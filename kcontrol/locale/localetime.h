@@ -27,6 +27,8 @@
 
 #include <qwidget.h>
 
+#include <qmap.h>
+
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
@@ -65,6 +67,14 @@ private slots:
   void slotWeekStartsMondayChanged();
 
 private:
+  QMap<QChar, QString> timeMap() const;
+  QMap<QChar, QString> dateMap() const;
+
+  QString storeToUser(const QMap<QChar, QString> & map,
+		      const QString & storeFormat) const;
+  QString userToStore(const QMap<QChar, QString> & map,
+		      const QString & userFormat) const;
+
   KLocale *m_locale;
 
   // Time & dates

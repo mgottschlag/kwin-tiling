@@ -161,8 +161,9 @@ void KLocaleApplication::save()
   KGlobal::_locale = lsave;
 
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
+  KConfigGroupSaver saver(config, "Locale");
 
+  // ##### this doesn't make sense
   bool langChanged = config->readEntry("Language")
     != m_locale->language();
 
