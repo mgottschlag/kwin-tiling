@@ -846,6 +846,8 @@ void KBackground::slotWallpaperType( int type )
 
     switch ( type ) {
 	case 0:
+	    if ( mode == KBackgroundSettings::NoWallpaper )
+		return;
 	    m_oldMode = mode;
 	    mode = KBackgroundSettings::NoWallpaper;
 	    m_pArrangementBox->setEnabled(false);
