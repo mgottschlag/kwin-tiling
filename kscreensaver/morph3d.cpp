@@ -907,6 +907,7 @@ release_morph3d()
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
+#include <kconfig.h>
 
 #include "morph3d.h"
 

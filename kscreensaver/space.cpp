@@ -459,7 +459,7 @@ initSpace(Window window)
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
-
+#include <kconfig.h>
 
 #include "space.moc"
 

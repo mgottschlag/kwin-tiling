@@ -122,6 +122,7 @@ FIXME: this could be clearer done by a calculation on the position.
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
 extern KLocale *glocale;
+#include <kconfig.h>
 
 #include "pipes.h"
 #include <X11/Intrinsic.h>
