@@ -329,6 +329,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
   m_locale->setCalendar(calendarType);
 
   updateWeekDayNames();
+  emit localeChanged();
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
