@@ -42,6 +42,7 @@ Name[xh]=Mac Engagqibekanga
 Name[xx]=xx
 Name[zh_CN.GB2312]=Mac 默认
 Name[zh_TW.Big5]=Mac 預設
+Name[zu]=Mac Okungaqedekanga
 Execute command=Alt+F2
 Kill Window=Meta+Ctrl+Escape
 Lock screen=Alt+Ctrl+L

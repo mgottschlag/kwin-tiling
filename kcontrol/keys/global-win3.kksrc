@@ -41,6 +41,7 @@ Name[xh]=Windows Ezingagqibekanga (Ngaphandle kwe Meta/Win-key)
 Name[xx]=xx
 Name[zh_CN.GB2312]=Windows 默认 (没有 Meta/Win-Key)
 Name[zh_TW.Big5]=Windows 預設 (沒有 Meta/Win-Key)
+Name[zu]=Amawindi Angaqedekanga (Without Meta/Win-Key)
 Execute command=none
 Kill Window=none
 Lock screen=none
