@@ -7,7 +7,7 @@ kcm_kdm_la_SOURCES = background.cpp kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
 kcm_kdm_la_LDFLAGS  = $(KDE_RPATH) $(all_libraries) -module -avoid-version -no-undefined
 kcm_kdm_la_LIBADD = $(top_builddir)/kcontrol/background/libkcmbgnd.la $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
-INCLUDES= -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
+INCLUDES= -I$(top_builddir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
 
 kcm_kdm_la_METASOURCES = AUTO
 
