@@ -32,6 +32,7 @@
 #include "mouse.h"
 #include "geom.h"
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
 
 extern "C" {
@@ -52,7 +53,8 @@ KMouseConfig::~KMouseConfig ()
 KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
-  QGridLayout *layout = new QGridLayout( this, 15, 4, 
+  QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
+  QGridLayout *layout = new QGridLayout( this, 15, 4,
 					 KDialog::marginHint(), 1);
   layout->setColStretch( 2, 100 );
   layout->setColStretch( 3, 100 );
@@ -62,14 +64,20 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   label = new QLabel(i18n("Active"), this);
   label->setFixedSize(label->sizeHint());
   layout->addWidget(label, 0,2, AlignHCenter);
+  QWhatsThis::add( label, i18n("In this column you can customize mouse clicks into the titlebar"
+    " or the frame of an active window.") );
 
   label = new QLabel(i18n("Inactive"), this);
   label->setFixedSize(label->sizeHint());
   layout->addWidget(label, 0,3, AlignHCenter);
+  QWhatsThis::add( label, i18n("In this column you can customize mouse clicks into the titlebar"
+    " or the frame of an inactive window.") );
 
   label = new QLabel(i18n("Titlebar and frame:"), this);
   layout->addMultiCellWidget(label, 0,0,0,1);
   layout->setRowStretch(0, 1);
+  QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on the"
+    " titlebar or the frame of a window.") );
 
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
@@ -78,6 +86,8 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   label = new QLabel(i18n("Inactive inner window:"), this);
   layout->addMultiCellWidget(label, 5,5,0,3);
   layout->setRowStretch(5, 1);
+  QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on an inactive"
+    " inner window ('inner' means: not titlebar, not frame).") );
 
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
@@ -86,33 +96,59 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   label = new QLabel(i18n("Inner window, titlebar and frame:"), this);
   layout->addMultiCellWidget(label, 10,10,0,3);
   layout->setRowStretch(10, 1);
+  QWhatsThis::add( label, i18n("Here you can customize KDE's behaviour when clicking somewhere into"
+    " a window while pressing a modifier key."));
 
   label = new QLabel(i18n("Left Button"), this);
   layout->addWidget(label, 1,1);
+  QWhatsThis::add( label, i18n("In this row you can customize left click behavior when clicking into"
+    " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Middle Button"), this);
   layout->addWidget(label, 2,1);
+  QWhatsThis::add( label, i18n("In this row you can customize middle click behavior when clicking into"
+    " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Right Button"), this);
   layout->addWidget(label, 3,1);
+  QWhatsThis::add( label, i18n("In this row you can customize right click behavior when clicking into"
+    " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Left Button"), this);
   layout->addWidget(label, 6,1);
+  strWin1 = i18n("In this row you can customize left click behavior when clicking into"
+    " an inactive inner window ('inner' means: not titlebar, not frame).");
+  QWhatsThis::add( label, strWin1 );
 
   label = new QLabel(i18n("Middle Button"), this);
   layout->addWidget(label, 7,1);
+  strWin2 = i18n("In this row you can customize middle click behavior when clicking into"
+    " an inactive inner window ('inner' means: not titlebar, not frame).");
+  QWhatsThis::add( label, strWin2 );
 
   label = new QLabel(i18n("Right Button"), this);
   layout->addWidget(label, 8,1);
+  strWin3 = i18n("In this row you can customize right click behavior when clicking into"
+    " an inactive inner window ('inner' means: not titlebar, not frame).");
+  QWhatsThis::add( label, strWin3 );
 
   label = new QLabel(i18n("ALT + Left Button"), this);
   layout->addWidget(label, 11,1);
+  strAll1 = i18n("Here you can customize KDE's behavior when left clicking into a window"
+    " while pressing the ALT key.");
+  QWhatsThis::add( label, strAll1 );
 
   label = new QLabel(i18n("ALT + Middle Button"), this);
   layout->addWidget(label, 12,1);
+  strAll2 = i18n("Here you can customize KDE's behavior when middle clicking into a window"
+    " while pressing the ALT key.");
+  QWhatsThis::add( label, strAll2 );
 
   label = new QLabel(i18n("ALT + Right Button"), this);
   layout->addWidget(label, 13,1);
+  strAll3 = i18n("Here you can customize KDE's behavior when right clicking into a window"
+    " while pressing the ALT key.");
+  QWhatsThis::add( label, strAll3 );
 
   QComboBox* combo;
 
@@ -123,6 +159,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Toggle raise and lower"));
   layout->addWidget(combo, 1,2);
   coTiAct1 = combo;
+  QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
@@ -132,6 +169,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Nothing"));
   layout->addWidget(combo, 2,2);
   coTiAct2 = combo;
+  QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
@@ -141,6 +179,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Nothing"));
   layout->addWidget(combo, 3,2);
   coTiAct3 =  combo;
+  QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -148,6 +187,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   layout->addWidget(combo, 1,3);
   coTiInAct1 = combo;
+  QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -155,6 +195,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   layout->addWidget(combo, 2,3);
   coTiInAct2 = combo;
+  QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -162,6 +203,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   layout->addWidget(combo, 3,3);
   coTiInAct3 = combo;
+  QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate, raise and pass click"));
@@ -170,6 +212,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   layout->addMultiCellWidget(combo, 6,6, 2, 3);
   coWin1 = combo;
+  QWhatsThis::add( combo, strWin1 );
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate, raise and pass click"));
@@ -178,6 +221,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   layout->addMultiCellWidget(combo, 7,7, 2, 3);
   coWin2 = combo;
+  QWhatsThis::add( combo, strWin2 );
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate, raise and pass click"));
@@ -186,6 +230,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and raise"));
   layout->addMultiCellWidget(combo, 8,8, 2, 3);
   coWin3 = combo;
+  QWhatsThis::add( combo, strWin3 );
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Move"));
@@ -196,6 +241,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Nothing"));
   layout->addMultiCellWidget(combo, 11,11, 2, 3);
   coAll1 = combo;
+  QWhatsThis::add( combo, strAll1 );
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Move"));
@@ -206,6 +252,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Nothing"));
   layout->addMultiCellWidget(combo, 12,12, 2, 3);
   coAll2 = combo;
+  QWhatsThis::add( combo, strAll2 );
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Move"));
@@ -216,6 +263,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Nothing"));
   layout->addMultiCellWidget(combo, 13,13, 2, 3);
   coAll3 =  combo;
+  QWhatsThis::add( combo, strAll3 );
 
   layout->setRowStretch(14, 1);
 
@@ -337,6 +385,14 @@ void KMouseConfig::defaults()
   setComboText (coAll1,"Move");
   setComboText(coAll2,"Toggle raise and lower");
   setComboText(coAll3,"Resize");
+}
+
+QString KMouseConfig::quickHelp()
+{
+  return i18n("<h1>Mouse Behavior</h1> Here you can customize the way the KDE window manager handles"
+    " mouse button clicks. <p>Please note that this configuration will not take effect if you don't use"
+    " KWin as your window manager. If you do use a different window manager, please refer to its documentation"
+    " for how to customize mouse behavior.");
 }
 
 #include "mouse.moc"

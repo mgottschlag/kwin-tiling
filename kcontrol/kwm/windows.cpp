@@ -24,6 +24,7 @@
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qslider.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <klocale.h>
@@ -69,11 +70,11 @@ KWindowConfig::~KWindowConfig ()
 KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
-
+  QString wtstr;
   QBoxLayout *lay = new QVBoxLayout (this, KDialog::marginHint(),
 				     KDialog::spacingHint());
 
-  windowsBox = new QButtonGroup(i18n("Windows"), this);	
+  windowsBox = new QButtonGroup(i18n("Windows"), this);
 
   QBoxLayout *wLay = new QVBoxLayout (windowsBox,KDialog::marginHint(),
 				      KDialog::spacingHint());
@@ -89,6 +90,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   //CT checkboxes: maximize, move, resize behaviour
   vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
+  QWhatsThis::add( vertOnly, i18n("If this option is enabled, windows will only be maximized"
+    " vertically while keeping there width.") );
 
   // CT: disabling is needed as long as functionality misses in kwin
   vertOnly->setEnabled(false);
@@ -96,9 +99,15 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   opaque = new QCheckBox(i18n("Display content in moving windows"), windowsBox);
   bLay->addWidget(opaque);
+  QWhatsThis::add( opaque, i18n("Enable this option if you want a window's content to be fully shown"
+    " while moving it, instead of just showing a window 'skeleton'. The result may not be satisfying"
+    " on slow machines without graphic acceleration.") );
 
   resizeOpaqueOn = new QCheckBox(i18n("Display content in resizing windows"), windowsBox);
   bLay->addWidget(resizeOpaqueOn);
+  QWhatsThis::add( resizeOpaqueOn, i18n("Enable this option if you want a window's content to be shown"
+    " while resizing it, instead of just showing a window 'skeleton'. The result may not be satisfying"
+    " on slow machines.") );
 
   // resize animation - CT 27May98; 19Oct1998
   resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
@@ -116,6 +125,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
   rLay->addWidget(resizeAnimFastLabel,1,2);
+
+  wtstr = i18n("Here you can set the speed for the resize animation shown when windows are"
+    " maximized or minimized. Drag the slider to the left edge to avoid a resize animation.");
+  QWhatsThis::add( resizeAnimTitleLabel, wtstr );
+  QWhatsThis::add( resizeAnimSlider, wtstr );
+  QWhatsThis::add( resizeAnimNoneLabel, wtstr );
+  QWhatsThis::add( resizeAnimFastLabel, wtstr );
 
 #ifdef __GNUC__
 #warning CT: disabling is needed as long as functionality misses in kwin
@@ -144,6 +160,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   //placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
   pLay->addWidget(placementCombo,1,0);
+
+  // FIXME, when more policies have been added to KWin
+  QWhatsThis::add( placementCombo, i18n("The placement policy determines where a new window"
+    " will appear on the desktop. For now, there are three different policies:"
+    " <ul><li><em>Smart</em> will try to achieve a minimum overlap of windows</li>"
+    " <li><em>Cascade</em> will cascade the windows</li>"
+    " <li><em>Random</em> will use a random position</li></ul>") );
 
   connect(placementCombo, SIGNAL(activated(int)),this,
 	  SLOT(ifPlacementIsInteractive()) );
@@ -181,6 +204,14 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   //  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
 
+  // FIXME, when more policies have been added to KWin
+  QWhatsThis::add( focusCombo, i18n("The focus policy is used to determin the active window, i.e."
+    " the window you can work in. <ul>"
+    " <li><em>Click to focus:</em> a window becomes active when you click into it. This is the behavior"
+    " you might know from other operating systems.</li>"
+    " <li><em>Focus follows mouse:</em> it's always the window containing the mouse pointer that's active."
+    " Long time Unix users are used to this.</li>") );
+
   connect(focusCombo, SIGNAL(activated(int)),this,
 	  SLOT(setAutoRaiseEnabled()) );
 
@@ -191,7 +222,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   connect(autoRaiseOn,SIGNAL(toggled(bool)), this, SLOT(autoRaiseOnTog(bool)));
 
   clickRaiseOn = new QCheckBox(i18n("Click Raise"), fcsBox);
-  fLay->addWidget(clickRaiseOn,3,0);
+  fLay->addWidget(clickRaiseOn,4,0);
 
   connect(clickRaiseOn,SIGNAL(toggled(bool)), this, SLOT(clickRaiseOnTog(bool)));
 
@@ -214,6 +245,17 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   fLay->addColSpacing(0,QMAX(autoRaiseOn->sizeHint().width(),
                              clickRaiseOn->sizeHint().width()) + 15);
+
+  QWhatsThis::add( autoRaiseOn, i18n("If Auto Raise is enabled, a window in the background will automatically"
+    " come to front when the mouse pointer has been over it for some time.") );
+  wtstr = i18n("This is the delay after which the window the mouse pointer is over will automatically"
+    " come to front.");
+  QWhatsThis::add( autoRaise, wtstr );
+  QWhatsThis::add( s, wtstr );
+  QWhatsThis::add( alabel, wtstr );
+
+  QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to"
+    " front automatically when you click somewhere into the window contents.") );
 
   // CT: disabling is needed as long as functionality misses in kwin
   autoRaiseOn->setEnabled(false);
@@ -568,6 +610,15 @@ void KWindowConfig::defaults()
     setResizeOpaque(RESIZE_TRANSPARENT);
     setPlacement(SMART_PLACEMENT);
     setFocus(CLICK_TO_FOCUS);
+}
+
+QString KWindowConfig::quickHelp()
+{
+    return i18n("<h1>Window Behavior</h1> Here you can modify the way windows behave when being"
+      " moved or resized and KWin's policies regarding window placement and window focus.<p>"
+      " Please note that changes in this module will only take effect if you use KWin as your"
+      " window manager. If you do use a different window manager, please consult its documentation"
+      " on how to change these options.");
 }
 
 void KWindowConfig::loadSettings()

@@ -24,18 +24,15 @@ display:
   advanced.cpp           [ ]        [ ]         [ ]         [ ]   help! what do those things mean?
   backgnd.cpp            [ ]        [x]         [ ]         [ ]
   bgdialogs.cpp          [ ]        [ ]         [ ]         [ ]
-  bgrender.cc            [ ]        [ ]         [ ]         [ ]
-  bgsettings.cc          [ ]        [ ]         [ ]         [ ]
   colorscm.cpp           [ ]        [x]         [x]         [ ]
   energy.cpp             [ ]        [x]         [ ]         [ ]
   fonts.cpp              [ ]        [x]         [ ]         [ ]
-  general.cpp            [ ]        [s]         [ ]         [ ]
-  icngeneral.cpp         [ ]        [ ]         [ ]         [ ]
-  icnlabel.cpp           [ ]        [ ]         [ ]         [ ]
-  icnmain.cpp            [ ]        [ ]         [ ]         [ ]
+  general.cpp            [ ]        [x]         [ ]         [ ]
+  icngeneral.cpp         [ ]        [ ]         [ ]         [ ]   Thorsten
+  icnlabel.cpp           [ ]        [ ]         [ ]         [ ]   Thorsten
+  icnmain.cpp            [ ]        [ ]         [ ]         [ ]   Thorsten
   scrnsave.cpp           [ ]        [x]         [ ]         [ ]
-  testicons.cpp          [ ]        [ ]         [ ]         [ ]
-  widgetcanvas.cpp       [ ]        [ ]         [ ]         [ ]
+  testicons.cpp          [ ]        [ ]         [ ]         [ ]   Thorsten?
 
 drkonqi:
   customize.cpp          [ ]        [ ]         [ ]         [ ]
@@ -140,11 +137,10 @@ konqhtml:
 
 kwm:
   advanced.cpp           [ ]        [ ]         [ ]         [ ]
-  desktop.cpp            [ ]        [ ]         [ ]         [ ]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
-  mouse.cpp              [ ]        [ ]         [ ]         [ ]
-  titlebar.cpp           [ ]        [ ]         [ ]         [ ]
-  windows.cpp            [ ]        [ ]         [ ]         [ ]
+  desktop.cpp            [ ]        [x]         [ ]         [ ]
+  mouse.cpp              [ ]        [x]         [ ]         [ ]
+  titlebar.cpp           [ ]        [ ]         [ ]         [ ]  Is this not used anymore due to KWin's styles?
+  windows.cpp            [ ]        [x]         [ ]         [ ]
 
 locale:
   klocaleadv.cpp         [ ]        [ ]         [ ]         [ ]

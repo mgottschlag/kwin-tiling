@@ -81,6 +81,7 @@ public:
   void load();
   void save();
   void defaults();
+  QString quickHelp();
 
   void loadSettings();
   void applySettings();

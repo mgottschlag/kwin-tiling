@@ -95,7 +95,7 @@ bool SaverConfig::read(QString file)
     if (indx >= 0) {
         mFile = file.mid(indx+1);
     }
-    
+
     return !mSaver.isEmpty();
 }
 
@@ -144,7 +144,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
                                      "apps/ScreenSavers/");
-    
+
     // Add KDE specific screensaver path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
@@ -228,8 +228,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
     mMonitorLabel->setPixmap( QPixmap(locate("data",
-					     "kcontrol/pics/monitor.png"))); 
+					     "kcontrol/pics/monitor.png")));
     vLayout->addWidget(mMonitorLabel, 0);
+    QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
 
     group = new QGroupBox( i18n("Settings"), this );
     vLayout->addWidget( group );
@@ -249,8 +250,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
     lbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
-    QWhatsThis::add( mWaitEdit, i18n("Choose the period of inactivity (from 1"
-      " to 120 minutes) after which the screen saver should start.") );
+    QString wtstr = i18n("Choose the period of inactivity (from 1"
+      " to 120 minutes) after which the screen saver should start.");
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( mWaitEdit, wtstr );
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
     mLockCheckBox->setChecked( mLock );
@@ -588,7 +591,7 @@ void KScreenSaver::slotSetup()
 
     if (mSetupProc->isRunning())
 	return;
-	
+
     mSetupProc->clearArguments();
 
     QString saver = mSaverList.at(mSelected)->setup();
@@ -740,8 +743,9 @@ QString KScreenSaver::quickHelp()
        " Besides providing an endless variety of entertainment and"
        " preventing monitor burn-in, a screen saver also gives you a simple"
        " way to lock your display if you are going to leave it unattended"
-       " for a while. If you want to lock the screen, make sure you enable"
-       " the \"Require password\" feature of the screen saver.");
+       " for a while. If you want the screen saver to lock the screen, make sure you enable"
+       " the \"Require password\" feature of the screen saver. If you don't, you can still"
+       " explicitly lock the screen using the desktop's \"Lock Screen\" action.");
 }
 
 #include "scrnsave.moc"

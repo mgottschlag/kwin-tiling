@@ -22,6 +22,7 @@
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qslider.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -70,7 +71,6 @@ extern "C" {
 KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
-
   QBoxLayout *lay = new QVBoxLayout(this, 5);
 
   ElectricBox = new QButtonGroup(i18n("Active desktop borders"),
@@ -85,15 +85,25 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
     QCheckBox(i18n("Enable active desktop borders"),
 	      ElectricBox);
   eLay->addMultiCellWidget(enable,1,1,0,1);
+  QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
+    " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
+    " to the other.") );
 
   movepointer = new QCheckBox(i18n("Move pointer towards center after switch"),
                               ElectricBox);
   eLay->addMultiCellWidget(movepointer,2,2,0,1);
+  QWhatsThis::add( movepointer, i18n("If this option is enabled, after switching desktops using"
+    " the active borders feature the mouse pointer will be moved to the middle of the screen. This"
+    " way you don't repeatedly change desktops because the mouse pointer is still on the border"
+    " of the screen.") );
 
   delays = new KIntNumInput(10, ElectricBox);
   delays->setRange(0, MAX_EDGE_RES/10, 10, true);
   delays->setLabel(i18n("Desktop switch delay:"));
   eLay->addMultiCellWidget(delays,4,4,1,2);
+  QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
+    " borders feature. Desktops will be switched after the mouse has been touching a screen border"
+    " for the specified number of seconds.") );
 
   connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
 
@@ -124,6 +134,9 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(BrdrSnap,1,2);
   eLay->addRowSpacing(0,5);
+  QWhatsThis::add( BrdrSnap, i18n("Here you can set the snap zone for screen borders, i.e."
+    " the 'strength' of the magnetic field which will make windows snap to the border when"
+    " moved near it.") );
 
   WndwSnap = new KIntNumInput(10, MagicBox);
   WndwSnap->setRange( 0, MAX_WNDW_SNAP);
@@ -132,6 +145,9 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
+  QWhatsThis::add( WndwSnap, i18n("Here you can set the snap zone for windows, i.e."
+    " the 'strength' of the magnetic field which will make windows snap to eachother when"
+    " they're moved near another window.") );
 
   load();
 
@@ -286,6 +302,16 @@ void KDesktopConfig::defaults( void )
 {
   setWindowSnapZone(KWM_WNDW_SNAP_ZONE_DEFAULT);
   setBorderSnapZone(KWM_BRDR_SNAP_ZONE_DEFAULT);
+}
+
+QString KDesktopConfig::quickHelp()
+{
+  return i18n("<h1>Borders</h1> Here you can configure two nice features the KDE window manager KWin"
+    " offers: <ul><li><em>Active Desktop Borders</em> enable you to switch desktops by moving the mouse pointer"
+    " to a screen border.</li><li><em>Magic Borders</em> provide sort of a 'magnetic field' which will"
+    " make windows snap to other windows or the screen border when moved near to them.</li></ul>"
+    " Please note, that changes here only take effect when you are using KWin as your window manager."
+    " If you do use a different window manager, check its documentation for how to enable such features.");
 }
 
 #include "desktop.moc"
