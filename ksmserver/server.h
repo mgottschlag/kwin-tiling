@@ -64,9 +64,10 @@ public:
     QStringList discardCommand() const;
     int restartStyleHint() const;
     QString userId() const;
+    const char* clientId() { return id ? id : ""; }
 
 private:
-    const char* clientId;
+    const char* id;
     SmsConn smsConn;
 };
 
@@ -94,6 +95,7 @@ public:
 
     // notification
     void clientSetProgram( KSMClient* client );
+    void clientRegistered( const char* previousId );
 
     // public API
     void restoreSession( QString sessionName );
@@ -114,6 +116,7 @@ private slots:
     void protectionTimeout();
 
     void autoStart();
+    void autoStart2();
 
 private:
     void handlePendingInteractions();
@@ -130,7 +133,7 @@ private:
     void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
 
-    void autoStart2();
+    void restoreNextInternal();
 
     // public dcop interface
     void logout( int, int, int );
@@ -160,8 +163,10 @@ private:
     void upAndRunning( const QString& msg );
     void publishProgress( int progress, bool max  = false  );
 
-    int progress;
+    // sequential startup
     int appsToStart;
+    int lastAppStarted;
+    QString lastIdStarted;
 };
 
 #endif
