@@ -170,7 +170,7 @@ void KAccessConfig::load()
   invertScreen->setChecked(config->readBoolEntry("VisibleBellInvert", true));
   flashScreen->setChecked(!invertScreen->isChecked());
   QColor def(Qt::red);
-  colorButton->setColor(config->readBoolEntry("VisibleBellColor", &def));
+  colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
   
   durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
 
@@ -211,6 +211,19 @@ void KAccessConfig::save()
 
 void KAccessConfig::defaults()
 {
+  systemBell->setChecked(true);
+  customBell->setChecked(false);
+  soundEdit->setText("");
+
+  visibleBell->setChecked(false);
+  invertScreen->setChecked(true);
+  flashScreen->setChecked(false);
+  colorButton->setColor(QColor(Qt::red));
+  
+  durationSlider->setValue(500);
+
+  checkAccess();
+
   emit changed(true);
 }
 
