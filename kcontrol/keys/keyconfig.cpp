@@ -391,7 +391,8 @@ void KKeyModule::readSchemeNames( )
     sList->insertItem( str );
     sFileList->append( *it );
 
-    nSysSchemes++;
+    // bug?  this makes it impossible to delete any scheme.
+    //nSysSchemes++;
 
   }
 		
