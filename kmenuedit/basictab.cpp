@@ -340,7 +340,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 
 void BasicTab::reset()
 {
-    if(_desktopFile != "")
+    if(!_desktopFile.isEmpty())
         setDesktopFile(_desktopFile, _name, _isDeleted);
 
     // key binding part

@@ -52,7 +52,7 @@ void KHotKeysApp::start_general( const QString& action_P )
     KHotData* current = data[ action_P ];
     // this code used to start commands is based on kdesktop's minicli.cpp
     QString run = current->run.stripWhiteSpace();
-    if( run == "" )
+    if( run.isEmpty() )
         return;
     int space_pos = run.find( ' ' );
     QString cmd = run;
