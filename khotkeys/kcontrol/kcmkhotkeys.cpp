@@ -261,7 +261,7 @@ void desktop_shortcut_dialog::key_changed()
                      "been allocated to the %2 action.\n"
                      "Please choose a unique key combination."
                     ).arg( it.current()->shortcut ).arg( it.currentKey());
-            KMessageBox::sorry( this, str, i18n( "Key conflict" ));
+            KMessageBox::sorry( this, str, i18n( "Key Conflict" ));
             //map[ action_name ].aConfigKeyCode = 0;
             pAction->clearShortcuts();
             keychooser->listSync(); // cancel the selected shortcut

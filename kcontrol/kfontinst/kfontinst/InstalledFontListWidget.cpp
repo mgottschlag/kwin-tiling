@@ -383,7 +383,7 @@ void CInstalledFontListWidget::fixTtfPsNames()
     if(KMessageBox::questionYesNo(this, i18n("This will *permanently* alter the TrueType font file(s),"
                                              "\nand cannot be undone."
                                              "\n"
-                                             "\nAre you sure?"), i18n("Fix TTF postscript names"))==KMessageBox::Yes)
+                                             "\nAre you sure?"), i18n("Fix TTF Postscript Names"))==KMessageBox::Yes)
     {
         CListViewItem *item=(CListViewItem *)itsList->firstChild();
         int           failures=0,
@@ -563,7 +563,7 @@ void CInstalledFontListWidget::createDir()
 
 void CInstalledFontListWidget::deleteDir()
 {
-    if(KMessageBox::questionYesNo(this, i18n("Are you sure?"), i18n("Delete folder"))==KMessageBox::Yes)
+    if(KMessageBox::questionYesNo(this, i18n("Are you sure?"), i18n("Delete Folder"))==KMessageBox::Yes)
     {
         CListViewItem *item=getFirstSelectedItem();
 

@@ -527,7 +527,7 @@ void CXftConfigEditor::addMatch()
 {
     if((LINEEDIT==itsMatchMode && 0==itsMatchString->text().length()) ||
        (itsMatchOther->isEnabled() && 0==itsMatchOther->text().length()))
-        KMessageBox::error(this, i18n("String is empty!"), i18n("Format error"));
+        KMessageBox::error(this, i18n("String is empty!"), i18n("Format Error"));
     else
     {
         QCString entry(itsMatchQualCombo->currentText().latin1());

@@ -151,7 +151,7 @@ void LookAndFeelTab::browse_theme(const QString& newtheme)
         }
     }
 
-    KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to load image file."));
+    KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to Load Image File"));
 }
 
 void LookAndFeelTab::tiles_clicked()
