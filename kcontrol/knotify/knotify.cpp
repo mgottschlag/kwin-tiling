@@ -85,7 +85,9 @@ void KNotifyWidget::changed()
 
 void KNotifyWidget::loadAll()
 {
-	QStringList dirs = KGlobal::dirs()->findAllResources("data", "*/eventsrc");
+	QStringList dirs(locate("config", "eventsrc")); // load system-wide eventsrc
+	dirs+=KGlobal::dirs()->findAllResources("data", "*/eventsrc");
+	
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
 	{
 		if (!QFileInfo(*it).isReadable()) continue;
@@ -94,7 +96,12 @@ void KNotifyWidget::loadAll()
 		QString appname(conf.readEntry("appname", "Unknown Title"));
 		QString desc(conf.readEntry("description"));
 		(new ListViewItem(apps, *it, appname, desc))->setPixmap
+<<<<<<< knotify.cpp
+			(0, KGlobal::instance()->iconLoader()->loadIcon("library",
+				KIconLoader::Small));
+=======
 			(0, SmallIcon("library"));
+>>>>>>> 1.9
 		kapp->processEvents();
 	}
 	if (!apps->firstChild()) apps->setEnabled(false);

@@ -113,13 +113,11 @@ void EventView::itemSelected(int item)
 	case (2):
 		file->show();
 		file->setText(logfile);
-		/*
 		if (present & KNotifyClient::Logfile)
 		{
 			enabled->setChecked(true);
 			file->setEnabled(true);
 		}
-		*/
 		break;
 	case (3):
 		if (present & KNotifyClient::Stderr)
@@ -167,8 +165,8 @@ void EventView::itemToggled(bool on)
 
 void EventView::load(KConfig *config, const QString &section)
 {
-	config->setGroup(section);
 	unload();
+	config->setGroup(section);
 	conf=config;
 	this->section=section;
 	setEnabled(true);
@@ -204,7 +202,6 @@ void EventView::load(KConfig *config, const QString &section)
 
 void EventView::setPixmap(int item, bool on)
 {
-// KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small)
 	if (on)
 		eventslist->changeItem(BarIcon("flag"), eventslist->text(item), item);
 	else
