@@ -86,6 +86,8 @@ extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
 # include <time.h>
 #endif	/* USE_PAM || AIXV3 */
 
+#include <sys/stat.h>
+
 #if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__) || defined(__GNU__)
 # define setpgrp setpgid
 #endif
