@@ -95,6 +95,15 @@ int kdemain(int argc, char **argv)
     return 0;
 }
 
+static QString simplifySlashes(const QString &str)
+{
+    QString ret(str);
+
+    while(-1!=ret.find("//"))
+        ret.replace("//", "/");
+    return ret;
+}
+
 static bool containsGsUseableFonts(const QString &ds)
 {
     QDir                dir(ds);
@@ -188,6 +197,7 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
 
     if(exists || formattedExists)
     {
+#if KDE_IS_VERSION(3,2,90)
         if(file && (CFontEngine::isAFontOrAfm(cPath)))
         {
             QString fontName(CGlobal::fe().createName(exists ? path : formattedPath));
@@ -216,6 +226,9 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
             addAtom(entry, KIO::UDS_NAME, 0, displayedName);
             addAtom(entry, KIO::UDS_URL, 0, url);
         }
+#else
+        addAtom(entry, KIO::UDS_NAME, 0, name);
+#endif
 
         if (S_ISLNK(buff.st_mode))
         {
@@ -314,7 +327,7 @@ static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QS
     }
 
     if(!err)
-        err=!createUDSEntry(entry, fName, fPath, QString(KIO_FONTS_PROTOCOL)+QChar(':')+url, mime, true);
+        err=!createUDSEntry(entry, fName, fPath, QString(KIO_FONTS_PROTOCOL)+QChar(':')+simplifySlashes(url), mime, true);
 
     return !err;
 }
@@ -607,6 +620,7 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
 void CKioFonts::stat(const KURL &url)
 {
     KFI_DBUG << "stat " << url.path() << endl;
+
     CHECK_URL_ROOT_OK(url)
 
     QStringList   path(QStringList::split('/', url.path(-1), false));
@@ -1415,6 +1429,7 @@ void CKioFonts::chmod(const KURL &url, int permissions)
 void CKioFonts::del(const KURL &url, bool isFile)
 {
     KFI_DBUG << "del " << url.path() << endl;
+
     CHECK_URL(url)
     CHECK_ALLOWED(url)
 
@@ -1424,17 +1439,14 @@ void CKioFonts::del(const KURL &url, bool isFile)
     const QStringList          &list=CGlobal::cfg().getRealTopDirs(url.path());
     QStringList                items;
 
-    KFI_DBUG << "real ";
     for(constIt=list.begin(); constIt!=list.end(); ++constIt)
         if((isFile && CMisc::fExists(*constIt+sub)) ||
            (!isFile && CMisc::dExists(*constIt+sub)))
         {
 
             items.append(*constIt+sub);
-            KFI_DBUG << *constIt+sub;
+            KFI_DBUG << "real: " << *constIt+sub << endl;
         }
-
-    KFI_DBUG << endl;
 
     if(items.count())
         if(isFile)
