@@ -158,4 +158,4 @@ Keywords[zh_CN]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,pow
 Keywords[zh_TW]=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,Power,能源,省電器,逾時,轉暗,待機,休眠,電源
 Keywords[zu]=umdlandla,umgcini,apm,acpi,isikhathi sokuphuma,ukuvimbela,lindela lengisa,amandla
 
-Categories=Qt;KDE;Settings;X-KDE-settings-power
+Categories=Qt;KDE;X-KDE-settings-power

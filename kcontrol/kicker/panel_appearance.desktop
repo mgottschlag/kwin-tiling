@@ -121,4 +121,4 @@ Keywords[zh_CN]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,aut
 Keywords[zh_TW]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons,trusted applets,security level,面板,工作列,啟動列,快捷列,位置,大小,終端機程式,自動隱藏,隱藏,按鈕,動畫,背景,佈景主題,選單快取,快取,隱藏,K-選單,書籤,最近開啟的文件,快速瀏覽,瀏覽選單,選單,圖示,小圖塊,應用程式,啟動,高亮度,縮放圖示,信任的應用程式,安全等級
 Keywords[zu]=kicker,iwindi lemininingwane,kpanel,ibha yemisebenzi, ibha yokuqala,ibha yokuqalisa,indawo,usayizi,ukufihla ngokuzenzekela, fihla,izinkinobho,ukuphilisa,inkundla yangemuva,izingqikithi,icache yemenu,cache,okufihliwe,K-Menu,omaka bencwadi,ushicilelo olusanda kwenzeke umcingi osheshayo,imenu yomcingi,menu,izimpawu zezithombe,amathayile, ama-applet,ukuqalisa,ukugqamisa,izibambo,ukusondeza izimpawu zezithombe, ama-applets athenjiwe, iqophelo lokuvikeleka
 
-Categories=Qt;KDE;Settings;X-KDE-settings-looknfeel
+Categories=Qt;KDE;X-KDE-settings-looknfeel

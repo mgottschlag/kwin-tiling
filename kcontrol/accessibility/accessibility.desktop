@@ -166,4 +166,4 @@ Keywords[zh_CN]=access,accessibility,deaf,impaired,bell,audible bell,visible bel
 Keywords[zh_TW]=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad,使用,聾,鈴聲,聽得見的鈴,看得見的鈴,鍵盤,按鍵,滑鼠導向,數字鍵
 Keywords[zu]=ngena,ukungena,okuthuli,kukhubazekile,insimbi,insimbiezwakalayo, insimbi ebonakalayo,okhiye,okhiye abanamathelayo,okhiyeababhampayo,okhiye abahamba kancane,ukuzula kwe-mouse,num pad
 
-Categories=Qt;KDE;Settings;X-KDE-settings-accessibility
+Categories=Qt;KDE;X-KDE-settings-accessibility

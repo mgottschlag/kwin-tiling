@@ -166,4 +166,4 @@ Keywords[zh_CN]=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,m
 Keywords[zh_TW]=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,mailbox,User Information,Reply Address,Server information,User Name,Passwords,Host,Current Profile,Profile,Organization,Incoming Host,Outgoing Host,Email Client,電子郵件,信件,位址,郵件伺服器,本地信箱,信箱,使用者資訊,回信位址,郵件主機資訊,帳號,密碼,主機,組織,收信主機,送信主機,郵件程式
 Keywords[zu]=Iposi lekhomputha,Iposi,Iposi lekhomputha,Ikheli, Umlekeleli weposi lekhomputha,IMAP,POP3,Ibhokisi leposi eliseduze, ibhokisi leposi,Ulwazi lomsebenzisi,Ikheli Lokuphendula,Ulwazi lomlekeleli,Igama Lomsebenzisi,Amagama-okudlula,Isiteshi sekhomputha, Iprofayela lamanje,Iprofayela,Inhlangano,Isiteshi sekhomputha sokungenayo, Isiteshi sekhomputha sokuphumayo, Umxhasi weposi lekhomputha
 
-Categories=Qt;KDE;Settings;X-KDE-settings-network
+Categories=Qt;KDE;X-KDE-settings-network

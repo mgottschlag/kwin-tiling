@@ -157,4 +157,4 @@ Keywords[zh_CN]=application,start,launch,busy,cursor,feedback,mouse,pointer,rota
 Keywords[zh_TW]=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report,應用程式,開始,啟動,忙碌,游標,回饋,滑鼠,指標,回轉,旋轉,磁碟,啟動,程式,報告
 Keywords[zu]=umyaleli,qala,qalisa,kumatasatasa,inkomba,umphumela obuyayo,i-mouse,inkomba yendawo yokubhala,iyajikeleza,iyajikeleza,i-disk qalisa,uhlelo lwemisebenzi,umbiko
 
-Categories=Qt;KDE;Settings;X-KDE-settings-looknfeel
+Categories=Qt;KDE;X-KDE-settings-looknfeel

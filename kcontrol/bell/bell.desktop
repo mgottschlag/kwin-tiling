@@ -186,4 +186,4 @@ Keywords[zh_CN]=Bell,Audio,Sound,Volume,Pitch,Duration,响铃,音频,音量,音�
 Keywords[zh_TW]=Bell,Audio,Sound,Volume,Pitch,Duration,響鈴,聲音,音量,音調,持續時間
 Keywords[zu]=Insimbi,Okuzwakalayo,Usimdo,Izinga lomsindo,Umnswininizo,Ubude besikhathi
 
-Categories=Qt;KDE;Settings;X-KDE-settings-sound
+Categories=Qt;KDE;X-KDE-settings-sound

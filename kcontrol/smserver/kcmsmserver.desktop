@@ -162,4 +162,4 @@ Keywords[zh_CN]=ksmserver,会话,注消,确认,保存,恢复
 Keywords[zh_TW]=ksmserver,session,logout,confirmation,save,restore,工作階段,登出,確認,儲存,回復
 Keywords[zu]=ksmserver,isiqendu,ukuphuma ngaphandle,ukuqiniseka,gcina,vuselela
 
-Categories=Qt;KDE;Settings;X-KDE-settings-components
+Categories=Qt;KDE;X-KDE-settings-components

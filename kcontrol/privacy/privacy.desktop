@@ -33,4 +33,4 @@ Type=Application
 X-KDE-FactoryName=privacy
 X-KDE-Library=privacy
 X-KDE-ModuleType=Library
-Categories=Qt;KDE;Settings;X-KDE-settings-security
+Categories=Qt;KDE;X-KDE-settings-security

@@ -168,4 +168,4 @@ Keywords[zh_CN]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE 
 Keywords[zh_TW]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications,風格,主題,外觀,視窗元件,圖示,工具列,文字,突出顯示,應用程式,KDE 應用程式
 Keywords[zu]=isitayela,izitayela,ukubukeka,widget,izimpawu zezithombe,amabha amathuluzi,umbhalo,ukugqamisa,apps,abayaleli be-KDE
 
-Categories=Qt;KDE;Settings;X-KDE-settings-looknfeel
+Categories=Qt;KDE;X-KDE-settings-looknfeel

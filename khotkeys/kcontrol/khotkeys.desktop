@@ -19,4 +19,4 @@ Keywords[pt_BR]=Teclas,Teclas de atalho globais,esquema de teclado,teclas de ata
 Keywords[sr]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,тастери,глобални тасте,пречица,шема тастера,пречице,програмске пречице
 Keywords[sv]=Tangenter,Globala kortkommandon,bindningar,Tangentbindningar
 Keywords[tr]=Tuşlar,Genel tuş bağıntıları,Tuş şeması,Tuş bağıntıları
-Categories=Qt;KDE;Settings;X-KDE-settings-system
+Categories=Qt;KDE;X-KDE-settings-system

@@ -164,4 +164,4 @@ Keywords[zh_CN]=kdm,display manager,xdm,users,login,greeting,Logo,styles,languag
 Keywords[zh_TW]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart,顯示管理程式,使用者,登入,歡迎,風格,語言,國家,字型,背景,底圖,工作階段,關機,重新啟動
 Keywords[zu]=kdm,Imenenja yokuveza,xdm,abasebenzisi,ukungena ngaphakathi,isibingelelo,Isiqubulo,izitayela,ulimi,izwe,izinhlobo zamagama, inkundla yangemuva,emaphepha ezindonga,iziqendu,vala,phinda uqale
 
-Categories=Qt;KDE;Settings;X-KDE-settings-system
+Categories=Qt;KDE;X-KDE-settings-system

@@ -148,4 +148,4 @@ Keywords[zh_CN]=components,component chooser,resources, email client, terminal e
 Keywords[zh_TW]=components,component chooser,resources, email client, terminal emulator,元件,元件選擇程式,資源,電子郵件客戶端程式,終端機模擬程式
 Keywords[zu]=amalunga,umkhethi welunga,amathuluzi okusebenza,umxhasi weposi lekhomputha,umlingisi wethuluzi langaphandle
 
-Categories=Qt;KDE;Settings;X-KDE-settings-components
+Categories=Qt;KDE;X-KDE-settings-components

@@ -164,4 +164,4 @@ Keywords[zh_CN]=language,translation,number format,currency,time,date,formats,lo
 Keywords[zh_TW]=language,translation,number format,currency,time,date,formats,locale,Country,charsets,character sets,Decimal symbol,Thousands separator,symbol,separator,sign,positive,negative,fractional digits,week,week start,語言,翻譯,數字格式,貨幣格式,時間格式,日期格式,格式,地區,國家,字元,字元集,小數點符號,千分位分隔,符號,分隔,符號,正數,負數,小數點位數,一週,由週日開始
 Keywords[zu]=ulimi,uguqulelo,isakhiwo senombolo, uphawu lwemali, isikhathi,usuku,izakhiwo,indawo,Izwe,charsets,amaqoqo ezimpawu,uphawu lwedesimali,umehlukanisi wezinkulungwane,uphawu,umehlukanisi,uphawu, okungaphezulu kuka-0,okungaphansi kuka-0,izinombolo azahlukanisiwe,isonto, ukuqala kwesonto
 
-Categories=Qt;KDE;Settings;X-KDE-settings-accessibility
+Categories=Qt;KDE;X-KDE-settings-accessibility

@@ -183,4 +183,4 @@ Keywords[zh_CN]=System sounds,Audio,Sound,Notify,Alerts,Notification,系统音�
 Keywords[zh_TW]=System sounds,Audio,Sound,Notify,Alerts,Notification,系統音效,音效,通知,警報
 Keywords[zu]=Imisindo yesistimu,Okuzwakalayo,Umsindo,Yazisa,Ukuqwashisa, Ukwazisa
 
-Categories=Qt;KDE;Settings;X-KDE-settings-sound
+Categories=Qt;KDE;X-KDE-settings-sound
