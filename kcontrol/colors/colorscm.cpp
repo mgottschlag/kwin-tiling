@@ -96,7 +96,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 {
     nSysSchemes = 2;
 
-    setQuickHelp( i18n(
+    setQuickHelp( i18n("<h1>Colors</h1> This module allows you to choose"
        " the color scheme used for the KDE desktop. The different"
        " elements of the desktop, such as title bars, menu text, etc.,"
        " are called \"widgets\". You can choose the widget whose"
