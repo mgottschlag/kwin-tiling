@@ -1,0 +1,12 @@
+[Desktop Entry]
+Exec=kcmshell nic
+Type=Application
+
+X-KDE-ModuleType=Library
+X-KDE-Library=nic
+X-KDE-FactoryName=nic
+
+Name=Network interfaces
+
+Comment=Network interface information
+
