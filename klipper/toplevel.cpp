@@ -202,17 +202,18 @@ void TopLevel::clickedMenu(int id)
         break;
     case QUIT_ITEM: {
         saveProperties();
-        int autoStart = KMessageBox::questionYesNo( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically start Klipper?") );
+        int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically start Klipper?") );
 
         QString file = locateLocal( "data", "../autostart/klipper.desktop" );
         if ( autoStart == KMessageBox::Yes )
             QFile::remove( file );
-        else {
+        else if ( autoStart == KMessageBox::No) {
             KSimpleConfig config( file );
             config.setDesktopGroup();
             config.writeEntry( "Hidden", true );
             config.sync();
-        }
+        }else  // cancel chosen don't quit
+	    break;
         kapp->quit();
         break;
         }
