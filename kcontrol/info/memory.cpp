@@ -3,7 +3,7 @@
  *
  *  prints memory-information and shows a graphical display.
  *
- *  Copyright (c) 1999-2001 Helge Deller <deller@gmx.de>
+ *  Copyright (c) 1999-2002 Helge Deller <deller@gmx.de>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -239,6 +239,27 @@ KMemoryWidget::~KMemoryWidget()
     timer->stop();
 }
 
+
+QString KMemoryWidget::quickHelp() const
+{
+  return i18n("<h1>Memory Information</h1>"
+	" This display shows you the current memory usage of your system."
+	" The values are updated on a regular basis and give you an "
+	" overview of the physical and virtual used memory." );
+}
+
+
+const KAboutData* KMemoryWidget::aboutData() const
+{
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcminfo"), I18N_NOOP("KDE Panel Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1998 - 2002 Helge Deller"));
+
+    about->addAuthor("Helge Deller", 0, "deller@gmx.de");
+    return about;
+}
 
 /* Graphical Memory Display */
 bool KMemoryWidget::Display_Graph(int widgetindex,

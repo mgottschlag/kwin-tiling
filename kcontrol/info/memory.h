@@ -9,6 +9,7 @@
 #include <qtimer.h>
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 #include <config.h>
 
 #ifdef HAVE_LONG_LONG
@@ -29,6 +30,9 @@ class KMemoryWidget:public KCModule {
   public:
     KMemoryWidget(QWidget * parent, const char *name = 0);
     ~KMemoryWidget();
+
+    QString quickHelp() const;
+    const KAboutData* aboutData() const;
 
   private:
     QString Not_Available_Text;
