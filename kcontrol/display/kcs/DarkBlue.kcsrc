@@ -5,6 +5,7 @@ activeForeground=255,255,255
 activeTitleBtnBg=66,103,148
 activeTitleBtnBlend=
 activeTitleBtnFg=66,103,148
+alternateBackground=0,66,123
 background=66,103,148
 buttonBackground=66,103,148
 buttonForeground=255,255,255
