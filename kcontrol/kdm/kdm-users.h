@@ -74,7 +74,7 @@ private:
 	KIconLoader	*iconloader;
 	QButtonGroup	*usrGroup, *shwGroup;
 	QGroupBox	*minGroup;
-	QLineEdit	*leminuid;
+	QLineEdit	*leminuid, *lemaxuid;
 	QRadioButton	*rbnoneusr, *rbselusr, *rballusr;
 	QCheckBox	*cbusrsrt;
 	KIconButton	*userbutton;
