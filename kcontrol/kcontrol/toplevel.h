@@ -25,6 +25,7 @@
 #include <qlistview.h>
 
 
+class QSplitter;
 class QTabWidget;
 
 class KToggleAction;
@@ -77,6 +78,7 @@ private:
 
   QString handleAmpersand( QString ) const;
   
+  QSplitter      *_splitter;
   QTabWidget     *_tab;
   DockContainer  *_dock;
 

@@ -59,7 +59,7 @@ TopLevel::TopLevel(const char* name)
   : KMainWindow( 0, name, WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
-  setCaption("");
+  setCaption(QString::null);
 
   report_bug = 0;
 
@@ -88,15 +88,10 @@ TopLevel::TopLevel(const char* name)
   for ( ConfigModule* m = _modules->first(); m; m = _modules->next() )
       connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
-/***** START: MK
-*/
-
   // create the layout box
-  QSplitter *_splitter = new QSplitter( QSplitter::Horizontal, this );
-  //QWidget* _splitter = new QHBox( this );
+  _splitter = new QSplitter( QSplitter::Horizontal, this );
 
   // create the left hand side (the tab view)
-//  _tab = new QTabWidget(hbox);
   _tab = new QTabWidget( _splitter );
 
   QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
@@ -123,6 +118,12 @@ TopLevel::TopLevel(const char* name)
   _tab->addTab(_helptab, i18n("Hel&p"));
 
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
+
+ // Restore sizes
+  config->setGroup("General");
+  QValueList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
+  if (!sizes.isEmpty())
+     _splitter->setSizes(sizes);
 
   // That one does the trick ...
   _splitter->setResizeMode( _tab, QSplitter::KeepSize );
@@ -194,6 +195,9 @@ TopLevel::~TopLevel()
       break;
     }
 
+  config->setGroup("General");
+  config->writeEntry("SplitterSizes", _splitter->sizes()); 
+  
   config->sync();
 
   delete _modules;

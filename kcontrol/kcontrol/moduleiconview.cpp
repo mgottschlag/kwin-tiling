@@ -48,7 +48,9 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setWordWrapIconText(true);
   setItemTextPos(Right);
   setResizeMode(Adjust);
-
+  setWordWrapIconText(false);
+  setShowToolTips(true);
+  
   // This is intentionally _not_ connected with executed(), since
   // honoring doubleclick doesn't make any sense here (changed by
   // large user demand)
@@ -134,6 +136,7 @@ void ModuleIconView::fill()
 
     // go-up node
     ModuleIconItem *i = new ModuleIconItem(this, i18n("Go up"), icon);
+	i->setDragEnabled(false);
     int last_slash = _path.findRev('/');
     if (last_slash == -1)
       i->setTag(QString::null);
@@ -170,6 +173,7 @@ void ModuleIconView::fill()
 
     ModuleIconItem *i = new ModuleIconItem(this, group->caption(), icon);
     i->setTag(subdir);
+	i->setDragEnabled(false);
   }
 
   // we don't ever have any modules on the top level
@@ -192,7 +196,8 @@ void ModuleIconView::fill()
     else
       icon = LoadMedium(module->icon());
 
-    (void) new ModuleIconItem(this, module->name(), icon, module);
+    ModuleIconItem *i = new ModuleIconItem(this, module->name(), icon, module);
+	i->setDragEnabled(false);
   }
 }
 
