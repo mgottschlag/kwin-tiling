@@ -72,9 +72,9 @@ info:
   memory_sgi.cpp         [ ]        [ ]         [ ]         [ ]
 
 input:
-  keyboard.cpp           [ ]        [x]         [x]         [ ]
+  keyboard.cpp           [ ]        [x]         [x]         [x]
   main.cpp               [ ]        [ ]         [ ]         [ ]
-  mouse.cpp              [ ]        [x]         [x]         [ ]
+  mouse.cpp              [ ]        [x]         [x]         [x]
 
 kcontrol:
   helpwidget.cpp         [ ]        [ ]         [ ]         [ ]
@@ -123,12 +123,12 @@ knotify:
   main.cpp               [ ]        [ ]         [ ]         [ ]
 
 konq:
-  behaviour.cpp          [ ]        [x]         [x]         [ ]
-  fontopts.cpp           [ ]        [x]         [x]         [ ]
-  main.cpp               [ ]        [x]         [x]         [ ]
-  miscopts.cpp           [ ]        [x]         [x]         [ ]
+  behaviour.cpp          [ ]        [x]         [x]         [x]
+  fontopts.cpp           [ ]        [x]         [x]         [x]
+  main.cpp               [ ]        [x]         [x]         [x]
+  miscopts.cpp           [ ]        [x]         [x]         [x]
   rootopts.cpp           [ ]        [x]         [ ]         [ ]
-  trashopts.cpp          [ ]        [x]         [x]         [ ]
+  trashopts.cpp          [ ]        [x]         [x]         [x]
 
 konqhtml:
   htmlopts.cpp           [ ]        [s]         [ ]         [ ]
