@@ -9,8 +9,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <qpixmap.h>
 #include <qdialog.h>
-#include <qradiobutton.h>
-class QCheckBox;
+class QPushButton;
 class QVButtonGroup;
 
 #include <kapplication.h>
@@ -37,21 +36,6 @@ private:
     int m_currentY;
 };
 
-// A radiobutton with a dblclk signal
-class KSMRadioButton : public QRadioButton
-{
-	Q_OBJECT
-
-public:
-	KSMRadioButton (const QString &text, QWidget *parent, const char *name = 0L);
-
-private:
-	virtual void mouseDoubleClickEvent (QMouseEvent *pe);
-	
-signals:
-	void doubleClicked();
-};
-
 // The confirmation dialog
 class KSMShutdownDlg : public QDialog
 {
@@ -61,14 +45,16 @@ public:
     static bool confirmShutdown( bool maysd, bool maynuke, KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode );
 
 public slots:
-    void slotSdMode(int);
+    void slotLogout();
+    void slotHalt();
+    void slotReboot();
 
 protected:
     ~KSMShutdownDlg() {};
 
 private:
     KSMShutdownDlg( QWidget* parent, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
-    QRadioButton *rLogout, *rHalt, *rReboot;
+    KApplication::ShutdownType m_shutdownType;
 #if 0
     , *rSched, *rTry, *rForce;
     QVButtonGroup *mgrp;

@@ -12,7 +12,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
-#include <qradiobutton.h>
 #include <qvbuttongroup.h>
 #include <qlabel.h>
 #include <qvbox.h>
@@ -21,6 +20,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qcursor.h>
 #include <qmessagebox.h>
 #include <qbuttongroup.h>
+#include <qiconset.h>
 
 #include <klocale.h>
 #include <kapplication.h>
@@ -33,6 +33,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kuser.h>
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
+#include <kdialog.h>
+#include <kseparator.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -51,7 +53,7 @@ KSMShutdownFeedback::KSMShutdownFeedback()
 {
     setBackgroundMode( QWidget::NoBackground );
     setGeometry( QApplication::desktop()->geometry() );
-    QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
 
 
@@ -72,8 +74,8 @@ void KSMShutdownFeedback::slotPaintEffect()
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-				bool maysd, bool /*maynuke*/,
-				KApplication::ShutdownType sdtype, KApplication::ShutdownMode /*sdmode*/ )
+                                bool maysd, bool /*maynuke*/,
+                                KApplication::ShutdownType sdtype, KApplication::ShutdownMode /*sdmode*/ )
     : QDialog( parent, 0, TRUE, WType_Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
@@ -83,54 +85,86 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
     frame->setLineWidth( style().pixelMetric( QStyle::PM_DefaultFrameWidth, frame ) );
     vbox->addWidget( frame );
-    vbox = new QVBoxLayout( frame, 15, 11 );
+    vbox = new QVBoxLayout( frame, 2 * KDialog::marginHint(),
+                            2 * KDialog::spacingHint() );
 
     QLabel* label = new QLabel( i18n("End Session for \"%1\"").arg(KUser().loginName()), frame );
     QFont fnt = label->font();
     fnt.setBold( true );
-    fnt.setPixelSize( fnt.pixelSize() * 3 / 2 );
+    fnt.setPointSize( fnt.pointSize() * 3 / 2 );
     label->setFont( fnt );
     vbox->addWidget( label, 0, AlignHCenter );
 
     if (maysd)
     {
-        QHBoxLayout* hbox = new QHBoxLayout( vbox );
-        QLabel* icon = new QLabel( frame );
+        QHBoxLayout* hbox = new QHBoxLayout( vbox, 2 * KDialog::spacingHint() );
+
+        // konqy
+        QFrame* lfrm = new QFrame( frame );
+        lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+        lfrm->setPaletteBackgroundColor( lfrm->colorGroup().midlight() );
+        hbox->addWidget( lfrm, AlignCenter );
+        QVBoxLayout* iconlay = new QVBoxLayout(
+            lfrm, KDialog::marginHint(), KDialog::spacingHint() );
+        QLabel* icon = new QLabel( lfrm );
         icon->setPixmap( UserIcon( "shutdownkonq" ) );
-        hbox->addWidget( icon, AlignCenter );
-        QButtonGroup *tgrp = new QButtonGroup( frame );
-        tgrp->setPaletteBackgroundColor( tgrp->colorGroup().midlight() );
-        tgrp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+        iconlay->addWidget( icon );
+        
+        // right column (buttons)
+        QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
+        buttonlay->setAlignment( Qt::AlignHCenter );
 
-        tgrp->setColumnLayout( 0, Qt::Vertical );
-        tgrp->layout()->setSpacing( 6 );
-        tgrp->layout()->setMargin( 11 );
-        QGridLayout* grid = new QGridLayout( tgrp->layout() );
-        grid->setAlignment( Qt::AlignTop );
+        QSpacerItem* item1 = new QSpacerItem(
+            0, KDialog::marginHint(), QSizePolicy::MinimumExpanding );
+        buttonlay->addItem( item1 );
+	
+        // End session
+        QPushButton* btnLogout = new QPushButton( i18n("&End current session"), frame );
+        QFont btnFont = btnLogout->font();
+        btnLogout->setIconSet( KGlobal::iconLoader()->loadIconSet(
+            "undo", KIcon::NoGroup, KIcon::SizeSmall ) );
+        buttonlay->addWidget( btnLogout );
 
-        QLabel* whatNext = new QLabel( i18n("What do you want to do?"), tgrp );
-        rLogout = new KSMRadioButton( i18n("&End session only"), tgrp );
-        rHalt = new KSMRadioButton( i18n("&Turn off computer"), tgrp );
-        rReboot = new KSMRadioButton( i18n("&Restart computer"), tgrp );
+        // Shutdown
+        QPushButton* btnHalt = new QPushButton( i18n("&Turn off computer"), frame );
+        btnHalt->setFont( btnFont );
+        btnHalt->setIconSet( KGlobal::iconLoader()->loadIconSet(
+            "exit", KIcon::NoGroup, KIcon::SizeSmall ) );
+        buttonlay->addWidget( btnHalt );
 
-        QObject::connect(rLogout, SIGNAL(doubleClicked()),
-                         this, SLOT(accept()));
-        QObject::connect(rHalt, SIGNAL(doubleClicked()),
-                         this, SLOT(accept()));
-        QObject::connect(rReboot, SIGNAL(doubleClicked()),
-                         this, SLOT(accept()));
+        // Reboot
+        QPushButton* btnReboot = new QPushButton( i18n("&Restart computer"), frame );
+        btnReboot->setFont( btnFont );
+        btnReboot->setIconSet( KGlobal::iconLoader()->loadIconSet(
+            "reload", KIcon::NoGroup, KIcon::SizeSmall ) );
+        buttonlay->addWidget( btnReboot );
 
+        // Separator
+        QSpacerItem* item2 = new QSpacerItem( 0, KDialog::spacingHint(), QSizePolicy::MinimumExpanding );
+        buttonlay->addItem( item2 );
+        KSeparator* sep = new KSeparator( frame );
+        buttonlay->addWidget( sep );
 
-        grid->addWidget( rLogout, 1, 1 );
-        grid->addWidget( rHalt, 2, 1 );
-        grid->addWidget( rReboot, 3, 1 );
-        grid->addMultiCellWidget( whatNext, 0, 0, 0, 1 );
-        QSpacerItem* spacer = new QSpacerItem( 20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum );
-        grid->addItem( spacer, 1, 0 );
+        // Back to Desktop
+        QPushButton* btnBack = new QPushButton( i18n("&Cancel"), frame );
+        buttonlay->addWidget( btnBack );
 
+        QObject::connect(btnLogout, SIGNAL(clicked()),
+                         this, SLOT(slotLogout()));
+        QObject::connect(btnHalt, SIGNAL(clicked()),
+                         this, SLOT(slotHalt()));
+        QObject::connect(btnReboot, SIGNAL(clicked()),
+                         this, SLOT(slotReboot()));
+        QObject::connect(btnBack, SIGNAL(clicked()),
+                         this, SLOT(reject()));
 
-        hbox->addWidget( tgrp, AlignTop );
-        connect( tgrp, SIGNAL( clicked(int) ), SLOT( slotSdMode(int) ) );
+        if ( sdtype == KApplication::ShutdownTypeHalt )
+            btnHalt->setFocus();
+        else if ( sdtype == KApplication::ShutdownTypeReboot )
+            btnReboot->setFocus();
+        else
+            btnLogout->setFocus();
+
  #if 0
         mgrp = new QVButtonGroup( i18n("Shutdown Mode"), frame );
         rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
@@ -143,101 +177,66 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     vbox->addStretch();
 
-    QHBoxLayout* hbox = new QHBoxLayout( vbox );
-    hbox->addStretch();
-    KPushButton* yes = new KPushButton( maysd ?
-					 KStdGuiItem::ok() :
-					 KGuiItem( i18n( "&Logout" ) ),
-					frame );
-    connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
-    yes->setDefault( TRUE );
-    hbox->addWidget( yes );
-    hbox->addStretch();
-    KPushButton* cancel = new KPushButton( KStdGuiItem::cancel(), frame );
-    connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
-    hbox->addWidget( cancel );
-    hbox->addStretch();
+    if ( !maysd ) {
+        QHBoxLayout* hbox = new QHBoxLayout( vbox );
 
-    if (maysd)
-    {
-        if (sdtype == KApplication::ShutdownTypeHalt)
-        {
-            rHalt->setChecked( true );
-            rHalt->setFocus();
-        }
-        else if (sdtype == KApplication::ShutdownTypeReboot)
-        {
-            rReboot->setChecked( true );
-            rReboot->setFocus();
-        }
-        else
-        {
-            rLogout->setChecked( true );
-            rLogout->setFocus();
-        }
-	slotSdMode(0);
+        // logout
+        KPushButton* btnLogout = new KPushButton( i18n("&Logout"), frame );
+        btnLogout->setIconSet( QIconSet( SmallIconSet("exit") ) );
+        btnLogout->setFocus();
+        connect( btnLogout, SIGNAL( clicked() ), SLOT( slotLogout() ) );
+        hbox->addWidget( btnLogout );
+        hbox->addStretch();
 
-#if 0
-        if (sdmode == KApplication::ShutdownModeSchedule)
-            rSched->setChecked( true );
-        else if (sdmode == KApplication::ShutdownModeTryNow)
-            rTry->setChecked( true );
-        else
-            rForce->setChecked( true );
-#endif
+       // cancel
+       KPushButton* cancel = new KPushButton( KStdGuiItem::cancel(), frame );
+       connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
+       hbox->addWidget( cancel );
+       hbox->addStretch();
     }
 }
 
-void KSMShutdownDlg::slotSdMode(int)
+
+void KSMShutdownDlg::slotLogout()
 {
-#if 0
-    mgrp->setEnabled( !rLogout->isChecked() );
-#endif
+    m_shutdownType = KApplication::ShutdownTypeNone;
+    accept();
 }
 
+
+void KSMShutdownDlg::slotReboot()
+{
+    m_shutdownType = KApplication::ShutdownTypeReboot;
+    accept();
+}
+
+
+void KSMShutdownDlg::slotHalt()
+{
+    m_shutdownType = KApplication::ShutdownTypeHalt;
+    accept();
+}
+
+
 bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
-				      KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
+                                      KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
 {
     kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
-					    //KSMShutdownFeedback::self(),
-					    maysd, maynuke, sdtype, sdmode );
+                                            //KSMShutdownFeedback::self(),
+                                            maysd, maynuke, sdtype, sdmode );
 
     // Show dialog (will save the background in showEvent)
     QSize sh = l->sizeHint();
     QRect rect = KGlobalSettings::desktopGeometry(QCursor::pos());
 
     l->move(rect.x() + (rect.width() - sh.width())/2,
-    	    rect.y() + (rect.height() - sh.height())/2);
+            rect.y() + (rect.height() - sh.height())/2);
     bool result = l->exec();
-
-    if (maysd)
-    {
-        sdtype = l->rHalt->isChecked()   ? KApplication::ShutdownTypeHalt :
-                 l->rReboot->isChecked() ? KApplication::ShutdownTypeReboot :
-                                           KApplication::ShutdownTypeNone;
-
-#if 0
-	sdmode = l->rSched->isChecked() ? KApplication::ShutdownModeSchedule :
-                 l->rTry->isChecked()   ? KApplication::ShutdownModeTryNow :
-                                          KApplication::ShutdownModeForceNow;
-#endif
-    }
+    sdtype = l->m_shutdownType;
 
     delete l;
 
     kapp->disableStyles();
     return result;
 }
-
-//	Specialized radio button impl.
-
-KSMRadioButton::KSMRadioButton (const QString &text, QWidget *parent, const char *name)
-	: QRadioButton(text, parent, name)
-{}
-
-void KSMRadioButton::mouseDoubleClickEvent (QMouseEvent * /*pe*/)
-{
-	emit doubleClicked();
-}
-
