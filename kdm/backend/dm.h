@@ -121,7 +121,9 @@ typedef union wait	waitType;
 
 #define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
 #define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
-
+#define WaitCode(w) ((w) & 0x7f)
+#define WaitCore(w) (((w) >> 7) & 1)
+#define WaitSig(w) (((w) >> 8) & 0xff)
 
 #ifndef FD_ZERO
 typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
@@ -380,6 +382,7 @@ extern void WaitForChild (void);
 extern void RegisterCloseOnFork (int fd);
 extern void ClearCloseOnFork (int fd);
 extern int Fork (void);
+extern int Wait4 (int pid);
 extern void execute(char **argv, char **environ);
 extern int runAndWait (char **args, char **environ);
 extern void TerminateProcess (int pid, int signal);
@@ -406,7 +409,7 @@ extern int Verify (struct display *d, char *name, char *pass);
 extern void Restrict (struct display *d);
 extern int StartClient(struct display *d, char *name, char *pass, char **sessargs);
 extern void SessionExit (struct display *d, int status);
-extern char **RdWrWm (struct display *d, char *usr, char **args);
+extern int RdUsrData (struct display *d, char *usr, char ***args, char ***parm);
 
 /* server.c */
 extern char *_SysErrorMsg (int n);
@@ -436,6 +439,7 @@ extern char **setEnv (char **e, char *name, char *value);
 extern char **putEnv (char *string, char **env);
 extern char *getEnv (char **e, char *name);
 extern char *localHostname (void);
+extern int fdgets (int fd, char *buf, int len);
 
 #ifdef XDMCP
 

@@ -88,7 +88,7 @@ Debug ("autoLogon, tdiff = %d, nlogpipe%s empty, goodexit = %d\n",
 	}
 	StrDup (namer, d->autoUser);
 	StrDup (passr, d->autoPass);
-	*sessargs = RdWrWm (d, d->autoUser, 0);
+	RdUsrData (d, d->autoUser, sessargs, 0);
 	if (!*sessargs || !*sessargs[0]) {
 	    if (d->autoString[0])
 		*sessargs = parseArgs (*sessargs, d->autoString);
@@ -279,7 +279,7 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    Debug ("G_GetSessArg\n");
 	    name = GRecvStr ();
 	    Debug (" user '%s'\n", name);
-	    args = RdWrWm (d, name, 0);
+	    RdUsrData (d, name, &args, 0);
 	    Debug (" -> %'[{s\n", args);
 	    GSendArgv (args);
 	    freeStrArr (args);
@@ -324,10 +324,8 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    goto bail;
 	}
     }
-    if ((i = GClose ())) {
-	LogError ("Greeter returned non-zero exit code %d\n", i);
+    if ((i = GClose ()))
 	exitCode = EX_UNMANAGE_DPY;
-    }
     DeleteXloginResources (d);
     if (exitCode >= 0)
 	SessionExit (d, exitCode);

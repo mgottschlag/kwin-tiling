@@ -995,49 +995,14 @@ ClrnLog (struct display *d)
 static void
 ReadnLog (struct display *d, int fd)
 {
-    char	buf[100], *p;
-    int		bpos, bend, ll, rt, ign;
+    int		ll;
+    char	buf[100];
 
-    for (bpos = 0, bend = 0, ign = 0;;) {
-	for (;;) {
-	    if ((p = memchr(buf + bpos, 10, bend - bpos)) != 0) {
-		ll = (p - buf) - bpos + 1;
-		break;
-	    }
-	    if (bpos == 0 && bend == sizeof (buf)) {
-		ign = 1;
-		bend = 0;
-	    } else {
-		memcpy (buf, buf + bpos, bend - bpos);
-		bend -= bpos;
-	    }
-	    bpos = 0;
-	    rt = Reader (fd, buf + bend, sizeof (buf) - bend);
-	    if (rt < 0) {
-		bzero (buf, sizeof(buf));
-		return;
-	    } else if (!rt) {
-		if (bend) {
-		    ll = bend;
-		    break;
-		} else {
-		    bzero (buf, sizeof(buf));
-		    return;
-		}
-	    } else
-		bend += rt;
-	}
-	if (ign) {
-	    ign = 0;
-	} else {
-	    ClrnLog (d);
-	    if ((d->hstent->nLogPipe = malloc (ll + 1)) != NULL) {
-		memcpy (d->hstent->nLogPipe, buf + bpos, ll);
-		d->hstent->nLogPipe[ll] = '\0';
-	    }
-	}
-	bpos += ll;
+    while ((ll = fdgets (fd, buf, sizeof(buf))) >= 0) {
+	ClrnLog (d);
+	StrNDup (&d->hstent->nLogPipe, buf, ll);
     }
+    bzero (buf, sizeof(buf));
 }
 
 static void

@@ -491,52 +491,6 @@ Verify (struct display *d, char *name, char *pass)
     return V_OK;
 }
 
-#define CA_ISDIR	0x1000
-#define CA_MKDIRS	0x2000
-#define CA_SUBDIR_	0x10000
-
-static int
-CheckAcc (char *fn, int mode)
-{
-    int ret;
-    char *pt;
-    struct stat st;
-
-    if (stat (fn, &st)) {
-	if (errno != ENOENT || !(mode & (CA_MKDIRS | 2)))
-	    return errno;
-	if (!(pt = strrchr (fn, '/')))
-	    return EINVAL;
-	*pt = '\0';
-	ret = CheckAcc (fn, (mode & CA_MKDIRS) | CA_SUBDIR_ | CA_ISDIR | 3);
-	*pt = '/';
-	if (ret != ENOENT || (~mode & (CA_MKDIRS | CA_SUBDIR_)))
-	    return ret;
-	if (mkdir (fn, 0755))
-	    return errno;
-	chown (fn, p->pw_uid, p->pw_gid);
-	return 0;
-    }
-    if ((mode & CA_ISDIR) != 0) {
-#ifndef X_NOT_POSIX
-        if (!S_ISDIR(st.st_mode))
-#else
-        if (!(st.st_mode & S_IFDIR))
-#endif
-	    return ENOTDIR;
-    } else {
-#ifndef X_NOT_POSIX
-        if (!S_ISREG(st.st_mode))
-#else
-        if (!(st.st_mode & S_IFREG))
-#endif
-	    return EISDIR;
-    }
-    mode = (mode & 7) << (p->pw_uid == st.st_uid ? 6 :
-			  p->pw_gid == st.st_gid ? 3 : 0);
-    return ((int)(st.st_mode & mode) == mode) ? 0 : EACCES;
-}
-
 void
 Restrict (struct display *d)
 {
@@ -684,7 +638,8 @@ Restrict (struct display *d)
 /* restrict_nohome */
 # ifdef USE_LOGIN_CAP
     if (login_getcapbool(lc, "requirehome", 0)) {
-	if (!*p->pw_dir || CheckAcc (p->pw_dir, CA_ISDIR | 1)) {
+	struct stat st;
+	if (!*p->pw_dir || stat (p->pw_dir, &st) || st.st_uid != p->pw_uid) {
 	    GSendInt (V_NOHOME);
 	    login_close(lc);
 	    return;
@@ -907,8 +862,6 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	   "end of environments\n", 
 	   "", "\n", verify->userEnviron,
 	   "", "\n", verify->systemEnviron);
-
-    (void) RdWrWm (d, name, sessargs);
 
     /*
      * for user-based authorization schemes,
@@ -1201,13 +1154,28 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    bzero(pass, strlen(pass));
 	SetUserAuthorization (d, verify);
 	home = getEnv (verify->userEnviron, "HOME");
-	if (home)
-	    if (chdir (home) == -1) {
+	if (home) {
+	    if (chdir (home) < 0) {
 		LogError ("user \"%s\": cannot chdir to home \"%s\" (err %d), using \"/\"\n",
 			  getEnv (verify->userEnviron, "USER"), home, errno);
 		chdir ("/");
 		verify->userEnviron = setEnv(verify->userEnviron, "HOME", "/");
+	    } else {
+		FILE *file;
+		for (i = 0; d->sessSaveFile[i]; i++)
+		    if (d->sessSaveFile[i] == '/') {
+			d->sessSaveFile[i] = 0;
+			mkdir (d->sessSaveFile, 0700);
+			d->sessSaveFile[i] = '/';
+		    }
+		if ( (file = fopen(d->sessSaveFile, "w")) != NULL ) {
+		    for (i = 0; sessargs[i]; i++)
+			fprintf (file, "%s\n", sessargs[i]);
+		    /* XXX write here: relogin, dpi, bbp, res */
+		    fclose (file);
+		}
 	    }
+	}
 	argv = parseArgs (0, d->session);
 Debug ("session args: %'[s\n", sessargs);
 	mergeStrArrs (&argv, sessargs);
@@ -1313,42 +1281,47 @@ SessionExit (struct display *d, int status)
     exit (status);
 }
 
-char **
-RdWrWm (struct display *d, char *usr, char **args)
+int
+RdUsrData (struct display *d, char *usr, char ***args, char ***parm ATTR_UNUSED)
 {
-    int i;
-    FILE *file;
-    char **margs, buf[256];
+    int len, pid, fd, pfd[2];
+    char buf[256];
 
     if (!usr || !usr[0])
 	return 0;
 
     if (init_vrf (d, usr, "") != V_OK || !init_pwd (usr NSHADOW))
 	return 0;
-Debug ("do_RdWr\n");
-    sprintf(buf, "%s/%s", p->pw_dir, d->sessSaveFile);
-    if (!args) {
-	margs = initStrArr (0);
-	if (!CheckAcc (buf, 4))
-	    if ( (file = fopen(buf, "r")) != NULL ) {
-		while (fgets (buf, sizeof(buf), file)) {
-		    i = strlen (buf);
-		    if (i && buf[i - 1] == '\n')
-			i--;
-		    margs = addStrArr (margs, buf, i);
-		}
-		fclose (file);
-	    }
-	return margs;
-    } else {
-	if (!CheckAcc (buf, CA_MKDIRS | 2))
-	    if ( (file = fopen(buf, "w")) != NULL ) {
-		for (i = 0; args[i]; i++)
-		    fprintf (file, "%s\n", args[i]);
-		fclose (file);
-	    }
+
+    if (pipe (pfd))
+	return 0;
+    if ((pid = Fork()) < 0) {
+	close (pfd[0]);
+	close (pfd[1]);
 	return 0;
     }
+    if (!pid) {
+	setgid (p->pw_gid);
+	setuid (p->pw_uid);
+	if (chdir (p->pw_dir) < 0)
+	    exit (0);
+	if ((fd = open (d->sessSaveFile, O_RDONLY)) < 0)
+	    exit (0);
+	while ((len = read (fd, buf, sizeof(buf))) > 0)
+	    write (pfd[1], buf, len);
+	exit (1);
+    }
+    close (pfd[1]);
+    *args = initStrArr (0);
+    while ((len = fdgets (pfd[0], buf, sizeof(buf))) > 0)
+	*args = addStrArr (*args, buf, len);
+/*
+    *parm = initStrArr (0);
+    while ((len = fdgets (pfd[0], buf, sizeof(buf))) > 0)
+	*parm = addStrArr (*parm, buf, len);
+*/
+    close (pfd[0]);
+    return WaitCode (Wait4 (pid));
 }
 
 

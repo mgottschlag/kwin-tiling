@@ -401,3 +401,33 @@ localHostname (void)
     }
     return localHostbuf;
 }
+
+/* extremely slow, but small ... */
+int
+fdgets (int fd, char *buf, int len)
+{
+    int po;
+    char c;
+
+    for (po = 0, len--;;) {
+	switch (Reader (fd, &c, 1)) {
+	case -1:
+	    return -1;
+	case 0:
+	    if (po) {
+		buf[po] = 0;
+		return po;
+	    }
+	    return -2;
+	default:
+	    if (c == '\n') {
+		buf[po] = 0;
+		return po;
+	    }
+	    if (po < len)
+		buf[po++] = c;
+	    break;
+	}
+    }
+}
+

@@ -166,7 +166,7 @@ Fork ()
     return pid;
 }
 
-static waitType
+int
 Wait4 (int pid)
 {
     waitType	result;
@@ -180,7 +180,7 @@ Wait4 (int pid)
 	Debug ("Wait4(%d) failed\n", pid);
 	return 0;
     }
-    return result;
+    return waitVal (result);
 }
 
 
@@ -230,7 +230,6 @@ int
 runAndWait (char **args, char **environ)
 {
     int		pid;
-    waitType	result;
 
     switch (pid = Fork ()) {
     case 0:
@@ -240,10 +239,8 @@ runAndWait (char **args, char **environ)
     case -1:
 	LogError ("can't fork to execute \"%s\" (err %d)\n", args[0], errno);
 	return 1;
-    default:
-	result = Wait4 (pid);
     }
-    return waitVal (result);
+    return waitVal (Wait4 (pid));
 }
 
 
@@ -339,7 +336,7 @@ GOpen (char **argv, char *what, char **env)
 int
 GClose ()
 {
-    int ret;
+    int	ret;
 
     if (!gpid) {
 	Debug ("Whoops, GClose while no helper is running\n");
@@ -349,11 +346,9 @@ GClose ()
 /*    TerminateProcess (gpid, SIGTERM);*/
     ret = Wait4 (gpid);
     gpid = 0;
-    Debug ("Helper exited with code %d, signal %d\n", 
-	    waitCode(ret), waitSig(ret));
-    if (waitSig (ret))
-	LogError ("Helper program crashed. "
-		  "Please run \"%s -debug 15\".\n", prog);
+    if (ret)
+	LogError ("Abnormal helper termination, code %d, signal %d\n", 
+		  WaitCode(ret), WaitSig(ret));
     return ret;
 }
 
@@ -362,7 +357,7 @@ static void GError (void) ATTR_NORETURN;
 static void
 GError ()
 {
-    GClose ();
+    (void) GClose ();
     Longjmp (GErrJmp, 1);
 }
 
@@ -477,7 +472,6 @@ iGRecvArrBuf (char *buf)
     return len;
 }
 
-/*
 int
 GRecvArrBuf (char *buf)
 {
@@ -488,7 +482,6 @@ GRecvArrBuf (char *buf)
     GDebug (" -> %02[*{hhx\n", len, buf);
     return len;
 }
-*/
 
 int
 GRecvStrBuf (char *buf)
