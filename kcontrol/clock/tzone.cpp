@@ -82,40 +82,35 @@ Tzone::Tzone(QWidget * parent, const char *name)
 
 void Tzone::fillTimeZones()
 {
-    FILE *f;
-    char tempstring[101] = "Unknown";
-    QStrList list;
+    FILE	*f;
+    char	tempstring[101] = "Unknown";
+    QStrList	list;
 
     getCurrentZone(tempstring);
     currentzone->setText(tempstring);
 
     tzonelist->insertItem(i18n("[No selection]"));
+
     // Read all system time zones
-    system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
-    if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-    {
-        while(fgets(tempstring, 100, f) != NULL)
-        {
-            list.inSort(tempstring);
-        }
-        fclose(f);
-    }
-    remove("/tmp/_tzone_.txt");
+    f = popen("grep -e  ^[^#] /usr/share/zoneinfo/zone.tab | cut -f 3 ","r");
+    if (!f)
+	    return;
+    while(fgets(tempstring, 100, f) != NULL)
+        list.inSort(tempstring);
+    pclose(f);
+
     tzonelist->insertStrList(&list);
 }
 
 void Tzone::getCurrentZone(char* szZone)
 {
-    FILE *f;
+    FILE	*f;
 
     // Read the current time zone
-    system("date +%Z > /tmp/_tzone_.txt");
-    if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-    {
-        fscanf(f, "%s", szZone);
-        fclose(f);
-    }
-    remove("/tmp/_tzone_.txt");
+    f = popen("date +%Z","r");
+    if (!f) return;
+    fscanf(f, "%s", szZone);
+    pclose(f);
 }
 
 void Tzone::load()
@@ -140,17 +135,14 @@ void Tzone::load()
     }
 
     tzonelist->insertItem(i18n("[No selection]"));
+
     // Read all system time zones
-    system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
-    if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-    {
-        while(fgets(tempstring, 100, f) != NULL)
-        {
-            list.inSort(tempstring);
-        }
-        fclose(f);
-    }
-    remove("/tmp/_tzone_.txt");
+    f = popen("grep -e  ^[^#] /usr/share/zoneinfo/zone.tab | cut -f 3","r");
+    if (!f) return;
+    while(fgets(tempstring, 100, f) != NULL)
+	list.inSort(tempstring);
+    pclose(f);
+
     tzonelist->insertStrList(&list);
 
     // find the currently set time zone and select it
