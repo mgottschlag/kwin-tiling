@@ -19,7 +19,7 @@
 */
 
 #include <qheader.h>
-
+#include <qimage.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
@@ -32,6 +32,18 @@
 #include "modules.h"
 #include "global.h"
 
+static QPixmap appIcon(const QString &iconName)
+{
+    QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
+    // make sure they are not larger than 20x20
+    if (normal.width() > 20 || normal.height() > 20) 
+    {
+       QImage tmp = normal.convertToImage();
+       tmp = tmp.smoothScale(20, 20);
+       normal.convertFromImage(tmp);
+    }
+    return normal;
+}
 
 class ModuleTreeWhatsThis : public QWhatsThis
 {
@@ -200,7 +212,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
     defName = defName.mid(pos+1);
   if (group && group->isValid())
   {
-     menu->setPixmap(0, SmallIcon(group->icon()));
+     menu->setPixmap(0, appIcon(group->icon()));
      menu->setText(0, " " + group->caption());
      menu->setTag(defName);
      menu->setCaption(group->caption());
@@ -275,6 +287,7 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
     KListView::keyPressEvent(e);
 }
 
+
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   : QListViewItem(parent)
   , _module(module)
@@ -283,7 +296,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   if (_module)
         {
           setText(0, " " + module->moduleName());
-          setPixmap(0, SmallIcon(module->icon()));
+          setPixmap(0, appIcon(module->icon()));
         }
 }
 
@@ -295,7 +308,7 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
   if (_module)
         {
           setText(0, " " + module->moduleName());
-          setPixmap(0, SmallIcon(module->icon()));
+          setPixmap(0, appIcon(module->icon()));
         }
 }
 
