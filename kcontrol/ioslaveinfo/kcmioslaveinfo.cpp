@@ -56,7 +56,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    QHBox *hbox=new QHBox(this);
    m_ioslavesLb=new KListBox(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
-   connect( m_ioslavesLb, SIGNAL( executed( QListBoxItem * ) ), SLOT( showInfo( QListBoxItem * ) ) );
+   connect( m_ioslavesLb, SIGNAL( selectionChanged( QListBoxItem * ) ), SLOT( showInfo( QListBoxItem * ) ) );
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
    hbox->setSpacing(KDialog::spacingHint());
