@@ -19,7 +19,6 @@
 */
 
 #include <qheader.h>
-#include <qdragobject.h>
 #include <qcursor.h>
 
 #include <klocale.h>
@@ -135,8 +134,7 @@ void ModuleIconView::fill()
 
     // go-back node
     ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
-	i->setOrderNo(0);
-	i->setDragEnabled(false);
+    i->setOrderNo(0);
     int last_slash = _path.findRev('/');
     if (last_slash == -1)
       i->setTag(QString::null);
@@ -173,7 +171,6 @@ void ModuleIconView::fill()
 
     ModuleIconItem *i = new ModuleIconItem(this, group->caption(), icon);
     i->setTag(subdir);
-	i->setDragEnabled(false);
   }
 
   // we don't ever have any modules on the top level
@@ -197,7 +194,6 @@ void ModuleIconView::fill()
       icon = LoadMedium(module->icon());
 
     ModuleIconItem *i = new ModuleIconItem(this, module->moduleName(), icon, module);
-    i->setDragEnabled(false);
     i->setOrderNo(++c);
   }
 }
@@ -218,47 +214,6 @@ void ModuleIconView::slotItemSelected(QListViewItem* item)
         fill();
         setCurrentItem(firstChild());
     }
-}
-
-QDragObject *ModuleIconView::dragObject()
-{
-  QDragObject *icondrag = QListView::dragObject();
-  QUriDrag *drag = new QUriDrag(this);
-
-  QPixmap pm = icondrag->pixmap();
-  drag->setPixmap(pm, QPoint(pm.width()/2,pm.height()/2));
-
-
-  QPoint orig = viewportToContents(viewport()->mapFromGlobal(QCursor::pos()));
-
-  QStringList l;
-  ModuleIconItem *item = static_cast<ModuleIconItem*>(itemAt(orig));
-  if (item)
-    {
-      if (item->module())
-        l.append(item->module()->fileName());
-      else
-        if (!item->tag().isEmpty())
-          {
-            QString dir = _path + "/" + item->tag();
-            dir = locate("apps", KCGlobal::baseGroup()+dir+"/.directory");
-            int pos = dir.findRev("/.directory");
-            if (pos > 0)
-              {
-                dir = dir.left(pos);
-                l.append(dir);
-              }
-          }
-
-      drag->setFilenames(l);
-    }
-
-  delete icondrag;
-
-  if (l.count() == 0)
-    return 0;
-
-  return drag;
 }
 
 void ModuleIconView::keyPressEvent(QKeyEvent *e)

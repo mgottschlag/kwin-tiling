@@ -67,7 +67,6 @@ protected slots:
   void slotItemSelected(QListViewItem*);
 
 protected:
- QDragObject *dragObject(); 
  void keyPressEvent(QKeyEvent *);
   
 private:
