@@ -38,7 +38,7 @@
 
 using namespace std;
 
-static QString contractHome(QString path)
+QString KXftConfig::contractHome(QString path)
 {
     if (!path.isEmpty() && '/'==path[0])
     {
@@ -56,7 +56,7 @@ static QString contractHome(QString path)
     return path;
 }
 
-static QString expandHome(QString path)
+QString KXftConfig::expandHome(QString path)
 {
     if(!path.isEmpty() && '~'==path[0])
         return 1==path.length() ? QDir::homeDirPath() : path.replace(0, 1, QDir::homeDirPath());

@@ -119,6 +119,9 @@ class KXftConfig
 
     public:
 
+    static QString contractHome(QString path);
+    static QString expandHome(QString path);
+
     //
     // Constructor
     //    required - This should be a bitmask of 'RequiredData', and indicates the data to be
