@@ -405,7 +405,7 @@ void BGDialog::loadWallpaperFilesList() {
    lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      if ( files.grep(*it).empty() && (*it).right(8) != ".desktop" ) {
+      if ( !(*it).endsWith(".desktop") && files.grep(*it).empty() ) {
          // First try to see if we have a comment describing the image.  If we do
          // just use the first line of said comment.
          KFileMetaInfo metaInfo(*it);
@@ -465,12 +465,21 @@ void BGDialog::setWallpaper(const QString &s)
    if (m_Wallpaper.find(s) == m_Wallpaper.end())
    {
       int i = comboWallpaper->count();
-      if (comboWallpaper->text(i-1) == s)
+      QString imageCaption;
+      int slash = s.findRev('/') + 1;
+      int endDot = s.findRev('.');
+
+      // strip the extension if it exists
+      if (endDot != -1 && endDot > slash)
+         imageCaption = s.mid(slash, endDot - slash);
+      else
+         imageCaption = s.mid(slash);
+      if (comboWallpaper->text(i-1) == imageCaption)
       {
          i--;
          comboWallpaper->removeItem(i);
       }
-      comboWallpaper->insertItem(KStringHandler::lsqueeze(s, 45));
+      comboWallpaper->insertItem(KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11));
       m_Wallpaper[s] = i;
       comboWallpaper->setCurrentItem(i);
    }
