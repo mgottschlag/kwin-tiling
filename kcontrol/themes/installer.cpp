@@ -46,6 +46,8 @@
 #include "global.h"
 #include "newthemedlg.h"
 #include <klocale.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 static bool sSettingTheme = false;
 
@@ -116,12 +118,10 @@ Installer::~Installer()
 //-----------------------------------------------------------------------------
 void Installer::readThemesList(void)
 {
-  QDir d(Theme::themesDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
-  //d.setNameFilter("*.themerc");
   mThemesList->clear();
 
   // Read local themes
-  QStringList entryList = d.entryList();
+  QStringList entryList = KGlobal::dirs()->findAllResources("themes");
   QStringList::ConstIterator name;
   for(name = entryList.begin(); 
       name != entryList.end(); name++)
@@ -131,16 +131,8 @@ void Installer::readThemesList(void)
     mThemesList->inSort(*name);
   }
 
-  // Read global themes
-  d.setPath(Theme::globalThemesDir());
-  entryList = d.entryList();
-  for(name=entryList.begin(); name != entryList.end(); name++)
-  {
-    if ((*name)[0]=='.') continue;
-    if ((*name)=="CVS" || (*name).right(8)==".themerc") continue;
-    // Dirty hack: the trailing space marks global themes ;-)
-    mThemesList->inSort(*name + " ");
-  }
+  // Stephan: the theme manager used to differ between global and local ones using spaces
+  // as I don't know where this is used, I can't fix it ;(
 }
 
 
@@ -191,13 +183,13 @@ void Installer::slotRemove()
   QFileInfo finfo;
 
   if (cur < 0) return;
-  themeFile = Theme::themesDir() + mThemesList->text(cur);
-  cmd.sprintf("rm -rf \"%s\"", (const char*)themeFile);
+  themeFile = mThemesList->text(cur);
+  cmd.sprintf("rm -rf \"%s\"", themeFile.ascii());
   finfo.setFile(themeFile);
   rc = system(cmd);
   if (rc || finfo.exists())
   {
-    warning(i18n("Failed to remove theme %s"), (const char*)themeFile);
+    warning(i18n("Failed to remove theme %1").arg(themeFile));
     return;
   }
   mThemesList->removeItem(cur);
@@ -225,10 +217,7 @@ void Installer::slotSetTheme(int id)
     name = mThemesList->text(id);
     if (name.isEmpty()) return;
 
-    isGlobal = (name[name.length()-1]==' ');
-    if (isGlobal) name = Theme::globalThemesDir() + name.stripWhiteSpace();
-    else name = Theme::themesDir() + name;
-
+    name = locate("theme", name);
     enabled = theme->load(name);
     if (!enabled)
     {
@@ -260,14 +249,13 @@ void Installer::slotImport()
   if (i >= 0) theme = fpath.mid(i+1, 1024);
   else theme = fpath;
 
+  QString dir = KGlobal::dirs()->getSaveLocation("themes");
   // Copy theme package into themes directory
-  cmd.sprintf("cp %s %s", (const char*)fpath, 
-	      (const char*)Theme::themesDir());
+  cmd.sprintf("cp %s %s", fpath.ascii(), dir.ascii());
   rc = system(cmd);
   if (rc)
   {
-    warning(i18n("Failed to copy theme %s\ninto themes directory %s"),
-	    (const char*)fpath, (const char*)Theme::themesDir());
+    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(fpath).arg(dir));
     return;
   }
 
@@ -279,7 +267,6 @@ void Installer::slotImport()
 void Installer::slotExport()
 {
   QString fname, fpath, cmd, themeFile, ext;
-  bool isGlobal = false;
   static QString path;
   QFileInfo finfo;
   int cur, i;
@@ -292,10 +279,8 @@ void Installer::slotExport()
   themeFile = mThemesList->text(cur);
   if (themeFile.isEmpty()) return;
 
-  isGlobal = (themeFile[themeFile.length()-1]==' ');
-  if (isGlobal) fpath = Theme::globalThemesDir() + themeFile.stripWhiteSpace();
-  else fpath = Theme::themesDir() + themeFile;
-
+  fpath = locate("theme", themeFile);
+  
   finfo.setFile(fpath);
   if (finfo.isDir())
   {

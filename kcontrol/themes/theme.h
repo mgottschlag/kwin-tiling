@@ -54,9 +54,8 @@ public:
   /** Read current Kde configuration from several config files. */
   virtual void readCurrent(void);
 
-  /** Get/set theme name. */
-  const QString name(void) const { return mName; }
-  virtual void setName(const QString newName);
+  /** set theme name. */
+  virtual void setName(const char *newName);
 
   /** Returns path + name where theme is stored. */
   const QString fileName(void) { return mFileName; }
@@ -99,12 +98,6 @@ public:
 
   /** Working directory. */
   static const QString workDir(void);
-
-  /** Local themes directory. */
-  static const QString themesDir(void);
-
-  /** Global themes directory. */
-  static const QString globalThemesDir(void);
 
   /** Create directory hierarchy, relative to given base directory
       or ~/.kde if none given. Returns true on success. */
@@ -213,7 +206,6 @@ protected:
   virtual const QString pathOf(const QString&) const;
 
 protected:
-  QString mName;           // Name of the theme
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
   QString mDescription;

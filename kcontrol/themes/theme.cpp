@@ -120,44 +120,28 @@ void Theme::setDescription(const QString aDescription)
 
 
 //-----------------------------------------------------------------------------
-void Theme::setName(const QString aName)
+void Theme::setName(const char *_name)
 {
-  int i;
-  i = aName.findRev('/');
-  if (i>0) mName = aName.mid(i+1, 1024);
-  else mName = aName.copy();
-
-  if (aName[0]=='/') mFileName = aName.copy();
-  else mFileName = workDir() + aName;
+    QString aName = _name;
+    QString mName;
+    int i = aName.findRev('/');
+    if (i>0) 
+	QObject::setName(aName.mid(i+1, 1024));
+    else 
+	QObject::setName(mName = aName);
+    
+    if (aName[0]=='/') 
+	mFileName = aName;
+    else 
+	mFileName = workDir() + aName;
 }
-
-
-//-----------------------------------------------------------------------------
-const QString Theme::themesDir(void)
-{
-  static QString str;
-  if (str.isEmpty())
-    str = kapp->localkdedir() + "/share/apps/" + kapp->appName() + "/Themes/";
-  return str;
-}
-
-
-//-----------------------------------------------------------------------------
-const QString Theme::globalThemesDir(void)
-{
-  static QString str;
-  if (str.isEmpty())
-    str = kapp->kde_datadir() + '/' + kapp->appName() + "/Themes/";
-  return str;
-}
-
 
 //-----------------------------------------------------------------------------
 const QString Theme::workDir(void)
 {
   static QString str;
   if (str.isEmpty())
-    str = kapp->localkdedir() + "/share/apps/" + kapp->appName() + "/Work/";
+    str = kapp->localkdedir() + "/share/apps/" + kapp->name() + "/Work/";
   return str;
 }
 
@@ -167,14 +151,14 @@ void Theme::loadMappings()
 {
   QFile file;
 
-  file.setName(kapp->localkdedir() + "/share/apps/" + kapp->appName() + 
+  file.setName(kapp->localkdedir() + "/share/apps/" + kapp->name() + 
 	       "/theme.mappings");
   if (!file.exists())
   {
     file.setName("theme.mappings");
     if (!file.exists())
     {
-      file.setName(kapp->kde_datadir() + "/" + kapp->appName() +
+      file.setName(kapp->kde_datadir() + "/" + kapp->name() +
 		   "/theme.mappings");
       if (!file.exists())
 	fatal(i18n("Mappings file theme.mappings not found."));
@@ -196,7 +180,7 @@ void Theme::cleanupWorkDir(void)
   cmd.sprintf("rm -rf %s*", (const char*)workDir());
   rc = system(cmd);
   if (rc) warning(i18n("Error during cleanup of work directory: rc=%d\n%s"),
-		  rc, (const char*)cmd);
+		  rc, cmd.ascii());
 }
 
 
@@ -1079,7 +1063,7 @@ void Theme::readConfig(void)
   col.setRgb(192,192,192);
 
   setGroup("General");
-  mDescription = readEntry("description", mName + " Theme");
+  mDescription = readEntry("description", QString(name()) + " Theme");
 
   setGroup("Colors");
   foregroundColor = readColorEntry(this, "foreground", &col);

@@ -37,6 +37,8 @@
 #include "about.h"
 #include <klocale.h>
 #include <kdebug.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 
 ThemeCreator* theme = NULL;
@@ -132,7 +134,7 @@ void KThemesApplication::apply()
 // Message handler
 static void msgHandler(QtMsgType aType, const char* aMsg)
 {
-  QString appName = kapp->appName();
+  QString appName = kapp->name();
   QString msg = aMsg;
 
   switch (aType)
@@ -142,7 +144,7 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
     break;
 
   case QtWarningMsg:
-    fprintf(stderr, "%s: %s\n", (const char*)appName, msg.data());
+    fprintf(stderr, "%s: %s\n", appName.ascii(), msg.data());
     if (strncmp(aMsg,"KCharset:",9) != 0 &&
 	strncmp(aMsg,"QGManager:",10) != 0 &&
 	strncmp(aMsg,"QPainter:",9) != 0 &&
@@ -167,17 +169,17 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
 //-----------------------------------------------------------------------------
 void init(void)
 {
-  oldMsgHandler = qInstallMsgHandler(msgHandler);
+    oldMsgHandler = qInstallMsgHandler(msgHandler);
 
-  if (!(Theme::mkdirhier(Theme::workDir()))) exit(1);
-  if (!(Theme::mkdirhier(Theme::themesDir()))) exit(1);
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_data_relative() + '/' + kapp->name() + "/Themes/");
+    if (!(Theme::mkdirhier(Theme::workDir()))) exit(1);
 }
 
 
 //-----------------------------------------------------------------------------
 void cleanup(void)
 {
-  qInstallMsgHandler(oldMsgHandler);
+    qInstallMsgHandler(oldMsgHandler);
 }
 
 

@@ -37,6 +37,8 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 
 //-----------------------------------------------------------------------------
@@ -103,7 +105,7 @@ bool ThemeCreator::extract(void)
   debug("Theme::extract() done");
 
   saveSettings();
-  save(themesDir() + mName);
+  save(KGlobal::dirs()->getSaveLocation("theme") + name());
 
   return true;
 }
@@ -373,7 +375,7 @@ void ThemeCreator::setGroupGeneral(void)
 
   cfg->setGroup("General");
   setGroup("General");
-  writeEntry("name", mName);
+  writeEntry("name", name());
   writeEntry("author", cfg->readEntry("author"));
   writeEntry("email", cfg->readEntry("email"));
   writeEntry("homepage", cfg->readEntry("homepage"));
