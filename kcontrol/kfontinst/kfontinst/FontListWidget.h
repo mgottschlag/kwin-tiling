@@ -132,7 +132,7 @@ class CFontListWidget : public KListView
     unsigned int  getNumSelectedFonts() { return getNumSelected(CListViewItem::FONT); }
     unsigned int  getNumSelectedDirs()  { return getNumSelected(CListViewItem::DIR); }
     unsigned int  getNumSelected()      { return getNumSelected(CListViewItem::FONT)+getNumSelected(CListViewItem::DIR); }
-    void          getNumSelected(int &numTT, int &numT1);
+    void          getNumSelected(int &numTT, int &numT1, int &numOther);
     QStringList & getAdvancedOpenDirs() { return itsAdvancedOpenDirs; }
     QPtrList<TItem> & getAddItems()     { return itsAddItems; }
     QStringList & getDelItems()         { return itsDelItems; }

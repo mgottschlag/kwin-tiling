@@ -635,6 +635,7 @@ CFontListWidget::CFontListWidget(QWidget *parent)
 
     itsFontsPopup=new QPopupMenu(this);
     itsFontsPopup->insertItem(i18n("Show Meta Data..."), this, SLOT(showMeta()));
+    itsFontsPopup->insertSeparator();
     itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF PostScript names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
@@ -754,7 +755,7 @@ unsigned int CFontListWidget::getNumSelected(CListViewItem::EType type)
     return num;
 }
 
-void CFontListWidget::getNumSelected(int &numTT, int &numT1)
+void CFontListWidget::getNumSelected(int &numTT, int &numT1, int &numOther)
 {
     CListViewItem *item=(CListViewItem *)firstChild();
 
@@ -766,9 +767,10 @@ void CFontListWidget::getNumSelected(int &numTT, int &numT1)
             if(CListViewItem::FONT==item->getType())
                 if(CFontEngine::isATtf(QFile::encodeName(item->text(0))))
                     numTT++;
+                else if(CFontEngine::isAType1(QFile::encodeName(item->text(0))))
+                    numT1++;
                 else
-                    if(CFontEngine::isAType1(QFile::encodeName(item->text(0))))
-                        numT1++;
+                    numOther++;
         item=(CListViewItem *)(item->itemBelow());
     }
 }
@@ -1583,10 +1585,11 @@ void CFontListWidget::popupMenu(QListViewItem *item, const QPoint &point, int)
         if(((CListViewItem *)item)->getType()==CListViewItem::FONT)
         {
             int numTT,
-                numT1;
+                numT1,
+                numOther;
 
-            getNumSelected(numTT, numT1);
-            if(numTT)
+            getNumSelected(numTT, numT1, numOther);
+            if(numTT || numT1 || numOther)
             {
                 itsFontsPopup->setItemEnabled(itsFixTtfPsNamesME, numTT ? true : false);
                 itsFontsPopup->popup(point);
@@ -1680,9 +1683,9 @@ void CFontListWidget::fixTtfPsNames()
         CListViewItem *item=(CListViewItem *)firstChild();
         int           failures=0,
                       numTT,
-                      numT1;
+                      dummy;
 
-        getNumSelected(numTT, numT1);
+        getNumSelected(numTT, dummy, dummy);
 
         CKfiGlobal::errorDialog().clear();
         progressInit(i18n("Fixing:"), numTT);
