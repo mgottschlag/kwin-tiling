@@ -167,6 +167,7 @@ KScienceSaver::~KScienceSaver()
 	releaseLens();
 	if ( d->xRootWin )
 		XDestroyImage( d->xRootWin );
+    XFreeGC(qt_xdisplay(), d->gc );
     delete d;
 }
 
