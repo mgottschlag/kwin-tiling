@@ -30,6 +30,8 @@
 #include <kaction.h>
 #include <kstdaction.h>
 #include <klocale.h>
+#include <kmenubar.h>
+
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -39,6 +41,8 @@
 #include "modules.h"
 #include "proxywidget.h"
 #include "global.h"
+#include "modulemenu.h"
+
 
 #include "toplevel.h"
 #include "toplevel.moc"
@@ -183,6 +187,12 @@ void TopLevel::setupActions()
   icon_large->setExclusiveGroup( "iconsize" );
 
   createGUI("kcontrolui.rc");
+
+  // add menu with the modules
+  ModuleMenu *menu = new ModuleMenu(_modules, this);
+  menuBar()->insertItem(i18n("&Modules"), menu, -1, 2);
+  connect(menu, SIGNAL(moduleActivated(ConfigModule*)),
+	  this, SLOT(moduleActivated(ConfigModule*)));
 }
 
 void TopLevel::activateIconView()
@@ -250,7 +260,7 @@ void TopLevel::newModule(const QString &name, const QString &quickhelp)
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
-  _dock->dockModule(module);
+  activateModule(module->name());
 }
 
 void TopLevel::showModule(QString desktopFile)
