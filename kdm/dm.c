@@ -461,7 +461,7 @@ int WaitForChild ()
 	    d->pid = -1;
 	    switch (waitVal (status)) {
 	    case UNMANAGE_DISPLAY:
-		Debug ("Display exited with UNMANAGE_DISPLAY\n");
+	        Debug ("Display exited with UNMANAGE_DISPLAY\n");
 		StopDisplay (d);
 		break;
 	    case OBEYSESS_DISPLAY:
