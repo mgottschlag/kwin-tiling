@@ -94,6 +94,8 @@ const int XNone = None;
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+#include <dmctl.h>
+
 KSMServer* the_server = 0;
 
 KSMClient::KSMClient( SmsConn conn)
@@ -842,18 +844,7 @@ void KSMServer::cleanUp()
     signal(SIGTERM, SIG_DFL);
     signal(SIGINT, SIG_DFL);
 
-    if ( shutdownType != KApplication::ShutdownTypeNone ) {
-        QCString cmd( "shutdown\t" );
-        cmd.append( shutdownType == KApplication::ShutdownTypeReboot ?
-                    "reboot\t" : "halt\t" );
-        cmd.append( shutdownMode == KApplication::ShutdownModeInteractive ?
-                    "ask\n" :
-                    shutdownMode == KApplication::ShutdownModeForceNow ?
-                    "forcenow\n" :
-                    shutdownMode == KApplication::ShutdownModeTryNow ?
-                    "trynow\n" : "schedule\n" );
-        KApplication::kdmExec( cmd.data() );
-    }
+    DM().shutdown( shutdownType, shutdownMode );
 }
 
 
@@ -956,9 +947,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
        (confirm == KApplication::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
     bool maysd = false;
-    QCString re;
-    if (config->readBoolEntry( "offerShutdown", true ) &&
-        KApplication::kdmExec( "caps\n", &re ) && re.find( "\tshutdown" ) >= 0)
+    if (config->readBoolEntry( "offerShutdown", true ) && DM().canShutdown())
         maysd = true;
     if (!maysd)
         sdtype = KApplication::ShutdownTypeNone;

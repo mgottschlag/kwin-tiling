@@ -21,6 +21,8 @@
 #include "lockdlg.h"
 #include "autologout.h"
 
+#include <dmctl.h>
+
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kservicegroup.h>
@@ -650,7 +652,7 @@ void LockProcess::stopSaver()
     mVisibility = false;
     if (!child_saver) {
         if (mLocked)
-            KApplication::kdmExec( "unlock\n" );
+            DM().setLock( false );
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
@@ -718,7 +720,7 @@ bool LockProcess::startLock()
         greetPlugin = plugin;
 	KGlobal::locale()->insertCatalogue( "kdmgreet" );
 	mLocked = true;
-	KApplication::kdmExec( "lock\n" );
+	DM().setLock( true );
 	return true;
     }
     cantLock( i18n("No appropriate greeter plugin configured.") );

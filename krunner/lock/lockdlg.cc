@@ -10,7 +10,9 @@
 
 #include "lockprocess.h"
 #include "lockdlg.h"
+
 #include <kcheckpass.h>
+#include <dmctl.h>
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -126,8 +128,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
 
-    QCString re;
-    if (!KApplication::kdmExec( "caps\n", &re ) || re.find( "\tlocal" ) < 0)
+    if (!DM().isSwitchable())
         mNewSessButton->hide();
 
     installEventFilter(this);
@@ -508,7 +509,7 @@ void PasswordDlg::show()
 void PasswordDlg::slotStartNewSession()
 {
     if (!KMessageBox::shouldBeShownContinue( ":confirmNewSession" )) {
-        KApplication::kdmExec("reserve\n");
+        DM().startReserve();
         return;
     }
 
@@ -604,7 +605,7 @@ void PasswordDlg::slotStartNewSession()
     if (ret == QDialog::Accepted) {
         if (cb->isChecked())
             KMessageBox::saveDontShowAgainContinue( ":confirmNewSession" );
-        KApplication::kdmExec("reserve\n");
+        DM().startReserve();
     }
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
@@ -626,8 +627,8 @@ public:
 
 void PasswordDlg::slotSwitchUser()
 {
-    int p, fd = -1;
-    QCString re;
+    int p;
+    DM dm;
 
     QDialog dialog( this, "sessbox", true, WX11BypassWM );
     QFrame *winFrame = new QFrame( &dialog );
@@ -643,7 +644,8 @@ void PasswordDlg::slotSwitchUser()
 
     KPushButton *btn;
 
-    if (KApplication::kdmExec( "list\talllocal\n", &re, &fd )) {
+    SessList sess;
+    if (dm.localSessions( sess )) {
 
         lv = new QListView( winFrame );
         connect( lv, SIGNAL(doubleClicked(QListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
@@ -655,20 +657,17 @@ void PasswordDlg::slotSwitchUser()
         lv->setColumnWidthMode( 1, QListView::Maximum );
         QListViewItem *itm;
         int ns = 0;
-        QStringList sess = QStringList::split( QChar('\t'), re.data() + 3 );
-        for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-            QStringList ts = QStringList::split( QChar(','), *it, true );
-            int vt = ts[1].mid( 2 ).toInt();
+        for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
             itm = new LockListViewItem( lv,
-                ts[3].isEmpty() ? i18n("Unused") :
-                  ts[3] == "<remote>" ? i18n("Remote Login") :
-                  i18n("user: session type", "%1: %2").arg(ts[2]).arg(ts[3]),
-                !vt ? ts[0] :
-                  i18n("display, virtual terminal", "%1, vt%2").arg(ts[0]).arg(vt),
-                vt );
-            if (!vt)
+                (*it).session.isEmpty() ? i18n("Unused") :
+                  (*it).session == "<remote>" ? i18n("Remote Login") :
+                  i18n("user: session type", "%1: %2").arg((*it).user).arg((*it).session),
+                !(*it).vt ? (*it).display :
+                  i18n("display, virtual terminal", "%1, vt%2").arg((*it).display).arg((*it).vt),
+                (*it).vt );
+            if (!(*it).vt)
                 itm->setEnabled( false );
-            if (ts[4].find( '*' ) >= 0) {
+            if ((*it).self) {
                 lv->setCurrentItem( itm );
                 itm->setSelected( true );
             }
@@ -690,13 +689,12 @@ void PasswordDlg::slotSwitchUser()
         vbox2->addStretch( 2 );
     }
 
-    if (kapp->authorize("start_new_session") &&
-        KApplication::kdmExec( "caps\n", &re, &fd ) && (p = re.find( "\treserve " )) >= 0)
+    if (kapp->authorize("start_new_session") && (p = dm.numReserve()) >= 0)
     {
         btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), winFrame );
         connect( btn, SIGNAL(clicked()), SLOT(slotStartNewSession()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
-        if (re[p + 9] == '0')
+        if (!p)
             btn->setEnabled( false );
         vbox2->addWidget( btn );
         vbox2->addStretch( 1 );
@@ -706,8 +704,6 @@ void PasswordDlg::slotSwitchUser()
     connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
     vbox2->addWidget( btn );
 
-    ::close( fd );
-
     static_cast< LockProcess* >(parent())->execDialog( &dialog );
 }
 
@@ -715,7 +711,7 @@ void PasswordDlg::slotSessionActivated()
 {
     LockListViewItem *itm = (LockListViewItem *)lv->currentItem();
     if (itm && itm->vt > 0)
-        KApplication::kdmExec( QString("activate\tvt%1\n").arg(itm->vt).latin1() );
+        DM().switchVT( itm->vt );
 }
 
 void PasswordDlg::capsLocked()
