@@ -22,115 +22,21 @@
 
   */
 
-
-#include <qdir.h>
-#include <qslider.h>
-
-#include <kcontrol.h>
+#include <kcmodule.h>
 #include "keyconfig.h"
-#include <kwm.h>
-#include <klocale.h>
-#include <stdio.h>
 
-bool global_switch = false ;
+class QWidget;
 
-class KKeyApplication : public KControlApplication
-{
-public:
-
-  KKeyApplication(int &argc, char **arg, const char *name);
-
-  void init();
-  void apply();
-  void defaultValues();
-
-private:
-
-//  KStdConfig *standard;
-//  KGlobalConfig *global;
-  KKeyConfig *standard;
-  KKeyConfig *global;
-};
-
-
-KKeyApplication::KKeyApplication(int &argc, char **argv, const char *name)
-  : KControlApplication(argc, argv, name)
-{
-  standard = 0;
-  global = 0;
-
-  if (runGUI())
-    {
-
-      if (!pages || pages->contains("standard")){
-	printf("create standard\n");
- 	global_switch = false ;
- 	addPage(standard = new KKeyConfig(dialog),
-		i18n("&Standard shortcuts"), "index-1.html");
-      }
-      if (!pages || pages->contains("global")){
-	printf("create global\n");
- 	global_switch = true ;
-	addPage(global = new KKeyConfig(dialog),
-		i18n("&Global shortcuts"), "index-1.html");
-
-      }
-
-      if (standard || global)
-        dialog->show();
-      else
-        {
-          fprintf(stderr, i18n("usage: kcmkeys [-init | {standard,global}]\n").ascii());
-          justInit = TRUE;
-        }
-
-    }
+extern "C" {
+  
+  KCModule *create_global(QWidget *parent, const char *name)
+  {
+    return new KKeyModule(parent, true, name);
+  }
+  
+  KCModule *create_standard(QWidget *parent, const char *name)
+  {
+    return new KKeyModule(parent, false, name);
+  }
 }
 
-
-void KKeyApplication::init()
-{
-//  KStdConfig *standard=new KStdConfig(0);
-  KKeyConfig *standard=new KKeyConfig(0);
-  standard->keys->writeSettings();
-  delete standard;
-//  KGlobalConfig *global = new KGlobalConfig(0);
-  KKeyConfig *global = new KKeyConfig(0);
-  global->keys->writeSettings();
-  delete global;
-}
-
-
-void KKeyApplication::apply()
-{
-
-  if (standard)
-    standard->applySettings();
-  if (global)
-    global->applySettings();
-  // tell kwm to re-parse the config file
-  KWM::configureWm();
-
-}
-
-void KKeyApplication::defaultValues(){
-  if (standard)
-    standard->defaultSettings();
-  if (global)
-    global->defaultSettings();
-}
-
-int main(int argc, char **argv)
-{
-
-  KKeyApplication app(argc, argv, "kcmkeys");
-  app.setTitle(i18n("Key binding settings"));
-
-  if (app.runGUI())
-    return app.exec();
-  else
-    {
-      app.init();
-      return 0;
-    }
-}

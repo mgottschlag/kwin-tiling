@@ -8,20 +8,17 @@
 #ifndef __KEYCONFIG_H__
 #define __KEYCONFIG_H__
 
-#include <qwidget.h>
 #include <qpushbutton.h>
-#include <qcombobox.h>
 #include <qlistbox.h>
-#include <qradiobutton.h>
-#include <qlineedit.h>
-#include <qbuttongroup.h>
-#include <kcontrol.h>
 
-#include "savescm.h"
 #include <kaccel.h>
 #include <kkeydialog.h>
+#include <kcontrol.h>
+#include <kcmodule.h>
 
-class KKeyConfig : public KConfigWidget
+#include "savescm.h"
+
+class KKeyModule : public KCModule
 {
 	Q_OBJECT
 public:
@@ -29,13 +26,14 @@ public:
 	QDict<KKeyEntry> dict;
 	KKeyChooser *kc;
 
-	KKeyConfig( QWidget *parent, const char *name = 0 );
-	~KKeyConfig ();
+	KKeyModule( QWidget *parent, bool isGlobal, const char *name = 0 );
+	~KKeyModule ();
 
-        virtual void loadSettings();
-        virtual void applySettings();
-        virtual void defaultSettings();
-
+        void load();
+        void save();
+        void defaults();
+        void init();
+        
 public slots:
 	void slotPreviewScheme( int );
 	void slotAdd();
