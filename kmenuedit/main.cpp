@@ -28,7 +28,7 @@
 #include "kmenuedit.h"
 
 static const char description[] = I18N_NOOP("KDE menu editor");
-static const char version[] = "0.5";
+static const char version[] = "0.6";
 
 extern "C" int kdemain( int argc, char **argv )
 {
