@@ -241,7 +241,7 @@ static void
 LoadResources (CfgArr *conf)
 {
     char **vptr, **pptr, *cptr;
-    int *iptr, i, id, nu, j, nptr, nint, nchr;
+    long *iptr, i, id, nu, j, nptr, nint, nchr;
 
     if (conf->data)
 	free (conf->data);
@@ -249,16 +249,16 @@ LoadResources (CfgArr *conf)
     nptr = GRecvInt ();
     nint = GRecvInt ();
     nchr = GRecvInt ();
-    if (!(conf->data = Malloc (conf->numCfgEnt * (sizeof(int) + sizeof(char *))
+    if (!(conf->data = Malloc (conf->numCfgEnt * (sizeof(long) + sizeof(char *))
 			       + nptr * sizeof(char *)
-			       + nint * sizeof(int)
+			       + nint * sizeof(long)
 			       + nchr))) {
 	CloseGetter ();
 	return;
     }
     vptr = (char **)conf->data;
     pptr = vptr + conf->numCfgEnt;
-    conf->idx = (int *)(pptr + nptr);
+    conf->idx = (long *)(pptr + nptr);
     iptr = conf->idx + conf->numCfgEnt;
     cptr = (char *)(iptr + nint);
     for (i = 0; i < conf->numCfgEnt; i++) {
@@ -294,7 +294,7 @@ ApplyResource (int id, char **src, char **dst)
 {
     switch (id & C_TYPE_MASK) {
     case C_TYPE_INT:
-	*(int *)dst = *(int *)src;
+	*(int *)dst = *(long *)src;
 	break;
     case C_TYPE_STR:
     case C_TYPE_ARGV:

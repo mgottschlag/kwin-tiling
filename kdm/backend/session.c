@@ -282,7 +282,7 @@ CtrlGreeterWait (int wreply)
 		{
 		case C_TYPE_INT:
 		    Debug (" -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr);
-		    GSendInt (*(int *)avptr);
+		    GSendInt (*(long *)avptr);
 		    break;
 		case C_TYPE_STR:
 		    Debug (" -> string %\"s\n", *avptr);
