@@ -702,7 +702,7 @@ void KBackgroundRenderer::cleanup()
 }
 
 
-void KBackgroundRenderer::setPreview(QSize size)
+void KBackgroundRenderer::setPreview(const QSize &size)
 {
     if (size.isNull())
         m_bPreview = false;

@@ -151,7 +151,7 @@ QColor BGAdvancedDialog::textColor()
     return dlg->m_colorText->color();
 }
 
-void BGAdvancedDialog::setTextColor(QColor color)
+void BGAdvancedDialog::setTextColor(const QColor &color)
 {
     dlg->m_colorText->setColor(color);
 }
@@ -162,7 +162,7 @@ QColor BGAdvancedDialog::textBackgroundColor()
            dlg->m_colorTextBackground->color() : QColor();
 }
 
-void BGAdvancedDialog::setTextBackgroundColor(QColor color)
+void BGAdvancedDialog::setTextBackgroundColor(const QColor &color)
 {
     dlg->m_colorTextBackground->blockSignals(true);
     dlg->m_cbSolidTextBackground->blockSignals(true);
@@ -363,7 +363,7 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
 
 /**** KProgramEditDialog ****/
 
-KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *name)
+KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, char *name)
     : KDialogBase(parent, name, true, i18n("Configure Background Program"),
 	Ok | Cancel, Ok, true)
 {

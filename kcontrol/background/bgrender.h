@@ -7,8 +7,8 @@
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
 
-#ifndef __BGRender_h_Included__
-#define __BGRender_h_Included__
+#ifndef BGRender_h_Included
+#define BGRender_h_Included
 
 #include <qobject.h>
 
@@ -45,7 +45,7 @@ public:
     
     void load(int desk, bool reparseConfig=true);
 
-    void setPreview(QSize size);
+    void setPreview(const QSize &size);
     
     QPixmap *pixmap();
     QImage *image();
@@ -100,8 +100,7 @@ private:
     KStandardDirs *m_pDirs;
     KShellProcess *m_pProc;
     
-    
 };
 
+#endif // BGRender_h_Included
 
-#endif // __BGRender_h_Included__

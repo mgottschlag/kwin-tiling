@@ -20,8 +20,8 @@
    Boston, MA 02111-1307, USA.
  */
 
-#ifndef _BGADVANCED_H_
-#define _BGADVANCED_H_
+#ifndef BGADVANCED_H
+#define BGADVANCED_H
 
 #include <qdict.h>
 #include <qlistview.h>
@@ -45,9 +45,9 @@ public:
    void setCacheSize(int s);
    int cacheSize();
    QColor textColor();
-   void setTextColor(QColor color);
+   void setTextColor(const QColor &color);
    QColor textBackgroundColor();
-   void setTextBackgroundColor(QColor color);
+   void setTextBackgroundColor(const QColor &color);
    bool shadowEnabled();
    void setShadowEnabled(bool enabled);
 
@@ -90,7 +90,7 @@ class KProgramEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L,
+    KProgramEditDialog(const QString &program=QString::null, QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -110,3 +110,4 @@ private:
 
 
 #endif
+
