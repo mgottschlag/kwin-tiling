@@ -241,7 +241,6 @@ void TopLevel::setupActions()
 
   // I need to add this so that each module can get a bug reported,
   // and not just KControl
-  setStandardToolBarMenuEnabled(false);
   createGUI("kcontrolui.rc");
 
   report_bug = actionCollection()->action("help_report_bug");
