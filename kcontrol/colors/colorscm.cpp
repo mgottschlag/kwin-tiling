@@ -41,6 +41,7 @@
 #include <kbuttonbox.h>
 #include <kstringhandler.h>
 #include <kgenericfactory.h>
+#include <kprocess.h>
 
 #include <kio/netaccess.h>
 
@@ -361,6 +362,19 @@ void KColorScheme::save()
     uint flags = KRdbExportQtColors;
     if ( exportColors )
         flags |= KRdbExportColors;
+    else
+    {
+        // Undo the property xrdb has placed on the root window (if any),
+        // i.e. remove all entries, including ours
+        Atom resource_manager;
+        resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
+        if (resource_manager != None)
+          XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resource_manager);
+        // and run xrdb with ~/.Xdefaults at least to get non-KDE defaults
+        KProcess proc;
+        proc << "xrdb" << ( QDir::homeDirPath() + "/.Xdefaults" );
+        proc.start( KProcess::Block, KProcess::Stdin );
+    }
     runRdb( flags );	// Save the palette to qtrc for KStyles
 
     // Notify all KDE applications

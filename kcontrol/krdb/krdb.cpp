@@ -514,12 +514,16 @@ void runRdb( uint flags )
   } else {
     applyGtkStyles(false);
 
+/*  Don't do this, it removes all xrdb entries during KDE startup
+    If exporting KDE colors is disabled, the property is removed in the kcontrol
+    module and it re-runs xrdb ~/.Xdefaults
+    
     // Undo the property xrdb has placed on the root window (if any).
     Atom resource_manager;
     resource_manager = XInternAtom( qt_xdisplay(), "RESOURCE_MANAGER", True);
     if (resource_manager != None)
       XDeleteProperty( qt_xdisplay(), qt_xrootwin(), resource_manager);
-
+*/
     // Undo Qt's _qt_desktop_properties (do we need to do this?)
     // (we prefer x11_apply_settings as its more featureful)
 /*    Atom qt_desktop_properties;
