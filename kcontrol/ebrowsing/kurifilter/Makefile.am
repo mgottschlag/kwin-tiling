@@ -2,9 +2,9 @@
 
 INCLUDES = $(all_includes)
 
-noinst_LTLIBRARIES = libkurifilter.la
+lib_LTLIBRARIES = libkurifilter.la
 libkurifilter_la_SOURCES = kurifilter.cpp kurifilterplugin.cpp
-libkurifilter_la_LDFLAGS = -no-undefined $(all_libraries)
+libkurifilter_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -module -no-undefined
 
 METASOURCES = AUTO
 
