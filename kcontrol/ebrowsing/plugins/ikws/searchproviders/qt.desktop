@@ -2,7 +2,13 @@
 Charset=
 Hidden=false
 Keys=qt
-Name=Qt 3.1 Online Documentation
-Query=http://doc.trolltech.com/3.1/\\{@}.html
+Name=Latest Qt Online Documentation
+Name[da]=Qt 3.1 Online-dokumentation
+Name[es]=Documentación Qt 3.1 en línea
+Name[eu]=Qt 3.1 Online Dokumentazioa
+Name[pt_BR]=Documentação on-line do Qt 3.1
+Name[sl]=Dokumentacija za Qt 3.1 na zvezi
+Name[sv]=Qt 3.1 online-dokumentation
+Query=http://doc.trolltech.com/latest/\\{@}.html
 ServiceTypes=SearchProvider
 Type=Service
