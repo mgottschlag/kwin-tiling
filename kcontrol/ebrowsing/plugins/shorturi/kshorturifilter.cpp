@@ -44,8 +44,12 @@
 #define QFL1(x) QString::fromLatin1(x)
  
  /**
-  * IMPORTANT: if you change anything here, please run the regression test
-  * kdelibs/kio/tests/kurifiltertest
+  * IMPORTANT:
+  *  If you change anything here, please run the regression test
+  *  kdelibs/kio/tests/kurifiltertest.
+  *
+  *  If you add anything here, make sure to add a corresponding
+  *  test code to kdelibs/kio/tests/kurifiltertest.
   */
   
 typedef QMap<QString,QString> EntryMap;
@@ -197,10 +201,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // Detect UNC style (aka windows SMB) URLs
   if ( cmd.startsWith( QString::fromLatin1( "\\\\") ) )
   {
-    cmd.remove(0, 2);
     // make sure path is unix style
     cmd.replace('\\', '/');
-    cmd.prepend( QString::fromLatin1( "smb://" ) );
+    cmd.prepend( QString::fromLatin1( "smb:" ) );
     setFilteredURI( data, KURL( cmd ));
     setURIType( data, KURIFilterData::NET_PROTOCOL );
     return true;
