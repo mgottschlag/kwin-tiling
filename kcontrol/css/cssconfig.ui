@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>440</width>
+            <width>444</width>
             <height>446</height>
         </rect>
     </property>
@@ -85,6 +85,10 @@
                         <name>text</name>
                         <string>Use &amp;user-defined stylesheet</string>
                     </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).</string>
+                    </property>
                 </widget>
                 <widget row="3"  column="0"  rowspan="1"  colspan="2" >
                     <class>QRadioButton</class>
@@ -109,6 +113,13 @@
                     <property stdset="1">
                         <name>sizeType</name>
                         <enum>Fixed</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>21</width>
+                            <height>20</height>
+                        </size>
                     </property>
                     <property>
                         <name>sizeHint</name>
@@ -325,6 +336,13 @@
                     <height>20</height>
                 </size>
             </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
         <widget row="2"  column="0"  rowspan="1"  colspan="2" >
             <class>QGroupBox</class>
@@ -486,6 +504,13 @@
                             <height>20</height>
                         </size>
                     </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>21</width>
+                            <height>20</height>
+                        </size>
+                    </property>
                 </spacer>
                 <spacer row="4"  column="0" >
                     <property>
@@ -499,6 +524,13 @@
                     <property stdset="1">
                         <name>sizeType</name>
                         <enum>Fixed</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
                     </property>
                     <property>
                         <name>sizeHint</name>
