@@ -792,6 +792,7 @@ Klipper::Klipper( QWidget* parent )
 {
 }
 
+#if QT_VERSION < 0x030200
 #ifndef Q_WS_QWS
 extern Time qt_x_time;
 #endif
@@ -815,6 +816,7 @@ void Klipper::enterEvent( QEvent* )
     }
 #endif
 }
+#endif
 
 // this sucks ... KUniqueApplication registers itself as 'klipper'
 // for the unique-app detection calls (and it shouldn't use that name IMHO)

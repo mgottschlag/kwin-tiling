@@ -140,7 +140,9 @@ k_dcop:
 public:
     Klipper( QWidget* parent = NULL );
 protected:
+#if QT_VERSION < 0x030200
     virtual void enterEvent( QEvent* );
+#endif
 };
 
 #endif

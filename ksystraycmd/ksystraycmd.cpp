@@ -258,6 +258,7 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
     toggleWindow();
 }
 
+#if QT_VERSION < 0x030200
 void KSysTrayCmd::enterEvent( QEvent * )
 {
   // Fake a focus event when the mouse points at our tray icon. This is
@@ -276,5 +277,5 @@ void KSysTrayCmd::enterEvent( QEvent * )
 	qt_x_time = time;
   }
 }
-
+#endif
 

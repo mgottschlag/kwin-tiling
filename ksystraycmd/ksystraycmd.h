@@ -60,7 +60,9 @@ protected:
   void setTargetWindow( const KWin::Info &info );
 
   void mousePressEvent( QMouseEvent *e );
+#if QT_VERSION < 0x030200
   void enterEvent( QEvent* );
+#endif
 
 private:
   QString command;
