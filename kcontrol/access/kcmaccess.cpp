@@ -38,7 +38,7 @@
 
 
 KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(parent, "kcmaccess")
 {
   QVBoxLayout *main = new QVBoxLayout(this, 0,0);
   QTabWidget *tab = new QTabWidget(this);
@@ -496,10 +496,9 @@ extern "C"
 {
   KCModule *create_access(QWidget *parent, const char *name)
   {
-    KGlobal::locale()->insertCatalogue("kcmaccess");
     return new KAccessConfig(parent, name);
   };
-  
+
   /* This one gets called by kcminit
 
    */
