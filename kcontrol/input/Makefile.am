@@ -13,3 +13,6 @@ libkcm_input_la_METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
+
+data_DATA = keyboard.desktop mouse.desktop
+datadir = $(kde_appsdir)/Settings/Peripherals

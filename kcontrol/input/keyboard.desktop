@@ -1,0 +1,60 @@
+[Desktop Entry]
+Exec=kcmshell Peripherals/keyboard
+Icon=keyboard
+Type=Application
+DocPath=kcontrol/kcminput/input-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=input
+X-KDE-FactoryName=keyboard
+X-KDE-Init=keyboard
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Keyboard
+Name[ca]=Teclat
+Name[cs]=Klávesnice
+Name[de]=Tastatur
+Name[eo]=Klavaro
+Name[fi]=Näppäimistö
+Name[fr]=Clavier
+Name[he]=םישקמ חול
+Name[hu]=Billentyűzet
+Name[it]=Tastiera
+Name[ja]=キーボード
+Name[no]=Tastatur
+Name[no_NY]=Tastatur
+Name[pt]=Teclado
+Name[ro]=Tastatură
+Name[sl]=Tipkovnica
+Name[sv]=Tangentbord
+Name[ta]=Å¢¨ºÀÄ¨¸
+
+Comment=Keyboard settings
+Comment[ca]=Arranjament del teclat
+Comment[cs]=Nastavení klávesnice
+Comment[de]=Einstellung der Tastatur
+Comment[eo]=Klavaroagordaĵo
+Comment[fi]=Näppäimistön asetukset
+Comment[fr]=Configuration du clavier
+Comment[he]=םישקמה חול תורדגה
+Comment[hu]=Billentyűzet beállításai
+Comment[it]=Configurazione tastiera
+Comment[ja]=キーボードの設定
+Comment[no]=Innstill tastaturet
+Comment[no_NY]=Tastaturinnstillingar
+Comment[pt]=Configuração do teclado
+Comment[ro]=Configurează tastatura
+Comment[sl]=Nastavitve tipkovnice
+Comment[sv]=Inställningar för tangentbordet
+Comment[ta]=Å¢¨ºÀÄ¨¸ «¨ÁôÒ¸û
+
+Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices
+Keywords[ca]=Teclat,repetició de teclat,volum de clic,dispositius d'entrada
+Keywords[de]=tastatur,tastenwiederholung,klick-lautstärke,eingabegeräte
+Keywords[hu]=billentyűzet,billentyű,beviteli eszközök
+Keywords[no]=Tastatus,Tastaturgjenntagelse,Klikkevolum,Inn-enheter,Innenheter
+Keywords[no_NY]=tastatur,tastaturrepetisjon,inn-einingar
+Keywords[pt]=teclado,repetição do teclado,volume,dispositivos de entrada
+Keywords[ro]=tastatură,repetare tastă,volum clic,Dispozitive de intrare
+Keywords[sl]=tipkovnica,ponovitev tipk,glasnost tipkanja,vhodne enote

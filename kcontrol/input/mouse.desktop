@@ -1,0 +1,58 @@
+[Desktop Entry]
+Exec=kcmshell Peripherals/mouse
+Icon=mouse
+Type=Application
+DocPath=kcontrol/kcminput/input-2.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=input
+X-KDE-FactoryName=mouse
+X-KDE-Init=mouse
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Mouse
+Name[ca]=Ratolí
+Name[cs]=Myš
+Name[de]=Maus
+Name[eo]=Muso
+Name[fi]=Hiiri
+Name[fr]=Souris
+Name[he]=רבכע
+Name[hu]=Egér
+Name[ja]=マウス
+Name[no]=Mus
+Name[no_NY]=Mus
+Name[pt]=Rato
+Name[sl]=Mi�ka
+Name[sv]=Mus
+Name[ta]=±Ä¢
+
+Comment=Mouse settings
+Comment[ca]=Arranjament del ratolí
+Comment[cs]=Nastavení myši
+Comment[de]=Einstellung der Maus
+Comment[eo]=Musagordaĵo
+Comment[fi]=Hiiren asetukset
+Comment[fr]=Configuration de la souris
+Comment[he]=רבכעה תורדגה
+Comment[hu]=Egér beállításai
+Comment[it]=Configurazione mouse
+Comment[ja]=マウスの設定
+Comment[no]=Innstill musen
+Comment[no_NY]=Musinnstillingar
+Comment[pt]=Configuração do rato
+Comment[ro]=Configurează mouse-ul
+Comment[sl]=Nastavitve mi�ke
+Comment[sv]=Inställningar för musen
+Comment[ta]=±Ä¢ «¨ÁôÒ¸û
+
+Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices
+Keywords[ca]=Ratolí,acceleració del ratolí,llindar del ratolí,botons del ratolí,selecció,forma del cursor,dispositius d'entrada
+Keywords[de]=maus,mausbeschleunigung,maus-schwellenwert,maustasten auswahl,cursor,form,eingabegeräte
+Keywords[hu]=egér,egér gyorsítás,egér érzékenység,egérgombok,kiválasztás,kurzor,beviteli eszközök
+Keywords[no]=Mus,musehastighet,museknapper,valg,merking,kursoregenskaper,pekeregenskaper,innenheter,inn-enheter
+Keywords[no_NY]=mus,musakselerasjon,musterskel,musknappar,val,markørform,inn-einingar
+Keywords[pt]=rato,aceleração do rato,botões do rato,selecção,forma do cursos,dispositivos de entrada
+Keywords[ro]=mouse,acceleraţie mouse,prag mouse,butoane mouse,selecţie,formă cursor,Dispozitive de intrare
+Keywords[sl]=mi�ka,pospe�itev mi�ke,gumbi mi�ke,izbira,oblika kazalca,vhodne enote
