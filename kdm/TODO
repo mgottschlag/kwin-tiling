@@ -20,9 +20,6 @@ Should:
 
 - check if pam works before trying to authenticate
 
-- a double click on a user picture should log him in at once if he has
-  no password
-
 - sync BSD_AUTH from xdm, sync osfc2 from kcheckpass
 
 - kill warning on AIX - see bug #13628 (really present?)
@@ -51,8 +48,6 @@ Could:
 - User pictures in logo field
 
 - check if pam works before trying to authenticate
-- a double click on a user picture should log him in at once if he has 
-  no password
 
 - remote-accessible command sockets for remote shutdown, etc.
   or maybe implement it as an xdmcp extension?
