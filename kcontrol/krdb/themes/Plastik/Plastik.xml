@@ -96,8 +96,8 @@
     <activeBackground rgb="#418edc" object="kwin" />
     <activeBlend rgb="#6b91b8" object="kwin" />
     <inactiveForeground rgb="#dddddd" object="kwin" />
-    <activeTitleBtnBg rgb="#7f9ec8" object="kwin" />
-    <inactiveTitleBtnBg rgb="#a7b5c7" object="kwin" />
+    <activeTitleBtnBg rgb="#dcdcdc" object="kwin" />
+    <inactiveTitleBtnBg rgb="#dcdcdc" object="kwin" />
   </colors>
   <cursors name="" />
   <wm type="builtin" name="kwin3_plastik" >

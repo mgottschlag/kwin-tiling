@@ -739,8 +739,9 @@ void KColorScheme::readScheme( int index )
     QColor activeBackground(65,142,220);
     QColor inactiveForeground(221,221,221);
     QColor activeBlend(107,145,184);
-    QColor activeTitleBtnBg(127,158,200);
-    QColor inactiveTitleBtnBg(167,181,199);
+    QColor inactiveBlend(157,170,186);
+    QColor activeTitleBtnBg(220,220,220);
+    QColor inactiveTitleBtnBg(220,220,220);
     QColor alternateBackground(237,244,249);
 
     QColor button;
@@ -761,10 +762,10 @@ void KColorScheme::readScheme( int index )
       cs->selectTxt   = white;
       cs->window      = white;
       cs->windowTxt   = black;
-      cs->iaTitle     = inactiveTitleBtnBg;
+      cs->iaTitle     = inactiveBackground;
       cs->iaTxt       = inactiveForeground;
-      cs->iaBlend     = inactiveBackground;
-      cs->aTitle      = activeTitleBtnBg;
+      cs->iaBlend     = inactiveBlend;
+      cs->aTitle      = activeBackground;
       cs->aTxt        = white;
       cs->aBlend      = activeBlend;
       cs->button      = button;
