@@ -57,8 +57,8 @@ The command FiFos
 -----------------
 
 This is a feature you can use to remote-control KDM. It's mostly intended
-for use by ksmserver and kdesktop from a running session, but there are 
-many other features.
+for use by ksmserver and kdesktop from a running session, but other 
+applications are possible as well.
 There are two types of FiFos: the global one (xdmctl) and the per-display 
 ones (xdmctl-<display>).
 The global one is owned by root, the per-display ones are owned by the user 
@@ -66,7 +66,7 @@ currently owning the session (root or the logged in user). Group ownership
 of the FiFos can be set via FifoGroup=, otherwise it's root. The file 
 permissions of the FiFos are rw--w---- (0620). The FiFos are created in the 
 directory specified by FifoDir=.
-The fields of a command are separated tabs (\t), the fields of a list
+The fields of a command are separated by tabs (\t), the fields of a list
 are separated by spaces. The command is terminated by a newline (\n).
 
 Global FiFo commands:
