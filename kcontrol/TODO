@@ -50,11 +50,6 @@ Way too much text here. Widgets aren't supposed to be indepth-manuals. Most of t
 
 Also kcontrol contains scrollbars for me using the default-size. This should never be the case for kcontrol-modules.
 
-Network -> SOCKS
-----------------
-The Radio-Button-text "Custom" should be renamed to "Custom library"  with an indented lineedit/open-filedialog-icon (like on the bottom in Look&Feel-> Icons -> Theme ) right below it (being still inside the while groupbox as it belongs to it).
-
-
 Network -> Talk Configuration
 -----------------------------
 Answering Machine: A groupbox around "Adress:, Subject:, First Line:" would be nice. That way one wouldn't need to mention "Mail" each time. The Groupbox could be named something like "Anwering Mail".
