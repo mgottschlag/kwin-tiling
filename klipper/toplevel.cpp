@@ -259,7 +259,7 @@ void TopLevel::readProperties(KConfig *kc)
   long int id;
 
   if (bKeepContents) { // load old clipboard if configured
-      KConfigGroupSaver(kc, "General");
+      KConfigGroupSaver groupSaver(kc, "General");
       dataList = kc->readListEntry("ClipboardData");
 
       for (QStringList::ConstIterator it = dataList.begin();
@@ -307,7 +307,7 @@ void TopLevel::saveProperties()
       QString  *data;
       QStringList dataList;
       KConfig  *kc = kapp->config();
-      KConfigGroupSaver(kc, "General");
+      KConfigGroupSaver groupSaver(kc, "General");
       QIntDictIterator<QString> it( *pQIDclipData );
 
       while ( (data = it.current()) ) {
