@@ -48,7 +48,6 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
 {
   QVBox *mainVbox = new QVBox(parent);
   mainVbox->setSpacing(KDialog::spacingHint());
-  mainVbox->setMargin(KDialog::marginHint());
 
   message = new QLabel(mainVbox);
   message->hide();
@@ -182,7 +181,8 @@ void JoyWidget::init()
     message->setText(QString("<qt><b>%1</b></qt>").arg(
       i18n("No joystick device automatically found on this computer.\n"
            "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]\n"
-           "If you know that there is one attached, please enter the correct device file.")));
+           "If you know that there is one attached, please enter the correct device file.")
+      .replace("\n", "<br>")));  // hack because we're in string freeze
   }
 }
 
