@@ -13,7 +13,6 @@
 
 #include <kaccel.h>
 #include <kkeydialog.h>
-#include <kcontrol.h>
 #include <kcmodule.h>
 
 #include "savescm.h"

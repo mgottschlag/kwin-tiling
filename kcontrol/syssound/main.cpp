@@ -22,6 +22,8 @@
  */
 
 
+#include <kglobal.h>
+#include <klocale.h>
 #include <kcmodule.h>
 
 
@@ -33,6 +35,7 @@ extern "C"
 
   KCModule *create_syssound(QWidget *parent, const char *name)
   { 
+    KGlobal::locale()->insertCatalogue("kcmsyssound");
     return new KSoundWidget(parent, name);
   }
 

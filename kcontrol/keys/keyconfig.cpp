@@ -33,11 +33,13 @@
 extern "C" {
   KCModule *create_global(QWidget *parent, const char *name)
   {
+    KGlobal::locale()->insertCatalogue("kcmkeys");
     return new KKeyModule(parent, true, name);
   }
   
   KCModule *create_standard(QWidget *parent, const char *name)
   {
+    KGlobal::locale()->insertCatalogue("kcmkeys");
     return new KKeyModule(parent, false, name);
   }
 }

@@ -23,6 +23,7 @@
 
 
 #include <klocale.h>
+#include <kglobal.h>
 
 
 #include "kdm-appear.h"
@@ -115,6 +116,7 @@ extern "C"
 {
   KCModule *create_kdm(QWidget *parent, const char *name) 
   { 
+    KGlobal::locale()->insertCatalogue("kdmconfig");
     return new KDModule(parent, name);
   }
 }

@@ -14,4 +14,4 @@ libkcm_kdm_la_METASOURCES = AUTO
 DISTCLEANFILES = $(lib_bell_METASOURCES)
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kdm_SOURCES) -o ../po/libkcm_kdm.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kdm_SOURCES) -o ../po/kdmconfig.pot

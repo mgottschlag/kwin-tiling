@@ -9,7 +9,7 @@ INCLUDES= $(all_includes)
 libkcm_keys_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmkeys_SOURCES) ../../kwm/kwmbindings.cpp ./stdbindings.cpp -o ../../po/libkcm_keys.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(libkcm_keys_la_SOURCES) ../../kwm/kwmbindings.cpp ./stdbindings.cpp -o ../../po/kcmkeys.pot
 
 $(srcdir)/keyconfig.cpp: stdbindings.cpp
 
