@@ -47,12 +47,11 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   : QWidget (parent, name),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this, 3, 2,
+  QGridLayout *lay = new QGridLayout(this, 3, 3,
                                      KDialog::marginHint(),
                                      KDialog::spacingHint());
-  lay->setAutoAdd(TRUE);
 
-  m_labCountry = new QLabel(this, I18N_NOOP("Country:"));
+  m_labCountry = new QLabel(this, I18N_NOOP("Country or region:"));
   m_comboCountry = new KLanguageButton( this );
   m_labCountry->setBuddy(m_comboCountry);
   connect( m_comboCountry, SIGNAL(activated(const QString &)),
@@ -60,13 +59,12 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   m_labLang = new QLabel(this, I18N_NOOP("Languages:"));
   m_labLang->setAlignment( AlignTop );
-  QHBox *hb = new QHBox(this);
-  hb->setSpacing(KDialog::spacingHint());
-  m_languages = new QListBox(hb);
+
+  m_languages = new QListBox(this);
   connect(m_languages, SIGNAL(selectionChanged()),
           SLOT(slotCheckButtons()));
 
-  QWidget * vb = new QWidget(hb);
+  QWidget * vb = new QWidget(this);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
   m_addLanguage = new KLanguageButton(QString::null, vb, I18N_NOOP("Add Language"));
   boxlay->add(m_addLanguage);
@@ -91,9 +89,16 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   //QComboBox * cb = new QComboBox( this );
   //cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
 
+  lay->addMultiCellWidget(m_labCountry, 0, 0, 0, 1);
+  lay->addWidget(m_comboCountry, 0, 2);
+  lay->addWidget(m_labLang, 1, 0);
+  lay->addWidget(m_languages, 1, 1);
+  lay->addWidget(vb, 1, 2);
+
   lay->setRowStretch(2, 5);
 
   lay->setColStretch(1, 1);
+  lay->setColStretch(2, 1);
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)
@@ -396,7 +401,7 @@ void KLocaleConfig::slotTranslate()
 
   QToolTip::add(m_comboCountry, m_locale->translate
         ( "This is where you live. KDE will use the defaults for "
-          "this country.") );
+          "this country or region.") );
   QToolTip::add(m_addLanguage, m_locale->translate
         ( "This will add a language to the list. If the language is already "
           "in the list, the old one will be moved instead." ) );
@@ -412,7 +417,7 @@ void KLocaleConfig::slotTranslate()
   QString str;
 
   str = m_locale->translate
-    ( "Here you can choose your country. The settings "
+    ( "Here you can choose your country or region. The settings "
       "for languages, numbers etc. will automatically switch to the "
       "corresponding values." );
   QWhatsThis::add( m_labCountry, str );

@@ -212,7 +212,7 @@ void KLocaleApplication::defaults()
 
 QString KLocaleApplication::quickHelp() const
 {
-  return m_locale->translate("<h1>Country & Language</h1>\n"
+  return m_locale->translate("<h1>Country/Region & Language</h1>\n"
           "<p>From here you can configure language, numeric, and time \n"
           "settings for your particular region. In most cases it will be \n"
           "sufficient to choose the country you live in. For instance KDE \n"
