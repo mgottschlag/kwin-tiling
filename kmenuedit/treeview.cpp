@@ -119,7 +119,7 @@ static QPixmap appIcon(const QString &iconName)
 
 
 TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, const char *name )
-    : KListView(parent, name), m_ac(ac), m_rmb(0),
+    : KListView(parent, name), m_ac(ac), m_rmb(0), m_clipboard(0),
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
       m_controlCenter(controlCenter)
 {
@@ -150,8 +150,6 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     // connect actions
     connect(m_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
-
-    cleanupClipboard();
 
     m_menuFile = new MenuFile( locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
