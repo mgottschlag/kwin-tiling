@@ -16,8 +16,6 @@
 #include <qpainter.h>
 #include <qstrlist.h>
 
-#include <kdebug.h> // pld
-
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
@@ -158,7 +156,6 @@ void TopLevel::newClipData()
     // If the string is null bug out
     if(clipData.isEmpty()) {
 	if (pSelectedItem != -1) {
-	    kdDebug(3000) << "unchecking pSelectedItem: " << pSelectedItem << endl;
             pQPMmenu->setItemChecked(pSelectedItem, false);
 	    pSelectedItem = -1;
 	}
@@ -197,11 +194,9 @@ void TopLevel::newClipData()
 
         if (pSelectedItem != -1)
 	{
-	    kdDebug(3000) << "unchecking pSelectedItem: " << pSelectedItem << endl;
             pQPMmenu->setItemChecked(pSelectedItem, false);
 	}
         pSelectedItem = id;
-	kdDebug(3000) << "checking pSelectedItem: " << pSelectedItem << endl;
         pQPMmenu->setItemChecked(pSelectedItem, true);
     }
 }
@@ -359,12 +354,13 @@ void TopLevel::saveProperties()
       KConfig  *kc = kapp->config();
       KConfigGroupSaver groupSaver(kc, "General");
       QIntDictIterator<QString> it( *pQIDclipData );
-
-      while ( (data = it.current()) ) {
-          dataList.prepend( *it );
-          ++it;
+      if ( !bClipEmpty )
+      {
+	  while ( (data = it.current()) ) {
+	      dataList.prepend( *it );
+	      ++it;
+	  }
       }
-
       kc->writeEntry("ClipboardData", dataList);
       kc->sync();
   }
