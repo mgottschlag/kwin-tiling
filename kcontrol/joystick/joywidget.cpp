@@ -172,7 +172,8 @@ void JoyWidget::init()
       delete joy;
   }
 
-  if ( device->count() == 0 )
+  /* KDE 4: Remove this check(and i18n) when all KCM wrappers properly test modules */
+  if ( device->count() == 0 ) 
   {
     KMessageBox::sorry(this,
       i18n("No joystick device automatically found on this computer.\n"

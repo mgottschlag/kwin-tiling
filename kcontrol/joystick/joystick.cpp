@@ -26,11 +26,43 @@
 
 #include "joystick.h"
 #include "joywidget.h"
+#include "joydevice.h"
 
 //---------------------------------------------------------------------------------------------
 
 typedef KGenericFactory<joystick, QWidget> JoystickFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_joystick, JoystickFactory("kcmjoystick"))
+
+extern "C"
+{
+  bool test_joystick()
+  { /* Code stolen from JoyWidget::init() */
+    int i;
+    char dev[30];
+  
+    for (i = 0; i < 5; i++)  // check the first 5 devices
+    {
+      sprintf(dev, "/dev/js%d", i);  // first look in /dev
+      JoyDevice *joy = new JoyDevice(dev);
+  
+      if ( joy->open() != JoyDevice::SUCCESS )
+      {
+        delete joy;
+        sprintf(dev, "/dev/input/js%d", i);  // then look in /dev/input
+        joy = new JoyDevice(dev);
+  
+        if ( joy->open() != JoyDevice::SUCCESS )
+        {
+          delete joy;
+          continue;    // try next number
+        }
+      }
+  
+      return true; /* We have at least one joystick and should hence be shown */
+    }
+    return false;
+  }
+}
 
 //---------------------------------------------------------------------------------------------
 
