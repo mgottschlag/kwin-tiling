@@ -57,7 +57,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // general group
     QGroupBox *general_group = new QGroupBox(this);
-    QGridLayout *grid = new QGridLayout(general_group, 4, 2,
+    QGridLayout *grid = new QGridLayout(general_group, 5, 2,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
 
@@ -71,6 +71,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _execEdit = new KURLRequester(general_group);
 	_execEdit->lineEdit()->setAcceptDrops(false);
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
+    _systrayCB = new QCheckBox(i18n("&Place in System Tray"), general_group);
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
@@ -88,12 +89,14 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
+    connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
     grid->addMultiCellWidget(_commentEdit, 1, 1, 1, 1);
     grid->addMultiCellWidget(_execEdit, 2, 2, 1, 1);
     grid->addMultiCellWidget(_launchCB, 3, 3, 0, 1);
+    grid->addMultiCellWidget(_systrayCB, 4, 4, 0, 1);
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -210,6 +213,7 @@ void BasicTab::slotDisableAction()
     _commentEdit->setEnabled(false);
     _execEdit->setEnabled(false);
     _launchCB->setEnabled(false);
+    _systrayCB->setEnabled(false);
     _nameLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
     _execLabel->setEnabled(false);
@@ -229,6 +233,7 @@ void BasicTab::enableWidgets(bool isDF, bool isDeleted)
     _iconButton->setEnabled(!isDeleted);
     _execEdit->setEnabled(isDF && !isDeleted);
     _launchCB->setEnabled(isDF && !isDeleted);
+    _systrayCB->setEnabled(isDF && !isDeleted);
     _nameLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
     _execLabel->setEnabled(isDF && !isDeleted);
@@ -261,6 +266,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _termOptEdit->setText("");
     _uidEdit->setText("");
     _launchCB->setChecked(false);
+    _systrayCB->setChecked(false);
     _terminalCB->setChecked(false);
     _uidCB->setChecked(false);
     _keyEdit->setShortcut(0, false);
@@ -287,7 +293,18 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         _keyEdit->setShortcut( entryInfo->shortcut(), false );
     }
 
-    _execEdit->lineEdit()->setText(df->readPathEntry("Exec"));
+    QString temp = df->readPathEntry("Exec");
+    if (temp.left(12) == "ksystraycmd ")
+    {
+      _execEdit->lineEdit()->setText(temp.right(temp.length()-12));
+      _systrayCB->setChecked(true);
+    }
+    else
+    {
+      _execEdit->lineEdit()->setText(temp);
+      _systrayCB->setChecked(false);
+    }
+    
     _pathEdit->lineEdit()->setText(df->readPath());
     _termOptEdit->setText(df->readEntry("TerminalOptions"));
     _uidEdit->setText(df->readEntry("X-KDE-Username"));
@@ -318,7 +335,11 @@ void BasicTab::apply()
 
         KDesktopFile *df = _menuEntryInfo->desktopFile();
         df->writeEntry("Comment", _commentEdit->text());
-        df->writePathEntry("Exec", _execEdit->lineEdit()->text());
+        if (_systrayCB->isChecked())
+          df->writePathEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
+        else  
+          df->writePathEntry("Exec", _execEdit->lineEdit()->text());
+        
         df->writePathEntry("Path", _pathEdit->lineEdit()->text());
 
         if (_terminalCB->isChecked())
@@ -351,6 +372,11 @@ void BasicTab::slotChanged()
 }
 
 void BasicTab::launchcb_clicked()
+{
+    slotChanged();
+}
+
+void BasicTab::systraycb_clicked()
 {
     slotChanged();
 }
