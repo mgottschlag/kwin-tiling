@@ -70,7 +70,8 @@ public:
 	QStringList refreshRates(SizeID size) const;
 
 	QString		refreshRateDirectDescription(int rate) const;
-	QString		refreshRateDescription(int index) const;
+	QString		refreshRateIndirectDescription(SizeID size, int index) const;
+	QString		refreshRateDescription(SizeID size, int index) const;
 
 	int			currentRefreshRate() const;
 	QString		currentRefreshRateDescription() const;

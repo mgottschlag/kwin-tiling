@@ -39,6 +39,8 @@ RandRScreen::RandRScreen(int screenIndex)
 {
 	m_root = RootWindow(qt_xdisplay(), m_screen);
 
+	XRRSelectInput(qt_xdisplay(), QPaintDevice::x11AppRootWindow(m_screen), RRScreenChangeNotifyMask);
+
 	loadSettings();
 	setOriginal();
 }
@@ -313,9 +315,14 @@ QString RandRScreen::refreshRateDirectDescription(int rate) const
 	return i18n("Refresh rate in Hertz (Hz)", "%1 Hz").arg(rate);
 }
 
-QString RandRScreen::refreshRateDescription(int index) const
+QString RandRScreen::refreshRateIndirectDescription(SizeID size, int index) const
 {
-	return refreshRates(m_proposedSize)[index];
+	return i18n("Refresh rate in Hertz (Hz)", "%1 Hz").arg(refreshRateIndexToHz(size, index));
+}
+
+QString RandRScreen::refreshRateDescription(SizeID size, int index) const
+{
+	return refreshRates(size)[index];
 }
 
 void RandRScreen::proposeRefreshRate(int index)
@@ -330,7 +337,7 @@ int RandRScreen::currentRefreshRate() const
 
 QString RandRScreen::currentRefreshRateDescription() const
 {
-	return refreshRateDirectDescription(m_currentRefreshRate);
+	return refreshRateIndirectDescription(m_currentSize, m_currentRefreshRate);
 }
 
 int RandRScreen::proposedRefreshRate() const
