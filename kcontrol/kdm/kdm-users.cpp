@@ -211,7 +211,7 @@ void KDMUsersWidget::makeReadOnly()
     rbprefusr->setEnabled(false);
     rbusronly->setEnabled(false);
     wstack->setEnabled(false);
-    userbutton->setEnabled(false);
+    disconnect( userbutton, SIGNAL(clicked()), this, SLOT(slotUserButtonClicked()) );
     rstuserbutton->setEnabled(false);
 }
 
