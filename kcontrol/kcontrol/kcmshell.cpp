@@ -37,9 +37,9 @@
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <kaboutdata.h>
+#include <kcmultidialog.h>
 
 #include "kcdialog.h"
-#include "kecdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
 #include "global.h"
@@ -289,7 +289,7 @@ int main(int _argc, char *_argv[])
     if (modules.count() < 1) return -1;
 
     // create the dialog
-    KExtendedCDialog * dlg = new KExtendedCDialog(0, 0, true);
+    KCMultiDialog * dlg = new KCMultiDialog(0, 0, true);
 
     // Needed for modules that use d'n'd (not really the right
     // solution for this though, I guess)

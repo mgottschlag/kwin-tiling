@@ -19,8 +19,8 @@
 
 */
 
-#ifndef __kecdialog_h__
-#define __kecdialog_h__
+#ifndef KCMULTIDIALOG_H
+#define KCMULTIDIALOG_H
 
 #include <qptrlist.h>
 #include <qptrdict.h>
@@ -29,12 +29,13 @@
 #include <kcmodule.h>
 
 /**
- * A method that offers a @ref KDialogBase containing arbitrary KControl Modules
+ * A class that offers a @ref KDialogBase containing arbitrary KControl Modules
  * 
  * @short A method that offers a @ref KDialogBase containing arbitrary KControl Modules
  * @author Matthias Elter <elter@kde.org>, Daniel Molkentin <molkentin@kde.org>
+ * @since 3.2
  */
-class KExtendedCDialog : public KDialogBase
+class KCMultiDialog : public KDialogBase
 {
     Q_OBJECT
 
@@ -42,11 +43,11 @@ public:
     /**
      * Constructor
      **/
-    KExtendedCDialog(QWidget *parent=0, const char *name=0, bool modal=false);
+    KCMultiDialog(QWidget *parent=0, const char *name=0, bool modal=false);
     /**
      * Destructor
      **/
-   virtual ~KExtendedCDialog();
+   virtual ~KCMultiDialog();
 
     /**
      * Add a module.
@@ -111,8 +112,8 @@ private:
     QString _docPath;
 
     // For future use
-    class KExtendedCDialogPrivate;
-    KExtendedCDialogPrivate *d;
+    class KCMultiDialogPrivate;
+    KCMultiDialogPrivate *d;
 };
 
-#endif
+#endif //KCMULTIDIALOG_H

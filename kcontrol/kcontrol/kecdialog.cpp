@@ -40,7 +40,7 @@
 #include "moduleinfo.h"
 #include "modloader.h"
 
-KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal)
+KCMultiDialog::KCMultiDialog(QWidget *parent, const char *name, bool modal)
   : KDialogBase(IconList, i18n("Settings"), Help | Default |Cancel | Apply | Ok, Ok,
                 parent, name, modal, true)
 {
@@ -50,12 +50,12 @@ KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal
     setInitialSize(QSize(640,480));
 }
 
-KExtendedCDialog::~KExtendedCDialog()
+KCMultiDialog::~KCMultiDialog()
 {
     moduleDict.setAutoDelete(true);
 }
 
-void KExtendedCDialog::slotDefault()
+void KCMultiDialog::slotDefault()
 {
     int curPageIndex = activePageIndex();
 
@@ -71,7 +71,7 @@ void KExtendedCDialog::slotDefault()
     }
 }
 
-void KExtendedCDialog::slotApply()
+void KCMultiDialog::slotApply()
 {
     QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
@@ -80,7 +80,7 @@ void KExtendedCDialog::slotApply()
 }
 
 
-void KExtendedCDialog::slotOk()
+void KCMultiDialog::slotOk()
 {
     QPtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
@@ -88,7 +88,7 @@ void KExtendedCDialog::slotOk()
     accept();
 }
 
-void KExtendedCDialog::slotHelp()
+void KCMultiDialog::slotHelp()
 {
     KURL url( KURL("help:/"), _docPath );
 
@@ -103,14 +103,14 @@ void KExtendedCDialog::slotHelp()
     }
 }
 
-void KExtendedCDialog::clientChanged(bool state)
+void KCMultiDialog::clientChanged(bool state)
 {
     enableButton(Apply, state);
 }
 
-void KExtendedCDialog::addModule(const QString& path, bool withfallback)
+void KCMultiDialog::addModule(const QString& path, bool withfallback)
 {
-    kdDebug(1208) << "KExtendedCDialog::addModule " << path << endl;
+    kdDebug(1208) << "KCMultiDialog::addModule " << path << endl;
 
     ModuleInfo info(path);
 
@@ -125,7 +125,7 @@ void KExtendedCDialog::addModule(const QString& path, bool withfallback)
        slotAboutToShow(page);
 }
 
-void KExtendedCDialog::slotAboutToShow(QWidget *page)
+void KCMultiDialog::slotAboutToShow(QWidget *page)
 {
     LoadInfo *loadInfo = moduleDict[page];
     if (!loadInfo)
