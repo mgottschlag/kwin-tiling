@@ -14,6 +14,7 @@
 	Copyright (C) 2001 Rik Hemsley (rikkus) <rik@kde.org>
 */
 
+#include <qpainter.h>
 #include <klocale.h>
 #include "buttons.h"
 #include "pixmaps.h"
