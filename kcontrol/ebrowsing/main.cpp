@@ -103,7 +103,7 @@ void KURIFilterModule::defaults()
 
 void KURIFilterModule::moduleChanged(bool state)
 {
-    emit changed(state);
+    setChanged(state);
 }
 
 QString KURIFilterModule::quickHelp() const

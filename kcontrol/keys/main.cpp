@@ -115,7 +115,7 @@ void KeyModule::resizeEvent( QResizeEvent * )
 
 void KeyModule::slotModuleChanged( bool bState )
 {
-	emit changed( bState );
+	setChanged( bState );
 }
 
 //----------------------------------------------------

@@ -158,7 +158,7 @@ void KCMKNotify::load()
 
     // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
-    emit changed( false );
+    setChanged( false );
 }
 
 void KCMKNotify::save()
@@ -168,7 +168,7 @@ void KCMKNotify::save()
 
     m_notifyWidget->save(); // will dcop knotify about its new config
 
-    emit changed( false );
+    setChanged( false );
 }
 
 QString KCMKNotify::quickHelp() const

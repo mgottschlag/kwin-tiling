@@ -310,7 +310,7 @@ void KIconConfig::load()
 {
     read();
     apply();
-    emit changed(false);
+    setChanged(false);
     for (int i=0; i<KIcon::LastGroup; i++)
 	mbChanged[i] = false;
     preview();
@@ -357,7 +357,7 @@ void KIconConfig::save()
 
     mpConfig->sync();
 
-    emit changed(false);
+    setChanged(false);
 
     // Emit KIPC change message.
     for (int i=0; i<KIcon::LastGroup; i++)
@@ -375,7 +375,7 @@ void KIconConfig::defaults()
     initDefaults();
     apply();
     preview();
-    emit changed(true);
+    setChanged(true);
 }
 
 void KIconConfig::slotUsage(int index)
@@ -432,7 +432,7 @@ void KIconConfig::EffectSetup(int state)
         // AK - can this call be moved therefore removing
         //      code duplication?
 
-        emit changed(true);
+        setChanged(true);
 
         if (mUsage == KIcon::LastGroup) {
             for (int i=0; i<KIcon::LastGroup; i++)
@@ -449,7 +449,7 @@ void KIconConfig::slotSize(int index)
     Q_ASSERT(mUsage < KIcon::LastGroup);
     mSizes[mUsage] = mAvSizes[mUsage][index];
     preview();
-    emit changed(true);
+    setChanged(true);
     mbChanged[mUsage] = true;
 }
 
@@ -459,7 +459,7 @@ void KIconConfig::slotDPCheck(bool check)
     if (mbDP[mUsage] != check)
     {
         mbDP[mUsage] = check;
-        emit changed(true);
+        setChanged(true);
         mbChanged[mUsage] = true;
     }
     preview();
@@ -472,7 +472,7 @@ void KIconConfig::slotAnimatedCheck(bool check)
     if (mbAnimated[mUsage] != check)
     {
         mbAnimated[mUsage] = check;
-        emit changed(true);
+        setChanged(true);
         mbChanged[mUsage] = true;
     }
 }

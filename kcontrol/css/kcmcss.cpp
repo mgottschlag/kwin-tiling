@@ -240,7 +240,7 @@ QString CSSConfig::quickHelp() const
 
 void CSSConfig::configChanged()
 {
-  emit changed(true);
+  setChanged(true);
 }
 
 

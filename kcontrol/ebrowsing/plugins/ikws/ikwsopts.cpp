@@ -289,7 +289,7 @@ void FilterOptions::moduleChanged()
 {
   // Removed the bool parameter, this way this can be directly connected
   // as it was alwayw called with true as argument anyway (malte)
-  emit changed(true);
+  setChanged(true);
 }
 
 void FilterOptions::setAutoWebSearchState()

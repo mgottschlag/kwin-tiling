@@ -172,7 +172,7 @@ QString AppletTab::quickHelp() const
 void AppletTab::level_changed(int)
 {
   list_group->setEnabled(trusted_rb->isChecked());
-  emit changed();
+  setChanged();
 }
 
 void AppletTab::updateTrusted()
@@ -192,13 +192,13 @@ void AppletTab::updateAvailable()
 void AppletTab::trusted_selection_changed(QListViewItem * item)
 {
   pb_remove->setEnabled(item != 0);
-  emit changed();
+  setChanged();
 }
 
 void AppletTab::available_selection_changed(QListViewItem * item)
 {
   pb_add->setEnabled(item != 0);
-  emit changed();
+  setChanged();
 }
 
 void AppletTab::add_clicked()

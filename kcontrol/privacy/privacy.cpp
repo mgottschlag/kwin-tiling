@@ -159,7 +159,7 @@ void Privacy::load()
   }
 
   delete c;
-  emit changed(false);
+  setChanged(false);
 
 }
 
@@ -167,7 +167,7 @@ void Privacy::load()
 void Privacy::defaults()
 {
   selectNone();
-  emit changed(true);
+  setChanged(true);
 }
 
 
@@ -197,7 +197,7 @@ void Privacy::save()
   c->sync();
 
   delete c;
-  emit changed(false);
+  setChanged(false);
 
 }
 
@@ -210,7 +210,7 @@ int Privacy::buttons()
 
 void Privacy::configChanged()
 {
-  emit changed(true);
+  setChanged(true);
 }
 
 void Privacy::selectAll()
@@ -220,7 +220,7 @@ void Privacy::selectAll()
   for ( item  = checklist.first(); item; item = checklist.next() )
     item->setOn(true);
 
-  emit changed(true);
+  setChanged(true);
 }
 
 void Privacy::selectNone()
@@ -230,7 +230,7 @@ void Privacy::selectNone()
   for ( item  = checklist.first(); item; item = checklist.next() )
     item->setOn(false);
   
-  emit changed(true);
+  setChanged(true);
 }
 
 

@@ -93,7 +93,7 @@ void KickerConfig::initScreenNumber()
 
 void KickerConfig::configChanged()
 {
-    emit changed(true);
+    setChanged(true);
 }
 
 void KickerConfig::load()
@@ -101,7 +101,7 @@ void KickerConfig::load()
     positiontab->load();
     hidingtab->load();
     menutab->load();
-    emit changed(false);
+    setChanged(false);
 }
 
 void KickerConfig::save()
@@ -110,7 +110,7 @@ void KickerConfig::save()
     hidingtab->save();
     menutab->save();
 
-    emit changed(false);
+    setChanged(false);
 
     notifyKicker();
 }
@@ -136,7 +136,7 @@ void KickerConfig::defaults()
     hidingtab->defaults();
     menutab->defaults();
 
-    emit changed(true);
+    setChanged(true);
 }
 
 QString KickerConfig::quickHelp() const

@@ -36,7 +36,7 @@ class KSpellCheckingConfig  : public KCModule
   QString quickHelp() const;
 
  protected slots:
-  void configChanged() { emit changed( true ); };
+  void configChanged() { setChanged( true ); };
 
  protected:
   KSpellConfig *spellConfig;

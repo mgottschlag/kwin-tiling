@@ -95,7 +95,7 @@ void KCMKonsole::load(bool useDefaults)
 
     delete config;
 
-    emit changed(useDefaults);
+    setChanged(useDefaults);
 }
 
 void KCMKonsole::load(const QString & /*s*/)
@@ -105,7 +105,7 @@ void KCMKonsole::load(const QString & /*s*/)
 
 void KCMKonsole::configChanged()
 {
-    emit changed(true);
+    setChanged(true);
 }
 
 void KCMKonsole::save()
@@ -144,7 +144,7 @@ void KCMKonsole::save()
 
     delete config;
 
-    emit changed(false);
+    setChanged(false);
 
     DCOPClient *dcc = kapp->dcopClient();
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());

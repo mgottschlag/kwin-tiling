@@ -110,7 +110,7 @@ void KPasswordConfig::load()
     slotKeep(m_bKeep);
 
     apply();
-    emit changed(false);
+    setChanged(false);
 }
 
 
@@ -139,7 +139,7 @@ void KPasswordConfig::save()
     if (client.ping() != -1)
         client.stopServer();
     }
-    emit changed(false);
+    setChanged(false);
 }
 
 
@@ -150,7 +150,7 @@ void KPasswordConfig::defaults()
     m_Timeout = defTimeout;
 
     apply();
-    emit changed(true);
+    setChanged(true);
 }
 
 
@@ -167,7 +167,7 @@ void KPasswordConfig::apply()
 void KPasswordConfig::slotEchoMode(int i)
 {
     m_Echo = i;
-    emit changed(true);
+    setChanged(true);
 }
 
 
@@ -175,7 +175,7 @@ void KPasswordConfig::slotKeep(bool keep)
 {
     m_bKeep = keep;
     m_TimeoutEdit->setEnabled(keep);
-    emit changed(true);
+    setChanged(true);
 }
 
 

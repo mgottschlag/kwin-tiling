@@ -108,5 +108,5 @@ const KAboutData* KclockModule::aboutData() const
 
 void KclockModule::moduleChanged(bool state)
 {
-  emit changed(state);
+  setChanged(state);
 }

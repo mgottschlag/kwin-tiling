@@ -84,7 +84,7 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
        */
       void configChanged(){
          kdDebug() << "Running: AccessibilityConfig::configChanged()"<< endl;
-         emit changed(true);
+         setChanged(true);
       };  
 };
 

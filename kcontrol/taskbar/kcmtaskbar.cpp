@@ -150,7 +150,7 @@ TaskbarConfig::~TaskbarConfig()
 void TaskbarConfig::configChanged()
 {
     m_moduleChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 void TaskbarConfig::slotUpdateComboBox()
@@ -187,7 +187,7 @@ void TaskbarConfig::load()
     }
 
     delete c;
-    emit changed(false);
+    setChanged(false);
     m_moduleChanged = false;
     slotUpdateComboBox();
 }
@@ -214,7 +214,7 @@ void TaskbarConfig::save()
 
     delete c;
 
-    emit changed(false);
+    setChanged(false);
 
     // Tell kicker about the new config file.
     if (!kapp->dcopClient()->isAttached())
@@ -234,7 +234,7 @@ void TaskbarConfig::defaults()
     ui->middleButtonComboBox->setCurrentItem( buttonAction( MidButton ) );
     ui->rightButtonComboBox->setCurrentItem( buttonAction( RightButton ) );
     ui->groupComboBox->setCurrentItem( groupMode() );
-    emit changed(true);
+    setChanged(true);
     slotUpdateComboBox();
 }
 

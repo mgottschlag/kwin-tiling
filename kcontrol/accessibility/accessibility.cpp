@@ -142,7 +142,7 @@ void AccessibilityConfig::load(){
 //
 //    checkAccess();
 //
-//    emit changed(false);
+//    setChanged(false);
 }
 
 
@@ -201,7 +201,7 @@ void AccessibilityConfig::save(){
 //
 //    delete config;
 //
-//    emit changed(false);
+//    setChanged(false);
 }
 
 

@@ -326,7 +326,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect( mLoadTimer, SIGNAL(timeout()), SLOT(findSavers()) );
     mLoadTimer->start( 100 );
     mChanged = false;
-    emit changed(false);
+    setChanged(false);
 }
 
 //---------------------------------------------------------------------------
@@ -415,7 +415,7 @@ void KScreenSaver::load()
 
     updateValues();
     mChanged = false;
-    emit changed(false);
+    setChanged(false);
 }
 
 //------------------------------------------------------------After---------------
@@ -482,7 +482,7 @@ void KScreenSaver::defaults()
     updateValues();
 
 
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------
@@ -512,7 +512,7 @@ void KScreenSaver::save()
     client->send("kdesktop", "KScreensaverIface", "configure()", "");
 
     mChanged = false;
-    emit changed(false);
+    setChanged(false);
 }
 
 //---------------------------------------------------------------------------
@@ -678,7 +678,7 @@ void KScreenSaver::slotEnable(bool e)
     mActivateLbl->setEnabled( e );
     mWaitEdit->setEnabled( e );
     mChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 
@@ -715,7 +715,7 @@ void KScreenSaver::slotScreenSaver(QListViewItem *item)
     if (bChanged)
     {
        mChanged = true;
-       emit changed(true);
+       setChanged(true);
     }
 }
 
@@ -856,7 +856,7 @@ void KScreenSaver::slotTimeoutChanged(int to )
 {
     mTimeout = to * 60;
     mChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------
@@ -865,7 +865,7 @@ void KScreenSaver::slotDPMS( bool d )
 {
     mDPMS = d;
     mChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------
@@ -874,7 +874,7 @@ void KScreenSaver::slotLock( bool l )
 {
     mLock = l;
     mChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------
@@ -891,7 +891,7 @@ void KScreenSaver::slotPriorityChanged( int val )
     mPriority = 0;
 
     mChanged = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------
@@ -901,7 +901,7 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
     mSetupBt->setEnabled( true );
-    emit changed(true);
+    setChanged(true);
 }
 
 //---------------------------------------------------------------------------

@@ -257,7 +257,7 @@ void KAccessConfig::selectSound()
 
 void KAccessConfig::configChanged()
 {
-  emit changed(true);
+  setChanged(true);
 }
 
 
@@ -294,7 +294,7 @@ void KAccessConfig::load()
 
   checkAccess();
 
-  emit changed(false);
+  setChanged(false);
 }
 
 
@@ -351,7 +351,7 @@ void KAccessConfig::save()
 
   delete config;
   
-  emit changed(false);
+  setChanged(false);
 }
 
 
@@ -379,7 +379,7 @@ void KAccessConfig::defaults()
 
   checkAccess();
 
-  emit changed(true);
+  setChanged(true);
 }
 
 

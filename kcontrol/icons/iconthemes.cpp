@@ -354,13 +354,13 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
   kdDebug() << icon.path<< "\n";
   m_previewDocument->setPixmap(QPixmap(icon.path));
-  emit changed(true);
+  setChanged(true);
   m_bChanged = true;
 }
 
 void IconThemesConfig::load()
 {
-  emit changed(false);
+  setChanged(false);
   m_bChanged = false;
 }
 
@@ -380,7 +380,7 @@ void IconThemesConfig::save()
 
   delete config;
 
-  emit changed(false);
+  setChanged(false);
 
   for (int i=0; i<KIcon::LastGroup; i++)
   {
@@ -402,7 +402,7 @@ void IconThemesConfig::defaults()
   m_iconThemes->setSelected(m_defaultTheme, true);
   updateRemoveButton();
 
-  emit changed(true);
+  setChanged(true);
   m_bChanged = true;
 }
 

@@ -226,7 +226,7 @@ void KDModule::defaults()
 
 void KDModule::moduleChanged(bool state)
 {
-  emit changed(state);
+  setChanged(state);
 }
 
 

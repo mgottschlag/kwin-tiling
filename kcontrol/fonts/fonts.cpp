@@ -405,7 +405,7 @@ KFonts::~KFonts()
 void KFonts::fontSelected()
 {
   _changed = true;
-  emit changed(true);
+  setChanged(true);
 }
 
 void KFonts::defaults()
@@ -423,7 +423,7 @@ void KFonts::defaults()
   enableAaWidgets();
 
   _changed = true;
-  emit changed(true);
+  setChanged(true);
 }
 
 QString KFonts::quickHelp() const
@@ -453,7 +453,7 @@ void KFonts::load()
   setAaWidgets();
 
   _changed = true;
-  emit changed(false);
+  setChanged(false);
 }
 
 void KFonts::save()
@@ -511,7 +511,7 @@ void KFonts::save()
   }
 
   xft.apply();
-  emit changed(false);
+  setChanged(false);
 }
 
 int KFonts::buttons()
@@ -530,7 +530,7 @@ void KFonts::slotApplyFontDiff()
     for ( int i = 0; i < (int) fontUseList.count(); i++ )
       fontUseList.at( i )->applyFontDiff( font,fontDiffFlags );
     _changed = true;
-    emit changed(true);
+    setChanged(true);
   }
 }
 
@@ -539,7 +539,7 @@ void KFonts::slotUseAntiAliasing()
     useAA = cbAA->isChecked();
     enableAaWidgets();
     _changed = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 void KFonts::slotAaChange()
@@ -547,7 +547,7 @@ void KFonts::slotAaChange()
     enableAaWidgets();
 
     _changed = true;
-    emit changed(true);
+    setChanged(true);
 }
 
 void KFonts::setAaWidgets()

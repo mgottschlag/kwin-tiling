@@ -53,7 +53,7 @@ SMServerConfig::~SMServerConfig()
 
 void SMServerConfig::configChanged()
 {
-  emit changed(true);
+  setChanged(true);
 }
 
 void SMServerConfig::load()
@@ -85,7 +85,7 @@ void SMServerConfig::load()
 
   delete c;
 
-  emit changed(false);
+  setChanged(false);
 }
 
 void SMServerConfig::save()
@@ -110,7 +110,7 @@ void SMServerConfig::save()
   c->sync();
   delete c;
 
-  emit changed(false);
+  setChanged(false);
 
   // update the k menu if necessary
   QByteArray data;
@@ -124,7 +124,7 @@ void SMServerConfig::defaults()
   dialog->logoutRadio->setChecked(true);
   dialog->excludeLineedit->setText("");
 
-  emit changed(true);
+  setChanged(true);
 }
 
 QString SMServerConfig::quickHelp() const

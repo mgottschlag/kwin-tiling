@@ -114,7 +114,7 @@ void ConfigModule::clientClosed()
 {
   deleteClient();
 
-  emit changed(this);
+  setChanged(this);
   emit childClosed();
 }
 
@@ -122,7 +122,7 @@ void ConfigModule::clientClosed()
 void ConfigModule::clientChanged(bool state)
 {
   setChanged(state);
-  emit changed(this);
+  setChanged(this);
 }
 
 
@@ -229,7 +229,7 @@ void ConfigModule::rootExited(KProcess *)
   _module=0;
 
   _changed = false;
-  emit changed(this);
+  setChanged(this);
   emit childClosed();
 }
 
