@@ -58,6 +58,7 @@ private:
     QClipboard *clip;
 
     QString m_lastString;
+    QString m_lastClipboard, m_lastSelection;
     KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
     QIntDict<QString> *m_clipDict;
@@ -66,7 +67,7 @@ private:
     bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory;
     QString QSempty;
     URLGrabber *myURLGrabber;
-    int pSelectedItem;
+    int m_selectedItem;
     int maxClipItems;
     int URLGrabItem;
 

@@ -80,7 +80,7 @@ TopLevel::TopLevel()
   : KMainWindow(0)
 {
     clip = kapp->clipboard();
-    pSelectedItem = -1;
+    m_selectedItem = -1;
     QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
@@ -155,18 +155,36 @@ void TopLevel::paintEvent(QPaintEvent *)
 
 void TopLevel::newClipData()
 {
-    QString clipData = clip->text().stripWhiteSpace();
+    QString clipData;
+
+    clip->setSelectionMode( false );
+    QString clipContents = clip->text().stripWhiteSpace();
+    if ( clipContents != m_lastClipboard ) {
+        clipData        = clipContents;
+        m_lastClipboard = clipContents;
+    }
+    else {
+        clip->setSelectionMode( true );
+        clipContents = clip->text().stripWhiteSpace();
+        if ( clipContents != m_lastSelection ) {
+            clipData        = clipContents;
+            m_lastSelection = clipContents;
+        }
+        else 
+            clipData = m_lastString;
+    }
+    
     // If the string is null bug out
     if(clipData.isEmpty()) {
-	if (pSelectedItem != -1) {
-            m_popup->setItemChecked(pSelectedItem, false);
-	    pSelectedItem = -1;
+	if (m_selectedItem != -1) {
+            m_popup->setItemChecked(m_selectedItem, false);
+	    m_selectedItem = -1;
 	}
         return;
     }
 
     if(clipData != m_lastString) {
-        m_lastString = clipData.copy();
+        m_lastString = clipData;
 
         QString *data = new QString(clipData);
 
@@ -192,20 +210,20 @@ void TopLevel::newClipData()
         long int id = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
         m_clipDict->insert(id, data);
 
-        if (pSelectedItem != -1)
+        if (m_selectedItem != -1)
 	{
-            m_popup->setItemChecked(pSelectedItem, false);
+            m_popup->setItemChecked(m_selectedItem, false);
 	}
-        pSelectedItem = id;
+        m_selectedItem = id;
 
 	if ( bClipEmpty )
 	{
 	    clip->clear();
-	    m_popup->setItemEnabled(pSelectedItem, false);
+	    m_popup->setItemEnabled(m_selectedItem, false);
 	}
 	else
 	{
-	    m_popup->setItemChecked(pSelectedItem, true);
+	    m_popup->setItemChecked(m_selectedItem, true);
 	}
     }
 }
@@ -259,9 +277,9 @@ void TopLevel::clickedMenu(int id)
 	{
 	    m_checkTimer->stop();
 	    //CT mark up the currently put into clipboard - so that user can see later
-	    m_popup->setItemChecked(pSelectedItem, false);
-	    pSelectedItem = id;
-	    m_popup->setItemChecked(pSelectedItem, true);
+	    m_popup->setItemChecked(m_selectedItem, false);
+	    m_selectedItem = id;
+	    m_popup->setItemChecked(m_selectedItem, true);
 	    QString *data = m_clipDict->find(id);
 	    if(data != 0x0 && *data != QSempty){
 		clip->setText(*data);
