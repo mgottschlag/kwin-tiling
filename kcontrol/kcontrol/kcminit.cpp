@@ -20,6 +20,9 @@
 #include <qfile.h>
 
 #include <kapp.h>
+#include <klocale.h>
+#include <kcmdlineargs.h>
+#include <kaboutdata.h>
 #include <kcmodule.h>
 #include <kservice.h>
 #include <klibloader.h>
@@ -29,7 +32,13 @@
 
 int main(int argc, char *argv[])
 {
-  KApplication app(argc, argv, "kcminit");
+  KAboutData aboutData( "kcminit", I18N_NOOP("KCMInit"),
+	"$Id:  $",
+	I18N_NOOP("KCMInit - runs startups initialisation for Control Modules."));
+
+  KCmdLineArgs::init(argc, argv, &aboutData);
+
+  KApplication app;
 
   // locate the desktop files
   KService::List list = KService::allInitServices();
