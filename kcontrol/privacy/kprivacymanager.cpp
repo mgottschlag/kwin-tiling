@@ -47,12 +47,12 @@ KPrivacyManager::~KPrivacyManager()
 {
 }
 
-bool KPrivacyManager::clearRunCommandHistory()
+bool KPrivacyManager::clearRunCommandHistory() const
 {
   return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "clearCommandHistory()", "" );
 }
 
-bool KPrivacyManager::clearAllCookies()
+bool KPrivacyManager::clearAllCookies() const
 {
   return kapp->dcopClient()->send( "kded", "kcookiejar", "deleteAllCookies()", "" );
 }
@@ -69,32 +69,32 @@ bool KPrivacyManager::clearSavedClipboardContents()
       c->sync();
     }
     return true;
-  } 
-  
+  }
+
   return kapp->dcopClient()->send( "klipper", "klipper", "clearClipboardHistory()", "" );
 }
 
-bool KPrivacyManager::clearFormCompletion()
+bool KPrivacyManager::clearFormCompletion() const
 {
   QFile completionFile(locateLocal("data", "khtml/formcompletions"));
 
   return completionFile.remove();
 }
 
-bool KPrivacyManager::clearWebCache()
+bool KPrivacyManager::clearWebCache() const
 {
     KProcess process;
     process << "kio_http_cache_cleaner" << "--clear-all";
     return process.start(KProcess::DontCare);
 }
 
-bool KPrivacyManager::clearRecentDocuments()
+bool KPrivacyManager::clearRecentDocuments() const
 {
   KRecentDocument::clear();
   return KRecentDocument::recentDocuments().isEmpty();
 }
 
-bool KPrivacyManager::clearQuickStartMenu()
+bool KPrivacyManager::clearQuickStartMenu() const
 {
   return kapp->dcopClient()->send( "kicker", "kicker", "clearQuickStartMenu()", "" );
 }
@@ -128,7 +128,7 @@ bool KPrivacyManager::clearFavIcons()
 }
 
 
-bool KPrivacyManager::isApplicationRegistered(QString appName)
+bool KPrivacyManager::isApplicationRegistered(const QString &appName)
 {
 
   QCStringList regApps = kapp->dcopClient()->registeredApplications();

@@ -35,18 +35,18 @@ public:
 
     ~KPrivacyManager();
 
-    bool clearAllCookies();
+    bool clearAllCookies() const;
     bool clearSavedClipboardContents();
-    bool clearRunCommandHistory();
-    bool clearFormCompletion();
+    bool clearRunCommandHistory() const;
+    bool clearFormCompletion() const;
     bool clearWebHistory();
-    bool clearWebCache();
-    bool clearQuickStartMenu();
-    bool clearRecentDocuments();
+    bool clearWebCache() const;
+    bool clearQuickStartMenu() const;
+    bool clearRecentDocuments() const;
     bool clearFavIcons();
 
 private:
-    bool isApplicationRegistered(QString appName);
+    bool isApplicationRegistered(const QString &appName);
     bool m_error;
 
 };
