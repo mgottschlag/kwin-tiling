@@ -15,6 +15,10 @@
 #include <unistd.h>
 
 #include <qtextstream.h>
+#include <qlayout.h>
+#include <qframe.h>
+#include <qcheckbox.h>
+#include <qwidget.h>
 
 #include <kapplication.h>
 #include <kstandarddirs.h>
@@ -24,16 +28,19 @@
 #include <krandomsequence.h>
 #include <kdebug.h>
 #include <kcmdlineargs.h>
+#include <kdialogbase.h>
+#include <kconfig.h>
 
 #include "kscreensaver_vroot.h"
+#include "random.h"
 
 #define MAX_ARGS    20
 
 void usage(char *name)
 {
-    puts(i18n("Usage: %1 [-setup] [args]\n"
-              "Starts a random screen saver.\n"
-              "Any arguments (except -setup) are passed on to the screen saver.").arg( name ).local8Bit().data());
+	puts(i18n("Usage: %1 [-setup] [args]\n"
+				"Starts a random screen saver.\n"
+				"Any arguments (except -setup) are passed on to the screen saver.").arg( name ).local8Bit().data());
 }
 
 static const char *appName = "random";
@@ -44,107 +51,183 @@ static const char *version = "2.0.0";
 
 static const KCmdLineOptions options[] =
 {
-//  { "setup", I18N_NOOP("Setup screen saver."), 0 },
-  { "window-id wid", I18N_NOOP("Run in the specified XWindow."), 0 },
-  { "root", I18N_NOOP("Run in the root XWindow."), 0 },
-//  { "+-- [options]", I18N_NOOP("Options to pass to the screen saver."), 0 }
-  KCmdLineLastOption
+	{ "setup", I18N_NOOP("Setup screen saver."), 0 },
+	{ "window-id wid", I18N_NOOP("Run in the specified XWindow."), 0 },
+	{ "root", I18N_NOOP("Run in the root XWindow."), 0 },
+	//  { "+-- [options]", I18N_NOOP("Options to pass to the screen saver."), 0 }
+	KCmdLineLastOption
 };
 
 //----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-    KLocale::setMainCatalogue("kscreensaver");
-    KCmdLineArgs::init(argc, argv, appName, description, version);
+	KLocale::setMainCatalogue("kscreensaver");
+	KCmdLineArgs::init(argc, argv, appName, description, version);
 
-    KCmdLineArgs::addCmdLineOptions(options);
+	KCmdLineArgs::addCmdLineOptions(options);
 
-    KApplication app;
+	KApplication app;
 
-    Window windowId = 0;
+	Window windowId = 0;
 
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-#if 0
-    // To be implemented
-    if (args->isSet("setup"))
-    {
-       exit(0);
-    }
-#endif
+	if (args->isSet("setup"))
+	{
+		KRandomSetup setup;
+		setup.exec();
+		exit(0);
+	}
 
-    if (args->isSet("window-id"))
-    {
-        windowId = atol(args->getOption("window-id"));
-    }
+	if (args->isSet("window-id"))
+	{
+		windowId = atol(args->getOption("window-id"));
+	}
 
-    if (args->isSet("root"))
-    {
-        windowId = RootWindow(qt_xdisplay(), qt_xscreen());
-    }
+	if (args->isSet("root"))
+	{
+		windowId = RootWindow(qt_xdisplay(), qt_xscreen());
+	}
 
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     "apps/ScreenSavers/");
-    KGlobal::dirs()->addResourceType("scrsav",
-                                     KGlobal::dirs()->kde_default("apps") +
-                                     "System/ScreenSavers/");
-    QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                                                   "*.desktop", false, true);
+	KGlobal::dirs()->addResourceType("scrsav",
+			KGlobal::dirs()->kde_default("apps") +
+			"apps/ScreenSavers/");
+	KGlobal::dirs()->addResourceType("scrsav",
+			KGlobal::dirs()->kde_default("apps") +
+			"System/ScreenSavers/");
+	QStringList tempSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
+			"*.desktop", false, true);
 
-    KRandomSequence rnd;
-    int indx = rnd.getLong(saverFileList.count());
-    QString filename = *(saverFileList.at(indx));
+	QStringList saverFileList;
 
-    KDesktopFile config(filename, true);
+	for (uint i = 0; i < tempSaverFileList.count(); i++)
+	{
+		KDesktopFile saver(tempSaverFileList[i], true);
+		if (saver.readEntry("X-KDE-Type").utf8())
+		{
+			QString type = saver.readEntry("X-KDE-Type").utf8();
+			if (type.isEmpty()) // no X-KDE-Type defined so must be OK
+			{
+				kdDebug() << "No X-KDE-Type" << endl;
+				saverFileList.append(tempSaverFileList[i]);
+			}
+			else
+			{
+				KConfig config("krandom.kssrc");
+				config.setGroup("Settings");
+				QStringList types = QStringList::split(";", type);
+				bool added = false;
+				for (uint i = 0; i < types.count(); i++)
+				{
+					kdDebug() << "checking for " << types << endl;
+					if (config.readBoolEntry("OpenGL") && types[i] == "OpenGL")
+					{
+						kdDebug() << "appending OpenGL" << endl;
+						saverFileList.append(tempSaverFileList[i]);
+						added = true;
 
-    QString cmd;
-    if (windowId && config.hasActionGroup("InWindow"))
-    {
-        config.setActionGroup("InWindow");
-    }
-    else if ((windowId == 0) && config.hasActionGroup("Root"))
-    {
-        config.setActionGroup("Root");
-    }
-    cmd = config.readPathEntry("Exec");
+					}
+					if (config.readBoolEntry("ManipulateScreen") && types[i] == "ManipulateScreen" && added == false)
+					{
+						kdDebug() << "appending manipulate" << endl;
+						saverFileList.append(tempSaverFileList[i]);
+					}
+					added = false;
+				}
+			}
 
-    QTextStream ts(&cmd, IO_ReadOnly);
-    QString word;
-    ts >> word;
-    QString exeFile = KStandardDirs::findExe(word);
+		}
+	}
 
-    if (!exeFile.isEmpty())
-    {
-        char *sargs[MAX_ARGS];
-        sargs[0] = new char [strlen(word.ascii())+1];
-        strcpy(sargs[0], word.ascii());
+	KRandomSequence rnd;
+	int indx = rnd.getLong(saverFileList.count());
+	QString filename = *(saverFileList.at(indx));
 
-        int i = 1;
-        while (!ts.atEnd() && i < MAX_ARGS-1)
-        {
-            ts >> word;
-            if (word == "%w")
-            {
-                word = word.setNum(windowId);
-            }
+	KDesktopFile config(filename, true);
 
-            sargs[i] = new char [strlen(word.ascii())+1];
-            strcpy(sargs[i], word.ascii());
-            i++;
-        }
+	QString cmd;
+	if (windowId && config.hasActionGroup("InWindow"))
+	{
+		config.setActionGroup("InWindow");
+	}
+	else if ((windowId == 0) && config.hasActionGroup("Root"))
+	{
+		config.setActionGroup("Root");
+	}
+	cmd = config.readPathEntry("Exec");
 
-        sargs[i] = 0;
+	QTextStream ts(&cmd, IO_ReadOnly);
+	QString word;
+	ts >> word;
+	QString exeFile = KStandardDirs::findExe(word);
 
-        execv(exeFile.ascii(), sargs);
-    }
+	if (!exeFile.isEmpty())
+	{
+		char *sargs[MAX_ARGS];
+		sargs[0] = new char [strlen(word.ascii())+1];
+		strcpy(sargs[0], word.ascii());
 
-    // If we end up here then we couldn't start a saver.
-    // If we have been supplied a window id or root window then blank it.
-    Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
-    XSetWindowBackground(qt_xdisplay(), win,
-                        BlackPixel(qt_xdisplay(), qt_xscreen()));
-    XClearWindow(qt_xdisplay(), win);
+		int i = 1;
+		while (!ts.atEnd() && i < MAX_ARGS-1)
+		{
+			ts >> word;
+			if (word == "%w")
+			{
+				word = word.setNum(windowId);
+			}
+
+			sargs[i] = new char [strlen(word.ascii())+1];
+			strcpy(sargs[i], word.ascii());
+			kdDebug() << "word is " << word.ascii() << endl;
+
+			i++;
+		}
+
+		sargs[i] = 0;
+
+		execv(exeFile.ascii(), sargs);
+	}
+
+	// If we end up here then we couldn't start a saver.
+	// If we have been supplied a window id or root window then blank it.
+	Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
+	XSetWindowBackground(qt_xdisplay(), win,
+			BlackPixel(qt_xdisplay(), qt_xscreen()));
+	XClearWindow(qt_xdisplay(), win);
 }
 
+
+KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
+	: KDialogBase( parent, name, true, i18n( "Setup Random Screen Saver" ),
+			Ok|Cancel, Ok, true )
+{
+
+	QFrame *main = makeMainWidget();
+	QGridLayout *grid = new QGridLayout(main, 4, 2, 0, spacingHint() );
+
+	openGL = new QCheckBox( i18n("Use OpenGL screen savers"), main );
+	grid->addWidget(openGL, 0, 0);
+
+	manipulateScreen = new QCheckBox(i18n("Use screen savers that manipulate the screen"), main);
+	grid->addWidget(manipulateScreen, 1, 0);
+
+	setMinimumSize( sizeHint() );
+
+	KConfig config("krandom.kssrc");
+	config.setGroup("Settings");
+	openGL->setChecked(config.readBoolEntry("OpenGL", true));
+	manipulateScreen->setChecked(config.readBoolEntry("ManipulateScreen", true));
+
+	connect( this, SIGNAL( okClicked() ), this, SLOT( slotOkClicked() ) );
+}
+
+void KRandomSetup::slotOkClicked()
+{
+	KConfig config("krandom.kssrc");
+	config.setGroup("Settings");
+	config.writeEntry("OpenGL", openGL->isChecked());
+	config.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
+}
+
+#include "random.moc"

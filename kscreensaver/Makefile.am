@@ -14,7 +14,7 @@ krandom_kss_SOURCES = random.cpp
 kblankscrn_kss_SOURCES = blankscrn.cpp
 kblankscrn_kss_LDADD = $(LIB_KDEUI) -lkscreensaver -lm 
 
-METASOURCES = blankscrn.moc
+METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/kscreensaver.pot
