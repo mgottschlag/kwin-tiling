@@ -31,7 +31,7 @@ class KRandomSetup : public KDialogBase
 
 		private slots:
 
-		void slotOkClicked();
+		void slotOk();
 
 };
 

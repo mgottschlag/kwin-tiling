@@ -43,7 +43,7 @@ protected:
 
 private slots:
 	void slotColor( const QColor & );
-	void slotOkPressed();
+	void slotOk();
 
 private:
 	QWidget *preview;

@@ -223,16 +223,16 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 	config.setGroup("Settings");
 	openGL->setChecked(config.readBoolEntry("OpenGL", true));
 	manipulateScreen->setChecked(config.readBoolEntry("ManipulateScreen", true));
-
-	connect( this, SIGNAL( okClicked() ), this, SLOT( slotOkClicked() ) );
 }
 
-void KRandomSetup::slotOkClicked()
+void KRandomSetup::slotOk()
 {
 	KConfig config("krandom.kssrc");
 	config.setGroup("Settings");
 	config.writeEntry("OpenGL", openGL->isChecked());
 	config.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
+
+	accept();
 }
 
 #include "random.moc"

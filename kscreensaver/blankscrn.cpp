@@ -70,9 +70,6 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	grid->setRowStretch( 3, 20 );
 
 	setMinimumSize( sizeHint() );
-
-	connect( this, SIGNAL( okClicked() ), SLOT( slotOkPressed() ) );
-	connect( this, SIGNAL( cancelClicked() ), SLOT( reject() ) );
 }
 
 // read settings from config file
@@ -91,7 +88,7 @@ void KBlankSetup::slotColor( const QColor &col )
 }
 
 // Ok pressed - save settings and exit
-void KBlankSetup::slotOkPressed()
+void KBlankSetup::slotOk()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
