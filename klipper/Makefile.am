@@ -18,7 +18,7 @@ klipper_SOURCES = dummy.cpp
 klipper_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 klipper_panelapplet_la_LIBADD = klipper.la
-klipper_panelapplet_la_SOURCES = applet.cpp
+klipper_panelapplet_la_SOURCES = applet.cpp applet.skel
 klipper_panelapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
