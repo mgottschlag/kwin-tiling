@@ -52,7 +52,7 @@ EXTRA_DIST = \
 
 noinst_HEADERS = $(EXTRA_DIST)
 
-INCLUDES= $(FREETYPE_INC) $(all_includes) -I../../fonts/
+INCLUDES= $(FREETYPE_INC) $(all_includes) -I$(srcdir)/../../fonts/
 KDE_ICON = kcmfontinst
 
 pics_DATA = kcmfontinst_star_office.png
