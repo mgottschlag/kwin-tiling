@@ -25,10 +25,11 @@
 
 #include "kswallow.h"
 #include "kswallow.moc"
+#include "qxembed.moc"
 
 
 KSwallowWidget::KSwallowWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+  : QXEmbed(parent, name)
 {
   window = 0;
   setFocusPolicy(StrongFocus);
@@ -36,36 +37,11 @@ KSwallowWidget::KSwallowWidget(QWidget *parent, const char *name)
 }
 
 
-void KSwallowWidget::resizeEvent(QResizeEvent*)
-{
-  if (window != 0)
-    XResizeWindow(qt_xdisplay(), window, width(), height());
-}
-
-void KSwallowWidget::focusInEvent( QFocusEvent * ){
-  // workarund: put the focus onto the swallowed widget (ettrich)
-  // TODO: When we switch to a newer qt than qt-1.33 this hack should
-  // be replaced with my new kswallow widget!
-  if (isActiveWindow() && isVisible()){ // isActiveWindow is important here!
-    // verify wether the window still belongs to us
-    unsigned int nwins;
-    Window dw1, dw2, *wins;
-    XQueryTree(qt_xdisplay(), winId(), 
-	       &dw1, &dw2, &wins, &nwins);
-    if (nwins)
-      XSetInputFocus(qt_xdisplay(), window, RevertToParent, CurrentTime);
-  }
-}
 
 void KSwallowWidget::swallowWindow(Window w)
 {
   window = w;
 
-  KWM::prepareForSwallowing(w);
-
-  XReparentWindow(qt_xdisplay(), w, winId(), 0, 0);
-  XMapRaised(qt_xdisplay(), w);
- 
   // let the swallowd window set the size
   int x, y;
   unsigned int width, height, dummy;
@@ -78,9 +54,9 @@ void KSwallowWidget::swallowWindow(Window w)
     height = parentWidget()->height();
   parentWidget()->resize(width,height);
   resize(width,height);
-  XResizeWindow(qt_xdisplay(), window, width, height);
 
   orig = QSize(width,height);
- 
+
+  QXEmbed::embed( w );
   show();
 }

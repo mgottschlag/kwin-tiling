@@ -41,6 +41,7 @@
 #include "configlist.moc"
 #include "configlist.h"
 
+static QListView* listview = 0;
 
 // ---------------------------------------------------------------
 // class KModuleList
@@ -120,7 +121,7 @@ void KModuleListEntry::parseKdelnkFile(const QString &fn)
   comment =  config.readEntry("Comment");
   name =     config.readEntry("Name", i18n("Unknown module: ")+fn);
   init =     config.readEntry("Init");
-  
+
   //create a unique swallow title. IGNORE SwallowTitle settings in the kdelnk file (ettrich)
   swallowTitle = "skcm:"; // (s)wallow (k) (c)ontrol (m)odule
   swallowTitle += name;
@@ -180,11 +181,14 @@ bool KModuleListEntry::execute(QWidget *parent)
       // swallowing? then move out of screen, set unique title
       if (isSwallow())
 	{
+	    QApplication::setOverrideCursor(waitCursor);
+	    
+	  // Avoid flickering a la kwm! (ettrich)
+	  KWM::doNotManage(swallowTitle);
+	  
 	  *process << "-swallow" << swallowTitle;
 	  //	  *process << "-geometry" << "480x480+10000+10000";
 
-	  // Avoid flickering a la kwm! (ettrich)
-	  KWM::doNotManage(swallowTitle);
 
 	  // connect to KWM events to get notification if window appears
 	  connect(kapp, SIGNAL(windowAdd(Window)), this, SLOT(addWindow(Window)));
@@ -235,15 +239,15 @@ bool KModuleListEntry::execute(QWidget *parent)
   else
     if (swallowWidget)
       {
-	if (visibleWidget && visibleWidget != swallowWidget) 
+	if (visibleWidget && visibleWidget != swallowWidget)
 	  visibleWidget->hide();
 
         // let the toplevel widget resize if necessary
-        connect(this, SIGNAL(ensureSize(int,int)), 
+        connect(this, SIGNAL(ensureSize(int,int)),
           qApp->mainWidget(), SLOT(ensureSize(int,int)));
         emit ensureSize(swallowWidget->getOrigSize().width(),
           swallowWidget->getOrigSize().height());
-        disconnect(this, SIGNAL(ensureSize(int,int)), 
+        disconnect(this, SIGNAL(ensureSize(int,int)),
           qApp->mainWidget(), SLOT(ensureSize(int,int)));
 
         swallowWidget->resize(swallowParent->width(), swallowParent->height());
@@ -251,7 +255,6 @@ bool KModuleListEntry::execute(QWidget *parent)
 	swallowWidget->raise();
 	swallowWidget->show();
 
-	swallowWidget->setFocus(); //workaround (ettrich)
 
 	KModuleListEntry::visibleWidget = swallowWidget;
       }
@@ -268,9 +271,20 @@ void KModuleListEntry::processExit(KProcess *proc)
       process = 0;
 
       if (visibleWidget && visibleWidget == swallowWidget){
-	//Workaround /see kswallow.cpp (ettrich)
-	XSetInputFocus(qt_xdisplay(), visibleWidget->topLevelWidget()->winId(),
-		       RevertToPointerRoot, CurrentTime);
+
+	  if ( visibleWidget->topLevelWidget()->isActiveWindow() ) {
+	      XSetInputFocus(qt_xdisplay(), visibleWidget->topLevelWidget()->winId(),
+			     RevertToPointerRoot, CurrentTime);
+	      XEvent e;
+	      e.type = FocusIn;
+	      e.xfocus.window = visibleWidget->topLevelWidget()->winId();
+	      e.xfocus.mode = NotifyNormal;
+	      e.xfocus.detail = NotifyDetailNone;
+	      XSendEvent(qt_xdisplay(), visibleWidget->topLevelWidget()->winId(), 0, FALSE, &e);
+	  }
+	  
+	if (listview)
+	    listview->setFocus();
 	visibleWidget = 0;
       }
 
@@ -282,7 +296,7 @@ void KModuleListEntry::processExit(KProcess *proc)
 
 void KModuleListEntry::addWindow(Window w)
 {
-    
+
    if (getSwallowTitle() == KWM::title(w))
     {
       if (!swallowWidget)
@@ -294,16 +308,16 @@ void KModuleListEntry::addWindow(Window w)
 	  visibleWidget = swallowWidget;
 	}
 
+      QApplication::restoreOverrideCursor();
       swallowWidget->swallowWindow(w);
-      swallowWidget->setFocus(); //workaround (ettrich)
 
       // let the toplevel widget resize if necessary
-      connect(this, SIGNAL(ensureSize(int,int)), 
+      connect(this, SIGNAL(ensureSize(int,int)),
         qApp->mainWidget(), SLOT(ensureSize(int,int)));
       emit ensureSize(swallowWidget->width(), swallowWidget->height());
-      disconnect(this, SIGNAL(ensureSize(int,int)), 
+      disconnect(this, SIGNAL(ensureSize(int,int)),
         qApp->mainWidget(), SLOT(ensureSize(int,int)));
-     
+
       swallowWidget->resize(swallowParent->size());
       // disconnect from KWM events
       disconnect(kapp, SIGNAL(windowAdd(Window)), this, SLOT(addWindow(Window)));
@@ -328,6 +342,28 @@ void KModuleListEntry::insertInit(QStrList *list)
 // ---------------------------------------------------------------
 // class ConfigList
 
+
+ConfigTreeItem::ConfigTreeItem(QListView * parent, KModuleListEntry *e)
+    : QListViewItem( parent )	
+{ 
+    moduleListEntry = e; 
+    if (!e)
+	return;
+    setText(0, e->getName());
+    setPixmap(0, e->getIcon());
+};
+
+ConfigTreeItem::ConfigTreeItem(QListViewItem * parent, KModuleListEntry *e ) 
+    : QListViewItem( parent )
+{ 
+    if (!e)
+	return;
+    moduleListEntry = e; 
+    setText(0, e->getName());
+    setPixmap(0, e->getIcon());
+};
+
+
 ConfigList::ConfigList()
 {
   modules = new KModuleListEntry(kapp->kde_appsdir()+"/Settings");
@@ -339,59 +375,35 @@ ConfigList::~ConfigList()
 }
 
 
-void ConfigList::insertEntry(KTreeList *list, KPath *path, KModuleListEntry *entry, bool root)
+void ConfigList::insertEntry(QListView *list, ConfigTreeItem* parent, KModuleListEntry *entry, bool root)
 {
-  ConfigTreeItem *item;
-  QPixmap icon;
+  ConfigTreeItem *item = 0;
 
   if (!entry)
     return;
-
-  if (entry->isDirectory())
-    {
-      // add directory
-      item = new ConfigTreeItem(entry);
-      item->setText(entry->getName());
-      icon = entry->getIcon();
-      item->setPixmap(&icon);
-
-      if (path->top())
-	list->addChildItem(item, path);
+  if (!root) {
+      if (parent)
+	  item = new ConfigTreeItem(parent, entry);
       else
-	if (!root)
-	  list->insertItem(item);
+	  item = new ConfigTreeItem(list, entry);
+  }  
 
-      // add children
-      if (!root)
-	path->push(&entry->getName());
+  if ( entry->getChildren() ) {
+      if (item)
+	  item->setSelectable( FALSE );
       for (KModuleListEntry *current = entry->getChildren()->first(); current != 0; current = entry->getChildren()->next())
-	{
-	  insertEntry(list, path, current, FALSE);
-	}
-      if (!root)
-      path->pop();
-    }
-  else
-    {
-      // add application
-      item = new ConfigTreeItem(entry);
-      item->setText(entry->getName());
-      icon = entry->getIcon();
-      item->setPixmap(&icon);
-      if (path->count() > 0)
-        list->addChildItem(item, path);
-      else
-        list->insertItem(item);
-    }
+	  {
+	      insertEntry(list, item, current);
+	  }
+  }
 }
 
 
-void ConfigList::fillTreeList(KTreeList *list)
+void ConfigList::fillTreeList(QListView *list)
 {
-  KPath path;
-
-  if (modules)
-    insertEntry(list, &path, modules, TRUE);
+    listview = listview;
+    if (modules)
+	insertEntry(list, 0,  modules, TRUE);
 }
 
 

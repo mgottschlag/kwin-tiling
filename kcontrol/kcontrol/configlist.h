@@ -2,21 +2,21 @@
   configlist.h - internally used by the KDE control center
 
   written 1997 by Matthias Hoelzer
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-   
+
   */
 
 
@@ -28,10 +28,11 @@
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qtabdialog.h>
-#include <ktreelist.h>
+#include <qlistview.h>
 #include <qlist.h>
 #include <kprocess.h>
 #include <kwm.h>
+#include <qlistview.h>
 
 #include "kswallow.h"
 
@@ -44,7 +45,7 @@ public:
 
   KModuleListEntry(const QString &fn);
   ~KModuleListEntry();
-  
+
   QList<KModuleListEntry> *getChildren() { return children; };
 
   QString &getFilename() { return filename; };
@@ -58,7 +59,7 @@ public:
 
   bool    isDirectory()  { return (children != 0) && (children->count() > 0); };
   bool    isSwallow()    { return swallowingEnabled && swallow; };
-  
+
   bool    execute(QWidget *parent);
 
   KSwallowWidget *getSwallowWidget() { return swallowWidget; };
@@ -66,7 +67,7 @@ public:
   static KSwallowWidget *visibleWidget;
 	
   static bool swallowingEnabled;
-  
+
   void insertInit(QStrList *list);
 
 private:
@@ -100,19 +101,20 @@ private slots:
 signals:
 
   void ensureSize(int w, int h);
-   
+
 };
 
 
 // -----------------------------------
 
 
-class ConfigTreeItem : public KTreeListItem
+class ConfigTreeItem : public QListViewItem
 {
 public:
 
-  ConfigTreeItem(KModuleListEntry *e = NULL) { moduleListEntry = e; };
-  
+  ConfigTreeItem(QListView * parent, KModuleListEntry *e = NULL);
+  ConfigTreeItem(QListViewItem * parent, KModuleListEntry *e = NULL) ;
+
   KModuleListEntry *moduleListEntry;
 };
 
@@ -120,25 +122,25 @@ public:
 class ConfigList
 {
 public:
-  
-  ConfigList(); 
+
+  ConfigList();
   ~ConfigList();
-    
+
   void loadConfigModules();
 
   bool select(QString name);
 
-  void fillTreeList(KTreeList *list);
+  void fillTreeList(QListView *list);
 
   void doInit();
 
   void raiseWidget(KSwallowWidget *widget);
-  
+
 private:
-  
+
   KModuleListEntry *modules;
 
-  void insertEntry(KTreeList *list, KPath *path, KModuleListEntry *entry, bool root);
+  void insertEntry(QListView *list, ConfigTreeItem* parent, KModuleListEntry *entry, bool root = FALSE);
 
 };
 

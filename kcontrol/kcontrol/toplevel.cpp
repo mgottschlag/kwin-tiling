@@ -26,6 +26,7 @@
 #include <kiconloader.h>
 #include <kmsgbox.h>
 #include "toplevel.moc"
+#include <qheader.h>
 
 
 void MySplitter::resizeEvent(QResizeEvent *event)
@@ -48,7 +49,11 @@ TopLevel::TopLevel (ConfigList *cl)
   splitter = new MySplitter(this);
   connect(splitter, SIGNAL(resized()), this, SLOT(doResize()));
 
-  treelist = new KTreeList(splitter);
+  treelist = new QListView(splitter);
+  treelist->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
+  treelist->setRootIsDecorated( TRUE );
+  treelist->addColumn("");
+  treelist->header()->hide();
   configList->fillTreeList(treelist);
   treelist->setMinimumWidth(200);
   splitter->setResizeMode(treelist,QSplitter::KeepSize);
@@ -56,8 +61,9 @@ TopLevel::TopLevel (ConfigList *cl)
   mwidget = new mainWidget(splitter);
   connect(mwidget, SIGNAL(resized()), this, SLOT(doResize()));
 
-  connect(treelist, SIGNAL(selected(int)), this, SLOT(item_selected(int)));
-  connect(treelist, SIGNAL(singleSelected(int)), this, SLOT(item_singleSelected(int)));
+//   connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
+  connect(treelist, SIGNAL(returnPressed(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
+  connect(treelist, SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
 
   setView(splitter);
   setMinimumSize(450,200);
@@ -127,44 +133,15 @@ void TopLevel::doResize()
 }
 
 
-void TopLevel::item_selected(int item)
+void TopLevel::itemSelected( QListViewItem *listEntry)
 {
-  KModuleListEntry *listEntry = getListEntry(item);
-
-  if (listEntry)
-    if (listEntry->isDirectory())
-      treelist->expandOrCollapseItem(item);
-    else
-      listEntry->execute(mwidget);
+    if (!listEntry)
+	return;
+    ConfigTreeItem* cti = (ConfigTreeItem*)listEntry;
+    cti->moduleListEntry->execute(mwidget);
 }
 
 
-void TopLevel::item_singleSelected(int item)
-{
-  KModuleListEntry *listEntry = getListEntry(item);
-  QString          hint;
-
-  if (listEntry)
-    hint = listEntry->getComment();
-
-  statusbar->changeItem(hint.data(), ID_GENERAL);
-
-  if (listEntry && !listEntry->isDirectory())
-    listEntry->execute(mwidget);
-}
-
-
-KModuleListEntry *TopLevel::getListEntry(int item)
-{
-  ConfigTreeItem *list_item;
-
-  list_item = (ConfigTreeItem *) treelist->itemAt(item);
-
-  if (list_item == NULL)
-    return NULL;
-  else
-    return list_item->moduleListEntry;
-}
 
 
 void TopLevel::swallowChanged()
@@ -195,7 +172,7 @@ void TopLevel::ensureSize(int w, int h)
   // the menubar
   KConfig* config = kapp->getConfig();
   config->setGroup("KDE");
-  if (config->readEntry("macStyle") == "on") 
+  if (config->readEntry("macStyle") == "on")
      height += statusbar->height();
   else
     height += menubar->height()+statusbar->height();
