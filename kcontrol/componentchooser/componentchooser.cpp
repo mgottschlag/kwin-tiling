@@ -423,6 +423,10 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
                         cfgcomp->ChooserDocu->setText(i18n("Choose from the list below which component should be used by default for the %1 service.").arg(it->text()));
 			newConfigWidget = cfgcomp;
 		}
+                else
+                {
+                        static_cast<CfgComponent*>(configWidget)->ChooserDocu->setText(i18n("Choose from the list below which component should be used by default for the %1 service.").arg(it->text()));
+                }
 	}
 	else if (cfgType=="internal_email")
 	{
