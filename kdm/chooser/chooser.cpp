@@ -54,21 +54,24 @@ bool MyApp::x11EventFilter(XEvent * ev)
 }
 
 static KCmdLineOptions options[] = {
-    /* XXX use I18N_NOOP !!!! */
-    {"xdmaddress <addr>", "Specify the chooser socket (in hex)", 0},
-    {"clientaddress <addr>", "Specify the client ip (in hex)", 0},
-    {"connectionType <type>", "Specify the connection type (in dec)", 0},
-    {"+[host]", "Specify the hosts to list or use BROADCAST", 0}
+    {"xdmaddress <addr>", I18N_NOOP("Specify the chooser socket (in hex)"), 0},
+    {"clientaddress <addr>", I18N_NOOP("Specify the client ip (in hex)"), 0},
+    {"connectionType <type>", I18N_NOOP("Specify the connection type (in dec)"), 0},
+    {"+[host]", I18N_NOOP("Specify the hosts to list or use BROADCAST"), 0}
 };
 
 int main(int argc, char **argv)
 {
+    if (!getenv( "HOME" ))
+	setenv( "HOME", "/tmp", 1 );	/* for QSettings */
+    KApplication::disableAutoDcopRegistration();
+
     KCmdLineArgs::init(argc, argv, "chooser", description, version);
     KCmdLineArgs::addCmdLineOptions(options);
 
-    CXdmcp *cxdmcp = new CXdmcp();
-
     MyApp app;
+
+    CXdmcp *cxdmcp = new CXdmcp();
 
     kchooser = new ChooserDlg(cxdmcp);
 
