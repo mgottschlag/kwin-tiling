@@ -201,13 +201,11 @@ char **
 xCopyStrArr (int rn, char **arr)
 {
     char **rarr;
-    int nnu, nu, i;
+    int nu;
 
     nu = arrLen (arr);
-    nnu = nu + rn;
-    if ((rarr = calloc (sizeof (char *), nnu + 1)))
-	for (i = 0; i < nu; i++)
-	    rarr[rn + i] = arr[i];
+    if ((rarr = calloc (sizeof(char *), nu + rn + 1)))
+	memcpy (rarr + rn, arr, sizeof(char *) * nu);
     return rarr;
 }
 
@@ -215,12 +213,11 @@ void
 mergeStrArrs (char ***darr, char **arr)
 {
     char **rarr;
-    int nu, i;
+    int nu;
 
     nu = arrLen (*darr);
     if ((rarr = xCopyStrArr (nu, arr))) {
-	for (i = 0; i < nu; i++)
-	    rarr[i] = (*darr)[i];
+	memcpy (rarr, *darr, sizeof(char *) * nu);
 	free (*darr);
 	*darr = rarr;
     }
