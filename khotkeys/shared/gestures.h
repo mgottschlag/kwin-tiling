@@ -72,13 +72,16 @@ class Gesture
         void enable( bool enable_P );
         void set_mouse_button( unsigned int button_P );
         void set_timeout( int time_P );
-    signals:
-        void handle_gesture( const QString &gesture );
+        void register_handler( QObject* receiver_P, const char* slot_P );
+        void unregister_handler( QObject* receiver_P, const char* slot_P );
     protected:
 	virtual bool x11Event( XEvent* ev_P );
     private slots:
         void stroke_timeout();
+    signals:
+        void handle_gesture( const QString &gesture );
     private:
+        void update_grab();
         void grab_mouse( bool grab_P );
         void mouse_replay( bool release_P );
         bool _enabled;
@@ -88,6 +91,7 @@ class Gesture
         bool recording;
         unsigned int button;
         int timeout;
+        QMap< QObject*, bool > handlers; // bool is just a dummy
     };
 
 // Gesture class must be QWidget derived because of x11Event()

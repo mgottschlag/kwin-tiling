@@ -297,24 +297,19 @@ const QString Window_trigger::description() const
 // Gesture_trigger
 
 Gesture_trigger::Gesture_trigger( Action_data* data_P, const QString &gesturecode_P )
-    : Trigger( data_P ), _gesturecode( gesturecode_P ), _active( false )
+    : Trigger( data_P ), _gesturecode( gesturecode_P )
     {
-    connect( gesture_handler, SIGNAL( handle_gesture( const QString& )),
-        this, SLOT( handle_gesture( const QString & )));
     }
     
 Gesture_trigger::Gesture_trigger( KConfig& cfg_P, Action_data* data_P )
-    : Trigger( cfg_P, data_P ), _active(false)
+    : Trigger( cfg_P, data_P )
     {
     _gesturecode = cfg_P.readEntry( "Gesture" );
-    connect( gesture_handler, SIGNAL( handle_gesture( const QString& )),
-        this, SLOT( handle_gesture( const QString & )));
     }
 
 Gesture_trigger::~Gesture_trigger()
     {
-    disconnect( gesture_handler, SIGNAL( handle_gesture( const QString& )),
-        this, SLOT( handle_gesture( const QString& )));
+    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
     }
     
 void Gesture_trigger::cfg_write( KConfig& cfg_P ) const
@@ -337,13 +332,16 @@ const QString Gesture_trigger::description() const
     
 void Gesture_trigger::handle_gesture( const QString &gesture_P )
     {
-    if( _active && gesturecode() == gesture_P )
+    if( gesturecode() == gesture_P )
         data->execute();
     }
 
 void Gesture_trigger::activate( bool activate_P )
     {
-    _active = ( activate_P && khotkeys_active());
+    if( activate_P )
+        gesture_handler->register_handler( this, SLOT( handle_gesture( const QString & )));
+    else
+        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
     }
     
 } // namespace KHotKeys

@@ -48,8 +48,6 @@ Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
     assert( gesture_handler == NULL );
     gesture_handler = this;
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
-// HACK needs to be enabled explicitly, otherwise the grab is done before reading settings
-//    enable( enabled_P );
     }
       
 Gesture::~Gesture()
@@ -64,7 +62,12 @@ void Gesture::enable( bool enabled_P )
         return;
     _enabled = enabled_P;
     assert( button != 0 );
-    if( _enabled )
+    update_grab();
+    }
+    
+void Gesture::update_grab()
+    {
+    if( _enabled && handlers.count() > 0 )
         {
         kapp->installX11EventFilter( this );
         // CHECKME at se grabuje jen kdyz je alespon jedno gesto?
@@ -76,6 +79,28 @@ void Gesture::enable( bool enabled_P )
         grab_mouse( false );
         kapp->removeX11EventFilter( this );
         }
+    }
+
+void Gesture::register_handler( QObject* receiver_P, const char* slot_P )
+    {
+    if( handlers.contains( receiver_P ))
+        return;
+    handlers[ receiver_P ] = true;
+    connect( this, SIGNAL( handle_gesture( const QString& )),
+        receiver_P, slot_P );
+    if( handlers.count() == 1 )
+        update_grab();
+    }
+
+void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
+    {
+    if( !handlers.contains( receiver_P ))
+        return;
+    handlers.remove( receiver_P );
+    disconnect( this, SIGNAL( handle_gesture( const QString& )),
+        receiver_P, slot_P );
+    if( handlers.count() == 0 )
+        update_grab();
     }
 
 bool Gesture::x11Event( XEvent* ev_P )
@@ -133,11 +158,12 @@ void Gesture::stroke_timeout()
 
 void Gesture::mouse_replay( bool release_P )
     {
-    grab_mouse( false );
+    bool was_enabled = _enabled;
+    enable( false );
     Mouse::send_mouse_button( button, release_P );
-    grab_mouse( true );
+    enable( was_enabled );
     }
-    
+
 void Gesture::grab_mouse( bool grab_P )
     {
     if( grab_P )
@@ -151,10 +177,13 @@ void Gesture::grab_mouse( bool grab_P )
             ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
             None, None );
         bool err = handler.error( true );
-        kdDebug( 1217 ) << "Grab:" << ret << ":" << err << endl;
+        kdDebug( 1217 ) << "Gesture grab:" << ret << ":" << err << endl;
         }
     else
+        {
+        kdDebug( 1217 ) << "Gesture ungrab" << endl;
         XUngrabButton( qt_xdisplay(), button, AnyModifier, qt_xrootwin());
+        }
     }
 
 void Gesture::set_mouse_button( unsigned int button_P )

@@ -137,7 +137,6 @@ class Gesture_trigger
         void handle_gesture( const QString& gesture_P );
     private:
         QString _gesturecode;
-        bool _active;
     };
 
 //***************************************************************************
