@@ -288,6 +288,10 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 	if (m_bPreview) {
 	    int xs = wp.width() * m_Size.width() / m_rSize.width();
 	    int ys = wp.height() * m_Size.height() / m_rSize.height();
+	    if ((xs < 1) || (ys < 1))
+	    {
+	       xs = ys = 1;
+	    }
 	    wp = wp.smoothScale(xs, ys);
 	}
     }
