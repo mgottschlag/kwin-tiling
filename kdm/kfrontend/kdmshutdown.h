@@ -84,8 +84,8 @@ public: // from KGVerifyHandler
 };
 
 
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
 class LiloHandler {
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
 public:
     LiloHandler();
     ~LiloHandler();
@@ -95,13 +95,11 @@ public:
     LiloInfo		*liloInfo;
     QComboBox		*targets;
     int			defaultLiloTarget, oldLiloTarget;
-};
 #endif
+};
 
 class KDMShutdown : public KDMShutdownBase
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
 		  , public LiloHandler
-#endif
 {
     Q_OBJECT
     typedef KDMShutdownBase inherited;
@@ -147,9 +145,7 @@ signals:
 };
 
 class KDMSlimShutdown : public FDialog
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
 		      , public LiloHandler
-#endif
 {
     Q_OBJECT
     typedef FDialog inherited;
