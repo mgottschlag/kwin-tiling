@@ -62,7 +62,7 @@ kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 rccontroldir = $(kde_datadir)/kcontrol
 rccontrol_DATA = kcontrolui.rc
 rcinfodir = $(kde_datadir)/kinfocenter
-rcinfo_DATA = kcontrolui.rc
+rcinfo_DATA = kinfocenterui.rc
 
 data_DATA = KControl.desktop
 datadir = $(kde_appsdir)/Settingsmenu
