@@ -446,14 +446,14 @@ void KCMStyle::save()
 		(cbEnableEffects->isChecked()) &&
 		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
     {
-		warn_string += "Menu translucency is not available.<br>";
+		warn_string += i18n("Menu translucency is not available.<br>");
 		comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
 		show_warning = true;
 	}
 
 	if (!allowMenuDropShadow && cbMenuShadow->isChecked())
 	{
-		warn_string += "Menu drop-shadows are not available.";
+		warn_string += i18n("Menu drop-shadows are not available.");
 		cbMenuShadow->setChecked(false);
 		show_warning = true;
 	}
