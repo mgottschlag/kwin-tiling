@@ -52,15 +52,6 @@ DockContainer::~DockContainer()
   deleteModule();
 }
 
-bool DockContainer::event( QEvent * e )
-{
-    if ( e->type() == QEvent::LayoutHint ) {
-	qDebug("dock container layout hint");
-	updateGeometryEx();
-    }
-    return QWidget::event( e );
-}
-
 void DockContainer::setBaseWidget(QWidget *widget)
 {
   delete _basew;
@@ -72,7 +63,7 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
   _basew->resize( size() );
   emit newModule(widget->caption(), "", "");
-  updateGeometryEx();
+  updateGeometry();
 }
 
 QSize DockContainer::minimumSizeHint() const
@@ -145,16 +136,8 @@ i18n("There are unsaved changes in the active module.\n"
   _busy->hide();
 
   KCGlobal::repairAccels( topLevelWidget() );
-  updateGeometryEx();
+  updateGeometry();
   return true;
-}
-
-void DockContainer::updateGeometryEx()
-{
-    // workaround a QSplitter bug in Qt 3.0.3
-    updateGeometry();
-//     if ( parentWidget() && parentWidget()->inherits("QSplitter") )
-// 	parentWidget()->updateGeometry();
 }
 
 void DockContainer::removeModule()
@@ -168,7 +151,7 @@ void DockContainer::removeModule()
   else
       emit newModule("", "", "");
 
-  updateGeometryEx();
+  updateGeometry();
 }
 
 void DockContainer::deleteModule()

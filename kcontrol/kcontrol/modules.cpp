@@ -24,8 +24,7 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
-
-
+#include <qvbox.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -101,6 +100,8 @@ void ConfigModule::deleteClient()
 
   delete _embedWidget;
   _embedWidget = 0;
+  delete _embedFrame;
+  _embedFrame = 0;
   kapp->syncX();
 
   delete _module;
@@ -141,10 +142,18 @@ void ConfigModule::runAsRoot()
   // create an embed widget that will embed the
   // kcmshell running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
-  _embedWidget = new QXEmbed(_module->parentWidget());
-  _embedLayout->addWidget(_embedWidget,1);
+  _embedFrame = new QVBox( _module->parentWidget() );
+  _embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
+  QPalette pal( red );
+  pal.setColor( QColorGroup::Background, 
+		_module->parentWidget()->colorGroup().background() );
+  _embedFrame->setPalette( pal );
+  _embedFrame->setLineWidth( 2 );
+  _embedFrame->setMidLineWidth( 2 );
+  _embedLayout->addWidget(_embedFrame,1);
+  _embedWidget = new QXEmbed(_embedFrame );
   _module->hide();
-  _embedWidget->show();
+  _embedFrame->show();
   QLabel *_busy = new QLabel(i18n("<big>Loading ...</big>"), _embedWidget);
   _busy->setAlignment(AlignCenter);
   _busy->setTextFormat(RichText);
@@ -186,7 +195,7 @@ void ConfigModule::runAsRoot()
     }
 
   // clean up in case of failure
-  delete _embedWidget;
+  delete _embedFrame;
   _embedWidget = 0;
   delete _embedLayout;
   _embedLayout = 0;

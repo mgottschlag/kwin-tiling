@@ -35,7 +35,7 @@ class ProxyWidget;
 class KProcess;
 class QXEmbed;
 class QVBoxLayout;
-
+class QVBox;
 
 class ConfigModule : public ModuleInfo
 {
@@ -78,6 +78,7 @@ private:
 
   bool         _changed;
   ProxyWidget *_module;
+  QVBox       *_embedFrame;
   QXEmbed     *_embedWidget;
   KProcess    *_rootProcess;
   QVBoxLayout *_embedLayout;
