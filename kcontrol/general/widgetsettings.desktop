@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell general 
+Exec=kcmshell widgetsettings
 Icon=style
 Type=Application
 DocPath=kcontrol/widgetstyle.html
