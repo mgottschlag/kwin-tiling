@@ -1,5 +1,5 @@
 /*
- * klangcombo.cpp - A combobox to select a language
+ * ktagcombobox.cpp - A combobox with support for submenues, icons and tags
  *
  * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *

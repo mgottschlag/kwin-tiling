@@ -1,5 +1,5 @@
 /*
- * klangcombo.cpp - A combobox to select a language
+ * klangcombo.cpp - Adds some methods for inserting languages.
  *
  * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *

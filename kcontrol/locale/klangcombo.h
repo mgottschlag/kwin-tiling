@@ -1,7 +1,7 @@
 /*
- * klangcombo.h - A combobox to select a language
+ * klangcombo.h - Adds some methods for inserting languages.
  *
- * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -28,8 +28,7 @@
 #include "ktagcombobox.h"
 
 /*
- * This class should be just like qcombobox, but it should be possible
- * to have have a QIconSet for each entry, and each entry should have a tag.
+ * Extends KTagCombo to support adding and changing languages.
  *
  * It has also support for sub menues.
  */
