@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-DocPath=kcontrol/kcmkio/kio-3.html
+DocPath=kcontrol/windows-shares.html
 Icon=samba
 Exec=kcmshell Network/smb
 
@@ -17,6 +17,7 @@ Name[eo]=Vindozaj retdosierujoj
 Name[et]=Windows ressursid
 Name[fi]=Windows jaot
 Name[fr]=Partages Windows
+Name[gl]=Comparticións do Windows
 Name[he]=Windows יפותיש
 Name[hu]=Megosztott Windows-erőforrások
 Name[it]=Condivisioni Windows
@@ -47,7 +48,9 @@ Comment[es]=Úselo para configurar qué sistemas de ficheros windows (SMNB) pued
 Comment[et]=Saad konfigureerida, mis windows'i (SMB) jagatud resursse sa saad lehitseda
 Comment[fi]=Käytä asettaaksesi windowsin (SMB) tiedostojärjestelmiä, joita voit selata
 Comment[fr]=Configuration des systèmes de fichiers Windows (SMB)
+Comment[gl]=Úseo para configurar os sistemas de ficheiros windows (SMB) que pode explorar
 Comment[he]=.ןייעל לכות (SMB) Windows לש םיצבק תוכרעמ וליאב עובקל ידכ הזב שמתשה
+Comment[hr]=Koristi se za podešavanje koje Windows (SMB) datotečne sustave smijete pregledavati
 Comment[hu]=A windows-os (SMB) fájlrendszerek beállításai
 Comment[it]=Utilizzalo per configurare quali filesystem windows (SMB) si possono sfogliare
 Comment[ja]=windows(SMB)ファイルシステムをブラウズするための設定
@@ -80,7 +83,9 @@ Keywords[es]=SMB,SAMBA,cliente SMB,Red Windows,Red LAN,Red,vecindario
 Keywords[et]=SMB,SAMBA,SMB klient,Windowsi võrk,LAN,Võrk,naabrus
 Keywords[fi]=SMB,SAMBA,SMB-asiakas,Windows verkko,LAN,Verkko,Naapuruus
 Keywords[fr]=SMB,SAMBA,client SMB,réseau Windows,LAN,réseau local,réseau,voisinage
+Keywords[gl]=SMB,SAMBA,cliente SMB,rede Windows,LAN,Rede,veciñanza
 Keywords[he]=םינכש,תשר,LAN,Windows תשר,SMB חוקל,SAMBA,SMB
+Keywords[hr]=SMB,SAMBA,SMB client,Windows network,LAN,Network,SMB klijent,Windows mreža,mreža,lokalna mreža
 Keywords[hu]=SMB,SAMBA,SMB-kliens,Windows-hálózat,LAN,hálózat
 Keywords[it]=SMB,SAMBA,Client SMB,Rete Windows,LAN,Rete,Risorse di rete
 Keywords[ja]=SMB,SAMBA,SMBクライアント,Windowsネットワーク,LAN,ネットワーク,neighborhood
