@@ -24,11 +24,12 @@ esac
 
 # start windowmanager
 which -s "$1" && exec "$1"
+which -s "start$1" && exec "start$1"
 
 # windowmanager not found, tell user
 message="Sorry, $1 not found."
-if which -s "$1"; then
-  exec kdialog --msgbox "$message"
+if [ `which kmessage` ]; then
+  exec kmessage -center "$message"
 else
   exec xmessage -center "$message"
 fi
