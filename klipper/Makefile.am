@@ -18,6 +18,10 @@ klipper_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 appsdir = $(kde_appsdir)/Utilities
 apps_DATA = klipper.desktop
+
+autostartdir = $(prefix)/share/autostart
+autostart_DATA = klipper.desktop
+
 data_DATA = klipperrc
 
 datadir = $(kde_confdir)
