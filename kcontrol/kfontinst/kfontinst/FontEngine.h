@@ -105,8 +105,7 @@ class CFontEngine
         NAME       = 0x1,    // Read name
         PROPERTIES = 0x2,    // Read weight, familiy, and postscript names
         XLFD       = 0x4,    // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
-        PREVIEW    = 0x8,    // Only really affects fonts opened with FreeType
-        AFM        = NAME|PROPERTIES|XLFD|PREVIEW   // For AFM, just read all properties...
+        AFM        = NAME|PROPERTIES|XLFD   // For AFM, just read all properties...
     };
 
     struct TGlyphInfo

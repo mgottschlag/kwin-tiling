@@ -947,7 +947,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
     char data[constHeaderMaxLen];
     bool status=false;
 
-    if(TEST==mask || mask&PREVIEW || mask&XLFD)
+    if(TEST==mask || mask&XLFD)
     {
         if(FT_New_Face(itsFt.library, file.local8Bit(), 0, &itsFt.face))
             return false;
