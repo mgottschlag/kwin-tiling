@@ -1,37 +1,55 @@
-Please help keeping this file up-to-date. Thanks.
+Please help keep this file up-to-date. Thanks.
 [ ] not started
 [s] started
 [x] done
 
 Please start translating QWhatsThis only when it is marked
-as proof-read thanks.
+as proof-read. Thanks.
 
 
-              WhatsThis   proof-read    Manual
-arts             [ ]         [ ]         [ ] 
-bell             [ ]         [ ]         [ ]
-clock            [ ]         [ ]         [ ]
-display          [s]         [ ]         [ ]
-drkonqi          [ ]         [ ]         [ ]
-ebrowsing        [ ]         [ ]         [ ]
-email            [x]         [x]         [ ]
-filetypes        [x]         [x]         [ ]
-info             [ ]         [ ]         [ ]
-input            [x]         [x]         [ ]
-kdm              [ ]         [ ]         [ ]
-keys             [ ]         [ ]         [ ]
-kicker           [s]         [ ]         [ ]
-kio              [s]         [ ]         [ ]
-knotify          [ ]         [ ]         [ ]
-konq             [x]         [x]         [ ]
-konqhtml         [s]         [ ]         [ ]
-kwm              [ ]         [ ]         [ ]
-locale           [s]         [ ]         [ ]
-midi             [ ]         [ ]         [ ]
-odbc             [ ]         [ ]         [ ]
-passwords        [x]         [x]         [ ]
-root             [ ]         [ ]         [ ]
-samba            [ ]         [ ]         [ ]
-syssound         [ ]         [ ]         [ ]
-themes           [ ]         [ ]         [ ]
-
+                   WhatsThis   proof-read    Manual
+arts                  [ ]         [ ]         [ ] 
+bell                  [ ]         [ ]         [ ]
+clock                 [ ]         [ ]         [ ]
+display
+  advanced.cpp        [ ]         [ ]         [ ]
+  backgnd.cpp         [ ]         [ ]         [ ]
+  colorscm.cpp        [x]         [x]         [ ]
+  energy.cpp          [x]         [ ]         [ ]
+  fonts.cpp           [s]         [ ]         [ ]
+  general.cpp         [ ]         [ ]         [ ]
+  icons.cpp           [ ]         [ ]         [ ]
+  scrnsave.cpp        [x]         [ ]         [ ]
+drkonqi               [ ]         [ ]         [ ]
+ebrowsing             [ ]         [ ]         [ ]
+email
+  email.cpp           [x]         [x]         [ ]
+filetypes
+  filetypesview.cpp   [x]         [x]         [ ]
+  newtypedlg.cpp      [x]         [x]         [ ]
+info                  [ ]         [ ]         [ ]
+input
+  keyboard.cpp        [x]         [x]         [ ]
+  mouse.cpp           [x]         [x]         [ ]
+kdm                   [ ]         [ ]         [ ]
+keys                  [ ]         [ ]         [ ]
+kicker                [s]         [ ]         [ ]
+kio                   [s]         [ ]         [ ]
+knotify               [ ]         [ ]         [ ]
+konq
+  behavior.cpp        [x]         [x]         [ ]
+  fontopts.cpp        [x]         [x]         [ ]
+  main.cpp            [x]         [x]         [ ]
+  miscopts.cpp        [x]         [x]         [ ]
+  trashopts.cpp       [x]         [x]         [ ]
+konqhtml              [s]         [ ]         [ ]
+kwm                   [ ]         [ ]         [ ]
+locale                [s]         [ ]         [ ]
+midi                  [ ]         [ ]         [ ]
+odbc                  [ ]         [ ]         [ ]
+passwords
+  passwords.cpp       [x]         [x]         [ ]
+root                  [ ]         [ ]         [ ]
+samba                 [ ]         [ ]         [ ]
+syssound              [ ]         [ ]         [ ]
+themes                [ ]         [ ]         [ ]

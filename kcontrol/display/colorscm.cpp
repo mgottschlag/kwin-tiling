@@ -79,12 +79,11 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     cs->setFixedHeight(160);
     cs->setMinimumWidth(440);
 
-    QWhatsThis::add( cs, i18n("This graphic gives you a preview of how your changed "
-       "color settings will look, so you don't need to apply them first.<br>Also, here you can click on a desktop element whose "
-       "color setting you want to change (e.g. the text on buttons). You'll notice "
-       "that its name (\"Button text\") will appear below in the \"Widget color\" listbox. "
-       "Then you can change its color by pressing on the color button.<br> "
-       "Alternatively, you can chose the element you want to change in the listbox below.") );
+    QWhatsThis::add( cs, i18n("This is a preview of the color settings which"
+       " will be applied if you click \"Apply\" or \"OK\". You can click on"
+       " different parts of this preview image. The widget name in the"
+       " \"Widget color\" box will change to reflect the part of the preview"
+       " image you clicked.") );
 
     connect( cs, SIGNAL( widgetSelected( int ) ),
 	     SLOT( slotWidgetColor( int ) ) );
@@ -105,9 +104,13 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
     groupLayout->addWidget(sList);
 
-    QWhatsThis::add( sList, i18n("Here you can see a list of complete color schemes, "
-       "predefined as well as schemes you've saved before. Select a color scheme to "
-       "see a preview in the graphic above.") );
+    QWhatsThis::add( sList, i18n("This is a list of predefined color schemes,"
+       " including any that you may have created. You can preview an existing"
+       " color scheme by selecting it from the list. The current scheme will"
+       " be replaced by the selected color scheme.<p>"
+       " Warning: if you have not yet applied any changes you may have made"
+       " to the current scheme, those changes will be lost if you select"
+       " another color scheme.") );
 
     QBoxLayout *pushLayout = new QHBoxLayout;
     groupLayout->addLayout( pushLayout );
@@ -116,14 +119,17 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
     pushLayout->addWidget(addBt, 10);
 
-    QWhatsThis::add( addBt, i18n("Press this button if you want to save your current "
-       "color settings to a new color scheme. You will be prompted for a name.") );
+    QWhatsThis::add( addBt, i18n("Press this button if you want to save"
+       " the current color settings as a new color scheme. You will be"
+       " prompted for a name.") );
 
     removeBt = new QPushButton(i18n("&Remove"), group);
     removeBt->setEnabled(FALSE);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 
-    QWhatsThis::add( removeBt, i18n("Press this button to remove the selected color scheme.") );
+    QWhatsThis::add( removeBt, i18n("Press this button to remove the selected"
+       " color scheme. Note that this button is disabled if you do not have"
+       " permission to delete the color scheme.") );
 
     pushLayout->addWidget( removeBt, 10 );
 
@@ -132,9 +138,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(saveBt, SIGNAL(clicked()), SLOT(slotSave()));
     groupLayout->addWidget(saveBt);
 
-    QWhatsThis::add(saveBt, "Press this button to save changes you've made to a custom "
-       "color scheme you've created before. You can not save changes to predefined KDE "
-       "color schemes.");
+    QWhatsThis::add(saveBt, i18n("Press this button to save changes made"
+       " to the current color scheme. Note that this button is disabled if"
+       " you do not have permission to modify the color scheme, but you can"
+       " still save the changes by adding a new color scheme.") );
 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
@@ -166,9 +173,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
     groupLayout->addWidget(wcCombo);
 
-    QWhatsThis::add( wcCombo, i18n("Here you can choose an element of the KDE "
-       "desktop whose color you want to change. Alternatively, you can click on "
-       "an item in the preview.") );
+    QWhatsThis::add( wcCombo, i18n("Click here to select an element of"
+       " the KDE desktop whose color you want to change. You may either"
+       " choose the \"widget\" here, or click on the corresponding part"
+       " of the preview image above.") );
 
     colorButton = new KColorButton( group );
     colorButton->setColor(cs->iaTitle);
@@ -178,8 +186,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     groupLayout->addWidget( colorButton );
 
-    QWhatsThis::add( colorButton, i18n("Click here to change the color of the "
-       "selected element.") );
+    QWhatsThis::add( colorButton, i18n("Click here to bring up a dialog"
+       " box where you can choose a color for the \"widget\" selected"
+       " in the above list.") );
 
     group = new QGroupBox(  i18n("Contrast"), this );
     stackLayout->addWidget(group);
@@ -194,9 +203,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     sb->setFocusPolicy( QWidget::StrongFocus );
     connect(sb, SIGNAL(valueChanged(int)), SLOT(sliderValueChanged(int)));
 
-    QWhatsThis::add(sb, i18n("Use this slider to change the contrast of your "
-       "current color scheme. This does not only affect the selected element, but all "
-       "of your desktop."));
+    QWhatsThis::add(sb, i18n("Use this slider to change the contrast level"
+       " of the current color scheme. Contrast does not affect all of the"
+       " colors, only the edges of 3D objects."));
 
     QLabel *label = new QLabel(sb, i18n("&Low"), group);
     groupLayout->addWidget(label);
@@ -301,13 +310,19 @@ void KColorScheme::defaults()
 
 QString KColorScheme::quickHelp()
 {
-    return i18n("<h1>Colors</h1> Here you can modify the colors of your KDE desktop. "
-       "All KDE applications will obey these settings (and some settings may even be "
-       "obeyed by non-KDE applications, see the \"Style\" tab for details).<p> "
-       "If you want, you can choose between several provided color schemes or save your "
-       "own color schemes. If you've already made up your own color scheme, it's a good idea to "
-       "save it before trying others.<p> Please use \"What's This\" help for more "
-       "details.");
+    return i18n("<h1>Colors</h1> This module allows you to choose"
+       " the color scheme used for the KDE desktop. The different"
+       " elements of the desktop, such as title bars, menu text, etc.,"
+       " are called \"widgets\". You can choose the widget whose"
+       " color you want to change by selecting it from a list, or by"
+       " clicking on a graphic representation of the desktop.<p>"
+       " You can save color settings as complete color schemes,"
+       " which can also be modified or deleted. KDE comes with several"
+       " predefined color schemes on which you can base your own.<p>"
+       " All KDE applications will obey the selected color scheme."
+       " Non-KDE applications may also obey some or all of the color"
+       " settings. See the \"Style\" control module under \"Themes\""
+       " for more details.");
 }
 
 

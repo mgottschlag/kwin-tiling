@@ -35,6 +35,7 @@
 #include <qslider.h>
 #include <qlayout.h>
 #include <qtextstream.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kprocess.h>
@@ -172,6 +173,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect( mEnableCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotEnable( bool ) ) );
     vLayout->addWidget(mEnableCheckBox);
+    QWhatsThis::add( mEnableCheckBox, i18n("Check this box if you would like"
+      " to enable a screen saver. If you have power saving features enabled"
+      " for your display, you may still enable a screen saver.") );
     
     QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
     vLayout->addWidget(group);
@@ -197,6 +201,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect( mSaverListBox, SIGNAL( highlighted( int ) ),
              this, SLOT( slotScreenSaver( int ) ) );
     groupLayout->addWidget( mSaverListBox, 10 );
+    QWhatsThis::add( mSaverListBox, i18n("This is a list of the available"
+      " screen savers. Select the one you want to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
     mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
@@ -204,11 +210,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mSetupBt->setEnabled(mEnabled &&
                          !mSaverList.at(mSelected)->setup().isEmpty());
     hlay->addWidget( mSetupBt );
+    QWhatsThis::add( mSetupBt, i18n("If the screen saver you selected has"
+      " customizable features, you can set them up by clicking this button.") );
     
     mTestBt = new QPushButton(  i18n("&Test"), group );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
     mTestBt->setEnabled(mEnabled);
     hlay->addWidget( mTestBt );
+    QWhatsThis::add( mTestBt, i18n("You can try out the screen saver by clicking"
+      " this button. (Also, the preview image shows you what the screen saver"
+      " will look like.)") );
 
     // right column
     vLayout = new QVBoxLayout(this, 0, 10);
@@ -238,6 +249,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
     lbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
+    QWhatsThis::add( mWaitEdit, i18n("Choose the period of inactivity (from 1"
+      " to 120 minutes) after which the screen saver should start.") );
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
     mLockCheckBox->setChecked( mLock );
@@ -245,6 +258,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
+    QWhatsThis::add( mLockCheckBox, i18n("If you check this option, the display"
+      " will be locked when the screen saver starts. To restore the display,"
+      " enter your account password at the prompt.") );
 
     mStarsCheckBox = new QCheckBox( i18n("Show p&assword as stars"), group );
     mStarsCheckBox->setChecked(mPasswordStars);
@@ -252,6 +268,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), 
 	     this, SLOT( slotStars( bool ) ) );
     groupLayout->addWidget(mStarsCheckBox);
+    QWhatsThis::add( mStarsCheckBox, i18n("If you check this option and the one"
+      " above, each character you type in the password will be echoed as an"
+      " asterisk (*) symbol. Otherwise, there will be no visual feedback.") );
 
     hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
@@ -269,6 +288,11 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 	    SLOT(slotPriorityChanged(int)));
     lbl->setBuddy(mPrioritySlider);
     hbox->addWidget(mPrioritySlider);
+    QWhatsThis::add( mPrioritySlider, i18n("Use this slider to change the"
+      " processing priority for the screen saver over other jobs that are"
+      " being executed in the background. For a processor-intensive screen"
+      " saver, setting a higher priority may make the display smoother at"
+      " the expense of other jobs.") );
 
 #ifndef HAVE_SETPRIORITY
     lbl->setEnabled(false);
@@ -704,6 +728,20 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
     mSetupBt->setEnabled( true );
+}
+
+//---------------------------------------------------------------------------
+//
+QString KScreenSaver::quickHelp()
+{
+    return i18n("<h1>Screen saver</h1> This module allows you to enable and"
+       " configure a screen saver. Note that you can enable a screen saver"
+       " even if you have power saving features enabled for your display.<p>"
+       " Besides providing an endless variety of entertainment and"
+       " preventing monitor burn-in, a screen saver also gives you a simple"
+       " way to lock your display if you are going to leave it unattended"
+       " for a while. If you want to lock the screen, make sure you enable"
+       " the \"Require password\" feature of the screen saver.");
 }
 
 #include "scrnsave.moc"

@@ -25,6 +25,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
+#include <qwhatsthis.h>
 
 #include <kglobal.h>
 #include <kconfig.h>
@@ -118,6 +119,8 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
 	m_pCBEnable= new QCheckBox(i18n("&Enable Display Energy Saving" ), this);
 	connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotChangeEnable(bool)));
 	hbox->addWidget(m_pCBEnable);
+        QWhatsThis::add( m_pCBEnable, i18n("Check this option to enable the"
+           " power saving features of your display.") );
     } else {
 	lbl = new QLabel(i18n("Your display has NO power saving features!"), this);
 	hbox->addWidget(lbl);
@@ -136,6 +139,9 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_pStandbySlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pStandbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby(int)));
     top->addWidget(m_pStandbySlider);
+    QWhatsThis::add( m_pStandbySlider, i18n("Choose the period of inactivity"
+       " after which the display should enter \"standby\" mode. This is the"
+       " first level of power saving.") );
 
     m_pSuspendSlider = new KIntNumInput(m_pStandbySlider, m_Suspend, this);
     m_pSuspendSlider->setLabel(i18n("S&uspend after:"));
@@ -144,6 +150,10 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_pSuspendSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pSuspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend(int)));
     top->addWidget(m_pSuspendSlider);
+    QWhatsThis::add( m_pSuspendSlider, i18n("Choose the period of inactivity"
+       " after which the display should enter \"suspend\" mode. This is the"
+       " second level of power saving, but for some displays, may not be"
+       " different from the first level.") );
 
     m_pOffSlider = new KIntNumInput(m_pSuspendSlider, m_Off, this);
     m_pOffSlider->setLabel(i18n("&Power Off after:"));
@@ -152,6 +162,10 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_pOffSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pOffSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff(int)));
     top->addWidget(m_pOffSlider);
+    QWhatsThis::add( m_pOffSlider, i18n("Choose the period of inactivity"
+       " after which the display should be powered off. This is the"
+       " greatest level of power saving that can be achieved while the"
+       " display is still physically turned on.") );
 
     top->addStretch();
 		
@@ -328,5 +342,19 @@ void KEnergy::slotChangeOff(int value)
     m_bChanged = true;
     emit changed(true);
 }
+
+
+QString KEnergy::quickHelp()
+{
+    return i18n("<h1>Energy Saving For Display</h1> If your display supports"
+      " power saving features, you can configure them using this module.<p>"
+      " There are three levels of power saving: standby, suspend, and off."
+      " The greater the level of power saving, the longer it takes for the"
+      " display to return to an active state.<p>"
+      " To wake up the display from a power saving mode, you can make a small"
+      " movement with the mouse, or press a key that is not likely to cause"
+      " any unintended side-effects, for example, the \"shift\" key.");
+}
+
 
 #include "energy.moc"
