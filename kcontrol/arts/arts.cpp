@@ -52,9 +52,9 @@
 #include "arts.h"
 
 extern "C" {
-	void init_arts();
+	KDE_EXPORT void init_arts();
 
-    KCModule *create_arts(QWidget *parent, const char */*name*/)
+    KDE_EXPORT KCModule *create_arts(QWidget *parent, const char* /*name*/)
 	{
 		KGlobal::locale()->insertCatalogue("kcmarts");
 		return new KArtsModule(parent, "kcmarts" );

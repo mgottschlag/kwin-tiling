@@ -385,12 +385,12 @@ QString KSmartcardConfig::quickHelp() const
 
 extern "C"
 {
-  KCModule *create_smartcard(QWidget *parent, const char *)
+  KDE_EXPORT KCModule *create_smartcard(QWidget *parent, const char *)
   {
     return new KSmartcardConfig(parent, "kcmsmartcard");
   }
 
-  void init_smartcard()
+  KDE_EXPORT void init_smartcard()
   {
     KConfig *config = new KConfig("ksmartcardrc", false, false);
     bool start = config->readBoolEntry("Enable Support", false);

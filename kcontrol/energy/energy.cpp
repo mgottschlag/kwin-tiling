@@ -85,11 +85,11 @@ static const int DFLT_OFF   = 60;
 
 extern "C" {
 
-    KCModule *create_energy(QWidget *parent, char *) {
+    KDE_EXPORT KCModule *create_energy(QWidget *parent, char *) {
 	return new KEnergy(parent, "kcmenergy");
     }
 
-    void init_energy() {
+    KDE_EXPORT void init_energy() {
 #ifdef HAVE_DPMS
         KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
         cfg->setGroup("DisplayEnergy");

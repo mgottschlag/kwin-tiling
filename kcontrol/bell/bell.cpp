@@ -40,12 +40,12 @@
 
 extern "C"
 {
-  KCModule *create_bell(QWidget *parent, const char *)
+  KDE_EXPORT KCModule *create_bell(QWidget *parent, const char *)
   {
     return new KBellConfig(parent, "kcmbell");
   }
 
-  void init_bell()
+  KDE_EXPORT void init_bell()
   {
     XKeyboardState kbd;
     XKeyboardControl kbdc;

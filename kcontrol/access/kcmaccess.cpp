@@ -442,7 +442,7 @@ void KAccessConfig::checkAccess()
 
 extern "C"
 {
-  KCModule *create_access(QWidget *parent, const char *name)
+  KDE_EXPORT KCModule *create_access(QWidget *parent, const char *name)
   {
     return new KAccessConfig(parent, name);
   }
@@ -450,7 +450,7 @@ extern "C"
   /* This one gets called by kcminit
 
    */
-  void init_access()
+  KDE_EXPORT void init_access()
   {
     KConfig *config = new KConfig("kaccessrc", true, false);
     bool run = needToRunKAccessDaemon( config );

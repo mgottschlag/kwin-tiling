@@ -391,7 +391,7 @@ QString KickerConfig::configName()
 
 extern "C"
 {
-    KCModule *create_kicker(QWidget *parent, const char *)
+    KDE_EXPORT KCModule *create_kicker(QWidget *parent, const char *)
     {
         KImageIO::registerFormats();
         KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +

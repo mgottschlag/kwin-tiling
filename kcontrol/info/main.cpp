@@ -34,7 +34,7 @@
 extern "C"
 {
 
-  KCModule *create_cpu(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_cpu(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_CPU_AVAILABLE
     return new KInfoListWidget(i18n("Processor(s)"), parent, "kcminfo", GetInfo_CPU);
@@ -43,7 +43,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_irq(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_irq(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_IRQ_AVAILABLE
     return new KInfoListWidget(i18n("Interrupt"), parent, "kcminfo", GetInfo_IRQ);
@@ -52,7 +52,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_pci(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_pci(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_PCI_AVAILABLE
     return new KInfoListWidget(i18n("PCI"), parent, "kcminfo", GetInfo_PCI);
@@ -61,7 +61,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_dma(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_dma(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_DMA_AVAILABLE
     return new KInfoListWidget(i18n("DMA-Channel"), parent, "kcminfo", GetInfo_DMA);
@@ -70,7 +70,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_ioports(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_ioports(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_IOPORTS_AVAILABLE
     return new KInfoListWidget(i18n("I/O-Port"), parent, "kcminfo", GetInfo_IO_Ports);
@@ -79,7 +79,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_sound(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_sound(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_SOUND_AVAILABLE
     return new KInfoListWidget(i18n("Soundcard"), parent, "kcminfo", GetInfo_Sound);
@@ -88,7 +88,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_scsi(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_scsi(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_SCSI_AVAILABLE
     return new KInfoListWidget(i18n("SCSI"), parent, "kcminfo", GetInfo_SCSI);
@@ -106,7 +106,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_partitions(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_partitions(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_PARTITIONS_AVAILABLE
     return new KInfoListWidget(i18n("Partitions"), parent, "kcminfo", GetInfo_Partitions);
@@ -115,7 +115,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_xserver(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_xserver(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_XSERVER_AVAILABLE
     return new KInfoListWidget(i18n("X-Server"), parent, "kcminfo", GetInfo_XServer_and_Video);
@@ -124,12 +124,12 @@ extern "C"
 #endif
   }
 
-  KCModule *create_memory(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_memory(QWidget *parent, const char * /*name*/)
   { 
     return new KMemoryWidget(parent, "kcminfo");
   }
 
-  KCModule *create_opengl(QWidget *parent, const char * )
+  KDE_EXPORT KCModule *create_opengl(QWidget *parent, const char * )
   { 
 #ifdef INFO_OPENGL_AVAILABLE
     return new KInfoListWidget(i18n("OpenGL"), parent, "kcminfo", GetInfo_OpenGL);

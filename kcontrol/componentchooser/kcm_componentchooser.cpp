@@ -55,7 +55,7 @@ void KCMComponentChooser::defaults(){
 
 extern "C"
 {
-    KCModule *create_componentchooser( QWidget *parent, const char * )
+    KDE_EXPORT KCModule *create_componentchooser( QWidget *parent, const char * )
     {
         KGlobal::locale()->insertCatalogue("kcmcomponentchooser");
         return new KCMComponentChooser( parent, "kcmcomponentchooser" );

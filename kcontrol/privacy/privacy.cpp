@@ -305,7 +305,7 @@ void Privacy::cleanup()
 extern "C"
 {
 
-  KCModule *create_privacy(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_privacy(QWidget *parent, const char * /*name*/)
   {
     KGlobal::locale()->insertCatalogue("privacy");
     return new Privacy(parent, "Privacy");

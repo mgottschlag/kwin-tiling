@@ -116,7 +116,7 @@ void KeyModule::resizeEvent( QResizeEvent * )
 
 extern "C"
 {
-  KCModule *create_keys(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_keys(QWidget *parent, const char * /*name*/)
   {
 	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
 	KGlobal::locale()->insertCatalogue("kwin");
@@ -125,7 +125,7 @@ extern "C"
 	return new KeyModule(parent, "kcmkeys");
   }
 
-  void initModifiers()
+  KDE_EXPORT void initModifiers()
   {
 	kdDebug(125) << "KeyModule::initModifiers()" << endl;
 
@@ -135,7 +135,7 @@ extern "C"
 		ModifiersModule::setupMacModifierKeys();
   }
 
-  void init_keys()
+  KDE_EXPORT void init_keys()
   {
 	kdDebug(125) << "KeyModule::init()\n";
 

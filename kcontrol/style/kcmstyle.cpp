@@ -84,13 +84,13 @@ void applyMultiHead(bool active)
 // Danimo: Why do we use the old interface?!
 extern "C"
 {
-    KCModule *create_style(QWidget *parent, const char*)
+    KDE_EXPORT KCModule *create_style(QWidget *parent, const char*)
     {
         KGlobal::locale()->insertCatalogue("kcmstyle");
         return new KCMStyle(parent, "kcmstyle");
     }
 
-    void init_style()
+    KDE_EXPORT void init_style()
     {
         uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
         KConfig config("kcmdisplayrc", true /*readonly*/, false /*don't read kdeglobals etc.*/);

@@ -41,12 +41,12 @@
 
 extern "C"
 {
-  KCModule *create_mouse(QWidget *parent, const char *)
+  KDE_EXPORT KCModule *create_mouse(QWidget *parent, const char *)
   {
     return new MouseConfig(parent, "kcminput");
   }
 
-  void init_mouse()
+  KDE_EXPORT void init_mouse()
   {
     KConfig *config = new KConfig("kcminputrc", true, false); // Read-only, no globals
     MouseSettings settings;

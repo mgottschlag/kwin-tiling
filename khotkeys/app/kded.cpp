@@ -33,7 +33,7 @@
 #include <gestures.h>
 
 extern "C" 
-KDEDModule *create_khotkeys( const QCString& obj )
+KDE_EXPORT KDEDModule *create_khotkeys( const QCString& obj )
     {
     return new KHotKeys::KHotKeysModule( obj );
     }

@@ -250,12 +250,12 @@ void KCMXinerama::clearIndicator() {
 }
 
 extern "C" {
-KCModule *create_xinerama(QWidget *parent, const char *name) {
-	KGlobal::locale()->insertCatalogue("kcmxinerama");
-	return new KCMXinerama(parent, name);
-}
+        KDE_EXPORT KCModule *create_xinerama(QWidget *parent, const char *name) {
+   	    KGlobal::locale()->insertCatalogue("kcmxinerama");
+	    return new KCMXinerama(parent, name);
+        }
 
-	bool test_xinerama() {
+	KDE_EXPORT bool test_xinerama() {
 		return QApplication::desktop()->isVirtualDesktop();
 	}
 }

@@ -47,14 +47,14 @@ K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
 extern "C"
 
 {
-	void init_randr()
+	KDE_EXPORT void init_randr()
 	{
 #ifndef XRANDR_STARTUP_HACK
 		KRandRModule::performApplyOnStartup();
 #endif
 	}
 
-	bool test_randr()
+	KDE_EXPORT bool test_randr()
 	{
 		if( XRRQueryExtension(qt_xdisplay(), 0, 0 ) )
 			return true;

@@ -397,7 +397,7 @@ void kthememanager::updatePreview( const QString & pixFile )
 
 extern "C"
 {
-    KCModule *create_kthememanager(QWidget *parent, const char *)
+    KDE_EXPORT KCModule *create_kthememanager(QWidget *parent, const char *)
     {
         KGlobal::locale()->insertCatalogue( "kthememanager" );
         return new kthememanager( parent, "kthememanager" );
