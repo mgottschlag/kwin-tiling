@@ -1,0 +1,52 @@
+[Desktop Entry]
+Icon=kcmkwm
+Type=Application
+Exec=kcmshell kwinoptions 
+DocPath=kcontrol/action.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kwinoptions
+X-KDE-FactoryName=kwinoptions
+
+Name=Window Behavior
+Name[bg]=Ïðîçîðåö Íàñòðîéêè
+Name[ca]=Comportament de les finestres
+Name[cs]=Chování oken
+Name[da]=Vinduesopførsel
+Name[de]=Fenster-Eigenschaften
+Name[el]=Συμπεριφορά Παραθύρων
+Name[eo]=Fenestrokonduto
+Name[es]=Comportamiento de Ventanas
+Name[et]=Akende käitumine
+Name[fi]=Ikkunoiden käyttäytyminen
+Name[fr]=Comportement des fenêtres
+Name[gl]=Comportamento das Fiestras
+Name[he]=תונולח תוגהנתה
+Name[hr]=Funkcioniranje prozora
+Name[hu]=Ablakbeállítások
+Name[is]=Hegðun Glugga
+Name[it]=Comportamento delle finestre
+Name[ja]=ウィンドウの挙動
+Name[lt]=Langų elgsena
+Name[mi]=Whanonga Matapihi
+Name[mk]=Прозорци
+Name[nl]=Venstergedrag
+Name[no]=Vindu-oppførsel
+Name[no_NY]=Vindaugsåtferd
+Name[oc]=Comportament de las finestras
+Name[pl]=Zachowanie okna
+Name[pt]=Comportamento das Janelas
+Name[pt_BR]=Comportamento das Janelas
+Name[ro]=Comportament ferestre
+Name[ru]=Поведение окна
+Name[sk]=Spôsob režimu okna
+Name[sl]=Obnašanje oken
+Name[sr]=Ponašanje prozora
+Name[sv]=Fönsterbeteende
+Name[ta]=º¡ÇÃ ¿¼ò¨¾
+Name[tr]=Pencere Davranışı
+Name[uk]=Поведінка вікон
+Name[zh_CN.GB2312]=窗口行为
+Name[zh_TW.Big5]=視窗行為
+
+Keywords=focus,placement,window behaviour,animation,raise,auto raise,windows,frame,titlebar,doubleclick
