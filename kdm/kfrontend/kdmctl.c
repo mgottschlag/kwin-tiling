@@ -87,7 +87,7 @@ readcfg( const char *cfg )
 static int
 exe( int fd, const char *in, int len )
 {
-	char buf[1024];
+	char buf[4096];
 
 	if (write( fd, in, len ) != len) {
 		fprintf( stderr, "Cannot send command\n" );
@@ -97,7 +97,11 @@ exe( int fd, const char *in, int len )
 		fprintf( stderr, "Cannot receive reply\n" );
 		return 1;
 	}
+	if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
+		fprintf( stderr, "Warning: reply is too long\n" );
 	fwrite( buf, 1, len, stdout );
+	if (len == sizeof(buf) && buf[sizeof(buf) - 1] != '\n')
+		puts( "[...]" );
 	return 0;
 }
 
