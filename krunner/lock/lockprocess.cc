@@ -282,6 +282,13 @@ void LockProcess::configure()
     else
         mLockGrace = -1;
 
+#ifdef HAVE_DPMS
+    //if the user  decided that the screensaver should run independent from
+    //dpms, we shouldn't check for it, aleXXX
+    if (config.readBoolEntry("DPMS-dependent", false)==false)
+       mCheckDPMS.stop();
+#endif
+
     mPriority = config.readNumEntry("Priority", 19);
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
