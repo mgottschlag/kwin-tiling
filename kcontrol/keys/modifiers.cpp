@@ -84,28 +84,30 @@ void ModifiersModule::save()
 	if( m_plblCtrl->text() != "Ctrl" )
 		KGlobal::config()->writeEntry( "Label Ctrl", m_plblCtrl->text(), true, true );
 	else
-		KGlobal::config()->deleteEntry( "Label Ctrl", true );
+		KGlobal::config()->deleteEntry( "Label Ctrl", false, true );
 
 	if( m_plblAlt->text() != "Alt" )
 		KGlobal::config()->writeEntry( "Label Alt", m_plblAlt->text(), true, true );
 	else
-		KGlobal::config()->deleteEntry( "Label Alt", true );
+		KGlobal::config()->deleteEntry( "Label Alt", false, true );
 
 	if( m_plblWin->text() != "Win" )
 		KGlobal::config()->writeEntry( "Label Win", m_plblWin->text(), true, true );
 	else
-		KGlobal::config()->deleteEntry( "Label Win", true );
+		KGlobal::config()->deleteEntry( "Label Win", false, true );
 
 	if( m_pchkMacKeyboard->isChecked() )
 		KGlobal::config()->writeEntry( "Mac Keyboard", true, true, true );
 	else
-		KGlobal::config()->deleteEntry( "Mac Keyboard", true );
+		KGlobal::config()->deleteEntry( "Mac Keyboard", false, true );
 
 	bool bMacSwap = m_pchkMacKeyboard->isChecked() && m_pchkMacSwap->isChecked();
 	if( bMacSwap )
-		KGlobal::config()->writeEntry( "Mac Modifier Swap", bMacSwap, true, true );
+		KGlobal::config()->writeEntry( "Mac Modifier Swap", true, true, true );
 	else
-		KGlobal::config()->deleteEntry( "Mac Modifier Swap", true );
+		KGlobal::config()->deleteEntry( "Mac Modifier Swap", false, true );
+
+	KGlobal::config()->sync();
 
 	if( m_bMacSwapOrig != bMacSwap ) {
 		if( bMacSwap )
@@ -221,9 +223,13 @@ void ModifiersModule::initGUI()
 	m_pchkMacSwap = new QCheckBox( "MacOS-style modifier usage", this );
 	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
 	QWhatsThis::add( m_pchkMacSwap,
-		i18n("Use <b>Command</b> for application and console commands, Option as a "
-			"command modifier and for navigating menus and dialogs, and "
-			"Control for window manager commands.") );
+		i18n("Checking this box will change your X Modifier Mapping to "
+			"better reflect the standard MacOS modifier key usage.  "
+			"It allows you to use <i>Command+C</i> for <i>Copy</i>, for instance, "
+			"instead of the PC standard of <i>Control+C</I>.  "
+			"<b>Command</b> will be used for application and console commands, "
+			"<b>Option</b> as a command modifier and for navigating menus and dialogs, "
+			"and <b>Control</b> for window manager commands.") );
 	connect( m_pchkMacSwap, SIGNAL(clicked()), SLOT(slotMacSwapClicked()) );
 	pLayoutTop->addWidget( m_pchkMacSwap, 2, 0 );
 

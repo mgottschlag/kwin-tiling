@@ -175,7 +175,7 @@ extern "C"
 	// Check for old group,
 	if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
 		keys->readActions( "Global Keys" );
-		KGlobal::config()->deleteGroup( "Global Keys" );
+		KGlobal::config()->deleteGroup( "Global Keys", true, true );
 	}
 	keys->readActions( "Global Shortcuts" );
 
