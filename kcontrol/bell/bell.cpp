@@ -53,7 +53,7 @@ extern "C"
 
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
 
-    KConfig config("kcmbellrc");
+    KConfig config("kcmbellrc", true, false);
     config.setGroup("General");
 
     kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
@@ -163,7 +163,7 @@ void KBellConfig::save()
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
 
-  KConfig config("kcmbellrc");
+  KConfig config("kcmbellrc", false, false);
   config.setGroup("General");
   config.writeEntry("Volume",bellVolume);
   config.writeEntry("Pitch",bellPitch);
