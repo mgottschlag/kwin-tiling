@@ -49,6 +49,7 @@
 #include "kdm_greet.h"
 //#include "kdm_config.h"
 
+extern "C" {
 /*#include <X11/Xlib.h>*/
 #ifdef HAVE_XKB
 // note: some XKBlib.h versions contain a global variable definition
@@ -56,6 +57,10 @@
 # define explicit __explicit_dummy
 # include <X11/XKBlib.h>
 #endif
+#ifdef HAVE_XINERAMA
+# include <X11/extensions/Xinerama.h>
+#endif
+};
 
 //#include <sys/types.h>
 #include <sys/param.h>
@@ -694,11 +699,23 @@ kg_main(int argc, char **argv)
     kgreeter->updateGeometry();
     kapp->processEvents(0);
     kgreeter->resize(kgreeter->sizeHint());
-    int dw = QApplication::desktop()->width();
-    int dh = QApplication::desktop()->height();
-    int gw = kgreeter->width();
-    int gh = kgreeter->height();
-    int x, y;
+    int dw, dh, gw, gh, x, y;
+#ifdef HAVE_XINERAMA
+    int numHeads;
+    XineramaScreenInfo *xineramaInfo;
+    if (XineramaIsActive(qt_xdisplay()) &&
+        ((xineramaInfo = XineramaQueryScreens(qt_xdisplay(), &numHeads)))) {
+	dw = xineramaInfo->width;
+	dh = xineramaInfo->height;
+	XFree(xineramaInfo);
+    } else
+#endif
+    {
+	dw = QApplication::desktop()->width();
+	dh = QApplication::desktop()->height();
+    }
+    gw = kgreeter->width();
+    gh = kgreeter->height();
     if (kdmcfg->_greeterPosX >= 0) {
 	x = kdmcfg->_greeterPosX;
 	y = kdmcfg->_greeterPosY;

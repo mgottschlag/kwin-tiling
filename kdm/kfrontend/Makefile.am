@@ -15,7 +15,7 @@ kdm_greet_SOURCES = \
     kgreeter.cpp \
     liloinfo.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI)
+kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIBXINERAMA) $(LIB_KDEUI)
 
 METASOURCES = kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc kfdialog.moc
 
