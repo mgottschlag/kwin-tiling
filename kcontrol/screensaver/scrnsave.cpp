@@ -414,7 +414,7 @@ void KScreenSaver::updateValues()
 {
     mWaitEdit->setValue(mTimeout/60);
     mLockCheckBox->setChecked(mLock);
-    mPrioritySlider->setValue(mPriority);
+    mPrioritySlider->setValue(19-mPriority);
     mEnableCheckBox->setChecked( mEnabled );
 }
 
