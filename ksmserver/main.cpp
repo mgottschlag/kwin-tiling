@@ -183,6 +183,7 @@ extern "C" int kdemain( int argc, char* argv[] )
        version, description, KAboutData::License_BSD,
        "(C) 2000, The KDE Developers");
     aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+    aboutData.addAuthor("Luboš Luňák", I18N_NOOP( "Maintainer" ), "l.lunak@kde.org" );
 
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options );
