@@ -499,7 +499,7 @@ void KFonts::save()
 
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
-  
+
   KGlobal::config()->sync();
 
   // KDE-1.x support
@@ -526,8 +526,8 @@ void KFonts::save()
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
 
   if(aaExcludeRange->isChecked())
-      xft.setExcludeRange(aaExcludeFrom->value(),
-                          aaExcludeTo->value());
+      xft.setExcludeRange(aaExcludeFrom->value()-1,
+                          aaExcludeTo->value()+1);
   else
       xft.setExcludeRange(0, 0);
 
@@ -598,8 +598,8 @@ void KFonts::setAaWidgets()
        aaTo=15.0;
    }
 
-   aaExcludeFrom->setValue(aaFrom);
-   aaExcludeTo->setValue(aaTo);
+   aaExcludeFrom->setValue(aaFrom+1);
+   aaExcludeTo->setValue(aaTo-1);
 
    KXftConfig::SubPixel::Type aaSpType;
 
@@ -618,7 +618,7 @@ void KFonts::setAaWidgets()
            aaUseSubPixel->setChecked(false);
    }
 
-   enableAaWidgets(); 
+   enableAaWidgets();
 }
 
 int KFonts::getIndex(KXftConfig::SubPixel::Type aaSpType)
