@@ -39,7 +39,6 @@
 #include <qlayout.h>
 
 #include <kapp.h>
-#include <kcontrol.h>
 #include <kiconloaderdialog.h>
 #include <ksimpleconfig.h>
 #include <kimgio.h>
