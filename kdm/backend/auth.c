@@ -639,7 +639,10 @@ DefineLocal (FILE *file, Xauth *auth)
 	 * is achieved by using gethostname().  For compatability, we must
 	 * also still create the entry using uname() above.
 	 */
-	gethostname(displayname, sizeof(displayname));
+	if (gethostname(displayname, sizeof(displayname)))
+	  displayname[0] = '\0';
+	else
+	  displayname[sizeof(displayname)-1] = '\0';
 
 	/*
 	 * If gethostname and uname both returned the same name,

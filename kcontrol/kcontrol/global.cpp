@@ -46,8 +46,10 @@ QString KCGlobal::_baseGroup = "";
 
 void KCGlobal::init()
 {
-  char buf[128];
-  gethostname(buf, 128);
+  char buf[256];
+  buf[0] = '\0';
+  if (!gethostname(buf, sizeof(buf)))
+    buf[sizeof(buf)-1] ='\0';
   QString hostname(buf);
   
   char *user = getlogin();

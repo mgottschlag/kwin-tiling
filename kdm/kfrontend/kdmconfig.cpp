@@ -156,7 +156,9 @@ KDMConfig::KDMConfig()
 
     // Greet String
     char hostname[256], *ptr;
-    gethostname (hostname, 255);
+    hostname[0] = '\0';
+    if (!gethostname (hostname, sizeof(hostname)))
+	hostname[sizeof(hostname)-1] = '\0';
     struct utsname tuname;
     uname (&tuname);
     QString gst = GetCfgQStr (C_GreetString);

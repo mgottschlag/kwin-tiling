@@ -271,11 +271,13 @@ void topKCMEmail::save()
 
 void topKCMEmail::defaults()
 {
-	char hostname[80];
+	char hostname[256];
 	struct passwd *p;
 
 	p = getpwuid(getuid());
-	gethostname(hostname, 80);
+	hostname[0] = '\0';
+	if( !gethostname(hostname, sizeof(hostname)) )
+		hostname[sizeof(hostname)-1] = '\0';
 
 	m_email->txtFullName->setText(QString::fromLocal8Bit(p->pw_gecos));
         m_email->txtOrganization->setText(QString::null);
