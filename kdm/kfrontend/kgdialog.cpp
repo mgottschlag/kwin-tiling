@@ -150,7 +150,18 @@ KGDialog::slotReallySwitch()
 void
 KGDialog::slotConsole()
 {
-	::exit( EX_TEXTLOGIN );
+#ifdef HAVE_VTS
+	dpySpec *sess = fetchSessions( 0 );
+	if (sess) {
+		int ret = KDMConfShutdown( -1, sess, -1 ).exec();
+		disposeSessions( sess );
+		if (!ret)
+			return;
+	}
+#endif
+	GSet( 1 );
+	GSendInt( G_Console );
+	GSet( 0 );
 }
 
 void
@@ -180,7 +191,7 @@ KGDialog::slotPopulateDisplays()
 {
 #ifdef HAVE_VTS
 	dpyMenu->clear();
-	dpySpec *sessions = fetchSessions( 1 );
+	dpySpec *sessions = fetchSessions( lstPassive );
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
 			QString tit =
 				i18n("session (location)", "%1 (%2)")

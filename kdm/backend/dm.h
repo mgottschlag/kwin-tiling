@@ -315,7 +315,9 @@ struct display {
 
 	int idleTimeout;            /* abort login after that time */
 	char **serverArgv;          /* server program and arguments */
+#ifndef HAVE_VTS
 	char *console;              /* the tty line hidden by the server */
+#endif
 
 	unsigned short *authNameLens;  /* authorization protocol name lens */
 

@@ -792,7 +792,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					di->status = notRunning;
 					break;
 				case textMode:
+#ifndef HAVE_VTS
 					SwitchToX( di );
+#endif
 					break;
 				default:
 					break;

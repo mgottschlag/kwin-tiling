@@ -87,10 +87,6 @@ static void StartDisplays( void );
 #define XS_RETRY 2
 static void ExitDisplay( struct display *d, int endState, int serverCmd, int goodExit );
 static void rStopDisplay( struct display *d, int endState );
-static int CheckUtmp( void );
-static void SwitchToTty( struct display *d );
-static void stoppen( int force );
-static void ReapChildren( void );
 static void MainLoop( void );
 
 static int signalFds[2];
@@ -340,21 +336,26 @@ activateVT( int vt )
 	}
 	return ret;
 }
+
+
+static void
+WakeDisplay( struct display *d )
+{
+	if (d->status == textMode)
+		d->status = (d->displayType & d_lifetime) == dReserve ? reserve : notRunning;
+}
 #endif
 
-
-enum utState { UtWait, UtActive };
+enum utState { UtDead, UtWait, UtActive };
 
 struct utmps {
 	struct utmps *next;
+#ifndef HAVE_VTS
 	struct display *d;
-	char line[sizeof(((struct UTMP *)0)->ut_line)];
+#endif
 	time_t time;
 	enum utState state;
 	int hadSess;
-#ifdef BSD_UTMP
-	int checked;
-#endif
 };
 
 #define TIME_LOG 40
@@ -363,7 +364,23 @@ struct utmps {
 static struct utmps *utmpList;
 static time_t utmpTimeout = TO_INF;
 
-static int
+static void
+bombUtmp( void )
+{
+	struct utmps *utp;
+
+	while ((utp = utmpList)) {
+#ifdef HAVE_VTS
+		ForEachDisplay( WakeDisplay );
+#else
+		utp->d->status = notRunning;
+#endif
+		utmpList = utp->next;
+		free( utp );
+	}
+}
+
+static void
 CheckUtmp( void )
 {
 	static time_t modtim;
@@ -371,29 +388,28 @@ CheckUtmp( void )
 	struct utmps *utp, **utpp;
 	struct stat st;
 #ifdef BSD_UTMP
+	int fd;
 	struct utmp ut[1];
 #else
 	struct UTMP *ut;
 #endif
 
+	if (!utmpList)
+		return;
 	if (stat( UTMP_FILE, &st )) {
 		LogError( UTMP_FILE " not found - cannot use console mode\n" );
-		return 0;
+		bombUtmp();
+		return;
 	}
-	if (!utmpList)
-		return 1;
 	if (modtim != st.st_mtime) {
-#ifdef BSD_UTMP
-		int fd;
-#endif
-
 		Debug( "rescanning " UTMP_FILE "\n" );
-#ifdef BSD_UTMP
 		for (utp = utmpList; utp; utp = utp->next)
-			utp->checked = 0;
+			utp->state = UtDead;
+#ifdef BSD_UTMP
 		if ((fd = open( UTMP_FILE, O_RDONLY )) < 0) {
 			LogError( "Cannot open " UTMP_FILE " - cannot use console mode\n" );
-			return 0;
+			bombUtmp();
+			return;
 		}
 		while (Reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0]))
 #else
@@ -401,104 +417,133 @@ CheckUtmp( void )
 		while ((ut = GETUTENT()))
 #endif
 		{
-			for (utp = utmpList; utp; utp = utp->next)
-				if (!strncmp( utp->line, ut->ut_line, sizeof(ut->ut_line) )) {
-#ifdef BSD_UTMP
-					utp->checked = 1;
+			for (utp = utmpList; utp; utp = utp->next) {
+#ifdef HAVE_VTS
+				char **line;
+				for (line = consoleTTYs; *line; line++)
+					if (!strncmp( *line, ut->ut_line, sizeof(ut->ut_line) ))
+						goto hitlin;
+				continue;
+			  hitlin:
 #else
-					if (ut->ut_type == LOGIN_PROCESS) {
-						Debug( "utmp entry for %.*s marked waiting\n",
-						       sizeof(utp->line), utp->line );
-						utp->state = UtWait;
-					} else if (ut->ut_type != USER_PROCESS)
-						break;
-					else
+				if (strncmp( utp->d->console, ut->ut_line, sizeof(ut->ut_line) ))
+					continue;
 #endif
-					{
-						utp->hadSess = 1;
-						Debug( "utmp entry for %.*s marked active\n",
-						       sizeof(utp->line), utp->line );
-						utp->state = UtActive;
-					}
-					if (utp->time < ut->ut_time)
-						utp->time = ut->ut_time;
-					break;
+#ifdef BSD_UTMP
+				if (!*ut->ut_name) {
+#else
+				if (ut->ut_type != USER_PROCESS) {
+#endif
+#ifdef HAVE_VTS
+					if (utp->state == UtActive)
+						break;
+#endif
+					utp->state = UtWait;
+				} else {
+					utp->hadSess = 1;
+					utp->state = UtActive;
 				}
+				if (utp->time < ut->ut_time) /* theoretically superfluous */
+					utp->time = ut->ut_time;
+				break;
+			}
 		}
 #ifdef BSD_UTMP
 		close( fd );
-		for (utp = utmpList; utp; utp = utp->next)
-			if (!utp->checked && utp->state == UtActive) {
-				utp->state = UtWait;
-				utp->time = now;
-				Debug( "utmp entry for %.*s marked waiting\n",
-				       sizeof(utp->line), utp->line );
-			}
 #else
 		ENDUTENT();
 #endif
 		modtim = st.st_mtime;
 	}
 	for (utpp = &utmpList; (utp = *utpp); ) {
-		if (utp->state == UtWait) {
+		if (utp->state != UtActive) {
+			if (utp->state == UtDead) /* shouldn't happen ... */
+				utp->time = 0;
 			time_t ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
 			if (ends <= now) {
-				struct display *d = utp->d;
-				Debug( "console login for %s at %.*s timed out\n",
-				       d->name, sizeof(utp->line), utp->line );
+#ifdef HAVE_VTS
+				ForEachDisplay( WakeDisplay );
+				Debug( "console login timed out\n" );
+#else
+				utp->d->status = notRunning;
+				Debug( "console login for %s at %s timed out\n",
+				       utp->d->name, utp->d->console );
+#endif
 				*utpp = utp->next;
 				free( utp );
-				d->status = notRunning;
 				continue;
 			} else
 				nck = ends;
 		} else
-#ifdef BSD_UTMP
-			nck = (TIME_RELOG + 5) / 3 + now;
-#else
 			nck = TIME_RELOG + now;
-#endif
 		if (nck < utmpTimeout)
 			utmpTimeout = nck;
 		utpp = &(*utpp)->next;
 	}
-	return 1;
 }
 
 static void
+#ifdef HAVE_VTS
+SwitchToTty( void )
+#else
 SwitchToTty( struct display *d )
+#endif
 {
 	struct utmps *utp;
 
-	if (!d->console || !d->console[0]) {
-		/* should not get here if greeter is not nuts */
-		LogError( "No console for %s specified - cannot use console mode\n",
-		          d->name );
-		d->status = notRunning;
-		return;
-	}
 	if (!(utp = Malloc( sizeof(*utp) ))) {
+#ifdef HAVE_VTS
+		ForEachDisplay( WakeDisplay );
+#else
 		d->status = notRunning;
+#endif
 		return;
 	}
-	strncpy( utp->line, d->console, sizeof(utp->line) );
+#ifndef HAVE_VTS
+	d->status = textMode;
 	utp->d = d;
+#endif
 	utp->time = now;
 	utp->hadSess = 0;
 	utp->next = utmpList;
 	utmpList = utp;
-#ifdef HAVE_VTS /* chvt */
-	if (!memcmp( d->console, "tty", 3 ))
-		activateVT( atoi( d->console + 3 ) );
+	CheckUtmp();
+
+#ifdef HAVE_VTS
+	if (!memcmp( *consoleTTYs, "tty", 3 ))
+		activateVT( atoi( *consoleTTYs + 3 ) );
 #endif
-	if (!CheckUtmp()) {
-		utmpList = utp->next;
-		free( utmpList );
-		d->status = notRunning;
-		return;
-	}
-	d->status = textMode;
+
+	/* XXX output something useful here */
 }
+
+#ifdef HAVE_VTS
+static void
+StopToTTY( struct display *d )
+{
+	if ((d->displayType & d_location) == dLocal)
+		switch (d->status) {
+		default:
+			rStopDisplay( d, DS_TEXTMODE | 0x100 );
+		case reserve:
+		case textMode:
+			break;
+		}
+}
+
+static void
+CheckTTYMode( void )
+{
+	struct display *d;
+
+	for (d = displays; d; d = d->next)
+		if (d->status == zombie)
+			return;
+
+	SwitchToTty();
+}
+
+#else
 
 void
 SwitchToX( struct display *d )
@@ -513,7 +558,7 @@ SwitchToX( struct display *d )
 			return;
 		}
 }
-
+#endif
 
 #ifdef XDMCP
 static void
@@ -662,7 +707,7 @@ static void
 processGPipe( struct display *d )
 {
 	struct display *di;
-	int cmd, alllocal;
+	int cmd, flags;
 	GTalk dpytalk;
 
 	dpytalk.pipe = &d->gpipe;
@@ -692,11 +737,11 @@ processGPipe( struct display *d )
 		GSendInt( sdRec.uid );
 		break;
 	case G_List:
-		alllocal = GRecvInt();
+		flags = GRecvInt();
 		for (di = displays; di; di = di->next)
-			if ((!alllocal || (di->displayType & d_location) == dLocal) &&
+			if (((flags & lstRemote) || (di->displayType & d_location) == dLocal) &&
 			    (di->status == remoteLogin ||
-			     (alllocal ? di->status == running : di->userSess >= 0)))
+			     ((flags & lstPassive) ? di->status == running : di->userSess >= 0)))
 			{
 				GSendStr( di->name );
 #ifdef HAVE_VTS
@@ -713,6 +758,17 @@ processGPipe( struct display *d )
 		activateVT( GRecvInt() );
 		break;
 #endif
+	case G_Console:
+#ifdef HAVE_VTS
+		if (*consoleTTYs) { /* sanity check against greeter */
+			ForEachDisplay( StopToTTY );
+			CheckTTYMode();
+		}
+#else
+		if (d->console && *d->console) /* sanity check against greeter */
+			rStopDisplay( d, DS_TEXTMODE );
+#endif
+		break;
 	default:
 		LogError( "Internal error: unknown G_* command %d\n", cmd );
 		StopDisplay( d );
@@ -783,10 +839,6 @@ ReapChildren( void )
 			GClosen (&d->gpipe);
 			closeCtrl( d );
 			switch (waitVal( status )) {
-			case EX_TEXTLOGIN:
-				Debug( "display exited with EX_TEXTLOGIN\n" );
-				ExitDisplay( d, DS_TEXTMODE, 0, 0 );
-				break;
 #ifdef XDMCP
 			case EX_REMOTE:
 				Debug( "display exited with EX_REMOTE\n" );
@@ -1350,18 +1402,27 @@ rStopDisplay( struct display *d, int endState )
 		if (d->serverPid != -1)
 			TerminateProcess( d->serverPid, d->termSignal );
 		d->status = zombie;
-		d->zstatus = endState;
+		d->zstatus = endState & 0xff;
 		Debug( " zombiefied\n" );
-	} else if (endState == DS_TEXTMODE)
+	} else if (endState == DS_TEXTMODE) {
+#ifdef HAVE_VTS
+		d->status = textMode;
+		CheckTTYMode();
+	} else if (endState == (DS_TEXTMODE | 0x100)) {
+		d->status = textMode;
+#else
 		SwitchToTty( d );
-	else if (endState == DS_RESERVE)
+#endif
+	} else if (endState == DS_RESERVE)
 		d->status = reserve;
 #ifdef XDMCP
 	else if (endState == DS_REMOTE)
 		StartRemoteLogin( d );
 #endif
 	else {
+#ifndef HAVE_VTS
 		SwitchToX( d );
+#endif
 		RemoveDisplay( d );
 	}
 }

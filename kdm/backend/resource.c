@@ -438,7 +438,10 @@ InitResources( char **argv )
 void
 ScanServers( int force )
 {
-	char *name, *class2, *console, **argv;
+#ifndef HAVE_VTS
+	char *console;
+#endif
+	char *name, *class2, **argv;
 	const char *dtx;
 	struct display *d;
 	int nserv, type;
@@ -453,14 +456,18 @@ ScanServers( int force )
 	while (nserv--) {
 		name = GRecvStr();
 		class2 = GRecvStr();
+#ifndef HAVE_VTS
 		console = GRecvStr();
+#endif
 		type = GRecvInt();
 		argv = GRecvArgv();
 		if ((d = FindDisplayByName( name ))) {
 			if (d->class2)
 				free( d->class2 );
+#ifndef HAVE_VTS
 			if (d->console)
 				free( d->console );
+#endif
 			freeStrArr( d->serverArgv );
 			dtx = "existing";
 		} else {
@@ -473,9 +480,10 @@ ScanServers( int force )
 		       ((type & d_location) == dLocal) ? "local" : "foreign",
 		       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv );
 		d->class2 = class2;
-		d->console = console;
 		d->serverArgv = argv;
-#ifdef HAVE_VTS
+#ifndef HAVE_VTS
+		d->console = console;
+#else
 		d->reqSrvVT = 0;
 		if (argv)
 			for (; argv[0]; argv++)

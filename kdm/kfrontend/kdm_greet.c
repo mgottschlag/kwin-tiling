@@ -294,14 +294,14 @@ GetCfgStrArr( int id, int *len )
 }
 
 dpySpec *
-fetchSessions( int all )
+fetchSessions( int flags )
 {
 	dpySpec *sess, *sessions = 0;
 	char *disp;
 
 	GSet( 1 );
 	GSendInt( G_List );
-	GSendInt( all );
+	GSendInt( flags );
 	while ((disp = GRecvStr())) {
 		if (!(sess = malloc( sizeof(*sess) )))
 			LogPanic( "Out of memory\n" );

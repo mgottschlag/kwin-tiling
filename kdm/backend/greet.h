@@ -77,7 +77,6 @@ from the copyright holder.
 #define EX_RESERVER_DPY     33	/* force server termination */
 #define EX_AL_RESERVER_DPY  34	/* reserver; maybe, auto-(re-)login */
 #define EX_OPENFAILED_DPY   35	/* XOpenDisplay failed, retry */
-#define EX_TEXTLOGIN        36	/* start console login */
 #define EX_RESERVE          37	/* put in reserve mode */
 #ifdef XDMCP
 #define EX_REMOTE           38	/* start -query-ing X-server */
@@ -139,7 +138,9 @@ from the copyright holder.
 #define G_PutDmrc       108 /* str key, str value; async - newdmrc */
 #define G_Verify        109 /* str type; ..., int V_ret */
 #define G_VerifyRootOK  110 /* str type; ..., int V_ret */
-#define G_List          111 /* int all; ?*(str,int,str,str,int), int 0 */
+#define G_List          111 /* int flags; ?*(str,int,str,str,int), int 0 */
+# define lstRemote        1
+# define lstPassive       2
 #define G_QueryShutdown 112 /* ; 5*int */
 #define G_Activate      113 /* int vt; async */
 #define G_ListBootOpts  114 /* ; int sts, [argv opts, int dflt, int cur] */
@@ -148,6 +149,7 @@ from the copyright holder.
 # define BO_NOMAN  -1
 # define BO_NOENT  -2
 # define BO_IO     -3
+#define G_Console       116 /* ; async */
 
 /*
  * Command codes core -> config reader

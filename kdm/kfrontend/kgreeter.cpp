@@ -368,8 +368,15 @@ KGreeter::slotShutdown()
 void
 KGreeter::slotConsole()
 {
+#ifdef HAVE_VTS
+	verify->suspend();
+#else
 	verify->abort();
+#endif
 	inherited::slotConsole();
+#ifdef HAVE_VTS
+	verify->resume();
+#endif
 }
 
 void

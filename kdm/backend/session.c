@@ -250,7 +250,11 @@ CtrlGreeterWait( int wreply )
 			if (type == C_isLocal)
 				i = (td->displayType & d_location) == dLocal;
 			else if (type == C_hasConsole)
+#ifdef HAVE_VTS
+				i = *consoleTTYs != 0;
+#else
 				i = td->console != 0;
+#endif
 			else if (type == C_isAuthorized)
 				i = td->authorizations != 0;
 			else

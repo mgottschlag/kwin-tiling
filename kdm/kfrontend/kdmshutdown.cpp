@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "kdmshutdown.h"
-#include "kdmconfig.h"
 #include "kdm_greet.h"
 
 #include <kapplication.h>
@@ -59,6 +58,9 @@ PluginList KDMShutdownBase::pluginList;
 KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
 	: inherited( _parent )
 	, box( new QVBoxLayout( this, KDmh, KDsh ) )
+#ifdef HAVE_VTS
+	, willShut( true )
+#endif
 	, mayNuke( false )
 	, doesNuke( false )
 	, mayOk( true )
@@ -82,7 +84,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
 	if (uid &&
-	    (_allowShutdown == SHUT_ROOT ||
+	    ((willShut && _allowShutdown == SHUT_ROOT) ||
 	     (mayNuke && _allowNuke == SHUT_ROOT)))
 	{
 		rootlab = new QLabel( i18n("Root authorization required."), this );
@@ -164,7 +166,7 @@ void
 KDMShutdownBase::updateNeedRoot()
 {
 	int nNeedRoot = uid &&
-		((_allowShutdown == SHUT_ROOT ||
+		(((willShut && _allowShutdown == SHUT_ROOT) ||
 		  (_allowNuke == SHUT_ROOT && doesNuke)));
 	if (verify && nNeedRoot != needRoot) {
 		if (needRoot == 1)
@@ -519,7 +521,7 @@ bool
 KDMSlimShutdown::checkShutdown( int type )
 {
 	reject();
-	dpySpec *sess = fetchSessions( 0 );
+	dpySpec *sess = fetchSessions( lstRemote );
 	if (!sess && _allowShutdown != SHUT_ROOT)
 		return true;
 	int ret = KDMConfShutdown( -1, sess, type ).exec();
@@ -534,7 +536,7 @@ KDMSlimShutdown::checkShutdown( int type )
 void
 KDMSlimShutdown::externShutdown( int type, int uid )
 {
-	dpySpec *sess = fetchSessions( 0 );
+	dpySpec *sess = fetchSessions( lstRemote );
 	int ret = KDMConfShutdown( uid, sess, type ).exec();
 	disposeSessions( sess );
 	if (ret == Schedule)
@@ -547,16 +549,23 @@ KDMSlimShutdown::externShutdown( int type, int uid )
 KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, QWidget *_parent )
 	: inherited( _uid, _parent )
 {
-	QLabel *title = new QLabel( QString( "<qt><center><b><nobr>"
+#ifdef HAVE_VTS
+	if (type == -1)
+		willShut = false;
+#endif
+	box->addWidget( new QLabel( QString( "<qt><center><b><nobr>"
 	                                     "%1"
 	                                     "</nobr></b></center><br></qt>" )
 	                            .arg( (type == SHUT_HALT) ?
 	                                  i18n("Turn Off Computer") :
-	                                  i18n("Restart Computer") ), this );
-	box->addWidget( title );
+#ifdef HAVE_VTS
+	                                  (type == -1) ?
+	                                  i18n("Switch to Console") :
+#endif
+	                                  i18n("Restart Computer") ), this ) );
 
 	if (sess) {
-		if (_scheduledSd != SHUT_NEVER)
+		if (willShut && _scheduledSd != SHUT_NEVER)
 			maySched = true;
 		mayNuke = doesNuke = true;
 		if (_allowNuke == SHUT_NONE)

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef KDMSHUTDOWN_H
 #define KDMSHUTDOWN_H
 
+#include "kdmconfig.h" // for HAVE_VTS
 #include "kgverify.h"
 
 #include <qradiobutton.h>
@@ -59,6 +60,11 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 	void complete( QWidget *prevWidget );
 
 	QVBoxLayout *box;
+#ifdef HAVE_VTS
+	bool willShut;
+#else
+	static const bool willShut = true;
+#endif
 	bool mayNuke, doesNuke, mayOk, maySched;
 
   private slots:
@@ -69,7 +75,7 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 	KPushButton *okButton, *cancelButton;
 	QLabel *rootlab;
 	KGStdVerify *verify;
-	int  needRoot, uid;
+	int needRoot, uid;
 
 	static int curPlugin;
 	static PluginList pluginList;
@@ -117,7 +123,7 @@ class KDMShutdown : public KDMShutdownBase, public BootHandler {
 	QRadioButton *restart_rb;
 	QLineEdit *le_start, *le_timeout;
 	QCheckBox *cb_force;
-	int  sch_st, sch_to;
+	int sch_st, sch_to;
 
 };
 

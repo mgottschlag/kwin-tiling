@@ -936,6 +936,57 @@ handBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 
+#ifdef HAVE_VTS
+static char *
+mem_mem( char *mem, int lmem, const char *smem, int lsmem )
+{
+	for (; lmem >= lsmem; mem++, lmem--)
+		if (!memcmp( mem, smem, lsmem ))
+			return mem + lsmem;
+	return 0;
+}
+
+static int maxTTY, TTYmask;
+
+static void
+getInitTab( void )
+{
+	File it;
+	char *p, *eol, *ep;
+	int tty;
+
+	if (maxTTY)
+		return;
+	if (readFile( &it, "/etc/inittab" )) {
+		for (p = it.buf; p < it.eof; p = eol + 1) {
+			for (eol = p; eol < it.eof && *eol != '\n'; eol++);
+			if (*p != '#') {
+				if ((ep = mem_mem( p, eol - p, " tty", 4 )) &&
+				    ep < eol && isdigit( *ep ))
+				{
+					if (ep + 1 == eol || isspace( *(ep + 1) ))
+						tty = *ep - '0';
+					else if (isdigit( *(ep + 1) ) &&
+					         (ep + 2 == eol || isspace( *(ep + 2) )))
+						tty = (*ep - '0') * 10 + (*(ep + 1) - '0');
+					else
+						continue;
+					TTYmask |= 1 << (tty - 1);
+					if (tty > maxTTY)
+						maxTTY = tty;
+				}
+			}
+		}
+		freeBuf( &it );
+	}
+	if (!maxTTY) {
+		maxTTY = 6;
+		TTYmask = 0x3f;
+	}
+}
+#endif
+
+
 /* TODO: handle solaris' local_uid specs */
 
 #ifdef HAVE_VTS
@@ -1275,50 +1326,32 @@ mk_xservers( Entry *ce, Section *cs ATTR_UNUSED )
 }
 
 #ifdef HAVE_VTS
-static char *
-mem_mem( char *mem, int lmem, const char *smem, int lsmem )
-{
-	for (; lmem >= lsmem; mem++, lmem--)
-		if (!memcmp( mem, smem, lsmem ))
-			return mem + lsmem;
-	return 0;
-}
-#endif
-
-#ifdef HAVE_VTS
 static void
 upd_servervts( Entry *ce, Section *cs ATTR_UNUSED )
 {
-	File it;
-	char *p, *eol, *ep;
-	int tty, maxtty;
-
 	if (!ce->active) { /* there is only the Global one */
 #ifdef __linux__ /* XXX actually, sysvinit */
-		if (readFile( &it, "/etc/inittab" )) {
-			maxtty = 0;
-			for (p = it.buf; p < it.eof; p = eol + 1) {
-				for (eol = p; eol < it.eof && *eol != '\n'; eol++);
-				if (*p != '#') {
-					if ((ep = mem_mem( p, eol - p, " tty", 4 )) &&
-					    ep < eol && isdigit( *ep ))
-					{
-						if (ep + 1 == eol || isspace( *(ep + 1) ))
-							tty = *ep - '0';
-						else if (isdigit( *(ep + 1) ) &&
-						         (ep + 2 == eol || isspace( *(ep + 2) )))
-							tty = (*ep - '0') * 10 + (*(ep + 1) - '0');
-						else
-							continue;
-						if (tty > maxtty)
-							maxtty = tty;
-					}
-				}
-			}
-			freeBuf( &it );
-			if (!maxtty)
-				maxtty = 6;
-			ASPrintf( (char **)&ce->value, "-%d", maxtty + 1 );
+		getInitTab();
+		ASPrintf( (char **)&ce->value, "-%d", maxTTY + 1 );
+		ce->active = ce->written = 1;
+#endif
+	}
+}
+
+static void
+upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	if (!ce->active) { /* there is only the Global one */
+#ifdef __linux__ /* XXX actually, sysvinit */
+		char *buf;
+		int i;
+
+		getInitTab();
+		for (i = 0, buf = 0; i < 16; i++)
+			if (TTYmask & (1 << i))
+				StrCat( &buf, ",tty%d", i + 1 );
+		if (buf) {
+			ce->value = buf + 1;
 			ce->active = ce->written = 1;
 		}
 #endif

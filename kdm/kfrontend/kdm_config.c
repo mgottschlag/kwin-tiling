@@ -1373,7 +1373,9 @@ ReadServersFile( const char *fname )
 	for (i = 0; i < nserv; i++, serverList = serverList->next) {
 		GSendStr( serverList->name );
 		GSendStr( serverList->class2 );
+#ifndef HAVE_VTS
 		GSendStr( serverList->console );
+#endif
 		GSendInt( serverList->type );
 		j = serverList->argc;
 		if (j) {

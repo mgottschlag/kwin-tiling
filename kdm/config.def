@@ -806,6 +806,20 @@ Description:
  free <acronym>VT</acronym>s greater than the absolute value of the last entry
  in this list.
 
+Key: ConsoleTTYs
+If: defined(HAVE_VTS)
+Type: list
+Default: ""
+User: core
+Instance: #"tty1,tty2,tty3,tty4,tty5,tty6"
+Update: upd_consolettys
+Comment:
+ TTYs to monitor for activity while in console mode.
+Description:
+ When &kdm; switches to console mode, it starts monitoring all TTYs (consoles)
+ listed here. If none of them is active for some time, &kdm; switches back to
+ the X login.
+
 Key: PidFile
 Type: string
 Default: ""

@@ -59,7 +59,7 @@ typedef struct dpySpec {
 	int self;
 } dpySpec;
 
-dpySpec *fetchSessions( int all );
+dpySpec *fetchSessions( int flags );
 void disposeSessions( dpySpec *sess );
 
 void freeStrArr( char **arr );
