@@ -27,6 +27,7 @@
 
 #include <qdir.h>
 #include <qlist.h>
+#include <qregexp.h>
 
 #include <kurl.h>
 #include <kdebug.h>

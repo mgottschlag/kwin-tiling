@@ -23,6 +23,7 @@
 #include <unistd.h>
 
 #include <qtextcodec.h>
+#include <qregexp.h>
 
 #include <kurl.h>
 #include <kdebug.h>
