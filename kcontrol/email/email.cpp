@@ -38,6 +38,7 @@
 #include <unistd.h>
 
 #include <qcheckbox.h>
+#include <qfile.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
