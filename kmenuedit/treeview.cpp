@@ -666,8 +666,14 @@ QStringList TreeView::dirList(const QString& rPath)
 
 bool TreeView::acceptDrag(QDropEvent* e) const
 {
-    return e->provides("application/x-kmenuedit-internal") &&
-           (e->source() == const_cast<TreeView *>(this));
+    if (e->provides("application/x-kmenuedit-internal") &&
+           (e->source() == const_cast<TreeView *>(this)))
+       return true;
+    KURL::List urls;
+    if (KURLDrag::decode(e, urls) && (urls.count() == 1) && 
+        urls[0].isLocalFile() && urls[0].path().endsWith(".desktop"))
+       return true;
+    return false;
 }
 
 
@@ -726,18 +732,62 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
 {
    if(!e) return;
 
-   if (e->source() != this) return; // Only internal drags are supported atm
-
+   // get destination folder
    TreeItem *parentItem = static_cast<TreeItem*>(parent);
+   QString folder = parentItem ? parentItem->directory() : QString::null;
+   MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
+
+   if (e->source() != this) 
+   {
+     // External drop
+     KURL::List urls;
+     if (!KURLDrag::decode(e, urls) || (urls.count() != 1) || !urls[0].isLocalFile())
+        return;
+     QString path = urls[0].path();
+     if (!path.endsWith(".desktop"))
+        return;
+
+     QString menuId;
+     QString result = createDesktopFile(path, &menuId, &m_newMenuIds);
+     KDesktopFile orig_df(path);
+     KDesktopFile *df = orig_df.copyTo(result);
+     df->deleteEntry("Categories"); // Don't set any categories!
+
+     KService *s = new KService(df);
+     s->setMenuId(menuId);
+
+     MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
+
+     QString oldCaption = entryInfo->caption;
+     QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
+     entryInfo->setCaption(newCaption);
+
+     // Add file to menu
+     // m_menuFile->addEntry(folder, menuId);
+     m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
+
+     // create the TreeItem
+     if(parentItem)
+        parentItem->setOpen(true);
+
+     // update fileInfo data
+     parentFolderInfo->add(entryInfo);
+
+     TreeItem *newItem = createTreeItem(parentItem, after, entryInfo, true);
+
+     setSelected ( newItem, true);
+     itemSelected( newItem);
+
+     m_drag = 0;
+     setLayoutDirty(parentItem);
+     return;
+   }
 
    // is there content in the clipboard?
    if (!m_drag) return;
 
    if (m_dragItem == after) return; // Nothing to do
 
-   // get destination folder
-   QString folder = parentItem ? parentItem->directory() : QString::null;
-   MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
    int command = m_drag;
    if (command == MOVE_FOLDER)
    {
