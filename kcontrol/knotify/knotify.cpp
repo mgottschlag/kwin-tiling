@@ -310,7 +310,7 @@ QString KNotifyWidget::quickHelp() const
 		"<li>With a beep or other noise."
 		"<li>Via a popup dialog box with additional information."
 		"<li>By recording the event in a logfile without "
-		"any additional visual or auditory alert."
+		"any additional visual or audible alert."
 		"</ul>");
 }
 

@@ -376,7 +376,7 @@ void KLocaleConfig::reTranslate()
         ( "All KDE programs will be displayed in this language (if "
           "available).") );
   QToolTip::add(comboChset, locale->translate
-        ( "The prefered charset for fonts.") );
+        ( "The preferred charset for fonts.") );
 
   QString str;
 
@@ -399,7 +399,7 @@ void KLocaleConfig::reTranslate()
 
   str = locale->translate
     ( "Here you can choose the charset KDE uses to display "
-      "text. ISO 8859-1 is default and should work for you if you use some "
+      "text. ISO 8859-1 is the default and should work for you if you use a "
       "Western European language. If not, you may have to choose a different "
       "charset." );
   QWhatsThis::add( labChset, str );

@@ -259,7 +259,7 @@ void KLocaleConfigNumber::reTranslate()
 
   str = locale->translate( "Here you can specify text used to prefix "
 			   "negative numbers. This shouldn't be empty, so "
-			   "you can distinguis positive and negative "
+			   "you can distinguish positive and negative "
 			   "numbers. It's normally set to minus (-)." );
   QWhatsThis::add( labMonNegSign, str );
   QWhatsThis::add( edMonNegSign,  str );

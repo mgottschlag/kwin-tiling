@@ -140,11 +140,11 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     fLay->addMultiCellWidget(focusCombo,1,1,0,1);
 
     // FIXME, when more policies have been added to KWin
-    QWhatsThis::add( focusCombo, i18n("The focus policy is used to determin the active window, i.e."
+    QWhatsThis::add( focusCombo, i18n("The focus policy is used to determine the active window, i.e."
                                       " the window you can work in. <ul>"
                                       " <li><em>Click to focus:</em> a window becomes active when you click into it. This is the behavior"
                                       " you might know from other operating systems.</li>"
-                                      " <li><em>Focus follows mouse:</em> Moving the mouse pointer actively onto a"
+                                      " <li><em>Focus follows mouse:</em> Moving the mouse pointer actively on to a"
                                       " normal window activates it. Very practical if you are using the mouse a lot.</li>"
                                       " <li><em>FocusUnderMouse</em> - The window that happens to be under the"
                                       "  mouse pointer becomes active. The invariant is: no window can"
@@ -185,14 +185,14 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
                                clickRaiseOn->sizeHint().width()) + 15);
 
     QWhatsThis::add( autoRaiseOn, i18n("If Auto Raise is enabled, a window in the background will automatically"
-                                       " come to front when the mouse pointer has been over it for some time.") );
-    wtstr = i18n("This is the delay after which the window the mouse pointer is over will automatically"
-                 " come to front.");
+                                       " come to the front when the mouse pointer has been over it for some time.") );
+    wtstr = i18n("This is the delay after which the window that the mouse pointer is over will automatically"
+                 " come to the front.");
     QWhatsThis::add( autoRaise, wtstr );
 //    QWhatsThis::add( s, wtstr );
     QWhatsThis::add( alabel, wtstr );
 
-    QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to"
+    QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to the"
                                         " front automatically when you click somewhere into the window contents.") );
 
     lay->addWidget(fcsBox);
@@ -209,21 +209,21 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     cdeMode = new QRadioButton(i18n("CDE"), kbdBox);
     kLay->addWidget(cdeMode, 1, 2);
 
-    wtstr = i18n("Keep the Alt key pressed and hit repeatedly the Tab key to walk"
-                 " through the windows on the current desktop ( the Alt+Tab"
-                 " combination may be reconfigured ). The two different modes mean:<ul>"
+    wtstr = i18n("Keep the Alt key pressed and hit the Tab key repeatedly to walk"
+                 " through the windows on the current desktop (the Alt+Tab"
+                 " combination can be reconfigured). The two different modes mean:<ul>"
                  "<li><b>KDE</b>: a nice widget is shown, displaying the icons of all windows to"
                  " walk through and the title of the currently selected one;"
-                 "<li><b>CDE</b>: the focus is passed to a new window at each time Tab is hit."
+                 "<li><b>CDE</b>: the focus is passed to a new window each time Tab is hit."
                  " No fancy widget.</li></ul>");
     QWhatsThis::add( altTabLabel, wtstr );
     QWhatsThis::add( kdeMode, wtstr );
     QWhatsThis::add( cdeMode, wtstr );
-    
+
     traverseAll = new QCheckBox( i18n( "Traverse windows on all desktops" ), kbdBox );
     kLay->addMultiCellWidget( traverseAll, 2, 2, 0, 2 );
-    
-    wtstr = i18n( "Leave this option disabled if you want limit walking through"
+
+    wtstr = i18n( "Leave this option disabled if you want to limit walking through"
                   " windows to the current desktop." );
     QWhatsThis::add( traverseAll, wtstr );
 
@@ -477,7 +477,7 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     minimizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
     rLay->addWidget(minimizeAnimFastLabel,1,2);
 
-    wtstr = i18n("Here you can set the speed for the animation shown when windows are"
+    wtstr = i18n("Here you can set the speed of the animation shown when windows are"
                  " minimized and restored. ");
     QWhatsThis::add( minimizeAnimSlider, wtstr );
     QWhatsThis::add( minimizeAnimSlowLabel, wtstr );
@@ -496,7 +496,7 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     moveResizeMaximized = new QCheckBox( i18n("Allow Moving and Resizing of maximized windows"), windowsBox);
     bLay->addWidget(moveResizeMaximized);
     QWhatsThis::add(moveResizeMaximized, i18n("When enabled, this feature activates the border of maximized windows"
-                                              " and allows you to move or to resize them,"
+                                              " and allows you to move or resize them,"
                                               " just like for normal windows"));
 
 
@@ -646,7 +646,7 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     WndwSnap->setSuffix( i18n(" pixels"));
     BrdrSnap->setSteps(1,1);
     QWhatsThis::add( WndwSnap, i18n("Here you can set the snap zone for windows, i.e."
-                                    " the 'strength' of the magnetic field which will make windows snap to eachother when"
+                                    " the 'strength' of the magnetic field which will make windows snap to each other when"
                                     " they're moved near another window.") );
 
     OverlapSnap=new QCheckBox(i18n("Snap windows only when &overlapping"),MagicBox);

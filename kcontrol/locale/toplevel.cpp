@@ -144,7 +144,7 @@ void KLocaleApplication::moduleChanged(bool state)
 QString KLocaleApplication::quickHelp() const
 {
   return locale->translate("<h1>Locale</h1>\n"
-          "<p>From here you can configure language, numberic, and time \n"
+          "<p>From here you can configure language, numeric, and time \n"
           "settings for your particular region. In most cases it will be \n"
           "sufficient to choose the country you live in. For instance KDE \n"
           "will automatically choose \"German\" as language if you choose \n"

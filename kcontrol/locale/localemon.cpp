@@ -391,7 +391,7 @@ void KLocaleConfigMoney::reTranslate()
 
   QString str;
 
-  str = locale->translate( "Here you can enter your normally used currency "
+  str = locale->translate( "Here you can enter your usual currency "
 			   "symbol, e.g. $ or DM."
 			   "<p>Please note that the Euro symbol may not be "
 			   "available on your system, depending on the "

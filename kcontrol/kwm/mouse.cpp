@@ -106,7 +106,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   label = new QLabel(i18n("Inner window, titlebar and frame:"), this);
   layout->addMultiCellWidget(label, 12,12,0,3);
   layout->setRowStretch(12, 1);
-  QWhatsThis::add( label, i18n("Here you can customize KDE's behaviour when clicking somewhere into"
+  QWhatsThis::add( label, i18n("Here you can customize KDE's behavior when clicking somewhere into"
     " a window while pressing a modifier key."));
 
   /*
@@ -118,7 +118,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   strMouseButton1 = i18n("Left Button");
   txtButton1 = i18n("In this row you can customize left click behavior when clicking into"
-     "  the titlebar or the frame.");
+     " the titlebar or the frame.");
 
   strMouseButton3 = i18n("Right Button");
   txtButton3 = i18n("In this row you can customize right click behavior when clicking into"
@@ -172,7 +172,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   strMouseButton1 = i18n("ALT + Left Button");
   strAll1 = i18n("In this row you can customize left click behavior when clicking into"
-     "  the titlebar or the frame.");
+     " the titlebar or the frame.");
 
   strMouseButton3 = i18n("ALT + Right Button");
   strAll3 = i18n("In this row you can customize right click behavior when clicking into"

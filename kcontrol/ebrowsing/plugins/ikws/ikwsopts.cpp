@@ -92,7 +92,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
                                                     "in its browser's address bar. This means you can simply type normal "
                                                     "words and phrases, such as \"KDE\", to automatically get redirected "
                                                     "to the appropriate site. For further details on this feature visit "
-                                                    "<b>http://www.internetkeywords.org</b> or simply type <b>IKW Dev</b>) "
+                                                    "<b>http://www.internetkeywords.org</b> or simply type <b>IKW Dev</b> "
                                                     "in the browser location bar."));
     i_vbox->addWidget(cb_enableInternetKeywords);
     QHBoxLayout *igbopts_lay = new QHBoxLayout( i_vbox, KDialog::spacingHint() );
