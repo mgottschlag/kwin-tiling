@@ -61,7 +61,7 @@ void KEditableListView::slotItemClicked( int button, QListViewItem *item,
 	slotDestroyEdit();
 	return;
     }
-    
+
     QRect r = itemRect( item );
     if ( !r.isValid() ) {
 	slotDestroyEdit();
@@ -150,7 +150,11 @@ void KEditableListView::slotDestroyEdit()
     delete myEdit;
     myEdit = 0L;
 
-    myCurrentItemIsOpen = currentItem()->isOpen();
+    if ( currentItem() )
+	myCurrentItemIsOpen = currentItem()->isOpen();
+    else
+	myCurrentItemIsOpen = false;
+    
     viewport()->setFocus();
 }
 
