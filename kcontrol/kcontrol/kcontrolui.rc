@@ -13,7 +13,7 @@
         </Menu>
     </Menu>
     <Menu name="help">
-        <Action name="help_about_module" append="about_merge">
+        <Action name="help_about_module" append="about_merge"/>
     </Menu>
 </MenuBar>
 </kpartgui>
