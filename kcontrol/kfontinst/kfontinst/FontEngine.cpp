@@ -47,20 +47,10 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qfile.h>
-
-//
-// NOTE: The FreeType headers are in quotes and not brackets, as the path is supplied in the compile line
-//       and some systems have both FreeType1 and FreeType2 installed - if we used <freetype/freetype.h> then it
-//       is likely that the FreeType1 header would be included!
-//
-#ifdef HAVE_FT2_FTSNAMES
-#include "freetype/ftsnames.h"
-#else
-#include "freetype/ftnames.h"
-#endif
-#include "freetype/ttnameid.h"
-#include "freetype/tttables.h"
-#include "freetype/ftimage.h"
+#include <ft2build.h>
+#include FT_SFNT_NAMES_H
+#include FT_TRUETYPE_IDS_H
+#include FT_TRUETYPE_TABLES_H
 
 static const char *constNoPsName  ="NO_PS_NAME";
 static const char *constBmpRoman  ="";

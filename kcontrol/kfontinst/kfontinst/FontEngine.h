@@ -32,7 +32,8 @@
 #if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 #include "Encodings.h"
 #endif
-#include <freetype/freetype.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qpixmap.h>

@@ -33,16 +33,10 @@
 // Want to use some classes from main KFontinst code, but don't want/need all functionaility...
 #define KFI_THUMBNAIL
 
-//
-// NOTE: The FreeType headers are in quotes and not brackets, as the path is supplied in the compile line
-//       and some systems have both FreeType1 and FreeType2 installed - if we used <freetype/freetype.h> then it
-//       is likely that the FreeType1 header would be included!
-//
- 
-#include "freetype/freetype.h"
-#include "freetype/cache/ftcimage.h"
-#include "freetype/cache/ftcsbits.h"
-#include "freetype/ftcache.h"
+#include <ft2build.h> 
+#include FT_CACHE_IMAGE_H
+#include FT_CACHE_SMALL_BITMAPS_H
+#include FT_CACHE_H
 #include "FontEngine.h"
 #include <kio/thumbcreator.h>
 #include <qptrlist.h>
