@@ -1,6 +1,6 @@
 $Id$
 
-This is the KDE Display Manager (kdm) v0.93 for KDE 3.0, 
+This is the KDE Display Manager (kdm) v0.94 for KDE 3.1, 
 the KDE replacement for the X Display Manager (xdm).
 
 
@@ -8,8 +8,9 @@ How to setup kdm
 ----------------
 
 KDM's config files are all located in ${kde_confdir}/kdm.
-"make install" will install an example configuration if the directory
-does not exist yet.
+"make install" will create a probably working configuration, either by
+deriving it from an already present KDM/XDM installation or by using
+defaults if no previous installation is found.
 
 You can change the configuration from the KDE Control Center. 
 You will find the Login Manager module in "System" -> "Login Manager".
@@ -113,7 +114,7 @@ Version 0.1 of kdm is copyright
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
 Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000-2001 Oswald Buddenhagen <ossi@kde.org>
+	(C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
 
 The files in the backend directory are licensed under the X licence 
 (see www.xfree86.org for more info). 
