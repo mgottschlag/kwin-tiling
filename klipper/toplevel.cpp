@@ -881,6 +881,7 @@ void Klipper::enterEvent( QEvent* )
 // find newInstance()  (which doesn't do anything in Klipper anyway)
 int Klipper::newInstance()
 {
+    kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
     return 0;
 }
 
