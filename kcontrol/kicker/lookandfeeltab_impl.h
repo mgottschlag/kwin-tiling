@@ -33,15 +33,14 @@ public:
     void load();
     void save();
     void defaults();
-    void show();
 
 signals:
     void changed();
 
 protected slots:
     void browse_theme();
-    void hideButtonsSet(int index);
-    
+    void hideButtonsClicked();
+
 private:
     QString theme;
     QPixmap theme_preview;

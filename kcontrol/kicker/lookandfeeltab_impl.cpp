@@ -51,7 +51,8 @@ LookAndFeelTab::LookAndFeelTab( KickerConfig *parent, const char* name )
     connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_autoHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_hideButtons, SIGNAL(activated(int)), SIGNAL(changed()));
+    connect(m_lHB, SIGNAL(clicked()), SLOT(hideButtonsClicked()));
+    connect(m_rHB, SIGNAL(clicked()), SLOT(hideButtonsClicked()));
     connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_backgroundButton, SIGNAL(clicked()), SLOT(browse_theme()));
@@ -71,12 +72,6 @@ LookAndFeelTab::LookAndFeelTab( KickerConfig *parent, const char* name )
     QWhatsThis::add(m_autoHideSlider, i18n("Determines the speed of the auto-hide animation, "
                                            "i.e. the animation shown when the panel disappears after "
                                            "a certain amount of time."));
-
-    QWhatsThis::add(m_hideButtons, i18n("If this option is enabled, the panel"
-                                        " will have buttons on both ends that can be used to hide it. The"
-                                        " panel will slide away, leaving more room for applications. There"
-                                        " only remains a small button which can be used to show the panel "
-                                        "again."));
 
     QWhatsThis::add(m_hideButtonSlider, i18n("Here you can change the size of the hide buttons."));
 
@@ -179,17 +174,10 @@ void LookAndFeelTab::load()
     bool showLHB = c->readBoolEntry("ShowLeftHideButton", false);
     bool showRHB = c->readBoolEntry("ShowRightHideButton", true);
 
-    if (showLHB)
-        if (showRHB)
-            m_hideButtons->setCurrentItem(0);
-        else
-            m_hideButtons->setCurrentItem(1);
-    else if (showRHB)
-        m_hideButtons->setCurrentItem(2);
-    else
-        m_hideButtons->setCurrentItem(3);
+    m_lHB->setChecked( showLHB );
+    m_rHB->setChecked( showRHB );
 
-    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 14));
+    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 10));
     m_hideButtonSlider->setEnabled(showLHB || showRHB);
 
     delete c;
@@ -212,16 +200,8 @@ void LookAndFeelTab::save()
     c->writeEntry("AutoHideAnimation", m_autoHideAnimation->isChecked());
     c->writeEntry("HideAnimationSpeed", m_manualHideSlider->value());
     c->writeEntry("AutoHideAnimationSpeed", m_autoHideSlider->value());
-
-    if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 1)
-        c->writeEntry("ShowLeftHideButton", "true");
-    else
-        c->writeEntry("ShowLeftHideButton", "false");
-
-    if (m_hideButtons->currentItem() == 0 || m_hideButtons->currentItem() == 2)
-        c->writeEntry("ShowRightHideButton", "true");
-    else
-        c->writeEntry("ShowRightHideButton", "false");
+    c->writeEntry("ShowLeftHideButton", m_lHB->isChecked());
+    c->writeEntry("ShowRightHideButton", m_rHB->isChecked());
 
     c->writeEntry("HideButtonSize", m_hideButtonSlider->value());
     c->sync();
@@ -250,35 +230,13 @@ void LookAndFeelTab::defaults()
     m_manualHideSlider->setValue(100);
     m_autoHideSlider->setValue(25);
 
-    m_hideButtons->setCurrentItem(2);
-    m_hideButtonSlider->setValue(14);
+    m_lHB->setChecked( false );
+    m_rHB->setChecked( true );
+    m_hideButtonSlider->setValue(10);
 }
 
-void LookAndFeelTab::hideButtonsSet(int index)
+void LookAndFeelTab::hideButtonsClicked()
 {
-    if (index < 3)
-    {
-        m_hideButtonSlider->setEnabled(true);
-    }
-    else
-    {
-        m_hideButtonSlider->setEnabled(false);
-    }
-}
-
-void LookAndFeelTab::show()
-{
-    if (kconf->horizontal())
-    {
-        m_hideButtons->changeItem(i18n("Enable Left Hide Button Only"), 1);
-        m_hideButtons->changeItem(i18n("Enable Right Hide Button Only"), 2);
-    }
-    else
-    {
-        qDebug("vertical");
-            m_hideButtons->changeItem(i18n("Enable Top Hide Button Only"), 1);
-            m_hideButtons->changeItem(i18n("Enable Bottom Hide Button Only"), 2);
-    }
-
-    QWidget::show();
+    m_hideButtonSlider->setEnabled( m_lHB->isChecked() || m_rHB->isChecked() );
+    emit changed();
 }
