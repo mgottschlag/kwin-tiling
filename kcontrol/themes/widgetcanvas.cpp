@@ -24,7 +24,6 @@
 #include <qchkbox.h>
 #include <qcombo.h>
 #include <kapp.h>
-#include <kmsgbox.h>
 
 #include <X11/Xlib.h>
 #include <X11/X.h>

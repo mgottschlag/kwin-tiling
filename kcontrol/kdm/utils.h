@@ -41,7 +41,6 @@
 #include <kapp.h>
 #include <kcontrol.h>
 #include <kiconloaderdialog.h>
-#include <kmsgbox.h>
 #include <ksimpleconfig.h>
 #include <kimgio.h>
 

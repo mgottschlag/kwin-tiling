@@ -23,12 +23,12 @@
 #include <unistd.h>
 #include <qpixmap.h>
 #include <qpushbutton.h>
-#include <kiconloader.h>
-#include <kmsgbox.h>
-#include "toplevel.moc"
 #include <qheader.h>
+
+#include <kiconloader.h>
 #include <klocale.h>
 
+#include "toplevel.moc"
 
 void MySplitter::resizeEvent(QResizeEvent *event)
 {

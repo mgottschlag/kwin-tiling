@@ -29,7 +29,6 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <kcharsets.h>
-#include <kmsgbox.h>
 #include <ksimpleconfig.h>
 #include <kcursor.h>
 #include <kglobal.h>

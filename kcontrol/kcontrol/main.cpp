@@ -23,7 +23,6 @@
 #include <qapplication.h>
 #include <qpushbutton.h>
 #include <qstring.h>
-#include <kmsgbox.h>
 
 #include "configlist.h"
 #include "toplevel.h"

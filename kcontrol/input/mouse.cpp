@@ -32,7 +32,6 @@
 #include <qstring.h>
 #include <qmessagebox.h> 
 
-#include <kmsgbox.h> 
 #include "mouse.h"
 
 #include <X11/X.h>

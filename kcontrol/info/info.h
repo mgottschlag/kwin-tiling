@@ -12,7 +12,6 @@
 #include <qfile.h>
 #include <qevent.h>
 
-#include <kmsgbox.h>
 #include <kcontrol.h>
 #include <ktablistbox.h>
 

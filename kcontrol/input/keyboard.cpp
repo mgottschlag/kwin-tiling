@@ -31,7 +31,6 @@
 #include <qstring.h>
 #include <qmessagebox.h> 
 
-#include <kmsgbox.h> 
 #include "keyboard.h"
 
 #include <X11/Xlib.h>

@@ -30,7 +30,6 @@
 #include <qobject.h>
 #include <qdir.h>
 
-#include <kmsgbox.h>
 #include <kiconloader.h>
 #include <kapp.h>
 #include <ksimpleconfig.h>

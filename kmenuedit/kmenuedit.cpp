@@ -31,7 +31,6 @@
 #include <qtextstream.h>
 
 #include <kapp.h>
-#include <kmsgbox.h>
 #include <kmenubar.h>
 #include <ktoolbar.h>
 #include <kiconloader.h>
