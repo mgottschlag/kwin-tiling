@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qdir.h>
 #include <qfile.h>
 #include <qimage.h>
+#include <qmovie.h>
 #include <qpopupmenu.h>
 #include <qtimer.h>
 #include <qheader.h>
@@ -52,6 +53,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qaccel.h>
+#include <qeventloop.h>
 
 #include <pwd.h>
 #include <grp.h>
@@ -630,14 +632,21 @@ KStdGreeter::KStdGreeter()
 			break;
 		case LOGO_LOGO:
 			{
+				QMovie movie( _logo );
+				kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers, 100 );
 				QPixmap pixmap;
-				if (pixmap.load( _logo )) {
+				if (!movie.framePixmap().isNull() || pixmap.load( _logo )) {
 					pixLabel = new QLabel( this );
-					pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
-					pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-					pixLabel->setAutoResize( true );
+					if (!movie.framePixmap().isNull()) {
+						pixLabel->setMovie( movie );
+						if (!movie.framePixmap().hasAlpha())
+							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+					} else {
+						pixLabel->setPixmap( pixmap );
+						if (!pixmap.hasAlpha())
+							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+					}
 					pixLabel->setIndent( 0 );
-					pixLabel->setPixmap( pixmap );
 				}
 			}
 			break;
