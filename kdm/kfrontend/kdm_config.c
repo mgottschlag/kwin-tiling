@@ -567,10 +567,7 @@ ReadConf()
 				case 'n': *pt++ = '\n'; break;
 				case 'r': *pt++ = '\r'; break;
 				case '\\': *pt++ = '\\'; break;
-				default:
-					LogError( "Unrecognized escape '\\%c' at %s:%d\n",
-					          *s, kdmrc, line );
-					break;
+				default: *pt++ = '\\'; *pt++ = *s; break;
 				}
 				en = pt;
 			} else {
