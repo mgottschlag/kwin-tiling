@@ -49,9 +49,9 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   layout->addWidget(info);
   layout->addStretch();
 
-   QString path = QString::fromLocal8Bit(getenv("PATH")) + QString::fromLatin1(":/usr/sbin");
-   QString smbExec = KStandardDirs::findExe( QString::fromLatin1("/usr/sbin/smbd"), path );
-   QString nfsExec = KStandardDirs::findExe( QString::fromLatin1("/usr/sbin/rpc.nfsd"), path );
+   QString path = QString::fromLatin1("/usr/sbin");
+   QString smbExec = KStandardDirs::findExe( QString::fromLatin1("smbd"), path );
+   QString nfsExec = KStandardDirs::findExe( QString::fromLatin1("rpc.nfsd"), path );
 
   if ( nfsExec.isEmpty() && smbExec.isEmpty())
   {
