@@ -57,8 +57,10 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
     }
 
     // Is this URL a candidate for filtering?
+    if (kurl.isMalformed())
+        return false;
 
-    if (kurl.isMalformed() || !KProtocolManager::self().protocols().contains(kurl.protocol())) {
+    if (!KProtocolManager::self().protocols().contains(kurl.protocol())) {
 	QString query = QString::null;
 	int pos = -1;
 
@@ -67,17 +69,13 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 	// prefix. Also note that other filterings like doing a DNS
 	// lookup for a hostname should have been taken care of before.
 	
-	if (kurl.isMalformed()) {
-	    query = KURISearchFilterEngine::self()->navQuery();
-	} else {
-	    pos = url.find(':');
-	    if (pos >= 0) {
+	pos = url.find(':');
+	if (pos >= 0) {
 		QString key = url.left(pos);
 		query = KURISearchFilterEngine::self()->searchQuery(key);
 		if (query == QString::null) {
 		    return false;
 		}
-	    }
 	}
 	
 	// Substitute the variable part in the query we found.
