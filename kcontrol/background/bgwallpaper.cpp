@@ -4,16 +4,16 @@
 
    Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
    Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
-  
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -67,7 +67,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
 {
    dlg = new BGMultiWallpaperBase(this);
    setMainWidget(dlg);
-   
+
    dlg->m_spinInterval->setRange(1, 240);
    dlg->m_spinInterval->setSteps(1, 15);
    dlg->m_spinInterval->setSuffix(i18n(" minutes"));
@@ -79,9 +79,17 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
 
    if (m_pSettings->multiWallpaperMode() == KBackgroundSettings::Random)
       dlg->m_cbRandom->setChecked(true);
-      
+
    connect(dlg->m_buttonAdd, SIGNAL(clicked()), SLOT(slotAdd()));
    connect(dlg->m_buttonRemove, SIGNAL(clicked()), SLOT(slotRemove()));
+   connect(dlg->m_listImages,  SIGNAL(clicked ( QListBoxItem * )), SLOT(slotItemSelected( QListBoxItem *)));
+   dlg->m_buttonRemove->setEnabled( false );
+
+}
+
+void BGMultiWallpaperDialog::slotItemSelected( QListBoxItem * item)
+{
+    dlg->m_buttonRemove->setEnabled( item );
 }
 
 void BGMultiWallpaperDialog::slotAdd()
@@ -116,6 +124,7 @@ void BGMultiWallpaperDialog::slotRemove()
         else
             i++;
     }
+    dlg->m_buttonRemove->setEnabled( dlg->m_listImages->selectedItem () );
 }
 
 void BGMultiWallpaperDialog::slotOk()
