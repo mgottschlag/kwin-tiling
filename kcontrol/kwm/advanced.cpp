@@ -12,7 +12,6 @@
 
 #include <qlayout.h>
 
-#include <kfiledialog.h>
 #include <kapp.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
