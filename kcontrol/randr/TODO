@@ -10,9 +10,6 @@ Qt
 Kwin
 	Support different sized virtual desktops
 
-KDesktop
-	automatically make sure desktop icons are visible
-	
 RandR programs
 	Support configuring different sized virtual desktops
 	Verify orientation stuff works
