@@ -433,9 +433,7 @@ Ent entsGeneral[] = {
 { "AuthDir",		C_authDir | C_PATH,	0,	"/var/run/xauth" },
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
 { "ExportList",		C_exportList,		0,	"" },
-#if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
-#endif
 { "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
 { "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
 };
