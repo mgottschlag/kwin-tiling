@@ -32,12 +32,11 @@
 #include "main.moc"
 #include "positiontab_impl.h"
 #include "hidingtab_impl.h"
-//#include "menutab_impl.h"
+#include "menutab_impl.h"
 //#include "lookandfeeltab_impl.h"
 //#include "applettab_impl.h"
 
 #include "lookandfeeltab_kcm.h"
-#include "menutab_kcm.h"
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
@@ -93,6 +92,10 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     tab->addTab(hidingtab, i18n("&Hiding"));
     connect(hidingtab, SIGNAL(changed()), this, SLOT(configChanged()));
 
+    menutab = new MenuTab(this);
+    tab->addTab(menutab, i18n("&Menus"));
+    connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
+
 //    lookandfeeltab = new LookAndFeelTab(this);
 //    tab->addTab(lookandfeeltab, i18n("A&ppearance"));
 //    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
@@ -129,7 +132,7 @@ void KickerConfig::load()
 {
     positiontab->load();
     hidingtab->load();
-    //menutab->load();
+    menutab->load();
     //lookandfeeltab->load();
     //applettab->load();
     emit changed(false);
@@ -139,7 +142,7 @@ void KickerConfig::save()
 {
     positiontab->save();
     hidingtab->save();
-    //menutab->save();
+    menutab->save();
     //lookandfeeltab->save();
     //applettab->save();
 
@@ -167,7 +170,7 @@ void KickerConfig::defaults()
 {
     positiontab->defaults();
     hidingtab->defaults();
-    //menutab->defaults();
+    menutab->defaults();
     //lookandfeeltab->defaults();
     //applettab->defaults();
 
@@ -290,6 +293,7 @@ extern "C"
 {
     KCModule *create_kicker(QWidget *parent, const char *)
     {
+        KImageIO::registerFormats();
         KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
                                          "kicker/applets");
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
@@ -305,15 +309,5 @@ extern "C"
         KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
                                          "kcmkicker/pics");
         return new LookAndFeelConfig(parent, "kcmkicker");
-    };
-
-    KCModule *create_kicker_menus(QWidget *parent, const char *)
-    {
-        KImageIO::registerFormats();
-        KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
-                                         "kicker/applets");
-        KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
-                                         "kicker/extensions");
-        return new MenuConfig(parent, "kcmkicker");
     };
 }

@@ -25,7 +25,7 @@
 class QTabWidget;
 class PositionTab;
 class HidingTab;
-//class MenuTab;
+class MenuTab;
 //class LookAndFeelTab;
 //class AppletTab;
 class ExtensionsTab;
@@ -68,7 +68,7 @@ private:
     PositionTab    *positiontab;
     HidingTab      *hidingtab;
 //    LookAndFeelTab *lookandfeeltab;
-//    MenuTab        *menutab;
+    MenuTab        *menutab;
 //    AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
     static int kickerconfig_screen_number;
