@@ -18,12 +18,14 @@
 #include <qstringlist.h>
 #include <qlabel.h>
 #include <qlistbox.h>
+#include <qlistview.h>                                                                     
 #include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <qtabwidget.h>
 #include <qiconview.h>
 
 #include <kapp.h>
@@ -57,13 +59,14 @@ extern "C" {
 KIconConfig::KIconConfig(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+
     QGridLayout *top = new QGridLayout(this, 2, 2,
                                        KDialog::marginHint(),
                                        KDialog::spacingHint());
     top->setColStretch(0, 1);
     top->setColStretch(1, 1);
 
-    // Use of Icon
+    // Use of Icon at (0,0)
     QGroupBox *gbox = new QGroupBox(i18n("Use of Icon"), this);
     top->addWidget(gbox, 0, 0);
     QBoxLayout *g_lay = new QVBoxLayout(gbox,
@@ -74,37 +77,7 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
     g_lay->addWidget(mpUsageList);
 
-
-    // Effects
-    gbox = new QGroupBox(i18n("Effects"), this);
-    top->addWidget(gbox, 1, 0);
-    g_lay = new QVBoxLayout(gbox, KDialog::marginHint(),
-                            KDialog::spacingHint());
-    mpStateList = new QListBox(gbox);
-    connect(mpStateList, SIGNAL(highlighted(int)), SLOT(slotState(int)));
-    g_lay->addSpacing(fontMetrics().lineSpacing());
-    g_lay->addWidget(mpStateList);
-
-    QGridLayout *grid = new QGridLayout;
-    grid->setColStretch(0, 2);
-    grid->setColStretch(0, 1);
-    g_lay->addLayout(grid);
-    QLabel *lbl = new QLabel(i18n("&Effect"), gbox);
-    grid->addWidget(lbl, 0, 0);
-    mpEffectBox = new QComboBox(gbox);
-    connect(mpEffectBox, SIGNAL(activated(int)), SLOT(slotEffect(int)));
-    grid->addWidget(mpEffectBox, 0, 1);
-    lbl->setBuddy(mpEffectBox);
-
-    mpESetupBut = new QPushButton( i18n("&Setup ..."),gbox);
-    connect(mpESetupBut, SIGNAL(clicked()), SLOT(slotEffectSetup()));
-    grid->addWidget(mpESetupBut, 1, 0);
-
-    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), gbox);
-    connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
-    grid->addWidget(mpSTCheck, 1, 1);
-
-    // Preview
+    // Preview at (0,1)
     gbox = new QGroupBox(i18n("Preview"), this);
     top->addWidget(gbox, 0, 1);
     g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0);
@@ -114,26 +87,65 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     mpPreview->setMinimumSize(128, 128);
     g_lay->addWidget(mpPreview);
 
+    // Tabwidget at (1,0) - (1,1)
+    m_pTabWidget = new QTabWidget(this);
+    top->addMultiCellWidget(m_pTabWidget, 1, 1, 0, 1);                                   
+
+    // Icon settings at Tab 1
+    m_pTab1 = new QWidget(0L, "Size Tab");
+    m_pTabWidget->addTab(m_pTab1, i18n("&Size"));
+    QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
+    grid->setColStretch(1, 1);
+    grid->setColStretch(2, 1);
+
+
     // Size
-    gbox = new QGroupBox(i18n("Size"), this);
-    top->addWidget(gbox, 1, 1);
-    g_lay = new QVBoxLayout(gbox, KDialog::marginHint(),
-                            KDialog::spacingHint());
-    g_lay->addSpacing(fontMetrics().lineSpacing());
-    QHBoxLayout *h_lay = new QHBoxLayout;
-    g_lay->addSpacing(10);
-    g_lay->addLayout(h_lay);
-    lbl = new QLabel(i18n("Size"), gbox);
-    h_lay->addWidget(lbl);
-    mpSizeBox = new QComboBox(gbox);
+    QLabel *lbl = new QLabel(i18n("Size:"), m_pTab1);
+    lbl->setFixedSize(lbl->sizeHint());
+    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);                                                  
+    mpSizeBox = new QComboBox(m_pTab1);
     connect(mpSizeBox, SIGNAL(activated(int)), SLOT(slotSize(int)));
-    h_lay->addWidget(mpSizeBox);
-    mpDPCheck = new QCheckBox(i18n("Double sized pixels"), gbox);
+    lbl->setBuddy(mpSizeBox);
+    grid->addWidget(mpSizeBox, 0, 1, Qt::AlignLeft);                                                    
+
+    mpDPCheck = new QCheckBox(i18n("Double sized pixels"), m_pTab1);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
-    g_lay->addWidget(mpDPCheck);
+    grid->addWidget(mpDPCheck, 1, 0, Qt::AlignLeft);
+
+    // Iconeffects at Tab 2
+    m_pTab2 = new QWidget(0L, "Iconeffect Tab");
+    m_pTabWidget->addTab(m_pTab2, i18n("&Effects"));
+    grid = new QGridLayout(m_pTab2, 4, 3, 10, 10);
+    grid->setColStretch(1, 1);
+    grid->setColStretch(2, 1);                                                                                                                                                                  
+
+
+    // Effects
+// I need to do a QListView here instead
+    mpStateList=new QListBox(m_pTab2);
+    connect(mpStateList, SIGNAL(highlighted(int)), SLOT(slotState(int)));
+    grid->addMultiCellWidget(mpStateList, 0, 0, 0, 3);                                   
+    lbl = new QLabel(i18n("&Effect:"), m_pTab2);
+    lbl->setFixedSize(lbl->sizeHint());
+    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
+    mpEffectBox = new QComboBox(m_pTab2);
+    connect(mpEffectBox, SIGNAL(activated(int)), SLOT(slotEffect(int)));
+    grid->addWidget(mpEffectBox, 1,1, Qt::AlignLeft);
+    lbl->setBuddy(mpEffectBox);
+
+    mpESetupBut = new QPushButton( i18n("&Setup ..."),m_pTab2);
+    connect(mpESetupBut, SIGNAL(clicked()), SLOT(slotEffectSetup()));
+    grid->addWidget(mpESetupBut, 1,2, Qt::AlignLeft);
+
+    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), m_pTab2);
+    connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
+    grid->addWidget(mpSTCheck, 2, 0, Qt::AlignLeft);
+
+
     top->activate(); // needs improvement
 
     top->activate();
+
     init();
     read();
     apply();
@@ -155,10 +167,11 @@ void KIconConfig::init()
     mpUsageList->insertItem(i18n("Toolbar"));
     mpUsageList->insertItem(i18n("Main Toolbar"));
     mpUsageList->insertItem(i18n("Small Icons"));
+    mpUsageList->insertItem(i18n("Panel"));
 
-    mpStateList->insertItem(i18n("Default"));
-    mpStateList->insertItem(i18n("Active"));
-    mpStateList->insertItem(i18n("Disabled"));
+    mpStateList->insertItem(i18n("Default - Default icon look"));
+    mpStateList->insertItem(i18n("Active - The mouse is over the icon"));
+    mpStateList->insertItem(i18n("Disabled - The icon cannot be used"));
 
     mpEffectBox->insertItem(i18n("No Effect"));
     mpEffectBox->insertItem(i18n("To Gray"));
@@ -171,6 +184,7 @@ void KIconConfig::init()
     mGroups += "Toolbar";
     mGroups += "MainToolbar";
     mGroups += "Small";
+    mGroups += "Panel";
 
     mStates += "Default";
     mStates += "Active";

@@ -24,9 +24,11 @@ class QWidget;
 class QCheckBox;
 class QComboBox;
 class QListBox;
+class QListView;
 class QSlider;
 class QLabel;
 class QIconView;
+class QTabWidget;
 
 class KConfig;
 class KIconEffect;
@@ -89,6 +91,8 @@ private:
     QComboBox *mpEffectBox, *mpSizeBox;
     QCheckBox *mpDPCheck, *mpSTCheck, *wordWrapCB, *underlineCB;
     QPushButton *mpESetupBut;                                   
+    QTabWidget *m_pTabWidget;
+    QWidget *m_pTab1, *m_pTab2;                                    
 };
 
 class KIconEffectSetupDialog: public QDialog
