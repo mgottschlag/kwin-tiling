@@ -14,6 +14,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qlayout.h>
+#include <qvbox.h>
 #include <qvariant.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
