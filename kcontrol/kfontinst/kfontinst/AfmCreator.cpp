@@ -70,7 +70,7 @@ CAfmCreator::EStatus CAfmCreator::go(const QString &dir)
                     (CFontEngine::isATtf(fInfo->fileName().local8Bit()) && CKfiGlobal::cfg().getDoTtAfms()) ))
                 {
                     bool createAfm = CMisc::fExists(CMisc::afmName(fInfo->filePath())) 
-                                         ? CKfiGlobal::cfg().getOverwriteAfms() ? true : false 
+                                         ? false 
                                          : true;
 
                     emit step(i18n("Creating AFM: ")+CMisc::afmName(fInfo->filePath())); 
@@ -106,18 +106,15 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
                 if(encs.findIndex(CKfiGlobal::cfg().getAfmEncoding())!=-1)   // Check for requested encoding...
                     enc=CKfiGlobal::cfg().getAfmEncoding();
                 else
-                    if(CKfiGlobal::cfg().getExclusiveEncoding() && encs.findIndex(CKfiGlobal::cfg().getEncoding())!=-1)  // Try X11 encoding...
-                        enc=CKfiGlobal::cfg().getEncoding();
-                    else
 #if QT_VERSION < 300
-                        if(encs.findIndex(QFont::encodingName(QFont::charSetForLocale()))!=-1)   // Try locale...
-                            enc=QFont::encodingName(QFont::charSetForLocale());
+                    if(encs.findIndex(QFont::encodingName(QFont::charSetForLocale()))!=-1)   // Try locale...
+                        enc=QFont::encodingName(QFont::charSetForLocale());
 #else
-                        if(encs.findIndex(constDefaultCharSet))
-                            enc=constDefaultCharSet;
+                    if(encs.findIndex(constDefaultCharSet))
+                        enc=constDefaultCharSet;
 #endif
-                        else
-                            enc=encs.first();  // Hmmm... just use the first available...
+                    else
+                        enc=encs.first();  // Hmmm... just use the first available...
 
             if(QString::null!=enc)
                 status=create(fName, enc, CEncodings::constT1Symbol==enc || CEncodings::constTTSymbol==enc ? true : false);

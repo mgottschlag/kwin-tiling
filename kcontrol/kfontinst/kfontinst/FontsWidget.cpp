@@ -27,58 +27,97 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontsWidget.h"
-#include "DiskFontListWidget.h"
 #include "KfiGlobal.h"
 #include "FontEngine.h"
 #include "Config.h"
 #include "SysConfigurer.h"
-#include "KfiCmModule.h"
 #include "FontPreview.h"
-#include <qbitmap.h>
-#include <qlabel.h>
-#include <qgroupbox.h>
-#include <qsplitter.h>
-#include <qpalette.h>
+#include "Misc.h"
+#include "KfiCmModule.h"
+
 #include <kprogress.h>
 #include <kapplication.h>
 #include <klocale.h>
+#include <kbuttonbox.h>
+
+#include <qbitmap.h>
+#include <qlabel.h>
+#include <qgroupbox.h>
+#include <qpalette.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qsplitter.h>
+
 #include <stdlib.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
-            : CFontsWidgetData(parent),
-              itsSysConfigurer(NULL),
-              itsPreviousTitle(i18n("Preview")),
-              itsPreviousStr(i18n(" No preview available"))
+            : QWidget(parent),
+              itsSysConfigurer(NULL)
 {
-    QPalette    pal(itsBox->palette());
+    QSplitter   *splitter=new QSplitter(this);
+    QGroupBox   *fontsBox=new QGroupBox(splitter, "fontsBox"),
+                *previewBox=new QGroupBox(splitter, "previewBox");
+
+    itsProgressBox=new QGroupBox(fontsBox, "itsProgressBox");
+
+    QGridLayout *fontsLayout=new QGridLayout(fontsBox, 3, 3, 11, 6),
+                *progressLayout=new QGridLayout(itsProgressBox, 2, 2, 11, 6),
+                *previewLayout=new QGridLayout(previewBox, 1, 1, 6, 6),
+                *layout=new QGridLayout(this, 1, 1, 11, 6);
+    KButtonBox  *buttonBox=new KButtonBox(fontsBox, Qt::Horizontal);
+    QPalette    pal(itsProgressBox->palette());
     QColorGroup dis(pal.disabled());
 
-    itsBox->setTitle(i18n(i18n("Preview").utf8()));
-    itsLabel->setText(i18n(i18n(" No preview available").utf8()));
-
-    dis.setColor(QColorGroup::Text , pal.active().text());
+    dis.setColor(QColorGroup::Text, pal.active().text());
     pal.setDisabled(dis);
-    itsBox->setPalette(pal);
+    itsProgressBox->setPalette(pal);
 
-    itsDisk=new CDiskFontListWidget(itsSplitter);
-    itsInstalled=new CInstalledFontListWidget(itsSplitter);
-    itsSplitter->setOrientation(CKfiGlobal::cfg().getFontListsOrientation());
-    connect(itsDisk, SIGNAL(fontSelected(const QString &, const QString &)), this, SLOT(preview(const QString &, const QString &)));
-    connect(itsInstalled, SIGNAL(fontSelected(const QString &, const QString &)), this, SLOT(preview(const QString &, const QString &)));
-    connect(itsInstalled, SIGNAL(configureSystem()), this, SLOT(configureSystem()));
-    connect(itsInstalled, SIGNAL(directorySelected(const QString &)), itsDisk, SLOT(setDestDir(const QString &)));
-    connect(itsInstalled, SIGNAL(fontSelected(const QString &, const QString &)), itsDisk, SLOT(setDestDirFromFontSel(const QString &, const QString &)));
-    connect(itsInstalled, SIGNAL(fontMoved(const QString &, const QString &, const QString &)), itsDisk, SLOT(fontMoved(const QString &, const QString &, const QString &)));
-    connect(itsInstalled, SIGNAL(dirMoved(const QString &, const QString &)), itsDisk, SLOT(dirMoved(const QString &, const QString &)));
-    connect(itsDisk, SIGNAL(installFont(const QString &, const QString &)), itsInstalled, SLOT(addFont(const QString &, const QString &)));
-    connect(itsDisk, SIGNAL(installDir(const QString &, const QString &)), itsInstalled, SLOT(addSubDir(const QString &, const QString &)));
-    connect(itsDisk, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
-    connect(itsDisk, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
-    connect(itsDisk, SIGNAL(stopProgress()), SLOT(stopProgress()));
-    connect(itsInstalled, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
-    connect(itsInstalled, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
-    connect(itsInstalled, SIGNAL(stopProgress()), SLOT(stopProgress()));
-    setPreviewMode(true);
+    itsFontList=new CFontListWidget(fontsBox);
+    itsFontList->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, itsFontList->sizePolicy().hasHeightForWidth()));
+
+    itsButtonAdd = buttonBox->addButton(i18n("Add..."));
+    itsButtonRemove = buttonBox->addButton(i18n("Remove"));
+    itsButtonDisable = buttonBox->addButton(i18n("Disable"));
+    itsButtonEnable = buttonBox->addButton(i18n("Enable"));
+    itsAdvancedCB = new QCheckBox( i18n("Advanced Mode"), fontsBox);
+    itsAdvancedCB->setChecked(CKfiGlobal::cfg().getAdvancedMode());
+
+    itsLabel=new QLabel(itsProgressBox, "itsLabel");
+    itsLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsLabel->sizePolicy().hasHeightForWidth()));
+    itsLabel->setText("Label...");
+    itsProgress=new KProgress(itsProgressBox, "itsProgress");
+    itsProgress->setMinimumSize(QSize(160, 0));
+    progressLayout->addItem(new QSpacerItem(8, 8, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 0);
+    progressLayout->addWidget(itsLabel, 1, 0);
+    progressLayout->addWidget(itsProgress, 1, 1);
+    itsProgressBox->hide();
+    itsProgressBox->setTitle("Title...");
+
+    fontsLayout->addMultiCellWidget(itsFontList, 0, 0, 0, 2);
+    fontsLayout->addWidget(buttonBox, 1, 2);
+    fontsLayout->addWidget(itsAdvancedCB, 1, 0);
+    fontsLayout->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 1);
+    fontsLayout->addMultiCellWidget(itsProgressBox, 2, 2, 0, 2);
+
+    itsPreview = new CFontPreview(previewBox, "itsPreview");
+    itsPreview->setSizePolicy(QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, itsPreview->sizePolicy().hasHeightForWidth()));
+    itsPreview->setMinimumSize(QSize(96, 64));
+    previewLayout->addWidget(itsPreview, 0, 0);
+
+    layout->addWidget(splitter, 0, 0);
+
+    connect(itsButtonAdd, SIGNAL(clicked()), itsFontList, SLOT(install()));
+    connect(itsButtonRemove, SIGNAL(clicked()), itsFontList, SLOT(uninstall()));
+    connect(itsButtonDisable, SIGNAL(clicked()), itsFontList, SLOT(disable()));
+    connect(itsButtonEnable, SIGNAL(clicked()), itsFontList, SLOT(enable()));
+    connect(itsAdvancedCB, SIGNAL(toggled(bool)), this, SLOT(setAdvanced(bool)));
+    connect(itsFontList, SIGNAL(fontSelected(const QString &)), itsPreview, SLOT(showFont(const QString &)));
+    connect(itsFontList, SIGNAL(configureSystem()), this, SLOT(configureSystem()));
+    connect(itsFontList, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
+    connect(itsFontList, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
+    connect(itsFontList, SIGNAL(stopProgress()), SLOT(stopProgress()));
+    connect(itsFontList, SIGNAL(madeChanges()), SLOT(flMadeChanges()));
 }
 
 CFontsWidget::~CFontsWidget()
@@ -87,57 +126,23 @@ CFontsWidget::~CFontsWidget()
         delete itsSysConfigurer;
 }
 
-void CFontsWidget::setPreviewMode(bool on)
-{
-    if(on)
-    {
-        if(QString::null!=itsPreviousTitle)
-        {
-            itsBox->setTitle(itsPreviousTitle);
-
-            if(QString::null!=itsPreviousStr)
-                itsLabel->setText(itsPreviousStr);
-            else
-                if(itsPreviousPixmap.isNull())
-                    itsLabel->setText(i18n(" No preview available"));
-                else
-                    itsLabel->setPixmap(itsPreviousPixmap);
-        }
-        else
-        {
-            itsBox->setTitle(i18n("Preview"));
-            itsLabel->setText(i18n(" No preview available"));
-        }
-
-        itsProgress->hide();
-    }
-    else
-    {
-        itsPreviousTitle=itsBox->title();
-        itsPreviousStr=itsLabel->text();
-
-        QPixmap *pix=itsLabel->pixmap();
-        if(pix)
-            itsPreviousPixmap=*pix;
-
-        itsBox->setTitle(i18n("Progress"));
-        itsLabel->setText("");
-        if(itsProgress->totalSteps()>0)
-            itsProgress->show();
-    }
-}
-
 void CFontsWidget::initProgress(const QString &title, int numSteps)
 {
     emit progressActive(true);
     if(topLevelWidget())
         topLevelWidget()->setEnabled(false);
     itsProgress->setTotalSteps(numSteps);
-    setPreviewMode(false);
-    itsBox->setTitle(title);
     if(numSteps>0)
+    {
+        itsProgress->show();
         itsProgress->setProgress(0);
+    }
+    else
+        itsProgress->hide();
+
     itsLabel->setText("");
+    itsProgressBox->setTitle(title);
+    itsProgressBox->show();
 }
 
 void CFontsWidget::progress(const QString &str)
@@ -166,7 +171,8 @@ void CFontsWidget::stopProgress()
         itsProgress->repaint();
     }
 
-    setPreviewMode(true);
+    itsProgressBox->hide();
+
     kapp->processEvents();
 
     if(topLevelWidget())
@@ -177,6 +183,7 @@ void CFontsWidget::stopProgress()
 void CFontsWidget::configureSystem()
 {
     kapp->processEvents();
+    itsFontList->applyChanges();
     if(NULL==itsSysConfigurer)
     {
         itsSysConfigurer=new CSysConfigurer(this);
@@ -184,7 +191,6 @@ void CFontsWidget::configureSystem()
         connect(itsSysConfigurer, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
         connect(itsSysConfigurer, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
         connect(itsSysConfigurer, SIGNAL(stopProgress()), SLOT(stopProgress()));
-        connect(itsSysConfigurer, SIGNAL(successful()), itsInstalled, SLOT(disableCfgButton()));
         connect(itsSysConfigurer, SIGNAL(successful()), SLOT(systemConfigured()));
     }
 
@@ -194,56 +200,17 @@ void CFontsWidget::configureSystem()
 void CFontsWidget::systemConfigured()
 {
     CKfiGlobal::cfg().clearModifiedDirs();
-    emit configuredSystem();
 }
 
-void CFontsWidget::preview(const QString &dir, const QString &file)
+void CFontsWidget::setAdvanced(bool b)
 {
-    bool createdBitmap=false;
-
-    if(CKfiGlobal::fe().openFont(dir+file, CFontEngine::PREVIEW|CFontEngine::NAME))
-    {
-        const int constPtSize=24;
-        const int constRes=75;
-        const int constBMWidth=1280;
-
-        QPixmap pix=CKfiGlobal::fe().createPixmap(CKfiGlobal::cfg().getUseCustomPreviewStr() ?
-                                                      CKfiGlobal::cfg().getCustomPreviewStr() :
-                                                      i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890"),
-                                                  constBMWidth, itsLabel->size().height(), constPtSize, constRes,
-                                                  itsBackground->backgroundColor().rgb());
-
-        if(!pix.isNull())
-        {
-            itsLabel->setPixmap(pix);
-            createdBitmap=true;
-        }
-
-        itsBox->setTitle(i18n("Preview:")+" "+CKfiGlobal::fe().getFullName().latin1());
-        itsBox->repaint();
-        CKfiGlobal::fe().closeFont();
-    }
-    else
-        itsBox->setTitle(i18n("Preview"));
-
-    if(!createdBitmap)
-        itsLabel->setText(i18n(" No preview available"));
+    CKfiGlobal::cfg().setAdvancedMode(b);
+    itsFontList->setAdvanced(b);
 }
 
-void CFontsWidget::rescan()
+void CFontsWidget::flMadeChanges()
 {
-    itsDisk->setAdvanced(CKfiGlobal::cfg().getAdvancedMode());  // Don't change dirs...
-    itsInstalled->rescan(CKfiGlobal::cfg().getAdvancedMode(), CKfiGlobal::cfg().getFontsDir());
+    emit madeChanges();
 }
 
-void CFontsWidget::setOrientation(Qt::Orientation o)
-{
-    itsSplitter->setOrientation(o);
-}
-
-void CFontsWidget::scanDirs()
-{
-    itsDisk->scan();
-    itsInstalled->scan();
-}
 #include "FontsWidget.moc"

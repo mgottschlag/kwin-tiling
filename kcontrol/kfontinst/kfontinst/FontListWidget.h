@@ -29,126 +29,178 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
  
-#include "FontListWidgetData.h"
 #include "Config.h"
-#include <qlistview.h>
+#include "Misc.h"
+
+#include <klistview.h>
+#include <qptrlist.h>
 
 class QPainter;
 class QColorGroup;
+class QPopupMenu;
 
-class CFontListWidget : public CFontListWidgetData
+class CFontListWidget : public KListView
 {
     Q_OBJECT
 
-    private:
-
-    struct TAdvanced
-    {
-        TAdvanced(const QString &d1, const QString &d1n, const QString &d1i, const QString &d2, const QString &d2n, const QString &d2i, bool b2)
-            : dir1(d1), dir1Name(d1n), dir1Icon(d1i), dir2(d2), dir2Name(d2n), dir2Icon(d2i), button2(b2) {}
-
-        QString dir1,
-                dir1Name,
-                dir1Icon,
-                dir2,
-                dir2Name,
-                dir2Icon;
-        bool    button2;
-    };
-
-    struct TBasic
-    {
-        TBasic (const QString &d, bool u) : dir(d), useSubDirs(u) {}
-
-        QString dir;
-        bool    useSubDirs;
-    };
-
     public:
+
+    enum EStatus
+    {
+        SUCCESS,
+        PERMISSION_DENIED,
+        ALREADY_INSTALLED,
+        HAS_SUB_DIRS,
+        COULD_NOT_CREATE_DIR,
+        COULD_NOT_DELETE_DIR,
+        INVALID_FONT,
+        NOT_EMPTY
+    };
 
     class CListViewItem : public QListViewItem
     {
         public:
+
+        enum EParameter
+        {
+            AVAILABLE,
+            ENABLE
+        };
  
         enum EType
         {
             FONT,
             DIR
         };
- 
+
         public:
  
-        CListViewItem(QListView *parent, const QString &name, EType type) : QListViewItem(parent, name), itsType(type) {}
-        CListViewItem(QListViewItem *parent, const QString &name, EType type) : QListViewItem(parent, name), itsType(type) {}
- 
+        CListViewItem(QListView *parent, const QString &name, EType type, bool isNew, bool enabled);
+        CListViewItem(QListViewItem *parent, const QString &name, EType type, bool isNew, bool enabled);
         virtual ~CListViewItem() {}
 
         QString         key(int column, bool ascending) const;
         void            paintCell(QPainter *painter, const QColorGroup &colourGroup, int column, int width, int align);
- 
         EType           getType() const { return itsType; }
         virtual QString fullName() const =0;
         virtual QString dir() const =0;
+        bool            changed() const  { return (itsAvailable != itsAvailableOrig) || (itsEnabled != itsEnabledOrig); }
+        void            reset();
+        void            saved(bool toggleState);
+        QString         extraData() const { return itsData; }
+        void            setExtraData(const QString &data) { itsData = CMisc::dirSyntax(data); setupDisplay(); }
+        virtual void    setAvailable(bool available);
+        virtual bool    available() const { return itsAvailable; }
+        bool            deleted() const { return !itsAvailable && itsAvailableOrig; }
+        bool            added() const { return itsAvailable && !itsAvailableOrig; }
+        virtual void    setEnabled(bool enabled);
+        bool            enabled() const { return itsEnabled; }
+        void            changeStatus(EParameter what, bool b);
+        virtual void    setupDisplay()=0;
 
-        private:
+        protected:
  
-        EType itsType;
+        EType   itsType;
+        bool    itsAvailable,
+                itsAvailableOrig,
+                itsEnabled,
+                itsEnabledOrig;
+        QString itsData;
+    };
+
+    struct TItem
+    {
+        TItem(const QString &s, const QString &d, const QString &f) : source(s), dest(d), file(f) {}
+
+        QString source,
+                dest, 
+                file;
     };
 
     public:
 
-    CFontListWidget(QWidget *parent, CConfig::EListWidget t, bool useSubDirs, bool showButton2Advanced,
-                    const QString &boxLabel, const QString &button1Label, const QString &button2Label,
-                    const QString &basicDir,
-                    const QString &dir1, const QString &dir1Name, const QString &dir1Icon,
-                    const QString &dir2=QString::null, const QString &dir2Name=QString::null, const QString &dir2Icon=QString::null);
+    CFontListWidget(QWidget *parent);
+    virtual ~CFontListWidget()          { }
 
-    virtual ~CFontListWidget();
-
-    void         setAdvanced(bool on);
-    unsigned int getNumSelected(CListViewItem::EType type);
-    unsigned int getNumSelectedFonts()  { return getNumSelected(CListViewItem::FONT); }
-    unsigned int getNumSelectedDirs()   { return getNumSelected(CListViewItem::DIR); }
-    unsigned int getNumSelected()       { return getNumSelected(CListViewItem::FONT)+getNumSelected(CListViewItem::DIR); }
-    void         getNumSelected(int &numTT, int &numT1);
-    void         progressInit(const QString &title, int numSteps);
-    void         progressShow(const QString &step);
-    void         progressStop();
-    void         scan();
-
-    static const QString & getDir(const QListViewItem *item);
+    void          reset();
+    void          clearLists();
+    void          restore(QListViewItem *item, bool checkOpen=true);
+    QString       currentDir();
+    unsigned int  getNumSelected(CListViewItem::EType type);
+    unsigned int  getNumSelectedFonts() { return getNumSelected(CListViewItem::FONT); }
+    unsigned int  getNumSelectedDirs()  { return getNumSelected(CListViewItem::DIR); }
+    unsigned int  getNumSelected()      { return getNumSelected(CListViewItem::FONT)+getNumSelected(CListViewItem::DIR); }
+    void          getNumSelected(int &numTT, int &numT1);
+    QStringList & getAdvancedOpenDirs() { return itsAdvancedOpenDirs; }
+    QPtrList<TItem> & getAddItems()     { return itsAddItems; }
+    QStringList & getDelItems()         { return itsDelItems; }
+    QStringList & getEnabledItems()     { return itsEnabledItems; }
+    QStringList & getDisabledItems()    { return itsDisabledItems; }
+    void          progressInit(const QString &title, int numSteps);
+    void          progressShow(const QString &step);
+    void          progressStop();
+    void          scan();
+    void          addFont(const QString &from, const QString &path, const QString &file, bool checkOpen=true);
+    void          addSubDir(const QString &top, const QString &sub);
+    void          changeStatus(bool status);
 
     public slots:
 
-    virtual void removeFont(CListViewItem *item);
-    virtual void addFont(const QString &path, const QString &file);
-    virtual void addSubDir(const QString &top, const QString &sub);
+    void          setAdvanced(bool on);
+    void          updateConfig();
+    void          applyChanges();
+    void          install();
+    void          uninstall();
+    void          disable();
+    void          enable();
+    void          popupMenu(QListViewItem *item, const QPoint &point, int column);
+    void          listClicked(QListViewItem *item, const QPoint &point, int column);
+    void          fixTtfPsNames();
+    void          createDir();
+    void          toggleUnscaled();
+    void          selectionChanged();
 
     signals:
 
-    void fontSelected(const QString &dir, const QString &file);
-    void directorySelected(const QString &dir);
-    void initProgress(const QString &title, int numSteps);
-    void progress(const QString &step);
-    void stopProgress();
+    void          fontSelected(const QString &file);
+    void          initProgress(const QString &title, int numSteps);
+    void          progress(const QString &step);
+    void          stopProgress();
+    void          configureSystem();
+    void          fontMoved(const QString &font, const QString &from, const QString &to);
+    void          dirMoved(const QString &top, const QString &sub);
+    void          madeChanges();
 
-    protected:
+    private:
 
-    void addDir(const QString &dir, const QString &name, const QString &icon);
-    void scanDir(const QString &dir, int sub=0);
-
-    virtual void selectionChanged();
+    void          addDir(const QString &dir, const QString &name, const QString &icon);
+    void          scanDir(const QString &dir, int sub=0);
 
     CListViewItem * getFirstSelectedItem();
 
-    protected:
+    EStatus       uninstall(const QString &path, bool deleteAfm);
+    EStatus       install(const QString &sourceDir, const QString &destDir, const QString &fname);
+    EStatus       move(const QString &sourceDir, const QString &destDir, const QString &fname);
+    QString       statusToStr(EStatus status);
+    EStatus       doDeleteDir(const QString &dir);
+    void          startDrag();
+    void          movableDropEvent(QListViewItem *parent, QListViewItem *afterme);
 
-    bool                 itsAdvancedMode,
-                         itsShowingProgress;
-    TAdvanced            itsAdvancedData;
-    TBasic               itsBasicData;
-    QString              itsBoxTitle;
-    CConfig::EListWidget itsType;
+    private:
+
+    bool            itsAdvancedMode,
+                    itsShowingProgress;
+    QPopupMenu      *itsFontsPopup,
+                    *itsDirsPopup;
+    int             itsFixTtfPsNamesME,
+                    itsCreateDirME,
+                    itsSetScaledME,
+                    itsSetUnscaledME;
+    QStringList     itsAdvancedOpenDirs,
+                    itsDelItems,
+                    itsDisabledItems,
+                    itsEnabledItems;
+    QPtrList<TItem> itsAddItems;
 };
 
 #endif

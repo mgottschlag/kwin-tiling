@@ -41,10 +41,6 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 
-#ifdef HAVE_XFT
-#include "xftint.h"
-#endif
-
 static const QCString constDefaultFontsDir              ("/usr/X11R6/lib/X11/fonts/");
 static const QCString constDefaultTTSubDir              ("TrueType/");
 static const QCString constDefaultT1SubDir              ("Type1/");
@@ -59,10 +55,6 @@ static const QCString constDefaultSOPpd                 ("SGENPRT.PS");
 static const QCString constNonRootDefaultFontsDir       ("share/fonts/");   // $KDEHOME+...
 static const QCString constNonRootDefaultXConfigFile    ("share/fonts/fontpaths"); // $KDEHOME+...
 static const QCString constNonRootDefaultGhostscriptDir ("share/fonts/");   // $KDEHOME+...
-#ifdef HAVE_XFT
-static const QCString constDefaultXftConfigFile         (XFT_DEFAULT_PATH);
-static const QCString constNonRootDefaultXftConfigFile  ("/.xftconfig"); // $HOME+...
-#endif
 
 static QString getDir(const QString &entry, const QString *posibilities, const QString &base=QString::null)
 {
@@ -257,25 +249,13 @@ const QString CConfig::constXfsConfigFiles[]=
     "/usr/openwin/lib/X11/fonts/fontserver.cfg",
     QString::null
 };
-#ifdef HAVE_XFT
-const QString CConfig::constXftConfigFiles[]=
-{
-    constDefaultXftConfigFile,
-    "/etc/X11/XftConfig",
-    QString::null
-};
-#endif
 
 const QString CConfig::constNotFound(I18N_NOOP("<Not Found>"));
 
-CConfig::CConfig()
-       : KConfig("kcmfontinstrc")
+void CConfig::load()
 {
     QCString defaultFontsDir,
              defaultXConfigFile,
-#ifdef HAVE_XFT
-             defaultXftConfigFile,
-#endif
              defaultGhostscriptFile;
 
     QString origGroup=group(),
@@ -294,28 +274,14 @@ CConfig::CConfig()
     {
         defaultFontsDir=constDefaultFontsDir;
         defaultXConfigFile=constDefaultXConfigFile;
-#ifdef HAVE_XFT
-        defaultXftConfigFile=constDefaultXftConfigFile;
-#endif
         defaultGhostscriptFile=constDefaultGhostscriptDir+"5.50/"+constDefaultGhostscriptFile;
     }
     else
     {
-#ifdef HAVE_XFT
-        const char *home=getenv("HOME");
-
-        if(!home)
-            home="";
-#endif
-
         defaultFontsDir=kapp->dirs()->localkdedir().local8Bit();
         defaultFontsDir+=constNonRootDefaultFontsDir;
         defaultXConfigFile=kapp->dirs()->localkdedir().local8Bit();
         defaultXConfigFile+=constNonRootDefaultXConfigFile;
-#ifdef HAVE_XFT
-        defaultXftConfigFile=home;
-        defaultXftConfigFile+=constNonRootDefaultXftConfigFile;
-#endif
         defaultGhostscriptFile=kapp->dirs()->localkdedir().local8Bit();
         defaultGhostscriptFile+=constNonRootDefaultGhostscriptDir;
         defaultGhostscriptFile+=constDefaultGhostscriptFile;
@@ -326,13 +292,6 @@ CConfig::CConfig()
 
     setGroup("Appearance");
     itsAdvancedMode=readBoolEntry("AdvancedMode");
-    intVal=readNumEntry("FontListsOrientation", Qt::Horizontal);
-    itsFontListsOrientation=intVal==Qt::Vertical ? Qt::Vertical : Qt::Horizontal;
-    itsUseCustomPreviewStr=readBoolEntry("UseCustomPreviewStr");
-    itsCustomPreviewStr=readEntry("CustomPreviewStr");
-    if(QString::null==itsCustomPreviewStr)
-        itsUseCustomPreviewStr=false;
-
     setGroup("FoldersAndFiles");
     val=readEntry("FontsDir");
     itsFontsDir=val.length()>0 ? val : defaultFontsDir;
@@ -353,23 +312,9 @@ CConfig::CConfig()
         itsCupsDir=val.length()>0 ? val : constDefaultCupsDir;
         itsDoCups=readBoolEntry("DoCups", true);
     }
-#ifdef HAVE_XFT
-    setGroup("AntiAlias");
-    val=readEntry("XftConfigFile");
-    itsXftConfigFile=val.length()>0 ? val : defaultXftConfigFile;
-#endif
     setGroup("InstallUninstall");
-    itsFixTtfPsNamesUponInstall=readBoolEntry("FixTtfPsNamesUponInstall", true);
-    val=readEntry("UninstallDir");
-    itsUninstallDir=val.length()>0 ? val : constDefaultUninstallDir;
     val=readEntry("InstallDir");
     itsInstallDir=val.length()>0 && CMisc::dExists(val) ? val : (QString(getenv("HOME"))+"/");
-
-    setGroup("AdvancedMode");
-    itsAdvanced[DISK].dirs=readListEntry("DiskDirs");
-    itsAdvanced[DISK].topItem=readEntry("DiskTopItem");
-    itsAdvanced[INSTALLED].dirs=readListEntry("InstalledDirs");
-    itsAdvanced[INSTALLED].topItem=readEntry("InstalledTopItem");
 
     setGroup("StarOffice");
     itsSOConfigure=readBoolEntry("SOConfigure");
@@ -379,24 +324,15 @@ CConfig::CConfig()
     itsSOPpd=val.length()>0 ? val : constDefaultSOPpd;
 
     setGroup("SystemConfiguration");
-    itsExclusiveEncoding=readBoolEntry("ExclusiveEncoding");
-#if QT_VERSION < 300
-    itsEncoding=readEntry("Encoding", QFont::encodingName(QFont::charSetForLocale()));
-#else
-    itsEncoding=readEntry("Encoding", "iso8859-1");
-#endif
     itsDoAfm=readBoolEntry("DoAfm");
     itsDoTtAfms=readBoolEntry("DoTtAfms", true);
     itsDoT1Afms=readBoolEntry("DoT1Afms", true);
-    itsOverwriteAfms=readBoolEntry("OverwriteAfms", false);
     itsAfmEncoding=readEntry("AfmEncoding", "iso8859-1"); // QFont::encodingName(QFont::charSetForLocale()));
     intVal=readNumEntry("XRefreshCmd", XREFRESH_XSET_FP_REHASH);
     itsXRefreshCmd=intVal>=0 && intVal <=XREFRESH_CUSTOM ? (EXFontListRefresh)intVal : XREFRESH_XSET_FP_REHASH;
     itsCustomXRefreshCmd=readEntry("CustomXRefreshCmd");
     if(QString::null==itsCustomXRefreshCmd && itsXRefreshCmd==XREFRESH_CUSTOM)
         itsXRefreshCmd=XREFRESH_XSET_FP_REHASH;
-    itsModifiedDirs=readListEntry("ModifiedDirs");
-
     //
     // Check data read from config file is valid...
     // ...if not, try to make it sensible...
@@ -453,12 +389,6 @@ CConfig::CConfig()
             if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)))
                 itsXConfigFile=i18n(constNotFound.utf8());
 
-#ifdef HAVE_XFT
-    if(CMisc::root())
-        if(QString::null==(itsXftConfigFile=getFile(itsXftConfigFile, constXftConfigFiles)))
-            itsXftConfigFile=i18n(constNotFound.utf8());
-#endif
-
     if(!CMisc::dExists(itsEncodingsDir))
     {
         QString top[]={ itsFontsDir, "/usr/share/", "/usr/local/share/", QString::null };
@@ -504,7 +434,7 @@ CConfig::CConfig()
     setGroup(origGroup);
 }
 
-CConfig::~CConfig()
+void CConfig::save()
 {
     QString origGroup=group();
 
@@ -513,10 +443,6 @@ CConfig::~CConfig()
 
     setGroup("Appearance");
     writeEntry("AdvancedMode", itsAdvancedMode);
-    writeEntry("FontListsOrientation", itsFontListsOrientation);
-    writeEntry("UseCustomPreviewStr", itsUseCustomPreviewStr);
-    writeEntry("CustomPreviewStr", itsCustomPreviewStr);
-
     setGroup("FoldersAndFiles");
     writeEntry("FontsDir", itsFontsDir);
     writeEntry("TTSubDir", itsTTSubDir);
@@ -531,21 +457,8 @@ CConfig::~CConfig()
         writeEntry("DoCups", itsDoCups);
     }
 
-#ifdef HAVE_XFT
-    setGroup("AntiAlias");
-    writeEntry("XftConfigFile", itsXftConfigFile);
-#endif
-
     setGroup("InstallUninstall");
-    writeEntry("FixTtfPsNamesUponInstall", itsFixTtfPsNamesUponInstall);
-    writeEntry("UninstallDir", itsUninstallDir);
     writeEntry("InstallDir", itsInstallDir);
-
-    setGroup("AdvancedMode");
-    writeEntry("DiskDirs", itsAdvanced[DISK].dirs);
-    writeEntry("DiskTopItem", itsAdvanced[DISK].topItem);
-    writeEntry("InstalledDirs", itsAdvanced[INSTALLED].dirs);
-    writeEntry("InstalledTopItem", itsAdvanced[INSTALLED].topItem);
 
     setGroup("StarOffice");
     writeEntry("SOConfigure", itsSOConfigure);
@@ -553,191 +466,40 @@ CConfig::~CConfig()
     writeEntry("SOPpd", itsSOPpd);
 
     setGroup("SystemConfiguration");
-    writeEntry("ExclusiveEncoding", itsExclusiveEncoding);
-    writeEntry("Encoding", itsEncoding);
     writeEntry("DoAfm", itsDoAfm);
     writeEntry("DoTtAfms", itsDoTtAfms);
     writeEntry("DoT1Afms", itsDoT1Afms);
     writeEntry("AfmEncoding", itsAfmEncoding);
-    writeEntry("OverwriteAfms", itsOverwriteAfms);
     writeEntry("XRefreshCmd", itsXRefreshCmd);
     writeEntry("CustomXRefreshCmd", itsCustomXRefreshCmd);
-    writeEntry("ModifiedDirs", itsModifiedDirs);
 
     // Restore KConfig group...
     setGroup(origGroup);
-}
-
-void CConfig::configured()
-{
-    itsConfigured=true;
-    write("Misc", "Configured", itsConfigured);
-}
-
-void CConfig::setAdvancedMode(bool b)
-{
-    itsAdvancedMode=b;
-    write("Appearance", "AdvancedMode", itsAdvancedMode);
-}
-
-void CConfig::setFontListsOrientation(Qt::Orientation o)
-{
-    itsFontListsOrientation=o;
-    write("Appearance", "FontListsOrientation", itsFontListsOrientation);
-}
-
-void CConfig::setUseCustomPreviewStr(bool b)
-{
-    itsUseCustomPreviewStr=b;
-    write("Appearance", "UseCustomPreviewStr", itsUseCustomPreviewStr);
-}
-
-void CConfig::setCustomPreviewStr(const QString &s)
-{
-    itsCustomPreviewStr=s;
-    write("Appearance", "CustomPreviewStr", itsCustomPreviewStr);
-}
-
-void CConfig::setFontsDir(const QString &s)
-{
-    itsFontsDir=s;
-    write("FoldersAndFiles", "FontsDir", itsFontsDir);
-}
-
-void CConfig::setTTSubDir(const QString &s)
-{
-    itsTTSubDir=s;
-    write("FoldersAndFiles", "TTSubDir", itsTTSubDir);
-}
-
-void CConfig::setT1SubDir(const QString &s)
-{
-    itsT1SubDir=s;
-    write("FoldersAndFiles", "T1SubDir", itsT1SubDir);
-}
-
-void CConfig::setXConfigFile(const QString &s)
-{
-    itsXConfigFile=s;
-    write("FoldersAndFiles", "XConfigFile", itsXConfigFile);
-}
-
-#ifdef HAVE_XFT
-void CConfig::setXftConfigFile(const QString &s)
-{
-    itsXftConfigFile=s;
-    write("AntiAlias", "XftConfigFile", itsXftConfigFile);
-}
-#endif
-
-void CConfig::setEncodingsDir(const QString &s)
-{
-    itsEncodingsDir=s;
-    write("FoldersAndFiles", "EncodingsDir", itsEncodingsDir);
-}
-
-void CConfig::setGhostscriptFile(const QString &s)
-{
-    itsGhostscriptFile=s;
-    write("FoldersAndFiles", "GhostscriptFile", itsGhostscriptFile);
-}
-
-void CConfig::setDoGhostscript(bool b)
-{
-    itsDoGhostscript=b;
-    write("FoldersAndFiles", "DoGhostscript", itsDoGhostscript);
-}
-
-void CConfig::setCupsDir(const QString &s)
-{
-    itsCupsDir=s;
-    write("FoldersAndFiles", "CupsDir", itsCupsDir);
-}
-
-void CConfig::setDoCups(bool b)
-{
-    itsDoCups=b;
-    write("FoldersAndFiles", "DoCups", itsDoCups);
-}
-
-void CConfig::setFixTtfPsNamesUponInstall(bool b)
-{
-    itsFixTtfPsNamesUponInstall=b;
-    write("InstallUninstall", "FixTtfPsNamesUponInstall", itsFixTtfPsNamesUponInstall);
-}
-
-void CConfig::setUninstallDir(const QString &s)
-{
-    itsUninstallDir=s;
-    write("InstallUninstall", "UninstallDir", itsUninstallDir);
-}
-
-void CConfig::setInstallDir(const QString &s)
-{
-    itsInstallDir=s;
-    write("InstallUninstall", "InstallDir", itsInstallDir);
-}
-
-void CConfig::addAdvancedDir(EListWidget w, const QString &d)
-{
-    if(-1==itsAdvanced[w].dirs.findIndex(d))
-    {
-        itsAdvanced[w].dirs.append(d);
-        write("AdvancedMode", DISK==w ? "DiskDirs" : "InstalledDirs", itsAdvanced[w].dirs);
-    }
-}
-
-void CConfig::removeAdvancedDir(EListWidget w, const QString &d)
-{
-    if(-1!=itsAdvanced[w].dirs.findIndex(d))
-    {
-        itsAdvanced[w].dirs.remove(d);
-        write("AdvancedMode", DISK==w ? "DiskDirs" : "InstalledDirs", itsAdvanced[w].dirs);
-    }
-}
-
-void CConfig::setAdvancedTopItem(EListWidget w, const QString &s)
-{
-    itsAdvanced[w].topItem=s;
-    write("AdvancedMode", DISK==w ? "DiskTopItem" : "InstalledTopItem", s);
+    sync();
 }
 
 void CConfig::setSOConfigure(bool b)
 {
     itsSOConfigure=b;
-    write("StarOffice", "SOConfigure", itsSOConfigure);
     if(b)
         setDoAfm(true);
 }
 
-void CConfig::setSODir(const QString &s)
+void CConfig::setAdvancedMode(bool b)
 {
-    itsSODir=s;
-    write("StarOffice", "SODir", itsSODir);
-}
+    QString origGroup=group();
 
-void CConfig::setSOPpd(const QString &s)
-{
-    itsSOPpd=s;
-    write("StarOffice", "SOPpd", itsSOPpd);
-}
-
-void CConfig::setExclusiveEncoding(bool b)
-{
-    itsExclusiveEncoding=b;
-    write("SystemConfiguration", "ExclusiveEncoding", itsExclusiveEncoding);
-}
-
-void CConfig::setEncoding(const QString &s)
-{
-    itsEncoding=s;
-    write("SystemConfiguration", "Encoding", itsEncoding);
+    itsAdvancedMode=b;
+    setGroup("Appearance");
+    writeEntry("AdvancedMode", itsAdvancedMode);
+    setGroup(origGroup);
+    if(CMisc::root())
+        sync();
 }
 
 void CConfig::setDoAfm(bool b)
 {
     itsDoAfm=b;
-    write("SystemConfiguration", "DoAfm", itsDoAfm);
     if(b)
     {
         if(!itsDoTtAfms && !itsDoT1Afms)
@@ -753,7 +515,6 @@ void CConfig::setDoAfm(bool b)
 void CConfig::setDoTtAfms(bool b)
 {
     itsDoTtAfms=b;
-    write("SystemConfiguration", "DoTtAfms", itsDoTtAfms);
     if(!b && !itsDoTtAfms)
         setDoAfm(false);
     else
@@ -764,7 +525,6 @@ void CConfig::setDoTtAfms(bool b)
 void CConfig::setDoT1Afms(bool b)
 {
     itsDoT1Afms=b;
-    write("SystemConfiguration", "DoT1Afms", itsDoT1Afms);
     if(!b && !itsDoT1Afms)
         setDoAfm(false);
     else
@@ -772,94 +532,18 @@ void CConfig::setDoT1Afms(bool b)
             setDoAfm(true);
 }
 
-void CConfig::setOverwriteAfms(bool b)
-{
-    itsOverwriteAfms=b;
-    write("SystemConfiguration", "OverwriteAfms", itsOverwriteAfms);
-}
-
-void CConfig::setAfmEncoding(const QString &s)
-{
-    itsAfmEncoding=s;
-    write("SystemConfiguration", "AfmEncoding", itsAfmEncoding);
-}
-
-void CConfig::setXRefreshCmd(EXFontListRefresh cmd)
-{
-    itsXRefreshCmd=cmd;
-    write("SystemConfiguration", "XRefreshCmd", (int)itsXRefreshCmd);
-}
-
-void CConfig::setCustomXRefreshCmd(const QString &s)
-{
-    itsCustomXRefreshCmd=s;
-    write("SystemConfiguration", "CustomXRefreshCmd", itsCustomXRefreshCmd);
-}
-
 void CConfig::addModifiedDir(const QString &d)
 {
-    if(-1==itsModifiedDirs.findIndex(d))
-    {
-        itsModifiedDirs.append(d);
-        write("SystemConfiguration", "ModifiedDirs", itsModifiedDirs);
-    }
+    QString ds(CMisc::dirSyntax(d));
+
+    if(-1==itsModifiedDirs.findIndex(ds))
+        itsModifiedDirs.append(ds);
 }
 
 void CConfig::removeModifiedDir(const QString &d)
 {
-    if(-1!=itsModifiedDirs.findIndex(d))
-    {
-        itsModifiedDirs.remove(d);
-        write("SystemConfiguration", "ModifiedDirs", itsModifiedDirs);
-    }
-}
+    QString ds(CMisc::dirSyntax(d));
 
-void CConfig::clearModifiedDirs()
-{
-    itsModifiedDirs.clear();
-    write("SystemConfiguration", "ModifiedDirs", itsModifiedDirs);
-}
-
-void CConfig::write(const QString &sect, const QString &key, const QString &value)
-{
-    if(itsAutoSync)
-    {
-        KConfigGroupSaver cfgSaver(this, sect);
-
-        writeEntry(key, value);
-        sync();
-    }
-}
-
-void CConfig::write(const QString &sect, const QString &key, const QStringList &value)
-{
-    if(itsAutoSync)
-    {
-        KConfigGroupSaver cfgSaver(this, sect);
-
-        writeEntry(key, value);
-        sync();
-    }
-}
-
-void CConfig::write(const QString &sect, const QString &key, bool value)
-{
-    if(itsAutoSync)
-    {
-        KConfigGroupSaver cfgSaver(this, sect);
-
-        writeEntry(key, value);
-        sync();
-    }
-}
-
-void CConfig::write(const QString &sect, const QString &key, int value)
-{
-    if(itsAutoSync)
-    {
-        KConfigGroupSaver cfgSaver(this, sect);
-
-        writeEntry(key, value);
-        sync();
-    }
+    if(-1!=itsModifiedDirs.findIndex(ds))
+        itsModifiedDirs.remove(ds);
 }

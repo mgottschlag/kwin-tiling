@@ -29,16 +29,23 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "FontsWidgetData.h"
-#include "InstalledFontListWidget.h"
+#include "FontListWidget.h"
+#include "KfiGlobal.h"
+#include "Config.h"
 #include <qnamespace.h>
 #include <qstring.h>
 #include <qpixmap.h>
+#include <qwidget.h>
 
-class CDiskFontListWidget;
 class CSysConfigurer;
+class CFontPreview;
+class KProgress;
+class QPushButton;
+class QGroupBox;
+class QCheckBox;
+class QLabel;
 
-class CFontsWidget : public CFontsWidgetData
+class CFontsWidget : public QWidget
 {
     Q_OBJECT
 
@@ -47,36 +54,38 @@ class CFontsWidget : public CFontsWidgetData
     CFontsWidget(QWidget *parent, const char *);
     virtual ~CFontsWidget();
 
-    void setPreviewMode(bool on);
-    void rescan();
-    void setOrientation(Qt::Orientation o);
-    void scanDirs();
+    void reset()    { itsFontList->reset(); }
+    void scanDirs() { itsFontList->scan(); }
 
     signals:
 
     void progressActive(bool);
     void configuredSystem();
+    void madeChanges();
 
     public slots:
 
-    void preview(const QString &) { }
+    void setAdvanced(bool b);
     void initProgress(const QString &title, int numSteps);
     void progress(const QString &str);
     void stopProgress();
     void configureSystem();
     void systemConfigured();
-    void preview(const QString &dir, const QString &file);
-    void enableCfgButton() { itsInstalled->enableCfgButton(); }
-    void setCfgButton()    { itsInstalled->setCfgButton(); }
+    void flMadeChanges();
 
     private:
 
-    CDiskFontListWidget      *itsDisk;
-    CInstalledFontListWidget *itsInstalled;
-    CSysConfigurer           *itsSysConfigurer;
-    QString                  itsPreviousTitle,
-                             itsPreviousStr;
-    QPixmap                  itsPreviousPixmap;
+    CFontListWidget *itsFontList;
+    KProgress       *itsProgress;
+    QLabel          *itsLabel;
+    CFontPreview    *itsPreview;
+    QGroupBox       *itsProgressBox;
+    QPushButton     *itsButtonAdd,
+                    *itsButtonRemove,
+                    *itsButtonDisable,
+                    *itsButtonEnable;
+    QCheckBox       *itsAdvancedCB;
+    CSysConfigurer  *itsSysConfigurer;
 };
 
 #endif

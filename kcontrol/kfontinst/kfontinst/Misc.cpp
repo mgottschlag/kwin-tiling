@@ -27,15 +27,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Misc.h"
+#ifndef KFI_THUMBNAIL
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "FontEngine.h"
+#endif
+
 #include <kprocess.h>
+#include <kstandarddirs.h>
+
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qregexp.h>
+
 #include <ctype.h>
 
 bool CMisc::dExists(const QString &d)
@@ -112,6 +118,25 @@ bool CMisc::dContainsTTorT1Fonts(const QString &d)
     return false;
 }
 
+QString CMisc::dirSyntax(const QString &d)
+{
+    if(QString::null!=d)
+    {
+        QString ds(d);
+
+        ds.replace(QRegExp("//"), "/");
+
+        int slashPos=ds.findRev('/');
+
+        if(slashPos!=(ds.length()-1))
+            ds.append('/');
+
+        return ds;
+    }
+
+    return d;
+}
+
 QString CMisc::getDir(const QString &f)
 {
     QString d(f);
@@ -120,6 +145,18 @@ QString CMisc::getDir(const QString &f)
  
     if(slashPos!=-1)
         d.remove(slashPos+1, d.length());
+
+    return dirSyntax(d);
+}
+
+QString CMisc::getFile(const QString &f)
+{
+    QString d(f);
+
+    int slashPos=d.findRev('/');
+ 
+    if(slashPos!=-1)
+        d.remove(0, slashPos+1);
 
     return d;
 }
@@ -257,6 +294,7 @@ QString CMisc::removeSymbols(const QString &str)
     return modified;
 }
 
+#ifndef KFI_THUMBNAIL
 QString CMisc::shortName(const QString &dir)
 {
     QString sn(dir);
@@ -266,6 +304,7 @@ QString CMisc::shortName(const QString &dir)
  
     return sn;
 }
+#endif
 
 int CMisc::findIndex(const QComboBox *box, const QString &str)
 {
@@ -286,11 +325,24 @@ int CMisc::findIndex(const QComboBox *box, const QString &str)
     return pos;
 }
 
+void CMisc::createBackup(const QString &f)
+{
+    const QString constExt(".bak");
+
+    if(!fExists(f+constExt) && fExists(f) && dWritable(getDir(f)))
+        doCmd("cp", "-f", f, f+constExt);
+}
+
+bool CMisc::createDir(const QString &dir)
+{
+    return KStandardDirs::makeDir(dir);
+}
+
 int CMisc::stricmp(const char *s1, const char *s2)
 {
     char c1,
          c2;
- 
+
     for(;;)
     {
         c1=*s1++;
@@ -305,12 +357,4 @@ int CMisc::stricmp(const char *s1, const char *s2)
             break;
     }
     return (int)c2-(int)c1;
-}
-
-void CMisc::createBackup(const QString &f)
-{
-    const QString constExt(".bak");
-
-    if(!fExists(f+constExt) && fExists(f) && dWritable(getDir(f)))
-        doCmd("cp", "-f", f, f+constExt);
 }

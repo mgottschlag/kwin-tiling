@@ -49,57 +49,36 @@ class CConfig : public KConfig
         XREFRESH_CUSTOM
     };
 
-    enum EListWidget
-    {
-        DISK      =0,
-        INSTALLED =1
-    };
+    CConfig() : KConfig("kcmfontinstrc")            { load(); }
+    virtual ~CConfig()                              { }
 
-    struct TAdvanced
-    {
-        QStringList dirs;
-        QString     topItem;
-    };
-
-    CConfig();
-    virtual ~CConfig();
+    void              load();
+    void              save();
+    void              reset()                       { rollback(); load(); }
 
     bool              firstTime()                   { return !itsConfigured; }
-    void              configured();
+    void              configured()                  { itsConfigured=true; }
     bool              getAdvancedMode()             { return itsAdvancedMode; }
-    Qt::Orientation   getFontListsOrientation()     { return itsFontListsOrientation; }
-    bool              getUseCustomPreviewStr()      { return itsUseCustomPreviewStr; }
-    const QString &   getCustomPreviewStr()         { return itsCustomPreviewStr; }
  
     const QString &   getFontsDir()                 { return itsFontsDir; }
     const QString &   getTTSubDir()                 { return itsTTSubDir; }
     const QString &   getT1SubDir()                 { return itsT1SubDir; }
     const QString &   getXConfigFile()              { return itsXConfigFile; }
-#ifdef HAVE_XFT
-    const QString &   getXftConfigFile()            { return itsXftConfigFile; }
-#endif
     const QString &   getEncodingsDir()             { return itsEncodingsDir; }
     const QString &   getGhostscriptFile()          { return itsGhostscriptFile; }
     bool              getDoGhostscript()            { return itsDoGhostscript; }
     const QString &   getCupsDir()                  { return itsCupsDir; }
     bool              getDoCups()                   { return itsDoCups; }
 
-    bool              getFixTtfPsNamesUponInstall() { return itsFixTtfPsNamesUponInstall; }
-    const QString &   getUninstallDir()             { return itsUninstallDir; }
     const QString &   getInstallDir()               { return itsInstallDir; }
 
-    const QStringList & getAdvancedDirs(EListWidget w) { return itsAdvanced[w].dirs; } 
-    const QString &   getAdvancedTopItem(EListWidget w) { return itsAdvanced[w].topItem; }
     bool              getSOConfigure()              { return itsSOConfigure; }
     const QString &   getSODir()                    { return itsSODir; }
     const QString &   getSOPpd()                    { return itsSOPpd; }
 
-    bool              getExclusiveEncoding()        { return itsExclusiveEncoding; }
-    const QString &   getEncoding()                 { return itsEncoding; }
     bool              getDoAfm()                    { return itsDoAfm; }
     bool              getDoTtAfms()                 { return itsDoTtAfms; }
     bool              getDoT1Afms()                 { return itsDoT1Afms; }
-    bool              getOverwriteAfms()            { return itsOverwriteAfms; }
     const QString &   getAfmEncoding()              { return itsAfmEncoding; }
     EXFontListRefresh getXRefreshCmd()              { return itsXRefreshCmd; }
     const QString &   getCustomXRefreshCmd()        { return itsCustomXRefreshCmd; }
@@ -107,48 +86,33 @@ class CConfig : public KConfig
     const QStringList getModifiedDirs()             { return itsModifiedDirs; }
 
     void setAdvancedMode(bool b);
-    void setFontListsOrientation(Qt::Orientation o);
-    void setUseCustomPreviewStr(bool b);
-    void setCustomPreviewStr(const QString &s);
  
-    void setFontsDir(const QString &s);
-    void setTTSubDir(const QString &s);
-    void setT1SubDir(const QString &s);
-    void setXConfigFile(const QString &s);
-#ifdef HAVE_XFT
-    void setXftConfigFile(const QString &s);
-#endif
-    void setEncodingsDir(const QString &s);
-    void setGhostscriptFile(const QString &s);
-    void setDoGhostscript(bool b);
-    void setCupsDir(const QString &s);
-    void setDoCups(bool b);
+    void setFontsDir(const QString &s)              { itsFontsDir=s; }
+    void setTTSubDir(const QString &s)              { itsTTSubDir=s; }
+    void setT1SubDir(const QString &s)              { itsT1SubDir=s; }
+    void setXConfigFile(const QString &s)           { itsXConfigFile=s; }
+    void setEncodingsDir(const QString &s)          { itsEncodingsDir=s; }
+    void setGhostscriptFile(const QString &s)       { itsGhostscriptFile=s; }
+    void setDoGhostscript(bool b)                   { itsDoGhostscript=b; }
+    void setCupsDir(const QString &s)               { itsCupsDir=s; }
+    void setDoCups(bool b)                          { itsDoCups=b; }
  
-    void setFixTtfPsNamesUponInstall(bool b);
-    void setUninstallDir(const QString &s);
-    void setInstallDir(const QString &s);
+    void setInstallDir(const QString &s)            { itsInstallDir=s; }
 
-    void addAdvancedDir(EListWidget w, const QString &d);
-    void removeAdvancedDir(EListWidget w, const QString &d);
-    void setAdvancedTopItem(EListWidget w, const QString &s);
- 
     void setSOConfigure(bool b);
-    void setSODir(const QString &s);
-    void setSOPpd(const QString &s);
+    void setSODir(const QString &s)                 { itsSODir=s; }
+    void setSOPpd(const QString &s)                 { itsSOPpd=s; }
  
-    void setExclusiveEncoding(bool b);
-    void setEncoding(const QString &s);
     void setDoAfm(bool b);
     void setDoTtAfms(bool b);
     void setDoT1Afms(bool b); 
-    void setOverwriteAfms(bool b);
-    void setAfmEncoding(const QString &s);
-    void setXRefreshCmd(EXFontListRefresh cmd);
-    void setCustomXRefreshCmd(const QString &s);
+    void setAfmEncoding(const QString &s)           { itsAfmEncoding=s; }
+    void setXRefreshCmd(EXFontListRefresh cmd)      { itsXRefreshCmd=cmd; }
+    void setCustomXRefreshCmd(const QString &s)     { itsCustomXRefreshCmd=s; }
 
     void addModifiedDir(const QString &d);
     void removeModifiedDir(const QString &d);
-    void clearModifiedDirs();
+    void clearModifiedDirs()                        { itsModifiedDirs.clear(); }
 
     public:
 
@@ -157,9 +121,6 @@ class CConfig : public KConfig
     static const QString constT1SubDirs[];
     static const QString constXConfigFiles[];
     static const QString constXfsConfigFiles[];
-#ifdef HAVE_XFT
-    static const QString constXftConfigFiles[];
-#endif
     static const QString constEncodingsSubDirs[];  // sub dirs of <X11>, /usr/share, /usr/local/share, etc...
     static const QString constGhostscriptDirs[];   // Excludes version number
     static const QString constGhostscriptFiles[];
@@ -176,41 +137,29 @@ class CConfig : public KConfig
 
     private:
 
-    QString           itsCustomPreviewStr,
-                      itsFontsDir,
+    QString           itsFontsDir,
                       itsTTSubDir,
                       itsT1SubDir,
                       itsXConfigFile,
-#ifdef HAVE_XFT
-                      itsXftConfigFile,
-#endif
                       itsEncodingsDir,
                       itsGhostscriptFile,
                       itsCupsDir,
-                      itsUninstallDir,
                       itsInstallDir,
                       itsSODir,
                       itsSOPpd,
-                      itsEncoding,
                       itsAfmEncoding,
                       itsCustomXRefreshCmd;
     bool              itsDoGhostscript,
                       itsDoCups,
                       itsAdvancedMode,
-                      itsUseCustomPreviewStr,
-                      itsFixTtfPsNamesUponInstall,
                       itsSOConfigure,
-                      itsExclusiveEncoding,
                       itsDoAfm,
                       itsDoTtAfms,
                       itsDoT1Afms,
-                      itsOverwriteAfms,
                       itsConfigured,
                       itsAutoSync;
     EXFontListRefresh itsXRefreshCmd;
-    Qt::Orientation   itsFontListsOrientation;
     QStringList       itsModifiedDirs;
-    TAdvanced         itsAdvanced[2];
 };
 
 #endif

@@ -29,19 +29,12 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
- 
 class CFontEngine;
 class CConfig;
 class CEncodings;
 class CErrorDialog;
 class CTtf;
 class CXConfig;
-#ifdef HAVE_XFT
-class CXftConfig;
-#endif
 class QWidget;
 
 class CKfiGlobal
@@ -57,9 +50,6 @@ class CKfiGlobal
     static CErrorDialog & errorDialog();
     static CTtf &         ttf();
     static CXConfig &     xcfg();
-#ifdef HAVE_XFT
-    static CXftConfig &   xft();
-#endif
 
     private:
 
@@ -69,9 +59,6 @@ class CKfiGlobal
     static CErrorDialog *theirErrorDialog;
     static CTtf         *theirTtf;
     static CXConfig     *theirXCfg;
-#ifdef HAVE_XFT
-    static CXftConfig   *theirXft;
-#endif
 };
 
 #endif

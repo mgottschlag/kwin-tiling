@@ -33,6 +33,8 @@
 #include "config.h"
 #endif
 
+#include "Misc.h"
+
 #include <qobject.h>
 #include <qglobal.h>
 #if QT_VERSION >= 300
@@ -59,7 +61,8 @@ class CXConfig : public QObject
 
     struct TPath
     {
-        TPath(const QString &d, bool u, bool dis, bool o=false) : dir(d), unscaled(u), origUnscaled(u), disabled(dis), orig(o) {}
+        TPath(const QString &d, bool u, bool dis, bool o=false)
+           : dir(CMisc::dirSyntax(d)), unscaled(u), origUnscaled(u), disabled(dis), orig(o) {}
 
         QString dir;
         bool    unscaled,
@@ -72,13 +75,7 @@ class CXConfig : public QObject
 
     CXConfig();
 
-    bool go(const QString &dir
-#ifdef HAVE_XFT
-        ,
-        QStringList &symbolFamilies,
-        QStringList &monoFamilies
-#endif
-    );
+    bool go(const QString &dir, QStringList &symbolFamilies);
 
     bool ok()                           { return NONE!=itsType; }
     bool custom()                       { return KFONTINST==itsType; }
@@ -111,13 +108,7 @@ class CXConfig : public QObject
 
     TPath * findPath(const QString &dir);
 
-    bool createFontsDotDir(const QString &dir
-#ifdef HAVE_XFT
-        ,
-        QStringList &symbolFamilies,
-        QStringList &monoFamilies
-#endif
-    );
+    bool createFontsDotDir(const QString &dir, QStringList &symbolFamilies);
 
     private:
 

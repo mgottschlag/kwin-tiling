@@ -31,10 +31,15 @@
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "SettingsWizard.h"
+#include "Misc.h"
+#include "XConfig.h"
 #include <qapplication.h>
 #include <qnamespace.h>
+#include <qfile.h>
+#include <fstream.h>
+#include "kxftconfig.cpp" // CPD: Hack!!, this source file is located in kcontrol/fonts
 
-const char * CKfi::constVersion = "0.11";
+const char * CKfi::constVersion = "0.12";
  
 CKfiMainWidget * CKfi::create(QWidget *parent)
 {
@@ -47,8 +52,47 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
         wiz->exec();
         QApplication::restoreOverrideCursor();
         CKfiGlobal::cfg().configured();
-    }
 
+        if(!CMisc::root())
+        {
+            if(CKfiGlobal::xcfg().ok() && CKfiGlobal::cfg().getModifiedDirs().count())
+            {
+                int i;
+
+                for(i=0; i<CKfiGlobal::cfg().getModifiedDirs().count(); ++i)
+                {
+                    ofstream fontsDir(QFile::encodeName(CKfiGlobal::cfg().getModifiedDirs()[i]+"/fonts.dir"));
+
+                    if(fontsDir)
+                    {
+                        fontsDir << 0 << endl;
+                        fontsDir.close();
+                    }
+                    CKfiGlobal::xcfg().addPath(CKfiGlobal::cfg().getModifiedDirs()[i]);
+                }
+            }
+
+            QStringList lst;
+
+            CKfiGlobal::xcfg().writeConfig();
+            CKfiGlobal::xcfg().getTTandT1Dirs(lst);
+
+            if(lst.count())
+            {
+                KXftConfig            xft(KXftConfig::Dirs, CMisc::root());
+                QStringList::Iterator it;
+
+                xft.clearDirs();
+                for(it=lst.begin(); it!=lst.end(); ++it)
+                    xft.addDir(*it);
+
+                xft.apply();
+            }
+
+            CKfiGlobal::cfg().clearModifiedDirs();
+            CKfiGlobal::cfg().save();
+        }
+    }
     return new CKfiMainWidget(parent);
 }
 

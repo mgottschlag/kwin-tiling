@@ -33,14 +33,24 @@
 
 class CKfiMainWidget : public CKfiMainWidgetData
 {
+    Q_OBJECT
+
     public:
 
     CKfiMainWidget(QWidget *parent, const char *name=NULL);
     virtual ~CKfiMainWidget() {}
 
-    void tabChanged(QWidget *tab);
     void scanFonts();
     void configureSystem();
+    void reset();
+
+    public slots:
+
+    void wMadeChanges();
+
+    signals:
+
+    void madeChanges();
 };
 
 #endif

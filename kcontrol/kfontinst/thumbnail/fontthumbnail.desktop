@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Font Files
+ServiceTypes=ThumbCreator
+MimeTypes=application/x-font-ttf,application/x-font-type1,application/x-font-bdf,application/x-font-pcf,application/x-font-snf
+X-KDE-Library=fontthumbnail
+CacheThumbnail=false

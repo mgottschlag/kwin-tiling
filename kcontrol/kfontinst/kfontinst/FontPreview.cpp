@@ -27,53 +27,108 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontPreview.h"
-#include <qpainter.h>
-#include <qpalette.h>
+#include "Misc.h"
 #include <kapplication.h>
+#include <klocale.h>
+#include <qpainter.h>
+
+#include <stdlib.h>
 
 CFontPreview::CFontPreview(QWidget *parent, const char *name)
-            : QWidget(parent, name)
+            : QWidget(parent, name),
+              itsLastWidth(0),
+              itsLastHeight(0),
+              itsJob(NULL)
 {
 }
 
-void CFontPreview::setText(const QString &text)
+void CFontPreview::showFont(const QString &file)
 {
-    itsText=text;
-    update();
+    KURL url;
+
+    url.setPath(CMisc::getDir(file));
+    url.setFileName(CMisc::getFile(file));
+    itsCurrentUrl=url;
+    showFont();
 }
 
-void CFontPreview::setPixmap(const QPixmap &pixmap)
+void CFontPreview::showFont()
 {
-    QString empty;
+    KURL::List urls;
 
-    itsText=empty;
-    itsPixmap=pixmap;
-    update();
+    urls.append(itsCurrentUrl);
+    itsLastWidth=width();
+    itsLastHeight=height();
+    itsJob=KIO::filePreview(urls, width(), height(), 0, 0, true, false);
+    connect(itsJob, SIGNAL(result(KIO::Job *)), SLOT(result(KIO::Job *)));
+    connect(itsJob, SIGNAL(gotPreview(const KFileItem *, const QPixmap &)), 
+                    SLOT(gotPreview(const KFileItem *, const QPixmap &)));
+    connect(itsJob, SIGNAL(failed(const KFileItem *)), SLOT(failed(const KFileItem *)));
+}
+
+void CFontPreview::result(KIO::Job *job)
+{
+    disconnect(job, SIGNAL(result(KIO::Job *)), this, SLOT(result(KIO::Job *)));
+    disconnect(job, SIGNAL(gotPreview(const KFileItem *, const QPixmap &)), this,
+                    SLOT(gotPreview(const KFileItem *, const QPixmap &)));
+    disconnect(job, SIGNAL(failed(const KFileItem *)), this, SLOT(failed(const KFileItem *)));
+
+    if(job==itsJob)
+        itsJob=NULL;
+}
+
+void CFontPreview::gotPreview(const KFileItem *item, const QPixmap &pix)
+{
+    if(item->url()==itsCurrentUrl)
+    {
+        itsPixmap=pix;
+        update();
+    }
+}
+
+void CFontPreview::failed(const KFileItem *item)
+{
+    if(item->url()==itsCurrentUrl)
+    {
+        QPixmap nullPix;
+
+        itsPixmap=nullPix;
+        update();
+    }
 }
 
 void CFontPreview::paintEvent(QPaintEvent *)
 {
     QPainter paint( this );
 
-    if(itsText.isEmpty())
-        paint.drawPixmap(0, 0, itsPixmap);
-    else
+    if(itsPixmap.isNull())
     {
         QRect r(rect());
 
         r.setX(r.x()+1);
         r.setY(r.y()+((height()-fontMetrics().height())/2));
         paint.setPen(kapp->palette().active().text());
-        paint.drawText(r, AlignLeft, itsText);
+        paint.drawText(r, AlignLeft, i18n(" No preview available"));
+    }
+    else
+    {
+        static const int constStepSize=16;
+
+        if(abs(width()-itsLastWidth)>constStepSize || abs(height()-itsLastHeight)>constStepSize)
+            showFont();
+        else            
+            paint.drawPixmap(0, 0, itsPixmap);
     }
 }
 
 QSize CFontPreview::sizeHint() const
 {
-    return QSize(32, 32);
+    return QSize(192, 64);
 }
 
 QSize CFontPreview::minimumSizeHint() const
 {
     return QSize(32, 32);
 }
+
+#include "FontPreview.moc"

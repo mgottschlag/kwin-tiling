@@ -60,7 +60,8 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&
     topLayout->setMargin(-5);
     itsMainWidget=CKfi::create(this);
     topLayout->addWidget(itsMainWidget, 0, 0);
-    setButtons(0);
+    connect(itsMainWidget, SIGNAL(madeChanges()), SLOT(emitChanged()));
+    setButtons(Apply);
 #if KDE_VERSION >= 291
     setUseRootOnlyMsg(false);
 #endif
@@ -92,29 +93,20 @@ const KAboutData * CKfiCmModule::aboutData() const
 
         that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "cpdrummond@uklinux.net");
         that->itsAboutData->addCredit("Michael Davis", I18N_NOOP("StarOffice xprinter.prolog patch"));
-#ifdef HAVE_XFT
-        that->itsAboutData->addCredit("Keith Packard", I18N_NOOP("XftConfig parser"));
-#endif
     }
 
     return itsAboutData;
 }
 
-void CKfiCmModule::madeChanges(bool m)
+void CKfiCmModule::emitChanged()
 {
-    if(NULL!=theirInstance)
-        theirInstance->emitChanged(m);
-}
-
-void CKfiCmModule::emitChanged(bool m)
-{
-    emit changed(m);
+    emit changed(true);
 }
 
 void CKfiCmModule::scanFonts()
 {
     if(CKfiGlobal::cfg().getModifiedDirs().count()>0 || CKfiGlobal::cfg().firstTime())
-        emitChanged(true);
+        emit changed(true);
 
     itsMainWidget->scanFonts();
 }
@@ -130,10 +122,15 @@ void CKfiCmModule::show()
     }
 }
 
+void CKfiCmModule::load()
+{
+    itsMainWidget->reset();
+}
+
 void CKfiCmModule::save()
 {
-    // This should onlt be called when the user selects to unload the module, and the system hasn't been configured...
     itsMainWidget->configureSystem();
+    emit changed(false);
 }
 
 QString CKfiCmModule::quickHelp() const

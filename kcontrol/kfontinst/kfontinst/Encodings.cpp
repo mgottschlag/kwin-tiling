@@ -610,12 +610,19 @@ static void toLower(char *str)
         str[ch]=tolower(str[ch]);
 }
 
-CEncodings::CEncodings(const QString &path)
-          : itsNumBuiltin(0)
+CEncodings::CEncodings()
 {
     its8BitList.setAutoDelete(true); 
     its16BitList.setAutoDelete(true);
-    addDir(path);
+    reset();
+}
+
+void CEncodings::reset()
+{
+    its8BitList.clear();
+    its16BitList.clear();
+    itsNumBuiltin=0;
+    addDir(CKfiGlobal::cfg().getEncodingsDir());
 }
 
 bool CEncodings::createEncodingsDotDir(const QString &dir)

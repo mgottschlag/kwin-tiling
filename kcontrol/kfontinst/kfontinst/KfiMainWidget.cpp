@@ -26,40 +26,21 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "KfiMainWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "FontsWidget.h"
 #include "SettingsWidget.h"
-#include "XftConfigSettingsWidget.h"
 #include <qtabwidget.h>
+#include "XConfig.h"
+#include "Encodings.h"
 
 CKfiMainWidget::CKfiMainWidget(QWidget *parent, const char *)
               : CKfiMainWidgetData(parent)
 {
-    connect(itsTab, SIGNAL(currentChanged(QWidget*)), this, SLOT(tabChanged(QWidget *)));
     connect(itsFonts, SIGNAL(progressActive(bool)), itsSettings, SLOT(setDisabled(bool)));
-    connect(itsSettings, SIGNAL(madeChanges()), itsFonts, SLOT(enableCfgButton()));
-#ifdef HAVE_XFT
-    connect(itsAA, SIGNAL(madeChanges()), itsFonts, SLOT(enableCfgButton()));
-    connect(itsAA, SIGNAL(savedChanges()), itsFonts, SLOT(setCfgButton()));
-    connect(itsFonts, SIGNAL(configuredSystem()), itsAA, SLOT(disableSaveButton()));
-#else
-    itsTab->removePage(itsAATab);
-#endif
-}
-
-void CKfiMainWidget::tabChanged(QWidget *tab)
-{
-    if(tab==itsFontsTab)
-    {
-        itsFonts->setOrientation(CKfiGlobal::cfg().getFontListsOrientation());
-        itsFonts->rescan();
-    }
+    connect(itsFonts, SIGNAL(madeChanges()), this, SLOT(wMadeChanges()));
+    connect(itsSettings, SIGNAL(madeChanges()), this, SLOT(wMadeChanges()));
 }
 
 void CKfiMainWidget::scanFonts()
@@ -71,4 +52,22 @@ void CKfiMainWidget::configureSystem()
 {
     itsTab->showPage(itsFontsTab);
     itsFonts->configureSystem();
+    CKfiGlobal::cfg().save();
 }
+
+void CKfiMainWidget::wMadeChanges()
+{
+    emit madeChanges();
+}
+
+void CKfiMainWidget::reset()
+{
+    CKfiGlobal::cfg().load();
+    CKfiGlobal::xcfg().readConfig();
+    CKfiGlobal::enc().reset();
+
+    itsFonts->reset();
+    itsSettings->reset();
+}
+
+#include "KfiMainWidget.moc"

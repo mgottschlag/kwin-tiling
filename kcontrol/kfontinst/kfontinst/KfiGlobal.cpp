@@ -33,7 +33,6 @@
 #include "ErrorDialog.h"
 #include "Ttf.h"
 #include "XConfig.h"
-#include "XftConfig.h"
 #include <qwidget.h>
 #include <stdio.h>
 
@@ -43,9 +42,6 @@ CEncodings   * CKfiGlobal::theirEncodings=NULL;
 CErrorDialog * CKfiGlobal::theirErrorDialog=NULL;
 CTtf         * CKfiGlobal::theirTtf=NULL;
 CXConfig     * CKfiGlobal::theirXCfg=NULL;
-#ifdef HAVE_XFT
-CXftConfig   * CKfiGlobal::theirXft=NULL;
-#endif
 
 void CKfiGlobal::create(QWidget *parent)
 {
@@ -54,9 +50,6 @@ void CKfiGlobal::create(QWidget *parent)
     enc();
     ttf();
     xcfg();
-#ifdef HAVE_XFT
-    xft();
-#endif
     if(NULL==theirErrorDialog)
         theirErrorDialog=new CErrorDialog(parent);
 }
@@ -82,11 +75,6 @@ void CKfiGlobal::destroy()
     if(theirXCfg)
         delete theirXCfg;
     theirXCfg=NULL;
-#ifdef HAVE_XFT
-    if(theirXft)
-        delete theirXft;
-    theirXft=NULL;
-#endif
 
     //
     // Don't delete error dialog, Qt will remove this...
@@ -112,7 +100,7 @@ CConfig & CKfiGlobal::cfg()
 CEncodings & CKfiGlobal::enc()
 {
     if(NULL==theirEncodings)
-        theirEncodings=new CEncodings(cfg().getEncodingsDir());
+        theirEncodings=new CEncodings;
  
     return *theirEncodings;
 }
@@ -140,16 +128,3 @@ CXConfig & CKfiGlobal::xcfg()
 
     return *theirXCfg;
 }
-
-#ifdef HAVE_XFT
-CXftConfig & CKfiGlobal::xft()
-{
-    if(NULL==theirXft)
-    {
-        theirXft=new CXftConfig;
-        theirXft->read(cfg().getXftConfigFile());
-    }
- 
-    return *theirXft;
-}
-#endif

@@ -39,7 +39,7 @@
 #include <qdir.h>
 #include <qstringlist.h>
 #include <qfileinfo.h>
-#include "XftConfig.h"
+#include "kxftconfig.h"
 
 static const char * constFinishedStr = "Finished";
 
@@ -99,10 +99,7 @@ void CSysConfigurer::go()
                  totalTtFonts=0,
                  totalT1Fonts=0,
                  d;
-#ifdef HAVE_XFT
-    QStringList  symbolFamilies,
-                 monoFamilies;
-#endif
+    QStringList  symbolFamilies;
 
     if(CKfiGlobal::cfg().getModifiedDirs().count())
     {
@@ -175,20 +172,14 @@ void CSysConfigurer::go()
        (CKfiGlobal::cfg().getXRefreshCmd()==CConfig::XREFRESH_CUSTOM && CKfiGlobal::cfg().getCustomXRefreshCmd().length()>0))
         totalSteps++;
 
-#ifdef HAVE_XFT
-    totalSteps++;
-#endif
+    totalSteps++; // For Xft...
 
     emit initProgress(i18n("Configuring System:"), totalSteps);
 
     for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
     {
         status(i18n("Configuring X (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
-#ifdef HAVE_XFT
-        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d], symbolFamilies, monoFamilies))
-#else
-        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d]))
-#endif
+        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d], symbolFamilies))
         {
             status(i18n("Could not configure X (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), QString::null, true);
             return;
@@ -205,23 +196,25 @@ void CSysConfigurer::go()
         }
     }
 
-#ifdef HAVE_XFT
-    // Always save xft - so that TT and T1 dirs are always added
-    //if(CKfiGlobal::xft().madeChanges() || CKfiGlobal::xcfg().madeChanges())
+    QStringList           dirs;
+    KXftConfig            xft(KXftConfig::Dirs|KXftConfig::SymbolFamilies, CMisc::root());
+    QStringList::Iterator it;
+
+    getTTandT1Dirs(dirs);
+
+    status(i18n("Saving XRender configuration file..."));
+
+    xft.clearDirs();
+    for(it=dirs.begin(); it!=dirs.end(); ++it)
+        xft.addDir(*it);
+    for(it=symbolFamilies.begin(); it!=symbolFamilies.end(); ++it)
+        xft.addSymbolFamily(*it);
+
+    if(!xft.apply())
     {
-        QStringList dirs;
-
-        getTTandT1Dirs(dirs);
-
-        status(i18n("Saving XRender configuration file..."));
-
-        if(!CKfiGlobal::xft().save(CKfiGlobal::cfg().getXftConfigFile(), dirs, symbolFamilies, monoFamilies))
-        {
-            status(i18n("Could not save XRender configuration file"), i18n("File permissions?"), true);
-            return;
-        }
+        status(i18n("Could not save XRender configuration file"), i18n("File permissions?"), true);
+        return;
     }
-#endif
 
     if(CKfiGlobal::cfg().getDoGhostscript())
     {
@@ -330,7 +323,7 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
                 if(ok)
                     emit successful();
                 else
-                    KMessageBox::error(itsParent, i18n("There was an error using the X refresh command:\n%1").arg(cmd), i18n("Error"));
+                    KMessageBox::error(itsParent, i18n("There was an error using the X refresh command"), i18n("Error"));
             }
             else
                 emit successful();

@@ -31,6 +31,14 @@
     <property name="name">
         <cstring>CSettingsWizardData</cstring>
     </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>741</width>
+            <height>562</height>
+        </rect>
+    </property>
     <property name="caption">
         <string>Settings Wizard</string>
     </property>
@@ -117,7 +125,7 @@
 &lt;p&gt;As you are not logged in as "root":
 &lt;ol&gt;
 &lt;li&gt;The settings set here will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as "root".&lt;/li&gt;
-&lt;li&gt;Any fonts installed will only be printable by applications that embed the fonts within their output. Basically, for applications such as StarOffice, please login as "root" to install your fonts.&lt;/li&gt;
+&lt;li&gt;Any fonts installed will only be printable by applications that embed the fonts within their output. Basically, for applications such as StarOffice (Versions &amp;lt;=5.2), please login as "root" to install your fonts.&lt;/li&gt;
 &lt;li&gt;If you are running a font server (xfs), then any fonts installed may not actually be usable - as normally only "root" may install fonts in this case.&lt;/li&gt;
 &lt;/ol&gt;
 To summarize: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as "root" (This can be accomplished via the "Administrator Mode" button.)
@@ -153,7 +161,7 @@ To summarize: If you have problems using, or printing, the fonts you have instal
             <cstring>itsDirsAndFilesPage</cstring>
         </property>
         <attribute name="title">
-            <string>Folder/File Locations</string>
+            <string>General Settings</string>
         </attribute>
         <grid>
             <property name="name">
@@ -165,207 +173,38 @@ To summarize: If you have problems using, or printing, the fonts you have instal
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="CDirSettingsWidget" row="0" column="1">
+            <widget class="QTextEdit" row="0" column="0">
                 <property name="name">
-                    <cstring>itsDirsAndFilesWidget</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>3</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>itsFnFText</cstring>
+                    <cstring>itsGenText</cstring>
                 </property>
                 <property name="sizePolicy">
                     <sizepolicy>
                         <hsizetype>0</hsizetype>
-                        <vsizetype>3</vsizetype>
+                        <vsizetype>7</vsizetype>
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                     </sizepolicy>
                 </property>
                 <property name="minimumSize">
                     <size>
-                        <width>160</width>
-                        <height>200</height>
+                        <width>172</width>
+                        <height>0</height>
                     </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>160</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="frameShape">
-                    <enum>Panel</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="margin">
-                    <number>10</number>
                 </property>
                 <property name="text">
-                    <string>The following values have been determined for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing "&lt;Not Found&gt;"</string>
-                </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignTop|AlignLeft</set>
-                </property>
-                <property name="vAlign" stdset="0">
-                </property>
-                <property name="wordwrap" stdset="0">
-                </property>
-            </widget>
-        </grid>
-    </widget>
-    <widget class="QWidget">
-        <property name="name">
-            <cstring>itsAAPage</cstring>
-        </property>
-        <attribute name="title">
-            <string>Anti-Aliasing</string>
-        </attribute>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>11</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1_2</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>0</hsizetype>
-                        <vsizetype>3</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>160</width>
-                        <height>200</height>
-                    </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>160</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="frameShape">
-                    <enum>Panel</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="margin">
-                    <number>10</number>
-                </property>
-                <property name="text">
-                    <string>If your system is capable of using the XRender extension for anti-aliasing fonts, then please enter the relevant data.</string>
-                </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignTop|AlignLeft</set>
-                </property>
-                <property name="vAlign" stdset="0">
-                </property>
-                <property name="wordwrap" stdset="0">
-                </property>
-            </widget>
-            <widget class="CXftConfigSettingsWidget" row="0" column="1">
-                <property name="name">
-                    <cstring>XftWizard</cstring>
-                </property>
-            </widget>
-        </grid>
-    </widget>
-    <widget class="QWidget">
-        <property name="name">
-            <cstring>itsStarOfficePage</cstring>
-        </property>
-        <attribute name="title">
-            <string>StarOffice</string>
-        </attribute>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>11</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="CStarOfficeSettingsWidget" row="0" column="1">
-                <property name="name">
-                    <cstring>itsSOWidget</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>3</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1_2_2</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>0</hsizetype>
-                        <vsizetype>3</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>160</width>
-                        <height>200</height>
-                    </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>160</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="frameShape">
-                    <enum>Panel</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-                <property name="margin">
-                    <number>10</number>
-                </property>
-                <property name="text">
-                    <string>If you wish to enable configuration of StarOffice, then select the "Configure" option, and enter the location of the main StarOffice folder.
+                    <string>&lt;p&gt;The following values have been determined for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing "&amp;lt;Not Found&amp;gt;"&lt;/p&gt;
 
-NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts. This can be set using the "System" part of the "Settings" tab when the module has loaded.</string>
+&lt;p&gt;If you wish to enable configuration of StarOffice, then select the "Configure" option, and enter the location of the main StarOffice folder.&lt;/p&gt;
+
+&lt;p&gt;NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts.&lt;/p&gt;</string>
                 </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignTop|AlignLeft</set>
+                <property name="readOnly">
+                    <bool>true</bool>
                 </property>
-                <property name="vAlign" stdset="0">
-                </property>
-                <property name="wordwrap" stdset="0">
+            </widget>
+            <widget class="CSettingsWidget" row="0" column="1">
+                <property name="name">
+                    <cstring>itsSettingsWidget</cstring>
                 </property>
             </widget>
         </grid>
@@ -415,20 +254,12 @@ NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The o
 &lt;li&gt;&lt;i&gt;Basic:&lt;/i&gt; The underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.&lt;/li&gt;
 &lt;li&gt;&lt;i&gt;Advanced:&lt;/i&gt; This is for more experienced users, and displays the X fonts folder structure - allowing you to add/delete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.&lt;/li&gt;
 &lt;/ol&gt;
-To switch between these modes, select the appropriate option from within the "Appearance" section of the "Settings" tab.&lt;/p&gt;</string>
+To switch between these modes use the "Advanced Mode" checkbox on the main tab.&lt;/p&gt;</string>
                 </property>
                 <property name="alignment">
                     <set>WordBreak|AlignVCenter|AlignLeft</set>
                 </property>
                 <property name="wordwrap" stdset="0">
-                </property>
-            </widget>
-            <widget class="QLabel" row="1" column="0">
-                <property name="name">
-                    <cstring>itsModifiedDirsText</cstring>
-                </property>
-                <property name="text">
-                    <string>&lt;b&gt;NOTE&lt;/b&gt; As this is the first time this module has been used by you, it has automatically marked the basic folders containing your TrueType and Type1 fonts as needing to be 'configured' - therefore, before closing this module you will be prompted to "Apply" these changes. This is necessary even if the folders are empty.</string>
                 </property>
             </widget>
             <widget class="QLabel" row="2" column="0">
@@ -444,38 +275,8 @@ To switch between these modes, select the appropriate option from within the "Ap
 </widget>
 <customwidgets>
     <customwidget>
-        <class>CDirSettingsWidget</class>
-        <header location="local">DirSettingsWidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </customwidget>
-    <customwidget>
-        <class>CStarOfficeSettingsWidget</class>
-        <header location="local">StarOfficeSettingsWidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </customwidget>
-    <customwidget>
-        <class>CXftConfigSettingsWidget</class>
-        <header location="local">XftConfigSettingsWidget.h</header>
+        <class>CSettingsWidget</class>
+        <header location="local">SettingsWidget.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>

@@ -30,9 +30,11 @@
 #include "config.h"
 #endif
 
+#ifndef KFI_THUMBNAIL
 #include "FontEngine.h"
 #include "KfiGlobal.h"
 #include "Config.h"
+#endif
 #include "Misc.h"
 #include "CompressedFile.h"
 #include <ctype.h>
@@ -65,6 +67,7 @@ static const char *constBmpRoman="";
 static const char *constBmpItalic=" Italic";
 static const char *constBmpOblique=" Oblique";
 
+#ifndef KFI_THUMBNAIL
 static const char *constDefaultFoundry="misc";
 
 struct TTtfFoundryMap
@@ -311,6 +314,7 @@ static const TT1AndSpdFoundryMap constT1AndSpdFoundries[]=    // These are taken
     { "XFree86",                            "xfree86"},
     { NULL,                                 NULL }
 };
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -371,17 +375,6 @@ void CFontEngine::closeFont()
     }
 
     itsType=NONE;
-}
-
-QPixmap CFontEngine::createPixmap(const QString &str, int width, int height, int pointSize, int resolution,
-                                  QRgb backgroundColour)
-{
-    QPixmap nullPix;
-
-    if(TRUE_TYPE==itsType || TYPE_1==itsType)
-        return createPixmapFt(str, width, height, pointSize, resolution, backgroundColour);
-    else
-        return nullPix;
 }
 
 bool CFontEngine::isA(const char *fname, const char *ext, bool z)
@@ -507,6 +500,7 @@ QString CFontEngine::spacingStr(enum ESpacing s)
     }
 }
 
+#ifndef KFI_THUMBNAIL
 QStringList CFontEngine::getEncodings()
 {
     switch(itsType)
@@ -545,6 +539,7 @@ QStringList CFontEngine::get8BitEncodings()
         }
     }
 }
+#endif
 
 CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
 {
@@ -606,6 +601,7 @@ CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
         return WIDTH_NORMAL;
 }
 
+#ifndef KFI_THUMBNAIL
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Metric accsessing functions...  (only work for TrueType & Type1)
@@ -721,6 +717,7 @@ const CFontEngine::TGlyphInfo * CFontEngine::getGlyphInfo(unsigned long glyph)
     else
         return NULL;
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1033,6 +1030,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                         }
                     }
 
+#ifndef KFI_THUMBNAIL
                     if(mask&XLFD)
                     {
                         if(NULL!=(str=getTokenT1(dict, "/isFixedPitch")))
@@ -1058,6 +1056,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                         foundNotice=true;
                         itsFoundry=constDefaultFoundry;
                     }
+#endif
                 }
 
                 if(mask&NAME || mask&PROPERTIES || mask&XLFD)
@@ -1079,6 +1078,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                 if((mask&XLFD || mask&NAME) && foundName)
                     itsWidth=strToWidth(itsFullName);
 
+#ifndef KFI_THUMBNAIL
                 if(mask&XLFD && !foundNotice)
                 {
                     foundNotice=true;
@@ -1095,6 +1095,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                         if(-1!=pos && pos==(int)(itsFullName.length()-strlen(constOblique)))
                             itsItalic=ITALIC_OBLIQUE;
                     }
+#endif
 
                 if(foundName && foundFamily)
                     itsFamily=createNames(familyIsFull ? QString::null : itsFamily, itsFullName);
@@ -1145,6 +1146,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
     return status;
 }
 
+#ifndef KFI_THUMBNAIL
 QStringList CFontEngine::getEncodingsT1()
 {
     QStringList enc;
@@ -1173,6 +1175,7 @@ QStringList CFontEngine::get8BitEncodingsT1()
 
     return enc;
 }
+#endif
 
 bool CFontEngine::getIsArrayEncodingT1()
 {
@@ -1278,6 +1281,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                     itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
             }
 
+#ifndef KFI_THUMBNAIL
             if(mask&XLFD)
             {
                 const TTtfFoundryMap *map;
@@ -1311,6 +1315,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                         break;
                     }
             }
+#endif
 
             if(mask&NAME || mask&PROPERTIES)
                 itsFamily=createNames(itsFamily, itsFullName);
@@ -1437,6 +1442,7 @@ QCString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdu
     return buffer;
 }
 
+#ifndef KFI_THUMBNAIL
 bool CFontEngine::has16BitEncodingFt(const QString &enc)
 {
     if(enc=="jisx0208.1983-0" || enc=="jisx0201.1976-0")
@@ -1498,162 +1504,33 @@ QStringList CFontEngine::get8BitEncodingsFt()
 QStringList CFontEngine::getEncodingsFt()
 {
     QStringList enc;
-    bool        exclusive=false;
 
-    // Check if font has the 'exclusive' encoding, if so just use this...
-    if(CKfiGlobal::cfg().getExclusiveEncoding())
-        if((CKfiGlobal::cfg().getEncoding()==CEncodings::constUnicodeStr && setCharmapUnicodeFt()) ||
-           has8BitEncodingFt(CKfiGlobal::enc().get8Bit(CKfiGlobal::cfg().getEncoding())) ||
-           (TRUE_TYPE==itsType && has16BitEncodingFt(CKfiGlobal::cfg().getEncoding())))
-        {
-            enc.append(CKfiGlobal::cfg().getEncoding());
-            exclusive=true;
-        }
-
-    if(!exclusive) // Either 'use exclusive' is false, or the font doesn't contain it...
+    // Check for symbol encoding...
+    if(setCharmapSymbolFt())
+        enc.append(itsType==TYPE_1 ? CEncodings::constT1Symbol : CEncodings::constTTSymbol);
+    else
     {
-        // Check for symbol encoding...
-        if(setCharmapSymbolFt())
-            enc.append(itsType==TYPE_1 ? CEncodings::constT1Symbol : CEncodings::constTTSymbol);
-        else
+        // Add Unicode encoding...
+        if(setCharmapUnicodeFt())
+            enc.append(CEncodings::constUnicodeStr);
+
+        // Do 8-bit encodings...
+        enc+=get8BitEncodingsFt();
+
+        if(TRUE_TYPE==itsType)
         {
-            // Add Unicode encoding...
-            if(setCharmapUnicodeFt())
-                enc.append(CEncodings::constUnicodeStr);
+            // Do 16-bit encodings...
+            CEncodings::T16Bit *enc16;
 
-            // Do 8-bit encodings...
-            enc+=get8BitEncodingsFt();
-
-            if(TRUE_TYPE==itsType)
-            {
-                // Do 16-bit encodings...
-                CEncodings::T16Bit *enc16;
-
-                for(enc16=CKfiGlobal::enc().first16Bit(); enc16; enc16=CKfiGlobal::enc().next16Bit())
-                    if(has16BitEncodingFt(enc16->name))
-                        enc.append(enc16->name);
-            }
+            for(enc16=CKfiGlobal::enc().first16Bit(); enc16; enc16=CKfiGlobal::enc().next16Bit())
+                if(has16BitEncodingFt(enc16->name))
+                    enc.append(enc16->name);
         }
     }
 
     return enc;
 }
-
-QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, int pointSize, int resolution, QRgb backgroundColour)
-{
-    QPixmap pix;
-    bool    symbol=false,
-            t1array=false;
-
-    if(QString::null!=str && str.length() && !FT_Set_Char_Size(itsFt.face, 0, pointSize*64, resolution, resolution) &&
-      ((t1array=(TYPE_1==itsType && getIsArrayEncodingT1())) || setCharmapUnicodeFt() || (symbol=setCharmapSymbolFt()) ))
-    {
-        int oldW=itsFt.bmp.w,
-            oldH=itsFt.bmp.h;
-
-        itsFt.bmp.w=width;
-        itsFt.bmp.h=height;
-
-        // Delete any previous bitmap if size is differnt to previous
-        if(NULL!=itsFt.bmp.data && oldW!=itsFt.bmp.w && oldH!=itsFt.bmp.h)
-        {
-            delete [] itsFt.bmp.data;
-            itsFt.bmp.data=NULL;
-        }
-
-        if(NULL==itsFt.bmp.data)
-            itsFt.bmp.data=new unsigned char[itsFt.bmp.w*itsFt.bmp.h];
-
-        if(NULL!=itsFt.bmp.data)
-        {
-            FT_GlyphSlot   slot=itsFt.face->glyph;
-            unsigned int   ch=0;
-            int            maxAscender=0,
-                           maxHeight=0;
-            unsigned short code;
-
-            for(ch=0; ch<str.length(); ++ch)
-            {
-                code=symbol | t1array ?
-                                ( CKfiGlobal::fe().getType()==TRUE_TYPE ?
-                                      CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode()+CEncodings::MS_SYMBOL_MODIFIER) :
-                                      ch
-                                ) :
-                                CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode());
-
-                if(!FT_Load_Glyph(itsFt.face, code, FT_LOAD_NO_SCALE))
-                {
-                    if(abs(slot->metrics.horiBearingY)>maxAscender)
-                        maxAscender=abs(slot->metrics.horiBearingY);
-                    if(abs(slot->metrics.height)>maxHeight)
-                        maxHeight=abs(slot->metrics.height);
-                }
-            }
-
-            maxHeight>>=6;
-            maxAscender>>=6;
-
-            int           pos=0,
-                          fHeight=maxHeight,
-                          yoffset=fHeight<itsFt.bmp.h ? (itsFt.bmp.h-fHeight)/2 : 0,
-                          ascender=maxAscender;
-
-            memset(itsFt.bmp.data, 0, itsFt.bmp.w*itsFt.bmp.h);
-
-            for(ch=0; ch<str.length(); ++ch)
-            {
-                code=symbol | t1array ?
-                                ( CKfiGlobal::fe().getType()==TRUE_TYPE ?
-                                      CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode()+CEncodings::MS_SYMBOL_MODIFIER) :
-                                      ch
-                                ) :
-                                CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode());
-
-                if(!FT_Load_Glyph(itsFt.face, code, FT_LOAD_DEFAULT) && !FT_Render_Glyph(itsFt.face->glyph, ft_render_mode_normal))
-                {
-                    int row,
-                        ypos=(ascender-slot->bitmap_top)+yoffset,//(fHeight-(slot->bitmap_top+descender))+yoffset,
-                        gWidth=slot->bitmap.width ? slot->bitmap.width : pointSize/4,
-                        width=(pos+gWidth)<itsFt.bmp.w ? gWidth : itsFt.bmp.w-(pos+1);
-
-                    if(width)
-                        for(row=0; row<slot->bitmap.rows; ++row)
-                        {
-                            if(row+ypos>=0 && row+ypos<itsFt.bmp.h && ((row+ypos)*itsFt.bmp.w)+pos+width < (itsFt.bmp.w*itsFt.bmp.h))
-                                memcpy(&(itsFt.bmp.data[((row+ypos)*itsFt.bmp.w)+pos]), &(slot->bitmap.buffer[row*slot->bitmap.pitch]), width);
-                        }
-                    else
-                        break;
-
-                    if(width<slot->bitmap.width)
-                        break;
-
-                    pos+=slot->bitmap.width+2;
-                    if(pos>=itsFt.bmp.w)
-                        break;
-                }
-            }
-
-            static QRgb clut [256];
-            static bool clutSetup=false;
-
-            if(!clutSetup)
-            {
-                int i;
-                for(i=0; i<256; i++)
-                    clut[i]=qRgb(255-i, 255-i, 255-i);
-                clutSetup=true;
-            }
-
-            QImage img(itsFt.bmp.data, itsFt.bmp.w, itsFt.bmp.h, 8, clut, 256, QImage::IgnoreEndian); // Endian????
-
-            img.setColor(0, backgroundColour);
-            pix=img;
-        }
-    }
-
-    return pix;
-}
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1811,6 +1688,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                     }
                 }
 
+#ifndef KFI_THUMBNAIL
                 if(mask&XLFD)
                 {
                     itsSpacing=hdr[constSpacingOffset]==constMonospaced ? SPACING_MONOSPACED : SPACING_PROPORTIONAL;
@@ -1828,6 +1706,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                             break;
                         }
                 }
+#endif
             }
         }
         spd.close();
@@ -1854,7 +1733,9 @@ static const unsigned int constBitmapMaxProps=1024;
 
 bool CFontEngine::openFontBmp(const QString &file, unsigned short mask)
 {
+#ifndef KFI_THUMBNAIL
     itsFoundry=constDefaultFoundry;
+#endif
 
     if(TEST==mask)
         mask=XLFD;

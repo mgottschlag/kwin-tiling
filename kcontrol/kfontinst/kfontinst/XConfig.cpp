@@ -30,7 +30,6 @@
 #include "KfiGlobal.h"
 #include "Encodings.h"
 #include "FontEngine.h"
-#include "Misc.h"
 #include "BufferedFile.h"
 #include "Config.h"
 #include <fstream.h>
@@ -50,19 +49,9 @@ CXConfig::CXConfig()
     readConfig();
 }
 
-bool CXConfig::go(const QString &dir
-#ifdef HAVE_XFT
-        ,
-        QStringList &symbolFamilies,
-        QStringList &monoFamilies
-#endif
-    )
+bool CXConfig::go(const QString &dir, QStringList &symbolFamilies)
 {
-    bool status=createFontsDotDir(dir
-#ifdef HAVE_XFT
-                , symbolFamilies, monoFamilies
-#endif
-    );
+    bool status=createFontsDotDir(dir, symbolFamilies);
 
     if(status)
     {
@@ -158,10 +147,11 @@ void CXConfig::addPath(const QString &dir, bool unscaled)
 {
     if(itsWritable)
     {
-        TPath *path=findPath(dir);
+        QString ds(CMisc::dirSyntax(dir));
+        TPath   *path=findPath(ds);
 
         if(NULL==path)
-            itsPaths.append(new TPath(dir, unscaled, false, false));
+            itsPaths.append(new TPath(ds, unscaled, false, false));
         else
             if(path->disabled)
                 path->disabled=false;
@@ -172,7 +162,8 @@ void CXConfig::removePath(const QString &dir)
 {
     if(itsWritable)
     {
-        TPath *path=findPath(dir);
+        QString ds(CMisc::dirSyntax(dir));
+        TPath   *path=findPath(ds);
  
         if(NULL!=path)
             if(path->orig)
@@ -215,10 +206,11 @@ void CXConfig::refreshPaths()
 
 CXConfig::TPath * CXConfig::findPath(const QString &dir)
 {
-    TPath *path=NULL;
+    TPath   *path=NULL;
+    QString ds(CMisc::dirSyntax(dir));
  
     for(path=itsPaths.first(); path; path=itsPaths.next())
-        if(path->dir==dir)
+        if(path->dir==ds)
             return path;
  
     return NULL;
@@ -682,7 +674,6 @@ bool CXConfig::writeXfsConfig()
     return processXfs(CKfiGlobal::cfg().getXConfigFile(), false);
 }
 
-#ifdef HAVE_XFT
 static bool find(const QStringList &list, const QString &val)
 {
     QStringList::Iterator it;
@@ -693,15 +684,8 @@ static bool find(const QStringList &list, const QString &val)
 
     return false;
 }
-#endif
 
-bool CXConfig::createFontsDotDir(const QString &dir
-#ifdef HAVE_XFT
-        ,
-        QStringList &symbolFamilies,
-        QStringList &monoFamilies
-#endif
-    )
+bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
 {
     bool status=false;
     QDir d(dir);
@@ -736,10 +720,6 @@ bool CXConfig::createFontsDotDir(const QString &dir
 
                                 if(encodings.count())
                                 {
-#ifdef HAVE_XFT
-                                    bool     mono=false;
-#endif
-                         
                                     QCString xlfd(fInfo->fileName().local8Bit());
                                     QString  family=CKfiGlobal::fe().getFamilyName();
 
@@ -773,13 +753,7 @@ bool CXConfig::createFontsDotDir(const QString &dir
                                         if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 || (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
                                             entry+='c';
                                         else
-                                        {
                                             entry+=CFontEngine::spacingStr(CKfiGlobal::fe().getSpacing()).latin1();
-#ifdef HAVE_XFT
-                                            if(!mono)
-                                                mono=CFontEngine::SPACING_MONOSPACED==CKfiGlobal::fe().getSpacing();
-#endif
-                                        }
 
                                         entry+="-";
                                         entry+="0";
@@ -790,15 +764,10 @@ bool CXConfig::createFontsDotDir(const QString &dir
                                             entry+=(*it).latin1();
                                         scalableFonts.append(entry);
 
-#ifdef HAVE_XFT
                                         if(CFontEngine::isATtf(fInfo->fileName().local8Bit()) &&
-                                          ((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it)) &&
-                                          !find(symbolFamilies, family))
+                                           CEncodings::constTTSymbol==*it &&
+                                           !find(symbolFamilies, family))
                                             symbolFamilies.append(family);
-
-                                        if(mono && !find(monoFamilies, family))
-                                            monoFamilies.append(family);
-#endif
                                     }
                                 }
                                 CKfiGlobal::fe().closeFont();

@@ -31,13 +31,13 @@
 #endif
 
 #include "SettingsWizard.h"
-#include "DirSettingsWidget.h"
-#include "StarOfficeSettingsWidget.h"
+#include "SettingsWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "Misc.h"
 #include <klocale.h>
 #include <qwizard.h>
+#include <qtextedit.h>
 #include <qlabel.h>
 #include <fstream.h>
 #include <stdio.h>
@@ -51,22 +51,12 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
         checkAndModifyFontmapFile();
         checkAndModifyXConfigFile();
 
-        QString fnfTxt=itsFnFText->text();
+        QString genTxt=itsGenText->text();
 
-        itsFnFText->setText(fnfTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, it is probable that you are not using the CUPS"
-                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(i18n(CConfig::constNotFound.utf8())));
-        itsModifiedDirsText->hide();
+        itsGenText->setText(genTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, it is probable that you are not using the CUPS"
+                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(
+                            i18n(CConfig::constNotFound.utf8())));
     }
-    else
-        if(0==CKfiGlobal::cfg().getModifiedDirs().count())
-            itsModifiedDirsText->hide();
-
-
-    itsSOWidget->hideNote();
-
-#ifndef HAVE_XFT
-    removePage(itsAAPage);
-#endif
 
     this->setFinishEnabled(itsCompletePage, true);
 }
@@ -112,7 +102,7 @@ void CSettingsWizard::checkAndModifyFontmapFile()
                     f.close();
 
                     if(useGS)
-                        itsDirsAndFilesWidget->setGhostscriptFile(CMisc::getDir(CKfiGlobal::cfg().getGhostscriptFile())+"Fontmap.GS");
+                        itsSettingsWidget->setGhostscriptFile(CMisc::getDir(CKfiGlobal::cfg().getGhostscriptFile())+"Fontmap.GS");
                 }
             }
         }
@@ -188,7 +178,7 @@ void CSettingsWizard::checkAndModifyXConfigFile()
                             if(CMisc::fExists(CConfig::constXfsConfigFiles[i]))
                             {
                                 CKfiGlobal::cfg().setXRefreshCmd(CConfig::XREFRESH_XFS_RESTART);
-                                itsDirsAndFilesWidget->setXConfigFile(CConfig::constXfsConfigFiles[i]);
+                                itsSettingsWidget->setXConfigFile(CConfig::constXfsConfigFiles[i]);
                                 break;
                             }
                     }

@@ -1,6 +1,6 @@
 
-SUBDIRS = kfontinst other 
+SUBDIRS = kfontinst other thumbnail
 
-EXTRA_DIST = TODO qtgen README.startkde
+EXTRA_DIST = TODO
 
 

@@ -45,17 +45,14 @@ class CKfiCmModule : public KCModule
 
     const KAboutData * aboutData() const;
 
-    static void madeChanges(bool m);
     static CKfiCmModule * instance() { return theirInstance; }
-
-    private:
-
-    void emitChanged(bool m);
 
     public slots:
 
+    void emitChanged();
     void    show();
     void    scanFonts();
+    void    load();
     void    save();
     QString quickHelp() const;
 

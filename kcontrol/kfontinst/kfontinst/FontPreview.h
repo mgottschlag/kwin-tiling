@@ -29,32 +29,46 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <qwidget.h>
 #include <qstring.h>
 #include <qpixmap.h>
 #include <qsize.h>
+#include <qwidget.h>
+#include <kurl.h>
+#include <kio/job.h>
+#include <kio/previewjob.h>
+#include <kfileitem.h>
 
 class CFontPreview : public QWidget
 {
+    Q_OBJECT
+
     public:
 
     CFontPreview(QWidget *parent, const char *name=NULL);
     virtual ~CFontPreview() {}
 
-    void setText(const QString &text);
-    void setPixmap(const QPixmap &pixmap);
-
-    const QString & text() { return itsText; }
-    QPixmap * pixmap()     { return itsText.isEmpty() ? &itsPixmap : NULL; }
-
     void  paintEvent(QPaintEvent *);
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 
+    public slots:
+
+    void showFont(const QString &file);
+    void result(KIO::Job *job);
+    void gotPreview(const KFileItem *item, const QPixmap &pix);
+    void failed(const KFileItem *item);
+
     private:
 
-    QString itsText;
-    QPixmap itsPixmap;
+    void showFont();
+
+    private:
+
+    QPixmap         itsPixmap;
+    KURL            itsCurrentUrl;
+    int             itsLastWidth,
+                    itsLastHeight;
+    KIO::PreviewJob *itsJob;
 };
 
 #endif

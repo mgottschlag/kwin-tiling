@@ -29,7 +29,9 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef KFI_THUMBNAIL
 #include "Encodings.h"
+#endif
 #include <freetype/freetype.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -171,7 +173,6 @@ class CFontEngine
     bool            openFont(const QString &file, unsigned short mask=NAME);
     void            closeFont();
 
-    QPixmap         createPixmap(const QString &str, int width, int height, int pointSize, int resolution,  QRgb backgroundColour);
     const QString & getFullName()     { return itsFullName; }
     const QString & getFamilyName()   { return itsFamily; }
     const QString & getPsName()       { return itsPsName; }
@@ -185,12 +186,15 @@ class CFontEngine
 
     EType           getType()         { return itsType; }
 
+#ifndef KFI_THUMBNAIL
     QStringList     getEncodings();
     QStringList     get8BitEncodings();
+#endif
 
     EWeight         strToWeight(const char *str);
     EWidth          strToWidth(const QString &str);
 
+#ifndef KFI_THUMBNAIL
     //
     // Metric accsessing functions...  (only work for TrueType & Type1)
     //
@@ -205,6 +209,7 @@ class CFontEngine
     int                getBBoxYMin();
     int                getBBoxYMax();
     const TGlyphInfo * getGlyphInfo(unsigned long glyph);
+#endif
 
     //
     // Type1 functions...
@@ -232,12 +237,13 @@ class CFontEngine
     unsigned int    getGlyphIndexFt(unsigned short code) { return FT_Get_Char_Index(itsFt.face, code); }
     bool            setCharmapUnicodeFt()                { return FT_Select_Charmap(itsFt.face, ft_encoding_unicode) ? false : true; }
     bool            setCharmapSymbolFt()                 { return FT_Select_Charmap(itsFt.face, ft_encoding_symbol) ? false : true; } 
-    QPixmap         createPixmapFt(const QString &str, int width, int height, int pointSize, int resolution, QRgb backgroundColour);
+#ifndef KFI_THUMBNAIL
     bool            hasEncodingFt(FT_UShort enc);
     bool            has16BitEncodingFt(const QString &enc);
     bool            has8BitEncodingFt(CEncodings::T8Bit *data);
     QStringList     get8BitEncodingsFt();
     QStringList     getEncodingsFt();
+#endif
     int             getNumGlyphsFt()                     { return itsFt.open ? itsFt.face->num_glyphs : 0; }
 
     //
@@ -280,6 +286,8 @@ class CFontEngine
     float          itsItalicAngle;
     TFtData        itsFt;
     const char     *itsFoundry;
+
+    friend class   CFontThumbnail;
 };
 
 #endif

@@ -29,20 +29,52 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <qwidget.h>
+#include "SettingsWidgetData.h"
 
-class CSettingsWidget : public QWidget
+class CSettingsWidget : public CSettingsWidgetData
 {
     Q_OBJECT
 
     public:
 
-    CSettingsWidget(QWidget *parent, const char *name=NULL);
+    CSettingsWidget(QWidget *parent, const char *name=NULL) : CSettingsWidgetData(parent, name) { reset(); }
     virtual ~CSettingsWidget()     { }
+
+    void reset();
+    void encodingsDirButtonPressed();
+    void gsFontmapButtonPressed();
+    void cupsButtonPressed();
+    void xDirButtonPressed();
+    void xConfigButtonPressed();
+    void xftConfigFileButtonPressed();
+    void t1SubDir(const QString &str);
+    void ttSubDir(const QString &str);
+    void ghostscriptChecked(bool on);
+    void cupsChecked(bool on);
+    void xftChecked(bool on);
+    void setGhostscriptFile(const QString &f);
+    void setXConfigFile(const QString &f);
+    void dirButtonPressed();
+    void configureSelected(bool on);
+    void ppdSelected(const QString &str);
+    void generateAfmsSelected(bool on);
+    void customXRefreshSelected(bool on);
+    void xfsRestartSelected(bool on);
+    void xsetFpRehashSelected(bool on);
+    void customXStrChanged(const QString &str);
+    void afmEncodingSelected(const QString &str);
+    void t1AfmSelected(bool on);
+    void ttAfmSelected(bool on);
 
     signals:
 
     void madeChanges();
+
+    private:
+
+    void setupSubDirCombos();
+    void setupPpdCombo();
+    void scanEncodings();
 };
 
 #endif

@@ -58,8 +58,8 @@ void CCompressedFile::open(const char *fname)
     switch(itsType)
     {
         case GZIP:
-            itsDev=KFilterDev::deviceForFile(fname);
-            if(!itsDev->open(IO_ReadOnly))
+            itsDev=KFilterDev::deviceForFile(fname, "application/x-gzip");
+            if(itsDev && !itsDev->open(IO_ReadOnly))
                 close();
             break;
         case Z:

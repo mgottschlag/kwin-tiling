@@ -71,9 +71,10 @@ class CEncodings
         MS_SYMBOL_MODIFIER = 0xf020   // Charmap for micorosft-symbol (i.e. add this value...)
     };
 
-    CEncodings(const QString &path);
+    CEncodings();
     virtual ~CEncodings()                               { }
 
+    void                  reset();
     bool                  createEncodingsDotDir(const QString &dir);
     void                  addDir(const QString &path)   { addDir(path, 0); }
     void                  clear()                       { its8BitList.clear(); its16BitList.clear(); }

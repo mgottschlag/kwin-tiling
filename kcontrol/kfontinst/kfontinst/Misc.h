@@ -55,10 +55,12 @@ class CMisc
     static bool         dWritable(const QString &d);
     static bool         dHasSubDirs(const QString &d);
     static bool         dContainsTTorT1Fonts(const QString &d);
+    static QString      dirSyntax(const QString &d);
     static QString      getDir(const QString &f);
+    static QString      getFile(const QString &f);
     static unsigned int getNumItems(const QString &d);
     static unsigned int countFonts(const QString &d);
-    static bool         createDir(const QString &dir)                        { return doCmd("mkdir", dir); }
+    static bool         createDir(const QString &dir);
     static bool         removeDir(const QString &dir)                        { return doCmd("rmdir", dir); }
     static bool         removeFile(const QString &file)                      { return doCmd("rm", "-f", file); }
     static bool         moveFile(const QString &file, const QString &dest)   { return doCmd("mv", "-f", file, dest); }
@@ -72,11 +74,13 @@ class CMisc
     static QString      locate(QString file) { return KGlobal::instance()->dirs()->findResource("data", "kcmfontinst/"+file); }
     static QStringList  locateAll(QString dir, QString type) { return KGlobal::instance()->dirs()->findAllResources("data", "kcmfontinst/"+dir+"/"+"*."+type); }
     static QString      removeSymbols(const QString &str);
+#ifndef KFI_THUMBNAIL
     static QString      shortName(const QString &dir);
+#endif
     static int          findIndex(const QComboBox *box, const QString &str);
     static bool         root() { return getuid()==0 ? true : false; }
-    static int          stricmp(const char *s1, const char *s2);
     static void         createBackup(const QString &f);
+    static int          stricmp(const char *s1, const char *s2);
 };
 
 #endif
