@@ -76,7 +76,7 @@ KFontChooser::KFontChooser( QWidget *parent, const char *name )
 	cmbFont->insertStrList( &fontList );
 	QStrListIterator it( fontList );
 	for ( i = 0; it.current(); ++it, i++ ) {
-		if ( fnt.family() == it.current() )
+		if ( fnt.family().ascii() == it.current() )
 			cmbFont->setCurrentItem( i );
 	}
 	
@@ -163,6 +163,7 @@ void KFontChooser::setFont( QFont start_fnt, bool fixed )
 {
 	fnt = start_fnt;
 	
+	cmbFont->setUpdatesEnabled(false);
 	cmbFont->clear();
 	if( fixed )
 		cmbFont->insertStrList( &fixedList );
@@ -171,10 +172,14 @@ void KFontChooser::setFont( QFont start_fnt, bool fixed )
 	
 	QStrListIterator it( fixed ? fixedList : fontList );
 	for ( int i = 0; it.current(); ++it, i++ ) {
-		if ( fnt.family(), it.current() )
-			cmbFont->setCurrentItem( i );
+	    if ( fnt.family() == it.current() ) {
+	      cmbFont->setCurrentItem( i );
+	      break;
+	    }
 	}
-	
+	cmbFont->setUpdatesEnabled(true);
+	cmbFont->update();
+
 	sbSize->setValue( fnt.pointSize() );
 	
 	if ( fnt.bold() )
@@ -253,7 +258,6 @@ void KFontChooser::addFont( QStrList &list, const char *xfont )
 		for ( ; it.current(); ++it )
 			if ( it.current() == font )
 				return;
-
 		list.inSort( font.ascii() );
 	}
 }
