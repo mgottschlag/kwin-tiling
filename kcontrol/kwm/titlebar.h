@@ -201,7 +201,7 @@ private:
  QListBox *gradientTypes;
  QGroupBox *pixmapBox, *gradBox;
  KPixmap gradPix; // used to preview the gradients
- QLabel *gradPreview;
+ QFrame *gradPreview;
 
 
  //CT 11feb98

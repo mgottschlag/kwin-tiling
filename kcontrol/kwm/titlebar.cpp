@@ -1054,16 +1054,16 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   gradLay->addSpacing(10);
 
-  gradPreview = new QLabel ("", gradBox);
+  gradPreview = new QFrame ( gradBox);
   gradPreview->setFrameStyle(QFrame::Panel | QFrame::Raised);
-  gradPix.resize(gradPreview->width(), gradPreview->height());
+  gradPreview->setFixedHeight(24);
+  gradPreview->setFixedWidth(150);
 
   setGradient(i18n("Horizontal")); // build the gradient
-
-  gradPreview->setPixmap(gradPix);
+  gradPreview->setBackgroundPixmap(gradPix);
 
   gradLay->addWidget(gradPreview);
-				     
+
   //CT 11feb98 - Title double click
   titlebarDblClickBox = new QGroupBox(i18n("Mouse action"),
 				       this);
@@ -1144,7 +1144,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   GetSettings();
 
   gradientTypes->setCurrentItem((int) gradient);
-
 }
 
 //CT 02Dec1998
@@ -1402,6 +1401,9 @@ void KTitlebarAppearance::SaveSettings( void )
 
 void KTitlebarAppearance::setGradient(const QString & grad_name)
 {
+
+  gradPix.resize(gradPreview->width(), gradPreview->height());
+
   if (grad_name == i18n("Vertical"))
   {
     gradient = VERT;
@@ -1451,7 +1453,7 @@ void KTitlebarAppearance::setGradient(const QString & grad_name)
 			    KPixmapEffect::EllipticGradient);
   }
 
-  gradPreview->setPixmap(gradPix);
+  gradPreview->setBackgroundPixmap(gradPix);
 }
 
 void KTitlebarAppearance::GetSettings( void )
