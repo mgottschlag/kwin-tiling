@@ -953,11 +953,16 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         else // Move it to our font folder...
         {
             tmpFile.setAutoDelete(false);
-            if(Misc::doCmd("mv", "-f", QFile::encodeName(KProcess::quote(tmpFileC)),
-               QFile::encodeName(KProcess::quote(destC))))
+            if(Misc::doCmd("mv", "-f", tmpFileC, destC))
             {
                 ::chmod(destC.data(), Misc::FILE_PERMS);
+                modified(FOLDER_USER);
                 createAfm(dest);
+            }
+            else
+            {
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_USER));
+                return;
             }
         }
 
@@ -1490,9 +1495,8 @@ void CKioFonts::doModified()
         {
             Misc::doCmd(FC_CACHE_CMD);
             KFI_DBUG << "RUN: " << FC_CACHE_CMD << endl;
-            Misc::doCmd("kfontinst", itsKfiParams, KProcess::quote(itsFolders[FOLDER_SYS].location));
-            KFI_DBUG << "RUN: kfontinst " << itsKfiParams << ' '
-                     << KProcess::quote(itsFolders[FOLDER_SYS].location) << endl;
+            Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(itsFolders[FOLDER_SYS].location));
+            KFI_DBUG << "RUN: kfontinst " << itsKfiParams << ' ' << itsFolders[FOLDER_SYS].location << endl;
             removeChar(itsKfiParams, 'a');
         }
         else
@@ -1514,7 +1518,7 @@ void CKioFonts::doModified()
     {
         Misc::doCmd(FC_CACHE_CMD);
         KFI_DBUG << "RUN: " << FC_CACHE_CMD << endl;
-        Misc::doCmd("kfontinst", itsKfiParams, KProcess::quote(itsFolders[FOLDER_USER].location));
+        Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(itsFolders[FOLDER_USER].location));
         KFI_DBUG << "RUN: kfontinst " << itsKfiParams << ' '
                  << KProcess::quote(itsFolders[FOLDER_USER].location) << endl;
         itsFolders[FOLDER_USER].modified=false;
