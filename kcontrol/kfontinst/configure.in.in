@@ -5,7 +5,7 @@ AC_MSG_CHECKING([for FreeType2 freetype/t1tables.h])
 FREETYPE_INC_DIRS="/usr/include /usr/include/freetype2 /usr/local/include /usr/local/include/freetype2 /usr/X11R6/include/freetype2 $kde_extra_includes"
 AC_FIND_FILE(freetype/t1tables.h,$FREETYPE_INC_DIRS,FREETYPE_INC)
 if test "$FREETYPE_INC" = NO; then
-    AC_MSG_ERROR([FreeType2 headers not found!])
+    AC_MSG_WARN([FreeType2 headers not found!])
 else
     AC_MSG_RESULT([yes, $FREETYPE_INC])
     FREETYPE_INC="-I$FREETYPE_INC"
@@ -24,12 +24,16 @@ if test "$FREETYPE_INC" != NO; then
 
     AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
     if test "$FREETYPE_LIB" = NO; then
-        AC_MSG_ERROR([FreeType2 library not found!])
+        AC_MSG_WARN([FreeType2 library not found!])
     else
         AC_DEFINE_UNQUOTED(HAVE_FT2, 1, [Define if your system has the freetype2 library])
         AC_SUBST(FREETYPE_LIB)
         AC_SUBST(FREETYPE_INC)
     fi
+fi
+
+if test "$FREETYPE_INC" = "NO" || test "$FREETYPE_LIB" = "NO"; then
+    DO_NOT_COMPILE="$DO_NOT_COMPILE kfontinst"
 fi
 
 dnl -- Xft/XRender --------------------------------------------------------------
