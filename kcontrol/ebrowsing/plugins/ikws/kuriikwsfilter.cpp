@@ -46,7 +46,8 @@ void KURISearchFilter::configure() {
 }
 
 bool KURISearchFilter::filterURI(KURL &kurl) const {
-    QString url = kurl.isMalformed() ? kurl.malformedUrl() : kurl.url();
+    //QString url = kurl.isMalformed() ? kurl.malformedUrl() : kurl.url();
+    QString url = kurl.url();
 
     if (KURISearchFilterEngine::self()->verbose()) {
 	kDebugInfo("filtering %s", url.ascii());
