@@ -829,7 +829,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
     //
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
     {
-        QString name(url.filename());
+        QString name(url.fileName());
         int     pos;
 
         itsDescriptiveName=name;

@@ -876,7 +876,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     bool            changed=confirmUrl(url),
                     nrs=nonRootSys(url);
     EFolder         destFolder=itsRoot || i18n(KFI_KIO_FONTS_SYS)==getSect(url.path()) ? FOLDER_SYS : FOLDER_USER;
-    QString         dest=itsFolders[destFolder].location+url.filename(),
+    QString         dest=itsFolders[destFolder].location+url.fileName(),
                     passwd;
     QCString        destC=QFile::encodeName(dest);
     KDE_struct_stat buffDest;
