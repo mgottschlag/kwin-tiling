@@ -816,8 +816,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
     connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( restoreNextInternal() ) );
     connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
-
-    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
 }
 
 KSMServer::~KSMServer()
@@ -1598,6 +1596,7 @@ void KSMServer::restoreSessionDoneInternal()
 #endif
     upAndRunning( "session ready" );
     DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
+    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
 
     // From now on handle X errors as normal shutdown.
     XSetIOErrorHandler(Xio_ErrorHandler);
