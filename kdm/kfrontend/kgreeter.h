@@ -66,18 +66,17 @@ protected:
 };
 
 
-class KGreeter : public QFrame {
+class KGreeter : public FDialog {
     Q_OBJECT
 
 public:
     KGreeter();
     ~KGreeter();
-    void ReturnPressed();
     void UpdateLock();
  
 public slots:
-    void go_button_clicked();
-    void clear_button_clicked();
+    void accept();
+    void reject();
     void chooser_button_clicked();
     void console_button_clicked();
     void quit_button_clicked();

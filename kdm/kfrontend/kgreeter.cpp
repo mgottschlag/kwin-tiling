@@ -107,26 +107,12 @@ MyApp::x11EventFilter( XEvent * ev )
 
 void KGreeter::keyPressEvent( QKeyEvent *e )
 {
-    if (e->state() == 0)
-	switch (e->key()) {
-	    case Key_Enter:
-	    case Key_Return:
-		ReturnPressed();
-		return;
-	    case Key_Escape:
-		clearButton->animateClick();
-		return;
-	}
-    else if ( e->state() & Keypad && e->key() == Key_Enter ) {
-	ReturnPressed();
-	return;
-    } else if (!(~e->state() & (AltButton | ControlButton)) &&
-	       e->key() == Key_Delete && 
-	       kdmcfg->_allowShutdown != SHUT_NONE) {
+    if (!(~e->state() & (AltButton | ControlButton)) &&
+	e->key() == Key_Delete && kdmcfg->_allowShutdown != SHUT_NONE) {
 	shutdown_button_clicked();
 	return;
     }
-    e->ignore();
+    FDialog::keyPressEvent( e );
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -185,111 +171,110 @@ KGreeter::Inserten( QPopupMenu *mnu, const QString& txt, const char *member )
 }
 
 KGreeter::KGreeter()
-  : QFrame( 0, 0, WStyle_Customize | WStyle_NoBorder | WStyle_Tool )
+  : FDialog( 0, 0, true )
   , user_view( 0 )
   , clock( 0 )
   , pixLabel( 0 )
   , capslocked( -1 )
   , loginfailed( false )
 {
-    setFrameStyle( QFrame::WinPanel | QFrame::Raised );
-    QBoxLayout* vbox = new QBoxLayout(  this,
-					QBoxLayout::TopToBottom,
-					10, 10);
-    QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
-    QBoxLayout* hbox2 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
+    QBoxLayout* vbox = new QBoxLayout( winFrame,
+				       QBoxLayout::TopToBottom,
+				       10, 10 );
+    QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10 );
+    QBoxLayout* hbox2 = new QBoxLayout( QBoxLayout::LeftToRight, 10 );
 
-    QGridLayout* grid = new QGridLayout( 5, 4, 5);
+    QGridLayout* grid = new QGridLayout( 5, 4, 5 );
 
     if (!kdmcfg->_greetString.isEmpty()) {
-	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, this);
-	welcomeLabel->setAlignment(AlignCenter);
-	welcomeLabel->setFont( kdmcfg->_greetFont);
-	vbox->addWidget( welcomeLabel);
+	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
+	welcomeLabel->setAlignment( AlignCenter );
+	welcomeLabel->setFont( kdmcfg->_greetFont );
+	vbox->addWidget( welcomeLabel );
     }
-    if( kdmcfg->_showUsers != SHOW_NONE) {
-	user_view = new QIconView( this);
+    if (kdmcfg->_showUsers != SHOW_NONE) {
+	user_view = new QIconView( winFrame );
 	user_view->setSelectionMode( QIconView::Single );
-	user_view->setArrangement( QIconView::LeftToRight);
-	user_view->setAutoArrange(true);
-	user_view->setItemsMovable(false);
-	user_view->setResizeMode(QIconView::Adjust);
-	insertUsers( user_view);
-	vbox->addWidget( user_view);
+	user_view->setArrangement( QIconView::LeftToRight );
+	user_view->setAutoArrange( true );
+	user_view->setItemsMovable( false );
+	user_view->setResizeMode( QIconView::Adjust );
+	insertUsers( user_view );
+	vbox->addWidget( user_view );
     }
 
-    switch( kdmcfg->_logoArea ) {
+    switch (kdmcfg->_logoArea) {
 	case LOGO_CLOCK:
-	    clock = new KdmClock( this, "clock" );
+	    clock = new KdmClock( winFrame, "clock" );
 	    break;
 	case LOGO_LOGO:
 	    {
 		QPixmap pixmap;
-		if ( pixmap.load( kdmcfg->_logo ) ) {
-		    pixLabel = new QLabel( this);
-		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken);
-		    pixLabel->setAutoResize( true);
-		    pixLabel->setIndent(0);
-		    pixLabel->setPixmap( pixmap);
+		if (pixmap.load( kdmcfg->_logo )) {
+		    pixLabel = new QLabel( winFrame );
+		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+		    pixLabel->setAutoResize( true );
+		    pixLabel->setIndent( 0 );
+		    pixLabel->setPixmap( pixmap );
 		}
 	    }
 	    break;
     }
 
-    loginEdit = new KLoginLineEdit( this);
-    loginLabel = new QLabel( loginEdit, i18n("&Login:"), this);
+    loginEdit = new KLoginLineEdit( winFrame );
+    loginLabel = new QLabel( loginEdit, i18n("&Login:"), winFrame );
 
-    passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
-    passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), this);
+    passwdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode );
+    passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
 
-    sessargBox = new QComboBox( false, this);
-    sessargLabel = new QLabel( sessargBox, i18n("Session &Type:"), this);
+    sessargBox = new QComboBox( false, winFrame );
+    sessargLabel = new QLabel( sessargBox, i18n("Session &Type:"), winFrame );
     sessargBox->insertStringList( kdmcfg->_sessionTypes );
-    sessargStat = new QWidget( this);
-    sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat);
-    sasSel = new QLabel( i18n("session type", "(selected)"), sessargStat);
+    sessargStat = new QWidget( winFrame );
+    sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat );
+    sasSel = new QLabel( i18n("session type", "(selected)"), sessargStat );
     sessargStat->setFixedSize(
 	QMAX(sasPrev->sizeHint().width(), sasSel->sizeHint().width()),
-	sessargBox->height());
+	sessargBox->height() );
 
-    vbox->addLayout( hbox1);
-    vbox->addLayout( hbox2);
-    hbox1->addLayout( grid, 3);
+    vbox->addLayout( hbox1 );
+    vbox->addLayout( hbox2 );
+    hbox1->addLayout( grid, 3 );
     if (clock)
-	hbox1->addWidget( (QWidget*)clock, 0, AlignTop);
+	hbox1->addWidget( clock, 0, AlignTop );
     else if (pixLabel)
-	hbox1->addWidget( (QWidget*)pixLabel, 0, AlignTop);
+	hbox1->addWidget( pixLabel, 0, AlignTop );
 
-    KSeparator* sep = new KSeparator( KSeparator::HLine, this);
+    KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame );
 
-    failedLabel = new QLabel( this);
-    failedLabel->setFont( kdmcfg->_failFont);
+    failedLabel = new QLabel( winFrame );
+    failedLabel->setFont( kdmcfg->_failFont );
 
-    grid->addWidget( loginLabel, 0, 0);
-    grid->addMultiCellWidget( loginEdit, 0,0, 1,3);
-    grid->addWidget( passwdLabel, 1, 0);
-    grid->addMultiCellWidget( passwdEdit, 1,1, 1,3);
-    grid->addWidget( sessargLabel, 2, 0);
-    grid->addWidget( sessargBox, 2, 1);
-    grid->addWidget( sessargStat, 2, 2);
-    grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter);
-    grid->addMultiCellWidget( sep, 4,4, 0,3);
-    grid->setColStretch( 3, 1);
+    grid->addWidget( loginLabel, 0, 0 );
+    grid->addMultiCellWidget( loginEdit, 0,0, 1,3 );
+    grid->addWidget( passwdLabel, 1, 0 );
+    grid->addMultiCellWidget( passwdEdit, 1,1, 1,3 );
+    grid->addWidget( sessargLabel, 2, 0 );
+    grid->addWidget( sessargBox, 2, 1 );
+    grid->addWidget( sessargStat, 2, 2 );
+    grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter );
+    grid->addMultiCellWidget( sep, 4,4, 0,3 );
+    grid->setColStretch( 3, 1 );
 
-    goButton = new QPushButton( i18n("G&o!"), this);
-    goButton->setFixedWidth(goButton->sizeHint().width());
-    goButton->setDefault( true);
-    connect( goButton, SIGNAL( clicked()), SLOT(go_button_clicked()));
-    hbox2->addWidget( goButton);
+    goButton = new QPushButton( i18n("G&o!"), winFrame );
+    goButton->setFixedWidth( goButton->sizeHint().width() );
+    goButton->setDefault( true );
+    connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
+    hbox2->addWidget( goButton );
 
-    clearButton = new QPushButton( i18n("&Clear"), this);
-    connect( clearButton, SIGNAL(clicked()), SLOT(clear_button_clicked()));
-    hbox2->addWidget( clearButton);
+    clearButton = new QPushButton( i18n("&Clear"), winFrame );
+    connect( clearButton, SIGNAL(clicked()), SLOT(reject()) );
+    hbox2->addWidget( clearButton );
 
-    hbox2->addStretch( 1);
+    hbox2->addStretch( 1 );
 
-    optMenu = new QPopupMenu(this);
-    optMenu->setCheckable(false);
+    optMenu = new QPopupMenu( winFrame );
+    optMenu->setCheckable( false );
 
     if (dhasConsole)
 	Inserten( optMenu, i18n("Co&nsole Login"),
@@ -301,19 +286,18 @@ KGreeter::KGreeter()
     Inserten( optMenu, disLocal ?
 		       i18n("R&estart X Server") :
 		       i18n("Clos&e Connection"),
-	      SLOT( quit_button_clicked() ) );
+	      SLOT(quit_button_clicked()) );
 
-    menuButton = new QPushButton( i18n("&Menu"), this );
+    menuButton = new QPushButton( i18n("&Menu"), winFrame );
     menuButton->setPopup( optMenu );
     hbox2->addWidget( menuButton );
 
     hbox2->addStretch( 1 );
 
-    if (kdmcfg->_allowShutdown != SHUT_NONE)
-    {
-	shutdownButton = new QPushButton( i18n("&Shutdown..."), this );
-	connect( shutdownButton, SIGNAL( clicked() ),
-		 SLOT( shutdown_button_clicked() ) );
+    if (kdmcfg->_allowShutdown != SHUT_NONE) {
+	shutdownButton = new QPushButton( i18n("&Shutdown..."), winFrame );
+	connect( shutdownButton, SIGNAL(clicked()),
+		 SLOT(shutdown_button_clicked()) );
 	hbox2->addWidget( shutdownButton );
     }
 
@@ -321,33 +305,33 @@ KGreeter::KGreeter()
     // clear fields
     connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
     // update session type
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT( load_wm()));
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT(load_wm()) );
     // start login timeout after entered login
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT( SetTimer()));
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
     // update sessargStat
     connect( sessargBox, SIGNAL(activated(int)),
-	     SLOT(slot_session_selected()));
-    if( user_view) {
+	     SLOT(slot_session_selected()) );
+    if (user_view) {
 	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)),
-		 SLOT(slot_user_name( QIconViewItem*)));
+		 SLOT(slot_user_name( QIconViewItem*)) );
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)),
-		 SLOT(slot_user_name( QIconViewItem*)));
+		 SLOT(slot_user_name( QIconViewItem*)) );
     }
 
-    clear_button_clicked();
+    reject();
 
-    UpdateLock ();
+    UpdateLock();
 
-    stsfile = new KSimpleConfig (QString::fromLatin1 (KDE_CONFDIR "/kdm/kdmsts"));
-    stsfile->setGroup ("PrevUser");
-    enam = QString::fromLocal8Bit(dname);
+    stsfile = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmsts") );
+    stsfile->setGroup( "PrevUser" );
+    enam = QString::fromLocal8Bit( dname );
     if (kdmcfg->_preselUser != PRESEL_PREV)
-	stsfile->deleteEntry (enam, false);
+	stsfile->deleteEntry( enam, false );
     if (kdmcfg->_preselUser != PRESEL_NONE) {
 	if (kdmcfg->_preselUser == PRESEL_PREV) {
-	    loginEdit->setText (stsfile->readEntry (enam));
+	    loginEdit->setText( stsfile->readEntry( enam ) );
 	} else
-	    loginEdit->setText (kdmcfg->_defaultUser);
+	    loginEdit->setText( kdmcfg->_defaultUser );
 	if (kdmcfg->_focusPasswd && !loginEdit->text().isEmpty())
 	    passwdEdit->setFocus();
 	else
@@ -356,16 +340,16 @@ KGreeter::KGreeter()
     }
 }
 
-KGreeter::~KGreeter ()
+KGreeter::~KGreeter()
 {
     delete stsfile;
 }
 
 void
-KGreeter::slot_user_name( QIconViewItem *item)
+KGreeter::slot_user_name( QIconViewItem *item )
 {
     if (item) {
-	loginEdit->setText( item->text());
+	loginEdit->setText( item->text() );
 	passwdEdit->erase();
 	passwdEdit->setFocus();
 	load_wm();
@@ -403,10 +387,10 @@ KGreeter::updateStatus()
 {
     if (loginfailed) {
 	failedLabel->setPaletteForegroundColor( Qt::black );
-	failedLabel->setText(i18n("Login failed"));
+	failedLabel->setText( i18n("Login failed") );
     } else if (capslocked) {
 	failedLabel->setPaletteForegroundColor( Qt::red );
-	failedLabel->setText(i18n("Warning: Caps locked"));
+	failedLabel->setText( i18n("Warning: Caps locked") );
     } else
 	failedLabel->clear();
 }
@@ -414,7 +398,7 @@ KGreeter::updateStatus()
 void
 KGreeter::SetTimer()
 {
-    if (!loginfailed)
+    if (!loginfailed && !loginEdit->text().isEmpty())
 	timer->start( 40000, TRUE );
 }
 
@@ -424,30 +408,37 @@ KGreeter::timerDone()
     if (loginfailed) {
 	loginfailed = false;
 	updateStatus();
-	goButton->setEnabled( true);
-	loginEdit->setEnabled( true);
-	passwdEdit->setEnabled( true);
-	sessargBox->setEnabled( true);
+	goButton->setEnabled( true );
+	loginEdit->setEnabled( true );
+	passwdEdit->setEnabled( true );
+	sessargBox->setEnabled( true );
+	if (!loginEdit->text().isEmpty()) {
+	    passwdEdit->erase();
+	    passwdEdit->setFocus();
+	    SetTimer();
+	    return;
+	}
     }
-    clear_button_clicked();
+    reject();
 }
 
 void
-KGreeter::clear_button_clicked()
+KGreeter::reject()
 {
+    timer->stop();
     loginEdit->clear();
     passwdEdit->erase();
     loginEdit->setFocus();
     sasPrev->hide();
     sasSel->hide();
     wmstat = WmNone;
-    set_wm( "default");
+    set_wm( "default" );
 }
 
 void
 KGreeter::quit_button_clicked()
 {
-    SessionExit (EX_RESERVER_DPY);
+    SessionExit( EX_RESERVER_DPY );
 }
 
 void
@@ -459,23 +450,23 @@ KGreeter::chooser_button_clicked()
 void
 KGreeter::console_button_clicked()
 {
-    SessionExit (EX_TEXTLOGIN);
+    SessionExit( EX_TEXTLOGIN );
 }
 
 void
 KGreeter::shutdown_button_clicked()
 {
-    KDMShutdown k( this );
+    KDMShutdown k( winFrame );
     k.exec();
 }
 
 void
-KGreeter::set_wm(const char *cwm)
+KGreeter::set_wm( const char *cwm )
 {
-    QString wm = QString::fromLocal8Bit (cwm);
+    QString wm = QString::fromLocal8Bit( cwm );
     for (int i = sessargBox->count(); i--;)
-	if (sessargBox->text(i) == wm) {
-	    sessargBox->setCurrentItem(i);
+	if (sessargBox->text( i ) == wm) {
+	    sessargBox->setCurrentItem( i );
 	    return;
 	}
 }
@@ -497,9 +488,9 @@ KGreeter::load_wm()
     } else {
 	wmstat = WmPrev;
 	sasPrev->show();
-	GSendInt (G_GetSessArg);
-	GSendStr (name.data());
-	ptr = GRecvStrArr (&dummy);
+	GSendInt( G_GetSessArg );
+	GSendStr( name.data() );
+	ptr = GRecvStrArr( &dummy );
 	if (!ptr) {		/* no such user */
 	    /* XXX - voodoo */
 	    for (sum = 0, i = 0; i < len; i++)
@@ -509,20 +500,20 @@ KGreeter::load_wm()
 	    num = sessargBox->count();
 	    i = sum % (num * 4 / 3);
 	    if (i < num) {
-		sessargBox->setCurrentItem(i);
+		sessargBox->setCurrentItem( i );
 		return;
 	    }
 	} else if (!ptr[0]) {	/* cannot read */
-	    free (ptr);
+	    free( ptr );
 	} else {
-	    set_wm (ptr[0]);
+	    set_wm( ptr[0] );
 	    for (i = 0; ptr[i]; i++)
-		free (ptr[i]);
-	    free (ptr);
+		free( ptr[i] );
+	    free( ptr );
 	    return;
 	}
     }
-    set_wm ("default");
+    set_wm( "default" );
 }
 
 
@@ -653,29 +644,19 @@ KGreeter::verifyUser(bool haveto)
 	    kapp->quit();
 	    return true;
     }
-    clear_button_clicked();
+    reject();
     return true;
 }
 
 void
-KGreeter::go_button_clicked()
+KGreeter::accept()
 {
-    verifyUser(true);
-}
-
-void
-KGreeter::ReturnPressed()
-{
-    if (!goButton->isEnabled())
-	return;
     if (loginEdit->hasFocus()) {
 	load_wm();
 	if (!verifyUser(false))
 	    passwdEdit->setFocus();
-    } else if (passwdEdit->hasFocus() ||
-	       sessargBox->hasFocus()) {
+    } else
 	verifyUser(true);
-    }
 }
 
 static void 
@@ -751,10 +732,9 @@ kg_main( int argc, char **argv )
     if (dsk->screenNumber( QCursor::pos() ) !=
 	dsk->screenNumber( grt.center() ))
 	QCursor::setPos( grt.center() );
-    XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime );
     XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
     Debug ("entering event loop\n");
-    kapp->exec();
+    kgreeter->exec();
     delete kgreeter;
     delete kdmcfg;
     UnsecureDisplay( dpy );

@@ -41,12 +41,13 @@ FDialog::FDialog( QWidget *parent, const char *name, bool modal )
     winFrame = new QFrame( this );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
+    QVBoxLayout *vbox = new QVBoxLayout( this );
+    vbox->addWidget( winFrame );
 }
 
 int
 FDialog::exec()
 {
-    winFrame->resize( winFrame->sizeHint() );
     QDialog::show();
     XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
     QDialog::exec();
