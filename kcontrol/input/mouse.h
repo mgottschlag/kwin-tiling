@@ -110,7 +110,7 @@ private:
 
   QButtonGroup *handedBox;
   QRadioButton *leftHanded, *rightHanded;
-  QCheckBox *singleClick;
+  QCheckBox *doubleClick;
   QCheckBox *cbAutoSelect;
   QLabel *lDelay;
   QSlider *slAutoSelect;

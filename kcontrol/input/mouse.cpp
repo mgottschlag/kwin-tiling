@@ -106,10 +106,10 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     // SC/DC/AutoSelect/ChangeCursor
 
-    singleClick = new QCheckBox(i18n("Use double-click to activate or open"), tab1);
-    connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
+    doubleClick = new QCheckBox(i18n("Use double-click to activate or open"), tab1);
+    connect(doubleClick, SIGNAL(clicked()), SLOT(changed()));
     lay->addSpacing(15);
-    lay->addWidget(singleClick);
+    lay->addWidget(doubleClick);
 
     wtstr = i18n("The default behavior in KDE is to select and activate"
          " icons with a single click of the left button on your pointing"
@@ -117,7 +117,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " when you click links in most web browsers. If you would prefer"
          " to select with a single click, and activate with a double click,"
          " check this option.");
-    QWhatsThis::add( singleClick, wtstr );
+    QWhatsThis::add( doubleClick, wtstr );
 
     cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), tab1);
     lay->addWidget(cbAutoSelect);
@@ -164,7 +164,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     lay->addWidget(cbCursor,Qt::AlignLeft);
     connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
 
-    connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
     connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
     wtstr = i18n("When this option is checked, the shape of the mouse pointer"
@@ -348,7 +348,7 @@ void MouseConfig::load()
   dragStartTime->setValue(settings->dragStartTime);
   dragStartDist->setValue(settings->dragStartDist);
 
-  singleClick->setChecked(settings->singleClick);
+  doubleClick->setChecked(!settings->singleClick);
 
   cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
@@ -370,7 +370,7 @@ void MouseConfig::save()
   settings->doubleClickInterval = doubleClickInterval->value();
   settings->dragStartTime = dragStartTime->value();
   settings->dragStartDist = dragStartDist->value();
-  settings->singleClick = singleClick->isChecked();
+  settings->singleClick = !doubleClick->isChecked();
   settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
   settings->visualActivate = cbVisualActivate->isChecked();
   settings->changeCursor = cbCursor->isChecked();
@@ -398,7 +398,7 @@ void MouseConfig::defaults()
     doubleClickInterval->setValue(400);
     dragStartTime->setValue(500);
     dragStartDist->setValue(4);
-    singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
+    doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
@@ -419,9 +419,9 @@ QString MouseConfig::quickHelp() const
 void MouseConfig::slotClick()
 {
   // Autoselect has a meaning only in single-click mode
-  cbAutoSelect->setEnabled(singleClick->isChecked());
+  cbAutoSelect->setEnabled(!doubleClick->isChecked());
   // Delay has a meaning only for autoselect
-  bool bDelay = cbAutoSelect->isChecked() && singleClick->isChecked();
+  bool bDelay = cbAutoSelect->isChecked() && !doubleClick->isChecked();
   slAutoSelect->setEnabled( bDelay );
   lDelay->setEnabled( bDelay );
 }
