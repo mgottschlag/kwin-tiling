@@ -24,8 +24,6 @@
 
     */
 
-#define _SVID_SOURCE	/* argl! Need it for strdup. */
-
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 
@@ -52,6 +50,12 @@
 
 static int no_old, copy_files;
 static const char *newdir = KDMCONF, *oldxdm, *oldkde;
+
+
+typedef struct StrList {
+    struct StrList	*next;
+    const char		*str;
+} StrList;
 
 
 #define NO_LOGGER
@@ -249,6 +253,16 @@ freeFile (File *file)
 # endif
 #endif
 
+#ifdef __linux__
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+#elif defined(sun)
+# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
+#elif defined(_AIX)
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
+#else
+# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
+#endif
+
 const char def_xaccess[] = 
 "# Xaccess - Access control file for XDMCP connections\n"
 "#\n"
@@ -329,17 +343,7 @@ const char def_xservers[] =
 "# managing them. Each X terminal line should look like:\n"
 "#       XTerminalName:0 foreign\n"
 "#\n"
-"\n"
-#ifdef __linux__
-":0 local@tty1 " XBINDIR "/X vt7"
-#elif defined(sun)
-":0 local@console " XBINDIR "/X"
-#elif defined(_AIX)
-":0 local@lft0 " XBINDIR "/X"
-#else
-":0 local " XBINDIR "/X"
-#endif
-"\n\n";
+"\n" DEF_SERVER_LINE "\n\n";
 
 const char def_willing[] = 
 "#!/bin/sh\n"
@@ -477,14 +481,15 @@ static Ent entsGeneral[] = {
 "# If \"false\", KDM won't daemonize after startup. Use this, if you start\n"
 "# KDM from inittab with the respawn instruction. Default is true.\n" },
 { "Xservers",		F_FILE644, def_xservers,
-"# The file, where X-servers to be used by KDM are listed. The file is in\n"
-"# the usual XDM-Xservers format.\n"
-"# Default is " KDMCONF "/Xservers\n"
+"# If the value starts with a slash (/), it specifies the file, where X-servers\n"
+"# to be used by KDM are listed; the file is in the usual XDM-Xservers format.\n"
+"# Otherwise it's interpreted like one line of the Xservers file, i.e., it\n"
+"# specifies exactly one X-server.\n"
+"# Default is \"" DEF_SERVER_LINE "\"\n"
 "# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
 "# do this best.\n" },
 { "PidFile",		0, 0,
-"# Where KDM should store its PID. Default is /var/run/xdm.pid - this\n"
-"# is an intentional conflict with \"plain\" XDM.\n" },
+"# Where KDM should store its PID. Default is \"\" (don't store)\n" },
 {"LockPidFile",		0, 0, 
  "# Whether KDM should lock the pid file to prevent having multiple KDM\n"
 "# instances running at once. Leave it \"true\", unless you're brave.\n" },
@@ -611,9 +616,9 @@ static Ent entsCore[] = {
 "# Default is \"\"\n" },
 { "Session",		F_FILE755, def_session, 
 "# The program which is run as the user which logs in. It is supposed to\n"
-"# interpret the session argument and start an appropriate session according\n"
-"# to it. See SessionTypes.\n"
-"# Default is " KDMCONF "/Xsession\n" },
+"# interpret the session argument (see SessionTypes) and start an appropriate\n"
+"# session according to it.\n"
+"# Default is " XBINDIR "/xterm -ls -T\n" },
 { "FailsafeClient",	0, 0, 
 "# The program to run if Session fails.\n"
 "# Default is " XBINDIR "/xterm\n" },
@@ -706,6 +711,9 @@ static Ent entsGreeter[] = {
 "# it to appear elsewhere on the screen. Default is false\n" },
 { "GreeterPosX",	0, 0, 0 },
 { "GreeterPosY",	0, 0, 0 },
+{ "GreeterScreen",	0, 0,
+"# The screen the greeter should be displayed on in multi-headed setups.\n"
+"# Default is 0\n" },
 { "GreetString",	0, 0, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
@@ -814,8 +822,8 @@ static DEnt dEntsDesktop[] = {
 
 static DEnt dEntsGeneral[] = {
 { "DaemonMode",		"false", 0 },
-{ "Xservers",		"", 0 },
-{ "PidFile",		"/var/run/kdm.pid", 0 },
+{ "Xservers",		KDMCONF "/Xservers", 1 },
+{ "PidFile",		"/var/run/kdm.pid", 1 },
 { "LockPidFile",	"false", 0 },
 { "AuthDir",		"/tmp", 0 },
 { "AutoRescan",		"false", 0 },
@@ -869,7 +877,7 @@ static DEnt dEntsAnyCore[] = {
 { "Setup",		KDMCONF "/Xsetup", 1 },
 { "Startup",		KDMCONF "/Xstartup", 1 },
 { "Reset",		KDMCONF "/Xreset", 1 },
-{ "Session",		"/etc/X11/Xsession", 0 },
+{ "Session",		KDMCONF "/Xsession", 1 },
 { "FailsafeClient",	"", 0 },
 { "UserPath",		"", 0 },
 { "SystemPath",		"", 0 },
@@ -924,6 +932,7 @@ static DEnt dEntsLocalCore[] = {
 
 static DEnt dEntsLocalGreeter[] = {
 { "AuthComplain",	"false", 0 },
+{ "GreeterScreen",	"1", 0 },
 };
 
 static DEnt dEnts0Core[] = {
@@ -1023,7 +1032,8 @@ typedef struct Entry {
 	struct Entry	*next;
 	Ent		*spec;
 	const char	*value;
-	int		active;
+	int		active:1;
+	int		written:1;
 } Entry;
 
 typedef struct Section {
@@ -1037,7 +1047,6 @@ typedef struct Section {
 
 static Section *config;
 
-/*
 static const char *
 getfqval (const char *sect, const char *key, const char *defval)
 {
@@ -1049,7 +1058,7 @@ getfqval (const char *sect, const char *key, const char *defval)
 	    if (cs->active)
 		for (ce = cs->ents; ce; ce = ce->next)
 		    if (!strcmp (ce->spec->key, key)) {
-			if (ce->active)
+			if (ce->active && ce->written)
 			    return ce->value;
 			break;
 		    }
@@ -1057,7 +1066,6 @@ getfqval (const char *sect, const char *key, const char *defval)
 	}
     return defval;
 }
-*/
 
 static Sect *
 findSect (const char *name)
@@ -1104,7 +1112,8 @@ putfqval (const char *sect, const char *key, const char *value)
 	fprintf (stderr, "Out of memory\n");
 	return;
     }
-    if (!(cs->name = strdup(sect))) {
+    ASPrintf ((char **)&cs->name, "%s", sect);
+    if (!cs->name) {
 	free (cs);
 	fprintf (stderr, "Out of memory\n");
 	return;
@@ -1124,13 +1133,14 @@ putfqval (const char *sect, const char *key, const char *value)
     ce->spec = findEnt (cs->spec, key);
     *cep = ce;
   haveent:
-    if (!(ce->value = strdup(value))) {
+    ASPrintf ((char **)&ce->value, "%s", value);
+    if (!ce->value) {
 	*cep = ce->next;
 	free (ce);
 	fprintf (stderr, "Out of memory\n");
 	return;
     }
-    ce->active = 1;
+    ce->written = ce->active = 1;
 }
 
 static const char *csect;
@@ -1188,43 +1198,94 @@ Create (const char *fn, int mode)
     return f;
 }
 
+
+static void 
+usedFile (StrList **flist, const char *fn)
+{
+    StrList **sp;
+
+    for (sp = flist; *sp; sp = &(*sp)->next)
+	if (!strcmp ((*sp)->str, fn))
+	    return;
+    if (!(*sp = calloc (1, sizeof(**sp))))
+	fprintf (stderr, "Out of memory\n");
+    else {
+	ASPrintf ((char **)&(*sp)->str, "%s", fn);
+	if (!(*sp)->str) {
+	    free (*sp);
+	    *sp = 0;
+	    fprintf (stderr, "Out of memory\n");
+	}
+    }
+}
+
+StrList *cflist, *lflist;
+
+static void 
+copiedFile (const char *fn)
+{
+    usedFile (&cflist, fn);
+}
+
+static void 
+linkedFile (const char *fn)
+{
+    usedFile (&lflist, fn);
+}
+
 static void 
 handFile (Entry *ce)
 {
-    char *buf, *bname, *fname;
+    char *buf, *bname;
+    const char *fname;
     FILE *f;
     File file;
-    int mode = ce->spec->flags & F_FILE644 ? 0644 : 0755;
+    int mode;
     struct stat st;
     char nname[160];
 
-    if (!(fname = strchr (ce->value, '/')))
+    if (ce->spec->flags & F_FILE755) {
+	if (!(fname = strchr (ce->value, '/')))
+	    return;
+	mode = 0755;
+    } else {
+	fname = ce->value;
+	mode = 0644;
+    }
+    if (!(bname = strrchr (fname, '/')))
 	return;
-    bname = strrchr (fname, '/');
     sprintf (nname, "%s/%s", newdir, bname + 1);
 
     if (stat (fname, &st)) {
+	if (ce->written)
+	    fprintf (stderr, "Warning: file %s not found\n", fname);
 	if (ce->spec->param) {
 	    f = Create (nname, mode);
 	    fputs (ce->spec->param, f);
 	    fclose (f);
 	}
-    } else if (strcmp (nname, fname) && copy_files) {
-	if (!readFile (&file, fname)) {
-	    fprintf (stderr, "Warning: cannot copy file %s\n", ce->value);
+    } else if (strcmp (nname, fname)) {
+	if (copy_files) {
+	    if (!readFile (&file, fname)) {
+		fprintf (stderr, "Warning: cannot copy file %s\n", ce->value);
+		return;
+	    }
+	    copiedFile (fname);
+	    f = Create (nname, mode);
+	    if (mode == 0755 && (file.buf[0] != '#' || file.buf[1] != '!'))
+		fwrite (file.buf, file.eof - file.buf, 1, f);
+	    else {
+		*bname = 0;
+		*file.eof = 0;
+		buf = sed (file.buf, fname, KDMCONF);
+		fputs (buf, f);
+		free (buf);
+	    }
+	    fclose (f);
+	} else {
+	    linkedFile (fname);
 	    return;
 	}
-	f = Create (nname, mode);
-	if (mode == 0755 && (file.buf[0] != '#' || file.buf[1] != '!'))
-	    fwrite (file.buf, file.eof - file.buf, 1, f);
-	else {
-	    *bname = 0;
-	    *file.eof = 0;
-	    buf = sed (file.buf, fname, KDMCONF);
-	    fputs (buf, f);
-	    free (buf);
-	}
-	fclose (f);
     } else
 	return;
     ASPrintf ((char **)&ce->value, "%.*s" KDMCONF "/%s", 
@@ -1243,11 +1304,6 @@ addKdePath (Entry *ce)
         (p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
 	ASPrintf ((char **)&ce->value, KDE_BINDIR ":%s", path);
 }
-
-typedef struct StrList {
-    struct StrList	*next;
-    const char		*str;
-} StrList;
 
 static void
 wrconf (FILE *f)
@@ -1341,6 +1397,7 @@ ReadConf (const char *fname)
 
     if (!readFile (&file, fname))
 	return 0;
+    copiedFile (fname);
 
     for (s = file.buf, line = 0, cursec = 0, sectmoan = 1; s < file.eof; s++) {
 	line++;
@@ -1516,6 +1573,8 @@ isTrue (const char *val)
 	   !strcmp(val, "0");
 }
 
+/* the mergeKdmRc* functions should be data-driven */
+
 static int
 mergeKdmRcOld (const char *path)
 {
@@ -1674,6 +1733,17 @@ mergeKdmRcOld (const char *path)
     return 1;
 }
 
+static struct {
+    const char *sect, *key, *def;
+} chgdef[] = {
+{ "General",	"Xservers",	"%s/kdm/Xservers"	},
+{ "General",	"PidFile",	"/var/run/xdm.pid"	},
+{ "X-*-Core",	"Setup",	"%s/kdm/Xsetup"		},
+{ "X-*-Core",	"Startup",	"%s/kdm/Xstartup"	},
+{ "X-*-Core",	"Reset",	"%s/kdm/Xreset"		},
+{ "X-*-Core",	"Session",	"%s/kdm/Xsession"	},
+};
+
 static int
 mergeKdmRcNewer (const char *path)
 {
@@ -1693,17 +1763,19 @@ mergeKdmRcNewer (const char *path)
     for (i = 0; i < 4; i++)
 	cpygroup (allSects + i);
 
+    if (cfgSGroup ("Xdmcp"))
+	cpyfqval ("Xdmcp", "Willing", "Xwilling");
+
     for (cursect = rootsect; cursect; cursect = cursect->next)
 	if (!strncmp (cursect->name, "X-", 2)) {
 	    setsect(cursect->name);
-	    if ((p = strchr (cursect->name + 2, '-'))) {
+	    if ((p = strrchr (cursect->name, '-'))) {
 		if (!strcmp (p + 1, "Core")) {
 		    cpygents (allSects + 4);
 		} else if (!strcmp (p + 1, "Greeter")) {
 		    cpygents (allSects + 5);
-		    /* ugly stuff begin */
-		    ASPrintf (&p2, "X-%.*s-Core", 
-			      p - (cursect->name + 2), cursect->name + 2);
+		    ASPrintf (&p2, "%.*s-Core", 
+			      p - cursect->name, cursect->name);
 		    if (p2) {
 			cpyfqval (p2, "AllowShutdown", 0);
 			free (p2);
@@ -1722,8 +1794,21 @@ mergeKdmRcNewer (const char *path)
 		    }
 		    cpyval ("HiddenUsers", "NoUsers");
 		    cpyval ("SelectedUsers", "Users");
-		    /* ugly stuff end */
 		}
+	    }
+	}
+
+    /*
+     * workaround 2.2 default borkedness ...
+     * XXX this (incorrectly) overrides 3.x defaults
+     */
+    for (i = 0; i < as(chgdef); i++)
+	if (!getfqval (chgdef[i].sect, chgdef[i].key, 0)) {
+	    ASPrintf (&p, chgdef[i].def, path);
+	    if (p) {
+printf("[%s] %s=%s\n", chgdef[i].sect, chgdef[i].key, p);
+		putfqval (chgdef[i].sect, chgdef[i].key, p);
+		free (p);
 	    }
 	}
 
@@ -1979,6 +2064,7 @@ mergeXdmCfg (const char *path)
 	    return 0;
 	if ((db = XrmGetFileDatabase (p))) {
 	    printf ("Information: reading old xdm config file %s\n", p);
+	    copiedFile (p);
 	    free (p);
 	    xdmpath = path;
 	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
@@ -2018,6 +2104,7 @@ int main(int argc, char **argv)
     const char **where;
     char *newkdmrc;
     FILE *f;
+    StrList *fp;
     int i, ap, newer;
     char nname[80];
 
@@ -2111,18 +2198,20 @@ int main(int argc, char **argv)
 	sprintf (nname, "%s/README", newdir);
 	f = Create (nname, 0644);
 	fprintf (f, 
-"The configuration files in this directory were automatically derived\n"
-"from these already present files:\n");
-	if (oldkde)
-	    fprintf (f, "- %s/%skdmrc\n", oldkde, newer ? "kdm/" : "");
-	if (oldxdm)
-	    fprintf (f, "- %s/*\n", oldxdm);
-	fprintf (f, 
-"As the used algorithm is pretty dumb, the configuration may be broken.\n");
-	if (!copy_files && oldxdm)
+"The configuration files in this directory were automatically generated.\n"
+"As the used algorithms are pretty dumb, the configuration may be broken.\n");
+	if (cflist) {
 	    fprintf (f, 
-"Note, that this configuration still depends on the already present\n"
-"config files in %s - don't delete them!\n", oldxdm);
+"This configuration is derived from the following files:\n");
+	    for (fp = cflist; fp; fp = fp->next)
+		fprintf (f, "- %s\n", fp->str);
+	}
+	if (lflist) {
+	    fprintf (f, 
+"This configuration depends on the following files, which must not be deleted:\n");
+	    for (fp = lflist; fp; fp = fp->next)
+		fprintf (f, "- %s\n", fp->str);
+	}
 	fprintf (f, 
 "Have a look at the program <kdebase-sources>/kdm/kfrontend/genkdmconf\n"
 "if you want to generate another configuration.\n");

@@ -422,6 +422,16 @@ PautoLoginX (Value *retval)
 # endif
 #endif
 
+#ifdef __linux__
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+#elif defined(sun)
+# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
+#elif defined(_AIX)
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
+#else
+# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
+#endif
+
 static const char
     *logoarea[] = { "None", "Logo", "Clock", 0 },
     *showusers[] = { "NotHidden", "Selected", "None", 0 },
@@ -432,8 +442,8 @@ static const char
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
-{ "Xservers",		C_servers,		&VXservers,	KDMCONF "/Xservers" },
-{ "PidFile",		C_pidFile,		0,	"/var/run/xdm.pid" },
+{ "Xservers",		C_servers,		&VXservers,	DEF_SERVER_LINE },
+{ "PidFile",		C_pidFile,		0,	"" },
 { "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
 { "AuthDir",		C_authDir | C_PATH,	0,	"/var/run/xauth" },
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
@@ -491,7 +501,7 @@ Ent entsCore[] = {
 { "Setup",		C_setup,		0,	"" },
 { "Startup",		C_startup,		0,	"" },
 { "Reset",		C_reset,		0,	"" },
-{ "Session",		C_session,		0,	KDMCONF "/Xsession" },
+{ "Session",		C_session,		0,	XBINDIR "/xterm -ls -T" },
 { "UserPath",		C_userPath,		0,	DEF_USER_PATH },
 { "SystemPath",		C_systemPath,		0,	DEF_SYSTEM_PATH },
 { "SystemShell",	C_systemShell,		0,	"/bin/sh" },
@@ -511,7 +521,7 @@ Ent entsCore[] = {
 { "SessSaveFile",	C_sessSaveFile,		0,	".wmrc" },
 { "AllowShutdown",	C_allowShutdown | C_ENUM, sd_who, "All" },
 { "AllowSdForceNow",	C_allowNuke | C_ENUM, sd_who,	"All" },
-{ "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode, "Schedule" },
+{ "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode,	"Schedule" },
 };
 
 Ent entsGreeter[] = {
@@ -522,6 +532,7 @@ Ent entsGreeter[] = {
 { "GreeterPosFixed",	C_GreeterPosFixed | C_BOOL, 0,	"false" },
 { "GreeterPosX",	C_GreeterPosX,		0,	"0" },
 { "GreeterPosY",	C_GreeterPosY,		0,	"0" },
+{ "GreeterScreen",	C_GreeterScreen,	0,	"0" },
 { "StdFont",		C_StdFont,		0,	"helvetica,12,5,0,50,0" },
 { "FailFont",		C_FailFont,		0,	"helvetica,12,5,0,75,0" },
 { "GreetString",	C_GreetString,		0,	"Welcome to %s at %n" },
@@ -536,7 +547,7 @@ Ent entsGreeter[] = {
 { "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
-{ "EchoMode",		C_EchoMode | C_ENUM, echomode, "OneStar" },
+{ "EchoMode",		C_EchoMode | C_ENUM, echomode,	"OneStar" },
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
 { "GrabTimeout",	C_grabTimeout,		0,	"3" },
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
@@ -1354,16 +1365,6 @@ ReadAccessFile (const char *fname)
     }
 }
 
-
-#ifdef __linux__
-# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
-#elif defined(sun)
-# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
-#elif defined(_AIX)
-# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
-#else
-# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
-#endif
 
 static struct displayMatch {
 	const char	*name;
