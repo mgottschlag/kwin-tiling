@@ -1,6 +1,6 @@
 
 /*  This file is part of the KDE project
-    
+
     Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
@@ -13,12 +13,12 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -73,7 +73,7 @@ QString KURISearchFilterEngine::webShortcutQuery( const KURL &url ) const
       {
         result = formatResult(provider->query(), provider->charset(),
                               QString::null, search.mid(pos+1),
-                              url.isMalformed());
+                              !url.isValid());
         delete provider;
       }
     }
@@ -87,38 +87,29 @@ QString KURISearchFilterEngine::autoWebSearchQuery( const KURL& url ) const
 {
   QString result;
 
-  if (!m_defaultSearchEngine.isEmpty())
+  if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty())
   {
     QString key;
     QString u = url.url();
 
-    if( url.isMalformed() && u[0] == '/' ) 
+    if( !url.isValid() && u[0] == '/' )
       key = QString::fromLatin1( "file" );
     else
       key = url.protocol();
 
     if(!KProtocolInfo::isKnownProtocol(key))
     {
-      SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);      
-      
+      SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);
+
       if (provider)
       {
-        QString search = provider->query();
-
-        // TODO: Remove this at some point in the future. Only kept for BC
-        // purposes. It was needed to bypass the RealNames feature which is
-        // no more.
-        QRegExp question("^[ \t]*\\?[ \t]*");
-        if (url.isMalformed() && u.find(question) == 0)
-          u = u.replace(question, "");
-
         result = formatResult (provider->query(), provider->charset(),
                                QString::null, u, true);
         delete provider;
       }
     }
   }
-  
+
   return result;
 }
 
@@ -134,7 +125,7 @@ KURISearchFilterEngine* KURISearchFilterEngine::self()
   return s_pSelf;
 }
 
-QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map, 
+QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
                                                           const QString& query) const
 {
   // Returns the number of query words
@@ -148,12 +139,12 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
 
     // Temporary substitute spaces in quoted strings (" " -> "%20")
     // Needed to split user query into StringList correctly.
-    while ((pos = qsexpr.search(userquery, start)) >= 0) 
+    while ((pos = qsexpr.search(userquery, start)) >= 0)
     {
       int i = 0;
       int n = 0;
       QString s = userquery.mid (pos, qsexpr.matchedLength());
-      while ((i = s.find(" ")) != -1) 
+      while ((i = s.find(" ")) != -1)
       {
         s = s.replace (i, 1, "%20");
         n++;
@@ -171,14 +162,14 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
     int i = 0;
     while ((i = userquery.find("%20")) != -1)
       userquery = userquery.replace(i, 3, " ");
-    
+
     for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
       *it = (*it).replace("%20", " ");
   }
 
   PIDDBG << "Generating substitution map:\n";
   // Generate substitution map from user query:
-  for (unsigned int i=0; i<=l.count(); i++) 
+  for (unsigned int i=0; i<=l.count(); i++)
   {
     int j = 0;
     int pos = 0;
@@ -188,8 +179,8 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
     // Add whole user query (\{0}) to substitution map:
     if (i==0)
       v = userquery;
-    // Add partial user query items to substitution map:      
-    else 
+    // Add partial user query items to substitution map:
+    else
       v = l[i-1];
 
     // Back-substitute quoted strings (%20 -> " "):
@@ -222,7 +213,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
   QString newurl = url;
   QStringList ql = modifySubstitutionMap (map, userquery);
   int count = ql.count();
-  
+
   // Check, if old style '\1' is found and replace it with \{@} (compatibility mode):
   {
     int pos = -1;
@@ -245,64 +236,64 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
     while ((pos = reflist.search(newurl, 0)) >= 0)
     {
       bool found = false;
-      
+
       //bool rest = false;
       QString v = "";
       QString rlstring = newurl.mid(pos + 2, reflist.matchedLength() - 3);
       PDVAR ("  reference list", rlstring);
-      
+
       // \{@} gets a special treatment later
-      if (rlstring == "@") 
+      if (rlstring == "@")
       {
         v = "\\@";
         found = true;
       }
-      
+
       // TODO: strip whitespaces around commas
       QStringList rl = QStringList::split(",", rlstring);
       unsigned int i = 0;
-      
-      while ((i<rl.count()) && !found) 
+
+      while ((i<rl.count()) && !found)
       {
         QString rlitem = rl[i];
         QRegExp range("[0-9]*\\-[0-9]*");
-        
+
         // Substitute a range of keywords
-        if (range.search(rlitem, 0) >= 0) 
+        if (range.search(rlitem, 0) >= 0)
         {
           int pos = rlitem.find("-");
           int first = rlitem.left(pos).toInt();
           int last  = rlitem.right(rlitem.length()-pos-1).toInt();
-          
+
           if (first == 0)
             first = 1;
-          
+
           if (last  == 0)
             last = count;
-          
-          for (int i=first; i<=last; i++) 
+
+          for (int i=first; i<=last; i++)
           {
             v += map[QString::number(i)] + " ";
             // Remove used value from ql (needed for \{@}):
             ql[i-1] = "";
           }
-          
+
           v = v.stripWhiteSpace();
-          if (!v.isEmpty()) 
+          if (!v.isEmpty())
             found = true;
-          
+
           PDVAR ("    range", QString::number(first) + "-" + QString::number(last) + " => '" + v + "'");
           v = KURL::encode_string(v, encodingMib);
-        } 
-        else if ( rlitem.startsWith("\"") && rlitem.endsWith("\"") ) 
+        }
+        else if ( rlitem.startsWith("\"") && rlitem.endsWith("\"") )
         {
           // Use default string from query definition:
           found = true;
           QString s = rlitem.mid(1, rlitem.length() - 2);
           v = KURL::encode_string(s, encodingMib);
           PDVAR ("    default", s);
-        } 
-        else if (map.contains(rlitem)) 
+        }
+        else if (map.contains(rlitem))
         {
           // Use value from substitution map:
           found = true;
@@ -311,19 +302,19 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 
           // Remove used value from ql (needed for \{@}):
           QString c = rlitem.left(1);
-          if (c=="0") 
+          if (c=="0")
           {
             // It's a numeric reference to '0'
             for (QStringList::Iterator it = ql.begin(); it!=ql.end(); ++it)
               (*it) = "";
-          } 
-          else if ((c>="0") && (c<="9")) 
+          }
+          else if ((c>="0") && (c<="9"))
           {
             // It's a numeric reference > '0'
             int n = rlitem.toInt();
             ql[n-1] = "";
-          } 
-          else 
+          }
+          else
           {
             // It's a alphanumeric reference
             QStringList::Iterator it = ql.begin();
@@ -332,25 +323,25 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
             if ((rlitem + "=") == (*it).left(rlitem.length()+1))
               (*it) = "";
           }
-        
+
           // Encode '+', otherwise it would be interpreted as space in the resulting url:
           int vpos = 0;
           while ((vpos = v.find('+')) != -1)
             v = v.replace (vpos, 1, "%2B");
-            
-        } 
+
+        }
         else if (rlitem == "@")
         {
           v = "\\@";
           PDVAR ("    v", v);
         }
-        
+
         i++;
       }
 
       newurl = newurl.replace(pos, reflist.matchedLength(), v);
     }
-    
+
     // Special handling for \{@};
     {
       PDVAR ("  newurl", newurl);
@@ -481,16 +472,16 @@ void KURISearchFilterEngine::loadConfig()
           // compare both and if thei're equal, don't
           // create a local copy
           if (provider->name() == *it && provider->query() == query &&
-              provider->keys() == keys && (provider->charset() == charset || 
+              provider->keys() == keys && (provider->charset() == charset ||
               (provider->charset().isEmpty() && charset.isEmpty())))
           {
               PIDDBG << *it << " is unchanged, skipping" << endl;
               continue;
           }
-          
+
           delete provider;
         }
-        
+
         KSimpleConfig desktop(kapp->dirs()->saveLocation("services", "searchproviders/") + name + ".desktop");
         desktop.setGroup("Desktop Entry");
         desktop.writeEntry("Type", "Service");
@@ -499,7 +490,7 @@ void KURISearchFilterEngine::loadConfig()
         desktop.writeEntry("Query", query);
         desktop.writeEntry("Keys", keys);
         desktop.writeEntry("Charset", charset);
-        
+
         PIDDBG << "Created searchproviders/" << name << ".desktop for " << *it << endl;
       }
 
@@ -522,15 +513,12 @@ void KURISearchFilterEngine::loadConfig()
   m_defaultSearchEngine = config.readEntry("DefaultSearchEngine");
   m_bVerbose = config.readBoolEntry("Verbose", false);
 
-  // Support most of the "Excluded characters" in RFC 2396 section
-  // 2.4.3 as possible keyword delimiters. Exceptions are the IPv6
-  // indicators [ and ] as well the the escaping character % and
-  // quotation mark.
-  if (strchr (" =:#<>{}|\\^`",m_cKeywordDelimiter) == 0)
+  // Use either a white space or a : as the keyword delimiter...
+  if (strchr (" :",m_cKeywordDelimiter) == 0)
     m_cKeywordDelimiter = ':';
 
   PIDDBG << "Keyword Delimiter: " << m_cKeywordDelimiter << endl;
-  PIDDBG << "Web Shortcuts Enabled: " << m_bWebShortcutsEnabled << endl;
   PIDDBG << "Default Search Engine: " << m_defaultSearchEngine << endl;
+  PIDDBG << "Web Shortcuts Enabled: " << m_bWebShortcutsEnabled << endl;
   PIDDBG << "Verbose: " << m_bVerbose << endl;
 }
