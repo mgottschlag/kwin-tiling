@@ -67,7 +67,7 @@ void DockContainer::dockModule(ConfigModule *module)
 
   if (_module && _module->isChanged())
     {	  	  
-      int res = KMessageBox::warningYesNo(0,i18n("There are unsaved changes in the "
+      int res = KMessageBox::warningYesNo(this,i18n("There are unsaved changes in the "
                                                  "active module.\n"
                                                  "Do you want to apply the changes "
                                                  "before running\n"
