@@ -168,7 +168,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
   // Filter for the about command.
-  if ( cmd.startsWith( QFL1("about:") ) )
+  if ( cmd == ( QFL1("about:") ) )
   {
     cmd = QFL1("about:konqueror");
     setFilteredURI( data, cmd );
