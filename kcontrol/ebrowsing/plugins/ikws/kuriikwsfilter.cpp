@@ -39,12 +39,12 @@ KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
                  :KURIFilterPlugin(parent, name ? name : "ikws", 1.0),
                   DCOPObject("KURISearchFilterIface")
 {
-  KURISearchFilterEngine::incRef(); 
+  KURISearchFilterEngine::incRef();
 }
 
-KURISearchFilter::~KURISearchFilter() 
+KURISearchFilter::~KURISearchFilter()
 {
-  KURISearchFilterEngine::decRef(); 
+  KURISearchFilterEngine::decRef();
 }
 
 void KURISearchFilter::configure() {
@@ -130,11 +130,13 @@ static const char *mocs[] = {
 };
 
 KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name) {
-    setMocClasses(mocs);
+    setMocClasses(mocs)
+    KURISearchFilterEngine::incRef();
     s_instance = new KInstance(KURISearchFilterEngine::self()->name());
 }
 
 KURISearchFilterFactory::~KURISearchFilterFactory() {
+    KURISearchFilterEngine::decRef(); 
     delete s_instance;
 }
 
