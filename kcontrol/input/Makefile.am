@@ -12,4 +12,4 @@ SUBDIRS = pics
 libkcm_input_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
+	$(XGETTEXT) $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot

@@ -15,7 +15,6 @@ libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries)
 
 KDE_ICON = locale
 
-
 check_PROGRAMS = test
 test_SOURCES = $(libkcm_locale_la_SOURCES) test.cpp
 test.cpp:
@@ -25,4 +24,5 @@ test_LDADD = $(LDADD)
 
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -kI18N_NOOP -x $(includedir)/kde.pot $(libkcm_locale_la_SOURCES) && mv messages.po $(podir)/kcmlocale.pot
+	$(XGETTEXT) $(libkcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
+

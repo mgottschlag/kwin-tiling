@@ -12,5 +12,5 @@ noinst_HEADERS = main.h
 KDE_ICON = root
 
 messages:
-#	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmroot_SOURCES) && mv messages.po $(podir)/kcmroot.pot
+#	$(XGETTEXT) $(kcmroot_SOURCES) -o $(podir)/kcmroot.pot
 

@@ -22,5 +22,5 @@ noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
 kcmkwm_LDFLAGS = $(KDE_RPATH)  $(all_libraries)
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmkwm_SOURCES) && mv messages.po $(podir)/kcmkwm.pot
+	$(XGETTEXT) $(kcmkwm_SOURCES) -o $(podir)/kcmkwm.pot
 

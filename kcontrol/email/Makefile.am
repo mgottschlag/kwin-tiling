@@ -13,5 +13,5 @@ noinst_HEADERS = email.h
 KDE_ICON = email
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(libkcm_email_la_SOURCES) && mv messages.po $(podir)/kcmemail.pot
+	$(XGETTEXT) $(libkcm_email_la_SOURCES) -o $(podir)/kcmemail.pot
 

@@ -9,5 +9,5 @@ INCLUDES= $(all_includes)
 libkcm_keys_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(libkcm_keys_la_SOURCES) -o $(podir)/kcmkeys.pot
+	$(XGETTEXT) $(libkcm_keys_la_SOURCES) -o $(podir)/kcmkeys.pot
 

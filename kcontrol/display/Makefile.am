@@ -31,5 +31,4 @@ METASOURCES = AUTO
 EXTRA_DIST = README
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -kni18n -x $(includedir)/kde.pot \
-	$(libkcm_display_la_SOURCES) && mv messages.po $(podir)/kcmdisplay.pot
+	$(XGETTEXT) -kni18n $(libkcm_display_la_SOURCES) -o $(podir)/kcmdisplay.pot

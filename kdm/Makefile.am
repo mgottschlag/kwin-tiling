@@ -66,7 +66,7 @@ noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.
 METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kdm_SOURCES) $(kdmdesktop_SOURCES) && mv messages.po $(podir)/kdm.pot
+	$(XGETTEXT) $(kdm_SOURCES) $(kdmdesktop_SOURCES) -o $(podir)/kdm.pot
 
 EXTRA_DIST = Chooser.ad  chooser.cpp kdm-0.5.lsm kdm_on_RH5.0.html kdmusers.h \
 	krb5auth.c sessreg.c sessreg.man xdm.man xdmconfig xdmshell.c

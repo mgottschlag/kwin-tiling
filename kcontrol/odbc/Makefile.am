@@ -39,6 +39,6 @@ libkcm_odbc_la_LIBADD = 	$(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
 METASOURCES =			AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot \
+	$(XGETTEXT) \
 	$(libkcm_odbc_la_SOURCES) -o $(podir)/kcmodbc.pot
 

@@ -14,5 +14,5 @@ libkcm_kurifilt_la_LDFLAGS  = $(all_libraries) -module -avoid-version
 libkcm_kurifilt_la_LIBADD = kurifilter/libkurifilter.la plugins/ikws/libkuriikwsfilter.la -lkdecore
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kurifilt_la_SOURCES) && mv messages.po $(podir)/kcmkurifilt.pot
+	$(XGETTEXT) $(libkcm_kurifilt_la_SOURCES) -o $(podir)/kcmkurifilt.pot
 

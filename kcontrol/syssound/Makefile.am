@@ -14,4 +14,4 @@ KDE_ICON = ksyssound
 DISTCLEANFILES = $(lib_syssound_METASOURCES)
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_syssound_la_SOURCES) -o $(podir)/kcmsyssound.pot
+	$(XGETTEXT) $(libkcm_syssound_la_SOURCES) -o $(podir)/kcmsyssound.pot

@@ -36,7 +36,7 @@ install-themes:
 	done
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kthememgr_SOURCES) && mv messages.po $(podir)/kthememgr.pot
+	$(XGETTEXT) $(kthememgr_SOURCES) -o $(podir)/kthememgr.pot
 
 edit:
 	xemacs $(kthememgr_SOURCES) $(noinst_HEADERS) &
