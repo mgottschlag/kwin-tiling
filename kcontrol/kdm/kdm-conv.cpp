@@ -102,7 +102,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    npGroup = new QVGroupBox(i18n("Password-less Login"), this );
+    npGroup = new QVGroupBox(i18n("Password-Less Login"), this );
 
     cbplen = new QCheckBox(i18n("Enable password-&less logins"), npGroup);
     QWhatsThis::add( cbplen, i18n("When this option is checked, the checked users from"

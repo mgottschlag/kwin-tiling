@@ -200,7 +200,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
 
-  m_labCalendarSystem = new QLabel(this, I18N_NOOP("Calendar System:"));
+  m_labCalendarSystem = new QLabel(this, I18N_NOOP("Calendar system:"));
   m_comboCalendarSystem = new QComboBox(false, this);
   connect(m_comboCalendarSystem, SIGNAL(activated(int)),
 	  this, SLOT(slotCalendarSystemChanged(int)));

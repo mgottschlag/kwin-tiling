@@ -97,7 +97,7 @@ FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *n
     QWhatsThis::add(cmb_defaultSearchEngine, wtstr);
 
     // Deals with the web short cut features...
-    gb_autoWebSearch = new QGroupBox (i18n("Web shortcuts"), this );
+    gb_autoWebSearch = new QGroupBox (i18n("Web Shortcuts"), this );
     // lay->setStretchFactor( gb_autoWebSearch, 10 );
     gb_autoWebSearch->setColumnLayout( 0, Qt::Horizontal );
     QGridLayout *w_grid = new QGridLayout( gb_autoWebSearch->layout(), 3, 2,

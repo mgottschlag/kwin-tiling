@@ -66,7 +66,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(positiontab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     hidingtab = new HidingTab(this);
-    tab->addTab(hidingtab, i18n("&Hiding"));
+    tab->addTab(hidingtab, i18n("H&iding"));
     connect(hidingtab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     menutab = new MenuTab(this);
