@@ -207,7 +207,7 @@
                             <cstring>loggingLabel</cstring>
                         </property>
                         <property name="text">
-                            <string>Message Display:</string>
+                            <string>Message display:</string>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>This controls the level of messages that are output by the sound server. Only messages at the selected level and above will be reported.</string>

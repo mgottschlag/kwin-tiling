@@ -557,7 +557,7 @@ QString createArgs(bool netTrans,
 
 #ifdef I18N_ONLY
 	//lukas: these are hacks to allow translation of the following
-	I18N_NOOP("No audio input/output");
+	I18N_NOOP("No Audio Input/Output");
 	I18N_NOOP("Advanced Linux Sound Architecture");
 	I18N_NOOP("Open Sound System");
 #endif
