@@ -122,6 +122,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    if (m_oldBackgroundMode == KBackgroundSettings::Program)
       m_oldBackgroundMode = KBackgroundSettings::Flat;
 
+   dlg->adjustSize();
    updateUI();
 }
 
