@@ -9,7 +9,7 @@ kde_module_LTLIBRARIES = libkcm_general.la
 libkcm_general_la_SOURCES = main.cpp widgetsettings.ui
 libkcm_general_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_general_la_LIBADD = $(LIB_KFILE) 
-libkcm_general_la_METASOURCES = general.moc
+libkcm_general_la_METASOURCES = AUTO
 
 noinst_HEADERS = widgetsettings.h
 
