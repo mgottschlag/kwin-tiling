@@ -21,7 +21,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include "../../kicker/core/kicker.h"
 #include "extensionInfo.h"
 
 
