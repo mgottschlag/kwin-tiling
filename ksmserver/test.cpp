@@ -2,6 +2,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
+#include <kiconloader.h>
 
 int
 main(int argc, char *argv[])
@@ -10,16 +11,14 @@ main(int argc, char *argv[])
    KCmdLineArgs::init(argc, argv, &about);
 
    KApplication a;
+   a.iconLoader()->addAppDir("ksmserver");
    KSMShutdownFeedback::start();
 
    KApplication::ShutdownType sdtype = KApplication::ShutdownTypeNone;
-   KApplication::ShutdownMode sdmode = KApplication::ShutdownModeSchedule;
-   (void)KSMShutdownDlg::confirmShutdown( false, false,
-                                          sdtype, sdmode );
-   (void)KSMShutdownDlg::confirmShutdown( true, false,
-                                          sdtype, sdmode );
-   (void)KSMShutdownDlg::confirmShutdown( true, true,
-                                          sdtype, sdmode );
+   (void)KSMShutdownDlg::confirmShutdown( true,
+                                          sdtype );
+/*   (void)KSMShutdownDlg::confirmShutdown( false,
+                                          sdtype ); */
 
    KSMShutdownFeedback::stop();
 }
