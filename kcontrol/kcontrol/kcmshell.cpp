@@ -206,7 +206,7 @@ int main(int _argc, char *_argv[])
 
         QString path = locateModule(args->arg(0));
         if (path.isEmpty())
-           return 0;
+           return 1; // error
 
         // load the module
         KCModuleInfo info(path, KCGlobal::baseGroup());
