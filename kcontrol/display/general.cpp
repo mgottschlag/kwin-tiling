@@ -78,17 +78,6 @@ void applyGtkStyles(bool active)
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
-void applyQtXFT(bool active)
-{
-   // Pass env. var to kdeinit.
-   QCString name = "QT_XFT";
-   QCString value = active ? "1" : "0";
-   QByteArray params;
-   QDataStream stream(params, IO_WriteOnly);
-   stream << name << value;
-   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-}
-
 void applyMultiHead(bool active)
 {
    // Pass env. var to kdeinit.
@@ -131,7 +120,6 @@ extern "C" {
 
         config.setGroup("KDE");
         // Enable/disable Qt anti-aliasing
-        applyQtXFT(config.readBoolEntry( "AntiAliasing", false ));
 
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
@@ -353,13 +341,6 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
 
-    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ), styles);
-    connect( cbAA, SIGNAL( clicked() ), SLOT ( slotUseAntiAliasing() ) );
-    vlay->addWidget( cbAA, 10 );
-    QWhatsThis::add( cbAA, i18n( "If this option is selected, KDE will use"
-      " anti-aliased fonts and pixmaps, meaning fonts can use more than"
-      " just one color to simulate curves.") );
-
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
     cbAutoCopy = new QCheckBox( i18n( "Copy selections automatically to clipboard" ), styles);
     connect( cbAutoCopy, SIGNAL( clicked() ), SLOT ( slotAutoCopySelection() ) );
@@ -370,6 +351,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 #endif
 
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
+
     topLayout->addWidget(tbStyle, 10);
 
     vlay = new QVBoxLayout( tbStyle, 10 );
@@ -514,13 +496,6 @@ void KGeneral::slotMacStyle()
     emit changed(true);
 }
 
-void KGeneral::slotUseAntiAliasing()
-{
-    useAA = cbAA->isChecked();
-    m_bChanged = true;
-    emit changed(true);
-}
-
 void KGeneral::slotAutoCopySelection()
 {
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
@@ -541,8 +516,6 @@ void KGeneral::readSettings()
     else
     applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
-    useAA = config->readBoolEntry( "AntiAliasing", false);
-    useAA_original = useAA;
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
     useAutoCopy = config->readBoolEntry( "AutoCopyToClipboard", false);
 #endif
@@ -566,7 +539,6 @@ void KGeneral::showSettings()
 {
     cbRes->setChecked(useRM);
     cbMac->setChecked(macStyle);
-    cbAA->setChecked(useAA);
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
     cbAutoCopy->setChecked(useAutoCopy);
 #endif
@@ -592,7 +564,6 @@ void KGeneral::defaults()
 {
     useRM = true;
     macStyle = false;
-    useAA = false;
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
     useAutoCopy = false;
 #endif
@@ -645,15 +616,10 @@ void KGeneral::save()
     if (!m_bChanged)
     return;
 
-    if(useAA != useAA_original) {
-	KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect before you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
-	useAA_original = useAA;
-    }
+
 
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
-    config->writeEntry("AntiAliasing", useAA, true, true);
-    applyQtXFT(useAA);
 #ifdef QT_AUTO_COPY_TO_CLIPBOARD
     config->writeEntry("AutoCopyToClipboard", useAutoCopy, true, true);
 #endif

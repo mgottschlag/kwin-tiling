@@ -76,7 +76,6 @@ private slots:
     void slotChangeEffectStyle();
     void slotUseResourceManager();
     void slotMacStyle();
-    void slotUseAntiAliasing();
     void slotAutoCopySelection();
 
 private:
@@ -86,7 +85,6 @@ private:
     bool m_bChanged, m_bStyleDirty, m_bToolbarsDirty;
     bool m_bEffectsDirty, m_bMacStyleDirty;
     bool useRM, macStyle;
-    bool useAA, useAA_original;
     bool useAutoCopy;
     bool tbUseHilite, tbMoveTransparent;
     bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip;
@@ -98,7 +96,6 @@ private:
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
     QCheckBox *cbMac;
-    QCheckBox *cbAA;
     QCheckBox *cbAutoCopy;
     QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu;
     QCheckBox *effAnimateCombo, *effFadeTooltip;
