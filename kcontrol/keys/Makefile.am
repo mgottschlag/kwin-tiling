@@ -12,6 +12,9 @@ messages:
 	customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"` ;\
 	$(XGETTEXT) $(kcm_keys_la_SOURCES) $$customkeys -o $(podir)/kcmkeys.pot
 
+update_DATA = kaccel.upd convertShortcuts.pl
+updatedir = $(kde_datadir)/kconf_update
+
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
 

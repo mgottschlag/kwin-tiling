@@ -1,0 +1,5 @@
+Id=kde3.0/r1
+File=kdeglobals
+Options=overwrite
+Script=convertShortcuts.pl,perl
+
