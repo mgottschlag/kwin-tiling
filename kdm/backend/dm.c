@@ -679,6 +679,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 		      fifoDir);
 	    return;
 	}
+	chmod (fifoDir, 0755); /* override umask */
 	if (!*fifopath)
 	    if (!StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
 			 dname, (char *)0))
