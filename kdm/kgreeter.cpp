@@ -40,8 +40,10 @@
 #include <qmessagebox.h>
 #include <qtextstream.h>
 #include <qpopupmenu.h>
+
 #include <kimgio.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -590,8 +592,10 @@ KGreeter::restrict_expired(){
 				     i18n("&OK"));
 	       return true;
 	  } else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
+	       QDateTime dat;
+	       dat.setTime_t(pwd->pw_expire);
 	       QString str = i18n("Warning: your account expires on %1").
-			   arg(ctime(&pwd->pw_expire));  // use locales
+			   arg(KGlobal::locale()->formatDateTime(dat));  // use locales
 	       QMessageBox::critical(this, QString::null,
 				     str,
 				     i18n("&OK"));
@@ -616,8 +620,10 @@ KGreeter::restrict_expired(){
 				   i18n("&OK"));
 	     return true;
 	 } else if (expiresec - time(NULL) < warntime) {
+	     QDateTime dat;
+	     dat.setTime_t(pwd->pw_expire);
              QString str = i18n("Warning: your account expires on %1").
-			 arg(ctime(&expiresec));  // use locales
+			 arg(KGlobal::locale()->formatDateTime(dat));  // use locales
 	     QMessageBox::critical(this, QString::null,
 				   str,
 				   i18n("&OK"));
