@@ -110,7 +110,8 @@ openCtrl (struct display *d)
 		LogError ("Cannot create control FiFo %\"s\n", cr->fpath);
 	    else {
 		cr->gid = fifoGroup;
-		chown (cr->fpath, -1, fifoGroup);
+		if (!d)
+		    chown (cr->fpath, -1, fifoGroup);
 		chmod (cr->fpath, 0620);
 		if ((cr->fifo.fd = open (cr->fpath, O_RDWR | O_NONBLOCK)) >= 0) {
 		    RegisterCloseOnFork (cr->fifo.fd);
@@ -140,7 +141,8 @@ openCtrl (struct display *d)
 		    LogError ("mkdir %\"s failed; no control sockets will be available\n", 
 			      sockdir);
 		else {
-		    chown (sockdir, -1, fifoGroup);
+		    if (!d)
+			chown (sockdir, -1, fifoGroup);
 		    chmod (sockdir, 0750);
 		    if ((cr->fd = socket (PF_UNIX, SOCK_STREAM, 0)) < 0)
 			LogError ("Cannot create control socket\n");
@@ -236,12 +238,11 @@ updateCtrl (void)
 	ffl = strrchr (ffp, '/') - ffp;
     } else
 	ffl = 0;
-    if (ffl != strlen (fifoDir) || memcmp (fifoDir, ffp, ffl)) {
+    if (ffl != strlen (fifoDir) || memcmp (fifoDir, ffp, ffl) ||
+	ctrl.gid != fifoGroup)
+    {
 	closeCtrl (0);
 	openCtrl (0);
-    } else if (ctrl.gid != fifoGroup) {
-	ctrl.gid = fifoGroup;
-	chownCtrl (&ctrl, -1, fifoGroup);
     }
 }
 

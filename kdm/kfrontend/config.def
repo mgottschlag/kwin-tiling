@@ -949,7 +949,7 @@ User: core
 Instance: #xdmctl
 Comment: &
 Description:
- To which group the command <acronym>FiFo</acronym>s should belong.
+ To which group the global command <acronym>FiFo</acronym> should belong.
  Can be either a name or a numerical ID.
 
 Key: DataDir

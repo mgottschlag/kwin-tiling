@@ -1531,7 +1531,6 @@ SessionExit (int status)
     }
     if (removeAuth)
     {
-	chownCtrl (&td->ctrl, 0, -1);
 #ifdef USE_PAM
 	if (pamh) {
 	    int pretc;
