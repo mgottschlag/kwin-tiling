@@ -7,7 +7,8 @@ X-KDE-ModuleType=Library
 X-KDE-Library=khotkeys
 
 Name=KHotKeys
-
-Comment=
+Name[pt_BR]=Teclas de atalho
 
 Keywords=Keys,Global key bindings,Key sheme,Key bindings
+Keywords[pt_BR]=Teclas,Teclas de atalho globais,esquema de teclado,teclas de atalho
+Keywords[sr]=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts,тастери,глобални тасте,пречица,шема тастера,пречице,програмске пречице
