@@ -147,27 +147,27 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const ch
     QBoxLayout* autoLockLayout = new QVBoxLayout( autoLockGroup->layout(),
         KDialog::spacingHint() );
 
-    m_topLeftCorner = new QCheckBox( i18n("Top-Left corner"), autoLockGroup);
+    m_topLeftCorner = new QCheckBox( i18n("Top-left corner"), autoLockGroup);
     autoLockLayout->addWidget( m_topLeftCorner );
     m_topLeftCorner->setChecked(mTopLeftCorner);
     connect( m_topLeftCorner, SIGNAL( toggled( bool ) ),
             this, SLOT( slotChangeTopLeftCorner( bool ) ) );
 
-    m_topRightCorner = new QCheckBox( i18n("Top-Right corner"),
+    m_topRightCorner = new QCheckBox( i18n("Top-right corner"),
         autoLockGroup );
     autoLockLayout->addWidget( m_topRightCorner );
     m_topRightCorner->setChecked(mTopRightCorner);
     connect( m_topRightCorner, SIGNAL( toggled( bool ) ),
          this, SLOT( slotChangeTopRightCorner( bool ) ) );
 
-    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-Left corner"),
+    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-left corner"),
         autoLockGroup );
     autoLockLayout->addWidget( m_bottomLeftCorner );
     m_bottomLeftCorner->setChecked(mBottomLeftCorner);
     connect( m_bottomLeftCorner, SIGNAL( toggled( bool ) ),
          this, SLOT( slotChangeBottomLeftCorner( bool ) ) );
 
-    m_bottomRightCorner = new QCheckBox( i18n("Bottom-Right corner"),
+    m_bottomRightCorner = new QCheckBox( i18n("Bottom-right corner"),
         autoLockGroup );
     autoLockLayout->addWidget( m_bottomRightCorner );
     m_bottomRightCorner->setChecked(mBottomRightCorner);
