@@ -47,5 +47,5 @@ dummy.cpp:
 
 # update script:
 updatedir = $(kde_datadir)/kconf_update
-update_DATA = klipperrc.upd klipper-1-2.pl klipper-kde31.sh
+update_DATA = klipperrc.upd klipper-1-2.pl klipper-kde31.sh klippershortcuts.upd
 

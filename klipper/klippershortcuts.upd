@@ -1,0 +1,5 @@
+Id=04112002
+File=klipperrc,kdeglobals
+Group=Global Shortcuts
+AllKeys
+RemoveGroup=Global Shortcuts
