@@ -68,6 +68,7 @@ void CfgComponent::save(KConfig *cfg) {
 		store->writePathEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
 		store->sync();
 		delete store;
+		emit changed(false);
 }
 
 void CfgComponent::load(KConfig *cfg) {
@@ -382,12 +383,31 @@ ComponentChooser::~ComponentChooser()
 }
 
 void ComponentChooser::load() {
+	if( configWidget )
+	{
+		CfgPlugin * plugin = static_cast<CfgPlugin*>(
+				configWidget->qt_cast( "CfgPlugin" ) );
+		if( plugin )
+		{
+			KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
+			plugin->load( cfg );
+			delete cfg;
+		}
+	}
 }
 
 void ComponentChooser::save() {
-	KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
-		if (configWidget) static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->save(cfg);
-	delete cfg;
+	if( configWidget )
+	{
+		CfgPlugin * plugin = static_cast<CfgPlugin*>(
+				configWidget->qt_cast( "CfgPlugin" ) );
+		if( plugin )
+		{
+			KSimpleConfig *cfg=new KSimpleConfig(latestEditedService);
+			plugin->save( cfg );
+			delete cfg;
+		}
+	}
 }
 
 void ComponentChooser::restoreDefault() {
@@ -408,3 +428,4 @@ void ComponentChooser::restoreDefault() {
 */
 }
 
+// vim: sw=4 ts=4 noet

@@ -25,19 +25,23 @@ KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_chooser=new ComponentChooser(this,"ComponentChooser");
-	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));
+	connect(m_chooser,SIGNAL(changed(bool)),this,SLOT(setChanged(bool)));
+	setButtons( Help | Apply );
 }
 
 void KCMComponentChooser::load(){
 	m_chooser->load();
+	setChanged(false);
 }
 
 void KCMComponentChooser::save(){
 	m_chooser->save();
+	setChanged(false);
 }
 
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
+	setChanged(true);
 }
 
 const KAboutData* KCMComponentChooser::aboutData() const
