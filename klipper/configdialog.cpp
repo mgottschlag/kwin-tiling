@@ -101,6 +101,8 @@ void ConfigDialog::commitShortcuts()
 GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     : QVBox( parent, name )
 {
+    setSpacing(KDialog::spacingHint());
+
     cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
                                 this );
     cbSaveContents = new QCheckBox( i18n("Sa&ve clipboard contents on exit"),
