@@ -78,7 +78,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
     m_selectedItem = -1;
-    
+
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
     m_overflowClearTimer.start( 1000 );
     connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
@@ -957,7 +957,7 @@ void KlipperWidget::createAboutData()
 		       "2001, Patrick Dubroy");
 
   about_data->addAuthor("Carsten Pfeiffer",
-                      I18N_NOOP("Author, Maintainer"),
+                      I18N_NOOP("Author"),
                       "pfeiffer@kde.org");
 
   about_data->addAuthor("Andrew Stanley-Jones",
@@ -971,6 +971,10 @@ void KlipperWidget::createAboutData()
   about_data->addAuthor( "Luboš Luňák",
                       I18N_NOOP("Bugfixes and optimizations"),
                       "l.lunak@kde.org");
+
+  about_data->addAuthor( "Esben Mose Hansen",
+                      I18N_NOOP("Maintainer"),
+                      "kde@mosehansen.dk");
 }
 
 void KlipperWidget::destroyAboutData()
