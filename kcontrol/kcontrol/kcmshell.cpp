@@ -147,7 +147,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
                           KCONTROL_VERSION,
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
-                          "(c) 1999-2002, The KDE Developers");
+                          "(c) 1999-2004, The KDE Developers");
 
     aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
@@ -163,7 +163,10 @@ extern "C" int kdemain(int _argc, char *_argv[])
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KGlobal::iconLoader()->addAppDir( "kcontrol" );
 
-    KGlobal::locale()->setLanguage(args->getOption("lang"));
+    QCString lang = args->getOption("lang");
+    if (! lang.isNull()) {
+	KGlobal::locale()->setLanguage(lang);
+    }
 
     if (args->isSet("list")) {
 
