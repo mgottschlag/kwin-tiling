@@ -167,8 +167,10 @@ void KLanguageCombo::paintEvent( QPaintEvent * )
 
   // Icon
   QIconSet *icon = popup->iconSet( this->current );
-  QPixmap pm = icon->pixmap();
-  p.drawPixmap( 4, (height()-pm.height())/2, pm );
+  if (icon) {
+    QPixmap pm = icon->pixmap();
+    p.drawPixmap( 4, (height()-pm.height())/2, pm );
+  }
 
   if ( hasFocus() )
     p.drawRect( posx - 5, 4, width() - posx + 1 , height() - 8 );
