@@ -81,6 +81,15 @@ extern "C"
 }
 #endif
 
+#ifdef HAVE_FT_CACHE
+#include <qpainter.h>
+#include <qpixmap.h>
+#include <qimage.h>
+#include <qbitmap.h>
+#include <kglobalsettings.h>
+#include <klocale.h>
+#endif
+
 static const char *constNoPsName  ="NO_PS_NAME";
 static const char *constBmpRoman  ="";
 static const char *constBmpItalic =" Italic";
@@ -93,21 +102,25 @@ static const char *constSlanted   ="Slanted";
 //    GENERIC
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CFontEngine::CFontEngine()
+
+#ifdef HAVE_FT_CACHE
+extern "C"
 {
-    itsType=NONE;
-    if(FT_Init_FreeType(&itsFt.library))
+    static FT_Error face_requester(FTC_FaceID faceId, FT_Library lib, FT_Pointer ptr, FT_Face *face)
     {
-        std::cerr << "ERROR: FreeType2 failed to initialise\n";
-        exit(0);
+        CFontEngine::TId *id=(CFontEngine::TId *)faceId;
+        FT_Error            err=FT_New_Face(lib, QFile::encodeName(id->path), id->faceNo, face);
+
+        ptr=ptr;
+
+        if(err)
+            err=FT_New_Face(lib, QFile::encodeName(
+                                   CGlobal::cfg().getRealTopDir(id->path)+CMisc::getSub(id->path)),
+                            id->faceNo, face);
+        return err;
     }
 }
-
-CFontEngine::~CFontEngine()
-{
-    closeFont();
-    FT_Done_FreeType(itsFt.library);
-}
+#endif
 
 bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force, int face)
 {
@@ -410,6 +423,168 @@ QString CFontEngine::createName(const QString &file, bool force)
 
     return name;
 }
+
+#ifdef HAVE_FT_CACHE
+static bool getCharMap(FT_Face &face, const QString &str)
+{
+    int cm;
+
+    for(cm=0; cm<face->num_charmaps; cm++)
+    {
+        unsigned int ch;
+        bool         found=true;
+
+        FT_Set_Charmap(face, face->charmaps[cm]);
+
+        for(ch=0; ch<str.length() && found; ch++)
+            if(FT_Get_Char_Index(face, str[ch].unicode())==0)
+                found=false;
+
+        if(found)
+            return true;
+    }
+    return false;
+}
+
+void CFontEngine::createPreview(const QString &path, int width, int height, QPixmap &pix, int faceNo)
+{
+    static const struct
+    {
+        int height,
+            titleFont,
+            font, 
+            offset,
+            space;
+    } sizes[] = { { 16, 0,  10, 2, 0 },
+                  { 32, 0,  12, 2, 0 },
+                  { 48, 10, 10, 1, 3 },
+                  { 64, 12, 14, 1, 4 },
+                  { 90, 12, 28, 2, 6 },
+                  { 0,  12, 28, 4, 8 }
+                };
+
+    int s;
+    
+    for(s=0; sizes[s].height && height>sizes[s].height; ++s)
+        ;
+
+    FT_Face        face;
+    FT_Size        size;
+    FTC_Image_Desc font;
+
+    font.font.face_id=getId(path, faceNo);
+    font.font.pix_width=font.font.pix_height=point2Pixel(sizes[s].font);
+    font.image_type=ftc_image_grays;
+
+    FT_F26Dot6 startX=sizes[s].offset,
+               startY=sizes[s].offset+font.font.pix_height,
+               x=startX,
+               y=startY;
+
+    pix.resize(width, height);
+    pix.fill(Qt::white);
+
+    QPainter painter(&pix);
+
+    if(sizes[s].titleFont)
+    {
+        QString name(CGlobal::fe().getFullName()),
+                info;
+        bool    bmp=CFontEngine::isABitmap(QFile::encodeName(path));
+        QFont   title(KGlobalSettings::generalFont());
+
+        if(bmp)
+        {
+            int pos=name.findRev('(');
+
+            info=name.mid(pos);
+            name=name.left(pos);
+        }
+
+        title.setPixelSize(sizes[s].titleFont);
+        painter.setFont(title);
+        painter.setPen(Qt::black);
+        y=painter.fontMetrics().height();
+        painter.drawText(x, y, name);
+
+        if(bmp)
+        {
+            y+=2+painter.fontMetrics().height();
+            painter.drawText(x, y, info);
+        }
+
+        y+=4;
+        painter.drawLine(sizes[s].offset, y, width-(sizes[s].offset*2), y);
+        y+=2;
+        y+=startY;
+    }
+
+    if(!FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
+    {
+        int        i;
+        FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+
+        if(0==sizes[s].height)
+        {
+            QString  quote(i18n("The quick brown fox jumps over the lazy dog"));
+            bool     foundCmap=getCharMap(face, quote);
+
+            if(foundCmap)
+            {
+                unsigned int ch;
+
+                for(ch=0; ch<quote.length(); ++ch)
+                    if(drawGlyph(pix, font, size, FT_Get_Char_Index(face, quote[ch].unicode()),
+                       x, y, width, height, startX, stepY, sizes[s].space))
+                        break;
+            }
+
+            font.font.pix_width=font.font.pix_height=point2Pixel((int)(sizes[s].font*0.75));
+
+            if(y<height && !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
+            {
+                FT_F26Dot6 stepY=size->metrics.y_ppem /*(size->metrics.height>>6)*/ + sizes[s].offset;
+
+                if(foundCmap)
+                {
+                    if(x!=startX)
+                    {
+                        y+=stepY;
+                        x=startX;
+                    }
+
+                    y+=font.font.pix_height;
+                }
+
+                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                    if(drawGlyph(pix, font, size, i, x, y, width, height, startX, stepY))
+                        break;
+            }
+        }
+        else
+        {
+            QString str(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"));
+
+            if(getCharMap(face, str))
+            {
+                unsigned int ch;
+
+                for(ch=0; ch<str.length(); ++ch)
+                    if(drawGlyph(pix, font, size, FT_Get_Char_Index(face, str[ch].unicode()),
+                       x, y, width, height, startX, stepY))
+                        break;
+
+            }
+            else
+                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                    if(drawGlyph(pix, font, size, i, x, y, width, height, startX, stepY))
+                        break;
+        }
+
+    }
+}
+
+#endif
 
 #ifdef KFONTINST_AFM
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1341,12 +1516,13 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
     bool status=FT_New_Face(itsFt.library, QFile::encodeName(file), face, &itsFt.face) ? false : true;
 
     if(status)
+    {
         itsFt.open=true;
+        itsNumFaces=itsFt.face->num_faces;
+    }
 
     if(TEST!=mask && status)
     {
-        itsNumFaces=itsFt.face->num_faces;
-
         if(mask&NAME || mask&PROPERTIES)
         {
             bool famIsPs=false;
@@ -2545,3 +2721,200 @@ bool CFontEngine::openFontPcf(const QString &file)
     return foundXlfd;
 }
 
+#ifdef HAVE_FT_CACHE
+FTC_FaceID CFontEngine::getId(const QString &f, int faceNo)
+{
+    TId *p=NULL;
+
+    for(p=itsFt.ids.first(); p; p=itsFt.ids.next())
+        if (p->path==f && p->faceNo==faceNo)
+            break;
+
+    if(!p)
+    {
+        p=new TId(f, faceNo);
+        itsFt.ids.append(p);
+    }
+
+    return (FTC_FaceID)p;
+}
+
+bool CFontEngine::getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &target, int &left, int &top,
+                                 int &xAdvance, FT_Pointer *ptr)
+{
+    bool ok=false;
+
+    *ptr=NULL;
+
+    //
+    // Cache small glyphs, else render on demand...
+    if(font.font.pix_width<48 && font.font.pix_height<48)
+    {
+        FTC_SBit sbit;
+
+        if(!FTC_SBit_Cache_Lookup(itsFt.sBitCache, &font, index, &sbit))
+        {
+            target.greys=ft_pixel_mode_mono==sbit->format ? 2 : 256;
+            target.height=sbit->height;
+            target.width=sbit->width;
+            target.buffer=sbit->buffer;
+            left=sbit->left;
+            top=sbit->top;
+            xAdvance=sbit->xadvance;
+            ok=true;
+        }
+    }
+    else
+    {
+        FT_Glyph glyph;
+
+        if(!FTC_Image_Cache_Lookup(itsFt.imageCache, &font, index, &glyph))
+        {
+            ok=true;
+
+            if(ft_glyph_format_outline==glyph->format)
+                if(ok=!FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 0))
+                    *ptr=glyph;
+
+            if(ok)
+                if(ft_glyph_format_bitmap==glyph->format)
+                {
+                    FT_BitmapGlyph bitmap=(FT_BitmapGlyph)glyph;
+                    FT_Bitmap      *source=&(bitmap->bitmap);
+
+                    target.greys= (ft_pixel_mode_mono==(FT_Pixel_Mode_) source->pixel_mode) ? 1 : source->num_grays;
+                    target.height=source->rows;
+                    target.width=source->width;
+                    target.buffer=source->buffer;
+                    left=bitmap->left;
+                    top=bitmap->top;
+                    xAdvance=(glyph->advance.x+0x8000)>>16;
+                }
+                else
+                    ok=false;
+        }
+    }
+
+    return ok;
+}
+
+void CFontEngine::align32(Bitmap &bmp)
+{
+    int mod=bmp.width%4;
+
+    if(mod)
+    {
+        bmp.mod=4-mod;
+
+        int width=bmp.width+bmp.mod,
+            size=(bmp.width+bmp.mod)*bmp.height,
+            row;
+
+        if(size>itsFt.bufferSize)
+        {
+            static const int constBufferBlock=512;
+
+            if(itsFt.buffer)
+                delete [] itsFt.buffer;
+            itsFt.bufferSize=(((int)(size/constBufferBlock))+(size%constBufferBlock ? 1 : 0))*constBufferBlock;
+            itsFt.buffer=new unsigned char [itsFt.bufferSize];
+        }
+
+        memset(itsFt.buffer, 0, itsFt.bufferSize);
+        for(row=0; row<bmp.height; ++row)
+            memcpy(&(itsFt.buffer[row*width]), &bmp.buffer[row*bmp.width], bmp.width);
+
+        bmp.buffer=itsFt.buffer;
+        bmp.width+=bmp.mod;
+    }
+    else
+        bmp.mod=0;
+}
+
+bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, FT_Size &size, int glyphNum,
+                            FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+{
+    int        left,
+               top,
+               xAdvance;
+    FT_Pointer glyph;
+    Bitmap     bmp;
+
+    if(getGlyphBitmap(font, glyphNum, bmp, left, top, xAdvance, &glyph) && bmp.width>0 && bmp.height>0)
+    {
+        if(2==bmp.greys)
+        {
+            QPixmap glyphPix(QBitmap(bmp.width, bmp.height, bmp.buffer));
+
+            bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, bmp.width, bmp.height, Qt::AndROP);
+        }
+        else
+        {
+            static QRgb clut[256];
+            static bool clutSetup=false;
+
+            if(!clutSetup)
+            {
+                int j;
+                for(j=0; j<256; j++)
+                    clut[j]=qRgb(255-j, 255-j, 255-j);
+                clutSetup=true;
+            }
+
+            align32(bmp);
+
+            QPixmap glyphPix(QImage(bmp.buffer, bmp.width, bmp.height, 8, clut , bmp.greys, QImage::IgnoreEndian));
+
+            bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, bmp.width, bmp.height, Qt::AndROP);
+        }
+
+        if(glyph)
+            FT_Done_Glyph((FT_Glyph)glyph);
+
+        x+=xAdvance+1;
+
+        if(x+size->metrics.x_ppem>width)
+        {
+            x=startX;
+            y+=stepY;
+
+            if(y>height)
+                return true;
+        }
+    }
+    else if(x!=startX)
+        x+=space;
+
+    return false;
+}
+#endif
+
+CFontEngine::TFtData::TFtData()
+                    : open(false)
+#ifdef HAVE_FT_CACHE
+                    , buffer(NULL),
+                      bufferSize(0)
+#endif
+
+{
+    if(FT_Init_FreeType(&library))
+    {
+        std::cerr << "ERROR: FreeType2 failed to initialise\n";
+        exit(0);
+    }
+#ifdef HAVE_FT_CACHE
+    ids.setAutoDelete(true);
+    FTC_Manager_New(library, 0, 0, 0, face_requester, 0, &cacheManager);
+    FTC_SBit_Cache_New(cacheManager, &sBitCache);
+    FTC_Image_Cache_New(cacheManager, &imageCache);
+#endif
+}
+
+CFontEngine::TFtData::~TFtData()
+{
+#ifdef HAVE_FT_CACHE
+    FTC_Manager_Done(cacheManager);
+#endif
+    FT_Done_FreeType(library);
+}

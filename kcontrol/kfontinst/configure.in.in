@@ -47,6 +47,10 @@ fi
 
 AM_CONDITIONAL(include_fontinst_tn, test -n "$FONTINST_TN")
 
+if test -n "$FONTINST_TN"; then
+    AC_DEFINE(HAVE_FT_CACHE, 1, [Defines if you have FreeType2's cache functionality])
+fi
+
 # Check OS...
 
 if test $FOUND_FREETYPE -eq 1; then

@@ -29,6 +29,10 @@
 // (C) Craig Drummond, 2001, 2002, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "Encodings.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -38,9 +42,25 @@
 #include <qwindowdefs.h>
 #include <qfile.h>
 
+#ifdef HAVE_FT_CACHE
+#include FT_CACHE_IMAGE_H
+#include FT_CACHE_SMALL_BITMAPS_H
+#include FT_CACHE_H
+#include <qptrlist.h>
+#include <qpaintdevice.h>
+#endif
+
 class CFontEngine
 {
     public:
+
+    struct TId
+    {
+        TId(const QString &p, int f=0) : path(p), faceNo(f) {}
+
+        QString path;
+        int     faceNo;
+    };
 
     enum EType
     {
@@ -150,17 +170,35 @@ class CFontEngine
             unsigned char *data;
         };
 
-        TFtData() : open(false) {}
+        TFtData();
+        ~TFtData();
 
-        FT_Library library;
-        FT_Face    face;
-        bool       open;
+        FT_Library      library;
+        FT_Face         face;
+        bool            open;
+#ifdef HAVE_FT_CACHE
+        FTC_Manager     cacheManager;
+        FTC_Image_Cache imageCache;
+        FTC_SBit_Cache  sBitCache;
+        QPtrList<TId>   ids;
+        unsigned char   *buffer;
+        int             bufferSize;
+#endif
+    };
+
+    struct Bitmap
+    {
+        int           width,
+                      height,
+                      greys,
+                      mod;
+        unsigned char *buffer;
     };
 
     public:
 
-    CFontEngine();
-    ~CFontEngine();
+    CFontEngine() : itsType(NONE)               { }
+    ~CFontEngine()                              { closeFont(); }
 
     static bool    isA(const char *fname, const char *ext, bool z=false);
     static bool    isATtf(const char *fname)    { return isA(fname, "ttf"); }
@@ -210,6 +248,15 @@ class CFontEngine
     EWidth          strToWidth(const QString &str);
 
     QString         createName(const QString &file, bool force=false);
+
+#ifdef HAVE_FT_CACHE
+    void            createPreview(const QString &path, int width, int height, QPixmap &pix, int faceNo);
+
+    static int      point2Pixel(int point)
+    {
+        return (point* /*QPaintDevice::x11AppDpiX()*/ 75 +36)/72;
+    }
+#endif
 
 #ifdef KFONTINST_AFM
     //
@@ -288,6 +335,17 @@ class CFontEngine
     // Pcf...
     bool            openFontPcf(const QString &file);
 
+#ifdef HAVE_FT_CACHE
+    private:
+
+    FTC_FaceID getId(const QString &f, int faceNo); 
+    bool       getGlyphBitmap(FTC_Image_Desc &font, FT_ULong index, Bitmap &target, int &left, int &top,
+                             int &xAdvance, FT_Pointer *ptr);
+    void       align32(Bitmap &bmp);
+    bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, FT_Size &size, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
+#endif
+
     private:
 
     EWeight        itsWeight;
@@ -305,8 +363,6 @@ class CFontEngine
     float          itsItalicAngle;
     int            itsNumFaces;
     TFtData        itsFt;
-
-    friend class   CFontThumbnail;
 };
 
 #endif
