@@ -235,7 +235,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_WallpaperType->setFrameStyle( QFrame::NoFrame );
     QWhatsThis::add( m_WallpaperType, i18n("If you check this option, you can choose"
 					   " a set of graphic files to be used as wallpaper, one at a time, for an"
-					   " interval ranging from 5 minutes to 4 hours. You can also choose to have"
+					   " interval ranging from 1 minutes to 4 hours. You can also choose to have"
 					   " the graphics selected at random or in the order you specified them.") );
     connect( m_WallpaperType, SIGNAL(clicked(int)), SLOT(slotWallpaperType(int)) );
     grid->addMultiCellWidget( m_WallpaperType, 0, 0, 0, 2 );
