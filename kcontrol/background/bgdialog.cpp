@@ -328,7 +328,7 @@ void BGDialog::initUI()
       QString imageCaption;
 
       if (metaInfo.item("Comment").isValid())
-         metaInfo.item("Comment").string().section('\n', 0, 0);
+         imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
 
       if (imageCaption.isEmpty())
       {
