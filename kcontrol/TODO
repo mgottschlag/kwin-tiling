@@ -44,11 +44,6 @@ The current dialog resembles a very good "advanced"-tab. It would be nice for th
 Tab for newbies in the first place which only shows the available Notification-themes ("Minimalistic", "Visually impaired", "Aureal impaired", "KDE-Standard").
 The current dialog should appear as an advanced tab behind the "Theme"-tab.
 
-Network -> KDE Protocols Information
-------------------------------------
-(should be renamed to "KDE Protocols" to keep it short. "Information" is redundant because that is what kcontrol is about and because there are settings in the second tab now, so this dialog is not about information only anymore.
-
-
 Network -> LAN Browsing
 -----------------------
 Way too much text here. Widgets aren't supposed to be indepth-manuals. Most of the text should be moved into the "Help"-Section on the left or into tooltips.
