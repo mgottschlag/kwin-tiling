@@ -92,7 +92,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif  
+#endif
 
 /*****************************************************************
  * This function authenticates the user, returning
@@ -108,5 +108,5 @@ void message(const char *, ...);
 
 #ifdef __cplusplus
 }
-#endif  
+#endif
 #endif

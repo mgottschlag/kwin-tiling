@@ -52,7 +52,7 @@ KXSDoubleRangeControl::KXSDoubleRangeControl(QWidget *parent,
   QLabel *label = new QLabel(mLabel, this);
   l->add(label);
 
-  int value = (mValue - mMinimum) / (mMaximum - mMinimum) * 100.0;
+  int value = int((mValue - mMinimum) * 100 / (mMaximum - mMinimum));
 
   mSlider = new QSlider(0, 100, 10, value, Qt::Horizontal, this);
   connect(mSlider, SIGNAL(valueChanged(int)), SLOT(slotValueChanged(int)));

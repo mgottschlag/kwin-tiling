@@ -1,5 +1,5 @@
 /* XPM */
-static char *amiga_hand[] = {
+static const char *amiga_hand[] = {
 /* width height num_colors chars_per_pixel */
 "   209   258        4            1",
 /* colors */
