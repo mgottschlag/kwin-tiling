@@ -304,8 +304,6 @@ const T* Simple_action_data< T, A >::trigger() const
     
 // Command_url_shortcut_action_data
 
-template class Simple_action_data< Shortcut_trigger, Command_url_action >;
-
 Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
     const KShortcut& shortcut_P, const QString& command_url_P, bool enabled_P )
@@ -324,9 +322,9 @@ void Simple_action_data< Shortcut_trigger, Command_url_action >
     cfg_P.writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
     }
 
-// Menuentry_shortcut_action_data
+template class Simple_action_data< Shortcut_trigger, Command_url_action >;
 
-template class Simple_action_data< Shortcut_trigger, Menuentry_action >;
+// Menuentry_shortcut_action_data
 
 Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
@@ -346,9 +344,9 @@ void Simple_action_data< Shortcut_trigger, Menuentry_action >
     cfg_P.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
     }
 
-// Dcop_shortcut_action_data
+template class Simple_action_data< Shortcut_trigger, Menuentry_action >;
 
-template class Simple_action_data< Shortcut_trigger, Dcop_action >;
+// Dcop_shortcut_action_data
 
 template<>
 void Simple_action_data< Shortcut_trigger, Dcop_action >
@@ -357,10 +355,8 @@ void Simple_action_data< Shortcut_trigger, Dcop_action >
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "DCOP_SHORTCUT_ACTION_DATA" );
     }
-
+template class Simple_action_data< Shortcut_trigger, Dcop_action >;
 // Keyboard_input_shortcut_action_data
-
-template class Simple_action_data< Shortcut_trigger, Keyboard_input_action >;
 
 template<>
 void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
@@ -369,10 +365,9 @@ void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
     }
+template class Simple_action_data< Shortcut_trigger, Keyboard_input_action >;
 
 // Activate_window_shortcut_action_data
-
-template class Simple_action_data< Shortcut_trigger, Activate_window_action >;
 
 template<>
 void Simple_action_data< Shortcut_trigger, Activate_window_action >
@@ -381,7 +376,8 @@ void Simple_action_data< Shortcut_trigger, Activate_window_action >
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" );
     }
-
+    
+template class Simple_action_data< Shortcut_trigger, Activate_window_action >;
 // Keyboard_input_gesture_action_data
 
 void Keyboard_input_gesture_action_data::set_action( Keyboard_input_action* action_P )
