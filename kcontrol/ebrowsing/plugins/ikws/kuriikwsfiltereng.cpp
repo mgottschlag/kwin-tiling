@@ -406,7 +406,7 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
   }
 
   // Decode user query:
-  QString userquery = KURL::decode_string(query, csetacodec->mibEnum());
+  QString userquery = KURL::decode_string(query, 106 /* utf-8*/);
 
   PDVAR ("user query", userquery);
   PDVAR ("query definition", url);
