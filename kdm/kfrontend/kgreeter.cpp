@@ -34,6 +34,7 @@
 #include <kseparator.h>
 #include <klistview.h>
 #include <ksimpleconfig.h>
+#include <kstringhandler.h>
 
 #undef Unsorted // x headers suck - make qdir.h work with --enable-final
 #include <qdir.h>
@@ -304,7 +305,7 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
     p = default_pix;
   gotit:
     seteuid( 0 );
-    QString realname = QFile::decodeName( ps->pw_gecos );
+    QString realname = KStringHandler::from8Bit( ps->pw_gecos );
     realname.truncate( realname.find( ',' ) );
     if (realname.isEmpty() || realname == username)
 	new UserListViewItem( listview, username, QPixmap( p ), username );
