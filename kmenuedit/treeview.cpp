@@ -652,13 +652,15 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
 
 void TreeView::newsubmenu()
 {
-    _ndlg->setText(i18n("NewSubmenu"));
+    _ndlg->setText(i18n(""));
     _ndlg->setCaption(i18n("NewSubmenu"));
     if (!_ndlg->exec()) return;
 
     QString dirname = _ndlg->text();
-    if (dirname.isEmpty())
-	dirname = "NewSubmenu";
+    if (dirname.isEmpty()) {
+    	KMessageBox::sorry(0, "Please provide a valid name.", "Invalid name");
+	return;
+    }
 
 
     TreeItem *item = (TreeItem*)selectedItem();
@@ -710,6 +712,12 @@ void TreeView::newsubmenu()
 	dir += '/';
 
     dir += dirname + "/.directory";
+    
+    QFile f(locateLocal("apps", dir));
+    if (f.exists()) {
+    	KMessageBox::sorry(0, "This directory is forgiven. Please provide another name.", "File exists");
+	return;
+    }
 
     TreeItem* newitem;
 
@@ -733,13 +741,15 @@ void TreeView::newsubmenu()
 
 void TreeView::newitem()
 {
-    _ndlg->setText(i18n("NewItem"));
+    _ndlg->setText(i18n(""));
     _ndlg->setCaption(i18n("NewItem"));
     if (!_ndlg->exec()) return;
-
+    
     QString filename = _ndlg->text();
-    if (filename.isEmpty())
-	filename = "NewFile";
+    if (filename.isEmpty()) {
+    	KMessageBox::sorry(0, "Please provide a valid name.", "Invalid name");
+	return;
+    }
 
     TreeItem *item = (TreeItem*)selectedItem();
 
@@ -775,6 +785,12 @@ void TreeView::newitem()
     if(!dir.isEmpty())
 	dir += '/';
     dir += filename + ".desktop";
+
+    QFile f(locateLocal("apps", dir));
+    if (f.exists()) {
+    	KMessageBox::sorry(0, "This filename is forgiven. Please provide another name.", "File exists");
+	return;
+    }
 
     TreeItem* newitem;
 
