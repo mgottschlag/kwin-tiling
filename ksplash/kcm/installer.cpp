@@ -43,7 +43,7 @@ ThemeListBox::ThemeListBox(QWidget *parent)
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 {
-   event->accept((event->source() != this) && QUriDrag::canDecode(event));
+   event->accept((event->source() != this) && KURLDrag::canDecode(event));
 }
 
 void ThemeListBox::dropEvent(QDropEvent* event)
@@ -78,7 +78,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
          url.setPath(mDragFile);
          KURL::List urls;
          urls.append(url);
-         QUriDrag *d = KURLDrag::newDrag(urls, this);
+         KURLDrag *d = KURLDrag::newDrag(urls, this);
          d->dragCopy();
       }
    }
