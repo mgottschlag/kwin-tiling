@@ -35,6 +35,7 @@
 #include <qwhatsthis.h>
 #include <qregexp.h>
 
+#include <kaboutdata.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -43,8 +44,6 @@
 #include <kprocess.h>
 
 #include "arts.h"
-#include <kaboutdata.h>
-
 
 extern "C" {
 	void init_arts();
@@ -178,6 +177,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 	connect(artsConfig->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 
+	connect(artsConfig->restartServer, SIGNAL(clicked()),
+	        this, SLOT(slotRestartServer()));
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
 
@@ -306,10 +307,32 @@ void KArtsModule::load()
 	GetSettings();
 }
 
-void KArtsModule::save()
+void KArtsModule::save() {
+	if (configChanged) {
+        configChanged = false;
+		saveParams();
+	}
+}
+
+int KArtsModule::userSavedChanges()
 {
+	int reply;
+
 	if (!configChanged)
-		return;
+		return KMessageBox::Yes;
+
+	QString question = i18n("The settings are changed since the last time "
+                            "you restarted the sound server.\n"
+                            "Do you want to save them?");
+	QString caption = i18n("Save Sound Server Settings?");
+	reply = KMessageBox::questionYesNo(this, question, caption);
+	if ( reply == KMessageBox::Yes)
+    {
+        configChanged = false;
+        saveParams();
+    }
+
+    return reply;
 
 /* FIXME(gioele): This is no more usefull here, shuld be put in updateWidgets()
 	if (startRealtime->isChecked() && !realtimeIsPossible()) {
@@ -337,28 +360,75 @@ void KArtsModule::save()
 	}
 */
 
-	configChanged = false;
-	saveParams();
-
+/*
     QString dialogText;
-    if(artsConfig->startServer->isChecked()) {
-        dialogText = i18n("Restart sound-server now?\nThis is needed for your changes to take effect\n\nRestarting the sound server might confuse or\neven crash applications using the sound server.");
+    if(startServer->isChecked()) {
+        dialogText = i18n("Restart sound-server now?\n"
+                          "This is needed for your changes to take effect.\n"
+                          "\n"
+                          "Restarting the sound server might confuse or even "
+                          "crash applications using the sound server.");
     } else {
-        dialogText = i18n("Shut down sound-server now?\nThis might confuse or even crash applications\nusing the sound server.");
+        dialogText = i18n("Shut down sound-server now?\n"
+                          "This might confuse or even crash applications "
+                          "using the sound server.");
     }
 
-	if(KMessageBox::warningYesNo(this,
+    if(KMessageBox::warningYesNo(this,
                      dialogText,
-				     i18n("Restart Sound Server Now?")) == KMessageBox::Yes)
-	{
-		restartServer();
+                     i18n("Restart Sound Server Now?")) == KMessageBox::Yes)
+    {
+        restartServer();
+    }
+*/
+}
+
+void KArtsModule::slotRestartServer()
+{
+	QString question;
+	QString caption;
+	bool artsdRunning = artsdIsRunning();
+	if (artsdRunning) {
+		if (startServer->isChecked()) {
+			question = i18n("Restart sound server now?\n"
+			                "\n"
+			                "Restarting the sound server might confuse "
+			                "or even crash applications using "
+			                "the sound server.");
+			caption = i18n("Restart Sound Server Now?");
+		} else {
+			question = i18n("Stop sound server now?\n"
+			                "\n"
+			                "This might confuse or even crash "
+			                "applications using the sound server.");
+			caption = i18n("Stop Sound Server Now?");
+		}
+	} else {
+		question = i18n("Start sound server?");
+		caption = i18n("Start Sound Server Now?");
 	}
+
+	int userWantRestart =
+	        KMessageBox::questionYesNo(this, question, caption);
+
+	if ((userWantRestart == KMessageBox::Yes) &&
+	    (userSavedChanges() == KMessageBox::Yes)) {
+		if (artsdRunning) {
+			if (startServer->isChecked())
+				restartServer();
+			else
+				stopServer();
+		} else {
+			initServer();
+		}
+	}
+	updateWidgets();
 }
 
 void KArtsModule::slotTestSound()
 {
-	if(configChanged)
-		save();
+	if (configChanged && (userSavedChanges() == KMessageBox::Yes))
+		restartServer();
 
 	KProcess test;
 	test << "artsplay";
@@ -449,29 +519,41 @@ void KArtsModule::calculateLatency()
 
 void KArtsModule::updateWidgets()
 {
-	startRealtime->setEnabled(startServer->isChecked());
+	bool startServerIsChecked = startServer->isChecked();
+	startRealtime->setEnabled(startServerIsChecked);
 	if (startRealtime->isChecked() && !realtimeIsPossible()) {
 		startRealtime->setChecked(false);
 		KMessageBox::error(this, i18n("Impossible to start aRts with realtime "
 		                              "priority because artswrapper is "
 		                              "missing or disabled"));
 	}
-	networkTransparent->setEnabled(startServer->isChecked());
-	x11Comm->setEnabled(startServer->isChecked());
-	fullDuplex->setEnabled(startServer->isChecked());
-	customDevice->setEnabled(startServer->isChecked());
-	deviceName->setEnabled(startServer->isChecked() && customDevice->isChecked());
-	customRate->setEnabled(startServer->isChecked());
-	samplingRate->setEnabled(startServer->isChecked() && customRate->isChecked());
-	artsConfig->customOptions->setEnabled(startServer->isChecked());
-	artsConfig->addOptions->setEnabled(startServer->isChecked() && artsConfig->customOptions->isChecked());
-	artsConfig->soundIO->setEnabled(startServer->isChecked());
-	artsConfig->testSound->setEnabled(startServer->isChecked());
-	autoSuspend->setEnabled(startServer->isChecked());
-	suspendTime->setEnabled(startServer->isChecked() && autoSuspend->isChecked());
-	displayMessage->setEnabled(startServer->isChecked());
-	messageApplication->setEnabled(startServer->isChecked() && displayMessage->isChecked());
+	networkTransparent->setEnabled(startServerIsChecked);
+	x11Comm->setEnabled(startServerIsChecked);
+	fullDuplex->setEnabled(startServerIsChecked);
+	customDevice->setEnabled(startServerIsChecked);
+	deviceName->setEnabled(startServerIsChecked && customDevice->isChecked());
+	customRate->setEnabled(startServerIsChecked);
+	samplingRate->setEnabled(startServerIsChecked && customRate->isChecked());
+	artsConfig->customOptions->setEnabled(startServerIsChecked);
+	artsConfig->addOptions->setEnabled(startServerIsChecked && artsConfig->customOptions->isChecked());
+	artsConfig->soundIO->setEnabled(startServerIsChecked);
+	autoSuspend->setEnabled(startServerIsChecked);
+	suspendTime->setEnabled(startServerIsChecked && autoSuspend->isChecked());
+	displayMessage->setEnabled(startServerIsChecked);
+	messageApplication->setEnabled(startServerIsChecked && displayMessage->isChecked());
 	calculateLatency();
+
+	bool artsdRunning = artsdIsRunning();
+	if (artsdRunning) {
+		if (startServerIsChecked)
+			artsConfig->restartServer->setText(i18n("Restart Server"));
+		else
+			artsConfig->restartServer->setText(i18n("Stop Server"));
+	} else {
+		artsConfig->restartServer->setText(i18n("Start Server"));
+		artsConfig->restartServer->setEnabled(startServerIsChecked);
+	}
+	artsConfig->testSound->setEnabled(artsdRunning);
 }
 
 void KArtsModule::slotChanged()
@@ -497,19 +579,43 @@ bool KArtsModule::realtimeIsPossible()
 	return false;
 }
 
-void KArtsModule::restartServer() 
+void KArtsModule::initServer()
+{
+	init_arts();
+	// FIXME(gioele): loop until artsshell status returns ok
+	//                and add a KProgressDialog
+	sleep(1);
+
+}
+
+void KArtsModule::stopServer()
 {
 	KProcess terminateArts;
 	terminateArts << "artsshell";
 	terminateArts << "terminate";
 	terminateArts.start(KProcess::Block);
-	// leave artsd some time to go away
-	sleep(1);
 
-	init_arts();
+	// leave artsd some time to go away
 	// FIXME(gioele): loop until artsshell status returns ok
 	//                and add a KProgressDialog
+
 	sleep(1);
+}
+
+void KArtsModule::restartServer()
+{
+	stopServer();
+	initServer();
+}
+
+bool KArtsModule::artsdIsRunning()
+{
+	KProcess check;
+	check << "artsshell";
+	check << "status";
+	check.start(KProcess::Block);
+
+	return (check.exitStatus() == 0);
 }
 
 void init_arts()

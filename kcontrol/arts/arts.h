@@ -62,6 +62,7 @@ public:
 private slots:
 
   void slotChanged();
+  void slotRestartServer();
   void slotTestSound();
   void slotArtsdExited(KProcess* proc);
   void slotProcessArtsdOutput(KProcess* p, char* buf, int len);
@@ -78,6 +79,8 @@ private:
                      int suspendTime,
                      const QString &messageApplication, int loggingLevel);
   void GetSettings ();
+  int userSavedChanges();
+  bool artsdIsRunning();
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
   			*fullDuplex, *customDevice, *customRate, *autoSuspend, *displayMessage;
@@ -103,6 +106,8 @@ private:
   void initAudioIOList();
   QPtrList<AudioIOElement> audioIOList;
 
+  void initServer();
+  void stopServer();
   void restartServer();
   bool realtimeIsPossible();
 };
