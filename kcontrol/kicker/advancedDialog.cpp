@@ -43,6 +43,8 @@ advancedDialog::advancedDialog(QWidget* parent, char* name)
 {
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(save()));
+    connect(this, SIGNAL(okClicked()),
+            this, SLOT(save()));
     actionButton(Apply)->setEnabled(false);
     QFrame* page = plainPage();
     QVBoxLayout* layout = new QVBoxLayout(page);

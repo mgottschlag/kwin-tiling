@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>289</width>
-            <height>117</height>
+            <width>217</width>
+            <height>97</height>
         </rect>
     </property>
     <property name="caption">
@@ -67,6 +67,15 @@
         <widget class="KIntSpinBox" row="2" column="1">
             <property name="name">
                 <cstring>hideButtonSize</cstring>
+            </property>
+            <property name="suffix">
+                <string> pixels</string>
+            </property>
+            <property name="maxValue">
+                <number>24</number>
+            </property>
+            <property name="minValue">
+                <number>3</number>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This setting defines how large the panel hide buttons will be if they are visible.</string>
