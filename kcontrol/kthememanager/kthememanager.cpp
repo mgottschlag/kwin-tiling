@@ -99,7 +99,6 @@ void kthememanager::load()
     QListViewItem * cur =  dlg->lvThemes->findItem( themeName, 0 );
     if ( cur )
     {
-        //dlg->lvThemes->setCurrentItem( cur );
         dlg->lvThemes->setSelected( cur, true );
         dlg->lvThemes->ensureItemVisible( cur );
         slotThemeChanged( cur );
@@ -230,7 +229,7 @@ void kthememanager::slotRemoveTheme()
     if ( cur )
     {
         QString themeName = cur->text( 0 );
-        if ( KMessageBox::questionYesNo( this, i18n( "Do you really want to remove the theme '%1'?" ).arg( themeName ),
+        if ( KMessageBox::questionYesNo( this, "<qt>" + i18n( "Do you really want to remove the theme <b>%1</b>?" ).arg( themeName ),
                                          i18n( "Remove Theme" ) )
              == KMessageBox::Yes )
         {
@@ -295,8 +294,12 @@ void kthememanager::slotThemeChanged( QListViewItem * item )
 
         if ( QFile::exists( pixFile ) )
         {
-            kdDebug() << "Preview is in file: " << pixFile << endl;
-            dlg->lbPreview->setPixmap( QPixmap( pixFile, "PNG" ) );
+            updatePreview( pixFile );
+        }
+        else
+        {
+            dlg->lbPreview->setPixmap( QPixmap() );
+            dlg->lbPreview->setText( i18n( "This theme doesn't contain a preview." ) );
         }
 
         KTheme theme( themeDir + themeName + ".xml" );
@@ -357,6 +360,16 @@ void kthememanager::queryLNFModules()
     dlg->btnStyle->setIconSet( il->loadIconSet( "style", KIcon::Desktop ) );
     dlg->btnIcons->setIconSet( il->loadIconSet( "icons", KIcon::Desktop ) );
     dlg->btnSaver->setIconSet( il->loadIconSet( "kscreensaver", KIcon::Desktop ) );
+}
+
+void kthememanager::updatePreview( const QString & pixFile )
+{
+     kdDebug() << "Preview is in file: " << pixFile << endl;
+     QImage preview( pixFile, "PNG" );
+     preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), QImage::ScaleMin );
+     QPixmap pix;
+     pix.convertFromImage( preview );
+     dlg->lbPreview->setPixmap( pix );
 }
 
 extern "C"

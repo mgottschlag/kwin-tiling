@@ -155,6 +155,11 @@ private:
 
     void queryLNFModules();
 
+    /**
+     * Updates the preview widget
+     */
+    void updatePreview( const QString & pixFile );
+
     KThemeDlg * dlg;
 
     KTheme * m_theme;

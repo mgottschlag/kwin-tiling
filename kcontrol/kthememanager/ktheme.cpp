@@ -677,9 +677,8 @@ void KTheme::setVersion( const QString & version )
 
 void KTheme::addPreview()
 {
-    QImage snapshot = QPixmap::grabWindow( qt_xrootwin() ).convertToImage()
-                      .smoothScale( 300, 225, QImage::ScaleMin );
     QString file = m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".preview.png";
+    QPixmap snapshot = QPixmap::grabWindow( qt_xrootwin() );
     snapshot.save( file, "PNG" );
 
     kdDebug() << k_funcinfo << "Adding preview: " << file << endl;

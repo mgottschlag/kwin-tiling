@@ -6,6 +6,8 @@ Version 0.3
 - added new details buttons to launch idividual kcm style-related
   modules
 - write/read the current theme and preselect it at startup
+- the preview pixmap is now generated dynamically
+  and taken at full size
 
 Version 0.2
 ===========
