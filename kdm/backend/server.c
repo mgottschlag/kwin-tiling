@@ -46,7 +46,7 @@ from the copyright holder.
 
 
 struct display *startingServer;
-static int savedAlarm;
+time_t serverTimeout = TO_INF;
 
 static void
 StartServerOnce ()
@@ -90,7 +90,7 @@ StartServerOnce ()
     default:
 	Debug ("X server forked, pid %d\n", pid);
 	d->serverPid = pid;
-	alarm (d->serverTimeout);
+	serverTimeout = d->serverTimeout + now;
 	break;
     }
 }
@@ -99,7 +99,6 @@ void
 StartServer (struct display *d)
 {
     startingServer = d;
-    savedAlarm = alarm (0);
     d->startTries = 0;
     StartServerOnce ();
 }
@@ -112,7 +111,7 @@ AbortStartServer (struct display *d)
 	if (d->serverStatus != ignore)
 	{
 	    d->serverStatus = ignore;
-	    alarm (savedAlarm);
+	    serverTimeout = TO_INF;
 	    Debug ("aborting X server start\n");
 	}
 	startingServer = 0;
@@ -124,7 +123,7 @@ StartServerSuccess ()
 {
     struct display *d = startingServer;
     d->serverStatus = ignore;
-    alarm (savedAlarm);
+    serverTimeout = TO_INF;
     Debug ("X server ready, starting session\n");
     StartDisplayP2 (d);
 }
@@ -136,12 +135,12 @@ StartServerFailed ()
     if (!d->serverAttempts || d->startTries < d->serverAttempts)
     {
 	d->serverStatus = pausing;
-	alarm (d->openDelay);
+	serverTimeout = d->openDelay + now;
     }
     else
     {
 	d->serverStatus = ignore;
-	alarm (savedAlarm);
+	serverTimeout = TO_INF;
 	startingServer = 0;
 	LogError ("X server for display %s can't be started,"
 		  " session disabled\n", d->name);
@@ -161,13 +160,13 @@ StartServerTimeout ()
 	LogError ("X server startup timeout, terminating\n");
 	kill (d->serverPid, d->termSignal);
 	d->serverStatus = d->termSignal == SIGKILL ? killed : terminated;
-	alarm (d->serverTimeout);
+	serverTimeout = d->serverTimeout + now;
 	break;
     case terminated:
 	LogInfo ("X server termination timeout, killing\n");
 	kill (d->serverPid, SIGKILL);
 	d->serverStatus = killed;
-	alarm (10);
+	serverTimeout = 10 + now;
 	break;
     case killed:
 	LogInfo ("X server is stuck in D state; leaving it alone\n");

@@ -58,6 +58,7 @@ from the copyright holder.
 
 #include <time.h>
 #define Time_t time_t
+#define TO_INF 0x7fffffff
 
 #include <errno.h>
 
@@ -328,6 +329,7 @@ void BecomeDaemon (void);
 
 /* in dm.c */
 extern char *prog, *progpath;
+extern time_t now;
 void StartDisplay (struct display *d);
 void StartDisplayP2 (struct display *d);
 void StopDisplay (struct display *d);
@@ -467,7 +469,8 @@ void AbortStartServer (struct display *d);
 void StartServerSuccess (void);
 void StartServerFailed (void);
 void StartServerTimeout (void);
-struct display *startingServer;
+extern struct display *startingServer;
+extern time_t serverTimeout;
 
 void WaitForServer (struct display *d);
 void ResetServer (struct display *d);

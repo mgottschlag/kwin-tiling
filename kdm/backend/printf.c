@@ -585,14 +585,14 @@ STATIC void
 LogOutOfMem (void)
 {
     static Time_t last;
-    Time_t now;
+    time_t tnow;
 
-    time (&now);
-    if (last + 100 > now) {	/* don't log bursts */
-	last = now;
+    time (&tnow);
+    if (last + 100 > tnow) {	/* don't log bursts */
+	last = tnow;
 	return;
     }
-    last = now;
+    last = tnow;
 #ifdef USE_SYSLOG
     if (!(debugLevel & DEBUG_NOSYSLOG))
 	syslog (LOG_CRIT, OOMSTR);

@@ -173,9 +173,7 @@ IndirectChoice (
     CARD16	connectionType)
 {
     ChoicePtr	c, next, prev;
-    Time_t	now;
 
-    now = time ((Time_t*)0);
     prev = 0;
     for (c = choices; c; c = next)
     {
@@ -983,7 +981,7 @@ DoChoose ()
 {
     HostName **hp, *h;
     char *host, **hostp;
-    struct timeval *to, now, nextPing;
+    struct timeval *to, tnow, nextPing;
     int pingTry, n, cmd;
     FD_TYPE rfds;
     static int xdmcpInited;
@@ -1022,16 +1020,16 @@ DoChoose ()
     for (;;) {
 	to = 0;
 	if (pingTry <= PING_TRIES) {
-	    gettimeofday (&now, 0);
-	    if (nextPing.tv_sec < now.tv_sec ||
-		(nextPing.tv_sec == now.tv_sec &&
-		 nextPing.tv_usec < now.tv_usec)) {
+	    gettimeofday (&tnow, 0);
+	    if (nextPing.tv_sec < tnow.tv_sec ||
+		(nextPing.tv_sec == tnow.tv_sec &&
+		 nextPing.tv_usec < tnow.tv_usec)) {
 		if (pingTry < PING_TRIES) {
 		  pingen:
 		    pingTry++;
 		    doPingHosts();
-		    gettimeofday (&now, 0);
-		    nextPing = now;
+		    gettimeofday (&tnow, 0);
+		    nextPing = tnow;
 		    nextPing.tv_sec++;
 		} else {
 		    for (hp = &hostNamedb; *hp; )
@@ -1046,12 +1044,12 @@ DoChoose ()
 		    goto noto;
 		}
 	    }
-	    to = &now;
-	    now.tv_sec = nextPing.tv_sec - now.tv_sec;
-	    now.tv_usec = nextPing.tv_usec - now.tv_usec;
-	    if (now.tv_usec < 0) {
-		now.tv_usec += 1000000;
-		now.tv_sec--;
+	    to = &tnow;
+	    tnow.tv_sec = nextPing.tv_sec - tnow.tv_sec;
+	    tnow.tv_usec = nextPing.tv_usec - tnow.tv_usec;
+	    if (tnow.tv_usec < 0) {
+		tnow.tv_usec += 1000000;
+		tnow.tv_sec--;
 	    }
 	}
       noto:

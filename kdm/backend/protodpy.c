@@ -78,7 +78,7 @@ FindProtoDisplay (
 }
 
 static void
-TimeoutProtoDisplays (Time_t now)
+TimeoutProtoDisplays (void)
 {
     struct protoDisplay	*pdpy, *next;
 
@@ -100,11 +100,9 @@ NewProtoDisplay (
     CARD32	    sessionID)
 {
     struct protoDisplay	*pdpy;
-    Time_t date;
 
     Debug ("NewProtoDisplay\n");
-    time (&date);
-    TimeoutProtoDisplays (date);
+    TimeoutProtoDisplays ();
     pdpy = (struct protoDisplay *) Malloc (sizeof *pdpy);
     if (!pdpy)
 	return NULL;
@@ -118,7 +116,7 @@ NewProtoDisplay (
     memmove( pdpy->address, address, addrlen);
     pdpy->displayNumber = displayNumber;
     pdpy->connectionType = connectionType;
-    pdpy->date = date;
+    pdpy->date = now;
     if (!XdmcpCopyARRAY8 (connectionAddress, &pdpy->connectionAddress))
     {
 	free ((char *) pdpy->address);

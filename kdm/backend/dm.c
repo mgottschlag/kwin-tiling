@@ -123,6 +123,8 @@ static int StorePid (void);
 
 static int sdAction, Stopping;
 
+time_t now;
+
 char *prog, *progpath;
 
 int
@@ -314,7 +316,6 @@ main (int argc, char **argv)
     (void) Signal (SIGINT, SigHandler);
     (void) Signal (SIGHUP, SigHandler);
     (void) Signal (SIGCHLD, SigHandler);
-    (void) Signal (SIGALRM, SigHandler);
     (void) Signal (SIGUSR1, SigHandler);
 
     /*
@@ -342,10 +343,9 @@ main (int argc, char **argv)
 	    sigemptyset(&mask);
 	    sigaddset(&mask, SIGCHLD);
 	    sigaddset(&mask, SIGHUP);
-	    sigaddset(&mask, SIGALRM);
 	    sigsuspend(&mask);
 #else
-	    sigpause (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
+	    sigpause (sigmask (SIGCHLD) | sigmask (SIGHUP));
 #endif
 	}
     }
@@ -378,13 +378,13 @@ struct utmps {
 #define TIME_RELOG 10
 
 static struct utmps *utmpList;
+static time_t utmpTimeout = TO_INF;
 
 static int
 CheckUtmp (void)
 {
     static time_t modtim;
-    int nck, nextChk;
-    time_t now;
+    time_t nck;
     struct utmps *utp, **utpp;
     struct stat st;
 #ifdef BSD_UTMP
@@ -402,7 +402,6 @@ CheckUtmp (void)
     }
     if (!utmpList)
 	return 1;
-    time(&now);
     if (modtim != st.st_mtime)
     {
 #ifdef BSD_UTMP
@@ -468,14 +467,12 @@ CheckUtmp (void)
 #endif
 	modtim = st.st_mtime;
     }
-    nextChk = 1000;
     for (utpp = &utmpList; (utp = *utpp); )
     {
 	if (utp->state == UtWait)
 	{
-	    time_t remains = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG) 
-			     - now;
-	    if (remains <= 0)
+	    time_t ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
+	    if (ends <= now)
 	    {
 		struct display *d = utp->d;
 		Debug ("console login for %s at %." UT_LINESIZE_S "s timed out\n", 
@@ -486,20 +483,18 @@ CheckUtmp (void)
 		continue;
 	    }
 	    else
-		nck = remains;
+		nck = ends;
 	}
 	else
 #ifdef BSD_UTMP
-	    nck = (TIME_RELOG + 5) / 3;
+	    nck = (TIME_RELOG + 5) / 3 + now;
 #else
-	    nck = TIME_RELOG;
+	    nck = TIME_RELOG + now;
 #endif
-	if (nck < nextChk)
-	    nextChk = nck;
+	if (nck < utmpTimeout)
+	    utmpTimeout = nck;
 	utpp = &(*utpp)->next;
     }
-    if (nextChk < 1000)
-	alarm (nextChk);
     return 1;
 }
 
@@ -1021,11 +1016,14 @@ static void
 MainLoop (void)
 {
     struct display *d;
+    struct timeval tv;
+    time_t to;
     int nready;
     char buf;
     FD_TYPE reads;
 
     Debug ("MainLoop\n");
+    time (&now);
     while (
 #ifdef XDMCP
 	   AnyListenSockets() ||
@@ -1035,11 +1033,30 @@ MainLoop (void)
 	if (!Stopping)
 	    StartDisplays ();
 	reads = WellKnownSocketsMask;
-	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
+	to = TO_INF;
+	if (serverTimeout < to)
+	    to = serverTimeout;
+	if (utmpTimeout < to)
+	    to = utmpTimeout;
+	to -= now;
+	if (to < 0)
+	    to = 0;
+	tv.tv_sec = to;
+	tv.tv_usec = 0;
+	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, &tv);
 	Debug ("select returns %d\n", nready);
+	time (&now);
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 	AddTimerEntropy ();
 #endif
+	if (now >= serverTimeout) {
+	    serverTimeout = TO_INF;
+	    StartServerTimeout ();
+	}
+	if (now >= utmpTimeout) {
+	    utmpTimeout = TO_INF;
+	    CheckUtmp ();
+	}
 	if (nready > 0)
 	{
 	    /*
@@ -1066,12 +1083,6 @@ MainLoop (void)
 		    break;
 		case SIGCHLD:
 		    ReapChildren ();
-		    break;
-		case SIGALRM:
-		    if (startingServer && startingServer->serverStatus != ignore)
-			StartServerTimeout ();
-		    else
-			CheckUtmp ();
 		    break;
 		case SIGUSR1:
 		    if (startingServer && startingServer->serverStatus == starting)
