@@ -2,8 +2,8 @@
 
 klipperpopup.h (part of Klipper - Cut & paste history for KDE)
 
-(C) Esben Mose Hansen <kde@mosehansen.dk>
 (C) by Andrew Stanley-Jones
+(C) Esben Mose Hansen <kde@mosehansen.dk>
 
 Generated with the KDE Application Generator
 
@@ -17,12 +17,14 @@ Licensed under the GNU GPL Version 2
 
 #include <kpopupmenu.h>
 #include <qptrlist.h>
+#include <qstring.h>
 
 class History;
 class KlipperWidget;
 class KHelpMenu;
 class KAction;
 class PopupProxy;
+class KLineEdit;
 
 /**
  * Default view of clipboard history.
@@ -52,8 +54,16 @@ public slots:
     void slotAboutToShow();
 
 private:
-    void rebuild();
+    void rebuild( const QString& filter = QString::null );
+    void buildFromScratch();
     int calcItemsPerMenu();
+
+    void insertSearchFilter();
+    void removeSearchFilter();
+
+protected:
+     virtual void keyPressEvent( QKeyEvent* e );
+
 private:
     bool m_dirty : 1; // true if menu contents needs to be rebuild.
 
@@ -61,6 +71,12 @@ private:
      * Contains the string shown if the menu is empty.
      */
     QString QSempty;
+
+    /**
+     * Contains the string shown if the search string has no
+     * matches and the menu is not empty.
+     */
+    QString QSnomatch;
 
     /**
      * The "document" (clipboard history)
@@ -81,6 +97,21 @@ private:
      * Proxy helper object used to track history items
      */
     PopupProxy* m_popupProxy;
+
+    /**
+     * search filter widget
+     */
+    KLineEdit* m_filterWidget;
+
+    /**
+     * id of search widget, for convenience
+     */
+    int m_filterWidgetId;
+
+    /**
+     * Number of history items currently in menu
+     */
+    int n_history_items;
 
 signals:
     void clearHistory();

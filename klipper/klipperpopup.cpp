@@ -16,6 +16,7 @@
 #include <kmessagebox.h>
 #include <khelpmenu.h>
 #include <kiconloader.h>
+#include <klineedit.h>
 
 #include <klocale.h>
 #include <kaction.h>
@@ -30,15 +31,75 @@
 #include "toplevel.h"
 #include "popupproxy.h"
 
+namespace {
+    static const int TOP_HISTORY_ITEM_INDEX = 2;
+}
+
+// #define DEBUG_EVENTS__
+
+#ifdef DEBUG_EVENTS__
+kdbgstream& operator<<( kdbgstream& stream,  const QKeyEvent& e ) {
+    stream << "(QKeyEvent(text=" << e.text() << ",key=" << e.key() << ( e.isAccepted()?",accepted":",ignored)" ) << ",count=" << e.count();
+    if ( e.state() & Qt::AltButton ) {
+        stream << ",ALT";
+    }
+    if ( e.state() & Qt::ControlButton ) {
+        stream << ",CTRL";
+    }
+    if ( e.state() & Qt::MetaButton ) {
+        stream << ",META";
+    }
+    if ( e.state() & Qt::ShiftButton ) {
+        stream << ",SHIFT";
+    }
+    if ( e.isAutoRepeat() ) {
+        stream << ",AUTOREPEAT";
+    }
+    stream << ")";
+
+    return stream;
+}
+#endif
+
+/**
+ * Exactly the same as KLineEdit, except that ALL key events are swallowed.
+ *
+ * We need this to avoid infinite loop when sending events to the search widget
+ */
+class KLineEditBlackKey : public KLineEdit {
+public:
+    KLineEditBlackKey(const QString& string, QWidget* parent, const char* name )
+        : KLineEdit( string, parent, name )
+        {}
+
+    KLineEditBlackKey( QWidget* parent, const char* name )
+        : KLineEdit( parent, name )
+        {}
+
+    ~KLineEditBlackKey() {
+    }
+protected:
+    virtual void keyPressEvent( QKeyEvent* e ) {
+        KLineEdit::keyPressEvent( e );
+        e->accept();
+
+    }
+
+};
 
 KlipperPopup::KlipperPopup( History* history, QWidget* parent, const char* name )
     : KPopupMenu( parent, name ),
       m_dirty( true ),
-      QSempty( i18n("<empty clipboard>") ),
+      QSempty( i18n( "<empty clipboard>" ) ),
+      QSnomatch( i18n( "<no matches>" ) ),
       m_history( history ),
       helpmenu( new KHelpMenu( this,  KlipperWidget::aboutData(), false ) ),
-      m_popupProxy(new PopupProxy( this, "popup_proxy", calcItemsPerMenu() ) )
+      m_popupProxy( 0 ),
+      m_filterWidget( 0 ),
+      m_filterWidgetId( 10 ),
+      n_history_items( 0 )
 {
+    m_popupProxy = new PopupProxy( this, "popup_proxy", calcItemsPerMenu() );
 
     connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
 }
@@ -69,6 +130,12 @@ int KlipperPopup::calcItemsPerMenu() {
 }
 
 void KlipperPopup::slotAboutToShow() {
+    if ( m_filterWidget ) {
+        if ( !m_filterWidget->text().isEmpty() ) {
+            m_dirty = true;
+            m_filterWidget->clear();
+        }
+    }
     ensureClean();
 
 }
@@ -82,19 +149,18 @@ void KlipperPopup::ensureClean() {
 
 }
 
-void KlipperPopup::rebuild() {
-
-    clear();
+void KlipperPopup::buildFromScratch() {
+    m_filterWidget = new KLineEditBlackKey( this, "Klipper filter widget" );
     insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
-    m_popupProxy->buildParent();
-
-    if ( m_history->empty() ) {
-        insertItem( QSempty );
-    }
+    m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
+    m_filterWidget->setFocusPolicy( QWidget::NoFocus );
+    setItemVisible( m_filterWidgetId,  false );
+    m_filterWidget->hide();
     QString lastGroup;
-    QString group;
+
     // Bit of a hack here. It would be better of KHelpMenu could be an action.
-    // Insert Help-menu at the butttom of the "default" group.
+    //    Insert Help-menu at the butttom of the "default" group.
+    QString group;
     QString defaultGroup( "default" );
     for ( KAction* action = m_actions.first(); action; action = m_actions.next() ) {
         group = action->group();
@@ -111,6 +177,38 @@ void KlipperPopup::rebuild() {
     if ( KGlobalSettings::insertTearOffHandle() ) {
         insertTearOffHandle();
     }
+
+}
+
+void KlipperPopup::rebuild( const QString& filter ) {
+
+    bool from_scratch = ( count() == 0 );
+    if ( from_scratch ) {
+        buildFromScratch();
+    } else {
+        for ( int i=0; i<n_history_items; i++ ) {
+            removeItemAt( TOP_HISTORY_ITEM_INDEX );
+        }
+    }
+
+//    m_filterWidget->setText( filter );
+    QRegExp filterexp( filter );
+    if ( filterexp.isValid() ) {
+        m_filterWidget->setPaletteForegroundColor( paletteForegroundColor() );
+    } else {
+        m_filterWidget->setPaletteForegroundColor( QColor( "red" ) );
+    }
+    n_history_items = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
+
+    if ( n_history_items == 0 ) {
+        if ( m_history->empty() ) {
+            insertItem( QSempty, -1, TOP_HISTORY_ITEM_INDEX  );
+        } else {
+            insertItem( QSnomatch, -1, TOP_HISTORY_ITEM_INDEX );
+        }
+        n_history_items++;
+    }
+
     m_dirty = false;
 
 }
@@ -120,5 +218,84 @@ void KlipperPopup::plugAction( KAction* action ) {
 }
 
 
-#include "klipperpopup.moc"
 
+
+/* virtual */
+void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
+    // If alt-something is pressed, select a shortcut
+    // from the menu. Do this by sending a keyPress
+    // without the alt-modifier to the superobject.
+    if ( e->state() & Qt::AltButton ) {
+        QKeyEvent ke( QEvent::KeyPress,
+                      e->key(),
+                      e->ascii(),
+                      e->state() ^ Qt::AltButton,
+                      e->text(),
+                      e->isAutoRepeat(),
+                      e->count() );
+        KPopupMenu::keyPressEvent( &ke );
+#ifdef DEBUG_EVENTS__
+        kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e "->" << ke << endl;
+#endif
+        if ( ke.isAccepted() ) {
+            e->accept();
+            return;
+        } else {
+            e->ignore();
+        }
+    }
+
+    // Otherwise, send most events to the search
+    // widget, except a few used for navigation:
+    // These go to the superobject.
+    switch( e->key() ) {
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+    case Qt::Key_Right:
+    case Qt::Key_Left:
+    case Qt::Key_Tab:
+    case Qt::Key_Backtab:
+    case Qt::Key_Escape:
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    {
+#ifdef DEBUG_EVENTS__
+        kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e << endl;
+#endif
+        KPopupMenu::keyPressEvent( e );
+        break;
+    }
+    default:
+    {
+#ifdef DEBUG_EVENTS__
+        kdDebug() << "Passing this event down to child (KLineEdit): " << e << endl;
+#endif
+	QString lastString = m_filterWidget->text();
+        QApplication::sendEvent( m_filterWidget, e );
+        if ( m_filterWidget->text().isEmpty() ) {
+            if ( isItemVisible( m_filterWidgetId ) )
+            {
+                setItemVisible( m_filterWidgetId, false );
+                m_filterWidget->hide();
+            }
+        }
+        else if ( !isItemVisible( m_filterWidgetId ) )
+        {
+            setItemVisible( m_filterWidgetId, true );
+            m_filterWidget->show();
+
+        }
+	if ( m_filterWidget->text() != lastString) {
+            slotHistoryChanged();
+            rebuild( m_filterWidget->text() );
+	}
+        break;
+
+    } //default:
+    } //case
+
+}
+
+
+
+#include "klipperpopup.moc"

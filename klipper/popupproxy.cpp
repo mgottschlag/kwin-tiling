@@ -9,6 +9,8 @@ Generated with the KDE Application Generator
 Licensed under the GNU GPL Version 2
 
 ------------------------------------------------------------- */
+#include <qregexp.h>
+
 #include <kstringhandler.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -30,7 +32,11 @@ PopupProxy::PopupProxy( KlipperPopup* parent, const char* name, int itemsPerMenu
 }
 
 void PopupProxy::slotHistoryChanged() {
-    // Delete more menus
+    deleteMoreMenus();
+
+}
+
+void PopupProxy::deleteMoreMenus() {
     const KPopupMenu* myParent = parent();
     if ( myParent != proxy_for_menu ) {
         const KPopupMenu* delme = proxy_for_menu;;
@@ -41,15 +47,19 @@ void PopupProxy::slotHistoryChanged() {
         }
         delete delme;
     }
-
 }
 
-void PopupProxy::buildParent() {
+int PopupProxy::buildParent( int index, const QRegExp& filter ) {
+    deleteMoreMenus();
     // Start from top of  history (again)
     spillPointer = parent()->history()->youngest();
     nextItemNumber = 0;
+    if ( filter.isValid() ) {
+        m_filter = filter;
+    }
 
-    insertFromSpill();
+    return insertFromSpill( index );
+
 }
 
 KlipperPopup* PopupProxy::parent() {
@@ -60,25 +70,47 @@ void PopupProxy::slotAboutToShow() {
     insertFromSpill();
 }
 
-void PopupProxy::insertFromSpill() {
-    const HistoryItem* item = spillPointer.current();
+int PopupProxy::insertFromSpill( int index ) {
+
+    // This menu is going to be filled, so we don't need the aboutToShow()
+    // signal anymore
     disconnect( proxy_for_menu, 0, this, 0 );
-    int lastNumber = nextItemNumber + m_itemsPerMenu;
+
+    // Insert history items into the current proxy_for_menu,
+    // discarding any that doesn't match the current filter.
+    // stop when the total number of items equal m_itemsPerMenu;
+    int count = 0;
+    const HistoryItem* item = spillPointer.current();
+    int maxItems = m_itemsPerMenu - proxy_for_menu->count();
     for ( History* history = parent()->history();
-          nextItemNumber < lastNumber && item;
+          count < maxItems && item;
           nextItemNumber++, item = ++spillPointer )
     {
-        int id = proxy_for_menu->insertItem( KStringHandler::cEmSqueeze(item->text().simplifyWhiteSpace(), proxy_for_menu->fontMetrics(), 25).replace( "&", "&&" ));
+        if ( m_filter.search( item->text() ) == -1) {
+            continue;
+        }
+        count++;
+        int id = proxy_for_menu->insertItem( KStringHandler::cEmSqueeze(item->text().simplifyWhiteSpace(),
+                                                                        proxy_for_menu->fontMetrics(),
+                                                                        25).replace( "&", "&&" ),
+                                             -1,
+                                             index++);
         proxy_for_menu->connectItem(  id,
                                       history,
                                       SLOT( slotMoveToTop( int ) ) );
         proxy_for_menu->setItemParameter(  id,  nextItemNumber );
     }
+
+    // If there is more items in the history, insert a new "More..." menu and
+    // make *this a proxy for that menu ('s content).
     if ( spillPointer.current() ) {
         KPopupMenu* moreMenu = new KPopupMenu( proxy_for_menu, "a more menu" );
-        proxy_for_menu->insertItem( i18n( "&More" ),  moreMenu );
+        proxy_for_menu->insertItem( i18n( "&More" ),  moreMenu, -1, index );
         connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
         proxy_for_menu = moreMenu;
     }
+
+    // Return the number of items inserted.
+    return count;
 
 }

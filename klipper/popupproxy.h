@@ -16,6 +16,8 @@ Licensed under the GNU GPL Version 2
 
 #include <qptrlist.h>
 #include <qobject.h>
+#include <qstring.h>
+#include <qregexp.h>
 
 #include <kpopupmenu.h>
 #include <history.h>
@@ -41,9 +43,13 @@ public:
     KlipperPopup* parent();
 
     /**
-     * Called when rebuilding the menu...
+     * Called when rebuilding the menu
+     * Deletes any More menus.. and start (re)inserting into the toplevel menu.
+     * @param index Items are inserted at index.
+     * @param filter If non-empty, only insert items that match filter as a regex
+     * @return number of items inserted.
      */
-    void buildParent();
+    int buildParent( int index, const QRegExp& filter = QRegExp() );
 
 public slots:
     void slotAboutToShow();
@@ -52,12 +58,20 @@ private:
     /**
      * Insert up to m_itemsPerMenu items from spill and a new
      * more-menu if neccessary.
+     * @param index Items are inserted at index
+     * @return number of items inserted.
      */
-    void insertFromSpill();
+    int insertFromSpill( int index = 0 );
+
+    /**
+     * Delete all "More..." menus current created.
+     */
+    void deleteMoreMenus();
 
 private:
     KPopupMenu* proxy_for_menu;
     History::iterator spillPointer;
+    QRegExp m_filter;
     int m_itemsPerMenu;
     int nextItemNumber;
 
