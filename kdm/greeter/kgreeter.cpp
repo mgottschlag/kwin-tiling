@@ -40,10 +40,6 @@
 #include <unistd.h>
 #include <signal.h>
 
-#if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
-# include <grp.h>
-#endif
-
 #include <qfile.h>
 #include <qbitmap.h>
 #include <qtextstream.h>
@@ -66,13 +62,7 @@
 #include "dm.h"
 #include "dm_error.h"
 #include "greet.h"
-
-#ifdef _AIX
-# define __FULL_PROTO 1
-# undef HAVE_SETEUID
-# undef HAVE_INITGROUPS
-# include <sys/id.h>
-#endif
+#include "miscfunc.h"
 
 #ifdef GREET_LIB
 extern "C" {
@@ -143,13 +133,7 @@ Display			**dpy;
 struct verify_info	*verify;
 struct greet_info	*greet;
 
-#define F_LEN 50
-char	name[F_LEN], password[F_LEN], sessarg[F_LEN];
-
-int AccNoPass (struct display *, const char *);
-int MyVerify (struct display *, struct greet_info *, struct verify_info *, time_t *expire, char **nologin);
-int AutoLogon (struct display *, struct greet_info *, struct verify_info *);
-int s_copy (char *, const char *, int, int);
+char name[F_LEN], password[F_LEN], sessarg[F_LEN];
 
 void
 KLoginLineEdit::focusOutEvent( QFocusEvent *e)
@@ -201,12 +185,6 @@ TempUngrab_Run(void (*func)(void *), void *ptr)
 	SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
     }
 }
-
-#ifndef HAVE_SETEUID
-# undef seteuid		/* from config.h */
-# define seteuid(euid) setreuid(-1, euid);
-# define setegid(egid) setregid(-1, egid);
-#endif // HAVE_SETEUID
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
 
@@ -491,81 +469,7 @@ KGreeter::shutdown_button_clicked()
     SetTimer();
 }
 
-// Switch uid/gids to user described by pwd. Return old gid set
-// or 0 if an error occurs
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
-
-static inline gid_t* switch_to_user( int *gidset_size, 
-				     const struct passwd *pwd)
-{
-    *gidset_size = getgroups(0, 0);
-    gid_t *gidset = new gid_t[*gidset_size];
-    if( getgroups( *gidset_size, gidset) == -1 ||
-	initgroups(pwd->pw_name, pwd->pw_gid) != 0 ||
-	setegid(pwd->pw_gid) != 0 ||
-        seteuid(pwd->pw_uid) != 0
-    ) {
-	// Error, back out
-	seteuid(0);
-        setegid(0);
-	setgroups( *gidset_size, gidset);
-	delete[] gidset;
-	return 0;
-    }
-    return gidset;
-}
-
-// Switch uid back to root, and gids to gidset
-static inline void switch_to_root( int gidset_size, gid_t *gidset)
-{
-    seteuid(0);
-    setegid(0);
-    setgroups( gidset_size, gidset);
-    delete[] gidset;
-}
-
-int
-rdwr_wm (char *wm, int wml, const char *usr, int rd)
-{
-    int rv, gidset_size;
-    gid_t *gidset;
-    char fname[256];
-    FILE *file;
-
-    // read passwd
-    struct passwd *pwd = getpwnam( usr );
-    endpwent();
-    if (!pwd)
-	return 0;
-
-    // Go user
-    if( !(gidset = switch_to_user( &gidset_size, pwd)))
-	return 0;
-
-    // open file as user which is loging in
-    sprintf(fname, "%s/" WMRC, pwd->pw_dir);
-    rv = 0;
-    if (rd) {
-	if ( (file = fopen(fname, "r")) != NULL ) {
-	    fgets (wm, wml, file);
-	    rv = strlen (wm);
-	    if (rv && wm[rv - 1] == '\n')
-		wm[--rv] = '\0';
-	    fclose (file);
-	}
-    } else {
-	if ( (file = fopen(fname, "w")) != NULL ) {
-	    fputs (wm, file);
-	    rv = 1;
-	    fclose (file);
-	}
-    }
-
-    // Go root
-    switch_to_root( gidset_size, gidset);
-
-    return rv;
-}
 
 void
 KGreeter::save_wm()
@@ -590,12 +494,6 @@ KGreeter::load_wm()
 }
 
 #else
-
-int
-rdwr_wm (char *wm, int wml, const char *usr, int rd)
-{
-    return 0;
-}
 
 void
 KGreeter::load_wm()
@@ -740,36 +638,6 @@ KGreeter::ReturnPressed()
     }
 }
 
-static void
-creat_greet(void * /* ptr */)
-{
-    kgreeter = new KGreeter;		   
-    kgreeter->updateGeometry();
-    kapp->processEvents(0);
-    kgreeter->resize(kgreeter->sizeHint());     
-    int dw = QApplication::desktop()->width();
-    int dh = QApplication::desktop()->height();
-    int gw = kgreeter->width();
-    int gh = kgreeter->height();
-    int x, y;
-    if (kdmcfg->_greeterPosX >= 0) {
-	x = kdmcfg->_greeterPosX;
-	y = kdmcfg->_greeterPosY;
-    } else {
-	x = dw/2;
-	y = dh/2;
-    }
-    x -= gw/2;
-    y -= gh/2;
-    if (x + gw > dw)
-	x = dw - gw;
-    if (y + gh > dh)
-	y = dh - gh;
-    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );  
-    kgreeter->show();
-    kgreeter->setActiveWindow();
-    QApplication::restoreOverrideCursor();
-}
 
 static int
 IOErrorHandler (Display*)
@@ -806,19 +674,6 @@ MyVerify (
         AccNoPass (d, greet->name))
 	greet->password = 0;
     return Verify (d, greet, verify, expire, nologin);
-}
-
-int s_copy (char *dst, const char *src, int idx, int spc)
-{
-    int dp = 0;
-
-    while (src[idx] == ' ')
-	idx++;
-    for (; src[idx] >= ' ' && (spc || src[idx] != ' '); idx++)
-	if (dp < F_LEN - 1)
-	    dst[dp++] = src[idx];
-    dst[dp] = '\0';
-    return idx;
 }
 
 int
@@ -877,6 +732,37 @@ AutoLogon (
     return MyVerify (d, greet, verify, 0, 0) >= V_OK;
 }
 
+
+static void
+creat_greet(void * /* ptr */)
+{
+    kgreeter = new KGreeter;		   
+    kgreeter->updateGeometry();
+    kapp->processEvents(0);
+    kgreeter->resize(kgreeter->sizeHint());     
+    int dw = QApplication::desktop()->width();
+    int dh = QApplication::desktop()->height();
+    int gw = kgreeter->width();
+    int gh = kgreeter->height();
+    int x, y;
+    if (kdmcfg->_greeterPosX >= 0) {
+	x = kdmcfg->_greeterPosX;
+	y = kdmcfg->_greeterPosY;
+    } else {
+	x = dw/2;
+	y = dh/2;
+    }
+    x -= gw/2;
+    y -= gh/2;
+    if (x + gw > dw)
+	x = dw - gw;
+    if (y + gh > dh)
+	y = dh - gh;
+    kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );  
+    kgreeter->show();
+    kgreeter->setActiveWindow();
+    QApplication::restoreOverrideCursor();
+}
 
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    This function is a BIG mess. It needs A LOT of cleanup.

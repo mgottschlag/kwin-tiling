@@ -31,8 +31,6 @@
 
 #include <qglobal.h>
 
-#define WMRC ".wmrc"
-
 #include <qlineedit.h>
 #include <qframe.h>
 #undef index
@@ -111,6 +109,9 @@ private:
 
 };
 
+int AccNoPass (struct display *, const char *);
+int MyVerify (struct display *, struct greet_info *, struct verify_info *, time_t *expire, char **nologin);
+int AutoLogon (struct display *, struct greet_info *, struct verify_info *);
 
 
 #endif /* KGREETER_H */

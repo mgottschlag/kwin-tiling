@@ -18,6 +18,7 @@ libKdmGreet_a_SOURCES = kdmconfig.cpp \
     kdmclock.cpp \
     kgreeter.cpp \
     liloinfo.cpp \
+    miscfunc.c \
     verify.c
 
 # dynamic
@@ -37,7 +38,7 @@ METASOURCES = kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc kfdialog.mo
 messages:
 	$(XGETTEXT) $(libKdmGreet_a_SOURCES) -o $(podir)/kdmgreet.pot
 
-noinst_HEADERS = kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h
+noinst_HEADERS = kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h miscfunc.h
 
 install-data-local:
 	@if test ! -f $(DESTDIR)$(kde_confdir)/kdmrc; then \
