@@ -455,10 +455,7 @@ void KGeneral::slotMacStyle()
 
 KGeneral::~KGeneral()
 {
-	delete iconStyle; // DF
 }
-
-
 
 void KGeneral::readSettings( int )
 {		
