@@ -132,12 +132,20 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   */
   KURL url = data.uri();
   QString cmd = url.url();
+  bool isMalformed = url.isMalformed();
+
+  // Extract path if URL is local
+  // (this removes "file:" but also decodes back %20 etc.)
+  if( url.isLocalFile() && !isMalformed )
+    cmd = url.path();
+
+  // Note: do NOT use "url" below this point
 
   // Environment variable expansion.
-  if ( expandEnvVar( cmd ) )
-    url = cmd;
+  (void)expandEnvVar( cmd );
 
-  //kdDebug() << "KShortURIFilter::filterURI url=" << url.url() << endl;
+  bool isLocalFullPath = cmd[0] == '/';
+  //kdDebug() << "KShortURIFilter::filterURI cmd=" << cmd << endl;
 
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
@@ -173,12 +181,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     return true;
   }
 
-  // LOCAL URL TEST CASE BEGINS...
-  // Remove any leading "file:" if present
-  // from the supplied command.
-  if( cmd.startsWith( QFL1( "file:") ) )
-    url = cmd.remove(0,5);
-
   // Expanding shortcut to HOME URL...
   if( cmd[0] == '~' )
   {
@@ -188,7 +190,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( slashPos == 1 )   // ~/
     {
       cmd.replace ( 0, 1, QDir::homeDirPath() );
-      url = cmd;
+      //url = cmd;
     }
     else // ~username/
     {
@@ -197,7 +199,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       if( dir && strlen(dir->pw_dir) )
       {
         cmd.replace (0, slashPos, QString::fromLocal8Bit(dir->pw_dir));
-        url = cmd;          // update the URL...
+        //url = cmd;          // update the URL...
       }
       else
       {
@@ -210,18 +212,18 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         return true;
       }
     }
+    isLocalFullPath = cmd[0] == '/';
   }
 
   // Checking for local resource match...
   // Determine if "uri" is an absolute path to a local resource  OR
   // A local resource with a supplied absolute path in KURIFilterData
   QString abs_path = data.absolutePath();
-  //kdDebug() << "abs_path=" << abs_path << " malformed=" << url.isMalformed() << endl;
 
-  bool canBeAbsolute = (url.isMalformed() && !abs_path.isEmpty());
+  bool canBeAbsolute = (isMalformed && !abs_path.isEmpty());
   bool canBeLocalAbsolute = (canBeAbsolute && abs_path[0] =='/');
+  //kdDebug() << "abs_path=" << abs_path << " malformed=" << isMalformed << " canBeLocalAbsolute=" << canBeLocalAbsolute << endl;
   bool exists = false;
-  bool fileNotFound = false; // not necessarily !exists ;-)
   struct stat buff;
   if ( canBeLocalAbsolute )
   {
@@ -237,14 +239,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( stat( abs.local8Bit().data() , &buff ) == 0 ) {
         cmd = abs; // yes -> store as the new cmd
         exists = true;
+        isLocalFullPath = true;
     }
   }
-  else if( cmd[0] == '/' )
+  else if( isLocalFullPath )
   {
     exists = ( stat( cmd.local8Bit().data() , &buff ) == 0 );
   }
 
-  //kdDebug() << "cmd=" << cmd << " exists=" << exists << endl;
+  //kdDebug() << "cmd=" << cmd << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
   if( exists )
   {
     // Can be abs path to file or directory, or to executable with args
@@ -267,36 +270,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     kdDebug() << "File found, but not a regular file nor dir... socket?" << endl;
   }
 
-  if ( cmd[0] == '/' )
-  {
-    // In case of a command, KURL turned every space into %20 etc. (e.g. for "/full/path --arg value")
-    if ( cmd.find(QFL1("%20")) != -1 )
-    {
-      // Decode this mess.
-      // IMHO KURIFilterData shouldn't be so much based on KURL... (David)
-      QString execCommand = KURL::decode_string( cmd );
-      //kdDebug() << k_funcinfo << "initially execCommand=" << execCommand << endl;
-
-      QString execBinary = removeArgs( execCommand );
-      //kdDebug() << k_funcinfo << "after removeArgs execBinary=" << execBinary << endl;
-
-      if( stat( execBinary.local8Bit().data() , &buff ) == 0 && !S_ISDIR( buff.st_mode )
-          && access (execBinary.local8Bit().data(), X_OK) == 0 )
-      {
-        //kdDebug() << "Abs path to EXECUTABLE with args" << endl;
-        setFilteredURI( data, execBinary );
-        setURIType( data, KURIFilterData::EXECUTABLE );
-        setArguments(data, execCommand.right(execCommand.length() - execBinary.length()));
-        return true;
-      }
-    }
-    else // Looked like abs file/path/command, but nothing worked -> error
-    {
-      kdDebug() << "stat failed" << endl;
-      fileNotFound = true;
-    }
-  }
-
   // Let us deal with possible relative URLs to see
   // if it is executable under the user's $PATH variable.
   // We try hard to avoid parsing any possible command
@@ -305,7 +278,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   //kdDebug() << k_funcinfo << "findExe with " << exe << endl;
   if( !KStandardDirs::findExe( exe ).isNull() )
   {
-    //kdDebug() << "EXECUTABLE" << endl;
+    //kdDebug() << "EXECUTABLE  exe=" << exe << endl;
     setFilteredURI( data, exe );
     // check if we have command line arguments
     if( exe != cmd )
@@ -317,18 +290,20 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // Process URLs of known and supported protocols so we don't have
   // to resort to the pattern matching scheme below which can possibly
   // be slow things down...
-  QStringList protocols = KProtocolInfo::protocols();
-  for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
+  if ( !isMalformed && !isLocalFullPath )
   {
-    if( (cmd.left((*it).length()).lower() == *it) &&
-        !url.isMalformed() && !url.isLocalFile() )
+    QStringList protocols = KProtocolInfo::protocols();
+    for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
     {
-      setFilteredURI( data, cmd );
-      if ( *it == QFL1("man") || *it == QFL1("help") )
-        setURIType( data, KURIFilterData::HELP );
-      else
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-      return true;
+      if( (cmd.left((*it).length()).lower() == *it) )
+      {
+        setFilteredURI( data, cmd );
+        if ( *it == QFL1("man") || *it == QFL1("help") )
+          setURIType( data, KURIFilterData::HELP );
+        else
+          setURIType( data, KURIFilterData::NET_PROTOCOL );
+        return true;
+      }
     }
   }
 
@@ -372,7 +347,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     // If cmd is NOT a local resource, check if it is a valid "shortURL"
     // candidate and append the default protocol the user supplied. (DA)
-    if ( url.isMalformed() && isValidShortURL(cmd) )
+    if ( isMalformed && isValidShortURL(cmd) )
     {
       //kdDebug() << "valid short url, from malformed url -> using default proto=" << m_strDefaultProtocol << endl;
       cmd.insert( 0, m_strDefaultProtocol );
@@ -382,9 +357,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
   }
 
-  // If we previously determined that the URL
-  // might be a file
-  if( fileNotFound )
+  // If we previously determined that the URL might be a file,
+  // and if it doesn't exist, then error
+  if( isLocalFullPath && !exists )
   {
     //kdDebug() << "fileNotFound -> ERROR" << endl;
     setErrorMsg( data, QString::null );
