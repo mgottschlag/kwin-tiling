@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Whatis query
+ServiceTypes=SearchProvider
+Keys=wi,whatis
+Query= http://whatis.techtarget.com/definitionsSearchResults/1,289878,sid9,00.html?query=\\1
