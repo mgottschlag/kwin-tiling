@@ -110,6 +110,9 @@ private:
 
     void discardSession();
     void storeSesssion();
+    
+    void startProtection();
+    void endProtection();
 
  private:
     QList<KSMListener> listener;

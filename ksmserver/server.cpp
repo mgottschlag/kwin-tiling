@@ -787,7 +787,7 @@ void KSMServer::shutdown()
 	if ( saveSession )
 	    discardSession();
 	state = Shutdown;
-	protection.start( 4000 );
+	startProtection();
 	for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	    c->resetState();
 	    SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
@@ -821,7 +821,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
     } else {
 	cancelShutdown();
     }
-    protection.start( 4000 );
+    startProtection();
 }
 
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
@@ -866,10 +866,10 @@ void KSMServer::handlePendingInteractions()
 	}
     }
     if ( clientInteracting ) {
-	protection.stop();
+	endProtection();
 	SmsInteract( clientInteracting->connection() );
     } else {
-	protection.start( 4000 );
+	startProtection();
     }
 }
 
@@ -889,23 +889,34 @@ void KSMServer::cancelShutdown()
     state = Idle;
 }
 
-/* 
+/*
    Internal protection slot, invoked when clients do not react during
   shutdown.
  */
 void KSMServer::protectionTimeout()
 {
-    protection.stop();
+    endProtection();
     if ( state != Shutdown || clientInteracting )
 	return;
-    
+
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( !c->saveYourselfDone && !c->waitForPhase2 )
 	    c->saveYourselfDone = TRUE;
     }
     completeShutdown();
-    protection.start( 4000 );
+    startProtection();
 }
+
+void KSMServer::startProtection()
+{
+    protection.start( 8000 );
+}
+
+void KSMServer::endProtection()
+{
+    protection.stop();
+}
+
 
 void KSMServer::completeShutdown()
 {
