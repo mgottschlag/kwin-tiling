@@ -18,6 +18,10 @@
 
 #include <config.h>
 
+#if !defined(QT_CLEAN_NAMESPACE)
+#define QT_CLEAN_NAMESPACE
+#endif
+
 #include <qglobal.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
