@@ -142,13 +142,13 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>U&amp;se accessibility stylesheet defined in "Customize"-tab</string>
+                        <string>U&amp;se accessibility stylesheet</string>
                     </property>
                     <property name="accel">
                         <string>Alt+S</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>&lt;b&gt;Use accessibility stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse. Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                        <string>&lt;b&gt;Use accessibility stylesheet&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse. Simply wander over to the Customize... dialog and pick out your desired options.&lt;/p&gt;</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -184,7 +184,7 @@
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Custom&amp;ize</string>
+                                <string>Custom&amp;ize...</string>
                             </property>
                             <property name="accel">
                                 <string>Alt+I</string>
