@@ -75,7 +75,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_volume->setSteps(5,25);
   layout->addWidget(m_volume);
   QWhatsThis::add( m_volume, i18n("Here you can customize the volume of the system bell. For further"
-    " customization of the bell, see the \"Accessability\" control module.") );
+    " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_pitch = new KIntNumInput(m_volume, 800, this);
   m_pitch->setLabel(i18n("Pitch:"));
@@ -84,7 +84,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_pitch->setSteps(40,200);
   layout->addWidget(m_pitch);
   QWhatsThis::add( m_pitch, i18n("Here you can customize the pitch of the system bell. For further"
-    " customization of the bell, see the \"Accessability\" control module.") );
+    " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_duration = new KIntNumInput(m_pitch, 100, this);
   m_duration->setLabel(i18n("Duration:"));
@@ -93,7 +93,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_duration->setSteps(20,100);
   layout->addWidget(m_duration);
   QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
-    " customization of the bell, see the \"Accessability\" control module.") );
+    " customization of the bell, see the \"Accessibility\" control module.") );
 
   QFrame *hLine = new QFrame(this);
   hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
