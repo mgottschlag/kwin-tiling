@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Hotbot
+Name[af]=HOTBOT
 Name[ko]=핫봇
 ServiceTypes=SearchProvider
 Keys=hb,hotbot

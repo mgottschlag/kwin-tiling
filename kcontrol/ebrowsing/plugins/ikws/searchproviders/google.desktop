@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Google
+Name[af]=GOOGLE
 Name[ko]=구글
 ServiceTypes=SearchProvider
 Keys=gg,google

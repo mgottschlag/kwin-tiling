@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=RealNames
+Name[af]=REALNAMES
 Name[eo]=Realnomoj
 Name[zh_TW.Big5]=真實姓名
 ServiceTypes=SearchProvider

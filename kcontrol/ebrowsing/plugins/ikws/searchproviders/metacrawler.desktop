@@ -1,6 +1,8 @@
 [Desktop Entry]
 Type=Service
 Name=MetaCrawler
+Name[af]=METACRAWLER
+Name[ko]=메타 크로울러
 Name[lv]=MetaKravlers
 ServiceTypes=SearchProvider
 Keys=mc,meta,metacrawler

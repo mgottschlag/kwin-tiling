@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Excite
+Name[af]=EXCITE
 Name[eo]=Ekscito
 Name[ko]=익사이트
 ServiceTypes=SearchProvider

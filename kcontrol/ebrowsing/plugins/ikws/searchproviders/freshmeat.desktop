@@ -1,7 +1,8 @@
 [Desktop Entry]
 Type=Service
 Name=Freshmeat
-Name[ko]=날고기(프레쉬미트)
+Name[af]=FRESHMEAT
+Name[ko]=날고기(프레시미트)
 ServiceTypes=SearchProvider
 Keys=fm,freshmeat
 Query=http://freshmeat.net/search/?q=\\1

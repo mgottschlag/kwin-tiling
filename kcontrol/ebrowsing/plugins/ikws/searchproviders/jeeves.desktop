@@ -1,9 +1,11 @@
 [Desktop Entry]
 Type=Service
 Name=Ask Jeeves
+Name[af]=VRA JEEVES
 Name[de]=Frag Jeeves
 Name[eo]=Demandu Jeeves
 Name[is]=Spyrja Jeeves
+Name[ko]=지브에게 묻기
 Name[lv]=Jautāt Džīvam
 ServiceTypes=SearchProvider
 Keys=ask,jeeves

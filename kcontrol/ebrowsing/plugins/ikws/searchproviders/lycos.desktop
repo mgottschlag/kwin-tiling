@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Lycos
+Name[af]=LYCOS
 Name[ko]=라이코스
 ServiceTypes=SearchProvider
 Keys=lycos,ly
