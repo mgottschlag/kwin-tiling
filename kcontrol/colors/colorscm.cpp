@@ -380,6 +380,17 @@ void KColorScheme::save()
     // Notify all KDE applications
     KIPC::sendMessageAll(KIPC::PaletteChanged);
 
+    // Update the "Current Scheme"
+    int current = findSchemeByName(sCurrentScheme);
+    sList->setCurrentItem(0);
+    readScheme(0);
+    QPixmap preview = mkColorPreview(cs);
+    sList->changeItem(preview, sList->text(0), 0);
+    sList->setCurrentItem(current);
+    readScheme(current);
+    preview = mkColorPreview(cs);
+    sList->changeItem(preview, sList->text(current), current);
+
     m_bChanged = false;
     emit changed(false);
 }
