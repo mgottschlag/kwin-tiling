@@ -39,6 +39,7 @@
 
 #include <kconfig.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 #include "bell.h"
 
@@ -216,6 +217,7 @@ extern "C"
 {
   KCModule *create_bell(QWidget *parent, const char *name) 
   { 
+    KGlobal::locale()->insertCatalogue("kcmbell");
     return new KBellModule(parent, name);
   }
 
