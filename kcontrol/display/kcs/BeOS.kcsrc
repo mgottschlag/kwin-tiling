@@ -19,3 +19,4 @@ inactiveForeground=0,0,0
 activeForeground=0,0,0
 windowForeground=0,0,0
 windowBackground=255,255,255
+alternateBackground=255,252,235
