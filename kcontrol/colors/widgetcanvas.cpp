@@ -42,7 +42,7 @@ static QPixmap* dis_menu_pix = 0;
 
 
 WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
-	: QWidget( parent, name  )
+	: QWidget( parent, name  ), shadeSortColumn( true )
 {
     setMouseTracking( true );
     setBackgroundMode( NoBackground );

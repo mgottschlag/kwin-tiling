@@ -238,6 +238,13 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " box where you can choose a color for the \"widget\" selected"
        " in the above list.") );
 
+    cbShadeList = new QCheckBox(i18n("Shade sorted column in lists"), this);
+    stackLayout->addWidget(cbShadeList);
+    connect(cbShadeList, SIGNAL(toggled(bool)), this, SLOT(changed()));
+
+    QWhatsThis::add(cbShadeList,
+       i18n("Check this box to show the sorted column in a list with a shaded background"));
+
     group = new QGroupBox(  i18n("Con&trast"), this );
     stackLayout->addWidget(group);
 
@@ -293,6 +300,8 @@ void KColorScheme::load()
     sList->setCurrentItem(findSchemeByName(sCurrentScheme));
     readScheme(0);
 
+    cbShadeList->setChecked(cs->shadeSortColumn);
+
     cs->drawSampleWidgets();
     slotWidgetColor(wcCombo->currentItem());
     sb->blockSignals(true);
@@ -323,6 +332,8 @@ void KColorScheme::save()
     cfg->writeEntry("linkColor", cs->link, true, true);
     cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
     cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
+
+    cfg->writeEntry("shadeSortColumn", cbShadeList->isChecked());
 
     cfg->setGroup( "WM" );
     cfg->writeEntry("activeForeground", cs->aTxt, true, true);
@@ -399,6 +410,8 @@ void KColorScheme::defaults()
 {
     readScheme(1);
     sList->setCurrentItem(1);
+
+    cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
     slotWidgetColor(wcCombo->currentItem());
@@ -754,6 +767,7 @@ void KColorScheme::readScheme( int index )
       cs->alternateBackground = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
 
       cs->contrast    = 7;
+      cs->shadeSortColumn = KDE_DEFAULT_SHADE_SORT_COLUMN;
 
       return;
     }
@@ -773,6 +787,8 @@ void KColorScheme::readScheme( int index )
       if (i >= 0)
         sCurrentScheme = sCurrentScheme.mid(i+1);
     }
+
+    cs->shadeSortColumn = config->readBoolEntry( "shadeSortColumn", KDE_DEFAULT_SHADE_SORT_COLUMN );
 
     // note: defaults should be the same as the KDE default
     cs->txt = config->readColorEntry( "foreground", &black );
@@ -896,6 +912,8 @@ void KColorScheme::slotPreviewScheme(int indx)
     readScheme(indx);
 
     // Set various appropriate for the scheme
+
+    cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
     sb->blockSignals(true);

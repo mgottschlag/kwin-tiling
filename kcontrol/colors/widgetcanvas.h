@@ -95,6 +95,7 @@ public:
     QColor alternateBackground;
 
     int contrast;
+    bool shadeSortColumn;
 
 signals:
     void widgetSelected( int );
