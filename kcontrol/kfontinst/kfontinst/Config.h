@@ -131,6 +131,7 @@ class CConfig : public KConfig
     static const QString constTTSubDirs[];
     static const QString constT1SubDirs[];
     static const QString constXConfigFiles[];
+    static const QString constXfsConfigFiles[];
 #ifdef HAVE_XFT
     static const QString constXftConfigFiles[];
 #endif

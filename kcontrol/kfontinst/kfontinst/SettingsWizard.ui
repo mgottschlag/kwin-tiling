@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>641</width>
+            <width>637</width>
             <height>436</height>
         </rect>
     </property>
@@ -203,7 +203,7 @@
                 <class>CDirSettingsWidget</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>MyCustomWidget1</cstring>
+                    <cstring>itsDirsAndFilesWidget</cstring>
                 </property>
                 <property stdset="1">
                     <name>sizePolicy</name>

@@ -37,6 +37,11 @@ class CSettingsWizard : public CSettingsWizardData
 
     CSettingsWizard(QWidget *widget, const char *name=NULL);
     virtual ~CSettingsWizard() {}
+
+    private:
+
+    void checkAndModifyFontmapFile();
+    void checkAndModifyXConfigFile();
 };
 
 #endif

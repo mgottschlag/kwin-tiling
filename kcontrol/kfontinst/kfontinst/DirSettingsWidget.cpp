@@ -80,10 +80,7 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
                                               "Fontmap*", this, "Select Ghostscript \"Fontmap\"");
  
     if(QString::null!=file && file!=itsGhostscriptFileText->text())
-    {
-        itsGhostscriptFileText->setText(file);
-        CKfiGlobal::cfg().setGhostscriptFile(file);
-    }
+        setGhostscriptFile(file);
 }
 
 void CDirSettingsWidget::xDirButtonPressed()
@@ -106,9 +103,7 @@ void CDirSettingsWidget::xConfigButtonPressed()
  
     if(QString::null!=file && file!=itsXConfigFileText->text())
     {
-        itsXConfigFileText->setText(file);
-        CKfiGlobal::cfg().setXConfigFile(file);
-        CKfiGlobal::xcfg().readConfig();
+        setXConfigFile(file);
         if(!CKfiGlobal::xcfg().ok())
             KMessageBox::information(this, i18n("File format not recognised!\n"
                                                 "Advanced mode folder operations will not be available."));
@@ -195,4 +190,18 @@ void CDirSettingsWidget::ghostscriptChecked(bool on)
 {
     CKfiGlobal::cfg().setDoGhostscript(on);
 }
+
+void CDirSettingsWidget::setGhostscriptFile(const QString &f)
+{
+    itsGhostscriptFileText->setText(f);
+    CKfiGlobal::cfg().setGhostscriptFile(f);
+}
+ 
+void CDirSettingsWidget::setXConfigFile(const QString &f)
+{
+    itsXConfigFileText->setText(f);
+    CKfiGlobal::cfg().setXConfigFile(f);
+    CKfiGlobal::xcfg().readConfig();
+}
+
 #include "DirSettingsWidget.moc"

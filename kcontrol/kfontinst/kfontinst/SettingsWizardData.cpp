@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Wed Jul 18 23:07:27 2001
+** Created: Fri Aug 3 18:49:35 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 {
     if ( !name )
 	setName( "CSettingsWizardData" );
-    resize( 641, 436 ); 
+    resize( 637, 436 ); 
     setCaption( i18n( "Settings Wizard" ) );
 
     itsIntroPage = new QWidget( this, "itsIntroPage" );
@@ -69,10 +69,10 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsDirsAndFilesPageLayout->setSpacing( 6 );
     itsDirsAndFilesPageLayout->setMargin( 11 );
 
-    MyCustomWidget1 = new CDirSettingsWidget( itsDirsAndFilesPage, "MyCustomWidget1" );
-    MyCustomWidget1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, MyCustomWidget1->sizePolicy().hasHeightForWidth() ) );
+    itsDirsAndFilesWidget = new CDirSettingsWidget( itsDirsAndFilesPage, "itsDirsAndFilesWidget" );
+    itsDirsAndFilesWidget->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, itsDirsAndFilesWidget->sizePolicy().hasHeightForWidth() ) );
 
-    itsDirsAndFilesPageLayout->addWidget( MyCustomWidget1, 0, 1 );
+    itsDirsAndFilesPageLayout->addWidget( itsDirsAndFilesWidget, 0, 1 );
 
     TextLabel2 = new QLabel( itsDirsAndFilesPage, "TextLabel2" );
     TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)3, TextLabel2->sizePolicy().hasHeightForWidth() ) );

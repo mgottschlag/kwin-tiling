@@ -49,6 +49,8 @@ class CDirSettingsWidget : public CDirSettingsWidgetData
     void ttSubDir(const QString &str);
     void ghostscriptChecked(bool on);
     void xftChecked(bool on);
+    void setGhostscriptFile(const QString &f);
+    void setXConfigFile(const QString &f);
 
     signals:
 

@@ -239,6 +239,11 @@ const QString CConfig::constXConfigFiles[]=
     "/etc/X11/XF86Config-4",
     "/etc/XF86Config",
     "/usr/X11R6/lib/X11/XF86Config",
+    QString::null
+};
+const QString CConfig::constXfsConfigFiles[]=
+{
+    "/etc/X11/fs/config",
     "/usr/openwin/lib/X11/fonts/fontserver.cfg",
     QString::null
 };
@@ -384,7 +389,8 @@ CConfig::CConfig()
 
     if(CMisc::root())
         if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXConfigFiles)))
-            itsXConfigFile=constNotFound;
+            if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)))
+                itsXConfigFile=constNotFound;
 
 #ifdef HAVE_XFT
     if(CMisc::root())
