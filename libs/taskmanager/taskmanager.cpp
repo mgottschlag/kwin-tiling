@@ -703,7 +703,7 @@ void Task::toggleShaded()
 
 void Task::publishIconGeometry(QRect rect)
 {
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconGeometry);
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), 0 );
     NETRect r;
     r.pos.x = rect.x();
     r.pos.y = rect.y();
