@@ -256,7 +256,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
     QWhatsThis::add(cbExportColors, i18n("Check this box to apply the"
-       " current color scheme to GTK applications."));
+       " current color scheme to non-KDE applications."));
 
     load();
 }
