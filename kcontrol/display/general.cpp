@@ -558,6 +558,7 @@ void KGeneral::showSettings()
     tbText->setChecked( tbUseText == "TextOnly" );
     tbUnder->setChecked( tbUseText == "IconTextBottom" );
 
+    effPlainMenu->setChecked(!effectAnimateMenu && !effectFadeMenu);
     effAnimateMenu->setChecked( effectAnimateMenu );
     effFadeMenu->setChecked( effectFadeMenu );
     effAnimateCombo->setChecked( effectAnimateCombo );
