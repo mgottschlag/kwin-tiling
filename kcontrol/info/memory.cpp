@@ -28,6 +28,7 @@
 #include <qlayout.h>
 #include <qpainter.h>
 #include <qdrawutil.h>
+#include <qtooltip.h>
 
 #include <kglobal.h>
 #include <kdialog.h>
@@ -80,9 +81,9 @@ static QString formatted_unit(t_memsize value)
 {
     if (value > (1024 * 1024))
         if (value > (1024 * 1024 * 1024))
-            return i18n("%1 GB").arg(KGlobal::locale()->formatNumber(value / (1024.0 * 1024.0 * 1024.0), 2));
+            return i18n("%1 GB").arg(KGlobal::locale()->formatNumber(value / (1024 * 1024 * 1024.0), 2));
         else
-            return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(value / (1024.0 * 1024.0), 2));
+            return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(value / (1024 * 1024.0), 2));
     else
         return i18n("%1 KB").arg(KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
@@ -177,6 +178,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
     top->addWidget(line);
 
     /* now the Graphics */
+    QString hint;
     hbox = new QHBoxLayout(top, 1);
     for (i = MEM_RAM_AND_HDD; i < MEM_LAST; i++) {
 	hbox->addSpacing(SPACING);
@@ -185,19 +187,41 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	switch (i) {
 	case MEM_RAM_AND_HDD:
 	    title = i18n("Total Memory");
+	    hint = i18n("This graph gives you an overview of the "
+			"<b>total sum of physical and virtual memory</b> "
+			"in your system.");
 	    break;
 	case MEM_RAM:
 	    title = i18n("Physical Memory");
+	    hint = i18n("This graph gives you an overview of "
+			"the <b>usage of physical memory</b> in your system."
+			"<p>Most operating systems (including Linux) "
+			"will use as much as possible of the "
+			"available physical memory as disk cache "
+			"to speed up the system performance. "
+			"<p>This means, that if you have a small amount "
+			"of <b>Free Physical Memory</b> and a big amount of "
+			"<b>Disk Cache Memory</b>, your system is well "
+			"configured.");
 	    break;
 	case MEM_HDD:
 	    title = i18n("Swap Space");
+	    hint = i18n("The swap space is the <b>virtual memory</b> "
+			"available to the system. "
+			"<p>It will be used on demand and is provided "
+			"through swap partitions and swap files.");
 	    break;
 	default:
-	    title = QString::null; 
+	    hint = title = QString::null; 
 	    break;
 	};
+
+	if (hint.length())
+	  hint = "<qt>" + hint + "</qt>";
+
 	Widget = new QLabel("<b>" + title + "</b>", this);
 	Widget->setAlignment(AlignCenter);
+	QToolTip::add(Widget, hint);
 	vbox->addWidget(Widget);
 	vbox->addSpacing(SPACING / 2);
 
@@ -205,12 +229,14 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	g->setMinimumWidth(2 * SPACING);
 	g->setMinimumHeight(3 * SPACING);
 	g->setBackgroundMode(NoBackground);
+	QToolTip::add(g, hint); // add the tooltip
 	Graph[i] = g;
 	vbox->addWidget(g, 2);
 	vbox->addSpacing(SPACING / 2);
 
 	Widget = new QLabel(this);	/* xx MB used. */
 	Widget->setAlignment(AlignCenter);
+	QToolTip::add(Widget, hint);
 	GraphLabel[i] = Widget;
 	vbox->addWidget(Widget);
     }
