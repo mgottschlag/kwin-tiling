@@ -266,7 +266,7 @@ const KAboutData *KNotifyWidget::aboutData() const
     if(!ab)
     {
         ab = new KAboutData(
-            "kcmnotify", I18N_NOOP("KNotify"), "2.0pre",
+            "kcmnotify", I18N_NOOP("KNotify"), "2.0",
             I18N_NOOP("System Notification Control Panel Module"),
             KAboutData::License_GPL, 0, 0, 0 );
         ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );

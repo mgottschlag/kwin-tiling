@@ -52,7 +52,7 @@ static KCmdLineOptions options[] =
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
-                          "2.0pre",
+                          "2.0",
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
                           "(c) 1999-2000, The KDE Developers");

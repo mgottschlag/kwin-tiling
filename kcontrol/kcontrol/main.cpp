@@ -76,7 +76,7 @@ KControlApp::~KControlApp()
 int main(int argc, char *argv[])
 {
   KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"), 
-    "v2.0pre", I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL, 
+    "v2.0", I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL, 
     "(c) 1998-2000, The KDE Control Center Developers");
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
