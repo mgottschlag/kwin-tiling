@@ -98,14 +98,6 @@ else
     AC_MSG_RESULT([no])
 fi
 
-AC_MSG_CHECKING([whether the system is CSRG based])
-if test -n "$CSRG_BASED"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE(CSRG_BASED, 1, [The system is CSRG based (4.4 BSD + clones)])
-else
-    AC_MSG_RESULT([no])
-fi
-
 AC_MSG_CHECKING([whether to prevent access to video RAM])
 if test -n "$FRAGILE_DEV_MEM"; then
     AC_MSG_RESULT([yes])
