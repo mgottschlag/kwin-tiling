@@ -28,6 +28,7 @@
 #include <qlayout.h>
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qradiobutton.h>
 #include <qwidgetstack.h>
 

@@ -18,6 +18,7 @@
 */  
 
 #include <qdir.h>
+#include <qcombobox.h>
 #include <kdbtn.h>
 #include "utils.h"
 #include <klined.h>

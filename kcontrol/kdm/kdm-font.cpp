@@ -18,6 +18,7 @@
 */  
 
 #include "utils.h"
+#include <qcombobox.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include "kdm-font.moc"
