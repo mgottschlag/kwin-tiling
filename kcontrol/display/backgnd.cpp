@@ -711,8 +711,8 @@ void KBackground::setMonitor()
 				currentItem.color2, 
 				KPixmapEffect::VerticalGradient);
       else
-	KPixmapEffect::gradient(preview, currentItem.color1, 
-				currentItem.color2, 
+	KPixmapEffect::gradient(preview, currentItem.color2, 
+				currentItem.color1, 
 				KPixmapEffect::HorizontalGradient);
 			
     } else
