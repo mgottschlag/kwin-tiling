@@ -1,6 +1,7 @@
 [Settings]
 Name=UNIX Scheme
 Name[cs]=Schéma Unix
+Name[de]=UNIX-Schema
 Name[es]=Esquema UNIX
 Name[hu]=UNIX-összeállítás
 Name[mt]=Skema UNIX
