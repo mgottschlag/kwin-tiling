@@ -315,7 +315,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Do not use konsole as default terminal application</string>
+                                    <string>Do not use Konsole as default terminal application</string>
                                 </property>
                             </widget>
                             <spacer row="1"  column="0" >
