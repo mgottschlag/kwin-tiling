@@ -59,8 +59,10 @@ kcminit_SOURCES = dummy.cpp
 kcminit_LDADD = kcminit.la
 kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
-rcdir = $(kde_datadir)/kcontrol
-rc_DATA = kcontrolui.rc
+rccontroldir = $(kde_datadir)/kcontrol
+rccontrol_DATA = kcontrolui.rc
+rcinfodir = $(kde_datadir)/kinfocenter
+rcinfo_DATA = kcontrolui.rc
 
 data_DATA = KControl.desktop
 datadir = $(kde_appsdir)/Settingsmenu
