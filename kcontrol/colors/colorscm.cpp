@@ -555,7 +555,7 @@ void KColorScheme::readScheme( int index )
 
       // Colours from the 40-colour palette.
       QColor c1(  0, 128, 128);
-      QColor c2(192, 192, 192);
+      QColor c2(195, 195, 195);
       QColor c3(  0,   0, 192);
       QColor c4(128,   0, 128);
 
