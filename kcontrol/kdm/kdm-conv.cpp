@@ -81,7 +81,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
     connect(puserlb, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be preselected for login. "
-	"This box is editable, so you can specify an arbitrary non-existing "
+	"This box is editable, so you can specify an arbitrary non-existent "
 	"user to mislead possible attackers.");
     QWhatsThis::add( pu_label, wtstr );
     QWhatsThis::add( puserlb, wtstr );
@@ -92,7 +92,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     cbjumppw = new QCheckBox(i18n("Focus pass&word"), puGroup);
     QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the user field after preselecting a user. "
-	"This will save one key press per login, if the users alternate rather seldom.") );
+	"This will save one key press per login, if the user logging on is usually the "
+	"same one.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     npGroup = new QVGroupBox(i18n("Password-less Login"), this );

@@ -87,8 +87,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBEnable = new QCheckBox( i18n("E&nable background"), this );
     QWhatsThis::add( m_pCBEnable,
              i18n("If this is checked, KDM will use the settings below for the background."
-		" If it is disabled, you have to care for the background yourself;"
-		" this is done by running some program (possibly xsetroot) in the script"
+		" If it is disabled, you have to look after the background yourself."
+		" This is done by running some program (possibly xsetroot) in the script"
 		" specified in the Setup= option in kdmrc (usually Xsetup).") );
     connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
 
@@ -101,8 +101,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     QWhatsThis::add( m_pMonitor,
              i18n("Here you can see a preview of how KDM's background will look "
-              "like using the current settings. You can even set a background "
-              "picture by dragging it onto the preview (e.g. from Konqueror).") );
+              "using the current settings. You can even set a background "
+              "picture by dragging it on to the preview (e.g. from Konqueror).") );
 
     // Tabwidget
     m_pTabWidget = new QTabWidget(this);

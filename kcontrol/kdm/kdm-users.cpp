@@ -85,7 +85,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     minGroup = new QGroupBox( 2, Horizontal, i18n("System U&IDs"), this );
     QWhatsThis::add( minGroup, i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
-      " Note, that users with the UID 0 (typically root) are not affected by this and must be"
+      " Note that users with the UID 0 (typically root) are not affected by this and must be"
       " explicitly hidden in \"Not hidden\" mode."));
     QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
     QValidator *valid = new QIntValidator( 0, 999999, minGroup );
@@ -112,11 +112,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
       " If one of the alternative radio buttons is selected, KDM will show a list of users,"
       " so users can click on their name or image rather than typing in their login.") );
     rbselusr = new QRadioButton( i18n("selected users", "Selected onl&y"), usrGroup );
-    QWhatsThis::add( rbselusr, i18n("If this option is selected, KDM will only show the users "
-      " checked in the \"Select users\" listview.") );
+    QWhatsThis::add( rbselusr, i18n("If this option is selected, KDM will only show the users"
+      " checked in the \"Select users\" list.") );
     rballusr = new QRadioButton( i18n("not hidden users", "Not hidden"), usrGroup );
-    QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all non-system users but those"
-      " checked in the \"Select users\" listview."));
+    QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all non-system users, except those"
+      " checked in the \"Select users\" list."));
     cbusrsrt = new QCheckBox( i18n("Sor&t users"), usrGroup );
     connect( cbusrsrt, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
     QWhatsThis::add( cbusrsrt, i18n("If this is checked, KDM will alphabetically sort the user list."
@@ -165,8 +165,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect( userbutton, SIGNAL(clicked()),
 	     SLOT(slotUserButtonClicked()) );
     QToolTip::add( userbutton, i18n("Click or drop an image here") );
-    QWhatsThis::add( userbutton, i18n("Here you can see the image assigned to the user selected in the combobox above. Click on the image button to select from a list"
-      " of images or drag and drop your own image onto the button (e.g. from Konqueror).") );
+    QWhatsThis::add( userbutton, i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
+      " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
     rstuserbutton = new QPushButton( i18n("Unset"), hlpw );
     QWhatsThis::add( rstuserbutton, i18n("Click this button to make KDM use the default image for the selected user.") );
     connect( rstuserbutton, SIGNAL(clicked()),
