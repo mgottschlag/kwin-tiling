@@ -1918,7 +1918,21 @@ static QStringList getQStringListProperty(WId w, Atom prop)
 
 QStringList KSMServer::windowWmCommand(WId w)
 {
-    return getQStringListProperty(w, XA_WM_COMMAND);
+    QStringList ret = getQStringListProperty(w, XA_WM_COMMAND);
+    // hacks here
+    if( ret.count() == 1 ) {
+        QString command = ret.first();
+        // Mozilla is launched using wrapper scripts, so it's launched using "mozilla",
+        // but the actual binary is "mozilla-bin" or "<path>/mozilla-bin", and that's what
+        // will be also in WM_COMMAND - using this "mozilla-bin" doesn't work at all though
+        if( command.endsWith( "mozilla-bin" ))
+            return QStringList() << "mozilla";
+        if( command.endsWith( "firefox-bin" ))
+            return QStringList() << "firefox";
+        if( command.endsWith( "thunderbird-bin" ))
+            return QStringList() << "thunderbird";
+    }
+    return ret;
 }
 
 QString KSMServer::windowWmClientMachine(WId w)
