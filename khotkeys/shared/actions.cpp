@@ -116,14 +116,18 @@ void Command_url_action::execute()
     {
     if( command_url().isEmpty())
         return;
-    int space_pos = command_url().find( ' ' );
     KURIFilterData uri;
     QString cmd = command_url();
-    if( command_url()[ 0 ] != '\'' && command_url()[ 0 ] != '"' && space_pos > -1
-        && command_url()[ space_pos - 1 ] != '\\' )
-        cmd = command_url().left( space_pos ); // get first 'word'
+//    int space_pos = command_url().find( ' ' );
+//    if( command_url()[ 0 ] != '\'' && command_url()[ 0 ] != '"' && space_pos > -1
+//        && command_url()[ space_pos - 1 ] != '\\' )
+//        cmd = command_url().left( space_pos ); // get first 'word'
     uri.setData( cmd );
     KURIFilter::self()->filterURI( uri );
+    if( uri.uri().isLocalFile() && !uri.uri().hasRef() )
+        cmd = uri.uri().path();
+    else
+        cmd = uri.uri().url();
     switch( uri.uriType())
         {
         case KURIFilterData::LOCAL_FILE:
@@ -153,8 +157,9 @@ void Command_url_action::execute()
             {
             if (!kapp->authorize("shell_access"))
 		return;
-            if( !KRun::runCommand( cmd,
-                cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ), uri.iconName()))
+            if( !KRun::runCommand(
+                cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ),
+                cmd, uri.iconName()))
                 // CHECKME ?
                 ;
           break;
