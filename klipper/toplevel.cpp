@@ -17,6 +17,7 @@
 #include <qstrlist.h>
 
 #include <kaction.h>
+#include <kapp.h>
 #include <kconfig.h>
 #include <kkeydialog.h>
 #include <klocale.h>
