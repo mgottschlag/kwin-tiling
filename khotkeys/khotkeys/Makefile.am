@@ -4,7 +4,7 @@ bin_PROGRAMS = khotkeys
 lib_LTLIBRARIES = khotkeys.la
 
 khotkeys_la_SOURCES = khotkeys.cpp main.cpp khotkeys.skel
-khotkeys_la_LIBADD   = ../shared/libshared.la $(LIB_KIO)
+khotkeys_la_LIBADD   = ../shared/libshared.la $(LIB_KSYCOCA)
 khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 khotkeys_SOURCES = dummy.cpp
