@@ -64,7 +64,7 @@ xftparserfiles = xftlex.l xftgram.y
 
 EXTRA_DIST = \
 	$(desktop_DATA) \
-	$(libkcm_fontinst_la_SOURCES) \
+	$(kcm_fontinst_la_SOURCES) \
 	$(xftparserfiles) \
 	KfiCmModule.h \
 	Config.h \
