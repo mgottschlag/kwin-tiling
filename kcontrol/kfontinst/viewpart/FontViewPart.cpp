@@ -81,8 +81,12 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 
     cfg.setGroup(KFI_PREVIEW_GROUP);
 
+    int  previewSize=cfg.readNumEntry(KFI_PREVIEW_SIZE_KEY, DEFAULT_FONT_SIZE);
+    bool wf=cfg.readBoolEntry(KFI_PREVIEW_WATERFALL_KEY, false);
+
     itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview", kcm ? NULL : i18n("Loading file..."),
-                                cfg.readNumEntry(KFI_PREVIEW_SIZE_KEY, DEFAULT_FONT_SIZE));
+                                previewSize<MIN_FONT_SIZE || previewSize>MAX_FONT_SIZE ? DEFAULT_FONT_SIZE : previewSize,
+                                wf);
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
     itsFaceSelector=new KIntNumInput(1, itsToolsFrame);
@@ -106,9 +110,12 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     itsZoomOutAction=KStdAction::zoomOut(this, SLOT(zoomOut()), actionCollection(), "zoomOut");
     itsChangeTextAction=new KAction(i18n("Change Text..."), "text", KShortcut(),
                                     this, SLOT(changeText()), actionCollection(), "changeText");
+    itsToggleWaterfallAction=new KToggleAction(i18n("Waterfall"), "leftjust", KShortcut(),
+                                    this, SLOT(toggleWaterfall()), actionCollection(), "toggleWaterfall");
     itsZoomInAction->setEnabled(false);
     itsZoomOutAction->setEnabled(false);
     itsChangeTextAction->setEnabled(false);
+    itsToggleWaterfallAction->setEnabled(false);
 
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
@@ -122,6 +129,7 @@ CFontViewPart::~CFontViewPart()
 
     cfg.setGroup(KFI_PREVIEW_GROUP);
     cfg.writeEntry(KFI_PREVIEW_SIZE_KEY, itsPreview->currentSize());
+    cfg.writeEntry(KFI_PREVIEW_WATERFALL_KEY, itsPreview->waterfall());
 }
 
 bool CFontViewPart::openURL(const KURL &url)
@@ -173,12 +181,14 @@ void CFontViewPart::previewStatus(bool st)
     itsInstallButton->setShown(st && KIO_FONTS_PROTOCOL!=m_url.protocol());
     itsToolsFrame->setShown(itsInstallButton->isShown()||itsFaceSelector->isShown());
 
-    if(st) // TODO: NEED TO CHECK IF IS SCALEABLE!!!
-    {
-        itsZoomInAction->setEnabled(true);
-        itsZoomOutAction->setEnabled(true);
-        itsChangeTextAction->setEnabled(true);
-    }
+// CPD: Need to handle bitmap only TTFs!!!
+    itsToggleWaterfallAction->setChecked(itsPreview->waterfall());
+    itsZoomInAction->setEnabled(!itsPreview->waterfall() && st && CGlobal::fe().isScaleable() &&
+                                itsPreview->currentSize()<MAX_FONT_SIZE);
+    itsZoomOutAction->setEnabled(!itsPreview->waterfall() && st && CGlobal::fe().isScaleable() && 
+                                 itsPreview->currentSize()>MIN_FONT_SIZE);
+    itsToggleWaterfallAction->setEnabled(st && CGlobal::fe().isScaleable());
+    itsChangeTextAction->setEnabled(st);
 }
 
 void CFontViewPart::install()
@@ -230,15 +240,23 @@ void CFontViewPart::install()
             {
                 if(CFontEngine::TYPE_1==CGlobal::fe().getType())
                 {
-                    KURL          afmUrl(m_url);
-                    KIO::UDSEntry uds;
+                    const char *others[]={ "afm", "AFM", NULL };
 
-                    afmUrl.setPath(CMisc::changeExt(m_url.path(), "afm"));
-                    destUrl.setPath(CMisc::changeExt(destUrl.path(), "afm"));
+                    for(int i=0; others[i]; i++)
+                    {
+                        KURL          afmUrl(m_url);
+                        KIO::UDSEntry uds;
 
-                    if(KIO::NetAccess::stat(afmUrl, uds, itsFrame->parentWidget()) &&
-                       !KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-                        KIO::NetAccess::copy(afmUrl, destUrl, itsFrame->parentWidget());
+                        afmUrl.setPath(CMisc::changeExt(m_url.path(), others[i]));
+                        destUrl.setPath(CMisc::changeExt(destUrl.path(), others[i]));
+
+                        if(KIO::NetAccess::stat(afmUrl, uds, itsFrame->parentWidget()))
+                        {
+                           if(!KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
+                               KIO::NetAccess::copy(afmUrl, destUrl, itsFrame->parentWidget());
+                           break;
+                        }
+                    }
                 }
 
                 KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed!").arg(m_url.protocol())
@@ -281,6 +299,15 @@ void CFontViewPart::changeText()
         CGlobal::fe().setPreviewString(newStr);
         itsPreview->showFont();
     }
+}
+
+void CFontViewPart::toggleWaterfall()
+{
+    itsZoomInAction->setEnabled(itsPreview->waterfall() && CGlobal::fe().isScaleable() &&
+                                itsPreview->currentSize()<MAX_FONT_SIZE);
+    itsZoomOutAction->setEnabled(itsPreview->waterfall() && CGlobal::fe().isScaleable() &&
+                                 itsPreview->currentSize()>MIN_FONT_SIZE);
+    itsPreview->showWaterfall(!itsPreview->waterfall());
 }
 
 #include "FontViewPart.moc"

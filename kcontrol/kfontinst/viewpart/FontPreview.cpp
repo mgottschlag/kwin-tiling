@@ -36,14 +36,15 @@
 #include <qimage.h>
 #include <stdlib.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str, int size)
+CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str, int size, bool wf)
             : QWidget(parent, name),
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
               itsSize(size),
               itsString(str.isEmpty() ? i18n(" No preview available") : str),
-              itsBgndCol(eraseColor())
+              itsBgndCol(eraseColor()),
+              itsWaterfall(wf)
 {
 }
 
@@ -65,6 +66,12 @@ void CFontPreview::showSize(int size)
     showFont();
 }
 
+void CFontPreview::showWaterfall(bool wf)
+{
+    itsWaterfall=wf;
+    showFont();
+}
+
 void CFontPreview::showFont()
 {
     itsLastWidth=width();
@@ -73,7 +80,8 @@ void CFontPreview::showFont()
     if(!itsCurrentUrl.isEmpty() && CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::NAME, true, itsCurrentFace-1))
     {
         setEraseColor(Qt::white);
-        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, itsSize, false);
+        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, itsSize, false,
+                                    itsWaterfall);
         update();
         emit status(true);
     }

@@ -42,23 +42,24 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null, int size=-1);
+    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null, int size=-1,
+                 bool wf=false);
     virtual ~CFontPreview() {}
 
     void            paintEvent(QPaintEvent *);
     QSize           sizeHint() const;
     QSize           minimumSizeHint() const;
     int             currentSize() const { return itsSize; }
+    bool            waterfall() const   { return itsWaterfall; }
+
+    void showFont(const KURL &url);
+    void showSize(int size);
+    void showWaterfall(bool wf);
+    void showFont();
 
     public slots:
 
-    void showFont(const KURL &url);
     void showFace(int face);
-    void showSize(int size);
-
-    public:
-
-    void showFont();
 
     signals:
 
@@ -74,6 +75,7 @@ class CFontPreview : public QWidget
             itsSize;
     QString itsString;
     QColor  itsBgndCol;
+    bool    itsWaterfall;
 };
 
 #endif

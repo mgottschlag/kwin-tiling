@@ -37,6 +37,7 @@ class QFrame;
 class QLabel;
 class KIntNumInput;
 class KAction;
+class KToggleAction;
 class KURL;
 
 class CFontViewPart : public KParts::ReadOnlyPart
@@ -60,18 +61,20 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void zoomIn();
     void zoomOut();
     void changeText();
+    void toggleWaterfall();
 
     private:
 
-    CFontPreview *itsPreview;
-    QPushButton  *itsInstallButton;
-    QFrame       *itsFrame,
-                 *itsToolsFrame;
-    QLabel       *itsFaceLabel;
-    KIntNumInput *itsFaceSelector;
-    KAction      *itsZoomInAction,
-                 *itsZoomOutAction,
-                 *itsChangeTextAction;
+    CFontPreview  *itsPreview;
+    QPushButton   *itsInstallButton;
+    QFrame        *itsFrame,
+                  *itsToolsFrame;
+    QLabel        *itsFaceLabel;
+    KIntNumInput  *itsFaceSelector;
+    KAction       *itsZoomInAction,
+                  *itsZoomOutAction,
+                  *itsChangeTextAction;
+    KToggleAction *itsToggleWaterfallAction;
 };
 
 #endif
