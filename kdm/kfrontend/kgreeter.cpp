@@ -329,15 +329,15 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
     QImage p;
     if (kdmcfg->_faceSource != FACE_USER_ONLY &&
 	kdmcfg->_faceSource != FACE_PREFER_USER)
-	p = QPixmap( user_pic_dir + username + ".png" );
+	p = QImage( user_pic_dir + username + ".png" );
     if (p.isNull() && kdmcfg->_faceSource != FACE_ADMIN_ONLY) {
 	// XXX remove seteuid-voodoo when we run as nobody
 	seteuid( ps->pw_uid );
-	p = QPixmap( QFile::decodeName( ps->pw_dir ) + "/.face.icon" );
+	p = QImage( QFile::decodeName( ps->pw_dir ) + "/.face.icon" );
 	seteuid( 0 );
     }
     if (p.isNull() && kdmcfg->_faceSource != FACE_USER_ONLY)
-	p = QPixmap( user_pic_dir + username + ".png" );
+	p = QImage( user_pic_dir + username + ".png" );
     if (p.isNull())
 	p = default_pix;
     else
