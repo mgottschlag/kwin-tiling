@@ -33,34 +33,53 @@
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <kurifilter.h>
 
-#include "ikwsopts.h"
 #include "main.h"
 
 KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     : KCModule(parent, name) {
 
+    filter = KURIFilter::filter();
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     tab = new QTabWidget(this);
     layout->addWidget(tab);
 
-    ikws = new InternetKeywordsOptions(0, this);
-    tab->addTab(ikws, i18n("Internet &Keywords"));
-    connect(ikws, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    for (; it.current(); ++it) {
+	KCModule *module = it.current()->configModule(this);
+	if (module) {
+	    tab->addTab(module, it.current()->configName());
+	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+	}
+    }
 
     load();
 }
 
 void KURIFilterModule::load() {
-    ikws->load();
+    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    for (; it.current(); ++it) {
+	KCModule *module = it.current()->configModule(this);
+	module->load();
+    }
 }
 
 void KURIFilterModule::save() {
-    ikws->save();
+    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    for (; it.current(); ++it) {
+	KCModule *module = it.current()->configModule(this);
+	module->save();
+    }
 }
 
 void KURIFilterModule::defaults() {
-    ikws->defaults();
+    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    for (; it.current(); ++it) {
+	KCModule *module = it.current()->configModule(this);
+	module->defaults();
+    }
 }
 
 void KURIFilterModule::moduleChanged(bool state) {

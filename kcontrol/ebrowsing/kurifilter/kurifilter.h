@@ -21,6 +21,7 @@
 #define __kurifilter_h__ "$Id$"
 
 #include <qlist.h>
+#include <kurl.h>
 
 #include <kurifilterplugin.h>
 
@@ -60,6 +61,13 @@ public:
      * @return A boolean indicating whether the URI has been changed
      * or not.
      */
+    bool filterURI(KURL &uri);
+    /**
+     * Filter a string representing a URI.
+     * @param uri The URI to filter.
+     * @return A boolean indicating whether the URI has been changed
+     * or not.
+     */
     bool filterURI(QString &uri);
 
     /**
@@ -67,7 +75,19 @@ public:
      * @param uri The URI to filter.
      * @return The filtered URI.
      */
+    KURL filteredURI(const KURL &uri);
+    /**
+     * Return a filtered string representation of a URI.
+     * @param uri The URI to filter.
+     * @return The filtered URI.
+     */
     QString filteredURI(const QString &uri);
+
+    /**
+     * Return an iterator to iterate over plugins.
+     * @return The iterator.
+     */
+    QListIterator<KURIFilterPlugin> pluginsIterator() const;
 
 protected:
     void loadPlugins();

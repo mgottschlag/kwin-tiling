@@ -30,7 +30,7 @@
 
 #include <kcmodule.h>
 
-class InternetKeywordsOptions;
+class KURIFilter;
 
 class KURIFilterModule : public KCModule {
     Q_OBJECT
@@ -49,8 +49,7 @@ protected slots:
 
 private:
   QTabWidget *tab;
-
-  InternetKeywordsOptions *ikws;
+  KURIFilter *filter;
 };
 
 #endif

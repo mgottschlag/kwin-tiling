@@ -38,6 +38,17 @@ KURIFilter *KURIFilter::filter() {
     return ms_pFilter;
 }
 
+bool KURIFilter::filterURI(KURL &uri) {
+    bool filtered = false;
+    QListIterator<KURIFilterPlugin> it(m_lstPlugins);
+
+    for (; it.current(); ++it) {
+	filtered |= it.current()->filterURI(uri);
+    }
+
+    return filtered;
+}
+
 bool KURIFilter::filterURI(QString &uri) {
     bool filtered = false;
     QListIterator<KURIFilterPlugin> it(m_lstPlugins);
@@ -49,11 +60,21 @@ bool KURIFilter::filterURI(QString &uri) {
     return filtered;
 }
 
+KURL KURIFilter::filteredURI(const KURL &uri) {
+    KURL filtered = uri;
+    filterURI(filtered);
+    return filtered;
+}
+
 QString KURIFilter::filteredURI(const QString &uri) {
     QString filtered = uri;
     filterURI(filtered);
     return filtered;
 }
+
+QListIterator<KURIFilterPlugin> KURIFilter::pluginsIterator() const {
+    return QListIterator<KURIFilterPlugin>(m_lstPlugins);
+};
 
 void KURIFilter::loadPlugins() {
     KTrader::OfferList offers = KTrader::self()->query( "KURIFilter/Plugin" );

@@ -1,14 +1,14 @@
 
 SUBDIRS = kurifilter plugins
 
-INCLUDES = -I$(srcdir)/plugins/ikws $(all_includes) 
+INCLUDES = -I$(srcdir)/kurifilter -I$(srcdir)/plugins/ikws $(all_includes) 
 LDFLAGS =  $(all_libraries)
 
 METASOURCES = AUTO
 
 lib_LTLIBRARIES = libkcm_kurifilt.la
 
-libkcm_kurifilt_la_SOURCES = ikwsopts.cpp main.cpp
+libkcm_kurifilt_la_SOURCES = main.cpp
 
 libkcm_kurifilt_la_LDFLAGS  = $(all_libraries) -module -avoid-version
 libkcm_kurifilt_la_LIBADD = kurifilter/libkurifilter.la plugins/ikws/libkuriikwsfilter.la -lkdecore
