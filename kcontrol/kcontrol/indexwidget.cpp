@@ -67,11 +67,12 @@ void IndexWidget::resizeEvent(QResizeEvent *e)
 
 void IndexWidget::moduleSelected(ConfigModule *m)
 {
+  const QObject *obj = sender();
   if(!m) return;
 
   emit moduleActivated(m);
 
-  if (sender()->inherits("ModuleIconView"))
+  if (obj->inherits("ModuleIconView"))
 	{
 	  _tree->makeVisible(m);
 
@@ -80,7 +81,7 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 	  connect(_tree, SIGNAL(moduleSelected(ConfigModule*)), 
 			  this, SLOT(moduleSelected(ConfigModule*)));
 	}
-  else if (sender()->inherits("ModuleTreeView"))
+  else if (obj->inherits("ModuleTreeView"))
 	{
 	  _icon->makeVisible(m);
 
