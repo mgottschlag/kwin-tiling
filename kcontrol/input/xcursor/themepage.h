@@ -29,6 +29,7 @@ class QString;
 class PreviewWidget;
 class QStringList;
 class QListViewItem;
+class QPushButton;
 
 struct ThemeInfo;
 
@@ -51,15 +52,20 @@ class ThemePage : public QWidget
 
 	private slots:
 		void selectionChanged( QListViewItem * );
+		void installClicked();
+		void removeClicked();
 
 	private:
+		bool installThemes( const QString &file );
+		void insertTheme( const QString & );
 		const QStringList getThemeBaseDirs() const;
-		const bool isCursorTheme( const QString &theme, const int depth = 0 ) const;
+		bool isCursorTheme( const QString &theme, const int depth = 0 ) const;
 		void insertThemes();
 		QPixmap createIcon( const QString &, const QString & ) const;
 
 		KListView *listview;
 		PreviewWidget *preview;
+		QPushButton *installButton, *removeButton;
 		QString selectedTheme;
 		QString currentTheme;
 		QStringList themeDirs;
