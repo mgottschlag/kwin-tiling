@@ -45,6 +45,7 @@ private:
 
 public:
     KDMConfig();
+    ~KDMConfig();
 
     QFont	_normalFont;
     QFont	_failFont;
@@ -61,8 +62,8 @@ public:
     QString	_defaultUser;
     bool	_focusPasswd;
     bool	_sortUsers;
-    QStringList	_users;
-    QStringList	_noUsers;
+    char	**_users;
+    char	**_noUsers;
     int		_lowUserId, _highUserId;
     int		_showRoot;
     int		_faceSource;

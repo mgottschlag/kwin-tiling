@@ -45,6 +45,8 @@ int GetCfgInt (int id);
 char *GetCfgStr (int id);
 char **GetCfgStrArr (int id, int *len);
 
+void freeStrArr (char **arr);
+
 void Debug (const char *fmt, ...);
 void LogInfo (const char *fmt, ...);
 void LogError (const char *fmt, ...);

@@ -217,7 +217,8 @@ GRecvStrArr (int *rnum)
     GDebug ("Receiving string array from core ...\n");
     GRead (&num, sizeof(num));
     GDebug (" -> %d strings\n", num);
-    *rnum = num;
+    if (rnum)
+	*rnum = num;
     if (!num)
 	return (char **)0;
     if (!(argv = malloc (num * sizeof(char *))))
@@ -276,6 +277,18 @@ GetCfgStrArr (int id, int *len)
 {
     ReqCfg (id);
     return GRecvStrArr (len);
+}
+
+void
+freeStrArr (char **arr)
+{
+    char **tarr;
+
+    if (arr) {
+	for (tarr = arr; *tarr; tarr++)
+	    free (*tarr);
+	free (arr);
+    }
 }
 
 

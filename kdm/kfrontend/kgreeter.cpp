@@ -50,6 +50,7 @@
 #include <qpushbutton.h>
 
 #include <pwd.h>
+#include <grp.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -313,6 +314,44 @@ KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
     }
 }
 
+class QCStringList : public QValueList<QCString> {
+public:
+    bool contains( const char *str ) const
+    {
+	for (ConstIterator it = begin(); it != end(); ++it)
+	    if (*it == str)
+		return true;
+	return false;
+    }
+};
+
+class UserList {
+public:
+    UserList( char **in );
+    bool hasUser( const char *str ) const { return users.contains( str ); }
+    bool hasGroup( gid_t gid ) const
+	{ return groups.find( gid ) != groups.end(); }
+    bool hasGroups() const { return !groups.isEmpty(); }
+    QCStringList users;
+private:
+    QValueList<gid_t> groups;
+};
+
+UserList::UserList( char **in )
+{
+    struct group *grp;
+
+    for (; *in; in++)
+	if (**in == '@') {
+	    if ((grp = getgrnam( *in + 1 ))) {
+		for (; *grp->gr_mem; grp->gr_mem++)
+		    users.append( *grp->gr_mem );
+		groups.append( grp->gr_gid );
+	    }
+	} else
+	    users.append( *in );
+}
+
 void
 KGreeter::insertUsers( UserListView *listview )
 {
@@ -326,27 +365,49 @@ KGreeter::insertUsers( UserListView *listview )
 	  default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
     struct passwd *ps;
     if (kdmcfg->_showUsers == SHOW_ALL) {
-	QDict<int> users( 1000 );
+	UserList noUsers( kdmcfg->_noUsers );
+	QDict<int> dupes( 1000 );
 	for (setpwent(); (ps = getpwent()) != 0;) {
-	    // usernames are stored in the same encoding as files
-	    QString username = QFile::decodeName( ps->pw_name );
 	    if (*ps->pw_dir && *ps->pw_shell &&
 		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
 		 !ps->pw_uid && kdmcfg->_showRoot) &&
 		ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
-		!kdmcfg->_noUsers.contains( username ) &&
-		!users.find( username )
+		!noUsers.hasUser( ps->pw_name ) &&
+		!noUsers.hasGroup( ps->pw_gid )
 	    ) {
-		// we might have a real user, insert him/her
-		users.insert( username, (int *)-1 );
-		insertUser( listview, default_pix, username, ps );
+		QString username( QFile::decodeName( ps->pw_name ) );
+		if (!dupes.find( username )) {
+		    dupes.insert( username, (int *)-1 );
+		    insertUser( listview, default_pix, username, ps );
+		}
 	    }
 	}
     } else {
-	QStringList::ConstIterator it = kdmcfg->_users.begin();
-	for (; it != kdmcfg->_users.end(); ++it)
-	    if ((ps = getpwnam( (*it).latin1() )))
-		insertUser( listview, default_pix, *it, ps );
+	UserList users( kdmcfg->_users );
+	if (users.hasGroups()) {
+	    QDict<int> dupes( 1000 );
+	    for (setpwent(); (ps = getpwent()) != 0;) {
+		if (*ps->pw_dir && *ps->pw_shell &&
+		    (ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
+		     !ps->pw_uid && kdmcfg->_showRoot) &&
+		    ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
+		    (users.hasUser( ps->pw_name ) ||
+		     users.hasGroup( ps->pw_gid ))
+		) {
+		    QString username( QFile::decodeName( ps->pw_name ) );
+		    if (!dupes.find( username )) {
+			dupes.insert( username, (int *)-1 );
+			insertUser( listview, default_pix, username, ps );
+		    }
+		}
+	    }
+	} else {
+	    QCStringList::ConstIterator it = users.users.begin();
+	    for (; it != users.users.end(); ++it)
+		if ((ps = getpwnam( (*it).data() )))
+		    insertUser( listview, default_pix,
+			        QFile::decodeName( *it ), ps );
+	}
     }
     endpwent();
     if (kdmcfg->_sortUsers)

@@ -138,8 +138,8 @@ KDMConfig::KDMConfig()
 	_logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") );
 
     _showUsers = GetCfgInt (C_ShowUsers);
-    _users = GetCfgQStrList (C_SelectedUsers);
-    _noUsers = GetCfgQStrList (C_HiddenUsers);
+    _users = GetCfgStrArr (C_SelectedUsers, 0);
+    _noUsers = GetCfgStrArr (C_HiddenUsers, 0);
     _lowUserId = GetCfgInt (C_MinShowUID);
     _highUserId = GetCfgInt (C_MaxShowUID);
     _sortUsers = GetCfgInt (C_SortUsers);
@@ -219,4 +219,10 @@ KDMConfig::KDMConfig()
     _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
     _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();
     _allowClose = GetCfgInt (C_AllowClose);
+}
+
+KDMConfig::~KDMConfig()
+{
+    freeStrArr (_users);
+    freeStrArr (_noUsers);
 }
