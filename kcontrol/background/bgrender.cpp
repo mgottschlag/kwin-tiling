@@ -23,11 +23,13 @@
 #include <kpixmapio.h>
 #include <ktempfile.h>
 #include <kcursor.h>
+#include <ksvgiconengine.h>
 
 #include "bgrender.h"
 
 #include <X11/Xlib.h>
 
+#include <config.h>
 
 /**** KBackgroundRenderer ****/
 
@@ -158,7 +160,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     int retval = Done;
     QString file;
-    
+
     static unsigned int tileWidth = 0;
     static unsigned int tileHeight = 0;
     if( tileWidth == 0 )
@@ -204,7 +206,7 @@ int KBackgroundRenderer::doBackground(bool quit)
         if (m_State & BackgroundStarted)
             break;
         m_State |= BackgroundStarted;
-        createTempFile();        
+        createTempFile();
 
 	file = buildCommand();
 	if (file.isEmpty())
@@ -286,7 +288,66 @@ wp_load:
 	    goto wp_out;
 	}
 
-	wp.load(file);
+        if (file.endsWith(".svg") || file.endsWith(".svgz")) {
+#ifdef HAVE_LIBART
+	    // Special stuff for SVG icons
+	    KSVGIconEngine* svgEngine = new KSVGIconEngine();
+
+	    //FIXME
+	    //ksvgiconloader doesn't seem to let us find out the
+	    //ratio of width to height so for the most part we just
+	    //assume it's a square
+	    int svgWidth;
+	    int svgHeight;
+	    switch (wpmode)
+	    {
+	        case Centred:
+	        case CentredAutoFit:
+		    svgHeight = (int)(m_Size.height() * 0.8);
+		    svgWidth = svgHeight;
+	            break;
+	        case Tiled:
+	        case CenterTiled:
+		    svgHeight = (int)(m_Size.height() * 0.5);
+		    svgWidth = svgHeight;
+	            break;
+	        case Scaled:
+		    svgHeight = m_Size.height();
+		    svgWidth = m_Size.width();
+	            break;
+	        case CentredMaxpect:
+	        case TiledMaxpect:
+		    svgHeight = m_Size.height();
+		    svgWidth = svgHeight;
+	            break;
+	        case NoWallpaper:
+	        default:
+	            kdWarning() << k_funcinfo << "unknown diagram type" << endl;
+		    svgHeight = m_Size.height();
+		    svgWidth = svgHeight;
+		    break;
+	    }
+	    //FIXME hack due to strangeness with
+	    //background control modules
+	    if ( svgHeight < 200 ) {
+		svgHeight *= 6;
+	        svgWidth *= 6;
+	    }
+
+	    if (svgEngine->load(svgWidth, svgHeight, file )) {
+		wp = ( *svgEngine->image() );
+	    } else {
+		kdWarning() << "failed to load SVG file " << file << endl;
+	    }
+
+	    delete svgEngine;
+#else //not libart
+	    kdWarning() << k_funcinfo
+			<< "tried to load SVG file but libart not installed" << endl;
+#endif
+	} else {
+	    wp.load(file);
+	}
 	if (wp.isNull()) {
             if (discardCurrentWallpaper())
                goto wp_load;
@@ -337,7 +398,7 @@ wp_out:
 	case CenterTiled:
 	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
 	    break;
-	case Scaled: 
+	case Scaled:
 	    wp = wp.smoothScale(ww = w, wh = h);
 	    d.setRect(0, 0, w, h);
 	    break;
@@ -380,7 +441,7 @@ wp_out:
     }
 
     wallpaperBlend( d, wp, ww, wh );
-    
+
     if (retval == Done)
         m_State |= WallpaperDone;
 
@@ -574,7 +635,6 @@ void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs
 void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
 {
     Q_ASSERT(process == m_pProc);
-    kdDebug() << "slotBackgroundDone" << endl;
     m_State |= BackgroundDone;
 
     if (m_pProc->normalExit() && !m_pProc->exitStatus()) {
@@ -620,7 +680,7 @@ void KBackgroundRenderer::render()
         return;
 
     int ret;
-    
+
     if (!(m_State & BackgroundDone)) {
         ret = doBackground();
         if (ret != Wait)
@@ -630,7 +690,7 @@ void KBackgroundRenderer::render()
 
     // No async wallpaper
     doWallpaper();
-    
+
     done();
     setBusyCursor(false);
 }
@@ -653,13 +713,13 @@ void KBackgroundRenderer::done()
      } else if(backgroundMode() == Program) {
          emit programSuccess(desk());
      }
-     
+
 }
 
 /*
  * This function toggles a busy cursor on and off, for use in rendering.
  * It is useful because of the ASYNC nature of the rendering - it is hard
- * to make sure we don't set the busy cursor twice, but only restore 
+ * to make sure we don't set the busy cursor twice, but only restore
  * once.
  */
 void KBackgroundRenderer::setBusyCursor(bool isBusy) {

@@ -24,6 +24,8 @@
    Boston, MA 02111-1307, USA.
 */
 
+#include <config.h>
+
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -356,8 +358,14 @@ void BGDialog::initUI()
       }
       int slash = (*it).findRev('/') + 1;
       QString directory = (*it).left(slash);
-      papers[lrs] = qMakePair(rs, directory + fileName);
-      files.append(directory + fileName);
+      bool canLoadScaleable = false;
+#ifdef HAVE_LIBART
+      canLoadScaleable = true;
+#endif
+      if ( fileConfig.readEntry("ImageType") == "pixmap" || canLoadScaleable ) {
+	      papers[lrs] = qMakePair(rs, directory + fileName);
+	      files.append(directory + fileName);
+      }
    }
 
    //now find any wallpapers that don't have a .desktop file
@@ -465,7 +473,12 @@ void BGDialog::slotWallpaperSelection()
    KFileDialog dlg( QString::null, QString::null, this,
                     "file dialog", true );
 
-   dlg.setFilter(KImageIO::pattern());
+   QString pattern = KImageIO::pattern();
+#ifdef HAVE_LIBART
+   pattern = "*.svg *.svgz " + pattern;
+   pattern += "\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics";
+#endif
+   dlg.setFilter(pattern);
    dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
    dlg.setCaption( i18n("Select Wallpaper") );
 
