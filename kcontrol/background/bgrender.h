@@ -43,7 +43,7 @@ class KBackgroundRenderer:
     Q_OBJECT
 
 public:
-    KBackgroundRenderer(int desk, KConfig *config);
+    KBackgroundRenderer(int desk, KConfig *config=0);
     ~KBackgroundRenderer();
 
     void load(int desk, bool reparseConfig=true);
