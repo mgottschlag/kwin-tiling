@@ -182,12 +182,7 @@ extern "C"
 		KGlobal::config()->deleteGroup( "Global Keys", true, true );
 	}
 	keys->readActions( "Global Shortcuts" );
-
-	// Why are the braces here? -- ellis
-	{
-	KSimpleConfig cfg( "kdeglobals" );
-	cfg.deleteGroup( "Global Shortcuts" );
-	}
+        KGlobal::config()->deleteGroup( "Global Shortcuts", true, true );
 
 	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	keys->writeActions( "Global Shortcuts", 0, true, true );
