@@ -177,8 +177,7 @@ static int kfi_rmdir(const char *dir)
     QString ds(CMisc::dirSyntax(dir));
 
     CMisc::removeAssociatedFiles(dir, true);
-
-    int rv=rmdir(dir);
+    int rv=0==rmdir(dir) ? 0 : -2;
 
     if(0==rv)
     {
@@ -189,7 +188,7 @@ static int kfi_rmdir(const char *dir)
 
         CGlobal::xcfg().removePath(ds);
         CGlobal::xft().removeDir(ds);
-        rv=CGlobal::xcfg().writeConfig() && CGlobal::xft().apply() ? 0 : -4;
+        rv=CGlobal::xcfg().writeConfig() && CGlobal::xft().apply() ? 0 : -3;
 
 #ifdef HAVE_FONTCONFIG
         QStringList::ConstIterator xftIt;
