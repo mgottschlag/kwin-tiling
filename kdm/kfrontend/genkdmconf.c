@@ -29,16 +29,19 @@
 
 #include <config.h>
 
-#include <sys/stat.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <sys/stat.h>
 #include <fcntl.h>
-#include <pwd.h>
+#include <utime.h>
 #include <dirent.h>
+#include <errno.h>
+#include <pwd.h>
 #include <time.h>
 #include <sys/param.h>
 #ifdef BSD
@@ -63,7 +66,8 @@
 #define RCVERMINOR 0
 #define RCVERSTR "2.0"
 
-static int old_scripts, no_old_scripts, old_confs, no_old, mixed_scripts;
+static int old_scripts, no_old_scripts, old_confs, no_old,
+    no_backup, no_in_notice, use_destdir, mixed_scripts;
 static const char *newdir = KDMCONF, *oldxdm, *oldkde;
 
 
@@ -282,6 +286,18 @@ freeBuf (File *file)
 	free (file->buf);
 }
 #endif
+
+
+static void
+displace (const char *fn)
+{
+    if (!no_backup) {
+	char bn[PATH_MAX + 4];
+	sprintf(bn, "%s.bak", fn); /* won't overflow if only existing paths are passed */
+	rename(fn, bn);
+    } else
+	unlink(fn);
+}
 
 
 /*
@@ -762,15 +778,25 @@ static const char def_background[] =
 "WallpaperList=\n"
 "WallpaperMode=Scaled\n";
 
-static FILE *
-Create (const char *fn, int mode)
+static char *
+prepName (const char *fn)
 {
     const char *tname;
     char *nname;
-    FILE *f;
 
     tname = strrchr (fn, '/');
     ASPrintf (&nname, "%s/%s", newdir, tname ? tname + 1 : fn);
+    displace (nname);
+    return nname;
+}
+
+static FILE *
+Create (const char *fn, int mode)
+{
+    char *nname;
+    FILE *f;
+
+    nname = prepName (fn);
     if (!(f = fopen (nname, "w"))) {
 	fprintf (stderr, "Cannot create %s\n", nname);
 	exit (1);
@@ -778,6 +804,27 @@ Create (const char *fn, int mode)
     chmod (nname, mode);
     free (nname);
     return f;
+}
+
+static void
+WriteOut (const char *fn, int mode, time_t stamp, const char *buf, size_t len)
+{
+    char *nname;
+    int fd;
+    struct utimbuf utim;
+
+    nname = prepName (fn);
+    if ((fd = creat (nname, mode)) < 0) {
+	fprintf (stderr, "Cannot create %s\n", nname);
+	exit (1);
+    }
+    write (fd, buf, len);
+    close (fd);
+    if (stamp) {
+	utim.actime = utim.modtime = stamp;
+	utime (nname, &utim);
+    }
+    free (nname);
 }
 
 
@@ -796,9 +843,18 @@ resect (const char *sec, const char *name)
 }
 
 static int
-inDestDir (const char *name)
+inNewDir (const char *name)
 {
     return !memcmp (name, KDMCONF "/", sizeof(KDMCONF));
+}
+
+static int
+inList (StrList *sp, const char *s)
+{
+    for (; sp; sp = sp->next)
+	if (!strcmp (sp->str, s))
+	    return 1;
+    return 0;
 }
 
 static void 
@@ -811,14 +867,37 @@ addStr (StrList **sp, const char *s)
     ASPrintf ((char **)&(*sp)->str, "%s", s);
 }
 
-StrList *cflist, *lflist;
+StrList *aflist, *uflist, *eflist, *cflist, *lflist;
 
+/* file is part of new config */
+static void 
+addedFile (const char *fn)
+{
+    addStr (&aflist, fn);
+}
+
+/* file from old config was parsed */
+static void 
+usedFile (const char *fn)
+{
+    addStr (&uflist, fn);
+}
+
+/* file from old config was copied with slight modifications */
+static void 
+editedFile (const char *fn)
+{
+    addStr (&eflist, fn);
+}
+
+/* file from old config was copied verbatim */
 static void 
 copiedFile (const char *fn)
 {
     addStr (&cflist, fn);
 }
 
+/* file from old config is still being used */
 static void 
 linkedFile (const char *fn)
 {
@@ -833,8 +912,6 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 {
     const char *tptr;
     char *nname;
-    StrList *sp;
-    FILE *f;
     File file;
     int rt;
 
@@ -842,12 +919,14 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 	return 1;
 
     tptr = strrchr (tname, '/');
-    ASPrintf (&nname, "%s/%s", KDMCONF, tptr ? tptr + 1 : tname);
-    for (sp = cflist; sp; sp = sp->next)
-	if (!strcmp (sp->str, ce->value)) {
-	    rt = 1;
-	    goto doret;
-	}
+    ASPrintf (&nname, KDMCONF "/%s", tptr ? tptr + 1 : tname);
+    if (inList (cflist, ce->value) ||
+        inList (eflist, ce->value) || 
+        inList (lflist, ce->value))
+    {
+	rt = 1;
+	goto doret;
+    }
     if (!readFile (&file, ce->value)) {
 	fprintf (stderr, "Warning: cannot copy file %s\n", ce->value);
 	rt = 0;
@@ -855,19 +934,24 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 	char *nbuf;
 	int nlen;
 
-	if (!proc || !proc (&file, &nbuf, &nlen)) {
-	    nbuf = file.buf;
-	    nlen = file.eof - file.buf;
+	if (!proc || !proc (&file, &nbuf, &nlen) ||
+	    (nlen == file.eof - file.buf && !memcmp (nbuf, file.buf, nlen)))
+	{
+	    if (!use_destdir && !strcmp (ce->value, nname))
+		linkedFile (nname);
+	    else {
+		struct stat st;
+		stat (ce->value, &st);
+		WriteOut (nname, mode, st.st_mtime, file.buf, file.eof - file.buf);
+		copiedFile (ce->value);
+	    }
+	} else {
+	    WriteOut (nname, mode, 0, nbuf, nlen);
+	    editedFile (ce->value);
 	}
-	copiedFile (ce->value);
-	f = Create (nname, mode);
-	fwrite (nbuf, nlen, 1, f);
-	fclose (f);
-	if (strcmp (ce->value, nname) &&
-	    inDestDir (ce->value) &&
-	    !memcmp (newdir, KDMCONF, sizeof(KDMCONF)))
-	    unlink (ce->value);
-	linkedFile (nname);
+	if (strcmp (ce->value, nname) && inNewDir (ce->value) && !use_destdir)
+	    displace (ce->value);
+	addedFile (nname);
 	rt = 1;
     }
   doret:
@@ -876,30 +960,22 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 }
 
 static void
-dlinkfile (const char *name/*, int (*proc)(File *, char **, int *)*/)
+dlinkfile (const char *name)
 {
-    FILE *f;
     File file;
-/*    char *nbuf;
-    int nlen;*/
 
     if (!readFile (&file, name)) {
 	fprintf (stderr, "Warning: cannot read file %s\n", name);
 	return;
     }
-/*    if (proc)
-	proc (&file, &nbuf, &nlen);*/
-    if (inDestDir (name)) {
-	if (memcmp (newdir, KDMCONF, sizeof(KDMCONF))) {
-	    struct stat st;
-	    stat (name, &st);
-	    f = Create (name, st.st_mode);
-	    fwrite (file.buf, file.eof - file.buf, 1, f);
-	    fclose (f);
-	}
+    if (inNewDir (name) && use_destdir) {
+	struct stat st;
+	stat (name, &st);
+	WriteOut (name, st.st_mode, st.st_mtime, file.buf, file.eof - file.buf);
 	copiedFile (name);
-    }
-    linkedFile (name);
+    } else
+	linkedFile (name);
+    addedFile (name);
 }
 
 static void
@@ -912,12 +988,8 @@ linkfile (Entry *ce)
 static void
 writefile (const char *tname, int mode, const char *cont)
 {
-    FILE *f;
-
-    f = Create (tname, mode);
-    fputs (cont, f);
-    fclose (f);
-    linkedFile (tname);
+    WriteOut (tname, mode, 0, cont, strlen (cont));
+    addedFile (tname);
 }
 
 
@@ -929,7 +1001,7 @@ handBgCfg (Entry *ce, Section *cs ATTR_UNUSED)
     if (!ce->active)	/* can be only the X-*-Greeter one */
 	writefile (KDMCONF "/backgroundrc", 0644,
 		   background ? background : def_background);
-#if 0 /* risk of clobbering the original file */
+#if 0 /* risk of kcontrol clobbering the original file */
     else if (old_confs)
 	linkfile (ce);
 #endif
@@ -1311,7 +1383,7 @@ cp_keyfile(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_confs)
 	linkfile (ce);
     else
-	if (!copyfile (ce, "kdmkeys", 0644, 0))
+	if (!copyfile (ce, "kdmkeys", 0600, 0))
 	    ce->active = 0;
 }
 
@@ -1336,7 +1408,7 @@ mk_willing(Entry *ce, Section *cs ATTR_UNUSED)
     else {
 	if (!(fname = strchr (ce->value, '/')))
 	    return;	/* obviously in-line (or empty) */
-	if (old_scripts || inDestDir (fname))
+	if (old_scripts || inNewDir (fname))
 	    dlinkfile (fname);
 	else {
 	  dflt:
@@ -1347,12 +1419,14 @@ mk_willing(Entry *ce, Section *cs ATTR_UNUSED)
     }
 }
 
+/*
 static int
-edit_resources(File *file ATTR_UNUSED, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
+edit_resources(File *file, char **nbuf, int *nlen)
 {
-    /* XXX remove any login*, chooser*, ... resources */
+    // XXX remove any login*, chooser*, ... resources
     return 0;
 }
+*/
 
 static void
 cp_resources(Entry *ce, Section *cs ATTR_UNUSED)
@@ -1362,7 +1436,7 @@ cp_resources(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_confs)
 	linkfile (ce);
     else
-	if (!copyfile (ce, ce->value, 0644, edit_resources))
+	if (!copyfile (ce, ce->value, 0644, 0/*edit_resources*/))
 	    ce->active = 0;
 }
 
@@ -1413,6 +1487,11 @@ delstr (File *fil, const char *pat)
     return 0;
 }
 
+/* XXX
+   the UseBackground voodoo will horribly fail, if multiple sections link
+   to the same Xsetup file
+*/
+
 static int mod_usebg;
 
 static int
@@ -1445,7 +1524,7 @@ mk_setup(Entry *ce, Section *cs)
 	    putval ("UseBackground", "false");
 	linkfile (ce);
     } else {
-	if (ce->active && inDestDir (ce->value)) {
+	if (ce->active && inNewDir (ce->value)) {
 	    if (mod_usebg)
 		copyfile (ce, ce->value, 0755, edit_setup);
 	    else
@@ -1478,7 +1557,7 @@ mk_startup(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_scripts || mixed_scripts)
 	linkfile (ce);
     else {
-	if (ce->active && inDestDir (ce->value)) {
+	if (ce->active && inNewDir (ce->value)) {
 	    if (mod_usebg)
 		copyfile (ce, ce->value, 0755, edit_startup);
 	    else
@@ -1494,7 +1573,7 @@ mk_startup(Entry *ce, Section *cs ATTR_UNUSED)
 static void
 mk_reset(Entry *ce, Section *cs ATTR_UNUSED)
 {
-    if (old_scripts || mixed_scripts || (ce->active && inDestDir (ce->value)))
+    if (old_scripts || mixed_scripts || (ce->active && inNewDir (ce->value)))
 	linkfile (ce);
     else {
 	ce->value = KDMCONF "/Xreset";
@@ -1506,7 +1585,7 @@ mk_reset(Entry *ce, Section *cs ATTR_UNUSED)
 static void
 mk_session(Entry *ce, Section *cs ATTR_UNUSED)
 {
-    if (old_scripts || (ce->active && inDestDir (ce->value)))
+    if (old_scripts || (ce->active && inNewDir (ce->value)))
 	linkfile (ce);
     else {
 	ce->value = KDMCONF "/Xsession";
@@ -2342,7 +2421,7 @@ ReadConf (const char *fname)
 
     if (!readFile (&file, fname))
 	return 0;
-    copiedFile (fname);
+    usedFile (fname);
 
     for (s = file.buf, line = 0, cursec = 0, sectmoan = 1; s < file.eof; s++) {
 	line++;
@@ -3054,7 +3133,7 @@ mergeXdmCfg (const char *path)
 	ASPrintf (&p, xdmconfs[i], path);
 	if ((db = XrmGetFileDatabase (p))) {
 	    printf ("Information: reading old xdm config file %s\n", p);
-	    copiedFile (p);
+	    usedFile (p);
 	    free (p);
 	    xdmpath = path;
 	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
@@ -3067,6 +3146,48 @@ mergeXdmCfg (const char *path)
     }
     return 0;
 }
+
+static void
+fwrapprintf (FILE *f, const char *msg, ...)
+{
+    char *txt, *ftxt, *line;
+    va_list ap;
+    int col, lword, fspace;
+
+    va_start (ap, msg);
+    VASPrintf (&txt, msg, ap);
+    va_end (ap);
+    ftxt = 0;
+    for (line = txt, col = 0, lword = fspace = -1; line[col]; ) {
+	if (line[col] == '\n') {
+	    StrCat (&ftxt, "%.*s", ++col, line);
+	    line += col;
+	    col = 0;
+	    lword = fspace = -1;
+	    continue;
+	} else if (line[col] == ' ') {
+	    if (lword >= 0) {
+		fspace = col;
+		lword = -1;
+	    }
+	} else {
+	    if (lword < 0)
+		lword = col;
+	    if (col >= 78 && fspace >= 0) {
+		StrCat (&ftxt, "%.*s\n", fspace, line);
+		line += lword;
+		col -= lword;
+		lword = 0;
+		fspace = -1;
+	    }
+	}
+	col++;
+    }
+    free (txt);
+    fputs (ftxt, f);
+    free (ftxt);
+}
+
 
 static const char *oldkdes[] = {
     KDE_CONFDIR, 
@@ -3145,6 +3266,10 @@ int main(int argc, char **argv)
 "  --old-confs\n"
 "    Directly use all ancillary config files from the older xdm/kdm\n"
 "    configuration. This is usually a bad idea.\n"
+"  --no-backup\n"
+"    Overwrite/delete old config files instead of backing them up.\n"
+"  --no-in-notice\n"
+"    Don't put the notice about --in being used into the generated README.\n"
 );
 	    exit (0);
 	}
@@ -3172,6 +3297,14 @@ int main(int argc, char **argv)
 	    no_old_kde = 1;
 	    continue;
 	}
+	if (!strcmp(argv[ap], "--no-backup")) {
+	    no_backup = 1;
+	    continue;
+	}
+	if (!strcmp(argv[ap], "--no-in-notice")) {
+	    no_in_notice = 1;
+	    continue;
+	}
 	where = 0;
 	if (!strcmp(argv[ap], "--in"))
 	    where = &newdir;
@@ -3189,6 +3322,8 @@ int main(int argc, char **argv)
 	}
 	*where = argv[++ap];
     }
+    if (memcmp (newdir, KDMCONF, sizeof(KDMCONF)))
+	use_destdir = 1;
 
     mkdefconf();
     newer = 0;
@@ -3196,15 +3331,26 @@ int main(int argc, char **argv)
 	DIR *dir;
 	if ((dir = opendir (newdir))) {
 	    struct dirent *ent;
-	    while ((ent = readdir (dir)))
-		unlink (ent->d_name);	/* don't mind for . & .. */
+	    char bn[PATH_MAX];
+	    readdir (dir); /* . */
+	    readdir (dir); /* .. */
+	    while ((ent = readdir (dir))) {
+		int l = sprintf (bn, "%s/%s", newdir, ent->d_name); /* cannot overflow (kernel would not allow the creation of a longer path) */
+		struct stat st;
+		if (!stat (bn, &st) && !S_ISREG (st.st_mode))
+		    continue;
+		if (no_backup || !memcmp (bn + l - 4, ".bak", 5))
+		    unlink (bn);
+		else
+		    displace (bn);
+	    }
 	    closedir (dir);
 	}
     } else {
 	if (oldkde) {
 	    if (!(newer = mergeKdmRcNewer (oldkde)) && !mergeKdmRcOld (oldkde))
 		fprintf (stderr, 
-			 "Cannot read old kdmrc at specified position\n");
+			 "Cannot read old kdmrc at specified location\n");
 	} else if (!no_old_kde) {
 	    for (i = 0; i < as(oldkdes); i++) {
 		if ((newer = mergeKdmRcNewer (oldkdes[i])) ||
@@ -3220,7 +3366,7 @@ int main(int argc, char **argv)
 	    if (oldxdm) {
 		if (!mergeXdmCfg (oldxdm))
 		    fprintf (stderr, 
-			     "Cannot read old kdm-config/xdm-config at specified position\n");
+			     "Cannot read old kdm-config/xdm-config at specified location\n");
 	    } else
 		for (i = 0; i < as(oldxdms); i++)
 		    if (mergeXdmCfg (oldxdms[i])) {
@@ -3242,7 +3388,7 @@ int main(int argc, char **argv)
 			 !strcmp (ce->spec->key, "Startup") ||
 			 !strcmp (ce->spec->key, "Reset")))
 		    {
-			if (inDestDir (ce->value))
+			if (inNewDir (ce->value))
 			    locals = 1;
 			else
 			    foreigns = 1;
@@ -3324,28 +3470,55 @@ int main(int argc, char **argv)
     wrconf (f);
     fclose (f);
 
-    if (oldxdm || oldkde) {
-	sprintf (nname, "%s/README", newdir);
-	f = Create (nname, 0644);
+    sprintf (nname, "%s/README", newdir);
+    f = Create (nname, 0644);
+    fprintf (f, 
+"This automatically generated configuration consists of the following files:\n");
+    fprintf (f, "- " KDMCONF "/kdmrc\n");
+    for (fp = aflist; fp; fp = fp->next)
+	fprintf (f, "- %s\n", fp->str);
+    if (use_destdir && !no_in_notice)
+	fwrapprintf (f,
+"All files destined for " KDMCONF " were actually saved in %s; "
+"this config won't be workable until moved in place.\n", newdir);
+    if (uflist || eflist || cflist || lflist) {
 	fprintf (f, 
-"The configuration files in this directory were automatically generated.\n"
-"As the used algorithms are pretty dumb, the configuration may be broken.\n");
-	fprintf (f, 
-"This configuration consists of the following files:\n");
-	fprintf (f, "- " KDMCONF "/kdmrc\n");
-	for (fp = lflist; fp; fp = fp->next)
-	    fprintf (f, "- %s\n", fp->str);
+"\n"
+"This config was derived from existing files. As the used algorithms are\n"
+"pretty dumb, it may be broken.\n");
+	if (uflist) {
+	    fprintf (f, 
+"Information from these files was extracted:\n");
+	    for (fp = uflist; fp; fp = fp->next)
+		fprintf (f, "- %s\n", fp->str);
+	}
+	if (lflist) {
+	    fprintf (f, 
+"These files were directly incorporated:\n");
+	    for (fp = lflist; fp; fp = fp->next)
+		fprintf (f, "- %s\n", fp->str);
+	}
 	if (cflist) {
 	    fprintf (f, 
-"This configuration was derived from the following files:\n");
+"These files were copied verbatim:\n");
 	    for (fp = cflist; fp; fp = fp->next)
 		fprintf (f, "- %s\n", fp->str);
 	}
-	fprintf (f, 
-"Have a look at the program <kdebase-sources>/kdm/kfrontend/genkdmconf\n"
-"if you want to generate another configuration.\n");
-	fclose (f);
+	if (eflist) {
+	    fprintf (f, 
+"These files were copied with modifications:\n");
+	    for (fp = eflist; fp; fp = fp->next)
+		fprintf (f, "- %s\n", fp->str);
+	}
+	if (!no_backup && !use_destdir)
+	    fprintf (f, 
+"Old files that would have been overwritten were renamed to <oldname>.bak.\n");
     }
+    fprintf (f, 
+"\nTry '<kdebase-sources>/kdm/kfrontend/genkdmconf --help' if you want to\n"
+"generate another configuration.\n"
+"\nYou may delete this README.\n");
+    fclose (f);
 
     return 0;
 }
