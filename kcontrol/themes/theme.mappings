@@ -35,7 +35,7 @@
 # If fileName is given it must be preceded with a ':' and is used as
 # a fixed file name. Then the corresponding file of the theme will be renamed
 # upon copy. E.g. Kwm expects it's close button to have the name close.png,
-# so the value would be ":close.png"
+# so the value would be ":close"
 #
 # The exclamation mark indicates that no file shall be installed. Used for
 # color settings, switches (on/off/yes/no), etc. Only values in the config
@@ -168,15 +168,15 @@ ConfigAppDir=apps/kwm/pics
 ConfigNextGroup=Window Titlebar-2
 ConfigInstallCmd=winTitlebar
 ConfigActivateCmd=kwmcom restart
-CloseButton=-:close.png
-MaximizeButton=-:maximize.png
-MaximizeDownButton=-:maximizedown.png
-MenuButton=-:menu.png
-MinimizeButton=-:iconify.png
-StickyButton=-:pinup.png
-StickyDownButton=-:pindown.png
-TitlebarPixmapActive=-:activetitlebar.png
-TitlebarPixmapInactive=-:inactivetitlebar.png
+CloseButton=-:close
+MaximizeButton=-:maximize
+MaximizeDownButton=-:maximizedown
+MenuButton=-:menu
+MinimizeButton=-:iconify
+StickyButton=-:pinup
+StickyDownButton=-:pindown
+TitlebarPixmapActive=-:activetitlebar
+TitlebarPixmapInactive=-:inactivetitlebar
 PixmapUnderTitleText=!
 TitleFrameShaded=!
 TitleAlignment=!
@@ -194,14 +194,14 @@ ConfigFile=kwmrc
 ConfigActivateCmd=kwmcom restart
 #ConfigPreInstallCmd=stretchBorders
 ConfigInstallCmd=winShapeMode
-ShapePixmapBottom=-:wm_bottom.png
-ShapePixmapBottomLeft=-:wm_bottomleft.png
-ShapePixmapBottomRight=-:wm_bottomright.png
-ShapePixmapLeft=-:wm_left.png
-ShapePixmapRight=-:wm_right.png
-ShapePixmapTop=-:wm_top.png
-ShapePixmapTopLeft=-:wm_topleft.png
-ShapePixmapTopRight=-:wm_topright.png
+ShapePixmapBottom=-:wm_bottom
+ShapePixmapBottomLeft=-:wm_bottomleft
+ShapePixmapBottomRight=-:wm_bottomright
+ShapePixmapLeft=-:wm_left
+ShapePixmapRight=-:wm_right
+ShapePixmapTop=-:wm_top
+ShapePixmapTopLeft=-:wm_topleft
+ShapePixmapTopRight=-:wm_topright
 #
 #-----------------------------------------------------------------------------
 [Window Button Layout]
@@ -374,9 +374,9 @@ htmlFollowedLinks=VLinkColor!
 # icon. If the mini icon is '-' then no mini icon will be installed.
 [Icons]
 ConfigActivateCmd=restart kfm
-Trash=kfm_trash.png
-TrashFull=kfm_fulltrash.png
-PanelGo=apps/kpanel/pics/go.png:apps/kpanel/pics/mini/go.png
-PanelExit=apps/kpanel/pics/exit.png:-
-PanelKey=apps/kpanel/pics/key.png:-
-PanelWindowList=apps/kpanel/pics/window_list.png:apps/kpanel/pics/mini/window_list.png
+Trash=kfm_trash
+TrashFull=kfm_fulltrash
+PanelGo=apps/kpanel/pics/go:apps/kpanel/pics/mini/go
+PanelExit=apps/kpanel/pics/exit:-
+PanelKey=apps/kpanel/pics/key:-
+PanelWindowList=apps/kpanel/pics/window_list:apps/kpanel/pics/mini/window_list
