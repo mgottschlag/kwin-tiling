@@ -260,6 +260,8 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
     ++count;
   }
+
+  fontUseLayout->setRowStretch( count, 1 );
 }
 
 KFonts::~KFonts()
