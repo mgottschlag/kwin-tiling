@@ -51,7 +51,7 @@
 #include <kdebug.h>
 #include <kstddirs.h>
 #include <kapp.h>
-#include <kwm.h>
+#include <kwin.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
 
@@ -429,7 +429,7 @@ void KSoundWidget::save(){
   KSimpleConfig config("kwmsoundrc");
   QString sname, helper;
   int lf;
-  KWM kwm;
+  KWin kwin;
 
   config.setGroup("SoundConfiguration");
 
@@ -477,7 +477,8 @@ void KSoundWidget::save(){
   config.writeEntry("Duration",bellDuration);
 
   config.sync();
-  kwm.sendKWMCommand("syssnd_restart");
+#warning "use of sendKWMCommand(syssnd_start)"
+  //kwin.sendKWMCommand("syssnd_restart");
 }
 
 void KSoundWidget::ringBell()

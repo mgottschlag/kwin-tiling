@@ -25,7 +25,7 @@
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
 #include <kaccel.h>
-#include <kwm.h>
+#include <kwin.h>
 #include <kdialog.h>
 
 #include "keyconfig.h"
@@ -141,7 +141,8 @@ void KKeyModule::save()
 {
   keys->setKeyDict( dict );
   keys->writeSettings();
-  KWM::configureWm();
+#warning used KWM::configureWM() (which uses sendKWMCommand)
+  //KWin::configureWm();
 }
 
 void KKeyModule::defaults()

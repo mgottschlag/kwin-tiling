@@ -32,7 +32,6 @@
 #include <qpushbutton.h>
 
 #include <kcmodule.h>
-#include <kwm.h>
 
 class KIntNumInput;
 class QButtonGroup;

@@ -30,7 +30,7 @@
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kthemebase.h>
-#include <kwm.h>
+#include <kwin.h>
 #include <kdialog.h>
 #include <kipc.h>
 #include <kprocess.h>
@@ -409,7 +409,8 @@ void KGeneral::save()
     }
 
     KIPC::sendMessageAll(KIPC::StyleChanged);
-    KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
+#warning "readd setting of Mac style menu (used sendKWMCommand)"
+    //KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
     QApplication::syncX();
 
     m_bChanged = false;

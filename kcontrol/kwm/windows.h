@@ -36,7 +36,6 @@
 #include <qcombobox.h>   //CT 31jan98
 #include <kcmodule.h>
 
-#include <kwm.h>
 
 class QSlider;
 class QButtonGroup;

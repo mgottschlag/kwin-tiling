@@ -25,7 +25,6 @@
 #include <qcombobox.h>
 
 #include <kcmodule.h>
-#include <kwm.h>
 
 class KMouseConfig : public KCModule
 {

@@ -39,7 +39,6 @@
 #include <kcontrol.h>
 #include <kiconloader.h>
 #include <kpixmap.h>
-#include <kwm.h>
 
 class QButtonGroup;
 class QRadioButton;

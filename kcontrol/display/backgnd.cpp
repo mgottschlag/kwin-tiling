@@ -37,7 +37,6 @@
 
 #include <kapp.h>
 #include <kconfig.h>
-#include <kwin.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
@@ -54,6 +53,9 @@
 #include <bgrender.h>
 #include <bgdialogs.h>
 #include <backgnd.h>
+
+/* as late as possible, as it includes some X headers without protecting them */
+#include <netwm.h>
 
 /**** DLL Interface ****/
 
@@ -316,8 +318,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
       " reverse the background and wallpaper layers by checking this option.") );
 
-    m_Desk = KWin::currentDesktop() - 1;
-    m_Max = KWin::numberOfDesktops();
+    NETRootInfo rin(qt_xdisplay(), NET::CurrentDesktop | NET::NumberOfDesktops);
+    m_Desk = rin.currentDesktop() - 1;
+    m_Max = rin.numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
 	m_Renderer[i] = new KBackgroundRenderer(i);
@@ -342,7 +345,7 @@ void KBackground::init()
     int i;
 
     // Desktop names
-    for (i=0; i<KWin::numberOfDesktops(); i++)
+    for (i=0; i<m_Max; i++)
 	m_pDeskList->insertItem(m_pGlobals->deskName(i));
 
     // Background modes: make sure these match with kdesktop/bgrender.cc !!

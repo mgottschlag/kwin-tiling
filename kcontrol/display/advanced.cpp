@@ -19,7 +19,6 @@
 #include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kwm.h>
 #include <kcmodule.h>
 #include <dcopclient.h>
 
