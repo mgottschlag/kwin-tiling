@@ -39,9 +39,10 @@
 
 #include <qfile.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
 #include <qlayout.h>
 
+#include <kstdguiitem.h>
+#include <kpushbutton.h>
 #include <kdebug.h>
 #include <klineedit.h>
 #include <kcombobox.h>
@@ -119,7 +120,7 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	     m_email->txtReplyTo->text().isEmpty() &&
 	     m_email->txtSMTP->text().isEmpty() )
 	{
-		KConfigGroup config( EMailFactory::instance()->config(), 
+		KConfigGroup config( EMailFactory::instance()->config(),
 				     "General" );
 		if ( config.readBoolEntry( "FirstStart", true ) )
 			defaults();
@@ -204,11 +205,9 @@ void topKCMEmail::slotNewProfile()
 	layout->addWidget(txtName);
 
 	layout = new QHBoxLayout(vlayout);
-	QPushButton *btnOK = new QPushButton(dlgAskName);
-	btnOK->setText(i18n("&OK"));
+	KPushButton *btnOK = new KPushButton( KStdGuiItem::ok(),  dlgAskName);
 	btnOK->setFixedSize(btnOK->sizeHint());
-	QPushButton *btnCancel = new QPushButton(dlgAskName);
-	btnCancel->setText(i18n("&Cancel"));
+	KPushButton *btnCancel = new KPushButton(KStdGuiItem::cancel(), dlgAskName);
 	btnCancel->setFixedSize(btnCancel->sizeHint());
 	layout->addWidget(btnOK);
 	layout->addWidget(btnCancel);
@@ -261,7 +260,7 @@ void topKCMEmail::save()
 	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
 	if (!cfgName.isEmpty())
 		::chmod(QFile::encodeName(cfgName), 0600);
-        
+
 	KConfigGroup config( EMailFactory::instance()->config(), "General" );
 	config.writeEntry( "FirstStart", false );
 
