@@ -787,7 +787,11 @@ void LockProcess::hackExited(KProcess *)
 void LockProcess::suspend()
 {
     if(!mSuspended)
+    {
         mHackProc.kill(SIGSTOP);
+        QApplication::syncX();
+        mSavedScreen = QPixmap::grabWindow( winId());
+    }
     mSuspended = true;
 }
 
@@ -798,7 +802,11 @@ void LockProcess::resume()
     if(!mVisibility)
         return; // no need to resume, not visible
     if(mSuspended)
+    {
+        bitBlt( this, 0, 0, &mSavedScreen );
+        QApplication::syncX();
         mHackProc.kill(SIGCONT);
+    }
     mSuspended = false;
 }
 

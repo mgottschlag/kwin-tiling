@@ -17,6 +17,7 @@
 #include <qtimer.h>
 #include <qvaluestack.h>
 #include <qmessagebox.h>
+#include <qpixmap.h>
 
 #include <X11/Xlib.h>
 
@@ -119,6 +120,7 @@ private:
     QStringList mPlugins, mPluginOptions;
     QString     mMethod;
     GreeterPluginHandle greetPlugin;
+    QPixmap     mSavedScreen;
 };
 
 #endif
