@@ -117,6 +117,7 @@ TopLevel::TopLevel(const char* name)
 
   // set a reasonable resize mode
   _splitter->setResizeMode(_tab, QSplitter::KeepSize);
+  _splitter->setOpaqueResize(true);
 
   // set up the right hand side (the docking area)
   _dock = new DockContainer(_splitter);

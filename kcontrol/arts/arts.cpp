@@ -29,17 +29,12 @@
 #include <sys/stat.h>
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-
-#include <iostream.h>
 
 #include <qfileinfo.h>
 #include <qstring.h>
 #include <qlayout.h>
 #include <qwidget.h>
-#include <qtabwidget.h>
-#include <qtabbar.h>
+#include <qvbuttongroup.h>
 #include <qdir.h>
 #include <qwhatsthis.h>
 
@@ -133,11 +128,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
     QWhatsThis::add(fullDuplex, i18n("This enables the soundserver to record and play sound at the same time. If you use applications like internet telephony, voice recognition or similar, you probably want this."));
 
-    responseGroup = new QButtonGroup(i18n("Response time"), this);
+    responseGroup = new QVButtonGroup(i18n("Response time"), this);
     QWhatsThis::add(responseGroup, i18n("If you increase the response time, the aRts soundserver will be able to keep up with playing incoming requests more easily, but CPU load will increase."));
-
-    QVBoxLayout *vbox = new QVBoxLayout(responseGroup,10);
-    vbox->addSpacing(responseGroup->fontMetrics().height());
 
     responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
@@ -145,8 +137,6 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     responseButton[3] = new QRadioButton( i18n("&Don't care (large!)"), responseGroup);
     //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
 
-    for (int i = 0; i < 4; i++)
-    vbox->addWidget(responseButton[i]);
     layout->addWidget(responseGroup);
 
     // options end
@@ -159,6 +149,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
                   "those changes to take effect.</qt>"));
     layout->addWidget(restartHint);
     layout->addStretch();
+
+    setMinimumSize(sizeHint());
 
     config = new KConfig("kcmartsrc");
 

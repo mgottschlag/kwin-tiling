@@ -142,10 +142,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
   // The Language group box
-  group = new QGroupBox(i18n("Language"), this);
+  group = new QGroupBox(0, Vertical, i18n("Language"), this);
   vbox->addWidget(group, 1);
 
-  QGridLayout *hbox = new QGridLayout(group, 2, 2, KDialog::marginHint(), KDialog::spacingHint() );
+  QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
 //  hbox->addRowSpacing(0, 15);
 //  hbox->addRowSpacing(5, 10);
 //  hbox->addColSpacing(0, 10);

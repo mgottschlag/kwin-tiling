@@ -69,9 +69,9 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   (void) new WhatsThis( this );
 
-  client->resize(client->minimumSize());
-  client->reparent(this,0,QPoint(0,0),true);
-  connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
+  _client->resize(_client->minimumSize());
+  _client->reparent(this,0,QPoint(0,0),true);
+  connect(_client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
   _sep = new QFrame(this);
   _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
@@ -111,21 +111,21 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   else
     connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
 
-  QGridLayout *top = new QGridLayout(this, 4, 6, 2, 4);
-  top->addMultiCellWidget(client, 1, 1, 0, 6);
-  top->addMultiCellWidget(_sep, 2, 2, 0, 6);
-  top->addWidget(_help, 3, 0);
-  top->addWidget(_default, 3, 1);
-  top->addWidget(_reset, 3, 2);
-  top->addWidget(_ok, 3, 4);
-  if (run_as_root)
-    top->addWidget(_root, 3, 5);
-  else
-    top->addWidget(_apply, 3, 5);
-  top->addWidget(_cancel, 3, 6);
+  QVBoxLayout *top = new QVBoxLayout(this, 2, 4);
+  top->addWidget(_client);
+  top->addWidget(_sep);
 
-  top->setRowStretch(1, 1);
-  top->setColStretch(3, 1);
+  QHBoxLayout *buttons = new QHBoxLayout(top, 4);
+  buttons->addWidget(_help);
+  buttons->addWidget(_default);
+  buttons->addWidget(_reset);
+  buttons->addStretch(1);
+  buttons->addWidget(_ok);
+  if (run_as_root)
+    buttons->addWidget(_root);
+  else
+    buttons->addWidget(_apply);
+  buttons->addWidget(_cancel);
 
   top->activate();
 

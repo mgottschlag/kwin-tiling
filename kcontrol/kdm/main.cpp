@@ -21,6 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qlayout.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -38,6 +39,7 @@
 KDModule::KDModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+  QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
 
   appearance = new KDMAppearanceWidget(this);
@@ -59,6 +61,8 @@ KDModule::KDModule(QWidget *parent, const char *name)
   sessions = new KDMSessionsWidget(this,0);
   tab->addTab(sessions, i18n("&Sessions"));
   connect(sessions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  top->addWidget(tab);
 }
 
 
