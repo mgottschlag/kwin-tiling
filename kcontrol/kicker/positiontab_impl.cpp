@@ -89,7 +89,7 @@ void PositionTab::load()
 		    QApplication::reverseLayout() ? 2 : 0));
 
     // if the panel is horizontal...
-    if (m_locationGroup->id(m_locationGroup->selected())) {
+    if (m_locationGroup->id(m_locationGroup->selected()) > 1) {
 	m_alignLeftTop->setText(i18n("Le&ft"));
 	m_alignRightBottom->setText(i18n("R&ight"));
     } else {
