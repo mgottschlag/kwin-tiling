@@ -10,4 +10,6 @@ X-KDE-Init=midi
 
 Name=Midi 
 Comment=Midi Configuration
-Keywords=MIDI, synthesizer, music
+Comment[he]=Midi תורדגה
+Comment[sv]=Anpassnig av Midi
+Keywords=MIDI,synthesizer,music
