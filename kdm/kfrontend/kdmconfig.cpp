@@ -102,13 +102,6 @@ void init_config( void )
     _hasConsole = _hasConsole && GetCfgInt (C_hasConsole);
     _authorized = GetCfgInt (C_isAuthorized);
 
-    if (_greeterScreen < 0) {
-	QDesktopWidget *dsk = kapp->desktop();
-	_greeterScreen = _greeterScreen == -2 ?
-		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
-		dsk->screenNumber( QPoint( 0, 0 ) );
-    }
-
     _stsFile = _dataDir + "/kdmsts";
 
     // Greet String

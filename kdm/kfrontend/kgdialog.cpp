@@ -175,13 +175,19 @@ KGDialog::adjustGeometry()
 {
     QDesktopWidget *dsk = qApp->desktop();
 
+    if (_greeterScreen < 0)
+	_greeterScreen = _greeterScreen == -2 ?
+		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
+		dsk->screenNumber( QPoint( 0, 0 ) );
+
     QRect scr = dsk->screenGeometry( _greeterScreen );
     setMaximumSize( scr.size() * .9 );
     adjustSize();
     QRect grt( rect() );
     unsigned x = 50, y = 50;
     sscanf(_greeterPos, "%u,%u", &x, &y);
-    grt.moveCenter( QPoint( scr.width() * x / 100, scr.height() * y / 100 ) );
+    grt.moveCenter( QPoint( scr.x() + scr.width() * x / 100,
+			    scr.y() + scr.height() * y / 100 ) );
     moveInto( grt, scr );
     setGeometry( grt );
 
