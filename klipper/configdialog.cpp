@@ -167,7 +167,7 @@ void ListView::rename( QListViewItem* item, int c )
   if ( gui ) {
     if ( ! _regExpEditor )
       _regExpEditor = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString::null, this );
-    KRegExpEditorInterface *iface = dynamic_cast<KRegExpEditorInterface *>( _regExpEditor );
+    KRegExpEditorInterface *iface = static_cast<KRegExpEditorInterface *>( _regExpEditor->qt_cast( "KRegExpEditorInterface" ) );
     assert( iface );
     iface->setRegExp( item->text( 0 ) );
 
