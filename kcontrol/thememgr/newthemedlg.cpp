@@ -38,7 +38,7 @@
 
 
 //-----------------------------------------------------------------------------
-NewThemeDlg::NewThemeDlg(QWidget *parent): 
+NewThemeDlg::NewThemeDlg(QWidget *parent):
   KDialogBase(parent, "newthemedlg", true,
 	i18n("Create New Theme"), Ok|Cancel, Ok, true)
 {
@@ -54,7 +54,7 @@ NewThemeDlg::NewThemeDlg(QWidget *parent):
   mEdtEmail = newLine(i18n("Email:"),1);
   mEdtHomepage = newLine(i18n("Webpage:"),1);
 
-  
+
 //  QLabel *previewL = new QLabel(i18n("Preview:"), page);
 //  mGrid->addWidget(previewL, 0, 2);
   mPreviewLabel = new QLabel(page);
@@ -77,6 +77,7 @@ NewThemeDlg::NewThemeDlg(QWidget *parent):
   mGrid->setColStretch(0, 0);
   mGrid->setColStretch(1, 1);
   mGrid->setColStretch(2, 0);
+  mEdtFilename->setFocus();
 }
 
 
@@ -122,25 +123,25 @@ void NewThemeDlg::slotSnapshot()
   SnapshotDlg *dlg = new SnapshotDlg(this);
   int result = dlg->exec();
   delete dlg;
-  if (result == SnapshotDlg::Rejected) 
+  if (result == SnapshotDlg::Rejected)
      return;
 
   kapp->processEvents();
 #ifdef HAVE_USLEEP
   usleep(100000);
   kapp->processEvents();
-#endif  
+#endif
 
   mPreview = QPixmap::grabWindow( qt_xrootwin()).convertToImage().smoothScale(320,240);
   QPixmap snapshot;
   snapshot.convertFromImage(mPreview.smoothScale(160,120));
   mPreviewLabel->setPixmap(snapshot);
   KWin::setCurrentDesktop(desktop);
-  KWin::deIconifyWindow(winId(), false);  
+  KWin::deIconifyWindow(winId(), false);
 }
 
 SnapshotDlg::SnapshotDlg(QWidget *parent)
-   : KDialogBase(parent, "snapshot", true, 
+   : KDialogBase(parent, "snapshot", true,
          i18n("Make Snapshot"), Cancel, Cancel, true)
 {
   QVBox *page = makeVBoxMainWidget();
