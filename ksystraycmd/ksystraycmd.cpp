@@ -1,6 +1,7 @@
 #include <qtooltip.h>
 #include <qtextstream.h>
 #include <qimage.h>
+#include <qregexp.h>
 
 #include <kapp.h>
 #include <kglobal.h>

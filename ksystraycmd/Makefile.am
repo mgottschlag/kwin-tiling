@@ -1,7 +1,5 @@
 ####### Fiddle here
 
-AM_CPPFLAGS = -DQT_CLEAN_NAMESPACE -DQT_NO_COMPAT
-
 INCLUDES = $(all_includes)
 LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 LDADD    = $(LIB_KDECORE) $(LIB_KDEUI)
