@@ -269,7 +269,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_RefreshEdit = new QSpinBox(frame);
     m_RefreshEdit->setRange(5, 60);
     m_RefreshEdit->setSteps(5, 10);
-    m_RefreshEdit->setSuffix(i18n(" minutes"));
+    m_RefreshEdit->setSuffix(i18n(" min."));
     m_RefreshEdit->setFixedSize(m_RefreshEdit->sizeHint());
     lbl->setBuddy(m_RefreshEdit);
     grid->addWidget(m_RefreshEdit, 5, 1, AlignLeft);
@@ -673,7 +673,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     m_pIntervalEdit->setRange(1, 240);
     m_pIntervalEdit->setSteps(1, 15);
     m_pIntervalEdit->setValue(QMAX(1,m_Interval));
-    m_pIntervalEdit->setSuffix(i18n(" minutes"));
+    m_pIntervalEdit->setSuffix(i18n(" min."));
     lbl->setBuddy(m_pIntervalEdit);
     hbox->setStretchFactor(m_pIntervalEdit, 1);
 
