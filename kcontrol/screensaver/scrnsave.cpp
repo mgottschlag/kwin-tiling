@@ -659,16 +659,35 @@ void KScreenSaver::slotSetup()
 
     QString word;
     ts >> word;
+    bool kxsconfig = word == "kxsconfig";
     QString path = findExe(word);
 
     if (!path.isEmpty())
     {
         (*mSetupProc) << path;
 
+        // Add caption and icon to about dialog
+        if (!kxsconfig) {
+            word = "-caption";
+            (*mSetupProc) << word;
+            word = mSaverList.at(mSelected)->name();
+            (*mSetupProc) << word;
+            word = "-icon";
+            (*mSetupProc) << word;
+            word = "kscreensaver";
+            (*mSetupProc) << word;
+        }
+
         while (!ts.atEnd())
         {
             ts >> word;
             (*mSetupProc) << word;
+        }
+
+        // Pass translated name to kxsconfig
+        if (kxsconfig) {
+          word = mSaverList.at(mSelected)->name();
+          (*mSetupProc) << word;
         }
 
         mSetupBt->setEnabled( false );
