@@ -31,17 +31,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class TaskRMBMenu : public QPopupMenu
 {
 	Q_OBJECT
-	
+
 public:
-	TaskRMBMenu( TaskList* tasks, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
-	TaskRMBMenu( Task* tasks, TaskManager* manager, QWidget *parent = 0, const char *name = 0 );
-	
+	TaskRMBMenu( TaskList* tasks, TaskManager* manager, bool showAll = true, QWidget *parent = 0, const char *name = 0 );
+	TaskRMBMenu( Task* tasks, TaskManager* manager, bool showAll = true, QWidget *parent = 0, const char *name = 0 );
+
 private:
 	void fillMenu( Task* t, TaskManager* manager );
 	void fillMenu( TaskList* tasks, TaskManager* manager );
 	QPopupMenu* makeDesktopsMenu( Task* t, TaskManager* manager );
 	QPopupMenu* makeDesktopsMenu( TaskList* tasks, TaskManager* manager );
-	
+
 private slots:
 	void slotMinimizeAll();
 	void slotMaximizeAll();
@@ -50,9 +50,10 @@ private slots:
 	void slotCloseAll();
 	void slotAllToDesktop( int desktop );
 	void slotAllToCurrentDesktop();
-	
+
 private:
 	TaskList* tasks;
+	bool showAll;
 };
 
 #endif

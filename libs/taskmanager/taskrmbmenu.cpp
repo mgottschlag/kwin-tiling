@@ -29,9 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskrmbmenu.h"
 #include "taskrmbmenu.moc"
 
-TaskRMBMenu::TaskRMBMenu( TaskList* theTasks, TaskManager* manager, QWidget *parent, const char *name )
+TaskRMBMenu::TaskRMBMenu( TaskList* theTasks, TaskManager* manager, bool show, QWidget *parent, const char *name )
 	: QPopupMenu( parent, name )
 	, tasks( theTasks )
+	, showAll( show )
 {
 	assert( tasks->count() > 0 );
 	if( tasks->count() == 1 ) {
@@ -41,9 +42,10 @@ TaskRMBMenu::TaskRMBMenu( TaskList* theTasks, TaskManager* manager, QWidget *par
 	}
 }
 
-TaskRMBMenu::TaskRMBMenu( Task* task, TaskManager* manager, QWidget* parent, const char* name )
+TaskRMBMenu::TaskRMBMenu( Task* task, TaskManager* manager, bool show, QWidget* parent, const char* name )
 	: QPopupMenu( parent, name )
 	, tasks(0)
+	, showAll( show )
 {
 	fillMenu( task, manager );
 }
@@ -75,9 +77,12 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 	{
 		insertSeparator();
 
-		id = insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
-		id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
-		setItemEnabled( id, !t->isOnCurrentDesktop() );
+		insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
+		if ( showAll )
+		{
+			id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
+			setItemEnabled( id, !t->isOnCurrentDesktop() );
+		}
 	}
 }
 
