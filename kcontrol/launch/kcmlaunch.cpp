@@ -45,7 +45,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     Form1Layout->setMargin( 11 );
 
     QGroupBox* GroupBox1 = new QGroupBox( this, "GroupBox1" );
-    GroupBox1->setTitle( i18n( "Busy Cursor" ) );
+    GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );
     QWhatsThis::add(GroupBox1, i18n(
      "<h1>Busy Cursor</h1>\n"
      "KDE offers a busy cursor for application startup notification.\n"
@@ -92,7 +92,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
             SLOT( checkChanged() ) );
 
     QGroupBox* GroupBox2 = new QGroupBox( this, "GroupBox2" );
-    GroupBox2->setTitle( i18n( "Taskbar Notification" ) );
+    GroupBox2->setTitle( i18n( "Taskbar &Notification" ) );
     QWhatsThis::add(GroupBox2, i18n("<H1>Taskbar Notification</H1>\n"
     "You can enable a second method of startup notification which is\n"
     "used by the taskbar where a button with a rotating hourglass appears,\n"
@@ -118,7 +118,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     connect( cb_taskbarButton, SIGNAL( toggled(bool) ), SLOT( checkChanged()));
 
     lbl_taskbarTimeout = new QLabel( GroupBox2, "TextLabel2" );
-    lbl_taskbarTimeout->setText( i18n( "Startup &indication timeout:" ) );
+    lbl_taskbarTimeout->setText( i18n( "Start&up indication timeout:" ) );
     GroupBox2Layout->addWidget( lbl_taskbarTimeout, 1, 0 );
     sb_taskbarTimeout = new KIntNumInput( GroupBox2, "sb_taskbarTimeout" );
     sb_taskbarTimeout->setRange( 0, 99, 1, true );
