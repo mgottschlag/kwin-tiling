@@ -229,11 +229,8 @@ void TaskbarConfig::save()
 
     delete c;
 
-    // Tell kicker about the new config file.
-    if (!kapp->dcopClient()->isAttached())
-        kapp->dcopClient()->attach();
     QByteArray data;
-    kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
+    kapp->dcopClient()->emitDCOPSignal("kdeTaskbarConfigChanged()", data);
 }
 
 void TaskbarConfig::defaults()
