@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KCMEmailBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -182,6 +182,29 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                 </widget>
             </grid>
         </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>m_smtpLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>SMTP Server:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtSMTP</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>Spacer21</cstring>
@@ -191,6 +214,12 @@ marks). Some people like to provide a nickname only. You can leave this field bl
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>220</height>
+                </size>
             </property>
         </spacer>
     </vbox>

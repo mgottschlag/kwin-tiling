@@ -54,6 +54,7 @@
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
+#include <kconfig.h>
 #include <dcopclient.h>
 
 #include "email.h"
@@ -75,6 +76,7 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	connect(m_email->txtOrganization, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtEMailAddr, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 	connect(m_email->txtReplyTo, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
+	connect(m_email->txtSMTP, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
 
 	pSettings = new KEMailSettings();
 	m_email->lblCurrentProfile->hide();
@@ -111,6 +113,20 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	"LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY\n"
 	"OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF\n"
 	"SUCH DAMAGE.");
+
+	if ( m_email->txtFullName->text().isEmpty() &&
+	     m_email->txtOrganization->text().isEmpty() &&
+	     m_email->txtEMailAddr->text().isEmpty() &&
+	     m_email->txtReplyTo->text().isEmpty() &&
+	     m_email->txtSMTP->text().isEmpty() )
+	{
+		KConfigGroup config( EMailFactory::instance()->config(), 
+				     "General" );
+		if ( config.readBoolEntry( "FirstStart", true ) )
+			defaults();
+	}
+
+	m_email->txtFullName->setFocus();
 }
 
 topKCMEmail::~topKCMEmail()
@@ -154,7 +170,7 @@ void topKCMEmail::load(const QString &s)
 		m_email->txtReplyTo->setText(pSettings->getSetting(KEMailSettings::ReplyToAddress));
 		m_email->txtOrganization->setText(pSettings->getSetting(KEMailSettings::Organization));
 		m_email->txtFullName->setText(pSettings->getSetting(KEMailSettings::RealName));
-
+		m_email->txtSMTP->setText(pSettings->getSetting(KEMailSettings::OutServer));
 		configChanged(false);
 	}
 
@@ -166,6 +182,7 @@ void topKCMEmail::clearData()
 	m_email->txtReplyTo->setText(QString::null);
 	m_email->txtOrganization->setText(QString::null);
 	m_email->txtFullName->setText(QString::null);
+	m_email->txtSMTP->setText(QString::null);
 
 	configChanged(false);
 }
@@ -239,11 +256,15 @@ void topKCMEmail::save()
 	pSettings->setSetting(KEMailSettings::EmailAddress, m_email->txtEMailAddr->text());
 	pSettings->setSetting(KEMailSettings::Organization, m_email->txtOrganization->text());
 	pSettings->setSetting(KEMailSettings::ReplyToAddress, m_email->txtReplyTo->text());
+	pSettings->setSetting(KEMailSettings::OutServer, m_email->txtSMTP->text());
 
 	// insure proper permissions -- contains sensitive data
 	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
 	if (!cfgName.isEmpty())
 		::chmod(QFile::encodeName(cfgName), 0600);
+        
+	KConfigGroup config( EMailFactory::instance()->config(), "General" );
+	config.writeEntry( "FirstStart", false );
 
 	configChanged(false);
 
@@ -261,6 +282,7 @@ void topKCMEmail::defaults()
 	m_email->txtFullName->setText(QString::fromLocal8Bit(p->pw_gecos));
         m_email->txtOrganization->setText(QString::null);
         m_email->txtReplyTo->setText(QString::null);
+        m_email->txtSMTP->setText(QString::null);
 
 	QString tmp = QString::fromLocal8Bit(p->pw_name);
 	tmp += "@"; tmp += hostname;
