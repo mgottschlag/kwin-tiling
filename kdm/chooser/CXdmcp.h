@@ -38,23 +38,19 @@ extern "C" {
 #include <X11/StringDefs.h>
 #include <X11/Xatom.h>
 }
-
 // this macro is only defined in XFree < 4.0
 #ifdef XIMStringConversionRetrival
 # include "dm.h"
 #endif
-
 extern "C" {
 #ifndef XIMStringConversionRetrival
 # include "dm.h"
 #endif
 #include "CXdmcp_c.h"
 }
-
 #include    <sys/types.h>
 #include    <stdio.h>
 #include    <ctype.h>
-
 #if defined(SVR4) && !defined(SCO325)
 #include    <sys/sockio.h>
 #endif
@@ -68,123 +64,120 @@ extern "C" {
 #include    <sys/stropts.h>
 #endif
 #endif
-
 #define XtRARRAY8   "ARRAY8"
 #define PING_INTERVAL	2000
 #define TRIES		3
-
 struct _app_resources {
-  ARRAY8Ptr	xdmAddress;
-  ARRAY8Ptr	clientAddress;
-  int		connectionType;
+    ARRAY8Ptr xdmAddress;
+    ARRAY8Ptr clientAddress;
+    int connectionType;
 };
 
 
-class CXdmcp : public QObject {
-    Q_OBJECT
+class CXdmcp:public QObject {
+    Q_OBJECT 
 
-public:
+  public:
 
-  typedef struct _hostName {
-    struct _hostName	*next;
-    char		*fullname;
-    int			willing;
-    ARRAY8		hostname, status;
-    CARD16		connectionType;
-    ARRAY8		hostaddr;
-  } HostName;
+    typedef struct _hostName {
+	struct _hostName *next;
+	char *fullname;
+	int willing;
+	ARRAY8 hostname, status;
+	CARD16 connectionType;
+	ARRAY8 hostaddr;
+    } HostName;
 
-	/* Constructor with command line arguments.
-   */
-  CXdmcp( int argc, char **argv );
-	~CXdmcp();
+    /* Constructor with command line arguments.
+     */
+     CXdmcp();
+    ~CXdmcp();
 
-	/* Add hostname to ping.
-	 * "BROADCAST" is special.
-	 */
-  void registerHostname (const char *name);
+    /* Add hostname to ping.
+     * "BROADCAST" is special.
+     */
+    void registerHostname(const char *name);
 
-	/* Empty Hostname list.
-	 */
-  void emptyHostnames (void);
+    /* Empty Hostname list.
+     */
+    void emptyHostnames(void);
 
-	/* Select Host.
-	 */
-  void chooseHost (const char *h);
+    /* Select Host.
+     */
+    void chooseHost(const char *h);
 
-	/* Ping all specified hosts.
-	 */
-  void pingHosts();
+    /* Ping all specified hosts.
+     */
+    void pingHosts();
 
-signals:
+  signals:
+    /* No more hosts to display.
+     */
+    void deleteAllHosts();
 
-	/* No more hosts to display.
-	 */
-  void deleteAllHosts();
+    /* Remove host from list.
+     */
+    void deleteHost(const QString & hn);
 
-  /* Remove host from list.
-	 */
-  void deleteHost(const QString & hn);
+    /* Add host to list.
+     */
+    void addHost(CXdmcp::HostName * newname);
 
-	/* Add host to list.
-	 */
-  void addHost(CXdmcp::HostName *newname);
+    /* Change hosts name in list.
+     */
+    void changeHost(const QString & hn, CXdmcp::HostName * newname);
 
-	/* Change hosts name in list.
-	 */
-  void changeHost(const QString & hn, CXdmcp::HostName *newname);
+  public slots:
+    /* To call when socket is ready.
+     */
+    void slotReceivePacket(int);
 
-public slots:
-	/* To call when socket is ready.
-   */
-  void slotReceivePacket (int);
+  private slots:
+    void doPingHosts();
 
-private slots:
-  void doPingHosts();
+  private:
+     QSocketNotifier * sn;
 
-private:
-  QSocketNotifier *sn;
+    ARRAYofARRAY8 AuthenticationNames;
+    int socketFD;
+    QTimer *t;
+    int pingTry;
 
-	ARRAYofARRAY8	AuthenticationNames;
-  int  socketFD;
-  QTimer *t;
-  int pingTry;
+    int ifioctl(int fd, int cmd, char *arg);
+    void rebuildTable(int size);
+    int addHostname(ARRAY8Ptr hostname, ARRAY8Ptr status,
+		    struct sockaddr *addr, int willing);
 
-  int ifioctl (int fd, int cmd, char *arg);
-  void rebuildTable (int size);
-  int addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
-		   struct sockaddr *addr, int willing);
-
-  void disposeHostname (HostName *host);
-  void removeHostname (HostName *host);
-  void registerHostaddr (struct sockaddr *addr, int len, xdmOpCode type);
-  int  initXDMCP (char **argv);
+    void disposeHostname(HostName * host);
+    void removeHostname(HostName * host);
+    void registerHostaddr(struct sockaddr *addr, int len, xdmOpCode type);
+    int initXDMCP();
 
 #ifdef MINIX
-   char read_buffer[XDM_MAX_MSGLEN+sizeof(udp_io_hdr_t)];
-   int read_inprogress;
-   int read_size;
-   void read_cb(nbio_ref_t ref, int res, int err);
+    char read_buffer[XDM_MAX_MSGLEN + sizeof(udp_io_hdr_t)];
+    int read_inprogress;
+    int read_size;
+    void read_cb(nbio_ref_t ref, int res, int err);
 #endif
 
-   int fromHex (char *s, char *d, int len);
+    int fromHex(char *s, char *d, int len);
 
 
-  struct _app_resources app_resources;
+    struct _app_resources app_resources;
 
 
-  typedef struct _hostAddr {
-    struct _hostAddr	*next;
-    struct sockaddr	*addr;
-    int			addrlen;
-    xdmOpCode		type;
-  } HostAddr;
+    typedef struct _hostAddr {
+	struct _hostAddr *next;
+	struct sockaddr *addr;
+	int addrlen;
+	xdmOpCode type;
+    } HostAddr;
 
-   HostAddr    *hostAddrdb;
-   HostName    *hostNamedb;
+    HostAddr *hostAddrdb;
+    HostName *hostNamedb;
 
-   XdmcpBuffer	directBuffer, broadcastBuffer;
-   XdmcpBuffer	buffer;
+    XdmcpBuffer directBuffer, broadcastBuffer;
+    XdmcpBuffer buffer;
 };
 
 #endif

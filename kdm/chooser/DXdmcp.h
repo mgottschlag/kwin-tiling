@@ -26,61 +26,63 @@
 #include "kfdialog.h"
 #include "CXdmcp.h"
 
-class HostView : public QListView {
+class HostView:public QListView {
     Q_OBJECT
 
-public:
-  HostView( CXdmcp *cxdmcp, QWidget *parent = 0, const char *name = 0, WFlags f = 0);
+  public:
+    HostView(CXdmcp * cxdmcp, QWidget * parent = 0, const char *name =
+	     0, WFlags f = 0);
 
-public slots:
-  void pingHosts();
-	void accept();
-	void willing();	
-	void cancel();	
+  public slots:
+    void pingHosts();
+    void accept();
+    void willing();
+    void cancel();
 
-	/* Add host to list.
-	 */
-	void slotAddHost(CXdmcp::HostName *name);
+    /* Add host to list.
+     */
+    void slotAddHost(CXdmcp::HostName * name);
 
-	/* No more hosts to display.
-	 */
-  void slotDeleteAllHosts();
+    /* No more hosts to display.
+     */
+    void slotDeleteAllHosts();
 
-  /* Remove host from list.
-	 */
-  void slotDeleteHost(const QString &name);
+    /* Remove host from list.
+     */
+    void slotDeleteHost(const QString & name);
 
-	/* Change hosts name in list.
-	 */
-  void slotChangeHost(const QString &oldname, CXdmcp::HostName *newname);
+    /* Change hosts name in list.
+     */
+    void slotChangeHost(const QString & oldname,
+			CXdmcp::HostName * newname);
 
-	/* Add hostname to ping.
-	 * "BROADCAST" is special.
-	 */
-  void slotRegisterHostname (const QString &name);
+    /* Add hostname to ping.
+     * "BROADCAST" is special.
+     */
+    void slotRegisterHostname(const QString & name);
 
-private:
-	CXdmcp *comXdmcp;	
-	int namecol, statcol;
+  private:
+    CXdmcp *comXdmcp;
+    int namecol, statcol;
 };
 
 
-class ChooserDlg : public FDialog {
+class ChooserDlg:public FDialog {
     Q_OBJECT
 
-public:
-	ChooserDlg( CXdmcp *cxdmcp, QWidget *parent = 0, const char *name=0, bool modal=false,
-		WFlags f=0);
+  public:
+    ChooserDlg(CXdmcp * cxdmcp, QWidget * parent = 0, const char *name =
+	       0, bool modal = false, WFlags f = 0);
 
-	void ping();
+    void ping();
 
-public slots:
-	void addHostname();
-	void slotHelp();
+  public slots:
+    void addHostname();
+    void slotHelp();
 
-private:
-	HostView *host_view;
-	QLineEdit *iline;
+  private:
+    HostView *host_view;
+    QLineEdit *iline;
 };
 
 #endif

@@ -32,6 +32,7 @@
 
 class FDialog : public QDialog {
      Q_OBJECT
+
 public:
      FDialog( QWidget *parent = 0, const char* name = 0, 
 	      bool modal = FALSE, WFlags f = 0) 

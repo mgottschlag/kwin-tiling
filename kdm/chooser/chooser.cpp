@@ -23,50 +23,60 @@
 #include <X11/keysym.h>
 #include <stdlib.h>
 
-static const char *description = 
-	I18N_NOOP("Login chooser for Xdmcp");
+static const char *description = I18N_NOOP("Login chooser for Xdmcp");
 
-static const char *version = "v0.0.1";
+static const char *version = "v0.1";
 
 static ChooserDlg *kchooser = 0;
 
+
 class MyApp:public KApplication {
-public:
-     virtual bool x11EventFilter( XEvent * );
+
+  public:
+    virtual bool x11EventFilter(XEvent *);
 };
 
-bool
-MyApp::x11EventFilter( XEvent * ev)
+
+bool MyApp::x11EventFilter(XEvent * ev)
 {
     // Hack to tell dialogs to take focus
-    if( ev->type == ConfigureNotify) {
-	QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
+    if (ev->type == ConfigureNotify) {
+	QWidget *target = QWidget::find(((XConfigureEvent *) ev)->window);
 	if (target) {
 	    target = target->topLevelWidget();
-	    if( target->isVisible() && !target->isPopup())
-		XSetInputFocus( qt_xdisplay(), target->winId(),
-	    RevertToParent, CurrentTime);
+	    if (target->isVisible() && !target->isPopup())
+		XSetInputFocus(qt_xdisplay(), target->winId(),
+			       RevertToParent, CurrentTime);
 	}
     }
 
     return FALSE;
 }
 
-int main( int argc, char **argv )
+static KCmdLineOptions options[] = {
+    /* XXX use I18N_NOOP !!!! */
+    {"xdmaddress <addr>", "Specify the chooser socket (in hex)", 0},
+    {"clientaddress <addr>", "Specify the client ip (in hex)", 0},
+    {"connectionType <type>", "Specify the connection type (in dec)", 0},
+    {"+[host]", "Specify the hosts to list or use BROADCAST", 0}
+};
+
+int main(int argc, char **argv)
 {
-  CXdmcp *cxdmcp = new CXdmcp(argc, argv);
+    KCmdLineArgs::init(argc, argv, "chooser", description, version);
+    KCmdLineArgs::addCmdLineOptions(options);
 
-  KCmdLineArgs::init(argc, argv, "chooser", description, version );
+    CXdmcp *cxdmcp = new CXdmcp();
 
-  MyApp app;
+    MyApp app;
 
-  kchooser = new ChooserDlg(cxdmcp);
+    kchooser = new ChooserDlg(cxdmcp);
 
-  app.setMainWidget(kchooser);
+    app.setMainWidget(kchooser);
 
-  kchooser->show();
-  kchooser->ping();
-  app.exec();
+    kchooser->show();
+    kchooser->ping();
+    app.exec();
 
-  exit(0);
+    exit(0);
 }
