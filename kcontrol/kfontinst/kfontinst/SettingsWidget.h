@@ -58,9 +58,7 @@ class CSettingsWidget : public CSettingsWidgetData
     void configureSelected(bool on);
     void ppdSelected(const QString &str);
     void generateAfmsSelected(bool on);
-    void customXRefreshSelected(bool on);
-    void xfsRestartSelected(bool on);
-    void xsetFpRehashSelected(bool on);
+    void xRefreshSelected(int val);
     void customXStrChanged(const QString &str);
     void afmEncodingSelected(const QString &str);
     void t1AfmSelected(bool on);

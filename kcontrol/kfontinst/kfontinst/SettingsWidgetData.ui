@@ -35,8 +35,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>527</width>
-            <height>479</height>
+            <width>607</width>
+            <height>513</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -60,40 +60,6 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QPushButton" row="1" column="2">
-            <property name="name">
-                <cstring>itsGhostscriptFileButton</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>22</width>
-                    <height>22</height>
-                </size>
-            </property>
-            <property name="maximumSize">
-                <size>
-                    <width>22</width>
-                    <height>22</height>
-                </size>
-            </property>
-            <property name="text">
-                <string>.</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Select File.</string>
-            </property>
-        </widget>
         <widget class="QLabel" row="1" column="1">
             <property name="name">
                 <cstring>itsGhostscriptFileText</cstring>
@@ -133,136 +99,6 @@ For normal (non-root) users, this file will usually be:
             </property>
             <property name="wordwrap" stdset="0">
             </property>
-        </widget>
-        <widget class="QCheckBox" row="1" column="0">
-            <property name="name">
-                <cstring>itsGhostscriptCheck</cstring>
-            </property>
-            <property name="text">
-                <string>Ghostscript, Fontmap file:</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Check this box to enable configuration of Ghostscript.</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>GroupBox4_2</cstring>
-            </property>
-            <property name="title">
-                <string>AFMs</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>itsGenAfmsCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Generate with</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>AFMs (Adobe Font Metrics) are files that
-may be used by programs (such as
-StarOffice) to obtain detailed "metrics"
-(e.g. sizes) of each character in a font -
-so that it may be displayed/printed
-correctly.
-
-AFMs may only contain one encoding,
-so here you can specify which one
-should be used.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>itsTtAfmCheck</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>T&amp;rueType</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this item to enable creation of AFM files for TrueType fonts.
-
-NOTE: StarOffice v6 (onwards), and OpenOffice, no longer require AFMs for TrueType fonts.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="3">
-                    <property name="name">
-                        <cstring>TextLabel1_2</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>encoding</string>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignVCenter|AlignLeft</set>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>itsAfmEncodingCombo</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>AFMs (Adobe Font Metrics) are files that may be used by programs (such as StarOffice) to obtain detailed "metrics" (e.g. sizes) of each character in a font - so that it may be displayed/printed correctly. 
-
-AFMs may only contain one encoding, so here you can specify which one should be used.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="2">
-                    <property name="name">
-                        <cstring>itsT1AfmCheck</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Type&amp;1</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check this item to enable creation of AFMs for Type1 fonts.
-
-These are required by StarOffice, and some other apps (such as AbiWord).</string>
-                    </property>
-                </widget>
-            </grid>
         </widget>
         <widget class="QGroupBox" row="4" column="0" rowspan="1" colspan="3">
             <property name="name">
@@ -431,6 +267,51 @@ files. Usually this will be (for Linux):
                 </widget>
             </grid>
         </widget>
+        <widget class="QPushButton" row="2" column="2">
+            <property name="name">
+                <cstring>itsCupsDirButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>.</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Select File.</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="0">
+            <property name="name">
+                <cstring>itsCupsCheck</cstring>
+            </property>
+            <property name="text">
+                <string>CUPS folder:</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Check this box to enable configuration of CUPS.</string>
+            </property>
+        </widget>
         <widget class="QLabel" row="2" column="1">
             <property name="name">
                 <cstring>itsCupsDirText</cstring>
@@ -467,20 +348,150 @@ Only root may modify the CUPS settings, hence this option is only available if t
             <property name="wordwrap" stdset="0">
             </property>
         </widget>
-        <widget class="QCheckBox" row="2" column="0">
+        <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>itsCupsCheck</cstring>
+                <cstring>GroupBox4_2</cstring>
+            </property>
+            <property name="title">
+                <string>AFMs</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>itsGenAfmsCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Generate with</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>AFMs (Adobe Font Metrics) are files that
+may be used by programs (such as
+StarOffice) to obtain detailed "metrics"
+(e.g. sizes) of each character in a font -
+so that it may be displayed/printed
+correctly.
+
+AFMs may only contain one encoding,
+so here you can specify which one
+should be used.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>itsTtAfmCheck</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>T&amp;rueType</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check this item to enable creation of AFM files for TrueType fonts.
+
+NOTE: StarOffice v6 (onwards), and OpenOffice, no longer require AFMs for TrueType fonts.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="3">
+                    <property name="name">
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>encoding</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignLeft</set>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>itsAfmEncodingCombo</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>AFMs (Adobe Font Metrics) are files that may be used by programs (such as StarOffice) to obtain detailed "metrics" (e.g. sizes) of each character in a font - so that it may be displayed/printed correctly. 
+
+AFMs may only contain one encoding, so here you can specify which one should be used.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="2">
+                    <property name="name">
+                        <cstring>itsT1AfmCheck</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Type&amp;1</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check this item to enable creation of AFMs for Type1 fonts.
+
+These are required by StarOffice, and some other apps (such as AbiWord).</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0">
+            <property name="name">
+                <cstring>itsGhostscriptCheck</cstring>
             </property>
             <property name="text">
-                <string>CUPS folder:</string>
+                <string>Ghostscript, Fontmap file:</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Check this box to enable configuration of CUPS.</string>
+                <string>Check this box to enable configuration of Ghostscript.</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="2">
+        <spacer row="5" column="1">
             <property name="name">
-                <cstring>itsCupsDirButton</cstring>
+                <cstring>Spacer17</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
+                <cstring>itsGhostscriptFileButton</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
@@ -512,23 +523,6 @@ Only root may modify the CUPS settings, hence this option is only available if t
                 <string>Select File.</string>
             </property>
         </widget>
-        <spacer row="5" column="1">
-            <property name="name" stdset="0">
-                <cstring>Spacer17</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>GroupBox4_3</cstring>
@@ -548,9 +542,9 @@ Only root may modify the CUPS settings, hence this option is only available if t
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="4">
+                <widget class="QLabel" row="3" column="1" rowspan="1" colspan="5">
                     <property name="name">
-                        <cstring>itsFontsDirText</cstring>
+                        <cstring>itsEncodingsDirText</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -573,132 +567,16 @@ Only root may modify the CUPS settings, hence this option is only available if t
                         <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This is the top level X11 fonts folder. Located within this will be the folders containing your fonts, and encodings files. Usually this will be (for Linux) either:
+                        <string>This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).
 
-    ~/.kde/share/fonts/    (Normal users)
-    /usr/X11R6/lib/X11/fonts/    (Root)</string>
+This folder is normally a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:
+
+    /usr/X11R6/lib/X11/fonts/encodings/</string>
                     </property>
                     <property name="wordwrap" stdset="0">
                     </property>
                 </widget>
-                <widget class="QPushButton" row="0" column="5">
-                    <property name="name">
-                        <cstring>itsFontsDirButton</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>22</width>
-                            <height>22</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>22</width>
-                            <height>22</height>
-                        </size>
-                    </property>
-                    <property name="text">
-                        <string>.</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Change Folder.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Top level fonts folder:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="1">
-                    <property name="name">
-                        <cstring>TextLabel1_2_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>TrueType :</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="4">
-                    <property name="name">
-                        <cstring>itsT1Combo</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Where Type1 fonts are installed in "basic" mode.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="3">
-                    <property name="name">
-                        <cstring>TextLabel1_2_2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Type1:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="2">
-                    <property name="name">
-                        <cstring>itsTTCombo</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Where TrueType fonts are installed in "basic" mode.</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="0">
-                    <property name="name" stdset="0">
-                        <cstring>Spacer1_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Minimum</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2_2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Configuration file:</string>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignVCenter|AlignLeft</set>
-                    </property>
-                    <property name="wordwrap" stdset="0">
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="1" rowspan="1" colspan="4">
+                <widget class="QLabel" row="2" column="1" rowspan="1" colspan="5">
                     <property name="name">
                         <cstring>itsXConfigFileText</cstring>
                     </property>
@@ -735,7 +613,27 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
                     <property name="wordwrap" stdset="0">
                     </property>
                 </widget>
-                <widget class="QPushButton" row="2" column="5">
+                <widget class="QComboBox" row="4" column="1" rowspan="1" colspan="2">
+                    <item>
+                        <property name="text">
+                            <string>xset fp rehash (Standard)</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>/etc/rc.d/init.d/xfs restart (Font Server)</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Custom:</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>itsXRefreshCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="2" column="6">
                     <property name="name">
                         <cstring>itsXConfigFileButton</cstring>
                     </property>
@@ -766,41 +664,57 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
                         <string>Select File.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="1" rowspan="1" colspan="4">
+                <widget class="QLineEdit" row="4" column="3" rowspan="1" colspan="4">
                     <property name="name">
-                        <cstring>itsEncodingsDirText</cstring>
+                        <cstring>itsRestartXfsCommand</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="text">
-                        <string>TextLabel1</string>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignVCenter|AlignLeft</set>
-                    </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).
-
-This folder is normally a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:
-
-    /usr/X11R6/lib/X11/fonts/encodings/</string>
-                    </property>
-                    <property name="wordwrap" stdset="0">
+                        <string>This is the command that can be issued upon successful system configuration to restart the X font server.</string>
                     </property>
                 </widget>
-                <widget class="QPushButton" row="3" column="5">
+                <widget class="QPushButton" row="0" column="6">
+                    <property name="name">
+                        <cstring>itsFontsDirButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>.</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Change Folder.</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="3" column="6">
                     <property name="name">
                         <cstring>itsEncodingsDirButton</cstring>
                     </property>
@@ -831,16 +745,8 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
                         <string>Change Folder.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="0">
+                <spacer row="1" column="6">
                     <property name="name">
-                        <cstring>TextLabel1_3_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Encodings folder:</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="5">
-                    <property name="name" stdset="0">
                         <cstring>Spacer2</cstring>
                     </property>
                     <property name="orientation">
@@ -856,95 +762,123 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
                         </size>
                     </property>
                 </spacer>
-                <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="6">
+                <widget class="QLabel" row="3" column="0">
                     <property name="name">
-                        <cstring>ButtonGroup5_2_2</cstring>
+                        <cstring>TextLabel1_3_2</cstring>
                     </property>
-                    <property name="title">
-                        <string>Command To Refresh X's Font List</string>
+                    <property name="text">
+                        <string>Encodings folder:</string>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>11</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QRadioButton" row="1" column="0">
-                            <property name="name">
-                                <cstring>itsCustomRadio</cstring>
-                            </property>
-                            <property name="text">
-                                <string>C&amp;ustom:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
-                            <property name="name">
-                                <cstring>itsRestartXfsCommand</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>This is the command that can be issued upon successful system configuration to restart the X font server.</string>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>itsXsetRadio</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>&amp;xset fp rehash (Standard)</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton" row="0" column="3">
-                            <property name="name">
-                                <cstring>itsXfsRadio</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>/e&amp;tc/rc.d/init.d/xfs restart (Font Server)</string>
-                            </property>
-                        </widget>
-                        <spacer row="0" column="2">
-                            <property name="name" stdset="0">
-                                <cstring>Spacer18</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>11</width>
-                                    <height>11</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </grid>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Refresh font list with:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Top level fonts folder:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Configuration file:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignLeft</set>
+                    </property>
+                    <property name="wordwrap" stdset="0">
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="1">
+                    <property name="name">
+                        <cstring>TextLabel1_2_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>TrueType :</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="4">
+                    <property name="name">
+                        <cstring>TextLabel1_2_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Type1:</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="2" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>itsTTCombo</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Where TrueType fonts are installed in "basic" mode.</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="5">
+                    <property name="name">
+                        <cstring>itsT1Combo</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Where Type1 fonts are installed in "basic" mode.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="5">
+                    <property name="name">
+                        <cstring>itsFontsDirText</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="frameShape">
+                        <enum>Panel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="text">
+                        <string>TextLabel1</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter|AlignLeft</set>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is the top level X11 fonts folder. Located within this will be the folders containing your fonts, and encodings files. Usually this will be (for Linux) either:
+
+    ~/.kde/share/fonts/    (Normal users)
+    /usr/X11R6/lib/X11/fonts/    (Root)</string>
+                    </property>
+                    <property name="wordwrap" stdset="0">
+                    </property>
                 </widget>
             </grid>
         </widget>
@@ -1036,36 +970,6 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
         <slot>ppdSelected(const QString&amp;)</slot>
     </connection>
     <connection>
-        <sender>itsCustomRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>itsRestartXfsCommand</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>itsXsetRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>CSettingsWidgetData</receiver>
-        <slot>xsetFpRehashSelected(bool)</slot>
-    </connection>
-    <connection>
-        <sender>itsXfsRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>CSettingsWidgetData</receiver>
-        <slot>xfsRestartSelected(bool)</slot>
-    </connection>
-    <connection>
-        <sender>itsCustomRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>CSettingsWidgetData</receiver>
-        <slot>customXRefreshSelected(bool)</slot>
-    </connection>
-    <connection>
-        <sender>itsRestartXfsCommand</sender>
-        <signal>textChanged(const QString&amp;)</signal>
-        <receiver>CSettingsWidgetData</receiver>
-        <slot>customXStrChanged(const QString&amp;)</slot>
-    </connection>
-    <connection>
         <sender>itsGenAfmsCheck</sender>
         <signal>toggled(bool)</signal>
         <receiver>itsAfmEncodingCombo</receiver>
@@ -1119,6 +1023,12 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
         <receiver>CSettingsWidgetData</receiver>
         <slot>dirButtonPressed()</slot>
     </connection>
+    <connection>
+        <sender>itsXRefreshCombo</sender>
+        <signal>activated(int)</signal>
+        <receiver>CSettingsWidgetData</receiver>
+        <slot>xRefreshSelected(int)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>itsFontsDirButton</tabstop>
@@ -1126,8 +1036,7 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
     <tabstop>itsT1Combo</tabstop>
     <tabstop>itsXConfigFileButton</tabstop>
     <tabstop>itsEncodingsDirButton</tabstop>
-    <tabstop>itsXsetRadio</tabstop>
-    <tabstop>itsXfsRadio</tabstop>
+    <tabstop>itsXRefreshCombo</tabstop>
     <tabstop>itsRestartXfsCommand</tabstop>
     <tabstop>itsGhostscriptCheck</tabstop>
     <tabstop>itsGhostscriptFileButton</tabstop>
@@ -1142,26 +1051,24 @@ This folder is normally a sub-folder of the system X11 fonts folder - and is usu
     <tabstop>itsPpdCombo</tabstop>
 </tabstops>
 <slots>
+    <slot specifier="pure virtual">afmEncodingSelected(const QString &amp;)</slot>
+    <slot specifier="pure virtual">configureSelected(bool)</slot>
     <slot specifier="pure virtual">cupsButtonPressed()</slot>
+    <slot specifier="pure virtual">cupsChecked( bool )</slot>
+    <slot specifier="pure virtual">customXStrChanged(const QString &amp;)</slot>
+    <slot specifier="pure virtual">dirButtonPressed()</slot>
     <slot specifier="pure virtual">encodingsDirButtonPressed()</slot>
+    <slot specifier="pure virtual">generateAfmsSelected(bool)</slot>
     <slot specifier="pure virtual">ghostscriptChecked( bool )</slot>
     <slot specifier="pure virtual">gsFontmapButtonPressed()</slot>
-    <slot specifier="pure virtual">cupsChecked( bool )</slot>
+    <slot specifier="pure virtual">ppdSelected(const QString &amp;)</slot>
+    <slot specifier="pure virtual">t1AfmSelected(bool)</slot>
     <slot specifier="pure virtual">t1SubDir( const QString &amp; )</slot>
+    <slot specifier="pure virtual">ttAfmSelected(bool)</slot>
     <slot specifier="pure virtual">ttSubDir( const QString &amp; )</slot>
     <slot specifier="pure virtual">xConfigButtonPressed()</slot>
     <slot specifier="pure virtual">xDirButtonPressed()</slot>
-    <slot specifier="pure virtual">configureSelected(bool)</slot>
-    <slot specifier="pure virtual">dirButtonPressed()</slot>
-    <slot specifier="pure virtual">ppdSelected(const QString &amp;)</slot>
-    <slot specifier="pure virtual">afmEncodingSelected(const QString &amp;)</slot>
-    <slot specifier="pure virtual">customXRefreshSelected(bool)</slot>
-    <slot specifier="pure virtual">customXStrChanged(const QString &amp;)</slot>
-    <slot specifier="pure virtual">generateAfmsSelected(bool)</slot>
-    <slot specifier="pure virtual">t1AfmSelected(bool)</slot>
-    <slot specifier="pure virtual">ttAfmSelected(bool)</slot>
-    <slot specifier="pure virtual">xfsRestartSelected(bool)</slot>
-    <slot specifier="pure virtual">xsetFpRehashSelected(bool)</slot>
+    <slot>xRefreshSelected(int)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

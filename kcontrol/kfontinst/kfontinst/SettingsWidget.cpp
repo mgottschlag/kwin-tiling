@@ -96,18 +96,8 @@ void CSettingsWidget::reset()
     itsGenAfmsCheck->setChecked(CKfiGlobal::cfg().getDoAfm());
     itsT1AfmCheck->setChecked(CKfiGlobal::cfg().getDoT1Afms());
     itsTtAfmCheck->setChecked(CKfiGlobal::cfg().getDoTtAfms());
-    switch(CKfiGlobal::cfg().getXRefreshCmd())
-    {
-        default:
-        case CConfig::XREFRESH_XSET_FP_REHASH:
-            itsXsetRadio->setChecked(true);
-            break;
-        case CConfig::XREFRESH_XFS_RESTART:
-            itsXfsRadio->setChecked(true);
-            break;
-        case CConfig::XREFRESH_CUSTOM:
-            itsCustomRadio->setChecked(true);
-    }
+    itsXRefreshCombo->setCurrentItem(CKfiGlobal::cfg().getXRefreshCmd());
+    itsRestartXfsCommand->setEnabled(CConfig::XREFRESH_CUSTOM==CKfiGlobal::cfg().getXRefreshCmd());
     itsRestartXfsCommand->setText(CKfiGlobal::cfg().getCustomXRefreshCmd());
     scanEncodings();
 }
@@ -487,30 +477,13 @@ void CSettingsWidget::generateAfmsSelected(bool on)
     emit madeChanges();
 }
 
-void CSettingsWidget::customXRefreshSelected(bool on)
+void CSettingsWidget::xRefreshSelected(int val)
 {
-    if(on)
+    if(val!=(int)CKfiGlobal::cfg().getXRefreshCmd())
     {
-        CKfiGlobal::cfg().setXRefreshCmd(CConfig::XREFRESH_CUSTOM);
+        CKfiGlobal::cfg().setXRefreshCmd((CConfig::EXFontListRefresh)val);
         emit madeChanges();
-    }
-}
-
-void CSettingsWidget::xfsRestartSelected(bool on)
-{
-    if(on)
-    {
-        CKfiGlobal::cfg().setXRefreshCmd(CConfig::XREFRESH_XFS_RESTART);
-        emit madeChanges();
-    }
-}
-
-void CSettingsWidget::xsetFpRehashSelected(bool on)
-{
-    if(on)
-    {
-        CKfiGlobal::cfg().setXRefreshCmd(CConfig::XREFRESH_XSET_FP_REHASH);
-        emit madeChanges();
+        itsRestartXfsCommand->setEnabled(CConfig::XREFRESH_CUSTOM==CKfiGlobal::cfg().getXRefreshCmd());
     }
 }
 
