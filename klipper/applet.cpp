@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------
 
-   toplevel.cpp (part of Klipper - Cut & paste history for KDE)
+   applet.cpp (part of Klipper - Cut & paste history for KDE)
 
    (C) by Andrew Stanley-Jones
    (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
@@ -11,6 +11,7 @@
 
 #include "applet.h"
 
+#include <kaboutapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <dcopclient.h>
@@ -23,7 +24,8 @@ extern "C"
     KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
         KGlobal::locale()->insertCatalogue("klipper");
-        return new KlipperApplet(configFile, KPanelApplet::Normal, 0, parent, "klipper");
+        int actions = KPanelApplet::Preferences | KPanelApplet::About | KPanelApplet::Help;
+        return new KlipperApplet(configFile, KPanelApplet::Normal, actions, parent, "klipper");
     }
 }
 
@@ -34,6 +36,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
     move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
     widget = new KlipperAppletWidget( this );
+    setCustomMenu(widget->popup());
     centerWidget();
     widget->show();
 }
@@ -68,6 +71,21 @@ void KlipperApplet::centerWidget()
     widget->move( x, y );
 }
 
+void KlipperApplet::preferences()
+{
+    widget->slotConfigure();
+}
+
+void KlipperApplet::help()
+{
+    kapp->invokeHelp(QString::null, QString::fromLatin1("klipper"));
+}
+
+void KlipperApplet::about()
+{
+    KAboutApplication about(this, 0);
+    about.exec();
+}
 
 KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
     : KlipperWidget( parent, new KConfig( "klipperrc" ))
@@ -87,7 +105,7 @@ KlipperAppletWidget::~KlipperAppletWidget()
 {
     delete m_dcop;
 }
-    
+
 // this is just to make klipper process think we're KUniqueApplication
 // (AKA ugly hack)
 int KlipperAppletWidget::newInstance()

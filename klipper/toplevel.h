@@ -42,12 +42,13 @@ public:
     ~KlipperWidget();
 
     virtual void adjustSize();
-
+    QPopupMenu* popup() { return m_popup; }
     KGlobalAccel *globalKeys;
 
 public slots:
     void saveSession();
     void slotSettingsChanged( int category );
+    void slotConfigure();
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -71,7 +72,7 @@ protected:
     void setClipboard( const QString& text, int mode );
     void setClipboard( const QString& text, bool selectionMode );
     bool ignoreClipboardChanges() const;
-    
+
     KConfig* config() const { return m_config; }
     bool isApplet() const { return m_config != kapp->config(); }
     void updateXTime();
@@ -83,12 +84,12 @@ protected slots:
     void setURLGrabberEnabled( bool );
     void toggleURLGrabber();
     void disableURLGrabber();
+    void cleanAppletMenu();
 
 private slots:
     void newClipData();
     void pollClipboard();
     void clickedMenu(int);
-    void slotConfigure();
     void slotClearClipboard();
 
     void slotMoveSelectedToTop();
@@ -117,7 +118,7 @@ private:
     bool bClipEmpty    :1;
     bool bKeepContents :1;
     bool bURLGrabber   :1;
-    bool bReplayActionInHistory :1; 
+    bool bReplayActionInHistory :1;
     bool bUseGUIRegExpEditor    :1;
     bool bNoNullClipboard       :1;
     bool bTearOffHandle         :1;

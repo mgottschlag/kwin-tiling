@@ -44,9 +44,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#define QUIT_ITEM    50
-#define CONFIG_ITEM  60
-#define EMPTY_ITEM   80
+#define QUIT_ITEM     50
+#define CONFIG_ITEM   60
+#define EMPTY_ITEM    80
+#define HELPMENU_ITEM 90
+#define TITLE_ITEM    100
 
 #define MENU_ITEMS   (( isApplet() ? 6 : 8 ) + ( bTearOffHandle ? 1 : 0 ))
 // the <clipboard empty> item
@@ -78,6 +80,10 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     m_lastString = "";
     m_popup = new KPopupMenu(0L, "main_menu");
     connect(m_popup, SIGNAL(activated(int)), SLOT(clickedMenu(int)));
+    if (isApplet())
+    {
+        connect(m_popup, SIGNAL(aboutToHide()), SLOT(cleanAppletMenu()));
+    }
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -155,8 +161,28 @@ void KlipperWidget::clearClipboardHistory()
 
 void KlipperWidget::mousePressEvent(QMouseEvent *e)
 {
-    if ( e->button() == LeftButton || e->button() == RightButton )
-        showPopupMenu( m_popup );
+    if ( e->button() != LeftButton && e->button() != RightButton )
+        return;
+
+    if (isApplet())
+    {
+        m_popup->insertTitle( SmallIcon( "klipper" ),
+                                i18n("Klipper - Clipboard Tool"), TITLE_ITEM, 0);
+        m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
+                            CONFIG_ITEM);
+
+        KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
+                    false );
+        m_popup->insertItem( i18n( "&Help" ), help->menu(), HELPMENU_ITEM );
+    }
+    showPopupMenu( m_popup );
+}
+
+void KlipperWidget::cleanAppletMenu()
+{
+    m_popup->removeItem(TITLE_ITEM);
+    m_popup->removeItem(HELPMENU_ITEM);
+    m_popup->removeItem(CONFIG_ITEM);
 }
 
 void KlipperWidget::paintEvent(QPaintEvent *)
@@ -251,10 +277,6 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
-    menu->move(-1000,-1000);
-    menu->show();
-    menu->hide();
-
     if (bPopupAtMouse) {
         QPoint g = QCursor::pos();
         if ( menu->height() < g.y() )
@@ -282,8 +304,12 @@ void KlipperWidget::readProperties(KConfig *kc)
   QStringList dataList;
 
   m_popup->clear();
-  m_popup->insertTitle( SmallIcon( "klipper" ),
-                        i18n("Klipper - Clipboard Tool"));
+
+  if (!isApplet())
+  {
+      m_popup->insertTitle( SmallIcon( "klipper" ),
+                            i18n("Klipper - Clipboard Tool"));
+  }
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -318,14 +344,15 @@ void KlipperWidget::readProperties(KConfig *kc)
 
   m_popup->insertItem( SmallIcon("history_clear"),
 			i18n("C&lear Clipboard History"), EMPTY_ITEM );
-  m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
-                       CONFIG_ITEM);
-
-  KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
-            false );
-  m_popup->insertItem( i18n( "&Help" ), help->menu() );
 
   if( !isApplet()) {
+    m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
+                        CONFIG_ITEM);
+
+    KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
+                false );
+    m_popup->insertItem( i18n( "&Help" ), help->menu(), HELPMENU_ITEM );
+
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
   }
@@ -743,17 +770,17 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
 }
 
 QStringList KlipperWidget::getClipboardHistoryMenu()
-{ 
+{
     QStringList menu;
     if ( !bClipEmpty )
     {
         // don't iterate over the map, but over the popup (due to sorting!)
         long id = 0L;
         // We skip the title and start at 1
-        for ( uint i = 1; i < m_popup->count(); i++ ) 
+        for ( uint i = 1; i < m_popup->count(); i++ )
         {
             id = m_popup->idAt( i );
-            if ( id != -1 ) 
+            if ( id != -1 )
             {
                 QMapIterator<long,QString> it = m_clipDict.find( id );
                 if ( it == m_clipDict.end() )

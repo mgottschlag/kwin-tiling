@@ -22,17 +22,21 @@ class KlipperApplet : public KPanelApplet
 {
   Q_OBJECT
 public:
-	KlipperApplet(const QString& configFile, Type t = Normal, int actions = 0,
-	            QWidget *parent = 0, const char *name = 0);
-	~KlipperApplet();
+    KlipperApplet(const QString& configFile, Type t = Normal, int actions = 0,
+                  QWidget *parent = 0, const char *name = 0);
+    ~KlipperApplet();
 
-	int widthForHeight(int h) const;
-	int heightForWidth(int w) const;
+    int widthForHeight(int h) const;
+    int heightForWidth(int w) const;
 protected:
-        void resizeEvent( QResizeEvent* );
+    void resizeEvent( QResizeEvent* );
+    void preferences();
+    void help();
+    void about();
+
 private:
-        void centerWidget();
-        KlipperAppletWidget* widget;
+    void centerWidget();
+    KlipperAppletWidget* widget;
 };
 
 class KlipperAppletWidget : public KlipperWidget
@@ -46,7 +50,7 @@ public:
     virtual ~KlipperAppletWidget();
 private:
     DCOPClient* m_dcop;
-    
+
 };
 
 #endif
