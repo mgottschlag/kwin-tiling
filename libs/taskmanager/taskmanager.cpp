@@ -46,11 +46,14 @@ template class QPtrList<Task>;
 // variable without changing Task, which also uses it.
 // So, we'll leak a little memory, but it's better than crashing.
 // The real problem is that KWinModule should be a singleton.
-KWinModule* kwin_module = new KWinModule();
+KWinModule* kwin_module = NULL;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
     : QObject(parent, name), _active(0), _startup_info( NULL )
 {
+    if ( kwin_module == NULL )
+        kwin_module = new KWinModule();
+
     KGlobal::locale()->insertCatalogue("libtaskmanager");
     connect(kwin_module, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
     connect(kwin_module, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
@@ -127,7 +130,7 @@ void TaskManager::windowAdded(WId w )
         // check if it's transient for a skiptaskbar window
         if( _skiptaskbar_windows.contains( transient_for ))
             return;
-    
+
         // lets see if this is a transient for an existing task
         if( transient_for != qt_xrootwin()
             && transient_for != 0 ) {
