@@ -634,7 +634,7 @@ CFontListWidget::CFontListWidget(QWidget *parent)
     connect(this, SIGNAL(clicked(QListViewItem *, const QPoint &, int)), SLOT(listClicked(QListViewItem *, const QPoint &, int)));
 
     itsFontsPopup=new QPopupMenu(this);
-    itsFontsPopup->insertItem(i18n("Show Meta Data..."), this, SLOT(showMeta()));
+    itsFontsPopup->insertItem(i18n("Show Meta Data"), this, SLOT(showMeta()));
     itsFontsPopup->insertSeparator();
     itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF PostScript names..."), this, SLOT(fixTtfPsNames()));
 

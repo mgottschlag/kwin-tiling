@@ -226,7 +226,7 @@ CFontSelectorWidget::CFontSelectorWidget(QWidget *parent)
     connect(this, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), SLOT(popupMenu(QListViewItem *, const QPoint &, int)));
 
     itsPopup=new QPopupMenu(this);
-    itsPopup->insertItem(i18n("Show Meta Data..."), this, SLOT(showMeta()));
+    itsPopup->insertItem(i18n("Show Meta Data"), this, SLOT(showMeta()));
     itsPopup->insertSeparator();
     itsPopup->insertItem(i18n("Install"), this, SLOT(install()));
     setRootIsDecorated(true);
