@@ -173,7 +173,7 @@ QString KCMKonsole::quickHelp() const
 {
     return i18n("<h1>Konsole</h1> With this module you can configure Konsole, the KDE terminal"
 		" application. You can configure the generic Konsole options (which can also be "
-		"configured using the RMB) and you can edit the schemas and sessions  "
+		"configured using the RMB) and you can edit the schemas and sessions "
 		"available to Konsole.");
 }
 
