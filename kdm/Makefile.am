@@ -6,4 +6,4 @@ EXTRA_DIST = misc
 PAM = @KDM_PAM_SERVICE@
 
 install-data-local:
-	@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)
+	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)
