@@ -14,6 +14,9 @@ email=admin@mgbreizh.com
 info=http://www.mgbreizh.com/
 # Short description
 Comment=Mikael GEORGES <admin@mgbreizh.com>
+Comment[de]=Mikael Georges <admin@mgbreizh.com>
+Comment[hu]=Mikael Georges <admin@mgbreizh.com>
+Comment[sl]=Mikael Georges <admin@mgbreizh.com>
 # Version of the theme
 version=1.0
 #

@@ -1,5 +1,16 @@
 [General]
 Name=Wood
+Name[de]=Holz
+Name[es]=Madera
+Name[hu]=Famintázat
+Name[it]=Legno
+Name[lv]=Koka
+Name[no_NY]=Tre
+Name[sl]=Les
+Name[sv]=Trä
+Name[tr]=Odun
+Name[uk]=Дерево
+Name[zh_CN.GB2312]=木头
 author=Georg Russell
 email=russell@kde.org
 info=

@@ -2,9 +2,30 @@
 #-----------------------------------------------------------------------------
 [General]
 Name=Nostalgy
+Name[es]=Nostalgia
+Name[hu]=Nosztalgia
+Name[it]=Nostalgia
+Name[lv]=Nostaļģija
+Name[no_NY]=Nostalgi
+Name[sl]=Nostalgija
+Name[sv]=Nostalgi
+Name[tr]=Nostalji
+Name[uk]=Ностальгія
+Name[zh_CN.GB2312]=怀旧
 author=Robert Flemming & Daniel M. Duley
 email=mosfet@kde.org
 Comment=A simple original theme that tries to combine the best aspects of familiar interfaces.
+Comment[de]=Einfaches Original-Design, das die besten Elemente bekannter Oberflächen zu kombinieren versucht
+Comment[es]=Un original tema simple que trata de combinar los mejores aspectos de interfaces familiares.
+Comment[hu]=Egy egyszerű, de mégis egyéni téma, mely ötvözni próbálja a jól ismert felületeket.
+Comment[it]=Un semplice tema originale che cerca di combinare i migliori aspetti diinterfacce familiari
+Comment[lv]=Vienkārša oriģinālā tēma, kas mēģina sakombinēt labākos aspektus nopazīstamām starpsejām.
+Comment[no_NY]=Eit enkelt, originalt tema som prøver å kombinera dei beste sidene ved fleire brukarmiljø.
+Comment[sl]=Preprosta izvirna tema, ki skuša združiti najboljše iz znanih vmesnikov.
+Comment[sv]=Ett enkelt originaltema som försöker kombinera det bästa från olika välkända gränssnitt.
+Comment[tr]=Oldukça basit ve orjinal bir tema
+Comment[uk]=Проста тема, що містить найкращі аспекти інтерфейсів familiar.
+Comment[zh_CN.GB2312]=一个简单将熟悉的界面的最好方面结合在一起的的主题。
 version=0.1
 #-----------------------------------------------------------------------------
 [Display]
