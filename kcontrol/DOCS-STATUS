@@ -1,0 +1,37 @@
+Please help keeping this file up-to-date. Thanks.
+[ ] not started
+[s] started
+[x] done
+
+Please start translating QWhatsThis only when it is marked
+as proof-read thanks.
+
+
+              WhatsThis   proof-read    Manual
+arts             [ ]         [ ]         [ ] 
+bell             [ ]         [ ]         [ ]
+clock            [ ]         [ ]         [ ]
+display          [s]         [ ]         [ ]
+drkonqi          [ ]         [ ]         [ ]
+ebrowsing        [ ]         [ ]         [ ]
+email            [x]         [ ]         [ ]
+filetypes        [x]         [ ]         [ ]
+info             [ ]         [ ]         [ ]
+input            [x]         [x]         [ ]
+kdm              [ ]         [ ]         [ ]
+keys             [ ]         [ ]         [ ]
+kicker           [s]         [ ]         [ ]
+kio              [s]         [ ]         [ ]
+knotify          [ ]         [ ]         [ ]
+konq             [s]         [ ]         [ ]
+konqhtml         [s]         [ ]         [ ]
+kwm              [ ]         [ ]         [ ]
+locale           [s]         [ ]         [ ]
+midi             [ ]         [ ]         [ ]
+odbc             [ ]         [ ]         [ ]
+passwords        [x]         [ ]         [ ]
+root             [ ]         [ ]         [ ]
+samba            [ ]         [ ]         [ ]
+syssound         [ ]         [ ]         [ ]
+themes           [ ]         [ ]         [ ]
+
