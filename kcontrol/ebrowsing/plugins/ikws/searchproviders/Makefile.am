@@ -35,6 +35,8 @@ services_DATA = \
 		google_lucky.desktop \
 		google_news.desktop \
 		hotbot.desktop \
+		hyperdictionary.desktop \
+		hyperdictionary_thesaurus.desktop \
 		imdb.desktop \
 		it2en.desktop \
 		jeeves.desktop \

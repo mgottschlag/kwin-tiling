@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=HyperDictionary.com Thesaurus
+ServiceTypes=SearchProvider
+Keys=hdt,hd-ths,hd-thesaurus
+Query=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
