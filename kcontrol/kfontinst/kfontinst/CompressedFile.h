@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
+#include <qstring.h>
 #include <qiodevice.h>
 
 class CCompressedFile
@@ -43,12 +44,12 @@ class CCompressedFile
         NORM
     };
 
-    CCompressedFile(const char *fname) : itsType(NORM), itsFName(fname), itsFile(NULL) { if(NULL!=fname) open(fname); }
-    virtual ~CCompressedFile()                                                         { close(); }
+    CCompressedFile(const QString &fname);
+    virtual ~CCompressedFile();
 
     operator bool()                                                                    { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
 
-    void   open(const char *fname);
+    void   open(const QString &fname);
     void   close();
     int    read(void *data, unsigned int len);
     int    getChar();
@@ -66,7 +67,7 @@ class CCompressedFile
 
     EType       itsType;
     int         itsPos;
-    const char  *itsFName;
+    QString     itsFName;
 
     union
     {

@@ -28,29 +28,38 @@
 
 #include "CompressedFile.h"
 #include <kfilterdev.h>
-#include <string.h>
-#include <ctype.h>
+#include <kprocess.h>
 
-static CCompressedFile::EType getType(const char *fname)
+#include <qfile.h>
+
+CCompressedFile::CCompressedFile(const QString &fname) 
+ : itsType(NORM), itsFName(fname), itsFile(NULL) 
+{ 
+    if(!fname.isEmpty())
+        open(fname); 
+}
+
+CCompressedFile::~CCompressedFile() 
+{ 
+    close();
+}
+
+static CCompressedFile::EType getType(const QString &fname)
 {
-    int  len=strlen(fname);
-
     // Check for .gz...
-    if(len>3 && fname[len-3]=='.' && tolower(fname[len-2])=='g' && tolower(fname[len-1])=='z')
+    if(fname.endsWith(".gz"))
         return CCompressedFile::GZIP;
 
     // Check for .Z
-    if(len>2 && fname[len-2]=='.' && tolower(fname[len-1])=='z')
+    if(fname.endsWith(".Z"))
         return CCompressedFile::Z;
 
     // Else assume its a normal file...
         return CCompressedFile::NORM;
 }
 
-void CCompressedFile::open(const char *fname)
+void CCompressedFile::open(const QString &fname)
 {
-    unsigned int len=fname ? strlen(fname) : 0;
-
     itsType=getType(fname);
     itsFName=fname;
     itsPos=0;
@@ -64,21 +73,12 @@ void CCompressedFile::open(const char *fname)
             break;
         case Z:
         {
-            const unsigned int constCmdSize=1024;
-
-            if(len+20<constCmdSize)
-            {
-                char cmd[constCmdSize];
-
-                sprintf(cmd, "uncompress -c \"%s\"", fname);
-                itsFile=popen(cmd, "r");
-            }
-            else
-                itsFile=NULL;
+            QString cmd = "uncompress -c " + KProcess::quote(fname);
+            itsFile=popen(QFile::encodeName(cmd), "r");
             break;
         }
         case NORM:
-            itsFile=fopen(fname, "r");
+            itsFile=fopen(QFile::encodeName(fname), "r");
     }
 }
 

@@ -695,7 +695,7 @@ void CEncodings::addDir(const QString &path, int sub)
                         else
                             if(isAEncFile(fInfo->fileName().local8Bit()))
                             {
-                                CCompressedFile ef(fInfo->filePath().local8Bit());
+                                CCompressedFile ef(fInfo->filePath());
 
                                 if(ef)
                                 {
@@ -808,7 +808,7 @@ bool CEncodings::T8Bit::load()
     if(!CEncodings::isBuiltin(*this) && NULL==map)
     {
         bool            status=false;
-        CCompressedFile ef(file.local8Bit());
+        CCompressedFile ef(file);
  
         if(ef)
         {

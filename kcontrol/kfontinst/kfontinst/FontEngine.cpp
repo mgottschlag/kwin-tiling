@@ -922,7 +922,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
         status=true; // If we've reached this point, then the FT_New_Face worked!
     else
     {
-        CCompressedFile f(file.local8Bit());
+        CCompressedFile f(file);
 
         if(f)
         {
@@ -1898,7 +1898,7 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
 bool CFontEngine::openFontBdf(const QString &file)
 {
     bool            foundXlfd=false;
-    CCompressedFile bdf(file.local8Bit());
+    CCompressedFile bdf(file);
 
     if(bdf)
     {
@@ -2003,7 +2003,7 @@ bool CFontEngine::openFontSnf(const QString &file)
                      indirect;  // true if value is a string
     };
 
-    CCompressedFile snf(file.local8Bit());
+    CCompressedFile snf(file);
 
     if(snf)
     {
@@ -2095,7 +2095,7 @@ static unsigned int read32(CCompressedFile &f, bool msb)
 bool CFontEngine::openFontPcf(const QString &file)
 {
     bool            foundXlfd=false;
-    CCompressedFile pcf(file.local8Bit());
+    CCompressedFile pcf(file);
 
     if(pcf)
     {
