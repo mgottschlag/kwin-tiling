@@ -5,9 +5,9 @@ LDADD =    $(LIB_KDEUI)
 
 bin_PROGRAMS = kcmbell
 
-kcmbell_SOURCES = main.cpp bell.cpp kslidercontrol.cpp
-METASOURCES = bell.moc kslidercontrol.moc
-noinst_HEADERS = bell.h geom.h kslidercontrol.h
+kcmbell_SOURCES = main.cpp bell.cpp 
+METASOURCES = bell.moc 
+noinst_HEADERS = bell.h geom.h 
 
 EXTRA_DIST = bell.xpm mini-bell.xpm
 

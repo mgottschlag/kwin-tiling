@@ -9,9 +9,9 @@ LDADD =       $(LIB_KDEUI)
 
 bin_PROGRAMS = kcminput
 
-kcminput_SOURCES = main.cpp mouse.cpp keyboard.cpp kslidercontrol.cpp
-METASOURCES = mouse.moc keyboard.moc kslidercontrol.moc
-noinst_HEADERS = mouse.h keyboard.h geom.h kslidercontrol.h
+kcminput_SOURCES = main.cpp mouse.cpp keyboard.cpp 
+METASOURCES = mouse.moc keyboard.moc 
+noinst_HEADERS = mouse.h keyboard.h geom.h 
 
 EXTRA_DIST = mouse.xpm mini-mouse.xpm keyboard.xpm mini-keyboard.xpm
 

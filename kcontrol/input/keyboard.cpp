@@ -64,7 +64,6 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name, bool init)
       
       click = new KSliderControl(i18n("Key click volume"),
 				 0, 100, 10, 100, "%", this);
-      click->setLabelSize(0.3);
       click->setLabelAlignment(AlignLeft);
       click->setSteps(5,25);
 
@@ -116,7 +115,7 @@ int  KeyboardConfig::getRepeat()
 
 int  KeyboardConfig::getClick()
 {
-  return click->intValue();
+  return click->value();
 }
 
 // set the slider and LCD values

@@ -30,10 +30,9 @@
 #include <qpushbutton.h>
 #include <qlcdnumber.h>
 #include <kapp.h>
-#include <kslider.h>
+#include <kslidercontrol.h>
 
 #include <kcontrol.h>
-#include "kslidercontrol.h"
 
 class KeyboardConfig : public KConfigWidget
 {

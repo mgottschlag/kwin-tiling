@@ -34,9 +34,9 @@
 
 #include <kapp.h>
 #include <kslider.h>
+#include <kslidercontrol.h>
 
 #include <kcontrol.h>
-#include "kslidercontrol.h"
 
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1

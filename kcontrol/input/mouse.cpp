@@ -70,8 +70,6 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
       thresh = new KSliderControl(i18n("Threshold"), 
 				  1,20,2,20, i18n("pixels"), 
 				  this);
-      accel->setLabelSize(0.3);
-      thresh->setLabelSize(0.3);
       accel->setLabelAlignment(AlignLeft);
       thresh->setLabelAlignment(AlignLeft);
       accel->setSteps(1,20);
@@ -132,7 +130,7 @@ void MouseConfig::resizeEvent(QResizeEvent *)
 
 int MouseConfig::getAccel()
 {
-  return accel->intValue();
+  return accel->value();
 }
 
 void MouseConfig::setAccel(int val)
@@ -142,7 +140,7 @@ void MouseConfig::setAccel(int val)
 
 int MouseConfig::getThreshold()
 {
-  return thresh->intValue();
+  return thresh->value();
 }
 
 void MouseConfig::setThreshold(int val)
