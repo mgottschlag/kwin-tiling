@@ -27,6 +27,7 @@ public:
     void writeFont();
     void setDefault();
     void setFont(const QFont &fnt ) { _font = fnt; }
+    void applyFontDiff(const QFont &fnt, int fontDiffFlags);
 
     QFont font() { return _font; }
     const QString& rcFile() { return _rcfile; }
@@ -78,6 +79,7 @@ signals:
 
 protected slots:
     void fontChanged();
+    void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
 
 private:

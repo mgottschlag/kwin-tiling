@@ -133,6 +133,22 @@ void FontUseItem::choose()
   }
 }
 
+void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
+{
+  if (fontDiffFlags && KFontChooser::FontDiffSize) {
+    _font.setPointSize( fnt.pointSize() );
+  }
+  if (fontDiffFlags && KFontChooser::FontDiffFamily) {
+    if (!fixed) _font.setFamily( fnt.family() );
+  }
+  if (fontDiffFlags && KFontChooser::FontDiffStyle) {
+    _font.setBold( fnt.bold() );
+    _font.setItalic( fnt.italic() );
+    _font.setUnderline( fnt.underline() );
+  }
+  updateLabel();
+}
+
 void FontUseItem::updateLabel()
 {
   QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize());
@@ -253,6 +269,11 @@ KFonts::KFonts(QWidget *parent, const char *name)
     ++count;
   }
 
+   QPushButton * fontAdjustButton = new QPushButton(i18n("Adjust all fonts"), this);
+   QWhatsThis::add(fontAdjustButton, i18n("Click to adjust fonts"));
+   connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
+   layout->addWidget(fontAdjustButton);
+
    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
 
    QWhatsThis::add(cbAA,
@@ -357,6 +378,21 @@ void KFonts::save()
 int KFonts::buttons()
 {
   return KCModule::Help | KCModule::Default | KCModule::Apply;
+}
+
+void KFonts::slotApplyFontDiff()
+{
+  QFont font = QFont(fontUseList.first()->font());
+  int fontDiffFlags = 0;
+  int ret = KFontDialog::getFontDiff(font,fontDiffFlags);
+
+  if (ret && fontDiffFlags) 
+  {
+    for ( int i = 0; i < (int) fontUseList.count(); i++ )
+      fontUseList.at( i )->applyFontDiff( font,fontDiffFlags );
+    _changed = true;
+    emit changed(true);
+  }
 }
 
 void KFonts::slotUseAntiAliasing()
