@@ -33,6 +33,7 @@
 #include <kapp.h>
 #include <kaudioplayer.h>
 #include <kcursor.h>
+#include <kdebug.h>
 #include <kdialog.h>
 #include <kfiledialog.h>
 #include <kglobal.h>
@@ -42,8 +43,8 @@
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 #include <kstddirs.h>
+#include <kurlcompletion.h>
 #include <kurlrequester.h>
-#include <kdebug.h>
 
 #include "knotify.h"
 #include "knotify.moc"
@@ -95,6 +96,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
     playButton->setPixmap( UserIcon("play") );
+    QToolTip::add( playButton, i18n("Play the given sound") );
     playButton->hide();
 
     connect( playButton, SIGNAL( clicked() ), SLOT( playSound() ));
@@ -103,6 +105,17 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     connect( view, SIGNAL( currentChanged( QListViewItem * )),
 	     SLOT( slotItemActivated( QListViewItem * )));
 
+    
+    hbox = new QHBox( box );
+    hbox->setSpacing( KDialog::spacingHint() );
+    cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
+    reqExternal = new KURLRequester( hbox );
+    reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
+    connect( cbExternal, SIGNAL( toggled( bool )), 
+	     SLOT( externalClicked( bool )));
+    connect( reqExternal, SIGNAL( textChanged( const QString& )),
+	     SLOT( changed() ));
+    
     m_events = new Events();
     qApp->processEvents(); // let's show up
 
@@ -183,7 +196,7 @@ void KNotifyWidget::slotFileChanged( const QString& text )
 
     if ( itemText && *itemText != text ) {
 	*itemText = text;
-	emit changed();
+	changed();
     }
 
     currentItem->setText( COL_FILENAME, text );
@@ -198,6 +211,14 @@ void KNotifyWidget::loadAll()
 {
     setEnabled( false );
     setCursor( KCursor::waitCursor() );
+
+    KConfig *kc = new KConfig( "knotifyrc" );
+    kc->setGroup( "Misc" );
+    cbExternal->setChecked( kc->readBoolEntry( "Use external player", false ));
+    reqExternal->setURL( kc->readEntry( "External player" ));
+    reqExternal->setEnabled( cbExternal->isChecked() );
+    delete kc;
+
     m_events->load();
     updateView();
     setEnabled( true );
@@ -206,10 +227,20 @@ void KNotifyWidget::loadAll()
 
 void KNotifyWidget::save()
 {
+    // see kdelibs/arts/knotify/knotify.cpp
+    KConfig *kc = new KConfig( "knotifyrc", false, false );
+    kc->setGroup( "Misc" );
+    kc->writeEntry( "External player", reqExternal->url() );
+    kc->writeEntry( "Use external player", cbExternal->isChecked() );
+    kc->sync();
+    delete kc;
+	
     m_events->save();
     if ( !kapp->dcopClient()->isAttached() )
 	kapp->dcopClient()->attach();
     kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
+    
+    emit KCModule::changed( false );
 }
 
 void KNotifyWidget::slotItemActivated( QListViewItem *i )
@@ -244,6 +275,13 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
     requester->setEnabled( enableButton );
 }
 
+void KNotifyWidget::externalClicked( bool on )
+{
+    if ( on )
+	reqExternal->setFocus();
+    reqExternal->setEnabled( on );
+    changed();
+}
 
 QString KNotifyWidget::quickHelp() const
 {
@@ -331,7 +369,7 @@ void KNListViewItem::itemChanged( KNCheckListItem *item )
     else
 	event->presentation &= ~item->eventType();
 
-    emit changed();
+    changed();
 }
 
 

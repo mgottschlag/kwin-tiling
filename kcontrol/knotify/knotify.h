@@ -25,8 +25,10 @@
 #ifndef _KNOTIFY_H
 #define _KNOTIFY_H
 
+#include <qcheckbox.h>
 #include <qlistview.h>
 #include <qstring.h>
+#include <qtooltip.h>
 
 #include <kcmodule.h>
 
@@ -51,6 +53,7 @@ public:
     virtual const KAboutData *aboutData() const;
 
 private slots:
+    void externalClicked( bool on );
     void changed();
     void loadAll();
 
@@ -61,8 +64,9 @@ private slots:
 private:
     void updateView();
 
+    QCheckBox *cbExternal;
     QListView *view;
-    KURLRequester *requester;
+    KURLRequester *requester, *reqExternal;
     QPushButton *playButton;
     Events *m_events;
     KNCheckListItem *currentItem;

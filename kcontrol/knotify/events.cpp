@@ -78,7 +78,6 @@ QString Events::makeRelative( const QString& fullPath )
 
 
 
-// ownership of the KConfig is transferred
 KNApplication::KNApplication( const QString &path )
 {
     QString config_file = path;
@@ -95,6 +94,7 @@ KNApplication::KNApplication( const QString &path )
 
 KNApplication::~KNApplication()
 {
+    delete config;
     delete kc;
     delete m_events;
 }
