@@ -16,11 +16,13 @@
 #include <qcheckbox.h>
 #include <qevent.h>
 #include <qgroupbox.h>
+#include <qheader.h>
 #include <qvgroupbox.h>
 
 #include <kdialogbase.h>
 #include <keditlistbox.h>
 #include <kkeydialog.h>
+#include <klistview.h>
 #include <knuminput.h>
 
 #include "urlgrabber.h"
@@ -55,12 +57,11 @@ public:
     ~ActionWidget();
 
     /**
-     * Creates a list of actions from the listView and returns a pointer to the
-     * list.
+     * Creates a list of actions from the listView and returns a pointer to
+     * the list.
      * Make sure to free that pointer when you don't need it anymore.
      */
     ActionList * actionList();
-
 
 private slots:
     void slotAddAction();
@@ -138,7 +139,7 @@ public:
     }
 
     virtual void show();
-    
+
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;
@@ -146,6 +147,28 @@ private:
 
 };
 
+class ListView : public KListView
+{
+public:
+    ListView( QWidget *parent, const char *name )
+	: KListView( parent, name ) {}
+    // QListView has a weird idea of a sizeHint...
+    virtual QSize sizeHint () const {
+	int w = minimumSizeHint().width();
+	int h = header()->height();
+	h += viewport()->sizeHint().height();
+	h += horizontalScrollBar()->height();
+	
+	QListViewItem *item = firstChild();
+	while ( item ) {
+	    h += item->totalHeight();
+	    item = item->nextSibling();
+	}
 
+	qDebug("*** w, h: %i, %i", w, h);	
+	return QSize( w, h );
+    }
+
+};
 
 #endif // CONFIGDIALOG_H

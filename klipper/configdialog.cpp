@@ -20,7 +20,6 @@
 
 #include <kaboutdialog.h>
 #include <kiconloader.h>
-#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kwinmodule.h>
@@ -78,9 +77,9 @@ void ConfigDialog::show()
 	if ( s1.height() >= s2.height() )
 	    h = s2.height();
 
-	resize( w, h );
+ 	resize( w, h );
     }
-    
+
     KDialogBase::show();
 }
 
@@ -106,23 +105,18 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     popupTimeout = new KIntNumInput( box );
     lblTimeout->setBuddy( popupTimeout );
     popupTimeout->setRange( 0, 200, 1, false );
-//    popupTimeout->setSuffix( i18n(" seconds") );
-//    popupTimeout->setLabel( i18n("Timeout for Action popups:"),
-//                            AlignVCenter);
     QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
+
     QLabel *lblSeconds = new QLabel( i18n("seconds"), box );
     box->setStretchFactor( lblSeconds, 10 );
     box->setSpacing(6);
-    
-//    QWidget * dummy = new QWidget( box );
-//    box->setStretchFactor( dummy, 10 );
 
     QLabel *lblMaxItems = new QLabel( i18n("&Clipboard history size:"), this );
     QHBox *maxItemsBox = new QHBox( this );
     maxItems = new KIntNumInput( maxItemsBox );
     lblMaxItems->setBuddy( maxItems );
     maxItems->setRange( 2, 25, 1, false );
-//    QToolTip::add( maxItems, i18n("A value of 0 disables the timeout") );
+
     QLabel *lblItems = new QLabel( i18n("items"), maxItemsBox );
     maxItemsBox->setStretchFactor( lblItems, 10 );
     maxItemsBox->setSpacing(6);
@@ -150,9 +144,10 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
 
     setTitle( i18n("Action settings") );
 
-    QLabel *lblAction = new QLabel( i18n("Action &list (right click to add/remove commands):"),
-				    this );
-    listView = new KListView( this, "list view" );
+    QLabel *lblAction = new QLabel( 
+	  i18n("Action &list (right click to add/remove commands):"), this );
+    
+    listView = new ListView( this, "list view" );
     lblAction->setBuddy( listView );
     listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
@@ -172,9 +167,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     connect( listView, SIGNAL( rightButtonPressed( QListViewItem *,
                                                    const QPoint&, int) ),
              SLOT( slotRightPressed( QListViewItem *, const QPoint&, int )));
-    connect( listView,
-             SIGNAL( executed( QListViewItem*, const QPoint&, int ) ),
-             SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ) );
+    connect( listView, SIGNAL(executed( QListViewItem*, const QPoint&, int )),
+             SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ));
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
@@ -218,8 +212,9 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     label->setAlignment( WordBreak | AlignLeft | AlignVCenter );
 
     box->setStretchFactor( label, 5 );
-
+    
     editListBox = new KEditListBox( i18n("D&isable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    
     QWhatsThis::add( editListBox,
           i18n("<qt>This lets you specify windows in which klipper should<br>"
 	       "not invoke \"actions\". Use"

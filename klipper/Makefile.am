@@ -23,7 +23,6 @@ autostartdir = $(prefix)/share/autostart
 autostart_DATA = klipper.desktop
 
 data_DATA = klipperrc
-
 datadir = $(kde_confdir)
 EXTRA_DIST = $(data_DATA)
 

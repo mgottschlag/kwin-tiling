@@ -29,9 +29,12 @@ int main(int argc, char *argv[])
 {
   KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
     version, description, KAboutData::License_Artistic,
-    "(c) 1998-2000, Andrew Stanley-Jones");
+		       "(c) 1998, Andrew Stanley-Jones\n"
+		       "1998-2001, Carsten Pfeiffer\n"
+		       "2001, Patrick Dubroy");
   aboutData.addAuthor("Andrew Stanley-Jones", 0, "asj@cban.com");
   aboutData.addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
+  aboutData.addAuthor("Patrick Dubroy", 0, "patrickdu@corel.com");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();
