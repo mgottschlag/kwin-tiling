@@ -2,6 +2,9 @@
   toplevel.h - A KControl Application
 
   written 1998 by Matthias Hoelzer
+
+  Copyright 1998 Matthias Hoelzer.
+  Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>.
   
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,6 +47,7 @@ public:
   void load();
   void save();
   void defaults();
+  QString quickHelp();
 
 public slots:
   void reTranslate();
