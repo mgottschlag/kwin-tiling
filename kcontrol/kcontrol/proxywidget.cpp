@@ -76,6 +76,9 @@ class RootInfoWidget : public QFrame
 {
 public:
     RootInfoWidget(QWidget *parent, const char *name);
+    void setRootMsg(const QString& s) { text->setText(s); }
+private:
+    QLabel *text;
 };
 
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
@@ -87,7 +90,7 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     QHBoxLayout *layout = new QHBoxLayout(this, KDialog::spacingHint(), KDialog::marginHint());
     QLabel *pixmap = new QLabel(this);
     pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
-    QLabel *text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
+    text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
                                    "<p>Click the &quot;Administrator Mode&quot; button to "
                                    "allow modifications on this module.</p></qt>"), this);
 
@@ -129,9 +132,12 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
   setVScrollBarMode(AlwaysOff);
   setHScrollBarMode(AlwaysOff);
   QVBox* box = new QVBox(viewport());
-  if (run_as_root) // notify the user
+  if (run_as_root && _client->useRootOnlyMsg()) // notify the user
   {
-      QWidget *infoBox = new RootInfoWidget(box);
+      RootInfoWidget *infoBox = new RootInfoWidget(box);
+      QString msg = _client->rootOnlyMsg();
+      if (!msg.isEmpty())
+	      infoBox->setRootMsg(msg);
       box->setSpacing(KDialog::spacingHint());
   }
   client->reparent(box,0,QPoint(0,0),true);
