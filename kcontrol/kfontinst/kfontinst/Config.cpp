@@ -51,7 +51,7 @@ static const QCString constDefaultT1SubDir              ("Type1/");
 static const QCString constDefaultXConfigFile           ("/etc/X11/XF86Config");
 static const QCString constDefaultEncodingsDir          ("/usr/X11R6/lib/X11/fonts/encodings/");
 static const QCString constDefaultGhostscriptDir        ("/usr/share/ghostscript/");
-static const QCString constDefaultGhostscriptFile       ("Fontmap"); 
+static const QCString constDefaultGhostscriptFile       ("Fontmap");
 static const QCString constDefaultCupsDir               ("/usr/share/cups/");
 static const QCString constDefaultUninstallDir          ("/tmp/");
 static const QCString constDefaultSODir                 ("/opt/office52/");
@@ -88,12 +88,12 @@ static QString getFirstSubDir(const QString &parent)
     if(dir.isReadable())
     {
         const QFileInfoList *files=dir.entryInfoList();
- 
+
         if(files)
         {
             QFileInfoListIterator it(*files);
             QFileInfo             *fInfo;
- 
+
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                     if(fInfo->isDir())
@@ -132,13 +132,13 @@ static QString locateFile(const QString &dir, const QString *files, int level=0)
         if(d.isReadable())
         {
             const QFileInfoList *fList=d.entryInfoList();
- 
+
             if(fList)
             {
                 QFileInfoListIterator it(*fList);
                 QFileInfo             *fInfo;
                 QString               str;
- 
+
                 for(; NULL!=(fInfo=it.current()); ++it)
                     if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                         if(fInfo->isDir())
@@ -147,7 +147,7 @@ static QString locateFile(const QString &dir, const QString *files, int level=0)
                                 return str;
                         }
                         else
-                        { 
+                        {
                             int f;
 
                             for(f=0; QString::null!=files[f]; ++f)
@@ -183,34 +183,34 @@ const QString CConfig::constFontsDirs[]=
     constDefaultFontsDir,
     "/usr/lib/X11/fonts/",
     "/usr/openwin/lib/X11/fonts/",
-    QString::null 
+    QString::null
 };
 const QString CConfig::constTTSubDirs[]=
 {
-    constDefaultTTSubDir, 
-    "truetype/", 
-    "ttf/", 
-    "TTF/", 
-    "Ttf/", 
+    constDefaultTTSubDir,
+    "truetype/",
+    "ttf/",
+    "TTF/",
+    "Ttf/",
     "tt",
     "TT",
-    "True_Type/", 
-    "true_type/", 
-    QString::null 
+    "True_Type/",
+    "true_type/",
+    QString::null
 };
 const QString CConfig::constT1SubDirs[]=
 {
-    constDefaultT1SubDir, 
-    "type1/", 
-    "T1/", 
-    "t1/", 
-    "Postscript/", 
-    "PSType1/", 
-    "pstype1/", 
-    QString::null 
+    constDefaultT1SubDir,
+    "type1/",
+    "T1/",
+    "t1/",
+    "Postscript/",
+    "PSType1/",
+    "pstype1/",
+    QString::null
 };
 const QString CConfig::constEncodingsSubDirs[]=
-{ 
+{
     "encodings/",
     "Encodings/",
     "enc/",
@@ -228,8 +228,8 @@ const QString CConfig::constCupsDirs[]=
     QString::null
 };
 const QString CConfig::constGhostscriptFiles[]=
-{ 
-    constDefaultGhostscriptFile, 
+{
+    constDefaultGhostscriptFile,
     "Fontmap.GS",
     QString::null
 };
@@ -266,7 +266,7 @@ const QString CConfig::constXftConfigFiles[]=
 };
 #endif
 
-const QString CConfig::constNotFound(i18n("<Not Found>"));
+const QString CConfig::constNotFound(I18N_NOOP("<Not Found>"));
 
 CConfig::CConfig()
        : KConfig("kcmfontinstrc")
@@ -277,7 +277,7 @@ CConfig::CConfig()
              defaultXftConfigFile,
 #endif
              defaultGhostscriptFile;
-             
+
     QString origGroup=group(),
             val;
     int     intVal;
@@ -417,7 +417,7 @@ CConfig::CConfig()
             }
 
     if(QString::null==(itsFontsDir=getDir(itsFontsDir, constFontsDirs)))
-        itsFontsDir=constNotFound;
+        itsFontsDir=i18n(constNotFound);
 
     //
     // Check for TrueType and Type1 sub-folders, and create if either doesn't exist
@@ -439,7 +439,7 @@ CConfig::CConfig()
     itsTTSubDir=getDir(itsTTSubDir, constTTSubDirs, itsFontsDir);
     itsT1SubDir=getDir(itsT1SubDir, constT1SubDirs, itsFontsDir);
 
-    if(QString::null==itsTTSubDir || QString::null==itsT1SubDir) 
+    if(QString::null==itsTTSubDir || QString::null==itsT1SubDir)
         if(QString::null==itsTTSubDir && QString::null!=itsT1SubDir)
             itsTTSubDir=itsT1SubDir;
         else
@@ -451,12 +451,12 @@ CConfig::CConfig()
     if(CMisc::root())
         if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXConfigFiles)))
             if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)))
-                itsXConfigFile=constNotFound;
+                itsXConfigFile=i18n(constNotFound);
 
 #ifdef HAVE_XFT
     if(CMisc::root())
         if(QString::null==(itsXftConfigFile=getFile(itsXftConfigFile, constXftConfigFiles)))
-            itsXftConfigFile=constNotFound;
+            itsXftConfigFile=i18n(constNotFound);
 #endif
 
     if(!CMisc::dExists(itsEncodingsDir))
@@ -482,13 +482,13 @@ CConfig::CConfig()
     {
         if(QString::null==(itsGhostscriptFile=getFile(itsGhostscriptFile, constGhostscriptDirs, constGhostscriptFiles)))
         {
-            itsGhostscriptFile=constNotFound;
+            itsGhostscriptFile=i18n(constNotFound);
             itsDoGhostscript=false;
         }
 
         if(QString::null==(itsCupsDir=getDir(itsCupsDir, constCupsDirs)))
         {
-            itsCupsDir=constNotFound;
+            itsCupsDir=i18n(constNotFound);
             itsDoCups=false;
         }
     }
@@ -499,7 +499,7 @@ CConfig::CConfig()
     // Can only configure StarOffice if AFM generation has been selected...
     if(itsSOConfigure)
         itsDoAfm=true;
-        
+
     // Restore KConfig group...
     setGroup(origGroup);
 }
@@ -563,14 +563,14 @@ CConfig::~CConfig()
     writeEntry("XRefreshCmd", itsXRefreshCmd);
     writeEntry("CustomXRefreshCmd", itsCustomXRefreshCmd);
     writeEntry("ModifiedDirs", itsModifiedDirs);
-        
+
     // Restore KConfig group...
     setGroup(origGroup);
 }
 
 void CConfig::configured()
 {
-    itsConfigured=true; 
+    itsConfigured=true;
     write("Misc", "Configured", itsConfigured);
 }
 
@@ -606,7 +606,7 @@ void CConfig::setFontsDir(const QString &s)
 
 void CConfig::setTTSubDir(const QString &s)
 {
-    itsTTSubDir=s; 
+    itsTTSubDir=s;
     write("FoldersAndFiles", "TTSubDir", itsTTSubDir);
 }
 
@@ -632,13 +632,13 @@ void CConfig::setXftConfigFile(const QString &s)
 
 void CConfig::setEncodingsDir(const QString &s)
 {
-    itsEncodingsDir=s; 
+    itsEncodingsDir=s;
     write("FoldersAndFiles", "EncodingsDir", itsEncodingsDir);
 }
 
 void CConfig::setGhostscriptFile(const QString &s)
 {
-    itsGhostscriptFile=s; 
+    itsGhostscriptFile=s;
     write("FoldersAndFiles", "GhostscriptFile", itsGhostscriptFile);
 }
 
@@ -662,13 +662,13 @@ void CConfig::setDoCups(bool b)
 
 void CConfig::setFixTtfPsNamesUponInstall(bool b)
 {
-    itsFixTtfPsNamesUponInstall=b; 
+    itsFixTtfPsNamesUponInstall=b;
     write("InstallUninstall", "FixTtfPsNamesUponInstall", itsFixTtfPsNamesUponInstall);
 }
 
 void CConfig::setUninstallDir(const QString &s)
 {
-    itsUninstallDir=s; 
+    itsUninstallDir=s;
     write("InstallUninstall", "UninstallDir", itsUninstallDir);
 }
 
@@ -686,7 +686,7 @@ void CConfig::addAdvancedDir(EListWidget w, const QString &d)
         write("AdvancedMode", DISK==w ? "DiskDirs" : "InstalledDirs", itsAdvanced[w].dirs);
     }
 }
- 
+
 void CConfig::removeAdvancedDir(EListWidget w, const QString &d)
 {
     if(-1!=itsAdvanced[w].dirs.findIndex(d))
@@ -712,31 +712,31 @@ void CConfig::setSOConfigure(bool b)
 
 void CConfig::setSODir(const QString &s)
 {
-    itsSODir=s; 
+    itsSODir=s;
     write("StarOffice", "SODir", itsSODir);
 }
 
 void CConfig::setSOPpd(const QString &s)
 {
-    itsSOPpd=s; 
+    itsSOPpd=s;
     write("StarOffice", "SOPpd", itsSOPpd);
 }
 
 void CConfig::setExclusiveEncoding(bool b)
 {
-    itsExclusiveEncoding=b; 
+    itsExclusiveEncoding=b;
     write("SystemConfiguration", "ExclusiveEncoding", itsExclusiveEncoding);
 }
 
 void CConfig::setEncoding(const QString &s)
 {
-    itsEncoding=s; 
+    itsEncoding=s;
     write("SystemConfiguration", "Encoding", itsEncoding);
 }
 
 void CConfig::setDoAfm(bool b)
 {
-    itsDoAfm=b; 
+    itsDoAfm=b;
     write("SystemConfiguration", "DoAfm", itsDoAfm);
     if(b)
     {
@@ -786,13 +786,13 @@ void CConfig::setAfmEncoding(const QString &s)
 
 void CConfig::setXRefreshCmd(EXFontListRefresh cmd)
 {
-    itsXRefreshCmd=cmd; 
+    itsXRefreshCmd=cmd;
     write("SystemConfiguration", "XRefreshCmd", (int)itsXRefreshCmd);
 }
 
 void CConfig::setCustomXRefreshCmd(const QString &s)
 {
-    itsCustomXRefreshCmd=s; 
+    itsCustomXRefreshCmd=s;
     write("SystemConfiguration", "CustomXRefreshCmd", itsCustomXRefreshCmd);
 }
 

@@ -29,7 +29,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
- 
+
 #include "SettingsWizard.h"
 #include "DirSettingsWidget.h"
 #include "StarOfficeSettingsWidget.h"
@@ -54,7 +54,7 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
         QString fnfTxt=itsFnFText->text();
 
         itsFnFText->setText(fnfTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, it is probable that you are not using the CUPS"
-                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(CConfig::constNotFound));
+                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(i18n(CConfig::constNotFound)));
         itsModifiedDirsText->hide();
     }
     else
@@ -76,41 +76,41 @@ void CSettingsWizard::checkAndModifyFontmapFile()
     //
     // Check if "Fontmap" has been selected by CConfig, and if so, have a look at its contents to see
     // whether it says '(Fontmap.GS) .runlibfile' - if so then use 'Fontmap.GS' instead...
-    if(CConfig::constNotFound!=CKfiGlobal::cfg().getGhostscriptFile())
+    if(i18n(CConfig::constNotFound)!=CKfiGlobal::cfg().getGhostscriptFile())
     {
         int slashPos=CKfiGlobal::cfg().getGhostscriptFile().findRev('/');
- 
+
         if(slashPos!=-1)
         {
             QString file=CKfiGlobal::cfg().getGhostscriptFile().mid(slashPos+1);
- 
+
             if("Fontmap"==file)
             {
                 ifstream f(CKfiGlobal::cfg().getGhostscriptFile().local8Bit());
- 
+
                 if(f)
                 {
                     const int constMaxLineLen=1024;
- 
+
                     char line[constMaxLineLen];
                     bool useGS=false;
- 
+
                     do
                     {
                         f.getline(line, constMaxLineLen);
- 
+
                         if(f.good())
                         {
                             line[constMaxLineLen-1]='\0';
- 
+
                             if(strstr(line, "Fontmap.GS")!=NULL && strstr(line, ".runlibfile")!=NULL)
                                 useGS=true;
                         }
                     }
                     while(!f.eof() && !useGS);
- 
+
                     f.close();
- 
+
                     if(useGS)
                         itsDirsAndFilesWidget->setGhostscriptFile(CMisc::getDir(CKfiGlobal::cfg().getGhostscriptFile())+"Fontmap.GS");
                 }
@@ -124,37 +124,37 @@ void CSettingsWizard::checkAndModifyXConfigFile()
     //
     // Check if XF86Config has been selected by CConfig, and if so, have a look to see wether it has
     // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
-    if(CConfig::constNotFound!=CKfiGlobal::cfg().getXConfigFile())
+    if(i18n(CConfig::constNotFound)!=CKfiGlobal::cfg().getXConfigFile())
     {
         int slashPos=CKfiGlobal::cfg().getXConfigFile().findRev('/');
- 
+
         if(slashPos!=-1)
         {
             QString file=CKfiGlobal::cfg().getXConfigFile().mid(slashPos+1);
- 
+
             if(file.find("XF86Config")!=-1)
             {
                 ifstream f(CKfiGlobal::cfg().getXConfigFile().local8Bit());
- 
+
                 if(f)
                 {
                     const int constMaxLineLen=1024;
- 
+
                     char line[constMaxLineLen],
                          str1[constMaxLineLen],
                          str2[constMaxLineLen];
                     bool inFiles=false,
                          useXfs=false;
- 
+
                     do
                     {
- 
+
                         f.getline(line, constMaxLineLen);
- 
+
                         if(f.good())
                         {
                             line[constMaxLineLen-1]='\0';
- 
+
                             if('#'!=line[0] && sscanf(line, "%s %s", str1, str2)==2)
                             {
                                 if(!inFiles)
@@ -177,13 +177,13 @@ void CSettingsWizard::checkAndModifyXConfigFile()
                         }
                     }
                     while(!f.eof() && !useXfs);
- 
+
                     f.close();
- 
+
                     if(useXfs)
                     {
                         int i;
- 
+
                         for(i=0; QString::null!=CConfig::constXfsConfigFiles[i]; ++i)
                             if(CMisc::fExists(CConfig::constXfsConfigFiles[i]))
                             {

@@ -72,12 +72,12 @@ CDirSettingsWidget::CDirSettingsWidget(QWidget *parent, const char *name)
 
     setupSubDirCombos();
 }
- 
+
 void CDirSettingsWidget::encodingsDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
                                                   this, i18n("Select Encodings Folder"));
- 
+
     if(QString::null!=dir && dir!=itsEncodingsDirText->text())
     {
         itsEncodingsDirText->setText(dir);
@@ -90,9 +90,9 @@ void CDirSettingsWidget::encodingsDirButtonPressed()
 
 void CDirSettingsWidget::gsFontmapButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
                                               "Fontmap*", this, i18n("Select Ghostscript \"Fontmap\""));
- 
+
     if(QString::null!=file && file!=itsGhostscriptFileText->text())
     {
         bool ok=false;
@@ -114,7 +114,7 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
 
 void CDirSettingsWidget::cupsButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
                                                   this, i18n("Select CUPS Folder"));
 
     if(QString::null!=dir && dir!=itsCupsDirText->text())
@@ -126,9 +126,9 @@ void CDirSettingsWidget::cupsButtonPressed()
 
 void CDirSettingsWidget::xDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
                                                   this, i18n("Select Fonts Folder"));
- 
+
     if(QString::null!=dir && dir!=itsFontsDirText->text())
     {
         itsFontsDirText->setText(dir);
@@ -139,7 +139,7 @@ void CDirSettingsWidget::xDirButtonPressed()
 
 void CDirSettingsWidget::xConfigButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
                                               NULL, this, i18n("Select X config file"));
 
     if(QString::null!=file && file!=itsXConfigFileText->text())
@@ -176,7 +176,7 @@ void CDirSettingsWidget::setupSubDirCombos()
     if(dir.isReadable())
     {
         const QFileInfoList *files=dir.entryInfoList();
- 
+
         if(files)
         {
             QFileInfoListIterator it(*files);
@@ -185,7 +185,7 @@ void CDirSettingsWidget::setupSubDirCombos()
                                   sub,
                                   tt=-1,
                                   t1=-1;
- 
+
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                     if(fInfo->isDir())
@@ -223,7 +223,7 @@ void CDirSettingsWidget::setupSubDirCombos()
                 else
                     if(-1==tt && -1==t1)
                         t1=tt=0;
-            
+
             CKfiGlobal::cfg().setTTSubDir(itsTTCombo->text(tt));
             CKfiGlobal::cfg().setT1SubDir(itsT1Combo->text(t1));
             itsTTCombo->setCurrentItem(tt);
@@ -261,7 +261,7 @@ void CDirSettingsWidget::setGhostscriptFile(const QString &f)
     itsGhostscriptFileText->setText(f);
     CKfiGlobal::cfg().setGhostscriptFile(f);
 }
- 
+
 void CDirSettingsWidget::setXConfigFile(const QString &f)
 {
     itsXConfigFileText->setText(f);

@@ -69,9 +69,9 @@ CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *
 
 void CXftConfigSettingsWidget::fileButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsConfigFileText->text() ? QString::null : itsConfigFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsConfigFileText->text() ? QString::null : itsConfigFileText->text(),
                                               "XftConfig .xftconfig", this, i18n("Select Anti-Alias configuration file"));
- 
+
     if(QString::null!=file && file!=itsConfigFileText->text())
     {
         bool ok=false;
@@ -152,7 +152,7 @@ void CXftConfigSettingsWidget::setWidgets()
     bool   fExists      = CMisc::fExists(CKfiGlobal::cfg().getXftConfigFile()),
            enableConfig = ( (fExists && CMisc::fWritable(CKfiGlobal::cfg().getXftConfigFile())) ||
                             (!fExists && CMisc::dWritable(CMisc::getDir(CKfiGlobal::cfg().getXftConfigFile()))));
- 
+
     itsUseSubPixelHintingCheck->setEnabled(enableConfig);
     itsAdvancedButton->setEnabled(fExists);
     itsFromText->setEnabled(enableConfig && itsExcludeRangeCheck->isChecked());

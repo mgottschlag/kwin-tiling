@@ -64,12 +64,12 @@ CStarOfficeSettingsWidget::CStarOfficeSettingsWidget(QWidget *parent, const char
     itsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
     setupPpdCombo();
 }
- 
+
 void CStarOfficeSettingsWidget::dirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsDirText->text() ? QString::null : itsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsDirText->text() ? QString::null : itsDirText->text(),
                                                   this, i18n("Select StarOffice Folder"));
- 
+
     if(QString::null!=dir && dir!=itsDirText->text())
     {
         itsDirText->setText(dir);
@@ -92,7 +92,7 @@ void CStarOfficeSettingsWidget::configureSelected(bool on)
 static bool isAPpd(const char *fname)
 {
     int  len=strlen(fname);
- 
+
     return (len>3 && fname[len-3]=='.' && tolower(fname[len-2])=='p' && tolower(fname[len-1])=='s');
 }
 
@@ -125,7 +125,7 @@ static const char * getName(const QString &file)
                 if((str=strstr(buffer, "*ModelName: \""))!=NULL)
                 {
                     str+=strlen("*ModelName: \"");
- 
+
                     if((ch=strchr(str, '\"'))!=NULL)
                     {
                         strncpy(name, str, ch-str);
@@ -184,7 +184,7 @@ void CStarOfficeSettingsWidget::setupPpdCombo()
     if(dir.isReadable())
     {
         const QFileInfoList *files=dir.entryInfoList();
- 
+
         if(files)
         {
             const unsigned int constMaxStrLen = 40;
@@ -192,7 +192,7 @@ void CStarOfficeSettingsWidget::setupPpdCombo()
             QFileInfoListIterator it(*files);
             QFileInfo             *fInfo;
             QStringList           list;
- 
+
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                     if(!fInfo->isDir() && isAPpd(fInfo->fileName().local8Bit()))
@@ -212,7 +212,7 @@ void CStarOfficeSettingsWidget::setupPpdCombo()
         }
 
         int i;
- 
+
         for(i=0; i<itsPpdCombo->count(); ++i)
             if(CKfiGlobal::cfg().getSOPpd()==removeInfo(itsPpdCombo->text(i)))
             {

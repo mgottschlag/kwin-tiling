@@ -44,22 +44,18 @@
 #include <klocale.h>
 #include <stdlib.h>
 
-static const QString & constDefaultPreviewStr("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890");
-static const QString & constNoPreviewStr(I18N_NOOP(" No preview available"));
-static const QString & constPreviewTitle(I18N_NOOP("Preview:"));
-
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
               itsSysConfigurer(NULL),
-              itsPreviousTitle(i18n(constPreviewTitle.utf8())),
-              itsPreviousStr(i18n(constNoPreviewStr.utf8()))
+              itsPreviousTitle(i18n("Preview:")),
+              itsPreviousStr(i18n(" No preview available"))
 {
     QPalette    pal(itsBox->palette());
     QColorGroup dis(pal.disabled());
 
-    itsBox->setTitle(i18n(constPreviewTitle.utf8()));
-    itsLabel->setText(i18n(constNoPreviewStr.utf8()));
-    
+    itsBox->setTitle(i18n(i18n("Preview:").utf8()));
+    itsLabel->setText(i18n(i18n(" No preview available").utf8()));
+
     dis.setColor(QColorGroup::Text , pal.active().text());
     pal.setDisabled(dis);
     itsBox->setPalette(pal);
@@ -103,14 +99,14 @@ void CFontsWidget::setPreviewMode(bool on)
                 itsLabel->setText(itsPreviousStr);
             else
                 if(itsPreviousPixmap.isNull())
-                    itsLabel->setText(constNoPreviewStr);
+                    itsLabel->setText(i18n(" No preview available"));
                 else
                     itsLabel->setPixmap(itsPreviousPixmap);
         }
         else
         {
-            itsBox->setTitle(constPreviewTitle);
-            itsLabel->setText(constNoPreviewStr);
+            itsBox->setTitle(i18n("Preview:"));
+            itsLabel->setText(i18n(" No preview available"));
         }
 
         itsProgress->hide();
@@ -184,14 +180,14 @@ void CFontsWidget::configureSystem()
     if(NULL==itsSysConfigurer)
     {
         itsSysConfigurer=new CSysConfigurer(this);
- 
+
         connect(itsSysConfigurer, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
         connect(itsSysConfigurer, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
         connect(itsSysConfigurer, SIGNAL(stopProgress()), SLOT(stopProgress()));
         connect(itsSysConfigurer, SIGNAL(successful()), itsInstalled, SLOT(disableCfgButton()));
         connect(itsSysConfigurer, SIGNAL(successful()), SLOT(systemConfigured()));
     }
- 
+
     itsSysConfigurer->go();
 }
 
@@ -213,7 +209,7 @@ void CFontsWidget::preview(const QString &dir, const QString &file)
 
         QPixmap pix=CKfiGlobal::fe().createPixmap(CKfiGlobal::cfg().getUseCustomPreviewStr() ?
                                                       CKfiGlobal::cfg().getCustomPreviewStr() :
-                                                      constDefaultPreviewStr,
+                                                      i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890"),
                                                   constBMWidth, itsLabel->size().height(), constPtSize, constRes,
                                                   itsBackground->backgroundColor().rgb());
 
@@ -223,15 +219,15 @@ void CFontsWidget::preview(const QString &dir, const QString &file)
             createdBitmap=true;
         }
 
-        itsBox->setTitle(constPreviewTitle+" "+CKfiGlobal::fe().getFullName().latin1());
+        itsBox->setTitle(i18n("Preview:")+" "+CKfiGlobal::fe().getFullName().latin1());
         itsBox->repaint();
         CKfiGlobal::fe().closeFont();
     }
     else
-        itsBox->setTitle(constPreviewTitle);
-    
+        itsBox->setTitle(i18n("Preview:"));
+
     if(!createdBitmap)
-        itsLabel->setText(constNoPreviewStr);
+        itsLabel->setText(i18n(" No preview available"));
 }
 
 void CFontsWidget::rescan()
