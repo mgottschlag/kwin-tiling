@@ -88,9 +88,11 @@ signals:
 
 struct ClipCommand
 {
+    ClipCommand( const QString &, const QString &, bool = true );
     QString command;
     QString description;
     bool isEnabled;
+    QString pixmap;
     //  int id; // the index reflecting the position in the list of commands
 };
 

@@ -5,14 +5,14 @@ lib_LTLIBRARIES = klipper.la
 
 CLEANFILES = dummy.cpp
 
-klipper_la_LIBADD = $(LIB_KDEUI)
+klipper_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
 klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
 	keditablelistview.cpp
 
 klipper_la_METASOURCES = AUTO
 klipper_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-klipper_LDADD = klipper.la
+klipper_LDADD = klipper.la $(LIB_KSYCOCA)
 klipper_SOURCES = dummy.cpp
 klipper_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 

@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kwin.h>
 #include <kstringhandler.h>
+#include <kiconloader.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -251,10 +252,10 @@ void TopLevel::readProperties(KConfig *kc)
 {
   QStringList dataList;
   pQPMmenu->clear();
-  pQPMmenu->insertTitle(i18n("Klipper - Clipboard Tool"));
-  pQPMmenu->insertItem(i18n("&Quit"), QUIT_ITEM );
+  pQPMmenu->insertTitle(kapp->miniIcon(), i18n("Klipper - Clipboard Tool"));
+  pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
   pQPMmenu->insertSeparator();
-  pQPMmenu->insertItem(i18n("&Preferences..."), CONFIG_ITEM);
+  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), CONFIG_ITEM);
   toggleURLGrabAction->plug( pQPMmenu );
   pQPMmenu->insertSeparator();
   long int id;

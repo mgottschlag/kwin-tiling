@@ -64,6 +64,7 @@ private slots:
     void slotAddAction();
     void slotDeleteAction();
     void slotRightPressed( QListViewItem *, const QPoint&, int col );
+    void slotItemChanged( QListViewItem *, int );
 
 private:
     KEditableListView *listView;

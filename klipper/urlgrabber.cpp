@@ -16,6 +16,8 @@
 #include <keditcl.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kservice.h>
+#include <kiconloader.h>
 #include <kdebug.h>
 #include <netwm.h>
 
@@ -130,14 +132,18 @@ void URLGrabber::slotActionMenu()
         for ( action = it.current(); action; action = ++it ) {
             QListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
-                myMenu->insertTitle( action->description() +
+                myMenu->insertTitle( kapp->miniIcon(), action->description() +
                                    i18n(" -  Actions for: ") + myClipData );
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;
                 if ( item.isEmpty() )
                     item = command->command;
 
-                int id = myMenu->insertItem( item );
+                int id;
+                if ( command->pixmap.isEmpty() )
+                    id = myMenu->insertItem( item );
+                else
+                    id = myMenu->insertItem( SmallIcon( command->pixmap ), item );
                 myCommandMapper.insert( id, command );
             }
         }
@@ -145,7 +151,7 @@ void URLGrabber::slotActionMenu()
         // add an edit-possibility
         myMenu->insertSeparator();
         myMenu->insertSeparator();
-        myMenu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
+        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit and process again"), URL_EDIT_ITEM );
         myMenu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
 
 	if ( myPopupKillTimer > 0 )
@@ -222,6 +228,7 @@ void URLGrabber::startProcess( const QString& cmdLine ) const
 
 void URLGrabber::editData()
 {
+    myPopupKillTimer->stop();
     KDialogBase *dlg = new KDialogBase( 0, 0, true,
                                         i18n("Edit text before processing"),
                                         KDialogBase::Ok | KDialogBase::Cancel);
@@ -234,10 +241,13 @@ void URLGrabber::editData()
     if ( dlg->exec() == QDialog::Accepted ) {
         myClipData = edit->text();
         delete dlg;
-        slotActionMenu();
+        QTimer::singleShot( 0, this, SLOT( slotActionMenu() ) );
     }
     else
+    {
         delete dlg;
+        QTimer::singleShot( 0, this, SLOT( slotKillPopupMenu() ) );
+    }
 }
 
 
@@ -332,6 +342,20 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
+ClipCommand::ClipCommand(const QString &_command, const QString &_description, bool _isEnabled)
+    : command(_command),
+      description(_description),
+      isEnabled(_isEnabled)
+{
+    int len = _command.find(" ");
+    if (len == -1)
+        len = _command.length();
+    KService::Ptr service= KService::serviceByDesktopName(_command.left(len));
+    if (service)
+        pixmap = service->icon();
+    else
+        pixmap = QString::null;
+}
 
 
 ClipAction::ClipAction( const QString& regExp, const QString& description )
@@ -387,10 +411,7 @@ void ClipAction::addCommand( const QString& command,
     if ( command.isEmpty() )
         return;
 
-    struct ClipCommand *cmd = new ClipCommand;
-    cmd->command = command;
-    cmd->description = description;
-    cmd->isEnabled = enabled;
+    struct ClipCommand *cmd = new ClipCommand( command, description, enabled );
     //    cmd->id = myCommands.count(); // superfluous, I think...
     myCommands.append( cmd );
 }

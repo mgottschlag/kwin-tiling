@@ -122,6 +122,9 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     connect( listView, SIGNAL( rightButtonPressed( QListViewItem *,
 						   const QPoint&, int) ),
 	     SLOT( slotRightPressed( QListViewItem *, const QPoint&, int )));
+    connect( listView,
+             SIGNAL( itemChanged( QListViewItem *, int ) ),
+             SLOT( slotItemChanged( QListViewItem *, int ) ) );
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
@@ -142,7 +145,10 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
 	for ( command = it2.current(); command; command = ++it2 ) {
 	    child = new QListViewItem( item, after,
 				       command->command, command->description);
-	    child->setPixmap( 0, exec );
+        if ( command->pixmap.isEmpty() )
+            child->setPixmap( 0, exec );
+        else
+            child->setPixmap( 0, SmallIcon( command->pixmap ) );
 	    after = child;
 	}
 	after = item;
@@ -197,6 +203,14 @@ void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
 	delete item;
 
     delete menu;
+}
+
+void ActionWidget::slotItemChanged( QListViewItem *item, int col )
+{
+    if ( !item->parent() || col != 0 )
+        return;
+    ClipCommand command( item->text(0), item->text(1) );
+	item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ? "exec" : command.pixmap ) );
 }
 
 void ActionWidget::slotAddAction()
