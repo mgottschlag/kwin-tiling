@@ -15,5 +15,5 @@ KDE_ICON = knotify
 messages:
 	$(XGETTEXT) $(libkcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
 
-data_DATA = knotify.desktop
+data_DATA = kcmnotify.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
