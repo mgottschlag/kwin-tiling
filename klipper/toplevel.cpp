@@ -20,7 +20,7 @@
 #include <kconfig.h>
 #include <kkeydialog.h>
 #include <klocale.h>
-#include <kwinmodule.h>
+#include <kwin.h>
 
 #include "configdialog.h"
 #include "mykapp.h"
@@ -229,17 +229,16 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
     }
 
     else {
-	/* oh well, KWin[Module] is b0rked currently
-	static KWinModule kwin( this );
-	QRect g = kwin.workArea();
+	KWin::Info i = KWin::info( winId() );
+	QRect g = i.geometry;
 	
 	if ( g.x() > QApplication::desktop()->width()/2 &&
 	     g.y() + menu->height() > QApplication::desktop()->height() )
 	    menu->exec(QPoint( g.x(), g.y() - menu->height()));
 	else
 	    menu->exec(QPoint( g.x() + width(), g.y() + height()));
-	*/
-	menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
+
+	//	menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
     }
 }
 
