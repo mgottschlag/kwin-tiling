@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Konsole schema editor</string>
+        <string>Konsole Schema Editor</string>
     </property>
     <property name="layoutMargin" stdset="0">
     </property>
@@ -358,7 +358,7 @@
                                 <cstring>saveButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Save schema...</string>
+                                <string>&amp;Save Schema...</string>
                             </property>
                         </widget>
                         <widget class="QPushButton" row="1" column="0">
@@ -366,7 +366,7 @@
                                 <cstring>removeButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Remove schema</string>
+                                <string>&amp;Remove Schema</string>
                             </property>
                         </widget>
                         <spacer row="0" column="1">
@@ -529,7 +529,7 @@
                     <property name="minimumSize">
                         <size>
                             <width>180</width>
-                            <height>100</height>
+                            <height>120</height>
                         </size>
                     </property>
                     <property name="maximumSize">

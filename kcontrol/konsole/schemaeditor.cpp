@@ -223,7 +223,7 @@ void SchemaEditor::imageSelect()
             start= KGlobal::dirs()->resourceDirs("wallpaper").last();
     }
 
-    KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a background image"));
+    KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a Background Image"));
 // KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select a background image"));
     if(!url.path().isEmpty())
     {
@@ -290,10 +290,10 @@ void SchemaEditor::saveCurrent()
     else
 	base = titleLine->text().stripWhiteSpace().simplifyWhiteSpace() + ".schema";
 #if QT_VERSION < 300
-    QString name = QInputDialog::getText(i18n("Save schema as..."),
+    QString name = QInputDialog::getText(i18n("Save Schema As..."),
 					 i18n("Filename:"), base);
 #else
-    QString name = QInputDialog::getText(i18n("Save schema as..."),
+    QString name = QInputDialog::getText(i18n("Save Schema As..."),
 					 i18n("Filename:"), QLineEdit::Normal, base);
 #endif
 
