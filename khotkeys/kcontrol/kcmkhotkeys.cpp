@@ -15,7 +15,7 @@
 #endif
 
 #include <ksimpleconfig.h>
-#include <kaccelbase.h>
+#include <kaccelaction.h>
 #include <kdialogbase.h>
 #include <dcopclient.h>
 #include <kkeydialog.h>
@@ -146,7 +146,7 @@ QString change_shortcut_internal( const QString& entry_P,
     else
         //pos->shortcut = KKey::keyToString(    // make sure the shortcut
         //    KKey::stringToKeyQt( shortcut_P ), false); // is valid
-	pos->shortcut = (KKeySequence( shortcut_P )).toString( KKeySequence::I18N_No );
+        pos->shortcut = (KShortcut( shortcut_P )).toStringInternal();
     if( !save_if_edited_P )
         return pos->shortcut;
     if( pos->shortcut.isEmpty())
@@ -200,7 +200,7 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
             shortcut_P = ""; // this shortcut is taken up by some other action
         }
     map.insertAction( action_name_P, action_name_P, QString::null,
-        KAccelShortcuts(shortcut_P), KAccelShortcuts(shortcut_P) );
+        KShortcut(shortcut_P), KShortcut(shortcut_P) );
     QWidget* page = new QWidget( this );
     setMainWidget( page );         // CHECKME i18n
     QLabel* label = new QLabel( i18n( "Desktop file to run" ), page );
@@ -227,7 +227,7 @@ bool desktop_shortcut_dialog::dlg_exec()
         if( pAction )
             {
             item->shortcut =
-                pAction->m_rgShortcuts.toString( KKeySequence::I18N_No );
+                pAction->shortcut().toStringInternal();
             return true;
             }
         }
@@ -240,9 +240,7 @@ void desktop_shortcut_dialog::key_changed()
     if( !pAction )
         return;
 
-    //uint shortcut = map[ action_name ].aConfigKeyCode;
-    KKeySequence key = pAction->getShortcut(0).getSequence(0).getKey(0);
-    QString shortcut_name = key.toString( KKeySequence::I18N_No );
+    QString shortcut_name = pAction->shortcut().toStringInternal();
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )

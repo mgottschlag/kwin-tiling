@@ -14,7 +14,7 @@
 #include <config.h>
 #endif
 
-#include <kaccelbase.h>
+//#include <kaccelbase.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
@@ -37,7 +37,7 @@ KHotKeysApp::~KHotKeysApp()
 
 // called when any action shortcut is pressed
 void KHotKeysApp::accel_activated( const QString& action_P, const QString&,
-    int )
+    const KKeySequence& )
     {
     KHotData* current = data[ action_P ];
     if( current->timeout.isActive()) // a little timeout after running
@@ -154,26 +154,6 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
     current->timeout.start( 1000, true ); // 1sec timeout
     }
 
-/*
-void KHotKeysApp::reread_configuration()
-    {
-    accel->clear();
-    data.clear();
-    KSimpleConfig cfg( CONFIG_FILE, true );
-    data.read_config( cfg );
-    for( KHotData_dict::Iterator it( data );
-         it.current();
-         ++it )
-        {
-        if( !accel->insertItem( it.currentKey(), it.currentKey(),
-            it.current()->shortcut ))
-            continue; // invalid shortcut
-        accel->connectItem( it.currentKey(), this,
-            SLOT( accel_activated( const QString&, const QString&, int )));
-        }
-    }
-*/
-
 void KHotKeysApp::reread_configuration()
     {
     accel->clearActions();
@@ -185,8 +165,8 @@ void KHotKeysApp::reread_configuration()
          ++it )
         {
         accel->insertAction( it.currentKey(), it.currentKey(), QString::null,
-            KShortcuts(it.current()->shortcut), KShortcuts(it.current()->shortcut),
-            this, SLOT( accel_activated( const QString&, const QString&, int )));
+            KShortcut(it.current()->shortcut), KShortcut(it.current()->shortcut),
+            this, SLOT( accel_activated( const QString&, const QString&, const KKeySequence& )));
         }
     accel->updateConnections();
     }

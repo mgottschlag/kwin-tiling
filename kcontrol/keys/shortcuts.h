@@ -28,8 +28,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
-#include <kaccelbase.h>
-//#include <kcmodule.h>
+#include <kaccelaction.h>
 #include <kcombobox.h>
 #include <kkeydialog.h>
 

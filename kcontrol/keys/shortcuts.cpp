@@ -179,7 +179,7 @@ void ShortcutsModule::createActionsGeneral()
 	KAccelActions& actions = m_actionsGeneral;
 
 	for( uint i = 0; i < actions.size(); i++ ) {
-		QString sConfigKey = actions[i].m_sName;
+		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.findRev( ' ' );
 		bool bIsNum = false;
@@ -189,8 +189,8 @@ void ShortcutsModule::createActionsGeneral()
 		//kdDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( bIsNum && !sConfigKey.contains( ':' ) ) {
-			actions[i].m_bConfigurable = false;
-			actions[i].m_sName = QString::null;
+			actions[i].setConfigurable( false );
+			actions[i].setName( QString::null );
 		}
 	}
 }
@@ -200,7 +200,7 @@ void ShortcutsModule::createActionsSequence()
 	KAccelActions& actions = m_actionsSequence;
 
 	for( uint i = 0; i < actions.size(); i++ ) {
-		QString sConfigKey = actions[i].m_sName;
+		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.findRev( ' ' );
 		bool bIsNum = false;
@@ -210,8 +210,8 @@ void ShortcutsModule::createActionsSequence()
 		//kdDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( !bIsNum && !sConfigKey.contains( ':' ) ) {
-			actions[i].m_bConfigurable = false;
-			actions[i].m_sName = QString::null;
+			actions[i].setConfigurable( false );
+			actions[i].setName( QString::null );
 		}
 	}
 }
@@ -223,8 +223,8 @@ void ShortcutsModule::createActionsApplication()
 		m_actionsApplication.insertAction( KStdAccel::action(id),
 			KStdAccel::description(id),
 			QString::null, // sHelp
-			KStdAccel::defaultKey3(id),
-			KStdAccel::defaultKey4(id) );
+			KStdAccel::shortcutDefault3(id),
+			KStdAccel::shortcutDefault4(id) );
 	}
 }
 

@@ -34,7 +34,7 @@ class KHotKeysApp
         void start_general( const QString& action_P );
         void start_menuentry( const QString& action_P );
     protected slots:
-        void accel_activated( const QString& action_P, const QString&, int );
+        void accel_activated( const QString& action_P, const QString&, const KKeySequence& );
     public:
     k_dcop:
         virtual ASYNC reread_configuration();

@@ -116,6 +116,7 @@ void KeyModule::slotModuleChanged( bool bState )
 }
 
 //----------------------------------------------------
+#include <kshortcut.h>
 
 extern "C"
 {
@@ -155,19 +156,19 @@ extern "C"
 #include "../../kxkb/kxkbbindings.cpp"
 
 	kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
+	keys->readActions( "Global Keys" );
 	keys->readActions( "Global Shortcuts" );
 
 	// Why are the braces here? -- ellis
 	{
 	KSimpleConfig cfg( "kdeglobals" );
 	cfg.deleteGroup( "Global Shortcuts" );
+	// Get rid of old group
+	cfg.deleteGroup( "Global Keys" );
 	}
 
 	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	keys->writeActions( "Global Shortcuts", 0, true, true );
-
-	kdDebug(125) << "KeyModule::init() - Read Config Bindings 2 for testing\n";
-	keys->readActions( "Global Shortcuts" );
   }
 }
 

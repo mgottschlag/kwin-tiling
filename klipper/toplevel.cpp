@@ -16,7 +16,7 @@
 #include <qpainter.h>
 
 #include <kaboutdata.h>
-#include <kaccelbase.h>
+#include <kaccelaction.h>
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
@@ -116,7 +116,7 @@ TopLevel::TopLevel()
     globalKeys->readSettings();
     globalKeys->updateConnections();
     KAccelAction* pAction = globalKeys->actions().actionPtr("Enable/Disable Clipboard Actions");
-    uint keyCombQt = pAction->getShortcut(0).getSequence(0).getKey(0).keyQt();
+    uint keyCombQt = pAction->shortcut().keyPrimaryQt();
     toggleURLGrabAction->setAccel(keyCombQt);
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )), this,
@@ -416,7 +416,7 @@ void TopLevel::slotConfigure()
         globalKeys->writeSettings();
         globalKeys->updateConnections();
         KAccelAction* pAction = globalKeys->actions().actionPtr("Enable/Disable Clipboard Actions");
-        uint keyCombQt = pAction->getShortcut(0).getSequence(0).getKey(0).keyQt();
+        uint keyCombQt = pAction->shortcut().keyPrimaryQt();
         toggleURLGrabAction->setAccel(keyCombQt);
 
 //	haveURLGrabber = dlg->enableActions();
