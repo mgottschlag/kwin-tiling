@@ -84,7 +84,8 @@ private:
     void ungrabInput();
     void cantLock(const QString &reason);
     bool startSaver();
-    void showFade();
+//     void fadeToBlack();
+//     void originalGamma();
     void stopSaver();
     bool startHack();
     void stopHack();

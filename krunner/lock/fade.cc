@@ -22,85 +22,13 @@
 #define HAVE_XF86VMODE_GAMMA
 #define HAVE_XF86VMODE_GAMMA_RAMP
 
-
-#ifdef HAVE_XF86VMODE_GAMMA
-static int xf86_gamma_fade (Display *dpy,
-                            Window *black_windows, int nwindows,
-                            int seconds, int ticks,
-                            Bool out_p, Bool clear_windows);
-#endif /* HAVE_XF86VMODE_GAMMA */
-
-
-void
-fade_screens (Display *dpy, Colormap *cmaps,
-              Window *black_windows, int nwindows,
-	      int seconds, int ticks,
-	      Bool out_p, Bool clear_windows)
-{
-  int oseconds = seconds;
-  Bool was_in_p = !out_p;
-
-  /* When we're asked to fade in, first fade out, then fade in.
-     That way all the transitions are smooth -- from what's on the
-     screen, to black, to the desktop.
-   */
-  if (was_in_p)
-    {
-      kdDebug() << "we're trying to fade in" << endl;
-      clear_windows = True;
-      out_p = True;
-      seconds /= 3;
-      //if (seconds == 0)
-//	seconds = 1;
-    }
-    else
-    {
-       kdDebug() << "we're trying to fade out" << endl;
-    }
-
- AGAIN:
-
-#ifdef HAVE_XF86VMODE_GAMMA
-  /* Then try to do it by fading the gamma in an XFree86-specific way... */
-  if (0 == xf86_gamma_fade(dpy, black_windows, nwindows,
-                           seconds, ticks, out_p,
-                           clear_windows))
-    ;
-//   else
-#endif /* HAVE_XF86VMODE_GAMMA */
-
-  /* If we were supposed to be fading in, do so now (we just faded out,
-     so now fade back in.)
-   */
-/*  if (was_in_p)
-    {
-      was_in_p = False;
-      out_p = False;
-      seconds = oseconds * 2 / 3;
-      if (seconds == 0)
-        seconds = 1;
-      goto AGAIN;
-    }*/
-}
-
 /* XFree86 4.x+ Gamma fading */
 
 #ifdef HAVE_XF86VMODE_GAMMA
 
 #include <X11/extensions/xf86vmode.h>
 
-typedef struct {
-  XF86VidModeGamma vmg;
-  int size;
-  unsigned short *r, *g, *b;
-} xf86_gamma_info;
-
-static int xf86_check_gamma_extension (Display *dpy);
-static Bool xf86_whack_gamma (Display *dpy, int screen,
-                              xf86_gamma_info *ginfo, float ratio);
-
-static int
-xf86_gamma_fade (Display *dpy,
+int xf86_gamma_fade (Display *dpy,
                  Window *black_windows, int nwindows,
                  int seconds, int ticks,
                  Bool out_p, Bool clear_windows)
@@ -166,28 +94,9 @@ xf86_gamma_fade (Display *dpy,
             goto FAIL;
         }
 # endif /* HAVE_XF86VMODE_GAMMA_RAMP */
-      else
-        abort();
     }
 
   gettimeofday(&then, &tzp);
-
-  /* If we're fading in (from black), then first crank the gamma all the
-     way down to 0, then take the windows off the screen.
-   */
-  if (!out_p)
-    {
-      kdDebug() << "we're fading in from black" << endl;
-      for (screen = 0; screen < nscreens; screen++)
-	xf86_whack_gamma(dpy, screen, &info[screen], 0.0);
-      for (screen = 0; screen < nwindows; screen++)
-	if (black_windows && black_windows[screen])
-	  {
-	    XUnmapWindow (dpy, black_windows[screen]);
-	    XClearWindow (dpy, black_windows[screen]);
-	    XSync(dpy, False);
-	  }
-    }
 
   /* Iterate by steps of the animation... */
   for (i = (out_p ? steps : 0);
@@ -246,15 +155,18 @@ xf86_gamma_fade (Display *dpy,
 	}
       XSync(dpy, False);
     }
+    else
+    {
+     kdDebug() << "not executing code loop" << endl;
+    }
 
   /* I can't explain this; without this delay, we get a flicker.
      I suppose there's some lossage with stale bits being in the
      hardware frame buffer or something, and this delay gives it
      time to flush out.  This sucks! */
   //usleep(100000);  /* 1/10th second */
-
-//   for (screen = 0; screen < nscreens; screen++)
-//     xf86_whack_gamma(dpy, screen, &info[screen], 1.0);
+    for (screen = 0; screen < nscreens; screen++)
+      xf86_whack_gamma(dpy, screen, &info[screen], 1.0);
   XSync(dpy, False);
 
   status = 0;
@@ -271,6 +183,68 @@ xf86_gamma_fade (Display *dpy,
       free(info);
     }
 
+  return status;
+}
+
+
+/* XFree doesn't let you set gamma to a value smaller than this.
+   Apparently they didn't anticipate the trick I'm doing here...
+ */
+#define XF86_MIN_GAMMA  0.1
+
+
+Bool
+xf86_whack_gamma(Display *dpy, int screen, xf86_gamma_info *info,
+                 float ratio)
+{
+  Bool status;
+
+  if (ratio < 0) ratio = 0;
+  if (ratio > 1) ratio = 1;
+
+  if (info->size == 0)    /* we only have a gamma number, not a ramp. */
+    {
+      XF86VidModeGamma g2;
+
+      g2.red   = info->vmg.red   * ratio;
+      g2.green = info->vmg.green * ratio;
+      g2.blue  = info->vmg.blue  * ratio;
+
+# ifdef XF86_MIN_GAMMA
+      if (g2.red   < XF86_MIN_GAMMA) g2.red   = XF86_MIN_GAMMA;
+      if (g2.green < XF86_MIN_GAMMA) g2.green = XF86_MIN_GAMMA;
+      if (g2.blue  < XF86_MIN_GAMMA) g2.blue  = XF86_MIN_GAMMA;
+# endif
+
+      status = XF86VidModeSetGamma (dpy, screen, &g2);
+    }
+  else
+    {
+# ifdef HAVE_XF86VMODE_GAMMA_RAMP
+
+      unsigned short *r, *g, *b;
+      int i;
+      r = (unsigned short *) malloc(info->size * sizeof(unsigned short));
+      g = (unsigned short *) malloc(info->size * sizeof(unsigned short));
+      b = (unsigned short *) malloc(info->size * sizeof(unsigned short));
+
+      for (i = 0; i < info->size; i++)
+        {
+          r[i] = info->r[i] * ratio;
+          g[i] = info->g[i] * ratio;
+          b[i] = info->b[i] * ratio;
+        }
+
+      status = XF86VidModeSetGammaRamp(dpy, screen, info->size, r, g, b);
+
+      free (r);
+      free (g);
+      free (b);
+
+# endif /* !HAVE_XF86VMODE_GAMMA_RAMP */
+    }
+
+  XSync(dpy, False);
   return status;
 }
 
@@ -322,11 +296,10 @@ safe_XF86VidModeQueryVersion (Display *dpy, int *majP, int *minP)
 # define XF86_VIDMODE_GAMMA_RAMP_MIN_MINOR 1
 
 
-
 /* Returns 0 if gamma fading not available; 1 if only gamma value setting
    is available; 2 if gamma ramps are available.
  */
-static int
+int
 xf86_check_gamma_extension (Display *dpy)
 {
   int event, error, major, minor;
@@ -351,68 +324,5 @@ xf86_check_gamma_extension (Display *dpy)
   return 2;
 }
 
-
-/* XFree doesn't let you set gamma to a value smaller than this.
-   Apparently they didn't anticipate the trick I'm doing here...
- */
-#define XF86_MIN_GAMMA  0.1
-
-
-static Bool
-xf86_whack_gamma(Display *dpy, int screen, xf86_gamma_info *info,
-                 float ratio)
-{
-  Bool status;
-
-  if (ratio < 0) ratio = 0;
-  if (ratio > 1) ratio = 1;
-
-  if (info->size == 0)    /* we only have a gamma number, not a ramp. */
-    {
-      XF86VidModeGamma g2;
-
-      g2.red   = info->vmg.red   * ratio;
-      g2.green = info->vmg.green * ratio;
-      g2.blue  = info->vmg.blue  * ratio;
-
-# ifdef XF86_MIN_GAMMA
-      if (g2.red   < XF86_MIN_GAMMA) g2.red   = XF86_MIN_GAMMA;
-      if (g2.green < XF86_MIN_GAMMA) g2.green = XF86_MIN_GAMMA;
-      if (g2.blue  < XF86_MIN_GAMMA) g2.blue  = XF86_MIN_GAMMA;
-# endif
-
-      status = XF86VidModeSetGamma (dpy, screen, &g2);
-    }
-  else
-    {
-# ifdef HAVE_XF86VMODE_GAMMA_RAMP
-
-      unsigned short *r, *g, *b;
-      int i;
-      r = (unsigned short *) malloc(info->size * sizeof(unsigned short));
-      g = (unsigned short *) malloc(info->size * sizeof(unsigned short));
-      b = (unsigned short *) malloc(info->size * sizeof(unsigned short));
-
-      for (i = 0; i < info->size; i++)
-        {
-          r[i] = info->r[i] * ratio;
-          g[i] = info->g[i] * ratio;
-          b[i] = info->b[i] * ratio;
-        }
-
-      status = XF86VidModeSetGammaRamp(dpy, screen, info->size, r, g, b);
-
-      free (r);
-      free (g);
-      free (b);
-
-# else  /* !HAVE_XF86VMODE_GAMMA_RAMP */
-      abort();
-# endif /* !HAVE_XF86VMODE_GAMMA_RAMP */
-    }
-
-  XSync(dpy, False);
-  return status;
-}
 
 #endif /* HAVE_XF86VMODE_GAMMA */
