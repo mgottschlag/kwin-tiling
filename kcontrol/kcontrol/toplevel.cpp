@@ -224,7 +224,7 @@ void TopLevel::setupActions()
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
 
-  about_module = new KAction(i18n("About the current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
+  about_module = new KAction(i18n("About the Current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
   about_module->setEnabled(false);
 
   // I need to add this so that each module can get a bug reported,
