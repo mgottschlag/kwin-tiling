@@ -126,7 +126,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
     item = new FontUseItem( i18n("Toolbar font"),
 			    QFont( "helvetica", 10 ) );
-    item->setRC( "General", "buttonFont" );
+    item->setRC( "General", "toolBarFont" );
     fontUseList.append( item );
    
     item = new FontUseItem( i18n("Window title font"),
