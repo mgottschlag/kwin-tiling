@@ -30,7 +30,6 @@
 
 class KLocale;
 class KLanguageButton;
-class KMenuButton;
 class KLocaleSample;
 class KAddButton;
 
@@ -73,7 +72,7 @@ private slots:
   void readLocale(const QString &path, QString &name,
 		  const QString &sub) const;
 
-  void slotAddLanguage(int);
+  void slotAddLanguage(const QString & id);
   void slotRemoveLanguage();
   void slotCheckButtons();
 
@@ -88,7 +87,7 @@ private:
     *m_labLang;
 
   QListBox * m_languages;
-  KMenuButton * m_addLanguage;
+  KLanguageButton * m_addLanguage;
   QPushButton * m_removeLanguage;
 };
 

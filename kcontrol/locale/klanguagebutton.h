@@ -2,7 +2,7 @@
  * klangbutton.h - Button with language selection drop down menu.
  *                 Derived from the KLangCombo class by Hans Petter Bieker.
  *
- * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2002 Hans Petter Bieker <bieker@kde.org>
  *           (c) 2001      Martijn Klingens   <mklingens@yahoo.com>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -33,6 +33,7 @@ class KLanguageButtonPrivate;
 
 /**
  * KLanguageButton provides a combobox with a 2-D dataset. It also supports icons.
+ * It is also possible to construct a non combobox version.
  *
  * All items are identified using strings, not integers.
  *
@@ -48,9 +49,15 @@ public:
    * Constructs a combobox widget with parent parent called name. 
    *
    * @param parent The parent of the combo box
-
    */
   KLanguageButton(QWidget * parent = 0, const char * name = 0);
+  /**
+   * Constructs a version with static text. The parent parent is called name. 
+   *
+   * @text The text of the button.
+   * @param parent The parent of the button.
+   */
+  KLanguageButton(const QString & text, QWidget * parent = 0, const char * name = 0);
   virtual ~KLanguageButton();
 
   /**
@@ -112,7 +119,10 @@ public:
    * Removes all combobox items.
    */
   void clear();
-  
+  /**
+   * Changes the current text item of the combobox, and makes the text static.
+   */
+  void setText(const QString & text);
   /**
    * Returns the id of the combobox's current item.
    */
@@ -141,6 +151,7 @@ private slots:
 private:
   int currentItem() const;
   void setCurrentItem( int );
+  void init(const char * name);
 
   // work space for the new class
   QStringList *m_ids;

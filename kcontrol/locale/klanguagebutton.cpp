@@ -1,7 +1,7 @@
 /*
  * klanguagebutton.cpp - Adds some methods for inserting languages.
  *
- * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2002 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.trolltech.com/
@@ -29,26 +29,92 @@
 
 #include "klanguagebutton.h"
 #include "klanguagebutton.moc"
-#include "helper.h"
 
 #include <kdebug.h>
+
+static void checkInsertPos( QPopupMenu *popup, const QString & str,
+                                   int &index )
+{
+  if ( index == -1 )
+    return;
+
+  int a = 0;
+  int b = popup->count();
+  while ( a < b )
+  {
+    int w = ( a + b ) / 2;
+
+    int id = popup->idAt( w );
+    int j = str.localeAwareCompare( popup->text( id ) );
+
+    if ( j > 0 )
+      a = w + 1;
+    else
+      b = w;
+  }
+
+  index = a; // it doesn't really matter ... a == b here.
+
+  Q_ASSERT( a == b );
+}
+
+static QPopupMenu * checkInsertIndex( QPopupMenu *popup,
+                            const QStringList *tags, const QString &submenu )
+{
+  int pos = tags->findIndex( submenu );
+
+  QPopupMenu *pi = 0;
+  if ( pos != -1 )
+  {
+    QMenuItem *p = popup->findItem( pos );
+    pi = p ? p->popup() : 0;
+  }
+  if ( !pi )
+    pi = popup;
+
+  return pi;
+}
 
 class KLanguageButtonPrivate
 {
 public:
   QPushButton * button;
+  bool staticText;
 };
 
 KLanguageButton::KLanguageButton( QWidget * parent, const char *name )
-  : QWidget( parent, name ),
-    m_ids( new QStringList ),
-    m_popup( 0 ),
-    m_oldPopup( 0 ),
-    d( new KLanguageButtonPrivate )
+  : QWidget( parent, name )
 {
+  init(name);
+}
+
+KLanguageButton::KLanguageButton( const QString & text, QWidget * parent, const char *name )
+  : QWidget( parent, name )
+{
+  init(name);
+
+  setText(text);
+}
+
+void KLanguageButton::setText(const QString & text)
+{
+  d->staticText = true;
+  d->button->setText(text);
+  d->button->setIconSet(QIconSet()); // remove the icon
+}
+
+void KLanguageButton::init(const char * name)
+{
+  m_ids = new QStringList;
+  m_popup = 0;
+  m_oldPopup = 0;
+  d = new KLanguageButtonPrivate;
+
+  d->staticText = false;
+
   QHBoxLayout *layout = new QHBoxLayout(this, 0, 0);
   layout->setAutoAdd(true);
-  d->button = new QPushButton( this, name );
+  d->button = new QPushButton( this, name ); // HPB don't touch this!!
 
   clear();
 }
@@ -107,10 +173,6 @@ void KLanguageButton::insertSubmenu( const QString &text, const QString &id,
 void KLanguageButton::slotActivated( int index )
 {
   //kdDebug() << "slotActivated" << index << endl;
-
-  // Update caption and iconset:
-  if ( m_current == index )
-    return;
 
   setCurrentItem( index );
 
@@ -172,12 +234,15 @@ void KLanguageButton::setCurrentItem( int i )
     return;
   m_current = i;
 
-  d->button->setText( m_popup->text( m_current ) );
-  QIconSet *icon = m_popup->iconSet( m_current );
-  if( icon )
-    d->button->setIconSet( *icon );
-  else
-    d->button->setIconSet( QIconSet() );
+  if ( !d->staticText )
+    {
+      d->button->setText( m_popup->text( m_current ) );
+      QIconSet *icon = m_popup->iconSet( m_current );
+      if( icon )
+	d->button->setIconSet( *icon );
+      else
+	d->button->setIconSet( QIconSet() );
+    }
 }
 
 void KLanguageButton::setCurrentItem( const QString & id )

@@ -31,6 +31,7 @@
 #include <qiconset.h>
 #include <qwhatsthis.h>
 #include <qcombobox.h>
+#include <qpushbutton.h>
 
 #include <qhbox.h>
 
@@ -49,7 +50,6 @@
 #include <qlistbox.h>
 
 #include "klanguagebutton.h"
-#include "kmenubutton.h"
 #include "klocalesample.h"
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
@@ -81,10 +81,10 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(hb);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add Language"));
+  m_addLanguage = new KLanguageButton(QString::null, vb, I18N_NOOP("Add Language"));
   boxlay->add(m_addLanguage);
-  connect(m_addLanguage, SIGNAL(activated(int)),
-	  SLOT(slotAddLanguage(int)));
+  connect(m_addLanguage, SIGNAL(activated(const QString &)),
+	  SLOT(slotAddLanguage(const QString &)));
   m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove Language"));
   boxlay->add(m_removeLanguage);
   connect(m_removeLanguage, SIGNAL(clicked()),
@@ -105,9 +105,8 @@ KLocaleConfig::~KLocaleConfig()
 {
 }
 
-void KLocaleConfig::slotAddLanguage(int i)
+void KLocaleConfig::slotAddLanguage(const QString & code)
 {
-  QString code = m_addLanguage->tag(i);
   QStringList languageList = m_locale->languageList();
 
   int pos = m_languages->currentItem();
