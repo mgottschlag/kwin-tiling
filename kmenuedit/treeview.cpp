@@ -176,6 +176,8 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     // connect actions
     connect(m_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
+    if (m_ac->action("newsep"))
+        connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
 
     m_menuFile = new MenuFile( locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
@@ -243,6 +245,8 @@ void TreeView::setViewMode(bool showHidden)
 	m_ac->action("newitem")->plug(m_rmb);
     if(m_ac->action("newsubmenu"))
 	m_ac->action("newsubmenu")->plug(m_rmb);
+    if(m_ac->action("newsep"))
+	m_ac->action("newsep")->plug(m_rmb);
 
     m_showHidden = showHidden;
     readMenuFolderInfo();
@@ -949,6 +953,37 @@ void TreeView::newitem()
    parentFolderInfo->add(entryInfo);
 
    TreeItem *newItem = createTreeItem(parentItem, item, entryInfo, true);
+
+   setSelected ( newItem, true);
+   itemSelected( newItem);
+
+   setLayoutDirty(parentItem);
+}
+
+void TreeView::newsep()
+{
+   TreeItem *parentItem = 0;
+   TreeItem *item = (TreeItem*)selectedItem();
+
+   if(!item)
+   {
+      parentItem = 0;
+   }
+   else if(item->isDirectory())
+   {
+      parentItem = item;
+      item = 0;
+   }
+   else
+   {
+      parentItem = static_cast<TreeItem*>(item->parent());
+   }
+
+   // create the TreeItem
+   if(parentItem)
+      parentItem->setOpen(true);
+
+   TreeItem *newItem = createTreeItem(parentItem, item, m_separator, true);
 
    setSelected ( newItem, true);
    itemSelected( newItem);

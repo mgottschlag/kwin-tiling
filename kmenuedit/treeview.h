@@ -114,6 +114,7 @@ protected slots:
 
     void newsubmenu();
     void newitem();
+    void newsep();
 
     void cut();
     void copy();

@@ -1,11 +1,12 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kmenuedit" version="4">
+<kpartgui name="kmenuedit" version="5">
 
 <MenuBar>
 
 <Menu name="file" noMerge="1"><text>&amp;File</text>
  <Action name="newitem"/>
  <Action name="newsubmenu" />
+ <Action name="newsep" />
  <Separator/>
  <Action name="file_save"/>
  <Separator/>
@@ -29,6 +30,7 @@
 <ToolBar name="mainToolBar" noMerge="1" fullWidth="true"><text>Main Toolbar</text>
  <Action name="newitem"/>
  <Action name="newsubmenu"/>
+ <Action name="newsep" />
  <Separator/>
  <Action name="edit_cut"/>
  <Action name="edit_copy"/>

@@ -37,8 +37,6 @@
 #include "kmenuedit.h"
 #include "kmenuedit.moc"
 
-// TODO: Add "Add Separator" menu entry.
-
 KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
   : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
 {
@@ -76,6 +74,8 @@ void KMenuEdit::setupActions()
 {
     (void)new KAction(i18n("&New Submenu..."), "menu_new", 0, actionCollection(), "newsubmenu");
     (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), actionCollection(), "newitem");
+    if (!m_controlCenter)
+       (void)new KAction(i18n("New &Separator"), "menu_new_sep", 0, actionCollection(), "newsep");
 
     m_actionDelete = 0;
 
