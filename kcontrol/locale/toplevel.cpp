@@ -2,7 +2,7 @@
   toplevel.cpp - A KControl Application
 
   Copyright 1998 Matthias Hoelzer
-  Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>
+  Copyright 1999-2001 Hans Petter Bieker <bieker@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   m_nullConfig = new KConfig(QString::null, false, false);
   m_globalConfig = new KConfig(QString::null, false, true);
 
-  m_locale = new KLocale(QString::fromLatin1("kcmlocale"), false);
+  m_locale = new KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
   QVBoxLayout *l = new QVBoxLayout(this, 5);
   l->setAutoAdd(TRUE);
 
@@ -137,7 +137,7 @@ KLocaleApplication::~KLocaleApplication()
 void KLocaleApplication::load()
 {
   m_globalConfig->reparseConfiguration();
-  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false, m_globalConfig);
+  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), m_globalConfig);
 
   emit localeChanged();
   emit languageChanged();
@@ -182,7 +182,7 @@ void KLocaleApplication::save()
 
 void KLocaleApplication::defaults()
 {
-  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false, m_nullConfig);
+  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
 
   emit localeChanged();
   emit languageChanged();
