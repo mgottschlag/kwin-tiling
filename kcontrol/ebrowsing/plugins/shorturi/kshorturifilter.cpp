@@ -169,6 +169,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // Handle MAN & INFO pages shortcuts...
   QString man_proto = QFL1("man:");
   QString info_proto = QFL1("info:");
+  QString starthere_proto = QFL1("start-here:");
+  if (cmd.find(starthere_proto,0,true) == 0 ) {
+	setFilteredURI(data,KURL("system:/"));
+	setURIType(data,KURIFilterData::LOCAL_DIR);
+	return true;
+
+  }
   if( cmd[0] == '#' ||
       cmd.find( man_proto, 0, true ) == 0 ||
       cmd.find( info_proto, 0, true ) == 0 )
