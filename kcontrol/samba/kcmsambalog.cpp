@@ -136,7 +136,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    updateButton.setFixedSize(updateButton.sizeHint());
 };
 
-void LogView::load()
+void LogView::loadSettings()
 {
    cout<<"LogView::load starts"<<endl;
    if (configFile==0) return;
@@ -150,7 +150,7 @@ void LogView::load()
    showFileClose.setChecked(configFile->readBoolEntry( "ShowFileClose", FALSE));
 };
 
-void LogView::save()
+void LogView::saveSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);

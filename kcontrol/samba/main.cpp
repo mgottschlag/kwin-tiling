@@ -32,9 +32,9 @@ class SambaContainer:public KCModule
 {
    public:
       SambaContainer(QWidget *parent=0, const char * name=0);
-      virtual ~SambaContainer() {};
-      virtual void load();
-      virtual void save();
+      virtual ~SambaContainer();
+      virtual void loadSettings();
+      virtual void saveSettings();
       virtual void defaults() {};
       QString quickHelp() const;
 
@@ -64,28 +64,31 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name)
    tabs.addTab(&logView,i18n("&Log"));
    tabs.addTab(&statisticsView,i18n("&Statistics"));
    connect(&logView,SIGNAL(contentsChanged(QListView* , int, int)),&statisticsView,SLOT(setListInfo(QListView *, int, int)));
-   setButtons(Ok|Help);
-   load();
+   setButtons(Help);
+   loadSettings();
 };
+
+SambaContainer::~SambaContainer()
+{
+   saveSettings();
+}
 
 #include <iostream.h>
 
-void SambaContainer::load()
+void SambaContainer::loadSettings()
 {
-//   cout<<"SambaContainer::load"<<endl;
-   status.load();
-   imports.load();
-   logView.load();
-   statisticsView.load();
+   status.loadSettings();
+   imports.loadSettings();
+   logView.loadSettings();
+   statisticsView.loadSettings();
 }
 
-void SambaContainer::save()
+void SambaContainer::saveSettings()
 {
-//   cout<<"SambaContainer::save"<<endl;
-   status.save();
-   imports.save();
-   logView.save();
-   statisticsView.save();
+   status.saveSettings();
+   imports.saveSettings();
+   logView.saveSettings();
+   statisticsView.saveSettings();
    config.sync();
 }
 

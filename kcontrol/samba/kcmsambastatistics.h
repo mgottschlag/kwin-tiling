@@ -81,8 +81,8 @@ class StatisticsView: public QWidget
 public:
   StatisticsView(QWidget *parent=0, KConfig *config=0, const char *name=0);
   virtual ~StatisticsView() {};
-  void save() {};
-  void load() {};
+  void saveSettings() {};
+  void loadSettings() {};
   public slots:
 	void setListInfo(QListView *list, int nrOfFiles, int nrOfConnections);
 private:

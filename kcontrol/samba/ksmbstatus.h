@@ -40,8 +40,8 @@ class NetMon : public QWidget
 Q_OBJECT
 public:
    NetMon(QWidget *parent, KConfig * config=0, const char * name=0);
-   void save() {};
-   void load() {};
+   void saveSettings() {};
+   void loadSettings() {};
 private:
    KConfig *configFile;
    KProcess *showmountProc;
