@@ -263,6 +263,10 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_ExecEdit = new QLineEdit(frame);
     lbl->setBuddy(m_ExecEdit);
     grid->addWidget(m_ExecEdit, 4, 1);
+    connect( m_ExecEdit, SIGNAL( textChanged ( const QString & )),
+             this, SLOT( slotExecFileNameChanged( const QString &)));
+
+
 
     lbl = new QLabel(i18n("&Refresh time:"), frame);
     grid->addWidget(lbl, 5, 0);
@@ -283,6 +287,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
 	m_NameEdit->setText(prog.name());
 	m_NameEdit->setSelection(0, 100);
 	m_RefreshEdit->setValue(15);
+        enableButtonOK( false );
 	return;
     }
 
@@ -294,8 +299,13 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_CommandEdit->setText(prog.command());
     m_PreviewEdit->setText(prog.previewCommand());
     m_RefreshEdit->setValue(prog.refresh());
+    slotExecFileNameChanged( prog.executable());
 }
 
+void KProgramEditDialog::slotExecFileNameChanged( const QString &text)
+{
+    enableButtonOK( !text.isEmpty() );
+}
 
 QString KProgramEditDialog::program()
 {

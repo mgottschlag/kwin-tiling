@@ -74,6 +74,8 @@ public:
 public slots:
     void slotOk();
 
+protected slots:
+    void slotExecFileNameChanged( const QString &);
 private:
     QString m_Program;
     QLineEdit *m_NameEdit, *m_CommentEdit;
