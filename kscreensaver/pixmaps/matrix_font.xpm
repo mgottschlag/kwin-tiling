@@ -1,5 +1,5 @@
 /* XPM */
-static char * matrix_font[] = {
+static const char * matrix_font[] = {
 "28 432 64 1",
 " 	c None",
 ".	c None",
