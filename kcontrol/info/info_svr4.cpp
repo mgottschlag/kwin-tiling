@@ -54,7 +54,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, char *Name, char splitchar  )
                   else ++p;
               }
           
-          QString s1(buf);
+          QString s1 = QString::fromLocal8Bit(buf);
           QString s2 = s1.mid(s1.find(splitchar)+1);
           
           s1.truncate(s1.find(splitchar));
@@ -73,7 +73,7 @@ bool GetInfo_CPU( QListView *lBox )
       char buf[256];
 
       sysinfo(SI_ARCHITECTURE, buf, sizeof(buf));
-      new QListViewItem(lBox, QString(buf));
+      new QListViewItem(lBox, QString::fromLocal8Bit(buf));
       return true;
 }
 
@@ -93,7 +93,7 @@ bool GetInfo_PCI( QListView *lBox )
       char buf[256];
 
       sysinfo(SI_BUSTYPES, buf, sizeof(buf));
-      new QListViewItem(lBox, QString(buf));
+      new QListViewItem(lBox, QString::fromLocal8Bit(buf));
       return true;
 }
 

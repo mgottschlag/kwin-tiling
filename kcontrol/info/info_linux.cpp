@@ -14,6 +14,10 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.17  2001/01/31 20:26:44  deller
+    fixed bug #15517,
+    cleaned up comments and indenting.
+
     Revision 1.16  2000/09/07 19:12:42  faure
     Patch from FX to remove hardcoded sizes for some columns, since
     it breaks with translations. Besides, only the linux version had
@@ -130,7 +134,7 @@ bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
 		}
 	    }
 
-	    QString s1(buf);
+	    QString s1 = QString::fromLocal8Bit(buf);
 	    QString s2 = s1.mid(s1.find(splitchar) + 1);
 
 	    s1.truncate(s1.find(splitchar));
@@ -292,7 +296,9 @@ bool GetInfo_Partitions(QListView * lbox)
     /* read the list of already mounted file-systems.. */
     QFile *file = new QFile(INFO_MOUNTED_PARTITIONS);
     if (file->open(IO_ReadOnly)) {
-	while (file->readLine(str, 1024) > 0) {
+	char buf[1024];
+	while (file->readLine(buf, 1024) > 0) {
+	    str = QString::fromLocal8Bit(buf);
 	    if (str.length()) {
 		int p = str.find(' ');	/* find first space. */
 		if (p)

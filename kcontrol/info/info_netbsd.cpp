@@ -79,7 +79,7 @@ bool GetInfo_CPU(QListView *lBox)
 		sysctl(mib,2,NULL,&len,NULL,0);
 		if ( (buf = (char*)malloc(len)) ) {
 			sysctl(mib,2,buf,&len,NULL,0);
-			value = QString(buf);
+			value = QString::fromLocal8Bit(buf);
 			free(buf);
 		}
 		else {
@@ -181,14 +181,14 @@ void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool ending)
 	}
 
 	pos = s.find(" irq ");
-	irqnum = (pos < 0) ? 0 : atoi(&(((const char *)s)[pos+5]));
+	irqnum = (pos < 0) ? 0 : atoi(&((s.latin1())[pos+5]));
 	if (irqnum) {
-		s.sprintf("%02d%s", irqnum, (const char *)s);
+		s.sprintf("%02d%s", irqnum, s.latin1());
 	}
 	else {
-		s.sprintf("??%s", (const char *)s);
+		s.sprintf("??%s", s.latin1());
 	}
-	strlist->inSort(s);
+	strlist->inSort(s.latin1());
 }
 
 bool GetInfo_IRQ (QListView *lBox)
@@ -283,8 +283,13 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("Mount Options"));
 
 	QListViewItem *olditem = 0;
+<<<<<<< info_netbsd.cpp
+	while ((s = t->readLine()) != "") {
+		orig_line = line = strdup(s.latin1());
+=======
 	while (!(s = t->readLine().latin1()).isEmpty()) {
 		orig_line = line = strdup(s);
+>>>>>>> 1.3
 
 		device = strsep(&line, " ");
 

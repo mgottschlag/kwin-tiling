@@ -461,7 +461,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, const char *Name )
   
   while (file->readLine(buf,sizeof(buf)-1) >= 0) 
   {	if (strlen(buf))
-      olditem = new QListViewItem(lBox, olditem, buf);
+      olditem = new QListViewItem(lBox, olditem, QString::fromLocal8Bit(buf));
   }
   
   file->close();

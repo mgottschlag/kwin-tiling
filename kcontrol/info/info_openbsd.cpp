@@ -78,7 +78,7 @@ bool GetInfo_CPU(QListView *lBox)
 		sysctl(mib,2,NULL,&len,NULL,0);
 		if ( (buf = (char*)malloc(len)) ) {
 			sysctl(mib,2,buf,&len,NULL,0);
-			value = QString(buf);
+			value = QString::fromLocal8Bit(buf);
 			free(buf);
 		}
 		else {
