@@ -1,5 +1,13 @@
 [Color Scheme]
 Name=Keramik
+Name[be]=Кераміка
+Name[bg]=Керамик
+Name[cs]=Keramika
+Name[eo]=Ceramiko
+Name[it]=Ceramica
+Name[lv]=Keramika
+Name[nn]=Keramikk
+Name[th]=เครามิก - K
 activeBackground=62,145,235
 activeBlend=62,145,235
 activeForeground=255,255,255
