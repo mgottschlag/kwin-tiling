@@ -535,7 +535,6 @@ void KCMStyle::save()
 	m_bEffectsDirty  = false;
 	m_bToolbarsDirty = false;
 	m_bStyleDirty    = false;
-	setChanged( false );
 }
 
 
@@ -626,19 +625,19 @@ QString KCMStyle::quickHelp() const
 void KCMStyle::setEffectsDirty()
 {
 	m_bEffectsDirty = true;
-	setChanged(true);
+	emit changed(true);
 }
 
 void KCMStyle::setToolbarsDirty()
 {
 	m_bToolbarsDirty = true;
-	setChanged(true);
+	emit changed(true);
 }
 
 void KCMStyle::setStyleDirty()
 {
 	m_bStyleDirty = true;
-	setChanged(true);
+	emit changed(true);
 }
 
 // ----------------------------------------------------------------
