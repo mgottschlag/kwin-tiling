@@ -422,8 +422,8 @@ void PasswordDlg::cantCheck()
 {
     greet->failed();
     static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical,
-        i18n("Cannot unlock the session because the authentication system failed to work.\n"
-             "You must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
+        i18n("Cannot unlock the session because the authentication system failed to work;\n"
+             "you must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
     greet->revive();
 }
 
