@@ -472,9 +472,8 @@ iGRecvArrBuf (char *buf)
 
     GRead (&len, sizeof (len));
     GDebug (" -> %d bytes\n", len);
-    if (!len)
-	return 0;
-    GRead (buf, len);
+    if (len)
+	GRead (buf, len);
     return len;
 }
 
