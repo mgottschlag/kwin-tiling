@@ -143,10 +143,8 @@ KProxyOptions::KProxyOptions(QWidget *parent, const char *name)
 
 
   QString path;
-  QPixmap pixmap;
-  pixmap.load( KApplication::kde_toolbardir() + "/down.xpm" ); 
   cp_down = new QPushButton( this );
-  cp_down->setPixmap( pixmap );
+  cp_down->setPixmap( ICON("down.xpm") );
   //CT 12Nov1998
   cp_down->setFixedSize(20,20);
   cp_down->setMinimumSize(cp_down->size());
