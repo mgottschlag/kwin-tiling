@@ -104,7 +104,7 @@ void FilterOptions::load()
 {
     // Clear state first.
     m_dlg->lvSearchProviders->clear();
-    
+
     KConfig config( KURISearchFilterEngine::self()->name() + "rc", false, false );
     config.setGroup("General");
 
@@ -135,14 +135,14 @@ void FilterOptions::load()
             SLOT(setWebShortcutState()));
     connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
             SLOT(configChanged()));
-    
+
     connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider()));
     connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
     connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
-            
+
     connect(m_dlg->cmbDefaultEngine, SIGNAL(activated(const QString &)), this,
             SLOT(configChanged()));
     connect(m_dlg->cmbDelimiter, SIGNAL(activated(const QString &)), this,
@@ -150,7 +150,7 @@ void FilterOptions::load()
 
     connect(m_dlg->pbNew, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
     connect(m_dlg->pbChange, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-    connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));      
+    connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
 }
 
 char FilterOptions::delimiter ()
@@ -187,14 +187,14 @@ void FilterOptions::save()
   config.writeEntry("KeywordDelimiter", delimiter() );
 
   QString engine;
-  
+
   if (m_dlg->cmbDefaultEngine->currentItem() != 0)
     engine = m_dlg->cmbDefaultEngine->currentText();
-  
+
   config.writeEntry("DefaultSearchEngine", m_defaultEngineMap[engine]);
-  
+
   // kdDebug () << "Engine: " << m_defaultEngineMap[engine] << endl;
-  
+
   int changedProviderCount = 0;
   QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
 
@@ -211,7 +211,7 @@ void FilterOptions::save()
     if (provider->isDirty())
     {
       changedProviderCount++;
-      
+
       if (name.isEmpty())
       {
         // New provider
@@ -280,22 +280,24 @@ void FilterOptions::save()
   }
 
   config.sync();
-  
+
   setChanged(false);
 
   // Update filters in running applications...
-  (void) DCOPRef("*", "KURIIKWSFilterIface").send("configure");    
+  (void) DCOPRef("*", "KURIIKWSFilterIface").send("configure");
   (void) DCOPRef("*", "KURISearchFilterIface").send("configure");
-  
+
   // If the providers changed, tell sycoca to rebuild its database...
   if (changedProviderCount)
-    (void) DCOPRef("kded", "kbuildsycoca").send("recreate");  
+    (void) DCOPRef("kded", "kbuildsycoca").send("recreate");
 }
 
 void FilterOptions::defaults()
 {
   setDelimiter (':');
   m_dlg->cmbDefaultEngine->setCurrentItem (0);
+  m_dlg->cbEnableShortcuts->setChecked( true );
+  setWebShortcutState();
 }
 
 void FilterOptions::configChanged()
