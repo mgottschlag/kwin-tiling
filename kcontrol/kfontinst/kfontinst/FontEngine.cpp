@@ -747,14 +747,13 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
     //
     // NOTE: Can't simply use FullName and remove style info - as this would convert "Times New Roman" to "Times New"!!
     //
-    QString retVal(fullName),
-            family(familyName);
+    QString retVal(fullName);
  
     //
     // Remove family name...
-    if(QString::null!=family)
-        if(0==retVal.find(family))    // This removes "Times New Roman" from "Times New Roman Bold"
-            retVal.remove(0, family.length());
+    if(QString::null!=familyName)
+        if(0==retVal.find(familyName))    // This removes "Times New Roman" from "Times New Roman Bold"
+            retVal.remove(0, familyName.length());
         else
         {
             //
@@ -768,37 +767,27 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
  
             full.replace(QRegExp(" "), "");   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
  
-            if(0==full.find(family))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set retVal to "ItalicOldstyle"
+            if(0==full.find(familyName))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set retVal to "ItalicOldstyle"
             {
                 //
                 // Now we need to extract the family name, and the rest...
-                // i.e. Family: "Lucidux Mono"
+                // i.e. Family: "LuciduxMono"
                 //      rest  : "Italic Oldstyle"
  
-                if(full.length()==family.length())  // No style information...
-                {
-                    family=fullName;
+                if(full.length()==familyName.length())  // No style information...
                     retVal="";
-                }
                 else  // Need to remove style info...
                 {
-                    QString      f;
                     unsigned int i;
  
                     //
-                    // Create family from retVal(which ==fullName ATM) - i.e. so we have spaces,
-                    // Do this by moving family.length() num chars (+ spaces) from retVal to family
-                    for(i=0; i<family.length(); ++i)
+                    // Remove familyName from retVal
+                    for(i=0; i<familyName.length(); ++i)
                     {
                         if(retVal[0]==QChar(' '))
-                        {
-                            f+=retVal[0];
                             retVal.remove(0, 1);
-                        }
-                        f+=retVal[0];
                         retVal.remove(0, 1);
                     }
-                    family=f;
                 }
             }
         }
@@ -820,8 +809,8 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
  
     //
     // Add the family name back on...
-    if(QString::null!=family)
-        retVal=family+retVal;
+    if(QString::null!=familyName)
+        retVal=familyName+retVal;
  
     //
     // Replace any non-alphanumeric or space characters...
