@@ -301,7 +301,6 @@ void ProxyWidget::applyClicked()
   }
   else
     clientChanged(false);
-  _apply->setEnabled(false);
 }
 
 void ProxyWidget::resetClicked()
@@ -316,7 +315,6 @@ void ProxyWidget::resetClicked()
   }
   else
     clientChanged(false);
-  _apply->setEnabled(false);
 }
 
 void ProxyWidget::rootClicked()
@@ -332,11 +330,8 @@ void ProxyWidget::clientChanged()
 
 void ProxyWidget::clientChanged(bool state)
 {
-  // enable/disable buttons
-    // int b = _client->buttons();
-//  _apply->setEnabled(state);
+  _apply->setEnabled(state);
   _reset->setEnabled(state);
-  _apply->setEnabled(true);
 
   // forward the signal
   emit changed(state);
