@@ -22,6 +22,7 @@
 #include <qpixmap.h>
 #include <qfont.h>
 #include <qwhatsthis.h>
+#include <qapplication.h>
 
 #include <kapplication.h>
 #include <kmessagebox.h>
@@ -65,7 +66,13 @@ ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
   m_name->setFont( font );
 
   setSpacing( KDialog::spacingHint() );
-  setStretchFactor( m_name, 10 );
+  if ( QApplication::reverseLayout() )
+  {
+      spacer = new QWidget( this );
+      setStretchFactor( spacer, 10 );
+  }
+  else
+      setStretchFactor( m_name, 10 );
 }
 
 void ModuleTitle::showTitleFor( ConfigModule *config )
