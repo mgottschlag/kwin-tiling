@@ -88,7 +88,7 @@ private:
   };
 
   void initAudioIOList();
-  QList<AudioIOElement> audioIOList;
+  QPtrList<AudioIOElement> audioIOList;
 };
 
 

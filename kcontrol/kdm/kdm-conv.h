@@ -22,7 +22,7 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <qimage.h>
 #include <qgroupbox.h>

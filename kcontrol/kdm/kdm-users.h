@@ -20,7 +20,7 @@
 #ifndef __KDMUSERS_H__
 #define __KDMUSERS_H__
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qlineedit.h>
 #include <qstring.h>
 #include <qimage.h>
