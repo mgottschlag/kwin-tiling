@@ -423,8 +423,6 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_customSpinbox->setMinValue(m_panelInfo->_customSizeMin);
     m_customSpinbox->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSpinbox->setValue(m_panelInfo->_customSize);
-    m_customSlider->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
-    m_customSpinbox->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
 
     m_sizeTiny->setEnabled(m_panelInfo->_useStdSizes);         
     m_sizeSmall->setEnabled(m_panelInfo->_useStdSizes);
