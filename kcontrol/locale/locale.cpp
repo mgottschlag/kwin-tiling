@@ -261,15 +261,12 @@ void KLocaleConfig::defaultSettings()
 }
 
 
-void KLocaleConfig::changed(int)
+void KLocaleConfig::changed(int i)
 {
   changedFlag = TRUE;
 
   delete locale;
-  const KLanguageCombo *send = static_cast<const KLanguageCombo*>(sender());
-  if (!send)
-      send = combo1;
-  setenv("KDE_LANG", *tags.at(send->currentItem()), 1);
+  setenv("KDE_LANG", (*tags.at(i)).ascii(), 1);
   locale = new KLocale("kdelibs");
 
   debug("changed %s", locale->language().ascii());
