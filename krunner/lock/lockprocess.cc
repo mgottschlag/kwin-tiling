@@ -227,11 +227,26 @@ void LockProcess::sigtermPipeSignal()
 bool LockProcess::lock()
 {
     if (startSaver()) {
+        // In case of a forced lock we don't react to events during
+        // the dead-time to give the screensaver some time to activate.
+        // That way we don't accidentally show the password dialog before
+        // the screensaver kicks in because the user moved the mouse after
+        // selecting "lock screen", that looks really untidy.
+        mBusy = true;
         if (startLock())
+        {
+            QTimer::singleShot(1000, this, SLOT(slotDeadTimePassed()));
             return true;
+        }
         stopSaver();
+        mBusy = false;
     }
     return false;
+}
+//---------------------------------------------------------------------------
+void LockProcess::slotDeadTimePassed()
+{
+    mBusy = false;
 }
 
 //---------------------------------------------------------------------------

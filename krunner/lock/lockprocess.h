@@ -68,6 +68,7 @@ private slots:
     void suspend();
     void resume();
     void checkDPMSActive();
+    void slotDeadTimePassed();
 
 private:
     void configure();
