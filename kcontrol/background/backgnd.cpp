@@ -185,7 +185,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBackgroundBox = new QComboBox(m_pTab1);
     connect(m_pBackgroundBox, SIGNAL(activated(int)), SLOT(slotBGMode(int)));
-    connect(m_pBackgroundBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBGMode(int)));
+
+// this is dog slow on remote X systems and in addition it breaks the standard combobox
+// behaviour which allows you to highlight items but abort the popup listbox by
+// clicking outside the popup, not changing the current combobox item. (Simon)
+//    connect(m_pBackgroundBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBGMode(int)));
+
     lbl->setBuddy(m_pBackgroundBox);
     grid->addWidget(m_pBackgroundBox, 0, 1);
     QWhatsThis::add( m_pBackgroundBox, i18n("You can select the manner in which"
