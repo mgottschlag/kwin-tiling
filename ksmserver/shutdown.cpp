@@ -164,11 +164,20 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if (maysd)
     {
         if (sdtype == KApplication::ShutdownTypeHalt)
+        {
             rHalt->setChecked( true );
+            rHalt->setFocus();
+        }
         else if (sdtype == KApplication::ShutdownTypeReboot)
+        {
             rReboot->setChecked( true );
+            rReboot->setFocus();
+        }
         else
-            rLogout->setChecked( true );
+        {
+            rHalt->setChecked( true );
+            rHalt->setFocus();
+        }
 	slotSdMode(0);
 
 #if 0
@@ -179,6 +188,10 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         else
             rForce->setChecked( true );
 #endif
+    }
+    else
+    {
+        checkbox->setFocus();
     }
 }
 
