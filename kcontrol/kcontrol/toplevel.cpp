@@ -133,6 +133,9 @@ TopLevel::TopLevel(const char* name)
           SLOT(changedModule(ConfigModule*)));
 
   // insert the about widget
+  // First preload about pixmaps for speedup
+  AboutWidget::initPixmaps();
+  
   AboutWidget *aw = new AboutWidget(this);
   _dock->setBaseWidget(aw);
 
@@ -179,6 +182,9 @@ TopLevel::~TopLevel()
     }
 
   config->sync();
+
+  // Not used anymore, free the pixmaps to the X server
+  AboutWidget::freePixmaps();
 }
 
 bool TopLevel::queryClose()
@@ -335,9 +341,15 @@ void TopLevel::categorySelected(QListViewItem *category)
   _dock->removeModule();
   
   // insert the about widget
-  AboutWidget *aw = new AboutWidget(this, 0, category);
-  connect(aw, SIGNAL(moduleSelected(const QString &)), SLOT(activateModule(const QString &)));
-  _dock->setBaseWidget(aw);
+  if( _dock->baseWidget()->isA( "AboutWidget" ) )
+    static_cast<AboutWidget *>( _dock->baseWidget() )->setCategory( category );
+  else
+  {
+    AboutWidget *aw = new AboutWidget( this, 0, category );
+    connect( aw, SIGNAL( moduleSelected( const QString & ) ),
+             SLOT( activateModule( const QString & ) ) );
+    _dock->setBaseWidget( aw );
+  }
 }
 
 

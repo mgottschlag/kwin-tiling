@@ -34,6 +34,8 @@ public:
   virtual ~DockContainer();
 
   void setBaseWidget(QWidget *widget);
+  QWidget *baseWidget() { return _basew; }
+  
   void dockModule(ConfigModule *module);
 
 public slots:
