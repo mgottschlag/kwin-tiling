@@ -8,6 +8,7 @@ DocPath=memory/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=memory
+X-KDE-ParentApp=kinfocenter
 
 Name=Memory
 Name[af]=geheue
@@ -100,6 +101,7 @@ Comment[nb]=Informasjon om minnet
 Comment[nl]=Geheugeninformatie
 Comment[oc]=Informacion de la memòria
 Comment[pl]=Informacje o pamięci
+Comment[pt]=Informações sobre a memória
 Comment[pt_BR]=Informações sobre memória
 Comment[ro]=Informaţii despre memorie
 Comment[ru]=Сведения о использовании памяти

@@ -8,6 +8,7 @@ DocPath=pci/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=pci
+X-KDE-ParentApp=kinfocenter
 
 Name=PCI
 Name[af]=pci
@@ -55,6 +56,7 @@ Comment[nb]=PCI-informasjon
 Comment[nl]=PCI-informatie
 Comment[oc]=Informacion de PCI
 Comment[pl]=Informacje o PCI
+Comment[pt]=Informação sobre o PCI
 Comment[pt_BR]=Informações PCI
 Comment[ro]=Informaţii despre magistrala PCI
 Comment[ru]=Сведения о устройствах PCI

@@ -8,6 +8,7 @@ DocPath=processor/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=cpu
+X-KDE-ParentApp=kinfocenter
 
 Name=Processor
 Name[af]=verwerker
@@ -97,6 +98,7 @@ Comment[nb]=Informasjon om prosessoren
 Comment[nl]=Processorinformatie
 Comment[oc]=Informacion dèu processador
 Comment[pl]=Informacje o procesorze
+Comment[pt]=Informação sobre o processador
 Comment[pt_BR]=Informações sobre o processador
 Comment[ro]=Informaţii despre procesor
 Comment[ru]=Сведения о процессоре

@@ -8,6 +8,8 @@ DocPath=partitions/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=partitions
+X-KDE-ParentApp=kinfocenter
+
 
 Name=Partitions
 Name[af]=partisies
@@ -96,6 +98,7 @@ Comment[nb]=Partisjoninformasjon
 Comment[nl]=Partitie-informatie
 Comment[oc]=Informacion de particions
 Comment[pl]=Informacje o partycjach dyskowych
+Comment[pt]=Informação sobre as partições
 Comment[pt_BR]=Informações de Partição
 Comment[ro]=Informaţii despre partiţii
 Comment[ru]=Сведения о использовании разделов

@@ -8,6 +8,7 @@ DocPath=scsi/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=scsi
+X-KDE-ParentApp=kinfocenter
 
 Name=SCSI
 Name[af]=scsi
@@ -53,6 +54,7 @@ Comment[nb]=SCSI-informasjon
 Comment[nl]=SCSI-informatie
 Comment[oc]=Informacion de SCSI
 Comment[pl]=Informacje o SCSI
+Comment[pt]=Informação sobre o SCSI
 Comment[pt_BR]=Informações SCSI
 Comment[ro]=Informaţii despre magistrala SCSI
 Comment[ru]=Сведения о устройствах SCSI

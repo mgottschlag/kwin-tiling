@@ -8,6 +8,7 @@ DocPath=xserver/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=xserver
+X-KDE-ParentApp=kinfocenter
 
 Name=X-Server
 Name[af]=x-bediener
@@ -92,6 +93,7 @@ Comment[nb]=X-tjenerinformasjon
 Comment[nl]=X-Server-informatie
 Comment[oc]=Informacion dèu servor X
 Comment[pl]=Informacje o X-serwerze
+Comment[pt]=Informações sobre o servidor X
 Comment[pt_BR]=Informações do servidor X
 Comment[ro]=Informaţii despre server-ul X
 Comment[ru]=Сведения об X-сервере

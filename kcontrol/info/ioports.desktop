@@ -8,6 +8,7 @@ DocPath=ioports/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=ioports
+X-KDE-ParentApp=kinfocenter
 
 Name=IO-Ports
 Name[af]=io-poorte
@@ -95,6 +96,7 @@ Comment[nb]=IO-portinformasjon
 Comment[nl]=IO-poortinformatie
 Comment[oc]=Informacion dèus ports E/S
 Comment[pl]=Informacje o portach wejścia/wyjścia
+Comment[pt]=Informação sobre os portos de E/S
 Comment[pt_BR]=Informações sobre as portas de E/S
 Comment[ro]=Informaţii despre porturile I/O
 Comment[ru]=Сведения о портах ввода/вывода
