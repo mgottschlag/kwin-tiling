@@ -162,8 +162,8 @@ void LookAndFeelTab::load()
     bool hideanim = c->readBoolEntry("HideAnimation", true);
     bool autohideanim = c->readBoolEntry("AutoHideAnimation", true);
 
-    m_manualHideSlider->setValue(c->readNumEntry("HideAnimationSpeed", 100));
-    m_autoHideSlider->setValue(c->readNumEntry("AutoHideAnimationSpeed", 25));
+    m_manualHideSlider->setValue(c->readNumEntry("HideAnimationSpeed", 40));
+    m_autoHideSlider->setValue(c->readNumEntry("AutoHideAnimationSpeed", 40));
 
     m_manualHideSlider->setEnabled(hideanim);
     m_autoHideSlider->setEnabled(autohideanim);
@@ -177,7 +177,7 @@ void LookAndFeelTab::load()
     m_lHB->setChecked( showLHB );
     m_rHB->setChecked( showRHB );
 
-    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 10));
+    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 14));
     m_hideButtonSlider->setEnabled(showLHB || showRHB);
 
     delete c;

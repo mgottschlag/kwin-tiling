@@ -1,7 +1,8 @@
 kde_module_LTLIBRARIES = libkcm_kicker.la
 
-libkcm_kicker_la_SOURCES = generaltab.ui lookandfeeltab.ui menutab.ui generaltab_impl.cpp \
-			lookandfeeltab_impl.cpp menutab_impl.cpp buttontab.cpp applettab.cpp main.cpp
+libkcm_kicker_la_SOURCES = generaltab.ui lookandfeeltab.ui menutab.ui extensionstab.ui \
+			generaltab_impl.cpp lookandfeeltab_impl.cpp menutab_impl.cpp \
+			buttontab.cpp applettab.cpp main.cpp
 
 libkcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kicker_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KFILE)
