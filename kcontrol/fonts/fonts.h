@@ -12,12 +12,13 @@
 #include <kfontdialog.h>
 #include <kcmodule.h>
 #include <kfontrequester.h>
-
+#include <kdialogbase.h>
 #include "kxftconfig.h"
 
 class QCheckBox;
 class QComboBox;
 class KDoubleNumInput;
+class FontAASettings;
 
 class FontUseItem : public KFontRequester
 {
@@ -44,6 +45,36 @@ private:
     QFont _default;
 };
 
+class FontAASettings : public KDialogBase
+{
+  Q_OBJECT
+
+public:
+
+    FontAASettings(QWidget *parent);
+
+    bool save();
+    void load();
+    void defaults();
+    int getIndex(KXftConfig::SubPixel::Type spType);
+    KXftConfig::SubPixel::Type getSubPixelType();
+    void enableWidgets();
+    int exec();
+
+protected slots:
+
+    void changed();
+
+private:
+
+    QCheckBox *excludeRange;
+    QCheckBox *useSubPixel;
+    KDoubleNumInput *excludeFrom;
+    KDoubleNumInput *excludeTo;
+    QComboBox *subPixelType;
+    QComboBox *hintingStyle;
+    QLabel    *excludeToLabel;
+};
 
 /**
  * The Desktop/fonts tab in kcontrol.
@@ -67,25 +98,14 @@ protected slots:
     void fontSelected();
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
-    void slotAaChange();
-
-private:
-    void setAaWidgets();
-    void enableAaWidgets();
-    int getIndex(KXftConfig::SubPixel::Type aaSpType);
-    KXftConfig::SubPixel::Type getAaSubPixelType();
+    void slotCfgAa();
 
 private:
     bool _changed;
     bool useAA, useAA_original;
     QCheckBox *cbAA;
     QPtrList <FontUseItem> fontUseList;
-    QCheckBox *aaExcludeRange;
-    QCheckBox *aaUseSubPixel;
-    KDoubleNumInput *aaExcludeFrom;
-    KDoubleNumInput *aaExcludeTo;
-    QLabel *aaExcludeToLabel;
-    QComboBox *aaSubPixelType;
+    FontAASettings *aaSettings;
 };
 
 #endif
