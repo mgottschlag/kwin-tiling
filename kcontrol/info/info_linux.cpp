@@ -465,7 +465,7 @@ bool GetInfo_Partitions(QListView * lbox)
     QFile *file = new QFile(INFO_MOUNTED_PARTITIONS);
     if (file->open(IO_ReadOnly)) {
 	char buf[1024];
-	while (file->readLine(buf, 1024) > 0) {
+	while (file->readLine(buf, sizeof( buf )) > 0) {
 	    str = QString::fromLocal8Bit(buf);
 	    if (str.length()) {
 		int p = str.find(' ');	/* find first space. */
