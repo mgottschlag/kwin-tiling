@@ -35,9 +35,11 @@
 #include <kkeybutton.h>
 #include <klocale.h>
 
+static bool treeFilled = false;
 CommandShortcutsModule::CommandShortcutsModule( QWidget *parent, const char *name )
 : QWidget( parent, name )
 {
+    treeFilled = false;
     initGUI();
 }
 
@@ -194,7 +196,6 @@ void CommandShortcutsModule::shortcutChanged(const KShortcut& shortcut)
 
 void CommandShortcutsModule::showing(QWidget* w)
 {
-    static bool treeFilled = false;
     if (w != this || treeFilled)
     {
         return;
