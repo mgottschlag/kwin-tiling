@@ -42,7 +42,7 @@ class Pipe
 {
 public:
     Pipe(kPipesSaver* b, int c);
-    bool chooseDir();
+    bool chooseDir(bool mayExtend);
     void choosePos();
     kPipesSaver* box;
     int col;
@@ -80,9 +80,8 @@ protected:
     void		resizeGL( int w, int h );
 
     virtual GLuint 	makeCoord();
-    virtual GLuint 	makeStart();
     virtual GLuint 	makeArrow();
-    virtual GLuint 	makeSphere(float f);
+    virtual GLuint 	makeSphere(float f, float trans);
 
 private:
 

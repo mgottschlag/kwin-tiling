@@ -52,11 +52,8 @@
  */
 
 //TODO: Overall, the screensaver is in a good shape.
-// - the central issue is that i wrote this thingy while not having access
-//   to a OpenGL documentation and it is my very first OpenGL try, too.
-//   Thus the geometry handling is not well implemented and especially
-//   the colors and lights suffer somewhat from it.
 // - should reinit when a repaintEvent occures
+// - antialising would certainly improve drawing
 // - Some additional parameters could be added to the setup
 // - check FIXMEs below
 
@@ -85,7 +82,7 @@ FIXME: this should be used to adjust the OpenGL projection. The total size of
    The pipe drawing is accomplished by two primitives:
 
    1) The origin of the pipe is drawn once (paintGL). It is a simple sphere
-      (start, makeStart()). It must be located in the center of a cell.
+      (start, makeSphere(1)). It must be located in the center of a cell.
 
    2) The pipe is extended by a composition of a sphere and a cylinder.
       (arrow, makeArrow()). The cylinder has the same RADIUS and height, and
@@ -107,6 +104,16 @@ FIXME: this could be clearer done by a calculation on the position.
    
    As soon as less then half of the original pipes are left, the whole
    procedure starts over.
+
+
+   Color selections is done by means of the HSV model. We choose two different
+   colors and interpolate between them to get colors for the remaining pipes.
+   We choose both hues randomly for a great varity of colors, but guarantee,
+   that they differ by at least 50 degrees.
+
+   Using the HSV model is very importent to get a proper lightning. We've
+   tried RGB, too, but this does not give us any control over the intensity
+   of the light.
 
 -- ------------------------------------------------------------------------ */
 #include "config.h"
@@ -393,7 +400,7 @@ Pipe::Pipe(kPipesSaver* b, int c)
   col = c;
 }
 
-bool Pipe::chooseDir()
+bool Pipe::chooseDir(bool mayExtend)
 { int x0 = x/SUBCELLS, y0 = y/SUBCELLS, z0 = z/SUBCELLS;
   int i, n=0; int possible[6];
   prev_dir = dir;
@@ -403,7 +410,7 @@ bool Pipe::chooseDir()
     int y1 = y0 + direct[i].y;
     int z1 = z0 + direct[i].z;
     if (!box->goodCubeLocation(x1,y1,z1)) continue;
-    if (i == dir && random()%(CUBESIZE) != 0) goto extend;
+    if (mayExtend && i == dir && random()%(CUBESIZE) != 0) goto extend;
     possible[n++] = i;
   }
   if (n==0) return FALSE; // out of choices, start over
@@ -435,13 +442,20 @@ void kPipesSaver::reinit()
 { int i;
   xRot = 1.0*random();
   yRot = 1.0*random();
-  zRot = 1.0*random();                // default object rotation
+  zRot = 1.0*random(); // default object rotation
   steps = 0;
   running = pipes;
   initial = TRUE;
   clearCube();
-  for (i = 0; i < pipes; i++) pipe[i]->choosePos();
   setColors(pipes);
+  for (i = 0; i < pipes; i++) pipe[i]->choosePos();
+  // Though we start out with a random direction
+  // we can guarantee a correct direction setting
+  // by the 'steps = 0' assignment above. This
+  // will force 'chooseDir' in 'tick', which
+  // makes 'dir' to be set correctly. The 'initial'
+  // setting finally makes 'prev_dir==dir' so that
+  // we get a small sphere at the start position.
 }
 
 // Handling locations in the cube //////////////////////////////////////////////
@@ -512,12 +526,13 @@ void kPipesSaver::paintGL()
     glCallList( start );
     glTranslatef( -RADIUS*pipe[i]->x, -RADIUS*pipe[i]->y, -RADIUS*pipe[i]->z );
   }
-	glFlush();
+  glFlush();
 }
 
 void kPipesSaver::makeStep()
 { int i;
   for (i = 0; i < pipes; i++)
+  if (pipe[i]->running)
   { Pipe* p = pipe[i]; 
     Direction* d = &direct[p->dir];
     p->x += d->x; p->y += d->y; p->z += d->z;
@@ -529,7 +544,6 @@ void kPipesSaver::paintStep()
 { int i;
   for (i = 0; i < pipes; i++)
   { Pipe* p = pipe[i]; Direction* d = &direct[p->dir];
-    if (!p->running) continue;
 
     glLoadIdentity();
     glTranslatef( 0.0, 0.0, -10.0 );
@@ -542,10 +556,17 @@ void kPipesSaver::paintStep()
     glTranslatef( RADIUS*p->x, RADIUS*p->y, RADIUS*p->z );
     glRotatef( 90.0*d->deg90, 1.0*d->rx, 1.0*d->ry, 0.0 );
     glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[pipe[i]->col] );
-    glCallList( arrow );
-    if (p->dir != p->prev_dir)
-      glCallList( random()%3==0?sphere1:sphere0 );
-    p->prev_dir = p->dir;
+    if (p->running)
+    {
+      glCallList( arrow );
+      if (p->dir != p->prev_dir)
+        glCallList( random()%3==0?sphere1:sphere0 );
+      p->prev_dir = p->dir;
+    }
+    else
+    {
+      glCallList( start ); //FIXME: stopped pipe is still drawing spheres
+    }
   }
 }
 
@@ -553,26 +574,35 @@ void kPipesSaver::paintStep()
 
 void kPipesSaver::tick()
 {
-  if (initial) { initial=FALSE; paintGL(); return; }
-
   if (steps % SUBCELLS == 0)
-  { int i;
-    for (i = 0; i < pipes; i++) 
+  {
+    for (int i = 0; i < pipes; i++) 
       if (pipe[i]->running)
-      if (!pipe[i]->chooseDir())
+      if (!pipe[i]->chooseDir(TRUE))
       {
         pipe[i]->running = FALSE;
         running -= 1;
       }
   }
+
   if (running < (pipes+1)/2)
   {
-    reinit(); return; // start over
+    reinit();
+    return; // start over
   }
+
+  if (initial)
+  {
+    paintGL();
+    for (int i = 0; i < pipes; i++) 
+      pipe[i]->prev_dir = pipe[i]->dir;
+    initial = FALSE;
+  }
+
   steps = steps+1;
   makeStep();
   paintStep();
-	glFlush();
+  glFlush();
 }
 
 // Creation of the basic display elements ////////////////////////////////////
@@ -600,24 +630,6 @@ GLuint kPipesSaver::makeCoord()
 }
 
 /*!
-    The pipes start out as spheres.
-*/
-
-GLuint kPipesSaver::makeStart()
-{        
-  GLUquadricObj *quadric = gluNewQuadric();  /* Initialize the Sphere */
-  gluQuadricNormals(quadric, (GLenum) GLU_SMOOTH); /* we want normals */
-  gluQuadricTexture(quadric, GL_FALSE); /* we want texture */
-
-  GLuint list = glGenLists(1);
-  glNewList(list, GL_COMPILE);
-  gluSphere(quadric, RADIUS, DETAIL, DETAIL);
-  glEndList();               // finish up the list
-  gluDeleteQuadric(quadric); // free up the quadric
-  return list;
-}
-
-/*!
     The pipes are extended by a combination of a sphere and a cylinder.
     The cylinder's height and radius is the same as the radius of the
     sphere and one of it's ends is located at the aequator of the sphere.
@@ -640,15 +652,7 @@ GLuint kPipesSaver::makeArrow()
   return list;
 }
 
-/*!
-    The pipes are extended by a combination of a sphere and a cylinder.
-    The cylinder's height and radius is the same as the radius of the
-    sphere and one of it's ends is located at the aequator of the sphere.
-    Later, we'll make the non-cylinder end of this combination to be
-    the extendion of the pipe.
-*/
-
-GLuint kPipesSaver::makeSphere(float f)
+GLuint kPipesSaver::makeSphere(float f, float trans)
 {        
   GLUquadricObj *quadric = gluNewQuadric();  /* Initialize the Sphere */
   gluQuadricNormals(quadric, (GLenum) GLU_SMOOTH); /* we want normals */
@@ -656,8 +660,7 @@ GLuint kPipesSaver::makeSphere(float f)
 
   GLuint list = glGenLists(1); /* create the call list */
   glNewList(list, GL_COMPILE);
-//  gluCylinder(quadric, RADIUS, RADIUS, RADIUS, DETAIL, DETAIL);
-    glTranslatef( 0, 0, RADIUS );
+    glTranslatef( 0, 0, trans );
     gluSphere(quadric, f*RADIUS, DETAIL, DETAIL);          /* draw the sphere of specified radius */
   glEndList();               // finish up the list
   gluDeleteQuadric(quadric); // free up the quadric
@@ -691,11 +694,11 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   glEnable( GL_AUTO_NORMAL );
   glEnable( GL_DEPTH_TEST );
 
-  start   = makeStart();                // Generate an OpenGL display list
-  arrow   = makeArrow();                // Generate an OpenGL display list
   coord   = makeCoord();                // Generate an OpenGL display list
-  sphere0 = makeSphere(1.0);            // Generate an OpenGL display list
-  sphere1 = makeSphere(1.3);            // Generate an OpenGL display list
+  arrow   = makeArrow();                // Generate an OpenGL display list
+  start   = makeSphere(1.0, 0);         // Generate an OpenGL display list
+  sphere0 = makeSphere(1.0,RADIUS);     // Generate an OpenGL display list
+  sphere1 = makeSphere(1.3,RADIUS);     // Generate an OpenGL display list
   glShadeModel( GL_SMOOTH );
 //glClearColor( 0.0, 0.0, 0.0, 0.0 ); // Let OpenGL clear to black
 
@@ -705,8 +708,8 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   readSettings();
   reinit();
 
-	connect( &timer, SIGNAL( timeout() ), SLOT( tick() ) );
-	timer.start( SPEED );
+  connect( &timer, SIGNAL( timeout() ), SLOT( tick() ) );
+  timer.start( SPEED );
 }
 
 kPipesSaver::~kPipesSaver()
@@ -821,8 +824,8 @@ void kPipesSetup::slotOkPressed()
 void kPipesSetup::slotAbout()
 {
   KMessageBox::about(this,
-	i18n("KPipes\nCopyright (c) 1998\n"
-			   "Lars Doelle <lars.doelle@on-line.de>"));
+	i18n("KPipes\nCopyright (c) 1998-2000\n"
+	   "Lars Doelle <lars.doelle@on-line.de>"));
 }
 
 #endif
