@@ -38,7 +38,6 @@ signals:
 
 private slots:
     void slotEnableChanged();
-    void moduleChanged(bool);
 private:
     void init();
     void apply();

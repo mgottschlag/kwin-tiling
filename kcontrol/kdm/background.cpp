@@ -56,7 +56,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     config->setGroup( "X-*-Greeter" );
     m_simpleConf=new KSimpleConfig(config->readEntry( "BackgroundCfg",KDE_CONFDIR "/kdm/backgroundrc" ) );
     m_background = new Backgnd( this, m_simpleConf, false );
-    connect(m_background, SIGNAL(changed(bool)), SLOT(moduleChanged(bool)));
+    connect(m_background, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
     // Top layout
     QVBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint() );
@@ -70,11 +70,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
 KBackground::~KBackground()
 {
     delete m_simpleConf;
-}
-
-void KBackground::moduleChanged(bool b)
-{
-    emit changed(b);
 }
 
 void KBackground::slotEnableChanged()
