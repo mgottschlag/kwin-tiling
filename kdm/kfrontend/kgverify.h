@@ -157,7 +157,9 @@ public: // from KGreetPluginHandler
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString &user );
     virtual void gplugStart( const char *method );
-    virtual QVariant gplugGetConf( const QString &key, const QVariant &dflt );
+
+private:
+    static QVariant getConf( void *ctx, const char *key, const QVariant &dflt );
 };
 
 class KGChTok : public FDialog, public KGVerifyHandler {

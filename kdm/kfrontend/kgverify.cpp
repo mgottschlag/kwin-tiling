@@ -696,15 +696,6 @@ KGVerify::gplugStart( const char *method )
     handleVerify();
 }
 
-QVariant
-KGVerify::gplugGetConf( const QString &key, const QVariant &dflt )
-{
-    if (key == "EchoMode")
-	return QVariant( kdmcfg->_echoMode );
-    else
-	return dflt;
-}
-
 
 bool
 KGVerify::eventFilter( QObject *o, QEvent *e )
@@ -766,7 +757,8 @@ KGVerify::updateStatus()
     }
 }
 
-void KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
+void
+KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
 {
     timer.suspend();
     FDialog::box( parent, typ, msg );
@@ -774,20 +766,28 @@ void KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
 }
 
 
+QVariant // private static
+KGVerify::getConf( void *, const char *key, const QVariant &dflt )
+{
+    if (!qstrcmp( key, "EchoMode" ))
+	return QVariant( kdmcfg->_echoMode );
+    else
+	return dflt;
+}
+
 QValueVector<GreeterPluginHandle> KGVerify::greetPlugins;
 
 PluginList
 KGVerify::init( const QStringList &plugins )
 {
     PluginList pluginList;
-    QString path;
 
     for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it) {
 	GreeterPluginHandle plugin;
-	path = KLibLoader::self()->findLibrary(
+	QString path = KLibLoader::self()->findLibrary(
 		    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).latin1() );
 	if (path.isEmpty()) {
-	    LogError( "GreetWidget %s does not exist\n", (*it).latin1() );
+	    LogError( "GreeterPlugin %s does not exist\n", (*it).latin1() );
 	    continue;
 	}
 	uint i, np = greetPlugins.count();
@@ -795,18 +795,23 @@ KGVerify::init( const QStringList &plugins )
 	    if (greetPlugins[i].library->fileName() == path)
 		goto next;
 	if (!(plugin.library = KLibLoader::self()->library( path.latin1() ))) {
-	    LogError( "Cannot load GreetWidget plugin %s (%s)\n", (*it).latin1(), path.latin1() );
+	    LogError( "Cannot load GreeterPlugin %s (%s)\n", (*it).latin1(), path.latin1() );
 	    continue;
 	}
 	if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
-	    LogError( "GreetWidget %s (%s) is no valid greet widget plugin\n",
+	    LogError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
 		     (*it).latin1(), path.latin1() );
+	    plugin.library->unload();
 	    continue;
 	}
 	plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
-	if (plugin.info->init)
-	    plugin.info->init();
-	Debug( "GreetWidget %s (%s) loaded\n", (*it).latin1(), plugin.info->name );
+	if (plugin.info->init && !plugin.info->init( getConf )) {
+	    LogError( "GreeterPlugin %s (%s) refuses to serve\n",
+		     (*it).latin1(), path.latin1() );
+	    plugin.library->unload();
+	    continue;
+        }
+	Debug( "GreeterPlugin %s (%s) loaded\n", (*it).latin1(), plugin.info->name );
 	greetPlugins.append( plugin );
       next:
 	pluginList.append( i );

@@ -58,16 +58,6 @@ public:
      * start processing. the handler has to know the mode itself.
      */
     virtual void gplugStart( const char *method ) = 0;
-    /**
-     * Get configuration item from the greeter.
-     * The only predefined key is "EchoMode", which is an int (in fact,
-     * KPasswordEdit::EchoModes).
-     * Other keys are obtained from the PluginOptions option; see kdmrc
-     * for details.
-     * If the key is unknown (particularily outside kdm this can be always
-     * true), dflt is returned.
-     */
-    virtual QVariant gplugGetConf( const QString &key, const QVariant &dflt ) = 0;
 };
 
 /**
@@ -88,7 +78,8 @@ public:
     /**
      * The Ex* functions will be called from within a running session;
      * they must know how to obtain the currently logged in user
-     * (+ domain/realm, etc.) themselves. The non-Ex variants can use stsFile.
+     * (+ domain/realm, etc.) themselves. The non-Ex variants will have a
+     * fixedEntity passed in the right contexts.
      * TODO: Unlock and ChangeTok are currently not used in kdm. ExChangeTok
      * should be used by kdepasswd.
      */
@@ -249,11 +240,21 @@ struct kgreeterplugin_info {
     int flags;
     
     /**
-     * Call after loading resp. before unloading the plugin.
-     * This is only here, because some systems fail to properly call the
-     * destructors of static objects when unloading libraries.
+     * Call after loading the plugin.
+     * If it returns false, unload the plugin again (don't call done() first).
+     *
+     * getConf can be used to obtain configuration items from the greeter;
+     * you have to pass it the ctx pointer.
+     * The only predefined key is "EchoMode", which is an int (in fact,
+     * KPasswordEdit::EchoModes).
+     * Other keys are obtained from the PluginOptions option; see kdmrc
+     * for details.
+     * If the key is unknown, dflt is returned.
      */
-    void (*init)( void );
+    bool (*init)( QVariant (*getConf)( void *ctx, const char *key, const QVariant &dflt ), void *ctx = 0 );
+    /**
+     * Call before unloading the plugin.
+     */
     void (*done)( void );
 
     /**
@@ -270,6 +271,14 @@ struct kgreeterplugin_info {
 			       const QString &fixedEntity,
 			       KGreeterPlugin::Function func,
 			       KGreeterPlugin::Context ctx );
+
+    /**
+     * Determine whether this plugin is capable of handling the authentication
+     * method. If method is null, it must be determined heuristically from the
+     * environment. The return value is a certainity factor in percent -
+     * effectively a priority.
+     */
+    int (*capable)( const char *method );
 };
 
 }

@@ -31,6 +31,8 @@
 #include <qlayout.h>
 #include <qlabel.h>
 
+static int echoMode;
+
 KClassicGreeter::KClassicGreeter(
 	KGreeterPluginHandler *_handler, QWidget *parent, QWidget *predecessor,
 	const QString &_fixedEntity, Function _func, Context _ctx ) :
@@ -46,7 +48,6 @@ KClassicGreeter::KClassicGreeter(
     layoutItem = grid;
     QWidget *pred = predecessor;
     int line = 0;
-    int echoMode = handler->gplugGetConf( "EchoMode", QVariant( -1 ) ).toInt();
 
     loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
     loginEdit = 0;
@@ -367,8 +368,14 @@ KClassicGreeter::slotLoginLostFocus()
 
 // factory
 
+static bool init( QVariant (*getConf)( void *, const char *, const QVariant & ), void *ctx )
+{
+    echoMode = getConf( ctx, "EchoMode", QVariant() ).toInt();
+    return true;
+}
+
 static KGreeterPlugin *
-create_kclassicgreeter(
+create(
     KGreeterPluginHandler *handler, QWidget *parent, QWidget *predecessor,
     const QString &fixedEntity,
     KGreeterPlugin::Function func,
@@ -377,8 +384,14 @@ create_kclassicgreeter(
     return new KClassicGreeter( handler, parent, predecessor, fixedEntity, func, ctx );
 }
 
+static int
+capable( const char *method )
+{
+    return method ? strcmp( method, "classic" ) ? 0 : 100 : 10;
+}
+
 kgreeterplugin_info kgreeterplugin_info = {
-    I18N_NOOP("Username + password (classic)"), kgreeterplugin_info::Local, 0, 0, create_kclassicgreeter
+    I18N_NOOP("Username + password (classic)"), kgreeterplugin_info::Local, init, 0, create, capable
 };
 
 #include "kgreet_classic.moc"
