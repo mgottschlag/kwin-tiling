@@ -32,6 +32,7 @@
 #include <kservice.h>
 #include <kdesktopfile.h>
 #include <qxembed.h>
+#include <kiconloader.h>
 
 
 #include "kcdialog.h"
@@ -138,6 +139,8 @@ int main(int _argc, char *_argv[])
             return -1;
         }
     }
+
+    KGlobal::iconLoader()->addAppDir( "kcontrol" );
 
     // load the module
     ModuleInfo info(path);
