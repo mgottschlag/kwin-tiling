@@ -151,6 +151,7 @@ signals:
     void startupAdded(Startup*);
     void startupRemoved(Startup*);
     void desktopChanged(int desktop);
+    void windowDesktopChanged(WId);
 
 protected slots:
     void windowAdded(WId);

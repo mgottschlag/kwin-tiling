@@ -227,8 +227,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (dirty & NET::WMIcon)
         t->refresh(true);
 
-    //if(dirty & NET::WMDesktop)
-    //    t->refresh();
+    if(dirty & (NET::WMDesktop|NET::WMState))
+        emit windowDesktopChanged(w); // moved to different desktop or is on all
 }
 
 void TaskManager::activeWindowChanged(WId w )
