@@ -105,7 +105,7 @@ private:
     QTimer *m_checkTimer;
     QPixmap *m_pixmap;
     bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber;
-    bool bReplayActionInHistory, bSynchronize, bUseGUIRegExpEditor;
+    bool bReplayActionInHistory, bUseGUIRegExpEditor;
     bool bNoNullClipboard;
     QString QSempty;
     URLGrabber *myURLGrabber;

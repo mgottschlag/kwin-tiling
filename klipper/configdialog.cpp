@@ -16,8 +16,10 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+#include <qvbuttongroup.h>
 #include <assert.h>
 
+#include <kclipboard.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
@@ -98,19 +100,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                                     this );
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
-    cbSynchronize = new QCheckBox( i18n("Sy&nchronize contents of the clipboard and the selection"),
-                                    this );
-    QWhatsThis::add( cbSynchronize,
-     i18n("<qt>There are two different clipboard buffers available:<br><br>"
-          "The <b>Clipboard</b>, that you fill by selecting something<br>"
-          "and pressing Ctrl-C or by pressing \"Copy\" in a tool- or<br>"
-          "menubar.<br><br>"
-          "And the <b>Selection</b>, that is available immediately after<br>"
-          "selecting some text. The only way to access the selection<br>"
-          "is to press the middle mouse button.<br><br>"
-          "Selecting this option synchronizes those two buffers, so they<br>"
-          "work the same way as in KDE 1.x and 2.x</qt>") );
-
+    
     cbNoNull = new QCheckBox( i18n("Pre&vent empty clipboard"), this );
     QWhatsThis::add( cbNoNull,
                      i18n("Selecting this option has the effect, that the "
@@ -118,6 +108,47 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                           "application exits, the clipboard would usually be "
                           "emptied.") );
 
+    QVButtonGroup *group = new QVButtonGroup( i18n("Clipboard / Selection Behavior"), this );
+    group->setExclusive( true );
+    
+    QWhatsThis::add( group,
+     i18n("<qt>There are two different clipboard buffers available:<br><br>"
+          "The <b>Clipboard</b>, that you fill by selecting something<br>"
+          "and pressing Ctrl-C or by pressing \"Copy\" in a tool- or<br>"
+          "menubar.<br><br>"
+          "And the <b>Selection</b>, that is available immediately after<br>"
+          "selecting some text. The only way to access the selection<br>"
+          "is to press the middle mouse button.<br><br>"
+          "You can configure the relation between Clipboard and Selection."
+          "</qt>" ));
+
+    cbSynchronize = new QRadioButton( 
+        i18n("Sy&nchronize contents of the clipboard and the selection"), 
+        group );
+    QWhatsThis::add( cbSynchronize,
+      i18n("Selecting this option synchronizes those two buffers, so they "
+           "work the same way as in KDE 1.x and 2.x.") );
+
+    cbImplicitSelection = new QRadioButton( 
+        i18n("When the clipboard is set, set the selection as well"), group );
+    QWhatsThis::add( cbImplicitSelection,
+        i18n("Selecting this option will set both clipboard and selection, "
+             " when choosing e.g. \"Copy\" in a menubar.") );
+    
+    cbSeparate = new QRadioButton( 
+        i18n("Separate clipboard and selection"), group );
+    QWhatsThis::add( 
+        cbSeparate,
+        i18n("Using this option will only set the selection when highlighting "
+             "something and the clipboard when choosing e.g. \"Copy\" "
+             "in a menubar.") );
+    
+    cbSynchronize->setChecked( KClipboard::isSynchronizing() );
+    cbImplicitSelection->setChecked( !KClipboard::isSynchronizing() && 
+                                     KClipboard::implicitSelection() );
+    cbSeparate->setChecked( !cbSynchronize->isChecked() && 
+                            !cbImplicitSelection->isChecked() );
+    
     popupTimeout = new KIntNumInput( this );
     popupTimeout->setLabel( i18n( "Tim&eout for action popups:" ) );
     popupTimeout->setRange( 0, 200, 1, true );

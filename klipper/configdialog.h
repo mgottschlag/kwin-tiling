@@ -17,6 +17,7 @@
 #include <qevent.h>
 #include <qgroupbox.h>
 #include <qheader.h>
+#include <qradiobutton.h>
 #include <qvbox.h>
 
 #include <kdialogbase.h>
@@ -45,8 +46,8 @@ public:
     ~GeneralWidget();
 
 private:
-    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbSynchronize;
-    QCheckBox *cbNoNull;
+    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
+    QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
     KIntNumInput *popupTimeout, *maxItems;
 
 };
@@ -138,9 +139,6 @@ public:
     bool replayActionInHistory() const {
 	return generalWidget->cbReplayAIH->isChecked();
     }
-    bool synchronize() const {
-        return generalWidget->cbSynchronize->isChecked();
-    }
     bool noNullClipboard() const {
         return generalWidget->cbNoNull->isChecked();
     }
@@ -159,6 +157,15 @@ public:
       return actionWidget->cbUseGUIRegExpEditor->isChecked();
     }
 
+    // KClipboard configuration
+    bool synchronize() const {
+        return generalWidget->cbSynchronize->isChecked();
+    }
+    bool implicitSelection() const {
+        return generalWidget->cbImplicitSelection->isChecked();
+    }
+    // ------------------------
+
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
     }
@@ -167,9 +174,6 @@ public:
     }
     void setReplayActionInHistory( bool enable ) {
 	generalWidget->cbReplayAIH->setChecked( enable );
-    }
-    void setSynchronize( bool enable ) {
-	generalWidget->cbSynchronize->setChecked( enable );
     }
     void setNoNullClipboard( bool enable ) {
         generalWidget->cbNoNull->setChecked( enable );
@@ -205,7 +209,7 @@ class ListView : public KListView
 {
 public:
     ListView( ConfigDialog* configWidget, QWidget *parent, const char *name )
-	: KListView( parent, name ), _configWidget( configWidget ), 
+	: KListView( parent, name ), _configWidget( configWidget ),
           _regExpEditor(0L) {}
     // QListView has a weird idea of a sizeHint...
     virtual QSize sizeHint () const {

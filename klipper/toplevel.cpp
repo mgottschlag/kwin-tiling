@@ -161,7 +161,7 @@ void TopLevel::clearClipboardContents()
 {
 	slotClearClipboard();	
 }
-    
+
 void TopLevel::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
@@ -293,7 +293,7 @@ void TopLevel::readProperties(KConfig *kc)
   QStringList dataList;
 
   m_popup->clear();
-  m_popup->insertTitle( SmallIcon( "klipper" ), 
+  m_popup->insertTitle( SmallIcon( "klipper" ),
                         i18n("Klipper - Clipboard Tool"));
 
   if (bKeepContents) { // load old clipboard if configured
@@ -308,7 +308,7 @@ void TopLevel::readProperties(KConfig *kc)
       }
   }
 
-  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() && 
+  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() &&
                dataList.isEmpty();
 
   m_popup->insertSeparator();
@@ -338,7 +338,6 @@ void TopLevel::readConfiguration( KConfig *kc )
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
     bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", true);
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
-    bSynchronize = kc->readBoolEntry("SynchronizeClipboards", false);
     bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
     bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
     maxClipItems = kc->readNumEntry("MaxClipItems", 7);
@@ -350,7 +349,6 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
-    kc->writeEntry("SynchronizeClipboards", bSynchronize);
     kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
     kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
     kc->writeEntry("MaxClipItems", maxClipItems);
@@ -401,7 +399,6 @@ void TopLevel::slotConfigure()
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory );
-    dlg->setSynchronize( bSynchronize );
     dlg->setNoNullClipboard( bNoNullClipboard );
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
@@ -413,7 +410,6 @@ void TopLevel::slotConfigure()
         bKeepContents = dlg->keepContents();
         bPopupAtMouse = dlg->popupAtMousePos();
         bReplayActionInHistory = dlg->replayActionInHistory();
-        bSynchronize = dlg->synchronize();
         bNoNullClipboard = dlg->noNullClipboard();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
@@ -430,7 +426,16 @@ void TopLevel::slotConfigure()
 	maxClipItems = dlg->maxItems();
 	trimClipHistory( maxClipItems );
 	
-        writeConfiguration( m_config );
+        // KClipboard configuration
+        m_config->setGroup("General");
+        m_config->writeEntry("SynchronizeClipboardAndSelection", 
+                             dlg->synchronize(), true, true );
+        m_config->writeEntry("ImplicitlySetSelection", 
+                             dlg->implicitSelection(), true, true );
+        // ### notify running apps!
+        // ------------------------
+
+        writeConfiguration( m_config ); // syncs
     }
     setURLGrabberEnabled( haveURLGrabber );
 
@@ -606,20 +611,6 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
             setClipboard( lastClipRef, selectionMode );
         else
             lastClipRef = text;
-
-        // sync clipboard and selection?
-        if ( bSynchronize ) {
-            clip->setSelectionMode( true );
-            QString selectContents = clip->text();
-            clip->setSelectionMode( false );
-            QString clipContents = clip->text();
-
-            if ( clipContents != selectContents ) {
-                m_lastSelection = text;
-                m_lastClipboard = text;
-                setClipboard( text, !selectionMode );
-            }
-        }
     }
 
     // lastClipRef has the new value now, if any
