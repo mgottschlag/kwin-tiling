@@ -4,7 +4,6 @@
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
 //
-
 #include <ctype.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -79,7 +78,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
     layout->activate();
 
     resize(layout->sizeHint());
-
+    winFrame->resize(layout->sizeHint());
     installEventFilter(this);
 
     mFailedTimerId = 0;
