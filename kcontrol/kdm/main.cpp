@@ -21,6 +21,8 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <config.h>
+
 #include <qlayout.h>
 #include <qstringlist.h>
 
@@ -76,8 +78,7 @@ KDModule::KDModule(QWidget *parent, const char *name)
 {
   QStringList show_users;
 
-  c = new KSimpleConfig( KGlobal::dirs()->resourceDirs("config").last() + 
-			 "kdmrc" );
+  c = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ) );
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
@@ -168,8 +169,7 @@ void KDModule::save()
   sessions->save();
   convenience->save();
   c->sync();
-  chmod(QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
-			  "kdmrc").data(), 0644);
+  chmod( KDE_CONFDIR "/kdm/kdmrc", 0644 );
 }
 
 

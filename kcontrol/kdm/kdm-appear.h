@@ -53,9 +53,7 @@ public:
 	void defaults();
 	QString quickHelp() const;
 
-	void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
-	void loadCountryList(KLanguageCombo *combo);
-	void loadLangs(QString country);
+	void loadLanguageList(KLanguageCombo *combo);
 
 	bool eventFilter(QObject *, QEvent *);
 
@@ -69,7 +67,6 @@ private slots:
 	void slotPosRadioClicked(int id);
 	void slotLogoButtonClicked();
 	void changed();
-	void changedCountry(int i);
  
 private:
 	enum { KdmNone, KdmClock, KdmLogo };
@@ -89,8 +86,6 @@ private:
 	QComboBox    *guicombo;
 	QComboBox    *echocombo;
 	KLanguageCombo *langcombo;
-	KLanguageCombo *countrycombo;
-	QStringList  langs;
 
 };
 

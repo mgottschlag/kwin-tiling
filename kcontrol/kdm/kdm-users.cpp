@@ -362,7 +362,7 @@ void KDMUsersWidget::slotUserSelected(const QString &user)
 
 void KDMUsersWidget::save()
 {
-    c->setGroup("KDM");
+    c->setGroup("X-*-Greeter");
 
     c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
@@ -394,7 +394,7 @@ void KDMUsersWidget::load(QStringList *show_users)
     iconloader = KGlobal::iconLoader();
     QString str;
 
-    c->setGroup("KDM");
+    c->setGroup("X-*-Greeter");
 
     // Read users from kdmrc and /etc/passwd
     QStringList users = c->readListEntry( "Users");

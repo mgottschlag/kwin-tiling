@@ -47,49 +47,55 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QString wtstr;
 
 
-      QGroupBox *group0 = new QGroupBox( i18n("Allo&w to shutdown"), this );
+      QGroupBox *group0 = new QGroupBox( i18n("Allow to shutdown"), this );
 
-      sdcombo = new QComboBox( FALSE, group0 );
-      sdcombo->insertItem(i18n("All"), SdAll);
-      sdcombo->insertItem(i18n("Console Only"), SdConsoleOnly);
-      sdcombo->insertItem(i18n("Root Only"), SdRootOnly);
-      sdcombo->insertItem(i18n("None"), SdNone);
-      connect(sdcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+      sdlcombo = new QComboBox( FALSE, group0 );
+      sdllabel = new QLabel (sdlcombo, i18n ("Co&nsole:"), group0);
+      sdlcombo->insertItem(i18n("Everybody"), SdAll);
+      sdlcombo->insertItem(i18n("Only root"), SdRoot);
+      sdlcombo->insertItem(i18n("Nobody"), SdNone);
+      connect(sdlcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+      sdrcombo = new QComboBox( FALSE, group0 );
+      sdrlabel = new QLabel (sdrcombo, i18n ("Re&mote:"), group0);
+      sdrcombo->insertItem(i18n("Everybody"), SdAll);
+      sdrcombo->insertItem(i18n("Only root"), SdRoot);
+      sdrcombo->insertItem(i18n("Nobody"), SdNone);
+      connect(sdrcombo, SIGNAL(activated(int)), this, SLOT(changed()));
       QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
-        " the computer using KDM. Possible values are:<ul>"
-        " <li><em>All:</em> everybody can shutdown the computer using KDM</li>"
-        " <li><em>Console Only:</em> only users sitting in front of this computer can shut it down using KDM</li>"
-        " <li><em>Root Only:</em> KDM will only allow shutdown after the user has entered the root password</li>"
-        " <li><em>None:</em> nobody can shutdown the computer using KDM</li></ul>") );
+        " the computer using KDM. You can specify different values for local (console) and remote displays. "
+	"Possible values are:<ul>"
+        " <li><em>Everybody:</em> everybody can shutdown the computer using KDM</li>"
+        " <li><em>Only root:</em> KDM will only allow shutdown after the user has entered the root password</li>"
+        " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
       shutdown_lined = new KLineEdit(group1);
-      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("S&hutdown"), group1);
+      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt"), group1);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      this, SLOT(changed()));
-      wtstr = i18n("Command to initiate the shutdown sequence. Typical value: /sbin/halt");
+      wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
       QWhatsThis::add( shutdown_label, wtstr );
       QWhatsThis::add( shutdown_lined, wtstr );
 
       restart_lined = new KLineEdit(group1);
-      QLabel *restart_label = new QLabel(restart_lined, i18n("&Restart"), group1);
+      QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot"), group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      this, SLOT(changed()));
-      wtstr = i18n("Command to initiate the restart sequence. Typical value: /sbin/reboot");
+      wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
       QWhatsThis::add( restart_label, wtstr );
       QWhatsThis::add( restart_lined, wtstr );
 
 #ifdef __linux__
       QGroupBox *group4 = new QGroupBox( i18n("Lilo"), this );
 
-      lilo_check = new QCheckBox(i18n("Show boot options"), group4);
+      lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
       connect(lilo_check, SIGNAL(toggled(bool)),
 	      this, SLOT(slotLiloCheckToggled(bool)));
       connect(lilo_check, SIGNAL(toggled(bool)),
 	      this, SLOT(changed()));
-      wtstr = i18n("");
+      wtstr = i18n("Enable Lilo boot options in the \"Shutdown ...\" dialog.");
       QWhatsThis::add( lilo_check, wtstr );
 
       lilocmd_lined = new KLineEdit(group4);
@@ -123,7 +129,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( type_label, wtstr );
       QWhatsThis::add( session_lined, wtstr );
 
-      btnadd = new QPushButton( i18n("Add &new"), group2 );
+      btnadd = new QPushButton( i18n("Add ne&w"), group2 );
       btnadd->setEnabled(false);
       connect( btnadd, SIGNAL( clicked() ), SLOT( changed() ) );
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );
@@ -159,7 +165,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( btndown, wtstr );
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
-      QBoxLayout *lgroup0 = new QVBoxLayout( group0, 10 );
+      QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
       QGridLayout *lgroup1 = new QGridLayout( group1, 3, 5, 10);
 #ifdef __linux__
       QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
@@ -173,8 +179,14 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 #endif
       main->addWidget(group2);
 
-      lgroup0->addSpacing(group0->fontMetrics().height()/2);
-      lgroup0->addWidget(sdcombo);
+      lgroup0->addRowSpacing(0, group0->fontMetrics().height()/2);
+      lgroup0->addColSpacing(2, KDialog::spacingHint() * 2);
+      lgroup0->setColStretch(1, 1);
+      lgroup0->setColStretch(4, 1);
+      lgroup0->addWidget(sdllabel, 1, 0);
+      lgroup0->addWidget(sdlcombo, 1, 1);
+      lgroup0->addWidget(sdrlabel, 1, 3);
+      lgroup0->addWidget(sdrcombo, 1, 4);
 
       lgroup1->addRowSpacing(0, group1->fontMetrics().height()/2);
       lgroup1->addColSpacing(2, KDialog::spacingHint() * 2);
@@ -216,7 +228,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
     // read only mode
     if (getuid() != 0)
     {
-      sdcombo->setEnabled(false);
+      sdlcombo->setEnabled(false);
+      sdrcombo->setEnabled(false);
 
       restart_lined->setReadOnly(true);
       shutdown_lined->setReadOnly(true);
@@ -294,34 +307,24 @@ void KDMSessionsWidget::slotRemoveSessionType()
     sessionslb->removeItem(i);
 }
 
+void KDMSessionsWidget::writeSD(QComboBox *combo)
+{
+    QString what;
+    switch (combo->currentItem()) {
+    case SdAll: what = "All"; break;
+    case SdRoot: what = "Root"; break;
+    default: what = "None"; break;
+    }
+    c->writeEntry( "AllowShutdown", what);
+}
+
 void KDMSessionsWidget::save()
 {
-    //kdDebug() << "KDMSessionsWidget::applySettings()" << endl;
+    c->setGroup("X-:*-Greeter");
+    writeSD(sdlcombo);
 
-    c->setGroup("KDM");
-
-    c->writeEntry("Shutdown", shutdown_lined->text(), true);
-    c->writeEntry("Restart", restart_lined->text(), true);
-
-  // write shutdown auth
-  switch ( sdcombo->currentItem() )
-  {
-    case SdNone:
-    c->writeEntry( "ShutdownButton", "None" );
-    break;
-    case SdAll:
-    c->writeEntry( "ShutdownButton", "All" );
-    break;
-    case SdRootOnly:
-    c->writeEntry( "ShutdownButton", "RootOnly" );
-    break;
-    case SdConsoleOnly:
-    c->writeEntry( "ShutdownButton", "ConsoleOnly" );
-    break;
-    default:
-    break;
-  }
-
+    c->setGroup("X-*-Greeter");
+    writeSD(sdrcombo);
     QString sesstr;
     for(uint i = 0; i < sessionslb->count(); i++)
     {
@@ -330,51 +333,51 @@ void KDMSessionsWidget::save()
     }
     c->writeEntry( "SessionTypes", sesstr );
 
+    c->setGroup("Shutdown");
+    c->writeEntry("HaltCmd", shutdown_lined->text(), true);
+    c->writeEntry("RebootCmd", restart_lined->text(), true);
 #ifdef __linux__
-    c->setGroup("Lilo");
-
-    c->writeEntry("Lilo", lilo_check->isChecked());
-    c->writeEntry("LiloCommand", lilocmd_lined->text());
+    c->writeEntry("UseLilo", lilo_check->isChecked());
+    c->writeEntry("LiloCmd", lilocmd_lined->text());
     c->writeEntry("LiloMap", lilomap_lined->text());
 #endif
 }
 
+void KDMSessionsWidget::readSD(QComboBox *combo, QString def)
+{
+  QString str = c->readEntry("AllowShutdown", def);
+  SdModes sdMode;
+  if(str == "All")
+    sdMode = SdAll;
+  else if(str == "Root")
+    sdMode = SdRoot;
+  else
+    sdMode = SdNone;
+  combo->setCurrentItem(sdMode);
+}
 
 void KDMSessionsWidget::load()
 {
   QString str;
 
-  c->setGroup("KDM");
+  c->setGroup("X-:*-Greeter");
+  readSD(sdlcombo, "All");
 
-  // read restart and shutdown cmds
-  restart_lined->setText(c->readEntry("Restart", "/sbin/reboot"));
-  shutdown_lined->setText(c->readEntry("Shutdown", "/sbin/halt"));
-
-  str = c->readEntry("ShutdownButton", "All");
-  SdModes sdMode;
-  if(str == "All")
-    sdMode = SdAll;
-  else if(str == "ConsoleOnly")
-    sdMode = SdConsoleOnly;
-  else if(str == "RootOnly")
-    sdMode = SdRootOnly;
-  else
-    sdMode = SdNone;
-  sdcombo->setCurrentItem(sdMode);
-
+  c->setGroup("X-*-Greeter");
+  readSD(sdrcombo, "Root");
   QStringList sessions = c->readListEntry( "SessionTypes");
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
 
+  c->setGroup("Shutdown");
+  restart_lined->setText(c->readEntry("RebootCmd", "/sbin/reboot"));
+  shutdown_lined->setText(c->readEntry("HaltCmd", "/sbin/halt"));
 #ifdef __linux__
-    c->setGroup("Lilo");
-
-    bool lien = c->readBoolEntry("Lilo", false);
-    lilo_check->setChecked(lien);
-    slotLiloCheckToggled(lien);
-
-    lilocmd_lined->setText(c->readEntry("LiloCommand", "/sbin/lilo"));
-    lilomap_lined->setText(c->readEntry("LiloMap", "/boot/map"));
+  bool lien = c->readBoolEntry("UseLilo", false);
+  lilo_check->setChecked(lien);
+  slotLiloCheckToggled(lien);
+  lilocmd_lined->setText(c->readEntry("LiloCmd", "/sbin/lilo"));
+  lilomap_lined->setText(c->readEntry("LiloMap", "/boot/map"));
 #endif
 }
 
@@ -385,7 +388,8 @@ void KDMSessionsWidget::defaults()
   restart_lined->setText("/sbin/reboot");
   shutdown_lined->setText("/sbin/halt");
 
-  sdcombo->setCurrentItem(SdAll);
+  sdlcombo->setCurrentItem(SdAll);
+  sdrcombo->setCurrentItem(SdRoot);
 
   sessionslb->clear();
   sessionslb->insertItem("default");

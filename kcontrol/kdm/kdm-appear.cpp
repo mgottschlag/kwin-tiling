@@ -1,5 +1,5 @@
 /*
-  $Id: $
+  $Id$
   This file is part of the KDE Display Manager Configuration package
   Copyright (C) 1997-1998 Thomas Tanghus (tanghus@earthling.net)
 
@@ -75,10 +75,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWidget *hlp = new QWidget( group );
   grid->addMultiCellWidget(hlp, 1,1, 0,1);
   QHBoxLayout *hlay = new QHBoxLayout( hlp, KDialog::spacingHint() );
-  QLabel *label = new QLabel(i18n("&Greeting:"), hlp);
-  hlay->addWidget(label);
   greetstr_lined = new KLineEdit(hlp);
-  label->setBuddy( greetstr_lined );
+  QLabel *label = new QLabel(greetstr_lined, i18n("&Greeting:"), hlp);
+  hlay->addWidget(label);
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
       this, SLOT(changed()));
   hlay->addWidget(greetstr_lined);
@@ -96,16 +95,16 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addMultiCellWidget(hlp, 2,4, 0,0);
   QGridLayout *hglay = new QGridLayout( hlp, 3, 4, KDialog::spacingHint() );
 
-  label = new QLabel(i18n("Logo a&rea:"), hlp);
+  label = new QLabel(i18n("Logo area:"), hlp);
   hglay->addWidget(label, 0, 0);
   QWidget *helper = new QWidget( hlp );
   hglay->addMultiCellWidget(helper, 0,0, 1,2);
   QVBoxLayout *vlay = new QVBoxLayout( helper, KDialog::spacingHint() );
-  noneRadio = new QRadioButton( i18n("None"), helper );
-  clockRadio = new QRadioButton( i18n("Show clock"), helper );
-  logoRadio = new QRadioButton( i18n("Show logo"), helper );
-  label->setBuddy( logoRadio );
+  noneRadio = new QRadioButton( i18n("&None"), helper );
+  clockRadio = new QRadioButton( i18n("Show cloc&k"), helper );
+  logoRadio = new QRadioButton( i18n("Sho&w logo"), helper );
   QButtonGroup *buttonGroup = new QButtonGroup( helper );
+  label->setBuddy( buttonGroup );
   connect( buttonGroup, SIGNAL(clicked(int)),
        this, SLOT(slotAreaRadioClicked(int)) );
   connect( buttonGroup, SIGNAL(clicked(int)),
@@ -149,19 +148,19 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(hlp, 2, 1);
   hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
 
-  label = new QLabel(i18n("Pos&ition:"), hlp);
+  label = new QLabel(i18n("Position:"), hlp);
   hglay->addWidget(label, 0, 0);
   helper = new QWidget( hlp );
   hglay->addWidget(helper, 0, 1);
   vlay = new QVBoxLayout( helper, KDialog::spacingHint() );
-  posCenterRadio = new QRadioButton( i18n("Centered"), helper );
-  label->setBuddy( posCenterRadio );
-  posSpecifyRadio = new QRadioButton( i18n("Specify"), helper );
+  posCenterRadio = new QRadioButton( i18n("Cente&red"), helper );
+  posSpecifyRadio = new QRadioButton( i18n("Spec&ify"), helper );
   buttonGroup = new QButtonGroup( helper );
+  label->setBuddy( buttonGroup );
   connect( buttonGroup, SIGNAL(clicked(int)),
-       this, SLOT(slotPosRadioClicked(int)) );
+	   this, SLOT(slotPosRadioClicked(int)) );
   connect( buttonGroup, SIGNAL(clicked(int)),
-       this, SLOT(changed()) );
+	   this, SLOT(changed()) );
   buttonGroup->hide();
   buttonGroup->insert(posCenterRadio, 0);
   buttonGroup->insert(posSpecifyRadio, 1);
@@ -215,7 +214,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
 
-  label = new QLabel(i18n("&Echo mode:"), hlp);
+  label = new QLabel(i18n("Echo &mode:"), hlp);
   echocombo = new QComboBox(false, hlp);
   label->setBuddy( echocombo );
   echocombo->insertItem(i18n("No echo"));
@@ -230,27 +229,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
   // The Language group box
-  group = new QGroupBox(0, Vertical, i18n("Language"), this);
+  group = new QGroupBox(0, Vertical, i18n("Locale"), this);
   vbox->addWidget(group, 1);
 
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
   hbox->setColStretch(1, 1);
 
-  label = new QLabel(i18n("Count&ry:"), group);
-  hbox->addWidget(label, 0, 0);
-
-  countrycombo = new KLanguageCombo(group);
-  label->setBuddy( countrycombo );
-  countrycombo->setFixedHeight( countrycombo->sizeHint().height() );
-  hbox->addWidget(countrycombo, 0, 1);
-  connect(countrycombo, SIGNAL(activated(int)), this, SLOT(changedCountry(int)));
-
-  wtstr = i18n("Here you can choose a country setting for KDM. This setting doesn't affect"
-    " a user's personal settings that will take effect after login.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( countrycombo, wtstr );
-
-  label = new QLabel(i18n("La&nguage:"), group);
+  label = new QLabel(i18n("Languag&e:"), group);
   hbox->addWidget(label, 1, 0);
 
   langcombo = new KLanguageCombo(group);
@@ -267,7 +252,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   vbox->addStretch(1);
 
-  loadCountryList(countrycombo);
+  loadLanguageList(langcombo);
   load();
 
   // implement read-only mode
@@ -285,148 +270,28 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
       guicombo->setEnabled(false);
       echocombo->setEnabled(false);
       langcombo->setEnabled(false);
-      countrycombo->setEnabled(false);
     }
 }
 
-void KDMAppearanceWidget::loadLanguageList(KLanguageCombo *combo, const QStringList &first)
+void KDMAppearanceWidget::loadLanguageList(KLanguageCombo *combo)
 {
-  // clear the list
   combo->clear();
-
-  QStringList prilang;
-  // add the primary languages for the country to the list
-  for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
-    {
-        QString str = locate("locale", *it + QString::fromLatin1("/entry.desktop"));
-        if (!str.isNull())
-          prilang << str;
-    }
-
-  // add all languages to the list
-  QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-                               QString::fromLatin1("*/entry.desktop"));
-  alllang.sort();
-  QStringList langlist = prilang;
-  if (langlist.count() > 0)
-    langlist << QString::null; // separator
-  langlist += alllang;
-
-  int menu_index = -2;
-  QString submenu; // we are working on this menu
+  QStringList langlist = KGlobal::dirs()->findAllResources("locale",
+			QString::fromLatin1("*/entry.desktop"));
+  langlist.sort();
   for ( QStringList::ConstIterator it = langlist.begin();
-    it != langlist.end(); ++it )
-    {
-        if ((*it).isNull())
-        {
-      combo->insertSeparator();
-      submenu = QString::fromLatin1("other");
-      combo->insertSubmenu(i18n("Other"), submenu, QString::null, -2);
-          menu_index = -1; // first entries should _not_ be sorted
-          continue;
-        }
+	it != langlist.end(); ++it )
+  {
+    QString fpath = (*it).left((*it).length() - 14);
+    int index = fpath.findRev('/');
+    QString nid = fpath.mid(index + 1);
+
     KSimpleConfig entry(*it);
     entry.setGroup(QString::fromLatin1("KCM Locale"));
     QString name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
-
-    QString path = *it;
-    int index = path.findRev('/');
-    path = path.left(index);
-    index = path.findRev('/');
-    path = path.mid(index+1);
-    combo->insertLanguage(path, name, QString::null, submenu, menu_index);
-    }
-}
-
-void KDMAppearanceWidget::loadCountryList(KLanguageCombo *combo)
-{
-  QString sub = QString::fromLatin1("l10n/");
-
-  // clear the list
-  combo->clear();
-
-  QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
-                                 sub + QString::fromLatin1("*.desktop"));
-  regionlist.sort();
-
-  for ( QStringList::ConstIterator it = regionlist.begin();
-    it != regionlist.end();
-    ++it )
-  {
-    QString tag = *it;
-    int index;
-
-    index = tag.findRev('/');
-    if (index != -1) tag = tag.mid(index + 1);
-
-    index = tag.findRev('.');
-    if (index != -1) tag.truncate(index);
-
-    KSimpleConfig entry(*it);
-    entry.setGroup(QString::fromLatin1("KCM Locale"));
-    QString name = entry.readEntry(QString::fromLatin1("Name"),
-                   i18n("without name"));
-
-    combo->insertSubmenu( name, '-' + tag, sub );
+    combo->insertLanguage(nid, name, QString::fromLatin1("l10n/"), QString::null);
   }
-
-  // add all languages to the list
-  QStringList countrylist = KGlobal::dirs()->findAllResources("locale",
-                               sub + QString::fromLatin1("*/entry.desktop"));
-  countrylist.sort();
-
-  for ( QStringList::ConstIterator it = countrylist.begin();
-    it != countrylist.end(); ++it )
-    {
-    KSimpleConfig entry(*it);
-    entry.setGroup(QString::fromLatin1("KCM Locale"));
-    QString name = entry.readEntry(QString::fromLatin1("Name"),
-                       i18n("without name"));
-    QString submenu = '-' + entry.readEntry(QString::fromLatin1("Region"));
-
-    QString tag = *it;
-    int index = tag.findRev('/');
-    tag.truncate(index);
-    index = tag.findRev('/');
-    tag = tag.mid(index+1);
-        int menu_index = combo->containsTag(tag) ? -1 : -2;
-    combo->insertLanguage(tag, name, sub, submenu, menu_index);
-    }
 }
-
-
-void KDMAppearanceWidget::loadLangs(QString country)
-{
-  KSimpleConfig ent(locate("locale",
-               QString::fromLatin1("l10n/%1/entry.desktop")
-               .arg(country)), true);
-  ent.setGroup(QString::fromLatin1("KCM Locale"));
-  langs = ent.readListEntry(QString::fromLatin1("Languages"));
-  if (langs.isEmpty()) langs = QString::fromLatin1("C");
-
-  // load lists into widgets
-  loadLanguageList(langcombo, langs);
-}
-
-
-void KDMAppearanceWidget::changedCountry(int i)
-{
-  loadLangs(countrycombo->tag(i));
-
-  QString lang = QString::fromLatin1("C");
-  // use the first INSTALLED langauge in the list, or default to C
-  for ( QStringList::Iterator it = langs.begin(); it != langs.end(); ++it )
-    if (langcombo->containsTag(*it))
-      {
-	lang = *it;
-	break;
-      }
-
-  langcombo->setCurrentItem(lang);
-
-  emit changed();
-}
-
 
 bool KDMAppearanceWidget::setLogo(QString logo)
 {
@@ -532,22 +397,17 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 void KDMAppearanceWidget::save()
 {
-  c->setGroup("KDM");
+  c->setGroup("X-*-Greeter");
 
-  // write greeting string
   c->writeEntry("GreetString", greetstr_lined->text());
 
-  // write logo or clock
   c->writeEntry("LogoArea", noneRadio->isChecked() ? "None" : 
-			    logoRadio->isChecked() ? "KdmLogo" : "KdmClock" );
+			    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-  // write logo path
   c->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
-  // write GUI style
   c->writeEntry("GUIStyle", styles[guicombo->currentItem()]);
 
-  // write echo mode
   c->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
 			    echocombo->currentItem() == 1 ? "OneStar" :
 							    "ThreeStars");
@@ -556,26 +416,23 @@ void KDMAppearanceWidget::save()
   c->writeEntry("GreeterPosX", xLineEdit->text());
   c->writeEntry("GreeterPosY", yLineEdit->text());
 
-  // write locale
-  c->setGroup("Locale");
   c->writeEntry("Language", langcombo->currentTag());
-  c->writeEntry("Country",  countrycombo->currentTag());
 }
 
 
 void KDMAppearanceWidget::load()
 {
-  c->setGroup("KDM");
+  c->setGroup("X-*-Greeter");
 
   // Read the greeting string
-  greetstr_lined->setText(c->readEntry("GreetString", "KDE System at [HOSTNAME]"));
+  greetstr_lined->setText(c->readEntry("GreetString", "Welcome to %s at %n"));
 
   // Regular logo or clock
-  QString logoArea = c->readEntry("LogoArea", "KdmLogo" );
-  if (logoArea == "KdmClock") {
+  QString logoArea = c->readEntry("LogoArea", "Logo" );
+  if (logoArea == "Clock") {
     clockRadio->setChecked(true);
     slotAreaRadioClicked(KdmClock);
-  } else if (logoArea == "KdmLogo") {
+  } else if (logoArea == "Logo") {
     logoRadio->setChecked(true);
     slotAreaRadioClicked(KdmLogo);
   } else {
@@ -613,25 +470,14 @@ void KDMAppearanceWidget::load()
   xLineEdit->setText( c->readEntry("GreeterPosX", "100"));
   yLineEdit->setText( c->readEntry("GreeterPosY", "100"));
 
-
-  c->setGroup("Locale");
-
-  // get the country
-  QString country = c->readEntry("Country", "C");
-
-  loadLangs (country);
   // get the language
-  QStringList lngs = c->readListEntry("Language", ':');
-
-  // update widgets
-  countrycombo->setCurrentItem(country);
-  langcombo->setCurrentItem(lngs.isEmpty() ? "C" : lngs.first());
+  langcombo->setCurrentItem(c->readEntry("Language", "C"));
 }
 
 
 void KDMAppearanceWidget::defaults()
 {
-  greetstr_lined->setText("KDE System at [HOSTNAME]");
+  greetstr_lined->setText("Welcome to %s at %n");
   logoRadio->setChecked( true );
   slotAreaRadioClicked( KdmLogo );
   posCenterRadio->setChecked( true );
@@ -640,8 +486,6 @@ void KDMAppearanceWidget::defaults()
   guicombo->setCurrentItem(0);
   echocombo->setCurrentItem(1);
 
-  loadLangs("C");
-  countrycombo->setCurrentItem("C");
   langcombo->setCurrentItem("C");
 }
 

@@ -25,11 +25,13 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qimage.h>
-#include <qbuttongroup.h>
+#include <qgroupbox.h>
+//#include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 
 #include <klistbox.h>
+#include <kcombobox.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
 
@@ -55,18 +57,20 @@ private slots:
 	void slotWpToNp();
 	void slotNpToWp();
         void slotEnALChanged();
+        void slotPresChanged();
         void slotEnPLChanged();
 	void slotChanged();
 
 private:
 	void removeText(QListBox *lb, const QString &user);
 
-	QGroupBox	*alGroup, *npGroup;
-	QButtonGroup	*btGroup;
-	QCheckBox	*cbalen, *cbal1st, *cbplen, *cbarlen, *cbshwen;
-	KListBox	*userlb, *wpuserlb, *npuserlb;
+	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
+	QCheckBox	*cbalen, *cbal1st, *cbplen, *cbarlen, *cbjumppw;
+	QRadioButton	*npRadio, *ppRadio, *spRadio;
+	KComboBox	*userlb, *puserlb;
+	KListBox	*wpuserlb, *npuserlb;
 	QPushButton	*np_to_wp, *wp_to_np;
-	QLabel		*u_label, *w_label, *n_label;
+	QLabel		*u_label, *pu_label, *w_label, *n_label;
 };
 
 #endif

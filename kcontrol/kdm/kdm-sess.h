@@ -24,6 +24,7 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
+#include <qcombobox.h>
 #include <qcheckbox.h>
 #include <kdbtn.h>
 
@@ -51,7 +52,7 @@ public:
 	void save();
 	void defaults();
 
-	enum SdModes { SdAll, SdConsoleOnly, SdRootOnly, SdNone };
+	enum SdModes { SdAll, SdRoot, SdNone };
 	
 protected:
 	void moveSession(int);
@@ -67,8 +68,12 @@ protected slots:
 	void changed();
 
 private:
+	void readSD (QComboBox *, QString);
+	void writeSD (QComboBox *);
+
 	KIconLoader	*iconloader;
-	QComboBox	*sdcombo;
+	QComboBox	*sdlcombo, *sdrcombo;
+	QLabel		*sdllabel, *sdrlabel;
 	QLineEdit	*restart_lined, *shutdown_lined, *session_lined;
 	MyListBox	*sessionslb;
 	KDirectionButton	*btnup, *btndown;

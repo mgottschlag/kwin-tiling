@@ -96,9 +96,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
 void KDMFontWidget::save()
 {
-  //kdDebug() << "KDMFontWidget::applySettings()" << endl;
-
-  c->setGroup("KDM");
+  c->setGroup("X-*-Greeter");
 
   // write font
   c->writeEntry("StdFont", stdfont);
@@ -119,7 +117,7 @@ void KDMFontWidget::load()
 {
   set_def();
 
-  c->setGroup("KDM");
+  c->setGroup("X-*-Greeter");
 
   // Read the fonts
   stdfont = c->readFontEntry("StdFont", &stdfont);
