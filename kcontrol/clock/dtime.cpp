@@ -243,11 +243,11 @@ void Dtime::load()
   KConfig config("kcmclockrc", true, false);
   config.setGroup("NTP");
   timeServerList->insertStringList(QStringList::split(',', config.readEntry("servers", 
-    "Public Time Server (pool.ntp.org),\
+    i18n("Public Time Server (pool.ntp.org),\
 asia.pool.ntp.org,\
 europe.pool.ntp.org,\
 north-america.pool.ntp.org,\
-oceania.pool.ntp.org")));
+oceania.pool.ntp.org"))));
   setDateTimeAuto->setChecked(config.readBoolEntry("enabled", false));
 
   // Reset to the current date and time
