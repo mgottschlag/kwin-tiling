@@ -282,7 +282,7 @@ void AboutWidget::updatePixmap()
     yoffset = 30;
 
     int fheight = fontMetrics().height();
-    int xadd = 120;
+//  int xadd = 120;
 
     f2.setBold(true);
 
@@ -290,9 +290,9 @@ void AboutWidget::updatePixmap()
     if (!_moduleList)
     {
         int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-120;
-	int xadd = (hAlign == AlignLeft) ? 120 : -xoffset+10;
-      
-	// kde version
+        int xadd = (hAlign == AlignLeft) ? 120 : -xoffset+10;
+
+        // kde version
         p.setFont(f1);
         p.drawText(xoffset, yoffset, 120, fheight, hAlign, i18n(version_text));
         p.setFont(f2);
@@ -374,7 +374,7 @@ void AboutWidget::updatePixmap()
         const int alxadd = 200; // AlignLeft xadd
         int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-alxadd;
         int xadd = (hAlign == AlignLeft) ? alxadd : 10-xoffset;
-	int yoffset = 20;
+        int yoffset = 20;
        
         p.setFont(headingFont);
         if (!_caption.isEmpty())
