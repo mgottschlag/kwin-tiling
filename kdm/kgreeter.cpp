@@ -44,6 +44,7 @@
 #include <kimgio.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -739,7 +740,7 @@ DoIt()
 int main(int argc, char **argv)
 {
      MyApp app(argc, argv);
-     KGlobal::dirs()->addResourceTypes("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
+     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
 
      kdmcfg = new KDMConfig();
 
@@ -786,6 +787,7 @@ GreetUser(
  
      argv[2] = d->name;
      MyApp myapp( argc, const_cast<char**>(argv) );
+     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
      QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );
      
@@ -796,12 +798,7 @@ GreetUser(
      
      RegisterCloseOnFork (ConnectionNumber (*dpy));
      SecureDisplay (d, *dpy);
-     // this is for a real BackSpace-key
-     // It's a hack, remove it!
-     /*
-     KeySym mysym = XK_BackSpace;
-     XChangeKeyboardMapping(*dpy, 22, 1, &mysym, 1);
-     */
+
      // this is necessary, since Qt-1.1 just overwrites the
      // IOErrorHandler that was set by xdm!!!
      // we have to return RESERVER_DISPLAY to restart the server
