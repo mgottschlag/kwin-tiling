@@ -25,6 +25,7 @@
 #include <qsplitter.h>
 #include <qtabwidget.h>
 
+#include <kapp.h>
 #include <kaction.h>
 #include <kstdaction.h>
 #include <klocale.h>
@@ -117,7 +118,9 @@ void TopLevel::newModule(const QString &name, const QString &quickhelp)
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
+  QApplication::setOverrideCursor( waitCursor );
   _dock->dockModule(module);
+  QApplication::restoreOverrideCursor();
 }
 
 void TopLevel::showModule(QString desktopFile)
@@ -145,7 +148,10 @@ void TopLevel::showModule(QString desktopFile)
 			_indextab->makeSelected(mod);
 
 			// dock it
-			_dock->dockModule(mod);
+            QApplication::setOverrideCursor( waitCursor );
+            _dock->dockModule(mod);
+            QApplication::restoreOverrideCursor();
+            break;
 	  }
     }
 }
@@ -164,8 +170,9 @@ void TopLevel::activateModule(const QString& name)
 		  _indextab->makeSelected(mod);
 		  
 		  // dock it
-		  _dock->dockModule(mod);
-		  
+          QApplication::setOverrideCursor( waitCursor );
+          _dock->dockModule(mod);
+          QApplication::restoreOverrideCursor();
 		  break;
 		}
 	}
