@@ -1366,8 +1366,6 @@ static struct displayMatch {
 	{ "foreign", 7,	dForeign | dPermanent | dFromFile },
 };
 
-#define def_type (Local | Permanent | FromFile)
-
 static int
 parseDisplayType (const char *string, const char **atPos)
 {
@@ -1377,7 +1375,7 @@ parseDisplayType (const char *string, const char **atPos)
     for (d = displayTypes; d < displayTypes + as(displayTypes); d++) {
 	if (!memcmp (d->name, string, d->len) &&
 	    (!string[d->len] || string[d->len] == '@')) {
-	    if (string[d->len] == '@')
+	    if (string[d->len] == '@' && string[d->len + 1])
 		*atPos = string + d->len + 1;
 	    return d->type;
 	}
@@ -1552,6 +1550,8 @@ int main(int argc, char **argv)
 
 /*Debug ("parsing command line\n");*/
     for (ap = 1; ap < argc; ap++) {
+	if (!memcmp (argv[ap], "tty", 3))	/* started from init */
+	    continue;
 	for (i = 0; i < as(opts); i++)
 	    if (!strcmp (argv[ap], opts[i].name)) {
 		switch (opts[i].type) {
