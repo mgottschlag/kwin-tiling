@@ -24,14 +24,14 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h> 
+#include <iostream.h>
 
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 
-#include <qfileinfo.h> 
+#include <qfileinfo.h>
 #include <qstring.h>
 #include <qhbuttongroup.h>
 #include <qmessagebox.h>
@@ -51,15 +51,19 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   : KCModule(parent, name)
 {
   QBoxLayout* lay = new QVBoxLayout(this, 10);
-      
-  accel = new KIntNumInput(i18n("Acceleration"), 1,20,2,20, "x", 
-                               10, true, this);
+
+  accel = new KIntNumInput(20, this);
+  accel->setLabel(i18n("Acceleration"));
+  accel->setRange(1,20,2);
+  accel->setSuffix("x");
   accel->setSteps(1,20);
   lay->addWidget(accel);
   connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-  thresh = new KIntNumInput(i18n("Threshold"), 1,20,2,20,
-			    i18n("pixels"), 10, true, this);
+  thresh = new KIntNumInput(accel, 20, this);
+  thresh->setLabel(i18n("Threshold"));
+  thresh->setRange(1,20,2);
+  thresh->setSuffix(i18n("pixels"));
   thresh->setSteps(1,20);
   lay->addWidget(thresh);
   connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -121,7 +125,7 @@ void MouseConfig::load()
   KConfig *config = new KConfig("kcminput");
 
   int accel_num, accel_den, threshold;
-  XGetPointerControl( kapp->getDisplay(), 
+  XGetPointerControl( kapp->getDisplay(),
 		      &accel_num, &accel_den, &threshold );
   accel_num /= accel_den;   // integer acceleration only
 
@@ -129,7 +133,7 @@ void MouseConfig::load()
   int h = RIGHT_HANDED;
   unsigned char map[5];
   num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 5);
-      
+
   switch (num_buttons)
     {
     case 1:
@@ -208,11 +212,11 @@ void MouseConfig::save()
   accelRate = getAccel();
   thresholdMove = getThreshold();
   handed = getHandedness();
-  
+
   XChangePointerControl( kapp->getDisplay(),
                          true, true, accelRate, 1, thresholdMove);
 
-  
+
   unsigned char map[5];
   int remap=1;
   if (handedEnabled) {
@@ -242,7 +246,7 @@ void MouseConfig::save()
               map[2] = (unsigned char) 1;
           }
           break;
-      case 5:  
+      case 5:
           // Intellimouse case, where buttons 1-3 are left, middle, and
           // right, and 4-5 are up/down
           if (handed == RIGHT_HANDED) {
@@ -275,7 +279,7 @@ void MouseConfig::save()
               /* keep trying until the pointer is free */
           { };
   }
-  
+
   config->setGroup("Mouse");
   config->writeEntry("Acceleration",accelRate);
   config->writeEntry("Threshold",thresholdMove);
@@ -283,7 +287,7 @@ void MouseConfig::save()
       config->writeEntry("MouseButtonMapping",QString("RightHanded"));
   else
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
-  
+
   config->sync();
 
   delete config;

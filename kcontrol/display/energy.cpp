@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  *
@@ -54,7 +54,7 @@ extern "C" {
     int DPMSEnable(Display *);
     int DPMSDisable(Display *);
     void DPMSSetTimeouts(Display *, int, int, int);
-#ifdef XIMStringConversionRetrival 
+#ifdef XIMStringConversionRetrival
 }
 #endif
 #endif
@@ -127,22 +127,28 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     lbl->setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
     hbox->addStretch();
     hbox->addWidget(lbl);
-    
+
     // Sliders
-    m_pStandbySlider = new KIntNumInput(i18n("&Standby after:"), 0, 120, 10, 
-	    m_Standby, i18n("min"), 10, true, this);
+    m_pStandbySlider = new KIntNumInput(m_Standby, this);
+    m_pStandbySlider->setLabel(i18n("&Standby after:"));
+    m_pStandbySlider->setRange(0, 120, 10);
+    m_pStandbySlider->setSuffix(i18n("min"));
     m_pStandbySlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pStandbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby(int)));
     top->addWidget(m_pStandbySlider);
 
-    m_pSuspendSlider = new KIntNumInput(i18n("S&uspend after:"), 0, 120, 10, 
-	    m_Suspend, i18n("min"), 10, true, this);
+    m_pSuspendSlider = new KIntNumInput(m_pStandbySlider, m_Suspend, this);
+    m_pSuspendSlider->setLabel(i18n("S&uspend after:"));
+    m_pSuspendSlider->setRange(0, 120, 10);
+    m_pSuspendSlider->setSuffix(i18n("min"));
     m_pSuspendSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pSuspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend(int)));
     top->addWidget(m_pSuspendSlider);
 
-    m_pOffSlider = new KIntNumInput(i18n("&Power Off after:"), 0, 120, 10, 
-	    m_Off, i18n("min"), 10, true, this);
+    m_pOffSlider = new KIntNumInput(m_pSuspendSlider, m_Off, this);
+    m_pOffSlider->setLabel(i18n("&Power Off after:"));
+    m_pOffSlider->setRange(0, 120, 10);
+    m_pOffSlider->setSuffix(i18n("min"));
     m_pOffSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pOffSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff(int)));
     top->addWidget(m_pOffSlider);
@@ -167,7 +173,7 @@ int KEnergy::buttons()
 {
     if (m_bDPMS)
 	return KCModule::Help | KCModule::Default | KCModule::Reset |
-	       KCModule::Cancel | KCModule::Ok; 
+	       KCModule::Cancel | KCModule::Ok;
     else
 	return KCModule::Help | KCModule::Ok;
 }
@@ -263,7 +269,7 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
 	if (enable) {
             DPMSEnable(dpy);
             DPMSSetTimeouts(dpy, 60*standby, 60*suspend, 60*off);
-        } else 
+        } else
             DPMSDisable(dpy);
     } else
 	qWarning("Server has no DPMS extension");

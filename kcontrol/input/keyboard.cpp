@@ -5,7 +5,7 @@
  *
  * Layout management, cleanups:
  * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
- * 
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -24,7 +24,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-//#include <iostream.h> 
+//#include <iostream.h>
 //#include <sys/types.h>
 //#include <unistd.h>
 //#include <sys/stat.h>
@@ -52,13 +52,15 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
   connect(repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
 
   lay->addSpacing(10);
-  click = new KIntNumInput(i18n("Key click volume"), 0, 100, 10, 100,
-			   "%", 10, true, this);
+  click = new KIntNumInput(100, this);
+  click->setLabel(i18n("Key click volume"));
+  click->setRange(0, 100, 10);
+  click->setSuffix("%");
   click->setSteps(5,25);
   connect(click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
   lay->addWidget(click);
-  
+
   lay->addStretch(10);
   load();
 }
@@ -84,14 +86,14 @@ void KeyboardConfig::load()
   KConfig *config = new KConfig("kcminput");
 
     XKeyboardState kbd;
-    
+
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
-    
+
     config->setGroup("Keyboard");
     bool key = config->readBoolEntry("KeyboardRepeat", true);
     keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
     clickVolume = config->readNumEntry("ClickVolume", kbd.key_click_percent);
-    
+
     setClick(kbd.key_click_percent);
     setRepeat(kbd.global_auto_repeat);
 
@@ -103,16 +105,16 @@ void KeyboardConfig::save()
   KConfig *config = new KConfig("kcminput");
 
     XKeyboardControl kbd;
-    
+
     clickVolume = getClick();
     keyboardRepeat = repeatBox->isChecked() ? AutoRepeatModeOn : AutoRepeatModeOff;
-    
+
     kbd.key_click_percent = clickVolume;
     kbd.auto_repeat_mode = keyboardRepeat;
-    XChangeKeyboardControl(kapp->getDisplay(), 
+    XChangeKeyboardControl(kapp->getDisplay(),
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbd);
-    
+
     config->setGroup("Keyboard");
     config->writeEntry("ClickVolume",clickVolume);
     config->writeEntry("KeyboardRepeat", (keyboardRepeat == AutoRepeatModeOn));
