@@ -83,7 +83,7 @@ Comment[uk]=Настройки миши
 Comment[zh_CN.GB2312]=鼠标设置
 Comment[zh_TW.Big5]=滑鼠設定
 
-Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick
+Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
 Keywords[ca]=Ratolí,acceleració del ratolí,llindar del ratolí,botons del ratolí,selecció,forma del cursor,dispositius d'entrada
 Keywords[cs]=Myš,Akcelerace myši,Práh myši,Tlačítka myši,Výběr,Tvar kurzoru,Vstupní zařízení
 Keywords[da]=Mus,Museacceleration,Muse grænse,Museknapper,Udvalg,Markørform,Inddataenheder
