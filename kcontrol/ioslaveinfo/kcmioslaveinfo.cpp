@@ -42,26 +42,12 @@
 
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
-:KCModule(parent,name)
-,m_ioslavesLb(0)
+               :KCModule(parent,name),m_ioslavesLb(0)
 {
-   setButtons(Help);
-   QBoxLayout *top = new QVBoxLayout(this,10,15);
+   QVBoxLayout *layout=new QVBoxLayout(this,10,15);
 
-   tabs = new QTabWidget(this);
-   top->addWidget(tabs);
-
-   ////////////////////////////////////////
-   // Add the main tab with the information
-   ////////////////////////////////////////
-   tabInfo = new QFrame(this);
-
-   setButtons(Help);
-   QVBoxLayout *layout=new QVBoxLayout(tabInfo,10,15);
-
-   QLabel* label=new QLabel(i18n("Available IOSlaves"),tabInfo);
-
-   QHBox *hbox=new QHBox(tabInfo);
+   QLabel* label=new QLabel(i18n("Available IOSlaves"),this);
+   QHBox *hbox=new QHBox(this);
    m_ioslavesLb=new QListBox(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    //TODO make something useful after 2.1 is released
@@ -79,22 +65,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
       m_ioslavesLb->insertItem(*it);
    };
    m_ioslavesLb->sort();
-
-   connect(m_ioslavesLb,SIGNAL(highlighted( const QString&)),this,SLOT(showInfo(const QString&)));
-   showInfo(m_ioslavesLb->text(0));
-
-
-   ////////////////////////////////////////
-   //// Add the tab for timeout values
-   ////////////////////////////////////////
-   tabTimeouts = new KIOTimeoutControl(this);
-
-   connect(tabTimeouts, SIGNAL(changed(bool)), SLOT(childChanged(bool)));
-
-   tabs->addTab(tabInfo, i18n("IOSlaves Installed"));
-   tabs->addTab(tabTimeouts, i18n("Timeout Values"));
-   tabs->resize(tabs->sizeHint());
-
+   
    setButtons(buttons());
    load();
 };
@@ -106,17 +77,14 @@ KCMIOSlaveInfo::~KCMIOSlaveInfo() {
 
 
 void KCMIOSlaveInfo::load() {
-   tabTimeouts->load();
    emit changed(false);
 }
 
 void KCMIOSlaveInfo::defaults() {
-   tabTimeouts->defaults();
    emit changed(true);
 }
 
 void KCMIOSlaveInfo::save() {
-   tabTimeouts->save();
    emit changed(true);
 }
 
@@ -191,108 +159,5 @@ extern "C"
     return new KCMIOSlaveInfo(parent, name);
   }
 }
-
-
-////////////////////////////////////////////////////////////////////////////
-/////       Timeout class definitions go under here                    /////
-////////////////////////////////////////////////////////////////////////////
-
-KIOTimeoutControl::KIOTimeoutControl(QWidget *parent, const char *name) 
-: QWidget(parent, name)
-{
-   QGridLayout *grid = new QGridLayout(this, 6, 2, KDialog::marginHint(),
-                                       KDialog::spacingHint());
-
-   QLabel *anonylabel;
-   QString whatstr;
-
-   anonylabel = new QLabel(i18n("Timeout values for KDE IO subsystem (in seconds)."), this);
-   grid->addMultiCellWidget(anonylabel, 0, 0, 0, 1);
-
-   anonylabel = new QLabel(i18n("Socket read timeout:"), this);
-   _to_read = new QSpinBox(1, 9999, 1, this);
-   grid->addWidget(anonylabel, 1, 0);
-   grid->addWidget(_to_read, 1, 1);
-   whatstr = i18n("This is the amount of time that KDE will wait on a socket"
-                  " for requested data before disconnecting.");
-   QWhatsThis::add(anonylabel, whatstr);
-   QWhatsThis::add(_to_read, whatstr);
-   connect(_to_read, SIGNAL(valueChanged(int)), SLOT(timeoutChanged(int)));
-
-   anonylabel = new QLabel(i18n("Server response timeout:"), this);
-   _to_response = new QSpinBox(1, 9999, 1, this);
-   grid->addWidget(anonylabel, 2, 0);
-   grid->addWidget(_to_response, 2, 1);
-   whatstr = i18n("This is the amount of time that KDE will wait on a socket"
-                  " for a server or peer to respond before disconnecting.");
-   QWhatsThis::add(anonylabel, whatstr);
-   QWhatsThis::add(_to_response, whatstr);
-   connect(_to_response, SIGNAL(valueChanged(int)), SLOT(timeoutChanged(int)));
-
-   anonylabel = new QLabel(i18n("Server connect timeout:"), this);
-   _to_connect = new QSpinBox(1, 9999, 1, this);
-   grid->addWidget(anonylabel, 3, 0);
-   grid->addWidget(_to_connect, 3, 1);
-   whatstr = i18n("This is the amount of time that KDE will wait for a"
-                  " connection to succeed before giving up.");
-   QWhatsThis::add(anonylabel, whatstr);
-   QWhatsThis::add(_to_connect, whatstr);
-   connect(_to_connect, SIGNAL(valueChanged(int)), SLOT(timeoutChanged(int)));
-
-   anonylabel = new QLabel(i18n("Proxy connect timeout:"), this);
-   _to_proxy = new QSpinBox(1, 9999, 1, this);
-   grid->addWidget(anonylabel, 4, 0);
-   grid->addWidget(_to_proxy, 4, 1);
-   whatstr = i18n("This is the amount of time that KDE will wait for a"
-                  " proxy server connection to succeed before giving up.");
-   QWhatsThis::add(anonylabel, whatstr);
-   QWhatsThis::add(_to_proxy, whatstr);
-   connect(_to_proxy, SIGNAL(valueChanged(int)), SLOT(timeoutChanged(int)));
-
-   _cfg = new KConfig("kioslaverc", false, false);
-
-   grid->setRowStretch(5,100);
-   load();
-}
-
-
-KIOTimeoutControl::~KIOTimeoutControl() {
-  delete _cfg;
-}
-
- 
-void KIOTimeoutControl::timeoutChanged(int val) {
-  emit changed(true);
-}
-
-void KIOTimeoutControl::load() {
-  _to_read->setValue(_cfg->readNumEntry("ReadTimeout", 15));
-  _to_response->setValue(_cfg->readNumEntry("ResponseTimeout", 60));
-  _to_connect->setValue(_cfg->readNumEntry("ConnectTimeout", 20));
-  _to_proxy->setValue(_cfg->readNumEntry("ProxyConnectTimeout", 10));
-  emit changed(false);
-}
-
-
-void KIOTimeoutControl::save() {
-  _cfg->writeEntry("ReadTimeout", _to_read->value());
-  _cfg->writeEntry("ResponseTimeout", _to_response->value());
-  _cfg->writeEntry("ConnectTimeout", _to_connect->value());
-  _cfg->writeEntry("ProxyConnectTimeout", _to_proxy->value());
-  emit changed(true);
-}
-
-
-void KIOTimeoutControl::defaults() {
-  _to_read->setValue(15);
-  _to_response->setValue(60);
-  _to_connect->setValue(20);
-  _to_proxy->setValue(10);
-  emit changed(true);
-}
-
-
-
-
 
 #include "kcmioslaveinfo.moc"

@@ -60,34 +60,5 @@ class KCMIOSlaveInfo : public KCModule
    public slots:
       void configChanged();
       void childChanged(bool really);
-
-   private:
-      QTabWidget *tabs;
-      QWidget *tabInfo;
-      KIOTimeoutControl *tabTimeouts;
 };
-
-
-class KIOTimeoutControl : public QWidget {
- Q_OBJECT
-public:
-  KIOTimeoutControl(QWidget *parent = 0L, const char *name = 0L);
-  virtual ~KIOTimeoutControl();
-
-  void load();
-  void save();
-  void defaults();
-
-private slots:
-  void timeoutChanged(int val);
-
-signals:
-  void changed(bool really);
-
-private:
-  QSpinBox *_to_read, *_to_response, *_to_connect, *_to_proxy;
-  KConfig *_cfg;
-};
-
-
 #endif
