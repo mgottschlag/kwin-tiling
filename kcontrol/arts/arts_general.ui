@@ -84,7 +84,7 @@
                         <cstring>startRealtime</cstring>
                     </property>
                     <property name="text">
-                        <string>Run soundserver with &amp;realtime priority</string>
+                        <string>Run soundserver &amp;with realtime priority</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests.</string>
@@ -144,7 +144,7 @@
                         <cstring>displayMessage</cstring>
                     </property>
                     <property name="text">
-                        <string>Display &amp;messages using:</string>
+                        <string>Display messages &amp;using:</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When enabled, server error, warning, and informational messages will be displayed using this external program.</string>
