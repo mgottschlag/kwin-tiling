@@ -103,7 +103,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	m_refreshRates = new KComboBox(refreshBox);
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
 
-	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees anticlockwise)"), this);
+	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
 	topLayout->addWidget(m_rotationGroup);
 	m_rotationGroup->setRadioButtonExclusive(true);
 

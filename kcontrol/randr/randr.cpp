@@ -224,11 +224,11 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 		case RR_Rotate_0:
 			return i18n("Normal");
 		case RR_Rotate_90:
-			return i18n("Rotated 90 degrees anticlockwise");
+			return i18n("Rotated 90 degrees counterclockwise");
 		case RR_Rotate_180:
-			return i18n("Rotated 180 degrees anticlockwise");
+			return i18n("Rotated 180 degrees counterclockwise");
 		case RR_Rotate_270:
-			return i18n("Rotated 270 degrees anticlockwise");
+			return i18n("Rotated 270 degrees counterclockwise");
 		default:
 			if (rotation & RR_Reflect_X)
 				if (rotation & RR_Reflect_Y)
