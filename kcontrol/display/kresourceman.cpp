@@ -102,7 +102,7 @@ void KResourceMan::sync()
 
 	    QString *value = propDict->find( it.currentKey() );
 			
-	    keyvalue.sprintf( "%s: %s\n", it.currentKey(), value->data() );
+	    keyvalue.sprintf( "%s: %s\n", it.currentKey().data(), value->data() );
 	    propString += keyvalue;
 // 	    if (it.currentKey() == "font"){
 // 		// dirty hack, makes font to fontList for x-resources

@@ -31,6 +31,7 @@
 #include "scrnsave.h"
 #include "general.h"
 #include "backgnd.h"
+#include <qfont.h>
 
 class KDisplayApplication : public KControlApplication
 {
@@ -41,6 +42,7 @@ public:
   void init();
   void apply();
   void defaultValues();
+  void writeQDesktopProperties( QPalette pal, QFont font);
 
 private:
 
@@ -91,6 +93,7 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
 void KDisplayApplication::init()
 {
   KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
+  writeQDesktopProperties( colors->createPalette(), kapp->generalFont() );
   delete colors;
   KBackground *background =  new KBackground(0, KDisplayModule::Init);
   delete background;
@@ -124,6 +127,16 @@ void KDisplayApplication::apply()
     fonts->applySettings();
   if (general)
     general->applySettings();
+  
+  if (colors || fonts) {
+      QPalette pal = colors?colors->createPalette():*qApp->palette();
+      
+      KConfig *config = kapp->getConfig();
+      config->reparseConfiguration();
+      config->setGroup( "General" );
+      QFont font = config->readFontEntry( "font", &kapp->generalFont());
+      writeQDesktopProperties( pal, font);
+  }
 }
 
 void KDisplayApplication::defaultValues()
@@ -138,6 +151,22 @@ void KDisplayApplication::defaultValues()
     fonts->defaultSettings();
   if (general)
     general->defaultSettings();
+}
+
+void KDisplayApplication::writeQDesktopProperties( QPalette pal, QFont font)
+{
+    
+    QByteArray properties;
+    QDataStream d( properties, IO_WriteOnly );
+
+    d << pal << font;
+
+    Atom a = XInternAtom(qt_xdisplay(), "QT_DESKTOP_PROPERTIES", FALSE );
+    
+    XChangeProperty(qt_xdisplay(),  qt_xrootwin(),
+		    a, a, 8, PropModeReplace,
+		    (unsigned char*) properties.data(), properties.size());
+    QApplication::flushX();
 }
 
 int main(int argc, char **argv)

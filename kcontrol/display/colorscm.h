@@ -36,6 +36,8 @@ public:
 	
 	Display *kde_display;
 	Atom KDEChangePalette;
+
+                QPalette createPalette();
 	
 protected slots:
 	void slotApply();
@@ -51,12 +53,13 @@ protected slots:
 
 protected:
 	void writeSettings();
-	void writeNamedColor( KConfigBase *config, 
+	void writeNamedColor( KConfigBase *config,
 				const char *key, const char *name );
 	void readSchemeNames();
 	void readScheme( int index = 0 );
 	void writeScheme();
 	void setDefaults();
+    
 	
 protected:
 	QSlider *sb;

@@ -4,6 +4,7 @@
 // Copyright (c)  Mark Donohoe 1997
 //
 // Converted to a kcc module by Matthias Hoelzer 1997
+// Ported to Qt-2.0 by Matthias Ettrich 1999
 //
 
 #include <stdio.h>
@@ -69,8 +70,9 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	useRM = true;
 
 	// if we are just initialising we don't need to create setup widget
-	if ( mode == Init )
-		return;
+	if ( mode == Init ) {
+	    return;
+	}
 	
 	//("KColorScheme::KColorScheme");
 	
@@ -826,3 +828,61 @@ void KColorScheme::applySettings()
   writeSettings();
   apply();
 }
+
+
+
+/* this function should dissappear: colorscm should work directly on a Qt palette, since 
+   this will give us much more cusomization with qt-2.0.
+   */
+QPalette KColorScheme::createPalette()
+{
+    
+    KConfigBase* config;
+    config  = kapp->getConfig();
+    config->setGroup( "General" );
+    QColor buttonText = 
+	     config->readColorEntry( "foreground", &black );
+
+    QColor background = 
+	config->readColorEntry( "background", &lightGray );
+    
+    QColor highlight =
+	config->readColorEntry( "selectBackground", &darkBlue);
+
+    QColor highlightedText =
+	config->readColorEntry( "selectForeground", &white );
+
+    QColor base = 
+	config->readColorEntry( "windowBackground", &white );
+
+    QColor foreground =
+	config->readColorEntry( "windowForeground", &black );
+	
+
+    int contrast =
+	config->readNumEntry( "contrast", 7 );
+    
+   int highlightVal, lowlightVal;
+	
+   highlightVal=100+(2*contrast+4)*16/10;
+   lowlightVal=100+(2*contrast+4)*10;
+	
+	
+   QColorGroup disabledgrp( foreground, background,
+			    background.light(150),
+			    background.dark(),
+			    background.dark(120),
+			    background.dark(120), base );
+
+   QColorGroup colgrp( foreground, background,
+		       background.light(150),
+		       background.dark(),
+		       background.dark(120),
+		       foreground, base );
+   
+   colgrp.setColor( QColorGroup::Highlight, highlight);
+   colgrp.setColor( QColorGroup::HighlightedText, highlightedText);
+   colgrp.setColor( QColorGroup::ButtonText, buttonText);
+   return QPalette( colgrp, disabledgrp, colgrp);
+}
+

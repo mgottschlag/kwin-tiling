@@ -88,7 +88,6 @@ public:
 	virtual void applySettings();
 	virtual void defaultSettings();
 	
-	QFont generalFont;
 	GUIStyle applicationStyle;
 	
 	Display *kde_display;
@@ -129,8 +128,6 @@ public:
 	virtual void loadSettings() {};
 	virtual void applySettings();
 	virtual void defaultSettings();
-	
-	QFont generalFont;
 	
 	Display *kde_display;
 	Atom 	KDEChangeGeneral;
