@@ -129,8 +129,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     QWhatsThis::add(fullDuplex, i18n("This enables the soundserver to record and play sound at the same time. If you use applications like internet telephony, voice recognition or similar, you probably want this."));
 
     responseGroup = new QVButtonGroup(i18n("Response time"), this);
-    QWhatsThis::add(responseGroup, i18n("If you increase the response time, the aRts soundserver will be able to keep up with playing incoming requests more easily, but CPU load will increase."));
-
+    QWhatsThis::add(responseGroup, i18n("A small response time means: <ul><li>fast response<li>high CPU usage<li>more dropouts</ul><p>On the other hand, a large response time means:<ul><li>slow response<li>low CPU usage<li>less dropouts</ul>"));
+	
     responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
     responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
