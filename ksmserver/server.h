@@ -79,6 +79,7 @@ struct SMData
     SMType type;
     QStringList wmCommand;
     QString wmClientMachine;
+    QString wmclass1, wmclass2;
     };
 typedef QMap<WId,SMData> WindowMap;
 #endif
@@ -194,6 +195,8 @@ private:
     int appsToStart;
     int lastAppStarted;
     QString lastIdStarted;
+    
+    QStringList excludeApps;
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
     WindowMap legacyWindows;

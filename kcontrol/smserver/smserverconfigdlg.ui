@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>395</width>
-            <height>357</height>
+            <width>356</width>
+            <height>429</height>
         </rect>
     </property>
     <property name="caption">
@@ -161,6 +161,45 @@
                 </widget>
             </vbox>
         </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>advancedGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Advanced</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Applications To Be Excluded From Sessions:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>excludeLineedit</cstring>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>excludeLineedit</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Here you can enter a colon-separated list of applications that should not be saved in sessions, and therefore won't be started when restoring a session. For example 'xterm:xconsole'.
+</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>bottomSpacer</cstring>
@@ -173,8 +212,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>0</width>
-                    <height>20</height>
+                    <width>20</width>
+                    <height>130</height>
                 </size>
             </property>
         </spacer>
@@ -199,6 +238,12 @@
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
+    <connection>
+        <sender>excludeLineedit</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>SMServerConfigDlg</receiver>
+        <slot>configChanged()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="global" impldecl="in implementation">kdialog.h</include>
@@ -208,4 +253,7 @@
 </slots>
 <layoutdefaults spacing="6" margin="0"/>
 <layoutfunctions spacing="KDialog::spacingHint"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
 </UI>

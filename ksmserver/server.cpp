@@ -91,6 +91,7 @@ const int XNone = None;
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 
 extern "C" {
     /* int umask(...); */
@@ -953,6 +954,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     config->reparseConfiguration(); // config may have changed in the KControl module
 
     config->setGroup("General" );
+    excludeApps = QStringList::split( ':', config->readEntry( "excludeApps" ).lower()); 
     bool logoutConfirmed =
         (confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
@@ -1349,6 +1351,8 @@ void KSMServer::storeSession()
         QStringList restartCommand = c->restartCommand();
         if (program.isEmpty() && restartCommand.isEmpty())
            continue;
+        if (excludeApps.contains( program.lower()))
+            continue;
 
         count++;
         QString n = QString::number(count);
@@ -1615,15 +1619,23 @@ void KSMServer::performLegacySessionSave()
             SMType wtype = SM_WMCOMMAND;
             int nprotocols = 0;
             Atom *protocols = 0;
-            XGetWMProtocols(qt_xdisplay(), leader, &protocols, &nprotocols);
-            for (int i=0; i<nprotocols; i++)
-                if (protocols[i] == wm_save_yourself) {
-                    wtype = SM_WMSAVEYOURSELF;
-                    break;
-                }
-            XFree((void*) protocols);
+            if( XGetWMProtocols(qt_xdisplay(), leader, &protocols, &nprotocols)) {
+                for (int i=0; i<nprotocols; i++)
+                    if (protocols[i] == wm_save_yourself) {
+                        wtype = SM_WMSAVEYOURSELF;
+                        break;
+                    }
+                XFree((void*) protocols);
+            }
 	    SMData data;
 	    data.type = wtype;
+            XClassHint classHint;
+            if( XGetClassHint( qt_xdisplay(), leader, &classHint ) ) {
+                data.wmclass1 = classHint.res_name;
+                data.wmclass2 = classHint.res_class;
+                XFree( classHint.res_name );
+                XFree( classHint.res_class );
+            }
             legacyWindows.insert(leader, data);
         }
     }
@@ -1719,6 +1731,9 @@ void KSMServer::storeLegacySession( KConfig* config )
     int count = 0;
     for (WindowMap::ConstIterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
         if ( (*it).type != SM_ERROR) {
+            if( excludeApps.contains( (*it).wmclass1.lower())
+                || excludeApps.contains( (*it).wmclass2.lower()))
+                continue;
             if ( !(*it).wmCommand.isEmpty() && !(*it).wmClientMachine.isEmpty() ) {
                 count++;
                 QString n = QString::number(count);

@@ -26,6 +26,7 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <kgenericfactory.h>
+#include <klineedit.h>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
@@ -80,6 +81,8 @@ void SMServerConfig::load()
     dialog->logoutRadio->setChecked(true);
     break;
   }
+  dialog->excludeLineedit->setText( c->readEntry("excludeApps"));
+
   delete c;
 
   emit changed(false);
@@ -103,6 +106,7 @@ void SMServerConfig::save()
                    dialog->rebootRadio->isChecked() ?
                      int(KApplication::ShutdownTypeReboot) :
                      int(KApplication::ShutdownTypeNone));
+  c->writeEntry("excludeApps", dialog->excludeLineedit->text());
   c->sync();
   delete c;
 
@@ -118,6 +122,7 @@ void SMServerConfig::defaults()
   dialog->previousSessionRadio->setChecked(true);
   dialog->confirmLogoutCheck->setChecked(true);
   dialog->logoutRadio->setChecked(true);
+  dialog->excludeLineedit->setText("");
 
   emit changed(true);
 }
