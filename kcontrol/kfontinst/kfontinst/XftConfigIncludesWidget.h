@@ -33,7 +33,6 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_XFT
 #include "XftConfigIncludesWidgetData.h"
 #include <qstringlist.h>
 #include <qgroupbox.h>
@@ -66,7 +65,5 @@ class CXftConfigIncludesWidget : public CXftConfigIncludesWidgetData
     QString getFile(const QString &current, bool checkDuplicates=false);
     bool    itsWritable;
 };
-
-#endif 
 
 #endif
