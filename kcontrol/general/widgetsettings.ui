@@ -10,279 +10,324 @@
             <x>0</x>
             <y>0</y>
             <width>377</width>
-            <height>273</height>
+            <height>360</height>
         </rect>
     </property>
     <property name="caption">
         <string>Widget Settings</string>
     </property>
-    <vbox>
+    <widget class="QGroupBox">
         <property name="name">
-            <cstring>unnamed</cstring>
+            <cstring>gbMiscToolbarSet</cstring>
         </property>
-        <property name="margin">
-            <number>11</number>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>355</width>
+                <height>104</height>
+            </rect>
         </property>
-        <property name="spacing">
-            <number>6</number>
+        <property name="title">
+            <string>Misc Toolbar Settings</string>
         </property>
-        <widget class="QGroupBox">
+        <grid>
             <property name="name">
-                <cstring>gbMiscToolbarSet</cstring>
+                <cstring>unnamed</cstring>
             </property>
-            <property name="title">
-                <string>Misc Toolbar Settings</string>
+            <property name="margin">
+                <number>11</number>
             </property>
-            <grid>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>cboxHoverButtons</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+                <property name="text">
+                    <string>High&amp;light buttons under mouse</string>
                 </property>
-                <property name="spacing">
-                    <number>6</number>
+                <property name="whatsThis" stdset="0">
+                    <string>If this option is selected, toolbar buttons will change their color when the mouse cursor is moved over them.</string>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>cboxHoverButtons</cstring>
-                    </property>
+            </widget>
+            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                <property name="name">
+                    <cstring>cboxToolbarsHighlight</cstring>
+                </property>
+                <property name="text">
+                    <string>Transparent tool&amp;bars when moving</string>
+                </property>
+                <property name="whatsThis" stdset="0">
+                    <string>If you check this box, the toolbars will be transparent when moving them around</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="3" column="0">
+                <property name="name">
+                    <cstring>txtToolbarIcons</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>4</hsizetype>
+                        <vsizetype>5</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="text">
+                    <string>Toolbar &amp;Icons:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>cbToolbarIcons</cstring>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="3" column="1">
+                <item>
                     <property name="text">
-                        <string>High&amp;light buttons under mouse</string>
+                        <string>Icons only</string>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, toolbar buttons will change their color when the mouse cursor is moved over them.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>cboxToolbarsHighlight</cstring>
-                    </property>
+                </item>
+                <item>
                     <property name="text">
-                        <string>Transparent tool&amp;bars when moving</string>
+                        <string>Text only</string>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If you check this box, the toolbars will be transparent when moving them around</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>txtToolbarIcons</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>4</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
+                </item>
+                <item>
                     <property name="text">
-                        <string>Toolbar &amp;Icons:</string>
+                        <string>Text aside icons</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>cbToolbarIcons</cstring>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Text under icons</string>
                     </property>
-                </widget>
-                <widget class="QComboBox" row="3" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Icons only</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Text only</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Text aside icons</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Text under icons</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>cbToolbarIcons</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;p&gt;&lt;b&gt;Icons only:&lt;/b&gt; Shows only icons on toolbar buttons. Best option for low resolutions.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text only: &lt;/b&gt;Shows only text on toolbar buttons.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text aside icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned aside the icon.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text under icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned below the icon.&lt;/p&gt;</string>
-                    </property>
-                </widget>
-                <spacer row="3" column="2">
-                    <property name="name" stdset="0">
-                        <cstring>Spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>cboxEnableGUIEffects</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Enable GUI Effects</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>If you check this box, you can select several effects for different widgets like combo boxes or tooltips.</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>gbGuiEffect</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="title">
-                <string>GUI Effects</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>&lt;p&gt;&lt;b&gt;Disable: &lt;/b&gt;Don't use an effect on this widget&lt;/p&gt;
+                </item>
+                <property name="name">
+                    <cstring>cbToolbarIcons</cstring>
+                </property>
+                <property name="whatsThis" stdset="0">
+                    <string>&lt;p&gt;&lt;b&gt;Icons only:&lt;/b&gt; Shows only icons on toolbar buttons. Best option for low resolutions.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text only: &lt;/b&gt;Shows only text on toolbar buttons.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text aside icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned aside the icon.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text under icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned below the icon.&lt;/p&gt;</string>
+                </property>
+            </widget>
+            <spacer row="3" column="2">
+                <property name="name" stdset="0">
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+        </grid>
+    </widget>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>cboxEnableGUIEffects</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>121</y>
+                <width>355</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Enable GUI Effects</string>
+        </property>
+        <property name="whatsThis" stdset="0">
+            <string>If you check this box, you can select several effects for different widgets like combo boxes or tooltips.</string>
+        </property>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>gbGuiEffect</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>147</y>
+                <width>355</width>
+                <height>108</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>GUI Effects</string>
+        </property>
+        <property name="whatsThis" stdset="0">
+            <string>&lt;p&gt;&lt;b&gt;Disable: &lt;/b&gt;Don't use an effect on this widget&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;Animate: &lt;/b&gt;Do some animation when &lt;/p&gt;
 &lt;p&gt;&lt;b&gt;Fade: &lt;/b&gt;Fade in the widget using alpha-blending&lt;/p&gt;</string>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
             </property>
-            <grid>
+            <property name="margin">
+                <number>11</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="2" column="0">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>TextLabel4</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+                <property name="text">
+                    <string>&amp;ToolTip Effect:</string>
                 </property>
-                <property name="spacing">
-                    <number>6</number>
+                <property name="buddy" stdset="0">
+                    <cstring>cbTooltipEffect</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>4</hsizetype>
+                        <vsizetype>1</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="text">
+                    <string>&amp;Menu Effect:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>cbMenuEffect</cstring>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="2" column="1">
+                <item>
                     <property name="text">
-                        <string>&amp;ToolTip Effect:</string>
+                        <string>Disable</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>cbTooltipEffect</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>4</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
+                </item>
+                <item>
                     <property name="text">
-                        <string>&amp;Menu Effect:</string>
+                        <string>Animate</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>cbMenuEffect</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="2" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Disable</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Animate</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Fade</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>cbTooltipEffect</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Disable</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Animate</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Fade</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>cbMenuEffect</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
+                </item>
+                <item>
                     <property name="text">
-                        <string>ComboBo&amp;x Effect:</string>
+                        <string>Fade</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>cbComboEffect</cstring>
+                </item>
+                <property name="name">
+                    <cstring>cbTooltipEffect</cstring>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="0" column="1">
+                <item>
+                    <property name="text">
+                        <string>Disable</string>
                     </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Disable</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Animate</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>cbComboEffect</cstring>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Animate</string>
                     </property>
-                </widget>
-            </grid>
-        </widget>
-        <spacer>
-            <property name="name" stdset="0">
-                <cstring>Spacer1</cstring>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Fade</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>cbMenuEffect</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>ComboBo&amp;x Effect:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>cbComboEffect</cstring>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="1" column="1">
+                <item>
+                    <property name="text">
+                        <string>Disable</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Animate</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>cbComboEffect</cstring>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>gbVisual</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>260</y>
+                <width>355</width>
+                <height>50</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>Visual Appearance</string>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cboxIconSupport</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>340</width>
                     <height>20</height>
-                </size>
+                </rect>
             </property>
-        </spacer>
-    </vbox>
+            <property name="text">
+                <string>Show icons on buttons</string>
+            </property>
+        </widget>
+    </widget>
+    <spacer>
+        <property name="name" stdset="0">
+            <cstring>Spacer1</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>20</height>
+            </size>
+        </property>
+    </spacer>
 </widget>
 <connections>
     <connection>
@@ -304,13 +349,13 @@
     <include location="local" impldecl="in implementation">widgetsettings.ui.h</include>
 </includes>
 <slots>
-    <slot>defaults()</slot>
     <slot>init()</slot>
-    <slot>load()</slot>
-    <slot returnType="QString">quickHelp() const</slot>
-    <slot>save()</slot>
     <slot specifier="non virtual">setDirty()</slot>
-    <slot returnType="const KAboutData*" specifies="non virtual">aboutData() const</slot>
+    <slot>defaults()</slot>
+    <slot>load()</slot>
+    <slot>save()</slot>
+    <slot returnType="const KAboutData*">aboutData() const</slot>
+    <slot returnType="QString">quickHelp() const</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
