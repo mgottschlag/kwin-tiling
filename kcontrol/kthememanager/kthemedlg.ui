@@ -1,0 +1,205 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>KThemeDlg</class>
+<author>Lukas Tinkl &lt;lukas@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>503</width>
+            <height>426</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QListView" row="1" column="0" rowspan="1" colspan="4">
+            <column>
+                <property name="text">
+                    <string>Theme</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Description</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>lvThemes</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>1</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="showSortIndicator">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="2" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnInstall</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Install new theme...</string>
+            </property>
+            <property name="accel">
+                <string>Alt+I</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnRemove</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Remove theme</string>
+            </property>
+            <property name="accel">
+                <string>Alt+R</string>
+            </property>
+        </widget>
+        <widget class="KURLLabel" row="0" column="3">
+            <property name="name">
+                <cstring>lbGet</cstring>
+            </property>
+            <property name="text">
+                <string>Get new themes...</string>
+            </property>
+            <property name="url" stdset="0">
+                <string>http://www.kde-look.org</string>
+            </property>
+            <property name="tipText">
+                <string>Go to the KDE themes website</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Choose your visual KDE theme</string>
+            </property>
+        </widget>
+        <spacer row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>81</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="4" column="3">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>90</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="5" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnCreate</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Create new theme...</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0" rowspan="4" colspan="2">
+            <property name="name">
+                <cstring>lbPreview</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>300</width>
+                    <height>225</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>300</width>
+                    <height>225</height>
+                </size>
+            </property>
+            <property name="frameShape">
+                <enum>Box</enum>
+            </property>
+            <property name="text">
+                <string>Preview</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string></string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>lbGet</sender>
+        <signal>leftClickedURL(const QString&amp;)</signal>
+        <receiver>Form1</receiver>
+        <slot>startKonqui(const QString&amp;)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>lvThemes</tabstop>
+    <tabstop>btnInstall</tabstop>
+    <tabstop>btnRemove</tabstop>
+    <tabstop>btnCreate</tabstop>
+</tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">kthemedlg.ui.h</include>
+</includes>
+<slots>
+    <slot specifier="non virtual">startKonqui( const QString &amp; url )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurllabel.h</includehint>
+</includehints>
+</UI>

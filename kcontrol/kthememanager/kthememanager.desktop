@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=Manage global KDE visual themes
+Comment[cs]=Správce vizuálních motivů KDE
+Exec=kcmshell kthememanager
+Icon=kthememgr
+Keywords=themes,look and feel
+Keywords[cs]=motivy,vzhled
+Name=Theme Manager
+Name[cs]=Správce motivů
+Terminal=false
+Type=Application
+X-KDE-FactoryName=kthememanager
+X-KDE-Library=kthememanager
+X-KDE-ModuleType=Library
+Categories=Qt;KDE;X-KDE-settings-looknfeel

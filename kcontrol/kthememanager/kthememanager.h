@@ -1,0 +1,142 @@
+// -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-
+/*  Copyright (C) 2003 Lukas Tinkl <lukas@kde.org>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#ifndef KTHEMEMANAGER_H
+#define KTHEMEMANAGER_H
+
+#include <kcmodule.h>
+#include <kaboutdata.h>
+#include <kurl.h>
+
+#include "kthemedlg.h"
+#include "ktheme.h"
+
+#define ORIGINAL_THEME "original" // no i18n() here!!!
+
+class QTabWidget;
+class QString;
+
+/**
+ *
+ * This is the for KControl config module for installing,
+ * creating and removing visual themes.
+ *
+ * @brief The Theme Manager config module.
+ * @author Lukas Tinkl <lukas@kde.org>
+ */
+class kthememanager: public KCModule
+{
+    Q_OBJECT
+
+public:
+    kthememanager( QWidget *parent=0, const char *name=0 );
+    virtual ~kthememanager();
+
+    /**
+     * Called on module startup
+     */
+    virtual void load();
+    /**
+     * Called when applying the changes
+     */
+    virtual void save();
+    /**
+     * Called when the user requests the default values
+     */
+    virtual void defaults();
+    /**
+     * @return the  set of available buttons
+     */
+    virtual int buttons();
+
+    /**
+     * @return quick help for the config module
+     */
+    virtual QString quickHelp() const;
+
+    /**
+     * @return information about the config module
+     */
+    virtual const KAboutData *aboutData() const;
+
+protected:
+    void dragEnterEvent ( QDragEnterEvent * ev );
+    void dropEvent ( QDropEvent * ev );
+
+public slots:
+    void configChanged();
+
+signals:
+    void filesDropped(const KURL::List &urls);
+
+private slots:
+    /**
+     * Install a theme from a tarball (*.kth)
+     */
+    void slotInstallTheme();
+
+    /**
+     * Remove an installed theme
+     */
+    void slotRemoveTheme();
+
+    /**
+     * Create a new theme
+     */
+    void slotCreateTheme();
+
+    /**
+     * Update the theme's info and preview
+     */
+    void slotThemeChanged( QListViewItem * item );
+
+    /**
+     * Invoked when one drops
+     */
+    void slotFilesDropped( const KURL::List & urls );
+
+private:
+    /**
+     * List themes available in the system and insert them into the listview.
+     */
+    void listThemes();
+
+    /**
+     * Performs the actual theme installation.
+     */
+    void addNewTheme( const KURL & url );
+
+    /**
+     * Perform internal initialization of paths.
+     */
+    void init();
+
+    /**
+     * Try to find out whether a theme is installed and get its version number
+     * @param themeName The theme name
+     * @return The theme's version number or -1 if not installed
+     */
+    static float getThemeVersion( const QString & themeName );
+
+    KThemeDlg * dlg;
+
+    KTheme * m_theme;
+    KTheme * m_origTheme;
+};
+
+#endif

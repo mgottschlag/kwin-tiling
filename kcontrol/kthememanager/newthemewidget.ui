@@ -1,0 +1,133 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>NewThemeWidget</class>
+<author>Lukas Tinkl &lt;lukas@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>537</width>
+            <height>431</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Theme name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Author:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leAuthor</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Email:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leEmail</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>textLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Homepage:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leHomepage</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="1">
+            <property name="name">
+                <cstring>leEmail</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>leName</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="1">
+            <property name="name">
+                <cstring>leHomepage</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1">
+            <property name="name">
+                <cstring>leAuthor</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>textLabel5</cstring>
+            </property>
+            <property name="text">
+                <string>Co&amp;mment:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignTop</set>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>teComment</cstring>
+            </property>
+        </widget>
+        <widget class="QTextEdit" row="5" column="1">
+            <property name="name">
+                <cstring>teComment</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="4" column="1">
+            <property name="name">
+                <cstring>leVersion</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>textLabel6</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Version:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leVersion</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>leName</tabstop>
+    <tabstop>leAuthor</tabstop>
+    <tabstop>leEmail</tabstop>
+    <tabstop>leHomepage</tabstop>
+    <tabstop>leVersion</tabstop>
+    <tabstop>teComment</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
