@@ -55,6 +55,7 @@ private slots:
     void slotSave();
     void slotAdd();
     void slotRemove();
+	void slotImport();
     void slotSelectColor(const QColor &col);
     void slotWidgetColor(int);
     void slotColorForWidget(int, const QColor &);
@@ -65,6 +66,7 @@ private:
     void setColorName( const QString &name, int id );
     void readScheme(int index=0);
     void readSchemeNames();
+	void insertEntry(const QString &sFile, const QString &sName);
     int findSchemeByName(const QString &scheme);
     QPalette createPalette();
     
@@ -76,7 +78,7 @@ private:
     QColor colorPushColor;
     QSlider *sb;
     QComboBox *wcCombo;
-    QPushButton *addBt, *removeBt;
+    QPushButton *addBt, *removeBt, *importBt;
     KListBox *sList;
     KColorSchemeList *mSchemeList;
     QString sCurrentScheme;

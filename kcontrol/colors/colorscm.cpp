@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qgroupbox.h>
+#include <qvgroupbox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -27,7 +27,7 @@
 #include <qfileinfo.h>
 #include <qwhatsthis.h>
 
-#include <kconfig.h>
+#include <kfiledialog.h>
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
 #include <kcursor.h>
@@ -41,6 +41,8 @@
 #include <kbuttonbox.h>
 #include <kstringhandler.h>
 #include <kgenericfactory.h>
+
+#include <kio/netaccess.h>
 
 #include <X11/Xlib.h>
 
@@ -134,17 +136,14 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
          SLOT( slotColorForWidget( int, const QColor&)));
     topLayout->addMultiCellWidget( cs, 0, 0, 0, 1 );
 
-    QGroupBox *group = new QGroupBox( i18n("Color Scheme"), this );
+    QGroupBox *group = new QVGroupBox( i18n("Color Scheme"), this );
     topLayout->addWidget( group, 1, 0 );
-    QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
-    groupLayout->addSpacing(10);
 
     sList = new KListBox( group );
     mSchemeList = new KColorSchemeList();
     readSchemeNames();
     sList->setCurrentItem( 0 );
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
-    groupLayout->addWidget(sList);
 
     QWhatsThis::add( sList, i18n("This is a list of predefined color schemes,"
        " including any that you may have created. You can preview an existing"
@@ -156,7 +155,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     addBt = new QPushButton(i18n("&Save Scheme..."), group);
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
-    groupLayout->addWidget(addBt, 10);
 
     QWhatsThis::add( addBt, i18n("Press this button if you want to save"
        " the current color settings as a color scheme. You will be"
@@ -170,14 +168,20 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " color scheme. Note that this button is disabled if you do not have"
        " permission to delete the color scheme.") );
 
-    groupLayout->addWidget( removeBt, 10 );
+	importBt = new QPushButton(i18n("&Import Scheme"), group);
+	connect(importBt, SIGNAL(clicked()),SLOT(slotImport()));
 
+	QWhatsThis::add( importBt, i18n("Press this button to import a new color"
+		" scheme. Note that the color scheme will only be available for the"
+		" current user." ));
+			
+	
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
 
     group = new QGroupBox(i18n("Widget Color"), this);
     stackLayout->addWidget(group);
-    groupLayout = new QVBoxLayout(group, 10);
+    QBoxLayout *groupLayout = new QVBoxLayout(group, 10);
     groupLayout->addSpacing(10);
 
     wcCombo = new QComboBox(false, group);
@@ -536,13 +540,10 @@ void KColorScheme::slotAdd()
        config->setGroup( "Color Scheme");
        config->writeEntry("Name", sName);
        delete config;
+
+	   insertEntry(sFile, sName);
        
-       KColorSchemeEntry *newEntry = new KColorSchemeEntry(sFile, sName, true);
-       mSchemeList->inSort(newEntry);
-       int newIndex = mSchemeList->findRef(newEntry)+nSysSchemes;
-       sList->insertItem(sName, newIndex);
-       sList->setCurrentItem(newIndex);
-    }
+   }
     slotSave();
 
     QPixmap preview = mkColorPreview(cs);
@@ -550,6 +551,38 @@ void KColorScheme::slotAdd()
     sList->changeItem(preview, sList->text(current), current);
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
     slotPreviewScheme(current);
+}
+
+void KColorScheme::slotImport()
+{
+	QString location = locateLocal( "data", "kdisplay/color-schemes/" );
+
+	KURL file = KFileDialog::getOpenFileName(QString::null, "*.kcsrc", this);
+	if ( file.isEmpty() )
+		return;
+
+	//kdDebug() << "Location: " << location << endl;
+	if (!KIO::NetAccess::copy(file, location+file.fileName( false )  ) )
+	{
+		KMessageBox::error(this, KIO::NetAccess::lastErrorString(),i18n("Import failed!"));
+		return;
+	}
+	else
+	{
+		QString sFile = location + file.fileName( false );
+		KSimpleConfig *config = new KSimpleConfig(sFile);
+		config->setGroup( "Color Scheme");
+		QString sName = config->readEntry("Name", i18n("Untitled Theme"));
+		delete config;
+
+
+		insertEntry(sFile, sName);
+		QPixmap preview = mkColorPreview(cs);
+		int current = sList->currentItem();
+		sList->changeItem(preview, sList->text(current), current);
+		connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
+		slotPreviewScheme(current);
+	}
 }
 
 QColor &KColorScheme::color(int index)
@@ -871,6 +904,15 @@ QPalette KColorScheme::createPalette()
     colgrp.setColor(QColorGroup::Button, cs->button);
     colgrp.setColor(QColorGroup::ButtonText, cs->buttonTxt);
     return QPalette( colgrp, disabledgrp, colgrp);
+}
+
+void KColorScheme::insertEntry(const QString &sFile, const QString &sName)
+{
+       KColorSchemeEntry *newEntry = new KColorSchemeEntry(sFile, sName, true);
+       mSchemeList->inSort(newEntry);
+       int newIndex = mSchemeList->findRef(newEntry)+nSysSchemes;
+       sList->insertItem(sName, newIndex);
+       sList->setCurrentItem(newIndex);
 }
 
 #include "colorscm.moc"
