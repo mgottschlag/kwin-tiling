@@ -260,7 +260,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
 
     // add modules
     for (KService::List::ConstIterator it = modules.begin(); it != modules.end(); ++it)
-        dlg->addModule(KCModuleInfo(*it), false);
+        dlg->addModule(KCModuleInfo(*it));
 
     // if we are going to be embedded, embed
     QCString embed = args->getOption("embed");
