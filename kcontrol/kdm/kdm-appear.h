@@ -33,7 +33,7 @@
 #include <kcmodule.h>
 
 
-#include "klangcombo.h"
+#include "klanguagebutton.h"
 
 class QLabel;
 class QRadioButton;
@@ -53,7 +53,7 @@ public:
 	void defaults();
 	QString quickHelp() const;
 
-	void loadLanguageList(KLanguageCombo *combo);
+	void loadLanguageList(KLanguageButton *combo);
 
 	bool eventFilter(QObject *, QEvent *);
 
@@ -85,7 +85,7 @@ private:
 	QLineEdit    *yLineEdit;
 	QComboBox    *guicombo;
 	QComboBox    *echocombo;
-	KLanguageCombo *langcombo;
+	KLanguageButton *langcombo;
 
 };
 

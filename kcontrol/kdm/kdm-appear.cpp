@@ -238,7 +238,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   label = new QLabel(i18n("Languag&e:"), group);
   hbox->addWidget(label, 1, 0);
 
-  langcombo = new KLanguageCombo(group);
+  langcombo = new KLanguageButton(group);
   label->setBuddy( langcombo );
   langcombo->setFixedHeight( langcombo->sizeHint().height() );
   hbox->addWidget(langcombo, 1, 1);
@@ -273,7 +273,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
     }
 }
 
-void KDMAppearanceWidget::loadLanguageList(KLanguageCombo *combo)
+void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
 {
   combo->clear();
   QStringList langlist = KGlobal::dirs()->findAllResources("locale",
