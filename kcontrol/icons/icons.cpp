@@ -108,6 +108,7 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     mpAlphaBCheck = new QCheckBox(i18n("Blend alpha channel"), m_pTab1);
     connect(mpAlphaBCheck, SIGNAL(toggled(bool)), SLOT(slotAlphaBCheck(bool)));
     grid->addWidget(mpAlphaBCheck, 2, 0, Qt::AlignLeft);
+    disableAlphaBlending = (QPixmap::defaultDepth()<=8);
 
     top->activate();
 
@@ -384,14 +385,19 @@ void KIconConfig::slotUsage(int index)
     {
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
-	mpAlphaBCheck->setEnabled(true);
+	if (!disableAlphaBlending)
+	    mpAlphaBCheck->setEnabled(true);
     } 
     else
     {
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
-	mpAlphaBCheck->setEnabled( (mUsage==KIcon::Desktop)? true : false);
+	if (!disableAlphaBlending)
+	    mpAlphaBCheck->setEnabled( (mUsage==KIcon::Desktop)? true : false);
     }
+    if (disableAlphaBlending)
+	mpAlphaBCheck->setEnabled(false);
+
     apply();
     preview();
 }

@@ -108,6 +108,7 @@ private:
     QListBox *mpUsageList;
     QComboBox *mpSizeBox;
     QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAlphaBCheck;
+    bool disableAlphaBlending;
     QTabWidget *m_pTabWidget;
     QWidget *m_pTab1;                                    
 };
