@@ -32,6 +32,7 @@
 #include <kconfig.h>
 #include <klistview.h>
 #include <ktextedit.h>
+#include <kmessagebox.h>
 
 
 #include "privacy.h"
@@ -236,6 +237,8 @@ void Privacy::selectNone()
 
 void Privacy::cleanup()
 {
+  if (KMessageBox::warningContinueCancel(this, i18n("You are deleting data that is potentially valuable to you. Are you sure?")) != KMessageBox::Continue) return;
+
   cleaningDialog->statusTextEdit->clear();
   cleaningDialog->statusTextEdit->setText(i18n("Starting cleanup..."));
 
