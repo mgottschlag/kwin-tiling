@@ -2,7 +2,7 @@
 
 AM_CPPFLAGS = -DQT_NO_CAST_ASCII
 
-INCLUDES = -I.. $(all_includes)
+INCLUDES = -I$(srcdir)/.. $(all_includes)
 
 #AM_CFLAGS   = -Wall -Wno-implicit -Wno-return-type
 

@@ -30,3 +30,4 @@ StdFont=Helvetica,12,5,iso-8859-1,50,0
 SessionTypes=kde,fvwm,failsafe
 #GUIStyle=Windows
 EchoMode=OneStar
+Shutdown=/sbin/poweroff

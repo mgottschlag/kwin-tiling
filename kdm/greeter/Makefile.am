@@ -1,6 +1,6 @@
 PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
-INCLUDES = -I.. $(all_includes) $(KERBEROS_INCS)
+INCLUDES = -I$(srcdir)/.. $(all_includes) $(KERBEROS_INCS)
 
 DBGFLAGS = -g
 
