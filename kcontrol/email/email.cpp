@@ -21,6 +21,8 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 
+#include <iostream.h>
+#include <kdebug.h>
 #include <kcombobox.h>
 #include <kdialog.h>
 #include <kglobal.h>
@@ -72,6 +74,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblFullName->setTextFormat( QLabel::PlainText );
 	txtFullName = new QLineEdit( grpUserInfo, "txtFullName" );
 	txtFullName->setGeometry( QRect( 122, 22, 406, 22 ) ); 
+	connect(txtFullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblFullName->setBuddy(txtFullName);
 
 	lblOrganization = new QLabel( grpUserInfo, "lblOrganization" );
@@ -80,6 +83,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblOrganization->setTextFormat( QLabel::PlainText );
 	txtOrganization = new QLineEdit( grpUserInfo, "txtOrganization" );
 	txtOrganization->setGeometry( QRect( 122, 50, 406, 22 ) ); 
+	connect(txtOrganization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblOrganization->setBuddy(txtOrganization);
 
 	lblEMailAddr = new QLabel( grpUserInfo, "lblEMailAddr" );
@@ -87,6 +91,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblEMailAddr->setText( i18n( "&E-Mail Address:" ) );
 	txtEMailAddr = new QLineEdit( grpUserInfo, "txtEMailAddr" );
 	txtEMailAddr->setGeometry( QRect( 122, 78, 406, 22 ) ); 
+	connect(txtEMailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblEMailAddr->setBuddy(txtEMailAddr);
 
 	lblReplyTo = new QLabel( grpUserInfo, "lblReplyTo" );
@@ -94,6 +99,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblReplyTo->setText( i18n( "&Reply-To Address:" ) );
 	txtReplyTo = new QLineEdit( grpUserInfo, "txtReplyTo" );
 	txtReplyTo->setGeometry( QRect( 122, 106, 406, 22 ) ); 
+	connect(txtReplyTo, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblReplyTo->setBuddy(txtReplyTo);
 
 	grpClient = new QGroupBox (2, Qt::Horizontal, this, "grpClient");
@@ -104,6 +110,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	txtEMailClient = new QLineEdit( grpClient, "txtEMailClient" );
 	txtEMailClient->setGeometry( QRect( 5, 20, 410, 22 ) ); 
+	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 
 	btnBrowseClient = new QPushButton( grpClient, "btnBrowseClient" );
 	btnBrowseClient->setGeometry( QRect( 420, 20, 102, 26 ) ); 
@@ -112,6 +119,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	chkRunTerminal = new QCheckBox( grpClient, "chkRunTerminal" );
 	chkRunTerminal->setGeometry( QRect( 20, 45, 106, 19 ) ); 
 	chkRunTerminal->setText(i18n( "Run in &terminal" ) );
+	connect(chkRunTerminal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	grpIncoming = new QGroupBox(2, Qt::Horizontal, this, "grpIncoming");
 	//grpIncoming->setGeometry( QRect( 5, 290, 535, 80 ) ); 
@@ -127,14 +135,17 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	radIMAP = new QRadioButton( grpICM, "radIMAP" );
 	radIMAP->setGeometry( QRect( 10, 20, 52, 19 ) ); 
 	radIMAP->setText(i18n( "&IMAP" ) );
+	connect(radIMAP, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	radPOP = new QRadioButton( grpICM, "radPOP" );
 	radPOP->setGeometry( QRect( 70, 20, 47, 19 ) ); 
 	radPOP->setText(i18n( "&POP" ) );
+	connect(radPOP, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	radICMLocal = new QRadioButton( grpICM, "radICMLocal" );
 	radICMLocal->setGeometry( QRect( 120, 20, 98, 19 ) ); 
 	radICMLocal->setText(i18n( "Local &mailbox" ) );
+	connect(radICMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	btnICMSettings = new QPushButton( grpIncoming, "btnICMRemoteSettings" );
 	btnICMSettings->setGeometry( QRect( 245, 45, 175, 26 ) ); 
@@ -155,10 +166,12 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	radSMTP = new QRadioButton( grpOGM, "radSMTP" );
 	radSMTP->setGeometry( QRect( 10, 20, 55, 19 ) ); 
 	radSMTP->setText( i18n("SMTP") );
+	connect(radSMTP, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	radOGMLocal = new QRadioButton( grpOGM, "radOGMLocal" );
 	radOGMLocal->setGeometry( QRect( 75, 20, 103, 19 ) ); 
 	radOGMLocal->setText( i18n("Local Delivery") );
+	connect(radOGMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	btnOGMSettings = new QPushButton( grpOutgoing, "btnOGMSMTPSettings" );
 	btnOGMSettings->setGeometry( QRect( 245, 15, 175, 26 ) ); 
@@ -194,11 +207,13 @@ void topKCMEmail::load(const QString &s)
 {
 	if (s == QString::null) {
 		cmbCurProfile->insertStringList(pSettings->profiles());
-		if (pSettings->defaultProfileName() != QString::null)
+		if (pSettings->defaultProfileName() != QString::null) {
+			kdDebug() << "prfile is: " << pSettings->defaultProfileName()<< "line is " << __LINE__ << endl;
 			load(pSettings->defaultProfileName());
-		else {
+		} else {
 			if (cmbCurProfile->count()) {
 				pSettings->setProfile(cmbCurProfile->text(0));
+				kdDebug() << "prfile is: " << cmbCurProfile->text(0) << endl;
 				load(cmbCurProfile->text(0));
 				pSettings->setDefault(cmbCurProfile->text(0));
 			} else {
@@ -221,6 +236,13 @@ void topKCMEmail::load(const QString &s)
 			grpICM->setButton(1);
 		else if (intype == "localbox")
 			grpICM->setButton(2);
+
+		QString outtype = pSettings->getSetting(KEMailSettings::OutServerType);
+		if (outtype == "smtp") {
+			grpOGM->setButton(0);
+		} else if (outtype == "local") {
+			grpOGM->setButton(1);
+		}
 
 		txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
 		chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
@@ -270,10 +292,12 @@ void topKCMEmail::slotNewProfile()
 	layout->addWidget(btnOK);
 	layout->addWidget(btnCancel);
 	connect(btnOK, SIGNAL(clicked()), dlgAskName, SLOT(accept()));
-	connect(btnCancel, SIGNAL(clicked()), dlgAskName, SLOT(rejet()));
+	connect(btnCancel, SIGNAL(clicked()), dlgAskName, SLOT(reject()));
 
 	if (dlgAskName->exec() == QDialog::Accepted) {
-		if (cmbCurProfile->contains(txtName->text()))
+		if (txtName->text().isEmpty()) {
+			KMessageBox::sorry(this, i18n("Oops, you need to enter a name please, thanks."));
+		} else if (cmbCurProfile->contains(txtName->text()))
 			KMessageBox::sorry(this, i18n("This e-mail profile already exists, and cannot be created again"), i18n("Oops"));
 		else {
 			pSettings->setProfile(txtName->text());
@@ -296,6 +320,7 @@ void topKCMEmail::configChanged()
 
 void topKCMEmail::save()
 {
+	pSettings->setProfile(cmbCurProfile->text(cmbCurProfile->currentItem()));
 	pSettings->setSetting(KEMailSettings::RealName, txtFullName->text());
 	pSettings->setSetting(KEMailSettings::EmailAddress, txtEMailAddr->text());
 	pSettings->setSetting(KEMailSettings::Organization, txtOrganization->text());
@@ -307,6 +332,12 @@ void topKCMEmail::save()
 		pSettings->setSetting(KEMailSettings::InServerType, "pop3");
 	else if (radICMLocal->isChecked())
 		pSettings->setSetting(KEMailSettings::InServerType, "localbox");
+
+	if (radSMTP->isChecked()) {
+		pSettings->setSetting(KEMailSettings::OutServerType, "smtp");
+	} else if (radOGMLocal->isChecked()) {
+		pSettings->setSetting(KEMailSettings::OutServerType, "local");
+	}
 
 	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
 	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
