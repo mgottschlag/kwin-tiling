@@ -65,8 +65,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
     if (nsess) {
         connect(mButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
         mButton->installEventFilter(this);
-     } else
-     mButton->hide();
+    } else
+        mButton->hide();
 
     installEventFilter(this);
 
@@ -78,16 +78,15 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
 
     DCOPRef kxkb("kxkb", "kxkb");
     if( !kxkb.isNull() ) {
-	layoutsList = kxkb.call("getLayoutsList");
-	QString currentLayout = kxkb.call("getCurrentLayout");
-	if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
-	    connect(mLayout, SIGNAL(clicked()), this, SLOT(layoutClicked()));
-	    setLayoutText(currentLayout);
-	}
-    } else {
-	// no kxkb running :(
-	mLayout->hide();
+        layoutsList = kxkb.call("getLayoutsList");
+        QString currentLayout = kxkb.call("getCurrentLayout");
+        if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
+            setLayoutText(currentLayout);
+            return;
+        }
     }
+    // no kxkb running or not working :(
+    mLayout->hide();
 }
 
 void PasswordDlg::layoutClicked()
