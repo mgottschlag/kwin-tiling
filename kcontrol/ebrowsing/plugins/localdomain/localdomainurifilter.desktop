@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=LocalDomainFilter
+X-KDE-Library=liblocaldomainurifilter
+ServiceTypes=KURIFilter/Plugin
+InitialPreference=6

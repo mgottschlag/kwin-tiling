@@ -1,3 +1,3 @@
 
-SUBDIRS = ikws shorturi
+SUBDIRS = ikws shorturi localdomain
 
