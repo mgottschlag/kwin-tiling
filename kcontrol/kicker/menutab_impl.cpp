@@ -18,6 +18,7 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qdir.h>
+#include <qlabel.h>
 #include <qlayout.h>
 
 #include <knuminput.h>
@@ -84,8 +85,11 @@ void MenuTab::load()
 
     c.setGroup("menus");
 
-    m_hiddenFiles->setChecked(c.readBoolEntry("ShowHiddenFiles", false));
+    bool showHiddenFiles = c.readBoolEntry("ShowHiddenFiles", false);
+    m_hiddenFiles->setChecked(showHiddenFiles);
     m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
+    m_maxQuickBrowserItems->setEnabled(showHiddenFiles);
+    m_maxQuickBrowserItemsLabel->setEnabled(showHiddenFiles);
 
     if (c.readBoolEntry("DetailedMenuEntries", true))
     {
