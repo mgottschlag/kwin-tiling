@@ -250,7 +250,7 @@ void KColorScheme::load()
 
     KConfig cfg("kcmdisplayrc", true, false);
     cfg.setGroup("X11");
-    exportColors = cfg.readBoolEntry("exportKDEColors", true);
+    bool exportColors = cfg.readBoolEntry("exportKDEColors", true);
     cbExportColors->setChecked(exportColors);
 
     m_bChanged = false;
@@ -305,16 +305,13 @@ void KColorScheme::save()
     config->sync();
     delete config;
 
-    if (exportColors != cbExportColors->isChecked())
-    {
-       KConfig cfg("kcmdisplayrc", false, false);
-       cfg.setGroup("X11");
-       exportColors = cbExportColors->isChecked();
-       cfg.writeEntry("exportKDEColors", exportColors);
-       bool exportFonts = cfg.readBoolEntry("exportKDEFonts", true);
-       cfg.sync();
-       runRdb(exportFonts, exportColors);
-    }
+    KConfig cfg2("kcmdisplayrc", false, false);
+    cfg2.setGroup("X11");
+    bool exportColors = cbExportColors->isChecked();
+    cfg2.writeEntry("exportKDEColors", exportColors);
+    bool exportFonts = cfg2.readBoolEntry("exportKDEFonts", true);
+    cfg2.sync();
+    runRdb(exportFonts, exportColors);
 
     QApplication::setOverrideCursor( waitCursor );
     QStringList args;

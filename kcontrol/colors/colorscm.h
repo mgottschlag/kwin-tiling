@@ -84,7 +84,6 @@ private:
     WidgetCanvas *cs;
     
     QCheckBox *cbExportColors;
-    bool exportColors;
 };
 
 
