@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=LEO-Translate
-Name[bs]=LEO-Prevodioc
+Name[bs]=LEO-Prevodilac
 Name[de]=LEO-Übersetzung
 Name[eo]=LEO-Tradukilo
 Name[is]=LEO-þýðandi
@@ -11,6 +11,7 @@ Name[lv]=LEO-Tulkot
 Name[nb]=LEO-oversetter
 Name[pl]=LEO-Tłumacz
 Name[pt_BR]=LEO-Tradutor
+Name[ven]=Hu dologa-LEO
 Name[xh]=LEO-Guqulela
 Name[xx]=xx
 Name[zu]=LEO-Guqulela

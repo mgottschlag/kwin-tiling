@@ -1,5 +1,42 @@
 [Settings]
 Name=Mac Scheme
+Name[ar]=نسق ماك
+Name[be]=Схема Mac
+Name[bg]=Mac Схема
+Name[bs]=Mac šema
+Name[cs]=Schéma Mac
+Name[da]=Mac Skema
+Name[de]=Mac-Schema
+Name[el]=Σχήμα Mac
+Name[eo]=Makintoŝa aranĝo
+Name[es]=Tema Mac
+Name[et]=Mac'i skeem
+Name[eu]=Mac Eskema
+Name[fi]=Mac-teema
+Name[fr]=Modèle Mac
+Name[he]=תצורת מקינטוש
+Name[hu]=Mac színösszeállítás
+Name[it]=Schema Mac
+Name[ja]=Macスキーム
+Name[lt]=Mac schema
+Name[lv]=Mac Shēma
+Name[nl]=Mac-schema
+Name[nn]=Mac-oppsett
+Name[pt]=Mapeamento Mac
+Name[pt_BR]=Esquema Mac
+Name[ro]=Schemă Mac
+Name[ru]=Схема Mac
+Name[sk]=Mac schéma
+Name[sl]=Shema Mac
+Name[sv]=Mac-schema
+Name[th]=ชุดรูปแบบ Mac
+Name[tr]=Mac Teması
+Name[uk]=Схема Mac
+Name[ven]=Tshikimu tsha Mac
+Name[xh]=Udweliso LweMac
+Name[xx]=xx
+Name[zh_CN]=Mac 主题
+Name[zu]=Isikimu se Mac
 Uses Win Modifer=true
 
 [Global Shortcuts]

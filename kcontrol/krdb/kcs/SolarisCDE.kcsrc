@@ -1,5 +1,17 @@
 [Color Scheme]
 Name=Solaris
+Name[af]=solaris
+Name[ar]=سولاريس
+Name[az]=Solaris CDE
+Name[eo]=Solariso
+Name[ko]=솔라리스
+Name[lt]=Solario CDE
+Name[ru]=Солярис
+Name[th]=โซลาริส
+Name[ven]=Solarisi
+Name[xh]=Isikhanyiso esenziwa lilanga
+Name[xx]=xx
+Name[zu]=Isikhanyiso esenziwa ilanga
 activeBackground=178,77,122
 activeBlend=174,178,195
 activeForeground=255,255,255

@@ -3,6 +3,7 @@ Encoding=UTF-8
 Keys=sf,sourceforge
 Name=SourceForge
 Name[af]=sourceforge
+Name[eo]=Programforĝejo
 Name[xx]=xx
 Name[zu]=I SourceForge
 Query=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\{exact,"0"}&words=\\{@}

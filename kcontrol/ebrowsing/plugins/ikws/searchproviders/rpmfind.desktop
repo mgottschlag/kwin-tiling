@@ -2,7 +2,6 @@
 Encoding=UTF-8
 Type=Service
 Name=RPM-Find
-Name[bs]=RPM-Nađi
 Name[de]=RPM-Suche
 Name[eo]=RPM-trovilo
 Name[fi]=RPM-haku
@@ -10,6 +9,8 @@ Name[is]=RPM-leit
 Name[ko]=RPM 찾기
 Name[lv]=RPM-Meklēšana
 Name[pl]=Szukanie RPM-ów
+Name[ro]=Căutare pachete RPM
+Name[ven]=RPM-Toda
 Name[xh]=RPM-Fumana
 Name[xx]=xx
 Name[zu]=RPM-Thola
