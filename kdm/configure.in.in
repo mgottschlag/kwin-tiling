@@ -75,18 +75,20 @@ else
 	                    # test, if it works *sigh*
 fi
 
-AC_ARG_WITH(shadow,
-	[  --with-shadow		  If you want shadow password support ],
-	[ if test "$withval" = "yes"; then
-             shadow_support="yes"
-          else
-             shadow_support="no"
-          fi
-	  if test "$pam_support" = "yes" && test "$shadow_support=yes"; then
-		AC_MSG_WARN("You can not define both pam AND shadow")
-	  fi
-	],
-	[ if test -z "$shadow_support"; then shadow_support="no"; fi ] )
+if test "$pam_support" != "yes"; then
+	AC_ARG_WITH(shadow,
+		[  --with-shadow		  If you want shadow password support ],
+		[ if test "$withval" = "yes"; then
+	             shadow_support="yes"
+	          else
+	             shadow_support="no"
+	          fi
+		  if test "$pam_support" = "yes" && test "$shadow_support=yes"; then
+			AC_MSG_WARN("You can not define both pam AND shadow")
+		  fi
+		],
+		[ if test -z "$shadow_support"; then shadow_support="no"; fi ] )
+fi
 
 if test "$pam_support" = "yes"; then
   AC_CHECK_LIB(pam, main, [PASSWDLIB="-lpam -ldl"
