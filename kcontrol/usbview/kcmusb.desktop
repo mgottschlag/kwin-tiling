@@ -1,0 +1,27 @@
+[Desktop Entry]
+Icon=usbview
+Type=Application
+Exec=kcmshell kcmusb
+X-KDE-ModuleType=Library
+X-KDE-Library=usb
+
+Name=USB Devices
+Name[de]=USB-Geräte
+Name[es]=Dispositivos USB
+Name[fr]=Périphériques USB
+Name[it]=Dispositivi USB
+Name[pt]=Dispositivos USB
+
+Comment=View the USB devices attached to this computer
+Comment[de]=USB-Geräte anzeigen die an diesen Computer angeschlossen sind
+Comment[es]=Ver los dispositivos USB conectados a este ordenador
+Comment[fr]=Affichage des périphériques USB connectés à cet ordinateur
+Comment[it]=Mostra i dispositivi USB attaccati a questo computer
+Comment[pt]=Ver os dispositivos USB ligados a este computador
+
+Keywords=USB,devices,viewer,control
+Keywords[de]=USB,Geräte,Anzeige,Kontrolle
+Keywords[es]=USB,dispositivos,visualizador,control
+Keywords[fr]=USB,périphériques,contrôle
+Keywords[it]=USB,dispositivi,elenco dispositivi,controllo
+
