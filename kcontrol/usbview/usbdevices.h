@@ -14,7 +14,7 @@
 
 
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 
 class USBDB;
@@ -36,14 +36,14 @@ public:
 
   QString dump();
 
-  static QList<USBDevice> &devices() { return _devices; };
+  static QPtrList<USBDevice> &devices() { return _devices; };
   static USBDevice *find(int bus, int device);
   static void parse(QString fname);
 
 
 private:
 
-  static QList<USBDevice> _devices;
+  static QPtrList<USBDevice> _devices;
 
   static USBDB *_db;
 

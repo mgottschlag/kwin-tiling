@@ -85,7 +85,7 @@ void USBViewer::load()
     {
       found = false;
 
-      QListIterator<USBDevice> it(USBDevice::devices());
+      QPtrListIterator<USBDevice> it(USBDevice::devices());
       for ( ; it.current(); ++it)
 	if (it.current()->level() == level)
 	  {

@@ -18,7 +18,7 @@
 
 
 #include <qfile.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 
 #include <klocale.h>
@@ -29,7 +29,7 @@
 #include "usbdevices.h"
 
 
-QList<USBDevice> USBDevice::_devices;
+QPtrList<USBDevice> USBDevice::_devices;
 USBDB *USBDevice::_db;
 
 
@@ -88,7 +88,7 @@ void USBDevice::parseLine(QString line)
 
 USBDevice *USBDevice::find(int bus, int device)
 {
-  QListIterator<USBDevice> it(_devices);
+  QPtrListIterator<USBDevice> it(_devices);
   for ( ; it.current(); ++it)
     if (it.current()->bus() == bus && it.current()->device() == device)
       return it.current();
