@@ -239,7 +239,7 @@ KGreeter::KGreeter()
     // clear fields
     connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
     // update session type
-    connect( loginEdit, SIGNAL(lost_focus()), SLOT(load_wm()) );
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT(sel_user()) );
     // start login timeout after entered login
     connect( loginEdit, SIGNAL(lost_focus()), SLOT(SetTimer()) );
     // update sessargStat
@@ -270,7 +270,7 @@ KGreeter::KGreeter()
 	    passwdEdit->setFocus();
 	else
 	    loginEdit->selectAll();
-	load_wm();
+	sel_user();
     }
 }
 
@@ -367,6 +367,22 @@ void KGreeter::keyReleaseEvent( QKeyEvent *e )
 {
     inherited::keyReleaseEvent( e );
     UpdateLock();
+}
+
+void
+KGreeter::sel_user()
+{
+    if (user_view) {
+	QString login = loginEdit->text();
+	QListViewItem *item;
+	for (item = user_view->firstChild(); item; item = item->nextSibling())
+	    if (((GreeterListViewItem *)item)->login == login) {
+		user_view->setCurrentItem( item );
+		user_view->ensureItemVisible( item );
+		break;
+	    }
+    }
+    load_wm();
 }
 
 void

@@ -93,6 +93,7 @@ public slots:
     void slot_session_selected();
     void SetTimer();
     void timerDone();
+    void sel_user();
     void load_wm();
 
 protected:
