@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=doi
+Name=Digital Object Identifier
+Query=http://dx.doi.org/\\{@}
+ServiceTypes=SearchProvider
+Type=Service

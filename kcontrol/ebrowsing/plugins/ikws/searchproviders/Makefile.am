@@ -17,6 +17,7 @@ services_DATA = \
 		de2en.desktop \
 		dmoz.desktop \
 		docbook.desktop \
+		doi.desktop \
 		en2de.desktop \
 		en2es.desktop \
 		en2fr.desktop \
