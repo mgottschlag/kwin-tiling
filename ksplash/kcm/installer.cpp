@@ -95,8 +95,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   if (!mGui)
     return;
 
-  QGridLayout *grid = new QGridLayout(this, 2, 3, KDialog::marginHint(),
-      KDialog::spacingHint());
+  QGridLayout *grid = new QGridLayout(this, 2, 3, 0, KDialog::spacingHint());
   mThemesList = new ThemeListBox(this);
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
   connect(mThemesList, SIGNAL(filesDropped(const KURL::List&)), SLOT(slotFilesDropped(const KURL::List&)));
