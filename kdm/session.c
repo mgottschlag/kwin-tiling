@@ -1077,7 +1077,7 @@ char	*user, *home;
     return env;
 }
 
-#if defined(Lynx) || defined(SCO) && !defined(SCO_USA)
+#if defined(Lynx) || defined(SCO) && !defined(SCO_USA) || !defined(HAVE_CRYPT_H)
 char *crypt(s1, s2)
 	char	*s1, *s2;
 {
