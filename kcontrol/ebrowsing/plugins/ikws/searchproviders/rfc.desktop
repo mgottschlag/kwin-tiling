@@ -1,6 +1,16 @@
 [Desktop Entry]
+Encoding=UTF-8
 Keys=rfc,rfcs
 Name=IETF Requests for Comments
+Name[ar]=طلبات IETF للتعليقات
+Name[da]=IETF-Forespørgsel om kommentarer
+Name[fr]=RFC IETF
+Name[hu]=IETF RFC-k (Request for Comments)
+Name[lv]=IETF Komentāru Pieprasījums
+Name[pt]=Pedidos de Comentários (RFCs) do IETF
+Name[pt_BR]=Pedidos de Comentários (RFCs) do IETF
+Name[xh]=IETF Icela incazo
+Name[xx]=xx
 Query=http://www.ietf.org/rfc/rfc\\{@}.txt
 ServiceTypes=SearchProvider
 Type=Service

@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Exec=khotkeys
 Name=KDE Hot Keys
 Name[af]=kde warm sleutels
@@ -41,6 +42,7 @@ Name[vi]=Các phím nóng cho KDE
 Name[xh]=Izitshixo ezishushu ze KDE
 Name[xx]=xx
 Name[zh_CN]=KDE 热键
+Name[zh_TW]=KDE 熱鍵
 Name[zu]=Izikhiye Ezishisayo ze KDE
 Type=Service
 X-KDE-StartupNotify=false

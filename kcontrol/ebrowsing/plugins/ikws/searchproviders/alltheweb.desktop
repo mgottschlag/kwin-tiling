@@ -1,7 +1,8 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=AllTheWeb fast
-Name[af]=ALLESVANDIEWEB VINNIGE
+Name[af]=allesvandieweb vinnige
 Name[az]=AllTheWeb
 Name[ca]=AllTheWeb ràpid
 Name[da]=AllTheWeb hurtigt
@@ -12,13 +13,17 @@ Name[is]=AllTheWeb hratt
 Name[it]=TuttoIlWeb veloce
 Name[ko]=올더웹 패스트
 Name[lv]=VissWebs ātri
-Name[no]=HeleWeben fort
-Name[no_NY]=AllTheWeb Fast
+Name[nb]=HeleWeben fort
+Name[nn]=AllTheWeb Fast
 Name[pl]=AllTheWeb szybko
 Name[pt]=AllThe Web fast
+Name[pt_BR]=AllTheWeb
 Name[sl]=AllTheWeb hitro
 Name[sv]=AllTheWeb snabb
 Name[tr]=AllTheWeb
+Name[xh]=Yonke iWeb ngokukhawuleza
+Name[xx]=xx
+Name[zu]=Yonke iWeb ngokukhawuleza
 ServiceTypes=SearchProvider
 Keys=atw,alltheweb
 Query=http://www.alltheweb.com/cgi-bin/search?exec=FAST+Search&type=all&query=\\{@}&exec=FAST+Search

@@ -1,8 +1,29 @@
 [Desktop Entry]
+Encoding=UTF-8
 Charset=
 Hidden=false
 Keys=qrz,call
 Name=QRZ.com callsign database
+Name[ar]=QRZ.com قاعدة بيانات callsign
+Name[az]=QRz.com databeyzi
+Name[da]=QRZ.com callsign-database
+Name[de]=Rufzeichendatenbank QRZ.com
+Name[es]=Base de datos callsign QRZ.com
+Name[eu]=QRZ.com callsign datubasea
+Name[fi]=QRZ.com kutsumerkkitietokanta
+Name[fr]=Base de données QRZ.com callsign
+Name[hu]=QRZ.com hívójel-adatbázis
+Name[lt]=QRZ.com callsign duomenų bazė
+Name[lv]=QRZ.com izsaukuma signālu datubāze
+Name[nn]=QRZ.com callsign-database
+Name[pt]=Base de dados de chamada do QRZ.com
+Name[pt_BR]=Banco de siglas
+Name[sk]=Databáza skratiek QRZ.com
+Name[sl]=Zbirka okrajšav QRZ.com
+Name[sv]=Databas för QRZ.com anropssignaler
+Name[xh]=QRZ.com callsign isiseko sedata
+Name[xx]=xx
+Name[zu]=I QRZ.com callsign database
 Query=http://www.qrz.com/database?callsign=\\{@}
 ServiceTypes=SearchProvider
 Type=Service

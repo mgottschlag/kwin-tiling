@@ -1,8 +1,10 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Google
-Name[af]=GOOGLE
+Name[af]=google
 Name[ko]=구글
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=gg,google
 Query=http://www.google.com/search?q=\\{@}

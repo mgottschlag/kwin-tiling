@@ -1,6 +1,21 @@
 [Desktop Entry]
+Encoding=UTF-8
 Keys=cpan
 Name=CPAN - Comprehensive Perl Archive Network
+Name[ar]=CPAN - شبكة أرشيفات Perl المفصلة
+Name[da]=CPAN - Omfattende Perl-arkivnetværk
+Name[de]=CPAN - Umfassendes Perl-Archiv
+Name[es]=CPAN - Red de archivos Perl comprensibles
+Name[fr]=CPAN (Comprehensive Perl Archive Network)
+Name[lt]=CPAN – Visapusiško Perlo Archyvo Tinklas
+Name[lv]=CPAN - Visaptverošs Perl Arhīvu Tīkls
+Name[nn]=CPAN - Perl-arkiv: «Comprehensive Perl Archive Network»
+Name[pt_BR]=CPAN
+Name[sl]=CPAN - Omrežje obsežnega arhiva za Perl
+Name[tr]=CPAN - Detaylı Perl Arşiv Ağı
+Name[xh]=CPAN - Enomxholo Perl Indawo yokugcina Yomsebenzi womnatha
+Name[xx]=xx
+Name[zh_CN]=CPAN－Comprehensive Perl Archive Network
 Query=http://search.cpan.org/search?mode=\\{mode,2,"dist"}&query=\\{query,q,1}
 ServiceTypes=SearchProvider
 Type=Service

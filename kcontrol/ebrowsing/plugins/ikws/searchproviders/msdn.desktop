@@ -1,13 +1,19 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Microsoft Developer Network Search
+Name[af]=microsoft ontwikkelaar netwerk soektog
 Name[ar]=بحث في شبكة مطوري مايكروسوفت
+Name[cs]=Vyhledávání v Microsoft Developer Network
 Name[da]=Microsoft udviklernetværkssøgning
 Name[de]=Microsoft Developer Network Suche
 Name[es]=Red de búsqueda del desarrollador de Microsoft
+Name[fi]=Microsoft Developer Network haku
 Name[is]=Microsoft Developer Network leit
 Name[ko]=마이크로소프트 개발자 네트웍 찾기
+Name[lt]=Microsoft Developer Network Paieška
 Name[lv]=Microsoft Izstrādātāju Tīkla Meklēšana
+Name[nn]=Microsoft Developer Network-søk
 Name[pt]=Pesquisa na Microsoft Developer Network
 Name[pt_BR]=Busca 
 Name[sk]=Hľadanie Microsoft Developer Network

@@ -1,9 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Voila
-Name[af]=VOILA
+Name[af]=voila
 Name[ko]=보일라
 Name[wa]=Voilà
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=voila
 Query=http://www.voila.com/S/www?an=1&kw=\\{@}&dt=*

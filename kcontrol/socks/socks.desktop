@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Icon=proxy
 Type=Application
 Exec=kcmshell socks
@@ -38,7 +39,7 @@ Comment[nl]=SOCKS-ondersteuning instellen
 Comment[nn]=Set opp SOCKS-støtte
 Comment[pl]=Konfiguracja wsparcia SOCKS
 Comment[pt]=Configurar o suporte do SOCKS
-Comment[pt_BR]=Configurar o suporte do SOCKS
+Comment[pt_BR]=Configurar suporte SOCKS
 Comment[ru]=настройки SOCKS
 Comment[sk]=Nastavenie podpory SOCKS
 Comment[sl]=Prikroji podporo SOCKS
@@ -55,7 +56,6 @@ Comment[zh_CN]=配置 SOCKS 支持
 Comment[zh_TW]=設定 SOCKS 支援
 Comment[zu]=Hlanganisela inxaso ye SOCKS
 Keywords=SOCKS,SOCKS5,SOCKS4,proxy
-Keywords[af]=socks,socks5,socks4,proxy
 Keywords[ar]=SOCKS,SOCKS5,SOCKS4,بروكسي
 Keywords[az]=SOCKS,SOCKS5,SOCKS4,vəkil verici
 Keywords[de]=SOCKS,SOCKS5,SOCKS4,Proxy

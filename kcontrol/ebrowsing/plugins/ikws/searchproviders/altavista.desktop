@@ -1,11 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=AltaVista
-Name[af]=ALTAVISTA
+Name[af]=altavista
 Name[eo]=Altavisto
 Name[et]=Altavista
 Name[ko]=알타비스타
 Name[sv]=Altavista
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=av,altavista
 Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}

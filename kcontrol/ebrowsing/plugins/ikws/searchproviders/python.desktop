@@ -1,8 +1,21 @@
 [Desktop Entry]
+Encoding=UTF-8
 Charset=
 Hidden=false
 Keys=py,python
 Name=Python Reference Manual
+Name[ar]=مرجع بايثون اليدوي
+Name[cs]=Manuál jazyka Python
+Name[da]=Python reference-manual
+Name[es]=Manual de referencia de Python
+Name[fr]=Manuel de référence de Python
+Name[hu]=Python referencia-kézikönyv
+Name[lt]=Python vadovas-žinynas
+Name[lv]=Pitona Atsauču Rokasgrāmata
+Name[pt]=Manual de Referência do Python
+Name[pt_BR]=Manual de Referência do Python
+Name[sv]=Python referensmanual
+Name[xh]=Incopho iye ibaluhlaza (okwengca)
 Query=http://search.python.org/query.html?col=\{what,"pydocs"}&nh=\{num,"20"}&qt=\{@}
 ServiceTypes=SearchProvider
 Type=Service

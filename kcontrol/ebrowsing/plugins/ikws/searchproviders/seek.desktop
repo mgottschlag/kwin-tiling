@@ -1,9 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=GO.com
-Name[af]=GAAN.COM
+Name[af]=gaan.com
 Name[de]=go.com
 Name[eo]=Go.com
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=seek
 Query=http://www.go.com/Titles?col=WW&qt=\\{@}&svx=home_searchbox&sv=IS&lk=noframeso

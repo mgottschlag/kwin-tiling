@@ -1,8 +1,18 @@
 [Desktop Entry]
+Encoding=UTF-8
 Charset=
 Hidden=false
 Keys=db,docbook
 Name=DocBook - The Definitive Guide
+Name[ar]=DocBook - المرشد النهائي
+Name[da]=DocBook - Den definitive guide
+Name[es]=DocBook - La guía definitiva
+Name[lt]=DocBook –  galutinis vadovas
+Name[lv]=DocBook - Izsmeļošs Ceļvedis
+Name[pt]=DocBook - O Guia Definitivo
+Name[pt_BR]=DocBook - O Guia Definitivo
+Name[sv]=Den slutgiltiga guiden till docbook
+Name[xh]=DocBook - IDefinitive Guide
 Query=http://www.docbook.org/tdg/en/html/\\{1}.html
 ServiceTypes=SearchProvider
 Type=Service

@@ -1,7 +1,27 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Ruby Application Archive
-Name[de]=Ruby Anwendungsarchiv
+Name[af]=ruby aansoek argief
+Name[ar]=أرشيف تطبيقات Ruby
+Name[az]=Ruby Proqram Arxivçisi
+Name[cs]=Archív aplikací Ruby
+Name[da]=Ruby programarkiv
+Name[es]=Archivo de aplicación Ruby
+Name[fi]=Ruby sovellushakemisto
+Name[fr]=Archive d'application Ruby
+Name[hu]=Ruby alkalmazásarchívum
+Name[lt]=Ruby taikomųjų programų archyvas
+Name[lv]=Ruby Aplikāciju Arhīvs
+Name[nl]=Ruby Applicatie-archief
+Name[nn]=Ruby-programarkiv
+Name[pt]=Arquivo de Aplicações Ruby
+Name[pt_BR]=Aplicação Ruby
+Name[sl]=Arhiv programov Ruby
+Name[xh]=Ruby Indawo yokugcina Isicelo
+Name[xx]=xx
+Name[zh_TW]=Ruby 應用程式檔案
+Name[zu]=I Ruby Application Archive
 ServiceTypes=SearchProvider
 Keys=raa
 Query=http://www.ruby-lang.org/en/raa-list.rhtml?name=\\{@}

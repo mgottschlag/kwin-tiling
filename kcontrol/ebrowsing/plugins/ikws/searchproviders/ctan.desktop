@@ -1,6 +1,21 @@
 [Desktop Entry]
+Encoding=UTF-8
 Keys=ctan
 Name=CTAN - Comprehensive TeX Archive Network
+Name[ar]=CTAN - شبكة أرشيفات TeX المفصلة
+Name[da]=CTAN - Omfattende TeX-arkivnetværk
+Name[de]=CTAN - Umfassendes TeX-Archiv
+Name[es]=CTAN - Red de archivos TeX comprensivos
+Name[fr]=CTAN (Comprehensive TeX Archive Network)
+Name[lt]=CTAN – Visapusiško TeX Archyvo Tinklas
+Name[lv]=CTAN - Visaptverošs TeX Arhīvu Tīkls
+Name[nn]=CTAN - TeX-arkiv: «Comprehensive TeX Archive Network»
+Name[pt_BR]=CTAN
+Name[sl]=CPAN - Omrežje obsežnega arhiva za TeX
+Name[tr]=CTAN - Detaylı TeX Arşiv Ağı
+Name[xh]=CTAN - Enomxholo TeX Indawo yokugcina Yomsebenzi womnatha
+Name[xx]=xx
+Name[zh_CN]=CTAN－Comprehensive TeX Archive Network
 Query=http://www.ctan.org/tools/filesearch?action=/search/&filename=\\{@}
 ServiceTypes=SearchProvider
 Type=Service

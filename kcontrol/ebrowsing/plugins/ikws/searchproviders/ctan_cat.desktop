@@ -1,7 +1,32 @@
 [Desktop Entry]
+Encoding=UTF-8
 Keys=ctan_cat
 Name=CTAN Catalogue
-Name[de]=CTAN Katalog
+Name[ar]=كتيب CTAN
+Name[az]=CTAN Kataloqları
+Name[bg]=CTAN Каталог
+Name[bs]=CTAN Katalog
+Name[cs]=CTAN katalog
+Name[da]=CTAN-katalog
+Name[de]=CTAN-Katalog
+Name[es]=Catálogo CTAN
+Name[fi]=CTAN katalogi
+Name[fr]=Catalogue du CTAN
+Name[ko]=CTAN 카탈로그
+Name[lt]=CTAN Katalogas
+Name[lv]=CTAN Katalogs
+Name[nl]=CTAN Catalogus
+Name[nn]=CTAN-katalog
+Name[pt]=Catálogo do CTAN
+Name[pt_BR]=Catálogo CTAN
+Name[sk]=Katalóg CTAN
+Name[sl]=Katalog CTAN
+Name[sv]=CTAN-katalog
+Name[tr]=CTAN Kataloğu
+Name[xh]=CTAN Incwadi yemifanekiso
+Name[xx]=xx
+Name[zh_CN]=CTAN 目录
+Name[zu]=I Khatalogi ye CTAN
 Query=http://www.ctan.org/tools/cataloguesearch?action=/search/&catstring=\\{@}
 ServiceTypes=SearchProvider
 Type=Service

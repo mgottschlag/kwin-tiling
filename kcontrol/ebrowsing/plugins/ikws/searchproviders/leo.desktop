@@ -1,13 +1,19 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=LEO-Translate
+Name[bs]=LEO-Prevodioc
 Name[de]=LEO-Übersetzung
 Name[eo]=LEO-Tradukilo
 Name[is]=LEO-þýðandi
 Name[ko]=레오-번역
 Name[lv]=LEO-Tulkot
-Name[no]=LEO-oversetter
+Name[nb]=LEO-oversetter
 Name[pl]=LEO-Tłumacz
+Name[pt_BR]=LEO-Tradutor
+Name[xh]=LEO-Guqulela
+Name[xx]=xx
+Name[zu]=LEO-Guqulela
 ServiceTypes=SearchProvider
 Keys=leo
 Query=http://dict.leo.org/?search=\\{@}

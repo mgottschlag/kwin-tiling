@@ -1,11 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=AustroNaut
-Name[af]=RUIMTEVAARDER
+Name[af]=ruimtevaarder
 Name[eo]=Aŭstronaŭto
 Name[ko]=오스트로 노트
 Name[lv]=Astronauts
 Name[sv]=Astronaut
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=austro,austronaut
 Query=http://AustroNaut.at/query.ims?wo=at&suche=\\{@}

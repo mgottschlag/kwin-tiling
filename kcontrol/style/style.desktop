@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Exec=kcmshell style
 Icon=style
 Type=Application
@@ -12,18 +13,33 @@ X-KDE-FactoryName=style
 Name=Style Settings 
 
 Comment=Allows the the manipulation of widget behavior and allows changing the Style for KDE
+Comment[ar]=يسمح بمعالجة تصرف الكائن ويسمح بتغيير نمط KDE
+Comment[da]=Tillader manipulering af kontrol-opførsel og tillader ændring af stilen for KDE
+Comment[en_GB]=Allows the the manipulation of widget behaviour and allows changing the Style for KDE
+Comment[es]=Permite la manipulación del comportamiento del widget y permite cambiar el estilo para KDE
+Comment[fr]=Permet la configuration du comportement des éléments graphiques et la modification des styles de KDE
+Comment[he]=שינוי הגדרות התפקוד של הפריטים והסגנון של KDE
+Comment[hu]=Lehetővé teszi a grafikus alapelemek néhány jellemzőjének megváltoztatását, a KDE stílusának módosítását
+Comment[lt]=Leidžia manipuliuoti valdiklio elgsena ir leidžia pakeisti KDE stilių
+Comment[lv]=Atļauj manipulācijas ar logdaļu izturēšanos un ļauj mainīt Stilu priekš KDE
+Comment[pt]=Permite a manipulação do comportamento dos widgets e permite a mudança do estilo para o KDE
+Comment[pt_BR]=Permite a manipulação do comportamento dos widgets e permite a mudança do estilo para o KDE
+Comment[sk]=Umožňuje upraviť chovanie prvku a zmenu štýlu pre KDE
+Comment[sv]=Låter dig manipulera beteendet hos komponenter och ändra stilen på KDE
+Comment[xx]=xx
 
 Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
 Keywords[af]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE programme
 Keywords[ar]=مظهر,مظاهر,مظهر,متحكم,أيقونات, شريط أدوات, نص, تظليل,تطبيقات, تطبيقات KDE
 Keywords[az]=tərz,tərzlər,görünüş,dekorlar,örtük,örtüklər,parçacıq,menyu,MacOS,menyu çubuğu,timsal,timsallar,vasitə çubuğu,mətn,düymə,siçan,şəffaf,hərəkət,ekran,proqram,proqramlar,KDE proqramları
-Keywords[da]=stil,udseende,dims,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
+Keywords[da]=stil,udseende,kontrol,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
 Keywords[de]=Stile,Designs,Themes,Schema,Elemente,Bildschirmelemente,Icons,Bedienelemente,Schriften,Symbole,Werkzeugleisten,Text,Hervorhebungen,Knöpfe,Anwendungen,Programme,KDE-Programme
 Keywords[es]=estilo,estilos,temas,aspecto,objeto visual,widget,texto,resaltado,botones, aplicaciones, aplicaciones KDE
 Keywords[fi]=tyyli,tyylit,ulkonäkö,kontrolli,kuvakkeet,työkalupalkit,teksti,korostus,sovellukset,KDE sovellukset
 Keywords[fr]=style,styles,thème,apparence,widget,barre de menus,MacOS,police,couleur,non KDE,icône,icônes,barre d'outils,barres d'outils,barres de menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,écran,applications,programmes,programmes non KDE,applications non KDE
 Keywords[he]=סגנון,מראה,פריטים,סמלים,סרגל כלים,טקסט,הדגשה,יישומים,יישומים של KDE
 Keywords[hu]=stílus,stílusok,kinézet,grafikus elem,ikonok,eszköztárak,szöveg,kiemelés,alkalmazások,KDE alkalmazások
+Keywords[lt]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications, stilius,stiliai,išvaizda,valdiklis,piktogramos,įrankių juostos,paryškinimas,KDE taikomosios programos
 Keywords[nl]=stijl,stijlen,look,uiterlijk,widget,icons,iconen,pictogrammen,werkbalken,tekst,highlight,accentuatie,apps,KDE applicaties,programma's,KDE-programma's,toepassingen
 Keywords[nn]=stil,tema,utsjånad,bunad,element,skjermelement,verktøylinje,tekst,markering,program,KDE-program
 Keywords[pt]=estilo,estilos,aparência,elemento,ícones,ferramentas,texto,realce,aplicações,aplicações do KDE
@@ -34,4 +50,5 @@ Keywords[sv]=stil,stilar,utseende,komponent,ikoner,verktygrader,text,färgläggn
 Keywords[tr]=simgeler,stil,stiller,dekor,dekorlar,tema,temalar,görünüm,parçacık,menü,KDE uygulamaları,araç çubukları,uygulamalar
 Keywords[xh]=uhlobo, iintlobo, jonga, widget, icons, iibar zesixhobo, okubhaliweyo, phawula, apps, KDE izicelo
 Keywords[xx]=xx
+Keywords[zh_TW]=風格,主題,外觀,視窗元件,選單列,MacOs,字體,色彩,顏色,非KDE,圖示,工具列,文字,高亮度,按鈕,滑鼠游標,透明,移動,螢幕,程式,應用程式,非KDE程式
 Keywords[zu]=izitayela,izitayela,ukubukeka,widget,ama icon,ithuluzi lamabhazi,okubhaliweyo,khanyisa,apps,KDE izingeniso

@@ -1,12 +1,16 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Ask Jeeves
-Name[af]=VRA JEEVES
+Name[af]=vra jeeves
 Name[de]=Frag Jeeves
 Name[eo]=Demandu Jeeves
 Name[is]=Spyrja Jeeves
 Name[ko]=지브에게 묻기
 Name[lv]=Jautāt Džīvam
+Name[xh]=Buza jeeves
+Name[xx]=xx
+Name[zu]=Buza Jeeves
 ServiceTypes=SearchProvider
 Keys=ask,jeeves
 Query=http://www.ask.com/main/askJeeves.asp?origin=0&qSource=4&site_name=Jeeves&metasearch=yes&ask=\\{@}

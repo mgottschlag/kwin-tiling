@@ -1,7 +1,36 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Google Image Search
-Name[de]=Google Bildersuche
+Name[af]=google beeld soektog
+Name[ar]=بحث صور Google
+Name[az]=Google Rəsm Axtarıcısı
+Name[bg]=Търсене на изображения при Google
+Name[bs]=Google traženje slika
+Name[cs]=Hledání obrázků (Google)
+Name[da]=Google billedsøgning
+Name[de]=Google-Bildsuche
+Name[es]=Búsqueda de imágenes de Google
+Name[eu]=Google Irudi Bilaketa
+Name[fi]=Google kuvahaku
+Name[fr]=Recherche d'images avec Google
+Name[hu]=Google képkereső
+Name[ko]=구글 그림 찾기
+Name[lt]=Google paveikslėlių paieška
+Name[lv]=Google Attēlu Meklēšana
+Name[nl]=Google plaatjes zoeken
+Name[nn]=Google biletesøk
+Name[pt]=Pesquisa de Imagens do Google
+Name[pt_BR]=Busca de  Imagens do Google
+Name[sk]=Hľadanie obrázkov Google
+Name[sl]=Iskanje slik z Google
+Name[sv]=Google bildsökning
+Name[tr]=Google Resim Arayıcı
+Name[xh]=Uphendlo lomfanekiso we Google
+Name[xx]=xx
+Name[zh_CN]=Google 图片搜索
+Name[zh_TW]=Google 影像搜尋
+Name[zu]=Google Ukuphenya Umboniso
 ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}

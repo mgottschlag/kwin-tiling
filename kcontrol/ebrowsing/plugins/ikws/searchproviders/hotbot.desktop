@@ -1,8 +1,12 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Hotbot
-Name[af]=HOTBOT
+Name[af]=hotbot
 Name[ko]=핫봇
+Name[xh]=ibot eshushu
+Name[xx]=xx
+Name[zu]=ibot eshishayo
 ServiceTypes=SearchProvider
 Keys=hb,hotbot
 Query=http://hotbot.lycos.com/?MT=\\{@}&SM=MC&DV=0&LG=any&DC=10&DE=2

@@ -1,7 +1,26 @@
 [Desktop Entry]
+Encoding=UTF-8
 Keys=tel,tel_at
 Name=Austrian Online Telephone Book
-Name[de]=�sterreichisches Online Telefonbuch
+Name[ar]=دليل الهواتف النمساوي
+Name[bs]=Austriska telefonska knjiga
+Name[da]=Østrigsk online-telefonbog
+Name[es]=Guía telefónica en línea de Austria
+Name[fi]=Itävallan puhelinluettelo
+Name[fr]=Annuaire australien en ligne
+Name[hu]=Osztrák online telefonkönyv
+Name[is]=Austurríska símaskráin á netinu
+Name[lt]=Austrijos telefonų knyga tinkle
+Name[lv]=Austrijas Online Telefonu Grāmata
+Name[nl]=Oostenrijks On-line Telefoonboek
+Name[nn]=Telefonkatalogen i Austerrike
+Name[pt]=Lista Telefónica Online da Áustria
+Name[pt_BR]=Livro de Telefones
+Name[sk]=Rakúsky telefónny zoznam
+Name[sl]=Avstrijski spletni telefonski imenik
+Name[xh]=Incwadi yefowuni eselayinini yase Austriya
+Name[xx]=xx
+Name[zu]=Incwadi Kathelephoni Okulayini yase Ositriyani
 Query=http://www.otb.at/telefonbuch/search_result_start.asp?Name=\\{name,1}&Vorname=\\{vorname,firstname}&Strasse=\\{strasse,street}&Hnr=\\{hnr}&Ort=\\{ort,city,plz,zip,2}&Zusatz=\\{zusatz,addon}&Telefon=\\{tel}&StartNr=0
 ServiceTypes=SearchProvider
 Type=Service

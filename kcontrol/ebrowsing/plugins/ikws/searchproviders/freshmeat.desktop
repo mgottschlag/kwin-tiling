@@ -1,8 +1,12 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Freshmeat
-Name[af]=FRESHMEAT
+Name[af]=freshmeat
 Name[ko]=날고기(프레시미트)
+Name[xh]=Inyama entsha
+Name[xx]=xx
+Name[zu]=Inyama entsha
 ServiceTypes=SearchProvider
 Keys=fm,freshmeat
 Query=http://freshmeat.net/search/?q=\\{@}

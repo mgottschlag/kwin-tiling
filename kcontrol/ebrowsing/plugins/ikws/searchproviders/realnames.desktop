@@ -1,9 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=RealNames
-Name[af]=REALNAMES
+Name[af]=realnames
 Name[eo]=Realnomoj
-Name[zh_TW.Big5]=真實姓名
+Name[pt_BR]=Nomes Reais
+Name[xh]=Amagama okwenene
+Name[xx]=xx
+Name[zu]=Amagama Angempela
 ServiceTypes=SearchProvider
 Keys=rn,realnames
 Query=http://navigation.us.realnames.com/resolver.dll?realname=\\{@}

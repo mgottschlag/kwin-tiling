@@ -1,6 +1,35 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Google (I'm Feeling Lucky)
+Name[ar]=Google (ضربة حظ)
+Name[az]=Google (Eləbil Bəxtim Gətirəcək)
+Name[bg]=Google (Върви ми!)
+Name[bs]=Google (Osjećam se sretno)
+Name[cs]=Google (Zkusím štěstí)
+Name[da]=Google (Jeg føler mig heldig)
+Name[de]=Google ("Auf gut Glück!")
+Name[es]=Google (Me siento afortunado)
+Name[eu]=Google (Zorte onean nago)
+Name[fi]=Google (Kokeile onneasi)
+Name[fr]=Google (J'ai de la chance)
+Name[he]=Google )I'm Feeling Lucky(
+Name[is]=Google (Mér líður vel í dag)
+Name[lt]=Google (Man sekasi!)
+Name[lv]=Google (Es jūtos laimīgs)
+Name[nl]=Google (Ik ga d'r voor)
+Name[nn]=Google (Eg prøver lykka)
+Name[pt]=Google (Sinto-me Com Sorte)
+Name[pt_BR]=Google
+Name[sk]=Google (Cítim sa štastne)
+Name[sl]=Google (Počutim se srečnega)
+Name[sv]=Google (Jag har tur)
+Name[tr]=Google
+Name[xh]=Google (Ndityisa u Lucky)
+Name[xx]=xx
+Name[zh_CN]=Google (手气不错)
+Name[zh_TW]=Google (我感覺很幸運)
+Name[zu]=Google (Ngizizwa Ngisenhlanhleni)
 ServiceTypes=SearchProvider
 Keys=ggl,gglucky
 Query=http://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky

@@ -1,9 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=MetaCrawler
-Name[af]=METACRAWLER
+Name[af]=metacrawler
+Name[ar]=MetaCrwaler
 Name[ko]=메타 크로울러
 Name[lv]=MetaKravlers
+Name[xh]=Umrhubuluzi we Meta
+Name[xx]=xx
 ServiceTypes=SearchProvider
 Keys=mc,meta,metacrawler
 Query=http://search.metacrawler.com/crawler?general=\\{@}&method=0&cat=Web&target=metaworld&redirect=web&rpp=20&hpe=10&region=0&timeout=0&sort=0&format=beta99&theme=classic&refer=mc-search&refer=mc-search

@@ -1,8 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=Klipper
 Name[hu]=Klipper vágólap-kezelő
 Name[lv]=Klippers
+Name[xx]=xx
 Comment=Clipboard Tool
+Comment[ar]=أداة الحافظة
 Comment[da]=Klippebordsværktøj
 Comment[de]=Verwaltung der Zwischenablage
 Comment[es]=Herramienta de portapapeles
@@ -10,11 +13,14 @@ Comment[fi]=Leikepöytätyökalu
 Comment[fr]=Un presse-papiers
 Comment[he]=כלי לוח עריכה
 Comment[hu]=Segédprogram a vágólap kezeléséhez
+Comment[lt]=Laikinos talpyklės priemonė
 Comment[lv]=Starpliktuves Rīks
 Comment[pt]=Ferramenta da Área de Transferência
 Comment[pt_BR]=Ferramenta da Área de Transferência
 Comment[sk]=Nástroj pre schránku
 Comment[sv]=Klippbordsverktyg
+Comment[ta]=´ðÎôÀÄ¨¸ì ¸ÕÅ¢
+Comment[xx]=xx
 Exec=klipper %i %m
 Icon=klipper
 Type=Application

@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Exec=kcmshell nic
 Type=Application
 
@@ -7,6 +8,57 @@ X-KDE-Library=nic
 X-KDE-FactoryName=nic
 
 Name=Network interfaces
+Name[af]=netwerk koppelvlakke
+Name[ar]=واجهات الشبكة
+Name[az]=Şəbəkə ara üzləri
+Name[cs]=Síťová rozhraní
+Name[da]=Netværksgrænseflader
+Name[de]=Netzwerk-Schnittstellen
+Name[es]=Interfaces de red
+Name[fi]=Verkkoliitynnät
+Name[fr]=Interfaces réseau
+Name[he]=ממשקי רשת
+Name[hu]=Hálózati csatolókártyák
+Name[lt]=Tinklo sąsajos
+Name[lv]=Tīkla saskarsmes virsmas
+Name[nl]=Netwerk-interfaces
+Name[nn]=Nettverksgrensesnitt
+Name[pt]=Interfaces de rede
+Name[pt_BR]=Interface de Rede
+Name[sk]=Sieťové rozhrania
+Name[sl]=Omrežni vmesniki
+Name[sv]=Nätverksgränssnitt
+Name[ta]=Å¨Ä Ó¸ôÒì¸û
+Name[tr]=Ağ arayüzleri
+Name[xh]=Iinjongano zomsebenzi womnatha
+Name[xx]=xx
+Name[zh_TW]=網路介面
 
 Comment=Network interface information
+Comment[af]=netwerk koppelvlak informasie
+Comment[ar]=معلومات حول واجهة الشبكة
+Comment[az]=Şəbəkə ara üzü məlumatı
+Comment[cs]=Informace o síťových rozhraních
+Comment[da]=Information om netværksgrænseflader
+Comment[de]=Informationen über die Netzwerkanschlüsse
+Comment[es]=Información sobre el interfaz de red
+Comment[fi]=Verkkoliityntöjen tiedot
+Comment[fr]=Informations sur l'interface réseau
+Comment[he]=מידע על ממשקי רשת
+Comment[hu]=Információ a hálózati kártyákról
+Comment[lt]=Tinklo sąsajos informacija
+Comment[lv]=Tīkla saskarsmes virsmu informācija
+Comment[nl]=Netwerkinterface-informatie
+Comment[nn]=Informasjon om nettverksgrensesnitt
+Comment[pt]=Informações sobre as interfaces de rede
+Comment[pt_BR]=Informações Sobre Rede
+Comment[sk]=Informácie o sieťových rozhraniach
+Comment[sl]=Podatki o omrežnih vmesnikih
+Comment[sv]=Information om nätverksgränssnitt
+Comment[ta]=Å¨Ä Ó¸ôÒò ¾¸Åø
+Comment[tr]=Ağ arayüz bilgisi
+Comment[xh]=Ulwazilojongano lomsebenzi womnatha
+Comment[xx]=xx
+Comment[zh_TW]=網路介面資訊
+Comment[zu]=Ulwazi lomlekeleli we-X
 

@@ -1,17 +1,29 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Name=Open Directory
-Name[af]=OPEN GIDS
+Name[af]=open gids
+Name[ar]=دليل مفتوح
 Name[bg]=Отвори директория
+Name[bs]=Otvori direktorij
 Name[eo]=Libera katalogo
+Name[eu]=Open Direktorioa
+Name[fi]=Avoin hakemisto
+Name[fr]=Ouvrir un dossier
+Name[id]=Buka Direktori
 Name[is]=Opin mappa
 Name[ko]=자료방 열기
 Name[lv]=Atvērt Direktoriju
+Name[nb]=Åpne katalog
 Name[nl]=Map openen
-Name[no]=Åpne katalog
+Name[pt_BR]=Abrir Diretório
 Name[ta]=¾¢Èó¾ «¨¼×
 Name[vi]=MềEthư mục 
 Name[wa]=Drovî ridant
+Name[xh]=Vula ulawulo
+Name[xx]=xx
+Name[zh_TW]=開啟目錄
+Name[zu]=Vula Ulawulo
 ServiceTypes=SearchProvider
 Keys=dmoz,odp
 Query=http://search.dmoz.org/cgi-bin/search?search=\\{@}
