@@ -20,6 +20,7 @@
 #include <qmap.h>
 #include <qpixmap.h>
 #include <dcopobject.h>
+#include <qtimer.h>
 
 class QClipboard;
 class KToggleAction;
@@ -108,7 +109,8 @@ private slots:
     }
     
     void slotAboutToHideMenu();
-
+    
+    void slotClearOverflow();
 
 private:
     enum SelectionMode { Clipboard = 1, Selection = 2 };
@@ -119,6 +121,7 @@ private:
 
     QString m_lastString;
     QString m_lastClipboard, m_lastSelection;
+    int mOverflowCounter;
     KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
     QMap<long,QString> m_clipDict;
@@ -138,6 +141,7 @@ private:
     int maxClipItems;
     int URLGrabItem;
     KConfig* m_config;
+    QTimer mOverflowClearTimer;
     ClipboardPoll* poll;
     static KAboutData* about_data;
 
