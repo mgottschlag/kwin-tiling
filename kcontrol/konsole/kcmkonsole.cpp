@@ -80,9 +80,9 @@ void KCMKonsole::load(bool useDefaults)
     bidiOrig = config->readBoolEntry("EnableBidi",false);
     dialog->bidiCB->setChecked(bidiOrig);
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
-    dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
+    dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",true));
     dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
-    dialog->allowResizeCB->setChecked(config->readBoolEntry("AllowResize",true));
+    dialog->allowResizeCB->setChecked(config->readBoolEntry("AllowResize",false));
     xonXoffOrig = config->readBoolEntry("XonXoff",false);
     dialog->xonXoffCB->setChecked(xonXoffOrig);
     dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
