@@ -325,33 +325,25 @@ void BGDialog::initUI()
    // the following QMap is lower cased names mapped to cased names and URLs
    // this way we get case insensitive sorting
    QMap<QString, QPair<QString, QString> > papers;
-   QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
+
+   //search for .desktop files before searching for images without .desktop files
+   QStringList lst = m_pDirs->findAllResources("wallpaper", "*desktop", false, true);
+   QStringList files;
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      // First try to see if we have a comment describing the image.  If we do
-      // just use the first line of said comment.
+      KSimpleConfig fileConfig(*it);
+      fileConfig.setGroup("Wallpaper");
 
-      KFileMetaInfo metaInfo(*it);
-      QString imageCaption;
-
-      if (metaInfo.isValid() && metaInfo.item("Comment").isValid())
-         imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
+      QString imageCaption = fileConfig.readEntry("Name");
+      QString fileName = fileConfig.readEntry("File");
 
       if (imageCaption.isEmpty())
       {
-         int slash = (*it).findRev('/') + 1;
-         int endDot = (*it).findRev('.');
-
-         // strip the extension if it exists
-         if (endDot != -1 && endDot > slash)
-            imageCaption = (*it).mid(slash, endDot - slash);
-         else
-            imageCaption = (*it).mid(slash);
-
+         imageCaption = fileName;
          imageCaption.replace('_', ' ');
          imageCaption = KStringHandler::capwords(imageCaption);
       }
-      
+
       imageCaption = KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11);
 
       // avoid name collisions
@@ -362,7 +354,52 @@ void BGDialog::initUI()
          rs = imageCaption + " (" + QString::number(n) + ')';
          lrs = rs.lower();
       }
-      papers[lrs] = qMakePair(rs, *it);
+      int slash = (*it).findRev('/') + 1;
+      QString directory = (*it).left(slash);
+      papers[lrs] = qMakePair(rs, directory + fileName);
+      files.append(directory + fileName);
+   }
+
+   //now find any wallpapers that don't have a .desktop file
+   lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
+   for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
+   {
+      if ( files.grep(*it).empty() && (*it).right(8) != ".desktop" ) {
+         // First try to see if we have a comment describing the image.  If we do
+         // just use the first line of said comment.
+         KFileMetaInfo metaInfo(*it);
+         QString imageCaption;
+
+         if (metaInfo.isValid() && metaInfo.item("Comment").isValid())
+            imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
+
+         if (imageCaption.isEmpty())
+         {
+            int slash = (*it).findRev('/') + 1;
+            int endDot = (*it).findRev('.');
+
+            // strip the extension if it exists
+            if (endDot != -1 && endDot > slash)
+               imageCaption = (*it).mid(slash, endDot - slash);
+            else
+               imageCaption = (*it).mid(slash);
+
+            imageCaption.replace('_', ' ');
+            imageCaption = KStringHandler::capwords(imageCaption);
+         }
+
+         imageCaption = KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11);
+
+         // avoid name collisions
+         QString rs = imageCaption;
+         QString lrs = rs.lower();
+         for (int n = 1; papers.find(lrs) != papers.end(); ++n)
+         {
+            rs = imageCaption + " (" + QString::number(n) + ')';
+            lrs = rs.lower();
+         }
+         papers[lrs] = qMakePair(rs, *it);
+      }
    }
 
    KComboBox *comboWallpaper = m_urlWallpaperBox;
