@@ -54,6 +54,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
     ButtonGroup1Layout->setAlignment( Qt::AlignTop );
     ButtonGroup1Layout->setSpacing( 6 );
     ButtonGroup1Layout->setMargin( 11 );
+    QWhatsThis::add(ButtonGroup1, i18n("<b>Bars</b><p>Use this groupbox to control the various available scrollbars, toolbars, and menubar.</p>"));
 
     showMenuBarCB = new QCheckBox( ButtonGroup1, "showMenuBarCB" );
     showMenuBarCB->setText( i18n( "Show menubar" ) );
@@ -94,6 +95,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
     GroupBox1Layout->setAlignment( Qt::AlignTop );
     GroupBox1Layout->setSpacing( 6 );
     GroupBox1Layout->setMargin( 11 );
+    QWhatsThis::add(GroupBox1, i18n("<b>Layout</b><p>Use the options presented within this groupbox to change the appearance of konsole.</p>"));
 
     TextLabel5 = new QLabel( GroupBox1, "TextLabel5" );
     TextLabel5->setText( i18n( "Font:" ) );
@@ -133,6 +135,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
     GroupBox2Layout->setAlignment( Qt::AlignTop );
     GroupBox2Layout->setSpacing( 6 );
     GroupBox2Layout->setMargin( 11 );
+    QWhatsThis::add(GroupBox2, i18n("<b>Misc</b><p>This groupbox contains general options for konsole that would not fit elsewhere.</p>"));
 
     historyCB = new QCheckBox( GroupBox2, "historyCB" );
     historyCB->setEnabled( FALSE );
@@ -170,6 +173,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
 
     terminalCB = new QCheckBox( GroupBox2, "terminalCB" );
     terminalCB->setText( i18n( "Do not use konsole as default terminal application" ) );
+    QWhatsThis::add(terminalCB, i18n("<b>Do not use konsole as default terminal application</b><p>Select this option if you wish to use a terminal program such as xterm, eterm, or rxvt by default.</p>"));
 
     GroupBox2Layout->addMultiCellWidget( terminalCB, 0, 0, 0, 3 );
     QSpacerItem* spacer = new QSpacerItem( 30, 20, QSizePolicy::Fixed, QSizePolicy::Minimum );
