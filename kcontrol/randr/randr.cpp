@@ -155,10 +155,10 @@ bool RandRScreen::confirm()
 											KTimerDialog::Ok|KTimerDialog::Cancel,
 											KTimerDialog::Cancel);
 
-	acceptDialog->setButtonOKText(i18n("Accept Configuration"));
-	acceptDialog->setButtonCancelText(i18n("Return to Previous Configuration"));
+	acceptDialog->setButtonOKText(i18n("&Accept Configuration"));
+	acceptDialog->setButtonCancelText(i18n("&Return to Previous Configuration"));
 
-	KActiveLabel *label = new KActiveLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds your configuration will revert to normal."), acceptDialog, "userSpecifiedLabel");
+	KActiveLabel *label = new KActiveLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds the display will revert to your previous settings."), acceptDialog, "userSpecifiedLabel");
 
 	acceptDialog->setMainWidget(label);
 
