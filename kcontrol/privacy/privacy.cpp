@@ -250,7 +250,7 @@ const KAboutData* Privacy::aboutData() const
 extern "C"
 {
 
-  KCModule *create_privacy(QWidget *parent, const char *name)
+  KCModule *create_privacy(QWidget *parent, const char * /*name*/)
   {
     KGlobal::locale()->insertCatalogue("privacy");
     return new Privacy(parent, "Privacy");
