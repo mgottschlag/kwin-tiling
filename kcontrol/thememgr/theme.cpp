@@ -52,6 +52,8 @@
 #include <kicontheme.h>
 #include <kipc.h>
 #include <kdebug.h>
+#include <kprocess.h>
+
 #include "theme.h"
 
 #include <kio/netaccess.h>
@@ -89,7 +91,7 @@ Theme::Theme()
 Theme::~Theme()
 {
   saveSettings();
-  if (mMappings) delete mMappings;
+  delete mMappings;
 }
 
 
@@ -173,7 +175,7 @@ void Theme::loadMappings()
      kdFatal() << "Mappings file theme.mappings not found." << endl;
   }
 
-  if (mMappings) delete mMappings;
+  delete mMappings;
   mMappings = new KSimpleConfig(file.name(), true);
 }
 
@@ -181,13 +183,13 @@ void Theme::loadMappings()
 //-----------------------------------------------------------------------------
 void Theme::cleanupWorkDir(void)
 {
-  QString cmd;
-  int rc;
-
   // cleanup work directory
-  cmd = QString::fromLatin1( "rm -rf %1*" ).arg( workDir() );
-  rc = system(QFile::encodeName(cmd));
-  if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
+  if (!workDir().isEmpty()) {
+    KProcess p;
+    p << "/bin/rm" << "-rf" << workDir();
+    if(!p.start(KProcess::Block) || !p.normalExit() || p.exitStatus())
+      kdWarning() << "Error during cleanup of work directory: " << workDir() << endl;
+  }
 }
 
 void Theme::findThemerc(const QString &path, const QStringList &list)
@@ -237,11 +239,9 @@ bool Theme::load(const QString &aPath, QString &error)
     if (i >= 0) str = workDir() + aPath.mid(i);
     else str = workDir();
 
-    cmd = QString("cp -r \"%1\" \"%2\"").arg(aPath).arg(str);
-    kdDebug() << cmd << endl;
-    rc = system(QFile::encodeName(cmd).data());
-    if (rc)
-    {
+    KProcess p;
+    p << "/bin/cp" << "-r" << aPath << str;
+    if(!p.start(KProcess::Block) || !p.normalExit() || p.exitStatus()) {
       error = i18n("Theme contents could not be copied from\n%1\ninto\n%2")
 		.arg(aPath).arg(str);
       return false;
@@ -250,8 +250,7 @@ bool Theme::load(const QString &aPath, QString &error)
   else if (aPath.right(4) == ".zip")
   {
     // The theme given is a zip archive. Unpack the archive.
-    cmd = QString("cd \"%1\"; unzip -qq \"%2\"")
-             .arg(workDir()).arg(aPath);
+    cmd = QString::fromLatin1("cd ") + KProcess::quote(workDir()) + "; unzip -qq " + KProcess::quote(aPath);
     kdDebug() << cmd << endl;
     rc = system(QFile::encodeName(cmd).data());
     if (rc)
@@ -264,9 +263,7 @@ bool Theme::load(const QString &aPath, QString &error)
   else
   {
     // The theme given is a tar package. Unpack theme package.
-    cmd = QString("cd \"%1\"; gzip -c -d \"%2\" | tar xf -")
-             .arg(workDir()).arg(aPath);
-    kdDebug() << cmd << endl;
+    cmd = QString::fromLatin1("cd ") + KProcess::quote(workDir()) + "; gzip -c -d " + KProcess::quote(aPath) + " | tar xf -";
     rc = system(QFile::encodeName(cmd).data());
     if (rc)
     {
@@ -365,9 +362,7 @@ bool Theme::save(const QString &aPath)
     path += defaultExtension();
   }
 
-  QString cmd = QString("cd \"%1\";tar cf - *|gzip -c >\"%2\"").
-		arg(workDir()).arg(path);
-
+  QString cmd = QString::fromLatin1("cd ") + KProcess::quote(workDir()) + ";tar cf - *|gzip -c >" + KProcess::quote(path);
   kdDebug() << cmd << endl;
   int rc = system(QFile::encodeName(cmd).data());
   if (rc) kdDebug() << "Failed to save theme to " << aPath << " with command " << cmd << endl;
@@ -1023,10 +1018,8 @@ bool Theme::backupFile(const QString &fname) const
   if (!fi.exists()) return false;
 
   QFile::remove((fname + '~'));
-  cmd.sprintf("mv \"%s\" \"%s~\"", fname.local8Bit().data(),
-	      fname.local8Bit().data());
-  rc = system(QFile::encodeName(cmd));
-  if (rc) kdWarning() << "Cannot make backup copy of "
+  rc = ::rename(QFile::encodeName(fname).data(), QFile::encodeName(fname + "~").data());
+  if (rc < 0) kdWarning() << "Cannot make backup copy of "
           << fname << ": mv returned " << rc << endl;
   return (rc==0);
 }
