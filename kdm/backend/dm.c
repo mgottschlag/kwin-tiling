@@ -1284,6 +1284,9 @@ WaitForSomething (void)
 	}
     }
     WaitForChild ();
+#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
+    AddTimerEntropy ();
+#endif
 }
 
 static void
