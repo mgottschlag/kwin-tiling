@@ -35,12 +35,12 @@ uninstall-local:
 	rm -f $(THEMESDIR)/Template.themerc
 
 install-themes:
-	$(mkinstalldirs) $(THEMESDIR)
-	$(INSTALL_DATA) $(srcdir)/Themes/Template.themerc $(THEMESDIR)
+	$(mkinstalldirs) $(DESTDIR)$(THEMESDIR)
+	$(INSTALL_DATA) $(srcdir)/Themes/Template.themerc $(DESTDIR)$(THEMESDIR)
 	cd $(srcdir)/Themes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
-	    tar --exclude CVS -c -f - $$f | gzip -c > $(THEMESDIR)/$$f.tar.gz; \
+	    tar --exclude CVS -c -f - $$f | gzip -c > $(DESTDIR)$(THEMESDIR)/$$f.tar.gz; \
 	  fi; \
 	done
 
