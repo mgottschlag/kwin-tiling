@@ -580,7 +580,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectColor2 = new QLabel(i18n("&Second color:"), mpEffectGroup);
     grid->addWidget(mpEffectColor2, 3, 0);
     mpECol2Button = new KColorButton(mpEffectGroup);
-    mpEffectColor->setBuddy( mpECol2Button );
+    mpEffectColor2->setBuddy( mpECol2Button );
     connect(mpECol2Button, SIGNAL(changed(const QColor &)),
 		SLOT(slotEffectColor2(const QColor &)));
     grid->addWidget(mpECol2Button, 3, 1);
