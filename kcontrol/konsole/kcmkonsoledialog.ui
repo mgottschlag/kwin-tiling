@@ -12,8 +12,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>405</width>
-            <height>440</height>
+            <width>354</width>
+            <height>436</height>
         </rect>
     </property>
     <property stdset="1">
@@ -41,6 +41,9 @@
                 <name>name</name>
                 <cstring>TabWidget2</cstring>
             </property>
+            <property>
+                <name>layoutMargin</name>
+            </property>
             <widget>
                 <class>QWidget</class>
                 <property stdset="1">
@@ -54,7 +57,7 @@
                 <grid>
                     <property stdset="1">
                         <name>margin</name>
-                        <number>11</number>
+                        <number>1</number>
                     </property>
                     <property stdset="1">
                         <name>spacing</name>
@@ -415,7 +418,7 @@
                 <grid>
                     <property stdset="1">
                         <name>margin</name>
-                        <number>11</number>
+                        <number>1</number>
                     </property>
                     <property stdset="1">
                         <name>spacing</name>
@@ -426,70 +429,6 @@
                         <property stdset="1">
                             <name>name</name>
                             <cstring>SchemaEditor1</cstring>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>tab</cstring>
-                </property>
-                <attribute>
-                    <name>title</name>
-                    <string>Sessions</string>
-                </attribute>
-                <grid>
-                    <property stdset="1">
-                        <name>margin</name>
-                        <number>11</number>
-                    </property>
-                    <property stdset="1">
-                        <name>spacing</name>
-                        <number>6</number>
-                    </property>
-                    <widget row="0"  column="0" >
-                        <class>QLabel</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>TextLabel9</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>Not yet implemented :-(</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>tab</cstring>
-                </property>
-                <attribute>
-                    <name>title</name>
-                    <string>Keyboard</string>
-                </attribute>
-                <grid>
-                    <property stdset="1">
-                        <name>margin</name>
-                        <number>11</number>
-                    </property>
-                    <property stdset="1">
-                        <name>spacing</name>
-                        <number>6</number>
-                    </property>
-                    <widget row="0"  column="0" >
-                        <class>QLabel</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>TextLabel10</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>Not yet implemented :-(</string>
                         </property>
                     </widget>
                 </grid>

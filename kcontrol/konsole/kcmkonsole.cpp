@@ -40,6 +40,14 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
     load();
 
     connect(dialog->fontPB, SIGNAL(clicked()), this, SLOT(setupFont()));
+    connect(dialog->fullScreenCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->showMenuBarCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->warnCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->scrollBarCO,SIGNAL(activated(int)),this,SLOT(configChanged()));
+    connect(dialog->showFrameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+    connect(dialog->terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+
 }
 
 void KCMKonsole::load()
@@ -54,7 +62,7 @@ void KCMKonsole::load()
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
     dialog->showFrameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",1));
-    dialog->fontCO->setCurrentItem(config->readNumEntry("font"));
+    dialog->fontCO->setCurrentItem(config->readNumEntry("font",3));
     currentFont = config->readFontEntry("defaultfont");
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
@@ -63,7 +71,8 @@ void KCMKonsole::load()
     config->setGroup("General");
     dialog->terminalLE->setText(config->readEntry("TerminalApplication","konsole"));
     dialog->terminalCB->setChecked(config->readEntry("TerminalApplication","konsole")!="konsole");
-    
+
+    emit changed(false);
 }
 
 void KCMKonsole::load(const QString & s)
@@ -77,13 +86,17 @@ void KCMKonsole::setupFont()
     // Example string, may be nice somthing like "[root@localhost]$ rm / -rf"
     QString example = i18n("[root@localhost]$ ");
     if (KFontDialog::getFontAndText(currentFont, example))
+    {
 	dialog->fontCO->setCurrentItem(0);
+        configChanged();
+    }
 }
 
 
 
 void KCMKonsole::configChanged()
 {
+emit changed(true);
 }
 
 void KCMKonsole::save()
@@ -111,6 +124,8 @@ void KCMKonsole::save()
     
     config->sync();		//is it necessary ?
 
+    emit changed(false);
+
 }
 
 void KCMKonsole::defaults()
@@ -121,8 +136,13 @@ void KCMKonsole::defaults()
     dialog->showFrameCB->setChecked(true);
     dialog->scrollBarCO->setCurrentItem(true);
     dialog->terminalCB->setChecked(false);
+    
+    // Check if -e is needed, I do not think so
     dialog->terminalLE->setText(i18n( "xterm -e " ) );
+    dialog->fontCO->setCurrentItem(4);
+
     configChanged();
+
 }
 
 QString KCMKonsole::quickHelp() const
