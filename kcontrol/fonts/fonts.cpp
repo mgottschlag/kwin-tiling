@@ -19,6 +19,7 @@
 #include <qgroupbox.h>
 #include <knuminput.h>
 #include <qpushbutton.h>
+#include <qdir.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -469,7 +470,7 @@ void KFonts::save()
   KGlobal::config()->sync();
 
   // KDE-1.x support
-  KSimpleConfig* config = new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
+  KSimpleConfig* config = new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())
