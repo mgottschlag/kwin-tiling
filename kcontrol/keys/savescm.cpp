@@ -9,7 +9,7 @@
 #include <klocale.h>
 
 SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
-    : KDialogBase( parent, name, true, i18n("Save key scheme"), Ok|Cancel, Ok, true )
+    : KDialogBase( parent, name, true, i18n("Save Key Scheme"), Ok|Cancel, Ok, true )
 {
     QWidget *page = new QWidget(this);
     setMainWidget(page);
