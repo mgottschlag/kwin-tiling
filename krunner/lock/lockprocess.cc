@@ -72,7 +72,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, "saver window", WX11BypassWM),
       child_saver(child),
-      parent(0),
+      mParent(0),
       mUseBlankOnly(useBlankOnly),
       mSuspended(false),
       mVisibility(false),
@@ -98,7 +98,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     // Add KDE specific screensaver path
     QString relPath="System/ScreenSavers/";
-    KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers" );
+    KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers");
     if (servGroup)
     {
       relPath=servGroup->relPath();
@@ -121,7 +121,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
 
-    connect(&suspendTimer, SIGNAL(timeout()), SLOT(suspend()));
+    connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
 #ifdef HAVE_DPMS
     connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
@@ -129,8 +129,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 #endif
 
     QStringList dmopt =
-        QStringList::split( QChar( ',' ),
-                            QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
+        QStringList::split(QChar(','),
+                            QString::fromLatin1( ::getenv( "XDM_MANAGED" )));
     if (dmopt.findIndex( "rsvd" ) < 0)
         mXdmFifoName = QString::null;
     else
@@ -147,12 +147,12 @@ LockProcess::~LockProcess()
 {
 }
 
-static int sigterm_pipe[ 2 ];
+static int sigterm_pipe[2];
 
-static void sigterm_handler( int )
+static void sigterm_handler(int)
 {
     char tmp;
-    ::write( sigterm_pipe[ 1 ], &tmp, 1 );
+    ::write( sigterm_pipe[1], &tmp, 1);
 }
 
 void LockProcess::setupSignals()
@@ -163,30 +163,30 @@ void LockProcess::setupSignals()
     sigemptyset(&(act.sa_mask));
     sigaddset(&(act.sa_mask), SIGHUP);
     act.sa_flags = 0;
-    sigaction( SIGHUP, &act, 0L);
+    sigaction(SIGHUP, &act, 0L);
     // ignore SIGINT
     act.sa_handler=SIG_IGN;
     sigemptyset(&(act.sa_mask));
     sigaddset(&(act.sa_mask), SIGINT);
     act.sa_flags = 0;
-    sigaction( SIGINT, &act, 0L);
+    sigaction(SIGINT, &act, 0L);
     // ignore SIGQUIT
     act.sa_handler=SIG_IGN;
     sigemptyset(&(act.sa_mask));
     sigaddset(&(act.sa_mask), SIGQUIT);
     act.sa_flags = 0;
-    sigaction( SIGQUIT, &act, 0L);
+    sigaction(SIGQUIT, &act, 0L);
     // exit cleanly on SIGTERM
     act.sa_handler= sigterm_handler;
     sigemptyset(&(act.sa_mask));
     sigaddset(&(act.sa_mask), SIGTERM);
     act.sa_flags = 0;
-    sigaction( SIGTERM, &act, 0L);
+    sigaction(SIGTERM, &act, 0L);
 
-    pipe( sigterm_pipe );
-    QSocketNotifier* notif = new QSocketNotifier( sigterm_pipe[ 0 ],
+    pipe(sigterm_pipe);
+    QSocketNotifier* notif = new QSocketNotifier(sigterm_pipe[0],
 	QSocketNotifier::Read, this );
-    connect( notif, SIGNAL( activated( int )), SLOT( sigtermPipeSignal()));
+    connect( notif, SIGNAL(activated(int)), SLOT(sigtermPipeSignal()));
 }
 
 
@@ -233,7 +233,6 @@ void LockProcess::configure()
 
     config.setGroup("ScreenSaver");
 
-//    bool e  = config->readBoolEntry("Enabled", false);
     if(config.readBoolEntry("Lock", false))
     {
         int lockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT);
@@ -274,8 +273,6 @@ void LockProcess::readSaver()
     {
         QString file = locate("scrsav", mSaver);
 
-        //kdDebug(1204) << "Reading saver: " << mSaver << endl;
-
         KDesktopFile config(file, true);
 
         if (config.hasActionGroup("Root"))
@@ -283,8 +280,6 @@ void LockProcess::readSaver()
             config.setActionGroup("Root");
             mSaverExec = config.readEntry("Exec");
         }
-
-        //kdDebug(1204) << "Saver-exec: " << mSaverExec << endl;
     }
 }
 
@@ -322,7 +317,7 @@ void LockProcess::createSaverWindow()
 
     // set NoBackground so that the saver can capture the current
     // screen state if necessary
-    setBackgroundMode( QWidget::NoBackground );
+    setBackgroundMode(QWidget::NoBackground);
 
     setCursor( blankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);
@@ -541,8 +536,8 @@ void LockProcess::startSaver()
 
     saveVRoot();
 
-    if (parent) {
-        QSocketNotifier *notifier = new QSocketNotifier(parent, QSocketNotifier::Read, this, "notifier");
+    if (mParent) {
+        QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this, "notifier");
         connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
     }
     createSaverWindow();
@@ -654,7 +649,7 @@ void LockProcess::stopHack()
 
 //---------------------------------------------------------------------------
 //
-void LockProcess::hackExited( KProcess * )
+void LockProcess::hackExited(KProcess *)
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
@@ -663,18 +658,18 @@ void LockProcess::hackExited( KProcess * )
 
 void LockProcess::suspend()
 {
-    if( !mSuspended )
+    if(!mSuspended)
         mHackProc.kill(SIGSTOP);
     mSuspended = true;
 }
 
 void LockProcess::resume()
 {
-    if( mActiveDialog != NULL )
+    if (mActiveDialog != NULL)
         return; // no resuming with dialog visible
-    if( !mVisibility )
+    if(!mVisibility)
         return; // no need to resume, not visible
-    if( mSuspended )
+    if(mSuspended)
         mHackProc.kill(SIGCONT);
     mSuspended = false;
 }
@@ -737,18 +732,18 @@ bool LockProcess::x11Event(XEvent *event)
             if( event->xvisibility.window == winId())
             {  // mVisibility == false means the screensaver is not visible at all
                // e.g. when switched to text console
-                mVisibility = !( event->xvisibility.state == VisibilityFullyObscured );
-                if( !mVisibility )
-                    suspendTimer.start( 2000, true );
+                mVisibility = !(event->xvisibility.state == VisibilityFullyObscured);
+                if(!mVisibility)
+                    mSuspendTimer.start(2000, true);
                 else
                     resume();
-                if (event->xvisibility.state != VisibilityUnobscured )
+                if (event->xvisibility.state != VisibilityUnobscured)
                     stayOnTop();
             }
             break;
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
-            if( event->xconfigure.event == qt_xrootwin())
+            if(event->xconfigure.event == qt_xrootwin())
                 stayOnTop();
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
@@ -765,7 +760,7 @@ bool LockProcess::x11Event(XEvent *event)
     // Qt seems to be quite hard to persuade to redirect the event,
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
-    if( mActiveDialog && ( event->type == KeyPress || event->type == KeyRelease )
+    if(mActiveDialog && ( event->type == KeyPress || event->type == KeyRelease)
         && event->xkey.window != mActiveDialog->winId())
     {
         XEvent ev2 = *event;
@@ -779,7 +774,7 @@ bool LockProcess::x11Event(XEvent *event)
 
 void LockProcess::stayOnTop()
 {
-    if( mActiveDialog )
+    if(mActiveDialog)
     {
         // if the topmost window is the dialog,
         // and this->winId() is the window right below it,
@@ -790,10 +785,10 @@ void LockProcess::stayOnTop()
         Window stack[2];
         stack[0] = mActiveDialog->winId();;
         stack[1] = winId();
-        XRestackWindows( x11Display(), stack, 2 );
+        XRestackWindows(x11Display(), stack, 2);
     }
     else
-        XRaiseWindow( qt_xdisplay(), winId());
+        XRaiseWindow(qt_xdisplay(), winId());
 }
 
 void LockProcess::startNewSession()
@@ -806,7 +801,7 @@ void LockProcess::checkDPMSActive()
 #ifdef HAVE_DPMS
     BOOL on;
     CARD16 state;
-    DPMSInfo( qt_xdisplay(), &state, &on);
+    DPMSInfo(qt_xdisplay(), &state, &on);
     if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
     {
        suspend();

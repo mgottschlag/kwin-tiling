@@ -34,7 +34,7 @@ public:
     void dontLock();
 
     void setChildren(QValueList<int> children) { child_sockets = children; }
-    void setParent(int fd) { parent = fd; }
+    void setParent(int fd) { mParent = fd; }
 
 public slots:
     void quitSaver();
@@ -87,10 +87,10 @@ private:
     QString     mXdmFifoName;
     bool        child_saver;
     QValueList<int> child_sockets;
-    int         parent;
+    int         mParent;
     bool	mUseBlankOnly;
     bool        mSuspended;
-    QTimer      suspendTimer;
+    QTimer      mSuspendTimer;
     bool        mVisibility;
     QWidget*    mActiveDialog;
     QTimer      mCheckDPMS;
