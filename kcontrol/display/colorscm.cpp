@@ -603,62 +603,50 @@ void KColorScheme::readScheme( int index )
 
 void KColorScheme::readSchemeNames( )
 {
-  QStringList list = KGlobal::dirs()->findAllResources("data", "kdisplay/color-schemes/*");
-  QStringList dirList, localdirList;
-  unsigned int i=0;
+  QStringList list = KGlobal::dirs()->findAllResources("data", "kdisplay/color-schemes/*.kcsrc", false, true);
+  QStringList localList;
   QString local_prefix = locateLocal("data", "test");
   local_prefix = local_prefix.left(local_prefix.findRev('/'));
   for(QStringList::Iterator it = list.begin(); it != list.end(); it++) {
     QString temp_s = (*it).left( (*it).findRev('/') );
-    if (temp_s.find(local_prefix) == -1) {
-      if (dirList.find(temp_s) == dirList.end())
-        dirList.append(temp_s);
-    } else {
-      if (localdirList.find(temp_s) == localdirList.end())
-        localdirList.append(temp_s);
+    if (temp_s.find(local_prefix) != -1) {
+      if (localList.find(temp_s) == localList.end()) {
+        localList.append(*it);
+        it = list.remove(it);  // returns next item
+        it--;  // reset back one to compensate
+      }
     }
   }
-  dirList += localdirList;
   
   nSysSchemes = 2;
   QDir d;
-  i = 0;
-  for(QStringList::Iterator it = dirList.begin(); it != dirList.end(); it++) {
-    d.setPath( *it );
-  
-    if( d.exists() ) {
-      d.setFilter( QDir::Files );
-      d.setSorting( QDir::Name );
-      d.setNameFilter("*.kcsrc");
-    
-      if ( const QFileInfoList *sysList = d.entryInfoList() ) {
-	QFileInfoListIterator sysIt( *sysList );
-	QFileInfo *fi;
-      
-	// Always a current and a default scheme
-      
-	QString str;
-      
-	// This for system files
-	while ( ( fi = sysIt.current() ) ) {
+  for(QStringList::Iterator it = list.begin(); it != list.end(); it++) {
+    // Always a current and a default scheme
+    QString str;
+    KSimpleConfig *config =
+      new KSimpleConfig( *it, true );
+    config->setGroup( "Color Scheme" );
+    str = config->readEntry( "name" );
 
-	  KSimpleConfig *config =
-	    new KSimpleConfig( fi->filePath(), true );
-	  config->setGroup( "Color Scheme" );
-	  str = config->readEntry( "name" );
+    sList->insertItem( str );
+    sFileList->append( (*it).ascii() );
 
-	  sList->insertItem( str );
-	  sFileList->append( fi->filePath().ascii() );
+    nSysSchemes++;
+    delete config;
+  }
 
-	  ++sysIt;
-	  if (i < dirList.count() - localdirList.count())
-	    nSysSchemes++;
+  // Now repeat for local files
+  for(QStringList::Iterator it = localList.begin(); it != localList.end(); it++) {
+    QString str;
+    KSimpleConfig *config =
+      new KSimpleConfig( (*it), true );
+    config->setGroup( "Color Scheme" );
+    str = config->readEntry( "name" );
 
-	  delete config;
-	}
-      }
-    }
-    i++;
+    sList->insertItem( str );
+    sFileList->append( (*it).ascii() );
+
+    delete config;
   }
 }
 
