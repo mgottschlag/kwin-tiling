@@ -75,6 +75,8 @@ private slots:
     void slotChangeTbStyle();
     void slotUseResourceManager();
     void slotMacStyle();
+    /* This should be in #ifdef HAVE_AA, but moc can't handle that */
+    void slotUseAntiAliasing();
 
 private:
     void readSettings();
@@ -82,6 +84,9 @@ private:
 
     bool m_bChanged, m_bToolbarsDirty;
     bool useRM, macStyle;
+#ifdef HAVE_AA
+    bool useAA, useAA_original;
+#endif
     bool tbUseHilite, tbMoveTransparent;
 
     QString tbUseText;
@@ -91,6 +96,9 @@ private:
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
     QCheckBox *cbMac;
+#ifdef HAVE_AA
+    QCheckBox *cbAA;
+#endif
 
     GUIStyle applicationStyle;
 

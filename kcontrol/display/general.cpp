@@ -39,6 +39,9 @@
 #include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <kdirwatch.h>
+#ifdef HAVE_AA
+#include <kmessagebox.h>
+#endif
 
 #include "general.h"
 
@@ -274,6 +277,15 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
 
+#ifdef HAVE_AA
+    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ), styles);
+    connect( cbAA, SIGNAL( clicked() ), SLOT ( slotUseAntiAliasing() ) );
+    vlay->addWidget( cbAA, 10 );
+    QWhatsThis::add( cbAA, i18n( "If this option is selected, KDE will use"
+      " anti-aliased fonts and pixmaps, meaning fonts can use more than"
+      " just one color to simulate curves.") );
+#endif
+
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
     topLayout->addWidget(tbStyle, 10);
 
@@ -356,7 +368,6 @@ void KGeneral::slotChangeTbStyle()
     emit changed(true);
 }
 
-
 void KGeneral::slotUseResourceManager()
 {
     useRM = cbRes->isChecked();
@@ -364,7 +375,6 @@ void KGeneral::slotUseResourceManager()
     m_bChanged = true;
     emit changed(true);
 }
-
 
 void KGeneral::slotMacStyle()
 {
@@ -374,6 +384,14 @@ void KGeneral::slotMacStyle()
     emit changed(true);
 }
 
+void KGeneral::slotUseAntiAliasing()
+{
+#ifdef HAVE_AA
+    useAA = cbAA->isChecked();
+    m_bChanged = true;
+    emit changed(true);
+#endif
+}
 
 void KGeneral::readSettings()
 {
@@ -386,6 +404,10 @@ void KGeneral::readSettings()
     else
     applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
+#ifdef HAVE_AA
+    useAA = config->readBoolEntry( "AntiAliasing", true);
+    useAA_original = useAA;
+#endif
 
     config->setGroup( "Toolbar style" );
     tbUseText = config->readEntry( "IconText", "IconOnly");
@@ -402,6 +424,9 @@ void KGeneral::showSettings()
 {
     cbRes->setChecked(useRM);
     cbMac->setChecked(macStyle);
+#ifdef HAVE_AA
+    cbAA->setChecked(useAA);
+#endif
 
     tbHilite->setChecked(tbUseHilite);
     tbTransp->setChecked(tbMoveTransparent);
@@ -418,6 +443,10 @@ void KGeneral::defaults()
 {
     useRM = true;
     macStyle = false;
+#ifdef HAVE_AA
+    useAA = true;
+    useAA_original = true;
+#endif
     tbUseText = "IconOnly";
     tbUseHilite = true;
     tbMoveTransparent = true;
@@ -462,8 +491,18 @@ void KGeneral::save()
     if (!m_bChanged)
     return;
 
+#ifdef HAVE_AA
+    if(useAA != useAA_original) {
+	KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect before you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
+	useAA_original = useAA;
+    }
+#endif
+
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
+#ifdef HAVE_AA
+    config->writeEntry("AntiAliasing", useAA, true, true);
+#endif
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
