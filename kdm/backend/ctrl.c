@@ -470,6 +470,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 #ifdef HAVE_VTS
 	} else if (!strcmp (ar[0], "activate")) {
+	    int vt;
 	    if (!ar[1])
 		goto miss;
 	    if (ar[2])
@@ -478,19 +479,27 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		fLog (d, fd, "perm", "display is not local");
 		goto bust;
 	    }
-	    if (!(di = FindDisplayByName (ar[1]))) {
-		fLog (d, fd, "noent", "display not found");
+	    if (ar[1][0] != 'v' || ar[1][1] != 't' ||
+	        (vt = atoi (ar[1] + 2)) <= 0)
+	    {
+		if (!(di = FindDisplayByName (ar[1]))) {
+		    fLog (d, fd, "noent", "display not found");
+		    goto bust;
+		}
+		if ((di->displayType & d_location) != dLocal) {
+		    fLog (d, fd, "inval", "target display is not local");
+		    goto bust;
+		}
+		if (!di->serverVT) {
+		    fLog (d, fd, "noent", "target display has no VT assigned");
+		    goto bust;
+		}
+		vt = di->serverVT;
+	    }
+	    if (!activateVT (vt)) {
+		fLog (d, fd, "inval", "VT switch failed");
 		goto bust;
 	    }
-	    if ((di->displayType & d_location) != dLocal) {
-		fLog (d, fd, "inval", "target display is not local");
-		goto bust;
-	    }
-	    if (!di->serverVT) {
-		fLog (d, fd, "noent", "target display has no VT assigned");
-		goto bust;
-	    }
-	    activateVT (di->serverVT);
 #endif
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1])

@@ -347,7 +347,7 @@ void setNLogin (struct display *d,
 		const char *nuser, const char *npass, char *nargs,
 		int rl);
 void cancelShutdown (void);
-void activateVT (int vt);
+int activateVT (int vt);
 
 /* in ctrl.c */
 void openCtrl (struct display *d);

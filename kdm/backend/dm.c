@@ -356,15 +356,18 @@ main (int argc, char **argv)
 
 
 #ifdef HAVE_VTS
-void
+int
 activateVT (int vt)
 {
+    int ret = 0;
     int con = open ("/dev/console", O_RDONLY);
     if (con >= 0)
     {
-	ioctl (con, VT_ACTIVATE, vt);
+	if (!ioctl (con, VT_ACTIVATE, vt))
+	    ret = 1;
 	close (con);
     }
+    return ret;
 }
 #endif
 
