@@ -166,7 +166,7 @@ void KLocaleApplication::save()
 			    "newly started applications.\nTo change the "
 			    "language of all programs, you will have to "
 			    "logout first."),
-			   m_locale->translate("Applying language settings"),
+			   m_locale->translate("Applying Language Settings"),
                            QString::fromLatin1("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
   // restore the old global locale
   KGlobal::_locale = lsave;
