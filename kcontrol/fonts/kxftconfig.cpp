@@ -376,11 +376,8 @@ KXftConfig::KXftConfig(int required, bool system)
 KXftConfig::~KXftConfig()
 {
 #ifndef HAVE_FONTCONFIG
-    if(m_data)
-    {
-        delete [] m_data;
-        m_data=NULL;
-    }
+    delete [] m_data;
+    m_data=NULL;
 #endif
 }
 
@@ -418,11 +415,8 @@ bool KXftConfig::reset()
     QFile f( m_file );
 
     m_size=0;
-    if(m_data)
-    {
-        delete [] m_data;
-        m_data=NULL;
-    }
+    delete [] m_data;
+    m_data=NULL;
 
     if(f.open( IO_Raw| IO_ReadOnly ))
     {
