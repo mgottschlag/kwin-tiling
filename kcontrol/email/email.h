@@ -2,6 +2,7 @@
  * email.h
  *
  * Copyright (c) 1999 Preston Brown <pbrown@redhat.com>
+ * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@
 class QLineEdit;
 class QRadioButton;
 class QButtonGroup;
+class QPushButton;
+class QCheckBox;
 
 class KEmailConfig : public KCModule
 {
@@ -43,14 +46,17 @@ public:
   
 public slots:
   void configChanged();
+  void selectEmailClient();
       
 private:
  QLineEdit *fullName, *organization;
  QLineEdit *emailAddr, *replyAddr;
 
- QLineEdit *userName, *password, *inServer, *outServer;
+ QLineEdit *userName, *password, *inServer, *outServer, *emailClient;
  QButtonGroup *bGrp;
  QRadioButton *pop3Button, *imapButton, *localButton;
+ QPushButton *bEmailClient;
+ QCheckBox *cTerminalClient;
 
 };
 

@@ -2,7 +2,8 @@
  * email.cpp
  *
  * Copyright (c) 1999, 2000 Preston Brown <pbrown@kde.org>
- * 
+ * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -30,7 +31,11 @@
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qwhatsthis.h>
+#include <qpushbutton.h>
+#include <qfileinfo.h>
+#include <qcheckbox.h>
 
+#include <kfiledialog.h>
 #include <klineedit.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -175,6 +180,29 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   QWhatsThis::add( pop3Button, wtstr );
   QWhatsThis::add( localButton, wtstr );
 
+  uBox = new QGroupBox(2, Qt::Horizontal, i18n("Preferred email client"),
+		                this);
+  topLayout->addWidget(uBox);
+
+  emailClient = new KLineEdit(uBox);
+  connect(emailClient, SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
+
+  bEmailClient = new QPushButton(i18n("Bro&wse..."), uBox);
+  connect(bEmailClient, SIGNAL(clicked()), this, SLOT(selectEmailClient()));
+
+  cTerminalClient = new QCheckBox(i18n("Run in &terminal"), uBox);
+
+  wtstr = i18n("Enter the path to your preferred email client (KMail, Mutt, etc.) here or"
+        " choose it with the <em>Browse...</em> button. If no client is specified here,"
+        " KMail will be used (if available) instead.");
+
+  QWhatsThis::add(emailClient, wtstr);
+  QWhatsThis::add(bEmailClient, i18n("Press this button to select your favorite email client. Please"
+        " note that the file you select has to have the executable attribute set in order to be"
+        " accepted."));
+  QWhatsThis::add(cTerminalClient, i18n("Activate this option if you want the selected email client"
+        " to be executed in a terminal (e.g. <em>Konsole</em>)."));
+
   topLayout->addSpacing(KDialog::spacingHint());
 
   load();
@@ -215,6 +243,9 @@ void KEmailConfig::load()
 
   bGrp->setButton(config->readNumEntry("ServerType", 0));
 
+  emailClient->setText(config->readEntry("EmailClient"));
+  cTerminalClient->setChecked(config->readBoolEntry("TerminalClient", false));
+
   emit changed(false);
   delete config;
 }
@@ -243,6 +274,14 @@ void KEmailConfig::save()
     sType = 2;
   config->writeEntry("ServerType", sType);
 
+  QString client;
+  if (emailClient->text() == "")
+    client = KGlobal::dirs()->findResource("exe", "kmail");
+  else
+    client = emailClient->text();
+  config->writeEntry("EmailClient", client);
+  config->writeEntry("TerminalClient", cTerminalClient->isChecked());
+
   config->sync();
 
   // insure proper permissions -- contains sensitive data
@@ -258,17 +297,21 @@ void KEmailConfig::defaults()
 {
   char hostname[80];
   struct passwd *p;
-    
+
   p = getpwuid(getuid());
   gethostname(hostname, 80);
 
   fullName->setText(p->pw_gecos);
-    
+
   QString tmp = p->pw_name;
   tmp += "@"; tmp += hostname;
 
   emailAddr->setText(tmp);
-  
+
+  emailClient->setText(KGlobal::dirs()->findResource("exe", "kmail"));
+
+  cTerminalClient->setChecked(false);
+
   emit changed(true);
 }
 
@@ -282,7 +325,14 @@ QString KEmailConfig::quickHelp()
      " features, but they provide their own configuration facilities.");
 }
 
+void KEmailConfig::selectEmailClient()
+{
+  QString client = KFileDialog::getOpenFileName(QString::null, "*", this);
 
+  QFileInfo *clientInfo = new QFileInfo(client);
+  if ((clientInfo->exists()) && (clientInfo->isExecutable()))
+    emailClient->setText(client);
+}
 
 extern "C"
 {
