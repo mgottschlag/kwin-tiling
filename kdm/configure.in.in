@@ -1,6 +1,6 @@
 dnl this is for kdm:
 
-AC_CHECK_FUNCS(getsecretkey)
+AC_CHECK_FUNCS(getsecretkey getloadavg)
 dnl checks for X server
 
 AC_PATH_PROG(X_SERVER, X)
