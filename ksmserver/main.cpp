@@ -48,7 +48,7 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::addCmdLineOptions( options );
 
     putenv("SESSION_MANAGER=");
-    KApplication a;
+    KApplication a(false, true); // Disable styles until we need them.
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

@@ -17,6 +17,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qtimer.h>
 
 #include <klocale.h>
+#include <kapp.h>
 
 #include <X11/Xlib.h>
 
@@ -74,6 +75,7 @@ void KSMShutdown::requestFocus()
 
 bool KSMShutdown::shutdown( bool& saveSession )
 {
+    kapp->enableStyles();
     QWidget* w = new QWidget(0, 0, WStyle_Customize | WStyle_NoBorder);
     w->setBackgroundMode( QWidget::NoBackground );
     w->setGeometry( QApplication::desktop()->geometry() );
@@ -90,5 +92,6 @@ bool KSMShutdown::shutdown( bool& saveSession )
     bool result = l->result();
     delete l;
     delete w;
+    kapp->disableStyles();
     return result;
 }
