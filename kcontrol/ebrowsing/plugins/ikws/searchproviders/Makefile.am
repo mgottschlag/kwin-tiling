@@ -56,6 +56,7 @@ services_DATA = \
 		mamma.desktop \
 		metacrawler.desktop \
 		msdn.desktop \
+		netcraft.desktop \
 		nl-telephone.desktop \
 		nl-teletekst.desktop \
 		pgpkeys.desktop \
@@ -69,12 +70,12 @@ services_DATA = \
 		seek.desktop \
 		sourceforge.desktop \
 		thesaurus.desktop \
+		uspto.desktop \
 		vivisimo.desktop \
 		voila.desktop \
 		webster.desktop \
 		whatis.desktop \
 		wikipedia.desktop \
-		wordref.desktop \
-		netcraft.desktop
+		wordref.desktop
 
 servicesdir = $(kde_servicesdir)/searchproviders
