@@ -19,6 +19,9 @@
  * General/Advanced tabs
  * Copyright (c) 2000 Brad Hughes <bhughes@trolltech.com>
  *
+ * redesign for KDE 2.2
+ * Copyright (c) 2001 Ralf Nolden <nolden@kde.org>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -53,6 +56,7 @@
 #include <qslider.h>
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
+#include <qpainter.h>
 
 #include <klocale.h>
 #include <kdialog.h>
@@ -61,6 +65,7 @@
 #include <kstddirs.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
+#include <kalphapainter.h>
 
 #include "mouse.h"
 
@@ -76,23 +81,17 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 {
     QString wtstr;
 
-    QBoxLayout *top = new QVBoxLayout(this);
+    QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
+	
+	tab1 = new KMouseDlg(this);
 
-    tab1 = new QWidget(0, "General Tab");
     tabwidget->addTab(tab1, i18n("&General"));
 
-    QBoxLayout *lay = new QVBoxLayout(tab1, KDialog::marginHint(),
-                      KDialog::spacingHint());
-
-    handedBox = new QHButtonGroup(i18n("Button Mapping"), tab1, "handed");
-    rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
-    leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
-    connect(handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
-    lay->addSpacing(15);
-    lay->addWidget(handedBox);
+    connect(tab1->handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
+    connect(tab1->handedBox, SIGNAL(clicked(int)), this, SLOT(slotHandedChanged(int)));
 
     wtstr = i18n("If you are left-handed, you may prefer to swap the"
          " functions of the left and right buttons on your pointing device"
@@ -100,14 +99,9 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " has more than two buttons, only those that function as the"
          " left and right buttons are affected. For example, if you have"
          " a three-button mouse, the middle button is unaffected.");
-    QWhatsThis::add( handedBox, wtstr );
+    QWhatsThis::add( tab1->handedBox, wtstr );
 
-    // SC/DC/AutoSelect/ChangeCursor
-
-    doubleClick = new QCheckBox(i18n("Use double-click to activate or open"), tab1);
-    connect(doubleClick, SIGNAL(clicked()), SLOT(changed()));
-    lay->addSpacing(15);
-    lay->addWidget(doubleClick);
+    connect(tab1->doubleClick, SIGNAL(clicked()), SLOT(changed()));
 
     wtstr = i18n("The default behavior in KDE is to select and activate"
          " icons with a single click of the left button on your pointing"
@@ -115,82 +109,56 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " when you click links in most web browsers. If you would prefer"
          " to select with a single click, and activate with a double click,"
          " check this option.");
-    QWhatsThis::add( doubleClick, wtstr );
+    QWhatsThis::add( tab1->doubleClick, wtstr );
 
-    cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), tab1);
-    lay->addWidget(cbAutoSelect);
-    connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
+    wtstr = i18n("Activates and opens a file or folder with a single click."
+          "When this option is checked, the shape of the mouse pointer"
+         " changes whenever it is over an icon.");
+    QWhatsThis::add( tab1->cbCursor, wtstr );
+
+
+    connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
 
     wtstr = i18n("If you check this option, pausing the mouse pointer"
          " over an icon on the screen will automatically select that icon."
          " This may be useful when single clicks activate icons, and you"
          " want only to select the icon without activating it.");
-    QWhatsThis::add( cbAutoSelect, wtstr );
+    QWhatsThis::add( tab1->cbAutoSelect, wtstr );
 
-    //----------
-    QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
-
-    int row = 0;
-    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
-    slAutoSelect->setSteps( 125, 125 );
-    slAutoSelect->setTickmarks( QSlider::Below );
-    slAutoSelect->setTickInterval( 250 );
-    slAutoSelect->setTracking( true );
-    grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
-    connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+//    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
+    tab1->slAutoSelect->setSteps( 125, 125 );
+    tab1->slAutoSelect->setTickmarks( QSlider::Below );
+    tab1->slAutoSelect->setTickInterval( 250 );
+    tab1->slAutoSelect->setTracking( true );
 
     wtstr = i18n("If you have checked the option to automatically select"
          " icons, this slider allows you to select how long the mouse pointer"
          " must be paused over the icon before it is selected.");
-    QWhatsThis::add( slAutoSelect, wtstr );
+    QWhatsThis::add( tab1->slAutoSelect, wtstr );
 
-    lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), tab1);
-    lDelay->adjustSize();
-    grid->addWidget(lDelay, row, 0);
-
-    row++;
-    QLabel * label = new QLabel(i18n("Small"), tab1);
-    grid->addWidget(label,row,1);
-
-    label = new QLabel(i18n("Large"), tab1);
-    grid->addWidget(label,row,2, Qt::AlignRight);
-
-    //lay->addLayout( grid );
-    //----------
-
-
-    cbVisualActivate = new QCheckBox(i18n("&Visual feedback on activation"), tab1);
-    lay->addWidget(cbVisualActivate,Qt::AlignLeft);
-    connect(cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
     wtstr = i18n("Show feedback when clicking an icon");
-    QWhatsThis::add( cbVisualActivate, wtstr );
+    QWhatsThis::add( tab1->cbVisualActivate, wtstr );
 
-    cbCursor = new QCheckBox(i18n("&Pointer shape changes when over an icon"), tab1);
-    lay->addWidget(cbCursor,Qt::AlignLeft);
-    connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
-
-    connect( doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-    connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-
-    wtstr = i18n("When this option is checked, the shape of the mouse pointer"
-         " changes whenever it is over an icon.");
-    QWhatsThis::add( cbCursor, wtstr );
-
-
-    cbLargeCursor = new QCheckBox(i18n("&Large cursor"), tab1);
-    lay->addWidget(cbLargeCursor,Qt::AlignLeft);
-    connect(cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(tab1->cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
 
     wtstr = i18n("Use high-visibility large cursor");
-    QWhatsThis::add( cbLargeCursor, wtstr );
+    QWhatsThis::add( tab1->cbLargeCursor, wtstr );
 
-    lay->addStretch(1);
+    connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
+
+    connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(slotClick()));
+
+    connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+
 
     // Advanced tab
     tab2 = new QWidget(0, "Advanced Tab");
     tabwidget->addTab(tab2, i18n("&Advanced"));
 
-    lay = new QVBoxLayout(tab2, KDialog::marginHint(),
+    QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
               KDialog::spacingHint());
 
     accel = new KIntNumInput(20, tab2);
@@ -330,7 +298,7 @@ void MouseConfig::setThreshold(int val)
 
 int MouseConfig::getHandedness()
 {
-  if (rightHanded->isChecked())
+  if (tab1->rightHanded->isChecked())
     return RIGHT_HANDED;
   else
     return LEFT_HANDED;
@@ -338,19 +306,25 @@ int MouseConfig::getHandedness()
 
 void MouseConfig::setHandedness(int val)
 {
-  rightHanded->setChecked(false);
-  leftHanded->setChecked(false);
-  if (val == RIGHT_HANDED)
-    rightHanded->setChecked(true);
-  else
-    leftHanded->setChecked(true);
+  tab1->rightHanded->setChecked(false);
+  tab1->leftHanded->setChecked(false);
+  if (val == RIGHT_HANDED){
+    tab1->rightHanded->setChecked(true);
+    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
+  }
+  else{
+    tab1->leftHanded->setChecked(true);
+    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
+  }
 }
 
 void MouseConfig::load()
 {
   settings->load(config);
-  rightHanded->setEnabled(settings->handedEnabled);
-  leftHanded->setEnabled(settings->handedEnabled);
+
+  tab1->rightHanded->setEnabled(settings->handedEnabled);
+  tab1->leftHanded->setEnabled(settings->handedEnabled);
+
   setAccel(settings->accelRate);
   setThreshold(settings->thresholdMove);
   setHandedness(settings->handed);
@@ -360,16 +334,16 @@ void MouseConfig::load()
   dragStartDist->setValue(settings->dragStartDist);
   wheelScrollLines->setValue(settings->wheelScrollLines);
 
-  doubleClick->setChecked(!settings->singleClick);
+  tab1->doubleClick->setChecked(!settings->singleClick);
 
-  cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
+  tab1->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
-     slAutoSelect->setValue( 0 );
+     tab1->slAutoSelect->setValue( 0 );
   else
-     slAutoSelect->setValue( settings->autoSelectDelay );
-  cbVisualActivate->setChecked( settings->visualActivate );
-  cbCursor->setChecked( settings->changeCursor );
-  cbLargeCursor->setChecked( settings->largeCursor );
+     tab1->slAutoSelect->setValue( settings->autoSelectDelay );
+  tab1->cbVisualActivate->setChecked( settings->visualActivate );
+  tab1->cbCursor->setChecked( settings->changeCursor );
+  tab1->cbLargeCursor->setChecked( settings->largeCursor );
   slotClick();
 }
 
@@ -383,11 +357,11 @@ void MouseConfig::save()
   settings->dragStartTime = dragStartTime->value();
   settings->dragStartDist = dragStartDist->value();
   settings->wheelScrollLines = wheelScrollLines->value();
-  settings->singleClick = !doubleClick->isChecked();
-  settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
-  settings->visualActivate = cbVisualActivate->isChecked();
-  settings->changeCursor = cbCursor->isChecked();
-  settings->largeCursor = cbLargeCursor->isChecked();
+  settings->singleClick = !tab1->doubleClick->isChecked();
+  settings->autoSelectDelay = tab1->cbAutoSelect->isChecked()? tab1->slAutoSelect->value():-1;
+  settings->visualActivate = tab1->cbVisualActivate->isChecked();
+  settings->changeCursor = tab1->cbCursor->isChecked();
+  settings->largeCursor = tab1->cbLargeCursor->isChecked();
 
   // Check if the user has asked us not to remind them that KDE needs
   // restarting after a cursor size change.
@@ -410,11 +384,11 @@ void MouseConfig::defaults()
     dragStartTime->setValue(500);
     dragStartDist->setValue(4);
     wheelScrollLines->setValue(3);
-    doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
-    cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
-    slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
-    cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
-    cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
+    tab1->doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
+    tab1->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+    tab1->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
+    tab1->cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
+    tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     slotClick();
 }
 
@@ -431,16 +405,27 @@ QString MouseConfig::quickHelp() const
 void MouseConfig::slotClick()
 {
   // Autoselect has a meaning only in single-click mode
-  cbAutoSelect->setEnabled(!doubleClick->isChecked());
+  tab1->cbAutoSelect->setEnabled(!tab1->doubleClick->isChecked() || tab1->cbCursor->isChecked());
   // Delay has a meaning only for autoselect
-  bool bDelay = cbAutoSelect->isChecked() && !doubleClick->isChecked();
-  slAutoSelect->setEnabled( bDelay );
-  lDelay->setEnabled( bDelay );
+  bool bDelay = tab1->cbAutoSelect->isChecked() && ! tab1->doubleClick->isChecked();
+   tab1->slAutoSelect->setEnabled( bDelay );
+   tab1->lDelay->setEnabled( bDelay );
+   tab1->lb_short->setEnabled( bDelay );
+   tab1->lb_long->setEnabled( bDelay );
+
 }
 
 void MouseConfig::changed()
 {
+
   emit KCModule::changed(true);
+}
+/** No descriptions */
+void MouseConfig::slotHandedChanged(int val){
+  if(val==0)
+    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
+  else
+    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
 }
 
 void MouseSettings::load(KConfig *config)

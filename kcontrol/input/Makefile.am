@@ -1,6 +1,6 @@
 kde_module_LTLIBRARIES = libkcm_input.la
 
-libkcm_input_la_SOURCES = main.cpp mouse.cpp
+libkcm_input_la_SOURCES = main.cpp mouse.cpp kmousedlg.ui
 
 libkcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_input_la_LIBADD = @XTESTLIB@ $(LIB_KIO) $(LIB_KDEUI)

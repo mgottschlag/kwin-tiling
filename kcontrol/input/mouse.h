@@ -44,6 +44,8 @@
 
 #include <kcmodule.h>
 
+#include "kmousedlg.h"
+
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1
 
@@ -92,6 +94,8 @@ private slots:
 
   void slotClick();
   void changed();
+  /** No descriptions */
+  void slotHandedChanged(int val);
 
 private:
 
@@ -111,18 +115,18 @@ private:
   KIntNumInput *wheelScrollLines;
 
   QButtonGroup *handedBox;
-  QRadioButton *leftHanded, *rightHanded;
-  QCheckBox *doubleClick;
-  QCheckBox *cbAutoSelect;
+//  QRadioButton *leftHanded, *rightHanded;
+//  QCheckBox *doubleClick;
+//  QCheckBox *cbAutoSelect;
   QLabel *lDelay;
-  QSlider *slAutoSelect;
-  QCheckBox *cbVisualActivate;
-  QCheckBox *cbCursor;
-  QCheckBox *cbLargeCursor;
+//  QSlider *slAutoSelect;
+//  QCheckBox *cbVisualActivate;
+//  QCheckBox *cbCursor;
+//  QCheckBox *cbLargeCursor;
     
   QTabWidget *tabwidget;
-  QWidget *tab1, *tab2;
-
+  QWidget *tab2;
+  KMouseDlg* tab1;
   MouseSettings *settings;
     
   KConfig *config;
