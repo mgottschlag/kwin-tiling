@@ -491,15 +491,38 @@ void KBackground::slotColor2(const QColor &color)
 
 void KBackground::slotImageDropped(QString uri)
 {
-    qDebug("image dropped: %s", uri.latin1());
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+    if (uri == r->wallpaper())
+	return;
+
+    if (!m_Wallpaper.contains(uri)) {
+	int count = m_Wallpaper.count();
+	m_Wallpaper[uri] = count;
+	m_pWallpaperBox->insertItem(uri);
+	m_pWallpaperBox->setCurrentItem(count);
+    }
+
+    r->stop();
+    r->setWallpaper(uri);
+    r->start();
 }
 
 
 void KBackground::slotMultiMode(bool multi)
 {
-    m_Renderer[m_Desk]->stop();
-    m_Renderer[m_Desk]->setMultiWallpaperMode(multi ? 1 : 0);
-    m_Renderer[m_Desk]->start();
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    KBackgroundRenderer *r = m_Renderer[desk];
+    if (multi == (r->multiWallpaperMode() != KBackgroundSettings::NoMulti))
+	return;
+
+    r->stop();
+    r->setMultiWallpaperMode(multi ? 1 : 0);
+    r->start();
 
     if (multi) {
 	m_pWallpaperBox->setEnabled(false);

@@ -748,6 +748,7 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     m_pModeEdit = new QComboBox(this);
     m_pModeEdit->insertItem(i18n("In Order"));
     m_pModeEdit->insertItem(i18n("Random"));
+    m_pModeEdit->setCurrentItem(m_Mode-1);
     lbl->setBuddy(m_pModeEdit);
     hbox->addWidget(m_pModeEdit);
     hbox->addStretch();

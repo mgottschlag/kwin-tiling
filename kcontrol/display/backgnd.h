@@ -48,7 +48,7 @@ class KBGMonitor : public QWidget
 public:
 
     KBGMonitor(QWidget *parent) : QWidget(parent) {
-	setAcceptDrops( true);
+	setAcceptDrops(true);
     };
 	     
     // we don't want no steenking palette change
