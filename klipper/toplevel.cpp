@@ -56,6 +56,7 @@
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent ), DCOPObject( "klipper" ), m_config( config )
 {
+    setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
     m_selectedItem = -1;
 
