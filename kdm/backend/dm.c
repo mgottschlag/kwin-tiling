@@ -240,8 +240,8 @@ main (int argc, char **argv)
 	    pt++;
 	if (!strcmp (pt, "help") || !strcmp (pt, "h")) {
 	    printf ("Usage: %s [options] [tty]\n"
-"  -daemon        - Daemonize even when stared by init\n"
-"  -nodaemon      - Don't daemonize even when stared from command line\n"
+"  -daemon        - Daemonize even when started by init\n"
+"  -nodaemon      - Don't daemonize even when started from command line\n"
 "  -config <file> - Use alternative master configuration file\n"
 "  -xrm <res>     - Override frontend-specific resource\n"
 "  -debug <num>   - Debug option bitfield\n"
