@@ -16,7 +16,4 @@ messages: category_list
 	$(XGETTEXT) -kni18n category_list.cpp $(kcm_screensaver_la_SOURCES) -o $(podir)/kcmscreensaver.pot
 	-rm -f category_list.cpp
 
-lnf_DATA = screensaver.desktop
-lnfdir = $(kde_appsdir)/Settings/LookNFeel
-
-EXTRA_DIST = $(lnf_DATA)
+xdg_apps_DATA = screensaver.desktop

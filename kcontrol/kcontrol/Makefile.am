@@ -49,8 +49,7 @@ rccontrol_DATA = kcontrolui.rc
 rcinfodir = $(kde_datadir)/kinfocenter
 rcinfo_DATA = kinfocenterui.rc
 
-kcontrol_data_DATA = KControl.desktop
-kcontrol_datadir = $(kde_appsdir)/Settingsmenu
+xdg_apps_DATA = KControl.desktop
 
 install-data-local: KControl_NoDisplay.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)
@@ -61,8 +60,6 @@ install-data-local: KControl_NoDisplay.desktop
 	$(INSTALL_DATA) $(srcdir)/kinfocenter.desktop $(DESTDIR)$(kde_appsdir)/System/
 
 KDE_ICON=AUTO
-
-EXTRA_DIST = $(kcontrol_data_DATA)
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcontrol.pot

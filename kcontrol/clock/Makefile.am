@@ -12,5 +12,4 @@ kcm_clock_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(kcm_clock_la_SOURCES) -o $(podir)/kcmkclock.pot
 
-kcmclock_data_DATA = clock.desktop
-kcmclock_datadir = $(kde_appsdir)/Settings/System
+xdg_apps_DATA = clock.desktop

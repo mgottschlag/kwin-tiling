@@ -14,8 +14,7 @@ KDE_ICON = AUTO
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmview1394.pot
 
-view1394_data_DATA = kcmview1394.desktop
-view1394_datadir = $(kde_appsdir)/Settings/Information
+xdg_apps_DATA = kcmview1394.desktop
 
 view1394_vendor_DATA = oui.db
 view1394_vendordir = $(kde_datadir)/kcmview1394

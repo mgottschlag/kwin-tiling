@@ -13,8 +13,7 @@ noinst_HEADERS = email.h
 
 KDE_ICON = email
 
-kcmemail_data_DATA = email.desktop
-kcmemail_datadir = $(kde_appsdir)/Settings/Network/
+xdg_apps_DATA = email.desktop
 
 install-data-local: uninstall.desktop
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/email.desktop

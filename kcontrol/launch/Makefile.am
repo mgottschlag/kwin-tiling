@@ -6,9 +6,7 @@ kcm_launch_la_LDFLAGS      = $(all_libraries) $(KDE_PLUGIN) -module
 kcm_launch_la_LIBADD       = $(LIB_KDEUI)
 kcm_launch_la_METASOURCES  = AUTO
 noinst_HEADERS                = kcmlaunch.h
-kcmlaunch_data_DATA                     = kcmlaunch.desktop
-kcmlaunch_datadir                       = $(kde_appsdir)/Settings/LookNFeel/
-EXTRA_DIST                    = $(kcmlaunch_data_DATA)
+xdg_apps_DATA = kcmlaunch.desktop
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmlaunch.pot

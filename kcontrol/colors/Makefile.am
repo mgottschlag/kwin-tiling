@@ -14,8 +14,4 @@ noinst_HEADERS = colorscm.h widgetcanvas.h
 messages:
 	$(XGETTEXT) -kni18n $(kcm_colors_la_SOURCES) -o $(podir)/kcmcolors.pot
 
-lnf_DATA = colors.desktop
-lnfdir = $(kde_appsdir)/Settings/LookNFeel
-
-EXTRA_DIST = $(lnf_DATA)
-
+xdg_apps_DATA = colors.desktop

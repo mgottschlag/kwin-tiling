@@ -12,7 +12,4 @@ kcm_nic_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(kcm_nic_la_SOURCES) -o $(podir)/kcmnic.pot
 
-kcmnic_data_DATA = nic.desktop
-kcmnic_datadir = $(kde_appsdir)/Settings/Information
-
-
+xdg_apps_DATA = nic.desktop

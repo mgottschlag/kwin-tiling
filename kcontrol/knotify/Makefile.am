@@ -15,8 +15,7 @@ noinst_HEADERS = knotify.h
 messages:
 	$(XGETTEXT) $(kcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
 
-kcmknotify_data_DATA = kcmnotify.desktop
-kcmknotify_datadir = $(kde_appsdir)/Settings/Sound
+xdg_apps_DATA = kcmnotify.desktop
 
 pics_DATA = play.png
 picsdir = $(kde_datadir)/kcontrol/pics

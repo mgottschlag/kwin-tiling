@@ -14,8 +14,7 @@ KDE_ICON = fileshare
 messages:
 	$(XGETTEXT) $(kcm_fileshare_la_SOURCES) -o $(podir)/kcmfileshare.pot
 
-kcmfileshare_data_DATA = fileshare.desktop
-kcmfileshare_datadir = $(kde_appsdir)/Settings/Network
+xdg_apps_DATA = fileshare.desktop
 
 bin_SCRIPTS = fileshareset
 install-exec-hook:

@@ -14,8 +14,7 @@ KDE_ICON = go
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot
 
-kcmtaskbar_data_DATA = kcmtaskbar.desktop
-kcmtaskbar_datadir = $(kde_appsdir)/Settings/Desktop/
+xdg_apps_DATA = kcmtaskbar.desktop
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel

@@ -10,8 +10,7 @@ kcm_componentchooser_la_SOURCES = componentchooser_ui.ui componentconfig_ui.ui e
 kcm_componentchooser_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 kcm_componentchooser_la_LIBADD =  $(LIB_KIO)
 
-kcm_componentchooser_DATA = componentchooser.desktop
-kcm_componentchooserdir = $(kde_appsdir)/Settings/Components
+xdg_apps_DATA = componentchooser.desktop
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmcomponentchooser.pot

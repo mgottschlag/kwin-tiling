@@ -14,6 +14,4 @@ KDE_ICON = arts
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmarts.pot
 
-kcmarts_data_DATA = arts.desktop
-kcmarts_datadir = $(kde_appsdir)/Settings/Sound
-
+xdg_apps_DATA = arts.desktop

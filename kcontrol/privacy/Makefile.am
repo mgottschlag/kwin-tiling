@@ -13,6 +13,4 @@ noinst_HEADERS = privacy.h
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/privacy.pot
 
-privacy_DATA = privacy.desktop
-privacydir = $(kde_appsdir)/Settings/Security
-
+xdg_apps_DATA = privacy.desktop

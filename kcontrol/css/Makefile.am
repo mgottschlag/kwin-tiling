@@ -13,5 +13,4 @@ kcm_css_la_METASOURCES = AUTO
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmcss.pot
  
-kcmcss_data_DATA = kcmcss.desktop
-kcmcss_datadir = $(kde_appsdir)/Settings/Network/WebBrowsing
+xdg_apps_DATA = kcmcss.desktop

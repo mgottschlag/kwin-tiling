@@ -14,7 +14,6 @@ KDE_ICON = go
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmsmserver.pot
 
-kcmsmserver_data_DATA = kcmsmserver.desktop
-kcmsmserver_datadir = $(kde_appsdir)/Settings/Components/
+xdg_apps_DATA = kcmsmserver.desktop
 
 EXTRA_DIST = $(kcmsmserver_data_DATA)

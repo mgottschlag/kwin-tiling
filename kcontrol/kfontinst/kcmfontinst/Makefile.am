@@ -4,8 +4,7 @@ kcm_fontinst_la_METASOURCES = AUTO
 kcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
 INCLUDES = $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../kio -I$(srcdir)/../../fonts -I$(srcdir)/../viewpart -I$(top_builddir)/kcontrol/kfontinst/viewpart $(all_includes)
  
-desktop_DATA = kcmfontinst.desktop
-desktopdir = $(kde_appsdir)/Settings/System/
+xdg_apps_DATA = kcmfontinst.desktop
  
 kcm_fontinst_la_SOURCES = \
         KCmFontInst.cpp \

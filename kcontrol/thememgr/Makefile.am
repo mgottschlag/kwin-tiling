@@ -16,8 +16,7 @@ noinst_HEADERS = theme.h installer.h \
 kcm_themes_la_LIBADD = $(LIB_KIO)
 kcm_themes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
-apps_DATA = kthememgr.desktop
-appsdir = $(kde_appsdir)/Settings/LookNFeel
+xdg_apps_DATA = kthememgr.desktop
 
 mappingdir = $(kde_datadir)/kthememgr
 mapping_DATA = theme.mappings

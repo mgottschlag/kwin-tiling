@@ -14,5 +14,4 @@ KDE_ICON = spellchecking
 messages:
 	$(XGETTEXT) $(kcm_spellchecking_la_SOURCES) -o $(podir)/kcmspellchecking.pot
 
-kcmspellchecking_data_DATA = spellchecking.desktop
-kcmspellchecking_datadir = $(kde_appsdir)/Settings/Components
+xdg_apps_DATA = spellchecking.desktop

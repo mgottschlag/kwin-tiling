@@ -14,8 +14,7 @@ KDE_ICON = AUTO
 messages:
 	$(XGETTEXT) *.cpp *.i18n -o $(podir)/kcmusb.pot
 
-kcmusb_data_DATA = kcmusb.desktop
-kcmusb_datadir = $(kde_appsdir)/Settings/Information
+xdg_apps_DATA = kcmusb.desktop
 
 usb_DATA = usb.ids
 usbdir = $(kde_datadir)/kcmusb

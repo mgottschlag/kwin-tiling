@@ -23,10 +23,8 @@ messages: rc.cpp
 	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkicker.pot
 
-kcmkicker_data_DATA = panel.desktop 
-kcmkicker_datadir = $(kde_appsdir)/Settings/Desktop/
-kcmkicker_data2_DATA = panel_appearance.desktop 
-kcmkicker_data2dir = $(kde_appsdir)/Settings/LookNFeel/
+xdg_apps_DATA = panel.desktop panel_appearance.desktop 
+
 kcmkicker_data3_DATA = kicker_config.desktop kicker_config_appearance.desktop
 kcmkicker_data3dir = $(kde_appsdir)/.hidden
 

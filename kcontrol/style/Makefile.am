@@ -16,8 +16,7 @@ noinst_HEADERS = kcmstyle.h stylepreview.h menupreview.h
 messages: rc.cpp
 	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmstyle.pot
 
-style_DATA = style.desktop
-styledir = $(kde_appsdir)/Settings/LookNFeel
+xdg_apps_DATA = style.desktop
 
 install-data-local:
 

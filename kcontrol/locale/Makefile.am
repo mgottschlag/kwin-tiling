@@ -15,8 +15,4 @@ kcm_locale_la_LIBADD = $(LIB_KDEUI)
 messages:
 	$(XGETTEXT) $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 
-kcm_locale_DATA = language.desktop
-kcm_localedir = $(kde_appsdir)/Settings/Accessibility
-
-EXTRA_DIST = $(kcm_locale_DATA)
-
+xdg_apps_DATA = language.desktop

@@ -12,5 +12,4 @@ kcm_bell_la_METASOURCES = bell.moc
 messages:
 	$(XGETTEXT) $(kcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot
 
-kcmbell_data_DATA = bell.desktop
-kcmbell_datadir = $(kde_appsdir)/Settings/Sound
+xdg_apps_DATA = bell.desktop

@@ -25,7 +25,4 @@ messages: rc.cpp
 	$(EXTRACTRC) *.ui *.rc >> rc.cpp
 	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmbackground.pot
 
-desktop_DATA =  background.desktop
-desktopdir = $(kde_appsdir)/Settings/LookNFeel
-
-EXTRA_DIST = $(desktop_DATA)
+xdg_apps_DATA = background.desktop

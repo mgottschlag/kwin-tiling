@@ -14,7 +14,4 @@ noinst_HEADERS = fonts.h kxftconfig.h
 messages:
 	$(XGETTEXT) -kni18n $(kcm_fonts_la_SOURCES) -o $(podir)/kcmfonts.pot
 
-lnf_DATA = fonts.desktop
-lnfdir = $(kde_appsdir)/Settings/LookNFeel
-
-EXTRA_DIST = $(lnf_DATA)
+xdg_apps_DATA = fonts.desktop

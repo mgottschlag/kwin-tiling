@@ -16,7 +16,4 @@ noinst_HEADERS = energy.h
 messages:
 	$(XGETTEXT) -kni18n $(kcm_energy_la_SOURCES) -o $(podir)/kcmenergy.pot
 
-power_DATA = energy.desktop
-powerdir = $(kde_appsdir)/Settings/PowerControl
-
-EXTRA_DIST = $(power_DATA)
+xdg_apps_DATA = energy.desktop

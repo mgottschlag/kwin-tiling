@@ -13,9 +13,6 @@ messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcminfo.pot
 
 
-kcminfo_data_DATA = memory.desktop processor.desktop dma.desktop \
+xdg_apps_DATA = memory.desktop processor.desktop dma.desktop \
 	interrupts.desktop ioports.desktop pci.desktop sound.desktop \
 	devices.desktop scsi.desktop partitions.desktop xserver.desktop
-
-kcminfo_datadir = $(kde_appsdir)/Settings/Information
-

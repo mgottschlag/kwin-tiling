@@ -15,8 +15,7 @@ messages:
 update_DATA = kaccel.upd convertShortcuts.pl
 updatedir = $(kde_datadir)/kconf_update
 
-kcmkeys_data_DATA = keys.desktop
-kcmkeys_datadir = $(kde_appsdir)/Settings/Accessibility
+xdg_apps_DATA = keys.desktop
 
 scheme_DATA = wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc
 schemedir = $(kde_datadir)/kcmkeys

@@ -9,8 +9,34 @@ X-KDE-Library=view1394
 X-KDE-ParentApp=kinfocenter
 
 Name=IEEE 1394 Devices
+Name[be]=IEEE 1394 прылады
+Name[da]=IEEE 1394-enheder
+Name[hu]=IEEE 1394 (Firewire) eszközök
+Name[pt_BR]=Dispositivos IEEE 1394
+Name[sr]=IEEE 1394 уређаји
+Name[sv]=IEEE 1394-enheter
+Name[tr]=IEEE 1394 Aygıtları
+Name[wa]=Éndjins IEEE 1394
+Name[xx]=xxIEEE 1394 Devicesxx
 
 Comment=View the IEEE 1394 devices attached to this computer
+Comment[da]=Se IEEE 1394-enheder forbundet til denne computer
+Comment[hu]=Az IEEE 1394-es eszközök jellemzőinek megtekintése
+Comment[pt_BR]=Ver os dispositivos IEEE 1394 para este computador
+Comment[sr]=Прикажи IEEE 1394 уређаје повезане на овај рачунар
+Comment[sv]=Visa IEEE 1394-enheter anslutna till datorn
+Comment[tr]=Bu bilgisayara bağlanmış IEEE 1394 aygıtlarını gör
+Comment[wa]=Vey les éndjins IEEE 1394 raloyîs a cisse copiutrece chal
+Comment[xx]=xxView the IEEE 1394 devices attached to this computerxx
 
 Keywords=1394,Firewire,devices,viewer,control
+Keywords[da]=1394,Firewire,enheder,fremviser,kontrol
+Keywords[hu]=1394,Firewire,eszközök,megnézés,vezérlés
+Keywords[pt_BR]=1394,Firewire,dispositivos,visualizador,controle
+Keywords[sr]=1394,Firewire,devices,viewer,control,уређаји,преглед,контрола
+Keywords[sv]=1394,Firewire,enheter,visare,kontroll
+Keywords[tr]=1394,firewire,aygıtlar,izleyici,denetim,kontrol
+Keywords[wa]=1394,IEEE 1394,Firewire,éndjins,håyneu,coontrôle,corwaitaedje
+Keywords[xx]=xx1394,Firewire,devices,viewer,controlxx
 
+Categories=Qt;KDE;Information;X-KDE-information
