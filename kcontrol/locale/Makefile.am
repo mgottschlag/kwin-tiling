@@ -18,3 +18,7 @@ KDE_ICON = locale
 messages:
 	$(XGETTEXT) $(libkcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 
+data_DATA = language.desktop
+datadir = $(kde_appsdir)/Settings/Personalization
+
+EXTRA_DIST = $(data_DATA)
