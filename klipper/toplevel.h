@@ -112,6 +112,7 @@ private:
     bool isApplet() const { return m_config != kapp->config(); }
     KConfig* m_config;
     DCOPClient* m_dcop;
+    bool bTearOffHandle;
 
     void trimClipHistory(int);
 };

@@ -43,7 +43,7 @@
 #define CONFIG_ITEM  60
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   ( isApplet() ? 5 : ( 7 + ( KGlobalSettings::insertTearOffHandle() ? 1 : 0 )))
+#define MENU_ITEMS   (( isApplet() ? 5 : 7 ) + ( bTearOffHandle ? 1 : 0 ))
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
@@ -70,6 +70,8 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
         m_config = kapp->config();
 
     QSempty = i18n("<empty clipboard>");
+    
+    bTearOffHandle = KGlobalSettings::insertTearOffHandle();
 
     // we need that collection, otherwise KToggleAction is not happy :}
     KActionCollection *collection = new KActionCollection( this, "my collection" );
@@ -303,7 +305,8 @@ void TopLevel::readProperties(KConfig *kc)
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
   }
-  m_popup->insertTearOffHandle();
+  if( bTearOffHandle )
+    m_popup->insertTearOffHandle();
 
   if (bClipEmpty)
       setEmptyClipboard();
