@@ -517,6 +517,7 @@ void MouseConfig::defaults()
     tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     tab1->cbWhiteCursor->setChecked( false );
     tab1->cbVisualActivate->setChecked( KDE_DEFAULT_VISUAL_ACTIVATE );
+    tab1->cb_pointershape->setChecked(KDE_DEFAULT_CHANGECURSOR);
     slotClick();
 
   mouseKeys->setChecked(false);
