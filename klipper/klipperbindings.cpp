@@ -8,8 +8,8 @@
 
 	keys->insertLabel( "Program:klipper", i18n("Clipboard") );
 
-	DEF( "Show Klipper Popup-Menu", "Alt+Ctrl+V", "Meta+Ctrl+V", slotPopupMenu() );
-	DEF( "Manually Invoke Action on Current Clipboard", "Alt+Ctrl+R", "Meta+Ctrl+R", slotRepeatAction() );
-	DEF( "Enable/Disable Clipboard Actions", "Alt+Ctrl+X", "Meta+Ctrl+X", toggleURLGrabber() );
+	DEF( I18N_NOOP("Show Klipper Popup-Menu"), "Alt+Ctrl+V", "Meta+Ctrl+V", slotPopupMenu() );
+	DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), "Alt+Ctrl+R", "Meta+Ctrl+R", slotRepeatAction() );
+	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), "Alt+Ctrl+X", "Meta+Ctrl+X", toggleURLGrabber() );
 
 #undef DEF
