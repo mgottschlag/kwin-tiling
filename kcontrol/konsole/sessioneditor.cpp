@@ -106,7 +106,7 @@ void SessionEditor::loadAllKeytab()
     QString title = readKeymapTitle(name);
 
     name = name.section('/',-1);
-    name = name.section('.',1);
+    name = name.section('.',0);
     keytabFilename.append(new QString(name));
 
     if (title.isNull() || title.isEmpty())
