@@ -10,29 +10,18 @@
 
 #include <kthemebase.h>
 #include <qwidget.h>
-#include <qpushbutton.h>
-#include <qlistbox.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qpainter.h>
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include <qradiobutton.h>
 #include <qstrlist.h>
-#include <kspinbox.h>
 #include <kcontrol.h>
 #include <qbuttongroup.h>
-#include <qgroupbox.h>
 #include <ktablistbox.h>
 #include <kfontdialog.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
 
 #include "display.h"
+
+class QCheckBox;
+class QRadioButton;
+class QButtonGroup;
+class QBoxLayout;
 
 // DF 13-Mar-99
 // This class is a part of the "style" tab.
@@ -120,7 +109,7 @@ protected:
 	//CT
 
 	QCheckBox *cbMac;//CT
-	Bool changed;
+	bool changed;
 	
 	bool useRM;
 	bool macStyle;//CT

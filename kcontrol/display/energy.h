@@ -9,23 +9,18 @@
 #define __ENERGY_H__
 
 #include <qwidget.h>
-#include <qpushbt.h>
 #include <qlined.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qpainter.h>
 #include <qchkbox.h>
-#include <kspinbox.h>
 #include <kslider.h>
 #include <kcontrol.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
 
 #include "display.h"
 
+class QPushButton;
+class QLCDNumber;
 
 class KEnergy : public KDisplayModule
 {
@@ -63,12 +58,12 @@ protected:
 	class QLCDNumber *standbyLCD;
 	class QLCDNumber *suspendLCD;
 	class QLCDNumber *offLCD;
-	Bool changed;
+	bool changed;
 	int standby;
 	int suspend;
 	int off;
-	Bool enabled;
-	Bool hasDPMS;
+	bool enabled;
+	bool hasDPMS;
 };
 
 #endif

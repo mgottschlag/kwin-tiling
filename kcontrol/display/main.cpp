@@ -36,6 +36,7 @@
 #include <qfont.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <X11/Xlib.h>
 
 class KDisplayApplication : public KControlApplication
 {

@@ -497,7 +497,7 @@ void KGeneral::readSettings( int )
 	tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
 			
 	config->setGroup("X11");
-	useRM = config->readBoolEntry( "useResourceManager", false );
+	useRM = config->readBoolEntry( "useResourceManager", true );
 }
 
 void KGeneral::setDefaults()

@@ -74,7 +74,6 @@ KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
     
   QLabel *label = new QLabel( this );
   label->setText( i18n( "Enter new desktop name" ) );
-  label->setMinimumSize( label->sizeHint() );
   vlayout->addWidget( label );
     
   edit = new QLineEdit( this );
@@ -117,8 +116,6 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
 {
   //debug("KBackground::KBackground");
 
-  KIconLoader iconLoader;
-      
   interactive = true;
   changed = false;
   maxDesks = 8;
@@ -225,11 +222,9 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   groupLayout->addWidget( oneDesktopButton, 5 );
   groupLayout->activate();
 
-  QPixmap p = iconLoader.loadIcon("monitor.xpm");
-
   monitorLabel = new QLabel( this );
   monitorLabel->setAlignment( AlignCenter );
-  monitorLabel->setPixmap( p );
+  monitorLabel->setPixmap( Icon(locate("data", "kcontrol/pics/monitor.xpm")));
   monitorLabel->adjustSize();
   monitorLabel->setMinimumSize(monitorLabel->size());
 	

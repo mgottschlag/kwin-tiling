@@ -24,6 +24,7 @@
 #include <qslider.h>
 #include <qlayout.h>
 #include <kapp.h>
+#include <kstddirs.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
@@ -133,8 +134,6 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 
 	findSavers();
 
-	QPixmap p = ICON("monitor.xpm");
-	
 	QGridLayout *topLayout = new QGridLayout( this, 4, 4, 10 );
 	
 	topLayout->setRowStretch(0,0);
@@ -149,7 +148,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 
 	monitorLabel = new QLabel( this );
 	monitorLabel->setAlignment( AlignCenter );
-	monitorLabel->setPixmap( p );
+	monitorLabel->setPixmap(Icon(locate("data", "kcontrol/pics/monitor.xpm"))); 
 	monitorLabel->setMinimumSize( 220, 160 );
 		 
 	topLayout->addMultiCellWidget( monitorLabel, 1, 1, 1, 2 );

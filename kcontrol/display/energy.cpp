@@ -24,6 +24,8 @@
 #include <kcharsets.h>
 #include <kconfigbase.h>
 #include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include <ksimpleconfig.h>
 #include <kwm.h>
 #include <kcolordlg.h>
@@ -71,8 +73,6 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	suspend= DFLT_SUSPEND;
 	off= DFLT_OFF;
 
-	debug("KEnergy::KEnergy");
-	
 	readSettings();
 
 	kde_display = x11Display();
@@ -102,10 +102,8 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	cbEnable->setEnabled(hasDPMS);
 	connect(cbEnable, SIGNAL(clicked()), SLOT(slotChangeEnable()));
 
-	KIconLoader iconLoader;
-	QPixmap p = iconLoader.loadIcon("energybig.xpm");
 	QLabel *pixlabel= new QLabel(this);
-	pixlabel->setPixmap(p);
+	pixlabel->setPixmap(Icon(locate("data", "kcontrol/pics/energybig.xpm")));
 	pixlabel->setMinimumSize(pixlabel->sizeHint());	
 	
 	topLayout->addLayout(h1Layout);
