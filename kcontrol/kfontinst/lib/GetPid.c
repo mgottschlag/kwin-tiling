@@ -139,11 +139,12 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                             found|=FOUND_PPID;
                         }
                     }
-                    if(found==FOUND_ALL)
+                    if(found==FOUND_ALL) {
                         if(pid)
                             error=true;
                         else
                             pid=atoi(entry->d_name);
+                    }
                     fclose(fd);
                 }
             }
