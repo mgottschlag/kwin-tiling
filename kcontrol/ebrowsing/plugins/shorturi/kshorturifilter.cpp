@@ -411,10 +411,9 @@ KShortURIFilterFactory::~KShortURIFilterFactory()
     delete s_instance;
 }
 
-QObject *KShortURIFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
+QObject *KShortURIFilterFactory::createObject( QObject *parent, const char *name, const char*, const QStringList & )
 {
     QObject *obj = new KShortURIFilter( parent, name );
-    emit objectCreated( obj );
     return obj;
 }
 
