@@ -116,7 +116,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     QWhatsThis::add( group,
      i18n("<qt>There are two different clipboard buffers available:<br><br>"
           "<b>Clipboard</b> is filled by selecting something<br>"
-          "and pressing CTRL-C, or by clicking \"Copy\" in a toolbar or<br>"
+          "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or<br>"
           "menubar.<br><br>"
           "<b>Selection</b> is available immediately after<br>"
           "selecting some text. The only way to access the selection<br>"
