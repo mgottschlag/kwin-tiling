@@ -76,3 +76,5 @@ genkdmconf_COMPILE_FIRST = config.ci
 
 config.ci: $(srcdir)/config.def $(srcdir)/confproc.pl
 	$(PERL) -w $(srcdir)/confproc.pl $< $@
+
+CLEANFILES = config.ci
