@@ -837,6 +837,10 @@ void KCMStyle::styleChanged()
 
 void KCMStyle::switchStyle(const QString& styleName)
 {
+    // Don't flicker the preview if the same style is chosen in the cb
+    if (appliedStyle && appliedStyle->name() == styleName) 
+        return;
+
 	// Create an instance of the new style...
 	QStyle* style = QStyleFactory::create(styleName);
 	if (!style)
