@@ -472,7 +472,7 @@ extern "C"
 
         if(startServer)
 			kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
-											QStringList::split(" \t",args));
+											QStringList::split(" ",args));
     }
 }
 
