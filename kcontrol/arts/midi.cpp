@@ -33,10 +33,10 @@
 
 extern "C"
 {
-    KCModule *create_midi(QWidget *parent, const char *name)
+    KCModule *create_midi(QWidget *parent, const char */*name*/)
     {
        KGlobal::locale()->insertCatalogue("kcmarts");
-       return new KMidConfig(parent, name);
+       return new KMidConfig(parent, "kcmarts");
     }
 }
 

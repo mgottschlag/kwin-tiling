@@ -52,10 +52,10 @@
 extern "C" {
 	void init_arts();
 
-	KCModule *create_arts(QWidget *parent, const char *name)
+    KCModule *create_arts(QWidget *parent, const char */*name*/)
 	{
 		KGlobal::locale()->insertCatalogue("kcmarts");
-		return new KArtsModule(parent, name);
+		return new KArtsModule(parent, "kcmarts" );
 	}
 }
 
@@ -139,11 +139,11 @@ static KCModule *load(QWidget *parent, const QString &libname, const QString &li
                     return module;
             }
         }
-    
+
 	// get the create_ function
 	QString factory("create_%1");
 	void *create = lib->symbol(QFile::encodeName(factory.arg(handle)));
-	
+
 	if (create)
 	    {
 		// create the module
@@ -163,7 +163,7 @@ static KCModule *loadModule(QWidget *parent, const QString &module)
     if (!service)
        return 0;
     QString library = service->library();
-    
+
     if (library.isEmpty())
        return 0;
 
@@ -189,12 +189,12 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	QTabWidget *tab = new QTabWidget(this);
 	layout->addWidget(tab);
 	layout->setMargin(0);
-	
+
 	general = new ArtsGeneral(tab);
 	soundIO = new ArtsSoundIO(tab);
 	mixer = loadModule(tab, "kmixcfg");
 	midi = new KMidConfig(tab, "kmidconfig");
-	
+
 	tab->addTab(general, i18n("&aRTs"));
 	tab->addTab(soundIO, i18n("&Sound I/O"));
 	if (mixer)
@@ -263,7 +263,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	        this, SLOT(slotRestartServer()));
 #endif
 	connect(general->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
-	
+
 	if (mixer)
 	   connect(mixer, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 	connect(midi, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
