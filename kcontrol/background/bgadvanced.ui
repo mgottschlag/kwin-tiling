@@ -81,7 +81,7 @@
                 <bool>false</bool>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have a lot of memory."</string>
+                <string>Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have a lot of memory.</string>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="3" column="1">
