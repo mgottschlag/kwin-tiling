@@ -77,12 +77,12 @@ const KAboutData * CKfiCmModule::aboutData() const
                                           I18N_NOOP("Font installer and previewer"),
                                           KAboutData::License_GPL,
                                           I18N_NOOP("(C) Craig Drummond, 2000, 2001"),
-                                          I18N_NOOP("\n(TQMM, PS - MBFM y CGD)"));
+                                          I18N_NOOP("(TQMM, PS - MBFM y CGD)"));
 
         that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "cpdrummond@uklinux.net");
-        that->itsAboutData->addAuthor("Michael Davis", I18N_NOOP("StarOffice xprinter.prolog patch"));
+        that->itsAboutData->addCredit("Michael Davis", I18N_NOOP("StarOffice xprinter.prolog patch"));
 #ifdef HAVE_XFT
-        that->itsAboutData->addAuthor("Keith Packard", I18N_NOOP("XftConfig parser"));
+        that->itsAboutData->addCredit("Keith Packard", I18N_NOOP("XftConfig parser"));
 #endif
     }
 
