@@ -72,11 +72,19 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_charset, whatsThis);
 
+    QHBoxLayout *Layout2 = new QHBoxLayout;
+    Layout2->setSpacing( KDialog::spacingHint() );
+    Layout2->setMargin( KDialog::marginHint() );
+    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    Layout2->addItem( spacer_2 );
+
     m_ok = new QPushButton(i18n("&OK"), this);
-    layout->addWidget(m_ok, 8, 0);
+    Layout2->addWidget(m_ok);
 
     m_cancel = new QPushButton(i18n("&Cancel"), this);
-    layout->addWidget(m_cancel, 8, 1);
+    Layout2->addWidget(m_cancel);
+
+    layout->addLayout( Layout2, 8, 0 );
 
     connect(m_name, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     connect(m_query, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
