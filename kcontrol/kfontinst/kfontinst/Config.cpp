@@ -307,7 +307,7 @@ void CConfig::load()
     itsSOConfigure=readBoolEntry("SOConfigure");
     val=readPathEntry("SODir");
     itsSODir=val.length()>0 ? val : constDefaultSODir;
-    val=readEntry("SOPpd");
+    val=readPathEntry("SOPpd");
     itsSOPpd=val.length()>0 ? val : constDefaultSOPpd;
 
     setGroup("SystemConfiguration");
