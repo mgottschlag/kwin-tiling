@@ -96,13 +96,13 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
 	if (kdmcfg->_defSdMode == SHUT_SCHEDULE)
 	    rb->setChecked( true );
 
-	force_rb = new QRadioButton( i18n("&Force Now"), whenGroup );
+	force_rb = new QRadioButton( i18n("&Force now"), whenGroup );
 	set_min( force_rb );
 	// Default action
 	if (kdmcfg->_defSdMode == SHUT_FORCENOW)
 	    force_rb->setChecked( true );
 
-	try_rb = new QRadioButton( i18n("&Try Now"), whenGroup );
+	try_rb = new QRadioButton( i18n("&Try now"), whenGroup );
 	set_min( try_rb );
 	if (kdmcfg->_defSdMode == SHUT_TRYNOW)
 	    try_rb->setChecked( true );
