@@ -118,7 +118,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
 
   //CT 15mar98 - add EdgeResistance, BorderAttractor, WindowsAttractor config
-  MagicBox = new QButtonGroup(i18n("Magic Borders"), this);
+  MagicBox = new QButtonGroup(i18n("Magic borders"), this);
 
   eLay = new QGridLayout(MagicBox,4,3,10,5);
   eLay->addRowSpacing(0,10);
@@ -129,7 +129,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   BrdrSnap = new KIntNumInput(10, MagicBox);
   BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
-  BrdrSnap->setLabel(i18n("Border Snap Zone:"));
+  BrdrSnap->setLabel(i18n("Border snap zone:"));
   BrdrSnap->setSuffix(i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(BrdrSnap,1,2);
@@ -140,7 +140,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   WndwSnap = new KIntNumInput(10, MagicBox);
   WndwSnap->setRange( 0, MAX_WNDW_SNAP);
-  WndwSnap->setLabel(i18n("Window Snap Zone:"));
+  WndwSnap->setLabel(i18n("Window snap zone:"));
   WndwSnap->setSuffix( i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
@@ -309,7 +309,7 @@ QString KDesktopConfig::quickHelp()
 {
   return i18n("<h1>Borders</h1> Here you can configure two nice features the KDE window manager KWin"
     " offers: <ul><li><em>Active Desktop Borders</em> enable you to switch desktops by moving the mouse pointer"
-    " to a screen border.</li><li><em>Magic Borders</em> provide sort of a 'magnetic field' which will"
+    " to a screen border.</li><li><em>Magic borders</em> provide sort of a 'magnetic field' which will"
     " make windows snap to other windows or the screen border when moved near to them.</li></ul>"
     " Please note, that changes here only take effect when you are using KWin as your window manager."
     " If you do use a different window manager, check its documentation for how to enable such features.");
