@@ -246,7 +246,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     QWhatsThis::add(preview, i18n("This is a preview of the \"%1\" font. You can change this font by clicking the \"Choose...\" button to the right.").arg(i->text()));
     QToolTip::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
 
-    QLabel * fontUse = new QLabel(i->text(), this);
+    QLabel * fontUse = new QLabel(i->text()+":", this);
 
     QWhatsThis::add(fontUse, *quickHelpIt++);
 
