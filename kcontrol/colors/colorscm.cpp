@@ -279,7 +279,7 @@ void KColorScheme::load()
     readScheme(0);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(0);
+    slotWidgetColor(wcCombo->currentItem());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -385,7 +385,7 @@ void KColorScheme::defaults()
     sList->setCurrentItem(1);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(0);
+    slotWidgetColor(wcCombo->currentItem());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -665,8 +665,10 @@ void KColorScheme::slotSelectColor(const QColor &col)
 
 void KColorScheme::slotWidgetColor(int indx)
 {
+    if (indx < 0)
+        indx = 0;
     if (wcCombo->currentItem() != indx)
-    wcCombo->setCurrentItem( indx );
+        wcCombo->setCurrentItem( indx );
 
     QColor col = color(indx);
     colorButton->setColor( col );
@@ -677,7 +679,7 @@ void KColorScheme::slotWidgetColor(int indx)
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 {
     if (wcCombo->currentItem() != indx)
-    wcCombo->setCurrentItem( indx );
+        wcCombo->setCurrentItem( indx );
 
     slotSelectColor(col);
 }
@@ -871,7 +873,7 @@ void KColorScheme::slotPreviewScheme(int indx)
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
-    slotWidgetColor(0);
+    slotWidgetColor(wcCombo->currentItem());
     if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
