@@ -21,7 +21,7 @@
 #include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
- 
+
 #include "extensionInfo.h"
 
 
@@ -50,10 +50,10 @@ void extensionInfo::load()
         KDesktopFile df(_desktopFile);
         _name = df.readName();
         _resizeable = df.readBoolEntry("X-KDE-PanelExt-Resizeable", _resizeable);
-        
+
         if (_resizeable)
         {
-            _useStdSizes = df.readBoolEntry("X-KDE-PanelExt-StdSizes", _useStdSizes); 
+            _useStdSizes = df.readBoolEntry("X-KDE-PanelExt-StdSizes", _useStdSizes);
             _size = df.readNumEntry("X-KDE-PanelExt-StdSizeDefault", _size);
             _customSizeMin = df.readNumEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
             _customSizeMax = df.readNumEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
@@ -90,7 +90,7 @@ void extensionInfo::load()
         _size           = c.readNumEntry ("Size",       _size);
         _customSize     = c.readNumEntry ("CustomSize", _customSize);
     }
-    
+
     // sanitize
     if (_sizePercentage < 1) _sizePercentage = 1;
     if (_sizePercentage > 100) _sizePercentage = 100;
@@ -113,7 +113,7 @@ void extensionInfo::setDefaults()
     _hideAnim       = true;
     _hideAnimSpeed  = 40;
     _unhideLocation = 6;
-    _sizePercentage = 1;
+    _sizePercentage = 100;
     _expandSize     = true;
     _customSize     = 0;
     _resizeable     = false;
@@ -152,7 +152,7 @@ void extensionInfo::save()
         c.writeEntry("Size",       _size);
         c.writeEntry("CustomSize", _customSize);
     }
-    
+
     c.sync();
 }
 
