@@ -177,7 +177,7 @@ void Theme::cleanupWorkDir(void)
   int rc;
 
   // cleanup work directory
-  cmd.sprintf("rm -rf %s*", workDir().local8Bit().data());
+  cmd = QString::fromLatin1( "rm -rf %1*" ).arg( workDir() );
   rc = system(cmd.local8Bit());
   if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
 }
