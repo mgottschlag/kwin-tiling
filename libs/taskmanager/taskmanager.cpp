@@ -571,11 +571,13 @@ void Task::close()
 
 void Task::raise()
 {
+//    kdDebug(1210) << "Task::raise(): " << name() << endl;
     XRaiseWindow( qt_xdisplay(), _win );
 }
 
 void Task::activate()
 {
+//    kdDebug(1210) << "Task::activate():" << name() << endl;
     NETRootInfo ri( qt_xdisplay(), 0 );
     ri.setActiveWindow( _win );
 }
