@@ -232,11 +232,8 @@ void KScreenSaverAdvancedDialog::readSettings()
 
     mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
     mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
-    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft",
-false);
-    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight",
-false);
-
+    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft", false);
+    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight", false);
     mChanged = false;
     delete config;
 }
@@ -665,6 +662,7 @@ void KScreenSaver::updateValues()
         mWaitEdit->setValue(0);
     }
 
+    mWaitLockEdit->setValue(mLockTimeout/1000);
     mLockCheckBox->setChecked(mLock);
     mDPMSDependentCheckBox->setChecked(mDPMS);
 }
@@ -684,6 +682,7 @@ void KScreenSaver::defaults()
         mSaverListView->ensureItemVisible( item );
     }
     slotTimeoutChanged( 5 );
+    slotLockTimeoutChanged( 60 );
     slotDPMS( false );
     slotLock( false );
 
