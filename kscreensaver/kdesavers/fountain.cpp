@@ -181,10 +181,12 @@ bool Fountain::loadParticle()
     bool Status = TRUE;
 	QImage buf;
 
-    kdDebug() << "Loading: " << locate("data", "kscreensaver/particle.bmp") << endl;
-    if (buf.load( locate("data", "kscreensaver/particle.bmp") ) )
+    kdDebug() << "Loading: " << locate("data", "kscreensaver/particle.png") << endl;
+ if (buf.load( locate("data", "kscreensaver/particle.png") ) )
+
         {
-		tex = QGLWidget::convertToGLFormat( buf );  // flipped 32bit RGBA
+		tex = convertToGLFormat(buf);  // flipped 32bit RGBA
+		kdDebug() << "Texture loaded: " << tex.numBytes () << endl;
 	}
 	else
 	{
@@ -196,21 +198,14 @@ bool Fountain::loadParticle()
 
             /* Set the status to true */
             //Status = TRUE;
-
-            /* Create The Texture */
-           glGenTextures( 1, &texture[0] );
-
-            /* Typical Texture Generation Using Data From The Bitmap */
-            glBindTexture( GL_TEXTURE_2D, texture[0] );
-
-            /* Generate The Texture */
-            glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(),
-                          tex.height(), 0, GL_RGB,GL_UNSIGNED_BYTE, tex.bits() );
-
-            /* Linear Filtering */
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	    //glEnable( GL_TEXTURE_2D );
+	glGenTextures(1, &texture[0]);   /* create three textures */
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	/* use linear filtering */
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	/* actually generate the texture */
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0,
+	GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
 
 
 
@@ -322,17 +317,19 @@ void Fountain::paintGL ()
 			float x=particle[loop].x;			// Grab Our Particle X Position
 			float y=particle[loop].y;			// Grab Our Particle Y Position
 			float z=particle[loop].z+zoom;			// Particle Z Pos + Zoom
+    /* Select Our Texture */
 
                     /* Draw The Particle Using Our RGB Values,
                      * Fade The Particle Based On It's Life
                      */
+
                     glColor4f( particle[loop].r,
                                particle[loop].g,
                                particle[loop].b,
                                particle[loop].life );
 
                     /* Build Quad From A Triangle Strip */
-                    glBegin( GL_TRIANGLE_FAN );
+                    glBegin( GL_TRIANGLE_STRIP );
                       /* Top Right */
                       glTexCoord2d( 1, 1 );
                       glVertex3f( x + 0.5f, y + 0.5f, z );
@@ -358,7 +355,7 @@ void Fountain::paintGL ()
 
 			if (particle[loop].life<0.0f)					// If Particle Is Burned Out
 			{
-				particle[loop].life=1.5f;				// Give It New Life
+				particle[loop].life=2.0f;				// Give It New Life
 				particle[loop].fade=float(rand()%100)/1000.0f+0.003f;	// Random Fade Value
 				particle[loop].x=0.0f;					// Center On X Axis
 				particle[loop].y=0.0f;					// Center On Y Axis
