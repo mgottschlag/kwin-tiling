@@ -23,9 +23,9 @@
 
 #include <dcopclient.h>
 #include <kapplication.h>
-#include <kstandarddirs.h>
-#include <ksimpleconfig.h>
 #include <kglobalsettings.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
@@ -780,9 +780,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     s = m_pConfig->readEntry("MultiWallpaperMode");
     if (m_MMMap.contains(s)) {
 	int mode = m_MMMap[s];
-        // consistency check.
-	if ((mode == NoMulti || mode == NoMultiRandom) || m_WallpaperFiles.count())
-	    m_MultiMode = mode;
+	m_MultiMode = mode;
     }
 
     // Wallpaper mode (NoWallpaper, div. tilings)
@@ -874,6 +872,9 @@ void KBackgroundSettings::updateWallpaperFiles()
  */
 void KBackgroundSettings::changeWallpaper(bool init)
 {
+    if (m_WallpaperFiles.count() == 0)
+        return;
+
     switch (m_MultiMode) {
     case InOrder:
 	m_CurrentWallpaper++;

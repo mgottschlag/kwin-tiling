@@ -25,10 +25,10 @@
 #include <qpushbutton.h>
 #include <qspinbox.h>
 
-#include <kstandarddirs.h>
 #include <kfiledialog.h>
 #include <kimageio.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 #include <kurldrag.h>
 
 #include "bgsettings.h"
