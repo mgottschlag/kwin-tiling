@@ -10,7 +10,7 @@
 #define INFO_CPU_AVAILABLE
 #define INFO_IRQ_AVAILABLE
 #define INFO_DMA_AVAILABLE
-#define INFO_PCI_AVAILABLE
+//#define INFO_PCI_AVAILABLE
 #define INFO_IOPORTS_AVAILABLE
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEVICES_AVAILABLE
@@ -30,13 +30,28 @@
 #include <machine/perfmon.h>
 
 #include <fstab.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <qtextstream.h>
 #include <qfile.h>
 #include <qfontmetrics.h>
+#include <qstring.h>
+#include <qtextstream.h>
+#include <qlist.h>
+#include <qdict.h>
 
 #include <kdebug.h>
+
+class Device {
+public:
+	Device (QString n=QString::null, QString d=QString::null) {name=n; description=d;}
+	QString name ,description;
+};
+
+void ProcessChildren(QString name);
+QString GetController(const QString &line);
+Device *GetDevice(const QString &line);
 
 bool GetInfo_CPU (QListView *lBox)
 {
@@ -112,34 +127,6 @@ bool GetInfo_DMA (QListView *)
   return false;
 }
 
-bool GetInfo_PCI (QListView *listview)
-{
-    QFile dmesg("/sbin/dmesg");
-    QFile grep("/usr/bin/grep");
-
-    if (! dmesg.exists() || ! grep.exists())
-	return FALSE;
-
-    FILE *pipe = popen("/sbin/dmesg | /usr/bin/grep pci", "r");
-
-    QTextIStream stream(pipe);
-    QListViewItem *prevItem = 0;
-    QString str;
-
-    while (! stream.atEnd()) {
-	str = stream.readLine();
-
-	// if (str.isNull())
-	//     break;
-
-	prevItem = new QListViewItem(listview, prevItem, str);
-    }
-
-    pclose(pipe);
-
-    return TRUE;
-}
-
 bool GetInfo_IO_Ports (QListView *)
 {
   return false;
@@ -170,36 +157,6 @@ bool GetInfo_Sound (QListView *lbox)
   sndstat->close();
   delete sndstat;
   return true;
-}
-
-bool GetInfo_Devices (QListView *lbox)
-{
-	QFile *dmesg = new QFile("/var/run/dmesg.boot");
-
-	if (!dmesg->exists()) {
-		delete dmesg;
-		return false;
-	}
-
-	if (!dmesg->open(IO_ReadOnly)) {
-		delete dmesg;
-		return false;
-	}
-
-	lbox->clear();
-
-	QTextStream *t = new QTextStream(dmesg);
-	QString s;
-
-    QListViewItem* olditem;
-
-	while ((s=t->readLine()) != QString::null)
-        olditem = new QListViewItem(lbox, olditem, s);
-
-	delete t;
-	dmesg->close();
-	delete dmesg;
-	return true;
 }
 
 bool GetInfo_SCSI (QListView *lbox)
@@ -283,4 +240,74 @@ bool GetInfo_Partitions (QListView *lbox)
 bool GetInfo_XServer_and_Video (QListView *lBox)
 {
 	return GetInfo_XServer_Generic( lBox );
+}
+
+bool GetInfo_Devices (QListView *lbox)
+{
+	QFile *f = new QFile("/var/run/dmesg.boot");
+	if (f->open(IO_ReadOnly)) {
+		QTextStream qts(f);
+		QDict<QListViewItem> lv_items;
+		Device *dev;
+		QString line, controller;
+		lbox->addColumn("Device");
+		lbox->addColumn("Description");
+		while ( (line=qts.readLine()) != QString::null) {
+			controller = GetController(line);
+			if (controller == QString::null)
+				continue;
+			dev=GetDevice(line);
+			if (!dev)
+				continue;
+			// Ewww assuing motherboard is the only toplevel controller is rather gross
+			if (controller == "motherboard") {
+				if (!lv_items[dev->name]) {
+					lv_items.insert(dev->name, new QListViewItem(lbox, dev->name, dev->description) );
+				}
+			} else {
+				QListViewItem *parent=lv_items[controller];
+				if (parent && !lv_items[dev->name]) {
+					lv_items.insert(dev->name, new QListViewItem(parent, dev->name, dev->description) );
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+QString GetController(const QString &line)
+{
+		if ( ( (line.startsWith("ad")) || (line.startsWith("afd")) || (line.startsWith("acd")) ) && (line.find(":") < 6) ) {
+			QString controller = line;
+			controller.remove(0, controller.find(" at ")+4);
+			if (controller.find("-slave") != -1) {
+				controller.remove(controller.find("-slave"), controller.length());
+			} else if (controller.find("-master") != -1) {
+				controller.remove(controller.find("-master"), controller.length());
+			} else
+				controller=QString::null;
+			if (controller != QString::null)
+				return controller;
+		}
+		if (line.find(" on ") != -1) {
+			QString controller;
+			controller = line;
+			controller.remove(0, controller.find(" on ")+4);
+			if (controller.find(" ") != -1)
+				controller.remove(controller.find(" "), controller.length());
+			return controller;
+		}
+			return QString::null;
+}
+
+Device *GetDevice(const QString &line)
+{
+	Device *dev = new Device;
+	if (line.find(":") == -1)
+		return 0;
+	dev->name = line.mid(0, line.find(":"));
+	dev->description = line.mid(line.find("<")+1, line.length());
+	dev->description.remove(dev->description.find(">"), dev->description.length());
+	return dev;
 }
