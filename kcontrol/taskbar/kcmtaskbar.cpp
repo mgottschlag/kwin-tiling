@@ -57,10 +57,15 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
                                        " the taskbar to display all of the existing windows at once.  By"
                                        " default, the taskbar will only show those windows that are on"
                                        " the current desktop."));
-    vbox->addWidget(showAllCheck);
 
-    m_pShowListBtn = new QCheckBox(i18n("Show windows list &button"), this);
+    m_pShowListBtn = new QCheckBox(i18n("Show windows list &button"), taskbar_group);
     connect(m_pShowListBtn, SIGNAL(clicked()), SLOT(configChanged()));
+    QWhatsThis::add(m_pShowListBtn, i18n("Check this option if you want"
+                                       " the taskbar to display a small popup which gives you easy access"
+                                       " to all applications on other desktops and some further options."));
+
+    vbox->addWidget(showAllCheck);
+    vbox->addWidget(m_pShowListBtn);
 
     // create windows list controls
     QButtonGroup *winlist_group = new QButtonGroup(i18n("Windows list"), this);
@@ -105,7 +110,6 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
     QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
                                               KDialog::spacingHint());
     top_layout->addWidget(taskbar_group);
-    top_layout->addWidget(m_pShowListBtn);
     top_layout->addWidget(winlist_group);
     top_layout->addWidget(listorder_group);
     top_layout->addStretch(1);
