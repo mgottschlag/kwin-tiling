@@ -21,7 +21,6 @@
 #include <qradiobutton.h>
 #include <qlayout.h>
 #include <qvbuttongroup.h>
-#include <qlabel.h>
 #include <qcheckbox.h>
 #include <qhbox.h>
 

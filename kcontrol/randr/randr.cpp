@@ -376,3 +376,4 @@ void RandRDisplay::refresh()
 	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
 		s->loadSettings();
 }
+#include "randr.moc"

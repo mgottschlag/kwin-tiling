@@ -25,7 +25,7 @@ bin_PROGRAMS = krandrtray
 
 krandrtray_SOURCES = main.cpp krandrtray.cpp krandrapp.cpp
 krandrtray_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_XRANDR)
+krandrtray_LDADD = librandrinternal.la $(LIB_QT) $(LIB_KFILE) $(LIB_XRANDR)
 
 app_DATA = krandrtray.desktop
 appdir = $(kde_appsdir)/System
