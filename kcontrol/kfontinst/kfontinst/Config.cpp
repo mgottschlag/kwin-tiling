@@ -338,7 +338,6 @@ CConfig::CConfig()
 #endif
     setGroup("InstallUninstall");
     itsFixTtfPsNamesUponInstall=readBoolEntry("FixTtfPsNamesUponInstall", true);
-    itsUninstallIsDelete=readBoolEntry("UninstallIsDelete");
     val=readEntry("UninstallDir");
     itsUninstallDir=val.length()>0 ? val : constDefaultUninstallDir;
     val=readEntry("InstallDir");
@@ -365,11 +364,30 @@ CConfig::CConfig()
         itsXRefreshCmd=XREFRESH_XSET_FP_REHASH;
     itsModifiedDirs=readListEntry("ModifiedDirs");
 
+    //
     // Check data read from config file is valid...
     // ...if not, try to make it sensible...
+
+    //
+    // First of all, if this is the first time KFontinst has been run as non-root, check for the existance of
+    // $KDEHOME/share/fonts - if it doesn't exist then try to create
+    if(!CMisc::root() && !itsConfigured && QString(defaultFontsDir)==itsFontsDir)
+        if(!CMisc::dExists(itsFontsDir))
+            if(CMisc::dExists(kapp->dirs()->localkdedir())) // Then $KDEHOME exists, check for share and share/fonts
+            {
+                if(!CMisc::dExists(kapp->dirs()->localkdedir()+"share"))
+                    CMisc::createDir(kapp->dirs()->localkdedir()+"share");
+
+                if(CMisc::dExists(kapp->dirs()->localkdedir()+"share")) // Should do now...
+                    if(!CMisc::dExists(defaultFontsDir))
+                        CMisc::createDir(defaultFontsDir);
+            }
+
     if(QString::null==(itsFontsDir=getDir(itsFontsDir, constFontsDirs)))
         itsFontsDir=constNotFound;
 
+    //
+    // Check for TrueType and Type1 sub-folders, and create if either doesn't exist
     if(!CMisc::root() && !itsConfigured && QString(defaultFontsDir)==itsFontsDir)
     {
         if(!CMisc::dExists(QString(defaultFontsDir)+constDefaultTTSubDir))
@@ -551,14 +569,6 @@ void CConfig::setFixTtfPsNamesUponInstall(bool b)
  
     writeEntry("FixTtfPsNamesUponInstall", b);
     itsFixTtfPsNamesUponInstall=b; 
-}
-
-void CConfig::setUninstallIsDelete(bool b)
-{
-    KConfigGroupSaver cfgSaver(this, "InstallUninstall");
- 
-    writeEntry("UninstallIsDelete", b);
-    itsUninstallIsDelete=b;
 }
 
 void CConfig::setUninstallDir(const QString &s)

@@ -126,21 +126,13 @@ void CInstalledFontListWidget::configure()
 
 void CInstalledFontListWidget::uninstall()
 {
-    QString q;
-    bool    dir=getNumSelectedDirs() ? true : false;
+    bool dir=getNumSelectedDirs() ? true : false;
+    int  res;
 
-    if(CKfiGlobal::cfg().getUninstallIsDelete())
-        q=dir ? i18n("Delete selected folder (and ALL of its contents).") :
-                i18n("Delete selected fonts.");
-    else
-    {
-        q=dir ? i18n("Move selected folder (and ALL of its contents) to:\n") :
-                i18n("Move selected fonts to:\n");
-        q+=CKfiGlobal::cfg().getUninstallDir();
-    }
-    q+=i18n("\n\nAre you sure?");
-
-    if(KMessageBox::questionYesNo(this, q, i18n("Remove"))==KMessageBox::Yes)
+    if((res=KMessageBox::warningYesNoCancel(this, i18n("Uninstall selected ") + (dir ? i18n("folder (and ALL of its contents)?") : i18n("fonts?")) +
+                                                  i18n("\n\nPlease select uninstall method :"
+                                                       "\n(\"Move\" will move the selected items to \"%1\")").arg(CKfiGlobal::cfg().getUninstallDir()),
+                                                  i18n("Remove"), i18n("&Move"), i18n("&Delete")))!=KMessageBox::Cancel)
     {
         int           failures=0,
                       successes=0;
@@ -162,8 +154,8 @@ void CInstalledFontListWidget::uninstall()
 
 
                 if(SUCCESS==(status=dir ?
-                                     uninstallDir(parentDir, item->text(0)) :
-                                     uninstall(item->dir(), QString::null, item->text(0), true)))
+                                     uninstallDir(parentDir, item->text(0), res==KMessageBox::No) :
+                                     uninstall(item->dir(), QString::null, item->text(0), true, res==KMessageBox::No)))
                 {
                     CListViewItem *tmp=(CListViewItem *)item->itemBelow();
 
@@ -201,31 +193,31 @@ void CInstalledFontListWidget::uninstall()
     }
 }
 
-CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstall(const QString &dir, const QString &sub, const QString &file, bool deleteAfm)
+CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstall(const QString &dir, const QString &sub, const QString &file, bool deleteAfm, bool uninstIsDel)
 {
     EStatus status=PERMISSION_DENIED;
 
     progressShow(itsAdvancedMode ? dir+sub+file : file);
 
-    if(CKfiGlobal::cfg().getUninstallIsDelete())
+    if(uninstIsDel)
         status=CMisc::removeFile(dir+sub+file) ? SUCCESS : PERMISSION_DENIED;
     else
         status=CMisc::moveFile(dir+sub+file, CKfiGlobal::cfg().getUninstallDir()+sub) ? SUCCESS : PERMISSION_DENIED;
 
     if(SUCCESS==status && deleteAfm)
     {
-        if(!CKfiGlobal::cfg().getUninstallIsDelete())
+        if(!uninstIsDel)
             emit fontMoved(file, dir+sub, CKfiGlobal::cfg().getUninstallDir()+sub);
 
         if(CMisc::fExists(CMisc::afmName(dir+sub+file)))
-            uninstall(dir, sub, CMisc::afmName(file), false);
+            uninstall(dir, sub, CMisc::afmName(file), false, uninstIsDel);
         CStarOfficeConfig::removeAfm(dir+sub+file);
     }
  
     return status;
 }
 
-CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstallDir(const QString &top, const QString &sub)
+CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstallDir(const QString &top, const QString &sub, bool uninstIsDel)
 {
     EStatus status=PERMISSION_DENIED;
 
@@ -240,7 +232,7 @@ CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstallDir(const Q
         {
             bool created=false;
 
-            status=CKfiGlobal::cfg().getUninstallIsDelete() || 
+            status=uninstIsDel || 
                    CMisc::dExists(CKfiGlobal::cfg().getUninstallDir()+sub) ||
                    (created=CMisc::createDir(CKfiGlobal::cfg().getUninstallDir()+sub)) ? 
                        SUCCESS : COULD_NOT_CREATE_DIR;
@@ -265,9 +257,9 @@ CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstallDir(const Q
                             if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                                 if(!fInfo->isDir())
                                     if(CFontEngine::isAFont(fInfo->fileName()))
-                                        status=uninstall(top, sub+"/", fInfo->fileName(), true);
+                                        status=uninstall(top, sub+"/", fInfo->fileName(), true, uninstIsDel);
                                     else
-                                        if(CKfiGlobal::cfg().getUninstallIsDelete())
+                                        if(uninstIsDel)
                                             CMisc::removeFile(top+sub+"/"+fInfo->fileName());
                                         else
                                             CMisc::moveFile(top+sub+"/"+fInfo->fileName(), CKfiGlobal::cfg().getUninstallDir()+sub);
@@ -476,8 +468,7 @@ void CInstalledFontListWidget::selectionChanged()
     CListViewItem *item=getFirstSelectedItem();
     bool          enable=false;
 
-    if(item && ( CKfiGlobal::cfg().getUninstallIsDelete() ||
-                 (!CKfiGlobal::cfg().getUninstallIsDelete() && CMisc::dWritable(CKfiGlobal::cfg().getUninstallDir())) ) )
+    if(item)
     {
         enable=true;
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'FontListWidget.ui'
 **
-** Created: Mon Apr 30 01:02:57 2001
+** Created: Mon Sep 10 00:09:00 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

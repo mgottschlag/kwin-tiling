@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>685</width>
+            <width>681</width>
             <height>436</height>
         </rect>
     </property>
@@ -440,6 +440,76 @@ NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The o
                     <name>wordwrap</name>
                 </property>
             </widget>
+        </grid>
+    </widget>
+    <widget>
+        <class>QWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>page</cstring>
+        </property>
+        <attribute>
+            <name>title</name>
+            <string>Setup Complete</string>
+        </attribute>
+        <grid>
+            <property stdset="1">
+                <name>margin</name>
+                <number>11</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="0" >
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_3</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>KFontinst has now determined all the setup information that it needs.
+
+This KControl module has two main modes of operation; Basic and Advanced.
+
+In Basic mode, the underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.
+
+Advanced mode is for more experienced users, and displays the X fonts folder structure - allowing you to add/elete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.
+
+To switch between these modes, select the appropriate radio from within the "Appearance" section of the "Settings" tab.
+
+For further detailed help on how to use this module, please refer to the on-line help documentation.</string>
+                </property>
+                <property stdset="1">
+                    <name>alignment</name>
+                    <set>WordBreak|AlignVCenter|AlignLeft</set>
+                </property>
+                <property>
+                    <name>wordwrap</name>
+                </property>
+            </widget>
+            <spacer row="1"  column="0" >
+                <property>
+                    <name>name</name>
+                    <cstring>Spacer1_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Vertical</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Expanding</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
         </grid>
     </widget>
 </widget>

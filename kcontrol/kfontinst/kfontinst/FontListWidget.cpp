@@ -444,6 +444,8 @@ void CFontListWidget::scan()
  
         if(QString::null!=itsAdvancedData.dir2)
             addDir(itsAdvancedData.dir2, itsAdvancedData.dir2Name, itsAdvancedData.dir2Icon);
+
+        itsList->setEnabled(true);
     }
     else
     {
@@ -451,6 +453,14 @@ void CFontListWidget::scan()
         itsList->setColumnText(0, "File");
         itsBox->setTitle(itsBoxTitle + " " + itsBasicData.dir);
         scanDir(itsBasicData.dir);
+
+        if(itsList->childCount())
+            itsList->setEnabled(true);
+        else
+        {
+            new QListViewItem(itsList, QString::null, i18n("This folder does not contain any fonts."));
+            itsList->setEnabled(false);
+        }
     }
 }
 

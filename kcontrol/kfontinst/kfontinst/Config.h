@@ -70,7 +70,6 @@ class CConfig : public KConfig
     bool              getDoGhostscript()            { return itsDoGhostscript; }
 
     bool              getFixTtfPsNamesUponInstall() { return itsFixTtfPsNamesUponInstall; }
-    bool              getUninstallIsDelete()        { return itsUninstallIsDelete; }
     const QString &   getUninstallDir()             { return itsUninstallDir; }
     const QString &   getInstallDir()               { return itsInstallDir; }
  
@@ -106,7 +105,6 @@ class CConfig : public KConfig
     void setDoGhostscript(bool b);
  
     void setFixTtfPsNamesUponInstall(bool b);
-    void setUninstallIsDelete(bool b);
     void setUninstallDir(const QString &s);
     void setInstallDir(const QString &s);
  
@@ -166,7 +164,6 @@ class CConfig : public KConfig
                       itsAdvancedMode,
                       itsUseCustomPreviewStr,
                       itsFixTtfPsNamesUponInstall,
-                      itsUninstallIsDelete,
                       itsSOConfigure,
                       itsExclusiveEncoding,
                       itsDoAfm,

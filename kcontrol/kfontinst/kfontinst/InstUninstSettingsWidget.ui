@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>311</width>
+            <width>307</width>
             <height>187</height>
         </rect>
     </property>
@@ -140,7 +140,7 @@ to automatically correct any broken fonts.</string>
             </property>
             <property stdset="1">
                 <name>title</name>
-                <string>To Uninstall:</string>
+                <string>Uninstall - "Move" To Folder:</string>
             </property>
             <grid>
                 <property stdset="1">
@@ -151,22 +151,6 @@ to automatically correct any broken fonts.</string>
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>itsDeleteRadio</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>De&amp;lete</string>
-                    </property>
-                    <property>
-                        <name>whatsThis</name>
-                        <string>If this is selected, then any fonts you choose
-to uninstall will be deleted.</string>
-                    </property>
-                </widget>
                 <widget row="0"  column="3" >
                     <class>QPushButton</class>
                     <property stdset="1">
@@ -201,26 +185,6 @@ to uninstall will be deleted.</string>
                     <property>
                         <name>toolTip</name>
                         <string>Change Folder.</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>itsMoveRadio</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>M&amp;ove to:</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                    <property>
-                        <name>whatsThis</name>
-                        <string>If this is selected, then any fonts you choose
-to uninstall will be moved to the desired folder.</string>
                     </property>
                 </widget>
                 <widget row="0"  column="2" >
@@ -283,22 +247,10 @@ to uninstall will be moved to the desired folder.</string>
 </widget>
 <connections>
     <connection>
-        <sender>itsMoveRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>itsUninstallDirButton</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
         <sender>itsFixTtfPsNamesUponInstall</sender>
         <signal>toggled(bool)</signal>
         <receiver>CInstUninstSettingsWidgetData</receiver>
         <slot>fixTtfNamesSelected(bool)</slot>
-    </connection>
-    <connection>
-        <sender>itsMoveRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>CInstUninstSettingsWidgetData</receiver>
-        <slot>moveToSelected(bool)</slot>
     </connection>
     <connection>
         <sender>itsUninstallDirButton</sender>
@@ -313,7 +265,6 @@ to uninstall will be moved to the desired folder.</string>
 </connections>
 <tabstops>
     <tabstop>itsFixTtfPsNamesUponInstall</tabstop>
-    <tabstop>itsMoveRadio</tabstop>
     <tabstop>itsUninstallDirButton</tabstop>
 </tabstops>
 </UI>

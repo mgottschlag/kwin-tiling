@@ -39,7 +39,6 @@ class CInstUninstSettingsWidget : public CInstUninstSettingsWidgetData
     virtual ~CInstUninstSettingsWidget() {}
 
     void fixTtfNamesSelected(bool on);
-    void moveToSelected(bool on);
     void uninstallDirButtonPressed();
 };
 

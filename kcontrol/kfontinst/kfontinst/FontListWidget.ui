@@ -38,7 +38,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>407</width>
+            <width>403</width>
             <height>155</height>
         </rect>
     </property>
@@ -165,10 +165,6 @@
                         <name>text</name>
                         <string>Action</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Select File.</string>
-                    </property>
                 </widget>
                 <widget row="1"  column="0" >
                     <class>QPushButton</class>
@@ -200,10 +196,6 @@
                     <property stdset="1">
                         <name>text</name>
                         <string>Action</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Select File.</string>
                     </property>
                 </widget>
                 <spacer row="1"  column="1" >

@@ -83,8 +83,8 @@ class CInstalledFontListWidget : public CFontListWidget
 
     private:
 
-    EStatus uninstall(const QString &dir, const QString &sub, const QString &file, bool deleteAfm=true);
-    EStatus uninstallDir(const QString &top, const QString &sub);
+    EStatus uninstall(const QString &dir, const QString &sub, const QString &file, bool deleteAfm, bool uninstIsDel);
+    EStatus uninstallDir(const QString &top, const QString &sub, bool uninstIsDel);
     QString statusToStr(EStatus status);
 
     private:

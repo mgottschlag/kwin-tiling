@@ -35,6 +35,7 @@
 #include <kfiledialog.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <klocale.h>
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
@@ -66,7 +67,7 @@ CStarOfficeSettingsWidget::CStarOfficeSettingsWidget(QWidget *parent, const char
 void CStarOfficeSettingsWidget::dirButtonPressed()
 {
     QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsDirText->text() ? QString::null : itsDirText->text(),
-                                                  this, "Select StarOffice Folder");
+                                                  this, i18n("Select StarOffice Folder"));
  
     if(QString::null!=dir && dir!=itsDirText->text())
     {

@@ -45,22 +45,12 @@ CInstUninstSettingsWidget::CInstUninstSettingsWidget(QWidget *parent, const char
     itsUninstallDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
     itsFixTtfPsNamesUponInstall->setChecked(CKfiGlobal::cfg().getFixTtfPsNamesUponInstall());
 
-    if(CKfiGlobal::cfg().getUninstallIsDelete())
-        itsDeleteRadio->setChecked(true);
-    else
-        itsMoveRadio->setChecked(true);
-
     itsUninstallDirText->setText(CKfiGlobal::cfg().getUninstallDir());
 }
  
 void CInstUninstSettingsWidget::fixTtfNamesSelected(bool on)
 {
     CKfiGlobal::cfg().setFixTtfPsNamesUponInstall(on);
-}
-
-void CInstUninstSettingsWidget::moveToSelected(bool on)
-{
-    CKfiGlobal::cfg().setUninstallIsDelete(!on);
 }
 
 void CInstUninstSettingsWidget::uninstallDirButtonPressed()

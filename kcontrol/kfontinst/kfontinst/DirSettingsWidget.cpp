@@ -31,6 +31,7 @@
 #include "Config.h"
 #include "Encodings.h"
 #include "XConfig.h"
+#include "Misc.h"
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kfiledialog.h>
@@ -62,7 +63,7 @@ CDirSettingsWidget::CDirSettingsWidget(QWidget *parent, const char *name)
 void CDirSettingsWidget::encodingsDirButtonPressed()
 {
     QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
-                                                  this, "Select Encodings Folder");
+                                                  this, i18n("Select Encodings Folder"));
  
     if(QString::null!=dir && dir!=itsEncodingsDirText->text())
     {
@@ -76,17 +77,32 @@ void CDirSettingsWidget::encodingsDirButtonPressed()
 
 void CDirSettingsWidget::gsFontmapButtonPressed()
 {
-    QString file=KFileDialog::getOpenFileName(CConfig::constNotFound==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
-                                              "Fontmap*", this, "Select Ghostscript \"Fontmap\"");
+    QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
+                                              "Fontmap*", this, i18n("Select Ghostscript \"Fontmap\""));
  
     if(QString::null!=file && file!=itsGhostscriptFileText->text())
-        setGhostscriptFile(file);
+    {
+        bool ok=false;
+
+        if(!(CMisc::fExists(file)))
+            if(CMisc::dWritable(CMisc::getDir(file)))
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
+                                                         "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+            else
+                KMessageBox::error(this, i18n("File does not exist,\n"
+                                              "and directory is not writeable"), i18n("File error"));
+        else
+            ok=true;
+
+        if(ok)
+            setGhostscriptFile(file);
+    }
 }
 
 void CDirSettingsWidget::xDirButtonPressed()
 {
     QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
-                                                  this, "Select Fonts Folder");
+                                                  this, i18n("Select Fonts Folder"));
  
     if(QString::null!=dir && dir!=itsFontsDirText->text())
     {
@@ -98,15 +114,30 @@ void CDirSettingsWidget::xDirButtonPressed()
 
 void CDirSettingsWidget::xConfigButtonPressed()
 {
-    QString file=KFileDialog::getOpenFileName(CConfig::constNotFound==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
-                                              NULL, this, "Select X config file");
+    QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
+                                              NULL, this, i18n("Select X config file"));
  
     if(QString::null!=file && file!=itsXConfigFileText->text())
     {
-        setXConfigFile(file);
-        if(!CKfiGlobal::xcfg().ok())
-            KMessageBox::information(this, i18n("File format not recognized!\n"
-                                                "Advanced mode folder operations will not be available."));
+        bool ok=false;
+ 
+        if(!(CMisc::fExists(file)))
+            if(CMisc::dWritable(CMisc::getDir(file)))
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
+                                                         "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+            else
+                KMessageBox::error(this, i18n("File does not exist,\n"
+                                              "and directory is not writeable"), i18n("File error"));
+        else
+            ok=true;
+
+        if(ok)
+        {
+            setXConfigFile(file);
+            if(!CKfiGlobal::xcfg().ok())
+                KMessageBox::information(this, i18n("File format not recognized!\n"
+                                                    "Advanced mode folder operations will not be available."));
+        }
     }
 }
 

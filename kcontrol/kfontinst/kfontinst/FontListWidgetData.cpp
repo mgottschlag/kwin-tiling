@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'FontListWidget.ui'
 **
-** Created: Sat May 12 01:51:27 2001
+** Created: Mon Sep 10 00:09:00 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
 {
     if ( !name )
 	setName( "CFontListWidgetData" );
-    resize( 407, 155 ); 
+    resize( 403, 155 ); 
     setCaption( i18n( "Form1" ) );
     CFontListWidgetDataLayout = new QGridLayout( this ); 
     CFontListWidgetDataLayout->setSpacing( 0 );
@@ -58,7 +58,6 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     itsButton2->setMinimumSize( QSize( 0, 0 ) );
     itsButton2->setMaximumSize( QSize( 32767, 32767 ) );
     itsButton2->setText( i18n( "Action" ) );
-    QToolTip::add(  itsButton2, i18n( "Select File." ) );
 
     itsBoxLayout->addWidget( itsButton2, 1, 2 );
 
@@ -67,7 +66,6 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     itsButton1->setMinimumSize( QSize( 0, 0 ) );
     itsButton1->setMaximumSize( QSize( 32767, 32767 ) );
     itsButton1->setText( i18n( "Action" ) );
-    QToolTip::add(  itsButton1, i18n( "Select File." ) );
 
     itsBoxLayout->addWidget( itsButton1, 1, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

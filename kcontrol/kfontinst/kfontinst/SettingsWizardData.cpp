@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Fri Sep 7 00:44:54 2001
+** Created: Mon Sep 10 00:21:48 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 {
     if ( !name )
 	setName( "CSettingsWizardData" );
-    resize( 685, 436 ); 
+    resize( 681, 436 ); 
     setCaption( i18n( "Settings Wizard" ) );
 
     itsIntroPage = new QWidget( this, "itsIntroPage" );
@@ -131,6 +131,20 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 
     itsStarOfficePageLayout->addWidget( TextLabel1_2_2, 0, 0 );
     addPage( itsStarOfficePage, i18n( "StarOffice" ) );
+
+    page = new QWidget( this, "page" );
+    pageLayout = new QGridLayout( page ); 
+    pageLayout->setSpacing( 6 );
+    pageLayout->setMargin( 11 );
+
+    TextLabel1_3 = new QLabel( page, "TextLabel1_3" );
+    TextLabel1_3->setText( i18n( "KFontinst has now determined all the setup information that it needs.\n\nThis KControl module has two main modes of operation; Basic and Advanced.\n\nIn Basic mode, the underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.\n\nAdvanced mode is for more experienced users, and displays the X fonts folder structure - allowing you to add/elete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.\n\nTo switch between these modes, select the appropriate radio from within the \"Appearance\" section of the \"Settings\" tab.\n\nFor further detailed help on how to use this module, please refer to the on-line help documentation." ) );
+    TextLabel1_3->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+
+    pageLayout->addWidget( TextLabel1_3, 0, 0 );
+    QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    pageLayout->addItem( spacer_4, 1, 0 );
+    addPage( page, i18n( "Setup Complete" ) );
 }
 
 /*  

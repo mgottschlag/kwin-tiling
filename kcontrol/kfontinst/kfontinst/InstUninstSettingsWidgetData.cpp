@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'InstUninstSettingsWidget.ui'
 **
-** Created: Fri Sep 7 00:50:15 2001
+** Created: Sun Sep 9 19:25:47 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,7 +14,6 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
 #include <qlayout.h>
 #include <qvariant.h>
 #include <qtooltip.h>
@@ -29,7 +28,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
 {
     if ( !name )
 	setName( "CInstUninstSettingsWidgetData" );
-    resize( 311, 187 ); 
+    resize( 307, 187 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, sizePolicy().hasHeightForWidth() ) );
     setCaption( i18n( "Form2" ) );
     CInstUninstSettingsWidgetDataLayout = new QGridLayout( this ); 
@@ -57,7 +56,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addMultiCellWidget( GroupBox5, 0, 0, 0, 1 );
 
     ButtonGroup1 = new QButtonGroup( this, "ButtonGroup1" );
-    ButtonGroup1->setTitle( i18n( "To Uninstall:" ) );
+    ButtonGroup1->setTitle( i18n( "Uninstall - \"Move\" To Folder:" ) );
     ButtonGroup1->setColumnLayout(0, Qt::Vertical );
     ButtonGroup1->layout()->setSpacing( 0 );
     ButtonGroup1->layout()->setMargin( 0 );
@@ -65,12 +64,6 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     ButtonGroup1Layout->setAlignment( Qt::AlignTop );
     ButtonGroup1Layout->setSpacing( 6 );
     ButtonGroup1Layout->setMargin( 11 );
-
-    itsDeleteRadio = new QRadioButton( ButtonGroup1, "itsDeleteRadio" );
-    itsDeleteRadio->setText( i18n( "De&lete" ) );
-    QWhatsThis::add(  itsDeleteRadio, i18n( "If this is selected, then any fonts you choose\nto uninstall will be deleted." ) );
-
-    ButtonGroup1Layout->addWidget( itsDeleteRadio, 0, 0 );
 
     itsUninstallDirButton = new QPushButton( ButtonGroup1, "itsUninstallDirButton" );
     itsUninstallDirButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, itsUninstallDirButton->sizePolicy().hasHeightForWidth() ) );
@@ -80,13 +73,6 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     QToolTip::add(  itsUninstallDirButton, i18n( "Change Folder." ) );
 
     ButtonGroup1Layout->addWidget( itsUninstallDirButton, 0, 3 );
-
-    itsMoveRadio = new QRadioButton( ButtonGroup1, "itsMoveRadio" );
-    itsMoveRadio->setText( i18n( "M&ove to:" ) );
-    itsMoveRadio->setChecked( TRUE );
-    QWhatsThis::add(  itsMoveRadio, i18n( "If this is selected, then any fonts you choose\nto uninstall will be moved to the desired folder." ) );
-
-    ButtonGroup1Layout->addWidget( itsMoveRadio, 0, 1 );
 
     itsUninstallDirText = new QLabel( ButtonGroup1, "itsUninstallDirText" );
     itsUninstallDirText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, itsUninstallDirText->sizePolicy().hasHeightForWidth() ) );
@@ -102,14 +88,11 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addItem( spacer_2, 1, 0 );
 
     // signals and slots connections
-    connect( itsMoveRadio, SIGNAL( toggled(bool) ), itsUninstallDirButton, SLOT( setEnabled(bool) ) );
     connect( itsFixTtfPsNamesUponInstall, SIGNAL( toggled(bool) ), this, SLOT( fixTtfNamesSelected(bool) ) );
-    connect( itsMoveRadio, SIGNAL( toggled(bool) ), this, SLOT( moveToSelected(bool) ) );
     connect( itsUninstallDirButton, SIGNAL( clicked() ), this, SLOT( uninstallDirButtonPressed() ) );
 
     // tab order
-    setTabOrder( itsFixTtfPsNamesUponInstall, itsMoveRadio );
-    setTabOrder( itsMoveRadio, itsUninstallDirButton );
+    setTabOrder( itsFixTtfPsNamesUponInstall, itsUninstallDirButton );
 }
 
 /*  

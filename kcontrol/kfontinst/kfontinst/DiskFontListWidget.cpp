@@ -137,13 +137,25 @@ void CDiskFontListWidget::dirMoved(const QString &top, const QString &sub)
 
 void CDiskFontListWidget::changeDirectory()
 {
-    QString dir=KFileDialog::getExistingDirectory(itsBasicData.dir, this, "Select Folder To Install From");
- 
-    if(QString::null!=dir && dir!=itsBasicData.dir)
+    KFileDialog dlg(itsBasicData.dir, "*.ttf *.TTF *.pfa *.pfb *.PFA *.PFB", this, "filedialog", true);
+
+    dlg.setMode(static_cast<KFile::Mode>(KFile::Directory|KFile::ExistingOnly|KFile::File|KFile::LocalOnly));
+    dlg.setCaption(i18n("Select Folder To Install From"));
+    dlg.exec();
+
+    QString dir=dlg.selectedURL().path();
+
+    if(QString::null!=dir)
     {
-        itsBasicData.dir=dir;
-        CKfiGlobal::cfg().setInstallDir(dir);
-        scan();
+        if(!CMisc::dExists(dir)) // In case user selected a file...
+            dir=CMisc::getDir(dir);
+
+        if(dir!=itsBasicData.dir)
+        {
+            itsBasicData.dir=dir;
+            CKfiGlobal::cfg().setInstallDir(dir);
+            scan();
+        }
     }
 }
 
