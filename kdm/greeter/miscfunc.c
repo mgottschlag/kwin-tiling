@@ -244,7 +244,7 @@ AutoLogon ()
 }
 
 
-// we have to return RESERVER_DISPLAY to restart the server
+/* we have to return RESERVER_DISPLAY to restart the server */
 int
 IOErrorHandler (Display *dpy)
 {
@@ -261,7 +261,7 @@ TempUngrab_Run(int (*func)(size_t), size_t arg)
     XUngrabKeyboard(*dpy, CurrentTime);
     ret = func(arg);
 
-    // Secure the keyboard again
+    /* Secure the keyboard again */
     if (XGrabKeyboard (*dpy, DefaultRootWindow (*dpy), 
 		       True, GrabModeAsync, GrabModeAsync, CurrentTime) 
 	!= GrabSuccess
