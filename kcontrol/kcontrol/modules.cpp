@@ -89,12 +89,13 @@ void ConfigModule::deleteClient()
   if (_embedWidget)
     XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
 
+  delete _rootProcess;
+  _rootProcess = 0;
+
   delete _embedWidget;
   _embedWidget = 0;
   delete _module;
   _module = 0;
-  delete _rootProcess;
-  _rootProcess = 0;
   delete _embedLayout;
   _embedLayout = 0;
 
@@ -109,6 +110,7 @@ void ConfigModule::clientClosed()
   emit changed(this);
   emit childClosed();
 }
+
 
 void ConfigModule::clientChanged(bool state)
 {
@@ -132,7 +134,11 @@ void ConfigModule::runAsRoot()
   _embedLayout->addWidget(_embedWidget,1);
   _module->hide();
   _embedWidget->show();
-  _embedWidget->setAutoDelete(true);
+  QLabel *_busy = new QLabel(i18n("<big>Loading ...</big>"), _embedWidget);
+  _busy->setAlignment(AlignCenter);
+  _busy->setTextFormat(RichText);
+  _busy->setGeometry(0,0, _module->width(), _module->height());
+  _busy->show();
 
   // prepare the process to run the kcmshell
   QString cmd = service()->exec().stripWhiteSpace();
@@ -167,12 +173,14 @@ void ConfigModule::runAsRoot()
   _embedWidget = 0;
   delete _embedLayout;
   _embedLayout = 0;
+  _module->show();
 }
 
 
 void ConfigModule::rootExited(KProcess *)
 {
-  XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+  if (_embedWidget->embeddedWinId())
+    XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
   delete _embedWidget;
   _embedWidget = 0;
   _rootProcess = 0;
