@@ -35,17 +35,24 @@
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
 {
-	(new QVBoxLayout(this,0,3))->setAutoAdd(true);
+	QVBoxLayout *layout=new QVBoxLayout(this,0,3);
+	layout->setAutoAdd(true);
 	
 	apps=new QListView(this);
+//	apps->setMaximumHeight(100);
 	apps->addColumn(i18n("Application Name"));
 	apps->addColumn(i18n("Description"));
+	apps->setSelectionMode(QListView::Single);
+	layout->setStretchFactor(events, -1);
 	
 	events=new QListView(this);
+	events->setSelectionMode(QListView::Single);
 	events->addColumn(i18n("Event Name"));
 	events->addColumn(i18n("Description"));
+	layout->setStretchFactor(events, 1);
 	eventview=new EventView(this);
 	loadAll();
+	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), SLOT(appSelected(QListViewmItem*)));
 	
 };
 
@@ -66,7 +73,6 @@ void KNotifyWidget::changed()
 
 void KNotifyWidget::loadAll()
 {
-	printf("KNotifyWidget::loadAll()\n");
 	QStringList dirs = KGlobal::dirs()->findAllResources("data", "*/eventsrc");
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
 	{
@@ -75,16 +81,32 @@ void KNotifyWidget::loadAll()
 		conf.setGroup("!Global!");
 		QString appname(conf.readEntry("appname", "Unknown Title"));
 		QString desc(conf.readEntry("description"));
-		(new QListViewItem(apps, *it, appname, desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/library", KIconLoader::Small));
+		(new ListViewItem(apps, *it, appname, desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/library", KIconLoader::Small));
 		kapp->processEvents();
 	}
+	apps->setSelected(apps->firstChild(), true);
 	appSelected(apps->firstChild());
 }
 
-void KNotifyWidget::appSelected(QListViewItem *)
+void KNotifyWidget::appSelected(QListViewItem *_i)
 {
+	events->clear();
 	// Set the rest of the dialog to show the proper info
-
+	printf("appSelected : %s\n\n", (const char*)((ListViewItem*)_i)->file) ;
+	KConfig conf(((ListViewItem*)_i)->file,false,false);
+	QStringList eventlist=conf.groupList();
+	eventlist.remove(QString("!Global!"));
+	eventlist.remove(QString("<default>"));
+	
+	for (QStringList::Iterator it=eventlist.begin(); it!=eventlist.end(); ++it)
+	{
+		conf.setGroup(*it);
+		QString friendly(conf.readEntry("friendly", *it));
+		QString desc(conf.readEntry("description"));
+		
+		(new ListViewItem(events, *it, friendly, desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/knotify", KIconLoader::Small));
+		kapp->processEvents();
+	}
 
 }
 
