@@ -7,11 +7,10 @@ LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB) $(top_builddir)/kdes
 
 SUBDIRS = . kcs ad pics maps
 
-#bin_PROGRAMS = kcmdisplay
+bin_PROGRAMS = kcmdisplay
 
-#kcmdisplay_SOURCES = colorscm.cpp backgnd.cpp display.cpp savescm.cpp \
-#	scrnsave.cpp general.cpp main.cpp widgetcanvas.cpp  fonts.cpp \
-#	energy.cpp bgdialogs.cpp advanced.cpp
+kcmdisplay_SOURCES = colorscm.cpp display.cpp savescm.cpp \
+	general.cpp main.cpp widgetcanvas.cpp energy.cpp 
 
 METASOURCES = AUTO
 

@@ -26,12 +26,8 @@
 #include <kimgio.h>
 #include "display.h"
 #include "colorscm.h"
-#include "scrnsave.h"
 #include "general.h"
-#include "backgnd.h"
-#include "fonts.h"
 #include "energy.h"
-#include "advanced.h"
 #include <qfont.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -56,53 +52,33 @@ public:
 private:
 
   KColorScheme *colors;
-  KScreenSaver *screensaver;
-  KFonts *fonts;
   KGeneral *general;
-  KBackground *background;
   KEnergy *energy;
-  KAdvanced *advanced;
 };
 
 
 KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
-  colors = 0; screensaver = 0; fonts = 0; general = 0; background = 0;
-  energy = 0; advanced = 0;
+  colors = 0; general = 0; energy = 0;
 
   if (runGUI())
     {
-      if (!pages || pages->contains("background"))
-        addPage(background = new KBackground(dialog, KDisplayModule::Setup),
-		i18n("&Background"), "kdisplay-3.html");
-      if (!pages || pages->contains("screensaver"))
-	addPage(screensaver = new KScreenSaver(dialog, KDisplayModule::Setup),
-		i18n("&Screensaver"), "kdisplay-4.html");
-
       if (!pages || pages->contains("colors"))
 	addPage(colors = new KColorScheme(dialog, KDisplayModule::Setup),
 		i18n("&Colors"), "kdisplay-5.html");
-      if (!pages || pages->contains("fonts"))
-	addPage(fonts = new KFonts(dialog, KDisplayModule::Setup),
-		i18n("&Fonts"), "kdisplay-6.html");
       if (!pages || pages->contains("style"))
 	addPage(general = new KGeneral(dialog, KDisplayModule::Setup),
 		i18n("&Style"), "kdisplay-7.html");
       if (!pages || pages->contains("energy"))
 	addPage(energy = new KEnergy(dialog, KDisplayModule::Setup),
 		i18n("&Energy"), "kdisplay-8.html");
-      if (!pages || pages->contains("advanced"))
-	addPage(advanced = new KAdvanced(dialog, KDisplayModule::Setup),
-		i18n("&Advanced"), "kdisplay-8.html");
 
-      if (background || screensaver || colors || fonts || general || energy
-          || advanced)
+      if (colors || general || energy)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,"
-		"colors,fonts,style,energy,advanced}]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {colors,style,energy}]\n").ascii());
           justInit = TRUE;
         }
 
@@ -114,15 +90,8 @@ void KDisplayApplication::init()
 {
   KColorScheme *colors = new KColorScheme(0, KDisplayModule::Init);
   delete colors;
-  KBackground *background =  new KBackground(0, KDisplayModule::Init);
-  delete background;
-  KScreenSaver *screensaver = new KScreenSaver(0, KDisplayModule::Init);
-  delete screensaver;
   KEnergy *energy = new KEnergy(0, KDisplayModule::Init);
   delete energy;
-  KFonts *fonts = new KFonts(0, KDisplayModule::Init);
-  delete fonts;
-  KAdvanced *advanced = new KAdvanced(0, KDisplayModule::Init);
   
   writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
   
@@ -144,22 +113,14 @@ void KDisplayApplication::apply()
 {
   if (colors)
     colors->applySettings();
-  if (background)
-    background->applySettings();
-  if (screensaver)
-    screensaver->applySettings();
   if (energy)
     energy->applySettings();
-  if (fonts)
-    fonts->applySettings();
   if (general)
     general->applySettings();
-  if (advanced)
-    advanced->applySettings();
 
   kapp->config()->sync();
   
-  if (colors || fonts) {
+  if (colors) {
       QPalette pal = colors?colors->createPalette():qApp->palette();
 
       KConfig *config = KGlobal::config();
@@ -186,18 +147,10 @@ void KDisplayApplication::defaultValues()
 {
   if (colors)
     colors->defaultSettings();
-  if (background)
-    background->defaultSettings();
-  if (screensaver)
-    screensaver->defaultSettings();
   if (energy)
     energy->defaultSettings();
-  if (fonts)
-    fonts->defaultSettings();
   if (general)
     general->defaultSettings();
-  if (advanced)
-    advanced->defaultSettings();
 }
 
 void KDisplayApplication::writeQDesktopProperties( QPalette pal, QFont font)
