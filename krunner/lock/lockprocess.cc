@@ -20,6 +20,7 @@
 #include "lockprocess.h"
 #include "lockdlg.h"
 #include "autologout.h"
+#include "kdesktopsettings.h"
 
 #include <dmctl.h>
 
@@ -301,13 +302,9 @@ void LockProcess::quitSaver()
 void LockProcess::configure()
 {
     // the configuration is stored in kdesktop's config file
-    KConfig config( "kdesktoprc", true );
-
-    config.setGroup("ScreenSaver");
-
-    if(config.readBoolEntry("Lock", false))
+    if( KDesktopSettings::lock() )
     {
-        mLockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT);
+        mLockGrace = KDesktopSettings::lockGrace();
         if (mLockGrace < 0)
             mLockGrace = 0;
         else if (mLockGrace > 300000)
@@ -316,33 +313,33 @@ void LockProcess::configure()
     else
         mLockGrace = -1;
 
-    if (config.readBoolEntry("AutoLogout", false))
+    if ( KDesktopSettings::autoLogout() )
     {
         mAutoLogout = true;
-        mAutoLogoutTimeout = config.readNumEntry("AutoLogoutTimeout", AUTOLOGOUT_DEFAULT);
+        mAutoLogoutTimeout = KDesktopSettings::autoLogoutTimeout();
         mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
     }
 
 #ifdef HAVE_DPMS
     //if the user  decided that the screensaver should run independent from
     //dpms, we shouldn't check for it, aleXXX
-    mDPMSDepend = config.readBoolEntry("DPMS-dependent", false);
+    mDPMSDepend = KDesktopSettings::dpmsDependent();
 #endif
 
-    mPriority = config.readNumEntry("Priority", 19);
+    mPriority = KDesktopSettings::priority();
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
 
-    mSaver = config.readEntry("Saver");
+    mSaver = KDesktopSettings::saver();
     if (mSaver.isEmpty() || mUseBlankOnly)
         mSaver = "KBlankscreen.desktop";
 
     readSaver();
 
-    mPlugins = config.readListEntry("PluginsUnlock");
+    mPlugins = KDesktopSettings::pluginsUnlock();
     if (mPlugins.isEmpty())
         mPlugins = QStringList("classic");
-    mPluginOptions = config.readListEntry("PluginOptions");
+    mPluginOptions = KDesktopSettings::pluginOptions();
 }
 
 //---------------------------------------------------------------------------
