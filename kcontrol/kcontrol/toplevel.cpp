@@ -18,7 +18,7 @@
 
 */
 
-#include <iostream.h>                                   
+#include <iostream.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -59,6 +59,8 @@ TopLevel::TopLevel(const char* name)
 {
   setPlainCaption(i18n("KDE Control Center"));
 
+  report_bug = 0;
+
   // read settings
   KConfig *config = KGlobal::config();
   config->setGroup("Index");
@@ -80,7 +82,7 @@ TopLevel::TopLevel(const char* name)
   // initialize the entries
   _modules = new ConfigModuleList();
   _modules->readDesktopEntries();
-  
+
   for ( ConfigModule* m = _modules->first(); m; m = _modules->next() )
       connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
@@ -89,7 +91,7 @@ TopLevel::TopLevel(const char* name)
 
   // create the left hand side (the tab view)
   _tab = new QTabWidget(_splitter);
-  
+
   QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
 
   // index tab
@@ -137,7 +139,7 @@ TopLevel::TopLevel(const char* name)
     activateIconView();
     icon_view->setChecked(true);
   }
-} 
+}
 
 TopLevel::~TopLevel()
 {
@@ -274,7 +276,7 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
     }
 
   setPlainCaption(cap);
-  
+
   _helptab->setText( docPath, quickhelp );
 
   if (!report_bug) return;
