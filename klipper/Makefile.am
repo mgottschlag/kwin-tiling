@@ -22,9 +22,9 @@ apps_DATA = klipper.desktop
 autostartdir = $(prefix)/share/autostart
 autostart_DATA = klipper.desktop
 
-data_DATA = klipperrc
-datadir = $(kde_confdir)
-EXTRA_DIST = $(data_DATA)
+install-data-local:
+	$(mkinstalldirs) $(kde_confdir)
+	$(INSTALL_DATA) $(srcdir)/klipperrc.desktop $(kde_confdir)/klipperrc
 
 KDE_ICON = klipper
 
