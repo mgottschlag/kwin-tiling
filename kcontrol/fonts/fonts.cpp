@@ -158,8 +158,7 @@ void FontUseItem::updateLabel()
 
 KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     :   KCModule(FontFactory::instance(), parent, name),
-        _changed(false),
-        xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType)
+        _changed(false)
 {
   QStringList nameGroupKeyRc;
 
@@ -439,6 +438,8 @@ void KFonts::save()
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 
+  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
+
   if(aaExcludeRange->isChecked())
       xft.setExcludeRange(aaExcludeFrom->value(),
                           aaExcludeTo->value());
@@ -495,6 +496,7 @@ void KFonts::slotAaChange()
 void KFonts::setAaWidgets()
 {
    double aaFrom, aaTo;
+   KXftConfig     xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
 
    if(xft.getExcludeRange(aaFrom, aaTo))
        aaExcludeRange->setChecked(true);

@@ -96,7 +96,6 @@ private:
     bool useAA, useAA_original;
     QCheckBox *cbAA;
     QPtrList <FontUseItem> fontUseList;
-    KXftConfig xft;
     QCheckBox *aaExcludeRange;
     QCheckBox *aaUseSubPixel;
     KDoubleNumInput *aaExcludeFrom;
