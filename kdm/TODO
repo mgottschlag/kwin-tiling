@@ -21,7 +21,6 @@ Could:
 
 - add a minimalistic window manager to the greeter (see gdm)
 - make kdm kcontrol module invokable from greeter
-- enable font AA support in greeter
 - session name aliasing
 - password change dialog for aged passwords
 - starting kdm while a kdm is running in the background in "console mode"
