@@ -270,6 +270,7 @@ void AppletTab::add_clicked()
 
   updateTrusted();
   updateAvailable();
+  updateAddRemoveButton();
 }
 
 void AppletTab::remove_clicked()
@@ -281,4 +282,12 @@ void AppletTab::remove_clicked()
 
   updateTrusted();
   updateAvailable();
+  updateAddRemoveButton();
+}
+
+
+void AppletTab::updateAddRemoveButton()
+{
+    pb_remove->setEnabled(l_trusted.count ()>0);
+    pb_add->setEnabled(l_available.count()>0);
 }

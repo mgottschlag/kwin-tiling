@@ -57,7 +57,7 @@ class AppletTab : public QWidget
  protected:
   void updateTrusted();
   void updateAvailable();
-
+  void updateAddRemoveButton();
  private:
   QGridLayout *layout;
 
