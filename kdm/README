@@ -163,6 +163,8 @@ KDM accepts two command line options related to logging:
     are logged to the "daemon" facility. The log usually can be found in
     /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.*
     is logged (look at /etc/syslog.conf).
+    If you have problems logging in and your system uses PAM, the "auth"
+    and "authpriv" syslog facilities are interesting, too.
 
 Send me the logs together with a detailed description of what you did and
 what happened. If your problem is related to a specific configuration,
