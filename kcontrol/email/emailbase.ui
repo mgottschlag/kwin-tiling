@@ -147,8 +147,8 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                 <cstring>txtSMTP</cstring>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>You can specify the server to send mail to here.
-&lt;br&gt; SMTP means Simple Mail Transfer Protocol and is the standard way to send mail.</string>
+                <string>&lt;qt&gt;You can specify the server to send mail to here.
+&lt;br&gt;&lt;br&gt; SMTP means Simple Mail Transfer Protocol and is the standard way to send mail.&lt;/qt&gt;</string>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
