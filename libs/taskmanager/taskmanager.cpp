@@ -121,9 +121,8 @@ void TaskManager::windowAdded(WId w )
     //        No  -> kill all non-NET_WM-compliant app-starting buttons.
 
     pid_t pid = info.pid();
-    bool hasPid = (pid != 0);
 
-    if (hasPid)
+    if (pid != 0)
         killStartup(pid);
     else {
 
@@ -148,6 +147,7 @@ void TaskManager::windowAdded(WId w )
                     // Found it !
                     found = true;
                     _startups.removeRef(s);
+                    emit startupRemoved(s);
                     delete s;
                     break;
                 }
@@ -155,7 +155,6 @@ void TaskManager::windowAdded(WId w )
         }
 
         if (!found) {
-
             // Build a list of all non-compliant buttons.
             QValueList<pid_t> buttonsToKill;
 
