@@ -52,14 +52,14 @@ KURISearchFilterEngine::KURISearchFilterEngine()
   loadConfig();
 }
 
-QString KURISearchFilterEngine::webShortcutQuery( const KURL &url ) const
+QString KURISearchFilterEngine::webShortcutQuery( const QString& typedString ) const
 {
   QString result;
 
   if (m_bWebShortcutsEnabled)
   {
     QString key;
-    QString search = url.url();
+    QString search = typedString;
     int pos = search.find(m_cKeywordDelimiter);
 
     if ( pos > -1 )
@@ -72,8 +72,7 @@ QString KURISearchFilterEngine::webShortcutQuery( const KURL &url ) const
       if (provider)
       {
         result = formatResult(provider->query(), provider->charset(),
-                              QString::null, search.mid(pos+1),
-                              !url.isValid());
+                              QString::null, search.mid(pos+1), true);
         delete provider;
       }
     }

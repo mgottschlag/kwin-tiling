@@ -45,7 +45,7 @@ public:
 
   QCString name() const;
   
-  QString webShortcutQuery (const KURL&) const;
+  QString webShortcutQuery (const QString&) const;
   
   QString autoWebSearchQuery (const KURL&) const;
   

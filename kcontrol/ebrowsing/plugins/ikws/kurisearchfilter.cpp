@@ -53,9 +53,9 @@ void KURISearchFilter::configure()
 bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 {
   if ( KURISearchFilterEngine::self()->verbose() )
-    kdDebug() << "KURISearchFilter::filterURI: " << data.uri().url() << endl;
+    kdDebug() << "KURISearchFilter::filterURI: " << data.typedString() << endl;
 
-  QString result = KURISearchFilterEngine::self()->webShortcutQuery( data.uri() );
+  QString result = KURISearchFilterEngine::self()->webShortcutQuery( data.typedString() );
 
   if ( !result.isEmpty() )
   {
