@@ -30,8 +30,10 @@
 
 /**
  * A class that offers a @ref KDialogBase containing arbitrary KControl Modules
- * 
- * @short A method that offers a @ref KDialogBase containing arbitrary KControl Modules
+ *
+ * @short A method that offers a @ref KDialogBase containing arbitrary
+ *        KControl Modules.
+ *
  * @author Matthias Elter <elter@kde.org>, Daniel Molkentin <molkentin@kde.org>
  * @since 3.2
  */
@@ -42,13 +44,17 @@ class KCMultiDialog : public KDialogBase
 public:
     /**
      * Constructs a new KCMultiDialog
-	 * 
-	 * @param parent The parent Widget
-	 * @param baseGroup The baseGroup, if you want to call a module out if kcontrol, just keep "settings"
-	 * @param name The widget name
-	 * @param modal If you pass true here, the dialog will be modal
+     *
+     * @param parent The parent Widget
+     * @param baseGroup The baseGroup, if you want to call a module out of
+     *                  kcontrol, just keep "settings"
+     * @param name The widget name
+     * @param modal If you pass true here, the dialog will be modal
      **/
-    KCMultiDialog(QWidget *parent=0, const QString& baseGroup = QString::fromLatin1("settings"), const char *name=0, bool modal=false);
+    KCMultiDialog(QWidget *parent=0, const QString& baseGroup =
+                  QString::fromLatin1("settings"), const char *name=0,
+                  bool modal=false);
+
     /**
      * Destructor
      **/
@@ -82,7 +88,7 @@ protected slots:
      **/
     virtual void slotApply();
 
-	/**
+    /**
      * This slot is called when the user presses the "OK" Button
      * You can reimplement it if needed
      *
@@ -90,7 +96,7 @@ protected slots:
      **/
     virtual void slotOk();
 
-	/**
+    /**
      * This slot is called when the user presses the "Help" Button
      * You can reimplement it if needed
      *
@@ -99,17 +105,17 @@ protected slots:
     virtual void slotHelp();
 
 private slots:
-	
+
     void slotAboutToShow(QWidget *);
 
     void clientChanged(bool state);
-	
+
 private:
-    struct LoadInfo { 
-      LoadInfo(const QString &_path, bool _withfallback) 
-         : path(_path), withfallback(_withfallback) 
+    struct LoadInfo {
+      LoadInfo(const QString &_path, bool _withfallback)
+         : path(_path), withfallback(_withfallback)
          { }
-      QString path; 
+      QString path;
       bool withfallback;
     };
     QPtrList<KCModule> modules;
