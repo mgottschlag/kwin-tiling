@@ -23,6 +23,9 @@ noinst_HEADERS = syssound.h
 METASOURCES =	syssound.moc
 
 KDE_ICON = kcmsyssound
+
+kde_conf_DATA = kwmsoundrc
+
 EXTRA_DIST = CHANGES
 
 # make messages.po. Move this one to ../po/ and "make merge" in po
