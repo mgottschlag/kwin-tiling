@@ -81,7 +81,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     const char *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && 
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) &&
                      KCmdLineArgs::parsedArgs()->isSet("embed"));
     itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) &&
                 !KCmdLineArgs::parsedArgs()->isSet("embed");
@@ -543,10 +543,10 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
     {
         //
         // Generate preview...
-        const KFileItem *previewItem=item 
-                                       ? item 
-                                       : list && 1==list->count() 
-                                             ? list->getFirst() 
+        const KFileItem *previewItem=item
+                                       ? item
+                                       : list && 1==list->count()
+                                             ? list->getFirst()
                                              : NULL;
 
         if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
@@ -607,13 +607,13 @@ void CKCmFontInst::removeFonts()
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
-                           i18n("Delete Item"), i18n("Delete"));
+                           i18n("Delete Item"), KGuiItem( i18n("Delete"), "editdelete"));
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
                                 files.count()),
-                           files, i18n("Delete Items"), i18n("Delete"));
+                           files, i18n("Delete Items"), KGuiItem( i18n("Delete"), "editdelete"));
         }
 
         if(doIt)
@@ -754,7 +754,7 @@ void CKCmFontInst::enableItems(bool enable)
 
     if (items->isEmpty())
         KMessageBox::information(this,
-                                enable ? i18n("You didn't select anything to enable.") 
+                                enable ? i18n("You didn't select anything to enable.")
                                        : i18n("You didn't select anything to disable."),
                                 enable ? i18n("Nothing to enable") : i18n("Nothing to disable"));
     else
@@ -785,7 +785,7 @@ void CKCmFontInst::enableItems(bool enable)
                        enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
                               : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
                        enable ? i18n("Enable Item") : i18n("Disable Item"),
-                       enable ? i18n("Enable") : i18n("Disable"));
+                       enable ? KGuiItem( i18n("Enable"), "button_ok") : KGuiItem( i18n("Disable"), "button_cancel"));
             break;
         default:
             doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
@@ -795,7 +795,7 @@ void CKCmFontInst::enableItems(bool enable)
                                      files.count()),
                        files,
                        enable ? i18n("Enable Items") : i18n("Disable Items"),
-                       enable ? i18n("Enable") : i18n("Disable"));
+                       enable ? KGuiItem( i18n("Enable"), "button_ok") : KGuiItem( i18n("Disable"), "button_cancel"));
     }
 
     if(doIt)
