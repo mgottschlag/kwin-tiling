@@ -8,7 +8,8 @@ kaccess_SOURCES = dummy.cpp
 kaccess_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kaccess_LDADD = kaccess.la
 
-kde_module_LTLIBRARIES = kcm_access.la kaccess.la
+kde_module_LTLIBRARIES = kcm_access.la
+lib_LTLIBRARIES = kaccess.la
 
 kaccess_la_SOURCES = kaccess.cpp main.cpp
 kaccess_la_LDFLAGS = $(all_libraries) -module -avoid-version
