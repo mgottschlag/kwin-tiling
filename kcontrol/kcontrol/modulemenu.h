@@ -27,7 +27,7 @@
 #include <qwidget.h>
 #include <qdict.h>
 
-#include <kpopmenu.h>
+#include <kpopupmenu.h>
 
 
 class ConfigModule;

@@ -41,7 +41,6 @@
 #include <kapp.h>
 #include <kicondialog.h>
 #include <ksimpleconfig.h>
-#include <kimgio.h>
 
 void semsplit( const QString& str, QStrList& result);
 

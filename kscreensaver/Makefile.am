@@ -38,7 +38,7 @@ kbanner_kss_SOURCES = $(BASE_SRCS) banner.cpp  kgroupbox.cpp
 kblankscrn_kss_SOURCES = $(BASE_SRCS) blankscrn.cpp
 
 kslideshow_kss_SOURCES = $(BASE_SRCS) slideshow.cpp
-kslideshow_kss_LDADD = $(LIB_KFILE) $(LDADD) $(LIB_KIMGIO) $(XPMLIB) 
+kslideshow_kss_LDADD = $(LIB_KFILE) $(LDADD) $(LIB_KSYCOCA) $(XPMLIB) 
 
 kbat_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) bat.cpp
 kbat_kss_LDADD = $(LDADD) $(XPMLIB)

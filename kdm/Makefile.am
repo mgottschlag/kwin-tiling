@@ -14,7 +14,7 @@ bin_PROGRAMS = kdm chooser
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
-LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
+LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
 	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
 	$(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
 
@@ -60,7 +60,7 @@ chooser_SOURCES = \
 	kfdialog.cpp
 
 chooser_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-chooser_LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
+chooser_LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)  -lXt
 
 noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h liloinfo.h

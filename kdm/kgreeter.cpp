@@ -40,7 +40,6 @@
 #include <qtextstream.h>
 #include <qpopupmenu.h>
 
-#include <kimgio.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -196,8 +195,6 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      pixLabel->setFrameStyle( QFrame::Panel| QFrame::Sunken);
      pixLabel->setAutoResize( true);
      pixLabel->setMargin( 0);
-
-     kimgioRegister();
 
      QPixmap pixmap;
      if( QFile::exists( kdmcfg->logo() ) )

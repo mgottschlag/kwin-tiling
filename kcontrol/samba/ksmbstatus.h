@@ -21,7 +21,7 @@
 #ifndef ksmbstatus_h_included
 #define ksmbstatus_h_included
  
-#include <kpopmenu.h>
+#include <kpopupmenu.h>
 #include <qtimer.h>
 #include <qlabel.h>
 #include <kprocess.h>

@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 kxsconfig_LDFLAGS  = $(KDE_RPATH) $(all_libraries) 
-kxsconfig_LDADD    = $(LIB_KDEUI) $(LIB_KIMGIO)
+kxsconfig_LDADD    = $(LIB_KDEUI)
 
 kxsrun_LDFLAGS  = $(KDE_RPATH) $(all_libraries) 
 kxsrun_LDADD    = $(LIB_KDEUI) $(LIB_KDECORE)

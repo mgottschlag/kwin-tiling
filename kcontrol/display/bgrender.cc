@@ -30,7 +30,7 @@
 #include <kpixmapeffect.h>
 #include <kimageeffect.h>
 #include <kprocess.h>
-#include <kimgio.h>
+#include <kimageio.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -59,7 +59,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
 
-    kimgioRegister();
+    KImageIO::registerFormats();
 }
 
 

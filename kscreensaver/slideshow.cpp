@@ -28,7 +28,7 @@
 #include <klocale.h>
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
-#include <kimgio.h>
+#include <kimageio.h>
 #include <kfiledialog.h>
 
 #include <stdlib.h>
@@ -93,7 +93,7 @@ kSlideShowSaver::kSlideShowSaver(Drawable drawable): kScreenSaver(drawable)
   time(&t);
   srand((unsigned int)t);
 
-  kimgioRegister();
+  KImageIO::registerFormats();
 
   mWidget.create(drawable);
   mWidget.setBackgroundColor(black);
