@@ -166,9 +166,12 @@ extern "C"
 	kdDebug(125) << "KeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
-#define KICKER_ALL_BINDINGS
+#define SHIFT Qt::SHIFT
+#define CTRL Qt::CTRL
+#define ALT Qt::ALT
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
+#define KICKER_ALL_BINDINGS
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
