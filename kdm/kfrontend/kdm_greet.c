@@ -171,7 +171,7 @@ iGRecvArr (int *rlen)
     *rlen = len;
     GDebug (" -> %d bytes\n", len);
     if (!len)
-        return (char *)0;
+	return (char *)0;
     if (!(buf = malloc (len)))
 	LogPanic ("No memory for read buffer\n");
     GRead (buf, len);

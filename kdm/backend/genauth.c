@@ -84,7 +84,7 @@ static void
 add_entropy (unsigned const *in, int nwords)
 {
 	static unsigned const twist_table[8] = {
-		         0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
+			 0, 0x3b6e20c8, 0x76dc4190, 0x4db26158,
 		0xedb88320, 0xd6d6a3e8, 0x9b64c2b0, 0xa00ae278 };
 	unsigned i, w;
 	int new_rotate;

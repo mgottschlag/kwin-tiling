@@ -58,19 +58,19 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 
     if( mBorder )
     {
-        setLineWidth(1);
-        setFrameStyle( Box|Plain );
-        //setFrameStyle( WinPanel|Sunken );
+	setLineWidth(1);
+	setFrameStyle( Box|Plain );
+	//setFrameStyle( WinPanel|Sunken );
     }
 
 /*
     if( !mDigital )
     {
-        if( height() < width() )
+	if( height() < width() )
 	{
 	    resize( height(), height() );
 	}
-        else
+	else
 	{
 	    resize( width() ,width() );
 	}
@@ -99,7 +99,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 {
     if( !isVisible() )
     {
-        return;
+	return;
     }
 
     QPainter p(this);
@@ -116,8 +116,8 @@ void KdmClock::paintEvent( QPaintEvent * )
 /*
     if( mDigital )
     {
-        QString buf;
-        if( mSecond )
+	QString buf;
+	if( mSecond )
 	{
 	    buf.sprintf( "%02d:%02d:%02d", time.hour(), time.minute(),
 			 time.second() );
@@ -134,7 +134,7 @@ void KdmClock::paintEvent( QPaintEvent * )
     else
     {
 */
-        QPointArray pts;
+	QPointArray pts;
 	QPoint cp = contentsRect().center() - QPoint(2,2);
 	int d = QMIN(contentsRect().width()-15,contentsRect().height()-15);
 	paint.setPen( foregroundColor() );
@@ -177,11 +177,11 @@ void KdmClock::paintEvent( QPaintEvent * )
 	    paint.setWorldMatrix( matrix );
 	    if( (i % 5) == 0 )
 	    {
-	        paint.drawLine( 450,0, 500,0 );	// draw hour lines
+		paint.drawLine( 450,0, 500,0 );	// draw hour lines
 	    }
 	    else
 	    {
-	        paint.drawPoint( 480,0 );	// draw second lines
+		paint.drawPoint( 480,0 );	// draw second lines
 	    }
 	    matrix.rotate( 6 );
 	}

@@ -175,10 +175,3 @@ private:
 
 
 #endif /* KGREETER_H */
-
-/*
- * Local variables:
- * mode: c++
- * c-file-style: "k&r"
- * End:
- */

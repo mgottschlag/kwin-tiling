@@ -548,7 +548,7 @@ ScanServers (int force)
     if (Setjmp (cnftalk.errjmp))
 	return;	/* may memleak */
     if (!startConfig (GC_gXservers, &xsDep, force))
-        return;
+	return;
     nserv = GRecvInt ();
     while (nserv--) {
 	name = GRecvStr ();

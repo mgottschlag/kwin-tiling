@@ -51,7 +51,7 @@ class LiloInfo
 {
 	public:
 		LiloInfo ( const QString &lilolocation,
-		           const QString &bootmaplocation );
+			   const QString &bootmaplocation );
 
 		int getBootOptions ( QStringList &bootOptions, int &defaultOptionIndex );
 		int getNextBootOption ( QString &nextBootOption );

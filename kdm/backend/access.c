@@ -116,9 +116,9 @@ ScanAccessDatabase (int force)
 
     Debug("ScanAccessDatabase\n");
     if (Setjmp (cnftalk.errjmp))
-        return; /* may memleak */
+	return; /* may memleak */
     if (!startConfig (GC_gXaccess, &accData->dep, force))
-        return;
+	return;
     if (accData->hostList)
 	free (accData->hostList);
     accData->nHosts = GRecvInt ();
@@ -358,7 +358,7 @@ Debug ("scanEntrylist: host pattern %s\n", h->entry.hostPattern);
 	case HOST_ADDRESS:
 Debug ("scanEntrylist: host address %02[*hhx\n", h->entry.displayAddress.hostAddress.length, h->entry.displayAddress.hostAddress.data);
 	    if (h->entry.displayAddress.connectionType == connectionType &&
-	    	XdmcpARRAY8Equal (&h->entry.displayAddress.hostAddress,
+		XdmcpARRAY8Equal (&h->entry.displayAddress.hostAddress,
 				  clientAddress))
 		return 1;
 	    break;

@@ -200,7 +200,7 @@ typedef struct CfgArr {
 	char		*data;		/* config value array; allocated */
 	int		*idx;		/* config index array; alias */
 	CfgDep		dep;		/* filestamp */
-    	int		numCfgEnt;	/* number of config entries */
+	int		numCfgEnt;	/* number of config entries */
 } CfgArr;
 
 struct display {

@@ -102,9 +102,9 @@ struct AuthProtocol {
     Xauth	    *(*GetAuth)(unsigned short len, const char *name);
 #ifdef XDMCP
     void	    (*GetXdmcpAuth)(
-    			struct protoDisplay	*pdpy,
-    			unsigned short		authorizationNameLen,
-    			const char		*authorizationName);
+			struct protoDisplay	*pdpy,
+			unsigned short		authorizationNameLen,
+			const char		*authorizationName);
 #endif
     int		    inited;
 };
@@ -541,9 +541,9 @@ checkEntry (Xauth *auth)
 	for (a = addrs; a; a = a->next) {
 		if (a->family == auth->family &&
 		    a->address_length == auth->address_length &&
- 		    !memcmp (a->address, auth->address, auth->address_length) &&
+		    !memcmp (a->address, auth->address, auth->address_length) &&
 		    a->number_length == auth->number_length &&
- 		    !memcmp (a->number, auth->number, auth->number_length) &&
+		    !memcmp (a->number, auth->number, auth->number_length) &&
 		    a->name_length == auth->name_length &&
 		    !memcmp (a->name, auth->name, auth->name_length))
 		{
@@ -629,7 +629,7 @@ DefineLocal (FILE *file, Xauth *auth)
 #endif
 
 #if (!defined(NEED_UTSNAME) || defined (hpux))
-        /* AIXV3:
+	/* AIXV3:
 	 * In AIXV3, _POSIX_SOURCE is defined, but uname gives only first
 	 * field of hostname. Thus, we use gethostname instead.
 	 */
@@ -698,8 +698,8 @@ ifioctl (int fd, int cmd, char *arg)
 	 * ifreq fields to hold all interfaces. The return buffer length
 	 * is placed in the buffer header.
 	 */
-        ((struct ifconf *) ioc.ic_dp)->ifc_len =
-                                         ioc.ic_len - sizeof(struct ifconf);
+	((struct ifconf *) ioc.ic_dp)->ifc_len =
+					 ioc.ic_len - sizeof(struct ifconf);
 #endif
     }
     else
@@ -868,7 +868,7 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	    if (ConvertAddr ((XdmcpNetaddr) &ifr->ifr_addr, &len, &addr) < 0)
 		continue;
 	    if (len == 0)
- 	    {
+	    {
 		Debug ("skipping zero length address\n");
 		continue;
 	    }
@@ -1151,11 +1151,11 @@ SetUserAuthorization (struct display *d)
 		!memcmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
 	    {
 		magicCookie = i;
-	    	if ((d->displayType & d_location) == dLocal)
-	    	    writeLocalAuth (new, auths[i], d->name);
+		if ((d->displayType & d_location) == dLocal)
+		    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
-	    	else
-	    	    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+		else
+		    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
 				     d->peer.length, d->name);
 #endif
 		break;
@@ -1173,11 +1173,11 @@ SetUserAuthorization (struct display *d)
 		if (auths[i]->name_length == 14 &&
 		    !strncmp (auths[i]->name, "MIT-KERBEROS-5", 14))
 		    auths[i]->data_length = 0;
-	    	if ((d->displayType & d_location) == dLocal)
-	    	    writeLocalAuth (new, auths[i], d->name);
+		if ((d->displayType & d_location) == dLocal)
+		    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
-	    	else
-	    	    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+		else
+		    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
 				     d->peer.length, d->name);
 #endif
 		auths[i]->data_length = data_len;
@@ -1213,10 +1213,10 @@ RemoveUserAuthorization (struct display *d)
 	for (i = 0; i < d->authNum; i++)
 	{
 	    if ((d->displayType & d_location) == dLocal)
-	    	writeLocalAuth (new, auths[i], d->name);
+		writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    else
-	    	writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+		writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
 				 d->peer.length, d->name);
 #endif
 	}

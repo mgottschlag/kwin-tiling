@@ -106,17 +106,17 @@ char * NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp)
 #ifdef UNIXCONN
     case AF_UNIX:
 	*lenp = strlen(((struct sockaddr_un *)netaddrp)->sun_path);
-        return (char *) (((struct sockaddr_un *)netaddrp)->sun_path);
+	return (char *) (((struct sockaddr_un *)netaddrp)->sun_path);
 #endif
 #ifdef TCPCONN
     case AF_INET:
-        *lenp = sizeof (struct in_addr);
-        return (char *) &(((struct sockaddr_in *)netaddrp)->sin_addr);
+	*lenp = sizeof (struct in_addr);
+	return (char *) &(((struct sockaddr_in *)netaddrp)->sin_addr);
 #endif
 #ifdef DNETCONN
     case AF_DECnet:
-        *lenp = sizeof (struct dn_naddr);
-        return (char *) &(((struct sockaddr_dn *)netaddrp)->sdn_add);
+	*lenp = sizeof (struct dn_naddr);
+	return (char *) &(((struct sockaddr_dn *)netaddrp)->sdn_add);
 #endif
 #ifdef AF_CHAOS
     case AF_CHAOS:
@@ -138,7 +138,7 @@ int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr)
     int retval;
 
     if (len == NULL)
-        return -1;
+	return -1;
     *addr = NetaddrAddress(saddr, len);
 #ifdef STREAMSCONN
     /* kludge */
@@ -155,18 +155,18 @@ int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr)
 #ifdef AF_UNIX
 #ifndef hpux
       case AF_UNIX:
-        retval = FamilyLocal;
+	retval = FamilyLocal;
 	break;
 #endif
 #endif
 #ifdef TCPCONN
       case AF_INET:
-        retval = FamilyInternet;
+	retval = FamilyInternet;
 	break;
 #endif
 #ifdef DNETCONN
       case AF_DECnet:
-        retval = FamilyDECnet;
+	retval = FamilyDECnet;
 	break;
 #endif
 #ifdef AF_CHAOS
@@ -176,7 +176,7 @@ int ConvertAddr (XdmcpNetaddr saddr, int *len, char **addr)
 #endif
       default:
 	retval = -1;
-        break;
+	break;
     }
 #endif /* STREAMSCONN else */
     Debug ("ConvertAddr returning %d for family %d\n", retval,

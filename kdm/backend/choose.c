@@ -206,8 +206,8 @@ IndirectChoice (
 	else
 	{
 	    if (XdmcpARRAY8Equal (clientAddress, &c->client) &&
-	    	connectionType == c->connectionType)
-	    	return &c->choice;
+		connectionType == c->connectionType)
+		return &c->choice;
 	    prev = c;
 	}
     }
@@ -245,11 +245,11 @@ RegisterIndirectChoice (
 	if (!c)
 	    return 0;
 	c->connectionType = connectionType;
-    	if (!XdmcpCopyARRAY8 (clientAddress, &c->client))
-    	{
+	if (!XdmcpCopyARRAY8 (clientAddress, &c->client))
+	{
 	    free ((char *) c);
 	    return 0;
-    	}
+	}
     }
     else
     {

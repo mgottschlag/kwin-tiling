@@ -52,7 +52,7 @@ PrintProtoDisplay (pdpy)
 
     PrintSockAddr (addrbuf, pdpy->address, pdpy->addrlen);
     Debug ("ProtoDisplay %p\n\taddress: %s\n\tdate %d (%d from now)\n"
-           "\tdisplay Number %d\n\tsessionID %d\n",
+	   "\tdisplay Number %d\n\tsessionID %d\n",
 	   pdpy, addrbuf, pdpy->date, time(0) - pdpy->date,
 	   pdpy->displayNumber, pdpy->sessionID);
 }

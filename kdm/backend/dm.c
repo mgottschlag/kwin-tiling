@@ -170,10 +170,10 @@ main (int argc, char **argv)
     {
 	char directory[PATH_MAX+1];
 #  if !defined(X_NOT_POSIX) || defined(SYSV) || defined(WIN32)
-        if (!getcwd(directory, sizeof(directory)))
+	if (!getcwd(directory, sizeof(directory)))
 	    Panic ("Can't find myself (getcwd failed)");
 #  else
-        if (!getwd(directory))
+	if (!getwd(directory))
 	    Panic ("Can't find myself (getwd failed)");
 #  endif
 	if (strchr(argv[0], '/'))
@@ -1122,7 +1122,7 @@ WaitForChild (void)
 		/*
 		 * no display connection was ever made, tell the
 		 * terminal that the open attempt failed
- 		 */
+		 */
 #ifdef XDMCP
 		if ((d->displayType & d_origin) == dFromXDMCP)
 		    SendFailed (d, "cannot open display");
@@ -1145,7 +1145,7 @@ WaitForChild (void)
 	    case EX_REMANAGE_DPY:
 		Debug ("display exited with EX_REMANAGE_DPY\n");
 		/*
- 		 * XDMCP will restart the session if the display
+		 * XDMCP will restart the session if the display
 		 * requests it
 		 */
 		ExitDisplay (d, DS_RESTART, FALSE, TRUE);
@@ -1511,7 +1511,7 @@ ExitDisplay (
 	{
 	    if (d->serverPid != -1 && (forceReserver || d->terminateServer))
 	    {
-	    	Debug ("killing X server for %s\n", d->name);
+		Debug ("killing X server for %s\n", d->name);
 		TerminateProcess (d->serverPid, d->termSignal);
 		d->status = phoenix;
 	    }

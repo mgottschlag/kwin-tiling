@@ -75,7 +75,7 @@ BecomeDaemon (void)
      */
 
     if (pipe (pfd))
-        pfd[0] = pfd[1] = -1; /* so what ...? */
+	pfd[0] = pfd[1] = -1; /* so what ...? */
     switch (fork ()) {
     case 0:
 	/* child */

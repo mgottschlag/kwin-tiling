@@ -367,7 +367,7 @@ KGreeter::insertUsers( UserListView *listview )
 	  default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
     struct passwd *ps;
     if (kdmcfg->_showUsers == SHOW_ALL) {
- 	QDict<int> users( 1000 );
+	QDict<int> users( 1000 );
 	for (setpwent(); (ps = getpwent()) != 0;) {
 	    // usernames are stored in the same encoding as files
 	    QString username = QFile::decodeName( ps->pw_name );
@@ -391,7 +391,7 @@ KGreeter::insertUsers( UserListView *listview )
     }
     endpwent();
     if (kdmcfg->_sortUsers)
-        listview->sort();
+	listview->sort();
 }
 
 void
@@ -736,7 +736,7 @@ KGreeter::verifyUser(bool haveto)
 		QFile f;
 		f.setName(QString::fromLocal8Bit(msg));
 		f.open(IO_ReadOnly);
-	        QTextStream t( &f );
+		QTextStream t( &f );
 		QString mesg;
 		while ( !t.eof() )
 		    mesg += t.readLine() + '\n';
@@ -991,10 +991,3 @@ kg_main( const char *argv0 )
 
 
 #include "kgreeter.moc"
-
-/*
- * Local variables:
- * mode: c++
- * c-file-style: "k&r"
- * End:
- */

@@ -184,7 +184,7 @@ execute (char **argv, char **env)
 	if (!(f = fopen (argv[0], "r")))
 	    return;
 	if (!fgets (program, sizeof(program), f))
- 	{
+	{
 	    fclose (f);
 	    return;
 	}
@@ -299,16 +299,16 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
     }
     switch (proc->pid = GFork (&proc->pipe, 0, cname)) {
     case -1:
-        close (pip[1]);
+	close (pip[1]);
       fail1:
-        close (pip[0]);
+	close (pip[0]);
       fail:
 	free (margv[0]);
 	free (margv);
 	return -1;
     case 0:
 	(void) Signal (SIGPIPE, SIG_IGN);
-        close (pip[0]);
+	close (pip[0]);
 	fcntl (pip[1], F_SETFD, FD_CLOEXEC);
 	sprintf (coninfo, "CONINFO=%d %d", proc->pipe.rfd, proc->pipe.wfd);
 	env = putEnv (coninfo, env);

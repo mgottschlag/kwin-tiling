@@ -545,9 +545,9 @@ SetupDisplay (struct display *d)
 
     if (d->setup && d->setup[0])
     {
-    	env = systemEnv (d, (char *) 0, (char *) 0);
-    	(void) source (env, d->setup);
-    	freeStrArr (env);
+	env = systemEnv (d, (char *) 0, (char *) 0);
+	(void) source (env, d->setup);
+	freeStrArr (env);
     }
 }
 

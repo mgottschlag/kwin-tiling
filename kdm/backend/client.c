@@ -698,7 +698,7 @@ static const char *envvars[] = {
 
 static char **
 userEnv (struct display *d, int isRoot, 
-         const char *user, const char *home, const char *shell)
+	 const char *user, const char *home, const char *shell)
 {
     char	**env, *xma;
 
@@ -731,7 +731,7 @@ userEnv (struct display *d, int isRoot,
     env = setEnv (env, "SHELL", shell);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
     if (krbtkfile[0] != '\0')
-        env = setEnv (env, "KRBTKFILE", krbtkfile);
+	env = setEnv (env, "KRBTKFILE", krbtkfile);
 #endif
     env = inheritEnv (env, envvars);
     return env;
@@ -1267,7 +1267,7 @@ SessionExit (struct display *d, int status)
 	RemoveUserAuthorization (d);
 #ifdef K5AUTH
 	/* do like "kdestroy" program */
-        {
+	{
 	    krb5_error_code code;
 	    krb5_ccache ccache;
 

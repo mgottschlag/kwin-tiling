@@ -143,7 +143,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	QHBoxLayout *qhb = new QHBoxLayout( box, 10 );
 	qhb->addWidget( plb );
 	qhb->addWidget( pswdEdit );
-        pswdEdit->setSizePolicy( fp );
+	pswdEdit->setSizePolicy( fp );
 	timer = new QTimer( this );
 	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
     } else
@@ -250,10 +250,3 @@ KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
 }
 
 #include "kdmshutdown.moc"
-
-/*
- * Local variables:
- * mode: c++
- * c-file-style: "k&r"
- * End:
-*/

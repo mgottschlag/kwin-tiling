@@ -749,7 +749,7 @@ Debug ("parsing config ...\n");
 		if (*s != ' ' && *s != '\t')
 		    en = pt;
 	    }
-        }
+	}
 
 	nstr = sl;
 	nlen = ek - sl + 1;
@@ -1510,7 +1510,7 @@ int main(int argc ATTR_UNUSED, char **argv)
 	return 1;
     }
     if (sscanf (ci, "%d %d", &rfd, &wfd) != 2)
-        return 1;
+	return 1;
 
     InitLog();
 

@@ -238,18 +238,18 @@ indirect_respond (
 	/*
 	 * set up the forward query packet
 	 */
-    	header.version = XDM_PROTOCOL_VERSION;
-    	header.opcode = (CARD16) FORWARD_QUERY;
-    	header.length = 0;
-    	header.length += 2 + clientAddress.length;
-    	header.length += 2 + clientPort.length;
-    	header.length += 1;
-    	for (i = 0; i < (int)queryAuthenticationNames.length; i++)
+	header.version = XDM_PROTOCOL_VERSION;
+	header.opcode = (CARD16) FORWARD_QUERY;
+	header.length = 0;
+	header.length += 2 + clientAddress.length;
+	header.length += 2 + clientPort.length;
+	header.length += 1;
+	for (i = 0; i < (int)queryAuthenticationNames.length; i++)
 	    header.length += 2 + queryAuthenticationNames.data[i].length;
-    	XdmcpWriteHeader (&buffer, &header);
-    	XdmcpWriteARRAY8 (&buffer, &clientAddress);
-    	XdmcpWriteARRAY8 (&buffer, &clientPort);
-    	XdmcpWriteARRAYofARRAY8 (&buffer, &queryAuthenticationNames);
+	XdmcpWriteHeader (&buffer, &header);
+	XdmcpWriteARRAY8 (&buffer, &clientAddress);
+	XdmcpWriteARRAY8 (&buffer, &clientPort);
+	XdmcpWriteARRAYofARRAY8 (&buffer, &queryAuthenticationNames);
 
 	localHostAsWell = ForEachMatchingIndirectHost (&clientAddress, connectionType, sendForward, (char *) 0);
 	
@@ -415,16 +415,16 @@ NetworkAddressToName(
 		{
 		    if (removeDomainname)
 		    {
-		    	char    *localDot, *remoteDot;
+			char    *localDot, *remoteDot;
     
 			/* check for a common domain name.  This
 			 * could reduce names by recognising common
 			 * super-domain names as well, but I don't think
 			 * this is as useful, and will confuse more
 			 * people
- 			 */
-		    	if ((localDot = strchr(localhost, '.')) &&
-		            (remoteDot = strchr(hostent->h_name, '.')))
+			 */
+			if ((localDot = strchr(localhost, '.')) &&
+			    (remoteDot = strchr(hostent->h_name, '.')))
 			{
 			    /* smash the name in place; it won't
 			     * be needed later.
@@ -496,15 +496,15 @@ forward_respond (
 		j = j * 256 + clientPort.data[i];
 	    Debug ("<forward> client address (port %d) %[*hhu\n", j,
 		   clientAddress.length, clientAddress.data);
-    	    switch (from->sa_family)
-    	    {
+	    switch (from->sa_family)
+	    {
 #ifdef AF_INET
 	    case AF_INET:
 		{
 		    struct sockaddr_in	in_addr;
 
 		    if (clientAddress.length != 4 ||
-		        clientPort.length != 2)
+			clientPort.length != 2)
 		    {
 			goto badAddress;
 		    }
@@ -553,7 +553,7 @@ forward_respond (
 	    case AF_DECnet:
 		goto badAddress;
 #endif
-    	    }
+	    }
 	}
 	else
 	{
@@ -756,7 +756,7 @@ request_respond (
 	if (pdpy)
 	{
 	    send_accept (from, fromlen, pdpy->sessionID,
-				        &authenticationName,
+					&authenticationName,
 					&authenticationData,
 					&authorizationName,
 					&authorizationData);
@@ -767,7 +767,7 @@ decline:    ;
 	    send_decline (from, fromlen, &authenticationName,
 				 &authenticationData,
 				 reason);
-            if (pdpy)
+	    if (pdpy)
 		DisposeProtoDisplay (pdpy);
 	}
     }
@@ -1051,7 +1051,7 @@ send_alive (
 	    sendRunning = 0;
 	    sendSessionID = 0;
 	    if (d && d->status == running)
- 	    {
+	    {
 		if (d->sessionID == sessionID)
 		    sendRunning = 1;
 		sendSessionID = d->sessionID;

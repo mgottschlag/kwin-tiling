@@ -949,8 +949,8 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
     tptr = strrchr (tname, '/');
     ASPrintf (&nname, KDMCONF "/%s", tptr ? tptr + 1 : tname);
     if (inList (cflist, ce->value) ||
-        inList (eflist, ce->value) || 
-        inList (lflist, ce->value))
+	inList (eflist, ce->value) || 
+	inList (lflist, ce->value))
     {
 	rt = 1;
 	goto doret;
@@ -1631,8 +1631,8 @@ addKdePath (Entry *ce, const char *defpath)
 
     path = ce->active ? ce->value : defpath;
     if (!(p = strstr (path, KDE_BINDIR)) ||
-        (p != path && *(p-1) != ':') ||
-        (p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
+	(p != path && *(p-1) != ':') ||
+	(p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
     {
 	ASPrintf ((char **)&ce->value, KDE_BINDIR ":%s", path);
 	ce->written = ce->active = 1;
@@ -2828,7 +2828,7 @@ mergeKdmRcOld (const char *path)
 	setsect("Shutdown");
 	cpyval ("UseLilo", "Lilo");
 	cpyval ("LiloCmd", "LiloCommand");
-        cpyval ("LiloMap", 0);
+	cpyval ("LiloMap", 0);
     }
 #endif
 
@@ -3060,7 +3060,7 @@ P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **val
 	!strncmp (*value, "/var/tmp/", 9))
     {
 	printf ("Warning: Resetting inappropriate value %s for AuthDir to default\n",
-	        *value);
+		*value);
 	*value = 0;
 	return;
     }

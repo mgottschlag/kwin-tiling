@@ -244,9 +244,9 @@ freeStrArr (char **arr)
     char **a;
 
     if (arr) {
-    	for (a = arr; *a; a++)
+	for (a = arr; *a; a++)
 	    free (*a);
-    	free (arr);
+	free (arr);
     }
 }
 
