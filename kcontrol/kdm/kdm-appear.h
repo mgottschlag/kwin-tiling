@@ -37,6 +37,7 @@
 
 class QLabel;
 class QRadioButton;
+class QLineEdit;
 class KLineEdit;
 
 
@@ -60,7 +61,8 @@ protected:
 	void setLogo(QString logo);
 
 private slots:
-	void slotRadioClicked(int id);
+	void slotAreaRadioClicked(int id);
+	void slotPosRadioClicked(int id);
         void slotLogoPixChanged(QString);
         void changed();
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
@@ -73,6 +75,12 @@ private:
 	QString      logopath;
 	QRadioButton *logoRadio;
 	QRadioButton *clockRadio;
+	QRadioButton *posCenterRadio;
+	QRadioButton *posSpecifyRadio;
+	QLabel	     *xLineLabel;
+	QLineEdit    *xLineEdit;
+	QLabel	     *yLineLabel;
+	QLineEdit    *yLineEdit;
 	QComboBox    *guicombo;
 	QComboBox    *echocombo;
         KLanguageCombo *langcombo;

@@ -45,8 +45,10 @@ KDModule::KDModule(QWidget *parent, const char *name)
 {
   QStringList show_users;
 
-  c = new KSimpleConfig(*KGlobal::dirs()->resourceDirs("config").begin() + 
-			"kdmrc");
+  c = new KSimpleConfig(
+// QString::fromLatin1(KDE_CONFDIR "/kdmrc") 
+*KGlobal::dirs()->resourceDirs("config").begin() + "kdmrc"
+  );
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
@@ -63,13 +65,13 @@ KDModule::KDModule(QWidget *parent, const char *name)
   tab->addTab(background, i18n("&Background"));
   connect(background, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  users = new KDMUsersWidget(this, 0, &show_users);
-  tab->addTab(users, i18n("&Users"));
-  connect(users, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-
   sessions = new KDMSessionsWidget(this);
   tab->addTab(sessions, i18n("&Sessions"));
   connect(sessions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+  users = new KDMUsersWidget(this, 0, &show_users);
+  tab->addTab(users, i18n("&Users"));
+  connect(users, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   // FAT NOTE: this must be behind the "users" tab!!!
   convenience = new KDMConvenienceWidget(this, 0, &show_users);
