@@ -8,7 +8,7 @@ INCLUDES= $(all_includes)
 
 libkcm_kicker_la_METASOURCES = AUTO
 
-noinst_HEADERS = paneltab.h lnftab.h menutab.h buttontab.h main.h 
+noinst_HEADERS = paneltab.h lnftab.h menutab.h buttontab.h main.h
 
 KDE_ICON = go
 
@@ -16,6 +16,6 @@ messages:
 	$(XGETTEXT) $(libkcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
 data_DATA = panel.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel
+datadir = $(kde_appsdir)/Settings/LookNFeel/Panel
 
 EXTRA_DIST = $(data_DATA)
