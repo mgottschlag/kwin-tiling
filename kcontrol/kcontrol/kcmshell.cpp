@@ -34,8 +34,8 @@
 #include <qxembed.h>
 #include <kiconloader.h>
 
-
 #include "kcdialog.h"
+#include "kecdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
 #include "global.h"
@@ -48,6 +48,36 @@ static KCmdLineOptions options[] =
     { "embed <id>", I18N_NOOP("Window ID to embed into."), 0 },
     KCmdLineLastOption
 };
+
+static QString locateModule(const QCString module)
+{
+    // locate the desktop file
+    //QStringList files;
+    if (module[0] == '/')
+    {
+        kdDebug() << "Full path given to kcmshell - not supported yet" << endl;
+        // (because of KService::findServiceByDesktopPath)
+        //files.append(args->arg(0));
+    }
+
+    QString path = KCGlobal::baseGroup();
+    path += module;
+    path += ".desktop";
+
+    if (!KService::serviceByDesktopPath( path ))
+    {
+        // Path didn't work. Trying as a name
+        KService::Ptr serv = KService::serviceByDesktopName( module );
+        if ( serv )
+            path = serv->entryPath();
+        else
+        {
+            cerr << i18n("Module %1 not found!").arg(module).local8Bit() << endl;
+            return QString::null;
+        }
+    }
+    return path;
+}
 
 int main(int _argc, char *_argv[])
 {
@@ -65,6 +95,7 @@ int main(int _argc, char *_argv[])
     KApplication app;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    KGlobal::iconLoader()->addAppDir( "kcontrol" );
 
     if (args->isSet("list")) {
         QStringList files;
@@ -106,71 +137,82 @@ int main(int _argc, char *_argv[])
         return 0;
     }
 
-    if (args->count() != 1) {
+    if (args->count() < 1) {
         args->usage();
         return -1;
     }
 
-    QCString arg = args->arg(0);
+    if (args->count() == 1) {
 
-    // locate the desktop file
-    //QStringList files;
-    if (arg[0] == '/')
-    {
-        kdDebug() << "Full path given to kcmshell - not supported yet" << endl;
-        // (because of KService::findServiceByDesktopPath)
-        //files.append(args->arg(0));
-    }
+        QString path = locateModule(args->arg(0));
 
-    QString path = KCGlobal::baseGroup();
-    path += arg;
-    path += ".desktop";
+        // load the module
+        ModuleInfo info(path);
 
-    if (!KService::serviceByDesktopPath( path ))
-    {
-        // Path didn't work. Trying as a name
-        KService::Ptr serv = KService::serviceByDesktopName( arg );
-        if ( serv )
-            path = serv->entryPath();
-        else
-        {
-            cerr << i18n("Module %1 not found!").arg(arg).local8Bit() << endl;
-            return -1;
+        KCModule *module = ModuleLoader::loadModule(info);
+
+        if (module) {
+            // create the dialog
+            KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
+            dlg->setCaption(info.name());
+
+            // Needed for modules that use d'n'd (not really the right
+            // solution for this though, I guess)
+            dlg->setAcceptDrops(true);
+
+            // if we are going to be embedded, embed
+            QCString embed = args->getOption("embed");
+            if (!embed.isEmpty())
+            {
+                bool ok;
+                int id = embed.toInt(&ok);
+                if (ok)
+                    QXEmbed::embedClientIntoWindow(dlg, id);
+            }
+
+            // run the dialog
+            int ret = dlg->exec();
+            delete dlg;
+            ModuleLoader::unloadModule(info);
+            return ret;
         }
+
+        return 0;
     }
 
-    KGlobal::iconLoader()->addAppDir( "kcontrol" );
-
-    // load the module
-    ModuleInfo info(path);
-
-    KCModule *module = ModuleLoader::loadModule(info);
-
-    if (module) {
-        // create the dialog
-        KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
-        dlg->setCaption(info.name());
-
-        // Needed for modules that use d'n'd (not really the right
-        // solution for this though, I guess)
-        dlg->setAcceptDrops(true);
-
-        // if we are going to be embedded, embed
-        QCString embed = args->getOption("embed");
-        if (!embed.isEmpty())
-          {
-            bool ok;
-            int id = embed.toInt(&ok);
-            if (ok)
-              QXEmbed::embedClientIntoWindow(dlg, id);
-          }
-
-        // run the dialog
-        int ret = dlg->exec();
-        delete dlg;
-        ModuleLoader::unloadModule(info);
-        return ret;
+    // multiple control modules
+    QStringList modules;
+    for (int i = 0; i < args->count(); i++) {
+        QString path = locateModule(args->arg(i));
+        if(!path.isEmpty())
+            modules.append(path);
     }
 
-    return 0;
+    if (modules.count() < 1) return -1;
+
+    // create the dialog
+    KExtendedCDialog * dlg = new KExtendedCDialog(0, 0, true);
+
+    // Needed for modules that use d'n'd (not really the right
+    // solution for this though, I guess)
+    dlg->setAcceptDrops(true);
+
+    // add modules
+    for (QStringList::ConstIterator it = modules.begin(); it != modules.end(); ++it)
+        dlg->addModule(*it);
+
+    // if we are going to be embedded, embed
+    QCString embed = args->getOption("embed");
+    if (!embed.isEmpty())
+    {
+        bool ok;
+        int id = embed.toInt(&ok);
+        if (ok)
+            QXEmbed::embedClientIntoWindow(dlg, id);
+    }
+
+    // run the dialog
+    int ret = dlg->exec();
+    delete dlg;
+    return ret;
 }

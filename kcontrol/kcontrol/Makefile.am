@@ -30,11 +30,12 @@ lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp moduleinfo.cpp utils.cpp modules.cpp proxywidget.cpp \
 	modloader.cpp dockcontainer.cpp aboutwidget.cpp global.cpp \
-	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp modulemenu.cpp
+	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp modulemenu.cpp \
+	kecdialog.cpp
 kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-kcmshell_la_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
+kcmshell_la_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp kecdialog.cpp \
 			utils.cpp proxywidget.cpp kcdialog.cpp global.cpp
 kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version

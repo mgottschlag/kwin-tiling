@@ -27,14 +27,14 @@
 #include "kcmodule.h"
 
 KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
-  : KDialogBase(parent, name, modal, QString::null, 
+  : KDialogBase(parent, name, modal, QString::null,
 	(b & KCModule::Help ? Help : 0) |
 	(b & KCModule::Default ? Default : 0) |
 	(b & KCModule::Reset ? User1 : 0) |
 	(b & KCModule::Cancel ? Cancel : 0) |
 	(b & KCModule::Apply ? Apply : 0) |
 	(b & KCModule::Ok ? Ok : 0),
-	Ok, false, i18n("&Reset")),
+	Ok, true, i18n("&Reset")),
     _client(client)
 {
   client->reparent(this,0,QPoint(0,0),true);
