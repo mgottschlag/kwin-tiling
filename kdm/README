@@ -1,6 +1,6 @@
 $Id$
 
-This is the KDE Display Manager (kdm) v0.94 for KDE 3.1, 
+This is the KDE Display Manager (kdm) v0.95 for KDE 3.2,
 the KDE replacement for the X Display Manager (xdm).
 
 
@@ -12,7 +12,7 @@ KDM's config files are all located in ${kde_confdir}/kdm.
 deriving it from an already present KDM/XDM installation or by using
 defaults if no previous installation is found.
 
-You can change the configuration from the KDE Control Center. 
+You can change the configuration from the KDE Control Center.
 You will find the Login Manager module in "System" -> "Login Manager".
 
 Have a look at README.pam in the kdebase top level directory if your
@@ -22,8 +22,8 @@ system uses PAM.
 The Xservers file
 -----------------
 
-This file tells kdm which/when/how X-Servers ("desktop sessions", 
-"login screens") should be started. The file is backwards compatible with 
+This file tells kdm which/when/how X-Servers ("desktop sessions",
+"login screens") should be started. The file is backwards compatible with
 XDM's Xservers file, but it contains some extensions:
 * @tty. The idea for this is stolen from Solaris (TM). You can specifiy here,
   which text console an X-Server is "covering", so KDM knows which virtual
@@ -49,7 +49,7 @@ other distributions/systems.
 
    Edit (as root) /etc/inittab.
 
-   Look for the line: 
+   Look for the line:
 
        x:5:respawn:/usr/X11/bin/xdm -nodaemon
 
@@ -58,7 +58,7 @@ other distributions/systems.
        x:5:respawn:/opt/kde/bin/kdm
 
    This tells init(8) to respawn KDM, the KDE display manager, when
-   the system is in run level 5. 
+   the system is in run level 5.
    Note that KDM does not need the -nodaemon option.
 
    To start KDM, either run (as root) /sbin/telinit 5 (to switch to
@@ -72,23 +72,23 @@ other distributions/systems.
 
        id:5:initdefault:
 
-   If you do the latter step, then every time your system boots 
-   successfully it will go into run level 5 and run KDM, 
-   presenting you the exceedingly cute KDE login screen. 
+   If you do the latter step, then every time your system boots
+   successfully it will go into run level 5 and run KDM,
+   presenting you the exceedingly cute KDE login screen.
 
 
 The command FiFos
 -----------------
 
 This is a feature you can use to remote-control KDM. It's mostly intended
-for use by ksmserver and kdesktop from a running session, but other 
+for use by ksmserver and kdesktop from a running session, but other
 applications are possible as well.
-There are two types of FiFos: the global one (xdmctl) and the per-display 
+There are two types of FiFos: the global one (xdmctl) and the per-display
 ones (xdmctl-<display>).
-The global one is owned by root, the per-display ones are owned by the user 
-currently owning the session (root or the logged in user). Group ownership 
-of the FiFos can be set via FifoGroup=, otherwise it's root. The file 
-permissions of the FiFos are rw--w---- (0620). The FiFos are created in the 
+The global one is owned by root, the per-display ones are owned by the user
+currently owning the session (root or the logged in user). Group ownership
+of the FiFos can be set via FifoGroup=, otherwise it's root. The file
+permissions of the FiFos are rw--w---- (0620). The FiFos are created in the
 directory specified by FifoDir=.
 The fields of a command are separated by tabs (\t), the fields of a list
 are separated by spaces. The command is terminated by a newline (\n).
@@ -135,7 +135,7 @@ KDM accepts two command line options related to logging:
 
   -debug <n>
     <n> is a decimal or hexadecimal (prefix 0x) number.
-    The number is a bitfield, i.e., it is formed by summing up the 
+    The number is a bitfield, i.e., it is formed by summing up the
     required values from this table:
     1 (0x1) - core debugging. probably the most useful one.
     2 (0x2) - config reader debugging.
@@ -156,13 +156,13 @@ KDM accepts two command line options related to logging:
 
   -logfile <file>
     <file> is the file to log various messages to.
-    For internal reasons there is no option in kdmrc to permanently specify 
+    For internal reasons there is no option in kdmrc to permanently specify
     another log file location. If you redirect KDM's standard error output
     to a file, KDM will log there.
-    If KDM is configured to use syslog, all internally generated messages 
-    are logged to the "daemon" facility. The log usually can be found in 
-    /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.* 
-    is logged (look at /etc/syslog.conf). 
+    If KDM is configured to use syslog, all internally generated messages
+    are logged to the "daemon" facility. The log usually can be found in
+    /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.*
+    is logged (look at /etc/syslog.conf).
 
 Send me the logs together with a detailed description what you did and
 what happened. If your problem is related to a specific configuration,
@@ -179,17 +179,16 @@ All later versions copyright:
 Since version 0.90 (KDE 2.1) copyright:
 	(C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
 
-The files in the backend directory are licensed under the X licence 
-(see www.xfree86.org for more info). 
-The files in the chooser and kfrontend directories are licensed under 
-the GNU GPL.
+The files in the backend directory are licensed under the X licence
+(see www.xfree86.org for more info).
+The files in the kfrontend directory are licensed under the GNU GPL.
 
 Thanks to (in no particular order):
 Michael Bach Jensen and Torsten Rahn for drawing icons.
 Duncan Haldane for investigation of PAM issues.
-Stephan Kulow for helping me with the autoconf stuff.
+Stephan Kulow for helping with the autoconf stuff.
 Martin Baehr for intensive testing and writing the sample Xsession scripts.
-Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
+Harald Hoyer <Harald.Hoyer@redhat.de> for the (now obsoleted) chooser
 ... and _many_ others ...
 
 

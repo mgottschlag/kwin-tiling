@@ -2,6 +2,8 @@ Must:
 
 - implement a "console mode" that is more adequate for linux
 
+- handle _all_ config changes on the fly, including xdmcp
+
 - export LC_* by default
 
 - Make nis & kerberos5 work (done, but untested ...)
@@ -52,6 +54,8 @@ Could:
 - remote-accessible command sockets for remote shutdown, etc.
   or maybe implement it as an xdmcp extension?
 - LoginMode=DirectQuery
+
+- parse /etc/kderc?
 
 ralf says:
 - put the kmenu sidebar image on the left of the greeter
