@@ -143,7 +143,7 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
         t << "# Themes/Styles in the control center and disable the checkbox " << endl;
         t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
         t << "#" << endl;
-        t << "# If you had a ~/.gtkrc before starting KDE, it's content is" << endl;
+        t << "# If you had a ~/.gtkrc before starting KDE, its content is" << endl;
         t << "# preserved in ~/.gtkrc-save" << endl;
         t << "#" << endl;
         t << endl;
