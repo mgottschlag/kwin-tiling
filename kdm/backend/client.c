@@ -47,6 +47,7 @@ from The Open Group.
 #ifdef SECURE_RPC
 # include <rpc/rpc.h>
 # include <rpc/key_prot.h>
+extern int key_setnet(struct key_netstarg *arg);
 #endif
 #ifdef K5AUTH
 # include <krb5/krb5.h>
@@ -1300,6 +1301,7 @@ StartClient ()
 	    int	    nameret, keyret;
 	    int	    len;
 	    int     key_set_ok = 0;
+	    struct  key_netstarg netst;
 
 	    nameret = getnetname (netname);
 	    Debug ("user netname: %s\n", netname);
@@ -1309,6 +1311,11 @@ StartClient ()
 	    keyret = getsecretkey(netname, secretkey, curpass);
 	    Debug ("getsecretkey returns %d, key length %d\n",
 		   keyret, strlen (secretkey));
+	    netst.st_netname = netname;
+	    memcpy (netst.st_priv_key, secretkey, HEXKEYBYTES);
+	    memset (netst.st_pub_key, 0, HEXKEYBYTES);
+	    if (key_setnet (&netst) < 0)
+		Debug ("Could not set secret key.\n");
 	    /* is there a key, and do we have the right password? */
 	    if (keyret == 1)
 	    {
