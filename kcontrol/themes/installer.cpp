@@ -250,7 +250,7 @@ void Installer::slotImport()
 
   QString dir = KGlobal::dirs()->getSaveLocation("themes");
   // Copy theme package into themes directory
-  cmd.sprintf("cp %s %s", fpath.ascii(), dir.ascii());
+  cmd.sprintf("cp \"%s\" \"%s\"", fpath.ascii(), dir.ascii());
   rc = system(cmd.ascii());
   if (rc)
   {
