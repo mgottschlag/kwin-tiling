@@ -65,6 +65,8 @@ public:
   void makeVisible(ConfigModule *module);
   void fill();
 
+  QSize sizeHint() const;
+
 signals:
   void moduleSelected(ConfigModule*);
   void categorySelected(QListViewItem*);

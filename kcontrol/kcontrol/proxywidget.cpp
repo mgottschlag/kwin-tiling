@@ -134,7 +134,7 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
     : QScrollView(parent, name), client(_client)
 {
   setResizePolicy(QScrollView::AutoOneFit);
-
+  setFrameStyle( NoFrame );
   contentWidget = new ProxyContentWidget( viewport() );
 
   QVBoxLayout* vbox = new QVBoxLayout( contentWidget );

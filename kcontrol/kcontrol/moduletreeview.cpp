@@ -92,7 +92,12 @@ void ModuleTreeView::fill()
         new ModuleTreeItem(this, module);
     }
 
-  setMinimumWidth(columnWidth(0));
+}
+
+QSize ModuleTreeView::sizeHint() const
+{
+    return QListView::sizeHint().boundedTo( 
+	QSize( fontMetrics().width('x')*35, QWIDGETSIZE_MAX) );
 }
 
 void ModuleTreeView::makeSelected(ConfigModule *module)
