@@ -194,10 +194,19 @@ void Backgnd::setWidgets()
     else
        m_pColorBlendBox->setCurrentItem(0);
 
-    m_pPatternEditBut->setEnabled(r->backgroundMode() == KBackgroundSettings::Pattern);
-    m_pColor2But->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
-    m_pColor2Label->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
-    
+    if (r->backgroundMode() != KBackgroundSettings::Program)
+    {
+        m_pPatternEditBut->setEnabled(r->backgroundMode() == KBackgroundSettings::Pattern);
+        m_pColor2But->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
+        m_pColor2Label->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
+    }
+    else
+    {
+        m_pPatternEditBut->setEnabled(false);
+        m_pColor2But->setEnabled(false);
+        m_pColor2Label->setEnabled(false);
+    }
+
     // set all the widgets in the wall paper groups box 
     
     if (r->wallpaperMode() < KBackgroundSettings::NoWallpaper)
