@@ -165,6 +165,8 @@ void KIconConfig::initDefaults()
     mDefaultEffect[1].color = QColor(169,156,255);
     mDefaultEffect[2].color = QColor(34,202,0);
 
+    const int defDefSizes[] = { 32, 22, 22, 16, 32 };
+
     KIcon::Group i;
     QStringList::ConstIterator it;
     for(it=mGroups.begin(), i=KIcon::FirstGroup; it!=mGroups.end(); it++, i++)
@@ -172,7 +174,10 @@ void KIconConfig::initDefaults()
 	mbDP[i] = false;
 	mbChanged[i] = true;
 	mbAnimated[i] = false;
-	mSizes[i] = mpTheme->defaultSize(i);
+	if (mpTheme)
+	    mSizes[i] = mpTheme->defaultSize(i);
+	else
+	    mSizes[i] = defDefSizes[i];
 
 	mEffects[i][0] = mDefaultEffect[0];
 	mEffects[i][1] = mDefaultEffect[1];
@@ -205,11 +210,22 @@ void KIconConfig::initDefaults()
 
 void KIconConfig::read()
 {
-    for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
-	mAvSizes[i] = mpTheme->querySizes(i);
+    if (mpTheme)
+    {
+        for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
+            mAvSizes[i] = mpTheme->querySizes(i);
 
-    mTheme = mpTheme->current();
-    mExample = mpTheme->example();
+        mTheme = mpTheme->current();
+        mExample = mpTheme->example();
+    }
+    else
+    {
+        for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
+            mAvSizes[i] = QValueList<int>();
+
+        mTheme = QString::null;
+        mExample = QString::null;
+    }
 
     initDefaults();
 
