@@ -14,7 +14,10 @@ noinst_HEADERS = email.h
 KDE_ICON = email
 
 data_DATA = email.desktop
-datadir = $(kde_appsdir)/Settings
+datadir = $(kde_appsdir)/Settings/Network/
+
+install-data-local: uninstall.desktop
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/email.desktop
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmemail.pot
