@@ -237,11 +237,6 @@ void Module::new_action_group()
 
 void Module::delete_action()
     {
-    QString txt = i18n( "Do you really want to delete \"%1\"?" ).arg(
-        current_action_data()->name());
-    if( KMessageBox::warningContinueCancel( NULL, txt, i18n( "Deleting Action" ),
-        i18n( "to delete", "Delete" )) != KMessageBox::Continue )
-        return;
     delete _current_action_data;
     _current_action_data = NULL;
     deleting_action = true; // CHECKME zase tak trosku hack, jinak by se snazilo provest save
