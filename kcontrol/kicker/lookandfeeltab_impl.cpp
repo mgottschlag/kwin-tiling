@@ -33,7 +33,6 @@
 #include <qimage.h>
 #include <qregexp.h>
 
-#include <main.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
@@ -48,6 +47,7 @@
 #include <kurlrequester.h>
 #include <klineedit.h>
 
+#include "main.h"
 #include "advancedDialog.h"
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
