@@ -20,7 +20,7 @@
 #ifndef MODULES_H
 #define MODULES_H
 
-#include "moduleinfo.h"
+#include <kcmoduleinfo.h>
 #include <qobject.h>
 
 template<class ConfigModule> class QPtrList;
