@@ -94,8 +94,46 @@ LIBS="$LIBS $LIBUTIL"
 AC_CHECK_FUNCS([setlogin setusercontext getusershell login_getclass auth_timeok])
 LIBS=$ac_save_libs
 
-dnl is getifaddrs available without additional libs?
-AC_CHECK_FUNCS([mkstemp setproctitle getifaddrs])
+AC_CHECK_FUNCS([mkstemp setproctitle])
+
+dnl is this always available without additional libs?
+dnl my linux glibc 2.3.2 getifaddrs() returns nonsense, so ignore it
+AC_CACHE_CHECK([for working getifaddrs], ac_cv_func_getifaddrs_ok,
+	[AC_RUN_IFELSE(
+		[AC_LANG_PROGRAM([
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
+			],[[
+	struct ifaddrs *ifr;
+	if (getifaddrs(&ifr) < 0) {
+		fprintf(stderr, "getifaddrs failed\n");
+		return 1;
+	}
+	for (; ifr; ifr = ifr->ifa_next)
+		if (!strcmp(ifr->ifa_name, "lo"))
+			switch (ifr->ifa_addr->sa_family) {
+			case AF_INET:
+#ifdef AF_INET6
+			case AF_INET6:
+#endif
+				return 0;
+			default:
+				fprintf(stderr, "getifaddrs returns nonsense\n");
+				return 1;
+			}
+	fprintf(stderr, "getifaddrs returned no loopback interface\n");
+	return 1;
+			]])],
+		[ac_cv_func_getifaddrs_ok=yes],
+		[ac_cv_func_getifaddrs_ok=no],
+		[ac_cv_func_getifaddrs_ok=no])
+	])
+if test $ac_cv_func_getifaddrs_ok = yes; then
+  AC_DEFINE(HAVE_GETIFADDRS, 1, [Define if you have a working getifaddrs()])
+fi
 
 AC_CHECK_FUNCS([arc4random], ,
 	[
