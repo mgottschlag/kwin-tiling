@@ -37,7 +37,9 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
-    : LockDlgImpl(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder), mCapsLocked(-1), mUnlockingFailed(false)
+    : LockDlgImpl(parent, "password dialog", true, WX11BypassWM),
+      mCapsLocked(-1),
+      mUnlockingFailed(false)
 {
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);
@@ -263,25 +265,22 @@ XXX this needs to go into a separate routine at startup time
     }
 }
 
-// see the comment at the top of lockprocess.cpp
-// with certain unreasonable focus policies (focus under mouse, ehm),
-// KWin interferes and doesn't make the dialog focused, so we have
-// to focus it manually (moving mouse doesn't help because of mouse grab)
-// the right fix is of course override_redirect, so KWin won't get in the way
-// and we can call setActiveWindow() and setFocus() without waiting
 void PasswordDlg::show()
 {
     QDialog::show();
     QApplication::flushX();
-    for(;;)
-    { // wait for the window to get mapped
-        XWindowAttributes attrs;
-        if( XGetWindowAttributes( qt_xdisplay(), winId(), &attrs )
-            && attrs.map_state != IsUnmapped )
-            break;
-    }
-    setActiveWindow();
-    setFocus();
+    // We have keyboard grab, so this application will
+    // get keyboard events even without having focus.
+    // Fake FocusIn to make Qt realize it has the active
+    // window, so that it will correctly show cursor in the dialog.
+    XEvent ev;
+    memset(&ev, 0, sizeof(ev));
+    ev.xfocus.display = qt_xdisplay();
+    ev.xfocus.type = FocusIn;
+    ev.xfocus.window = winId();
+    ev.xfocus.mode = NotifyNormal;
+    ev.xfocus.detail = NotifyAncestor;
+    XSendEvent( qt_xdisplay(), winId(), False, NoEventMask, &ev );
 }
 
 void PasswordDlg::slotStartNewSession()

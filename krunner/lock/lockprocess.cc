@@ -15,13 +15,6 @@
 //some image will be corrupted).
 
 
-// This stuff should be probably rewritten to use override_redirect
-// (WX11BypassWM) windows. This process grabs the mouse and the keyboard,
-// and basically pretends there's no WM anyway. If there will be some
-// more problems with focus, window showing or whatever related,
-// tell KWin developers.
-// See also PasswordDlg::show().
-
 #include <config.h>
 
 #include <stdlib.h>
@@ -34,7 +27,6 @@
 #include <kmessagebox.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
-#include <kwin.h>
 #include <qtimer.h>
 #include <qfile.h>
 #include <assert.h>
@@ -68,7 +60,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder),
+    : QWidget(0L, "saver window", WX11BypassWM),
       child_saver(child),
       parent(0),
       mUseBlankOnly(useBlankOnly),
@@ -76,9 +68,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mVisibility(false),
       mActiveDialog(NULL)
 {
-    KWin::setState( winId(), NET::StaysOnTop );
-    KWin::setOnAllDesktops( winId(), true );
-
     setupSignals();
 
     kapp->installX11EventFilter(this);
@@ -89,6 +78,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
                         qt_xscreen()), &rootAttr);
     mRootWidth = rootAttr.width;
     mRootHeight = rootAttr.height;
+    XSelectInput( qt_xdisplay(), qt_xrootwin(),
+        SubstructureNotifyMask | rootAttr.your_event_mask );
 
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
@@ -400,8 +391,6 @@ void LockProcess::saveVRoot()
 //
 void LockProcess::setVRoot(Window win, Window vr)
 {
-    assert( KWin::windowInfo(winId()).mappingState() != NET::Withdrawn );
-
     if (gVRoot)
         removeVRoot(gVRoot);
 
@@ -555,10 +544,6 @@ void LockProcess::startSaver()
 
 void LockProcess::slotStart()
 {
-    if (KWin::windowInfo(winId()).mappingState() == NET::Withdrawn) {
-        QTimer::singleShot(100, this, SLOT(slotStart()));
-        return;
-    }
     setVRoot( winId(), winId() );
     if (startHack() == false)
     {
@@ -686,7 +671,7 @@ void LockProcess::resume()
 bool LockProcess::checkPass()
 {
     suspend();
-    PasswordDlg passDlg(this, !mXdmFifoName.isNull());
+    PasswordDlg passDlg( NULL, !mXdmFifoName.isNull());
     connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
 
     QDesktopWidget *desktop = KApplication::desktop();
@@ -719,12 +704,6 @@ bool LockProcess::x11Event(XEvent *event)
 {
     switch (event->type)
     {
-        case FocusIn:
-        case FocusOut:
-            // Hack to tell dialogs to take focus when the keyboard is grabbed
-            event->xfocus.mode = NotifyNormal;
-            break;
-
         case KeyPress:
         case ButtonPress:
         case MotionNotify:
@@ -749,24 +728,57 @@ bool LockProcess::x11Event(XEvent *event)
                 else
                     resume();
                 if (event->xvisibility.state != VisibilityUnobscured )
-                {
-                    raise();
-                    QApplication::flushX();
-                }
+                    stayOnTop();
             }
             break;
 
-        case ConfigureNotify:
-//            // Workaround for bug in Qt 2.1, as advised by Matthias Ettrich (David)
-//            if (event->xconfigure.window != event->xconfigure.event)
-//                return true;
-
-            raise();
-            QApplication::flushX();
+        case ConfigureNotify: // from SubstructureNotifyMask on the root window
+            if( event->xconfigure.event == qt_xrootwin())
+                stayOnTop();
+            break;
+        case MapNotify: // from SubstructureNotifyMask on the root window
+            if( event->xmap.event == qt_xrootwin())
+                stayOnTop();
             break;
     }
 
+    // We have grab with the grab window being the root window.
+    // This results in key events being sent to the root window,
+    // but they should be sent to the dialog if it's visible.
+    // It could be solved by setFocus() call, but that would mess
+    // the focus after this process exits.
+    // Qt seems to be quite hard to persuade to redirect the event,
+    // so let's simply dupe it with correct destination window,
+    // and ignore the original one.
+    if( mActiveDialog && ( event->type == KeyPress || event->type == KeyRelease )
+        && event->xkey.window != mActiveDialog->winId())
+    {
+        XEvent ev2 = *event;
+        ev2.xkey.window = ev2.xkey.subwindow = mActiveDialog->winId();
+        qApp->x11ProcessEvent( &ev2 );
+        return true;
+    }
+
     return false;
+}
+
+void LockProcess::stayOnTop()
+{
+    if( mActiveDialog )
+    {
+        // if the topmost window is the dialog,
+        // and this->winId() is the window right below it,
+        // the two calls below won't have any real effect,
+        // and therefore there also won't be any ConfigureNotify
+        // that could lead to loop
+        XRaiseWindow( qt_xdisplay(), mActiveDialog->winId());
+        Window stack[2];
+        stack[0] = mActiveDialog->winId();;
+        stack[1] = winId();
+        XRestackWindows( x11Display(), stack, 2 );
+    }
+    else
+        XRaiseWindow( qt_xdisplay(), winId());
 }
 
 void LockProcess::startNewSession()

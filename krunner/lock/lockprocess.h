@@ -71,6 +71,7 @@ private:
     void stopHack();
     void setupSignals();
     bool checkPass();
+    void stayOnTop();
 
     bool        mLock;
     int         mPriority;
