@@ -4,7 +4,7 @@
 	Main Widget for showing system-dependent information.
 	(But all functions in THIS FILE should be system independent !)
 
-	(C) 1998-2002 by Helge Deller <deller@kde.org>
+	(C) 1998-2003 by Helge Deller <deller@kde.org>
 
 	** main.cpp includes this file ! **
 
@@ -354,6 +354,7 @@ void KInfoListWidget::load()
 
     /* is the user allowed to use sorting ? */
     lBox->header()->setClickEnabled(sorting_allowed);
+    lBox->header()->setFont(KGlobalSettings::generalFont());
     lBox->setShowSortIndicator(sorting_allowed);
 
     if (ok)
