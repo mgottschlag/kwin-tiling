@@ -681,6 +681,7 @@ void TreeView::newsubmenu()
 
     newitem->setText(0, dirname);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon("package", KIcon::Desktop, KIcon::SizeSmall));
+    newitem->setExpandable(true);
 
     KConfig c(locateLocal("apps", dir));
     c.setDesktopGroup();
