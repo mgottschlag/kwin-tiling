@@ -226,6 +226,7 @@ bool MenuFolderInfo::hasDirt()
        (entryInfo = it.current()); ++it)
    {
       if (entryInfo->dirty) return true;
+      if (entryInfo->shortcutDirty) return true;
    }
    return false;
 }
@@ -314,9 +315,11 @@ bool MenuEntryInfo::needInsertion()
 
 void MenuEntryInfo::save()
 {
-   if (!dirty) return;
-
-   df->sync();
+   if (dirty)
+   {
+      df->sync();
+      dirty = false;
+   }
 
    if (shortcutDirty)
    {
@@ -326,8 +329,6 @@ void MenuEntryInfo::save()
       }
       shortcutDirty = false;
    }
-
-   dirty = false;
 }
 
 void MenuEntryInfo::setCaption(const QString &_caption)
@@ -425,7 +426,6 @@ void MenuEntryInfo::setShortcut(const KShortcut &_shortcut)
 
    shortcutLoaded = true;
    shortcutDirty = true;
-   dirty = true;
 }
 
 void MenuEntryInfo::setInUse(bool inUse)
@@ -437,7 +437,7 @@ void MenuEntryInfo::setInUse(bool inUse)
       if (isShortcutAvailable(temp))
          shortCut = temp;
       else
-         dirty = true;
+         shortcutDirty = true;
       allocateShortcut(shortCut);
 
       if (s_deletedApps)
