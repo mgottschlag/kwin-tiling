@@ -254,5 +254,5 @@ fi
 AC_SUBST(LIBXDMCP)
 AC_SUBST(kdmchooserdir)
 
-dnl AC_OUTPUT(kdm/xdmconfig/xdm-config)
+dnl AC_OUTPUT(kdm/xdmconfig/kdm-config)
 dnl AC_OUTPUT(kdm/xdmconfig/Xservers)
