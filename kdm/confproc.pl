@@ -676,6 +676,8 @@ if (!$do_doc) {
 
 print OUTFILE
   "/* generated from $ARGV[0] by $0 - DO NOT EDIT! */\n\n".
+  "#ifndef CONFIG_DEFS\n".
+  "#define CONFIG_DEFS\n\n".
   $raw_out."\n\n".
   $ov_enum_defs."\n".
   $ov_defaults."\n\n";
@@ -805,6 +807,8 @@ print OUTFILE
   "KUpdSec kupsects[] = { \\\n".
   $ov_km_sect_refs.
   "};\n";
+print OUTFILE
+  "\n#endif /* CONFIG_DEFS */\n";
 
 } else {
 
