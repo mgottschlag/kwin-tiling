@@ -164,6 +164,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	QWhatsThis::add(hardware->customOptions, optionsHint);
 	QWhatsThis::add(hardware->addOptions, optionsHint);
 
+	hardware->audioIO->insertItem( i18n( "Autodetect" ) );
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 		hardware->audioIO->insertItem(i18n(a->fullName.utf8()));
 
