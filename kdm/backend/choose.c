@@ -383,14 +383,14 @@ AddChooserHost (
     char	hostbuf[1024];
 
     argp = (char ***) closure;
-    if (addr->length == strlen ("BROADCAST") &&
-	!memcmp ((char *)addr->data, "BROADCAST", addr->length))
+    if (addr->length == 9 &&
+	!memcmp ((char *)addr->data, "BROADCAST", 9))
     {
-	(void) addStrArr (*argp, "BROADCAST", 9);
+	*argp = addStrArr (*argp, "BROADCAST", 9);
     }
     else if (ARRAY8ToDottedDecimal (addr, hostbuf, sizeof (hostbuf)))
     {
-	(void) addStrArr (*argp, hostbuf, -1);
+	*argp = addStrArr (*argp, hostbuf, -1);
     }
 }
 
