@@ -30,7 +30,7 @@
 
 #include "liloinfo.h"
 
-using std::cerr;
+using namespace std;
 
 /*
  * The constructor. Initialize the internal variables and copy the parameter strings.
