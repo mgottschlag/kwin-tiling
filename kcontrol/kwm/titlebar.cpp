@@ -1105,22 +1105,22 @@ void KTitlebarAppearance::SaveSettings( void )
   int a = getDCTBAction();
   switch (a) {
   case DCTB_MAXIMIZE:
-    config->writeEntry(KWM_DCTBACTION, "winMaximize");
+    config->writeEntry(KWM_DCTBACTION, "Maximize");
     break;
   case DCTB_ICONIFY:
-    config->writeEntry(KWM_DCTBACTION, "winIconify");
+    config->writeEntry(KWM_DCTBACTION, "Iconify");
     break;
   case DCTB_CLOSE:
-    config->writeEntry(KWM_DCTBACTION, "winClose");
+    config->writeEntry(KWM_DCTBACTION, "Close");
     break;
   case DCTB_STICKY:
-    config->writeEntry(KWM_DCTBACTION, "winSticky");
+    config->writeEntry(KWM_DCTBACTION, "Sticky");
     break;
   case DCTB_SHADE:
-    config->writeEntry(KWM_DCTBACTION, "winShade");
+    config->writeEntry(KWM_DCTBACTION, "Shade");
     break;
   //CT should never get here
-  default:     config->writeEntry(KWM_DCTBACTION, "winMaximize");
+  default:     config->writeEntry(KWM_DCTBACTION, "Maximize");
   }
 
   config->sync();
@@ -1238,11 +1238,11 @@ void KTitlebarAppearance::GetSettings( void )
   titleAnim->setValue(config->readNumEntry(KWM_TITLEANIMATION,0));
 
   key = config->readEntry(KWM_DCTBACTION);
-  if (key == "winMaximize") setDCTBAction(DCTB_MAXIMIZE);
-  else if (key == "winIconify") setDCTBAction(DCTB_ICONIFY);
-  else if (key == "winClose") setDCTBAction(DCTB_CLOSE);
-  else if (key == "winSticky") setDCTBAction(DCTB_STICKY);
-  else if (key == "winShade") setDCTBAction(DCTB_SHADE);
+  if (key == "Maximize") setDCTBAction(DCTB_MAXIMIZE);
+  else if (key == "Iconify") setDCTBAction(DCTB_ICONIFY);
+  else if (key == "Close") setDCTBAction(DCTB_CLOSE);
+  else if (key == "Sticky") setDCTBAction(DCTB_STICKY);
+  else if (key == "Shade") setDCTBAction(DCTB_SHADE);
   else setDCTBAction(DCTB_MAXIMIZE);
 
   // load titleBar colors
