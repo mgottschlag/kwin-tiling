@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=w9wm
+Name=W9WM
+Comment=A window manager based on 9WM, enhanced by virtual screens and keyboard bindings

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=afterstep
+Name=AfterStep
+Comment=A window manager with the NeXTStep look and feel, based on FVWM

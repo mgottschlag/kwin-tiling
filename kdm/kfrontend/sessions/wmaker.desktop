@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=wmaker
+Name=WindowMaker
+Comment=A simple window manager that resembles the NeXTStep look very closely

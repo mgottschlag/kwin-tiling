@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=enlightenment
+Name=Enlightenment
+Comment=An extremely themable very feature-rich window manager

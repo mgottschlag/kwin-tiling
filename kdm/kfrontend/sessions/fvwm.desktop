@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=fvwm
+Name=FVWM
+Comment=A powerful ICCCM-compliant multiple virtual desktop window manager

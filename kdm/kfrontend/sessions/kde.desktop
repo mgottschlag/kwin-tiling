@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=startkde
+Name=KDE
+Comment=The K Desktop Environment, a powerful Open Source graphical desktop environment

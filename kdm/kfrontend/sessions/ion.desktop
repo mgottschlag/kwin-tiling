@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=ion
+Name=Ion
+Comment=A keyboard-friendly window manager with tiled windows, based on PWM

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=aewm++_xsession
+Name=AEWM++
+Comment=A minimal window manager based on AEWM, enhanced by virtual desktops and partial GNOME support

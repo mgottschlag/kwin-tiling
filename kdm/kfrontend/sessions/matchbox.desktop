@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=matchbox
+Name=Matchbox
+Comment=A window manager for handheld devices

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=9wm
+Name=9WM
+Comment=An emulation of the Plan 9 window manager 8-1/2

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=ude
+Name=UDE
+Comment=The Unix Desktop Environment

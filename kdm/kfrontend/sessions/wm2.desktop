@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=wm2
+Name=WM2
+Comment=A small, unconfigurable window manager

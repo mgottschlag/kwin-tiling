@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=oroborus
+Name=Oroborus
+Comment=A lightweight themeable window manager
+# not usable as a session
+Hidden=true

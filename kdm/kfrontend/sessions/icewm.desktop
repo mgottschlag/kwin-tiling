@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=icewm
+Name=IceWM
+Comment=A Win95-OS/2-Motif-like window manager

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=sawfish
+Name=Sawfish
+Comment=An extensible window manager scriptable with an Emacs Lisp-like language

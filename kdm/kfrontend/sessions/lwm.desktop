@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=lwm
+Name=LWM
+Comment=The Lightweight Window Manager, an unconfigurable, bare window manager
+# this can't be used as a session in itself
+Hidden=true

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=amiwm
+Name=AmiWM
+Comment=The Amiga look-alike window manager

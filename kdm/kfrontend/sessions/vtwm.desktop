@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=vtwm
+Name=VTWM
+Comment=The Virtual Tab Window Manager, TWM enhanced by virtual screens, etc.

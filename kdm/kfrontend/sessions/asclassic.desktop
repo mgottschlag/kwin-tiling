@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=asclassic
+Name=ASClassic
+Comment=AfterStep Classic, a window manager based on AfterStep v1.1

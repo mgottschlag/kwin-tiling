@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=evilwm
+Name=EvilWM
+Comment=A minimalist window manager based on AEWM

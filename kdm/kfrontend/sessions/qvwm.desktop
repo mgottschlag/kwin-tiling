@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=qvwm
+Name=QVWM
+Comment=A Win95 like window manager

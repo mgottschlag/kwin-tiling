@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=flwm
+Name=FLWM
+Comment=The Fast Light Window Manager, based primarily on WM2

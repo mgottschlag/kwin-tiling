@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=larswm
+Name=LarsWM
+Comment=The Lars Window Manager, based on 9WM, supports tiled windows

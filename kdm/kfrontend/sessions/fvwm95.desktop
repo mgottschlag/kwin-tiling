@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=fvwm95
+Name=FVWM95
+Comment=A Win95 lookalike derivative of FVWM

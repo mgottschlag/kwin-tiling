@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=golem
+Name=Golem
+Comment=A lightweight window manager

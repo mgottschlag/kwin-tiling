@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=waimea
+Name=Waimea
+Comment=A highly customizable window manager based on Blackbox
