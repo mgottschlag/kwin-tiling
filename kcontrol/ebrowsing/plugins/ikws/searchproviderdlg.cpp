@@ -60,7 +60,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     layout->addMultiCellWidget(label, 4, 4, 0, 1);
     label->setBuddy(m_keys = new KLineEdit(this));
     layout->addMultiCellWidget(m_keys, 5, 5, 0, 1);
-    whatsThis = i18n("The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For example, the shortcut <em>av<em> can be used as in <em>av</em>:<em>my search</em>.");
+    whatsThis = i18n("The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For example, the shortcut <em>av</em> can be used as in <em>av</em>:<em>my search</em>.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_keys, whatsThis);
 
@@ -68,7 +68,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider, QWidget *pa
     layout->addMultiCellWidget(label, 6, 6, 0, 1);
     label->setBuddy(m_charset = new KComboBox(this));
     layout->addMultiCellWidget(m_charset, 7, 7, 0, 1);
-    whatsThis = i18n("Select the character set that will be used to encode your search query");
+    whatsThis = i18n("Select the character set that will be used to encode your search query.");
     QWhatsThis::add(label, whatsThis);
     QWhatsThis::add(m_charset, whatsThis);
 
