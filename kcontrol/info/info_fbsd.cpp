@@ -20,13 +20,14 @@
 
 
 /*
- * all following functions should return TRUE, when the Information 
+ * all following functions should return TRUE, when the Information
  * was filled into the lBox-Widget. Returning FALSE indicates that
  * information was not available.
  */
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include <machine/perfmon.h>
 
 #include <fstab.h>
 #include <stdlib.h>
@@ -38,43 +39,63 @@
 #include <kdebug.h>
 
 bool GetInfo_CPU (QListView *lBox)
-{ 
-  QString str;
+{
+    // Modified 13 July 2000 for SMP by Brad Hughes - bhughes@trolltech.com
 
-  /* Stuff for sysctl */
-  char *buf, *mhz;
-  QString cpustring;
-  int mib[2], machspeed;
-  size_t len;
+    int sc[2], ncpu, cpuspeed;
+    size_t len;
 
-  mib[0] = CTL_HW;
-  mib[1] = HW_MODEL;
-  sysctl(mib,2,NULL,&len,NULL,0);
-  buf=(char*)malloc(len);
-  sysctl(mib,2,buf,&len,NULL,0);
-  /*	Get the CPU speed, only on Genuine P5s
-		heh, heh, undocumented sysctls rule but I dunno
-		if this works on 2.2.x machines. */
-  mib[0] = CTL_MACHDEP; mib[1] = 107;
-  len=sizeof(machspeed);
-  sysctl(mib,2,&machspeed,&len,NULL,0);
-  /* Format the integer into correct xxx.xx MHz */
-  mhz=(char *)malloc(20);
-  snprintf(mhz,20,"%d.%02d",(machspeed+4999)/1000000,
-		   ((machspeed+4999)/10000)%100);
-  if (strcmp(mhz,"0.00")==0)
- 	/* We dunno how fast it's running */
-	cpustring = i18n("%1, unknown speed").arg(buf);
-  else
-	cpustring = i18n("%1 running at %2 MHz").arg(buf).arg(mhz);
+    sc[0] = CTL_HW;
+    sc[1] = HW_NCPU;
+    len = sizeof(ncpu);
+    sysctl(sc, 2, &ncpu, &len, NULL, 0);
 
-  /* Put everything in the listbox */
-  new QListViewItem(lBox, cpustring);
-  /* Clean up after ourselves, this time I mean it ;-) */
-  free(mhz);
-  free(buf);
+    for (int i = ncpu; i > 0; i--) {
+	/* Stuff for sysctl */
+	char *buf, *mhz;
+	QString cpustring;
 
-  return true;
+	// get the processor model
+	sc[0] = CTL_HW;
+	sc[1] = HW_MODEL;
+	sysctl(sc,2,NULL,&len,NULL,0);
+	buf = new char[len];
+	sysctl(sc,2,buf,&len,NULL,0);
+
+	/*
+	  Get the CPU speed, only on Genuine P5s
+	  heh, heh, undocumented sysctls rule but I dunno
+	  if this works on 2.2.x machines.
+	*/
+	sc[0] = CTL_MACHDEP;
+	sc[1] = 0x6b;
+
+	len = sizeof(cpuspeed);
+	cpuspeed = 0;
+	sysctl(sc, 2, &cpuspeed, &len, NULL, 0);
+
+	/* Format the integer into correct xxx.xx MHz */
+	mhz = new char[20];
+	snprintf(mhz,20,"%d.%02d",
+		 ((cpuspeed + 4999) / 1000000),
+		 ((cpuspeed + 4999) / 10000) % 100);
+
+	if (strcmp(mhz,"0.00") == 0)
+	    /* We dunno how fast it's running */
+	    cpustring = i18n("CPU %1: %2, unknown speed").arg(i).arg(buf);
+	else
+	    cpustring = i18n("CPU %1: %2 running at %3 MHz").arg(i).arg(buf).arg(mhz);
+
+	/* Put everything in the listbox */
+	new QListViewItem(lBox, cpustring);
+
+	/* Clean up after ourselves, this time I mean it ;-) */
+
+	delete mhz;
+	delete buf;
+    }
+
+    return true;
 }
 
 bool GetInfo_IRQ (QListView *)
@@ -91,9 +112,32 @@ bool GetInfo_DMA (QListView *)
   return false;
 }
 
-bool GetInfo_PCI (QListView *)
+bool GetInfo_PCI (QListView *listview)
 {
-  return false;
+    QFile dmesg("/sbin/dmesg");
+    QFile grep("/usr/bin/grep");
+
+    if (! dmesg.exists() || ! grep.exists())
+	return FALSE;
+
+    FILE *pipe = popen("/sbin/dmesg | /usr/bin/grep pci", "r");
+
+    QTextIStream stream(pipe);
+    QListViewItem *prevItem = 0;
+    QString str;
+
+    while (! stream.atEnd()) {
+	str = stream.readLine();
+
+	// if (str.isNull())
+	//     break;
+
+	prevItem = new QListViewItem(listview, prevItem, str);
+    }
+
+    pclose(pipe);
+
+    return TRUE;
 }
 
 bool GetInfo_IO_Ports (QListView *)
@@ -105,17 +149,17 @@ bool GetInfo_Sound (QListView *lbox)
 {
   QFile *sndstat = new QFile("/dev/sndstat");
   QTextStream *t; QString s;
- 
+
   if (!sndstat->exists()) {
     delete sndstat;
     return false;
   }
-  
+
   if (!sndstat->open(IO_ReadOnly)) {
     delete sndstat;
     return false;
   }
-  
+
   t = new QTextStream(sndstat);
 
   QListViewItem* olditem = 0;
@@ -148,7 +192,7 @@ bool GetInfo_Devices (QListView *lbox)
 	QString s;
 
     QListViewItem* olditem;
-    
+
 	while ((s=t->readLine()) != QString::null)
         olditem = new QListViewItem(lbox, olditem, s);
 
@@ -160,47 +204,51 @@ bool GetInfo_Devices (QListView *lbox)
 
 bool GetInfo_SCSI (QListView *lbox)
 {
-  /*
-   * This code relies on the system at large having "the" CAM (see the FreeBSD
-   * 3.0 Release notes for more info) SCSI layer, and not the older one.
-   * If someone who has a system with the older SCSI layer and would like to
-   * tell me (jazepeda@pacbell.net) how to extract that info, I'd be much
-   * obliged.
-   */
-  FILE *pipe;
-  QFile *camcontrol = new QFile("/sbin/camcontrol");
-  QTextStream *t;
-  QString s;
+    /*
+     * This code relies on the system at large having "the" CAM (see the FreeBSD
+     * 3.0 Release notes for more info) SCSI layer, and not the older one.
+     * If someone who has a system with the older SCSI layer and would like to
+     * tell me (jazepeda@pacbell.net) how to extract that info, I'd be much
+     * obliged.
+     */
+    FILE *pipe;
+    QFile *camcontrol = new QFile("/sbin/camcontrol");
+    QTextStream *t;
+    QString s;
 
-  if (!camcontrol->exists()) {
-    delete camcontrol;
-    return false;
-  }
-  
-  /* This prints out a list of all the scsi devies, perhaps eventually we could
-     parse it as opposed to schlepping it into a listbox */
-  if ((pipe = popen("/sbin/camcontrol devlist", "r")) == NULL) {
-    delete camcontrol;
-    return false;
-  }
+    if (!camcontrol->exists()) {
+	qDebug("camcontrol doesn't exist");
 
-  t = new QTextStream(pipe, IO_ReadOnly);
-  
-  QListViewItem* olditem = 0;
+	delete camcontrol;
+	return false;
+    }
 
-  while (true) {
-    s = t->readLine();
-    if ( (s == "") || (s == QString::null) )
-      break;
-    olditem = new QListViewItem(lbox, olditem, s);
-  }
+    /* This prints out a list of all the scsi devies, perhaps eventually we could
+       parse it as opposed to schlepping it into a listbox */
+    if ((pipe = popen("/sbin/camcontrol devlist", "r")) == NULL) {
+	qDebug("popen failed");
 
-  delete t; delete camcontrol; pclose(pipe);
-  
-  if (!lbox->childCount())
-    return false;
-  
-  return true;
+	delete camcontrol;
+	return false;
+    }
+
+    t = new QTextStream(pipe, IO_ReadOnly);
+
+    QListViewItem* olditem = 0;
+
+    while (true) {
+	s = t->readLine();
+	if ( (s == "") || (s == QString::null) )
+	    break;
+	olditem = new QListViewItem(lbox, olditem, s);
+    }
+
+    delete t; delete camcontrol; pclose(pipe);
+
+    if (!lbox->childCount())
+	return false;
+
+    return true;
 }
 
 bool GetInfo_Partitions (QListView *lbox)
@@ -222,7 +270,7 @@ bool GetInfo_Partitions (QListView *lbox)
         new QListViewItem(lbox, fstab_ent->fs_spec,
                           fstab_ent->fs_file, fstab_ent->fs_vfstype,
                           fstab_ent->fs_mntops);
-        
+
 	}
 
     lbox->setSorting(0);
