@@ -716,7 +716,6 @@ bool LockProcess::startLock()
         }
         kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
         greetPlugin = plugin;
-	KGlobal::locale()->insertCatalogue( "kdmgreet" );
 	mLocked = true;
 	DM().setLock( true );
 	return true;
