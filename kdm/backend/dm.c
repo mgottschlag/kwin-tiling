@@ -260,9 +260,9 @@ main (int argc, char **argv)
 	/* Clean up any old Authorization files */
 	char cmdbuf[1024];
 #ifndef MINIX
-	sprintf(cmdbuf, "/bin/rm -f %s/authdir/authfiles/A*", authDir);
+	sprintf(cmdbuf, "/bin/rm -f %s/authfiles/A*", authDir);
 #else
-	sprintf(cmdbuf, "/usr/bin/rm -f %s/authdir/authfiles/A*", authDir);
+	sprintf(cmdbuf, "/usr/bin/rm -f %s/authfiles/A*", authDir);
 #endif
 	system(cmdbuf);
     }

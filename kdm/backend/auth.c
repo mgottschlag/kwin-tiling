@@ -272,8 +272,7 @@ CleanUpFileName (char *src, char *dst, int len)
     *dst = '\0';
 }
 
-static char authdir1[] = "authdir";
-static char authdir2[] = "authfiles";
+static char authdir[] = "authfiles";
 
 #ifdef SYSV
 # define NAMELEN	14
@@ -295,34 +294,29 @@ MakeServerAuthFile (struct display *d)
 	free (d->authFile);
 	d->authFile = 0;
     }
-    CleanUpFileName (d->name, cleanname, NAMELEN - 8);
-    if (!(af = malloc ((unsigned) strlen (authDir) + 
-			sizeof (authdir1) + sizeof (authdir2) + 
-			strlen (cleanname) + 12)))
-	return FALSE;
-    sprintf (af, "%s/%s", authDir, authdir1);
-    r = stat(af, &statb);
+    r = stat(authDir, &statb);
     if (r == 0) {
 	if (statb.st_uid != 0)
-	    (void) chown(af, 0, statb.st_gid);
+	    (void) chown(authDir, 0, statb.st_gid);
 	if ((statb.st_mode & 0077) != 0)
-	    (void) chmod(af, statb.st_mode & 0700);
+	    (void) chmod(authDir, statb.st_mode & 0700);
     } else {
 	if (errno == ENOENT)
-	    r = mkdir(af, 0700);
-	if (r < 0) {
-	    free (af);
+	    r = mkdir(authDir, 0700);
+	if (r < 0)
 	    return FALSE;
-	}
     }
-    sprintf (af, "%s/%s/%s", authDir, authdir1, authdir2);
+    CleanUpFileName (d->name, cleanname, NAMELEN - 8);
+    if (!(af = malloc ((unsigned) strlen (authDir) + 
+			sizeof (authdir) + strlen (cleanname) + 10)))
+	return FALSE;
+    sprintf (af, "%s/%s", authDir, authdir);
     r = mkdir(af, 0700);
     if (r < 0  &&  errno != EEXIST) {
 	free (af);
 	return FALSE;
     }
-    sprintf (af, "%s/%s/%s/A%s-XXXXXX",
-	     authDir, authdir1, authdir2, cleanname);
+    sprintf (af, "%s/%s/A%s-XXXXXX", authDir, authdir, cleanname);
     (void) mktemp (af);
     d->authFile = af;
     return TRUE;
@@ -1145,7 +1139,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	for (i = 0; i < d->authNum; i++)
 	{
 	    if (auths[i]->name_length == 18 &&
-		!strncmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
+		!memcmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
 	    {
 		magicCookie = i;
 	    	if ((d->displayType & location) == Local)
