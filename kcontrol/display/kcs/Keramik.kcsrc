@@ -1,0 +1,22 @@
+[Color Scheme]
+Name=Keramik Blue
+activeBackground=209,218,228
+activeBlend=10,95,137
+activeForeground=0,0,0
+activeTitleBtnBg=243,246,249
+alternateBackground=238,246,255
+background=243,246,249
+buttonBackground=228,228,228
+buttonForeground=0,0,0
+contrast=7
+foreground=0,0,0
+inactiveBackground=233,237,241
+inactiveBlend=220,220,220
+inactiveForeground=156,156,156
+inactiveTitleBtnBg=243,246,249
+linkColor=0,0,192
+selectBackground=10,95,137
+selectForeground=255,255,255
+visitedLinkColor=128,0,128
+windowBackground=255,255,255
+windowForeground=0,0,0
