@@ -342,6 +342,10 @@ void TopLevel::categorySelected(QListViewItem *category)
       }
   }
   _dock->removeModule();
+  about_module->setText( i18n( "About the current Module" ) );
+  about_module->setIconSet( QIconSet() );
+  about_module->setEnabled( false );
+								   
   
   // insert the about widget
   if( _dock->baseWidget()->isA( "AboutWidget" ) )
