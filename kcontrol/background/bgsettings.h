@@ -13,12 +13,13 @@
 #define __BGSettings_h_Included__
 
 
+#include <qstringlist.h>
+
 template <class QString, class T> class QMap;
 class KStandardDirs;
 class KSimpleConfig;
 class KConfig;
 class QString;
-class QStringList;
 class QColor;
 class QImage;
 
