@@ -697,6 +697,7 @@ void Backgnd::slotAdvanced()
 
 void Backgnd::makeReadOnly(bool state)
 {
+    KBackgroundRenderer *r = m_Renderer[m_Desk];
     m_pDesktopLabel->setEnabled(state);
     m_pDesktopBox->setEnabled(state);
     m_monitorImage->setEnabled(state);
@@ -713,6 +714,7 @@ void Backgnd::makeReadOnly(bool state)
     m_pImageOrderBox->setEnabled( state );
     m_pWPChangeIntervalLbl->setEnabled( state );
     m_pWPModeLbl->setEnabled( state );
+
     m_pBalanceSlider->setEnabled( state );
     m_pWPModeBox->setEnabled( state );
     m_pBackgroundGrp->setEnabled( state );
@@ -720,12 +722,23 @@ void Backgnd::makeReadOnly(bool state)
     m_pProgramSetupBut->setEnabled( state );
     m_pPatternEditBut->setEnabled( state );
     m_pColor1Label->setEnabled( state );
-    m_pColor2But->setEnabled( state );
+    m_pColor2But->setEnabled( state);
     m_pColor2Label->setEnabled( state );
     m_pColor1But->setEnabled( state );
     m_pBlendModeLabel->setEnabled( state );
     m_pColorBlendBox->setEnabled( state );
     m_pColorRadio->setEnabled( state );
+
+    if ( state )
+    {
+        m_pPatternEditBut->setEnabled(r->backgroundMode() == KBackgroundSettings::Pattern);
+
+        m_pColor2But->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
+        m_pColor2Label->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
+        m_pBalanceSlider->setEnabled(r->backgroundMode()!=KBackgroundSettings::NoBlending);
+        m_pBalanceLbl->setEnabled(r->backgroundMode()!=KBackgroundSettings::NoBlending);
+        adjustMultiWP();
+    }
 }
 
 #include "backgnd.moc"
