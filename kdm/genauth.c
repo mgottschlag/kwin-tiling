@@ -52,9 +52,8 @@ extern Time_t time ();
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#ifdef HAVE_UNISTD_H
+
 #include <unistd.h>
-#endif
 
 #ifndef X_GETTIMEOFDAY
 /*WABA: According to the man page gettimeofday takes a second argument */

@@ -60,10 +60,8 @@ from the X Consortium.
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
 #else
-#ifdef HAVE_UNISTD_H
 # define _XOPEN_SOURCE
 # include <unistd.h>
-#endif
 #endif
 #ifdef HAVE_RPC_RPC_H
 # include <rpc/rpc.h>

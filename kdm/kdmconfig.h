@@ -29,9 +29,7 @@
 
 #include "kdm-config.h"
 
-#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>	// for BSD
-#endif
 #include <unistd.h>
 
 #include <qstring.h>

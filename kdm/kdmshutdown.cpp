@@ -30,10 +30,8 @@
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
 #else
-#ifdef HAVE_UNISTD_H
 # define _XOPEN_SOURCE
 # include <unistd.h>
-#endif
 #endif
 #ifdef USE_PAM
 extern "C" {

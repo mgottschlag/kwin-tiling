@@ -34,9 +34,7 @@
 
 #include <X11/Xmd.h>
 
-#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>	// for BSD
-#endif
 #include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
