@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:42 2001
+** Created: Wed Nov 21 00:35:23 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -42,14 +42,14 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
 
     TextLabel2_2_2 = new QLabel( this, "TextLabel2_2_2" );
     TextLabel2_2_2->setText( tr2i18n( "Configuration file:" ) );
-    TextLabel2_2_2->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    TextLabel2_2_2->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( TextLabel2_2_2, 2, 2, 0, 1 );
 
     itsFromText = new QLineEdit( this, "itsFromText" );
     itsFromText->setEnabled( FALSE );
     itsFromText->setText( tr2i18n( "8.0" ) );
-    itsFromText->setAlignment( int( QLineEdit::AlignAuto | QLineEdit::AlignRight ) );
+    itsFromText->setAlignment( int( QLineEdit::AlignRight ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( itsFromText, 3, 2 );
 
@@ -61,7 +61,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsToText = new QLineEdit( this, "itsToText" );
     itsToText->setEnabled( FALSE );
     itsToText->setText( tr2i18n( "15.0" ) );
-    itsToText->setAlignment( int( QLineEdit::AlignAuto | QLineEdit::AlignRight ) );
+    itsToText->setAlignment( int( QLineEdit::AlignRight ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( itsToText, 3, 4 );
 
@@ -75,7 +75,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsConfigFileText->setFrameShape( QLabel::Panel );
     itsConfigFileText->setFrameShadow( QLabel::Sunken );
     itsConfigFileText->setText( tr2i18n( "TextLabel2" ) );
-    itsConfigFileText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsConfigFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add( itsConfigFileText, tr2i18n( "This is the configuration file used by the XRender extension. Under Linux/XFree86 this file will usually be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide settings (usually only \"root\" can alter this file)." ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsConfigFileText, 2, 2, 2, 4 );

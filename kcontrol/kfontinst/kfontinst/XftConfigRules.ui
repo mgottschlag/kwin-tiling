@@ -71,7 +71,7 @@
             </property>
         </widget>
         <spacer row="1" column="0">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer2</cstring>
             </property>
             <property name="orientation">
@@ -160,7 +160,7 @@
                                 </property>
                             </widget>
                             <spacer row="1" column="0">
-                                <property name="name">
+                                <property name="name" stdset="0">
                                     <cstring>Spacer1</cstring>
                                 </property>
                                 <property name="orientation">
@@ -325,10 +325,10 @@ NOTE: Xft will *not* complain if any files from this list are not found.</string
     <tabstop>itsCancelButton</tabstop>
 </tabstops>
 <slots>
-    <slot>addButtonPressed()</slot>
-    <slot>itemSelected(QListViewItem *)</slot>
-    <slot>editButtonPressed()</slot>
-    <slot>removeButtonPressed()</slot>
+    <slot specifier="pure virtual">addButtonPressed()</slot>
+    <slot specifier="pure virtual">editButtonPressed()</slot>
+    <slot specifier="pure virtual">itemSelected(QListViewItem *)</slot>
+    <slot specifier="pure virtual">removeButtonPressed()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

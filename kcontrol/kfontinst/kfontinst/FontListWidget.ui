@@ -207,7 +207,7 @@
     </connection>
 </connections>
 <slots>
-    <slot>selectionChanged()</slot>
+    <slot specifier="pure virtual">selectionChanged()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

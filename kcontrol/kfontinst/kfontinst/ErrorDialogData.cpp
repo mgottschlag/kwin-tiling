@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'ErrorDialog.ui'
 **
-** Created: Wed Oct 24 21:21:37 2001
+** Created: Sat Nov 17 17:36:40 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
 {
     if ( !name )
 	setName( "ErrorDialog" );
-    resize( 297, 235 ); 
+    resize( 312, 239 ); 
     setCaption( tr2i18n( "Errors" ) );
     setSizeGripEnabled( FALSE );
     ErrorDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "ErrorDialogLayout"); 
@@ -48,8 +48,8 @@ CErrorDialogData::CErrorDialogData( QWidget* parent,  const char* name, bool mod
     ErrorDialogLayout->addLayout( Layout1, 1, 0 );
 
     itsGroupBox = new QGroupBox( this, "itsGroupBox" );
-    itsGroupBox->setTitle( tr2i18n( "12345678901234567890123456789012345678901234567890" ) );
     itsGroupBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, itsGroupBox->sizePolicy().hasHeightForWidth() ) );
+    itsGroupBox->setTitle( tr2i18n( "12345678901234567890123456789012345678901234567890" ) );
     itsGroupBox->setColumnLayout(0, Qt::Vertical );
     itsGroupBox->layout()->setSpacing( 6 );
     itsGroupBox->layout()->setMargin( 11 );

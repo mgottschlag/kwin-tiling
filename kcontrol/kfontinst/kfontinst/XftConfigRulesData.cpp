@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigRules.ui'
 **
-** Created: Wed Oct 24 21:21:41 2001
+** Created: Wed Nov 21 00:35:23 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -141,14 +141,14 @@ void CXftConfigRulesData::addButtonPressed()
     qWarning( "CXftConfigRulesData::addButtonPressed(): Not implemented yet!" );
 }
 
-void CXftConfigRulesData::itemSelected(QListViewItem *)
-{
-    qWarning( "CXftConfigRulesData::itemSelected(QListViewItem *): Not implemented yet!" );
-}
-
 void CXftConfigRulesData::editButtonPressed()
 {
     qWarning( "CXftConfigRulesData::editButtonPressed(): Not implemented yet!" );
+}
+
+void CXftConfigRulesData::itemSelected(QListViewItem *)
+{
+    qWarning( "CXftConfigRulesData::itemSelected(QListViewItem *): Not implemented yet!" );
 }
 
 void CXftConfigRulesData::removeButtonPressed()

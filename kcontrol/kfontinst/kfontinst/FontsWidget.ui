@@ -232,7 +232,7 @@
 <connections>
 </connections>
 <slots>
-    <slot>preview(const QString &amp;)</slot>
+    <slot specifier="pure virtual">preview(const QString &amp;)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

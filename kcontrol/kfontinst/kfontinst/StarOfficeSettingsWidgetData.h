@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'StarOfficeSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:39 2001
+** Created: Wed Nov 21 00:35:21 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

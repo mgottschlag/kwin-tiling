@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigIncludesWidget.ui'
 **
-** Created: Wed Oct 24 21:21:41 2001
+** Created: Wed Nov 21 00:35:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -39,6 +39,8 @@ CXftConfigIncludesWidgetData::CXftConfigIncludesWidgetData( QWidget* parent,  co
     itsGroupBoxLayout->setAlignment( Qt::AlignTop );
 
     itsList = new QListBox( itsGroupBox, "itsList" );
+    itsList->setFrameShape( QListBox::StyledPanel );
+    itsList->setFrameShadow( QListBox::Sunken );
 
     itsGroupBoxLayout->addMultiCellWidget( itsList, 0, 0, 0, 3 );
 
@@ -65,7 +67,7 @@ CXftConfigIncludesWidgetData::CXftConfigIncludesWidgetData( QWidget* parent,  co
     CXftConfigIncludesWidgetDataLayout->addWidget( itsGroupBox, 0, 0 );
 
     // signals and slots connections
-    connect( itsList, SIGNAL( selectionChanged(QListBoxItem*) ), this, SLOT( itemSelected(QListBoxItem *) ) );
+    connect( itsList, SIGNAL( selectionChanged(QListBoxItem*) ), this, SLOT( itemSelected(QListBoxItem*) ) );
     connect( itsAddButton, SIGNAL( clicked() ), this, SLOT( addPressed() ) );
     connect( itsRemoveButton, SIGNAL( clicked() ), this, SLOT( removePressed() ) );
     connect( itsEditButton, SIGNAL( clicked() ), this, SLOT( editPressed() ) );
@@ -89,14 +91,14 @@ void CXftConfigIncludesWidgetData::addPressed()
     qWarning( "CXftConfigIncludesWidgetData::addPressed(): Not implemented yet!" );
 }
 
-void CXftConfigIncludesWidgetData::itemSelected(QListBoxItem *)
-{
-    qWarning( "CXftConfigIncludesWidgetData::itemSelected(QListBoxItem *): Not implemented yet!" );
-}
-
 void CXftConfigIncludesWidgetData::editPressed()
 {
     qWarning( "CXftConfigIncludesWidgetData::editPressed(): Not implemented yet!" );
+}
+
+void CXftConfigIncludesWidgetData::itemSelected(QListBoxItem *)
+{
+    qWarning( "CXftConfigIncludesWidgetData::itemSelected(QListBoxItem *): Not implemented yet!" );
 }
 
 void CXftConfigIncludesWidgetData::removePressed()

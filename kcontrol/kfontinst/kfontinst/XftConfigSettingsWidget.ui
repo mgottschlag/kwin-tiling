@@ -76,7 +76,7 @@ This may be of use if you have an LCD screen.</string>
                 <string>Configuration file:</string>
             </property>
             <property name="alignment">
-                <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property name="wordwrap" stdset="0">
             </property>
@@ -92,7 +92,7 @@ This may be of use if you have an LCD screen.</string>
                 <string>8.0</string>
             </property>
             <property name="alignment">
-                <set>AlignAuto|AlignRight</set>
+                <set>AlignRight</set>
             </property>
             <property name="hAlign" stdset="0">
             </property>
@@ -116,7 +116,7 @@ This may be of use if you have an LCD screen.</string>
                 <string>15.0</string>
             </property>
             <property name="alignment">
-                <set>AlignAuto|AlignRight</set>
+                <set>AlignRight</set>
             </property>
             <property name="hAlign" stdset="0">
             </property>
@@ -151,7 +151,7 @@ This may be of use if you have an LCD screen.</string>
                 <string>TextLabel2</string>
             </property>
             <property name="alignment">
-                <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This is the configuration file used by the XRender extension. Under Linux/XFree86 this file will usually be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide settings (usually only "root" can alter this file).</string>
@@ -194,7 +194,7 @@ This may be of use if you have an LCD screen.</string>
             </property>
         </widget>
         <spacer row="5" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -222,7 +222,7 @@ This may be of use if you have an LCD screen.</string>
             </property>
         </widget>
         <spacer row="6" column="0" rowspan="1" colspan="3">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer4</cstring>
             </property>
             <property name="orientation">
@@ -261,7 +261,7 @@ This may be of use if you have an LCD screen.</string>
             </property>
         </widget>
         <spacer row="8" column="4">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer3</cstring>
             </property>
             <property name="orientation">
@@ -332,13 +332,13 @@ This may be of use if you have an LCD screen.</string>
     <tabstop>itsAdvancedButton</tabstop>
 </tabstops>
 <slots>
-    <slot>advancedButtonPressed()</slot>
-    <slot>excludeRangeChecked(bool)</slot>
-    <slot>fileButtonPressed()</slot>
-    <slot>fromChanged(const QString &amp;)</slot>
-    <slot>saveButtonPressed()</slot>
-    <slot>toChanged(const QString &amp;)</slot>
-    <slot>useSubPixelChecked(bool)</slot>
+    <slot specifier="pure virtual">advancedButtonPressed()</slot>
+    <slot specifier="pure virtual">excludeRangeChecked(bool)</slot>
+    <slot specifier="pure virtual">fileButtonPressed()</slot>
+    <slot specifier="pure virtual">fromChanged(const QString &amp;)</slot>
+    <slot specifier="pure virtual">saveButtonPressed()</slot>
+    <slot specifier="pure virtual">toChanged(const QString &amp;)</slot>
+    <slot specifier="pure virtual">useSubPixelChecked(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

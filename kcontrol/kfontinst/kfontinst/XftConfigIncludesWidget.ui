@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CXftConfigIncludesWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ///////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CXftConfigIncludesWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -42,111 +39,95 @@
             <height>218</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
-    <property>
-        <name>layoutSpacing</name>
+    <property name="layoutSpacing" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>0</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>0</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0">
+            <property name="name">
                 <cstring>itsGroupBox</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>"Include":</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
-                    <class>QListBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QListBox" row="0" column="0" rowspan="1" colspan="4">
+                    <property name="name">
                         <cstring>itsList</cstring>
                     </property>
+                    <property name="frameShape">
+                        <enum>StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
                 </widget>
-                <widget row="1"  column="3" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="3">
+                    <property name="name">
                         <cstring>itsRemoveButton</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Remove</string>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="2">
+                    <property name="name">
                         <cstring>itsEditButton</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Edit...</string>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="1">
+                    <property name="name">
                         <cstring>itsAddButton</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Add...</string>
                     </property>
                 </widget>
-                <spacer row="1"  column="0" >
-                    <property>
-                        <name>name</name>
+                <spacer row="1" column="0">
+                    <property name="name" stdset="0">
                         <cstring>Spacer1_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
@@ -162,7 +143,7 @@
         <sender>itsList</sender>
         <signal>selectionChanged(QListBoxItem*)</signal>
         <receiver>CXftConfigIncludesWidgetData</receiver>
-        <slot>itemSelected(QListBoxItem *)</slot>
+        <slot>itemSelected(QListBoxItem*)</slot>
     </connection>
     <connection>
         <sender>itsAddButton</sender>
@@ -182,10 +163,6 @@
         <receiver>CXftConfigIncludesWidgetData</receiver>
         <slot>editPressed()</slot>
     </connection>
-    <slot access="public">addPressed()</slot>
-    <slot access="public">itemSelected(QListBoxItem *)</slot>
-    <slot access="public">editPressed()</slot>
-    <slot access="public">removePressed()</slot>
 </connections>
 <tabstops>
     <tabstop>itsList</tabstop>
@@ -193,4 +170,11 @@
     <tabstop>itsEditButton</tabstop>
     <tabstop>itsRemoveButton</tabstop>
 </tabstops>
+<slots>
+    <slot specifier="pure virtual">addPressed()</slot>
+    <slot specifier="pure virtual">editPressed()</slot>
+    <slot specifier="pure virtual">itemSelected(QListBoxItem *)</slot>
+    <slot specifier="pure virtual">removePressed()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'InstUninstSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:38 2001
+** Created: Wed Nov 21 00:35:20 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -77,7 +77,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     itsUninstallDirText->setFrameShape( QLabel::Panel );
     itsUninstallDirText->setFrameShadow( QLabel::Sunken );
     itsUninstallDirText->setText( tr2i18n( "TextLabel4" ) );
-    itsUninstallDirText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    itsUninstallDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     ButtonGroup1Layout->addWidget( itsUninstallDirText, 0, 2 );
 

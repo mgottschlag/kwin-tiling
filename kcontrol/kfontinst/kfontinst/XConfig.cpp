@@ -673,7 +673,7 @@ bool CXConfig::writeXfsConfig()
 }
 
 #ifdef HAVE_XFT
-bool find(const QStringList &list, const QString &val)
+static bool find(const QStringList &list, const QString &val)
 {
     QStringList::Iterator it;
 

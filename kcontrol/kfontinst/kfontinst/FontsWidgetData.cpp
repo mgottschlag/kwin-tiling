@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Mon Nov 5 00:26:22 2001
+** Created: Wed Nov 21 00:35:19 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

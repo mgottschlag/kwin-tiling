@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigEditor.ui'
 **
-** Created: Wed Oct 24 21:21:40 2001
+** Created: Wed Nov 21 00:35:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,7 +32,7 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
 {
     if ( !name )
 	setName( "CXftConfigEditorData" );
-    resize( 553, 286 ); 
+    resize( 553, 297 ); 
     setCaption( tr2i18n( "XftConfig Rule Editor" ) );
     CXftConfigEditorDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CXftConfigEditorDataLayout"); 
 
@@ -51,12 +51,12 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     Frame10Layout = new QGridLayout( Frame10, 1, 1, 0, 6, "Frame10Layout"); 
 
     itsMatchAddButton = new QPushButton( Frame10, "itsMatchAddButton" );
-    itsMatchAddButton->setText( tr2i18n( "Add" ) );
+    itsMatchAddButton->setText( tr2i18n( "&Add" ) );
 
     Frame10Layout->addWidget( itsMatchAddButton, 0, 0 );
 
     itsMatchRemoveButton = new QPushButton( Frame10, "itsMatchRemoveButton" );
-    itsMatchRemoveButton->setText( tr2i18n( "Remove" ) );
+    itsMatchRemoveButton->setText( tr2i18n( "&Remove" ) );
 
     Frame10Layout->addWidget( itsMatchRemoveButton, 1, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
@@ -176,15 +176,15 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     CXftConfigEditorDataLayout->addMultiCellWidget( GroupBox10_2, 1, 1, 0, 2 );
 
     // signals and slots connections
-    connect( itsMatchFieldNameCombo, SIGNAL( activated(const QString&) ), this, SLOT( matchFieldSelected(const QString &) ) );
+    connect( itsMatchFieldNameCombo, SIGNAL( activated(const QString&) ), this, SLOT( matchFieldSelected(const QString&) ) );
     connect( itsOkButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
     connect( PushButton15, SIGNAL( clicked() ), this, SLOT( reject() ) );
-    connect( itsEditFieldNameCombo, SIGNAL( activated(const QString&) ), this, SLOT( editFieldSelected(const QString &) ) );
-    connect( itsEditCombo, SIGNAL( activated(const QString&) ), this, SLOT( editCombo(const QString &) ) );
-    connect( itsMatchCombo, SIGNAL( activated(const QString&) ), this, SLOT( matchCombo(const QString &) ) );
+    connect( itsEditFieldNameCombo, SIGNAL( activated(const QString&) ), this, SLOT( editFieldSelected(const QString&) ) );
+    connect( itsEditCombo, SIGNAL( activated(const QString&) ), this, SLOT( editCombo(const QString&) ) );
+    connect( itsMatchCombo, SIGNAL( activated(const QString&) ), this, SLOT( matchCombo(const QString&) ) );
     connect( itsMatchAddButton, SIGNAL( clicked() ), this, SLOT( addMatch() ) );
     connect( itsMatchRemoveButton, SIGNAL( clicked() ), this, SLOT( removeMatch() ) );
-    connect( itsMatchList, SIGNAL( selectionChanged(QListBoxItem*) ), this, SLOT( matchSelected(QListBoxItem *) ) );
+    connect( itsMatchList, SIGNAL( selectionChanged(QListBoxItem*) ), this, SLOT( matchSelected(QListBoxItem*) ) );
 }
 
 /*  

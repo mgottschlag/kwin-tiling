@@ -115,7 +115,7 @@ This mode also allows you to install Speedo and bitmap fonts.</string>
             </grid>
         </widget>
         <spacer row="1" column="0">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1_2_2_2</cstring>
             </property>
             <property name="orientation">
@@ -132,7 +132,7 @@ This mode also allows you to install Speedo and bitmap fonts.</string>
             </property>
         </spacer>
         <spacer row="5" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer3_2</cstring>
             </property>
             <property name="orientation">
@@ -168,7 +168,7 @@ This mode also allows you to install Speedo and bitmap fonts.</string>
             </property>
         </widget>
         <spacer row="3" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1_2_2_2_2</cstring>
             </property>
             <property name="orientation">
@@ -263,10 +263,10 @@ This mode also allows you to install Speedo and bitmap fonts.</string>
     <tabstop>itsCustomText</tabstop>
 </tabstops>
 <slots>
-    <slot>advancedSelected(bool)</slot>
-    <slot>customStrChecked(bool)</slot>
-    <slot>textChanged(const QString &amp;)</slot>
-    <slot>topAndBottomSelected(bool)</slot>
+    <slot specifier="pure virtual">advancedSelected(bool)</slot>
+    <slot specifier="pure virtual">customStrChecked(bool)</slot>
+    <slot specifier="pure virtual">textChanged(const QString &amp;)</slot>
+    <slot specifier="pure virtual">topAndBottomSelected(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -214,7 +214,7 @@
 <connections>
 </connections>
 <slots>
-    <slot>tabChanged(QWidget *)</slot>
+    <slot specifier="pure virtual">tabChanged(QWidget *)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

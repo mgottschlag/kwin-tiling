@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DirSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:36 2001
+** Created: Wed Nov 21 00:35:18 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -127,7 +127,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsEncodingsDirText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     QWhatsThis::add( itsEncodingsDirText, tr2i18n( "This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).\n"
 "\n"
-"This folder is normaly a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:\n"
+"This folder is normally a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:\n"
 "\n"
 "    /usr/X11R6/lib/X11/fonts/encodings/" ) );
 

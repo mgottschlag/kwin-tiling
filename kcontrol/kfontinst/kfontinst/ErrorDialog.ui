@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CErrorDialogData</class>
 <comment>
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,168 +29,136 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 </comment>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>ErrorDialog</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>297</width>
-            <height>235</height>
+            <width>312</width>
+            <height>239</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Errors</string>
     </property>
-    <property stdset="1">
-        <name>sizeGripEnabled</name>
+    <property name="sizeGripEnabled">
         <bool>false</bool>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="1"  column="0" >
-            <class>QLayoutWidget</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLayoutWidget" row="1" column="0">
+            <property name="name">
                 <cstring>Layout1</cstring>
             </property>
             <hbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>0</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
                 <spacer>
-                    <property>
-                        <name>name</name>
+                    <property name="name" stdset="0">
                         <cstring>Horizontal Spacing2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget>
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton">
+                    <property name="name">
                         <cstring>buttonOk</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;OK</string>
                     </property>
-                    <property stdset="1">
-                        <name>autoDefault</name>
+                    <property name="autoDefault">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>default</name>
+                    <property name="default">
                         <bool>true</bool>
                     </property>
                 </widget>
             </hbox>
         </widget>
-        <widget row="0"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0">
+            <property name="name">
                 <cstring>itsGroupBox</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>12345678901234567890123456789012345678901234567890</string>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>3</hsizetype>
                     <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
+            <property name="title">
+                <string>12345678901234567890123456789012345678901234567890</string>
+            </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QListView</class>
+                <widget class="QListView" row="0" column="0">
                     <column>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Item</string>
                         </property>
-                        <property>
-                            <name>clickable</name>
+                        <property name="clickable">
                             <bool>false</bool>
                         </property>
-                        <property>
-                            <name>resizeable</name>
+                        <property name="resizeable">
                             <bool>true</bool>
                         </property>
                     </column>
                     <column>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Reason</string>
                         </property>
-                        <property>
-                            <name>clickable</name>
+                        <property name="clickable">
                             <bool>false</bool>
                         </property>
-                        <property>
-                            <name>resizeable</name>
+                        <property name="resizeable">
                             <bool>true</bool>
                         </property>
                     </column>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>itsListView</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>selectionMode</name>
+                    <property name="selectionMode">
                         <enum>NoSelection</enum>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
+                    <property name="whatsThis" stdset="0">
                         <string>Lists any errors associated with a font file.</string>
                     </property>
                 </widget>
@@ -206,4 +174,5 @@
         <slot>accept()</slot>
     </connection>
 </connections>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

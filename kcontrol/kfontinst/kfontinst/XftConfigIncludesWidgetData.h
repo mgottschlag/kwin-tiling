@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigIncludesWidget.ui'
 **
-** Created: Wed Oct 24 21:21:41 2001
+** Created: Wed Nov 21 00:35:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -36,8 +36,8 @@ public:
 
 public slots:
     virtual void addPressed();
-    virtual void itemSelected(QListBoxItem *);
     virtual void editPressed();
+    virtual void itemSelected(QListBoxItem *);
     virtual void removePressed();
 
 protected:

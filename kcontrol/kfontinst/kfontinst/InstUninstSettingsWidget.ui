@@ -61,7 +61,7 @@
             <number>6</number>
         </property>
         <spacer row="3" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer5</cstring>
             </property>
             <property name="orientation">
@@ -181,7 +181,7 @@ Selecting this option will cause the installer to automatically correct any brok
                         <string>TextLabel4</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="wordwrap" stdset="0">
                     </property>
@@ -189,7 +189,7 @@ Selecting this option will cause the installer to automatically correct any brok
             </grid>
         </widget>
         <spacer row="1" column="0">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1_2_2_2</cstring>
             </property>
             <property name="orientation">
@@ -226,10 +226,10 @@ Selecting this option will cause the installer to automatically correct any brok
     <tabstop>itsUninstallDirButton</tabstop>
 </tabstops>
 <slots>
-    <slot>fixTtfNamesSelected(bool)</slot>
-    <slot>moveToSelected(bool)</slot>
-    <slot>processAfmsSelected(bool)</slot>
-    <slot>uninstallDirButtonPressed()</slot>
+    <slot specifier="pure virtual">fixTtfNamesSelected(bool)</slot>
+    <slot specifier="pure virtual">moveToSelected(bool)</slot>
+    <slot specifier="pure virtual">processAfmsSelected(bool)</slot>
+    <slot specifier="pure virtual">uninstallDirButtonPressed()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

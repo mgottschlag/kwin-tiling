@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'StarOfficeSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:39 2001
+** Created: Wed Nov 21 00:35:21 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -103,7 +103,7 @@ CStarOfficeSettingsWidgetData::CStarOfficeSettingsWidgetData( QWidget* parent,  
     connect( itsCheck, SIGNAL( toggled(bool) ), itsPpdCombo, SLOT( setEnabled(bool) ) );
     connect( itsCheck, SIGNAL( toggled(bool) ), this, SLOT( configureSelected(bool) ) );
     connect( itsDirButton, SIGNAL( clicked() ), this, SLOT( dirButtonPressed() ) );
-    connect( itsPpdCombo, SIGNAL( activated(const QString&) ), this, SLOT( ppdSelected(const QString &) ) );
+    connect( itsPpdCombo, SIGNAL( activated(const QString&) ), this, SLOT( ppdSelected(const QString&) ) );
 }
 
 /*  
