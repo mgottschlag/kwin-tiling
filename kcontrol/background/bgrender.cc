@@ -456,7 +456,7 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
     // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
     if (d.isValid()) {
         QPixmap wp_pixmap;
-        if( useShm()) {
+        if( useShm() && !wp.hasAlphaBuffer()) {
             KPixmapIO io;
             wp_pixmap = io.convertToPixmap( wp );
         }
