@@ -25,7 +25,7 @@
 
 static const char *appName = "klock";
 
-static const char *description = i18n("KDE Screen Lock / Saver");
+static const char *description = I18N_NOOP("KDE Screen Lock / Saver");
 
 static const char *version = "2.0.0";
 
