@@ -1,0 +1,19 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/keys
+Icon=keyboard
+Type=Application
+Init=kcmkeys -init
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=keys
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Key bindings
+Name[de]=Tastenbelegungen
+
+Comment=Configuration of keybindings
+Comment[de]=Konfiguration der Tastenbelegungen
+
+Keywords=Keys,Global key bindings,Key sheme,Key bindings
+Keywords[de]=tasten,tastenzuordnung,tastenkürzel,tastenschema

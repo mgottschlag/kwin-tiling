@@ -1,0 +1,36 @@
+[Desktop Entry]
+Exec=kcmshell Desktop/odbc
+Icon=odbc
+Type=Application
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=odbc
+X-KDE-FactoryName=odbc
+X-KDE-RootOnly=true
+X-KDE-ControlModuleType=System
+X-KDE-HideFromPanel=true
+
+Name=ODBC
+
+Comment=ODBC database interface configuration
+Comment[ca]=Configuració de l'interfície de base de dades ODBC
+Comment[cs]=Nastavení ODBC
+Comment[de]=Einrichtung der ODBC-Schnittstelle
+Comment[eo]=agordo de la datumbaza interfaco ODBC
+Comment[fi]=ODBC-tietokantojen asetukset
+Comment[fr]=Configuration de l'interface de base de données ODBC
+Comment[hu]=ODBC adatbáziskezelő illesztő beállítás
+Comment[it]=Configurazione dell'interfaccia database ODBC
+Comment[ja]=ODBCデータベースインターフェースの設定
+Comment[no]=Konfigurasjon av ODBC-databaseinterface
+Comment[no_NY]=Oppsett av ODBC-databasemiljøet
+Comment[pt]=Configuração da interface com bases de dados ODBC
+Comment[ro]=Configurează interfaţa de baze de date ODBC
+Comment[sl]=Nastavitev vmesnika za zbirko ODBC
+Comment[ta]=ODBC ¾Ã×¾Çõ ­¨¼Ó¸ ÅÊÅ¨ÁôÒ
+
+Keywords=ODBC,Database
+Keywords[hu]=ODBC,adatbázis
+Keywords[no_NY]=ODBC,database
+Keywords[pt]=ODBC,base de dados
+Keywords[ro]=ODBC,bază de date

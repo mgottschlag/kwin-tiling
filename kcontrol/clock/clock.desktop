@@ -1,0 +1,41 @@
+[Desktop Entry]
+Type=Application
+Exec=kdesu kcmshell System/clock
+Icon=clock
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=clock
+X-KDE-RootOnly=true
+X-KDE-ControlModuleType=System
+X-KDE-HideFromPanel=true
+
+Name=Date & Time
+Name[ca]=Dia i hora
+Name[de]=Datum & Zeit
+Name[he]=העשו ךיראת
+Name[hu]=Dátum és idő
+Name[it]=Data e Ora
+Name[no]=Dato og klokke
+Name[no_NY]=Dato & Tid
+Name[pt]=Data e Hora
+Name[sl]=Datum & ura
+
+Comment=Date and time settings
+Comment[ca]=Arranjament del dia i l'hora
+Comment[de]=Einstellungen für Datum und Zeit
+Comment[he]=העשו ךיראת תורדגה
+Comment[hu]=A dátum és az idő beállításai
+Comment[it]=Impostazione della data e dell ora
+Comment[no]=Dato- og klokkeinnstillinger
+Comment[no_NY]=Innstilling av dato og tid
+Comment[pt]=Configuração da data e hora
+Comment[sl]=Nastavitve datuma in ure
+
+Keywords=date,time
+Keywords[ca]=dia,hora
+Keywords[de]=datum,zeit
+Keywords[hu]=dátum,idő
+Keywords[no]=dato,tid,klokke
+Keywords[no_NY]=dato,tid
+Keywords[pt]=data,hora
+Keywords[sl]=datum,ura,�as

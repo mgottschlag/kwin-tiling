@@ -42,3 +42,5 @@ messages:
 	$(XGETTEXT) \
 	$(libkcm_odbc_la_SOURCES) -o $(podir)/kcmodbc.pot
 
+data_DATA = odbc.desktop
+datadir = $(kde_appsdir)/Settings/System
