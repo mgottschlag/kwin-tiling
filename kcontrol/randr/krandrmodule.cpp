@@ -59,7 +59,7 @@ void KRandRModule::performApplyOnStartup()
 	{
 		// Load settings and apply appropriate config
 		RandRDisplay display;
-		if (display.loadDisplay(config))
+		if (display.isValid() && display.loadDisplay(config))
 			display.applyProposed(false);
 	}
 }
