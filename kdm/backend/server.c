@@ -1,5 +1,4 @@
 /* $TOG: server.c /main/21 1998/02/09 13:56:13 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

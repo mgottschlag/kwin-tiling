@@ -1,7 +1,6 @@
     /*
 
     xconsole widget for KDM
-    $Id$
 
     Copyright (C) 2002 Oswald Buddenhagen <ossi@kde.org>
 

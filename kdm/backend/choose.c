@@ -1,6 +1,5 @@
 /*
  * $TOG: choose.c /main/18 1998/02/09 13:54:39 kaleb $
- * $Id$
  *
 Copyright 1990, 1998  The Open Group
 

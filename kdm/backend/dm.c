@@ -1,5 +1,4 @@
 /* $TOG: dm.c /main/73 1998/04/09 15:12:03 barstow $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

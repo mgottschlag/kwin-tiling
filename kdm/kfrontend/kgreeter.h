@@ -1,7 +1,6 @@
     /*
 
     Greeter module for xdm
-    $Id$
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>

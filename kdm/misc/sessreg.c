@@ -1,6 +1,5 @@
 /*
  * $TOG: sessreg.c /main/19 1998/02/09 13:56:23 kaleb $
- * $Id$
  *
  * Copyright 1990, 1998  The Open Group
  *

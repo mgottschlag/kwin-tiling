@@ -1,5 +1,4 @@
 /* $TOG: genauth.c /main/24 1998/02/09 13:55:23 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

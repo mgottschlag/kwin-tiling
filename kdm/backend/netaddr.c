@@ -1,5 +1,4 @@
 /* $TOG: netaddr.c /main/9 1998/02/09 13:55:43 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1991, 1998  The Open Group

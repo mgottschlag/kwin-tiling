@@ -1,5 +1,4 @@
 /* $TOG: dm.h /main/67 1998/02/09 13:55:01 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

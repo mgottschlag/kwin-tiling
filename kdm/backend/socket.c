@@ -1,5 +1,4 @@
 /* $TOG: socket.c /main/37 1998/02/09 13:56:31 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

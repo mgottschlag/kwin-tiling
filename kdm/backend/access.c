@@ -1,6 +1,5 @@
 /*
  * $TOG: access.c /main/17 1998/02/09 13:54:13 kaleb $
- * $Id$
  *
 Copyright 1990, 1998  The Open Group
 

@@ -1,5 +1,4 @@
 /* $TOG: reset.c /main/12 1998/02/09 13:56:00 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

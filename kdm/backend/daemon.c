@@ -1,5 +1,4 @@
 /* $TOG: daemon.c /main/17 1998/02/09 13:54:47 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

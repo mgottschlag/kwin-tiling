@@ -1,5 +1,4 @@
 /* $TOG: xdmcp.c /main/18 1998/06/04 11:50:41 barstow $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

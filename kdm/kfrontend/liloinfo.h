@@ -1,7 +1,6 @@
     /*
 
     Front-end to Lilo's boot options
-    $Id$
 
     Copyright (C) 1999 Stefan van den Oord <oord@cs.utwente.nl>
     Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>

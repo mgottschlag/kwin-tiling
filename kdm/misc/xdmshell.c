@@ -1,5 +1,4 @@
 /* $TOG: xdmshell.c /main/17 1998/02/09 13:56:54 kaleb $ */
-/* $Id$ */
 /*
  * xdmshell - simple program for running xdm from login
  *

@@ -1,5 +1,4 @@
 /* $TOG: rpcauth.c /main/5 1998/02/09 13:56:09 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

@@ -1,5 +1,4 @@
 /* $TOG: greet.h /main/5 1998/02/09 13:55:28 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1994, 1998  The Open Group

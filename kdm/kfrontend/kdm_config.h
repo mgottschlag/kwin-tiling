@@ -2,8 +2,6 @@
 
     Config option definitions private to KDM
 
-    $Id$
-
     Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
 

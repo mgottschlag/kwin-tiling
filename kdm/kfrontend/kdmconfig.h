@@ -1,7 +1,6 @@
     /*
 
     Configuration for kdm. Class KDMConfig
-    $Id$
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
     Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>

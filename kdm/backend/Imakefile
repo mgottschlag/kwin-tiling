@@ -1,6 +1,5 @@
 XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:54:14 cpqbld Exp $
 XCOMM $XFree86: xc/programs/xdm/Imakefile,v 3.43 2001/03/06 17:31:39 dawes Exp $
-XCOMM $Id$
 
 /* well, we have no subdirs ...
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'

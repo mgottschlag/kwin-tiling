@@ -1,5 +1,4 @@
 /* $TOG: auth.c /main/64 1998/02/26 10:02:22 barstow $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

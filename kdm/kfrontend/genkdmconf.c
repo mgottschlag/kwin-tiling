@@ -3,8 +3,6 @@
     Create a suitable configuration for kdm taking old xdm/kdm 
     installations into account
 
-    $Id$
-
     Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
 
 

@@ -1,5 +1,4 @@
 /* $TOG: policy.c /main/13 1998/02/09 13:55:49 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

@@ -1,6 +1,5 @@
 /*
  * $TOG: protodpy.c /main/16 1998/02/09 13:55:55 kaleb $
- * $Id$
  *
 Copyright 1989, 1998  The Open Group
 

@@ -1,5 +1,4 @@
 /* $TOG: util.c /main/19 1998/02/09 13:56:40 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1989, 1998  The Open Group

@@ -1,5 +1,4 @@
 /* $TOG: verify.c /main/37 1998/02/11 10:00:45 kaleb $ */
-/* $Id$ */
 /*
 
 Copyright 1988, 1998  The Open Group

@@ -1,7 +1,6 @@
     /*
 
     chooser widget for KDM
-    $Id$
 
     Copyright (C) 2002 Oswald Buddenhagen <ossi@kde.org>
     based on the chooser (C) 1999 by Harald Hoyer <Harald.Hoyer@RedHat.de>
