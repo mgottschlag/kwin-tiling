@@ -81,7 +81,8 @@ KBlobSaver::KBlobSaver
 	if (QPixmap::defaultDepth() < 8)
 	{
 		XSetForeground(qt_xdisplay(), mGc, white.pixel());
-		XDrawString(qt_xdisplay(), mDrawable, mGc, mWidth/2, mHeight/2, msg, strlen(msg));
+		XDrawString(qt_xdisplay(), mDrawable, mGc, mWidth/2, mHeight/2,
+			    msg.local8Bit(), msg.length());
 		return;
 	}
 

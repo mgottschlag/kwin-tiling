@@ -75,7 +75,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 {
 	saver = NULL;
 	speed = 50;
-	
+
 	readSettings();
 
 	QString str;
@@ -90,7 +90,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QHBoxLayout *tl1 = new QHBoxLayout;
 	tl->addLayout(tl1);
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
-	tl1->addLayout(tl11);	
+	tl1->addLayout(tl11);
 
 	QGroupBox *group = new QGroupBox( i18n("Font"), this );
 	QGridLayout *gl = new QGridLayout(group, 6, 2, 5);
@@ -114,7 +114,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 			SLOT( slotFamily( const QString& ) ) );
 
 	label = new QLabel( i18n("Size:"), group );
-	gl->addWidget(label, 2, 0);	
+	gl->addWidget(label, 2, 0);
 
 	combo = new QComboBox( FALSE, group );
 	i = 0;
@@ -131,7 +131,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	gl->addWidget(combo, 2, 1);
 	connect( combo, SIGNAL( activated( int ) ), SLOT( slotSize( int ) ) );
 
-	QCheckBox *cb = new QCheckBox( i18n("Bold"), 
+	QCheckBox *cb = new QCheckBox( i18n("Bold"),
 				       group );
 	cb->setChecked( bold );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotBold( bool ) ) );
@@ -187,7 +187,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	fixed_height(ed);
 	tl2->addWidget(ed);
 	ed->setText( message );
-	connect( ed, SIGNAL( textChanged( const QString & ) ), 
+	connect( ed, SIGNAL( textChanged( const QString & ) ),
 			SLOT( slotMessage( const QString &  ) ) );
 
    QCheckBox *timeCb=new QCheckBox( i18n("Show current time"),this);
@@ -196,12 +196,12 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
    connect(timeCb,SIGNAL(toggled(bool)),this,SLOT(slotTimeToggled(bool)));
    timeCb->setChecked(showTime);
 
-   KButtonBox *bbox = new KButtonBox(this);	
+   KButtonBox *bbox = new KButtonBox(this);
 	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	button = bbox->addButton(i18n("Cancel"));
@@ -227,9 +227,9 @@ void KBannerSetup::readSettings()
    message=config->readEntry("Message","KDE");
 
    showTime=config->readBoolEntry("ShowTime",FALSE);
-	
+
    fontFamily=config->readEntry("FontFamily","Times");
-	
+
    fontSize=config->readNumEntry("FontSize",48);
 
    fontColor.setNamedColor(config->readEntry("FontColor","red"));
@@ -268,7 +268,7 @@ void KBannerSetup::slotCyclingColor(bool on)
 {
    colorPush->setEnabled(!on);
    cyclingColor=on;
-   
+
    if (saver) saver->setCyclingColor( cyclingColor );
 }
 
@@ -409,21 +409,21 @@ void KBannerSaver::setMessage( const QString &msg )
 {
    showTime=FALSE;
 	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
-	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message,
-                 message.length() );
+   XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos,
+		message.local8Bit(), message.length() );
 
 	message = msg;
-	fwidth = XTextWidth( fontInfo, message, message.length() );
+   fwidth = XTextWidth( fontInfo, message.local8Bit(), message.length() );
 }
 
 void KBannerSaver::setTimeDisplay()
 {
 	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
-	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message,
-                 message.length() );
+   XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos,
+	       message.local8Bit(), message.length() );
    showTime=TRUE;
    message = QTime::currentTime().toString();
-	fwidth = XTextWidth( fontInfo, message, message.length() );
+   fwidth = XTextWidth( fontInfo, message.local8Bit(), message.length() );
 }
 
 // read settings from config file
@@ -443,9 +443,9 @@ void KBannerSaver::readSettings()
    message=config->readEntry("Message","KDE");
 
    showTime=config->readBoolEntry("ShowTime",FALSE);
-	
+
    fontFamily=config->readEntry("FontFamily","Times");
-	
+
    fontSize=config->readNumEntry("FontSize",48);
 
    fontColor.setNamedColor(config->readEntry("FontColor","red"));
@@ -454,7 +454,7 @@ void KBannerSaver::readSettings()
 
    bold=config->readBoolEntry("FontBold",FALSE);
    italic=config->readBoolEntry("FontItalic",FALSE);
-   
+
     if ( cyclingColor )
    {
       currentHue=0;
@@ -471,7 +471,7 @@ void KBannerSaver::initialize()
 	int size;
 	char ichar;
 
-	if ( !stricmp( fontFamily, "Helvetica" ) )
+	if ( !stricmp( fontFamily.local8Bit(), "Helvetica" ) )
 		ichar = 'o';
 	else
 		ichar = 'i';
@@ -483,11 +483,11 @@ void KBannerSaver::initialize()
 	  .arg(bold ? "bold" : "medium")
 	  .arg(italic ? ichar : 'r')
 	  .arg(size);
-	fontInfo = XLoadQueryFont( qt_xdisplay(), font );
+	fontInfo = XLoadQueryFont( qt_xdisplay(), font.local8Bit() );
 
 	XSetFont( qt_xdisplay(), mGc, fontInfo->fid );
 
-	fwidth = XTextWidth( fontInfo, message, message.length() );
+	fwidth = XTextWidth( fontInfo, message.local8Bit(), message.length() );
 
 	xpos = mWidth;
 	ypos = mHeight / 2;
@@ -505,7 +505,8 @@ void KBannerSaver::slotTimeout()
       fontColor.setHsv(currentHue,SATURATION,VALUE);
    };
 	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
-	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
+	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos,
+		     message.local8Bit(), message.length() );
 
 	xpos -= step;
 	if ( xpos < -fwidth-(int)mWidth/2 )
@@ -514,7 +515,8 @@ void KBannerSaver::slotTimeout()
 	XSetForeground( qt_xdisplay(), mGc, fontColor.pixel() );
 
    if (showTime) message = KGlobal::locale()->formatTime(QTime::currentTime(), true);
-   XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
+   XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos,
+		message.local8Bit(), message.length() );
 }
 
 void KBannerSaver::blank()
