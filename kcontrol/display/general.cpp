@@ -126,6 +126,7 @@ extern "C" {
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
         QByteArray properties;
         QDataStream d(properties, IO_WriteOnly);
+	d.setVersion( 3 );	// Qt2 apps need this.
         d << kapp->palette() << KGlobalSettings::generalFont();
         Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
 
