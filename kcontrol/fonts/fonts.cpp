@@ -74,7 +74,6 @@ FontUseItem::FontUseItem(
     fixed(f)
 {
   readFont();
-  updateLabel();
 }
 
 QString FontUseItem::fontString(QFont rFont)
@@ -114,6 +113,7 @@ void FontUseItem::readFont()
     KGlobal::charsets()->setQFont(_font, KGlobal::locale()->charset());
   }
   if (deleteme) delete config;
+  updateLabel();
 }
 
 void FontUseItem::writeFont()
@@ -365,8 +365,7 @@ void KFonts::save()
 
 int KFonts::buttons()
 {
-  return KCModule::Help | KCModule::Default | KCModule::Reset |
-    KCModule::Cancel | KCModule::Apply | KCModule::Ok;
+  return KCModule::Help | KCModule::Default | KCModule::Apply;
 }
 
 // vim:ts=2:sw=2:tw=78
