@@ -16,6 +16,10 @@ if include_kcontrol_usbview
 USBVIEW_SUBDIR=usbview
 endif
 
+if include_kcontrol_view1394
+VIEW1394_SUBDIR=view1394
+endif
+
 # 'colors' and 'fonts' should come after 'krdb'
 SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	kicker locale launch keys kio konq thememgr style kded \
@@ -24,4 +28,4 @@ SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	icons screensaver taskbar crypto privacy smserver \
 	konsole spellchecking fileshare $(USBVIEW_SUBDIR) \
 	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) \
-	componentchooser performance xinerama
+	componentchooser performance xinerama $(VIEW1394_SUBDIR)
