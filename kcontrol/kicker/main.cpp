@@ -22,6 +22,7 @@
 #include <kdirwatch.h>
 #include <kstandarddirs.h>
 #include <kimageio.h>
+#include <klistview.h>
 
 #include <dcopclient.h>
 
@@ -30,8 +31,6 @@
 #include "positiontab_impl.h"
 #include "hidingtab_impl.h"
 #include "menutab_impl.h"
-//#include "lookandfeeltab_impl.h"
-//#include "applettab_impl.h"
 
 #include "lookandfeeltab_kcm.h"
 
@@ -72,14 +71,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     menutab = new MenuTab(this);
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
-    
-//    lookandfeeltab = new LookAndFeelTab(this);
-//    tab->addTab(lookandfeeltab, i18n("A&ppearance"));
-//    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
-
-//    menutab = new MenuTab(this);
-//    tab->addTab(menutab, i18n("&Menus"));
-//    connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     load();
 
@@ -90,9 +81,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(positiontab, SIGNAL(panelPositionChanged(int)),
             hidingtab, SLOT(panelPositionChanged(int)));
 
-    //applettab = new AppletTab(this);
-    //tab->addTab(applettab, i18n("&Applets"));
-    //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
     connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
     configFileWatch->startScan();
 }
@@ -113,8 +101,6 @@ void KickerConfig::load()
     positiontab->load();
     hidingtab->load();
     menutab->load();
-    //lookandfeeltab->load();
-    //applettab->load();
     emit changed(false);
 }
 
@@ -123,8 +109,6 @@ void KickerConfig::save()
     positiontab->save();
     hidingtab->save();
     menutab->save();
-    //lookandfeeltab->save();
-    //applettab->save();
 
     emit changed(false);
 
@@ -151,8 +135,6 @@ void KickerConfig::defaults()
     positiontab->defaults();
     hidingtab->defaults();
     menutab->defaults();
-    //lookandfeeltab->defaults();
-    //applettab->defaults();
 
     emit changed(true);
 }

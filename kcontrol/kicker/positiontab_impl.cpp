@@ -30,6 +30,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <knuminput.h>
+#include <klistview.h>
 #include <kpanelextension.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>

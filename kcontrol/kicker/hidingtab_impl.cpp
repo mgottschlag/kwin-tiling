@@ -24,6 +24,7 @@
 #include <kcombobox.h>
 #include <klocale.h>
 #include <knuminput.h>
+#include <klistview.h>
 
 #include "main.h"
 #include "hidingtab_impl.h"
