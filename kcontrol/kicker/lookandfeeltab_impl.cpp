@@ -347,17 +347,17 @@ void LookAndFeelTab::defaults()
 void LookAndFeelTab::fillTileCombos()
 {
   m_kmenuTile->clear();
-  m_kmenuTile->insertItem(i18n("No Tile"));
+  m_kmenuTile->insertItem(i18n("Default"));
   m_desktopTile->clear();
-  m_desktopTile->insertItem(i18n("No Tile"));
+  m_desktopTile->insertItem(i18n("Default"));
   m_urlTile->clear();
-  m_urlTile->insertItem(i18n("No Tile"));
+  m_urlTile->insertItem(i18n("Default"));
   m_browserTile->clear();
-  m_browserTile->insertItem(i18n("No Tile"));
+  m_browserTile->insertItem(i18n("Default"));
   m_exeTile->clear();
-  m_exeTile->insertItem(i18n("No Tile"));
+  m_exeTile->insertItem(i18n("Default"));
   m_wlTile->clear();
-  m_wlTile->insertItem(i18n("No Tile"));
+  m_wlTile->insertItem(i18n("Default"));
   m_tilename.clear();
   m_tilename << "";
 
