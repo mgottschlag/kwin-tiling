@@ -994,17 +994,17 @@ void TreeView::paste()
         if (pos < 0) pos = 0;
         dest.truncate(pos);
     }
-
     QString newname = _clipboard;
     QFile f(locate("apps", dest + '/' + newname));
 
     while (f.exists()) {
         pos = newname.findRev(".desktop");
-        newname.insert(pos, " (Copy)");
-
+        if ( pos!=-1)// .directory
+            newname.insert(pos, " (Copy)");
+        else
+            newname.insert(newname.length(), " (Copy)");
         f.setName(locate("apps", dest + '/' + newname));
     }
-
     kdDebug() << "### clip: " << _clipboard.local8Bit() << " dest: " << dest.local8Bit() << " ###" << endl;
 
     // is _clipboard a .directory or a .desktop file
@@ -1014,7 +1014,6 @@ void TreeView::paste()
         copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + newname, true );
 
     // create the TreeItems:
-
     QListViewItem* parent = 0;
 
     if(item){
@@ -1028,7 +1027,6 @@ void TreeView::paste()
 
     if(parent)
         parent->setOpen(true);
-
     TreeItem* newitem;
     if (!parent)
 	newitem = new TreeItem(this, item, "");
@@ -1043,7 +1041,6 @@ void TreeView::paste()
     else
         newitem->setFile(newname);
     newitem->setPixmap(0, appIcon(df.readIcon()));
-
     fillBranch(newitem->file(), newitem);
     setSelected ( newitem, true);
     itemSelected( newitem);
