@@ -242,6 +242,9 @@ class CFontEngine
     bool            hasPsInfo()       { return itsType<=TYPE_1_AFM; }
     static bool     hasPsInfo(const char *fname) { return getType(fname)<=TYPE_1_AFM; }
 
+    bool            hasAfmInfo()       { return itsType<TYPE_1_AFM; }
+    static bool     hasAfmInfo(const char *fname) { return getType(fname)<TYPE_1_AFM; }
+
     QStringList     getEncodings();
 
     static EWeight  strToWeight(const char *str);

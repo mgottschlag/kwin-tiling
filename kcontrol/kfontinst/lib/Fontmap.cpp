@@ -213,7 +213,7 @@ void CFontmap::createLocal(const QString &dir)
             QFileInfo             *fInfo;
  
             for(; NULL!=(fInfo=it.current()); ++it)
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() && CFontEngine::hasPsInfo(QFile::encodeName(fInfo->fileName())))
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() && CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
                 {
                     const QStringList *existing=old.getEntries(fInfo->fileName());
 

@@ -673,7 +673,7 @@ float CFontEngine::getItalicAngle()
 
 int CFontEngine::getAscender()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->ascender);
     else
         return 0;
@@ -681,7 +681,7 @@ int CFontEngine::getAscender()
 
 int CFontEngine::getDescender()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->descender);
     else
         return 0;
@@ -689,7 +689,7 @@ int CFontEngine::getDescender()
 
 int CFontEngine::getUnderlineThickness()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->underline_thickness);
     else
         return 0;
@@ -697,7 +697,7 @@ int CFontEngine::getUnderlineThickness()
 
 int CFontEngine::getUnderlinePosition()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->underline_position);
     else
         return 0;
@@ -705,7 +705,7 @@ int CFontEngine::getUnderlinePosition()
 
 int CFontEngine::getBBoxXMin()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->bbox.xMin);
     else
         return 0;
@@ -713,7 +713,7 @@ int CFontEngine::getBBoxXMin()
 
 int CFontEngine::getBBoxXMax()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->bbox.xMax);
     else
         return 0;
@@ -721,7 +721,7 @@ int CFontEngine::getBBoxXMax()
 
 int CFontEngine::getBBoxYMin()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->bbox.yMin);
     else
         return 0;
@@ -729,7 +729,7 @@ int CFontEngine::getBBoxYMin()
 
 int CFontEngine::getBBoxYMax()
 {
-    if(hasPsInfo() && itsFt.open)
+    if(hasAfmInfo() && itsFt.open)
         return scaleMetric(itsFt.face->bbox.yMax);
     else
         return 0;
@@ -737,7 +737,7 @@ int CFontEngine::getBBoxYMax()
 
 const CFontEngine::TGlyphInfo * CFontEngine::getGlyphInfo(unsigned long glyph)
 {
-    if(hasPsInfo() && itsFt.open  && !FT_Load_Glyph(itsFt.face, glyph, FT_LOAD_NO_SCALE))
+    if(hasAfmInfo() && itsFt.open && !FT_Load_Glyph(itsFt.face, glyph, FT_LOAD_NO_SCALE))
     {
         static TGlyphInfo info;
 
