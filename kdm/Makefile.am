@@ -1,4 +1,4 @@
-SUBDIRS = greeter pics xdmconfig @kdmchooserdir@
+SUBDIRS = greeter xdmconfig @kdmchooserdir@
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB = $(PASSWDLIB) $(PAMLIBS)
