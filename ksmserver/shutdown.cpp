@@ -152,12 +152,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                          KGuiItem( i18n( "&Logout" ) ),
                                         frame );
     connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
+    yes->setDefault( TRUE );
     hbox->addWidget( yes );
     hbox->addStretch();
     KPushButton* cancel = new KPushButton( KStdGuiItem::cancel(), frame );
     connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
     hbox->addWidget( cancel );
-    cancel->setDefault( TRUE );
     hbox->addStretch();
 
     checkbox->setChecked( saveSession );
