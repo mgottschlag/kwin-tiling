@@ -70,7 +70,9 @@ AutoLogout::~AutoLogout()
 
 void AutoLogout::updateLabel(int timeout)
 {
-    mStatusLabel->setText(i18n("<nobr><qt>You will be automatically logged out in %1 seconds</qt></nobr>").arg(timeout));
+    mStatusLabel->setText(i18n("<nobr><qt>You will be automatically logged out in 1 second</qt></nobr>",
+                               "<nobr><qt>You will be automatically logged out in %n seconds</qt></nobr>",
+                               timeout) );
 }
 
 void AutoLogout::timerEvent(QTimerEvent *ev)
