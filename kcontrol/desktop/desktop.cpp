@@ -1,3 +1,4 @@
+// -*- c-basic-offset: 2 -*-
 /**
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
@@ -44,7 +45,7 @@ extern "C"
 // I'm using 16 line inputs by intention as it makes sence to be able
 // to see all desktop names at the same time. It also makes sence to
 // be able to TAB through those line edits fast. So don't send me mails
-// asking why I did not implement a more intelligent/smaler GUI.
+// asking why I did not implement a more intelligent/smaller GUI.
 
 KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
@@ -159,7 +160,11 @@ QString KDesktopConfig::quickHelp() const
 void KDesktopConfig::slotValueChanged(int n)
 {
   for(int i = 0; i < 16; i++)
+  {
     _nameInput[i]->setEnabled(i < n);
+    if(i<n && _nameInput[i]->text().isEmpty())
+      _nameInput[i]->setText(i18n("Desktop %1").arg(i+1));
+  }
   _numLabel->setText(QString("%1").arg(n));
   emit changed(true);
 }
