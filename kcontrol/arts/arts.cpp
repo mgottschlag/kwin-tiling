@@ -81,7 +81,7 @@ void KArtsModule::initAudioIOList()
 		KMessageBox::error(0, i18n("Unable to start aRts sound server to "
 		                           "retrieve possible sound I/O methods.\n"
 		                           "Only automatic detection will be "
-		                           "available"));
+		                           "available."));
 	}
 }
 
