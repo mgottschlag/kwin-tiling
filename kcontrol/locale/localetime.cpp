@@ -339,7 +339,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 void KLocaleConfigTime::slotLocaleChanged()
 {
   typedef QValueVector<QString> CalendarVector;
-  CalendarVector calendars(2);
+  CalendarVector calendars(3);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
   calendars[2] = "hebrew";
