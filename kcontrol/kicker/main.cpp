@@ -59,7 +59,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(generaltab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     lnftab = new LookAndFeelTab(this);
-    tab->addTab(lnftab, i18n("&Look & Feel"));
+    tab->addTab(lnftab, i18n("&Look && Feel"));
     connect(lnftab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     menutab = new MenuTab(this);
