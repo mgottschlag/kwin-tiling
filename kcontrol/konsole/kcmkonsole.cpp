@@ -70,7 +70,7 @@ void KCMKonsole::load()
     dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",1));
     dialog->fontCO->setCurrentItem(config->readNumEntry("font",3));
     currentFont = config->readFontEntry("defaultfont");
-    dialog->SpinBox1->setValue(config->readNumEntry("history",0));
+    dialog->SpinBox1->setValue(config->readNumEntry("history",1000));
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
 

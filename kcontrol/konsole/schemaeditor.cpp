@@ -110,6 +110,7 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 QString SchemaEditor::schema()
 {
     if (defaultSchemaCB->isChecked())
+     if(schemaList->currentItem()>=0)
 	return *filename.at(schemaList->currentItem());
 
     return defaultSchema;
@@ -196,7 +197,8 @@ void SchemaEditor::loadAllSchema()
     QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.schema");
     QStringList::ConstIterator it;
     schemaList->clear();
-    schemaList->setCurrentItem(0);
+
+//    schemaList->setCurrentItem(0);
     filename.clear();
     int i = 0;
     for (it = list.begin(); it != list.end(); ++it) {
@@ -207,12 +209,10 @@ void SchemaEditor::loadAllSchema()
 
 	QString title = readSchemaTitle(name);
 
-
 	if (title.isNull() || title.isEmpty())
-	    schemaList->insertItem(i18n("untitled"));
+	    schemaList->insertItem(i18n("untitled"),i);
 	else
-	    schemaList->insertItem(title);
-	
+	 schemaList->insertItem(title,i);
 	
 	i++;
     }
@@ -264,13 +264,17 @@ void SchemaEditor::slotColorChanged(int slot)
 
 void SchemaEditor::removeCurrent()
 {
+
     QString base = *filename.at(schemaList->currentItem());
+    if(base==schema())
+     setSchema("");
     if (!QFile::remove(base))
 	KMessageBox::error(this,
 			   i18n("Cannot remove the schema.\nMaybe it is a system schema\n"),
 			   i18n("Error removing schema"));
 
     loadAllSchema();
+
     setSchema(defaultSchema);
 
 }
@@ -372,6 +376,7 @@ void SchemaEditor::saveCurrent()
 
 
     loadAllSchema();
+    setSchema(defaultSchema);
 
 }
 
