@@ -247,7 +247,7 @@ void topKCMEmail::configChanged()
 
 void topKCMEmail::save()
 {
-	//pSettings->setProfile(m_email->cmbCurProfile->text(cmbCurProfile->currentItem()));
+	pSettings->setProfile(m_email->cmbCurProfile->text(m_email->cmbCurProfile->currentItem()));
 	pSettings->setSetting(KEMailSettings::RealName, m_email->txtFullName->text());
 	pSettings->setSetting(KEMailSettings::EmailAddress, m_email->txtEMailAddr->text());
 	pSettings->setSetting(KEMailSettings::Organization, m_email->txtOrganization->text());
@@ -316,6 +316,8 @@ void topKCMEmail::defaults()
 
 	if (client.isEmpty())
 		client = "kmail";
+
+	m_email->txtEMailClient->setURL(client);
 
 	m_email->chkRunTerminal->setChecked(false);
 
