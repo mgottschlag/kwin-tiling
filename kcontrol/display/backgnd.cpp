@@ -228,14 +228,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     init();
     apply();
 
-    setButtons(buttons());
-}
-
-
-int KBackground::buttons()
-{
-    return KCModule::Help | KCModule::Default | KCModule::Reset |
-	   KCModule::Cancel | KCModule::Apply | KCModule::Ok;
 }
 
 

@@ -75,8 +75,6 @@ public:
     virtual void save();
     virtual void defaults();
 
-    int buttons();
-
 signals:
     void changed(bool);
 
