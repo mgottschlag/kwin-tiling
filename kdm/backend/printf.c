@@ -87,10 +87,6 @@ from The Open Group.
 #define DP_C_LONG	3
 #define DP_C_STR	10
 
-#ifndef USE_CONST
-# define const
-#endif
-
 typedef void (*OutCh)(void *bp, char c);
 
 
@@ -100,7 +96,7 @@ fmtint (OutCh dopr_outch, void *bp,
 {
     unsigned long uvalue;
     char convert[20];
-    const char *ctab;
+    CONST char *ctab;
     int signvalue = 0;
     int place = 0;
     int spadlen = 0;		/* amount to space pad */
@@ -179,7 +175,7 @@ fmtint (OutCh dopr_outch, void *bp,
 
 static void
 fmtstr (OutCh dopr_outch, void *bp,
-	const char *value, int flags, int min, int max)
+	CONST char *value, int flags, int min, int max)
 {
     int padlen, strln, curcol;
 #ifdef PRINT_QUOTES
@@ -260,11 +256,11 @@ fmtstr (OutCh dopr_outch, void *bp,
 }
 
 static void
-DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
+DoPr (OutCh dopr_outch, void *bp, CONST char *format, va_list args)
 {
-    const char *strvalue;
+    CONST char *strvalue;
 #ifdef PRINT_ARRAYS
-    const char *arpr, *arsf, *arepr, *aresf, *aresp;
+    CONST char *arpr, *arsf, *arepr, *aresf, *aresp;
     void *arptr;
 #endif
     unsigned long value;
@@ -498,14 +494,8 @@ logTime (char *dbuf)
 }
 #endif
 
-#ifdef LOG_LOCAL
-# define STATIC static
-#else
-# define STATIC
-#endif
-
 STATIC void
-LogOutOfMem (const char *fkt)
+LogOutOfMem (CONST char *fkt)
 {
 #ifdef USE_SYSLOG
     syslog (LOG_CRIT, "Out of memory in %s()", fkt);
@@ -587,7 +577,7 @@ OutChL (void *bp, char c)
 }
 
 static void
-Logger (int type, const char *fmt, va_list args)
+Logger (int type, CONST char *fmt, va_list args)
 {
     static OCLBuf oclb;
 
@@ -602,7 +592,7 @@ Logger (int type, const char *fmt, va_list args)
 STATIC int debugLevel;
 
 STATIC void
-Debug (const char *fmt, ...)
+Debug (CONST char *fmt, ...)
 {
     va_list args;
 
@@ -617,7 +607,7 @@ Debug (const char *fmt, ...)
 
 #ifndef LOG_NO_INFO
 STATIC void 
-LogInfo(const char *fmt, ...)
+LogInfo(CONST char *fmt, ...)
 {
     va_list args;
 
@@ -629,7 +619,7 @@ LogInfo(const char *fmt, ...)
 
 #ifndef LOG_NO_ERROR
 STATIC void
-LogError (const char *fmt, ...)
+LogError (CONST char *fmt, ...)
 {
     va_list args;
 
@@ -641,7 +631,7 @@ LogError (const char *fmt, ...)
 
 #ifdef LOG_PANIC_EXIT
 STATIC void
-LogPanic (const char *fmt, ...)
+LogPanic (CONST char *fmt, ...)
 {
     va_list args;
 
@@ -653,3 +643,56 @@ LogPanic (const char *fmt, ...)
 #endif
 
 #endif /* NO_LOGGER */
+
+#ifdef NEED_FDPRINTF
+
+typedef struct {
+    char *buf;
+    int clen, blen, tlen;
+} OCFBuf;
+
+static void
+OutCh_OCF (void *bp, char c)
+{
+    OCFBuf *ocfbp = (OCFBuf *)bp;
+    char *nbuf;
+    int nlen;
+
+    ocfbp->tlen++;
+    if (ocfbp->clen >= ocfbp->blen) {
+	if (ocfbp->blen < 0)	
+	    return;
+	nlen = ocfbp->blen * 3 / 2 + 100;
+	nbuf = realloc (ocfbp->buf, nlen);
+	if (!nbuf) {
+	    LogOutOfMem ("FdPrintf");
+	    free (ocfbp->buf);
+	    ocfbp->blen = -1;
+	    ocfbp->buf = 0;
+	    ocfbp->clen = 0;
+	    return;
+	}
+	ocfbp->blen = nlen;
+	ocfbp->buf = nbuf;
+    }
+    ocfbp->buf[ocfbp->clen++] = c;
+}
+
+int 
+FdPrintf (int fd, CONST char *fmt, ...)
+{
+    va_list args;
+    OCFBuf ocfb = { 0, 0, 0, -1 };
+
+    va_start(args, fmt);
+    DoPr(OutCh_OCF, &ocfb, fmt, args);
+    va_end(args);
+    if (ocfb.buf) {
+	Debug ("FdPrintf %'.*s to %d\n", ocfb.clen, ocfb.buf, fd);
+	(void) write (fd, ocfb.buf, ocfb.clen);
+	free (ocfb.buf);
+    }
+    return ocfb.tlen;
+}
+
+#endif /* NEED_FDPRINTF */

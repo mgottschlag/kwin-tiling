@@ -85,7 +85,10 @@ static int read_size;
 /*
  * misc externs
  */
-extern int Rescan, ChildReady;
+#ifndef HAS_SELECT_ON_FIFO
+extern int ChkPipe;
+#endif
+extern int Rescan, ChildReady, ChkUtmp;
 extern int sourceAddress;
 
 /*
@@ -108,11 +111,6 @@ static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenti
 int	xdmcpFd = -1;
 int	chooserFd = -1;
 
-FD_TYPE	WellKnownSocketsMask;
-int	WellKnownSocketsMax;
-
-#define pS(s)	((s) ? ((char *) (s)) : "empty string")
-
 void
 DestroyWellKnownSockets (void)
 {
@@ -133,6 +131,7 @@ AnyWellKnownSockets (void)
 {
     return xdmcpFd != -1 || chooserFd != -1;
 }
+
 
 static XdmcpBuffer	buffer;
 
@@ -371,52 +370,6 @@ ProcessRequestSocket (void)
 	send_alive (&addr, addrlen, header.length);
 	break;
     }
-}
-
-void
-WaitForSomething (void)
-{
-    FD_TYPE	reads;
-    int	nready;
-
-    Debug ("WaitForSomething\n");
-    if (AnyWellKnownSockets () && !ChildReady) {
-	reads = WellKnownSocketsMask;
-#ifdef MINIX__NOT
-	{
-		struct timeval tv;
-		tv.tv_sec= 5;
-		tv.tv_usec= 0;
-		nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, &tv);
-		ChildReady= 1;
-	}
-#else
-# if defined(hpux)
-	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
-# else
-	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
-# endif
-#endif
-	Debug ("select returns %d.  Rescan: %d  ChildReady: %d\n",
-		nready, Rescan, ChildReady);
-	if (nready > 0)
-	{
-	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
-		ProcessRequestSocket ();
-	    if (chooserFd >= 0 && FD_ISSET (chooserFd, &reads))
-#ifdef ISC
-	        if (!ChildReady) {
-	           WaitForSomething ();
-                } else
-#endif
-		ProcessChooserSocket (chooserFd);
-	}
-	if (ChildReady)
-	{
-	    WaitForChild ();
-	}
-    } else
-	WaitForChild ();
 }
 
 /*
@@ -700,12 +653,10 @@ send_willing (
 {
     XdmcpHeader	header;
 
-    Debug ("Send willing %*.*s %*.*s\n", authenticationName->length,
-					 authenticationName->length,
-					 pS(authenticationName->data),
-					 status->length,
-					 status->length,
-					 pS(status->data));
+    Debug ("Send willing %.*s %.*s\n", authenticationName->length,
+					authenticationName->data,
+					status->length,
+					status->data);
     header.version = XDM_PROTOCOL_VERSION;
     header.opcode = (CARD16) WILLING;
     header.length = 6 + authenticationName->length +
@@ -726,12 +677,10 @@ send_unwilling (
 {
     XdmcpHeader	header;
 
-    Debug ("Send unwilling %*.*s %*.*s\n", authenticationName->length,
-					 authenticationName->length,
-					 pS(authenticationName->data),
+    Debug ("Send unwilling %.*s %.*s\n", authenticationName->length,
+					 authenticationName->data,
 					 status->length,
-					 status->length,
-					 pS(status->data));
+					 status->data);
     header.version = XDM_PROTOCOL_VERSION;
     header.opcode = (CARD16) UNWILLING;
     header.length = 4 + Hostname.length + status->length;
@@ -751,9 +700,9 @@ void init_session_id(void)
      * incarnation so we don't say "Alive" to those displays.
      * Start with low digits 0 to make debugging easier.
      */
-    globalSessionID = (time((Time_t)0)&0x7fff) * 16000;
+    globalSessionID = (time((Time_t *)0)&0x7fff) * 16000;
 }
-    
+
 static ARRAY8 outOfMemory = { (CARD16) 13, (CARD8Ptr) "Out of memory" };
 static ARRAY8 noValidAddr = { (CARD16) 16, (CARD8Ptr) "No valid address" };
 static ARRAY8 noValidAuth = { (CARD16) 22, (CARD8Ptr) "No valid authorization" };
@@ -948,7 +897,7 @@ send_decline (
 {
     XdmcpHeader	header;
 
-    Debug ("Decline %*.*s\n", status->length, status->length, pS(status->data));
+    Debug ("Decline %.*s\n", status->length, status->data);
     header.version = XDM_PROTOCOL_VERSION;
     header.opcode = (CARD16) DECLINE;
     header.length = 0;
@@ -1056,7 +1005,7 @@ manage (
 		send_failed (from, fromlen, name, sessionID, "out of memory");
 		goto abort;
 	    }
-	    d->displayType = Foreign | Transient | FromXDMCP;
+	    d->displayType = dForeign | dTransient | dFromXDMCP;
 	    d->sessionID = pdpy->sessionID;
 	    d->from.data = from_save;
 	    d->from.length = fromlen;
@@ -1350,6 +1299,76 @@ void udp_read_cb(nbio_ref_t ref, int res, int err)
 	}
 	read_inprogress= 0;
 }
-#endif
+#endif /* MINIX */
 
 #endif /* XDMCP */
+
+#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
+
+FD_TYPE	WellKnownSocketsMask;
+int	WellKnownSocketsMax;
+
+void
+WaitForSomething (void)
+{
+    FD_TYPE	reads;
+    int	nready;
+
+    Debug ("WaitForSomething\n");
+    if (AnyWellKnownSockets () && !ChildReady) {
+	reads = WellKnownSocketsMask;
+#ifdef hpux
+	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
+#else
+	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
+#endif
+	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d"
+#ifndef HAS_SELECT_ON_FIFO
+		"  ChkPipe: %d"
+#endif
+		"\n", nready, Rescan, ChildReady, ChkUtmp
+#ifndef HAS_SELECT_ON_FIFO
+		, ChkPipe
+#endif
+	    );
+	if (nready > 0)
+	{
+#ifdef XDMCP
+	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
+	    {
+		ProcessRequestSocket ();
+# ifdef HAS_SELECT_ON_FIFO
+		nready--;
+# endif
+	    }
+	    if (chooserFd >= 0 && FD_ISSET (chooserFd, &reads))
+	    {
+# ifdef ISC
+	        if (!ChildReady) {
+		    /* XXX wouldn't that recurse us infinitely? */
+	           WaitForSomething ();
+                } else
+# endif
+		ProcessChooserSocket (chooserFd);
+# ifdef HAS_SELECT_ON_FIFO
+		nready--;
+# endif
+	    }
+# ifdef HAS_SELECT_ON_FIFO
+	    if (nready)
+		CheckFifos ();
+# endif
+#else /* XDMCP */
+	    CheckFifos ();
+#endif
+	}
+	if (ChildReady)
+	{
+	    WaitForChild ();
+	}
+    } else
+	WaitForChild ();
+}
+
+#endif /* XDMCP || HAS_SELECT_ON_FIFO */
+

@@ -168,7 +168,7 @@ initStrArr (char **arr)
     return arr;
 }
 
-static int
+int
 arrLen (char **arr)
 {
     int nu = 0;
@@ -263,39 +263,14 @@ parseArgs (char **argv, char *string)
 }
 
 
-static char *
-makeEnv (char *name, char *value)
-{
-    char *result;
-
-    result = malloc ((unsigned) (strlen (name) + strlen (value) + 2));
-    if (!result) {
-	LogOutOfMem ("makeEnv");
-	return 0;
-    }
-#ifdef AIXV3
-    /* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
-    if (!(value && *value))
-	sprintf (result, "%s", name);
-    else
-#endif
-	sprintf (result, "%s=%s", name, value);
-    return result;
-}
-
 char *
 getEnv (char **e, char *name)
 {
-    int l = strlen (name);
-
-    if (!e)
-	return 0;
-
-    while (*e) {
-	if ((int) strlen (*e) > l && !strncmp (*e, name, l) &&
-	    (*e)[l] == '=')
-	    return (*e) + l + 1;
-	++e;
+    if (e) {
+	int l = strlen (name);
+	for (; *e; e++)
+	    if (!memcmp (*e, name, l) && (*e)[l] == '=')
+		return (*e) + l + 1;
     }
     return 0;
 }
@@ -308,33 +283,40 @@ setEnv (char **e, char *name, char *value)
     int envsize;
     int l;
 
-    l = strlen (name);
-    newe = makeEnv (name, value);
-    if (!newe) {
-	LogOutOfMem ("setEnv");
-	return e;
-    }
-    if (e) {
-	for (old = e; *old; old++)
-	    if ((int) strlen (*old) > l && !strncmp (*old, name, l)
-		&& (*old)[l] == '=')
-		break;
-	if (*old) {
-	    free (*old);
-	    *old = newe;
+#ifdef AIXV3
+    /* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
+    if (!value) {
+	if (!StrDup (&newe, name)) {
+	    LogOutOfMem ("setEnv");
 	    return e;
 	}
-	envsize = old - e;
-	new = (char **) realloc ((char *) e,
-				 (unsigned) ((envsize + 2) * 
-					     sizeof (char *)));
-    } else {
-	envsize = 0;
-	new = (char **) malloc (2 * sizeof (char *));
+    } else
+#endif
+    {
+	newe = 0;
+	if (!StrApp (&newe, name, "=", value, (char *)0)) {
+	    LogOutOfMem ("setEnv");
+	    return e;
+	}
     }
-    if (!new) {
-	LogOutOfMem ("setEnv");
+    envsize = 0;
+    if (e) {
+	l = strlen (name);
+	for (old = e; *old; old++)
+	    if (!memcmp (*old, name, l) && ((*old)[l] == '=' || !(*old)[l]))
+	    {
+		free (*old);
+		*old = newe;
+		return e;
+	    }
+	envsize = old - e;
+    }
+    if (!(new = (char **) 
+	    realloc ((char *) e,
+		     (unsigned) ((envsize + 2) * sizeof (char *)))))
+    {
 	free (newe);
+	LogOutOfMem ("setEnv");
 	return e;
     }
     new[envsize] = newe;
@@ -345,24 +327,16 @@ setEnv (char **e, char *name, char *value)
 char **
 putEnv(char *string, char **env)
 {
-    char *v, *b, *n;
-    int nl;
-  
-    if ((b = strchr(string, '=')) == NULL)
+    char *b, *n;
+
+    if (!(b = strchr(string, '=')))
 	return NULL;
-    v = b + 1;
-  
-    nl = b - string;
-    if ((n = malloc(nl + 1)) == NULL)
+    if (!StrNDup (&n, string, b - string))
     {
 	LogOutOfMem ("putEnv");
 	return NULL;
     }
-  
-    memcpy(n, string, nl);
-    n[nl] = 0;
-  
-    env = setEnv(env, n, v);
+    env = setEnv(env, n, b + 1);
     free(n);
     return env;
 }

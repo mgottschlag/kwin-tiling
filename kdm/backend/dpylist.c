@@ -44,6 +44,76 @@ AnyDisplaysLeft (void)
     return displays != (struct display *) 0;
 }
 
+int
+AnyActiveDisplays (void)
+{
+    struct display *d;
+
+Debug("AnyActiveDisplays?\n");
+    for (d = displays; d; d = d->next)
+	if (d->userSess >= 0)
+{Debug(" yes\n");
+	    return 1;
+}Debug(" no\n");
+    return 0;
+}
+
+int
+AllLocalDisplaysLocked (struct display *dp)
+{
+    struct display *d;
+
+Debug("AllLocalDisplaysLocked?\n");
+    for (d = displays; d; d = d->next)
+	if (d != dp &&
+	    (d->displayType & d_location) == dLocal &&
+	    d->status == running && !d->hstent->lock)
+{Debug(" no\n");
+	    return 0;
+}Debug(" yes\n");
+    return 1;
+}
+
+void
+StartReserveDisplay (int lt)
+{
+    struct display *d;
+
+Debug("StartReserveDisplay\n");
+    for (d = displays; d; d = d->next)
+	if (d->status == reserve)
+	{
+Debug("starting reserve display %s, timeout %d\n", d->name, lt);
+	    d->idleTimeout = lt;
+	    StartDisplay (d);
+	    break;
+	}
+}
+
+void
+ReapReserveDisplays (void)
+{
+    struct display *d, *rd;
+
+Debug("ReapReserveDisplays\n");
+    for (rd = 0, d = displays; d; d = d->next)
+	if ((d->displayType & d_location) == dLocal && d->status == running &&
+	    !d->hstent->lock)
+	{
+	    if (rd)
+	    {
+		rd->idleTimeout = 0;
+Debug ("killing reserve display %s\n", rd->name);
+		if (rd->pid != -1)
+		    kill (rd->pid, SIGALRM);
+		rd = 0;
+	    }
+	    if ((d->displayType & d_lifetime) == dReserve &&
+		d->userSess < 0)
+		rd = d;
+	}
+}
+
 void
 ForEachDisplay (void (*f)(struct display *))
 {
@@ -107,7 +177,7 @@ FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber)
     struct display  *d;
 
     for (d = displays; d; d = d->next)
-	if ((d->displayType & d_origin) == FromXDMCP &&
+	if ((d->displayType & d_origin) == dFromXDMCP &&
 	    d->displayNumber == displayNumber &&
 	    addressEqual ((XdmcpNetaddr)d->from.data, d->from.length, 
 			  addr, addrlen))
@@ -127,6 +197,7 @@ RemoveDisplay (struct display *old)
 
     for (dp = &displays; (d = *dp); dp = &(*dp)->next) {
 	if (d == old) {
+Debug ("Removing display %s\n", d->name);
 	    *dp = d->next;
 	    IfFree (d->class2);
 	    IfFree (d->cfg.data);
@@ -142,6 +213,7 @@ RemoveDisplay (struct display *old)
 		(void) unlink (d->authFile);
 		free (d->authFile);
 	    }
+	    IfFree (d->fifoPath);
 	    IfFree (d->authNameLens);
 #ifdef XDMCP
 	    XdmcpDisposeARRAY8 (&d->peer);
@@ -196,17 +268,15 @@ NewDisplay (char *name, char *class2)
 	free ((char *) d);
 	return 0;
     }
-    /* initialize every field to avoid possible problems (others are 0) */
+    /* initialize fields (others are 0) */
     d->status = notRunning;
     d->pid = -1;
     d->serverPid = -1;
-    d->stillThere = 1;
-    d->autoLogin1st = 1;
-    d->fifoOwner = -1;
-    d->fifoGroup = -1;
     d->fifofd = -1;
     d->pipefd[0] = -1;
     d->pipefd[1] = -1;
+    d->userSess = -1;
     displays = d;
+Debug ("Created new display %s\n", d->name);
     return d;
 }

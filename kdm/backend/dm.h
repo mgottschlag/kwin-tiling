@@ -156,8 +156,15 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # define Jmp_buf	sigjmp_buf
 #endif
 
+#ifndef MINIX
+# define HAS_SELECT_ON_FIFO
+#endif
 
-typedef enum displayStatus { running, notRunning, zombie, phoenix, suspended } DisplayStatus;
+typedef enum displayStatus { running, notRunning, zombie, phoenix,
+#ifdef HAS_SELECT_ON_FIFO
+			     raiser,
+#endif
+			     tzombie, textMode, rzombie, reserve } DisplayStatus;
 
 typedef struct RcStr {
     struct RcStr	*next;
@@ -181,11 +188,10 @@ struct display {
 	struct display	*next;
 	struct disphist	*hstent;	/* display history entry */
 
-	/* Xservers file / XDMCP information */
+	/* basic display information */
 	char		*name;		/* DISPLAY name -- also referenced in hstent */
 	char		*class2;	/* display class (may be NULL) */
 	int		displayType;	/* location/origin/lifetime */
-	char		**serverArgv;	/* server program and arguments */
 	CfgArr		cfg;		/* config data array */
 
 	/* display state */
@@ -193,10 +199,11 @@ struct display {
 	int		pid;		/* process id of child */
 	int		serverPid;	/* process id of server (-1 if none) */
 	int		stillThere;	/* state during HUP processing */
-	Display		*dpy;		/* connection to X server */
-	struct verify_info *verify;	/* info about logged in user */
-	int		fifofd;		/* fifo for login after logout */
-	int		pipefd[2];	/* pipe for re-login after crash */
+	int		userSess;	/* -1=nobody, otherwise uid */
+	int		fifofd;		/* command fifo */
+	int		pipefd[2];	/* feedback pipe */
+	Display		*dpy;		/* connection to X server; for session process */
+	struct verify_info *verify;	/* info about logged in user; for session process */
 #ifdef XDMCP
 	/* XDMCP state */
 	unsigned	sessionID;	/* ID of active session */
@@ -212,7 +219,7 @@ struct display {
 	int		serverAttempts;	/* number of attempts at running X */
 	int		serverTimeout;	/* how long to wait for X */
 	int		startInterval;	/* reset startAttempts after this time */
-	int		openDelay;	/* server{Timeout,Delay} fit better */
+	int		openDelay;	/* serverDelay would fit better */
 	int		openRepeat;	/* connection open attempts to make */
 	int		openTimeout;	/* abort open attempt timeout */
 	int		startAttempts;	/* number of attempts at starting */
@@ -222,10 +229,8 @@ struct display {
 	int		resetSignal;	/* signal to reset server */
 	int		termSignal;	/* signal to terminate server */
 	int		resetForAuth;	/* server reads auth file at reset */
-
-	int		fifoCreate;	/* create a login data fifo */
-	int		fifoOwner;	/* owner of fifo */
-	int		fifoGroup;	/* group of fifo */
+	int		idleTimeout;	/* abort login after that time */
+	char		**serverArgv;	/* server program and arguments */
 	char		*console;	/* the tty line hidden by the server */
 
 	/* session resources */
@@ -240,17 +245,18 @@ struct display {
 	char		*systemShell;	/* interpreter for startup/reset */
 	char		*failsafeClient;/* a client to start when the session fails */
 	char		*chooser;	/* chooser program XXX kill! */
-
-	int		autoReLogin;	/* auto-re-login after crash */
-	int		autoLogin1st;	/* auto-login at startup? */
 	char		*autoUser;	/* user to log in automatically. */
 	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
 	char		*autoString;	/* xsession arguments. */
 	char		**noPassUsers;	/* users allowed in without a password */
-	char		*sessSaveFile;	/* rel. file name where previous session is saved */
-
+	char		*sessSaveFile;	/* rel. file name where previous session args are saved */
+	int		autoReLogin;	/* auto-re-login after crash */
+	int		autoLogin1st;	/* auto-login at startup? */
 	int		allowNullPasswd;/* allow null password on login */
 	int		allowRootLogin;	/* allow direct root login */
+	int		allowShutdown;	/* who is allowed to shutdown */
+	int		allowNuke;	/* who is allowed to s/d even when other sessions are running */
+	int		defSdMode;	/* s/d condition/timing used by default */
 
 	/* authorization resources */
 	int		authorize;	/* enable authorization */
@@ -264,7 +270,7 @@ struct display {
 	Xauth		**authorizations;/* authorization data */
 	int		authNum;	/* number of authorizations */
 	char		*authFile;	/* file to store authorization in */
-
+	char		*fifoPath;	/* filename of the command fifo */
 };
 
 struct disphist {
@@ -272,9 +278,13 @@ struct disphist {
 	char		*name;
 	Time_t		lastStart;	/* time of last display start */
 	Time_t		lastExit;	/* time of last display exit */
-	int		goodExit;	/* was the last exit "peaceful"? */
 	int		startTries;	/* current start try */
-	char		*nLogPipe;	/* data read from fifo */
+	unsigned	rLogin:2,	/* 0=nothing 1=relogin 2=login */
+			sd_how:2,	/* 0=none 1=reboot 2=halt (SHUT_*) */
+			sd_when:2,	/* 0=maylater 1=trynow 2=forcenow (SHUT_*) */
+			lock:1,		/* screen locker running */
+			goodExit:1;	/* was the last exit "peaceful"? */
+	char		*nuser, *npass, **nargs;
 };
 
 /*
@@ -309,10 +319,12 @@ struct protoDisplay {
 };
 #endif /* XDMCP */
 
-extern char	*config;
-extern char	*config2Parse;
+/* status code for RStopDisplay */
+#define DS_RESTART	0
+#define DS_TEXTMODE	1
+#define DS_RESERVE	2
+#define DS_REMOVE	3
 
-extern char	*servers;
 extern int	request_port;
 extern int	debugLevel;
 extern int	daemonMode;
@@ -330,12 +342,17 @@ extern int	autoLogin;
 extern char	*cmdHalt;
 extern char	*cmdReboot;
 extern char	*PAMService;
+extern char	*fifoDir;
+extern int	fifoGroup;
+extern int	fifoAllowShutdown;
+extern int	fifoAllowNuke;
 
 /* in daemon.c */
 extern void BecomeDaemon (void);
 
 /* in dm.c */
 extern char *prog, *progpath;
+extern void CheckFifos (void);
 extern void StartDisplay (struct display *d);
 extern void SetTitle (char *name, ...);
 
@@ -352,9 +369,10 @@ extern struct display
 	*FindDisplayByPid (int pid),
 	*FindDisplayByServerPid (int serverPid),
 	*NewDisplay (char *name, char *class2);
-
-/* in file.c */
-extern void ParseDisplay (char *source);
+extern int AnyActiveDisplays (void);
+extern int AllLocalDisplaysLocked (struct display *dp);
+extern void StartReserveDisplay (int lt);
+extern void ReapReserveDisplays (void);
 
 /* in reset.c */
 extern void pseudoReset (Display *dpy);
@@ -378,20 +396,21 @@ extern void DeleteXloginResources (struct display *d);
 extern void LoadXloginResources (struct display *d);
 extern void ManageSession (struct display *d);
 extern void SetupDisplay (struct display *d);
+extern void rStopDisplay (struct display *d, int endState);
 extern void StopDisplay (struct display *d);
 extern void WaitForChild (void);
 
 /* process.c */
 extern void RegisterCloseOnFork (int fd);
-extern void ClearCloseOnFork (int fd);
+extern void CloseNClearCloseOnFork (int fd);
 extern int Fork (void);
 extern int Wait4 (int pid);
-extern void execute(char **argv, char **environ);
+extern void execute (char **argv, char **environ);
 extern int runAndWait (char **args, char **environ);
-extern void TerminateProcess (int pid, int signal);
+extern void TerminateProcess (int pid, int sig);
 extern Jmp_buf GErrJmp;
 extern char *GOpen (char **argv, char *what, char **env);
-extern int GClose (void);
+extern int GClose (int force);
 extern void GSendInt (int val);
 extern int GRecvInt (void);
 extern int GRecvCmd (int *cmd);
@@ -410,8 +429,8 @@ extern char **GRecvArgv (void);
 extern int Verify (struct display *d, char *name, char *pass);
 extern void Restrict (struct display *d);
 extern int StartClient(struct display *d, char *name, char *pass, char **sessargs);
-extern void SessionExit (struct display *d, int status);
-extern int RdUsrData (struct display *d, char *usr, char ***args);
+extern void SessionExit (struct display *d, int status) ATTR_NORETURN;
+extern void RdUsrData (struct display *d, char *usr, char ***args);
 
 /* server.c */
 extern char *_SysErrorMsg (int n);
@@ -431,6 +450,7 @@ extern int StrNDup (char **dst, char *src, int len);
 extern int StrDup (char **dst, char *src);
 extern int StrApp (char **dst, ...);
 extern void WipeStr (char *str);
+extern int arrLen (char **arr);
 extern char **initStrArr (char **arr);
 extern char **extStrArr (char ***arr);
 extern char **addStrArr (char **arr, char *str, int len);
@@ -445,6 +465,11 @@ extern char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(char *, int, void *), void *ptr);
 
+#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
+/* in xdmcp.c */
+extern void WaitForSomething (void);
+#endif
+
 #ifdef XDMCP
 
 /* in xdmcp.c */
@@ -452,7 +477,6 @@ extern char *NetworkAddressToHostname (CARD16 connectionType, ARRAY8Ptr connecti
 extern int AnyWellKnownSockets (void);
 extern void DestroyWellKnownSockets (void);
 extern void SendFailed (struct display *d, char *reason);
-extern void WaitForSomething (void);
 extern void init_session_id(void);
 extern void registerHostname(char *name, int namelen);
 

@@ -47,37 +47,28 @@ from The Open Group.
 extern int errno;
 #endif
 
-static char *
-s_copy (char **dst, char *src, int spc)
-{
-    int idx;
-
-    while (*src == ' ')
-	src++;
-    for (idx = 0; src[idx] >= ' ' && (spc || src[idx] != ' '); idx++);
-    (void) StrNDup (dst, src, idx);
-    return src + idx;
-}
-
 static int
-AutoLogon (struct display *d, char **namer, char **passr, char ***sessargs)
+AutoLogon (struct display *d)
 {
-    char *str;
-    Time_t tdiff;
+    char	*str, *name, *pass, **args;
+    Time_t	tdiff;
+    int		pid, fargs;
 
     if (!autoLogin)
 	return 0;
+    str = "default";
     tdiff = time (0) - d->hstent->lastExit - d->openDelay;
-Debug ("autoLogon, tdiff = %d, nlogpipe%s empty, goodexit = %d\n", 
-	tdiff, d->hstent->nLogPipe ? " not":"", d->hstent->goodExit);
-    if (d->hstent->nLogPipe && tdiff <= 0) {
-	char *cp;
-	if (d->hstent->nLogPipe[0] == '\n')
+Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n", 
+	tdiff, d->hstent->rLogin, d->hstent->goodExit, d->hstent->nuser);
+    if (d->hstent->rLogin >= 1) {
+	if (d->hstent->rLogin == 1 &&
+	    (d->hstent->goodExit || d->hstent->lock || 
+	     !d->hstent->nuser[0] || tdiff > 0))
 	    return 0;
-	cp = s_copy(&str, d->hstent->nLogPipe, 0);
-	cp = s_copy(namer, cp, 0);
-	(void) s_copy(passr, cp, 1);
-	*sessargs = addStrArr (0, str, -1);
+	name = d->hstent->nuser;
+	pass = d->hstent->npass;
+	args = d->hstent->nargs;
+	fargs = 0;
     } else if (d->autoUser[0] != '\0') {
 	if (tdiff <= 0) {
 	    if (d->hstent->goodExit)
@@ -86,24 +77,26 @@ Debug ("autoLogon, tdiff = %d, nlogpipe%s empty, goodexit = %d\n",
 	    if (!d->autoLogin1st)
 		return 0;
 	}
-	StrDup (namer, d->autoUser);
-	StrDup (passr, d->autoPass);
-	RdUsrData (d, d->autoUser, sessargs);
-	if (!*sessargs || !*sessargs[0]) {
-	    if (d->autoString[0])
-		*sessargs = parseArgs (*sessargs, d->autoString);
-	    else
-		*sessargs = addStrArr (*sessargs, "default", 7);
-	}
+	name = d->autoUser;
+	pass = d->autoPass;
+	args = 0;
+	if (d->autoString[0])
+	    str = d->autoString;
     } else
 	return 0;
 
-    if (Verify (d, *namer, *passr) == V_OK)
-	return 1;
-    free (*namer);
-    WipeStr (*passr);
-    freeStrArr (*sessargs);
-    return 0;
+    if (Verify (d, name, pass) != V_OK)
+	return 0;
+    if (!args || !args[0]) {
+	RdUsrData (d, d->autoUser, &args);
+	if (!args || !args[0])
+	    args = parseArgs (args, str);
+	fargs = 1;
+    }
+    pid = StartClient (d, name, pass, args);
+    if (fargs)
+	freeStrArr (args);
+    return pid;
 }
 
 
@@ -202,30 +195,47 @@ ErrorHandler(Display *dpy ATTR_UNUSED, XErrorEvent *event)
     return 0;
 }
 
+static int greeter;
 
-static void
-GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
+static Jmp_buf	idleTOJmp;
+
+/* ARGSUSED */
+static SIGVAL
+IdleTOJmp (int n ATTR_UNUSED)
 {
-    int		i, cmd, type, exitCode;
+    Longjmp (idleTOJmp, 1);
+}
+
+static int
+GreetUser (struct display *d)
+{
+    int		i, cmd, type, pid, exitCode;
     char	*ptr, *name, *pass, **avptr, **args;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
 #endif
+
+    greeter = 1;
 
     /*
      * Load system default Resources (if any)
      */
     LoadXloginResources (d);
 
+    if (Setjmp (idleTOJmp)) {
+	GClose (1);
+	SessionExit (d, EX_RESERVE);
+    }
+    Signal (SIGALRM, IdleTOJmp);
+    alarm (d->idleTimeout);
+
     if (Setjmp (GErrJmp))
 	SessionExit (d, EX_RESERVER_DPY);
-    ptr = GOpen ((char **)0, "_greet", systemEnv (d, 0, 0));
-    if (ptr) {
+    if ((ptr = GOpen ((char **)0, "_greet", systemEnv (d, 0, 0)))) {
 	LogError ("Cannot run greeter: %s\n", ptr);
 	goto bail;
     }
     exitCode = -1;
-    *namer = (char *)0;
     while (GRecvCmd (&cmd)) {
 	switch (cmd)
 	{
@@ -238,7 +248,8 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 		GSendInt (GE_NoEnt);
 		break;
 	    }
-	    switch (type & C_TYPE_MASK) {
+	    switch (type & C_TYPE_MASK)
+	    {
 	    default:
 		Debug (" -> unknown type\n");
 		GSendInt (GE_BadType);
@@ -250,7 +261,8 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    case C_TYPE_ARR:
 #endif
 		GSendInt (GE_Ok);
-		switch (type & C_TYPE_MASK) {
+		switch (type & C_TYPE_MASK)
+		{
 		case C_TYPE_INT:
 		    Debug (" -> int %#x (%d)\n", *(int *)avptr, *(int *)avptr);
 		    GSendInt (*(int *)avptr);
@@ -289,6 +301,8 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    Debug ("G_SessionExit\n");
 	    exitCode = GRecvInt ();
 	    Debug (" code %d\n", exitCode);
+	    /* (void) GClose (0); not really necessary, init will reap it */
+	    SessionExit (d, exitCode);
 	    break;
 	case G_Verify:
 	    Debug ("G_Verify\n");
@@ -298,21 +312,36 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    Debug (pass[0] ? " password\n" : " no password\n");
 	    GSendInt (i = Verify (d, name, pass));
 	    Debug (" -> return %d\n", i);
-	    free (name);
 	    WipeStr (pass);
+	    free (name);
 	    break;
 	case G_Restrict:
 	    Debug ("G_Restrict(...)\n");
 	    Restrict (d);
 	    break;
 	case G_Login:
+	    alarm (0);
 	    Debug ("G_Login\n");
-	    *namer = GRecvStr ();
-	    Debug (" user '%s'\n", *namer);
-	    *passr = GRecvStr ();
-	    Debug ((*passr)[0] ? " password\n" : " no password\n");
-	    *sessargs = GRecvArgv ();
-	    Debug (" arguments: %'[{s\n", *sessargs);
+	    name = GRecvStr ();
+	    Debug (" user '%s'\n", name);
+	    pass = GRecvStr ();
+	    Debug (pass[0] ? " password\n" : " no password\n");
+	    args = GRecvArgv ();
+	    Debug (" arguments: %'[{s\n", args);
+	    pid = StartClient (d, name, pass, args);
+	    freeStrArr (args);
+	    WipeStr (pass);
+	    free (name);
+	    (void) GClose (0);
+	    DeleteXloginResources (d);
+	    greeter = 0;
+	    return pid;
+	case G_Shutdown:
+	    i = GRecvInt ();	/* C calling convention order! */
+	    FdPrintf (d->pipefd[1], "s\t%d\t%d\n", i, GRecvInt ());
+#ifndef HAS_SELECT_ON_FIFO
+	    kill (getppid (), SIGUSR2);
+#endif
 	    break;
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
@@ -320,23 +349,13 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    break;
 	default:
 	    LogError ("Received unknown command 0x%x from greeter\n", cmd);
-	    (void) GClose ();
+	    (void) GClose (1);
 	    goto bail;
 	}
     }
-    if ((i = GClose ()))
-	exitCode = EX_UNMANAGE_DPY;
-    DeleteXloginResources (d);
-    if (exitCode >= 0)
-	SessionExit (d, exitCode);
-    if (!*namer) {
-	LogError ("Greeter exited unexpectedly\n");
-	SessionExit (d, EX_RESERVER_DPY);
-    }
-    return;
-
+    LogError ("Greeter exited unexpectedly\n");
+    (void) GClose (0);
   bail:
-    Debug ("bailing from GreetUser\n");
     SessionExit (d, EX_RESERVER_DPY);
 }
 
@@ -345,16 +364,11 @@ void
 ManageSession (struct display *d)
 {
     volatile int	exitCode, clientPid;
-    int		pid;
-    char	*name, *pass, **sessargs;
 
     Debug ("ManageSession %s\n", d->name);
     (void)XSetIOErrorHandler(IOErrorHandler);
     (void)XSetErrorHandler(ErrorHandler);
     SetTitle(d->name, (char *) 0);
-
-    if (!AutoLogon(d, &name, &pass, &sessargs))
-	GreetUser(d, &name, &pass, &sessargs);
 
     exitCode = EX_NORMAL;
     clientPid = 0;
@@ -364,25 +378,9 @@ ManageSession (struct display *d)
 	 * Start the clients, changing uid/groups
 	 *	   setting up environment and running the session
 	 */
-	clientPid = StartClient (d, name, pass, sessargs);
-
-	/* XXX perfect crap */
-	if (clientPid && d->pipefd[1] >= 0) {
-	    char *buf;
-	    if (d->autoReLogin &&
-		(buf = malloc (strlen(sessargs[0]) + strlen(name) + strlen(pass) + 4))) {
-		write (d->pipefd[1], buf, 
-		       sprintf (buf, "%s %s %s\n", sessargs[0], name, pass));
-		free (buf);
-	    } else
-		write (d->pipefd[1], "\n", 1);
-	}
-
-	free (name);
-	WipeStr (pass);
-	freeStrArr (sessargs);
-
-	if (clientPid) {
+	if ((clientPid = AutoLogon(d)) ||
+	    (clientPid = GreetUser(d)))
+	{
 	    Debug ("Client Started\n");
 
 	    /*
@@ -393,10 +391,9 @@ ManageSession (struct display *d)
 		{
 		    (void) Signal (SIGALRM, catchAlrm);
 		    (void) alarm (d->pingInterval * 60); /* may be 0 */
-		    pid = wait ((waitType *) 0);
+		    (void) Wait4 (clientPid);
 		    (void) alarm (0);
-		    if (pid == clientPid)
-			break;
+		    break;
 		}
 		else
 		{
@@ -412,7 +409,7 @@ ManageSession (struct display *d)
 	     */
 	    if (!PingServer (d)) {
 		Debug("X-Server dead upon session exit.\n");
-		if ((d->displayType & d_origin) == Local)
+		if ((d->displayType & d_location) == dLocal)
 		    sleep (10);
 		exitCode = EX_AL_RESERVER_DPY;
 	    }
@@ -420,12 +417,12 @@ ManageSession (struct display *d)
 	    LogError ("session start failed\n");
 	}
     } else {
-	/*
-	 * when terminating the session, nuke
-	 * the child and then run the reset script
-	 */
 	if (clientPid)
 	    AbortClient (clientPid);
+	else if (greeter) {
+	    (void) GClose (1);
+	    DeleteXloginResources (d);
+	}	    
 	exitCode = EX_AL_RESERVER_DPY;
     }
     SessionExit (d, exitCode);
@@ -518,7 +515,7 @@ defaultEnv (char *user)
 
 #ifdef AIXV3
     /* we need the tags SYSENVIRON: and USRENVIRON: in the call to setpenv() */
-    env = setEnv(env, "SYSENVIRON:", "");
+    env = setEnv(env, "SYSENVIRON:", 0);
 #endif
 
     if (user) {
@@ -530,7 +527,7 @@ defaultEnv (char *user)
     }
 
 #ifdef AIXV3
-    env = setEnv(env, "USRENVIRON:", "");
+    env = setEnv(env, "USRENVIRON:", 0);
 #endif
 
     if (exportList)

@@ -299,7 +299,9 @@ static FILE *
 MakeServerAuthFile (struct display *d)
 {
     FILE	*f;
+#ifndef HAS_MKSTEMP
     int		r;
+#endif
     char	cleanname[NAMELEN], nambuf[NAMELEN+128];
 
     /*
@@ -308,8 +310,7 @@ MakeServerAuthFile (struct display *d)
      * a) authDir is supposed to be /var/run/xauth (=safe) or similar and
      * b) even if it's not (say, /tmp), we create files safely (hopefully).
      */
-    r = mkdir(authDir, 0755);
-    if (r < 0  &&  errno != EEXIST)
+    if (mkdir(authDir, 0755) < 0  &&  errno != EEXIST)
 	return 0;
     CleanUpFileName (d->name, cleanname, NAMELEN - 8);
 #ifdef HAS_MKSTEMP
@@ -1193,7 +1194,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 		!memcmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
 	    {
 		magicCookie = i;
-	    	if ((d->displayType & d_location) == Local)
+	    	if ((d->displayType & d_location) == dLocal)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
@@ -1215,7 +1216,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 		if (auths[i]->name_length == 14 &&
 		    !strncmp (auths[i]->name, "MIT-KERBEROS-5", 14))
 		    auths[i]->data_length = 0;
-	    	if ((d->displayType & d_location) == Local)
+	    	if ((d->displayType & d_location) == dLocal)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
@@ -1256,7 +1257,7 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 	doWrite = 0;
 	for (i = 0; i < d->authNum; i++)
 	{
-	    if ((d->displayType & d_location) == Local)
+	    if ((d->displayType & d_location) == dLocal)
 	    	writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    else

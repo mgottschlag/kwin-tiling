@@ -367,7 +367,7 @@ init_vrf(struct display *d, char *name, char *password)
 
 #elif defined(AIXV3)
 
-    if ((d->displayType & d_location) == Foreign) {
+    if ((d->displayType & d_location) == dForeign) {
 	strncpy(hostname, d->name, sizeof(hostname) - 1);
 	hostname[sizeof(hostname)-1] = '\0';
 	if ((tmpch = strchr(hostname, ':')))
@@ -527,25 +527,18 @@ Restrict (struct display *d)
 
     Debug("Restrict %s ...\n", name);
 
-    if ((pretc = init_vrf(d, name, "")) != V_OK) {
-	free (name);
-	GSendInt (pretc);
-	return;
-    }
-
-    if (!init_pwd(name YSHADOW)) {
-	free (name);
-	GSendInt (V_AUTH);
-	return;
-    }
-
-    free (name);
-
-    if (!p->pw_uid) {
+    if (!strcmp (name, "root")) {
 	if (!d->allowRootLogin)
 	    GSendInt (V_NOROOT);
 	else
 	    GSendInt (V_OK);	/* don't deny root to log in */
+	free (name);
+	return;
+    }
+
+    if ((pretc = init_vrf(d, name, "")) != V_OK) {
+	GSendInt (pretc);
+	free (name);
 	return;
     }
 
@@ -565,15 +558,17 @@ Restrict (struct display *d)
 	GSendInt (V_OK);
     /* really should do password changing, but it doesn't fit well */
 
+    free (name);
+
 #elif defined(AIXV3)	/* USE_PAM */
 
     msg = NULL;
-    if (loginrestrictions(p->pw_name,
-		((d->displayType & d_location) == Foreign) ? S_RLOGIN : S_LOGIN,
-		tty, &msg) == -1)
+    if (loginrestrictions(name,
+	((d->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
+	tty, &msg) == -1)
     {
 	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
-	loginfailed(p->pw_name, hostname, tty);
+	loginfailed(name, hostname, tty);
 	if (msg) {
 	    GSendInt (V_MSGERR);
 	    GSendStr (msg);
@@ -584,7 +579,17 @@ Restrict (struct display *d)
     if (msg)
 	free((void *)msg);
 
+    free (name);
+
 #else	/* USE_PAM || AIXV3 */
+
+    if (!init_pwd(name YSHADOW)) {
+	GSendInt (V_AUTH);
+	free (name);
+	return;
+    }
+
+    free (name);
 
 # ifdef HAVE_GETUSERSHELL
     for (;;) {
@@ -774,15 +779,34 @@ static char *envvars[] = {
 };
 
 static char **
-userEnv (struct display *d, int useSystemPath, char *user, char *home, char *shell)
+userEnv (struct display *d, int isRoot, char *user, char *home, char *shell)
 {
-    char	**env;
+    char	**env, *xma;
 
     env = defaultEnv (user);
-    env = setEnv (env, "XDM_MANAGED", "true");
+    xma = 0;
+    if (d->fifoPath && StrDup (&xma, d->fifoPath))
+	if ((d->allowShutdown == SHUT_ALL ||
+	     (d->allowShutdown == SHUT_ROOT && isRoot)) &&
+	    StrApp (&xma, ",maysd", (char *)0))
+	{
+	    if (d->allowNuke == SHUT_ALL ||
+		(d->allowNuke == SHUT_ROOT && isRoot))
+		StrApp (&xma, ",mayfn", (char *)0);
+	    StrApp (&xma, d->defSdMode == SHUT_FORCENOW ? ",fn" :
+			  d->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
+		    (char *)0);
+	}
+    if (xma)
+    {
+	env = setEnv (env, "XDM_MANAGED", xma);
+	free (xma);
+    }
+    else
+	env = setEnv (env, "XDM_MANAGED", "true");
     env = setEnv (env, "DISPLAY", d->name);
     env = setEnv (env, "HOME", home);
-    env = setEnv (env, "PATH", useSystemPath ? d->systemPath : d->userPath);
+    env = setEnv (env, "PATH", isRoot ? d->systemPath : d->userPath);
     env = setEnv (env, "SHELL", shell);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
     if (krbtkfile[0] != '\0')
@@ -837,7 +861,6 @@ static int sourceReset = 0;
 int
 StartClient(struct display *d, char *name, char *pass, char **sessargs)
 {
-    int		i;
     char	*shell, *home;
     char	**argv;
 #ifdef USE_PAM
@@ -845,16 +868,17 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 #else
 # ifdef AIXV3
     char	*msg;
+    char	**theenv;
+    extern char	**newenv; /* from libs.a, this is set up by setpenv */
 # else
 #  ifdef HAS_SETUSERCONTEXT
-    char	**e, **envinit;
     extern char	**environ;
 #  endif
 # endif
 #endif
     char	*failsafeArgv[2];
-    int		pid;
     struct verify_info	*verify;
+    int		i, pid;
 
     if (init_vrf(d, name, pass) != V_OK)
 	return 0;
@@ -887,7 +911,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 
     if (!(verify = malloc (sizeof (*verify)))) {
 	LogOutOfMem("StartClient");
-	SessionExit (d, EX_NORMAL);
+	return 0;
     }
     d->verify = verify;
     StrDup (&verify->user, name);
@@ -959,6 +983,8 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
     ReInitErrorLog ();
 #endif    
     removeAuth = 1;
+    if (d->fifoPath)
+	chown (d->fifoPath, verify->uid, -1);
     switch (pid = Fork ()) {
     case 0:
 #ifdef XDMCP
@@ -980,9 +1006,10 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 #endif
 
 #ifndef AIXV3
+
 # if !defined(HAS_SETUSERCONTEXT) || defined(USE_PAM)
 	if (!SetGid (name, verify->gid))
-	    return 0;
+	    exit (1);
 #  ifdef USE_PAM
 	pam_setcred(pamh, 0);
 	/* pass in environment variables set by libpam and modules it called */
@@ -996,25 +1023,21 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	if (setlogin(name) < 0)
 	{
 	    LogError("setlogin for \"%s\" failed, errno=%d\n", name, errno);
-	    return 0;
+	    exit (1);
 	}
 #  endif
 	if (!SetUid (name, verify->uid))
-	    return 0;
+	    exit (1);
 # else /* HAS_SETUSERCONTEXT && !USE_PAM */
 	/*
 	 * Destroy environment unless user has requested its preservation.
 	 * We need to do this before setusercontext() because that may
 	 * set or reset some environment variables.
 	 */
-	envinit = malloc(sizeof(char*));
-	if (NULL == envinit) {
-		LogError("malloc() of initial environment failed, errno=%d\n",
-			 errno);
-		return 0;
+	if (!(environ = initStrArr (0))) {
+	    LogOutOfMem("StartSession");
+	    exit (1);
 	}
-	envinit[0] = NULL;
-	environ = envinit;
 
 	/*
 	 * Set the user's credentials: uid, gid, groups,
@@ -1024,13 +1047,11 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	{
 	    LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
 		     errno);
-	    return 0;
+	    exit (1);
 	}
-	endpwent();
 
-	e = environ;
-	while (*e)
-	    verify->userEnviron = putEnv(*e++, verify->userEnviron);
+	for (i = 0; environ[i]; i++)
+	    verify->userEnviron = putEnv(environ[i], verify->userEnviron);
 
 # endif /* HAS_SETUSERCONTEXT */
 #else /* AIXV3 */
@@ -1041,45 +1062,37 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	if (setpcred(name, NULL) == -1)
 	{
 	    LogError("setpcred for \"%s\" failed, errno=%d\n", name, errno);
-	    return 0;
+	    exit (1);
 	}
 
-	{ 
-	    extern char **newenv; /* from libs.a, this is set up by setpenv */
-	    char **theenv;
-	    int i;
-
-	    /*
-	     * Make a copy of the environment, because setpenv will trash it.
-	     */
-	    for (i = 0; verify->userEnviron[i++]; );
-	    if (!(theenv = (char **)malloc(i * sizeof(char *))))
-	    {
-		Debug("Out of memory\n");
-		return 0;
-	    }
-	    memcpy(theenv, verify->userEnviron, i * sizeof(char *));
-
-	    /*
-	     * Set the users process environment. Store protected variables and
-	     * obtain updated user environment list. This call will initialize
-	     * global 'newenv'. 
-	     */
-	    if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
-			theenv, NULL) != 0)
-	    {
-		Debug("Can't set process environment (user=%s)\n", name);
-		free(theenv);
-		return 0;
-	    }
-
-	    /*
-	     * Free old userEnviron and replace with newenv from setpenv().
-	     */
-	    free(theenv);
-	    freeStrArr(verify->userEnviron);
-	    verify->userEnviron = newenv;
+	/*
+	 * Make a copy of the environment, because setpenv will trash it.
+	 */
+	if (!(theenv = xCopyStrArr (0, verify->userEnviron)))
+	{
+	    LogOutOfMem("StartSession");
+	    exit (1);
 	}
+
+	/*
+	 * Set the users process environment. Store protected variables and
+	 * obtain updated user environment list. This call will initialize
+	 * global 'newenv'. 
+	 */
+	if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
+		    theenv, NULL) != 0)
+	{
+	    LogError("Can't set process environment (user=%s)\n", name);
+	    exit (1);
+	}
+
+	/*
+	 * Free old userEnviron and replace with newenv from setpenv().
+	 */
+	free(theenv);
+	freeStrArr(verify->userEnviron);
+	verify->userEnviron = newenv;
+
 #endif /* AIXV3 */
 
 	/*
@@ -1104,7 +1117,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 		bzero (pass + 8, len - 8);
 	    keyret = getsecretkey(netname, secretkey, pass);
 	    Debug ("getsecretkey returns %d, key length %d\n",
-		    keyret, strlen (secretkey));
+		   keyret, strlen (secretkey));
 	    /* is there a key, and do we have the right password? */
 	    if (keyret == 1)
 	    {
@@ -1201,7 +1214,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 		}
 	    }
 	}
-	argv = parseArgs (0, d->session);
+	argv = parseArgs ((char **)0, d->session);
 Debug ("session args: %'[s\n", sessargs);
 	mergeStrArrs (&argv, sessargs);
 	if (!argv || !argv[0])
@@ -1224,6 +1237,9 @@ Debug ("session args: %'[s\n", sessargs);
 	return 0;
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);
+	FdPrintf (d->pipefd[1], "u\t%d\n", verify->uid);
+	if (d->autoReLogin)
+	    FdPrintf (d->pipefd[1], "r\t%s\t%s\t%[s\n", name, pass, sessargs);
 	return pid;
     }
 }
@@ -1245,6 +1261,8 @@ SessionExit (struct display *d, int status)
     }
     if (removeAuth)
     {
+	if (d->fifoPath)
+	    chown (d->fifoPath, 0, -1);
 #ifdef USE_PAM
 	if (pamh) {
 	    /* shutdown PAM session */
@@ -1313,29 +1331,29 @@ addData (char *buf, int len, void *ptr)
     *sp = addStrArr (*sp, buf, len);
 }
 
-int
+void
 RdUsrData (struct display *d, char *usr, char ***args)
 {
-    int len, pid, ret, fd, pfd[2];
+    struct passwd *pw;
+    int len, pid, fd, pfd[2];
 
-    if (!usr || !usr[0])
-	return 0;
+    *args = 0;
 
-    if (init_vrf (d, usr, "") != V_OK || !init_pwd (usr NSHADOW))
-	return 0;
+    if (!usr || !usr[0] || !(pw = getpwnam (usr)))
+	return;
 
     if (pipe (pfd))
-	return 0;
+	return;
     if ((pid = Fork()) < 0) {
 	close (pfd[0]);
 	close (pfd[1]);
-	return 0;
+	return;
     }
     if (!pid) {
 	char buf[1024];
-	if (!SetUser (p->pw_name, p->pw_uid, p->pw_gid))
+	if (!SetUser (pw->pw_name, pw->pw_uid, pw->pw_gid))
 	    exit (0);
-	if (chdir (p->pw_dir) < 0)
+	if (chdir (pw->pw_dir) < 0)
 	    exit (0);
 	if ((fd = open (d->sessSaveFile, O_RDONLY)) < 0)
 	    exit (0);
@@ -1347,8 +1365,7 @@ RdUsrData (struct display *d, char *usr, char ***args)
     *args = initStrArr (0);
     FdGetsCall (pfd[0], addData, args);
     close (pfd[0]);
-    ret = Wait4 (pid);
-    return WaitCode (ret);
+    (void) Wait4 (pid);
 }
 
 

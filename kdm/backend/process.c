@@ -50,13 +50,13 @@ from The Open Group.
 #endif
 
 #include <errno.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdarg.h>
-
 #ifdef X_NOT_STDC_ENV
 extern int errno;
 #endif
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 static int opipe[2], ipipe[2], gpid;
 Jmp_buf GErrJmp;
@@ -99,8 +99,9 @@ RegisterCloseOnFork (int fd)
 }
 
 void
-ClearCloseOnFork (int fd)
+CloseNClearCloseOnFork (int fd)
 {
+    close (fd);
     FD_CLR (fd, &CloseMask);
 }
 
@@ -173,12 +174,13 @@ Wait4 (int pid)
 #ifndef X_NOT_POSIX
     if (waitpid (pid, &result, 0) < 0)
 #else
-    if (wait4 (pid, &result, 0, (struct rusage *)0) < 0)
+    while (wait4 (pid, &result, 0, (struct rusage *)0) < 0)
 #endif
-    {
-	Debug ("Wait4(%d) failed\n", pid);
-	return 0;
-    }
+	if (errno != EINTR)
+	{
+	    Debug ("Wait4(%d) failed: %s\n", pid, _SysErrorMsg(errno) );
+	    return 0;
+	}
     return waitVal (result);
 }
 
@@ -247,10 +249,8 @@ runAndWait (char **args, char **environ)
 static void
 GClosen ()
 {
-    ClearCloseOnFork (opipe[1]);
-    ClearCloseOnFork (ipipe[0]);
-    close (opipe[1]);
-    close (ipipe[0]);
+    CloseNClearCloseOnFork (opipe[1]);
+    CloseNClearCloseOnFork (ipipe[0]);
 }
 
 static void
@@ -311,7 +311,7 @@ GOpen (char **argv, char *what, char **env)
 }
 
 int
-GClose ()
+GClose (int force)
 {
     int	ret;
 
@@ -320,10 +320,11 @@ GClose ()
 	return 0;
     }
     GClosen ();
-/*    TerminateProcess (gpid, SIGTERM);*/
+    if (force)
+	TerminateProcess (gpid, SIGTERM);
     ret = Wait4 (gpid);
     gpid = 0;
-    if (ret)
+    if (ret && WaitSig(ret) != SIGTERM)
 	LogError ("Abnormal helper termination, code %d, signal %d\n", 
 		  WaitCode(ret), WaitSig(ret));
     return ret;
@@ -334,7 +335,7 @@ static void GError (void) ATTR_NORETURN;
 static void
 GError ()
 {
-    (void) GClose ();
+    (void) GClose (1);
     Longjmp (GErrJmp, 1);
 }
 

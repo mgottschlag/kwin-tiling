@@ -32,11 +32,9 @@ from The Open Group.
  * streams.c - Support for STREAMS
  */
 
+#if defined(XDMCP) && defined(STREAMSCONN)
+
 #include "dm.h"
-
-#ifdef XDMCP
-#ifdef STREAMSCONN
-
 #include "dm_error.h"
 
 #include <fcntl.h>
@@ -144,5 +142,4 @@ GetChooserAddr (addr, lenp)
     return retval;
 }
 
-#endif /* STREAMSCONN */
-#endif /* XDMCP */
+#endif /* STREAMSCONN && XDMCP */

@@ -45,6 +45,9 @@ from The Open Group.
 #define PRINT_ARRAYS
 #define LOG_DEBUG_MASK DEBUG_CORE
 #define LOG_PANIC_EXIT 1
+#define NEED_FDPRINTF
+#define STATIC
+#define CONST
 #include "printf.c"
 
 void

@@ -32,11 +32,9 @@ from The Open Group.
  * socket.c - Support for BSD sockets
  */
 
+#if defined(XDMCP) && !defined(STREAMSCONN)
+
 #include "dm.h"
-
-#ifdef XDMCP
-#ifndef STREAMSCONN
-
 #include "dm_error.h"
 #include "dm_socket.h"
 
@@ -249,5 +247,4 @@ GetChooserAddr (
     return 0;
 }
 
-#endif /* !STREAMSCONN */
-#endif /* XDMCP */
+#endif /* !STREAMSCONN && XDMCP */

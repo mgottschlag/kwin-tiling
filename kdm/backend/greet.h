@@ -69,12 +69,17 @@ from The Open Group.
 #define EX_AL_RESERVER_DPY	4	/* reserver; maybe, auto-(re-)login */
 #define EX_OPENFAILED_DPY	5	/* XOpenDisplay failed, retry */
 #define EX_TEXTLOGIN		6	/* start console login */
-#define EX_REBOOT		7	/* shutdown & reboot */
-#define EX_HALT			8	/* shutdown & halt/poweroff */
+#define EX_RESERVE		7	/* put in reserve mode */
 
 /*
  * Command codes greeter -> core
  */
+#define G_Shutdown	1	/* int how; int when; async */
+# define SHUT_REBOOT	1	/* how */
+# define SHUT_HALT	2
+# define SHUT_SCHEDULE	0	/* when */
+# define SHUT_TRYNOW	1
+# define SHUT_FORCENOW	2
 #define G_SessionExit	2	/* int code; async */
 #define G_Verify	3	/* str name, str pass; int V_ret */
 #define G_Restrict	4	/* str name; <variable> */
@@ -172,6 +177,11 @@ from The Open Group.
 
 #define C_PAMService		(C_TYPE_STR | 0x012)
 
+#define C_fifoDir		(C_TYPE_STR | 0x013)
+#define C_fifoGroup		(C_TYPE_INT | 0x014)	
+#define C_fifoAllowShutdown	(C_TYPE_INT | 0x015)
+#define C_fifoAllowNuke		(C_TYPE_INT | 0x016)
+
 /* per-display config */
 
 #define C_serverAttempts	(C_TYPE_INT | 0x100)
@@ -190,9 +200,6 @@ from The Open Group.
 #define C_authorize		(C_TYPE_INT | 0x10e)
 #define C_authNames		(C_TYPE_ARGV | 0x110)
 #define C_clientAuthFile	(C_TYPE_STR | 0x111)
-#define C_fifoCreate		(C_TYPE_INT | 0x112)
-#define C_fifoOwner		(C_TYPE_INT | 0x113)	
-#define C_fifoGroup		(C_TYPE_INT | 0x114)	
 #define C_resources		(C_TYPE_STR | 0x116)
 #define C_xrdb			(C_TYPE_STR | 0x117)
 #define C_setup			(C_TYPE_STR | 0x118)
@@ -214,6 +221,12 @@ from The Open Group.
 #define C_allowNullPasswd	(C_TYPE_INT | 0x129)
 #define C_allowRootLogin	(C_TYPE_INT | 0x12a)
 #define C_sessSaveFile		(C_TYPE_STR | 0x12b)
+#define C_allowShutdown		(C_TYPE_INT | 0x12c)
+# define SHUT_NONE	0
+# define SHUT_ROOT	1
+# define SHUT_ALL	2
+#define C_allowNuke		(C_TYPE_INT | 0x12d)	/* see previous */
+#define C_defSdMode		(C_TYPE_INT | 0x12e)	/* see G_Shutdown */
 
 /* display variables */
 #define C_name			(C_TYPE_STR | 0x200)
@@ -235,16 +248,17 @@ from The Open Group.
  **/
 
 #define d_location	1
-#define Local		1	/* server runs on local host */
-#define Foreign		0	/* server runs on remote host */
+#define dLocal		1	/* server runs on local host */
+#define dForeign	0	/* server runs on remote host */
 
-#define d_lifetime	2
-#define Permanent	2	/* session restarted when it exits */
-#define Transient	0	/* session not restarted when it exits */
+#define d_lifetime	6
+#define dPermanent	4	/* display restarted when session exits */
+#define dReserve	2	/* display not restarted when session exits */
+#define dTransient	0	/* display removed when session exits */
 
-#define d_origin	4
-#define FromFile	4	/* started via entry in servers file */
-#define FromXDMCP	0	/* started with XDMCP */
+#define d_origin	8
+#define dFromFile	8	/* started via entry in servers file */
+#define dFromXDMCP	0	/* started with XDMCP */
 
 /**
  ** for xdmcp acls
