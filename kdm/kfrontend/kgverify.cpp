@@ -167,11 +167,14 @@ KGVerify::setUser( const QString &user )
     curUser = user;
     Debug( "greet->setUser(%\"s)\n", user.latin1() );
     greet->setUser( user );
+    hasBegun = true;
+    setTimer();
 }
 
 void
 KGVerify::start()
 {
+    hasBegun = false;
     authTok = (func == KGreeterPlugin::ChAuthTok);
     reAuthTok = false;
     running = true;
@@ -239,6 +242,7 @@ KGVerify::reject()
     curUser = QString::null;
     Debug( "greet->clear()\n" );
     greet->clear();
+    hasBegun = false;
     if (!failed)
 	timer.stop();
 }
@@ -281,7 +285,7 @@ KGVerify::slotTimeout()
 void // private
 KGVerify::setTimer()
 {
-    if (!failed && fixedEntity.isEmpty() && !curUser.isEmpty())
+    if (!failed && fixedEntity.isEmpty() && hasBegun)
 	timer.start( 40000 );
 }
 
@@ -670,6 +674,8 @@ KGVerify::gplugReturnText( const char *text, int tag )
     GSendStr( text );
     if (text) {
 	GSendInt( tag );
+	hasBegun = true;
+	setTimer();
 	handleVerify();
     } else
 	coreLock = 0;
@@ -686,6 +692,8 @@ KGVerify::gplugReturnBinary( const char *data )
 	    GSendArr( 4, data );
 	else
 	    GSendArr( len, data );
+	hasBegun = true;
+	setTimer();
 	handleVerify();
     } else {
 	Debug( "gplugReturnBinary(NULL)\n" );
@@ -699,7 +707,8 @@ KGVerify::gplugSetUser( const QString &user )
 {
     Debug( "gplugSetUser(%\"s)\n", user.latin1() );
     curUser = user;
-    handler->verifySetUser( curUser );
+    handler->verifySetUser( user );
+    hasBegun = !user.isEmpty();
     setTimer();
 }
 
@@ -713,6 +722,11 @@ KGVerify::gplugStart( const char *method )
     handleVerify();
 }
 
+void
+KGVerify::gplugActivity()
+{
+    setTimer();
+}
 
 bool
 KGVerify::eventFilter( QObject *o, QEvent *e )

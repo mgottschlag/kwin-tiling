@@ -40,6 +40,7 @@ public:
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString & );
     virtual void gplugStart( const char *method );
+    virtual void gplugActivity();
 
 signals:
     void startNewSession();

@@ -59,6 +59,13 @@ public:
      *  up to the backend, but will usually be related to the PAM service.
      */
     virtual void gplugStart( const char *method ) = 0;
+    /**
+     * Plugins that expect user input from a different device than the mouse or
+     * keyboard must call this when user activity is detected to prevent the
+     * greeter from resetting/going away. Events should be compressed to no
+     * more than ten per second; one every five seconds is actually enough.
+     */
+    virtual void gplugActivity() = 0;
 };
 
 /**

@@ -447,6 +447,11 @@ void PasswordDlg::gplugStart( const char *method )
     handleVerify();
 }
 
+void PasswordDlg::gplugActivity()
+{
+    slotActivity();
+}
+
 void PasswordDlg::slotOK()
 {
     greet->next();
