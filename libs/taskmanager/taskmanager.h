@@ -48,6 +48,11 @@ public:
     QString name() { return _info.name; }
     QString visibleName() { return _info.visibleName; }
     QString visibleNameWithState() { return _info.visibleNameWithState(); }
+    QString iconName();
+    QString visibleIconName();
+    QString className();
+
+    QValueList<WId> transients() { return _transients; }
 
     // state
     bool maximized() const;
@@ -57,7 +62,7 @@ public:
     bool staysOnTop() const;
     bool shaded() const;
     bool active() const;
-    int desktop() const { return _info.desktop; }
+    int  desktop() const { return _info.desktop; }
 
     // actions
     void maximize();
@@ -106,7 +111,7 @@ public:
     bool compliant() const { return _compliant; }
 
 signals:
-    void killMe(pid_t);
+    void killMe(Startup*);
 
 protected:
     void timerEvent(QTimerEvent *);
@@ -153,6 +158,7 @@ protected slots:
     void activeWindowChanged(WId);
     void currentDesktopChanged(int);
     void killStartup(pid_t pid);
+    void killStartup(Startup*);
 
 protected:
     Task* findTask(WId w);

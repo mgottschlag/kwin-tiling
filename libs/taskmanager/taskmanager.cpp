@@ -252,7 +252,7 @@ void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString b
     Startup * s = new Startup(name, icon, pid, bin, compliant, this);
     _startups.append(s);
 
-    connect(s, SIGNAL(killMe(pid_t)), SLOT(killStartup(pid_t)));
+    connect(s, SIGNAL(killMe(Startup*)), SLOT(killStartup(Startup*)));
     emit startupAdded(s);
 }
 
@@ -269,6 +269,15 @@ void TaskManager::killStartup(pid_t pid)
         if (s->pid() == pid)
             break;
     }
+    if (s == 0) return;
+
+    _startups.removeRef(s);
+    emit startupRemoved(s);
+    delete s;
+}
+
+void TaskManager::killStartup(Startup* s)
+{
     if (s == 0) return;
 
     _startups.removeRef(s);
@@ -317,9 +326,18 @@ void Task::refresh(bool icon)
 {
     _info = KWin::info(_win);
     if (icon) {
+
+        // try to load icon via net_wm
         _pixmap = KWin::icon(_win, 16, 16, true);
+
+        // try to guess the icon from the classhint
         if(_pixmap.isNull())
-            _pixmap = SmallIcon("xapp");
+            KGlobal::instance()->iconLoader()->loadIcon(className().lower(), KIcon::Small,
+                                                        KIcon::Small, KIcon::DefaultState, 0, true);
+
+        // load xapp icon
+        if (_pixmap.isNull())
+            _pixmap = SmallIcon("kcmx");
     }
     emit changed();
 }
@@ -363,6 +381,25 @@ bool Task::onAllDesktops() const
 bool Task::active() const
 {
     return _active;
+}
+
+QString Task::iconName()
+{
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconName);
+    return QString::fromUtf8(ni.iconName());
+}
+QString Task::visibleIconName()
+{
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMVisibleIconName);
+    return QString::fromUtf8(ni.visibleIconName());
+}
+
+QString Task::className()
+{
+    XClassHint hint;
+    if(XGetClassHint(qt_xdisplay(), _win, &hint))
+        return QString(hint.res_class);
+    return QString::null;
 }
 
 void Task::maximize()
@@ -473,5 +510,5 @@ Startup::~Startup()
 void Startup::timerEvent(QTimerEvent *)
 {
     killTimers();
-    emit(killMe(_pid));
+    emit(killMe(this));
 }
