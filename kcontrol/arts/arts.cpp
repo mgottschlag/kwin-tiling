@@ -280,6 +280,7 @@ void KArtsModule::GetSettings( void )
 	delete midiConfig;
 	
 	updateWidgets();
+	setChanged( false );
 }
 
 KArtsModule::~KArtsModule() {
@@ -362,6 +363,7 @@ void KArtsModule::save()
 		restartServer();
 		updateWidgets();
 	}
+	setChanged( false );
 }
 
 int KArtsModule::userSavedChanges()
