@@ -136,6 +136,8 @@ void KBackgroundPattern::readSettings()
 
     m_Pattern = m_pConfig->readPathEntry("File");
     m_Comment = m_pConfig->readEntry("Comment");
+    if (m_Comment.isEmpty())
+       m_Comment = m_File.mid(m_File.findRev('/')+1);
 }
 
 
@@ -158,6 +160,8 @@ void KBackgroundPattern::writeSettings()
 
 bool KBackgroundPattern::isAvailable()
 {
+    if (m_Pattern.isEmpty())
+       return false;
     QString file = m_Pattern;
     if (file.at(0) != '/')
         file = m_pDirs->findResource("dtop_pattern", file);

@@ -147,6 +147,13 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    if (m_wallpaperPos == KBackgroundSettings::NoWallpaper)
       m_wallpaperPos = KBackgroundSettings::Centred; // Default
 
+   if (KGlobal::dirs()->isRestrictedResource("wallpaper"))
+   {
+      m_urlWallpaper->button()->hide();
+      m_buttonSetupWallpapers->hide();
+      m_radioSlideShow->hide();
+   }
+
    initUI();
    updateUI();
 
@@ -304,7 +311,8 @@ void BGDialog::initUI()
    for (it=m_Patterns.begin(); it != m_Patterns.end(); it++)
    {
       KBackgroundPattern pat(*it);
-      m_comboPattern->insertItem(pat.comment());
+      if (pat.isAvailable())
+         m_comboPattern->insertItem(pat.comment());
    }
 
    // Wallpapers
