@@ -22,18 +22,19 @@
 #include <stdlib.h>
 
 #include <qfile.h>
+#include <qxembed.h>
 
 #include <dcopclient.h>
 
-#include <kdebug.h>
-#include <kstandarddirs.h>
-#include <kcmdlineargs.h>
-#include <kdesktopfile.h>
-#include <qxembed.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
-#include <klibloader.h>
 #include <kaboutdata.h>
+#include <kcmdlineargs.h>
+#include <kdebug.h>
+#include <kdesktopfile.h>
+#include <kiconloader.h>
+#include <klibloader.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
+#include <kstartupinfo.h>
 #include <kwin.h>
 
 #include <kcmultidialog.h>
@@ -78,6 +79,17 @@ static KService::Ptr locateModule(const QCString& module)
         return 0;
         
     return service;
+}
+
+KCMShellMultiDialog::KCMShellMultiDialog(QWidget *parent, const char *name, bool modal)
+  : KCMultiDialog(parent, name, modal),
+    DCOPObject("dialog")
+{
+}
+
+void KCMShellMultiDialog::activate( QCString asn_id )
+{
+    KStartupInfo::setNewStartupId( this, asn_id );
 }
 
 void
@@ -273,12 +285,17 @@ extern "C" int kdemain(int _argc, char *_argv[])
        return 0;
     }
 
+    QCString dcopName;
+
     // multiple control modules
     KService::List modules;
     for (int i = 0; i < args->count(); i++) {
         KService::Ptr service = locateModule(args->arg(i));
         if (service)
 	{
+	        if (!dcopName.isEmpty())
+		   dcopName += "_";
+		dcopName += args->arg(i);
 		modules.append(service);
 		continue;
 	}
@@ -286,8 +303,15 @@ extern "C" int kdemain(int _argc, char *_argv[])
 
     if (modules.count() < 1) return -1;
 
+    app.setDCOPName(dcopName);
+    if (app.isRunning())
+    {
+        app.waitForExit();
+        return 0;
+    }
+
     // create the dialog
-    KCMultiDialog * dlg = new KCMultiDialog(0, 0, true);
+    KCMultiDialog * dlg = new KCMShellMultiDialog(0, 0, true);
 
     // Needed for modules that use d'n'd (not really the right
     // solution for this though, I guess)

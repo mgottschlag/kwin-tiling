@@ -42,7 +42,7 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 kcontrol_la_LIBADD  = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-kcmshell_la_SOURCES = kcmshell.cpp kcdialog.cpp kcdialog.skel
+kcmshell_la_SOURCES = kcmshell.cpp kcdialog.cpp kcdialog.skel kcmshell.skel
 kcmshell_la_LIBADD = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 

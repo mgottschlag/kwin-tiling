@@ -21,7 +21,21 @@
 #ifndef __kcmshell_h__
 #define __kcmshell_h__
 
+#include <dcopobject.h>
+
 #include <kapplication.h>
+#include <kcmultidialog.h>
+
+class KCMShellMultiDialog : public KCMultiDialog, public DCOPObject
+{
+  Q_OBJECT
+  K_DCOP
+public:
+  KCMShellMultiDialog(QWidget *parent=0, const char *name=0, bool modal=false);
+
+k_dcop:
+  virtual void activate( QCString asn_id );
+};
 
 class kcmApplication : public KApplication
 {
