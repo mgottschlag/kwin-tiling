@@ -174,8 +174,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     QBoxLayout *topLayout = new QHBoxLayout(this, 10, 10);
 
     // left column
-    QBoxLayout *vLayout = new QVBoxLayout(this, 0, 10);
-    topLayout->addLayout(vLayout);
+    QBoxLayout *vLayout = new QVBoxLayout(topLayout, 10);
 
     mEnableCheckBox = new QCheckBox( i18n("&Enable screensaver"), this );
     mEnableCheckBox->setChecked( mEnabled );
@@ -215,8 +214,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
       " will look like.)") );
 
     // right column
-    vLayout = new QVBoxLayout(this, 0, 10);
-    topLayout->addLayout(vLayout);
+    vLayout = new QVBoxLayout(topLayout, 10);
 
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
@@ -298,8 +296,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 #endif
 
     groupLayout->addStretch(1);
-
-    topLayout->activate();
 
     setMonitor();
 
