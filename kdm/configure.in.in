@@ -65,7 +65,7 @@ EOF
 	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`]
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
-	AC_MSG_ERROR([$XMKF (imake) failed])
+	AC_MSG_ERROR([$XMKMF (imake) failed])
     fi
     cd ..
     rm -fr conftestdir
