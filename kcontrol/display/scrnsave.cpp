@@ -22,6 +22,7 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qslider.h>
+#include <qvgroupbox.h>
 #include <qlayout.h>
 #include <qtextstream.h>
 #include <ksimpleconfig.h>
@@ -269,30 +270,22 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	
 	topLayout->addLayout( stackLayout, 2, 2 );
 
-	group = new QGroupBox(  i18n("Settings"), this );
+	group = new QVGroupBox(  i18n("Settings"), this );
 	
 	stackLayout->addWidget( group, 15 );
-	
-	groupLayout = new QVBoxLayout( group, 10, 5 );
 	
 	mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60, i18n("min"), 10, false, group);
     mWaitEdit->setLabelAlignment(AlignCenter);
     connect( mWaitEdit, SIGNAL( valueChanged(int) ),
              SLOT( slotTimeoutChanged(int) ) );
     
-    groupLayout->addWidget(mWaitEdit, 0, AlignTop);
-    
 	mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
 	mLockCheckBox->setChecked( mLock );
 	connect( mLockCheckBox, SIGNAL( toggled( bool ) ), SLOT( slotLock( bool ) ) );
-	groupLayout->addWidget( mLockCheckBox );
     
 	mStarsCheckBox = new QCheckBox( i18n("Show &password as stars"), group );
 	mStarsCheckBox->setChecked(mPasswordStars);
 	connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), SLOT( slotStars( bool ) ) );
-	groupLayout->addWidget( mStarsCheckBox );
-    
-	groupLayout->activate();
     
 	group = new QGroupBox(  i18n("Priority"), this );
 	
