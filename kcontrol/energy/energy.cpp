@@ -18,9 +18,7 @@
 
 #include <config.h>
 
-#define QT_CLEAN_NAMESPACE
 #include <qglobal.h>
-#undef QT_CLEAN_NAMESPACE
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -44,7 +42,7 @@
 #include "energy.h"
 
 
-#if HAVE_DPMS
+#ifdef HAVE_DPMS
 #include <X11/Xmd.h>
 extern "C" {
 #include <X11/extensions/dpms.h>
@@ -107,7 +105,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_Off = DFLT_OFF;
     m_bDPMS = false;
 
-#if HAVE_DPMS
+#ifdef HAVE_DPMS
     int dummy;
     m_bDPMS = DPMSQueryExtension(qt_xdisplay(), &dummy, &dummy);
 #endif
@@ -273,7 +271,7 @@ int dropError(Display *, XErrorEvent *)
 /* static */
 void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
 {
-#if HAVE_DPMS
+#ifdef HAVE_DPMS
     int (*defaultHandler)(Display *, XErrorEvent *);
     defaultHandler = XSetErrorHandler(dropError);
 
