@@ -261,7 +261,9 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 		if (!(configWidget && configWidget->qt_cast("CfgComponent")))
 		{
 			delete configWidget;
-			configWidget=new CfgComponent(configContainer);
+			CfgComponent* cfgcomp = new CfgComponent(configContainer);
+			configWidget=cfgcomp;
+                        cfgcomp->ChooserDocu->setText(i18n("Choose from the list below which component should be used by default for the %1 service.").arg(it->text()));
 			configWidget->show();
 			myLayout->addWidget(configWidget);
 			connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));

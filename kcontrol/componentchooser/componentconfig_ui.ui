@@ -31,7 +31,7 @@
                 <cstring>ChooserDocu</cstring>
             </property>
             <property name="text">
-                <string>Choose from the list below which component should be used by default for the %1 service.</string>
+                <string></string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
