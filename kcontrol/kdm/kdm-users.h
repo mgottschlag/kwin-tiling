@@ -52,7 +52,7 @@ public:
 protected:
 	void userButtonDragEnterEvent(QDragEnterEvent *e);
 	void userButtonDropEvent(QDropEvent *e);
-	
+
 private slots:
         void slotUserSelected(const QString &user);
         void slotAllToNo();
@@ -66,6 +66,7 @@ private:
 
         KIconLoader *iconloader;
 	QButtonGroup *usrGroup, *shwGroup;
+        QRadioButton *rbselusr, *rballusr;
         QCheckBox    *cbusrshw, *cbusrsrt;
         KIconButton *userbutton;
         QLabel       *userlabel;

@@ -154,19 +154,19 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     usrGroup->setExclusive( TRUE );
     QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10 );
 
-    rb = new QRadioButton(i18n("Show only\nselected users"), usrGroup );
-    usrGroup->insert( rb );
-    usrGLayout->addWidget( rb );
-    connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    QWhatsThis::add(rb, i18n("If this option is selected, KDM will only show the users listed"
+    rbselusr = new QRadioButton(i18n("Show only\nselected users"), usrGroup );
+    usrGroup->insert( rbselusr );
+    usrGLayout->addWidget( rbselusr );
+    connect(rbselusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add(rbselusr, i18n("If this option is selected, KDM will only show the users listed"
       " in the \"selected users\" listbox in its login dialog."));
 
-    rb = new QRadioButton( i18n("Show all users\nbut no-show users"), usrGroup );
-    rb->setGeometry( 10, 50, 140, 25 );
-    usrGroup->insert( rb );
-    usrGLayout->addWidget( rb );
-    connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    QWhatsThis::add( rb, i18n("If this option is selected, KDM will show all users but those"
+    rballusr = new QRadioButton( i18n("Show all users\nbut no-show users"), usrGroup );
+    rballusr->setGeometry( 10, 50, 140, 25 );
+    usrGroup->insert( rballusr );
+    usrGLayout->addWidget( rballusr );
+    connect(rballusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all users but those"
       " who are listed in the \"no-show users\" listbox."));
 
     lLayout->addWidget( usrGroup );
@@ -216,7 +216,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 void KDMUsersWidget::slotUserPixChanged(QString)
 {
     QString user(userlabel->text().stripWhiteSpace());
-    if(user == m_defaultText) 
+    if(user == m_defaultText)
     {
        user = "default";
        if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"))
@@ -271,8 +271,8 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
         bool istmp = false;
 
         QString mimetype = KImageIO::mimeType(url.url());
-        
-        if( !KImageIO::isSupported(mimetype, KImageIO::Reading) ) 
+
+        if( !KImageIO::isSupported(mimetype, KImageIO::Reading) )
         {
             QString msg =  i18n("Sorry, but\n"
 				"%1\n"
@@ -294,7 +294,7 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
             // Finally we've got an image file to add to the user
             QPixmap p(pixpath);
             if (istmp)
-                KIO::NetAccess::removeTempFile(pixpath); 
+                KIO::NetAccess::removeTempFile(pixpath);
             if(!p.isNull()) { // Save image as <userpixdir>/<user>.<ext>
                 userbutton->setPixmap(p);
                 slotUserPixChanged(user);
@@ -384,6 +384,8 @@ void KDMUsersWidget::save()
     c->writeEntry( "UserView", cbusrshw->isChecked() );
     c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
+    showallusers = rballusr->isChecked();
+
     if(nouserlb->count() > 0) {
         QString nousrstr;
         for(uint i = 0; i < nouserlb->count(); i++) {
@@ -452,7 +454,8 @@ void KDMUsersWidget::load()
 
     cbusrsrt->setChecked(c->readNumEntry("SortUsers", true));
     cbusrshw->setChecked(c->readNumEntry("UserView", true));
-    usrGroup->setButton(showallusers ? 0 : 1);
+    if (showallusers) rballusr->setChecked(true);
+    else rbselusr->setChecked(true);
 
     delete c;
     alluserlb->setCurrentItem(0);
