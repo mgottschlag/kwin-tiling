@@ -25,6 +25,8 @@
 #include <kmessagebox.h>
 #include <kinstance.h>
 #include <kaction.h>
+#include <kwin.h>
+#include <kiconloader.h>
 
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
@@ -153,6 +155,9 @@ TopLevel::TopLevel(const char* name)
       connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
+      KWin::setIcons(  winId(),
+		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  32 ),
+		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  16 ) );
   }
 }
 
@@ -200,7 +205,7 @@ bool TopLevel::queryClose()
 void TopLevel::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
-  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), 
+  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
 actionCollection());
   icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
