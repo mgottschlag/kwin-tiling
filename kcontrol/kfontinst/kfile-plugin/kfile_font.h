@@ -20,6 +20,10 @@ class KFileFontPlugin : public KFilePlugin
 
     private:
 
+    void addMimeType(const char *mime);
+
+    private:
+
     CFontEngine itsFontEngine;
 };
 

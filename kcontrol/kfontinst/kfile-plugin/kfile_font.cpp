@@ -13,34 +13,31 @@ K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"));
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)
 {
-    static const int constNumTypes=6;
-
-    KFileMimeTypeInfo *info[constNumTypes];
-
-    info[0] = addMimeTypeInfo("application/x-font-ttf"),
-    info[1] = addMimeTypeInfo("application/x-font-type1");
-    info[2] = addMimeTypeInfo("application/x-font-speedo");
-    info[3] = addMimeTypeInfo("application/x-font-bdf");
-    info[4] = addMimeTypeInfo("application/x-font-pcf");
-    info[5] = addMimeTypeInfo("application/x-font-snf");
-
-    for(int t=0; t<constNumTypes; ++t)
-    {
-        KFileMimeTypeInfo::GroupInfo *group;
-        group=addGroupInfo(info[t], "General", i18n("General"));
-        addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
-        addItemInfo(group, "Family", i18n("Family"), QVariant::String);
-        addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
-        addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
-        addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
-        addItemInfo(group, "Width", i18n("Width"), QVariant::String);
-        addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
-        addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
-    }
+    addMimeType("application/x-font-ttf"),
+    addMimeType("application/x-font-type1");
+    addMimeType("application/x-font-speedo");
+    addMimeType("application/x-font-bdf");
+    addMimeType("application/x-font-pcf");
+    addMimeType("application/x-font-snf");
 }
 
 KFileFontPlugin::~KFileFontPlugin()
 {
+}
+
+void KFileFontPlugin::addMimeType(const char *mime)
+{
+    KFileMimeTypeInfo            *info=addMimeTypeInfo(mime);
+    KFileMimeTypeInfo::GroupInfo *group=addGroupInfo(info, "General", i18n("General"));
+
+    addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
+    addItemInfo(group, "Family", i18n("Family"), QVariant::String);
+    addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
+    addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
+    addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
+    addItemInfo(group, "Width", i18n("Width"), QVariant::String);
+    addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
+    addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
 }
 
 static QString toStr(CFontEngine::ESpacing v)
