@@ -23,7 +23,7 @@ BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
 XS_SRCS = xs_colors.c xs_hsv.c xs_visual.c
 XL_SRCS = xlock.cpp
 
-SUBDIRS = pixmaps bitmaps kxsconfig
+SUBDIRS = libkscreensaver pixmaps bitmaps kxsconfig
 
 krandom_kss_SOURCES = random.cpp
 
