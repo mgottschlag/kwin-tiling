@@ -567,10 +567,9 @@ void WidgetCanvas::drawSampleWidgets()
 	popup->setItemEnabled( id, false );
 
 	// HACK: Force Layouting
-        //Sad Eagle: sizeHint() forces layouting too, and it's a lot less visible
-        popup->sizeHint();
-	//popup->popup(QPoint() );
-	//popup->hide();
+	//Sad Eagle: sizeHint() forces layouting too, and it's a lot less visible
+	//popup->sizeHint(); // Breaks with Qt 3.3
+	popup->resize(popup->sizeHint());
 
 	pm = QPixmap::grabWidget( popup );
 	delete popup;
