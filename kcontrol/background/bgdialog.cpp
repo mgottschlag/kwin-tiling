@@ -338,6 +338,7 @@ void BGDialog::initUI()
    m_comboWallpaperPos->insertItem(i18n("Tiled Maxpect"));
    m_comboWallpaperPos->insertItem(i18n("Scaled"));
    m_comboWallpaperPos->insertItem(i18n("Centered Auto Fit"));
+   m_comboWallpaperPos->insertItem(i18n("Scale and Crop"));
 
    // Blend modes: make sure these match with kdesktop/bgrender.cc !!
    m_comboBlend->insertItem(i18n("No Blending"));
