@@ -83,6 +83,11 @@ Tzone::Tzone(QWidget * parent, const char *name)
   fillTimeZones();
 
   load();
+
+  if (getuid() != 0)
+    {
+      tzonelist->setEnabled(false);
+    }
 }
 
 void Tzone::fillTimeZones()
@@ -201,11 +206,11 @@ void Tzone::save()
 		QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
 	}
 	
-	QString val = ":" + tz;
-	setenv("TZ", val.ascii(), 1);
-	tzset();
+  QString val = ":" + tz;
+  setenv("TZ", val.ascii(), 1);
+  tzset();
   
-	// write some stuff
+  // write some stuff
   KConfig *config = KGlobal::config();
   config->setGroup("tzone");
   config->writeEntry("TZ", tzonelist->currentItem() );

@@ -51,7 +51,10 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   tab->addTab(tzone, i18n("Time Zone"));
   connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  setButtons(Help|Reset|Cancel|Apply|Ok);
+  if(getuid() == 0)
+    setButtons(Help|Reset|Cancel|Apply|Ok);
+  else
+    setButtons(Help|Cancel);
 }
 
 void KclockModule::save()
