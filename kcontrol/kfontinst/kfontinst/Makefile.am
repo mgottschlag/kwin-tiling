@@ -21,7 +21,6 @@ kcm_fontinst_la_SOURCES = \
 
 EXTRA_DIST = \
 	$(desktop_DATA) \
-	$(kcm_fontinst_la_SOURCES) \
 	KfiCmModule.h \
 	Config.h \
 	Encodings.h \
