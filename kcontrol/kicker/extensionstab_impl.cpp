@@ -144,6 +144,7 @@ void ExtensionsTab::loadConfig( QListViewItem* item )
 
 	m_autoHide->setChecked(ah);
 	m_autoHideSwitch->setChecked(ahs);
+        m_autoHideSwitch->setEnabled(ah);
 
 	// disconnect so that slotChanged doesn't get called here
 	disconnect(m_delaySlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
