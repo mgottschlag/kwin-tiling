@@ -24,6 +24,6 @@ test_LDADD = $(LDADD)
 
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(libkcm_locale_la_SOURCES) && mv messages.po $(podir)/kcmlocale.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -kI18N_NOOP -x $(includedir)/kde.pot $(libkcm_locale_la_SOURCES) && mv messages.po $(podir)/kcmlocale.pot
 
 

@@ -42,8 +42,6 @@
 #include "localetime.h"
 #include "localetime.moc"
 
-#define i18n(a) (a)
-
 extern KLocale *locale;
 
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
@@ -55,19 +53,19 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel("1", this, i18n("Time format"));
+  label = new QLabel("1", this, I18N_NOOP("Time format"));
   edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edTimeFmt, 0, 2);
 
-  label = new QLabel("1", this, i18n("Date format"));
+  label = new QLabel("1", this, I18N_NOOP("Date format"));
   edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edDateFmt, 1, 2);
 
-  label = new QLabel("1", this, i18n("Short date format"));
+  label = new QLabel("1", this, I18N_NOOP("Short date format"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);

@@ -2,6 +2,7 @@
   main.cpp - A KControl Application
 
   written 1998 by Matthias Hoelzer
+  written 1999-2000 by Hans Petter Bieker <bieker@kde.org>
   
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -38,8 +39,6 @@
 #include "main.h"
 #include "main.moc"
 
-#define i18n(a) (a)
-
 KLocale *locale;
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
@@ -52,13 +51,13 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   tab = new QTabWidget( this, "section" );
   l->addWidget(tab);
 
-  localemain = new KLocaleConfig( this, i18n("&Locale") );
+  localemain = new KLocaleConfig( this, I18N_NOOP("&Locale") );
   tab->addTab( localemain, "1");
-  localenum = new KLocaleConfigNumber( this, i18n("&Numbers") );
+  localenum = new KLocaleConfigNumber( this, I18N_NOOP("&Numbers") );
   tab->addTab( localenum, "1" );
-  localemon = new KLocaleConfigMoney( this, i18n("&Money") );
+  localemon = new KLocaleConfigMoney( this, I18N_NOOP("&Money") );
   tab->addTab( localemon, "1" ); 
-  localetime = new KLocaleConfigTime( this, i18n("&Time && dates") );
+  localetime = new KLocaleConfigTime( this, I18N_NOOP("&Time && dates") );
   tab->addTab( localetime, "1" ); 
 
   connect(localemain, SIGNAL(resample()),       SLOT(update()));
@@ -68,7 +67,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
 
   // Examples
-  gbox = new QGroupBox("1", this, i18n("Examples"));
+  gbox = new QGroupBox("1", this, I18N_NOOP("Examples"));
   l->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 

@@ -45,8 +45,6 @@
 #include "locale.moc"
 #include "main.h"
 
-#define i18n(a) (a)
-
 extern KLocale *locale;
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
@@ -58,7 +56,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 
     changedFlag = FALSE;
 
-    QLabel *label = new QLabel(this, i18n("&Country"));
+    QLabel *label = new QLabel(this, I18N_NOOP("&Country"));
     comboCountry = new KLanguageCombo(this);
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
     label->setBuddy(comboCountry);
@@ -67,7 +65,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 1, 1);
     tl1->addWidget(comboCountry, 1, 2);
 
-    label = new QLabel(this, i18n("&Language"));
+    label = new QLabel(this, I18N_NOOP("&Language"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
     label->setBuddy(comboLang);
@@ -76,7 +74,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 2, 1);
     tl1->addWidget(comboLang, 2, 2);
 
-    label = new QLabel(this, i18n("&Numbers"));
+    label = new QLabel(this, I18N_NOOP("&Numbers"));
     comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
     label->setBuddy(comboNumber);
@@ -85,7 +83,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 3, 1);
     tl1->addWidget(comboNumber, 3, 2);
 
-    label = new QLabel(this, i18n("&Money"));
+    label = new QLabel(this, I18N_NOOP("&Money"));
     comboMoney = new KLanguageCombo(this);
     comboMoney->setFixedHeight(comboMoney->sizeHint().height());
     label->setBuddy(comboMoney);
@@ -94,7 +92,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 4, 1);
     tl1->addWidget(comboMoney, 4, 2);
 
-    label = new QLabel(this, i18n("&Date and time"));
+    label = new QLabel(this, I18N_NOOP("&Date and time"));
     comboDate = new KLanguageCombo(this);
     comboDate->setFixedHeight(comboDate->sizeHint().height());
     label->setBuddy(comboDate);
@@ -113,6 +111,10 @@ KLocaleConfig::~KLocaleConfig ()
 
 void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first)
 {
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
   QString name;
 
   // clear the list
@@ -147,7 +149,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
         }
 	KSimpleConfig entry(*it);
 	entry.setGroup("KCM Locale");
-	name = entry.readEntry("Name", i18n("without name"));
+	name = entry.readEntry("Name", locale->translate("without name"));
 	
 	QString path = *it;
 	int index = path.findRev('/');
@@ -156,6 +158,8 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
 	path = path.mid(index+1);
 	combo->insertLanguage(path, name, sub);
     }
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfig::load()
@@ -198,9 +202,19 @@ void KLocaleConfig::load()
 
 void KLocaleConfig::readLocale(const QString &path, QString &name, const QString &sub) const
 {
+  // temperary use of our locale as the global locale
+  // temperary use of our locale as the global locale
+  // restore the old global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
+  // read the name
   KSimpleConfig entry(locate("locale", sub + path + "/entry.desktop"));
   entry.setGroup("KCM Locale");
-  name = entry.readEntry("Name", i18n("without name"));
+  name = entry.readEntry("Name", locale->translate("without name"));
+
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 }
 
 void KLocaleConfig::save()
@@ -219,10 +233,10 @@ void KLocaleConfig::save()
 
   if (changedFlag)
     KMessageBox::information(this,
-			     i18n("Changed language settings apply only to newly started "
+			     locale->translate("Changed language settings apply only to newly started "
 				  "applications.\nTo change the language of all "
 				  "programs, you will have to logout first."),
-                             i18n("Applying language settings"));
+                             locale->translate("Applying language settings"));
 
   changedFlag = FALSE;
 }

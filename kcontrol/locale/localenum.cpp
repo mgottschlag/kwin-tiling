@@ -42,8 +42,6 @@
 #include "localenum.h"
 #include "localenum.moc"
 
-#define i18n(a) (a)
-
 extern KLocale *locale;
 
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
@@ -55,25 +53,25 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel("1", this, i18n("Decimal symbol"));
+  label = new QLabel("1", this, I18N_NOOP("Decimal symbol"));
   edDecSym = new QLineEdit(this);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edDecSym, 0, 2);
 
-  label = new QLabel("1", this, i18n("Thousands separator"));
+  label = new QLabel("1", this, I18N_NOOP("Thousands separator"));
   edThoSep = new QLineEdit(this);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edThoSep, 1, 2);
 
-  label = new QLabel("1", this, i18n("Positive sign"));
+  label = new QLabel("1", this, I18N_NOOP("Positive sign"));
   edMonPosSign = new QLineEdit(this);
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edMonPosSign, 2, 2);
 
-  label = new QLabel("1", this, i18n("Negative sign"));
+  label = new QLabel("1", this, I18N_NOOP("Negative sign"));
   edMonNegSign = new QLineEdit(this);
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
   tl1->addWidget(label, 3, 1);

@@ -31,8 +31,6 @@
 
 #include "klocalesample.h"
 
-#define i18n(a) (a)
-
 extern KLocale *locale;
 
 KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
@@ -46,31 +44,31 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     addColSpacing(3, 10);
     setColStretch(2, 1);
 
-    label = new QLabel("1", parent, i18n("Numbers:"));
+    label = new QLabel("1", parent, I18N_NOOP("Numbers:"));
     addWidget(label, 1, 1);
 
     numberSample = new QLabel(parent);
     addWidget(numberSample, 1, 2);
 
-    label = new QLabel("1", parent, i18n("Money:"));
+    label = new QLabel("1", parent, I18N_NOOP("Money:"));
     addWidget(label, 2, 1);
 
     moneySample = new QLabel(parent);
     addWidget(moneySample, 2, 2);
 
-    label = new QLabel("1", parent, i18n("Date:"));
+    label = new QLabel("1", parent, I18N_NOOP("Date:"));
     addWidget(label, 3, 1);
 
     dateSample = new QLabel(parent);
     addWidget(dateSample, 3, 2);
 
-    label = new QLabel("1", parent, i18n("Short date:"));
+    label = new QLabel("1", parent, I18N_NOOP("Short date:"));
     addWidget(label, 4, 1);
 
     dateShortSample = new QLabel(parent);
     addWidget(dateShortSample, 4, 2);
 
-    label = new QLabel("1", parent, i18n("Time:"));
+    label = new QLabel("1", parent, I18N_NOOP("Time:"));
     addWidget(label, 5, 1);
 
     timeSample = new QLabel(parent);
