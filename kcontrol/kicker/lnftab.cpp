@@ -167,19 +167,22 @@ void LnFTab::browse_theme()
                                                   KImageIO::pattern(KImageIO::Reading),
                                                   0,i18n("Select a image file"));
   if (theme == newtheme) return;
+  if (newtheme.isEmpty()) return;
 
   QImage tmpImg(newtheme);
-  tmpImg = tmpImg.smoothScale(theme_label->contentsRect().width(),theme_label->contentsRect().height());
-  theme_preview.convertFromImage(tmpImg);
-  if(theme_preview.isNull()) {
-    KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to load image file."));
-    return;
+  if( !tmpImg.isNull() ) {
+    tmpImg = tmpImg.smoothScale(theme_label->contentsRect().width(),theme_label->contentsRect().height());
+    theme_preview.convertFromImage(tmpImg);
+    if( !theme_preview.isNull() ) {
+      theme = newtheme;
+      theme_input->setText(theme);
+      theme_label->setPixmap(theme_preview);
+      emit changed();
+      return;
+    }
   }
-  
-  theme = newtheme;
-  theme_input->setText(theme);
-  theme_label->setPixmap(theme_preview);
-  emit changed();
+
+  KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to load image file."));
 }
 
 void LnFTab::hide_clicked()
