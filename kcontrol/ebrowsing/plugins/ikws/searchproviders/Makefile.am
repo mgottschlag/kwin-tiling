@@ -43,6 +43,7 @@ services_DATA = \
 		google_groups.desktop \
 		google_images.desktop \
 		google_lucky.desktop \
+		google_movie.desktop \
 		google_news.desktop \
 		gracenote.desktop \
 		grec.desktop \
