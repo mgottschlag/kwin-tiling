@@ -75,6 +75,15 @@ public:
 
   /** Base directory. */
   static const QString baseDir(void);
+  
+  /** returns true when the file has a supported extension **/
+  static bool checkExtension(const QString &file);
+  
+  /** remove extension part from the file **/
+  static QString removeExtension(const QString &file);
+  
+  /** default extension for the file **/
+  static QString defaultExtension();
 
   /** Uninstall files of last theme installation for given group */
   virtual void uninstallFiles(const char* groupName);

@@ -1,0 +1,8 @@
+# KDE Config File
+[Desktop Entry]
+MimeType=application/x-ktheme
+Comment=KDE Theme
+Icon=ktheme
+Type=MimeType
+Patterns=*.ktheme;
+X-KDE-AutoEmbed=false

@@ -21,7 +21,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <qdir.h>
-#include <qstrlist.h>
 #include <qbuttongroup.h>
 #include <qframe.h>
 #include <qlabel.h>
@@ -30,7 +29,6 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qfileinfo.h>
-#include <qlistbox.h>
 #include <qmultilinedit.h>
 
 #include <unistd.h>
@@ -42,26 +40,47 @@
 #include "newthemedlg.h"
 
 #include <kbuttonbox.h>
+#include <klistbox.h>
 #include <kfiledialog.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kstddirs.h>
 #include <kmessagebox.h>
+#include <kurldrag.h>
 #include <kio/netaccess.h>
 
-static QString findThemePath(const QString &name)
+static QString findThemePath(QString name)
 {
     if (name.isEmpty()) 
-       return name;
+       return QString::null;
 
-    QString path = locate("themes", name);
-    if (path.isEmpty())
-    {
-       path = locate("themes", name+".tar.gz");
-    }
-    return path;
+    name = Theme::removeExtension(name);
+    QStringList paths = KGlobal::dirs()->findAllResources("themes", name+".*", false, true);
+    if (paths.isEmpty())
+       return QString::null;
+    return paths[0];
 }
+
+ThemeListBox::ThemeListBox(QWidget *parent)
+  : KListBox(parent)
+{
+   setAcceptDrops(true);
+}
+
+void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
+{
+   event->accept(QUriDrag::canDecode(event));
+}
+
+void ThemeListBox::dropEvent(QDropEvent* event)
+{
+   KURL::List urls;
+   if (KURLDrag::decode(event, urls))
+   {
+      emit filesDropped(urls);
+   }
+} 
 
 //-----------------------------------------------------------------------------
 Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
@@ -78,8 +97,9 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   connect(theme, SIGNAL(changed()), SLOT(slotThemeChanged()));
 
   mGrid = new QGridLayout(this, 2, 3, 6, 6);
-  mThemesList = new QListBox(this);
+  mThemesList = new ThemeListBox(this);
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
+  connect(mThemesList, SIGNAL(filesDropped(const KURL::List&)), SLOT(slotFilesDropped(const KURL::List&)));
   mGrid->addMultiCellWidget(mThemesList, 0, 1, 0, 0);
 
   mPreview = new QLabel(this);
@@ -107,6 +127,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
 
   mText = new QMultiLineEdit(this);
   mText->setMinimumSize(mText->sizeHint());
+  mText->setReadOnly(true);
   mGrid->addWidget(mText, 1, 1);
 
   mGrid->setColStretch(0, 1);
@@ -130,8 +151,7 @@ int Installer::addTheme(const QString &path)
     int i = tmp.findRev('/');
     if (i >= 0)
        tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
-    if (tmp.right(7) == ".tar.gz")
-       tmp.truncate(tmp.length()-7);
+    tmp = Theme::removeExtension(tmp);
     i = mThemesList->count();
     while((i > 0) && (mThemesList->text(i-1) > tmp))
 	i--;   
@@ -139,6 +159,22 @@ int Installer::addTheme(const QString &path)
        return i-1;
     mThemesList->insertItem(tmp, i);
     return i;
+}
+
+// Copy theme package into themes directory
+void Installer::addNewTheme(const KURL &srcURL)
+{
+  QString dir = KGlobal::dirs()->saveLocation("themes");
+  KURL url;
+  url.setPath(dir+srcURL.fileName());
+  bool rc = KIO::NetAccess::copy(srcURL, url);
+  if (!rc)
+  {
+    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(srcURL.fileName()).arg(dir).ascii());
+    return;
+  }
+
+  mThemesList->setCurrentItem(addTheme(url.path()));
 }
 
 //-----------------------------------------------------------------------------
@@ -263,28 +299,23 @@ void Installer::slotAdd()
   static QString path;
   if (path.isEmpty()) path = QDir::homeDirPath();
 
-  KFileDialog dlg(path, "*.tar.gz", 0, 0, true);
+  KFileDialog dlg(path, "*"+Theme::defaultExtension(), 0, 0, true);
   dlg.setCaption(i18n("Add Theme"));
   if (!dlg.exec()) return;
 
-  path = dlg.baseURL().path();
-  QString fpath = dlg.selectedFile();
-  QString dir = KGlobal::dirs()->saveLocation("themes");
-
-  // Copy theme package into themes directory
-  KURL url;
-  url.setPath(fpath);
-  url.setPath(dir+url.fileName());
-  bool rc = KIO::NetAccess::upload(fpath, url);
-  if (!rc)
-  {
-    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(fpath).arg(dir).ascii());
-    return;
-  }
-
-  mThemesList->setCurrentItem(addTheme(url.path()));
+  path = dlg.baseURL().url();
+  addNewTheme(dlg.selectedURL());
 }
 
+void Installer::slotFilesDropped(const KURL::List &urls)
+{
+  for(KURL::List::ConstIterator it = urls.begin();
+      it != urls.end();
+      ++it)
+  {
+     addNewTheme(*it);
+  }
+}
 
 //-----------------------------------------------------------------------------
 void Installer::slotSaveAs()
@@ -307,7 +338,7 @@ void Installer::slotSaveAs()
   KURL url;
   url.setPath(fpath);
   themeFile = url.fileName();
-  ext = "*.tar.gz";
+  ext = "*"+Theme::defaultExtension();
 
   KFileDialog dlg(path, ext, 0, 0, true);
   dlg.setCaption(i18n("Save Theme As"));
@@ -317,8 +348,8 @@ void Installer::slotSaveAs()
   if (dlg.baseURL().isLocalFile())
      path = dlg.baseURL().path();
   fpath = dlg.selectedFile();
-  if (fpath.right(7) != ".tar.gz")
-     fpath += ".tar.gz";
+  if (!Theme::checkExtension(fpath))
+     fpath += Theme::defaultExtension();
 
   theme->save(fpath);
 }

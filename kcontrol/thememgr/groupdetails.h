@@ -5,7 +5,7 @@
 
 #include <qdialog.h>
 #include <klistview.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 
 class Theme;
 

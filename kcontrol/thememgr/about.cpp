@@ -5,20 +5,17 @@
 #include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbt.h>
-#include <qchkbox.h>
-#include <qlistbox.h>
-#include <qcombo.h>
-#include <kapp.h>
-#include <kconfig.h>
 #include <qframe.h>
 #include <qfont.h>
+
+#include <kapp.h>
+#include <kconfig.h>
+#include <klocale.h>
 
 #include "about.h"
 #include "themecreator.h"
 #include "global.h"
 #include "version.h"
-#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------

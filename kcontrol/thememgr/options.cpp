@@ -4,10 +4,10 @@
 #include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbt.h>
-#include <qchkbox.h>
-#include <qlistbox.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qcombo.h>
+
 #include <kapp.h>
 #include <kconfig.h>
 #include <kdebug.h>

@@ -24,12 +24,14 @@
 #define INSTALLER_H
 
 #include <kcmodule.h>
+#include <klistbox.h>
+#include <kurl.h>
 
 class QGridLayout;
-class QListBox;
 class QPushButton;
 class QLabel;
 class QMultiLineEdit;
+class ThemeListBox;
 
 #define InstallerInherited KCModule
 class Installer : public KCModule
@@ -52,21 +54,37 @@ protected slots:
   virtual void slotRemove();
   virtual void slotThemeChanged();
   virtual void slotSetTheme(int);
+  void slotFilesDropped(const KURL::List &urls);
 
 protected:
   /** Scan Themes directory for available theme packages */
   virtual void readThemesList(void);
   /** add a theme to the list, returns the list index */
   int addTheme(const QString &path);
+  void addNewTheme(const KURL &srcURL);
 
 private:
   bool mGui;
   QGridLayout *mGrid;
-  QListBox *mThemesList;
+  ThemeListBox *mThemesList;
   QPushButton *mBtnCreate, *mBtnSaveAs, *mBtnAdd, *mBtnRemove;
   QMultiLineEdit *mText;
   QLabel *mPreview;
 };
+
+class ThemeListBox: public KListBox
+{
+  Q_OBJECT
+public:
+  ThemeListBox(QWidget *parent);
+signals:
+  void filesDropped(const KURL::List &urls);
+
+protected:
+  void dragEnterEvent(QDragEnterEvent* event);
+  void dropEvent(QDropEvent* event);
+};
+
 
 #endif /*INSTALLER_H*/
 

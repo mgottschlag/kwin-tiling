@@ -129,6 +129,30 @@ kdDebug() << ":: baseDir = " << (*str) << endl;
   return *str;
 }
 
+bool Theme::checkExtension(const QString &file)
+{
+  return ((file.right(4) == ".tgz") ||
+          (file.right(7) == ".tar.gz") ||
+          (file.right(7) == ".ktheme"));
+}
+
+QString Theme::removeExtension(const QString &file)
+{
+  QString result = file;
+  if (file.right(4) == ".tgz")
+     result.truncate(file.length()-4);
+  else if (file.right(7) == ".tar.gz")
+     result.truncate(file.length()-7);
+  else if (file.right(7) == ".ktheme")
+     result.truncate(file.length()-7);
+
+  return result;
+}
+
+QString Theme::defaultExtension()
+{
+   return QString::fromLatin1(".ktheme");
+}
 
 //-----------------------------------------------------------------------------
 void Theme::loadMappings()
@@ -257,11 +281,11 @@ bool Theme::save(const QString &aPath)
   mConfig->sync();
 
   QString path = aPath;
-  if ((path.right(4) != ".tgz") && 
-      (path.right(7) != ".tar.gz"))
+  if (!checkExtension(path))
   {
-    path += ".tar.gz";
+    path += defaultExtension();
   }
+
   QString cmd = QString("cd \"%1\";tar cf - *|gzip -c >\"%2\"").
 		arg(workDir()).arg(path);
 
