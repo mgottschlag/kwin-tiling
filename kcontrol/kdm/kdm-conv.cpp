@@ -186,7 +186,7 @@ void KDMConvenienceWidget::save()
     config->setGroup("X-*-Core");
     config->writeEntry( "AutoReLogin", cbarlen->isChecked() );
 
-    config->setGroup("X-*-Greeter");
+    config->setGroup("X-:*-Greeter");
     config->writeEntry( "PreselectUser", npRadio->isChecked() ? "None" :
 				    ppRadio->isChecked() ? "Previous" :
 							   "Default" );
@@ -211,7 +211,7 @@ void KDMConvenienceWidget::load()
     config->setGroup("X-*-Core");
     cbarlen->setChecked(config->readBoolEntry( "AutoReLogin", false) );
 
-    config->setGroup("X-*-Greeter");
+    config->setGroup("X-:*-Greeter");
     QString presstr = config->readEntry( "PreselectUser", "None" );
     if (presstr == "Previous")
 	ppRadio->setChecked(true);
