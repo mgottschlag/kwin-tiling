@@ -202,7 +202,7 @@ QStringList KBackgroundPattern::list()
     QStringList lst = dirs->findAllResources("dtop_pattern", "*.desktop",
                                              false, true);
     QStringList::Iterator it;
-    for (it=lst.begin(); it!=lst.end(); it++) {
+    for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix
         int pos = (*it).findRev('/');
         if (pos != -1)
@@ -413,7 +413,7 @@ QStringList KBackgroundProgram::list()
     QStringList lst = dirs->findAllResources("dtop_program", "*.desktop",
                                              false, true);
     QStringList::Iterator it;
-    for (it=lst.begin(); it!=lst.end(); it++) {
+    for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix
         int pos = (*it).findRev('/');
         if (pos != -1)
@@ -846,7 +846,7 @@ void KBackgroundSettings::updateWallpaperFiles()
 {
     QStringList::Iterator it;
     m_WallpaperFiles.clear();
-    for (it=m_WallpaperList.begin(); it!=m_WallpaperList.end(); it++) {
+    for (it=m_WallpaperList.begin(); it!=m_WallpaperList.end(); ++it) {
         QString file = locate("wallpaper", *it);
         if (file.isEmpty())
             continue;
@@ -859,7 +859,7 @@ void KBackgroundSettings::updateWallpaperFiles()
 	    QDir dir(file);
 	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
 	    QStringList::Iterator it;
-	    for (it=lst.begin(); it!=lst.end(); it++)
+	    for (it=lst.begin(); it!=lst.end(); ++it)
 	    {
 		file = dir.absFilePath(*it);
 		QFileInfo fi(file);

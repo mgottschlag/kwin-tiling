@@ -314,7 +314,7 @@ void BGDialog::initUI()
    m_Patterns = KBackgroundPattern::list();
    m_Patterns.sort(); // Defined order
    QStringList::Iterator it;
-   for (it=m_Patterns.begin(); it != m_Patterns.end(); it++)
+   for (it=m_Patterns.begin(); it != m_Patterns.end(); ++it)
    {
       KBackgroundPattern pat(*it);
       if (pat.isAvailable())

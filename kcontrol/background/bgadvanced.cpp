@@ -83,7 +83,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    // Load programs
    QStringList lst = KBackgroundProgram::list();
    QStringList::Iterator it;
-   for (it=lst.begin(); it != lst.end(); it++)
+   for (it=lst.begin(); it != lst.end(); ++it)
       addProgram(*it);
 
    if (m_multidesktop)

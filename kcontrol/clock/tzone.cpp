@@ -196,7 +196,7 @@ void Tzone::save()
     {
       // Find untranslated selected zone
       QStringList::Iterator it;
-      for (it = tzonenames.begin(); it != tzonenames.end(); it++)
+      for (it = tzonenames.begin(); it != tzonenames.end(); ++it)
         if (selectedzone == i18n((*it).utf8()))
           break;
       selectedzone = (*it);
