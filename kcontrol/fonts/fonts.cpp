@@ -152,7 +152,7 @@ void FontUseItem::readFont()
     config = KGlobal::config();
   else
   {
-    config = new KSimpleConfig(locate("config", _rcfile), true);
+    config = new KConfig(_rcfile, true);
     deleteme = true;
   }
 
