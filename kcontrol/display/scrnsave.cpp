@@ -26,6 +26,7 @@
 #include <qtextstream.h>
 #include <ksimpleconfig.h>
 #include <kapp.h>
+#include <knuminput.h>
 #include <kstddirs.h>
 #include <kglobal.h>
 #include <kwm.h>
@@ -250,16 +251,18 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
              SLOT( slotScreenSaver( int ) ) );
 	
 	groupLayout->addWidget( mSaverListBox, 10 );
+
+    QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
     
 	mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
 	connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
 	
-	groupLayout->addWidget( mSetupBt, 0, AlignRight );
+	hlay->addWidget( mSetupBt );
     
 	mTestBt = new QPushButton(  i18n("&Test"), group );
 	connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
 	
-	groupLayout->addWidget( mTestBt, 0, AlignRight );
+	hlay->addWidget( mTestBt );
 	groupLayout->activate();
     
 	QBoxLayout *stackLayout = new QVBoxLayout( 5 );
@@ -272,27 +275,12 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	
 	groupLayout = new QVBoxLayout( group, 10, 5 );
 	
-	QBoxLayout *pushLayout = new QHBoxLayout( 5 );
-	
-	groupLayout->addSpacing( 10 );
-	groupLayout->addLayout( pushLayout );
-	
-	mWaitEdit = new QLineEdit( group );
-	QString str;
-	str.setNum( mTimeout/60 );
-	mWaitEdit->setText( str );
-	mWaitEdit->setMaxLength(4);
-    connect( mWaitEdit, SIGNAL( textChanged( const QString & ) ),
-             SLOT( slotTimeoutChanged( const QString & ) ) );
+	mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60, i18n("min"), 10, false, group);
+    mWaitEdit->setLabelAlignment(AlignCenter);
+    connect( mWaitEdit, SIGNAL( valueChanged(int) ),
+             SLOT( slotTimeoutChanged(int) ) );
     
-    QLabel *label = new QLabel( mWaitEdit, i18n("&Wait for"), group );
-    
-	pushLayout->addWidget( label );		
-	pushLayout->addWidget( mWaitEdit, 10 );
-	
-	label = new QLabel(  i18n("min."), group );
-	
-	pushLayout->addWidget( label );
+    groupLayout->addWidget(mWaitEdit);
     
 	mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
 	mLockCheckBox->setChecked( mLock );
@@ -323,7 +311,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	connect( mPrioritySlider, SIGNAL( valueChanged(int) ),
              SLOT( slotPriorityChanged(int) ) );
     
-	label = new QLabel( mPrioritySlider, i18n("&High"), group );
+	QLabel* label = new QLabel( mPrioritySlider, i18n("&High"), group );
 	
 	groupLayout->addWidget( label );
 	groupLayout->addWidget( mPrioritySlider, 10 );
@@ -391,9 +379,7 @@ void KScreenSaver::readSettings( int )
 //
 void KScreenSaver::updateValues()
 {
-	QString str;
-	str.setNum(mTimeout/60);
-	mWaitEdit->setText(str);
+	mWaitEdit->setValue(mTimeout/60);
 	mLockCheckBox->setChecked(mLock);
 	mStarsCheckBox->setChecked(mPasswordStars);
 	mPrioritySlider->setValue(mPriority);
@@ -406,7 +392,7 @@ void KScreenSaver::defaultSettings()
 	slotScreenSaver( 0 );
 	mSaverListBox->setCurrentItem( 0 );
 	mSaverListBox->centerCurrentItem();
-	slotTimeoutChanged( "1" );
+	slotTimeoutChanged( 1 );
 	slotPriorityChanged( 0 );
 	slotLock( false );
 	slotStars( true );
@@ -629,12 +615,9 @@ void KScreenSaver::slotStopTest()
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotTimeoutChanged( const QString &to )
+void KScreenSaver::slotTimeoutChanged(int to )
 {
-	mTimeout = to.toInt() * 60;
-
-	if ( mTimeout <= 0 )
-		mTimeout = 60;
+	mTimeout = to * 60;
 	mChanged = true;
 }
 

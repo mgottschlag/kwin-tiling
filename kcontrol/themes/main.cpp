@@ -24,7 +24,6 @@
 #include <qmessagebox.h>
 
 #include <kimgio.h>
-#include <kslider.h>
 
 #define private public
 #include <kcontrol.h>

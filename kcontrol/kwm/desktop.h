@@ -29,14 +29,15 @@
 #include <qdialog.h>
 #include <qmessagebox.h>
 #include <qcheckbox.h> 
-#include <qbuttongroup.h>
 #include <qpushbutton.h>
-#include <kslider.h>
 
 #include <kcontrol.h>
 
 #include <kwm.h>
 
+class KIntNumInput;
+class QButtonGroup;
+class QSlider;
 
 class KDesktopConfig : public KConfigWidget
 {
@@ -70,27 +71,19 @@ private:
   void setElectricBordersDelay( int );
   void setElectricBordersMovePointer( bool );
 
-  //CT 15mar98 - magics
   int getBorderSnapZone();
   void setBorderSnapZone( int );
   
   int getWindowSnapZone();
   void setWindowSnapZone( int );
-  //CT ---
 
   QButtonGroup *ElectricBox;
   QCheckBox *enable, *movepointer;
-  KSlider *delayslider;
-  QLabel *delaylabel;
-  QLCDNumber *delaylcd;
+  KIntNumInput *delays;
   QLabel *sec;
 
-  //CT 15mar98 - magics
   QButtonGroup *MagicBox;
-  KSlider *BrdrSnapSlider, *WndwSnapSlider;
-  QLabel *BrdrSnapLabel, *WndwSnapLabel;
-  QLCDNumber  *BrdrSnapLCD, *WndwSnapLCD;
-  //CT ---
+  KIntNumInput *BrdrSnap, *WndwSnap;
 };
 
 #endif

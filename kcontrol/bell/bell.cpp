@@ -63,17 +63,18 @@ KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
     QVBoxLayout *layout = new QVBoxLayout(this, 10);
 
     // args: label, min, max, step, initial, units
-    volume = new KSliderControl(i18n("Volume:"), 0, 100, 5, 50, "%", this);
+    volume = new KIntNumInput(i18n("Volume:"), 0, 100, 5, 50,
+                              "%", 10, true, this);
     volume->setSteps(5,25);
     layout->addWidget(volume);
-
-    pitch = new KSliderControl(i18n("Pitch:"),  0, 2000, 20, 800, 
-			       i18n("Hz"), this);
+    
+    pitch = new KIntNumInput(i18n("Pitch:"),  0, 2000, 20, 800, 
+                             i18n("Hz"), 10, true, this);
     pitch->setSteps(40,200);
     layout->addWidget(pitch);
-
-    duration = new KSliderControl(i18n("Duration:"), 0, 1000, 50, 100,
-				  i18n("ms"), this);
+    
+    duration = new KIntNumInput(i18n("Duration:"), 0, 1000, 50, 100,
+                                i18n("ms"), 10, true, this);
     duration->setSteps(20,100);
     layout->addWidget(duration);
 
@@ -219,7 +220,7 @@ void KBellConfig::applySettings()
 
 void KBellConfig::defaultSettings()
 {
-    setBellVolume(50);
+    setBellVolume(100);
     setBellPitch(800);
     setBellDuration(100);
 }

@@ -4,32 +4,14 @@
 // Written by: Tom Vijlbrief 1999
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <qgrpbox.h>
-#include <qbttngrp.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include <qpushbt.h>
-#include <qfiledlg.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
-#include <qcombo.h>
+#include <qcheckbox.h>
 #include <qlayout.h>
-#include <qlcdnum.h>
-#include <kapp.h>
-#include <kcharsets.h>
-#include <kconfigbase.h>
+
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <ksimpleconfig.h>
-#include <kwm.h>
-#include <kcolordlg.h>
 #include <kiconloader.h>
+#include <knuminput.h>
 #include <klocale.h>
 
 #include <X11/Xlib.h>
@@ -114,86 +96,40 @@ KEnergy::KEnergy(QWidget *parent, Mode m)
 	  topLayout->addWidget(msg);
 	}
 
-	standbySlider = new QSlider( QSlider::Horizontal, this);
-	standbySlider->setRange( 0, 120 );
+	standbySlider = new KIntNumInput(i18n("&Standby after:"), 0, 120, 10, standby, i18n("min"), 10, true, this);
 	standbySlider->setSteps( 10, 30 );
-	standbySlider->setTickmarks( QSlider::Below );
-	standbySlider->setValue( standby );
 	standbySlider->setEnabled(hasDPMS);
-	connect(standbySlider, SIGNAL(valueChanged(int)),
-		SLOT(slotChangeStandby()) );
+    standbySlider->setSpecialValueText(i18n("Disabled"));
+	connect(standbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby()) );
 
-	suspendSlider = new QSlider( QSlider::Horizontal, this);
-	suspendSlider->setRange( 0, 120 );
+	suspendSlider = new KIntNumInput(i18n("&Suspend after:"), 0, 120, 10, suspend, i18n("min"), 10, true, this);
 	suspendSlider->setSteps( 10, 30 );
-	suspendSlider->setTickmarks( QSlider::Below );
-	suspendSlider->setValue( suspend );
 	suspendSlider->setEnabled(hasDPMS);
-	connect(suspendSlider, SIGNAL(valueChanged(int)),
-		SLOT(slotChangeSuspend()) );
+    suspendSlider->setSpecialValueText(i18n("Disabled"));
+	connect(suspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend()) );
 
-	offSlider = new QSlider( QSlider::Horizontal, this);
-	offSlider->setRange( 0, 120 );
+	offSlider = new KIntNumInput(i18n("&Power Off after:"), 0, 120, 10, off, i18n("min"), 10, true, this);
 	offSlider->setSteps( 10, 30 );
-	offSlider->setTickmarks( QSlider::Below );
-	offSlider->setValue( off );
 	offSlider->setEnabled(hasDPMS);
-	connect(offSlider, SIGNAL(valueChanged(int)),
-		SLOT(slotChangeOff()) );
+    offSlider->setSpecialValueText(i18n("Disabled"));
+	connect(offSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff()) );
 		
-	QLabel *label0 = new QLabel( standbySlider,
-	  i18n("&Standby after ... minutes, choose `0' to disable: "), this );
-
-	QLabel *label1 = new QLabel( suspendSlider,
-	  i18n("&Suspend after ... minutes, choose `0' to disable: "), this );
-
-	QLabel *label2= new QLabel( offSlider,
-	  i18n("&Power Off after ... minutes, choose `0' to disable: "), this );
-
-	label0->setEnabled(hasDPMS);
-	label1->setEnabled(hasDPMS);
-	label2->setEnabled(hasDPMS);
-
-	standbyLCD = new QLCDNumber(3, this);
-	standbyLCD->setFrameStyle( QFrame::NoFrame );
-	standbyLCD->setFixedHeight(40);
-	standbyLCD->setEnabled(hasDPMS);
-	standbyLCD->display( standby );
-
-	suspendLCD = new QLCDNumber(3, this);
-	suspendLCD->setFrameStyle( QFrame::NoFrame );
-	suspendLCD->setFixedHeight(40);
-	suspendLCD->setEnabled(hasDPMS);
-	suspendLCD->display( suspend );
-
-	offLCD = new QLCDNumber(3, this);
-	offLCD->setFrameStyle( QFrame::NoFrame );
-	offLCD->setFixedHeight(40);
-	offLCD->setEnabled(hasDPMS);
-	offLCD->display( off );
-
 	QBoxLayout *h2Layout= new QHBoxLayout();
 	QBoxLayout *h3Layout= new QHBoxLayout();
 	QBoxLayout *h4Layout= new QHBoxLayout();
 
 	topLayout->addLayout(h2Layout);
-	h2Layout->addWidget( label0);
 	h2Layout->addStretch(10);
-	h2Layout->addWidget( standbyLCD);
 	topLayout->addWidget( standbySlider);
 	topLayout->addSpacing(14);
 
 	topLayout->addLayout(h3Layout);
-	h3Layout->addWidget( label1);
 	h3Layout->addStretch(10);
-	h3Layout->addWidget( suspendLCD);
 	topLayout->addWidget( suspendSlider);
 	topLayout->addSpacing(14);
 
 	topLayout->addLayout(h4Layout);
-	h4Layout->addWidget( label2);
 	h4Layout->addStretch(10);
-	h4Layout->addWidget( offLCD);
 	topLayout->addWidget( offSlider);
 
 	topLayout->addStretch(10);
@@ -211,7 +147,6 @@ void KEnergy::slotChangeEnable()
 void KEnergy::slotChangeStandby()
 {
 	standby= standbySlider->value();
-	standbyLCD->display(standby);
 	if (standby > suspend) {
 	  suspendSlider->setValue(standby);
 	  slotChangeSuspend();
@@ -223,7 +158,6 @@ void KEnergy::slotChangeStandby()
 void KEnergy::slotChangeSuspend()
 {
 	suspend= suspendSlider->value();
-	suspendLCD->display(suspend);
 	if (suspend > off) {
 	  offSlider->setValue(suspend);
 	  slotChangeOff();
@@ -238,7 +172,6 @@ void KEnergy::slotChangeSuspend()
 void KEnergy::slotChangeOff()
 {
 	off= offSlider->value();
-	offLCD->display(off);
 	if (off < suspend) {
 	  suspendSlider->setValue(off);
 	  slotChangeSuspend();
@@ -332,17 +265,17 @@ void KEnergy::apply( bool force )
 	defaultHandler=XSetErrorHandler(dropError);
 
 	if (hasDPMS) {
- #if HAVE_DPMS
-	  if (enabled) {
-	    DPMSEnable(kde_display);
-	    DPMSSetTimeouts(kde_display,
-		60 * standby, 60 * suspend, 60 * off);
-	  } else {
-	    DPMSDisable(kde_display);
-	  }
- #endif
+#if HAVE_DPMS
+        if (enabled) {
+            DPMSEnable(kde_display);
+            DPMSSetTimeouts(kde_display,
+                            60 * standby, 60 * suspend, 60 * off);
+        } else {
+            DPMSDisable(kde_display);
+        }
+#endif
 	} else
-	  fprintf(stderr, "Server has no DPMS extension\n");
+        warning("Server has no DPMS extension");
 	
 	XFlush(kde_display);
 	XSetErrorHandler(defaultHandler);

@@ -10,19 +10,15 @@
  *
  */
 
-
 #include <qlayout.h>
+
 #include <kfiledialog.h>
 #include <kapp.h>
-
-
 #include <ksimpleconfig.h>
-
-#include "advanced.h"
 #include <klocale.h>
 #include <kconfig.h>
 
-
+#include "advanced.h"
 
 extern KConfig *config;
 

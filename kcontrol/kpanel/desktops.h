@@ -28,16 +28,15 @@
 #include <kwm.h>
 
 #include <qbutton.h>
-#include <qlayout.h>
 #include <qlabel.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcombobox.h> 
 #include <qcheckbox.h> 
-#include <kslider.h>
-#include <qlineedit.h>
 
 class QButtonGroup;
+class QSlider;
+class QLineEdit;
 
 class KDesktopsConfig : public KConfigWidget
 {
@@ -55,20 +54,14 @@ protected slots:
     void visible_changed(int value);
 
 private:
-    QVBoxLayout *layout;
-
-    QGridLayout *fields_layout;
     QLineEdit *fields[8];
     QFrame *field_frame;
     QLabel *labels[8];
-    
-    QGridLayout *slider_layout;
     QSlider *visible;
     QSlider *width;
     QLabel  *visible_label;
     QLabel  *width_label;
     int width_value;
-    
 };
 
 #endif

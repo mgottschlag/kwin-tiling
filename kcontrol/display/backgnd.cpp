@@ -27,7 +27,6 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qfileinfo.h>
-#include <qlcdnumber.h>
 
 #include <kfiledialog.h>
 #include <kapp.h>
@@ -362,19 +361,10 @@ KBackground::KBackground(QWidget *parent, Mode m)
     topLayout->addWidget( dockButton, 5, 1 );//CT 30Nov1998
 
     int cacheSize = config->readNumEntry("CacheSize", DEFAULT_CACHE_SIZE);
-    aLabel = new QLabel(i18n("Cache size (kB):"), this);
-    topLayout->addWidget( aLabel, 5, 2 );
-
-    cacheSlider = new QSlider( 128, 5120, 0, cacheSize, KSlider::Horizontal, this );
+    cacheSlider = new KIntNumInput(i18n("Cache size:"), 128, 5120, 512, cacheSize,
+                                   "kB", 10, true, this );
     cacheSlider->setSteps(512, 1024);
-    topLayout->addWidget( cacheSlider, 5, 3 );
-
-    cacheLCD = new QLCDNumber(4, this);
-    cacheLCD->setFrameStyle( QFrame::NoFrame );
-    cacheLCD->display( cacheSize );
-    topLayout->addMultiCellWidget( cacheLCD, 4, 6, 4, 4 );
-
-    connect( cacheSlider, SIGNAL(valueChanged(int)), cacheLCD, SLOT(display(int)) );
+    topLayout->addWidget( cacheSlider, 5, 3);
 
     showSettings();
 
@@ -1617,15 +1607,10 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
   pushLayout = new QHBoxLayout( 5 );
   toplevelHL->addLayout( pushLayout );
 
-  timerLabel = new QLabel( this );
-  timerLabel->setText( i18n( "Timer Delay in seconds :" ) );
-	
-  pushLayout->addWidget( timerLabel );
+  timerNumInput = new KIntNumInput( i18n("Timer Delay in seconds:"), 0, 32767, 1,
+                                    delay, "s", 10, false, this );
 
-  timerLined = new KIntLineEdit( this );
-  timerLined->setValue( delay );
-
-  pushLayout->addWidget( timerLined, 5 );
+  pushLayout->addWidget( timerNumInput, 5 );
   pushLayout->addStretch( 5 );
 
   orderButton = new QCheckBox( i18n("In &order"), this );
@@ -1864,7 +1849,7 @@ void KRandomDlg::done( int r )
 
   picturesConfig.setGroup( "Common" );
   picturesConfig.writeEntry( "Count", listBox->count() );
-  picturesConfig.writeEntry( "Timer", timerLined->value() );
+  picturesConfig.writeEntry( "Timer", timerNumInput->value() );
   picturesConfig.writeEntry( "InOrder", orderButton->isChecked() );
   picturesConfig.writeEntry( "UseDir", dirCheckBox->isChecked() );
   picturesConfig.writeEntry( "Directory", dirLined->text() );

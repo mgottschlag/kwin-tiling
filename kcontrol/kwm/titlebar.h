@@ -28,26 +28,27 @@
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 #include <qlabel.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
 #include <qpixmap.h>
-#include <qgroupbox.h>
 #include <qpainter.h>
-#include <qbuttongroup.h>
-#include <qlcdnumber.h>
-#include <qcombobox.h> //CT 11feb98
-#include <qcheckbox.h> //CT 02Dec1998
-#include <qwidgetstack.h> //CT 15Jul 1999 - use a nifty switchable opts set
-                          // for pixmap of gradient titlebar types
 #include <qlistbox.h>
 
-#include <kslider.h>
+#undef Above
+#undef Below                    /* We all hate X11 headers */
+#include <qslider.h>
 
 #include <kcontrol.h>
 #include <kiconloader.h>
 #include <kpixmap.h>
-
 #include <kwm.h>
+
+class QButtonGroup;
+class QRadioButton;
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QWidgetStack;
+
+class KIntNumInput;
 
 #define NOFUNC     -1
 #define MAXIMIZE    0
@@ -58,7 +59,6 @@
 
 #define NUM_BUTTONS 6
 
-//CT 06Nov1998
 #define AT_LEFT                 0
 #define AT_MIDDLE               1
 #define AT_RIGHT                2
@@ -67,15 +67,10 @@
 #define TITLEBAR_SHADED               1
 #define TITLEBAR_PIXMAP               2
 
-//CT 11feb98; 23Oct1998
 #define DCTB_MAXIMIZE      0
 #define DCTB_SHADE         1
 #define DCTB_ICONIFY       2
 #define DCTB_STICKY        3
-//#define DCTB_MOVE          4
-//#define DCTB_RESIZE        5
-//#define DCTB_RESTORE       6
-//#define DCTB_OPERATIONS    7
 #define DCTB_CLOSE         4
 
 class TitlebarPreview : public QFrame
@@ -150,7 +145,6 @@ class KTitlebarAppearance : public KConfigWidget
 public:
   KTitlebarAppearance( QWidget *parent=0, const char* name=0 );
   ~KTitlebarAppearance( );
-  //CT  void  resizeEvent(QResizeEvent *e);
   void SaveSettings( void );
 
   void loadSettings();
@@ -169,22 +163,16 @@ private slots:
 private:
  void GetSettings( void );
 
- //CT 02Dec1998 macStyle
  bool getFramedTitle(void);
  void setFramedTitle(bool);
  bool getPixedText(void);
  void setPixedText(bool);
 
- //CT 06Nov1998
  int getAlign(void);
  void setAlign(int);
- //CT
 
  int getTitlebar( void );
  void setTitlebar(int);
-
- int getTitleAnim( void );
- void setTitleAnim(int);
 
  QCheckBox *cbFrame, *cbPixedText;
  QGroupBox *appearBox;
@@ -210,10 +198,7 @@ private:
  QLabel * lDblClick;
  QComboBox * dblClickCombo;
 
- QGroupBox *animBox;
- KSlider *titleAnim;
- QLCDNumber *t;
- QLabel *sec;
+ KIntNumInput *titleAnim;
 
  QLabel *lPixmapActive, *lPixmapInactive;
  QPushButton *pbPixmapActive, *pbPixmapInactive;

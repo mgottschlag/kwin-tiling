@@ -21,6 +21,8 @@
 
 #include "display.h"
 
+class KIntNumInput;
+
 //===========================================================================
 class CornerButton : public QLabel
 {
@@ -111,7 +113,7 @@ protected slots:
     void slotSetup();
     void slotTest();
     void slotStopTest();
-    void slotTimeoutChanged( const QString &);
+    void slotTimeoutChanged(int);
     void slotLock( bool );
     void slotStars( bool );
     void slotPriorityChanged( int val );
@@ -139,7 +141,7 @@ protected:
     QPushButton *mSetupBt;
     QPushButton *mTestBt;
     QListBox    *mSaverListBox;
-    QLineEdit   *mWaitEdit;
+    KIntNumInput *mWaitEdit;
     QSlider     *mPrioritySlider;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;

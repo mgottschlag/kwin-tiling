@@ -16,17 +16,16 @@
 #include <qlineedit.h>
 #include <qbuttongroup.h>
 
-#include <knumlineedit.h>
+#include <knuminput.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
 #include <kcontrol.h>
-#include <kslider.h>
 
 #include "display.h"
 
 class KBackground;
+class KIntNumInput;
 class PatternEntry;
-class QLCDNumber;
 
 class KItem : public QObject
 {
@@ -208,7 +207,6 @@ protected slots:
 
 private:
   QLabel *desktopLabel;
-  QLabel *timerLabel;
   QListBox *listBox;
   QList<QString> list;
   QCheckBox *orderButton;
@@ -217,7 +215,7 @@ private:
   QLineEdit *dirLined;
   QPushButton *dirPushButton;
 
-  KIntLineEdit *timerLined;
+  KIntNumInput* timerNumInput;
 
   KBackground *kb;
   QList<KItem> ItemList;
@@ -322,8 +320,7 @@ protected:
   QComboBox *wpModeCombo;
   QComboBox *wpCombo;
 
-  QSlider *cacheSlider;
-  QLCDNumber *cacheLCD;
+  KIntNumInput* cacheSlider;
 
   QLabel *monitorLabel;
   KBGMonitor* monitor;

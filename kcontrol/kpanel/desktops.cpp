@@ -21,6 +21,11 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlineedit.h>
+#include <qslider.h>
+
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include "desktops.h"
@@ -30,14 +35,14 @@ extern KConfigBase *config;
 KDesktopsConfig::KDesktopsConfig( QWidget *parent, const char* name ) 
     : KConfigWidget(parent, name)
 {
-    layout = new QVBoxLayout(this, 5);
+    QBoxLayout* layout = new QVBoxLayout(this, 5);
     layout->addStretch(2);
-    fields_layout = new QGridLayout(4, 4);
+    QGridLayout* fields_layout = new QGridLayout(4, 4);
     layout->addLayout(fields_layout);
     
     layout->addStretch(2);
 
-    slider_layout = new QGridLayout(2, 5, 30);
+    QGridLayout* slider_layout = new QGridLayout(2, 5, 30);
     layout->addLayout(slider_layout, 3);
 
     layout->addStretch(2);

@@ -13,14 +13,14 @@
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qpainter.h>
-#include <qchkbox.h>
-#include <kslider.h>
 #include <kcontrol.h>
 
 #include "display.h"
 
 class QPushButton;
-class QLCDNumber;
+class QCheckBox;
+
+class KIntNumInput;
 
 class KEnergy : public KDisplayModule
 {
@@ -50,12 +50,9 @@ protected:
 	
 protected:
 	QCheckBox *cbEnable;
-	QSlider *standbySlider;
-	QSlider *suspendSlider;
-	QSlider *offSlider;
-	class QLCDNumber *standbyLCD;
-	class QLCDNumber *suspendLCD;
-	class QLCDNumber *offLCD;
+	KIntNumInput *standbySlider;
+	KIntNumInput *suspendSlider;
+	KIntNumInput *offSlider;
 	bool changed;
 	int standby;
 	int suspend;

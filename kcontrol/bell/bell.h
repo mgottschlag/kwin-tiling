@@ -34,7 +34,7 @@
 #include <qradiobutton.h> 
 
 #include <kcontrol.h>
-#include <kslidercontrol.h>
+#include <knuminput.h>
 
 class KBellConfig : public KConfigWidget
 {
@@ -64,7 +64,7 @@ private:
   void setBellPitch(int);
   void setBellDuration(int);
 
-  KSliderControl *volume, *pitch, *duration;
+  KIntNumInput *volume, *pitch, *duration;
 
   QPushButton *test;
 

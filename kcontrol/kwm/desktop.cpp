@@ -18,17 +18,15 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h>
+#include <qlayout.h>
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
+#include <qslider.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-
-#include <qlayout.h> //CT
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <knuminput.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -76,39 +74,15 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   enable= new
     QCheckBox(i18n("Enable active desktop borders"),
 	      ElectricBox);
-  enable->adjustSize();
-  enable->setMinimumSize(enable->size());
   eLay->addMultiCellWidget(enable,1,1,0,1);
 
-  movepointer = new
-    QCheckBox(i18n("Move pointer towards center after switch"),
-	      ElectricBox);
-  movepointer->adjustSize();
-  movepointer->setMinimumSize(movepointer->size());
+  movepointer = new QCheckBox(i18n("Move pointer towards center after switch"),
+                              ElectricBox);
   eLay->addMultiCellWidget(movepointer,2,2,0,1);
 
-  delaylabel = new QLabel(i18n("Desktop switch delay:"),
-			  ElectricBox);
-  delaylabel->adjustSize();
-  delaylabel->setMinimumSize(delaylabel->size());
-  delaylabel->setAlignment(AlignVCenter|AlignLeft);
-  eLay->addWidget(delaylabel,3,0);
-
-  delaylcd = new QLCDNumber (2, ElectricBox);
-  delaylcd->setFrameStyle( QFrame::NoFrame );
-  delaylcd->setFixedHeight(30);
-  delaylcd->adjustSize();
-  delaylcd->setMinimumSize(delaylcd->size());
-  eLay->addWidget(delaylcd,3,1);
-
-  delayslider = new KSlider(0,MAX_EDGE_RES/10,10,0,
-			    KSlider::Horizontal, ElectricBox);
-  delayslider->setSteps(10,10);
-  delayslider->adjustSize();
-  delayslider->setMinimumSize(delaylabel->width(), delayslider->height());
-  eLay->addMultiCellWidget(delayslider,4,4,1,2);
-
-  connect( delayslider, SIGNAL(valueChanged(int)), delaylcd, SLOT(display(int)) );
+  delays = new KIntNumInput(i18n("Desktop switch delay:"), 0,MAX_EDGE_RES/10,10,0,
+                            QString::null, 10, true, ElectricBox);
+  eLay->addMultiCellWidget(delays,4,4,1,2);
 
   connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
 
@@ -126,92 +100,41 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->setColStretch(1,0);
   eLay->setColStretch(2,1);
 
-  BrdrSnapLabel = new QLabel(i18n("Border Snap Zone:\n       (pixels)"), MagicBox);
-  BrdrSnapLabel->adjustSize();
-  BrdrSnapLabel->setMinimumSize(BrdrSnapLabel->size());
-  BrdrSnapLabel->setAlignment(AlignTop);
-  eLay->addWidget(BrdrSnapLabel,1,0);
-
-  BrdrSnapLCD = new QLCDNumber (2, MagicBox);
-  BrdrSnapLCD->setFrameStyle( QFrame::NoFrame );
-  BrdrSnapLCD->setFixedHeight(30);
-  BrdrSnapLCD->adjustSize();
-  BrdrSnapLCD->setMinimumSize(BrdrSnapLCD->size());
-  eLay->addWidget(BrdrSnapLCD,1,1);
-
-  BrdrSnapSlider = new KSlider(0,MAX_BRDR_SNAP,1,0,
-			       KSlider::Horizontal, MagicBox);
-  BrdrSnapSlider->setSteps(1,1);
-  BrdrSnapSlider->adjustSize();
-  BrdrSnapSlider->setMinimumSize( BrdrSnapLabel->width()+
-				  BrdrSnapLCD->width(),
-				  BrdrSnapSlider->height());
-  eLay->addWidget(BrdrSnapSlider,1,2);
+  BrdrSnap = new KIntNumInput(i18n("Border Snap Zone:"), 0, MAX_BRDR_SNAP, 1, 0,
+                                    i18n("pixels"), 10, true, MagicBox);
+  BrdrSnap->setSteps(1,1);
+  eLay->addWidget(BrdrSnap,1,2);
   eLay->addRowSpacing(0,5);
 
-  connect( BrdrSnapSlider, SIGNAL(valueChanged(int)), BrdrSnapLCD, SLOT(display(int)) );
-
-  WndwSnapLabel = new QLabel(i18n("Window Snap Zone:\n       (pixels)"), MagicBox);
-  WndwSnapLabel->adjustSize();
-  WndwSnapLabel->setMinimumSize(WndwSnapLabel->size());
-  WndwSnapLabel->setAlignment(AlignTop);
-  eLay->addWidget(WndwSnapLabel,3,0);
-
-  WndwSnapLCD = new QLCDNumber (2, MagicBox);
-  WndwSnapLCD->setFrameStyle( QFrame::NoFrame );
-  WndwSnapLCD->setFixedHeight(30);
-  WndwSnapLCD->adjustSize();
-  WndwSnapLCD->setMinimumSize(WndwSnapLCD->size());
-  eLay->addWidget(WndwSnapLCD,3,1);
-
-  WndwSnapSlider = new KSlider(0,MAX_WNDW_SNAP,1,0,
-			       KSlider::Horizontal, MagicBox);
-  WndwSnapSlider->setSteps(1,1);
-  WndwSnapSlider->adjustSize();
-  WndwSnapSlider->setMinimumSize( WndwSnapLabel->width()+
-				  WndwSnapLCD->width(),
-				  WndwSnapSlider->height());
-  eLay->addWidget(WndwSnapSlider,3,2);
-
-  connect( WndwSnapSlider, SIGNAL(valueChanged(int)), WndwSnapLCD, SLOT(display(int)) );
-
-  eLay->activate();
-
+  WndwSnap = new KIntNumInput(i18n("Window Snap Zone:"), 0, MAX_WNDW_SNAP, 1, 0,
+                              i18n("pixels"), 10, true, MagicBox);
+  WndwSnap->setSteps(1,1);
+  eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
-
-  lay->activate();
 
   GetSettings();
 }
 
 
-void KDesktopConfig::setEBorders(){
-
-  if(enable->isChecked()){
-    movepointer->setEnabled(true);
-    delayslider->setEnabled(true);
-    delaylabel->setEnabled(true);
-  }
-  else{
-    delayslider->setEnabled(false);
-    movepointer->setEnabled(false);
-    delaylabel->setEnabled(false);
-  }
-
+void KDesktopConfig::setEBorders()
+{
+    delays->setEnabled(enable->isChecked());
+    movepointer->setEnabled(enable->isChecked());
 }
 
 bool KDesktopConfig::getElectricBorders()
 {
-  return  enable->isChecked();
+    return  enable->isChecked();
 }
 
-int KDesktopConfig::getElectricBordersDelay(){
-    return delayslider->value();
+int KDesktopConfig::getElectricBordersDelay()
+{
+    return delays->value();
 }
 
 bool KDesktopConfig::getElectricBordersMovePointer()
 {
-  return movepointer->isChecked();
+    return movepointer->isChecked();
 }
 
 void KDesktopConfig::setElectricBordersMovePointer(bool move){
@@ -236,32 +159,25 @@ void KDesktopConfig::setElectricBorders(bool b){
 
 void KDesktopConfig::setElectricBordersDelay(int delay)
 {
-    delayslider->setValue(delay);
-    delaylcd->display(delay);
-
+    delays->setValue(delay);
 }
 
 
-//CT 15mar98 - magics
-
 int KDesktopConfig::getBorderSnapZone() {
-  return BrdrSnapSlider->value();
+  return BrdrSnap->value();
 }
 
 void KDesktopConfig::setBorderSnapZone(int pxls) {
-  BrdrSnapSlider->setValue(pxls);
-  BrdrSnapLCD->display(pxls);
+  BrdrSnap->setValue(pxls);
 }
 
 int KDesktopConfig::getWindowSnapZone() {
-  return WndwSnapSlider->value();
+  return WndwSnap->value();
 }
 
 void KDesktopConfig::setWindowSnapZone(int pxls) {
-  WndwSnapSlider->setValue(pxls);
-  WndwSnapLCD->display(pxls);
+  WndwSnap->setValue(pxls);
 }
-//CT ---
 
 void KDesktopConfig::GetSettings( void )
 {

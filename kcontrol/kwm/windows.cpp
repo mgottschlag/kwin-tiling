@@ -21,19 +21,14 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-
 #include <qlayout.h>
 #include <qspinbox.h>
+#include <qslider.h>
+
 #include <kapp.h>
-#include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <knuminput.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -89,42 +84,27 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   bLay->addWidget(vertOnly);
 
   opaque = new QCheckBox(i18n("Display content in moving windows"), windowsBox);
-  opaque->adjustSize();
-  opaque->setMinimumSize(opaque->size());
   bLay->addWidget(opaque);
 
   resizeOpaqueOn = new QCheckBox(i18n("Display content in resizing windows"), windowsBox);
-  resizeOpaqueOn->adjustSize();
-  resizeOpaqueOn->setMinimumSize(resizeOpaqueOn->size());
   bLay->addWidget(resizeOpaqueOn);
 
   // resize animation - CT 27May98; 19Oct1998
   resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
 				    windowsBox);
-  resizeAnimTitleLabel->adjustSize();
-  resizeAnimTitleLabel->setMinimumSize(resizeAnimTitleLabel->size());
   rLay->addWidget(resizeAnimTitleLabel,0,0);
 
-  resizeAnimSlider = new KSlider(0,10,10,0,KSlider::Horizontal, windowsBox);
+  resizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
   resizeAnimSlider->setSteps(10,1);
-  //  resizeAnimSlider->setFixedHeight(20);
-  resizeAnimSlider->adjustSize();
-  resizeAnimSlider->setMinimumSize(resizeAnimSlider->size());
   rLay->addMultiCellWidget(resizeAnimSlider,0,0,1,2);
 
   resizeAnimNoneLabel= new QLabel(i18n("None"),windowsBox);
-  resizeAnimNoneLabel->adjustSize();
-  resizeAnimNoneLabel->setMinimumSize(resizeAnimNoneLabel->size());
   resizeAnimNoneLabel->setAlignment(AlignTop|AlignLeft);
   rLay->addWidget(resizeAnimNoneLabel,1,1);
 
   resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
-  resizeAnimFastLabel->adjustSize();
-  resizeAnimFastLabel->setMinimumSize(resizeAnimFastLabel->size());
   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
   rLay->addWidget(resizeAnimFastLabel,1,2);
-
-  wLay->activate();
 
   lay->addWidget(windowsBox);
 
@@ -134,32 +114,21 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   QGridLayout *pLay = new QGridLayout(plcBox,3,3,10,5);
   pLay->addRowSpacing(0,10);
 
-  placementCombo = new QComboBox(FALSE, plcBox);
-  placementCombo->insertItem(i18n("Smart"),
-			     SMART_PLACEMENT);
-  placementCombo->insertItem(i18n("Cascade"),
-			     CASCADE_PLACEMENT);
-  placementCombo->insertItem(i18n("Interactive"),
-			     INTERACTIVE_PLACEMENT);
-  placementCombo->insertItem(i18n("Random"),
-			     RANDOM_PLACEMENT);
-  placementCombo->insertItem(i18n("Manual"),
-			     MANUAL_PLACEMENT);
+  placementCombo = new QComboBox(false, plcBox);
+  placementCombo->insertItem(i18n("Smart"), SMART_PLACEMENT);
+  placementCombo->insertItem(i18n("Cascade"), CASCADE_PLACEMENT);
+  placementCombo->insertItem(i18n("Interactive"), INTERACTIVE_PLACEMENT);
+  placementCombo->insertItem(i18n("Random"), RANDOM_PLACEMENT);
+  placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
-  placementCombo->adjustSize();
-  placementCombo->setMinimumSize(placementCombo->size());
-  placementCombo->setMaximumHeight(placementCombo->height());
   pLay->addWidget(placementCombo,1,0);
 
-  //CT 13mar98 interactive trigger config
   connect(placementCombo, SIGNAL(activated(int)),this,
 	  SLOT(ifPlacementIsInteractive()) );
 
   iTLabel = new QLabel(i18n("  Allowed overlap:\n"
 					       "(% of desktop space)"),
 		       plcBox);
-  iTLabel->adjustSize();
-  iTLabel->setMinimumSize(iTLabel->size());
   iTLabel->setAlignment(AlignTop|AlignHCenter);
   pLay->addWidget(iTLabel,1,1);
 
@@ -167,8 +136,6 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   pLay->addWidget(interactiveTrigger,1,2);
 
   pLay->addRowSpacing(2,10);
-
-  pLay->activate();
 
   lay->addWidget(plcBox);
 
@@ -182,18 +149,11 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   fLay->setColStretch(2,1);
 
 
-  focusCombo =  new QComboBox(FALSE, fcsBox);
-  focusCombo->insertItem(i18n("Click to focus"),
-			 CLICK_TO_FOCUS);
-  focusCombo->insertItem(i18n("Focus follows mouse"),
-			 FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(i18n("Classic focus follows mouse"),
-			 CLASSIC_FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(i18n("Classic sloppy focus"),
-			 CLASSIC_SLOPPY_FOCUS);
-  focusCombo->adjustSize();
-  focusCombo->setMinimumSize(focusCombo->size());
-  focusCombo->setMaximumHeight(focusCombo->height());
+  focusCombo =  new QComboBox(false, fcsBox);
+  focusCombo->insertItem(i18n("Click to focus"), CLICK_TO_FOCUS);
+  focusCombo->insertItem(i18n("Focus follows mouse"), FOCUS_FOLLOWS_MOUSE);
+  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
+  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
 
   connect(focusCombo, SIGNAL(activated(int)),this,
@@ -202,21 +162,15 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   // autoraise delay
 
   autoRaiseOn = new QCheckBox(i18n("Auto Raise"), fcsBox);
-  autoRaiseOn->adjustSize();
-  autoRaiseOn->setMinimumSize(autoRaiseOn->size());
   fLay->addWidget(autoRaiseOn,2,0);
   connect(autoRaiseOn,SIGNAL(toggled(bool)), this, SLOT(autoRaiseOnTog(bool)));
 
   clickRaiseOn = new QCheckBox(i18n("Click Raise"), fcsBox);
-  clickRaiseOn->adjustSize();
-  clickRaiseOn->setMinimumSize(clickRaiseOn->size());
   fLay->addWidget(clickRaiseOn,3,0);
 
   connect(clickRaiseOn,SIGNAL(toggled(bool)), this, SLOT(clickRaiseOnTog(bool)));
 
   alabel = new QLabel(i18n("Delay (ms)"), fcsBox);
-  alabel->adjustSize();
-  alabel->setMinimumSize(alabel->size());
   alabel->setAlignment(AlignVCenter|AlignHCenter);
   fLay->addWidget(alabel,2,1);
 
@@ -227,20 +181,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   s->setMinimumSize(s->size());
   fLay->addWidget(s,2,2);
 
-  autoRaise = new KSlider(0,3000,100,500, KSlider::Horizontal, fcsBox);
+  autoRaise = new KIntNumInput(QString::null, 0,3000, 100,500,
+                               QString::null, 10, true, fcsBox);
   autoRaise->setSteps(100,100);
-  autoRaise->setFixedHeight(20);
-  autoRaise->adjustSize();
-  autoRaise->setMinimumSize(alabel->width()+s->width(), autoRaise->height());
   fLay->addMultiCellWidget(autoRaise,3,3,1,2);
-
   connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
 
-  fLay->activate();
-
   lay->addWidget(fcsBox);
-
-  lay->activate();
 
   GetSettings();
 }
@@ -256,9 +203,9 @@ int KWindowConfig::getMove()
 void KWindowConfig::setMove(int trans)
 {
   if (trans == TRANSPARENT)
-    opaque->setChecked(FALSE);
+    opaque->setChecked(false);
   else
-    opaque->setChecked(TRUE);
+    opaque->setChecked(true);
 }
 
 // placement policy --- CT 31jan98 ---
@@ -303,17 +250,17 @@ int KWindowConfig::getResizeOpaque()
 void KWindowConfig::setResizeOpaque(int opaque)
 {
   if (opaque == RESIZE_OPAQUE)
-    resizeOpaqueOn->setChecked(TRUE);
+    resizeOpaqueOn->setChecked(true);
   else
-    resizeOpaqueOn->setChecked(FALSE);
+    resizeOpaqueOn->setChecked(false);
 }
 
 void KWindowConfig::setMaximize(int tb)
 {
   if (tb == MAXIMIZE_FULL)
-    vertOnly->setChecked(FALSE);
+    vertOnly->setChecked(false);
   else
-    vertOnly->setChecked(TRUE);
+    vertOnly->setChecked(true);
 }
 
 int KWindowConfig::getMaximize()
@@ -350,17 +297,17 @@ void KWindowConfig::setAutoRaiseEnabled()
   // the auto raise related widgets are: autoRaise, alabel, s, sec
   if ( focusCombo->currentItem() != CLICK_TO_FOCUS )
     {
-      autoRaiseOn->setEnabled(TRUE);
+      autoRaiseOn->setEnabled(true);
       autoRaiseOnTog(autoRaiseOn->isChecked());
-      clickRaiseOn->setEnabled(TRUE);
+      clickRaiseOn->setEnabled(true);
       clickRaiseOnTog(clickRaiseOn->isChecked());
     }
   else
     {
-      autoRaiseOn->setEnabled(FALSE);
-      autoRaiseOnTog(FALSE);
-      clickRaiseOn->setEnabled(FALSE);
-      clickRaiseOnTog(FALSE);
+      autoRaiseOn->setEnabled(false);
+      autoRaiseOnTog(false);
+      clickRaiseOn->setEnabled(false);
+      clickRaiseOnTog(false);
     }
 }
 
@@ -368,11 +315,11 @@ void KWindowConfig::setAutoRaiseEnabled()
 void KWindowConfig::ifPlacementIsInteractive( )
 {
   if( placementCombo->currentItem() == INTERACTIVE_PLACEMENT) {
-    iTLabel->setEnabled(TRUE);
+    iTLabel->setEnabled(true);
     interactiveTrigger->show();
   }
   else {
-    iTLabel->setEnabled(FALSE);
+    iTLabel->setEnabled(false);
     interactiveTrigger->hide();
   }
 }
@@ -431,12 +378,12 @@ void KWindowConfig::GetSettings( void )
     else
       interactiveTrigger->setValue (key.right(key.length()
 					      - comma_pos).toUInt(0));
-    iTLabel->setEnabled(TRUE);
+    iTLabel->setEnabled(true);
     interactiveTrigger->show();
   }
   else {
     interactiveTrigger->setValue(0);
-    iTLabel->setEnabled(FALSE);
+    iTLabel->setEnabled(false);
     interactiveTrigger->hide();
     if( key == "random")
       setPlacement(RANDOM_PLACEMENT);

@@ -33,11 +33,16 @@
 #include <qbuttongroup.h>
 #include <qpushbutton.h>
 
-#include <kslider.h>
 #include <qcombobox.h>   //CT 31jan98
 #include <kcontrol.h>
 
 #include <kwm.h>
+
+class QSlider;
+class QButtonGroup;
+class QSpinBox;
+
+class KIntNumInput;
 
 #define TRANSPARENT 0
 #define OPAQUE      1
@@ -54,12 +59,11 @@
 #define MAXIMIZE_FULL 0
 #define MAXIMIZE_VERT 1
 
-// CT 19jan98
 #define SMART_PLACEMENT       0
-#define CASCADE_PLACEMENT     1 //CT 31jan98
-#define INTERACTIVE_PLACEMENT 2 //CT 13mar98
+#define CASCADE_PLACEMENT     1 
+#define INTERACTIVE_PLACEMENT 2 
 #define RANDOM_PLACEMENT      3
-#define MANUAL_PLACEMENT      4 //CT 13mar98
+#define MANUAL_PLACEMENT      4 
 
 #define  CLICK_TO_FOCUS                0
 #define  FOCUS_FOLLOWS_MOUSE           1
@@ -112,7 +116,7 @@ private:
   QCheckBox *opaque, *vertOnly;
 
   QCheckBox *resizeOpaqueOn;
-  KSlider *resizeAnimSlider;
+  QSlider *resizeAnimSlider;
   QLabel *resizeAnimTitleLabel, *resizeAnimNoneLabel, *resizeAnimFastLabel;
 
   //CT 19jan98; 21Oct1998
@@ -125,7 +129,7 @@ private:
   QComboBox *focusCombo;
   QCheckBox *autoRaiseOn;
   QCheckBox *clickRaiseOn;
-  KSlider *autoRaise;
+  KIntNumInput *autoRaise;
   QLabel *alabel;
   QLCDNumber *s;
   //CT  QLabel *sec;

@@ -24,13 +24,9 @@
 
 
 #include <qdir.h>
-//#include <kapp.h>
-//#include <qobject.h>
-#include <kslider.h>
+#include <qslider.h>
 
 #include <kcontrol.h>
-//#include "standard.h"
-//#include "global.h"
 #include "keyconfig.h"
 #include <kwm.h>
 #include <klocale.h>

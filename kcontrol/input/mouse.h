@@ -33,8 +33,7 @@
 #include <qbuttongroup.h>
 
 #include <kapp.h>
-#include <kslider.h>
-#include <kslidercontrol.h>
+#include <knuminput.h>
 
 #include <kcontrol.h>
 
@@ -47,7 +46,6 @@ class MouseConfig : public KConfigWidget
 public:
   MouseConfig( QWidget *parent=0, const char* name=0, bool init=FALSE);
   ~MouseConfig();
-  void  resizeEvent(QResizeEvent *e);
   void saveParams( void );
 
   void loadSettings();
@@ -65,8 +63,8 @@ private:
   void setThreshold(int);
   void setHandedness(int);
 
-  KSliderControl *accel;
-  KSliderControl *thresh;
+  KIntNumInput *accel;
+  KIntNumInput *thresh;
 
   QButtonGroup *handedBox;
   QRadioButton *leftHanded, *rightHanded;

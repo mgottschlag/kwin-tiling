@@ -22,20 +22,10 @@
 #ifndef __KKWMMOUSECONFIG_H__
 #define __KKWMMOUSECONFIG_H__
 
-#include <qlcdnumber.h> 
-#include <qlabel.h>
-#include <qdialog.h>
-#include <qmessagebox.h>
-#include <qcheckbox.h> 
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
 #include <qcombobox.h>
-#include <kslider.h>
 
 #include <kcontrol.h>
-
 #include <kwm.h>
-
 
 class KMouseConfig : public KConfigWidget
 {
@@ -53,21 +43,20 @@ public  slots:
 
 private:
 
-QComboBox* coTiAct1; 
-QComboBox* coTiAct2; 
-QComboBox* coTiAct3; 
-QComboBox* coTiInAct1; 
-QComboBox* coTiInAct2; 
-QComboBox* coTiInAct3; 
-
-QComboBox* coWin1; 
-QComboBox* coWin2; 
-QComboBox* coWin3; 
-
-QComboBox* coAll1; 
-QComboBox* coAll2; 
-QComboBox* coAll3; 
-
+  QComboBox* coTiAct1; 
+  QComboBox* coTiAct2; 
+  QComboBox* coTiAct3; 
+  QComboBox* coTiInAct1; 
+  QComboBox* coTiInAct2; 
+  QComboBox* coTiInAct3; 
+  
+  QComboBox* coWin1; 
+  QComboBox* coWin2; 
+  QComboBox* coWin3; 
+  
+  QComboBox* coAll1; 
+  QComboBox* coAll2; 
+  QComboBox* coAll3; 
 
   const char* functionTiAc(int); 
   const char* functionTiInAc(int); 

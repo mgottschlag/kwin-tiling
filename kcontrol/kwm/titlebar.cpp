@@ -3,6 +3,9 @@
  *
  * Copyright (c) 1997 Patrick Dowler dowler@morgul.fsh.uvic.ca
  *
+ * Enhancements:
+ * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
+ * 
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -21,15 +24,12 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <iostream.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-
 #include <qdir.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
+#include <qradiobutton.h>
+#include <qwidgetstack.h>
 
 #include <kapp.h>
 #include <klocale.h>
@@ -38,13 +38,12 @@
 #include <kglobal.h>
 #include <kiconloaderdialog.h>
 #include <kiconloader.h>
+#include <knuminput.h>
+#include <kpixmapeffect.h>
 
 #include "titlebar.h"
-
 #include "geom.h"
 
-
-#include <kpixmapeffect.h> //CT for the previews
 extern KConfig *config;
 
 // config file keywords used by kwm
@@ -85,8 +84,7 @@ KTitlebarButtons::~KTitlebarButtons ()
   delete right;
   delete off;
 
-  for (int i=0; i<3; i++)
-    {
+  for (int i=0; i<3; i++) {
       delete minRB[i];
       delete maxRB[i];
       delete stickyRB[i];
@@ -240,7 +238,6 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   for (i=0; i<3; i++)
     {
       minRB[i] = new QRadioButton(" ", minBox, NULL);
-      minRB[i]->adjustSize();
       hlay->addWidget(minRB[i], 10);
       connect(minRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
@@ -316,12 +313,12 @@ void KTitlebarButtons::resizeEvent(QResizeEvent *)
   blankTitlebar->setPixmapSize( minP->width(), minP->height() );
 
 
-  drawPreview(TRUE);
+  drawPreview(true);
 }
 
 void KTitlebarButtons::updatePreview()
 {
-  drawPreview(TRUE);
+  drawPreview(true);
 }
 
 void KTitlebarButtons::drawPreview(bool draw)
@@ -359,7 +356,7 @@ void KTitlebarButtons::drawPreview(bool draw)
     }
   else
     {
-      menuRB[2]->setChecked(TRUE);
+      menuRB[2]->setChecked(true);
     }
 
   // close can go in A, B, E, or F
@@ -396,7 +393,7 @@ void KTitlebarButtons::drawPreview(bool draw)
   else
     {
       // make sure it is OFF
-      closeRB[2]->setChecked(TRUE);
+      closeRB[2]->setChecked(true);
     }
 
 
@@ -444,7 +441,7 @@ void KTitlebarButtons::drawPreview(bool draw)
   else
     {
       // make sure this func is OFF
-      stickyRB[2]->setChecked(TRUE);
+      stickyRB[2]->setChecked(true);
     }
 
   // max may not fit is the selected side is full already
@@ -475,8 +472,8 @@ void KTitlebarButtons::drawPreview(bool draw)
 				    "is full... disabling the 'maximize' "
 				    "button\n"),
 			       i18n("&Ok"));
-	  maxRB[0]->setChecked(FALSE);
-	  maxRB[2]->setChecked(TRUE);
+	  maxRB[0]->setChecked(false);
+	  maxRB[2]->setChecked(true);
 	  left--;
 	}
       left++;
@@ -507,8 +504,8 @@ void KTitlebarButtons::drawPreview(bool draw)
 				    "is full... disabling the 'maximise' "
 				    "button\n"),
 			       i18n("&Ok"));
-	  maxRB[1]->setChecked(FALSE);
-	  maxRB[2]->setChecked(TRUE);
+	  maxRB[1]->setChecked(false);
+	  maxRB[2]->setChecked(true);
 	  right--;
 	}
       right++;
@@ -516,7 +513,7 @@ void KTitlebarButtons::drawPreview(bool draw)
   else
     {
       // make sure this func is OFF
-      maxRB[2]->setChecked(TRUE);
+      maxRB[2]->setChecked(true);
     }
 
   // min may not fit is the selected side is full already
@@ -546,8 +543,8 @@ void KTitlebarButtons::drawPreview(bool draw)
 				    "is full... disabling the 'minimize' "
 				    "button\n"),
 			       i18n("&Ok"));
-	  minRB[0]->setChecked(FALSE);
-	  minRB[2]->setChecked(TRUE);
+	  minRB[0]->setChecked(false);
+	  minRB[2]->setChecked(true);
 	  left--;
 	}
       left++;
@@ -578,8 +575,8 @@ void KTitlebarButtons::drawPreview(bool draw)
 				"is full... disabling the 'minimize' "
 				"button\n"),
 			   i18n("&Ok"));
-	  minRB[1]->setChecked(FALSE);
-	  minRB[2]->setChecked(TRUE);
+	  minRB[1]->setChecked(false);
+	  minRB[2]->setChecked(true);
 	  right--;
 	}
       right++;
@@ -587,7 +584,7 @@ void KTitlebarButtons::drawPreview(bool draw)
   else
     {
       // make sure it is OFF
-      minRB[2]->setChecked(TRUE);
+      minRB[2]->setChecked(true);
     }
 }
 
@@ -606,61 +603,61 @@ void KTitlebarButtons::setButton(int button, int func)
     case ICONIFY:
       if (button < 3)
       {
-	minRB[0]->setChecked(TRUE);
-        minRB[1]->setChecked(FALSE);
+	minRB[0]->setChecked(true);
+        minRB[1]->setChecked(false);
       }
       else
       {
-	minRB[1]->setChecked(TRUE);
-        minRB[0]->setChecked(FALSE);
+	minRB[1]->setChecked(true);
+        minRB[0]->setChecked(false);
       }
       break;
     case MAXIMIZE:
       if (button < 3)
       {
-	maxRB[0]->setChecked(TRUE);
-        maxRB[1]->setChecked(FALSE);
+	maxRB[0]->setChecked(true);
+        maxRB[1]->setChecked(false);
       }
       else
       {
-	maxRB[1]->setChecked(TRUE);
-        maxRB[0]->setChecked(FALSE);
+	maxRB[1]->setChecked(true);
+        maxRB[0]->setChecked(false);
       }
       break;
     case STICKY:
       if (button < 3)
       {
-	stickyRB[0]->setChecked(TRUE);
-        stickyRB[1]->setChecked(FALSE);
+	stickyRB[0]->setChecked(true);
+        stickyRB[1]->setChecked(false);
       }
       else
       {
-	stickyRB[1]->setChecked(TRUE);
-        stickyRB[0]->setChecked(FALSE);
+	stickyRB[1]->setChecked(true);
+        stickyRB[0]->setChecked(false);
       }
       break;
     case CLOSE:
       if (button < 3)
       {
-	closeRB[0]->setChecked(TRUE);
-        closeRB[1]->setChecked(FALSE);
+	closeRB[0]->setChecked(true);
+        closeRB[1]->setChecked(false);
       }
       else
       {
-	closeRB[1]->setChecked(TRUE);
-        closeRB[0]->setChecked(FALSE);
+	closeRB[1]->setChecked(true);
+        closeRB[0]->setChecked(false);
       }
       break;
     case MENU:
       if (button < 3)
       {
-	menuRB[0]->setChecked(TRUE);
-        menuRB[1]->setChecked(FALSE);
+	menuRB[0]->setChecked(true);
+        menuRB[1]->setChecked(false);
       }
       else
       {
-	menuRB[1]->setChecked(TRUE);
-        menuRB[0]->setChecked(FALSE);
+	menuRB[1]->setChecked(true);
+        menuRB[0]->setChecked(false);
       }
       break;
     }
@@ -668,7 +665,7 @@ void KTitlebarButtons::setButton(int button, int func)
 
 void KTitlebarButtons::setState()
 {
-  drawPreview(FALSE);
+  drawPreview(false);
 }
 
 void KTitlebarButtons::getStringValue(int b, QString *str)
@@ -777,16 +774,16 @@ void KTitlebarButtons::GetSettings( void )
   FBUTTON = buttonFunc(&key);
 
   // clear all buttons (for reloading!)
-  minRB[0]->setChecked(FALSE);
-  minRB[1]->setChecked(FALSE);
-  maxRB[0]->setChecked(FALSE);
-  maxRB[1]->setChecked(FALSE);
-  stickyRB[0]->setChecked(FALSE);
-  stickyRB[1]->setChecked(FALSE);
-  closeRB[0]->setChecked(FALSE);
-  closeRB[1]->setChecked(FALSE);
-  menuRB[0]->setChecked(FALSE);
-  menuRB[1]->setChecked(FALSE);
+  minRB[0]->setChecked(false);
+  minRB[1]->setChecked(false);
+  maxRB[0]->setChecked(false);
+  maxRB[1]->setChecked(false);
+  stickyRB[0]->setChecked(false);
+  stickyRB[1]->setChecked(false);
+  closeRB[0]->setChecked(false);
+  closeRB[1]->setChecked(false);
+  menuRB[0]->setChecked(false);
+  menuRB[1]->setChecked(false);
 
   setButton(0, ABUTTON);
   setButton(1, BBUTTON);
@@ -800,7 +797,7 @@ void KTitlebarButtons::GetSettings( void )
 void KTitlebarButtons::loadSettings()
 {
   GetSettings();
-  drawPreview(TRUE);
+  drawPreview(true);
 }
 
 void KTitlebarButtons::applySettings()
@@ -851,37 +848,31 @@ void TitlebarPreview::setPixmapSize(int w, int /*unused*/ )
 void TitlebarPreview::setA( QPixmap *pm )
 {
   a->setPixmap( *pm );
-  a->adjustSize();
   a->show();
 }
 void TitlebarPreview::setB( QPixmap *pm )
 {
   b->setPixmap( *pm );
-  b->adjustSize();
   b->show();
 }
 void TitlebarPreview::setC( QPixmap *pm )
 {
   c->setPixmap( *pm );
-  c->adjustSize();
   c->show();
 }
 void TitlebarPreview::setD( QPixmap *pm )
 {
   d->setPixmap( *pm );
-  d->adjustSize();
   d->show();
 }
 void TitlebarPreview::setE( QPixmap *pm )
 {
   e->setPixmap( *pm );
-  e->adjustSize();
   e->show();
 }
 void TitlebarPreview::setF( QPixmap *pm )
 {
   f->setPixmap( *pm );
-  f->adjustSize();
   f->show();
 }
 void TitlebarPreview::removeAll( void )
@@ -974,8 +965,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   cbFrame = new QCheckBox(i18n("Active title has shaded frame"),
 	                   appearBox);
-  cbFrame->adjustSize();
-  cbFrame->setMinimumSize(cbFrame->size());
   appearLay->addWidget(cbFrame);
 
 
@@ -1070,12 +1059,10 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   lDblClick = new QLabel(i18n("Left Button double click does:"),
 			 titlebarDblClickBox);
-  lDblClick->adjustSize();
-  lDblClick->setMinimumSize(lDblClick->size());
   pixLay->addWidget(lDblClick,1,0);
 
   // I commented some stuff out, since it does not make sense (Matthias 23okt98)
-  dblClickCombo = new QComboBox(FALSE, titlebarDblClickBox);
+  dblClickCombo = new QComboBox(false, titlebarDblClickBox);
   dblClickCombo->insertItem(i18n("(Un)Maximize"),DCTB_MAXIMIZE);
   dblClickCombo->insertItem(i18n("(Un)Shade"),DCTB_SHADE);
   dblClickCombo->insertItem(i18n("Iconify"),DCTB_ICONIFY);
@@ -1083,49 +1070,16 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   dblClickCombo->insertItem(i18n("Close"),DCTB_CLOSE);
   dblClickCombo->setCurrentItem( DCTB_MAXIMIZE );
 
-  dblClickCombo->adjustSize();
-  dblClickCombo->setMinimumSize(dblClickCombo->size());
   pixLay->addWidget(dblClickCombo,1,1);
 
   pixLay->activate();
 
   lay->addMultiCellWidget(titlebarDblClickBox,2,2,0,1);
 
-  // titlebar animation
-  animBox = new QGroupBox(i18n("Title animation"),
-				       this);
-
-  pixLay = new QGridLayout(animBox,2,3,10,5);
-  pixLay->addRowSpacing(0,10);
-  pixLay->setColStretch(0,0);
-  pixLay->setColStretch(1,0);
-  pixLay->setColStretch(2,1);
-
-  t = new QLCDNumber (2, animBox);
-  t->setFrameStyle( QFrame::NoFrame );
-  t->setFixedHeight(30);
-  t->adjustSize();
-  t->setMinimumSize(t->size());
-  pixLay->addWidget(t,1,0);
-
-  sec = new QLabel(i18n("ms"), animBox);
-  sec->adjustSize();
-  sec->setMinimumSize(sec->size());
-  pixLay->addWidget(sec,1,1);
-
-  titleAnim = new KSlider(0,100,10,0, KSlider::Horizontal, animBox);
+  titleAnim = new KIntNumInput(i18n("Title animation"), 0, 100, 10, 0,
+                               i18n("ms"), 10, true, this);
   titleAnim->setSteps(10,10);
-  titleAnim->adjustSize();
-  titleAnim->setMinimumSize(titleAnim->size());
-  pixLay->addWidget(titleAnim,1,2);
-
-  pixLay->activate();
-
-  lay->addMultiCellWidget(animBox,3,3,0,1);
-
-  lay->activate();
-
-  connect( titleAnim,   SIGNAL(valueChanged(int)), t, SLOT(display(int)) );
+  lay->addMultiCellWidget(titleAnim,3,0, 1, 1);
 
   GetSettings();
 
@@ -1159,11 +1113,11 @@ int KTitlebarAppearance::getAlign() {
 
 void KTitlebarAppearance::setAlign(int a) {
   if (a == AT_LEFT) 
-    leftAlign->setChecked(TRUE);
+    leftAlign->setChecked(true);
   if (a == AT_MIDDLE)
-    midAlign->setChecked(TRUE);
+    midAlign->setChecked(true);
   if (a == AT_RIGHT)
-    rightAlign->setChecked(TRUE);
+    rightAlign->setChecked(true);
 }
 //CT
 
@@ -1182,56 +1136,46 @@ void KTitlebarAppearance::setTitlebar(int tb)
 {
   if (tb == TITLEBAR_PIXMAP)
     {
-      bShaded->setChecked(FALSE);
-      plain->setChecked(FALSE);
-      pixmap->setChecked(TRUE);
+      bShaded->setChecked(false);
+      plain->setChecked(false);
+      pixmap->setChecked(true);
       optOpts->raiseWidget(pixmapBox);
-      pixmapBox->setEnabled(TRUE);
-      lPixmapActive->setEnabled(TRUE);
-      pbPixmapActive->setEnabled(TRUE);
-      lPixmapInactive->setEnabled(TRUE);
-      pbPixmapInactive->setEnabled(TRUE);
-      cbPixedText->setEnabled(TRUE);
+      pixmapBox->setEnabled(true);
+      lPixmapActive->setEnabled(true);
+      pbPixmapActive->setEnabled(true);
+      lPixmapInactive->setEnabled(true);
+      pbPixmapInactive->setEnabled(true);
+      cbPixedText->setEnabled(true);
       return;
     }
   if (tb == TITLEBAR_SHADED)
     {
-      bShaded->setChecked(TRUE);
-      plain->setChecked(FALSE);
-      pixmap->setChecked(FALSE);
+      bShaded->setChecked(true);
+      plain->setChecked(false);
+      pixmap->setChecked(false);
       optOpts->raiseWidget(gradBox);
-      pixmapBox->setEnabled(FALSE);
-      lPixmapActive->setEnabled(FALSE);
-      pbPixmapActive->setEnabled(FALSE);
-      lPixmapInactive->setEnabled(FALSE);
-      pbPixmapInactive->setEnabled(FALSE);
-      cbPixedText->setEnabled(FALSE);
+      pixmapBox->setEnabled(false);
+      lPixmapActive->setEnabled(false);
+      pbPixmapActive->setEnabled(false);
+      lPixmapInactive->setEnabled(false);
+      pbPixmapInactive->setEnabled(false);
+      cbPixedText->setEnabled(false);
       return;
     }
   if (tb == TITLEBAR_PLAIN)
     {
-      bShaded->setChecked(FALSE);
-      plain->setChecked(TRUE);
-      pixmap->setChecked(FALSE);
+      bShaded->setChecked(false);
+      plain->setChecked(true);
+      pixmap->setChecked(false);
       optOpts->raiseWidget(pixmapBox);
-      pixmapBox->setEnabled(FALSE);
-      lPixmapActive->setEnabled(FALSE);
-      pbPixmapActive->setEnabled(FALSE);
-      lPixmapInactive->setEnabled(FALSE);
-      pbPixmapInactive->setEnabled(FALSE);
-      cbPixedText->setEnabled(FALSE);
+      pixmapBox->setEnabled(false);
+      lPixmapActive->setEnabled(false);
+      pbPixmapActive->setEnabled(false);
+      lPixmapInactive->setEnabled(false);
+      pbPixmapInactive->setEnabled(false);
+      cbPixedText->setEnabled(false);
       return;
     }
-}
-
-int KTitlebarAppearance::getTitleAnim()
-{
-  return t->intValue();
-}
-void KTitlebarAppearance::setTitleAnim(int tb)
-{
-  titleAnim->setValue(tb);
-  t->display(tb);
 }
 
 //CT 11feb98 action on double click on titlebar
@@ -1332,10 +1276,9 @@ void KTitlebarAppearance::SaveSettings( void )
     }
   }
 
-  int a = getTitleAnim();
-  config->writeEntry(KWM_TITLEANIMATION, a);
+  config->writeEntry(KWM_TITLEANIMATION, titleAnim->value());
 
-  a = getDCTBAction();
+  int a = getDCTBAction();
   switch (a) {
   case DCTB_MAXIMIZE:
     config->writeEntry(KWM_DCTBACTION, "winMaximize");
@@ -1468,7 +1411,7 @@ void KTitlebarAppearance::GetSettings( void )
   pbPixmapInactive->setPixmap(pixmapInactiveOld =
 			      Icon( sPixmapInactive ));
 
-  setTitleAnim(config->readNumEntry(KWM_TITLEANIMATION,0));
+  titleAnim->setValue(config->readNumEntry(KWM_TITLEANIMATION,0));
 
   key = config->readEntry(KWM_DCTBACTION);
   if (key == "winMaximize") setDCTBAction(DCTB_MAXIMIZE);

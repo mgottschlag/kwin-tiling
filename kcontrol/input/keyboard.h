@@ -24,15 +24,12 @@
 #ifndef __KKEYBOARDCONFIG_H__
 #define __KKEYBOARDCONFIG_H__
 
-#include <qlabel.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
-#include <qlcdnumber.h>
 #include <kapp.h>
-#include <kslidercontrol.h>
-
 #include <kcontrol.h>
+
+class KIntNumInput;
+class KConfig;
+class QCheckBox;
 
 class KeyboardConfig : public KConfigWidget
 {
@@ -40,7 +37,6 @@ class KeyboardConfig : public KConfigWidget
 public:
   KeyboardConfig( QWidget *parent=0, const char* name=0, bool init=FALSE );
   ~KeyboardConfig( );
-  void  resizeEvent(QResizeEvent *e);
   void saveParams( void );
 
   void loadSettings();
@@ -55,13 +51,10 @@ private:
   void setRepeatRate( int );
 
   int getClick();
-  int getRepeat();
   int getRepeatRate();
 
-  QButtonGroup *repeatBox;
-  QRadioButton *repeatOn, *repeatOff;
-
-  KSliderControl *click;
+  QCheckBox *repeatBox;
+  KIntNumInput *click;
 
   KConfig *config;
   int clickVolume, keyboardRepeat;

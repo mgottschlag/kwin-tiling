@@ -22,8 +22,6 @@
 
 #include <stdio.h>
 
-#include <kslider.h>
-
 #include <kcontrol.h>
 #include <kimgio.h>
 #include "display.h"

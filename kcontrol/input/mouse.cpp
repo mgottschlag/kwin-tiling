@@ -3,6 +3,9 @@
  *
  * Copyright (c) 1997 Patrick Dowler dowler@morgul.fsh.uvic.ca
  *
+ * Layout management, enhancements:
+ * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -30,7 +33,10 @@
 
 #include <qfileinfo.h> 
 #include <qstring.h>
-#include <qmessagebox.h> 
+#include <qhbuttongroup.h>
+#include <qmessagebox.h>
+#include <qlayout.h>
+
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -44,88 +50,44 @@
 
 MouseConfig::~MouseConfig ()
 {
-  if (GUI)
-    {
-      delete accel;
-      delete thresh;
-      delete leftHanded;
-      delete rightHanded;
-      delete handedBox;
+    if (GUI) {
+        delete accel;
+        delete thresh;
+        delete leftHanded;
+        delete rightHanded;
+        delete handedBox;
     }
 }
 
 MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
   : KConfigWidget (parent, name)
 {
-  if (init)
-    GUI = FALSE;
-  else
-    GUI = TRUE;
+    GUI = !init;
 
-  if (GUI)
-    {
-      accel = new KSliderControl(i18n("Acceleration"), 
-				 1,20,2,20, "x", 
-				 this);
-      thresh = new KSliderControl(i18n("Threshold"), 
-				  1,20,2,20, i18n("pixels"), 
-				  this);
-      accel->setLabelAlignment(AlignLeft);
-      thresh->setLabelAlignment(AlignLeft);
-      accel->setSteps(1,20);
-      thresh->setSteps(1,20);
-
-      handedBox = new QButtonGroup(i18n("Button mapping"), 
-				   this, "handed");
-      rightHanded = new QRadioButton(i18n("Right handed"), 
-				     handedBox, "R");
-      leftHanded = new QRadioButton(i18n("Left handed"), 
-				    handedBox, "L");
-
-      accel->move(SPACE_XO, SPACE_YO);
-      accel->resize(accel->minimumSize().width(), 
-		    accel->minimumSize().height());
-      thresh->move(SPACE_XO, accel->y() + accel->height() + SPACE_YO);
-      thresh->resize(thresh->minimumSize().width(), 
-		    thresh->minimumSize().height());
-
-      rightHanded->adjustSize();
-      leftHanded->adjustSize();
-
-      QFontMetrics fm = handedBox->font();
-      int titleH = fm.height();
-      int titleW = fm.width(handedBox->title());
-      int buttonH = rightHanded->height();
-      int buttonW = max( rightHanded->width(), leftHanded->width() );
-      int boxH = 2*buttonH + 3*SPACE_YI + titleH;
-      int boxW = 0;
-      if (boxW < titleW + 4*SPACE_XI)
-	boxW =  titleW + 4*SPACE_XI;
-      if (boxW < buttonW + 2*SPACE_XI)
-	boxW = buttonW + 2*SPACE_XI;
+  if (GUI) {
+      QBoxLayout* lay = new QVBoxLayout(this, 10);
       
-      rightHanded->move(SPACE_XI, SPACE_YI + titleH);
-      leftHanded->move(SPACE_XI, 2*SPACE_YI + buttonH + titleH);
-      handedBox->move(SPACE_XO, thresh->y() + thresh->height() + SPACE_YO);
-      handedBox->resize(boxW, boxH);
+      accel = new KIntNumInput(i18n("Acceleration"), 1,20,2,20, "x", 
+                               10, true, this);
+      accel->setSteps(1,20);
+      lay->addWidget(accel);
+      
+      thresh = new KIntNumInput(i18n("Threshold"), 1,20,2,20,
+                                i18n("pixels"), 10, true, this);
+      thresh->setSteps(1,20);
+      lay->addWidget(thresh);
+      
+      handedBox = new QHButtonGroup(i18n("Button mapping"), this, "handed");
+      rightHanded = new QRadioButton(i18n("Right handed"), handedBox, "R");
+      leftHanded = new QRadioButton(i18n("Left handed"), handedBox, "L");
 
-      // determine minimum size
-      int w = max(accel->minimumSize().width(), thresh->minimumSize().width());
-      int h = accel->minimumSize().height() + thresh->minimumSize().height() +
-	boxH + 4*SPACE_YO;
-      setMinimumSize(w,h);
-    }
+      lay->addWidget(handedBox);
+  }
 
-  handedEnabled = TRUE;
+  handedEnabled = true;
   config = kapp->getConfig();
 
   GetSettings();
-}
-
-void MouseConfig::resizeEvent(QResizeEvent *)
-{
-  accel->resize(width() - 2*SPACE_XO, accel->minimumSize().height());
-  thresh->resize(width() - 2*SPACE_XO, thresh->minimumSize().height());
 }
 
 int MouseConfig::getAccel()
@@ -159,12 +121,12 @@ int MouseConfig::getHandedness()
 
 void MouseConfig::setHandedness(int val)
 {
-  rightHanded->setChecked(FALSE);
-  leftHanded->setChecked(FALSE);
+  rightHanded->setChecked(false);
+  leftHanded->setChecked(false);
   if (val == RIGHT_HANDED)
-    rightHanded->setChecked(TRUE);
+    rightHanded->setChecked(true);
   else
-    leftHanded->setChecked(TRUE);
+    leftHanded->setChecked(true);
 }
 
 void MouseConfig::GetSettings( void )
@@ -185,9 +147,9 @@ void MouseConfig::GetSettings( void )
       /* disable button remapping */
       if (GUI)
 	{
-	  rightHanded->setEnabled(FALSE);
-	  leftHanded->setEnabled(FALSE);
-	  handedEnabled = FALSE;
+	  rightHanded->setEnabled(false);
+	  leftHanded->setEnabled(false);
+	  handedEnabled = false;
 	}
       break;
     case 2:
@@ -200,8 +162,8 @@ void MouseConfig::GetSettings( void )
 	  /* custom button setup: disable button remapping */
 	  if (GUI)
 	    {
-	      rightHanded->setEnabled(FALSE);
-	      leftHanded->setEnabled(FALSE);
+	      rightHanded->setEnabled(false);
+	      leftHanded->setEnabled(false);
 	    }
 	}
       break;
@@ -216,9 +178,9 @@ void MouseConfig::GetSettings( void )
 	  /* custom button setup: disable button remapping */
 	  if (GUI)
 	    {
-	      rightHanded->setEnabled(FALSE);
-	      leftHanded->setEnabled(FALSE);
-	      handedEnabled = FALSE;
+	      rightHanded->setEnabled(false);
+	      leftHanded->setEnabled(false);
+	      handedEnabled = false;
 	    }
 	}
       break;
@@ -226,9 +188,9 @@ void MouseConfig::GetSettings( void )
       /* custom setup with > 3 buttons: disable button remapping */
       if (GUI)
 	{
-	  rightHanded->setEnabled(FALSE);
-	  leftHanded->setEnabled(FALSE);
-	  handedEnabled = FALSE;
+	  rightHanded->setEnabled(false);
+	  leftHanded->setEnabled(false);
+	  handedEnabled = false;
 	}
       break;
     }
@@ -265,117 +227,105 @@ void MouseConfig::GetSettings( void )
 
 void MouseConfig::saveParams( void )
 {
-  if (GUI)
-    {
+  if (GUI) {
       accelRate = getAccel();
       thresholdMove = getThreshold();
       handed = getHandedness();
-    }
-
+  }
+  
   XChangePointerControl( kapp->getDisplay(),
-			 TRUE, TRUE, accelRate, 1, thresholdMove);
+                         true, true, accelRate, 1, thresholdMove);
 
   
   unsigned char map[5];
   int remap=1;
-  if (handedEnabled)
-    {
-      switch (num_buttons)
-	{
-	case 1:
-          {
- 	    map[0] = (unsigned char) 1;
+  if (handedEnabled) {
+      switch (num_buttons) {
+      case 1:
+          map[0] = (unsigned char) 1;
+          break;
+      case 2:
+          if (handed == RIGHT_HANDED) {
+              map[0] = (unsigned char) 1;
+              map[1] = (unsigned char) 3;
           }
-	  break;
-	case 2:
-	  if (handed == RIGHT_HANDED)
-	    {
-	      map[0] = (unsigned char) 1;
-	      map[1] = (unsigned char) 3;
-	    }
-	  else
-	    {
-	      map[0] = (unsigned char) 3;
-	      map[1] = (unsigned char) 1;
-	    }
-	  break;
-	case 3:
-	  if (handed == RIGHT_HANDED)
-	    {
-	      map[0] = (unsigned char) 1;
-	      map[1] = (unsigned char) middle_button;
-	      map[2] = (unsigned char) 3;
-	    }
-	  else
-	    {
-	      map[0] = (unsigned char) 3;
-	      map[1] = (unsigned char) middle_button;
-	      map[2] = (unsigned char) 1;
-	    }
-	  break;
-        case 5:  
-         // Intellimouse case, where buttons 1-3 are left, middle, and
-         // right, and 4-5 are up/down
-         if (handed == RIGHT_HANDED)
-           {
-             map[0] = (unsigned char) 1;
-             map[1] = (unsigned char) 2;
-             map[2] = (unsigned char) 3;
-             map[3] = (unsigned char) 4;
-             map[4] = (unsigned char) 5;
-           }
-         else
-           {
-             map[0] = (unsigned char) 3;
-             map[1] = (unsigned char) 2;
-             map[2] = (unsigned char) 1;
-             map[3] = (unsigned char) 4;
-             map[4] = (unsigned char) 5;
-           }
-         break;
-       default:
-         {
-           //catch-all for mice with four or more than five buttons
-           //Without this, XSetPointerMapping is called with a undefined value
-           //for map
-           remap=0;  //don't remap
-         }
-         break;
-	}
+          else {
+              map[0] = (unsigned char) 3;
+              map[1] = (unsigned char) 1;
+          }
+          break;
+      case 3:
+          if (handed == RIGHT_HANDED) {
+              map[0] = (unsigned char) 1;
+              map[1] = (unsigned char) middle_button;
+              map[2] = (unsigned char) 3;
+          }
+          else {
+              map[0] = (unsigned char) 3;
+              map[1] = (unsigned char) middle_button;
+              map[2] = (unsigned char) 1;
+          }
+          break;
+      case 5:  
+          // Intellimouse case, where buttons 1-3 are left, middle, and
+          // right, and 4-5 are up/down
+          if (handed == RIGHT_HANDED) {
+              map[0] = (unsigned char) 1;
+              map[1] = (unsigned char) 2;
+              map[2] = (unsigned char) 3;
+              map[3] = (unsigned char) 4;
+              map[4] = (unsigned char) 5;
+          }
+          else {
+              map[0] = (unsigned char) 3;
+              map[1] = (unsigned char) 2;
+              map[2] = (unsigned char) 1;
+              map[3] = (unsigned char) 4;
+              map[4] = (unsigned char) 5;
+          }
+          break;
+      default: {
+              //catch-all for mice with four or more than five buttons
+              //Without this, XSetPointerMapping is called with a undefined value
+              //for map
+              remap=0;  //don't remap
+          }
+          break;
+      }
       int retval;
       if (remap)
-       while ((retval=XSetPointerMapping(kapp->getDisplay(), map,
-                                         num_buttons)) == MappingBusy)
-         /* keep trying until the pointer is free */
-         { };
-    }
-
+          while ((retval=XSetPointerMapping(kapp->getDisplay(), map,
+                                            num_buttons)) == MappingBusy)
+              /* keep trying until the pointer is free */
+          { };
+  }
+  
   config->setGroup("Mouse");
   config->writeEntry("Acceleration",accelRate);
   config->writeEntry("Threshold",thresholdMove);
   if (handed == RIGHT_HANDED)
-    config->writeEntry("MouseButtonMapping",QString("RightHanded"));
+      config->writeEntry("MouseButtonMapping",QString("RightHanded"));
   else
-    config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
-
+      config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
+  
   config->sync();
 }
 
 void MouseConfig::loadSettings()
 {
-  GetSettings();
+    GetSettings();
 }
 
 void MouseConfig::applySettings()
 {
-  saveParams();
+    saveParams();
 }
 
 void MouseConfig::defaultSettings()
 {
-  setThreshold(2);
-  setAccel(2);
-  setHandedness(RIGHT_HANDED);
+    setThreshold(2);
+    setAccel(2);
+    setHandedness(RIGHT_HANDED);
 }
 
 
