@@ -1,5 +1,5 @@
 /* XPM */
-static char *bat-2[] = {
+static const char *bat2[] = {
 /* width height num_colors chars_per_pixel */
 "   147   108       67            2",
 /* colors */
