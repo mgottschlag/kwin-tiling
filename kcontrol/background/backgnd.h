@@ -103,21 +103,25 @@ private slots:
 private:
     void init();
     void apply();
+    void enableBlend(int);
 
     int m_Desk, m_Max;
     int m_oldMode;
 
+    QLabel *m_plblMode, *m_plblWallpaper;
     QListBox *m_pDeskList;
     QCheckBox *m_pCBCommon;
     QCheckBox *m_pReverseBlending, *m_pCBLimit;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
     QComboBox *m_pArrangementBox, *m_pBlendBox;
     QHButtonGroup *m_WallpaperType;
+    QLabel *m_plblBalance;
     QSlider *m_pBlendSlider;
     QPushButton *m_pBGSetupBut, *m_pMSetupBut;
     QPushButton *m_pBrowseBut;
     QTabWidget *m_pTabWidget;
     QWidget *m_pTab1, *m_pTab2, *m_pTab3, *m_pTab4;
+    QLabel *m_plblCache;
     QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
 

@@ -173,7 +173,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     // Background settings at Tab 1
     m_pTab1 = new QWidget(0L, "Background Tab");
     m_pTabWidget->addTab(m_pTab1, i18n("&Background"));
-    QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
+    QGridLayout *grid = new QGridLayout(m_pTab1, 5, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
 
@@ -250,12 +250,12 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     rb = new QRadioButton( i18n("&Single wallpaper"), m_WallpaperType );
     rb = new QRadioButton( i18n("&Multiple wallpapers"), m_WallpaperType );
 
-    lbl = new QLabel(i18n("M&ode:"), m_pTab2);
-    lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
+    m_plblMode = new QLabel(i18n("M&ode:"), m_pTab2);
+    m_plblMode->setFixedSize(m_plblMode->sizeHint());
+    grid->addWidget(m_plblMode, 1, 0, Qt::AlignLeft);
     m_pArrangementBox = new QComboBox(m_pTab2);
     connect(m_pArrangementBox, SIGNAL(activated(int)), SLOT(slotWPMode(int)));
-    lbl->setBuddy(m_pArrangementBox);
+    m_plblMode->setBuddy(m_pArrangementBox);
     grid->addWidget(m_pArrangementBox, 1, 1, Qt::AlignLeft);
     QWhatsThis::add( m_pArrangementBox, i18n("You can have a wallpaper (based on"
 					     " a graphic) on top of your background. You can choose one of the following"
@@ -275,11 +275,11 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
                                              " than the desktop, it's scalled down to fit while keeping the aspect"
                                              " ratio.</li></ul>") );
 
-    lbl = new QLabel(i18n("&Wallpaper:"), m_pTab2);
-    lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
+    m_plblWallpaper = new QLabel(i18n("&Wallpaper:"), m_pTab2);
+    m_plblWallpaper->setFixedSize(m_plblWallpaper->sizeHint());
+    grid->addWidget(m_plblWallpaper, 2, 0, Qt::AlignLeft);
     m_pWallpaperBox = new QComboBox(m_pTab2);
-    lbl->setBuddy(m_pWallpaperBox);
+    m_plblWallpaper->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
 	    SLOT(slotWallpaper(const QString &)));
     connect(m_pWallpaperBox->listBox(),SIGNAL(highlighted ( const QString &  )), SLOT(slotWallpaper(const QString &)));
@@ -303,16 +303,18 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     // Tab 3: Advanced
     m_pTab3 = new QWidget(0L, "Advanced Tab");
     m_pTabWidget->addTab(m_pTab3, i18n("&Advanced"));
-    grid = new QGridLayout(m_pTab3, 3, 3, 10, 10);
+    grid = new QGridLayout(m_pTab3, 5, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
+    grid->setRowStretch(4, 1);
 
     lbl = new QLabel(i18n("B&lending:"), m_pTab3);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBlendBox = new QComboBox(m_pTab3);
     connect(m_pBlendBox, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
-    connect(m_pBlendBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
+    // See an earlier comment for the reason this connect is disabled
+    //connect(m_pBlendBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
     lbl->setBuddy(m_pBlendBox);
     grid->addWidget(m_pBlendBox, 0, 1);
     QWhatsThis::add( m_pBlendBox, i18n("If you have selected to use wallpaper, you"
@@ -322,13 +324,13 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 1, 0);
-    lbl = new QLabel(i18n("B&alance:"), m_pTab3);
-    lbl->setFixedSize(lbl->sizeHint());
-    hbox->addSpacing(20); hbox->addWidget(lbl); hbox->addStretch();
+    m_plblBalance = new QLabel(i18n("B&alance:"), m_pTab3);
+    m_plblBalance->setFixedSize(m_plblBalance->sizeHint());
+    hbox->addSpacing(20); hbox->addWidget(m_plblBalance); hbox->addStretch();
     m_pBlendSlider = new QSlider(QSlider::Horizontal, m_pTab3);
     m_pBlendSlider->setRange( -200, 200 );
     connect(m_pBlendSlider, SIGNAL(valueChanged(int)), SLOT(slotBlendBalance(int)));
-    lbl->setBuddy(m_pBlendSlider);
+    m_plblBalance->setBuddy(m_pBlendSlider);
     grid->addWidget(m_pBlendSlider, 1, 1);
     QWhatsThis::add( m_pBlendSlider, i18n("You can use this slider to control"
 					  " the degree of blending. You can experiment by moving the slider and"
@@ -347,18 +349,18 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     connect(m_pCBLimit, SIGNAL(toggled(bool)), SLOT(slotLimitCache(bool)));
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 0);
-    lbl = new QLabel(i18n("Cache &size"), m_pTab3);
-    lbl->setFixedSize(lbl->sizeHint());
-    hbox->addSpacing(20); hbox->addWidget(lbl); hbox->addStretch();
+    m_plblCache = new QLabel(i18n("Cache &size:"), m_pTab3);
+    m_plblCache->setFixedSize(m_plblCache->sizeHint());
+    hbox->addSpacing(20); hbox->addWidget(m_plblCache); hbox->addStretch();
     m_pCacheBox = new QSpinBox(m_pTab3);
     m_pCacheBox->setSteps(512, 1024);
     m_pCacheBox->setSuffix(i18n(" KB"));
     m_pCacheBox->setRange(512, 10240);
     grid->addWidget(m_pCacheBox, 3, 1, Qt::AlignLeft);
-    lbl->setBuddy(m_pCacheBox);
+    m_plblCache->setBuddy(m_pCacheBox);
     connect(m_pCacheBox, SIGNAL(valueChanged(int)), SLOT(slotCacheSize(int)));
     QString wtstr = i18n( "In this box you can enter how much memory KDE should use for caching pixmaps for faster access." );
-    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_plblCache, wtstr );
     QWhatsThis::add( m_pCacheBox, wtstr );
 
     m_Desk = KWin::currentDesktop() - 1;
@@ -503,6 +505,7 @@ void KBackground::apply()
 
         // Blending not possible without wallpaper
         m_pBlendBox->setEnabled(false);
+        m_plblBalance->setEnabled(false);
         m_pBlendSlider->setEnabled(false);
         m_pReverseBlending->setEnabled(false);
     }
@@ -511,10 +514,7 @@ void KBackground::apply()
 	m_pArrangementBox->setCurrentItem(r->wallpaperMode()-1);
 	m_pArrangementBox->setEnabled(true);
         m_pBlendBox->setEnabled(true);
-        m_pBlendSlider->setEnabled(
-            (r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
-        m_pReverseBlending->setEnabled(
-            (r->blendMode() < KBackgroundSettings::IntensityBlending) ? false : true);
+        enableBlend(r->blendMode());
 
         // Multi mode
         if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti || r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom)
@@ -537,10 +537,12 @@ void KBackground::apply()
     if (m_pGlobals->limitCache())
     {
         m_pCBLimit->setChecked(true);
+        m_plblCache->setEnabled(true);
         m_pCacheBox->setEnabled(true);
     } else
     {
         m_pCBLimit->setChecked(false);
+        m_plblCache->setEnabled(false);
         m_pCacheBox->setEnabled(false);
     }
     m_pCacheBox->setValue(m_pGlobals->cacheSize());
@@ -665,6 +667,13 @@ void KBackground::slotBGMode(int mode)
     emit changed(true);
 }
 
+void KBackground::enableBlend(int mode)
+{
+    m_pBlendSlider->setEnabled(mode!=KBackgroundSettings::NoBlending);
+    m_plblBalance->setEnabled(mode!=KBackgroundSettings::NoBlending);
+    m_pReverseBlending->setEnabled(mode>=KBackgroundSettings::IntensityBlending);
+}
+
 /*
  * Called from the "Blending Mode" combobox.
  */
@@ -678,10 +687,7 @@ void KBackground::slotBlendMode(int mode)
     if (mode == r->blendMode())
         return;
 
-    m_pBlendSlider->setEnabled( (mode==KBackgroundSettings::NoBlending)
-                ?false:true);
-    m_pReverseBlending->setEnabled(
-      (r->blendMode()<KBackgroundSettings::IntensityBlending)?false:true);
+    enableBlend(mode);
 
     r->stop();
     r->setBlendMode(mode);
@@ -851,12 +857,15 @@ void KBackground::slotWallpaperType( int type )
 		return;
 	    m_oldMode = mode;
 	    mode = KBackgroundSettings::NoWallpaper;
+            m_plblMode->setEnabled(false);
 	    m_pArrangementBox->setEnabled(false);
+            m_plblWallpaper->setEnabled(false);
 	    m_pWallpaperBox->setEnabled(false);
 	    m_pBrowseBut->setEnabled(false);
 	    m_pMSetupBut->setEnabled(false);
 	    // Blending not possible without wallpaper
 	    m_pBlendBox->setEnabled(false);
+            m_plblBalance->setEnabled(false);
 	    m_pBlendSlider->setEnabled(false);
 	    m_pReverseBlending->setEnabled(false);
 	    break;
@@ -865,6 +874,8 @@ void KBackground::slotWallpaperType( int type )
 	    multi = false;
 	    if ( mode == KBackgroundSettings::NoWallpaper )
 		mode = m_oldMode;
+            m_plblMode->setEnabled(true);
+            m_plblWallpaper->setEnabled(true);
 	    m_pWallpaperBox->setEnabled(true);
 	    m_pBrowseBut->setEnabled(true);
 	    m_pMSetupBut->setEnabled(false);
@@ -874,6 +885,7 @@ void KBackground::slotWallpaperType( int type )
 	    multi = true;
 	    if ( mode == KBackgroundSettings::NoWallpaper )
 		mode = m_oldMode;
+            m_plblWallpaper->setEnabled(false);
 	    m_pWallpaperBox->setEnabled(false);
 	    m_pBrowseBut->setEnabled(false);
 	    m_pMSetupBut->setEnabled(true);
@@ -884,8 +896,7 @@ void KBackground::slotWallpaperType( int type )
 	mode != KBackgroundSettings::NoWallpaper ) {
 	m_pArrangementBox->setEnabled(true);
         m_pBlendBox->setEnabled(true);
-        m_pBlendSlider->setEnabled(
-            (r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
+        enableBlend(r->blendMode());
     }
 
     r->stop();
@@ -1006,6 +1017,7 @@ void KBackground::slotSetupMulti()
 void KBackground::slotLimitCache(bool limit)
 {
     m_pGlobals->setLimitCache(limit);
+    m_plblCache->setEnabled(limit);
     m_pCacheBox->setEnabled(limit);
     emit changed(true);
 }
