@@ -318,7 +318,7 @@ freeBuf (File *file)
 
 static int daemonize = -1, autolog = 1;
 static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
-	VXaccess, VXservers;
+	VXaccess, VXservers, Vdummy;
 
 #define C_MTYPE_MASK	0x30000000
 # define C_PATH		0x10000000	/* C_TYPE_STR is a path spec */
@@ -435,6 +435,7 @@ PautoLoginX (Value *retval)
 static const char
     *logoarea[] = { "None", "Logo", "Clock", 0 },
     *showusers[] = { "NotHidden", "Selected", "None", 0 },
+    *facesource[] = { "AdminOnly", "PreferAdmin", "PreferUser", "UserOnly", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
     *sd_who[] = { "None", "Root", "All", 0 },
@@ -442,6 +443,7 @@ static const char
     *numlock[] = { "Off", "On", "Keep", 0 };
 
 Ent entsGeneral[] = {
+{ "ConfigVersion",	C_INTERNAL | C_TYPE_STR,&Vdummy,	"" },
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
 { "Xservers",		C_servers,		&VXservers,	DEF_SERVER_LINE },
 { "PidFile",		C_pidFile,		0,	"" },
@@ -460,7 +462,7 @@ Ent entsGeneral[] = {
 Ent entsXdmcp[] = {
 { "Enable",		C_xdmcpEnable | C_BOOL,	&VxdmcpEnable,	"true" },
 { "Port",		C_requestPort,		(void *)PrequestPort,	"177" },
-{ "KeyFile",		C_keyFile,		0,	KDMCONF "/kdmkeys" },
+{ "KeyFile",		C_keyFile,		0,	"" },
 { "Xaccess",		C_accessFile,		&VXaccess,	KDMCONF "/Xaccess" },
 { "ChoiceTimeout",	C_choiceTimeout,	0,	"15" },
 { "RemoveDomainname",	C_removeDomainname | C_BOOL, 0,	"true" },
@@ -548,6 +550,7 @@ Ent entsGreeter[] = {
 { "MinShowUID",		C_MinShowUID,		0,	"0" },
 { "MaxShowUID",		C_MaxShowUID,		0,	"65535" },
 { "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },
+{ "FaceSource",		C_FaceSource | C_ENUM, facesource, "AdminOnly" },
 { "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
@@ -555,37 +558,18 @@ Ent entsGreeter[] = {
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
 { "GrabTimeout",	C_grabTimeout,		0,	"3" },
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
+{ "UseBackground",	C_UseBackground | C_BOOL, 0,	"true" },
+{ "BackgroundCfg",	C_BackgroundCfg,	0,	KDMCONF "/backgroundrc" },
 };
 
-Ent entsDesktop[] = {
-{ "BackgroundMode",	C_BackgroundMode,	0,	"VerticalGradient" },
-{ "BlendBalance",	C_BlendBalance,		0,	"100" },
-{ "BlendMode",		C_BlendMode,		0,	"NoBlending" },
-{ "ChangeInterval",	C_ChangeInterval,	0,	"60" },
-{ "Color1",		C_Color1,		0,	"30,114,160" },
-{ "Color2",		C_Color2,		0,	"192,192,192" },
-{ "CurrentWallpaper",	C_CurrentWallpaper,	0,	"0" },
-{ "LastChange",		C_LastChange,		0,	"0" },
-{ "MinOptimizationDepth", C_MinOptimizationDepth, 0,	"1" },
-{ "MultiWallpaperMode",	C_MultiWallpaperMode,	0,	"NoMulti" },
-{ "Pattern",		C_Pattern,		0,	"" },
-{ "Program",		C_Program,		0,	"" },
-{ "ReverseBlending",	C_ReverseBlending | C_BOOL, 0,	"false" },
-{ "UseSHM",		C_UseSHM | C_BOOL,	0,	"false" },
-{ "Wallpaper",		C_Wallpaper,		0,	"" },
-{ "WallpaperList",	C_WallpaperList,	0,	"" },
-{ "WallpaperMode",	C_WallpaperMode,	0,	"Tiled" },
-};
-
-/* Don't change order! */
-Sect allSects[] = { 
- { "General", entsGeneral, as(entsGeneral) },
- { "Xdmcp", entsXdmcp, as(entsXdmcp) },
- { "Shutdown", entsShutdown, as(entsShutdown) },
- { "Desktop0", entsDesktop, as(entsDesktop) }, /* XXX should be -Desktop */
- { "-Core", entsCore, as(entsCore) },
- { "-Greeter", entsGreeter, as(entsGreeter) },
-};
+Sect
+ secGeneral	= { "General",	entsGeneral, as(entsGeneral) },
+ secXdmcp	= { "Xdmcp",	entsXdmcp, as(entsXdmcp) },
+ secShutdown	= { "Shutdown",	entsShutdown, as(entsShutdown) },
+ sec_Core	= { "-Core",	entsCore, as(entsCore) },
+ sec_Greeter	= { "-Greeter",	entsGreeter, as(entsGreeter) },
+ *allSects[]	= { &secGeneral, &secXdmcp, &secShutdown,
+		    &sec_Core, &sec_Greeter };
 
 static const char *kdmrc = KDMCONF "/kdmrc";
 
@@ -695,8 +679,8 @@ Debug ("parsing config ...\n");
 		clen = nlen;
 	    }
 	    for (i = 0; i < as(allSects); i++)
-		if ((int)strlen (allSects[i].name) == clen && 
-		    !memcmp (allSects[i].name, cstr, clen))
+		if ((int)strlen (allSects[i]->name) == clen && 
+		    !memcmp (allSects[i]->name, cstr, clen))
 		    goto newsec;
 	  illsec:
 	    cursec = 0;
@@ -718,7 +702,7 @@ Debug ("parsing config ...\n");
 	    cursec->dnuml = dnuml;
 	    cursec->dclass = dclass;
 	    cursec->dclassl = dclassl;
-	    cursec->sect = allSects + i;
+	    cursec->sect = allSects[i];
 	    cursec->entries = 0;
 	    cursec->next = rootsec;
 	    rootsec = cursec;
@@ -1427,6 +1411,7 @@ ReadServersFile (const char *fname)
 	    goto haveit;
     } else {
 	ReadConf ();
+	CopyValues (0, &secGeneral, 0, C_CONFIG);
 	if (copyBuf (&file, VXservers.ptr, VXservers.len - 1))
 	    goto haveit;
     }
@@ -1603,8 +1588,8 @@ int main(int argc, char **argv)
 	case GC_Files:
 /*	    Debug ("GC_Files\n");*/
 	    ReadConf ();
-	    CopyValues (&va, allSects + 0, 0, C_CONFIG);
-	    CopyValues (&va, allSects + 1, 0, C_CONFIG);
+	    CopyValues (0, &secGeneral, 0, C_CONFIG);
+	    CopyValues (0, &secXdmcp, 0, C_CONFIG);
 	    GSendInt ((VXservers.ptr[0] == '/') ? 3 : 2);
 	    GSendStr (kdmrc);
 		GSendInt (-1);
@@ -1640,9 +1625,9 @@ int main(int argc, char **argv)
 	    case GC_gGlobal:
 /*		Debug ("GC_gGlobal\n");*/
 		ReadConf ();
-		CopyValues (&va, allSects + 0, 0, 0);
-		CopyValues (&va, allSects + 1, 0, 0);
-		CopyValues (&va, allSects + 2, 0, 0);
+		CopyValues (&va, &secGeneral, 0, 0);
+		CopyValues (&va, &secXdmcp, 0, 0);
+		CopyValues (&va, &secShutdown, 0, 0);
 #ifdef HAVE_PAM
 		AddValue (&va, C_PAMService, &pamservice);
 #endif
@@ -1656,8 +1641,8 @@ int main(int argc, char **argv)
 /*		Debug (" Class %s\n", dcls);*/
 		MkDSpec (&dspec, disp, dcls ? dcls : "");
 		ReadConf ();
-		CopyValues (&va, allSects + 4, &dspec, 0);
-		CopyValues (&va, allSects + 5, &dspec, 0);
+		CopyValues (&va, &sec_Core, &dspec, 0);
+		CopyValues (&va, &sec_Greeter, &dspec, 0);
 		free (disp);
 		if (dcls)
 		    free (dcls);

@@ -22,13 +22,12 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     */
- 
+
 
 #ifndef KGREETER_H
 #define KGREETER_H
 
 class QTimer;
-class QIconView;
 class QLabel;
 class QPushButton;
 class QPopupMenu;
@@ -37,11 +36,11 @@ class QComboBox;
 #include <qglobal.h>
 #include <qlineedit.h>
 #include <qframe.h>
-#include <qiconview.h>
 #include <qmessagebox.h>
 
 #include <kpassdlg.h>
 #include <ksimpleconfig.h>
+#include <klistview.h>
 
 #include "kfdialog.h"
 #include "kdmshutdown.h"
@@ -49,25 +48,34 @@ class QComboBox;
 class KdmClock;
 
 
-class KLoginLineEdit : public QLineEdit {
+class GreeterApp : public KApplication {
     Q_OBJECT
+    typedef KApplication inherited;
 
 public:
-    KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent)
-    {
-	setMaxLength(100);
-    }
+    GreeterApp( int& argc, char** argv ) : inherited( argc, argv, "kdmgreet" ) {}
+    virtual bool x11EventFilter( XEvent * );
+};
+
+
+class KLoginLineEdit : public QLineEdit {
+    Q_OBJECT
+    typedef QLineEdit inherited;
+
+public:
+    KLoginLineEdit( QWidget *parent = 0 ) : inherited( parent ) { setMaxLength( 100 ); }
 
 signals:
     void lost_focus();
 
 protected:
-    void focusOutEvent( QFocusEvent *e);
+    void focusOutEvent( QFocusEvent *e );
 };
 
 
 class KGreeter : public FDialog {
     Q_OBJECT
+    typedef FDialog inherited;
 
 public:
     KGreeter();
@@ -81,7 +89,7 @@ public slots:
     void console_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
-    void slot_user_name( QIconViewItem * );
+    void slot_user_name( QListViewItem * );
     void slot_session_selected();
     void SetTimer();
     void timerDone();
@@ -90,10 +98,12 @@ public slots:
 protected:
     void timerEvent( QTimerEvent * ) {};
     void keyPressEvent( QKeyEvent * );
+    void keyReleaseEvent( QKeyEvent * );
 
 private:
     void set_wm( const char * );
-    void insertUsers( QIconView * );
+    void insertUsers( KListView * );
+    void insertUser( KListView *, const QImage &, const QString &, struct passwd * );
     void MsgBox( QMessageBox::Icon typ, QString msg ) { KFMsgBox::box( this, typ, msg ); }
     void Inserten( QPopupMenu *mnu, const QString& txt, const char *member );
     bool verifyUser( bool );
@@ -103,7 +113,7 @@ private:
     WmStat		wmstat;
     QString		enam;
     KSimpleConfig	*stsfile;
-    QIconView		*user_view;
+    KListView		*user_view;
     KdmClock		*clock;
     QLabel		*pixLabel;
     QLabel		*loginLabel, *passwdLabel, *sessargLabel;

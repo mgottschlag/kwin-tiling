@@ -26,7 +26,8 @@
 #include <config.h>
 
 #include <qfile.h>
-#include <qbitmap.h>
+#include <qpixmap.h>
+#include <qimage.h>
 #include <qtextstream.h>
 #include <qpopupmenu.h>
 #include <qtimer.h>
@@ -34,14 +35,15 @@
 #include <qstring.h>
 #include <qaccel.h>
 #include <qcursor.h>
+#include <qheader.h>
 
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <kcmdlineargs.h>
 #include <kseparator.h>
 #include <kapplication.h>
+#include <kprocess.h>
 
 #include "kgreeter.h"
 #include "kdmconfig.h"
@@ -59,130 +61,40 @@ extern "C" {
 };
 
 #include <sys/param.h>
+#include <sys/stat.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <strings.h>
 
-KGreeter *kgreeter = 0;
+
+class GreeterListViewItem : public KListViewItem {
+public:
+    GreeterListViewItem( KListView* parent, const QString& text )
+	: KListViewItem( parent, text ) {};
+    QString login;
+};
 
 void
 KLoginLineEdit::focusOutEvent( QFocusEvent *e )
 {
     emit lost_focus();
-    QLineEdit::focusOutEvent( e );
+    inherited::focusOutEvent( e );
 }
 
-class MyApp : public KApplication {
-
-public:
-    MyApp( int& argc, char** argv ) : KApplication( argc, argv, "kdmgreet" ) {};
-    virtual bool x11EventFilter( XEvent * );
-};
-
-bool
-MyApp::x11EventFilter( XEvent * ev )
-{
-    switch (ev->type) {
-    case FocusIn:
-    case FocusOut:
-	// Hack to tell dialogs to take focus when the keyboard is grabbed
-	ev->xfocus.mode = NotifyNormal;
-	break;
-    case ButtonPress:
-    case ButtonRelease:
-	// Hack to let the RMB work (nearly) as LMB
-	if (ev->xbutton.button == 3)
-	    ev->xbutton.button = 1;
-	break;
-    case KeyPress:
-    case KeyRelease:
-	if (kgreeter)
-	    kgreeter->UpdateLock();
-	break;
-    }
-    return false;
-}
-
-void KGreeter::keyPressEvent( QKeyEvent *e )
-{
-    if (!(~e->state() & (AltButton | ControlButton)) &&
-	e->key() == Key_Delete && kdmcfg->_allowShutdown != SHUT_NONE) {
-	shutdown_button_clicked();
-	return;
-    }
-    FDialog::keyPressEvent( e );
-}
-
-#define CHECK_STRING( x) (x != 0 && x[0] != 0)
-
-void
-KGreeter::insertUsers( QIconView *iconview)
-{
-    QPixmap default_pix( locate("user_pic", QString::fromLatin1("default.png")));
-    if( default_pix.isNull())
-	LogError("Can't open default pixmap \"default.png\"\n");
-    if( kdmcfg->_showUsers == SHOW_ALL ) {
-	struct passwd *ps;
-	for( setpwent(); (ps = getpwent()) != 0; ) {
-	    // usernames are stored in the same encoding as files
-	    QString username = QFile::decodeName ( ps->pw_name );
-	    if( CHECK_STRING(ps->pw_dir) &&
-		CHECK_STRING(ps->pw_shell) &&
-		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId || 
-		 username == "root") &&
-		ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
-        	!kdmcfg->_noUsers.contains( username )
-	    ) {
-		// we might have a real user, insert him/her
-		QPixmap p( locate("user_pic",
-				  username + QString::fromLatin1(".png")));
-		if( p.isNull())
-		    p = default_pix;
-		QIconViewItem *item = new QIconViewItem( iconview, username, p);
-		item->setDragEnabled(false);
-	    }
-	}
-    } else {
-	QStringList::ConstIterator it = kdmcfg->_users.begin();
-	for( ; it != kdmcfg->_users.end(); ++it) {
-	    if (getpwnam((*it).latin1())) {
-		QPixmap p( locate("user_pic",
-				  *it + QString::fromLatin1(".png")));
-		if( p.isNull())
-		    p = default_pix;
-		QIconViewItem *item = new QIconViewItem( iconview, *it, p);
-		item->setDragEnabled(false);
-	    }
-	}
-    }
-    endpwent();
-    if (kdmcfg->_sortUsers)
-        iconview->sort();
-}
-
-#undef CHECK_STRING
-
-void
-KGreeter::Inserten( QPopupMenu *mnu, const QString& txt, const char *member )
-{
-    mnu->insertItem( txt, this, member, QAccel::shortcutKey(txt) );
-}
 
 KGreeter::KGreeter()
-  : FDialog( 0, 0, true )
+  : inherited( 0, 0, true )
   , user_view( 0 )
   , clock( 0 )
   , pixLabel( 0 )
   , capslocked( -1 )
   , loginfailed( false )
 {
-    QBoxLayout* vbox = new QBoxLayout( winFrame,
-				       QBoxLayout::TopToBottom,
-				       10, 10 );
-    QBoxLayout* hbox1 = new QBoxLayout( QBoxLayout::LeftToRight, 10 );
-    QBoxLayout* hbox2 = new QBoxLayout( QBoxLayout::LeftToRight, 10 );
+    QGridLayout* main_grid = new QGridLayout( winFrame, 4, 2, 10 );
+    QBoxLayout* hbox1 = new QHBoxLayout( 10 );
+    QBoxLayout* hbox2 = new QHBoxLayout( 10 );
 
     QGridLayout* grid = new QGridLayout( 5, 4, 5 );
 
@@ -190,17 +102,16 @@ KGreeter::KGreeter()
 	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
 	welcomeLabel->setAlignment( AlignCenter );
 	welcomeLabel->setFont( kdmcfg->_greetFont );
-	vbox->addWidget( welcomeLabel );
+	main_grid->addWidget( welcomeLabel, 0, 1 );
     }
     if (kdmcfg->_showUsers != SHOW_NONE) {
-	user_view = new QIconView( winFrame );
-	user_view->setSelectionMode( QIconView::Single );
-	user_view->setArrangement( QIconView::LeftToRight );
-	user_view->setAutoArrange( true );
-	user_view->setItemsMovable( false );
-	user_view->setResizeMode( QIconView::Adjust );
+	user_view = new KListView( winFrame );
+	user_view->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored ) );
+	user_view->addColumn(QString::null);
+	user_view->setResizeMode(QListView::LastColumn);
+	user_view->header()->hide();
 	insertUsers( user_view );
-	vbox->addWidget( user_view );
+	main_grid->addMultiCellWidget(user_view, 0, 3, 0, 0);
     }
 
     switch (kdmcfg->_logoArea) {
@@ -212,6 +123,7 @@ KGreeter::KGreeter()
 		QPixmap pixmap;
 		if (pixmap.load( kdmcfg->_logo )) {
 		    pixLabel = new QLabel( winFrame );
+		    pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
 		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 		    pixLabel->setAutoResize( true );
 		    pixLabel->setIndent( 0 );
@@ -237,13 +149,27 @@ KGreeter::KGreeter()
 	QMAX(sasPrev->sizeHint().width(), sasSel->sizeHint().width()),
 	sessargBox->height() );
 
-    vbox->addLayout( hbox1 );
-    vbox->addLayout( hbox2 );
-    hbox1->addLayout( grid, 3 );
-    if (clock)
-	hbox1->addWidget( clock, 0, AlignTop );
-    else if (pixLabel)
-	hbox1->addWidget( pixLabel, 0, AlignTop );
+    main_grid->addItem( hbox1, 1, 1 );
+    main_grid->addItem( grid, 2, 1 );
+    main_grid->addItem( hbox2, 3, 1 );
+    if (kdmcfg->_showUsers != SHOW_NONE) {
+	if (clock)
+	    hbox1->addWidget( clock, 0, AlignTop );
+	else if (pixLabel)
+	    hbox1->addWidget( pixLabel, 0, AlignTop );
+    } else {
+#if 0
+	if (clock)
+	    main_grid->addMultiCellWidget( clock, 0,3, 2,2, AlignCenter );
+	else if (pixLabel)
+	    main_grid->addMultiCellWidget( pixLabel, 0,3, 2,2, AlignCenter );
+#else
+	if (clock)
+	    grid->addMultiCellWidget( clock, 0,3, 4,4, AlignTop );
+	else if (pixLabel)
+	    grid->addMultiCellWidget( pixLabel, 0,3, 4,4, AlignTop );
+#endif
+    }
 
     KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame );
 
@@ -258,7 +184,13 @@ KGreeter::KGreeter()
     grid->addWidget( sessargBox, 2, 1 );
     grid->addWidget( sessargStat, 2, 2 );
     grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter );
+#if 0
     grid->addMultiCellWidget( sep, 4,4, 0,3 );
+#else
+    grid->addMultiCellWidget( sep, 4,4, 0,
+	(kdmcfg->_showUsers != SHOW_NONE || 
+	 kdmcfg->_logoArea == LOGO_NONE) ? 3 : 4 );
+#endif
     grid->setColStretch( 3, 1 );
 
     goButton = new QPushButton( i18n("G&o!"), winFrame );
@@ -312,17 +244,17 @@ KGreeter::KGreeter()
     connect( sessargBox, SIGNAL(activated(int)),
 	     SLOT(slot_session_selected()) );
     if (user_view) {
-	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)),
-		 SLOT(slot_user_name( QIconViewItem*)) );
-	connect( user_view, SIGNAL(clicked(QIconViewItem*)),
-		 SLOT(slot_user_name( QIconViewItem*)) );
+	connect( user_view, SIGNAL(returnPressed( QListViewItem * )),
+		 SLOT(slot_user_name( QListViewItem * )) );
+	connect( user_view, SIGNAL(clicked( QListViewItem * )),
+		 SLOT(slot_user_name( QListViewItem * )) );
     }
 
     reject();
 
     UpdateLock();
 
-    stsfile = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmsts") );
+    stsfile = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmsts") ); // XXX get from kdm_config
     stsfile->setGroup( "PrevUser" );
     enam = QString::fromLocal8Bit( dname );
     if (kdmcfg->_preselUser != PRESEL_PREV)
@@ -346,10 +278,100 @@ KGreeter::~KGreeter()
 }
 
 void
-KGreeter::slot_user_name( QIconViewItem *item )
+KGreeter::insertUser( KListView *listview, const QImage &default_pix,
+		      const QString &username, struct passwd *ps )
+{
+    QImage p;
+    if (kdmcfg->_faceSource != FACE_USER_ONLY &&
+	kdmcfg->_faceSource != FACE_PREFER_USER)
+	p = QPixmap( locate( "user_pic", username + ".png" ) );
+    if (p.isNull() && kdmcfg->_faceSource != FACE_ADMIN_ONLY) {
+	// XXX remove seteuid-voodoo when we run as nobody
+	seteuid( ps->pw_uid );
+	p = QPixmap( QFile::decodeName( ps->pw_dir ) + "/.face.icon" );
+	seteuid( 0 );
+    }
+    if (p.isNull() && kdmcfg->_faceSource != FACE_USER_ONLY)
+	p = QPixmap( locate( "user_pic", username + ".png" ) );
+    if (p.isNull())
+	p = default_pix;
+    else
+	p = p.smoothScale( 48, 48, QImage::ScaleMin );
+    QString realname = QFile::decodeName( ps->pw_gecos );
+    realname = realname.left(realname.find(","));
+    QString userlabel = realname.isEmpty() ?
+				username :
+				realname + "\n" + username;
+    GreeterListViewItem *item = new GreeterListViewItem( listview, userlabel );
+    item->setPixmap( 0, QPixmap( p ) );
+    item->login = username;
+}
+
+void
+KGreeter::insertUsers( KListView *listview )
+{
+    QImage default_pix(
+	locate( "user_pic", QString::fromLatin1("default.png") ) );
+    if (default_pix.isNull())
+	LogError("Can't open default pixmap \"default.png\"\n");
+    default_pix = default_pix.smoothScale( 48, 48, QImage::ScaleMin );
+    struct passwd *ps;
+    if (kdmcfg->_showUsers == SHOW_ALL) {
+ 	QDict<int> users( 1000 );
+	for (setpwent(); (ps = getpwent()) != 0;) {
+	    // usernames are stored in the same encoding as files
+	    QString username = QFile::decodeName( ps->pw_name );
+	    if (*ps->pw_dir && *ps->pw_shell &&
+		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
+		 !ps->pw_uid && kdmcfg->_showRoot) &&
+		ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
+		!kdmcfg->_noUsers.contains( username ) &&
+		!users.find( username )
+	    ) {
+		// we might have a real user, insert him/her
+		users.insert( username, (int *)-1 );
+		insertUser( listview, default_pix, username, ps );
+	    }
+	}
+    } else {
+	QStringList::ConstIterator it = kdmcfg->_users.begin();
+	for (; it != kdmcfg->_users.end(); ++it)
+	    if ((ps = getpwnam( (*it).latin1() )))
+		insertUser( listview, default_pix, *it, ps );
+    }
+    endpwent();
+    if (kdmcfg->_sortUsers)
+        listview->sort();
+}
+
+void
+KGreeter::Inserten( QPopupMenu *mnu, const QString& txt, const char *member )
+{
+    mnu->insertItem( txt, this, member, QAccel::shortcutKey(txt) );
+}
+
+void KGreeter::keyPressEvent( QKeyEvent *e )
+{
+    if (!(~e->state() & (AltButton | ControlButton)) &&
+	e->key() == Key_Delete && kdmcfg->_allowShutdown != SHUT_NONE) {
+	shutdown_button_clicked();
+	return;
+    }
+    inherited::keyPressEvent( e );
+    UpdateLock();
+}
+
+void KGreeter::keyReleaseEvent( QKeyEvent *e )
+{
+    inherited::keyReleaseEvent( e );
+    UpdateLock();
+}
+
+void
+KGreeter::slot_user_name( QListViewItem *item )
 {
     if (item) {
-	loginEdit->setText( item->text() );
+	loginEdit->setText( ((GreeterListViewItem *)item)->login );
 	passwdEdit->erase();
 	passwdEdit->setFocus();
 	load_wm();
@@ -460,6 +482,7 @@ KGreeter::shutdown_button_clicked()
 {
     KDMShutdown k( winFrame );
     k.exec();
+    UpdateLock();
 }
 
 void
@@ -661,6 +684,29 @@ KGreeter::accept()
 	verifyUser(true);
 }
 
+bool
+GreeterApp::x11EventFilter( XEvent * ev )
+{
+    switch (ev->type) {
+    case FocusIn:
+    case FocusOut:
+	// Hack to tell dialogs to take focus when the keyboard is grabbed
+	ev->xfocus.mode = NotifyNormal;
+	break;
+    case ButtonPress:
+    case ButtonRelease:
+	// Hack to let the RMB work as LMB
+	if (ev->xbutton.button == 3)
+	    ev->xbutton.button = 1;
+	/* fall through */
+    case MotionNotify:
+	if (ev->xbutton.state & Button3Mask)
+	    ev->xbutton.state = (ev->xbutton.state & ~Button3Mask) | Button1Mask;
+	break;
+    }
+    return false;
+}
+
 static void 
 moveInto (QRect &what, const QRect &where)
 {
@@ -681,22 +727,23 @@ extern bool kde_have_kipc;
 extern "C" void
 kg_main( int argc, char **argv )
 {
+    KProcess *proc = 0;
+    char *ppath = argv[0];
+
     kde_have_kipc = false;
-#if QT_VERSION >= 300
     KApplication::disableAutoDcopRegistration();
-#endif
-    MyApp myapp( argc, argv );
+    GreeterApp app( argc, argv );
 
     Display *dpy = qt_xdisplay();
 
     kdmcfg = new KDMConfig();
 
+    app.setFont( kdmcfg->_normalFont );
+
     KGlobal::dirs()->addResourceType( "user_pic",
 				      KStandardDirs::kde_default("data") +
 				      QString::fromLatin1("kdm/pics/users/") );
 
-
-    myapp.setFont( kdmcfg->_normalFont );
 
 #ifdef HAVE_XKBSETPERCLIENTCONTROLS
     //
@@ -712,6 +759,14 @@ kg_main( int argc, char **argv )
     setup_modifiers( dpy, kdmcfg->_numLockStatus );
     SecureDisplay( dpy );
     if (!dgrabServer) {
+	if (GetCfgInt( C_UseBackground )) {
+	    proc = new KProcess;
+	    *proc << QCString( ppath, argv[0] - ppath + 1 ) + "krootimage";
+	    char *conf = GetCfgStr( C_BackgroundCfg );
+	    *proc << conf;
+	    free( conf );
+	    proc->start();
+	}
 	GSendInt( G_SetupDpy );
 	GRecvInt();
     }
@@ -722,7 +777,7 @@ kg_main( int argc, char **argv )
 	    kdmcfg->_greeterScreen == -2 ?
 		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
 		kdmcfg->_greeterScreen );
-    kgreeter = new KGreeter;
+    KGreeter *kgreeter = new KGreeter;
     kgreeter->setMaximumSize( scr.size() );
     kgreeter->move( -10000, -10000 );
     kgreeter->show();
@@ -741,10 +796,13 @@ kg_main( int argc, char **argv )
     Debug ("entering event loop\n");
     kgreeter->exec();
     delete kgreeter;
-    delete kdmcfg;
+    delete proc;
     UnsecureDisplay( dpy );
     restore_modifiers();
+
+    delete kdmcfg;
 }
+
 
 #include "kgreeter.moc"
 
@@ -754,4 +812,3 @@ kg_main( int argc, char **argv )
  * c-file-style: "k&r"
  * End:
  */
-

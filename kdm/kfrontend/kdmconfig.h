@@ -27,16 +27,15 @@
 #ifndef KDMCONFIG_H
 #define KDMCONFIG_H
 
-#include <sys/param.h>	// for BSD
-#include <unistd.h>
-
+#include <qnamespace.h>
 #include <qstring.h>
 #include <qstrlist.h>
 #include <qfont.h>
 
-#include <ksimpleconfig.h>
+#include <ksimpleconfig.h>	// need it here for "make final"
 
-#include <qnamespace.h>
+#include <sys/param.h>	// for BSD
+#include <unistd.h>
 
 QString GetCfgQStr (int id);
 QStringList GetCfgQStrList (int id);
@@ -68,6 +67,8 @@ public:
     QStringList	_users;
     QStringList	_noUsers;
     int		_lowUserId, _highUserId;
+    int		_showRoot;
+    int		_faceSource;
     int		_echoMode;
      
     QStringList	_sessionTypes;

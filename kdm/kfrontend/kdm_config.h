@@ -73,23 +73,12 @@
 #define C_GreeterScreen		(C_TYPE_INT | 0x1026)
 #define C_AntiAliasing		(C_TYPE_INT | 0x1027)
 #define C_NumLock		(C_TYPE_INT | 0x1028)
-
-#define C_BackgroundMode	(C_TYPE_STR | 0x1100)
-#define C_BlendBalance		(C_TYPE_INT | 0x1101)
-#define C_BlendMode		(C_TYPE_STR | 0x1102)
-#define C_ChangeInterval	(C_TYPE_INT | 0x1103)
-#define C_Color1		(C_TYPE_STR | 0x1104)
-#define C_Color2		(C_TYPE_STR | 0x1105)
-#define C_CurrentWallpaper	(C_TYPE_INT | 0x1106)
-#define C_LastChange		(C_TYPE_INT | 0x1107)
-#define C_MultiWallpaperMode	(C_TYPE_STR | 0x1108)
-#define C_Pattern		(C_TYPE_STR | 0x1109)
-#define C_Program		(C_TYPE_STR | 0x110a)
-#define C_ReverseBlending	(C_TYPE_INT | 0x110b)
-#define C_Wallpaper		(C_TYPE_STR | 0x110c)	
-#define C_WallpaperList		(C_TYPE_ARGV | 0x110d)
-#define C_WallpaperMode		(C_TYPE_STR | 0x110e)
-#define C_MinOptimizationDepth	(C_TYPE_INT | 0x110f)
-#define C_UseSHM		(C_TYPE_INT | 0x1110)
+#define C_UseBackground		(C_TYPE_INT | 0x1029)
+#define C_BackgroundCfg		(C_TYPE_STR | 0x102a)
+#define C_FaceSource		(C_TYPE_INT | 0x102b)
+# define FACE_ADMIN_ONLY	0
+# define FACE_PREFER_ADMIN	1
+# define FACE_PREFER_USER	2
+# define FACE_USER_ONLY		3
 
 #endif /* _KDM_CONFIG_H_ */

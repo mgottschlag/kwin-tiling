@@ -99,21 +99,6 @@ QFont KDMConfig::Str2Font (QString aValue)
 	aRetFont.setStrikeOut( nFontBits & 0x04 != 0 );
 	aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
 	aRetFont.setRawMode( nFontBits & 0x20 != 0 );
-
-#if QT_VERSION < 300
-	QFont::CharSet chId = (QFont::CharSet)sl[3].toUInt(&chOldEntry);
-	if (chOldEntry)
-	    aRetFont.setCharSet( chId );
-	else if (kapp) {
-	    if (sl[3] == QString::fromLatin1("default"))
-		chStr = KGlobal::locale() ? 
-			KGlobal::locale()->charset() : 
-			"iso-8859-1";
-	    else
-		chStr = sl[3];
-	    KGlobal::charsets()->setQFont(aRetFont, chStr);
-	}
-#endif
     }
 
     return aRetFont;
@@ -167,6 +152,8 @@ KDMConfig::KDMConfig()
     _lowUserId = GetCfgInt (C_MinShowUID);
     _highUserId = GetCfgInt (C_MaxShowUID);
     _sortUsers = GetCfgInt (C_SortUsers);
+    _showRoot = GetCfgInt (C_allowRootLogin);
+    _faceSource = GetCfgInt (C_FaceSource);
 
     _sessionTypes = GetCfgQStrList (C_SessionTypes);
 
