@@ -76,6 +76,7 @@ Theme::Theme()
   mConfigDir = KGlobal::dirs()->saveLocation("config");
   len = mConfigDir.length();
   if (len > 0 && mConfigDir[len-1] != '/') mConfigDir += '/';
+  mKwmCount = 0;
 
   mMappings = NULL;
   loadMappings();
@@ -124,7 +125,6 @@ const QString Theme::baseDir()
   {
      str = new QString(KGlobal::dirs()->saveLocation("config"));
      str->truncate(str->length()-7);
-kdDebug() << ":: baseDir = " << (*str) << endl;
   }
   return *str;
 }
@@ -191,7 +191,6 @@ bool Theme::load(const QString &aPath, QString &error)
   int rc, num, i;
 
   assert(!aPath.isEmpty());
-  kdDebug() << "Theme::load()" << endl;
 
   delete mConfig; mConfig = 0;
   cleanupWorkDir();
@@ -385,7 +384,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   destFile.close();
 
   addInstFile(dest);
-  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
+//  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
 
   return true;
 }
@@ -440,7 +439,7 @@ bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
   KIO::NetAccess::dircopy(url1, url2);
 
   addInstFile(dest);
-  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
+//  kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
 
   return true;
 }
@@ -457,7 +456,6 @@ int Theme::installGroup(const char* aGroupName)
   int len, i, installed = 0;
   const char* missing = 0;
 
-  kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
   mConfig->setGroup(group);
 
@@ -467,7 +465,6 @@ int Theme::installGroup(const char* aGroupName)
   while (!group.isEmpty())
   {
     mMappings->setGroup(group);
-    kdDebug() << "Mappings group: " << group << endl;
 
     // Read config settings
     value = mMappings->readEntry("ConfigFile");
@@ -512,18 +509,15 @@ int Theme::installGroup(const char* aGroupName)
     {
       if (cfg)
       {
-	kdDebug() << "closing config file" << endl;
 	cfg->sync();
 	delete cfg;
       }
-      kdDebug() << "opening config file " << cfgFile << endl;
       cfg = new KSimpleConfig(cfgFile);
       oldCfgFile = cfgFile;
     }
 
     // Set group in config file
     cfg->setGroup(cfgGroup);
-    kdDebug() << cfgFile << ": " << cfgGroup << endl;
 
     // Execute pre-install command (if given)
     if (!preInstCmd.isEmpty()) preInstallCmd(cfg, preInstCmd);
@@ -616,7 +610,6 @@ int Theme::installGroup(const char* aGroupName)
          cfgValue = appDir + cfgValue;
 
       // Set config entry
-      kdDebug() << cfgKey << "=" << cfgValue << endl;
       if (bDeleteKey)
          cfg->deleteEntry(cfgKey, false);
       else
@@ -630,13 +623,11 @@ int Theme::installGroup(const char* aGroupName)
 
   if (cfg)
   {
-    kdDebug() << "closing config file" << endl;
     cfg->sync();
     delete cfg;
   }
 
   writeInstFileList(aGroupName);
-  kdDebug() << "*** done with " << aGroupName << endl;
   return installed;
 }
 
@@ -678,6 +669,12 @@ static void cleanKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
   }
 }
 
+static int countKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
+{
+  return aCfg->readEntry(entry).isEmpty() ? 0 : 1;
+   
+}
+
 //-----------------------------------------------------------------------------
 void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 		       int &aInstalled)
@@ -708,10 +705,15 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "setKWM")
   {
-    KConfig kwinrc("kwinrc");
-    kwinrc.setGroup("Style");
-    kwinrc.writeEntry("PluginLib", "libkwinkwmtheme");
-    kwinrc.sync();
+    mKwmCount = 0;
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_top");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_bottom");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_left");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_right");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_topleft");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_topright");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_bottomleft");
+    mKwmCount += countKWMPixmapEntry(aCfg, "wm_bottomright");
   }
   else if (cmd == "setKWM2")
   {
@@ -723,6 +725,13 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     cleanKWMPixmapEntry(aCfg, "close");
     cleanKWMPixmapEntry(aCfg, "pinup");
     cleanKWMPixmapEntry(aCfg, "pindown");
+  }
+  else if (cmd == "setKWM3")
+  {
+    if ((mKwmCount == 8) && (aCfg->readEntry("PluginLib").isEmpty()))
+    {
+       aCfg->writeEntry("PluginLib", "libkwinkwmtheme");
+    }
   }
   else
   {
@@ -776,8 +785,8 @@ void Theme::doCmdList(void)
     }
     else if (cmd == "applyColors")
     {
-      colorSchemeApply();
       runKrdb();
+      colorSchemeApply();
     }
     else if (cmd == "applyWallpaper")
     {
@@ -881,8 +890,6 @@ void Theme::uninstallFiles(const char* aGroupName)
   bool reverted = false;
   int processed = 0;
 
-  kdDebug() << "*** beginning uninstall of " << aGroupName << endl;
-
   readInstFileList(aGroupName);
   for (QStringList::ConstIterator it=mInstFiles.begin();
        it != mInstFiles.end();
@@ -903,40 +910,34 @@ void Theme::uninstallFiles(const char* aGroupName)
 
     if (reverted)
     {
-      kdDebug() << "uninstalled " << fname << endl;
       processed++;
     }
   }
   mInstFiles.clear();
   writeInstFileList(aGroupName);
-
-  kdDebug() << "*** done uninstall of " << aGroupName << endl;
 }
 
 
 //-----------------------------------------------------------------------------
 void Theme::install(void)
 {
-  kdDebug() << "Theme::install() started" << endl;
-
   loadMappings();
   mCmdList.clear();
 
   if (instWallpapers) installGroup("Display");
-  if (instColors) installGroup("Colors");
   if (instSounds) installGroup("Sounds");
   if (instIcons) installGroup("Icons");
+
+  // Colors & WM are installed behind each other to get a smoother update.
+  if (instColors) installGroup("Colors"); 
   if (instWM) 
   { 
      installGroup("Window Border");
      installGroup("Window Titlebar");
   }
 
-  kdDebug() << "*** executing command list" << endl;
-
   doCmdList();
 
-  kdDebug() << "Theme::install() done" << endl;
   saveSettings();
 }
 
@@ -1025,9 +1026,6 @@ void Theme::stretchPixmap(const QString &aFname, bool aStretchVert)
 
   dest = src;
   dest.resize(w2, h2);
-
-  kdDebug() << "stretching " << aFname << " from " << w << "x" << h <<
-    " to " << w2 << "x" << h2 << endl;
 
   p.begin(&dest);
   p.drawTiledPixmap(0, 0, w2, h2, src);

@@ -426,6 +426,14 @@ shapePixmapTopLeft=wm_topleft
 shapePixmapTopRight=wm_topright
 shapePixmapBottomLeft=wm_bottomleft
 shapePixmapBottomRight=wm_bottomright
+ConfigNextGroup=WindowBorder-2
+#
+[WindowBorder-2]
+ConfigFile=kwinrc
+ConfigGroup=Style
+ConfigInstallCmd=setKWM3
+ConfigAppDir=apps/kwin/styles
+PluginLib=PluginLib
 #
 [Window Titlebar]
 ConfigFile=kdeglobals

@@ -211,8 +211,9 @@ protected:
   KSimpleConfig* mMappings;
   KSimpleConfig* mConfig;
   QStringList mCmdList;
-  QStringList mInstFiles;     // List of installed files
-  int mInstIcons;          // Number of installed icons
+  QStringList mInstFiles;	// List of installed files
+  int mInstIcons;		// Number of installed icons
+  int mKwmCount;		// Number of kwm theme pixmaps
 };
 
 #endif /*THEME_H*/
