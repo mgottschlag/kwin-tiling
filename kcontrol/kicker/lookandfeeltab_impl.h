@@ -48,6 +48,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void previewBackground(const QString& themepath, bool isNew);
 
  protected slots:
+  void browseTheme();
   void browseTheme(const QString&);
   void launchAdvancedDialog();
   void enableTransparency( bool );
@@ -59,7 +60,6 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void wlTileChanged(int i);
 
  private:
-  QString theme;
   QPixmap theme_preview;
   QStringList m_tilename;
 };

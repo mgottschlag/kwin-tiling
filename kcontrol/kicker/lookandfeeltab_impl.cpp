@@ -70,6 +70,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_colorizeImage, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
+  connect(m_backgroundInput->lineEdit(), SIGNAL(lostFocus()), SLOT(browseTheme()));
   m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
   m_backgroundInput->fileDialog()->setCaption(i18n("Select Image File"));
 
@@ -78,9 +79,13 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   fillTileCombos();
 }
 
+void LookAndFeelTab::browseTheme()
+{
+    browseTheme(m_backgroundInput->url());
+}
+
 void LookAndFeelTab::browseTheme(const QString& newtheme)
 {
-    if (theme == newtheme) return;
     if (newtheme.isEmpty())
     {
         m_backgroundInput->clear();
@@ -129,7 +134,7 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
     }
 
     KMessageBox::error(this,
-                       i18n("Error loading theme image file. '%1' '%2'")
+                       i18n("Error loading theme image file.\n\n%1\n%2")
                             .arg(theme, themepath));
     m_backgroundInput->clear();
     m_backgroundLabel->setPixmap(QPixmap());
@@ -142,7 +147,7 @@ void LookAndFeelTab::load()
   c.setGroup("General");
 
   bool use_theme = c.readBoolEntry("UseBackgroundTheme", true);
-  theme = c.readEntry("BackgroundTheme", "wallpapers/default.png").stripWhiteSpace();
+  QString theme = c.readEntry("BackgroundTheme", "wallpapers/default.png").stripWhiteSpace();
 
   bool transparent = c.readBoolEntry( "Transparent", false );
 
@@ -243,7 +248,7 @@ void LookAndFeelTab::save()
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
   c.writeEntry("ColorizeBackground", m_colorizeImage->isChecked());
   c.writeEntry("Transparent", m_transparent->isChecked());
-  c.writeEntry("BackgroundTheme", theme);
+  c.writeEntry("BackgroundTheme", m_backgroundInput->url());
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
 
   c.setGroup("button_tiles");
@@ -358,7 +363,7 @@ void LookAndFeelTab::defaults()
   m_exeColor->setColor(QColor());
   m_exeColor->setEnabled(false);
 
-  theme = "wallpapers/default.png";
+  QString theme = "wallpapers/default.png";
 
   m_backgroundImage->setChecked(true);
   m_transparent->setChecked(false);

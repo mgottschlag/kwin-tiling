@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>451</width>
-            <height>414</height>
+            <width>333</width>
+            <height>455</height>
         </rect>
     </property>
     <property name="whatsThis" stdset="0">
@@ -661,19 +661,32 @@
         <receiver>m_colorizeImage</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>m_backgroundInput</sender>
+        <signal>returnPressed(const QString&amp;)</signal>
+        <receiver>LookAndFeelTabBase</receiver>
+        <slot>browseTheme(const QString&amp;)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>m_zoom_cb</tabstop>
     <tabstop>m_showToolTips</tabstop>
     <tabstop>m_kmenuTile</tabstop>
-    <tabstop>m_desktopTile</tabstop>
-    <tabstop>m_exeTile</tabstop>
-    <tabstop>m_browserTile</tabstop>
+    <tabstop>m_kmenuColor</tabstop>
     <tabstop>m_urlTile</tabstop>
+    <tabstop>m_urlColor</tabstop>
+    <tabstop>m_desktopTile</tabstop>
+    <tabstop>m_desktopColor</tabstop>
+    <tabstop>m_browserTile</tabstop>
+    <tabstop>m_browserColor</tabstop>
     <tabstop>m_wlTile</tabstop>
+    <tabstop>m_wlColor</tabstop>
+    <tabstop>m_exeTile</tabstop>
+    <tabstop>m_exeColor</tabstop>
     <tabstop>m_transparent</tabstop>
     <tabstop>m_backgroundImage</tabstop>
     <tabstop>m_backgroundInput</tabstop>
+    <tabstop>m_colorizeImage</tabstop>
     <tabstop>advancedOptionsButton</tabstop>
 </tabstops>
 <includes>

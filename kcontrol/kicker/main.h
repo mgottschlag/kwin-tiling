@@ -18,6 +18,7 @@
 #ifndef __main_h__
 #define __main_h__
 
+#include <dcopobject.h>
 #include <kcmodule.h>
 #include <kconfig.h>
 
@@ -32,9 +33,10 @@ class MenuTab;
 //class AppletTab;
 class ExtensionsTab;
 
-class KickerConfig : public KCModule
+class KickerConfig : public KCModule, public DCOPObject
 {
     Q_OBJECT
+    K_DCOP
 
 public:
     KickerConfig(QWidget *parent = 0L, const char *name = 0L);
@@ -53,6 +55,9 @@ public:
     static void initScreenNumber();
     static QString configName();
     static void notifyKicker();
+
+k_dcop:
+    void jumpToPanel(const QString& panelConfig);
 
 signals:
     void extensionInfoChanged();
