@@ -368,12 +368,12 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    QHBoxLayout *lay = new QHBoxLayout(layout, KDialog::spacingHint());
    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
    lay->addItem( spacer );
-   QPushButton * fontAdjustButton = new QPushButton(i18n("Adjust All Fonts..."), this);
+   QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
    QWhatsThis::add(fontAdjustButton, i18n("Click to change all fonts"));
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
 
-   QGroupBox *aaBox=new QGroupBox(i18n("Anti-Aliasing"), this);
+   QGroupBox *aaBox=new QGroupBox(i18n("An&ti-Aliasing"), this);
 
    aaBox->setColumnLayout(1, Qt::Horizontal);
    aaBox->layout()->setSpacing(KDialog::spacingHint());
