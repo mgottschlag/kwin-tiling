@@ -28,6 +28,7 @@
 
 #include <kapp.h>
 #include <klocale.h>
+#include <kseparator.h>
 
 #include "kdmshutdown.h"
 #include "kdmconfig.h" // for shutdown-modes
@@ -83,10 +84,10 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
     box->addWidget( label, 0, AlignCenter);
 
-    QFrame* sepFrame = new QFrame( winFrame);
-    sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
-    h += sepFrame->height(); 
-    box->addWidget( sepFrame);
+
+    KSeparator* sep = new KSeparator( KSeparator::HLine, winFrame);
+    h += sep->height(); 
+    box->addWidget( sep);
 
     btGroup = new QButtonGroup( /* this */);
      

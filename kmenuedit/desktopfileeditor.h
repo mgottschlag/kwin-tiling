@@ -26,7 +26,6 @@ class BasicTab;
 class AdvancedTab;
 class QPushButton;
 class QTabWidget;
-class QFrame;
 
 class DesktopFileEditor : public QWidget
 {
@@ -49,7 +48,6 @@ protected slots:
 protected:
     BasicTab      *_basicTab;
     AdvancedTab   *_advancedTab;
-    QFrame        *_separator;
     QPushButton   *_apply, *_reset;
     QTabWidget    *_tabs;
     bool          _desktopFileNeedsSave;

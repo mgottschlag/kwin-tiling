@@ -37,6 +37,7 @@
 #include <kstddirs.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
+#include <kseparator.h>
 #include <kapp.h>
 
 #include "kgreeter.h"
@@ -261,9 +262,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     else if (pixLabel)
 	hbox1->addWidget( (QWidget*)pixLabel, 0, AlignTop);
 
-    QFrame* sepFrame = new QFrame( this);
-    sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
-    sepFrame->setFixedHeight( sepFrame->sizeHint().height());
+    KSeparator* sep = new KSeparator( KSeparator::HLine, this);
 
     failedLabel = new QLabel( this);
     failedLabel->setFont( *kdmcfg->_failFont);
@@ -276,7 +275,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     grid->addWidget( sessargBox, 2, 1);
     grid->addWidget( sessargStat, 2, 2);
     grid->addMultiCellWidget( failedLabel, 3,3, 0,3, AlignCenter);
-    grid->addMultiCellWidget( sepFrame, 4,4, 0,3);
+    grid->addMultiCellWidget( sep, 4,4, 0,3);
     grid->setColStretch( 3, 1);
 
     goButton = new QPushButton( i18n("G&o!"), this);

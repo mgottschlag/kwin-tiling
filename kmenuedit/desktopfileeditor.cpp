@@ -18,12 +18,12 @@
  */
 
 #include <qlayout.h>
-#include <qframe.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 
 #include <klocale.h>
 #include <kglobal.h>
+#include <kseparator.h>
 
 #include "basictab.h"
 #include "advancedtab.h"
@@ -46,8 +46,7 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     layout->addMultiCellWidget(_tabs, 0, 0, 0, 2);
 
     // setup separator
-    _separator = new QFrame(this);
-    _separator->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+    KSeparator *_separator = new KSeparator(KSeparator::HLine, this);
     layout->addMultiCellWidget(_separator, 1, 1, 0, 2);
 
     // setup buttons
