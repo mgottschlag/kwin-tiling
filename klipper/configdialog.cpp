@@ -29,7 +29,7 @@
 #include "configdialog.h"
 
 ConfigDialog::ConfigDialog( const ActionList *list, KAccelActions &keyMap )
-    : KDialogBase( KDialogBase::Tabbed, i18n("Klipper preferences"),
+    : KDialogBase( KDialogBase::Tabbed, i18n("Klipper Preferences"),
                     KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
                     KDialogBase::Ok, 0L, "config dialog" )
 {
