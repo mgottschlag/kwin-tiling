@@ -1,6 +1,6 @@
 kde_module_LTLIBRARIES = libkcm_keys.la
 
-libkcm_keys_la_SOURCES =  shortcuts.cpp savescm.cpp main.cpp
+libkcm_keys_la_SOURCES =  shortcuts.cpp modifiers.cpp savescm.cpp main.cpp
 libkcm_keys_la_LIBADD   = -lkdeui
 libkcm_keys_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 

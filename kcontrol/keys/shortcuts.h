@@ -29,11 +29,11 @@
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <kaccelbase.h>
-#include <kcmodule.h>
+//#include <kcmodule.h>
 #include <kcombobox.h>
 #include <kkeydialog.h>
 
-class ShortcutsModule : public KCModule
+class ShortcutsModule : public QWidget
 {
 	Q_OBJECT
  public:
@@ -52,6 +52,9 @@ class ShortcutsModule : public KCModule
 	void readSchemeNames();
 	void saveScheme();
 	void resizeEvent(QResizeEvent *e);
+
+ signals:
+	void changed( bool );
 
  protected slots:
 	void slotSchemeCur();

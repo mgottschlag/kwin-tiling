@@ -41,7 +41,7 @@
 #include <kstdaccel.h>
 
 ShortcutsModule::ShortcutsModule( QWidget *parent, const char *name )
-: KCModule( parent, name )
+: QWidget( parent, name )
 {
 	initGUI();
 }
@@ -93,14 +93,12 @@ void ShortcutsModule::initGUI()
 	KAccelActions* keys = &m_actionsGeneral;
 // see also KShortcutsModule::init() below !!!
 #define NOSLOTS
-#define KShortcuts KAccelShortcuts
 #define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
-#undef KShortcuts
 
 	kdDebug(125) << "B-----------" << endl;
 	m_actionsSequence.init( m_actionsGeneral );
@@ -224,6 +222,7 @@ void ShortcutsModule::createActionsApplication()
 		KStdAccel::StdAccel id = (KStdAccel::StdAccel) i;
 		m_actionsApplication.insertAction( KStdAccel::action(id),
 			KStdAccel::description(id),
+			QString::null, // sHelp
 			KStdAccel::defaultKey3(id),
 			KStdAccel::defaultKey4(id) );
 	}

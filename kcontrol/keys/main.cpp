@@ -22,6 +22,7 @@
  */
 
 #include "main.h"
+#include "modifiers.h"
 #include "shortcuts.h"
 
 #include <qdir.h>
@@ -67,8 +68,8 @@ void KeyModule::initGUI()
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
 	connect( m_pShortcuts, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
 
-	//m_pModifiers = new ModifiersModule( this );
-	//m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
+	m_pModifiers = new ModifiersModule( this );
+	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
 }
 
 // Called when [Reset] is pressed
@@ -132,7 +133,7 @@ extern "C"
   // dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
   void init_keys()
   {
-	kdDebug(125) << "ShortcutsModule::init()\n";
+	kdDebug(125) << "KeyModule::init()\n";
 
 	/*kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
 	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
@@ -143,7 +144,7 @@ extern "C"
 	*/
 	KAccelActions* keys = new KAccelActions();
 
-	kdDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
+	kdDebug(125) << "KeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
 #define KICKER_ALL_BINDINGS
@@ -153,7 +154,7 @@ extern "C"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
 
-	kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
+	kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	keys->readActions( "Global Shortcuts" );
 
 	// Why are the braces here? -- ellis
@@ -162,8 +163,11 @@ extern "C"
 	cfg.deleteGroup( "Global Shortcuts" );
 	}
 
-	kdDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
+	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	keys->writeActions( "Global Shortcuts", 0, true, true );
+
+	kdDebug(125) << "KeyModule::init() - Read Config Bindings 2 for testing\n";
+	keys->readActions( "Global Shortcuts" );
   }
 }
 
