@@ -119,10 +119,6 @@ KClassicGreeter::KClassicGreeter(
 	if (!passwdEdit)
 	    passwd1Edit->setFocus();
     }
-
-    QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
-    for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-	 itm->widget()->show();
 }
 
 // virtual

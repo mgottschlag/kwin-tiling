@@ -126,6 +126,21 @@ KGVerify::pluginName() const
     return name.mid( st, en - st );
 }
 
+static void
+showWidgets( QLayoutItem *li )
+{
+    QWidget *w;
+    QLayout *l;
+
+    if ((w = li->widget()))
+	w->show();
+    else if ((l = li->layout())) {
+	QLayoutIterator it = l->iterator();
+	for (QLayoutItem *itm = it.current(); itm; itm = ++it)
+	     showWidgets( itm );
+    }
+}
+
 void // public
 KGVerify::selectPlugin( int id )
 {
@@ -135,6 +150,7 @@ KGVerify::selectPlugin( int id )
     }
     curPlugin = id;
     greet = greetPlugins[pluginList[id]].info->create( this, parent, predecessor, fixedEntity, func, ctx );
+    showWidgets( greet->getLayoutItem() );
     grid->addItem( greet->getLayoutItem(), 0, 0 );
     if (plugMenu)
 	plugMenu->setItemChecked( id, true );
