@@ -801,22 +801,33 @@ linkedFile (const char *fn)
     addStr (&lflist, fn);
 }
 
-static void
+/*
+ * XXX this stuff is highly borked. it does not handle collisions at all.
+ */
+static int
 copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, int *))
 {
+    const char *tptr;
+    char *nname;
     StrList *sp;
     FILE *f;
     File file;
+    int rt;
 
     if (!*ce->value)
-	return;
-    for (sp = cflist; sp; sp = sp->next)
-	if (!strcmp (sp->str, ce->value))
-	    return;
+	return 1;
 
-    if (!readFile (&file, ce->value))
+    tptr = strrchr (tname, '/');
+    ASPrintf (&nname, "%s/%s", KDMCONF, tptr ? tptr + 1 : tname);
+    for (sp = cflist; sp; sp = sp->next)
+	if (!strcmp (sp->str, ce->value)) {
+	    rt = 1;
+	    goto doret;
+	}
+    if (!readFile (&file, ce->value)) {
 	fprintf (stderr, "Warning: cannot copy file %s\n", ce->value);
-    else {
+	rt = 0;
+    } else {
 	char *nbuf;
 	int nlen;
 
@@ -825,16 +836,19 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 	    nlen = file.eof - file.buf;
 	}
 	copiedFile (ce->value);
-	f = Create (ce->value, mode);
+	f = Create (nname, mode);
 	fwrite (nbuf, nlen, 1, f);
 	fclose (f);
-	if (strcmp (ce->value, tname) &&
+	if (strcmp (ce->value, nname) &&
 	    inDestDir (ce->value) &&
 	    !memcmp (newdir, KDMCONF, sizeof(KDMCONF)))
 	    unlink (ce->value);
+	rt = 1;
     }
-    ce->value = tname;
-    linkedFile (tname);
+  doret:
+    ce->value = nname;
+    linkedFile (nname);
+    return rt;
 }
 
 static void
@@ -889,8 +903,13 @@ handBgCfg (Entry *ce, Section *cs ATTR_UNUSED)
     else if (old_confs)
 	linkfile (ce);
 #endif
-    else
-	copyfile (ce, KDMCONF "/backgroundrc", 0644, 0);
+    else {
+	if (!copyfile (ce, ce->value, 0644, 0)) {
+	    if (!strcmp (cs->name, "X-*-Greeter"))
+		writefile (KDMCONF "/backgroundrc", 0644, def_background);
+	    ce->active = 0;
+	}
+    }
 }
 
 
@@ -1247,7 +1266,7 @@ mk_xservers(Entry *ce, Section *cs ATTR_UNUSED)
     } else if (old_confs)
 	linkfile (ce);
     else
-	copyfile (ce, KDMCONF "/Xservers", 0644, edit_xservers);
+	copyfile (ce, "Xservers", 0644, edit_xservers);
 }
 
 static void
@@ -1258,7 +1277,8 @@ cp_keyfile(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_confs)
 	linkfile (ce);
     else
-	copyfile (ce, KDMCONF "/kdmkeys", 0644, 0);
+	if (!copyfile (ce, "kdmkeys", 0644, 0))
+	    ce->active = 0;
 }
 
 static void
@@ -1269,7 +1289,7 @@ mk_xaccess(Entry *ce, Section *cs ATTR_UNUSED)
     else if (old_confs)
 	linkfile (ce);
     else
-	copyfile (ce, KDMCONF "/Xaccess", 0644, 0);
+	copyfile (ce, "Xaccess", 0644, 0);	/* don't handle error, it will disable Xdmcp automatically */
 }
 
 static void
@@ -1308,7 +1328,8 @@ cp_resources(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_confs)
 	linkfile (ce);
     else
-	copyfile (ce, KDMCONF "/Xresources", 0644, edit_resources);
+	if (!copyfile (ce, ce->value, 0644, edit_resources))
+	    ce->active = 0;
 }
 
 static int
@@ -2690,12 +2711,15 @@ mergeKdmRcNewer (const char *path)
 	}
 
     applydefs (kdmdefs_all, as(kdmdefs_all), path);
-    if (!getfqval ("General", "ConfigVersion", 0)) {	/* < 3.1 */
-	if (is22conf (path))
+    if (!*getfqval ("General", "ConfigVersion", "")) {	/* < 3.1 */
+	if (is22conf (path)) {
 	    /* work around 2.2.x defaults borkedness */
 	    applydefs (kdmdefs_eq_22, as(kdmdefs_eq_22), path);
-	else
+	    printf ("Information: old kdmrc is from kde 2.2\n");
+	} else {
 	    applydefs (kdmdefs_ge_30, as(kdmdefs_ge_30), path);
+	    printf ("Information: old kdmrc is from kde 3.0\n");
+	}
 	/* work around minor <= 3.0.x defaults borkedness */
 	applydefs (kdmdefs_le_30, as(kdmdefs_le_30), path);
 	/* disable built-in background if we have a setup script */
@@ -2707,6 +2731,7 @@ mergeKdmRcNewer (const char *path)
 				  "UseBackground", "false");
 
     } else {
+	printf ("Information: old kdmrc is from kde >= 3.1\n");
 	applydefs (kdmdefs_ge_30, as(kdmdefs_ge_30), path);
 	applydefs (kdmdefs_ge_31, as(kdmdefs_ge_31), path);
     }
