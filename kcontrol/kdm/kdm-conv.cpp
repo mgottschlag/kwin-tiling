@@ -153,7 +153,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);
     QWhatsThis::add( cbarlen, i18n("When this option is on, a user will be"
 	" logged in again automatically, when his session is interrupted by an"
-	" X server crash.") );
+	" X server crash. Note, that this can open a security hole: if you use"
+	" another screen locker than kdesktop's integrated one, this will make"
+	" circumventing a password-secured screen lock possible.") );
     connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     QGridLayout *main = new QGridLayout(this, 4, 2, 10);
@@ -323,15 +325,16 @@ void KDMConvenienceWidget::load(QStringList *show_users)
     c->setGroup("X-:*-Core");
     cbplen->setChecked(c->readBoolEntry( "NoPassEnable", false) );
     QStringList npusers = c->readListEntry( "NoPassUsers");
-    QStringList wpusers;
+    wpuserlb->clear();
     for (QStringList::ConstIterator it = show_users->begin(),
 	    et = show_users->end(); it != et; ++it)
-	if (npusers.contains(*it) == 0)
-	    wpusers.append(*it);
+	if (!npusers.contains(*it))
+	    wpuserlb->insertItem(*it);
     npuserlb->clear();
-    npuserlb->insertStringList(npusers);
-    wpuserlb->clear();
-    wpuserlb->insertStringList(wpusers);
+    for (QStringList::ConstIterator it = npusers.begin(), et = npusers.end(); 
+	 it != et; ++it)
+	if (show_users->contains(*it))
+	    npuserlb->insertItem(*it);
 
     c->setGroup("X-*-Core");
     cbarlen->setChecked(c->readBoolEntry( "AutoReLogin", false) );

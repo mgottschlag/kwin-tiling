@@ -177,23 +177,23 @@ void KDMFontWidget::slotGetFont()
 void KDMFontWidget::slotSetFont(int id)
 {
   QApplication::setOverrideCursor( waitCursor );
-  QFont tmpfont;
+  QFont *tmpfont;
   switch (id)
   {
     case 0:
-      tmpfont = greetfont;
+      tmpfont = &greetfont;
       fontlabel->setText(i18n("Greeting font"));
       break;
     case 1:
-      tmpfont = failfont;
+      tmpfont = &failfont;
       fontlabel->setText(i18n("Fail font"));
       break;
-    case 2:
-      tmpfont = stdfont;
+    default:
+      tmpfont = &stdfont;
       fontlabel->setText(i18n("Standard font"));
       break;
   }
-  fontlabel->setFont(tmpfont);
+  fontlabel->setFont(*tmpfont);
   //fontlabel->adjustSize();
   QApplication::restoreOverrideCursor( );
 }

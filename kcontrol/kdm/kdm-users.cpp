@@ -420,7 +420,10 @@ void KDMUsersWidget::load(QStringList *show_users)
     // Read users from kdmrc and /etc/passwd
     QStringList users = c->readListEntry( "SelectedUsers");
     userlb->clear();
-    userlb->insertStringList(users);
+    for (QStringList::ConstIterator it = users.begin(), et = users.end(); 
+	 it != et; ++it)
+	if (getpwnam((*it).local8Bit()))
+	    userlb->insertItem(*it);
 
     QStringList no_users = c->readListEntry( "HiddenUsers");
     nouserlb->clear();

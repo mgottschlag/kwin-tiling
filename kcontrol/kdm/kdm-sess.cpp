@@ -73,7 +73,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       shutdown_lined = new KURLRequester(group1);
       QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("Ha&lt"), group1);
-      connect(shutdown_lined->lineEdit(), SIGNAL(textChanged(const QString&)),
+      connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
       QWhatsThis::add( shutdown_label, wtstr );
@@ -81,7 +81,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       restart_lined = new KURLRequester(group1);
       QLabel *restart_label = new QLabel(restart_lined, i18n("&Reboot"), group1);
-      connect(restart_lined->lineEdit(), SIGNAL(textChanged(const QString&)),
+      connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
       QWhatsThis::add( restart_label, wtstr );
@@ -101,7 +101,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lilocmd_lined = new KURLRequester(group4);
       lilocmd_label = new QLabel(lilocmd_lined , i18n("Lilo command"), group4);
       connect(lilocmd_lined, SIGNAL(textChanged(const QString&)),
-          SLOT(changed()));
+	      SLOT(changed()));
       wtstr = i18n("Command to run Lilo. Typical value: /sbin/lilo");
       QWhatsThis::add( lilocmd_label, wtstr );
       QWhatsThis::add( lilocmd_lined, wtstr );
@@ -301,7 +301,7 @@ void KDMSessionsWidget::slotAddSessionType()
   if(!session_lined->text().isEmpty())
   {
     sessionslb->insertItem(session_lined->text());
-    session_lined->setText("");
+    session_lined->clear();
   }
 }
 
@@ -341,12 +341,12 @@ void KDMSessionsWidget::save()
     c->writeEntry( "SessionTypes", sesstr );
 
     c->setGroup("Shutdown");
-    c->writeEntry("HaltCmd", shutdown_lined->lineEdit()->text(), true);
-    c->writeEntry("RebootCmd", restart_lined->lineEdit()->text(), true);
+    c->writeEntry("HaltCmd", shutdown_lined->url(), true);
+    c->writeEntry("RebootCmd", restart_lined->url(), true);
 #if defined(__linux__) && defined(__i386__)
     c->writeEntry("UseLilo", lilo_check->isChecked());
-    c->writeEntry("LiloCmd", lilocmd_lined->lineEdit()->text());
-    c->writeEntry("LiloMap", lilomap_lined->lineEdit()->text());
+    c->writeEntry("LiloCmd", lilocmd_lined->url());
+    c->writeEntry("LiloMap", lilomap_lined->url());
 #endif
 }
 
@@ -381,14 +381,14 @@ void KDMSessionsWidget::load()
   sessionslb->insertStringList(sessions);
 
   c->setGroup("Shutdown");
-  restart_lined->lineEdit()->setText(c->readEntry("RebootCmd", "/sbin/reboot"));
-  shutdown_lined->lineEdit()->setText(c->readEntry("HaltCmd", "/sbin/halt"));
+  restart_lined->setURL(c->readEntry("RebootCmd", "/sbin/reboot"));
+  shutdown_lined->setURL(c->readEntry("HaltCmd", "/sbin/halt"));
 #if defined(__linux__) && defined(__i386__)
   bool lien = c->readBoolEntry("UseLilo", false);
   lilo_check->setChecked(lien);
   slotLiloCheckToggled(lien);
-  lilocmd_lined->lineEdit()->setText(c->readEntry("LiloCmd", "/sbin/lilo"));
-  lilomap_lined->lineEdit()->setText(c->readEntry("LiloMap", "/boot/map"));
+  lilocmd_lined->setURL(c->readEntry("LiloCmd", "/sbin/lilo"));
+  lilomap_lined->setURL(c->readEntry("LiloMap", "/boot/map"));
 #endif
 }
 
@@ -396,8 +396,8 @@ void KDMSessionsWidget::load()
 
 void KDMSessionsWidget::defaults()
 {
-  restart_lined->lineEdit()->setText("/sbin/reboot");
-  shutdown_lined->lineEdit()->setText("/sbin/halt");
+  restart_lined->setURL("/sbin/reboot");
+  shutdown_lined->setURL("/sbin/halt");
 
   sdlcombo->setCurrentItem(SdAll);
   sdrcombo->setCurrentItem(SdRoot);
@@ -411,8 +411,8 @@ void KDMSessionsWidget::defaults()
     lilo_check->setChecked(false);
     slotLiloCheckToggled(false);
 
-    lilocmd_lined->lineEdit()->setText("/sbin/lilo");
-    lilomap_lined->lineEdit()->setText("/boot/map");
+    lilocmd_lined->setURL("/sbin/lilo");
+    lilomap_lined->setURL("/boot/map");
 #endif
 }
 
