@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include <kstyle.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
@@ -166,8 +165,7 @@ void runRdb(bool exportColors) {
 
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = kapp->palette().active();
-  if ( !kapp->kstyle() || !kapp->kstyle()->inherits("KLegacyStyle") )
-      createGtkrc( exportColors, cg );
+  createGtkrc( exportColors, cg );
 
   QString preproc;
 

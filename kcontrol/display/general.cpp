@@ -34,7 +34,6 @@
 #include <kstddirs.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
-#include <kthemebase.h>
 #include <kwin.h>
 #include <kdialog.h>
 #include <kipc.h>
@@ -239,14 +238,6 @@ void KThemeListBox::save()
 
     curItem = currentItem();
     curTheme = curItem->text(2);
-    KThemeBase::applyConfigFile(currentItem()->text(2));
-
-// This section can be removed when kdelibs 2.1 is released.
-    KConfig kconfig("kstylerc");
-    kconfig.setGroup("KDE");
-    kconfig.writeEntry("currentTheme", curTheme);
-    kconfig.sync();
-// End section
 }
 
 

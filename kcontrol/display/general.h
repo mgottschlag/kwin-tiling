@@ -13,7 +13,6 @@
 #include <qlistview.h>
 #include <qgroupbox.h>
 
-#include <kthemebase.h>
 #include <kcmodule.h>
 
 class QCheckBox;
