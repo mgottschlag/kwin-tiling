@@ -43,7 +43,6 @@
 
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
-#define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
 #define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[[0-9][0-9]?[0-9]?]?/?"
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
@@ -370,7 +369,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // this thing so simply return false so that
   // other filters, if present, can take a crack
   // at it.
-  // kdDebug() << "KShortURIFilter::filterURI returning false!" << endl;
+  //kdDebug() << "KShortURIFilter::filterURI returning false!" << endl;
   return false;
 }
 
@@ -400,7 +399,6 @@ void KShortURIFilter::configure()
     // from the control panel.
     m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
     m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
-    m_urlHints.append( URLHint(QFL1(HOSTPORT_PATTERN), QFL1("http://")) );
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkshorturifilter,
