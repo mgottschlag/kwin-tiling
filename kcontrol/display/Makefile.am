@@ -2,7 +2,7 @@
 
 INCLUDES = $(all_includes)
 
-#SUBDIRS = . kcs ad pics
+SUBDIRS = . kcs ad pics
 
 lib_LTLIBRARIES = libkcm_style.la
 
