@@ -11,6 +11,8 @@ KDE3.2 -> KDE3.3
 8.  Add extra style information (which was previously added to FamilyName) into the XLFD.
 9.  Consider regular weight to be medium (same as mkfontscale).
 10. Default to width=normal, weight=medium if not set.
+11. Allow change of preview string.
+12. Allow zooming in/out of preview.
 
 KDE3.1 -> KDE3.2
 ================
