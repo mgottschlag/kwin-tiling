@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>591</width>
+            <width>587</width>
             <height>335</height>
         </rect>
     </property>
@@ -262,14 +262,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt;
-You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt;
-&lt;li&gt;%t: Recipient's address&lt;/li&gt;
-&lt;li&gt;%s: Subject&lt;/li&gt;
-&lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt;
-&lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt;
-&lt;li&gt;%B: Template body text&lt;/li&gt;
-&lt;/ul&gt;</string>
+                                    <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt; You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
                                 </property>
                             </widget>
                             <widget>
