@@ -39,29 +39,30 @@ public slots:
 	void profileChanged(const QString &);
 
 protected:
-    QGroupBox* grpClient;
+	QGroupBox* grpClient;
 
-    QLineEdit* txtEMailClient;
-    QPushButton* btnBrowseClient;
-    QCheckBox* chkRunTerminal;
+	QLineEdit* txtEMailClient;
+	QPushButton* btnBrowseClient;
+	QCheckBox* chkRunTerminal;
 
-    QGroupBox* grpIncoming;
-    QButtonGroup* grpICM;
-    QRadioButton* radIMAP, *radPOP, *radICMLocal;
-    QPushButton *btnICMSettings;
+	QGroupBox* grpIncoming;
+	QButtonGroup* grpICM;
+	QRadioButton* radIMAP, *radPOP, *radICMLocal;
+	QPushButton *btnICMSettings;
 
-    QGroupBox* grpOutgoing;
-    QPushButton *btnOGMSettings;
-    QButtonGroup *grpOGM;
-    QRadioButton *radSMTP, *radOGMLocal;
 
-    QPushButton *btnNewProfile;
-    QLabel *lblCurrentProfile;
-    KComboBox *cmbCurProfile;
+	QGroupBox* grpOutgoing;
+	QPushButton *btnOGMSettings;
+	QButtonGroup *grpOGM;
+	QRadioButton *radSMTP, *radOGMLocal;
 
-    QGroupBox *grpUserInfo;
-    QLabel *lblFullName, *lblOrganization, *lblEMailAddr, *lblReplyTo;
-    QLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
+	QPushButton *btnNewProfile;
+	QLabel *lblCurrentProfile;
+	KComboBox *cmbCurProfile;
+
+	QGroupBox *grpUserInfo;
+	QLabel *lblFullName, *lblOrganization, *lblEMailAddr, *lblReplyTo;
+	QLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
 
 protected slots:
 	void slotNewProfile();
