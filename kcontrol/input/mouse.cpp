@@ -143,6 +143,21 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
     connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
+    // Only allow setting reversing scroll polarity if we have scroll buttons
+    unsigned char map[5];
+    if ( XGetPointerMapping(kapp->getDisplay(), map, 5) == 5 )
+    {
+      tab1->cbScrollPolarity->setEnabled( true );
+      tab1->cbScrollPolarity->show();
+    }
+    else
+    {
+      tab1->cbScrollPolarity->setEnabled( false );
+      tab1->cbScrollPolarity->hide();
+    }
+    connect(tab1->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(tab1->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(slotScrollPolarityChanged()));
+
     // Cursor theme tab
     themetab = new ThemePage(this);
     connect(themetab, SIGNAL(changed(bool)), SLOT(changed()));
@@ -389,6 +404,9 @@ void MouseConfig::load()
 
   tab1->rightHanded->setEnabled(settings->handedEnabled);
   tab1->leftHanded->setEnabled(settings->handedEnabled);
+  if ( tab1->cbScrollPolarity->isEnabled() )
+    tab1->cbScrollPolarity->setEnabled(settings->handedEnabled);
+  tab1->cbScrollPolarity->setChecked( settings->reverseScrollPolarity );
 
   setAccel(settings->accelRate);
   setThreshold(settings->thresholdMove);
@@ -442,6 +460,7 @@ void MouseConfig::save()
   settings->visualActivate = tab1->cbVisualActivate->isChecked();
 //  settings->changeCursor = tab1->singleClick->isChecked();
   settings->changeCursor = tab1->cb_pointershape->isChecked();
+  settings->reverseScrollPolarity = tab1->cbScrollPolarity->isChecked();
 
   settings->apply();
   settings->save(config);
@@ -473,6 +492,7 @@ void MouseConfig::defaults()
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
+    tab1->cbScrollPolarity->setChecked( false );
     doubleClickInterval->setValue(400);
     dragStartTime->setValue(500);
     dragStartDist->setValue(4);
@@ -527,7 +547,7 @@ void MouseConfig::changed()
 
 /** No descriptions */
 void MouseConfig::slotHandedChanged(int val){
-  if(val==0)
+  if(val==RIGHT_HANDED)
     tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
   else
     tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
@@ -544,6 +564,7 @@ void MouseSettings::load(KConfig *config)
 
   // get settings from X server
   int h = RIGHT_HANDED;
+  bool revScroll = false;
   unsigned char map[5];
   num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 5);
 
@@ -583,6 +604,9 @@ void MouseSettings::load(KConfig *config)
       handedEnabled = false;
       break;
     }
+  if ( handedEnabled && num_buttons == 5 && ( int )map[3] == 5 && ( int )map[4] == 4 )
+    revScroll = true;
+
 
   config->setGroup("Mouse");
   double a = config->readDoubleNumEntry("Acceleration",-1);
@@ -604,7 +628,8 @@ void MouseSettings::load(KConfig *config)
     handed = LEFT_HANDED;
   else if (key == NULL)
     handed = h;
-  m_handedNeedsApply = (handed != h);
+  reverseScrollPolarity = config->readBoolEntry( "ReverseScrollPolarity", false );
+  m_handedNeedsApply = ( (handed != h) || (reverseScrollPolarity != revScroll) );
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup("KDE");
@@ -655,20 +680,20 @@ void MouseSettings::apply()
           break;
       case 5:
           // Intellimouse case, where buttons 1-3 are left, middle, and
-          // right, and 4-5 are up/down
+          // right, and 4-5 are up/down depending on scroll polarity
           if (handed == RIGHT_HANDED) {
               map[0] = (unsigned char) 1;
               map[1] = (unsigned char) 2;
               map[2] = (unsigned char) 3;
-              map[3] = (unsigned char) 4;
-              map[4] = (unsigned char) 5;
+              map[3] = reverseScrollPolarity ? (unsigned char) 5 : (unsigned char) 4;
+              map[4] = reverseScrollPolarity ? (unsigned char) 4 : (unsigned char) 5;
           }
           else {
               map[0] = (unsigned char) 3;
               map[1] = (unsigned char) 2;
               map[2] = (unsigned char) 1;
-              map[3] = (unsigned char) 4;
-              map[4] = (unsigned char) 5;
+              map[3] = reverseScrollPolarity ? (unsigned char) 5 : (unsigned char) 4;
+              map[4] = reverseScrollPolarity ? (unsigned char) 4 : (unsigned char) 5;
           }
           break;
       default: {
@@ -699,6 +724,7 @@ void MouseSettings::save(KConfig *config)
       config->writeEntry("MouseButtonMapping",QString("RightHanded"));
   else
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
+  config->writeEntry( "ReverseScrollPolarity", reverseScrollPolarity );
 
   config->setGroup("KDE");
   config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
@@ -714,6 +740,11 @@ void MouseSettings::save(KConfig *config)
   config->writeEntry("ChangeCursor", changeCursor );
   config->sync();
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
+}
+
+void MouseConfig::slotScrollPolarityChanged()
+{
+  settings->m_handedNeedsApply = true;
 }
 
 #include "mouse.moc"

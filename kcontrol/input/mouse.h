@@ -76,6 +76,7 @@ public:
  int visualActivate;
  bool changeCursor;
  int wheelScrollLines;
+ bool reverseScrollPolarity;
 };
 
 class MouseConfig : public KCModule
@@ -97,6 +98,7 @@ private slots:
   void changed();
   /** No descriptions */
   void slotHandedChanged(int val);
+  void slotScrollPolarityChanged();
   void checkAccess();
 
 private:

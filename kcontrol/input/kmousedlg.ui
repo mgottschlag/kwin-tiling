@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>441</width>
-            <height>351</height>
+            <width>460</width>
+            <height>378</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>KMouseDlg</string>
     </property>
     <vbox>
         <property name="name">
@@ -124,6 +127,20 @@
                 </widget>
             </grid>
         </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cbScrollPolarity</cstring>
+            </property>
+            <property name="text">
+                <string>Re&amp;verse scroll polarity</string>
+            </property>
+            <property name="accel">
+                <string>Alt+V</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Change the direction of scrolling for the mouse wheel or the 4th and 5th mouse buttons.</string>
+            </property>
+        </widget>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>GroupBox1</cstring>
@@ -174,6 +191,9 @@
                     </property>
                     <property name="text">
                         <string>Cha&amp;nge pointer shape over icons</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -326,7 +346,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>20</height>
+                    <height>16</height>
                 </size>
             </property>
         </spacer>
