@@ -73,8 +73,11 @@ protected slots:
 protected:
 	void clearData();
 	KEMailSettings *pSettings;	
-	QString m_sICMPassword, m_sICMUsername;
-	QString m_sOGMPassword, m_sOGMUsername;
+	QString m_sICMPassword, m_sICMUsername, m_sICMPath, m_sICMHost;
+	QString m_sOGMPassword, m_sOGMUsername, m_sOGMCommand, m_sOGMHost;
+	unsigned int m_uOGMPort, m_uICMPort;
+	bool m_bOGMSecure, m_bICMSecure;
+
 	bool m_bChanged;
 };
 

@@ -20,6 +20,26 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	QVBoxLayout *topLayout = new QVBoxLayout(top, KDialog::marginHint(), KDialog::spacingHint());
 	topLayout->setMargin(0);
 
+	QHBoxLayout *layHost = new QHBoxLayout(topLayout);
+	layHost->setMargin(0);
+	lblHost = new QLabel(top, "lblHost");
+	lblHost->setText(i18n("&Hostname")+QString::fromLatin1(":"));
+	lblHost->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
+	txtHost = new KLineEdit(top, "txtHost");
+	txtHost->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
+	lblHost->setBuddy(txtHost);
+	layHost->addWidget(lblHost);
+	layHost->addWidget(txtHost, 5);
+
+	lblPort = new QLabel(top, "lblPort");
+	lblPort->setText(i18n("&Port")+QString::fromLatin1(":"));
+	lblPort->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
+	txtPort = new KLineEdit(top, "txtPort");
+	txtPort->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
+	lblPort->setBuddy(txtPort);
+	layHost->addWidget(lblPort);
+	layHost->addWidget(txtPort, 2);
+
 	QHBoxLayout *layUsername = new QHBoxLayout(topLayout);
 	layUsername->setMargin(0);
 	lblUsername = new QLabel(top, "lblUsername");
@@ -50,8 +70,9 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 
 	chkTLS = new QCheckBox(top, "chkTLS");
 	chkTLS->setChecked(false);
-	chkTLS->setText(i18n("Use secure transport layer if available"));
+	chkTLS->setText(i18n("Use &secure transport layer if available"));
 	topLayout->addWidget(chkTLS);
+	txtHost->setFocus();
 
 }
 

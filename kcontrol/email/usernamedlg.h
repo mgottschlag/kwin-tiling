@@ -15,8 +15,8 @@ public:
 	~UserNameDlg ();
 
 	QCheckBox *chkTLS;
-	KLineEdit *txtUsername, *txtPass;
-	QLabel *lblUsername, *lblPass;
+	KLineEdit *txtUsername, *txtPass, *txtHost, *txtPort;
+	QLabel *lblUsername, *lblPass, *lblHost, *lblPort;
 };
 
 #endif
