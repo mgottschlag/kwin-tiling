@@ -9,7 +9,7 @@ X-KDE-Library=general
 X-KDE-FactoryName=general
 X-KDE-Init=general
 
-Name=General Widget Options
+Name=Widget Settings 
 
 Comment=Allows to manipulate the behavior of some widgets.
 
