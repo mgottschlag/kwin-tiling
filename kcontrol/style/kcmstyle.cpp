@@ -321,13 +321,13 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Add Page3 (Miscellaneous)
 	// -------------------------
-	gbToolbarSettings = new QGroupBox( 1, Qt::Horizontal, i18n("Misc Toolbar Settings"), page3 );
+	gbToolbarSettings = new QGroupBox( 1, Qt::Horizontal, i18n("Toolbar Settings"), page3 );
 	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), gbToolbarSettings );
 	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), gbToolbarSettings );
 
 	QWidget * dummy = new QWidget( gbToolbarSettings );
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
-	lbl = new QLabel( i18n("Toolbar &icons:"), dummy );
+	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( FALSE, dummy );
 	comboToolbarIcons->insertItem( i18n("Icons Only") );
 	comboToolbarIcons->insertItem( i18n("Text Only") );
