@@ -27,6 +27,7 @@ services_DATA =	acronym.desktop \
 		metacrawler.desktop \
 		msdn.desktop \
 		nl-teletekst.desktop \
+		pgpkeys.desktop \
 		php.desktop \
 		python.desktop \
 		realnames.desktop \
