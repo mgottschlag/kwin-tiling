@@ -21,7 +21,7 @@ services_DATA =	acronym.desktop \
 		google_images.desktop \
 		google_lucky.desktop \
 		hotbot.desktop \
-                imdb.desktop \
+		imdb.desktop \
 		jeeves.desktop \
 		leo.desktop \
 		lycos.desktop \
@@ -32,6 +32,7 @@ services_DATA =	acronym.desktop \
 		pgpkeys.desktop \
 		php.desktop \
 		python.desktop \
+		qt.desktop \
 		rfc.desktop \
 		rpmfind.desktop \
 		ruby_application_archive.desktop \
