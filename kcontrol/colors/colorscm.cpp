@@ -374,7 +374,7 @@ void KColorScheme::slotSave( )
     config->writeEntry("linkColor", cs->link);
     config->writeEntry("visitedLinkColor", cs->visitedLink);
 
-    config->sync();
+    delete config;
 }
 
 
@@ -564,6 +564,8 @@ void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 
 /*
  * Read a color scheme into "cs".
+ *
+ * KEEP IN SYNC with thememgr!
  */
 void KColorScheme::readScheme( int index )
 {
@@ -657,6 +659,8 @@ void KColorScheme::readScheme( int index )
       config->setGroup( "KDE" );
 
     cs->contrast = config->readNumEntry( "contrast", 7 );
+    if (index != 0)
+      delete config;
 }
 
 
