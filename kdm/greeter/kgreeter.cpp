@@ -850,6 +850,7 @@ creat_greet(void * /* ptr */)
 {
     kgreeter = new KGreeter;		   
     kgreeter->updateGeometry();
+    kapp->processEvents(0);
     kgreeter->resize(kgreeter->sizeHint());     
     int dw = QApplication::desktop()->width();
     int dh = QApplication::desktop()->height();
