@@ -903,28 +903,13 @@ Instance: */KDMDATA "pics/kdelogo.png"
 Comment:
  The image to show when LogoArea=Logo.
 
-Key: GreeterPosFixed
-Type: bool
-Default: false
-User: greeter
-Instance: #*/true
+Key: GreeterPos
+Type: string
+Default: "50,50"
+User: greeter-c
+Instance: #*/"30,40"
 Comment:
- Normally, the greeter is centered on the screen. Use this, if you want
- it to appear elsewhere on the screen.
-
-Key: GreeterPosX
-Type: int
-Default: 0
-User: greeter
-Instance: #*/200
-Comment:
-
-Key: GreeterPosY
-Type: int
-Default: 0
-User: greeter
-Instance: #*/100
-Comment:
+ The relative coordinates (X,Y in percent) of the center of the greeter.
 
 Key: GreeterScreen
 Type: int

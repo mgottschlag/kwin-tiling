@@ -71,7 +71,6 @@ protected:
 
 private slots:
 	void slotAreaRadioClicked(int id);
-	void slotPosRadioClicked(int id);
 	void slotLogoButtonClicked();
 	void changed();
 
@@ -84,11 +83,7 @@ private:
 	QRadioButton *noneRadio;
 	QRadioButton *clockRadio;
 	QRadioButton *logoRadio;
-	QRadioButton *posCenterRadio;
-	QRadioButton *posSpecifyRadio;
-	QLabel	     *xLineLabel;
 	QLineEdit    *xLineEdit;
-	QLabel	     *yLineLabel;
 	QLineEdit    *yLineEdit;
 	KBackedComboBox    *guicombo;
 	KBackedComboBox    *colcombo;

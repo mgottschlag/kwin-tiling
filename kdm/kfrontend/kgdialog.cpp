@@ -179,11 +179,10 @@ KGDialog::adjustGeometry()
     setMaximumSize( scr.size() * .9 );
     adjustSize();
     QRect grt( rect() );
-    if (_greeterPosFixed) {
-	grt.moveCenter( QPoint( _greeterPosX, _greeterPosY ) );
-	moveInto( grt, scr );
-    } else
-	grt.moveCenter( scr.center() );
+    unsigned x = 50, y = 50;
+    sscanf(_greeterPos, "%u,%u", &x, &y);
+    grt.moveCenter( QPoint( scr.width() * x / 100, scr.height() * y / 100 ) );
+    moveInto( grt, scr );
     setGeometry( grt );
 
     if (dsk->screenNumber( QCursor::pos() ) != _greeterScreen)

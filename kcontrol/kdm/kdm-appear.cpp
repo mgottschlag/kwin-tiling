@@ -178,55 +178,33 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->setColStretch( 3, 1);
 
 
-  hlp = new QWidget( group );
-  grid->addWidget(hlp, 2, 1);
-  hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
+  hglay = new QGridLayout( group, 2, 3, KDialog::spacingHint() );
+  grid->addLayout(hglay, 2, 1);
 
-  label = new QLabel(i18n("Position:"), hlp);
-  hglay->addWidget(label, 0, 0);
-  helper = new QWidget( hlp );
-  hglay->addWidget(helper, 0, 1);
-  vlay = new QVBoxLayout( helper, KDialog::spacingHint() );
-  posCenterRadio = new QRadioButton( i18n("Cente&red"), helper );
-  posSpecifyRadio = new QRadioButton( i18n("Spec&ify"), helper );
-  buttonGroup = new QButtonGroup( helper );
-  label->setBuddy( buttonGroup );
-  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(slotPosRadioClicked(int)) );
-  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(changed()) );
-  buttonGroup->hide();
-  buttonGroup->insert(posCenterRadio, 0);
-  buttonGroup->insert(posSpecifyRadio, 1);
-  vlay->addWidget(posCenterRadio);
-  vlay->addWidget(posSpecifyRadio);
-  wtstr = i18n("You can choose whether the login dialog should be centered"
-	       " or placed at specified coordinates.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( posCenterRadio, wtstr );
-  QWhatsThis::add( posSpecifyRadio, wtstr );
-  helper = new QWidget( hlp );
-  hglay->addWidget(helper, 1, 1, AlignHCenter | AlignTop);
-  QGridLayout *glay = new QGridLayout( helper, 2, 2, KDialog::spacingHint() );
-  QValidator *posValidator = new QIntValidator(0, 999, helper);
-  xLineLabel = new QLabel(i18n("&X:"), helper);
-  glay->addWidget(xLineLabel, 0, 0);
-  xLineEdit = new QLineEdit (helper);
+  label = new QLabel(i18n("Position:"), group);
+  hglay->addMultiCellWidget(label, 0,1, 0,0, AlignVCenter);
+  QValidator *posValidator = new QIntValidator(0, 100, group);
+  QLabel *xLineLabel = new QLabel(i18n("&X:"), group);
+  hglay->addWidget(xLineLabel, 0, 1);
+  xLineEdit = new QLineEdit (group);
   connect( xLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
-  glay->addWidget(xLineEdit, 0, 1);
+  hglay->addWidget(xLineEdit, 0, 2);
   xLineLabel->setBuddy(xLineEdit);
   xLineEdit->setValidator(posValidator);
-  yLineLabel = new QLabel(i18n("&Y:"), helper);
-  glay->addWidget(yLineLabel, 1, 0);
-  yLineEdit = new QLineEdit (helper);
+   QLabel *yLineLabel = new QLabel(i18n("&Y:"), group);
+  hglay->addWidget(yLineLabel, 1, 1);
+  yLineEdit = new QLineEdit (group);
   connect( yLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
-  glay->addWidget(yLineEdit, 1, 1);
+  hglay->addWidget(yLineEdit, 1, 2);
   yLineLabel->setBuddy(yLineEdit);
   yLineEdit->setValidator(posValidator);
-  wtstr = i18n("Here you specify the coordinates of the login dialog's <em>center</em>.");
+  wtstr = i18n("Here you specify the relative coordinates (in percent) of the login dialog's <em>center</em>.");
+  QWhatsThis::add( label, wtstr );
   QWhatsThis::add( xLineLabel, wtstr );
   QWhatsThis::add( xLineEdit, wtstr );
   QWhatsThis::add( yLineLabel, wtstr );
   QWhatsThis::add( yLineEdit, wtstr );
-  hglay->setColStretch( 2, 1);
+  hglay->setColStretch( 3, 1);
   hglay->setRowStretch( 2, 1);
 
 
@@ -302,8 +280,6 @@ void KDMAppearanceWidget::makeReadOnly()
     noneRadio->setEnabled(false);
     clockRadio->setEnabled(false);
     logoRadio->setEnabled(false);
-    posCenterRadio->setEnabled(false);
-    posSpecifyRadio->setEnabled(false);
     xLineEdit->setEnabled(false);
     yLineEdit->setEnabled(false);
     guicombo->setEnabled(false);
@@ -417,15 +393,6 @@ void KDMAppearanceWidget::slotAreaRadioClicked(int id)
 }
 
 
-void KDMAppearanceWidget::slotPosRadioClicked(int id)
-{
-    xLineEdit->setEnabled( id != 0 );
-    xLineLabel->setEnabled( id != 0 );
-    yLineEdit->setEnabled( id != 0 );
-    yLineLabel->setEnabled( id != 0 );
-}
-
-
 bool KDMAppearanceWidget::eventFilter(QObject *, QEvent *e)
 {
   if (e->type() == QEvent::DragEnter) {
@@ -503,9 +470,7 @@ void KDMAppearanceWidget::save()
 			    echocombo->currentItem() == 1 ? "OneStar" :
 							    "ThreeStars");
 
-  config->writeEntry("GreeterPosFixed", posSpecifyRadio->isChecked());
-  config->writeEntry("GreeterPosX", xLineEdit->text());
-  config->writeEntry("GreeterPosY", yLineEdit->text());
+  config->writeEntry("GreeterPos", xLineEdit->text() + ',' + yLineEdit->text());
 
   config->writeEntry("Language", langcombo->current());
 }
@@ -549,15 +514,14 @@ void KDMAppearanceWidget::load()
   else  // "NoEcho"
     echocombo->setCurrentItem(0);
 
-  if (config->readBoolEntry("GreeterPosFixed", false)) {
-    posSpecifyRadio->setChecked(true);
-    slotPosRadioClicked(1);
+  QStringList sl = config->readListEntry( "GreeterPos" );
+  if (sl.count() != 2) {
+    xLineEdit->setText( "50" );
+    yLineEdit->setText( "50" );
   } else {
-    posCenterRadio->setChecked(true);
-    slotPosRadioClicked(0);
+    xLineEdit->setText( sl.first() );
+    yLineEdit->setText( sl.last() );
   }
-  xLineEdit->setText( config->readEntry("GreeterPosX", "100"));
-  yLineEdit->setText( config->readEntry("GreeterPosY", "100"));
 
   // get the language
   langcombo->setCurrentItem(config->readEntry("Language", "C"));
@@ -569,15 +533,13 @@ void KDMAppearanceWidget::defaults()
   greetstr_lined->setText( i18n("Welcome to %s at %n") );
   logoRadio->setChecked( true );
   slotAreaRadioClicked( KdmLogo );
-  posCenterRadio->setChecked( true );
-  slotPosRadioClicked( 0 );
   setLogo( "" );
   guicombo->setCurrentId( "" );
   colcombo->setCurrentId( "" );
   echocombo->setCurrentItem( 1 );
 
-  xLineEdit->setText( "100");
-  yLineEdit->setText( "100");
+  xLineEdit->setText( "50" );
+  yLineEdit->setText( "50" );
 
   langcombo->setCurrentItem( "en_US" );
 }
