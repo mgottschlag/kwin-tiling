@@ -66,9 +66,6 @@ public:
     virtual void defaults();
     void preview();
 
-signals:
-    void changed(bool);
-
 private slots:
     void slotEffectSetup0() { EffectSetup(0); }
     void slotEffectSetup1() { EffectSetup(1); }
