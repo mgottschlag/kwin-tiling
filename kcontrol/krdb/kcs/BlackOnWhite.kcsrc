@@ -1,5 +1,6 @@
 [Color Scheme]
 Name=Black on White
+Name[ar]=أسود على أبيض
 Name[az]=Qara üstündə Ağ
 Name[be]=Чорнае на белым
 Name[bs]=Crno na bijelom
@@ -21,17 +22,20 @@ Name[hu]=Fekete-fehér
 Name[it]=Nero su bianco
 Name[mn]=Цагаан дээр хар
 Name[nb]=Svart på hvitt
+Name[nds]=Swatt op witt
 Name[nl]=Zwart op wit
 Name[nn]=Svart på kvitt
 Name[pl]=Czarny na białym
 Name[pt]=Preto no Branco
 Name[pt_BR]=Preto no Branco
 Name[ro]=Negru pe alb
+Name[ru]=Черный на белом
 Name[sk]=Čierna na bielej
 Name[sl]=Črno na belem
 Name[sr]=Црна на белој
 Name[sv]=Svart på vit
 Name[ta]=வெள்ளை மேல் கறுப்பு
+Name[tg]=Сиёҳ дар сафед
 Name[tr]=Beyaz üzeri Siyah
 Name[uk]=Білий на чорному
 Name[uz]=Оқда қора
