@@ -36,19 +36,19 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   _allLoaded = false;
 
   //kdDebug() << "desktopFile = " << desktopFile << endl;
-  KService::Ptr service = KService::serviceByDesktopPath(desktopFile);
-  assert(service);
+  _service = KService::serviceByDesktopPath(desktopFile);
+  assert(_service);
 
   // set the modules simple attributes
-  setName(service->name());
-  setComment(service->comment());
-  setIcon(service->icon());
+  setName(_service->name());
+  setComment(_service->comment());
+  setIcon(_service->icon());
 
   // library and factory
-  setLibrary(service->library());
+  setLibrary(_service->library());
 
   // get the keyword list
-  setKeywords(service->keywords());
+  setKeywords(_service->keywords());
  
   // try to find out the modules groups
   QString group = desktopFile; 
@@ -82,7 +82,7 @@ ModuleInfo::loadAll() const
   non_const_this->setHandle(desktop.readEntry("X-KDE-FactoryName"));
 
   // does the module need super user privileges?
-  non_const_this->setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-NeedsRootPrivileges", false));
+  non_const_this->setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
   // does the module implement a read-only mode?
   non_const_this->setHasReadOnlyMode(desktop.readBoolEntry("X-KDE-HasReadOnlyMode", false));
@@ -116,6 +116,13 @@ ModuleInfo::groups() const
 { 
    return _groups; 
 };
+
+
+KService::Ptr ModuleInfo::service() const
+{
+  return _service;
+}
+
 
 const QStringList &
 ModuleInfo::keywords() const 

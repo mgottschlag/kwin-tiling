@@ -39,7 +39,7 @@ class ProxyWidget : public QWidget
 
 public:
 
-  ProxyWidget(KCModule *client, QString title, const char *name=0);
+  ProxyWidget(KCModule *client, QString title, const char *name=0, bool run_as_root = false);
   ~ProxyWidget();
 
   QString quickHelp();
@@ -54,6 +54,7 @@ public slots:
   void applyClicked();
   void cancelClicked();
   void okClicked();
+  void rootClicked();
 
   void clientChanged(bool state);
 
@@ -63,11 +64,12 @@ signals:
   void closed();
   void helpRequest();
   void changed(bool state);
-  
+  void runAsRoot();
+
 
 private:
 
-  QPushButton *_help, *_default, *_reset, *_apply, *_cancel, *_ok;
+  QPushButton *_help, *_default, *_reset, *_apply, *_cancel, *_ok, *_root;
   QFrame      *_sep;
   KCModule    *_client;
 

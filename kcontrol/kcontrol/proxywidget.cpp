@@ -38,7 +38,8 @@ static void setVisible(QPushButton *btn, bool vis)
     btn->hide();
 }
 
-ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
+ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
+			 bool run_as_root)
   : QWidget(0, name)
   , _client(client)
 {
@@ -57,15 +58,17 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   _cancel = new QPushButton(i18n("&Cancel"), this);
   _apply = new QPushButton(i18n("&Apply"), this);
   _ok = new QPushButton(i18n("&OK"), this);
+  _root = new QPushButton(i18n("R&un as root"), this);
 
   // only enable the requested buttons
   int b = _client->buttons();
   setVisible(_help, b & KCModule::Help);
-  setVisible(_default, b & KCModule::Default);
-  setVisible(_reset, b & KCModule::Reset);
+  setVisible(_default, !run_as_root && b & KCModule::Default);
+  setVisible(_reset, !run_as_root && b & KCModule::Reset);
   setVisible(_cancel, b & KCModule::Cancel);
-  setVisible(_apply, b & KCModule::Apply);
+  setVisible(_apply, !run_as_root && b & KCModule::Apply);
   setVisible(_ok, b & KCModule::Ok);
+  setVisible(_root, run_as_root);
 
   // disable initial buttons
   _reset->setEnabled(false);
@@ -76,7 +79,12 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
-  connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
+  connect(_root, SIGNAL(clicked()), this, SLOT(rootClicked()));
+
+  if (run_as_root)
+    connect(_ok, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+  else
+    connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
 
   QGridLayout *top = new QGridLayout(this, 4, 6, 5);
   top->addMultiCellWidget(client, 1, 1, 0, 6);
@@ -84,7 +92,10 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
   top->addWidget(_help, 3, 0);
   top->addWidget(_default, 3, 1);
   top->addWidget(_reset, 3, 2);
-  top->addWidget(_apply, 3, 4);
+  if (run_as_root)
+    top->addWidget(_root, 3, 4);
+  else
+    top->addWidget(_apply, 3, 4);
   top->addWidget(_ok, 3, 5);
   top->addWidget(_cancel, 3, 6);
 
@@ -143,6 +154,13 @@ void ProxyWidget::okClicked()
   _client->save();
   emit closed();
 }
+
+
+void ProxyWidget::rootClicked()
+{
+  emit runAsRoot();
+}
+
 
 void ProxyWidget::clientChanged(bool state)
 {

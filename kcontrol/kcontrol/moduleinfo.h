@@ -27,6 +27,9 @@
 #include <qstringlist.h>
 
 
+#include <kservice.h>
+
+
 class ModuleInfo : public QObject
 {
   Q_OBJECT 
@@ -40,6 +43,7 @@ public:
   const QStringList &groups() const;
   const QStringList &keywords() const;
   QString name() const;
+  KService::Ptr service() const;
   QString comment() const;
   QString icon() const;
   QString docPath() const;
@@ -72,6 +76,9 @@ private:
   QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
   bool        _directory, _hasReadOnlyMode, _needsRootPrivileges;
   bool        _allLoaded;
+
+  KService::Ptr _service;
+
 };
 
 #endif

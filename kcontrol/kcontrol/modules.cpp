@@ -17,12 +17,17 @@
  
 */                                                                            
 
+#include <unistd.h>
+#include <sys/types.h>
+
+
 #include <qwidget.h>
 
 #include <kapp.h>
 #include <kglobal.h>
 #include <kservicegroup.h>
 #include <kcmodule.h>
+#include <krun.h>
 
 #include "modules.h"
 #include "modules.moc"
@@ -53,10 +58,14 @@ ProxyWidget *ConfigModule::module()
 
   if (modWidget)
     {
-      _module = new ProxyWidget(modWidget, name());
+      bool run_as_root = needsRootPrivileges() && (getuid() != 0);
+
+      _module = new ProxyWidget(modWidget, name(), "", run_as_root);
       connect(_module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
       connect(_module, SIGNAL(closed()), this, SLOT(clientClosed()));
       connect(_module, SIGNAL(helpRequest()), this, SLOT(helpRequest()));
+      connect(_module, SIGNAL(runAsRoot()), this, SLOT(runAsRoot()));
+
       return _module;
     }
 
@@ -88,6 +97,14 @@ void ConfigModule::helpRequest()
 {
   kapp->invokeHTMLHelp(docPath(), "");
 }
+
+
+void ConfigModule::runAsRoot()
+{
+  QStringList urls;
+  KRun::run(*service(), urls);
+}
+
 
 ConfigModuleList::ConfigModuleList()
 {

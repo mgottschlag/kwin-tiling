@@ -56,6 +56,7 @@ private slots:
   void clientClosed();
   void clientChanged(bool state);
   void helpRequest();
+  void runAsRoot();
 
 
 signals:
