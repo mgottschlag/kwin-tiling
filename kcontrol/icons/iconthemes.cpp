@@ -378,17 +378,6 @@ void IconThemesConfig::save()
 
   config->writeEntry("Theme", m_themeNames[selected->text(0)]);
 
-  KIconTheme icontheme(m_themeNames[selected->text(0)]);
-
-  const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
-
-  for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
-  {
-    if (groups[i] == 0L)
-      break;
-    config->setGroup(QString::fromLatin1(groups[i]) + "Icons");
-    config->writeEntry("Size", icontheme.defaultSize(i));
-  }
   delete config;
 
   emit changed(false);
