@@ -178,8 +178,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     topLayout->addLayout(vLayout);
 
     mEnableCheckBox = new QCheckBox( i18n("&Enable screensaver"), this );
-    mEnableCheckBox->setChecked( false );
-    mEnableCheckBox->setEnabled(false);
+    mEnableCheckBox->setChecked( mEnabled );
     connect( mEnableCheckBox, SIGNAL( toggled( bool ) ),
          this, SLOT( slotEnable( bool ) ) );
     vLayout->addWidget(mEnableCheckBox);
@@ -304,8 +303,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 
     setMonitor();
 
-    slotEnable(false);
-  
     // finding the savers can take some time, so defer loading until
     // we've started up.
     mNumLoaded = 0;
@@ -496,10 +493,6 @@ void KScreenSaver::findSavers()
                              !mSaverList.at(mSelected)->setup().isEmpty());
         mTestBt->setEnabled(mEnabled);
         setMonitor();
-        slotEnable(mEnabled);
-	mEnableCheckBox->setChecked(mEnabled);
-        if (mNumLoaded > 0)
-          mEnableCheckBox->setEnabled(true);
     } else {
         mSaverList.sort();
         mSaverListBox->clear();
