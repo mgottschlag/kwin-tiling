@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kmenuedit  -caption "%c" %i %m %u
+Exec=kmenuedit
 Icon=kmenuedit
 DocPath=kmenuedit/index.html
 Type=Application
