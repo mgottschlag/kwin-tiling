@@ -79,16 +79,19 @@
  You can use the "*" wildcard for host, number, and class. You may omit
  trailing components; they are assumed to be "*" then.
  The host part may be a domain specification like ".inf.tu-dresden.de".
+ It may also be "+", which means non-empty, i.e. remote displays only.
  From which section a setting is actually taken is determined by these
  rules:
  - an exact match takes precedence over a partial match (for the host part),
-   which in turn takes precedence over a wildcard
+   which in turn takes precedence over a wildcard ("+" taking precedence
+   over "*")
  - precedence decreases from left to right for equally exact matches
  Example: display name "myhost:0", class "dpy".
  [X-myhost:0_dpy] precedes
  [X-myhost:0_*] (same as [X-myhost:0]) precedes
  [X-myhost:*_dpy] precedes
  [X-myhost:*_*] (same as [X-myhost]) precedes
+ [X-+:0_dpy] precedes
  [X-*:0_dpy] precedes
  [X-*:0_*] (same as [X-*:0]) precedes
  [X-*:*_*] (same as [X-*])
@@ -175,11 +178,12 @@ display class (which can be ignored in most cases).</para>
 <para>All sections with the same <replaceable>sub-section</replaceable>
 make up a section class.</para>
 
-<para>You can use the <literal>*</literal> wildcard for
+<para>You can use the wildcard <literal>*</literal> (match any) for
 <replaceable>host</replaceable>, <replaceable>number</replaceable>, 
 and <replaceable>class</replaceable>. You may omit trailing components;
 they are assumed to be <literal>*</literal> then. The host part may be a
-domain specification like <replaceable>.inf.tu-dresden.de</replaceable>.</para>
+domain specification like <replaceable>.inf.tu-dresden.de</replaceable>
+or the wildcard <literal>+</literal> (match non-empty).</para>
 
 <para>From which section a setting is actually taken is determined by
 these rules:</para>
@@ -187,7 +191,8 @@ these rules:</para>
 <itemizedlist>
 <listitem>
 <para>An exact match takes precedence over a partial match (for the
-host part), which in turn takes precedence over a wildcard.</para>
+host part), which in turn takes precedence over a wildcard
+(<literal>+</literal> taking precendence over <literal>*</literal>).</para>
 </listitem>
 
 <listitem>
@@ -201,16 +206,22 @@ Example: display name <quote>myhost:0</quote>, class <quote>dpy</quote>
 </para>
 <itemizedlist>
 <listitem>
-<para>[X-myhost:0_dpy] precedes</para>
+<para>[X-myhost.foo:0_dpy] precedes</para>
 </listitem>
 <listitem>
-<para>[X-myhost:0_*] (same as [X-myhost:0]) precedes</para>
+<para>[X-myhost.foo:0_*] (same as [X-myhost.foo:0]) precedes</para>
 </listitem>
 <listitem>
-<para>[X-myhost:*_dpy] precedes</para>
+<para>[X-myhost.foo:*_dpy] precedes</para>
 </listitem>
 <listitem>
-<para>[X-myhost:*_*] (same as [X-myhost]) precedes</para>
+<para>[X-myhost.foo:*_*] (same as [X-myhost.foo]) precedes</para>
+</listitem>
+<listitem>
+<para>[X-.foo:*_*] (same as [X-.foo]) precedes</para>
+</listitem>
+<listitem>
+<para>[X-+:0_dpy] precedes</para>
 </listitem>
 <listitem>
 <para>[X-*:0_dpy] precedes</para>
@@ -223,7 +234,7 @@ Example: display name <quote>myhost:0</quote>, class <quote>dpy</quote>
 </listitem>
 <listitem>
 <para>These sections do <emphasis>not</emphasis> match this display:</para>
-<para>[X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]</para>
+<para>[X-hishost], [X-myhost.foo:0_dec], [X-*:1], [X-:*]</para>
 </listitem>
 </itemizedlist>
 

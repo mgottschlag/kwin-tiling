@@ -632,7 +632,7 @@ FindGEnt (int id)
 /* Display name match scoring:
  * - class (any/exact) -> 0/1
  * - number (any/exact) -> 0/2
- * - host (any/trail/wild/exact) -> 0/4/8/12
+ * - host (any/nonempty/trail/exact) -> 0/4/8/12
  */
 static Entry *
 FindDEnt (int id, DSpec *dspec)
@@ -660,12 +660,17 @@ FindDEnt (int id, DSpec *dspec)
 		    continue;
 	    }
 	    if (cursec->dhostl != 1 || cursec->dhost[0] != '*') {
-		if (cursec->dhost[0] == '.') {
+		if (cursec->dhostl == 1 && cursec->dhost[0] == '+') {
+		    if (dspec->dhostl)
+			score += 4;
+		    else
+			continue;
+		} else if (cursec->dhost[0] == '.') {
 		    if (cursec->dhostl < dspec->dhostl && 
 			!memcmp (cursec->dhost, 
 				 dspec->dhost + dspec->dhostl - cursec->dhostl, 
 				 cursec->dhostl))
-			score += 4;
+			score += 8;
 		    else
 			continue;
 		} else {
