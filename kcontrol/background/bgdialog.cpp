@@ -327,7 +327,7 @@ void BGDialog::initUI()
       KFileMetaInfo metaInfo(*it);
       QString imageCaption;
 
-      if (metaInfo.item("Comment").isValid())
+      if (metaInfo.isValid() && metaInfo.item("Comment").isValid())
          imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
 
       if (imageCaption.isEmpty())
@@ -627,7 +627,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       }
 
       KFileMetaInfo metaInfo(uri);
-      if (metaInfo.item("Dimensions").isValid())
+      if (metaInfo.isValid() && metaInfo.item("Dimensions").isValid())
       {
          // If the image is greater than 800x600 default to using scaled mode,
          // otherwise default to tiled.
