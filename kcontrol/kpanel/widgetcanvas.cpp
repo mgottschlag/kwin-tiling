@@ -128,7 +128,7 @@ QColorGroup WidgetCanvas::makeColorGroup(const QColor &fg, const QColor &bg)
 {
     return(QColorGroup( fg, bg, bg.light(150), bg.dark(),
                         bg.dark(120), fg,
-                        kapp->palette()->normal().base()));
+                        kapp->palette().normal().base()));
 }
 
 QSize WidgetCanvas::sizeHint() const

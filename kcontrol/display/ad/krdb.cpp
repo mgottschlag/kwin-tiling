@@ -107,7 +107,7 @@ QString fontString( QFont rFont, FontStyle style )
 main( int argc, char ** argv )
 {
 	KApplication a( argc, argv );
-	QColorGroup cg = a.palette()->normal();
+	QColorGroup cg = a.palette().normal();
 	
 	int contrast = 7;
 	

@@ -130,7 +130,7 @@ void KDisplayApplication::apply()
     general->applySettings();
 
   if (colors || fonts) {
-      QPalette pal = colors?colors->createPalette():*qApp->palette();
+      QPalette pal = colors?colors->createPalette():qApp->palette();
 
       KConfig *config = kapp->getConfig();
       config->reparseConfiguration();
