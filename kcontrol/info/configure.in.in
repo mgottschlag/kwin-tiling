@@ -8,26 +8,3 @@ AC_SUBST(LIB_TRU64_MACH)
 
 KDE_CHECK_LONG_LONG
 
-dnl Checks for Solaris' libkstat
-kde_have_kstat=yes
-AC_CHECK_LIB(kstat, kstat_open, [LIBKSTAT=-lkstat], kde_have_kstat=no)
-AC_SUBST(LIBKSTAT)
-if test "$kde_have_kstat" = "yes"; then
-  AC_DEFINE(HAVE_KSTAT, 1, [Defines if you have Solaris' libkstat])
-fi
-
-dnl Checks for libdevinfo (Solaris 7 and later)
-dnl since the library is available on earlier Solaris releases (but
-dnl with a completely different and undocumented interface),
-dnl we have to verfy that the required header is present as well
-AC_CHECK_HEADER(libdevinfo.h,
-	kde_have_libdevinfo_h=yes,
-	kde_have_libdevinfo_h=no)
-if test "$kde_have_libdevinfo_h" = "yes"; then
-   kde_have_libdevinfo_lib=yes
-   AC_CHECK_LIB(devinfo, di_init, [LIBDEVINFO=-ldevinfo], kde_have_libdevinfo_lib=no)
-   if test "$kde_have_libdevinfo_lib" = "yes"; then
-      AC_DEFINE(HAVE_LIBDEVINFO_H, 1, [Defines if you have libdevinfo of Solaris 7 or later])
-      AC_SUBST(LIBDEVINFO)
-   fi
-fi
