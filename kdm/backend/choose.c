@@ -83,7 +83,7 @@ RememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 		if (XdmcpARRAY8Equal( clientAddress, &i->client ) &&
 		    connectionType == i->connectionType)
 			return 1;
-	i = (IndirectUsersPtr)Malloc( sizeof(IndirectUsersRec));
+	i = (IndirectUsersPtr)Malloc( sizeof(IndirectUsersRec) );
 	if (!XdmcpCopyARRAY8( clientAddress, &i->client )) {
 		free( (char *)i );
 		return 0;
@@ -191,7 +191,7 @@ RegisterIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	insert = 0;
 	if (!c) {
 		insert = 1;
-		c = (ChoicePtr)Malloc( sizeof(ChoiceRec));
+		c = (ChoicePtr)Malloc( sizeof(ChoiceRec) );
 		if (!c)
 			return 0;
 		c->connectionType = connectionType;
@@ -523,11 +523,12 @@ emptyPingHosts( void )
 
 /* Handle variable length ifreq in BNR2 and later */
 #ifdef VARIABLE_IFREQ
-# define ifr_size(p) (sizeof (struct ifreq) + \
-					  (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
-					   p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
+# define ifr_size(p) \
+	(sizeof(struct ifreq) + \
+	 (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
+	  p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
 #else
-# define ifr_size(p) (sizeof (struct ifreq))
+# define ifr_size(p) (sizeof(struct ifreq))
 #endif
 
 #define IFC_REQ(ifc) ifc.ifc_req

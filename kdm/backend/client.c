@@ -1172,7 +1172,7 @@ StartClient()
 			char netname[MAXNETNAMELEN+1];
 			char domainname[MAXNETNAMELEN+1];
 
-			getdomainname( domainname, sizeof domainname );
+			getdomainname( domainname, sizeof(domainname) );
 			user2netname( netname, curuid, domainname );
 			addr.family = FamilyNetname;
 			addr.length = strlen( netname );
@@ -1575,18 +1575,18 @@ ReadDmrc()
 			exit( 0 );
 		if (!(data = iniLoad( fname ))) {
 			static const int m1 = -1;
-			write( pfd[1], &m1, sizeof(int));
+			write( pfd[1], &m1, sizeof(int) );
 			exit( 0 );
 		}
 		len = strlen( data );
-		write( pfd[1], &len, sizeof(int));
+		write( pfd[1], &len, sizeof(int) );
 		write( pfd[1], data, len + 1 );
 		exit( 0 );
 	}
 	close( pfd[1] );
 	free( fname );
 	err = GE_Error;
-	if (Reader( pfd[0], &len, sizeof(int)) == sizeof(int)) {
+	if (Reader( pfd[0], &len, sizeof(int) ) == sizeof(int)) {
 		if (len == -1)
 			err = GE_Denied;
 		else if ((curdmrc = Malloc( len + 1 ))) {

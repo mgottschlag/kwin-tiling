@@ -666,7 +666,7 @@ GSendStr( const char *buf )
 		GWrite( &len, sizeof(len) );
 		GWrite( buf, len );
 	} else
-		GWrite( &buf, sizeof(int));
+		GWrite( &buf, sizeof(int) );
 }
 
 void
@@ -731,7 +731,7 @@ GRecvStrArr( int *rnum )
 	*rnum = num;
 	if (!num)
 		return (char **)0;
-	if (!(argv = Malloc( num * sizeof(char *))))
+	if (!(argv = Malloc( num * sizeof(char *) )))
 		GErr();
 	for (cargv = argv; --num >= 0; cargv++)
 		*cargv = GRecvStr();
@@ -749,7 +749,7 @@ GSendArgv( char **argv )
 		iGSendStrArr( num + 1, argv );
 	} else {
 		GDebug( "sending NULL argv to %s\n", curtalk->pipe->who );
-		GWrite( &argv, sizeof(int));
+		GWrite( &argv, sizeof(int) );
 	}
 }
 

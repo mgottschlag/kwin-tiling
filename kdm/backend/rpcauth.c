@@ -57,7 +57,7 @@ SecureRPCGetAuth( unsigned short namelen, const char *name )
 	Xauth *new;
 	char key[MAXNETNAMELEN+1];
 
-	new = (Xauth *)Malloc( sizeof *new );
+	new = (Xauth *)Malloc( sizeof(*new) );
 	if (!new)
 		return (Xauth *)0;
 	new->family = FamilyWild;

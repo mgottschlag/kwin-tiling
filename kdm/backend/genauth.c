@@ -359,7 +359,7 @@ sumFile( const char *name, int len, int whence, long offset )
 			return -1;
 		}
 		readlen += cnt;
-		if (sizeof(unsigned)== 4)
+		if (sizeof(unsigned) == 4)
 			add_entropy( (unsigned *)buf, (cnt + 3) / 4 );
 		else {
 			unsigned buf2[sizeof(buf) / 4];
@@ -435,7 +435,7 @@ GenerateAuthData( char *auth, int len )
 #ifdef HAVE_ARC4RANDOM
 	int i;
 	unsigned *rnd = (unsigned *)auth;
-	if (sizeof(unsigned)== 4)
+	if (sizeof(unsigned) == 4)
 		for (i = 0; i < len; i += 4)
 			rnd[i / 4] = arc4random();
 	else
@@ -476,7 +476,7 @@ GenerateAuthData( char *auth, int len )
 		add_entropy( tmp, 1 );
 		pmd5_hash( tmp, epool + 16 );
 		add_entropy( tmp + 2, 1 );
-		if (sizeof(unsigned)== 4)
+		if (sizeof(unsigned) == 4)
 			memcpy( auth, tmp, len );
 		else {
 			int i;

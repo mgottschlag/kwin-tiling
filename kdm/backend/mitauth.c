@@ -53,7 +53,7 @@ Xauth *
 MitGetAuth( unsigned short namelen, const char *name )
 {
 	Xauth *new;
-	new = (Xauth *)Malloc( sizeof(Xauth));
+	new = (Xauth *)Malloc( sizeof(Xauth) );
 
 	if (!new)
 		return (Xauth *)0;

@@ -86,7 +86,7 @@ Krb5GetAuthFor( unsigned short namelen, const char *name, const char *dname )
 	Xauth *new;
 	char *filename;
 
-	if (!(new = (Xauth *)Malloc( sizeof *new )))
+	if (!(new = (Xauth *)Malloc( sizeof(*new) )))
 		return (Xauth *)0;
 	new->family = FamilyWild;
 	new->address_length = 0;

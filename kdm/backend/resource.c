@@ -240,11 +240,11 @@ LoadResources( CfgArr *conf )
 	nint = GRecvInt();
 	nchr = GRecvInt();
 	if (!(conf->data = Malloc( conf->numCfgEnt *
-	                           (sizeof(long) +
-	                            sizeof(char *)) +
-	                            nptr * sizeof(char *) +
-	                            nint * sizeof(long) +
-	                            nchr )))
+	                             (sizeof(long) +
+	                              sizeof(char *)) +
+	                           nptr * sizeof(char *) +
+	                           nint * sizeof(long) +
+	                           nchr )))
 	{
 		CloseGetter();
 		return;

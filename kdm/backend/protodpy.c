@@ -84,7 +84,7 @@ NewProtoDisplay( XdmcpNetaddr address, int addrlen, CARD16 displayNumber,
 
 	Debug( "NewProtoDisplay\n" );
 	TimeoutProtoDisplays ();
-	pdpy = (struct protoDisplay *)Malloc( sizeof *pdpy );
+	pdpy = (struct protoDisplay *)Malloc( sizeof(*pdpy) );
 	if (!pdpy)
 		return NULL;
 	pdpy->address = (XdmcpNetaddr)Malloc( addrlen );

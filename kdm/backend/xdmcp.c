@@ -242,7 +242,7 @@ ProcessRequestSocket( int fd )
 #else
 	struct sockaddr addr;
 #endif
-	int addrlen = sizeof addr;
+	int addrlen = sizeof(addr);
 
 	Debug( "ProcessRequestSocket\n" );
 	bzero( (char *)&addr, sizeof(addr) );
@@ -926,7 +926,7 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			d->connectionType = connectionType;
 			XdmcpDisposeARRAY8( &clientPort );
 			if (pdpy->fileAuthorization) {
-				d->authorizations = (Xauth **)Malloc( sizeof(Xauth *));
+				d->authorizations = (Xauth **)Malloc( sizeof(Xauth *) );
 				if (!d->authorizations) {
 					free( (char *)from_save );
 					free( (char *)d );

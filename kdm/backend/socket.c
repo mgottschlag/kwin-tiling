@@ -164,12 +164,12 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 {
 	struct socklist *s;
 
-	if (!(s = Calloc( 1, sizeof(struct socklist))))
+	if (!(s = Calloc( 1, sizeof(struct socklist) )))
 		return NULL;
 
 	if (addr->length == 4) { /* IPv4 */
 		struct sockaddr_in *sin4;
-		sin4 = Calloc( 1, sizeof(struct sockaddr_in));
+		sin4 = Calloc( 1, sizeof(struct sockaddr_in) );
 #ifdef BSD44SOCKETS
 		sin4->sin_len = sizeof(struct sockaddr_in);
 #endif
@@ -183,7 +183,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 #if defined(IPv6) && defined(AF_INET6)
 	else if (addr->length == 16) { /* IPv6 */
 		struct sockaddr_in6 *sin6;
-		sin6 = Calloc( 1, sizeof(struct sockaddr_in6));
+		sin6 = Calloc( 1, sizeof(struct sockaddr_in6) );
 #ifdef SIN6_LEN
 		sin6->sin6_len = sizeof(struct sockaddr_in6);
 #endif
@@ -265,10 +265,10 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 			struct ip_mreq mreq;
 			memcpy( &mreq.imr_multiaddr,
 			        &((struct sockaddr_in *)g->addr)->sin_addr,
-			        sizeof(struct in_addr));
+			        sizeof(struct in_addr) );
 			memcpy( &mreq.imr_interface,
 			        &((struct sockaddr_in *)s->addr)->sin_addr,
-			        sizeof(struct in_addr));
+			        sizeof(struct in_addr) );
 			if (op == JOIN_MCAST_GROUP)
 				sockopt = IP_ADD_MEMBERSHIP;
 			else
@@ -298,7 +298,7 @@ ChangeMcastMembership( struct socklist *s, struct socklist *g, int op )
 			struct ipv6_mreq mreq6;
 			memcpy( &mreq6.ipv6mr_multiaddr,
 			        &((struct sockaddr_in6 *)g->addr)->sin6_addr,
-			        sizeof(struct in6_addr));
+			        sizeof(struct in6_addr) );
 			mreq6.ipv6mr_interface = 0;  /* TODO: fix this */
 			if (op == JOIN_MCAST_GROUP)
 				sockopt = IPV6_JOIN_GROUP;

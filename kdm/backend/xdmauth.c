@@ -68,7 +68,7 @@ XdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 {
 	Xauth *new;
 
-	if (!(new = (Xauth *)Malloc( sizeof(Xauth))))
+	if (!(new = (Xauth *)Malloc( sizeof(Xauth) )))
 		return (Xauth *)0;
 	new->family = FamilyWild;
 	new->address_length = 0;
@@ -129,7 +129,7 @@ XdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	                              FALSE );
 	if (!xdmcpauth)
 		return;
-	fileauth = (Xauth *)Malloc( sizeof(Xauth));
+	fileauth = (Xauth *)Malloc( sizeof(Xauth) );
 	if (!fileauth) {
 		XauDisposeAuth( xdmcpauth );
 		return;

@@ -115,15 +115,15 @@ getLocalAddress( void )
 			localAddress.data[3] = 1;
 		} else {
 			if (ai->ai_family == AF_INET) {
-				XdmcpAllocARRAY8( &localAddress, sizeof(struct in_addr));
+				XdmcpAllocARRAY8( &localAddress, sizeof(struct in_addr) );
 				memcpy( localAddress.data,
 				        &((struct sockaddr_in *)ai->ai_addr)->sin_addr,
-				        sizeof(struct in_addr));
+				        sizeof(struct in_addr) );
 			} else /* if (ai->ai_family == AF_INET6) */ {
-				XdmcpAllocARRAY8( &localAddress, sizeof(struct in6_addr));
+				XdmcpAllocARRAY8( &localAddress, sizeof(struct in6_addr) );
 				memcpy( localAddress.data,
 				        &((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr,
-				        sizeof(struct in6_addr));
+				        sizeof(struct in6_addr) );
 			}
 			freeaddrinfo( ai );
 #else
@@ -160,10 +160,10 @@ ScanAccessDatabase( int force )
 	accData->nAcls = GRecvInt();
 	nChars = GRecvInt();
 	if (!(accData->hostList = (HostEntry *)
-	      Malloc( accData->nHosts * sizeof(HostEntry)+
-	              accData->nListens * sizeof(ListenEntry)+
-	              accData->nAliases * sizeof(AliasEntry)+
-	              accData->nAcls * sizeof(AclEntry)+
+	      Malloc( accData->nHosts * sizeof(HostEntry) +
+	              accData->nListens * sizeof(ListenEntry) +
+	              accData->nAliases * sizeof(AliasEntry) +
+	              accData->nAcls * sizeof(AclEntry) +
 	              nChars )))
 	{
 		CloseGetter();

@@ -166,7 +166,7 @@ main( int argc, char **argv )
 	 */
 	noDaemonMode = getppid();
 	errorLogFile = 0;
-	if (!(opts = Malloc( 2 * sizeof(char *))))
+	if (!(opts = Malloc( 2 * sizeof(char *) )))
 		return 1;
 	opts[0] = (char *)"";
 	opts[1] = 0;
