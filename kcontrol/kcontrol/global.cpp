@@ -25,6 +25,10 @@
 #include <ksycoca.h>
 #include <kdebug.h>
 
+#include <qobjectlist.h>
+#include <qaccel.h>
+#include <qwidget.h>
+
 #include "config.h"
 #include "utils.h"
 #include "global.h"
@@ -93,4 +97,16 @@ QString KCGlobal::baseGroup()
     }
   }
   return _baseGroup;
+}
+
+void KCGlobal::repairAccels( QWidget * tw )
+{
+    QObjectList * l = tw->queryList( "QAccel" );
+    QObjectListIt it( *l );             // iterate over the buttons
+    QObject * obj;
+    while ( (obj=it.current()) != 0 ) { // for each found object...
+        ++it;
+        ((QAccel*)obj)->repairEventFilter();
+    }
+    delete l;                           // delete the list, not the objects
 }

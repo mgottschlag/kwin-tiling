@@ -71,7 +71,7 @@ void DockContainer::dockModule(ConfigModule *module)
 
   if (_module && _module->isChanged())
     {
-      
+
       int res = KMessageBox::warningYesNo(this,
 module ?
 i18n("There are unsaved changes in the "
@@ -129,15 +129,7 @@ i18n("There are unsaved changes in the "
   }
   _busy->hide();
 
-  QObjectList * l = topLevelWidget()->queryList( "QAccel" );
-  QObjectListIt it( *l );             // iterate over the buttons
-  QObject * obj;
-  while ( (obj=it.current()) != 0 ) { // for each found object...
-      ++it;
-      ((QAccel*)obj)->repairEventFilter();
-  }
-  delete l;                           // delete the list, not the objects
-
+  KCGlobal::repairAccels( topLevelWidget() );
 }
 
 void DockContainer::removeModule()

@@ -58,6 +58,8 @@ public:
   static void setViewMode(IndexViewMode m) { _viewmode = m; }
   static void setIconSize(IndexIconSize s) { _iconsize = s; }
 
+  static void repairAccels( QWidget * tw );
+
 private:
   static bool _root;
   static QStringList _types;

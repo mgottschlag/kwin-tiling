@@ -27,6 +27,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klibloader.h>
+#include <global.h>
 
 #include "kecdialog.h"
 #include "kecdialog.moc"
@@ -103,4 +104,6 @@ void KExtendedCDialog::addModule(const QString& path, bool withfallback)
     connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
     //setHelp( docpath, QString::null );
     modules.append(module);
+
+    KCGlobal::repairAccels( topLevelWidget() );
 }

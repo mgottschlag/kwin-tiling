@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kapp.h>
 #include <kwin.h>
+#include <global.h>
 
 #include "kcdialog.h"
 #include "kcdialog.moc"
@@ -32,7 +33,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
                 (b & KCModule::Help ? Help : 0) |
                 (b & KCModule::Default ? User1 : 0) |
                 (b & KCModule::Apply ? (Ok | Apply | Cancel) : Close),
-                (b & KCModule::Apply ? Ok : Close), 
+                (b & KCModule::Apply ? Ok : Close),
                 true, i18n("Use &Defaults")),
     DCOPObject("dialog"),
     _client(client)
@@ -44,6 +45,8 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     setHelp( docpath, QString::null );
 
     enableButton(Apply, false);
+
+    KCGlobal::repairAccels( topLevelWidget() );
 }
 
 void KCDialog::slotUser1()
