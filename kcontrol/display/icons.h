@@ -4,6 +4,8 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 2000 Geert Jansen <jansen@kde.org>
+ * with minor additions and based on ideas from
+ * Torsten Rahn <torsten@kde.org>                                               
  * 
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
@@ -15,7 +17,9 @@
 #include <kcmodule.h>
 #include <qvaluelist.h>
 #include <qcolor.h>
+#include <qdialog.h>
 
+class QColor;
 class QWidget;
 class QCheckBox;
 class QComboBox;
@@ -26,8 +30,7 @@ class KConfig;
 class KIconEffect;
 class KIconTheme;
 class KIconLoader;
-class QIconView;
-class QIconViewItem;
+class KColorButton;
 
 /**
  * The Desktop/icons tab in kcontrol.
@@ -38,39 +41,35 @@ class KIconConfig: public KCModule
 
 public:
     KIconConfig(QWidget *parent, const char *name);
-
     virtual void load();
     virtual void save();
     virtual void defaults();
+    void preview();
 
 signals:
     void changed(bool);
 
 private slots:
+    void slotEffectSetup();
     void slotUsage(int index);
     void slotState(int index);
     void slotEffect(int index);
-    void slotEffectValue(int value);
     void slotSize(int index);
     void slotDPCheck(bool check);
+    void slotSTCheck(bool check);
 
-    void slotBgColorChanged(const QColor &);
-    void slotNormalColorChanged(const QColor &);
-    void slotHiliteColorChanged(const QColor &);
-    void slotUnderline(bool);
-    void slotWrap(bool);
-    
 private:
     void init();
     void read();
     void apply();
-    void preview();
 
-    bool mbDP[4], mbChanged[4];
-    int mSizes[4];
-    QValueList<int> mAvSizes[4];
-    int mEffects[4][3];
-    float mEffectValues[4][3];
+    bool mbDP[6], mbChanged[6];
+    int mSizes[6];
+    QValueList<int> mAvSizes[6];
+    int mEffects[6][3];
+    float mEffectValues[6][3];
+    QColor mEffectColors[6][3];
+    bool mEffectTrans[6][3];
 
     int mUsage, mState;
     QString mTheme, mExample;
@@ -81,16 +80,43 @@ private:
     KIconLoader *mpLoader;
     KConfig *mpConfig;
 
-    QIconView *mpPreview;
-    QIconViewItem *mpPreviewItem;
-    
+    QLabel *mpPreview;
     QListBox *mpUsageList, *mpStateList;
     QComboBox *mpEffectBox, *mpSizeBox;
-    QSlider *mpEffectSlider;
-    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB;
-
-    bool wrap, underline;	
-    QColor bgColor, normalColor, hiliteColor;
+    QCheckBox *mpDPCheck;
+    QCheckBox *mpSTCheck;
+    QPushButton *mpESetupBut;
 };
 
+class KIconEffectSetupDialog: public QDialog
+{
+    Q_OBJECT
+     
+    public:
+    KIconEffectSetupDialog(QColor m_pEfColor, 
+    float m_pEfValue, int m_pEfTyp,                                          
+    QWidget *parent=0L, char *name=0L);
+    QColor fxcolor() { return m_pEfColor; }
+    float fxvalue() { return m_pEfValue; }
+
+signals:
+    void changed(bool);
+
+
+public slots:
+    void slotHelp();
+    void slotOK();    
+
+private:
+    QSlider *mpEffectSlider;
+    KColorButton *mpEColButton;
+    QColor m_pEfColor;
+    float m_pEfValue;
+
+private slots:
+    void slotEffectValue(int value);
+    void slotEffectColor(const QColor &col);
+
+};                      
+                      
 #endif
