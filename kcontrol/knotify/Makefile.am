@@ -12,8 +12,8 @@ METASOURCES = AUTO
 
 noinst_HEADERS = knotify.h
 
-messages:
-	$(XGETTEXT) $(kcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcmnotify.pot
 
 xdg_apps_DATA = kcmnotify.desktop
 
