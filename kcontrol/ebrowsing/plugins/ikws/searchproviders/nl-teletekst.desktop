@@ -44,4 +44,4 @@ Name[zu]=Umnikeli wosesho lwe-Teletekst
 Type=Service
 ServiceTypes=SearchProvider
 Keys=tt,teletekst
-Query[nl]=http://teletekst.nos.nl/cgi-bin/tt/nos/page/t/o/m/x/n/\\{@}
+Query[nl]=http://teletekst.nos.nl/gif/\\{@}-01.html
