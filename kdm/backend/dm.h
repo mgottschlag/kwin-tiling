@@ -427,6 +427,8 @@ extern void WipeStr (char *str);
 extern char **initStrArr (char **arr);
 extern char **extStrArr (char ***arr);
 extern char **addStrArr (char **arr, char *str, int len);
+extern char **xCopyStrArr (int rn, char **arr);
+extern void mergeStrArrs (char ***darr, char **arr);
 extern void freeStrArr (char **arr);
 extern char **parseArgs (char **argv, char *string);
 extern char **setEnv (char **e, char *name, char *value);

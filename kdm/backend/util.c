@@ -162,15 +162,22 @@ initStrArr (char **arr)
     return arr;
 }
 
+static int
+arrLen (char **arr)
+{
+    int nu = 0;
+    if (arr)
+	for (; arr[nu]; nu++);
+    return nu;
+}
+
 char **
 extStrArr (char ***arr)
 {
     char **rarr;
     int nu;
 
-    nu = 0;
-    if (*arr)
-	for (; (*arr)[nu]; nu++);
+    nu = arrLen (*arr);
     if ((rarr = realloc (*arr, sizeof (char *) * (nu + 2)))) {
 	*arr = rarr;
 	rarr[nu + 1] = 0;
@@ -189,6 +196,35 @@ addStrArr (char **arr, char *str, int len)
     if ((dst = extStrArr (&arr)))
 	(void) StrNDup (dst, str, len);
     return arr;    
+}
+
+char **
+xCopyStrArr (int rn, char **arr)
+{
+    char **rarr;
+    int nnu, nu, i;
+
+    nu = arrLen (arr);
+    nnu = nu + rn;
+    if ((rarr = calloc (sizeof (char *), nnu + 1)))
+	for (i = 0; i < nu; i++)
+	    rarr[rn + i] = arr[i];
+    return rarr;
+}
+
+void
+mergeStrArrs (char ***darr, char **arr)
+{
+    char **rarr;
+    int nu, i;
+
+    nu = arrLen (*darr);
+    if ((rarr = xCopyStrArr (nu, arr))) {
+	for (i = 0; i < nu; i++)
+	    rarr[i] = (*darr)[i];
+	free (*darr);
+	*darr = rarr;
+    }
 }
 
 void

@@ -195,7 +195,7 @@ execute (char **argv, char **environ)
      * a reasonable thing
      */
     if (errno != ENOENT) {
-	char	program[1024], *e, **newargv, **av;
+	char	program[1024], *e, **newargv;
 	FILE	*f;
 
 	/*
@@ -220,9 +220,7 @@ execute (char **argv, char **environ)
 	    newargv = parseArgs (0, program + 2);
 	else
 	    newargv = addStrArr (0, "/bin/sh", 7);
-	for (; *argv; argv++)
-	    if ((av = extStrArr (&newargv)))
-		*av = *argv;
+	mergeStrArrs (&newargv, argv);
 	Debug ("Shell script execution: %[s\n", newargv);
 	execve (newargv[0], newargv, environ);
     }
@@ -292,7 +290,7 @@ GCloseAll ()
 char *
 GOpen (char **argv, char *what, char **env)
 {
-    char **margv, **av, coninfo[20];
+    char **margv, coninfo[20];
 
     if (gpid)
 	return "another helper program is already running";
@@ -305,27 +303,19 @@ GOpen (char **argv, char *what, char **env)
     }
     RegisterCloseOnFork (opipe[1]);
     RegisterCloseOnFork (ipipe[0]);
-    margv = 0;
-    if (!extStrArr (&margv))
-	goto meme1;
-    margv[0] = 0;
-    if (!StrApp (margv, progpath, what, (char *)0)) {
-      meme2:
-	freeStrArr (margv);
-      meme1:
+    if (!(margv = xCopyStrArr (1, argv))) {
 	GCloseAll ();
 	return "out of memory";
     }
-    if (argv) {
-	for (; *argv; argv++)
-	    if (!(av = extStrArr (&margv)))
-		goto meme2;
-	    else
-		*av = *argv;
+    if (!StrApp (margv, progpath, what, (char *)0)) {
+	free (margv);
+	GCloseAll ();
+	return "out of memory";
     }
     switch (gpid = Fork()) {
     case -1:
-	freeStrArr (margv);
+	free (margv[0]);
+	free (margv);
 	GCloseAll ();
 	return "fork() failed";
     case 0:
@@ -336,7 +326,8 @@ GOpen (char **argv, char *what, char **env)
 	LogPanic ("Cannot execute '%s'\n", margv[0]);
     default:
 	Debug ("Forked helper %s, pid %d\n", margv[0], gpid);
-	freeStrArr (margv);
+	free (margv[0]);
+	free (margv);
 	close (opipe[0]);
 	close (ipipe[1]);
 	(void) Signal (SIGPIPE, SIG_IGN);

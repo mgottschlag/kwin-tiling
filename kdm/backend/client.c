@@ -119,50 +119,51 @@ PAM_conv (int num_msg,
     int count;
     struct pam_response *reply;
 
-    if (!(reply = calloc(num_msg, sizeof(struct pam_response))))
+    if (!(reply = calloc(num_msg, sizeof(*reply))))
 	return PAM_CONV_ERR;
 
     for (count = 0; count < num_msg; count++) {
 	switch (msg[count]->msg_style) {
 	case PAM_TEXT_INFO:
-	    StrApp(&infostr, msg[count]->msg, "\n", (char *)0);
+	    if (!StrApp(&infostr, msg[count]->msg, "\n", (char *)0))
+		goto conv_err;
 	    break;
 	case PAM_ERROR_MSG:
-	    StrApp(&errstr, msg[count]->msg, "\n", (char *)0);
+	    if (!StrApp(&errstr, msg[count]->msg, "\n", (char *)0))
+		goto conv_err;
 	    break;
 	case PAM_PROMPT_ECHO_OFF:
 	    /* wants password */
+	    if (!StrDup (&reply[count].resp, PAM_password))
+		goto conv_err;
 	    reply[count].resp_retcode = PAM_SUCCESS;
-	    StrDup (&reply[count].resp, PAM_password);
 	    break;
 	case PAM_PROMPT_ECHO_ON:
 	    /* user name given to PAM already */
 	    /* fall through */
 	default:
 	    /* unknown */
-	    goto conV_AUTH;
+	    goto conv_err;
 	}
     }
-
     *resp = reply;
     return PAM_SUCCESS;
 
-  conV_AUTH:
-    for (count = 0; count < num_msg; ++count) {
-	if (reply[count].resp == NULL)
-	    continue;
-	switch (msg[count]->msg_style) {
-	case PAM_PROMPT_ECHO_ON:
-	case PAM_PROMPT_ECHO_OFF:
-	    WipeStr(reply[count].resp);
-	    break;
-	case PAM_ERROR_MSG:
-	case PAM_TEXT_INFO:
-	    /* should not actually be able to get here... */
-	    free(reply[count].resp);
+  conv_err:
+    for (; count >= 0; count--)
+	if (reply[count].resp) {
+	    switch (msg[count]->msg_style) {
+	    case PAM_ERROR_MSG:
+	    case PAM_TEXT_INFO:
+	    case PAM_PROMPT_ECHO_ON:
+		free(reply[count].resp);
+		break;
+	    case PAM_PROMPT_ECHO_OFF:
+		WipeStr(reply[count].resp);
+		break;
+	    }
+	    reply[count].resp = 0;
 	}
-	reply[count].resp = NULL;
-    }
     /* forget reply too */
     free (reply);
     return PAM_CONV_ERR;
@@ -847,9 +848,9 @@ static int sourceReset = 0;
 int
 StartClient(struct display *d, char *name, char *pass, char **sessargs)
 {
-    int		i, pretc, nargs;
+    int		i, pretc;
     char	*shell, *home;
-    char	**argv, **avpt;
+    char	**argv;
 #ifdef USE_PAM
     char	**pam_env;
 #else
@@ -1214,9 +1215,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    }
 	argv = parseArgs (0, d->session);
 Debug ("session args: %'[s\n", sessargs);
-	for (nargs = 0; sessargs[nargs]; nargs++)
-	    if ((avpt = extStrArr (&argv)))
-		*avpt = sessargs[nargs];
+	mergeStrArrs (&argv, sessargs);
 	if (!argv || !argv[0])
 	    argv = addStrArr (argv, "xsession", 8);
 	if (argv) {
