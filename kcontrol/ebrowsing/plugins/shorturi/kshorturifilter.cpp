@@ -43,8 +43,9 @@
 
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
+#define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
 #define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[[0-9][0-9]?[0-9]?]?/?"
-#define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
+#define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
 
@@ -64,9 +65,10 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 {
   // Loose many of the QRegExp matches as they tend
   // to slow things down.  They are also unnecessary!! (DA)
-  if ( cmd[cmd.length()-1] == '&' || !cmd.contains('.') ||
-       cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||
-       cmd.contains(QRegExp(QFL1("[ ;<>]"))) )
+    if ( cmd[cmd.length()-1] == '&' ||     // must not end with '&'
+       (!cmd.contains('.') && !cmd.contains(':')) ||             // must contain either '.' or ':'
+       cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||   // must not look like shell
+       cmd.contains(QRegExp(QFL1("[ ;<>]"))) )  // must not contain space, ;, < or >
        return false;
 
   return true;
@@ -117,6 +119,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if ( expandEnvVar( cmd ) )
     url = cmd;
 
+  //kdDebug() << "KShortURIFilter::filterURI cmd=" << cmd << " url=" << url.url() << endl;
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
   // executable and only the argument part, if any, changed!
@@ -317,6 +320,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             return true;
         }
     }
+    //kdDebug() << "KShortURIFilter::filterURI malformed:" << url.isMalformed() << " isValidShortURL:" << isValidShortURL(cmd) << endl;
     // If cmd is NOT a local resource, check if it
     // is a valid "shortURL" candidate and append
     // the default protocol the user supplied. (DA)
@@ -341,6 +345,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // this thing so simply return false so that
   // other filters, if present, can take a crack
   // at it.
+  //kdDebug() << "KShortURIFilter::filterURI returning false!" << endl;
   return false;
 }
 
@@ -370,6 +375,7 @@ void KShortURIFilter::configure()
     // from the control panel.
     m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
     m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
+    m_urlHints.append( URLHint(QFL1(HOSTPORT_PATTERN), QFL1("http://")) );
 }
 
 /***************************************** KShortURIFilterFactory *******************************************/
