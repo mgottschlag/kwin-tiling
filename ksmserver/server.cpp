@@ -65,6 +65,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstddirs.h>
 #include <unistd.h>
 #include <kapp.h>
+#include <knotifyclient.h>
 #include <kstaticdeleter.h>
 #include <dcopclient.h>
 
@@ -825,6 +826,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     connect( &protection, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
     connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
+
+    KNotifyClient::event( "startkde" ); // this is the time KDE is up
 }
 
 KSMServer::~KSMServer()
@@ -945,6 +948,7 @@ void KSMServer::shutdown()
     if ( state != Idle )
 	return;
     if ( KSMShutdown::shutdown( saveSession ) ) {
+	KNotifyClient::event( "exitkde" ); // KDE says good bye
 	KConfig* config = KGlobal::config();
 	config->setGroup("General" );
 	config->writeEntry( "saveSession", saveSession?"true":"false");
