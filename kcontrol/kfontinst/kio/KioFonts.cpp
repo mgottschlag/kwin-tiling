@@ -1555,7 +1555,7 @@ void CKioFonts::doModifiedDirs()
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
 #else
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
-            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
 #endif
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
             CMisc::setTimeStamps(CMisc::dirSyntax(*it));
