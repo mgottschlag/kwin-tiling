@@ -23,5 +23,3 @@ bin_SCRIPTS = kdeinstallktheme
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kthememanager.pot
-
-include ../admin/Doxyfile.am

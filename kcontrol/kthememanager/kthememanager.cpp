@@ -281,7 +281,7 @@ void kthememanager::slotCreateTheme()
             m_theme->addPreview();
 
             QString result = m_theme->createYourself( true );
-            if ( result )
+            if ( !result.isEmpty() )
                 KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
                                           i18n( "Theme Created" ), "theme_created_ok" );
             else
