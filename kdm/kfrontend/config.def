@@ -346,6 +346,9 @@ so any name which converts to the correct network address may be used. Note
 that only the first network address returned for a host name is used.
 For patterns, only canonical host names are used in the comparison, so ensure
 that you do not attempt to match aliases.
+Host names from &XDMCP; queries always contain the local domain name
+even if the reverse lookup returns a short name, so you can use
+patterns for the local domain.
 Preceding the entry with a <literal>!</literal> character causes hosts which
 match that entry to be excluded.
 To only respond to <quote>Direct</quote> queries for a host or pattern,
