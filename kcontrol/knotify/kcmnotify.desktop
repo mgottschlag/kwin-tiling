@@ -1,0 +1,82 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/knotify
+Icon=knotify
+Type=Application
+DocPath=kcontrol/knotify/knotify-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=knotify
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=System Notifications
+Name[ca]=Notificacions del sistema
+Name[cs]=Systémová hlášení
+Name[de]=Systemnachrichten
+Name[eo]=Sistematentigoj
+Name[es]=Notificaciones del sistema
+Name[et]=Süsteemi teadistused
+Name[fi]=Järjestelmän varoitukset
+Name[fr]=Notifications du système
+Name[he]=תכרעמ תועדוה
+Name[hu]=Rendszer figyelmeztető
+Name[it]=Avvisi di sistema
+Name[ja]=システム通知
+Name[mk]=Сигнализација
+Name[nl]=Systeemnotificaties
+Name[no]=Systemvarsler
+Name[no_NY]=Systempåminningar
+Name[pt]=Mensagens do Sistema
+Name[ro]=Notificări sistem
+Name[sl]=Sistemska obvestila
+Name[sr]=Sistemska obaveštenja
+Name[sv]=Systemunderrättelser
+Name[ta]=கணிபெபாறி அறிவிபபகள
+Name[tr]=Sistem Bildirimleri
+
+Comment=System Notification Configuration
+Comment[ca]=Configuració de les notificacions del sistema
+Comment[cs]=Nastavení systémových hlášení
+Comment[de]=Einstellung der Systemnachrichten
+Comment[eo]=Agordo de sistematentigoj
+Comment[es]=Configuración de notificaciones del sistema
+Comment[et]=Süsteemsete teadistuste konfigureerimine
+Comment[fi]=Järjestelmän varoitusten asetukset
+Comment[fr]=Configuration du système de notifications
+Comment[he]=תכרעמ תועדוה תורדגה
+Comment[hu]=Rendszer figyelmeztető beállítása
+Comment[it]=Configurazione degli avvisi di sistema
+Comment[ja]=システム通知の設定
+Comment[mk]=Конфигурирање на сисемската сигнализација
+Comment[nl]=Instellingen van de systeemnotificatie
+Comment[no]=Systemvarslingsinnstillinger
+Comment[no_NY]=Oppsett av systempåminningar
+Comment[pt]=Configuração das mensagens do sistema
+Comment[ro]=Configurează notificarea sistemului
+Comment[ru]=Настройка системных сообщений
+Comment[sl]=Ukrojitev sistemskih obvestil
+Comment[sr]=Podešavanje sistemskih obaveštenja
+Comment[sv]=Anpassning av systemunderrättelser
+Comment[ta]=கணிபெபாறி அறிவிபபகள வடவைமபப
+Comment[tr]=Sistem Bildirimi Yapýlandýrmasý
+
+Keywords=System sounds,Audio,Sound,Notify,Alerts,Notification
+Keywords[ca]=Sons del sistema,Àudio,So,Notifica,Alertes,Notificació
+Keywords[cs]=Systémové zvuky,Audio,Oznámit,Varování,Oznámení
+Keywords[de]=Klänge,Systemklänge,Audio,Sound,Benachrichtigung,Nachricht,Alarm,Signalton,Beep
+Keywords[eo]=sistemo,sonoroj,aŭdio,sono,atentigo,alarmo,operaciumo
+Keywords[et]=Süsteemsed helid,audio,heli,tedistus,alarm
+Keywords[fi]=Järestelmän äänet,Äänet,Varoitukset
+Keywords[he]=תוקעזא,עודיי,לילצ,עמש,תכרעמ ילילצ
+Keywords[hu]=rendszerhangok,audió,hang,figyelmeztető,vészjelző
+Keywords[it]=Suoni di sistema,Audio,Suono,Notifica,Avvisi,Messaggi
+Keywords[mk]=системски звуци,аудио,звук,сигнализација
+Keywords[nl]=Systeemgeluiden,Audio,geluid,waarschuwingen,geluidssignaal,Notificatie
+Keywords[no]=Systemlyd,Lyd,Varsle,Advarsel,Varsling
+Keywords[no_NY]=Systemlydar,lyd,påminning,varsel,alarm
+Keywords[pt]=sons de sistema,audio,som,notificar,alertas,notificação
+Keywords[ro]=sunete de sistem,audio,sunet,notifică,alertă,notificare
+Keywords[sl]=sistemski zvoki,avdio,zvok,obvestila,alarmi
+Keywords[tr]=Sistem sesleri,Ses,Bildir,Alarmlar,Bildirme
+
+
