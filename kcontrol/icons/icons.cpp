@@ -83,8 +83,8 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     top->addMultiCellWidget(m_pTabWidget, 1, 1, 0, 1);                                   
 
     // Icon settings at Tab 1
-    m_pTab1 = new QWidget(0L, "Size Tab");
-    m_pTabWidget->addTab(m_pTab1, i18n("&Size"));
+    m_pTab1 = new QWidget(0L, "General Tab");
+    m_pTabWidget->addTab(m_pTab1, i18n("&General"));
     QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
@@ -102,6 +102,10 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     mpDPCheck = new QCheckBox(i18n("Double sized pixels"), m_pTab1);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
     grid->addWidget(mpDPCheck, 1, 0, Qt::AlignLeft);
+
+    mpAlphaBCheck = new QCheckBox(i18n("Blend alpha channel"), m_pTab1);
+    connect(mpAlphaBCheck, SIGNAL(toggled(bool)), SLOT(slotAlphaBCheck(bool)));
+    grid->addWidget(mpAlphaBCheck, 2, 0, Qt::AlignLeft);
 
     // Iconeffects at Tab 2
     m_pTab2 = new QWidget(0L, "Iconeffect Tab");
@@ -200,6 +204,7 @@ void KIconConfig::read()
 	mpConfig->setGroup(*it + "Icons");
 	mSizes[i] = mpConfig->readNumEntry("Size", mpTheme->defaultSize(i));
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels");
+	mbAlphaB[i] = mpConfig->readBoolEntry("AlphaBlending");
 
 	// defaults
 	mEffects[i][0] = KIconEffect::NoEffect;
@@ -279,6 +284,7 @@ void KIconConfig::apply()
     }
     mpSTCheck->setChecked(mEffectTrans[mUsage][mState]);
     mpDPCheck->setChecked(mbDP[mUsage]);
+    mpAlphaBCheck->setChecked(mbAlphaB[mUsage]);
 }
 
 void KIconConfig::preview()
@@ -318,6 +324,7 @@ void KIconConfig::save()
 	mpConfig->setGroup(*it + "Icons");
 	mpConfig->writeEntry("Size", mSizes[i], true, true);
 	mpConfig->writeEntry("DoublePixels", mbDP[i], true, true);
+	mpConfig->writeEntry("AlphaBlending", mbAlphaB[i], true, true);
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
 	    QString tmp;
@@ -365,6 +372,7 @@ void KIconConfig::defaults()
     for (int i=0; i<KIcon::LastGroup; i++)
     {
 	mbDP[i] = false;
+	mbAlphaB[i] = false;
 	mbChanged[i] = true;
 	mSizes[i] = mpTheme->defaultSize(i);
 	mEffects[i][0] = KIconEffect::NoEffect;
@@ -390,14 +398,24 @@ void KIconConfig::slotUsage(int index)
 {
     mUsage = index;
     mState = 0;
-    if (mUsage == KIcon::Panel || mUsage == KIcon::Small)
+    if (mUsage == KIcon::Small)
     {
 	m_pTabWidget->setTabEnabled(m_pTab1, false);
 	m_pTabWidget->setCurrentPage(1);
     }
+    else if ( mUsage == KIcon::Panel )
+    {
+	m_pTabWidget->setTabEnabled(m_pTab1, true);
+        mpSizeBox->setEnabled(false);
+        mpDPCheck->setEnabled(false);
+	mpAlphaBCheck->setEnabled(true);
+    } 
     else
     {
 	m_pTabWidget->setTabEnabled(m_pTab1, true);
+        mpSizeBox->setEnabled(true);
+        mpDPCheck->setEnabled(true);
+	mpAlphaBCheck->setEnabled( (mUsage==KIcon::Desktop)? true : false);
     }
     apply();
     preview();
@@ -507,6 +525,17 @@ void KIconConfig::slotDPCheck(bool check)
 {
     mbDP[mUsage] = check;
     preview();
+    emit changed(true);
+    mbChanged[mUsage] = true;
+}
+
+void KIconConfig::slotAlphaBCheck(bool check)
+{
+    mbAlphaB[mUsage] = check;
+ // XXX Should warning the user that this change will only
+ // take effect when restarting KDE.
+
+ //    preview();
     emit changed(true);
     mbChanged[mUsage] = true;
 }

@@ -62,6 +62,7 @@ private slots:
     void slotPreview(float &m_pEfValue);
     void slotPreview(QColor &m_pEfColor);
     void slotDPCheck(bool check);
+    void slotAlphaBCheck(bool check);
     void slotSTCheck(bool check);
 
 private:
@@ -69,7 +70,7 @@ private:
     void read();
     void apply();
 
-    bool mbDP[6], mbChanged[6];
+    bool mbDP[6], mbAlphaB[6], mbChanged[6];
     int mSizes[6];
     QValueList<int> mAvSizes[6];
     int mEffects[6][3];
@@ -90,7 +91,7 @@ private:
 
     QListBox *mpUsageList, *mpStateList;
     QComboBox *mpEffectBox, *mpSizeBox;
-    QCheckBox *mpDPCheck, *mpSTCheck, *wordWrapCB, *underlineCB;
+    QCheckBox *mpDPCheck, *mpSTCheck, *wordWrapCB, *underlineCB, *mpAlphaBCheck;
     QPushButton *mpESetupBut;                                   
     QTabWidget *m_pTabWidget;
     QWidget *m_pTab1, *m_pTab2;                                    
