@@ -77,6 +77,7 @@ private slots:
     void slotUseResourceManager();
     void slotMacStyle();
     void slotAutoCopySelection();
+    void slotRunImporter();
 
 private:
     void readSettings();

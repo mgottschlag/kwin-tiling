@@ -301,7 +301,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QBoxLayout *lay = new QHBoxLayout;
     topLayout->addLayout(lay);
 
-    QGroupBox *themeBox = new QGroupBox(1, Vertical,
+    QGroupBox *themeBox = new QGroupBox(1, Horizontal,
                     i18n("Widget style and theme"),
                     this);
     lay->addWidget(themeBox);
@@ -313,6 +313,21 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " predefined widget styles (the way e.g. buttons are drawn) which"
       " may or may not be combined with a theme (additional information"
       " like a marble texture or a gradient).") );
+
+    QWidget *dummy = new QWidget(themeBox);
+    QHBoxLayout *btnLay = new QHBoxLayout(dummy);
+
+    QPushButton *btnImport = new QPushButton(i18n("&Import..."), dummy);
+    btnImport->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
+    QWhatsThis::add(btnImport, i18n("The launches KDE legacy style importer "
+        "which allows you to convert i.e. GTK themes to KDE widget styles."));
+
+    QSpacerItem *spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
+
+    btnLay->addWidget(btnImport);
+    btnLay->addItem(spacer);
+
+    connect(btnImport, SIGNAL(clicked()), SLOT(slotRunImporter()));
 
     // Drawing settings
     styles = new QGroupBox ( i18n( "Other settings for drawing" ), this );
@@ -403,11 +418,11 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     grid = new QGridLayout(3, 2);
     vlay->addLayout( grid );
 
-    effPlainMenu = new QRadioButton( i18n( "No menu effect" ), effectStyle );
-    effFadeMenu = new QRadioButton( i18n( "Fade menus" ), effectStyle );
-    effAnimateMenu = new QRadioButton( i18n( "Animate menus"), effectStyle );
-    effAnimateCombo = new QCheckBox( i18n( "Animate combo boxes"), effectStyle );
-    effFadeTooltip = new QCheckBox( i18n( "Fade tool tips"), effectStyle );
+    effPlainMenu = new QRadioButton( i18n( "No m&enu effect" ), effectStyle );
+    effFadeMenu = new QRadioButton( i18n( "&Fade menus" ), effectStyle );
+    effAnimateMenu = new QRadioButton( i18n( "Anima&te menus"), effectStyle );
+    effAnimateCombo = new QCheckBox( i18n( "Animate &combo boxes"), effectStyle );
+    effFadeTooltip = new QCheckBox( i18n( "Fade tool t&ips"), effectStyle );
 
     QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus open immediately." ) );
     QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus fade in slowly." ) );
@@ -534,6 +549,13 @@ void KGeneral::readSettings()
     useRM = config->readBoolEntry( "useResourceManager", true );
 }
 
+void KGeneral::slotRunImporter()
+{
+    KProcess *themeImporter = new KProcess();
+    themeImporter->setExecutable("klegacyimport");
+    connect(themeImporter, SIGNAL(processExited(KProcess *)), themeList,SLOT(rescan()));
+    themeImporter->start();
+}
 
 void KGeneral::showSettings()
 {
