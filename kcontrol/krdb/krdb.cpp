@@ -365,7 +365,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool )
   if ( f.open(IO_ReadOnly) ) {
       QCString buf( 8192 );
       while ( !f.atEnd() ) {
-          int read = f.readLine( buf.data(), buf.size() );
+          int read = f.readBlock( buf.data(), buf.size() );
           if ( read > 0 )
               tmp.writeBlock( buf.data(), read );
       }
