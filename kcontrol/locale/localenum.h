@@ -46,7 +46,7 @@ public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
-  void syncWithKLocaleNum();
+  void reset();
   void updateSample();
 
 private slots:

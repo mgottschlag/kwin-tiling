@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 
+#include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qobjectlist.h>
@@ -164,6 +165,17 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
 	if (s)
           ((QPushButton *)wc)->setText(i18n(s));
       }
+      else if ( !qstrcmp(wc->className(), "QComboBox"))
+      {
+	if (!qstrcmp(wc->name(), "signpos"))
+	{
+	  ((QComboBox*)wc)->changeItem(i18n("Parens around"), 0);
+	  ((QComboBox*)wc)->changeItem(i18n("Before quantity money"), 1);
+	  ((QComboBox*)wc)->changeItem(i18n("After quantity money"), 2);
+	  ((QComboBox*)wc)->changeItem(i18n("Before money"), 3);
+	  ((QComboBox*)wc)->changeItem(i18n("After money"), 4);
+	}
+      }
       else if ( !qstrcmp(wc->className(), "QTabWidget"))
       {
 	if (locale)
@@ -188,19 +200,19 @@ void KLocaleApplication::reset()
 void KLocaleApplication::resetMon()
 {
   if (localemon)
-    localemon->syncWithKLocaleMon();
+    localemon->reset();
 }
 
 void KLocaleApplication::resetNum()
 {
   if (localenum)
-    localenum->syncWithKLocaleNum();
+    localenum->reset();
 }
 
 void KLocaleApplication::resetTime()
 {
   if (localetime)
-    localetime->syncWithKLocaleTime();
+    localetime->reset();
 }
 
 int main(int argc, char **argv)

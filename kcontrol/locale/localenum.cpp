@@ -82,7 +82,10 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
-  syncWithKLocaleNum();
+  tl->addStretch(1);
+  tl->activate();
+
+  loadSettings();
 }
 
 KLocaleConfigNumber::~KLocaleConfigNumber()
@@ -91,6 +94,10 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 
 void KLocaleConfigNumber::loadSettings()
 {
+  KLocale *locale = KGlobal::locale();
+
+  edDecSym->setText(locale->_decimalSymbol);
+  edThoSep->setText(locale->_thousandsSeparator);
 }
 
 void KLocaleConfigNumber::applySettings()
@@ -104,13 +111,15 @@ void KLocaleConfigNumber::applySettings()
 
   QString str;
 
-  str = ent.readEntry("DecimalSymbol");
-  if (str != locale->_decimalSymbol)
-    config->writeEntry("DecimalSymbol", locale->_decimalSymbol, true, true);
+  str = ent.readEntry("DecimalSymbol", ".");
+  str = str==locale->_decimalSymbol?QString::null:locale->_decimalSymbol;
+  config->writeEntry("DecimalSymbol", str, true, true);
 
-  str = ent.readEntry("ThousandsSeparator");
-  if (str != locale->_thousandsSeparator)
-    config->writeEntry("ThousandsSeparator", locale->_thousandsSeparator, true, true);
+  str = ent.readEntry("ThousandsSeparator", ",");
+  str = str==locale->_thousandsSeparator?QString::null:"$0"+locale->_thousandsSeparator+"$0";
+  config->writeEntry("ThousandsSeparator", str, true, true);
+
+  config->sync();
 }
 
 void KLocaleConfigNumber::defaultSettings()
@@ -137,8 +146,18 @@ void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
   sample->update();
 }
 
-void KLocaleConfigNumber::syncWithKLocaleNum()
+void KLocaleConfigNumber::reset()
 {
-  edDecSym->setText(KGlobal::locale()->_decimalSymbol);
-  edThoSep->setText(KGlobal::locale()->_thousandsSeparator);
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  ent.setGroup("KCM Locale");
+
+  QString str;
+
+  str = ent.readEntry("DecimalSymbol", ".");
+  edDecSym->setText(str);
+
+  str = ent.readEntry("ThousandsSeparator", ",");
+  edThoSep->setText(str);
+
+  loadSettings();
 }

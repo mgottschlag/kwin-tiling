@@ -112,7 +112,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   tl1->addWidget(chMonNegPreCurSym, 8, 2);
 
   label = new QLabel("1", gbox, i18n("Sign position, positive"));
-  cmbMonPosMonSignPos = new QComboBox(gbox);
+  cmbMonPosMonSignPos = new QComboBox(gbox, "signpos");
   connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
   tl1->addWidget(label, 9, 1);
   tl1->addWidget(cmbMonPosMonSignPos, 9, 2);
@@ -123,7 +123,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   cmbMonPosMonSignPos->insertItem("4");
 
   label = new QLabel("1", gbox, i18n("Sign position, negative"));
-  cmbMonNegMonSignPos = new QComboBox(gbox);
+  cmbMonNegMonSignPos = new QComboBox(gbox, "signpos");
   connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
   tl1->addWidget(label, 10, 1);
   tl1->addWidget(cmbMonNegMonSignPos, 10, 2);
@@ -140,15 +140,31 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   tl->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
-  syncWithKLocaleMon();
+  tl->addStretch(1);
+  tl->activate();
+
+  loadSettings();
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()
 {
 }
 
+
 void KLocaleConfigMoney::loadSettings()
 {
+  KLocale *locale = KGlobal::locale();
+
+  edMonCurSym->setText(locale->_currencySymbol);
+  edMonDecSym->setText(locale->_monetaryDecimalSymbol);
+  edMonThoSep->setText(locale->_monetaryThousandsSeparator);
+  edMonPosSign->setText(locale->_positiveSign);
+  edMonNegSign->setText(locale->_negativeSign);
+  edMonFraDig->setText(locale->formatNumber(locale->_fracDigits, 0));
+  chMonPosPreCurSym->setChecked(locale->_positivePrefixCurrencySymbol);
+  chMonNegPreCurSym->setChecked(locale->_negativePrefixCurrencySymbol);
+  cmbMonPosMonSignPos->setCurrentItem(locale->_positiveMonetarySignPosition);
+  cmbMonNegMonSignPos->setCurrentItem(locale->_negativeMonetarySignPosition);
 }
 
 void KLocaleConfigMoney::applySettings()
@@ -164,44 +180,46 @@ void KLocaleConfigMoney::applySettings()
   int i;
 
   str = ent.readEntry("CurrencySymbol", "$");
-  if (str != locale->_currencySymbol)
-    config->writeEntry("CurrencySymbol", locale->_currencySymbol, true, true);
+  str = str==locale->_currencySymbol?QString::null:locale->_currencySymbol;
+  config->writeEntry("CurrencySymbol", str, true, true);
 
   str = ent.readEntry("MonetaryDecimalSymbol", ".");
-  if (str != locale->_monetaryDecimalSymbol)
-    config->writeEntry("MonetaryDecimalSymbol", locale->_monetaryDecimalSymbol, true, true);
+  str = str==locale->_monetaryDecimalSymbol?QString::null:locale->_monetaryDecimalSymbol;
+  config->writeEntry("MonetaryDecimalSymbol", str, true, true);
 
   str = ent.readEntry("MonetaryThousandsSeparator", ",");
-  if (str != locale->_monetaryThousandsSeparator)
-    config->writeEntry("MonetaryThousandsSeparator", locale->_monetaryThousandsSeparator, true, true);
+  str = str==locale->_monetaryThousandsSeparator?QString::null:"$0"+locale->_monetaryThousandsSeparator+"$0";
+  config->writeEntry("MonetaryThousandsSeparator", str, true, true);
 
   str = ent.readEntry("PositiveSign");
-  if (str != edMonPosSign->text())
-    config->writeEntry("PositiveSign", locale->_positiveSign, true, true);
+  str = str==locale->_positiveSign?QString::null:locale->_positiveSign;
+  config->writeEntry("PositiveSign", str, true, true);
 
   str = ent.readEntry("NegativeSign", "-");
-  if (str != edMonNegSign->text())
-    config->writeEntry("NegativeSign", locale->_negativeSign, true, true);
+  str = str==locale->_negativeSign?QString::null:locale->_negativeSign;
+  config->writeEntry("NegativeSign", str, true, true);
 
   i = ent.readNumEntry("FractDigits", 2);
-  if (i != locale->_fracDigits)
-    config->writeEntry("FractDigits", locale->_fracDigits, true, true);
+  str = i==locale->_fracDigits?QString::null:QString::number(locale->_fracDigits);
+  config->writeEntry("FractDigits", str, true, true);
 
   i = ent.readNumEntry("PositivePrefixCurrencySymbol", true);
-  if (i != locale->_positivePrefixCurrencySymbol)
-    config->writeEntry("PositivePrefixCurrencySymbol", locale->_positivePrefixCurrencySymbol, true, true);
+  str = i==locale->_positivePrefixCurrencySymbol?QString::null:QString::number(locale->_positivePrefixCurrencySymbol);
+  config->writeEntry("PositivePrefixCurrencySymbol", str, true, true);
 
   i = ent.readNumEntry("NegativePrefixCurrencySymbol", true);
-  if (i != locale->_negativePrefixCurrencySymbol)
-    config->writeEntry("negativePrefixCurrencySymbol", locale->_negativePrefixCurrencySymbol, true, true);
+  str = i==locale->_negativePrefixCurrencySymbol?QString::null:QString::number(locale->_negativePrefixCurrencySymbol);
+  config->writeEntry("negativePrefixCurrencySymbol", str, true, true);
 
   i = ent.readNumEntry("PositiveMonetarySignPosition", KLocale::BeforeQuantityMoney);
-  if (i != locale->_positiveMonetarySignPosition)
-    config->writeEntry("NegativeMonetarySignPosition", locale->_positiveMonetarySignPosition, true, true);
+  str = i==locale->_positiveMonetarySignPosition?QString::null:QString::number(locale->_positiveMonetarySignPosition);
+  config->writeEntry("NegativeMonetarySignPosition", str, true, true);
   
   i = ent.readNumEntry("NegativeMonetarySignPosition", KLocale::ParensAround);
-  if (i != locale->_negativeMonetarySignPosition)
-    config->writeEntry("NegativeMonetarySignPosition", locale->_negativeMonetarySignPosition, true, true);
+  str = i==locale->_negativeMonetarySignPosition?QString::null:QString::number(locale->_negativeMonetarySignPosition);
+  config->writeEntry("NegativeMonetarySignPosition", str, true, true);
+
+  config->sync();
 }
 
 void KLocaleConfigMoney::defaultSettings()
@@ -261,18 +279,44 @@ void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
   ((KLocaleApplication*)kapp)->updateSample();
 }
 
-void KLocaleConfigMoney::syncWithKLocaleMon()
+void KLocaleConfigMoney::reset()
 {
-  // Money
-  edMonCurSym->setText(KGlobal::locale()->_currencySymbol);
-  edMonDecSym->setText(KGlobal::locale()->_monetaryDecimalSymbol);
-  edMonThoSep->setText(KGlobal::locale()->_monetaryThousandsSeparator);
-  edMonPosSign->setText(KGlobal::locale()->_positiveSign);
-  edMonNegSign->setText(KGlobal::locale()->_negativeSign);
-  edMonFraDig->setText(KGlobal::locale()->formatNumber(KGlobal::locale()->_fracDigits, 0));
+  KLocale *locale = KGlobal::locale();
 
-  chMonPosPreCurSym->setChecked(KGlobal::locale()->_positivePrefixCurrencySymbol);
-  chMonNegPreCurSym->setChecked(KGlobal::locale()->_negativePrefixCurrencySymbol);
-  cmbMonPosMonSignPos->setCurrentItem(KGlobal::locale()->_positiveMonetarySignPosition);
-  cmbMonNegMonSignPos->setCurrentItem(KGlobal::locale()->_negativeMonetarySignPosition);
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->money + "/entry.desktop"), true);
+  ent.setGroup("KCM Locale");
+
+  QString str;
+
+  str = ent.readEntry("CurrencySymbol", "$");
+  edMonCurSym->setText(str);
+
+  str = ent.readEntry("MonetaryDecimalSymbol", ".");
+  edMonDecSym->setText(str);
+
+  str = ent.readEntry("MonetaryThousendSeparator", ",");
+  edMonThoSep->setText(str);
+
+  str = ent.readEntry("PositiveSign");
+  edMonPosSign->setText(str);
+
+  str = ent.readEntry("NegativeSign", "-");
+  edMonNegSign->setText(str);
+
+  int i = ent.readNumEntry("FractDigits", 2);
+  edMonFraDig->setText(locale->formatNumber(i, 0));
+
+  bool b = ent.readBoolEntry("PositivePrefixCurrencySymbol", true);
+  chMonPosPreCurSym->setChecked(b);
+
+  b = ent.readBoolEntry("NegativePrefixCurrencySymbol", true);
+  chMonNegPreCurSym->setChecked(b);
+
+  i = ent.readNumEntry("PositiveMonetarySignPosition", KLocale::BeforeQuantityMoney);
+  cmbMonPosMonSignPos->setCurrentItem(i);
+
+  i = ent.readNumEntry("NegativeMonetarySignPosition", KLocale::BeforeQuantityMoney);
+  cmbMonNegMonSignPos->setCurrentItem(i);
+
+  loadSettings();
 }

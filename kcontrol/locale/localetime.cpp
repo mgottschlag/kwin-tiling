@@ -82,7 +82,10 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   tl->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
-  syncWithKLocaleTime();
+  tl->addStretch(1);
+  tl->activate();
+
+  loadSettings();
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()
@@ -91,10 +94,15 @@ KLocaleConfigTime::~KLocaleConfigTime()
 
 void KLocaleConfigTime::loadSettings()
 {
+  KLocale *locale = KGlobal::locale();
+
+  edTimeFmt->setText(locale->_timefmt);
+  edDateFmt->setText(locale->_datefmt);
 }
 
 void KLocaleConfigTime::applySettings()
 {
+  KSimpleConfig a(0, false);
   KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
@@ -104,13 +112,15 @@ void KLocaleConfigTime::applySettings()
 
   QString str;
 
-  str = ent.readEntry("TimeFormat");
-  if (str != locale->_timefmt)
-    config->writeEntry("TimeFormat", locale->_timefmt, true, true);
+  str = ent.readEntry("TimeFormat", "%I:%M:%S %p");
+  str = str==locale->_timefmt?QString::null:locale->_timefmt;
+  config->writeEntry("TimeFormat", str, true, true);
 
-  str = ent.readEntry("DateFormat");
-  if (str != locale->_datefmt)
-    config->writeEntry("DateFormat", locale->_datefmt, true, true);
+  str = ent.readEntry("DateFormat", "%m/%d/%y");
+  str = str==locale->_datefmt?QString::null:locale->_datefmt;
+  config->writeEntry("DateFormat", str, true, true);
+
+  config->sync();
 }
 
 void KLocaleConfigTime::defaultSettings()
@@ -135,8 +145,20 @@ void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
   sample->update();
 }
 
-void KLocaleConfigTime::syncWithKLocaleTime()
+void KLocaleConfigTime::reset()
 {
-  edTimeFmt->setText(KGlobal::locale()->_timefmt);
-  edDateFmt->setText(KGlobal::locale()->_datefmt);
+  KLocale *locale = KGlobal::locale();
+
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->time + "/entry.desktop"), true);
+  ent.setGroup("KCM Locale");
+
+  QString str;
+
+  str = ent.readEntry("TimeFormat", "%I:%M:%S %p");
+  edTimeFmt->setText(str);
+
+  str = ent.readEntry("DateFormat", "%m/%d/%y");
+  edDateFmt->setText(str);
+
+  loadSettings();
 }
