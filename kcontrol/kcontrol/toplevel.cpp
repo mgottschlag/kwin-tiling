@@ -137,6 +137,8 @@ TopLevel::TopLevel(const char* name)
   AboutWidget::initPixmaps();
   
   AboutWidget *aw = new AboutWidget(this);
+  connect( aw, SIGNAL( moduleSelected( const QString & ) ),
+           SLOT( activateModule( const QString & ) ) );
   _dock->setBaseWidget(aw);
 
   // set the main view
