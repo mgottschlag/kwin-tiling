@@ -325,7 +325,7 @@ void KDiskNavConfig::loadSettings() {
   show_recent_section->setChecked(config->readEntry("ShowRecentSection", "on") == "on");
   show_option_entry->setChecked(config->readEntry("ShowOptionEntry", "on") == "on");
 
-  terminal->setText(config->readEntry("Terminal", "kvt"));
+  terminal->setText(config->readEntry("Terminal", "konsole"));
 }
 
 void KDiskNavConfig::applySettings() {
@@ -368,7 +368,7 @@ void KDiskNavConfig::saveSettings() {
       config->writeEntry("ShowOptionEntry",
                          (show_option_entry->isChecked() ? "on" : "off"));
 
-    if (config->hasKey("Terminal") || strcmp(show_recent_section->text(), "kvt"))
+    if (config->hasKey("Terminal") || strcmp(show_recent_section->text(), "konsole"))
       config->writeEntry("Terminal", terminal->text());
 
     config->sync();
