@@ -72,8 +72,6 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl1->addWidget(edMonNegSign, 3, 2);
 
   tl1->setRowStretch(4, 1);
-
-  load();
 }
 
 KLocaleConfigNumber::~KLocaleConfigNumber()

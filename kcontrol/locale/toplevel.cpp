@@ -76,6 +76,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   l->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
+  load();
   update();
 }
 
@@ -170,4 +171,6 @@ void KLocaleApplication::newChset()
   KConfig *c = KGlobal::config();
   c->setGroup( QString::fromLatin1("General") );
   setFont(c->readFontEntry(QString::fromLatin1("font"), font));
+
+  moduleChanged(true);
 }

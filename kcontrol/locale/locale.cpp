@@ -113,7 +113,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
        comboChset->insertItem(*it, *it);
 
     tl1->setRowStretch(7, 1);
-    load();
 }
 
 KLocaleConfig::~KLocaleConfig ()

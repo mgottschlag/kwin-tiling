@@ -108,8 +108,6 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   }
 
   tl1->setRowStretch(8, 1);
-
-  load();
 }
 
 KLocaleConfigMoney::~KLocaleConfigMoney()

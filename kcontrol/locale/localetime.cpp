@@ -70,8 +70,6 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   tl1->addWidget(edDateFmtShort, 2, 2);
   
   tl1->setRowStretch(3, 1);
-
-  load();
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()
