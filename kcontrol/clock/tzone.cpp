@@ -43,6 +43,8 @@
 #include "tzone.moc"
 
 #if defined(USE_SOLARIS)
+#include <ktempfile.h>
+#include <kstandarddirs.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -101,7 +103,8 @@ void Tzone::fillTimeZones()
              "/bin/find %s \\( -name src -prune \\) -o -type f -print | /bin/cut -b %d-",
              ZONEINFODIR, strlen(ZONEINFODIR) + 2);
 
-    if (fp = popen(buf, "r"))
+    fp = popen(buf, "r");
+    if (fp)
     {
         while(fgets(buf, MAXPATHLEN - 1, fp) != NULL)
         {
@@ -161,7 +164,8 @@ void Tzone::load()
              "/bin/fgrep 'TZ=' %s | /bin/head -n 1 | /bin/cut -b 4-",
              INITFILE);
 
-    if (fp = popen(buf, "r"))
+    fp = popen(buf, "r");
+    if (fp)
     {
         if (fgets(buf, MAXPATHLEN - 1, fp) != NULL)
         {
@@ -206,27 +210,18 @@ void Tzone::save()
       selectedzone = (*it);
 
 #if defined(USE_SOLARIS)	// MARCO
-        char buf[MAXPATHLEN];
 
-        strcpy(buf, "/tmp/kde-tzone-XXXXXX");
-        mktemp(buf);
+        KTempFile tf( locateLocal( "tmp", "kde-tzone" ) );
+        tf.setAutoDelete( true );
+        QTextStream *ts = tf.textStream();
 
-        if (*buf == '\0')
-        {
-            // Could not create a temporary file
-            // name.
-            return;
-        }
-
-        QFile tf(buf);
         QFile fTimezoneFile(INITFILE);
         bool updatedFile = false;
 
-        if (tf.open(IO_WriteOnly | IO_Truncate) &&
-            fTimezoneFile.open(IO_ReadOnly))
+        if (tf.status() == 0 && fTimezoneFile.open(IO_ReadOnly))
         {
             bool found = false;
-            QTextStream ts(&tf);
+            
             QTextStream is(&fTimezoneFile);
 
             for (QString line = is.readLine(); !line.isNull();
@@ -234,37 +229,35 @@ void Tzone::save()
             {
                 if (line.find("TZ=") == 0)
                 {
-                    ts << "TZ=" << selectedzone << endl;
+                    *ts << "TZ=" << selectedzone << endl;
                     found = true;
                 }
                 else
                 {
-                    ts << line << endl;
+                    *ts << line << endl;
                 }
             }
 
             if (!found)
             {
-                ts << "TZ=" << selectedzone << endl;
+                *ts << "TZ=" << selectedzone << endl;
             }
 
             updatedFile = true;
-            tf.close();
             fTimezoneFile.close();
         }
 
         if (updatedFile)
         {
+            ts->device()->reset();
             fTimezoneFile.remove();
 
-            if (tf.open(IO_ReadOnly) &&
-                fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
+            if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
             {
-                QTextStream ts(&tf);
                 QTextStream os(&fTimezoneFile);
 
-                for (QString line = ts.readLine(); !line.isNull();
-                     line = ts.readLine())
+                for (QString line = ts->readLine(); !line.isNull();
+                     line = ts->readLine())
                 {
                     os << line << endl;
                 }
@@ -273,7 +266,6 @@ void Tzone::save()
                        S_IXUSR | S_IRUSR | S_IRGRP | S_IXGRP |
                        S_IROTH | S_IXOTH);
                 fTimezoneFile.close();
-                tf.remove();
             }
         }
 
