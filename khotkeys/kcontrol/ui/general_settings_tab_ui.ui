@@ -54,7 +54,7 @@
                         <cstring>import_button</cstring>
                     </property>
                     <property name="text">
-                        <string>Import new actions</string>
+                        <string>Import New Actions</string>
                     </property>
                 </widget>
                 <spacer>
