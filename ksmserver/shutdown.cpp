@@ -102,8 +102,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     lfrm->setPaletteBackgroundColor( lfrm->colorGroup().midlight() );
     hbox->addWidget( lfrm, AlignCenter );
-    QVBoxLayout* iconlay = new QVBoxLayout(
-        lfrm, KDialog::marginHint(), KDialog::spacingHint() );
+    QVBoxLayout* iconlay = new QVBoxLayout( lfrm );
+
     QLabel* icon = new QLabel( lfrm );
     icon->setPixmap( UserIcon( "shutdownkonq" ) );
     iconlay->addWidget( icon );
@@ -134,7 +134,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         KSMDelayedPushButton* btnReboot = new KSMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), frame );
         btnReboot->setFont( btnFont );
         buttonlay->addWidget( btnReboot );
-	
+
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
         if ( sdtype == KApplication::ShutdownTypeReboot )
             btnReboot->setFocus();
@@ -153,7 +153,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 	      else
 		targets->insertItem( *it, index );
 	    }
-	  
+
 	  btnReboot->setPopup(targets);
 	  connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
 	}
@@ -227,8 +227,8 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sd
     return result;
 }
 
-KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item, 
-					    QWidget *parent, 
+KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
+					    QWidget *parent,
 					    const char *name)
   : KPushButton( item, parent, name), pop(0), popt(0)
 {
@@ -260,7 +260,7 @@ void KSMDelayedPushButton::slotTimeout()
   QPoint bl = mapToGlobal(rect().bottomLeft());
   QWidget *par = (QWidget*)parent();
   QPoint br = par->mapToGlobal(par->rect().bottomRight());
-  // we must avoid painting over the dialog's limits 
+  // we must avoid painting over the dialog's limits
   // as the feedback area isn't repainted when the popup disappears
   bl.setX( QMIN( bl.x(), br.x() - pop->sizeHint().width()));
   pop->popup( bl );
