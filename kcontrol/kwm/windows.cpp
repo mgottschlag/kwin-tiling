@@ -196,8 +196,8 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
 //    QWhatsThis::add( s, wtstr );
     QWhatsThis::add( alabel, wtstr );
 
-    QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to the"
-                                        " front automatically when you click somewhere into the window contents.") );
+    QWhatsThis::add( clickRaiseOn, i18n("When this option is enabled, your windows will be brought to the"
+                                        " front when you click somewhere into the window contents.") );
 
     lay->addWidget(fcsBox);
 
@@ -413,7 +413,7 @@ void KFocusConfig::save( void )
 
     config->setGroup( "TabBox" );
     config->writeEntry( KWIN_TRAVERSE_ALL , traverseAll->isChecked());
-    
+
     config->setGroup("Desktops");
 }
 
@@ -795,9 +795,9 @@ void KAdvancedConfig::shadeHoverChanged(bool a) {
 void KAdvancedConfig::setXinerama(bool on) {
 #ifdef HAVE_XINERAMA
     if (KApplication::desktop()->isVirtualDesktop())
- 	xineramaEnable->setChecked(on);
+        xineramaEnable->setChecked(on);
     else
-	xineramaEnable->setEnabled(false);
+        xineramaEnable->setEnabled(false);
 
     xineramaMovementEnable->setEnabled(on);
     xineramaPlacementEnable->setEnabled(on);
@@ -889,7 +889,7 @@ void KAdvancedConfig::load( void )
 #ifdef HAVE_XINERAMA
     key = config->readEntry(KWIN_XINERAMA, "off");
     setXinerama(key == "on");
- 
+
     key = config->readEntry(KWIN_XINERAMA_MOVEMENT, "off");
     xineramaMovementEnable->setChecked(key == "on");
 
@@ -991,24 +991,24 @@ void KAdvancedConfig::save( void )
 
 #ifdef HAVE_XINERAMA
     if (xineramaEnable->isChecked())
-	config->writeEntry(KWIN_XINERAMA, "on");
+        config->writeEntry(KWIN_XINERAMA, "on");
     else
-	config->writeEntry(KWIN_XINERAMA, "off");
+        config->writeEntry(KWIN_XINERAMA, "off");
 
     if (xineramaMovementEnable->isChecked())
-	config->writeEntry(KWIN_XINERAMA_MOVEMENT, "on");
+        config->writeEntry(KWIN_XINERAMA_MOVEMENT, "on");
     else
-	config->writeEntry(KWIN_XINERAMA_MOVEMENT, "off");
+        config->writeEntry(KWIN_XINERAMA_MOVEMENT, "off");
 
     if (xineramaPlacementEnable->isChecked())
-	config->writeEntry(KWIN_XINERAMA_PLACEMENT, "on");
+        config->writeEntry(KWIN_XINERAMA_PLACEMENT, "on");
     else
-	config->writeEntry(KWIN_XINERAMA_PLACEMENT, "off");
+        config->writeEntry(KWIN_XINERAMA_PLACEMENT, "off");
 
     if (xineramaMaximizeEnable->isChecked())
-	config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "on");
+        config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "on");
     else
-	config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "off");
+        config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "off");
 #endif
 
   //copied from kcontrol/konq/kwindesktop, aleXXX
