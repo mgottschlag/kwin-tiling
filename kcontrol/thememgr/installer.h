@@ -66,7 +66,6 @@ private:
   QPushButton *mBtnCreate, *mBtnSaveAs, *mBtnAdd, *mBtnRemove;
   QMultiLineEdit *mText;
   QLabel *mPreview;
-  bool mEditing;
 };
 
 #endif /*INSTALLER_H*/

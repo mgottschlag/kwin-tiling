@@ -261,7 +261,13 @@ ReverseBlending7=ReverseBlending!
 [Display-dtm]
 ConfigFile=kdesktoprc
 ConfigGroup=Background Common
+ConfigNextGroup=Display-textcolor
 ConfigInstallCmd=oneDesktopMode
+#
+[Display-textcolor]
+ConfigGroup=FMSettings
+NormalTextColor=NormalTextColor!
+ItemTextBackground=ItemTextBackground!
 #
 [Icons]
 ConfigAppDir=icons

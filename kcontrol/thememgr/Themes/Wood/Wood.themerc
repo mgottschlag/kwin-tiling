@@ -10,6 +10,8 @@ background=panel.png
 [Display]
 Wallpaper0=wallpaper.jpg
 WallpaperMode0=Tiled
+NormalTextColor=231,158,90
+ItemTextBackground=170,76,48
 [Colors]
 foreground=3,90,0
 selectForeground=255,255,255

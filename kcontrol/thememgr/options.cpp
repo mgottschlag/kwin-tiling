@@ -178,6 +178,7 @@ void Options::slotDetails()
 void Options::slotCbxClicked()
 {
   save();
+  emit changed(true);
 }
 
 

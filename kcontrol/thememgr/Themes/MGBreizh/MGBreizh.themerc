@@ -28,6 +28,8 @@ WallpaperMode0=Centred
 BackgroundMode0=Flat
 Color1_0=0,0,0
 BlendMode0=NoBlending
+ItemTextBackground=
+NormalTextColor=255,255,255
 #
 #-----------------------------------------------------------------------------
 [Colors]

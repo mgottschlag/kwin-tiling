@@ -105,7 +105,7 @@ void KThemeMgr::init()
 //-----------------------------------------------------------------------------
 void KThemeMgr::defaultValues()
 {
-  theme->extract();
+//  theme->extract();
 }
 
 

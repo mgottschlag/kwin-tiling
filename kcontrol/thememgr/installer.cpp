@@ -77,8 +77,6 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
     return;
   }
 
-  mEditing = false;
-
   connect(theme, SIGNAL(changed()), SLOT(slotThemeChanged()));
 
   mGrid = new QGridLayout(this, 2, 3, 6, 6);
@@ -189,8 +187,7 @@ void Installer::slotCreate()
 
   name = dlg.fileName();
   if (!theme->create(name)) return;
-
-  mEditing = true;
+  theme->extract();
 
   sSettingTheme = true;
   mThemesList->setCurrentItem(addTheme(name));

@@ -137,7 +137,7 @@ const QString Theme::workDir(void)
 {
   static QString str;
   if (str.isEmpty())
-    str = locateLocal("appdata", "Work/");
+    str = locateLocal("data", "kthememgr/Work/");
   return str;
 }
 
