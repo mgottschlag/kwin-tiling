@@ -1,4 +1,4 @@
-[Global Key Scheme]
+[Settings]
 Name=Windows Default (Without Meta/Win-Key)
 Name[af]=vensters verstek (sonder om te meta/Win-Key)
 Name[ar]=الإعداد الإفتراضي للويندوز (بدون مفاتيح الويندوز المخصصة)
@@ -41,6 +41,9 @@ Name[xh]=Windows Ezingagqibekanga (Ngaphandle kwe Meta/Win-key)
 Name[xx]=xx
 Name[zh_CN]=Windows 默认 (没有 Meta/Win-Key)
 Name[zu]=Amawindi Angaqedekanga (Without Meta/Win-Key)
+Uses Win Modifer=false
+
+[Global Shortcuts]
 Execute command=none
 Kill Window=none
 Lock screen=none
@@ -116,3 +119,45 @@ toggle-clipboard-actions=none
 Screenshot of active window=Alt+Print
 Screenshot of desktop=Ctrl+Print
 Toggle Show Desktop=Alt+Ctrl+D
+
+[Shortcuts]
+AddBookmark=Ctrl+D
+Back=Alt+Left
+Close=Ctrl+F4
+Copy=Ctrl+C
+Cut=Ctrl+X
+DeleteWordBack=Ctrl+Backspace
+DeleteWordForward=Ctrl+Delete
+End=Ctrl+End
+Find=Ctrl+F
+FindNext=F3
+FindPrev=Shift+F3
+Forward=Alt+Right
+GotoLine=Ctrl+G
+Help=F1
+Home=Ctrl+Home
+Insert=Ctrl+Insert
+New=Ctrl+N
+Next=Next
+NextCompletion=Ctrl+Down
+Open=Ctrl+O
+Paste=Ctrl+V
+PopupMenuContext=F10
+PrevCompletion=Ctrl+Up
+Print=Ctrl+P
+Prior=Prior
+Quit=Alt+F4
+Redo=Ctrl+Shift+Z
+Reload=F5
+Replace=Ctrl+R
+RotateDown=Down
+RotateUp=Up
+Save=Ctrl+S
+SelectAll=Ctrl+A
+ShowMenubar=Ctrl+M
+TextCompletion=Ctrl+E
+Undo=Ctrl+Z
+Up=Alt+Up
+WhatThis=Shift+F1
+ZoomIn=Ctrl+Plus
+ZoomOut=Ctrl+Minus

@@ -15,11 +15,5 @@ messages:
 data_DATA = keys.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel
 
-scheme_DATA = kde3.kksrc kde4.kksrc
+scheme_DATA = kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac3.kksrc unix3.kksrc
 schemedir = $(kde_datadir)/kcmkeys
-
-app_scheme_DATA = app-kde3.kksrc app-kde4.kksrc app-mac3.kksrc app-unix3.kksrc app-win3.kksrc
-app_schemedir = $(kde_datadir)/kcmkeys/standard
-
-global_scheme_DATA = global-kde3.kksrc global-kde4.kksrc global-mac3.kksrc global-unix3.kksrc global-win3.kksrc global-win4.kksrc
-global_schemedir = $(kde_datadir)/kcmkeys/global

@@ -1,4 +1,4 @@
-[Global Key Scheme]
+[Settings]
 Name=Unix Default
 Name[af]=unix verstek
 Name[ar]=الإعداد الإفتراضي ليونكس
@@ -42,6 +42,9 @@ Name[xh]=Unix Engagqibekanga
 Name[xx]=xx
 Name[zh_CN]=Unix 默认
 Name[zu]=Unix Okungaqedekanga
+Uses Win Modifer=false
+
+[Global Shortcuts]
 Execute command=Alt+F2
 Kill Window=Alt+F9
 Lock screen=Alt+Ctrl+L
@@ -117,3 +120,45 @@ toggle-clipboard-actions=Alt+Ctrl+X
 Screenshot of active window=Alt+Print
 Screenshot of desktop=Ctrl+Print
 Toggle Show Desktop=Alt+Ctrl+D
+
+[Shortcuts]
+AddBookmark=Ctrl+B
+Back=Alt+Left
+Close=Ctrl+W
+Copy=Ctrl+C
+Cut=Ctrl+X
+DeleteWordBack=Ctrl+Backspace
+DeleteWordForward=Ctrl+Delete
+End=Ctrl+End
+Find=Ctrl+S
+FindNext=F3
+FindPrev=Shift+F3
+Forward=Alt+Right
+GotoLine=Ctrl+G
+Help=F1
+Home=Ctrl+Home
+Insert=Ctrl+Insert
+New=Ctrl+N
+Next=Next
+NextCompletion=Ctrl+Down
+Open=Ctrl+O
+Paste=Ctrl+V
+PopupMenuContext=Menu
+PrevCompletion=Ctrl+Up
+Print=Ctrl+P
+Prior=Prior
+Quit=Ctrl+Q
+Redo=Ctrl+Shift+Z
+Reload=F5
+Replace=Ctrl+R
+RotateDown=Down
+RotateUp=Up
+Save=Ctrl+S
+SelectAll=
+ShowMenubar=Ctrl+M
+TextCompletion=Ctrl+E
+Undo=Ctrl+Z
+Up=Alt+Up
+WhatThis=Shift+F1
+ZoomIn=Ctrl+Plus
+ZoomOut=Ctrl+Minus
