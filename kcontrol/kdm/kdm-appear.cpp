@@ -422,9 +422,8 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 	// we gotta check if it is a non-local file and make a tmp copy at the hd.
 	if(!url->isLocalFile()) {
-	    pixurl = "file:" +
-		     KGlobal::dirs()->resourceDirs("data").last() +
-		     "kdm/pics/" + url->fileName();
+	    pixurl.setPath(KGlobal::dirs()->resourceDirs("data").last() +
+		     "kdm/pics/" + url->fileName());
 	    KIO::NetAccess::copy(*url, pixurl, parentWidget());
 	    istmp = true;
 	} else {
