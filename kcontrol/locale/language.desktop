@@ -85,7 +85,7 @@ Comment[uk]=Настройка мови, відображення чисел т�
 Comment[zh_CN.GB2312]=你所在地区的语言, 数字和时间设置
 Comment[zh_TW.Big5]=你指定區域的語言,數字及時間設定
 
-Keywords=language,translation,numbers,currency,time,date,formats,locale,Country,charset,Decimal symbol,Thousands seperator,symbol,seperator,sign,positiv,negativ,fractal digits,week,start week
+Keywords=language,translation,number format,currency,time,date,formats,locale,Country,charset,Decimal symbol,Thousands seperator,symbol,seperator,sign,positiv,negativ,fractal digits,week,start week
 Keywords[ca]=idioma,traducció,números,moneda,hora,data,formats
 Keywords[cs]=Jazyk,Překlad,Čísla,Měna,Čas,Datum,Formáty
 Keywords[da]=sprog,oversættelse,tal,penge,tid,dato,formater

@@ -76,7 +76,7 @@ Comment[uk]=Настройте Ваше ім'я, адресу електронн
 Comment[zh_CN.GB2312]=配置你的身份, e-mail 地址, 邮件服务等.
 Comment[zh_TW.Big5]=設定你的身份,電子郵件位址,郵件伺服器等。
 
-Keywords=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,mailbox,User Information,Reply Address,Server information,User Name,Password,Host
+Keywords=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,mailbox,User Information,Reply Address,Server information,User Name,Passwords,Host
 Keywords[ca]=Correu electrònic,Correu,e-mail,Adreça,servidor de correu,IMAP,POP3,bústia local,bústia
 Keywords[cs]=Email,Pošta,E-mail,Adresa,Poštovní server,IMAP,POP3,Lokální poštovní schránka,Schránka,
 Keywords[da]=Epost,Post,E-post,Adresse,Epost server,Imap,Pop3,Lokal postkasse,postkasse

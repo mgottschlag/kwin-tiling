@@ -86,7 +86,7 @@ Comment[uk]=Всі настройки KDM
 Comment[zh_CN.GB2312]=所有的 KDE 设置
 Comment[zh_TW.Big5]=所有 KDM 設定
 
-Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpaper,sessions,shutdown,restart
+Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 Keywords[ca]=kdm,gestor de monitor,xdm,usuaris,connexió
 Keywords[cs]=kdm,Správce obrazovky,xdm,Uživatel,Přihlášení
 Keywords[da]=kdm,skærmhåndtering,xdm,brugere,logpå
