@@ -303,7 +303,10 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
     m_bChanged = false;
+    m_bStyleDirty = false;
     m_bToolbarsDirty = false;
+    m_bEffectsDirty = false;
+    m_bMacStyleDirty = false;
     useRM = true;
     macStyle = false;
 
@@ -407,6 +410,39 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     grid->addWidget(tbHilite, 0, 1);
     grid->addWidget(tbTransp, 1, 1);
 
+    effectStyle = new QButtonGroup( i18n( "Effect options" ), this);
+    topLayout->addWidget(effectStyle, 10);
+
+    vlay = new QVBoxLayout( effectStyle, 10 );
+    vlay->addSpacing( effectStyle->fontMetrics().lineSpacing() );
+
+    grid = new QGridLayout(3, 2);
+    vlay->addLayout( grid );
+
+    effPlainMenu = new QRadioButton( i18n( "No menu effect" ), effectStyle );
+    effFadeMenu = new QRadioButton( i18n( "Fade menus" ), effectStyle );
+    effAnimateMenu = new QRadioButton( i18n( "Animate menus"), effectStyle );
+    effAnimateCombo = new QCheckBox( i18n( "Animate combo boxes"), effectStyle );
+    effFadeTooltip = new QCheckBox( i18n( "Fade tool tips"), effectStyle );
+
+    QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus open immediately." ) );
+    QWhatsThis::add( effFadeMenu, i18n( "If this option is selected, menus fade in slowly." ) );
+    QWhatsThis::add( effAnimateMenu, i18n( "If this option is selected, menus are animated to grow to their full size." ) );
+    QWhatsThis::add( effAnimateCombo, i18n( "If this option is selected, combo boxes are animated to grow to their full size.") );
+    QWhatsThis::add( effFadeTooltip, i18n( "If this option is selected, tooltips fade in slowly." ) );
+
+    connect( effPlainMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
+    connect( effFadeMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) ) ;
+    connect( effAnimateMenu, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect( effAnimateCombo, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+    connect( effFadeTooltip, SIGNAL( clicked() ), SLOT( slotChangeEffectStyle() ) );
+
+    grid->addWidget( effPlainMenu, 0, 0 );
+    grid->addWidget( effFadeMenu, 1, 0 );
+    grid->addWidget( effAnimateMenu, 2, 0 );
+    grid->addWidget( effAnimateCombo, 0, 1 );
+    grid->addWidget( effFadeTooltip, 1, 1 );
+    
     topLayout->addStretch( 100 );
     load();
 }
@@ -420,6 +456,7 @@ KGeneral::~KGeneral()
 
 void KGeneral::slotChangeStylePlugin(QListViewItem *)
 {
+    m_bStyleDirty = true;
     m_bChanged = true;
     emit changed(true);
 }
@@ -446,6 +483,18 @@ void KGeneral::slotChangeTbStyle()
     emit changed(true);
 }
 
+void KGeneral::slotChangeEffectStyle()
+{
+    effectAnimateMenu = effAnimateMenu->isChecked();
+    effectFadeMenu = effFadeMenu->isChecked();
+    effectAnimateCombo = effAnimateCombo->isChecked();
+    effectFadeTooltip = effFadeTooltip->isChecked();
+
+    m_bEffectsDirty = true;
+    m_bChanged = true;
+    emit changed(true);
+}
+
 void KGeneral::slotUseResourceManager()
 {
     useRM = cbRes->isChecked();
@@ -458,6 +507,7 @@ void KGeneral::slotMacStyle()
 {
     macStyle = cbMac->isChecked();
 
+    m_bMacStyleDirty = true;
     m_bChanged = true;
     emit changed(true);
 }
@@ -486,6 +536,10 @@ void KGeneral::readSettings()
     useAA = config->readBoolEntry( "AntiAliasing", true);
     useAA_original = useAA;
 #endif
+    effectAnimateMenu = config->readBoolEntry( "EffectAnimateMenu", false );
+    effectFadeMenu = config->readBoolEntry( "EffectFadeMenu", false );
+    effectAnimateCombo = config->readBoolEntry( "EffectAnimateCombo", false );
+    effectFadeTooltip = config->readBoolEntry( "EffectFadeTooltip", false );
 
     config->setGroup( "Toolbar style" );
     tbUseText = config->readEntry( "IconText", "IconOnly");
@@ -514,6 +568,11 @@ void KGeneral::showSettings()
     tbAside->setChecked( tbUseText == "IconTextRight" );
     tbText->setChecked( tbUseText == "TextOnly" );
     tbUnder->setChecked( tbUseText == "IconTextBottom" );
+
+    effAnimateMenu->setChecked( effectAnimateMenu );
+    effFadeMenu->setChecked( effectFadeMenu );
+    effAnimateCombo->setChecked( effectAnimateCombo );
+    effFadeTooltip->setChecked( effectFadeTooltip );
 }
 
 
@@ -528,6 +587,11 @@ void KGeneral::defaults()
     tbUseText = "IconOnly";
     tbUseHilite = true;
     tbMoveTransparent = true;
+
+    effectAnimateMenu = false;
+    effectFadeMenu = false;
+    effectAnimateCombo = false;
+    effectFadeTooltip = false;
 
     themeList->defaults();
     showSettings();
@@ -582,6 +646,11 @@ void KGeneral::save()
     config->writeEntry("AntiAliasing", useAA, true, true);
     applyQtXFT(useAA);
 #endif
+    config->writeEntry("EffectAnimateMenu", effectAnimateMenu, true, true);
+    config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
+    config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);
+    config->writeEntry("EffectFadeTooltip", effectFadeTooltip, true, true);
+    
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
@@ -599,12 +668,22 @@ void KGeneral::save()
     }
     applyGtkStyles(useRM);
 
-    KIPC::sendMessageAll(KIPC::StyleChanged);
+    if ( m_bStyleDirty )
+        KIPC::sendMessageAll(KIPC::StyleChanged);
+    else if ( m_bMacStyleDirty )
+        kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
     if ( m_bToolbarsDirty )
         KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 /* we could use later for finer granularity */);
+    if ( m_bEffectsDirty )
+        KIPC::sendMessageAll(KIPC::SettingsChanged);
+
     QApplication::syncX();
 
     m_bChanged = false;
+    m_bStyleDirty = false;
+    m_bToolbarsDirty = false;
+    m_bEffectsDirty = false;
+    m_bMacStyleDirty = false;
     emit changed(false);
 }
 

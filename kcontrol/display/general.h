@@ -73,6 +73,7 @@ signals:
 private slots:
     void slotChangeStylePlugin(QListViewItem *);
     void slotChangeTbStyle();
+    void slotChangeEffectStyle();
     void slotUseResourceManager();
     void slotMacStyle();
     /* This should be in #ifdef HAVE_AA, but moc can't handle that */
@@ -82,16 +83,18 @@ private:
     void readSettings();
     void showSettings();
 
-    bool m_bChanged, m_bToolbarsDirty;
+    bool m_bChanged, m_bStyleDirty, m_bToolbarsDirty;
+    bool m_bEffectsDirty, m_bMacStyleDirty;
     bool useRM, macStyle;
 #ifdef HAVE_AA
     bool useAA, useAA_original;
 #endif
     bool tbUseHilite, tbMoveTransparent;
+    bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip;
 
     QString tbUseText;
 
-    QGroupBox *styles, *tbStyle;
+    QGroupBox *styles, *tbStyle, *effectStyle;
     QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
@@ -99,6 +102,8 @@ private:
 #ifdef HAVE_AA
     QCheckBox *cbAA;
 #endif
+    QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu;
+    QCheckBox *effAnimateCombo, *effFadeTooltip;
 
     GUIStyle applicationStyle;
 
