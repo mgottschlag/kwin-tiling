@@ -46,15 +46,17 @@
 
 #if HAVE_DPMS
 #include <X11/Xmd.h>
+extern "C" {
 #include <X11/extensions/dpms.h>
+}
 
 #ifdef XIMStringConversionRetrival
 extern "C" {
 #endif
-    int DPMSQueryExtension(Display *, int *, int *);
-    int DPMSEnable(Display *);
-    int DPMSDisable(Display *);
-    void DPMSSetTimeouts(Display *, int, int, int);
+    Bool DPMSQueryExtension(Display *, int *, int *);
+    Status DPMSEnable(Display *);
+    Status DPMSDisable(Display *);
+    Bool DPMSSetTimeouts(Display *, CARD16, CARD16, CARD16);
 #ifdef XIMStringConversionRetrival
 }
 #endif
