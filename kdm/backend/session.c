@@ -136,6 +136,7 @@ AutoLogon()
 		td->hstent->npass = 0;
 		newdmrc = td->hstent->nargs;
 		td->hstent->nargs = 0;
+		cursource = (td->hstent->rLogin == 1) ? PWSRC_RELOGIN : PWSRC_MANUAL;
 	} else if (*td->autoUser && tdiff > 0) {
 		unsigned int lmask;
 		Window dummy1, dummy2;
@@ -147,8 +148,11 @@ AutoLogon()
 			return 0;
 		StrDup( &curuser, td->autoUser );
 		StrDup( &curpass, td->autoPass );
-	} else
+		cursource = PWSRC_AUTOLOGIN;
+	} else {
+		cursource = PWSRC_MANUAL;
 		return 0;
+	}
 	return 1;
 }
 

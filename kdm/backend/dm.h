@@ -482,6 +482,10 @@ int ReadDmrc( void );
 extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curtype, *newpass,
             *dmrcuser, *curdmrc, *newdmrc;
+extern int cursource;
+#define PWSRC_MANUAL 0
+#define PWSRC_AUTOLOGIN 1
+#define PWSRC_RELOGIN 2
 
 /* server.c */
 char **PrepServerArgv( struct display *d, const char *args );

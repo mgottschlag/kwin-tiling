@@ -94,6 +94,7 @@ char **userEnviron;
 char **systemEnviron;
 static int curuid;
 static int curgid;
+int cursource;
 
 char *dmrcuser;
 char *curdmrc;
@@ -383,8 +384,14 @@ AccNoPass( const char *un, struct passwd *pw )
 	if (!*un)
 		return 0;
 
-	if (!strcmp( un, td->autoUser ))
+	switch (cursource) {
+	case PWSRC_RELOGIN:
 		return 1;
+	case PWSRC_AUTOLOGIN:
+		if (!strcmp( un, td->autoUser ))
+			return 1;
+		return 0;
+	}
 
 	for (hg = 0, fp = td->noPassUsers; *fp; fp++)
 		if (**fp == '@')
