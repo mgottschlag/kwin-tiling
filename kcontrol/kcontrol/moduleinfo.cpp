@@ -81,10 +81,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
 QPixmap ModuleInfo::icon()
 {
-  QPixmap icon = KGlobal::iconLoader()->loadApplicationIcon(_icon, KIconLoader::Small);
-  if (icon.isNull())
-    icon = BarIcon("unknown");
-  return icon;
+  return KGlobal::iconLoader()->loadApplicationIcon(_icon, KIconLoader::Small);
 }
 
 

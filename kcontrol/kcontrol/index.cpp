@@ -27,6 +27,8 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kdesktopfile.h>
+#include <kstddirs.h>
 
 
 #include "index.h"
@@ -89,22 +91,39 @@ void IndexPane::fillIndex(ConfigModuleList &list)
 
 QListViewItem *IndexPane::getGroupItem(QListViewItem *parent, const QStringList& groups)
 {
+  QString path;
+
   QListViewItem *item = parent;
 
   QStringList::ConstIterator it;
   for (it=groups.begin(); it != groups.end(); it++)
     {
+      path += *it + "/";
+
       parent = item;
       item = item->firstChild();
       while (item)
 	{
-	  if (item->text(0) == *it)
+	  if (((IndexItem*)item)->tag() == *it)
 	    break;
 
 	  item = item->nextSibling();
 	}
       if (!item)
-	item = new QListViewItem(parent, *it);
+	{
+	  // create new branch
+	  IndexItem *iitem = new IndexItem(parent);
+	  iitem->setTag(*it);
+
+	  // now decorate the branch
+	  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
+	  
+	  iitem->setText(0, directory.readEntry("Name", *it));
+	  iitem->setPixmap(0, KGlobal::iconLoader()->loadApplicationIcon(
+            directory.readEntry("Icon"), KIconLoader::Small));
+
+	  return iitem;
+	}
     }
 
   return item;
@@ -163,7 +182,7 @@ void IndexPane::makeVisible(ConfigModule *module)
       item = item->firstChild();
       while (item)
 	{
-	  if (item->text(0) == *it)
+	  if (((IndexItem*)item)->tag() == *it)
 	    {
 	      _tree->setOpen(item, true);
 	      break;
@@ -180,7 +199,7 @@ void IndexPane::makeVisible(ConfigModule *module)
 
 
 IndexListItem::IndexListItem(QListViewItem *parent, ConfigModule *module)
-  : QListViewItem(parent), _module(module)
+  : IndexItem(parent), _module(module)
 {
   if (!module)
     return;
@@ -197,7 +216,7 @@ IndexListItem::IndexListItem(QListViewItem *parent, ConfigModule *module)
 
 
 IndexListItem::IndexListItem(QListView *parent, ConfigModule *module)
-  : QListViewItem(parent), _module(module)
+  : IndexItem(parent), _module(module)
 {
   if (!module)
     return;

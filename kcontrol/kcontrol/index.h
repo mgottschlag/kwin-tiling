@@ -75,7 +75,27 @@ private:
 };
 
 
-class IndexListItem : public QListViewItem
+class IndexItem : public QListViewItem
+{
+public:
+
+  IndexItem(QListViewItem *parent)
+    : QListViewItem(parent) {};
+  IndexItem(QListView *parent)
+    : QListViewItem(parent) {};
+
+  void setTag(QString tag) { _tag = tag; };
+  QString tag() const { return _tag; };
+
+
+private:
+  
+  QString _tag;
+
+};
+
+
+class IndexListItem : public IndexItem
 {
   friend class IndexPane;
 
