@@ -129,7 +129,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( type_label, wtstr );
       QWhatsThis::add( session_lined, wtstr );
 
-      btnadd = new QPushButton( i18n("Add ne&w"), group2 );
+      btnadd = new QPushButton( i18n("Add Ne&w"), group2 );
       btnadd->setEnabled(false);
       connect( btnadd, SIGNAL( clicked() ), SLOT( changed() ) );
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );

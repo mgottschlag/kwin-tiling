@@ -57,7 +57,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
     " string (see \"Appearance\" tab)</li><li><em>Fail:</em> used to display a message"
     " when a person fails to login</li><li><em>Standard:</em> used for the rest of the text</li></ul>") );
 
-  QPushButton *fontbtn = new QPushButton(i18n("C&hange font..."), tGroup);
+  QPushButton *fontbtn = new QPushButton(i18n("C&hange Font..."), tGroup);
   fontbtn->setFixedSize(fontbtn->sizeHint());
   connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
 
