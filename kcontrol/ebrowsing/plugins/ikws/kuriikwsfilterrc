@@ -1,9 +1,7 @@
 [General]
 SearchEngines=Open Directory,Freshmeat,AltaVista,Google,Lycos,Voila,Yahoo,Merriam-Webster Dictionary,Merriam-Webster Thesaurus,RPM-Find,LEO-Translate,AustroNaut,Excite,Ask Jeeves,Free On-Line Dictionary Of Computing,GO.com,Hotbot,Mamma - Mother of all Search Engines,MetaCrawler,Acronym Database,RealNames
-
-[Internet Keywords]
-NavEnabled=true
-NavSearchFallback=Google Search
+InternetKeywordsEnabled=true
+InternetKeywordsSearchFallback=Google
 
 [Acronym Database Search]
 Keys=ad,acro,acronym
