@@ -21,6 +21,7 @@
 class QSlider;
 class QComboBox;
 class QPushButton;
+class QCheckBox;
 class QResizeEvent;
 class KLineEdit;
 class QPalette;
@@ -57,6 +58,7 @@ private slots:
     void slotWidgetColor(int);
     void slotColorForWidget(int, const QColor &);
     void slotPreviewScheme(int);
+    void slotChanged();
 
 private:
     void setColorName( const QString &name, int id );
@@ -80,6 +82,9 @@ private:
 
     KColorButton *colorButton;
     WidgetCanvas *cs;
+    
+    QCheckBox *cbExportColors;
+    bool exportColors;
 };
 
 

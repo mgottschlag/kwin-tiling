@@ -14,6 +14,7 @@
 #include <unistd.h>
 
 #include <qgroupbox.h>
+#include <qcheckbox.h>
 #include <qlabel.h>
 #include <klineedit.h>
 #include <qpushbutton.h>
@@ -39,6 +40,8 @@
 #include <kbuttonbox.h>
 
 #include <X11/Xlib.h>
+
+#include "../display/krdb.h"
 
 #include "colorscm.h"
 #include "widgetcanvas.h"
@@ -71,7 +74,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     // LAYOUT
 
-    QGridLayout *topLayout = new QGridLayout( this, 2, 2, 10 );
+    QGridLayout *topLayout = new QGridLayout( this, 3, 2, 10 );
     topLayout->setRowStretch(0,0);
     topLayout->setRowStretch(1,0);
     topLayout->setColStretch(0,1);
@@ -206,12 +209,22 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     label->setText(i18n("High Contrast", "High"));
     groupLayout->addWidget( label );
 
+    cbExportColors = new QCheckBox(i18n("Apply colors to non-KDE applications."), this);
+    topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
+    connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+
     load();
 }
 
 
 KColorScheme::~KColorScheme()
 {
+}
+
+void KColorScheme::slotChanged()
+{
+    m_bChanged = true;
+    emit changed(true);
 }
 
 void KColorScheme::setColorName( const QString &name, int id )
@@ -234,6 +247,11 @@ void KColorScheme::load()
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
+
+    KConfig cfg("kcmdisplayrc", true, false);
+    cfg.setGroup("X11");
+    exportColors = cfg.readBoolEntry("exportKDEColors", true);
+    cbExportColors->setChecked(exportColors);
 
     m_bChanged = false;
     emit changed(false);
@@ -287,6 +305,17 @@ void KColorScheme::save()
     config->sync();
     delete config;
 
+    if (exportColors != cbExportColors->isChecked())
+    {
+       KConfig cfg("kcmdisplayrc", false, false);
+       cfg.setGroup("X11");
+       exportColors = cbExportColors->isChecked();
+       cfg.writeEntry("exportKDEColors", exportColors);
+       bool exportFonts = cfg.readBoolEntry("exportKDEFonts", true);
+       cfg.sync();
+       runRdb(exportFonts, exportColors);
+    }
+
     QApplication::setOverrideCursor( waitCursor );
     QStringList args;
     args.append("style");
@@ -312,6 +341,8 @@ void KColorScheme::defaults()
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
+
+    cbExportColors->setChecked(true);
 
     m_bChanged = true;
     emit changed(true);
