@@ -27,7 +27,7 @@ void usage( char *name );
 
 int main(int argc, char *argv[])
 {
-    KApplication app(argc, argv);
+    KApplication app(argc, argv, "kscreensaver");
 
     // For the kdebase package we use a single strings file.
     glocale = new KLocale("klock");

@@ -107,7 +107,7 @@ public:
      virtual bool x11EventFilter( XEvent * );
 };
 
-MyApp::MyApp(int &argc, char **argv ) : KApplication(argc, argv)
+MyApp::MyApp(int &argc, char **argv ) : KApplication(argc, argv, "kdm")
 {}
 
 MyApp::~MyApp()

@@ -29,7 +29,7 @@ void usage(char *name)
 
 int main(int argc, char *argv[])
 {
-    KApplication app(argc, argv);
+    KApplication app(argc, argv, "random");
     long windowId = 0;
     int i;
     char *sargs[MAX_ARGS];
