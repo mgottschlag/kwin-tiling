@@ -1,4 +1,4 @@
-/* 
+/*
 
     $Id$
 
@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.16  2000/06/09 21:51:09  charles
+    a preview for the sound.
+
+    Someone want to make a little icon for it?.. cough.. cough.. tackat.. cough..
+
     Revision 1.15  2000/05/25 21:13:36  charles
     *** empty log message ***
 
@@ -90,18 +95,17 @@
     cd knotify
     make --dammit it_work
 
-*/  
+*/
 
 
 #ifndef _EVENTVIEW_H
 #define _EVENTVIEW_H
 
 #include <knotifyclient.h>
-#include <qlistbox.h>
-#include <qcheckbox.h>
 #include <kurlrequester.h>
 #include <kconfig.h>
 #include <qpushbutton.h>
+#include <qlistview.h>
 
 class EventConfig;
 
@@ -113,17 +117,16 @@ public:
 	EventView(QWidget *parent, const char *name=0);
 	virtual ~EventView();
 
-	int enumNum(int listNum);
+	int enumNum(QListViewItem *item);
 	
 public slots:
 	void defaults();
 	void load(EventConfig *_event, bool save=true);
 	void unload(bool save=true);
-	void itemSelected(int item);
+	void itemSelected(QListViewItem *item);
 	
 protected slots:
-	void setPixmaps();
-	void itemToggled(bool on);
+	void itemClicked(QListViewItem*);
 
 	void textChanged(const QString &str);
 	void playSound();
@@ -132,14 +135,15 @@ signals:
 	void changed();
 
 private:
+        void setFileURL(const QString& url);
+    
 	QPushButton *play;
-	QListBox *eventslist;
-	QCheckBox *enabled;
+	QListView *eventslist;
 	KURLRequester *file;
 	QPushButton *todefault;
 	
 	EventConfig *event;
-	int oldListItem;
+	QCheckListItem *oldListItem;
 };
 
 #endif

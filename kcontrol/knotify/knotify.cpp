@@ -54,6 +54,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	eventview=new EventView(split);
 	eventview->setEnabled(false);
 	loadAll();
+	connect( eventview, SIGNAL( changed() ), SLOT( changed() ));
 };
 
 KNotifyWidget::~KNotifyWidget()

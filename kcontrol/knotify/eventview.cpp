@@ -27,89 +27,99 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qheader.h>
+#include <qlistview.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdialog.h>
 #include <kinstance.h>
+#include <kmessagebox.h>
 #include <kaudioplayer.h>
-
-#include <iostream.h>
 
 
 QString iSound(i18n("Sound"));
-QString iMessageBox("Message Box");
-QString iLogFile("Log File");
-QString iStandardError("Standard Error");
+QString iMessageBox(i18n("Message Box"));
+QString iLogFile(i18n("Log File"));
+QString iStandardError(i18n("Standard Error"));
 
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name), event(0), oldListItem(-1)
+	QWidget(parent, name), event(0), oldListItem(0)
 {
-	QGridLayout *layout=new QGridLayout(this,4, 2, 
-					    KDialog::marginHint(),
-					    KDialog::spacingHint());
+	QGridLayout *layout=new QGridLayout(this,4, 2,
+	                                    KDialog::marginHint(),
+	                                    KDialog::spacingHint());
 	QHBoxLayout *tinylayout;
 	layout->addLayout(tinylayout=new QHBoxLayout(this),2,1);
 
 	
-	eventslist=new QListBox(this);
+	eventslist=new QListView(this);
+	eventslist->addColumn("Column");
+	eventslist->header()->hide();
 	
 	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
-	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
 	tinylayout->addWidget(file=new KURLRequester(this));
 	tinylayout->addWidget(play=new QPushButton(i18n("&Play"), this));
-	layout->addWidget(new QLabel(file, i18n("&File:"), this), 1,1);
+	layout->addWidget(new QLabel(file, i18n("&Filename:"), this), 1,1);
 	layout->addWidget(todefault=new QPushButton(i18n("Set To &Default"), this), 3,1, Qt::AlignRight);
 	
 	file->setEnabled(false);
-	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
-	connect(enabled, SIGNAL(toggled(bool)), SLOT(itemToggled(bool)));
-	connect((QObject*)file->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
+	connect(eventslist, SIGNAL(selectionChanged(QListViewItem*)), SLOT(itemSelected(QListViewItem*)));
+	connect(eventslist, SIGNAL(clicked(QListViewItem*)), SLOT(itemClicked(QListViewItem*)));
+	
+	connect(file, SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
 	connect(todefault, SIGNAL(clicked()), SLOT(defaults()));
 	connect(play, SIGNAL(clicked()), SLOT(playSound()));
 };
 
 EventView::~EventView()
 {
-
 }
 
 void EventView::defaults()
 {
-	int current=eventslist->currentItem();
+	if (!KMessageBox::Yes==KMessageBox::questionYesNo(this, i18n("This will reset this entire notification to the system-default settings.\nAre you sure you want to continue?"), i18n("Continue?")))
+		return;
+	QCheckListItem *current=(QCheckListItem*)eventslist->currentItem();
 	
 	emit changed();
 	event->reload();
 	load(event, false);
 	eventslist->setCurrentItem(current);
+	
 }
 
 void EventView::textChanged(const QString &str)
 {
-	int item=eventslist->currentItem();
-	if (event)
+	QCheckListItem *item=(QCheckListItem*)eventslist->selectedItem();
+	if (event && item)
 		if (enumNum(item) == KNotifyClient::Sound)
 			event->soundfile=str;
 		else if (enumNum(item) == KNotifyClient::Logfile)
 			event->logfile=str;
+	emit changed();
 }
 
-void EventView::itemSelected(int item)
+void EventView::itemSelected(QListViewItem *lvi)
 {
-	file->setEnabled(false);
-	// charger la nouvelle chose
+        if ( !lvi || !event )
+	        return;
+    
+        QCheckListItem *item = static_cast<QCheckListItem *>(lvi);
+    
+        int type = enumNum(item);
+	file->setEnabled(item->isOn() && 
+			 (type == KNotifyClient::Sound || type == KNotifyClient::Logfile));
 	
-	enabled->setChecked((event->present & enumNum(item)) ? true : false);
-	if (enumNum(item) == KNotifyClient::Sound)
-		file->setEnabled(true), file->setURL(event->soundfile), play->show();
+	if (type == KNotifyClient::Sound)
+		setFileURL(event->soundfile), play->show();
 	else
 		play->hide();
 		
-	if (enumNum(item) == KNotifyClient::Logfile)
-		file->setEnabled(true), file->setURL(event->logfile);
+	if (type == KNotifyClient::Logfile)
+		setFileURL(event->logfile);
 	
-		
-	oldListItem=item;
+	oldListItem=(QCheckListItem*)item;
 }
 
 void EventView::playSound()
@@ -117,59 +127,61 @@ void EventView::playSound()
 	KAudioPlayer::play(file->url());
 }
 
-void EventView::itemToggled(bool on)
+void EventView::itemClicked(QListViewItem* lvi)
 {
-	if (!event) return;
-	if (on)
-		event->present|=enumNum(eventslist->currentItem());
+        if ( !lvi )
+	        return;
+    
+        QCheckListItem *item = static_cast<QCheckListItem *>(lvi);
+    
+        int type = enumNum(item);
+	file->setEnabled(item->isOn() && 
+			 (type == KNotifyClient::Sound || type == KNotifyClient::Logfile));
+
+	// only emit changed(), when the checked state changed
+	if ( ((event->present & type) == 0) == item->isOn() )
+	        emit changed();
+		
+	if (item->isOn())
+	        event->present|=type;
 	else
-		event->present&= ~enumNum(eventslist->currentItem());
-	setPixmaps();
+	        event->present&=~type;
 }
 
 void EventView::load(EventConfig *_event, bool save)
 {
+        if ( !_event )
+	        return;
+    
 	unload(save);
 	
-	// I load the _event (e.g., showing all the cute little flags)
+	// I load the _event
+	QCheckListItem *item = 0L;
 	
 	// Handle the nopresent thing
-	QStringList presentation;
-	if (!(_event->nopresent && KNotifyClient::Sound))
-		presentation << iSound;
-	if (!(_event->nopresent && KNotifyClient::Messagebox))
-		presentation << iMessageBox;
-	if (!(_event->nopresent && KNotifyClient::Logfile))
-		presentation << iLogFile;
-	if (!(_event->nopresent && KNotifyClient::Stderr))
-		presentation << iStandardError;
-	eventslist->insertStringList(presentation);
+	if (!(_event->nopresent & KNotifyClient::Sound)) {
+		item = new QCheckListItem(eventslist, iSound, QCheckListItem::CheckBox);
+		item->setOn( _event->present & KNotifyClient::Sound );
+	}
+	if (!(_event->nopresent & KNotifyClient::Messagebox)) {
+		item = new QCheckListItem(eventslist, iMessageBox, QCheckListItem::CheckBox);
+		item->setOn( _event->present & KNotifyClient::Messagebox );
+	}
+	if (!(_event->nopresent & KNotifyClient::Logfile)) {
+		item = new QCheckListItem(eventslist, iLogFile, QCheckListItem::CheckBox);
+		item->setOn( _event->present & KNotifyClient::Logfile );
+	}
+	if (!(_event->nopresent & KNotifyClient::Stderr)) {
+		item = new QCheckListItem(eventslist, iStandardError, QCheckListItem::CheckBox);
+		item->setOn( _event->present & KNotifyClient::Stderr );
+	}
 	
-	event=_event;
+	event = _event;
 	setEnabled(true);
-	setPixmaps();
 	eventslist->setSelected(0, true);
 	kapp->processEvents();
 	eventslist->setContentsPos(0,0); // go to the top
-	itemSelected(0);
-}
-
-void EventView::setPixmaps()
-{ // Handle all of 'dem at once
-	int current=eventslist->currentItem();
-	eventslist->blockSignals(true);
-	if (!event) return;
-	int i=0;
-	for (int c=1; c <=8; c*=2)
-	{
-		if (event->present & c)
-			eventslist->changeItem(SmallIcon("flag"), eventslist->text(i), i);
-		else
-			eventslist->changeItem(eventslist->text(i), i);
-		i++;
-	}
-	eventslist->setCurrentItem(current);
-	eventslist->blockSignals(false);
+	itemSelected(eventslist->firstChild());
 }
 
 void EventView::unload(bool)
@@ -177,20 +189,28 @@ void EventView::unload(bool)
 	eventslist->clear();
 
 	event=0;
-	enabled->setChecked(false);
-	setPixmaps();
 	
-	
-	file->setURL("");
+	setFileURL("");
 	file->setEnabled(false);
 }
 
-int EventView::enumNum(int listNum)
+int EventView::enumNum(QListViewItem *item)
 {
-	QString temp=eventslist->text(listNum);
+        if ( !item )
+	        return 0;
+    
+	QString temp=item->text(0);
 	if (temp==iSound) return 1;
 	if (temp==iMessageBox) return 2;
 	if (temp==iLogFile) return 4;
 	if (temp==iStandardError) return 8;
 	return 0;
+}
+
+// we get a textChanged() signal when we call setURL(), but we don't want it
+void EventView::setFileURL(const QString& url)
+{
+        file->blockSignals(true);
+	file->setURL( url );
+	file->blockSignals(false);
 }
