@@ -139,18 +139,18 @@ LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
 	$(XDMCPLIB) $(RPCLIB) $(PAM_LIBRARIES) \
 	$(CRYPT_LIBRARIES) $(KRBIVLIB) $(XINLIBS)
 
-          SRCS1 = auth.c daemon.c server.c dpylist.c dm.c error.c file.c \
-		  netaddr.c reset.c resource.c protodpy.c policy.c \
-		  session.c socket.c streams.c util.c client.c xdmcp.c \
-		  process.c mitauth.c \
-		  genauth.c access.c choose.c \
-		  $(XDMAUTHSRCS) $(RPCSRCS) $(KRB5SRCS)
-          OBJS1 = auth.o daemon.o server.o dpylist.o dm.o error.o file.o \
-		  netaddr.o reset.o resource.o protodpy.o policy.o \
-		  session.o socket.o streams.o util.o client.o xdmcp.o \
-		  process.o mitauth.o \
-		  genauth.o access.o choose.o \
-		  $(XDMAUTHOBJS) $(RPCOBJS) $(KRB5OBJS)
+          SRCS = auth.c daemon.c server.c dpylist.c dm.c error.c file.c \
+		 netaddr.c reset.c resource.c protodpy.c policy.c \
+		 session.c socket.c streams.c util.c client.c xdmcp.c \
+		 process.c mitauth.c \
+		 genauth.c access.c choose.c \
+		 $(XDMAUTHSRCS) $(RPCSRCS) $(KRB5SRCS)
+          OBJS = auth.o daemon.o server.o dpylist.o dm.o error.o file.o \
+		 netaddr.o reset.o resource.o protodpy.o policy.o \
+		 session.o socket.o streams.o util.o client.o xdmcp.o \
+		 process.o mitauth.o \
+		 genauth.o access.o choose.o \
+		 $(XDMAUTHOBJS) $(RPCOBJS) $(KRB5OBJS)
 
        PROGRAMS = xdm
 
@@ -158,13 +158,12 @@ LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
  OSMINORVERSION = OSMinorVersion
    CONN_DEFINES = $(CONNECTION_FLAGS)
         DEFINES = $(SIGNAL_DEFINES) $(LOG_DEFINES) $(CRYPT_DEFINES) \
-		$(XDMAUTH_DEFINES) $(RPC_DEFINES) $(KRB5_DEFINES) \
-		$(PWD_DEFINES) $(PAM_DEFINES) $(CONN_DEFINES) \
-		$(FRAGILE_DEFINES) $(RANDOM_DEFINES) \
-		$(USER_CONTEXT_DEFINES) $(XDMCP_DEFINES) \
-		-DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION)
+  $(XDMAUTH_DEFINES) $(RPC_DEFINES) $(KRB5_DEFINES) \
+  $(PWD_DEFINES) $(PAM_DEFINES) $(USER_CONTEXT_DEFINES) $(CONN_DEFINES) \
+  $(FRAGILE_DEFINES) $(RANDOM_DEFINES) $(XDMCP_DEFINES) \
+  -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION)
 
-ComplexProgramTarget_1(xdm,$(LOCAL_LIBRARIES),NullParameter)
+ComplexProgramTargetNoMan(xdm)
 
 #if defined(FreeBSDArchitecture) && (OSMajorVersion < 2)
 XCOMM only for daemon.c? it's used in some other places, too.
