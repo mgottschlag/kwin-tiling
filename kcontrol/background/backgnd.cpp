@@ -367,38 +367,6 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pCacheBox, wtstr );
 
-    // Tab 4: Tuning
-    m_pTab4 = new QWidget(0L, "Tuning");
-    m_pTabWidget->addTab(m_pTab4, i18n("&Tuning"));
-    grid = new QGridLayout(m_pTab4, 2, 2, 10, 10);
-    grid->setColStretch(1, 1);
-
-    m_pCBShm = new QCheckBox(i18n("Use &shared memory (MIT-SHM)"), m_pTab4);
-    QWhatsThis::add( m_pCBShm, i18n( "Checking this box lets KDE to use shared memory for image to pixmap conversions.\n"
-                                     " This results in faster background creation. If any painting problems occur,"
-                                     " try turning this optimization off." ) );
-    m_pCBShm->setFixedSize(m_pCBShm->sizeHint());
-    grid->addWidget(m_pCBShm, 0, 0);
-    connect(m_pCBShm, SIGNAL(toggled(bool)), SLOT(slotShm(bool)));
-
-
-    lbl = new QLabel(i18n("Minimal color &depth for paint optimizations:"), m_pTab4);
-    lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
-    m_pMinOptDepth = new QComboBox(m_pTab4);
-    connect(m_pMinOptDepth, SIGNAL(activated(int)), SLOT(slotMinOptDepth(int)));
-    connect(m_pMinOptDepth->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotMinOptDepth(int)));
-    m_pMinOptDepth->insertItem( i18n( "Always use paint optimizations" ));
-    m_pMinOptDepth->insertItem( i18n( "16bpp" ));
-    m_pMinOptDepth->insertItem( i18n( "15bpp" ));
-    m_pMinOptDepth->insertItem( i18n( "Don't use paint optimizations" ));
-    lbl->setBuddy(m_pMinOptDepth);
-    grid->addWidget(m_pMinOptDepth, 1, 1);
-    QWhatsThis::add( m_pMinOptDepth, i18n("Using paint optimizations reduces memory usage and causes faster"
-                                          " background painting for some background modes. However, especially"
-                                          " when using low color depths, this may lead to poor results or"
-                                          " flickering during desktop repaints." ) );
-
     m_Desk = KWin::currentDesktop() - 1;
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
@@ -583,10 +551,6 @@ void KBackground::apply()
     }
     m_pCacheBox->setValue(m_pGlobals->cacheSize());
 
-    // Tuning
-    m_pCBShm->setChecked(r->useShm());
-    m_pMinOptDepth->setCurrentItem(r->minOptimizationDepth());
-    
     // Start preview render
     r->setPreview(m_pMonitor->size());
     r->start();
@@ -1037,40 +1001,6 @@ void KBackground::slotLimitCache(bool limit)
 void KBackground::slotCacheSize(int size)
 {
     m_pGlobals->setCacheSize(size);
-    emit changed(true);
-}
-
-
-void KBackground::slotShm(bool use)
-{
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
-
-    if (use == r->useShm())
-        return;
-
-    r->stop();
-    r->setUseShm(use);
-    r->start();
-    emit changed(true);
-}
-
-
-void KBackground::slotMinOptDepth(int mode)
-{
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
-
-    if (mode == r->minOptimizationDepth())
-        return;
-
-    r->stop();
-    r->setMinOptimizationDepth(mode);
-    r->start();
     emit changed(true);
 }
 

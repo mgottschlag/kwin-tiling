@@ -402,18 +402,11 @@ wp_out:
     return retval;
 }
 
-#if QT_VERSION >= 300
 extern bool qt_use_xrender; // in Qt ( qapplication_x11.cpp )
-#endif
 
 void KBackgroundRenderer::wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
 {
-#if QT_VERSION >=300 
-    if( blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer()))
-#else
-    if( blendMode() == NoBlending && !wp.hasAlphaBuffer())
-#endif
-        {
+    if( blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer())) {
         fastWallpaperBlend( d, wp, ww, wh );
     }
     else {
