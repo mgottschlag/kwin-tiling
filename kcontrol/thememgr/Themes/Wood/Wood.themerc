@@ -28,6 +28,7 @@ Name[sk]=Drevo
 Name[sl]=Les
 Name[sv]=Trä
 Name[tr]=Odun
+Name[xxx]=xx
 Name[zh_CN.GB2312]=木头
 Name[zh_TW.Big5]=木質
 author=Georg Russell
@@ -66,6 +67,7 @@ Comment[sv]=Ett träaktigt utseende för ditt skrivbord!\nAv Georg Russell <russ
 Comment[ta]=¯í¸û §Á¨ºì¸¡É ´Õ ÁÃò§¾¡üÈõ!\n ¬ì¸¢ÂÐ Georg Russell <russell@kde.org>
 Comment[tr]=Masaüstünüz için ağaçtan bir görünüm!\nGeorg Russell <russell@kde.org>
 Comment[vi]=Làm cho desktop của bạn giống như làm bằng gềE\nBy Georg Russell <russell@kde.org>
+Comment[xxx]=xx
 Comment[zh_CN.GB2312]=桌面上的木头外观！\n作者 Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png

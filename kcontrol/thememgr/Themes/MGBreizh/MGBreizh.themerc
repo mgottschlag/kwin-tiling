@@ -9,6 +9,7 @@ Name=MGBreizh
 Name[af]=mgbreizh
 Name[fr]=MG Breizh
 Name[sv]=Mgbreizh
+Name[xxx]=xx
 # Name of the author
 author=Mikael GEORGES
 # Email address of the author
@@ -22,6 +23,7 @@ Comment[de]=Mikael Georges <admin@mgbreizh.com>
 Comment[he]=מיכאל ג'ורג'ס >admin@mgbreizh.com<
 Comment[hu]=Mikael Georges <admin@mgbreizh.com>
 Comment[sl]=Mikael Georges <admin@mgbreizh.com>
+Comment[xxx]=xx
 # Version of the theme
 version=1.0
 #
