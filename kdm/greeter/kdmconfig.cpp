@@ -26,14 +26,17 @@
 
 #include <stdio.h>
 #include <unistd.h>
+
 #include "kdmconfig.h"
 //#include <qpixmap.h>
 #include <qfile.h>
-/*#include <kapp.h>
-#include <pwd.h>
+#include <kapp.h>
+/*#include <pwd.h>
 #include <sys/types.h>
 #include <iostream.h>
 */
+#include <qmotifstyle.h>
+#include <qwindowsstyle.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kpassdlg.h>
@@ -74,12 +77,11 @@ KDMConfig::KDMConfig() :
     } else
 	_greeterPosX = -1;
 
-    /* TODO: to be ported to QStyle
-    if( readEntry( "GUIStyle") == "Windows")
-	_style = Qt::WindowsStyle;
-    else
-	_style = MotifStyle;
-    */
+    QString style = readEntry( "GUIStyle");
+    if ( style == QString::fromLatin1("Windows"))
+	kapp->setStyle (new QWindowsStyle);
+    else if ( style == QString::fromLatin1("Motif"))
+	kapp->setStyle (new QMotifStyle);
 
     QString logoArea = readEntry( "LogoArea", QString::fromLatin1("KdmLogo") );
     _useLogo = logoArea == QString::fromLatin1( "KdmLogo");
