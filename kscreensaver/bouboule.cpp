@@ -870,9 +870,9 @@ kBoubouleSaver::kBoubouleSaver( Drawable drawable ) : kScreenSaver( drawable )
 	colorContext = QColor::enterAllocContext();
 
 	batchcount = numPoints;
-	maxsize=pointSize;
-	colorchange=MAXCCSPEED-colorCycleDelay;
-	use3d=flag_3dmode;
+	maxsize = pointSize;
+	colorchange = MAXCCSPEED-colorCycleDelay;
+	use3d = flag_3dmode;
 
     // Clear to background colour when exposed
     XSetWindowBackground(qt_xdisplay(), mDrawable,
@@ -912,7 +912,7 @@ void kBoubouleSaver::setPoints( int p )
 	numPoints = p;
 	timer.stop();
         release_bouboule();
-        batchcount=numPoints;
+        batchcount = numPoints;
 	initbouboule( mDrawable );
 	timer.start( speed );
 }
@@ -922,7 +922,7 @@ void kBoubouleSaver::setSize( int p )
 	pointSize = p;
 	timer.stop();
         release_bouboule();
-	maxsize=pointSize;
+	maxsize = pointSize;
 	initbouboule( mDrawable );
 	timer.start( speed );
 }
@@ -1163,7 +1163,7 @@ void kBoubouleSetup::slotOkPressed()
     scolorcycle.setNum( colorCycleDelay );
     config->writeEntry( "ColorCycleDelay", scolorcycle );
 
-    config->writeEntry( "3DMode", flag_3dmode ? QString( "yes" ) : QString( "no" ) );
+    config->writeEntry( "3DMode", flag_3dmode );
 
     config->sync();
     delete config;
