@@ -78,7 +78,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
-    delete m_Tempfile;
+    delete m_Tempfile; m_Tempfile = 0;
 }
 
 
@@ -479,6 +479,7 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *)
         m_pBackground->load(m_Tempfile->name());
 
     m_Tempfile->unlink();
+    delete m_Tempfile; m_Tempfile = 0;
     m_pTimer->start(0, true);
 }
 
