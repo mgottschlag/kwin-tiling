@@ -269,6 +269,8 @@ void SplashInstaller::slotRemove()
      url.setPath(themeDir);
      if (KMessageBox::questionYesNo(this,i18n("Delete folder %1 and its contents?").arg(themeDir))==KMessageBox::Yes)
        rc = KIO::NetAccess::del(url,this);
+     else
+       return;
   }
   if (!rc)
   {
