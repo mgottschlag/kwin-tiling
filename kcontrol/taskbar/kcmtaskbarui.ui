@@ -11,22 +11,25 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>469</width>
-            <height>281</height>
+            <width>605</width>
+            <height>454</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>Taskbar</string>
     </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
     <vbox>
         <property stdset="1">
             <name>margin</name>
-            <number>0</number>
+            <number>4</number>
         </property>
         <property stdset="1">
             <name>spacing</name>
-            <number>0</number>
+            <number>6</number>
         </property>
         <widget>
             <class>QButtonGroup</class>
@@ -63,6 +66,10 @@
                         <name>text</name>
                         <string>&amp;Show all windows</string>
                     </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
                     <property>
                         <name>whatsThis</name>
                         <string>Check this option if you want the taskbar to display all of the existing windows at once. By default, the taskbar will only show those windows that are on the current desktop.</string>
@@ -77,6 +84,10 @@
                     <property stdset="1">
                         <name>text</name>
                         <string>Show windows list &amp;button</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
                     </property>
                     <property>
                         <name>whatsThis</name>
@@ -93,9 +104,32 @@
                         <name>text</name>
                         <string>&amp;Group similar tasks</string>
                     </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
                     <property>
                         <name>whatsThis</name>
                         <string>Check this option if you want the taskbar to hold all running instances of one application in one taskbutton. Clicking on the button for some seconds will unfold a menu which shows all instances of the application. This is especially useful with the "&lt;strong&gt;Show all windows&lt;/strong&gt;" option.</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>sortCheck</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Sort tasks by &amp;desktop</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Check this option if you want the taskbar to sort task buttons by deskop.</string>
                     </property>
                 </widget>
             </vbox>

@@ -43,7 +43,7 @@ protected slots:
     void configChanged();
 
 private:
-        TaskbarConfigUI *ui;
+    TaskbarConfigUI *ui;
 };
 
 #endif

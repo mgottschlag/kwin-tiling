@@ -34,11 +34,11 @@
 
 extern "C"
 {
-  KCModule *create_taskbar(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmtaskbar");
-    return new TaskbarConfig(parent, name);
-  };
+    KCModule *create_taskbar(QWidget *parent, const char *name)
+    {
+	KGlobal::locale()->insertCatalogue("kcmtaskbar");
+	return new TaskbarConfig(parent, name);
+    };
 }
 
 TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
@@ -49,7 +49,10 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
     QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
                                         KDialog::spacingHint());
     vbox->addWidget(ui);
+    connect(ui->showAllCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->groupCheck, SIGNAL(clicked()), SLOT(configChanged()));
+    connect(ui->sortCheck, SIGNAL(clicked()), SLOT(configChanged()));
 
     load();
 }
@@ -72,6 +75,7 @@ void TaskbarConfig::load()
         ui->showAllCheck->setChecked(c->readBoolEntry("ShowAllWindows", true));
         ui->showListBtnCheck->setChecked(c->readBoolEntry("ShowWindowListBtn", true));
         ui->groupCheck->setChecked(c->readBoolEntry("GroupTasks", true));
+	ui->sortCheck->setChecked(c->readBoolEntry("SortByDesktop", true));
     }
 
     delete c;
@@ -87,6 +91,7 @@ void TaskbarConfig::save()
         c->writeEntry("ShowAllWindows", ui->showAllCheck->isChecked());
         c->writeEntry("ShowWindowListBtn", ui->showListBtnCheck->isChecked());
         c->writeEntry("GroupTasks", ui->groupCheck->isChecked());
+	c->writeEntry("SortByDesktop", ui->sortCheck->isChecked());
         c->sync();
     }
 
@@ -106,6 +111,7 @@ void TaskbarConfig::defaults()
     ui->showAllCheck->setChecked(true);
     ui->showListBtnCheck->setChecked(true);
     ui->groupCheck->setChecked(true);
+    ui->sortCheck->setChecked(true);
     emit changed(true);
 }
 
