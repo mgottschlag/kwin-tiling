@@ -7,7 +7,7 @@ Type=Application
 X-KDE-Library=energy
 X-KDE-Init=energy
 X-KDE-ParentApp=kcontrol
-Categories=Qt;KDE;X-KDE-settings-energy
+Categories=Qt;KDE;X-KDE-settings-power
 
 Name=Display Power Control
 Name[af]=Vertoon Elektrisiteit Kontrole
