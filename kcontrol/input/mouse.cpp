@@ -357,9 +357,11 @@ void MouseConfig::saveParams( void )
   config->writeEntry("Acceleration",accelRate);
   config->writeEntry("Threshold",thresholdMove);
   if (handed == RIGHT_HANDED)
-    config->writeEntry("MouseButtonMapping","RightHanded");
+    config->writeEntry("MouseButtonMapping",QString("RightHanded"));
   else
-    config->writeEntry("MouseButtonMapping","LeftHanded");
+    config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
+
+  config->sync();
 }
 
 void MouseConfig::loadSettings()

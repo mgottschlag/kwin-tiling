@@ -182,9 +182,9 @@ void KeyboardConfig::saveParams( void )
   config->setGroup("Keyboard");
   config->writeEntry("ClickVolume",clickVolume);
   if (keyboardRepeat == AutoRepeatModeOn)
-    config->writeEntry("KeyboardRepeat","on");
+    config->writeEntry("KeyboardRepeat", QString("on"));
   else
-    config->writeEntry("KeyboardRepeat","off");
+    config->writeEntry("KeyboardRepeat", QString("off"));
   config->sync();
 }
 
