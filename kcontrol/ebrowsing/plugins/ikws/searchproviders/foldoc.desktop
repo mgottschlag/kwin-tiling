@@ -15,10 +15,14 @@ Name[et]=Vaba arvutialane võrgusõnastik
 Name[eu]=Konputazioari buruzko lineako hiztegi librea
 Name[fi]=Vapaa tietokonealan sanasto
 Name[fr]=Dictionnaire de l'informatique gratuit en ligne
+Name[fy]=Free On-Line Dictionary Of Computing (IT-wurdboek)
 Name[gl]=Diccionario Ceibo En liña da Computación
+Name[he]=מילון מחשוב מקוון חופשי
 Name[hu]=Szabad hozzáférésű számítástechnikai szótár
+Name[is]=Ókeypis tölvuorðabók á Netinu
 Name[it]=Dizionario libero on-line di informatica
 Name[ja]=コンピューティングに関するフリーオンライン辞書
+Name[lt]=Nemokamas kompiuterijos žodynas tinkle
 Name[mk]=Бесплатен речник за компјутери на линија
 Name[mt]=Dizzjunarju tal-Compjuters Online B'xejn (FOLDOC)
 Name[nb]=Gratis ordbok på nettet om datamaskiner
@@ -45,3 +49,4 @@ Name[zh_CN]=Free On-Line Dictionary Of Computing
 ServiceTypes=SearchProvider
 Keys=fd,foldoc
 Query=http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\{@}
+Query[xx]=xxhttp://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\{@}xx

@@ -25,6 +25,7 @@ Name[hu]=HyperDictionary.com szinonimaszótár
 Name[is]=HyperDictionary.com samheitaorðabók
 Name[it]=Sinonimi HyperDictionary.com
 Name[ja]=HyperDictionary.com シソーラス
+Name[lt]=Merriam-Webster sinonimų žodynas
 Name[mk]=HyperDictionary.com Енциклопедија
 Name[mt]=Teżawru HyperDictionary.com
 Name[nds]=HyperDictionary.com Synonümwöörbook
@@ -47,3 +48,4 @@ Name[zh_CN]=HyperDictionary.com 宝藏
 ServiceTypes=SearchProvider
 Keys=hdt,hd-ths,hd-thesaurus
 Query=http://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}
+Query[xx]=xxhttp://www.hyperdictionary.com/search.aspx?Dict=T&define=\\{@}xx
