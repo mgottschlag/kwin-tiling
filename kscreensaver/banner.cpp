@@ -478,8 +478,11 @@ void KBannerSaver::initialize()
 
 	size = fontSize * mHeight / QApplication::desktop()->height();
 
-	font.sprintf( "-*-%s-%s-%c-*-*-%d-*-*-*-*-*-*-*", fontFamily.ascii(),
-			bold ? "bold" : "medium", italic ? ichar : 'r', size );
+	font = QString::fromLatin1( "-*-%1-%2-%3-*-*-%4-*-*-*-*-*-*-*")
+	  .arg(fontFamily)
+	  .arg(bold ? "bold" : "medium")
+	  .arg(italic ? ichar : 'r')
+	  .arg(size);
 	fontInfo = XLoadQueryFont( qt_xdisplay(), font );
 
 	XSetFont( qt_xdisplay(), mGc, fontInfo->fid );

@@ -813,7 +813,7 @@ void kSlideShowSetup::readSettings()
   num = config->readNumEntry("Count", 0);
   for (i=0, cur=-1; i<num; i++)
   {
-    key.sprintf("Dir%d", i);
+    key = QString::fromLatin1("Dir%1").arg(i);
     value = config->readEntry(key);
     if (!value.isEmpty())
     {
@@ -854,7 +854,7 @@ void kSlideShowSetup::writeSettings()
   config->setGroup("Slide Show");
   for (i=0; i<num; i++)
   {
-    key.sprintf("Dir%d", i);
+    key = QString::fromLatin1("Dir%1").arg(i);
     value = mCboDir->text(i+1);
     config->writeEntry(key, value);
   }

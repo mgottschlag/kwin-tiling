@@ -542,7 +542,7 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   /*
   densityEd = new QLineEdit(this);
   fixed_size(densityEd);
-  tmps.sprintf("%d", cfg.density);
+  tmps.setNum(cfg.density);
   densityEd->setText(tmps);
   connect(densityEd, SIGNAL(textChanged(const QString &)),
 	  SLOT(slotDensityEdit(const QString &)));
@@ -568,7 +568,7 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   /*
   speedEd = new QLineEdit(this);
   fixed_size(speedEd);
-  tmps.sprintf("%d", SPEED2SL(cfg.speed));
+  tmps.setNum(SPEED2SL(cfg.speed));
   speedEd->setText(tmps);
   connect(speedEd, SIGNAL(textChanged(const QString &)),
 	  SLOT(slotSpeedEdit(const QString &)));
@@ -675,7 +675,7 @@ void KMatrixSetup::slotDensity(int val) {
   QString tmp;
   setDensity(val);
   // update edit control
-  // tmp.sprintf("%d", val);
+  // tmp.setNum(val);
   // densityEd->setText(tmp);
 }
 
@@ -689,7 +689,7 @@ void KMatrixSetup::slotSpeed(int val) {
   QString tmp;
   setSpeed(val);
   // update edit control
-  // tmp.sprintf("%d", val);
+  // tmp.setNum(val);
   // speedEd->setText(tmp);
 }
 
