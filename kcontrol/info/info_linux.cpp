@@ -14,6 +14,10 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.24  2002/06/07 07:47:40  adrian
+    fix Alsa sndstat /proc path for current alsa versions.
+    (reported by Florian Schebelle)
+
     Revision 1.23  2002/04/23 00:21:33  cumming
     GUI: Capitalization
 
@@ -92,6 +96,7 @@
 #define INFO_DEV_SNDSTAT "/dev/sndstat"
 #define INFO_SOUND "/proc/sound"
 #define INFO_ASOUND "/proc/asound/oss/sndstat"
+#define INFO_ASOUND09 "/proc/asound/sndstat"
 
 #define INFO_DEVICES_AVAILABLE
 #define INFO_DEVICES "/proc/devices"
@@ -227,8 +232,10 @@ bool GetInfo_Sound(QListView * lBox)
 	return true;
     else if (GetInfo_ReadfromFile(lBox, INFO_SOUND, 0))
 	return true;
+    else if (GetInfo_ReadfromFile(lBox, INFO_ASOUND, 0))
+	return true;
     else
-	return GetInfo_ReadfromFile(lBox, INFO_ASOUND, 0);
+	return GetInfo_ReadfromFile(lBox, INFO_ASOUND09, 0);
 }
 
 bool GetInfo_Devices(QListView * lBox)
