@@ -2,7 +2,7 @@
 
 SUBDIRS= . pics
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) $(DPMSINC)
 
 lib_LTLIBRARIES = libkcm_energy.la
 
