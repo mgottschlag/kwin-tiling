@@ -47,6 +47,7 @@ private slots:
     void slotChangeStandby(int);
     void slotChangeSuspend(int);
     void slotChangeOff(int);
+    void openURL(const QString &);
 
 private:
     void readSettings();

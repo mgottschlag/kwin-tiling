@@ -22,7 +22,6 @@
 #define QT_CLEAN_NAMESPACE
 #endif
 
-#include <qtooltip.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -36,6 +35,7 @@
 #include <knuminput.h>
 #include <klocale.h>
 #include <kdialog.h>
+#include <kurllabel.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -118,24 +118,6 @@ extern "C" {
     }
 }
 
-/**** KEnergyStarLavel ****/
-
-class KEnergyStarLabel : public QLabel {
-  public:
-    KEnergyStarLabel(QWidget *parent) : QLabel(parent) {
-        setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
-        setCursor(KCursor::handCursor());
-        QToolTip::add(this, i18n("Learn more about the Energy Star program"));
-    }
-
-  protected:
-    void mouseReleaseEvent (QMouseEvent *) {
-        // KRun deletes itself
-        new KRun("http://www.energystar.gov/");
-    }
-};
-
-
 /**** KEnergy ****/
 
 KEnergy::KEnergy(QWidget *parent, const char *name)
@@ -170,10 +152,15 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
          hbox->addWidget(lbl);
     }
 
-    lbl= new KEnergyStarLabel(this);
+    KURLLabel *logo = new KURLLabel(this);
+    logo->setURL("http://www.energystar.gov");
+    logo->setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
+    logo->setTipText(i18n("Learn more about the Energy Star program"));
+    logo->setUseTips(true); 
+connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString &)));
 
     hbox->addStretch();
-    hbox->addWidget(lbl);
+    hbox->addWidget(logo);
 
     // Sliders
     m_pStandbySlider = new KIntNumInput(m_Standby, this);
@@ -448,5 +435,9 @@ QString KEnergy::quickHelp() const
       " any unintended side-effects, for example, the \"shift\" key.");
 }
 
+void KEnergy::openURL(const QString &URL)
+{
+      new KRun(URL);
+}
 
 #include "energy.moc"
