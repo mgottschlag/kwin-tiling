@@ -58,7 +58,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatastream.h>
-#include <qstack.h>
+#include <qptrstack.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 #include <qguardedptr.h>
