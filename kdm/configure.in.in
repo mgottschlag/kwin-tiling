@@ -91,7 +91,7 @@ AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
 AC_MSG_RESULT([checking for X library directory... $XLIBDIR])
 AC_DEFINE_UNQUOTED(XLIBDIR, "$XLIBDIR", [Define where to find the X libraries])
 
-AC_CHECK_LIB(Xau, main, [:], 
+AC_CHECK_LIB(Xau, XauReadAuth, [:], , $all_libraries 
 	[
 	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
 	  DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
