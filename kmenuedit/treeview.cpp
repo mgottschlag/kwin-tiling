@@ -715,7 +715,7 @@ void TreeView::newsubmenu()
     
     QFile f(locateLocal("apps", dir));
     if (f.exists()) {
-    	KMessageBox::sorry(0, i18n("This directory is forgiven. Please provide another name."), i18n("File Exists"));
+    	KMessageBox::sorry(0, i18n("A file exists with that name. Please provide another name."), i18n("File Exists"));
 	return;
     }
 
@@ -788,7 +788,7 @@ void TreeView::newitem()
 
     QFile f(locateLocal("apps", dir));
     if (f.exists()) {
-    	KMessageBox::sorry(0, i18n("This filename is forgiven. Please provide another name."), i18n("File Exists"));
+    	KMessageBox::sorry(0, i18n("A file already exists with that name. Please provide another name."), i18n("File Exists"));
 	return;
     }
 
