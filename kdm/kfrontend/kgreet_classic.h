@@ -78,7 +78,7 @@ private:
     QString		fixedUser, curUser;
     Function		func;
     Context		ctx;
-    int			exp, has;
+    int			exp, pExp, has;
     bool		running, authTok;
 };
 

@@ -102,6 +102,7 @@ extern char *crypt(const char *, const char *);
 char *curuser;
 char *curpass;
 char *curtype;
+char *newpass;
 char **userEnviron;
 char **systemEnviron;
 static int curuid;
@@ -698,12 +699,8 @@ Verify (GConvFunc gconv, int rootok)
 	} else
 	    GSendInt (V_CHTOK);
 	for (;;) {
-	    /* don't use PAM_CHANGE_EXPIRED_AUTHTOK:
-	       - makes pam_unix ask for a password (why?!)
-	       - the frontend cannot depend on the requested item sequence
-	    */
 	    Debug (" pam_chauthtok() ...\n");
-	    pretc = pam_chauthtok (pamh, 0);
+	    pretc = pam_chauthtok (pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 	    ReInitErrorLog ();
 	    Debug (" pam_chauthtok() returned: %s\n", pam_strerror (pamh, pretc));
 	    if (pdata.abort)
@@ -713,6 +710,10 @@ Verify (GConvFunc gconv, int rootok)
 	    /* effectively there is only PAM_AUTHTOK_ERR */
 	    GSendInt (V_RETRY);
 	}
+	if (curpass)
+	    free (curpass);
+	curpass = newpass;
+	newpass = 0;
     } else if (pretc != PAM_SUCCESS)
 	V_RET (V_AUTH);
 

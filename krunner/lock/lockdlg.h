@@ -41,6 +41,7 @@ public:
     virtual void gplugSetUser( const QString & );
     virtual void gplugStart();
     virtual void gplugActivity();
+    virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
 
 signals:
     void startNewSession();

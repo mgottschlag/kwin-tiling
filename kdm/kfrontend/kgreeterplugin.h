@@ -25,6 +25,7 @@
 #define KGREETERPLUGIN_H
 
 #include <qvariant.h>
+#include <qmessagebox.h>
 
 class QWidget;
 class QLayoutItem;
@@ -32,7 +33,8 @@ class QLayoutItem;
 class KGreeterPluginHandler {
 public:
     /* keep in sync with V_IS_* */
-    enum { IsUser = 1, IsPassword = 2 };
+    enum { IsSecret = 1, IsUser = 2, IsPassword = 4, IsOldPassword = 8,
+	   IsNewPassword = 16 };
     /**
      * Reply to textPrompt().
      * @param text text to return to core; null to abort auth cycle
@@ -64,6 +66,12 @@ public:
      * more than ten per second; one every five seconds is actually enough.
      */
     virtual void gplugActivity() = 0;
+    /**
+     * Show a message box on behalf of the talker.
+     * @param type message severity
+     * @param text message text
+     */
+    virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text ) = 0;
 };
 
 /**

@@ -195,7 +195,6 @@ KGVerify::start()
 {
     hasBegun = false;
     authTok = (func == KGreeterPlugin::ChAuthTok);
-    reAuthTok = false;
     running = true;
     Debug( "greet->start()\n" );
     greet->start();
@@ -311,7 +310,9 @@ KGVerify::slotTimeout()
 void // private
 KGVerify::setTimer()
 {
-    if (!failed && fixedEntity.isEmpty() && hasBegun)
+    if (func == KGreeterPlugin::Authenticate &&
+	ctx == KGreeterPlugin::Login &&
+	!failed && hasBegun)
 	timer.start( 40000 );
 }
 
@@ -534,13 +535,7 @@ KGVerify::handleVerify()
 	    echo = GRecvInt();
 	    Debug( "  echo = %d\n", echo );
 	    ndelay = GRecvInt();
-	    Debug( "  ndelay = %d\n", ndelay );
-	    if (reAuthTok) {
-		reAuthTok = false;
-		Debug( "greet->start()\n" );
-		greet->start();
-	    }
-	    Debug( "greet->textPrompt(...)\n" );
+	    Debug( "  ndelay = %d\ngreet->textPrompt(...)\n", ndelay );
 	    greet->textPrompt( msg, echo, ndelay );
 	    if (msg)
 		free( msg );
@@ -550,13 +545,7 @@ KGVerify::handleVerify()
 	    msg = GRecvArr( &ret );
 	    Debug( "  %d bytes prompt\n", ret );
 	    ndelay = GRecvInt();
-	    Debug( "  ndelay = %d\n", ndelay );
-	    if (reAuthTok) {
-		reAuthTok = false;
-		Debug( "greet->start()\n" );
-		greet->start();
-	    }
-	    Debug( "greet->binaryPrompt(...)\n" );
+	    Debug( "  ndelay = %d\ngreet->binaryPrompt(...)\n", ndelay );
 	    greet->binaryPrompt( msg, ndelay );
 	    if (msg)
 		free( msg );
@@ -617,7 +606,7 @@ KGVerify::handleVerify()
 	    if (!greet->textMessage( msg, true ))
 		VMsgBox( parent, user, sorrybox, QString::fromLocal8Bit( msg ) );
 	    free( msg );
-	    goto ntdone;
+	    continue;
 	case V_MSG_INFO:
 	    Debug( " V_MSG_INFO\n" );
 	    msg = GRecvStr();
@@ -625,14 +614,10 @@ KGVerify::handleVerify()
 	    if (!greet->textMessage( msg, false ))
 		VMsgBox( parent, user, infobox, QString::fromLocal8Bit( msg ) );
 	    free( msg );
-	    goto ntdone;
-	}
-	if (handleNTVerify( parent, ret, user )) {
-	  ntdone:
-	    if (authTok)
-		reAuthTok = true;
 	    continue;
 	}
+	if (handleNTVerify( parent, ret, user ))
+	    continue;
 
 	// terminal status
 	coreLock = 0;
@@ -685,7 +670,6 @@ KGVerify::handleVerify()
 	running = true;
 	Debug( "greet->start()\n" );
 	greet->start();
-	reAuthTok = false;
 	if (!cont)
 	    return;
 	user = QString::null;
@@ -696,7 +680,7 @@ void
 KGVerify::gplugReturnText( const char *text, int tag )
 {
     Debug( "gplugReturnText(%\"s, %d)\n",
-	    tag == V_IS_PASSWORD ? "<masked>" : text, tag );
+	    tag & V_IS_SECRET ? "<masked>" : text, tag );
     GSendStr( text );
     if (text) {
 	GSendInt( tag );
@@ -749,6 +733,12 @@ void
 KGVerify::gplugActivity()
 {
     setTimer();
+}
+
+void
+KGVerify::gplugMsgBox( QMessageBox::Icon type, const QString &text )
+{
+    MsgBox( type, text );
 }
 
 bool

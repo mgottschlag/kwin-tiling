@@ -143,7 +143,7 @@ private:
     KGreeterPlugin::Context ctx;
     bool		capsLocked;
     bool		enabled, running, suspended, failed, delayed, cont;
-    bool		authTok, reAuthTok, hasBegun;
+    bool		authTok, hasBegun;
 
     static void VMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
     static bool handleNTVerify( QWidget *parent, int ret, const QString &user );
@@ -161,6 +161,7 @@ public: // from KGreetPluginHandler
     virtual void gplugSetUser( const QString &user );
     virtual void gplugStart();
     virtual void gplugActivity();
+    virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
 
     static QVariant getConf( void *ctx, const char *key, const QVariant &dflt );
 };

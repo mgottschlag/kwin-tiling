@@ -460,6 +460,31 @@ void PasswordDlg::gplugActivity()
     slotActivity();
 }
 
+void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
+{
+    QDialog dialog( this, 0, true, WX11BypassWM );
+    QFrame *winFrame = new QFrame( &dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+    QVBoxLayout *vbox = new QVBoxLayout( &dialog );
+    vbox->addWidget( winFrame );
+
+    QLabel *label1 = new QLabel( winFrame );
+    label1->setPixmap( QMessageBox::standardIcon( type ) );
+    QLabel *label2 = new QLabel( text, winFrame );
+    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
+    button->setDefault( true );
+    button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
+    connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
+
+    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
+    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
+    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+
+    static_cast< LockProcess* >(parent())->execDialog( &dialog );
+}
+
 void PasswordDlg::slotOK()
 {
     greet->next();

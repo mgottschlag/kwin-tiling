@@ -185,27 +185,27 @@ conv_interact (int what, const char *prompt)
 	    tag = GRecvInt();
 	    switch (what) {
 	    case GCONV_USER:
-		/* assert(tag == V_IS_USER); */
+		/* assert(tag & V_IS_USER); */
 		if (curuser)
 		    free (curuser);
 		curuser = ret;
 		break;
 	    case GCONV_PASS:
 	    case GCONV_PASS_ND:
-		/* assert(tag == V_IS_PASSWORD); */
+		/* assert(tag & V_IS_PASSWORD); */
 		if (curpass)
 		    free (curpass);
 		curpass = ret;
 		break;
 	    default:
-		switch (tag) {
-		case V_IS_USER:
+		if (tag & V_IS_USER)
 		    ReStr (&curuser, ret);
-		    break;
-		case V_IS_PASSWORD:
+		else if (tag & V_IS_PASSWORD)
 		    ReStr (&curpass, ret);
-		    break;
-		}
+		else if (tag & V_IS_NEWPASSWORD)
+		    ReStr (&newpass, ret);
+		else if (tag & V_IS_OLDPASSWORD)
+		    ReStr (&ret, curpass);
 	    }
 	}
 	return ret;

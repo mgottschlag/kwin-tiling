@@ -483,7 +483,8 @@ extern int StartClient (void);
 extern void SessionExit (int status) ATTR_NORETURN;
 extern int ReadDmrc (void);
 extern char **userEnviron, **systemEnviron;
-extern char *curuser, *curpass, *curtype, *dmrcuser, *curdmrc, *newdmrc;
+extern char *curuser, *curpass, *curtype, *newpass,
+	*dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
 extern void StartServer (struct display *d);

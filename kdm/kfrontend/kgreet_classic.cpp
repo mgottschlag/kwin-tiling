@@ -29,6 +29,7 @@
 #include <kpassdlg.h>
 #include <kuser.h>
 
+#include <qregexp.h>
 #include <qlayout.h>
 #include <qlabel.h>
 
@@ -51,6 +52,7 @@ KClassicGreeter::KClassicGreeter(
     func( _func ),
     ctx( _ctx ),
     exp( -1 ),
+    pExp( -1 ),
     running( false )
 {
     QGridLayout *grid = new QGridLayout( 0, 0, 10 );
@@ -185,7 +187,7 @@ KClassicGreeter::setEnabled( bool enable )
 void // private
 KClassicGreeter::returnData()
 {
-    switch (exp++) {
+    switch (exp) {
     case 0:
 	handler->gplugReturnText(
 	    (loginEdit ? loginEdit->text() : fixedUser).local8Bit(),
@@ -193,27 +195,65 @@ KClassicGreeter::returnData()
 	break;
     case 1:
 	handler->gplugReturnText( passwdEdit->password(),
-				  KGreeterPluginHandler::IsPassword );
+				  KGreeterPluginHandler::IsPassword |
+				  KGreeterPluginHandler::IsSecret );
 	break;
     case 2:
-	handler->gplugReturnText( passwd1Edit->password(), 0 );
+	handler->gplugReturnText( passwd1Edit->password(),
+				  KGreeterPluginHandler::IsSecret );
 	break;
     default: // case 3:
 	handler->gplugReturnText( passwd2Edit->password(),
-				  KGreeterPluginHandler::IsPassword );
+				  KGreeterPluginHandler::IsNewPassword |
+				  KGreeterPluginHandler::IsSecret );
 	break;
     }
 }
 
 bool // virtual
-KClassicGreeter::textMessage( const char *, bool )
+KClassicGreeter::textMessage( const char *text, bool err )
 {
+    if (!err &&
+	QString( text ).find( QRegExp( "^Changing password for [^ ]+$" ) ) >= 0)
+	return true;
     return false;
 }
 
 void // virtual
-KClassicGreeter::textPrompt( const char *, bool, bool nonBlocking )
+KClassicGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 {
+    pExp = exp;
+    if (echo)
+	exp = 0;
+    else if (!authTok)
+	exp = 1;
+    else {
+	QString pr( prompt );
+	if (pr.find( QRegExp( "\\b(old|current)\\b", false ) ) >= 0) {
+	    handler->gplugReturnText( "",
+				      KGreeterPluginHandler::IsOldPassword |
+				      KGreeterPluginHandler::IsSecret );
+	    return;
+	} else if (pr.find( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
+				     false ) ) >= 0)
+	    exp = 3;
+	else if (pr.find( QRegExp( "\\bnew\\b", false ) ) >= 0)
+	    exp = 2;
+	else {
+	    handler->gplugMsgBox( QMessageBox::Critical,
+				  i18n("Unrecognized prompt \"%1\"")
+				  .arg( prompt ) );
+	    handler->gplugReturnText( 0, 0 );
+	    exp = -1;
+	    return;
+	}
+    }
+
+    if (pExp >= 0 && pExp >= exp) {
+	revive();
+	has = -1;
+    }
+
     if (has >= exp || nonBlocking)
 	returnData();
 }
@@ -228,22 +268,8 @@ KClassicGreeter::binaryPrompt( const char *, bool )
 void // virtual
 KClassicGreeter::start()
 {
-    if (passwdEdit && passwdEdit->isEnabled()) {
-	authTok = false;
-	if (func == Authenticate || ctx == ChangeTok || ctx == ExChangeTok)
-	    exp = -1;
-	else
-	    exp = 1;
-    } else {
-	if (running) { // what a hack ... PAM sucks.
-	    passwd1Edit->erase();
-	    passwd2Edit->erase();
-	}
-	passwd1Edit->setFocus();
-	authTok = true;
-	exp = 2;
-    }
-    has = -1;
+    authTok = !(passwdEdit && passwdEdit->isEnabled());
+    exp = has = -1;
     running = true;
 }
 
@@ -276,10 +302,9 @@ KClassicGreeter::next()
 	    has = 3;
     } else
 	has = 1;
-    if (exp < 0) {
-	exp = authTok ? 2 : (ctx == Login || ctx == Shutdown) ? 0 : 1;
+    if (exp < 0)
 	handler->gplugStart();
-    } else if (has >= exp)
+    else if (has >= exp)
 	returnData();
 }
 

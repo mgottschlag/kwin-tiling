@@ -183,8 +183,11 @@ from The Open Group.
 #define V_PFEXPIRED	123	/* password expired (root enforced) */
 /* queries */
 #define V_GET_TEXT	200	/* str prompt, int echo, int ndelay; str return, int tag */
-# define V_IS_USER	1
-# define V_IS_PASSWORD	2
+# define V_IS_SECRET		1
+# define V_IS_USER		2
+# define V_IS_PASSWORD		4
+# define V_IS_OLDPASSWORD	8
+# define V_IS_NEWPASSWORD	16
 #define V_GET_BINARY	201	/* array prompt, int ndelay; array return */
 
 /*
