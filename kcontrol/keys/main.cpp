@@ -187,6 +187,7 @@ extern "C"
 	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	keys->writeActions( "Global Shortcuts", 0, true, true );
 
+	delete keys;
 	initModifiers();
   }
 }
