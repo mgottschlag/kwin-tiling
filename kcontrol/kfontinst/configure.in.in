@@ -101,7 +101,7 @@ if test $KFI_FOUND_FREETYPE -eq 1; then
 
         # Check for fontenc...
         ac_font_enc_headers=0
-        AC_CHECK_HEADER(X11/fonts/fontenc.h,[ac_font_enc_headers=1])
+        KDE_CHECK_HEADER(X11/fonts/fontenc.h,[ac_font_enc_headers=1])
         if test "$ac_font_enc_headers" = "0"; then
             AC_MSG_WARN(FontEnc headers not found. FontEnc support disabled)
         else
@@ -109,7 +109,7 @@ if test $KFI_FOUND_FREETYPE -eq 1; then
             ld_shared_flag=
             KDE_CHECK_COMPILER_FLAG(shared, [ld_shared_flag="-shared"])
             LDFLAGS="$LDFLAGS $ld_shared_flag $all_libraries -lz"
-            AC_CHECK_LIB(fontenc,FontEncDirectory,ac_font_enc_lib=1,ac_font_enc_lib=0)
+            KDE_CHECK_LIB(fontenc,FontEncDirectory,ac_font_enc_lib=1,ac_font_enc_lib=0)
             if test "$ac_font_enc_lib" = "1"; then
                 LIB_FONT_ENC="-lfontenc"
                 AC_DEFINE(HAVE_FONT_ENC, 1, [Defines if you have FontEnc])
