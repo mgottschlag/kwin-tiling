@@ -1,7 +1,7 @@
 # $Id$
 # kdebase/kcontrol/display
 
-INCLUDES = $(all_includes) -I$(srcdir)/../../kdesktop
+INCLUDES = $(all_includes) -I$(top_srcdir)/kdesktop
 LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) libbgnd.la
 
 SUBDIRS = . kcs ad pics
