@@ -227,7 +227,7 @@ void KArtsModule::GetSettings( void )
 {
     config->setGroup("Arts");
     startServer->setChecked(config->readBoolEntry("StartServer",true));
-    startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
+    startRealtime->setChecked(config->readBoolEntry("StartRealtime",true));
     networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
     x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
@@ -376,7 +376,7 @@ void KArtsModule::slotTestSound()
 void KArtsModule::defaults()
 {
     startServer->setChecked(true);
-    startRealtime->setChecked(false);
+    startRealtime->setChecked(true);
     networkTransparent->setChecked(false);
     x11Comm->setChecked(false);
     fullDuplex->setChecked(false);
@@ -485,7 +485,7 @@ extern "C"
 
         config->setGroup("Arts");
         bool startServer = config->readBoolEntry("StartServer",true);
-        bool startRealtime = config->readBoolEntry("StartRealtime",false);
+        bool startRealtime = config->readBoolEntry("StartRealtime",true);
         bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
 		QString args = config->readEntry("Arguments","-F 10 -S 4096");
 
