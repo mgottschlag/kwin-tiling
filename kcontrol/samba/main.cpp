@@ -26,6 +26,7 @@
 #include <kcmodule.h>
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
+#include <kdialog.h>
 
 class SambaContainer; // damn forward declaration :( but I want the factory first zecke
 
@@ -44,7 +45,6 @@ class SambaContainer:public KCModule
       const KAboutData* aboutData() const;
 
    private:
-      QVBoxLayout layout;
       KConfig config;
       QTabWidget tabs;
       NetMon status;
@@ -55,7 +55,6 @@ class SambaContainer:public KCModule
 
 SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringList&)
 :KCModule(SambaFactory::instance(), parent,name)
-,layout(this)
 ,config("kcmsambarc",false,true)
 ,tabs(this)
 ,status(&tabs,&config)
@@ -63,7 +62,8 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
 ,logView(&tabs,&config)
 ,statisticsView(&tabs,&config)
 {
-   layout.addWidget(&tabs);
+   QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+   layout->addWidget(&tabs);
    tabs.addTab(&status,i18n("&Exports"));
    tabs.addTab(&imports,i18n("&Imports"));
    tabs.addTab(&logView,i18n("&Log"));

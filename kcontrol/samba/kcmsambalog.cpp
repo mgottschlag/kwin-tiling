@@ -23,10 +23,12 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
-#include <kmessagebox.h>
 
 #include <qlayout.h>
 #include <qwhatsthis.h>
+
+#include <kmessagebox.h>
+#include <kdialog.h>
 
 #include "kcmsambalog.h"
 #include "kcmsambalog.moc"
@@ -50,7 +52,8 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,showFileClose(i18n("Show closed files"),this)
 ,updateButton(i18n("&Update"),this)
 {
-   QVBoxLayout *mainLayout=new QVBoxLayout(this);
+   QVBoxLayout *mainLayout=new QVBoxLayout(this, KDialog::marginHint(),
+       KDialog::spacingHint());
    QHBoxLayout *leLayout=new QHBoxLayout(mainLayout);
    leLayout->addWidget(&label);
    leLayout->addWidget(&logFileName,1);
@@ -88,13 +91,6 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    QWhatsThis::add( &updateButton, i18n("Click here to refresh the information"
      " on this page. The log file (shown above) will be read to obtain the"
      " events logged by samba.") );
-
-   mainLayout->setMargin(LOG_SCREEN_XY_OFFSET);
-   mainLayout->setSpacing(10);
-   leLayout->setMargin(0);
-   leLayout->setSpacing(10);
-   subLayout->setMargin(0);
-   subLayout->setSpacing(10);
 
    logFileName.setURL("/var/log/samba.log");
 

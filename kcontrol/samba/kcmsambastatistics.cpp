@@ -35,9 +35,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
-
-
-#define STAT_SCREEN_XY_OFFSET 15
+#include <kdialog.h>
 
 StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name)
    :QWidget (parent, name)
@@ -95,9 +93,8 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    expandedInfoCb->setMinimumSize(expandedInfoCb->sizeHint());
    expandedUserCb->setMinimumSize(expandedUserCb->sizeHint());
    
-   QVBoxLayout *topLayout=new QVBoxLayout(this);
-   topLayout->setMargin(8);
-   topLayout->setSpacing(7);
+   QVBoxLayout *topLayout=new QVBoxLayout(this, KDialog::marginHint(),
+      KDialog::spacingHint());
    topLayout->addWidget(viewStatistics,1);
    QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
    subLayout->setColStretch(1,1);

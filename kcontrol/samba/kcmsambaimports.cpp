@@ -24,30 +24,29 @@
 #include "kcmsambaimports.moc"
 
 #include <qlayout.h>
-#include <klocale.h>
 #include <qwhatsthis.h>
 
-#include <stdio.h>
+#include <klocale.h>
+#include <kdialog.h>
 
-#define IMP_SCREEN_XY_OFFSET 20
+#include <stdio.h>
 
 ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
    : QWidget (parent, name)
    ,configFile(config)
    ,list(this)
 {
-    QBoxLayout *topLayout = new QVBoxLayout(this);
+    QBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
+        KDialog::spacingHint());
     topLayout->setAutoAdd(true);
-    topLayout->setMargin(IMP_SCREEN_XY_OFFSET);
-    topLayout->setSpacing(10);
-    
+
     list.setAllColumnsShowFocus(true);
     list.setShowSortIndicator(true);
     list.setMinimumSize(425,200);
     list.addColumn(i18n("Type"), 50);
     list.addColumn(i18n("Resource"), 200);
     list.addColumn(i18n("Mounted Under"), 190);
-    
+
     QWhatsThis::add( this, i18n("This list shows the Samba and NFS shared"
       " resources mounted on your system from other hosts. The \"Type\""
       " column tells you whether the mounted resource is a Samba or an NFS"

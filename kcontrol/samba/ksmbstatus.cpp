@@ -27,6 +27,7 @@
 #include <qlayout.h>
 
 #include <klocale.h>
+#include <kdialog.h>
 
 #include "ksmbstatus.h"
 #include "ksmbstatus.moc"
@@ -50,10 +51,9 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    ,iMachine(0)
    ,iPid(0)
 {
-    QBoxLayout *topLayout = new QVBoxLayout(this);
+    QBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
+        KDialog::spacingHint());
     topLayout->setAutoAdd(true);
-    topLayout->setMargin(SCREEN_XY_OFFSET);
-    topLayout->setSpacing(10);
 
     list=new QListView(this,"Hello");
     version=new QLabel(this);
@@ -166,7 +166,7 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
 
 void NetMon::update()
 {
-   int pid,n;
+   int pid;
    QListViewItem *row;
    KProcess * process = new KProcess();
 
