@@ -63,7 +63,7 @@ private:
     QRadioButton	*restart_rb, *force_rb, *try_rb;
     QTimer		*timer;
     bool		needRoot;
-#if defined(__linux__) && (__i386__)
+#if defined(__linux__) && defined(__i386__)
     int			liloTarget;
 #endif
 
