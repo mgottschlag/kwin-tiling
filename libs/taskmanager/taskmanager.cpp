@@ -230,10 +230,18 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         t->updateDemandsAttentionState( w );
 
     // refresh icon pixmap if necessary
-    if (dirty & NET::WMIcon)
-        t->refresh(true);
+    if (dirty == NET::WMIcon)
+    {
+        t->refreshIcon();
+    }
     else
+    {
         t->refresh();
+        if (dirty & NET::WMIcon)
+        {
+            t->refreshIcon();
+        }
+    }
 
     if (dirty & (NET::WMDesktop| NET::WMState | NET::XAWMState))
     {
@@ -396,31 +404,35 @@ Task::~Task()
 {
 }
 
-void Task::refresh(bool icon)
+void Task::refreshIcon()
 {
-    if (icon) {
+    // try to load icon via net_wm
+    _pixmap = KWin::icon(_win, 16, 16, true);
 
-        // try to load icon via net_wm
-        _pixmap = KWin::icon(_win, 16, 16, true);
-
-        // try to guess the icon from the classhint
-        if(_pixmap.isNull())
-            KGlobal::instance()->iconLoader()->loadIcon(className().lower(), KIcon::Small,
-                                                        KIcon::Small, KIcon::DefaultState, 0, true);
-
-        // load xapp icon
-        if (_pixmap.isNull())
-            _pixmap = SmallIcon("kcmx");
-
-        _lastIcon.resize(0,0);
-        emit iconChanged();
-    }
-    else
+    // try to guess the icon from the classhint
+    if(_pixmap.isNull())
     {
-        _info = KWin::windowInfo(_win);
-        // TODO: this only really needs to get emitted when the name changes it seems
-        emit changed(); // always changed ?  ... :(
+        KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
+                                                    KIcon::Small,
+                                                    KIcon::Small,
+                                                    KIcon::DefaultState,
+                                                    0, true);
     }
+
+    // load xapp icon
+    if (_pixmap.isNull())
+    {
+        _pixmap = SmallIcon("kcmx");
+    }
+
+    _lastIcon.resize(0,0);
+    emit iconChanged();
+}
+
+void Task::refresh()
+{
+    _info = KWin::windowInfo(_win);
+    emit changed();
 }
 
 void Task::setActive(bool a)

@@ -215,7 +215,9 @@ public:
     // internal
 
     //* @internal
-    void refresh(bool icon = false);
+    void refresh();
+    //* @internal
+    void refreshIcon();
     //* @internal
     void addTransient( WId w, const NETWinInfo& info );
     //* @internal
