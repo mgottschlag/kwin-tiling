@@ -110,7 +110,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     top->setColStretch(1, 2);
 
     // A nice button size. Translators can adapt this
-    QPushButton *pbut = new QPushButton(i18n("abcdefgh"), this);
+    QPushButton *pbut = new QPushButton(i18n("some nonsense string as example string", "abcdefgh"), this);
     QSize bsize = pbut->sizeHint();
     delete pbut;
 
@@ -345,7 +345,7 @@ void KBackground::init()
 	m_pDeskList->insertItem(m_pGlobals->deskName(i));
 
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
-    m_pBackgroundBox->insertItem(i18n("Flat"));
+    m_pBackgroundBox->insertItem(i18n("Simple Color", "Flat"));
     m_pBackgroundBox->insertItem(i18n("Pattern"));
     m_pBackgroundBox->insertItem(i18n("Background Program"));
     m_pBackgroundBox->insertItem(i18n("Horizontal Gradient"));
