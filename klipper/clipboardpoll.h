@@ -33,18 +33,21 @@ class ClipboardPoll
         {
             Atom atom;
             Atom sentinel_atom;
+            Atom timestamp_atom;
             Window last_owner;
             bool owner_is_qt;
             Time last_change;
+            bool waiting_for_timestamp;
+            Time waiting_x_time;
         };
         void updateQtOwnership( SelectionData& data );
         bool checkTimestamp( SelectionData& data );
+        bool changedTimestamp( SelectionData& data, const XEvent& e );
         QTimer timer;
         SelectionData selection;
         SelectionData clipboard;
         Atom xa_clipboard;
         Atom xa_timestamp;
-        Atom klipper_atom;
     };
     
 #endif
