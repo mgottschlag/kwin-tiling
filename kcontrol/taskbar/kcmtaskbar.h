@@ -42,8 +42,21 @@ public:
 
 protected slots:
     void configChanged();
-
+    void slotUpdateComboBox();
+    
 private:
+    enum Action {
+        ShowTaskList = 0,
+        ShowOperationsMenu,
+        ActivateRaiseOrIconify,
+        Activate,
+        Raise,
+        Lower,
+        Iconify };
+    static Action buttonAction( ButtonState button, const QString& actionName = QString::null );
+    static QString buttonAction( int action );
+    static const QStringList& actionList();
+    static QStringList i18nActionList();
     TaskbarConfigUI *ui;
 };
 
