@@ -60,17 +60,15 @@
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
-// Protection against too many clipboard data changes. Lyx responds to clipboard data
-// requests with setting new clipboard data, so if Lyx takes over clipboard,
-// Klipper notices, requests this data, this triggers "new" clipboard contents
-// from Lyx, so Klipper notices again, requests this data, ... you get the idea.
-const int MAX_CLIPBOARD_CHANGES = 10; // max changes per second
-
 extern bool qt_qclipboard_bailout_hack;
 
 // config == kapp->config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
-    : QWidget( parent ), DCOPObject( "klipper" ), mOverflowCounter( 0 ), m_config( config )
+    : QWidget( parent )
+    , DCOPObject( "klipper" )
+    , m_overflowCounter( 0 )
+    , m_config( config )
+    , m_pendingContentsCheck( false )
 {
     qt_qclipboard_bailout_hack = true;
     updateTimestamp(); // read initial X user time
@@ -78,8 +76,9 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     clip = kapp->clipboard();
     m_selectedItem = -1;
     
-    connect( &mOverflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
-    mOverflowClearTimer.start( 1000 );
+    connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
+    m_overflowClearTimer.start( 1000 );
+    connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
 
     QSempty = i18n("<empty clipboard>");
 
@@ -645,7 +644,7 @@ void KlipperWidget::slotMoveSelectedToTop()
 
 void KlipperWidget::newClipData()
 {
-    if( ++mOverflowCounter > MAX_CLIPBOARD_CHANGES )
+    if( blockFetchingNewData())
         return;
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
@@ -655,7 +654,7 @@ void KlipperWidget::newClipData()
 
 void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
-    if( ++mOverflowCounter > MAX_CLIPBOARD_CHANGES )
+    if( blockFetchingNewData())
         return;
     // Don't react on Klipper's own actions. This signal comes either
     // from this process when it sets the clipboard (in which case ignoring
@@ -670,6 +669,45 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
     updateTimestamp();
     QString text = clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     checkClipData( text, selectionMode );
+}
+
+// Protection against too many clipboard data changes. Lyx responds to clipboard data
+// requests with setting new clipboard data, so if Lyx takes over clipboard,
+// Klipper notices, requests this data, this triggers "new" clipboard contents
+// from Lyx, so Klipper notices again, requests this data, ... you get the idea.
+const int MAX_CLIPBOARD_CHANGES = 10; // max changes per second
+
+bool KlipperWidget::blockFetchingNewData()
+{
+// Hacks for #85198 and #80302.
+// #85198 - block fetching new clipboard contents if Shift is pressed and mouse is not,
+//   this may mean the user is doing selection using the keyboard, in which case
+//   it's possible the app sets new clipboard contents after every change - Klipper's
+//   history would list them all.
+// #80302 - OOo (v1.1.3 at least) has a bug that if Klipper requests its clipboard contents
+//   while the user is doing a selection using the mouse, OOo stops updating the clipboard
+//   contents, so in practice it's like the user has selected only the part which was
+//   selected when Klipper asked first.
+    ButtonState buttonstate = kapp->keyboardMouseState();
+    if( ( buttonstate & ( ShiftButton | LeftButton )) == ShiftButton // #85198
+        || ( buttonstate & LeftButton ) == LeftButton ) { // #80302
+        m_pendingContentsCheck = true;
+        m_pendingCheckTimer.start( 100, true );
+        return true;
+    }
+    m_pendingContentsCheck = false;
+    if( ++m_overflowCounter > MAX_CLIPBOARD_CHANGES )
+        return true;
+    return false;
+}
+
+void KlipperWidget::slotCheckPending()
+{
+    if( !m_pendingContentsCheck )
+        return;
+    m_pendingContentsCheck = false; // blockFetchingNewData() will be called again
+    updateTimestamp();
+    newClipData();
 }
 
 void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
@@ -767,12 +805,12 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
 
 void KlipperWidget::slotClearOverflow()
 {
-    if( mOverflowCounter > MAX_CLIPBOARD_CHANGES ) {
+    if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
         kdDebug() << "App owning the clipboard/selection is lame" << endl;
         // update to the latest data - this unfortunately may trigger the problem again
         newClipData();
     }
-    mOverflowCounter = 0;
+    m_overflowCounter = 0;
 }
 
 QStringList KlipperWidget::getClipboardHistoryMenu()

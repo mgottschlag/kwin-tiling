@@ -111,6 +111,7 @@ private slots:
     void slotAboutToHideMenu();
     
     void slotClearOverflow();
+    void slotCheckPending();
 
 private:
     enum SelectionMode { Clipboard = 1, Selection = 2 };
@@ -121,7 +122,7 @@ private:
 
     QString m_lastString;
     QString m_lastClipboard, m_lastSelection;
-    int mOverflowCounter;
+    int m_overflowCounter;
     KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
     QMap<long,QString> m_clipDict;
@@ -141,11 +142,14 @@ private:
     int maxClipItems;
     int URLGrabItem;
     KConfig* m_config;
-    QTimer mOverflowClearTimer;
+    QTimer m_overflowClearTimer;
+    QTimer m_pendingCheckTimer;
+    bool m_pendingContentsCheck;
     ClipboardPoll* poll;
     static KAboutData* about_data;
 
     void trimClipHistory(int);
+    bool blockFetchingNewData();
 };
 
 
