@@ -100,7 +100,6 @@ void ModuleIconView::fill()
         subdirs.append(path);
     }
   }
-  subdirs.sort();
 
   // some defines for code readibility
   #define LoadSmall(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeSmall)
