@@ -275,7 +275,7 @@ void KColorScheme::save()
     cfg->writeEntry("buttonForeground", cs->buttonTxt, true, true);
     cfg->writeEntry("linkColor", cs->link, true, true);
     cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
-	cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
+    cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
 
     cfg->setGroup( "WM" );
     cfg->writeEntry("activeForeground", cs->aTxt, true, true);
@@ -401,7 +401,7 @@ void KColorScheme::slotSave( )
     config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
     config->writeEntry("linkColor", cs->link);
     config->writeEntry("visitedLinkColor", cs->visitedLink);
-	config->writeEntry("alternateBackground", cs->alternateBackground);
+    config->writeEntry("alternateBackground", cs->alternateBackground);
 
     delete config;
 }
@@ -563,6 +563,18 @@ void KColorScheme::slotSelectColor(const QColor &col)
     int selection;
     selection = wcCombo->currentItem();
 
+    // Adjust the alternate background color if the standard color changes
+    // Only if the previous alternate color was not a user-configured one
+    // of course
+    if ( selection == CSM_Standard_background &&
+         color(CSM_Alternate_background) ==
+         KGlobalSettings::calculateAlternateBackgroundColor(
+             color(CSM_Standard_background) ) ) 
+    {
+        color(CSM_Alternate_background) = 
+            KGlobalSettings::calculateAlternateBackgroundColor( col );
+    }
+        
     color(selection) = col;
 
     cs->drawSampleWidgets();
@@ -619,7 +631,6 @@ void KColorScheme::readScheme( int index )
 
     QColor link(0, 0, 192);
     QColor visitedLink(128, 0,128);
-    QColor alternate(238, 246, 255);
 
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
@@ -642,7 +653,7 @@ void KColorScheme::readScheme( int index )
       cs->iTitleBtn   = cs->back;
       cs->link        = link;
       cs->visitedLink = visitedLink;
-      cs->alternateBackground = alternate;
+      cs->alternateBackground = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
 
       cs->contrast    = 7;
 
@@ -674,18 +685,7 @@ void KColorScheme::readScheme( int index )
     cs->buttonTxt = config->readColorEntry( "buttonForeground", &black );
     cs->link = config->readColorEntry( "linkColor", &link );
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
-    int h, s, v;
-    if (cs->window != Qt::white)
-    {
-        cs->window.hsv( &h, &s, &v );
-        if (v > 128)
-            alternate = cs->window.dark(106);
-        else if (cs->window != black)
-            alternate = cs->window.light(106);
-        else
-            alternate = Qt::darkGray;
-    }
-
+    QColor alternate = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
     cs->alternateBackground = config->readColorEntry( "alternateBackground", &alternate );
 
     if (index == 0)
@@ -786,7 +786,7 @@ int KColorScheme::findSchemeByName(const QString &scheme)
      search = search.mid(i+1);
 
    i = nSysSchemes;
-   while (i < sFileList.count())
+   while (i < (int) sFileList.count())
    {
       if (sFileList[i].contains(search))
          return i;
