@@ -56,6 +56,7 @@ libkcm_fontinst_la_SOURCES = \
 	XftConfigIncludesWidget.cpp \
 	XftConfigIncludesWidgetData.cpp \
 	FontPreview.cpp \
+	CompressedFile.cpp \
 	xftgram-kfi.c \
 	xftlex-kfi.c
 

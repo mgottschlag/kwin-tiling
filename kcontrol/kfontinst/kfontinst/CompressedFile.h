@@ -31,133 +31,28 @@
 
 #include <zlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 
 class CCompressedFile
 {
     public:
 
-    CCompressedFile(const char *fname)
-    {
-        unsigned int len=fname ? strlen(fname) : 0;
+    CCompressedFile(const char *fname);
+    virtual ~CCompressedFile() { close(); }
 
-        itsGzip=len ? !(fname[len-2]=='.' && toupper(fname[len-1])=='Z') : true;
+    operator bool()            { return itsGzip ? NULL!=itsGzFile : NULL!=itsFile; }
 
-        if(itsGzip)
-            itsGzFile=gzopen(fname, "r");
-        else
-        {
-            const unsigned int constCmdSize=1024;
+    void   close();
+    int    read(void *data, unsigned int len);
+    int    getChar();
+    char * getString(char *data, unsigned int len);
+    int    seek(int offset, int whence);
+    bool   eof()               { return itsGzip ? gzeof(itsGzFile) : feof(itsFile); }
 
-            if(len+20<constCmdSize)
-            {
-                char cmd[constCmdSize];
+    private:
 
-                sprintf(cmd, "uncompress -c \"%s\"", fname);
-                itsFile=popen(cmd, "r");
-                itsPos=0;
-            }
-            else
-                itsFile=NULL;
-        }
-    }
-
-    ~CCompressedFile()
-    {
-        close();
-    }
-
-    void close()
-    {
-        if(*this)
-            if(itsGzip)
-            {
-                gzclose(itsGzFile);
-                itsGzFile=NULL;
-            }
-            else
-            {
-                pclose(itsFile);
-                itsFile=NULL;
-            }
-    }
-
-    operator bool() { return itsGzip ? NULL!=itsGzFile : NULL!=itsFile; }
-
-    int read(void *data, unsigned int len)
-    {
-        if(itsGzip)
-            return gzread(itsGzFile, data, len);
-        else
-        {
-            int r=fread(data, 1, len, itsFile);
-            if(r>0)
-                itsPos+=r;
-            return r;
-        }
-    }
-
-    int getChar()
-    {
-        if(itsGzip)
-            return gzgetc(itsGzFile);
-        else
-        {
-            int c=fgetc(itsFile);
-            if(EOF!=c)
-                itsPos++;
-            return c;
-        }
-    }
-
-    char * getString(char *data, unsigned int len)
-    {
-        if(itsGzip)
-            return gzgets(itsGzFile, data, len);
-        else
-        {
-            char *s=fgets(data, len, itsFile);
-            if(NULL!=s)
-                itsPos+=strlen(s);
-            return s;
-        }
-    }
-
-    int seek(int offset, int whence)
-    {
-        if(itsGzip)
-            return gzseek(itsGzFile, offset, whence);
-        else
-        {
-            switch(whence)
-            {
-                case SEEK_CUR:
-                    break;
-                case SEEK_SET:
-                    offset-=itsPos;
-                    break;
-                default:
-                    offset=-1;
-            }
-
-            char ch;
-            int  c;
-
-            for(c=0; c<offset && read(&ch, 1); c++)
-                itsPos++;
-
-            return c==offset ? offset : -1;
-        }
-    }
-
-    bool eof()
-    {
-        if(itsGzip)
-            return gzeof(itsGzFile);
-        else
-            return feof(itsFile);
-    }
+    // Don't really want copy contructor or operator=, therefore defined as private
+    CCompressedFile & operator=(const CCompressedFile&);
+    CCompressedFile(const CCompressedFile&);
 
     private:
 
