@@ -106,6 +106,49 @@ KDrKonqiCustomize::KDrKonqiCustomize(KConfig *config, QString group, QWidget *pa
   subLayout->addWidget(bt_ChangeTexts,0,AlignBottom);
 
   layout->activate();         
+
+
+lb_PresetList->insertItem("Test");
+  /*
+   * If nothing is in our list box (no presets available),
+   * disable all items. 
+   */
+  
+  if ( lb_PresetList->count() == 0)
+  {
+    bt_Remove->setEnabled(false);
+    bt_Save->setEnabled(false);
+    cb_Technical->setEnabled(false);
+    cb_Signal->setEnabled(false);
+    cb_SignalDetail->setEnabled(false);
+    cb_WhatToDo->setEnabled(false);
+    cb_ShowBugReport->setEnabled(false);
+    bt_Preview->setEnabled(false);
+    bt_ChangeTexts->setEnabled(false);
+  }
+  else
+  {
+    /* Select the first item BECAUSE:
+     * 1.) This is only a preset editor. The actual preset is chosen
+     *     in the "general" tab.
+     * 2.) It is really not necessary to choose the preset according
+     *     to the current one in the general tab :)
+     */
+    lb_PresetList->setSelected(0,TRUE);
+  }
+  
+
+  /*
+   * Connect the controls
+   */
+
+  if (!cb_Signal->isChecked())
+  {
+    cb_SignalDetail->setEnabled(false);
+  }
+  
+connect(cb_Signal,SIGNAL(toggled(bool)),cb_SignalDetail,SLOT(setEnabled(bool)));
+
 /*  bGrp = new QButtonGroup(1, Qt::Vertical,
 						  i18n("Sample optionss"), this);
   connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
