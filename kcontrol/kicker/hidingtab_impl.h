@@ -40,11 +40,11 @@ signals:
     void changed();
 
 public slots:
+    void switchPanel(int);
     void panelPositionChanged(int);
 
 protected slots:
     void backgroundModeClicked();
-    void switchPanel(QListViewItem*);
     void infoUpdated();
     void storeInfo();
     void extensionAdded(extensionInfo*);
@@ -56,7 +56,7 @@ private:
     // this is why storing enums vs strings can be a BAD thing
     int triggerComboToConfig(int trigger);
     int triggerConfigToCombo(int trigger);
-    
+
     KickerConfig* m_kcm;
     extensionInfo* m_panelInfo;
 };

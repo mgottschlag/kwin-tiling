@@ -17,6 +17,7 @@
  */
 
 #include <qcheckbox.h>
+#include <qgroupbox.h>
 #include <qheader.h>
 #include <qslider.h>
 #include <qradiobutton.h>
@@ -24,7 +25,6 @@
 #include <kcombobox.h>
 #include <klocale.h>
 #include <knuminput.h>
-#include <klistview.h>
 
 #include "main.h"
 #include "hidingtab_impl.h"
@@ -37,8 +37,6 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     m_kcm(kcmKicker),
     m_panelInfo(0)
 {
-    m_panelList->setSorting(-1);
-    m_panelList->header()->hide();
     // connections
     connect(m_manual,SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_automatic, SIGNAL(toggled(bool)), SIGNAL(changed()));
@@ -61,54 +59,55 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
 void HidingTab::load()
 {
     m_panelInfo = 0;
-    m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
-    if (m_kcm->extensionsInfo().count() == 1)
-    {
-        m_panelList->hide();
-    }
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
     switchPanel(0);
 }
 
 void HidingTab::extensionAdded(extensionInfo* info)
 {
-    new extensionInfoItem(info, m_panelList, m_panelList->lastItem());
+    m_panelList->insertItem(info->_name);
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 }
 
 void HidingTab::removeExtension(extensionInfo* info)
 {
-    // remove it from the hidingtab
-    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->firstChild());
-
-    while (extItem)
+    int count = m_panelList->count();
+    int extensionCount = m_kcm->extensionsInfo().count();
+    int index = 0;
+    for (; index < count && index < extensionCount; ++index)
     {
-        if (extItem->info() == info)
+        if (m_kcm->extensionsInfo()[index] == info)
         {
-            bool current = extItem->isSelected();
-            delete extItem;
-            if (current)
-            {
-                m_panelList->setSelected(m_panelList->firstChild(), true);
-            }
             break;
         }
+    }
 
-        extItem = static_cast<extensionInfoItem*>(extItem->nextSibling());
+    bool isCurrentlySelected = index == m_panelList->currentItem();
+    m_panelList->removeItem(index);
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
+
+    if (isCurrentlySelected)
+    {
+        m_panelList->setCurrentItem(0);
     }
 }
 
-void HidingTab::switchPanel(QListViewItem* panelItem)
+void HidingTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    extensionInfoItem* listItem = reinterpret_cast<extensionInfoItem*>(panelItem);
+    extensionInfo* panelInfo = (m_kcm->extensionsInfo())[panelItem];
 
-    if (!listItem)
+    if (!panelInfo)
     {
-        m_panelList->setSelected(m_panelList->firstChild(), true);
-        listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
-        if (!listItem)
+        m_panelList->setCurrentItem(0);
+        panelInfo = (m_kcm->extensionsInfo())[panelItem];
+
+        if (!panelInfo)
+        {
             return;
+        }
     }
 
     if (m_panelInfo)
@@ -116,7 +115,7 @@ void HidingTab::switchPanel(QListViewItem* panelItem)
         storeInfo();
     }
 
-    m_panelInfo = listItem->info();
+    m_panelInfo = panelInfo;
 
     if(m_panelInfo->_autohidePanel)
     {

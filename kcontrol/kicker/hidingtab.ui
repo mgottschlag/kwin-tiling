@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>HidingTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,32 +8,70 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>685</width>
-            <height>439</height>
+            <width>703</width>
+            <height>472</height>
         </rect>
     </property>
-    <grid>
+    <property name="caption">
+        <string>HidingTabBase</string>
+    </property>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <spacer row="3" column="1">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>Spacer7</cstring>
+                <cstring>m_panelsGroupBox</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
+            <property name="title">
+                <string></string>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QButtonGroup" row="0" column="1">
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>m_panelListLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Panels:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_panelList</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox">
+                    <property name="name">
+                        <cstring>m_panelList</cstring>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer11</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>342</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>m_modeGroup</cstring>
             </property>
@@ -303,7 +341,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QGroupBox" row="1" column="1">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>m_manualGroup</cstring>
             </property>
@@ -378,7 +416,7 @@
                 </spacer>
             </grid>
         </widget>
-        <widget class="QGroupBox" row="2" column="1">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>m_manualGroup_2</cstring>
             </property>
@@ -601,44 +639,27 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="KListView" row="0" column="0" rowspan="4" colspan="1">
-            <column>
-                <property name="text">
-                    <string>Panels</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
+        <spacer>
             <property name="name">
-                <cstring>m_panelList</cstring>
+                <cstring>Spacer7</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-            <property name="minimumSize">
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
                 <size>
-                    <width>130</width>
-                    <height>0</height>
+                    <width>20</width>
+                    <height>16</height>
                 </size>
             </property>
-            <property name="hScrollBarMode">
-                <enum>AlwaysOff</enum>
-            </property>
-            <property name="fullWidth">
-                <bool>true</bool>
-            </property>
-        </widget>
-    </grid>
+        </spacer>
+    </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_automatic</sender>
@@ -708,22 +729,23 @@
     </connection>
     <connection>
         <sender>m_panelList</sender>
-        <signal>selectionChanged(QListViewItem*)</signal>
+        <signal>activated(int)</signal>
         <receiver>HidingTabBase</receiver>
-        <slot>switchPanel(QListViewItem*)</slot>
+        <slot>switchPanel(int)</slot>
     </connection>
 </connections>
 <tabstops>
     <tabstop>m_manual</tabstop>
-    <tabstop>m_automatic</tabstop>
+    <tabstop>m_delaySpinBox</tabstop>
     <tabstop>m_autoHideSwitch</tabstop>
-    <tabstop>m_background</tabstop>
     <tabstop>m_backgroundRaise</tabstop>
     <tabstop>m_backgroundPos</tabstop>
     <tabstop>m_lHB</tabstop>
     <tabstop>m_rHB</tabstop>
     <tabstop>m_animateHiding</tabstop>
     <tabstop>m_hideSlider</tabstop>
+    <tabstop>m_automatic</tabstop>
+    <tabstop>m_background</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">klineedit.h</include>
@@ -731,8 +753,11 @@
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
 <slots>
-    <slot access="protected" specifier="pure virtual">switchPanel(QListViewItem*)</slot>
+    <slot specifier="pure virtual">switchPanel(int)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+<includehints>
+    <includehint>knuminput.h</includehint>
+</includehints>
 </UI>

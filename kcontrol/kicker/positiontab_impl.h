@@ -47,12 +47,14 @@ signals:
     void changed();
     void panelPositionChanged(int);
 
+public slots:
+    void switchPanel(int);
+
 protected slots:
     void movePanel(int);
     void lengthenPanel(int);
     void panelDimensionsChanged();
     void slotBGPreviewReady(int);
-    void switchPanel(QListViewItem*);
     void infoUpdated();
     void storeInfo();
     void showIdentify();

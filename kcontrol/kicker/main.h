@@ -24,6 +24,7 @@
 
 #include "extensionInfo.h"
 
+class QComboBox;
 class QTabWidget;
 class KDirWatch;
 class PositionTab;
@@ -40,13 +41,14 @@ class KickerConfig : public KCModule, public DCOPObject
 
 public:
     KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+    ~KickerConfig();
     void load();
     void save();
     void defaults();
     QString quickHelp() const;
     const KAboutData* aboutData() const;
 
-    void populateExtensionInfoList(QListView* list);
+    void populateExtensionInfoList(QComboBox* list);
     void reloadExtensionInfo();
     void saveExtentionInfo();
     const extensionInfoList& extensionsInfo();
@@ -69,14 +71,14 @@ public slots:
     void configChanged();
 
 protected slots:
-    void positionPanelChanged(QListViewItem*);
-    void hidingPanelChanged(QListViewItem*);
+    void positionPanelChanged(int);
+    void hidingPanelChanged(int);
     void configChanged(const QString&);
 
 private:
     void setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists = false);
 
-    KDirWatch      *configFileWatch; 
+    KDirWatch      *configFileWatch;
     PositionTab    *positiontab;
     HidingTab      *hidingtab;
     LookAndFeelTab *lookandfeeltab;

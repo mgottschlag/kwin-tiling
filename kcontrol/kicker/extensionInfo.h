@@ -18,19 +18,19 @@
 
 #ifndef __PANELINFO_H
 #define __PANELINFO_H
- 
-#include <qptrlist.h>
+
+#include <qvaluelist.h>
 #include <qlistview.h>
 #include <kpanelextension.h>
 
 class extensionInfo;
 
-typedef QPtrList<extensionInfo> extensionInfoList;
+typedef QValueList<extensionInfo*> extensionInfoList;
 
 class extensionInfo
 {
     public:
-        extensionInfo(const QString& destopFile, 
+        extensionInfo(const QString& destopFile,
                       const QString& configFile,
                       const QString& configPath);
         ~extensionInfo() {};
@@ -79,17 +79,6 @@ class extensionInfo
 
 	// position handling
 	bool	_allowedPosition[4];
-};
-
-class extensionInfoItem : public QListViewItem
-{
-    public:
-        extensionInfoItem(extensionInfo* info, QListView* parent, QListViewItem* after);
-        ~extensionInfoItem() {}
-        extensionInfo* info();
-
-    protected:
-        extensionInfo* m_info;
 };
 
 #endif

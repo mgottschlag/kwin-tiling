@@ -1,4 +1,4 @@
-    /*
+/*
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     DCOPObject("KickerConfig"),
     configFileWatch(new KDirWatch(this))
 {
-    m_extensionInfo.setAutoDelete(true);
-
     initScreenNumber();
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -71,16 +69,28 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 
     load();
 
-    connect(positiontab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
-            this, SLOT(positionPanelChanged(QListViewItem*)));
-    connect(hidingtab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
-            this, SLOT(hidingPanelChanged(QListViewItem*)));
+    connect(positiontab->m_panelList, SIGNAL(activated(int)),
+            this, SLOT(positionPanelChanged(int)));
+    connect(hidingtab->m_panelList, SIGNAL(activated(int)),
+            this, SLOT(hidingPanelChanged(int)));
     connect(positiontab, SIGNAL(panelPositionChanged(int)),
             hidingtab, SLOT(panelPositionChanged(int)));
 
     kapp->dcopClient()->setNotifications(true);
     connectDCOPSignal("kicker", "kicker", "configSwitchToPanel(QString)", "jumpToPanel(QString)", false);
     kapp->dcopClient()->send("kicker", "kicker", "configLaunched()", QByteArray());
+}
+
+KickerConfig::~KickerConfig()
+{
+    // QValueList::setAutoDelete where for art thou?
+    extensionInfoList::iterator it = m_extensionInfo.begin();
+    while (it != m_extensionInfo.end())
+    {
+        extensionInfo* info = *it;
+        it = m_extensionInfo.erase(it);
+        delete info;
+    }
 }
 
 void KickerConfig::initScreenNumber()
@@ -292,7 +302,7 @@ void KickerConfig::configChanged(const QString& config)
     }
 
     // find the extension and change it
-    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    for (extensionInfoList::iterator it = m_extensionInfo.begin(); it != m_extensionInfo.end(); ++it)
     {
         if (config == (*it)->_configPath)
         {
@@ -305,12 +315,12 @@ void KickerConfig::configChanged(const QString& config)
     emit extensionChanged(config);
 }
 
-void KickerConfig::populateExtensionInfoList(QListView* list)
+void KickerConfig::populateExtensionInfoList(QComboBox* list)
 {
-    extensionInfoItem* last(0);
-    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    list->clear();
+    for (extensionInfoList::iterator it = m_extensionInfo.begin(); it != m_extensionInfo.end(); ++it)
     {
-       last = new extensionInfoItem(*it, list, last);
+       list->insertItem((*it)->_name);
     }
 }
 
@@ -321,7 +331,7 @@ const extensionInfoList& KickerConfig::extensionsInfo()
 
 void KickerConfig::reloadExtensionInfo()
 {
-    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    for (extensionInfoList::iterator it = m_extensionInfo.begin(); it != m_extensionInfo.end(); ++it)
     {
        (*it)->load();
     }
@@ -331,7 +341,7 @@ void KickerConfig::reloadExtensionInfo()
 
 void KickerConfig::saveExtentionInfo()
 {
-    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    for (extensionInfoList::iterator it = m_extensionInfo.begin(); it != m_extensionInfo.end(); ++it)
     {
        (*it)->save();
     }
@@ -339,59 +349,26 @@ void KickerConfig::saveExtentionInfo()
 
 // when someone clicks on a panel in the position panel, make it
 // switch the selected panel on the hiding panel too
-void KickerConfig::positionPanelChanged(QListViewItem* item)
+void KickerConfig::positionPanelChanged(int index)
 {
-    if (!item)
-    {
-        return;
-    }
-
-    extensionInfo* info = static_cast<extensionInfoItem*>(item)->info();
-    extensionInfoItem* hidingItem =
-        static_cast<extensionInfoItem*>(hidingtab->m_panelList->firstChild());
-
-    while (hidingItem)
-    {
-        if (hidingItem->info() == info)
-        {
-            hidingtab->m_panelList->setSelected(hidingItem, true);
-            return;
-        }
-
-        hidingItem = static_cast<extensionInfoItem*>(hidingItem->nextSibling());
-    }
+    hidingtab->m_panelList->setCurrentItem(index);
+    hidingtab->switchPanel(index);
 }
 
 
 // when someone clicks on a panel in the hiding panel, make it
 // switch the selected panel on the position panel too
-void KickerConfig::hidingPanelChanged(QListViewItem* item)
+void KickerConfig::hidingPanelChanged(int index)
 {
-    if (!item)
-    {
-        return;
-    }
-
-    extensionInfo* info = static_cast<extensionInfoItem*>(item)->info();
-    extensionInfoItem* positionItem =
-        static_cast<extensionInfoItem*>(positiontab->m_panelList->firstChild());
-
-    while (positionItem)
-    {
-        if (positionItem->info() == info)
-        {
-            positiontab->m_panelList->setSelected(positionItem, true);
-            return;
-        }
-
-        positionItem = static_cast<extensionInfoItem*>(positionItem->nextSibling());
-    }
+    positiontab->m_panelList->setCurrentItem(index);
+    positiontab->switchPanel(index);
 }
 
 void KickerConfig::jumpToPanel(const QString& panelConfig)
 {
     extensionInfoList::iterator it = m_extensionInfo.begin();
-    for (; it != m_extensionInfo.end(); ++it)
+    int index = 0;
+    for (; it != m_extensionInfo.end(); ++it, ++index)
     {
         if ((*it)->_configFile == panelConfig)
         {
@@ -406,36 +383,12 @@ void KickerConfig::jumpToPanel(const QString& panelConfig)
 
     if (positiontab)
     {
-        extensionInfoItem* positionItem =
-            static_cast<extensionInfoItem*>(positiontab->m_panelList->firstChild());
-
-        while (positionItem)
-        {
-            if (positionItem->info() == (*it))
-            {
-                positiontab->m_panelList->setSelected(positionItem, true);
-                return;
-            }
-
-            positionItem = static_cast<extensionInfoItem*>(positionItem->nextSibling());
-        }
+        positiontab->m_panelList->setCurrentItem(index);
     }
 
     if (hidingtab)
     {
-        extensionInfoItem* hidingItem =
-            static_cast<extensionInfoItem*>(hidingtab->m_panelList->firstChild());
-
-        while (hidingItem)
-        {
-            if (hidingItem->info() == (*it))
-            {
-                hidingtab->m_panelList->setSelected(hidingItem, true);
-                return;
-            }
-
-            hidingItem = static_cast<extensionInfoItem*>(hidingItem->nextSibling());
-        }
+        hidingtab->m_panelList->setCurrentItem(index);
     }
 }
 

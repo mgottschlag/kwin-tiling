@@ -31,7 +31,6 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <knuminput.h>
-#include <klistview.h>
 #include <kpanelextension.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>
@@ -68,8 +67,6 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10,
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
-    m_panelList->setSorting(-1);
-    m_panelList->header()->hide();
 
     /*
      * set the tooltips on the buttons properly for RTL langs
@@ -152,13 +149,8 @@ PositionTab::~PositionTab()
 void PositionTab::load()
 {
     m_panelInfo = 0;
-    m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
-
-    if (m_kcm->extensionsInfo().count() == 1)
-    {
-        m_panelList->hide();
-    }
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
     switchPanel(0);
     m_desktopPreview->setPreview(m_pretendDesktop->size());
@@ -167,7 +159,8 @@ void PositionTab::load()
 
 void PositionTab::extensionAdded(extensionInfo* info)
 {
-    new extensionInfoItem(info, m_panelList, m_panelList->lastItem());
+    m_panelList->insertItem(info->_name);
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 }
 
 void PositionTab::save()
@@ -490,17 +483,20 @@ void PositionTab::slotBGPreviewReady(int)
     m_pretendDesktop->setBackgroundPixmap(pm);
 }
 
-void PositionTab::switchPanel(QListViewItem* panelItem)
+void PositionTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    extensionInfoItem* listItem = reinterpret_cast<extensionInfoItem*>(panelItem);
+    extensionInfo* panelInfo = (m_kcm->extensionsInfo())[panelItem];
 
-    if (!listItem)
+    if (!panelInfo)
     {
-        m_panelList->setSelected(m_panelList->firstChild(), true);
-        listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
-        if (!listItem)
+        m_panelList->setCurrentItem(0);
+        panelInfo = (m_kcm->extensionsInfo())[panelItem];
+
+        if (!panelInfo)
+        {
             return;
+        }
     }
 
     if (m_panelInfo)
@@ -508,7 +504,7 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
         storeInfo();
     }
 
-    m_panelInfo = listItem->info();
+    m_panelInfo = panelInfo;
 
     m_panelSize->removeItem(4);
     if (m_panelInfo->_customSizeMin == m_panelInfo->_customSizeMax)
@@ -546,8 +542,6 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_customSpinbox->setValue(m_panelInfo->_customSize);
 
     m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
-
-
     m_panelPos = m_panelInfo->_position;
     m_panelAlign = m_panelInfo->_alignment;
     if(m_panelInfo->_xineramaScreen >= 0 && m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
@@ -626,8 +620,8 @@ void PositionTab::infoUpdated()
 
 void PositionTab::extensionAboutToChange(const QString& configPath)
 {
-    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->currentItem());
-    if (extItem->info()->_configPath == configPath)
+    extensionInfo* extension = (m_kcm->extensionsInfo())[m_panelList->currentItem()];
+    if (extension && extension->_configPath == configPath)
     {
         storeInfo();
     }
@@ -635,11 +629,11 @@ void PositionTab::extensionAboutToChange(const QString& configPath)
 
 void PositionTab::extensionChanged(const QString& configPath)
 {
-    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->currentItem());
-    if (extItem->info()->_configPath == configPath)
+    extensionInfo* extension = (m_kcm->extensionsInfo())[m_panelList->currentItem()];
+    if (extension && extension->_configPath == configPath)
     {
         m_panelInfo = 0;
-        switchPanel(extItem);
+        switchPanel(m_panelList->currentItem());
     }
 }
 
@@ -692,9 +686,9 @@ void PositionTab::showIdentify()
 
         screenLabel->setAlignment(Qt::AlignCenter);
         screenLabel->setNum(s + 1);
-	// BUGLET: we should not allow the identification to be entered again
-	//         until the timer fires.
-	QTimer::singleShot(1500, screenLabel, SLOT(close()));
+        // BUGLET: we should not allow the identification to be entered again
+        //         until the timer fires.
+        QTimer::singleShot(1500, screenLabel, SLOT(close()));
 
         QPoint screenCenter(QApplication::desktop()->screenGeometry(s).center());
         QRect targetGeometry(QPoint(0,0),screenLabel->sizeHint());
@@ -708,22 +702,24 @@ void PositionTab::showIdentify()
 
 void PositionTab::removeExtension(extensionInfo* info)
 {
-    // remove it from the hidingtab
-    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->firstChild());
-
-    while (extItem)
+    int count = m_panelList->count();
+    int extensionCount = m_kcm->extensionsInfo().count();
+    int index = 0;
+    for (; index < count && index < extensionCount; ++index)
     {
-        if (extItem->info() == info)
+        if (m_kcm->extensionsInfo()[index] == info)
         {
-            bool current = extItem->isSelected();
-            delete extItem;
-            if (current)
-            {
-                m_panelList->setSelected(m_panelList->firstChild(), true);
-            }
             break;
         }
+    }
 
-        extItem = static_cast<extensionInfoItem*>(extItem->nextSibling());
+    bool isCurrentlySelected = index == m_panelList->currentItem();
+    m_panelList->removeItem(index);
+    m_panelsGroupBox->setHidden(m_panelList->count() < 2);
+
+    if (isCurrentlySelected)
+    {
+        m_panelList->setCurrentItem(0);
     }
 }
+

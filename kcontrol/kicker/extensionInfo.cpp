@@ -23,7 +23,7 @@
 #include "extensionInfo.h"
 
 
-extensionInfo::extensionInfo(const QString& desktopFile, 
+extensionInfo::extensionInfo(const QString& desktopFile,
                              const QString& configFile,
                              const QString& configPath)
     : _configFile(configFile),
@@ -121,7 +121,7 @@ void extensionInfo::configChanged()
     KConfig c(_configFile);
     c.setGroup("General");
 
-    // check to see if the new value is different from both 
+    // check to see if the new value is different from both
     // the original value and the currently set value, then it
     // must be a newly set value, external to the panel!
     int position  = c.readNumEntry ("Position",  _position);
@@ -216,19 +216,3 @@ void extensionInfo::save()
 
     c.sync();
 }
-
-extensionInfoItem::extensionInfoItem(extensionInfo* info, QListView* parent, QListViewItem* after)
-    : QListViewItem(parent, after),
-      m_info(info)
-{
-    if (info)
-    {
-        setText(0, info->_name);
-    }
-}
-
-extensionInfo* extensionInfoItem::info()
-{
-   return m_info;
-}
-
