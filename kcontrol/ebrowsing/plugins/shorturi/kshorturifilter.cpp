@@ -178,7 +178,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       }
       else
       {
-        QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home folder!</qt>").arg(user) :
+        QString msg = dir ? i18n("<qt><b>%1</b> does not have a home folder.</qt>").arg(user) :
                             i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
         setErrorMsg( data, msg );
         setURIType( data, KURIFilterData::ERROR );
