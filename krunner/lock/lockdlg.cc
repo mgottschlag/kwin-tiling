@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <kuser.h>
 #include <dcopref.h>
+#include <kmessagebox.h>
 
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -37,6 +38,7 @@
 #include <qapplication.h>
 #include <qlistview.h>
 #include <qheader.h>
+#include <qcheckbox.h>
 
 #include <ctype.h>
 #include <unistd.h>
@@ -505,6 +507,11 @@ void PasswordDlg::show()
 
 void PasswordDlg::slotStartNewSession()
 {
+    if (!KMessageBox::shouldBeShownContinue( ":confirmNewSession" )) {
+        KApplication::kdmExec("reserve\n");
+        return;
+    }
+
     killTimer(mTimeoutTimerId);
     mTimeoutTimerId = 0;
 
@@ -537,17 +544,21 @@ void PasswordDlg::slotStartNewSession()
     KPushButton *cbutton = new KPushButton( KStdGuiItem::cancel(), winFrame );
     connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
 
-    QBoxLayout *hbox = new QHBoxLayout( 0 );
+    QBoxLayout *mbox = new QVBoxLayout( winFrame, KDialog::marginHint(), KDialog::spacingHint() );
+
+    QGridLayout *grid = new QGridLayout( mbox, 2, 2, 2 * KDialog::spacingHint() );
+    grid->setMargin( KDialog::marginHint() );
+    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
+    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
+    QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), winFrame );
+    grid->addMultiCellWidget( cb, 1,1, 0,1 );
+
+    QBoxLayout *hbox = new QHBoxLayout( mbox, KDialog::spacingHint() );
     hbox->addStretch( 1 );
     hbox->addWidget( okbutton );
     hbox->addStretch( 1 );
     hbox->addWidget( cbutton );
     hbox->addStretch( 1 );
-
-    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
-    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
-    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    grid->addMultiCellLayout( hbox, 1,1, 0,1 );
 
     // stolen from kmessagebox
     int pref_width = 0;
@@ -590,8 +601,11 @@ void PasswordDlg::slotStartNewSession()
 
     delete dialog;
 
-    if (ret == QDialog::Accepted)
+    if (ret == QDialog::Accepted) {
+        if (cb->isChecked())
+            KMessageBox::saveDontShowAgainContinue( ":confirmNewSession" );
         KApplication::kdmExec("reserve\n");
+    }
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
 }
