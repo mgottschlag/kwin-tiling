@@ -24,13 +24,9 @@
  */
 
 #include <qdatetime.h>
-#include <qevent.h>
 #include <qlabel.h>
-#include <qimage.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
-#include <qobjectlist.h>
-#include <qpixmap.h>
 #include <qtimer.h>
 
 #include <kglobal.h>
@@ -82,28 +78,6 @@ KLocaleSample::KLocaleSample(KLocaleAdvanced *_locale,
 
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
-
-  // background pixmap stuff
-  QString path = locate("data",
-			QString::fromLatin1("kcmlocale/pics/background.png"));
-  QPixmap bgPix( path );
-
-  if ( !bgPix.isNull() ) {
-      bgImage = bgPix.convertToImage();
-
-      const QObjectList *list = children();
-      if ( list ) {
-	  QObject *o;
-	  QObjectListIt it( *list );
-	  while ( (o = it.current()) ) {
-	      if ( o->isWidgetType() )
-		  static_cast<QWidget*>(o)->setBackgroundOrigin(ParentOrigin);
-	      ++it;
-	  }
-
-	  setBackground( bgPix );
-      }
-  }
 
   QTimer *timer = new QTimer(this, "clock_timer");
   connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdateTime()));
@@ -159,31 +133,3 @@ void KLocaleSample::update()
   QWhatsThis::add( timeSample, str );
 }
 
-void KLocaleSample::resizeEvent( QResizeEvent *e )
-{
-    QWidget::resizeEvent( e );
-
-    if ( !bgImage.isNull() ) {
-	QPixmap pix;
-        pix = bgImage.smoothScale( width(), height() );
-	setBackground( pix );
-    }
-}
-
-void KLocaleSample::setBackground( const QPixmap& pix )
-{
-    setBackgroundPixmap( pix );
-
-    const QObjectList *list = children();
-    if ( list ) {
-	QObject *o;
-	QObjectListIt it( *list );
-	while ( (o = it.current()) ) {
-	    if ( o->isWidgetType() )
-		static_cast<QWidget*>( o )->setBackgroundPixmap( pix );
-	    ++it;
-	}
-
-	setBackgroundPixmap( pix );
-    }
-}
