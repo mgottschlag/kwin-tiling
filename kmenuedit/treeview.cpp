@@ -786,7 +786,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
 	   parentItem->setOpen(true);
 
          // update fileInfo data
-         folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
+         folderInfo->updateFullId(parentFolderInfo->fullId);
          folderInfo->setInUse(true);
          parentFolderInfo->add(folderInfo);
 

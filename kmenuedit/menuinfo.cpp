@@ -75,6 +75,18 @@ bool MenuFolderInfo::takeRecursive(MenuFolderInfo *info)
    return false;
 }
 
+// Recursively update all fullIds
+void MenuFolderInfo::updateFullId(const QString &parentId)
+{
+   fullId = parentId + id;
+
+   for(MenuFolderInfo *subFolderInfo = subFolders.first();
+       subFolderInfo; subFolderInfo = subFolders.next())
+   {
+      subFolderInfo->updateFullId(fullId);
+   }
+}
+
 // Add entry
 void MenuFolderInfo::add(MenuEntryInfo *entry, bool initial)
 {

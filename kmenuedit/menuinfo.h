@@ -72,6 +72,9 @@ public:
     // from @p exclude
     QString uniqueItemCaption(const QString &caption, const QString &exclude = QString::null);
 
+    // Update full id's for this item and all submenus
+    void updateFullId(const QString &parentId);
+
     // Return a list of existing submenu ids
     QStringList existingMenuIds();
 
