@@ -19,8 +19,10 @@
 
 */
 
-#ifndef __kurisearchfilterengine_h__
-#define __kurisearchfilterengine_h__ $Id$
+/* $Id$ */
+
+#ifndef __KURIIKWSFILTERENGINE_H__
+#define __KURIIKWSFILTERENGINE_H__
 
 #include <qvaluelist.h>
 #include <qstringlist.h>

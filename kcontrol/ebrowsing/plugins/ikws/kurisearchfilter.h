@@ -18,8 +18,10 @@
 
 */
 
-#ifndef __KURIIKWSFILTER_H__
-#define __KURIIKWSFILTER_H__ $Id$
+/* $Id$ */
+
+#ifndef __KURISEARCHFILTER_H__
+#define __KURISEARCHFILTER_H__
 
 #include <dcopobject.h>
 #include <klibloader.h>
