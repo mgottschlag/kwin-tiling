@@ -48,19 +48,21 @@ public:
     void load(int desk, bool reparseConfig=true);
 
     void setPreview(QSize size);
-
+    
     QPixmap *pixmap();
     QImage *image();
     bool isActive() { return m_State & Rendering; }
     void cleanup();
 
 public slots:
-    void start();
+    void start(bool enableBusyCursor = false);
     void stop();
     void desktopResized();
 
 signals:
     void imageDone(int desk);
+    void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or 
+    void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
 private slots:
     void slotBackgroundDone(KProcess *);
@@ -84,7 +86,10 @@ private:
 
     int doBackground(bool quit=false);
     int doWallpaper(bool quit=false);
-
+    void setBusyCursor(bool isBusy);
+    
+    bool m_isBusyCursor;
+    bool m_enableBusyCursor;
     bool m_bPreview;
     int m_State;
 
@@ -96,6 +101,8 @@ private:
 
     KStandardDirs *m_pDirs;
     KShellProcess *m_pProc;
+    
+    
 };
 
 

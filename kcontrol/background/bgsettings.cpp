@@ -264,12 +264,12 @@ void KBackgroundProgram::init(bool force_rw)
     if (force_rw || m_File.isEmpty()) {
         m_File = m_pDirs->saveLocation("dtop_program") + m_Name + ".desktop";
         m_pConfig = new KSimpleConfig(m_File);
-    } else
+        m_bReadOnly = false;
+    } else {
         m_pConfig = new KSimpleConfig(m_File);
+        m_bReadOnly = (m_File != locateLocal("dtop_program", m_Name + ".desktop"));
+    }
     m_pConfig->setGroup("KDE Desktop Program");
-
-    QFileInfo fi(m_File);
-    m_bReadOnly = !fi.isWritable();
 }
 
 

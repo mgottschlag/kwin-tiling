@@ -24,6 +24,7 @@
 #include <kprocess.h>
 #include <kpixmapio.h>
 #include <ktempfile.h>
+#include <kcursor.h>
 
 #include "bgrender.h"
 
@@ -37,7 +38,8 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     : KBackgroundSettings(desk, config)
 {
     m_State = 0;
-
+    m_isBusyCursor = false;
+    m_enableBusyCursor = false;
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
@@ -145,7 +147,6 @@ int KBackgroundRenderer::doBackground(bool quit)
 {
     if (m_State & BackgroundDone)
         return Done;
-
     int bgmode = backgroundMode();
 
     if (!enabled())
@@ -562,17 +563,21 @@ void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs
 
 
 
-void KBackgroundRenderer::slotBackgroundDone(KProcess *)
+void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
 {
+    Q_ASSERT(process == m_pProc);
     kdDebug() << "slotBackgroundDone" << endl;
     m_State |= BackgroundDone;
 
-    if (m_pProc->normalExit() && !m_pProc->exitStatus())
+    if (m_pProc->normalExit() && !m_pProc->exitStatus()) {
         m_pBackground->load(m_Tempfile->name());
+        m_State |= BackgroundDone;
+    }
 
     m_Tempfile->unlink();
     delete m_Tempfile; m_Tempfile = 0;
     m_pTimer->start(0, true);
+    setBusyCursor(false);
 }
 
 
@@ -580,8 +585,10 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *)
 /*
  * Starts the rendering process.
  */
-void KBackgroundRenderer::start()
+void KBackgroundRenderer::start(bool enableBusyCursor)
 {
+    m_enableBusyCursor = enableBusyCursor;
+    setBusyCursor(true);
     if (m_pBackground == 0L)
 	m_pBackground = new QImage();
     if (m_pImage == 0L)
@@ -600,11 +607,12 @@ void KBackgroundRenderer::start()
  */
 void KBackgroundRenderer::render()
 {
+    setBusyCursor(true);
     if (!(m_State & Rendering))
         return;
 
     int ret;
-
+    
     if (!(m_State & BackgroundDone)) {
         ret = doBackground();
         if (ret != Wait)
@@ -614,8 +622,9 @@ void KBackgroundRenderer::render()
 
     // No async wallpaper
     doWallpaper();
-
+    
     done();
+    setBusyCursor(false);
 }
 
 
@@ -624,10 +633,38 @@ void KBackgroundRenderer::render()
  */
 void KBackgroundRenderer::done()
 {
+    setBusyCursor(false);
     m_State |= AllDone;
     emit imageDone(desk());
+    if(backgroundMode() == Program && m_pProc &&
+       m_pProc->normalExit() && m_pProc->exitStatus()) {
+         emit programFailure(desk(), m_pProc->exitStatus());
+     } else if(backgroundMode() == Program && m_pProc &&
+       !m_pProc->normalExit()) {
+         emit programFailure(desk(), -1);
+     } else if(backgroundMode() == Program) {
+         emit programSuccess(desk());
+     }
+     
 }
 
+/*
+ * This function toggles a busy cursor on and off, for use in rendering.
+ * It is useful because of the ASYNC nature of the rendering - it is hard
+ * to make sure we don't set the busy cursor twice, but only restore 
+ * once.
+ */
+void KBackgroundRenderer::setBusyCursor(bool isBusy) {
+   if(m_isBusyCursor == isBusy)
+      return;
+   if (isBusy && !m_enableBusyCursor)
+      return;
+   m_isBusyCursor = isBusy;
+   if(isBusy)
+      QApplication::setOverrideCursor( KCursor::workingCursor() );
+   else
+      QApplication::restoreOverrideCursor();
+}
 
 /*
  * Stop the rendering.
@@ -639,7 +676,6 @@ void KBackgroundRenderer::stop()
 
     doBackground(true);
     doWallpaper(true);
-
     m_State = 0;
 }
 
@@ -649,6 +685,7 @@ void KBackgroundRenderer::stop()
  */
 void KBackgroundRenderer::cleanup()
 {
+    setBusyCursor(false);
     delete m_pBackground; m_pBackground = 0L;
     delete m_pImage; m_pImage = 0L;
     delete m_pPixmap; m_pPixmap = 0L;

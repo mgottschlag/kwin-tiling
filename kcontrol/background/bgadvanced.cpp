@@ -320,7 +320,7 @@ void BGAdvancedDialog::slotProgramItemDoubleClicked(QListViewItem *item)
 
 void BGAdvancedDialog::slotProgramChanged()
 {
-   r->stop();
+//   r->stop();
 
    r->setProgram(m_selectedProgram);
    if (dlg->m_cbProgram->isChecked() && !m_selectedProgram.isEmpty())
@@ -328,7 +328,8 @@ void BGAdvancedDialog::slotProgramChanged()
    else
       r->setBackgroundMode(m_oldBackgroundMode);
 
-   r->start();
+// We have no preview, no need to start the renderer
+//   r->start();
 }
 
 void BGAdvancedDialog::slotEnableProgram(bool b)

@@ -470,7 +470,7 @@ void BGDialog::updateUI()
 
     // Start preview render
     r->setPreview(m_pMonitor->size());
-    r->start();
+    r->start(true);
 }
 
 void BGDialog::slotPreviewDone(int desk_done)
@@ -508,7 +508,7 @@ void BGDialog::slotImageDropped(const QString &uri)
 
    r->stop();
    r->setWallpaper(uri);
-   r->start();
+   r->start(true);
 
    m_copyAllDesktops = true;
    emit changed(true);
@@ -576,7 +576,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
    }
    m_buttonGroupBackground->setButton(i);
 
-   r->start();
+   r->start(true);
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -608,7 +608,7 @@ void BGDialog::slotWallpaperPos(int mode)
 
    r->stop();
    r->setWallpaperMode(mode);
-   r->start();
+   r->start(true);
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -623,7 +623,7 @@ void BGDialog::slotSetupMulti()
         r->stop();
         m_slideShowRandom = r->multiWallpaperMode();
         r->setWallpaperMode(m_wallpaperPos);
-        r->start();
+        r->start(true);
         m_copyAllDesktops = true;
         emit changed(true);
     }
@@ -639,7 +639,7 @@ void BGDialog::slotPrimaryColor(const QColor &color)
 
    r->stop();
    r->setColorA(color);
-   r->start();
+   r->start(true);
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -653,7 +653,7 @@ void BGDialog::slotSecondaryColor(const QColor &color)
 
    r->stop();
    r->setColorB(color);
-   r->start();
+   r->start(true);
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -680,7 +680,7 @@ void BGDialog::slotPattern(int pattern)
       r->setBackgroundMode(KBackgroundSettings::Pattern);
       r->setPatternName(m_Patterns[pattern - NR_PREDEF_PATTERNS]);
    }
-   r->start();
+   r->start(true);
    m_colorSecondary->setEnabled(bSecondaryEnabled);
 
    m_copyAllDesktops = true;
@@ -746,7 +746,6 @@ void BGDialog::slotAdvanced()
         m_previewUpdates = true;
         return;
     }
-
     int cacheSize = dlg.cacheSize();
     if (cacheSize)
     {
@@ -764,7 +763,7 @@ void BGDialog::slotAdvanced()
 
     r->stop();
     m_previewUpdates = true;
-    r->start();
+    r->start(true);
 
     updateUI();
     m_copyAllDesktops = true;
@@ -786,7 +785,7 @@ void BGDialog::slotBlendMode(int mode)
 
    m_Renderer[m_eDesk]->stop();
    m_Renderer[m_eDesk]->setBlendMode(mode);
-   m_Renderer[m_eDesk]->start();
+   m_Renderer[m_eDesk]->start(true);
 }
 
 void BGDialog::slotBlendBalance(int value)
@@ -798,7 +797,7 @@ void BGDialog::slotBlendBalance(int value)
 
    m_Renderer[m_eDesk]->stop();
    m_Renderer[m_eDesk]->setBlendBalance(value);
-   m_Renderer[m_eDesk]->start();
+   m_Renderer[m_eDesk]->start(true);
 }
 
 void BGDialog::slotBlendReverse(bool b)
@@ -809,7 +808,7 @@ void BGDialog::slotBlendReverse(bool b)
 
    m_Renderer[m_eDesk]->stop();
    m_Renderer[m_eDesk]->setReverseBlending(b);
-   m_Renderer[m_eDesk]->start();
+   m_Renderer[m_eDesk]->start(true);
 }
 
 void BGDialog::desktopResized()
@@ -823,7 +822,7 @@ void BGDialog::desktopResized()
             r->stop();
         r->desktopResized();
     }
-    m_Renderer[m_eDesk]->start();
+    m_Renderer[m_eDesk]->start(true);
 }
 
 
