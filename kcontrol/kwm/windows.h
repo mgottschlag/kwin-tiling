@@ -103,6 +103,7 @@ private:
   void setAutoRaiseInterval(int);
   void setAutoRaise(bool);
   void setClickRaise(bool);
+  void setAnimateShade(bool);
   void setAltTabMode(bool);
   void setCtrlTab(bool);
 

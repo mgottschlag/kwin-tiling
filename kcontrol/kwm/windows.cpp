@@ -54,14 +54,15 @@
 #define KWIN_FOCUS     "FocusPolicy"
 #define KWIN_PLACEMENT "Placement"
 #define KWIN_MOVE      "MoveMode"
-#define KWIN_MINIMIZE_ANIM    "AnimateMinimize"
-#define KWIN_MINIMIZE_ANIM_SPEED    "AnimateMinimizeSpeed"
-#define KWIN_RESIZE_OPAQUE    "ResizeMode"
-#define KWIN_AUTORAISE_INTERVAL "AutoRaiseInterval"
-#define KWIN_AUTORAISE "AutoRaise"
+#define KWIN_MINIMIZE_ANIM       "AnimateMinimize"
+#define KWIN_MINIMIZE_ANIM_SPEED "AnimateMinimizeSpeed"
+#define KWIN_RESIZE_OPAQUE       "ResizeMode"
+#define KWIN_AUTORAISE_INTERVAL  "AutoRaiseInterval"
+#define KWIN_AUTORAISE  "AutoRaise"
 #define KWIN_CLICKRAISE "ClickRaise"
+#define KWIN_ANIMSHADE  "AnimateShade"
 #define KWIN_ALTTABMODE "AltTabStyle"
-#define KWIN_CTRLTAB "ControlTab"
+#define KWIN_CTRLTAB    "ControlTab"
 
 
 extern "C" {
@@ -298,7 +299,6 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     kLay->addWidget(kdeMode, 1, 1);
     cdeMode = new QRadioButton(i18n("CDE"), kbdBox);
     kLay->addWidget(cdeMode, 1, 2);
-    kdeMode->setChecked(true);
 
     wtstr = i18n("Keep the Alt key pressed and hit repeatedly the Tab key to walk"
                  " throught the windows on the current desktop. The two different modes mean:<ul>"
@@ -490,6 +490,10 @@ void KWindowConfig::autoRaiseOnTog(bool a) {
 void KWindowConfig::clickRaiseOnTog(bool ) {
 }
 
+void KWindowConfig::setAnimateShade(bool a) {
+    animateShade->setChecked(a);
+}
+
 void KWindowConfig::setAltTabMode(bool a) {
     kdeMode->setChecked(a);
 }
@@ -581,6 +585,8 @@ void KWindowConfig::load( void )
     setClickRaise(key != "off");
     setAutoRaiseEnabled();      // this will disable/hide the auto raise delay widget if focus==click
 
+    setAnimateShade(config->readBoolEntry(KWIN_ANIMSHADE, true));
+
     key = config->readEntry(KWIN_ALTTABMODE, "KDE");
     setAltTabMode(key == "KDE");
 
@@ -592,24 +598,24 @@ delete config;
 
 void KWindowConfig::save( void )
 {
-int v;
+    int v;
 
-KConfig *config = new KConfig("kwinrc", false, false);
-config->setGroup( "Windows" );
+    KConfig *config = new KConfig("kwinrc", false, false);
+    config->setGroup( "Windows" );
 
-v = getMove();
-if (v == TRANSPARENT)
-    config->writeEntry(KWIN_MOVE,"Transparent");
-else
-config->writeEntry(KWIN_MOVE,"Opaque");
+    v = getMove();
+    if (v == TRANSPARENT)
+        config->writeEntry(KWIN_MOVE,"Transparent");
+    else
+        config->writeEntry(KWIN_MOVE,"Opaque");
 
 
-// placement policy --- CT 31jan98 ---
-v =getPlacement();
-if (v == RANDOM_PLACEMENT)
-    config->writeEntry(KWIN_PLACEMENT, "Random");
-else if (v == CASCADE_PLACEMENT)
-    config->writeEntry(KWIN_PLACEMENT, "Cascade");
+    // placement policy --- CT 31jan98 ---
+    v =getPlacement();
+    if (v == RANDOM_PLACEMENT)
+        config->writeEntry(KWIN_PLACEMENT, "Random");
+    else if (v == CASCADE_PLACEMENT)
+        config->writeEntry(KWIN_PLACEMENT, "Cascade");
 //CT 13mar98 manual and interactive placement
 //   else if (v == MANUAL_PLACEMENT)
 //     config->writeEntry(KWIN_PLACEMENT, "Manual");
@@ -617,63 +623,65 @@ else if (v == CASCADE_PLACEMENT)
 //       QString tmpstr = QString("Interactive,%1").arg(interactiveTrigger->value());
 //       config->writeEntry(KWIN_PLACEMENT, tmpstr);
 //   }
-else
-config->writeEntry(KWIN_PLACEMENT, "Smart");
+    else
+        config->writeEntry(KWIN_PLACEMENT, "Smart");
 
 
-v = getFocus();
-if (v == CLICK_TO_FOCUS)
-    config->writeEntry(KWIN_FOCUS,"ClickToFocus");
-else if (v == FOCUS_UNDER_MOUSE)
-    config->writeEntry(KWIN_FOCUS,"FocusUnderMouse");
-else if (v == FOCUS_STRICTLY_UNDER_MOUSE)
-    config->writeEntry(KWIN_FOCUS,"FocusStrictlyUnderMouse");
-else
-config->writeEntry(KWIN_FOCUS,"FocusFollowsMouse");
+    v = getFocus();
+    if (v == CLICK_TO_FOCUS)
+        config->writeEntry(KWIN_FOCUS,"ClickToFocus");
+    else if (v == FOCUS_UNDER_MOUSE)
+        config->writeEntry(KWIN_FOCUS,"FocusUnderMouse");
+    else if (v == FOCUS_STRICTLY_UNDER_MOUSE)
+        config->writeEntry(KWIN_FOCUS,"FocusStrictlyUnderMouse");
+    else
+        config->writeEntry(KWIN_FOCUS,"FocusFollowsMouse");
 
 //CT - 17Jun1998
-config->writeEntry(KWIN_MINIMIZE_ANIM, getMinimizeAnim());
-config->writeEntry(KWIN_MINIMIZE_ANIM_SPEED, getMinimizeAnimSpeed());
+    config->writeEntry(KWIN_MINIMIZE_ANIM, getMinimizeAnim());
+    config->writeEntry(KWIN_MINIMIZE_ANIM_SPEED, getMinimizeAnimSpeed());
 
-if ( getMinimizeAnim() > 0 )
-    config->writeEntry("AnimateMinimize", true );
-
-
-v = getResizeOpaque();
-if (v == RESIZE_OPAQUE)
-    config->writeEntry(KWIN_RESIZE_OPAQUE, "Opaque");
-else
-config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
+    if ( getMinimizeAnim() > 0 )
+        config->writeEntry("AnimateMinimize", true );
 
 
-v = getAutoRaiseInterval();
-if (v <0) v = 0;
-config->writeEntry(KWIN_AUTORAISE_INTERVAL,v);
+    v = getResizeOpaque();
+    if (v == RESIZE_OPAQUE)
+        config->writeEntry(KWIN_RESIZE_OPAQUE, "Opaque");
+    else
+        config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
 
-if (autoRaiseOn->isChecked())
-    config->writeEntry(KWIN_AUTORAISE, "on");
-else
-config->writeEntry(KWIN_AUTORAISE, "off");
 
-if (clickRaiseOn->isChecked())
-    config->writeEntry(KWIN_CLICKRAISE, "on");
-else
-config->writeEntry(KWIN_CLICKRAISE, "off");
+    v = getAutoRaiseInterval();
+    if (v <0) v = 0;
+    config->writeEntry(KWIN_AUTORAISE_INTERVAL,v);
 
-if (kdeMode->isChecked())
-    config->writeEntry(KWIN_ALTTABMODE, "KDE");
-else
-config->writeEntry(KWIN_ALTTABMODE, "CDE");
+    if (autoRaiseOn->isChecked())
+        config->writeEntry(KWIN_AUTORAISE, "on");
+    else
+        config->writeEntry(KWIN_AUTORAISE, "off");
 
-config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
+    if (clickRaiseOn->isChecked())
+        config->writeEntry(KWIN_CLICKRAISE, "on");
+    else
+        config->writeEntry(KWIN_CLICKRAISE, "off");
 
-config->sync();
+    if (kdeMode->isChecked())
+        config->writeEntry(KWIN_ALTTABMODE, "KDE");
+    else
+        config->writeEntry(KWIN_ALTTABMODE, "CDE");
 
-delete config;
+    config->writeEntry(KWIN_ANIMSHADE, animateShade->isChecked());
 
-if ( !kapp->dcopClient()->isAttached() )
-    kapp->dcopClient()->attach();
-kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
+    config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
+
+    config->sync();
+
+    delete config;
+
+    if ( !kapp->dcopClient()->isAttached() )
+        kapp->dcopClient()->attach();
+    kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
 }
 
 void KWindowConfig::defaults()
