@@ -459,6 +459,7 @@ const KAboutData* KAccessConfig::aboutData() const{
    return about;
 }
 
+//K_EXPORT_COMPONENT_FACTORY( libmyplugin, KGenericFactory<MyPlugin> );
 
 extern "C"
 {
@@ -470,6 +471,7 @@ extern "C"
   /* This one gets called by kcminit
 
    */
+  /*
   void init_access()
   {
     KConfig *config = new KConfig("kaccessrc", true, false);
@@ -478,5 +480,5 @@ extern "C"
     delete config;
     if (run)
       kapp->startServiceByDesktopName("kaccess");
-  }
+  }*/
 }
