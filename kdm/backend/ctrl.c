@@ -301,6 +301,7 @@ unQuote (const char *str)
 static void
 processCtrl (const char *string, int len, int fd, struct display *d)
 {
+    struct display *di;
     const char *word;
     char **ar, *args;
     int how, when;
@@ -446,24 +447,24 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    fLog (d, fd, "bad", "missing argument(s)");
 		    goto bust;
 		}
-		if (!(d = FindDisplayByName (ar[1]))) {
+		if (!(di = FindDisplayByName (ar[1]))) {
 		    fLog (d, fd, "noent", "display %s not found", ar[1]);
 		    goto bust;
 		}
 		if (ar[5] && (args = unQuote (ar[5]))) {
-		    setNLogin (d, ar[3], ar[4], args, 2);
+		    setNLogin (di, ar[3], ar[4], args, 2);
 		    free (args);
 		} else
-		    setNLogin (d, ar[3], ar[4], 0, 2);
-		if (d->status == running && d->pid != -1) {
-		    if (d->userSess < 0 || !strcmp (ar[2], "now")) {
-			TerminateProcess (d->pid, SIGTERM);
-			d->status = raiser;
+		    setNLogin (di, ar[3], ar[4], 0, 2);
+		if (di->status == running && di->pid != -1) {
+		    if (di->userSess < 0 || !strcmp (ar[2], "now")) {
+			TerminateProcess (di->pid, SIGTERM);
+			di->status = raiser;
 		    }
-		} else if (d->status == reserve)
-		    d->status = notRunning;
-		else if (d->status == textMode && !strcmp (ar[2], "now"))
-		    SwitchToX (d);
+		} else if (di->status == reserve)
+		    di->status = notRunning;
+		else if (di->status == textMode && !strcmp (ar[2], "now"))
+		    SwitchToX (di);
 	    } else {
 		fLog (d, fd, "nosys", "unknown command");
 		goto bust;
