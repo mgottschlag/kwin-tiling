@@ -778,9 +778,12 @@ void MouseSettings::save(KConfig *config)
   config->writeEntry("SingleClick", singleClick, true, true);
   config->writeEntry("AutoSelectDelay", autoSelectDelay, true, true );
   config->writeEntry("VisualActivate", visualActivate, true, true);
-  config->writeEntry("ChangeCursor", changeCursor, true, true );
-  config->writeEntry("LargeCursor", largeCursor, true, true );
-  config->writeEntry("WhiteCursor", whiteCursor, true, true );
+
+  // the following need to be in the local config file so they are read
+  // by kcminit (which only reads local config for speed up)
+  config->writeEntry("ChangeCursor", changeCursor );
+  config->writeEntry("LargeCursor", largeCursor );
+  config->writeEntry("WhiteCursor", whiteCursor );
   config->sync();
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
 }
