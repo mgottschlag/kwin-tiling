@@ -455,7 +455,7 @@ void KCMStyle::styleSpecificConfig()
 
 	if (dial->exec() == QDialog::Accepted  && dial->isDirty() ) {
 		// Force re-rendering of the preview, to apply settings
-		switchStyle(currentStyle());
+		switchStyle(currentStyle(), true);
 
 		//For now, ask all KDE apps to recreate their styles to apply the setitngs
 		KIPC::sendMessageAll(KIPC::StyleChanged);
@@ -835,12 +835,12 @@ void KCMStyle::styleChanged()
 }
 
 
-void KCMStyle::switchStyle(const QString& styleName)
+void KCMStyle::switchStyle(const QString& styleName, bool force)
 {
-    // Don't flicker the preview if the same style is chosen in the cb
-    if (appliedStyle && appliedStyle->name() == styleName) 
-        return;
-
+	// Don't flicker the preview if the same style is chosen in the cb
+	if (!force && appliedStyle && appliedStyle->name() == styleName) 
+		return;
+         
 	// Create an instance of the new style...
 	QStyle* style = QStyleFactory::create(styleName);
 	if (!style)

@@ -73,7 +73,7 @@ public:
 
 protected:
 	bool findStyle( const QString& str, int& combobox_item );
-	void switchStyle(const QString& styleName);
+	void switchStyle(const QString& styleName, bool force = false);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
 	void loadStyle( KConfig& config );
