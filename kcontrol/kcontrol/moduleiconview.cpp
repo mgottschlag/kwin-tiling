@@ -41,7 +41,7 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   , _path(QString::null)
   , _modules(list)
 {
-  setArrangement(LeftToRight);
+  setArrangement(TopToBottom);
   setSelectionMode(Single);
   setItemsMovable(false);
   setSorting(false);
@@ -50,6 +50,8 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setResizeMode(Adjust);
   setWordWrapIconText(false);
   setShowToolTips(true);
+  setMaxItemWidth(200);
+
   
   // This is intentionally _not_ connected with executed(), since
   // honoring doubleclick doesn't make any sense here (changed by
