@@ -92,7 +92,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     m_checkTimer = new QTimer(this, "timer");
     m_checkTimer->start(1000, FALSE);
-    connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
+    connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(pollClipboard()));
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
