@@ -49,13 +49,13 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     : KBackgroundSettings(desk, config)
 {
     m_State = 0;
+
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
     m_pProc = 0L;
     m_Tempfile = 0L;
     m_bPreview = false;
-    m_bTile = false;
 
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
@@ -65,7 +65,8 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
-    delete m_Tempfile; m_Tempfile = 0;
+    delete m_Tempfile;
+    m_Tempfile = 0;
 }
 
 
@@ -268,10 +269,6 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 
     int wpmode = wallpaperMode();
 
-    bool bTile = m_bTile;
-    if (wpmode != NoWallpaper)
-	bTile = false;
-
     QImage wp;
     if (wpmode != NoWallpaper) {
 	if (currentWallpaper().isEmpty()) {
@@ -331,7 +328,7 @@ wp_out:
 	    d.setRect(0, 0, w, h);
 	    break;
 	case CenterTiled:
-	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w, h);
+	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
 	    break;
 	case Scaled: 
 	    wp = wp.smoothScale(ww = w, wh = h);
@@ -663,12 +660,6 @@ void KBackgroundRenderer::setPreview(QSize size)
 }
 
 
-void KBackgroundRenderer::setTile(bool tile)
-{
-    m_bTile = tile;
-}
-
-
 QPixmap *KBackgroundRenderer::pixmap()
 {
     if (m_State & AllDone) {
@@ -706,7 +697,6 @@ void KBackgroundRenderer::load(int desk, bool reparseConfig)
 
     cleanup();
     m_bPreview = false;
-    m_bTile = false;
     m_Size = m_rSize;
 
     KBackgroundSettings::load(desk, reparseConfig);
