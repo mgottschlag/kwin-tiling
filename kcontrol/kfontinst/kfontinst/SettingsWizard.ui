@@ -35,8 +35,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>681</width>
-            <height>436</height>
+            <width>674</width>
+            <height>522</height>
         </rect>
     </property>
     <property name="caption">
@@ -67,7 +67,7 @@
                     <string>As this is the first time you have run KFontinst, there are some configuration settings that you will need to inform KFontinst of.</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignTop|AlignLeft</set>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
                 </property>
                 <property name="vAlign" stdset="0">
                 </property>
@@ -75,7 +75,7 @@
                 </property>
             </widget>
             <spacer row="5" column="2">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer1</cstring>
                 </property>
                 <property name="orientation">
@@ -100,7 +100,7 @@
                 </property>
             </widget>
             <spacer row="3" column="0">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer3</cstring>
                 </property>
                 <property name="orientation">
@@ -121,16 +121,24 @@
                     <cstring>itsNonRootText</cstring>
                 </property>
                 <property name="text">
-                    <string>NOTE: As you are not logged in as "root", then the settings will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as root.</string>
+                    <string>&lt;B&gt;NOTE&lt;/B&gt;
+&lt;p&gt;As you are not logged in as "root":
+&lt;ol&gt;
+&lt;li&gt;The settings set here will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as "root".&lt;/li&gt;
+&lt;li&gt;Any fonts installed will only be printable by applications that embed the fonts within their output. Basically, for applications such as StarOffice, please login as "root" to install your fonts.&lt;/li&gt;
+&lt;li&gt;If you are running a font server (xfs), then any fonts installed may not actually be usable - as normally only "root" may install fonts in this case.&lt;/li&gt;
+&lt;/ol&gt;
+To sumarise: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as "root" (This can be accomplished via the "Administrator Mode" button.)
+&lt;/p&gt;</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignVCenter|AlignLeft</set>
+                    <set>WordBreak|AlignVCenter|AlignLeft</set>
                 </property>
                 <property name="wordwrap" stdset="0">
                 </property>
             </widget>
             <spacer row="1" column="1">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer2</cstring>
                 </property>
                 <property name="orientation">
@@ -180,7 +188,7 @@
             </widget>
             <widget class="QLabel" row="0" column="0">
                 <property name="name">
-                    <cstring>TextLabel2</cstring>
+                    <cstring>itsFnFText</cstring>
                 </property>
                 <property name="sizePolicy">
                     <sizepolicy>
@@ -215,7 +223,7 @@
                     <string>KFontinst has determined the following values for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing "&lt;Not Found&gt;"</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignTop|AlignLeft</set>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
                 </property>
                 <property name="vAlign" stdset="0">
                 </property>
@@ -278,7 +286,7 @@
                     <string>If your system is capable of using the XRender extension for anti-aliasing fonts, then please enter the relevant data.</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignTop|AlignLeft</set>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
                 </property>
                 <property name="vAlign" stdset="0">
                 </property>
@@ -361,7 +369,7 @@
 NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts. This can be set using the "System" part of the "Settings" tab when the module has loaded.</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignTop|AlignLeft</set>
+                    <set>WordBreak|AlignTop|AlignLeft</set>
                 </property>
                 <property name="vAlign" stdset="0">
                 </property>
@@ -392,26 +400,25 @@ NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The o
                     <cstring>TextLabel1_3</cstring>
                 </property>
                 <property name="text">
-                    <string>KFontinst has now determined all the setup information that it needs.
+                    <string>&lt;p&gt;KFontinst has now determined all the setup information that it needs.&lt;/p&gt;
 
-This KControl module has two main modes of operation; Basic and Advanced.
-
-In Basic mode, the underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.
-
-Advanced mode is for more experienced users, and displays the X fonts folder structure - allowing you to add/elete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.
-
-To switch between these modes, select the appropriate radio from within the "Appearance" section of the "Settings" tab.
-
-For further detailed help on how to use this module, please refer to the on-line help documentation.</string>
+&lt;p&gt;This KControl module has two main modes of operation:
+&lt;ol&gt;
+&lt;li&gt;&lt;i&gt;Basic:&lt;/i&gt; The underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;Advanced:&lt;/i&gt; This is for more experienced users, and displays the X fonts folder structure - allowing you to add/delete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.&lt;/li&gt;
+&lt;/ol&gt;
+To switch between these modes, select the appropriate option from within the "Appearance" section of the "Settings" tab.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;NOTE&lt;/b&gt; As this is the first time KFontinst has been run by you, it has automatically marked the basic folders containing your TrueType and Type1 fonts as needing to be 'configured' - therefore, before closing this KControl module you will be prompted to "Apply" these changes.&lt;/p&gt;
+&lt;p&gt;For further detailed help on how to use this module, please refer to the on-line help documentation.&lt;/p&gt;</string>
                 </property>
                 <property name="alignment">
-                    <set>WordBreak|AlignAuto|AlignVCenter|AlignLeft</set>
+                    <set>WordBreak|AlignVCenter|AlignLeft</set>
                 </property>
                 <property name="wordwrap" stdset="0">
                 </property>
             </widget>
             <spacer row="1" column="0">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer1_2</cstring>
                 </property>
                 <property name="orientation">
