@@ -118,7 +118,7 @@ void KLocaleConfigTime::save()
   str = str==locale->_timefmt?QString::null:locale->_timefmt;
   config->writeEntry("TimeFormat", str, true, true);
 
-  str = ent.readEntry("DateFormat", "%m/%d/%y");
+  str = ent.readEntry("DateFormat", "%A %d %B %Y");
   str = str==locale->_datefmt?QString::null:locale->_datefmt;
   config->writeEntry("DateFormat", str, true, true);
 
@@ -159,7 +159,7 @@ void KLocaleConfigTime::reset()
   ent.setGroup("KCM Locale");
 
   locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");
-  locale->_datefmt = ent.readEntry("DateFormat", "%m/%d/%y");
+  locale->_datefmt = ent.readEntry("DateFormat", "%A %d %B %Y");
   locale->_datefmtshort = ent.readEntry("DateFormatShort", "%m/%d/%y");
 
   load();
