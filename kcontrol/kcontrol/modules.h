@@ -20,8 +20,6 @@
 #ifndef __modules_h__
 #define __modules_h__
 
-#include <ltdl.h>
-
 #include <qobject.h>
 #include <qstringlist.h>
 #include <qptrlist.h>
