@@ -28,7 +28,7 @@
 #include <stdlib.h>
 
 #include <qdir.h>
-#include <qlayout.h> //CT 21Oct1998
+#include <qlayout.h>
 #include <qmessagebox.h>
 
 #include <kapp.h>
@@ -42,7 +42,6 @@
 #include <kconfig.h>
 #include <kstddirs.h>
 #include <kglobal.h>
-#include <kstddirs.h>
 
 extern KConfig *config;
 
@@ -932,18 +931,12 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   QGridLayout *pixLay = new QGridLayout(alignBox,2,3,15,5);
   
   leftAlign = new QRadioButton(i18n("Left"),alignBox);
-  leftAlign->adjustSize();
-  leftAlign->setMinimumSize(leftAlign->size());
   pixLay->addWidget(leftAlign,1,0);
 
   midAlign = new QRadioButton(i18n("Middle"),alignBox);
-  midAlign->adjustSize();
-  midAlign->setMinimumSize(midAlign->size());
   pixLay->addWidget(midAlign,1,1);
 
   rightAlign = new QRadioButton(i18n("Right"),alignBox);
-  rightAlign->adjustSize();
-  rightAlign->setMinimumSize(rightAlign->size());
   pixLay->addWidget(rightAlign,1,2);
 
   pixLay->activate();
@@ -964,33 +957,26 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   QBoxLayout *pushLay = new QVBoxLayout (titlebarBox,10,5);
   //CT
 
-  vShaded = new QRadioButton(i18n("Shaded Vertically"), 
-			    titlebarBox);
-  vShaded->adjustSize();
-  vShaded->setMinimumSize(vShaded->size());
+  vShaded = new QRadioButton(i18n("Shaded Vertically"), titlebarBox);
   pushLay->addWidget(vShaded);
 
-  hShaded = new QRadioButton(i18n("Shaded Horizontally"), 
-			    titlebarBox);
-  hShaded->adjustSize();
-  hShaded->setMinimumSize(hShaded->size());
+  hShaded = new QRadioButton(i18n("Shaded Horizontally"), titlebarBox);
   pushLay->addWidget(hShaded);
+
+  dShaded = new QRadioButton(i18n("Shaded on Diagonal"), titlebarBox);
+  pushLay->addWidget(dShaded);
 
   connect(vShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
   connect(hShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
+  connect(dShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
   plain = new QRadioButton(i18n("Plain"), 
 			   titlebarBox);
-  plain->adjustSize();
-  plain->setMinimumSize(plain->size());
   pushLay->addWidget(plain);
 
   connect(plain, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
-  pixmap = new QRadioButton(i18n("Pixmap"),
-	                   titlebarBox);
-  pixmap->adjustSize();
-  pixmap->setMinimumSize(pixmap->size());
+  pixmap = new QRadioButton(i18n("Pixmap"), titlebarBox);
   pushLay->addWidget(pixmap);
 
   connect(pixmap, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
@@ -1173,6 +1159,8 @@ int KTitlebarAppearance::getTitlebar()
     return TITLEBAR_SHADED_VERT;
   else if (hShaded->isChecked())
     return TITLEBAR_SHADED_HORIZ;
+  else if (dShaded->isChecked())
+    return TITLEBAR_SHADED_DIAG;
   else if (pixmap->isChecked())
       return TITLEBAR_PIXMAP;
   else
@@ -1199,6 +1187,7 @@ void KTitlebarAppearance::setTitlebar(int tb)
     {
       vShaded->setChecked(TRUE);
       hShaded->setChecked(FALSE);
+      dShaded->setChecked(FALSE);
       plain->setChecked(FALSE);
       pixmap->setChecked(FALSE);
       pixmapBox->setEnabled(FALSE);
@@ -1213,6 +1202,22 @@ void KTitlebarAppearance::setTitlebar(int tb)
     {
       vShaded->setChecked(FALSE);
       hShaded->setChecked(TRUE);
+      dShaded->setChecked(FALSE);
+      plain->setChecked(FALSE);
+      pixmap->setChecked(FALSE);
+      pixmapBox->setEnabled(FALSE);
+      lPixmapActive->setEnabled(FALSE);
+      pbPixmapActive->setEnabled(FALSE);
+      lPixmapInactive->setEnabled(FALSE);
+      pbPixmapInactive->setEnabled(FALSE);
+      cbPixedText->setEnabled(FALSE);
+      return;
+    }
+  if (tb == TITLEBAR_SHADED_DIAG)
+    {
+      vShaded->setChecked(FALSE);
+      hShaded->setChecked(FALSE);
+      dShaded->setChecked(TRUE);
       plain->setChecked(FALSE);
       pixmap->setChecked(FALSE);
       pixmapBox->setEnabled(FALSE);
@@ -1227,6 +1232,7 @@ void KTitlebarAppearance::setTitlebar(int tb)
     {
       vShaded->setChecked(FALSE);
       hShaded->setChecked(FALSE);
+      dShaded->setChecked(FALSE);
       plain->setChecked(TRUE);
       pixmap->setChecked(FALSE);
       pixmapBox->setEnabled(FALSE);
@@ -1285,6 +1291,8 @@ void KTitlebarAppearance::SaveSettings( void )
     config->writeEntry(KWM_TITLEBARLOOK, "shadedVertical");
   else if (t == TITLEBAR_SHADED_HORIZ)
     config->writeEntry(KWM_TITLEBARLOOK, "shadedHorizontal");
+  else if (t == TITLEBAR_SHADED_DIAG)
+    config->writeEntry(KWM_TITLEBARLOOK, "shadedDiagonal");
   else if (t == TITLEBAR_PIXMAP)
       config->writeEntry(KWM_TITLEBARLOOK, "pixmap");
   else
@@ -1415,6 +1423,8 @@ void KTitlebarAppearance::GetSettings( void )
     setTitlebar(TITLEBAR_SHADED_VERT);
   else if( key == "shadedHorizontal")
     setTitlebar(TITLEBAR_SHADED_HORIZ);
+  else if( key == "shadedDiagonal")
+    setTitlebar(TITLEBAR_SHADED_DIAG);
   else if( key == "pixmap")
     setTitlebar(TITLEBAR_PIXMAP);
   else
@@ -1423,9 +1433,9 @@ void KTitlebarAppearance::GetSettings( void )
   sPixmapActive = "activetitlebar.xpm";
   sPixmapInactive = "inactivetitlebar.xpm";
   pbPixmapActive->setPixmap(pixmapActiveOld =
-			      ICON(locate("icon", sPixmapActive)));
+			      Icon( sPixmapActive ));
   pbPixmapInactive->setPixmap(pixmapInactiveOld =
-			      ICON(locate("icon", sPixmapInactive)));
+			      Icon( sPixmapInactive ));
 
 
   int k = config->readNumEntry(KWM_TITLEANIMATION,0);

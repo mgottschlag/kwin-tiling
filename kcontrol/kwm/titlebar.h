@@ -62,7 +62,8 @@
 #define TITLEBAR_PLAIN                0
 #define TITLEBAR_SHADED_VERT          1
 #define TITLEBAR_SHADED_HORIZ         2
-#define TITLEBAR_PIXMAP               3
+#define TITLEBAR_SHADED_DIAG          3
+#define TITLEBAR_PIXMAP               4
 
 //CT 11feb98; 23Oct1998
 #define DCTB_MAXIMIZE      0
@@ -189,7 +190,7 @@ private:
  QRadioButton *leftAlign, *midAlign, *rightAlign;
  //CT
  QButtonGroup *titlebarBox;
- QRadioButton *vShaded, *hShaded, *plain, *pixmap;
+ QRadioButton *vShaded, *hShaded, *dShaded, *plain, *pixmap;
 
  //CT 11feb98
  int getDCTBAction();
