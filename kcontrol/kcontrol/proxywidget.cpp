@@ -222,7 +222,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   // only enable the requested buttons
   int b = _client->buttons();
-  setVisible(_help, (b & KCModule::Help));
+  setVisible(_help, false & (b & KCModule::Help));
   setVisible(_default, mayModify && (b & KCModule::Default));
   setVisible(_apply, mayModify && (b & KCModule::Apply));
   setVisible(_reset, mayModify && (b & KCModule::Apply));
