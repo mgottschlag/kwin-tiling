@@ -1053,10 +1053,10 @@ void CKioFonts::mkdir(const KURL &url, int)
 
     if(isSpecialDir(CMisc::getName(url.path()), sys))
         error(KIO::ERR_SLAVE_DEFINED,
-                  sys ? i18n("Sorry, you cannot create a folder named \"CID\", \"encodings\", or \"util\" - as these are special "
-                             "system folders. (\"CID\"is for \"CID\" fonts - these are <b>not</b> handled - and "
-                             "\"encodings\" and \"util\" are for X11 encoding files.)")
-                      : i18n("Sorry, you cannot create a folder named \"kde-override\", as this is a special KDE folder."));
+                  sys ? i18n("You cannot create a folder named \"CID\", \"encodings\", or \"util\" - as these are special "
+                             "system folders (\"CID\"is for \"CID\" fonts - these are <b>not</b> handled - and "
+                             "\"encodings\" and \"util\" are for X11 encoding files).")
+                      : i18n("You cannot create a folder named \"kde-override\", as this is a special KDE folder."));
     else
     {
         checkPath(realPath, otherExists, otherHidden);
@@ -1674,7 +1674,7 @@ bool CKioFonts::confirmUrl(KURL &url)
                                     CMisc::getFile(url.path()));
                         break;
                     default:
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, to install bitmap (.bdf, .pcf, .snf), or Speedo (.spd) "
+                        error(KIO::ERR_SLAVE_DEFINED, i18n("To install bitmap (.bdf, .pcf, .snf), or Speedo (.spd) "
                                                            "fonts\n in the \"%1\" folder you must specify a sub-folder.").arg(KIO_FONTS_SYS));
                         return false;
                 }
