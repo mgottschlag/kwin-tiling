@@ -11,13 +11,20 @@
 #include <kdeversion.h>
 #include <fontconfig/fontconfig.h>
 
-#define KFI_FC_HAS_WIDTHS    (FC_VERSION>=KDE_MAKE_VERSION(2, 2, 0))
-#define KFI_FC_FULL_WEIGHTS  (FC_VERSION>=KDE_MAKE_VERSION(2, 2, 0))
+#if (FC_VERSION<20200)
 
-#if !KFI_FC_FULL_WEIGHTS
+#define KFI_FC_NO_WIDTHS
+#define KFI_FC_LIMITED_WEIGHTS
+
+#endif
+
+#ifdef KFI_FC_LIMITED_WEIGHTS
+
+#undef FC_WEIGHT_LIGHT
 #define FC_WEIGHT_THIN              0
 #define FC_WEIGHT_EXTRALIGHT        40
 #define FC_WEIGHT_ULTRALIGHT        FC_WEIGHT_EXTRALIGHT
+#define FC_WEIGHT_LIGHT             50
 #define FC_WEIGHT_BOOK              75
 #define FC_WEIGHT_REGULAR           80
 #define FC_WEIGHT_NORMAL            FC_WEIGHT_REGULAR
@@ -25,6 +32,7 @@
 #define FC_WEIGHT_EXTRABOLD         205
 #define FC_WEIGHT_ULTRABOLD         FC_WEIGHT_EXTRABOLD
 #define FC_WEIGHT_HEAVY             FC_WEIGHT_BLACK
+
 #endif
 
 class QPixmap;
@@ -49,7 +57,7 @@ class KDE_EXPORT CFcEngine
     int     getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     QString getName(const KURL &url, int faceNo=0);
     bool    getInfo(const KURL &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                     QString &width,
 #endif
                     QString &spacing, QString &slant);
@@ -61,7 +69,7 @@ class KDE_EXPORT CFcEngine
     static QString getFcString(FcPattern *pat, const char *val, int faceNo=0);
     static QString createName(FcPattern *pat, int faceNo=0);
     static QString weightStr(int weight, bool emptyNormal=true);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
     static QString widthStr(int width, bool emptyNormal=true);
 #endif
     static QString slantStr(int slant, bool emptyNormal=true);
@@ -84,7 +92,7 @@ class KDE_EXPORT CFcEngine
     int             itsIndex,
                     itsIndexCount,
                     itsWeight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                     itsWidth,
 #endif
                     itsSlant,

@@ -78,7 +78,7 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_MEDIUM;
 }
 
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
 static int strToWidth(const QString &str)
 {   
     if(str.isEmpty())
@@ -172,7 +172,7 @@ static const char * getFoundry(const char *notice)
 }
 
 static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry, QString &weight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                     QString &width,
 #endif
                     QString &spacing, QString &slant)
@@ -181,7 +181,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
     bool  foundName=false,
           foundFamily=false;
     int   intSpacing=FC_PROPORTIONAL,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
           intWidth=FC_WIDTH_NORMAL,
 #endif
           intWeight=FC_WEIGHT_NORMAL,
@@ -204,7 +204,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                 if(0==line.find("FullName "))
                 {
                     full=line.mid(9);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                     intWidth=strToWidth(full);
 #endif
                     foundName=true;
@@ -244,7 +244,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
     if(foundName && foundFamily)
     {
         weight=KFI::CFcEngine::weightStr(intWeight, false);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
         width=KFI::CFcEngine::widthStr(intWidth, false);
 #endif
         slant=KFI::CFcEngine::slantStr(intSlant, false);
@@ -290,7 +290,7 @@ void KFileFontPlugin::addMimeType(const char *mime)
     addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
     addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
 #endif
     addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
@@ -304,7 +304,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             family,
             foundry,
             weight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
             width,
 #endif
             spacing,
@@ -313,7 +313,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             familyAll,
             foundryAll,
             weightAll,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
             widthAll,
 #endif
             spacingAll,
@@ -337,7 +337,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     {
         if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
             status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                            widthAll,
 #endif
                            spacingAll, slantAll);
@@ -345,7 +345,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             for(int face=0; face<10; ++face)  // How to get num faces from fontconfig? don't know - so just try 1st 10...
             {
                 if(itsEngine.getInfo(url, face, full, family, foundry, weight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                                      width,
 #endif
                                      spacing, slant) &&
@@ -380,7 +380,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                             }
                         }
                         addEntry(face, weightAll, weight);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                         addEntry(face, widthAll, width);
 #endif
                         addEntry(face, spacingAll, spacing);
@@ -404,7 +404,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 appendItem(group, "Family", familyAll);
                 appendItem(group, "Foundry", foundryAll);
                 appendItem(group, "Weight", weightAll);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                 appendItem(group, "Width", widthAll);
 #endif
                 appendItem(group, "Spacing", spacingAll);

@@ -1631,7 +1631,11 @@ bool CKioFonts::updateFontList()
     if(!itsFontList)
     {
         FcPattern   *pat = FcPatternCreate();
-        FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_WEIGHT, FC_WIDTH, FC_SLANT, 0);
+        FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_WEIGHT,
+#ifdef KFI_FC_HAS_WIDTHS
+                                            FC_WIDTH,
+#endif
+                                            FC_SLANT, 0);
 
         itsFontList=FcFontList(0, pat, os);
 

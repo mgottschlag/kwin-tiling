@@ -62,7 +62,7 @@ static int fcWeight(int weight)
     return FC_WEIGHT_HEAVY;
 }
 
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
 static int fcWidth(int width)
 {
     if(width<FC_WIDTH_EXTRACONDENSED)
@@ -196,7 +196,7 @@ static int strToWeight(const QString &str, QString &newStr)
     return FC_WEIGHT_REGULAR;
 }
 
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
 static int strToWidth(const QString &str, QString &newStr)
 {
     if(0==str.find(i18n(KFI_WIDTH_ULTRACONDENSED), 0, false))
@@ -289,10 +289,12 @@ inline bool equalWeight(int a, int b)
     return a==b || fcWeight(a)==fcWeight(b);
 }
 
+#ifndef KFI_FC_NO_WIDTHS
 inline bool equalWidth(int a, int b)
 {
     return a==b || fcWidth(a)==fcWidth(b);
 }
+#endif
 
 inline bool equalSlant(int a, int b)
 {
@@ -692,7 +694,7 @@ QString CFcEngine::createName(FcPattern *pat, int faceNo)
         }
     }
 
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
     if (FcResultMatch==FcPatternGetInteger(pat, FC_WIDTH, faceNo, &intVal))
     {
         str=widthStr(intVal);
@@ -729,7 +731,7 @@ QString CFcEngine::weightStr(int weight, bool emptyNormal)
     }
 }
 
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
 QString CFcEngine::widthStr(int width, bool emptyNormal)
 {
     switch(fcWidth(width))
@@ -783,7 +785,7 @@ QString CFcEngine::spacingStr(int spacing)
 }
 
 bool CFcEngine::getInfo(const KURL &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                         QString &width,
 #endif
                         QString &spacing, QString &slant)
@@ -803,7 +805,7 @@ bool CFcEngine::getInfo(const KURL &url, int faceNo, QString &full, QString &fam
         else
             family=itsName;
         weight=weightStr(itsWeight, false);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
         width=widthStr(itsWidth, false);
 #endif
         slant=slantStr(itsSlant, false);
@@ -835,7 +837,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
         if(-1==(pos=name.find(", ")))   // No style information...
         {
             itsWeight=FC_WEIGHT_NORMAL;
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
             itsWidth=FC_WIDTH_NORMAL;
 #endif
             itsSlant=FC_SLANT_ROMAN;
@@ -845,7 +847,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
             QString style(name.mid(pos+2));
 
             itsWeight=strToWeight(style, style);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
             itsWidth=strToWidth(style, style);
 #endif
             itsSlant=strToSlant(style);
@@ -869,7 +871,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
                                                 FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
                                                 FC_WEIGHT, FcTypeInteger, itsWeight,
                                                 FC_SLANT, FcTypeInteger, itsSlant,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                                                 FC_WIDTH, FcTypeInteger, itsWidth,
 #endif
                                                 NULL);
@@ -912,7 +914,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
             FcPattern *pat=FcFreeTypeQuery((const FcChar8 *)(QFile::encodeName(itsName).data()), 0, NULL, &count);
 
             itsWeight=FC_WEIGHT_NORMAL;
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
             itsWidth=FC_WIDTH_NORMAL;
 #endif
             itsSlant=FC_SLANT_ROMAN;
@@ -926,7 +928,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
                 {
                     FcPatternGetInteger(pat, FC_WEIGHT, faceNo, &itsWeight);
                     FcPatternGetInteger(pat, FC_SLANT, faceNo, &itsSlant);
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                     FcPatternGetInteger(pat, FC_WIDTH, faceNo, &itsWidth);
 #endif
                     FcPatternGetInteger(pat, FC_SPACING, faceNo, &itsSpacing);
@@ -957,7 +959,7 @@ XftFont * CFcEngine::getFont(int size, QPixmap *pix)
                            FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
                            FC_WEIGHT, FcTypeInteger, itsWeight,
                            FC_SLANT, FcTypeInteger, itsSlant,
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                            FC_WIDTH, FcTypeInteger, itsWidth,
 #endif
                            FC_PIXEL_SIZE, FcTypeDouble, (double)size,
@@ -1040,7 +1042,7 @@ void CFcEngine::getSizes(QPixmap *pix)
                     if(FcResultMatch==FcPatternGetDouble(f->pattern, FC_PIXEL_SIZE, 0, &px) && equal(constSizes[i], px) &&
                        FcResultMatch==FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &iv) && equalWeight(iv,itsWeight) &&
                        FcResultMatch==FcPatternGetInteger(f->pattern, FC_SLANT, 0, &iv) && equalSlant(iv, itsSlant) &&
-#ifdef KFI_FC_HAS_WIDTHS
+#ifndef KFI_FC_NO_WIDTHS
                        FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv) && equalWidth(iv, itsWidth) &&
 #endif
                        FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
