@@ -122,6 +122,7 @@ KIconConfigGeneral::KIconConfigGeneral(QWidget *parent, const char *name)
     mpDPCheck = new QCheckBox(i18n("Double sized pixels"), gbox);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
     g_lay->addWidget(mpDPCheck);
+    top->activate(); // needs improvement
 
     init();
     read();
