@@ -45,8 +45,10 @@ public:
      * @param pri The priority of the plugin.
      *
      */
-    KURIFilterPlugin(QObject *parent = 0, const char *name = 0, const QString &pname = QString::null, double pri = 1.0) : QObject(parent, name), m_strName(pname), m_dblPriority(pri) {
-    }
+    KURIFilterPlugin(QObject *parent = 0, const char *name = 0,
+                     const QString &pname = QString::null, double pri = 1.0)
+        : QObject(parent, name), m_strName(pname), m_dblPriority(pri)
+    {  }
 
     /**
      * Return the filter's name.
