@@ -23,7 +23,7 @@ install-data-local: uninstall.desktop
 
 KDE_ICON = kmenuedit
 
-EXTRA_DIST = $(apps_DATA)
+EXTRA_DIST = $(xdg_apps_DATA)
 
 rcdir = $(kde_datadir)/kmenuedit
 rc_DATA = kmenueditui.rc
