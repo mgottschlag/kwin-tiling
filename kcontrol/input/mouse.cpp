@@ -84,7 +84,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     top->addWidget(tabwidget);
 
     tab1 = new QWidget(0, "General Tab");
-    tabwidget->addTab(tab1, "&General");
+    tabwidget->addTab(tab1, i18n("&General"));
 
     QBoxLayout *lay = new QVBoxLayout(tab1, KDialog::marginHint(),
                       KDialog::spacingHint());
