@@ -28,6 +28,7 @@
 #include <qwidgetintdict.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qcheckbox.h>
 
 #include <kconfig.h>
 #include <kcmodule.h>
@@ -236,11 +237,14 @@ void KLocaleApplication::slotTranslate()
 
     if (::qstrcmp(wc->className(), "QLabel") == 0)
       ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
-    else if (::qstrcmp(wc->className(), "QGroupBox") == 0)
+    else if (::qstrcmp(wc->className(), "QGroupBox") == 0 ||
+	     ::qstrcmp(wc->className(), "QVGroupBox") == 0)
       ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
     else if (::qstrcmp(wc->className(), "QPushButton") == 0 ||
 	     ::qstrcmp(wc->className(), "KMenuButton") == 0)
       ((QPushButton *)wc)->setText( m_locale->translate( wc->name() ) );
+    else if (::qstrcmp(wc->className(), "QCheckBox") == 0)
+      ((QCheckBox *)wc)->setText( m_locale->translate( wc->name() ) );
   }
   delete list;
 

@@ -222,7 +222,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
-  m_chWeekStartsMonday = new QCheckBox(I18N_NOOP("Week starts on Monday"), this);
+  m_chWeekStartsMonday = new QCheckBox(this, I18N_NOOP("Week starts on Monday"));
   connect( m_chWeekStartsMonday, SIGNAL( clicked() ),
 	   this, SLOT( slotWeekStartsMondayChanged() ) );
   
