@@ -98,7 +98,7 @@ from The Open Group.
 # include <linux/vt.h>
 #endif
 
-#if defined(SVR4) && !defined(SCO)
+#if defined(SVR4) && !defined(SCO) && !defined(sun)
 extern FILE    *fdopen();
 #endif
 
@@ -311,7 +311,6 @@ main (int argc, char **argv)
 
 #ifdef XDMCP
     init_session_id ();
-    CreateWellKnownSockets ();
 #else
     Debug ("not compiled for XDMCP\n");
 #endif
@@ -330,6 +329,7 @@ main (int argc, char **argv)
     /*
      * Step 2 - run a sub-daemon for each entry
      */
+    UpdateListenSockets ();
     openFifo (&fifoFd, &fifoPath, 0);
     MainLoop ();
     closeFifo (&fifoFd, &fifoPath);
@@ -622,7 +622,8 @@ static void
 stoppen (int force)
 {
 #ifdef XDMCP
-    DestroyWellKnownSockets ();
+    request_port = 0;
+    UpdateListenSockets ();
 #endif
     if (force)
 	ForEachDisplay (StopDisplay);
@@ -993,6 +994,7 @@ static void
 RescanConfigs (int force)
 {
     if (ScanConfigs (force)) {
+	UpdateListenSockets ();
 	UpdateFifo ();
     }
 }
@@ -1220,7 +1222,7 @@ MainLoop (void)
     Debug ("MainLoop\n");
     while (
 #ifdef XDMCP
-	   AnyWellKnownSockets() ||
+	   AnyListenSockets() ||
 #endif
 	   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft ()))
     {
@@ -1277,11 +1279,8 @@ MainLoop (void)
 		continue;
 	    }
 #ifdef XDMCP
-	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
-	    {
-		ProcessRequestSocket ();
+	    if (ProcessListenSockets (&reads))
 		continue;
-	    }
 #endif	/* XDMCP */
 	    if (fifoFd >= 0 && FD_ISSET (fifoFd, &reads))
 	    {

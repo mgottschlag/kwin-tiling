@@ -78,10 +78,10 @@ ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames)
 
 int
 CheckAuthentication (
-    struct protoDisplay	*pdpy,
-    ARRAY8Ptr		displayID,
-    ARRAY8Ptr		name,
-    ARRAY8Ptr		data)
+    struct protoDisplay	*pdpy ATTR_UNUSED,
+    ARRAY8Ptr		displayID ATTR_UNUSED,
+    ARRAY8Ptr		name ATTR_UNUSED,
+    ARRAY8Ptr		data ATTR_UNUSED)
 {
 #ifdef HASXDMAUTH
     if (name->length && !memcmp ((char *)name->data, "XDM-AUTHENTICATION-1", 20))
@@ -261,10 +261,31 @@ Accept (
 /*ARGSUSED*/
 int
 SelectConnectionTypeIndex (
-    ARRAY16Ptr	     connectionTypes ATTR_UNUSED,
+    ARRAY16Ptr	     connectionTypes,
     ARRAYofARRAY8Ptr connectionAddresses ATTR_UNUSED)
 {
-    return 0;
+    int i;
+
+    /* 
+     * Select one supported connection type 
+     */
+
+    for (i = 0; i < connectionTypes->length; i++) {
+	switch (connectionTypes->data[i]) {
+	  case FamilyLocal:
+#if defined(TCPCONN)
+	  case FamilyInternet:
+# if defined(IPv6) && defined(AF_INET6) 
+	  case FamilyInternet6:
+# endif /* IPv6 */
+#endif /* TCPCONN */
+#if defined(DNETCONN)
+	  case FamilyDECnet:
+#endif /* DNETCONN */
+	    return i;
+	}
+    } /* for */
+    return -1;
 }
 
 #endif /* XDMCP */

@@ -221,13 +221,17 @@ RegisterIndirectChoice (
 {
     ChoicePtr	c;
     int		insert;
+#if 0
     int		found = 0;
+#endif
 
     Debug ("got indirect choice back\n");
     for (c = choices; c; c = c->next) {
 	if (XdmcpARRAY8Equal (clientAddress, &c->client) &&
 	    connectionType == c->connectionType) {
+#if 0
 	    found = 1;
+#endif
 	    break;
 	}
     }
@@ -324,6 +328,9 @@ static XdmcpBuffer directBuffer, broadcastBuffer;
 static XdmcpBuffer buffer;
 
 static int socketFD;
+#if defined(IPv6) && defined(AF_INET6)
+static int socket6FD;
+#endif
 
 
 static void
@@ -333,7 +340,11 @@ doPingHosts()
 
 Debug ("pinging hosts\n");
     for (hosts = hostAddrdb; hosts; hosts = hosts->next)
+#if defined(IPv6) && defined(AF_INET6)
+	XdmcpFlush (hosts->addr->sa_family == AF_INET6 ? socket6FD : socketFD,
+#else
 	XdmcpFlush (socketFD,
+#endif
 		    hosts->type == QUERY ? &directBuffer : &broadcastBuffer,
 		    (XdmcpNetaddr) hosts->addr, hosts->addrlen);
 }
@@ -353,6 +364,14 @@ addHostname(ARRAY8Ptr hostname, ARRAY8Ptr status,
 	    hostAddr.length = 4;
 	    connectionType = FamilyInternet;
 	    break;
+#if defined(IPv6) && defined(AF_INET6)
+	case AF_INET6:
+	    hostAddr.data =
+		(CARD8 *) &((struct sockaddr_in6 *) addr)->sin6_addr;
+	    hostAddr.length = 16;
+	    connectionType = FamilyInternet6;
+	    break;
+#endif
 	default:
 	    hostAddr.data = (CARD8 *) "";
 	    hostAddr.length = 0;
@@ -378,12 +397,15 @@ addHostname(ARRAY8Ptr hostname, ARRAY8Ptr status,
     if (hostname->length) {
 	switch (addr->sa_family) {
 	case AF_INET:
+#if defined(IPv6) && defined(AF_INET6)
+	case AF_INET6:
+#endif
 	    {
 		struct hostent *hostent;
 		char *host;
 
 		hostent = gethostbyaddr((char *) hostAddr.data,
-					hostAddr.length, AF_INET);
+					hostAddr.length, addr->sa_family);
 		if (hostent) {
 		    XdmcpDisposeARRAY8(hostname);
 		    host = hostent->h_name;
@@ -440,19 +462,23 @@ emptyHostnames(void)
 }
 
 static void
-receivePacket()
+receivePacket(int sfd)
 {
     XdmcpHeader header;
     ARRAY8 authenticationName;
     ARRAY8 hostname;
     ARRAY8 status;
     int saveHostname = 0;
+#if defined(IPv6) && defined(AF_INET6)
+    struct sockaddr_storage addr;
+#else
     struct sockaddr addr;
+#endif
     int addrlen;
 
 Debug ("receiving packet\n");
     addrlen = sizeof(addr);
-    if (!XdmcpFill(socketFD, &buffer, (XdmcpNetaddr) &addr, &addrlen))
+    if (!XdmcpFill(sfd, &buffer, (XdmcpNetaddr) &addr, &addrlen))
 	return;
     if (!XdmcpReadHeader(&buffer, &header))
 	return;
@@ -468,7 +494,8 @@ Debug ("receiving packet\n");
 		XdmcpReadARRAY8(&buffer, &status)) {
 		if (header.length == 6 + authenticationName.length +
 		    hostname.length + status.length) {
-		    if (addHostname(&hostname, &status, &addr, 1))
+		    if (addHostname(&hostname, &status,
+				    (struct sockaddr *)&addr, 1))
 			saveHostname = 1;
 		}
 	    }
@@ -478,7 +505,8 @@ Debug ("receiving packet\n");
 	    if (XdmcpReadARRAY8(&buffer, &hostname) &&
 		XdmcpReadARRAY8(&buffer, &status)) {
 		if (header.length == 4 + hostname.length + status.length) {
-		    if (addHostname(&hostname, &status, &addr, 0))
+		    if (addHostname(&hostname, &status,
+				    (struct sockaddr *)&addr, 0))
 			saveHostname = 1;
 		}
 	    }
@@ -493,12 +521,12 @@ Debug ("receiving packet\n");
 }
 
 static void
-registerHostaddr(struct sockaddr *addr, int len, xdmOpCode type)
+addHostaddr(HostAddr **hosts, struct sockaddr *addr, int len, xdmOpCode type)
 {
     HostAddr *host;
 
-Debug("registering host %[*hhu, type %d\n", len, addr, type);
-    for (host = hostAddrdb; host; host = host->next)
+    Debug("adding host %[*hhu, type %d\n", len, addr, type);
+    for (host = *hosts; host; host = host->next)
 	if (host->type == type && host->addr->sa_family == addr->sa_family)
 	    switch (addr->sa_family) {
 	    case AF_INET:
@@ -510,21 +538,38 @@ Debug("registering host %[*hhu, type %d\n", len, addr, type);
 		    return;
 		break;
 		}
+#if defined(IPv6) && defined(AF_INET6)
+	    case AF_INET6:
+		{
+		struct sockaddr_in6 *na = (struct sockaddr_in6 *)addr;
+		struct sockaddr_in6 *oa = (struct sockaddr_in6 *)host->addr;
+		if (na->sin6_port == oa->sin6_port &&
+		    !memcmp (&na->sin6_addr, &oa->sin6_addr, 16))
+		    return;
+		break;
+		}
+#endif
 	    default:	/* ... */
 		break;
 	    }
-Debug(" not dupe\n");
+    Debug(" not dupe\n");
     if (!(host = (HostAddr *) Malloc(sizeof(*host))))
 	return;
     if (!(host->addr = (struct sockaddr *) Malloc(len))) {
 	free((char *) host);
 	return;
     }
-    memmove((char *) host->addr, (char *) addr, len);
+    memcpy((char *) host->addr, (char *) addr, len);
     host->addrlen = len;
     host->type = type;
-    host->next = hostAddrdb;
-    hostAddrdb = host;
+    host->next = *hosts;
+    *hosts = host;
+}
+
+static void
+registerHostaddr(struct sockaddr *addr, int len, xdmOpCode type)
+{
+    addHostaddr(&hostAddrdb, addr, len, type);
 }
 
 static void
@@ -539,6 +584,25 @@ emptyPingHosts (void)
     }
     hostAddrdb = 0;
 }
+
+/* Handle variable length ifreq in BNR2 and later */
+#ifdef VARIABLE_IFREQ
+# define ifr_size(p) (sizeof (struct ifreq) + \
+		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
+		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
+#else
+# define ifr_size(p) (sizeof (struct ifreq))
+#endif
+
+#ifdef ISC
+# define IFC_REQ(ifc) (struct ifreq *) ifc.ifc_buf
+#else
+# define IFC_REQ(ifc) ifc.ifc_req
+#endif
+
+#ifndef SYSV_SIOCGIFCONF
+# define ifioctl ioctl
+#endif
 
 static void
 registerBroadcastForPing (void)
@@ -590,9 +654,9 @@ registerBroadcastForPing (void)
 	if (ifioctl(socketFD, (int) SIOCGIFCONF, (char *) &ifc) < 0)
 	    return;
 
-	cplim = (char *) IFC_IFC_REQ (ifc) + ifc.ifc_len;
+	cplim = (char *) IFC_REQ (ifc) + ifc.ifc_len;
 
-	for (cp = (char *) IFC_IFC_REQ (ifc); cp < cplim; cp += ifr_size(ifr))
+	for (cp = (char *) IFC_REQ (ifc); cp < cplim; cp += ifr_size(ifr))
 # endif				/* WINTCP */
 	{
 # ifndef WINTCP
@@ -654,23 +718,41 @@ registerBroadcastForPing (void)
 }
 
 static int
-makeSockAddr (const char *name, struct sockaddr_in *in_addr)
+makeSockAddrs (const char *name, HostAddr **hosts)
 {
+#if defined(IPv6) && defined(AF_INET6)
+    struct addrinfo *ai, *nai, hints;
+    bzero(&hints, sizeof(hints));
+    hints.ai_socktype = SOCK_DGRAM;
+    if (getaddrinfo(name, stringify(XDM_UDP_PORT), &hints, &ai))
+	return 0;
+    for (nai = ai; nai; nai = nai->ai_next)
+	if ((nai->ai_family == AF_INET) || (nai->ai_family == AF_INET6))
+	    addHostaddr(hosts, nai->ai_addr, nai->ai_addrlen, 
+		(nai->ai_family == AF_INET ?
+		 IN_MULTICAST(((struct sockaddr_in *) nai->ai_addr)->sin_addr.s_addr) :
+		 IN6_IS_ADDR_MULTICAST(&((struct sockaddr_in6 *) nai->ai_addr)->sin6_addr)) ?
+		BROADCAST_QUERY : QUERY);
+#else
+    struct sockaddr_in in_addr;
     /* Per RFC 1123, check first for IP address in dotted-decimal form */
-    if ((in_addr->sin_addr.s_addr = inet_addr(name)) != (unsigned) -1)
-	in_addr->sin_family = AF_INET;
-    else {
+    if ((in_addr.sin_addr.s_addr = inet_addr(name)) == (unsigned) -1) {
 	struct hostent *hostent;
-	if (!(hostent = gethostbyname(name)))
+	if (!(hostent = gethostbyname(name)) || hostent->h_addrtype != AF_INET)
 	    return 0;
-	if (hostent->h_addrtype != AF_INET || hostent->h_length != 4)
-	    return 0;
-	in_addr->sin_family = hostent->h_addrtype;
-	memmove(&in_addr->sin_addr, hostent->h_addr, 4);
+	memcpy(&in_addr.sin_addr, hostent->h_addr, 4);
     }
-    in_addr->sin_port = htons(XDM_UDP_PORT);
-#ifdef BSD44SOCKETS
-    in_addr->sin_len = sizeof(*in_addr);
+    in_addr.sin_family = AF_INET;
+    in_addr.sin_port = htons(XDM_UDP_PORT);
+# ifdef BSD44SOCKETS
+    in_addr.sin_len = sizeof(in_addr);
+# endif
+    addHostaddr(hosts, (struct sockaddr *) &in_addr, sizeof(in_addr),
+# ifdef IN_MULTICAST
+		IN_MULTICAST(in_addr.sin_addr.s_addr) ?
+		BROADCAST_QUERY :
+# endif
+		QUERY);
 #endif
     return 1;
 }
@@ -685,17 +767,11 @@ makeSockAddr (const char *name, struct sockaddr_in *in_addr)
 static int
 registerForPing(const char *name)
 {
-    struct sockaddr_in in_addr;
-
     Debug ("manual host registration: %s\n", name);
     if (!strcmp(name, "BROADCAST") || !strcmp(name, "*"))
 	registerBroadcastForPing();
-    else {
-	if (!makeSockAddr(name, &in_addr))
-	    return 0;
-	registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
-			 QUERY);
-    }
+    else if (!makeSockAddrs(name, &hostAddrdb))
+	return 0;
     return 1;
 }
 
@@ -721,8 +797,26 @@ AddChooserHost (
 	in_addr.sin_len = sizeof(in_addr);
 #endif
 	registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
+#ifdef IN_MULTICAST
+			 IN_MULTICAST(&in_addr.sin_addr.s_addr) ?
+			 BROADCAST_QUERY :
+#endif
 			 QUERY);
     }
+#if defined(IPv6) && defined(AF_INET6)
+    else if (connectionType == FamilyInternet6) {
+	struct sockaddr_in6 in6_addr;
+	in6_addr.sin6_family = AF_INET6;
+	memmove(&in6_addr.sin6_addr, addr->data, 16);
+	in6_addr.sin6_port = htons(XDM_UDP_PORT);
+#ifdef SIN6_LEN
+	in6_addr.sin6_len = sizeof(in6_addr);
+#endif
+	registerHostaddr((struct sockaddr *) &in6_addr, sizeof(in6_addr),
+			 IN6_IS_ADDR_MULTICAST(&in6_addr.sin6_addr) ?
+			 BROADCAST_QUERY : QUERY);
+    }
+#endif
 }
 
 static ARRAYofARRAY8    AuthenticationNames;
@@ -803,6 +897,12 @@ initXDMCP()
 #else
     if ((socketFD = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	return 0;
+#if defined(IPv6) && defined(AF_INET6)
+    if ((socket6FD = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
+	close(socketFD);
+	return 0;
+    }
+#endif
 # ifdef SO_BROADCAST
     soopts = 1;
     if (setsockopt
@@ -819,24 +919,35 @@ static void ATTR_NORETURN
 chooseHost(int hid)
 {
     HostName *h;
-    char addr[32];
+#if defined(IPv6) && defined(AF_INET6)
+    char addr[64];
+#endif
 
     for (h = hostNamedb; h; h = h->next)
 	if ((int)h == hid) {
 	    /* XXX error handling */
 	    GSet (&mstrtalk);
 	    if ((td->displayType & d_location) == dLocal) {
-		sprintf (addr, "%d.%d.%d.%d",
-			 h->hostaddr.data[0], h->hostaddr.data[1],
-			 h->hostaddr.data[2], h->hostaddr.data[3]);
 		GSendInt (D_RemoteHost);
+#if defined(IPv6) && defined(AF_INET6)
+		switch (h->connectionType) {
+		case FamilyInternet6:
+		    inet_ntop (AF_INET6, h->hostaddr.data, addr, sizeof(addr));
+		    break;
+		default: /* FamilyInternet */
+		    inet_ntop (AF_INET, h->hostaddr.data, addr, sizeof(addr));
+		    break;
+		}
 		GSendStr (addr);
+#else
+		GSendStr (inet_ntoa (*(struct in_addr *)h->hostaddr.data));
+#endif
 		CloseGreeter (FALSE);
 		SessionExit (EX_REMOTE);
 	    } else {
 		GSendInt (D_ChooseHost);
 		GSendArr (td->clientAddr.length, (char *)td->clientAddr.data);
-		GSendInt (td->connectionType);	/* maybe h->connectionType? */
+		GSendInt (td->connectionType);
 		GSendArr (h->hostaddr.length, (char *)h->hostaddr.data);
 		CloseGreeter (FALSE);
 		goto bout;
@@ -851,9 +962,9 @@ chooseHost(int hid)
 static void
 directChooseHost(const char *name)
 {
-    struct sockaddr_in in_addr;
+    HostAddr *hosts = 0;
 
-    if (!makeSockAddr(name, &in_addr))
+    if (!makeSockAddrs(name, &hosts))
 	return;
     GSendInt (G_Ch_Exit);
     /* XXX error handling */
@@ -866,8 +977,8 @@ directChooseHost(const char *name)
     } else {
 	GSendInt (D_ChooseHost);
 	GSendArr (td->clientAddr.length, (char *)td->clientAddr.data);
-	GSendInt (td->connectionType);	/* maybe h->connectionType? */
-	GSendArr (4, (char *)&in_addr.sin_addr);	/* XXX AF_INET-specific */
+	GSendInt (td->connectionType);
+	GSendArr (hosts->addrlen, (char *)hosts->addr);
 	CloseGreeter (FALSE);
 	SessionExit (EX_NORMAL);
     }
@@ -955,10 +1066,17 @@ DoChoose ()
 	FD_ZERO (&rfds);
 	FD_SET (grtproc.pipe.rfd, &rfds);
 	FD_SET (socketFD, &rfds);
-	n = select (
-	    (socketFD > grtproc.pipe.rfd ? socketFD : grtproc.pipe.rfd) + 1,
-	    &rfds, 0, 0, to);
-	if (n > 0) {
+#if defined(IPv6) && defined(AF_INET6)
+	FD_SET (socket6FD, &rfds);
+#endif
+	n = grtproc.pipe.rfd;
+	if (socketFD > n)
+	    n = socketFD;
+#if defined(IPv6) && defined(AF_INET6)
+	if (socket6FD > n)
+	    n = socket6FD;
+#endif
+	if (select (n + 1, &rfds, 0, 0, to) > 0) {
 	    if (FD_ISSET (grtproc.pipe.rfd, &rfds))
 		switch (cmd = CtrlGreeterWait (FALSE)) {
 		case -1:
@@ -989,7 +1107,11 @@ DoChoose ()
 		    return cmd;
 		}
 	    if (FD_ISSET (socketFD, &rfds))
-		receivePacket ();
+		receivePacket (socketFD);
+#if defined(IPv6) && defined(AF_INET6)
+	    if (FD_ISSET (socket6FD, &rfds))
+		receivePacket (socket6FD);
+#endif
 	}
     }
 

@@ -235,6 +235,7 @@ struct display {
 	int		useChooser;	/* Run the chooser for this display */
 	ARRAY8		clientAddr;	/* for chooser picking */
 	unsigned	connectionType;	/* ... */
+	int		xdmcpFd;
 #endif
 
 	/* server management resources */
@@ -499,9 +500,6 @@ extern void ResetServer (struct display *d);
 extern int PingServer(struct display *d);
 extern Display *dpy;
 
-/* socket.c */
-extern void CreateWellKnownSockets (void);
-
 /* in util.c */
 extern void *Calloc (size_t nmemb, size_t size);
 extern void *Malloc (size_t size);
@@ -538,12 +536,8 @@ extern char *iniMerge (char *data, const char *newdata);
 
 /* in xdmcp.c */
 extern char *NetworkAddressToHostname (CARD16 connectionType, ARRAY8Ptr connectionAddress);
-extern int AnyWellKnownSockets (void);
-extern void DestroyWellKnownSockets (void);
 extern void SendFailed (struct display *d, const char *reason);
 extern void init_session_id(void);
-extern void registerHostname(const char *name, int namelen);
-extern int xdmcpFd;
 
 /* in netaddr.c */
 extern char *NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp);
@@ -553,9 +547,8 @@ extern int NetaddrFamily (XdmcpNetaddr netaddrp);
 extern int addressEqual (XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2);
 
 /* in policy.c */
-#if 0
-extern ARRAY8Ptr Accept (/* struct sockaddr *from, int fromlen, CARD16 displayNumber */);
-#endif
+struct sockaddr;
+extern ARRAY8Ptr Accept (struct sockaddr *from, int fromlen, CARD16 displayNumber);
 extern ARRAY8Ptr ChooseAuthentication (ARRAYofARRAY8Ptr authenticationNames);
 extern int CheckAuthentication (struct protoDisplay *pdpy, ARRAY8Ptr displayID, ARRAY8Ptr name, ARRAY8Ptr data);
 extern int SelectAuthorizationTypeIndex (ARRAY8Ptr authenticationName, ARRAYofARRAY8Ptr authorizationNames);
@@ -579,6 +572,7 @@ extern struct protoDisplay	*NewProtoDisplay (
 
 #define FamilyBroadcast 0xffff
 typedef void (*ChooserFunc)(CARD16 connectionType, ARRAY8Ptr addr, char *closure);
+typedef void (*ListenFunc)(ARRAY8Ptr addr, void **closure);
 
 /* in access.c */
 extern ARRAY8Ptr getLocalAddress (void);
@@ -587,6 +581,7 @@ extern int ForEachMatchingIndirectHost (ARRAY8Ptr clientAddress, CARD16 connecti
 extern void ScanAccessDatabase (int force);
 extern int UseChooser (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern void ForEachChooserHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
+extern void ForEachListenAddr (ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure);
 
 /* in choose.c */
 extern ARRAY8Ptr IndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType);
@@ -596,8 +591,13 @@ extern void ForgetIndirectClient ( ARRAY8Ptr clientAddress, CARD16 connectionTyp
 extern int RegisterIndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice);
 extern int DoChoose (void);
 
+/* socket.c or streams.c */
+extern void UpdateListenSockets (void);
+extern int AnyListenSockets (void);
+extern int ProcessListenSockets (FD_TYPE *reads);
+
 /* in xdmcp.c */
-extern void ProcessRequestSocket (void);
+extern void ProcessRequestSocket (int fd);
 
 #endif /* XDMCP */
 

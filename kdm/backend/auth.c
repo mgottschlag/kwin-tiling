@@ -714,9 +714,61 @@ ifioctl (int fd, int cmd, char *arg)
 #endif
     return(ret);
 }
+
 #endif /* SYSV_SIOCGIFCONF */
 
-#if defined(STREAMSCONN) && !defined(SYSV_SIOCGIFCONF) && !defined(NCR)
+#ifdef HAS_GETIFADDRS
+# include <ifaddrs.h>
+
+static void
+DefineSelf(int fd, FILE *file, Xauth *auth)
+{
+    struct ifaddrs *ifap, *ifr;
+    char *addr;
+    int family, len;
+    
+    if (getifaddrs(&ifap) < 0) 
+	return;
+    for (ifr = ifap; ifr; ifr = ifr->ifa_next) {
+	len = sizeof(*(ifr->ifa_addr));
+	family = ConvertAddr((XdmcpNetaddr)(ifr->ifa_addr), &len, &addr);
+	if (family == -1 || family == FamilyLocal) 
+	    continue;
+	/*
+	 * don't write out 'localhost' entries, as
+	 * they may conflict with other local entries.
+	 * DefineLocal will always be called to add
+	 * the local entry anyway, so this one can
+	 * be tossed.
+	 */
+	if (family == FamilyInternet &&
+	    addr[0] == 127 && addr[1] == 0 &&
+	    addr[2] == 0 && addr[3] == 1)
+	{
+	    Debug ("Skipping localhost address\n");
+	    continue;
+	}
+# if defined(IPv6) && defined(AF_INET6)
+	if (family == FamilyInternet6) {
+	    if (IN6_IS_ADDR_LOOPBACK(((struct in6_addr *)addr))) {
+		Debug ("Skipping IPv6 localhost address\n");
+		continue;
+	    }
+	    /* Also skip XDM-AUTHORIZATION-1 */
+	    if (auth->name_length == 19 && 
+		!memcmp (auth->name, "XDM-AUTHORIZATION-1", 19)) {
+		Debug ("Skipping IPv6 XDM-AUTHORIZATION-1\n");
+		continue;
+	    }
+	}
+# endif
+	writeAddr (family, len, addr, file, auth);
+    }
+    freeifaddrs (ifap);
+}
+#else  /* GETIFADDRS */
+
+#if defined(STREAMSCONN) && !defined(SYSV_SIOCGIFCONF) && !defined(WINTCP)
 
 #include <tiuser.h>
 
@@ -818,7 +870,57 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 
 #else /* WINTCP */
 
-#ifdef SIOCGIFCONF
+/* Solaris provides an extended interface SIOCGLIFCONF.  Other systems
+ * may have this as well, but the code has only been tested on Solaris
+ * so far, so we only enable it there.  Other platforms may be added as
+ * needed.
+ *
+ * Test for Solaris commented out  --  TSI @ UQV 2003.06.13
+ */
+#ifdef SIOCGLIFCONF
+/* #if defined(sun) */
+# define USE_SIOCGLIFCONF
+/* #endif */
+#endif
+
+#if defined(SIOCGIFCONF) || defined (USE_SIOCGLIFCONF)
+
+#if !defined(SYSV_SIOCGIFCONF) || defined(USE_SIOCGLIFCONF)
+# define ifioctl ioctl
+#endif
+
+#ifdef USE_SIOCGLIFCONF
+# define ifr_type    struct lifreq
+#else
+# define ifr_type    struct ifreq
+#endif
+
+/* Handle variable length ifreq in BNR2 and later */
+#ifdef VARIABLE_IFREQ
+# define ifr_size(p) (sizeof (struct ifreq) + \
+		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
+		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
+#else
+# define ifr_size(p) (sizeof (ifr_type))
+#endif
+
+#ifdef USE_SIOCGLIFCONF
+# define IFC_IOCTL_REQ SIOCGLIFCONF
+# define IFC_REQ(ifc) ifc.lifc_req
+# define IFC_LEN(ifc) ifc.lifc_len
+# define IFR_ADDR(ifr) ifr->lifr_addr
+# define IFR_NAME(ifr) ifr->lifr_name
+#else    
+# define IFC_IOCTL_REQ SIOCGIFCONF
+# ifdef ISC
+#  define IFC_REQ(ifc) ((ifr_type *) ifc.ifc_buf)
+# else
+#  define IFC_REQ(ifc) ifc.ifc_req
+# endif
+# define IFC_LEN(ifc) ifc.ifc_len
+# define IFR_ADDR(ifr) ifr->ifr_addr
+# define IFR_NAME(ifr) ifr->ifr_name
+#endif
 
 /* Define this host for access control.  Find all the hosts the OS knows about 
  * for this fd and add them to the selfhosts list.
@@ -827,38 +929,72 @@ static void
 DefineSelf (int fd, FILE *file, Xauth *auth)
 {
     char		buf[2048], *cp, *cplim;
-    struct ifconf	ifc;
     int 		len;
     char 		*addr;
     int 		family;
-    register struct ifreq *ifr;
+    ifr_type		*ifr;
+#ifdef USE_SIOCGLIFCONF
+    int			n;
+    void *		bufptr = buf;
+    size_t		buflen = sizeof(buf);
+    struct lifconf	ifc;
+# ifdef SIOCGLIFNUM
+    struct lifnum	ifn;
+# endif
+#else
+    struct ifconf	ifc;
+#endif
     
+#if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
+    ifn.lifn_family = AF_UNSPEC;
+    ifn.lifn_flags = 0;
+    if (ioctl (fd, (int) SIOCGLIFNUM, (char *) &ifn) < 0)
+	LogError ("Failed getting interface count\n");
+    if (buflen < (ifn.lifn_count * sizeof(struct lifreq))) {
+	buflen = ifn.lifn_count * sizeof(struct lifreq);
+	bufptr = Malloc (buflen);
+    }
+#endif
+
+#ifdef USE_SIOCGLIFCONF
+    ifc.lifc_family = AF_UNSPEC;
+    ifc.lifc_flags = 0;
+    ifc.lifc_len = buflen;
+    ifc.lifc_buf = bufptr;
+#else
     ifc.ifc_len = sizeof (buf);
     ifc.ifc_buf = buf;
-    if (ifioctl (fd, SIOCGIFCONF, (char *) &ifc) < 0) {
+#endif
+    if (ifioctl (fd, IFC_IOCTL_REQ, (char *) &ifc) < 0) {
 	LogError ("Trouble getting network interface configuration\n");
+#if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
+	if (bufptr != buf)
+	    free (bufptr);
+#endif
 	return;
     }
 
-    cplim = (char *) IFC_IFC_REQ (ifc) + ifc.ifc_len;
+    cplim = (char *) IFC_REQ (ifc) + IFC_LEN (ifc);
 
-    for (cp = (char *) IFC_IFC_REQ (ifc); cp < cplim; cp += ifr_size (ifr))
+    for (cp = (char *) IFC_REQ (ifc); cp < cplim; cp += ifr_size (ifr))
     {
-	ifr = (struct ifreq *) cp;
+	ifr = (ifr_type *) cp;
 #ifdef DNETCONN
 	/*
 	 * this is ugly but SIOCGIFCONF returns decnet addresses in
 	 * a different form from other decnet calls
 	 */
-	if (ifr->ifr_addr.sa_family == AF_DECnet) {
+	if (IFR_ADDR (ifr).sa_family == AF_DECnet) {
 		len = sizeof (struct dn_naddr);
-		addr = (char *)ifr->ifr_addr.sa_data;
+		addr = (char *)IFR_ADDR (ifr).sa_data;
 		family = FamilyDECnet;
 	} else
 #endif
 	{
-	    if (ConvertAddr ((XdmcpNetaddr) &ifr->ifr_addr, &len, &addr) < 0)
+	    family = ConvertAddr ((XdmcpNetaddr) &IFR_ADDR (ifr), &len, &addr);
+	    if (family < 0)
 		continue;
+
 	    if (len == 0)
 	    {
 		Debug ("skipping zero length address\n");
@@ -871,18 +1007,35 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	     * the local entry anyway, so this one can
 	     * be tossed.
 	     */
-	    if (len == 4 &&
+	    if (family == FamilyInternet &&
 		addr[0] == 127 && addr[1] == 0 &&
 		addr[2] == 0 && addr[3] == 1)
 	    {
 		    Debug ("skipping localhost address\n");
 		    continue;
 	    }
-	    family = FamilyInternet;
+#if defined(IPv6) && defined(AF_INET6)
+	    if (family == FamilyInternet6) {
+		if (IN6_IS_ADDR_LOOPBACK(((struct in6_addr *)addr))) {
+		    Debug ("Skipping IPv6 localhost address\n");
+		    continue;
+		}
+		/* Also skip XDM-AUTHORIZATION-1 */
+		if (auth->name_length == 19 && 
+		    !memcmp (auth->name, "XDM-AUTHORIZATION-1", 19)) {
+		    Debug ("Skipping IPv6 XDM-AUTHORIZATION-1\n");
+		    continue;
+		}
+	    }
+#endif
 	}
 	Debug ("DefineSelf: write network address, length %d\n", len);
 	writeAddr (family, len, addr, file, auth);
     }
+#if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
+    if (bufptr != buf)
+	free (bufptr);
+#endif
 }
 
 #else /* SIOCGIFCONF */
@@ -928,6 +1081,7 @@ DefineSelf (int fd, int file, int auth)
 #endif /* SIOCGIFCONF else */
 #endif /* WINTCP else */
 #endif /* STREAMSCONN && !SYSV_SIOCGIFCONF else */
+#endif /* HAS_GETIFADDRS */
 
 #endif /* XDMCP */
 
@@ -970,6 +1124,10 @@ writeLocalAuth (FILE *file, Xauth *auth, const char *name)
     t_close (fd);
 #endif
 #ifdef TCPCONN
+#if defined(IPv6) && defined(AF_INET6)
+    fd = socket (AF_INET6, SOCK_STREAM, 0);
+    if (fd < 0)
+#endif
     fd = socket (AF_INET, SOCK_STREAM, 0);
     DefineSelf (fd, file, auth);
     close (fd);

@@ -56,63 +56,41 @@ from The Open Group.
 #  include <un.h>
 # endif
 #endif
-#if defined(__SVR4) && defined(__sun)
-/*
- * make sure we get the resolver's version of gethostbyname
- * otherwise we may not get all the addresses!
- */
-# define gethostbyname res_gethostbyname
-#endif
 #include <netdb.h>
+#if defined(IPv6) && defined(AF_INET6)
+# include <arpa/inet.h>
+#endif
 
 /*
  * Forward reference
  */
-static void broadcast_respond (struct sockaddr *from, int fromlen, int length);
-static void forward_respond (struct sockaddr *from, int fromlen, int length);
-static void manage (struct sockaddr *from, int fromlen, int length);
-static void query_respond (struct sockaddr *from, int fromlen, int length);
-static void request_respond (struct sockaddr *from, int fromlen, int length);
-static void send_accept (struct sockaddr *to, int tolen, CARD32 sessionID, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr authorizationName, ARRAY8Ptr authorizationData);
-static void send_alive (struct sockaddr *from, int fromlen, int length);
-static void send_decline (struct sockaddr *to, int tolen, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr status);
-static void send_failed (struct sockaddr *from, int fromlen, const char *name, CARD32 sessionID, const char *reason);
-static void send_refuse (struct sockaddr *from, int fromlen, CARD32 sessionID);
-static void send_unwilling (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status);
-static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status);
-
-
-int	xdmcpFd = -1;
-
-void
-DestroyWellKnownSockets (void)
-{
-    if (xdmcpFd != -1)
-    {
-	CloseNClearCloseOnFork (xdmcpFd);
-	UnregisterInput (xdmcpFd);
-	xdmcpFd = -1;
-    }
-}
-
-int
-AnyWellKnownSockets (void)
-{
-    return xdmcpFd != -1;
-}
+static void broadcast_respond (struct sockaddr *from, int fromlen, int length, int fd);
+static void forward_respond (struct sockaddr *from, int fromlen, int length, int fd);
+static void manage (struct sockaddr *from, int fromlen, int length, int fd);
+static void query_respond (struct sockaddr *from, int fromlen, int length, int fd);
+static void request_respond (struct sockaddr *from, int fromlen, int length, int fd);
+static void send_accept (struct sockaddr *to, int tolen, CARD32 sessionID, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr authorizationName, ARRAY8Ptr authorizationData, int fd);
+static void send_alive (struct sockaddr *from, int fromlen, int length, int fd);
+static void send_decline (struct sockaddr *to, int tolen, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr status, int fd);
+static void send_failed (struct sockaddr *from, int fromlen, const char *name, CARD32 sessionID, const char *reason, int fd);
+static void send_refuse (struct sockaddr *from, int fromlen, CARD32 sessionID, int fd);
+static void send_unwilling (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd);
+static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd);
 
 
 static XdmcpBuffer	buffer;
 
-/*ARGSUSED*/
 static void
 sendForward (
     CARD16	connectionType,
     ARRAY8Ptr	address,
-    char	*closure ATTR_UNUSED)
+    char	*closure)
 {
 #ifdef AF_INET
     struct sockaddr_in	    in_addr;
+#endif
+#if defined(IPv6) && defined(AF_INET6)
+    struct sockaddr_in6	    in6_addr;
 #endif
 #ifdef AF_DECnet
 #endif
@@ -136,13 +114,28 @@ sendForward (
 	addrlen = sizeof (struct sockaddr_in);
 	break;
 #endif
+#if defined(IPv6) && defined(AF_INET6)
+    case FamilyInternet6:
+	addr = (struct sockaddr *) &in6_addr;
+	bzero ((char *) &in6_addr, sizeof (in6_addr));
+# ifdef SIN6_LEN
+	in6_addr.sin6_len = sizeof(in6_addr);
+# endif
+	in6_addr.sin6_family = AF_INET6;
+	in6_addr.sin6_port = htons ((short) XDM_UDP_PORT);
+	if (address->length != 16)
+	    return;
+	memmove( (char *) &in6_addr.sin6_addr, address->data, address->length);
+	addrlen = sizeof (struct sockaddr_in6);
+	break;
+#endif
 #ifdef AF_DECnet
     case FamilyDECnet:
 #endif
     default:
 	return;
     }
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) addr, addrlen);
+    XdmcpFlush ((int) closure, &buffer, (XdmcpNetaddr) addr, addrlen);
     return;
 }
 
@@ -174,7 +167,8 @@ all_query_respond (
     struct sockaddr	*from,
     int			fromlen,
     ARRAYofARRAY8Ptr	authenticationNames,
-    xdmOpCode		type)
+    xdmOpCode		type,
+    int			fd)
 {
     ARRAY8Ptr	authenticationName;
     ARRAY8	status;
@@ -198,10 +192,10 @@ all_query_respond (
 
     authenticationName = ChooseAuthentication (authenticationNames);
     if (Willing (&addr, connectionType, authenticationName, &status, type))
-	send_willing (from, fromlen, authenticationName, &status);
+	send_willing (from, fromlen, authenticationName, &status, fd);
     else
 	if (type == QUERY)
-	    send_unwilling (from, fromlen, authenticationName, &status);
+	    send_unwilling (from, fromlen, authenticationName, &status, fd);
     XdmcpDisposeARRAY8 (&status);
 }
 
@@ -209,7 +203,8 @@ static void
 indirect_respond (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
     ARRAYofARRAY8   queryAuthenticationNames;
     ARRAY8	    clientAddress;
@@ -245,13 +240,13 @@ indirect_respond (
 	XdmcpWriteARRAY8 (&buffer, &clientPort);
 	XdmcpWriteARRAYofARRAY8 (&buffer, &queryAuthenticationNames);
 
-	localHostAsWell = ForEachMatchingIndirectHost (&clientAddress, connectionType, sendForward, (char *) 0);
+	localHostAsWell = ForEachMatchingIndirectHost (&clientAddress, connectionType, sendForward, (char *) fd);
 	
 	XdmcpDisposeARRAY8 (&clientAddress);
 	XdmcpDisposeARRAY8 (&clientPort);
 	if (localHostAsWell)
 	    all_query_respond (from, fromlen, &queryAuthenticationNames,
-			   INDIRECT_QUERY);
+			   INDIRECT_QUERY, fd);
     }
     else
     {
@@ -261,15 +256,19 @@ indirect_respond (
 }
 
 void
-ProcessRequestSocket (void)
+ProcessRequestSocket (int fd)
 {
     XdmcpHeader		header;
+#if defined(IPv6) && defined(AF_INET6)
+    struct sockaddr_storage	addr;
+#else
     struct sockaddr	addr;
+#endif
     int			addrlen = sizeof addr;
 
     Debug ("ProcessRequestSocket\n");
     bzero ((char *) &addr, sizeof (addr));
-    if (!XdmcpFill (xdmcpFd, &buffer, (XdmcpNetaddr) &addr, &addrlen)) {
+    if (!XdmcpFill (fd, &buffer, (XdmcpNetaddr) &addr, &addrlen)) {
 	Debug ("XdmcpFill failed\n");
 	return;
     }
@@ -286,25 +285,25 @@ ProcessRequestSocket (void)
     switch (header.opcode)
     {
     case BROADCAST_QUERY:
-	broadcast_respond (&addr, addrlen, header.length);
+	broadcast_respond ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case QUERY:
-	query_respond (&addr, addrlen, header.length);
+	query_respond ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case INDIRECT_QUERY:
-	indirect_respond (&addr, addrlen, header.length);
+	indirect_respond ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case FORWARD_QUERY:
-	forward_respond (&addr, addrlen, header.length);
+	forward_respond ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case REQUEST:
-	request_respond (&addr, addrlen, header.length);
+	request_respond ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case MANAGE:
-	manage (&addr, addrlen, header.length);
+	manage ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     case KEEPALIVE:
-	send_alive (&addr, addrlen, header.length);
+	send_alive ((struct sockaddr *) &addr, addrlen, header.length, fd);
 	break;
     }
 }
@@ -313,25 +312,13 @@ ProcessRequestSocket (void)
  * respond to a request on the UDP socket.
  */
 
-static ARRAY8	Hostname;
-
-void
-registerHostname (
-    const char	*name,
-    int		namelen)
-{
-    if (!XdmcpReallocARRAY8 (&Hostname, namelen))
-	return;
-    memcpy (Hostname.data, name, namelen);
-	
-}
-
 static void
 direct_query_respond (
     struct sockaddr *from,
     int		    fromlen,
     int		    length,
-    xdmOpCode	    type)
+    xdmOpCode	    type,
+    int		    fd)
 {
     ARRAYofARRAY8   queryAuthenticationNames;
     int		    expectedLen;
@@ -343,7 +330,7 @@ direct_query_respond (
     for (i = 0; i < (int)queryAuthenticationNames.length; i++)
 	expectedLen += 2 + queryAuthenticationNames.data[i].length;
     if (length == expectedLen)
-	all_query_respond (from, fromlen, &queryAuthenticationNames, type);
+	all_query_respond (from, fromlen, &queryAuthenticationNames, type, fd);
     XdmcpDisposeARRAYofARRAY8 (&queryAuthenticationNames);
 }
 
@@ -351,19 +338,21 @@ static void
 query_respond (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
     Debug ("<query> respond %d\n", length);
-    direct_query_respond (from, fromlen, length, QUERY);
+    direct_query_respond (from, fromlen, length, QUERY, fd);
 }
 
 static void
 broadcast_respond (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
-    direct_query_respond (from, fromlen, length, BROADCAST_QUERY);
+    direct_query_respond (from, fromlen, length, BROADCAST_QUERY, fd);
 }
 
 /* computes an X display name */
@@ -378,20 +367,52 @@ NetworkAddressToName(
     switch (connectionType)
     {
     case FamilyInternet:
+#if defined(IPv6) && defined(AF_INET6)
+    case FamilyInternet6:
+#endif
 	{
 	    CARD8		*data;
 	    struct hostent	*hostent;
+	    char 		*hostname = NULL;
 	    char		*name;
 	    const char		*localhost;
 	    int			 multiHomed = 0;
+	    int 		 type;
+#if defined(IPv6) && defined(AF_INET6)
+	    struct addrinfo	 *ai = NULL, *nai, hints;
+	    char		 dotted[INET6_ADDRSTRLEN];
+
+	    if (connectionType == FamilyInternet6)
+		type = AF_INET6;
+	    else
+#endif
+		type = AF_INET;
 
 	    data = connectionAddress->data;
 	    hostent = gethostbyaddr ((char *)data,
-				     connectionAddress->length, AF_INET);
-	    if (sourceAddress && hostent) {
-		hostent = gethostbyname(hostent->h_name);
-		if (hostent)
+				     connectionAddress->length, type);
+	    if (hostent) {
+		if (sourceAddress) {
+#if defined(IPv6) && defined(AF_INET6)
+		    bzero (&hints, sizeof(hints));
+		    hints.ai_flags = AI_CANONNAME;
+		    if (!getaddrinfo (hostent->h_name, NULL, &hints, &ai)) {
+			hostname = ai->ai_canonname;
+			for (nai = ai->ai_next; nai; nai = nai->ai_next)
+			    if (ai->ai_protocol == nai->ai_protocol &&
+			        memcmp (ai->ai_addr, nai->ai_addr,
+					ai->ai_addrlen))
+				multiHomed = 1;
+		    }
+#else
+		    hostent = gethostbyname (hostent->h_name);
+		    if (hostent && hostent->h_addrtype == AF_INET) {
 			multiHomed = hostent->h_addr_list[1] != NULL;
+			hostname = hostent->h_name;
+		    }
+#endif
+		} else
+		    hostname = hostent->h_name;
 	    }
 
 	    localhost = localHostname ();
@@ -399,17 +420,15 @@ NetworkAddressToName(
 	    /* 
 	     * protect against bogus host names 
 	     */
-	    if (hostent && hostent->h_name && hostent->h_name[0]
-			&& (hostent->h_name[0] != '.') 
-			&& !multiHomed)
+	    if (hostname && *hostname && *hostname != '.' && !multiHomed)
 	    {
-		if (!strcmp (localhost, hostent->h_name))
+		if (!strcmp (localhost, hostname))
 		    ASPrintf (&name, "localhost:%d", displayNumber);
 		else
 		{
 		    if (removeDomainname)
 		    {
-			char    *localDot, *remoteDot;
+		    	char	*localDot, *remoteDot;
     
 			/* check for a common domain name.  This
 			 * could reduce names by recognising common
@@ -418,7 +437,7 @@ NetworkAddressToName(
 			 * people
 			 */
 			if ((localDot = strchr(localhost, '.')) &&
-			    (remoteDot = strchr(hostent->h_name, '.')))
+			    (remoteDot = strchr(hostname, '.')))
 			{
 			    /* smash the name in place; it won't
 			     * be needed later.
@@ -428,16 +447,34 @@ NetworkAddressToName(
 			}
 		    }
 
-		    ASPrintf (&name, "%s:%d", hostent->h_name, displayNumber);
+		    ASPrintf (&name, "%s:%d", hostname, displayNumber);
 		}
 	    }
 	    else
 	    {
+#if defined(IPv6) && defined(AF_INET6)
+		if (multiHomed) {
+		    if (connectionType == FamilyInternet) {
+			data = (CARD8 *) 
+			  &((struct sockaddr_in *)originalAddress)->sin_addr;
+		    } else {
+			data = (CARD8 *) 
+			  &((struct sockaddr_in6 *)originalAddress)->sin6_addr;
+		    }
+		}
+		inet_ntop (type, data, dotted, sizeof(dotted));
+		ASPrintf (&name, "%s:%d", dotted, displayNumber);
+#else
 		if (multiHomed)
-		    data = (CARD8 *) &((struct sockaddr_in *)originalAddress)->
-				sin_addr.s_addr;
+		    data = (CARD8 *)
+		      &((struct sockaddr_in *)originalAddress)->sin_addr;
 		ASPrintf (&name, "%[4|'.'hhu:%d", data, displayNumber);
+#endif
 	    }
+#if defined(IPv6) && defined(AF_INET6)
+	    if (ai)
+		freeaddrinfo (ai);
+#endif
 	    return name;
 	}
 #ifdef DNET
@@ -454,7 +491,8 @@ static void
 forward_respond (
     struct sockaddr	*from,
     int			fromlen ATTR_UNUSED,
-    int			length)
+    int			length,
+    int			fd)
 {
     ARRAY8	    clientAddress;
     ARRAY8	    clientPort;
@@ -512,7 +550,31 @@ forward_respond (
 		    client = (struct sockaddr *) &in_addr;
 		    clientlen = sizeof (in_addr);
 		    all_query_respond (client, clientlen, &authenticationNames,
-			       FORWARD_QUERY);
+			       FORWARD_QUERY, fd);
+		}
+		break;
+#endif
+#if defined(IPv6) && defined(AF_INET6)
+	    case AF_INET6:
+		{
+		    struct sockaddr_in6	in6_addr;
+
+		    if (clientAddress.length != 16 ||
+		        clientPort.length != 2)
+		    {
+			goto badAddress;
+		    }
+		    bzero ((char *) &in6_addr, sizeof (in6_addr));
+#ifdef SIN6_LEN
+		    in6_addr.sin6_len = sizeof(in6_addr);
+#endif
+		    in6_addr.sin6_family = AF_INET6;
+		    memmove(&in6_addr,clientAddress.data,clientAddress.length);
+		    memmove((char *) &in6_addr.sin6_port, clientPort.data, 2);
+		    client = (struct sockaddr *) &in6_addr;
+		    clientlen = sizeof (in6_addr);
+		    all_query_respond (client, clientlen, &authenticationNames,
+			       FORWARD_QUERY, fd);
 		}
 		break;
 #endif
@@ -535,7 +597,7 @@ forward_respond (
 		    clientlen = sizeof (un_addr);
 #endif
 		    all_query_respond (client, clientlen, &authenticationNames,
-			       FORWARD_QUERY);
+			       FORWARD_QUERY, fd);
 		}
 		break;
 #endif
@@ -560,12 +622,15 @@ badAddress:
     XdmcpDisposeARRAYofARRAY8 (&authenticationNames);
 }
 
+static ARRAY8	Hostname;
+
 static void
 send_willing (
     struct sockaddr *from,
     int		    fromlen,
     ARRAY8Ptr	    authenticationName,
-    ARRAY8Ptr	    status)
+    ARRAY8Ptr	    status,
+    int		    fd)
 {
     XdmcpHeader	header;
 
@@ -581,7 +646,7 @@ send_willing (
     XdmcpWriteARRAY8 (&buffer, authenticationName);
     XdmcpWriteARRAY8 (&buffer, &Hostname);
     XdmcpWriteARRAY8 (&buffer, status);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) from, fromlen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) from, fromlen);
 }
 
 static void
@@ -589,7 +654,8 @@ send_unwilling (
     struct sockaddr *from,
     int		    fromlen,
     ARRAY8Ptr	    authenticationName,
-    ARRAY8Ptr	    status)
+    ARRAY8Ptr	    status,
+    int		    fd)
 {
     XdmcpHeader	header;
 
@@ -603,7 +669,7 @@ send_unwilling (
     XdmcpWriteHeader (&buffer, &header);
     XdmcpWriteARRAY8 (&buffer, &Hostname);
     XdmcpWriteARRAY8 (&buffer, status);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) from, fromlen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) from, fromlen);
 }
 
 static unsigned long	globalSessionID;
@@ -617,6 +683,9 @@ void init_session_id(void)
      * Start with low digits 0 to make debugging easier.
      */
     globalSessionID = (time((Time_t *)0)&0x7fff) * 16000;
+
+    Hostname.data = (char *)localHostname ();
+    Hostname.length = strlen (Hostname.data);
 }
 
 static ARRAY8 outOfMemory = { (CARD16) 13, (CARD8Ptr) "Out of memory" };
@@ -628,7 +697,8 @@ static void
 request_respond (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
     CARD16	    displayNumber;
     ARRAY16	    connectionTypes;
@@ -753,14 +823,14 @@ request_respond (
 					&authenticationName,
 					&authenticationData,
 					&authorizationName,
-					&authorizationData);
+					&authorizationData, fd);
 	}
 	else
 	{
 decline:    ;
 	    send_decline (from, fromlen, &authenticationName,
 				 &authenticationData,
-				 reason);
+				 reason, fd);
 	    if (pdpy)
 		DisposeProtoDisplay (pdpy);
 	}
@@ -782,7 +852,8 @@ send_accept (
     ARRAY8Ptr	    authenticationName,
     ARRAY8Ptr	    authenticationData,
     ARRAY8Ptr	    authorizationName,
-    ARRAY8Ptr	    authorizationData)
+    ARRAY8Ptr	    authorizationData,
+    int		    fd)
 {
     XdmcpHeader	header;
 
@@ -800,7 +871,7 @@ send_accept (
     XdmcpWriteARRAY8 (&buffer, authenticationData);
     XdmcpWriteARRAY8 (&buffer, authorizationName);
     XdmcpWriteARRAY8 (&buffer, authorizationData);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) to, tolen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) to, tolen);
 }
    
 static void
@@ -809,7 +880,8 @@ send_decline (
     int		    tolen,
     ARRAY8Ptr	    authenticationName,
     ARRAY8Ptr	    authenticationData,
-    ARRAY8Ptr	    status)
+    ARRAY8Ptr	    status,
+    int	       	    fd)
 {
     XdmcpHeader	header;
 
@@ -824,14 +896,15 @@ send_decline (
     XdmcpWriteARRAY8 (&buffer, status);
     XdmcpWriteARRAY8 (&buffer, authenticationName);
     XdmcpWriteARRAY8 (&buffer, authenticationData);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) to, tolen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) to, tolen);
 }
 
 static void
 manage (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
     CARD32		sessionID;
     CARD16		displayNumber;
@@ -881,7 +954,7 @@ manage (
 	    Debug ("session ID %ld refused\n", (long) sessionID);
 	    if (pdpy)
 		Debug ("existing session ID %ld\n", (long) pdpy->sessionID);
-	    send_refuse (from, fromlen, sessionID);
+	    send_refuse (from, fromlen, sessionID, fd);
 	}
 	else
 	{
@@ -892,7 +965,8 @@ manage (
 	    if (!name)
 	    {
 		Debug ("could not compute display name\n");
-		send_failed (from, fromlen, "(no name)", sessionID, "out of memory");
+		send_failed (from, fromlen, "(no name)", sessionID, 
+		  "out of memory", fd);
 		goto abort;
 	    }
 	    Debug ("computed display name: %s\n", name);
@@ -905,20 +979,22 @@ manage (
 	    {
 		if (!StrNDup(&class2, (char *)displayClass.data, displayClass.length))
 		{
-		    send_failed (from, fromlen, name, sessionID, "out of memory");
+		    send_failed (from, fromlen, name, sessionID, "out of memory", fd);
 		    goto abort;
 		}
 	    }
 	    if (!(from_save = (XdmcpNetaddr) Malloc (fromlen)))
 	    {
-		send_failed (from, fromlen, name, sessionID, "out of memory");
+		send_failed (from, fromlen, name, sessionID, 
+		  "out of memory", fd);
 		goto abort;
 	    }
 	    memmove( from_save, from, fromlen);
 	    if (!(d = NewDisplay (name)))
 	    {
 		free ((char *) from_save);
-		send_failed (from, fromlen, name, sessionID, "out of memory");
+		send_failed (from, fromlen, name, sessionID,
+		  "out of memory", fd);
 		goto abort;
 	    }
 	    d->class2 = class2;
@@ -930,6 +1006,7 @@ manage (
 	    d->displayNumber = pdpy->displayNumber;
 	    ClientAddress (from, &clientAddress, &clientPort, &connectionType);
 	    d->useChooser = 0;
+	    d->xdmcpFd = fd;
 	    if (IsIndirectClient (&clientAddress, connectionType))
 	    {
 		Debug ("IsIndirectClient\n");
@@ -950,7 +1027,8 @@ manage (
 		{
 		    free ((char *) from_save);
 		    free ((char *) d);
-		    send_failed (from, fromlen, name, sessionID, "out of memory");
+		    send_failed (from, fromlen, name, sessionID,
+		      "out of memory", fd);
 		    goto abort;
 		}
 		d->authorizations[0] = pdpy->fileAuthorization;
@@ -975,7 +1053,8 @@ SendFailed (
     const char	    *reason)
 {
     Debug ("display start failed, sending <failed>\n");
-    send_failed ((struct sockaddr *)(d->from.data), d->from.length, d->name, d->sessionID, reason);
+    send_failed ((struct sockaddr *)(d->from.data), d->from.length, d->name,
+		 d->sessionID, reason, d->xdmcpFd);
 }
 
 static void
@@ -984,7 +1063,8 @@ send_failed (
     int		    fromlen,
     const char	    *name,
     CARD32	    sessionID,
-    const char	    *reason)
+    const char	    *reason,
+    int		    fd)
 {
     char	buf[360];
     XdmcpHeader	header;
@@ -1001,14 +1081,15 @@ send_failed (
     XdmcpWriteHeader (&buffer, &header);
     XdmcpWriteCARD32 (&buffer, sessionID);
     XdmcpWriteARRAY8 (&buffer, &status);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) from, fromlen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) from, fromlen);
 }
 
 static void
 send_refuse (
     struct sockaddr *from,
     int		    fromlen,
-    CARD32	    sessionID)
+    CARD32	    sessionID,
+    int		    fd)
 {
     XdmcpHeader	header;
 
@@ -1018,14 +1099,15 @@ send_refuse (
     header.length = 4;
     XdmcpWriteHeader (&buffer, &header);
     XdmcpWriteCARD32 (&buffer, sessionID);
-    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) from, fromlen);
+    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) from, fromlen);
 }
 
 static void
 send_alive (
     struct sockaddr *from,
     int		    fromlen,
-    int		    length)
+    int		    length,
+    int		    fd)
 {
     CARD32		sessionID;
     CARD16		displayNumber;
@@ -1059,7 +1141,7 @@ send_alive (
 	    XdmcpWriteHeader (&buffer, &header);
 	    XdmcpWriteCARD8 (&buffer, sendRunning);
 	    XdmcpWriteCARD32 (&buffer, sendSessionID);
-	    XdmcpFlush (xdmcpFd, &buffer, (XdmcpNetaddr) from, fromlen);
+	    XdmcpFlush (fd, &buffer, (XdmcpNetaddr) from, fromlen);
 	}
     }
 }
@@ -1072,37 +1154,109 @@ NetworkAddressToHostname (
     switch (connectionType)
     {
     case FamilyInternet:
+#if defined(IPv6) && defined(AF_INET6)
+    case FamilyInternet6:
+#endif
 	{
 	    struct hostent *he;
 	    char *myDot, *name, *lname;
+	    int af_type;
+#if defined(IPv6) && defined(AF_INET6)
+	    char dotted[INET6_ADDRSTRLEN];
 
-	    he = gethostbyaddr ((char *)connectionAddress->data, 4, AF_INET);
+	    if (connectionType == FamilyInternet6)
+		af_type = AF_INET6;
+	    else
+#endif
+		af_type = AF_INET;
 
+	    he = gethostbyaddr ((char *)connectionAddress->data,
+				connectionAddress->length, af_type);
 	    if (he) {
+Debug( "host %[*:hhu, %d reverse resolved to %s\n", connectionAddress->length, connectionAddress->data, af_type, he->h_name );
+#if defined(IPv6) && defined(AF_INET6)
+		struct addrinfo	*ai, *nai;
+		if (!getaddrinfo (he->h_name, NULL, NULL, &ai)) {
+		    for (nai = ai; nai; nai = nai->ai_next) {
+Debug( " re-resolve: %[*:hhu, %d\n", nai->ai_addrlen, nai->ai_addr, nai->ai_family );
+			if (af_type == nai->ai_family &&
+			    !memcmp (nai->ai_family == AF_INET ?
+					(char *)&((struct sockaddr_in *)nai->ai_addr)->sin_addr :
+					(char *)&((struct sockaddr_in6 *)nai->ai_addr)->sin6_addr,
+				     connectionAddress->data,
+				     connectionAddress->length))
+			{
+			    freeaddrinfo (ai);
+			    goto oki;
+			}
+		    }
+		    freeaddrinfo (ai);
+#else
+		if ((he = gethostbyname (he->h_name)) &&
+		    he->h_addrtype == AF_INET)
+		{
+		    int i;
+		    for (i = 0; he->h_addr_list[i]; i++)
+			if (!memcmp (he->h_addr_list[i],
+				     connectionAddress->data, 4))
+			    goto oki;
+#endif
+		    LogError ("DNS spoof attempt or misconfigured resolver.\n");
+		}
+		goto gotnone;
+	      oki:
 		if (StrDup (&name, he->h_name) &&
 		    !strchr (name, '.') &&
 		    (myDot = strchr (localHostname(), '.')))
 		{
 		    if (ASPrintf (&lname, "%s%s", name, myDot))
 		    {
-			if (!(he = gethostbyname (lname)) ||
-			    he->h_addrtype != AF_INET ||
-			    memcmp (he->h_addr, connectionAddress->data, 4))
-			{
-			    free (lname);
+#if defined(IPv6) && defined(AF_INET6)
+			if (!getaddrinfo (lname, NULL, NULL, &ai)) {
+			    for (nai = ai; nai; nai = nai->ai_next) {
+				if (af_type == nai->ai_family &&
+				    !memcmp (nai->ai_family == AF_INET ?
+						(char *)&((struct sockaddr_in *)nai->ai_addr)->sin_addr :
+						(char *)&((struct sockaddr_in6 *)nai->ai_addr)->sin6_addr,
+					     connectionAddress->data,
+					     connectionAddress->length))
+				{
+				    freeaddrinfo(ai);
+				    free (name);
+				    return lname;
+				}
+			    }
+			    freeaddrinfo(ai);
 			}
-			else
+#else
+			if ((he = gethostbyname (lname)) &&
+			    he->h_addrtype == AF_INET)
 			{
-			    free (name);
-			    return lname;
+			    int i;
+			    for (i = 0; he->h_addr_list[i]; i++)
+				if (!memcmp (he->h_addr_list[i],
+					     connectionAddress->data, 4))
+				{
+				    free (name);
+				    return lname;
+				}
 			}
+#endif
+			free (lname);
 		    }
 		}
 	    } else {
+	      gotnone:
 		/* can't get name, so use emergency fallback */
-		ASPrintf (&name, "%[4|'.'hhu", connectionAddress);
-		LogError ("Cannot convert Internet address %s to host name\n",
-			  name);
+#if defined(IPv6) && defined(AF_INET6)
+		inet_ntop (af_type, connectionAddress->data,
+			   dotted, sizeof(dotted));
+		StrDup (&name, dotted);
+#else
+		ASPrintf (&name, "%[4|'.'hhu", connectionAddress->data);
+#endif
+		LogInfo ("Cannot convert Internet address %s to host name\n",
+			 name);
 	    }
 	    return name;
 	}

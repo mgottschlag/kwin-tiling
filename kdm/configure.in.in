@@ -13,14 +13,14 @@ KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please mak
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
-imkv=2
+imkv=3
 test "$kde_cv_defines_imake_version" = $imkv || unset kde_cv_defines_imake
 AC_CACHE_VAL(kde_cv_defines_imake, [
   rm -fr conftestdir
   if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'[
-BASIC_FLAGS = StandardDefines ConnectionFlags 
+BASIC_FLAGS = StandardDefines ConnectionFlags
 
 #if HasXdmAuth
 XDMAUTH_DEFINES = -DHASXDMAUTH
@@ -54,9 +54,13 @@ MKTMP_DEFINES = -DHAS_MKSTEMP
 CRYPT_DEFINES = -DHAS_CRYPT
 #endif
 
+#if HasGetIfAddrs
+IFADDRS_DEFINES = -DHAS_GETIFADDRS
+#endif
+
 VERSION_DEFINES = -DOSMAJORVERSION=OSMajorVersion -DOSMINORVERSION=OSMinorVersion
 
-XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES)
+XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES) $(IFADDRS_DEFINES)
 
 acimake:
 	@set crap $(XDM_CFLAGS); shift; se="s,\\([ 	\`\"'\\\\]\\),\\\\\\1,g"; for i in "$$@"; do echo "$$i" | sed "$$se"; done | tr '\n' ' ' | sed "s, \$$,,;$$se;s,^,XDM_CFLAGS=,"; echo
@@ -65,6 +69,16 @@ acimake:
 #endif
 	@echo XBINDIR=$(BINDIR)
 	@echo XLIBDIR=$(LIBDIR)
+#ifndef IPv6Flags
+	@echo IPV6DEF=
+#else
+#if !IPv6SocketsAlsoIPv4 && !PreferXdmcpIPv6
+	@echo IPV6DEF=
+#else
+	@echo IPV6DEF=IPv6Flags
+#endif
+#endif
+
 ]EOF
     if $XMKMF >&5 2>&1 && test -f Makefile; then
 	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*=' | tr '\n' ' '`]
@@ -121,7 +135,7 @@ if test "x$with_xdmcp" = xyes; then
 are installed or use --without-xdmcp to disable XDMCP support!])
     DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
-  XDMCP_DEFINE=-DXDMCP
+  XDMCP_DEFINE="-DXDMCP $IPV6DEF"
 fi
 AC_SUBST(LIBXDMCP)
 AC_SUBST(XDMCP_DEFINE)

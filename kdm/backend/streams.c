@@ -45,21 +45,32 @@ from The Open Group.
 #include <netconfig.h>
 #include <netdir.h>
 
-extern int	xdmcpFd;
+static int xdmcpFd = -1, c_request_port;
 
 void
-CreateWellKnownSockets ()
+UpdateListenSockets (void)
 {
     struct t_bind bind_addr;
     struct netconfig *nconf;
     struct nd_hostserv service;
     struct nd_addrlist *servaddrs;
-    char *name, *localHostname();
     char bindbuf[15];
     int it;
 
-    if (request_port == 0)
+    if (c_request_port == request_port)
 	return;
+    c_request_port == request_port;
+
+    if (xdmcpFd != -1)
+    {
+	CloseNClearCloseOnFork (xdmcpFd);
+	UnregisterInput (xdmcpFd);
+	xdmcpFd = -1;
+    }
+
+    if (!request_port)
+	return;
+
     Debug ("creating UDP stream %d\n", request_port);
 
     nconf = getnetconfigent("udp");
@@ -74,8 +85,6 @@ CreateWellKnownSockets ()
 	t_error ("CreateWellKnownSockets(xdmcpFd): t_open failed");
 	return;
     }
-    name = localHostname ();
-    registerHostname (name, strlen (name));
 
     service.h_host = HOST_SELF;
     sprintf(bindbuf, "%d", request_port);
@@ -99,6 +108,23 @@ CreateWellKnownSockets ()
     }
     RegisterCloseOnFork (xdmcpFd);
     RegisterInput (xdmcpFd);
+}
+
+int
+AnyListenSockets (void)
+{
+    return xdmcpFd != -1;
+}
+
+int
+ProcessRequestSockets (FD_TYPE *reads)
+{
+    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, reads))
+    {
+	ProcessRequestSocket (xdmcpFd);
+	return 1;
+    }
+    return 0;
 }
 
 #endif /* STREAMSCONN && XDMCP */

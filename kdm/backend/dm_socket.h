@@ -47,35 +47,15 @@ authorization.
 #endif
 #include <netinet/in.h>
 
-/* ugly, but we need this after socket.h */
-extern ARRAY8Ptr Accept (struct sockaddr *from, int fromlen, CARD16 displayNumber);
-
-#if ((defined(SVR4) && !defined(sun) && !defined(NCR)) || defined(ISC)) && defined(SIOCGIFCONF)
+#if ((defined(SVR4) && !defined(sun)) || defined(ISC)) && defined(SIOCGIFCONF)
 # define SYSV_SIOCGIFCONF
 int ifioctl (int fd, int cmd, char *arg);
-#else
-# define ifioctl ioctl
 #endif
 
 #ifdef CSRG_BASED
 # if (BSD >= 199103)
 #  define VARIABLE_IFREQ
 # endif
-#endif
-
-/* Handle variable length ifreq in BNR2 and later */
-#ifdef VARIABLE_IFREQ
-# define ifr_size(p) (sizeof (struct ifreq) + \
-		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
-		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
-#else
-# define ifr_size(p) (sizeof (struct ifreq))
-#endif
-
-#ifdef ISC
-# define IFC_IFC_REQ(ifc) ((struct ifreq *) ifc.ifc_buf)
-#else
-# define IFC_IFC_REQ(ifc) ifc.ifc_req
 #endif
 
 #endif /* _DM_SOCKET_H_ */

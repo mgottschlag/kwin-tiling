@@ -2,6 +2,7 @@
  * $TOG: access.c /main/17 1998/02/09 13:54:13 kaleb $
  *
 Copyright 1990, 1998  The Open Group
+Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -15,13 +16,13 @@ all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of The Open Group shall not be
+Except as contained in this notice, the name of a copyright holder shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
-in this Software without prior written authorization from The Open Group.
+in this Software without prior written authorization from the copyright holder.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
@@ -47,18 +48,27 @@ in this Software without prior written authorization from The Open Group.
 #include <ctype.h>
 
 #include <netdb.h>
+#if defined(IPv6) && defined(AF_INET6)
+# include <arpa/inet.h>
+#endif
 
 typedef struct {
     short int	type;
-    union _hostOrAlias {
+    union {
 	char	*aliasPattern;
 	char	*hostPattern;
-	struct _display {
+	struct _displayAddress {
 	    CARD16	connectionType;
 	    ARRAY8	hostAddress;
 	} displayAddress;
     } entry;
 } HostEntry;
+
+typedef struct {
+    short int	iface;
+    short int	mcasts;
+    short int	nmcasts;
+} ListenEntry;
 
 typedef struct {
     char	*name;
@@ -76,9 +86,10 @@ typedef struct {
 
 typedef struct {
     HostEntry		*hostList;
+    ListenEntry		*listenList;
     AliasEntry		*aliasList;
     AclEntry		*acList;
-    short int		nHosts, nAliases, nAcls;
+    short int		nHosts, nListens, nAliases, nAcls;
     CfgDep		dep;
 } AccArr;
 
@@ -94,11 +105,35 @@ getLocalAddress (void)
     
     if (!haveLocalAddress)
     {
+#if defined(IPv6) && defined(AF_INET6)
+	struct addrinfo *ai;
+
+	if (getaddrinfo(localHostname(), NULL, NULL, &ai)) {
+	    XdmcpAllocARRAY8 (&localAddress, 4);
+	    localAddress.data[0] = 127;
+	    localAddress.data[1] = 0;
+	    localAddress.data[2] = 0;
+	    localAddress.data[3] = 1;
+	} else {
+	    if (ai->ai_family == AF_INET) {
+		XdmcpAllocARRAY8 (&localAddress, sizeof(struct in_addr));
+		memcpy(localAddress.data, 
+		  &((struct sockaddr_in *)ai->ai_addr)->sin_addr,
+		  sizeof(struct in_addr));
+	    } else /* if (ai->ai_family == AF_INET6) */ {
+		XdmcpAllocARRAY8 (&localAddress, sizeof(struct in6_addr));
+		memcpy(localAddress.data, 
+		  &((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr,
+		  sizeof(struct in6_addr));
+	    }	      
+	    freeaddrinfo(ai);
+#else
 	struct hostent	*hostent;
 
 	if ((hostent = gethostbyname (localHostname()))) {
 	    XdmcpAllocARRAY8 (&localAddress, hostent->h_length);
 	    memmove( localAddress.data, hostent->h_addr, hostent->h_length);
+#endif
 	    haveLocalAddress = 1;
 	}
     }
@@ -109,7 +144,7 @@ getLocalAddress (void)
 void
 ScanAccessDatabase (int force)
 {
-    struct _display *da;
+    struct _displayAddress *da;
     char *cptr;
     int nChars, i;
 
@@ -121,11 +156,13 @@ ScanAccessDatabase (int force)
     if (accData->hostList)
 	free (accData->hostList);
     accData->nHosts = GRecvInt ();
+    accData->nListens = GRecvInt ();
     accData->nAliases = GRecvInt ();
     accData->nAcls = GRecvInt ();
     nChars = GRecvInt ();
     if (!(accData->hostList = (HostEntry *)
 	    Malloc (accData->nHosts * sizeof(HostEntry) +
+		    accData->nListens * sizeof(ListenEntry) +
 		    accData->nAliases * sizeof(AliasEntry) +
 		    accData->nAcls * sizeof(AclEntry) +
 		    nChars)))
@@ -133,7 +170,8 @@ ScanAccessDatabase (int force)
 	CloseGetter ();
 	return;
     }
-    accData->aliasList = (AliasEntry *)(accData->hostList + accData->nHosts);
+    accData->listenList = (ListenEntry *)(accData->hostList + accData->nHosts);
+    accData->aliasList = (AliasEntry *)(accData->listenList + accData->nListens);
     accData->acList = (AclEntry *)(accData->aliasList + accData->nAliases);
     cptr = (char *)(accData->acList + accData->nAcls);
     for (i = 0; i < accData->nHosts; i++) {
@@ -160,6 +198,11 @@ Debug ("host pattern %s\n", accData->hostList[i].entry.hostPattern);
 		da->connectionType = FamilyInternet;
 		break;
 #endif
+#if defined(IPv6) && defined(AF_INET6)
+	    case AF_INET6:
+		da->connectionType = FamilyInternet6;
+		break;
+#endif
 #ifdef AF_DECnet
 	    case AF_DECnet:
 		da->connectionType = FamilyDECnet;
@@ -184,6 +227,16 @@ Debug ("broadcast\n");
 	    LogError ("Received unknown host type %d from config reader\n", accData->hostList[i].type);
 	    return;
 	}
+    }
+    for (i = 0; i < accData->nListens; i++) {
+	accData->listenList[i].iface = GRecvInt ();
+	accData->listenList[i].mcasts = GRecvInt ();
+	accData->listenList[i].nmcasts = GRecvInt ();
+Debug ("listener at %p: iface %d, %d mcasts at %d\n", 
+	&accData->listenList[i],
+	accData->listenList[i].iface,
+	accData->listenList[i].nmcasts,
+	accData->listenList[i].mcasts);
     }
     for (i = 0; i < accData->nAliases; i++) {
 	accData->aliasList[i].name = cptr;
@@ -450,7 +503,6 @@ void ForEachChooserHost (
  * returns TRUE if the given client is acceptable to the local host.  The
  * given display client is acceptable if it occurs without a host list.
  */
-
 int
 AcceptableDisplayAddress (
     ARRAY8Ptr	clientAddress,
@@ -468,4 +520,24 @@ Debug ("matched %p\n", e);
 	(type != BROADCAST_QUERY || !(e->flags & a_notBroadcast));
 }
 
+void ForEachListenAddr (
+    ListenFunc	listenfunction,
+    ListenFunc	mcastfunction,
+    void	**closure)
+{
+    int		i, j, ifc, mc, nmc;
+
+    for (i = 0; i < accData->nListens; i++)
+    {
+	ifc = accData->listenList[i].iface;
+	(*listenfunction) (ifc < 0 ? 0 :
+				&accData->hostList[ifc].entry.displayAddress.hostAddress,
+			   closure);
+	mc = accData->listenList[i].mcasts;
+	nmc = accData->listenList[i].nmcasts;
+	for (j = 0; j < nmc; j++, mc++)
+	    (*mcastfunction) (&accData->hostList[mc].entry.displayAddress.hostAddress,
+			      closure);
+    }
+}
 #endif /* XDMCP */

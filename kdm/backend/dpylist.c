@@ -303,6 +303,9 @@ NewDisplay (const char *name)
     d->pipe.rfd = -1;
     d->pipe.wfd = -1;
     d->userSess = -1;
+#ifdef XDMCP
+    d->xdmcpFd = -1;
+#endif
     displays = d;
 Debug ("created new display %s\n", d->name);
     return d;

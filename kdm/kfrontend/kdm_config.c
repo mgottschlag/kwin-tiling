@@ -1151,6 +1151,8 @@ ReadWord (File *file, int *len, int EOFatEOL)
 #define CHOOSER_STRING	    "CHOOSER"
 #define BROADCAST_STRING    "BROADCAST"
 #define NOBROADCAST_STRING  "NOBROADCAST"
+#define LISTEN_STRING	    "LISTEN"
+#define WILDCARD_STRING	    "*"
 
 typedef struct hostEntry {
     struct hostEntry	*next;
@@ -1165,6 +1167,13 @@ typedef struct hostEntry {
 	} displayAddress;
     } entry;
 } HostEntry;
+
+typedef struct listenEntry {
+    struct listenEntry	*next;
+    int		iface;
+    int		mcasts;
+    int		nmcasts;
+} ListenEntry;
 
 typedef struct aliasEntry {
     struct aliasEntry	*next;
@@ -1196,25 +1205,36 @@ HasGlobCharacters (char *s)
 	}
 }
 
+#define PARSE_ALL	0
+#define PARSE_NO_BCAST	1
+#define PARSE_NO_PAT	2
+#define PARSE_NO_ALIAS	3
+
 static int
 ParseHost (int *nHosts, HostEntry ***hostPtr, int *nChars, 
-	   char *hostOrAlias, int len)
+	   char *hostOrAlias, int len, int parse)
 {
+#if defined(IPv6) && defined(AF_INET6)
+    struct addrinfo *ai;
+#else
     struct hostent  *hostent;
+#endif
+    void *addr;
+    int addr_type, addr_len;
 
     if (!(**hostPtr = (HostEntry *) Malloc (sizeof (HostEntry))))
 	return 0;
-    if (!strcmp (hostOrAlias, BROADCAST_STRING))
+    if (!(parse & PARSE_NO_BCAST) && !strcmp (hostOrAlias, BROADCAST_STRING))
     {
 	(**hostPtr)->type = HOST_BROADCAST;
     }
-    else if (*hostOrAlias == ALIAS_CHARACTER)
+    else if (!(parse & PARSE_NO_ALIAS) && *hostOrAlias == ALIAS_CHARACTER)
     {
 	(**hostPtr)->type = HOST_ALIAS;
 	(**hostPtr)->entry.aliasPattern = hostOrAlias + 1;
 	*nChars += len;
     }
-    else if (HasGlobCharacters (hostOrAlias))
+    else if (!(parse & PARSE_NO_PAT) && HasGlobCharacters (hostOrAlias))
     {
 	(**hostPtr)->type = HOST_PATTERN;
 	(**hostPtr)->entry.hostPattern = hostOrAlias;
@@ -1223,23 +1243,43 @@ ParseHost (int *nHosts, HostEntry ***hostPtr, int *nChars,
     else
     {
 	(**hostPtr)->type = HOST_ADDRESS;
+#if defined(IPv6) && defined(AF_INET6)
+	if (getaddrinfo (hostOrAlias, NULL, NULL, &ai))
+#else
 	if (!(hostent = gethostbyname (hostOrAlias)))
+#endif
 	{
 	    LogError ("Host \"%s\" not found\n", hostOrAlias);
 	    free ((char *) (**hostPtr));
 	    return 0;
 	}
+#if defined(IPv6) && defined(AF_INET6)
+	addr_type = ai->ai_addr->sa_family;
+	if (ai->ai_family == AF_INET) {
+	    addr = &((struct sockaddr_in *)ai->ai_addr)->sin_addr;
+	    addr_len = sizeof(struct in_addr);
+	} else /*if (ai->ai_addr->sa_family == AF_INET6)*/ {
+	    addr = &((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr;
+	    addr_len = sizeof(struct in6_addr);
+	}
+#else
+	addr_type = hostent->h_addrtype;
+	addr = hostent->h_addr;
+	addr_len = hostent->h_length;
+#endif
 	if (!((**hostPtr)->entry.displayAddress.hostAddress = 
-	      Malloc (hostent->h_length)))
+	      Malloc (addr_len)))
 	{
 	    free ((char *) (**hostPtr));
 	    return 0;
 	}
-	memcpy ((**hostPtr)->entry.displayAddress.hostAddress, 
-		hostent->h_addr, hostent->h_length);
-	*nChars += hostent->h_length;
-	(**hostPtr)->entry.displayAddress.hostAddrLen = hostent->h_length;
-	(**hostPtr)->entry.displayAddress.connectionType = hostent->h_addrtype;
+	memcpy ((**hostPtr)->entry.displayAddress.hostAddress, addr, addr_len);
+	*nChars += addr_len;
+	(**hostPtr)->entry.displayAddress.hostAddrLen = addr_len;
+	(**hostPtr)->entry.displayAddress.connectionType = addr_type;
+#if defined(IPv6) && defined(AF_INET6)
+	freeaddrinfo (ai);
+#endif
     }
     *hostPtr = &(**hostPtr)->next;
     (*nHosts)++;
@@ -1252,12 +1292,13 @@ ReadAccessFile (const char *fname)
     HostEntry		*hostList, **hostPtr = &hostList;
     AliasEntry		*aliasList, **aliasPtr = &aliasList;
     AclEntry		*acList, **acPtr = &acList;
+    ListenEntry		*listenList, **listenPtr = &listenList;
     char		*displayOrAlias, *hostOrAlias;
     File		file;
-    int			nHosts, nAliases, nAcls, nChars, error;
+    int			nHosts, nAliases, nAcls, nListens, nChars, error;
     int			i, len;
 
-    nHosts = nAliases = nAcls = nChars = error = 0;
+    nHosts = nAliases = nAcls = nListens = nChars = error = 0;
     if (!readFile (&file, fname, "XDMCP access control"))
 	goto sendacl;
     while ((displayOrAlias = ReadWord (&file, &len, FALSE)))
@@ -1275,12 +1316,39 @@ ReadAccessFile (const char *fname)
 	    (*aliasPtr)->nhosts = 0;
 	    while ((hostOrAlias = ReadWord (&file, &len, TRUE)))
 	    {
-		if (!ParseHost (&nHosts, &hostPtr, &nChars, hostOrAlias, len))
+		if (!ParseHost (&nHosts, &hostPtr, &nChars, hostOrAlias, len,
+				PARSE_NO_BCAST|PARSE_NO_PAT))
 		    goto sktoeol;
 		(*aliasPtr)->nhosts++;
 	    }
 	    aliasPtr = &(*aliasPtr)->next;
 	    nAliases++;
+	}
+	else if (!strcmp (displayOrAlias, LISTEN_STRING))
+	{
+	    if (!(*listenPtr = (ListenEntry *) Malloc (sizeof (ListenEntry))))
+	    {
+		error = 1;
+		break;
+	    }
+	    (*listenPtr)->iface = nHosts;
+	    if (!(hostOrAlias = ReadWord (&file, &len, TRUE)) ||
+		!strcmp (hostOrAlias, WILDCARD_STRING) ||
+		!ParseHost (&nHosts, &hostPtr, &nChars, hostOrAlias, len,
+			    PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS))
+	    {
+		(*listenPtr)->iface = -1;
+	    }
+	    (*listenPtr)->mcasts = nHosts;
+	    (*listenPtr)->nmcasts = 0;
+	    while ((hostOrAlias = ReadWord (&file, &len, TRUE)))
+	    {
+		if (ParseHost (&nHosts, &hostPtr, &nChars, hostOrAlias, len,
+			       PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS))
+		    (*listenPtr)->nmcasts++;
+	    }
+	    listenPtr = &(*listenPtr)->next;
+	    nListens++;
 	}
 	else
 	{
@@ -1297,10 +1365,12 @@ ReadAccessFile (const char *fname)
 	    }
 	    (*acPtr)->entries = nHosts;
 	    (*acPtr)->nentries = 1;
-	    if (!ParseHost (&nHosts, &hostPtr, &nChars, displayOrAlias, len))
+	    if (!ParseHost (&nHosts, &hostPtr, &nChars, displayOrAlias, len,
+			    PARSE_NO_BCAST))
 	    {
-		if ((*acPtr)->flags & a_notAllowed) {
-	      sktoeol:
+		if ((*acPtr)->flags & a_notAllowed)
+		{
+		  sktoeol:
 		    error = 1;
 		}
 		while (ReadWord (&file, &len, TRUE));
@@ -1317,7 +1387,7 @@ ReadAccessFile (const char *fname)
 		else
 		{
 		    if (ParseHost (&nHosts, &hostPtr, &nChars, 
-				   hostOrAlias, len))
+				   hostOrAlias, len, PARSE_NO_PAT))
 			(*acPtr)->nhosts++;
 		}
 	    }
@@ -1326,12 +1396,31 @@ ReadAccessFile (const char *fname)
 	}
     }
 
+    if (!nListens) {
+	if (!(*listenPtr = (ListenEntry *) Malloc (sizeof (ListenEntry))))
+	    error = 1;
+	else {
+	    (*listenPtr)->iface = -1;
+	    (*listenPtr)->mcasts = nHosts;
+	    (*listenPtr)->nmcasts = 0;
+#if defined(IPv6) && defined(AF_INET6) && defined(XDM_DEFAULT_MCAST_ADDR6)
+	    if (ParseHost (&nHosts, &hostPtr, &nChars,
+			   XDM_DEFAULT_MCAST_ADDR6,
+			   sizeof(XDM_DEFAULT_MCAST_ADDR6)-1,
+			   PARSE_ALL))
+		(*listenPtr)->nmcasts++;
+#endif
+	    nListens++;
+	}
+    }
+
     if (error) {
-	nHosts = nAliases = nAcls = nChars = 0;
+	nHosts = nAliases = nAcls = nListens = nChars = 0;
       sendacl:
 	LogError ("No XDMCP requests will be granted\n");
     }
     GSendInt (nHosts);
+    GSendInt (nListens);
     GSendInt (nAliases);
     GSendInt (nAcls);
     GSendInt (nChars);
@@ -1350,6 +1439,11 @@ ReadAccessFile (const char *fname)
 	    GSendInt (hostList->entry.displayAddress.connectionType);
 	    break;
 	}
+    }
+    for (i = 0; i < nListens; i++, listenList = listenList->next) {
+	GSendInt (listenList->iface);
+	GSendInt (listenList->mcasts);
+	GSendInt (listenList->nmcasts);
     }
     for (i = 0; i < nAliases; i++, aliasList = aliasList->next) {
 	GSendStr (aliasList->name);
