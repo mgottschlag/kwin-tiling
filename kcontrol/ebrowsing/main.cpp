@@ -35,7 +35,10 @@
 #include <kdialog.h>
 #include <kurifilter.h>
 
+#include "filteropts.h"
 #include "main.h"
+
+class FilterOptions;
 
 KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     : KCModule(parent, name) {
@@ -46,39 +49,60 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     tab = new QTabWidget(this);
     layout->addWidget(tab);
 
+    opts = new FilterOptions(this);
+    tab->addTab(opts, i18n("&Filters"));
+    connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
+    modules.setAutoDelete(true);
+
     QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
     for (; it.current(); ++it) {
 	KCModule *module = it.current()->configModule(this);
 	if (module) {
+	    modules.append(module);
+
 	    tab->addTab(module, it.current()->configName());
 	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 	}
+    }
+
+    // Since there's nothing in the options tab yet, show the first plugin.
+
+    KCModule *first = modules.first();
+    if (first) {
+	tab->showPage(first);
     }
 
     load();
 }
 
 void KURIFilterModule::load() {
-    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    QListIterator<KCModule> it(modules);
     for (; it.current(); ++it) {
-	KCModule *module = it.current()->configModule(this);
-	module->load();
+	KCModule *module = it.current();
+	if (module) {
+	    module->load();
+	}
     }
 }
 
 void KURIFilterModule::save() {
-    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    QListIterator<KCModule> it(modules);
     for (; it.current(); ++it) {
-	KCModule *module = it.current()->configModule(this);
-	module->save();
+	KCModule *module = it.current();
+	if (module) {
+	    module->save();
+	}
     }
 }
 
 void KURIFilterModule::defaults() {
-    QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    QListIterator<KCModule> it(modules);
     for (; it.current(); ++it) {
-	KCModule *module = it.current()->configModule(this);
-	module->defaults();
+	KCModule *module = it.current();
+	if (module) {
+	    module->defaults();
+	}
     }
 }
 

@@ -35,7 +35,7 @@
 
 KInstance *KURISearchFilterFactory::s_instance = 0L;
 
-KURISearchFilter::KURISearchFilter(QObject *parent) : KURIFilterPlugin(parent, "KURISearchFilter", "ikws", 1.0), DCOPObject("KURISearchFilterIface") {
+KURISearchFilter::KURISearchFilter(QObject *parent, const char *name) : KURIFilterPlugin(parent, name ? name : "KURISearchFilter", "ikws", 1.0), DCOPObject("KURISearchFilterIface") {
 }
 
 KURISearchFilter::~KURISearchFilter() {
@@ -109,8 +109,8 @@ bool KURISearchFilter::filterURI(KURL &kurl) const {
     return false;
 }
 
-KCModule *KURISearchFilter::configModule() const {
-    return new InternetKeywordsOptions;
+KCModule *KURISearchFilter::configModule(QWidget *parent, const char *name) const {
+    return new InternetKeywordsOptions(parent, name);
 }
 
 QString KURISearchFilter::configName() const {

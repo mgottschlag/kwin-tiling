@@ -82,7 +82,7 @@ public:
      * @return A configuration module, or 0 if the filter isn't
      * configurable.
      */
-    virtual KCModule *configModule(const QWidget *parent = 0, const char *name = 0) const;
+    virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const;
 
     /**
      * Return a configuration module for the filter.

@@ -48,8 +48,11 @@ protected slots:
     void moduleChanged(bool state);
 
 private:
-  QTabWidget *tab;
-  KURIFilter *filter;
+    KURIFilter *filter;
+
+    QTabWidget *tab;
+    FilterOptions *opts;
+    QList<KCModule> modules;
 };
 
 #endif

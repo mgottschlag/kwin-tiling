@@ -31,12 +31,12 @@ class KInstance;
 class KURISearchFilter : public KURIFilterPlugin, public DCOPObject {
     K_DCOP
 public:
-    KURISearchFilter( QObject *parent );
+    KURISearchFilter(QObject *parent = 0, const char *name = 0);
     ~KURISearchFilter();
 
     virtual bool filterURI(KURL &uri) const;
 
-    virtual KCModule *configModule() const;
+    virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const;
     virtual QString configName() const;
 
 public:

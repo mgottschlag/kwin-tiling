@@ -39,7 +39,7 @@ bool KURIFilterPlugin::filterURI(QString &uri) const {
     return filtered;
 }
 
-KCModule *KURIFilterPlugin::configModule(const QWidget *, const char *) const {
+KCModule *KURIFilterPlugin::configModule(QWidget *, const char *) const {
     return 0;
 }
 
