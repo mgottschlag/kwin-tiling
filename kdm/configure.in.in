@@ -65,17 +65,18 @@ EOF
 	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`]
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
-	AC_MSG_ERROR([$XMKMF (imake) failed])
+        AC_MSG_RESULT([failed])
+	AC_MSG_ERROR([$XMKMF (imake) failed.
+Make sure you have all necessary X development packages installed.])
     fi
     cd ..
     rm -fr conftestdir
 else
-    AC_MSG_ERROR([mkdir failed])
+    AC_MSG_RESULT([failed])
+    AC_MSG_ERROR([cannot create temporary directory])
 fi])
-if test -n "$kde_cv_defines_imake"; then
-    eval $kde_cv_defines_imake
-    AC_MSG_RESULT([done])
-fi
+AC_MSG_RESULT([done])
+eval $kde_cv_defines_imake
 
 AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
