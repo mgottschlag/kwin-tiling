@@ -3,7 +3,6 @@ Encoding=UTF-8
 Exec=kcmshell Components/kcmkded
 Icon=kded
 Type=Application
-DocPath=kcontrol/kded/index.html
 
 X-KDE-SubstituteUID=true
 X-KDE-RootOnly=false
