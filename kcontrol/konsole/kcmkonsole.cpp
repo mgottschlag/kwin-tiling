@@ -54,6 +54,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
     connect(dialog->historyCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->SpinBox1, SIGNAL(valueChanged ( int  )), this, SLOT(configChanged()));
     connect(dialog->fontCO, SIGNAL(highlighted ( int )),this,SLOT(configChanged()));
+    connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 }
 
 void KCMKonsole::load()
@@ -85,6 +86,11 @@ void KCMKonsole::load()
     config->setGroup("General");
     dialog->terminalLE->setText(config->readEntry("TerminalApplication","konsole"));
     dialog->terminalCB->setChecked(config->readEntry("TerminalApplication","konsole")!="konsole");
+    delete config;
+
+    config = new KConfig("kwritedrc", true);
+    config->setGroup("General");
+    dialog->startKwritedCB->setChecked(config->readBoolEntry("Autostart",true));
     delete config;
 
     emit changed(false);
@@ -141,6 +147,11 @@ void KCMKonsole::save()
     config->setGroup("General");
     config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?dialog->terminalLE->text():"konsole", true, true);
 
+    delete config;
+
+    config = new KConfig("kwritedrc");
+    config->setGroup("General");
+    config->writeEntry("Autostart", dialog->startKwritedCB->isChecked());
     delete config;
 
     emit changed(false);
