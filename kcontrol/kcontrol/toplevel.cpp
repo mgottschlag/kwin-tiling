@@ -54,7 +54,7 @@
 
 
 TopLevel::TopLevel(const char* name)
-  : KTMainWindow( name, WStyle_ContextHelp  )
+  : KMainWindow( 0, name, WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
   setPlainCaption(i18n("KDE Control Center"));
@@ -125,7 +125,7 @@ TopLevel::TopLevel(const char* name)
   _dock->setBaseWidget(aw);
 
   // set the main view
-  setView(_splitter);
+  setCentralWidget(_splitter);
 
   // initialize the GUI actions
   setupActions();

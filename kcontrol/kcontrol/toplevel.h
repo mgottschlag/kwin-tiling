@@ -21,7 +21,7 @@
 #ifndef __TOPLEVEL_H__
 #define __TOPLEVEL_H__
 
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
 
 class QTabWidget;
 class QSplitter;
@@ -36,7 +36,7 @@ class HelpWidget;
 class ConfigModule;
 class ConfigModuleList;
 
-class TopLevel : public KTMainWindow
+class TopLevel : public KMainWindow
 {
   Q_OBJECT
 
