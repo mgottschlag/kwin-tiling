@@ -8,10 +8,8 @@ X-KDE-ModuleType=Library
 X-KDE-Library=arts
 X-KDE-Init=arts
 
-<<<<<<< arts.desktop
 Name=Sound Server
-=======
-Name=Soundserver
+Name[de]=Soundserver
 Name[ca]=Servidor de so
 Name[cs]=Zvukový server
 Name[da]=Lydserver
@@ -41,22 +39,18 @@ Name[ta]=ஒலி ேசைவயகமஂ
 Name[tr]=Ses Sunucusu
 Name[uk]=Сервер звуку
 Name[zh_CN.GB2312]=声音服务器
->>>>>>> 1.44
 
-<<<<<<< arts.desktop
 Comment=Sound Server Configuration
-=======
-Comment=Soundserver Configuration
+Comment[de]=Einrichtung des Soundservers
+Comment[fi]=Järjestelmän äänipalvelimen asetukset
+Comment[fr]=Configuration du serveur de son
 Comment[ca]=Configuraci� del servidor de so
 Comment[cs]=Nastavení zvukového serveru
 Comment[da]=Lydserverens indstilling
-Comment[de]=Einstellung des Soundservers
 Comment[el]=Ρύθμιση Διακομιστή Ήχου
 Comment[eo]=Agordo de la sonorservo
 Comment[es]=Configuración del servidor de sonido
 Comment[et]=Heliserveri konfigureerimine
-Comment[fi]=Järjestelmän äänipalvelimen asetukset
-Comment[fr]=Configuration du serveur de son
 Comment[he]=לילצה תרש תורדגה
 Comment[hr]=Postavke zvučnog poslužitelja
 Comment[hu]=A hangkiszolgáló beállításai
@@ -79,20 +73,17 @@ Comment[ta]=கணிபஂெபாறி ஒலி வடிவைமபஂப
 Comment[tr]=Ses Sunucusu Yapılandırması
 Comment[uk]=Конфігурація серверів звуку
 Comment[zh_CN.GB2312]=声音服务器配置
->>>>>>> 1.44
 
-<<<<<<< arts.desktop
 Keywords=aRts,Sound Server,artsd,Audio,Sound
-=======
-Keywords=aRts,Soundserver,artsd,Audio,Sound
+Keywords[de]=aRts,Soundserver,Artsd,Audio,Sound,Klang,Klangserver
+Keywords[fi]=aRts,Äänipalvelin,artsd,Äänet
+Keywords[fr]=aRts,serveur son,artsd,audio,son
 Keywords[ca]=aRts,servidor de so,artsd,�udio,So
 Keywords[cs]=aRts,Zvukový server,artsd,Audio,Zvuk
 Keywords[da]=aRTs,Lydserver,artsd,audio,Lyd
-Keywords[de]=aRts,Soundserver,Artsd,Audio,Sound,Klang,Klangserver
 Keywords[eo]=aRts,Sonoro,artsd,Audio,Sound,Sono
+Keywords[es]=aRts,Servidor de sonidop, artsd, Audio, Sonido
 Keywords[et]=aRts,Heliserver,artsd,Audio,Heli
-Keywords[fi]=aRts,Äänipalvelin,artsd,Äänet
-Keywords[fr]=aRts,serveur son,artsd,audio,son
 Keywords[he]=aRts,artsd,לילצ,עמש,לילצ תרש
 Keywords[hr]=aRts,Soundserver,artsd,Audio,Sound,Zvuk
 Keywords[hu]=aRts,hangkiszolgáló,artsd,audió,hang
