@@ -58,9 +58,11 @@
 
 #include <sys/ioctl.h>
 
+#if 0
 #if !defined(__FreeBSD__) || (__FreeBSD_version < 400018) // WAG about when this showed up in FreeBSD -- 4.0-S
 	#undef HAVE_GETNAMEINFO
 	#undef HAVE_GETIFADDRS
+#endif
 #endif
 
 #if defined(HAVE_GETNAMEINFO) && defined(HAVE_GETIFADDRS)
