@@ -44,21 +44,6 @@ from the copyright holder.
 
 static struct protoDisplay *protoDisplays;
 
-#ifdef DEBUG
-static
-PrintProtoDisplay( pdpy )
-	struct protoDisplay *pdpy;
-{
-	char addrbuf[128];
-
-	PrintSockAddr( addrbuf, pdpy->address, pdpy->addrlen );
-	Debug( "ProtoDisplay %p\n\taddress: %s\n\tdate %d (%d from now)\n"
-	       "\tdisplay Number %d\n\tsessionID %d\n",
-	       pdpy, addrbuf, pdpy->date, now - pdpy->date,
-	       pdpy->displayNumber, pdpy->sessionID );
-}
-#endif
-
 struct protoDisplay *
 FindProtoDisplay(
                  XdmcpNetaddr address,
