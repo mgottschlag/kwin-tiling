@@ -8,13 +8,19 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>341</width>
-            <height>325</height>
+            <width>360</width>
+            <height>327</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>FilterOptionsUI</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="QCheckBox">
             <property name="name">
@@ -253,9 +259,4 @@ Select the search engine to use for input boxes that provide automatic lookup se
     <tabstop>cmbDelimiter</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>klistview.h</includehint>
-    <includehint>kcombobox.h</includehint>
-</includehints>
 </UI>

@@ -9,12 +9,18 @@
             <x>0</x>
             <y>0</y>
             <width>399</width>
-            <height>224</height>
+            <height>204</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>SearchProviderDlgUI</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="KLineEdit" row="1" column="0">
             <property name="name">
@@ -123,10 +129,4 @@ Recommended is \{@}, since it removes all query variables (name=value) from the 
     <tabstop>cbCharset</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kcombobox.h</includehint>
-</includehints>
 </UI>
