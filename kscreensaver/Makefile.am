@@ -17,7 +17,6 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss kbanner.kss \
 
 EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
 
-KDE_ICON = kscreensaver
 
 BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
 
