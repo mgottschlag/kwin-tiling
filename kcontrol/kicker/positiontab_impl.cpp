@@ -195,7 +195,7 @@ void PositionTab::defaults()
         m_panelAlign = AlignLeft;
     }
 
-    m_panelSize->setCurrentItem(KPanelExtension::SizeSmall);
+    m_panelSize->setCurrentItem(KPanelExtension::SizeNormal);
 
     // update the magic drawing
     lengthenPanel(-1);
