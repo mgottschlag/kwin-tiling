@@ -236,7 +236,7 @@ while (<INFILE>) {
       if (/^\[(.*)\]$/) {
         defined($ex_sects{$1}) &&
           pegout("redefinition of example section [$1]");
-        push @ex_config, [$1, $comm, "", ""];
+        push @ex_config, [$1, dedb($comm), "", ""];
         $ex_sects{$1} = $#ex_config;
         $comm = "";
       } else {
@@ -568,7 +568,7 @@ while (<INFILE>) {
           $desc ||
             print STDERR "Warning: key ".$key." in section [".$sect."] has empty Description\n";
           ($comm eq "&") &&
-            ($comm = dedb($desc));
+            ($comm = $desc);
           $desc = "<para>\n".$desc."</para>\n";
           if ($e_desc) {
             $e_desc = "<variablelist>\n".$e_desc."</variablelist>\n";
@@ -606,6 +606,7 @@ while (<INFILE>) {
       } else {
         $vname = "0";
       }
+	  $comm = dedb($comm);
       $comm =~ s/"/\\"/g;
       $comm =~ s/([^\n]*)\n/ \\\n\"# $1\\n\"/g;
       @oa = (

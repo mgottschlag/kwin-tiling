@@ -89,9 +89,9 @@
 # Section headers are "condensation seeds" for the Instance:s in the key
 # definitions below.
 <kdmrc>
- KDM master configuration file
+ &kdm; master configuration file
  _
- Definition: the greeter is the login dialog, i.e., the part of KDM
+ Definition: the greeter is the login dialog, i.e., the part of &kdm;
  which the user sees.
  _
  You can configure every X-display individually.
@@ -127,7 +127,7 @@
  _
  Every comment applies to the following section or key. Note that all
  comments will be lost if you change this file with the kcontrol frontend.
- The defaults refer to KDM's built-in values, not anything set in this file.
+ The defaults refer to &kdm;'s built-in values, not anything set in this file.
  _
  Special characters need to be backslash-escaped (leading and trailing
  spaces (\\s), tab (\\t), linefeed (\\n), carriage return (\\r) and the
@@ -144,7 +144,7 @@
 
 [Shutdown]
 
- Rough estimations about how many seconds KDM will spend at most on
+ Rough estimations about how many seconds &kdm; will spend at most on
  - opening a connection to the X-server (OpenTime) if the attempt
    - times out: OpenTimeout
    - is refused: OpenRepeat * OpenDelay
@@ -153,7 +153,7 @@
  - starting a display:
    - local display: ServerTime + OpenTime
    - foreign display: StartAttempts * OpenTime
-   - xdmcp display: OpenTime (repeated indefinitely by client)
+   - &XDMCP; display: OpenTime (repeated indefinitely by client)
 
  Core config for all displays
 [X-*-Core]
@@ -843,7 +843,7 @@ User: core
 Instance: #"7,8,-9,-10"
 Update: upd_servervts
 Comment:
- VTs to allocate to X-servers. A negative number means that the VT will be
+ VTs to allocate to &X-Server;s. A negative number means that the VT will be
  used only if it is free. If all VTs in this list are used up, the next free
  one greater than the last one in this list will be allocated.
 Description:
@@ -874,7 +874,7 @@ User: core
 Instance: "/var/run/kdm.pid"
 Merge: xdm
 Comment:
- Where KDM should store its PID (do not store if empty).
+ Where &kdm; should store its PID (do not store if empty).
 Description:
  The filename specified will be created to contain an ASCII representation
  of the process ID of the main &kdm; process; the PID will not be stored
@@ -887,7 +887,7 @@ User: core
 Instance: #!
 Merge: xdm
 Comment:
- Whether KDM should lock the PID file to prevent having multiple KDM
+ Whether &kdm; should lock the PID file to prevent having multiple &kdm;
  instances running at once. Do not change unless you are brave.
 Description:
  This option controls whether &kdm; uses file locking to keep multiple
@@ -917,7 +917,7 @@ User: core
 Instance: #!
 Merge: xdm
 Comment:
- Whether KDM should automatically re-read configuration files, if it
+ Whether &kdm; should automatically re-read configuration files, if it
  finds them having changed.
 Description:
  This boolean controls whether &kdm; automatically re-reads its
@@ -943,7 +943,7 @@ User: core
 Instance: #""
 Merge: xdm
 Comment:
- A file KDM should read entropy from.
+ A file &kdm; should read entropy from.
 Description:
  If the system has no native entropy source like /dev/urandom (see
  <option>RandomDevice</option>) and no entropy daemon like EGD (see
@@ -963,7 +963,7 @@ User: core
 Instance: #"/tmp/entropy"
 Merge: xdm
 Comment:
- A UNIX domain socket KDM should read entropy from.
+ A UNIX domain socket &kdm; should read entropy from.
 Description:
  If the system has no native entropy source like /dev/urandom (see
  <option>RandomDevice</option>), read random data from a Pseudo-Random
@@ -980,7 +980,7 @@ User: core
 Instance: #4840
 Merge: xdm
 Comment:
- A TCP socket on localhost KDM should read entropy from.
+ A TCP socket on localhost &kdm; should read entropy from.
 Description:
  Same as <option>PrngdSocket</option>, only use a TCP socket on localhost.
 
@@ -992,10 +992,10 @@ User: core
 Instance: #"/dev/altrandom"
 Merge: xdm
 Comment:
- A character device KDM should read entropy from.
+ A character device &kdm; should read entropy from.
  Empty means use the system's preferred entropy device.
 Description:
- The path to a character device which KDM should read random data from.
+ The path to a character device which &kdm; should read random data from.
  Empty means to use the system's preferred entropy device if there is one.
  </para><para>
  This option does not exist on OpenBSD, as it uses the arc4_random
@@ -1032,7 +1032,7 @@ User: greeter
 Instance: #""
 Update: upd_datadir
 Comment:
- The directory in which kdm should store persistent working data.
+ The directory in which &kdm; should store persistent working data.
 Description:
  The directory in which &kdm; should store persistent working data; such data
  is, for example, the previous user that logged in on a particular display.
@@ -1073,7 +1073,7 @@ User: core(request_port)
 Instance: #
 Merge: xdm:requestPort(P_requestPort)
 Comment:
- The UDP port on which KDM should listen for XDMCP requests. Do not change.
+ The UDP port on which &kdm; should listen for &XDMCP; requests. Do not change.
 Description:
  This indicates the UDP port number which &kdm; uses to listen for incoming
  &XDMCP; requests. Unless you need to debug the system, leave this with its
@@ -1103,7 +1103,7 @@ Instance: #""
 Update: mk_xaccess
 Merge: xdm:accessFile
 Comment:
- XDMCP access control file in the usual XDM-Xaccess format.
+ &XDMCP; access control file in the usual XDM-Xaccess format.
 Description:
  To prevent unauthorized &XDMCP; service and to allow forwarding of &XDMCP;
  IndirectQuery requests, this file contains a database of hostnames which
@@ -1167,7 +1167,7 @@ Update: mk_willing
 Merge: xdm
 Merge: kdm:Xwilling
 Comment:
- The program which is invoked to dynamically generate replies to XDMCP
+ The program which is invoked to dynamically generate replies to &XDMCP;
  DirectQuery or BroadcastQuery requests.
  If empty, no program is invoked and "Willing to manage" is sent.
 Description:
@@ -1319,7 +1319,7 @@ User: core
 Instance: #:*/
 Merge: xdm
 Comment:
- How often to try to run the X-server. Running includes executing it and
+ How often to try to run the &X-Server;. Running includes executing it and
  waiting for it to come up.
 Description:
  How many times &kdm; should attempt to start up a local &X-Server;.
@@ -1331,7 +1331,7 @@ Default: 15
 User: core
 Instance: #:*/
 Comment:
- How long to wait for a local X-server to come up.
+ How long to wait for a local &X-Server; to come up.
 Description:
  How many seconds &kdm; should wait for a local &X-Server; to come up.
 
@@ -1376,7 +1376,7 @@ User: core
 Instance: #:*/!
 Merge: xdm
 Comment:
- Restart instead of resetting the local X-server after session exit.
+ Restart instead of resetting the local &X-Server; after session exit.
  Use it if the server leaks memory etc.
 Description:
  Whether &kdm; should restart the local &X-Server; after session exit instead
@@ -1391,7 +1391,7 @@ User: core
 Instance: #:*/
 Merge: xdm
 Comment:
- The signal needed to reset the local X-server.
+ The signal needed to reset the local &X-Server;.
 Description:
  The signal number to use to reset the local &X-Server;.
 
@@ -1403,7 +1403,7 @@ User: core
 Instance: #:*/
 Merge: xdm
 Comment:
- The signal needed to terminate the local X-server.
+ The signal needed to terminate the local &X-Server;.
 Description:
  The signal number to use to terminate the local &X-Server;.
 
@@ -1442,7 +1442,7 @@ User: core
 Instance: #:*/!
 Merge: xdm
 Comment:
- Need to reset the X-server to make it read initial Xauth file.
+ Need to reset the &X-Server; to make it read initial Xauth file.
 Description:
  Some <emphasis>old</emphasis> &X-Server;s re-read the authorization file
  at &X-Server; reset time, instead of when checking the initial connection.
@@ -1459,7 +1459,7 @@ User: core(clientAuthFile)
 Instance: #*/""
 Merge: xdm
 Comment:
- The name of this X-server's Xauth file.
+ The name of this &X-Server;'s Xauth file.
  If empty, a random name in the AuthDir directory will be used.
 Description:
  This file is used to communicate the authorization data from &kdm; to
@@ -1643,7 +1643,7 @@ User: core
 Instance: #*/""
 Merge: xdm
 Comment:
- Where to put the user's X-server authorization file if ~/.Xauthority
+ Where to put the user's &X-Server; authorization file if ~/.Xauthority
  cannot be created.
 Description:
  When &kdm; is unable to write to the usual user authorization file
@@ -1658,7 +1658,7 @@ User: core
 Instance: #*/!
 Merge: xdm
 Comment:
- Whether to automatically restart sessions after X-server crashes.
+ Whether to automatically restart sessions after &X-Server; crashes.
  Note that enabling this makes circumventing screen lockers other than
  KDE's built-in one possible!
 Description:
@@ -1841,7 +1841,7 @@ Default: true
 User: core
 Instance: #*/!
 Comment:
- Whether kdm's built-in utmp/wtmp/lastlog registration should be used.
+ Whether &kdm;'s built-in utmp/wtmp/lastlog registration should be used.
 Description:
  Specify whether &kdm;'s built-in utmp/wtmp/lastlog registration should
  be used. If it is not, the tool <command>sessreg</command> should be used
@@ -2252,7 +2252,7 @@ Default: true
 User: greeter
 Instance: #*/!
 Comment:
- If true, krootimage will be automatically started by KDM; otherwise, the
+ If true, krootimage will be automatically started by &kdm;; otherwise, the
  Setup script should be used to setup the background.
 Description:
  If enabled, &kdm; will automatically start the <command>krootimage</command>
@@ -2279,7 +2279,7 @@ Default: false
 User: greeter-c
 Instance: #*/!
 Comment:
- Hold the X-server grabbed the whole time the greeter is visible. This
+ Hold the &X-Server; grabbed the whole time the greeter is visible. This
  may be more secure, but it will disable any background and other
  X-clients started from the Setup script.
 Description:
@@ -2316,7 +2316,7 @@ Instance: #*/!
 Merge: xdm
 Comment:
  Warn, if display has no X-authorization (local auth cannot be created,
- XDMCP display wants no auth, or display is foreign from file).
+ &XDMCP; display wants no auth, or display is foreign from file).
 Description:
  Warn, if a display has no X-authorization. This will be the case if
  <itemizedlist>
@@ -2387,7 +2387,7 @@ Default: false
 User: greeter
 Instance: :0/true
 Comment:
- Enable KDM's built-in xconsole. Note that this can be enabled for only
+ Enable &kdm;'s built-in xconsole. Note that this can be enabled for only
  one display at a time.
 Description:
  Enable &kdm;'s built-in <command>xconsole</command>.
@@ -2402,7 +2402,7 @@ Default: ""
 User: greeter-c
 Instance: :0/"/dev/xconsole"
 Comment:
- The data source for KDM's built-in xconsole.
+ The data source for &kdm;'s built-in xconsole.
  If empty, a console log redirection is requested from /dev/console.
 Description:
  The data source for &kdm;'s built-in <command>xconsole</command>.
