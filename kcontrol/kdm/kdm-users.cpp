@@ -442,11 +442,11 @@ void KDMUsersWidget::load()
 	rballusr->setChecked(true);
 
     QString ps = config->readEntry( "FaceSource" );
-    if (su == QString::fromLatin1("UserOnly"))
+    if (ps == QString::fromLatin1("UserOnly"))
 	rbusronly->setChecked(true);
-    else if (su == QString::fromLatin1("PrefUser"))
+    else if (ps == QString::fromLatin1("PrefUser"))
 	rbprefusr->setChecked(true);
-    else if (su == QString::fromLatin1("PrefAdmin"))
+    else if (ps == QString::fromLatin1("PrefAdmin"))
 	rbprefadm->setChecked(true);
     else
 	rbadmonly->setChecked(true);
