@@ -37,7 +37,7 @@ public:
 
 k_dcop:
 	QFont getFont();
-   QPalette getPalette();
+	QPalette getPalette();
 	void invokeHelp();
 
 signals:

@@ -26,6 +26,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klibloader.h>
+#include <kparts/componentfactory.h>
 
 #include <stdlib.h>
 
@@ -57,9 +58,25 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
       // try to load the library
       QString libname("libkcm_%1");
+     
+     // attempt to load KDE3 modules (new loader)
+     
+	  KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
+     if (module)
+		return module;
+
+
+     kdDebug() << "Unable to load module using ComponentFactory! Giving up..." << endl;
+  }
+/*
+
+     // else do a fallback
+     kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
+
       KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
       if (lib)
 	{
+
 	  // get the create_ function
 	  QString factory("create_%1");
 	  void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
@@ -75,7 +92,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
     }
     else
       kdWarning() << "Module " << mod.fileName() << " doesn't specify a library!" << endl;
-
+*/
   /*
    * Ok, we could not load the library.
    * Try to run it as an executable.
@@ -84,9 +101,11 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
    * (startService calls kcmshell which calls modloader which calls startService...)
    *
    */
+
+
   if(withfallback)
-      kapp->startServiceByDesktopPath(mod.fileName(), QString::null);
-  return 0;
+      kapp->startServiceByDesktopPath(mod.fileName(), QString::null); 
+  return 0; 
 }
 
 void ModuleLoader::unloadModule(const ModuleInfo &mod)
