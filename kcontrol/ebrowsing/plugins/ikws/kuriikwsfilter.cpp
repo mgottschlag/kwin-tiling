@@ -118,7 +118,14 @@ QString KURISearchFilter::configName() const {
     return i18n("Internet &Keywords");
 }
 
+ 
+static const char *mocs[] = {
+#include "libkuriikwsfilter_la_moc_classes.h"
+   0
+};
+
 KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name) {
+    setMocClasses(mocs);
     s_instance = new KInstance(KURISearchFilterEngine::self()->name());
 }
 
