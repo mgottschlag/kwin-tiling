@@ -73,6 +73,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
   handedEnabled = true;
 
+  lay->addStretch(10);
   load();
 }
 

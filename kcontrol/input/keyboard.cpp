@@ -51,6 +51,7 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
   lay->addWidget(repeatBox);
   connect(repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
 
+  lay->addSpacing(10);
   click = new KIntNumInput(i18n("Key click volume"), 0, 100, 10, 100,
 			   "%", 10, true, this);
   click->setSteps(5,25);
@@ -58,6 +59,7 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
 
   lay->addWidget(click);
   
+  lay->addStretch(10);
   load();
 }
 
