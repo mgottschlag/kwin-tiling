@@ -6,6 +6,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <kglobal.h>
 #include <kcharsets.h>
@@ -54,7 +55,13 @@ void mainWidget::paintEvent(QPaintEvent *)
   p.setFont(boldFont);
   p.drawText(60,90, i18n("User: "));
   p.setFont(normalFont);
-  str = getlogin();
+  char *login = getlogin(); // can't just use isEmpty... (mosfet)
+  if(!login)
+      login = getenv("LOGNAME");
+  if(!login)
+      str = i18n("Unknown");
+  else
+      str.sprintf("%s", login);      
   p.drawText(180,90, str);
 
   p.setFont(boldFont);
