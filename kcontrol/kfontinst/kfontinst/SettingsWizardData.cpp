@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Wed Oct 24 23:34:06 2001
+** Created: Wed Nov 28 22:40:30 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsIntroPageLayout = new QGridLayout( itsIntroPage, 1, 1, 11, 6, "itsIntroPageLayout"); 
 
     itsMainText = new QLabel( itsIntroPage, "itsMainText" );
-    itsMainText->setText( tr2i18n( "As this is the first time you have run KFontinst, there are some configuration settings that you will need to inform KFontinst of." ) );
+    itsMainText->setText( tr2i18n( "As this is the first time you have used this module, there are some configuration settings that you will need to inform it of." ) );
     itsMainText->setAlignment( int( QLabel::WordBreak | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsIntroPageLayout->addMultiCellWidget( itsMainText, 0, 0, 0, 2 );
@@ -61,14 +61,14 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 "<li>Any fonts installed will only be printable by applications that embed the fonts within their output. Basically, for applications such as StarOffice, please login as \"root\" to install your fonts.</li>\n"
 "<li>If you are running a font server (xfs), then any fonts installed may not actually be usable - as normally only \"root\" may install fonts in this case.</li>\n"
 "</ol>\n"
-"To sumarise: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as \"root\" (This can be accomplished via the \"Administrator Mode\" button.)\n"
+"To summarize: If you have problems using, or printing, the fonts you have installed - then you should try re-installing them as \"root\" (This can be accomplished via the \"Administrator Mode\" button.)\n"
 "</p>" ) );
     itsNonRootText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     itsIntroPageLayout->addMultiCellWidget( itsNonRootText, 2, 2, 0, 2 );
     QSpacerItem* spacer_3 = new QSpacerItem( 16, 16, QSizePolicy::Minimum, QSizePolicy::Fixed );
     itsIntroPageLayout->addItem( spacer_3, 1, 1 );
-    addPage( itsIntroPage, tr2i18n( "Welcome To KFontinst" ) );
+    addPage( itsIntroPage, tr2i18n( "Welcome To The KDE Font Installer" ) );
 
     itsDirsAndFilesPage = new QWidget( this, "itsDirsAndFilesPage" );
     itsDirsAndFilesPageLayout = new QGridLayout( itsDirsAndFilesPage, 1, 1, 11, 6, "itsDirsAndFilesPageLayout"); 
@@ -85,7 +85,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsFnFText->setFrameShape( QLabel::Panel );
     itsFnFText->setFrameShadow( QLabel::Sunken );
     itsFnFText->setMargin( 10 );
-    itsFnFText->setText( tr2i18n( "KFontinst has determined the following values for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing \"<Not Found>\"" ) );
+    itsFnFText->setText( tr2i18n( "The following values have been determined for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing \"<Not Found>\"" ) );
     itsFnFText->setAlignment( int( QLabel::WordBreak | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsDirsAndFilesPageLayout->addWidget( itsFnFText, 0, 0 );
@@ -126,7 +126,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     TextLabel1_2_2->setFrameShape( QLabel::Panel );
     TextLabel1_2_2->setFrameShadow( QLabel::Sunken );
     TextLabel1_2_2->setMargin( 10 );
-    TextLabel1_2_2->setText( tr2i18n( "If you wish to enable configuration of StarOffice from KFontinst, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n"
+    TextLabel1_2_2->setText( tr2i18n( "If you wish to enable configuration of StarOffice, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n"
 "\n"
 "NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts. This can be set using the \"System\" part of the \"Settings\" tab when the module has loaded." ) );
     TextLabel1_2_2->setAlignment( int( QLabel::WordBreak | QLabel::AlignTop | QLabel::AlignLeft ) );
@@ -136,23 +136,30 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
 
     itsCompletePage = new QWidget( this, "itsCompletePage" );
     itsCompletePageLayout = new QGridLayout( itsCompletePage, 1, 1, 11, 6, "itsCompletePageLayout"); 
+    QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    itsCompletePageLayout->addItem( spacer_4, 3, 0 );
 
     TextLabel1_3 = new QLabel( itsCompletePage, "TextLabel1_3" );
-    TextLabel1_3->setText( tr2i18n( "<p>KFontinst has now determined all the setup information that it needs.</p>\n"
-"\n"
-"<p>This KControl module has two main modes of operation:\n"
+    TextLabel1_3->setText( tr2i18n( "<p>All the required setup information has now been determined.</p>\n"
+"<p>This module has two main modes of operation:\n"
 "<ol>\n"
 "<li><i>Basic:</i> The underlying folder structure is hidden - and you will only be able to install/uninstall TrueType and Type1 fonts.</li>\n"
 "<li><i>Advanced:</i> This is for more experienced users, and displays the X fonts folder structure - allowing you to add/delete whole folders to/from the X font path. Using this mode you can also install/uninstall Speedo and Bitmap (pcf, bdf, and snf) fonts.</li>\n"
 "</ol>\n"
-"To switch between these modes, select the appropriate option from within the \"Appearance\" section of the \"Settings\" tab.</p>\n"
-"<p><b>NOTE</b> As this is the first time KFontinst has been run by you, it has automatically marked the basic folders containing your TrueType and Type1 fonts as needing to be 'configured' - therefore, before closing this KControl module you will be prompted to \"Apply\" these changes.</p>\n"
-"<p>For further detailed help on how to use this module, please refer to the on-line help documentation.</p>" ) );
+"To switch between these modes, select the appropriate option from within the \"Appearance\" section of the \"Settings\" tab.</p>" ) );
     TextLabel1_3->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     itsCompletePageLayout->addWidget( TextLabel1_3, 0, 0 );
-    QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    itsCompletePageLayout->addItem( spacer_4, 1, 0 );
+
+    itsModifiedDirsText = new QLabel( itsCompletePage, "itsModifiedDirsText" );
+    itsModifiedDirsText->setText( tr2i18n( "<b>NOTE</b> As this is the first time this module has been used by you, it has automatically marked the basic folders containing your TrueType and Type1 fonts as needing to be 'configured' - therefore, before closing this module you will be prompted to \"Apply\" these changes. This is necessary even if the folders are empty." ) );
+
+    itsCompletePageLayout->addWidget( itsModifiedDirsText, 1, 0 );
+
+    TextLabel2 = new QLabel( itsCompletePage, "TextLabel2" );
+    TextLabel2->setText( tr2i18n( "<p>For further detailed help on how to use this module, please refer to the on-line help documentation.</p>" ) );
+
+    itsCompletePageLayout->addWidget( TextLabel2, 2, 0 );
     addPage( itsCompletePage, tr2i18n( "Setup Complete" ) );
 }
 

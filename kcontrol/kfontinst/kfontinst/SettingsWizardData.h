@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SettingsWizard.ui'
 **
-** Created: Wed Oct 24 23:34:06 2001
+** Created: Wed Nov 28 22:40:29 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -43,6 +43,8 @@ public:
     QLabel* TextLabel1_2_2;
     QWidget* itsCompletePage;
     QLabel* TextLabel1_3;
+    QLabel* itsModifiedDirsText;
+    QLabel* TextLabel2;
 
 
 protected:
