@@ -63,7 +63,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   l1->addWidget( year, 0, 2 );
   QWhatsThis::add( year, i18n("Here you can change the system date's year.") );
 
-  cal = new KDateTable( this );
+  cal = new KDateTable( dateBox );
   l1->addMultiCellWidget( cal, 1, 1, 0, 2 );
   QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month.") );
 
