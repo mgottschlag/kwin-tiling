@@ -28,13 +28,29 @@
 class MenuFile;
 class MenuEntryInfo;
 
-class MenuFolderInfo 
+class MenuInfo
+{
+public:
+    MenuInfo() {}
+    virtual ~MenuInfo() {}
+};
+
+class MenuSeparatorInfo : public MenuInfo
+{
+public:
+    MenuSeparatorInfo() {}
+};
+
+class MenuFolderInfo : public MenuInfo
 {
 public:
     MenuFolderInfo() : dirty(false), hidden(false) { subFolders.setAutoDelete(true); }
 
+    // Add separator
+    void add(MenuSeparatorInfo *, bool initial=false);
+
     // Add sub menu
-    void add(MenuFolderInfo *);
+    void add(MenuFolderInfo *, bool initial=false);
 
     // Remove sub menu (without deleting it)
     void take(MenuFolderInfo *);
@@ -44,7 +60,7 @@ public:
     bool takeRecursive(MenuFolderInfo *info);
     
     // Add entry
-    void add(MenuEntryInfo *);
+    void add(MenuEntryInfo *, bool initial = false);
     
     // Remove entry (without deleteing it)
     void take(MenuEntryInfo *);
@@ -115,11 +131,12 @@ public:
     QString icon; // Icon
     QPtrList<MenuFolderInfo> subFolders; // Sub menus in this folder
     QPtrList<MenuEntryInfo> entries; // Menu entries in this folder
+    QPtrList<MenuInfo> initialLayout; // Layout of menu entries according to sycoca
     bool dirty;
     bool hidden;
 };
 
-class MenuEntryInfo
+class MenuEntryInfo : public MenuInfo
 {
 public:
     MenuEntryInfo(const KService::Ptr &_service, KDesktopFile *_df = 0) 

@@ -35,10 +35,19 @@ static QStringList *s_newShortcuts = 0;
 static QStringList *s_freeShortcuts = 0;
 static QStringList *s_deletedApps = 0;
 
+// Add separator
+void MenuFolderInfo::add(MenuSeparatorInfo *info, bool initial)
+{
+   if (initial)
+      initialLayout.append(info);
+}
+
 // Add sub menu
-void MenuFolderInfo::add(MenuFolderInfo *info)
+void MenuFolderInfo::add(MenuFolderInfo *info, bool initial)
 {
    subFolders.append(info);
+   if (initial)
+      initialLayout.append(info);
 }
 
 // Remove sub menu (without deleting it)
@@ -67,9 +76,11 @@ bool MenuFolderInfo::takeRecursive(MenuFolderInfo *info)
 }
 
 // Add entry
-void MenuFolderInfo::add(MenuEntryInfo *entry)
+void MenuFolderInfo::add(MenuEntryInfo *entry, bool initial)
 {
    entries.append(entry);
+   if (initial)
+      initialLayout.append(entry);
 }
 
 // Remove entry

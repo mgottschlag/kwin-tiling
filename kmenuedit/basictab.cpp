@@ -292,6 +292,30 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     blockSignals(true);
     _menuFolderInfo = 0;
     _menuEntryInfo = entryInfo;
+    
+    if (!entryInfo)
+    {
+       _nameEdit->setText(QString::null);
+       _descriptionEdit->setText(QString::null);
+       _commentEdit->setText(QString::null);
+       _iconButton->setIcon(QString::null);
+
+       // key binding part
+       _keyEdit->setShortcut( KShortcut(), false );
+       _execEdit->lineEdit()->setText(QString::null);
+       _systrayCB->setChecked(false);
+
+       _pathEdit->lineEdit()->setText(QString::null);
+       _termOptEdit->setText(QString::null);
+       _uidEdit->setText(QString::null);
+
+       _launchCB->setChecked(false);
+       _terminalCB->setChecked(false);
+       _uidCB->setChecked(false);
+       enableWidgets(true, true);
+       blockSignals(false);
+       return;
+    }
 
     KDesktopFile *df = entryInfo->desktopFile();
 

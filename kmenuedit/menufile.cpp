@@ -40,6 +40,10 @@
 #define MF_OLD          "Old"
 #define MF_NEW          "New"
 #define MF_DIRECTORY    "Directory"
+#define MF_LAYOUT       "Layout"
+#define MF_MENUNAME     "Menuname"
+#define MF_SEPARATOR    "Separator"
+#define MF_MERGE        "Merge"
 
 MenuFile::MenuFile(const QString &file)
  : m_fileName(file), m_bDirty(false)
@@ -243,6 +247,22 @@ static void purgeDeleted(QDomElement elem)
    }
 }
 
+static void purgeLayout(QDomElement elem)
+{
+   // Remove any previous includes/excludes of appId
+   QDomNode n = elem.firstChild();
+   while( !n.isNull() )
+   {
+      QDomNode next = n.nextSibling();
+      QDomElement e = n.toElement(); // try to convert the node to an element.
+      if (e.tagName() == MF_LAYOUT)
+      {
+         elem.removeChild(e);
+      }
+      n = next;
+   }
+}
+
 void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 {
    m_bDirty = true;   
@@ -265,6 +285,59 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
    fileNode.appendChild(m_doc.createTextNode(menuId));
    includeNode.appendChild(fileNode);
+}
+
+void MenuFile::setLayout(const QString &menuName, const QStringList &layout)
+{
+   m_bDirty = true;   
+
+   QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
+
+   purgeLayout(elem);
+
+   QDomElement layoutNode = m_doc.createElement(MF_LAYOUT);
+   elem.appendChild(layoutNode);
+
+   for(QStringList::ConstIterator it = layout.begin();
+       it != layout.end(); ++it)
+   {
+      QString li = *it;
+      if (li == ":S")
+      {
+         layoutNode.appendChild(m_doc.createElement(MF_SEPARATOR));
+      }
+      else if (li == ":M")
+      {
+         QDomElement mergeNode = m_doc.createElement(MF_MERGE);
+         mergeNode.setAttribute("type", "menus");
+         layoutNode.appendChild(mergeNode);
+      }
+      else if (li == ":F")
+      {
+         QDomElement mergeNode = m_doc.createElement(MF_MERGE);
+         mergeNode.setAttribute("type", "files");
+         layoutNode.appendChild(mergeNode);
+      }
+      else if (li == ":A")
+      {
+         QDomElement mergeNode = m_doc.createElement(MF_MERGE);
+         mergeNode.setAttribute("type", "all");
+         layoutNode.appendChild(mergeNode);
+      }
+      else if (li.endsWith("/"))
+      {
+         li.truncate(li.length()-1);
+         QDomElement menuNode = m_doc.createElement(MF_MENUNAME);
+         menuNode.appendChild(m_doc.createTextNode(li));
+         layoutNode.appendChild(menuNode);
+      }
+      else
+      {
+         QDomElement fileNode = m_doc.createElement(MF_FILENAME);
+         fileNode.appendChild(m_doc.createTextNode(li));
+         layoutNode.appendChild(fileNode);
+      }
+   }
 }
 
 

@@ -80,6 +80,8 @@ public:
    void moveMenu(const QString &oldMenu, const QString &newMenu);
    void removeMenu(const QString &menuName);
 
+   void setLayout(const QString &menuName, const QStringList &layout);
+
    /**
     * Returns a unique menu-name for a new menu under @p menuName 
     * inspired by @p newMenu and not part of @p excludeList

@@ -33,6 +33,7 @@ class KDesktopFile;
 class MenuFile;
 class MenuFolderInfo;
 class MenuEntryInfo;
+class MenuSeparatorInfo;
 
 class TreeItem : public QListViewItem
 {
@@ -55,18 +56,27 @@ public:
     void setName(const QString &name);
 
     bool isDirectory() const { return m_folderInfo; }
+    bool isEntry() const { return m_entryInfo; }
 
     bool isHidden() const { return _hidden; }
     void setHidden(bool b);
 
+    bool isLayoutDirty() { return _layoutDirty; }
+    void setLayoutDirty() { _layoutDirty = true; }
+    QStringList layout();
+
     virtual void setOpen(bool o);
     void load();
+
+    virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align);
+    virtual void setup();
 
 private:
     void update();
 
     bool _hidden : 1;
     bool _init : 1;
+    bool _layoutDirty : 1;
     QString _menuId;
     QString _name;
     QString _directoryPath;
@@ -87,7 +97,7 @@ public:
     void save();
 
     bool dirty();
-
+    
 public slots:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);
@@ -113,6 +123,7 @@ protected slots:
 protected:
     TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
     TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuSeparatorInfo *sepInfo, bool _init = false);
 
     void del(TreeItem *, bool deleteInfo);
     void fill();
@@ -123,6 +134,10 @@ protected:
     void copy( bool moving );
 
     void cleanupClipboard();
+    
+    bool isLayoutDirty();
+    void setLayoutDirty(TreeItem *);
+    void saveLayout();
 
     QStringList fileList(const QString& relativePath);
     QStringList dirList(const QString& relativePath);
@@ -144,10 +159,12 @@ private:
     bool               m_controlCenter;
     MenuFile          *m_menuFile;
     MenuFolderInfo    *m_rootFolder;
+    MenuSeparatorInfo *m_separator;
     QStringList        m_newMenuIds;
     QStringList        m_newDirectoryList;
     bool               m_detailedMenuEntries;
     bool               m_detailedEntriesNamesFirst;
+    bool               m_layoutDirty;
 };
 
 
