@@ -49,6 +49,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
                   I18N_NOOP("(c) 2003 Ralf Hoelzer"));
 
   about->addAuthor("Ralf Hoelzer", 0, "ralf@well.com");
+  about->addAuthor("Benjamin Meyer", I18N_NOOP("Thumbnail Cache"), "ben+kdeprivacy@meyerhome.net");
   setAboutData( about );
 
   m_privacymanager = new KPrivacyManager();
