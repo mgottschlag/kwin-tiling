@@ -79,7 +79,8 @@ KLoginLineEdit::focusOutEvent( QFocusEvent *e)
 class MyApp : public KApplication {
 
 public:
-    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") {};
+    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") 
+    { disableAutoDcopRegistration(); };
     virtual bool x11EventFilter( XEvent * );
 };
 
