@@ -31,6 +31,7 @@ themes_DATA = Template.themerc
 install-data-local:
 	cp -r $(srcdir)/Themes BuildThemes; \
 	rm -rf `find BuildThemes -type d -name CVS -print`; \
+	mkdir -p $(DESTDIR)$(themesdir)
 	( cd BuildThemes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
