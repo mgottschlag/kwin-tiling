@@ -33,8 +33,8 @@ QListView *Programs::events=0;
 void EventConfig::load(KConfig &conf)
 {
 	internalname=conf.group();
-	friendly=conf.readEntry("friendly", "Unknown Name");
-	description=conf.readEntry("description", "No Description");
+	friendly=conf.readEntry("Name", "Unknown Name");
+	description=conf.readEntry("Comment", "No Description");
 	
 	{ // Load the presentation
 		present=conf.readNumEntry("presentation", -1);
@@ -82,8 +82,8 @@ ProgramConfig::~ProgramConfig()
 void ProgramConfig::load(KConfig &conf)
 {
 	// Load the Names
-	appname=conf.readEntry("appname", "Unknown Title");
-	description=conf.readEntry("description", "No Description");
+	appname=conf.readEntry("Name", "Unknown Title");
+	description=conf.readEntry("Comment", "No Description");
 
 	// Load all the events	
 	QStringList conflist=conf.groupList();
