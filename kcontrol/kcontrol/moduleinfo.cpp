@@ -24,7 +24,6 @@
 #include <kdesktopfile.h>
 #include <kservice.h>
 #include <kdebug.h>
-#include <assert.h>
 
 #include "moduleinfo.h"
 #include "moduleinfo.moc"
@@ -38,7 +37,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
   //kdDebug(1208) << "desktopFile = " << desktopFile << endl;
   _service = KService::serviceByDesktopPath(desktopFile);
-  assert(_service != 0L);
+  Q_ASSERT(_service != 0L);
 
   // set the modules simple attributes
   setName(_service->name());
@@ -86,8 +85,9 @@ ModuleInfo::loadAll() const
   // does the module need super user privileges?
   non_const_this->setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
-  // does the module implement a read-only mode?
-  non_const_this->setHasReadOnlyMode(desktop.readBoolEntry("X-KDE-HasReadOnlyMode", false));
+  // does the module need to be shown to root only?
+  // Depricated !
+  non_const_this->setIsHiddenByDefault(desktop.readBoolEntry("X-KDE-IsHiddenByDefault", false));
 
   // get the documentation path
   non_const_this->setDocPath(desktop.readEntry("DocPath"));
@@ -190,10 +190,10 @@ ModuleInfo::needsRootPrivileges() const
 };
 
 bool
-ModuleInfo::hasReadOnlyMode() const
+ModuleInfo::isHiddenByDefault() const
 {
   if (!_allLoaded) loadAll();
 
-  return _hasReadOnlyMode;
+  return _isHiddenByDefault;
 };
 

@@ -72,10 +72,10 @@ ProxyWidget *ConfigModule::module()
 
   KCModule *modWidget = 0;
 
-  if (run_as_root && !hasReadOnlyMode())
+  if (run_as_root && isHiddenByDefault())
      modWidget = new KCRootOnly(0, "root_only");
   else
-     modWidget = ModuleLoader::loadModule(*this);
+      modWidget = ModuleLoader::loadModule(*this);
 
   if (modWidget)
     {

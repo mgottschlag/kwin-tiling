@@ -27,8 +27,13 @@
 #include <kapp.h>
 #include <kcmodule.h>
 #include <kseparator.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <kdialog.h>
 
 #include <qwhatsthis.h>
+#include <qvbox.h>
+#include <qlabel.h>
 
 #include "proxywidget.h"
 #include "proxywidget.moc"
@@ -53,6 +58,8 @@ private:
     ProxyWidget* proxy;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static void setVisible(QPushButton *btn, bool vis)
 {
   if (vis)
@@ -61,10 +68,51 @@ static void setVisible(QPushButton *btn, bool vis)
     btn->hide();
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+class RootInfoWidget : public QFrame
+{
+public:
+    RootInfoWidget(QWidget *parent, const char *name);
+};
+
+RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
+    : QFrame(parent, name)
+{
+    setFrameShape(QFrame::Box);
+    setFrameShadow(QFrame::Raised);
+
+    QHBoxLayout *layout = new QHBoxLayout(this, KDialog::spacingHint(), KDialog::marginHint());
+    QLabel *pixmap = new QLabel(this);
+    pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
+    QLabel *text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
+                                   "<p>Click the &quot;modify&quot; button to allow "
+                                   "modifications on this module.</p></qt>"), this);
+
+	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
+                              "for system-wide modifications. Therefore it is "
+                              "required that you provide the root password to be "
+                              "able to change the modules properties. As long as "
+                              "you don't provide the password, the module will be "
+                              "disabled."));
+
+
+    pixmap->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
+    text->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum));
+
+    layout->addWidget(pixmap);
+    layout->addWidget(text);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class ProxyView : public QScrollView
 {
 public:
-    ProxyView(KCModule *client, const QString& title, QWidget *parent, const char *name);
+    ProxyView(KCModule *client, const QString& title, QWidget *parent, bool run_as_root, const char *name);
 
 private:
     virtual void resizeEvent(QResizeEvent *);
@@ -74,15 +122,21 @@ private:
 };
 
 
-ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, const char *name)
+ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool run_as_root, const char *name)
     : QScrollView(parent, name), client(_client)
 {
-  setResizePolicy(QScrollView::Manual);
+  setResizePolicy(QScrollView::AutoOneFit);
   setVScrollBarMode(AlwaysOff);
   setHScrollBarMode(AlwaysOff);
-  client->reparent(viewport(),0,QPoint(0,0),true);
-  addChild(client);
+  QVBox* box = new QVBox(viewport());
+  if (run_as_root) // notify the user
+  {
+      QWidget *infoBox = new RootInfoWidget(box);
+      box->setSpacing(KDialog::spacingHint());
+  }
+  client->reparent(box,0,QPoint(0,0),true);
   client->adjustSize();
+  addChild(box);
   scroll = (kapp->desktop()->width() < 800 || kapp->desktop()->height() < 640 || client->minimumSizeHint().width() > 700 || client->minimumSizeHint().height() > 510);
   if (!scroll) {
     QSize min = client->minimumSizeHint();
@@ -134,6 +188,10 @@ void ProxyView::resizeEvent(QResizeEvent *e)
     QScrollView::resizeEvent(e);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
              bool run_as_root)
   : QWidget(0, name)
@@ -141,7 +199,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 {
   setCaption(title);
 
-  view = new ProxyView(client, title, this, "proxyview");
+  view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
   connect(_client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
