@@ -555,6 +555,7 @@ SwitchToTty (struct display *d)
 	return;
     }
     strncpy (utp->line, d->console, UT_LINESIZE);
+    utp->line[ UT_LINESIZE - 1 ] = '\0';
     utp->d = d;
     utp->time = time(0);
     utp->hadSess = 0;
