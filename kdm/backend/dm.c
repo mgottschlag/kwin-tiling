@@ -917,6 +917,21 @@ ReapChildren (void)
 			int con = open ("/dev/console", O_RDONLY);
 			if (con >= 0)
 			{
+			    struct vt_stat vtstat;
+			    ioctl (con, VT_GETSTATE, &vtstat);
+			    if (vtstat.v_active == d->serverVT) {
+				int vt = 1;
+				struct display *di;
+				for (di = displays; di; di = di->next)
+				    if (di != d && di->serverVT)
+					vt = di->serverVT;
+				for (di = displays; di; di = di->next)
+				    if (di != d && di->serverVT &&
+					(di->userSess >= 0 ||
+					 di->status == remoteLogin))
+					vt = di->serverVT;
+				ioctl (con, VT_ACTIVATE, vt);
+			    }
 			    ioctl (con, VT_DISALLOCATE, d->serverVT);
 			    close (con);
 			}
