@@ -271,6 +271,8 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect( tbText , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbAside, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbUnder, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+    connect( tbHilite, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+    connect( tbTransp, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
 
     grid->addWidget(tbIcon, 0, 0);
     grid->addWidget(tbText, 0, 1);
@@ -310,6 +312,9 @@ void KGeneral::slotChangeTbStyle()
     tbUseText = 3;
     else
     tbUseText = 0 ;
+
+    tbUseHilite = tbHilite->isChecked();
+    tbMoveTransparent = tbTransp->isChecked();
 
     m_bChanged = true;
     emit changed(true);
@@ -362,7 +367,7 @@ void KGeneral::showSettings()
     cbRes->setChecked(useRM);
     cbMac->setChecked(macStyle);
 
-    tbHilite->setChecked(tbHilite);
+    tbHilite->setChecked(tbUseHilite);
     tbTransp->setChecked(tbMoveTransparent);
 
     switch (tbUseText) {

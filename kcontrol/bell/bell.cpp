@@ -108,9 +108,9 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   layout->addStretch(1);
 
   // watch for changes
-  connect(m_volume, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-  connect(m_pitch, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-  connect(m_duration, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+  connect(m_volume, SIGNAL(valueChanged(int)), this, SIGNAL(changed(bool)));
+  connect(m_pitch, SIGNAL(valueChanged(int)), this, SIGNAL(changed(bool)));
+  connect(m_duration, SIGNAL(valueChanged(int)), SIGNAL(changed(bool)));
 
   load();
 }
