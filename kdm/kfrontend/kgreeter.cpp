@@ -425,10 +425,12 @@ KGreeter::timerDone()
 void
 KGreeter::reject()
 {
-    timer->stop();
+    if (!loginfailed) {
+	timer->stop();
+	loginEdit->setFocus();
+    }
     loginEdit->clear();
     passwdEdit->erase();
-    loginEdit->setFocus();
     sasPrev->hide();
     sasSel->hide();
     wmstat = WmNone;
