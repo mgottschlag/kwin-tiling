@@ -230,7 +230,7 @@ void ModifiersModule::initGUI()
 		i18n("Checking this box will change your X Modifier Mapping to "
 			"better reflect the standard MacOS modifier key usage. "
 			"It allows you to use <i>Command+C</i> for <i>Copy</i>, for instance, "
-			"instead of the PC standard of <i>CTRL+C</I>. "
+			"instead of the PC standard of <i>Ctrl+C</I>. "
 			"<b>Command</b> will be used for application and console commands, "
 			"<b>Option</b> as a command modifier and for navigating menus and dialogs, "
 			"and <b>Control</b> for window manager commands.") );
