@@ -108,7 +108,7 @@ void DockContainer::dockModule(ConfigModule *module)
 	  _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
-      
+
       //####### this doesn't work anymore, what was it supposed to do? The signal is gone.
 //       connect(_module, SIGNAL(quickHelpChanged()),
 //               this, SLOT(quickHelpChanged()));
@@ -124,7 +124,10 @@ void DockContainer::dockModule(ConfigModule *module)
   else
     QApplication::restoreOverrideCursor();
 
-  if (widget) widget->show();
+  if (widget)  {
+      widget->show();
+      QApplication::sendPostedEvents( widget, QEvent::ShowWindowRequest ); // show NOW
+  }
   _busy->hide();
 }
 
