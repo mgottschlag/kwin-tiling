@@ -2,7 +2,7 @@
 AM_CPPFLAGS = -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST -DQT_NO_COMPAT
 INCLUDES = $(all_includes) -I..
 
-SUBDIRS = default
+SUBDIRS = default pics
 
 lib_LTLIBRARIES = libkcm_locale.la
 libkcm_locale_la_SOURCES = ktagcombobox.cpp klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 

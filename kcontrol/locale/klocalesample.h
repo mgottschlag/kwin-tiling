@@ -28,6 +28,7 @@
 #include <qwidget.h>
 
 class QLabel;
+class QResizeEvent;
 
 class KLocaleSample : public QWidget
 {
@@ -37,6 +38,9 @@ public:
 
 public slots:
   void update();
+
+protected:
+  virtual void resizeEvent(QResizeEvent *);
 
 private:
   QLabel *numberSample, *labNumber;

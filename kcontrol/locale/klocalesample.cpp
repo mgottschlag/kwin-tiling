@@ -27,9 +27,11 @@
 #include <qlabel.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
+#include <qpixmap.h>
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kstddirs.h>
 
 #include "klocaleadv.h"
 #include "klocalesample.h"
@@ -59,10 +61,53 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
 
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
+
+  // background pixmap stuff
+  QString path = locate("data", 
+			QString::fromLatin1("kcmlocale/pics/background.png"));
+  QPixmap pix;
+  pix.load( path );
+
+  if ( !pix.isNull() ) {
+    setBackgroundPixmap( pix );
+
+    labNumber->setBackgroundOrigin( ParentOrigin );
+    numberSample->setBackgroundOrigin( ParentOrigin );
+    labMoney->setBackgroundOrigin( ParentOrigin );
+    moneySample->setBackgroundOrigin( ParentOrigin );
+    labDate->setBackgroundOrigin( ParentOrigin );
+    dateSample->setBackgroundOrigin( ParentOrigin );
+    labDateShort->setBackgroundOrigin( ParentOrigin );
+    dateShortSample->setBackgroundOrigin( ParentOrigin );
+    labTime->setBackgroundOrigin( ParentOrigin );
+    timeSample->setBackgroundOrigin( ParentOrigin );
+
+    labNumber->setBackgroundPixmap( pix );
+    numberSample->setBackgroundPixmap( pix );
+    labMoney->setBackgroundPixmap( pix );
+    moneySample->setBackgroundPixmap( pix );
+    labDate->setBackgroundPixmap( pix );
+    dateSample->setBackgroundPixmap( pix );
+    labDateShort->setBackgroundPixmap( pix );
+    dateShortSample->setBackgroundPixmap( pix );
+    labTime->setBackgroundPixmap( pix );
+    timeSample->setBackgroundPixmap( pix );
+  }
 }
 
 KLocaleSample::~KLocaleSample()
 {
+}
+
+void KLocaleSample::resizeEvent( QResizeEvent * )
+{
+  const QPixmap *old = backgroundPixmap();
+  if ( !old )
+    return;
+    
+  QPixmap *pix = new QPixmap( *old );
+  pix->resize( size() );
+  setBackgroundPixmap( pix ? *pix : 0L );
 }
 
 void KLocaleSample::update()
