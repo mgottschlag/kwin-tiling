@@ -77,7 +77,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     QWhatsThis::add(m_maxSlider, maxstr);
     QWhatsThis::add(m_maxSpinBox, maxstr);
 
-    QWhatsThis::add(m_detailedEntries, i18n("Toogle menu entry details."));
+    QWhatsThis::add(m_detailedEntries, i18n("Toggle menu entry details."));
 
     QWhatsThis::add(m_showBookmarks, i18n("Enabling this option will make the panel show "
                                           "a bookmarks menu in your KDE menu"));
