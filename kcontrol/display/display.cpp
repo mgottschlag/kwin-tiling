@@ -59,6 +59,8 @@ KCModule* KCMDisplay::addTab( const QString &name, const QString &label )
 
     connect( kcm, SIGNAL( changed(bool) ), SLOT( setChanged(bool) ) );
   }
+  else
+    delete page;
 
   return kcm;
 }
