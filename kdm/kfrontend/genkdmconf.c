@@ -409,17 +409,17 @@ const char def_startup[] =
 "  if [ -z \"$devname\" ]; then\n"
 "    devname=\"unknown\"\n"
 "  fi\n"
-"  if [ ! -d /dev/kdm ]; then\n"
-"    /usr/bin/mkdir /dev/kdm\n"
-"    /usr/bin/chmod 755 /dev/kdm\n"
+"  if [ ! -d /dev/xdm ]; then\n"
+"    /usr/bin/mkdir /dev/xdm\n"
+"    /usr/bin/chmod 755 /dev/xdm\n"
 "  fi\n"
-"  /usr/bin/touch /dev/kdm/$devname\n"
-"  /usr/bin/chmod 644 /dev/kdm/$devname\n"
+"  /usr/bin/touch /dev/xdm/$devname\n"
+"  /usr/bin/chmod 644 /dev/xdm/$devname\n"
 "\n"
 "  if [ -z \"$hostname\" ]; then\n"
-"    exec /usr/lib/X11/xdm/sessreg -a -l kdm/$devname $USER\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l xdm/$devname $USER\n"
 "  else\n"
-"    exec /usr/lib/X11/xdm/sessreg -a -l kdm/$devname -h $hostname $USER\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l xdm/$devname -h $hostname $USER\n"
 "  fi\n"
 "fi\n";
 #else
@@ -449,7 +449,7 @@ const char def_reset[] =
 #ifdef _AIX
 "if [ -f /usr/lib/X11/xdm/sessreg ]; then\n"
 "  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
-"  exec /usr/lib/X11/xdm/sessreg -d -l kdm/$devname $USER\n"
+"  exec /usr/lib/X11/xdm/sessreg -d -l xdm/$devname $USER\n"
 "fi\n";
 #else
 "#exec sessreg -d -l $DISPLAY "
