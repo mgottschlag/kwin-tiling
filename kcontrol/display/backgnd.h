@@ -16,7 +16,7 @@
 #include <qlineedit.h>
 #include <qbuttongroup.h>
 
-#include <kintegerline.h>
+#include <kintlineedit.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
 #include <kcontrol.h>
@@ -218,7 +218,7 @@ private:
   QLineEdit *dirLined;
   QPushButton *dirPushButton;
 
-  KIntegerLine *timerLined;
+  KIntLineEdit *timerLined;
   KDNDDropZone *picdrop;
 
   KBackground *kb;

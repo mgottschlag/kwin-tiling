@@ -1798,7 +1798,7 @@ KRandomDlg::KRandomDlg(int _desktop, KBackground *_kb, char *name)
 	
   pushLayout->addWidget( timerLabel );
 
-  timerLined = new KIntegerLine( this );
+  timerLined = new KIntLineEdit( this );
   timerLined->setValue( delay );
   timerLined->setMinimumSize( timerLined->sizeHint() );
 
