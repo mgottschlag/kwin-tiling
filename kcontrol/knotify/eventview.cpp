@@ -227,12 +227,18 @@ void EventView::setPixmap(int item, bool on)
 
 void EventView::save()
 {
-	unload();
+	if (!conf) return;
+	conf->writeEntry("presentation", int(present));
+	if (!soundfile.isEmpty())
+		conf->writeEntry("soundfile", soundfile);
+	if (!soundfile.isEmpty())
+		conf->writeEntry("logfile", logfile);
+	conf->sync();
 }
 
 void EventView::unload()
 {
-	
+	save();
 	delete conf;
 	enabled->setChecked(false);
 	file->setText("");
