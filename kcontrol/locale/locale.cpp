@@ -281,6 +281,7 @@ void KLocaleConfig::defaults()
   comboNumber->setCurrentItem(C);
   comboMoney->setCurrentItem(C);
   comboDate->setCurrentItem(C);
+  comboChset->setCurrentItem(QString::fromLatin1("iso-8859-1"));
   
   emit resample();
   emit countryChanged();
