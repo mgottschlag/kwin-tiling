@@ -77,7 +77,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     frame->setLineWidth( style().pixelMetric( QStyle::PM_DefaultFrameWidth, frame ) );
 #endif
     vbox->addWidget( frame );
-    vbox = new QVBoxLayout( frame, 15, 5 );
+    vbox = new QVBoxLayout( frame, 15, 11 );
 
     QString username;
     char buf[128];
