@@ -23,7 +23,7 @@
 
 #include "htmlopts.h"
 
-#include "../../kfm/config-kfm.h"
+#include "defaults.h"
 #include <klocale.h> // include default values directly from kfm
 
 //-----------------------------------------------------------------------------
@@ -226,8 +226,8 @@ void KFontOptions::defaultSettings()
 {
     g_pConfig->setGroup( "KFM HTML Defaults" );			
     fSize=4;
-    stdName = DEFAULT_VIEW_FONT;
-    fixedName = DEFAULT_VIEW_FIXED_FONT;
+    stdName = KGlobal::generalFont().family();
+    fixedName = KGlobal::fixedFont().family();
     charsetName = "";
 
     updateGUI();
@@ -236,9 +236,9 @@ void KFontOptions::defaultSettings()
 void KFontOptions::updateGUI()
 {
     if ( stdName.isEmpty() )
-        stdName = DEFAULT_VIEW_FONT;
+        stdName = KGlobal::generalFont().family();
     if ( fixedName.isEmpty() )
-        fixedName = DEFAULT_VIEW_FIXED_FONT;  
+        fixedName = KGlobal::fixedFont().family();
     
     QStrListIterator sit( standardFonts );
     int i;

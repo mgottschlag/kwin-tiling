@@ -13,7 +13,7 @@
 
 #include <qlayout.h> //CT
 
-#include "../../kfm/config-kfm.h"
+#include "defaults.h"
 
 UserAgentOptions::UserAgentOptions( QWidget * parent, const char * name ) :
   KConfigWidget( parent, name )

@@ -12,7 +12,7 @@
 
 #include "miscopts.h"
 
-#include "../../kfm/config-kfm.h"
+#include "defaults.h"
 #include <klocale.h> // include default values directly from kfm
 
 //-----------------------------------------------------------------------------
