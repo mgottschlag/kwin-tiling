@@ -67,7 +67,8 @@ void WidgetCanvas::drawSampleWidgets()
     int spot = 0;
     QBrush brush;
     QColorGroup cg;
-
+    if(smplw.isNull()) // I shouldn't have to do this...
+	smplw.resize(100, boxSize+25);
     QPainter paint( &smplw );
 
     // Draw main kpanel
