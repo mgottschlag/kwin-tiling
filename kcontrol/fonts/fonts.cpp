@@ -507,6 +507,8 @@ void KFonts::save()
   KSimpleConfig* config = new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
+      if("font"==i->rcKey())
+          QSettings().writeEntry("/qt/font", i->font().toString());
       kdDebug () << "write entry " <<  i->rcKey() << endl;
       config->writeEntry( i->rcKey(), i->font() );
   }
