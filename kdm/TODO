@@ -49,8 +49,6 @@ Could:
 - Different logos for each session type
 - User pictures in logo field
 
-- check if pam works before trying to authenticate
-
 - remote-accessible command sockets for remote shutdown, etc.
   or maybe implement it as an xdmcp extension?
 - LoginMode=DirectQuery
