@@ -211,7 +211,8 @@ void EditButton::mouseReleaseEvent( QMouseEvent * _mouse )
 	  QMessageBox::warning( 0, i18n("KMenuedit"), 
 				i18n("Sorry ! You have to save your changes\n"
 				"before you can drop this item on "
-				"another window.") );
+				"another window."),
+				i18n("OK") );
 	  delete dndIcon;
 	  dndIcon = 0L;
 	  dragEndEvent();

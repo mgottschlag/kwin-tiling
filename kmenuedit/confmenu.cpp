@@ -159,14 +159,14 @@ void MenuButton::open()
 
 void MenuButton::delete_item()
 {
-  QMessageBox msg_box;
   if( pmenu_item->getType() == submenu )
     {
-      if( !msg_box.query( i18n("Warning !"),
+      if( QMessageBox::warning(this,
+			  i18n("Warning !"),
 			  i18n("If you delete this button you will lose all of its submenus"),
 			  i18n("OK"),
-			  i18n("Cancel") ) )
-	{ return; }
+			  i18n("Cancel") ) == 1 )
+	  return;
     }
   emit delButton( id );
   changes_to_save = TRUE;
@@ -302,11 +302,11 @@ void MenuButton::change_accept()
 	{
 	  if( old_type == submenu )
 	    {
-	      QMessageBox msg_box;
-	      if( msg_box.query( i18n("Warning !"),
+	      if( QMessageBox::warning(this,
+			         i18n("Warning !"),
 				 i18n("Changing the type of this button will delete all of its submenus"),
 				 i18n("OK"),
-				 i18n("Cancel") ) )
+				 i18n("Cancel") ) == 0 )
 		{
 		  popmenu.removeItemAt(0);
 		  disconnect( this, SIGNAL(clicked(int)), this, SLOT(sOpen(int)) );
