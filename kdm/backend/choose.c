@@ -788,7 +788,7 @@ AddChooserHost (
 #endif
 	registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
 #ifdef IN_MULTICAST
-			 IN_MULTICAST(&in_addr.sin_addr.s_addr) ?
+			 IN_MULTICAST(in_addr.sin_addr.s_addr) ?
 			 BROADCAST_QUERY :
 #endif
 			 QUERY);
