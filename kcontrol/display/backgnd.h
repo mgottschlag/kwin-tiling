@@ -71,6 +71,8 @@ public:
     virtual void save();
     virtual void defaults();
 
+    QString quickHelp();
+
 signals:
     void changed(bool);
 

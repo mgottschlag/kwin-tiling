@@ -13,7 +13,7 @@ bell                  [ ]         [ ]         [ ]
 clock                 [ ]         [ ]         [ ]
 display
   advanced.cpp        [ ]         [ ]         [ ]
-  backgnd.cpp         [ ]         [ ]         [ ]
+  backgnd.cpp         [x]         [ ]         [ ]
   colorscm.cpp        [x]         [x]         [ ]
   energy.cpp          [x]         [ ]         [ ]
   fonts.cpp           [s]         [ ]         [ ]

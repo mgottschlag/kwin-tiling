@@ -33,6 +33,7 @@
 #include <qdragobject.h>
 #include <qhbox.h>
 #include <qevent.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -126,6 +127,13 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
     vbox->addWidget(m_pCBCommon);
     connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
+    QWhatsThis::add( m_pDeskList, i18n("Choose the desktop whose background"
+      " you want to modify. If you want the same background settings to be"
+      " applied to all desktops, check the \"Common Background\" option, and"
+      " this list will be disabled.") );
+    QWhatsThis::add( m_pCBCommon, i18n("Check this option if you want to have"
+      " the same background settings for all desktops. If this option is not"
+      " checked, the background settings can be customized for each desktop.") );
 
     // Background settings
     group = new QGroupBox(i18n("Background"), this);
@@ -143,6 +151,16 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBackgroundBox, SIGNAL(activated(int)), SLOT(slotBGMode(int)));
     lbl->setBuddy(m_pBackgroundBox);
     grid->addWidget(m_pBackgroundBox, 1, 1);
+    QWhatsThis::add( m_pBackgroundBox, i18n("You can select the manner in which"
+      " the background is painted. The choices are:"
+      " <ul><li><em>Flat:</em> Use a solid color (\"Color 1\").</li>"
+      " <li><em>Pattern:</em> Use a two-color pattern. Click \"Setup\" to choose"
+      " the pattern.</li>"
+      " <li><em>Gradients:</em> Blend two colors using a predefined gradient"
+      " (horizontal, vertical, etc.).</li>"
+      " <li><em>Program:</em> Use an application which paints the background, for"
+      " example, with a day/night map of the world that is refreshed periodically."
+      " Click \"Setup\" to select and configure the program.</li></ul>") );
 
     lbl = new QLabel(i18n("Color &1:"), group);
     lbl->setFixedSize(lbl->sizeHint());
@@ -152,6 +170,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	    SLOT(slotColor1(const QColor &)));
     grid->addWidget(m_pColor1But, 2, 1);
     lbl->setBuddy(m_pColor1But);
+    QWhatsThis::add( m_pColor1But, i18n("Click to choose a color.") );
 
     lbl = new QLabel(i18n("Color &2:"), group);
     lbl->setFixedSize(lbl->sizeHint());
@@ -161,6 +180,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	    SLOT(slotColor2(const QColor &)));
     grid->addWidget(m_pColor2But, 3, 1);
     lbl->setBuddy(m_pColor2But);
+    QWhatsThis::add( m_pColor2But, i18n("Click to choose a second color. If the"
+      " background mode does not require a second color, this button is disabled.") );
 
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 4, 1);
@@ -169,6 +190,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
     hbox->addStretch();
+    QWhatsThis::add( m_pBGSetupBut, i18n("If the background mode you selected has"
+      " additional options to configure, click here.") );
 
 
     // Preview monitor at (0,1)
@@ -197,6 +220,19 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pArrangementBox, SIGNAL(activated(int)), SLOT(slotWPMode(int)));
     lbl->setBuddy(m_pArrangementBox);
     grid->addWidget(m_pArrangementBox, 1, 1);
+    QWhatsThis::add( m_pArrangementBox, i18n("You can have a wallpaper (based on"
+      " a graphic) on top of your background. You can choose one of the following"
+      " methods for displaying the wallpaper:"
+      " <ul><li><em>Centered:</em> Center the graphic on the desktop.</li>"
+      " <li><em>Tiled:</em> Tile the graphic beginning at the top left of the"
+      " desktop, so the background is totally covered up.</li>"
+      " <li><em>Center Tiled:</em> Center the graphic on the desktop, and then"
+      " tile around it so that the background is totally covered up.</li>"
+      " <li><em>Centered Maxpect:</em> Magnify the graphic without distorting it"
+      " until it fills either the width or height of the desktop, and then center"
+      " it on the desktop.</li>"
+      " <li><em>Scaled:</em> Magnify the graphic, distorting it if necessary,"
+      " until the entire desktop is covered.</li></ul>") );
 
     lbl = new QLabel(i18n("&Wallpaper"), group);
     lbl->setFixedSize(lbl->sizeHint());
@@ -206,6 +242,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
 	    SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 2, 1);
+    QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
+      " to use as wallpaper.") );
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
@@ -214,6 +252,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     hbox->addWidget(m_pBrowseBut);
     hbox->addStretch();
+    QWhatsThis::add( m_pBrowseBut, i18n("If the graphic you want is not in a standard"
+      " directory, you can still find it by clicking here.") );
 
     m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), group);
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
@@ -226,6 +266,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
     hbox->addWidget(m_pMSetupBut);
     hbox->addStretch();
+    QWhatsThis::add( m_pCBMulti, i18n("If you check this option, you can choose"
+      " a set of graphic files to be used as wallpaper, one at a time, for an"
+      " interval ranging from 5 minutes to 4 hours. You can also choose to have"
+      " the graphics selected at random or in the order you specified them.") );
+    QWhatsThis::add( m_pMSetupBut, i18n("Click here to select graphics to be used"
+      " for wallpaper, and to configure other options.") );
 
     // Blending
     group = new QGroupBox(i18n("Blending between Background and Wallpaper"),
@@ -243,7 +289,10 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBlendBox, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
     lbl->setBuddy(m_pBlendBox);
     grid->addWidget(m_pBlendBox,1,1);
-
+    QWhatsThis::add( m_pBlendBox, i18n("If you have selected to wallpaper, you"
+      " can choose various methods of blending the background colors and patterns"
+      " with the wallpaper. The default option, \"No Blending\", means that the"
+      " wallpaper simply obscures the background below.") );
 
     lbl = new QLabel(i18n("&Balance:"), group);
     lbl->setFixedSize(lbl->sizeHint());
@@ -254,12 +303,17 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	    SLOT(slotBlendBalance(int)));
     lbl->setBuddy(m_pBlendSlider);
     grid->addWidget(m_pBlendSlider,1,3);
+    QWhatsThis::add( m_pBlendSlider, i18n("You can use this slider to control"
+      " the degree of blending. You can experiment by moving the slider and"
+      " looking at the effects in the preview image above.") );
 
     m_pReverseBlending = new QCheckBox(i18n("&Reverse"), group);
     m_pReverseBlending->setFixedSize(m_pReverseBlending->sizeHint());
     connect(m_pReverseBlending, SIGNAL(toggled(bool)), 
 	    SLOT(slotReverseBlending(bool)));
     grid->addWidget(m_pReverseBlending,1,4);
+    QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
+      " reverse the background and wallpaper layers by checking this option.") );
 
     m_Desk = KWin::currentDesktop() - 1;
     m_Max = KWin::numberOfDesktops();
@@ -331,10 +385,10 @@ void KBackground::init()
 
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("No Wallpaper"));
-    m_pArrangementBox->insertItem(i18n("Centred"));
+    m_pArrangementBox->insertItem(i18n("Centered"));
     m_pArrangementBox->insertItem(i18n("Tiled"));
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
-    m_pArrangementBox->insertItem(i18n("Centred Maxpect"));
+    m_pArrangementBox->insertItem(i18n("Centered Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
     m_pArrangementBox->setFixedWidth(width);
 }
@@ -750,7 +804,7 @@ void KBackground::slotBrowseWallpaper()
     if (url.isEmpty())
       return;
     if (!url.isLocalFile()) {
-      KMessageBox::sorry(this, i18n("Currently are only local wallpapers allowed."));
+      KMessageBox::sorry(this, i18n("Currently only local wallpapers are allowed."));
       return;
     }
     QString file = url.path();
@@ -855,6 +909,27 @@ void KBackground::slotPreviewDone(int desk_done)
 	pm.convertFromImage(*r->image());
 
     m_pMonitor->setBackgroundPixmap(pm);
+}
+
+
+QString KBackground::quickHelp()
+{
+    return i18n("<h1>Background</h1> This module allows you to control the"
+      " appearance of the virtual desktops. KDE offers a variety of options"
+      " for customization, including the ability to specify different settings"
+      " for each virtual desktop, or a common background for all of them.<p>"
+      " The appearance of the desktop results from the combination of its"
+      " background colors and patterns, and optionally, wallpaper, which is"
+      " based on the image from a graphic file.<p>"
+      " The background can be made up of a single color, or a pair of colors"
+      " which can be blended in a variety of patterns. Wallpaper is also"
+      " customizable, with options for tiling and stretching images. The"
+      " wallpaper can be overlaid opaquely, or blended in different ways with"
+      " the background colors and patterns.<p>"
+      " KDE allows you to have the wallpaper change automatically at prespecified"
+      " intervals of time. You can also replace the background with a program"
+      " that updates the desktop dynamically. For example, the \"kdeworld\""
+      " program shows a day/night map of the world which is updated periodically.");
 }
 
 

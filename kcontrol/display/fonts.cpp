@@ -223,11 +223,19 @@ void KFonts::defaults()
 
 QString KFonts::quickHelp()
 {
-    return i18n( "<h1>Fonts</h1> In KDE you can freely choose which fonts will be"
-      " used to display text. In this module you can assign a font (consisting"
-      " of a font family like <em>helvetica</em> and attributes like <em>bold</em>)"
-      " to a type of text (e.g. toolbar text). Just select a type of text in the box"
-      " on the left, then change the settings." );
+    return i18n( "<h1>Fonts</h1> This module allows you to choose which"
+      " fonts will be used to display text in KDE. You can select not only"
+      " the font family (for example, <em>helvetica</em> or <em>times</em>),"
+      " but also the attributes that make up a specific font (for example,"
+      " <em>bold</em> style and <em>12 points</em> in height.)<p>"
+      " Just select the type of text (for example, <em>menu text</em>) and"
+      " then change the font settings. Note that some fonts, such as those"
+      " used to display text in a word-processor, cannot be specified here."
+      " Those fonts must be specified within the relevant application.<p>"
+      " All KDE applications will use the font settings specified here."
+      " You can ask KDE to try and apply font and color settings to non-KDE"
+      " applications as well. See the \"Style\" control module under"
+      " \"Themes\" for more information.");
 }
 
 void KFonts::load()
