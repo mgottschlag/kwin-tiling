@@ -55,29 +55,6 @@
 
 /**** DLL Interface for kcontrol ****/
 
-void applyGtkStyles(bool active)
-{
-   QString gtkkde = QDir::homeDirPath()+"/.gtkrc-kde";
-   QCString gtkrc = getenv("GTK_RC_FILES");
-   QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
-   if (list.count() == 0)
-   {
-      list.append(QString::fromLatin1("/etc/gtk/gtkrc"));
-      list.append(QDir::homeDirPath()+"/.gtkrc");
-   }
-   list.remove(gtkkde);
-   if (active)
-      list.append(gtkkde);
-
-   // Pass env. var to kdeinit.
-   QCString name = "GTK_RC_FILES";
-   QCString value = QFile::encodeName(list.join(":"));
-   QByteArray params;
-   QDataStream stream(params, IO_WriteOnly);
-   stream << name << value;
-   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-}
-
 void applyMultiHead(bool active)
 {
    // Pass env. var to kdeinit.
@@ -100,15 +77,7 @@ extern "C" {
         config.setGroup("X11");
         bool exportKDEFonts = config.readBoolEntry("exportKDEFonts", true);
         bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
-        if (exportKDEFonts || exportKDEColors)
-        {
-	  runRdb(exportKDEFonts, exportKDEColors);
-          applyGtkStyles(true);
-        }
-        else
-        {
-          applyGtkStyles(false);
-        }
+        runRdb(exportKDEFonts, exportKDEColors);
 
         if (!config.readBoolEntry( "disableMultihead", false ) &&
            (ScreenCount(qt_xdisplay()) > 1))
@@ -721,14 +690,9 @@ void KGeneral::save()
     config->writeEntry("exportKDEColors", m_bExportColors);
     config->sync();
 
-    bool useRM = m_bExportFonts || m_bExportColors;
-
-    if (useRM) {
-      QApplication::setOverrideCursor( waitCursor );
-      runRdb(m_bExportFonts, m_bExportColors);
-      QApplication::restoreOverrideCursor();
-    }
-    applyGtkStyles(useRM);
+    QApplication::setOverrideCursor( waitCursor );
+    runRdb(m_bExportFonts, m_bExportColors);
+    QApplication::restoreOverrideCursor();
 
     if ( m_bStyleDirty )
         KIPC::sendMessageAll(KIPC::StyleChanged);

@@ -22,6 +22,8 @@
 #include <qstring.h>
 #include <qtextstream.h>
 
+#include <dcopclient.h>
+
 #include <kapp.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
@@ -39,6 +41,28 @@
 enum FontStyle { Normal, Bold, Italic, Fixed };
 
 // -----------------------------------------------------------------------------
+static void applyGtkStyles(bool active)
+{
+   QString gtkkde = QDir::homeDirPath()+"/.gtkrc-kde";
+   QCString gtkrc = getenv("GTK_RC_FILES");
+   QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
+   if (list.count() == 0)
+   {
+      list.append(QString::fromLatin1("/etc/gtk/gtkrc"));
+      list.append(QDir::homeDirPath()+"/.gtkrc");
+   }
+   list.remove(gtkkde);
+   if (active)
+      list.append(gtkkde);
+
+   // Pass env. var to kdeinit.
+   QCString name = "GTK_RC_FILES";
+   QCString value = QFile::encodeName(list.join(":"));
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
 
 static QString fontString( QFont rFont, FontStyle style, bool force8Bit = false )
 {
@@ -141,32 +165,38 @@ static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors,
         t << endl;
         t << "style \"default\"" << endl;
         t << "{" << endl;
+        if (exportFonts)
+        {
 //         t << "  " << "fontset = \"" << font.rawName()
 //           << ", -*-" << font.family() << "-*-*-*-*-*-*-*-*-*-*-*-*\"" << endl;
 //         t << endl;
-        t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
-        t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
-        t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
-        t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
-        t << endl;
-        t << "  base[NORMAL] = " << color( cg.base() ) << endl;
-        t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
-        t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
-        t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
-        t << endl;
-        t << "  text[NORMAL] = " << color( cg.text() ) << endl;
-        t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
-        t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
-        t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
-        t << endl;
-        t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
-        t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
-        t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
-        t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
+        }
+        if (exportColors)
+        {
+          t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
+          t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
+          t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
+          t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
+          t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
+          t << endl;
+          t << "  base[NORMAL] = " << color( cg.base() ) << endl;
+          t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
+          t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
+          t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
+          t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
+          t << endl;
+          t << "  text[NORMAL] = " << color( cg.text() ) << endl;
+          t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
+          t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
+          t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
+          t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
+          t << endl;
+          t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
+          t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
+          t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
+          t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
+          t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
+        }
         t << "}" << endl;
         t << endl;
         t << "class \"*\" style \"default\"" << endl;
@@ -177,6 +207,11 @@ static void createGtkrc( bool exportFonts, const QFont& font, bool exportColors,
 // -----------------------------------------------------------------------------
 
 void runRdb(bool exportFonts, bool exportColors) {
+  if (!exportFonts && !exportColors)
+  {
+     applyGtkStyles(false);
+     return;
+  }
 
   KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
   QColorGroup cg = kapp->palette().normal();
@@ -263,5 +298,6 @@ void runRdb(bool exportFonts, bool exportColors) {
   proc.start( KProcess::Block, KProcess::Stdin );
 
   tmpFile.unlink();
+  applyGtkStyles(true);
 }
 
