@@ -114,7 +114,7 @@ AC_CACHE_CHECK([for working getifaddrs], ac_cv_func_getifaddrs_ok,
 		[ac_cv_func_getifaddrs_ok=no])
 	])
 if test $ac_cv_func_getifaddrs_ok = yes; then
-  AC_DEFINE(HAVE_GETIFADDRS, 1, [Define if you have a working getifaddrs()])
+  AC_DEFINE(HAVE_GOOD_GETIFADDRS, 1, [Define if you have a working getifaddrs()])
 fi
 
 AC_CHECK_FUNCS([arc4random], ,

@@ -612,7 +612,7 @@ ifioctl (int fd, int cmd, char *arg)
 
 #endif /* SYSV_SIOCGIFCONF */
 
-#ifdef HAVE_GETIFADDRS
+#ifdef HAVE_GOOD_GETIFADDRS
 # include <ifaddrs.h>
 
 static void
@@ -990,7 +990,7 @@ setAuthNumber( Xauth *auth, const char *name )
 static void
 writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 {
-#if defined(STREAMSCONN) || !defined(HAVE_GETIFADDRS)
+#if defined(STREAMSCONN) || !defined(HAVE_GOOD_GETIFADDRS)
 	int fd;
 #endif
 
@@ -1002,7 +1002,7 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 	DefineSelf( fd, file, auth );
 	t_unbind( fd );
 	t_close( fd );
-# elif defined(HAVE_GETIFADDRS)
+# elif defined(HAVE_GOOD_GETIFADDRS)
 	DefineSelf( file, auth );
 # else
 #  ifdef TCPCONN
