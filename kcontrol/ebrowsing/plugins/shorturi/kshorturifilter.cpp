@@ -69,7 +69,9 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
        cmd.at( cmd.length()-1 ) == '&' )
         return false;
 
-  return true;
+  // (David): added '.' so that internet keywords work again
+  // slashdot.org is a valid short URL, but "food" or "gg:blah" aren't.
+  return cmd.contains( '.' );
 }
 
 bool KShortURIFilter::expandEnvVar( QString& cmd ) const
