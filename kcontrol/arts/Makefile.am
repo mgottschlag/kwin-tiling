@@ -1,6 +1,6 @@
 kde_module_LTLIBRARIES = kcm_arts.la
 
-kcm_arts_la_SOURCES = arts.cpp midi.cpp arts_general.ui arts_soundio.ui
+kcm_arts_la_SOURCES = arts.cpp generaltab.ui hardwaretab.ui
 
 kcm_arts_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_arts_la_LIBADD = $(LIB_KIO) -lkmid -lkutils
@@ -16,6 +16,4 @@ messages: rc.cpp
 
 kcmarts_data_DATA = arts.desktop
 kcmarts_datadir = $(kde_appsdir)/Settings/Sound
-kcmarts_data2_DATA = midi.desktop
-kcmarts_data2dir = $(kde_appsdir)/.hidden
 

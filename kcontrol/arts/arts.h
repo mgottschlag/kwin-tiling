@@ -37,11 +37,12 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include "arts_general.h"
-#include "arts_soundio.h"
+#include "generaltab.h"
+#include "hardwaretab.h"
 
 
 class KProcess;
+class DeviceManager;
 
 class KArtsModule : public KCModule
 {
@@ -63,10 +64,11 @@ public:
 private slots:
 
   void slotChanged();
-  /* void slotRestartServer(); */
   void slotTestSound();
+  void slotTestMIDI();
   void slotArtsdExited(KProcess* proc);
   void slotProcessArtsdOutput(KProcess* p, char* buf, int len);
+  //void slotStartServerChanged();
 
 private:
 
@@ -77,27 +79,25 @@ private:
                      const QString &deviceName,
                      int rate, int bits, const QString &audioIO,
                      const QString &addOptions, bool autoSuspend,
-                     int suspendTime,
-                     const QString &messageApplication, int loggingLevel);
+                     int suspendTime);
   void GetSettings ();
   int userSavedChanges();
   bool artsdIsRunning();
 
-  QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
-  			*fullDuplex, *customDevice, *customRate, *autoSuspend, *displayMessage;
+  QCheckBox *startServer, *startRealtime, *networkTransparent,
+  			*fullDuplex, *customDevice, *customRate, *autoSuspend;
   QLineEdit *deviceName;
-  QLineEdit *samplingRate;
-  QLineEdit *messageApplication;
+  QSpinBox *samplingRate;
   KIntNumInput *suspendTime;
-  ArtsGeneral *general;
-  ArtsSoundIO *soundIO;
-  KCModule *mixer;
-  KCModule *midi;
+  generalTab *general;
+  hardwareTab *hardware;
   KConfig *config;
+  DeviceManager *deviceManager;
   int latestProcessStatus;
   int fragmentCount;
   int fragmentSize;
   bool configChanged;
+  bool realtimePossible;
 
   class AudioIOElement {
   public:
