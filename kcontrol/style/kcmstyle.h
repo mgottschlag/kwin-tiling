@@ -41,6 +41,7 @@ class QComboBox;
 class QFrame;
 class QGroupBox;
 class QListBox;
+class QListViewItem;
 class QStyle;
 class QTabWidget;
 class QVBoxLayout; 
@@ -49,6 +50,7 @@ class QSettings;
 class QSpacerItem;
 class QLabel;
 class QSlider;
+class KListView;
 
 
 class KCMStyle : public KCModule
@@ -66,12 +68,12 @@ public:
 	virtual QString quickHelp() const;
 
 protected:
-	void loadStyle(void);
 	void switchStyle(const QString& styleName);
 	void setStyleRecursive(QWidget* w, QStyle* s);
 
-	void loadEffects(void);
-	void loadMisc();
+	void loadStyle( KSimpleConfig& config );
+	void loadEffects( KSimpleConfig& config );
+	void loadMisc( KSimpleConfig& config );
 	void addWhatsThis();
 
 protected slots:
@@ -81,7 +83,7 @@ protected slots:
 	void setToolbarsDirty();
 	void setStyleDirty();
 
-	void updateStyleTimer(const QString& style);
+	void updateStyleTimer( QListViewItem* );
 	void styleChanged();
 	void menuEffectChanged( bool enabled );
 	void menuEffectChanged();
@@ -101,7 +103,7 @@ private:
 
 	// Page1 widgets
 	QGroupBox* gbWidgetStyle;
-	QListBox* lbStyle;
+	KListView* lvStyle;
 	StylePreview* stylePreview;
 	QStyle* appliedStyle;
 	QPalette palette;

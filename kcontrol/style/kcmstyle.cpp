@@ -28,6 +28,7 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qdict.h>
 #include <qframe.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -55,8 +56,11 @@
 #include <kaboutdata.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
+#include <klistview.h>
 #include <kmessagebox.h>
+#include <ksimpleconfig.h>
 #include <kstyle.h>
+#include <kstandarddirs.h>
 
 #include "kcmstyle.h"
 #include "stylepreview.h"
@@ -128,20 +132,29 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kcmstyle, GeneralFactory );
 
 
 // All this just to make the default QListBox height smaller.
-class QStyleListBox: public QListBox
+class KStyleListView: public KListView
 {
 	public:
-		QStyleListBox( QWidget* parent ) : QListBox( parent) {};
+		KStyleListView( QWidget* parent ) : KListView(parent)
+		{
+		    addColumn(i18n("Name"));
+		    addColumn(i18n("Description"));
+		    setAllColumnsShowFocus(true);
+			setSorting(0, true);	// Sort by Name
+			setFullWidth(true);
+			setResizeMode(LastColumn);
+		};
 
 		QSize minimumSizeHint() const 
 		{
-			QSize size = QListBox::minimumSizeHint();
-			size.setHeight( size.height() / 2 );	// Ensure centerCurrentItem() is still visible.
+			QSize size = KListView::minimumSizeHint();
+			size.setHeight( size.height() / 2 );
 			return size;
 		}
+
 		QSize sizeHint() const 
 		{
-			QSize size = QListBox::sizeHint();
+			QSize size = KListView::sizeHint();
 			size.setHeight( size.height() / 2 );
 			return size;
 		}
@@ -150,6 +163,12 @@ class QStyleListBox: public QListBox
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
+	// required so we can change settings in qt-only applications.
+	QApplication::setDesktopSettingsAware(true);	
+
+	KGlobal::dirs()->addResourceType("themes", 
+		KStandardDirs::kde_default("data") + "kstyle/themes");
+	
 	// Setup pages and mainLayout
     mainLayout = new QVBoxLayout( this ); 
     tabWidget  = new QTabWidget( this );
@@ -165,13 +184,13 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Add Page1 (Style)
 	// -----------------
 	gbWidgetStyle = new QGroupBox( 1, Qt::Horizontal, i18n("Widget Style"), page1 );
-	lbStyle = new QStyleListBox( gbWidgetStyle );
+	lvStyle = new KStyleListView( gbWidgetStyle );
 	stylePreview = new StylePreview( page1 );
 	page1Layout->addWidget( gbWidgetStyle );
 	page1Layout->addWidget( stylePreview );
 
 	// Connect all required stuff
-	connect(lbStyle, SIGNAL(highlighted(const QString&)), this, SLOT(updateStyleTimer(const QString&)));
+	connect(lvStyle, SIGNAL(currentChanged(QListViewItem*)), this, SLOT(updateStyleTimer(QListViewItem*)));
 	connect(&switchStyleTimer, SIGNAL(timeout()), this, SLOT(styleChanged()));
 	
 	// Add Page2 (Effects)
@@ -225,7 +244,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	menuContainer->setMargin(0);
 	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,    // rows, columns
-        KDialog::marginHint(), KDialog::spacingHint() );
+		KDialog::marginHint(), KDialog::spacingHint() );
 
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
 
@@ -312,7 +331,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	page3Layout->addItem( sp3 );
 
 	// Do all the setDirty connections.
-	connect(lbStyle, SIGNAL(selectionChanged()), this, SLOT(setStyleDirty()));
+	connect(lvStyle, SIGNAL(selectionChanged()), this, SLOT(setStyleDirty()));
 	// Page2
 	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
@@ -343,20 +362,22 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 KCMStyle::~KCMStyle()
 {
+	QApplication::setDesktopSettingsAware(false);
 	delete appliedStyle;
 }
 
 
 void KCMStyle::load()
 {
+	KSimpleConfig config( "kdeglobals", true );
 	// Page1 - Build up the Style ListBox
-	loadStyle();
+	loadStyle( config );
 
 	// Page2 - Effects
-	loadEffects();
+	loadEffects( config );
 
 	// Page3 - Misc.
-	loadMisc();
+	loadMisc( config );
 }
 
 
@@ -384,7 +405,8 @@ void KCMStyle::save()
     {
 		KMessageBox::information( this, 
 			i18n("This module has detected that the currently selected style (") +
-			lbStyle->currentText() + i18n(") does not support Menu Translucency, therefore "
+			lvStyle->currentItem()->text(2) + 
+			i18n(") does not support Menu Translucency, therefore "
 			"this Menu Effect has been disabled.") );
 			comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
 	}
@@ -479,19 +501,19 @@ void KCMStyle::save()
 void KCMStyle::defaults()
 {
 	// Select default style
-	QListBoxItem* item;
-	if ( (item = lbStyle->findItem("Highcolor")) )
-		lbStyle->setCurrentItem(item);
-	else if ( (item = lbStyle->findItem("Default")) )
-		lbStyle->setCurrentItem(item);
-	else if ( (item = lbStyle->findItem("Windows")) )
-		lbStyle->setCurrentItem(item);
-	else if ( (item = lbStyle->findItem("Platinum")) )
-		lbStyle->setCurrentItem(item);
-	else if ( (item = lbStyle->findItem("Motif")) )
-		lbStyle->setCurrentItem(item);
+	QListViewItem* item;
+	if ( (item = lvStyle->findItem("HighColor", 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
+	else if ( (item = lvStyle->findItem("Default", 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
+	else if ( (item = lvStyle->findItem("Windows", 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
+	else if ( (item = lvStyle->findItem("Platinum", 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
+	else if ( (item = lvStyle->findItem("Motif", 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
 	else
-		lbStyle->setCurrentItem((int)0);	// Use any available style 
+		lvStyle->setCurrentItem(lvStyle->firstChild());	// Use any available style 
 
 	// Effects..
 	cbEnableEffects->setChecked(false);
@@ -564,66 +586,92 @@ void KCMStyle::setStyleDirty()
 // All the Style Switching / Preview stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadStyle(void)
-{
-	KConfig* config = KGlobal::config();
-	config->setGroup("KDE");
+struct StyleEntry {
+	QString name;
+	QString desc;
+};
 
-	// Insert all the styles into the listbox.
-	lbStyle->clear();
+void KCMStyle::loadStyle( KSimpleConfig& config )
+{
+	lvStyle->viewport()->setUpdatesEnabled(false);
+	lvStyle->clear();
+
+	// Create a dictionary of WidgetStyle to Name and Desc. mappings.
+	QDict<StyleEntry> styleEntries;
+	styleEntries.setAutoDelete(true);
+
+	QString strWidgetStyle;
+	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
+    for (QStringList::iterator it = list.begin(); it != list.end(); it++)
+	{
+		KSimpleConfig config( *it, true );
+		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )
+			continue;
+
+		config.setGroup("KDE");
+
+		strWidgetStyle = config.readEntry("WidgetStyle");
+		if (strWidgetStyle.isNull())
+			continue;
+
+		// We have a widgetstyle, so lets read the i18n entries for it...
+		StyleEntry* entry = new StyleEntry;
+		config.setGroup("Misc");
+		entry->name = config.readEntry("Name");
+		entry->desc = config.readEntry("Comment", i18n("No description available."));
+
+		// Insert the entry into our dictionary.
+		styleEntries.insert(strWidgetStyle, entry);
+	}
+
 	QStringList styles = QStyleFactory::keys();
-	lbStyle->insertStringList( styles );
-	lbStyle->setSelectionMode( QListBox::Single );
+	StyleEntry* entry;
+    for (QStringList::iterator it = styles.begin(); it != styles.end(); it++)
+	{
+		// Find a match for the key in the dictionary
+		if (entry = styleEntries.find(*it)) {
+			if (entry->name.isNull())
+				lvStyle->insertItem( new QListViewItem(lvStyle, *it,
+												   entry->desc, *it) );
+			else
+				lvStyle->insertItem( new QListViewItem(lvStyle, entry->name,
+												   entry->desc, *it) );
+		} else
+			// We didn't find a match, so use the key as the name
+			// and a default description.
+			lvStyle->insertItem( new QListViewItem(lvStyle, *it,
+									i18n("No description available."), *it) );
+	}
 
 	// Find out which style is currently being used
-	QString currentStyle = config->readEntry("widgetStyle", "Unknown");
-	if (currentStyle.isNull() || currentStyle == "Unknown")
-		currentStyle = QApplication::style().className();
+	config.setGroup("General");
+	QString defaultStyle = (QPixmap::defaultDepth() > 8) ? "HighColor" : "Default";
+	QString currentStyle = config.readEntry("widgetStyle", defaultStyle);
 
-	QStringList::iterator it = styles.begin();
-	unsigned int styleNo = 0;
-	while (it != styles.end())
-	{
-		if (*it == currentStyle)
-			break;
-		styleNo++;
-		it++;
-	}
+	// Find the current style in the list
+	QListViewItem* current = lvStyle->findItem( currentStyle, 2, Qt::ExactMatch);
+	if (!current)
+		current = lvStyle->findItem( currentStyle, 2, Qt::Contains);
+	if (!current)
+		current = lvStyle->findItem( QApplication::style().className(), 2, Qt::Contains);
+	if (!current)
+		current = lvStyle->firstChild();	// Last fallback
 
-	// Check if we found a match...
-	if ( styleNo < lbStyle->count() )
-		lbStyle->setCurrentItem(styleNo);
-	else {
-		// No match was found, so try to find the
-		// closest match to the Style's className
-		styleNo = 0;
-		it = styles.begin();
-		while (it != styles.end())
-		{
-			if (currentStyle.contains(*it))
-				break;
-			styleNo++;
-			it++;
-		}
-		if (styleNo < lbStyle->count() )
-			lbStyle->setCurrentItem(styleNo);
-		else {
-			lbStyle->insertItem(i18n("Unknown Style"));
-			lbStyle->setCurrentItem( lbStyle->count() - 1 );
-		}
-	}
-
-	// Sort after the match is found.
-	lbStyle->sort();
-	currentStyle = lbStyle->currentText();
-
+	// Select the current style
+	lvStyle->setCurrentItem( current );
+	lvStyle->ensureItemVisible( current );
+	lvStyle->sort();
+	lvStyle->viewport()->setUpdatesEnabled(true);
+	lvStyle->viewport()->repaint(false);
+	
+	currentStyle = lvStyle->currentItem()->text(2);
 	m_bStyleDirty = false;
 }
 
 
-void KCMStyle::updateStyleTimer(const QString& style)
+void KCMStyle::updateStyleTimer( QListViewItem* item )
 {
-	currentStyle = style;
+	currentStyle = item->text(2);
 	switchStyleTimer.start(500, TRUE);
 }
 
@@ -684,33 +732,32 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 // All the Effects stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadEffects(void)
+void KCMStyle::loadEffects( KSimpleConfig& config )
 {
 	// Load effects.
-	KConfig* config = KGlobal::config();
-	config->setGroup("KDE");
+	config.setGroup("KDE");
 
-	cbEnableEffects->setChecked( config->readBoolEntry( "EffectsEnabled", false) );
-	
-	if ( config->readBoolEntry( "EffectAnimateCombo", false) )
+	cbEnableEffects->setChecked( config.readBoolEntry( "EffectsEnabled", false) );
+
+	if ( config.readBoolEntry( "EffectAnimateCombo", false) )
 		comboComboEffect->setCurrentItem( 1 );
 	else 
 		comboComboEffect->setCurrentItem( 0 );
-		
-	if ( config->readBoolEntry( "EffectAnimateTooltip", false) )
+
+	if ( config.readBoolEntry( "EffectAnimateTooltip", false) )
 		comboTooltipEffect->setCurrentItem( 1 );
-	else if ( config->readBoolEntry( "EffectFadeTooltip", false) )
+	else if ( config.readBoolEntry( "EffectFadeTooltip", false) )
 		comboTooltipEffect->setCurrentItem( 2 );
 	else
 		comboTooltipEffect->setCurrentItem( 0 );
 
-	if ( config->readBoolEntry( "EffectAnimateMenu", false) )
+	if ( config.readBoolEntry( "EffectAnimateMenu", false) )
 		comboMenuEffect->setCurrentItem( 1 );
-	else if ( config->readBoolEntry( "EffectFadeMenu", false) )
+	else if ( config.readBoolEntry( "EffectFadeMenu", false) )
 		comboMenuEffect->setCurrentItem( 2 );
 	else
 		comboMenuEffect->setCurrentItem( 0 );
-	
+
 	// KStyle Menu transparency options...
 	QSettings settings;
 	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
@@ -794,16 +841,14 @@ void KCMStyle::menuEffectChanged( bool enabled )
 // All the Miscellaneous stuff
 // ----------------------------------------------------------------
 
-void KCMStyle::loadMisc()
+void KCMStyle::loadMisc( KSimpleConfig& config )
 {
 	// KDE's Part via KConfig
-	KConfig* config = KGlobal::config();
+	config.setGroup("Toolbar style");
+	cbHoverButtons->setChecked(config.readBoolEntry("Highlighting", true));
+	cbTransparentToolbars->setChecked(config.readBoolEntry("TransparentMoving", false));
 
-	config->setGroup("Toolbar style");
-	cbHoverButtons->setChecked(config->readBoolEntry("Highlighting", true));
-	cbTransparentToolbars->setChecked(config->readBoolEntry("TransparentMoving", false));
-
-	QString tbIcon = config->readEntry("IconText", "IconOnly");
+	QString tbIcon = config.readEntry("IconText", "IconOnly");
 	if (tbIcon == "TextOnly")
 		comboToolbarIcons->setCurrentItem(1);
 	else if (tbIcon == "IconTextRight")
@@ -813,11 +858,11 @@ void KCMStyle::loadMisc()
 	else
 		comboToolbarIcons->setCurrentItem(0);
 
-	config->setGroup("KDE");
-	cbIconsOnButtons->setChecked(config->readBoolEntry("ShowIconsOnPushButtons", true));
-	cbEnableTooltips->setChecked(!config->readBoolEntry("EffectNoTooltip", false));
-	cbTearOffHandles->setChecked(config->readBoolEntry("InsertTearOffHandle",true));
-	cbMacMenubar->setChecked(config->readBoolEntry("macStyle", false));
+	config.setGroup("KDE");
+	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", true));
+	cbEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
+	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle",true));
+	cbMacMenubar->setChecked(config.readBoolEntry("macStyle", false));
 
 	m_bMacDirty = false;
 }
@@ -825,7 +870,7 @@ void KCMStyle::loadMisc()
 void KCMStyle::addWhatsThis()
 {
 	// Page1
-	QWhatsThis::add( lbStyle, i18n("Here you can choose from a list of"
+	QWhatsThis::add( lvStyle, i18n("Here you can choose from a list of"
 							" predefined widget styles (e.g. the way buttons are drawn) which"
 							" may or may not be combined with a theme (additional information"
 							" like a marble texture or a gradient).") );
