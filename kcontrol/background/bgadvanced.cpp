@@ -385,7 +385,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_RefreshEdit = new QSpinBox(frame);
     m_RefreshEdit->setRange(5, 60);
     m_RefreshEdit->setSteps(5, 10);
-    m_RefreshEdit->setSuffix(i18n(" minutes"));
+    m_RefreshEdit->setSuffix(i18n(" min"));
     m_RefreshEdit->setFixedSize(m_RefreshEdit->sizeHint());
     lbl->setBuddy(m_RefreshEdit);
     grid->addWidget(m_RefreshEdit, 5, 1, AlignLeft);
