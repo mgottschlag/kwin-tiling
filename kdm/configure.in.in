@@ -1,11 +1,17 @@
 
 dnl this is for kdm:
 
+AC_DEFUN([KDE_EXPAND_MAKEVAR], [
+tmp=$$2
+while $1=`eval echo "$tmp"`; test "x$$1" != "x$tmp"; do tmp=$$1; done
+unset tmp
+])
+
 savex=$exec_prefix
 test "x$exec_prefix" = xNONE && exec_prefix=$prefix
-KDE_CONFDIR=`eval echo $kde_confdir`
+KDE_EXPAND_MAKEVAR(KDE_CONFDIR, kde_confdir)
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
-KDE_BINDIR=`eval echo $kde_bindir`
+KDE_EXPAND_MAKEVAR(KDE_BINDIR, kde_bindir)
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 exec_prefix=$savex
 
