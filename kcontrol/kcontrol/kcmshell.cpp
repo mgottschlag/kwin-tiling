@@ -128,7 +128,7 @@ kcmApplication::slotAppExit(const QCString &appId)
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
-                          "2.9",
+                          "3.0alpha1",
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
                           "(c) 1999-2000, The KDE Developers");
