@@ -873,11 +873,14 @@ static const char * getFoundry(const FT_Face face)
         }
     }
                 
+    const char *foundry=NULL;
+
+#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
     PS_FontInfoRec t1info;
-    const char     *foundry=NULL;
 
     if(0==FT_Get_PS_Font_Info(face, &t1info))
         foundry=getFoundry(t1info.notice, true);
+#endif
 
     if(!foundry)
         foundry=getFoundry(getName(face, TT_NAME_ID_TRADEMARK));
@@ -1698,7 +1701,11 @@ bool CFontEngine::checkEncodingFt(const QString &enc)
            For encodings using PS names (currently Adobe Standard and
            Adobe Symbol only), we require perfect coverage. */
 
+#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
         if(FT_Has_PS_Glyph_Names(itsFt.face))
+#else
+        if(FT_HAS_GLYPH_NAMES(itsFt.face))
+#endif
             for(mapping=encoding->mappings; mapping; mapping=mapping->next)
                 if(FONT_ENCODING_POSTSCRIPT==mapping->type)
                 {
@@ -1798,7 +1805,11 @@ bool CFontEngine::checkExtraEncodingFt(const QString &enc, bool found)
             return true;
     }
     else if(enc==CEncodings::constT1Symbol)
+#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
         return !found && FT_Has_PS_Glyph_Names(itsFt.face) ? true : false;
+#else
+        return !found && FT_HAS_GLYPH_NAMES(itsFt.face) ? true : false;
+#endif
 
     return false;
 }
