@@ -101,9 +101,9 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
         index = helpData.find( "charset=", index ) + 8;
         QString charset = helpData.mid( index, helpData.find( '\"', index ) - index );
         QString text = QTextCodec::codecForName(charset.latin1())->toUnicode( helpData );
-        index = text.find( "<div class=\"article\">" );
+        index = text.find( "<div class=\"titlepage\">" );
         text = text.mid( index );
-        index = text.find( "<div id=\"bottom-nav\"" );
+        index = text.find( "<table width=\"100%\" class=\"bottom-nav\"" );
         text = text.left( index );
         m_info->setText(text);
         return;
