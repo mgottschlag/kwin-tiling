@@ -204,13 +204,21 @@ X-KDE-Group
 	to rearrange the entries. At the moment, you should not use
 	it.
 
+
+X-KDE-Init
+
+	If the module has to perform some action at system startup,
+	use this entry to build the name of a function to call.
+	if X-KDE-Init is "bell", for example, the function
+	"init_bell" is called in the library indicated by
+	X-KDE-LibraryName.
+
+
 Don't forget the usual entries :
 
 Type=Application
 Icon=...
 Exec=kcontrol dir/file
-
-(or should that be kcmshell ?)
 
 
 What else do I need?
