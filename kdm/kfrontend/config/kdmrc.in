@@ -82,10 +82,6 @@ WallpaperMode=Scaled
 # Where KDM should fetch entropy from. This is meaningless, if your system
 # supports /dev/urandom, otherwise it defaults to /dev/mem.
 #RandomFile=/dev/mem
-# Path to the xrdb program. This only has a meaning, if you use the Recources
-# option below (what you probably won't do).
-# Default is @XBINDIR@/xrdb
-#Xrdb=
 
 [Xdmcp]
 # Whether KDM should listen to XDMCP requests. Default is true.
@@ -170,6 +166,10 @@ UseLilo=false
 # The name of this X-server's Xauth file. Default is "", which means, that
 # a random name in the AuthDir directory will be used.
 #AuthFile=
+# Path to the xrdb program. This only has a meaning, if you use the Recources
+# option below (what you probably won't do).
+# Default is @XBINDIR@/xrdb
+#Xrdb=
 # Specify a file with X-resources for the greeter, chooser and background.
 # The KDE frontend doesn't care for this, so you don't need it unless you
 # use an alternative chooser or another background generator than kdmdesktop.
