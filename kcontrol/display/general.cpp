@@ -115,13 +115,14 @@ extern "C" {
         applyQtXFT(config.readBoolEntry( "AntiAliasing", true ));
 
         // Write some Qt root property.
+#ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
         QByteArray properties;
         QDataStream d(properties, IO_WriteOnly);
         d << kapp->palette() << KGlobalSettings::generalFont();
         Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
         XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
                (unsigned char*) properties.data(), properties.size());
-
+#endif
     }
 }
 
