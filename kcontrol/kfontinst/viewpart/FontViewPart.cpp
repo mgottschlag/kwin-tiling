@@ -267,7 +267,7 @@ void CFontViewPart::install()
         KURL          destUrl(getDest(CMisc::getFile(m_url.path()), KMessageBox::No==resp));
 
         if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-            KMessageBox::error(itsFrame, i18n("%1:%2 already installed!").arg(m_url.protocol()).arg(m_url.path()),
+            KMessageBox::error(itsFrame, i18n("%1:%2 already installed.").arg(m_url.protocol()).arg(m_url.path()),
                                i18n("Error"));
         else
             if(KIO::NetAccess::copy(KURL(m_file), destUrl, itsFrame->parentWidget()))
@@ -293,7 +293,7 @@ void CFontViewPart::install()
                     }
                 }
 
-                KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed!").arg(m_url.protocol())
+                KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.").arg(m_url.protocol())
                                                        .arg(m_url.path()), i18n("Success"),
                                          "FontViewPart_DisplayInstallationSuccess");
             }
