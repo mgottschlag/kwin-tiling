@@ -216,7 +216,8 @@ bool CFontmap::createLocal(const QString &dir)
             QFileInfo             *fInfo;
 
             for(; NULL!=(fInfo=it.current()); ++it)
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() && CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() &&
+                   CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
                 {
                     const QStringList *existing=old.getEntries(fInfo->fileName());
 
@@ -233,7 +234,8 @@ bool CFontmap::createLocal(const QString &dir)
 
                         do
                         {
-                            if(CGlobal::fe().openFont(fInfo->filePath(), CFontEngine::NAME|CFontEngine::PROPERTIES, false, face))
+                            if(CGlobal::fe().openFont(fInfo->filePath(), CFontEngine::NAME|CFontEngine::PROPERTIES, false,
+                                                      face))
                             {
                                 numFaces=CGlobal::fe().getNumFaces();  // Only really for TTC files...
 
@@ -254,7 +256,8 @@ bool CFontmap::createLocal(const QString &dir)
                                         if(CFontEngine::ITALIC_ITALIC!=CGlobal::fe().getItalic() &&
                                            CFontEngine::ITALIC_OBLIQUE!=CGlobal::fe().getItalic())
                                             addAliasEntry(entries,
-                                                          createName(x11Ps, "Roman", getItalicStr(CGlobal::fe().getItalic())),
+                                                          createName(x11Ps, "Roman",
+                                                          getItalicStr(CGlobal::fe().getItalic())),
                                                           CGlobal::fe().getPsName());
                                         addAliasEntry(entries,
                                                       createName(x11Ps, NULL, getItalicStr(CGlobal::fe().getItalic())),
@@ -382,8 +385,8 @@ void CFontmap::createTopLevel()
 
         CMisc::setTimeStamps(CGlobal::cfg().getFontmapDir());
 
-        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isEmpty())  // Now ensure GS's Fontmap file .runlibfile's our Fontmap file!
-        {
+        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isEmpty())  // Now ensure GS's Fontmap file .runlibfile's
+        {                                                                    //  our Fontmap file!
             const int constMaxLineLen=1024;
             const char *constRLF=".runlibfile";
 
