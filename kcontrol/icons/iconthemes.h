@@ -1,6 +1,4 @@
 /**
- * midi.h
- *
  * Copyright (c) 2000 Antonio Larrosa <larrosa@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -18,8 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef __midi_h__
-#define __midi_h__
+#ifndef ICONTHEMES_H
+#define ICONTHEMES_H
 
 #include <kcmodule.h>
 #include <qmap.h>
@@ -40,8 +38,8 @@ public:
   virtual ~IconThemesConfig();
 
   void loadThemes();
-  bool installThemes(QStringList themes, QString archiveName);
-  QStringList findThemeDirs(QString archiveName);
+  bool installThemes(const QStringList &themes, const QString &archiveName);
+  QStringList findThemeDirs(const QString &archiveName);
 
   void updateRemoveButton();
 
@@ -57,7 +55,7 @@ protected slots:
   void removeSelectedTheme();
 
 private:
-  QListViewItem *iconThemeItem(QString name);
+  QListViewItem *iconThemeItem(const QString &name);
 
   QListView *m_iconThemes;
   QPushButton *m_removeButton;
@@ -70,4 +68,5 @@ private:
   bool m_bChanged;
 };
 
-#endif
+#endif // ICONTHEMES_H
+

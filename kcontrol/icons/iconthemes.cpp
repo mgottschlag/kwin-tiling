@@ -1,6 +1,4 @@
 /**
- *  icontheme.cpp
- *
  *  Copyright (c) 2000 Antonio Larrosa <larrosa@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -116,7 +114,7 @@ IconThemesConfig::~IconThemesConfig()
 {
 }
 
-QListViewItem *IconThemesConfig::iconThemeItem(QString name)
+QListViewItem *IconThemesConfig::iconThemeItem(const QString &name)
 {
   QListViewItem *item;
   for ( item=m_iconThemes->firstChild(); item ; item=item->nextSibling() )
@@ -204,7 +202,7 @@ void IconThemesConfig::installNewTheme()
   updateRemoveButton();
 }
 
-bool IconThemesConfig::installThemes(QStringList themes, QString archiveName)
+bool IconThemesConfig::installThemes(const QStringList &themes, const QString &archiveName)
 {
   bool everythingOk = true;
   QString localThemesDir(locateLocal("icon", "./"));
@@ -224,7 +222,7 @@ bool IconThemesConfig::installThemes(QStringList themes, QString archiveName)
   const KArchiveDirectory* rootDir = archive.directory();
 
   KArchiveDirectory* currentTheme;
-  for (QStringList::Iterator it = themes.begin();
+  for (QStringList::ConstIterator it = themes.begin();
        it != themes.end();
        ++it) {
     progressDiag.setLabel(
@@ -253,7 +251,7 @@ bool IconThemesConfig::installThemes(QStringList themes, QString archiveName)
   return everythingOk;
 }
 
-QStringList IconThemesConfig::findThemeDirs(QString archiveName)
+QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 {
   QStringList foundThemes;
 
