@@ -62,16 +62,14 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 {
-  // TODO: configurability like always treat foobar/XXX as a shortURL
-  if ( QRegExp( QFL1("[ ;<>]") ).match( cmd ) >= 0 ||
-       QRegExp( QFL1("||") ).match( cmd ) >= 0 ||
-       QRegExp( QFL1("&&") ).match( cmd ) >= 0 ||
-       cmd.at( cmd.length()-1 ) == '&' )
-        return false;
+  // Loose many of the QRegExp matches as they tend
+  // to slow things down.  They are also unnecessary!! (DA)
+  if ( cmd.find( QFL1("||") ) >= 0 || cmd.find( QFL1("&&") ) >= 0 ||
+       cmd.at( cmd.length()-1 ) == '&' || cmd.find( '.') == -1 ||
+       QRegExp( QFL1("[ ;<>]") ).match( cmd ) >= 0 )
+       return false;
 
-  // (David): added '.' so that internet keywords work again
-  // slashdot.org is a valid short URL, but "food" or "gg:blah" aren't.
-  return cmd.contains( '.' );
+  return true;
 }
 
 bool KShortURIFilter::expandEnvVar( QString& cmd ) const
@@ -98,11 +96,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * Here is a description of how the shortURI deals with the supplied
   * data.  First it expands any environment variable settings and then
   * deals with special shortURI cases. These special cases are the "smb:"
-  * URL scheme which is very specific to KDE and not a standard, "#" and
-  * "##" which are shortcuts for man:/ and info:/ protocols respectively
-  * and local files.  It then checks if KDE supports the URL and whether
-  * or not it is valid.  If it fails this test, it checks to see if there
-  * is any specific
+  * URL scheme which is very specific to KDE, "#" and "##" which are
+  * shortcuts for man:/ and info:/ protocols respectively abd local files.
+  * Then it checks to see if URL is valid and one that is supported by KDE's
+  * IO system.  If all the above check fails, it simply lookups the URL in
+  * the user-defined list and returns without filtering if it is not found.
+  * In the future versions, we might want to make it so that everything
+  * with the exception of ENV expansion is configurable by the user.
   */
   if ( expandEnvVar( cmd ) )
     url = cmd;  // Update the url
@@ -137,9 +137,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd.find( QFL1("info:"), 0, true ) == 0 )
   {
     if( cmd.left(2) == QFL1("##") )
-      cmd = QFL1("info:/") + ( cmd.length() == 2 ? QString::fromLatin1("dir" ) : cmd.mid(2));
+      cmd = QFL1("info:/") + ( cmd.length() == 2 ? QFL1("dir") : cmd.mid(2));
     else if ( cmd[0] == '#' )
       cmd = QFL1("man:/") + cmd.mid(1);
+    else if ( cmd.lower() == QFL1( "man:" ) )
+      cmd += '/';
+    else if ( cmd.lower() == QFL1( "info:" ) )
+      cmd += QFL1( "/dir" );
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::HELP );
     return data.hasBeenFiltered();
@@ -154,6 +158,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     cmd = QDir::cleanDirPath( url.path() );
     if ( hasEndSlash && cmd.right(1) != QFL1("/") )
       cmd += '/';
+    url = cmd;      // update the URL...
   }
 
   // Expanding shortcut to HOME URL...
@@ -163,13 +168,19 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( len == -1 )
       len = cmd.length();
     if( len == 1 )
+    {
       cmd.replace ( 0, 1, QDir::homeDirPath() );
+      url = cmd;
+    }
     else
     {
       QString user = cmd.mid( 1, len-1 );
       struct passwd *dir = getpwnam(user.local8Bit().data());
       if( dir && strlen(dir->pw_dir) )
+      {
         cmd.replace (0, len, QString::fromLocal8Bit(dir->pw_dir));
+        url = cmd;          // update the URL...
+      }
       else
       {
         QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) :
@@ -241,7 +252,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   URLHintsMap::ConstIterator it;
   for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
   {
-    int len = 0;
+    int len = 0;      // Future use for allowing replacement
     match = it.key(); // Pattern is stored as key...
     if( match.match( cmd, 0, &len ) == 0 )
     {
@@ -255,7 +266,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // If cmd is NOT a local resource, check if it
   // is a valid "shortURL" candidate and append
   // the default protocol the user supplied. (DA)
-  if( isValidShortURL( cmd ) )
+  if( !url.isLocalFile() && isValidShortURL( cmd ) )
   {
     cmd.insert( 0, m_strDefaultProtocol );
     setFilteredURI( data, cmd );
