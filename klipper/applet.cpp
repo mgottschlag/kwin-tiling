@@ -33,7 +33,7 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
     toplevel = new TopLevel( true );
     // no longer toplevel >;)
     toplevel->reparent( this, QPoint( 0, 0 ));
-    toplevel->move(( width() - toplevel->width()) / 2, ( height() - toplevel->height()) / 2 );
+    centerWidget();
     toplevel->show();
 }
 
@@ -50,8 +50,17 @@ int KlipperApplet::heightForWidth(int) const
 
 void KlipperApplet::resizeEvent( QResizeEvent* ev )
 {
+    move( 0, 0 );
+    toplevel->adjustSize();
     KPanelApplet::resizeEvent( ev );
-    toplevel->move(( width() - toplevel->width()) / 2, ( height() - toplevel->height()) / 2 );
+    centerWidget();
+}
+
+void KlipperApplet::centerWidget()
+{
+    int x = (width() - toplevel->width())/2;
+    int y = (height() - toplevel->height())/2;
+    toplevel->move( x, y );
 }
 
 #include "applet.moc"

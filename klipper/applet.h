@@ -28,6 +28,7 @@ public:
 protected:
         void resizeEvent( QResizeEvent* );
 private:
+        void centerWidget();
         TopLevel* toplevel;
 };
 

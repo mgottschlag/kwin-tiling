@@ -28,11 +28,15 @@
 
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel )
+ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel, 
+                            bool isApplet )
     : KDialogBase( KDialogBase::Tabbed, i18n("Klipper Preferences"),
                     KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
                     KDialogBase::Ok, 0L, "config dialog" )
 {
+    if ( isApplet )
+        setHelp( QString::null, "klipper" );
+
     QFrame *w = 0L; // the parent for the widgets
 
     w = addVBoxPage( i18n("&General") );

@@ -124,7 +124,7 @@ class ConfigDialog : public KDialogBase
     Q_OBJECT
 
 public:
-    ConfigDialog( const ActionList *list, KGlobalAccel *accel );
+    ConfigDialog( const ActionList *list, KGlobalAccel *accel, bool isApplet );
     ~ConfigDialog();
 
     ActionList * actionList() const { return actionWidget->actionList(); }

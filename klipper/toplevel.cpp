@@ -155,6 +155,14 @@ TopLevel::~TopLevel()
     }
 }
 
+void TopLevel::adjustSize()
+{
+    // don't ask me why, but otherwise the applet won't show the entire pixmap :-/
+    resize( m_pixmap->width() +2, m_pixmap->height() +2 );
+//    resize( m_pixmap->size() );
+}
+
+
 // this is used for quiting klipper process, if klipper is being started as an applet
 void TopLevel::quitProcess()
 {
@@ -469,7 +477,7 @@ void TopLevel::slotConfigure()
     }
 
     ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
-                                          globalKeys );
+                                          globalKeys, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory );

@@ -38,6 +38,8 @@ public:
     TopLevel( bool applet = false );
     ~TopLevel();
 
+    virtual void adjustSize();
+
     KGlobalAccel *globalKeys;
 
 protected:
