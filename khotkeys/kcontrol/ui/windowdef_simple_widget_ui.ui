@@ -12,9 +12,6 @@
             <height>497</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Windowdef_simple_widget_ui</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>

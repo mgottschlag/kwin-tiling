@@ -472,7 +472,7 @@ QDragObject *CKFileFontView::dragObject()
     hotspot.setX(pixmap.width() / 2);
     hotspot.setY(pixmap.height() / 2);
 
-    QDragObject* dragObject=KURLDrag::newDrag(urls, widget());
+    QDragObject* dragObject=new KURLDrag(urls, widget());
 
     dragObject->setPixmap(pixmap, hotspot);
 

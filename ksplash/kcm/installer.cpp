@@ -78,7 +78,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
          url.setPath(mDragFile);
          KURL::List urls;
          urls.append(url);
-         KURLDrag *d = KURLDrag::newDrag(urls, this);
+         KURLDrag *d = new KURLDrag(urls, this);
          d->dragCopy();
       }
    }
