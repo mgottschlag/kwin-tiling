@@ -16,6 +16,8 @@ kcheckpass_SOURCES = kcheckpass.c \
 
 noinst_HEADERS = kcheckpass.h
 
-EXTRA_DIST = README
+install-data-local:
+	@test -n "$(DESTDIR)" || $(top_srcdir)/mkpamserv @KCHECKPASS_PAM_SERVICE@
 
+EXTRA_DIST = README
 

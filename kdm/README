@@ -14,6 +14,9 @@ does not exist yet.
 You can change the configuration from the KDE Control Center. 
 You will find the Login Manager module in "System" -> "Login Manager".
 
+Have a look at README.pam in the kdebase top level directory if your
+system uses PAM.
+
 
 Running KDM from init
 ---------------------
@@ -79,7 +82,7 @@ Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
 
 More input! ;-)
 
-KDM accepts two command line options related logging. These options
+KDM accepts two command line options related to logging. These options
 _must_ come first on the command line, if they are used:
 
   -debug <n>

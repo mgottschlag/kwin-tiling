@@ -1026,13 +1026,7 @@ static struct {
 static int cfgMapT[] = { GC_gGlobal, GC_gDisplay };
 static int cfgMap[] = { 0, 0 };
 
-Value pamservice = {
-#ifdef KDE_PAM_SERVICE
-    KDE_PAM_SERVICE, sizeof(KDE_PAM_SERVICE)
-#else
-    "kde", 4	/* XXX i don't like this ... should be "kdm" */
-#endif
-};
+Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
 
 int main(int argc, char **argv)
 {

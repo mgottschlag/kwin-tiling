@@ -28,16 +28,6 @@ extern  char caller[20];
 #include <string.h>
 #include <security/pam_appl.h>
 
-#ifdef KDE_PAM_SERVICE
-#define KDE_PAM KDE_PAM_SERVICE
-#else
-#ifdef __FreeBSD__
-#define KDE_PAM "login"  /* default PAM service used by kcheckpass */
-#else
-#define KDE_PAM "xdm"  /* default PAM service used by kcheckpass */
-#endif
-#endif
-
 static const char *PAM_username;
 static const char *PAM_password;
 
@@ -52,46 +42,58 @@ PAM_conv (int num_msg, pam_message_type **msg,
 	  struct pam_response **resp,
 	  void *appdata_ptr)
 {
-  int             count = 0, replies = 0;
-  struct pam_response *repl = NULL;
-  int             size = sizeof(struct pam_response);
+  int             count;
+  struct pam_response *repl;
 
-#define GET_MEM \
-	if (!(repl = (realloc(repl, size)))) \
-  		return PAM_CONV_ERR; \
-	size += sizeof(struct pam_response)
-#define COPY_STRING(s) (s) ? strdup(s) : NULL
+  if (!(repl = calloc(num_msg, sizeof(struct pam_response))))
+    return PAM_CONV_ERR;
 
-  for (count = 0; count < num_msg; count++) {
+  for (count = 0; count < num_msg; count++)
     switch (msg[count]->msg_style) {
     case PAM_PROMPT_ECHO_ON:
-      GET_MEM;
-      repl[replies].resp_retcode = PAM_SUCCESS;
-      repl[replies++].resp = COPY_STRING(PAM_username);
+      if (PAM_username)
+	if (!(repl[count].resp = strdup(PAM_username)))
+	  goto conv_err;
+      repl[count].resp_retcode = PAM_SUCCESS;
       /* PAM frees resp */
       break;
     case PAM_PROMPT_ECHO_OFF:
-      GET_MEM;
-      repl[replies].resp_retcode = PAM_SUCCESS;
-      repl[replies++].resp = COPY_STRING(PAM_password);
+      if (PAM_password)
+        if (!(repl[count].resp = strdup(PAM_password)))
+	  goto conv_err;
+      repl[count].resp_retcode = PAM_SUCCESS;
       /* PAM frees resp */
       break;
     case PAM_TEXT_INFO:
-      message("unexpected message from PAM: %s\n",
-	      msg[count]->msg);
+      message("unexpected message from PAM: %s\n", msg[count]->msg);
       break;
     case PAM_ERROR_MSG:
+      message("unexpected error from PAM: %s\n", msg[count]->msg);
+      break;
     default:
       /* Must be an error of some sort... */
-      message("unexpected error from PAM: %s\n",
-	     msg[count]->msg);
-      free(repl);
-      return PAM_CONV_ERR;
+      goto conv_err;
     }
-  }
-  if (repl)
-    *resp = repl;
+  *resp = repl;
   return PAM_SUCCESS;
+
+ conv_err:
+  for (; count >= 0; count--)
+    if (repl[count].resp) {
+      switch (msg[count]->msg_style) {
+      case PAM_PROMPT_ECHO_OFF:
+	memset (repl[count].resp, 0, strlen(repl[count].resp));
+	/* fall through */
+      case PAM_ERROR_MSG:
+      case PAM_TEXT_INFO:
+      case PAM_PROMPT_ECHO_ON:
+	free(repl[count].resp);
+	break;
+      }
+      repl[count].resp = 0;
+    }
+  free(repl);
+  return PAM_CONV_ERR;
 }
 
 static struct pam_conv PAM_conversation = {
@@ -105,30 +107,38 @@ int Authenticate(const char *login, const char *passwd)
   pam_handle_t	*pamh;
   int		pam_error;
 
-  const char *tty = ":0.0";
-  char kde_pam[20] = KDE_PAM;
+  const char *tty;
+  const char *kde_pam = KCHECKPASS_PAM_SERVICE;
+
   PAM_username = login;
   PAM_password = passwd;
 
-  /* If the caller is kscreensaver then use the corresponding pam module */
-  if ( ! strncmp(caller,"kscreensaver",19)  ) {
-      strncpy(kde_pam,"kscreensaver",19);
-  }
-
+  if (caller[0])
+    kde_pam = caller;
   pam_error = pam_start(kde_pam, login, &PAM_conversation, &pamh);
+  if (pam_error != PAM_SUCCESS)
+    return 0;
 
-  pam_error = pam_set_item (pamh, PAM_TTY, strdup(tty));
-  pam_error = pam_authenticate(pamh, 0);
-  if (pam_error != PAM_SUCCESS
-      || (pam_error = pam_authenticate(pamh, 0)) != PAM_SUCCESS) {
+  tty = getenv ("DISPLAY");
+  if (!tty)
+    tty = ":0";
+  pam_error = pam_set_item (pamh, PAM_TTY, tty);
+  if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
     return 0;
   }
-  /* Set credentials (You need this e.g. for AFS */
+
+  pam_error = pam_authenticate(pamh, 0);
+  if (pam_error != PAM_SUCCESS) {
+    pam_end(pamh, pam_error);
+    return 0;
+  }
+
+  /* Refresh credentials (Needed e.g. for AFS (timing out Kerberos tokens)) */
   pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
   if (pam_error != PAM_SUCCESS)  {
-      pam_end(pamh, pam_error);
-      return 0;
+    pam_end(pamh, pam_error);
+    return 0;
   }
 
   pam_end(pamh, PAM_SUCCESS);
