@@ -568,6 +568,8 @@ int Theme::installGroup(const char* aGroupName)
       group = "Control Panel/Colors";
     else if (group == "Display")
       group = "Control Panel/Desktop";
+    else if (group == "Sounds")
+      group = "AppEvents/Schemes/Apps/.Default/Minimize/.Current";
   }
   mConfig->setGroup(group);
 
@@ -579,6 +581,12 @@ int Theme::installGroup(const char* aGroupName)
     mMappings->setGroup(group);
 
     // Read config settings
+    value = mMappings->readEntry("ConfigThemeGroup");
+    if (!value.isEmpty())
+    {
+      mConfig->setGroup(value);
+    }
+
     value = mMappings->readEntry("ConfigFile");
     if (!value.isEmpty())
     {
@@ -687,26 +695,26 @@ int Theme::installGroup(const char* aGroupName)
       themeValue = mConfig->readEntry(key);
       if (group.left(20) == "Control Panel/Colors")
       {
-        themeValue.replace((const QRegExp&) "\\s", (const QString&) ",");
+        themeValue.replace(QRegExp("\\s"), QString::fromLatin1(","));
       }
       else if (group.left(21) == "Control Panel/Desktop")
       {
-	if (key == "Wallpaper")
-        {
-	  themeValue = (themeValue.findRev('%') >= 0) ? 
-	    themeValue.right(themeValue.length() - themeValue.findRev('%') - 1) :
-	    themeValue;
-        }
-	else if (key == "WallpaperStyle")
+ 	if (key == "WallpaperStyle")
         {
 	  themeValue = "Scaled";
         }
       }
+      if (bInstallFile && (mThemeType == Theme_Windows))
+      {
+         themeValue.replace(QRegExp("%.+%"), QString::null);
+      }
+
       if (cfgValue.isEmpty()) cfgValue = themeValue;
 
       // Install file
       if (bInstallFile)
       {
+        // Strip leading path
         i = cfgValue.findRev('/');
         if (i != -1)
            cfgValue = cfgValue.mid(i+1);
@@ -1149,6 +1157,8 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 	gName = "Control Panel/Colors";
     else if (aName == "Display")
 	gName = "Control Panel/Desktop";
+    else if (aName == "Sounds")
+        gName = "AppEvents/Schemes/Apps/.Default/Minimize/.Current";
   } else
     gName = aName;
   found = mConfig->hasGroup(gName);

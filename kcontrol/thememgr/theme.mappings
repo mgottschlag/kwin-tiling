@@ -52,6 +52,8 @@
 # * ConfigGroup: The group within the config file. Multiple groups
 #   can be handled via subsequent groups. See ConfigNextGroup.
 #
+# * ConfigThemeGroup: The group to use within the theme file. 
+#
 # * ConfigAppDir: Directory where installed files will be placed.
 #   The path is relative to ~/.kde/share or $KDEDIR/share (the later
 #   is not yet supported)
@@ -507,4 +509,51 @@ TitlebarPixmapInactive=
 TitleFrameShaded=!
 PixmapUnderTitleText=!
 TitleAlignment=!
+#
+[AppEvents/Schemes/Apps/.Default/Minimize/.Current]
+ConfigAppDir=sounds
+ConfigFile=kwin.eventsrc
+ConfigGroup=startkde
+ConfigInstallCmd=setSound
+ConfigActivateCmd=applySound
+
+ConfigGroup=iconify
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound1
+[MS-sound1]
+ConfigGroup=maximize
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/Maximize/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound2
+[MS-sound2]
+ConfigGroup=unmaximize
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/RestoreDown/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound3
+[MS-sound3]
+ConfigGroup=deiconify
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/RestoreUp/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound4
+[MS-sound4]
+ConfigGroup=open
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/Open/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound5
+[MS-sound5]
+ConfigGroup=close
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/Close/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound6
+
+[MS-sound6]
+ConfigFile=knotify.eventsrc
+ConfigGroup=startkde
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/SystemStart/.Current
+DefaultValue=soundfile
+ConfigNextGroup=MS-sound7
+[MS-sound7]
+ConfigGroup=exitkde
+ConfigThemeGroup=AppEvents/Schemes/Apps/.Default/SystemExit/.Current
+DefaultValue=soundfile
 
