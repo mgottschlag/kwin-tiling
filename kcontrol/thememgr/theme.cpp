@@ -20,7 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -321,7 +321,7 @@ bool Theme::load(const QString &aPath, QString &error)
 
   if (mThemeType == Theme_Windows)
   {
-    // Convert '\' to '/'. 
+    // Convert '\' to '/'.
     // KSimpleConfig uses '\' for escaping, so we have to do that here!
     QFile file1(mThemercFile);
     QFile file2(mThemercFile+"_rc");
@@ -817,7 +817,7 @@ static void cleanKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
 static int countKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
 {
   return aCfg->readEntry(entry).isEmpty() ? 0 : 1;
-   
+
 }
 
 //-----------------------------------------------------------------------------
@@ -842,7 +842,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     bool value = aCfg->readBoolEntry("CommonDesktop", false);
     if (flag || value)
       aCfg->writeEntry("CommonDesktop", true);
-    if (flag) 
+    if (flag)
       aCfg->writeEntry("DeskNum", 0);
   }
   else if (cmd == "setSound")
@@ -912,20 +912,26 @@ void Theme::applyIcons()
 
   const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 
-  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-  for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
+  KConfig *config = new KConfig("kdeglobals");
+  for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::User; i++)
   {
     if (groups[i] == 0L)
       break;
     config->setGroup(QString::fromLatin1(groups[i]) + "Icons");
     config->writeEntry("Size", icontheme.defaultSize(i));
   }
-  delete config;
 
-  for (int i=0; i<KIcon::LastGroup; i++)
+  config->setGroup("Icons");
+  //kdDebug() << k_funcinfo << "Icon theme is: " << theme <<endl;
+  config->writeEntry("Theme", theme);
+  config->sync();
+
+  for (int i=0; i<KIcon::User; i++)
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
+
+  delete config;
 }
 
 
@@ -1100,9 +1106,9 @@ void Theme::install(void)
   if (instIcons) installGroup("Icons");
 
   // Colors & WM are installed behind each other to get a smoother update.
-  if (instColors) installGroup("Colors"); 
-  if (instWM) 
-  { 
+  if (instColors) installGroup("Colors");
+  if (instWM)
+  {
      installGroup("Window Border");
      installGroup("Window Titlebar");
   }
@@ -1135,7 +1141,7 @@ void Theme::loadGroupGeneral(void)
   QColor col;
   col.setRgb(192,192,192);
 
-  if (mThemeType == Theme_Windows) 
+  if (mThemeType == Theme_Windows)
   {
     mName = mThemercFile;
     int i = mName.findRev('/');
@@ -1149,8 +1155,8 @@ void Theme::loadGroupGeneral(void)
     mEmail = "";
     mHomePage = "";
     mVersion = "";
-  } 
-  else 
+  }
+  else
   {
     mConfig->setGroup("General");
     mName = mConfig->readEntry("Name");
@@ -1171,14 +1177,14 @@ void Theme::loadGroupGeneral(void)
   }
   if (mPreview.isNull())
   {
-     if (mThemeType == Theme_Windows) 
+     if (mThemeType == Theme_Windows)
      {
         mConfig->setGroup("Control Panel/Desktop");
         mPreviewFile = mConfig->readEntry("Wallpaper");
         mPreviewFile.replace(QRegExp("%.+%"), QString::null);
         mPreviewFile = findFile(mPreviewFile);
         if (!mPreviewFile.isEmpty())
-        { 
+        {
            QImage img(mPreviewFile);
            if (!img.isNull())
            {
@@ -1194,8 +1200,8 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
   bool found;
   QString gName;
-  
-  if (mThemeType == Theme_Windows) 
+
+  if (mThemeType == Theme_Windows)
   {
     if (aName == "Colors")
 	gName = "Control Panel/Colors";
@@ -1308,7 +1314,7 @@ void Theme::updateColorScheme(KSimpleConfig *config)
     // Current scheme
     config->setGroup("General");
 
-    bool isDefault = config->readEntry( "background").isEmpty(); 
+    bool isDefault = config->readEntry( "background").isEmpty();
     if (isDefault)
     {
        QString sCurrentScheme = locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");

@@ -71,6 +71,7 @@
 #   - kfmclient <arg>: Calls kfmclient with <arg> as the argument.
 #   - applyColors: Sends a color-scheme-changed signal to all windows.
 #   - applyWallpaper: Changes wallpaper.
+#	- applyIcons: Changes icons
 #   - applyKWM: Changes WM decorations.
 #   - restart <app>: Restart application <app>.
 #
