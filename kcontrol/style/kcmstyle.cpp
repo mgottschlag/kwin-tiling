@@ -240,6 +240,15 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	containerLayout->addWidget( lblMenuEffect, 2, 0 );
 	containerLayout->addWidget( comboMenuEffect, 2, 1 );
 
+	comboMenuHandle = new QComboBox( FALSE, containerFrame );
+	comboMenuHandle->insertItem( i18n("Disable") );
+	comboMenuHandle->insertItem( i18n("Application level") );
+	comboMenuHandle->insertItem( i18n("Enable") );
+	lblMenuHandle = new QLabel( i18n("Me&nu tear-off handles:"), containerFrame );
+	lblMenuHandle->setBuddy( comboMenuHandle );
+	containerLayout->addWidget( lblMenuHandle, 3, 0 );
+	containerLayout->addWidget( comboMenuHandle, 3, 1 );
+
 	// Push the [label combo] to the left.
 	comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	containerLayout->addItem( comboSpacer, 1, 2 );
@@ -346,6 +355,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
 	connect( comboComboEffect,    SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
 	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
+	connect( comboMenuHandle,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
 	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
 	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setEffectsDirty()));
 	// Page3
@@ -353,7 +363,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
 	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
+//	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setToolbarsDirty()));
 	connect( cbMacMenubar,          SIGNAL(toggled(bool)),    this, SLOT(setMacDirty()));
 
@@ -441,6 +451,8 @@ void KCMStyle::save()
 	item = comboMenuEffect->currentItem();
 	config.writeEntry( "EffectAnimateMenu", item == 1 );
 	config.writeEntry( "EffectFadeMenu", item == 2 );
+	item = comboMenuHandle->currentItem();
+	config.writeEntry( "InsertTearOffHandle", item );
 
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
@@ -462,7 +474,6 @@ void KCMStyle::save()
 	// Misc page
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
-	config.writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
 	config.writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 
 	config.setGroup("General");
@@ -544,7 +555,7 @@ void KCMStyle::defaults()
 	comboTooltipEffect->setCurrentItem(0);
 	comboComboEffect->setCurrentItem(0);
 	comboMenuEffect->setCurrentItem(0);
-
+  comboMenuHandle->setCurrentItem(0);
 	comboMenuEffectType->setCurrentItem(0);
 	slOpacity->setValue(90);
 
@@ -554,7 +565,7 @@ void KCMStyle::defaults()
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(false);
-	cbTearOffHandles->setChecked(false);
+//  cbTearOffHandles->setChecked(false);
 	cbMacMenubar->setChecked(false);
 }
 
@@ -569,6 +580,7 @@ const KAboutData* KCMStyle::aboutData() const
 
 	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
 	about->addAuthor("Daniel Molkentin", 0, "molkentin@kde.org");
+	about->addAuthor("Ralf Nolden", 0, "nolden@kde.org");
 	return about;
 }
 
@@ -781,6 +793,8 @@ void KCMStyle::loadEffects( KSimpleConfig& config )
 		comboMenuEffect->setCurrentItem( 2 );
 	else
 		comboMenuEffect->setCurrentItem( 0 );
+
+  comboMenuHandle->setCurrentItem(config.readNumEntry("InsertTearOffHandle", 0));
 
 	// KStyle Menu transparency options...
 	QSettings settings;

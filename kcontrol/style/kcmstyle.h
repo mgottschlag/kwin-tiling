@@ -119,9 +119,12 @@ private:
 	QComboBox* comboTooltipEffect;
 	QComboBox* comboComboEffect;
 	QComboBox* comboMenuEffect;
+	QComboBox* comboMenuHandle;
+
 	QLabel* lblTooltipEffect;
 	QLabel* lblComboEffect;
 	QLabel* lblMenuEffect;
+	QLabel* lblMenuHandle;
 	QSpacerItem* comboSpacer;
 
 	QFrame* menuContainer;
