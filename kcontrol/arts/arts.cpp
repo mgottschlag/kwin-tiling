@@ -309,8 +309,9 @@ void KArtsModule::load()
 
 void KArtsModule::save() {
 	if (configChanged) {
-        configChanged = false;
+		configChanged = false;
 		saveParams();
+		restartServer();
 	}
 }
 
@@ -327,10 +328,10 @@ int KArtsModule::userSavedChanges()
 	QString caption = i18n("Save Sound Server Settings?");
 	reply = KMessageBox::questionYesNo(this, question, caption);
 	if ( reply == KMessageBox::Yes)
-    {
+	{
         configChanged = false;
         saveParams();
-    }
+	}
 
     return reply;
 
@@ -358,28 +359,6 @@ int KArtsModule::userSavedChanges()
 					 "starting the aRts server with realtime priority. \n"
 					 "The following problem occured:\n")+thereason);
 	}
-*/
-
-/*
-    QString dialogText;
-    if(startServer->isChecked()) {
-        dialogText = i18n("Restart sound-server now?\n"
-                          "This is needed for your changes to take effect.\n"
-                          "\n"
-                          "Restarting the sound server might confuse or even "
-                          "crash applications using the sound server.");
-    } else {
-        dialogText = i18n("Shut down sound-server now?\n"
-                          "This might confuse or even crash applications "
-                          "using the sound server.");
-    }
-
-    if(KMessageBox::warningYesNo(this,
-                     dialogText,
-                     i18n("Restart Sound Server Now?")) == KMessageBox::Yes)
-    {
-        restartServer();
-    }
 */
 }
 
