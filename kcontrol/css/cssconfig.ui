@@ -593,7 +593,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>&amp;Preview...</string>
+                                    <string>&amp;Preview</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
