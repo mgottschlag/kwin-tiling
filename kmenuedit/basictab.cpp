@@ -55,17 +55,21 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 					KDialog::marginHint(),
 					KDialog::spacingHint());
 
-    // setup labels
-    grid->addWidget(new QLabel(i18n("Name"), general_group), 0, 0);
-    grid->addWidget(new QLabel(i18n("Comment"), general_group), 1, 0);
-    grid->addWidget(new QLabel(i18n("Command"), general_group), 2, 0);
-    grid->addWidget(new QLabel(i18n("Type"), general_group), 3, 0);
-
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
     _commentEdit = new KLineEdit(general_group);
     _execEdit = new KURLRequester(general_group);
     _typeEdit = new KComboBox(true, general_group);
+
+    // setup labels
+    _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
+    _commentLabel = new QLabel(_commentEdit, i18n("&Comment:"), general_group);
+    _execLabel = new QLabel(_execEdit, i18n("Co&mmand:"), general_group);
+    _typeLabel = new QLabel(_typeEdit, i18n("&Type:"), general_group);
+    grid->addWidget(_nameLabel, 0, 0);
+    grid->addWidget(_commentLabel, 1, 0);
+    grid->addWidget(_execLabel, 2, 0);
+    grid->addWidget(_typeLabel, 3, 0);
 
     // connect line inputs
     connect(_nameEdit, SIGNAL(textChanged(const QString&)),
@@ -78,14 +82,20 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 	    SLOT(slotChanged(const QString&)));
 
     // add line inputs to the grid
-    grid->addWidget(_nameEdit, 0, 1);
-    grid->addWidget(_commentEdit, 1, 1);
-    grid->addWidget(_execEdit, 2, 1);
-    grid->addWidget(_typeEdit, 3, 1);
+    grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
+    grid->addMultiCellWidget(_commentEdit, 1, 1, 1, 1);
+    grid->addMultiCellWidget(_execEdit, 2, 2, 1, 1);
+    grid->addMultiCellWidget(_typeEdit, 3, 3, 1, 1);
 
 	// add values to the Type Combobox
 	_typeEdit->insertItem("Application");
 	_typeEdit->insertItem("Link");
+
+    // setup icon button
+    _iconButton = new KIconButton(general_group);
+    _iconButton->setFixedSize(52,52);
+    connect(_iconButton, SIGNAL(clicked()), SIGNAL(changed()));
+    grid->addMultiCellWidget(_iconButton, 0, 1, 2, 2);
 
     // add the general group to the main layout
     layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
@@ -96,35 +106,35 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 					KDialog::spacingHint());
 
     QHBox *hbox = new QHBox(_path_group);
-    (void) new QLabel(i18n("Work Path"), hbox);
     hbox->setSpacing(KDialog::spacingHint());
+
+    _pathLabel = new QLabel(i18n("&Work path:"), hbox);
 
     _pathEdit = new KURLRequester(hbox);
     _pathEdit->fileDialog()->setMode(KFile::Directory | KFile::LocalOnly);
+
+    _pathLabel->setBuddy(_pathEdit);
+
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
-    layout->addWidget(_path_group, 1, 0);
-
-    // setup icon button
-    _iconButton = new KIconButton(this);
-    _iconButton->setFixedSize(52,52);
-    connect(_iconButton, SIGNAL(clicked()), SIGNAL(changed()));
-    layout->addWidget(_iconButton, 1, 1);
+    layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
 
     // terminal group
     _term_group = new QGroupBox(this);
     vbox = new QVBoxLayout(_term_group, KDialog::marginHint(),
 			   KDialog::spacingHint());
 
-    _terminalCB = new QCheckBox(i18n("Run in terminal"), _term_group);
+    _terminalCB = new QCheckBox(i18n("Run in term&inal"), _term_group);
     connect(_terminalCB, SIGNAL(clicked()), SLOT(termcb_clicked()));
     vbox->addWidget(_terminalCB);
 
     hbox = new QHBox(_term_group);
-    (void) new QLabel(i18n("Terminal Options"), hbox);
     hbox->setSpacing(KDialog::spacingHint());
+    _termOptLabel = new QLabel(i18n("Terminal &options:"), hbox);
     _termOptEdit = new KLineEdit(hbox);
+    _termOptLabel->setBuddy(_termOptEdit);
+
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
@@ -137,14 +147,16 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
 			   KDialog::spacingHint());
 
-    _uidCB = new QCheckBox(i18n("Run as a different user"), _uid_group);
+    _uidCB = new QCheckBox(i18n("Run as a &different user"), _uid_group);
     connect(_uidCB, SIGNAL(clicked()), SLOT(uidcb_clicked()));
     vbox->addWidget(_uidCB);
 
     hbox = new QHBox(_uid_group);
-    (void) new QLabel(i18n("Username"), hbox);
     hbox->setSpacing(KDialog::spacingHint());
+    _uidLabel = new QLabel(i18n("&Username:"), hbox);
     _uidEdit = new KLineEdit(hbox);
+    _uidLabel->setBuddy(_uidEdit);
+
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
@@ -164,7 +176,6 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 					KDialog::marginHint(),
 					KDialog::spacingHint());
 
-    grid_keybind->addWidget(new QLabel(i18n("Current key"), general_group_keybind), 0, 0);
     //_keyEdit = new KLineEdit(general_group_keybind);
     //_keyEdit->setReadOnly( true );
     //_keyEdit->setText( "" );
@@ -172,6 +183,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     //                                           general_group_keybind );
     //connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
     _keyEdit = new KKeyButton(general_group_keybind);
+    grid_keybind->addWidget(new QLabel(_keyEdit, i18n("Current shortcut &key:"), general_group_keybind), 0, 0);
     connect( _keyEdit, SIGNAL(capturedShortcut(const KShortcut&)),
              this, SLOT(slotCapturedShortcut(const KShortcut&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
@@ -185,6 +197,10 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _commentEdit->setEnabled(false);
     _execEdit->setEnabled(false);
     _typeEdit->setEnabled(false);
+    _nameLabel->setEnabled(false);
+    _commentLabel->setEnabled(false);
+    _execLabel->setEnabled(false);
+    _typeLabel->setEnabled(false);
     _path_group->setEnabled(false);
     _term_group->setEnabled(false);
     _uid_group->setEnabled(false);
@@ -214,6 +230,11 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _commentEdit->setEnabled(true);
     _execEdit->setEnabled(isDF);
     _typeEdit->setEnabled(isDF);
+    _nameLabel->setEnabled(true);
+    _commentLabel->setEnabled(true);
+    _execLabel->setEnabled(isDF);
+    _typeLabel->setEnabled(isDF);
+
     _path_group->setEnabled(isDF);
     _term_group->setEnabled(isDF);
     _uid_group->setEnabled(isDF);
@@ -259,7 +280,10 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _uidCB->setChecked(df.readBoolEntry("X-KDE-SubstituteUID", false));
 
     _termOptEdit->setEnabled(_terminalCB->isChecked());
+    _termOptLabel->setEnabled(_terminalCB->isChecked());
+
     _uidEdit->setEnabled(_uidCB->isChecked());
+    _uidLabel->setEnabled(_uidCB->isChecked());
 }
 
 void BasicTab::apply( bool desktopFileNeedsSave )
@@ -324,12 +348,14 @@ void BasicTab::slotChanged()
 void BasicTab::termcb_clicked()
 {
     _termOptEdit->setEnabled(_terminalCB->isChecked());
+    _termOptLabel->setEnabled(_terminalCB->isChecked());
     emit changed();
 }
 
 void BasicTab::uidcb_clicked()
 {
     _uidEdit->setEnabled(_uidCB->isChecked());
+    _uidLabel->setEnabled(_uidCB->isChecked());
     emit changed();
 }
 

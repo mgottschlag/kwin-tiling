@@ -30,6 +30,7 @@ class KLineEdit;
 class KIconButton;
 class QCheckBox;
 class QGroupBox;
+class QLabel;
 class KURLRequester;
 class KComboBox;
 
@@ -67,6 +68,7 @@ protected:
     QCheckBox    *_terminalCB, *_uidCB;
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
+    QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel, *_typeLabel;
 
     QString       _desktopFile;
     bool _khotkeysNeedsSave;
