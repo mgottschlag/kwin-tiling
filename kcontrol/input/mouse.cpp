@@ -26,6 +26,9 @@
  * redesign for KDE 2.2
  * Copyright (c) 2001 Ralf Nolden <nolden@kde.org>
  *
+ * Logitech mouse support
+ * Copyright (C) 2004 Brad Hards <bradh@frogmouth.net>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -51,13 +54,18 @@
 #include <qslider.h>
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
+#include <qradiobutton.h>
 
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
+
+#include <config.h>
 
 #include "mouse.h"
+#include "logitechmouse.h"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -330,12 +338,64 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   vbox->addStretch();
 }
 
+  settings = new MouseSettings;
 
-    config = new KConfig("kcminputrc");
-    settings = new MouseSettings;
-    load();
+  // This part is for handling features on Logitech USB mice.
+  // It only works if libusb is available.
+#ifdef HAVE_LIBUSB
+
+  struct device_table {
+      int idVendor;
+      int idProduct;
+      QString Model;
+      QString Name;
+      int flags;
+  } device_table[] = {
+      { VENDOR_LOGITECH, 0xC00E, "M-BJ58", "Wheel Mouse Optical", HAS_RES },
+      { VENDOR_LOGITECH, 0xC00F, "M-BJ79", "MouseMan Traveler", HAS_RES },
+      { VENDOR_LOGITECH, 0xC012, "M-BL63B", "MouseMan Dual Optical", HAS_RES },
+      { VENDOR_LOGITECH, 0xC01B, "M-BP86", "MX310 Optical Mouse", HAS_RES },
+      { VENDOR_LOGITECH, 0xC01D, "M-BS81A", "MX510 Optical Mouse", HAS_RES | HAS_SS | HAS_SSR },
+      { VENDOR_LOGITECH, 0xC024, "M-BP82", "MX300 Optical Mouse", HAS_RES },
+      { VENDOR_LOGITECH, 0xC025, "M-BP81A", "MX500 Optical Mouse", HAS_RES | HAS_SS | HAS_SSR },
+      { VENDOR_LOGITECH, 0xC031, "M-UT58A", "iFeel Mouse (silver)", HAS_RES },
+      { VENDOR_LOGITECH, 0xC501, "C-BA4-MSE", "Mouse Receiver", HAS_CSR },
+      { VENDOR_LOGITECH, 0xC502, "C-UA3-DUAL", "Dual Receiver", HAS_CSR | USE_CH2},
+      { VENDOR_LOGITECH, 0xC504, "C-BD9-DUAL", "Cordless Freedom Optical", HAS_CSR | USE_CH2 },
+      { VENDOR_LOGITECH, 0xC505, "C-BG17-DUAL", "Cordless Elite Duo", HAS_SS | HAS_SSR | HAS_CSR | USE_CH2},
+      { VENDOR_LOGITECH, 0xC506, "C-BF16-MSE", "MX700 Optical Mouse", HAS_SS | HAS_CSR },
+      { VENDOR_LOGITECH, 0xC508, "C-BA4-MSE", "Cordless Optical TrackMan", HAS_SS | HAS_CSR },
+      { VENDOR_LOGITECH, 0xC50B, "967300-0403", "Cordless MX Duo Receiver", HAS_SS|HAS_CSR },
+      { VENDOR_LOGITECH, 0xC50E, "M-RAG97", "MX1000 Laser Mouse", HAS_SS | HAS_CSR },
+      { VENDOR_LOGITECH, 0xC702, "C-UF15", "Receiver for Cordless Presenter", HAS_CSR },
+      { 0, 0, QString(), QString(), 0 }
+  };
+
+  usb_init();
+  usb_find_busses();
+  usb_find_devices();
+
+  struct usb_bus *bus;
+  struct usb_device *dev;
+
+  for (bus = usb_busses; bus; bus = bus->next) {
+      for (dev = bus->devices; dev; dev = dev->next) {
+	  for (int n = 0; device_table[n].idVendor; n++)
+	      if ( (device_table[n].idVendor == dev->descriptor.idVendor) &&
+		   (device_table[n].idProduct == dev->descriptor.idProduct) ) {
+		  // OK, we have a device that appears to be one of the ones we support
+		  LogitechMouse *mouse = new LogitechMouse( dev, device_table[n].flags, this, device_table[n].Name.latin1() );
+		  settings->logitechMouseList.append(mouse);
+		  tabwidget->addTab( (QWidget*)mouse, device_table[n].Name );
+	      }
+      }
+  }
+
+#endif
+
+  config = new KConfig("kcminputrc");
+  load();
 }
-
 
 void MouseConfig::checkAccess()
 {
@@ -711,6 +771,13 @@ void MouseSettings::apply()
       m_handedNeedsApply = false;
   }
 
+  // This iterates through the various Logitech mice, if we have support.
+  #ifdef HAVE_LIBUSB
+  LogitechMouse *logitechMouse;
+  for (logitechMouse = logitechMouseList.first(); logitechMouse; logitechMouse = logitechMouseList.next() ) {
+      logitechMouse->applyChanges();
+  }
+  #endif
 }
 
 void MouseSettings::save(KConfig *config)
@@ -733,6 +800,13 @@ void MouseSettings::save(KConfig *config)
   config->writeEntry("AutoSelectDelay", autoSelectDelay, true, true );
   config->writeEntry("VisualActivate", visualActivate, true, true);
   config->writeEntry("ChangeCursor", changeCursor, true, true);
+  // This iterates through the various Logitech mice, if we have support.
+#ifdef HAVE_LIBUSB
+  LogitechMouse *logitechMouse;
+  for (logitechMouse = logitechMouseList.first(); logitechMouse; logitechMouse = logitechMouseList.next() ) {
+      logitechMouse->save(config);
+  }
+#endif
   config->sync();
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
 }
