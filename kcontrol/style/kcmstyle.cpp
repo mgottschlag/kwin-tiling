@@ -568,7 +568,9 @@ void KCMStyle::defaults()
 {
 	// Select default style
 	QListViewItem* item;
-	if ( (item = lvStyle->findItem("HighColor", 2, ExactMatch)) )
+	if ( (item = lvStyle->findItem( KStyle::defaultStyle(), 2, ExactMatch)) )
+		lvStyle->setCurrentItem(item);
+	else if ( (item = lvStyle->findItem("HighColor", 2, ExactMatch)) )
 		lvStyle->setCurrentItem(item);
 	else if ( (item = lvStyle->findItem("Default", 2, ExactMatch)) )
 		lvStyle->setCurrentItem(item);
@@ -713,7 +715,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 
 	// Find out which style is currently being used
 	config.setGroup("General");
-	QString defaultStyle = (QPixmap::defaultDepth() > 8) ? "HighColor" : "Default";
+	QString defaultStyle = KStyle::defaultStyle();;
 	QString cfgStyle = config.readEntry("widgetStyle", defaultStyle);
 
 	// Find the current style in the list

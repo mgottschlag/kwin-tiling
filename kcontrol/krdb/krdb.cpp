@@ -37,6 +37,7 @@
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kglobalsettings.h>
+#include <kstyle.h>
 
 #include "krdb.h"
 
@@ -216,8 +217,7 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 
   /* export widget style */
   kglobals.setGroup("General");
-  QString style = kglobals.readEntry("widgetStyle",
-                  (QPixmap::defaultDepth()) > 8 ? "HighColor" : "Default");
+  QString style = kglobals.readEntry("widgetStyle", KStyle::defaultStyle() );
   if (!style.isEmpty())
     settings.writeEntry("/qt/style", style);
 
