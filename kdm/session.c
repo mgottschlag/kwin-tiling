@@ -76,6 +76,13 @@ from the X Consortium.
 # include <shadow.h>
 #endif
 
+#ifdef KRB4
+#  include <krb.h>
+#  ifdef AFS
+#    include <kafs.h>
+#  endif
+#endif
+
 #ifndef GREET_USER_STATIC
 #include <dlfcn.h>
 #ifndef RTLD_NOW
@@ -657,6 +664,14 @@ void SessionExit (d, status, removeAuth)
 	    }
 	}
 #endif /* K5AUTH */
+#ifdef KRB4
+        {
+	    (void) dest_tkt();
+#ifdef AFS
+            if (k_hasafs()) (void) k_unlog();
+#endif
+	}
+#endif
     }
     Debug ("Display %s exiting with status %d\n", d->name, status);
     exit (status);

@@ -5,16 +5,17 @@ SUBDIRS	= config pics $(xdmconfigsubdir)
 # Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) $(KERBEROS_INCS)
 
 #AM_CFLAGS   = -Wall -Wno-implicit -Wno-return-type
 
 bin_PROGRAMS = kdm chooser
 
 # Libraries:
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
-	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
+LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
+LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
+	$(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
+	$(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
 
 # Sources for xdm (both C and C++):
 kdmlib_source = access.c \

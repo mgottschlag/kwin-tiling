@@ -103,6 +103,73 @@ if test -z "$PASSWDLIB" && test "$shadow_support" = "yes"; then
     ])
 fi
 AC_SUBST(PASSWDLIB)
+
+AC_MSG_CHECKING(whether to use Kerberos v4)
+AC_ARG_WITH(krb4,
+[  --with-krb4[=PATH]      Compile in Kerberos v4 support.],
+[ case "$withval" in
+  yes)
+    with_krb4=/usr/kerberos
+    ;;
+  esac ],
+[ with_krb4=no ]
+)
+case "$with_krb4" in
+no)
+  AC_MSG_RESULT(no)
+  ;;
+*)
+  AC_MSG_RESULT(yes)
+  AC_DEFINE_UNQUOTED(KRB4, 1, [ define if you have Kerberos IV ])
+  KERBEROS_ROOT="$with_krb4"
+  KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
+  KERBEROS_LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes"
+  KRB_RPATH=
+  if test "$USE_RPATH" = "yes" ; then
+    KRB_RPATH="-rpath ${KERBEROS_ROOT}/lib"
+  fi
+  AC_CHECK_LIB(resolv, dn_expand, KERBEROS_LIBS="$KERBEROS_LIBS -lresolv")
+  dnl Check whether or not the AFS lifetime conversion routines exist.
+  AC_MSG_CHECKING(whether AFS lifetime conversion routines are present)
+  keeplibs="$LIBS"
+  keepcflags="$CFLAGS"
+  LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes $LIBS"
+  CFLAGS="-I${KERBEROS_ROOT}/include $CFLAGS"
+  AC_TRY_LINK([#include <krb.h>], [ krb_life_to_time(10, 10);],
+              [AC_MSG_RESULT(yes)
+               AC_DEFINE_UNQUOTED(HAVE_KRB_LIFE_TO_TIME, 1, 
+	         [ define if libkrb has krb_life_to_time() ])],
+              [AC_MSG_RESULT(no)])
+  LIBS="$keeplibs"
+  CFLAGS="$keepcflags"
+  ;;
+esac
+
+AC_MSG_CHECKING(whether to use AFS)
+AC_ARG_WITH(afs,
+[  --with-afs              Compile in AFS support (requires KTH krb4).],
+if test "$with_afs" = no; then
+      AC_MSG_RESULT(no)
+    else
+      AC_MSG_RESULT(yes)
+  AC_DEFINE_UNQUOTED(AFS, 1, [ define if you have KTH Kerberos IV and AFS ])
+  if test "$with_krb4" = no; then
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN("AFS requires Kerberos v4 support.")
+  else
+    KERBEROS_LIBS="${KERBEROS_LIBS} -lkafs"
+    if test -n "$os_aix"; then
+      KERBEROS_LIBS="${KERBEROS_LIBS} -lld"
+    fi
+  fi
+fi
+)
+
+AC_SUBST(KERBEROS_ROOT)dnl
+AC_SUBST(KERBEROS_INCS)dnl
+AC_SUBST(KERBEROS_LIBS)dnl
+AC_SUBST(KRB_RPATH)
+
 AC_REQUIRE([KDE_MISC_TESTS])
 AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
 AC_SUBST(LIBUTIL)

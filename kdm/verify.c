@@ -58,6 +58,16 @@ from the X Consortium.
 #endif
 #endif /* USE_PAM */
 
+#ifdef KRB4
+#include <krb.h>
+#ifdef AFS
+#include <kafs.h>
+#endif
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
+#endif
+
 # include	"greet.h"
 
 #ifdef X_NOT_STDC_ENV
@@ -232,6 +242,12 @@ struct verify_info	*verify;
 #endif
 	char		*shell, *home;
 	char		**argv;
+#ifdef KRB4
+        int             ret = 1;
+        char            lrealm[REALM_SZ + 1];
+        char            tkt_string[1024];
+        char            *krbtkfile_env=NULL;
+#endif
 
 	Debug ("Verify %s ...\n", greet->name);
 	p = getpwnam (greet->name);
@@ -255,12 +271,50 @@ struct verify_info	*verify;
 	}
 	endspent();
 #endif /* USESHADOW */
+#ifdef KRB4
+        Debug ("Starting Kerberos 4 Authentication\n");
+        ret = KFAILURE;
+        if (krb_get_lrealm(lrealm, 1) != KFAILURE) {
+            /*snprintf (tkt_string, sizeof(tkt_string), */
+            /*      "%s%d_%d", TKT_ROOT, */
+            /*      (unsigned)p->pw_uid, (unsigned)getpid()); */
+            snprintf (tkt_string, sizeof(tkt_string),
+              "%s%d", TKT_ROOT, (unsigned)p->pw_uid);
+            krbtkfile_env = tkt_string;
+	    krb_set_tkt_string (tkt_string);
+            /*ret = krb_verify_user (p->pw_name, "", lrealm,
+                                   greet->password, 1, NULL);
+	    */
+	    ret = krb_get_pw_in_tkt(p->pw_name, "", lrealm, "krbtgt", lrealm,
+	                            DEFAULT_TKT_LIFE, greet->password);
+        }
+	if (ret == KSUCCESS) {
+	    if (krbtkfile_env)
+		setenv("KRBTKFILE", krbtkfile_env, 1);
+	    chown (tkt_string, p->pw_uid, p->pw_gid);
+#ifdef AFS
+	    if (k_hasafs()) {
+		Debug ("Starting AFS Login\n");
+		k_setpag();
+		krb_afslog_uid (NULL, NULL, p->pw_uid);
+	    }
+#endif
+	} else {
+            Debug ("Kerberos authentication failed. Falling back to local auth.\n");
+            syslog(LOG_NOTICE, "User not verified by KRB4: %s",
+                               krb_get_err_text(ret));
+       /* closing } after local auth (next ifdef KRB4) */
+#endif
+
 	if (strcmp (crypt (greet->password, p->pw_passwd), p->pw_passwd))
 	{
 		Debug ("password verify failed\n");
 		bzero(greet->password, strlen(greet->password));
 		return 0;
 	}
+#ifdef KRB4
+	}
+#endif
 #else /* USE_PAM */
        #define PAM_BAIL \
 	  if (pam_error != PAM_SUCCESS) { \
@@ -285,6 +339,7 @@ struct verify_info	*verify;
           have to worry about closing the pam handle?  It will
           be closed when the session is closed.
        */
+       /*pam_end(pamh, PAM_SUCCESS); */          
 #endif /* USE_PAM */
 
 	Debug ("verify succeeded\n");
