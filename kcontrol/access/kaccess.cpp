@@ -137,6 +137,8 @@ void KAccessApp::readSettings()
   // gestures for enabling the other features
   if (config->readBoolEntry("Gestures", true))
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
+  else
+      xkb->ctrls->enabled_ctrls &= ~XkbAccessXKeysMask;
 
   // mouse-by-keyboard ----------------------------------------------
 
