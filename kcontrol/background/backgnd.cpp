@@ -254,7 +254,7 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
         rb->hide();
     }
 
-    lbl = new QLabel(i18n("M&ode:"), m_pTab2);
+    lbl = new QLabel(i18n("Mod&e:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pArrangementBox = new QComboBox(m_pTab2);
@@ -308,12 +308,12 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
 
     // Tab 3: Advanced
     m_pTab3 = new QWidget(0L, "Advanced Tab");
-    m_pTabWidget->addTab(m_pTab3, i18n("&Advanced"));
+    m_pTabWidget->addTab(m_pTab3, i18n("Advanced"));
     grid = new QGridLayout(m_pTab3, 3, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
 
-    lbl = new QLabel(i18n("B&lending:"), m_pTab3);
+    lbl = new QLabel(i18n("Ble&nding:"), m_pTab3);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBlendBox = new QComboBox(m_pTab3);
@@ -328,7 +328,7 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 1, 0);
-    lbl = new QLabel(i18n("B&alance:"), m_pTab3);
+    lbl = new QLabel(i18n("Balance:"), m_pTab3);
     lbl->setFixedSize(lbl->sizeHint());
     hbox->addSpacing(20); hbox->addWidget(lbl); hbox->addStretch();
     m_pBlendSlider = new QSlider(QSlider::Horizontal, m_pTab3);
@@ -339,7 +339,7 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     QWhatsThis::add( m_pBlendSlider, i18n("You can use this slider to control"
 					  " the degree of blending. You can experiment by moving the slider and"
 					  " looking at the effects in the preview image above.") );
-    m_pReverseBlending = new QCheckBox(i18n("&Reverse"), m_pTab3);
+    m_pReverseBlending = new QCheckBox(i18n("R&everse"), m_pTab3);
     m_pReverseBlending->setFixedSize(m_pReverseBlending->sizeHint());
     connect(m_pReverseBlending, SIGNAL(toggled(bool)),
 	    SLOT(slotReverseBlending(bool)));
