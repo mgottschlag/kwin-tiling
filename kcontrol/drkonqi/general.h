@@ -41,8 +41,8 @@ protected slots:
   void changed();
   
 private slots:
-  void showDetails (void);
-
+  void loadLists();
+  void slotPresetChanged(int index);
 private:
   KConfig *g_pConfig;
   QString groupname;
@@ -51,7 +51,11 @@ private:
   QCheckBox *cbAllowBugReporting;
   QComboBox *cmPresets;
 
-  QListBox  *lb_Presets;
+  QListBox *lb_presets;
+  QListBox *lb_debuggers;
+
+  QStringList m_presets;
+  QStringList m_debuggers;
 };
 
 #endif

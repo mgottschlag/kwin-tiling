@@ -20,50 +20,56 @@
 
 #include <qlayout.h>
 #include <qvbox.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
+
 #include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include <klocale.h>
+#include <kglobal.h>
 
 #include "main.h"
 
 KDrKonqiMain::KDrKonqiMain(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-    KConfig *config = new KConfig("drkonqirc",false,true);
+    KConfig *config = new KConfig("drkonqirc", false, true);
+    config->setGroup(QString::fromLatin1("drkonqi"));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
+#if 0
     tab = new QTabWidget(this);
     layout->addWidget(tab);
+#else
+    layout->setAutoAdd( TRUE );
+#endif
 
     general = new KDrKonqiGeneral(config, "General", this);
-    tab->addTab(general, i18n("&General"));
+    //    tab->addTab(general, i18n("&General"));
     connect(general,SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
+#if 0
     customize = new KDrKonqiCustomize(config, "Customize", this);
     tab->addTab(customize, i18n("&Customize"));
     connect(customize,SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+#endif
 
+    load();
 }
 
 void KDrKonqiMain::load()
 {
     general->load();
-    customize->load();
+    //    customize->load();
 }
 
 void KDrKonqiMain::save()
 {
     general->save();
-    customize->save();
+    //    customize->save();
 }
 
 void KDrKonqiMain::defaults()
 {
     general->defaults();
-    customize->defaults();
+    //    customize->defaults();
 }
 
 void KDrKonqiMain::moduleChanged(bool state)
@@ -90,7 +96,6 @@ QString KDrKonqiMain::quickHelp()
 
 extern "C"
 {
-
   KCModule *create_drkonqi(QWidget *parent, const char *name)
   {
     KGlobal::locale()->insertCatalogue("kcmdrkonqi");
