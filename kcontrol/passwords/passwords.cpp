@@ -96,7 +96,6 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
 
     top->addStretch();
 
-    setButtons(buttons());
     m_pConfig = KGlobal::config();
     load();
 }
@@ -196,8 +195,7 @@ void KPasswordConfig::slotKeep(bool keep)
 
 int KPasswordConfig::buttons()
 {
-    return KCModule::Help | KCModule::Default | KCModule::Reset |
-       KCModule::Cancel | KCModule::Ok| KCModule::Apply ;
+    return KCModule::Help | KCModule::Default | KCModule::Apply ;
 }
 
 QString KPasswordConfig::quickHelp() const
