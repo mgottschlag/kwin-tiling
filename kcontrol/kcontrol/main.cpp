@@ -80,12 +80,13 @@ int MyApplication::newInstance()
 
 int main(int argc, char *argv[])
 {
-
-  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"), "v2.0pre", I18N_NOOP("KDE Control Center - configuration manager for KDE"),
-              KAboutData::GPL, "(c) 1999-2000, The Control Center developers" );
-  KCmdLineArgs::init( argc, argv, "kcontrol","","");
-
-  KCmdLineArgs::addCmdLineOptions( options );
+  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), 
+    "v2.0pre", "The KDE Control Centre", KAboutData::GPL, 
+    "(c) 1998-2000, The KDE Control Centre Developers");
+  aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
+  KCmdLineArgs::init( argc, argv, &aboutData );
+  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+ 
   
   if (!MyApplication::start())
     exit(0); // Don't do anything if we are already running
