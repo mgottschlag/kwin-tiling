@@ -49,7 +49,6 @@
 #include <X11/Xutil.h>
 
 #include "windows.h"
-#include "geom.h"
 
 
 // kwin config keywords
@@ -72,16 +71,6 @@
 #define KWIN_XINERAMA_MOVEMENT     "XineramaMovementEnabled"
 #define KWIN_XINERAMA_PLACEMENT    "XineramaPlacementEnabled"
 #define KWIN_XINERAMA_MAXIMIZE     "XineramaMaximizeEnabled"
-
-/*
- * Some inter-widget spacing constants
- */
-#define SPACE_XO 20
-#define SPACE_YO 20
-#define SPACE_XI 10
-#define SPACE_YI 10
-
-#define max(a,b) ((a > b) ? a:b)
 
 // kwm config keywords
 #define KWM_ELECTRIC_BORDER                  "ElectricBorder"

@@ -10,7 +10,7 @@ libkcm_kwinoptions_la_SOURCES = windows.cpp mouse.cpp main.cpp
 libkcm_kwinoptions_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_kwinoptions_la_LIBADD = $(LIB_KDEUI)
 
-noinst_HEADERS = windows.h geom.h mouse.h main.h
+noinst_HEADERS = windows.h mouse.h main.h
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkwm.pot

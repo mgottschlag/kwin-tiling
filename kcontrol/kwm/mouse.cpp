@@ -34,7 +34,6 @@
 #include <X11/Xutil.h>
 
 #include "mouse.h"
-#include "geom.h"
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qtl.h>
