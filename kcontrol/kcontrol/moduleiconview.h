@@ -40,6 +40,7 @@ public:
   ConfigModule* module() { return _module; }
   QString tag() { return _tag; }
 
+
 private:
   QString       _tag;
   ConfigModule *_module;
@@ -63,11 +64,14 @@ protected slots:
   void slotItemSelected(QIconViewItem*);
 
 protected:
- void startDrag () { return; }
+
+ QDragObject *dragObject(); 
+
   
 private:
   QString           _path; 
   ConfigModuleList *_modules;
+
 };
 
 

@@ -16,7 +16,13 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
 */            
+
+
+#include <qevent.h>
+
+
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 #include <kstddirs.h>                                                                
 #include <kdesktopfile.h>
@@ -25,6 +31,7 @@
 #include "moduleiconview.h"
 #include "modules.h"
 #include "global.h"
+
 
 ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const char * name)
   : QIconView(parent, name)
@@ -164,3 +171,47 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
 	  fill();
 	}
 }
+
+
+QDragObject *ModuleIconView::dragObject()
+{
+  QDragObject *icondrag = QIconView::dragObject();
+  QUriDrag *drag = new QUriDrag(this);
+
+  QPixmap pm = icondrag->pixmap();
+  drag->setPixmap(pm, QPoint(pm.width()/2,pm.height()/2));
+
+
+  QPoint orig = viewportToContents(viewport()->mapFromGlobal(QCursor::pos()));
+  
+  QStringList l;	
+  ModuleIconItem *item = (ModuleIconItem*) findItem(orig);
+  if (item)
+    {
+      if (item->module())
+	l.append(item->module()->fileName());
+      else
+	if (!item->tag().isEmpty())
+	  {
+	    QString dir = _path + "/" + item->tag();
+	    dir = locate("apps", "Settings/"+dir+"/.directory");
+	    int pos = dir.findRev("/.directory");
+	    if (pos > 0)
+	      {
+		dir = dir.left(pos);
+		l.append(dir);
+	      }
+	  }
+      
+      drag->setFilenames(l); 
+    }
+
+  delete icondrag;
+
+  if (l.count() == 0)
+    return 0;
+
+  return drag;
+}
+
+
