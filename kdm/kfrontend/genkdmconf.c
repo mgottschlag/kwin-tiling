@@ -1610,23 +1610,6 @@ upd_language(Entry *ce, Section *cs ATTR_UNUSED)
 }
 
 static void
-upd_greetstring(Entry *ce, Section *cs ATTR_UNUSED)
-{
-    char *p2;
-    if ((p2 = strstr (ce->value, "HOSTNAME"))) {
-	strcpy (p2, "%n");
-	strcpy (p2 + 2, p2 + 8);
-    }
-}
-
-static void
-upd_echomode(Entry *ce, Section *cs ATTR_UNUSED)
-{
-    if (!strcmp (ce->value, "NoStars"))
-	ce->value = (char *)"NoEcho";
-}
-
-static void
 upd_guistyle(Entry *ce, Section *cs ATTR_UNUSED)
 {
     if (!strcmp (ce->value, "Motif+"))
@@ -1646,18 +1629,7 @@ upd_showusers(Entry *ce, Section *cs)
 	ce->value = (char *)"Selected";
 	ce->active = 0;
 	ce->written = 1;
-   }
-}
-
-static void
-upd_logoarea(Entry *ce, Section *cs ATTR_UNUSED)
-{
-    if (!strcmp (ce->value, "KdmLogo"))
-	ce->value = (char *)"Logo";
-    else if (!strcmp (ce->value, "KdmClock"))
-	ce->value = (char *)"Clock";
-    else if (strcmp (ce->value, "Logo") && strcmp (ce->value, "Clock"))
-	ce->value = (char *)"None";
+    }
 }
 
 static const char *defminuid, *defmaxuid;
@@ -2051,7 +2023,7 @@ static Ent entsGreeter[] = {
 { "ColorScheme",		0, 0, 
 "# Widget color scheme of the greeter. \"\" means the built-in default which\n"
 "# currently is quite greyish. Default is \"\"\n" },
-{ "LogoArea",		0, upd_logoarea, 
+{ "LogoArea",		0, 0, 
 "# What should be shown righthand of the input lines:\n"
 "# \"Logo\" - the image specified by LogoPixmap (Default)\n"
 "# \"Clock\" - a neat analog clock\n"
@@ -2068,7 +2040,7 @@ static Ent entsGreeter[] = {
 "# The numbering starts with 0 and corresponds to the listing order in the\n"
 "# active ServerLayout section of XF86Config. -1 means to use the upper-left\n"
 "# screen, -2 means to use the upper-right screen. Default is 0\n" },
-{ "GreetString",	0, upd_greetstring, 
+{ "GreetString",	0, 0, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
 "# - %d -> current display\n"
@@ -2137,7 +2109,7 @@ static Ent entsGreeter[] = {
 { "FocusPasswd",	0, 0, 
 "# If this is true, the password input line is focused automatically if\n"
 "# a user is preselected. Default is false\n" },
-{ "EchoMode",		0, upd_echomode, 
+{ "EchoMode",		0, 0, 
 "# The password input fields cloak the typed in text. Specify, how to do it:\n"
 "# \"NoEcho\" - nothing is shown at all, the cursor doesn't move\n"
 "# \"OneStar\" - \"*\" is shown for every typed letter (Default)\n"
@@ -2706,132 +2678,15 @@ static int
 mergeKdmRcOld (const char *path)
 {
     char *p;
+    struct stat st;
 
     ASPrintf (&p, "%s/kdmrc", path);
-    if (!cfgRead(p)) {
+    if (stat (p, &st)) {
 	free (p);
 	return 0;
     }
-    printf ("Information: reading old kdmrc %s (from kde < 2.2)\n", p);
+    printf ("Information: ignoring old kdmrc %s from kde < 2.2\n", p);
     free (p);
-
-    if (cfgSGroup ("Desktop0")) {
-	REntry *ce;
-	background = mstrdup ("[Desktop0]\n");
-	for (ce = cursect->ents; ce; ce = ce->next)
-	    StrCat (&background, "%s=%s\n", ce->key, ce->value);
-    } else if (cfgSGroup ("KDMDESKTOP")) {
-	background = mstrdup ("[Desktop0]\n");
-	p = cfgEnt ("BackGroundPictureMode");
-	if (!p || !strcmp(p, "None")) {
-	    p = cfgEnt ("BackGroundColorMode");
-	    if (!p || !strcmp(p, "Plain"))
-		StrCat (&background, "BackgroundMode=Flat\n");
-	    else if (!strcmp(p, "Vertical"))
-		StrCat (&background, "BackgroundMode=VerticalGradient\n");
-	    else if (!strcmp(p, "Horizontal"))
-		StrCat (&background, "BackgroundMode=HorizontalGradient\n");
-	    StrCat (&background, "WallpaperMode=NoWallpaper\n");
-	} else {
-	    if (!strcmp(p, "Tile"))
-		StrCat (&background, "WallpaperMode=Tiled\n");
-	    else if (!strcmp(p, "Scale"))
-		StrCat (&background, "WallpaperMode=Scaled\n");
-	    else
-		StrCat (&background, "WallpaperMode=Centered\n");
-	    StrCat (&background, "BackgroundMode=Wallpaper\n");
-	}
-	if ((p = cfgEnt ("BackGroundPicture")))
-	    StrCat (&background, "Wallpaper=%s\n", p);
-	if ((p = cfgEnt ("BackGroundColor1")))
-	    StrCat (&background, "Color1=%s\n", p);
-	if ((p = cfgEnt ("BackGroundColor2")))
-	    StrCat (&background, "Color2=%s\n", p);
-    }
-
-    setsect ("X-*-Greeter");
-
-    if (cfgSGroup ("Locale"))
-	cpyval ("Language", 0);
-
-    if (cfgSGroup ("KDM")) {
-	cpyval ("GreetString", 0);
-	cpyval ("EchoMode", 0);
-	cpyval ("GUIStyle", 0);
-	cpyval ("StdFont", 0);
-	cpyval ("GreetFont", 0);
-	cpyval ("FailFont", 0);
-	cpyval ("MinShowUID", "UserIDLow");
-	cpyval ("MinShowUID", 0);
-	cpyval ("SortUsers", 0);
-	cpyval ("SelectedUsers", "Users");
-	cpyval ("HiddenUsers", "NoUsers");
-	cpyval ("ShowUsers", 0);
-	if ((p = cfgEnt ("UserView"))) {
-	    if (isTrue (p)) {
-		if (!(p = cfgEnt ("Users")) || !p[0])
-		    putval ("ShowUsers", "NotHidden");
-		else
-		    putval ("ShowUsers", "Selected");
-	    } else
-		putval ("ShowUsers", "None");
-	}
-	if ((p = cfgEnt("LogoPixmap"))) {
-	    if (!strcmp (p, "/dev/null"))
-		putval ("LogoArea", "None");
-	    else {
-		putval ("LogoPixmap", p);
-		putval ("LogoArea", "Logo");
-	    }
-	}
-	cpyval ("LogoArea", 0);
-	cpyval ("GreeterPosFixed", 0);
-	cpyval ("GreeterPosX", 0);
-	cpyval ("GreeterPosY", 0);
-	if ((p = cfgEnt("ShowPrevious")))
-	    putval ("PreselectUser", isTrue(p) ? "Previous" : "None");
-
-	setsect ("Shutdown");
-	cpyval ("HaltCmd", "Shutdown");
-	cpyval ("RebootCmd", "Restart");
-
-	setsect ("X-*-Core");
-	cpyval ("AutoReLogin", 0);
-	if (((p = cfgEnt("ShutDownButton"))) || 
-	    ((p = cfgEnt("ShutdownButton")))) {
-	    if (!strcmp (p, "All")) {
-		putval ("AllowShutdown", "All");
-		putfqval ("X-:*-Core", "AllowShutdown", "All");
-	    } else if (!strcmp (p, "RootOnly")) {
-		putval ("AllowShutdown", "Root");
-		putfqval ("X-:*-Core", "AllowShutdown", "Root");
-	    } else if (!strcmp (p, "ConsoleOnly")) {
-		putval ("AllowShutdown", "None");
-		putfqval ("X-:*-Core", "AllowShutdown", "All");
-	    } else {
-		putval ("AllowShutdown", "None");
-		putfqval ("X-:*-Core", "AllowShutdown", "None");
-	    }
-	}
-
-	setsect ("X-:*-Core");
-	cpyval ("NoPassEnable", 0);
-	cpyval ("NoPassUsers", 0);
-
-	setsect ("X-:0-Core");
-	cpyval ("AutoLoginEnable", 0);
-	cpyval ("AutoLoginUser", 0);
-    }
-
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-    if (cfgSGroup ("Lilo")) {
-	setsect("Shutdown");
-	cpyval ("UseLilo", "Lilo");
-	cpyval ("LiloCmd", "LiloCommand");
-	cpyval ("LiloMap", 0);
-    }
-#endif
-
     return 1;
 }
 
@@ -3219,9 +3074,6 @@ DumpEntry(
     return False;
 }
 
-static const char *xdmpath;
-static const char *xdmconfs[] = { "%s/kdm-config", "%s/xdm-config" };
-
 static FDefs xdmdefs[] = {
 { "Xdmcp",	"Xaccess",	"%s/Xaccess",		0	},
 { "Xdmcp",	"Willing",	"",			0	},
@@ -3236,23 +3088,19 @@ mergeXdmCfg (const char *path)
 {
     char *p;
     XrmDatabase db;
-    int i;
 
-    for (i = 0; i < as(xdmconfs); i++) {
-	ASPrintf (&p, xdmconfs[i], path);
-	if ((db = XrmGetFileDatabase (p))) {
-	    printf ("Information: reading old xdm config file %s\n", p);
-	    usedFile (p);
-	    free (p);
-	    xdmpath = path;
-	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
-				 DumpEntry, (XPointer) 0);
-	    applydefs (xdmdefs, as(xdmdefs), path);
-	    mod_usebg = 1;
-	    return 1;
-	}
+    ASPrintf (&p, "%s/xdm-config", path);
+    if ((db = XrmGetFileDatabase (p))) {
+	printf ("Information: reading old xdm config file %s\n", p);
+	usedFile (p);
 	free (p);
+	XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
+			     DumpEntry, (XPointer) 0);
+	applydefs (xdmdefs, as(xdmdefs), path);
+	mod_usebg = 1;
+	return 1;
     }
+    free (p);
     return 0;
 }
 
