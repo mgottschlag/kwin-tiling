@@ -554,7 +554,7 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
 
         if(0==sizes[s].height)
         {
-            QString  quote(i18n("The quick brown fox jumps over the lazy dog"));
+            QString  quote(i18n("A sentence that uses all of the letters of the alphabet", "The quick brown fox jumps over the lazy dog"));
             bool     foundCmap=getCharMap(face, quote);
 
             if(foundCmap)
