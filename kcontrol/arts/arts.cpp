@@ -36,7 +36,6 @@
 
 #include <qfileinfo.h>
 #include <qstring.h>
-#include <qmessagebox.h>
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qtabwidget.h>
@@ -47,6 +46,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kmessagebox.h>
 
 #include "arts.h"
 
@@ -186,7 +186,7 @@ void KArtsModule::save()
         while(fgets(reason,1024,why)) thereason += reason;
         fclose(why);
 
-        QMessageBox::warning( 0, "kcmarts",
+        KMessageBox::error( 0,
                 i18n("There is an installation problem which doesn't allow "
                     "starting the aRts server with realtime priority. \n"
                     "The following problem occured:\n")+thereason);
