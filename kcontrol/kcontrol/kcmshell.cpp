@@ -44,6 +44,7 @@
 #include "global.h"
 #include "kcmshell.h"
 #include "proxywidget.h"
+#include <kaboutdata.h>
 
 static KCmdLineOptions options[] =
 {

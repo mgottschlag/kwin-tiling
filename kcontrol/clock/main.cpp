@@ -35,6 +35,7 @@
 
 #include "tzone.h"
 #include "dtime.h"
+#include <kaboutdata.h>
 
 KclockModule::KclockModule(QWidget *parent, const char *name)
   : KCModule(parent, name)

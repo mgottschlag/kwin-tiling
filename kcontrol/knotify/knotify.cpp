@@ -48,6 +48,7 @@
 #include <kurlrequester.h>
 
 #include "knotify.h"
+#include <dcopclient.h>
 #include "knotify.moc"
 
 static const int COL_FILENAME = 1;

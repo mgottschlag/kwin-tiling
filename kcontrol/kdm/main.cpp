@@ -44,6 +44,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <kaboutdata.h>
 
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {

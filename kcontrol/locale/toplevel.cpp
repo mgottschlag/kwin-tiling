@@ -44,6 +44,7 @@
 #include "localeother.h"
 #include "klocalesample.h"
 #include "toplevel.h"
+#include <kaboutdata.h>
 #include "toplevel.moc"
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)

@@ -42,6 +42,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <fstream.h>
+#include <qpushbutton.h>
 
 CStarOfficeSettingsWidget::CStarOfficeSettingsWidget(QWidget *parent, const char *name)
                          : CStarOfficeSettingsWidgetData(parent, name)

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "XftConfigIncludesWidget.h"
+#include <qpushbutton.h>
 
 #ifdef HAVE_XFT
 #include "Misc.h"

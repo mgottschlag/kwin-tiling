@@ -38,6 +38,7 @@
 #include "bell.moc"
 
 #include <X11/Xlib.h>
+#include <kaboutdata.h>
 
 extern "C"
 {

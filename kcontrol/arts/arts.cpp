@@ -52,6 +52,7 @@
 #include <kstddirs.h>
 
 #include "arts.h"
+#include <kaboutdata.h>
 
 /* check if starting realtime would be possible */
 

@@ -45,6 +45,7 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 #include <kio/netaccess.h>
+#include <kiconloader.h>
 
 #include "kdm-appear.moc"
 

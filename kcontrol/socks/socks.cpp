@@ -45,6 +45,7 @@
 #include <ksocks.h>
 
 #include "socks.h"
+#include <kaboutdata.h>
 
 KSocksConfig::KSocksConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)

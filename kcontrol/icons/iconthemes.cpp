@@ -48,6 +48,7 @@
 #include <kio/job.h>
 
 #include "iconthemes.h"
+#include <kiconloader.h>
 
 IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)

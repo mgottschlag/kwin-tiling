@@ -38,6 +38,7 @@
 #include "extensionstab_impl.h"
 
 #include <X11/Xlib.h>
+#include <kaboutdata.h>
 
 
 // for multihead

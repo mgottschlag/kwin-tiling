@@ -35,6 +35,7 @@
 #include <qtimer.h>
 #include <qlayout.h>
 #include <kmessagebox.h>
+#include <kaboutdata.h>
 
 static bool firstTime=true;
 

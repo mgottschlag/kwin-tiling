@@ -39,6 +39,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <stdlib.h>
+#include <qpushbutton.h>
 
 CDiskFontListWidget::CDiskFontListWidget(QWidget *parent, const char *)
                    : CFontListWidget(parent, false, false, i18n("Install From:"), i18n("&Install"), i18n("Cha&nge Folder"),

@@ -30,6 +30,7 @@
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kstddirs.h>
+#include <qpushbutton.h>
 #include "kdm-font.moc"
 
 

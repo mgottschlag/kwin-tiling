@@ -30,6 +30,7 @@
 #include <klocale.h>
 
 #include "kcmtaskbar.h"
+#include <kaboutdata.h>
 #include "kcmtaskbar.moc"
 
 extern "C"

@@ -41,6 +41,7 @@
 #include "fonts.moc"
 
 #include <kdebug.h>
+#include <qpushbutton.h>
 
 /**** DLL Interface ****/
 
