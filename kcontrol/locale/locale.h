@@ -52,7 +52,7 @@ public slots:
     
 private:
 
-  KLanguageCombo *combo1, *combo2, *combo3;
+  KLanguageCombo *combo1, *combo2, *combo3, *combo4, *combo5, *combo6;
 
   // samples for how things will display w/selected locale
   QLabel *numberSample;
@@ -67,7 +67,11 @@ private:
 private slots:
 
   void changed(int);
- 
+  void changedNumber(int);
+  void changedMoney(int);
+  void changedTime(int);
+  void updateSample();
+
 };
 
 

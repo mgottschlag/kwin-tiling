@@ -35,8 +35,8 @@
 
 #include "locale.h"
 #include "locale.moc"
-#include <stdlib.h>
-#include "config.h"	// needed for setenv() on HP-UX...
+
+#include "config.h"
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : KConfigWidget (parent, name)
@@ -44,7 +44,8 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     locale = new KLocale("kdelibs");
     
     // allow localization of numbers and money
-    locale->enableNumericLocale(true);
+    // not used by KDE it self?
+    // locale->enableNumericLocale(true);
     
     QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
     QGroupBox *gbox = new QGroupBox(i18n("Language"), this);
@@ -89,6 +90,36 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 3, 1);
     tl1->addWidget(combo3, 3, 2);
     
+    label = new QLabel(i18n("&Numbers"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo4 = new KLanguageCombo(gbox);
+    combo4->setMinimumWidth(combo4->sizeHint().width());
+    combo4->setFixedHeight(combo4->sizeHint().height());
+    label->setBuddy(combo4);
+    connect(combo4,SIGNAL(highlighted(int)),this,SLOT(changedNumber(int)));
+    tl1->addWidget(label, 4, 1);
+    tl1->addWidget(combo4, 4, 2);
+
+    label = new QLabel(i18n("&Money"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo5 = new KLanguageCombo(gbox);
+    combo5->setMinimumWidth(combo5->sizeHint().width());
+    combo5->setFixedHeight(combo5->sizeHint().height());
+    label->setBuddy(combo5);
+    connect(combo5,SIGNAL(highlighted(int)),this,SLOT(changedMoney(int)));
+    tl1->addWidget(label, 5, 1);
+    tl1->addWidget(combo5, 5, 2);
+
+    label = new QLabel(i18n("&Date and time"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo6 = new KLanguageCombo(gbox);
+    combo6->setMinimumWidth(combo6->sizeHint().width());
+    combo6->setFixedHeight(combo6->sizeHint().height());
+    label->setBuddy(combo6);
+    connect(combo6,SIGNAL(highlighted(int)),this,SLOT(changedTime(int)));
+    tl1->addWidget(label, 6, 1);
+    tl1->addWidget(combo6, 6, 2);
+
     tl1->activate();
     
     gbox = new QGroupBox(i18n("Examples"), this);
@@ -107,36 +138,28 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     
     numberSample = new QLabel(gbox);
     tl1->addWidget(numberSample, 1, 2);
-    numberSample->setText(locale->formatNumber(1234567.89) +
-			  " / " +
-			  locale->formatNumber(-1234567.89));
-    
+
     label = new QLabel(i18n("Money:"), gbox);
     label->setMinimumSize(label->sizeHint());
     tl1->addWidget(label, 2, 1);
     
     moneySample = new QLabel(gbox);
     tl1->addWidget(moneySample, 2, 2);
-    moneySample->setText(locale->formatMoney(123456789.00) +
-			 " / " + 
-			 locale->formatMoney(-123456789.00));
-    
+
     label = new QLabel(i18n("Date:"), gbox);
     label->setMinimumSize(label->sizeHint());
     tl1->addWidget(label, 3, 1);
     
     dateSample = new QLabel(gbox);
     tl1->addWidget(dateSample, 3, 2);
-    dateSample->setText(locale->formatDate(QDate::currentDate()));
-    
+
     label = new QLabel(i18n("Time:"), gbox);
     label->setMinimumSize(label->sizeHint());
     tl1->addWidget(label, 4, 1);
     
     timeSample = new QLabel(gbox);
     tl1->addWidget(timeSample, 4, 2);
-    timeSample->setText(locale->formatTime(QTime::currentTime()));
-    
+
     tl->addStretch(1);
     tl->activate();
 
@@ -190,6 +213,12 @@ void KLocaleConfig::loadSettings()
   loadLanguageList(combo1);
   loadLanguageList(combo2);
   loadLanguageList(combo3);
+  loadLanguageList(combo4);
+  loadLanguageList(combo5);
+  loadLanguageList(combo6);
+  combo4->insertItem(i18n("Same as language"), 0);
+  combo5->insertItem(i18n("Same as language"), 0);
+  combo6->insertItem(i18n("Same as language"), 0);
 
 
   // This code is adopted from klocale.cpp
@@ -200,7 +229,7 @@ void KLocaleConfig::loadSettings()
   config->setGroup("Locale");
   languages = config->readEntry("Language");
 
-  while (1) {
+  while (i < 3) {
     lang = languages.left(languages.find(':'));
     languages = languages.right(languages.length() - lang.length() - 1);
     if (lang.isEmpty() || lang == "C")
@@ -219,9 +248,24 @@ void KLocaleConfig::loadSettings()
               if (pos >= 0)
                 combo3->setCurrentItem(pos);
               break;        
-      default: return;
     }
   } 
+
+  // Numeric
+  QString str = config->readEntry("Numeric");
+  pos = tags.findIndex(str);
+  combo4->setCurrentItem(pos + 1);
+
+  // Money
+  str = config->readEntry("Monetary");
+  pos = tags.findIndex(str);
+  combo5->setCurrentItem(pos + 1);
+
+  // Date and time
+  str = config->readEntry("Time");
+  pos = tags.findIndex(str);
+  combo6->setCurrentItem(pos + 1);
+
   changed(combo1->currentItem());
 }
 
@@ -239,7 +283,19 @@ void KLocaleConfig::applySettings()
 
   config->setGroup("Locale");
   config->writeEntry("Language", value, true, true);
+
+  QString str1 = combo4->currentItem()?*tags.at(combo4->currentItem() - 1):QString::null;
+  QString str2 = combo5->currentItem()?*tags.at(combo5->currentItem() - 1):QString::null;
+  QString str3 = combo6->currentItem()?*tags.at(combo6->currentItem() - 1):QString::null;
+  config->writeEntry("Numeric", str1);
+  config->writeEntry("Monetary", str2);
+  config->writeEntry("Time", str3);
   config->sync();
+
+  // Apply new settings to the runing locale... experimental.
+  if (str1.isNull()) str1 = *tags.at(combo1->currentItem());
+  if (str2.isNull()) str2 = *tags.at(combo1->currentItem());
+  if (str3.isNull()) str3 = *tags.at(combo1->currentItem());
 
   if (changedFlag)
     KMessageBox::information(this,
@@ -256,26 +312,85 @@ void KLocaleConfig::defaultSettings()
   combo1->setCurrentItem(0);
   combo2->setCurrentItem(0);
   combo3->setCurrentItem(0);
+  combo4->setCurrentItem(0);
+  combo5->setCurrentItem(0);
+  combo6->setCurrentItem(0);
 }
 
+void KLocaleConfig::changedNumber(int i)
+{
+  changedFlag = TRUE;
+
+  QString str = i?*tags.at(i - 1):QString::null;
+  if (str.isNull()) str = locale->language();
+  locale->setLanguage(QString::null,
+                      QString::null,
+                      str,
+                      QString::null,
+                      QString::null);
+  updateSample();
+}
+
+void KLocaleConfig::changedMoney(int i)
+{
+  changedFlag = TRUE;
+
+  QString str = i?*tags.at(i - 1):QString::null;
+  if (str.isNull()) str = locale->language();
+  locale->setLanguage(QString::null,
+                      QString::null,
+                      QString::null,
+                      str,
+                      QString::null);
+  updateSample();
+}
+
+void KLocaleConfig::changedTime(int i)
+{
+  changedFlag = TRUE;
+
+  QString str = i?*tags.at(i - 1):QString::null;
+  if (str.isNull()) str = locale->language();
+  locale->setLanguage(QString::null,
+                      QString::null,
+                      QString::null,
+                      QString::null,
+                      str);
+  updateSample();
+}
 
 void KLocaleConfig::changed(int i)
 {
   changedFlag = TRUE;
 
-  delete locale;
-  setenv("KDE_LANG", (*tags.at(i)).ascii(), 1);
-  locale = new KLocale("kdelibs");
+  // default to the selected language if no special locale for numbers/money/time
+  QString str1 = combo4->currentItem()?*tags.at(combo4->currentItem() - 1):QString::null;
+  QString str2 = combo5->currentItem()?*tags.at(combo5->currentItem() - 1):QString::null;
+  QString str3 = combo6->currentItem()?*tags.at(combo6->currentItem() - 1):QString::null;
+  if (str1.isNull()) str1 = *tags.at(i);
+  if (str2.isNull()) str2 = *tags.at(i);
+  if (str3.isNull()) str3 = *tags.at(i);
 
-  debug("changed %s", locale->language().ascii());
   // should update the locale here before redisplaying samples.
-  numberSample->setText(locale->formatNumber(1234567.89) +
-			" / " +
-			locale->formatNumber(-1234567.89));
+  locale->setLanguage(*tags.at(i),
+                      *tags.at(i),
+                      str1,
+                      str2,
+                      str3);
 
-  moneySample->setText(locale->formatMoney(123456789.00) +
-		       " / " + 
-		       locale->formatMoney(-123456789.00));
-  dateSample->setText(locale->formatDate(QDate::currentDate()));
-  timeSample->setText(locale->formatTime(QTime::currentTime()));
+  updateSample();
+}
+
+void KLocaleConfig::updateSample()
+{
+   numberSample->setText(locale->formatNumber(1234567.89) +
+ 			" / " +
+ 			locale->formatNumber(-1234567.89));
+
+   moneySample->setText(locale->formatMoney(123456789.00) +
+		       " / " +
+		       " / " +
+ 		       locale->formatMoney(-123456789.00));
+   dateSample->setText(locale->formatDate(QDate::currentDate()));
+   timeSample->setText(locale->formatTime(QTime::currentTime()));
 }
