@@ -148,7 +148,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
      {
         path = url.path();
         ref = url.ref();
-        path += KURL::decode_string(url.query());
+        path += KURL::decode_string(url.query(), 106 /* utf-8 */);
         if (path.isEmpty() && url.hasHost())
            path = "/";
      }
