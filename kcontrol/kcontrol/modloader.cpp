@@ -34,7 +34,7 @@
 #include "global.h"
 #include "modloader.h"
 
-KCModule* KCModuleLoader::load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader)
+KCModule* KCModuleLoader::load(const KCModuleInfo &mod, const QString &libname, KLibLoader *loader)
 {
     // attempt to load modules with ComponentFactory, only if the symbol init_<lib> exists
     // (this is because some modules, e.g. kcmkio with multiple modules in the library,
@@ -56,7 +56,7 @@ KCModule* KCModuleLoader::load(const ModuleInfo &mod, const QString &libname, KL
                     return module;
             }
             // else do a fallback
-            kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
+            kdDebug(1208) << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
         }
     
 	// get the create_ function
@@ -77,7 +77,7 @@ KCModule* KCModuleLoader::load(const ModuleInfo &mod, const QString &libname, KL
 }
 
 
-KCModule* KCModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
+KCModule* KCModuleLoader::loadModule(const KCModuleInfo &mod, bool withfallback)
 {
   /*
    * Simple libraries as modules are the easiest case:
@@ -113,7 +113,7 @@ KCModule* KCModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
   return 0;
 }
 
-void KCModuleLoader::unloadModule(const ModuleInfo &mod)
+void KCModuleLoader::unloadModule(const KCModuleInfo &mod)
 {
 	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();

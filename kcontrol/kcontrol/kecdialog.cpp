@@ -113,7 +113,7 @@ void KCMultiDialog::addModule(const QString& path, bool withfallback)
 {
     kdDebug(1208) << "KCMultiDialog::addModule " << path << endl;
 
-    ModuleInfo info(path);
+    KCModuleInfo info(path);
 
     QHBox* page = addHBoxPage(info.name(), info.comment(),
                               KGlobal::iconLoader()->loadIcon(info.icon(), KIcon::Desktop, KIcon::SizeMedium));
@@ -136,7 +136,7 @@ void KCMultiDialog::slotAboutToShow(QWidget *page)
 
     moduleDict.remove(page);
 
-    ModuleInfo info(loadInfo->path);
+    KCModuleInfo info(loadInfo->path);
 
     KCModule *module = KCModuleLoader::loadModule(info, loadInfo->withfallback);
 

@@ -29,7 +29,7 @@
 #include "moduleinfo.moc"
 #include "global.h"
 
-ModuleInfo::ModuleInfo(QString desktopFile)
+KCModuleInfo::KCModuleInfo(QString desktopFile)
   : _fileName(desktopFile)
 {
   _allLoaded = false;
@@ -64,14 +64,14 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   setGroups(groups);
 }
 
-ModuleInfo::~ModuleInfo()
+KCModuleInfo::~KCModuleInfo()
 {
   _name = QString::null;
   _comment = QString::null;
 }
 
 void
-ModuleInfo::loadAll()
+KCModuleInfo::loadAll() 
 {
   _allLoaded = true;
 
@@ -91,10 +91,10 @@ ModuleInfo::loadAll()
   setDocPath(desktop.readEntry("DocPath"));
 }
 
-QCString
-ModuleInfo::moduleId() const
+QCString 
+KCModuleInfo::moduleId() const
 {
-  if (!_allLoaded) const_cast<ModuleInfo*>(this)->loadAll();
+  if (!_allLoaded) const_cast<KCModuleInfo*>(this)->loadAll();
 
   QString res;
 
@@ -107,69 +107,69 @@ ModuleInfo::moduleId() const
 }
 
 const QString
-ModuleInfo::fileName() const
+KCModuleInfo::fileName() const
 {
    return _fileName;
 };
 
 const QStringList &
-ModuleInfo::groups() const
+KCModuleInfo::groups() const
 {
    return _groups;
 };
 
 
-KService::Ptr
-ModuleInfo::service() const
+KService::Ptr 
+KCModuleInfo::service() const
 {
   return _service;
 }
 
 
 const QStringList &
-ModuleInfo::keywords() const
+KCModuleInfo::keywords() const
 {
    return _keywords;
 };
 
 QString
-ModuleInfo::name() const
+KCModuleInfo::name() const
 {
    return _name;
 };
 
 QString
-ModuleInfo::comment() const
+KCModuleInfo::comment() const
 {
    return _comment;
 };
 
 QString
-ModuleInfo::icon() const
+KCModuleInfo::icon() const
 {
    return _icon;
 };
 
 QString
-ModuleInfo::docPath() const
+KCModuleInfo::docPath() const
 {
-  if (!_allLoaded)
-    const_cast<ModuleInfo*>(this)->loadAll();
+  if (!_allLoaded) 
+    const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _doc;
 };
 
 QString
-ModuleInfo::library() const
+KCModuleInfo::library() const
 {
   return _lib;
 };
 
 QString
-ModuleInfo::handle() const
+KCModuleInfo::handle() const
 {
-  if (!_allLoaded)
-    const_cast<ModuleInfo*>(this)->loadAll();
+  if (!_allLoaded) 
+    const_cast<KCModuleInfo*>(this)->loadAll();
 
   if (_handle.isEmpty())
      return _lib;
@@ -178,25 +178,25 @@ ModuleInfo::handle() const
 };
 
 bool
-ModuleInfo::isDirectory() const
+KCModuleInfo::isDirectory() const
 {
    return _directory;
 };
 
 bool
-ModuleInfo::needsRootPrivileges() const
+KCModuleInfo::needsRootPrivileges() const
 {
-  if (!_allLoaded)
-    const_cast<ModuleInfo*>(this)->loadAll();
+  if (!_allLoaded) 
+    const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _needsRootPrivileges;
 };
 
 bool
-ModuleInfo::isHiddenByDefault() const
+KCModuleInfo::isHiddenByDefault() const
 {
   if (!_allLoaded)
-    const_cast<ModuleInfo*>(this)->loadAll();
+    const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _isHiddenByDefault;
 };

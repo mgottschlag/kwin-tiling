@@ -37,7 +37,7 @@ class QXEmbed;
 class QVBoxLayout;
 class QVBox;
 
-class ConfigModule : public ModuleInfo
+class ConfigModule : public KCModuleInfo
 {
   Q_OBJECT
 

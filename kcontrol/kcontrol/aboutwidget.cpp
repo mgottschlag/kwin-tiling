@@ -70,7 +70,7 @@ const char * machine_text = I18N_NOOP("Machine:");
 
 struct AboutWidget::ModuleLink
 {
-    ModuleInfo *module;
+    KCModuleInfo *module;
     QRect linkArea;
 };
 
@@ -399,7 +399,7 @@ void AboutWidget::updatePixmap()
         {
             QString szName;
             QString szComment;
-            ModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
+            KCModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
             if (module)
             {
                 szName = module->name();

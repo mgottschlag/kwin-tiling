@@ -51,7 +51,7 @@ template class QPtrList<ConfigModule>;
 
 
 ConfigModule::ConfigModule(QString desktopFile)
-  : ModuleInfo(desktopFile), _changed(false), _module(0), _embedWidget(0),
+  : KCModuleInfo(desktopFile), _changed(false), _module(0), _embedWidget(0),
     _rootProcess(0), _embedLayout(0), _embedFrame(0)
 {
 }

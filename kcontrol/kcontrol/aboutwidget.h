@@ -23,7 +23,7 @@
 #include <qwidget.h>
 #include <qlistview.h>
 
-class ModuleInfo;
+class KCModuleInfo;
 class QPixmap;
 class KPixmap;
 

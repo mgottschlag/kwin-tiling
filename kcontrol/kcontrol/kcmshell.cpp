@@ -222,7 +222,7 @@ int main(int _argc, char *_argv[])
 	}
 
         // load the module
-        ModuleInfo info(path);
+        KCModuleInfo info(path);
 
         KCModule *module = KCModuleLoader::loadModule(info, false);
 

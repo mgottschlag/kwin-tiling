@@ -28,11 +28,11 @@ class KLibLoader;
 class KCModuleLoader
 {
 public:
-  static KCModule *loadModule(const ModuleInfo &mod, bool withfallback=true);
-  static void unloadModule(const ModuleInfo &mod);
+  static KCModule *loadModule(const KCModuleInfo &mod, bool withfallback=true);
+  static void unloadModule(const KCModuleInfo &mod);
   static void showLastLoaderError(QWidget *parent);
 private:
-  static KCModule* load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader);
+  static KCModule* load(const KCModuleInfo &mod, const QString &libname, KLibLoader *loader);
 
 };
 

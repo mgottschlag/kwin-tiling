@@ -30,14 +30,14 @@
 #include <kservice.h>
 
 
-class ModuleInfo : public QObject
+class KCModuleInfo : public QObject
 {
   Q_OBJECT
 
 public:
 
-  ModuleInfo(QString desktopFile);
-  ~ModuleInfo();
+  KCModuleInfo(QString desktopFile);
+  ~KCModuleInfo();
 
   const QString fileName() const;
   const QStringList &groups() const;
@@ -81,4 +81,5 @@ private:
 
 };
 
+// vim: ts=2 sw=2 et
 #endif
