@@ -88,6 +88,7 @@ private:
     QTimer *m_pTimer;
 
     KConfig *m_pConfig;
+    bool m_bDeleteConfig;
     KStandardDirs *m_pDirs;
     KShellProcess *m_pProc;
 };

@@ -59,8 +59,11 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 	    configname.sprintf("kdesktop-screen-%drc", screen_number);
 
 	m_pConfig = new KConfig(configname, false, true);
-    } else
+        m_bDeleteConfig = true;
+    } else {
 	m_pConfig = config;
+        m_bDeleteConfig = false;
+    }
 
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
@@ -79,6 +82,8 @@ KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
     delete m_Tempfile; m_Tempfile = 0;
+    if( m_bDeleteConfig )
+        delete m_pConfig;
 }
 
 
