@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kstdaction.h>
+#include <kstdguiitem.h>
 
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
@@ -92,7 +93,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 		actionCollection() );
 	actPrefs->plug( menu );
 
-	menu->insertItem(i18n("&Help"), m_help->menu());
+	menu->insertItem(KStdGuiItem::help().text(), m_help->menu());
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	quitAction->plug(menu);
 }
