@@ -23,6 +23,7 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
+#include <qiconview.h>
 
 class ConfigModuleList;
 class ConfigModule;
@@ -33,16 +34,15 @@ class IndexWidget : public QWidget
   Q_OBJECT    
   
 public:   
-  IndexWidget(QWidget *parent, const char *name=0);	
-
-  void fillIndex(ConfigModuleList *list);
+  IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);	
 
 public slots:
   void moduleChanged(ConfigModule *module);
   void makeVisible(ConfigModule *module);
 
 protected slots:
-  void currentChanged(QListViewItem *item);
+  void itemSelected(QListViewItem *item);
+  void iconSelected(QIconViewItem *icon);
   void treeButtonClicked();
   void iconButtonClicked();
 
@@ -50,15 +50,19 @@ signals:
   void moduleActivated(ConfigModule *module);
 
 protected:
+  void fillTreeView();
+  void fillIconView();
   void updateItem(QListViewItem *item, ConfigModule *module);
   void resizeEvent(QResizeEvent *);
 
 private:
   QListViewItem *getGroupItem(QListViewItem *parent, const QStringList &groups);
 
-  QListView     *_tree;
-  QListViewItem *_root;
-  QPushButton   *_treebtn, *_iconbtn;
+  QListView        *_tree;
+  QIconView        *_icon;
+  QListViewItem    *_root;
+  QPushButton      *_treebtn, *_iconbtn;
+  ConfigModuleList *_modules;
 
 };
 
@@ -93,6 +97,28 @@ public:
 protected:
   ConfigModule *_module;
 
+};
+
+class IconItem : public QIconViewItem
+{
+
+public:
+  IconItem(QIconView *parent, const QString& text, const QPixmap& pm,
+		   ConfigModule *m = 0, const QString& g = "")
+	: QIconViewItem(parent, text, pm)
+	, _module(m)
+	, _group(g)
+	{}
+
+  void setConfigModule(ConfigModule* m) { _module = m; }
+  void setGroup(const QString& g) { _group = g; }
+
+  ConfigModule* module() { return _module; }
+  QString       group() { return _group; }
+
+private:
+  ConfigModule* _module;
+  QString       _group;
 };
 
 #endif

@@ -40,6 +40,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
   // set the modules' simple attributes
   setName(desktop.readName());
+  setComment(desktop.readComment());
   setIcon(desktop.readIcon());
 
   // get the documentation path
@@ -69,9 +70,21 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
 QPixmap ModuleInfo::icon()
 {
-  return KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small);
+  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small, 0, true);
+  if(icon.isNull())
+	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Small);
+  
+  return icon;
 }
 
+QPixmap ModuleInfo::largeIcon()
+{
+  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Large, 0, true);
+  if(icon.isNull())
+	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Large);
+  
+  return icon;
+}
 
 QCString ModuleInfo::moduleId() const
 {

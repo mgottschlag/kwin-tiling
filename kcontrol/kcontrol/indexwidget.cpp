@@ -32,8 +32,9 @@
 #include "modules.h"
 #include "global.h"
 
-IndexWidget::IndexWidget(QWidget *parent , const char *name)
+IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *name)
   : QWidget(parent, name)
+  , _modules(modules)
 {
   _tree = new QListView(this);
   _tree->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);   
@@ -42,7 +43,19 @@ IndexWidget::IndexWidget(QWidget *parent , const char *name)
   _tree->header()->hide();
 
   connect(_tree, SIGNAL(currentChanged(QListViewItem*)), 
-	  this, SLOT(currentChanged(QListViewItem*)));
+	  this, SLOT(itemSelected(QListViewItem*)));
+
+  _icon = new QIconView(this);
+  _icon->setArrangement(QIconView::LeftToRight);
+  _icon->setSelectionMode(QIconView::Single);
+  _icon->setItemsMovable(false);
+  _icon->setSorting(false);
+  _icon->setWordWrapIconText(true);
+  _icon->setItemTextPos(QIconView::Right);
+  _icon->setResizeMode(QIconView::Adjust);
+
+  connect(_icon, SIGNAL(clicked(QIconViewItem*)), 
+		  this, SLOT(iconSelected(QIconViewItem*)));
 
   _treebtn = new QPushButton(i18n("Tree view"), this);
   _treebtn->setFixedHeight(22);
@@ -51,6 +64,12 @@ IndexWidget::IndexWidget(QWidget *parent , const char *name)
   _iconbtn = new QPushButton(i18n("Icon view"), this);
   _iconbtn->setFixedHeight(22);
   connect(_iconbtn, SIGNAL(clicked()), this, SLOT(iconButtonClicked()));
+
+  // populate treeview
+  fillTreeView();
+
+  // populate iconview
+  fillIconView();
 
   // activate treeview
   treeButtonClicked();
@@ -65,10 +84,17 @@ void IndexWidget::resizeEvent(QResizeEvent *)
 
   _tree->move(0,0);
   _tree->resize(width(), height()-22);
+
+  _icon->move(0,0);
+  _icon->resize(width(), height()-22);
+  _icon->setGridX(width()-26);
+  fillIconView();
 }
 
-void IndexWidget::fillIndex(ConfigModuleList *list)
+void IndexWidget::fillTreeView()
 {
+  _tree->clear();
+
   QString rootlabel;
 
   if (KCGlobal::system())
@@ -81,21 +107,19 @@ void IndexWidget::fillIndex(ConfigModuleList *list)
   _root->setPixmap(0, KGlobal::iconLoader()->loadIcon("kcontrol", KIconLoader::Small));
   
   ConfigModule *module;
-  for (module=list->first(); module != 0; module=list->next())
+  for (module=_modules->first(); module != 0; module=_modules->next())
     {
       if (module->library().isEmpty())
-	continue;
+		continue;
       
-      if (KCGlobal::system())
-	{
-	  if (!module->onlyRoot())
-	    continue;
-	}
-      else
-	{
-	  if (module->onlyRoot() && !KCGlobal::root())
-	    continue;
-	}
+      if (KCGlobal::system()) {
+		  if (!module->onlyRoot())
+			continue;
+		}
+      else {
+		  if (module->onlyRoot() && !KCGlobal::root())
+			continue;
+		}
       
       QListViewItem *parent;
       parent = _root;
@@ -105,6 +129,29 @@ void IndexWidget::fillIndex(ConfigModuleList *list)
   
   _tree->setOpen(_root, true);
   setMinimumWidth(_tree->columnWidth(0)+22);
+}
+
+void IndexWidget::fillIconView()
+{
+  _icon->clear();
+
+  ConfigModule *module;
+  for (module=_modules->first(); module != 0; module=_modules->next())
+    {
+      if (module->library().isEmpty())
+		continue;
+      
+      if (KCGlobal::system()) {
+		  if (!module->onlyRoot())
+			continue;
+		}
+      else {
+		  if (module->onlyRoot() && !KCGlobal::root())
+			continue;
+		}
+
+	  (void) new IconItem(_icon, module->comment(), module->largeIcon(), module);
+    }
 }
 
 QListViewItem *IndexWidget::getGroupItem(QListViewItem *parent, const QStringList& groups)
@@ -146,18 +193,25 @@ QListViewItem *IndexWidget::getGroupItem(QListViewItem *parent, const QStringLis
   return item;
 }
 
-void IndexWidget::currentChanged(QListViewItem *item)
+void IndexWidget::itemSelected(QListViewItem *item)
 {
-  if (item == 0)
-    return;
+  if (!item) return;
+  if (item->childCount() != 0) return;
 
-  if (item->childCount() != 0)
-    return;
   IndexListItem *iitem = (IndexListItem*)(item);
   if (iitem && iitem->_module)
-    {
       emit moduleActivated(iitem->_module);
-    }
+}
+
+void IndexWidget::iconSelected(QIconViewItem *icon)
+{
+  if(!icon) return;
+
+  IconItem* item = (IconItem*)(icon);
+  if (item && item->module())
+	emit moduleActivated(item->module());
+
+
 }
 
 void IndexWidget::updateItem(QListViewItem *item, ConfigModule *module)
@@ -214,6 +268,7 @@ void IndexWidget::makeVisible(ConfigModule *module)
 void IndexWidget::iconButtonClicked()
 {
   _tree->hide();
+  _icon->show();
   _iconbtn->setEnabled(false);
   _treebtn->setEnabled(true);
 }
@@ -221,6 +276,7 @@ void IndexWidget::iconButtonClicked()
 void IndexWidget::treeButtonClicked()
 {
   _tree->show();
+  _icon->hide();
   _iconbtn->setEnabled(true);
   _treebtn->setEnabled(false);
 }

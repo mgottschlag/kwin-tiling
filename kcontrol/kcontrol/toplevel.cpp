@@ -55,8 +55,7 @@ TopLevel::TopLevel(const char* name)
   _tab = new QTabWidget(_splitter);
 
   // index tab
-  _indextab = new IndexWidget(_tab);
-  _indextab->fillIndex(_modules);
+  _indextab = new IndexWidget(_modules, _tab);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
 		  this, SLOT(moduleActivated(ConfigModule*)));
   _tab->addTab(_indextab, "In&dex");
