@@ -266,14 +266,7 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
         defaultUserFontsDir=constDefaultSysFontsDir;
     else
     {
-        const char *hm=getenv("HOME");
-
-        if(!hm)
-            hm="/";
-
-        home=hm;
-
-        defaultUserFontsDir=QFile::encodeName(CMisc::dirSyntax(home+"/.fonts/"));
+        defaultUserFontsDir=QFile::encodeName(CMisc::dirSyntax(QDir::homeDirPath()+"/.fonts/"));
     }
     if(all)
     {
