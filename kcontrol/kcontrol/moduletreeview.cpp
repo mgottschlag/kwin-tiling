@@ -134,7 +134,7 @@ void ModuleTreeView::fill(ModuleTreeItem *parent, const QString &parentPath)
 QSize ModuleTreeView::sizeHint() const
 {
     return QListView::sizeHint().boundedTo( 
-	QSize( fontMetrics().width('x')*35, QWIDGETSIZE_MAX) );
+	QSize( fontMetrics().maxWidth()*35, QWIDGETSIZE_MAX) );
 }
 
 void ModuleTreeView::makeSelected(ConfigModule *module)
