@@ -438,6 +438,7 @@ ClipAction::ClipAction( KConfig *kc )
         QString group = actionGroup + "/Command_%1";
         kc->setGroup( group.arg( i ) );
 
+        kdDebug() << "kc->isDollarExpansion=" <<  kc->readEntry( "Commandline" ) << endl;
         addCommand( kc->readPathEntry( "Commandline" ),
                     kc->readEntry( "Description" ), // i18n'ed
                     kc->readBoolEntry( "Enabled" ),
@@ -456,6 +457,7 @@ void ClipAction::addCommand( const QString& command,
 {
     if ( command.isEmpty() )
         return;
+    kdDebug() << "command->command=" << command << endl;
 
     struct ClipCommand *cmd = new ClipCommand( command, description, enabled, icon );
     //    cmd->id = myCommands.count(); // superfluous, I think...

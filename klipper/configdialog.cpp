@@ -33,6 +33,7 @@
 #include <kregexpeditorinterface.h>
 #include <kparts/componentfactory.h>
 
+#include <kdebug.h>
 #include "configdialog.h"
 
 ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,

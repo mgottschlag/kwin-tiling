@@ -30,7 +30,7 @@
 #include "toplevel.h"
 #include "version.h"
 
-#if defined Q_WS_X11 && ! defined K_WS_QTONLY
+#if defined Q_WS_X11
 #include <qxembed.h> // schroder
 #endif
 
