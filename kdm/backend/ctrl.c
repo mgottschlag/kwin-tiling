@@ -377,6 +377,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		goto exce;
 	    Reply ("ok\tkdm\tlist\t");
 	    if (d) {
+		if ((d->displayType & d_location) == dLocal)
+		    Reply ("local\t");
 		if (d->allowShutdown != SHUT_NONE) {
 		    if (d->allowShutdown == SHUT_ROOT && d->userSess)
 			Reply ("shutdown root\t");
