@@ -57,7 +57,7 @@ extern "C" {
         {
             KProcess proc;
             proc.setExecutable("krdb");
-            proc.start( KProcess::DontCare );
+            proc.start( KProcess::Block );
         }
         // Write some Qt root property.
        QByteArray properties;
