@@ -65,6 +65,7 @@ LockProcess::LockProcess(bool child)
     : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder), child_saver(child), parent(0)
 {
     KWin::setState( winId(), NET::StaysOnTop );
+    KWin::setOnAllDesktops( winId(), true );
 
     setupSignals();
 
