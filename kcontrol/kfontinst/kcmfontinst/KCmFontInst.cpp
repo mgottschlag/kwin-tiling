@@ -316,9 +316,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     connect(itsDirOp, SIGNAL(urlEntered(const KURL &)), SLOT(urlEntered(const KURL &)));
     connect(itsDirOp, SIGNAL(fileHighlighted(const KFileItem *)), SLOT(fileHighlighted(const KFileItem *)));
-#ifdef HAVE_FT_CACHE
-    connect(itsDirOp, SIGNAL(fileSelected(const KFileItem *)), SLOT(fileSelected(const KFileItem *)));
-#endif
     connect(itsDirOp, SIGNAL(finishedLoading()), SLOT(loadingFinished()));
     connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
                       SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
@@ -477,7 +474,7 @@ void CKCmFontInst::urlEntered(const KURL &url)
     updateInformation(0, 0);
 }
 
-void CKCmFontInst::fileHighlighted(const KFileItem *)
+void CKCmFontInst::fileHighlighted(const KFileItem *item)
 {
     const KFileItemList *list=itsDirOp->selectedItems();
 
@@ -515,54 +512,40 @@ void CKCmFontInst::fileHighlighted(const KFileItem *)
         itsEnableAct->setEnabled(false);
         itsDisableAct->setEnabled(false);
     }
-}
 
 #ifdef HAVE_FT_CACHE
-void CKCmFontInst::fileSelected(const KFileItem *item)
-{
-    if(item)  // OK, check its been selected - not deselected!!!
+    //
+    // Generate preview...
+    const KFileItem *previewItem=item 
+                                   ? item 
+                                   : list && 1==list->count() 
+                                         ? list->getFirst() 
+                                         : NULL;
+
+    if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
     {
-        const KFileItemList *list=itsDirOp->selectedItems();
+        QCString fName(QFile::encodeName(previewItem->url().path()));
 
-        if(list)
+        if(CFontEngine::isAFont(fName))
         {
-            KFileItemListIterator it(*list);
+            bool showFs=false;
 
-            while(it.current())
+            if(CFontEngine::isATtc(fName) && CGlobal::fe().openKioFont(fName, CFontEngine::TEST, true))
             {
-                if((*it)==item)
+                if(CGlobal::fe().getNumFaces()>1)
                 {
-                    QCString fName(QFile::encodeName(item->url().path()));
-
-                    if(CFontEngine::isAFont(fName))
-                    {
-                        bool showFs=false;
-
-                        if(CFontEngine::isATtc(fName) && CGlobal::fe().openKioFont(fName, CFontEngine::TEST, true))
-                        {
-                            if(CGlobal::fe().getNumFaces()>1)
-                            {
-                                itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
-                                showFs=true;
-                            }
-
-                            CGlobal::fe().closeFont();
-                        }
-
-                        itsFaceLabel->setShown(showFs);
-                        itsFaceSelector->setShown(showFs);
-                        itsPreview->showFont(item->url());
-                    }
-                    break;
+                    itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
+                    showFs=true;
                 }
-                ++it;
+
+                CGlobal::fe().closeFont();
             }
+
+            itsFaceLabel->setShown(showFs);
+            itsFaceSelector->setShown(showFs);
+            itsPreview->showFont(previewItem->url());
         }
     }
-}
-#else
-void CKCmFontInst::fileSelected(const KFileItem *)
-{
 }
 #endif
 

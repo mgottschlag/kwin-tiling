@@ -76,7 +76,6 @@ class CKCmFontInst : public KCModule
     void    setupViewMenu();
     void    urlEntered(const KURL &url);
     void    fileHighlighted(const KFileItem *item);
-    void    fileSelected(const KFileItem *item);
     void    loadingFinished();
     void    addFonts();
     void    removeFonts();
