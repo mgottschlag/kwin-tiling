@@ -42,7 +42,7 @@ class KInfoListWidget : public KConfigWidget
 
 public:
 
-  KInfoListWidget(QWidget *parent, const char *name=0, const char *_localname=0, bool _getlistbox (KTabListBox *)=0);
+  KInfoListWidget(QWidget *parent, const char *name=0, QString _title=0, bool _getlistbox (KTabListBox *)=0);
 
   void applySettings() {};
   void loadSettings() {};
@@ -51,7 +51,7 @@ public:
 private:
   KTabListBox 	*lBox;
   bool 		(*getlistbox) (KTabListBox *);
-  char		localname[31];
+  QString 	title;
   
   QLabel	*NoInfoText;
 

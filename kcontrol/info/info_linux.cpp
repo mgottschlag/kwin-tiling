@@ -1,4 +1,5 @@
-/*  info_linux.cpp
+/*  $Id$
+
     Linux-specific Information about the Hardware.
 
     written 1998 by Helge Deller (helge.deller@ruhr-uni-bochum.de)
@@ -14,8 +15,12 @@
 */
 
 
+#include <unistd.h>
 #include <syscall.h>
 #include <stdio.h>
+#include <fstab.h>
+#include <sys/statfs.h>
+#include <sys/stat.h>
 #include <linux/kernel.h>
 
 #include <kapp.h>
@@ -49,6 +54,7 @@
 
 #define INFO_PARTITIONS_AVAILABLE
 #define INFO_PARTITIONS "/proc/partitions"
+#define INFO_PARTITIONS_FULL_INFO	// define, to show complete info !
 
 #define INFO_XSERVER_AVAILABLE
 
@@ -103,8 +109,6 @@ bool GetInfo_CPU( KTabListBox *lBox )
 
 bool GetInfo_IRQ( KTabListBox *lBox )
 {
-//  lBox->setAutoUpdate(FALSE);
-//  lBox->setDefaultColumnWidth(MAXCOLUMNWIDTH );
   return GetInfo_ReadfromFile( lBox, INFO_IRQ, 0 );
 }
 
@@ -141,7 +145,8 @@ bool GetInfo_Devices( KTabListBox *lBox )
 {  
   GetInfo_ReadfromFile( lBox, INFO_DEVICES, 0 );
   lBox->insertItem(QString(""));
-  lBox->insertItem(QString("Misc devices:"));
+  // don't use i18n() for "Misc devices", because all other info is english too!
+  lBox->insertItem(QString("Misc devices:")); 
   GetInfo_ReadfromFile( lBox, INFO_MISC, 0 );
   return TRUE;
 }
@@ -151,10 +156,105 @@ bool GetInfo_SCSI( KTabListBox *lBox )
   return GetInfo_ReadfromFile( lBox, INFO_SCSI, 0 );
 }
 
+
+
+#ifndef INFO_PARTITIONS_FULL_INFO
+
 bool GetInfo_Partitions( KTabListBox *lBox )
 {
   return GetInfo_ReadfromFile( lBox, INFO_PARTITIONS, 0 );
 }
+
+#else // INFO_PARTITIONS_FULL_INFO
+
+// Some Ideas taken from garbazo from his source in info_fbsd.cpp
+
+bool GetInfo_Partitions (KTabListBox *lbox)
+{
+	#define NUMCOLS 6
+	int maxwidth[NUMCOLS]={0,0,0,0,0,0};
+	QString Title[NUMCOLS];
+	int n;
+	
+	struct fstab *fstab_ent;
+ 	struct statfs sfs;
+	/* struct stat st; */
+	unsigned long total,avail;
+	QFontMetrics fm(lbox->tableFont());
+	QString str;
+	QString MB(i18n("MB"));	// "MB" = "Mega-Byte"
+	QString TAB(SEPERATOR);
+
+	if (setfsent() != 0) // Try to open fstab
+	    return FALSE;
+
+	MB = QString(" ") + MB;
+	Title[0] = i18n("Device");
+	Title[1] = i18n("Mount Point");
+	Title[2] = i18n("FS Type");
+	Title[3] = i18n("Total Size");
+	Title[4] = i18n("Free Size");
+	Title[5] = i18n("Mount Options");
+
+	lbox->setNumCols(NUMCOLS);
+	lbox->setSeparator(SEPERATOR_CHAR);
+	for (n=0; n<NUMCOLS; ++n)
+        {	maxwidth[n]=fm.width(Title[n]);
+		lbox->setColumn(n,Title[n],maxwidth[n] );
+	}
+
+	while ((fstab_ent=getfsent())!=NULL) {
+		if ( (n=fm.width(fstab_ent->fs_spec)) > maxwidth[0])
+			maxwidth[0]=n;
+
+		if ( (n=fm.width(fstab_ent->fs_file)) > maxwidth[1])
+			maxwidth[1]=n;
+		
+		if ( (n=fm.width(fstab_ent->fs_vfstype)) > maxwidth[2])
+			maxwidth[2]=n;
+
+		if (!maxwidth[3])
+		    maxwidth[3] = maxwidth[4] = fm.width("999999 MB");
+
+		if ( (n=fm.width(fstab_ent->fs_mntops)) > maxwidth[5])
+			maxwidth[5]=n;
+
+		str =  QString(fstab_ent->fs_spec) + TAB
+		    +  QString(fstab_ent->fs_file) + TAB 
+		    +  QString(fstab_ent->fs_vfstype) + TAB;
+
+		total = avail = 0;
+		if (statfs(fstab_ent->fs_file,&sfs)==0) {
+    		    total = sfs.f_blocks * sfs.f_bsize;
+		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) * sfs.f_bsize;
+		};
+		/*
+		if (stat(fstab_ent->fs_file,&st)!=0)
+			total = 0;
+		if (!S_ISDIR(st.st_mode))
+			total = 0;
+		*/
+		if (total)
+		    str += TAB
+			+  Value((total/1024+512)/1024,6) + MB 
+			+  TAB
+			+  Value((avail/1024+512)/1024,6) + MB;
+		else
+		    str += " " + TAB + " " + TAB;
+
+		str +=  TAB + QString(fstab_ent->fs_mntops);
+
+		lbox->insertItem(str);
+	}
+	endfsent();  // close fstab..
+
+	for (n=0; n<NUMCOLS; ++n)
+	    lbox->setColumnWidth(n, maxwidth[n] + PIXEL_ADD);
+	    
+	return TRUE;
+}
+#endif	 // INFO_PARTITIONS_FULL_INFO
+
 
 
 

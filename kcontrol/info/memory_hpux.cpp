@@ -1,3 +1,4 @@
+// $Id$
 //
 // This file will be included by memory.cpp !
 //
@@ -68,9 +69,7 @@ void KMemoryWidget::update()
 	      swapinfo.pss_nblksenabled = swapinfo.pss_nfpgs;
           total_swap += (((unsigned long)swapinfo.pss_nblksenabled) * 1024);
           free_swap  += (((unsigned long)swapinfo.pss_nfpgs       ) * 1024);
-	  //fprintf(stderr,"%luMB -> %luMB\r\n", swapinfo.pss_nblksenabled/1024, swapinfo.pss_nfpgs/1024 );
       }
-     //fprintf(stderr,"\r\n");
   }
 
   used_swap = total_swap - free_swap;

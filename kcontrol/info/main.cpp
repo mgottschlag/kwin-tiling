@@ -1,4 +1,6 @@
 /*
+  $Id$
+
   main.cpp for kcminfo = "control-panel information"
 
   based on:
@@ -18,9 +20,12 @@
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-   
+
   Last modified:
-      - 3. Oktober 1998 by Helge Deller (helge.deller@ruhr-uni-bochum.de)
+    1998-10-03 by Helge Deller (deller@gmx.de)
+              many changes to the Layout of kcminfo,
+	      introduced KInfoListWidget()
+
   */
 
 
@@ -53,7 +58,7 @@ public slots:
 
 #define CHECK_PAGE(pagename,widgetptr,getproc,title,helpfile) \
       if (!pages || pages->contains(pagename))		\
-	addPage(widgetptr = new KInfoListWidget(dialog, pagename, title, getproc), \
+	addPage(widgetptr = new KInfoListWidget(dialog,pagename,title,getproc), \
 		title, helpfile)
 
 
@@ -88,7 +93,7 @@ KInfoApplication::KInfoApplication(int &argc, char **argv, const char *name)
       CHECK_PAGE("dma",        dma,        GetInfo_DMA,               i18n("DMA-C&hannels"),"info-4.html" );
   #endif      
   #ifdef INFO_IOPORTS_AVAILABLE
-      CHECK_PAGE("ioports",    ioports,    GetInfo_IO_Ports,          i18n("&IO-Ports"),    "info-5.html" );
+      CHECK_PAGE("ioports",    ioports,    GetInfo_IO_Ports,          i18n("IO-Por&ts"),    "info-5.html" );
   #endif      
   #ifdef INFO_PCI_AVAILABLE
       CHECK_PAGE("pci",        pci,        GetInfo_PCI,               i18n("PCI-&Bus"),     "info-6.html" );

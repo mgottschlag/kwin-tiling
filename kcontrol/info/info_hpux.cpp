@@ -1,4 +1,4 @@
-/* 	info_hpux.cpp
+/* 	$Id$
 	
 	!!!!! this file will be included by info.cpp !!!!!
 
@@ -6,7 +6,8 @@
 	04.05.1999	added audio(alib)-support (deller)
 	27.04.1999	Helge Deller (deller@gmx.de)
 			[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
-			added support for nearly all categories (means: not finished!)
+			added support for nearly all categories 
+			    (means: not finished!)
 	01.11.1998	first (nearly empty) version [Helge Deller]
 			with a little source for CPU from Aubert Pierre
 
@@ -24,9 +25,6 @@
 #include <qfile.h>
 #include <qfontmetrics.h>
 #include <qtextstream.h>
-
-// #include <signal.h>
-
 
 
 #define INFO_CPU_AVAILABLE
@@ -234,7 +232,7 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 { "D260"	,V_1x1d	,PA7200		},
 { "D270"	,V_2x0	,PA8000		},
 { "D370"	,V_2x0	,PA8000		},
-{ ""		,V_LAST	,PARISC_PA_LAST	}	// Last Entry has to be "" !!!!
+{ ""		,V_LAST	,PARISC_PA_LAST	}  // Last Entry has to be empty !!!!
 };
 
 
@@ -285,8 +283,6 @@ static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
     returning FALSE indicates, that information was not available.
 */
 
-
-#define PIXEL_ADD	10
 
 bool GetInfo_CPU( KTabListBox *lBox )
 {

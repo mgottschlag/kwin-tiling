@@ -7,7 +7,7 @@
 	* info_fbsd.cpp: Add a few (hopefully) useful comments, and tidy up
 	some of the code.
 
-1998-12-08  Helge Deller <helge.deller@ruhr-uni-bochum.de>
+1998-12-08  Helge Deller <deller@gmx.de>
 
 	* info.cpp:
 	fixed the column-width of KTabListboxes, where only one column was/is visible.

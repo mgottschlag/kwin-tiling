@@ -18,11 +18,15 @@ Conversion to kcontrol applet:
 
   Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
   
+
 added more informations:
-    (pci,dma,interrupts,Sound,X-Server,devices,ioports,partitions,SCSI)
-    [Linux only, empty functions for the other systems]):
-    Helge Deller (helge.deller@ruhr-uni-bochum.de)
-  
-    Hey!  We've got Sound, XServer, devices, partitions and SCSI info for 
-    FreeBSD now too, compliments of your truly.
-    Alex Zepeda (garbanzo@hooked.net)
+
+  (pci,dma,interrupts,Sound,X-Server,devices,ioports,partitions,SCSI)
+  [Linux and HP-UX, empty functions for the other systems]):
+  Helge Deller (deller@gmx.de)
+
+  Hey!  We've got Sound, XServer, devices, partitions and SCSI info for 
+  FreeBSD now too, compliments of your truly.
+  Alex Zepeda (garbanzo@hooked.net)
+    
+    

@@ -1,4 +1,7 @@
-/* 	Main Widget for showing system-dependent information.
+/* 	
+	$Id$
+	
+	Main Widget for showing system-dependent information.
 	
 	** main.cpp includes this file ! **
 
@@ -24,13 +27,12 @@
 
 
 	Last modified:	by:
-	24.04.1999	Helge Deller (deller@gmx.de)
+	21.05.1999	deller
+			minor fixes, sprintf()->arg() for QT 2.x
+	24.04.1999	deller
 			changed i18n()'s in Get_X_Server, because there was 
 			some really ugly layout-problems in some languages !
-			These problems could bee seen in german-language !
-			-> Sorry i18n-Team ! I had to change & SIMPLIFY the 
-			i18n()-strings for you !
-	01.11.1998	first version [Helge Deller]
+	01.11.1998	first version [Helge Deller, deller@gmx.de]
 	
 */
 
@@ -45,24 +47,16 @@
 #include <X11/Xlib.h>
 
 
-// All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special 
-// error-message should be shown to the user....
-// If GetInfo_ErrorString is not modified in the function, the default string
-// DEFAULT_ERRORSTRING will be used...
+/* All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special 
+   error-message should be shown to the user....
+   If GetInfo_ErrorString is not modified in the function, the default string
+   DEFAULT_ERRORSTRING will be used...
+*/
 
 QString	GetInfo_ErrorString;
 
 #define DEFAULT_ERRORSTRING \
-  i18n("No Information available\n or\nthis System is not yet supported :-(")
-
-
-
-/*
-***************************************************************************
-**  End of: Include system-specific code				 **
-***************************************************************************
-*/
-
+  i18n("No Information available\n or \nthis System is not yet supported :-(")
 
 /* easier to read with such a define ! */
 #define I18N_MAX(txt,in,fm,maxw) \
@@ -71,14 +65,10 @@ QString	GetInfo_ErrorString;
 #define SEPERATOR 	"\t"
 #define SEPERATOR_CHAR	'\t'
 
-
+#define PIXEL_ADD	10	// add x Pixels to multicolumns
 
 static QString Value( int val, int numbers=1 )
-{	char txt[20];
-	char fmt[10];
-	sprintf(fmt,"%%%ii",numbers);
-	sprintf(txt,fmt,val);
-	return QString(txt);
+{	return QString("%1").arg(val,numbers);
 }
 
 
@@ -88,9 +78,7 @@ static void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr,
     int i;
     double xres, yres;
     int ndepths = 0, *depths = NULL;
-    QString str,str2, txt;
-    const char *txt2;
-    char ctxt[300];
+    QString txt,txt2;
     QString TAB(SEPERATOR);
     
     xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
@@ -98,37 +86,34 @@ static void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr,
 
     lBox->insertItem("");
 
-    str = i18n("Screen #");
-    str += Value((int)scr);
-    lBox->insertItem(str);
+    lBox->insertItem( i18n("Screen # %1").arg((int)scr,-1) );
 
-    ctxt[0] = 0;
-    
     I18N_MAX(txt,i18n("Dimensions"),fm,*maxwidth);
-    txt2 = i18n("%dx%d Pixels (%dx%d mm)");
-    sprintf(ctxt,txt2,	(int)DisplayWidth(dpy, scr), (int)DisplayHeight(dpy, scr),
-			(int)DisplayWidthMM(dpy, scr), (int)DisplayHeightMM (dpy, scr) );
-    str = QString(" ") + txt + TAB + QString(ctxt);
-    lBox->insertItem(str);
+    txt2 = i18n("%1 x %2 Pixels (%3 x %4 mm)")
+		.arg( (int)DisplayWidth(dpy,scr) )
+		.arg( (int)DisplayHeight(dpy,scr) )
+		.arg( (int)DisplayWidthMM(dpy,scr) )
+		.arg( (int)DisplayHeightMM (dpy,scr) );
+    lBox->insertItem( QString(" ") + txt + TAB + txt2 );
 
     I18N_MAX(txt,i18n("Resolution"),fm,*maxwidth);
-    txt2 = i18n("%dx%d Dots per Inch (dpi)");
-    sprintf(ctxt,txt2,	(int)(xres+0.5), (int)(yres+0.5));
-    str = QString(" ") + txt + TAB + QString(ctxt);
-    lBox->insertItem(str);
+    txt2 = i18n("%1 x %2 Dots per Inch (dpi)")
+		.arg( (int)(xres+0.5) )
+		.arg( (int)(yres+0.5) );
+    lBox->insertItem( QString(" ") + txt + TAB + txt2 );
 
     depths = XListDepths (dpy, scr, &ndepths);
     if (!depths) ndepths = 0;
     I18N_MAX(txt,i18n("Depths"),fm,*maxwidth);
-    str =  QString(" ") + txt + QString(" (") + Value(ndepths) + QString(")") + TAB;
+    txt =  QString(" ") + txt + QString(" (%1)").arg(ndepths,-1) + TAB;
     
     for (i = 0; i < ndepths; i++) 
     {	
-	str = str + Value(depths[i]);
+	txt = txt + Value(depths[i]);
 	if (i < ndepths - 1)
-	    str = str + QString(", ");
+	    txt = txt + QString(", ");
     }
-    lBox->insertItem(str);
+    lBox->insertItem(txt);
     if (depths) XFree((char *) depths);
 }
 
@@ -260,8 +245,8 @@ void KInfoListWidget::defaultSettings()
 	       --row;
 	    }
 	    colwidth += 5;
-	    if (localname) 
-   	        lBox->setColumn(0,localname,colwidth); // set title and width
+	    if (!title.isEmpty()) 
+   	        lBox->setColumn(0,title,colwidth); // set title and width
 	    else
    	        lBox->setDefaultColumnWidth(colwidth); // only set width
 	}
@@ -271,29 +256,35 @@ void KInfoListWidget::defaultSettings()
 
     if (!ok)
     {	if (lBox) { delete lBox; lBox = 0; }	    
-	if (GetInfo_ErrorString==0 || GetInfo_ErrorString.length()==0)
+	if (GetInfo_ErrorString.isEmpty())
 	    GetInfo_ErrorString = DEFAULT_ERRORSTRING;
 	if (NoInfoText)
 	    NoInfoText->setText(GetInfo_ErrorString);
 	else
 	    NoInfoText = new QLabel(GetInfo_ErrorString,this);
 	NoInfoText->setAutoResize(TRUE);
-	NoInfoText->setAlignment(AlignCenter | WordBreak);
+	NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
 	NoInfoText->move( width()/2,height()/2 ); // -120 -30
     }
 }
 
 
-KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name, 
-		const char *_localname, bool _getlistbox(KTabListBox *lbox))
+KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name=0, 
+		QString _title, bool _getlistbox(KTabListBox *lbox))
   : KConfigWidget(parent, name)
-{   char 	*p;
+{   
+    int pos;
     getlistbox 	= _getlistbox;
     lBox 	= 0;
     NoInfoText  = 0;
-    strncpy(&localname[0],_localname,sizeof(localname)-1);
-    p = localname;
-    while (*p) { if (*p=='&') strcpy(&p[0],&p[1]); else ++p; } /* delete the key-accelerator ! */
+    title   	= _title;
+    if (title.isEmpty() && name)
+	title = QString(name);
+    do {	// delete all '&'-chars !
+	pos = title.find('&');
+	if (pos>=0) title.remove(pos,1);	// delete this char !
+    } while (pos>=0);
+    GetInfo_ErrorString = "";
     setMinimumSize( 200,6*SCREEN_XY_OFFSET );
     defaultSettings();
 }

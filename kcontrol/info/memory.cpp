@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #include <qtabbar.h>
 #include <kapp.h>
 #include <kcharsets.h>
@@ -73,11 +75,8 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 
 QString format(unsigned long value)
 {
-  QString  text;
   double   mb = value / 1048576.0;
-  
-  text.sprintf(i18n("%10u bytes  = %8.2f MB"), ((unsigned int)value), mb);
-  return text;
+  return i18n("%1 bytes  = %2 MB").arg(value,10).arg(mb,10,'f',2);
 }
 
 
@@ -97,13 +96,15 @@ QString format(unsigned long value)
 
 void KMemoryWidget::update()
 {
-  // Numerical values
-  totalMem->setText(i18n("Not available"));
-  freeMem->setText(i18n("Not available"));
-  sharedMem->setText(i18n("Not available"));
-  bufferMem->setText(i18n("Not available"));
-  swapMem->setText(i18n("Not available"));
-  freeSwapMem->setText(i18n("Not available"));
+  QString Not_Available_Text;
+
+  Not_Available_Text = i18n("Not available");
+  totalMem->setText(Not_Available_Text);
+  freeMem->setText(Not_Available_Text);
+  sharedMem->setText(Not_Available_Text);
+  bufferMem->setText(Not_Available_Text);
+  swapMem->setText(Not_Available_Text);
+  freeSwapMem->setText(Not_Available_Text);
 }
 
 #endif
