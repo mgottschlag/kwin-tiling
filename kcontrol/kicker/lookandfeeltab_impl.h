@@ -57,7 +57,6 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void desktopTileChanged(int i);
   void browserTileChanged(int i);
   void urlTileChanged(int i);
-  void exeTileChanged(int i);
   void wlTileChanged(int i);
 
  private:

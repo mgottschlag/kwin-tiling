@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>LookAndFeelTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>402</width>
-            <height>441</height>
+            <width>428</width>
+            <height>411</height>
         </rect>
     </property>
     <property name="caption">
@@ -236,60 +236,6 @@
                         <string>Choose a tile image for window list buttons.</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="5" column="2">
-                    <property name="name">
-                        <cstring>m_exeColor</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When the Custom Color option is selected, use this button to pick a color for non-KDE application tile backgrounds</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Non-KDE app&amp;lications:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_exeTile</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for legacy application buttons.</string>
-                    </property>
-                </widget>
-                <widget class="KComboBox" row="5" column="1">
-                    <item>
-                        <property name="text">
-                            <string>Default</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Custom Color</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>m_exeTile</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="insertionPolicy">
-                        <enum>NoInsertion</enum>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose a tile image for legacy application buttons.</string>
-                    </property>
-                </widget>
                 <widget class="KComboBox" row="2" column="1">
                     <item>
                         <property name="text">
@@ -398,7 +344,7 @@
                         <string>Choose a tile image for buttons that launch applications.</string>
                     </property>
                 </widget>
-                <spacer row="0" column="3" rowspan="6" colspan="1">
+                <spacer row="0" column="3" rowspan="5" colspan="1">
                     <property name="name">
                         <cstring>Spacer48</cstring>
                     </property>
@@ -410,8 +356,8 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>80</width>
-                            <height>160</height>
+                            <width>66</width>
+                            <height>130</height>
                         </size>
                     </property>
                 </spacer>
@@ -613,8 +559,6 @@ This option is only active if 'Enable background image' is selected.</string>
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_backgroundInput</sender>
@@ -672,8 +616,6 @@ This option is only active if 'Enable background image' is selected.</string>
     <tabstop>m_browserColor</tabstop>
     <tabstop>m_wlTile</tabstop>
     <tabstop>m_wlColor</tabstop>
-    <tabstop>m_exeTile</tabstop>
-    <tabstop>m_exeColor</tabstop>
     <tabstop>m_backgroundInput</tabstop>
     <tabstop>m_colorizeImage</tabstop>
     <tabstop>advancedOptionsButton</tabstop>
@@ -690,7 +632,4 @@ This option is only active if 'Enable background image' is selected.</string>
 </slots>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>

@@ -50,21 +50,18 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_desktopTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_browserTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_urlTile, SIGNAL(activated(int)), SIGNAL(changed()));
-  connect(m_exeTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_wlTile, SIGNAL(activated(int)), SIGNAL(changed()));
 
   connect(m_kmenuTile, SIGNAL(activated(int)), SLOT(kmenuTileChanged(int)));
   connect(m_desktopTile, SIGNAL(activated(int)), SLOT(desktopTileChanged(int)));
   connect(m_browserTile, SIGNAL(activated(int)), SLOT(browserTileChanged(int)));
   connect(m_urlTile, SIGNAL(activated(int)), SLOT(urlTileChanged(int)));
-  connect(m_exeTile, SIGNAL(activated(int)), SLOT(exeTileChanged(int)));
   connect(m_wlTile, SIGNAL(activated(int)), SLOT(wlTileChanged(int)));
 
   connect(m_kmenuColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
   connect(m_desktopColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
   connect(m_browserColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
   connect(m_urlColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
-  connect(m_exeColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
   connect(m_wlColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
 
   connect(m_transparent, SIGNAL(toggled(bool)), SIGNAL(changed()));
@@ -221,13 +218,11 @@ void LookAndFeelTab::load()
   m_desktopTile->setCurrentItem(0);
   m_urlTile->setCurrentItem(0);
   m_browserTile->setCurrentItem(0);
-  m_exeTile->setCurrentItem(0);
   m_wlTile->setCurrentItem(0);
   m_kmenuColor->setEnabled(false);
   m_desktopColor->setEnabled(false);
   m_urlColor->setEnabled(false);
   m_browserColor->setEnabled(false);
-  m_exeColor->setEnabled(false);
   m_wlColor->setEnabled(false);
   if (c.readBoolEntry("EnableTileBackground", false))
   {
@@ -263,14 +258,6 @@ void LookAndFeelTab::load()
       m_browserTile->setCurrentItem(m_tilename.findIndex(tile));
       m_browserColor->setColor(c.readColorEntry("KMenuTileColor"));
       m_browserColor->setEnabled(tile == "Colorize");
-    }
-
-    if (c.readBoolEntry("EnableExeTiles", false))
-    {
-      tile = c.readEntry("ExeTile", "solid_red");
-      m_exeTile->setCurrentItem(m_tilename.findIndex(tile));
-      m_exeColor->setColor(c.readColorEntry("KMenuTileColor"));
-      m_exeColor->setEnabled(tile == "Colorize");
     }
 
     if (c.readBoolEntry("EnableWindowListTiles", false))
@@ -348,19 +335,6 @@ void LookAndFeelTab::save()
     c.writeEntry("EnableBrowserTiles", false);
   }
 
-  tile = m_exeTile->currentItem();
-  if (tile > 0)
-  {
-    enableTiles = true;
-    c.writeEntry("EnableExeTiles", tile > 0);
-    c.writeEntry("ExeTile", m_tilename[m_exeTile->currentItem()]);
-    c.writeEntry("ExeTileColor", m_exeColor->color());
-  }
-  else
-  {
-    c.writeEntry("EnableExeTiles", false);
-  }
-
   tile = m_wlTile->currentItem();
   if (tile > 0)
   {
@@ -389,7 +363,6 @@ void LookAndFeelTab::defaults()
   m_kmenuTile->setCurrentItem(0);
   m_urlTile->setCurrentItem(0);
   m_browserTile->setCurrentItem(0);
-  m_exeTile->setCurrentItem(0);
   m_wlTile->setCurrentItem(0);
   m_desktopTile->setCurrentItem(0);
 
@@ -403,8 +376,6 @@ void LookAndFeelTab::defaults()
   m_browserColor->setEnabled(false);
   m_wlColor->setColor(QColor());
   m_wlColor->setEnabled(false);
-  m_exeColor->setColor(QColor());
-  m_exeColor->setEnabled(false);
 
   QString theme = "wallpapers/default.png";
 
@@ -430,8 +401,6 @@ void LookAndFeelTab::fillTileCombos()
   m_urlTile->insertItem(i18n("Default"));
   m_browserTile->clear();
   m_browserTile->insertItem(i18n("Default"));
-  m_exeTile->clear();
-  m_exeTile->insertItem(i18n("Default"));
   m_wlTile->clear();
   m_wlTile->insertItem(i18n("Default"));*/
   m_tilename.clear();
@@ -460,7 +429,6 @@ void LookAndFeelTab::fillTileCombos()
     m_desktopTile->insertItem(pix, tile);
     m_urlTile->insertItem(pix, tile);
     m_browserTile->insertItem(pix, tile);
-    m_exeTile->insertItem(pix, tile);
     m_wlTile->insertItem(pix, tile);
 
     if (pix.height() > minHeight)
@@ -474,7 +442,6 @@ void LookAndFeelTab::fillTileCombos()
   m_desktopTile->setMinimumHeight(minHeight);
   m_urlTile->setMinimumHeight(minHeight);
   m_browserTile->setMinimumHeight(minHeight);
-  m_exeTile->setMinimumHeight(minHeight);
   m_wlTile->setMinimumHeight(minHeight);
 }
 
@@ -496,11 +463,6 @@ void LookAndFeelTab::browserTileChanged(int i)
 void LookAndFeelTab::urlTileChanged(int i)
 {
     m_urlColor->setEnabled(i == 1);
-}
-
-void LookAndFeelTab::exeTileChanged(int i)
-{
-    m_exeColor->setEnabled(i == 1);
 }
 
 void LookAndFeelTab::wlTileChanged(int i)
