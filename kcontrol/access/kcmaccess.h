@@ -43,6 +43,7 @@ protected slots:
   void invertClicked();
   void flashClicked();
   void selectSound();
+  void changeFlashScreenColor();
 
       
 private:

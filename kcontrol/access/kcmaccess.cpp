@@ -134,7 +134,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(flashScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(visibleBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(visibleBell, SIGNAL(clicked()), this, SLOT(checkAccess()));
-  connect(colorButton, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(colorButton, SIGNAL(clicked()), this, SLOT(changeFlashScreenColor()));
 
   connect(invertScreen, SIGNAL(clicked()), this, SLOT(invertClicked()));
   connect(flashScreen, SIGNAL(clicked()), this, SLOT(flashClicked()));
@@ -298,6 +298,12 @@ KAccessConfig::~KAccessConfig()
 {
 }
 
+void KAccessConfig::changeFlashScreenColor()
+{
+    invertScreen->setChecked(false);
+    flashScreen->setChecked(true);
+    configChanged();
+}
 
 void KAccessConfig::selectSound()
 {
