@@ -39,25 +39,14 @@ static QPixmap appIcon(const QString &iconName)
 {
      QString path;
      QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, &path, true);
-     if (!path.isEmpty())
+     // make sure they are not larger than KIcon::SizeSmall
+     if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall)
      {
-         // make sure they are not larger than KIcon::SizeSmall
-         if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall)
-         {
-             QImage tmp = normal.convertToImage();
-             tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
-             normal.convertFromImage(tmp);
-         }
-         return normal;
+         QImage tmp = normal.convertToImage();
+         tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
+         normal.convertFromImage(tmp);
      }
-     else
-     {
-         kdDebug() << "No pixmap for "<< iconName << ". Providing replacement!" << endl;
-         QPixmap pixmap(QSize(KIcon::SizeSmall, KIcon::SizeSmall));
-         pixmap.fill(Qt::color0);
-         pixmap.setMask(pixmap.createHeuristicMask());
-         return pixmap;
-     }
+     return normal;
 }
 
 class ModuleTreeWhatsThis : public QWhatsThis
@@ -346,8 +335,12 @@ void ModuleTreeItem::paintCell( QPainter * p, const QColorGroup & cg, int column
 
     if (offset > 0)
     {
-      p->eraseRect(0, 0, offset + 1, height());
-      p->translate(offset + 1, 0);
+      QPixmap pixmap(offset, offset);
+      pixmap.fill(Qt::color0);
+      pixmap.setMask(pixmap.createHeuristicMask());
+      QBitmap mask( pixmap.size(), true );
+      pixmap.setMask( mask );
+      QListViewItem::setPixmap(0, pixmap);
     }
   }
 
@@ -356,7 +349,7 @@ void ModuleTreeItem::paintCell( QPainter * p, const QColorGroup & cg, int column
 
 
 void ModuleTreeItem::setGroup(const QString &path)
-{     
+{
   KServiceGroup::Ptr group = KServiceGroup::group(path);
   QString defName = path.left(path.length()-1);
   int pos = defName.findRev('/');
