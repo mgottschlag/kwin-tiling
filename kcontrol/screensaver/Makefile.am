@@ -10,9 +10,9 @@ kcm_screensaver_la_METASOURCES = AUTO
 
 noinst_HEADERS = scrnsave.h
 
-messages:
+messages: rc.cpp
 	sed 's/X-KDE-Category=\(.*\)/i18n\("Screen saver category","\1"\);/' < category_list > category_list.cpp
-	$(XGETTEXT) category_list.cpp $(kcm_screensaver_la_SOURCES) -o $(podir)/kcmscreensaver.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmscreensaver.pot
 	-rm -f category_list.cpp
 
 xdg_apps_DATA = screensaver.desktop
