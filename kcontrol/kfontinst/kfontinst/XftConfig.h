@@ -116,7 +116,7 @@ class CXftConfig
 
     TEntry * getExcludeRangeEntry();
     TEntry * getUseSubPixelHintingEntry();
-    TEntry * findFamilyEntry(const QString &family);
+    TEntry * findFamilyEntry(const QString &family, const char *field);
 
     public:
 

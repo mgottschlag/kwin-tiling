@@ -567,7 +567,7 @@ void CXftConfig::addEntries(const QStringList &list, const char *field, const ch
 
     for(sIt=((QStringList &)list).begin(); sIt!=((QStringList &)list).end(); ++sIt)
     {
-        TEntry *entry=findFamilyEntry(*sIt);  // See if there is already a rule for this family...
+        TEntry *entry=findFamilyEntry(*sIt, field);  // See if there is already a rule for this family - ie. a match family edit field =
         bool   newEntry=false,
                haveEdit=false;
 
@@ -576,26 +576,24 @@ void CXftConfig::addEntries(const QStringList &list, const char *field, const ch
             entry=createEntry((char *)((*sIt).latin1()));
             newEntry=true;
         }
-
-        // Now look for "edit 'field'='setting'" ...
-        if(entry->edit)
-            if(0==CMisc::stricmp(entry->edit->field, field) && XftOpAssign==entry->edit->op && entry->edit->expr &&
-               XftOpString==entry->edit->expr->op)
+        else // Look for "edit 'field'='setting'" ...
+        {
+            if(NULL!=charSetting && XftOpString==entry->edit->expr->op)
             {
-                if(NULL!=charSetting)
+                if(CMisc::stricmp(entry->edit->expr->u.sval, charSetting))
                 {
-                    if(CMisc::stricmp(entry->edit->expr->u.sval, charSetting))
-                    {
-                        free(entry->edit->expr->u.sval);
-                        entry->edit->expr->u.sval=_XftSaveString(charSetting);
-                    }
+                    free(entry->edit->expr->u.sval);
+                    entry->edit->expr->u.sval=_XftSaveString(charSetting);
                 }
-                else
-                    if(entry->edit->expr->u.ival!=intSetting)
-                        entry->edit->expr->u.ival=intSetting;
-
                 haveEdit=true;
             }
+            else
+                if(XftOpInteger==entry->edit->expr->op)
+                {
+                    entry->edit->expr->u.ival=intSetting;
+                    haveEdit=true;
+                }
+        }
 
         if(!haveEdit)
         {
@@ -776,13 +774,14 @@ CXftConfig::TEntry * CXftConfig::getUseSubPixelHintingEntry()
     return entry;
 }
 
-CXftConfig::TEntry * CXftConfig::findFamilyEntry(const QString &family)
+CXftConfig::TEntry * CXftConfig::findFamilyEntry(const QString &family, const char *field)
 {
     TEntry *entry=NULL;
 
     for(entry=itsList.first(); entry; entry=itsList.next())
         if(entry->test && 0==CMisc::stricmp(entry->test->field, "family") && XftTypeString==entry->test->value.type &&
-           0==CMisc::stricmp(entry->test->value.u.s, family.latin1()))
+           0==CMisc::stricmp(entry->test->value.u.s, family.latin1()) && entry->edit &&
+           0==CMisc::stricmp(entry->edit->field, field) && XftOpAssign==entry->edit->op && entry->edit->expr)
             break;
 
     return entry;
