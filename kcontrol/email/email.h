@@ -3,6 +3,7 @@
 
 #include <qvariant.h>
 #include <qdialog.h>
+#include <qvbox.h>
 
 #include <kcmodule.h>
 
@@ -19,7 +20,7 @@ class KEMailSettings;
 
 class topKCMEmail
 	: public KCModule
-{ 
+{
     Q_OBJECT
 
 public:
@@ -40,21 +41,19 @@ public slots:
 	void profileChanged(const QString &);
 
 protected:
-	QGroupBox* grpClient;
+	QGroupBox *grpClient;
+	KLineEdit *txtEMailClient;
+	QPushButton *btnBrowseClient;
+	QCheckBox *chkRunTerminal;
 
-	KLineEdit* txtEMailClient;
-	QPushButton* btnBrowseClient;
-	QCheckBox* chkRunTerminal;
-
-	QGroupBox* grpIncoming;
-	QButtonGroup* grpICM;
-	QRadioButton* radIMAP, *radPOP, *radICMLocal;
+	QButtonGroup *grpIncoming;
+	QVBox *grpICM;
+	QRadioButton *radIMAP, *radPOP, *radICMLocal;
 	QPushButton *btnICMSettings;
 
-
-	QGroupBox* grpOutgoing;
+        QButtonGroup *grpOutgoing;
+        QVBox *grpOGM;
 	QPushButton *btnOGMSettings;
-	QButtonGroup *grpOGM;
 	QRadioButton *radSMTP, *radOGMLocal;
 
 	QPushButton *btnNewProfile;
@@ -73,7 +72,7 @@ protected slots:
 
 protected:
 	void clearData();
-	KEMailSettings *pSettings;	
+	KEMailSettings *pSettings;
 	QString m_sICMPassword, m_sICMUsername, m_sICMPath, m_sICMHost;
 	QString m_sOGMPassword, m_sOGMUsername, m_sOGMCommand, m_sOGMHost;
 	unsigned int m_uOGMPort, m_uICMPort;
