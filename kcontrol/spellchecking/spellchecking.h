@@ -17,7 +17,7 @@
 */
 
 #ifndef __spellchecking_h__
-#define __spellchecking_h__ "$Id$"
+#define __spellchecking_h__ 
 
 #include "kcmodule.h"
 

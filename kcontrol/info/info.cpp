@@ -1,6 +1,4 @@
 /*
-	$Id$
-
 	Main Widget for showing system-dependent information.
 	(But all functions in THIS FILE should be system independent !)
 

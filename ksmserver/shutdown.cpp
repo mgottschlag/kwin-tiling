@@ -1,8 +1,6 @@
 /*****************************************************************
 ksmserver - the KDE session management server
 
-$Id$
-
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 

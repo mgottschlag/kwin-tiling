@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Copyright (C) 2003 Fredrik Höglund <fredrik@kde.org>
  *
  * Based on the large cursor code written by Rik Hemsley,

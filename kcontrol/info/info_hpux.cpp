@@ -1,5 +1,5 @@
-/* 	$Id$
 	
+/*
 	!!!!! this file will be included by info.cpp !!!!!
 	
 	Mostly written 1998-1999 by Helge Deller (deller@gmx.de),

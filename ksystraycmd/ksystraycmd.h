@@ -13,7 +13,6 @@ class KWinModule;
  * Provides a system tray icon for a normal window.
  *
  * @author Richard Moore, rich@kde.org
- * @version $Id$
  */
 class KSysTrayCmd : public QLabel
 {

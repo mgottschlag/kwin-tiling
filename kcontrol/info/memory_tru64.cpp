@@ -22,8 +22,6 @@ extern "C" {
 }
 #include <mach/vm_statistics.h>
 
-/* $Id$ */
-
 #define pagetob(size) (1024L * ((long) (size) << (long) pageshift))
 #define LOG1024       10
 

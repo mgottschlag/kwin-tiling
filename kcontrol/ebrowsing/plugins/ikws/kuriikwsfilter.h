@@ -19,8 +19,6 @@
 
 */
 
-/* $Id$ */
-
 #ifndef __KURIIKWSFILTER_H__
 #define __KURIIKWSFILTER_H__
 

@@ -437,7 +437,6 @@ typedef QPtrList<Startup> StartupList;
  * @see Task
  * @see Startup
  * @see KWinModule
- * @version $Id$
  */
 class TaskManager : public QObject
 {

@@ -1,7 +1,5 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id$
- *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999-2001 by Alex Zepeda and Daniel Molkentin
  *               2001-2002 Michael Haeckel <haeckel@kde.org>

@@ -1,5 +1,3 @@
-# $Id$
-
 SUBDIRS= . pics
 
 INCLUDES = $(all_includes) $(DPMSINC)

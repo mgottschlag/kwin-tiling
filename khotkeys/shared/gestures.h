@@ -6,8 +6,6 @@
 
  Distributed under the terms of the GNU General Public License version 2.
  
- $Id$
-
 ****************************************************************************/
 
 #ifndef _GESTURES_H_

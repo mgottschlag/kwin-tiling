@@ -6,8 +6,6 @@
 //
 // Ported to kcontrol2 by Geert Jansen.
 
-/* $Id$ */
-
 #include <qlayout.h>
 #include <qhbox.h>
 #include <qlabel.h>

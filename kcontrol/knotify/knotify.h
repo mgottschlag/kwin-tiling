@@ -1,6 +1,4 @@
 /*
-    $Id$
-
     Copyright (C) 2000,2002 Carsten Pfeiffer <pfeiffer@kde.org>
 
 

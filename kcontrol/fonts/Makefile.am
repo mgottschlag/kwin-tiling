@@ -1,5 +1,3 @@
-# $Id$
-
 noinst_LTLIBRARIES = libkxftconfig.la
 
 libkxftconfig_la_SOURCES = kxftconfig.cpp

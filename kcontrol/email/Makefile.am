@@ -1,5 +1,3 @@
-# $Id$
-
 kde_module_LTLIBRARIES = kcm_email.la
 
 kcm_email_la_SOURCES = emailbase.ui email.cpp

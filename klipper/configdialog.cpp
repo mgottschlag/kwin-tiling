@@ -2,7 +2,6 @@
 
    configdialog.cpp (part of Klipper - Cut & paste history for KDE)
 
-   $Id$
 
    (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
 

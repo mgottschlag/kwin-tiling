@@ -1,5 +1,3 @@
-# $Id$
-
 INCLUDES = $(all_includes)
 
 kde_module_LTLIBRARIES = kcm_icons.la

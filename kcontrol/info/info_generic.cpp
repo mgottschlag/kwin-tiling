@@ -1,4 +1,4 @@
-/* 	$Id$
+/*
 
 	1998 by Helge Deller (deller@gmx.de)
 	free source under GPL

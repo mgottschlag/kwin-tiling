@@ -1,6 +1,4 @@
 /*
- *  $Id$
- *
  *  Copyright (c) 2003 Benjamin Reed <ranger@befunk.com>
  *
  *  memory_osx.cpp is part of the KDE program kcminfo.  Copied wholesale

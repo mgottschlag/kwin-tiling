@@ -1,4 +1,4 @@
-/* $Id$
+/*
 
     This file will be included by memory.cpp !
 

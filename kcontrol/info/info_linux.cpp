@@ -1,4 +1,4 @@
-/*  $Id$
+/*
 
     Linux-specific Information about the Hardware.
 

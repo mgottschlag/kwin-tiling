@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * info_netbsd.cpp is part of the KDE program kcminfo.  This displays
  * various information about the NetBSD system it's running on.
  *

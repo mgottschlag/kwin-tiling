@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * info_fbsd.cpp is part of the KDE program kcminfo.  This displays
  * various information about the system (hopefully a FreeBSD system)
  * it's running on.

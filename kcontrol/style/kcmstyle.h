@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * KCMStyle
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>

@@ -1,5 +1,3 @@
-# $Id$
-
 # libmach for Tru64
 # linux/raw.h for Linux
 # devinfo.h, libdevinfo for the list of {IRQ,DMA,IOPORTS/MEMRANGES} for FreeBSD

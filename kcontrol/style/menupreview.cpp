@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Menu Transparency Preview Widget
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
  *

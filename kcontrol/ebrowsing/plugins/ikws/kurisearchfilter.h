@@ -19,8 +19,6 @@
 
 */
 
-/* $Id$ */
-
 #ifndef __KURISEARCHFILTER_H__
 #define __KURISEARCHFILTER_H__
 

@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <qfile.h>
 
-/* $Id$ */
-
 void KMemoryWidget::update()
 {
   struct sysinfo info;

@@ -1,5 +1,4 @@
 /*
-  $Id$
   This file is part of the KDE Display Manager Configuration package
   Copyright (C) 1997-1998 Thomas Tanghus (tanghus@earthling.net)
 

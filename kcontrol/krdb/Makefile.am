@@ -1,5 +1,3 @@
-# $Id$
-
 INCLUDES = $(all_includes)
 
 SUBDIRS = . kcs ad pics

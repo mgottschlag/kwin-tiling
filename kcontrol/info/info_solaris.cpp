@@ -1,8 +1,6 @@
 /*
  *  info_solaris.cpp
  *
- *  $Id$
- *
  *  Torsten Kasch <tk@Genetik.Uni-Bielefeld.DE>
  */
 

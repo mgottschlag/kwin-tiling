@@ -12,8 +12,6 @@
   There is a reference application available on the LibStroke Home Page:
   http://www.etla.net/~willey/projects/libstroke/ )
  
- $Id$
-
 ****************************************************************************/
 
 #define _GESTURES_CPP_

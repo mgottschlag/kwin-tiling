@@ -1,4 +1,3 @@
-/* $Id$ */
 
 #include <sys/param.h>
 #if __NetBSD_Version__ > 103080000
