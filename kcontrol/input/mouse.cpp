@@ -260,10 +260,10 @@ void MouseConfig::load()
   bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), DEFAULT_SINGLECLICK);
   singleClick->setChecked(b);
   int  autoSelect = config->readNumEntry("AutoSelectDelay", DEFAULT_AUTOSELECTDELAY);
-  if ( autoSelect < 0 ) autoSelect = 0;
   bool changeCursor = config->readBoolEntry("ChangeCursor", DEFAULT_CHANGECURSOR);
 
-  cbAutoSelect->setChecked( autoSelect > 0 );
+  cbAutoSelect->setChecked( autoSelect >= 0 );
+  if ( autoSelect < 0 ) autoSelect = 0;
   slAutoSelect->setValue( autoSelect );
   cbCursor->setChecked( changeCursor );
   slotClick();
