@@ -45,14 +45,7 @@
 #include <ksimpleconfig.h>
 #include <kimgio.h>
 
-#define CONFIGFILE kapp->kde_configdir() + "/kdmrc"
-
-#define PIXDIR kapp->kde_datadir()+"/kdm/pics/"
-#define USERPIXDIR PIXDIR + "users/"
-
-
 void semsplit( const QString& str, QStrList& result);
-
 
 #endif
 

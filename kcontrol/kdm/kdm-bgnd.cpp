@@ -544,8 +544,7 @@ void KDMBackgroundWidget::showSettings()
 void KDMBackgroundWidget::applySettings()
 {
   //debug("KDMBackgroundWidget::applySettings()"); 
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDMDESKTOP");
 
@@ -617,10 +616,10 @@ void KDMBackgroundWidget::applySettings()
 void KDMBackgroundWidget::loadSettings()
 {
     iconloader = KGlobal::iconLoader();
-  QString fn(CONFIGFILE), str;
+  QString str;
   
   // Get config object
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDMDESKTOP");
   color1  = c->readColorEntry( "BackGroundColor1", &darkCyan);

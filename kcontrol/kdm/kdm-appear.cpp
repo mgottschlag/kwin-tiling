@@ -143,7 +143,7 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       langcombo->adjustSize();
       langcombo->move(logo_lined->x(), 20);
 
-      KSimpleConfig simple(CONFIGFILE);
+      KConfig simple("kdmrc");
       simple.setGroup("Locale");
       QString lang = simple.readEntry("Language", "C");
       int index = lang.find(':');
@@ -187,7 +187,7 @@ void KDMAppearanceWidget::slotLogoPixChanged(const char *icon)
   // we gotta save the image in PIXDIR.
   // To make it easy we save it as an XPM
   QString msg, iconstr = icon;
-  QString pix = PIXDIR + iconstr.left(iconstr.findRev('.')) + ".xpm";
+  QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".xpm";
   const QPixmap *p = logobutton->pixmap();
   if(!p)
     return;
@@ -280,8 +280,7 @@ void KDMAppearanceWidget::slotSetGUI( int g )
 void KDMAppearanceWidget::applySettings()
 {
   //debug("KDMAppearanceWidget::applySettings()");
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
 
@@ -310,11 +309,11 @@ void KDMAppearanceWidget::applySettings()
 void KDMAppearanceWidget::loadSettings()
 {
     iconloader = KGlobal::iconLoader();
-  QString fn(CONFIGFILE), str;
+    QString str;
   
-  // Get config object
-  KSimpleConfig *c = new KSimpleConfig(fn);
-  c->setGroup("KDM");
+    // Get config object
+    KConfig *c = new KConfig("kdmrc");
+    c->setGroup("KDM");
 
   // Read the greeting string
   greetstr = "KDE System at HOSTNAME";

@@ -19,6 +19,7 @@
 
 #include "utils.h"
 #include <klocale.h>
+#include <kstddirs.h>
 #include "kdm-font.moc"
 
 
@@ -93,8 +94,7 @@ void KDMFontWidget::setupPage(QWidget *)
 void KDMFontWidget::applySettings()
 {
   //debug("KDMFontWidget::applySettings()");
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
   // write font
@@ -107,10 +107,10 @@ void KDMFontWidget::applySettings()
 
 void KDMFontWidget::loadSettings()
 {
-  QString fn(CONFIGFILE), str;
+  QString str;
   
   // Get config object
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // Read the fonts

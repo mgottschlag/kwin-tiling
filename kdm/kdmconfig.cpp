@@ -107,54 +107,52 @@ p));
      return result;
 }
 
-void
-KDMConfig::getConfig()
+void KDMConfig::getConfig()
 {
-  QString aFileName = KApplication::kde_configdir() + "/kdmrc"; 
-  kc = new KConfig( aFileName ); // kalle
-     kc->setGroup( "KDM");
-
-     // Read Entries
-     QString normal_font = kc->readEntry( "StdFont");
-     QString fail_font   = kc->readEntry( "FailFont");
-     QString greet_font  = kc->readEntry( "GreetFont");
-
-     QString greet_string   = kc->readEntry(             "GreetString");
-     QString session_string = kc->readEntry(            "SessionTypes");
-     QString logo_string    = kc->readEntry(              "LogoPixmap");
-     if( kc->hasKey("ShutdownButton")) {
-          QString tmp       = kc->readEntry(       "ShutdownButton");
-          if( tmp == "All")
-               _shutdownButton = All;
-          else if( tmp == "RootOnly")
-               _shutdownButton = RootOnly;
-          else if( tmp == "ConsoleOnly")
-               _shutdownButton = ConsoleOnly;
-          else
-               _shutdownButton = KNone;
-          _shutdown         = new QString( kc->readEntry(  "Shutdown"));
-          if( _shutdown->isNull())
-               *_shutdown = "/sbin/halt";
-          _restart          = new QString( kc->readEntry(   "Restart"));
-          if( _restart->isNull())
-               *_restart = "/sbin/reboot";
-     } else
-          _shutdownButton   = KNone;
-
-     _consoleMode = new QString(kc->readEntry("ConsoleMode"));
-     if (_consoleMode->isNull())
-       *_consoleMode = "/sbin/init 3";
-     
-     /* TODO: to be ported to QStyle
-     if( kc->hasKey( "GUIStyle")) {
-          if( kc->readEntry( "GUIStyle") == "Windows")
-               _style = Qt::WindowsStyle;
-          else                        // Added this cause else users couldn't
-               _style = MotifStyle;   // explicitly ask for motif-style. Th.
-     } else {
-          _style = MotifStyle;
-     }
-     */
+    kc = new KConfig( "kdmrc" ); // kalle
+    kc->setGroup( "KDM");
+    
+    // Read Entries
+    QString normal_font = kc->readEntry( "StdFont");
+    QString fail_font   = kc->readEntry( "FailFont");
+    QString greet_font  = kc->readEntry( "GreetFont");
+    
+    QString greet_string   = kc->readEntry(             "GreetString");
+    QString session_string = kc->readEntry(            "SessionTypes");
+    QString logo_string    = kc->readEntry(              "LogoPixmap");
+    if( kc->hasKey("ShutdownButton")) {
+	QString tmp       = kc->readEntry(       "ShutdownButton");
+	if( tmp == "All")
+	    _shutdownButton = All;
+	else if( tmp == "RootOnly")
+	    _shutdownButton = RootOnly;
+	else if( tmp == "ConsoleOnly")
+	    _shutdownButton = ConsoleOnly;
+	else
+	    _shutdownButton = KNone;
+	_shutdown         = new QString( kc->readEntry(  "Shutdown"));
+	if( _shutdown->isNull())
+	    *_shutdown = "/sbin/halt";
+	_restart          = new QString( kc->readEntry(   "Restart"));
+	if( _restart->isNull())
+	    *_restart = "/sbin/reboot";
+    } else
+	_shutdownButton   = KNone;
+    
+    _consoleMode = new QString(kc->readEntry("ConsoleMode"));
+    if (_consoleMode->isNull())
+	*_consoleMode = "/sbin/init 3";
+    
+    /* TODO: to be ported to QStyle
+       if( kc->hasKey( "GUIStyle")) {
+       if( kc->readEntry( "GUIStyle") == "Windows")
+       _style = Qt::WindowsStyle;
+       else                        // Added this cause else users couldn't
+       _style = MotifStyle;   // explicitly ask for motif-style. Th.
+       } else {
+       _style = MotifStyle;
+       }
+    */
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?

@@ -54,8 +54,9 @@ private:
 };
 
 
-KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *name)
-  : KControlApplication(argc, argv, name)
+KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, 
+					   const char *name)
+    : KControlApplication(argc, argv, name)
 {
   appearance = 0;
   font = 0;
@@ -68,10 +69,6 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
 
   if (runGUI())
   {
-    QString fn(CONFIGFILE);
-    QFileInfo fi(fn.data());
-    if(fi.isReadable() && fi.isWritable())
-    {
       kimgioRegister();
       KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics/users");
       KGlobal::dirs()->addResourceType("icon", KStandardDirs::kde_data_relative() + "/kdm/pics");
@@ -99,12 +96,11 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
       if (appearance || font || background || sessions || users || lilo)
         dialog->show();
       else
-        {
-          fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n"));
-          justInit = TRUE;
-        }
-
-    }
+	  {
+	      fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users,lilo}]\n"));
+	      justInit = TRUE;
+	  }
+      
   }
 }
 
@@ -143,19 +139,25 @@ int main(int argc, char **argv)
   KDMConfigApplication app(argc, argv, "kdmconfig");
   app.setTitle(i18n("KDM Configuration"));
   
-  if (app.runGUI())
-  {
-    QString fn(CONFIGFILE);
-    QFileInfo fi(fn.data());
-    if(fi.isReadable() && fi.isWritable())
-      return app.exec();
-    else
-    {
-      QString msg = i18n("Sorry, but you don't have read/write\n"
-				       "permission to the KDM setup file.");
-      QMessageBox::warning( 0, i18n("KDM Setup - Missing privileges"), msg,
-			    i18n("&Ok"));
-    }
+  if (app.runGUI()) {
+      
+      QString file = locate("config", "kdmrc");
+      if (file == KGlobal::dirs()->getSaveLocation("config") + "kdmrc") {
+	  QString msg = i18n("You have a local config file %1  - \n"
+			     "I will save your changes into this file.\n"
+			     "If this isn't your intention, remove it please!").arg(file);
+	  QMessageBox::warning( 0, i18n("KDM Setup - Wrong filename"), msg,
+				i18n("&Ok"));
+      }
+      QFileInfo fi(file);
+      if(fi.isReadable() && fi.isWritable())
+	  return app.exec();
+      else {
+	  QString msg = i18n("Sorry, but you don't have read/write\n"
+			     "permission to the KDM setup file %1.").arg(file);
+	  QMessageBox::warning( 0, i18n("KDM Setup - Missing privileges"), msg,
+				i18n("&Ok"));
+      }
   }
   else
     {

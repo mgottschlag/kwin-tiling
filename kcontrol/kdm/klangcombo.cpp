@@ -107,10 +107,11 @@ QString KLanguageCombo::language(const char *lang)
     return name.right(name.length()-pos-1);
 }
 
+#warning TODO: kdmconfig is massivly broken with KStandardDirs ;(
 
 void KLanguageCombo::loadLanguageList()
 {
-  KSimpleConfig config(kapp->kde_configdir()+"/kcmlocalerc");
+  KSimpleConfig config(locate("config", "kcmlocalerc"));
   QString name;
 
   clear();

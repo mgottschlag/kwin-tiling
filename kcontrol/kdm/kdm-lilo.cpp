@@ -20,6 +20,7 @@
 #include "utils.h"
 #include <klocale.h>
 #include <qlayout.h>
+#include <kstddirs.h>
 
 #include "kdm-lilo.moc"
 
@@ -69,8 +70,7 @@ void KDMLiloWidget::setupPage(QWidget *)
 
 void KDMLiloWidget::applySettings()
 {
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("Lilo");
 
@@ -84,8 +84,7 @@ void KDMLiloWidget::applySettings()
 
 void KDMLiloWidget::loadSettings()
 {
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("Lilo");
 
   bool use = c->readBoolEntry("Lilo", TRUE);

@@ -22,6 +22,7 @@
 #include "utils.h"
 #include <klined.h>
 #include <klocale.h>
+#include <kstddirs.h>
 #include "kdm-sess.moc"
 
 
@@ -232,8 +233,7 @@ void KDMSessionsWidget::slotSetAllowShutdown(int s)
 void KDMSessionsWidget::applySettings()
 {
   //debug("KDMSessionsWidget::applySettings()");
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
 
@@ -279,10 +279,10 @@ void KDMSessionsWidget::applySettings()
 
 void KDMSessionsWidget::loadSettings()
 {
-  QString fn(CONFIGFILE), str;
+  QString str;
   
   // Get config object
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // read restart and shutdown cmds

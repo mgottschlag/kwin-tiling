@@ -23,6 +23,7 @@
 #include <kio_job.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 #include "kdm-users.moc"
 
 
@@ -191,7 +192,7 @@ void KDMUsersWidget::slotUserPixChanged(const char*)
     else
       return;
   }
-  QString userpix = USERPIXDIR + user + ".xpm";
+  QString userpix = locate("icon", user + ".xpm");
   const QPixmap *p = userbutton->pixmap();
   if(!p)
     return;
@@ -384,8 +385,7 @@ void KDMUsersWidget::slotUserSelected(int)
 void KDMUsersWidget::applySettings()
 {
   //debug("KDMUsersWidget::applySettings()");
-  QString fn(CONFIGFILE);
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
 
@@ -420,10 +420,10 @@ void KDMUsersWidget::applySettings()
 void KDMUsersWidget::loadSettings()
 {
     iconloader = KGlobal::iconLoader();
-  QString fn(CONFIGFILE), str;
+  QString str;
   
   // Get config object
-  KSimpleConfig *c = new KSimpleConfig(fn);
+  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // Read users from kdmrc and /etc/passwd
