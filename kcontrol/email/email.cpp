@@ -55,6 +55,8 @@
 #include <kemailsettings.h>
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
+#include <kapplication.h>
+#include <dcopclient.h>
 
 #include "email.h"
 
@@ -259,6 +261,8 @@ void topKCMEmail::save()
 		::chmod(QFile::encodeName(cfgName), 0600);
 
 	configChanged(false);
+
+	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
 }
 
 void topKCMEmail::defaults()
