@@ -42,6 +42,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
+#include <kgenericfactory.h>
 
 #include "arts.h"
 #include <kaboutdata.h>
@@ -62,9 +63,11 @@ extern "C" {
 			    const QString &addOptions, bool autoSuspend,
 			    int suspendTime,
 			    const QString &messageApplication, int loggingLevel);
-	KCModule *create_arts(QWidget *parent, const char *name);
 	void init_arts();
 }
+
+typedef KGenericFactory<KArtsModule, QWidget> KArtsModuleFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_arts, KArtsModuleFactory( "kcmarts" ) );
 
 /*
  * This function uses artsd -A to init audioIOList with the possible audioIO
@@ -110,8 +113,8 @@ void KArtsModule::initAudioIOList()
 	}
 }
 
-KArtsModule::KArtsModule(QWidget *parent, const char *name)
-  : KCModule(parent, name), configChanged(false)
+KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
+  : KCModule(KArtsModuleFactory::instance(), parent, name), configChanged(false)
 {
 	setButtons(Default|Apply);
 
@@ -464,12 +467,6 @@ void KArtsModule::slotChanged()
 	updateWidgets();
 	configChanged = true;
 	emit changed(true);
-}
-
-
-KCModule *create_arts(QWidget *parent, const char *name)
-{
-	return new KArtsModule(parent, "kcmarts");
 }
 
 void init_arts()

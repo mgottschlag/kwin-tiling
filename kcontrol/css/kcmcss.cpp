@@ -28,7 +28,7 @@ typedef KGenericFactory<CSSConfig, QWidget> CSSFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_css, CSSFactory("kcmcss") );
 
 CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(CSSFactory::instance(), parent, name)
 {
   dialog = new CSSConfigDialog(this);
 

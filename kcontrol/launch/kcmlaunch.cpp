@@ -37,7 +37,7 @@ K_EXPORT_COMPONENT_FACTORY( libkcm_launch, LaunchFactory("kcmlaunch") );
 
 
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(LaunchFactory::instance(), parent, name)
 {
     if ( !name )
 	setName( "Form1" );

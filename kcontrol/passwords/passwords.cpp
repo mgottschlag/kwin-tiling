@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY (libkcm_passwords, PassFactory("passwords") );
 /**** KPasswordConfig ****/
 
 KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStringList &)
-    : KCModule(parent, name)
+    : KCModule(PassFactory::instance(), parent, name)
 {
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
 

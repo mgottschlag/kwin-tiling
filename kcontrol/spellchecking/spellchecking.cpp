@@ -33,7 +33,7 @@ K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory("kcmspellchecking
 
 
 KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):
-    KCModule(parent, name)
+    KCModule(SpellFactory::instance(), parent, name)
 {
   QBoxLayout *layout = new QVBoxLayout(this,
 				       KDialog::marginHint(),

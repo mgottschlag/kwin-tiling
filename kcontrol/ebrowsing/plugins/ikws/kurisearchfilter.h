@@ -47,5 +47,7 @@ k_dcop:
     virtual void configure();
 };
 
+typedef KGenericFactory<KURISearchFilter> KURISeachFilterFactory;
+
 #endif
 

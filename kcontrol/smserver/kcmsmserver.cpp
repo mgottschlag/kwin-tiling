@@ -36,7 +36,7 @@ typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_smserver, SMSFactory("kcmsmserver") );
 
 SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
-  : KCModule (parent, name)
+  : KCModule (SMSFactory::instance(), parent, name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new SMServerConfigImpl(this);

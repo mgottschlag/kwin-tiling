@@ -62,7 +62,7 @@ typedef QPtrList<MyNIC> NICList;
 NICList* findNICs();
 
 KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
-   :KCModule(parent,name)
+   :KCModule(KCMNicFactory::instance(), parent,name)
 {
    QVBoxLayout *box=new QVBoxLayout(this);
    box->setMargin(KDialog::marginHint());

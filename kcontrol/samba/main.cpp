@@ -54,7 +54,7 @@ class SambaContainer:public KCModule
 };
 
 SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringList&)
-:KCModule(parent,name)
+:KCModule(SambaFactory::instance(), parent,name)
 ,layout(this)
 ,config("kcmsambarc",false,true)
 ,tabs(this)

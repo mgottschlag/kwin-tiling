@@ -38,7 +38,7 @@ K_EXPORT_COMPONENT_FACTORY( libkcm_icons, IconsFactory("kcmicons") );
 /**** IconModule ****/
 
 IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(IconsFactory::instance(), parent, name)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);

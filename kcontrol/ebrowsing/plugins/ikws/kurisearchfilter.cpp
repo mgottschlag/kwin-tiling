@@ -65,7 +65,7 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 
 KCModule *KURISearchFilter::configModule(QWidget *parent, const char *name) const
 {
-    return new InternetKeywordsOptions(parent, name);
+    return new InternetKeywordsOptions( KURISeachFilterFactory::instance(), parent, name);
 }
 
 QString KURISearchFilter::configName() const
@@ -74,6 +74,6 @@ QString KURISearchFilter::configName() const
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkurisearchfilter, 
-	                    KGenericFactory<KURISearchFilter>( "kuriikwsfilter" ) );
+	                    KURISeachFilterFactory( "kuriikwsfilter" ) );
 
 #include "kurisearchfilter.moc"

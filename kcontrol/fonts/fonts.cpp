@@ -155,7 +155,7 @@ void FontUseItem::updateLabel()
 /**** KFonts ****/
 
 KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
-    :   KCModule(parent, name),
+    :   KCModule(FontFactory::instance(), parent, name),
         _changed(false)
 {
   QStringList nameGroupKeyRc;

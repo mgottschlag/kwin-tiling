@@ -40,6 +40,7 @@
 #include <kstandarddirs.h>
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
+#include <kgenericfactory.h>
 
 #include "knotify.h"
 #include <dcopclient.h>
@@ -47,8 +48,11 @@
 
 static const int COL_FILENAME = 1;
 
+typedef KGenericFactory<KNotifyWidget, QWidget> NotifyFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_knotify, NotifyFactory("kcmnotify") );
+
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringList & ):
-    KCModule(parent, name)
+    KCModule(NotifyFactory::instance(), parent, name)
 {
     updating = true;
     currentItem = 0L;

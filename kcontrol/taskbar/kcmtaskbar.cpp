@@ -81,7 +81,7 @@ QString TaskbarConfig::buttonAction( int action )
 }
 
 TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringList & )
-  : KCModule (parent, name)
+  : KCModule (TaskBarFactory::instance(), parent, name)
 {
     ui = new TaskbarConfigUI(this);
 

@@ -35,7 +35,7 @@ typedef KGenericFactory<KMidConfig, QWidget > KMidFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_midi, KMidFactory("kcmmidi") );
 
 KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(KMidFactory::instance(), parent, name)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this,5);
 

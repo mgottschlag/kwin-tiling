@@ -41,7 +41,7 @@ typedef KGenericFactory<KSocksConfig, QWidget > SocksFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_socks, SocksFactory("kcmsocks") );
 
 KSocksConfig::KSocksConfig(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(SocksFactory::instance(), parent, name)
 {
 
   QVBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());

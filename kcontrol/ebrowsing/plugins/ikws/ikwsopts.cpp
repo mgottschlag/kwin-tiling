@@ -77,8 +77,8 @@ private:
     SearchProvider *m_provider;
 };
 
-InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *name)
-                        :KCModule(parent, name)
+InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *parent, const char *name)
+                        :KCModule(instance, parent, name)
 {
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
     lay->setAutoAdd( true );

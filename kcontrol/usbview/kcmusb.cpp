@@ -32,7 +32,7 @@ typedef KGenericFactory<USBViewer, QWidget > USBFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_usb, USBFactory("kcmusb") );
 
 USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(USBFactory::instance(), parent, name)
 {
   setButtons(Help);
 

@@ -34,8 +34,11 @@
 #include <qcombobox.h>
 #include <qspinbox.h>
 
+typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
+K_EXPORT_COMPONENT_FACTORY( libkcm_konsole, ModuleFactory("kcmkonsole") );
+
 KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
-:KCModule(parent, name)
+:KCModule(ModuleFactory::instance(), parent, name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new KCMKonsoleDialog(this);
@@ -175,8 +178,5 @@ const KAboutData * KCMKonsole::aboutData() const
  return ab;
 
 }
-
-typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_konsole, ModuleFactory("kcmkonsole") );
 
 #include "kcmkonsole.moc"

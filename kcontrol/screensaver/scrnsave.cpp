@@ -138,7 +138,7 @@ void TestWin::keyPressEvent(QKeyEvent *)
 //
 
 KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&)
-    : KCModule(parent, name)
+    : KCModule(KSSFactory::instance(), parent, name)
 {
     mSetupProc = 0;
     mPreviewProc = 0;

@@ -45,7 +45,7 @@ class InternetKeywordsOptions : public KCModule {
     Q_OBJECT
 
 public:
-    InternetKeywordsOptions(QWidget *parent = 0, const char *name = 0);
+    InternetKeywordsOptions(KInstance *instance, QWidget *parent = 0, const char *name = 0);
 
     void load();
     void save();

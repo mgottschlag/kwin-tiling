@@ -61,7 +61,7 @@ typedef KGenericFactory<topKCMEmail, QWidget> EMailFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_email, EMailFactory("kcmemail") );
 
 topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList &)
-	: KCModule (parent, name)
+	: KCModule(EMailFactory::instance(), parent, name)
 {
 	QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 	m_email = new KCMEmailBase(this);
