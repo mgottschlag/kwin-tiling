@@ -14,7 +14,7 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss klissie.kss kbanner.kss \
 
 EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss
 
-EXTRA_DIST = kscreensaver.xpm mini-kscreensaver.xpm kscience.gif kscience-small.gif kscreensave-0.3.3.lsm kscreensaver.pam
+EXTRA_DIST = kscreensaver.xpm mini-kscreensaver.xpm kscience.gif kscience-small.gif kscreensave-0.3.3.lsm
 
 BASE_SRCS = main.cpp xautolock.cpp saver.cpp xlock.cpp \
 	    helpers.cpp xs_colors.c xs_hsv.c xs_visual.c
