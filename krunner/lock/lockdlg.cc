@@ -85,7 +85,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
     KSeparator *sep = new KSeparator( KSeparator::HLine, frame );
 
     mNewSessButton = new KPushButton( KGuiItem(i18n("&Start New Session..."), "fork"), frame );
-    ok = new KPushButton( KStdGuiItem::ok(), frame );
+    ok = new KPushButton( i18n("&Unlock"), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
 
     greet = plugin->info->create( this, this, mLayoutButton, QString::null,
