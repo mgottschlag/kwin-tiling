@@ -506,7 +506,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    goto miss;
 		sdr.start = strtol (ar[2], &bp, 10);
 		if (bp != ar[2] && !*bp) {
-		    if (!sdr.start || *ar[2] == '+')
+		    if (*ar[2] == '+')
 			sdr.start += now;
 		    if (!ar[3])
 			goto miss;
@@ -516,7 +516,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 			goto bust;
 		    }
 		    if (*ar[3] == '+')
-			sdr.timeout += sdr.start;
+			sdr.timeout += sdr.start ? sdr.start : now;
 		    if (sdr.timeout < 0) {
 			sdr.timeout = TO_INF;
 			if (ar[4])
