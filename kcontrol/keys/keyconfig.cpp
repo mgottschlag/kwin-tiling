@@ -418,7 +418,9 @@ void KKeyModule::slotPreviewScheme( int indx )
 
   // Set various appropriate for the scheme
 
-  if ( indx < nSysSchemes ) {
+  if ( indx < nSysSchemes ||
+       (*sFileList->at(indx)).contains( "/global-" ) ||
+       (*sFileList->at(indx)).contains( "/app-" ) ) {
     removeBt->setEnabled( FALSE );
   } else {
     removeBt->setEnabled( TRUE );
@@ -428,9 +430,15 @@ void KKeyModule::slotPreviewScheme( int indx )
 void KKeyModule::readSchemeNames( )
 {
   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
+  QRegExp r( "-kde[34].kksrc$" );
 
   // This for system files
   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) {
+    // KPersonalizer relies on .kksrc files containing all the keyboard shortcut
+    //  schemes for various setups.  It also requires the KDE defaults to be in
+    //  a .kksrc file.  The KDE defaults shouldn't be listed here.
+    if( r.match( *it ) != -1 )
+       continue;
 
     KSimpleConfig config( *it, true );
     config.setGroup( KeyScheme );
