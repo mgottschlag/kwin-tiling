@@ -16,7 +16,7 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcombobox.h>
-#include <qlistbox.h>
+#include <klistbox.h>
 #include <qlayout.h>
 #include <qcursor.h>
 #include <qstringlist.h>
@@ -59,13 +59,12 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     m_bChanged = false;
     nSysSchemes = 2;
 
-    m_pDirs = KGlobal::dirs();
-    m_pDirs->addResourceType("colorscm", m_pDirs->kde_default("data") +
-                             "kdisplay/color-schemes");
+#if 0
     KConfig *cfg = new KConfig("kcmdisplayrc");
     cfg->setGroup("X11");
     cfg->readBoolEntry("useResourceManager", true);
     delete cfg;
+#endif
 
     cs = new WidgetCanvas( this );
     cs->setCursor( KCursor::handCursor() );
@@ -98,8 +97,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     QBoxLayout *groupLayout = new QVBoxLayout( group, 10 );
     groupLayout->addSpacing(10);
 
-    sFileList = new QStrList();
-    sList = new QListBox( group );
+    sList = new KListBox( group );
     readSchemeNames();
     sList->setFixedHeight(sList->sizeHint().height()/2);
     sList->setCurrentItem( 0 );
@@ -341,7 +339,7 @@ void KColorScheme::sliderValueChanged( int val )
 void KColorScheme::slotSave( )
 {
     KSimpleConfig *config =
-	new KSimpleConfig( sFileList->at( sList->currentItem() ) );
+	new KSimpleConfig(sFileList[ sList->currentItem() ] );
 			
     config->setGroup("Color Scheme" );
     config->writeEntry("background", cs->back );
@@ -370,7 +368,7 @@ void KColorScheme::slotSave( )
 void KColorScheme::slotRemove()
 {
     uint ind = sList->currentItem();
-    if (unlink(sFileList->at(ind))) {
+    if (unlink(QFile::encodeName(sFileList[ind]).data())) {
 	KMessageBox::error( 0,
 	      i18n("This color scheme could not be removed.\n"
 		   "Perhaps you do not have permission to alter the file\n"
@@ -379,7 +377,7 @@ void KColorScheme::slotRemove()
     }
 
     sList->removeItem(ind);
-    sFileList->remove(ind);
+    sFileList.remove(sFileList.at(ind));
 }
 
 
@@ -438,8 +436,8 @@ void KColorScheme::slotAdd()
     sList->setFocus();
     sList->setCurrentItem(sList->count() - 1);
 
-    sFile = m_pDirs->saveLocation("colorscm") + sFile.latin1() + ".kcsrc";
-    sFileList->append(sFile.latin1());
+    sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/" + sFile + ".kcsrc");
+    sFileList.append(sFile);
 
     KSimpleConfig *config = new KSimpleConfig(sFile);
     config->setGroup( "Color Scheme");
@@ -656,7 +654,7 @@ void KColorScheme::readScheme( int index )
 	config->setGroup("General");
     } else {
 	// Open scheme file
-	config = new KSimpleConfig(sFileList->at(index), true);
+	config = new KSimpleConfig(sFileList[index], true);
 	config->setGroup("Color Scheme");
     }
 
@@ -700,14 +698,14 @@ void KColorScheme::readSchemeNames()
 {
     // Always a current and a default scheme
     sList->insertItem( i18n("Current scheme"), 0 );
-    sFileList->append( "Not a  kcsrc file" );
+    sFileList.append( "Not a  kcsrc file" );
     sList->insertItem( i18n("KDE default"), 1 );
-    sFileList->append( "Not a kcsrc file" );
+    sFileList.append( "Not a kcsrc file" );
     nSysSchemes = 2;
 
     // Global + local schemes
-    QStringList list = m_pDirs->findAllResources("colorscm", "*.kcsrc",
-	    false, true);
+    QStringList list = KGlobal::dirs()->findAllResources("data", 
+            "kdisplay/color-schemes/*.kcsrc", false, true);
 
     // Put local schemes into localList
     QStringList localList;
@@ -729,7 +727,7 @@ void KColorScheme::readSchemeNames()
 	if (str.isEmpty())
 	    continue;
 	sList->insertItem(str);
-	sFileList->append((*it).ascii());
+	sFileList.append(*it);
 	nSysSchemes++;
 	delete config;
     }
@@ -742,7 +740,7 @@ void KColorScheme::readSchemeNames()
 	if (str.isEmpty())
 	    continue;
 	sList->insertItem(str);
-	sFileList->append((*it).ascii());
+	sFileList.append(*it);
 	delete config;
     }
 }

@@ -10,7 +10,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 #include <qcolor.h>
 #include <qdialog.h>
 
@@ -24,6 +24,7 @@ class QPushButton;
 class QResizeEvent;
 class QLineEdit;
 class QPalette;
+class KListBox;
 class KColorButton;
 class KConfig;
 class KStdDirs;
@@ -69,11 +70,9 @@ private:
     QSlider *sb;
     QComboBox *wcCombo;
     QPushButton *saveBt, *addBt, *removeBt;
-    QListBox *sList;
-    QStrList *schemeList, *sFileList;
+    KListBox *sList;
+    QStringList sFileList;
 
-    KConfig *m_pConfig;
-    KStandardDirs *m_pDirs;
     KColorButton *colorButton;
     WidgetCanvas *cs;
 };
