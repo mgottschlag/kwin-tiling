@@ -429,7 +429,7 @@ void KLocaleConfig::slotTranslate()
       "have been installed. You can get translations packages for many "
       "languages from the place you got KDE from.<p>"
       "Note that some applications may not be translated to your languages; "
-      "in this case, they will automatically fall back to English US." );
+      "in this case, they will automatically fall back to US English." );
   QWhatsThis::add( m_labLang, str );
   QWhatsThis::add( m_languages, str );
   QWhatsThis::add( m_addLanguage, str );
