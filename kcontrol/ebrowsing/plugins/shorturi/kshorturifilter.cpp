@@ -211,7 +211,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         ref = url.ref();
         query = url.query();
         if (path.isEmpty() && url.hasHost())
-           path = "/";
+           path = '/';
      }
   }
 
