@@ -390,18 +390,18 @@ void KCMStyle::save()
 	}
 
 	// Save effects.
-	KConfig* config = KGlobal::config();
-	config->setGroup("KDE");
+	KConfig config( "kdeglobals" );
+	config.setGroup("KDE");
 
-	config->writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
+	config.writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
 	int item = comboComboEffect->currentItem();
-	config->writeEntry( "EffectAnimateCombo", item == 1 );
+	config.writeEntry( "EffectAnimateCombo", item == 1 );
 	item = comboTooltipEffect->currentItem();
-	config->writeEntry( "EffectAnimateTooltip", item == 1);
-	config->writeEntry( "EffectFadeTooltip", item == 2 );
+	config.writeEntry( "EffectAnimateTooltip", item == 1);
+	config.writeEntry( "EffectFadeTooltip", item == 2 );
 	item = comboMenuEffect->currentItem();
-	config->writeEntry( "EffectAnimateMenu", item == 1 );
-	config->writeEntry( "EffectFadeMenu", item == 2 );
+	config.writeEntry( "EffectAnimateMenu", item == 1 );
+	config.writeEntry( "EffectFadeMenu", item == 2 );
 
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
@@ -421,17 +421,17 @@ void KCMStyle::save()
 	}
 
 	// Misc page
-	config->writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
-	config->writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
-	config->writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
-	config->writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
+	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
+	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
+	config.writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
+	config.writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 
-	config->setGroup("General");
-	config->writeEntry( "widgetStyle", currentStyle );
+	config.setGroup("General");
+	config.writeEntry( "widgetStyle", currentStyle );
 
-	config->setGroup("Toolbar style");
-	config->writeEntry( "Highlighting", cbHoverButtons->isChecked(), true, true );
-	config->writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), true, true );
+	config.setGroup("Toolbar style");
+	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), true, true );
+	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), true, true );
 	QString tbIcon;
 	switch( comboToolbarIcons->currentItem() )
 	{
@@ -441,8 +441,8 @@ void KCMStyle::save()
 		case 0:
 		default: tbIcon = "IconOnly"; break;
 	}
-	config->writeEntry( "IconText", tbIcon, true, true );
-	config->sync();
+	config.writeEntry( "IconText", tbIcon, true, true );
+	config.sync();
 
 	// ###### TODO - export changes to qtrc via krdb first
 
