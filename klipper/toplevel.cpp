@@ -808,22 +808,71 @@ bool KlipperWidget::ignoreClipboardChanges() const
 extern Time qt_x_time;
 extern Time qt_x_user_time;
 
+static Time next_x_time;
+static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
+{
+    if( next_x_time != CurrentTime )
+        return False;
+    // from qapplication_x11.cpp
+    switch ( event->type ) {
+    case ButtonPress:
+	// fallthrough intended
+    case ButtonRelease:
+	next_x_time = event->xbutton.time;
+	break;
+    case MotionNotify:
+	next_x_time = event->xmotion.time;
+	break;
+    case KeyPress:
+	// fallthrough intended
+    case KeyRelease:
+	next_x_time = event->xkey.time;
+	break;
+    case PropertyNotify:
+	next_x_time = event->xproperty.time;
+	break;
+    case EnterNotify:
+    case LeaveNotify:
+	next_x_time = event->xcrossing.time;
+	break;
+    case SelectionClear:
+	next_x_time = event->xselectionclear.time;
+	break;
+    default:
+	break;
+    }
+    return False;
+}
+
+static Time nextXTime()
+    {
+    next_x_time = CurrentTime;
+    XEvent dummy;
+    XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
+    return next_x_time;
+    }
+
 void KlipperWidget::updateTimestamp()
 { // Qt3.3.0 and 3.3.1 use qt_x_user_time for clipboard operations
     Time& time = ( strcmp( qVersion(), "3.3.1" ) == 0
                 || strcmp( qVersion(), "3.3.0" ) == 0 )
                 ? qt_x_user_time : qt_x_time;
-    // get current X timestamp
-    Window w = XCreateSimpleWindow( qt_xdisplay(), qt_xrootwin(), 0, 0, 1, 1, 0, 0, 0 );
-    XSelectInput( qt_xdisplay(), w, PropertyChangeMask );
-    unsigned char data[ 1 ];
-    XChangeProperty( qt_xdisplay(), w, XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
-    XEvent ev;
-    XWindowEvent( qt_xdisplay(), w, PropertyChangeMask, &ev );
-    Time current_time = ev.xproperty.time;
-    XDestroyWindow( qt_xdisplay(), w );
-    if( time == 0 || current_time - time < 1000000000U ) // check current_time > time, handle wrapping
-        time = current_time;
+    time = nextXTime();
+    if( time == CurrentTime )
+        {
+        // get current X timestamp
+        static Window w = None;
+        if( w == None )
+            {
+            w = XCreateSimpleWindow( qt_xdisplay(), qt_xrootwin(), 0, 0, 1, 1, 0, 0, 0 );
+            XSelectInput( qt_xdisplay(), w, PropertyChangeMask );
+            }
+        unsigned char data[ 1 ];
+        XChangeProperty( qt_xdisplay(), w, XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
+        XEvent ev;
+        XWindowEvent( qt_xdisplay(), w, PropertyChangeMask, &ev );
+        time = ev.xproperty.time;
+        }
 }
 
 static const char * const description =
