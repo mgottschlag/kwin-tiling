@@ -84,9 +84,6 @@ public:
 protected slots:
     void slotChildChanged(bool);
     
-signals:
-    void changed(bool);
-
 private:
 //    void apply();
     
