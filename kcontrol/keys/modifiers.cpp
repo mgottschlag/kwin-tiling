@@ -278,6 +278,7 @@ void ModifiersModule::updateWidgetData()
 	m_plblWin->setText( m_sLabelWinOrig );
 	m_pchkMacKeyboard->setChecked( m_bMacKeyboardOrig );
 	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
+        m_pchkMacSwap->setEnabled( m_bMacKeyboardOrig );
 }
 
 void ModifiersModule::updateWidgets()
