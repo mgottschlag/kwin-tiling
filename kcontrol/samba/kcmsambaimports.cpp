@@ -76,7 +76,7 @@ void ImportsView::updateList()
                strType=" nfs";
             else if (s.contains(" smbfs "))
                strType=" smbfs";
-            int pos(strMount.find(" type ");
+            int pos(strMount.find(" type "));
             if (pos==-1) pos=strMount.find(" read/");
             strMount=strMount.left(pos);
             new QListViewItem(&list,strSource,strMount,strType);
