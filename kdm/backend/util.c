@@ -43,11 +43,6 @@ from The Open Group.
 # include <unistd.h>
 #endif
 
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
-
 #ifdef USG
 # define NEED_UTSNAME
 #endif

@@ -38,8 +38,6 @@ from The Open Group.
 #include "dm_error.h"
 #include "dm_socket.h"
 
-#include <errno.h>
-
 #ifndef MINIX
 # ifndef X_NO_SYS_UN
 #  ifndef Lynx
@@ -60,11 +58,6 @@ from The Open Group.
 # include <sys/ioctl.h>
 # include <sys/nbio.h>
 #endif /* !MINIX */
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
-
 
 extern int	xdmcpFd;
 extern int	chooserFd;

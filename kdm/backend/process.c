@@ -32,27 +32,9 @@ from The Open Group.
  * session.c
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
-
-#ifdef X_POSIX_C_SOURCE
-# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-# include <signal.h>
-# undef _POSIX_C_SOURCE
-#else
-# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#  include <signal.h>
-# else
-#  define _POSIX_SOURCE
-#  include <signal.h>
-#  undef _POSIX_SOURCE
-# endif
-#endif
-
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 #include <ctype.h>
 #include <stdio.h>

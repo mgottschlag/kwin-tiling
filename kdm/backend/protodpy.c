@@ -32,20 +32,10 @@ in this Software without prior written authorization from The Open Group.
  * started.
  */
 
-#include "dm.h"
-
 #ifdef XDMCP
 
+#include "dm.h"
 #include "dm_error.h"
-
-#include <sys/types.h>
-#ifdef X_NOT_STDC_ENV
-#define Time_t long
-extern Time_t time ();
-#else
-#include <time.h>
-#define Time_t time_t
-#endif
 
 static struct protoDisplay	*protoDisplays;
 

@@ -76,6 +76,11 @@ extern Time_t time ();
 # define Time_t time_t
 #endif
 
+#include <errno.h>
+#ifdef X_NOT_STDC_ENV
+extern int errno;
+#endif
+
 #ifdef XDMCP
 # include <X11/Xdmcp.h>
 #endif
@@ -98,11 +103,11 @@ extern Time_t time ();
 # endif
 # define waitCode(w)	(WIFEXITED(w) ? WEXITSTATUS(w) : 0)
 # define waitSig(w)	(WIFSIGNALED(w) ? WTERMSIG(w) : 0)
-#ifdef WCOREDUMP
-# define waitCore(w)    (WCOREDUMP(w))
-#else
-# define waitCore(w)    0	/* not in POSIX.  so what? */
-#endif
+# ifdef WCOREDUMP
+#  define waitCore(w)	(WCOREDUMP(w))
+# else
+#  define waitCore(w)	0	/* not in POSIX.  so what? */
+# endif
 typedef int		waitType;
 #else /* X_NOT_POSIX */
 # ifdef SYSV
@@ -156,8 +161,20 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # define Jmp_buf	sigjmp_buf
 #endif
 
-#ifndef MINIX
-# define HAS_SELECT_ON_FIFO
+#ifdef NEED_SIGNAL
+# ifdef X_POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE X_POSIX_C_SOURCE
+#  include <signal.h>
+#  undef _POSIX_C_SOURCE
+# else
+#  if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
+#   include <signal.h>
+#  else
+#   define _POSIX_SOURCE
+#   include <signal.h>
+#   undef _POSIX_SOURCE
+#  endif
+# endif
 #endif
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix,
@@ -536,6 +553,7 @@ extern void RunChooser (struct display *d);
 # include <stdlib.h>
 #else
 char *malloc(), *realloc();
+void exit(int);
 #endif
 
 typedef SIGVAL (*SIGFUNC)(int);

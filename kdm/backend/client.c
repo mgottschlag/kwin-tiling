@@ -38,11 +38,6 @@ from The Open Group.
 #include "dm_auth.h"
 #include "dm_error.h"
 
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
-
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>

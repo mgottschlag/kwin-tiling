@@ -41,8 +41,6 @@ from The Open Group.
 
 #include <stdio.h>
 #include <signal.h>
-#include <errno.h>
-
 #ifdef MINIX
 # include <sys/ioctl.h>
 # include <net/gen/in.h>
@@ -51,10 +49,6 @@ from The Open Group.
 #endif
 
 static int receivedUsr1;
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 static int serverPause (unsigned t, int serverPid);
 
@@ -65,7 +59,7 @@ CatchUsr1 (int n ATTR_UNUSED)
 #ifdef SIGNALS_RESET_WHEN_CAUGHT
     (void) Signal (SIGUSR1, CatchUsr1);
 #endif
-    Debug ("display manager caught SIGUSR1\n");
+    /* Debug ("display manager caught SIGUSR1\n"); */
     ++receivedUsr1;
 }
 
@@ -84,13 +78,13 @@ StartServerOnce (struct display *d)
     Debug ("StartServer for %s\n", d->name);
     receivedUsr1 = 0;
     (void) Signal (SIGUSR1, CatchUsr1);
-    argv = d->serverArgv;
     switch (pid = Fork ()) {
     case 0:
 #ifdef XDMCP
 	/* The chooser socket is not closed by CleanUpChild() */
 	DestroyWellKnownSockets();
 #endif
+	argv = d->serverArgv;
 	if (d->authFile) {
 	    argv = addStrArr (argv, "-auth", 5);
 	    argv = addStrArr (argv, d->authFile, -1);
@@ -118,9 +112,9 @@ StartServerOnce (struct display *d)
 	break;
     }
     Debug ("Server forked, pid %d\n", pid);
-    d->serverPid = pid;
     if (serverPause ((unsigned) d->serverTimeout, pid))
 	return FALSE;
+    d->serverPid = pid;
     return TRUE;
 }
 
@@ -214,9 +208,8 @@ serverPause (unsigned t, int serverPid)
     (void) alarm ((unsigned) 0);
     (void) Signal (SIGALRM, SIG_DFL);
     (void) Signal (SIGUSR1, CatchUsr1);
-    if (serverPauseRet) {
+    if (serverPauseRet)
 	LogError ("Server unexpectedly died\n");
-    }
     return serverPauseRet;
 }
 
@@ -306,7 +299,8 @@ WaitForServer (struct display *d)
     volatile int i;
     /* static int i; */
 
-    for (i = 0; i < (d->openRepeat > 0 ? d->openRepeat : 1); i++) {
+    i = 0;
+    do {
     	(void) Signal (SIGALRM, abortOpen);
     	(void) alarm ((unsigned) d->openTimeout);
     	if (!Setjmp (openAbort)) {
@@ -342,13 +336,11 @@ WaitForServer (struct display *d)
 		   d->name, errno, strerror (errno), i+1);
 	    sleep ((unsigned) d->openDelay);
     	} else {
-	    Debug ("hung in open, aborting\n");
 	    LogError ("Hung in XOpenDisplay(%s), aborting\n", d->name);
 	    (void) Signal (SIGALRM, SIG_DFL);
 	    break;
     	}
-    }
-    Debug ("giving up on server\n");
+    } while (++i < d->openRepeat);
     LogError ("server open failed for %s, giving up\n", d->name);
     return 0;
 }

@@ -37,17 +37,6 @@ from The Open Group.
 #include <X11/Xauth.h>
 #include <X11/Xos.h>
 
-#include <errno.h>
-
-#ifdef X_NOT_STDC_ENV
-# define Time_t long
-extern Time_t time ();
-extern int errno;
-#else
-# include <time.h>
-# define Time_t time_t
-#endif
-
 static unsigned char	key[8];
 
 #ifdef HASXDMAUTH

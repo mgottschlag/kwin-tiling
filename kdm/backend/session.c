@@ -39,13 +39,8 @@ from The Open Group.
 #include <X11/Xatom.h>
 
 #include <signal.h>
-#include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 static int
 AutoLogon (struct display *d)
@@ -57,6 +52,7 @@ AutoLogon (struct display *d)
     if (!autoLogin)
 	return 0;
     str = "default";
+    fargs = 0;
     tdiff = time (0) - d->hstent->lastExit - d->openDelay;
 Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n", 
 	tdiff, d->hstent->rLogin, d->hstent->goodExit, d->hstent->nuser);
@@ -68,7 +64,6 @@ Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n",
 	name = d->hstent->nuser;
 	pass = d->hstent->npass;
 	args = d->hstent->nargs;
-	fargs = 0;
     } else if (d->autoUser[0] != '\0') {
 	if (tdiff <= 0) {
 	    if (d->hstent->goodExit)

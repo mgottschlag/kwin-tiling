@@ -32,19 +32,13 @@ from The Open Group.
  */
 /* $XFree86: xc/programs/xdm/policy.c,v 3.4 1998/12/06 06:08:48 dawes Exp $ */
 
-#include "dm.h"
-
 #ifdef XDMCP
 
+#include "dm.h"
 #include "dm_auth.h"
 #include "dm_socket.h"
 
 #include <X11/X.h>
-
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 static ARRAY8 noAuthentication = { (CARD16) 0, (CARD8Ptr) 0 };
 

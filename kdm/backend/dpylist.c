@@ -32,10 +32,9 @@ from The Open Group.
  * a simple linked list of known displays
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
-
-#include <signal.h>
 
 static struct display	*displays;
 static struct disphist	*disphist;

@@ -32,25 +32,13 @@ from The Open Group.
  * display manager
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
 
 #include <stdio.h>
 #include <string.h>
-#ifdef X_POSIX_C_SOURCE
-# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-# include <signal.h>
-# undef _POSIX_C_SOURCE
-#else
-# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#  include <signal.h>
-# else
-#  define _POSIX_SOURCE
-#  include <signal.h>
-#  undef _POSIX_SOURCE
-# endif
-#endif
 #ifdef __NetBSD__
 # include <sys/param.h>
 #endif
@@ -60,7 +48,6 @@ from The Open Group.
 #endif
 
 #include <sys/stat.h>
-#include <errno.h>
 #include <X11/Xfuncproto.h>
 #include <stdarg.h>
 
@@ -102,10 +89,6 @@ from The Open Group.
 #ifdef linux
 # include <sys/ioctl.h>
 # include <linux/vt.h>
-#endif
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
 #endif
 
 #if defined(SVR4) && !defined(SCO)
@@ -854,8 +837,11 @@ processFifo (char *buf, int len, void *ptr ATTR_UNUSED)
 	}
 	setNLogin (d, 
 		   ar[3], ar[4], ar[5] ? parseArgs ((char **)0, ar[5]) : 0, 2);
-	if ((d->userSess < 0 || !strcmp (ar[2], "now")) && d->pid != -1)
-	    TerminateProcess (d->pid, SIGTERM);
+	if (d->pid != -1) {
+	    if (d->userSess < 0 || !strcmp (ar[2], "now"))
+		TerminateProcess (d->pid, SIGTERM);
+	} else
+	    StartDisplay (d);
     } else
 	LogInfo ("Invalid fifo command %'s\n", ar[0]);
     freeStrArr (ar);

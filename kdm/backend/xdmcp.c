@@ -32,12 +32,14 @@ from The Open Group.
  * xdmcp.c - Support for XDMCP
  */
 
-#include "dm.h"
+#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
+# include "dm.h"
+# include "dm_error.h"
+#endif
 
 #ifdef XDMCP
 
 #include "dm_auth.h"
-#include "dm_error.h"
 #include "dm_socket.h"
 
 #include <X11/X.h>
@@ -60,14 +62,6 @@ from The Open Group.
 # include <net/gen/netdb.h>
 #endif /* !MINIX */
 
-#ifdef X_NOT_STDC_ENV
-# define Time_t long
-extern Time_t time ();
-#else
-# include <time.h>
-# define Time_t time_t
-#endif
-
 #ifdef MINIX
 struct sockaddr_un
 {
@@ -85,10 +79,6 @@ static int read_size;
 /*
  * misc externs
  */
-#ifndef HAS_SELECT_ON_FIFO
-extern int ChkPipe;
-#endif
-extern int Rescan, ChildReady, ChkUtmp;
 extern int sourceAddress;
 
 /*
@@ -1305,6 +1295,11 @@ void udp_read_cb(nbio_ref_t ref, int res, int err)
 
 #if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
 
+#ifndef HAS_SELECT_ON_FIFO
+extern int ChkPipe;
+#endif
+extern int Rescan, ChildReady, ChkUtmp;
+
 FD_TYPE	WellKnownSocketsMask;
 int	WellKnownSocketsMax;
 
@@ -1315,7 +1310,12 @@ WaitForSomething (void)
     int	nready;
 
     Debug ("WaitForSomething\n");
-    if (AnyWellKnownSockets () && !ChildReady) {
+    if (!ChildReady
+#ifdef XDMCP
+	&& AnyWellKnownSockets ()
+#endif
+	) 
+    {
 	reads = WellKnownSocketsMask;
 #ifdef hpux
 	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);

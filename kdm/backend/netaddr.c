@@ -31,10 +31,9 @@ from The Open Group.
  * netaddr.c - Interpretation of XdmcpNetaddr object.
  */
 
-#include "dm.h"
-
 #ifdef XDMCP
 
+#include "dm.h"
 #include "dm_socket.h"
 #include "dm_error.h"
 

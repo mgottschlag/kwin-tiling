@@ -44,11 +44,6 @@ from The Open Group.
 #include <fcntl.h>
 #include <stdlib.h>
 
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
-
 #ifndef ESIX
 # include <sys/ioctl.h>
 #endif /* !ESIX */

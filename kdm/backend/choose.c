@@ -31,10 +31,9 @@ in this Software without prior written authorization from The Open Group.
  * xdm interface to chooser program
  */
 
-#include "dm.h"
-
 #ifdef XDMCP
 
+#include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
 
@@ -57,19 +56,9 @@ in this Software without prior written authorization from The Open Group.
 #endif /* !MINIX */
 
 #include <ctype.h>
-#include <errno.h>
 
 #if defined(STREAMSCONN)
 # include <tiuser.h>
-#endif
-
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-# define Time_t long
-extern Time_t time ();
-#else
-# include <time.h>
-# define Time_t time_t
 #endif
 
 #ifdef MINIX
@@ -619,7 +608,6 @@ RunChooser (struct display *d)
     env = systemEnv (d, (char *) 0, (char *) 0);
     Debug ("Running %s\n", args[0]);
     execute (args, env);
-    Debug ("Couldn't run %s\n", args[0]);
     LogError ("Cannot execute %s\n", args[0]);
     exit (EX_REMANAGE_DPY);
 }

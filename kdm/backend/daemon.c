@@ -30,6 +30,9 @@ from The Open Group.
  * Author:  Keith Packard, MIT X Consortium
  */
 
+#include "dm.h"
+#include "dm_error.h"
+
 #include <X11/Xos.h>
 
 #if defined(SVR4) || defined(USG)
@@ -46,26 +49,12 @@ from The Open Group.
 #  define TIOCNOTTY  _IO('t', 113)           /* void tty association */
 # endif
 #endif
-#include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 #include <sys/types.h>
 #ifdef X_NOT_POSIX
 # define Pid_t int
 #else
 # define Pid_t pid_t
 #endif
-
-#ifndef X_NOT_STDC_ENV
-# include <stdlib.h>
-#else
-extern void exit (int);
-#endif
-
-
-#include "dm.h"
-#include "dm_error.h"
 
 void
 BecomeDaemon (void)
