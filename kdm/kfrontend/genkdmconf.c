@@ -263,6 +263,15 @@ freeBuf( File *file )
 #endif
 
 static int
+isTrue( const char *val )
+{
+	return !strcmp( val, "true" ) ||
+	       !strcmp( val, "yes" ) ||
+	       !strcmp( val, "on" ) ||
+	       atoi( val );
+}
+
+static int
 mkdirp( const char *name, int mode, const char *what, int existok )
 {
 	char *mfname = mstrdup( name );
@@ -1321,6 +1330,15 @@ upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
 }
 #endif
 
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+static void
+absorb_uselilo( const char *sect ATTR_UNUSED, char **value )
+{
+	if (isTrue( *value ))
+		putfqval( "Shutdown", "BootManager", "Lilo" );
+}
+#endif
+
 #ifdef XDMCP
 static void
 cp_keyfile( Entry *ce, Section *cs ATTR_UNUSED )
@@ -2039,15 +2057,6 @@ ReadConf( const char *fname )
 	return rootsec;
 }
 
-
-static int
-isTrue( const char *val )
-{
-	return !strcmp( val, "true" ) ||
-	       !strcmp( val, "yes" ) ||
-	       !strcmp( val, "on" ) ||
-	       !strcmp( val, "0" );
-}
 
 static int
 mergeKdmRcOld( const char *path )
