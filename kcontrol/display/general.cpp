@@ -38,6 +38,7 @@
 #include <kcmodule.h>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
+#include <kdirwatch.h>
 
 #include "general.h"
 
@@ -84,9 +85,6 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     defName = QString::fromLatin1("KDE default");
     curTheme = kconfig.readEntry("currentTheme");
 
-    curItem = 0;
-    defItem = 0;
-
     addColumn(i18n("Name:"));
     addColumn(i18n("Description:"));
     setAllColumnsShowFocus(true);
@@ -95,21 +93,21 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     if (curTheme.isEmpty())
        curTheme = locate("themes", "default.themerc");
 
-    QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
-    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-        readTheme(*it);
+    connect(KDirWatch::self(), SIGNAL(dirty(const QString&)),
+            this, SLOT(rescan()));
+    localThemeDir = locateLocal("themes","");
+    KDirWatch::self()->addDir(localThemeDir);
+    KDirWatch::self()->startScan();
 
     setFixedHeight(120);
 
-    if (!currentItem() )
-        setSelected(firstChild(), true);
-
-    ensureItemVisible(currentItem());
+    rescan();
 }
 
 
 KThemeListBox::~KThemeListBox()
 {
+    KDirWatch::self()->removeDir(localThemeDir);
 }
 
 
@@ -158,6 +156,22 @@ void KThemeListBox::load()
         setSelected(curItem, true);
         ensureItemVisible( curItem );
     }
+}
+
+void KThemeListBox::rescan()
+{
+    clear();
+    curItem = 0;
+    defItem = 0;
+
+    QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+        readTheme(*it);
+
+    if (!currentItem() )
+        setSelected(firstChild(), true);
+
+    ensureItemVisible(currentItem());
 }
 
 

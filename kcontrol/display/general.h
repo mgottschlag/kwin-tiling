@@ -37,10 +37,13 @@ public:
     void save();
     void load();
     void defaults();
+public slots:
+    void rescan();
 
 private:
     void readTheme(const QString &file);
 
+    QString localThemeDir;
     QString curTheme;
     QString defName;
     QListViewItem *curItem, *defItem;
