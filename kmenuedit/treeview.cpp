@@ -555,8 +555,6 @@ void TreeView::newitem()
 
 void TreeView::cut()
 {
-    return;
-    
     copy();
     del();
 }
@@ -651,49 +649,34 @@ void TreeView::paste()
 
     // create the TreeItems:
 
-    // file or dir?
-    if(_clipboard.find(".desktop") > 0)
-	{
-	    QListViewItem* parent = 0;
-
-	    if(item){
-		if(item->childCount() > 0) {
-		    parent = item;
-		    item = 0;
-		}
-		else
-		    parent = item->parent();	
-	    }
-	
-	    TreeItem* newitem;
-	    if (!parent)
-		newitem = new TreeItem(this, item, "");
-	    else
-		newitem = new TreeItem(parent, item, "");
-	
-	    KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
-	
-	    newitem->setText(0, df.readName());
-	    if(!dest.isEmpty())
-		newitem->setFile(dest + '/' + _clipboard);
-	    else
-		newitem->setFile(_clipboard);
-	    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+    QListViewItem* parent = 0;
+    
+    if(item){
+	if(item->childCount() > 0) {
+	    parent = item;
+	    item = 0;
 	}
-#if 0
+	else
+	    parent = item->parent();	
+    }
+	
+    TreeItem* newitem;
+    if (!parent)
+	newitem = new TreeItem(this, item, "");
     else
-	{
-	    TreeItem* parent = 0;
+	newitem = new TreeItem(parent, item, "");
+	
+    KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
+	
+    newitem->setText(0, df.readName());
+    if(!dest.isEmpty())
+	newitem->setFile(dest + '/' + _clipboard);
+    else
+	newitem->setFile(_clipboard);
+    newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+    
 
-	    if(item){
-		if(item->childCount() > 0)
-		    parent = item;
-		else
-		    parent = (TreeItem*) item->parent();
-	    }
-	    fillBranch(dest + '/' + _clipboard, parent);
-	}
-#endif
+    fillBranch(newitem->file(), newitem);
 }
 
 void TreeView::del()
