@@ -122,12 +122,10 @@ QString KURIFilterModule::quickHelp() const
       " changed this shortcut) and enter your search query into the KDE Run Command dialog.");
 }
 
-#if 0
 void KURIFilterModule::resizeEvent(QResizeEvent *)
 {
     tab->setGeometry(0,0,width(),height());
 }
-#endif
 
 extern "C"
 {

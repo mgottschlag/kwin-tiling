@@ -64,8 +64,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QVBoxLayout *gbkLay = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
     
     cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), gb_keywords);
-    cb_enableInternetKeywords->adjustSize();
-    cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
+    //cb_enableInternetKeywords->adjustSize();
+    //cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
     connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you type Internet Keywords in its browser's address bar."));
     gbkLay->addWidget(cb_enableInternetKeywords);
@@ -84,13 +84,13 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QHBoxLayout *igbopts_lay = new QHBoxLayout( gbkLay, KDialog::spacingHint() );
 
     lb_searchFallback = new QLabel(i18n("Search &Fallback:"), gb_keywords);
-    lb_searchFallback->adjustSize();
-    lb_searchFallback->setMinimumSize(lb_searchFallback->size());
+    //lb_searchFallback->adjustSize();
+    //lb_searchFallback->setMinimumSize(lb_searchFallback->size());
     igbopts_lay->addWidget( lb_searchFallback );
 
     cmb_searchFallback = new QComboBox(false, gb_keywords);
-    cmb_searchFallback->adjustSize();
-    cmb_searchFallback->setMinimumSize(cmb_searchFallback->size());
+    //cmb_searchFallback->adjustSize();
+    //cmb_searchFallback->setMinimumSize(cmb_searchFallback->size());
     igbopts_lay->addWidget( cmb_searchFallback, 1 );
     lb_searchFallback->setBuddy(cmb_searchFallback);
 
@@ -109,8 +109,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
 /*  Feature to consider after KDE 2.0...
     cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Engine Shortcuts"), this);
-    cb_enableSearchKeywords->adjustSize();
-    cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
+    //cb_enableSearchKeywords->adjustSize();
+    //cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
     QWhatsThis::add(cb_enableSearchKeywords, i18n("If this box is checked, KDE will let you use the shortcuts "
                                                   "defined below to quickly search the internet. For example, "
@@ -136,7 +136,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lv_searchProviders->addColumn(i18n("Name"));
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setSorting(0);
-    lv_searchProviders->setMinimumSize(lv_searchProviders->sizeHint());
+    //lv_searchProviders->setMinimumSize(lv_searchProviders->sizeHint() / 4);
     wtstr = i18n("This list contains the search engines that KDE knows about, and their associated shortcuts.");
     QWhatsThis::add(lv_searchProviders, wtstr);
 
@@ -146,13 +146,13 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     gbsLay->addMultiCellWidget(lv_searchProviders, 1, 9, 0, 0);
 
     lb_searchProviderName = new QLabel(i18n("Search &Provider Name:"), gb_search);
-    lb_searchProviderName->adjustSize();
-    lb_searchProviderName->setMinimumSize(lb_searchProviderName->size());    
+    //lb_searchProviderName->adjustSize();
+    //lb_searchProviderName->setMinimumSize(lb_searchProviderName->size());    
     gbsLay->addWidget(lb_searchProviderName, 1, 2);
 
     le_searchProviderName = new QLineEdit(gb_search);
-    le_searchProviderName->adjustSize();
-    le_searchProviderName->setMinimumSize(le_searchProviderName->size()); 
+    //le_searchProviderName->adjustSize();
+    //le_searchProviderName->setMinimumSize(le_searchProviderName->size()); 
     gbsLay->addWidget(le_searchProviderName, 2, 2);
 
     lb_searchProviderName->setBuddy(le_searchProviderName);
@@ -163,13 +163,13 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QWhatsThis::add(le_searchProviderName, wtstr);
 
     lb_searchProviderURI = new QLabel(i18n("Search &URI:"), gb_search);
-    lb_searchProviderURI->adjustSize();
-    lb_searchProviderURI->setMinimumSize(lb_searchProviderURI->size());
+    //lb_searchProviderURI->adjustSize();
+    //lb_searchProviderURI->setMinimumSize(lb_searchProviderURI->size());
     gbsLay->addWidget(lb_searchProviderURI, 3, 2); 
     
     le_searchProviderURI = new QLineEdit(gb_search);
-    le_searchProviderURI->adjustSize();
-    le_searchProviderURI->setMinimumSize(le_searchProviderURI->size());  
+    //le_searchProviderURI->adjustSize();
+    //le_searchProviderURI->setMinimumSize(le_searchProviderURI->size());  
     gbsLay->addWidget(le_searchProviderURI, 4, 2);
 
     lb_searchProviderURI->setBuddy(le_searchProviderURI);
@@ -180,13 +180,13 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QWhatsThis::add(le_searchProviderURI, wtstr);
 
     lb_searchProviderShortcuts = new QLabel(i18n("UR&I Shortcuts:"), gb_search);
-    lb_searchProviderShortcuts->adjustSize();
-    lb_searchProviderShortcuts->setMinimumSize(lb_searchProviderShortcuts->size());
+    //lb_searchProviderShortcuts->adjustSize();
+    //lb_searchProviderShortcuts->setMinimumSize(lb_searchProviderShortcuts->size());
     gbsLay->addWidget(lb_searchProviderShortcuts, 5, 2);
 
     le_searchProviderShortcuts = new QLineEdit(gb_search);
-    le_searchProviderShortcuts->adjustSize();
-    le_searchProviderShortcuts->setMinimumSize(le_searchProviderShortcuts->size());
+    //le_searchProviderShortcuts->adjustSize();
+    //le_searchProviderShortcuts->setMinimumSize(le_searchProviderShortcuts->size());
     gbsLay->addWidget(le_searchProviderShortcuts, 6, 2);
 
     lb_searchProviderShortcuts->setBuddy(le_searchProviderShortcuts);

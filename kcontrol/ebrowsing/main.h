@@ -44,6 +44,7 @@ public:
     QString quickHelp() const;
 
 protected:
+    void resizeEvent(QResizeEvent *);
 
 protected slots:
     void moduleChanged(bool state);
