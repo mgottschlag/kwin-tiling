@@ -97,6 +97,9 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
   
   // Restrict minimum size to the optimal one  
   setMinimumSize(sizeHint());
+  
+  // Notify parent about minimumSize change
+  parent->updateGeometry();
 }
 
 

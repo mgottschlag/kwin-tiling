@@ -52,13 +52,15 @@ void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
   _children.append(widget);
 
   addTab(widget, QIconSet(icon), widget->caption());
-  showPage(widget);
+  showPage(widget);  
+  updateGeometry();
 }
 
 
 void KDockContainer::removeDockWidget(KDockWidget *widget)
 {
   _children.remove(widget);
+  updateGeometry();
 }
 
 
