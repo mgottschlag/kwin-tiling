@@ -61,6 +61,9 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
 
 SessionEditor::~SessionEditor()
 {
+    keytabFilename.setAutoDelete(true);
+    schemaFilename.setAutoDelete(true);
+    sessionFilename.setAutoDelete(true);
 }
 
 void SessionEditor::show()
