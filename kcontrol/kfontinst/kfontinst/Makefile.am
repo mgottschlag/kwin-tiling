@@ -6,4 +6,4 @@ noinst_HEADERS=
 
 kfontinst_LDADD = $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS) $(LIB_KDECORE) ../lib/libkfontinst.la
 kfontinst_LDFLAGS = $(all_libraries) $(LIBFONTCONFIG_RPATH) $(LIBFREETYPE_RPATH)
-INCLUDES= $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) $(all_includes) -I../lib -I../../fonts
+INCLUDES= $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) $(all_includes) -I$(srcdir)/../lib -I$(srcdir)/../../fonts
