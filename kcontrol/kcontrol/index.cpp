@@ -53,7 +53,6 @@ IndexPane::IndexPane(QWidget *parent, const char *name)
 	  this, SLOT(doubleClicked(QListViewItem*)));
 }
 
-
 void IndexPane::resizeEvent(QResizeEvent *)
 {
   if (_tree)

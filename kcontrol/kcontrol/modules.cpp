@@ -44,6 +44,7 @@ ConfigModule::ConfigModule(QString desktopFile)
 
 ConfigModule::~ConfigModule()
 {
+  delete _module;
   delete _process;
 }
 
