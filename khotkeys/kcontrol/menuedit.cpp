@@ -303,6 +303,7 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
         return "";
         }
     entry->reparent( khotkeys_get_menu_root( settings.actions ));
+    settings.daemon_disabled = false; // #91782
     settings.write_settings();
     khotkeys_send_reread_config();
     return shortcut;
