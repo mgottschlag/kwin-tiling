@@ -46,6 +46,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kdesktopfile.h>
+#include <kipc.h>
 
 #include <sys/stat.h>
 #include <assert.h>
@@ -1286,37 +1287,7 @@ void Theme::runKrdb(void) const
 //-----------------------------------------------------------------------------
 void Theme::colorSchemeApply(void)
 {
-  XEvent ev;
-  unsigned int i, nrootwins;
-  Window dw1, dw2, *rootwins;
-  int (*defaultHandler)(Display *, XErrorEvent *);
-  Display* dpy = qt_xdisplay();
-  Window root = RootWindow(dpy, DefaultScreen(dpy));
-  Atom KDEChangePalette = XInternAtom(dpy, "KDEChangePalette", false);
-	
-  defaultHandler = XSetErrorHandler(dropError);
-  XQueryTree(dpy, root, &dw1, &dw2, &rootwins, &nrootwins);
-	
-  // Matthias
-  Atom a = XInternAtom(dpy, "KDE_DESKTOP_WINDOW", False);
-  for (i = 0; i < nrootwins; i++) {
-    long result = 0;
-    getSimpleProperty(rootwins[i],a, result);
-    if (result){
-      ev.xclient.type = ClientMessage;
-      ev.xclient.display = dpy;
-      ev.xclient.window = rootwins[i];
-      ev.xclient.message_type = KDEChangePalette;
-      ev.xclient.format = 32;
-      
-      XSendEvent(dpy, rootwins[i] , False, 0L, &ev);
-    }
-  }
-  
-  XFlush(dpy);
-  XSetErrorHandler(defaultHandler);
-  
-  XFree((char*)rootwins);
+  KIPC::sendMessage("KDEChangePalette");
 }
 
 

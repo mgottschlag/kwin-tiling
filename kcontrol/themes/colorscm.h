@@ -82,9 +82,6 @@ public:
 	
 	QColor colorPushColor;
 	
-	Display *kde_display;
-	Atom 		KDEChangePalette;
-	
 	SaveScm *ss;
 	void initSchemeList();
 	void writeScheme();
@@ -115,10 +112,6 @@ protected:
 	QString schemeFile;
 	
 	bool changed;
-	
-	Window          root;
-	int screen;
-
 };
 
 #endif

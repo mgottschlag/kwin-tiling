@@ -24,6 +24,7 @@
 #include <qcombo.h>
 #include <kapp.h>
 #include <kmessagebox.h>
+#include <kipc.h>
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -45,11 +46,6 @@
 #include <config.h>
 #endif
 
-
-int dropError(Display *, XErrorEvent *)
-{
-  return 0;
-}
 
 WidgetCanvas::WidgetCanvas( QWidget *parent)
   : QWidget( parent  )
@@ -242,11 +238,6 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
   if ( mode == Init )
     return;
 	
-  kde_display = x11Display();
-  KDEChangePalette = XInternAtom( kde_display, "KDEChangePalette", False);
-  screen = DefaultScreen(kde_display);
-  root = RootWindow(kde_display, screen);
-    
   setName( i18n("Color Scheme") );
 	
   sampleWidgets = new WidgetCanvas( this );
@@ -878,37 +869,8 @@ void KColorScheme::apply( bool  )
   if ( !changed )
     return;
 	
-  XEvent ev;
-  unsigned int i, nrootwins;
-  Window dw1, dw2, *rootwins;
-  int (*defaultHandler)(Display *, XErrorEvent *);
+  KIPC::sendMessage("KDEChangePalette");
 
-
-  defaultHandler=XSetErrorHandler(dropError);
-	
-  XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-	
-  // Matthias
-  Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
-  for (i = 0; i < nrootwins; i++) {
-    long result = 0;
-    getSimpleProperty(rootwins[i],a, result);
-    if (result){
-      ev.xclient.type = ClientMessage;
-      ev.xclient.display = kde_display;
-      ev.xclient.window = rootwins[i];
-      ev.xclient.message_type = KDEChangePalette;
-      ev.xclient.format = 32;
-	    
-      XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
-    }
-  }
-
-  XFlush(kde_display);
-  XSetErrorHandler(defaultHandler);
-	
-  XFree((void *) rootwins);
-	
   changed=FALSE;
 }
 
