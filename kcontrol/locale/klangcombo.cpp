@@ -114,6 +114,7 @@ void KLanguageCombo::internalActivate( int index )
   if (current == index) return;
   current = index;
   emit activated( index );
+  debug("activated: %s", tag( index ).ascii());
   repaint();
 }
 
@@ -133,24 +134,23 @@ int KLanguageCombo::count() const
   return tags->count();
 }
 
-void KLanguageCombo::insertItem(const QIconSet& icon, const QString &text, const QString &tag, int index)
+void KLanguageCombo::insertItem(const QIconSet& icon, const QString &text, const QString &tag, const QString &submenu, int index )
 {
-  if (index == -1)
-  {
-    QMenuItem *p = popup->findItem(popup->idAt(popup->count() - 1));
-    QPopupMenu *pi = p?p->popup():0;
-    if(pi)
-      {
-        pi->insertItem(icon, text, count());
-        tags->append(tag);
-        return;
-      }
-  }
+  // find first Other
+  int pos = tags->findIndex(submenu);
 
-  if (index < 0 || index >= count())
-    index = count();
-  popup->insertItem(icon, text, index, index);
-  tags->insert(tags->at(index), tag);
+  QPopupMenu *pi = 0;
+  if (pos != -1)
+  {
+    QMenuItem *p = popup->findItem(popup->idAt(pos));
+    pi = p?p->popup():0;
+  }
+  if (!pi) pi = popup;
+
+  if (index >= (int)pi->count())
+    index = -1;
+  pi->insertItem(icon, text, count(), index);
+  tags->append(tag);
 }
 
 void KLanguageCombo::changeItem( const QString &text, int index )
@@ -207,11 +207,11 @@ void KLanguageCombo::insertSubmenu(const QString &text, const QString &tag)
                         SLOT(internalHighlight(int)) );
 }
 
-void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub)
+void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub, const QString &submenu)
 {
   QString output = name + QString::fromLatin1(" (") + path + QString::fromLatin1(")");
   QPixmap flag(locate("locale", sub + path + QString::fromLatin1("/flag.png")));
-  insertItem(QIconSet(flag), output, path);
+  insertItem(QIconSet(flag), output, path, submenu);
 }
 
 void KLanguageCombo::changeLanguage(const QString& name, int i)

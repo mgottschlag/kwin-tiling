@@ -149,13 +149,15 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
     langlist << QString::null; // separator
   langlist += alllang;
 
+  QString submenu; // we are working on this menu
   for ( QStringList::ConstIterator it = langlist.begin();
 	it != langlist.end(); ++it )
     {
         if ((*it).isNull())
         {
 	  combo->insertSeparator();
-	  combo->insertSubmenu(locale->translate("Other"), QString::fromLatin1("other"));
+	  submenu = QString::fromLatin1("other");
+	  combo->insertSubmenu(locale->translate("Other"), submenu);
           continue;
         }
 	KSimpleConfig entry(*it);
@@ -167,7 +169,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
 	path = path.left(index);
 	index = path.findRev('/');
 	path = path.mid(index+1);
-	combo->insertLanguage(path, name, sub);
+	combo->insertLanguage(path, name, sub, submenu);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;

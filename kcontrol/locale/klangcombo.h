@@ -31,8 +31,7 @@
  * This class should be just like qcombobox, but it should be possible
  * to have have a QIconSet for each entry, and each entry should have a tag.
  *
- * It has also support for sub menues, but some of the code should be
- * rewritten (it's a hack).
+ * It has also support for sub menues.
  */
 class KLanguageCombo : public QWidget
 {
@@ -43,11 +42,11 @@ public:
   ~KLanguageCombo();
 
   // insertLanguage should not use locate..
-  void insertLanguage(const QString& path, const QString& name, const QString& sub = QString::null);
+  void insertLanguage(const QString& path, const QString& name, const QString& sub = QString::null, const QString &submenu = QString::null);
   void changeLanguage(const QString& name, int i);
 
   // work space
-  void insertItem(const QIconSet& icon, const QString &text, const QString &tag, int index=-1 );
+  void insertItem(const QIconSet& icon, const QString &text, const QString &tag, const QString &submenu = QString::null, int index=-1 );
   void insertSeparator(int index=-1 );
   void insertSubmenu(const QString &text, const QString &tag);
   void changeItem( const QString &text, int index );
