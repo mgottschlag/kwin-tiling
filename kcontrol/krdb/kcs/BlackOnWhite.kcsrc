@@ -1,5 +1,10 @@
 [Color Scheme]
 Name=High Contrast Black Text
+Name[da]=Sort tekst med høj kontrast
+Name[nl]=Hoog contrast zwarte tekst
+Name[pt]=Alto Contraste Texto Preto
+Name[pt_BR]=Alto Contraste do Texto Preto
+Name[sv]=Svart text med hög kontrast
 activeBackground=165,165,255
 activeBlend=165,165,255
 activeForeground=0,0,0

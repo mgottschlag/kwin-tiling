@@ -1,5 +1,10 @@
 [Color Scheme]
 Name=High Contrast Yellow on Blue
+Name[da]=Gult på blåt med høj kontrast
+Name[nl]=Hoog contrast geel op blauw
+Name[pt]=Alto Contraste Amarelo em Azul
+Name[pt_BR]=Alto Contraste do Texto Amarelo ou Azul
+Name[sv]=Gul på blå med hög kontrast
 activeBackground=0,0,180
 activeBlend=0,0,180
 activeForeground=255,255,0

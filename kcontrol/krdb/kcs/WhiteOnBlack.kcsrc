@@ -1,5 +1,10 @@
 [Color Scheme]
 Name=High Contrast White Text
+Name[da]=Hvid tekst med høj kontrast
+Name[nl]=Hoog contrast witte tekst
+Name[pt]=Alto Contraste Texto Branco
+Name[pt_BR]=Alto Contraste do Texto Branco
+Name[sv]=Vit text med hög kontrast
 activeBackground=0,0,90
 activeBlend=0,0,90
 activeForeground=255,255,255
