@@ -139,7 +139,7 @@ void KCMKNotify::load()
     for ( ; it != fullpaths.end(); ++it) 
         m_notifyWidget->addApplicationEvents( *it );
 
-    ApplicationList& allApps = m_notifyWidget->allApps();
+    ApplicationList allApps = m_notifyWidget->allApps();
     allApps.sort();
     m_notifyWidget->setEnabled( !allApps.isEmpty() );
 
