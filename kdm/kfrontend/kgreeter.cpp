@@ -491,7 +491,7 @@ KGreeter::slotLoadPrevWM()
 		return;
 	    }
 	} else {
-	    for (uint i = 0; i < sessionTypes.count(); i++)
+	    for (uint i = 0; i < sessionTypes.count() && !sessionTypes[i].hid; i++)
 		if (sessionTypes[i].type == sess) {
 		    free( sess );
 		    setPrevWM( i );
