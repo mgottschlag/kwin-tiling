@@ -364,3 +364,5 @@ extern "C" {
 
 }
 
+#include "kcmcss.moc"
+
