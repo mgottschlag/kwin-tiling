@@ -27,6 +27,7 @@
 #include <qlabel.h>
 #include <qgroupbox.h>
 #include <qobjectlist.h>
+#include <qtooltip.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -109,11 +110,16 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
 
+    QToolTip::add(comboCountry, I18N_NOOP("This is were you live. KDE will use the defaults for this country."));
+    QToolTip::add(comboLang, I18N_NOOP("All KDE programs will be displayed in this language (if available)."));
+    QToolTip::add(comboNumber, I18N_NOOP("The rules of this country will be used to localize numbers"));
+    QToolTip::add(comboMoney, I18N_NOOP("The rules of this country will be used to localize money"));
+    QToolTip::add(comboDate, I18N_NOOP("The rules of this country will be used to display time and dates"));
+    QToolTip::add(comboChset, I18N_NOOP("The prefered charset for fonts"));
+
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
-    {
        comboChset->insertItem(QIconSet(), *it, *it);
-    }
 
 
     tl1->setRowStretch(6,1);
