@@ -49,6 +49,7 @@
 #include <dcopclient.h>
 #include <kservicegroup.h>
 #include <kgenericfactory.h>
+#include <kwin.h>
 
 #include <X11/Xlib.h>
 
@@ -118,6 +119,7 @@ TestWin::TestWin()
     : QXEmbed(0, 0, WStyle_Customize | WStyle_NoBorder)
 {
     setFocusPolicy(StrongFocus);
+    KWin::setState( winId(), NET::StaysOnTop );
     grabMouse();
 }
 
