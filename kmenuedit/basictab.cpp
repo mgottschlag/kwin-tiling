@@ -308,12 +308,6 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _uidLabel->setEnabled(!isDeleted && _uidCB->isChecked());
 }
 
-static QString locateLocalXDG(const QString &prefix, const QString &file)
-{
-    QString path = QDir::homeDirPath() + "/.desktop/" + prefix + "/" + file;
-    return path;
-}
-
 void BasicTab::apply( bool desktopFileNeedsSave )
 {
     // key binding part
@@ -334,9 +328,15 @@ void BasicTab::apply( bool desktopFileNeedsSave )
         }
         else
         {
-           // VFolder style needs to be made relative, assume no subdirectories.
-           local = _desktopFile.mid(_desktopFile.findRev('/')+1);
-           local = locateLocalXDG("applications", local);
+           // XDG Desktop menu items come with absolute paths, we need to 
+           // extract their relative path and then build a local path.
+           local = KGlobal::dirs()->relativeLocation("xdgdata-apps", _desktopFile);
+           if (local.startsWith("/"))
+           {
+             // What now? Use filename only and hope for the best.
+             local = _desktopFile.mid(_desktopFile.findRev('/')+1);
+           }
+           local = locateLocal("xdgdata-apps", local);
         }
     }
     else
@@ -347,9 +347,15 @@ void BasicTab::apply( bool desktopFileNeedsSave )
         }
         else
         {
-           // VFolder style needs to be made relative, assume no subdirectories.
-           local = _desktopFile.mid(_desktopFile.findRev('/')+1);
-           local = locateLocalXDG("desktop-directories", local);
+           // XDG Desktop menu items come with absolute paths, we need to 
+           // extract their relative path and then build a local path.
+           local = KGlobal::dirs()->relativeLocation("xdgdata-dirs", _desktopFile);
+           if (local.startsWith("/"))
+           {
+             // What now? Use filename only and hope for the best.
+             local = _desktopFile.mid(_desktopFile.findRev('/')+1);
+           }
+           local = locateLocal("xdgdata-dirs", local);
         }
     }
 
