@@ -47,7 +47,7 @@
    DEFAULT_ERRORSTRING will be used...
 */
 
-static QString *GetInfo_ErrorString;	/* should allways point to:
+static QString *GetInfo_ErrorString;	/* should always point to:
 					    KInfoListWidget::ErrorString */
 static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
@@ -359,7 +359,7 @@ void KInfoListWidget::load()
         another string, then it change *GetInfo_ErrorString ! */
     ErrorString = i18n("No information available about %1!").arg(title)
 		    + QString("\n\n") + DEFAULT_ERRORSTRING;
-    GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
+    GetInfo_ErrorString = &ErrorString;  /* save the address of ErrorString */
 
     sorting_allowed = true; 	/* the functions may set that */
     lBox->setSorting(-1);   	/* No Sorting per default */

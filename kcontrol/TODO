@@ -25,7 +25,7 @@ The current dialog should appear as an advanced tab behind the "Theme"-tab.
 
 Network -> Talk Configuration
 -----------------------------
-Answering Machine: A groupbox around "Adress:, Subject:, First Line:" would be nice. That way one wouldn't need to mention "Mail" each time. The Groupbox could be named something like "Anwering Mail".
+Answering Machine: A groupbox around "Address:, Subject:, First Line:" would be nice. That way one wouldn't need to mention "Mail" each time. The Groupbox could be named something like "Anwering Mail".
 That way one would have a much cleaner layout and it would be much easier to see at once what the dialog is about.
 Forward: Way too much text here. I see the point of having a direct explanation in the dialog. But this could look much friendlier using the following solution:
 There should be a Textbox below the "Forward method"-Combobox. This Textbox only contains the information for the Forward-method which is currently selected (So the text changes each time a different Forward-method is selected).
