@@ -1173,12 +1173,10 @@ NetworkAddressToHostname (
 	    he = gethostbyaddr ((char *)connectionAddress->data,
 				connectionAddress->length, af_type);
 	    if (he) {
-Debug( "host %[*:hhu, %d reverse resolved to %s\n", connectionAddress->length, connectionAddress->data, af_type, he->h_name );
 #if defined(IPv6) && defined(AF_INET6)
 		struct addrinfo	*ai, *nai;
 		if (!getaddrinfo (he->h_name, NULL, NULL, &ai)) {
 		    for (nai = ai; nai; nai = nai->ai_next) {
-Debug( " re-resolve: %[*:hhu, %d\n", nai->ai_addrlen, nai->ai_addr, nai->ai_family );
 			if (af_type == nai->ai_family &&
 			    !memcmp (nai->ai_family == AF_INET ?
 					(char *)&((struct sockaddr_in *)nai->ai_addr)->sin_addr :
