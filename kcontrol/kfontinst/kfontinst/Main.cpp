@@ -77,7 +77,10 @@ static int kfi_configure_dir(const char *dir)
 #endif
 
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
 #endif
@@ -90,12 +93,17 @@ static int kfi_configure_dir(const char *dir)
 //
 // Try to ensure both xftconfig/fonts.conf and X11 config have the same
 // direcories listed.
-static int kfi_sync_dirs()
+static void kfi_sync_dirs()
 {
     //
     // *Always* ensure top-level folders are in path...
-    CGlobal::userXcfg().addPath(CGlobal::cfg().getUserFontsDir());
-    CGlobal::userXft().addDir(CGlobal::cfg().getUserFontsDir());
+    QStringList::ConstIterator uIt;
+
+    for(uIt=CGlobal::cfg().getUserFontsDirs().begin(); uIt!=CGlobal::cfg().getUserFontsDirs().end(); ++uIt)
+    {
+        CGlobal::userXcfg().addPath(*uIt);
+        CGlobal::userXft().addDir(*uIt);
+    }
 
     QStringList           xftDirs(CGlobal::userXft().getDirs()),
                           x11Dirs,
@@ -126,7 +134,10 @@ static int kfi_sync_dirs()
             CGlobal::userXft().addDir(*it);
         CGlobal::userXft().apply();
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
@@ -152,8 +163,12 @@ static int kfi_sync_dirs()
 
     if(CGlobal::userXft().changed()) // Would only happen if top-level added only
     {
+        QStringList::ConstIterator xftIt;
+
         CGlobal::userXft().apply();
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
     }
 }
 
@@ -172,14 +187,15 @@ static int kfi_rmdir(const char *dir)
         CGlobal::create(true, true);
         kfi_sync_dirs();
 
-        CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
         CGlobal::xcfg().removePath(ds);
-        CGlobal::xft().addDir(CGlobal::cfg().getUserFontsDir());
         CGlobal::xft().removeDir(ds);
         rv=CGlobal::xcfg().writeConfig() && CGlobal::xft().apply() ? 0 : -4;
 
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
 #endif
@@ -195,18 +211,18 @@ static int kfi_rmdir(const char *dir)
 
 static int kfi_mkdir(const char *dir, bool make=true)
 {
+    KInstance kinst("kfontinst");
+
+    CGlobal::create(true, true);
+
     QString ds(CMisc::dirSyntax(dir));
     int     rv=!make || CMisc::createDir(ds) ? 0 : -2;
 
     if(0==rv)
     {
-        KInstance kinst("kfontinst");
-
-        CGlobal::create(true, true);
         kfi_sync_dirs();
 
         chmod(dir, CMisc::DIR_PERMS);
-        CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
         CGlobal::xcfg().addPath(ds);
 
 #ifdef HAVE_FONTCONFIG
@@ -217,12 +233,14 @@ static int kfi_mkdir(const char *dir, bool make=true)
 #endif
 
         CFontmap::createLocal(ds);
-        CGlobal::xft().addDir(CGlobal::cfg().getUserFontsDir());
         CGlobal::xft().addDir(ds);
         rv=CGlobal::xcfg().writeConfig() && CGlobal::xft().apply() ? 0 : -4;
 
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
 #endif 
@@ -230,9 +248,9 @@ static int kfi_mkdir(const char *dir, bool make=true)
         if(CMisc::root())
             CGlobal::cfg().storeSysXConfigFileTs();
         CMisc::setTimeStamps(ds);
-
-        CGlobal::destroy();
     }
+
+    CGlobal::destroy();
     
     return rv;
 }
@@ -264,12 +282,25 @@ static int kfi_cfgdir(const char *dir)
 
 static int kfi_install(const char *from, const char *to)
 {
+    KInstance kinst("kfontinst");
+    int       rv=-2;
+        
+    CGlobal::create(true, true);
+
+    QString dir(CMisc::getDir(to));
+
+    if(!CMisc::dExists(dir))
+        CMisc::createDir(dir);
+
     if(CMisc::doCmd("cp", "-f", from, to))
     {
         chmod(to, CMisc::FILE_PERMS);
-        return 0;
+        rv=0;
     }
-    return -2;
+
+    CGlobal::destroy();
+
+    return rv;
 }
 
 static int kfi_rename(const char *from, const char *to)
@@ -285,9 +316,6 @@ static int kfi_rename(const char *from, const char *to)
         
         CGlobal::create(true, true);
         kfi_sync_dirs();
-
-        CGlobal::xcfg().addPath(CGlobal::cfg().getUserFontsDir());
-        CGlobal::xft().addDir(CGlobal::cfg().getUserFontsDir());
 
         if(!CMisc::hidden(to, true))
         {
@@ -315,7 +343,10 @@ static int kfi_rename(const char *from, const char *to)
         rv=CGlobal::xcfg().writeConfig() && CGlobal::xft().apply() ? 0 : -4;
 
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         if(-1!=slash)
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(fromDs.left(slash+1)));
@@ -374,9 +405,9 @@ int main(int argc, char *argv[])
     }
 
     if(-1==rv)
-        std::cerr << "Usage: " << argv[0] << "<command> <dir/font> [<to>]\n"
-                  << "       " << argv[0] << "refresh\n"
-                  << "       " << argv[0] << "createfontmap\n"
+        std::cerr << "Usage: " << argv[0] << " <command> <dir/font> [<to>]\n"
+                  << "       " << argv[0] << " refresh\n"
+                  << "       " << argv[0] << " createfontmap\n"
                   << "           Commands:\n"
                   << "               mkdir     Create directory, and add to config files\n"
                   << "               rmdir     Remove directory, and remove from config files\n"

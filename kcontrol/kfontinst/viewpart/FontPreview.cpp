@@ -75,7 +75,7 @@ void CFontPreview::showFont()
     if(CGlobal::fe().openKioFont(itsCurrentUrl.path(), CFontEngine::NAME, true, itsCurrentFace-1))
     {
         setEraseColor(Qt::white);
-        CGlobal::fe().createPreview(itsCurrentUrl.path(), itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
+        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
         update();
         emit status(true);
         CGlobal::fe().closeFont();

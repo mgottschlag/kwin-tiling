@@ -48,8 +48,8 @@ class CKioFonts : public KIO::SlaveBase
     virtual ~CKioFonts();
 
     void listDir(const KURL &url);
-    int  getSize(const QString &ds);
-    void listDir(const QString &top, const QString &sub, bool sys=true);
+    int  getSize(const QStringList &top, const QString &sub, bool sys=true);
+    void listDir(const QStringList &top, const QString &sub, bool sys=true);
     void stat(const KURL &url);
     bool createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys=true);
     void get(const KURL &url);
@@ -77,7 +77,7 @@ class CKioFonts : public KIO::SlaveBase
     bool    doRootCmd(const char *cmd, bool askPasswd=true) { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     bool    confirmUrl(KURL &url);
 
-    static QString convertUrl(const KURL &url);
+    static QString convertUrl(const KURL &url, bool checkExists);
 
     private:
 

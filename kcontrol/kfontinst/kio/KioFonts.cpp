@@ -62,6 +62,7 @@
 #include "XConfig.h"
 #include "kxftconfig.h"
 #include <kdesu/su.h>
+#include <kprocess.h>
 
 #define MAX_IPC_SIZE  (1024*32)
 #define TIMEOUT       2         // Time between last mod and writing files...
@@ -95,6 +96,25 @@ int kdemain(int argc, char **argv)
     slave.dispatchLoop();
 
     return 0;
+}
+
+enum ExistsType
+{
+    EXISTS_DIR,
+    EXISTS_FILE,
+    EXISTS_NO
+};
+
+static ExistsType checkIfExists(const QStringList &list, const QString &item)
+{
+    QStringList::ConstIterator it;
+    KDE_struct_stat            buff;
+
+    for(it=list.begin(); it!=list.end(); ++it)
+        if(-1!=KDE_stat(QFile::encodeName(*it+item).data(), &buff))
+            return S_ISDIR(buff.st_mode) ? EXISTS_DIR : EXISTS_FILE;
+
+    return EXISTS_NO;
 }
 
 static bool isSpecialDir(const QString &sub, bool sys)
@@ -163,6 +183,16 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
         addAtom(entry, KIO::UDS_MIME_TYPE, 0, mime);
         addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
         return true;
+    }
+    else if (!CMisc::root() && CGlobal::cfg().getSysFontsDirs().first()==path)
+    {
+        QStringList::ConstIterator it=CGlobal::cfg().getSysFontsDirs().begin();
+
+        it++;  // Skip 1st one - thats this one!!!
+        for(; it!=CGlobal::cfg().getSysFontsDirs().end(); ++it)
+            if(createUDSEntry(entry, name, *it, mime))
+                return true;
+        return createUDSEntry(entry, name, "/", mime);
     }
 
     return false;
@@ -261,7 +291,7 @@ if (u.path()==QString(QChar('/')+i18n(KIO_FONTS_USER)) || \
     return; \
 }
 
-static void checkPath(const QCString path, bool &exists, bool &hidden)
+static void checkPath(const QCString &path, bool &exists, bool &hidden)
 {
     int slashPos=path.findRev('/', path.length()-2);
 
@@ -290,6 +320,20 @@ static void checkPath(const QCString path, bool &exists, bool &hidden)
     }
     else
         hidden=false;
+
+    KDE_DBUG << "checkPath " << path << " " << hidden << " " << exists << endl;
+}
+
+static void checkPath(const QStringList &dirs, const QString &item, bool &exists, bool &hidden)
+{
+    QStringList::ConstIterator it;
+    bool                       le=false,
+                               lh=false;
+
+    for(it=dirs.begin(); it!=dirs.end() && !le; ++it)
+        checkPath(QFile::encodeName(*it+item), le, lh);
+    exists=le;
+    hidden=lh;
 }
 
 CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
@@ -323,31 +367,28 @@ void CKioFonts::listDir(const KURL &url)
 
     if(CMisc::root())
     {
-        size=getSize(CMisc::dirSyntax(CGlobal::cfg().getUserFontsDir()+url.encodedPathAndQuery(-1)));
+        size=getSize(CGlobal::cfg().getUserFontsDirs(), url.encodedPathAndQuery(-1), false);
         totalSize(size);
-        listDir(CGlobal::cfg().getRealTopDir(), url.encodedPathAndQuery(-1), false);
+        listDir(CGlobal::cfg().getUserFontsDirs(), url.encodedPathAndQuery(-1), false);
     }
     else if(QStringList::split('/', url.path(), false).count()==0)
     {
         size=2;
         totalSize(size);
-        createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getUserFontsDir(), false);
+        createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getUserFontsDirs().first(), false);
         listEntry(entry, false);
-        createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getSysFontsDir(), true);
+        createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getSysFontsDirs().first(), true);
         listEntry(entry, false);
-        addDir(CGlobal::cfg().getUserFontsDir());
-        cfgDir(CGlobal::cfg().getUserFontsDir());
+        addDir(CGlobal::cfg().getUserFontsDirs().first());
+        cfgDir(CGlobal::cfg().getUserFontsDirs().first());
     }
     else
     {
-        QString top(CGlobal::cfg().getRealTopDir(url.path()));
+        const QStringList &top=CGlobal::cfg().getRealTopDirs(url.path());
 
-        if(!top.isNull())
-        {
-            size=getSize(CMisc::dirSyntax(top+CMisc::getSub(url.path())));
-            totalSize(size);
-            listDir(top, CMisc::getSub(url.path()), i18n(KIO_FONTS_SYS)==CMisc::getSect(url.path()));
-        }
+        size=getSize(top, CMisc::getSub(url.path()), i18n(KIO_FONTS_SYS)==CMisc::getSect(url.path()));
+        totalSize(size);
+        listDir(top, CMisc::getSub(url.path()), i18n(KIO_FONTS_SYS)==CMisc::getSect(url.path()));
     }
 
     listEntry(size ? entry : KIO::UDSEntry(), true);
@@ -356,75 +397,97 @@ void CKioFonts::listDir(const KURL &url)
     KDE_DBUG << "listDir - finished!" << endl;
 }
 
-int CKioFonts::getSize(const QString &ds)
+int CKioFonts::getSize(const QStringList &top, const QString &sub, bool sys)
 {
-    KDE_DBUG << "getSize " << ds << endl;
+    KDE_DBUG << "getSize " << top.first() << ", " << sub << ", " << sys << endl;
 
-    QDir                dir(ds);
-    const QFileInfoList *files=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::Hidden);
+    QStringList                entries;
+    QStringList::ConstIterator it;
 
-    int                 size=0;
-
-    if(files)
+    for(it=top.begin(); it!=top.end(); ++it)
     {
-        QFileInfoListIterator it(*files);
-        QFileInfo             *fInfo;
+        QString             ds(CMisc::dirSyntax(*it+sub));
+        QDir                dir(ds);
+        const QFileInfoList *files=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::Hidden);
 
-        for(; NULL!=(fInfo=it.current()); ++it)
-            if("."!=fInfo->fileName() && ".."!=fInfo->fileName() &&
-               (fInfo->isDir() || CFontEngine::isAFont(QFile::encodeName(fInfo->fileName()))
-                               || CFontEngine::isAAfm(QFile::encodeName(fInfo->fileName()))) )
-                    size++;
+        KDE_DBUG << "Looking in " << ds << endl;
+
+        if(files)
+        {
+            QFileInfoListIterator it(*files);
+            QFileInfo             *fInfo;
+
+            for(; NULL!=(fInfo=it.current()); ++it)
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() &&
+                   (fInfo->isDir() || CFontEngine::isAFont(QFile::encodeName(fInfo->fileName()))
+                                   || CFontEngine::isAAfm(QFile::encodeName(fInfo->fileName()))) &&
+                   !isSpecialDir(fInfo->fileName(), sys) &&
+                   !entries.contains(fInfo->fileName()))
+                    entries.append(fInfo->fileName());
+        }
     }
 
-    KDE_DBUG << "Size:" << size << endl;
-    return size;
+    KDE_DBUG << "Size:" << entries.count() << endl;
+    return entries.count();
 }
 
-void CKioFonts::listDir(const QString &top, const QString &sub, bool sys)
+void CKioFonts::listDir(const QStringList &top, const QString &sub, bool sys)
 {
-    KDE_DBUG << "listDir " << top << ", " << sub << ", " << sys << endl;
+    KDE_DBUG << "listDir " << top.first() << ", " << sub << ", " << sys << endl;
 
-    KIO::UDSEntry       entry;
-    QString             dPath(CMisc::dirSyntax(top+sub)),
-                        name(CMisc::getName(sub));
-    QDir                dir(dPath);
-    const QFileInfoList *files=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::Hidden);
-    CXConfig            &xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
+    QStringList                entries;
+    QStringList::ConstIterator it;
 
-    //
-    // Ensure this dir is in fontpath - if it exists, and it contains fonts!
-    if(!sys && (sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys))))
+    for(it=top.begin(); it!=top.end(); ++it)
     {
-        addDir(dPath);
-        cfgDir(dPath);
-    }
+        KIO::UDSEntry       entry;
+        QString             dPath(CMisc::dirSyntax(*it+sub)),
+                            name(CMisc::getName(sub));
+        QDir                dir(dPath);
+        const QFileInfoList *files=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::Hidden);
+        CXConfig            &xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
 
-    if(files)
-    {
-        QFileInfoListIterator it(*files);
-        QFileInfo             *fInfo;
+        KDE_DBUG << "Looking in " << dPath << endl;
 
-        for(; NULL!=(fInfo=it.current()); ++it)
-            if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                if(fInfo->isDir())
-                {
-                    if(!isSpecialDir(fInfo->fileName(), sys))
+        //
+        // Ensure this dir is in fontpath - if it exists, and it contains fonts!
+        if(!sys && (sub.isNull() || (!name.isNull() && !sys && QChar('.')!=name[0] && !isSpecialDir(name, sys))))
+        {
+            addDir(dPath);
+            cfgDir(dPath);
+        }
+
+        if(files)
+        {
+            QFileInfoListIterator it(*files);
+            QFileInfo             *fInfo;
+
+            for(; NULL!=(fInfo=it.current()); ++it)
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
+                    if(fInfo->isDir())
                     {
-                        QString ds(CMisc::dirSyntax(fInfo->filePath()));
-
-                        if((QChar('.')==fInfo->fileName()[0] || (!sys && addDir(ds)) || xcfg.subInPath(ds)) &&
-                           createDirEntry(entry, fInfo->fileName(), ds, sys && !CMisc::root()))
+                        if(!entries.contains(fInfo->fileName()) && !isSpecialDir(fInfo->fileName(), sys))
                         {
-                            if(!sys && QChar('.')!=fInfo->fileName()[0])
-                                cfgDir(ds);
-                            listEntry(entry, false);
+                            QString ds(CMisc::dirSyntax(fInfo->filePath()));
+
+                            if((QChar('.')==fInfo->fileName()[0] || (!sys && addDir(ds)) || xcfg.subInPath(ds)) &&
+                               createDirEntry(entry, fInfo->fileName(), ds, sys && !CMisc::root()))
+                            {
+                                if(!sys && QChar('.')!=fInfo->fileName()[0])
+                                    cfgDir(ds);
+                                listEntry(entry, false);
+                                entries.append(fInfo->fileName());
+                            }
                         }
                     }
-                }
-                else if(( CFontEngine::isAFont(QFile::encodeName(fInfo->fileName())) || CFontEngine::isAAfm(QFile::encodeName(fInfo->fileName())) ) &&
-                        createFileEntry(entry, fInfo->fileName(), fInfo->filePath()))
-                    listEntry(entry, false);
+                    else if(( CFontEngine::isAFont(QFile::encodeName(fInfo->fileName())) || CFontEngine::isAAfm(QFile::encodeName(fInfo->fileName())) ) &&
+                            !entries.contains(fInfo->fileName()) &&
+                            createFileEntry(entry, fInfo->fileName(), fInfo->filePath()))
+                    {
+                        listEntry(entry, false);
+                        entries.append(fInfo->fileName());
+                    }
+        }
     }
 }
 
@@ -441,16 +504,16 @@ void CKioFonts::stat(const KURL &url)
     switch(path.count())
     {
         case 0:
-            err=!createDirEntry(entry, i18n("Fonts"), CGlobal::cfg().getRealTopDir(), false);
+            err=!createDirEntry(entry, i18n("Fonts"), CGlobal::cfg().getUserFontsDirs().first(), false);
             break;
         case 1:
             if(CMisc::root())
                 err=!createStatEntry(entry, url);
             else
                 if(i18n(KIO_FONTS_USER)==path[0])
-                    err=!createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getRealTopDir(url.path()), false);
+                    err=!createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getUserFontsDirs().first(), false);
                 else if(path[0]==i18n(KIO_FONTS_SYS))
-                    err=!createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getRealTopDir(url.path()), true);
+                    err=!createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getSysFontsDirs().first(), true);
                 else
                 {
                     error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".").arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS));
@@ -475,37 +538,36 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys)
 {
     KDE_DBUG << "createStatEntry " << url.path() << endl;
 
-    QString top(CGlobal::cfg().getRealTopDir(url.path())),
-            sub(CMisc::getSub(url.path())),
-            ds(CMisc::dirSyntax(top+sub));
 
-    QDir d(ds);
+    const QStringList          top=CGlobal::cfg().getRealTopDirs(url.path());
+    QStringList::ConstIterator it;
+    QString                    name(CMisc::getName(url.path()));
 
-    if(d.exists())
+    for(it=top.begin(); it!=top.end(); ++it)
     {
-//        return (QChar('.')==sub[0] || CGlobal::userXcfg().inPath(ds) || CGlobal::sysXcfg().inPath(ds)) &&
-//               createDirEntry(entry, CMisc::getName(url.path()), top+sub, !CMisc::root() && i18n(KIO_FONTS_SYS)==CMisc::getSect(url.path()));
+        QString sub(CMisc::getSub(url.path())),
+                ds(CMisc::dirSyntax(*it+sub));
 
-        QString name(CMisc::getName(url.path()));
+        QDir d(ds);
 
-        if(!isSpecialDir(name, sys))
+        if(d.exists())
         {
-            CXConfig xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
-
-            if((QChar('.')==name[0] || xcfg.inPath(ds) || (!sys && addDir(ds))) && createDirEntry(entry, name, ds, sys && !CMisc::root()))
+            if(!isSpecialDir(name, sys))
             {
-                if(!sys && QChar('.')!=name[0])
-                    cfgDir(ds);
-                return true;
+                CXConfig xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();
+
+                if((QChar('.')==name[0] || xcfg.inPath(ds) || (!sys && addDir(ds))) && createDirEntry(entry, name, ds, sys && !CMisc::root()))
+                {
+                    if(!sys && QChar('.')!=name[0])
+                        cfgDir(ds);
+                    return true;
+                }
             }
         }
-    }
-    else
-    {
-        QString fName(CMisc::getName(url.path()));
-
-        return (CFontEngine::isAFont(QFile::encodeName(fName)) || CFontEngine::isAAfm(QFile::encodeName(fName))) &&
-                createFileEntry(entry, fName, top+sub);
+        else if(CMisc::fExists(*it+sub) &&
+                (CFontEngine::isAFont(QFile::encodeName(name)) || CFontEngine::isAAfm(QFile::encodeName(name))) &&
+                CMisc::fExists(*it+sub) && createFileEntry(entry, name, *it+sub))
+            return true;
     }
 
     return false;
@@ -516,7 +578,7 @@ void CKioFonts::get(const KURL &url)
     KDE_DBUG << "get " << url.path() << endl;
     CHECK_URL(url)
 
-    QCString realPath=QFile::encodeName(convertUrl(url));
+    QCString realPath=QFile::encodeName(convertUrl(url, true));
 
     KDE_struct_stat buff;
     if (-1==KDE_stat(realPath.data(), &buff))
@@ -588,7 +650,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 {
     KDE_DBUG << "put " << u.path() << endl;
 
-    QString  destOrig(convertUrl(u));
+    QString  destOrig(convertUrl(u, false));
     QCString destOrigC(QFile::encodeName(destOrig));
 
     // Check mime-type - only want to copy fonts, or AFM files...
@@ -602,22 +664,21 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     if(!confirmUrl(url))
         return;
 
-    destOrig=convertUrl(url);
+    destOrig=convertUrl(url, false);
     destOrigC=(QFile::encodeName(destOrig));
 
-    KDE_struct_stat buffOrig;
-    bool            origExists=(-1!=KDE_stat(destOrigC.data(), &buffOrig));
+    ExistsType origExists=checkIfExists(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()));
 
-    if (origExists && !overwrite && !resume)
+    if (EXISTS_NO!=origExists && !overwrite && !resume)
     {
-        error(S_ISDIR(buffOrig.st_mode) ? KIO::ERR_DIR_ALREADY_EXIST : KIO::ERR_FILE_ALREADY_EXIST, destOrig);
+        error(EXISTS_DIR==origExists ? KIO::ERR_DIR_ALREADY_EXIST : KIO::ERR_FILE_ALREADY_EXIST, url.path());
         return;
     }
 
     bool otherExists,
          otherHidden;
 
-    checkPath(destOrigC, otherExists, otherHidden);
+    checkPath(CGlobal::cfg().getRealTopDirs(u.path()), CMisc::getSub(u.path()), otherExists, otherHidden);
 
     if(otherExists)
     {
@@ -642,16 +703,25 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 
             tmpFile.setAutoDelete(true);
 
-            if(putReal(tmpFile.name(), tmpFileC, origExists, mode, resume))
+            if(putReal(tmpFile.name(), tmpFileC, EXISTS_NO!=origExists, mode, resume))
             {
-                QCString cmd("cp -f "); // "kfontinst install ");
+                QCString cmd;
 
-                cmd+=tmpFileC;
-                cmd+=" ";
-                cmd+=destOrigC;
-
-                cmd+="; chmod 0644 ";
-                cmd+=destOrigC;
+                if(CMisc::dExists(CMisc::getDir(destOrig)))
+                {
+                    cmd+=("cp -f "); // "kfontinst install ");
+                    cmd+=tmpFileC;
+                    cmd+=" ";
+                    cmd+=destOrigC;
+                    cmd+="; chmod 0644 ";
+                }
+                else
+                {
+                    cmd+=("kfontinst install ");
+                    cmd+=tmpFileC;
+                    cmd+=" ";
+                    cmd+=destOrigC;
+                }
 
                 // Get root to move this to fonts folder...
                 if(doRootCmd(cmd, passwd))
@@ -664,7 +734,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         if(err)
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
     }
-    else if(putReal(destOrig, destOrigC, origExists, mode, resume))
+    else if(putReal(destOrig, destOrigC, EXISTS_NO!=origExists, mode, resume))
         modifiedDir(CMisc::getDir(destOrig));
 
     if(++itsNewFonts>MAX_NEW_FONTS)
@@ -798,10 +868,9 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     KDE_DBUG << "copy " << src.path() << " - " << d.path() << endl;
     CHECK_URL(src)
 
-    QCString        realSrc=QFile::encodeName(convertUrl(src)),
-                    realDest=QFile::encodeName(convertUrl(d));
-    KDE_struct_stat buffSrc,
-                    buffDest;
+    QCString        realSrc=QFile::encodeName(convertUrl(src, true)),
+                    realDest=QFile::encodeName(convertUrl(d, false));
+    KDE_struct_stat buffSrc;
 
     KDE_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
     if(S_ISDIR(buffSrc.st_mode))
@@ -820,11 +889,13 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     if(!confirmUrl(dest))
         return;
 
-    realDest=QFile::encodeName(convertUrl(dest));
+    realDest=QFile::encodeName(convertUrl(dest, false));
 
-    if(-1!=KDE_stat(realDest.data(), &buffDest))
+    ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), CMisc::getSub(dest.path()));
+
+    if (EXISTS_NO!=destExists)
     {
-        if(S_ISDIR(buffDest.st_mode))
+        if(EXISTS_DIR==destExists)
         {
            error(KIO::ERR_DIR_ALREADY_EXIST, dest.path());
            return;
@@ -838,7 +909,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
     if(nonRootSys(dest))
     {
-        QCString cmd("cp -f ");
+        QCString cmd(CMisc::dExists(CMisc::getDir(realDest)) ? "cp -f " : "kfontinst install ");
 
         cmd+=realSrc;
         cmd+=" ";
@@ -955,8 +1026,9 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
     CHECK_URL(src)
     CHECK_ALLOWED(src)
 
-    QCString srcPath(QFile::encodeName(convertUrl(src.path())));
-    QCString destPath(QFile::encodeName(convertUrl(dest.path())));
+    QCString srcPath(QFile::encodeName(convertUrl(src.path(), true)));
+    QString  sSub(CMisc::getSub(src.path())),
+             dSub(CMisc::getSub(dest.path()));
 
     KDE_struct_stat buffSrc;
 
@@ -966,11 +1038,15 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         return;
     }
 
-    KDE_struct_stat buffDest;
+    QCString destPath(QFile::encodeName(CMisc::getDir(srcPath)+CMisc::getFile(dest.path())));
 
-    if(-1!=KDE_stat(destPath.data(), &buffDest))
+    KDE_DBUG << "rename " << srcPath << " to " << destPath << endl;
+
+    ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), dSub);
+
+    if(EXISTS_NO!=destExists)
     {
-        if(S_ISDIR(buffDest.st_mode))
+        if(EXISTS_DIR==destExists)
         {
            error(KIO::ERR_DIR_ALREADY_EXIST, dest.path());
            return;
@@ -982,15 +1058,29 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         }
     }
 
-    bool nrs=false;
+    bool                       nrs=false,
+                               dir=S_ISDIR(buffSrc.st_mode);
+    QStringList::ConstIterator it;
+    QStringList                list=CGlobal::cfg().getRealTopDirs(src.path());
 
     if(nonRootSys(dest))
     {
-        QCString cmd(S_ISDIR(buffSrc.st_mode) ? "kfontinst rename " : "mv -f ");
+        QCString cmd;
+        bool     first=true;
 
-        cmd+=srcPath;
-        cmd+=" ";
-        cmd+=destPath;
+        for(it=list.begin(); it!=list.end(); ++it)
+            if(CMisc::fExists(*it+sSub))
+            {
+                if(first)
+                    first=false;
+                else
+                    cmd+=" ; ";
+                cmd+=dir ? "kfontinst rename " : "mv -f ";
+                cmd+=QFile::encodeName(KProcess::quote(*it+sSub));
+                cmd+=" ";
+                cmd+=QFile::encodeName(KProcess::quote(*it+dSub));
+            }
+
         nrs=true;
 
         if(!doRootCmd(cmd))
@@ -1000,27 +1090,33 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         }
     }
     else
-        if(::rename(srcPath.data(), destPath.data()))
-        {
-            switch(errno)
+        for(it=list.begin(); it!=list.end(); ++it)
+            if(CMisc::fExists(*it+sSub))
             {
-                case EACCES:
-                case EPERM:
-                    error(KIO::ERR_ACCESS_DENIED, dest.path());
-                    break;
-                case EXDEV:
-                    error(KIO::ERR_UNSUPPORTED_ACTION, QString::fromLatin1("rename"));
-                    break;
-                case EROFS: // The file is on a read-only filesystem
-                    error(KIO::ERR_CANNOT_DELETE, src.path());
-                    break;
-                default:
-                    error(KIO::ERR_CANNOT_RENAME, src.path());
-            }
-            return;
-        }
+                KDE_DBUG << "rename " << *it+sSub << " to " << *it+dSub << endl;
 
-    if(S_ISDIR(buffSrc.st_mode))
+                if(::rename(QFile::encodeName(*it+sSub).data(), QFile::encodeName(*it+dSub).data()))
+                {
+                    switch(errno)
+                    {
+                        case EACCES:
+                        case EPERM:
+                            error(KIO::ERR_ACCESS_DENIED, dest.path());
+                            break;
+                        case EXDEV:
+                            error(KIO::ERR_UNSUPPORTED_ACTION, QString::fromLatin1("rename"));
+                            break;
+                        case EROFS: // The file is on a read-only filesystem
+                            error(KIO::ERR_CANNOT_DELETE, src.path());
+                            break;
+                        default:
+                            error(KIO::ERR_CANNOT_RENAME, src.path());
+                    }
+                    return;
+                }
+            }
+
+    if(dir)
     {
         if(!CMisc::hidden(srcPath, true))
             deletedDir(srcPath, nrs);
@@ -1046,12 +1142,11 @@ void CKioFonts::mkdir(const KURL &url, int)
     KDE_DBUG << "mkdir " << url.path() << endl;
     CHECK_URL(url)
 
-    QCString        realPath=QFile::encodeName(convertUrl(url));
+    QCString        realPath=QFile::encodeName(convertUrl(url, false));
     bool            sys=nonRootSys(url);
     CXConfig        &xcfg=sys ? CGlobal::sysXcfg() : CGlobal::userXcfg();   // for root, syscfg==usercfg
-    KDE_struct_stat buff;
-    bool            exists=-1!=KDE_stat(realPath.data(), &buff),
-                    otherExists,
+    ExistsType      exists=checkIfExists(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()));
+    bool            otherExists,
                     otherHidden;
 
     if(isSpecialDir(CMisc::getName(url.path()), sys))
@@ -1062,10 +1157,10 @@ void CKioFonts::mkdir(const KURL &url, int)
                       : i18n("You cannot create a folder named \"kde-override\", as this is a special KDE folder."));
     else
     {
-        checkPath(realPath, otherExists, otherHidden);
+        checkPath(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()), otherExists, otherHidden);
 
-        if(exists && xcfg.inPath(realPath))
-            error(S_ISDIR(buff.st_mode) ? KIO::ERR_DIR_ALREADY_EXIST : KIO::ERR_FILE_ALREADY_EXIST, url.path());
+        if(EXISTS_NO!=exists && xcfg.inPath(realPath))
+            error(EXISTS_DIR==exists ? KIO::ERR_DIR_ALREADY_EXIST : KIO::ERR_FILE_ALREADY_EXIST, url.path());
         else if(otherExists)
         {
             error(KIO::ERR_SLAVE_DEFINED, otherHidden ? i18n("A hidden/disabled folder (starting with a '.') already exists.\n"
@@ -1076,7 +1171,7 @@ void CKioFonts::mkdir(const KURL &url, int)
         else
             if(sys)
             {
-                QCString cmd(exists ? "kfontinst adddir " : "kfontinst mkdir ");
+                QCString cmd(EXISTS_NO!=exists ? "kfontinst adddir " : "kfontinst mkdir ");
                 cmd+=realPath;
 
                 if(doRootCmd(cmd))
@@ -1089,7 +1184,7 @@ void CKioFonts::mkdir(const KURL &url, int)
                     error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
             }
             else
-                if (!exists && 0!=::mkdir(realPath.data(), 0777 /*umask will be applied*/ ))
+                if (EXISTS_NO==exists && 0!=::mkdir(realPath.data(), 0777 /*umask will be applied*/ ))
                     error(EACCES==errno
                                   ? KIO::ERR_ACCESS_DENIED
                                   : ENOSPC==errno
@@ -1110,7 +1205,7 @@ void CKioFonts::chmod(const KURL &url, int permissions)
     KDE_DBUG << "chmod " << url.path() << endl;
     CHECK_URL(url)
 
-    QCString realPath=QFile::encodeName(convertUrl(url));
+    QCString realPath=QFile::encodeName(convertUrl(url, true));
 
     if(nonRootSys(url))
     {
@@ -1138,77 +1233,104 @@ void CKioFonts::del(const KURL &url, bool isFile)
     CHECK_URL(url)
     CHECK_ALLOWED(url)
 
-    QString  realPath=convertUrl(url);
-    KDE_DBUG << "real " << realPath << endl;
+    QString                    sub(CMisc::getSub(url.path()));
+    QStringList::ConstIterator constIt;
+    QStringList::Iterator      it;
+    const QStringList          &list=CGlobal::cfg().getRealTopDirs(url.path());
+    QStringList                items;
 
-    if(isFile)
-    {
-        QCString realPathC(QFile::encodeName(realPath));
+    for(constIt=list.begin(); constIt!=list.end(); ++constIt)
+        if((isFile && CMisc::fExists(*constIt+sub)) ||
+           (!isFile && CMisc::dExists(*constIt+sub)))
+            items.append(*constIt+sub);
+ 
+    KDE_DBUG << "real " << items << endl;
 
-        if(nonRootSys(url))
+    if(items.count())
+        if(isFile)
         {
-            QCString cmd("rm -f "); // "kfontinst rmfont ");
-            cmd+=realPathC;
-
-            if(doRootCmd(cmd))
-                modifiedDir(CMisc::getDir(realPath), true);
-            else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
-        }
-        else
-            if (0!=unlink(realPathC.data()))
+            if(nonRootSys(url))
             {
-                if(EACCES==errno || EPERM==errno)
-                    error(KIO::ERR_ACCESS_DENIED, url.path());
-                else if(EISDIR==errno)
-                    error(KIO::ERR_IS_DIRECTORY, url.path());
-                else
-                    error(KIO::ERR_CANNOT_DELETE, url.path());
+                QCString cmd("rm -f "); // "kfontinst rmfont ");
 
-                return;
-            }
-            else
-            {
-                // Remove any other associated files - file.afm
-                // NO - AFMs are now displayed! CMisc::removeAssociatedFiles(realPath);
-                modifiedDir(CMisc::getDir(realPath));
-            }
-    }
-    else
-    {
-        QCString realPathC=QFile::encodeName(realPath);
-
-        if(nonRootSys(url))
-        {
-            QCString cmd("kfontinst rmdir ");
-            cmd+=realPathC;
-
-            if(doRootCmd(cmd))
-            {
-                CGlobal::cfg().storeSysXConfigFileTs();
-                deletedDir(realPath, true);
-            }
-            else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
-        }
-        else
-        {
-            // 1st may need to remove any fonts.dir, fonts.scale, encodings.dir, XftCache*,
-            // fonts.cache*
-            CMisc::removeAssociatedFiles(realPath, true);
-
-            if(-1==::rmdir(realPathC.data()))
-                if(EACCES==errno || EPERM==errno)
-                    error(KIO::ERR_ACCESS_DENIED, url.path());
-                else
+                for(it=items.begin(); it!=items.end(); ++it)
                 {
-                    error(KIO::ERR_COULD_NOT_RMDIR, url.path());
-                    return;
+                    cmd+=QFile::encodeName(KProcess::quote(*it));
+                    cmd+=" ";
                 }
+
+                if(doRootCmd(cmd))
+                {
+                    for(it=items.begin(); it!=items.end(); ++it)
+                        modifiedDir(CMisc::getDir(*it), true);
+                }
+                else
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
+            }
             else
-                deletedDir(realPath);
+                for(it=items.begin(); it!=items.end(); ++it)
+                    if (0!=unlink(QFile::encodeName(*it).data()))
+                    {
+                        if(EACCES==errno || EPERM==errno)
+                            error(KIO::ERR_ACCESS_DENIED, url.path());
+                        else if(EISDIR==errno)
+                            error(KIO::ERR_IS_DIRECTORY, url.path());
+                        else
+                            error(KIO::ERR_CANNOT_DELETE, url.path());
+
+                        return;
+                    }
+                    else
+                    {
+                        // Remove any other associated files - file.afm
+                        // NO - AFMs are now displayed! CMisc::removeAssociatedFiles(realPath);
+                        modifiedDir(CMisc::getDir(*it));
+                    }
         }
-    }
+        else
+        {
+            if(nonRootSys(url))
+            {
+                QCString cmd("kfontinst rmdir ");
+
+                for(it=items.begin(); it!=items.end(); ++it)
+                {
+                    cmd+=QFile::encodeName(KProcess::quote(*it));
+                    cmd+=" ";
+                }
+
+                if(doRootCmd(cmd))
+                {
+                    CGlobal::cfg().storeSysXConfigFileTs();
+                    for(it=items.begin(); it!=items.end(); ++it)
+                        deletedDir(*it, true);
+                }
+                else
+                    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
+            }
+            else
+            {
+                // 1st may need to remove any fonts.dir, fonts.scale, encodings.dir, XftCache*,
+                // fonts.cache*
+                for(it=items.begin(); it!=items.end(); ++it)
+                {
+                    // 1st may need to remove any fonts.dir, fonts.scale, encodings.dir, XftCache*,
+                    // fonts.cache*
+                    CMisc::removeAssociatedFiles(*it, true);
+
+                    if(-1==::rmdir(QFile::encodeName(*it).data()))
+                        if(EACCES==errno || EPERM==errno)
+                            error(KIO::ERR_ACCESS_DENIED, url.path());
+                        else
+                        {
+                            error(KIO::ERR_COULD_NOT_RMDIR, url.path());
+                            return;
+                        }
+                    else
+                        deletedDir(*it);
+                }
+            }
+        }
 
     finished();
 }
@@ -1220,7 +1342,7 @@ bool CKioFonts::addDir(const QString &ds)
 {
     KDE_DBUG << "addDir " << ds << endl;
 
-    if(!CGlobal::userXcfg().inPath(ds))  // Check it's not already in path though!!!
+    if(!CGlobal::userXcfg().inPath(ds) && CMisc::dExists(ds))  // Check it's not already in path though!!!
     {
 #ifdef ADD_DIR_SHOULD_CHECK_FOR_PRESENCE_OF_FONTS
         QDir                dir(ds);
@@ -1263,7 +1385,7 @@ void CKioFonts::cfgDir(const QString &ds)
     //
     // Check that it's not one that we're gonna update later, and that either fonts.dir does not exist, or
     // the fonts.dir is much older than the last mod time of the dir
-    if(-1==itsModifiedDirs.findIndex(ds))    // Ensure its not one that we're gonna update later...
+    if(-1==itsModifiedDirs.findIndex(ds) && CMisc::dExists(ds))    // Ensure its not one that we're gonna update later...
     {
         time_t dTs=CMisc::getTimeStamp(ds);
         bool   doTs=false;
@@ -1292,7 +1414,10 @@ void CKioFonts::cfgDir(const QString &ds)
             if(CGlobal::userXft().changed())
                 CGlobal::userXft().apply();
 #ifdef HAVE_FONTCONFIG
-            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+            QStringList::ConstIterator xftIt;
+
+            for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+                CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(ds));
 #endif
@@ -1322,8 +1447,14 @@ void CKioFonts::syncDirs()
 {
     //
     // *Always* ensure top-level folders are in path...
-    CGlobal::userXcfg().addPath(CGlobal::cfg().getUserFontsDir());
-    CGlobal::userXft().addDir(CGlobal::cfg().getUserFontsDir());
+
+    QStringList::ConstIterator uIt;
+
+    for(uIt=CGlobal::cfg().getUserFontsDirs().begin(); uIt!=CGlobal::cfg().getUserFontsDirs().end(); ++uIt)
+    {
+        CGlobal::userXcfg().addPath(*uIt);
+        CGlobal::userXft().addDir(*uIt);
+    }
 
     QStringList           xftDirs(CGlobal::userXft().getDirs()),
                           x11Dirs,
@@ -1358,7 +1489,10 @@ void CKioFonts::syncDirs()
         }
         CGlobal::userXft().apply();
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
@@ -1384,7 +1518,11 @@ void CKioFonts::syncDirs()
     if(CGlobal::userXft().changed()) // Would only happen if top-level added only
     {
         CGlobal::userXft().apply();
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
     }
 }
 
@@ -1456,7 +1594,10 @@ void CKioFonts::addedDir(const QString &d, bool sys)
         CGlobal::userXft().addDir(ds);
 
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        QStringList::ConstIterator xftIt;
+
+        for(xftIt=CGlobal::cfg().getUserFontsDirs().begin(); xftIt!=CGlobal::cfg().getUserFontsDirs().end(); ++xftIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*xftIt));
 #else
         if(symFamilies.count())
         {
@@ -1485,11 +1626,11 @@ void CKioFonts::modifiedDir(const QString &d, bool sys)
 
     if(sys)
     {
-        if(!CGlobal::sysXcfg().inPath(ds) || !CGlobal::sysXft().hasDir(ds)
-#ifdef HAVE_FONTCONFIG   // Ensure toop-level is also in
-               || !CGlobal::sysXft().hasDir(CGlobal::cfg().getSysFontsDir())
-#endif
-          )
+        if(!CGlobal::sysXcfg().inPath(ds) || !CGlobal::sysXft().hasDir(ds))
+// CPD: FIXME????
+// #ifdef HAVE_FONTCONFIG   // Ensure top-level is also in
+//                || !CGlobal::sysXft().hasDir(CGlobal::cfg().getSysFontsDir())
+// #endif
         {
             QCString cmd(CMisc::dExists(ds) ? "kfontinst adddir " : "kfontinst mkdir ");
 
@@ -1561,6 +1702,8 @@ void CKioFonts::doModifiedDirs()
 
     if(itsModifiedDirs.count())
     {
+        QStringList::ConstIterator constIt;
+
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
         {
             QString ds(CMisc::dirSyntax(*it));
@@ -1582,14 +1725,18 @@ void CKioFonts::doModifiedDirs()
             CGlobal::userXft().apply();
         CFontmap::createTopLevel();
 #ifdef HAVE_FONTCONFIG
-        CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
+        for(constIt=CGlobal::cfg().getUserFontsDirs().begin(); constIt!=CGlobal::cfg().getUserFontsDirs().end(); ++constIt)
+            CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*constIt));
 #else
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
 #endif
         for(it=itsModifiedDirs.begin(); it!=itsModifiedDirs.end(); ++it)
             CMisc::setTimeStamps(CMisc::dirSyntax(*it));
-        CMisc::setTimeStamps(CGlobal::cfg().getUserFontsDir());
+
+        for(constIt=CGlobal::cfg().getUserFontsDirs().begin(); constIt!=CGlobal::cfg().getUserFontsDirs().end(); ++constIt)
+            CMisc::setTimeStamps(*constIt);
+
         itsModifiedDirs.clear();
         CGlobal::userXcfg().refreshPaths();
     }
@@ -1667,18 +1814,20 @@ bool CKioFonts::confirmUrl(KURL &url)
                     case CFontEngine::TRUE_TYPE:
                     case CFontEngine::OPEN_TYPE:
                     case CFontEngine::TT_COLLECTION:
-                        url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CGlobal::cfg().getSysTTSubDir()+
-                                    CMisc::getFile(url.path()));
+                        if(CGlobal::cfg().getSysTTSubDir().isNull())
+                            url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CMisc::getFile(url.path()));
+                        else
+                            url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CGlobal::cfg().getSysTTSubDir()+CMisc::getFile(url.path()));
                         break;
                     case CFontEngine::TYPE_1:
                     case CFontEngine::TYPE_1_AFM:
-                        url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CGlobal::cfg().getSysT1SubDir()+
-                                    CMisc::getFile(url.path()));
+                        if(CGlobal::cfg().getSysT1SubDir().isNull())
+                            url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CMisc::getFile(url.path()));
+                        else
+                            url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CGlobal::cfg().getSysT1SubDir()+CMisc::getFile(url.path()));
                         break;
                     default:
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("To install bitmap (.bdf, .pcf, .snf), or Speedo (.spd) "
-                                                           "fonts\n in the \"%1\" folder you must specify a sub-folder.").arg(KIO_FONTS_SYS));
-                        return false;
+                            url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CMisc::getFile(url.path()));
                 }
             }
             else
@@ -1691,10 +1840,23 @@ bool CKioFonts::confirmUrl(KURL &url)
     return true;
 }
 
-QString CKioFonts::convertUrl(const KURL &url)
+QString CKioFonts::convertUrl(const KURL &url, bool checkExists)
 {
     if(CMisc::root())
-        return CGlobal::cfg().getRealTopDir(url.path())+CMisc::getSub(url.path());
+    {
+        if(!checkExists)
+            return CGlobal::cfg().getUserFontsDirs().first()+CMisc::getSub(url.path());
+        else
+        {
+            QStringList::ConstIterator it;
+            QString                    sub(CMisc::getSub(url.path()));
+
+            for(it=CGlobal::cfg().getUserFontsDirs().begin(); it!=CGlobal::cfg().getUserFontsDirs().end(); ++it)
+                if(CMisc::fExists(*it+sub) || CMisc::dExists(*it+sub))
+                    return *it+sub;
+            return CGlobal::cfg().getUserFontsDirs().first()+sub;
+        }
+    }
     else
     {
         QString sect(CMisc::getSect(url.path()));
@@ -1702,6 +1864,22 @@ QString CKioFonts::convertUrl(const KURL &url)
         if(i18n(KIO_FONTS_USER)!=sect && i18n(KIO_FONTS_SYS)!=sect)
             return url.path();
         else
-            return CGlobal::cfg().getRealTopDir(url.path())+CMisc::getSub(url.path());
+        {
+            const QStringList &list=i18n(KIO_FONTS_USER)==sect
+                                         ? CGlobal::cfg().getUserFontsDirs()
+                                         : CGlobal::cfg().getSysFontsDirs();
+            if(!checkExists)
+                return list.first()+CMisc::getSub(url.path());
+            else
+            {
+                QStringList::ConstIterator it;
+                QString                    sub(CMisc::getSub(url.path()));
+
+                for(it=list.begin(); it!=list.end(); ++it)
+                    if(CMisc::fExists(*it+sub) || CMisc::dExists(*it+sub))
+                        return *it+sub;
+                return list.first()+sub;
+            }
+        }
     }
 }

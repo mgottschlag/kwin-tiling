@@ -125,7 +125,7 @@ void CFontViewPart::install()
 
     if(KMessageBox::Cancel!=resp)
     {
-        QString sub("/");
+        QString sub("");
 
         if(CMisc::root() || KMessageBox::No==resp)
             switch(CFontEngine::getType(QFile::encodeName(m_url.path())))
@@ -133,18 +133,24 @@ void CFontViewPart::install()
                 case CFontEngine::TRUE_TYPE:
                 case CFontEngine::OPEN_TYPE:
                 case CFontEngine::TT_COLLECTION:
-                    sub=CGlobal::cfg().getSysTTSubDir()+QString("/");
+                    if(!CGlobal::cfg().getSysTTSubDir().isNull())
+                        sub=CGlobal::cfg().getSysTTSubDir();
                     break;
                 case CFontEngine::TYPE_1:
-                    sub=CGlobal::cfg().getSysT1SubDir()+QString("/");
+                    if(!CGlobal::cfg().getSysT1SubDir().isNull())
+                        sub=CGlobal::cfg().getSysT1SubDir();
                     break;
                 default:
                     break;
             }
 
-        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? i18n(KIO_FONTS_USER) : i18n(KIO_FONTS_SYS)))+QChar('/')+sub);
-        KURL          destUrl(QString("fonts:/")+destDir+CMisc::getFile(m_url.path()));
         KIO::UDSEntry uds;
+        KURL          destUrl(QString("fonts:/")+
+                                      (CMisc::root()
+                                           ? sub
+                                           : QString((KMessageBox::Yes==resp ? i18n(KIO_FONTS_USER) : i18n(KIO_FONTS_SYS))+QChar('/')+sub)
+                                      )+
+                                      CMisc::getFile(m_url.path()));
 
         if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
             KMessageBox::error(itsFrame, i18n("%1:%2 already installed!").arg(m_url.protocol()).arg(m_url.path()), i18n("Error"));

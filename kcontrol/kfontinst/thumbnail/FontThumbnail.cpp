@@ -62,7 +62,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     if(CGlobal::fe().openKioFont(path, CFontEngine::NAME, true, 0))
     {
         QPixmap pix;
-        CGlobal::fe().createPreview(path, width, height, pix, 0);
+        CGlobal::fe().createPreview(width, height, pix, 0);
 
         img=pix.convertToImage();
 

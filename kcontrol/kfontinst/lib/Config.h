@@ -45,10 +45,10 @@ class CConfig : public KConfig
     CConfig(bool all=false, bool checkDirs=true, bool checkX=false);
     virtual ~CConfig()                    { }
 
-    const QString &   getRealTopDir(const QString &f=QString::null);
+    const QStringList & getRealTopDirs(const QString &f=QString::null);
 
-    const QString &   getUserFontsDir()    { return itsUserFontsDir; }
-    const QString &   getSysFontsDir()     { return itsSysFontsDir; }
+    const QStringList & getUserFontsDirs() { return itsUserFontsDirs; }
+    const QStringList & getSysFontsDirs()  { return itsSysFontsDirs; }
     const QString &   getSysXConfigFile()  { return itsSysXfs ? itsSysXfsConfigFile : itsSysXConfigFile; }
     const QString &   getUserXConfigFile() { return itsUserXConfigFile; }
 #ifndef HAVE_FONT_ENC
@@ -68,19 +68,19 @@ class CConfig : public KConfig
 
     private:
 
-    QString itsUserFontsDir,
-            itsSysFontsDir,
-            itsSysXConfigFile,
-            itsSysXfsConfigFile,
-            itsUserXConfigFile,
+    QStringList itsUserFontsDirs,
+                itsSysFontsDirs;
+    QString     itsSysXConfigFile,
+                itsSysXfsConfigFile,
+                itsUserXConfigFile,
 #ifndef HAVE_FONT_ENC
-            itsEncodingsDir,
+                itsEncodingsDir,
 #endif
-            itsSysTTSubDir,
-            itsSysT1SubDir,
-            itsFontmapDir,
-            itsGhostscriptFile;
-    bool    itsSysXfs;
+                itsSysTTSubDir,
+                itsSysT1SubDir,
+                itsFontmapDir,
+                itsGhostscriptFile;
+    bool        itsSysXfs;
 };
 
 #endif

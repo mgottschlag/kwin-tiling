@@ -250,7 +250,7 @@ class CFontEngine
     QString         createName(const QString &file, bool force=false);
 
 #ifdef HAVE_FT_CACHE
-    void            createPreview(const QString &path, int width, int height, QPixmap &pix, int faceNo);
+    void            createPreview(int width, int height, QPixmap &pix, int faceNo);
 
     static int      point2Pixel(int point)
     {
@@ -365,7 +365,8 @@ class CFontEngine
                    itsEncoding,    // Used only for Type1 fonts
                    itsAfmEncoding, // Used only for Type1 fonts
                    itsXlfd,        // Used for Bitmap fonts
-                   itsFoundry;
+                   itsFoundry,
+                   itsPath;
     float          itsItalicAngle;
     int            itsNumFaces;
     TFtData        itsFt;

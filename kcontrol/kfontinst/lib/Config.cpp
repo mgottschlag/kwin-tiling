@@ -40,7 +40,7 @@
 
 #define KCONFIG_GROUP "KFontinst"
 
-static const QString constDefaultSysFontsDir        ("/usr/X11R6/lib/X11/fonts/");
+static const QString constDefaultSysX11FontsDir     ("/usr/X11R6/lib/X11/fonts/");
 static const QString constDefaultSysTTSubDir        ("TrueType/");
 static const QString constDefaultSysT1SubDir        ("Type1/");
 static const QString constDefaultXConfigFile        ("/etc/X11/XF86Config-4");
@@ -65,33 +65,6 @@ static QString getDir(const QString &entry, const QString *posibilities, const Q
 
         return posibilities[d];
     }
-}
-
-static QString getFirstSubDir(const QString &parent)
-{
-    QString sub(QString::null);
-    QDir    dir(parent);
-
-    if(dir.isReadable())
-    {
-        const QFileInfoList *files=dir.entryInfoList();
-
-        if(files)
-        {
-            QFileInfoListIterator it(*files);
-            QFileInfo             *fInfo;
-
-            for(; NULL!=(fInfo=it.current()); ++it)
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                    if(fInfo->isDir())
-                    {
-                        sub=fInfo->fileName()+"/";
-                        break;
-                    }
-        }
-    }
-
-    return sub;
 }
 
 static const QString & getFile(const QString &entry, const QString *posibilities)
@@ -155,9 +128,9 @@ static QString locateFile(const QString &file, const QString *dirs)
     return QString::null;
 }
 
-static const QString constSysFontsDirs[]=
+static const QString constSysX11FontsDirs[]=
 {
-    constDefaultSysFontsDir,
+    constDefaultSysX11FontsDir,
     "/usr/lib/X11/fonts/",
     "/usr/openwin/lib/X11/fonts/",
     QString::null
@@ -210,7 +183,7 @@ static const QString constEncodingsSubDirs[]=
 static const QString constXConfigFiles[]=
 {
     constDefaultXConfigFile,
-    "/etc/X11/XF86Config"
+    "/etc/X11/XF86Config",
     "/etc/XF86Config-4",
     "/etc/XF86Config",
     //"/usr/X11R6/etc/X11/XF86Config.$HOSTNAME"
@@ -239,12 +212,11 @@ static const QString constGhostscriptDirs[]=
 CConfig::CConfig(bool all, bool checkDirs, bool checkX)
        : KConfig("kfontinstrc")
 {
-    QString defaultUserFontsDir,
-            defaultSysFontsDir=constDefaultSysFontsDir,
+    QString sysX11FontsDir,
             defaultSysXConfigFile,
             defaultUserXConfigFile,
             origUserFontsDir,
-            origSysFontsDir,
+            origSysX11FontsDir,
             origSysXConfigFile,
             origSysXfsConfigFile,
             origUserXConfigFile,
@@ -258,27 +230,33 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
             home;
     bool    configured=false,
             origConfigured=false,
-            origSysXfs=false;
+            origSysXfs=false,
+            root=CMisc::root();
     int     origSysXConfigFileTs=0,
             sysXConfigFileTs=0;
 
     KConfigGroupSaver saver(this, KCONFIG_GROUP);
 
-    if(CMisc::root())
-        defaultUserFontsDir=constDefaultSysFontsDir;
-    else
+    itsSysFontsDirs.append("/usr/local/share/fonts/");
+    itsSysFontsDirs.append("/usr/share/fonts/");
+    
+    if(!root)
     {
-        defaultUserFontsDir=QFile::encodeName(CMisc::dirSyntax(QDir::homeDirPath()+"/.fonts/"));
+        char * kdeHome=getenv("KDEHOME");
+        itsUserFontsDirs.append(QFile::encodeName(CMisc::dirSyntax(QDir::homeDirPath()+"/.fonts/")));
+
+        if(kdeHome)
+            itsUserFontsDirs.append(QFile::encodeName(CMisc::dirSyntax(QString(kdeHome)+"/share/fonts/")));
     }
+
     if(all)
     {
-        defaultUserXConfigFile=defaultUserFontsDir+constNonRootDefaultXConfigFile;
         defaultSysXConfigFile=constDefaultXConfigFile;
+        defaultUserXConfigFile=root ? defaultSysXConfigFile : (itsUserFontsDirs.first()+constNonRootDefaultXConfigFile);
     }
 
     configured=readBoolEntry("Configured", false);
-    itsUserFontsDir=CMisc::dirSyntax(readPathEntry("UserFontsDir", defaultUserFontsDir));
-    itsSysFontsDir=CMisc::dirSyntax(readPathEntry("SysFontsDir", defaultSysFontsDir));
+    sysX11FontsDir=CMisc::dirSyntax(readPathEntry("SysX11FontsDir", constDefaultSysX11FontsDir));
 
     if(all)
     {
@@ -292,11 +270,10 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
         itsSysXfs=readBoolEntry("SysXfs", false);
         itsSysTTSubDir=CMisc::dirSyntax(readEntry("SysTTSubDir", constDefaultSysTTSubDir));
         itsSysT1SubDir=CMisc::dirSyntax(readEntry("SysT1SubDir", constDefaultSysT1SubDir));
-        itsFontmapDir=CMisc::dirSyntax(readPathEntry("FontmapDir", CMisc::root() ? "/etc/fonts" : getUserFontsDir()));
+        itsFontmapDir=CMisc::dirSyntax(readPathEntry("FontmapDir", root ? "/etc/fonts" : itsUserFontsDirs.first()));
 
         origConfigured=configured;
-        origUserFontsDir=itsUserFontsDir;
-        origSysFontsDir=itsSysFontsDir;
+        origSysX11FontsDir=sysX11FontsDir;
         origSysXConfigFile=itsSysXConfigFile;
         origSysXfsConfigFile=itsSysXfsConfigFile;
         origUserXConfigFile=itsUserXConfigFile;
@@ -309,7 +286,7 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
         origSysXConfigFileTs=sysXConfigFileTs;
         origFontmapDir=itsFontmapDir;
 
-        if(CMisc::root())
+        if(root)
         {
             itsGhostscriptFile=readPathEntry("GhostscriptFile", QString::null);
             origGhostscriptFile=itsGhostscriptFile;
@@ -317,25 +294,25 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
     }
 
     // Now check the read in data...
+    if(!(sysX11FontsDir=getDir(sysX11FontsDir, constSysX11FontsDirs)).isNull())
+        itsSysFontsDirs.append(sysX11FontsDir);
 
+    if(root) // For root, these are *always* the same
+        itsUserFontsDirs=itsSysFontsDirs;
     //
-    // First of all, if this is the first time KFontinst has been run as non-root, check for the existance of
-    // $HOME/.fonts - if it doesn't exist then try to create
-    if(!CMisc::root() && !CMisc::dExists(itsUserFontsDir))
-        CMisc::createDir(itsUserFontsDir);
+    // First of all, if this is the first time KFontinst has been run, check for the existance of
+    // /usr/local/share/fonts or $HOME/.fonts - if it doesn't exist then try to create
+    if(!CMisc::dExists(itsUserFontsDirs.first()))
+        CMisc::createDir(itsUserFontsDirs.first());
 
     if(!configured && !CMisc::dExists(itsFontmapDir))
         CMisc::createDir(itsFontmapDir);
-
-    if(checkDirs)
-        if((itsSysFontsDir=getDir(itsSysFontsDir, constSysFontsDirs)).isNull())
-            itsSysFontsDir=defaultSysFontsDir;
 
     if(all)
     {
         //
         // Try to determine location for X and xfs config files...
-        // ...note on sime systems (Solaris and HP-UX) only the xfs file will be found
+        // ...note on some systems (Solaris and HP-UX) only the xfs file will be found
         itsSysXConfigFile=getFile(itsSysXConfigFile, constXConfigFiles);
         itsSysXfsConfigFile=getFile(itsSysXfsConfigFile, constXfsConfigFiles);
 
@@ -362,30 +339,38 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
 
         if(!configured || checkDirs)
         {
-            if(CMisc::root())
+            if(root)
             {
                 if(itsGhostscriptFile.isNull() || !CMisc::fExists(itsGhostscriptFile))
                     itsGhostscriptFile=locateFile("Fontmap", constGhostscriptDirs);
             }
-            else
-            {
-                itsSysTTSubDir=getDir(itsSysTTSubDir, constTTSubDirs, itsSysFontsDir);
-                itsSysT1SubDir=getDir(itsSysT1SubDir, constT1SubDirs, itsSysFontsDir);
 
-                if(itsSysTTSubDir.isNull() || itsSysT1SubDir.isNull())
-                    if(itsSysTTSubDir.isNull() && !itsSysT1SubDir.isNull())
-                        itsSysTTSubDir=itsSysT1SubDir;
-                    else
-                        if(!itsSysTTSubDir.isNull() && itsSysT1SubDir.isNull())
-                            itsSysT1SubDir=itsSysTTSubDir;
-                        else // Bugger, they're both NULL!!
-                            itsSysT1SubDir=itsSysTTSubDir=getFirstSubDir(itsSysFontsDir);
+            QStringList::Iterator it;
+            bool                  foundTT=false,
+                                  foundT1=false;
+
+            for(it=itsSysFontsDirs.begin(); it!=itsSysFontsDirs.end() && (!foundTT || !foundT1); ++it)
+            {
+                if(CMisc::dExists(*it+itsSysTTSubDir))
+                    foundTT=true;
+                if(CMisc::dExists(*it+itsSysT1SubDir))
+                    foundT1=true;
             }
+
+            for(it=itsSysFontsDirs.begin(); it!=itsSysFontsDirs.end() && (!foundTT || !foundT1); ++it)
+            {
+                if(!foundTT && !(itsSysTTSubDir=getDir(constDefaultSysTTSubDir, constTTSubDirs, *it)).isNull())
+                    foundTT=true;
+                if(!foundT1 && !(itsSysT1SubDir=getDir(constDefaultSysT1SubDir, constT1SubDirs, *it)).isNull())
+                    foundT1=true;
+
+            }
+            
 
 #ifndef HAVE_FONT_ENC
             if(!CMisc::dExists(itsEncodingsDir))
             {
-                QString top[]={ itsSysFontsDir, "/usr/share/", "/usr/local/share/", QString::null };
+                QString top[]={ sysX11FontsDir.isNull() ? constDefaultSysX11FontsDir : sysX11FontsDir, "/usr/share/", "/usr/local/share/", QString::null };
                 bool    found=false;
                 int     t,
                         s;
@@ -399,7 +384,7 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
                         }
 
                 if(!found)
-                    itsEncodingsDir=itsSysFontsDir;
+                    itsEncodingsDir=sysX11FontsDir.isEmpty() ? itsSysFontsDirs.first() : sysX11FontsDir;
             }
 #endif
         }
@@ -409,39 +394,38 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
 
         configured=true;
 
-        if(CMisc::root())
-        {
-            itsUserFontsDir=itsSysFontsDir;  // For root, these are *always* the same
+        if(root)
             if(origGhostscriptFile!=itsGhostscriptFile)
                 writeEntry("GhostscriptFile", itsGhostscriptFile);
-        }
 
         if(origConfigured!=configured)
             writeEntry("Configured", configured);
-        if(origUserFontsDir!=itsUserFontsDir)
-            writePathEntry("UserFontsDir", itsUserFontsDir);
-        if(origSysFontsDir!=itsSysFontsDir)
-            writePathEntry("SysFontsDir", itsSysFontsDir);
-        if(origSysTTSubDir!=itsSysTTSubDir)
-            writeEntry("SysTTSubDir", itsSysTTSubDir);
-        if(origSysT1SubDir!=itsSysT1SubDir)
-            writeEntry("SysT1SubDir", itsSysT1SubDir);
-        if(origSysXConfigFile!=itsSysXConfigFile)
-            writePathEntry("SysXConfigFile", itsSysXConfigFile);
-        if(origSysXfsConfigFile!=itsSysXfsConfigFile)
-            writePathEntry("SysXfsConfigFile", itsSysXfsConfigFile);
-        if(origSysXConfigFileTs!=sysXConfigFileTs)
-            writeEntry("SysXConfigFileTs", sysXConfigFileTs);
-        if(origSysXfs!=itsSysXfs)
-            writeEntry("SysXfs", itsSysXfs);
-        if(origUserXConfigFile!=itsUserXConfigFile)
-            writePathEntry("UserXConfigFile", itsUserXConfigFile);
+        if(origSysX11FontsDir!=sysX11FontsDir)
+            writePathEntry("SysX11FontsDir", sysX11FontsDir);
+
+        if(all)
+        {
+            if(origSysTTSubDir!=itsSysTTSubDir)
+                writeEntry("SysTTSubDir", itsSysTTSubDir);
+            if(origSysT1SubDir!=itsSysT1SubDir)
+                writeEntry("SysT1SubDir", itsSysT1SubDir);
+            if(origSysXConfigFile!=itsSysXConfigFile)
+                writePathEntry("SysXConfigFile", itsSysXConfigFile);
+            if(origSysXfsConfigFile!=itsSysXfsConfigFile)
+                writePathEntry("SysXfsConfigFile", itsSysXfsConfigFile);
+            if(origSysXConfigFileTs!=sysXConfigFileTs)
+                writeEntry("SysXConfigFileTs", sysXConfigFileTs);
+            if(origSysXfs!=itsSysXfs)
+                writeEntry("SysXfs", itsSysXfs);
+            if(origUserXConfigFile!=itsUserXConfigFile)
+                writePathEntry("UserXConfigFile", itsUserXConfigFile);
 #ifndef HAVE_FONT_ENC
-        if(origEncodingsDir!=itsEncodingsDir)
-            writePathEntry("EncodingsDir", itsEncodingsDir);
+            if(origEncodingsDir!=itsEncodingsDir)
+                writePathEntry("EncodingsDir", itsEncodingsDir);
 #endif
-        if(origFontmapDir!=itsFontmapDir)
-            writePathEntry("FontmapDir", itsFontmapDir);
+            if(origFontmapDir!=itsFontmapDir)
+                writePathEntry("FontmapDir", itsFontmapDir);
+        }
     }
 
     // Restore KConfig group...
@@ -522,11 +506,11 @@ void CConfig::checkAndModifyXConfigFile()
     }
 }
 
-const QString & CConfig::getRealTopDir(const QString &f)
+const QStringList & CConfig::getRealTopDirs(const QString &f)
 {
     return CMisc::root() || CMisc::getSect(f)==i18n(KIO_FONTS_SYS)
-               ? itsSysFontsDir
-               : itsUserFontsDir;
+               ? itsSysFontsDirs
+               : itsUserFontsDirs;
 }
 
 void CConfig::storeSysXConfigFileTs()

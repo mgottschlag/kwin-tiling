@@ -114,9 +114,14 @@ extern "C"
         ptr=ptr;
 
         if(err)
-            err=FT_New_Face(lib, QFile::encodeName(
-                                   CGlobal::cfg().getRealTopDir(id->path)+CMisc::getSub(id->path)),
-                            id->faceNo, face);
+        {
+            const QStringList          &list=CGlobal::cfg().getRealTopDirs(id->path);
+            QStringList::ConstIterator it;
+
+            for(it=list.begin(); it!=list.end(); it++)
+                if((err=FT_New_Face(lib, QFile::encodeName(*it+CMisc::getSub(id->path)), id->faceNo, face)))
+                    break;
+        }
         return err;
     }
 }
@@ -135,6 +140,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
     itsEncoding=itsAfmEncoding=QString::null;
     itsFt.open=false;
     itsNumFaces=1;
+    itsPath=file;
 
     switch(itsType)
     {
@@ -191,7 +197,21 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
 
 bool CFontEngine::openKioFont(const QString &file, unsigned short mask, bool force, int face)
 {
-    return openFont(file, mask, force, face) ? true : openFont(CGlobal::cfg().getRealTopDir(file)+CMisc::getSub(file), mask, force, face);
+    if(openFont(file, mask, force, face))
+        return true;
+    else
+    {
+        const QStringList          &list=CGlobal::cfg().getRealTopDirs(file);
+        QStringList::ConstIterator it;
+
+        for(it=list.begin(); it!=list.end(); it++)
+            if(openFont(*it+CMisc::getSub(file), mask, force, face))
+            {
+                itsPath=*it+CMisc::getSub(file);
+                return true;
+            }
+    }
+    return false; 
 }
 
 void CFontEngine::closeFont()
@@ -474,7 +494,7 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
     painter.drawText(x, y, s);
 }
 
-void CFontEngine::createPreview(const QString &path, int width, int height, QPixmap &pix, int faceNo)
+void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 {
     static const struct
     {
@@ -500,7 +520,7 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
     FT_Size        size;
     FTC_Image_Desc font;
 
-    font.font.face_id=getId(path, faceNo);
+    font.font.face_id=getId(itsPath, faceNo);
     font.font.pix_width=font.font.pix_height=point2Pixel(sizes[s].font);
     font.image_type=ftc_image_grays;
 
@@ -518,10 +538,9 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
     {
         QString name(itsFullName),
                 info;
-        bool    bmp=CFontEngine::isABitmap(QFile::encodeName(path));
         QFont   title(KGlobalSettings::generalFont());
 
-        if(bmp)
+        if(BITMAP==itsType)
         {
             int pos=name.findRev('(');
 
@@ -535,7 +554,7 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
         y=painter.fontMetrics().height();
         drawText(painter, x, y, width, name);
 
-        if(bmp)
+        if(BITMAP==itsType)
         {
             y+=2+painter.fontMetrics().height();
             drawText(painter, x, y, width, info);

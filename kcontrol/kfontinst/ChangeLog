@@ -2,13 +2,16 @@ KDE3.1 -> KDE3.2
 ================
 1.  Re-designed (yet again...) to be a kio slave. As a user, starting fonts:/ will display
 
-        Personal   links to ~/.fonts
-        System     links to (e.g.) /usr/X11R6/lib/X11/fonts
+        Personal   Lists contents of $HOME/.fonts and $KDEHOME/share/fonts (where previous installer installed to)
+                   Fonts are installed to $HOME/.fonts
+
+        System     Lists contents of /usr/local/share/fonts, /usr/share/fonts, and /usr/X11R6/lib/X11/fonts
+                   Fonts are installed to /usr/local/share/fonts (as per FHS)
 
     To install fonts system wide, just drop onto "System" and root's password will be asked
     for.
 
-    As root, fonts:/ will show the contents of (e.g.) /usr/X11R6/lib/X11/fonts
+    As root, fonts:/ will show the same as fonts:/System (but without the System part...)
 
 2.  New kcontrol module that uses fonts:/
 3.  Removed:
