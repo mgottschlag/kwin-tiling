@@ -145,9 +145,11 @@ KGreeter::KGreeter()
     sessargStat = new QWidget( winFrame );
     sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat );
     sasSel = new QLabel( i18n("session type", "(selected)"), sessargStat );
+    sasPrev->setFixedSize( sasPrev->sizeHint() );
+    sasSel->setFixedSize( sasSel->sizeHint() );
     sessargStat->setFixedSize(
-	QMAX(sasPrev->sizeHint().width(), sasSel->sizeHint().width()),
-	sessargBox->height() );
+	QMAX(sasPrev->size().width(), sasSel->size().width()),
+	QMAX(sasPrev->size().height(), sasSel->size().height()) );
 
     main_grid->addItem( hbox1, 1, 1 );
     main_grid->addItem( grid, 2, 1 );
