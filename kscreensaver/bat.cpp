@@ -97,14 +97,7 @@
 
 //ModeSpecOpt bat_opts = {0, NULL, NULL, NULL};
 
-static XImage bimages[] =
-{
-	{0, 0, 0, XYBitmap, 0, LSBFirst, 8, LSBFirst, 8, 1},
-	{0, 0, 0, XYBitmap, 0, LSBFirst, 8, LSBFirst, 8, 1},
-	{0, 0, 0, XYBitmap, 0, LSBFirst, 8, LSBFirst, 8, 1},
-	{0, 0, 0, XYBitmap, 0, LSBFirst, 8, LSBFirst, 8, 1},
-	{0, 0, 0, XYBitmap, 0, LSBFirst, 8, LSBFirst, 8, 1}
-};
+static XImage bimages[5];
 static XImage *images[ORIENTS / 2 + 1];
 
 typedef struct {
@@ -139,7 +132,7 @@ static unsigned char *bits[] =
 };
 
 #if HAVE_XPM
-static char **pixs[] =
+static const char **pixs[] =
 {
 	bat0, bat1, bat2, bat3, bat4
 };
@@ -156,16 +149,23 @@ init_images()
 
 	if (!mono && Scr[screen].npixels > 2)
 		for (i = 0; i <= ORIENTS / 2; i++)
-			xpm_ret += XpmCreateImageFromData(dsp, pixs[i], &(images[i]),
-				   (XImage **) NULL, (XpmAttributes *) NULL);
+		    xpm_ret += XpmCreateImageFromData(dsp, const_cast<char**>(pixs[i]), &(images[i]),
+						      (XImage **) NULL, (XpmAttributes *) NULL);
 	if (mono || Scr[screen].npixels <= 2 || xpm_ret != 0)
 #endif
 		for (i = 0; i <= ORIENTS / 2; i++) {
-			bimages[i].data = (char *) bits[i];
-			bimages[i].width = bat0_width;
-			bimages[i].height = bat0_height;
-			bimages[i].bytes_per_line = (bat0_width + 7) / 8;
-			images[i] = &(bimages[i]);
+		    memset(&bimages[i], 0, sizeof(bimages[i]));
+		    bimages[i].data = (char *) bits[i];
+		    bimages[i].width = bat0_width;
+		    bimages[i].height = bat0_height;
+		    bimages[i].bytes_per_line = (bat0_width + 7) / 8;
+		    bimages[i].format = XYBitmap;
+		    bimages[i].byte_order = LSBFirst;
+		    bimages[i].bitmap_unit = 8;
+		    bimages[i].bitmap_bit_order = LSBFirst;
+		    bimages[i].bitmap_pad = 8;
+		    bimages[i].depth = 1;
+		    images[i] = &(bimages[i]);
 		}
 }
 
