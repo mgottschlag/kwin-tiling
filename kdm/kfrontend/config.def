@@ -147,6 +147,13 @@
 # The macro %REF% is replaced with the accumulated Description:s from the key
 # definitions below.
 <docu>
+<chapter id="kdm-files">
+<title>The Files &kdm; Uses for Configuration</title>
+
+<para>This chapter documents the files that control &kdm;'s behavior.
+Some of this can be also controlled from the &kcontrol; module, but
+not all.</para>
+
 <sect1>
 <title>&kdmrc; - The &kdm; master configuration file</title>
 
@@ -623,6 +630,8 @@ or unmounting directories from file servers.</para>
 </sect2>
 
 </sect1>
+
+</chapter>
 </docu>
 
 
