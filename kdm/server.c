@@ -360,7 +360,7 @@ WaitForServer (struct display *d)
 #endif
 	    	RegisterCloseOnFork (ConnectionNumber (dpy));
 		(void) fcntl (ConnectionNumber (dpy), F_SETFD, 0);
-#ifdef HAVE_X11_XKBLIB_H
+#if defined(HAVE_X11_XKBLIB_H) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
                 {
                     int opcode, evbase, errbase, majret, minret;
                     unsigned int value = XkbPCF_GrabsUseXKBStateMask;

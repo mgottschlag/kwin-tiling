@@ -215,6 +215,11 @@ AC_SUBST(LIB_LIBS)
 
 AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h X11/XKBlib.h)
 
+KDE_CHECK_LIB(X11, XkbSetPerClientControls,
+[
+    AC_DEFINE_UNQUOTED(HAVE_XKBSETPERCLIENTCONTROLS, 1, [Define if you have XkbSetPerClientControls])
+])
+
 AC_CHECK_LIB(Xau, main, [:], 
 	[
 	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])

@@ -712,7 +712,7 @@ kg_main(const char *dname)
     // Hack! Kdm looses keyboard focus unless
     // the keyboard is ungrabbed during setup
     TempUngrab_Run(creat_greet, 0);
-#ifdef HAVE_X11_XKBLIB_H
+#if defined(HAVE_X11_XKBLIB_H) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
     //
     //  Activate the correct mapping for modifiers in XKB extension as
     //  grabbed keyboard has its own mapping by default
