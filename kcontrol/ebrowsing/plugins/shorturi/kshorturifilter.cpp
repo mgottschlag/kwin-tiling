@@ -52,7 +52,7 @@
 typedef QMap<QString,QString> EntryMap;
 
 KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
-	                          const QStringList & /*args*/ )
+                                  const QStringList & /*args*/ )
                 :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
                  DCOPObject("KShortURIFilterIface")
 {
@@ -109,7 +109,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * supported by KDE's IO system.  If all the above checks fails, it simply
   * lookups the URL in the user-defined list and returns without filtering
   * if it is not found. TODO: the user-defined table is currently only manually
-  * hackable and is missing a config dialog.  Simply copying the file
+  * hackable and is missing a config dialog.
   */
   KURL url = data.uri();
   QString cmd = url.url();
@@ -298,12 +298,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
   }
 
-  // Okay this is the code that allows users to supply custom
-  // matches for specific URLs using Qt's regexp class.  This
-  // is hard-coded for now in the constructor, but will soon be
-  // moved to the config dialog so that people can configure this
-  // stuff.  This is perhaps one of those unecessary but somewhat
-  // useful features that usually makes people go WHOO and WHAAA.
+  // Okay this is the code that allows users to supply custom matches for
+  // specific URLs using Qt's regexp class. This is hard-coded for now in
+  // the constructor, but will soon be moved to the config dialog so that
+  // people can configure this stuff.  This is perhaps one of those unecessary
+  // but somewhat useful features that usually makes people go WHOO and WHAAA.
   if ( !cmd.contains( ' ' ) )
   {
     QRegExp match;
@@ -319,10 +318,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             return true;
         }
     }
-    //kdDebug() << "KShortURIFilter::filterURI malformed:" << url.isMalformed() << " isValidShortURL:" << isValidShortURL(cmd) << endl;
-    // If cmd is NOT a local resource, check if it
-    // is a valid "shortURL" candidate and append
-    // the default protocol the user supplied. (DA)
+    
+    // If cmd is NOT a local resource, check if it is a valid "shortURL" 
+    // candidate and append the default protocol the user supplied. (DA)
     if ( url.isMalformed() && isValidShortURL(cmd) )
     {
         cmd.insert( 0, m_strDefaultProtocol );
@@ -332,7 +330,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
   }
 
-  // If we previously determined that we want
+  // If we previously determined that the URL
+  // might be a file
   if( fileNotFound )
   {
     setErrorMsg( data, QString::null );
