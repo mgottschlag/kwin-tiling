@@ -1,8 +1,7 @@
 ####### Fiddle here
 
 INCLUDES = $(all_includes)
-LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-LDADD    = $(LIB_KDECORE) $(LIB_KDEUI)
+LDADD    = $(LIB_KDEUI)
 
 #######	Files
 
@@ -11,6 +10,7 @@ METASOURCES	= ksystraycmd.moc
 noinst_HEADERS  = ksystraycmd.h
 
 ksystraycmd_SOURCES = ksystraycmd.cpp main.cpp
+ksystraycmd_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 
 messages:
 	$(XGETTEXT) $(ksystraycmd_SOURCES) -o $(podir)/ksystraycmd.pot

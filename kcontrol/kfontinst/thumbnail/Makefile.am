@@ -11,5 +11,4 @@ kdelnkdir = $(kde_servicesdir)
 
 kde_services_DATA = fontthumbnail.desktop
 
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
 INCLUDES= $(LIBFREETYPE_CFLAGS) $(all_includes) -I$(srcdir)/../kfontinst

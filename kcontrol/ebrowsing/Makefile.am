@@ -2,12 +2,10 @@
 SUBDIRS = plugins
 
 INCLUDES = -I$(srcdir)/plugins/ikws $(all_includes)
-LDFLAGS =  $(all_libraries)
 
 METASOURCES = AUTO
 
 kde_module_LTLIBRARIES = kcm_kurifilt.la
-
 kcm_kurifilt_la_SOURCES = filteropts.cpp main.cpp
 
 kcm_kurifilt_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
