@@ -109,7 +109,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   eLay->activate();
 
-  lay->addWidget(ElectricBox,5);
+  lay->addWidget(ElectricBox);
 
   // Electric borders are not in kwin yet => disable controls
   enable->setEnabled(false);
@@ -144,7 +144,8 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   WndwSnap->setSuffix( i18n(" pixels"));
   BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
-  lay->addWidget(MagicBox,5);
+  lay->addWidget(MagicBox);
+  lay->addStretch();
   QWhatsThis::add( WndwSnap, i18n("Here you can set the snap zone for windows, i.e."
     " the 'strength' of the magnetic field which will make windows snap to eachother when"
     " they're moved near another window.") );
