@@ -103,7 +103,7 @@ PMenuItem::PMenuItem( EntryType e, QString t, QString c, QString n, PMenu *menu,
 }
 
 PMenuItem::PMenuItem( PMenuItem &item )
-  : url_name(command_name), dev_name(command_name), mount_point(term_opt), fs_type(exec_path),
+  : QObject(), url_name(command_name), dev_name(command_name), mount_point(term_opt), fs_type(exec_path),
     dev_read_only(use_term), umount_pixmap_name(pattern), swallow_title(term_opt)
 {
   initMetaObject();
@@ -630,7 +630,7 @@ PMenu::PMenu()
   list.setAutoDelete(TRUE);
 }
 
-PMenu::PMenu( PMenu &menu )
+PMenu::PMenu( PMenu &menu ) : QObject()
 {
   initMetaObject();
   menu_conf = NULL;

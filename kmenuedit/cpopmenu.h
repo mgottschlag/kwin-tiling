@@ -41,8 +41,8 @@ protected:
   void mousePressEvent( QMouseEvent *e );
 
 private:	// Disabled copy constructor and operator=
-  CPopupMenu( const CPopupMenu & ) {}
-  CPopupMenu &operator=( const CPopupMenu & ) { return *this; }
+  CPopupMenu( const CPopupMenu & );
+  CPopupMenu &operator=( const CPopupMenu & );
 };
 
 
