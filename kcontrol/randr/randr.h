@@ -153,7 +153,7 @@ public:
 	int				currentScreenIndex() const;
 	RandRScreen*	currentScreen();
 
-	void	refresh();
+	void	refresh(int screen);
 
 	/**
 	 * Loads settings. Loads the settings for individual screens if

@@ -34,7 +34,7 @@ public:
 	virtual void contextMenuAboutToShow(KPopupMenu* menu);
 
 protected slots:
-	void slotConfigChanged();
+	void slotConfigChanged(int screen);
 	void slotSwitchScreen();
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);
@@ -42,7 +42,7 @@ protected slots:
 
 private:
 	void populateMenu(KPopupMenu* menu);
-	
+
 	bool m_popupUp;
 };
 

@@ -143,7 +143,7 @@ bool RandRScreen::confirm()
 
 	m_shownDialog = acceptDialog;
 	connect( m_shownDialog, SIGNAL( destroyed()), this, SLOT( shownDialogDestroyed()));
-	connect( kapp->desktop(), SIGNAL( resized()), this, SLOT( desktopResized()));
+	connect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
 
     return acceptDialog->exec();
 }
@@ -151,13 +151,13 @@ bool RandRScreen::confirm()
 void RandRScreen::shownDialogDestroyed()
 {
     m_shownDialog = NULL;
-    disconnect( kapp->desktop(), SIGNAL( resized()), this, SLOT( desktopResized()));
+    disconnect( kapp->desktop(), SIGNAL( resized(int)), this, SLOT( desktopResized()));
 }
 
 void RandRScreen::desktopResized()
 {
-    if( m_shownDialog != NULL )
-	KDialog::centerOnScreen(m_shownDialog, m_screen);
+	if( m_shownDialog != NULL )
+		KDialog::centerOnScreen(m_shownDialog, m_screen);
 }
 
 QString RandRScreen::changedMessage() const
@@ -494,10 +494,10 @@ int RandRDisplay::currentScreenIndex() const
 	return m_currentScreenIndex;
 }
 
-void RandRDisplay::refresh()
+void RandRDisplay::refresh(int screen)
 {
-	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
-		s->loadSettings();
+	if (screen < (int)m_screens.count())
+		m_screens.at(screen)->loadSettings();
 }
 
 int RandRDisplay::numScreens() const
