@@ -26,6 +26,7 @@ services_DATA =	acronym.desktop \
 		hotbot.desktop \
 		imdb.desktop \
 		jeeves.desktop \
+		kde_webcvs.desktop \
 		leo.desktop \
 		lycos.desktop \
 		mamma.desktop \

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=KDE WebCVS
+ServiceTypes=SearchProvider
+Keys=kdewebcvs,kdecvs,kcvs,kvs
+Query=http://webcvs.kde.org/cgi-bin/cvsweb.cgi/\\{@}?sortby=date#dirlist
+
