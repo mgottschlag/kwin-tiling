@@ -11,8 +11,6 @@ SUBDIRS =
 
 libkcm_samba_la_METASOURCES = AUTO
 
-KDE_ICON = samba smbstatus
-
 messages:
 	$(XGETTEXT) $(libkcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot
 
