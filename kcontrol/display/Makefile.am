@@ -34,7 +34,17 @@ testicons_LDFLAGS = $(all_libraries)
 testicons_LDADD = $(LIB_KDEUI)
 
 METASOURCES = AUTO
-EXTRA_DIST = README
 
 messages:
 	$(XGETTEXT) -kni18n $(libkcm_display_la_SOURCES) -o $(podir)/kcmdisplay.pot
+
+lnf_DATA = colors.desktop fonts.desktop screensaver.desktop
+lnfdir = $(kde_appsdir)/Settings/LookNFeel
+
+theme_DATA = style.desktop
+themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
+
+desktop_DATA = desktop.desktop advanced.desktop background.desktop
+desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
+
+EXTRA_DIST = README $(lnf_DATA) $(theme_DATA) $(desktop_DATA)

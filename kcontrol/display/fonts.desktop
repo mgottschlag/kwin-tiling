@@ -1,0 +1,59 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/fonts
+Icon=fonts
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-6.html
+Init=kcmdisplay -init
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=fonts
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Fonts
+Name[cs]=Písma
+Name[de]=Schrift
+Name[eo]=Tiparoj
+Name[fi]=Kirjasimet
+Name[fr]=Polices
+Name[he]=םינפוג
+Name[hu]=Betűtípusok
+Name[it]=Caratteri
+Name[ja]=フォント
+Name[no]=Skrifttype
+Name[no_NY]=Skrifttypar
+Name[pt]=Fontes
+Name[ro]=Fonturi
+Name[sl]=Pisave
+Name[sv]=Typsnitt
+Name[ta]=±ØòÐÅ¨¸¸û
+
+Comment=Font settings
+Comment[ca]=Arranjament de les fonts
+Comment[cs]=Nastavení písem
+Comment[de]=Schrifteinstellungen
+Comment[eo]=Tiparagordaĵo
+Comment[fi]=Kirjasinten asetukset
+Comment[fr]=Configuration des polices
+Comment[he]=םינפוג תורדגה
+Comment[hu]=Betűtípusok beállítása
+Comment[it]=Impostazioni caratteri
+Comment[ja]=フォントの設定
+Comment[no]=Innstill skrifttyper
+Comment[no_NY]=Skrifttypeinnstillingar
+Comment[pt]=Configuração das fontes
+Comment[ro]=Configurează fonturile de sistem
+Comment[sl]=Nastavitve pisav
+Comment[sv]=Typsnittsinställningar
+Comment[ta]=±ØòÐÅ¨¸ «¨ÁôÒ¸û
+
+Keywords=fonts,font,font size,style,charset,panel,kicker,control panel
+Keywords[ca]=fonts,font,mida de font,estil,joc de caràcters,plafó,kicker,plafó de control
+Keywords[de]=schrift,schriften,schriftgröße,zeichensatz,kontrollleiste,kontroll-leiste,panel,kicker
+Keywords[hu]=betűtípusok,betűtípus,karakterkészlet,panel,kicker
+Keywords[no]=skrifttypeer,skrifttyper,skriftstørrelse,stil,tegnsett,panel,kicker,kontrollpanel
+Keywords[no_NY]=skrift,skrifttype,skriftstorleik,stil,teiknsett,panel,kicker,kontrollpanel
+Keywords[pt]=fontes,fonte,tamanho de fonte,estilo,mapa de caracteres,painel,kicker,painel de controlo
+Keywords[ro]=fonturi,font,mărime font,stil,set caractere,panou,kicker,panou de control
+Keywords[sl]=pisava,pisave,velikost pisave,slog,stil,znakovni nabor,pult,kicker,nadzorna plo��a

@@ -1,0 +1,29 @@
+[Desktop Entry]
+Type=Application
+DocPath=kcontrol/kcmkdesktop/kdesktop-1.html
+Icon=kfm
+Exec=kcmshell Desktop/icons
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=icons
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Icons
+Name[hu]=Ikonok
+Name[no]=Ikoner
+Name[no_NY]=Ikon
+Name[ro]=Iconiţe
+
+Comment=Customize KDE Icons
+Comment[hu]=KDE ikonok testreszabása
+Comment[no]=Tilpass ikonene i KDE
+Comment[no_NY]=Tilpass KDE-ikon
+Comment[ro]=Personalizează iconiţele KDE
+
+Keywords=icons,effects,size,hicolor,locolor
+Keywords[hu]=ikonok,effektek,méret,sokszínű,kevésszínű,színes
+Keywords[no]=ikoner,effekter,størrelse,mange farger,få farger
+Keywords[no_NY]=ikon,effektar,storleik,mange fargar,få fargar
+Keywords[ro]=iconiţe,efecte,mărime,culori multe, culori puţine

@@ -1,0 +1,57 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Desktop/advanced
+Type=Application
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=advanced
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Advanced
+Name[ca]=Avançat
+Name[cs]=Doplňková
+Name[de]=Erweitert
+Name[eo]=Pli
+Name[fi]=Lisäasetukset
+Name[fr]=Avancé
+Name[he]=םדקתמ
+Name[hu]=Haladóknak
+Name[it]=Avanzate
+Name[ja]=詳細
+Name[no]=Avansert
+Name[no_NY]=Avansert
+Name[pt]=Avançado
+Name[ro]=Avansat
+Name[sl]=Napredno
+Name[sv]=Avancerat
+Name[ta]=¯Â÷ó¾
+
+Comment=Advanced display settings
+Comment[ca]=Arranjaments avançats del monitor
+Comment[cs]=Doplňková nastavení obrazovky 
+Comment[de]=Weitere Anzeige-Einstellungen
+Comment[eo]=Aldona agordo de la ekrano
+Comment[fi]=Edistyneet näytönasetukset
+Comment[fr]=Configuration avancée de l'affichage
+Comment[he]=תומדקתמ הגוצת תורדגה
+Comment[hu]=Haladó képernyő-beállítások
+Comment[it]=Impostazioni avanzate dello schermo
+Comment[ja]=詳細なディスプレイの設定
+Comment[no]=Avansert skjerminnstillinger
+Comment[no_NY]=Avanserte skjerminnstillingar
+Comment[pt]=Configuração de atributos avançados do ecrã
+Comment[ro]=Configurează setări avansate pentru ecran
+Comment[sl]=Napredne nastavitve zaslona
+Comment[sv]=Avancerade skärminställningar
+Comment[ta]=¯Â÷ó¾ ¸¡ðº¢ «¨ÁôÒ¸û
+
+Keywords=background,cache,transparency
+Keywords[ca]=fons,cau,transparència
+Keywords[de]=hintergrund,zwischenspeicher,pufferspeicher,cache,dia
+Keywords[hu]=háttér,gyorstár,cache,átlátszóság
+Keywords[no]=bakgrunn,hurtiglager,mellomlager,gjennomsiktighet
+Keywords[no_NY]=bakgrunn,mellomlager,gjennomsiktig,transparent
+Keywords[pt]=fundo,cache,transparência
+Keywords[ro]=fundal,cache,transpareţă
+Keywords[sl]=ozadje,predpomnenje,transparentnost,prosojnost

@@ -1,0 +1,59 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Desktop/background
+Icon=background
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-3.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=background
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Background
+Name[ca]=Fons
+Name[cs]=Pozadí
+Name[de]=Hintergrund
+Name[eo]=Fono
+Name[fi]=Tausta
+Name[fr]=Fond d'écran
+Name[he]=עקר
+Name[hu]=Háttér
+Name[it]=Sfondo
+Name[ja]=背景
+Name[no]=Bakgrunn
+Name[no_NY]=Bakgrunn
+Name[pt]=Fundo de ecrã
+Name[ro]=Fundal
+Name[sl]=Ozadje
+Name[sv]=Bakgrund
+Name[ta]=À¢ý ¾¢¨Ã
+
+Comment=Background settings
+Comment[ca]=Arranjament del fons
+Comment[cs]=Nastavení pozadí
+Comment[de]=Einstellungen für den Hintergrund
+Comment[eo]=Tapetoagordaĵo
+Comment[fi]=Taustan asetukset
+Comment[fr]=Configuration du fond d'écran
+Comment[he]=עקר תורדגה
+Comment[hu]=Háttér beállításai
+Comment[it]=Impostazioni sfondo
+Comment[ja]=背景の設定
+Comment[no]=Bakgrunns-oppsett
+Comment[no_NY]=Bakgrunnsinnstillingar
+Comment[pt]=Configuração do fundo de ecrã
+Comment[ro]=Configurează setările fundalului
+Comment[sl]=Nastavitve ozadja
+Comment[sv]=Inställningar för bakgrunden
+Comment[ta]=À¢ý ¾¢¨Ã «¨ÁôÒ¸û
+
+Keywords=background,desktops,color,colour,image
+Keywords[ca]=fons,escriptoris,color,imatge
+Keywords[de]=hintergrund,arbeitsfläche,desktop,farbe,bild
+Keywords[hu]=háttér,munkaasztalok,asztal,szín,kép
+Keywords[no]=bakgrunn,skrivebord,farge,bilde
+Keywords[no_NY]=bakgrunn,skrivebord,farge,bilete
+Keywords[pt]=fundo,ecrãs,cor,imagem
+Keywords[ro]=fundal,ecrane,birou,culoare,imagine
+Keywords[sl]=ozdaje,namizja,barve,slika

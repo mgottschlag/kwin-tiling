@@ -1,0 +1,60 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/screensaver
+Icon=kscreensaver
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-4.html
+Init=kcmdisplay -init
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=screensaver
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Screensaver
+Name[ca]=Salvapantalles
+Name[cs]=Šetřič obrazovky
+Name[de]=Bildschirmschoner
+Name[eo]=Ekrankurteno
+Name[fi]=Ruudunsäästäjä
+Name[fr]=Écran de veille
+Name[he]=ךסמ רמוש
+Name[hu]=Képernyővédő
+Name[it]=Salvaschermo
+Name[ja]=スクリーンセーバー
+Name[no]=Skjermsparer
+Name[no_NY]=Skjermsparar
+Name[pt]=Protectores de ecrã
+Name[ro]=Protecţie ecran
+Name[sl]=Ohranjevalnik zaslona
+Name[sv]=Skärmsläckare
+Name[ta]=¾¢¨Ã¸¡ôÒ
+
+Comment=Screensaver settings
+Comment[ca]=Arranjament del salvapantalles
+Comment[cs]=Nastavení šetřiče obrazovky
+Comment[de]=Einstellung des Bildschirmschoners
+Comment[eo]=Agordaĵo de la Ekrankurteno
+Comment[fi]=Ruudunsäästäjän asetukset
+Comment[fr]=Configuration de l'écran de veille
+Comment[he]=ךסמ רמוש תורדגה
+Comment[hu]=Képernyővédő beállítások
+Comment[it]=Impostazioni salvaschermo
+Comment[ja]=スクリーンセーバーの設定
+Comment[no]=Skjermsparer-oppsett
+Comment[no_NY]=Skjermsparar-innstillingar
+Comment[pt]=Configuração dos protectores de ecrã
+Comment[ro]=Configurează protecţia de ecran
+Comment[sl]=Nastavitve za ohranjevalnik zaslona
+Comment[sv]=Inställningar för skärmsläckare
+Comment[ta]=¾¢¨Ã¸¡ôÒ «¨ÁôÒ¸û
+
+
+Keywords=screensavers
+Keywords[ca]=Salvapantalles
+Keywords[de]=Bildschirmschoner
+Keywords[hu]=képernyővédők
+Keywords[no]=skjermsparere
+Keywords[no_NY]=skjermsparar
+Keywords[pt]=protectores de ecrã
+Keywords[sl]=ohranjevalniki zaslona

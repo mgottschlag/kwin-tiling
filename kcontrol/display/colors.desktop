@@ -1,0 +1,58 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/colors
+Icon=colors
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-5.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=colors
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Colors
+Name[cs]=Barvy
+Name[de]=Farben
+Name[eo]=Koloroj
+Name[fi]=Värit
+Name[fr]=Couleurs
+Name[he]=םיעבצ
+Name[hu]=Színek
+Name[it]=Colori
+Name[ja]=色
+Name[no]=Farger
+Name[no_NY]=Fargar
+Name[pt]=Cores
+Name[ro]=Culori
+Name[sl]=Barve
+Name[sv]=Färger
+Name[ta]=¿¢Èí¸û
+
+Comment=Color settings
+Comment[ca]=Arranjament dels colors
+Comment[cs]=Nastavení barev
+Comment[de]=Einstellung der Bildschirmfarben
+Comment[eo]=Agordaĵo de la koloroj
+Comment[fi]=Värien asetukset
+Comment[fr]=Configuration des couleurs
+Comment[he]=םיעבצ תורדגה
+Comment[hu]=Színek beállítása
+Comment[it]=Impostazioni colori
+Comment[ja]=色の設定
+Comment[no]=Fargeoppsett
+Comment[no_NY]=Fargeinnstillingar
+Comment[pt]=Configuração das cores
+Comment[ro]=Configurează culorile ferestrelor
+Comment[sl]=Nastavitve barv
+Comment[sv]=Anpassning av färger
+Comment[ta]=¿¢Èõ «¨ÁôÒ¸û
+
+Keywords=colors,colours,scheme,contrast
+Keywords[ca]=colors,esquema,contrast
+Keywords[de]=farbe,schema,kontrast
+Keywords[hu]=színek,séma,kontraszt
+Keywords[no]=farger,skjema,kontrast
+Keywords[no_NY]=fargar,oppsett,kontrast
+Keywords[pt]=cores,esquema,contraste
+Keywords[ro]=culoare,culori,schemă,contrast
+Keywords[sl]=barve,sheme,kontrast

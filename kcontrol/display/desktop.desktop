@@ -1,0 +1,51 @@
+[Desktop Entry]
+Type=Application
+DocPath=kcontrol/kcmkdesktop/kdesktop-1.html
+# Needs another icon !
+Icon=kfm
+Exec=kcmshell LookNFeel/Desktop/desktop
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=konq
+X-KDE-FactoryName=desktop
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Desktop
+Name[ca]=Escriptori
+Name[cs]=Pracovní plocha
+Name[de]=Arbeitsfläche
+Name[eo]=Labortabulo
+Name[fi]=Työpöytä
+Name[fr]=Bureau
+Name[he]=הדובע ןחלוש
+Name[hu]=Munkaasztal
+Name[ja]=デスクトップ
+Name[no]=Skrivebord
+Name[pt]=Ambiente de Trabalho
+Name[ro]=Ecran
+Name[sl]=Namizje
+Name[sv]=Skrivbordet
+Name[ta]=§Á¨º
+
+Comment=You can customize the desktop here
+Comment[ca]=Aquí podeu configurar l'escriptori
+Comment[de]=Hier können Sie die Arbeitsfläche einrichten
+Comment[he]=ןאכ הדובעה ןחלוש תרוצת תא עובקל ךתורשפאב
+Comment[hu]=A munkaasztalt itt lehet testreszabni
+Comment[it]=Qui puoi personalizzare il dekstop
+Comment[no]=Her kan du tilpasse ikonene på skrivebordet
+Comment[no_NY]=Du kan tilpassa skrivebordet her
+Comment[pt]=Configuração do ambiente de trabalho
+Comment[ro]=Personalizează ecranul
+Comment[sl]=Tu lahko prikrojite namizje
+
+Keywords=icons,desktop,colors,colors,font,font size,files,filenames,menu,popupmenu,k-menu,startmenu,windowlist,windows,desktops
+Keywords[ca]=icones,escriptori,colors,,font,mida de font,fitxer,noms de fitxer,menú,menú emergent,menu k,menú d'inici,llista de finestres,finestres,escriptoris
+Keywords[de]=symbole,icons,arbeitsfläche,desktop,farben, schrift, schriftgröße dateien,dateinamen,menü,kontextmenüs,k-menü,startmenü,fensterliste,fenster, arbeitsflächen
+Keywords[hu]=ikonok,munkaasztal,asztal,színek,betűtípusok,fájlok,fájlnevek,menü,k-menü,startmenü,ablaklista,munkaasztalok
+Keywords[no]=ikoner,skrivebord,farger,skrifttype,skriftstørrelse filer,filnavn,meny,oppsprettmeny,k-meny,startmeny,vindusliste,vinduer,skrivebord
+Keywords[no_NY]=ikon,skrivebord,fargar,skrifttype,skriftstorleik,filer,filnamn,menu,oppsprettmeny,k-meny,startmeny,vindaugsliste,vindauge
+Keywords[pt]=ícones,ecrã,cores,fonte,tamanho da fonte,ficheiros,nomes de ficheiro,menu,menu k, menu inical,lista de janelas,janelas,ecrãs
+Keywords[ro]=iconiţe,ecran,culori,font,mărime font,fişiere,nume fişiere,meniu,meniu popup,meniu k,meniu start,listă ferestre,ferestre,ecrane
+Keywords[sl]=ikone,namizje,barve,pisava,velikost pisave,datoteke,imena datotek,menu,dvi�ni menu,k-menu,zagonski menu,seznam oken,okna,namizja

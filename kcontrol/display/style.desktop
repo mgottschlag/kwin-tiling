@@ -1,0 +1,58 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Themes/style
+Icon=style
+Type=Application
+DocPath=kcontrol/kcmdisplay/kdisplay-6.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=style
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Style
+Name[ca]=Estil
+Name[cs]=Styl
+Name[de]=Stil
+Name[eo]=Stilo
+Name[fi]=Tyyli
+Name[he]=ןונגס
+Name[hu]=Stílus
+Name[it]=Stile
+Name[ja]=スタイル
+Name[no]=Stil
+Name[no_NY]=Stil
+Name[pt]=Estilo
+Name[ro]=Stil
+Name[sl]=Slog
+Name[sv]=Stil
+Name[ta]=À¡ó¾õ
+
+Comment=General style settings
+Comment[ca]=Arranjament de l'estil general
+Comment[cs]=Nastavení stylu
+Comment[de]=Einstellung des Stils
+Comment[eo]=Agordaĵo de la Stilo
+Comment[fi]=Yleiset tyyliasetukset
+Comment[fr]=Configuration du style général
+Comment[he]=תויללכ ןונגס תורדגה
+Comment[hu]=Megjelenési stílus beállítása
+Comment[it]=Impostazioni generali stile
+Comment[ja]=一般的なスタイルの設定
+Comment[no]=Generelt stiloppsett
+Comment[no_NY]=Generelle stilinnstillingar
+Comment[pt]=Configuração do estilo geral
+Comment[ro]=Configurează stilul de afişare a elementelor grafice
+Comment[sl]=Splo�ne nastavitve sloga
+Comment[sv]=Allmänna stilinställningar
+Comment[ta]=¦À¡ÐÅ¡É À¡ó¾ «¨ÁôÒ¸û
+
+Keywords=style,stykes,theme,themes,look
+Keywords[ca]=estil,stykes,tema,temes,aspecte
+Keywords[de]=stil,design,thema,themen,aussehen,optik,schema
+Keywords[hu]=stílus,stílusok,téma,theme,kinézet
+Keywords[no]=stil,tema,temaer,utseende
+Keywords[no_NY]=stil,tema,utsjånad,bunad
+Keywords[pt]=estilo,estilos,tema,temas,aparência
+Keywords[ro]=stil,temă,teme,aspect
+Keywords[sl]=stil,stykes,tema,teme,videz,izgled
