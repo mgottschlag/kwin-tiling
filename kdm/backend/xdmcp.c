@@ -49,13 +49,6 @@ from the copyright holder.
 #include <sys/types.h>
 #include <ctype.h>
 
-#ifndef X_NO_SYS_UN
-# ifndef Lynx
-#  include <sys/un.h>
-# else
-#  include <un.h>
-# endif
-#endif
 #include <netdb.h>
 #if defined(IPv6) && defined(AF_INET6)
 # include <arpa/inet.h>

@@ -42,14 +42,6 @@ from the copyright holder.
 
 #include <X11/X.h>
 
-#ifndef X_NO_SYS_UN
-# ifndef Lynx
-#  include <sys/un.h>
-# else
-#  include <un.h>
-# endif
-#endif
-
 #include <ctype.h>
 
 #if defined(STREAMSCONN)

@@ -73,13 +73,6 @@ from the copyright holder.
 
 #include "dm_socket.h"
 
-#ifndef X_NO_SYS_UN
-# ifndef Lynx
-#  include <sys/un.h>
-# else
-#  include <un.h>
-# endif
-#endif
 #include <string.h>
 
 #ifndef INADDR_LOOPBACK

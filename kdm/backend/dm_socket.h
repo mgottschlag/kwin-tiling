@@ -44,6 +44,14 @@ authorization.
 #endif
 #include <netinet/in.h>
 
+#ifndef X_NO_SYS_UN
+# ifndef Lynx
+#  include <sys/un.h>
+# else
+#  include <un.h>
+# endif
+#endif
+
 #if ((defined(SVR4) && !defined(sun)) || defined(ISC)) && defined(SIOCGIFCONF)
 # define SYSV_SIOCGIFCONF
 int ifioctl (int fd, int cmd, char *arg);

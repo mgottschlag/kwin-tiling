@@ -791,7 +791,6 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 
 #ifdef WINTCP /* NCR with Wollongong TCP */
 
-#include <sys/un.h>
 #include <stropts.h>
 #include <tiuser.h>
 

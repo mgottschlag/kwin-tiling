@@ -42,15 +42,6 @@ from the copyright holder.
 
 #include <X11/X.h>		/* FamilyInternet, etc. */
 
-#ifdef UNIXCONN
-#ifndef X_NO_SYS_UN
-#ifndef Lynx
-#include <sys/un.h>		/* struct sockaddr_un */
-#else
-#include <un.h>			/* struct sockaddr_un */
-#endif
-#endif
-#endif
 #ifdef DNETCONN
 #include <netdnet/dn.h>		/* struct sockaddr_dn */
 #endif
