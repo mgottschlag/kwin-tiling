@@ -106,9 +106,10 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     grid->addMultiCellWidget(frame, 4, 4, 0, 2);
       
     singleClick = new QCheckBox(i18n("Single &click to activate"), this);
+    connect(singleClick, SIGNAL(clicked()), SLOT(slotSingleClick()));
+
     grid->addMultiCellWidget(singleClick, 5, 5, 0, 2);
 
-    qDebug("foo!!!");
     config = new KConfig("kcmdisplayrc");
     load();
 }
@@ -139,13 +140,16 @@ void KIconStyle::load()
     if (s == "Large") m_KDEStyle = 1;
     kdeGroup->setButton(m_KDEStyle);
 
-    changed = false;
+    bool b = config->readBoolEntry("SingleClick", true);
+    singleClick->setChecked(b);
+
+    bChanged = false;
 }
 
 
 void KIconStyle::save()
 {
-    if (!changed)
+    if (!bChanged)
 	return;
 
     config->setGroup("KDE");
@@ -156,9 +160,11 @@ void KIconStyle::save()
     // TODO: notify konqy
     config->writeEntry("KDEIconStyle", m_KDEStyle ? "Large" : "Normal");
 
+    config->writeEntry("SingleClick", singleClick->isChecked(), true, true);
+
     KMessageBox::information(0L, i18n("The icon style change will "
 	    "not all be applied until you restart KDE."));
-    changed = false;
+    bChanged = false;
 }
 
 
@@ -167,28 +173,33 @@ void KIconStyle::defaults()
     m_PanelStyle = 0; panelGroup->setButton(0);
     m_KonqStyle = 0; konqGroup->setButton(0);
     m_KDEStyle = 0; kdeGroup->setButton(0);
-    changed = true;
+    singleClick->setChecked(true);
+    bChanged = true; emit changed(bChanged);
 }
 
 
 void KIconStyle::slotPanel(int style)
 {
     m_PanelStyle = style;
-    changed = true;
+    bChanged = true; emit changed(bChanged);
 }
 
 void KIconStyle::slotKonq(int style)
 {
     m_KonqStyle = style;
-    changed = true;
+    bChanged = true; emit changed(bChanged);
 }
 
 void KIconStyle::slotKDE(int style)
 {
     m_KDEStyle = style;
-    changed = true;
+    bChanged = true; emit changed(bChanged);
 }
 
+void KIconStyle::slotSingleClick()
+{
+  bChanged = true; emit changed(bChanged);
+}
 
 
 /**** KThemeListBox ****/
@@ -307,6 +318,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     // Icon style
     iconStyle = new KIconStyle(this);
+    connect(iconStyle, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
     lay->addWidget(iconStyle);
 
 

@@ -41,13 +41,17 @@ public:
     void save();
     void defaults();
 
+signals:
+    void changed(bool);
+
 private slots:
     void slotPanel(int);
     void slotKonq(int);
     void slotKDE(int);
+    void slotSingleClick();
 
 private:
-    bool changed;
+    bool bChanged;
     int m_PanelStyle, m_KonqStyle, m_KDEStyle;
 
     QButtonGroup *panelGroup, *konqGroup, *kdeGroup;
