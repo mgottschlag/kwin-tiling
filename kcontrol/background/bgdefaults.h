@@ -19,7 +19,7 @@
 #define _defLimitCache true
 #define _defCacheSize 2048
 
-#define _defShm true
+#define _defShm false
 // there are usually poor results with bpp<16 when tiling
 #define _defMinOptimizationDepth 1
 
