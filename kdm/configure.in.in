@@ -1,12 +1,15 @@
 
 dnl this is for kdm:
 
+savex="$exec_prefix"
+test "x$exec_prefix" = xNONE && exec_prefix="$prefix"
 KDE_CONFDIR=`eval echo $kde_confdir`
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
 AC_SUBST(KDE_CONFDIR)
 KDE_BINDIR=`eval echo $kde_bindir`
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 AC_SUBST(KDE_BINDIR)
+exec_prefix="$savex"
 
 KDE_FIND_PATH(X, X_SERVER)
 if test -n "$X_SERVER"; then
@@ -15,14 +18,11 @@ else
     KDE_FIND_PATH(xrdb, XRDB)
     if test -n "$XRDB"; then
         XBINDIR=`echo $XRDB | sed -e 's#/xrdb$##'`
+    else
+	AC_MSG_ERROR([X binaries not found. Please make sure they are in PATH!])
     fi
 fi
-
-if test "x$XBINDIR" = x; then
-  AC_MSG_ERROR([X binaries not found. Please make sure they are in PATH!])
-else
-  AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
-fi
+AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
 AC_SUBST(XBINDIR)
 
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
