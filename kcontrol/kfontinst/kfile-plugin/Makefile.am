@@ -7,7 +7,7 @@ kfile_font_la_LIBADD = $(LIB_KIO) $(LIBFREETYPE_LIBS) ../lib/libkfontinst.la
 kdelnkdir = $(kde_servicesdir)
 kde_services_DATA = kfile_font.desktop
 
-AM_CPPFLAGS = $(LIBFREETYPE_CFLAGS) -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes)
+AM_CPPFLAGS = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS)
 
 METASOURCES = AUTO
 noinst_HEADERS = KFileFont.h
