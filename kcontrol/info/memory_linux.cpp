@@ -7,24 +7,22 @@
 void KMemoryWidget::update()
 {
   struct sysinfo info;
-  int	shift_val;
   
   sysinfo(&info);	/* Get Information from system... */
   
-  /* try to fix the change, introduced with kernel 2.3.25, which
-     now counts the memory-information in pages (not bytes anymore) */
-  if (info.totalram < (4*1024*1024)) /* smaller than 4MB ? */
-      shift_val = getpagesize();
-  else
-      shift_val = 1;
+  /* 
+   * The sysinfo.mem_unit member variable is not available in older 2.4 kernels.
+   * If you have troubles compiling this code, set mem_unit to "1".
+   */
+    
+  const int mem_unit = info.mem_unit;
 
-  Memory_Info[TOTAL_MEM]    = MEMORY(info.totalram  * shift_val); // total physical memory (without swaps)
-  Memory_Info[FREE_MEM]     = MEMORY(info.freeram   * shift_val); // total free physical memory (without swaps)
-  Memory_Info[SHARED_MEM]   = MEMORY(info.sharedram * shift_val); 
-  Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram * shift_val); 
-  Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap * shift_val); // total size of all swap-partitions
-  Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap  * shift_val); // free memory in swap-partitions
-
+  Memory_Info[TOTAL_MEM]    = MEMORY(info.totalram)  * mem_unit; // total physical memory (without swaps)
+  Memory_Info[FREE_MEM]     = MEMORY(info.freeram)   * mem_unit; // total free physical memory (without swaps)
+  Memory_Info[SHARED_MEM]   = MEMORY(info.sharedram) * mem_unit; 
+  Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram) * mem_unit; 
+  Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap) * mem_unit; // total size of all swap-partitions
+  Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap)  * mem_unit; // free memory in swap-partitions
   
   QFile file("/proc/meminfo");
   if (file.open(IO_ReadOnly)) {
@@ -33,7 +31,7 @@ void KMemoryWidget::update()
 		if (strncmp(buf,"Cached:",7)==0) {
 			unsigned long v;
 			v = strtoul(&buf[7],NULL,10);			
-			Memory_Info[CACHED_MEM] = MEMORY(v)*1024; // Cached memory in RAM
+			Memory_Info[CACHED_MEM] = MEMORY(v) * 1024; // Cached memory in RAM
 		}
 	}
 	file.close();

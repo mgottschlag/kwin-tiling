@@ -23,9 +23,9 @@ void KMemoryWidget::update()
   struct rminfo rmi;
   if( sysmp(MP_SAGET, MPSA_RMINFO, &rmi, sizeof(rmi)) == -1 )
     return;
-  Memory_Info[TOTAL_MEM]    = MEMORY(rmi.physmem*pagesize); // total physical memory (without swaps)
-  Memory_Info[FREE_MEM]     = MEMORY(rmi.freemem*pagesize); // total free physical memory (without swaps)
-  Memory_Info[BUFFER_MEM]   = MEMORY(rmi.bufmem*pagesize);
+  Memory_Info[TOTAL_MEM]    = MEMORY(rmi.physmem) * pagesize; // total physical memory (without swaps)
+  Memory_Info[FREE_MEM]     = MEMORY(rmi.freemem) * pagesize; // total free physical memory (without swaps)
+  Memory_Info[BUFFER_MEM]   = MEMORY(rmi.bufmem)  * pagesize;
 
 
   //FIXME: Memory_Info[CACHED_MEM]"
@@ -33,10 +33,10 @@ void KMemoryWidget::update()
   
   long val;
   swapctl(SC_GETSWAPTOT, &val);
-  Memory_Info[SWAP_MEM]     = MEMORY(val*UBSIZE); // total size of all swap-partitions
+  Memory_Info[SWAP_MEM]     = MEMORY(val) * UBSIZE; // total size of all swap-partitions
 
   swapctl(SC_GETFREESWAP, &val);
-  Memory_Info[FREESWAP_MEM] = MEMORY(val*UBSIZE); // free memory in swap-partitions
+  Memory_Info[FREESWAP_MEM] = MEMORY(val) * UBSIZE; // free memory in swap-partitions
 
 #ifndef MPKA_SHMINFO
   /* Irix 6.5 (also 6.4?) */

@@ -42,7 +42,7 @@ void KMemoryWidget::update()
 
     len = sizeof(vmem);
     if (sysctlbyname("vm.vmmeter", &vmem, &len, NULL, 0) == 0) 
-	Memory_Info[SHARED_MEM]   = MEMORY((vmem.t_armshr * PAGE_SIZE));
+	Memory_Info[SHARED_MEM]   = MEMORY(vmem.t_armshr) * PAGE_SIZE;
     else 
         Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO;
 
@@ -59,7 +59,7 @@ void KMemoryWidget::update()
     if ((sysctlbyname("vm.stats.vm.v_free_count", &free, &len, NULL, 0) == -1) || !len)
 	Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;
     else
-	Memory_Info[FREE_MEM]     = MEMORY(free*getpagesize());
+	Memory_Info[FREE_MEM]     = MEMORY(free) * getpagesize();
 
     // Q&D hack for swap display. Borrowed from xsysinfo-1.4
     if ((pipe = popen("/usr/sbin/pstat -ks", "r")) == NULL) {
@@ -82,8 +82,8 @@ void KMemoryWidget::update()
     _free=total-used;
 
     // total size of all swap-partitions
-    Memory_Info[SWAP_MEM] = MEMORY(1024*total);
+    Memory_Info[SWAP_MEM] = MEMORY(total) * 1024;
 
     // free memory in swap-partitions
-    Memory_Info[FREESWAP_MEM] = MEMORY(1024*_free);
+    Memory_Info[FREESWAP_MEM] = MEMORY(free) * 1024;
 }

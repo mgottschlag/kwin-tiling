@@ -36,7 +36,7 @@ void KMemoryWidget::update()
 	mach_msg_type_number_t info_count;
 	DIR *dirp;
 	struct dirent *dp;
-	off_t total;
+	t_memsize total;
 
 	info_count = HOST_VM_INFO_COUNT;
 	if (host_statistics(mach_host_self (), HOST_VM_INFO, (host_info_t)&vm_info, &info_count)) {
@@ -44,9 +44,9 @@ void KMemoryWidget::update()
 		return;
 	}
 
-	Memory_Info[TOTAL_MEM]    = (vm_info.active_count + vm_info.inactive_count +
+	Memory_Info[TOTAL_MEM]    = MEMORY(vm_info.active_count + vm_info.inactive_count +
 		vm_info.free_count + vm_info.wire_count) * vm_page_size;
-	Memory_Info[FREE_MEM]     = vm_info.free_count * vm_page_size;
+	Memory_Info[FREE_MEM]     = MEMORY(vm_info.free_count) * vm_page_size;
 	Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO;
 	Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO;
 	Memory_Info[CACHED_MEM]   = NO_MEMORY_INFO;
@@ -85,9 +85,9 @@ void KMemoryWidget::update()
 	// off_t used = (vm_info.pageouts - vm_info.pageins) * vm_page_size;
 	Memory_Info[FREESWAP_MEM] = NO_MEMORY_INFO;
 
-	/* free = vm_info.free_count * vm_page_size;
-	   used = vm_info.active_count * vm_page_size;
-	   total = (vm_info.active_count + vm_info.inactive_count +
+	/* free = MEMORY(vm_info.free_count) * vm_page_size;
+	   used = MEMORY(vm_info.active_count) * vm_page_size;
+	   total = MEMORY(vm_info.active_count + vm_info.inactive_count +
 		vm_info.free_count + vm_info.wire_count) * vm_page_size; */
 
 }

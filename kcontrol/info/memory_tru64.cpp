@@ -22,7 +22,7 @@ extern "C" {
 }
 #include <mach/vm_statistics.h>
 
-#define pagetob(size) (1024L * ((long) (size) << (long) pageshift))
+#define pagetob(size) (MEMORY(1024L) * ((long) (size) << (long) pageshift))
 #define LOG1024       10
 
 extern "C" void vm_statistics(task_t, vm_statistics_data_t*);

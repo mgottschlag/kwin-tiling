@@ -82,7 +82,7 @@ void KMemoryWidget::update()
   Memory_Info[TOTAL_MEM]    = MEMORY(total_mem); // total physical memory (without swaps)
   Memory_Info[FREE_MEM]     = MEMORY(total_free);// total free physical memory (without swaps)
   Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 		    /* FIXME ?? */
-  Memory_Info[BUFFER_MEM]   = MEMORY(fields_[2]*page_size); /* FIXME ?? */
+  Memory_Info[BUFFER_MEM]   = MEMORY(fields_[2])*page_size; /* FIXME ?? */
   Memory_Info[SWAP_MEM]     = MEMORY(total_swap); // total size of all swap-partitions
   Memory_Info[FREESWAP_MEM] = MEMORY(free_swap);  // free memory in swap-partitions
 #ifdef __GNUC__

@@ -57,24 +57,24 @@ void KMemoryWidget::update()
     Memory_Info[INACTIVE_MEM] = NO_MEMORY_INFO;
     Memory_Info[SWAP_MEM]     = NO_MEMORY_INFO;
     Memory_Info[FREESWAP_MEM] = NO_MEMORY_INFO;
-    Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
+    Memory_Info[CACHED_MEM]   = NO_MEMORY_INFO;
   } else {
-    t_memsize pgsz = uvmexp.pagesize;
-    Memory_Info[FREE_MEM] = MEMORY(pgsz * uvmexp.free);
-    Memory_Info[ACTIVE_MEM] = MEMORY(pgsz * uvmexp.active);
-    Memory_Info[INACTIVE_MEM] = MEMORY(pgsz * uvmexp.inactive);
-    Memory_Info[SWAP_MEM] = MEMORY(pgsz * uvmexp.swpages);
-    Memory_Info[FREESWAP_MEM] = MEMORY(pgsz * (uvmexp.swpages - uvmexp.swpginuse));
+    t_memsize pgsz = MEMORY(uvmexp.pagesize);
+    Memory_Info[FREE_MEM]     = pgsz * uvmexp.free;
+    Memory_Info[ACTIVE_MEM]   = pgsz * uvmexp.active;
+    Memory_Info[INACTIVE_MEM] = pgsz * uvmexp.inactive;
+    Memory_Info[SWAP_MEM]     = pgsz * uvmexp.swpages;
+    Memory_Info[FREESWAP_MEM] = pgsz * (uvmexp.swpages - uvmexp.swpginuse);
 #if __NetBSD_Version__ > 106000000
-    Memory_Info[CACHED_MEM] = MEMORY(pgsz * (uvmexp.filepages + uvmexp.execpages));
+    Memory_Info[CACHED_MEM]   = pgsz * (uvmexp.filepages + uvmexp.execpages);
 #else
-    Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
+    Memory_Info[CACHED_MEM]   = NO_MEMORY_INFO;
 #endif
     }
 #else
-  Memory_Info[FREE_MEM] = NO_MEMORY_INFO;
-  Memory_Info[ACTIVE_MEM] = NO_MEMORY_INFO;
-  Memory_Info[INACTIVE_MEM] = NO_MEMORY_INFO;
+  Memory_Info[FREE_MEM]       = NO_MEMORY_INFO;
+  Memory_Info[ACTIVE_MEM]     = NO_MEMORY_INFO;
+  Memory_Info[INACTIVE_MEM]   = NO_MEMORY_INFO;
 
   /* swap */
   totalswap = freeswap = usedswap = 0;
