@@ -722,7 +722,7 @@ void CEncodings::addDir(const QString &path, int sub)
                                             line+=strlen("size");
 
                                             if(sscanf(line, "%x %x", &dummy, &dummy)==2 ||
-                                               sscanf(line, "%d %d", &dummy, &dummy)==2)
+                                               sscanf(line, "%u %u", &dummy, &dummy)==2)
                                                 sixteenBit=true;
                                         }
                                         else if(NULL!=(line=strstr(buffer, "startmapping")))

@@ -61,7 +61,7 @@ CTtf::CTtf()
 
                 tmpStr[constMaxStrLen-1]='\0';
 
-                if(sscanf(tmpStr, "%li %s", &(map->unicode), psName)==2)
+                if(sscanf(tmpStr, "%lu %s", &(map->unicode), psName)==2)
                 {
                     map->psName=psName;
                     itsPsNameList.append(map); 

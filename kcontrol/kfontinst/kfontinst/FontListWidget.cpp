@@ -1846,6 +1846,7 @@ void CFontListWidget::startDrag()
 void CFontListWidget::movableDropEvent(QListViewItem *parent, QListViewItem *afterme)
 {
     CListViewItem *dest=(CListViewItem *)parent;
+    Q_UNUSED(afterme);
 
     if(dest && CKfiGlobal::cfg().getFontsDir()!=dest->fullName())
     {
