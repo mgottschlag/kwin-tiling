@@ -9,15 +9,12 @@ INCLUDES = $(all_includes)
 
 #AM_CFLAGS   = -Wall -Wno-implicit -Wno-return-type
 
-bin_PROGRAMS = kdm kdmdesktop
+bin_PROGRAMS = kdm 
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
-
-# For kdmdesktop
-kdmdesktop_LDADD = $(LIB_KIMGIO) $(LIB_KDECORE) $(LIB_KDEUI)
 
 # Sources for xdm (both C and C++):
 kdmlib_source = access.c \
@@ -52,9 +49,6 @@ kdm_SOURCES = kdmconfig.cpp \
 	kgreeter.cpp \
 	liloinfo.cpp \
 	$(kdmlib_source)
-
-kdmdesktop_SOURCES = \
-	kdmdesktop.cpp
 
 noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h liloinfo.h
 
