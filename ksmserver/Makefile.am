@@ -25,7 +25,8 @@ bin_PROGRAMS = ksmserver
 noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_METASOURCES = AUTO
-ksmserver_SOURCES = server.cpp shutdown.cpp main.cpp
+# Order is important for --enable-final!
+ksmserver_SOURCES = main.cpp server.cpp shutdown.cpp
 
 check_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
