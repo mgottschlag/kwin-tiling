@@ -13,13 +13,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <kconfig.h>
-
 #include <qdir.h>
+#include <qpixmap.h>
 
-#include <netwm.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
+
+#include <netwm.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"

@@ -12,17 +12,14 @@
 #ifndef __backgnd_Included__
 #define __backgnd_Included__
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qcolor.h>
-#include <qmap.h>
-#include <qevent.h>
 #include <qwidget.h>
 #include <qptrvector.h>
 
-#include <kcmodule.h>
 #include "bgdefaults.h"
 
+class QString;
+class QColor;
+class QEVent;
 class QCheckBox;
 class QListBox;
 class QComboBox;

@@ -15,6 +15,7 @@
 
 #include <qtimer.h>
 #include <qpainter.h>
+#include <qimage.h>
 
 #include <kapplication.h>
 #include <kdebug.h>

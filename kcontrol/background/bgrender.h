@@ -13,12 +13,12 @@
 #define __BGRender_h_Included__
 
 #include <qobject.h>
-#include <qstring.h>
 
 #include "bgsettings.h"
 
 class QSize;
 class QRect;
+class QString;
 class QImage;
 class QPixmap;
 class QTimer;

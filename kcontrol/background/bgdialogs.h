@@ -12,18 +12,19 @@
 #ifndef __BGDialogs_h_Included__
 #define __BGDialogs_h_Included__
 
-#include <qmap.h>
-#include <qstring.h>
-#include <qevent.h>
-
 #include <kdialogbase.h>
 
+class QString;
+class QEvent;
 class QListView;
 class QListViewItem;
 class QLineEdit;
 class QSpinBox;
 class QGroupBox;
 class QListBox;
+
+template <class QString, class QListViewItem> class QMap; 
+
 class KBackgroundProgram;
 class KBackgroundSettings;
 

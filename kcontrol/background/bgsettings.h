@@ -12,15 +12,15 @@
 #ifndef __BGSettings_h_Included__
 #define __BGSettings_h_Included__
 
-#include <qstring.h>
-#include <qmap.h>
-#include <qcolor.h>
-#include <qstringlist.h>
-#include <qimage.h>
 
+template <class QString, class T> class QMap;
 class KStandardDirs;
 class KSimpleConfig;
 class KConfig;
+class QString;
+class QStringList;
+class QColor;
+class QImage;
 
 /**
  * A class to manipulate/read/write/list KDE desktop patterns.

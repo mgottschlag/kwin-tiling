@@ -724,7 +724,7 @@ void KMultiWallpaperDialog::slotAdd()
 
 void KMultiWallpaperDialog::slotRemove()
 {
-    for ( int i = 0; i <m_pListBox->count();)
+    for ( unsigned i = 0; i <m_pListBox->count();)
     {
         QListBoxItem * item = m_pListBox->item( i );
         if ( item && item->isSelected())
