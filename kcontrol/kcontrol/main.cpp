@@ -62,7 +62,7 @@ MyApplication::MyApplication()
     toplevel = new TopLevel();
   
   setMainWidget(toplevel);
-  toplevel->resize(720,540); // 800x600 - 10%
+  toplevel->resize(720,520);
 }
 
 

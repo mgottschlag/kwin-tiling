@@ -1,5 +1,4 @@
 /*
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
@@ -33,20 +32,21 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   : QVBox(parent, name)
 {
   KTextBrowser *browser = new KTextBrowser(this);
+  browser->setFrameStyle(QFrame::NoFrame);
   
   QColorGroup clgrp = colorGroup();
   clgrp.setColor( QColorGroup::Base, QColor( 255, 255, 255 ) );
   browser->setPaperColorGroup( clgrp );
-  browser->setFrameStyle(QFrame::Box | QFrame::Raised);
+  browser->setFrameStyle(QFrame::NoFrame);
   browser->setFocusPolicy(NoFocus);
-  browser->setHScrollBarMode( QScrollView::AlwaysOff );
+  //browser->setHScrollBarMode( QScrollView::AlwaysOff );
   browser->setNotifyClick(true);
 
   QString wizard = locate("data", "kcontrol/pics/wizard.png");
   QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
 
   QString text = i18n("<p>"
-                      "<table cellpadding=2 cellspacing=1 border=0  width=95% bgcolor=#EEEEFF>"
+                      "<table cellpadding=2 cellspacing=1 border=0  width=98% bgcolor=#EEEEFF>"
                       "<tr>"
                       "<td width=1%>"
                       "<img src=\""
