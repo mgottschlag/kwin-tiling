@@ -67,9 +67,14 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
 
 void KCMKonsole::load()
 {
+    load(false);
+}
 
+void KCMKonsole::load(bool useDefaults)
+{
     KConfig *config = new KConfig("konsolerc", true);
     config->setDesktopGroup();
+    config->setReadDefaults(useDefaults);
 
     dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
     bidiOrig = config->readBoolEntry("EnableBidi",false);
@@ -90,7 +95,7 @@ void KCMKonsole::load()
 
     delete config;
 
-    emit changed(false);
+    emit changed(useDefaults);
 }
 
 void KCMKonsole::load(const QString & /*s*/)
@@ -175,22 +180,7 @@ void KCMKonsole::save()
 
 void KCMKonsole::defaults()
 {
-    dialog->terminalSizeHintCB->setChecked(true);
-    dialog->bidiCB->setChecked(false);
-    dialog->warnCB->setChecked(true);
-    dialog->ctrldragCB->setChecked(false);
-    dialog->cutToBeginningOfLineCB->setChecked(false);
-    dialog->allowResizeCB->setChecked(true);
-    dialog->xonXoffCB->setChecked(false);
-    dialog->blinkingCB->setChecked(false);
-    dialog->frameCB->setChecked(true);
-    dialog->line_spacingSB->setValue(0);
-    dialog->silence_secondsSB->setValue(10);
-
-    dialog->word_connectorLE->setText(":@-./_~");
-
-    configChanged();
-
+    load(true);
 }
 
 QString KCMKonsole::quickHelp() const

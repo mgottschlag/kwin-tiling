@@ -33,6 +33,7 @@ public:
 	KCMKonsole (QWidget *parent = 0, const char *name = 0, const QStringList& = 0);
 	
 	void load();
+	void load(bool useDefaults);
 	void load(const QString &);
 	void save();
 	void defaults();
