@@ -7,7 +7,7 @@ kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui
 
 kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_kicker_la_LIBADD =  ../background/libbgnd.la $(LIB_KIO)
-AM_CPPFLAGS = -I$(top_srcdir)/kicker/core -I$(srcdir)/../background $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/kicker/core -I$(top_builddir)/kicker/share -I$(srcdir)/../background $(all_includes)
 
 METASOURCES = AUTO
 
