@@ -1,0 +1,23 @@
+[Color Scheme]
+activeBackground=0,3,169
+activeBlend=0,12,122
+activeForeground=255,255,255
+activeTitleBtnBg=192,192,192
+activeTitleBtnBlend=0,0,0
+activeTitleBtnFg=255,255,255
+background=220,220,220
+buttonBackground=220,220,220
+buttonForeground=0,0,0
+contrast=2
+foreground=0,0,0
+inactiveBackground=115,115,115
+inactiveBlend=0,0,0
+inactiveForeground=255,255,255
+inactiveTitleBtnBg=192,192,192
+inactiveTitleBtnBlend=0,0,0
+inactiveTitleBtnFg=255,255,255
+name=Next
+selectBackground=0,0,0
+selectForeground=255,255,255
+windowBackground=255,255,255
+windowForeground=0,0,0
