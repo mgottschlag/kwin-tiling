@@ -35,6 +35,7 @@ from The Open Group.
  * server.c - manage the X server
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
@@ -43,7 +44,6 @@ from The Open Group.
 #include <X11/Xos.h>
 
 #include <stdio.h>
-#include <signal.h>
 
 static int receivedUsr1;
 
@@ -151,10 +151,11 @@ static int
 serverPause (unsigned t, int serverPid)
 {
     int		pid;
+    SIGFUNC	oldAlrm;
 
     serverPauseRet = 0;
     if (!Setjmp (pauseAbort)) {
-	(void) Signal (SIGALRM, serverPauseAbort);
+	oldAlrm = Signal (SIGALRM, serverPauseAbort);
 	(void) Signal (SIGUSR1, serverPauseUsr1);
 	if (!receivedUsr1)
 	    (void) alarm (t);
@@ -194,7 +195,7 @@ serverPause (unsigned t, int serverPid)
 	}
     }
     (void) alarm ((unsigned) 0);
-    (void) Signal (SIGALRM, SIG_DFL);
+    (void) Signal (SIGALRM, oldAlrm);
     (void) Signal (SIGUSR1, CatchUsr1);
     if (serverPauseRet)
 	LogError ("X server unexpectedly died\n");

@@ -50,7 +50,11 @@ SIGVAL (*Signal (int sig, SIGFUNC handler))(int)
     struct sigaction sigact, osigact;
     sigact.sa_handler = handler;
     sigemptyset(&sigact.sa_mask);
+# ifdef SA_RESTART
+    sigact.sa_flags = SA_RESTART;
+# else
     sigact.sa_flags = 0;
+# endif
     sigaction(sig, &sigact, &osigact);
     return osigact.sa_handler;
 #else

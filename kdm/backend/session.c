@@ -35,6 +35,7 @@ from The Open Group.
  * session.c
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 
@@ -42,7 +43,6 @@ from The Open Group.
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
 
-#include <signal.h>
 #include <stdio.h>
 #include <ctype.h>
 

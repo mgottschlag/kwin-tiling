@@ -130,17 +130,7 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # define FD_TYPE	fd_set
 #endif
 
-#if defined(X_NOT_POSIX) && defined(SIGNALRETURNSINT)
-# define SIGVAL int
-#else
-# define SIGVAL void
-#endif
-
-#if defined(X_NOT_POSIX) || defined(__EMX__) || defined(__NetBSD__) && defined(__sparc__)
-# if defined(SYSV) || defined(__EMX__)
-#  define SIGNALS_RESET_WHEN_CAUGHT
-#  define UNRELIABLE_SIGNALS
-# endif
+#if defined(X_NOT_POSIX) || defined(__EMX__) || (defined(__NetBSD__) && defined(__sparc__))
 # define Setjmp(e)	setjmp(e)
 # define Longjmp(e,v)	longjmp(e,v)
 # define Jmp_buf	jmp_buf
@@ -151,6 +141,14 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 #endif
 
 #ifdef NEED_SIGNAL
+# if defined(X_NOT_POSIX) && defined(SIGNALRETURNSINT)
+#  define SIGVAL int
+# else
+#  define SIGVAL void
+# endif
+# if (defined(X_NOT_POSIX) && defined(SYSV)) || defined(__EMX__) || defined(ISC)
+#  define SIGNALS_RESET_WHEN_CAUGHT
+# endif
 # ifdef X_POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE X_POSIX_C_SOURCE
 #  include <signal.h>
@@ -427,9 +425,11 @@ extern char *conv_interact (int what, const char *prompt);
 /* process.c */
 #include <stdlib.h>
 
+#ifdef NEED_SIGNAL
 typedef SIGVAL (*SIGFUNC)(int);
 
 SIGVAL (*Signal(int, SIGFUNC Handler))(int);
+#endif
 
 extern void RegisterInput (int fd);
 extern void UnregisterInput (int fd);

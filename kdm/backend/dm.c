@@ -102,10 +102,7 @@ from The Open Group.
 extern FILE    *fdopen();
 #endif
 
-#ifndef UNRELIABLE_SIGNALS
-static SIGVAL	ChildNotify (int n);
-#endif
-static SIGVAL	TermNotify (int n), UtmpNotify (int n), RescanNotify (int n);
+static SIGVAL	SigHandler (int n);
 static void	RescanConfigs (void);
 static void	StartDisplays (void);
 #define XS_KEEP 0
@@ -118,12 +115,10 @@ static void	SwitchToTty (struct display *d);
 static void	openFifo (int *fifofd, char **fifoPath, const char *dname);
 static void	closeFifo (int *fifofd, const char *fifoPath);
 static void	stoppen (int force);
-static void	WaitForChild (void);
-static void	WaitForSomething (void);
+static void	ReapChildren (void);
+static void	MainLoop (void);
 
-int	Rescan;
-int	StopAll;
-int	ChkUtmp;
+static int signalFds[2];
 
 #if !defined(HAS_SETPROCTITLE) && !defined(NOXDMTITLE)
 static char *Title;
@@ -313,12 +308,16 @@ main (int argc, char **argv)
 #else
     Debug ("not compiled for XDMCP\n");
 #endif
-    (void) Signal (SIGTERM, TermNotify);
-    (void) Signal (SIGINT, TermNotify);
-    (void) Signal (SIGHUP, RescanNotify);
-#ifndef UNRELIABLE_SIGNALS
-    (void) Signal (SIGCHLD, ChildNotify);
-#endif
+    if (pipe (signalFds))
+	LogPanic ("Unable to create signal notification pipe.\n");
+    RegisterInput (signalFds[0]);
+    RegisterCloseOnFork (signalFds[0]);
+    RegisterCloseOnFork (signalFds[1]);
+    (void) Signal (SIGTERM, SigHandler);
+    (void) Signal (SIGINT, SigHandler);
+    (void) Signal (SIGHUP, SigHandler);
+    (void) Signal (SIGCHLD, SigHandler);
+    (void) Signal (SIGALRM, SigHandler);
 
     /*
      * Step 2 - run a sub-daemon for each entry
@@ -329,35 +328,7 @@ main (int argc, char **argv)
 #endif
     ScanServers (0);
     StartDisplays ();
-    while (
-#ifdef XDMCP
-	   AnyWellKnownSockets() ||
-#endif
-	   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft ()))
-    {
-	if (StopAll)
-	{
-	    Debug ("shutting down entire manager\n");
-	    stoppen (TRUE);
-	    StopAll = 0;
-	    continue;
-	}
-	if (Rescan)
-	{
-	    RescanConfigs ();
-	    Rescan = 0;
-	}
-	if (ChkUtmp)
-	{
-	    CheckUtmp ();
-	    ChkUtmp = 0;
-	}
-#if defined(UNRELIABLE_SIGNALS)
-	WaitForChild ();
-#else
-	WaitForSomething ();
-#endif
-    }
+    MainLoop ();
     closeFifo (&fifoFd, fifoPath);
     if (sdAction)
     {
@@ -386,14 +357,6 @@ main (int argc, char **argv)
     return 0;
 }
 
-
-/* ARGSUSED */
-static SIGVAL
-UtmpNotify (int n ATTR_UNUSED)
-{
-    Debug ("caught SIGALRM\n");
-    ChkUtmp = 1;
-}
 
 enum utState { UtWait, UtActive };
 
@@ -541,10 +504,7 @@ CheckUtmp (void)
 	utpp = &(*utpp)->next;
     }
     if (nextChk < 1000)
-    {
-	Signal (SIGALRM, UtmpNotify);
 	alarm (nextChk);
-    }
     return 1;
 }
 
@@ -964,17 +924,6 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 }
 
 
-/* ARGSUSED */
-static SIGVAL
-RescanNotify (int n ATTR_UNUSED)
-{
-    Debug ("caught SIGHUP\n");
-    Rescan = 1;
-#ifdef SIGNALS_RESET_WHEN_CAUGHT
-    (void) Signal (SIGHUP, RescanNotify);
-#endif
-}
-
 static void
 MarkDisplay (struct display *d)
 {
@@ -1005,82 +954,17 @@ RescanIfMod (void)
 }
 
 
-/*
- * catch a SIGTERM, kill all displays and exit
- */
-
-/* ARGSUSED */
-static SIGVAL
-TermNotify (int n ATTR_UNUSED)
-{
-    StopAll = 1;
-#ifdef SIGNALS_RESET_WHEN_CAUGHT
-    /* to avoid another one from killing us unceremoniously */
-    (void) Signal (SIGTERM, StopAll);
-    (void) Signal (SIGINT, StopAll);
-#endif
-}
-
-/*
- * notice that a child has died and may need another
- * sub-daemon started
- */
-
-int	ChildReady;
-
-#ifndef UNRELIABLE_SIGNALS
-/* ARGSUSED */
-static SIGVAL
-ChildNotify (int n ATTR_UNUSED)
-{
-    ChildReady = 1;
-# ifdef ISC
-    (void) Signal (SIGCHLD, ChildNotify);
-# endif
-}
-#endif
-
 static void
-WaitForChild (void)
+ReapChildren (void)
 {
     int		pid;
     struct display	*d;
     waitType	status;
-#ifndef X_NOT_POSIX
-    sigset_t mask, omask;
-#else
-    int		omask;
-#endif
 
-#ifdef UNRELIABLE_SIGNALS
-    /* XXX classic System V signal race condition here with RescanNotify */
-    if ((pid = wait (&status)) != -1)
-#else
-# ifndef X_NOT_POSIX
-    sigemptyset(&mask);	/* XXX TERM & INT? */
-    sigaddset(&mask, SIGCHLD);
-    sigaddset(&mask, SIGHUP);
-    sigaddset(&mask, SIGALRM);
-    sigprocmask(SIG_BLOCK, &mask, &omask);
-    Debug ("signals blocked\n");
-# else
-    omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
-    Debug ("signals blocked, mask was %#x\n", omask);
-# endif
-    if (!ChildReady && !Rescan && !StopAll && !ChkUtmp)
-# ifndef X_NOT_POSIX
-	sigsuspend(&omask);
-# else
-	sigpause (omask);
-# endif
-    ChildReady = 0;
-# ifndef X_NOT_POSIX
-    sigprocmask(SIG_SETMASK, &omask, (sigset_t *)NULL);
+#ifndef X_NOT_POSIX
     while ((pid = waitpid (-1, &status, WNOHANG)) > 0)
-# else
-    sigsetmask (omask);
+#else
     while ((pid = wait3 (&status, WNOHANG, (struct rusage *) 0)) > 0)
-# endif
 #endif
     {
 	Debug ("manager wait returns  pid %d  sig %d  core %d  code %d\n",
@@ -1264,73 +1148,103 @@ UnregisterInput (int fd)
     }
 }
 
+static SIGVAL
+SigHandler (int n)
+{
+    int olderrno = errno;
+    char buf = (char) n;
+    Debug ("caught signal %d\n", n);
+    write (signalFds[1], &buf, 1);
+#ifdef SIGNALS_RESET_WHEN_CAUGHT
+    (void) Signal (n, SigHandler);
+#endif
+    errno = olderrno;
+}
+
 static void
-WaitForSomething (void)
+MainLoop (void)
 {
     struct display *d;
-    struct timeval tv, *tvp;
     int nready;
+    char buf;
     FD_TYPE reads;
 
-    Debug ("WaitForSomething\n");
-    if (WellKnownSocketsCount)
+    Debug ("MainLoop\n");
+    while (
+#ifdef XDMCP
+	   AnyWellKnownSockets() ||
+#endif
+	   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft ()))
     {
-	tvp = 0;
-	if (ChildReady) {
-	    tv.tv_sec = tv.tv_usec = 0;
-	    tvp = &tv;
-	}
 	reads = WellKnownSocketsMask;
 #ifdef hpux
-	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, tvp);
+	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
 #else
-	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, tvp);
+	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
 #endif
-	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d\n",
-		nready, Rescan, ChildReady, ChkUtmp);
+	Debug ("select returns %d\n", nready);
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 	AddTimerEntropy ();
 #endif
 	if (nready > 0)
 	{
 	    /*
-	     * we return after the first handled fd, as
+	     * we restart after the first handled fd, as
 	     * a) it makes things simpler
 	     * b) the probability that multiple fds trigger at once is
 	     *    ridiculously small. we handle it in the next iteration.
 	     */
 	    /* XXX a cleaner solution would be a callback mechanism */
+	    if (FD_ISSET (signalFds[0], &reads))
+	    {
+		if (read (signalFds[0], &buf, 1) != 1)
+		    LogPanic ("Signal notification pipe broken.\n");
+		switch (buf) {
+		case SIGTERM:
+		case SIGINT:
+		    Debug ("shutting down entire manager\n");
+		    stoppen (TRUE);
+		    break;
+		case SIGHUP:
+		    RescanConfigs ();
+		    break;
+		case SIGCHLD:
+		    ReapChildren ();
+		    break;
+		case SIGALRM:
+		    CheckUtmp ();
+		    break;
+		}
+		continue;
+	    }
 #ifdef XDMCP
 	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
 	    {
 		ProcessRequestSocket ();
-		return;
+		continue;
 	    }
 #endif	/* XDMCP */
 	    if (fifoFd >= 0 && FD_ISSET (fifoFd, &reads))
 	    {
 		FdGetsCall (fifoFd, processFifo, 0);
-		return;
+		continue;
 	    }
+	    /* Must be last (because of the breaks)! */
 	    for (d = displays; d; d = d->next)
 	    {
 		if (d->fifofd >= 0 && FD_ISSET (d->fifofd, &reads))
 		{
 		    FdGetsCall (d->fifofd, processDFifo, d);
-		    return;
+		    break;
 		}
 		if (d->pipe.rfd >= 0 && FD_ISSET (d->pipe.rfd, &reads))
 		{
 		    processDPipe (d);
-		    return;
+		    break;
 		}
 	    }
 	}
     }
-    WaitForChild ();
-#if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
-    AddTimerEntropy ();
-#endif
 }
 
 static void

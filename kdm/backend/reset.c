@@ -37,12 +37,11 @@ from The Open Group.
  * a client remains connected with no windows.
  */
 
+#define NEED_SIGNAL
 #include "dm.h"
 #include "dm_error.h"
 
 #include <X11/Xlib.h>
-
-#include <signal.h>
 
 /*ARGSUSED*/
 static int
