@@ -27,6 +27,7 @@
 #include <qtabwidget.h>
 #include <qevent.h>
 #include <qwidgetintdict.h>
+#include <qlayout.h>
 
 #include <kcharsets.h>
 #include <kconfig.h>
@@ -52,9 +53,9 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 {
   locale = new KLocaleAdvanced(QString::fromLatin1("kcmlocale"));
   QVBoxLayout *l = new QVBoxLayout(this, 5);
+  l->setAutoAdd(TRUE);
 
   tab = new QTabWidget(this);
-  l->addWidget(tab);
 
   localemain = new KLocaleConfig(this);
   tab->addTab( localemain, QString::null);
@@ -65,19 +66,20 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   localetime = new KLocaleConfigTime(this);
   tab->addTab( localetime, QString::null);
 
-  connect(localemain, SIGNAL(resample()),                   SLOT(update()));
-  connect(localenum,  SIGNAL(resample()),                   SLOT(update()));
-  connect(localemon,  SIGNAL(resample()),                   SLOT(update()));
-  connect(localetime, SIGNAL(resample()),                   SLOT(update()));
-  connect(localemain, SIGNAL(countryChanged()),             SLOT(reset()) );
-  connect(localemain, SIGNAL(moneyChanged()),   localemon,  SLOT(reset()) );
-  connect(localemain, SIGNAL(numberChanged()),  localenum,  SLOT(reset()) );
-  connect(localemain, SIGNAL(timeChanged()),    localetime, SLOT(reset()) );
-  connect(localemain, SIGNAL(chsetChanged()),               SLOT(newChset()) );
+  connect(localemain, SIGNAL(resample()),                  SLOT(update()));
+  connect(localenum,  SIGNAL(resample()),                  SLOT(update()));
+  connect(localemon,  SIGNAL(resample()),                  SLOT(update()));
+  connect(localetime, SIGNAL(resample()),                  SLOT(update()));
+  connect(localemain, SIGNAL(countryChanged()),            SLOT(reset()) );
+  connect(localemain, SIGNAL(moneyChanged()),  localemon,  SLOT(reset()) );
+  connect(localemain, SIGNAL(numberChanged()), localenum,  SLOT(reset()) );
+  connect(localemain, SIGNAL(timeChanged()),   localetime, SLOT(reset()) );
+  connect(localemain, SIGNAL(chsetChanged()),              SLOT(newChset()) );
 
   // Examples
   gbox = new QGroupBox(this);
-  l->addWidget(gbox);
+  l = new QVBoxLayout(gbox, 10);
+  l->setAutoAdd(TRUE);
   sample = new KLocaleSample(gbox);
 
   load();
@@ -108,10 +110,11 @@ void KLocaleApplication::save()
     KLocale *lsave = KGlobal::_locale;
     KGlobal::_locale = locale;
 
-    KMessageBox::information(this,
-			     locale->translate("Changed language settings apply only to newly started "
-				  "applications.\nTo change the language of all "
-				  "programs, you will have to logout first."),
+    KMessageBox::information(this, locale->translate
+			     ("Changed language settings apply only to "
+			      "newly started applications.\nTo change the "
+			      "language of all programs, you will have to "
+			      "logout first."),
                              locale->translate("Applying language settings"));
     // restore the old global locale
     KGlobal::_locale = lsave;
@@ -181,6 +184,7 @@ void KLocaleApplication::reTranslate()
   localenum->reTranslate();
   localemon->reTranslate();
   localetime->reTranslate();
+  sample->update();
 
   // FIXME: All widgets are done now. However, there are 
   // still some problems. Popup menus from the QLabel are 

@@ -61,8 +61,11 @@ signals:
 
 private:
   // Time & dates
+  QLabel *labTimeFmt;
   QLineEdit *edTimeFmt;
+  QLabel *labDateFmt;
   QLineEdit *edDateFmt;
+  QLabel *labDateFmtShort;
   QLineEdit *edDateFmtShort;
 };
 

@@ -50,94 +50,62 @@ extern KLocaleAdvanced *locale;
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : QWidget (parent, name)
 {
-    QString wtstr;
     QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
     tl1->setColStretch( 2, 1);
 
-    QLabel *label = new QLabel(this, I18N_NOOP("&Country"));
+    labCountry = new QLabel(this, I18N_NOOP("&Country"));
     comboCountry = new KLanguageCombo(this);
     comboCountry->setFixedHeight(comboCountry->sizeHint().height());
-    label->setBuddy(comboCountry);
+    labCountry->setBuddy(comboCountry);
     connect( comboCountry, SIGNAL(activated(int)),
 	     this, SLOT(changedCountry(int)) );
-    tl1->addWidget(label, 1, 1);
+    tl1->addWidget(labCountry, 1, 1);
     tl1->addWidget(comboCountry, 1, 2);
-    wtstr = locale->translate("Here you can choose your country. The settings"
-      " for language, numbers etc. will automatically switch to the"
-      " corresponding values.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboCountry, wtstr );
 
-    label = new QLabel(this, I18N_NOOP("&Language"));
+    labLang = new QLabel(this, I18N_NOOP("&Language"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
-    label->setBuddy(comboLang);
+    labLang->setBuddy(comboLang);
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
-    tl1->addWidget(label, 2, 1);
+    tl1->addWidget(labLang, 2, 1);
     tl1->addWidget(comboLang, 2, 2);
-    wtstr = locale->translate("Here you can choose the language that will be used"
-      " by KDE. If only US English is available, no translations have been"
-      " installed. You can get translations packages for many languages from"
-      " the place you got KDE from. <p> Note that some applications may not be translated to"
-      " your language; in this case, they will automatically fall back"
-      " to the default language, i.e. US English.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboLang, wtstr );
 
-    label = new QLabel(this, I18N_NOOP("&Numbers"));
+    labNumber = new QLabel(this, I18N_NOOP("&Numbers"));
     comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
-    label->setBuddy(comboNumber);
+    labNumber->setBuddy(comboNumber);
     connect( comboNumber, SIGNAL(activated(int)),
 	     this, SLOT(changedNumber(int)) );
-    tl1->addWidget(label, 3, 1);
+    tl1->addWidget(labNumber, 3, 1);
     tl1->addWidget(comboNumber, 3, 2);
-    wtstr = locale->translate( "Here you can choose a national setting to display"
-      " numbers. You can also customize this using the 'Numbers' tab." );
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboNumber, wtstr );
 
-    label = new QLabel(this, I18N_NOOP("&Money"));
+    labMoney = new QLabel(this, I18N_NOOP("&Money"));
     comboMoney = new KLanguageCombo(this);
     comboMoney->setFixedHeight(comboMoney->sizeHint().height());
-    label->setBuddy(comboMoney);
+    labMoney->setBuddy(comboMoney);
     connect( comboMoney, SIGNAL(activated(int)),
 	     this, SLOT(changedMoney(int)) );
-    tl1->addWidget(label, 4, 1);
+    tl1->addWidget(labMoney, 4, 1);
     tl1->addWidget(comboMoney, 4, 2);
-    wtstr = locale->translate( "Here you can choose a national setting to display"
-      " monetary values. You can also customize this using the 'Money' tab." );
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboMoney, wtstr );
 
-    label = new QLabel(this, I18N_NOOP("&Date and time"));
+    labDate = new QLabel(this, I18N_NOOP("&Date and time"));
     comboDate = new KLanguageCombo(this);
     comboDate->setFixedHeight(comboDate->sizeHint().height());
-    label->setBuddy(comboDate);
+    labDate->setBuddy(comboDate);
     connect( comboDate, SIGNAL(activated(int)),
 	     this, SLOT(changedTime(int)) );
-    tl1->addWidget(label, 5, 1);
+    tl1->addWidget(labDate, 5, 1);
     tl1->addWidget(comboDate, 5, 2);
-    wtstr = locale->translate( "Here you can choose a national setting to display"
-      " date and time. You can also customize this using the 'Time & dates' tab." );
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboDate, wtstr );
 
-    label = new QLabel(this, I18N_NOOP("C&harset"));
+    labChset = new QLabel(this, I18N_NOOP("C&harset"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
-    label->setBuddy(comboChset);
+    labChset->setBuddy(comboChset);
     connect( comboChset, SIGNAL(activated(int)),
 	     this, SLOT(changedCharset(int)) );
-    tl1->addWidget(label, 6, 1);
+    tl1->addWidget(labChset, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
-    wtstr = locale->translate( "Here you can choose the charset KDE uses to display"
-      " text. ISO 8859-1 is default and should work for you if you use some"
-      " Western European language. If not, you may have to choose a different"
-      " charset." );
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( comboChset, wtstr );
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
@@ -416,18 +384,67 @@ void KLocaleConfig::reTranslateLists()
 
 void KLocaleConfig::reTranslate()
 {
-    QToolTip::add(comboCountry, locale->translate("This is were you live. KDE will use the defaults for this country."));
-    QToolTip::add(comboLang, locale->translate("All KDE programs will be displayed in this language (if available)."));
-    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers."));
-    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money."));
-    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates."));
-    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts."));
+  QToolTip::add(comboCountry, locale->translate
+		( "This is were you live. KDE will use the defaults for "
+		  "this country.") );
+  QToolTip::add(comboLang, locale->translate
+		( "All KDE programs will be displayed in this language (if "
+		  "available).") );
+  QToolTip::add(comboNumber, locale->translate
+		( "The rules of this country will be used to localize "
+		  "numbers.") );
+  QToolTip::add(comboMoney, locale->translate
+		( "The rules of this country will be used to localize "
+		  "money.") );
+  QToolTip::add(comboDate, locale->translate
+		( "The rules of this country will be used to display time "
+		  "and dates.") );
+  QToolTip::add(comboChset, locale->translate
+		( "The prefered charset for fonts.") );
+
+  QString str;
+
+  str = locale->translate
+    ( "Here you can choose your country. The settings "
+      "for language, numbers etc. will automatically switch to the "
+      "corresponding values." );
+  QWhatsThis::add( labCountry, str );
+  QWhatsThis::add( comboCountry, str );
+
+  str = locale->translate
+    ( "Here you can choose the language that will be used "
+      "by KDE. If only US English is available, no translations have been "
+      "installed. You can get translations packages for many languages from "
+      "the place you got KDE from. <p> Note that some applications may not "
+      "be translated to your language; in this case, they will automatically "
+      "fall back to the default language, i.e. US English." );
+  QWhatsThis::add( labLang, str );
+  QWhatsThis::add( comboLang, str );            
+
+  str = locale->translate
+    ( "Here you can choose a national setting to display "
+      "numbers. You can also customize this using the 'Numbers' tab." );
+  QWhatsThis::add( labNumber, str );
+  QWhatsThis::add( comboNumber, str );
+
+  str = locale->translate
+    ( "Here you can choose a national setting to display"
+      " monetary values. You can also customize this using the 'Money' "
+      "tab." );
+  QWhatsThis::add( labMoney, str );
+  QWhatsThis::add( comboMoney, str );    
+
+  str = locale->translate
+    ( "Here you can choose a national setting to display date and time. You "
+      "can also customize this using the 'Time & dates' tab." );
+  QWhatsThis::add( labDate, str );
+  QWhatsThis::add( comboDate, str );          
+
+  str = locale->translate
+    ( "Here you can choose the charset KDE uses to display "
+      "text. ISO 8859-1 is default and should work for you if you use some "
+      "Western European language. If not, you may have to choose a different "
+      "charset." );
+  QWhatsThis::add( labChset, str );
+  QWhatsThis::add( comboChset, str );            
 }
-
-
-
-
-
-
-
-

@@ -25,11 +25,11 @@
 #ifndef __KLOCALESAMPLE_H__
 #define __KLOCALESAMPLE_H__
 
-#include <qlayout.h>
+#include <qwidget.h>
 
 class QLabel;
 
-class KLocaleSample : public QGridLayout
+class KLocaleSample : public QWidget
 {
 public:
   KLocaleSample(QWidget *parent=0, const char*name=0);
@@ -39,12 +39,11 @@ public slots:
   void update();
 
 private:
-  QLabel *textSample;
-  QLabel *numberSample;
-  QLabel *moneySample;
-  QLabel *timeSample;
-  QLabel *dateSample;
-  QLabel *dateShortSample;
+  QLabel *numberSample, *labNumber;
+  QLabel *moneySample, *labMoney;
+  QLabel *timeSample, *labTime;
+  QLabel *dateSample, *labDate;
+  QLabel *dateShortSample, *labDateShort;
 };
 
 #endif

@@ -68,14 +68,22 @@ private:
   KLocaleSample *sample;
 
   // Money
+  QLabel *labMonCurSym;
   QLineEdit *edMonCurSym;
+  QLabel *labMonDecSym;
   QLineEdit *edMonDecSym;
+  QLabel *labMonThoSep;
   QLineEdit *edMonThoSep;
+  QLabel *labMonFraDig;
   QLineEdit *edMonFraDig;
 
+  QLabel *labMonPosPreCurSym;
   QCheckBox *chMonPosPreCurSym;
+  QLabel *labMonNegPreCurSym;
   QCheckBox *chMonNegPreCurSym;
+  QLabel *labMonPosMonSignPos;
   QComboBox *cmbMonPosMonSignPos;
+  QLabel *labMonNegMonSignPos;
   QComboBox *cmbMonNegMonSignPos;
 };
 

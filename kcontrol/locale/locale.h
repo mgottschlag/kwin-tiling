@@ -61,7 +61,9 @@ signals:
   void chsetChanged();
 
 private:
-  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate, *comboChset;
+  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, 
+    *comboDate, *comboChset;
+  QLabel *labCountry, *labLang, *labNumber, *labMoney, *labDate, *labChset;
 
 private slots:
   void changedCountry(int);

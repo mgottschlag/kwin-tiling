@@ -62,9 +62,13 @@ signals:
 
 private:
   // Numbers
+  QLabel *labDecSym;
   QLineEdit *edDecSym;
+  QLabel *labThoSep;
   QLineEdit *edThoSep;
+  QLabel *labMonPosSign;
   QLineEdit *edMonPosSign;
+  QLabel *labMonNegSign;
   QLineEdit *edMonNegSign;
 };
 

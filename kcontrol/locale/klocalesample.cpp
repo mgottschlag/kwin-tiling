@@ -26,6 +26,7 @@
 #include <qdatetime.h>
 #include <qlabel.h>
 #include <qwhatsthis.h>
+#include <qlayout.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -36,66 +37,25 @@
 extern KLocaleAdvanced *locale;
 
 KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
-  : QGridLayout(parent, 6, 4, 5, -1, name)
+  : QWidget(parent, name)
 {
-    QLabel *label;
-    QString wtstr;
+  QGridLayout *lay = new QGridLayout(this, 5, 2);
+  lay->setAutoAdd(TRUE);
 
-    addRowSpacing(0, 15);
-    addRowSpacing(5, 10);
-    addColSpacing(0, 10);
-    addColSpacing(3, 10);
-    setColStretch(2, 1);
+  labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
+  numberSample = new QLabel(this);
 
-    label = new QLabel(parent, I18N_NOOP("Numbers:"));
-    addWidget(label, 1, 1);
+  labMoney = new QLabel(this, I18N_NOOP("Money:"));
+  moneySample = new QLabel(this);
 
-    numberSample = new QLabel(parent);
-    addWidget(numberSample, 1, 2);
+  labDate = new QLabel(this, I18N_NOOP("Date:"));
+  dateSample = new QLabel(this);
 
-    wtstr = locale->translate("This is how numbers will be displayed.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( numberSample, wtstr );
+  labDateShort = new QLabel(this, I18N_NOOP("Short date:"));
+  dateShortSample = new QLabel(this);
 
-    label = new QLabel(parent, I18N_NOOP("Money:"));
-    addWidget(label, 2, 1);
-
-    moneySample = new QLabel(parent);
-    addWidget(moneySample, 2, 2);
-
-    wtstr = locale->translate("This is how monetary values will be displayed.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( moneySample, wtstr );
-
-    label = new QLabel(parent, I18N_NOOP("Date:"));
-    addWidget(label, 3, 1);
-
-    dateSample = new QLabel(parent);
-    addWidget(dateSample, 3, 2);
-
-    wtstr = locale->translate("This is how date values will be displayed.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( dateSample, wtstr );
-
-    label = new QLabel(parent, I18N_NOOP("Short date:"));
-    addWidget(label, 4, 1);
-
-    dateShortSample = new QLabel(parent);
-    addWidget(dateShortSample, 4, 2);
-
-    wtstr = locale->translate("This is how date values will be displayed using a short notation.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( dateShortSample, wtstr );
-
-    label = new QLabel(parent, I18N_NOOP("Time:"));
-    addWidget(label, 5, 1);
-
-    timeSample = new QLabel(parent);
-    addWidget(timeSample, 5, 2);
-
-    wtstr = locale->translate("This is how the time will be displayed.");
-    QWhatsThis::add( label, wtstr );
-    QWhatsThis::add( timeSample, wtstr );
+  labTime = new QLabel(this, I18N_NOOP("Time:"));
+  timeSample = new QLabel(this);
 }
 
 KLocaleSample::~KLocaleSample()
@@ -114,4 +74,27 @@ void KLocaleSample::update()
   dateSample->setText(locale->formatDate(QDate::currentDate(), false));
   dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
   timeSample->setText(locale->formatTime(QTime::currentTime()));
+
+  QString str;
+
+  str = locale->translate("This is how numbers will be displayed.");
+  QWhatsThis::add( labNumber,  str );
+  QWhatsThis::add( numberSample, str );
+
+  str = locale->translate("This is how monetary values will be displayed.");
+  QWhatsThis::add( labMoney,    str );
+  QWhatsThis::add( moneySample, str );   
+
+  str = locale->translate("This is how date values will be displayed.");
+  QWhatsThis::add( labDate,    str );
+  QWhatsThis::add( dateSample, str ); 
+
+  str = locale->translate("This is how date values will be displayed using "
+			  "a short notation.");
+  QWhatsThis::add( labDateShort, str );
+  QWhatsThis::add( dateShortSample, str );    
+
+  str = locale->translate("This is how the time will be displayed.");
+  QWhatsThis::add( labTime,    str );
+  QWhatsThis::add( timeSample, str );       
 }
