@@ -1,14 +1,14 @@
 # $Id$
 # kdebase/kcontrol/display
 
-INCLUDES = $(all_includes) -I$(top_srcdir)/kdesktop
+INCLUDES = $(all_includes)
 LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) libbgnd.la
 
 SUBDIRS = . kcs ad pics
 
 noinst_HEADERS = backgnd.h  colorscm.h scrnsave.h general.h widgetcanvas.h \
 	fonts.h energy.h bgdialogs.h advanced.h stdclient_bitmaps.h \
-	bgsettings.h bgrender.h
+	bgsettings.h bgrender.h bgdefauts.h
 
 lib_LTLIBRARIES = libkcm_display.la
 libkcm_display_la_SOURCES = advanced.cpp fonts.cpp scrnsave.cpp backgnd.cpp \
