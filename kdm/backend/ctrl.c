@@ -361,6 +361,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	Debug ("global control %s received %'[s\n", word, ar);
     if (ar[0]) {
 	if (fd >= 0 && !strcmp (ar[0], "caps")) {
+	    if (ar[1])
+		goto exce;
 	    Reply ("ok\tkdm\tlist\t");
 	    if (d) {
 		if (d->allowShutdown != SHUT_NONE) {
@@ -390,6 +392,14 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    goto bust;
 	} else if (fd >= 0 && !strcmp (ar[0], "list")) {
+	    if (ar[1]) {
+		if (strcmp (ar[1], "all")) {
+		    fLog (d, fd, "bad", "invalid list scope %\"s", ar[1]);
+		    goto bust;
+		}
+		if (ar[2])
+		    goto exce;
+	    }
 	    Reply ("ok");
 	    for (di = displays; di; di = di->next) {
 		if (di->status != remoteLogin && di->userSess < 0 && !ar[1])
@@ -425,14 +435,21 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    Reply ("\n");
 	    goto bust;
 	} else if (!strcmp (ar[0], "reserve")) {
-	    int lt;
+	    int lt = 60; /* XXX make default timeout configurable? */
+	    if (ar[1]) {
+		lt = strtol (ar[1], &bp, 10);
+		if (lt < 15 || *bp) {
+		    fLog (d, fd, "bad", "invalid timeout %\"s", ar[1]);
+		    goto bust;
+		}
+		if (ar[2])
+		    goto exce;
+	    }
 	    if (d && (d->displayType & d_location) != dLocal) {
 		fLog (d, fd, "perm", "display is not local");
 		goto bust;
 	    }
-	    lt = ar[1] ? atoi (ar[1]) : 0;
-	    /* XXX make timeout configurable? */
-	    if (!StartReserveDisplay (lt > 15 ? lt : 60)) {
+	    if (!StartReserveDisplay (lt)) {
 		fLog (d, fd, "noent", "no reserve display available");
 		goto bust;
 	    }
@@ -441,6 +458,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		goto miss;
 	    sdr.force = 0;
 	    if (fd >= 0 && !strcmp (ar[1], "status")) {
+		if (ar[2])
+		    goto exce;
 		bp = cbuf;
 		*bp++ = 'o';
 		*bp++ = 'k';
@@ -458,13 +477,17 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    } else if (!strcmp (ar[1], "cancel")) {
 		sdr.how = 0;
 		sdr.start = 0;
-		if (d && ar[2]) {
+		if (ar[2]) {
+		    if (!d)
+			goto exce;
 		    if (!strcmp (ar[2], "global"))
 			sdr.start = TO_INF;
 		    else if (strcmp (ar[2], "local")) {
 			fLog (d, fd, "bad", "invalid cancel scope %\"s", ar[2]);
 			goto bust;
 		    }
+		    if (ar[3])
+			goto exce;
 		}
 	    } else {
 		if (!strcmp (ar[1], "reboot"))
@@ -491,9 +514,11 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    }
 		    if (*ar[3] == '+')
 			sdr.timeout += sdr.start;
-		    if (sdr.timeout < 0)
+		    if (sdr.timeout < 0) {
 			sdr.timeout = TO_INF;
-		    else {
+			if (ar[4])
+			    goto exce;
+		    } else {
 			if (!ar[4])
 			    goto miss;
 			if (!strcmp (ar[4], "force"))
@@ -505,6 +530,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 				  ar[4]);
 			    goto bust;
 			}
+			if (ar[5])
+			    goto exce;
 		    }
 		} else {
 		    sdr.timeout = 0;
@@ -516,6 +543,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 			fLog (d, fd, "bad", "invalid mode %\"s", ar[2]);
 			goto bust;
 		    }
+		    if (ar[3])
+			goto exce;
 		}
 	    }
 	    if (d) {
@@ -583,17 +612,23 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	} else if (d) {
 	    if (!strcmp (ar[0], "lock")) {
+		if (ar[1])
+		    goto exce;
 		d->hstent->lock = 1;
 #ifdef AUTO_RESERVE
 		if (AllLocalDisplaysLocked (0))
 		    StartReserveDisplay (0);
 #endif
 	    } else if (!strcmp (ar[0], "unlock")) {
+		if (ar[1])
+		    goto exce;
 		d->hstent->lock = 0;
 #ifdef AUTO_RESERVE
 		ReapReserveDisplays ();
 #endif
 	    } else if (!strcmp (ar[0], "suicide")) {
+		if (ar[1])
+		    goto exce;
 		if (d->status == running && d->pid != -1) {
 		    TerminateProcess (d->pid, SIGTERM);
 		    d->status = raiser;
@@ -614,7 +649,16 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    fLog (d, fd, "noent", "display %s not found", ar[1]);
 		    goto bust;
 		}
-		if (ar[5] && (args = unQuote (ar[5]))) {
+		if (ar[5]) {
+		    if (!(args = unQuote (ar[5]))) {
+			fLog (d, fd, "nomem", "out of memory");
+			goto bust;
+		    }
+		    if (ar[6]) {
+		      exce:
+			fLog (d, fd, "bad", "excess argument(s)");
+			goto bust;
+		    }
 		    setNLogin (di, ar[3], ar[4], args, 2);
 		    free (args);
 		} else
