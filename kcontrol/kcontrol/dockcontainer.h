@@ -30,7 +30,7 @@ class DockContainer : public QWidget
   Q_OBJECT
 
 public:
-  DockContainer(QWidget *parent=0, const char *name=0);
+  DockContainer(QWidget *parent=0);
   virtual ~DockContainer();
 
   void setBaseWidget(QWidget *widget);
@@ -46,6 +46,7 @@ protected:
 
 signals:
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
+  void changedModule(ConfigModule *module);
 
 private:
   QWidget      *_basew;

@@ -62,8 +62,10 @@ protected slots:
   void activateLargeIcons();
 
   void deleteDummyAbout();
-    
+
   void slotHelpRequest();
+
+    void changedModule(ConfigModule *changed);
 
 private:
   QTabWidget     *_tab;

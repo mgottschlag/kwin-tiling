@@ -55,7 +55,7 @@ TopLevel::TopLevel(const char* name)
   : KMainWindow( 0, name, WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
-  setPlainCaption(i18n("KDE Control Center"));
+  setCaption("");
 
   report_bug = 0;
 
@@ -123,6 +123,8 @@ TopLevel::TopLevel(const char* name)
   _dock = new DockContainer(hbox);
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
                   this, SLOT(newModule(const QString&, const QString&, const QString&)));
+  connect(_dock, SIGNAL(changedModule(ConfigModule*)),
+          SLOT(changedModule(ConfigModule*)));
 
   // insert the about widget
   AboutWidget *aw = new AboutWidget(this);
@@ -276,14 +278,7 @@ void TopLevel::activateLargeIcons()
 
 void TopLevel::newModule(const QString &name, const QString& docPath, const QString &quickhelp)
 {
-  QString cap = i18n("KDE Control Center");
-
-  if (!name.isEmpty())
-    {
-      cap += " - [" + name +"]";
-    }
-
-  setPlainCaption(cap);
+    setCaption(name, false);
 
   _helptab->setText( docPath, quickhelp );
 
@@ -293,6 +288,13 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
     report_bug->setText(i18n("&Report Bug..."));
   else
     report_bug->setText(i18n("Report Bug on Module %1...").arg(name));
+}
+
+void TopLevel::changedModule(ConfigModule *changed)
+{
+    if (!changed)
+        return;
+    setCaption(changed->name(), changed->isChanged() );
 }
 
 void TopLevel::moduleActivated(ConfigModule *module)

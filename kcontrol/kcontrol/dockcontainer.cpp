@@ -35,8 +35,8 @@
 #include <qobjcoll.h>
 #include <qaccel.h>
 
-DockContainer::DockContainer(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+DockContainer::DockContainer(QWidget *parent)
+  : QWidget(parent, "DockContainer")
   , _basew(0L)
   , _module(0L)
 {
@@ -97,7 +97,8 @@ void DockContainer::dockModule(ConfigModule *module)
       _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
-
+      connect(_module, SIGNAL(changed(ConfigModule *)),
+              SIGNAL(changedModule(ConfigModule *)));
       //####### this doesn't work anymore, what was it supposed to do? The signal is gone.
 //       connect(_module, SIGNAL(quickHelpChanged()),
 //               this, SLOT(quickHelpChanged()));
@@ -172,4 +173,3 @@ void DockContainer::quickHelpChanged()
   if (_module && _module->module())
 	emit newModule(_module->module()->caption(),  _module->docPath(), _module->module()->quickHelp());
 }
-
