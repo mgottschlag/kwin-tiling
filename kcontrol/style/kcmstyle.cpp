@@ -477,7 +477,7 @@ void KCMStyle::save()
 	else if (m_bMacDirty)
 		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
 
-	if ( m_bToolbarsDirty )
+	if ( m_bToolbarsDirty || m_bMacDirty )
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in 
 		// KApplication/KToolbar
 		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 
