@@ -1842,6 +1842,7 @@ void KRandomDlg::done( int r )
   picturesConfig.writeEntry( "InOrder", orderButton->isChecked() );
   picturesConfig.writeEntry( "UseDir", dirCheckBox->isChecked() );
   picturesConfig.writeEntry( "Directory", dirLined->text() );
+  picturesConfig.writeEntry( "RandomMode", true );
 
   hide();
   
@@ -1849,6 +1850,7 @@ void KRandomDlg::done( int r )
 
   kb->rnddlg = 0L;
   kb->random = 0;
+  kb->randomMode = true;
   kb->randomSetupButton->setEnabled( true );
   kb->wpModeCombo->setEnabled( false );
 }
