@@ -30,6 +30,7 @@
 #include <kstringhandler.h>
 #include <kwin.h>
 #include <kdebug.h>
+#include <kglobalsettings.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -40,7 +41,7 @@
 #define CONFIG_ITEM  60
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   8
+#define MENU_ITEMS   (7 + (KGlobalSettings::insertTearOffHandle() ? 1 : 0 ))
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
