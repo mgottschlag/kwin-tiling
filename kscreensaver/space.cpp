@@ -50,6 +50,7 @@
 #define QT_CLEAN_NAMESPACE
 
 #include <qslider.h>
+#include <qlayout.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <krandomsequence.h>
@@ -63,7 +64,8 @@
 
 #include <klocale.h>
 
-#include <space.h>
+#undef index
+#include "space.h"
 #include <math.h>
 #include <X11/Intrinsic.h>
 #ifdef HAVE_GL_XMESA_H
@@ -579,53 +581,51 @@ void kSpaceSaver::slotTimeout()
 //-----------------------------------------------------------------------------
 
 kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+	: KDialogBase( parent, name, true, i18n("Setup KSpace"),
+		       Ok|Cancel|User1, Ok, false, i18n("About") )
 {
-	readSettings();
+    readSettings();
 
-	setCaption( i18n("Setup KSpace") );
+    QWidget *page = new QWidget( this );
+    setMainWidget( page );
+    QHBoxLayout *hb = new QHBoxLayout( page, spacingHint() );
+    QVBoxLayout *vb = new QVBoxLayout( hb, spacingHint() );
 
-	QLabel *label;
-	QPushButton *button;
-	QSlider *slider;
+    QLabel *label;
+    QSlider *slider;
 
-	label = new QLabel( i18n("Speed:"), this );
-	label->setGeometry( 15, 15, 60, 20 );
+    label = new QLabel( i18n("Speed:"), page );
+    vb->addWidget( label );
 
-	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
-                        this );
-	slider->setGeometry( 15, 35, 90, 20 );
+    slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+		    page );
+    vb->addWidget( slider );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(10);
-	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
+    connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
-	label = new QLabel( i18n("Warp Interval:"), this );
-	label->setGeometry( 15, 65, 90, 20 );
+    vb->addSpacing( 10 );
+    label = new QLabel( i18n("Warp Interval:"), page );
+    vb->addWidget( label );
 
-	slider = new QSlider(MINWARP, MAXWARP, 3, warpinterval,
-                        QSlider::Horizontal, this );
-	slider->setGeometry( 15, 85, 90, 20 );
+    slider = new QSlider(MINWARP, MAXWARP, 3, warpinterval,
+		    QSlider::Horizontal, page );
+    vb->addWidget( slider );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(3);
-	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotWarp( int ) ) );
+    connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotWarp( int ) ) );
 
-	preview = new QWidget( this );
-	preview->setGeometry( 130, 15, 220, 170 );
-	preview->setBackgroundColor( black );
-	preview->show();    // otherwise saver does not get correct size
-	saver = new kSpaceSaver( preview->winId() );
+    vb->addStrut( 150 );
+    vb->addStretch( 1 );
 
-	button = new QPushButton( i18n("About"), this );
-	button->setGeometry( 130, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
+    preview = new QWidget( page );
+    hb->addWidget( preview );
+    preview->setFixedSize( 220, 170 );
+    preview->setBackgroundColor( black );
+    preview->show();    // otherwise saver does not get correct size
+    saver = new kSpaceSaver( preview->winId() );
 
-	button = new QPushButton( i18n("OK"), this );
-	button->setGeometry( 235, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
-
-	button = new QPushButton( i18n("Cancel"), this );
-	button->setGeometry( 300, 210, 50, 25 );
-	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
+    connect( this, SIGNAL( user1Clicked() ), SLOT( slotAbout() ) );
 }
 
 void kSpaceSetup::readSettings()
@@ -668,7 +668,7 @@ void kSpaceSetup::slotWarp( int num )
 		saver->setWarp( warpinterval );
 }
 
-void kSpaceSetup::slotOkPressed()
+void kSpaceSetup::slotOk()
 {
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );

@@ -4,7 +4,7 @@
 
 #include <qtimer.h>
 #include <qlist.h>
-#include <qdialog.h>
+#include <kdialogbase.h>
 #include <qlineedit.h>
 #include "saver.h"
 
@@ -35,7 +35,7 @@ protected:
 	int			numPoints;
 };
 
-class kSpaceSetup : public QDialog
+class kSpaceSetup : public KDialogBase
 {
 	Q_OBJECT
 public:
@@ -47,7 +47,7 @@ protected:
 private slots:
 	void slotSpeed( int );
 	void slotWarp( int );
-	void slotOkPressed();
+	void slotOk();
 	void slotAbout();
 
 private:

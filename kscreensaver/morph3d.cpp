@@ -1039,7 +1039,7 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
     setMainWidget( page );
     QHBoxLayout *hl = new QHBoxLayout( page, spacingHint() );
 
-    QVBoxLayout *vb = new QVBoxLayout( hl );
+    QVBoxLayout *vb = new QVBoxLayout( hl, spacingHint() );
 
     QLabel *label;
     QSlider *slider;
