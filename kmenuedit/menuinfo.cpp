@@ -169,6 +169,7 @@ void MenuFolderInfo::save()
 
       df->setDesktopGroup();
       df->writeEntry("Name", caption);
+      df->writeEntry("GenericName", genericname);
       df->writeEntry("Comment", comment);
       df->writeEntry("Icon", icon);
       df->sync();
@@ -314,6 +315,15 @@ void MenuEntryInfo::setCaption(const QString &_caption)
    caption = _caption;
    setDirty();
    desktopFile()->writeEntry("Name", caption);
+}
+
+void MenuEntryInfo::setDescription(const QString &_description)
+{
+    if (description == _description)
+        return;
+    description = _description;
+    setDirty();
+    desktopFile()->writeEntry("GenericName", description);
 }
 
 void MenuEntryInfo::setIcon(const QString &_icon)

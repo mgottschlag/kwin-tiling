@@ -66,6 +66,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
 	_nameEdit->setAcceptDrops(false);
+    _descriptionEdit = new KLineEdit(general_group);
+    _descriptionEdit->setAcceptDrops(false);
     _commentEdit = new KLineEdit(general_group);
 	_commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
@@ -75,15 +77,19 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
+    _descriptionLabel = new QLabel(_descriptionEdit, i18n("&Description:"), general_group);
     _commentLabel = new QLabel(_commentEdit, i18n("&Comment:"), general_group);
     _execLabel = new QLabel(_execEdit, i18n("Co&mmand:"), general_group);
     grid->addWidget(_nameLabel, 0, 0);
-    grid->addWidget(_commentLabel, 1, 0);
-    grid->addWidget(_execLabel, 2, 0);
+    grid->addWidget(_descriptionLabel, 1, 0);
+    grid->addWidget(_commentLabel, 2, 0);
+    grid->addWidget(_execLabel, 3, 0);
 
     // connect line inputs
     connect(_nameEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
+    connect(_descriptionEdit, SIGNAL(textChanged(const QString&)),
+	    SLOT(slotChanged()));
     connect(_commentEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
@@ -93,10 +99,11 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
-    grid->addMultiCellWidget(_commentEdit, 1, 1, 1, 1);
-    grid->addMultiCellWidget(_execEdit, 2, 2, 1, 1);
-    grid->addMultiCellWidget(_launchCB, 3, 3, 0, 1);
-    grid->addMultiCellWidget(_systrayCB, 4, 4, 0, 1);
+    grid->addMultiCellWidget(_descriptionEdit, 1, 1, 1, 1);
+    grid->addMultiCellWidget(_commentEdit, 2, 2, 1, 1);
+    grid->addMultiCellWidget(_execEdit, 3, 3, 1, 1);
+    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 1);
+    grid->addMultiCellWidget(_systrayCB, 5, 5, 0, 1);
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -156,7 +163,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
                            KDialog::spacingHint());
 
-    _uidCB = new QCheckBox(i18n("Run as a &different user"), _uid_group);
+    _uidCB = new QCheckBox(i18n("&Run as a different user"), _uid_group);
     connect(_uidCB, SIGNAL(clicked()), SLOT(uidcb_clicked()));
     vbox->addWidget(_uidCB);
 
@@ -210,11 +217,13 @@ void BasicTab::slotDisableAction()
     //disable all group at the begining.
     //because there is not file selected.
     _nameEdit->setEnabled(false);
+    _descriptionEdit->setEnabled(false);
     _commentEdit->setEnabled(false);
     _execEdit->setEnabled(false);
     _launchCB->setEnabled(false);
     _systrayCB->setEnabled(false);
     _nameLabel->setEnabled(false);
+    _descriptionLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
     _execLabel->setEnabled(false);
     _path_group->setEnabled(false);
@@ -229,12 +238,14 @@ void BasicTab::enableWidgets(bool isDF, bool isDeleted)
 {
     // set only basic attributes if it is not a .desktop file
     _nameEdit->setEnabled(!isDeleted);
+    _descriptionEdit->setEnabled(!isDeleted);
     _commentEdit->setEnabled(!isDeleted);
     _iconButton->setEnabled(!isDeleted);
     _execEdit->setEnabled(isDF && !isDeleted);
     _launchCB->setEnabled(isDF && !isDeleted);
     _systrayCB->setEnabled(isDF && !isDeleted);
     _nameLabel->setEnabled(!isDeleted);
+    _descriptionLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
     _execLabel->setEnabled(isDF && !isDeleted);
 
@@ -257,6 +268,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _menuEntryInfo = 0;
 
     _nameEdit->setText(folderInfo->caption);
+    _descriptionEdit->setText(folderInfo->genericname);
     _commentEdit->setText(folderInfo->comment);
     _iconButton->setIcon(folderInfo->icon);
 
@@ -284,6 +296,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     KDesktopFile *df = entryInfo->desktopFile();
 
     _nameEdit->setText(df->readName());
+    _descriptionEdit->setText(df->readGenericName());
     _commentEdit->setText(df->readComment());
     _iconButton->setIcon(df->readIcon());
 
@@ -331,6 +344,7 @@ void BasicTab::apply()
     {
         _menuEntryInfo->setDirty();
         _menuEntryInfo->setCaption(_nameEdit->text());
+        _menuEntryInfo->setDescription(_descriptionEdit->text());
         _menuEntryInfo->setIcon(_iconButton->icon());
 
         KDesktopFile *df = _menuEntryInfo->desktopFile();
@@ -355,6 +369,7 @@ void BasicTab::apply()
     else
     {
         _menuFolderInfo->setCaption(_nameEdit->text());
+        _menuFolderInfo->setGenericName(_descriptionEdit->text());
         _menuFolderInfo->setComment(_commentEdit->text());
         _menuFolderInfo->setIcon(_iconButton->icon());
     }

@@ -154,6 +154,16 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     m_menuFile = new MenuFile( locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
     m_drag = 0;
+
+    //	Read menu format configuration information
+    KSharedConfig::Ptr		pConfig = KSharedConfig::openConfig("kickerrc");
+	
+    pConfig->setGroup("menus");
+    m_detailedMenuEntries = pConfig->readBoolEntry("DetailedMenuEntries",true);
+    if (m_detailedMenuEntries)
+    {
+        m_detailedEntriesNamesFirst = pConfig->readBoolEntry("DetailedEntriesNamesFirst",true);
+    }
 }
 
 TreeView::~TreeView() {
@@ -330,8 +340,25 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuE
    else
      item = new TreeItem(parent, after, entryInfo->menuId(),_init);
 
+   QString	name;
+	 
+   if (m_detailedMenuEntries && entryInfo->description.length() != 0)
+   {
+      if (m_detailedEntriesNamesFirst)
+      {
+         name = entryInfo->caption + " (" + entryInfo->description + ")";
+      }
+      else
+      {
+         name = "(" + entryInfo->description + ") " + entryInfo->caption;
+      }
+   }
+   else
+   {
+      name = entryInfo->caption;
+   }
    item->setMenuEntryInfo(entryInfo);
-   item->setName(entryInfo->caption);
+   item->setName(name);
    item->setPixmap(0, appIcon(entryInfo->icon));
 
    item->setHidden(hidden);
@@ -400,7 +427,24 @@ void TreeView::currentChanged(MenuEntryInfo *entryInfo)
     if (item == 0) return;
     if (entryInfo == 0) return;
 
-    item->setName(entryInfo->caption);
+    QString	name;
+	 
+    if (m_detailedMenuEntries && entryInfo->description.length() != 0)
+    {
+        if (m_detailedEntriesNamesFirst)
+	 {
+            name = entryInfo->caption + " (" + entryInfo->description + ")";
+        }
+	 else
+        {
+            name = "(" + entryInfo->description + ") " + entryInfo->caption;
+        }
+    }
+    else
+    {
+        name = entryInfo->caption;
+    }
+    item->setName(name);
     item->setPixmap(0, appIcon(entryInfo->icon));
 }
 

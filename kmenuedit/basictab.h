@@ -68,6 +68,7 @@ protected:
 
 protected:
     KLineEdit    *_nameEdit, *_commentEdit;
+    KLineEdit	 *_descriptionEdit;
     KKeyButton   *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
@@ -75,6 +76,7 @@ protected:
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
     QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel;
+    QLabel	*_descriptionLabel;
 
     MenuFolderInfo *_menuFolderInfo;
     MenuEntryInfo  *_menuEntryInfo;

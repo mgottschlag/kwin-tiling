@@ -146,6 +146,8 @@ private:
     MenuFolderInfo    *m_rootFolder;
     QStringList        m_newMenuIds;
     QStringList        m_newDirectoryList;
+    bool               m_detailedMenuEntries;
+    bool               m_detailedEntriesNamesFirst;
 };
 
 

@@ -72,6 +72,13 @@ public:
        setDirty();
     }
 
+    void setGenericName(const QString &_description)
+    {
+       if (_description == genericname) return;
+       genericname = _description;
+       setDirty();
+    }
+
     void setComment(const QString &_comment)
     {
        if (_comment == comment) return;
@@ -98,6 +105,7 @@ public:
     QString id; // Relative to parent
     QString fullId; // Name in tree
     QString caption; // Visible name
+    QString genericname; // Generic description
     QString comment; // Comment
     QString directoryFile; // File describing this folder.
     QString icon; // Icon
@@ -115,11 +123,13 @@ public:
        shortcutLoaded(false), shortcutDirty(false), dirty(_df != 0), hidden(false)
     {
        caption = service->name();
+       description = service->genericName();
        icon = service->icon();
     }
     ~MenuEntryInfo();
 
     void setCaption(const QString &_caption);
+    void setDescription(const QString &_description);
     void setIcon(const QString &_icon);
     
     QString menuId() const { return service->menuId(); }
@@ -141,6 +151,7 @@ public:
 
 public:
     QString caption;
+    QString description;
     QString icon;
     KService::Ptr service;
     KDesktopFile *df;
