@@ -415,10 +415,12 @@ wp_out:
 	}
 
 	// And copy the centred image		
-        for (y=0; y<wh; y++)
+        for (y=0; y<wh; y++) {
+	    if (m_pImage->scanLine(ya+y) && wp.scanLine(y+offy))
             memcpy(m_pImage->scanLine(ya+y) + xa * sizeof(QRgb),
                    wp.scanLine(y+offy) + offx * sizeof(QRgb),
-                   ww * sizeof(QRgb));		   
+                   ww * sizeof(QRgb));
+	}
         break;
     }
 
@@ -545,7 +547,7 @@ wp_out:
 
 void KBackgroundRenderer::slotBackgroundDone(KProcess *)
 {
-    qDebug("slotBackgroundDone");
+    kdDebug() << "slotBackgroundDone" << endl;
     m_State |= BackgroundDone;
 
     if (m_pProc->normalExit() && !m_pProc->exitStatus())

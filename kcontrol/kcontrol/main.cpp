@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   KCGlobal::init();
 
   if (!KControlApp::start()) {
-	qDebug("kcontrol is already running!\n");
+	kdDebug() << "kcontrol is already running!\n" << endl;
 	return (0);
   }
   

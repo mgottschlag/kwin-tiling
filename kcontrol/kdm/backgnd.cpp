@@ -402,7 +402,7 @@ void KBackground::load()
 
 void KBackground::save()
 {
-    qDebug("Saving stuff...");
+    kdDebug() << "Saving stuff..." << endl;
     for (int i=0; i<m_Max; i++)
 	m_Renderer[i]->writeSettings();
 
@@ -670,7 +670,7 @@ void KBackground::slotSetupMulti()
 
 void KBackground::slotPreviewDone(int desk_done)
 {
-    qDebug("Preview for desktop %d done", desk_done);
+    kdDebug() << "Preview for desktop " << desk_done << " done" << endl;
 
     int desk = m_Desk;
 	desk = 0;

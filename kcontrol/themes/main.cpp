@@ -140,7 +140,7 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
   switch (aType)
   {
   case QtDebugMsg:
-    kdebug(KDEBUG_INFO, 0, msg.ascii());
+    kdDebug(0) << msg.ascii() << endl;
     break;
 
   case QtWarningMsg:
@@ -153,7 +153,7 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
     {
       KMessageBox::sorry(0, msg);
     }
-    else kdebug(KDEBUG_INFO, 0, msg.ascii());
+    else kdDebug(0) << msg.ascii() << endl;
     break;
 
   case QtFatalMsg:
