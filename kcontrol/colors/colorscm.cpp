@@ -161,7 +161,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     setColorName(i18n("Inactive title button"), CSM_Inactive_title_button);
     setColorName(i18n("Link"), CSM_Link);
     setColorName(i18n("Followed Link"), CSM_Followed_Link);
-	setColorName(i18n("Alternate background in lists"), CSM_Alternate_background);
+    setColorName(i18n("Alternate background in lists"), CSM_Alternate_background);
 
     wcCombo->adjustSize();
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
@@ -522,8 +522,8 @@ QColor &KColorScheme::color(int index)
     return cs->link;
     case CSM_Followed_Link:
     return cs->visitedLink;
-	case CSM_Alternate_background:
-	return cs->alternateBackground;
+    case CSM_Alternate_background:
+    return cs->alternateBackground;
     }
 
     assert(0); // Should never be here!
@@ -592,7 +592,7 @@ void KColorScheme::readScheme( int index )
 
     QColor link(0, 0, 192);
     QColor visitedLink(128, 0,128);
-	QColor alternate(240, 240, 240);
+    QColor alternate(240, 240, 240);
 
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
@@ -615,7 +615,7 @@ void KColorScheme::readScheme( int index )
       cs->iTitleBtn   = cs->back;
       cs->link        = link;
       cs->visitedLink = visitedLink;
-	  cs->alternateBackground = alternate;
+      cs->alternateBackground = alternate;
 
       cs->contrast    = 7;
 
@@ -647,7 +647,17 @@ void KColorScheme::readScheme( int index )
     cs->buttonTxt = config->readColorEntry( "buttonForeground", &black );
     cs->link = config->readColorEntry( "linkColor", &link );
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
-	cs->alternateBackground = config->readColorEntry( "alternateBackground", &alternate );
+    alternate = cs->window.dark(106);
+    int h, s, v;
+    cs->window.hsv( &h, &s, &v );
+    if (v > 128)
+        alternate = cs->window.dark(106);
+    else if (cs->window != black)
+        alternate = cs->window.light(106);
+    else
+        alternate = Qt::darkGray;
+
+    cs->alternateBackground = config->readColorEntry( "alternateBackground", &alternate );
 
     if (index == 0)
       config->setGroup( "WM" );
