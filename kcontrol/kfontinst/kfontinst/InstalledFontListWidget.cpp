@@ -383,7 +383,7 @@ void CInstalledFontListWidget::fixTtfPsNames()
     if(KMessageBox::questionYesNo(this, i18n("This will *permanently* alter the TrueType font file(s),"
                                              "\nand cannot be undone."
                                              "\n"
-                                             "\nAre you sure?"), i18n("Fix TTF Postscript Names"))==KMessageBox::Yes)
+                                             "\nAre you sure?"), i18n("Fix TTF PostScript Names"))==KMessageBox::Yes)
     {
         CListViewItem *item=(CListViewItem *)itsList->firstChild();
         int           failures=0,
