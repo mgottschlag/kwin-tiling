@@ -327,9 +327,9 @@ void Installer::slotSetTheme(int id)
       KMessageBox::sorry(this, error);
     }
   }
-
+  isGlobal = QFileInfo(name).isWritable();
   mBtnSaveAs->setEnabled(enabled);
-  mBtnRemove->setEnabled(!isGlobal);
+  mBtnRemove->setEnabled(isGlobal);
 }
 
 
