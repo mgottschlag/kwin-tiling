@@ -86,8 +86,8 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   connect(m_addLanguage, SIGNAL(activated(const QString &)),
 	  SLOT(slotAddLanguage(const QString &)));
   m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove Language"));
-  m_upButton = new QPushButton(vb, I18N_NOOP("Up"));
-  m_downButton = new QPushButton(vb, I18N_NOOP("Down"));
+  m_upButton = new QPushButton(vb, I18N_NOOP("Move Up"));
+  m_downButton = new QPushButton(vb, I18N_NOOP("Move Down"));
   boxlay->add(m_removeLanguage);
   boxlay->add(m_upButton);
   boxlay->add(m_downButton);
