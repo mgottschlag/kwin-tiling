@@ -4,7 +4,7 @@
 	Main Widget for showing system-dependent information.
 	(But all functions in THIS FILE should be system independent !)
 
-	(C) 1998-2002 by Helge Deller <deller@gmx.de>
+	(C) 1998-2002 by Helge Deller <deller@kde.org>
 
 	** main.cpp includes this file ! **
 
@@ -413,7 +413,7 @@ const KAboutData* KInfoListWidget::aboutData() const
 		0, 0, KAboutData::License_GPL,
 		I18N_NOOP("(c) 1998 - 2002 Helge Deller"));
 
-    about->addAuthor("Helge Deller", 0, "deller@gmx.de");
+    about->addAuthor("Helge Deller", 0, "deller@kde.org");
 
     return about;
 }
