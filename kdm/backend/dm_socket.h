@@ -40,14 +40,12 @@ authorization.
 #include <X11/Xmd.h>
 #include <X11/Xdmcp.h>
 
-#ifndef MINIX
-# ifndef Lynx
-#  include <sys/socket.h>
-# else
-#  include <socket.h>
-# endif
-# include <netinet/in.h>
+#ifndef Lynx
+# include <sys/socket.h>
+#else
+# include <socket.h>
 #endif
+#include <netinet/in.h>
 
 /* ugly, but we need this after socket.h */
 extern ARRAY8Ptr Accept (struct sockaddr *from, int fromlen, CARD16 displayNumber);

@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -133,12 +137,9 @@ static void
 AbortClient (int pid)
 {
     int	sig = SIGTERM;
-#ifdef __STDC__
     volatile int	i;
-#else
-    int	i;
-#endif
     int	retId;
+
     for (i = 0; i < 4; i++) {
 	if (killpg (pid, sig) == -1) {
 	    switch (errno) {
@@ -357,9 +358,6 @@ GreetUser (struct display *d)
 	case G_Shutdown:
 	    i = GRecvInt ();	/* C calling convention order! */
 	    FdPrintf (d->pipefd[1], "s\t%d\t%d\n", i, GRecvInt ());
-#ifndef HAS_SELECT_ON_FIFO
-	    kill (getppid (), SIGUSR2);
-#endif
 	    break;
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
@@ -387,7 +385,11 @@ ManageSession (struct display *d)
     Debug ("ManageSession %s\n", d->name);
     (void)XSetIOErrorHandler(IOErrorHandler);
     (void)XSetErrorHandler(ErrorHandler);
+#ifndef HAS_SETPROCTITLE
     SetTitle(d->name, (char *) 0);
+#else
+    setproctitle("%s", d->name);
+#endif
 
     exitCode = EX_NORMAL;
     clientPid = 0;

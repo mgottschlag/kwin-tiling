@@ -10,6 +10,10 @@ XCOMM $Id$
 CDEBUGFLAGS := $(CDEBUGFLAGS) -g
 #endif
 
+#ifndef BuildBoth
+#define BuildBoth (defined(LinuxArchitecture) && !UseElfFormat)
+#endif
+
 #ifndef LinuxShadowSuite
 #define LinuxShadowSuite NO
 #endif
@@ -18,14 +22,10 @@ CDEBUGFLAGS := $(CDEBUGFLAGS) -g
 LOG_DEFINES = -DUSE_SYSLOG
 #endif
 
-#ifdef NOXDMCP
+#ifdef NoXDMCP
 XDMCPLIB =
 #else
 XDMCP_DEFINES = -DXDMCP
-#endif
-
-#ifndef MINIX
-SELECT_DEFINES = -DHAS_SELECT_ON_FIFO
 #endif
 
 #if HasXdmAuth
@@ -41,10 +41,6 @@ RPCSRCS = rpcauth.c
 RPCLIB = -lrpcsvc
 #endif
 
-#ifdef USEKRB4
-#undef HasKrbIV
-#define HasKrbIV USEKRB4
-#endif
 #if HasKrbIV
 #if NOAFS
 KRBIV_DEFINES = KrbIVDefines -DNO_AFS
@@ -62,22 +58,10 @@ KRB5OBJS = krb5auth.o
 KRB5SRCS = krb5auth.c
 #endif
 
-#ifdef USEPAM
-#undef HasPam
-#undef PamLibraries
-#define HasPam USEPAM
-#define PamLibraries PAMLIBS
-#endif
-
 /* This is correct for Linux and FreeBSD */
 #if HasPam
 PAM_LIBRARIES = PamLibraries
 PAM_DEFINES = -DUSE_PAM
-#endif
-
-#ifdef USESHADOW
-#undef HasShadowPasswd
-#define HasShadowPasswd USESHADOW
 #endif
 
 #if HasPam
@@ -86,6 +70,12 @@ PAM_DEFINES = -DUSE_PAM
 #undef HasLibCrypt
 #define HasLibCrypt NO
 #endif
+
+/*
+#if HasBSDAuth
+BSDAUTH_DEFINES = -DUSE_BSDAUTH
+#endif
+*/
 
 #if SystemV4 || HasShadowPasswd
 
@@ -142,53 +132,69 @@ RANDOM_DEFINES = -DDEV_RANDOM
 
 #if HasSetUserContext
 USER_CONTEXT_DEFINES = -DHAS_SETUSERCONTEXT
+# XXX - only FreeBSD has this in libutil
 SYS_LIBRARIES1 = -lutil
+#endif
+
+#if HasSetProcTitle
+PROCTITLE_DEFINES = -DHAS_SETPROCTITLE
 #endif
 
   SYS_LIBRARIES = $(SYS_LIBRARIES1) $(SYS_LIBRARIES2) $(SYS_LIBRARIES3)
 
-  INCLUDES = $(KRBIV_INCLUDES) $(KRB5_INCLUDE)
-   DEPLIBS = $(DEPXLIB) $(DEPXAUTHLIB) $(DEPXDMCPLIB) $(XINDEPLIBS)
+  INCLUDES = $(KRB5_INCLUDE)
+   DEPLIBS = $(DEPXLIB) $(DEPXAUTHLIB) $(DEPXDMCPLIB)
    LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
  $(XDMCPLIB) $(RPCLIB) $(PAM_LIBRARIES) \
- $(CRYPT_LIBRARIES) $(KRBIVLIB) $(XINLIBS)
+ $(CRYPT_LIBRARIES) $(KRBIVLIB)
 
-          SRCS = auth.c daemon.c server.c dpylist.c dm.c error.c file.c \
+      COMMSRCS = auth.c daemon.c server.c dpylist.c dm.c error.c \
 		 netaddr.c reset.c resource.c protodpy.c policy.c \
-		 session.c socket.c streams.c util.c client.c xdmcp.c \
+		 session.c socket.c streams.c util.c xdmcp.c \
 		 process.c mitauth.c \
 		 genauth.c access.c choose.c \
 		 $(XDMAUTHSRCS) $(RPCSRCS) $(KRB5SRCS)
-          OBJS = auth.o daemon.o server.o dpylist.o dm.o error.o file.o \
+      COMMOBJS = auth.o daemon.o server.o dpylist.o dm.o error.o \
 		 netaddr.o reset.o resource.o protodpy.o policy.o \
-		 session.o socket.o streams.o util.o client.o xdmcp.o \
+		 session.o socket.o streams.o util.o xdmcp.o \
 		 process.o mitauth.o \
 		 genauth.o access.o choose.o \
 		 $(XDMAUTHOBJS) $(RPCOBJS) $(KRB5OBJS)
 
-       PROGRAMS = xdm
+         SRCS1 = $(COMMSRCS) client.c
+         OBJS1 = $(COMMOBJS) client.o
+
+#if BuildBoth
+         SRCS2 = $(COMMSRCS) clientsh.c
+         OBJS2 = $(COMMOBJS) clientsh.o
+
+    XDM_SHADOW = xdm-shadow
+#endif
+
+       PROGRAMS = xdm $(XDM_SHADOW)
+
 
  OSMAJORVERSION = OSMajorVersion
  OSMINORVERSION = OSMinorVersion
    CONN_DEFINES = $(CONNECTION_FLAGS)
-        DEFINES = $(SIGNAL_DEFINES) $(LOG_DEFINES) $(CRYPT_DEFINES) \
+        DEFINES = $(SIGNAL_DEFINES) $(LOG_DEFINES) \
+  $(CRYPT_DEFINES)$(PWD_DEFINES)  \
+  $(BSDAUTH_DEFINES) $(PAM_DEFINES) $(USER_CONTEXT_DEFINES) \
   $(XDMAUTH_DEFINES) $(RPC_DEFINES) $(KRB5_DEFINES) \
-  $(PWD_DEFINES) $(PAM_DEFINES) $(USER_CONTEXT_DEFINES) $(CONN_DEFINES) \
-  $(FRAGILE_DEFINES) $(RANDOM_DEFINES) $(XDMCP_DEFINES) $(SELECT_DEFINES) \
+  $(XDMCP_DEFINES) $(SOCK_DEFINES) $(CONN_DEFINES) \
+  $(FRAGILE_DEFINES) $(RANDOM_DEFINES) $(PROCTITLE_DEFINES) \
   -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION) \
-  -Dconst
+  -Dconst=
 
-#ifdef ComplexProgramTargetNoMan
-ComplexProgramTargetNoMan(xdm)
-#else
-ComplexProgramTarget(xdm)
+ComplexProgramTarget_1(xdm,$(LOCAL_LIBRARIES),NullParameter)
+#if BuildBoth
+NormalProgramTarget(xdm-shadow,$(OBJS2),$(DEPLIBS),$(LOCAL_LIBRARIES),-lshadow)
+InstallProgram(xdm-shadow,$(BINDIR))
+ObjectFromSpecialSource(clientsh,client,-DUSESHADOW)
 #endif
 
 #if defined(FreeBSDArchitecture) && (OSMajorVersion < 2)
 XCOMM only for daemon.c? it's used in some other places, too.
 SpecialCObjectRule(daemon,$(ICONFIGFILES),-UCSRG_BASED)
 #endif
-SpecialCObjectRule(auth,$(ICONFIGFILES),$(SOCK_DEFINES))
-SpecialCObjectRule(policy,$(ICONFIGFILES),$(_NOOP_))
-SpecialCObjectRule(socket,$(ICONFIGFILES),$(SOCK_DEFINES))
-SpecialCObjectRule(xdmcp,$(ICONFIGFILES),$(SOCK_DEFINES))
+

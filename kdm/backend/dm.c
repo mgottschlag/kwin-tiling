@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -98,9 +102,6 @@ extern FILE    *fdopen();
 #ifndef UNRELIABLE_SIGNALS
 static SIGVAL	ChildNotify (int n);
 #endif
-#ifndef HAS_SELECT_ON_FIFO
-static SIGVAL	PipeNotify (int n);
-#endif
 static SIGVAL	TermNotify (int n), UtmpNotify (int n), RescanNotify (int n);
 static void	RescanConfigs (void);
 static void	ScanServers (int force);
@@ -115,9 +116,6 @@ static void	stoppen (int force);
 int	Rescan;
 int	StopAll;
 int	ChkUtmp;
-#ifndef HAS_SELECT_ON_FIFO
-int	ChkPipe;
-#endif
 
 #define nofork_session (debugLevel & DEBUG_NOFORK)
 
@@ -157,7 +155,7 @@ main (int argc, char **argv)
     {
 	int len;
 	char buf[16], fullpath[PATH_MAX];
-	sprintf (buf, "/proc/%d/exe", getpid());
+	sprintf (buf, "/proc/%ld/exe", (long)getpid());
 	if ((len = readlink (buf, fullpath, sizeof(fullpath))) < 0)
 	    Panic ("Invoke with full path specification or mount /proc\n");
 	if (!StrNDup (&progpath, fullpath, len))
@@ -286,9 +284,6 @@ main (int argc, char **argv)
 #ifndef UNRELIABLE_SIGNALS
     (void) Signal (SIGCHLD, ChildNotify);
 #endif
-#ifndef HAS_SELECT_ON_FIFO
-    (void) Signal (SIGUSR2, PipeNotify);
-#endif
 
     /*
      * Step 2 - run a sub-daemon for each entry
@@ -322,14 +317,7 @@ main (int argc, char **argv)
 	    CheckUtmp ();
 	    ChkUtmp = 0;
 	}
-#ifndef HAS_SELECT_ON_FIFO
-	if (ChkPipe)
-	{
-	    CheckFifos ();
-	    ChkPipe = 0;
-	}
-#endif
-#if defined(UNRELIABLE_SIGNALS) || !(defined(XDMCP) || defined(HAS_SELECT_ON_FIFO))
+#if defined(UNRELIABLE_SIGNALS)
 	WaitForChild ();
 #else
 	WaitForSomething ();
@@ -362,17 +350,6 @@ main (int argc, char **argv)
     Debug ("Nothing left to do, exiting\n");
     return 0;
 }
-
-
-#ifndef HAS_SELECT_ON_FIFO
-/* ARGSUSED */
-static SIGVAL
-PipeNotify (int n ATTR_UNUSED)
-{
-    Debug ("Caught SIGUSR2\n");
-    ChkPipe = 1;
-}
-#endif
 
 
 /* ARGSUSED */
@@ -620,11 +597,9 @@ doShutdown (int how, int when)
 }
 
 
-#ifdef HAS_SELECT_ON_FIFO
 extern FD_TYPE	WellKnownSocketsMask;
 extern int	WellKnownSocketsMax;
 extern int	NumOfFifos;
-#endif
 
 static void
 openFifo (int *fifofd, char **fifopath, const char *dname)
@@ -648,12 +623,10 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 		chmod (*fifopath, 0620);
 		if ((*fifofd = open (*fifopath, O_RDWR | O_NONBLOCK)) >= 0) {
 		    RegisterCloseOnFork (*fifofd);
-#ifdef HAS_SELECT_ON_FIFO
 		    FD_SET (*fifofd, &WellKnownSocketsMask);
 		    if (*fifofd > WellKnownSocketsMax)
 			WellKnownSocketsMax = *fifofd;
 		    NumOfFifos++;
-#endif
 		    return;
 		}
 		unlink (*fifopath);
@@ -669,10 +642,8 @@ static void
 closeFifo (int *fifofd, const char *fifopath)
 {
     if (*fifofd >= 0) {
-#ifdef HAS_SELECT_ON_FIFO
 	FD_CLR (*fifofd, &WellKnownSocketsMask);
 	NumOfFifos--;
-#endif
 	CloseNClearCloseOnFork (*fifofd);
 	*fifofd = -1;
 	unlink (fifopath);
@@ -798,13 +769,10 @@ processDFifo (const char *buf, int len, void *ptr)
 	d->hstent->sd_when = when;
     } else if (!strcmp (ar[0], "lock")) {
 	d->hstent->lock = 1;
-#ifdef HAS_SELECT_ON_FIFO
 	if (AllLocalDisplaysLocked (0))
 	    StartReserveDisplay (0);
-#endif
     } else if (!strcmp (ar[0], "unlock")) {
 	d->hstent->lock = 0;
-#ifdef HAS_SELECT_ON_FIFO
 	ReapReserveDisplays ();
     } else if (!strcmp (ar[0], "reserve")) {
 	int lt = 0;
@@ -816,7 +784,6 @@ processDFifo (const char *buf, int len, void *ptr)
 	    TerminateProcess (d->pid, SIGTERM);
 	    d->status = raiser;
 	}
-#endif
     } else
 	LogInfo ("Invalid fifo command %'s\n", ar[0]);
     freeStrArr (ar);
@@ -1062,9 +1029,6 @@ WaitForChild (void)
 	       pid, waitSig(status), waitCore(status), waitCode(status));
 	if (autoRescan)
 	    RescanIfMod ();
-#ifndef HAS_SELECT_ON_FIFO
-	CheckFifos ();
-#endif
 	/* SUPPRESS 560 */
 	if ((d = FindDisplayByPid (pid))) {
 	    d->pid = -1;
@@ -1153,11 +1117,9 @@ WaitForChild (void)
 		       d->name);
 		d->status = notRunning;
 		break;
-#ifdef HAS_SELECT_ON_FIFO
 	    case raiser:
 		d->status = notRunning;
 		/* fallthrough */
-#endif
 	    case running:
 		LogError ("Server for display %s terminated unexpectedly\n",
 			  d->name);
@@ -1284,12 +1246,10 @@ StartDisplay (struct display *d)
 	    return;
 	} else {
 	    (void) fcntl (d->pipefd[0], F_SETFL, O_NONBLOCK);
-#ifdef HAS_SELECT_ON_FIFO
 	    FD_SET (d->pipefd[0], &WellKnownSocketsMask);
 	    if (d->pipefd[0] > WellKnownSocketsMax)
 		WellKnownSocketsMax = d->pipefd[0];
 	    NumOfFifos++;
-#endif
 	    RegisterCloseOnFork (d->pipefd[0]);
 	}
     }
@@ -1342,10 +1302,8 @@ rStopDisplay (struct display *d, int endState)
     Debug ("Stopping display %s to state %d\n", d->name, endState);
     closeFifo (&d->fifofd, d->fifoPath);
     if (d->pipefd[0] >= 0) {
-#ifdef HAS_SELECT_ON_FIFO
 	FD_CLR (d->pipefd[0], &WellKnownSocketsMask);
 	NumOfFifos--;
-#endif
 	CloseNClearCloseOnFork (d->pipefd[0]); 
 	close (d->pipefd[1]); 
 	d->pipefd[0] = d->pipefd[1] = -1;
@@ -1383,13 +1341,11 @@ ExitDisplay (
 {
     struct disphist	*he;
 
-#ifdef HAS_SELECT_ON_FIFO
     if (d->status == raiser)
     {
 	forceReserver = FALSE;
 	goodExit = TRUE;
     }
-#endif
 
     Debug ("ExitDisplay %s, "
 	   "endState = %d, forceReserver = %d, GoodExit = %d\n", 
@@ -1490,7 +1446,7 @@ StorePid (void)
 # endif
 #endif
 	}
-	fprintf (pidFilePtr, "%d\n", getpid ());
+	fprintf (pidFilePtr, "%ld\n", (long)getpid ());
 	(void) fflush (pidFilePtr);
 	RegisterCloseOnFork (pidFd);
     }
@@ -1522,7 +1478,7 @@ UnlockPidFile (void)
 }
 #endif
 
-
+#ifndef HAS_SETPROCTITLE
 void SetTitle (const char *name, ...)
 {
 #ifndef NOXDMTITLE
@@ -1552,3 +1508,4 @@ void SetTitle (const char *name, ...)
     va_end(args);
 #endif	
 }
+#endif

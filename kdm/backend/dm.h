@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -37,12 +41,6 @@ from The Open Group.
 #ifndef _DM_H_
 #define _DM_H_ 1
 
-#ifdef MINIX
-# ifdef MNX_TCPCONN
-#  define TCPCONN
-# endif
-#endif /* MINIX */
-
 #include "greet.h"
 
 #include <X11/Xos.h>
@@ -57,29 +55,14 @@ from The Open Group.
 # include <limits.h>
 # undef _POSIX_C_SOURCE
 #else
-# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#  include <setjmp.h>
-#  include <limits.h>
-# else
-#  define _POSIX_SOURCE
-#  include <setjmp.h>
-#  include <limits.h>
-#  undef _POSIX_SOURCE
-# endif
+# include <setjmp.h>
+# include <limits.h>
 #endif
 
-#ifdef X_NOT_STDC_ENV
-# define Time_t long
-extern Time_t time ();
-#else
-# include <time.h>
-# define Time_t time_t
-#endif
+#include <time.h>
+#define Time_t time_t
 
 #include <errno.h>
-#ifdef X_NOT_STDC_ENV
-extern int errno;
-#endif
 
 #ifdef XDMCP
 # if defined(__osf__)
@@ -181,10 +164,7 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # endif
 #endif
 
-typedef enum displayStatus { running, notRunning, zombie, phoenix,
-#ifdef HAS_SELECT_ON_FIFO
-			     raiser,
-#endif
+typedef enum displayStatus { running, notRunning, zombie, phoenix, raiser,
 			     tzombie, textMode, rzombie, reserve } DisplayStatus;
 
 typedef struct RcStr {
@@ -375,7 +355,9 @@ extern void BecomeDaemon (void);
 extern char *prog, *progpath;
 extern void CheckFifos (void);
 extern void StartDisplay (struct display *d);
+#ifndef HAS_SETPROCTITLE
 extern void SetTitle (const char *name, ...);
+#endif
 
 /* in dpylist.c */
 extern int AnyDisplaysLeft (void);
@@ -486,10 +468,8 @@ extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
-#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
 /* in xdmcp.c */
 extern void WaitForSomething (void);
-#endif
 
 #ifdef XDMCP
 
@@ -553,21 +533,10 @@ extern void RunChooser (struct display *d);
 
 #endif /* XDMCP */
 
-#ifndef X_NOT_STDC_ENV
-# include <stdlib.h>
-#else
-char *malloc(), *realloc();
-void exit(int);
-#endif
+#include <stdlib.h>
 
 typedef SIGVAL (*SIGFUNC)(int);
 
 SIGVAL (*Signal(int, SIGFUNC Handler))(int);
-
-#ifdef MINIX
-# include <sys/nbio.h>
-void udp_read_cb(nbio_ref_t ref, int res, int err);
-void tcp_listen_cb(nbio_ref_t ref, int res, int err);
-#endif
 
 #endif /* _DM_H_ */

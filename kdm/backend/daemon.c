@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -40,7 +44,7 @@ from The Open Group.
 #else
 # include <sys/ioctl.h>
 #endif
-#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__GNU__) || defined(__CYGWIN__)
+#if defined(__osf__) || defined(linux) || defined(__GNU__) || defined(__CYGWIN__)
 # define setpgrp setpgid
 #endif
 #ifdef hpux
@@ -98,11 +102,9 @@ BecomeDaemon (void)
 	sts = 0;	/* don't know how to set child's process group */
 #  else
 	sts = setpgrp(child_id, child_id);
-#   ifndef MINIX
 	if (sts)
 	    LogError("setting process grp for daemon failed, errno = %d\n",
 		     errno);
-#   endif /* MINIX */
 #  endif
 # endif
 #endif /* !CSRG_BASED */
@@ -123,16 +125,6 @@ BecomeDaemon (void)
     chdir("/");
 
 # ifndef __EMX__
-#  ifdef MINIX
-#   if 0
-    /* Use setsid() to get rid of our controlling tty, this requires an extra
-     * fork though.
-     */
-    setsid();
-    if (fork() > 0)
-    	_exit(0);
-#   endif
-#  else /* !MINIX */
 #   if !((defined(SYSV) || defined(SVR4)) && defined(i386)) && !defined(__CYGWIN__)
     if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
 #    if defined(USG) && defined(TCCLRCTTY)
@@ -149,7 +141,6 @@ BecomeDaemon (void)
 	(void) close (i);
     }
 #   endif /* !((SYSV || SVR4) && i386) */
-#  endif /* MINIX */
 # endif /* !__EMX__ */
 
 #else

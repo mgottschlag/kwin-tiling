@@ -4,7 +4,11 @@
  *
 Copyright 1990, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
@@ -39,31 +43,18 @@ in this Software without prior written authorization from The Open Group.
 
 #include <X11/X.h>
 
-#ifndef MINIX
-# ifndef X_NO_SYS_UN
-#  ifndef Lynx
-#   include <sys/un.h>
-#  else
-#   include <un.h>
-#  endif
+#ifndef X_NO_SYS_UN
+# ifndef Lynx
+#  include <sys/un.h>
+# else
+#  include <un.h>
 # endif
-#else /* MINIX */
-# include <sys/ioctl.h>
-# include <net/netlib.h>
-# include <net/gen/in.h>
-# include <net/gen/tcp.h>
-# include <net/gen/tcp_io.h>
-#endif /* !MINIX */
+#endif
 
 #include <ctype.h>
 
 #if defined(STREAMSCONN)
 # include <tiuser.h>
-#endif
-
-#ifdef MINIX
-int listen_inprogress;
-int listen_completed;
 #endif
 
 /* XXX use SNPrintf for this? */
@@ -396,12 +387,6 @@ ProcessChooserSocket (int fd)
     struct t_call *call;
     int		flags = 0;
 #endif
-#ifdef MINIX
-    nwio_tcpconf_t tcpconf;
-    nwio_tcpcl_t tcpcl;
-    char *tcp_device;
-    int new_fd, flags, r;
-#endif /* MINIX */
     char	buf[1024];
 
     Debug ("Process chooser socket\n");
@@ -447,83 +432,7 @@ ProcessChooserSocket (int fd)
 	return;
     }
 #else
-#ifdef MINIX
-    if (listen_inprogress) abort();
-    /* If the listen succeeded save the filedescriptor */
-    if (listen_completed)
-    {
-    	client_fd = dup(fd);
-    	if (client_fd == -1)
-    	{
-		LogError ("Dup failed: %s\n", strerror(errno));
-		return;
-    	}
-    }
-    else
-    	client_fd = -1;
-
-    /* Try to setup a new tcp device at the same filedescriptor as the old
-     * one.
-     */
-    if (ioctl(fd, NWIOGTCPCONF, &tcpconf) == -1)
-    {
-	LogError ("NWIOGTCPCONF failed: %s\n", strerror(errno));
-	return;
-    }
-    close(fd);
-    tcp_device = getenv("TCP_DEVICE");
-    if (tcp_device == NULL)
-    	tcp_device = TCP_DEVICE;
-    new_fd = open(tcp_device, O_RDWR);
-    if (new_fd == -1)
-    {
-	LogError ("open '%s' failed: %s\n", tcp_device, strerror(errno));
-	return;
-    }
-    if (new_fd != fd)
-    {
-    	dup2(new_fd, fd);
-    	close(new_fd);
-    }
-    if ((flags = fcntl(fd, F_GETFD)) == -1)
-    {
-	LogError ("F_GETFD failed: %s\n", strerror(errno));
-	return;
-    }
-    if (fcntl(fd, F_SETFD, flags | FD_ASYNCHIO) == -1)
-    {
-	LogError ("F_SETFD failed: %s\n", strerror(errno));
-	return;
-    }
-    tcpconf.nwtc_flags = NWTC_EXCL | NWTC_LP_SET | NWTC_UNSET_RA | NWTC_UNSET_RP;
-    if (ioctl(fd, NWIOSTCPCONF, &tcpconf) == -1)
-    {
-	LogError ("NWIOSTCPCONF failed: %s\n", strerror(errno));
-	return;
-    }
-    listen_inprogress = 0;
-    listen_completed = 0;
-
-    tcpcl.nwtcl_flags = 0;
-    r = ioctl(fd, NWIOTCPLISTEN, &tcpcl);
-    if (r == -1 && errno == EINPROGRESS)
-    {
-    	listen_inprogress = 1;
-    	nbio_inprogress(fd, ASIO_IOCTL, 1 /* read */, 1 /* write */,
-    		0 /* except */);
-    }
-    else if (r == -1)
-    {
-	LogError ("NWIOTCPLISTEN failed: %s\n", strerror(errno));
-	return;
-    }
-    else
-    	listen_completed = 1;
-    if (client_fd == -1)
-    	return;
-#else /* !MINIX */
     client_fd = accept (fd, (struct sockaddr *)buf, (void *)&len);
-#endif /* MINIX */
     if (client_fd == -1)
     {
 	LogError ("Cannot accept chooser connection\n");
@@ -586,7 +495,11 @@ RunChooser (struct display *d)
     char buf[1024];
 
     Debug ("RunChooser %s\n", d->name);
+#ifndef HAS_SETPROCTITLE
     SetTitle (d->name, "chooser", (char *) 0);
+#else
+    setproctitle("chooser %s", d->name);
+#endif
     LoadXloginResources (d);
     args = parseArgs ((char **) 0, d->chooser);
     strcpy (buf, "-xdmaddress ");
@@ -610,18 +523,5 @@ RunChooser (struct display *d)
     LogError ("Cannot execute %s\n", args[0]);
     exit (EX_REMANAGE_DPY);
 }
-
-# ifdef MINIX
-void tcp_listen_cb(nbio_ref_t ref, int res, int err)
-{
-	if (!listen_inprogress)
-		abort();
-	if (res == 0)
-		listen_completed= 1;
-	else
-    		LogError("listen error: %s\n", strerror(err));
-	listen_inprogress= 0;
-}
-# endif
 
 #endif /* XDMCP */

@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -32,10 +36,8 @@ from The Open Group.
  * xdmcp.c - Support for XDMCP
  */
 
-#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
-# include "dm.h"
-# include "dm_error.h"
-#endif
+#include "dm.h"
+#include "dm_error.h"
 
 #ifdef XDMCP
 
@@ -48,31 +50,21 @@ from The Open Group.
 #include <sys/types.h>
 #include <ctype.h>
 
-#ifndef MINIX
-# ifndef X_NO_SYS_UN
-#  ifndef Lynx
-#   include <sys/un.h>
-#  else
-#   include <un.h>
-#  endif
+#ifndef X_NO_SYS_UN
+# ifndef Lynx
+#  include <sys/un.h>
+# else
+#  include <un.h>
 # endif
-# include <netdb.h>
-#else /* MINIX */
-# include <net/hton.h>
-# include <net/gen/netdb.h>
-#endif /* !MINIX */
-
-#ifdef MINIX
-struct sockaddr_un
-{
-	u16_t   sun_family;
-	char    sun_path[62];
-};
-static char read_buffer[XDM_MAX_MSGLEN+sizeof(udp_io_hdr_t)];
-static int read_inprogress;
-static int read_size;
-# define select(n,r,w,x,t) nbio_select(n,r,w,x,t)
 #endif
+#if defined(__SVR4) && defined(__sun)
+/*
+ * make sure we get the resolver's version of gethostbyname
+ * otherwise we may not get all the addresses!
+ */
+# define gethostbyname res_gethostbyname
+#endif
+#include <netdb.h>
 
 #define getString(name,len)	((name = malloc (len + 1)) ? 1 : 0)
 
@@ -287,45 +279,13 @@ ProcessRequestSocket (void)
     XdmcpHeader		header;
     struct sockaddr	addr;
     int			addrlen = sizeof addr;
-#ifdef MINIX
-    int			r;
-#endif
-
-#ifdef MINIX
-    if (read_inprogress) abort();
-    if (read_size == 0)
-    {
-    	r= read(xdmcpFd, read_buffer, sizeof(read_buffer));
-    	if (r == -1 && errno == EINPROGRESS)
-    	{
-    		read_inprogress= 1;
-    		nbio_inprogress(xdmcpFd, ASIO_READ, 1 /* read */,
-    			0 /* write */, 0 /* exception */);
-    	}
-    	else if (r <= 0)
-    	{
-    		LogError("read error: %s\n",
-    			r == 0 ?  "EOF" : strerror(errno));
-		return;
-	}
-    }
-#endif
 
     Debug ("ProcessRequestSocket\n");
     bzero ((char *) &addr, sizeof (addr));
-#ifdef MINIX
-    if (!MNX_XdmcpFill (xdmcpFd, &buffer, &addr, &addrlen,
-    	read_buffer, read_size))
-    {
-	return;
-    }
-    read_size= 0;
-#else
     if (!XdmcpFill (xdmcpFd, &buffer, (XdmcpNetaddr) &addr, &addrlen)) {
 	Debug ("XdmcpFill failed\n");
 	return;
     }
-#endif
     if (!XdmcpReadHeader (&buffer, &header)) {
 	Debug ("XdmcpReadHeader failed\n");
 	return;
@@ -442,15 +402,7 @@ NetworkAddressToName(
 	    hostent = gethostbyaddr ((char *)data,
 				     connectionAddress->length, AF_INET);
 	    if (sourceAddress && hostent) {
-#if defined(__SVR4) && defined(__sun)
-		/*
-		 * make sure we get the resolver's version of gethostbyname
-		 * otherwise we may not get all the addresses!
-		 */
-		hostent = (struct hostent *) res_gethostbyname(hostent->h_name);
-#else
 		hostent = gethostbyname(hostent->h_name);
-#endif
 		if (hostent)
 			multiHomed = hostent->h_addr_list[1] != NULL;
 	    }
@@ -600,7 +552,7 @@ forward_respond (
 		    memmove( un_addr.sun_path, clientAddress.data, clientAddress.length);
 		    un_addr.sun_path[clientAddress.length] = '\0';
 		    client = (struct sockaddr *) &un_addr;
-#if defined(BSD44SOCKETS) && !defined(Lynx)
+#if defined(BSD44SOCKETS) && !defined(Lynx) && defined(UNIXCONN)
 		    un_addr.sun_len = strlen(un_addr.sun_path);
 		    clientlen = SUN_LEN(&un_addr);
 #else
@@ -1270,39 +1222,13 @@ NameToNetworkAddress(
 }
 #endif
 
-#ifdef MINIX
-void udp_read_cb(nbio_ref_t ref, int res, int err)
-{
-	if (!read_inprogress)
-		abort();
-	if (res > 0)
-	{
-		read_size= res;
-	}
-	else
-    	{
-    		LogError("read error: %s\n",
-    			res == 0 ?  "EOF" : strerror(err));
-		read_size= 0;
-	}
-	read_inprogress= 0;
-}
-#endif /* MINIX */
-
 #endif /* XDMCP */
 
-#if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
-
-#ifndef HAS_SELECT_ON_FIFO
-extern int ChkPipe;
-#endif
 extern int Rescan, ChildReady, ChkUtmp;
 
 FD_TYPE	WellKnownSocketsMask;
 int	WellKnownSocketsMax;
-#ifdef HAS_SELECT_ON_FIFO
 int	NumOfFifos;
-#endif
 
 void
 WaitForSomething (void)
@@ -1312,11 +1238,9 @@ WaitForSomething (void)
 
     Debug ("WaitForSomething\n");
     if (!ChildReady
-#if defined(XDMCP) && defined(HAS_SELECT_ON_FIFO)
+#if defined(XDMCP)
 	&& (NumOfFifos || AnyWellKnownSockets ())
-#elif defined(XDMCP)
-	&& AnyWellKnownSockets ()
-#elif defined(HAS_SELECT_ON_FIFO)
+#else
 	&& NumOfFifos
 #endif
 	) 
@@ -1327,24 +1251,15 @@ WaitForSomething (void)
 #else
 	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
 #endif
-	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d"
-#ifndef HAS_SELECT_ON_FIFO
-		"  ChkPipe: %d"
-#endif
-		"\n", nready, Rescan, ChildReady, ChkUtmp
-#ifndef HAS_SELECT_ON_FIFO
-		, ChkPipe
-#endif
-	    );
+	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d\n",
+		nready, Rescan, ChildReady, ChkUtmp);
 	if (nready > 0)
 	{
 #ifdef XDMCP
 	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
 	    {
 		ProcessRequestSocket ();
-# ifdef HAS_SELECT_ON_FIFO
 		nready--;
-# endif
 	    }
 	    if (chooserFd >= 0 && FD_ISSET (chooserFd, &reads))
 	    {
@@ -1355,14 +1270,10 @@ WaitForSomething (void)
                 } else
 # endif
 		ProcessChooserSocket (chooserFd);
-# ifdef HAS_SELECT_ON_FIFO
 		nready--;
-# endif
 	    }
-# ifdef HAS_SELECT_ON_FIFO
 	    if (nready)
 		CheckFifos ();
-# endif
 #else /* XDMCP */
 	    CheckFifos ();
 #endif
@@ -1374,6 +1285,4 @@ WaitForSomething (void)
     } else
 	WaitForChild ();
 }
-
-#endif /* XDMCP || HAS_SELECT_ON_FIFO */
 

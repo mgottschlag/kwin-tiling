@@ -4,7 +4,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -41,12 +45,6 @@ from The Open Group.
 
 #include <stdio.h>
 #include <signal.h>
-#ifdef MINIX
-# include <sys/ioctl.h>
-# include <net/gen/in.h>
-# include <net/gen/tcp.h>
-# include <net/gen/tcp_io.h>
-#endif
 
 static int receivedUsr1;
 
@@ -245,9 +243,6 @@ GetRemoteAddress (struct display *d, int fd)
 #ifdef STREAMSCONN
     struct netbuf	netb;
 #endif
-#ifdef MINIX
-    nwio_tcpconf_t tcpconf;
-#endif
 
     XdmcpDisposeARRAY8 (&d->peer);
 #ifdef STREAMSCONN
@@ -257,25 +252,7 @@ GetRemoteAddress (struct display *d, int fd)
     len = 8;
     /* lucky for us, t_getname returns something that looks like a sockaddr */
 #else
-#ifdef MINIX
-    if (ioctl(fd, NWIOGTCPCONF, &tcpconf) == -1)
-    {
-    	LogError("NWIOGTCPCONF failed: %s\n", strerror(errno));
-    	len= 0;
-    }
-    else
-    {
-    	struct sockaddr_in *sinp;
-
-    	sinp= (struct sockaddr_in *)buf;
-    	len= sizeof(*sinp);
-    	sinp->sin_family= AF_INET;
-    	sinp->sin_port= tcpconf.nwtc_remport;
-    	sinp->sin_addr.s_addr= tcpconf.nwtc_remaddr;
-    }
-#else
     getpeername (fd, (struct sockaddr *) buf, (void *)&len);
-#endif
 #endif
     if (len && XdmcpAllocARRAY8(&d->peer, len))
 	memmove( (char *) d->peer.data, buf, len);

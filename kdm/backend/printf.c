@@ -3,7 +3,11 @@
 
 Copyright 1988, 1998  The Open Group
 
-All Rights Reserved.
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
 
 The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
@@ -32,6 +36,11 @@ from The Open Group.
  *
  */
 
+/*
+ * NOTE: this file is meant to be included, not linked, 
+ * so it can be used in the helper programs without much voodoo.
+ */
+
 /* ########## printf core implementation with some extensions ########## */
 /*
  * How to use the extensions:
@@ -53,8 +62,6 @@ from The Open Group.
  *     - { -> short for ( "{" ) " }" < " " | ""
  *   - the pointer to the array is the last argument to the format
  *
- * NOTE: this file is meant to be included, not linked, 
- * so it can be used in the helper programs without much voodoo.
  */
 
 /**************************************************************
@@ -504,11 +511,11 @@ LogOutOfMem (const char *fkt)
     logTime (dbuf);
     fprintf (stderr, "%s "
 # ifdef LOG_NAME
-	LOG_NAME "[%d]: Out of memory in %s()\n", dbuf, 
+	LOG_NAME "[%ld]: Out of memory in %s()\n", dbuf, 
 # else
-	"%s[%d]: Out of memory in %s()\n", dbuf, prog, 
+	"%s[%ld]: Out of memory in %s()\n", dbuf, prog, 
 # endif
-	(int)getpid(), fkt);
+	(long)getpid(), fkt);
     fflush (stderr);
 #endif
 }
@@ -530,11 +537,11 @@ OutChLFlush (OCLBuf *oclbp)
 	logTime (dbuf);
 	fprintf (stderr, "%s "
 # ifdef LOG_NAME
-	    LOG_NAME  "[%d] %s: %.*s\n", dbuf, 
+	    LOG_NAME  "[%ld] %s: %.*s\n", dbuf, 
 # else
-	    "%s[%d] %s: %.*s\n", dbuf, prog, 
+	    "%s[%ld] %s: %.*s\n", dbuf, prog, 
 # endif
-	    (int)getpid(), lognams[oclbp->type], oclbp->clen, oclbp->buf);
+	    (long)getpid(), lognams[oclbp->type], oclbp->clen, oclbp->buf);
 	fflush (stderr);
 #endif
 	oclbp->clen = 0;
@@ -594,13 +601,14 @@ STATIC int debugLevel;
 STATIC void
 Debug (const char *fmt, ...)
 {
-    va_list args;
-
     if (debugLevel & LOG_DEBUG_MASK)
     {
+	va_list args;
+	int olderrno = errno;
 	va_start(args, fmt);
 	Logger (DM_DEBUG, fmt, args);
 	va_end(args);
+	errno = olderrno;
     }
 }
 #endif
