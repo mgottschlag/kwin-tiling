@@ -123,5 +123,5 @@ QString TaskbarConfig::quickHelp() const
     return i18n("<h1>Taskbar</h1> You can configure the taskbar here."
                 " This includes options such as whether or not the taskbar should show all"
 		" windows at once or only those on the current desktop."
-                " You can also configure whether or not Windows list button will be displayed.");
+                " You can also configure whether or not the Window List button will be displayed.");
 }

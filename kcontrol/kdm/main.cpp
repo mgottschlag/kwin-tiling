@@ -120,15 +120,15 @@ KDModule::~KDModule()
 QString KDModule::quickHelp() const
 {
     return i18n(    "<h1>Login Manager</h1> In this module you can configure the "
-                    "various aspects  of the KDE Login Manager.  This includes "
+                    "various aspects of the KDE Login Manager.  This includes "
                     "the look and feel as well as the users that can be "
                     "selected for login. Note that you can only make changes "
                     "if you run the module with superuser rights. If you haven't started the KDE "
                     "Control Center with superuser rights (which is the completely right thing to "
                     "do, by the way), click on the <em>Modify</em> button to acquire "
                     "superuser rights. You will be asked for the superuser password."
-                    "<h2>Appearance</h2> On this tab page, you can figure how "
-                    "the Login Manager should look like, which language it should use, and which "
+                    "<h2>Appearance</h2> On this tab page, you can configure how "
+                    "the Login Manager should look, which language it should use, and which "
                     "GUI style it should use. The language settings made here have no influence on "
                     "the user's language settings."
                     "<h2>Font</h2>Here you can choose the fonts that the Login Manager should use "
