@@ -29,7 +29,7 @@ void  KWidgetSettingsModule::init()
 	connect(cbComboEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cboxIconSupport, SIGNAL(toggled(bool)), SLOT(setDirty()));
-	connect(cboxTearOffHandles, SIGNAL(toggles(bool)), SLOT(setDirty()));
+	connect(cboxTearOffHandles, SIGNAL(toggled(bool)), SLOT(setDirty()));
 }
 
 void  KWidgetSettingsModule::setDirty()

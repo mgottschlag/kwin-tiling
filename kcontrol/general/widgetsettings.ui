@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>534</width>
-            <height>496</height>
+            <height>407</height>
         </rect>
     </property>
     <property name="caption">
@@ -147,6 +147,12 @@
                     </property>
                     <property name="text">
                         <string>E&amp;nable Tooltips</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you check this options, KDE application will offer tooltips when the cursor remains over items in the toolbar.</string>
                     </property>
                 </widget>
             </grid>
@@ -292,38 +298,45 @@
             <property name="title">
                 <string>Visual Appearance</string>
             </property>
-            <widget class="QCheckBox">
+            <vbox>
                 <property name="name">
-                    <cstring>cboxIconSupport</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>30</y>
-                        <width>340</width>
-                        <height>20</height>
-                    </rect>
+                <property name="margin">
+                    <number>11</number>
                 </property>
-                <property name="text">
-                    <string>Sho&amp;w icons on buttons</string>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>cboxTearOffHandles</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>60</y>
-			<width>680</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Show &amp;Tear-Off Handles in Pop-Up menus</string>
-                </property>
-            </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>cboxIconSupport</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Sho&amp;w icons on buttons</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you enable this option, KDE Applications will show small icons aside of some important buttons.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>cboxTearOffHandles</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show tear-off handles in &amp;pop-up menus</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you enable this option some pop-up menus will show so called tear-off handles. If you click them, you get the menu inside a widget. This can be very helpfull when performing the same action multiple times.</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <spacer>
             <property name="name" stdset="0">
