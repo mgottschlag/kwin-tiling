@@ -46,6 +46,7 @@
 #include <X11/Xmd.h>
 extern "C" {
 #include <X11/extensions/dpms.h>
+int __kde_do_not_unload = 1;
 }
 
 #ifdef XIMStringConversionRetrival
