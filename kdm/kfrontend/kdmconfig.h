@@ -29,14 +29,9 @@
 
 #include <qnamespace.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 #include <qfont.h>
 #include <qpalette.h>
-
-#include <ksimpleconfig.h>	// need it here for "make final"
-
-#include <sys/param.h>	// for BSD
-#include <unistd.h>
 
 QString GetCfgQStr (int id);
 QStringList GetCfgQStrList (int id);

@@ -27,19 +27,17 @@
 #ifndef KDMSHUTDOWN_H
 #define KDMSHUTDOWN_H
 
-#include <qglobal.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <kpassdlg.h>
 #include "kfdialog.h"
 
-#include <sys/param.h>	// for BSD
-#include <stdlib.h>
+#include <qradiobutton.h>
+
+class LiloInfo;
+class QLabel;
+class QPushButton;
+class QButtonGroup;
+class KPasswordEdit;
+class QComboBox;
+class QTimer;
 
 class KDMShutdown : public FDialog {
     Q_OBJECT
@@ -47,10 +45,13 @@ class KDMShutdown : public FDialog {
 
 public:
     KDMShutdown( QWidget *_parent = 0 );
+#if defined(__linux__) && defined(__i386__)
+    ~KDMShutdown();
+#endif
 
 private slots:
     void bye_bye();
-    void target_changed( int );
+    void target_changed();
     void when_changed( int );
     void timerDone();
 
@@ -64,11 +65,10 @@ private:
     QTimer		*timer;
     bool		needRoot;
 #if defined(__linux__) && defined(__i386__)
-    int			liloTarget;
+    LiloInfo		*liloInfo;
+    QComboBox		*targets;
+    int			defaultLiloTarget, oldLiloTarget;
 #endif
-
-    void set_min( QWidget *w ) { w->setMinimumSize( w->sizeHint() ); }
-    void set_fixed( QWidget *w ) { w->setFixedSize( w->sizeHint() ); }
 
 };
 

@@ -20,12 +20,15 @@
  *
  */
 
+#include "kdmclock.h"
+
+//#include <kapplication.h>
+//#include <kconfig.h>
+
+#include <qdatetime.h>
+#include <qpixmap.h>
 #include <qpainter.h>
 #include <qtimer.h>
-#include <kapplication.h>
-#include <kconfig.h>
-
-#include "kdmclock.h"
 
 KdmClock::KdmClock( QWidget *parent, const char *name )
   : inherited( parent, name )

@@ -27,29 +27,28 @@
 #ifndef KGREETER_H
 #define KGREETER_H
 
+#include "kfdialog.h"
+
+#include <kapplication.h>
+
+#include <qlineedit.h>
+#include <qmessagebox.h>
+
+class KdmClock;
+class KConsole;
+class UserListView;
+
+class KListView;
+class KSimpleConfig;
+class KPasswordEdit;
+
 class QTimer;
 class QLabel;
+class QFrame;
 class QPushButton;
 class QPopupMenu;
 class QComboBox;
-
-#include <qglobal.h>
-#include <qlineedit.h>
-#include <qframe.h>
-#include <qmessagebox.h>
-
-#include <kpassdlg.h>
-#include <ksimpleconfig.h>
-#include <klistview.h>
-
-#include "kfdialog.h"
-#include "kdmshutdown.h"
-#ifdef BUILTIN_XCONSOLE
-# include "kconsole.h"
-#endif
-
-class KdmClock;
-
+class QListViewItem;
 
 class GreeterApp : public KApplication {
     typedef KApplication inherited;
@@ -82,8 +81,6 @@ protected:
     void focusOutEvent( QFocusEvent *e );
 };
 
-
-class UserListView;
 
 class KGreeter : public FDialog {
     Q_OBJECT

@@ -23,7 +23,6 @@
 #define _KDM_CLOCK_H_
 
 #include <qframe.h>
-#include <qdatetime.h>
 
 class KdmClock : public QFrame
 {

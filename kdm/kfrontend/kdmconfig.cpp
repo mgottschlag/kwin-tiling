@@ -23,25 +23,21 @@
 
     */
  
+#include "kdmconfig.h"
+#include "kdm_greet.h"
+#include "kdm_config.h"
+
+#include <kapplication.h>
+#include <klocale.h>
+#include <kstandarddirs.h>
+#include <ksimpleconfig.h>
+
+#include <qtextcodec.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/utsname.h>
-
-//#include <qfile.h>
-#include <qtextcodec.h>	//XXX
-#include <qsettings.h> 
-
-#include <kapplication.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kcharsets.h>
-#include <kstandarddirs.h>
-
-#include "kdmconfig.h"
-#include "kdm_greet.h"
-#include "kdm_config.h"
 
 KDMConfig *kdmcfg = 0;
 

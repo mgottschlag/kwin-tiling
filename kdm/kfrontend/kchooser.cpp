@@ -22,8 +22,12 @@
 
     */
 
+#include "kchooser.h"
+#include "kdmshutdown.h"
+#include "kdmconfig.h"
+#include "kdm_greet.h"
+
 #include <klocale.h>
-#include <kmessagebox.h>
 
 #include <qaccel.h>
 #include <qlayout.h>
@@ -31,12 +35,8 @@
 #include <qpushbutton.h>
 #include <qpopupmenu.h>
 #include <qsocketnotifier.h>
-//#include <qfont.h>
-
-#include "kchooser.h"
-#include "kdmshutdown.h"
-#include "kdmconfig.h"
-#include "kdm_greet.h"
+#include <qlistview.h>
+#include <qlineedit.h>
 
 #include <stdlib.h>
 
@@ -49,18 +49,12 @@ public:
 };
 
 
-static void set_min(QWidget * w)
-{
-    w->setMinimumSize(w->sizeHint());
-}
-
 ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
     : inherited(parent, name)
 {
     QBoxLayout *vbox = new QVBoxLayout(winFrame, 10, 10);
 
     QLabel *title = new QLabel(i18n("XDMCP Host Menu"), winFrame);
-    set_min(title);
     title->setAlignment(AlignCenter);
     vbox->addWidget(title);
 
@@ -112,12 +106,6 @@ ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
 
 //    QPushButton *helpButton = new QPushButton(i18n("&Help"), winFrame);
 
-    set_min(acceptButton);
-    set_min(pingButton);
-    set_min(menuButton);
-//    set_min(helpButton);
-
-
     QBoxLayout *hbox = new QHBoxLayout(vbox, 20);
     hbox->addWidget(acceptButton);
     hbox->addWidget(pingButton);
@@ -128,8 +116,6 @@ ChooserDlg::ChooserDlg(QWidget * parent, const char *name)
 
     sn = new QSocketNotifier (rfd, QSocketNotifier::Read, this);
     connect (sn, SIGNAL(activated(int)), SLOT(slotReadPipe()));
-
-    //     setMinimumSize( winFrame->minimumSize());
 
     connect(pingButton, SIGNAL(clicked()), SLOT(pingHosts()));
     connect(acceptButton, SIGNAL(clicked()), SLOT(accept()));

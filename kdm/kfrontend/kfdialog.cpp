@@ -23,15 +23,13 @@
 
     */
  
+#include "kfdialog.h"
+
+#include <klocale.h>
 
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-
-#include <kapplication.h>
-#include <klocale.h>
-
-#include "kfdialog.h"
 
 #include <X11/Xlib.h>
 

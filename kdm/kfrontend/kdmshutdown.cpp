@@ -23,25 +23,30 @@
 
     */
 
-#include <qfile.h>
-#include <qcombobox.h>
-#include <qvbuttongroup.h>
-#include <qstyle.h>
-
-#include <kapplication.h>
-#include <klocale.h>
-#include <kseparator.h>
-
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "liloinfo.h"
 #include "kdm_greet.h"
 
+#include <kapplication.h>
+#include <klocale.h>
+#include <kpassdlg.h>
+
+#include <qcombobox.h>
+#include <qvbuttongroup.h>
+#include <qstyle.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qtimer.h>
+#include <qpushbutton.h>
+
+#include <stdlib.h>
 
 KDMShutdown::KDMShutdown( QWidget *_parent )
     : inherited( _parent, "Shutdown" )
 {
-    QComboBox *targets = 0;
+    QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
+
     QVBoxLayout *box = new QVBoxLayout( winFrame, KDialog::spacingHint() * 2 );
 
     QHBoxLayout *hlay = new QHBoxLayout( box );
@@ -51,13 +56,11 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 
     QRadioButton *rb;
     rb = new KDMRadioButton( i18n("&Turn off computer"), howGroup );
-    set_min( rb );
     // Default action
     rb->setChecked( true );
     rb->setFocus();
 
     restart_rb = new KDMRadioButton( i18n("&Restart computer"), howGroup );
-    set_min( restart_rb );
 
     connect( rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
     connect( restart_rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
@@ -70,43 +73,51 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	    + howGroup->insideSpacing();
 	hb->addSpacing( spc );
 	targets = new QComboBox( hlp );
-	set_fixed( targets );
+	targets->setSizePolicy( fp );
 	hlp->setFixedSize( targets->width() + spc, targets->height() );
 	hb->addWidget( targets );
 
 	// fill combo box with contents of lilo config
-	LiloInfo info( kdmcfg->_liloCmd, kdmcfg->_liloMap );
+	liloInfo = new LiloInfo( kdmcfg->_liloCmd, kdmcfg->_liloMap );
 
 	QStringList list;
-	if (info.getBootOptions( &list ) == 0) {
+	if (!liloInfo->getBootOptions( list, defaultLiloTarget )) {
+	    oldLiloTarget = defaultLiloTarget;
 	    targets->insertStringList( list );
-            liloTarget = info.getDefaultBootOptionIndex();
-	    targets->setCurrentItem( liloTarget );
+	    QString nextOption;
+	    liloInfo->getNextBootOption( nextOption );
+	    if (!nextOption.isEmpty()) {
+		int idx = list.findIndex( nextOption );
+		if (idx < 0) {
+		    targets->insertItem( nextOption );
+		    oldLiloTarget = list.count();
+		} else
+		    oldLiloTarget = idx;
+	    }
+	    targets->setCurrentItem( oldLiloTarget );
 	    connect( targets, SIGNAL(activated(int)),
-		     SLOT(target_changed(int)) );
+		     SLOT(target_changed()) );
 	}
-    }
+    } else
+	liloInfo = 0;
 #endif
 
-    set_fixed( howGroup );
+    howGroup->setSizePolicy( fp );
 
     if (!kdmcfg->_interactiveSd) {
 	whenGroup = new QVButtonGroup( i18n("Shutdown Mode"), winFrame );
 	hlay->addWidget( whenGroup, 0, AlignTop );
 
 	rb = new QRadioButton( i18n("verb!", "&Schedule"), whenGroup );
-	set_min( rb );
 	if (kdmcfg->_defSdMode == SHUT_SCHEDULE)
 	    rb->setChecked( true );
 
 	force_rb = new QRadioButton( i18n("&Force now"), whenGroup );
-	set_min( force_rb );
 	// Default action
 	if (kdmcfg->_defSdMode == SHUT_FORCENOW)
 	    force_rb->setChecked( true );
 
 	try_rb = new QRadioButton( i18n("&Try now"), whenGroup );
-	set_min( try_rb );
 	if (kdmcfg->_defSdMode == SHUT_TRYNOW)
 	    try_rb->setChecked( true );
 
@@ -115,7 +126,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 
 	connect( whenGroup, SIGNAL(clicked(int)), SLOT(when_changed(int)) );
 
-	set_fixed( whenGroup );
+	whenGroup->setSizePolicy( fp );
     }
 
     if (kdmcfg->_allowShutdown == SHUT_ROOT ||
@@ -126,22 +137,22 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 					      QSizePolicy::Preferred ) );
 
 	QLabel *plb = new QLabel( pswdEdit, i18n("Root &password:"), winFrame );
+	plb->setSizePolicy( fp );
 
 	QHBoxLayout *qhb = new QHBoxLayout( box, 10 );
 	qhb->addWidget( plb );
 	qhb->addWidget( pswdEdit );
-        set_fixed( pswdEdit );
-        set_min( plb);
+        pswdEdit->setSizePolicy( fp );
 	timer = new QTimer( this );
 	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
     } else
 	pswdEdit = 0;
 
     okButton = new QPushButton( i18n("&OK"), winFrame );
-    set_fixed( okButton );
+    okButton->setSizePolicy( fp );
     okButton->setDefault( true );
     cancelButton = new QPushButton( i18n("&Cancel"), winFrame );
-    set_fixed( cancelButton );
+    cancelButton->setSizePolicy( fp );
 
     hlay = new QHBoxLayout( box );
     hlay->addStretch( 1 );
@@ -156,6 +167,13 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     when_changed( 0 );
 }
 
+#if defined(__linux__) && defined(__i386__)
+KDMShutdown::~KDMShutdown()
+{
+    delete liloInfo;
+}
+#endif
+
 void
 KDMShutdown::timerDone()
 {
@@ -165,11 +183,10 @@ KDMShutdown::timerDone()
 }
 
 void
-KDMShutdown::target_changed( int id )
+KDMShutdown::target_changed()
 {
 #if defined(__linux__) && defined(__i386__)
     restart_rb->setChecked( true );
-    liloTarget = id;
 #endif
 }
 
@@ -204,8 +221,12 @@ KDMShutdown::bye_bye()
     }
 #if defined(__linux__) && defined(__i386__)
     if (kdmcfg->_useLilo && restart_rb->isChecked()) {
-	LiloInfo info( kdmcfg->_liloCmd, kdmcfg->_liloMap );
-	info.setNextBootOption( liloTarget );
+	if (targets->currentItem() != oldLiloTarget) {
+	    if (targets->currentItem() == defaultLiloTarget)
+		liloInfo->setNextBootOption( "" );
+	    else
+		liloInfo->setNextBootOption( targets->currentText() );
+	}
     }
 #endif
     GSendInt( G_Shutdown );

@@ -28,8 +28,9 @@
 #define FDIALOG_H
 
 #include <qdialog.h>
-#include <qframe.h>
 #include <qmessagebox.h>
+
+class QFrame;
 
 class FDialog : public QDialog {
     typedef QDialog inherited;

@@ -32,60 +32,58 @@
 #include <config.h>
 #endif 
 
-#include <qfileinfo.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <kapplication.h>
 #include <kprocess.h>
 
 /*
  * Errors:
  *      0 = No error
- *     -1 = Lilo Error (description in getErrorDescription)
- *     -2 = No next option was defined
- *     -3 = Next option does not occur in option list
- *     -4 = Hack is not enabled
- *     -5 = Attempt to write invalid next boot option
- *     -6 = Failed to run Lilo
- *     -7 = Lilo location is a non-existing file
- *     -8 = Bootmap location is a non-existing file
+ *     -1 = Lilo location is a non-existing file
+ *     -2 = Bootmap location is a non-existing file
+ *     -3 = Failed to run Lilo
+ *     -4 = Lilo Error (description in getErrorDescription)
+ *     -5 = Error parsing Lilo output
  */
 
-class LiloInfo : QObject
+class LiloInfo
+{
+	public:
+		LiloInfo ( const QString &lilolocation,
+		           const QString &bootmaplocation );
+
+		int getBootOptions ( QStringList &bootOptions, int &defaultOptionIndex );
+		int getNextBootOption ( QString &nextBootOption );
+		int setNextBootOption ( const QString &nextBootOption );
+//		QString getErrorDescription() { return liloErrorString; }
+
+	private:
+		QString liloloc, bootmaploc;
+		QStringList options;
+		int indexDefault;
+		QString nextOption;
+		int error;
+		QString liloErrorString;
+
+};
+
+class LiloProcess : public KProcess
 {
 	Q_OBJECT
 
 	public:
-		LiloInfo ( QString lilolocation,
-		           QString bootmaplocation,
-		           bool enableHack = true,
-		           bool enableDebug = true );
-		~LiloInfo();
-
-		int getBootOptions ( QStringList *bootOptions );
-		int getDefaultBootOptionIndex();
-		int setNextBootOption ( int nextBootOptionIndex );
+		LiloProcess ( const QString &lilolocation,
+			      const QString &bootmaplocation );
+		bool exec();
+		QStringList stdout();
+		QString error();
 
 	private:
-		QString liloloc, bootmaploc;
-		bool optionsAreRead;               // true as soon as lilo -q is called
-		bool nextOptionIsRead;          // true as soon as lilo -q -v is called
-		QStringList *options;
-		int indexDefault;             // index in options of the default option
-		int indexNext;                   // index in options of the next option
-		bool debug, useHack;
-		int error;
-		QString liloErrorString;      // is set when lilo resulted in an error;
-		                             // getErrorDescription() then returns this
-		                                               // string and clears it.
-
-		bool getOptionsFromLilo();
-		bool getNextOptionFromLilo();
+		QByteArray _stdout, _stderr;
 
 	private slots:
-		void getOptionsFromStdout ( KProcess *, char *buffer, int len );
-		void getNextOptionFromStdout ( KProcess *, char *buffer, int len );
+		void processStdout ( KProcess *, char *buffer, int len );
 		void processStderr ( KProcess *, char *buffer, int len );
 };
 

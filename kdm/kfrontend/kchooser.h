@@ -27,9 +27,6 @@
 
 #include "kfdialog.h"
 
-#include <qlistview.h>
-#include <qlineedit.h>
-
 /* should be in kgreet_local.h */
 #define ex_exit		1
 #define ex_greet	2
@@ -37,6 +34,9 @@
 
 class QSocketNotifier;
 class QPopupMenu;
+class QLineEdit;
+class QListView;
+class QListViewItem;
 
 class ChooserDlg : public FDialog {
     Q_OBJECT

@@ -25,33 +25,34 @@
 
 #include <config.h>
 
-#include <qfile.h>
-#include <qpixmap.h>
-#include <qimage.h>
-#include <qtextstream.h>
-#include <qpopupmenu.h>
-#include <qtimer.h>
-#include <qcombobox.h>
-#include <qstring.h>
-#include <qaccel.h>
-#include <qcursor.h>
-#include <qheader.h>
-#include <qstyle.h>
-
-#include <klocale.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
-#include <kseparator.h>
-#include <kapplication.h>
-#include <kprocess.h>
-
 #include "kgreeter.h"
+#include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kdmclock.h"
 #include "kchooser.h"
 #include "kdm_greet.h"
 #include "kdm_config.h"
+
+#include <klocale.h>
+#include <kstandarddirs.h>
+#include <kseparator.h>
+#include <kprocess.h>
+#include <kpassdlg.h>
+#include <klistview.h>
+#include <ksimpleconfig.h>
+
+#include <qfile.h>
+#include <qimage.h>
+#include <qpopupmenu.h>
+#include <qtimer.h>
+#include <qcombobox.h>
+#include <qaccel.h>
+#include <qcursor.h>
+#include <qheader.h>
+#include <qstyle.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
 
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -62,7 +63,6 @@
 #include <strings.h>
 
 #include <X11/Xlib.h>
-
 
 void
 KLoginLineEdit::focusOutEvent( QFocusEvent *e )
