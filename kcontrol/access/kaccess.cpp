@@ -19,6 +19,7 @@
 #include <netwm.h>
 #include <kshortcut.h>
 #include <kkeynative.h>
+#include <kwin.h>
 
 #include <X11/XKBlib.h>
 #define XK_MISCELLANY
@@ -553,9 +554,9 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
         featuresLabel->setText ( question+"\n\n"+explanation
               +" "+i18n("These AccessX settings are needed for some users with motion impairments and can be configured in the KDE Control Center. You can also turn them on and off with standardized keyboard gestures.\n\nIf you do not need them, you can select \"Deactivate all AccessX features and gestures\".") );
 
+        KWin::setState( dialog->winId(), NET::KeepAbove );
+        kapp->updateUserTimestamp();
         dialog->show();
-        dialog->setActiveWindow();
-        dialog->raise();
      }
   }
 }
