@@ -360,7 +360,7 @@ void KTitlebarButtons::drawPreview(bool draw)
 	  // can't place max on right
 	  KMessageBox::information(this,
                                i18n("The right side of the titlebar "
-                                    "is full... disabling the 'maximise' "
+                                    "is full... disabling the 'maximize' "
                                     "button\n"));
 	  maxRB[1]->setChecked(false);
 	  maxRB[2]->setChecked(true);
