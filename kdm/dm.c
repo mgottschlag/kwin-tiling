@@ -70,11 +70,7 @@ from the X Consortium.
 # define Va_start(a,b) va_start(a)
 #endif
 
-#ifndef F_TLOCK
-#ifndef X_NOT_POSIX
-# include	<unistd.h>
-#endif
-#endif
+#include	<unistd.h>
 
 #ifdef X_NOT_STDC_ENV
 extern int errno;
@@ -148,6 +144,7 @@ char	**argv;
 	fprintf (stderr, "Only root wants to run %s\n", argv[0]);
 	exit (1);
     }
+    chdir("/");
     if (debugLevel == 0 && daemonMode)
 	BecomeOrphan ();
     if (debugLevel >= 10)
