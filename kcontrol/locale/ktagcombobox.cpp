@@ -28,6 +28,7 @@
 #include <qiconset.h>
 #include <qpopupmenu.h>
 #include <qmenudata.h>
+#include <kdebug.h>
 
 #include "ktagcombobox.h"
 #include "ktagcombobox.moc"
