@@ -74,9 +74,11 @@ public:
 
     int		_allowShutdown;
 
+#ifdef __linux__
     bool	_useLilo;
     QString	_liloCmd;
     QString	_liloMap;
+#endif
 };
 
 extern KDMConfig *kdmcfg;

@@ -47,10 +47,8 @@
 #include "kdmclock.h"
 #include "kfdialog.h"
 #include "kdm_greet.h"
-//#include "kdm_config.h"
 
 extern "C" {
-/*#include <X11/Xlib.h>*/
 #ifdef HAVE_XKB
 // note: some XKBlib.h versions contain a global variable definition
 // called "explicit". This keyword is not allowed on some C++ compilers so ->
@@ -62,18 +60,12 @@ extern "C" {
 #endif
 };
 
-//#include <sys/types.h>
 #include <sys/param.h>
-//#include <sys/stat.h>
-
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include <signal.h>
 #include <strings.h>
-//#include <utime.h>
-//#include <time.h>
 
 KGreeter *kgreeter = 0;
 
@@ -330,22 +322,21 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	sbw = shutdownButton->width();
     }
 
-    //vbox->activate();
     timer = new QTimer( this );
-    //// Signals/Slots
-    // Timer for failed login
-    connect( timer, SIGNAL(timeout()),
-	     this , SLOT(timerDone()) );
-     // Signal to update session type
-    connect( loginEdit, SIGNAL(lost_focus()),
-	     this, SLOT( load_wm()));
+    // clear fields
+    connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
+    // update session type
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT( load_wm()));
+    // start login timeout after entered login
+    connect( loginEdit, SIGNAL(lost_focus()), SLOT( SetTimer()));
+    // update sessargStat
     connect( sessargBox, SIGNAL(activated(int)),
-	     this, SLOT(slot_session_selected()));
+	     SLOT(slot_session_selected()));
     if( user_view) {
 	connect( user_view, SIGNAL(returnPressed(QIconViewItem*)),
-		 this, SLOT(slot_user_name( QIconViewItem*)));
+		 SLOT(slot_user_name( QIconViewItem*)));
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)),
-		 this, SLOT(slot_user_name( QIconViewItem*)));
+		 SLOT(slot_user_name( QIconViewItem*)));
     }
 
     clear_button_clicked();
@@ -368,6 +359,11 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     }
 }
 
+KGreeter::~KGreeter ()
+{
+    delete stsfile;
+}
+
 void
 KGreeter::slot_user_name( QIconViewItem *item)
 {
@@ -376,6 +372,7 @@ KGreeter::slot_user_name( QIconViewItem *item)
 	passwdEdit->erase();
 	passwdEdit->setFocus();
 	load_wm();
+	SetTimer();
     }
 }
 
@@ -390,21 +387,21 @@ KGreeter::slot_session_selected()
 void
 KGreeter::SetTimer()
 {
-    if (failedLabel->text().isNull())	// XXX something's wrooooong here
+    if (failedLabel->text().isNull())
 	timer->start( 40000, TRUE );
 }
 
 void
 KGreeter::timerDone()
 {
-    if (failedLabel->isVisible()) {
+    if (!failedLabel->text().isNull()) {
 	failedLabel->setText(QString::null);
 	goButton->setEnabled( true);
 	loginEdit->setEnabled( true);
 	passwdEdit->setEnabled( true);
 	sessargBox->setEnabled( true);
-	clear_button_clicked();
     }
+    clear_button_clicked();
 }
 
 void
@@ -440,10 +437,8 @@ KGreeter::console_button_clicked()
 void
 KGreeter::shutdown_button_clicked()
 {
-    timer->stop();
     KDMShutdown k( this);
     k.exec();
-    SetTimer();
 }
 
 void
@@ -588,7 +583,7 @@ KGreeter::verifyUser(bool haveto)
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
 	    sessargBox->setEnabled( false);
-	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );// XXX make configurable
+	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );
 	    return true;
 	default:
 	    switch (ret) {
@@ -635,11 +630,6 @@ KGreeter::verifyUser(bool haveto)
     }
     clear_button_clicked();
     return true;
-}
-
-KGreeter::~KGreeter ()
-{
-    delete stsfile;
 }
 
 void

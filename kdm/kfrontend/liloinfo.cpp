@@ -22,6 +22,8 @@
 
     */
 
+#ifdef __linux__
+
 #include <klocale.h>
 
 #include "liloinfo.moc"
@@ -453,3 +455,5 @@ int LiloInfo::setNextBootOption ( int nextBootOptionIndex)
 	// Return the error code
 	return error;
 }
+
+#endif

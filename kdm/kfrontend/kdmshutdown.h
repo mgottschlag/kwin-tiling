@@ -28,17 +28,18 @@
 #define KDMSHUTDOWN_H
 
 #include <qglobal.h>
-
-#include <sys/param.h>	// for BSD
-#include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qtimer.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <kpassdlg.h>
 #include "kfdialog.h"
+
+#include <sys/param.h>	// for BSD
+#include <stdlib.h>
 
 class KDMShutdown : public FDialog {
     Q_OBJECT
@@ -49,6 +50,7 @@ public:
 private slots:
     void bye_bye();
     void target_changed(int);
+    void timerDone();
 
 private:
     QLabel		*label;
@@ -57,7 +59,10 @@ private:
     QPushButton		*cancelButton;
     KPasswordEdit	*pswdEdit;
     QRadioButton	*restart_rb;
+    QTimer		*timer;
+#ifdef __linux__
     int			liloTarget;
+#endif
 };
 
 #endif /* KDMSHUTDOWN_H */

@@ -70,7 +70,6 @@ public:
     KGreeter(QWidget *parent = 0, const char *ti = 0);
     ~KGreeter();
     void ReturnPressed();
-    void SetTimer();
 
 public slots:
     void go_button_clicked();
@@ -79,9 +78,10 @@ public slots:
     void console_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
-    void timerDone();
     void slot_user_name( QIconViewItem *);
     void slot_session_selected( );
+    void SetTimer();
+    void timerDone();
     void load_wm();
 
 protected:

@@ -103,6 +103,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 
     hbox->addWidget(restart_rb);
 
+#ifdef __linux__
     if ( kdmcfg->_useLilo ) {
 	targets = new QComboBox(winFrame);
 	hbox->addWidget(targets);
@@ -118,6 +119,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 	    connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
 	}
     }
+#endif
     w = QMAX( restart_rb->width()
 	     + (targets ? targets->sizeHint().width()+10 : 0), w);
 
@@ -130,8 +132,12 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 	pswdEdit->setFocus();
 	h+= pswdEdit->height() + 10;
 	box->addWidget( pswdEdit);
-    } else
+	timer = new QTimer( this );
+	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
+    } else {
 	pswdEdit = 0;
+	timer = 0;
+    }
 
     QBoxLayout* box3 = new QBoxLayout( QBoxLayout::LeftToRight, 10);
     box->addLayout( box3);
@@ -157,10 +163,20 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
 }
 
 void
+KDMShutdown::timerDone()
+{
+    pswdEdit->setEnabled( true);
+    okButton->setEnabled( true);
+    pswdEdit->setFocus();
+}
+
+void
 KDMShutdown::target_changed(int id)
 {
+#ifdef __linux__
     restart_rb->setChecked(true);
     liloTarget = id;
+#endif
 }
 
 void
@@ -172,15 +188,18 @@ KDMShutdown::bye_bye()
 	GSendStr (pswdEdit->password());
 	if (GRecvInt () < V_OK ) {
 	    pswdEdit->erase();
-	    pswdEdit->setFocus();
-	    // XXX should show some message ... + delay
+	    pswdEdit->setEnabled( false);
+	    okButton->setEnabled( false);
+	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );
 	    return;
 	}
     }
+#ifdef __linux__
     if (kdmcfg->_useLilo && restart_rb->isChecked()) {
 	LiloInfo info(kdmcfg->_liloCmd, kdmcfg->_liloMap);
 	info.setNextBootOption(liloTarget);
     }
+#endif
     SessionExit (restart_rb->isChecked() ? EX_REBOOT : EX_HALT);
 }
 
