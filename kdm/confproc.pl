@@ -267,7 +267,7 @@ while (<INFILE>) {
       }
       if (/^Proc: (.+)$/) {
         $proc = $1;
-	getl();
+        getl();
       } else {
         pegout("expecting Proc keyword in legacy section");
       }
@@ -277,7 +277,7 @@ while (<INFILE>) {
         my $src = $1;
         if ($src =~ /^xdm:(.*)$/) {
           my $what = $1;
-	  my $dsp = ($what =~ s/^\*\.//);
+          my $dsp = ($what =~ s/^\*\.//);
           my @oa = ([ "{ \"".$what."\", (char *)-1, 0, ".$proc." },", "XMO" ]);
           add_cond($kif, $what, \@oa, \%ov_xm_conds);
           $ov_xm[$dsp] .= $oa[0][0]." \\\n";
