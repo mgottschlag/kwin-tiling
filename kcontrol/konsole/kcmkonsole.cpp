@@ -51,6 +51,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->ctrldragCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->cutToBeginningOfLineCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->allowResizeCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->bidiCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->xonXoffCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -71,6 +72,8 @@ void KCMKonsole::load()
     config->setDesktopGroup();
 
     dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
+    bidiOrig = config->readBoolEntry("EnableBidi",false);
+    dialog->bidiCB->setChecked(bidiOrig);
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
     dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
     dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
@@ -118,6 +121,8 @@ void KCMKonsole::save()
     config->setDesktopGroup();
 
     config->writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
+    bool bidiNew = dialog->bidiCB->isChecked();
+    config->writeEntry("EnableBidi", bidiNew);
     config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
     config->writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
     config->writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
@@ -149,11 +154,29 @@ void KCMKonsole::save()
                                            "The 'stty' command can be used to change the flow control "
                                            "settings of existing Konsole sessions."));
     }
+
+    if (bidiNew && !bidiOrig)
+    {
+       KMessageBox::information(this, i18n("You have chosen to enable "
+                                           "bidirectional text rendering by "
+                                           "default.\n"
+                                           "Note that bidirectional text may "
+                                           "not always be shown correctly, "
+                                           "especially when selecting parts of "
+                                           "text written right-to-left. This "
+                                           "is a known issue which cannot be "
+                                           "resolved at the moment due to the "
+                                           "nature of text handling in "
+                                           "console-based applications."));
+    }
+    bidiOrig = bidiNew;
+
 }
 
 void KCMKonsole::defaults()
 {
     dialog->terminalSizeHintCB->setChecked(true);
+    dialog->bidiCB->setChecked(false);
     dialog->warnCB->setChecked(true);
     dialog->ctrldragCB->setChecked(false);
     dialog->cutToBeginningOfLineCB->setChecked(false);

@@ -138,7 +138,15 @@
                                     <string>Use Ctrl+S/Ctrl+Q flow control</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="8" column="0">
+                            <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>bidiCB</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Enable bidirectional text rendering</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="9" column="0">
                                 <property name="name">
                                     <cstring>TextLabel1_4</cstring>
                                 </property>
@@ -157,7 +165,7 @@
                                     <cstring>line_spacingSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="8" column="1">
+                            <widget class="KIntNumInput" row="9" column="1">
                                 <property name="name">
                                     <cstring>line_spacingSB</cstring>
                                 </property>
@@ -176,7 +184,7 @@
                                     <number>8</number>
                                 </property>
                             </widget>
-                            <spacer row="8" column="3">
+                            <spacer row="9" column="3">
                                 <property name="name">
                                     <cstring>Spacer2</cstring>
                                 </property>
@@ -187,7 +195,7 @@
                                     <enum>Expanding</enum>
                                 </property>
                             </spacer>
-                            <widget class="QLabel" row="9" column="0">
+                            <widget class="QLabel" row="10" column="0">
                                 <property name="name">
                                     <cstring>SilenceLabel</cstring>
                                 </property>
@@ -206,7 +214,7 @@
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="9" column="1">
+                            <widget class="KIntNumInput" row="10" column="1">
                                 <property name="name">
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
@@ -222,7 +230,7 @@
                                     <number>1</number>
                                 </property>
                             </widget>
-                            <spacer row="9" column="3">
+                            <spacer row="10" column="3">
                                 <property name="name">
                                     <cstring>Spacer3</cstring>
                                 </property>

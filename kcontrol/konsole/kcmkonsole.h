@@ -43,6 +43,7 @@ public slots:
 private:
 	KCMKonsoleDialog *dialog;
 	bool xonXoffOrig;
+	bool bidiOrig;
 };
 
 #endif
