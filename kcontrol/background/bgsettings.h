@@ -14,13 +14,13 @@
 
 
 #include <qstringlist.h>
+#include <qcolor.h>
 
 template <class QString, class T> class QMap;
 class KStandardDirs;
 class KSimpleConfig;
 class KConfig;
 class QString;
-class QColor;
 class QImage;
 
 /**
