@@ -222,7 +222,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( cmd[0] == '/' )
   {
     struct stat buff;
-    kdDebug() << "stating " << cmd << endl;
+    //kdDebug() << "stating " << cmd << endl;
     int status = stat( cmd.local8Bit().data() , &buff );
     if( status == 0 )
     {
