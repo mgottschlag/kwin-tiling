@@ -44,7 +44,7 @@ lnfdir = $(kde_appsdir)/Settings/LookNFeel
 theme_DATA = style.desktop
 themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
 
-desktop_DATA = desktop.desktop advanced.desktop background.desktop
+desktop_DATA = desktop.desktop advanced.desktop background.desktop borders.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
 
 power_DATA = energy.desktop

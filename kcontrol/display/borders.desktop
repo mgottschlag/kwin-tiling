@@ -1,0 +1,59 @@
+[Desktop Entry]
+Icon=desktop_settings
+Type=Application
+Exec=kcmshell LookNFeel/Desktop/borders
+DocPath=kcontrol/kcmkwm/kwm-4.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=kwindesktop
+X-KDE-FactoryName=kwindesktop
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Borders
+Name[ca]=Vores
+Name[cs]=Hranice
+Name[de]=Ränder
+Name[eo]=Ekranrandoj
+Name[fi]=Reunukset
+Name[fr]=Bords
+Name[he]=תורגסמ
+Name[hu]=Szegélyek
+Name[it]=Bordi
+Name[ja]=枠
+Name[no]=Rammer
+Name[no_NY]=Kantar
+Name[pt]=Molduras
+Name[ro]=Margini
+Name[sl]=Obrobe
+Name[sv]=Kanter
+Name[ta]=µÃí¸û
+
+Comment=Desktop Border Options
+Comment[ca]=Opcions de les vores de l'escriptori
+Comment[cs]=Možnosti hranic pracovní plochy
+Comment[de]=Einstellung für die Ränder der Arbeitsfläche
+Comment[eo]=Agordaĵo de la Ekranrandoj
+Comment[fi]=Työpöydän reunusten asetukset
+Comment[fr]=Options des bords du bureau
+Comment[he]=הדובעה תונחלוש לש תורגסמה תויורשפא
+Comment[hu]=Munkaasztal szegély beállítások
+Comment[it]=Opzioni bordi del dekstop
+Comment[ja]=デスクトップの枠のオプション
+Comment[no]=Skrivebordramme-oppsett
+Comment[no_NY]=Val for skrivebordskantar
+Comment[pt]=Configuração das molduras
+Comment[ro]=Configurează setările pentru marginile ecranului
+Comment[sl]=Izbire za obrobe namizja
+Comment[sv]=Inställningar för skrivbordets kanter
+Comment[ta]=§Á¨º µÃõ §¾÷×¸û
+
+Keywords=borders,warp,desktops
+Keywords[ca]=vores,ordit,escriptoris
+Keywords[de]=umrandung,arbeitsfläche,desktop
+Keywords[hu]=keretek,munkaasztalok
+Keywords[no]=kanter,bryting,skrivebord
+Keywords[no_NY]=bordar,hopp,skrivebord
+Keywords[pt]=molduras,ecrãs
+Keywords[ro]=margini,warp,ecrane
+Keywords[sl]=okvirji,warp,namizja
