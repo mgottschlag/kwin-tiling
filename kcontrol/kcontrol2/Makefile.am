@@ -18,6 +18,10 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 			utils.cpp KCModuleIface.stub \
 			proxymodule.cpp
 
+modloader.cpp: proxymodule.h
+toplevel.cpp: proxymodule.h
+proxymodule.h: KCModuleIface_stub.h
+
 kcmroot_LDADD   = $(LIB_KDEUI)
 
 icons_DATA = close.png
