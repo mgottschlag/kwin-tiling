@@ -1,7 +1,7 @@
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 bin_PROGRAMS = kpartsaver.kss
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) -I../libkscreensaver
 
 kpartsaver_kss_SOURCES = kpartsaver.cpp configwidget.ui
 kpartsaver_kss_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(kde_libraries)/libkscreensaver.la
