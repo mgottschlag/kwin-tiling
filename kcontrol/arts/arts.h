@@ -33,10 +33,10 @@
 #include <qcheckbox.h>
 
 #include <kcmodule.h>
+#include <knuminput.h>
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include <qspinbox.h>
 #include <artsconfig.h>
 
 class KArtsModule : public KCModule
@@ -72,7 +72,7 @@ private:
   QLineEdit *deviceName;
   QLineEdit *samplingRate;
   QLineEdit *messageApplication;
-  QSpinBox *suspendTime;
+  KIntNumInput *suspendTime;
   ArtsConfig *artsConfig;
   KConfig *config;
   int fragmentCount;

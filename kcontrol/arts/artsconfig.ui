@@ -50,14 +50,6 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLabel" row="5" column="2" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>TextLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>seconds</string>
-                        </property>
-                    </widget>
                     <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>networkTransparent</cstring>
@@ -85,21 +77,24 @@
                             <cstring>autoSuspend</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Autosuspend if idle for</string>
+                            <string>&amp;Autosuspend if idle for:</string>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>The sound server will suspend itself if idle for this period of time.</string>
                         </property>
                     </widget>
-                    <widget class="QSpinBox" row="5" column="1">
+                    <widget class="KIntNumInput" row="5" column="1" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>suspendTime</cstring>
+                        </property>
+                        <property name="value">
+                            <number>60</number>
                         </property>
                         <property name="maxValue">
                             <number>9999</number>
                         </property>
-                        <property name="value">
-                            <number>60</number>
+                        <property name="suffix">
+                            <string> sec</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="4">
@@ -461,8 +456,31 @@
         </widget>
     </vbox>
 </widget>
+<tabstops>
+    <tabstop>tabWidget</tabstop>
+    <tabstop>startServer</tabstop>
+    <tabstop>networkTransparent</tabstop>
+    <tabstop>x11Comm</tabstop>
+    <tabstop>startRealtime</tabstop>
+    <tabstop>autoSuspend</tabstop>
+    <tabstop>suspendTime</tabstop>
+    <tabstop>displayMessage</tabstop>
+    <tabstop>messageApplication</tabstop>
+    <tabstop>loggingLevel</tabstop>
+    <tabstop>testSound</tabstop>
+    <tabstop>audioIO</tabstop>
+    <tabstop>fullDuplex</tabstop>
+    <tabstop>customDevice</tabstop>
+    <tabstop>deviceName</tabstop>
+    <tabstop>customRate</tabstop>
+    <tabstop>samplingRate</tabstop>
+    <tabstop>customOptions</tabstop>
+    <tabstop>addOptions</tabstop>
+    <tabstop>soundQuality</tabstop>
+    <tabstop>latencySlider</tabstop>
+</tabstops>
 <includes>
-    <include location="global" impldecl="in declaration">kseparator.h</include>
+    <include location="global" impldecl="in declaration">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

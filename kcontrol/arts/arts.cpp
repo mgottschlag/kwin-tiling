@@ -159,6 +159,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	config = new KConfig("kcmartsrc");
 	GetSettings();
 
+    suspendTime->setRange( 0, 999, 1, true );
+
 	connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
 	connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
 	connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
@@ -174,8 +176,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	connect(artsConfig->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
 	connect(artsConfig->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 	connect(artsConfig->latencySlider,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
-	connect(artsConfig->autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
-	connect(artsConfig->suspendTime,SIGNAL(valueChanged(const QString &)),SLOT(slotChanged()));
+	connect(autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
+	connect(suspendTime,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(displayMessage, SIGNAL(clicked()), SLOT(slotChanged()));
 	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 	connect(artsConfig->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
