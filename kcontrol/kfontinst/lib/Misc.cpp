@@ -310,3 +310,24 @@ bool CMisc::check(const QString &path, unsigned int fmt, bool checkW)
 
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }
+
+bool CMisc::fExists(const QString &p, bool format)
+{
+    if(!format)
+        return check(p, S_IFREG, false);
+    else
+        return check(p, S_IFREG, false) || check(formatFileName(p), S_IFREG, false);
+}
+
+QString CMisc::formatFileName(const QString &p)
+{
+    QString fName(getFile(p)),
+            formatted(fName.lower());
+
+    formatted=formatted.replace(QChar('-'), "_");
+
+    if(formatted!=fName)
+        return getDir(p)+formatted;
+    else
+        return p;
+}

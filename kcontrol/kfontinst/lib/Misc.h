@@ -48,7 +48,7 @@ class CMisc
         DIR_PERMS    = 0755
     };
 
-    static bool    fExists(const QString &p)     { return check(p, S_IFREG, false); }
+    static bool    fExists(const QString &p, bool format=false);
     static bool    dExists(const QString &p)     { return check(p, S_IFDIR, false); }
     static bool    fWritable(const QString &p)   { return check(p, S_IFREG, true); }
     static bool    dWritable(const QString &p)   { return check(p, S_IFDIR, true); }
@@ -73,6 +73,7 @@ class CMisc
     static bool    hidden(const QString &u, bool dir=false);
     static time_t  getTimeStamp(const QString &item);
     static void    setTimeStamps(const QString &ds);
+    static QString formatFileName(const QString &p);
 
     private:
 
