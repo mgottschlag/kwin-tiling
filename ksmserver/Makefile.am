@@ -30,14 +30,14 @@ ksmserver_SOURCES = dummy.cpp
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
 ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-ksmserver_la_LIBADD = $(LIB_KDECORE)
+ksmserver_la_LIBADD = $(LIB_KDEUI)
 ksmserver_LDADD = ksmserver.la
 
 check_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
 
 testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-testsh_LDADD = $(LIB_KDECORE)
+testsh_LDADD = $(LIB_KDEUI)
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot

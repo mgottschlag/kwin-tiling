@@ -14,6 +14,9 @@ main(int argc, char *argv[])
    QObject::connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), &a, SLOT( quit() ) );
 
    bool saveSession;
-   (void)KSMShutdownDlg::confirmShutdown( saveSession );
-   a.exec();
+   KApplication::ShutdownType sdtype = KApplication::ShutdownTypeNone;
+   KApplication::ShutdownMode sdmode = KApplication::ShutdownModeDefault;
+   (void)KSMShutdownDlg::confirmShutdown( saveSession, true, true,
+                                          sdtype, sdmode );
+   KSMShutdownFeedback::stop();
 }
