@@ -294,7 +294,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     btnLay->addItem(spacer);
 
     connect(btnImport, SIGNAL(clicked()), SLOT(slotRunImporter()));
-
+/*
     // Drawing settings
     styles = new QGroupBox ( i18n( "Other settings for drawing" ), this );
     topLayout->addWidget(styles, 10);
@@ -443,7 +443,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     	effPlainTooltip->setEnabled(false);
     	effAnimateTooltip->setEnabled(false);
     }
-
+*/
     topLayout->addStretch( 100 );
     load();
 }
@@ -465,6 +465,7 @@ void KGeneral::slotChangeStylePlugin(QListViewItem *)
 
 void KGeneral::slotChangeTbStyle()
 {
+/*
     if (tbIcon->isChecked() )
         tbUseText = "IconOnly";
     else if (tbText->isChecked() )
@@ -481,12 +482,13 @@ void KGeneral::slotChangeTbStyle()
 
     m_bToolbarsDirty = true;
     m_bChanged = true;
-    emit changed(true);
+    emit changed(true);*/
 }
 
 
 void KGeneral::slotChangeEffectStyle()
 {
+/*
     effectFadeMenu = effFadeMenu->isChecked();
     effectAnimateMenu = effAnimateMenu->isChecked();
 
@@ -509,10 +511,12 @@ void KGeneral::slotChangeEffectStyle()
     m_bEffectsDirty = true;
     m_bChanged = true;
     emit changed(true);
+*/
 }
 
 void KGeneral::slotUseResourceManager()
 {
+/*
     switch(cbRes->state()) {
     case QButton::On:
         m_bExportColors = true;
@@ -526,22 +530,26 @@ void KGeneral::slotUseResourceManager()
 
     m_bChanged = true;
     emit changed(true);
+*/
 }
 void KGeneral::slotUseIcons()
 {
+/*
     icons = cbIcons->isChecked( );
     m_bIconsDirty = true;
     m_bChanged = true;
     emit changed( true );
-
+*/
 }
 void KGeneral::slotMacStyle()
 {
+/*
     macStyle = cbMac->isChecked();
 
     m_bMacStyleDirty = true;
     m_bChanged = true;
     emit changed(true);
+*/
 }
 
 void KGeneral::readSettings()
@@ -583,6 +591,7 @@ void KGeneral::slotRunImporter()
 
 void KGeneral::showSettings()
 {
+/*
     cbRes->setChecked(m_bExportColors);
 
     cbMac->setChecked(macStyle);
@@ -615,6 +624,7 @@ void KGeneral::showSettings()
     	effPlainTooltip->setEnabled(true);
     	effAnimateTooltip->setEnabled(true);
     }
+*/
 }
 
 
