@@ -162,10 +162,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     wcCombo->insertItem(i18n("Button text"));
     wcCombo->insertItem(i18n("Active title button"));
     wcCombo->insertItem(i18n("Inactive title button"));
-    wcCombo->insertItem(i18n("Active title button background"));
-    wcCombo->insertItem(i18n("Inactive title button background"));
-    wcCombo->insertItem(i18n("Active title button blend"));
-    wcCombo->insertItem(i18n("Inactive title button blend"));
 
     wcCombo->adjustSize();
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
@@ -257,18 +253,8 @@ void KColorScheme::save()
     cfg->writeEntry("activeBackground", cs->aTitle, true, true);
     cfg->writeEntry("activeBlend", cs->aBlend, true, true);
     cfg->writeEntry("inactiveForeground", cs->iaTxt, true, true);
-    cfg->writeEntry("activeTitleBtnFg", cs->aTitleBtn, true, true);
-    cfg->writeEntry("inactiveTitleBtnFg", cs->iTitleBtn, true, true);
-    cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtnBack, true, true);
-    cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtnBack, true, true);
-    if(cs->aTitleBtnBlend != cs->aTitleBtnBack)
-        cfg->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend, true, true);
-    else
-        cfg->writeEntry("activeTitleBtnBlend", "", true, true);
-    if(cs->iTitleBtnBlend != cs->iTitleBtnBack)
-        cfg->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend, true, true);
-    else
-        cfg->writeEntry("inactiveTitleBtnBlend", "", true, true);
+    cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtn, true, true);
+    cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, true, true);
 
     cfg->setGroup( "KDE" );
     cfg->writeEntry("contrast", cs->contrast, true, true);
@@ -357,19 +343,8 @@ void KColorScheme::slotSave( )
     config->writeEntry("contrast", cs->contrast );
     config->writeEntry("buttonForeground", cs->buttonTxt );
     config->writeEntry("buttonBackground", cs->button );
-    config->writeEntry("activeTitleBtnFg", cs->aTitleBtn);
-    config->writeEntry("inactiveTitleBtnFg", cs->iTitleBtn);
-    config->writeEntry("activeTitleBtnBg", cs->aTitleBtnBack);
-    config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtnBack);
-    if(cs->aTitleBtnBlend != cs->aTitleBtnBack)
-        config->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend);
-    else
-        config->writeEntry("activeTitleBtnBlend", "");
-    if(cs->iTitleBtnBlend != cs->iTitleBtnBack)
-        config->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend);
-    else
-        config->writeEntry("inactiveTitleBtnBlend", "");
-
+    config->writeEntry("activeTitleBtnBg", cs->aTitleBtn);
+    config->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn);
 
     config->sync();
     saveBt->setEnabled( FALSE );
