@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell arts
 Icon=arts
 Type=Application
+DocPath=kcontrol/sndserver.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=arts
@@ -95,7 +96,7 @@ Comment[lv]=Skaņas Servera Konfigurācija
 Comment[mk]=Конфигурација на звук-опслужувачот
 Comment[mt]=Konfigurazzjoni tas-Sound
 Comment[nb]=Konfigurasjon av lydtjener
-Comment[nl]=configuratie van de geluidsserver
+Comment[nl]=Configuratie van de geluidsserver
 Comment[nn]=Oppsett av lydtenar
 Comment[oc]=Configuracion dèu servor de son
 Comment[pl]=Konfiguracja serwera dźwięku
