@@ -51,9 +51,13 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   level_group->setRadioButtonExclusive(true);
   connect(level_group, SIGNAL(clicked(int)), SLOT(level_changed(int)));
 
-  QVBoxLayout *vbox = new QVBoxLayout(level_group, KDialog::marginHint(),
-                                      KDialog::spacingHint());
-  vbox->addSpacing(fontMetrics().lineSpacing());
+  level_group->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5,(QSizePolicy::SizeType)0,level_group->sizePolicy().hasHeightForWidth() ) );   level_group->setColumnLayout(0, Qt::Vertical );
+  level_group->layout()->setSpacing( 0 );
+  level_group->layout()->setMargin( 0 );
+  QVBoxLayout *vbox = new QVBoxLayout( level_group->layout() );
+  vbox->setAlignment( Qt::AlignTop );
+  vbox->setSpacing(KDialog::marginHint() );
+  vbox->setMargin(  KDialog::spacingHint() );
 
   trusted_rb = new QRadioButton(i18n("Load only trusted applets internal"), level_group);
   vbox->addWidget(trusted_rb);
