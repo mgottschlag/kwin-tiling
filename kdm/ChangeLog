@@ -2,6 +2,11 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2004-08-14  Oswald Buddenhagen <ossi@kde.org>
+
+	* Replaced dysfunct InteractiveSd with working
+	  ScheduledSd { Never, Optional, Always }
+
 2004-07-28  Oswald Buddenhagen <ossi@kde.org>
 
 	* Added control sockets. Control FiFos are now obsolete.
@@ -11,7 +16,8 @@ if they affect the configuration.
 
 2004-07-23  Oswald Buddenhagen <ossi@kde.org>
 
-	* Dynamic VT allocation added; option ServerVTs
+	* Dynamic VT allocation added; option ServerVTs; no need to specify
+	  vtX in Xservers any more.
 
 2004-07-10  Oswald Buddenhagen <ossi@kde.org>
 

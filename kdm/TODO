@@ -1,4 +1,5 @@
 theming ToDo:
+- maybe add a Themable plugin flag. if not set and no talker, abort.
 - minor: show QWidgets only when the layout is ready and the theme was painted.
   but one can't hide the widgets in a QLayout, as they have no size then.
 - add attribute inheritance. apply attributes extracted from particular
@@ -9,6 +10,13 @@ theming ToDo:
 - extract background from theme. use explicit node-id "background", i think.
 - automatic talker node detection/creation. same for background, possibly.
 
+- bomb kapp::kdmExec, make separate source file in kdebase that talks
+  kdm new, kdm old and gdm - restore backwards compat!
+
+- remote login can have the chosen host as the sessName
+- popup menu grabs keyboard. that means it is ungrabbed afterwards ...
+- error label uses fixed colors. red might be ok, but not black.
+
 - message after switching to text mode
 - implement a "console mode" that is more adequate for linux
 - starting kdm while a kdm is running in the background in "console mode"
@@ -16,6 +24,8 @@ theming ToDo:
   (disable -config option or make audit!) and make it write the fifo).
 
 - FreeBSD has virtual consoles as well; use them.
+- before nuking X server on other vt, save current vt and restore it before
+  disallocating server vt. or just make the xserver not switch wildly.
 
 - get rid of Xservers file. consider sessreg vs. BSD. see #56329
 
@@ -48,8 +58,6 @@ save these options to .dmrc?
 - write generic conversation plugin
 - write modern conv plugin. or maybe this should be a parallel vs. serial
   setting of the classic plugin?
-- write samba conv plugin. supposedly the domain is coded into the user name.
-  (tell Erik Weber <eweber@iqnet-ag.de>)
 
 - actually implement the libpam_client support
 
@@ -83,17 +91,16 @@ save these options to .dmrc?
   add FiFo command "background\t{inprogress,aborted,done}"
 
 - export OS choices, for selection in ksmserver (#45322)
-
-- support sleep/suspend in the shutdown menu. should this be really treated
-  like a shutdown? (#33839)
-
 - lilo boot option <default>, i.e., -R with no argument
 - support lilo -A mode
 - support grub (#63800)
 
+- support sleep/suspend in the shutdown menu. should this be really treated
+  like a shutdown? (#33839)
+
 - add language selection (export as LC_*). kde should respect this until the
   language is explicitly configured. and later? option "use system setting"?
-  (#55379, #63804)
+  integrate with $KDE_LANG somehow. (#55379, #63804)
 - add keymap selection (via xkb) (#51245, #64642)
 for both, one would preset a list of available options and make one entry
 the greeter's own setting. explicitly setting it sets it for both the greeter
@@ -115,6 +122,7 @@ and the session. .dmrc later affects only the session, not the greeter.
 
 - make kdm kcontrol module invokable from greeter (#80264)
   depends on wm. security!?
+  the usability experts say that this is a stupid idea.
 - write a separate configurator application, as kcontrol does not scale well
   enough to cover all of kdm's options.
 
@@ -132,8 +140,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 
 - export password to the startup/session scripts. somehow ... (#35396)
 
-- actually implement InteractiveSd (#65543, relates #25304)
-
 - maybe reset CapsLock in the greeter. there is some CapsLock vs. ShiftLock
   confusion, though.
 
@@ -144,24 +150,21 @@ and the session. .dmrc later affects only the session, not the greeter.
   possibly auto-hide it on vt switch - see kdesktop_lock for the x event
   handling.
 
-- rethink the coupling of the kdm components, particularily the config reader.
-  options:
-  - keep things basically as-is, make the Xaccess and Xservers interfaces
-    even more flexible, add capability flags.
-  - as previous, but don't use #defines, but textual constants. even more
-    flexible, but slower, bigger, no compile-time checking, and the typing
-    system would have to be more core-based. keys in the rc are considered
-    invalid if they were not queried.
-  - completely opposite: no explicit queries, but hard-code everything. that
-    kills the idea of having one backend binary for multiple frontends, but
-    that's a BlueSkyDream anyway.
-    following that path, the config reader could be nuked at all.
-
 - ssh-agent/gpg-agent integration (#44177, #65709)
 
 - lbxproxy integration (tell ghakko)
 
 - in kcm_kdm, detach backgroundrc change status from kdmrc change status.
+
+- when a shutdown is scheduled, don't remove all login possibilities.
+  instead, display a warning in the greeter. use SIGUSR1 to notify already
+  running greeters about changes.
+- user notification about scheduled shutdown (and cancelled forced shutdown):
+  - wall
+  - greeter popup
+  - d-bus message. this would be best, particularly because screen savers
+    would need no special handling then.
+- maybe bomb DefaultSdMode, save in state file instead. compare with ksmserver.
 
 - gdm changelog indicates that PAM sometimes
   - continues despite PAM_CONV_ERR
@@ -186,6 +189,18 @@ internal stuff:
   of starting a new one and feeding it the old auth data.
 - move OS selection code to the core. the greeter could finally run
   unprivileged then
+- rethink the coupling of the kdm components, particularily the config reader.
+  options:
+  - keep things basically as-is, make the Xaccess and Xservers interfaces
+    even more flexible, add capability flags.
+  - as previous, but don't use #defines, but textual constants. even more
+    flexible, but slower, bigger, no compile-time checking, and the typing
+    system would have to be more core-based. keys in the rc are considered
+    invalid if they were not queried.
+  - completely opposite: no explicit queries, but hard-code everything. that
+    kills the idea of having one backend binary for multiple frontends, but
+    that's a BlueSkyDream anyway.
+    following that path, the config reader could be nuked at all.
 
 ralf says:
 - put the kmenu sidebar image on the left of the greeter
