@@ -114,12 +114,15 @@ void KURIFilterModule::moduleChanged(bool state)
 
 QString KURIFilterModule::quickHelp() const
 {
-    return i18n("<h1>Enhanced Browsing</h1> In this module you can configure some special features"
-      " the Konqueror browser offers. <h2>Internet Keywords</h2> Using internet keywords is a very"
-      " quick way of using web search engines. For example, you can just enter \"altavista:frobozz\""
-      " or \"av:frobozz\" and konqueror will do a search query on AltaVista for you, returning all"
-      " hits AltaVista found on the word \"frobozz\". Even easier: just pressing Alt-F2 (if you haven't"
-      " changed this shortcut) and enter your search query into the KDE Run Command dialog.");
+    return i18n("<h1>Enhanced Browsing</h1> In this module you can configure some enhanced browsing"
+      " features of KDE. <h2>Internet Keywords</h2>Internet Keywords let you"
+      " type in the name of a brand, a project, a celebrity, etc... and go to the"
+      " relevant location. For example you can just type"
+      " \"KDE\" or \"K Desktop Environment\" in Konqueror to go to KDE's homepage."
+      "<h2>Search shortcuts</h2>Search shortcuts are a quick way of using Web search engines. For example, type \"altavista:frobozz\""
+      " or \"av:frobozz\" and Konqueror will do a search on AltaVista for \"frobozz\"."
+      " Even easier: just press Alt-F2 (if you haven't"
+      " changed this shortcut) and enter the shortcut in the KDE Run Command dialog.");
 }
 
 void KURIFilterModule::resizeEvent(QResizeEvent *)
