@@ -65,8 +65,8 @@ MyApplication::MyApplication()
 
   KConfig *config = KGlobal::config();
   config->setGroup("General");
-  int x = config->readNumEntry("InitialWidth", 720);
-  int y = config->readNumEntry("InitialHeight", 520);
+  int x = config->readNumEntry("InitialWidth", 730);
+  int y = config->readNumEntry("InitialHeight", 530);
   toplevel->resize(x,y);
 }
 

@@ -46,14 +46,14 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
 
   QString text = "<p>"
-    "<table cellpadding=2 cellspacing=1 border=0  width=98%>"
+    "<table cellpadding=\"2\" cellspacing=\"1\" border=\"0\"  width=\"98%\">"
     "<tr>"
-    "<td width=1%>"
+    "<td width=\"1%\">"
     "<img src=\""
     + kcontrol +
     "\" border=\"0\">"
     "</td>"
-    "<td width=90%>"
+    "<td width=\"90%\">"
     "<b><big><big>"
     + i18n("KDE Control Center") +
     "</big></big></b>"
@@ -62,7 +62,6 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "</td></tr>"
     "</table>"
     "</p>"
-    "<br>"
     "<p>"
     + i18n("Welcome to the \"KDE Control Center\", a central place to configure your "
            "desktop environment. "
@@ -70,9 +69,13 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
            "Click on \"Desktop\" -> \"Background\" to configure the desktop background "
            "for example.") +
     "</p>"
-    "<br>"
     "<p>"
     "<table cellpadding=2 cellspacing=1 border=0  width=100%>"
+    "<tr>"
+
+    "<td>"
+    "<br>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=50%>"
     "<tr>"
     "<td>"
     + i18n("KDE version:") +
@@ -80,11 +83,6 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "<td><b>"
     + KCGlobal::kdeVersion() +
     "</b></td>"
-    "<td rowspan=8>"
-    "<img src=\""
-    + wizard +
-    "\" align=\"left\" border=\"0\">"
-    "</td>"
     "</tr>"
     "<tr>"
     "<td>"
@@ -127,11 +125,32 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
     "</td></b>"
     "</tr>"
     "<tr>"
+    "<td>"
+    "<br>"
+    "</td>"
+    "</tr>"
+    "<tr>"
     "<td colspan=2>"
     + i18n("Click on the \"Help\" tab on the left to browse a help text on the active "
            "control module. Use the \"Search\" tab if you are unsure where to look for "
            "a particular configuration option.") +
     "</td>"
+    "</tr>"
+    "</table>"
+    "</td>"
+
+    "<td>"
+    "<table cellpadding=2 cellspacing=1 border=0  width=50%>"
+    "<tr>"
+    "<td>"
+    "<img src=\""
+    + wizard +
+    "\" align=\"left\" border=\"0\">"
+    "</td>"
+    "</tr>"
+    "</table>"
+    "</td>"
+
     "</tr>"
     "</table>"
     "</p>";
