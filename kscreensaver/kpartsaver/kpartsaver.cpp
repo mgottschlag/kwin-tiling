@@ -392,3 +392,4 @@ void SaverConfig::down()
     }
 }
 
+#include "kpartsaver.moc"
