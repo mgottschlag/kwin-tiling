@@ -218,7 +218,7 @@ class CFontEngine
     bool            checkEncodingFt(const QString &enc);
     bool            checkExtraEncodingFt(const QString &enc, bool found);
 #else
-    bool            has8BitEncodingFt(CEncodings::T8Bit *data);
+    bool            has8BitEncodingFt(const CEncodings::T8Bit &data);
     QStringList     get8BitEncodingsFt();
 #endif
     QStringList     getEncodingsFt();

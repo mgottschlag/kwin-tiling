@@ -979,31 +979,25 @@ void CFontEngine::setPsNameFt()
 }
 
 #ifndef HAVE_FONT_ENC
-bool CFontEngine::has8BitEncodingFt(CEncodings::T8Bit *data)
+bool CFontEngine::has8BitEncodingFt(const CEncodings::T8Bit &data)
 {
-    if(data)
+    int cm;
+
+    for(cm=0; cm<itsFt.face->num_charmaps; cm++)
     {
-        if(data->load())
-        {
-            int cm;
+        static const int constMaxMissing=5;
 
-            for(cm=0; cm<itsFt.face->num_charmaps; cm++)
-            {
-                static const int constMaxMissing=5;
+        int ch,
+            missing=0;
 
-                int ch,
-                    missing=0;
+        setCharmapFt(itsFt.face->charmaps[cm]);
 
-                setCharmapFt(itsFt.face->charmaps[cm]);
+        for(ch=0; ch<CEncodings::T8Bit::NUM_MAP_ENTRIES && missing<=constMaxMissing; ch++)
+            if(data.map[ch]>-1 && FT_Get_Char_Index(itsFt.face, data.map[ch])==0)
+                missing++;
 
-                for(ch=0; ch<CEncodings::T8Bit::NUM_MAP_ENTRIES && missing<=constMaxMissing; ch++)
-                    if(data->map[ch]>-1 && FT_Get_Char_Index(itsFt.face, data->map[ch])==0)
-                        missing++;
-
-                if(missing<=constMaxMissing)
-                    return true;
-            }
-        }
+        if(missing<=constMaxMissing)
+            return true;
     }
 
     return false;
@@ -1015,7 +1009,7 @@ QStringList CFontEngine::get8BitEncodingsFt()
 
     for(int i=0; CEncodings::eightBit()[i].map; i++)
         if(has8BitEncodingFt(CEncodings::eightBit()[i]))
-            enc.append(enc8->name);
+            enc.append(CEncodings::eightBit()[i].name);
 
     return enc;
 }
@@ -1248,11 +1242,12 @@ QStringList CFontEngine::getEncodingsFt()
                 enc.append("jisx0208.1983-0");
                 enc.append("jisx0201.1976-0");
             }
-            if(FT_Err_Ok==FT_Select_Charmap(ft_encoding_gb2312))
+            if(FT_Err_Ok==FT_Select_Charmap(itsFt.face, ft_encoding_gb2312))
                 enc.append("gb2312.1980-0");
-            if(FT_Err_Ok==FT_Select_Charmap(ft_encoding_big5))
+            if(FT_Err_Ok==FT_Select_Charmap(itsFt.face, ft_encoding_big5))
                 enc.append("big5.et-0");
-            if(FT_Err_Ok==FT_Select_Charmap(ft_encoding_wansung) || (FT_Err_Ok==FT_Select_Charmap(ft_encoding_johab)))
+            if(FT_Err_Ok==FT_Select_Charmap(itsFt.face, ft_encoding_wansung) ||
+               FT_Err_Ok==FT_Select_Charmap(itsFt.face, ft_encoding_johab) )
                 enc.append("ksc5601.1987-0");
         }
 #endif
