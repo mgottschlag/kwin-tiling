@@ -883,7 +883,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     QString plugin = aCfg->readEntry("PluginLib");
     kdDebug() << "KWin Plugin: " << plugin << endl;
     if ((mKwmCount == 8) && (plugin.isEmpty()))
-       aCfg->writeEntry("PluginLib", "libkwinkwmtheme");
+       aCfg->writeEntry("PluginLib", "kwin_kwmtheme");
     else if (!plugin.isEmpty())  //an installed kwin client
        aCfg->writeEntry("PluginLib", plugin);
   }
