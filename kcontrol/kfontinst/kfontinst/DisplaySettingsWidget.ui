@@ -96,7 +96,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>amp;Advanced</string>
+                        <string>&amp;Advanced</string>
                     </property>
                     <property>
                         <name>whatsThis</name>

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DisplaySettingsWidget.ui'
 **
-** Created: Tue Jul 31 21:00:14 2001
+** Created: Fri Aug 3 19:05:35 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -47,7 +47,7 @@ CDisplaySettingsWidgetData::CDisplaySettingsWidgetData( QWidget* parent,  const 
     ButtonGroup5_3Layout->setMargin( 11 );
 
     itsAdvanced = new QRadioButton( ButtonGroup5_3, "itsAdvanced" );
-    itsAdvanced->setText( i18n( "amp;Advanced" ) );
+    itsAdvanced->setText( i18n( "&Advanced" ) );
     QWhatsThis::add(  itsAdvanced, i18n( "In \"advanced\" mode the complete X11\nfonts folder structure is displayed - allowing\nyou to specify exactly where a font should\nbe installed.\n\nThis mode also allows you to install Speedo\nand bitmap fonts." ) );
 
     ButtonGroup5_3Layout->addWidget( itsAdvanced, 0, 0 );
