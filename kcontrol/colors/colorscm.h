@@ -47,15 +47,12 @@ public:
     virtual void defaults();
     QString quickHelp() const;
 
-signals:
-    void changed(bool);
-
 private slots:
     void sliderValueChanged(int val);
     void slotSave();
     void slotAdd();
     void slotRemove();
-	void slotImport();
+    void slotImport();
     void slotSelectColor(const QColor &col);
     void slotWidgetColor(int);
     void slotColorForWidget(int, const QColor &);
