@@ -102,7 +102,7 @@ void KMenuEdit::slotChangeView()
        m_actionUndelete = 0;
     }
     
-    m_actionDelete = new KAction(i18n("&Remove"), "editdelete", 0, actionCollection(), "delete");
+    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
     if (m_showHidden)
     {
        m_actionUndelete = new KAction(i18n("&Re-add"), "undo", 0, actionCollection(), "undelete");
