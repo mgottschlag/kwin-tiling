@@ -5,4 +5,5 @@ Name=Wikipedia - The Free Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
 Query=http://www.wikipedia.org/w/wiki.phtml?search=\\{@}&go=Go
+Query[de]=http://de.wikipedia.org/w/wiki.phtml?search=\\{@}&go=Go
 Charset=utf8

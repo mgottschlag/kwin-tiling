@@ -2,8 +2,10 @@
 Encoding=UTF-8
 Type=Service
 Name=Google
+Name[fa]=گوگل
 Name[ko]=구글
 ServiceTypes=SearchProvider
 Keys=gg,google
 Query=http://www.google.com/search?q=\\{@}&ie=UTF-8&oe=UTF-8
+Query[de]=http://www.google.de/search?q=\\{@}&ie=UTF-8&oe=UTF-8
 Charset=utf8
