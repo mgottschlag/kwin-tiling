@@ -120,8 +120,8 @@ TopLevel::TopLevel(const char* name)
 
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
-  // That one does the trick ..,
-//  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
+  // That one does the trick ...
+  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
 
   // set up the right hand side (the docking area)
   _dock = new DockContainer( _splitter );
