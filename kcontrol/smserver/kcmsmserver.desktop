@@ -1,0 +1,18 @@
+[Desktop Entry]
+Icon=go
+Type=Application
+DocPath=kcontrol/smserver.html
+Exec=kcmshell LookNFeel/kcmsmserver
+
+X-KDE-ModuleType=Library
+X-KDE-Library=smserver
+X-KDE-FactoryName=smserver
+
+Name=Session Manager
+Name[de]=Sitzungsmanager
+
+Comment=You can configure the session manager here
+Comment[de]=Hier können Sie den Sitzungsmanager einrichten
+
+Keywords=ksmserver,session,logout,confirmation,save,restore
+Keywords[de]=ksmserver,Sitzung,Logout,Bestaetigung,sichern,wiederherstellen
