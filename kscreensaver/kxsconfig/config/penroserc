@@ -1,0 +1,7 @@
+[Arg0]
+Label=Size:
+Maximum=50
+Minimum=10
+Switch=-size %1
+Type=Range
+Value=40

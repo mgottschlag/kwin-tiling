@@ -1,0 +1,7 @@
+[Arg0]
+Label=Density:
+Minimum=5
+Maximum=100
+Switch=-density %1
+Type=Range
+Value=20
