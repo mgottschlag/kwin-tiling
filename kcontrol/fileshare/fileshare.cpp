@@ -54,7 +54,7 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
 
   if ( nfsExec.isEmpty() && smbExec.isEmpty())
   {
-      info->setText(i18n("Smb server and nfs server not installed !"));
+      info->setText(i18n("SMB and NFS servers not installed!"));
       info->show();
       noSharing->setEnabled( false );
       sharing->setEnabled( false );
@@ -138,7 +138,7 @@ void KFileShareConfig::defaults()
 
 QString KFileShareConfig::quickHelp() const
 {
-  return i18n("todo !");
+  return i18n("To-Do!");
 }
 
 #include "fileshare.moc"
