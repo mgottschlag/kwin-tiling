@@ -348,11 +348,11 @@ void InternetKeywordsOptions::changeSearchKeywordsEnabled()
 {
     bool use_keywords = cb_enableSearchKeywords->isChecked();
     lv_searchProviders->setEnabled(use_keywords);
-    pb_addSearchProviders->setEnabled(use_keywords);
-    pb_chgSearchProviders->setEnabled(use_keywords);
-    pb_delSearchProviders->setEnabled(use_keywords);
-    pb_impSearchProviders->setEnabled(use_keywords);
-    pb_expSearchProviders->setEnabled(use_keywords);
+    pb_addSearchProvider->setEnabled(use_keywords);
+    pb_chgSearchProvider->setEnabled(use_keywords);
+    pb_delSearchProvider->setEnabled(use_keywords);
+    pb_impSearchProvider->setEnabled(use_keywords);
+    pb_expSearchProvider->setEnabled(use_keywords);
     moduleChanged();
 }
 
