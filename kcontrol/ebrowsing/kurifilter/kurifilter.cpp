@@ -22,6 +22,8 @@
 
 #include "kurifilter.h"
 
+template class QList<KURIFilterPlugin>;
+
 KURIFilter *KURIFilter::ms_pFilter = 0;
 
 KURIFilter::KURIFilter() {
