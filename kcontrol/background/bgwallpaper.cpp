@@ -100,7 +100,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
    dlg = new BGMultiWallpaperBase(this);
    setMainWidget(dlg);
 
-   dlg->m_spinInterval->setRange(1, 240);
+   dlg->m_spinInterval->setRange(1, 99999);
    dlg->m_spinInterval->setSteps(1, 15);
    dlg->m_spinInterval->setSuffix(i18n(" min"));
 
