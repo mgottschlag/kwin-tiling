@@ -205,7 +205,7 @@ void Privacy::save()
     c->writeEntry("ClearFormCompletion", clearFormCompletion->isOn());
     c->writeEntry("ClearRecentDocuments", clearRecentDocuments->isOn());
     c->writeEntry("ClearQuickStartMenu", clearQuickStartMenu->isOn());
-    c->writeEntry("ClearFavIcons", clearQuickStartMenu->isOn());
+    c->writeEntry("ClearFavIcons", clearFavIcons->isOn());
   }
 
   {
