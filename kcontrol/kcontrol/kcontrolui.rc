@@ -1,7 +1,9 @@
 <!DOCTYPE kpartgui>
 <kpartgui name="kcontrol">
-#<ToolBar fullWidth="true" name="mainToolBar">
-#	<Action name="help_contents"/>
-#	<Action name="help_whats_this"/>
-#</ToolBar>
+<MenuBar>
+  <Menu name="view"><text>&amp;View</text>
+    <Action name="activate_iconview"/>
+    <Action name="activate_treeview"/>
+  </Menu>
+</MenuBar>
 </kpartgui>

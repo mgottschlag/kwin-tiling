@@ -99,8 +99,21 @@ TopLevel::~TopLevel() {}
 void TopLevel::setupActions()
 {
   KStdAction::quit(kapp, SLOT(quit()), actionCollection());
-  KStdAction::preferences(kapp, SLOT(preferences()), actionCollection());
+  (void)new KAction(i18n("&Icon View"), 0, this, SLOT(activateIconView()),
+                    actionCollection(), "activate_iconview");
+  (void)new KAction(i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
+                    actionCollection(), "activate_treeview");
   createGUI("kcontrolui.rc");
+}
+
+void TopLevel::activateIconView()
+{
+  _indextab->activateView(Icon);
+}
+
+void TopLevel::activateTreeView()
+{
+  _indextab->activateView(Tree);
 }
 
 void TopLevel::newModule(const QString &name, const QString &quickhelp)
