@@ -80,7 +80,7 @@ FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *n
     // Auto Web Search label and combobox
     QVBox *vbox = new QVBox (this);
     vbox->setSpacing (KDialog::spacingHint());
-    lb_defaultSearchEngine = new QLabel(i18n("Defa&ult Search Engine:"), vbox);
+    lb_defaultSearchEngine = new QLabel(i18n("Defa&ult search engine:"), vbox);
     lb_defaultSearchEngine->setSizePolicy (QSizePolicy::Maximum,QSizePolicy::Preferred);
 
     cmb_defaultSearchEngine = new QComboBox(false, vbox);
