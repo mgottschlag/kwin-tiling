@@ -382,7 +382,9 @@ static void checkPath(const QStringList &dirs, const QString &item, bool &exists
 
 CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
          : KIO::SlaveBase(KIO_FONTS_PROTOCOL, pool, app),
-           itsNewFonts(0)
+           itsNewFonts(0),
+           itsLastDest(DEST_UNCHANGED),
+           itsLastDestTime(0)
 {
     KDE_DBUG << "Constructor" << endl;
     CGlobal::create(true, true); // Load X config files...
@@ -709,10 +711,8 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         return;
     }
 
-    KURL url(u);
-    if(!confirmUrl(url))
-        return;
-
+    KURL       url(u);
+    bool       changed=confirmUrl(url);
     ExistsType origExists=checkIfExists(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()));
 
     if (EXISTS_NO!=origExists && !overwrite && !resume)
@@ -724,7 +724,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     bool otherExists,
          otherHidden;
 
-    checkPath(CGlobal::cfg().getRealTopDirs(u.path()), CMisc::getSub(u.path()), otherExists, otherHidden);
+    checkPath(CGlobal::cfg().getRealTopDirs(url.path()), CMisc::getSub(url.path()), otherExists, otherHidden);
 
     if(otherExists)
     {
@@ -735,7 +735,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
         return;
     }
 
-    QString  destOrig(CMisc::formatFileName(convertUrl(u, false)));
+    QString  destOrig(CMisc::formatFileName(convertUrl(url, false)));
     QCString destOrigC(QFile::encodeName(destOrig));
 
     if(nonRootSys(url))
@@ -802,6 +802,9 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     }
 
     finished();
+
+    if(changed)
+        itsLastDestTime=time(NULL);
 }
 
 bool CKioFonts::putReal(const QString &destOrig, const QCString &destOrigC, bool origExists,
@@ -945,11 +948,8 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
         return;
     }
 
-    KURL dest(d);
-
-    if(!confirmUrl(dest))
-        return;
-
+    KURL       dest(d);
+    bool       changed=confirmUrl(dest);
     QCString   realDest=QFile::encodeName(CMisc::formatFileName(convertUrl(dest, false)));
     ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), CMisc::getSub(dest.path()));
 
@@ -1084,6 +1084,9 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     }
 
     finished();
+
+    if(changed)
+        itsLastDestTime=time(NULL);
 }
 
 void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
@@ -1886,12 +1889,18 @@ bool CKioFonts::confirmUrl(KURL &url)
 
         if(i18n(KIO_FONTS_USER)!=sect && i18n(KIO_FONTS_SYS)!=sect)
         {
-            // No = 2nd button = System
-            if(KMessageBox::No==messageBox(QuestionYesNo, i18n("Do you wish to install the font into \"%1\" (in which case the "
-                                                               "font will only be usable by you), or \"%2\" (the font will be usable "
-                                                               "by all users - but you will need to know the Administrator's password) ?")
-                                                              .arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS),
-                                           i18n("Where to install..."), i18n(KIO_FONTS_USER), i18n(KIO_FONTS_SYS)))
+            bool changeToSystem=false;
+
+            if(DEST_UNCHANGED!=itsLastDest && itsLastDestTime && (abs(time(NULL)-itsLastDestTime) < 5))
+                changeToSystem=DEST_SYS==itsLastDest;
+            else
+                changeToSystem=KMessageBox::No==messageBox(QuestionYesNo, i18n("Do you wish to install the font into \"%1\" (in which case the "
+                                                                               "font will only be usable by you), or \"%2\" (the font will be usable "
+                                                                               "by all users - but you will need to know the Administrator's password) ?")
+                                                                               .arg(KIO_FONTS_USER).arg(KIO_FONTS_SYS),
+                                                           i18n("Where to install..."), i18n(KIO_FONTS_USER), i18n(KIO_FONTS_SYS));
+
+            if(changeToSystem)
             {
                 switch(CFontEngine::getType(QFile::encodeName(url.path())))
                 {
@@ -1913,15 +1922,20 @@ bool CKioFonts::confirmUrl(KURL &url)
                     default:
                             url.setPath(QChar('/')+i18n(KIO_FONTS_SYS)+QChar('/')+CMisc::getFile(url.path()));
                 }
+                itsLastDest=DEST_SYS;
             }
             else
+            {
+                itsLastDest=DEST_USER;
                 url.setPath(QChar('/')+i18n(KIO_FONTS_USER)+QChar('/')+CMisc::getFile(url.path()));
+            }
 
             KDE_DBUG << "Changed URL to:" << url.path() << endl;
+            return true;
         }
     }
 
-    return true;
+    return false;
 }
 
 QString CKioFonts::convertUrl(const KURL &url, bool checkExists)

@@ -1,0 +1,8 @@
+[Desktop Entry]
+ServiceTypes=application/x-font-ttf,application/x-font-type1,application/x-font-speedo,application/x-font-bdf,application/x-font-pcf,application/x-font-snf,application/x-font-otf,application/x-font-ttc,application/x-afm
+Actions=installFont
+
+[Desktop Action installFont]
+Name=Install
+Icon=kcmfontinst
+Exec=kfmclient copy %U fonts:/

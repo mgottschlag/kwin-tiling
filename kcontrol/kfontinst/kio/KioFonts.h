@@ -42,6 +42,15 @@
 
 class CKioFonts : public KIO::SlaveBase
 {
+    private:
+
+    enum EDest
+    {
+        DEST_UNCHANGED,
+        DEST_SYS,
+        DEST_USER
+    };
+
     public:
 
     CKioFonts(const QCString &pool, const QCString &app);
@@ -86,6 +95,8 @@ class CKioFonts : public KIO::SlaveBase
     QString     itsPasswd;
     bool        itsCanStorePasswd;
     uint        itsNewFonts;
+    EDest       itsLastDest;
+    time_t      itsLastDestTime;
 };
 
 #endif
