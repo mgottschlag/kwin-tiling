@@ -26,6 +26,7 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobalsettings.h>
+#include <kseparator.h>
 #include <qcombobox.h>
 
 #include <X11/X.h>
@@ -47,7 +48,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   : KCModule (parent, name), config(_config)
 {
   QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
-  QGridLayout *layout = new QGridLayout( this, 15, 4,
+  QGridLayout *layout = new QGridLayout( this, 17, 4,
                      KDialog::marginHint(), 1);
   QLabel* label;
   QString strMouseButton1, strMouseButton3;
@@ -58,9 +59,10 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   layout->addMultiCellWidget(label, 0,0,0,1);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when double clicking on the"
     " titlebar of a window.") );
-  label = new QLabel(this);
-  label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  layout->addMultiCellWidget(label, 1, 1, 0, 3);
+
+  KSeparator *line = new KSeparator(KSeparator::HLine, this);
+  layout->addMultiCellWidget(line, 1, 1, 0, 3, AlignVCenter);
+  layout->setRowStretch(1, 1);
 
   QComboBox* combo = new QComboBox(this);
   combo->insertItem(i18n("Maximize"));
@@ -85,27 +87,24 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   label = new QLabel(i18n("Titlebar and frame:"), this);
   layout->addMultiCellWidget(label, 2,2,0,1);
-  layout->setRowStretch(2, 1);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on the"
     " titlebar or the frame of a window.") );
 
-  label = new QLabel(this);
-  label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  layout->addMultiCellWidget(label, 6, 6, 0, 3);
+  line = new KSeparator(KSeparator::HLine, this);
+  layout->addMultiCellWidget(line, 6, 6, 0, 3, AlignVCenter);
+  layout->setRowStretch(6, 1);
 
   label = new QLabel(i18n("Inactive inner window:"), this);
   layout->addMultiCellWidget(label, 7,7,0,3);
-  layout->setRowStretch(7, 1);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on an inactive"
     " inner window ('inner' means: not titlebar, not frame).") );
 
-  label = new QLabel(this);
-  label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  layout->addMultiCellWidget(label, 11, 11, 0, 3);
+  line = new KSeparator(KSeparator::HLine, this);
+  layout->addMultiCellWidget(line, 11, 11, 0, 3, AlignVCenter);
+  layout->setRowStretch(11, 1);
 
   label = new QLabel(i18n("Inner window, titlebar and frame:"), this);
   layout->addMultiCellWidget(label, 12,12,0,3);
-  layout->setRowStretch(12, 1);
   QWhatsThis::add( label, i18n("Here you can customize KDE's behavior when clicking somewhere into"
     " a window while pressing a modifier key."));
 
