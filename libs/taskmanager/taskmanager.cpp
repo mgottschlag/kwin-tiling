@@ -428,16 +428,24 @@ QString Task::visibleIconName() const
 QString Task::className()
 {
     XClassHint hint;
-    if(XGetClassHint(qt_xdisplay(), _win, &hint))
-        return QString(hint.res_name);
+    if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
+	QString nh( hint.res_name );
+	XFree( hint.res_name );
+	XFree( hint.res_class );
+	return nh;
+    }
     return QString::null;
 }
 
 QString Task::classClass()
 {
     XClassHint hint;
-    if(XGetClassHint(qt_xdisplay(), _win, &hint))
-        return QString(hint.res_class);
+    if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
+	QString ch( hint.res_class );
+	XFree( hint.res_name );
+	XFree( hint.res_class );
+	return ch;
+    }
     return QString::null;
 }
 
