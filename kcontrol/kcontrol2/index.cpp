@@ -113,7 +113,7 @@ QListViewItem *IndexPane::getGroupItem(QListViewItem *parent, const QStringList&
 
 void IndexPane::doubleClicked(QListViewItem *item)
 {
-  if (!item->childCount() == 0)
+  if (item->childCount() != 0)
     return;
   IndexListItem *iitem = (IndexListItem*)(item);
   if (iitem && iitem->_module)
@@ -128,12 +128,11 @@ void IndexPane::updateItem(QListViewItem *item, ConfigModule *module)
 {
   while (item)
     {
-      updateItem(item->firstChild(), module);
-
-      if (!item->childCount() == 0)
-        continue;
+      if (item->childCount() != 0)
+	updateItem(item->firstChild(), module);
+	  
       IndexListItem *iitem = (IndexListItem*)(item);
-      if ((iitem && iitem->getModule()) && (iitem->getModule() == module))
+      if (iitem->getModule() == module)
 	iitem->repaint();
 
       item = item->nextSibling();
