@@ -1,3 +1,5 @@
+SUBDIRS= . sounds
+
 lib_LTLIBRARIES = libkcm_knotify.la
 
 libkcm_knotify_la_SOURCES = main.cpp knotify.cpp eventview.cpp eventconfig.cpp
