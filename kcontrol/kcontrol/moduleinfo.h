@@ -39,7 +39,8 @@ public:
   const QStringList &keywords() const { return _keywords; };
   QString name() const { return _name; };
   QString comment() const { return _comment; };
-  QPixmap icon();
+  QPixmap smallIcon();
+  QPixmap mediumIcon();
   QPixmap largeIcon();
   bool isDirectory() const { return _directory; };
   QString library() const { return _lib; };

@@ -21,6 +21,7 @@
 #include <kapp.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kconfig.h>
 
 #include <qsplitter.h>
 #include <qtabwidget.h>
@@ -36,6 +37,7 @@
 #include "aboutwidget.h"
 #include "modules.h"
 #include "proxywidget.h"
+#include "global.h"
 
 #include "toplevel.h"
 #include "toplevel.moc"
@@ -45,6 +47,26 @@ TopLevel::TopLevel(const char* name)
   : KTMainWindow( name )
   , _active(0)
 {
+  setPlainCaption(i18n("KDE Control Center"));
+
+  // read settings
+  KConfig *config = KGlobal::config();
+  config->setGroup("Index");
+  QString viewmode = config->readEntry("ViewMode", "Icon");
+
+  if (viewmode == "Tree")
+    KCGlobal::setViewMode(Tree);
+  else
+    KCGlobal::setViewMode(Icon);
+
+  QString size = config->readEntry("IconSize", "Medium");
+  if (size == "Small")
+    KCGlobal::setIconSize(Small);
+  else if (size == "Large")
+    KCGlobal::setIconSize(Large);
+  else
+    KCGlobal::setIconSize(Medium);
+  
   // initialize the entries
   _modules = new ConfigModuleList();
   _modules->readDesktopEntries();
@@ -91,29 +113,126 @@ TopLevel::TopLevel(const char* name)
   // initialize the GUI actions
   setupActions();
 
-  setPlainCaption(i18n("KDE Control Center"));
+  // activate defaults
+  if (KCGlobal::viewMode() == Tree)   {
+    activateTreeView();
+    tree_view->setChecked(true);
+  }
+  else {
+    activateIconView();
+    icon_view->setChecked(true);
+  }
 }
 
-TopLevel::~TopLevel() {}
+TopLevel::~TopLevel()
+{
+  KConfig *config = KGlobal::config();
+  config->setGroup("Index");
+  if (KCGlobal::viewMode() == Tree)
+    config->writeEntry("ViewMode", "Tree");
+  else
+    config->writeEntry("ViewMode", "Icon");
+
+  switch (KCGlobal::iconSize())
+    {
+    case Small:
+      config->writeEntry("IconSize", "Small");
+      break;
+    case Medium:
+      config->writeEntry("IconSize", "Medium");
+      break;
+    case Large:
+      config->writeEntry("IconSize", "Large");
+      break;
+    default:
+      config->writeEntry("IconSize", "Medium");
+      break;
+    }
+
+  config->sync();
+}
 
 void TopLevel::setupActions()
 {
   KStdAction::quit(kapp, SLOT(quit()), actionCollection());
-  (void)new KAction(i18n("&Icon View"), 0, this, SLOT(activateIconView()),
-                    actionCollection(), "activate_iconview");
-  (void)new KAction(i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
-                    actionCollection(), "activate_treeview");
+
+  icon_view = new KToggleAction
+    (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
+     actionCollection(), "activate_iconview");
+  icon_view->setExclusiveGroup( "viewmode" );
+
+  tree_view = new KToggleAction
+    (i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
+     actionCollection(), "activate_treeview");
+  tree_view->setExclusiveGroup( "viewmode" );
+
+  icon_small = new KToggleAction
+    (i18n("&Small"), 0, this, SLOT(activateSmallIcons()),
+     actionCollection(), "activate_smallicons");
+  icon_small->setExclusiveGroup( "iconsize" );
+
+  icon_medium = new KToggleAction
+    (i18n("&Medium"), 0, this, SLOT(activateMediumIcons()),
+     actionCollection(), "activate_mediumicons");
+  icon_medium->setExclusiveGroup( "iconsize" );
+
+  icon_large = new KToggleAction
+    (i18n("&Large"), 0, this, SLOT(activateLargeIcons()),
+     actionCollection(), "activate_largeicons");
+  icon_large->setExclusiveGroup( "iconsize" );
+
   createGUI("kcontrolui.rc");
 }
 
 void TopLevel::activateIconView()
 {
+  KCGlobal::setViewMode(Icon);
   _indextab->activateView(Icon);
+
+  icon_small->setEnabled(true);
+  icon_medium->setEnabled(true);
+  icon_large->setEnabled(true);
+
+  switch(KCGlobal::iconSize())
+    {
+    case Small:
+      icon_small->setChecked(true);
+      break;
+    case Large:
+      icon_large->setChecked(true);
+      break;
+    default:
+      icon_medium->setChecked(true);
+      break;
+    }
 }
 
 void TopLevel::activateTreeView()
 {
+  KCGlobal::setViewMode(Tree);
   _indextab->activateView(Tree);
+
+  icon_small->setEnabled(false);
+  icon_medium->setEnabled(false);
+  icon_large->setEnabled(false);
+}
+
+void TopLevel::activateSmallIcons()
+{
+  KCGlobal::setIconSize(Small);
+  _indextab->reload();
+}
+
+void TopLevel::activateMediumIcons()
+{
+  KCGlobal::setIconSize(Medium);
+  _indextab->reload();
+}
+
+void TopLevel::activateLargeIcons()
+{
+  KCGlobal::setIconSize(Large);
+  _indextab->reload();
 }
 
 void TopLevel::newModule(const QString &name, const QString &quickhelp)

@@ -26,6 +26,8 @@
 class QTabWidget;
 class QSplitter;
 
+class KToggleAction;
+
 class DockContainer;
 class IndexWidget;
 class SearchWidget;
@@ -53,10 +55,17 @@ protected slots:
   void activateIconView();
   void activateTreeView();
 
+  void activateSmallIcons();
+  void activateMediumIcons();
+  void activateLargeIcons();
+
 private:
   QTabWidget     *_tab;
   DockContainer  *_dock;
   QSplitter      *_splitter;
+
+  KToggleAction *tree_view, *icon_view;
+  KToggleAction *icon_small, *icon_medium, *icon_large;
 
   IndexWidget  *_indextab;
   SearchWidget *_searchtab;

@@ -185,7 +185,7 @@ void SearchWidget::populateResultListBox(const QString& s)
   results.sort();
 
   for(QStringList::ConstIterator it = results.begin(); it != results.end(); it++)
-    _resultList->insertItem((dict[*it])->icon(), *it);
+    _resultList->insertItem((dict[*it])->smallIcon(), *it);
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)

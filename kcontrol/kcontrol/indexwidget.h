@@ -22,13 +22,12 @@
 
 #include <qwidget.h>
 
+#include "global.h"
+
 class ConfigModuleList;
 class ConfigModule;
 class ModuleTreeView;
 class ModuleIconView;
-class QPushButton;
-
-enum IndexViewMode {Icon, Tree};
 
 class IndexWidget : public QWidget
 {
@@ -42,10 +41,10 @@ public slots:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);
   void activateView(IndexViewMode);
+  void reload();
 
 protected slots:
   void moduleSelected(ConfigModule *);
-  void viewButtonClicked();
 
 signals:
   void moduleActivated(ConfigModule *module);
@@ -56,7 +55,6 @@ protected:
 private:
   ModuleTreeView   *_tree;
   ModuleIconView   *_icon;
-  QPushButton      *_viewbtn;
   ConfigModuleList *_modules;
   IndexViewMode    viewMode;
 };

@@ -22,6 +22,9 @@
 
 #include <qstring.h>
 
+enum IndexViewMode {Icon, Tree};
+enum IndexIconSize {Small, Medium, Large};
+
 class KCGlobal
 {
 public:
@@ -37,6 +40,8 @@ public:
   static QString systemRelease() { return _irelease; }
   static QString systemVersion() { return _iversion; }
   static QString systemMachine() { return _imachine; }
+  static IndexViewMode viewMode() { return _viewmode; }
+  static IndexIconSize iconSize() { return _iconsize; }
 
   static void setRoot(bool r) { _root = r; }
   static void setSystem(bool s) { _system = s; }
@@ -47,10 +52,14 @@ public:
   static void setSystemRelease(const QString& n){ _irelease = n; }
   static void setSystemVersion(const QString& n){ _iversion = n; }
   static void setSystemMachine(const QString& n){ _imachine = n; }
+  static void setViewMode(IndexViewMode m) { _viewmode = m; }
+  static void setIconSize(IndexIconSize s) { _iconsize = s; }
 
 private:
   static bool _root, _system;
   static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
+  static IndexViewMode _viewmode;
+  static IndexIconSize _iconsize;
 };
 
 #endif

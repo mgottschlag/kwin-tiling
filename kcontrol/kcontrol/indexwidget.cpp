@@ -18,7 +18,6 @@
 */                                                                            
 
 #include <qlayout.h>
-#include <qpushbutton.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -46,43 +45,23 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
   _icon->fill();
   connect(_icon, SIGNAL(moduleSelected(ConfigModule*)), 
 		  this, SLOT(moduleSelected(ConfigModule*)));
-
-  // view button
-  _viewbtn = new QPushButton(this);
-  _viewbtn->setFixedHeight(22);
-  connect(_viewbtn, SIGNAL(clicked()), this, SLOT(viewButtonClicked()));
-
-  KConfig *config = KGlobal::config();
-  config->setGroup("Index");
-  QString defaultview = config->readEntry("DefaultView", "Icon");
-
-  if (defaultview == "Tree")
-    activateView(Tree);
-  else
-    activateView(Icon);
+  activateView(Icon);
 }
 
-IndexWidget::~IndexWidget()
+IndexWidget::~IndexWidget() {}
+
+void IndexWidget::reload()
 {
-  KConfig *config = KGlobal::config();
-  config->setGroup("Index");
-  if (viewMode == Tree)
-    config->writeEntry("DefaultView", "Tree");
-  else
-    config->writeEntry("DefaultView", "Icon");
-  config->sync();
+  _icon->fill();
 }
 
 void IndexWidget::resizeEvent(QResizeEvent *)
 {
-  _viewbtn->move(0, height()-22);
-  _viewbtn->resize(width(), 22);
-
   _tree->move(0,0);
-  _tree->resize(width(), height()-22);
+  _tree->resize(width(), height());
 
   _icon->move(0,0);
-  _icon->resize(width(), height()-22);
+  _icon->resize(width(), height());
   _icon->setGridX(width()-26);
   _icon->fill();
 }
@@ -143,21 +122,11 @@ void IndexWidget::activateView(IndexViewMode mode)
       _tree->hide();
       _icon->show();
       _icon->setFocus();
-      _viewbtn->setText(i18n("S&witch to treeview."));
     }
   else
     {
       _tree->show();
       _tree->setFocus();
       _icon->hide();
-      _viewbtn->setText(i18n("S&witch to iconview."));
     }
-}
-
-void IndexWidget::viewButtonClicked()
-{
-  if (viewMode == Icon)
-    activateView(Tree);
-  else
-    activateView(Icon);
 }

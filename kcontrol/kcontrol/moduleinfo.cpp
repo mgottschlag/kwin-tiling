@@ -67,8 +67,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   setGroups(groups);
 }
 
-
-QPixmap ModuleInfo::icon()
+QPixmap ModuleInfo::smallIcon()
 {
   QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small, 0, true);
   if(icon.isNull())
@@ -77,11 +76,21 @@ QPixmap ModuleInfo::icon()
   return icon;
 }
 
-QPixmap ModuleInfo::largeIcon()
+QPixmap ModuleInfo::mediumIcon()
 {
   QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Medium, 0, true);
   if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Medium);  
+	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Medium); 
+  
+  return icon;
+}
+
+QPixmap ModuleInfo::largeIcon()
+{
+  QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Large, 0, true);
+  if(icon.isNull())
+	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Large); 
+  
   return icon;
 }
 

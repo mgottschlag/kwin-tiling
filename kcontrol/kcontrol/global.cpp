@@ -34,6 +34,8 @@ QString KCGlobal::_isystem = "";
 QString KCGlobal::_irelease = "";
 QString KCGlobal::_iversion = "";
 QString KCGlobal::_imachine = "";
+IndexViewMode KCGlobal::_viewmode = Icon;
+IndexIconSize KCGlobal::_iconsize = Medium;
 
 void KCGlobal::init()
 {
