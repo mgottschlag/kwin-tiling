@@ -59,7 +59,8 @@ private:
 
   QCheckBox *slowKeys, *bounceKeys;    
   KIntNumInput *slowKeysDelay, *bounceKeysDelay;
-
+  
+  QCheckBox *gestures;
 };
 
 

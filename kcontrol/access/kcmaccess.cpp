@@ -8,7 +8,6 @@
 
 #include <stdlib.h>
 
-
 #include <dcopref.h>
 
 #include <qtabwidget.h>
@@ -27,6 +26,13 @@
 #include <knuminput.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <kshortcut.h>
+#include <kkeynative.h>
+
+#include <X11/XKBlib.h>
+#define XK_MISCELLANY
+#define XK_XKB_KEYS
+#include <X11/keysymdef.h>
 
 #include "kcmaccess.moc"
 
@@ -49,6 +55,8 @@ static bool needToRunKAccessDaemon( KConfig *config )
         return true;
   if (keyboard.readBoolEntry("BounceKeys", false))
         return true;
+  if (keyboard.readBoolEntry("Gestures", true))
+        return true;
 
   KConfigGroup mouse( config, "Mouse" );
   
@@ -56,6 +64,116 @@ static bool needToRunKAccessDaemon( KConfig *config )
         return true;
 
     return false; // don't need it
+}
+
+QString mouseKeysShortcut (Display *display) {
+  // Calculate the keycode
+  KeySym sym = XK_MouseKeys_Enable;
+  KeyCode code = XKeysymToKeycode(display, sym);
+  if (code == 0) {
+     sym = XK_Pointer_EnableKeys;
+     code = XKeysymToKeycode(display, sym);
+     if (code == 0)
+        return ""; // No shortcut available?
+  }
+
+  // Calculate the modifiers by searching the keysym in the X keyboard mapping
+  XkbDescPtr xkbdesc = XkbGetMap(display, XkbKeyTypesMask | XkbKeySymsMask, XkbUseCoreKbd);
+
+  bool found = false;
+  unsigned char modifiers = 0;
+  int groups = XkbKeyNumGroups(xkbdesc, code);
+  for (int grp = 0; grp < groups && !found; grp++)
+  {
+     int levels = XkbKeyGroupWidth(xkbdesc, code, grp);
+     for (int level = 0; level < levels && !found; level++)
+     {
+        if (sym == XkbKeySymEntry(xkbdesc, code, level, grp))
+        {
+           // keysym found => determine modifiers
+           int typeIdx = xkbdesc->map->key_sym_map[code].kt_index[grp];
+           XkbKeyTypePtr type = &(xkbdesc->map->types[typeIdx]);
+           for (int i = 0; i < type->map_count && !found; i++)
+           {
+              if (type->map[i].active && (type->map[i].level == level))
+              {
+                 modifiers = type->map[i].mods.mask;
+                 found = true;
+              }
+           }
+        }
+     }
+  }
+  XkbFreeClientMap (xkbdesc, 0, true);
+
+  if (!found)
+     return ""; // Somehow the keycode -> keysym mapping is flawed
+  
+  XEvent ev;
+  ev.xkey.display = display;
+  ev.xkey.keycode = code;
+  ev.xkey.state = 0;
+  KKey key = KKey(KKeyNative(&ev));
+  QString keyname = key.toString();
+
+  unsigned int AltMask   = KKeyNative::modX(KKey::ALT);
+  unsigned int WinMask   = KKeyNative::modX(KKey::WIN);
+  unsigned int NumMask   = KKeyNative::modXNumLock();
+  unsigned int ScrollMask= KKeyNative::modXScrollLock();
+
+  unsigned int MetaMask  = XkbKeysymToModifiers (display, XK_Meta_L);
+  unsigned int SuperMask = XkbKeysymToModifiers (display, XK_Super_L);
+  unsigned int HyperMask = XkbKeysymToModifiers (display, XK_Hyper_L);
+  unsigned int AltGrMask = XkbKeysymToModifiers (display, XK_Mode_switch)
+                         | XkbKeysymToModifiers (display, XK_ISO_Level3_Shift)
+                         | XkbKeysymToModifiers (display, XK_ISO_Level3_Latch)
+                         | XkbKeysymToModifiers (display, XK_ISO_Level3_Lock);
+  
+  unsigned int mods = ShiftMask | ControlMask | AltMask | WinMask
+                    | LockMask | NumMask | ScrollMask;
+
+  AltGrMask &= ~mods;
+  MetaMask  &= ~(mods | AltGrMask);
+  SuperMask &= ~(mods | AltGrMask | MetaMask);
+  HyperMask &= ~(mods | AltGrMask | MetaMask | SuperMask);
+
+  if ((modifiers & AltGrMask) != 0)
+    keyname = i18n("AltGraph") + "+" + keyname;
+  if ((modifiers & HyperMask) != 0)
+    keyname = i18n("Hyper") + "+" + keyname;
+  if ((modifiers & SuperMask) != 0)
+    keyname = i18n("Super") + "+" + keyname;
+  if ((modifiers & WinMask) != 0)
+    keyname = KKey::modFlagLabel(KKey::WIN) + "+" + keyname;
+  if ((modifiers & AltMask) != 0)
+    keyname = KKey::modFlagLabel(KKey::ALT) + "+" + keyname;
+  if ((modifiers & ControlMask) != 0)
+    keyname = KKey::modFlagLabel(KKey::CTRL) + "+" + keyname;
+  if ((modifiers & ShiftMask) != 0)
+    keyname = KKey::modFlagLabel(KKey::SHIFT) + "+" + keyname;
+
+  QString result;
+  if ((modifiers & ScrollMask) != 0)
+    if ((modifiers & LockMask) != 0)
+      if ((modifiers & NumMask) != 0)
+        result = i18n("Press %1 while NumLock, CapsLock and ScrollLock are active");
+      else
+        result = i18n("Press %1 while CapsLock and ScrollLock are active");
+    else if ((modifiers & NumMask) != 0)
+        result = i18n("Press %1 while NumLock and ScrollLock are active");
+      else
+        result = i18n("Press %1 while ScrollLock is active");
+  else if ((modifiers & LockMask) != 0)
+      if ((modifiers & NumMask) != 0)
+        result = i18n("Press %1 while NumLock and CapsLock are active");
+      else
+        result = i18n("Press %1 while CapsLock is active");
+    else if ((modifiers & NumMask) != 0)
+        result = i18n("Press %1 while NumLock is active");
+      else
+        result = i18n("Press %1");
+  
+  return result.arg(keyname);
 }
 
 KAccessConfig::KAccessConfig(QWidget *parent, const char *)
@@ -235,7 +353,26 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   bounceKeysDelay->setLabel(i18n("D&elay:"));
   hbox->addWidget(bounceKeysDelay);
 
+  grp = new QGroupBox(i18n("Activation Gestures"), keys);
+  grp->setColumnLayout( 0, Qt::Horizontal );
+  vbox->addWidget(grp);
 
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
+
+  gestures = new QCheckBox(i18n("Use gestures for activating the above features"), grp);
+  vvbox->addWidget(gestures);
+  QString shortcut = mouseKeysShortcut(this->x11Display());
+  if (shortcut.isEmpty())
+    QWhatsThis::add (gestures, i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+    "Sticky keys: Press Shift key 5 consecutive times\n"
+    "Slow keys: Hold down Shift for 8 seconds"));
+  else
+    QWhatsThis::add (gestures, i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+    "Mouse Keys: %1\n"
+    "Sticky keys: Press Shift key 5 consecutive times\n"
+    "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
+
+//XK_MouseKeys_Enable,XK_Pointer_EnableKeys
   connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(stickyKeysLock, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(slowKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
@@ -246,6 +383,8 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   connect(bounceKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
   connect(bounceKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+
+  connect(gestures, SIGNAL(clicked()), this, SLOT(configChanged()));
 
   vbox->addStretch();
 
@@ -312,6 +451,7 @@ void KAccessConfig::load()
   slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
   bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
   bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
+  gestures->setChecked(config->readBoolEntry("Gestures", true));
 
 
   delete config;
@@ -349,6 +489,8 @@ void KAccessConfig::save()
 
   config->writeEntry("BounceKeys", bounceKeys->isChecked());
   config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
+  
+  config->writeEntry("Gestures", gestures->isChecked());
 
 
   config->sync();
@@ -398,8 +540,10 @@ void KAccessConfig::defaults()
   bounceKeys->setChecked(false);
   bounceKeysDelay->setValue(500);
 
-  stickyKeys->setChecked(true);
+  stickyKeys->setChecked(false);
   stickyKeysLock->setChecked(true);
+
+  gestures->setChecked(true);
 
   checkAccess();
 

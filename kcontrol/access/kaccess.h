@@ -34,6 +34,7 @@ protected:
   void readSettings();
 
   void xkbBellNotify(XkbBellNotifyEvent *event);
+  void xkbControlsNotify(XkbControlsNotifyEvent *event);
 
 
 private slots:
@@ -45,6 +46,7 @@ private slots:
 private:
 
   int xkb_opcode;
+  unsigned int features;
 
   bool    _systemBell, _artsBell, _visibleBell, _visibleBellInvert;
   bool    _artsBellBlocked;
