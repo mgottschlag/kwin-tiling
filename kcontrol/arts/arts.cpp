@@ -68,7 +68,7 @@ extern "C" {
 			    int rate, int bits, const QString &audioIO,
 			    const QString &addOptions, bool autoSuspend,
 			    int suspendTime,
-			    const QString &messageApplication);
+			    const QString &messageApplication, int loggingLevel);
 	KCModule *create_arts(QWidget *parent, const char *name);
 	void init_arts();
 }
@@ -182,6 +182,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	connect(artsConfig->suspendTime,SIGNAL(valueChanged(const QString &)),SLOT(slotChanged()));
 	connect(displayMessage, SIGNAL(clicked()), SLOT(slotChanged()));
 	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
+	connect(artsConfig->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
@@ -203,6 +204,7 @@ void KArtsModule::GetSettings( void )
 	artsConfig->latencySlider->setValue(config->readNumEntry("Latency",250));
 	messageApplication->setText(config->readEntry("MessageApplication","artsmessage"));
 	displayMessage->setChecked(!messageApplication->text().isEmpty());
+	artsConfig->loggingLevel->setCurrentItem(3 - config->readNumEntry("LoggingLevel",0));
 
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
@@ -278,6 +280,7 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("AutoSuspend", autoSuspend->isChecked());
 	config->writeEntry("SuspendTime", suspendTime->value());
 	config->writeEntry("MessageApplication",app);
+	config->writeEntry("LoggingLevel",3 - artsConfig->loggingLevel->currentItem());
 
 	calculateLatency();
 	// Save arguments string in case any other process wants to restart artsd.
@@ -286,7 +289,8 @@ void KArtsModule::saveParams( void )
 		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
 					fragmentCount, fragmentSize, dev, rate, bits,
 					audioIO, addOptions, autoSuspend->isChecked(),
-					suspendTime->value(), app));
+					suspendTime->value(), app,
+				    3 - artsConfig->loggingLevel->currentItem()));
 
 	config->sync();
 }
@@ -374,6 +378,7 @@ void KArtsModule::defaults()
 	artsConfig->latencySlider->setValue(250);
 	displayMessage->setChecked(true);
 	messageApplication->setText("artsmessage");
+	artsConfig->loggingLevel->setCurrentItem(0);
 	slotChanged();
 }
 
@@ -489,7 +494,7 @@ QString createArgs(bool netTrans,
 		   int rate, int bits, const QString &audioIO,
 		   const QString &addOptions, bool autoSuspend,
 		   int suspendTime,
-		   const QString &messageApplication)
+		   const QString &messageApplication, int loggingLevel)
 {
 	QString args;
 
@@ -525,6 +530,8 @@ QString createArgs(bool netTrans,
 
 	if (addOptions.length() > 0)
 		args += QChar(' ') + addOptions;
+
+	args += QString::fromLatin1(" -l %1").arg(loggingLevel);
 
 	return args;
 }
