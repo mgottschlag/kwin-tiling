@@ -65,10 +65,10 @@ void KMenuEdit::setupActions()
     (void)new KAction(i18n("New &Item"), "filenew", 0, actionCollection(), "newitem");
     (void)new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
     
-    KStdAction::quit(this, 0, actionCollection());
-    KStdAction::cut(this, 0, actionCollection());
-    KStdAction::copy(this, 0, actionCollection());
-    KStdAction::paste(this, 0, actionCollection());
+    KStdAction::quit(0, 0, actionCollection());
+    KStdAction::cut(0, 0, actionCollection());
+    KStdAction::copy(0, 0, actionCollection());
+    KStdAction::paste(0, 0, actionCollection());
 }
 
 void KMenuEdit::setupView()

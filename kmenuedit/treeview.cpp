@@ -103,16 +103,28 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     _rmb = new QPopupMenu(this);
     
     if(_ac->action("edit_cut"))
-	_ac->action("edit_cut")->plug(_rmb);
+	{
+	    _ac->action("edit_cut")->plug(_rmb);
+	    _ac->action("edit_cut")->setEnabled(false);
+	}
     if(_ac->action("edit_copy"))
-	_ac->action("edit_copy")->plug(_rmb);
+	{
+	    _ac->action("edit_copy")->plug(_rmb);
+	    _ac->action("edit_copy")->setEnabled(false);
+	}
     if(_ac->action("edit_paste"))
-	_ac->action("edit_paste")->plug(_rmb);
+	{
+	    _ac->action("edit_paste")->plug(_rmb);
+	    _ac->action("edit_paste")->setEnabled(false);
+	}
     
     _rmb->insertSeparator();
     
     if(_ac->action("delete"))
-	_ac->action("delete")->plug(_rmb);
+	{
+	    _ac->action("delete")->plug(_rmb);
+	    _ac->action("delete")->setEnabled(false);
+	}
     
     _rmb->insertSeparator();
 
@@ -208,9 +220,12 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 
 void TreeView::itemSelected(QListViewItem *item)
 {
+    _ac->action("edit_cut")->setEnabled(selectedItem());
+    _ac->action("edit_copy")->setEnabled(selectedItem());
+    _ac->action("delete")->setEnabled(selectedItem());
+    
     if(!item) return;
 
-    cout << " SELECTED: " << ((TreeItem*)item)->file().local8Bit() << endl;
     emit entrySelected(((TreeItem*)item)->file());
 }
 
@@ -749,6 +764,7 @@ void TreeView::copy()
 	
 	    copyFile(file, QString(clipboard_prefix) + _clipboard);
 	}
+    _ac->action("edit_paste")->setEnabled(true);
 }
 
 void TreeView::paste()
@@ -848,6 +864,10 @@ void TreeView::del()
 	    deleteFile(file);
 	    delete item;
 	}
+    
+    _ac->action("edit_cut")->setEnabled(false);
+    _ac->action("edit_copy")->setEnabled(false);
+    _ac->action("delete")->setEnabled(false);
 }
 
 void TreeView::cleanupClipboard()
