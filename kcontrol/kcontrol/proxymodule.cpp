@@ -60,7 +60,7 @@ ProcessProxy::ProcessProxy(QString exec, bool onlyRoot)
 
   // find out if we have to call kdesu
   if (onlyRoot && (getuid() != 0))
-    *_process << locate("exe", "kdesu") << "root" << "-c";
+    *_process << locate("exe", "kdesu");
 
   // feed the arguments to the process.
   // TODO: This ignores escaping!!!
@@ -135,7 +135,7 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
 
   // run the remote process
   _process = new KProcess;
-  *_process << locate("exe", "kdesu") << "root" << "-c" << locate("exe", "kcmroot") << mod.fileName();
+  *_process << locate("exe", "kdesu") << locate("exe", "kcmroot") << mod.fileName();
   if (!server.isEmpty())
     *_process << "-dcopserver" << server;
   if (!_process->start())
