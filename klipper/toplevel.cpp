@@ -355,7 +355,7 @@ void TopLevel::readConfiguration( KConfig *kc )
     kc->setGroup("General");
     bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
-    bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", true);
+    bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", false);
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
     bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
     bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
