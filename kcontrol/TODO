@@ -67,12 +67,6 @@ Sound -> Sound Server
 As soon as more stuff is being added, a tab "Quality" might be a good idea.
 
 
-Web Browsing -> Style-Sheet
----------------------------
-Too many groupboxes (Especially if you think of the case that visulally impaired people might want large fonts which wouldn't be displayed properly with the current layout).
-Solution: Rename "Use accessibility stylesheet defined below" to "Use accessbility stylesheet defined on the "Customize"-Tab and move all Groupboxes except for the "Stylesheets"-Groupbox to a new "Customize"-tab.
-
-
 Web Browsing -> User Agent
 --------------------------
 The Dialog suffers from the cockpit-dilemma.
