@@ -158,9 +158,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd = QFL1("info:/") + ( temp_int == 2 ? QFL1("dir") : cmd.mid(2));
     else if ( cmd[0] == '#' )
       cmd = QFL1("man:/") + cmd.mid(1);
-    else if ( temp_int == (int)man_proto.length() )
+
+    else if ( temp_int == (int)man_proto.length() && cmd.contains(QFL1("man:")))
       cmd += '/';
-    else if ( temp_int == (int)info_proto.length() )
+    else if ( temp_int == (int)info_proto.length() && cmd.contains(QFL1("info:")))
       cmd += QFL1( "/dir" );
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::HELP );
