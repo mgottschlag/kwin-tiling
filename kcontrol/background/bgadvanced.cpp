@@ -104,9 +104,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    connect( dlg->m_cbBlendReverse, SIGNAL(toggled(bool)), SLOT(slotBlendReverse(bool)));
 
    connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
-            dlg->m_listPrograms, SLOT(setEnabled(bool)));
-   connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
-            SLOT(slotProgramChanged()));
+            SLOT(slotEnableProgram(bool)));
 
    dlg->m_monitorImage->setText(QString::null);
    dlg->m_monitorImage->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
@@ -181,6 +179,8 @@ void BGAdvancedDialog::updateUI()
    dlg->m_comboBlend->blockSignals(false);
    dlg->m_sliderBlend->blockSignals(false);
 
+   dlg->m_cbProgram->blockSignals(true);
+
    QString prog = r->KBackgroundProgram::name();
    if ((r->backgroundMode() == KBackgroundSettings::Program)
        && !prog.isEmpty())
@@ -194,6 +194,8 @@ void BGAdvancedDialog::updateUI()
       dlg->m_cbProgram->setChecked(false);
       dlg->m_listPrograms->setEnabled(false);
    }
+   dlg->m_cbProgram->blockSignals(false);
+
    slotPreviewDone();
 }
 
@@ -262,7 +264,6 @@ void BGAdvancedDialog::addProgram(const QString &name)
 
 void BGAdvancedDialog::selectProgram(const QString &name)
 {
-qWarning("BGAdvancedDialog::selectProgram(%s)", name.latin1());
    if (m_programItems.find(name))
    {
       QListViewItem *item = m_programItems[name];
@@ -360,13 +361,34 @@ void BGAdvancedDialog::slotProgramChanged()
    r->start();
 }
 
+void BGAdvancedDialog::slotEnableProgram(bool b)
+{
+   dlg->m_listPrograms->setEnabled(b);
+   if (b)
+   {
+      dlg->m_listPrograms->blockSignals(true);
+      QListViewItem *cur = dlg->m_listPrograms->currentItem();
+      dlg->m_listPrograms->setSelected(cur, true);
+      dlg->m_listPrograms->ensureItemVisible(cur);
+      dlg->m_listPrograms->blockSignals(false);
+      slotProgramItemClicked(cur);
+   }
+   else
+   {
+      slotProgramChanged();
+   }
+}
+
 void BGAdvancedDialog::slotPreviewDone()
 {
+   QImage *img = r->image();
+   if (!img)
+      return;
    KPixmap pm;
    if (QPixmap::defaultDepth() < 15)
-      pm.convertFromImage(*r->image(), KPixmap::LowColor);
+      pm.convertFromImage(*img, KPixmap::LowColor);
    else
-      pm.convertFromImage(*r->image());
+      pm.convertFromImage(*img);
 
    m_pMonitor->setBackgroundPixmap(pm);
 }

@@ -61,6 +61,7 @@ protected slots:
    void slotProgramItemClicked(QListViewItem *item);
    void slotProgramItemDoubleClicked(QListViewItem *item);
    void slotProgramChanged();
+   void slotEnableProgram(bool b);
    void slotBlendMode(int mode);
    void slotBlendBalance(int value);
    void slotBlendReverse(bool b);

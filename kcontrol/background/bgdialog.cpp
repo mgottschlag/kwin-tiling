@@ -29,6 +29,7 @@
 #include <qpainter.h>
 #include <qwhatsthis.h>
 
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -43,8 +44,25 @@
 #include "bgadvanced.h"
 #include "bgdialog.h"
 
+#include <X11/Xlib.h>
+
 #define NR_PREDEF_PATTERNS	6
 #define SLIDE_SHOW		i18n("<Slide Show>")
+
+static QCString desktopConfigname()
+{
+	int desktop=0;
+	if (qt_xdisplay())
+		desktop = DefaultScreen(qt_xdisplay());
+	QCString name;
+	if (desktop == 0)
+		name = "kdesktoprc";
+    else
+		name.sprintf("kdesktop-screen-%drc", desktop);
+
+	return name;
+}
+
 
 BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
   : BGDialog_UI(parent, "BGDialog")
@@ -67,6 +85,13 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
       m_comboDesktop->hide();
       m_buttonSetupWallpapers->hide();
       m_groupIconText->hide();
+   }
+   else
+   {
+      KConfig cfg(desktopConfigname(), false, false);
+      cfg.setGroup( "General" );
+      if (!cfg.readBoolEntry( "Enabled", true ))
+         m_groupIconText->hide();
    }
 
    m_monitorImage->setText(QString::null);
@@ -315,13 +340,11 @@ void BGDialog::initUI()
 
 void BGDialog::setWallpaper(const QString &s)
 {
-qWarning("setWallpaper(%s)", s.latin1());
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->blockSignals(true);
    if (s.isEmpty())
    {
       comboWallpaper->setCurrentItem(0);
-qWarning("comboWallpaper->setCurrentItem(0) #1");
    }
    else if (s.startsWith("<"))
    {
@@ -336,7 +359,6 @@ qWarning("comboWallpaper->setCurrentItem(0) #1");
          comboWallpaper->changeItem(s, m_comboWallpaperSpecial);
       }
       comboWallpaper->setCurrentItem(m_comboWallpaperSpecial);
-qWarning("comboWallpaper->setCurrentItem(%d) #2", m_comboWallpaperSpecial);
    }
    else
    {
@@ -351,12 +373,10 @@ qWarning("comboWallpaper->setCurrentItem(%d) #2", m_comboWallpaperSpecial);
          comboWallpaper->insertItem(KStringHandler::lsqueeze(s, 45));
          m_Wallpaper[s] = i;
          comboWallpaper->setCurrentItem(i);
-qWarning("comboWallpaper->setCurrentItem(%d) #3", i);
       }
       else
       {
          comboWallpaper->setCurrentItem(m_Wallpaper[s]);
-qWarning("comboWallpaper->setCurrentItem(%d) #4", m_Wallpaper[s]);
       }
    }
    comboWallpaper->blockSignals(false);
@@ -387,7 +407,6 @@ void BGDialog::updateUI()
 
    int wallpaperMode = r->wallpaperMode();
    int multiMode = r->multiWallpaperMode();
-qWarning("Wallpaper mode = %d %s", wallpaperMode, r->wallpaper().latin1());
    if (wallpaperMode == KBackgroundSettings::NoWallpaper )
    {
       m_comboWallpaperPos->setEnabled(false);
