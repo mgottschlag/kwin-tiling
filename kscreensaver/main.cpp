@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
         demoWidget->show();
         saveWin = demoWidget->winId();
         app.setMainWidget(demoWidget);
+        app.processEvents();
     }
 
     startScreenSaver(saveWin);
