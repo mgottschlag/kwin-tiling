@@ -227,15 +227,19 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     QLabel * preview = new QLabel(this);
     preview->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     // preview->setMaximumWidth(200);
+    QString name = *it; it++;
+    QString group = *it; it++;
+    QString key = *it; it++;
+    QString file = *it; it++;
 
     FontUseItem * i =
       new FontUseItem(
         this,
         preview,
-        *it++,
-        *it++,
-        *it++,
-        *it++,
+        name,
+        group,
+        key,
+        file,
         *defaultFontIt++,
         *fixedListIt++
       );
