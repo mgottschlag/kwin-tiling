@@ -1,13 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Exec=kdesu kcmshell clock
+Exec=kcmshell clock
 Icon=date
 DocPath=kcontrol/datetime.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=clock
 X-KDE-RootOnly=true
+X-KDE-SubstituteUID=true
+X-KDE-Username=root
 
 Name=Date & Time
 Name[af]=datum & tyd
