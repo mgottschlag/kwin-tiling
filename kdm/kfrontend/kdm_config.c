@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <grp.h>
 #ifdef _POSIX_PRIORITY_SCHEDULING
 # include <sched.h>
