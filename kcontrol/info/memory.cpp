@@ -208,14 +208,17 @@ bool KMemoryWidget::Display_Graph(
 	    int widgetindex, bool highlight,
 	    t_memsize total, t_memsize avail )
 {
-    QWidget *graph = Graph[widgetindex];
-    QPainter paint(graph);
+    QWidget	*graph = Graph[widgetindex];
+    QPainter	paint(graph);
+    QPen	pen(QColor(0,0,0));
     
     if (total == 0 || total < avail ||
 	total == NO_MEMORY_INFO ||
 	avail == NO_MEMORY_INFO) {
 	paint.fillRect(0,0,graph->width(),graph->height(),
 			QBrush(QColor(128,128,128)));
+	paint.setPen(pen);
+	paint.drawRect(graph->rect());
 	GraphLabel[widgetindex]->setText( Not_Available_Text );
 	return false;
     }
@@ -231,6 +234,9 @@ bool KMemoryWidget::Display_Graph(
     paint.fillRect(0,localheight,
 			graph->width(),graph->height(),
 			QBrush(QColor(color,0,0)));
+    paint.setPen(pen);
+    paint.drawRect(graph->rect());
+    /* print percentage into box */
     int dy, boxheight = (graph->height()-localheight);
     if (boxheight < SPACING) dy = SPACING; else dy = 0;
     paint.drawText( 0, graph->height(),

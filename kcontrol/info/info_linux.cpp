@@ -13,6 +13,11 @@
  
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.9  1999/07/28 09:02:11  deller
+
+    now the linux-specific information looks nicer again, after dmuell removed
+    the ktablistbox-usage.
+
     Revision 1.8  1999/07/27 22:34:51  dmuell
     KTabListBox -> QListView.
     Will probably break compilation if platform != linux. Please tell me
@@ -89,11 +94,21 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
 			    QListViewItem **newlastitem = 0 )
 {
   char buf[512];
+  bool added = false;
 
   QFile *file = new QFile(FileName);
 
-  if(!file->open(IO_ReadOnly)) {
+  if (!file->exists()) {
     delete file; 
+    return false;
+  }
+
+  if (!file->open(IO_ReadOnly)) {
+    delete file; 
+    /*   *GetInfo_ErrorString = 
+	i18n("You do not have read-access for the file %1 !\nPlease ask your system-administrator for advice !")
+	.arg(FileName);
+    */
     return false;
   }
 
@@ -128,6 +143,7 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
           s1.truncate(s1.find(splitchar));
           if(!(s1.isEmpty() || s2.isEmpty()))
               lastitem = new QListViewItem(lbox, lastitem, s1, s2);
+	      added = true;
       }
   }
   
@@ -135,7 +151,7 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
   delete file;
   if (newlastitem)
       *newlastitem = lastitem;
-  return true;
+  return added;
 }
 
 
@@ -189,8 +205,8 @@ bool GetInfo_Devices( QListView *lBox )
   QListViewItem* lastitem = 0;
   sorting_allowed = false;	// no sorting by user !
   GetInfo_ReadfromFile( lBox, INFO_DEVICES, 0, lastitem, &lastitem );
-  // don't use i18n() for "Misc devices", because all other info is english too!
   lastitem = new QListViewItem(lBox, lastitem, "" ); // add empty line..
+  // don't use i18n() for "Misc devices", because all other info is english too!
   lastitem = new QListViewItem(lBox, lastitem, QString("Misc devices:"));
   GetInfo_ReadfromFile( lBox, INFO_MISC, 0, lastitem, &lastitem );
   return true;
@@ -239,8 +255,9 @@ bool GetInfo_Partitions (QListView *lbox)
 
  	struct statfs 	sfs;
 	unsigned long 	total,avail;
-    QString     str;
+	QString		str;
 	QString 	MB(i18n("MB"));	// "MB" = "Mega-Byte"
+	
 
 #ifdef HAVE_FSTAB_H	
 	if (setfsent() != 0) // Try to open fstab
