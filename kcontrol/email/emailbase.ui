@@ -154,7 +154,7 @@ Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&a
                         <cstring>lbl_EMailAddr</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Email Address:</string>
+                        <string>E&amp;mail Address:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>txtEMailAddr</cstring>
@@ -174,7 +174,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                         <cstring>lblFullName</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Full Name:</string>
+                        <string>Full &amp;Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>txtFullName</cstring>
@@ -226,7 +226,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                         <cstring>chkRunTerminal</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Run In Terminal</string>
+                        <string>Run In Terminal</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
