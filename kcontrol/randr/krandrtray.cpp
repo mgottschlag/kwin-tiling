@@ -62,7 +62,6 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 
 	menu->clear();
 	menu->setCheckable(true);
-	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Size & Rotation"), 0, 0);
 
 	if (!isValid()) {
 		lastIndex = menu->insertItem(i18n("Required X Extension Not Available"));
@@ -88,7 +87,8 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 
 	menu->insertSeparator();
 
-	KAction *actPrefs = KStdAction::preferences( this, SLOT( slotPrefs() ),
+	KAction *actPrefs = new KAction( i18n( "Configure Display..." ),
+		SmallIconSet( "configure" ), KShortcut(), this, SLOT( slotPrefs() ),
 		actionCollection() );
 	actPrefs->plug( menu );
 
@@ -238,6 +238,7 @@ void KRandRSystemTray::slotPrefs()
 	KCMultiDialog *kcm = new KCMultiDialog( KDialogBase::Plain,
 		i18n( "Configure" ), this );
 
-	kcm->addModule( "randr" );
+	kcm->addModule( "display" );
+	kcm->setPlainCaption( i18n( "Configure Display" ) );
 	kcm->exec();
 }

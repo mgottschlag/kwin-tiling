@@ -35,7 +35,7 @@ bin_PROGRAMS = krandrtray
 
 krandrtray_SOURCES = main.cpp krandrtray.cpp krandrapp.cpp krandrpassivepopup.cpp
 krandrtray_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_KUTILS) $(LIB_XRANDR) $(LIB_XRANDR)
+krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_KUTILS) $(LIB_XRANDR)
 
 messages:
 	$(XGETTEXT) -kni18n $(kcm_randr_la_SOURCES) $(krandrtray_SOURCES) -o $(podir)/krandr.pot
