@@ -58,9 +58,9 @@ KVItemList*
 KDMConfig::getUsers( QString s, bool sorted)
 {
      KVItemList* result = new KVItemList;
-     QPixmap default_pix( locate("user_pic", "default.xpm"));
+     QPixmap default_pix( locate("user_pic", "default.png"));
      if( default_pix.isNull())
-       printf("Cant get default pixmap from \"default.xpm\"\n");
+       printf("Cant get default pixmap from \"default.png\"\n");
      if( s.isNull()) {  // isEmpty()?  Th.
           QString  nu = kc->readEntry( "NoUsers");
           QStrList no_users;
@@ -74,7 +74,7 @@ KDMConfig::getUsers( QString s, bool sorted)
                    //CHECK_STRING(ps->pw_gecos) && // many users didn't want this check (tanghus)
                    ( no_users.contains( ps->pw_name) == 0)){
                     // we might have a real user, insert him/her
-                    QPixmap p( locate("user_pic", QString(ps->pw_name) + ".xpm"));
+                    QPixmap p( locate("user_pic", QString(ps->pw_name) + ".png"));
                     if( p.isNull())
                          p = default_pix;
                     if( sorted)
@@ -94,7 +94,7 @@ p));
           sl.setAutoDelete( true);
           QStrListIterator it( sl);
           for( ; it.current(); ++it) {
-               QPixmap p( locate("user_pic", QString(it.current()) + ".xpm"));
+               QPixmap p( locate("user_pic", QString(it.current()) + ".png"));
                if( p.isNull())
                     p = default_pix;
                if( sorted)
@@ -155,7 +155,7 @@ void KDMConfig::getConfig()
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?
-          _logo = new QString( locate("data", "kdm/pics/kdelogo.xpm") );
+          _logo = new QString( locate("data", "kdm/pics/kdelogo.png") );
      else
           _logo = new QString( logo_string);
 
