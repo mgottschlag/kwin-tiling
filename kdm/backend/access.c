@@ -488,7 +488,7 @@ scanHostlist (
     return haveLocalhost;
 }
 
-/* Returns non-0 iff string is matched by pattern.  Does case folding.
+/* Returns non-0 if string is matched by pattern.  Does case folding.
  */
 static int
 patternMatch (char *string, char *pattern)
@@ -519,7 +519,7 @@ patternMatch (char *string, char *pattern)
 	    p = *pattern++;
 	    /* fall through */
 	default:
-	    if (isupper(p)) p = tolower(p);
+	    if (isupper(p)) p = tolower(p);	/* XXX */
 	    if (isupper(s)) s = tolower(s);
 	    if (p != s)
 		return 0;
