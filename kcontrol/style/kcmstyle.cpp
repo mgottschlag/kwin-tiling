@@ -165,6 +165,16 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
 
+	// Obtain the keyboard repeat rate and delay.
+	// This enables us to use a QTimer that only switches the style preview
+	// after a user releases the up/down arrow keys. This helps prevent
+	// repetitive (and slow) style changing whilst cycling through the style
+	// list with a keyboard.
+	KConfig config("kcminputrc");
+	config.setGroup("Keyboard");
+	styleChangeDelay =  config.readNumEntry("RepeatRate", 30);
+	styleChangeDelay += config.readNumEntry("RepeatDelay", 250);
+
 	KGlobal::dirs()->addResourceType("themes",
 		KStandardDirs::kde_default("data") + "kstyle/themes");
 
@@ -189,6 +199,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	page1Layout->addWidget( stylePreview );
 
 	// Connect all required stuff
+	connect(lvStyle, SIGNAL(clicked(QListViewItem*)), this, SLOT(styleChanged()));
 	connect(lvStyle, SIGNAL(currentChanged(QListViewItem*)), this, SLOT(updateStyleTimer(QListViewItem*)));
 	connect(&switchStyleTimer, SIGNAL(timeout()), this, SLOT(styleChanged()));
 
@@ -740,12 +751,13 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 void KCMStyle::updateStyleTimer( QListViewItem* item )
 {
 	currentStyle = item->text(2);
-	switchStyleTimer.start(500, TRUE);
+	switchStyleTimer.start(styleChangeDelay, TRUE);
 }
 
 
 void KCMStyle::styleChanged()
 {
+	switchStyleTimer.stop();
 	switchStyle( currentStyle );
 }
 

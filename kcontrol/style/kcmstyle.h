@@ -90,9 +90,8 @@ protected slots:
 	void menuEffectTypeChanged();
 
 private:
-	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty,
-//		 m_bGeneralDirty, 
-		 m_bToolbarsDirty;
+	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
+	int styleChangeDelay; 
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
