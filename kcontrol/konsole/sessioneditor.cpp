@@ -49,7 +49,7 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
   connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
 
   connect(nameLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
-  connect(commentLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
+  connect(directoryLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
   connect(executeLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
   connect(termLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
 
@@ -233,8 +233,8 @@ void SessionEditor::readSession(int num)
         str = co->readEntry("Name");
         nameLine->setText(str);
 
-        str = co->readEntry("Comment");
-        commentLine->setText(str);
+        str = co->readEntry("Cwd");
+        directoryLine->setText(str);
 
         str = co->readEntry("Exec");
         executeLine->setText(str);
@@ -299,7 +299,7 @@ void SessionEditor::saveCurrent()
   co->setDesktopGroup();
   co->writeEntry("Type","KonsoleApplication");
   co->writeEntry("Name",nameLine->text());
-  co->writeEntry("Comment",commentLine->text());
+  co->writeEntry("Cwd",directoryLine->text());
   co->writeEntry("Exec",executeLine->text());
   co->writeEntry("Icon",previewIcon->icon());
   if (fontCombo->currentItem()==0)

@@ -69,7 +69,7 @@
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
-                        <cstring>commentLine</cstring>
+                        <cstring>executeLine</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -82,7 +82,7 @@
                 </widget>
                 <widget class="QLineEdit" row="2" column="1">
                     <property name="name">
-                        <cstring>executeLine</cstring>
+                        <cstring>directoryLine</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -117,10 +117,10 @@
                         <cstring>TextLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Comment:</string>
+                        <string>E&amp;xecute:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>commentLine</cstring>
+                        <cstring>executeLine</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -128,10 +128,10 @@
                         <cstring>TextLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>E&amp;xecute:</string>
+                        <string>&amp;Directory:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>executeLine</cstring>
+                        <cstring>directoryLine</cstring>
                     </property>
                 </widget>
             </grid>
@@ -444,8 +444,8 @@
 </images>
 <tabstops>
     <tabstop>nameLine</tabstop>
-    <tabstop>commentLine</tabstop>
     <tabstop>executeLine</tabstop>
+    <tabstop>directoryLine</tabstop>
     <tabstop>sessionList</tabstop>
     <tabstop>saveButton</tabstop>
     <tabstop>removeButton</tabstop>
