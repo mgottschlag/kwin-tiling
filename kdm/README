@@ -1,32 +1,44 @@
 $Id$
 
-This is the KDE Display Manager (kdm) for KDE-2.0. 
+This is the KDE Display Manager (kdm) for KDE-2.0, the KDE replacement for
+the X Display Manager (xdm).
 
-Kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
+kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
 specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
 necessary to change them. You can change the configuration from
 KDE Controll Center. You will find the Login Manager module in "Local
 computer" -> "Applications".
 
-HOW TO INSTALL KDM:
-  [Then be sure to run kdmdesktop from the xdm setup script -- on most
-  systems called /usr/X11/lib/X11/xdm/Xsetup_0 or similar]
+In fact it's just a new greeter for the xdm, which was programmed in a way
+that a replacement of the greeter module is possible.
 
-configure will look for your xdm configuration files and use them. If
-the files aren't found, you can give the explicit path with the
---with-xdmdir option. If this is still not good, new xdm config files
-are installed. These require hand editing before use. You might want to
-look at the files in the "samples" directory. They show how to make
-Xsession scripts for different window managers and setups.
-  
-TODO:
+It should also be possible to replace the greeter with a dynamic library,
+but for some reason I wasn't able to do that on my Linux machine. But
+since the standard xdm on Linux doesn't use this dynamic library anyway
+and recompilation of just xdm is a pain in the ass, I don't see a problem
+with that.
 
-See the file TODO
+How to setup kdm
+----------------
+
+After installation of kdebase, be sure to run kdmdesktop from the xdm
+setup script -- on most systems located at /usr/X11/lib/X11/xdm/Xsetup_0,
+or somewhere similar.
+
+kdebase's configure will look for your xdm configuration files and use
+them. If the files aren't found, you can give the explicit path with the
+--with-xdmdir option. If this is still not good, new xdm config files are
+installed. These require hand editing before use. You might want to look
+at the files in the "samples" directory. They show how to make Xsession
+scripts for different window managers and setups.
+
+Random rambings and license information
+---------------------------------------
 
 Version 0.1 of kdm is copyright
 	Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
-All later versions:
-License/Copyright: (C) 1997 Steffen Hansen.
+All later versions copyright:
+	(C) 1997 Steffen Hansen <stefh@dit.ou.dk>
 
 Thanks to (in no particular order):
 Michael Bach Jensen and Torsten Rahn for drawing icons.
@@ -38,35 +50,19 @@ Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
 kdm is free software. I'm not sure exactly how it's license is, because it
 has a lot of code from xdm in it. Anyway, i have to state:
 
-[Your package] requires the Qt library, which is copyright Troll Tech AS. 
-Freely distributable programs may generally use Qt for free, 
-see the file README.QT for details. Anyone is allowed to change kdm and 
-redistribute the result as long as my name is mentioned.
-
-And by the way: kdm is provided as is with no warranty of any kind, 
-including the warranty of design, merchantability and fitness for a particular
-purpose.
+Anyone is allowed to change kdm and redistribute the result as long as my
+name is mentioned.  kdm is provided as is with no warranty of any kind,
+including the warranty of design, merchantability and fitness for a
+particular purpose.
 
 Have fun with it (and feel free to comment),
 
 	Steffen <stefh@dit.ou.dk>
 
-------------------------------------------------------------------------
-This is kdm the KDE replacement for the X Display Manager "xdm".
+Differences from xdm
+--------------------
 
-In fact it's just a new greeter for the xdm, which was programmed
-in a way that a replacement of the greeter module is possible.
-
-It should also be possible to replace the greeter with a dynamic library,
-but for some reason I wasn't able to do that on my Linux machine.
-But since the standard xdm on Linux doesn't use this dynamic library
-anyway and recompilation of xdm doesn't take a minute at all, I don't
-see a problem with that.
-
-
-DIFFERENCES FROM XDM
-
-- a nice window with Qt-widgets to enter your login and password
+* a nice window with Qt-widgets to enter your login and password
 
 KNOWN BUGS 
 
