@@ -1210,7 +1210,6 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
     if(mask&NAME && status)
     {
         PS_FontInfoRec t1info;
-        bool           famIsPs=false;
 
         if(0==FT_Get_PS_Font_Info(itsFt.face, &t1info))
         {
@@ -1226,10 +1225,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 
             if(itsFamily.isEmpty())
                 if(itsFullName.isEmpty())
-                {
-                    famIsPs=true;
                     itsFamily=itsFullName=FT_Get_Postscript_Name(itsFt.face);
-                }
                 else
                     itsFamily=itsFullName;
             else
@@ -1249,32 +1245,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
             if(NAME!=mask)
             {
                 removeSymbols(itsFamily);
-
-                //
-                // Algorithm taken from ttf2pt1.c ...
-                //
-                QString psName=famIsPs ? itsFamily : FT_Get_Postscript_Name(itsFt.face);
-
-                if(psName.isEmpty())
-                    psName=itsFullName;
-
-                itsPsName=psName;
-
-                // Must not start with a digit
-                if(!itsPsName.isEmpty())
-                {
-                    unsigned int ch,
-                                 ch2;
-
-                    if(itsPsName[0].isDigit())
-                        itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
-
-                    for(ch=1; ch<itsPsName.length(); ++ch)
-                        if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
-                            for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
-                                itsPsName[ch2]=itsPsName[ch2+1];
-                }
-
+                setPsNameFt();
                 itsWeight=strToWeight(t1info.weight);
                 itsItalic=t1info.italic_angle <= -4 || t1info.italic_angle >= 4 ? ITALIC_ITALIC : ITALIC_NONE;
                 itsWidth=strToWidth(itsFullName);
@@ -1391,16 +1362,11 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
             return status;
         }
 
-        bool famIsPs=false;
-
         itsFamily=getName(itsFt.face, TT_NAME_ID_FONT_FAMILY);
 
         if(itsFamily.isEmpty())
             if(itsFullName.isEmpty())
-            {
-                famIsPs=true;
                 itsFamily=itsFullName=FT_Get_Postscript_Name(itsFt.face);
-            }
             else
                 itsFamily=itsFullName;
         else
@@ -1418,35 +1384,10 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                 TT_Postscript *post=NULL;
                 TT_OS2        *os2=NULL;
                 TT_Header     *head=NULL;
+                bool          gotItalic=false;
                 
                 removeSymbols(itsFamily);
-
-                //
-                // Algorithm taken from ttf2pt1.c ...
-                //
-                QString psName=famIsPs ? itsFamily : FT_Get_Postscript_Name(itsFt.face);
-    
-                if(psName.isEmpty())
-                    psName=itsFullName;
-    
-                itsPsName=psName;
-    
-                // Must not start with a digit
-                if(!itsPsName.isEmpty())
-                {
-                    unsigned int ch,
-                                ch2;
-    
-                    if(itsPsName[0].isDigit())
-                        itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
-    
-                    for(ch=1; ch<itsPsName.length(); ++ch)
-                        if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
-                            for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
-                                itsPsName[ch2]=itsPsName[ch2+1];
-                }
-    
-                bool gotItalic=false;
+                setPsNameFt();
     
                 if(NULL==(os2=(TT_OS2 *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2)) || 0xFFFF==os2->version)
                 {
@@ -1611,6 +1552,31 @@ void CFontEngine::closeFaceFt()
     {
         FT_Done_Face(itsFt.face);
         itsFt.open=false;
+    }
+}
+
+void CFontEngine::setPsNameFt()
+{
+    itsPsName=(FT_Get_Postscript_Name(itsFt.face));
+
+    if(itsPsName.isEmpty())
+    {
+        itsPsName=itsFullName;
+
+        // Must not start with a digit
+        if(!itsPsName.isEmpty())
+        {
+            unsigned int ch,
+                         ch2;
+
+            if(itsPsName[0].isDigit())
+                itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
+
+            for(ch=1; ch<itsPsName.length(); ++ch)
+                if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
+                    for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
+                        itsPsName[ch2]=itsPsName[ch2+1];
+        }
     }
 }
 
