@@ -80,6 +80,8 @@ void KHotKeysApp::start_general( const QString& action_P )
         case KURIFilterData::EXECUTABLE:
         case KURIFilterData::SHELL:
             {
+            if (!kapp->authorize("shell_access"))
+            	return;
             QString icon_name = uri.iconName();
             if( icon_name.isNull())
                 icon_name = QString::fromLatin1( "go" );
