@@ -35,36 +35,36 @@
 #include "modules.h"
 #include "moduletreeview.h"
 
-const char * kcc_text = I18N_NOOP("KDE Control Center");
+static const char kcc_text[] = I18N_NOOP("KDE Control Center");
 
-const char * title_text = I18N_NOOP("Configure your desktop environment.");
+static const char title_text[] = I18N_NOOP("Configure your desktop environment.");
 
-const char * intro_text = I18N_NOOP("Welcome to the \"KDE Control Center\", "
+static const char intro_text[] = I18N_NOOP("Welcome to the \"KDE Control Center\", "
                                 "a central place to configure your "
                                 "desktop environment. "
                                 "Select an item from the index on the left "
                                 "to load a configuration module.");
 
-const char * kcc_infotext = I18N_NOOP("KDE Info Center");
+static const char kcc_infotext[] = I18N_NOOP("KDE Info Center");
 
-const char * title_infotext = I18N_NOOP("");
+static const char title_infotext[] = I18N_NOOP("Get system and desktop environment information");
 
-const char * intro_infotext = I18N_NOOP("Welcome to the \"KDE Info Center\", "
+static const char intro_infotext[] = I18N_NOOP("Welcome to the \"KDE Info Center\", "
                                 "a central place to find information about your "
                                 "computer system.");
 
-const char * use_text = I18N_NOOP("Click on the \"Help\" tab on the left to view help "
+static const char use_text[] = I18N_NOOP("Click on the \"Help\" tab on the left to view help "
                         "for the active "
                         "control module. Use the \"Search\" tab if you are unsure "
                         "where to look for "
                         "a particular configuration option.");
 
-const char * version_text = I18N_NOOP("KDE version:");
-const char * user_text = I18N_NOOP("User:");
-const char * host_text = I18N_NOOP("Hostname:");
-const char * system_text = I18N_NOOP("System:");
-const char * release_text = I18N_NOOP("Release:");
-const char * machine_text = I18N_NOOP("Machine:");
+static const char version_text[] = I18N_NOOP("KDE version:");
+static const char user_text[] = I18N_NOOP("User:");
+static const char host_text[] = I18N_NOOP("Hostname:");
+static const char system_text[] = I18N_NOOP("System:");
+static const char release_text[] = I18N_NOOP("Release:");
+static const char machine_text[] = I18N_NOOP("Machine:");
 
 struct AboutWidget::ModuleLink
 {

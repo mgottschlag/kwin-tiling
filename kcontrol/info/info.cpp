@@ -52,9 +52,9 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 
 #if defined(__linux__)
-# define DEFAULT_ERRORSTRING QString("") /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
+# define DEFAULT_ERRORSTRING QString::null /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
 #elif defined(hpux)
-# define DEFAULT_ERRORSTRING QString("")
+# define DEFAULT_ERRORSTRING QString::null
 #else
 #define DEFAULT_ERRORSTRING  i18n("Maybe this system is not completely supported yet :-(")
 #endif
@@ -71,16 +71,16 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Bytes = 32 Bits = 8 Hex-Digits */
 
-static QString Value( int val, int numbers=1 )
+static const QString Value( int val, int numbers=1 )
 {
   return KGlobal::locale()->formatNumber(val, 0).rightJustify(numbers);
 }
 
-static QString HexStr(unsigned long val, int digits )
+static const QString HexStr(unsigned long val, int digits )
 {
     QString hexstr;
     int i;
-    hexstr = QString("0x%1").arg(val, digits, 16/*=HEX*/);
+    hexstr = QString::fromLatin1("0x%1").arg(val, digits, 16/*=HEX*/);
     for (i=hexstr.length()-1; i>0; --i)
      if (hexstr[i]==' ')
          hexstr[i] = '0';
@@ -167,7 +167,7 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
         for (i = 0; i < ndepths; i++) {
             txt = txt + Value(depths[i]);
             if (i < ndepths - 1)
-                txt = txt + QString(", ");
+                txt = txt + QString::fromLatin1(", ");
         }
 
         last = new QListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
@@ -204,7 +204,7 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
 		    &width, &height);
     last = new QListViewItem(item, last, i18n("Largest Cursor"),
 		(width == 65535 && height == 65535)
-		? i18n("unlimited") : QString("%1 x %2").arg(width).arg(height));
+		? i18n("unlimited") : QString::fromLatin1("%1 x %2").arg(width).arg(height));
 
     last = new QListViewItem(item, last, i18n("Current Input Event Mask"),
 		HexStr((unsigned long)EventMaskOfScreen(s),HEXDIGITS));
@@ -220,19 +220,19 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     return item;
 }
 
-static QString Order( int order )
+static const QString Order( int order )
 {
     if (order==LSBFirst) return i18n("LSBFirst"); else
     if (order==MSBFirst) return i18n("MSBFirst"); else
 	return i18n("Unknown Order %1").arg(order);
 }
 
-static QString BitString( unsigned long n )
+static const QString BitString( unsigned long n )
 {
     return i18n("1 Bit", "%n Bits", n); // singular & plural form of "%d Bit"
 }
 
-static QString ByteString( unsigned long n )
+static const QString ByteString( unsigned long n )
 {
     /* explanation in BR #52640 (http://bugs.kde.org/show_bug.cgi?id=52640) */
     if (n == 1)
@@ -272,12 +272,12 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
     last = new QListViewItem(next, i18n("Name of the Display"),
 		DisplayString(dpy));
 
-    last = new QListViewItem(next, last, i18n("Vendor String"), QString(ServerVendor(dpy)));
+    last = new QListViewItem(next, last, i18n("Vendor String"), QString::fromLatin1(ServerVendor(dpy)));
     last = new QListViewItem(next, last, i18n("Vendor Release Number"),
 		Value((int)VendorRelease(dpy)));
 
     last = new QListViewItem(next, last, i18n("Version Number"),
-		QString("%1.%2").arg((int)ProtocolVersion(dpy))
+		QString::fromLatin1("%1.%2").arg((int)ProtocolVersion(dpy))
     		                  .arg((int)ProtocolRevision(dpy)));
 
     last = item = new QListViewItem(next, last, i18n("Available Screens"));
@@ -294,7 +294,7 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
     int extCount;
     char **extensions = XListExtensions( dpy, &extCount );
     for ( i = 0; i < extCount; i++ ) {
-       item = new QListViewItem( last, item, QString( extensions[i] ) );
+       item = new QListViewItem( last, item, QString::fromLatin1( extensions[i] ) );
     }
     XFreeExtensionList( extensions );
 
@@ -356,7 +356,7 @@ void KInfoListWidget::load()
         retrieve-function. If the function wants the widget to show
         another string, then it change *GetInfo_ErrorString ! */
     ErrorString = i18n("No information available about %1.").arg(title)
-		    + QString("\n\n") + DEFAULT_ERRORSTRING;
+		    + QString::fromLatin1("\n\n") + DEFAULT_ERRORSTRING;
     GetInfo_ErrorString = &ErrorString;  /* save the address of ErrorString */
 
     sorting_allowed = true; 	/* the functions may set that */
@@ -402,7 +402,6 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     : KCModule(parent, name),
       title(_title)
 {
-
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcminfo"),
 		I18N_NOOP("KDE Panel System Information Control Module"),
