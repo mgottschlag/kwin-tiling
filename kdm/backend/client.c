@@ -792,7 +792,7 @@ userEnv (struct display *d, int isRoot,
 			  d->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
 		    (char *)0);
 	}
-	if (AnyReserveDisplays ())
+	if ((d->displayType & d_location) == dLocal && AnyReserveDisplays ())
 	    StrApp (&xma, ",rsvd", (char *)0);
     if (xma)
     {

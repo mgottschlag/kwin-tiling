@@ -803,7 +803,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
 	return 0;
     *how = 0;
     if (!ar[1] || (!ar[2] && wdef < 0)) {
-	LogInfo ("Missing argument(s) to fifo command shutdown\n");
+	LogInfo ("Missing argument(s) to fifo command 'shutdown'\n");
 	return 1;
     }
     if (ar[2]) {
@@ -814,7 +814,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
 	else if (!strcmp (ar[2], "schedule"))
 	    *when = SHUT_SCHEDULE;
 	else {
-	    LogInfo ("Invalid mode spec %'s to fifo command shutdown\n", ar[2]);
+	    LogInfo ("Invalid mode spec %'s to fifo command 'shutdown'\n", ar[2]);
 	    return 1;
 	}
     } else
@@ -824,7 +824,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
     else if (!strcmp (ar[1], "halt"))
 	*how = SHUT_HALT;
     else
-	LogInfo ("Invalid type spec %'s to fifo command shutdown\n", ar[1]);
+	LogInfo ("Invalid type spec %'s to fifo command 'shutdown'\n", ar[1]);
     return 1;
 }
 
@@ -844,16 +844,15 @@ processDFifo (const char *buf, int len, void *ptr)
 	if (d->allowShutdown == SHUT_NONE ||
 	    (d->allowShutdown == SHUT_ROOT && d->userSess))
 	{
-	    LogInfo ("Insufficient priviledges for system shutdown "
-		     "via command fifo\n");
+	    LogInfo ("Display %s attempted fifo command 'shutdown'\n", d->name);
 	    return;
 	}
 	if (when == SHUT_FORCENOW &&
 	    (d->allowNuke == SHUT_NONE ||
 	    (d->allowNuke == SHUT_ROOT && d->userSess)))
 	{
-	    LogInfo ("Insufficient priviledges for forced system shutdown "
-		     "via command fifo\n");
+	    LogInfo ("Display %s attempted fifo command 'shutdown forcenow'\n",
+		     d->name);
 	    return;
 	}
 	d->hstent->sd_how = how;
@@ -870,17 +869,20 @@ processDFifo (const char *buf, int len, void *ptr)
 	ReapReserveDisplays ();
 #endif
     } else if (!strcmp (ar[0], "reserve")) {
-	int lt = 0;
-	if (ar[1])
-	    lt = atoi (ar[1]);
-	StartReserveDisplay (lt ? lt : 60); /* XXX maybe make configurable? */
+	if ((d->displayType & d_location) == dLocal) {
+	    int lt = 0;
+	    if (ar[1])
+		lt = atoi (ar[1]);
+	    StartReserveDisplay (lt ? lt : 60); /* XXX maybe make configurable? */
+	} else
+	    LogInfo ("Remote display %s attempted fifo command 'reserve'\n", d->name);
     } else if (!strcmp (ar[0], "suicide")) {
 	if (d->pid != -1) {
 	    TerminateProcess (d->pid, SIGTERM);
 	    d->status = raiser;
 	}
     } else
-	LogInfo ("Invalid fifo command %'s\n", ar[0]);
+	LogInfo ("Invalid fifo command %'s from display %s\n", ar[0], d->name);
     freeStrArr (ar);
 }
 
@@ -913,7 +915,7 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	    return;
 	}
 	if (!(d = FindDisplayByName (ar[1]))) {
-	    LogInfo ("Display %s in fifo command %s not found\n", ar[1], ar[0]);
+	    LogInfo ("Display %s in fifo command '%s' not found\n", ar[1], ar[0]);
 	    return;
 	}
 	setNLogin (d, 
