@@ -111,46 +111,42 @@ int main(int argc, char *argv[])
 	{
 		kdDebug() << "Looking at " << tempSaverFileList[i] << endl;
 		KDesktopFile saver(tempSaverFileList[i], true);
-		if (saver.readEntry("X-KDE-Type").utf8())
+		kdDebug() << "read X-KDE-Type" << endl;
+		QString saverType = saver.readEntry("X-KDE-Type");
+		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 		{
-			kdDebug() << "read X-KDE-Type" << endl;
-			QString saverType = saver.readEntry("X-KDE-Type").utf8();
-			if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
+			saverFileList.append(tempSaverFileList[i]);
+		}
+		else
+		{
+			QStringList saverTypes = QStringList::split(";", saverType);
+			for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
 			{
-				saverFileList.append(tempSaverFileList[i]);
-			}
-			else
-			{
-				QStringList saverTypes = QStringList::split(";", saverType);
-				for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
+				kdDebug() << "saverTypes is "<< *it << endl;
+				if (*it == "ManipulateScreen")
 				{
-					kdDebug() << "saverTypes is "<< *it << endl;
-					if (*it == "ManipulateScreen")
+					if (manipulatescreen)
 					{
-						if (manipulatescreen)
-						{
-							saverFileList.append(tempSaverFileList[i]);
-						}
+						saverFileList.append(tempSaverFileList[i]);
 					}
-					else
-					if (*it == "OpenGL")
-					{
-						if (opengl)
-						{
-							saverFileList.append(tempSaverFileList[i]);
-						}
-					}
-					if (*it == "Fortune")
-					{
-						if (fortune)
-						{
-							saverFileList.append(tempSaverFileList[i]);
-						}
-					}
-
 				}
-			}
+				else
+				if (*it == "OpenGL")
+				{
+					if (opengl)
+					{
+						saverFileList.append(tempSaverFileList[i]);
+					}
+				}
+				if (*it == "Fortune")
+				{
+					if (fortune)
+					{
+						saverFileList.append(tempSaverFileList[i]);
+					}
+				}
 
+			}
 		}
 	}
 
