@@ -9,7 +9,8 @@ foreach (<>) {
         s/^Execute command/Run Command/;
         s/^Lock screen/Lock Screen/;
         s/^Mouse emulation/Mouse Emulation/;
-        s/^Next keyboard layout/Switch To Next Keyboard Layout/;
+        s/^Next keyboard layout/Switch to Next Keyboard Layout/;
+        s/Switch To Next Keyboard Layout/Switch to Next Keyboard Layout/;
         s/^Screenshot of desktop/Desktop Screenshot/;
         s/^Pop-up window operations menu/Window Operations Menu/;
         s/^toggle-clipboard-actions/Enable\/Disable Clipboard Actions/;
