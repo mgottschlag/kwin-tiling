@@ -330,8 +330,8 @@ void TopLevel::readProperties(KConfig *kc)
   URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
 
   m_popup->insertItem( SmallIcon("history_clear"),
-			i18n("&Clear Clipboard History"), EMPTY_ITEM );
-  m_popup->insertItem( SmallIcon("configure"), i18n("&Preferences..."),
+			i18n("C&lear Clipboard History"), EMPTY_ITEM );
+  m_popup->insertItem( SmallIcon("configure"), i18n("&Configure Klipper..."),
                        CONFIG_ITEM);
 
   KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(),
