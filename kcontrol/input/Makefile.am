@@ -18,7 +18,7 @@ data_DATA = mouse.desktop
 datadir = $(kde_appsdir)/Settings/Peripherals
 
 fontdir = $(kde_datadir)/kcminput
-font_DATA = cursor_large.pcf.gz
+font_DATA = cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz
 EXTRA_DIST = $(font_DATA)
 
 install-data-hook:

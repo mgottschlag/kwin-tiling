@@ -75,6 +75,7 @@ public:
  int visualActivate;
  bool changeCursor;
  bool largeCursor;
+ bool whiteCursor;
  int wheelScrollLines;
 };
 
