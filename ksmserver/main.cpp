@@ -47,7 +47,7 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options );
 
-    putenv("SESSION_MANAGER=");
+    putenv((char*)"SESSION_MANAGER=");
     KApplication a(false, true); // Disable styles until we need them.
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
@@ -70,7 +70,7 @@ int main( int argc, char* argv[] )
     }
     only_local = false;
 #endif
-    
+
     KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
     IceSetIOErrorHandler (IoErrorHandler );
 

@@ -367,9 +367,13 @@ void KSMSetPropertiesProc (
 	if ( p )
 	    client->properties.removeRef( p );
 	client->properties.append( props[i] );
+	if ( !qstrcmp( props[i]->name, SmProgram ) )
+	    the_server->clientSetProgram( client );
     }
+
     if ( numProps )
 	free( props );
+
 }
 
 void KSMDeletePropertiesProc (
@@ -1165,7 +1169,7 @@ void KSMServer::completeKilling()
     kdDebug(0) << "KSMServer::completeKilling clients.count()=" <<
 	clients.count() << endl;
     if ( state != Killing ) {
-	kdWarning() << "Not Killing !!! state=" << state << endl;
+// 	kdWarning() << "Not Killing !!! state=" << state << endl;
 	return;
     }
 
@@ -1262,7 +1266,7 @@ void KSMServer::restoreSession()
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
 	startApplication( wmCommand );
-	QTimer::singleShot( 2000, this, SLOT( autoStart() ) );
+	QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
     } else {
 	autoStart();
     }
@@ -1279,7 +1283,7 @@ void KSMServer::startDefaultSession()
     progress = 1;
     publishProgress( progress, true );
     startApplication( wm );
-    autoStart();
+    QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
 }
 
 bool KSMServer::process(const QCString &fun, const QByteArray &data,
@@ -1296,8 +1300,21 @@ bool KSMServer::process(const QCString &fun, const QByteArray &data,
 
 void KSMServer::autoStart()
 {
+    static bool beenThereDoneThat = FALSE;
+    if ( beenThereDoneThat )
+	return;
+    beenThereDoneThat = TRUE;
+
     kapp->dcopClient()->send("klauncher", "klauncher", "autoStart()", QByteArray());
 }
+
+
+void KSMServer::clientSetProgram( KSMClient* client )
+{
+    if ( !wm.isEmpty() && client->program() == wm )
+	autoStart();
+}
+
 
 void KSMServer::restoreSessionInternal()
 {
@@ -1309,22 +1326,20 @@ void KSMServer::restoreSessionInternal()
     int count =  config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
 	QString n = QString::number(i);
-        QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
-        if ( restartCommand.isEmpty() ||
-             (config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever))
-        {
-           progress--;
-           continue;
-        }
+	QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
+	if ( restartCommand.isEmpty() ||
+	     (config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever)) {
+	    progress--;
+	    continue;
+	}
 	if ( wm == config->readEntry( QString("program")+n ) )
-           continue;
+	    continue;
 
-        startApplication( restartCommand );
+	startApplication( restartCommand );
     }
-    if (progress == 0)
-    {
-       publishProgress( progress );
-       upAndRunning( "session ready" );
+    if (progress == 0) {
+	publishProgress( progress );
+	upAndRunning( "session ready" );
     }
 }
 

@@ -93,6 +93,9 @@ public:
     bool process(const QCString &, const QByteArray &,
                  QCString&, QByteArray &);
 
+    // notification
+    void clientSetProgram( KSMClient* client );
+
     // public API
     void restoreSession();
     void startDefaultSession();
@@ -109,6 +112,7 @@ private slots:
 
     void protectionTimeout();
     void cancelShutdown();
+
     void autoStart();
 
 private:
