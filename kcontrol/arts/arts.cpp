@@ -228,9 +228,9 @@ extern "C"
 		KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
 
 		if(x11Comm)
-			X11CommConfig->writeEntry("GlobalComm","X11GlobalComm");
+			X11CommConfig->writeEntry("GlobalComm","Arts::X11GlobalComm");
 		else
-			X11CommConfig->writeEntry("GlobalComm","TmpGlobalComm");
+			X11CommConfig->writeEntry("GlobalComm","Arts::TmpGlobalComm");
 
 		X11CommConfig->sync();
 		delete X11CommConfig;
