@@ -39,7 +39,7 @@ template class QList<Task>;
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
-    : QObject(parent, name), _active(0)
+    : QObject(parent, name), DCOPObject("TaskbarApplet"), _active(0)
 {
     // create and connect kwin module
     kwin_module = new KWinModule(this);
@@ -172,7 +172,7 @@ void TaskManager::windowAdded(WId w )
 
     kdDebug() << "TM: Task added for WId: " << w << endl;
 
-    emit changed();
+    emit taskAdded(t);
 }
 
 void TaskManager::windowRemoved(WId w )
@@ -183,6 +183,9 @@ void TaskManager::windowRemoved(WId w )
 
     if (t->window() == w) {
         _tasks.removeRef(t);
+
+        emit taskRemoved(t);
+
         if(t == _active) _active = 0;
         delete t;
         kdDebug() << "TM: Task for WId " << w << " removed." << endl;
@@ -191,7 +194,6 @@ void TaskManager::windowRemoved(WId w )
         t->removeTransient( w );
         kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
     }
-    emit changed();
 }
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
@@ -210,8 +212,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (dirty & NET::WMIcon)
         t->refresh(true);
 
-    if(dirty & NET::WMDesktop)
-        emit changed();
+    //if(dirty & NET::WMDesktop)
+    //    t->refresh();
 }
 
 void TaskManager::activeWindowChanged(WId w )
@@ -250,14 +252,13 @@ void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString b
     _startups.append(s);
 
     connect(s, SIGNAL(killMe(pid_t)), SLOT(killStartup(pid_t)));
-    emit changed();
+    emit startupAdded(s);
 }
 
 void TaskManager::clientDied(pid_t pid)
 {
     if ((long)pid != 0)
 	killStartup(pid);
-    emit changed();
 }
 
 void TaskManager::killStartup(pid_t pid)
@@ -270,8 +271,20 @@ void TaskManager::killStartup(pid_t pid)
     if (s == 0) return;
 
     _startups.removeRef(s);
+    emit startupRemoved(s);
     delete s;
 }
+
+QString TaskManager::desktopName(int desk)
+{
+    return kwin_module->desktopName(desk);
+}
+
+int TaskManager::numberOfDesktops()
+{
+    return kwin_module->numberOfDesktops();
+}
+
 
 Task::Task(WId win, QObject * parent, const char *name)
     : QObject(parent, name), _active(false), _win(win)
@@ -285,6 +298,7 @@ Task::~Task()
 
 void Task::refresh(bool icon)
 {
+    _info = KWin::info(_win);
     if (icon) {
         _pixmap = KWin::icon(_win, 16, 16, true);
         if(_pixmap.isNull())
@@ -311,6 +325,11 @@ bool Task::staysOnTop() const
 bool Task::onCurrentDesktop() const
 {
     return (_info.onAllDesktops || _info.desktop == kwin_module->currentDesktop());
+}
+
+bool Task::onAllDesktops() const
+{
+    return _info.onAllDesktops;
 }
 
 bool Task::active() const
@@ -344,6 +363,29 @@ void Task::close()
 {
     NETRootInfo ri( qt_xdisplay(),  NET::CloseWindow );
     ri.closeWindowRequest( _win );
+}
+
+void Task::raise()
+{
+    XRaiseWindow( qt_xdisplay(), _win );
+}
+
+void Task::activate()
+{
+    KWin::setActiveWindow(_win);
+}
+
+void Task::toDesktop(int desk)
+{
+    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
+    if (desk == 0) {
+        if (_info.onAllDesktops)
+            ni.setDesktop(kwin_module->currentDesktop());
+        else
+            ni.setDesktop(NETWinInfo::OnAllDesktops);
+        return;
+    }
+    ni.setDesktop(desk);
 }
 
 Startup::Startup(const QString& text, const QString& /*icon*/, pid_t pid,

@@ -53,6 +53,7 @@ public:
     bool maximized() const;
     bool iconified() const;
     bool onCurrentDesktop() const;
+    bool onAllDesktops() const;
     bool staysOnTop() const;
     bool active() const;
 
@@ -62,6 +63,9 @@ public:
     void iconify();
     void deiconify();
     void close();
+    void raise();
+    void activate();
+    void toDesktop(int);
 
     // internal
     void refresh(bool icon = false);
@@ -114,7 +118,7 @@ class TaskManager : public QObject, virtual public DCOPObject
     Q_OBJECT
     K_DCOP
 
-k_dcop:
+    k_dcop:
     void clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant);
     void clientDied(pid_t pid);
 
@@ -125,8 +129,14 @@ public:
     QList<Task> tasks() { return _tasks; }
     QList<Startup> startups() { return _startups; }
 
+    QString desktopName(int);
+    int numberOfDesktops();
+
 signals:
-    void changed();
+    void taskAdded(Task*);
+    void taskRemoved(Task*);
+    void startupAdded(Startup*);
+    void startupRemoved(Startup*);
     void desktopChanged(int desktop);
 
 protected slots:
