@@ -280,7 +280,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     vlay = new QVBoxLayout( tbStyle, 10 );
     vlay->addSpacing( tbStyle->fontMetrics().lineSpacing() );
 
-    QGridLayout *grid = new QGridLayout(2, 2);
+    QGridLayout *grid = new QGridLayout(4, 2);
     vlay->addLayout( grid );
 
     tbIcon   = new QRadioButton( i18n( "&Icons only" ), tbStyle);
@@ -310,12 +310,12 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect( tbTransp, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
 
     grid->addWidget(tbIcon, 0, 0);
-    grid->addWidget(tbText, 0, 1);
-    grid->addWidget(tbAside, 1, 0);
-    grid->addWidget(tbUnder, 1, 1);
+    grid->addWidget(tbText, 1, 0);
+    grid->addWidget(tbAside, 2, 0);
+    grid->addWidget(tbUnder, 3, 0);
 
-    vlay->addWidget(tbHilite, 10);
-    vlay->addWidget(tbTransp, 10);
+    grid->addWidget(tbHilite, 0, 1);
+    grid->addWidget(tbTransp, 1, 1);
 
     topLayout->addStretch( 100 );
     load();
