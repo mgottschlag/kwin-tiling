@@ -209,10 +209,10 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
             windowRemoved( w );
             return;
             }
-        else if( !findTask( w )) 
+        else if( !findTask( w ))
             windowAdded( w ); // skipTaskBar state was removed, so add this window
         }
-        
+
     // check if any state we are interested in is marked dirty
     if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMState|NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
         return;
@@ -425,7 +425,7 @@ QString Task::className()
 {
     XClassHint hint;
     if(XGetClassHint(qt_xdisplay(), _win, &hint))
-        return QString(hint.res_class);
+        return QString(hint.res_name);
     return QString::null;
 }
 
