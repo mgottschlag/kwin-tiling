@@ -3,7 +3,7 @@ The KCheckPass authentication software:
 
 KCheckPass is KDE's authentication program. It is meant to be
 used by any software in need of user authentication, most
-notably login programs (kdm) and screensavers.
+notably screensavers.
 
 It enhances security be the following means:
 

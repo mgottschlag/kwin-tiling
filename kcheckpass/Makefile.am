@@ -23,5 +23,3 @@ install-data-local:
 install-exec-hook:
 	@(chown root $(DESTDIR)$(bindir)/kcheckpass && chmod 4755 $(DESTDIR)$(bindir)/kcheckpass) \
 	|| echo "Error: Could not install kcheckpass as setuid root (possibly you won't be able to unlock)!!\n"
-
-	

@@ -52,38 +52,213 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <syslog.h>
-#include <memory.h>
-
 #include <stdlib.h>
 #include <errno.h>
-#include <time.h>
 
-/* Define this if you want the pam service from 
-    the environment variable */
+/* Compatibility: accept some options from environment variables */
 #define ACCEPT_ENV
-/* Define this if you want kcheckpass to accept options */
-/*#define ACCEPT_OPTIONS*/
 
-/* This will disable environment vars when options are enabled.
-   (there would be a preference clash otherwise) */
-#ifdef ACCEPT_OPTIONS
-#ifdef ACCEPT_ENV
-#undef ACCEPT_ENV
-#endif
-#endif
 
-/*****************************************************************
- * Set to 1 if stdin is a tty
- *****************************************************************/
-static int	havetty = 0;
-char caller[20] = "";
-#ifdef ACCEPT_OPTIONS
-static int	debug = 0;
-#endif
+static int havetty, sfd = -1;
+static const char *username;
+const char *caller = KCHECKPASS_PAM_SERVICE;
 
-/*****************************************************************
- * Output a message to syslog (and to stderr as well, if available)
- *****************************************************************/
+static char *
+conv_legacy (ConvRequest what, const char *prompt)
+{
+    char		*p, *p2;
+    struct passwd	*pw;
+    int			len;
+    uid_t		uid;
+    char		buf[1024];
+
+    switch (what) {
+    case ConvGetBinary:
+	break;
+    case ConvGetNormal:
+	if (prompt) {
+	    if (!havetty)
+		break;
+	    /* i guess we should use /dev/tty ... */
+	    fputs(prompt, stdout);
+	    fflush(stdout);
+	    if (!fgets(buf, sizeof(buf), stdin))
+		return 0;
+	    len = strlen(buf);
+	    if (len && buf[len - 1] == '\n')
+		buf[--len] = 0;
+	    return strdup(buf);
+	} else {
+	    if (username)
+		return strdup(username);
+	    uid = getuid();
+	    if (!(p = getenv("LOGNAME")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
+		if (!(p = getenv("USER")) || !(pw = getpwnam(p)) || pw->pw_uid != uid)
+		    if (!(pw = getpwuid(uid))) {
+			message("Cannot determinate current user\n");
+			return 0;
+		    }
+	    return strdup(pw->pw_name);
+	}
+    case ConvGetHidden:
+	if (havetty) {
+	    p = getpass(prompt ? prompt : "Password: ");
+	    p2 = strdup(p);
+	    memset(p, 0, strlen(p));
+	    return p2;
+	} else {
+	    if ((len = read(0, buf, sizeof(buf) - 1)) < 0) {
+		message("Cannot read password\n");
+		return 0;
+	    } else {
+		if (len && buf[len - 1] == '\n')
+		    --len;
+		buf[len] = 0;
+		p2 = strdup(buf);
+		memset(buf, 0, len);
+		return p2;
+	    }
+	}
+    case ConvPutInfo:
+	message("Information: %s\n", prompt);
+	return 0;
+    case ConvPutError:
+	message("Error: %s\n", prompt);
+	return 0;
+    }
+    message("Authentication backend requested data type which cannot be handled.\n");
+    return 0;
+}
+
+
+static int
+Reader (void *buf, int count)
+{
+    int ret, rlen;
+
+    for (rlen = 0; rlen < count; ) {
+      dord:
+	ret = read (sfd, (void *)((char *)buf + rlen), count - rlen);
+	if (ret < 0) {
+	    if (errno == EINTR)
+		goto dord;
+	    if (errno == EAGAIN)
+		break;
+	    return -1;
+	}
+	if (!ret)
+	    break;
+	rlen += ret;
+    }
+    return rlen;
+}
+
+static void
+GRead (void *buf, int count)
+{
+    if (Reader (buf, count) != count) {
+	message ("Communication breakdown on read\n");
+	exit(15);
+    }
+}
+
+static void
+GWrite (const void *buf, int count)
+{
+    if (write (sfd, buf, count) != count) {
+	message ("Communication breakdown on write\n");
+	exit(15);
+    }
+}
+
+static void
+GSendInt (int val)
+{
+    GWrite (&val, sizeof(val));
+}
+
+static void
+GSendStr (const char *buf)
+{
+    int len = buf ? strlen (buf) + 1 : 0;
+    GWrite (&len, sizeof(len));
+    GWrite (buf, len);
+}
+
+static void
+GSendArr (int len, const char *buf)
+{
+    GWrite (&len, sizeof(len));
+    GWrite (buf, len);
+}
+
+static int
+GRecvInt ()
+{
+    int val;
+
+    GRead (&val, sizeof(val));
+    return val;
+}
+
+static char *
+GRecvStr ()
+{
+    int len;
+    char *buf;
+
+    if (!(len = GRecvInt()))
+	return (char *)0;
+    if (len > 0x1000 || !(buf = malloc (len))) {
+	message ("No memory for read buffer\n");
+	exit(15);
+    }
+    GRead (buf, len);
+    buf[len - 1] = 0; /* we're setuid ... don't trust "them" */
+    return buf;
+}
+
+static char *
+GRecvArr ()
+{
+    int len;
+    char *arr;
+
+    if (!(len = GRecvInt()))
+	return (char *)0;
+    if (len > 0x10000 || !(arr = malloc (len))) {
+	message ("No memory for read buffer\n");
+	exit(15);
+    }
+    GRead (arr, len);
+    return arr;
+}
+
+
+static char *
+conv_server (ConvRequest what, const char *prompt)
+{
+    GSendInt (what);
+    switch (what) {
+    case ConvGetBinary:
+      {
+	unsigned const char *up = (unsigned const char *)prompt;
+	int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
+	GSendArr (len, prompt);
+	return GRecvArr (&len);
+      }
+    case ConvGetNormal:
+    case ConvGetHidden:
+	GSendStr (prompt);
+	return GRecvStr ();
+    case ConvPutInfo:
+    case ConvPutError:
+    default:
+	GSendStr (prompt);
+	return 0;
+    }
+}
+
 void
 message(const char *fmt, ...)
 {
@@ -95,57 +270,43 @@ message(const char *fmt, ...)
   } else {
 #ifndef HAVE_VSYSLOG
     char	buffer[1024];
-
-    /* Not sure what's less portable -- vsyslog or
-     * vsnprintf :-/
-     */
-#ifdef HAVE_VSNPRINTF
     vsnprintf(buffer, sizeof(buffer), fmt, ap);
-#else
-    vsprintf(buffer, fmt, ap);
-#endif
     syslog(LOG_NOTICE, "%s", buffer);
 #else
     vsyslog(LOG_NOTICE, fmt, ap);
 #endif
-      }
+  }
 }
 
-/*****************************************************************
- * Usage message
- *****************************************************************/
-static void
+static void ATTR_NORETURN
 usage(int exitval)
 {
-  message("usage: kcheckpass %s\n"
-	  "    Obtains the password from standard input and checks it\n"
-	  "    against that of the invoking user.\n"
-	  "    Exit codes:\n"
-	  "        0 success\n"
-	  "        1 invalid password\n"
-          "        2 cannot read password database\n"
-	  "    Anything else tells you something's badly hosed.\n",
-#ifdef ACCEPT_OPTIONS
-	" [-dh] [-c caller] [-U username]"
-#else
-	""
-#endif
+  message(
+	  "usage: kcheckpass {-h|[-c caller] [-m method] [-U username|-S handle]}\n"
+	  "  options:\n"
+	  "    -h           this help message\n"
+	  "    -U username  authenticate the specified user instead of current user\n"
+	  "    -S handle    operate in binary server mode on file descriptor handle\n"
+	  "    -c caller    the calling application, effectively the PAM service basename\n"
+	  "    -m method    use the specified authentication method (default: \"classic\")\n"
+	  "  exit codes:\n"
+	  "    0 success\n"
+	  "    1 invalid password\n"
+          "    2 cannot read password database\n"
+	  "    Anything else tells you something's badly hosed.\n"
 	);
   exit(exitval);
 }
 
-/*****************************************************************
- * Main program
- *****************************************************************/
+
 int
 main(int argc, char **argv)
 {
-  char		*login, passbuffer[1024], *passwd,*ca,*un,username[128];
-  int		with_U;
-  struct passwd	*pw;
-  int		status, c;
-  uid_t		uid;
-  int		passlen;
+  const char	*method = "classic";
+#ifdef ACCEPT_ENV
+  char		*p;
+#endif
+  int		c, nfd;
 
   openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
@@ -156,8 +317,6 @@ main(int argc, char **argv)
   /* Make sure stdout/stderr are open */
   for (c = 1; c <= 2; c++) {
     if (fcntl(c, F_GETFL) == -1) {
-      int	nfd;
-
       if ((nfd = open("/dev/null", O_WRONLY)) < 0) {
         message("cannot open /dev/null: %s\n", strerror(errno));
 	exit(10);
@@ -171,124 +330,55 @@ main(int argc, char **argv)
 
   havetty = isatty(0);
 
-  /* did the user provided the -U option? */
-  with_U = 0;
-  
-#ifndef ACCEPT_OPTIONS
-  if (argc != 1)
-    usage(10);
-#else
-  while ((c = getopt(argc, argv, "hdc:U:")) != -1) {
+  while ((c = getopt(argc, argv, "hc:m:U:S:")) != -1) {
     switch (c) {
-    case 'd':
-      debug = 1;
-      break;
-    case 'c':
-      strncpy(caller,optarg,19);  
-      caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
-      break;
-    case 'U':
-      strncpy(username,optarg,128);
-      with_U = 1;
-      username[127] = '\000';
-      break;
     case 'h':
       usage(0);
       break;
+    case 'c':
+      caller = optarg;
+      break;
+    case 'm':
+      method = optarg;
+      break;
+    case 'U':
+      username = optarg;
+      break;
+    case 'S':
+      sfd = atoi(optarg);
+      break;
     default:
-      message("Unknown option %c\n", c);
+      message("Command line option parsing error\n");
       usage(10);
     }
   }
-#endif
 
 #ifdef ACCEPT_ENV
-  ca = getenv("KDE_PAM_ACTION");
-  if (ca) strncpy(caller,ca,19);
-  caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
-  unsetenv("KDE_PAM_ACTION");
-
-  un = getenv("KCHECKPASS_USER");
-  if (un) {
-    strncpy(username, un, 127);
-    username[127] = '\000';
-    with_U = 1;
-  }  
-  
+  if ((p = getenv("KDE_PAM_ACTION")))
+    caller = p;
+  if ((p = getenv("KCHECKPASS_USER")))
+    username = p;
 #endif  
 
-  if (with_U) {
-    if (!(pw = getpwnam(username))) {
-      message("Unknown user (%s)\n", username);
-      exit(10);
-    }
-    uid = pw->pw_uid;
-  } else {
-    uid = getuid();
-    if (!(pw = getpwuid(uid))) {
-      message("Unknown user (uid %d)\n", uid);
-      exit(10);
-    }
-  }
- 
-  if ((login = strdup(pw->pw_name)) == NULL) {
-    message("Out of memory on strdup'ing user name \"%.100s\"\n", pw->pw_name);
-    exit(10);
-  }
-
-  /* If we have a tty, use getpass.
-   * Otherwise, just snarf the password from stdin (we don't
-   * want getpass to blurt anything to stderr).
-   */
-  passwd = 0;
-  if (havetty) {
-    passwd = getpass("Password: ");
-    passlen = strlen(passwd);
-  } else {
-    passlen = read(0, passbuffer, sizeof(passbuffer)-1);
-    if (passlen >= 0) {
-      passbuffer[passlen] = '\0';
-      if (passlen >= 1 && passbuffer[passlen-1] == '\n')
-	passbuffer[--passlen] = '\0';
-      passwd = passbuffer;
-    }
-  }
-  if (passwd == 0) {
-    message("Can't read password: %100s\n", strerror(errno));
-    exit(10);
-  }
-
   /* Now do the fandango */
-  status = Authenticate(login, passwd);
-
-  /* Clear password buffer */
-  memset(passbuffer, 0, sizeof(passbuffer));
-  (void) passbuffer[0]; /* read passbuffer to avoid the memset being
-                           optimized away */
-
-  if ( status == 0 ) {
-    /* failure */
-    if ( passlen > 0 ) {
-      /* Only write to logfile, if a password was entered. Otherwise
-         the logfile will clutter up with irrelevant messages. */
-      time_t	now = time(NULL);
-      message("authentication failure for user %100s [uid %d]\n",
-	      login, uid);
-
-      do {
-        sleep (1); /* <<< Security: Don't undermine the shadow system */
-      } while (time(NULL) < now + 1);
-      exit(1);
-    }
-    else
-      exit(1);
+  AuthReturn ret = Authenticate(method, sfd < 0 ? conv_legacy : conv_server);
+  if (ret == AuthBad) {
+    /* Security: Don't undermine the shadow system.
+     * Note that this does not help too much, as an attacker can simply
+     * timeout kcheckpass and start multiple instances simultaneously.
+     * FIXME: Do invocation throttling instead.
+     */
+    sleep (2);
+    message("Authentication failure (invoked by uid %d)\n", getuid());
   }
-  if ( status == 2 ) {
-    /* Cannot read password database (e.g. not SUID on shadow systems) */
-    exit(2);
-  }
+  return ret;
+}
 
-  return 0;
+void
+dispose(char *str)
+{
+    memset(str, 0, strlen(str));
+    free(str);
 }
 
 /*****************************************************************

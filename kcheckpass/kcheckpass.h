@@ -36,9 +36,7 @@
 #ifndef KCHECKPASS_H_
 #define KCHECKPASS_H_
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
@@ -67,42 +65,67 @@
 #include <prot.h>
 #endif
 
-/* Default back to HAVE_ETCPASSWD */
-#if !defined(HAVE_PAM) && !defined(HAVE_SHADOW) && !defined(HAVE_OSF_C2_PASSWD)
-#define HAVE_ETCPASSWD
-#endif
-
 /* Make sure there is only one! */
 #if defined(HAVE_PAM)
-#undef HAVE_SHADOW
-#undef HAVE_OSF_C2_PASSWD
-#undef HAVE_ETCPASSWD
+# undef HAVE_OSF_C2_PASSWD
+# undef HAVE_SHADOW
+#elif defined(HAVE_OSF_C2_PASSWD)
+# undef HAVE_SHADOW
+#elif defined(_AIX)
+# define HAVE_AIX_AUTH
+# undef HAVE_SHADOW
+#elif !defined(HAVE_SHADOW)
+# define HAVE_ETCPASSWD
 #endif
 
-#if defined(HAVE_OSF_C2_PASSWD)
-#undef HAVE_SHADOW
-#undef HAVE_ETCPASSWD
-#endif
-
-#if defined(HAVE_SHADOW)
-#undef HAVE_ETCPASSWD
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+# define ATTR_UNUSED __attribute__((unused))
+# define ATTR_NORETURN __attribute__((noreturn))
+# define ATTR_PRINTFLIKE(fmt,var) __attribute__((format(printf,fmt,var)))
+#else
+# define ATTR_UNUSED
+# define ATTR_NORETURN
+# define ATTR_PRINTFLIKE(fmt,var)
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*****************************************************************
- * This function authenticates the user, returning
- *   1		if the password was accepted
- *   0		otherwise
- *****************************************************************/
-int Authenticate(const char *login, const char *pass);
+/* these must match kcheckpass' exit codes */
+typedef enum {
+    AuthOk = 0,
+    AuthBad = 1,
+    AuthError = 2,
+    AuthAbort = 3
+} AuthReturn;
+
+typedef enum {
+    ConvGetBinary,
+    ConvGetNormal,
+    ConvGetHidden,
+    ConvPutInfo,
+    ConvPutError
+} ConvRequest;
 
 /*****************************************************************
- * Output a message to syslog (and to stderr as well, if available)
+ * Authenticates user
  *****************************************************************/
-void message(const char *, ...);
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *));
+
+
+/*****************************************************************
+ * Output a message to syslog or stderr
+ *****************************************************************/
+void message(const char *, ...) ATTR_PRINTFLIKE(1, 2);
+
+/*****************************************************************
+ * Overwrite and free the passed string
+ *****************************************************************/
+void dispose(char *);
+
+/* for PAM variant */
+extern const char *caller;
 
 #ifdef __cplusplus
 }

@@ -15,15 +15,12 @@
  *
  *      Copyright (C) 1998, Caldera, Inc.
  */
+
 #include "kcheckpass.h"
+
 #ifdef HAVE_PAM
 
-extern  char caller[20];
-
-/*****************************************************************
- * This is the authentication code if you use PAM
- * Ugly, but proven to work.
- *****************************************************************/
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,8 +30,11 @@ extern  char caller[20];
 #include <security/pam_appl.h>
 #endif
 
-static const char *PAM_username;
-static const char *PAM_password;
+struct pam_data {
+  char *(*conv) (ConvRequest, const char *);
+  int abort:1;
+  int classic:1;
+};
 
 #ifdef PAM_MESSAGE_NONCONST
 typedef struct pam_message pam_message_type;
@@ -47,107 +47,139 @@ PAM_conv (int num_msg, pam_message_type **msg,
 	  struct pam_response **resp,
 	  void *appdata_ptr)
 {
-  int             count;
+  int count;
   struct pam_response *repl;
+  struct pam_data *pd = (struct pam_data *)appdata_ptr;
 
   if (!(repl = calloc(num_msg, sizeof(struct pam_response))))
     return PAM_CONV_ERR;
 
   for (count = 0; count < num_msg; count++)
     switch (msg[count]->msg_style) {
-    case PAM_PROMPT_ECHO_ON:
-      if (PAM_username)
-	if (!(repl[count].resp = strdup(PAM_username)))
-	  goto conv_err;
-      repl[count].resp_retcode = PAM_SUCCESS;
-      /* PAM frees resp */
-      break;
-    case PAM_PROMPT_ECHO_OFF:
-      if (PAM_password)
-        if (!(repl[count].resp = strdup(PAM_password)))
-	  goto conv_err;
-      repl[count].resp_retcode = PAM_SUCCESS;
-      /* PAM frees resp */
-      break;
     case PAM_TEXT_INFO:
-      message("unexpected message from PAM: %s\n", msg[count]->msg);
-      break;
+      pd->conv(ConvPutInfo, msg[count]->msg);
+      continue;
     case PAM_ERROR_MSG:
-      message("unexpected error from PAM: %s\n", msg[count]->msg);
-      break;
+      pd->conv(ConvPutError, msg[count]->msg);
+      continue;
     default:
-      /* Must be an error of some sort... */
-      goto conv_err;
+      switch (msg[count]->msg_style) {
+      case PAM_PROMPT_ECHO_ON:
+        repl[count].resp =
+            pd->conv(ConvGetNormal, pd->classic ? 0 : msg[count]->msg);
+        break;
+      case PAM_PROMPT_ECHO_OFF:
+        repl[count].resp =
+            pd->conv(ConvGetHidden, pd->classic ? 0 : msg[count]->msg);
+        break;
+#ifdef PAM_BINARY_PROMPT
+      case PAM_BINARY_PROMPT:
+        repl[count].resp = pd->conv(ConvGetBinary, msg[count]->msg);
+        break;
+#endif
+      default:
+        /* Must be an error of some sort... */
+        goto conv_err;
+      }
+      if (!repl[count].resp) {
+        pd->abort = 1;
+        goto conv_err;
+      }
+      repl[count].resp_retcode = PAM_SUCCESS;
+      break;
     }
   *resp = repl;
   return PAM_SUCCESS;
 
  conv_err:
   for (; count >= 0; count--)
-    if (repl[count].resp) {
+    if (repl[count].resp)
       switch (msg[count]->msg_style) {
       case PAM_PROMPT_ECHO_OFF:
-	memset (repl[count].resp, 0, strlen(repl[count].resp));
-	/* fall through */
-      case PAM_ERROR_MSG:
-      case PAM_TEXT_INFO:
+	dispose(repl[count].resp);
+        break;
+#ifdef PAM_BINARY_PROMPT
+      case PAM_BINARY_PROMPT: /* handle differently? */
+#endif
       case PAM_PROMPT_ECHO_ON:
 	free(repl[count].resp);
 	break;
       }
-      repl[count].resp = 0;
-    }
   free(repl);
   return PAM_CONV_ERR;
 }
 
+static struct pam_data PAM_data;
+
 static struct pam_conv PAM_conversation = {
   &PAM_conv,
-  NULL
+  &PAM_data
 };
 
+#ifdef PAM_FAIL_DELAY
+static void
+fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED, 
+	   void *appdata_ptr ATTR_UNUSED)
+{}
+#endif
 
-int Authenticate(const char *login, const char *passwd)
+
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
 {
+  const char	*tty;
   pam_handle_t	*pamh;
+  const char	*pam_service;
+  char		pservb[64];
   int		pam_error;
 
-  const char *tty;
-  const char *kde_pam = KCHECKPASS_PAM_SERVICE;
-
-  PAM_username = login;
-  PAM_password = passwd;
-
-  if (caller[0])
-    kde_pam = caller;
-  pam_error = pam_start(kde_pam, login, &PAM_conversation, &pamh);
+  PAM_data.conv = conv;
+  if (strcmp(method, "classic")) {
+    sprintf(pservb, "%.31s-%.31s", caller, method);
+    pam_service = pservb;
+  } else {
+    PAM_data.classic = 1;
+    pam_service = caller;
+  }
+  pam_error = pam_start(pam_service, 0, &PAM_conversation, &pamh);
   if (pam_error != PAM_SUCCESS)
-    return 0;
+    return AuthError;
 
   tty = getenv ("DISPLAY");
   if (!tty)
-    tty = ":0";
+    tty = ttyname(0);
   pam_error = pam_set_item (pamh, PAM_TTY, tty);
   if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
-    return 0;
+    return AuthError;
   }
+
+# ifdef PAM_FAIL_DELAY
+  pam_set_item (pamh, PAM_FAIL_DELAY, (void *)fail_delay);
+# endif
 
   pam_error = pam_authenticate(pamh, 0);
   if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
-    return 0;
+    switch (pam_error) {
+      case PAM_USER_UNKNOWN:
+      case PAM_AUTH_ERR:
+      case PAM_MAXTRIES: /* should handle this better ... */
+      case PAM_AUTHINFO_UNAVAIL: /* returned for unknown users ... bogus */
+        return AuthBad;
+      default:
+        return AuthError;
+    }
   }
 
   /* Refresh credentials (Needed e.g. for AFS (timing out Kerberos tokens)) */
   pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
   if (pam_error != PAM_SUCCESS)  {
     pam_end(pamh, pam_error);
-    return 0;
+    return AuthError;
   }
 
   pam_end(pamh, PAM_SUCCESS);
-  return 1;
+  return AuthOk;
 }
 
 #endif

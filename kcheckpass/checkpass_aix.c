@@ -15,38 +15,84 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "kcheckpass.h"
 
-#ifdef _AIX
+#ifdef HAVE_AIX_AUTH
 #include <stdlib.h>
 
 /* 
  * The AIX builtin authenticate() uses whichever method the system 
  * has been configured for.  (/etc/passwd, DCE, etc.)
  */
-int authenticate(wchar_t *, wchar_t *, int *, wchar_t **);
+int authenticate(char *, char *, int *, char **);
 
-int Authenticate(const char *login, const char *passwd) {
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
+{
   int result;
   int reenter;  /* Tells if authenticate is done processing or not. */
-  wchar_t *msg; /* Contains a prompt message or failure reason.     */
+  char *login, *passwd;
+  char *msg; /* Contains a prompt message or failure reason.     */
 
-  result = authenticate((wchar_t *)login, (wchar_t *)passwd, &reenter, &msg);
-  
-  if (result == 0 && reenter == 0) {
-    return 1;
-  }
-  else {
-    if (msg) {
-      message((char *)msg);
-      free(msg);
+  if (!(login = conv(ConvGetNormal, 0)))
+    return AuthAbort;
+
+  if (!strcmp(method, "classic")) {
+
+    if (!(passwd = conv(ConvGetHidden, 0))) {
+      free(login);
+      return AuthAbort;
     }
-    return 0; 
-  }
+
+    if ((result = authenticate(login, passwd, &reenter, &msg))) {
+      if (msg) {
+        conv(ConvPutError, msg);
+        free(msg);
+      }
+      dispose(passwd);
+      free(login);
+      return AuthBad;
+    }
+    if (reenter) {
+      char buf[256];
+      snprintf(buf, sizeof(buf), "More authentication data requested: %s\n", msg);
+      conv(ConvPutError, buf);
+      free(msg);
+      dispose(passwd);
+      free(login);
+      return result == ENOENT || result == ESAD ? AuthBad : AuthError;
+    }
+    dispose(passwd);
+    free(login);
+    return AuthOk;
+
+  } else if (!strcmp(method, "generic")) {
+
+    for (passwd = 0;;) {
+      if ((result = authenticate(login, passwd, &reenter, &msg))) {
+        if (msg) {
+          conv(ConvPutError, msg);
+          free(msg);
+        }
+        if (passwd)
+          dispose(passwd);
+        free(login);
+        return result == ENOENT || result == ESAD ? AuthBad : AuthError;
+      }
+      if (passwd)
+	dispose(passwd);
+      if (!reenter)
+        break;
+      passwd = conv(ConvGetHidden, msg);
+      free(msg);
+      if (!passwd) {
+        free(login);
+        return AuthAbort;
+      }
+    }
+
+  } else
+    return AuthError;
+
 }
 
 #endif

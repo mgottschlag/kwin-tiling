@@ -24,6 +24,7 @@
  *
  *      Copyright (C) 1998, Christian Esken <esken@kde.org>
  */
+
 #include "kcheckpass.h"
 
 /*******************************************************************
@@ -32,30 +33,48 @@
 
 #ifdef HAVE_SHADOW
 #include <string.h>
+#include <stdlib.h>
 #include <pwd.h>
 
 #ifndef __hpux
 #include <shadow.h>
 #endif
 
-int Authenticate(const char *login, const char *typed_in_password)
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
 {
+  char          *login, *typed_in_password;
   char          *crpt_passwd;
   char          *password;
   struct passwd *pw;
   struct spwd   *spw;
 
-  if ( !(pw = getpwnam(login)) )
-    return 2;
+  if (strcmp(method, "classic"))
+    return AuthError;
+
+  if (!(login = conv(ConvGetNormal, 0)))
+    return AuthAbort;
+
+  if ( !(pw = getpwnam(login)) ) {
+    free(login);
+    return AuthAbort;
+  }
   
   spw = getspnam(login);
   password = spw ? spw->sp_pwdp : pw->pw_passwd;
-  
+ 
+  free(login);
+ 
+  if (!(typed_in_password = conv(ConvGetHidden, 0)))
+    return AuthAbort;
+
 #if defined( __linux__ ) && defined( HAVE_PW_ENCRYPT )
   crpt_passwd = pw_encrypt(typed_in_password, password);  /* (1) */
 #else  
   crpt_passwd = crypt(typed_in_password, password);
 #endif
+
+  dispose(typed_in_password);
+
   return !strcmp(password, crpt_passwd );
 }
 

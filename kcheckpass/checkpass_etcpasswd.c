@@ -18,43 +18,54 @@
  *      Copyright (C) 1998, Christian Esken <esken@kde.org>
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "kcheckpass.h"
 
-#if defined(HAVE_ETCPASSWD) && !defined(_AIX)
+#ifdef HAVE_ETCPASSWD
 
 /*******************************************************************
  * This is the authentication code for /etc/passwd passwords
  *******************************************************************/
 
 #include <string.h>
+#include <stdlib.h>
 
-int Authenticate(const char *login, const char *passwd)
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
 {
   struct passwd *pw;
+  char *login, *passwd;
   char *crpt_passwd;
   int result;
+
+  if (strcmp(method, "classic"))
+    return AuthError;
+
+  if (!(login = conv(ConvGetNormal, 0)))
+    return AuthAbort;
 
   /* Get the password entry for the user we want */
   pw = getpwnam(login);
 
+  free(login);
+
   /* getpwnam should return a NULL pointer on error */
   if (pw == 0)
-    return 0;
+    return AuthBad;
+
+  if (!(passwd = conv(ConvGetHidden, 0)))
+    return AuthAbort;
 
   /* Encrypt the password the user entered */
   crpt_passwd = crypt(passwd, pw->pw_passwd);
+
+  dispose(passwd);
 
   /* Are they the same? */
   result = strcmp(pw->pw_passwd, crpt_passwd);
 
   if (result == 0)
-    return 1; /* Success */
+    return AuthOk; /* Success */
   else
-    return 0; /* Password wrong or account locked */
+    return AuthBad; /* Password wrong or account locked */
 }
 
 #endif

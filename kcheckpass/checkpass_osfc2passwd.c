@@ -18,42 +18,52 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "kcheckpass.h"
 
 #ifdef HAVE_OSF_C2_PASSWD
 
-char *osf1c2crypt(const char *pw, char *salt);
+static char *osf1c2crypt(const char *pw, char *salt);
+static int osf1c2_getprpwent(char *p, char *n, int len);
 
 /*******************************************************************
  * This is the authentication code for OSF C2 security passwords
  *******************************************************************/
 
 #include <string.h>
+#include <stdlib.h>
 
-int Authenticate(const char *login, const char *passwd)
+AuthReturn Authenticate(const char *method, char *(*conv) (ConvRequest, const char *))
 {
-  struct passwd *pw;
+  char *login, *passwd;
+  char *crpt_passwd;
   char c2passwd[256];
   int result;
 
-  /* Get the password entry for the user we want */
-  pw = getpwnam(login);
+  if (strcmp(method, "classic"))
+    return AuthError;
 
-  /* getpwnam should return a NULL pointer on error */
-  if (pw == 0)
-    return 0;
+  if (!(login = conv(ConvGetNormal, 0)))
+    return AuthAbort;
+
+  result = osf1c2_getprpwent(c2passwd, login, sizeof(c2passwd));
+
+  free(login);
+
+  if (!result)
+    return AuthBad;
+
+  if (!(passwd = conv(ConvGetHidden, 0)))
+    return AuthAbort;
 
   /* Are they the same? */
-  osf1c2_getprpwent(c2passwd, login, sizeof(c2passwd));
-  if (strcmp(c2passwd, osf1c2crypt(passwd, c2passwd)) != 0) {
-    return 0;
-  }
+  crpt_passwd = osf1c2crypt(passwd, c2passwd);
 
-  return 1; /* success */
+  dispose(passwd);
+
+  if (strcmp(c2passwd, crpt_passwd) != 0)
+    return AuthBad;
+  else
+    return AuthOk;
 }
 
 
@@ -89,7 +99,7 @@ within ssh. See the file COPYING for full licensing informations.
 static int     c2security = -1;
 static int     crypt_algo;
 
-void
+static void
 initialize_osf_security(int ac, char **av)
 {
   FILE *f;
@@ -136,7 +146,7 @@ initialize_osf_security(int ac, char **av)
 }
 
 
-int
+static int
 osf1c2_getprpwent(char *p, char *n, int len)
 {
   time_t pschg, tnow;
@@ -180,12 +190,15 @@ osf1c2_getprpwent(char *p, char *n, int len)
     {
       struct passwd *pw = getpwnam(n);
       if (pw)
-       strlcpy(p, pw->pw_passwd, len);
+        {
+          strlcpy(p, pw->pw_passwd, len);
+          return 1;
+        }
     }
   return 0;
 }
 
-char *
+static char *
 osf1c2crypt(const char *pw, char *salt)
 {
    if (c2security == 1) {
