@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=LEO - Translate Between French and German
+Name[xx]=xxLEO - Translate Between French and Germanxx
+ServiceTypes=SearchProvider
+Keys=de2fr
+Query=http://dict.leo.org/?lp=frde&search=\\{@}

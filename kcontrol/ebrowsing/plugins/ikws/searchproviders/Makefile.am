@@ -18,6 +18,7 @@ services_DATA = \
 		ctan.desktop \
 		dbug.desktop \
 		de2en.desktop \
+		de2fr.desktop \
 		deb.desktop \
 		dmoz.desktop \
 		docbook.desktop \
@@ -30,6 +31,7 @@ services_DATA = \
 		excite.desktop \
 		feedster.desktop \
 		foldoc.desktop \
+		fr2de.desktop \
 		fr2en.desktop \
 		freedb.desktop \
 		freshmeat.desktop \
