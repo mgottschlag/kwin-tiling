@@ -559,7 +559,7 @@ ListSessions( int flags, struct display *d, void *ctx,
 	if ((fd = open( UTMP_FILE, O_RDONLY )) < 0)
 		return;
 	while (Reader( fd, ut, sizeof(ut[0]) ) == sizeof(ut[0])) {
-		if (*ut->ut_name) {	/* no idea how to list passive TTYs on BSD */
+		if (*ut->ut_user) {	/* no idea how to list passive TTYs on BSD */
 #else
 	SETUTENT();
 	while ((ut = GETUTENT())) {

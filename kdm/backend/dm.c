@@ -400,7 +400,7 @@ CheckUtmp( void )
 					continue;
 #endif
 #ifdef BSD_UTMP
-				if (!*ut->ut_name) {
+				if (!*ut->ut_user) {
 #else
 				if (ut->ut_type != USER_PROCESS) {
 #endif

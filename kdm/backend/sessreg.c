@@ -124,7 +124,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 	bzero( &ut_ent, sizeof(ut_ent) );
 
 	if (pid) {
-		strncpy( ut_ent.ut_name, user, sizeof(ut_ent.ut_name) );
+		strncpy( ut_ent.ut_user, user, sizeof(ut_ent.ut_user) );
 #ifndef BSD_UTMP
 		ut_ent.ut_pid = pid;
 		ut_ent.ut_type = USER_PROCESS;
@@ -231,7 +231,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 				              sizeof(entry.ut_host) ))
 #  endif
 					goto found;
-			if (freeslot < 0 && *entry.ut_name == '\0')
+			if (freeslot < 0 && *entry.ut_user == '\0')
 				freeslot = slot;
 			slot++;
 		}
