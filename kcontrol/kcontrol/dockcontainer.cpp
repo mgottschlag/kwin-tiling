@@ -62,6 +62,8 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
   _basew = widget;
   _basew->reparent(this, 0 , QPoint(0,0), true);
+  // "inherit" the minimum size
+  setMinimumSize( _basew->minimumSize() );
   resize(_basew->sizeHint());
   emit newModule(widget->caption(), "", "");
 }
@@ -113,6 +115,8 @@ void DockContainer::dockModule(ConfigModule *module)
 
       widget->reparent(this, 0 , QPoint(0,0), false);
       widget->resize(size());
+      // "inherit" the minimum size
+      setMinimumSize( widget->minimumSize() );
 
       emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
       QApplication::restoreOverrideCursor();
@@ -129,6 +133,8 @@ void DockContainer::removeModule()
   deleteModule();
 
   resizeEvent(0L);
+
+  setMinimumSize( _basew->minimumSize() );
 
   if (_basew)
 	emit newModule(_basew->caption(), "", "");
