@@ -620,8 +620,10 @@ OutChL (void *bp, char c)
 static void
 Logger (int type, const char *fmt, va_list args)
 {
-    OCLBuf oclb = { 0, 0, 0 };
+    OCLBuf oclb;
 
+    oclb.buf = 0;
+    oclb.blen = oclb.clen = 0;
     oclb.type = type;
     DoPr(OutChL, &oclb, fmt, args);
     /* no flush, every message is supposed to be \n-terminated */
