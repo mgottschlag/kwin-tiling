@@ -1,0 +1,29 @@
+			README for KSysTrayCmd
+			======================
+
+Introduction
+============
+
+KSysTrayCmd is a utility that allows you to run any application you
+like in the system tray, not just those designed to use it.
+
+Examples
+========
+
+ksystraycmd --window 'kmail' kmail
+
+ksystraycmd --startonshow --icon logfile --tooltip 'X Log' --hidden --window 'X Log' \
+  konsole --icon logfile --caption 'X Log' -e 'less -M ~/.xsession-errors'
+
+More Information
+================
+
+I'm currently writing an article for the dot which will describe the
+usage of both kstart and ksystraycmd in more detail, the text of the
+article will be used to improve this document.
+
+Richard Moore
+rich@kde.org
+
+
+
