@@ -18,8 +18,6 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <stdlib.h>
-
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qregexp.h>
@@ -160,8 +158,8 @@ void LookAndFeelTab::colorize(QImage& image)
     inactiveTitle.hsv(&h2, &s2, &v2);
     palette().active().background().hsv(&h3, &s3, &v3);
 
-    if ( (abs(h1-h3)+abs(s1-s3)+abs(v1-v3) < abs(h2-h3)+abs(s2-s3)+abs(v2-v3)) &&
-        ((abs(h1-h3)+abs(s1-s3)+abs(v1-v3) < 32) || (s1 < 32)) && (s2 > s1))
+    if ( (kAbs(h1-h3)+kAbs(s1-s3)+kAbs(v1-v3) < kAbs(h2-h3)+kAbs(s2-s3)+kAbs(v2-v3)) &&
+        ((kAbs(h1-h3)+kAbs(s1-s3)+kAbs(v1-v3) < 32) || (s1 < 32)) && (s2 > s1))
         color = inactiveTitle;
     else
         color = activeTitle;
