@@ -11,7 +11,7 @@ kcm_componentchooser_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-un
 kcm_componentchooser_la_LIBADD =  $(LIB_KIO)
 
 kcm_componentchooser_DATA = componentchooser.desktop
-kcm_componentchooserdir = $(kde_appsdir)/Settings/Personalization
+kcm_componentchooserdir = $(kde_appsdir)/Settings/Components
 
 messages: rc.cpp
 	$(XGETTEXT) *.cc *.cpp -o $(podir)/kcmcomponentchooser.pot

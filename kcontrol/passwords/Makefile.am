@@ -14,4 +14,4 @@ messages:
 	$(XGETTEXT) $(kcm_passwords_la_SOURCES) -o $(podir)/passwords.pot
 
 data_DATA = passwords.desktop
-datadir = $(kde_appsdir)/Settings/Personalization
+datadir = $(kde_appsdir)/Settings/Security
