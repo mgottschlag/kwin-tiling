@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>601</width>
+            <width>593</width>
             <height>454</height>
         </rect>
     </property>
@@ -64,7 +64,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>&amp;Show all windows</string>
+                        <string>&amp;Show windows from all desktops</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
