@@ -36,10 +36,10 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kiconloader.h>
+#include <klanguagebutton.h>
 
 #include <qlistbox.h>
 
-#include "klanguagebutton.h"
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
 #include "toplevel.h"

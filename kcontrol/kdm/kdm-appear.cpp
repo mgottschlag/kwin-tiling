@@ -278,7 +278,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   langcombo = new KLanguageButton(group);
   loadLanguageList(langcombo);
-  connect(langcombo, SIGNAL(activated(int)), SLOT(changed()));
+  connect(langcombo, SIGNAL(activated(const QString &)), SLOT(changed()));
   label = new QLabel(langcombo, i18n("Languag&e:"), group);
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
   hbox->setColStretch(1, 1);
@@ -508,7 +508,7 @@ void KDMAppearanceWidget::save()
   config->writeEntry("GreeterPosX", xLineEdit->text());
   config->writeEntry("GreeterPosY", yLineEdit->text());
 
-  config->writeEntry("Language", langcombo->currentTag());
+  config->writeEntry("Language", langcombo->current());
 }
 
 
