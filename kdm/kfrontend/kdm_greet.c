@@ -372,6 +372,7 @@ SecureDisplay (Display *dpy)
 	(void) alarm (0);
 	(void) signal (SIGALRM, SIG_DFL);
 	LogError ("Keyboard on display %s could not be secured\n", dname);
+	sleep (10);
 	SessionExit (EX_RESERVER_DPY);
     }
     (void) alarm (0);

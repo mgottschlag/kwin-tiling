@@ -895,7 +895,7 @@ DoChoose ()
 
     if (!xdmcpInited) {
 	if (!initXDMCP ())
-	    SessionExit (EX_RESERVER_DPY);	/* UNMANAGE? */
+	    SessionExit (EX_UNMANAGE_DPY);
 	xdmcpInited = 1;
     }
     if ((td->displayType & d_location) == dLocal) {

@@ -460,7 +460,6 @@ struct dpyVals {
 { C_openRepeat,		boffset(openRepeat) },
 { C_openTimeout,	boffset(openTimeout) },
 { C_startAttempts,	boffset(startAttempts) },
-{ C_startInterval,	boffset(startInterval) },
 { C_pingInterval,	boffset(pingInterval) },
 { C_pingTimeout,	boffset(pingTimeout) },
 { C_terminateServer,	boffset(terminateServer) },
@@ -574,7 +573,6 @@ ScanServers (int force)
 	       ((type & d_location) == dLocal) ? "local" : "foreign",
 	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);
 	d->serverArgv = argv;
-	d->hstent->startTries = 0;
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
 	    d->status = reserve;

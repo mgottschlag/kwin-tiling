@@ -221,8 +221,9 @@ CtrlGreeterWait (int wreply)
 
     if (Setjmp (mstrtalk.errjmp)) {
 	CloseGreeter (TRUE);
-	SessionExit (EX_RESERVER_DPY);
+	SessionExit (EX_UNMANAGE_DPY);
     }
+
     while (GRecvCmd (&cmd)) {
 	switch (cmd)
 	{
@@ -368,21 +369,25 @@ CtrlGreeterWait (int wreply)
 	    return -1;
     }
     LogError ("Lost connection to greeter\n");
-    CloseGreeter (FALSE);
-    SessionExit (EX_RESERVER_DPY);
+    return -2;
 }
 
 void
 OpenGreeter ()
 {
     char	*name, **env;
+    static Time_t lastStart;
+    int cmd;
     Cursor	xcursor;
 
     GSet (&grttalk);
     if (greeter)
 	return;
+    if (time (0) < lastStart + 10) /* XXX should use some readiness indicator instead */
+	SessionExit (EX_UNMANAGE_DPY);
     greeter = 1;
-    Debug ("starting greeter for %s\n", td->name);
+    ASPrintf (&name, "greeter for display %s", td->name);
+    Debug ("starting %s\n", name);
 
     /* Hourglass cursor */
     if ((xcursor = XCreateFontCursor (dpy, XC_watch)))
@@ -397,12 +402,16 @@ OpenGreeter ()
 
     grttalk.pipe = &grtproc.pipe;
     env = systemEnv (0, 0);
-    ASPrintf (&name, "greeter for display %s", td->name);
     if (GOpen (&grtproc, (char **)0, "_greet", env, name))
-	SessionExit (EX_RESERVER_DPY);
+	SessionExit (EX_UNMANAGE_DPY);
     freeStrArr (env);
-    CtrlGreeterWait (TRUE);
-    Debug ("greeter for %s ready\n", td->name);
+    if ((cmd = CtrlGreeterWait (TRUE))) {
+	LogError ("Received unknown or unexpected command %d from greeter\n", cmd);
+	CloseGreeter (TRUE);
+	SessionExit (EX_UNMANAGE_DPY);
+    }
+    Debug ("%s ready\n", name);
+    time (&lastStart);
 }
 
 int
@@ -412,9 +421,9 @@ CloseGreeter (int force)
 
     if (!greeter)
 	return 0;
+    greeter = 0;
     ret = GClose (&grtproc, force);
     DeleteXloginResources ();
-    greeter = 0;
     Debug ("greeter for %s stopped\n", td->name);
     return ret;
 }
@@ -461,7 +470,9 @@ static int
 IOErrorHandler (Display *dspl ATTR_UNUSED)
 {
     LogError("Fatal X server IO error: %s\n", SysErrorMsg());
-    Longjmp (abortSession, EX_AL_RESERVER_DPY);	/* XXX EX_RESERVER_DPY */
+    /* The only X interaction during the session are pings, and those
+       have an own IOErrorHandler -> not EX_AL_RESERVER_DPY */
+    Longjmp (abortSession, EX_RESERVER_DPY);
     /*NOTREACHED*/
     return 0;
 }
@@ -472,7 +483,7 @@ ErrorHandler(Display *dspl ATTR_UNUSED, XErrorEvent *event)
 {
     LogError("X error\n");
     if (event->error_code == BadImplementation)
-	Longjmp (abortSession, EX_UNMANAGE_DPY); /* XXX EX_RETRY_ONCE */
+	Longjmp (abortSession, EX_UNMANAGE_DPY);
     return 0;
 }
 
@@ -494,7 +505,6 @@ ManageSession (struct display *d)
     (void)XSetIOErrorHandler (IOErrorHandler);
     (void)XSetErrorHandler (ErrorHandler);
     (void)Signal (SIGTERM, catchTerm);
-    SetTitle(d->name);
 
     if (Setjmp (grttalk.errjmp))
 	Longjmp (abortSession, EX_RESERVER_DPY);	/* EX_RETRY_ONCE */
@@ -511,10 +521,15 @@ ManageSession (struct display *d)
 	if (greeter)
 	    GSendInt (V_OK);
     } else {
+      regreet:
 	OpenGreeter ();
 	if (Setjmp (idleTOJmp)) {
 	    CloseGreeter (TRUE);
+#ifdef AUTO_RESERVE
 	    SessionExit (EX_RESERVE);
+#else
+	    SessionExit (EX_NORMAL);
+#endif
 	}
 	Signal (SIGALRM, IdleTOJmp);
 	alarm (td->idleTimeout);
@@ -533,17 +548,21 @@ ManageSession (struct display *d)
 	    }
 	    if (cmd == G_DGreet)
 		continue;
+	    alarm (0);
 	    if (cmd == G_Ready)
 		break;
-	    LogError ("Received unknown command %d from greeter\n", cmd);
-	    CloseGreeter (TRUE);
-	    SessionExit (EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
+	    if (cmd == -2)
+		CloseGreeter (FALSE);
+	    else {
+		LogError ("Received unknown command %d from greeter\n", cmd);
+		CloseGreeter (TRUE);
+	    }
+	    goto regreet;
 	}
-	alarm (0);
     }
 
     if (CloseGreeter (FALSE))
-	SessionExit (EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
+	goto regreet;
 
     if (!(clientPid = StartClient ())) {
 	LogError ("Client start failed\n");

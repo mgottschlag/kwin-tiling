@@ -240,7 +240,6 @@ from The Open Group.
 #define C_openRepeat		(C_TYPE_INT | 0x103)
 #define C_openTimeout		(C_TYPE_INT | 0x104)
 #define C_startAttempts		(C_TYPE_INT | 0x105)
-#define C_startInterval		(C_TYPE_INT | 0x115)
 #define C_pingInterval		(C_TYPE_INT | 0x106)
 #define C_pingTimeout		(C_TYPE_INT | 0x107)	
 #define C_terminateServer	(C_TYPE_INT | 0x108)

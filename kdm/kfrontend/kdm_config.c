@@ -477,7 +477,6 @@ Ent entsCore[] = {
 { "Authorize",		C_authorize | C_BOOL,	0,	"true" },
 { "AuthNames",		C_authNames,		0,	DEF_AUTH_NAME },
 { "AuthFile",		C_clientAuthFile,	0,	"" },
-{ "StartInterval",	C_startInterval,	0,	"30" },
 { "Resources",		C_resources,		0,	"" },
 { "Xrdb",		C_xrdb,			0,	XBINDIR "/xrdb" },
 { "Setup",		C_setup,		0,	"" },

@@ -108,7 +108,10 @@ static SIGVAL	ChildNotify (int n);
 static SIGVAL	TermNotify (int n), UtmpNotify (int n), RescanNotify (int n);
 static void	RescanConfigs (void);
 static void	StartDisplays (void);
-static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
+#define XS_KEEP 0
+#define XS_RESTART 1
+#define XS_RETRY 2
+static void	ExitDisplay (struct display *d, int endState, int serverCmd, int goodExit);
 static void	rStopDisplay (struct display *d, int endState);
 static int	CheckUtmp (void);
 static void	SwitchToTty (struct display *d);
@@ -612,12 +615,12 @@ StartRemoteLogin (struct display *d)
 	argv = addStrArr (argv, d->remoteHost, -1);
 	if (!argv) {
 	    LogError ("StartRemoteLogin: no arguments\n");
-	    exit (EX_RESERVER_DPY);
+	    exit (1);
 	}
 	Debug ("exec %\"[s\n", argv);
 	(void) execv (argv[0], argv);
 	LogError ("X server %\"s cannot be executed\n", argv[0]);
-	exit (0);
+	exit (1);
     case -1:
 	LogError ("Forking X server for remote login failed: %s",
 		  SysErrorMsg());
@@ -947,8 +950,10 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	} else
 	    setNLogin (d, ar[3], ar[4], 0, 2);
 	if (d->pid != -1) {
-	    if (d->userSess < 0 || !strcmp (ar[2], "now"))
+	    if (d->userSess < 0 || !strcmp (ar[2], "now")) {
 		TerminateProcess (d->pid, SIGTERM);
+		d->status = raiser;
+	    }
 	} else
 	    StartDisplay (d);
     } else
@@ -1089,71 +1094,85 @@ WaitForChild (void)
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
 		Debug ("display exited with EX_TEXTLOGIN\n");
-		ExitDisplay (d, DS_TEXTMODE, FALSE, FALSE);
+		ExitDisplay (d, DS_TEXTMODE, 0, 0);
 		break;
-	    case EX_UNMANAGE_DPY:
-		Debug ("display exited with EX_UNMANAGE_DPY\n");
-		ExitDisplay (d, DS_REMOVE, FALSE, FALSE);
+	    case EX_REMOTE:
+		Debug ("display exited with EX_REMOTE\n");
+		ExitDisplay (d, DS_REMOTE, 0, 0);
 		break;
+#ifdef AUTO_RESERVE
 	    case EX_RESERVE:
-		/* XXX this should go away, i guess */
 		Debug ("display exited with EX_RESERVE\n");
-		ExitDisplay (d, DS_RESERVE, FALSE, FALSE);
+		ExitDisplay (d, DS_RESERVE, 0, 0);
 		break;
+#endif
 	    case EX_NORMAL:
+		/* (any type of) session ended */
 		Debug ("display exited with EX_NORMAL\n");
 		if ((d->displayType & d_lifetime) == dReserve
 #ifdef AUTO_RESERVE
 		     && !AllLocalDisplaysLocked (d)
 #endif
 		   )
-		    ExitDisplay (d, DS_RESERVE, FALSE, TRUE);
+		    ExitDisplay (d, DS_RESERVE, 0, 0);
 		else
-		    ExitDisplay (d, DS_RESTART, FALSE, TRUE);
+		    ExitDisplay (d, DS_RESTART, XS_KEEP, TRUE);
 		break;
-	    case EX_REMOTE:
-		Debug ("display exited with EX_REMOTE\n");
-		ExitDisplay (d, DS_REMOTE, FALSE, FALSE);
+#if 0
+	    case EX_REMANAGE_DPY:
+		/* user session ended */
+		Debug ("display exited with EX_REMANAGE_DPY\n");
+		ExitDisplay (d, DS_RESTART, XS_KEEP, TRUE);
 		break;
-	    default:
-		LogError ("Unknown session exit code %d (sig %d) from manager process\n",
-			  waitCode (status), waitSig (status));
-		ExitDisplay (d, DS_REMOVE, FALSE, TRUE);
-		break;
+#endif
 	    case EX_OPENFAILED_DPY:
+		/* WaitForServer() failed */
 		LogError ("Display %s cannot be opened\n", d->name);
+#ifdef XDMCP
 		/*
 		 * no display connection was ever made, tell the
 		 * terminal that the open attempt failed
 		 */
-#ifdef XDMCP
 		if ((d->displayType & d_origin) == dFromXDMCP)
 		    SendFailed (d, "cannot open display");
 #endif
-		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
-		break;
-	    case EX_RESERVER_DPY:
-		Debug ("display exited with EX_RESERVER_DPY\n");
-		ExitDisplay (d, DS_RESTART, TRUE, TRUE);
-		break;
-	    case EX_AL_RESERVER_DPY:
-		Debug ("display exited with EX_AL_RESERVER_DPY\n");
-		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
+		ExitDisplay (d, DS_RESTART, XS_RETRY, FALSE);
 		break;
 	    case waitCompose (SIGTERM,0,0):
+		/* killed before/during WaitForServer()
+		   - local Xserver died
+		   - display stopped (is zombie)
+		   - "login now" and "suicide" pipe commands (is raiser)
+		*/
 		Debug ("display exited on SIGTERM\n");
-		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
+		ExitDisplay (d, DS_RESTART, XS_RETRY, FALSE);
 		break;
-#if 0
-	    case EX_REMANAGE_DPY:
-		Debug ("display exited with EX_REMANAGE_DPY\n");
-		/*
-		 * XDMCP will restart the session if the display
-		 * requests it
-		 */
-		ExitDisplay (d, DS_RESTART, FALSE, TRUE);
+	    case EX_AL_RESERVER_DPY:
+		/* - killed after WaitForServer()
+		   - Xserver dead after remote session exit
+		*/
+		Debug ("display exited with EX_AL_RESERVER_DPY\n");
+		ExitDisplay (d, DS_RESTART, XS_RESTART, FALSE);
 		break;
-#endif
+	    case EX_RESERVER_DPY:
+		/* induced by greeter:
+		   - could not secure display
+		   - requested by user
+		*/
+		Debug ("display exited with EX_RESERVER_DPY\n");
+		ExitDisplay (d, DS_RESTART, XS_RESTART, TRUE);
+		break;
+	    case EX_UNMANAGE_DPY:
+		/* some fatal error */
+		Debug ("display exited with EX_UNMANAGE_DPY\n");
+		ExitDisplay (d, DS_REMOVE, 0, 0);
+		break;
+	    default:
+		/* prolly crash */
+		LogError ("Unknown session exit code %d (sig %d) from manager process\n",
+			  waitCode (status), waitSig (status));
+		ExitDisplay (d, DS_REMOVE, 0, 0);
+		break;
 	    }
 	}
 	/* SUPPRESS 560 */
@@ -1172,13 +1191,17 @@ WaitForChild (void)
 		d->status = notRunning;
 		break;
 	    case remoteLogin:
-		Debug ("remote login X server for display %s exited, restarting display\n",
-		       d->name);
+		Debug ("remote login X server for display %s exited,"
+		       " restarting display\n", d->name);
 		d->status = notRunning;
 		break;
 	    case raiser:
+		/* this should not happen */
 		d->status = notRunning;
-		/* fallthrough */
+		LogError ("X server for display %s terminated unexpectedly\n",
+			  d->name);
+		/* don't kill again */
+		break;
 	    case running:
 		LogError ("X server for display %s terminated unexpectedly\n",
 			  d->name);
@@ -1191,6 +1214,7 @@ WaitForChild (void)
 	    case notRunning:
 	    case textMode:
 	    case reserve:
+		/* this cannot happen */
 		Debug ("X server exited for passive (%d) session on display %s\n",
 		       (int) d->status, d->name);
 		break;
@@ -1331,7 +1355,6 @@ void
 StartDisplay (struct display *d)
 {
     char	*cname;
-    Time_t	curtime;
     int		pid;
 
     if (sdAction)
@@ -1341,6 +1364,9 @@ StartDisplay (struct display *d)
 	return;
     }
 
+    Debug ("StartDisplay %s, try %d\n", d->name, d->startTries + 1);
+    time (&d->lastStart);
+
     if (!LoadDisplayResources (d))
     {
 	LogError ("Unable to read configuration for display %s; stopping it.\n", 
@@ -1348,26 +1374,6 @@ StartDisplay (struct display *d)
 	StopDisplay (d);
 	return;
     }
-
-    time (&curtime);
-    if (d->hstent->lastStart + d->startInterval < curtime)
-	d->hstent->startTries = 0;
-    else if (d->hstent->startTries > d->startAttempts)
-    {
-	Debug ("ignoring disabled display %s\n", d->name);
-	StopDisplay (d);
-	return;
-    }
-    d->hstent->startTries++;
-    Debug ("StartDisplay %s, try %d\n", d->name, d->hstent->startTries);
-    if (d->hstent->startTries > d->startAttempts)
-    {
-	LogError ("Display %s is being disabled (restarting too fast)\n",
-		  d->name);
-	StopDisplay (d);
-	return;
-    }
-    d->hstent->lastStart = curtime;
 
     if ((d->displayType & d_location) == dLocal)
     {
@@ -1417,6 +1423,7 @@ StartDisplay (struct display *d)
     switch (pid)
     {
     case 0:
+	SetTitle (d->name);
 	if (debugLevel & DEBUG_WSESS)
 	    sleep (100);
 	mstrtalk.pipe = &d->pipe;
@@ -1483,20 +1490,20 @@ static void
 ExitDisplay (
     struct display	*d, 
     int			endState,
-    int			forceReserver,
+    int			serverCmd,
     int			goodExit)
 {
     struct disphist	*he;
 
     if (d->status == raiser)
     {
-	forceReserver = FALSE;
+	serverCmd = XS_KEEP;
 	goodExit = TRUE;
     }
 
     Debug ("ExitDisplay %s, "
-	   "endState = %d, forceReserver = %d, GoodExit = %d\n", 
-	   d->name, endState, forceReserver, goodExit);
+	   "endState = %d, serverCmd = %d, GoodExit = %d\n",
+	   d->name, endState, serverCmd, goodExit);
 
     d->userSess = -1;
     he = d->hstent;
@@ -1512,7 +1519,32 @@ ExitDisplay (
 	}
 	else
 	{
-	    if (d->serverPid != -1 && (forceReserver || d->terminateServer))
+	    if (serverCmd == XS_RETRY)
+	    {
+		if ((d->displayType & d_location) == dLocal)
+		{
+		    if (he->lastExit - d->lastStart < 120)
+		    {
+			LogError ("Unable to fire up local display %s;"
+				  " disabling.\n", d->name);
+			StopDisplay (d);
+			goto bork;
+		    }
+		}
+		else
+		{
+		    if (++d->startTries > d->startAttempts)
+		    {
+			LogError ("Disabling foreign display %s"
+				 " (too many attempts)\n", d->name);
+			StopDisplay (d);
+			goto bork;
+		    }
+		}
+	    }
+	    else
+		d->startTries = 0;
+	    if (d->serverPid != -1 && (serverCmd != XS_KEEP || d->terminateServer))
 	    {
 		Debug ("killing X server for %s\n", d->name);
 		TerminateProcess (d->serverPid, d->termSignal);
@@ -1524,6 +1556,7 @@ ExitDisplay (
 	    }
 	}
     }
+  bork:
     if (he->sd_how)
     {
 	doShutdown (he->sd_how, he->sd_when);

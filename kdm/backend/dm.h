@@ -217,6 +217,8 @@ struct display {
 	int		zstatus;	/*  substatus while zombie */
 	int		pid;		/* process id of child */
 	int		serverPid;	/* process id of server (-1 if none) */
+	Time_t		lastStart;	/* time of last display start */
+	int		startTries;	/* current start try; foreign from file only */
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
@@ -236,11 +238,10 @@ struct display {
 	/* server management resources */
 	int		serverAttempts;	/* number of attempts at running X */
 	int		serverTimeout;	/* how long to wait for X */
-	int		startInterval;	/* reset startAttempts after this time */
-	int		openDelay;	/* serverDelay would fit better */
+	int		openDelay;	/* after failed server start or XOpenDisplay */
 	int		openRepeat;	/* connection open attempts to make */
-	int		openTimeout;	/* abort open attempt timeout */
-	int		startAttempts;	/* number of attempts at starting */
+	int		openTimeout;	/* XOpenDisplay timeout */
+	int		startAttempts;	/* number of attempts at starting foreign from file */
 	int		pingInterval;	/* interval between XSync */
 	int		pingTimeout;	/* timeout for XSync */
 	int		terminateServer;/* restart for each session */
@@ -293,9 +294,7 @@ struct display {
 struct disphist {
 	struct disphist	*next;
 	char		*name;
-	Time_t		lastStart;	/* time of last display start */
 	Time_t		lastExit;	/* time of last display exit */
-	int		startTries;	/* current start try */
 	unsigned	rLogin:2,	/* 0=nothing 1=relogin 2=login */
 			sd_how:2,	/* 0=none 1=reboot 2=halt (SHUT_*) */
 			sd_when:2,	/* 0=maylater 1=trynow 2=forcenow (SHUT_*) */

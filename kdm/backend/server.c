@@ -80,7 +80,6 @@ StartServerOnce (struct display *d)
 	}
 	if (!argv) {
 	    LogError ("StartServer: no arguments\n");
-	    sleep ((unsigned) d->openDelay);
 	    exit (EX_UNMANAGE_DPY);
 	}
 	Debug ("exec %\"[s\n", argv);

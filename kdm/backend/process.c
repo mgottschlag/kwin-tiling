@@ -70,7 +70,7 @@ TerminateProcess (int pid, int sig)
 
 
 static FD_TYPE	CloseMask;
-static int	max;
+static int	max = -1;
 
 void
 RegisterCloseOnFork (int fd)
@@ -96,6 +96,7 @@ CloseOnFork (void)
 	if (FD_ISSET (fd, &CloseMask))
 	    close (fd);
     FD_ZERO (&CloseMask);
+    max = -1;
 }
 
 int
