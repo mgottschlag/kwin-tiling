@@ -102,7 +102,7 @@ void init_config( void )
 	CONF_GREET_INIT
 
 	_isLocal = GetCfgInt( C_isLocal );
-	_hasConsole = _hasConsole && GetCfgInt( C_hasConsole );
+	_hasConsole = _hasConsole && _isLocal && GetCfgInt( C_hasConsole );
 	_authorized = GetCfgInt( C_isAuthorized );
 
 	_stsFile = _dataDir + "/kdmsts";
