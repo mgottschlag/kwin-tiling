@@ -139,10 +139,10 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
 }
 
 #undef KeyPress	/* i hate X #defines */
+#undef KeyRelease /* Some muppet just wasted lots of my time trying to find a dumb compile error */
 
 bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
 {
-    capsLocked();
     if ( ev->type() == QEvent::KeyPress ) {
         killTimer(mTimeoutTimerId);
         mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
@@ -157,7 +157,10 @@ bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
                 startCheckPassword();
             return true;
         }
-    } else if (ev->type() == QEvent::ContextMenu)
+    }
+    else if (ev->type() == QEvent::KeyRelease)
+        capsLocked();
+    else if (ev->type() == QEvent::ContextMenu)
 	return true;
     return false;
 }
