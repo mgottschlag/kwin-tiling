@@ -130,6 +130,12 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    updateUI();
 }
 
+void BGAdvancedDialog::makeReadOnly()
+{
+   dlg->m_cbProgram->setEnabled(false);
+   dlg->m_listPrograms->setEnabled(false);
+}
+
 void BGAdvancedDialog::setCacheSize(int s)
 {
    dlg->m_spinCache->setValue(s);

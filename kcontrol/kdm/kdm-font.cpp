@@ -77,7 +77,10 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
 void KDMFontWidget::makeReadOnly()
 {
-    setEnabled(false);
+  stdFontChooser->button()->setEnabled(false);
+  failFontChooser->button()->setEnabled(false);
+  greetingFontChooser->button()->setEnabled(false);
+  aacb->setEnabled(false);
 }
 
 void KDMFontWidget::configChanged()

@@ -174,9 +174,19 @@ void BGDialog::makeReadOnly()
 {
     m_pMonitor->setEnabled( false );
     m_comboDesktop->setEnabled( false );
-    m_buttonAdvanced->setEnabled( false );
-    m_buttonGroupBackground->setEnabled( false );
-    groupBox3->setEnabled( false );
+    m_colorPrimary->setEnabled( false );
+    m_colorSecondary->setEnabled( false );
+    m_comboPattern->setEnabled( false );
+    m_radioNoPicture->setEnabled( false );
+    m_radioPicture->setEnabled( false );
+    m_radioSlideShow->setEnabled( false );
+    m_urlWallpaperBox->setEnabled( false );
+    m_urlWallpaperButton->setEnabled( false );
+    m_comboWallpaperPos->setEnabled( false );
+    m_buttonSetupWallpapers->setEnabled( false );
+    m_comboBlend->setEnabled( false );
+    m_sliderBlend->setEnabled( false );
+    m_cbBlendReverse->setEnabled( false );
 }
 
 void BGDialog::load()
@@ -844,6 +854,12 @@ void BGDialog::slotAdvanced()
 
     m_previewUpdates = false;
     BGAdvancedDialog dlg(r, topLevelWidget(), m_multidesktop);
+
+    if (!m_pMonitor->isEnabled()) {
+       dlg.makeReadOnly();
+       dlg.exec();
+       return;
+    }
 
     dlg.setTextColor(m_pGlobals->textColor());
     dlg.setTextBackgroundColor(m_pGlobals->textBackgroundColor());

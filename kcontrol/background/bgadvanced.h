@@ -53,6 +53,8 @@ public:
 
    void updateUI();
 
+   void makeReadOnly();
+
 public slots:
    void slotAdd();
    void slotRemove();

@@ -153,9 +153,10 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
 void KDMConvenienceWidget::makeReadOnly()
 {
-    alGroup->setEnabled(false);
-    npGroup->setEnabled(false);
-    pl_label->setEnabled(false);
+    ((QWidget*)alGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
+    userlb->setEnabled(false);
+    ((QWidget*)npGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
+    npuserlv->setEnabled(false);
     cbarlen->setEnabled(false);
     npRadio->setEnabled(false);
     ppRadio->setEnabled(false);
