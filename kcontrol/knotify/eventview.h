@@ -20,6 +20,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.4  2000/03/25 00:01:08  charles
+    Now shows whether the events are toggled. and klined.h->klineedit.h
+
+    I need an artist to draw me a "enable"/"disable" icon.  Right now I'm using
+    either a flag or nothing.
+
     Revision 1.3  2000/03/24 06:01:25  charles
     More mindless boring stuff.
 
@@ -40,6 +46,7 @@
 #ifndef _EVENTVIEW_H
 #define _EVENTVIEW_H
 
+#include <knotifyclient.h>
 #include <qlistbox.h>
 #include <qcheckbox.h>
 #include <klineedit.h>
@@ -59,6 +66,7 @@ public slots:
 	void load(KConfig *config, const QString &section);
 	void save();
 	void unload();
+	void itemSelected(int item);
 
 protected slots:
 	void setPixmap(int item, bool on);
@@ -73,6 +81,11 @@ protected:
 	QCheckBox *enabled;
 	KLineEdit *file;
 	QPushButton *todefault;
+	
+	KNotifyClient::Presentation present;
+	
+	QString soundfile;
+	QString logfile;
 };
 
 #endif

@@ -24,7 +24,7 @@
 #include "eventview.h"
 #include "eventview.moc"
 
-#include <knotifyclient.h>
+
 #include <qlayout.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -58,6 +58,9 @@ EventView::EventView(QWidget *parent, const char *name):
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
 	layout->addWidget(file=new KLineEdit(this), 1,1);
 	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 2,1);
+	
+	file->hide();
+	connect(eventslist, SIGNAL(selected(int)), SLOT(itemSelected(int)));
 };
 
 EventView::~EventView()
@@ -70,6 +73,23 @@ void EventView::defaults()
 }
 
 
+void EventView::itemSelected(int item)
+{
+	enabled->setChecked(false);
+
+	switch (item)
+	{
+	case (0):
+		file->show();
+		file->setText(soundfile);
+		if (present & KNotifyClient::Sound)
+			enabled->setChecked(true);
+		else
+			file->setEnabled(false);
+	
+	}
+}
+
 void EventView::load(KConfig *config, const QString &section)
 {
 	config->setGroup(section);
@@ -78,13 +98,25 @@ void EventView::load(KConfig *config, const QString &section)
 	this->section=section;
 	setEnabled(true);
 	typedef KNotifyClient::Presentation Presentation;
-	Presentation present;
 	
 	{ // Load the presentation
 		present=(Presentation)conf->readNumEntry("presentation", -1);
 		if (present==KNotifyClient::Default)
 			present=(Presentation)conf->readNumEntry("default_presentation", 0);
 	}
+
+	{ // Load the files
+		soundfile=conf->readEntry("soundfile");
+		if (soundfile.isNull())
+			soundfile=conf->readEntry("default_soundfile");
+	}
+	
+	{ // Load the files
+		logfile=conf->readEntry("logfile");
+		if (logfile.isNull())
+			logfile=conf->readEntry("default_logfile");
+	}	
+	
 	// Stick the flags on the list for that which is present
 	if (present & KNotifyClient::Sound)
 		setPixmap(0, true);
@@ -97,24 +129,6 @@ void EventView::load(KConfig *config, const QString &section)
 	if (present & KNotifyClient::Stderr)
 		setPixmap(4, true);
 }
-
-/*
-Can't use this yet.
-	if (present & KNotifyClient::Sound)
-	{ // Load 'Sound'
-		sound=conf->readEntry("sound", 0);
-		if (sound.isNull())
-			sound=conf->readEntry("default_sound", "");
-	}
-	
-	if (present & KNotifyClient::Logfile)
-	{ // Load 'Logfile'
-		sound=conf->readEntry("logfile", 0);
-		if (sound.isNull())
-			sound=conf->readEntry("default_logfile", "");
-	}
-
-*/
 
 void EventView::setPixmap(int item, bool on)
 {
