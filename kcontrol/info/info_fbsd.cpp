@@ -1,3 +1,4 @@
+#include <iostream.h>
 /*
  * $Id$
  *
@@ -118,7 +119,7 @@ bool GetInfo_Sound (QListView *lbox)
   t = new QTextStream(sndstat);
 
   QListViewItem* olditem = 0;
-  while ((s=t->readLine())!="")
+  while ((s=t->readLine()) != QString::null)
       olditem = new QListViewItem(lbox, olditem, s);
 
   delete t;
@@ -148,7 +149,7 @@ bool GetInfo_Devices (QListView *lbox)
 
     QListViewItem* olditem;
     
-	while ((s=t->readLine())!="")
+	while ((s=t->readLine()) != QString::null)
         olditem = new QListViewItem(lbox, olditem, s);
 
 	delete t;
@@ -163,14 +164,14 @@ bool GetInfo_SCSI (QListView *lbox)
    * This code relies on the system at large having "the" CAM (see the FreeBSD
    * 3.0 Release notes for more info) SCSI layer, and not the older one.
    * If someone who has a system with the older SCSI layer and would like to
-   * tell me (garbanzo@hooked.net) how to extract that info, I'd be much
+   * tell me (jazepeda@pacbell.net) how to extract that info, I'd be much
    * obliged.
    */
   FILE *pipe;
   QFile *camcontrol = new QFile("/sbin/camcontrol");
   QTextStream *t;
   QString s;
-  
+
   if (!camcontrol->exists()) {
     delete camcontrol;
     return false;
@@ -187,9 +188,13 @@ bool GetInfo_SCSI (QListView *lbox)
   
   QListViewItem* olditem = 0;
 
-  while ((s=t->readLine())!="")
-      olditem = new QListViewItem(lbox, olditem, s);
-  
+  while (true) {
+    s = t->readLine();
+    if ( (s == "") || (s == QString::null) )
+      break;
+    olditem = new QListViewItem(lbox, olditem, s);
+  }
+
   delete t; delete camcontrol; pclose(pipe);
   
   if (!lbox->childCount())
