@@ -228,7 +228,9 @@ void CMisc::removeAssociatedFiles(const QString realPath, bool d)
     QDir dir(d ? realPath
                : getDir(realPath),
              d ? QString::null
-               : getFile(changeExt(realPath, "*")));
+               : getFile(changeExt(realPath, "*")),
+             QDir::Name|QDir::IgnoreCase,
+             QDir::All|QDir::Hidden);
 
     if(dir.isReadable())
     {
