@@ -254,7 +254,7 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
 }
 
 #ifdef USE_FONTS_CONF
-static const QString defaultPath("/etc/fonts.conf");
+static const QString defaultPath("/etc/fonts/fonts.conf");
 static const QString defaultUserFile(".fonts.conf");
 static const char *  constSymEnc="glyphs-fontspecific";
 #else
