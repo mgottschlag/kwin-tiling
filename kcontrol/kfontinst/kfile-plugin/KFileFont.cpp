@@ -272,10 +272,10 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStrin
 
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");
-    addMimeType("application/x-font-speedo");
+    //addMimeType("application/x-font-speedo");
     addMimeType("application/x-font-bdf");
     addMimeType("application/x-font-pcf");
-    addMimeType("application/x-font-snf");
+    //addMimeType("application/x-font-snf");
     addMimeType("application/x-font-otf");
     addMimeType("application/x-font-ttc");
     addMimeType("application/x-afm");

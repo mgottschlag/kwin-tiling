@@ -80,8 +80,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
          I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
          "(c) Craig Drummond, 2000 - 2004"));
     about->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
-    setAboutData( about );
-
+    setAboutData(about);
 
     const char *appName=KCmdLineArgs::appName();
 
@@ -148,10 +147,10 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
               << "application/x-font-otf"
               << "application/x-font-ttc"
               << "application/x-font-type1"
-              << "application/x-font-bdf"
               << "application/x-font-pcf"
-              << "application/x-font-snf"
-              << "application/x-font-speedo";
+              << "application/x-font-bdf";
+              //<< "application/x-font-snf"
+              //<< "application/x-font-speedo";
 
     itsDirOp->setMimeFilter(mimeTypes);
     itsDirOp->dirLister()->setMainWindow(this);
@@ -302,13 +301,15 @@ QString CKCmFontInst::quickHelp() const
 {
     return Misc::root()
                ? i18n("<h1>Font Installer</h1><p> This module allows you to"
-                      " install TrueType, Type1, Speedo, and Bitmap"
+                      //" install TrueType, Type1, Speedo, and Bitmap"
+                      " install TrueType, Type1, and Bitmap"
                       " fonts.</p><p>You may also install fonts using Konqueror:"
                       " type fonts:/ into Konqueror's location bar"
                       " and this will display your installed fonts. To install a"
                       " font, simply copy one into the folder.</p>")
                : i18n("<h1>Font Installer</h1><p> This module allows you to"
-                      " install TrueType, Type1, Speedo, and Bitmap"
+                      //" install TrueType, Type1, Speedo, and Bitmap"
+                      " install TrueType, Type1, and Bitmap"
                       " fonts.</p><p>You may also install fonts using Konqueror:"
                       " type fonts:/ into Konqueror's location bar"
                       " and this will display your installed fonts. To install a"
@@ -396,8 +397,8 @@ void CKCmFontInst::addFonts()
 {
     KURL::List list=KFileDialog::getOpenURLs(QString::null, "application/x-font-ttf application/x-font-otf "
                                                             "application/x-font-ttc application/x-font-type1 "
-                                                            "application/x-font-bdf application/x-font-pcf "
-                                                            "application/x-font-snf application/x-font-speedo",
+                                                            "application/x-font-pcf application/x-font-bdf",
+                                                            //"application/x-font-snf application/x-font-speedo",
                                              this, i18n("Add Fonts"));
 
     if(list.count())
