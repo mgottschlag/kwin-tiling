@@ -54,8 +54,8 @@ OpenGetter ()
 		   originalArgv, "_config", 0, strdup("config reader"),
 		   0))
 	    LogPanic ("Cannot run config reader\n");
+	Debug ("getter now ready\n");
     }
-    Debug ("getter ready\n");
 }
 
 void
@@ -64,8 +64,8 @@ CloseGetter ()
     if (getter.pid) {
 	GSet (&cnftalk);
 	(void) GClose (&getter, 0, 0);
+	Debug ("getter now closed\n");
     }
-    Debug ("getter closed\n");
 }
 
 /*
