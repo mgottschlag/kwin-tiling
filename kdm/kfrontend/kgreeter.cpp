@@ -704,6 +704,8 @@ kg_main(int argc, char **argv)
     QRect scr = QApplication::desktop()->screenGeometry(kdmcfg->_greeterScreen);
     kgreeter = new KGreeter;
     kgreeter->setMaximumSize(scr.size());
+    kgreeter->move(-1000, -1000);
+    kgreeter->show();
     QRect grt(QPoint (0, 0), kgreeter->sizeHint());
     if (kdmcfg->_greeterPosX >= 0) {
 	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY));
@@ -711,7 +713,6 @@ kg_main(int argc, char **argv)
     } else
 	grt.moveCenter( scr.center());
     kgreeter->setGeometry (grt);
-    kgreeter->show();
     QApplication::restoreOverrideCursor();
     Debug ("entering event loop\n");
     kapp->exec();
