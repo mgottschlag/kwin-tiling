@@ -793,7 +793,7 @@ void KSMServer::processData( int /*socket*/ )
     IceConn iceConn = ((KSMConnection*)sender())->iceConn;
     IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
     if ( status == IceProcessMessagesIOError ) {
-	(void) IceCloseConnection( iceConn );
+	IceSetShutdownNegotiation( iceConn, False );
 	QListIterator<KSMClient> it ( clients );
 	while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
 	    ++it;
@@ -803,7 +803,7 @@ void KSMServer::processData( int /*socket*/ )
 	    deleteClient( it.current() );
 	    SmsCleanUp( smsConn );
 	}
-	IceCloseConnection( iceConn );
+	(void) IceCloseConnection( iceConn );
     }
 }
 
