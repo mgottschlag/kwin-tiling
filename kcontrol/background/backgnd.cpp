@@ -367,7 +367,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     hbox->addSpacing(20); hbox->addWidget(lbl); hbox->addStretch();
     m_pCacheBox = new QSpinBox(m_pTab3);
     m_pCacheBox->setSteps(512, 1024);
-    m_pCacheBox->setSuffix(i18n(" Kb"));
+    m_pCacheBox->setSuffix(i18n(" KB"));
     m_pCacheBox->setRange(512, 10240);
     grid->addWidget(m_pCacheBox, 3, 1, Qt::AlignLeft);
     lbl->setBuddy(m_pCacheBox);
