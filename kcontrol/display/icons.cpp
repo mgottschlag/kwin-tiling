@@ -301,6 +301,10 @@ void KIconConfig::save()
     mpConfig->sync();
 
     emit changed(false);
+
+    // Send two KIPC messages. This way repainting is easier to implement in
+    // clients. On the first message, all icons are updated, while on the
+    // second one, the view is repainted.
     for (int i=0; i<KIcon::LastGroup; i++)
     {
 	if (mbChanged[i])
@@ -309,6 +313,7 @@ void KIconConfig::save()
 	    mbChanged[i] = false;   
 	}
     }
+    KIPC::sendMessageAll(KIPC::IconChanged, KIcon::LastGroup);
 }
 
 void KIconConfig::defaults()
