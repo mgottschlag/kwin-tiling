@@ -1,3 +1,7 @@
 acroread*lprCommand: kprinter
-acroread*Foreground:               WINDOW_FOREGROUND
-acroread*Background:               WINDOW_BACKGROUND
+Acroread.foreground:               WINDOW_FOREGROUND
+Acroread.background:               WINDOW_BACKGROUND
+AcroRead.borderColor:              WINDOW_FOREGROUND
+AcroRead.XmScreen.background:      WINDOW_BACKGROUND
+AcroRead.XmScreen.borderColor:     WINDOW_FOREGROUND
+
