@@ -297,6 +297,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->setGroup("General");
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
+    kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
 
     if ( myURLGrabber )
         myURLGrabber->writeConfiguration( kc );
