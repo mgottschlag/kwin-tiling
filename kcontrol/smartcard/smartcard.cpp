@@ -45,7 +45,8 @@
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-
+  
+  
   QVBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
   config = new KConfig("ksmartcardrc", false, false);
 
@@ -55,6 +56,8 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   dc->remoteInterfaces("kded", "kardsvc", &_ok);
 
   if (_ok) {
+
+    
      base = new SmartcardBase(this);
      layout->add(base);
      
@@ -73,7 +76,8 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
 	     this,
 	     SLOT(slotShowPopup(QListViewItem *,const QPoint &,int)));
 
-     
+
+  
      _cardDB= new KCardDB();
      load();
   } else {
@@ -91,6 +95,8 @@ void KSmartcardConfig::configChanged()
 {
     emit changed(true);
 }
+
+
 
 void KSmartcardConfig::slotLaunchChooser(){
 
@@ -131,6 +137,16 @@ if (_ok) {
   base->beepOnInsert->setChecked(config->readBoolEntry("Beep on Insert", true));
   base->launchManager->setChecked(config->readBoolEntry("Launch Manager", true));
   
+  base->_readerHostsListView->clear();
+  if (!config->readBoolEntry("Enable Support", false)){
+    
+    kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)", 
+			     data, rettype, retval);
+    
+    (void) new KListViewItem(base->_readerHostsListView,i18n("Smart card support disabled"));
+    return;
+
+  }
   
   kapp->dcopClient()->call("kded", "kardsvc", "getSlotList ()", 
 			   data, rettype, retval);
@@ -139,10 +155,8 @@ if (_ok) {
   QDataStream _retReader(retval, IO_ReadOnly);
   _retReader>>_readers;
 
-
-  base->_readerHostsListView->clear();
-
   if (_readers.isEmpty()){
+
 
     (void) new KListViewItem(base->_readerHostsListView,i18n("No readers found.Check 'pcscd' is running"));
     return;
@@ -220,6 +234,11 @@ if (_ok) {
 	arg << modName;
 	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
 			         data, rettype, retval);
+
+	config->sync();
+       
+	kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
+			         data, rettype, retval);
   } else {
    
 	QByteArray data, retval;
@@ -231,12 +250,7 @@ if (_ok) {
 			         data, rettype, retval);
   }
 
-  config->sync();
-  QByteArray data, retval;
-  QCString rettype;
-  QDataStream arg(data, IO_WriteOnly);
-  kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
-			         data, rettype, retval);
+
 }
   emit changed(false);
 }

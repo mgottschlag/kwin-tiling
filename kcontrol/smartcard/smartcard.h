@@ -37,6 +37,7 @@ class KPopupMenu;
 class KSmartcardConfig : public KCModule
 {
   Q_OBJECT
+ 
 
 public:
   KSmartcardConfig(QWidget *parent = 0L, const char *name = 0L);
@@ -62,12 +63,17 @@ public:
   void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i); 
   void slotLaunchChooser();
   
+
+
+
 private:
 
   KConfig *config;
   bool _ok;
   KCardDB * _cardDB;
   KPopupMenu * _popUpKardChooser;
+
+  
 };
 
 #endif
