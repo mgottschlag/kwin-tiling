@@ -1,0 +1,6 @@
+[Desktop Entry]
+Keys=rfc,rfcs
+Name=IETF Requests for Comments
+Query=http://www.ietf.org/rfc/rfc\\{@}.txt
+ServiceTypes=SearchProvider
+Type=Service
