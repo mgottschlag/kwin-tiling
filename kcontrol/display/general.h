@@ -51,6 +51,7 @@ private:
     int m_PanelStyle, m_KonqStyle, m_KDEStyle;
 
     QButtonGroup *panelGroup, *konqGroup, *kdeGroup;
+    QCheckBox *singleClick;
     KConfig *config;
 };
 

@@ -31,6 +31,7 @@
 #include <kthemebase.h>
 #include <kmessagebox.h>
 #include <kwm.h>
+#include <kdialog.h>
 #include <kipc.h>
 #include <kprocess.h>
 #include <kcmodule.h>
@@ -56,9 +57,8 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
 
     setTitle(i18n("Icon style"));
 
-    QGridLayout *grid = new QGridLayout(this, 4, 3);
-    grid->setSpacing(10);
-    grid->setMargin(10);
+    QGridLayout *grid = new QGridLayout(this, 4, 3, KDialog::marginHint(),
+					KDialog::spacingHint());
     QLabel *lbl = new QLabel(i18n("Normal"), this);
 
     grid->addWidget(lbl, 0, 1);
@@ -101,6 +101,14 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     kdeGroup->insert(rb);
     grid->addWidget(rb, 3, 2);
 
+    QFrame *frame = new QFrame(this);
+    frame->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    grid->addMultiCellWidget(frame, 4, 4, 0, 2);
+      
+    singleClick = new QCheckBox(i18n("Single &click to activate"), this);
+    grid->addMultiCellWidget(singleClick, 5, 5, 0, 2);
+
+    qDebug("foo!!!");
     config = new KConfig("kcmdisplayrc");
     load();
 }
@@ -280,19 +288,19 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     macStyle = false;
 
     config = new KConfig("kcmdisplayrc");
-    QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
+    QBoxLayout *topLayout = new QVBoxLayout( this, KDialog::marginHint(),
+					     KDialog::spacingHint() );
 
     // my little style list (mosfet 04/26/99)
-    QBoxLayout *lay = new QHBoxLayout(10);
+    QBoxLayout *lay = new QHBoxLayout;
     topLayout->addLayout(lay);
 
-    QGroupBox *themeBox = new QGroupBox(i18n("Widget style and theme:"), this);
+    QGroupBox *themeBox = new QGroupBox(1, Vertical, 
+					i18n("Widget style and theme:"), 
+					this);
     lay->addWidget(themeBox);
 
-    QBoxLayout *themeLayout = new QVBoxLayout(themeBox, 10);
     themeList = new KThemeListBox(themeBox);
-    themeLayout->addSpacing(10);
-    themeLayout->addWidget(themeList);
     connect(themeList, SIGNAL(currentChanged(QListViewItem*)),
             SLOT(slotChangeStylePlugin(QListViewItem*)));
 
@@ -305,8 +313,9 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     // Drawing settings
     styles = new QGroupBox ( i18n( "Other settings for drawing:" ), this );
     topLayout->addWidget(styles, 10);
-    QBoxLayout *vlay = new QVBoxLayout (styles, 10);
-    vlay->addSpacing(10);
+    QBoxLayout *vlay = new QVBoxLayout (styles, KDialog::marginHint(),
+					KDialog::spacingHint());
+    vlay->addSpacing(styles->fontMetrics().lineSpacing());
 
     cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
                                  "the style of MacOS" ), styles);
@@ -321,10 +330,10 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     topLayout->addWidget(tbStyle, 10);
 
     vlay = new QVBoxLayout( tbStyle, 10 );
-    vlay->addSpacing( 10 );
+    vlay->addSpacing( tbStyle->fontMetrics().lineSpacing() );
     
-    lay = new QHBoxLayout( 10 );
-    vlay->addLayout( lay );
+    QGridLayout *grid = new QGridLayout(2, 2);
+    vlay->addLayout( grid );
 
     tbIcon   = new QRadioButton( i18n( "&Icons only" ), tbStyle);
     tbText   = new QRadioButton( i18n( "&Text only" ), tbStyle);
@@ -340,10 +349,10 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect( tbAside, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbUnder, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
 
-    lay->addWidget(tbIcon, 10);
-    lay->addWidget(tbText, 10);
-    lay->addWidget(tbAside, 10);
-    lay->addWidget(tbUnder, 10);
+    grid->addWidget(tbIcon, 0, 0);
+    grid->addWidget(tbText, 0, 1);
+    grid->addWidget(tbAside, 1, 0);
+    grid->addWidget(tbUnder, 1, 1);
 
     vlay->addWidget(tbHilite, 10);
     vlay->addWidget(tbTransp, 10);
