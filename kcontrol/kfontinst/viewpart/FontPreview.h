@@ -33,6 +33,7 @@
 #include <qpixmap.h>
 #include <qsize.h>
 #include <qwidget.h>
+#include <qcolor.h>
 #include <kurl.h>
 
 class CFontPreview : public QWidget
@@ -70,6 +71,7 @@ class CFontPreview : public QWidget
             itsLastWidth,
             itsLastHeight;
     QString itsString;
+    QColor  itsBgndCol;
 };
 
 #endif

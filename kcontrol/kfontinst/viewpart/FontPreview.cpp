@@ -41,7 +41,8 @@ CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsString(str.isNull() ? i18n(" No preview available") : str)
+              itsString(str.isNull() ? i18n(" No preview available") : str),
+              itsBgndCol(eraseColor())
 {
 }
 
@@ -73,6 +74,7 @@ void CFontPreview::showFont()
 
     if(CGlobal::fe().openKioFont(itsCurrentUrl.path(), CFontEngine::NAME, true, itsCurrentFace-1))
     {
+        setEraseColor(Qt::white);
         CGlobal::fe().createPreview(itsCurrentUrl.path(), itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
         update();
         emit status(true);
@@ -82,6 +84,7 @@ void CFontPreview::showFont()
     {
         QPixmap nullPix;
 
+        setEraseColor(itsBgndCol);
         itsPixmap=nullPix;
         update();
         emit status(false);
@@ -90,8 +93,8 @@ void CFontPreview::showFont()
 
 void CFontPreview::paintEvent(QPaintEvent *)
 {
-    QPainter paint( this );
-
+    QPainter paint(this);
+ 
     if(itsPixmap.isNull())
     {
         paint.setPen(kapp->palette().active().text());
