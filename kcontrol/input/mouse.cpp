@@ -351,7 +351,7 @@ void MouseConfig::load()
   singleClick->setChecked(settings->singleClick);
 
   cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
-  if ( settings->autoSelectDelay < 0 ) 
+  if ( settings->autoSelectDelay < 0 )
      slAutoSelect->setValue( 0 );
   else
      slAutoSelect->setValue( settings->autoSelectDelay );
@@ -461,6 +461,7 @@ void MouseSettings::load(KConfig *config)
         handedEnabled = false;
       break;
     case 3:
+    case 5:
       middle_button = (int)map[1];
       if ( (int)map[0] == 1 && (int)map[2] == 3 )
     h = RIGHT_HANDED;
