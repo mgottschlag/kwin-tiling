@@ -81,12 +81,12 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
 
     m_Desk = KWin::currentDesktop() - 1;
     if(m_pGlobals->commonBackground())
-	m_Desk = 0;
+        m_Desk = 0;
 
     int i;
     for (i=0; i<m_Max; i++) {
-	m_Renderer.insert(i, new KBackgroundRenderer(i));
-	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
+        m_Renderer.insert(i, new KBackgroundRenderer(i));
+        connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 
     // Preview monitor at (0,1)
@@ -233,17 +233,17 @@ void Backgnd::setWidgets()
 
     // Set the names in the group boxes
 
-    if (m_Desk==0)
+    if (m_pGlobals->commonBackground())
     {
        m_pBackgroundGrp->setTitle(i18n("Coloring"));
        m_pWallpaperGrp->setTitle(i18n("Images"));
     }
     else
     {
-       QString bgStr(i18n("Coloring For %1").arg(m_pGlobals->deskName(m_Desk-1)));
+       QString bgStr(i18n("Coloring For '%1'").arg(m_pGlobals->deskName(m_Desk)));
        m_pBackgroundGrp->setTitle(bgStr);
 
-       QString wpStr(i18n("Images For %1").arg(m_pGlobals->deskName(m_Desk-1)));
+       QString wpStr(i18n("Images For '%1'").arg(m_pGlobals->deskName(m_Desk)));
        m_pWallpaperGrp->setTitle(wpStr);
     }
 
