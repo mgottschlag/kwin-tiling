@@ -249,6 +249,10 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     QRadioButton *rb = new QRadioButton( i18n("&No wallpaper"), m_WallpaperType );
     rb = new QRadioButton( i18n("&Single wallpaper"), m_WallpaperType );
     rb = new QRadioButton( i18n("&Multiple wallpapers"), m_WallpaperType );
+    if ( !m_multidesktop )
+    {
+        rb->hide();
+    }
 
     lbl = new QLabel(i18n("M&ode:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
@@ -294,6 +298,8 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
 					" directory, you can still find it by clicking here.") );
 
     m_pMSetupBut = new QPushButton(i18n("S&etup Multiple..."), m_pTab2);
+    if ( !m_multidesktop )
+        m_pMSetupBut->hide();
     m_pMSetupBut->setFixedSize(m_pMSetupBut->sizeHint());
     grid->addWidget(m_pMSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
@@ -360,7 +366,6 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     QString wtstr = i18n( "In this box you can enter how much memory KDE should use for caching pixmaps for faster access." );
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pCacheBox, wtstr );
-
 
     // Doing this only in KBGMonitor doesn't work, probably due to the
     // reparenting that is done.
@@ -471,6 +476,8 @@ void Backgnd::apply()
 	m_WallpaperType->setButton( 0 );
     else if ( r->multiWallpaperMode() == KBackgroundSettings::NoMulti || r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom )
 	m_WallpaperType->setButton( 1 );
+    else if ( !(r->multiWallpaperMode() == KBackgroundSettings::NoMulti || r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom) && !m_multidesktop)
+        m_WallpaperType->setButton( 1 );
     else
 	m_WallpaperType->setButton( 2 );
     QString wp = r->wallpaper();
