@@ -38,6 +38,8 @@
 PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
     : LockDlgImpl(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder)
 {
+    frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
+    frame->setLineWidth(2);
 
     pixlabel->setPixmap(DesktopIcon("kmenu"));
 
