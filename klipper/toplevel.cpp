@@ -198,7 +198,11 @@ void TopLevel::newClipData()
             pQPMmenu->setItemChecked(pSelectedItem, false);
 	}
         pSelectedItem = id;
-        pQPMmenu->setItemChecked(pSelectedItem, true);
+
+	if ( bClipEmpty ) 
+	    pQPMmenu->setItemEnabled(id, false);
+	else
+	    pQPMmenu->setItemChecked(pSelectedItem, true);
     }
 }
 
