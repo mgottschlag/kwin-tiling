@@ -75,7 +75,7 @@ void KMenuEdit::setupActions()
     (void)new KAction(i18n("&New Submenu..."), "menu_new", 0, actionCollection(), "newsubmenu");
     (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), actionCollection(), "newitem");
     if (!m_controlCenter)
-       (void)new KAction(i18n("New &Separator"), "menu_new_sep", 0, actionCollection(), "newsep");
+       (void)new KAction(i18n("New S&eparator"), "menu_new_sep", 0, actionCollection(), "newsep");
 
     m_actionDelete = 0;
 
