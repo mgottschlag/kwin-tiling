@@ -3,12 +3,13 @@ Encoding=UTF-8
 Keys=sf,sourceforge
 Name=SourceForge
 Name[af]=Sourceforge
+Name[bn]=সোর্স-ফর্জ
 Name[eo]=Programforĝejo
 Name[fo]=Sourceforge
 Name[hi]=सोर्सफोर्ज
-Name[nl]=SourceForge (Webcatalogus van UNIX en crossplatform software)
 Name[nso]=Bofora bja Mothopo
 Name[pl]=SourceForge - projekty
+Name[ta]=மூலத்திருட்டு
 Name[xx]=xxSourceForgexx
 Query=http://sourceforge.net/search/?type_of_search=\\{type,"soft"}&exact=\{exact,"0"}&words=\\{@}
 ServiceTypes=SearchProvider
