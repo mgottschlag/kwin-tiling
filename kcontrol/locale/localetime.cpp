@@ -200,7 +200,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
    m_locale(_locale)
 {
   // Time
-  QGridLayout *lay = new QGridLayout(this, 5, 2,
+  QGridLayout *lay = new QGridLayout(this, 6, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
@@ -232,7 +232,11 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
           << I18N_NOOP("Thursday") << I18N_NOOP("Friday") << I18N_NOOP("Saturday")
           << I18N_NOOP("Sunday");
   m_comboWeekStartDay->insertStringList(tmpDays);
-
+  
+  m_chDateMonthNamePossessive = new QCheckBox(this, I18N_NOOP("Use declined form of month name"));
+  connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
+	     SLOT( slotDateMonthNamePossChanged() ) );
+  
   lay->setColStretch(1, 1);
 }
 
@@ -278,10 +282,28 @@ void KLocaleConfigTime::save()
   if (firstDay != m_locale->weekStartDay())
       config->writeEntry("WeekStartDay", m_locale->weekStartDay(), true, true);
 
+  if ( m_locale->nounDeclension() )
+  {
+    bool b;    
+    b = ent.readNumEntry("DateMonthNamePossessive", false);
+    config->deleteEntry("DateMonthNamePossessive", false, true);
+    if (b != m_locale->dateMonthNamePossessive())
+      config->writeEntry("DateMonthNamePossessive",
+		         m_locale->dateMonthNamePossessive(), true, true);    
+  }
+      
   config->sync();
 
   // restore the old global locale
   KGlobal::_locale = lsave;
+}
+
+void KLocaleConfigTime::showEvent( QShowEvent *e )
+{
+  // This option makes sense only for languages where nouns are declined
+   if ( !m_locale->nounDeclension() )
+    m_chDateMonthNamePossessive->hide();  
+   QWidget::showEvent( e );
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
@@ -297,6 +319,9 @@ void KLocaleConfigTime::slotLocaleChanged()
 					  m_locale->dateFormatShort() ) );
   m_comboWeekStartDay->setCurrentItem( m_locale->weekStartDay() - 1 );
 
+  if ( m_locale->nounDeclension() )
+    m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
+  
   kdDebug(173) << "converting: " << m_locale->timeFormat() << endl;
   kdDebug(173) << storeToUser(timeMap(),
 			   m_locale->timeFormat()) << endl;
@@ -332,6 +357,15 @@ void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
     m_locale->setWeekStartDay(m_comboWeekStartDay->currentItem() + 1);
     emit localeChanged();
 }
+
+void KLocaleConfigTime::slotDateMonthNamePossChanged()
+{
+  if (m_locale->nounDeclension())
+  {
+    m_locale->setDateMonthNamePossessive(m_chDateMonthNamePossessive->isChecked());
+    emit localeChanged();
+  }
+} 
 
 void KLocaleConfigTime::slotTranslate()
 {
@@ -437,5 +471,13 @@ void KLocaleConfigTime::slotTranslate()
     ("<p>This option determines which day will be considered as "
      "the first one of the week.</p>");
   QWhatsThis::add( m_comboWeekStartDay,  str );
+  
+  if ( m_locale->nounDeclension() )
+  {
+    str = m_locale->translate
+      ("<p>This option determines whether possessive form of month "
+       "names should be used in dates.</p>");
+    QWhatsThis::add( m_chDateMonthNamePossessive,  str );
+  }
 }
 

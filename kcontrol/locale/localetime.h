@@ -46,6 +46,9 @@ public:
   virtual ~KLocaleConfigTime( );
 
   void save();
+  
+protected:
+  void showEvent( QShowEvent *e );
 
 public slots:
   /**
@@ -66,6 +69,7 @@ private slots:
   void slotDateFmtChanged(const QString &t);
   void slotDateFmtShortChanged(const QString &t);
   void slotWeekStartDayChanged(int firstDay);
+  void slotDateMonthNamePossChanged();
 
 private:
   QValueList<StringPair> timeMap() const;
@@ -89,6 +93,7 @@ private:
   QComboBox * m_comboDateFmtShort;
   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
+  QCheckBox *m_chDateMonthNamePossessive;
 };
 
 #endif
