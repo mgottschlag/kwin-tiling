@@ -59,7 +59,6 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->xonXoffCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-    connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->line_spacingSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->silence_secondsSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
@@ -91,11 +90,6 @@ void KCMKonsole::load()
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
 
-    delete config;
-
-    config = new KConfig("kwritedrc", true);
-    config->setGroup("General");
-    dialog->startKwritedCB->setChecked(config->readBoolEntry("Autostart",true));
     delete config;
 
     emit changed(false);
@@ -145,11 +139,6 @@ void KCMKonsole::save()
 
     delete config;
 
-    config = new KConfig("kwritedrc");
-    config->setGroup("General");
-    config->writeEntry("Autostart", dialog->startKwritedCB->isChecked());
-    delete config;
-
     emit changed(false);
 
     DCOPClient *dcc = kapp->dcopClient();
@@ -177,7 +166,6 @@ void KCMKonsole::defaults()
     dialog->xonXoffCB->setChecked(false);
     dialog->blinkingCB->setChecked(false);
     dialog->frameCB->setChecked(true);
-    dialog->startKwritedCB->setChecked(true);
     dialog->line_spacingSB->setValue(0);
     dialog->silence_secondsSB->setValue(10);
 
