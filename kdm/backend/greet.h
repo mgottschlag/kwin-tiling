@@ -142,6 +142,12 @@ from the copyright holder.
 #define G_List          111 /* int all; ?*(str,int,str,str,int), int 0 */
 #define G_QueryShutdown 112 /* ; 5*int */
 #define G_Activate      113 /* int vt; async */
+#define G_ListBootOpts  114 /* ; int sts, [argv opts, int dflt, int cur] */
+#define G_SetBootOpt    115 /* str opt; int sts */
+# define BO_OK      0
+# define BO_NOMAN  -1
+# define BO_NOENT  -2
+# define BO_IO     -3
 
 /*
  * Command codes core -> config reader

@@ -226,7 +226,7 @@ GTalk mstrtalk; /* make static; see dm.c */
 int
 CtrlGreeterWait( int wreply )
 {
-	int i, cmd, type, rootok;
+	int i, cmd, type, rootok, dflt, curr;
 	char *name, *pass, **avptr;
 #ifdef XDMCP
 	ARRAY8Ptr aptr;
@@ -372,6 +372,24 @@ CtrlGreeterWait( int wreply )
 			SetupDisplay( 0 );
 			td_setup = 0;
 			GSendInt( 0 );
+			break;
+		case G_ListBootOpts:
+			Debug( "G_ListBootOpts\n" );
+			i = getBootOptions( &avptr, &dflt, &curr );
+			GSendInt( i );
+			if (i == BO_OK) {
+				GSendArgv( avptr );
+				freeStrArr( avptr );
+				GSendInt( dflt );
+				GSendInt( curr );
+			}
+			break;
+		case G_SetBootOpt:
+			Debug ("G_SetBootOpt\n");
+			name = GRecvStr();
+			Debug( " option %\"s\n", name );
+			GSendInt( setBootOption( name ) );
+			free( name );
 			break;
 		default:
 			return cmd;

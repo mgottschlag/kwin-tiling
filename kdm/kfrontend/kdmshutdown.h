@@ -3,7 +3,7 @@
 Shutdown dialog
 
 Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright (C) 2000-2003,2005 Oswald Buddenhagen <ossi@kde.org>
 
 
 This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qradiobutton.h>
 
-class LiloInfo;
 class QLabel;
 class KPushButton;
 class QButtonGroup;
@@ -84,21 +83,17 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 };
 
 
-class LiloHandler {
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+class BootHandler {
   public:
-	LiloHandler();
-	~LiloHandler();
-	void setupTargets( QWidget *parent );
+	BootHandler() {}
+	bool setupTargets( QWidget *parent );
 	void applyTarget();
 
-	LiloInfo *liloInfo;
 	QComboBox *targets;
-	int defaultLiloTarget, oldLiloTarget;
-#endif
+	int defaultTarget, oldTarget;
 };
 
-class KDMShutdown : public KDMShutdownBase, public LiloHandler {
+class KDMShutdown : public KDMShutdownBase, public BootHandler {
 	Q_OBJECT
 	typedef KDMShutdownBase inherited;
 
@@ -141,7 +136,7 @@ class KDMRadioButton : public QRadioButton {
 
 };
 
-class KDMSlimShutdown : public FDialog, public LiloHandler {
+class KDMSlimShutdown : public FDialog, public BootHandler {
 	Q_OBJECT
 	typedef FDialog inherited;
 

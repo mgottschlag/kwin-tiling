@@ -12,6 +12,7 @@ bin_PROGRAMS = kdm
 kdm_SOURCES = \
     access.c \
     auth.c \
+    bootman.c \
     choose.c \
     client.c \
     ctrl.c \

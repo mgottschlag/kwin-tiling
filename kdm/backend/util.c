@@ -427,3 +427,16 @@ Writer( int fd, const void *buf, int count )
 	return AtomicIO( (ssize_t(*)( int, void *, size_t ))write,
 	                 fd, (void *)buf, count );
 }
+
+int
+fGets( char *buf, int max, FILE *f )
+{
+	int len;
+
+	if (!fgets( buf, max, f ))
+		return -1;
+	len = strlen( buf );
+	if (len && buf[len - 1] == '\n')
+		buf[--len] = 0;
+	return len;
+}

@@ -484,6 +484,9 @@ int Fork( void );
 int Wait4( int pid );
 void execute( char **argv, char **env );
 int runAndWait( char **args, char **env );
+FILE *pOpen( char **what, char m, int *pid );
+int pClose( FILE *f, int pid );
+char *locate( const char *exe );
 void TerminateProcess( int pid, int sig );
 
 void GSet( GTalk *talk);	/* call before GOpen! */
@@ -565,12 +568,17 @@ const char *getEnv( char **e, const char *name );
 const char *localHostname( void );
 int Reader( int fd, void *buf, int len );
 int Writer( int fd, const void *buf, int len );
+int fGets( char *buf, int max, FILE *f );
 
 /* in inifile.c */
 char *iniLoad( const char *fname );
 int iniSave( const char *data, const char *fname );
 char *iniEntry( char *data, const char *section, const char *key, const char *value );
 char *iniMerge( char *data, const char *newdata );
+
+/* in bootman.c */
+int getBootOptions( char ***opts, int *def, int *cur );
+int setBootOption( const char *opt );
 
 #ifdef XDMCP
 

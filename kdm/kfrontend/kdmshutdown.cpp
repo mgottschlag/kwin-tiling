@@ -3,7 +3,7 @@
 Shutdown dialog
 
 Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright (C) 2000-2003,2005 Oswald Buddenhagen <ossi@kde.org>
 
 
 This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
-#include "liloinfo.h"
 #include "kdm_greet.h"
 
 #include <kapplication.h>
@@ -217,53 +216,32 @@ KDMShutdownBase::verifySetUser( const QString & )
 }
 
 
-#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
-LiloHandler::LiloHandler()
-	: liloInfo( 0 )
+bool
+BootHandler::setupTargets( QWidget *parent )
 {
-}
-
-LiloHandler::~LiloHandler()
-{
-	delete liloInfo;
-}
-
-void
-LiloHandler::setupTargets( QWidget *parent )
-{
-	liloInfo = new LiloInfo( _liloCmd, _liloMap );
-
-	QStringList list;
-	if (liloInfo->getBootOptions( list, defaultLiloTarget ))
-		return;
-
-	oldLiloTarget = defaultLiloTarget;
+	GSendInt( G_ListBootOpts );
+	if (GRecvInt() != BO_OK)
+		return false; /* XXX needs somewhat more handling */
+	char **tlist = GRecvStrArr( 0 );
+	defaultTarget = GRecvInt();
+	oldTarget = GRecvInt();
 	targets = new QComboBox( parent );
-	targets->insertStringList( list );
-	QString nextOption;
-	liloInfo->getNextBootOption( nextOption );
-	if (!nextOption.isEmpty()) {
-		int idx = list.findIndex( nextOption );
-		if (idx < 0) {
-			targets->insertItem( nextOption );
-			oldLiloTarget = list.count();
-		} else
-			oldLiloTarget = idx;
-	}
-	targets->setCurrentItem( oldLiloTarget );
+	for (int i = 0; tlist[i]; i++)
+		targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
+	freeStrArr( tlist );
+	targets->setCurrentItem( oldTarget == -1 ? defaultTarget : oldTarget );
+	return true;
 }
 
 void
-LiloHandler::applyTarget()
+BootHandler::applyTarget()
 {
-	if (targets->currentItem() != oldLiloTarget) {
-		if (targets->currentItem() == defaultLiloTarget)
-			liloInfo->setNextBootOption( "" );
-		else
-			liloInfo->setNextBootOption( targets->currentText() );
+	if (targets->currentItem() != oldTarget) {
+		GSendInt( G_SetBootOpt );
+		GSendStr( targets->currentText().local8Bit() );
+		GRecvInt(); /* XXX handle this */
 	}
 }
-#endif
 
 
 static void
@@ -301,20 +279,18 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	connect( rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 	connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-	if (_useLilo) {
+	if (_bootManager != BO_NONE) {
 		QWidget *hlp = new QWidget( howGroup );
-		setupTargets( hlp );
-		QHBoxLayout *hb = new QHBoxLayout( hlp, KDmh, KDsh );
-		int spc = kapp->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
-		          + howGroup->insideSpacing();
-		hb->addSpacing( spc );
-		targets->setSizePolicy( fp );
-		hlp->setFixedSize( targets->width() + spc, targets->height() );
-		hb->addWidget( targets );
-		connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
+		if (setupTargets( hlp )) {
+			QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
+			int spc = kapp->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
+			          + howGroup->insideSpacing();
+			hb->addSpacing( spc );
+			hb->addWidget( targets );
+			connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
+		} else
+			delete hlp;
 	}
-#endif
 
 	howGroup->setSizePolicy( fp );
 
@@ -396,9 +372,7 @@ KDMShutdown::accept()
 void
 KDMShutdown::slotTargetChanged()
 {
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
 	restart_rb->setChecked( true );
-#endif
 }
 
 void
@@ -411,10 +385,8 @@ KDMShutdown::slotWhenChanged()
 void
 KDMShutdown::accepted()
 {
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-	if (_useLilo && restart_rb->isChecked())
+	if (_bootManager != BO_NONE && restart_rb->isChecked())
 		applyTarget();
-#endif
 	GSet( 1 );
 	GSendInt( G_Shutdown );
 	GSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
@@ -490,16 +462,13 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-	if (_useLilo) {
-		setupTargets( this );
+	if (setupTargets( this )) {
 		QLabel *bol = new QLabel( targets, i18n("Next &boot:"), this );
 		QHBoxLayout *hb = new QHBoxLayout( buttonlay, KDsh );
 		hb->addWidget( bol );
 		hb->addWidget( targets );
 		connect( targets, SIGNAL(activated( int )), btnReboot, SLOT(setFocus()) );
 	}
-#endif
 
 	buttonlay->addStretch( 1 );
 
@@ -541,10 +510,7 @@ void
 KDMSlimShutdown::slotReboot()
 {
 	if (checkShutdown( SHUT_REBOOT )) {
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-		if (_useLilo)
-			applyTarget();
-#endif
+		applyTarget();
 		doShutdown( SHUT_REBOOT );
 	}
 }

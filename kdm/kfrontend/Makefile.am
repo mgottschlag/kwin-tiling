@@ -13,7 +13,6 @@ kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET) $(LIBPOSIX4)
 
 kdm_greet_SOURCES = \
     kdm_greet.c \
-    liloinfo.cpp \
     kdmconfig.cpp \
     kdmclock.cpp \
     kconsole.cpp \
@@ -49,7 +48,6 @@ messages:
 
 noinst_HEADERS = \
     kdm_greet.h \
-    liloinfo.h \
     kdmconfig.h \
     kdmclock.h \
     kconsole.h \

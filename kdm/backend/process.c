@@ -48,6 +48,8 @@ from the copyright holder.
 # endif
 #endif
 
+extern char **environ;
+
 
 SIGVAL( *Signal( int sig, SIGFUNC handler ) )(int)
 {
@@ -184,7 +186,7 @@ execute( char **argv, char **env )
 	 * a reasonable thing
 	 */
 	if (errno != ENOENT) {
-		char *e, **newargv;
+		char **newargv;
 		FILE *f;
 		int nu;
 		char program[1024];
@@ -198,14 +200,11 @@ execute( char **argv, char **env )
 		 */
 		if (!(f = fopen( argv[0], "r" )))
 			return;
-		if (!fgets( program, sizeof(program), f )) {
+		if (!fGets( program, sizeof(program), f )) {
 			fclose( f );
 			return;
 		}
 		fclose( f );
-		e = program + strlen( program ) - 1;
-		if (*e == '\n')
-			*e = '\0';
 		if (!strncmp( program, "#!", 2 ))
 			newargv = parseArgs( 0, program + 2 );
 		else
@@ -215,7 +214,7 @@ execute( char **argv, char **env )
 		nu = arrLen( newargv );
 		if (!(argv = xCopyStrArr( nu, argv )))
 			return;
-		memcpy( argv, newargv, sizeof(char *)* nu );
+		memcpy( argv, newargv, sizeof(char *) * nu );
 		Debug( "shell script execution: %[s\n", argv );
 		execve( argv[0], argv, env );
 	}
@@ -230,7 +229,7 @@ runAndWait( char **args, char **env )
 	case 0:
 		execute( args, env );
 		LogError( "Can't execute %\"s: %m\n", args[0] );
-		exit( 1 );
+		exit( 127 );
 	case -1:
 		LogError( "Can't fork to execute %\"s: %m\n", args[0] );
 		return 1;
@@ -239,7 +238,47 @@ runAndWait( char **args, char **env )
 	return waitVal( ret );
 }
 
-static char *
+FILE *
+pOpen( char **what, char m, int *pid )
+{
+	int dp[2];
+
+	if (pipe( dp ))
+		return 0;
+	switch ((*pid = Fork())) {
+	case 0:
+		if (m == 'r')
+			dup2( dp[1], 1 );
+		else
+			dup2( dp[0], 0 );
+		close( dp[0] );
+		close( dp[1] );
+		execute( what, environ );
+		LogError( "Can't execute %\"s: %m\n", what[0] );
+		exit( 127 );
+	case -1:
+		close( dp[0] );
+		close( dp[1] );
+		LogError( "Can't fork to execute %\"s: %m\n", what[0] );
+		return 0;
+	}
+	if (m == 'r') {
+		close( dp[1] );
+		return fdopen( dp[0], "r" );
+	} else {
+		close( dp[0] );
+		return fdopen( dp[1], "w" );
+	}
+}
+
+int
+pClose( FILE *f, int pid )
+{
+	fclose( f );
+	return Wait4( pid );
+}
+
+char *
 locate( const char *exe )
 {
 	int len;

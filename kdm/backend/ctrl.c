@@ -672,6 +672,57 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					sdRec = sdr;
 				}
 			}
+		} else if (!strcmp( ar[0], "listbootoptions" )) {
+			char **opts;
+			int def, cur, i, j;
+
+			if (ar[1])
+				goto exce;
+			switch (getBootOptions( &opts, &def, &cur )) {
+			case BO_NOMAN:
+				fLog( d, fd, "notsup", "boot options unavailable" );
+				goto bust;
+			}
+			Reply( "ok\t" );
+			for (i = 0; opts[i]; i++) {
+				bp = cbuf;
+				if (i)
+					*bp++ = ' ';
+				for (j = 0; opts[i][j]; j++)
+					if (opts[i][j] == ' ') {
+						*bp++ = '\\';
+						*bp++ = 's';
+					} else
+						*bp++ = opts[i][j];
+				Writer( fd, cbuf, bp - cbuf );
+			}
+			freeStrArr( opts );
+			Writer( fd, cbuf, sprintf( cbuf, "\t%d\t%d\n", def, cur ) );
+			goto bust;
+		} else if (!strcmp( ar[0], "setbootoption" )) {
+			if (!ar[1])
+				goto miss;
+			if (ar[2])
+				goto exce;
+
+			if (d ? (d->allowShutdown == SHUT_NONE ||
+			         (d->allowShutdown == SHUT_ROOT && d->userSess >= 0)) :
+			        !fifoAllowShutdown)
+			{
+				fLog( d, fd, "perm", "setting boot option forbidden" );
+				goto bust;
+			}
+			switch (setBootOption( ar[1] )) {
+			case BO_NOMAN:
+				fLog( d, fd, "notsup", "boot options unavailable" );
+				goto bust;
+			case BO_NOENT:
+				fLog( d, fd, "noent", "no such boot option" );
+				goto bust;
+			case BO_IO:
+				fLog( d, fd, "io", "io error" );
+				goto bust;
+			}
 		} else if (d) {
 			if (!strcmp( ar[0], "lock" )) {
 				if (ar[1])
