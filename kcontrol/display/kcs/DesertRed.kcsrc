@@ -1,7 +1,6 @@
 # KDE Config File
 [Color Scheme]
 Name=Desert red
-Name[af]=WOESTYN ROOI
 Name[az]=Çöl qırmızısı
 Name[ca]=Roig desert
 Name[cs]=Pouštní červená
@@ -12,7 +11,7 @@ Name[es]=Rojo desierto
 Name[et]=Dessertpunane
 Name[fi]=Aavikon punainen
 Name[fr]=Désert rouge
-Name[he]=ירבדמ םודא
+Name[he]=אדום מדברי
 Name[hu]=Téglavörös
 Name[is]=Eyðimerkurrautt
 Name[it]=Rosso deserto
@@ -25,13 +24,14 @@ Name[nl]=Woestijnrood
 Name[no]=Ørken Rød
 Name[no_NY]=Ørkenraud
 Name[pl]=Czerwień pustyni
-Name[pt_BR]=Deserto vermelho
 Name[pt]=Vermelho deserto
+Name[pt_BR]=Deserto vermelho
 Name[ro]=Deşert roşu
 Name[sk]=Púštna červená
 Name[sl]=Puščavska rdeča
 Name[sr]=Pustinjsko crvena
 Name[sv]=Ökenröd
+Name[th]=แดงทะเลทราย
 Name[tr]=Çöl kırmızısı
 Name[uk]=Червона пустеля
 Name[vi]=Màu đềEchói 

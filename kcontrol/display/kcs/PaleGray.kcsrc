@@ -1,7 +1,6 @@
 # KDE Config File
 [Color Scheme]
 Name=Pale gray
-Name[af]=BLEEK GRYS
 Name[az]=Açıq boz
 Name[ca]=Gris pàl·lid
 Name[cs]=Bledě šedá
@@ -13,7 +12,7 @@ Name[es]=Gris pálido
 Name[et]=Kahvatu hall
 Name[fi]=Vaaleanharmaa
 Name[fr]=Gris pâle
-Name[he]=ריהב רופא
+Name[he]=אפור בהיר
 Name[hu]=Halványszürke
 Name[is]=Fölgrátt
 Name[it]=Grigio pallido
@@ -26,14 +25,15 @@ Name[nl]=Vaalgrijs
 Name[no]=Svak grønn
 Name[no_NY]=Lysegrå
 Name[pl]=Bladoszary
-Name[pt_BR]=Cinza
 Name[pt]=Cinzento pálido
+Name[pt_BR]=Cinza
 Name[ro]=Gri pal
 Name[ru]=Дымчатый
 Name[sk]=Svetlošedá
 Name[sl]=Bleda sivina
 Name[sr]=Bledo siva
 Name[sv]=Blekgrå
+Name[th]=เทาอ่อน
 Name[tr]=Açık gri
 Name[uk]=Тьмяно сірий
 Name[vi]=Màu xám nhạt 
