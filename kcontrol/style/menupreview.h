@@ -1,0 +1,63 @@
+/*
+ * $Id$
+ *
+ * Menu Transparency Preview Widget
+ * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#ifndef __MENUPREVIEW_H
+#define __MENUPREVIEW_H
+
+#include <qwidget.h>
+
+class KPixmap;
+
+class MenuPreview : public QWidget
+{
+	Q_OBJECT
+
+public:
+	enum PreviewMode {
+		NoEffect = 0,
+		Tint,
+		Blend 
+	};
+
+	MenuPreview( QWidget* parent, int opacity, PreviewMode pvm );
+	~MenuPreview();
+
+public slots:
+	void setOpacity( int opacity );
+	void setPreviewMode( PreviewMode pvm );
+
+protected:
+	void paintEvent( QPaintEvent* pe );
+
+private:
+	void createPixmaps();
+	void blendPixmaps();
+
+	KPixmap* pixBackground;
+	KPixmap* pixOverlay;
+	KPixmap* pixBlended;
+	float menuOpacity;
+	PreviewMode mode;
+};
+
+// vim: set noet ts=4:
+#endif // __MENUPREVIEW_H
+
