@@ -389,7 +389,9 @@ void kthememanager::updatePreview( const QString & pixFile )
 {
      kdDebug() << "Preview is in file: " << pixFile << endl;
      QImage preview( pixFile, "PNG" );
-     preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), QImage::ScaleMin );
+     if (preview.width()>dlg->lbPreview->contentsRect().width() ||
+         preview.height()>dlg->lbPreview->contentsRect().height() )
+         preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), QImage::ScaleMin );
      QPixmap pix;
      pix.convertFromImage( preview );
      dlg->lbPreview->setPixmap( pix );
