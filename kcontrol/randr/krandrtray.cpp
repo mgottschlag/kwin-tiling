@@ -94,7 +94,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 		actionCollection() );
 	actPrefs->plug( menu );
 
-	menu->insertItem(KStdGuiItem::help().text(), m_help->menu());
+	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	quitAction->plug(menu);
 }
