@@ -67,7 +67,6 @@ protected slots:
     void positionPanelChanged(QListViewItem*);
     void hidingPanelChanged(QListViewItem*);
     void configChanged(const QString&);
-    void configRemoved(const QString&);
 
 private:
     void setupExtensionInfo(KConfig& c, bool checkExists);

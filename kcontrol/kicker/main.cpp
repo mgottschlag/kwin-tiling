@@ -96,7 +96,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     //tab->addTab(applettab, i18n("&Applets"));
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
     connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
-    connect(configFileWatch, SIGNAL(deleted(const QString&)), this, SLOT(configRemoved(const QString&)));
     configFileWatch->startScan();
 }
 
@@ -189,6 +188,11 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
 {
     c.setGroup("General");
     QStringList elist = c.readListEntry("Extensions2");
+
+    // all of our existing extensions
+    // we'll remove ones we find still there, and delete
+    // all the extensions that remain (e.g. are no longer active
+    QPtrList<extensionInfo> oldExtensions(m_extensionInfo);
     for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
     {
         // extension id
@@ -200,7 +204,7 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
         {
             continue;
         }
-        
+
         // set config group
         c.setGroup(group);
 
@@ -215,20 +219,39 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
             {
                 if (configpath == (*extIt)->_configPath)
                 {
+                    // we have found it in the config file and it exists
+                    // so remove it from our list of existing extensions
+                    oldExtensions.remove(*extIt);
                     break;
                 }
             }
-            
+
             if (extIt)
             {
                 continue;
             }
         }
-        
+
         configFileWatch->addFile(configpath);
         extensionInfo* info = new extensionInfo(df, configname, configpath);
         m_extensionInfo.append(info);
         emit extensionAdded(info);
+    }
+
+    if (checkExists)
+    {
+        // now remove all the left overs that weren't in the file
+        QPtrListIterator<extensionInfo> extIt(oldExtensions);
+        for (; extIt; ++extIt)
+        {
+            // don't remove the kickerrc!
+            if ((*extIt)->_configPath.right(8) != "kickerrc")
+            {
+                hidingtab->removeExtension(*extIt);
+                positiontab->removeExtension(*extIt);
+                m_extensionInfo.remove(*extIt);
+            }
+        }
     }
 }
 
@@ -239,8 +262,8 @@ void KickerConfig::configChanged(const QString& config)
         KConfig c(configName(), false, false);
         setupExtensionInfo(c, true);
     }
-        
-    // find the extension and delete it
+
+    // find the extension and change it
     for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
     {
         if (config == (*it)->_configPath)
@@ -252,38 +275,6 @@ void KickerConfig::configChanged(const QString& config)
     }
 
     emit extensionChanged(config);
-}
-
-void KickerConfig::configRemoved(const QString& config)
-{
-    if (config.right(8) == "kickerrc")
-    {
-        // the main panel config has been removed???
-        // ditch the extensions, i suppose - AJS
-        for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
-        {
-            if ((*it)->_configFile != config)
-            {
-                hidingtab->removeExtension(*it);         
-                positiontab->removeExtension(*it);
-                m_extensionInfo.remove(*it);
-            }
-        }
-    }
-    else
-    {
-        // find the extension and delete it
-        for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
-        {
-            if (config == (*it)->_configPath)
-            {
-                hidingtab->removeExtension(*it);               
-                positiontab->removeExtension(*it);               
-                m_extensionInfo.remove(*it);
-                break;
-            }
-        }
-    }
 }
 
 void KickerConfig::populateExtensionInfoList(QListView* list)
