@@ -50,48 +50,49 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <fstream>
+#include <qgroupbox.h>
 
 void CSettingsWidget::reset()
 {
-    itsFontsDirReq->setShowLocalProtocol(false);
-    itsFontsDirReq->setURL(CKfiGlobal::cfg().getFontsDir());
-    itsFontsDirReq->lineEdit()->setReadOnly(true);
-
-    itsEncodingsDirReq->setShowLocalProtocol(false);
-    itsEncodingsDirReq->setURL(CKfiGlobal::cfg().getEncodingsDir());
-    itsEncodingsDirReq->lineEdit()->setReadOnly(true);
-
-    itsGhostscriptFileReq->setShowLocalProtocol(false);
-    itsGhostscriptFileReq->setURL(CKfiGlobal::cfg().getGhostscriptFile());
-    itsGhostscriptFileReq->lineEdit()->setReadOnly(true);
-    bool b = CKfiGlobal::cfg().getDoGhostscript();
-    itsGhostscriptCheck->setChecked(b);
-    itsGhostscriptFileReq->setEnabled(b);
-
-    itsXConfigFileReq->setShowLocalProtocol(false);
-    itsXConfigFileReq->setURL(CKfiGlobal::cfg().getXConfigFile());
-    itsXConfigFileReq->lineEdit()->setReadOnly(true);
-
     if(CMisc::root())
     {
+        itsFontsDirReq->setShowLocalProtocol(false);
+        itsFontsDirReq->setURL(CKfiGlobal::cfg().getFontsDir());
+        itsFontsDirReq->lineEdit()->setReadOnly(true);
+
+        itsEncodingsDirReq->setShowLocalProtocol(false);
+        itsEncodingsDirReq->setURL(CKfiGlobal::cfg().getEncodingsDir());
+        itsEncodingsDirReq->lineEdit()->setReadOnly(true);
+
+        itsGhostscriptFileReq->setShowLocalProtocol(false);
+        itsGhostscriptFileReq->setURL(CKfiGlobal::cfg().getGhostscriptFile());
+        itsGhostscriptFileReq->lineEdit()->setReadOnly(true);
+        itsGhostscriptCheck->setChecked(CKfiGlobal::cfg().getDoGhostscript());
+        itsGhostscriptFileReq->setEnabled(CKfiGlobal::cfg().getDoGhostscript());
+
+        itsXConfigFileReq->setShowLocalProtocol(false);
+        itsXConfigFileReq->setURL(CKfiGlobal::cfg().getXConfigFile());
+        itsXConfigFileReq->lineEdit()->setReadOnly(true);
+
         itsCupsDirReq->setShowLocalProtocol(false);
         itsCupsDirReq->setURL(CKfiGlobal::cfg().getCupsDir());
         itsCupsDirReq->lineEdit()->setReadOnly(true);
-        bool b = CKfiGlobal::cfg().getDoCups();
-        itsCupsCheck->setChecked(b);
-        itsCupsDirReq->setEnabled(b);
+        itsCupsCheck->setChecked(CKfiGlobal::cfg().getDoCups());
+        itsCupsDirReq->setEnabled(CKfiGlobal::cfg().getDoCups());
+        setupSubDirCombos();
+        itsXRefreshCombo->setCurrentItem(CKfiGlobal::cfg().getXRefreshCmd());
+        itsRestartXfsCommand->setEnabled(CConfig::XREFRESH_CUSTOM==CKfiGlobal::cfg().getXRefreshCmd());
+        itsRestartXfsCommand->setText(CKfiGlobal::cfg().getCustomXRefreshCmd());
     }
     else
     {
-        itsCupsDirReq->hide();
-        itsCupsCheck->hide();
+        itsPrintingGroupBox->hide();
+        itsXSettingsGroupBox->hide();
     }
-    setupSubDirCombos();
 
-    b = CKfiGlobal::cfg().getSOConfigure();
-    itsCheck->setChecked(b);
-    itsStarOfficeDirReq->setEnabled(b);
-    itsPpdCombo->setEnabled(b);
+    itsCheck->setChecked(CKfiGlobal::cfg().getSOConfigure());
+    itsStarOfficeDirReq->setEnabled(CKfiGlobal::cfg().getSOConfigure());
+    itsPpdCombo->setEnabled(CKfiGlobal::cfg().getSOConfigure());
 
     itsStarOfficeDirReq->setShowLocalProtocol(false);
     itsStarOfficeDirReq->setURL(CKfiGlobal::cfg().getSODir());
@@ -102,9 +103,6 @@ void CSettingsWidget::reset()
     itsGenAfmsCheck->setChecked(CKfiGlobal::cfg().getDoAfm());
     itsT1AfmCheck->setChecked(CKfiGlobal::cfg().getDoT1Afms());
     itsTtAfmCheck->setChecked(CKfiGlobal::cfg().getDoTtAfms());
-    itsXRefreshCombo->setCurrentItem(CKfiGlobal::cfg().getXRefreshCmd());
-    itsRestartXfsCommand->setEnabled(CConfig::XREFRESH_CUSTOM==CKfiGlobal::cfg().getXRefreshCmd());
-    itsRestartXfsCommand->setText(CKfiGlobal::cfg().getCustomXRefreshCmd());
     scanEncodings();
 }
 

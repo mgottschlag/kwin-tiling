@@ -131,6 +131,8 @@ class CConfig : public KConfig
     void write(const QString &sect, const QString &key, const QStringList &value);
     void write(const QString &sect, const QString &key, bool value);
     void write(const QString &sect, const QString &key, int value);
+    void checkAndModifyFontmapFile();
+    void checkAndModifyXConfigFile();
 
     private:
 

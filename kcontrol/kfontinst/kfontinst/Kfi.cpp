@@ -47,13 +47,14 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
  
     if(CKfiGlobal::cfg().firstTime())
     {
-        QApplication::setOverrideCursor(Qt::arrowCursor);
-        CSettingsWizard *wiz=new CSettingsWizard(parent);
-        wiz->exec();
-        QApplication::restoreOverrideCursor();
-        CKfiGlobal::cfg().configured();
-
-        if(!CMisc::root())
+        if(CMisc::root())
+        {
+            QApplication::setOverrideCursor(Qt::arrowCursor);
+            CSettingsWizard *wiz=new CSettingsWizard(parent);
+            wiz->exec();
+            QApplication::restoreOverrideCursor();
+        }
+        else
         {
             if(CKfiGlobal::xcfg().ok() && CKfiGlobal::cfg().getModifiedDirs().count())
             {
@@ -90,8 +91,9 @@ CKfiMainWidget * CKfi::create(QWidget *parent)
             }
 
             CKfiGlobal::cfg().clearModifiedDirs();
-            CKfiGlobal::cfg().save();
         }
+        CKfiGlobal::cfg().configured();
+        CKfiGlobal::cfg().save();
     }
     return new CKfiMainWidget(parent);
 }

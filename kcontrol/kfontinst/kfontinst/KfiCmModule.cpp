@@ -50,7 +50,7 @@ static bool firstTime=true;
 
 CKfiCmModule * CKfiCmModule::theirInstance=NULL;
 
-CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&)
+CKfiCmModule::CKfiCmModule(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "fontinst"),
               itsAboutData(NULL)
 {
@@ -139,7 +139,14 @@ QString CKfiCmModule::quickHelp() const
     QString help(i18n("<h1>Font Installer</h1><p> This module allows you to"
                       " install TrueType, Type1, Speedo, and Bitmap"
                       " fonts. If you have StarOffice installed on your"
-                      " system, this can also be configured.</p>")),
+                      " system, this can also be configured.</p>"
+                      "<p>This module has 2 main modes of operation:<ul>"
+                      "<li><i>Basic:</i> The underlying folder structure is hidden, "
+                      "and you will only be able to install/uninstall TrueType and Type1 fonts.</li>"
+                      "<li><i>Advanced:</i> This is for more experienced users, and displays "
+                      "the X fonts folder structure - allowing you to add/delete whole folders "
+                      "to/from the X font path. Using this mode you can also install/uninstall "
+                      "Speedo and Bitmap (pcf, bdf, and snf) fonts.</li></ol>")),
             rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
                           " fonts installed will only be available to you. To install"
                           " fonts system wide, use the \"Administrator Mode\""

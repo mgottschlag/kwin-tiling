@@ -36,7 +36,7 @@
             <x>0</x>
             <y>0</y>
             <width>581</width>
-            <height>512</height>
+            <height>523</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -62,7 +62,7 @@
         </property>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>GroupBox_X_settings</cstring>
+                <cstring>itsXSettingsGroupBox</cstring>
             </property>
             <property name="title">
                 <string>X Settings</string>
@@ -141,7 +141,7 @@
                     </property>
                 </widget>
                 <spacer row="1" column="6">
-                    <property name="name" stdset="0">
+                    <property name="name">
                         <cstring>Spacer2</cstring>
                     </property>
                     <property name="orientation">
@@ -153,7 +153,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>20</height>
+                            <height>0</height>
                         </size>
                     </property>
                 </spacer>
@@ -239,7 +239,7 @@
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>GroupBox_printing</cstring>
+                <cstring>itsPrintingGroupBox</cstring>
             </property>
             <property name="title">
                 <string>Printing</string>
@@ -290,7 +290,7 @@
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>GroupBox_AFM</cstring>
+                <cstring>itsAfmsGroupBox</cstring>
             </property>
             <property name="title">
                 <string>AFMs</string>
@@ -380,7 +380,7 @@ AFMs may only contain one encoding, so here you can specify which one should be 
                             </property>
                         </widget>
                         <spacer>
-                            <property name="name" stdset="0">
+                            <property name="name">
                                 <cstring>Spacer2_2</cstring>
                             </property>
                             <property name="orientation">
@@ -392,7 +392,7 @@ AFMs may only contain one encoding, so here you can specify which one should be 
                             <property name="sizeHint">
                                 <size>
                                     <width>20</width>
-                                    <height>20</height>
+                                    <height>0</height>
                                 </size>
                             </property>
                         </spacer>
@@ -413,7 +413,7 @@ AFMs may only contain one encoding, so here you can specify which one should be 
                             <number>6</number>
                         </property>
                         <spacer>
-                            <property name="name" stdset="0">
+                            <property name="name">
                                 <cstring>Spacer2_2_2_2</cstring>
                             </property>
                             <property name="orientation">
@@ -470,7 +470,7 @@ These are required by StarOffice, and some other apps (such as AbiWord).</string
                             </property>
                         </widget>
                         <spacer>
-                            <property name="name" stdset="0">
+                            <property name="name">
                                 <cstring>Spacer2_2_2</cstring>
                             </property>
                             <property name="orientation">
@@ -492,7 +492,7 @@ These are required by StarOffice, and some other apps (such as AbiWord).</string
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>GroupBox5</cstring>
+                <cstring>itsStarOfficGroupBox</cstring>
             </property>
             <property name="title">
                 <string>StarOffice (Versions &lt;= 5.2)</string>
@@ -585,7 +585,7 @@ files. Usually this will be (for Linux):
             </grid>
         </widget>
         <spacer>
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer17</cstring>
             </property>
             <property name="orientation">
@@ -596,7 +596,7 @@ files. Usually this will be (for Linux):
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
+                    <width>0</width>
                     <height>20</height>
                 </size>
             </property>

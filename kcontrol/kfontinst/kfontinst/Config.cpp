@@ -40,6 +40,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
+#include <fstream>
 
 static const QCString constDefaultFontsDir              ("/usr/X11R6/lib/X11/fonts/");
 static const QCString constDefaultTTSubDir              ("TrueType/");
@@ -419,6 +420,12 @@ void CConfig::load()
             itsCupsDir=i18n(constNotFound.utf8());
             itsDoCups=false;
         }
+
+        if(!itsConfigured)
+        {
+            checkAndModifyFontmapFile();
+            checkAndModifyXConfigFile();
+        }
     }
 
     if(QString::null==(itsSODir=getDir(itsSODir, constSODirs)))
@@ -531,3 +538,134 @@ void CConfig::removeModifiedDir(const QString &d)
     if(-1!=itsModifiedDirs.findIndex(ds))
         itsModifiedDirs.remove(ds);
 }
+
+void CConfig::checkAndModifyFontmapFile()
+{
+    //
+    // Check if "Fontmap" has been selected by CConfig, and if so, have a look at its contents to see
+    // whether it says '(Fontmap.GS) .runlibfile' - if so then use 'Fontmap.GS' instead...
+    if(i18n(constNotFound.utf8())!=itsGhostscriptFile)
+    {
+        int slashPos=itsGhostscriptFile.findRev('/');
+
+        if(slashPos!=-1)
+        {
+            QString file=itsGhostscriptFile.mid(slashPos+1);
+
+            if("Fontmap"==file)
+            {
+                ifstream f(itsGhostscriptFile.local8Bit());
+
+                if(f)
+                {
+                    const int constMaxLineLen=1024;
+
+                    char line[constMaxLineLen];
+                    bool useGS=false;
+
+                    do
+                    {
+                        f.getline(line, constMaxLineLen);
+
+                        if(f.good())
+                        {
+                            line[constMaxLineLen-1]='\0';
+
+                            if(strstr(line, "Fontmap.GS")!=NULL && strstr(line, ".runlibfile")!=NULL)
+                                useGS=true;
+                        }
+                    }
+                    while(!f.eof() && !useGS);
+
+                    f.close();
+
+                    if(useGS)
+                    {
+                        QString f(CMisc::getDir(itsGhostscriptFile)+"Fontmap.GS");
+                        itsGhostscriptFile=f;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void CConfig::checkAndModifyXConfigFile()
+{
+    //
+    // Check if XF86Config has been selected by CConfig, and if so, have a look to see wether it has
+    // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
+    if(i18n(constNotFound.utf8())!=itsXConfigFile)
+    {
+        int slashPos=itsXConfigFile.findRev('/');
+
+        if(slashPos!=-1)
+        {
+            QString file=itsXConfigFile.mid(slashPos+1);
+
+            if(file.find("XF86Config")!=-1)
+            {
+                ifstream f(itsXConfigFile.local8Bit());
+
+                if(f)
+                {
+                    const int constMaxLineLen=1024;
+
+                    char line[constMaxLineLen],
+                         str1[constMaxLineLen],
+                         str2[constMaxLineLen];
+                    bool inFiles=false,
+                         useXfs=false;
+
+                    do
+                    {
+
+                        f.getline(line, constMaxLineLen);
+
+                        if(f.good())
+                        {
+                            line[constMaxLineLen-1]='\0';
+
+                            if('#'!=line[0] && sscanf(line, "%s %s", str1, str2)==2)
+                            {
+                                if(!inFiles)
+                                {
+                                    if(strcmp(str1, "Section")==0 && strcmp(str2, "\"Files\"")==0)
+                                        inFiles=true;
+                                }
+                                else
+                                    if(strcmp(str1, "FontPath")==0 && str2[0]=='\"')
+                                    {
+                                        unsigned int s2len=strlen(str2);
+
+                                        if(s2len>8 && str2[s2len-1]=='\"' && &str2[1]==strstr(&str2[1], "unix/") && strchr(&str2[1], ':')!=NULL)
+                                            useXfs=true;
+                                    }
+                            }
+                            else
+                                if(inFiles && sscanf(line, "%s", str1)==1 && strcmp(str1, "EndSection")==0)
+                                    break;
+                        }
+                    }
+                    while(!f.eof() && !useXfs);
+
+                    f.close();
+
+                    if(useXfs)
+                    {
+                        int i;
+
+                        for(i=0; QString::null!=CConfig::constXfsConfigFiles[i]; ++i)
+                            if(CMisc::fExists(CConfig::constXfsConfigFiles[i]))
+                            {
+                                itsXRefreshCmd=XREFRESH_XFS_RESTART;
+                                itsXConfigFile=constXfsConfigFiles[i];
+                                break;
+                            }
+                    }
+                }
+            }
+        }
+    }
+}
+
