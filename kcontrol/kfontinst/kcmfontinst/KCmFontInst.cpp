@@ -368,9 +368,9 @@ QString CKCmFontInst::quickHelp() const
 {
     QString help(i18n("<h1>Font Installer</h1><p> This module allows you to"
                       " install TrueType, Type1, Speedo, and Bitmap"
-                      " fonts.</p><p>You may also install fonts using konqueror,"
-                      " type fonts:/ into konqueror's location bar - "
-                      " and this will display your installed fonts. To install a "
+                      " fonts.</p><p>You may also install fonts using Konqueror:"
+                      " type fonts:/ into Konqueror's location bar"
+                      " and this will display your installed fonts. To install a"
                       " font, simply copy one into the appropriate folder.</p>")),
             rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
                           " fonts installed will only be available to you. To install"
