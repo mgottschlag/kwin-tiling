@@ -46,6 +46,7 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kipc.h>
+#include <kapp.h>
 
 #include "mouse.h"
 
@@ -359,7 +360,7 @@ void MouseConfig::save()
 
   config->sync();
 
-  KIPC::sendMessageAll(KIPC::IconviewChanged);
+  KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
 
   delete config;
 }
