@@ -29,7 +29,7 @@ servicesdir = $(kde_servicesdir)
 #KDE_ICON = sample
 
 messages:
-	$(XGETTEXT) $(kaccess_SOURCES) -o $(podir)/kaccess.pot
+	$(XGETTEXT) $(kaccess_la_SOURCES) -o $(podir)/kaccess.pot
 	$(XGETTEXT) $(libkcm_access_la_SOURCES) -o $(podir)/kcmaccess.pot
 
 dummy.cpp:
