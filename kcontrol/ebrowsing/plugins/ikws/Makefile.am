@@ -7,10 +7,10 @@ LDFLAGS   = $(all_libraries)
 
 kde_module_LTLIBRARIES = libkuriikwsfilter.la libkurisearchfilter.la
 
-libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined 
+libkuriikwsfilter_la_LDFLAGS = -module $(KDE_PLUGIN)
 libkuriikwsfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
 
-libkurisearchfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined
+libkurisearchfilter_la_LDFLAGS = -module $(KDE_PLUGIN)
 libkurisearchfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
 
 libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp searchprovider.cpp
