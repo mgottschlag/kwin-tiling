@@ -20,7 +20,7 @@ class QRadioButton;
 class KColorButton;
 class QSlider;
 class KNumInput;
-
+class KAboutData;
 
 class KAccessConfig : public KCModule
 {
@@ -34,6 +34,7 @@ public:
   void load();
   void save();
   void defaults();
+  const KAboutData* aboutData() const;
   
 
 protected slots:

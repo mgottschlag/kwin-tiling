@@ -32,7 +32,7 @@
 #include <kfiledialog.h>
 #include <knuminput.h>
 #include <kapplication.h>
-
+#include <kaboutdata.h>
 
 #include "kcmaccess.moc"
 
@@ -398,6 +398,21 @@ void KAccessConfig::checkAccess()
 
   bounceKeysDelay->setEnabled(bounceKeys->isChecked());
 }
+
+const KAboutData* KAccessConfig::aboutData() const
+{
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kaccess"), I18N_NOOP("KDE Accessibility Tool"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
+
+   about->addAuthor("Matthias Hoelzerr-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
+
+
+
+   return about;
+}
+
 
 
 extern "C"
