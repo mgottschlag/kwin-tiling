@@ -27,6 +27,8 @@
 #include "qxembed.h"
 #include <X11/Xlib.h>
 
+#include "qxembed.moc"
+
 #include <qcursor.h>
 
 QXEmbed::QXEmbed(QWidget *parent, const char *name)
@@ -34,7 +36,7 @@ QXEmbed::QXEmbed(QWidget *parent, const char *name)
 {
     window = 0;
     setFocusPolicy(StrongFocus);
-
+    
     //trick to create extraData();
     QCursor old = cursor();
     setCursor(Qt::blankCursor);
@@ -69,7 +71,7 @@ void QXEmbed::showEvent(QShowEvent*)
 
 void QXEmbed::keyPressEvent( QKeyEvent *e )
 {
-    static Atom qu = 0;
+  static Atom qu = 0;
     if (!qu)
 	qu = XInternAtom(qt_xdisplay(), "QT_UNICODE_KEY_PRESS", False);
 
@@ -91,8 +93,9 @@ void QXEmbed::keyPressEvent( QKeyEvent *e )
 	ev.xclient.data.s[2] = e->state();
 	ev.xclient.data.s[3] = e->isAutoRepeat();
 	ev.xclient.data.s[4] = !text.isEmpty()?1:e->count();
-	ev.xclient.data.s[5] = !text.isEmpty()?text[i-1].row:QChar::null.row;
-	ev.xclient.data.s[6] = !text.isEmpty()?text[i-1].cell:QChar::null.cell;
+
+	ev.xclient.data.s[5] = !text.isEmpty()?text[i-1].row():QChar::null.row();
+	ev.xclient.data.s[6] = !text.isEmpty()?text[i-1].cell():QChar::null.cell();
 	ev.xclient.data.s[7] = i++;
 	ev.xclient.data.s[8] = m;
 	XSendEvent(qt_xdisplay(), window, FALSE, NoEventMask, &ev);
@@ -123,8 +126,8 @@ void QXEmbed::keyReleaseEvent( QKeyEvent *e )
 	ev.xclient.data.s[2] = e->state();
 	ev.xclient.data.s[3] = e->isAutoRepeat();
 	ev.xclient.data.s[4] = !text.isEmpty()?1:e->count();
-	ev.xclient.data.s[5] = !text.isEmpty()?text[i-1].row:QChar::null.row;
-	ev.xclient.data.s[6] = !text.isEmpty()?text[i-1].cell:QChar::null.cell;
+	ev.xclient.data.s[5] = !text.isEmpty()?text[i-1].row():QChar::null.row();
+	ev.xclient.data.s[6] = !text.isEmpty()?text[i-1].cell():QChar::null.cell();
 	ev.xclient.data.s[7] = i++;
 	ev.xclient.data.s[8] = m;
 	XSendEvent(qt_xdisplay(), window, FALSE, NoEventMask, &ev);
