@@ -31,6 +31,7 @@
 #include <kprocess.h>
 #include <kstddirs.h>
 #include <klocale.h>
+#include <kcmdlineargs.h>
 
 #include "kxsconfig.h"
 #include "kxscontrol.h"
@@ -234,24 +235,29 @@ void KXSConfigDialog::slotCancel()
 
 //===========================================================================
 
-void usage(const char *name)
-{
-  printf("kxsconfig - xscreensaver configuration\n");
-  printf("Usage: %s xscreensaver-filename\n", name);
-}
+static const char *appName = "kxsconfig";
 
+static const char *description = I18N_NOOP("KDE X Screensaver Configuration tool");
+
+static const char *version = "2.0.0";
+
+static const KCmdLineOptions options[] =
+{
+   {"+screensaver", I18N_NOOP("Filename of the screensaver to configure."), 0},
+   {0,0,0}
+};
 
 int main(int argc, char *argv[])
 {
-  KApplication app(argc, argv, "kxsconfig");
+  KCmdLineArgs::init(argc, argv, appName, description, version);
 
-  if (argc != 2 || argv[1][0] == '-')
-  {
-    usage(argv[0]);
-    exit(1);
-  }
+  KCmdLineArgs::addCmdLineOptions(options);
 
-  KXSConfigDialog *dialog = new KXSConfigDialog(argv[1]);
+  KApplication app;
+
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  KXSConfigDialog *dialog = new KXSConfigDialog(args->arg(0));
   dialog->show();
 
   app.setMainWidget(dialog);

@@ -30,6 +30,8 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+#include <klocale.h>
+#include <kcmdlineargs.h>
 
 #include "kxsitem.h"
 
@@ -38,25 +40,30 @@
 template class QList<KXSConfigItem>;
 
 //===========================================================================
+static const char *appName = "kxsrun";
 
-void usage(const char *name)
+static const char *description = I18N_NOOP("KDE X Screensaver Launcher");
+
+static const char *version = "2.0.0";
+
+static const KCmdLineOptions options[] =
 {
-  printf("kxsconfig - xscreensaver launcher\n");
-  printf("Usage: %s xscreensaver-filename [xscreensaver-options]\n", name);
-}
+   {"+screensaver", I18N_NOOP("Filename of the screensaver to start."), 0},
+   {"+-- [options]", I18N_NOOP("Extra options to pass to the screensaver."), 0},
+   {0,0,0}
+};
 
-//===========================================================================
 int main(int argc, char *argv[])
 {
-  KApplication app(argc, argv, "KXSConfig", false);
+  KCmdLineArgs::init(argc, argv, appName, description, version);
 
-  if (argc < 2 || argv[1][0] == '-')
-  {
-    usage(argv[0]);
-    exit(1);
-  }
+  KCmdLineArgs::addCmdLineOptions(options);
 
-  QString filename(argv[1]);
+  KApplication app;
+
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  QString filename = args->url(0).path();
   QString configFile(filename);
 
   // Get the config filename
@@ -121,9 +128,9 @@ int main(int argc, char *argv[])
     // add the command line options
     QString cmd;
     int i;
-    for (i = 2; i < argc; i++)
+    for (i = 1; i < args->count(); i++)
     {
-      cmd += " " + QString(argv[i]);
+      cmd += " " + QString(args->arg(i));
     }
 
     // add the config options
