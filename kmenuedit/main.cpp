@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
+ *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,13 +29,13 @@
 #include "kmenuedit.h"
 
 static const char *description = I18N_NOOP("KDE Menu editor");
-static const char *version = "0.3";
+static const char *version = "0.4";
 
 int main( int argc, char **argv )
 {
     KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
 			 version, description, KAboutData::License_GPL,
-			 "(c) 2001, Raffaele Sandrini");
+			 "(C) 2002, Raffaele Sandrini");
     aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Maintainer"), "sandrini@kde.org");
     aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
 

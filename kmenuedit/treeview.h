@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
+ *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ class TreeView : public KListView
 
 public:
     TreeView(KActionCollection *ac,QWidget *parent=0, const char *name=0);
+    ~TreeView();
 
 public slots:
     void currentChanged();
@@ -68,6 +70,8 @@ protected slots:
     void copy();
     void paste();
     void del();
+    void hide();
+    void unhide();
 
 protected:
     void fill();
@@ -79,10 +83,16 @@ protected:
     void copyFile(const QString& src, const QString& dest, bool moving );
     void copyDir(const QString& src, const QString& dest, bool moving );
 
-    void deleteFile(const QString& deskfile);
-    void deleteDir(const QString& dir);
+    bool deleteFile(const QString& deskfile, const bool move = false);
+    bool deleteDir(const QString& dir, const bool move = false);
+    void hideFile(const QString& deskfile, bool hide);
+    void hideDir(const QString& d, const QString name, bool hide, QString icon);
+    
+    void dohide(bool _hide);
+
 
     void cleanupClipboard();
+    void cleanupClipboard(const QString path);
 
     QStringList fileList(const QString& relativePath);
     QStringList dirList(const QString& relativePath);
@@ -96,5 +106,13 @@ private:
     NameDialog        *_ndlg;
     QString            _clipboard;
 };
+
+inline void TreeView::hide() {
+	dohide(true);
+}
+
+inline void TreeView::unhide() {
+	dohide(false);
+}
 
 #endif

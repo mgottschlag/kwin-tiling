@@ -16,6 +16,8 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
+ <Action name="hide"/>
+ <Action name="unhide"/>
 </Menu>
 </MenuBar>
 
@@ -28,6 +30,8 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
+ <Action name="hide"/>
+ <Action name="unhide"/>
 </ToolBar>
 
 </kpartgui>

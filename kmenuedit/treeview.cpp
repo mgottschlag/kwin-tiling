@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
+ *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 #include <qdatastream.h>
 #include <qcstring.h>
 #include <qpopupmenu.h>
+#include <qfileinfo.h>
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -34,6 +36,7 @@
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 #include <kaction.h>
+#include <kmessagebox.h>
 
 #include "namedlg.h"
 #include "treeview.h"
@@ -87,6 +90,8 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     connect(_ac->action("edit_copy"), SIGNAL(activated()), SLOT(copy()));
     connect(_ac->action("edit_paste"), SIGNAL(activated()), SLOT(paste()));
     connect(_ac->action("delete"), SIGNAL(activated()), SLOT(del()));
+    connect(_ac->action("hide"), SIGNAL(activated()), SLOT(hide()));
+    connect(_ac->action("unhide"), SIGNAL(activated()), SLOT(unhide()));
 
     // setup rmb menu
     _rmb = new QPopupMenu(this);
@@ -105,6 +110,16 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     }
 
     _rmb->insertSeparator();
+    
+    if(_ac->action("hide")) {
+        _ac->action("hide")->plug(_rmb);
+        _ac->action("hide")->setEnabled(false);
+    }
+    
+    if(_ac->action("unhide")) {
+        _ac->action("unhide")->plug(_rmb);
+        _ac->action("unhide")->setEnabled(false);
+    }
 
     if(_ac->action("delete")) {
         _ac->action("delete")->plug(_rmb);
@@ -120,11 +135,17 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 
     _ndlg = new NameDialog(this);
 
+    cleanupClipboard();
     fill();
 }
 
+TreeView::~TreeView() {
+    cleanupClipboard();
+}
+
 void TreeView::fill()
-{
+{    //QString name(item->text(0));
+    //if (!(name.find("[Hidden]") > 0))
     clear();
     fillBranch("", 0);
 }
@@ -154,13 +175,23 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 	    if(df.readBoolEntry("Hidden") == true)
 		continue;
 
+	    if(df.readBoolEntry("NoDisplay") == true) {
+		    TreeItem* item;
+		    if (parent == 0) item = new TreeItem(this, *it);
+	    	else item = new TreeItem(parent, *it);
+
+		    item->setText(0, df.readName() + i18n(" [Hidden]"));
+		    //item->setPixmap(0, KGlobal::iconLoader()->loadIcon("no",KIcon::Desktop, KIcon::SizeSmall));
+	    	    item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	    }
+	    else {
 	    TreeItem* item;
 	    if (parent == 0) item = new TreeItem(this, *it);
 	    else item = new TreeItem(parent, *it);
 
 	    item->setText(0, df.readName());
-	    item->setPixmap(0, KGlobal::iconLoader()->
-			    loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	    item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	    }
 	}
 	while (it != filelist.begin());
     }
@@ -168,7 +199,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
     // add directories and process sudirs
     if (!dirlist.isEmpty()) {
 	QStringList::ConstIterator it = dirlist.end();
-	do{
+	do {
 	    --it;
 
 	    QString dirFile = KGlobal::dirs()->findResource("apps", *it + "/.directory");
@@ -186,19 +217,31 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
             }
 	    else {
                 KDesktopFile df(dirFile);
-                if(df.readBoolEntry("Hidden") == true)
-                    continue;
+		if(df.readBoolEntry("Hidden") == true)
+		continue;
+		
+                if(df.readBoolEntry("Hidden") == true) {
+	                if (parent == 0)
+	                    item = new TreeItem(this,  *it + "/.directory");
+	                else
+	                    item = new TreeItem(parent, *it + "/.directory");
 
+	                item->setText(0, df.readName() + i18n(" [Hidden]"));
+	                //item->setPixmap(0, KGlobal::iconLoader()->loadIcon("no",KIcon::Desktop, KIcon::SizeSmall));
+			item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	                item->setExpandable(true);
+		}
+		else {
                 if (parent == 0)
                     item = new TreeItem(this,  *it + "/.directory");
                 else
                     item = new TreeItem(parent, *it + "/.directory");
 
                 item->setText(0, df.readName());
-                item->setPixmap(0, KGlobal::iconLoader()
-                                ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+                item->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
                 item->setExpandable(true);
-            }
+		}
+	   }
 	    fillBranch(*it, item);
 	}
 	while (it != dirlist.begin());
@@ -207,9 +250,26 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 
 void TreeView::itemSelected(QListViewItem *item)
 {
-    _ac->action("edit_cut")->setEnabled(selectedItem());
-    _ac->action("edit_copy")->setEnabled(selectedItem());
-    _ac->action("delete")->setEnabled(selectedItem());
+    TreeItem *_item = (TreeItem*)item;
+    bool selected = false, hselected = false;
+    if (item) {
+	selected = true;
+	QString name(item->text(0));
+	if (!(name.find("[Hidden]") > 0)) {
+		hselected = true;
+	}
+    // Check if the file is Writeable for us
+    QFileInfo finfo((KGlobal::dirs()->findResourceDir("apps", _item->file())) + _item->file());
+    if (finfo.isWritable())
+ 	_ac->action("delete")->setEnabled(true);
+    else
+	_ac->action("delete")->setEnabled(false);
+
+    _ac->action("edit_cut")->setEnabled(selected);
+    _ac->action("edit_copy")->setEnabled(selected);
+    _ac->action("hide")->setEnabled(hselected);
+    _ac->action("unhide")->setEnabled(!hselected);
+    }
 
     if(!item) return;
 
@@ -310,7 +370,6 @@ void TreeView::copyDir(const QString& s, const QString& d, bool moving )
         QString file = (*it).mid((*it).findRev('/'), (*it).length());
         copyFile(src + file, dest + file, moving );
     }
-
     // process subdirs
     for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it) {
         QString file = (*it).mid((*it).findRev('/'), (*it).length());
@@ -324,7 +383,7 @@ void TreeView::copyDir(const QString& s, const QString& d, bool moving )
     c.sync();
 }
 
-void TreeView::deleteFile(const QString& deskfile)
+bool TreeView::deleteFile(const QString& deskfile, const bool move = false)
 {
     // We search for the file in all prefixes and remove all writeable
     // ones. If we were not able to remove all (because of lack of permissons)
@@ -345,21 +404,20 @@ void TreeView::deleteFile(const QString& deskfile)
             allremoved = false;
     }
 
-    // if we did not have the permissions to remove all files we set a hidden flag
-    // in the local one.
-    if(!allremoved) {
-        KSimpleConfig c(locateLocal("apps", deskfile));
+    if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
+        KHotKeys::menuEntryDeleted( deskfile );
+	
+    if(move) {
+	KSimpleConfig c(locateLocal("apps", deskfile));
         c.setDesktopGroup();
         c.writeEntry("Name", "empty");
         c.writeEntry("Hidden", true);
         c.sync();
-    }
-
-    if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
-        KHotKeys::menuEntryDeleted( deskfile );
+    } else
+	return allremoved;
 }
 
-void TreeView::deleteDir(const QString& d)
+bool TreeView::deleteDir(const QString& d, const bool move = false)
 {
     // We delete all .desktop files and then process with the subdirs.
     // Afterwards the .directory file gets deleted from all prefixes
@@ -399,15 +457,37 @@ void TreeView::deleteDir(const QString& d)
         if(!dir.rmdir(*it))
             allremoved = false;
     }
-
-    // set a local hidden flag if not all dirs could be deleted
-    if(!allremoved) {
+    
+    if(move) {
         KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
         c.setDesktopGroup();
         c.writeEntry("Name", "empty");
         c.writeEntry("Hidden", true);
         c.sync();
-    }
+    } else
+	return allremoved;
+}
+
+void TreeView::hideFile(const QString& deskfile, bool hide) {
+
+        KSimpleConfig c(locateLocal("apps", deskfile));
+        c.setDesktopGroup();
+        c.writeEntry("NoDisplay", hide);
+        c.sync();
+
+
+    if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
+        KHotKeys::menuEntryDeleted( deskfile );
+}
+
+void TreeView::hideDir(const QString& d, const QString name, bool hide, QString icon) {
+	QString directory = d;
+	KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
+	c.setDesktopGroup();
+	c.writeEntry("Name", name);
+	c.writeEntry("Hidden", hide);
+	c.writeEntry("Icon", icon);
+	c.sync();
 }
 
 QStringList TreeView::fileList(const QString& rPath)
@@ -544,11 +624,11 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
 
     if(isDir) {
         copyDir(src, dest, true );
-        deleteDir(src);
+        deleteDir(src, true);
     }
     else {
         copyFile(src, dest, true );
-        deleteFile(src);
+        deleteFile(src, true);
     }
 }
 
@@ -775,7 +855,6 @@ void TreeView::paste()
 
     // nil selected? -> nil to paste to
     if (item == 0) return;
-
     // is there content in the clipboard?
     if (_clipboard.isEmpty()) return;
 
@@ -858,18 +937,23 @@ void TreeView::del()
     // is file a .directory or a .desktop file
     if(file.find(".directory") > 0)
     {
-        deleteDir(file.mid(0, file.find("/.directory")));
-        delete item;
+        if (!(deleteDir(file.mid(0, file.find("/.directory")))))
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead please."), i18n("Permission denied"));
+	else
+        	delete item;
     }
     else if (file.find(".desktop"))
     {
-        deleteFile(file);
-        delete item;
+        if (!(deleteFile(file)))
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead please."), i18n("Permission denied"));
+	else
+		delete item;
     }
 
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);
+    _ac->action("hide")->setEnabled(false);
 
     // Select new current item
     setSelected( currentItem(), true );
@@ -877,7 +961,78 @@ void TreeView::del()
     itemSelected( selectedItem() );
 }
 
-void TreeView::cleanupClipboard()
+void TreeView::dohide(bool _hide) {
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to hide
+    if (item == 0) return;
+
+    QString file = item->file();
+    KDesktopFile df(item->file());
+
+    // is file a .directory or a .desktop file
+    if(file.find(".directory") > 0)
+    {
+        hideDir(file.mid(0, file.find("/.directory")), df.readName(), _hide, df.readIcon());
+    }
+    else if (file.find(".desktop"))
+    {
+        hideFile(file, _hide);
+    }
+    if (_hide)
+    	item->setText(0, item->text(0) + i18n(" [Hidden]"));
+    else
+    	item->setText(0, df.readName());
+
+    item->repaint();
+
+    _ac->action("edit_cut")->setEnabled(false);
+    _ac->action("edit_copy")->setEnabled(false);
+    _ac->action("delete")->setEnabled(false);
+    _ac->action("hide")->setEnabled(false);
+
+    // Select new current item
+    setSelected( currentItem(), true );
+    // Switch the UI to show that item
+    itemSelected( selectedItem() );
+}
+
+void TreeView::cleanupClipboard() {
+	cleanupClipboard(locateLocal("apps", ".kmenuedit_clipboard"));
+}
+
+void TreeView::cleanupClipboard(const QString path)
 {
-    // TODO
+    QDir d(path);
+    d.setFilter(QDir::Dirs);
+    QStringList dirlist = d.entryList();
+
+    if (!dirlist.isEmpty()) {
+    	QStringList::ConstIterator it = dirlist.begin();
+	int i = 0;
+	do {
+		if (i<2) {	// get rid of the "./" and  "../"
+			++it;
+			i++;
+			continue;
+		}
+		cleanupClipboard(path + "/" + *it);
+		i++;
+		++it;
+	} while (it != dirlist.end());
+    }
+
+    d.setFilter(QDir::Files | QDir::Hidden);
+    QStringList filelist = d.entryList();
+    if (!filelist.isEmpty()) {
+ 	QStringList::ConstIterator it = filelist.begin();
+	QFile f;
+	while (it != filelist.end()) {
+		f.setName(path + "/" + *it);
+		f.remove();
+		++it;
+	}
+    }
+
+    d.rmdir(path);
 }
