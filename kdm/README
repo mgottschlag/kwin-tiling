@@ -238,7 +238,7 @@ Per-display Fifo commands:
    session on the display exits, the display is removed, too. Direct
    the reserve command to your current session's FiFo. So if session
    0 is your standard login session and 1 is reserved, send the
-   reserve command to xdmct-\:0. Once it executes, it creates xdmctl-\:1.
+   reserve command to xdmctl-:0. Once it executes, it creates xdmctl-:1.
 
 "suicide"
  - The currently running session is forcibly terminated. No auto-relogin is
