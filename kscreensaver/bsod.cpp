@@ -20,6 +20,7 @@
  *      -  Should randomize the various hex numbers printed.
  */
 
+#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

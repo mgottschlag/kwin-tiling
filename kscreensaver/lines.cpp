@@ -7,7 +7,7 @@
 //
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
-
+#include <config.h>
 #include <stdlib.h>
 #include <time.h>
 #include <qcolor.h>

@@ -16,6 +16,7 @@
 //		- add to Algs array in KBlobSaver constructor in this file
 //		- test by setup saver and choosing alg from list
 
+#include <config.h>
 #include <stdlib.h>
 #include <time.h>
 #include <limits.h>
