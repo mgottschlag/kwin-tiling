@@ -73,7 +73,7 @@ ProxyWidget *ConfigModule::module()
   if (run_as_root && isHiddenByDefault())
      modWidget = new KCRootOnly(0, "root_only");
   else
-      modWidget = ModuleLoader::loadModule(*this);
+      modWidget = KCModuleLoader::loadModule(*this);
 
   if (modWidget)
     {
@@ -110,7 +110,7 @@ void ConfigModule::deleteClient()
   delete _embedLayout;
   _embedLayout = 0;
 
-  ModuleLoader::unloadModule(*this);
+  KCModuleLoader::unloadModule(*this);
   _changed = false;
 }
 
