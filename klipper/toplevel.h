@@ -66,6 +66,7 @@ private:
     bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber, bReplayActionInHistory;
     QString QSempty;
     URLGrabber *myURLGrabber;
+    int pSelectedItem;
 };
 
 #endif

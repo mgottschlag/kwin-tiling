@@ -118,6 +118,8 @@ TopLevel::TopLevel()
     connect( toggleURLGrabAction, SIGNAL( toggled( bool ) ), this,
              SLOT( setURLGrabberEnabled( bool )));
     setBackgroundMode(X11ParentRelative);
+
+    pSelectedItem = -1;
 }
 
 TopLevel::~TopLevel()
@@ -185,6 +187,11 @@ void TopLevel::newClipData()
         }
         long int id = pQPMmenu->insertItem(clipData.simplifyWhiteSpace(), -2, -1); // -2 means unique id, -1 means at end
         pQIDclipData->insert(id, data);
+
+        if (pSelectedItem != -1)
+            pQPMmenu->setItemChecked(pSelectedItem, false);
+        pSelectedItem = id;
+        pQPMmenu->setItemChecked(pSelectedItem, true);
     }
 }
 
@@ -202,6 +209,10 @@ void TopLevel::clickedMenu(int id)
         break;
     default:
         pQTcheck->stop();
+        //CT mark up the currently put into clipboard - so that user can see later
+        pQPMmenu->setItemChecked(pSelectedItem, false);
+        pSelectedItem = id;
+        pQPMmenu->setItemChecked(pSelectedItem, true);
         QString *data = pQIDclipData->find(id);
         if(data != 0x0 && *data != QSempty){
             clip->setText(*data);
