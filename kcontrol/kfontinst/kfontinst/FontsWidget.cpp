@@ -44,21 +44,21 @@
 #include <klocale.h>
 #include <stdlib.h>
 
-static const QString constDefaultPreviewStr("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890");
-static const QString constNoPreviewStr(i18n(" No preview available"));
-static const QString constPreviewTitle(i18n("Preview:"));
+static const QString & constDefaultPreviewStr("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890");
+static const QString & constNoPreviewStr(I18N_NOOP(" No preview available"));
+static const QString & constPreviewTitle(I18N_NOOP("Preview:"));
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
               itsSysConfigurer(NULL),
-              itsPreviousTitle(constPreviewTitle),
-              itsPreviousStr(constNoPreviewStr)
+              itsPreviousTitle(i18n(constPreviewTitle.utf8())),
+              itsPreviousStr(i18n(constNoPreviewStr.utf8()))
 {
     QPalette    pal(itsBox->palette());
     QColorGroup dis(pal.disabled());
 
-    itsBox->setTitle(constPreviewTitle);
-    itsLabel->setText(constNoPreviewStr);
+    itsBox->setTitle(i18n(constPreviewTitle.utf8()));
+    itsLabel->setText(i18n(constNoPreviewStr.utf8()));
     
     dis.setColor(QColorGroup::Text , pal.active().text());
     pal.setDisabled(dis);
