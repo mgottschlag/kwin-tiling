@@ -135,7 +135,7 @@ Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&a
                         <cstring>lblReplyTo</cstring>
                     </property>
                     <property name="text">
-                        <string>Reply-&amp;To Address:</string>
+                        <string>Reply-&amp;to address:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>txtReplyTo</cstring>
@@ -154,7 +154,7 @@ Do &lt;em&gt;not&lt;/em&gt; enter something like John Doe &amp;lt;john@doe.com&a
                         <cstring>lbl_EMailAddr</cstring>
                     </property>
                     <property name="text">
-                        <string>E&amp;mail Address:</string>
+                        <string>E&amp;mail address:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>txtEMailAddr</cstring>
@@ -174,7 +174,7 @@ marks). Some people like to provide a nickname only. You can leave this field bl
                         <cstring>lblFullName</cstring>
                     </property>
                     <property name="text">
-                        <string>Full &amp;Name:</string>
+                        <string>Full &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>txtFullName</cstring>
