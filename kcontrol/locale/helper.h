@@ -24,7 +24,7 @@ inline void checkInsertPos( QPopupMenu *popup, const QString & str,
 
   index = a; // it doesn't really matter ... a == b here.
 
-  ASSERT( a == b );
+  Q_ASSERT( a == b );
 }
 
 inline QPopupMenu * checkInsertIndex( QPopupMenu *popup,
