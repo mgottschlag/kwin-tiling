@@ -40,7 +40,7 @@ install-data-local:
 	rm -rf BuildThemes;
 
 messages:
-	(cd Themes && ls -1 | grep -v CVS | sed -e "s/\(.*\)/i18n(\"\1\");/") >>> rc.cpp
+	(cd Themes && ls -1 | grep -v CVS | sed -e "s/\(.*\)/i18n(\"\1\");/") > rc.cpp
 	$(XGETTEXT) $(libkcm_themes_la_SOURCES) rc.cpp -o $(podir)/kcmthemes.pot
 	-rm -f rc.cpp
 
