@@ -43,6 +43,11 @@ from The Open Group.
 # include <unistd.h>
 #endif
 
+#include <errno.h>
+#ifdef X_NOT_STDC_ENV
+extern int errno;
+#endif
+
 #ifdef USG
 # define NEED_UTSNAME
 #endif
@@ -52,24 +57,40 @@ from The Open Group.
 #endif
 
 
-/* duplicate src; free old dst string */
+void
+WipeStr (char *str)
+{
+    if (str) {
+	bzero (str, strlen (str));
+	free (str);
+    }
+}
+
+/* duplicate src; wipe & free old dst string */
 int
-ReStr (char **dst, char *src)
+ReStrN (char **dst, char *src, int len)
 {
     char *ndst = 0;
 
     if (src) {
-	int len = strlen (src) + 1;
-	if (*dst && !memcmp (*dst, src, len))
+	if (len < 0)
+	    len = strlen (src);
+	if (*dst && !memcmp (*dst, src, len) && !(*dst)[len])
 	    return 1;
-	if (!(ndst = malloc ((unsigned) len)))
+	if (!(ndst = malloc (len + 1)))
 	    return 0;
 	memcpy (ndst, src, len);
+	ndst[len] = 0;
     }
-    if (*dst)
-	free (*dst);
+    WipeStr (*dst);	/* make an option, if we should become heavily used */
     *dst = ndst;
     return 1;
+}
+
+int
+ReStr (char **dst, char *src)
+{
+    return ReStrN (dst, src, -1);
 }
 
 /* duplicate src */
@@ -77,7 +98,9 @@ int
 StrNDup (char **dst, char *src, int len)
 {
     if (src) {
-	if (!(*dst = malloc ((unsigned) len + 1)))
+	if (len < 0)
+	    len = strlen (src);
+	if (!(*dst = malloc (len + 1)))
 	    return 0;
 	memcpy (*dst, src, len);
 	(*dst)[len] = 0;
@@ -86,23 +109,15 @@ StrNDup (char **dst, char *src, int len)
     return 1;
 }
 
-/* duplicate src */
 int
 StrDup (char **dst, char *src)
 {
-    if (src) {
-	unsigned len = strlen (src) + 1;
-	if (!(*dst = malloc (len)))
-	    return 0;
-	memcpy (*dst, src, len);
-    } else
-	*dst = 0;
-    return 1;
+    return StrNDup (dst, src, -1);
 }
 
 /* append any number of strings to dst */
 int
-StrApp(char **dst, ...)
+StrApp (char **dst, ...)
 {
     int len;
     char *bk, *pt, *dp;
@@ -141,15 +156,6 @@ StrApp(char **dst, ...)
     *dp = '\0';
     *dst = bk;
     return 1;
-}
-
-void
-WipeStr (char *str)
-{
-    if (str) {
-	bzero (str, strlen (str));
-	free (str);
-    }
 }
 
 
@@ -191,8 +197,6 @@ addStrArr (char **arr, char *str, int len)
 {
     char **dst;
 
-    if (len < 0)
-	len = strlen (str);
     if ((dst = extStrArr (&arr)))
 	(void) StrNDup (dst, str, len);
     return arr;    
@@ -402,32 +406,70 @@ localHostname (void)
     return localHostbuf;
 }
 
-/* extremely slow, but small ... */
 int
-fdgets (int fd, char *buf, int len)
+Reader (int fd, void *buf, int count)
 {
-    int po;
-    char c;
+    int ret, rlen;
 
-    for (po = 0, len--;;) {
-	switch (Reader (fd, &c, 1)) {
-	case -1:
+    for (rlen = 0; rlen < count; ) {
+      dord:
+	ret = read (fd, (void *)((char *)buf + rlen), count - rlen);
+	if (ret < 0) {
+	    if (errno == EINTR)
+		goto dord;
+	    if (errno == EAGAIN)
+		break;
 	    return -1;
-	case 0:
-	    if (po) {
-		buf[po] = 0;
-		return po;
-	    }
-	    return -2;
-	default:
-	    if (c == '\n') {
-		buf[po] = 0;
-		return po;
-	    }
-	    if (po < len)
-		buf[po++] = c;
-	    break;
 	}
+	if (!ret)
+	    break;
+	rlen += ret;
+    }
+    return rlen;
+}
+
+void
+FdGetsCall (int fd, void (*func)(char *, int, void *), void *ptr)
+{
+    char	*p;
+    int		bpos, bend, llen, ll, rt, ign;
+    char	buf[200];
+
+    for (bpos = bend = ign = 0;;) {
+	for (;;) {
+	    if ((p = memchr(buf + bpos, '\n', bend - bpos)) != 0) {
+		llen = (ll = (p - buf) - bpos) + 1;
+		break;
+	    }
+	    if (bpos == 0 && bend == sizeof (buf)) {
+		ign = 1;
+		bend = 0;
+	    } else {
+		memcpy (buf, buf + bpos, bend - bpos);
+		bend -= bpos;
+	    }
+	    bpos = 0;
+	    rt = Reader (fd, buf + bend, sizeof (buf) - bend);
+	    if (rt < 0) {
+		bzero (buf, sizeof(buf));
+		return;
+	    }
+	    if (!rt) {
+		if (bend) {
+		    llen = ll = bend;
+		    break;
+		} else {
+		    bzero (buf, sizeof(buf));
+		    return;
+		}
+	    }
+	    bend += rt;
+	}
+	if (ign)
+	    ign = 0;
+	else
+	    func (buf + bpos, ll, ptr);
+	bpos += llen;
     }
 }
 

@@ -134,7 +134,7 @@ PAM_conv (int num_msg,
 	    break;
 	case PAM_PROMPT_ECHO_OFF:
 	    /* wants password */
-# ifndef HAVE_PAM_FAIL_DELAY
+# ifndef PAM_FAIL_DELAY
 	    if (!PAM_password[0])
 		goto conv_err;
 # endif
@@ -178,7 +178,7 @@ static struct pam_conv PAM_conversation = {
 	NULL
 };
 
-# ifdef HAVE_PAM_FAIL_DELAY
+# ifdef PAM_FAIL_DELAY
 static void
 fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED, 
 	   void *appdata_ptr ATTR_UNUSED)
@@ -344,7 +344,7 @@ init_vrf(struct display *d, char *name, char *password)
 	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
-# ifdef HAVE_PAM_FAIL_DELAY
+# ifdef PAM_FAIL_DELAY
 	pam_set_item(pamh, PAM_FAIL_DELAY, fail_delay);
 # endif
     } else
@@ -793,13 +793,51 @@ userEnv (struct display *d, int useSystemPath, char *user, char *home, char *she
 }
 
 
+static int
+SetGid (char *name, int gid)
+{
+    if (setgid(gid) < 0)
+    {
+	LogError("setgid %d (user \"%s\") failed, errno=%d\n",
+		 gid, name, errno);
+	return 0;
+    }
+#ifndef QNX4
+    if (initgroups(name, gid) < 0)
+    {
+	LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
+	return 0;
+    }
+#endif   /* QNX4 doesn't support multi-groups, no initgroups() */
+    return 1;
+}
+
+static int
+SetUid (char *name, int uid)
+{
+    if (setuid(uid) < 0)
+    {
+	LogError("setuid %d (user \"%s\") failed, errno=%d\n",
+		 uid, name, errno);
+	return 0;
+    }
+    return 1;
+}
+
+static int
+SetUser (char *name, int uid, int gid)
+{
+    return SetGid (name, gid) && SetUid (name, uid);
+}
+
+
 static int removeAuth = 0;
 static int sourceReset = 0;
 
 int
 StartClient(struct display *d, char *name, char *pass, char **sessargs)
 {
-    int		i, pretc;
+    int		i;
     char	*shell, *home;
     char	**argv;
 #ifdef USE_PAM
@@ -818,11 +856,11 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
     int		pid;
     struct verify_info	*verify;
 
-    if ((pretc = init_vrf(d, name, pass)) != V_OK)
-	return pretc;
+    if (init_vrf(d, name, pass) != V_OK)
+	return 0;
 
     if (!init_pwd(name NSHADOW))
-	return V_AUTH;
+	return 0;
 
 #ifndef USE_PAM
 # ifdef AIXV3
@@ -852,6 +890,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	SessionExit (d, EX_NORMAL);
     }
     d->verify = verify;
+    StrDup (&verify->user, name);
     verify->uid = p->pw_uid;
     verify->gid = p->pw_gid;
     home = p->pw_dir;
@@ -942,19 +981,8 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 
 #ifndef AIXV3
 # if !defined(HAS_SETUSERCONTEXT) || defined(USE_PAM)
-	if (setgid(verify->gid) < 0)
-	{
-	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
-		     verify->gid, name, errno);
+	if (!SetGid (name, verify->gid))
 	    return 0;
-	}
-#  ifndef QNX4
-	if (initgroups(name, verify->gid) < 0)
-	{
-	    LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
-	    return 0;
-	}
-#  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
 #  ifdef USE_PAM
 	pam_setcred(pamh, 0);
 	/* pass in environment variables set by libpam and modules it called */
@@ -971,12 +999,8 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    return 0;
 	}
 #  endif
-	if (setuid(verify->uid) < 0)
-	{
-	    LogError("setuid %d (user \"%s\") failed, errno=%d\n",
-		     verify->uid, name, errno);
+	if (!SetUid (name, verify->uid))
 	    return 0;
-	}
 # else /* HAS_SETUSERCONTEXT && !USE_PAM */
 	/*
 	 * Destroy environment unless user has requested its preservation.
@@ -1231,8 +1255,7 @@ SessionExit (struct display *d, int status)
 	    ReInitErrorLog ();
 	}
 #endif
-	setgid (d->verify->gid);
-	setuid (d->verify->uid);
+	SetUser (d->verify->user, d->verify->uid, d->verify->gid);
 	RemoveUserAuthorization (d, d->verify);
 #ifdef K5AUTH
 	/* do like "kdestroy" program */
@@ -1282,11 +1305,18 @@ SessionExit (struct display *d, int status)
     exit (status);
 }
 
-int
-RdUsrData (struct display *d, char *usr, char ***args, char ***parm ATTR_UNUSED)
+
+static void
+addData (char *buf, int len, void *ptr)
 {
-    int len, pid, fd, pfd[2];
-    char buf[256];
+    char ***sp = (char ***)ptr;
+    *sp = addStrArr (*sp, buf, len);
+}
+
+int
+RdUsrData (struct display *d, char *usr, char ***args)
+{
+    int len, pid, ret, fd, pfd[2];
 
     if (!usr || !usr[0])
 	return 0;
@@ -1302,27 +1332,23 @@ RdUsrData (struct display *d, char *usr, char ***args, char ***parm ATTR_UNUSED)
 	return 0;
     }
     if (!pid) {
-	setgid (p->pw_gid);
-	setuid (p->pw_uid);
+	char buf[1024];
+	if (!SetUser (p->pw_name, p->pw_uid, p->pw_gid))
+	    exit (0);
 	if (chdir (p->pw_dir) < 0)
 	    exit (0);
 	if ((fd = open (d->sessSaveFile, O_RDONLY)) < 0)
 	    exit (0);
-	while ((len = read (fd, buf, sizeof(buf))) > 0)
+	if ((len = read (fd, buf, sizeof(buf))) > 0)
 	    write (pfd[1], buf, len);
 	exit (1);
     }
     close (pfd[1]);
     *args = initStrArr (0);
-    while ((len = fdgets (pfd[0], buf, sizeof(buf))) > 0)
-	*args = addStrArr (*args, buf, len);
-/*
-    *parm = initStrArr (0);
-    while ((len = fdgets (pfd[0], buf, sizeof(buf))) > 0)
-	*parm = addStrArr (*parm, buf, len);
-*/
+    FdGetsCall (pfd[0], addData, args);
     close (pfd[0]);
-    return WaitCode (Wait4 (pid));
+    ret = Wait4 (pid);
+    return WaitCode (ret);
 }
 
 

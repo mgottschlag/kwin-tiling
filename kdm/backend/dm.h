@@ -277,10 +277,13 @@ struct disphist {
 	char		*nLogPipe;	/* data read from fifo */
 };
 
-
+/*
+ * This info is created, when a user is being logged in.
+ */
 struct verify_info {
 	int		uid;		/* user id */
 	int		gid;		/* group id */
+	char		*user;		/* name of the user */
 	char		**userEnviron;	/* environment for session */
 	char		**systemEnviron;/* environment for startup/reset */
 };
@@ -386,7 +389,6 @@ extern int Wait4 (int pid);
 extern void execute(char **argv, char **environ);
 extern int runAndWait (char **args, char **environ);
 extern void TerminateProcess (int pid, int signal);
-extern int Reader (int fd, void *buf, int len);
 extern Jmp_buf GErrJmp;
 extern char *GOpen (char **argv, char *what, char **env);
 extern int GClose (void);
@@ -409,7 +411,7 @@ extern int Verify (struct display *d, char *name, char *pass);
 extern void Restrict (struct display *d);
 extern int StartClient(struct display *d, char *name, char *pass, char **sessargs);
 extern void SessionExit (struct display *d, int status);
-extern int RdUsrData (struct display *d, char *usr, char ***args, char ***parm);
+extern int RdUsrData (struct display *d, char *usr, char ***args);
 
 /* server.c */
 extern char *_SysErrorMsg (int n);
@@ -423,9 +425,10 @@ extern int GetChooserAddr (char *addr, int *lenp);
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
+extern int ReStrN (char **dst, char *src, int len);
 extern int ReStr (char **dst, char *src);
-extern int StrDup (char **dst, char *src);
 extern int StrNDup (char **dst, char *src, int len);
+extern int StrDup (char **dst, char *src);
 extern int StrApp (char **dst, ...);
 extern void WipeStr (char *str);
 extern char **initStrArr (char **arr);
@@ -439,7 +442,8 @@ extern char **setEnv (char **e, char *name, char *value);
 extern char **putEnv (char *string, char **env);
 extern char *getEnv (char **e, char *name);
 extern char *localHostname (void);
-extern int fdgets (int fd, char *buf, int len);
+extern int Reader (int fd, void *buf, int len);
+extern void FdGetsCall (int fd, void (*func)(char *, int, void *), void *ptr);
 
 #ifdef XDMCP
 

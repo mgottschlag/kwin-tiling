@@ -130,7 +130,6 @@ Fork ()
 
 #ifndef X_NOT_POSIX
     sigset_t ss, oss; 
-    sigemptyset(&ss);
     sigfillset(&ss);
     sigprocmask(SIG_SETMASK, &ss, &oss);
 #else
@@ -229,7 +228,7 @@ execute (char **argv, char **environ)
 int
 runAndWait (char **args, char **environ)
 {
-    int		pid;
+    int	pid, ret;
 
     switch (pid = Fork ()) {
     case 0:
@@ -240,30 +239,8 @@ runAndWait (char **args, char **environ)
 	LogError ("can't fork to execute \"%s\" (err %d)\n", args[0], errno);
 	return 1;
     }
-    return waitVal (Wait4 (pid));
-}
-
-
-int
-Reader (int fd, void *buf, int count)
-{
-    int ret, rlen;
-
-    for (rlen = 0; rlen < count; ) {
-      dord:
-	ret = read (fd, (void *)((char *)buf + rlen), count - rlen);
-	if (ret < 0) {
-	    if (errno == EINTR)
-		goto dord;
-	    if (errno == EAGAIN)
-		break;
-	    return -1;
-	}
-	if (!ret)
-	    break;
-	rlen += ret;
-    }
-    return rlen;
+    ret = Wait4 (pid);
+    return waitVal (ret);
 }
 
 

@@ -266,16 +266,10 @@ main (int argc, char **argv)
 	exit (1);
     }
 
-    if (!nofork_session) {
-	/* Clean up any old Authorization files */
-	char cmdbuf[1024];
-#ifndef MINIX
-	sprintf(cmdbuf, "/bin/rm -f %s/authfiles/A*", authDir);
-#else
-	sprintf(cmdbuf, "/usr/bin/rm -f %s/authfiles/A*", authDir);
-#endif
-	system(cmdbuf);
-    }
+    /*
+     * We used to clean up old authorization files here. As authDir is
+     * supposed to be /var/run/xauth or /tmp, we needn't to care for it.
+     */
 
 #ifdef XDMCP
     init_session_id ();
@@ -985,24 +979,20 @@ StartDisplay (struct display *d)
 static void
 ClrnLog (struct display *d)
 {
-    if (d->hstent->nLogPipe) {
-	bzero (d->hstent->nLogPipe, strlen (d->hstent->nLogPipe));
-	free (d->hstent->nLogPipe);
-	d->hstent->nLogPipe = NULL;
-    }
+    WipeStr (d->hstent->nLogPipe);
+    d->hstent->nLogPipe = NULL;
+}
+
+static void
+savenLog (char *buf, int len, void *ptr)
+{
+    ReStrN (&((struct display *)ptr)->hstent->nLogPipe, buf, len);
 }
 
 static void
 ReadnLog (struct display *d, int fd)
 {
-    int		ll;
-    char	buf[100];
-
-    while ((ll = fdgets (fd, buf, sizeof(buf))) >= 0) {
-	ClrnLog (d);
-	StrNDup (&d->hstent->nLogPipe, buf, ll);
-    }
-    bzero (buf, sizeof(buf));
+    FdGetsCall (fd, savenLog, d);
 }
 
 static void

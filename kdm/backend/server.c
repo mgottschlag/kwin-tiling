@@ -93,8 +93,8 @@ StartServerOnce (struct display *d)
 	DestroyWellKnownSockets();
 #endif
 	if (d->authFile) {
-	    sprintf (arg, "-auth %s", d->authFile);
-	    argv = parseArgs (argv, arg);
+	    argv = addStrArr (argv, "-auth", 5);
+	    argv = addStrArr (argv, d->authFile, -1);
 	}
 	if (!argv) {
 	    LogError ("StartServer: no arguments\n");

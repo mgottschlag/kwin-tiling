@@ -88,7 +88,7 @@ Debug ("autoLogon, tdiff = %d, nlogpipe%s empty, goodexit = %d\n",
 	}
 	StrDup (namer, d->autoUser);
 	StrDup (passr, d->autoPass);
-	RdUsrData (d, d->autoUser, sessargs, 0);
+	RdUsrData (d, d->autoUser, sessargs);
 	if (!*sessargs || !*sessargs[0]) {
 	    if (d->autoString[0])
 		*sessargs = parseArgs (*sessargs, d->autoString);
@@ -279,7 +279,7 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
 	    Debug ("G_GetSessArg\n");
 	    name = GRecvStr ();
 	    Debug (" user '%s'\n", name);
-	    RdUsrData (d, name, &args, 0);
+	    RdUsrData (d, name, &args);
 	    Debug (" -> %'[{s\n", args);
 	    GSendArgv (args);
 	    freeStrArr (args);
