@@ -885,6 +885,7 @@ void CFontListWidget::scan()
 void CFontListWidget::scanDir(const QString &dir, int sub)
 {
     QDir d(dir);
+    bool inPath=CKfiGlobal::xcfg().inPath(dir);
 
     if(d.isReadable())
     {
@@ -902,22 +903,18 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
             {
                 QString file = fInfo->fileName();
                 if("."!=file && ".."!=file)
-                {
                     if(fInfo->isDir())
                     {
                         if(sub<CMisc::MAX_SUB_DIRS)
                             scanDir(dir+file+"/", sub+1);
                     }
-                    else
+                    else if(inPath &&
+                            (CFontEngine::isAType1(QFile::encodeName(file)) ||
+                             CFontEngine::isATtf(QFile::encodeName(file))) )
                     {
-                        if(CFontEngine::isAType1(QFile::encodeName(file)) ||
-                           CFontEngine::isATtf(QFile::encodeName(file)))
-                        {
-                            progressShow(file);
-                            new CFontItem(this, file, dir, false, true);
-                        }
+                        progressShow(file);
+                        new CFontItem(this, file, dir, false, true);
                     }
-                }
             }
 
             if(0==sub && files->count())
@@ -940,14 +937,12 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
             for(; NULL!=(fInfo=it.current()); ++it)
             {
                 QString file = fInfo->fileName();
-                if(!fInfo->isDir())
+                if(!fInfo->isDir() && inPath &&
+                   (CFontEngine::isAType1(QFile::encodeName(file)) ||
+                    CFontEngine::isATtf(QFile::encodeName(file))) )
                 {
-                    if(CFontEngine::isAType1(QFile::encodeName(file)) ||
-                       CFontEngine::isATtf(QFile::encodeName(file)))
-                    {
-                        progressShow(file);
-                        new CFontItem(this, file, dir, false, false);
-                    }
+                    progressShow(file);
+                    new CFontItem(this, file, dir, false, false);
                 }
             }
 
