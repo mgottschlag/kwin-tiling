@@ -15,6 +15,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qvbox.h>
 #include <qtimer.h>
 #include <qstyle.h>
+#include <qcombobox.h>
 #include <qcursor.h>
 #include <qmessagebox.h>
 #include <qbuttongroup.h>
@@ -38,6 +39,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <dmctl.h>
 
 #include <X11/Xlib.h>
 
@@ -73,7 +75,7 @@ void KSMShutdownFeedback::slotPaintEffect()
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KApplication::ShutdownType sdtype )
-    : QDialog( parent, 0, TRUE, WType_Popup )
+  : QDialog( parent, 0, TRUE, WType_Popup ), targets(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -135,6 +137,19 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         if ( sdtype == KApplication::ShutdownTypeReboot )
             btnReboot->setFocus();
 
+        int def, cur;
+        QStringList opts;
+        if ( DM().bootOptions( opts, def, cur ) ) {
+            targets = new QComboBox( frame );
+            targets->insertStringList( opts );
+            if ( cur == -1 )
+                cur = def;
+            targets->setCurrentItem( cur );
+            QHBoxLayout *hb = new QHBoxLayout( buttonlay );
+            hb->addSpacing( targets->height() );
+            hb->addWidget( targets );
+            connect( targets, SIGNAL(activated(int)), btnReboot, SLOT(setFocus()) );
+        }
     }
 
     buttonlay->addStretch( 1 );
@@ -159,6 +174,9 @@ void KSMShutdownDlg::slotLogout()
 
 void KSMShutdownDlg::slotReboot()
 {
+    if (targets)
+        DM().setBootOption( targets->currentText() );
+
     m_shutdownType = KApplication::ShutdownTypeReboot;
     accept();
 }

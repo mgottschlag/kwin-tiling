@@ -11,6 +11,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qdialog.h>
 class QPushButton;
 class QVButtonGroup;
+class QComboBox;
 
 #include <kapplication.h>
 
@@ -55,6 +56,7 @@ protected:
 private:
     KSMShutdownDlg( QWidget* parent, bool maysd, KApplication::ShutdownType sdtype );
     KApplication::ShutdownType m_shutdownType;
+    QComboBox *targets;
 };
 
 #endif
