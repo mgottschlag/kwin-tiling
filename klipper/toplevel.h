@@ -26,6 +26,7 @@ class KToggleAction;
 class KAboutData;
 class URLGrabber;
 class ClipboardPoll;
+class QTime;
 
 class KlipperWidget : public QWidget, public DCOPObject
 {
@@ -105,12 +106,16 @@ private slots:
     void slotClipboardChanged() {
         clipboardSignalArrived( false );
     }
+    
+    void slotAboutToHideMenu();
 
 
 private:
     enum SelectionMode { Clipboard = 1, Selection = 2 };
 
     QClipboard *clip;
+
+    QTime *menuTimer;
 
     QString m_lastString;
     QString m_lastClipboard, m_lastSelection;

@@ -13,6 +13,7 @@
 
 #include <qclipboard.h>
 #include <qcursor.h>
+#include <qdatetime.h>
 #include <qfile.h>
 #include <qintdict.h>
 #include <qpainter.h>
@@ -85,9 +86,12 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     readConfiguration( kc );
     setURLGrabberEnabled( bURLGrabber );
 
+    menuTimer = new QTime();
+
     m_lastString = "";
     m_popup = new KPopupMenu(0L, "main_menu");
     connect(m_popup, SIGNAL(activated(int)), SLOT(clickedMenu(int)));
+    connect(m_popup, SIGNAL(aboutToHide()), SLOT(slotAboutToHideMenu()));
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -165,7 +169,11 @@ void KlipperWidget::mousePressEvent(QMouseEvent *e)
     if ( e->button() != LeftButton && e->button() != RightButton )
         return;
 
-    showPopupMenu( m_popup );
+    // if we only hid the menu less than a third of a second ago,
+    // it's probably because the user clicked on the klipper icon
+    // to hide it, and therefore won't want it shown again.
+    if ( menuTimer->elapsed() > 300 )
+        showPopupMenu( m_popup );
 }
 
 void KlipperWidget::paintEvent(QPaintEvent *)
@@ -248,6 +256,10 @@ void KlipperWidget::clickedMenu(int id)
     }
 }
 
+void KlipperWidget::slotAboutToHideMenu()
+{
+    menuTimer->start();
+}
 
 void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 {
@@ -261,8 +273,8 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
         else
             menu->popup(QPoint(g.x(), g.y()));
     } else {
-        KWin::Info i = KWin::info( winId() );
-        QRect g = i.geometry;
+        KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
+        QRect g = i.geometry();
 	QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
         if ( g.x()-screen.x() > screen.width()/2 &&
