@@ -242,7 +242,7 @@
                                 <cstring>m_manual</cstring>
                             </property>
                             <property name="text">
-                                <string>Manual Hide Only</string>
+                                <string>Manual hide only</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -253,7 +253,7 @@
                                 <cstring>m_automatic</cstring>
                             </property>
                             <property name="text">
-                                <string>Automatic Hide</string>
+                                <string>Automatic hide</string>
                             </property>
                         </widget>
                         <widget class="QRadioButton">
@@ -261,7 +261,7 @@
                                 <cstring>m_background</cstring>
                             </property>
                             <property name="text">
-                                <string>Into Background</string>
+                                <string>Into background</string>
                             </property>
                         </widget>
                     </hbox>
@@ -310,7 +310,7 @@
                                 <cstring>m_buttonSizeLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>Button Size:</string>
+                                <string>Button size:</string>
                             </property>
                         </widget>
                         <widget class="QLayoutWidget" row="1" column="1" rowspan="1" colspan="2">
@@ -529,7 +529,7 @@
                                 <cstring>m_left</cstring>
                             </property>
                             <property name="text">
-                                <string>Left Edge</string>
+                                <string>Left edge</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>7</number>
@@ -540,7 +540,7 @@
                                 <cstring>m_bottomRight</cstring>
                             </property>
                             <property name="text">
-                                <string>Bottom Right Corner</string>
+                                <string>Bottom right corner</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>4</number>
@@ -551,7 +551,7 @@
                                 <cstring>m_bottom</cstring>
                             </property>
                             <property name="text">
-                                <string>Bottom Edge</string>
+                                <string>Bottom edge</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>5</number>
@@ -562,7 +562,7 @@
                                 <cstring>m_right</cstring>
                             </property>
                             <property name="text">
-                                <string>Right Edge</string>
+                                <string>Right edge</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>3</number>
@@ -573,7 +573,7 @@
                                 <cstring>m_topLeft</cstring>
                             </property>
                             <property name="text">
-                                <string>Top Left Corner</string>
+                                <string>Top left corner</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>8</number>
@@ -584,7 +584,7 @@
                                 <cstring>m_bottomLeft</cstring>
                             </property>
                             <property name="text">
-                                <string>Bottom Left Corner</string>
+                                <string>Bottom left corner</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -598,7 +598,7 @@
                                 <cstring>m_top</cstring>
                             </property>
                             <property name="text">
-                                <string>Top Edge</string>
+                                <string>Top edge</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>1</number>
@@ -609,7 +609,7 @@
                                 <cstring>m_topRight</cstring>
                             </property>
                             <property name="text">
-                                <string>Top Right Corner</string>
+                                <string>Top right corner</string>
                             </property>
                             <property name="buttonGroupId">
                                 <number>2</number>
