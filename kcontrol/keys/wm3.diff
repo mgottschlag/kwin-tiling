@@ -1,0 +1,14 @@
+Index: Makefile.am
+===================================================================
+RCS file: /home/kde/kdebase/kcontrol/keys/Makefile.am,v
+retrieving revision 1.39
+diff -u -p -B -w -r1.39 Makefile.am
+--- Makefile.am	15 Sep 2002 19:54:44 -0000	1.39
++++ Makefile.am	22 Mar 2003 20:24:17 -0000
+@@ -18,5 +18,5 @@ updatedir = $(kde_datadir)/kconf_update
+ data_DATA = keys.desktop
+ datadir = $(kde_appsdir)/Settings/Accessibility
+ 
+-scheme_DATA = kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc
++scheme_DATA = wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc
+ schemedir = $(kde_datadir)/kcmkeys
