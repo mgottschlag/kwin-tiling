@@ -470,7 +470,7 @@ void KColorScheme::slotAdd()
 
        KSimpleConfig *config = new KSimpleConfig(sFile);
        config->setGroup( "Color Scheme");
-       config->writeEntry("name", sName);
+       config->writeEntry("Name", sName);
        delete config;
     }
     slotSave();
@@ -683,9 +683,12 @@ void KColorScheme::readSchemeNames()
     for (it = list.begin(); it != list.end(); it++) {
     KSimpleConfig *config = new KSimpleConfig(*it, true);
     config->setGroup("Color Scheme");
-    QString str = config->readEntry("name");
-    if (str.isEmpty())
-        continue;
+    QString str = config->readEntry("Name");
+    if (str.isEmpty()) {
+       str =  config->readEntry("name");  
+       if (str.isEmpty())
+          continue;
+    }
     sList->insertItem(str);
     sFileList.append(*it);
     nSysSchemes++;
