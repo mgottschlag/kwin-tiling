@@ -56,6 +56,9 @@ from The Open Group.
 extern int errno;
 #  endif
 # endif
+# ifdef HAVE_CRYPT_H
+#  include <crypt.h>
+# endif
 #endif
 
 # include	"greet.h"
@@ -443,7 +446,7 @@ done:
 
 
 int
-VerifyRoot( const char* pw)
+VerifyRoot( const char *pw)
 {
 #define superuser "root"
 #ifndef USE_PAM
@@ -481,7 +484,7 @@ VerifyRoot( const char* pw)
 		pam_end(pamh, 0); \
 		return 0; \
 	    }
-	PAM_password = pw;
+	PAM_password = (char *)pw;
 	pam_error = pam_start(KDE_PAM, superuser, &PAM_conversation, &pamh);
 	PAM_BAIL;
 	pam_error = pam_authenticate( pamh, 0);

@@ -181,23 +181,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
     // Passwd line edit
     if( mode == KDMConfig::SdRootOnly) {
 	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
-	/*
-	  pswdEdit = new QLineEdit( winFrame);
-	  //set_min( pswdEdit);
-	  pswdEdit->setMinimumHeight( pswdEdit->sizeHint().height());
-	  pswdEdit->setEchoMode( QLineEdit::NoEcho);
-	  QColorGroup passwdColGroup(
-	       QApplication::palette()->normal().foreground(),
-	       QApplication::palette()->normal().background(),
-	       QApplication::palette()->normal().light(),
-	       QApplication::palette()->normal().dark(),
-	       QApplication::palette()->normal().mid(),
-	       QApplication::palette()->normal().base(),
-	       QApplication::palette()->normal().base());
-	  QPalette passwdPalette( passwdColGroup, passwdColGroup, 
-				  passwdColGroup);
-	  pswdEdit->setPalette( passwdPalette);
-	*/
 	pswdEdit->setFocusPolicy( StrongFocus);
 	pswdEdit->setFocus();
 	h+= pswdEdit->height() + 10;
@@ -259,9 +242,7 @@ void
 KDMShutdown::bye_bye()
 {
      // usernames and passwords are stored in the same format as files
-    if( !pswdEdit || 
-	VerifyRoot( QFile::encodeName( pswdEdit->text() ).data() ) 
-    ) {
+    if( !pswdEdit || VerifyRoot( pswdEdit->password() ) ) {
 	QApplication::flushX();
 	if( fork() == 0) {
 
@@ -280,7 +261,7 @@ KDMShutdown::bye_bye()
 	    QApplication::exit( UNMANAGE_DISPLAY);
 	}
     } else {
-	pswdEdit->clear();
+	pswdEdit->erase();
 	pswdEdit->setFocus();
 	// should show some message ...
     }

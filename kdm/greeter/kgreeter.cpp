@@ -86,13 +86,13 @@ extern "C" {
  */
 int	(*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
 void	(*__xdm_SessionPingFailed)(struct display *d) = NULL;
-void	(*__xdm_Debug)(char *fmt, ...) = NULL;
+void	(*__xdm_Debug)(const char *fmt, ...) = NULL;
 void	(*__xdm_RegisterCloseOnFork)(int fd) = NULL;
 void	(*__xdm_SecureDisplay)(struct display *d, Display *dpy) = NULL;
 void	(*__xdm_UnsecureDisplay)(struct display *d, Display *dpy) = NULL;
 void	(*__xdm_ClearCloseOnFork)(int fd) = NULL;
 void	(*__xdm_SetupDisplay)(struct display *d) = NULL;
-void	(*__xdm_LogError)(char *fmt, ...) = NULL;
+void	(*__xdm_LogError)(const char *fmt, ...) = NULL;
 void	(*__xdm_SessionExit)(struct display *d, int status, int removeAuth) = NULL;
 void	(*__xdm_DeleteXloginResources)(struct display *d, Display *dpy) = NULL;
 int	(*__xdm_source)(char **environ, char *file) = NULL;
@@ -102,7 +102,7 @@ char	**(*__xdm_putEnv)(const char *string, char **env) = NULL;
 char	**(*__xdm_parseArgs)(char **argv, char *string) = NULL;
 void	(*__xdm_printEnv)(char **e) = NULL;
 char	**(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
-void	(*__xdm_LogOutOfMem)(char *fmt, ...) = NULL;
+void	(*__xdm_LogOutOfMem)(const char *fmt, ...) = NULL;
 SETGRENT_TYPE	(*__xdm_setgrent)(void) = NULL;
 struct group	*(*__xdm_getgrent)(void) = NULL;
 void	(*__xdm_endgrent)(void) = NULL;
@@ -330,9 +330,9 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
     vbox->addLayout( hbox1);
     vbox->addLayout( hbox2);
+    hbox1->addLayout( grid, 3);
     hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, 
 		      AlignTop);
-    hbox1->addLayout( grid, 3);
 
     QFrame* sepFrame = new QFrame( this);
     sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
@@ -778,11 +778,13 @@ nolog_succ:
 #endif
     return false;
     
+#if defined(USE_LOGIN_CAP) || !defined(USE_PAM) || defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
 fail:
-#ifdef USE_LOGIN_CAP
+# ifdef USE_LOGIN_CAP
     login_close(lc);
-#endif
+# endif
     return true;
+#endif
 }
 
 
@@ -955,7 +957,7 @@ AutoLogon (
 	    strncpy(name, kdmcfg->_autoUser.latin1(), F_LEN - 1);
 	    greet->password = 0;
 	    if (!rdwr_wm (sessarg, F_LEN, name, 1))
-		greet->string = "default";
+		greet->string = (char *)"default";
 	} else	// no autologin
 	    return 0;
     }
@@ -972,7 +974,11 @@ GreetUser(
     Display		**dpy2,
     struct verify_info	*verify2,
     struct greet_info	*greet2,
-    struct dlfuncs	*dlfuncs)
+    struct dlfuncs	*
+#ifdef GREET_LIB
+			 dlfuncs
+#endif
+	 )
 {
 #ifdef GREET_LIB
 /*

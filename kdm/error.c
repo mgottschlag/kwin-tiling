@@ -48,7 +48,7 @@ from The Open Group.
 
 /*VARARGS1*/
 void 
-LogInfo(char * fmt, ...)
+LogInfo(const char *fmt, ...)
 {
 #  ifndef USE_SYSLOG
     char fmt1[256];
@@ -69,7 +69,7 @@ LogInfo(char * fmt, ...)
 
 /*VARARGS1*/
 void
-LogError (char * fmt, ...)
+LogError (const char *fmt, ...)
 {
 #  ifndef USE_SYSLOG
     char fmt1[256];
@@ -90,7 +90,7 @@ LogError (char * fmt, ...)
 
 /*VARARGS1*/
 void
-LogPanic (char * fmt, ...)
+LogPanic (const char *fmt, ...)
 {
 #  ifndef USE_SYSLOG
     char fmt1[256];
@@ -112,7 +112,7 @@ LogPanic (char * fmt, ...)
 
 /*VARARGS1*/
 void
-LogOutOfMem (char * fmt, ...)
+LogOutOfMem (const char *fmt, ...)
 {
     char fmt1[256];
     va_list args;
@@ -131,7 +131,7 @@ LogOutOfMem (char * fmt, ...)
 }
 
 void
-Panic (char *mesg)
+Panic (const char *mesg)
 {
 #ifdef USE_SYSLOG
     openlog("kdm", LOG_PID, LOG_DAEMON);
@@ -149,7 +149,7 @@ Panic (char *mesg)
 
 /*VARARGS1*/
 void
-Debug (char * fmt, ...)
+Debug (const char *fmt, ...)
 {
 #  ifndef USE_SYSLOG
     char fmt1[256];

@@ -42,35 +42,35 @@ in this Software without prior written authorization from The Open Group.
 #include "dm_socket.h"
 
 #ifndef MINIX
-#ifndef X_NO_SYS_UN
-#ifndef Lynx
-#include <sys/un.h>
-#else
-#include <un.h>
-#endif
-#endif
+# ifndef X_NO_SYS_UN
+#  ifndef Lynx
+#   include <sys/un.h>
+#  else
+#   include <un.h>
+#  endif
+# endif
 #else /* MINIX */
-#include <sys/ioctl.h>
-#include <net/netlib.h>
-#include <net/gen/in.h>
-#include <net/gen/tcp.h>
-#include <net/gen/tcp_io.h>
+# include <sys/ioctl.h>
+# include <net/netlib.h>
+# include <net/gen/in.h>
+# include <net/gen/tcp.h>
+# include <net/gen/tcp_io.h>
 #endif /* !MINIX */
 
 #include <ctype.h>
 #include <errno.h>
 
 #if defined(STREAMSCONN)
-# include       <tiuser.h>
+# include <tiuser.h>
 #endif
 
 #ifdef X_NOT_STDC_ENV
 extern int errno;
-#define Time_t long
+# define Time_t long
 extern Time_t time ();
 #else
-#include <time.h>
-#define Time_t time_t
+# include <time.h>
+# define Time_t time_t
 #endif
 
 #ifdef MINIX
@@ -542,7 +542,7 @@ ProcessChooserSocket (int fd)
     Debug ("Accepted %d\n", client_fd);
     
 #if defined(STREAMSCONN)
-    len = t_rcv (client_fd, buf, sizeof (buf),&flags);
+    len = t_rcv (client_fd, buf, sizeof (buf), &flags);
 #else
     len = read (client_fd, buf, sizeof (buf));
 #endif

@@ -525,7 +525,7 @@ ManageSession (struct display *d)
     if (dpy)
 	XCloseDisplay (dpy);
     else
-	sleep (1);
+	sleep (10);
 
     SessionExit (d, OBEYSESS_DISPLAY, TRUE);
 }

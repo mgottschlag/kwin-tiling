@@ -62,13 +62,13 @@ extern "C" {
 struct dlfuncs {
     int (*_PingServer)(struct display *d, Display *alternateDpy);
     void (*_SessionPingFailed)(struct display *d);
-    void (*_Debug)(char * fmt, ...);
+    void (*_Debug)(const char *fmt, ...);
     void (*_RegisterCloseOnFork)(int fd);
     void (*_SecureDisplay)(struct display *d, Display *dpy);
     void (*_UnsecureDisplay)(struct display *d, Display *dpy);
     void (*_ClearCloseOnFork)(int fd);
     void (*_SetupDisplay)(struct display *d);
-    void (*_LogError)(char * fmt, ...);
+    void (*_LogError)(const char *fmt, ...);
     void (*_SessionExit)(struct display *d, int status, int removeAuth);
     void (*_DeleteXloginResources)(struct display *d, Display *dpy);
     int (*_source)(char **environ, char *file);
@@ -78,7 +78,7 @@ struct dlfuncs {
     char **(*_parseArgs)(char **argv, char *string);
     void (*_printEnv)(char **e);
     char **(*_systemEnv)(struct display *d, char *user, char *home);
-    void (*_LogOutOfMem)(char * fmt, ...);
+    void (*_LogOutOfMem)(const char *fmt, ...);
     SETGRENT_TYPE (*_setgrent)(void);	/* no longer used */
     struct group *(*_getgrent)(void);	/* no longer used */
     void (*_endgrent)(void);		/* no longer used */
@@ -159,13 +159,13 @@ typedef greet_user_rtn (*GreetUserProc)(
 
 extern	int     (*__xdm_PingServer)(struct display *d, Display *alternateDpy);
 extern	void    (*__xdm_SessionPingFailed)(struct display *d);
-extern	void    (*__xdm_Debug)(char * fmt, ...);
+extern	void    (*__xdm_Debug)(const char *fmt, ...);
 extern	void    (*__xdm_RegisterCloseOnFork)(int fd);
 extern	void    (*__xdm_SecureDisplay)(struct display *d, Display *dpy);
 extern	void    (*__xdm_UnsecureDisplay)(struct display *d, Display *dpy);
 extern	void    (*__xdm_ClearCloseOnFork)(int fd);
 extern	void    (*__xdm_SetupDisplay)(struct display *d);
-extern	void    (*__xdm_LogError)(char * fmt, ...);
+extern	void    (*__xdm_LogError)(const char *fmt, ...);
 extern	void    (*__xdm_SessionExit)(struct display *d, int status, int removeAuth);
 extern	void    (*__xdm_DeleteXloginResources)(struct display *d, Display *dpy);
 extern	int     (*__xdm_source)(char **environ, char *file);
@@ -175,7 +175,7 @@ extern	char    **(*__xdm_putEnv)(const char *string, char **env);
 extern	char    **(*__xdm_parseArgs)(char **argv, char *string);
 extern	void    (*__xdm_printEnv)(char **e);
 extern	char    **(*__xdm_systemEnv)(struct display *d, char *user, char *home);
-extern	void    (*__xdm_LogOutOfMem)(char * fmt, ...);
+extern	void    (*__xdm_LogOutOfMem)(const char *fmt, ...);
 extern	SETGRENT_TYPE (*__xdm_setgrent)(void);
 extern	struct group    *(*__xdm_getgrent)(void);
 extern	void    (*__xdm_endgrent)(void);

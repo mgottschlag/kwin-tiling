@@ -53,13 +53,13 @@ authorization.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern void Debug        (char * fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void Debug        (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
 extern void InitErrorLog (void);
-extern void LogError     (char * fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void LogInfo      (char * fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void LogOutOfMem  (char * fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void LogPanic     (char * fmt, ...) GCC_PRINTFLIKE(1,2);
-extern void Panic        (char * mesg);
+extern void LogError     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void LogInfo      (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void LogOutOfMem  (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void LogPanic     (const char *fmt, ...) GCC_PRINTFLIKE(1,2);
+extern void Panic        (const char *mesg);
 #ifdef __cplusplus
 }
 #endif

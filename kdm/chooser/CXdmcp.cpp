@@ -116,32 +116,33 @@ extern "C" {
 #define offset(field) XtOffsetOf(struct _app_resources, field)
 
 static XtResource  resources[] = {
-  {const_cast<char*>("xdmAddress"),	
-   const_cast<char*>("XdmAddress"),  
-   XtRARRAY8,	sizeof (ARRAY8Ptr),
-   offset (xdmAddress),	    XtRString,	NULL },
-  
-  {const_cast<char*>("clientAddress"),	
-   const_cast<char*>("ClientAddress"),  
-   XtRARRAY8,	sizeof (ARRAY8Ptr),
-   offset (clientAddress),	    XtRString,	NULL },
-  {const_cast<char*>("connectionType"),	
-   const_cast<char*>("ConnectionType"),   
+  {const_cast<char*>("xdmAddress"),
+   const_cast<char*>("XdmAddress"),
+   const_cast<char*>(XtRARRAY8),	sizeof (ARRAY8Ptr),
+   offset (xdmAddress),		XtRString,	NULL },
+
+  {const_cast<char*>("clientAddress"),
+   const_cast<char*>("ClientAddress"),
+   const_cast<char*>(XtRARRAY8),	sizeof (ARRAY8Ptr),
+   offset (clientAddress),	XtRString,	NULL },
+
+  {const_cast<char*>("connectionType"),
+   const_cast<char*>("ConnectionType"),
    XtRInt,	sizeof (int),
-   offset (connectionType),    XtRImmediate,	(XtPointer) 0 }
+   offset (connectionType),	XtRImmediate,	(XtPointer) 0 }
 };
 
 #undef offset
 
 static XrmOptionDescRec options[] = {
-  { const_cast<char*>("-xdmaddress"),  
-      const_cast<char*>("*xdmAddress"),	    
+  { const_cast<char*>("-xdmaddress"),
+      const_cast<char*>("*xdmAddress"),
       XrmoptionSepArg,	NULL },
-  { const_cast<char*>("-clientaddress"),  
-      const_cast<char*>("*clientAddress"),   
+  { const_cast<char*>("-clientaddress"),
+      const_cast<char*>("*clientAddress"),
       XrmoptionSepArg,	NULL },
   { const_cast<char*>("-connectionType"),
-      const_cast<char*>("*connectionType"),  
+      const_cast<char*>("*connectionType"),
       XrmoptionSepArg,	NULL },
 };
 
@@ -679,7 +680,7 @@ CXdmcp::registerHostname (const char *name)
 	in_addr.sin_family = AF_INET;
     }
     /* Per RFC 1123, check first for IP address in dotted-decimal form */
-    else if ((in_addr.sin_addr.s_addr = inet_addr(name)) != -1)
+    else if ((in_addr.sin_addr.s_addr = inet_addr(name)) != (unsigned)-1)
       in_addr.sin_family = AF_INET;
     else {
       hostent = gethostbyname (name);
