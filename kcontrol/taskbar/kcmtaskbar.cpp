@@ -187,6 +187,7 @@ void TaskbarConfig::defaults()
     ui->showListBtnCheck->setChecked(true);
     ui->groupCheck->setChecked(true);
     ui->sortCheck->setChecked(true);
+    ui->iconCheck->setChecked(true);
     ui->leftButtonComboBox->setCurrentItem( buttonAction( LeftButton ) );
     ui->middleButtonComboBox->setCurrentItem( buttonAction( MidButton ) );
     ui->rightButtonComboBox->setCurrentItem( buttonAction( RightButton ) );
@@ -204,13 +205,13 @@ QString TaskbarConfig::quickHelp() const
 
 const KAboutData* TaskbarConfig::aboutData() const
 {
- 
+
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmtaskbar"), I18N_NOOP("KDE Taskbar Control Module"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 2000 - 2001 Matthias Elter"));
- 
+
     about->addAuthor("Matthias Elter", 0, "elter@kde.org");
- 
+
     return about;
 }
