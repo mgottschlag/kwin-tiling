@@ -4,6 +4,8 @@
 #include <qpushbt.h>
 #include <qframe.h>
 
+#include <kmessagebox.h>
+
 #include "classAbout.h"
 #include "classAbout.moc"
 
@@ -239,7 +241,7 @@ void classAbout::pbODBC_Clicked()
     qsMsg += "It is a simple text file but is configured using the ODBCConfig tool.\n";
     qsMsg += "The User data sources are typically stored in ~/.odbc.ini while the\n";
     qsMsg += "System data sources are stored in /etc/odbc.ini\n";
-    QMessageBox::information( this, "ODBC Config - odbc.ini", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbODBCConfig_Clicked()
@@ -248,7 +250,7 @@ void classAbout::pbODBCConfig_Clicked()
 
     qsMsg = "This is the program you are using now. This\n";
     qsMsg += "program allows the user to easily configure ODBC.\n";
-    QMessageBox::information( this, "ODBC Config", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbDatabase_Clicked()
@@ -270,7 +272,7 @@ void classAbout::pbDatabase_Clicked()
     qsMsg += "remote machine. It may also store its information in a variety of\n";
     qsMsg += "ways. This does not matter to an ODBC application because the Driver\n";
     qsMsg += "Manager and the Driver provides a consistent interface to the Database System.\n";
-    QMessageBox::information( this, "ODBC Config - Database System", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbDriverManager_Clicked()
@@ -285,7 +287,7 @@ void classAbout::pbDriverManager_Clicked()
     qsMsg += "in the Driver Manager (or via odbcinst lib).\n";
     qsMsg += "\n";
     qsMsg += "The DriverManager is the hub of ODBC activity... a traffic cop.\n";
-    QMessageBox::information( this, "ODBC Config - Driver Manager", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbDriver_Clicked()
@@ -304,7 +306,7 @@ void classAbout::pbDriver_Clicked()
     qsMsg += "from the Database vendor.\n";
     qsMsg += "\n";
     qsMsg += "Check http://www.unixodbc.org for drivers\n";
-    QMessageBox::information( this, "ODBC Config - Drivers", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbODBCDrivers_Clicked()
@@ -318,7 +320,7 @@ void classAbout::pbODBCDrivers_Clicked()
     qsMsg += "An entry should be made when an ODBC driver is installed\n";
     qsMsg += "and removed when the driver is uninstalled. This\n";
     qsMsg += "can be done using ODBCConfig or the odbcinst command tool.\n";
-    QMessageBox::information( this, "ODBC Config - odbcinst.ini", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbCredits_Clicked()
@@ -339,7 +341,7 @@ void classAbout::pbCredits_Clicked()
     qsMsg += "\n";
     qsMsg += "Thanks to folks like Lars Doelle for helping out.\n";
 
-    QMessageBox::information( this, "ODBC Config - Credits", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 void classAbout::pbApplication_Clicked()
@@ -357,7 +359,7 @@ void classAbout::pbApplication_Clicked()
     qsMsg += "System. This allows the user to choose a different Database\n";
     qsMsg += "System using the ODBCConfig tool.\n";
 
-    QMessageBox::information( this, "ODBC Config - Application", qsMsg );
+    KMessageBox::information( this, qsMsg );
 }
 
 

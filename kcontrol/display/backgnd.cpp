@@ -25,7 +25,6 @@
 #include <qstring.h>
 #include <qpainter.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 #include <qfileinfo.h>
 
 #include <kfiledialog.h>
@@ -36,6 +35,7 @@
 #include <kbuttonbox.h>
 #include <kpixmapeffect.h>
 #include <kimgio.h>
+#include <kmessagebox.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -1245,9 +1245,7 @@ bool KBackground::setNew( QString pic, int item )
       currentItem.bUseWallpaper = true;
     }
   else {
-    QMessageBox::warning(this, i18n("File error"),
-			 i18n("Can't load image file"),
-			i18n("OK") );
+    KMessageBox::sorry(this, i18n("Can't load this image file"));
     return false;
   }
 
@@ -1715,10 +1713,8 @@ void KRandomDlg::dropEvent(QDropEvent *e)
     uri.prepend('/');
     addToPicList(uri);
   } else {
-    QMessageBox::warning(this, i18n("Unsupported URL"),
-			 i18n("Sorry, this type of URL is currently unsupported"
-			      " by the KDE Display Module"),
-			 i18n("&OK"));
+      KMessageBox::sorry(this, i18n("Sorry, this type of URL is currently unsupported"
+                                    " by the KDE Display Module"));
   }
 }
 
@@ -1815,9 +1811,7 @@ void KRandomDlg::done( int r )
 
   QDir d( dirLined->text() );
   if ( !d.exists() ) {
-    QMessageBox::warning(this, i18n("Directory error"),
-			 i18n("Selected directory doesn't exists"),
-			i18n("OK") );
+    KMessageBox::sorry(this, i18n("Selected directory doesn't exists"));
     return;
   }
 

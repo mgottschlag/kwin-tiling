@@ -20,69 +20,6 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 
-    $Log$
-    Revision 1.20  1999/07/13 23:50:39  pbrown
-    main sound widget should not accept drops.
-
-    Revision 1.19  1999/07/13 23:49:50  pbrown
-    KDND is dead, long live Xdnd.
-
-    Revision 1.18  1999/07/02 15:08:41  bieker
-    Added missing i18n("OK")s + removed some QMessageBox::message()s.
-
-    Revision 1.17  1999/06/26 00:01:56  bieker
-    Made it compile with QT_NO_ASCII_CAST...
-
-    Some day someone should grep for lines with both ascii() and i18n() -- I
-    dint't fix it all.
-
-    Revision 1.16  1999/06/18 16:49:13  kulow
-    adoting to new KConfig API
-
-    Revision 1.15  1999/06/15 10:07:48  kulow
-    fixes for --enable-final (had to change some defines in konqy to avoid clashes with
-    enums)
-    fixes for -Wwrite-strings (bsod.cpp turned out to be a beast in writing to results
-    of readEntry...)
-    fixes some other warnings
-
-    -enable-final goes through kdebase now - just my virtual memory isn't enough
-    for konqueror ;(
-
-    Revision 1.14  1999/05/23 21:26:08  kulow
-    more changes
-
-    Revision 1.13  1999/05/23 20:48:55  kulow
-    some more fixes
-
-    Revision 1.12  1999/05/16 08:58:33  bieker
-    sprintf -> arg
-
-    Revision 1.11  1999/04/19 15:53:34  kulow
-    CVS_SILENT header fixes
-
-    Revision 1.10  1999/04/16 11:19:24  kulow
-    fixes
-
-    Revision 1.9  1999/03/12 18:40:56  dfaure
-    Squashed more ksprintf and did some more Qt2.0 porting
-
-    Revision 1.8  1999/03/02 15:54:56  kulow
-    CVS_SILENT replacing klocale->translate with i18n
-
-    Revision 1.7  1999/03/01 23:24:11  kulow
-    CVS_SILENT ported to Qt 2.0
-
-    Revision 1.6.4.1  1999/02/22 22:19:42  kulow
-    CVS_SILENT replaced old qt header names with new ones
-
-    Revision 1.6  1998/04/17 22:08:08  kulow
-    fixed typo
-
-    Revision 1.5  1998/03/08 08:01:32  wuebben
-    Bernd: implemented support for all sound events
-
-
 */  
 
 
@@ -95,7 +32,6 @@
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qdir.h>
-#include <qmessagebox.h>
 #include <qdragobject.h>
 
 #include <klocale.h>
@@ -104,6 +40,7 @@
 #include <kstddirs.h>
 #include <kapp.h>
 #include <kwm.h>
+#include <kmessagebox.h>
 
 #include "syssound.h"
 #include "syssound.moc"
@@ -506,9 +443,7 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
 			 "to be a WAV--file.").arg(fname);
 
-	QMessageBox::warning(this, 
-			     i18n("Improper File Extension"), 
-			     msg, i18n("OK"));
+        KMessageBox::sorry(this, msg);
 
       } else {
 
@@ -520,20 +455,17 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
 		           "%1\n"
 			   "is already in the list").arg(fname);
 
-	  QMessageBox::warning(this, 
-			       i18n("File Already in List"), 
-			       msg, i18n("OK"));
+	  KMessageBox::information(this, msg);
 	  
 	}
       }
     }
   } else {
     // non-local file present
-    QMessageBox::warning(this, i18n("Non-local File Dropped"),
-			 i18n("At least one file that was dropped "
-			      "was not a local file.  You may only "
-			      "add local files."),
-			 i18n("&OK"));
+    KMessageBox::sorry(this, 
+                       i18n("At least one file that was dropped "
+                            "was not a local file.  You may only "
+                            "add local files."));
   }
 }
 

@@ -30,7 +30,6 @@
 #include <qpixmap.h>
 #include <qbitmap.h>
 #include <qpainter.h>
-#include <qmessagebox.h>
 #include <qwindowdefs.h>
 
 #include <string.h>
@@ -40,6 +39,7 @@
 #include <unistd.h>
 
 #include <kconfigbackend.h>
+#include <kmessagebox.h>
 #include <kwm.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -692,13 +692,11 @@ void Theme::doCmdList(void)
       appName = cmd.mid(7,256).stripWhiteSpace();
       str.sprintf(i18n("Restart %s to activate the new settings?").ascii(),
 		  appName.ascii());
-      if (!QMessageBox::information(0,i18n("Theme Setup - Restart Application"), str,
-				   i18n("&Yes"), i18n("&No")))
-	{
-	  str.sprintf(mRestartCmd.ascii(), appName.ascii(), 
-		      appName.ascii());
-	  system(str.ascii());
-	}
+      if (KMessageBox::questionYesNo(0, str) == KMessageBox::Yes) {
+          str.sprintf(mRestartCmd.ascii(), appName.ascii(), 
+                      appName.ascii());
+          system(str.ascii());
+      }
     }
   }
 

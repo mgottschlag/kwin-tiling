@@ -3,6 +3,8 @@
 #include <qlabel.h>
 #include <qpushbt.h>
 
+#include <kmessagebox.h>
+
 #include "classDriverPrompt.h"
 #include "classDriverPrompt.moc"
 
@@ -106,12 +108,12 @@ void classDriverPrompt::pbOk_Clicked()
 		qsDriver		= pListViewItem->text( 2 );
 		qsSetup			= pListViewItem->text( 3 );
 		if ( qsDriverName == "" )
-			QMessageBox::information(	this, "ODBC Config",  "Please select a listing which contains a Driver file name" );
+			KMessageBox::information(this, "Please select a listing which contains a Driver file name" );
 		else
 			accept();
 	}
 	else
-		QMessageBox::information(	this, "ODBC Config",  "Please select a Driver from the list or click Cancel" );
+		KMessageBox::information(this, "Please select a Driver from the list or click Cancel" );
 }
 
 

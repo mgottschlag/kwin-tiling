@@ -22,7 +22,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <qdir.h>
-#include <qmessagebox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
@@ -31,6 +30,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstddirs.h>
+#include <kmessagebox.h>
 #include <ksimpleconfig.h>
 
 #include "locale.h"
@@ -242,11 +242,10 @@ void KLocaleConfig::applySettings()
   config->sync();
 
   if (changedFlag)
-    QMessageBox::information(this,i18n("Applying language settings"),
+    KMessageBox::information(this,
 			     i18n("Changed language settings apply only to newly started "
-				  "applications.\nTo change the language of all "
-				  "programs, you will have to logout first."),
-                             i18n("OK"));
+                      "applications.\nTo change the language of all "
+                      "programs, you will have to logout first."));
 
   changedFlag = FALSE;
 }

@@ -21,18 +21,18 @@
 
 #include "utils.h"
 
-#include <qmessagebox.h>
-
 #include "kdm-appear.h"
 #include "kdm-font.h"
 #include "kdm-bgnd.h"
 #include "kdm-users.h"
 #include "kdm-sess.h"
 #include "kdm-lilo.h"
+
 #include <kwm.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kmessagebox.h>
 
 class KDMConfigApplication : public KControlApplication
 {
@@ -143,24 +143,22 @@ int main(int argc, char **argv)
       
       QString file = locate("config", "kdmrc");
       if (file == KGlobal::dirs()->getSaveLocation("config") + "kdmrc") {
-	  QString msg = i18n("You have a local config file %1  - \n"
-			     "I will save your changes into this file.\n"
-			     "If this isn't your intention, remove it please!").arg(file);
-	  QMessageBox::warning( 0, i18n("KDM Setup - Wrong filename"), msg,
-				i18n("&Ok"));
+          QString msg = i18n("You have a local config file %1  - \n"
+                             "I will save your changes into this file.\n"
+                             "If this isn't your intention, remove it please!").arg(file);
+          KMessageBox::sorry( 0, msg);
       }
       QFileInfo fi(file);
       if(fi.isReadable() && fi.isWritable())
-	  return app.exec();
+          return app.exec();
       else {
-	  QString msg = i18n("Sorry, but you don't have read/write\n"
-			     "permission to the KDM setup file %1.").arg(file);
-	  QMessageBox::warning( 0, i18n("KDM Setup - Missing privileges"), msg,
-				i18n("&Ok"));
+          QString msg = i18n("Sorry, but you don't have read/write\n"
+                             "permission to the KDM setup file %1.").arg(file);
+          KMessageBox::sorry( 0, msg);
       }
   }
   else
-    {
+  {
 //      app.init();
       return 0;
     }

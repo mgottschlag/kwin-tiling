@@ -18,7 +18,6 @@
 */  
 
 
-#include <qmessagebox.h>
 #include <qdragobject.h>
 
 #include "utils.h"
@@ -26,6 +25,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <klined.h>
+#include <kmessagebox.h>
 #include <kstddirs.h>
 
 #include "kdm-appear.moc"
@@ -175,8 +175,7 @@ void KDMAppearanceWidget::slotLogoPixTextChanged()
     msg  = i18n("There was an error loading the image:\n>");
     msg += pix;
     msg += i18n("<");
-    QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
-			 i18n("&Ok"));
+    KMessageBox::sorry(this, msg);
   }
 }
 
@@ -195,7 +194,7 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
     msg  = i18n("There was an error saving the image:\n>");
     msg += pix;
     msg += i18n("<");
-    QMessageBox::warning(this, i18n("KDM Setup - Error"), msg, i18n("&Ok"));
+    KMessageBox::sorry(this, msg);
   }
   else
     logo_lined->setText(pix);
@@ -256,8 +255,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 		  "%2")
 	.arg(filename)
 	.arg(ext);
-      QMessageBox::warning( this, i18n("KDM Setup - Improper File Extension"), msg,
-			    i18n("&Ok"));
+      KMessageBox::sorry( this, msg);
     } else {
       // we gotta check if it is a non-local file and make a tmp copy at the hd.
       if(url.protocol() != "file") {
@@ -276,11 +274,10 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	logopath = url.path();
 	logo_lined->setText(logopath);
       } else {
-	msg  = i18n("There was an error loading the image:\n>");
-	msg += url.path();
-	msg += i18n("<\nIt will not be saved...");
-	QMessageBox::warning(this, i18n("KDM Setup - Error"), msg,
-			     i18n("&Ok"));
+        msg  = i18n("There was an error loading the image:\n>");
+        msg += url.path();
+        msg += i18n("<\nIt will not be saved...");
+        KMessageBox::sorry(this, msg);
       }
     }
   }

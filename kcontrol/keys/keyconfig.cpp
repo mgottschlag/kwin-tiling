@@ -21,7 +21,6 @@
 #include <qcheckbox.h>
 #include <qpainter.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -31,6 +30,7 @@
 #include <kiconloader.h>
 #include <ksimpleconfig.h>
 #include <kbuttonbox.h>
+#include <kmessagebox.h>
 
 #include <X11/Xlib.h>
 
@@ -208,11 +208,10 @@ void KKeyConfig::slotRemove()
 	uint ind = sList->currentItem();
 	
 	if ( !d.remove( *sFileList->at( ind ) ) ) {
-		QMessageBox::critical( 0, i18n("Error removing scheme"),
-		      i18n("This key scheme could not be removed.\n"
-			   "Perhaps you do not have permission to alter the file\n"
-			   "system where the key scheme is stored." ),
-		      i18n("OK") );
+		KMessageBox::sorry( 0, 
+                            i18n("This key scheme could not be removed.\n"
+                                 "Perhaps you do not have permission to alter the file\n"
+                                 "system where the key scheme is stored." ));
 		return;
 	}
 	
@@ -337,11 +336,10 @@ void KKeyConfig::slotAdd()
 		for ( int i = 0; i < (int) sList->count(); i++ ) {
 			if ( sName == sList->text( i ) ) {
 				nameValid = FALSE;
-				QMessageBox::critical( 0, i18n( "Naming conflict" ),
-					i18n( "Please choose a unique name for the new key\n"\
-							"scheme. The one you entered already appears\n"\
-							"in the key scheme list." ),
-					i18n("OK") );
+				KMessageBox::error( 0, 
+                                    i18n( "Please choose a unique name for the new key\n"\
+                                          "scheme. The one you entered already appears\n"\
+                                          "in the key scheme list." ));
 			}
 		}
 	} else return;

@@ -3,6 +3,8 @@
 #include <qlabel.h>
 #include <qframe.h>
 
+#include <kmessagebox.h>
+
 #include "classDrivers.h"
 #include "classDrivers.moc"
 
@@ -216,7 +218,7 @@ void classDrivers::Add()
 			delete pProperties;
 			FreeProperties( &hFirstProperty );
 			qsError.sprintf( "Could not write to (%s). Try running this program as root when working with Drivers or System DSN's.", szINI );
-			QMessageBox::information( this, "ODBC Config",  qsError );
+			KMessageBox::information( this, "ODBC Config",  qsError );
 			return;
 		}
 
@@ -235,7 +237,7 @@ void classDrivers::Add()
 
 void classDrivers::Edit()
 {
-	QMessageBox::information(	this, "ODBC Config",  "Not implemented yet. Try the odbcinst command line tool" );
+	KMessageBox::information(	this, "ODBC Config",  "Not implemented yet. Try the odbcinst command line tool" );
 }
 
 void classDrivers::Delete()
@@ -257,7 +259,7 @@ void classDrivers::Delete()
 	}
 	else
 	{
-		QMessageBox::information( this, "ODBC Config",  "Please select a Driver from the list first" );
+		KMessageBox::information( this, "ODBC Config",  "Please select a Driver from the list first" );
 		return;
 	}
 
@@ -265,9 +267,9 @@ void classDrivers::Delete()
 	if ( SQLWritePrivateProfileString( pszName, NULL, NULL, szINI ) == FALSE )
 	{
 		qsError.sprintf( "Could not write property list for (%s)", pszName );
-		QMessageBox::information( this, "ODBC Config",  qsError );
+		KMessageBox::information( this, "ODBC Config",  qsError );
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
-			QMessageBox::information( this, "ODBC Config",  szErrorMsg );
+			KMessageBox::information( this, "ODBC Config",  szErrorMsg );
 	}
 	
 	// RELOAD (slow but safe)
@@ -325,9 +327,9 @@ void classDrivers::Load()
 	else
 	{
 		qsError.sprintf( "Could not load %s", szINI );
-		QMessageBox::information(	this, "ODBC Config",  qsError );
+		KMessageBox::information(	this, "ODBC Config",  qsError );
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
-			QMessageBox::information( this, "ODBC Config",  szErrorMsg );
+			KMessageBox::information( this, "ODBC Config",  szErrorMsg );
 	}
 	*/
 
@@ -377,7 +379,7 @@ void classDrivers::Load()
 	else
 	{
 		qsError.sprintf( "Could not open System odbc.ini file at %s", szINI );
-		QMessageBox::information(	this, "ODBC Config",  qsError );
+		KMessageBox::information(	this, qsError );
 	}
 	
 }

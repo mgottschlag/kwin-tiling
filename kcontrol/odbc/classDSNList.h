@@ -7,7 +7,6 @@
 #include <ini.h>
 #include <odbcinstext.h>
 
-#include <qmessagebox.h>
 #include <qwidget.h>
 #include <qlistview.h>
 #include <qstring.h>

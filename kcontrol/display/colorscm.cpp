@@ -15,7 +15,6 @@
 #include <qfiledialog.h>
 #include <qslider.h>
 #include <qradiobutton.h>
-#include <qmessagebox.h>
 #include <qdrawutil.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -29,6 +28,7 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <kcharsets.h>
+#include <kmessagebox.h>
 #include <ksimpleconfig.h>
 #include <kcursor.h>
 #include <kglobal.h>
@@ -291,11 +291,10 @@ void KColorScheme::slotRemove()
 	uint ind = sList->currentItem();
 
 	if ( !d.remove( sFileList->at( ind ) ) ) {
-		QMessageBox::critical( 0, i18n("Error removing"),
+		KMessageBox::error( 0, 
 		      i18n("This color scheme could not be removed.\n"
 			   "Perhaps you do not have permission to alter the file\n"
-			   "system where the color scheme is stored." ),
-		      i18n("OK") );
+               "system where the color scheme is stored." ));
 		return;
 	}
 	
@@ -350,11 +349,10 @@ void KColorScheme::slotAdd()
 		for ( int i = 0; i < (int) sList->count(); i++ ) {
 			if ( sName == sList->text( i ) ) {
 				nameValid = FALSE;
-				QMessageBox::critical( 0, i18n( "Naming error" ),
+				KMessageBox::error( 0, 
 					i18n( "Please choose a unique name for the new color\n"\
-							"scheme. The one you entered already appears\n"\
-							"in the color scheme list." ),
-					i18n("OK") );
+                          "scheme. The one you entered already appears\n"\
+                          "in the color scheme list." ));
 			}
 		}
 	} else return;

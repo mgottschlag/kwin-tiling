@@ -25,7 +25,6 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -39,6 +38,7 @@
 #include <ksimpleconfig.h>
 #include <kwm.h>
 #include <kcolordlg.h>
+#include <kmessagebox.h>
 
 #include "fonts.h"
 
@@ -126,7 +126,9 @@ void KIconStyle::apply()
         }
     }
     if (changed)
-        QMessageBox::information( 0L, i18n("Icons style"), i18n("The icon style change will not all be applied until you restart KDE."), i18n("OK"));
+        KMessageBox::information( 0L, i18n("The icon style change will "
+                                           "not all be applied until you"
+                                           " restart KDE."));
 }
 
 void KIconStyle::readSettings()
