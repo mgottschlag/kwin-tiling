@@ -17,12 +17,14 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <kcolorbutton.h>
-#include <qslider.h>
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qslider.h>
 
+#include <kcolorbutton.h>
 #include <klocale.h>
 
 #include "advancedDialog.h"
@@ -52,7 +54,7 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
     layout->addSpacing( 20 );
     layout->addStretch();
 
-    connect(m_advancedWidget->fadeOutHandles, SIGNAL(toggled(bool)),
+    connect(m_advancedWidget->handles, SIGNAL(clicked(int)),
             this, SLOT(changed()));
     connect(m_advancedWidget->hideButtonSize, SIGNAL(valueChanged(int)),
             this, SLOT(changed()));
@@ -73,8 +75,16 @@ void advancedDialog::load()
 {
     KConfig c(KickerConfig::configName(), false, false);
     c.setGroup("General");
+
     bool fadedOut = c.readBoolEntry("FadeOutAppletHandles", false);
-    m_advancedWidget->fadeOutHandles->setChecked(fadedOut);
+    bool hideHandles = c.readBoolEntry("HideApplletHandles", false);
+    if (hideHandles)
+        m_advancedWidget->hideHandles->setChecked(true);
+    else if (fadedOut)
+        m_advancedWidget->fadeOutHandles->setChecked(true);
+    else
+        m_advancedWidget->visibleHandles->setChecked(true);
+
     int defaultHideButtonSize = c.readNumEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
     bool resizeableHandle = c.readBoolEntry( "ResizeableHandle", false);
@@ -94,6 +104,8 @@ void advancedDialog::save()
     c.setGroup("General");
     c.writeEntry("FadeOutAppletHandles",
                  m_advancedWidget->fadeOutHandles->isChecked());
+    c.writeEntry("HideAppletHandles",
+                 m_advancedWidget->hideHandles->isChecked());
     c.writeEntry("HideButtonSize",
                  m_advancedWidget->hideButtonSize->value());
     c.writeEntry("TintColor",
@@ -120,6 +132,8 @@ void advancedDialog::save()
         extConfig.setGroup("General");
         extConfig.writeEntry("FadeOutAppletHandles",
                              m_advancedWidget->fadeOutHandles->isChecked());
+        extConfig.writeEntry("HideAppletHandles",
+                             m_advancedWidget->hideHandles->isChecked());
         extConfig.writeEntry("HideButtonSize",
                              m_advancedWidget->hideButtonSize->value());
         extConfig.writeEntry("TintColor",
