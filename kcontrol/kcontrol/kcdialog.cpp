@@ -34,7 +34,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
                 (b & KCModule::Default ? User1 : 0) |
                 (b & KCModule::Apply ? (Ok | Apply | Cancel) : Close),
                 (b & KCModule::Apply ? Ok : Close),
-                true, i18n("Use &Defaults")),
+                true, i18n("&Defaults")),
     DCOPObject("dialog"),
     _client(client)
 {
