@@ -1,51 +1,35 @@
-/**
- * email.h - $Id$
- *
- * Copyright (c) 1999 Preston Brown <pbrown@redhat.com>
- * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+#ifndef KCMEMAIL_H
+#define KCMEMAIL_H "$Id$"
 
-#ifndef _EMAIL_H
-#define _EMAIL_H
+#include <qvariant.h>
+#include <qdialog.h>
 
 #include <kcmodule.h>
 
-#include <qstringlist.h>
-
-class QLineEdit;
-class QRadioButton;
 class QButtonGroup;
-class QPushButton;
 class QCheckBox;
+class QGroupBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+
 class KComboBox;
 class KEMailSettings;
 
-class KEmailConfig : public KCModule
-{
-	Q_OBJECT
+class topKCMEmail
+	: public KCModule
+{ 
+    Q_OBJECT
+
 public:
-	KEmailConfig(QWidget *parent = 0L, const char *name = 0L);
-	virtual ~KEmailConfig();
+	topKCMEmail (QWidget* parent = 0, const char* name = 0);
+	~topKCMEmail ();
 
 	void load(const QString & = QString::null);
 	void save();
 	void defaults();
-
-	int buttons();
+	//int buttons();
 	QString quickHelp() const;
 
 public slots:
@@ -55,18 +39,37 @@ public slots:
 	void profileChanged(const QString &);
 
 protected:
-	QLineEdit *fullName, *organization;
-	QLineEdit *emailAddr, *replyAddr;
+    QGroupBox* grpClient;
 
-	QLineEdit *userName, *password, *inServer, *outServer, *emailClient;
-	QButtonGroup *bGrp;
-	QRadioButton *pop3Button, *imapButton, *localButton;
-	QPushButton *bEmailClient;
-	QCheckBox *cTerminalClient;
+    QLineEdit* txtEMailClient;
+    QPushButton* btnBrowseClient;
+    QCheckBox* chkRunTerminal;
 
-	KComboBox *cProfiles;
-	KEMailSettings *pSettings;
-	bool blah;
+    QGroupBox* grpIncoming;
+    QButtonGroup* grpICM;
+    QRadioButton* radIMAP, *radPOP, *radICMLocal;
+    QPushButton *btnICMSettings;
+
+    QGroupBox* grpOutgoing;
+    QPushButton *btnOGMSettings;
+    QButtonGroup *grpOGM;
+    QRadioButton *radSMTP, *radOGMLocal;
+
+    QPushButton *btnNewProfile;
+    QLabel *lblCurrentProfile;
+    KComboBox *cmbCurProfile;
+
+    QGroupBox *grpUserInfo;
+    QLabel *lblFullName, *lblOrganization, *lblEMailAddr, *lblReplyTo;
+    QLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
+
+protected slots:
+	void slotNewProfile();
+
+protected:
+	void clearData();
+	KEMailSettings *pSettings;	
+	bool m_bChanged;
 };
 
-#endif
+#endif // TOPKCMEMAIL_H

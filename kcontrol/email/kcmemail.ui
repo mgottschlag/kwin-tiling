@@ -9,8 +9,8 @@
     <property stdset="1">
         <name>geometry</name>
         <rect>
-            <x>53</x>
-            <y>14</y>
+            <x>0</x>
+            <y>0</y>
             <width>546</width>
             <height>510</height>
         </rect>
@@ -40,22 +40,6 @@
         <name>caption</name>
         <string>E-Mail Settings</string>
     </property>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton8</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>110</x>
-                <y>475</y>
-                <width>102</width>
-                <height>26</height>
-            </rect>
-        </property>
-    </widget>
     <widget>
         <class>QPushButton</class>
         <property stdset="1">
@@ -100,22 +84,6 @@
         <class>QPushButton</class>
         <property stdset="1">
             <name>name</name>
-            <cstring>PushButton11</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>435</x>
-                <y>475</y>
-                <width>109</width>
-                <height>26</height>
-            </rect>
-        </property>
-    </widget>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
             <cstring>PushButton7</cstring>
         </property>
         <property stdset="1">
@@ -131,251 +99,6 @@
             <name>text</name>
             <string>PushButton7</string>
         </property>
-    </widget>
-    <widget>
-        <class>QLayoutWidget</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>Layout10</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>535</width>
-                <height>24</height>
-            </rect>
-        </property>
-        <hbox>
-            <property stdset="1">
-                <name>margin</name>
-                <number>0</number>
-            </property>
-            <property stdset="1">
-                <name>spacing</name>
-                <number>6</number>
-            </property>
-            <widget>
-                <class>QLabel</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>lblCurrentProfile</cstring>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>Current Profile:</string>
-                </property>
-                <property stdset="1">
-                    <name>minimumSize</name>
-                    <size>
-                        <width>0</width>
-                        <height>0</height>
-                    </size>
-                </property>
-            </widget>
-            <widget>
-                <class>KComboBox</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>KComboBox1</cstring>
-                </property>
-                <property stdset="1">
-                    <name>sizePolicy</name>
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>0</vsizetype>
-                    </sizepolicy>
-                </property>
-            </widget>
-        </hbox>
-    </widget>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton36</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>25</x>
-                <y>35</y>
-                <width>102</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>&amp;New Profile..</string>
-        </property>
-    </widget>
-    <widget>
-        <class>QGroupBox</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>grpUserInfo</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>5</x>
-                <y>70</y>
-                <width>535</width>
-                <height>140</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>title</name>
-            <string>User Information</string>
-        </property>
-        <property stdset="1">
-            <name>sizePolicy</name>
-            <sizepolicy>
-                <hsizetype>4</hsizetype>
-                <vsizetype>4</vsizetype>
-            </sizepolicy>
-        </property>
-        <widget>
-            <class>QLayoutWidget</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>layUserInfo</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>5</x>
-                    <y>20</y>
-                    <width>525</width>
-                    <height>110</height>
-                </rect>
-            </property>
-            <hbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>0</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>layTextLabels</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel2</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>&amp;Full Name:</string>
-                            </property>
-                            <property stdset="1">
-                                <name>textFormat</name>
-                                <enum>PlainText</enum>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel3</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Or&amp;ganization:</string>
-                            </property>
-                            <property stdset="1">
-                                <name>textFormat</name>
-                                <enum>PlainText</enum>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel4</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>E-Mail Address:</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel5</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Reply-To Address:</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>layEditBoxes</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>LineEdit3</cstring>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>LineEdit2</cstring>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>LineEdit1</cstring>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>LineEdit4</cstring>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </hbox>
-        </widget>
     </widget>
     <widget>
         <class>QGroupBox</class>
@@ -397,10 +120,26 @@
             <string>Preferred E-Mail Client</string>
         </property>
         <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>txtEMailClient</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>5</x>
+                    <y>20</y>
+                    <width>410</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>PushButton5</cstring>
+                <cstring>btnBrowseClient</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -417,26 +156,10 @@
             </property>
         </widget>
         <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>LineEdit31</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>5</x>
-                    <y>20</y>
-                    <width>410</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
             <class>QCheckBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>CheckBox1</cstring>
+                <cstring>chkRunTerminal</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -476,7 +199,7 @@
             <class>QButtonGroup</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>ButtonGroup1</cstring>
+                <cstring>grpICM</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -495,7 +218,7 @@
                 <class>QRadioButton</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>RadioButton1</cstring>
+                    <cstring>radIMAP</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -515,7 +238,7 @@
                 <class>QRadioButton</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>RadioButton2</cstring>
+                    <cstring>radPOP</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -535,7 +258,7 @@
                 <class>QRadioButton</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>RadioButton3</cstring>
+                    <cstring>radICMLocal</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -556,7 +279,7 @@
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>PushButton45</cstring>
+                <cstring>btnICMRemoteSettings</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -576,7 +299,7 @@
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>PushButton44</cstring>
+                <cstring>btnICMLocalSettings</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -636,27 +359,7 @@
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>PushButton56</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>245</x>
-                    <y>45</y>
-                    <width>170</width>
-                    <height>26</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Local delivery settings...</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PushButton55</cstring>
+                <cstring>btnOGMSMTPSettings</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -673,10 +376,30 @@
             </property>
         </widget>
         <widget>
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>btnOGMLocalSettings</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>245</x>
+                    <y>45</y>
+                    <width>170</width>
+                    <height>26</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Local delivery settings...</string>
+            </property>
+        </widget>
+        <widget>
             <class>QButtonGroup</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>ButtonGroup3</cstring>
+                <cstring>grpOGM</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
@@ -695,7 +418,7 @@
                 <class>QRadioButton</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>RadioButton7</cstring>
+                    <cstring>radSMTP</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -715,7 +438,7 @@
                 <class>QRadioButton</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>RadioButton8</cstring>
+                    <cstring>radOGMLocal</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -733,26 +456,315 @@
             </widget>
         </widget>
     </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>btnNewProfile</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>25</x>
+                <y>35</y>
+                <width>102</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;New Profile..</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QLabel</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>lblCurrentProfile</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>6</x>
+                <y>6</y>
+                <width>83</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Current Profile:</string>
+        </property>
+        <property stdset="1">
+            <name>minimumSize</name>
+            <size>
+                <width>0</width>
+                <height>0</height>
+            </size>
+        </property>
+    </widget>
+    <widget>
+        <class>KComboBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>cmbCurProfile</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>95</x>
+                <y>6</y>
+                <width>444</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>sizePolicy</name>
+            <sizepolicy>
+                <hsizetype>3</hsizetype>
+                <vsizetype>0</vsizetype>
+            </sizepolicy>
+        </property>
+    </widget>
+    <widget>
+        <class>QGroupBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>grpUserInfo</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>5</x>
+                <y>70</y>
+                <width>535</width>
+                <height>140</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>title</name>
+            <string>User Information</string>
+        </property>
+        <property stdset="1">
+            <name>sizePolicy</name>
+            <sizepolicy>
+                <hsizetype>4</hsizetype>
+                <vsizetype>4</vsizetype>
+            </sizepolicy>
+        </property>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lblFullName</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>7</x>
+                    <y>22</y>
+                    <width>107</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Full Name:</string>
+            </property>
+            <property stdset="1">
+                <name>textFormat</name>
+                <enum>PlainText</enum>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lblOrganization</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>7</x>
+                    <y>50</y>
+                    <width>107</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Or&amp;ganization:</string>
+            </property>
+            <property stdset="1">
+                <name>textFormat</name>
+                <enum>PlainText</enum>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lblEMailAddr</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>7</x>
+                    <y>78</y>
+                    <width>107</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>E-Mail Address:</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>lblReplyTo</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>7</x>
+                    <y>106</y>
+                    <width>107</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Reply-To Address:</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>txtFullName</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>122</x>
+                    <y>22</y>
+                    <width>406</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>txtOrganization</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>122</x>
+                    <y>50</y>
+                    <width>406</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>txtEMailAddr</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>122</x>
+                    <y>78</y>
+                    <width>406</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>txtReplyTo</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>122</x>
+                    <y>106</y>
+                    <width>406</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>PushButton8</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>110</x>
+                <y>475</y>
+                <width>102</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>PushButton8</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>PushButton11</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>435</x>
+                <y>475</y>
+                <width>109</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>PushButton11</string>
+        </property>
+    </widget>
 </widget>
 <tabstops>
-    <tabstop>KComboBox1</tabstop>
-    <tabstop>PushButton36</tabstop>
-    <tabstop>LineEdit3</tabstop>
-    <tabstop>LineEdit2</tabstop>
-    <tabstop>LineEdit1</tabstop>
-    <tabstop>LineEdit4</tabstop>
-    <tabstop>LineEdit31</tabstop>
-    <tabstop>PushButton5</tabstop>
-    <tabstop>CheckBox1</tabstop>
-    <tabstop>RadioButton1</tabstop>
-    <tabstop>RadioButton2</tabstop>
-    <tabstop>RadioButton3</tabstop>
-    <tabstop>PushButton44</tabstop>
-    <tabstop>PushButton45</tabstop>
-    <tabstop>RadioButton7</tabstop>
-    <tabstop>RadioButton8</tabstop>
-    <tabstop>PushButton55</tabstop>
-    <tabstop>PushButton56</tabstop>
+    <tabstop>cmbCurProfile</tabstop>
+    <tabstop>btnNewProfile</tabstop>
+    <tabstop>txtFullName</tabstop>
+    <tabstop>txtOrganization</tabstop>
+    <tabstop>txtEMailAddr</tabstop>
+    <tabstop>txtReplyTo</tabstop>
+    <tabstop>txtEMailClient</tabstop>
+    <tabstop>btnBrowseClient</tabstop>
+    <tabstop>chkRunTerminal</tabstop>
+    <tabstop>radIMAP</tabstop>
+    <tabstop>radPOP</tabstop>
+    <tabstop>radICMLocal</tabstop>
+    <tabstop>btnICMLocalSettings</tabstop>
+    <tabstop>btnICMRemoteSettings</tabstop>
+    <tabstop>radSMTP</tabstop>
+    <tabstop>radOGMLocal</tabstop>
+    <tabstop>btnOGMSMTPSettings</tabstop>
+    <tabstop>btnOGMLocalSettings</tabstop>
     <tabstop>PushButton7</tabstop>
     <tabstop>PushButton8</tabstop>
     <tabstop>PushButton9</tabstop>

@@ -1,306 +1,315 @@
-/**
- * email.cpp - $Id$
- *
- * Copyright (c) 1999, 2000 Preston Brown <pbrown@kde.org>
- * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
- *
- * $Id$
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+// $Id$
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <stdlib.h>
 #include <pwd.h>
 #include <unistd.h>
 
-#include <qlayout.h>
-#include <qvbox.h>
-#include <qlabel.h>
 #include <qbuttongroup.h>
-#include <qradiobutton.h>
-#include <qwhatsthis.h>
-#include <qpushbutton.h>
-#include <qfileinfo.h>
 #include <qcheckbox.h>
+#include <qframe.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qlayout.h>
+#include <qvariant.h>
+#include <qtooltip.h>
+#include <qwhatsthis.h>
+#include <qfile.h>
+#include <qfileinfo.h>
 
-#include <kfiledialog.h>
-#include <klineedit.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <klocale.h>
-#include <kdialog.h>
 #include <kcombobox.h>
+#include <kdialog.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <kfiledialog.h>
+#include <kstddirs.h>
+#include <kmessagebox.h>
 #include <kemailsettings.h>
 
 #include "email.h"
 
-KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
+    : KCModule (parent, name)
 {
-	blah=false;
-	QString wtstr;
+	m_bChanged=false;
 	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
-	QLabel *label;
 
-	QHBoxLayout *l = new QHBoxLayout(topLayout);
-	cProfiles = new KComboBox(true, this);
-	cProfiles->setTrapReturnKey(true);
-	connect(cProfiles, SIGNAL(returnPressed()), this, SLOT(newProfile()));
-	label = new QLabel("Current Profile:", this);
-	label->setBuddy(cProfiles);
-	l->addWidget(label, 0);
-	l->addWidget(cProfiles, 1);
-	connect (cProfiles, SIGNAL(activated(const QString&)), this, SLOT(profileChanged(const QString&)));
+	QHBoxLayout *layCurProfile = new QHBoxLayout(topLayout);
 
-	QGroupBox *uBox = new QGroupBox(2, Qt::Horizontal, i18n("User information"), this);
-	topLayout->addWidget(uBox);
+	lblCurrentProfile = new QLabel( this, "lblCurrentProfile" );
+	lblCurrentProfile->setGeometry( QRect( 6, 6, 83, 22 ) ); 
+	lblCurrentProfile->setText( i18n("Current Profile:" ) );
+	lblCurrentProfile->setMinimumSize( QSize( 0, 0 ) );
+	layCurProfile->addWidget(lblCurrentProfile);
 
-	label = new QLabel(i18n("&Full Name:"), uBox);
+	cmbCurProfile = new KComboBox( FALSE, this, "cmbCurProfile" );
+	cmbCurProfile->setGeometry( QRect( 95, 6, 444, 22 ) ); 
+	cmbCurProfile->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, cmbCurProfile->sizePolicy().hasHeightForWidth() ) );
+	layCurProfile->addWidget(cmbCurProfile);
 
-	fullName = new KLineEdit(uBox);
-	connect(fullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-	label->setBuddy(fullName);
+	QHBoxLayout *layCurProfile2 = new QHBoxLayout(topLayout);
+	btnNewProfile = new QPushButton( this, "btnNewProfile" );
+	btnNewProfile->setGeometry( QRect( 25, 35, 102, 26 ) ); 
+	btnNewProfile->setText( i18n( "&New Profile.." ) );
+	btnNewProfile->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+	connect(btnNewProfile, SIGNAL(clicked()), this, SLOT(slotNewProfile()));
+	layCurProfile2->addWidget(btnNewProfile);
+	layCurProfile2->addStretch(9);
 
-	wtstr = i18n(	"Enter your full name here, e.g. \"John Doe\" (without the quotation"
-			" marks).  Some people like to provide a nick name only. You can leave this field"
-			" blank and still use email. However, providing your full name is <em>recommended</em> as"
-			" this makes it much easier for your recipient to browse his or her email.");
-	QWhatsThis::add( label, wtstr );
-	QWhatsThis::add( fullName, wtstr );
+	grpUserInfo = new QGroupBox( 2, Qt::Horizontal, this, "grpUserInfo" );
+	grpUserInfo->setGeometry( QRect( 5, 70, 535, 140 ) ); 
+	grpUserInfo->setTitle( i18n( "User Information" ) );
+	grpUserInfo->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	topLayout->addWidget(grpUserInfo);
 
-	label = new QLabel(i18n("Or&ganization:"), uBox);
+	lblFullName = new QLabel( grpUserInfo, "lblFullName" );
+	lblFullName->setGeometry( QRect( 7, 22, 107, 22 ) ); 
+	lblFullName->setText("&Full Name:");
+	lblFullName->setTextFormat( QLabel::PlainText );
+	txtFullName = new QLineEdit( grpUserInfo, "txtFullName" );
+	txtFullName->setGeometry( QRect( 122, 22, 406, 22 ) ); 
+	lblFullName->setBuddy(txtFullName);
 
-	organization = new KLineEdit(uBox);
-	connect(organization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-	label->setBuddy(organization);
+	lblOrganization = new QLabel( grpUserInfo, "lblOrganization" );
+	lblOrganization->setGeometry( QRect( 7, 50, 107, 22 ) ); 
+	lblOrganization->setText(i18n( "Or&ganization:" ) );
+	lblOrganization->setTextFormat( QLabel::PlainText );
+	txtOrganization = new QLineEdit( grpUserInfo, "txtOrganization" );
+	txtOrganization->setGeometry( QRect( 122, 50, 406, 22 ) ); 
+	lblOrganization->setBuddy(txtOrganization);
 
-	wtstr = i18n(	"Here you can enter the name of your organization, company"
-			" or university. This field is <em>optional</em>. However, if"
-			" you are using a business account and communicate with persons working for other"
-			" companies, providing the name of your organization is recommended.");
-	QWhatsThis::add( label, wtstr );
-	QWhatsThis::add( organization, wtstr );
+	lblEMailAddr = new QLabel( grpUserInfo, "lblEMailAddr" );
+	lblEMailAddr->setGeometry( QRect( 7, 78, 107, 22 ) ); 
+	lblEMailAddr->setText( i18n( "&E-Mail Address:" ) );
+	txtEMailAddr = new QLineEdit( grpUserInfo, "txtEMailAddr" );
+	txtEMailAddr->setGeometry( QRect( 122, 78, 406, 22 ) ); 
+	lblEMailAddr->setBuddy(txtEMailAddr);
 
-	label = new QLabel(i18n("Email &Address:"), uBox);
+	lblReplyTo = new QLabel( grpUserInfo, "lblReplyTo" );
+	lblReplyTo->setGeometry( QRect( 7, 106, 107, 22 ) ); 
+	lblReplyTo->setText( i18n( "&Reply-To Address:" ) );
+	txtReplyTo = new QLineEdit( grpUserInfo, "txtReplyTo" );
+	txtReplyTo->setGeometry( QRect( 122, 106, 406, 22 ) ); 
+	lblReplyTo->setBuddy(txtReplyTo);
 
-	emailAddr = new KLineEdit(uBox);
-	connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-	label->setBuddy(emailAddr);
+	grpClient = new QGroupBox (2, Qt::Horizontal, this, "grpClient");
+	grpClient->setGeometry( QRect( 5, 215, 535, 70 ) ); 
+	grpClient->setTitle( i18n( "Preferred E-Mail Client" ) );
+	grpClient->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	topLayout->addWidget(grpClient);
 
-	wtstr = i18n(	"Enter your email address here, e.g. \"john@doe.com\" (without "
-			"the quotation marks). This information is mandatory if you want to use email.<p>"
-			"Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
-			"Your email address may not contain any blank spaces.");
-	QWhatsThis::add( label, wtstr );
-	QWhatsThis::add( emailAddr, wtstr );
+	txtEMailClient = new QLineEdit( grpClient, "txtEMailClient" );
+	txtEMailClient->setGeometry( QRect( 5, 20, 410, 22 ) ); 
 
-	label = new QLabel(i18n("&Reply Address:"), uBox);
+	btnBrowseClient = new QPushButton( grpClient, "btnBrowseClient" );
+	btnBrowseClient->setGeometry( QRect( 420, 20, 102, 26 ) ); 
+	btnBrowseClient->setText(i18n( "&Browse..." ) );
 
-	replyAddr = new KLineEdit(uBox);
-	connect(replyAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-	label->setBuddy(replyAddr);
+	chkRunTerminal = new QCheckBox( grpClient, "chkRunTerminal" );
+	chkRunTerminal->setGeometry( QRect( 20, 45, 106, 19 ) ); 
+	chkRunTerminal->setText(i18n( "Run in &terminal" ) );
 
-  wtstr = i18n("You can set a reply address if you want replies to your e-mail messages"
-     " to go to a different address than the e-mail address above. Most likely, you should"
-     " leave the reply address blank, so replies go to the e-mail address you entered above.<p>"
-     " <em>Please note:</em> <ul><li>You do not need to enter the same email"
-     " address as above.</li><li>You should not use a reply address if you frequently"
-     " use discussion mailing lists.</li></ul>");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( replyAddr, wtstr );
+	grpIncoming = new QGroupBox(2, Qt::Horizontal, this, "grpIncoming");
+	//grpIncoming->setGeometry( QRect( 5, 290, 535, 80 ) ); 
+	grpIncoming->setTitle(i18n( "Incoming Mail" ) );
+	grpIncoming->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	topLayout->addWidget(grpIncoming);
 
-  uBox = new QGroupBox(2, Qt::Horizontal, i18n("Server information"),
-               this);
-  topLayout->addWidget(uBox);
+	grpICM = new QButtonGroup( grpIncoming, "grpICM" );
+	grpICM->setTitle(i18n( "Mail retrieval type" ) );
+	grpICM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
+	grpICM->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
-  label = new QLabel(i18n("User &name:"), uBox);
+	radIMAP = new QRadioButton( grpICM, "radIMAP" );
+	radIMAP->setGeometry( QRect( 10, 20, 52, 19 ) ); 
+	radIMAP->setText(i18n( "&IMAP" ) );
 
-  userName = new KLineEdit(uBox);
-  connect(userName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(userName);
+	radPOP = new QRadioButton( grpICM, "radPOP" );
+	radPOP->setGeometry( QRect( 70, 20, 47, 19 ) ); 
+	radPOP->setText(i18n( "&POP" ) );
 
-  wtstr = i18n("The user name you use to login to your e-mail server (sometimes just called \"login\")."
-     " Your e-mail provider should have supplied this information. Your login name is often (but"
-     " not always) identical to the part of your email address that comes before the \"@\".");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( userName, wtstr );
+	radICMLocal = new QRadioButton( grpICM, "radICMLocal" );
+	radICMLocal->setGeometry( QRect( 120, 20, 98, 19 ) ); 
+	radICMLocal->setText(i18n( "Local &mailbox" ) );
 
-  label = new QLabel(i18n("&Password:"), uBox);
+	btnICMSettings = new QPushButton( grpIncoming, "btnICMRemoteSettings" );
+	btnICMSettings->setGeometry( QRect( 245, 45, 175, 26 ) ); 
+	btnICMSettings->setText(i18n( "Incoming mailbox settings..." ) );
+	btnICMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-  password = new KLineEdit(uBox);
-  password->setEchoMode(QLineEdit::Password);
-  connect(password, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(password);
+	grpOutgoing = new QGroupBox( 2, Qt::Horizontal, this, "grpOutgoing" );
+	grpOutgoing->setGeometry( QRect( 5, 370, 535, 80 ) ); 
+	grpOutgoing->setTitle( i18n( "Outgoing Mail Settings" ) );
+	grpOutgoing->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	topLayout->addWidget(grpOutgoing);
 
-  wtstr = i18n("Your password for the e-mail server. Your e-mail provider should have supplied"
-     " this information along with your user name. <br>Your password will not"
-     " appear on screen and will not be readable by other normal users on the system.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( password, wtstr );
+	grpOGM = new QButtonGroup(grpOutgoing, "grpOGM" );
+	grpOGM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
+	grpOGM->setTitle( i18n( "Mail Delivery Method" ) );
+	grpOGM->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
-  label = new QLabel(i18n("&Incoming host:"), uBox);
+	radSMTP = new QRadioButton( grpOGM, "radSMTP" );
+	radSMTP->setGeometry( QRect( 10, 20, 55, 19 ) ); 
+	radSMTP->setText( i18n("SMTP") );
 
-  inServer = new KLineEdit(uBox);
-  connect(inServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  label->setBuddy(inServer);
+	radOGMLocal = new QRadioButton( grpOGM, "radOGMLocal" );
+	radOGMLocal->setGeometry( QRect( 75, 20, 103, 19 ) ); 
+	radOGMLocal->setText( i18n("Local Delivery") );
 
-  wtstr = i18n("The server you get incoming e-mail from (this <em>may</em> be identical to your outgoing host)."
-     " Your e-mail provider should have supplied this information. It may have been labeled \"POP3 server/host\" or"
-     " \"IMAP server/host\". If you are using a local mailbox, you may leave this blank.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( inServer, wtstr );
+	btnOGMSettings = new QPushButton( grpOutgoing, "btnOGMSMTPSettings" );
+	btnOGMSettings->setGeometry( QRect( 245, 15, 175, 26 ) ); 
+	btnOGMSettings->setText(i18n( "Outgoing mailbox settings..." ));
+	btnOGMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-  label = new QLabel(i18n("O&utgoing host:"), uBox);
+	grpOGM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
+	grpICM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
 
-  outServer = new KLineEdit(uBox);
-  connect(outServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 
-  label->setBuddy(outServer);
-
-  wtstr = i18n("The server you use for sending e-mail (this <em>may</em> be identical to your incoming host)."
-     " Your e-mail provider should have supplied this information. It may have been labeled \"SMTP server\" or"
-     " \"SMTP host\". If you are using a local mailbox, you may leave this blank.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( outServer, wtstr );
-
-  bGrp = new QButtonGroup(1, Qt::Vertical,
-               i18n("Incoming mail server type"), this);
-  connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
-
-  topLayout->addWidget(bGrp);
-
-  imapButton = new QRadioButton(i18n("&IMAP"), bGrp);
-  pop3Button = new QRadioButton(i18n("P&OP3"), bGrp);
-  localButton = new QRadioButton(i18n("&Local mailbox"), bGrp);
-
-  wtstr = i18n("This is the protocol used by your incoming e-mail server. Your e-mail provider should have"
-     " supplied this information. If you use dial-up networking, you are probably using a POP3 server.");
-  QWhatsThis::add( bGrp, wtstr );
-  QWhatsThis::add( imapButton, wtstr );
-  QWhatsThis::add( pop3Button, wtstr );
-  QWhatsThis::add( localButton, wtstr );
-
-  uBox = new QGroupBox(2, Qt::Horizontal, i18n("Preferred email client"),
-                        this);
-  topLayout->addWidget(uBox);
-
-  emailClient = new KLineEdit(uBox);
-  connect(emailClient, SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
-
-  bEmailClient = new QPushButton(i18n("Bro&wse..."), uBox);
-  connect(bEmailClient, SIGNAL(clicked()), this, SLOT(selectEmailClient()));
-
-  cTerminalClient = new QCheckBox(i18n("Run in &terminal"), uBox);
-  connect(cTerminalClient, SIGNAL(clicked()), this, SLOT(configChanged()));
-
-  wtstr = i18n("Enter the path to your preferred email client (KMail, Mutt, etc.) here or"
-        " choose it with the <em>Browse...</em> button. If no client is specified here,"
-        " KMail will be used (if available) instead.");
-
-  QWhatsThis::add(emailClient, wtstr);
-  QWhatsThis::add(bEmailClient, i18n("Press this button to select your favorite email client. Please"
-        " note that the file you select has to have the executable attribute set in order to be"
-        " accepted."));
-	QWhatsThis::add(cTerminalClient, i18n(	"Activate this option if you want the selected email client"
-						" to be executed in a terminal (e.g. <em>Konsole</em>)."));
-
-	topLayout->addSpacing(KDialog::spacingHint());
+	// tab order
+	setTabOrder( cmbCurProfile, btnNewProfile );
+	setTabOrder( btnNewProfile, txtFullName );
+	setTabOrder( txtFullName, txtOrganization );
+	setTabOrder( txtOrganization, txtEMailAddr );
+	setTabOrder( txtEMailAddr, txtReplyTo );
+	setTabOrder( txtReplyTo, txtEMailClient );
+	setTabOrder( txtEMailClient, btnBrowseClient );
+	setTabOrder( btnBrowseClient, chkRunTerminal );
+	setTabOrder( chkRunTerminal, radIMAP );
+	setTabOrder( radIMAP, radPOP );
+	setTabOrder( radPOP, radICMLocal );
+	setTabOrder( radICMLocal, btnICMSettings );
+	setTabOrder( btnICMSettings, radSMTP );
+	setTabOrder( radSMTP, radOGMLocal );
+	setTabOrder( radOGMLocal, btnOGMSettings );
 
 	pSettings = new KEMailSettings();
-
 	load();
 }
 
-KEmailConfig::~KEmailConfig()
-{
-}
-
-void KEmailConfig::configChanged()
-{
-	emit changed(true);
-	blah=true;
-}
-
-
-void KEmailConfig::load(const QString &s)
+void topKCMEmail::load(const QString &s)
 {
 	if (s == QString::null) {
-		cProfiles->insertStringList(pSettings->profiles());
+		cmbCurProfile->insertStringList(pSettings->profiles());
 		if (pSettings->defaultProfileName() != QString::null)
 			load(pSettings->defaultProfileName());
 		else {
-			if (cProfiles->count()) {
-				pSettings->setProfile(cProfiles->text(0));
-				load(cProfiles->text(0));
-				pSettings->setDefault(cProfiles->text(0));
+			if (cmbCurProfile->count()) {
+				pSettings->setProfile(cmbCurProfile->text(0));
+				load(cmbCurProfile->text(0));
+				pSettings->setDefault(cmbCurProfile->text(0));
 			} else {
-				cProfiles->insertItem(i18n("Default"));
+				cmbCurProfile->insertItem(i18n("Default"));
 				pSettings->setProfile(i18n("Default"));
 				pSettings->setDefault(i18n("Default"));
 			}
 		}
 	} else {
 		pSettings->setProfile(s);
-		emailAddr->setText(pSettings->getSetting(KEMailSettings::EmailAddress));
-		replyAddr->setText(pSettings->getSetting(KEMailSettings::ReplyToAddress));
-		organization->setText(pSettings->getSetting(KEMailSettings::Organization));
-		userName->setText(pSettings->getSetting(KEMailSettings::InServerLogin));
-		password->setText(pSettings->getSetting(KEMailSettings::InServerPass));
-		inServer->setText(pSettings->getSetting(KEMailSettings::InServer));
-		outServer->setText(pSettings->getSetting(KEMailSettings::OutServer));
-		fullName->setText(pSettings->getSetting(KEMailSettings::RealName));
+		txtEMailAddr->setText(pSettings->getSetting(KEMailSettings::EmailAddress));
+		txtReplyTo->setText(pSettings->getSetting(KEMailSettings::ReplyToAddress));
+		txtOrganization->setText(pSettings->getSetting(KEMailSettings::Organization));
+		txtFullName->setText(pSettings->getSetting(KEMailSettings::RealName));
 
 		QString intype = pSettings->getSetting(KEMailSettings::InServerType);
 		if (intype == "imap4")
-			bGrp->setButton(0);
+			grpICM->setButton(0);
 		else if (intype == "pop3")
-			bGrp->setButton(1);
+			grpICM->setButton(1);
 		else if (intype == "localbox")
-			bGrp->setButton(2);
+			grpICM->setButton(2);
 
-		emailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
-		cTerminalClient->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
+		txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
+		chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
 		emit changed(false);
-		blah=false;
 	}
 }
 
-void KEmailConfig::save()
+topKCMEmail::~topKCMEmail()
 {
-	pSettings->setSetting(KEMailSettings::RealName, fullName->text());
-	pSettings->setSetting(KEMailSettings::EmailAddress, emailAddr->text());
-	pSettings->setSetting(KEMailSettings::Organization, organization->text());
-	pSettings->setSetting(KEMailSettings::ReplyToAddress, replyAddr->text());
-	pSettings->setSetting(KEMailSettings::OutServer, outServer->text());
-	pSettings->setSetting(KEMailSettings::InServerLogin, userName->text());
-	pSettings->setSetting(KEMailSettings::InServerPass, password->text());
-	pSettings->setSetting(KEMailSettings::InServer, inServer->text());
+}
 
-	if (imapButton->isChecked())
+void topKCMEmail::clearData()
+{
+	txtEMailAddr->setText(QString::null);
+	txtReplyTo->setText(QString::null);
+	txtOrganization->setText(QString::null);
+	txtFullName->setText(QString::null);
+	grpICM->setButton(0);
+	txtEMailClient->setText(QString::null);
+	chkRunTerminal->setChecked(false);
+	emit changed(false);
+}
+
+void topKCMEmail::slotNewProfile()
+{
+	KDialog *dlgAskName = new KDialog(this, "noname", true);
+	dlgAskName->setCaption(i18n("New E-Mail Profile"));
+
+	QVBoxLayout *vlayout = new QVBoxLayout(dlgAskName, KDialog::marginHint(), KDialog::spacingHint());
+
+	QHBoxLayout *layout = new QHBoxLayout(vlayout);
+
+	QLabel *lblName = new QLabel(dlgAskName);
+	lblName->setText(i18n("Name:"));
+	lblName->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+	QLineEdit *txtName = new QLineEdit(dlgAskName);
+	layout->addWidget(lblName);
+	layout->addWidget(txtName);
+
+	layout = new QHBoxLayout(vlayout);
+	QPushButton *btnOK = new QPushButton(dlgAskName);
+	btnOK->setText(i18n("&OK"));
+	btnOK->setFixedSize(btnOK->sizeHint());
+	QPushButton *btnCancel = new QPushButton(dlgAskName);
+	btnCancel->setText(i18n("&Cancel"));
+	btnCancel->setFixedSize(btnCancel->sizeHint());
+	layout->addWidget(btnOK);
+	layout->addWidget(btnCancel);
+	connect(btnOK, SIGNAL(clicked()), dlgAskName, SLOT(accept()));
+	connect(btnCancel, SIGNAL(clicked()), dlgAskName, SLOT(rejet()));
+
+	if (dlgAskName->exec() == QDialog::Accepted) {
+		if (cmbCurProfile->contains(txtName->text()))
+			KMessageBox::sorry(this, i18n("This e-mail profile already exists, and cannot be created again"), i18n("Oops"));
+		else {
+			pSettings->setProfile(txtName->text());
+			cmbCurProfile->insertItem(txtName->text());
+			// should probbaly load defaults instead
+			clearData();
+			cmbCurProfile->setCurrentItem(cmbCurProfile->count()-1);
+		}
+	} else { // rejected
+	}
+
+	delete dlgAskName;
+}
+
+void topKCMEmail::configChanged()
+{
+        emit changed(true);
+        m_bChanged=true;
+}
+
+void topKCMEmail::save()
+{
+	pSettings->setSetting(KEMailSettings::RealName, txtFullName->text());
+	pSettings->setSetting(KEMailSettings::EmailAddress, txtEMailAddr->text());
+	pSettings->setSetting(KEMailSettings::Organization, txtOrganization->text());
+	pSettings->setSetting(KEMailSettings::ReplyToAddress, txtReplyTo->text());
+
+	if (radIMAP->isChecked())
 		pSettings->setSetting(KEMailSettings::InServerType, "imap4");
-	else if (pop3Button->isChecked())
+	else if (radPOP->isChecked())
 		pSettings->setSetting(KEMailSettings::InServerType, "pop3");
-	else if (localButton->isChecked())
+	else if (radICMLocal->isChecked())
 		pSettings->setSetting(KEMailSettings::InServerType, "localbox");
 
-	pSettings->setSetting(KEMailSettings::ClientProgram, emailClient->text());
-	pSettings->setSetting(KEMailSettings::ClientTerminal, (cTerminalClient->isChecked()) ? "true" : "false");
+	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
+	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
 
 	// insure proper permissions -- contains sensitive data
 	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
@@ -308,74 +317,68 @@ void KEmailConfig::save()
 		::chmod(cfgName.utf8(), 0600);
 
 	emit changed(false);
-	blah=false;
+	m_bChanged=false;
 }
 
-void KEmailConfig::defaults()
+void topKCMEmail::defaults()
 {
-  char hostname[80];
-  struct passwd *p;
+	char hostname[80];
+	struct passwd *p;
 
-  p = getpwuid(getuid());
-  gethostname(hostname, 80);
+	p = getpwuid(getuid());
+	gethostname(hostname, 80);
 
-  fullName->setText(p->pw_gecos);
+	txtFullName->setText(p->pw_gecos);
 
-  QString tmp = p->pw_name;
-  tmp += "@"; tmp += hostname;
+	QString tmp = p->pw_name;
+	tmp += "@"; tmp += hostname;
 
-  emailAddr->setText(tmp);
+	txtEMailAddr->setText(tmp);
 
-  QString client = KGlobal::dirs()->findResource("exe", "kmail");
+	QString client = KGlobal::dirs()->findResource("exe", "kmail");
 
-  if (client.isEmpty())
-    client = "kmail";
+	if (client.isEmpty())
+		client = "kmail";
 
-  emailClient->setText(client);
+	txtEMailClient->setText(client);
 
-  cTerminalClient->setChecked(false);
+	chkRunTerminal->setChecked(false);
 
-  emit changed(true);
-	blah=true;
+	emit changed(true);
+	m_bChanged=true;
 }
 
-QString KEmailConfig::quickHelp() const
+QString topKCMEmail::quickHelp() const
 {
-  return i18n("<h1>e-mail</h1> This module allows you to enter basic e-mail"
-     " information for the current user. The information here is used,"
-     " among other things, for sending bug reports to the KDE developers"
-     " when you use the bug report dialog.<p>"
-     " Note that e-mail programs like KMail and Empath offer many more"
-     " features, but they provide their own configuration facilities.");
+	return i18n("<h1>e-mail</h1> This module allows you to enter basic e-mail"
+		    " information for the current user. The information here is used,"
+		    " among other things, for sending bug reports to the KDE developers"
+		    " when you use the bug report dialog.<p>"
+		    " Note that e-mail programs like KMail and Empath offer many more"
+		    " features, but they provide their own configuration facilities.");
 }
 
-void KEmailConfig::selectEmailClient()
+void topKCMEmail::selectEmailClient()
 {
-  QString client = KFileDialog::getOpenFileName(QString::null, "*", this);
+	QString client = KFileDialog::getOpenFileName(QString::null, "*", this);
 
-  QFileInfo *clientInfo = new QFileInfo(client);
-  if (clientInfo->exists() && clientInfo->isExecutable() && clientInfo->filePath().contains(' ') == 0)
-    emailClient->setText(client);
+	QFileInfo *clientInfo = new QFileInfo(client);
+	if (clientInfo->exists() && clientInfo->isExecutable() && clientInfo->filePath().contains(' ') == 0)
+		txtEMailClient->setText(client);
 }
 
-void KEmailConfig::profileChanged(const QString &s)
+void topKCMEmail::profileChanged(const QString &s)
 {
 	save(); // Save our changes...
 	load(s);
 }
 
-void KEmailConfig::newProfile()
-{
-	return; //...
-}
-
 extern "C"
 {
-  KCModule *create_email(QWidget *parent, const char *name)
-  {
-    KGlobal::locale()->insertCatalogue("kcmemail");
-    return new KEmailConfig(parent, name);
-  };
+	KCModule *create_email(QWidget *parent, const char *name) {
+		KGlobal::locale()->insertCatalogue("kcmemail");
+		return new topKCMEmail(parent, name);
+	};
 }
 
 #include "email.moc"
