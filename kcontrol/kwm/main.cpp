@@ -57,6 +57,10 @@ KWinOptions::KWinOptions(QWidget *parent, const char *name)
   tab->addTab(mActions, i18n("&Actions"));
   connect(mActions, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
+  mMoving = new KMovingConfig(mConfig, this, "KWin Moving");
+  tab->addTab(mMoving, i18n("&Moving"));
+  connect(mMoving, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+
   mAdvanced = new KAdvancedConfig(mConfig, this, "KWin Advanced");
   tab->addTab(mAdvanced, i18n("Ad&vanced"));
   connect(mAdvanced, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
@@ -68,6 +72,7 @@ void KWinOptions::load()
   mConfig->reparseConfiguration();
   mFocus->load();
   mActions->load();
+  mMoving->load();
   mAdvanced->load();
 }
 
@@ -76,6 +81,7 @@ void KWinOptions::save()
 {
   mFocus->save();
   mActions->save();
+  mMoving->save();
   mAdvanced->save();
 
   // Send signal to kwin
@@ -90,6 +96,7 @@ void KWinOptions::defaults()
 {
   mFocus->defaults();
   mActions->defaults();
+  mMoving->defaults();
   mAdvanced->defaults();
 }
 

@@ -2,9 +2,7 @@
  * windows.cpp
  *
  * Copyright (c) 1997 Patrick Dowler dowler@morgul.fsh.uvic.ca
- *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
+ * Copyright (c) 2001 Waldo Bastian bastian@kde.org
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -73,9 +71,8 @@
 #define KWIN_XINERAMA_MAXIMIZE     "XineramaMaximizeEnabled"
 
 // kwm config keywords
-#define KWM_ELECTRIC_BORDER                  "ElectricBorder"
-#define KWM_ELECTRIC_BORDER_DELAY            "ElectricBorderNumberOfPushes"
-#define KWM_ELECTRIC_BORDER_MOVE_POINTER     "ElectricBorderPointerWarp"
+#define KWM_ELECTRIC_BORDER                  "ElectricBorders"
+#define KWM_ELECTRIC_BORDER_DELAY            "ElectricBorderDelay"
 
 //CT 15mar 98 - magics
 #define KWM_BRDR_SNAP_ZONE                   "BorderSnapZone"
@@ -294,20 +291,6 @@ void KFocusConfig::setAutoRaiseEnabled()
 }
 
 
-// CT 13mar98 interactiveTrigger configured by this slot
-// void KFocusConfig::ifPlacementIsInteractive( )
-// {
-//   if( placementCombo->currentItem() == INTERACTIVE_PLACEMENT) {
-//     iTLabel->setEnabled(true);
-//     interactiveTrigger->show();
-//   }
-//   else {
-//     iTLabel->setEnabled(false);
-//     interactiveTrigger->hide();
-//   }
-// }
-//CT
-
 //CT 23Oct1998 make AutoRaise toggling much clear
 void KFocusConfig::autoRaiseOnTog(bool a) {
     autoRaise->setEnabled(a);
@@ -426,6 +409,261 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     QBoxLayout *lay = new QVBoxLayout (this, KDialog::marginHint(),
                                        KDialog::spacingHint());
 
+    //iTLabel = new QLabel(i18n("  Allowed overlap:\n"
+    //                         "(% of desktop space)"),
+    //             plcBox);
+    //iTLabel->setAlignment(AlignTop|AlignHCenter);
+    //pLay->addWidget(iTLabel,1,1);
+
+    //interactiveTrigger = new QSpinBox(0, 500, 1, plcBox);
+    //pLay->addWidget(interactiveTrigger,1,2);
+
+    //pLay->addRowSpacing(2,KDialog::spacingHint());
+
+    //lay->addWidget(plcBox);
+
+    shBox = new QButtonGroup(i18n("Shading"), this);
+    QGridLayout *shLay = new QGridLayout(shBox, 3, 3,
+                                         KDialog::marginHint(),
+                                         KDialog::spacingHint());
+
+    shLay->addRowSpacing(0,fontMetrics().lineSpacing());
+    animateShade = new QCheckBox(i18n("Animate"), shBox);
+    QWhatsThis::add(animateShade, i18n("Animate the action of reducing the window to its titlebar (shading)"
+                                       " as well as the expansion of a shaded window") );
+    shLay->addWidget(animateShade, 1, 0);
+
+    shadeHoverOn = new QCheckBox(i18n("Enable Hover"), shBox);
+    shLay->addWidget(shadeHoverOn, 2, 0);
+
+    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(shadeHoverChanged(bool)));
+
+    shlabel = new QLabel(i18n("Delay (ms)"), shBox);
+    shlabel->setAlignment(AlignVCenter | AlignHCenter);
+    shLay->addWidget(shlabel, 3, 0, AlignLeft);
+
+    shadeHover = new KIntNumInput(500, shBox);
+    shadeHover->setRange(0, 3000, 100, true);
+    shadeHover->setSteps(100, 100);
+    shLay->addMultiCellWidget(shadeHover, 3, 3, 1, 2);
+
+    QWhatsThis::add(shadeHoverOn, i18n("If Shade Hover is enabled, a shaded window will un-shade automatically "
+                                       "when the mouse pointer has been over the title bar for some time."));
+
+    wtstr = i18n("Sets the time in milliseconds before the window unshades "
+                "when the mouse pointer goes over the shaded window.");
+    QWhatsThis::add(shadeHover, wtstr);
+    QWhatsThis::add(shlabel, wtstr);
+
+    lay->addWidget(shBox);
+
+    // Any changes goes to slotChanged()
+    connect(animateShade, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(shadeHover, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+
+#ifdef HAVE_XINERAMA
+    xineramaBox = new QVButtonGroup(i18n("Xinerama"), this);
+
+    xineramaEnable = new QCheckBox(i18n("Enable Xinerama Support"), xineramaBox);
+    QWhatsThis::add(xineramaEnable, i18n("Enable support for Xinerama."));
+    connect(xineramaEnable, SIGNAL(toggled(bool)), this, SLOT(setXinerama(bool)));
+    xineramaMovementEnable = new QCheckBox(i18n("Enable Window Resistance Support"), xineramaBox);
+    QWhatsThis::add(xineramaMovementEnable, i18n("Turn on resistance when moving a window from one physical screen to the other."));
+    xineramaPlacementEnable = new QCheckBox(i18n("Enable Window Placement Support"), xineramaBox);
+    QWhatsThis::add(xineramaPlacementEnable, i18n("This option opens new windows on the physical screen on which the cursor is present."));
+    xineramaMaximizeEnable = new QCheckBox(i18n("Enable Window Maximize Support"), xineramaBox);
+    QWhatsThis::add(xineramaMaximizeEnable, i18n("When this option is turned on, windows will only maximize up to the physical screen size."));
+
+    lay->addWidget(xineramaBox);
+#endif
+    lay->addStretch();
+    load();
+
+#ifdef HAVE_XINERAMA
+    connect( xineramaEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaMovementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaPlacementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( xineramaMaximizeEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
+#endif
+}
+
+// many widgets connect to this slot
+void KAdvancedConfig::slotChanged()
+{
+    emit changed(true);
+}
+
+void KAdvancedConfig::setShadeHover(bool on) {
+    shadeHoverOn->setChecked(on);
+    shadeHover->setEnabled(on);
+    shlabel->setEnabled(on);
+}
+
+void KAdvancedConfig::setShadeHoverInterval(int k) {
+    shadeHover->setValue(k);
+}
+
+int KAdvancedConfig::getShadeHoverInterval() {
+
+    return shadeHover->value();
+}
+
+void KAdvancedConfig::shadeHoverChanged(bool a) {
+    shadeHover->setEnabled(a);
+    shlabel->setEnabled(a);
+}
+
+void KAdvancedConfig::setXinerama(bool on) {
+#ifdef HAVE_XINERAMA
+    if (KApplication::desktop()->isVirtualDesktop())
+        xineramaEnable->setChecked(on);
+    else
+        xineramaEnable->setEnabled(false);
+
+    xineramaMovementEnable->setEnabled(on);
+    xineramaPlacementEnable->setEnabled(on);
+    xineramaMaximizeEnable->setEnabled(on);
+#endif
+}
+
+void KAdvancedConfig::setAnimateShade(bool a) {
+    animateShade->setChecked(a);
+}
+
+void KAdvancedConfig::load( void )
+{
+    config->setGroup( "Windows" );
+
+    setAnimateShade(config->readBoolEntry(KWIN_ANIMSHADE, true));
+    setShadeHover(config->readBoolEntry(KWIN_SHADEHOVER, false));
+    setShadeHoverInterval(config->readNumEntry(KWIN_SHADEHOVER_INTERVAL, 250));
+
+#ifdef HAVE_XINERAMA
+    setXinerama(config->readBoolEntry(KWIN_XINERAMA, false));
+    xineramaMovementEnable->setChecked( config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, false));
+    xineramaPlacementEnable->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, false));
+    xineramaMaximizeEnable->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, false));
+#endif
+
+/* Electric borders are not in kwin yet (?)
+  v = config->readNumEntry(KWM_ELECTRIC_BORDER);
+  setElectricBorders(v != -1);
+
+  v = config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY);
+  setElectricBordersDelay(v);
+
+  //CT 17mar98 re-allign this reading with the one in kwm  ("on"/"off")
+  // matthias: this is obsolete now. Should be fixed in 1.1 with NoWarp, MiddleWarp, FullWarp
+  key = config->readEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER);
+  if (key == "MiddleWarp")
+    setElectricBordersMovePointer(TRUE);
+*/
+}
+
+void KAdvancedConfig::save( void )
+{
+    int v;
+
+    config->setGroup( "Windows" );
+    config->writeEntry(KWIN_ANIMSHADE, animateShade->isChecked());
+    if (shadeHoverOn->isChecked())
+        config->writeEntry(KWIN_SHADEHOVER, "on");
+    else
+        config->writeEntry(KWIN_SHADEHOVER, "off");
+
+    v = getShadeHoverInterval();
+    if (v<0) v = 0;
+    config->writeEntry(KWIN_SHADEHOVER_INTERVAL, v);
+
+#ifdef HAVE_XINERAMA
+    config->writeEntry(KWIN_XINERAMA, xineramaEnable->isChecked());
+    config->writeEntry(KWIN_XINERAMA_MOVEMENT, xineramaMovementEnable->isChecked());
+    config->writeEntry(KWIN_XINERAMA_PLACEMENT, xineramaPlacementEnable->isChecked());
+    config->writeEntry(KWIN_XINERAMA_MAXIMIZE, xineramaMaximizeEnable->isChecked());
+#endif
+
+/* Electric borders are not in kwin yet
+  int v = getElectricBordersDelay()>10?80*getElectricBordersDelay():800;
+  if (getElectricBorders())
+    config->writeEntry(KWM_ELECTRIC_BORDER,v);
+  else
+    config->writeEntry(KWM_ELECTRIC_BORDER,-1);
+
+
+  config->writeEntry(KWM_ELECTRIC_BORDER_DELAY,getElectricBordersDelay());
+
+  bv = getElectricBordersMovePointer();
+  config->writeEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER,bv?"MiddleWarp":"NoWarp");
+*/
+}
+
+void KAdvancedConfig::defaults()
+{
+    setAnimateShade(true);
+    setShadeHover(false);
+    setShadeHoverInterval(250);
+    setXinerama(false);
+}
+
+void KAdvancedConfig::setEBorders()
+{
+    delays->setEnabled(enable->isChecked());
+    movepointer->setEnabled(enable->isChecked());
+}
+
+bool KAdvancedConfig::getElectricBorders()
+{
+    return  enable->isChecked();
+}
+
+int KAdvancedConfig::getElectricBordersDelay()
+{
+    return delays->value();
+}
+
+bool KAdvancedConfig::getElectricBordersMovePointer()
+{
+    return movepointer->isChecked();
+}
+
+void KAdvancedConfig::setElectricBordersMovePointer(bool move){
+
+  if(move){
+    movepointer->setEnabled(true);
+    movepointer->setChecked(true);
+  }
+  else{
+    movepointer->setEnabled(false);
+    movepointer->setChecked(false);
+  }
+
+  movepointer->setEnabled(enable->isChecked());
+
+}
+
+void KAdvancedConfig::setElectricBorders(bool b){
+    enable->setChecked(b);
+    setEBorders();
+}
+
+void KAdvancedConfig::setElectricBordersDelay(int delay)
+{
+    delays->setValue(delay);
+}
+
+
+KMovingConfig::~KMovingConfig ()
+{
+}
+
+KMovingConfig::KMovingConfig (KConfig *_config, QWidget *parent, const char *name)
+    : KCModule (parent, name), config(_config)
+{
+    QString wtstr;
+    QBoxLayout *lay = new QVBoxLayout (this, KDialog::marginHint(),
+                                       KDialog::spacingHint());
+
     windowsBox = new QButtonGroup(i18n("Windows"), this);
 
     QBoxLayout *wLay = new QVBoxLayout (windowsBox,KDialog::marginHint(),
@@ -475,16 +713,6 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     QWhatsThis::add( minimizeAnimSlider, wtstr );
     QWhatsThis::add( minimizeAnimSlowLabel, wtstr );
     QWhatsThis::add( minimizeAnimFastLabel, wtstr );
-
-    //CT 17Dec2000 - maybe restore this button box when placement becomes again what was in KDE-1
-    // placement policy --- CT 19jan98, 13mar98 ---
-    //plcBox = new QButtonGroup(i18n("Placement policy"),this);
-
-    //QGridLayout *pLay = new QGridLayout(plcBox,3,3,
-    //                    KDialog::marginHint(),
-    //                    KDialog::spacingHint());
-    //pLay->addRowSpacing(0,fontMetrics().lineSpacing());
-
 
     moveResizeMaximized = new QCheckBox( i18n("Allow Moving and Resizing of maximized windows"), windowsBox);
     bLay->addWidget(moveResizeMaximized);
@@ -541,90 +769,13 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
 
     //lay->addWidget(plcBox);
 
-    shBox = new QButtonGroup(i18n("Shading"), this);
-    QGridLayout *shLay = new QGridLayout(shBox, 3, 3,
-                                         KDialog::marginHint(),
-                                         KDialog::spacingHint());
 
-    shLay->addRowSpacing(0,fontMetrics().lineSpacing());
-    animateShade = new QCheckBox(i18n("Animate"), shBox);
-    QWhatsThis::add(animateShade, i18n("Animate the action of reducing the window to its titlebar (shading)"
-                                       " as well as the expansion of a shaded window") );
-    shLay->addWidget(animateShade, 1, 0);
-
-    shadeHoverOn = new QCheckBox(i18n("Enable Hover"), shBox);
-    shLay->addWidget(shadeHoverOn, 2, 0);
-
-    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(shadeHoverChanged(bool)));
-
-    shlabel = new QLabel(i18n("Delay (ms)"), shBox);
-    shlabel->setAlignment(AlignVCenter | AlignHCenter);
-    shLay->addWidget(shlabel, 3, 0, AlignLeft);
-
-    shadeHover = new KIntNumInput(500, shBox);
-    shadeHover->setRange(0, 3000, 100, true);
-    shadeHover->setSteps(100, 100);
-    shLay->addMultiCellWidget(shadeHover, 3, 3, 1, 2);
-
-    QWhatsThis::add(shadeHoverOn, i18n("If Shade Hover is enabled, a shaded window will un-shade automatically "
-                                       "when the mouse pointer has been over the title bar for some time."));
-
-    wtstr = i18n("Sets the time in milliseconds before the window unshades "
-                "when the mouse pointer goes over the shaded window.");
-    QWhatsThis::add(shadeHover, wtstr);
-    QWhatsThis::add(shlabel, wtstr);
-
-    lay->addWidget(shBox);
-
-    // Any changes goes to slotChanged()
-    connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect(minimizeAnimOn, SIGNAL(clicked() ), SLOT(slotChanged()));
-    connect(minimizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
-    connect(moveResizeMaximized, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
-    connect(placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-    connect(animateShade, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
-    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
-    connect(shadeHover, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
-
-    //copied from kcontrol/konq/kwindesktop, aleXXX
-//CT disabled <i>sine die</i>
-//  ElectricBox = new QVButtonGroup(i18n("Active desktop borders"),
-//                 this);
-//  ElectricBox->setMargin(15);
-//
-//  enable= new QCheckBox(i18n("Enable &active desktop borders"), ElectricBox);
-//  QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
-//    " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
-//    " to the other.") );
-//
-//  movepointer = new QCheckBox(i18n("&Move pointer towards center after switch"),
-//                              ElectricBox);
-//  QWhatsThis::add( movepointer, i18n("If this option is enabled, after switching desktops using"
-//    " the active borders feature the mouse pointer will be moved to the middle of the screen. This"
-//    " way you don't repeatedly change desktops because the mouse pointer is still on the border"
-//    " of the screen.") );
-//
-//  delays = new KIntNumInput(10, ElectricBox);
-//  delays->setRange(0, MAX_EDGE_RES/10, 10, true);
-//  delays->setLabel(i18n("&Desktop switch delay:"));
-//  QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
-//    " borders feature. Desktops will be switched after the mouse has been touching a screen border"
-//    " for the specified number of seconds.") );
-//
-//  connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
-//
-//  lay->addWidget(ElectricBox);
-//
-//  // Electric borders are not in kwin yet => disable controls
-//  enable->setEnabled(false);
-//  movepointer->setEnabled(false);
-//  delays->setEnabled(false);
     //CT 15mar98 - add EdgeResistance, BorderAttractor, WindowsAttractor config
-    MagicBox = new QVButtonGroup(i18n("Magic borders"), this);
+    MagicBox = new QVButtonGroup(i18n("Snap Zones"), this);
     MagicBox->setMargin(15);
 
     BrdrSnap = new KIntNumInput(10, MagicBox);
+    BrdrSnap->setSpecialValueText( i18n("none") );
     BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
     BrdrSnap->setLabel(i18n("&Border snap zone:"));
     BrdrSnap->setSuffix(i18n(" pixels"));
@@ -634,6 +785,7 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
                                     " moved near it.") );
 
     WndwSnap = new KIntNumInput(10, MagicBox);
+    WndwSnap->setSpecialValueText( i18n("none") );
     WndwSnap->setRange( 0, MAX_WNDW_SNAP);
     WndwSnap->setLabel(i18n("&Window snap zone:"));
     WndwSnap->setSuffix( i18n(" pixels"));
@@ -648,44 +800,29 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
                                        " comes only near another window or border.") );
 
     lay->addWidget(MagicBox);
-#ifdef HAVE_XINERAMA
-    xineramaBox = new QVButtonGroup(i18n("Xinerama"), this);
-
-    xineramaEnable = new QCheckBox(i18n("Enable Xinerama Support"), xineramaBox);
-    QWhatsThis::add(xineramaEnable, i18n("Enable support for Xinerama."));
-    connect(xineramaEnable, SIGNAL(toggled(bool)), this, SLOT(setXinerama(bool)));
-    xineramaMovementEnable = new QCheckBox(i18n("Enable Window Resistance Support"), xineramaBox);
-    QWhatsThis::add(xineramaMovementEnable, i18n("Turn on resistance when moving a window from one physical screen to the other."));
-    xineramaPlacementEnable = new QCheckBox(i18n("Enable Window Placement Support"), xineramaBox);
-    QWhatsThis::add(xineramaPlacementEnable, i18n("This option opens new windows on the physical screen on which the cursor is present."));
-    xineramaMaximizeEnable = new QCheckBox(i18n("Enable Window Maximize Support"), xineramaBox);
-    QWhatsThis::add(xineramaMaximizeEnable, i18n("When this option is turned on, windows will only maximize up to the physical screen size."));
-
-    lay->addWidget(xineramaBox);
-#endif
     lay->addStretch();
+
     load();
 
+    // Any changes goes to slotChanged()
+    connect( opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    connect( minimizeAnimOn, SIGNAL(clicked() ), SLOT(slotChanged()));
+    connect( minimizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+    connect( moveResizeMaximized, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect( placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
     connect( BrdrSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect( WndwSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect( OverlapSnap, SIGNAL(clicked()), this, SLOT(slotChanged()));
-#ifdef HAVE_XINERAMA
-    connect( xineramaEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect( xineramaMovementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect( xineramaPlacementEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
-    connect( xineramaMaximizeEnable, SIGNAL(clicked()), this, SLOT(slotChanged()));
-#endif
-
-    load();
 }
 
 // many widgets connect to this slot
-void KAdvancedConfig::slotChanged()
+void KMovingConfig::slotChanged()
 {
     emit changed(true);
 }
 
-int KAdvancedConfig::getMove()
+int KMovingConfig::getMove()
 {
     if (opaque->isChecked())
         return OPAQUE;
@@ -693,7 +830,7 @@ int KAdvancedConfig::getMove()
         return TRANSPARENT;
 }
 
-void KAdvancedConfig::setMove(int trans)
+void KMovingConfig::setMove(int trans)
 {
     if (trans == TRANSPARENT)
         opaque->setChecked(false);
@@ -702,27 +839,27 @@ void KAdvancedConfig::setMove(int trans)
 }
 
 // placement policy --- CT 31jan98 ---
-int KAdvancedConfig::getPlacement()
+int KMovingConfig::getPlacement()
 {
     return placementCombo->currentItem();
 }
 
-void KAdvancedConfig::setPlacement(int plac)
+void KMovingConfig::setPlacement(int plac)
 {
     placementCombo->setCurrentItem(plac);
 }
 
-bool KAdvancedConfig::getMinimizeAnim()
+bool KMovingConfig::getMinimizeAnim()
 {
     return minimizeAnimOn->isChecked();
 }
 
-int KAdvancedConfig::getMinimizeAnimSpeed()
+int KMovingConfig::getMinimizeAnimSpeed()
 {
     return minimizeAnimSlider->value();
 }
 
-void KAdvancedConfig::setMinimizeAnim(bool anim, int speed)
+void KMovingConfig::setMinimizeAnim(bool anim, int speed)
 {
     minimizeAnimOn->setChecked( anim );
     minimizeAnimSlider->setValue(speed);
@@ -731,7 +868,7 @@ void KAdvancedConfig::setMinimizeAnim(bool anim, int speed)
     minimizeAnimFastLabel->setEnabled( anim );
 }
 
-int KAdvancedConfig::getResizeOpaque()
+int KMovingConfig::getResizeOpaque()
 {
     if (resizeOpaqueOn->isChecked())
         return RESIZE_OPAQUE;
@@ -739,7 +876,7 @@ int KAdvancedConfig::getResizeOpaque()
         return RESIZE_TRANSPARENT;
 }
 
-void KAdvancedConfig::setResizeOpaque(int opaque)
+void KMovingConfig::setResizeOpaque(int opaque)
 {
     if (opaque == RESIZE_OPAQUE)
         resizeOpaqueOn->setChecked(true);
@@ -747,62 +884,11 @@ void KAdvancedConfig::setResizeOpaque(int opaque)
         resizeOpaqueOn->setChecked(false);
 }
 
-// CT 13mar98 interactiveTrigger configured by this slot
-// void KAdvancedConfig::ifPlacementIsInteractive( )
-// {
-//   if( placementCombo->currentItem() == INTERACTIVE_PLACEMENT) {
-//     iTLabel->setEnabled(true);
-//     interactiveTrigger->show();
-//   }
-//   else {
-//     iTLabel->setEnabled(false);
-//     interactiveTrigger->hide();
-//   }
-// }
-//CT
-
-void KAdvancedConfig::setShadeHover(bool on) {
-    shadeHoverOn->setChecked(on);
-    shadeHover->setEnabled(on);
-    shlabel->setEnabled(on);
-}
-
-void KAdvancedConfig::setShadeHoverInterval(int k) {
-    shadeHover->setValue(k);
-}
-
-int KAdvancedConfig::getShadeHoverInterval() {
-
-    return shadeHover->value();
-}
-
-void KAdvancedConfig::shadeHoverChanged(bool a) {
-    shadeHover->setEnabled(a);
-    shlabel->setEnabled(a);
-}
-
-void KAdvancedConfig::setXinerama(bool on) {
-#ifdef HAVE_XINERAMA
-    if (KApplication::desktop()->isVirtualDesktop())
-        xineramaEnable->setChecked(on);
-    else
-        xineramaEnable->setEnabled(false);
-
-    xineramaMovementEnable->setEnabled(on);
-    xineramaPlacementEnable->setEnabled(on);
-    xineramaMaximizeEnable->setEnabled(on);
-#endif
-}
-
-void KAdvancedConfig::setAnimateShade(bool a) {
-    animateShade->setChecked(a);
-}
-
-void KAdvancedConfig::setMoveResizeMaximized(bool a) {
+void KMovingConfig::setMoveResizeMaximized(bool a) {
     moveResizeMaximized->setChecked(a);
 }
 
-void KAdvancedConfig::load( void )
+void KMovingConfig::load( void )
 {
     QString key;
 
@@ -865,48 +951,10 @@ void KAdvancedConfig::load( void )
         setPlacement(SMART_PLACEMENT);
 //  }
 
-    setAnimateShade(config->readBoolEntry(KWIN_ANIMSHADE, true));
-
     setMoveResizeMaximized(config->readBoolEntry(KWIN_MOVE_RESIZE_MAXIMIZED, true));
 
-    key = config->readEntry(KWIN_SHADEHOVER, "off");
-    setShadeHover(key == "on");
-
-    int k = config->readNumEntry(KWIN_SHADEHOVER_INTERVAL, 250);
-    setShadeHoverInterval(k);
-
-#ifdef HAVE_XINERAMA
-    key = config->readEntry(KWIN_XINERAMA, "off");
-    setXinerama(key == "on");
-
-    key = config->readEntry(KWIN_XINERAMA_MOVEMENT, "off");
-    xineramaMovementEnable->setChecked(key == "on");
-
-    key = config->readEntry(KWIN_XINERAMA_PLACEMENT, "off");
-    xineramaPlacementEnable->setChecked(key == "on");
-
-    key = config->readEntry(KWIN_XINERAMA_MAXIMIZE, "off");
-    xineramaMaximizeEnable->setChecked(key == "on");
-#endif
-
-    //copied from kcontrol/konq/kwindesktop, aleXXX
     int v;
-    config->setGroup( "Windows" );
 
-/* Electric borders are not in kwin yet (?)
-  v = config->readNumEntry(KWM_ELECTRIC_BORDER);
-  setElectricBorders(v != -1);
-
-  v = config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY);
-  setElectricBordersDelay(v);
-
-  //CT 17mar98 re-allign this reading with the one in kwm  ("on"/"off")
-  // matthias: this is obsolete now. Should be fixed in 1.1 with NoWarp, MiddleWarp, FullWarp
-  key = config->readEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER);
-  if (key == "MiddleWarp")
-    setElectricBordersMovePointer(TRUE);
-*/
-    //CT 15mar98 - magics
     v = config->readNumEntry(KWM_BRDR_SNAP_ZONE, KWM_BRDR_SNAP_ZONE_DEFAULT);
     if (v > MAX_BRDR_SNAP) setBorderSnapZone(MAX_BRDR_SNAP);
     else if (v < 0) setBorderSnapZone (0);
@@ -916,13 +964,11 @@ void KAdvancedConfig::load( void )
     if (v > MAX_WNDW_SNAP) setWindowSnapZone(MAX_WNDW_SNAP);
     else if (v < 0) setWindowSnapZone (0);
     else setWindowSnapZone(v);
-    //CT ---
 
     OverlapSnap->setChecked(config->readBoolEntry("SnapOnlyWhenOverlapping",false));
-
 }
 
-void KAdvancedConfig::save( void )
+void KMovingConfig::save( void )
 {
     int v;
 
@@ -951,7 +997,6 @@ void KAdvancedConfig::save( void )
     else
         config->writeEntry(KWIN_PLACEMENT, "Smart");
 
-//CT - 17Jun1998
     config->writeEntry(KWIN_MINIMIZE_ANIM, getMinimizeAnim());
     config->writeEntry(KWIN_MINIMIZE_ANIM_SPEED, getMinimizeAnimSpeed());
 
@@ -965,68 +1010,15 @@ void KAdvancedConfig::save( void )
     else
         config->writeEntry(KWIN_RESIZE_OPAQUE, "Transparent");
 
-    config->writeEntry(KWIN_ANIMSHADE, animateShade->isChecked());
-
     config->writeEntry(KWIN_MOVE_RESIZE_MAXIMIZED, moveResizeMaximized->isChecked());
 
-    if (shadeHoverOn->isChecked())
-        config->writeEntry(KWIN_SHADEHOVER, "on");
-    else
-        config->writeEntry(KWIN_SHADEHOVER, "off");
 
-    v = getShadeHoverInterval();
-    if (v<0) v = 0;
-    config->writeEntry(KWIN_SHADEHOVER_INTERVAL, v);
-
-#ifdef HAVE_XINERAMA
-    if (xineramaEnable->isChecked())
-        config->writeEntry(KWIN_XINERAMA, "on");
-    else
-        config->writeEntry(KWIN_XINERAMA, "off");
-
-    if (xineramaMovementEnable->isChecked())
-        config->writeEntry(KWIN_XINERAMA_MOVEMENT, "on");
-    else
-        config->writeEntry(KWIN_XINERAMA_MOVEMENT, "off");
-
-    if (xineramaPlacementEnable->isChecked())
-        config->writeEntry(KWIN_XINERAMA_PLACEMENT, "on");
-    else
-        config->writeEntry(KWIN_XINERAMA_PLACEMENT, "off");
-
-    if (xineramaMaximizeEnable->isChecked())
-        config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "on");
-    else
-        config->writeEntry(KWIN_XINERAMA_MAXIMIZE, "off");
-#endif
-
-  //copied from kcontrol/konq/kwindesktop, aleXXX
-  config->setGroup( "Windows" );
-
-/* Electric borders are not in kwin yet
-  int v = getElectricBordersDelay()>10?80*getElectricBordersDelay():800;
-  if (getElectricBorders())
-    config->writeEntry(KWM_ELECTRIC_BORDER,v);
-  else
-    config->writeEntry(KWM_ELECTRIC_BORDER,-1);
-
-
-  config->writeEntry(KWM_ELECTRIC_BORDER_DELAY,getElectricBordersDelay());
-
-  bv = getElectricBordersMovePointer();
-  config->writeEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER,bv?"MiddleWarp":"NoWarp");
-*/
-
-  //CT 15mar98 - magics
-  config->writeEntry(KWM_BRDR_SNAP_ZONE,getBorderSnapZone());
-
-  config->writeEntry(KWM_WNDW_SNAP_ZONE,getWindowSnapZone());
-
-  config->writeEntry("SnapOnlyWhenOverlapping",OverlapSnap->isChecked());
-
+    config->writeEntry(KWM_BRDR_SNAP_ZONE,getBorderSnapZone());
+    config->writeEntry(KWM_WNDW_SNAP_ZONE,getWindowSnapZone());
+    config->writeEntry("SnapOnlyWhenOverlapping",OverlapSnap->isChecked());
 }
 
-void KAdvancedConfig::defaults()
+void KMovingConfig::defaults()
 {
     setMove(OPAQUE);
     setResizeOpaque(RESIZE_TRANSPARENT);
@@ -1037,72 +1029,22 @@ void KAdvancedConfig::defaults()
     setWindowSnapZone(KWM_WNDW_SNAP_ZONE_DEFAULT);
     setBorderSnapZone(KWM_BRDR_SNAP_ZONE_DEFAULT);
     OverlapSnap->setChecked(false);
-
 }
 
-void KAdvancedConfig::setEBorders()
-{
-    delays->setEnabled(enable->isChecked());
-    movepointer->setEnabled(enable->isChecked());
-}
-
-bool KAdvancedConfig::getElectricBorders()
-{
-    return  enable->isChecked();
-}
-
-int KAdvancedConfig::getElectricBordersDelay()
-{
-    return delays->value();
-}
-
-bool KAdvancedConfig::getElectricBordersMovePointer()
-{
-    return movepointer->isChecked();
-}
-
-void KAdvancedConfig::setElectricBordersMovePointer(bool move){
-
-  if(move){
-    movepointer->setEnabled(true);
-    movepointer->setChecked(true);
-  }
-  else{
-    movepointer->setEnabled(false);
-    movepointer->setChecked(false);
-  }
-
-  movepointer->setEnabled(enable->isChecked());
-
-}
-
-void KAdvancedConfig::setElectricBorders(bool b){
-    enable->setChecked(b);
-    setEBorders();
-}
-
-void KAdvancedConfig::setElectricBordersDelay(int delay)
-{
-    delays->setValue(delay);
-}
-
-
-int KAdvancedConfig::getBorderSnapZone() {
+int KMovingConfig::getBorderSnapZone() {
   return BrdrSnap->value();
 }
 
-void KAdvancedConfig::setBorderSnapZone(int pxls) {
+void KMovingConfig::setBorderSnapZone(int pxls) {
   BrdrSnap->setValue(pxls);
 }
 
-int KAdvancedConfig::getWindowSnapZone() {
+int KMovingConfig::getWindowSnapZone() {
   return WndwSnap->value();
 }
 
-void KAdvancedConfig::setWindowSnapZone(int pxls) {
+void KMovingConfig::setWindowSnapZone(int pxls) {
   WndwSnap->setValue(pxls);
 }
-
-
 
 #include "windows.moc"

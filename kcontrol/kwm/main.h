@@ -58,6 +58,7 @@ private:
 
   KFocusConfig *mFocus;
   KActionsConfig *mActions;
+  KMovingConfig *mMoving;
   KAdvancedConfig *mAdvanced;
 
   KConfig *mConfig;

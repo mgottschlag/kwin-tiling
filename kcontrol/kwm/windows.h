@@ -2,9 +2,7 @@
  * windows.h
  *
  * Copyright (c) 1997 Patrick Dowler dowler@morgul.fsh.uvic.ca
- *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
+ * Copyright (c) 2001 Waldo Bastian bastian@kde.org
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -109,6 +107,58 @@ private:
   KConfig *config;
 };
 
+class KMovingConfig : public KCModule
+{
+  Q_OBJECT
+public:
+  KMovingConfig( KConfig *config, QWidget *parent=0, const char* name=0 );
+  ~KMovingConfig();
+
+  void load();
+  void save();
+  void defaults();
+
+private slots:
+  void slotChanged();
+
+private:
+
+  int getMove( void );
+  bool getMinimizeAnim( void );
+  int getMinimizeAnimSpeed( void );
+  int getResizeOpaque ( void );
+  int getPlacement( void ); //CT
+
+  void setMove(int);
+  void setMinimizeAnim(bool,int);
+  void setResizeOpaque(int);
+  void setPlacement(int); //CT
+  void setMoveResizeMaximized(bool);
+
+  QButtonGroup *windowsBox;
+  QCheckBox *opaque;
+
+  QCheckBox *resizeOpaqueOn;
+  QCheckBox* minimizeAnimOn;
+  QSlider *minimizeAnimSlider;
+  QLabel *minimizeAnimSlowLabel, *minimizeAnimFastLabel;
+  QCheckBox *moveResizeMaximized;
+
+  QComboBox *placementCombo;
+
+  KConfig *config;
+
+  int getBorderSnapZone();
+  void setBorderSnapZone( int );
+  int getWindowSnapZone();
+  void setWindowSnapZone( int );
+
+  QVButtonGroup *MagicBox;
+  KIntNumInput *BrdrSnap, *WndwSnap;
+  QCheckBox *OverlapSnap;
+
+};
+
 class KAdvancedConfig : public KCModule
 {
   Q_OBJECT
@@ -121,7 +171,6 @@ public:
   void defaults();
 
 private slots:
-  //  void ifPlacementIsInteractive();
   void slotChanged();
   void shadeHoverChanged(bool);
 
@@ -132,38 +181,12 @@ private slots:
 
 private:
 
-  int getMove( void );
-  bool getMinimizeAnim( void );
-  int getMinimizeAnimSpeed( void );
-  int getResizeOpaque ( void );
-  int getPlacement( void ); //CT
   int getShadeHoverInterval (void );
-
-  void setMove(int);
-  void setMinimizeAnim(bool,int);
-  void setResizeOpaque(int);
-  void setPlacement(int); //CT
   void setAnimateShade(bool);
-  void setMoveResizeMaximized(bool);
   void setShadeHover(bool);
   void setShadeHoverInterval(int);
 
-  QButtonGroup *windowsBox;
-  QCheckBox *opaque;
-
-  QCheckBox *resizeOpaqueOn;
-  QCheckBox* minimizeAnimOn;
-  QSlider *minimizeAnimSlider;
-  QLabel *minimizeAnimSlowLabel, *minimizeAnimFastLabel;
   QCheckBox *animateShade;
-  QCheckBox *moveResizeMaximized;
-
-  //CT 19jan98; 21Oct1998
-  //QButtonGroup *plcBox;
-  QComboBox *placementCombo;
-  //QSpinBox *interactiveTrigger;
-  //QLabel *iTLabel;
-
   QButtonGroup *shBox;
   QCheckBox *shadeHoverOn;
   KIntNumInput *shadeHover;
@@ -188,21 +211,10 @@ private:
   void setElectricBordersDelay( int );
   void setElectricBordersMovePointer( bool );
 
-  int getBorderSnapZone();
-  void setBorderSnapZone( int );
-  
-  int getWindowSnapZone();
-  void setWindowSnapZone( int );
-
   QVButtonGroup *ElectricBox;
   QCheckBox *enable, *movepointer;
   KIntNumInput *delays;
   QLabel *sec;
-
-  QVButtonGroup *MagicBox;
-  KIntNumInput *BrdrSnap, *WndwSnap;
-  QCheckBox *OverlapSnap;
-
 };
 
 #endif
