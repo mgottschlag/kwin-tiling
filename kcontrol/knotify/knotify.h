@@ -20,6 +20,14 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.2  2000/03/19 07:23:28  charles
+    the module actually "exists" now :D
+    Just wait until I start to DO something with it!
+
+    And how do you debug these darned things?
+    cd knotify
+    make --dammit it_work
+
     Revision 1.1  2000/03/19 01:32:22  charles
     A rediculously early commit so that I can rm -rf all I want :)
     and, btw, applnk/Settings/System/Makefile.am is unchanged :)
@@ -55,12 +63,25 @@ public:
 
 private slots:
 	void changed();
-
+	/**
+	 * Load all the apps
+	 */
+	void loadAll();
+	void appSelected(QListViewItem *);
+	
 protected:
 	QListView *apps;
 	QListView *events;
 	EventView *eventview;
 
 };
+
+class ListViewItem : public QListViewItem
+{
+public:
+	ListViewItem(QListView *parent, const QString &configfile, const QString &r1, const QString &r2=0);
+	QString file;
+};
+
 
 #endif
