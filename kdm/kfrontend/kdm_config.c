@@ -537,7 +537,7 @@ Ent entsGreeter[] = {
 { "FailFont",		C_FailFont,		0,	"helvetica,12,5,0,75,0" },
 { "GreetString",	C_GreetString,		0,	"Welcome to %s at %n" },
 { "GreetFont",		C_GreetFont,		0,	"charter,24,5,0,50,0" },
-{ "AntiAliasing",	C_AntiAliasing,		0,	"false" },
+{ "AntiAliasing",	C_AntiAliasing | C_BOOL,0,	"false" },
 { "Language",		C_Language,		0,	"en_US" },
 { "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "NotHidden" },
 { "SelectedUsers",	C_SelectedUsers,	0,	"" },
