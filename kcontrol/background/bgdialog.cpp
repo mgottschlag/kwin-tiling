@@ -349,6 +349,8 @@ void BGDialog::initUI()
          imageCaption.replace('_', ' ');
          imageCaption = KStringHandler::capwords(imageCaption);
       }
+      
+      imageCaption = KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11);
 
       // avoid name collisions
       QString rs = imageCaption;
