@@ -70,7 +70,7 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #define PIXEL_ADD	20	// add x Pixel to multicolumns..
 
-#define HEXDIGITS (sizeof(int)*8/4)	/* 4 Byte = 32 Bit = 8 Hex-Digits */
+#define HEXDIGITS (sizeof(int)*8/4)	/* 4 Bytes = 32 Bits = 8 Hex-Digits */
 
 static QString Value( int val, int numbers=1 )
 {
@@ -221,14 +221,29 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     return item;
 }
 
-QString Order( int order )
+static QString Order( int order )
 {
     if (order==LSBFirst) return i18n("LSBFirst"); else
     if (order==MSBFirst) return i18n("MSBFirst"); else
 	return i18n("Unknown Order %1").arg(order);
 }
 
-bool GetInfo_XServer_Generic( QListView *lBox )
+static QString BitString( unsigned long n )
+{
+    return i18n("1 Bit", "%n Bits", n); // singular & plural form of "%d Bit"
+}
+
+static QString ByteString( unsigned long n )
+{
+    /* explanation in BR #52640 (http://bugs.kde.org/show_bug.cgi?id=52640) */
+    if (n == 1)
+	return i18n("1 Byte"); // singular form: "1 Byte" (yes, it's "1", not "%1"!)
+
+    return i18n("%1 Bytes")  // plural form: "%1 Bytes"
+		.arg(KGlobal::locale()->formatNumber(n,0));
+}
+
+static bool GetInfo_XServer_Generic( QListView *lBox )
 {
     /* Many parts of this source are taken from the X11-program "xdpyinfo" */
 
@@ -289,10 +304,12 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     if (pmf) {
 	last->setExpandable(true);
 	for (i=0; i<n; i++) {
-	    item = new QListViewItem(last, item, i18n("Pixmap Format #%1").arg(i+1),
-			i18n("%1 BPP, Depth: %2 Bit, scanline_pad: %3").
-			arg(pmf[i].bits_per_pixel).arg(pmf[i].depth).
-			arg(pmf[i].scanline_pad));
+	    item = new QListViewItem(last, item,
+			i18n("Pixmap Format #%1").arg(i+1),
+			i18n("%1 BPP, Depth: %2, Scanline padding: %3")
+				.arg(pmf[i].bits_per_pixel)
+				.arg(BitString(pmf[i].depth))
+				.arg(BitString(pmf[i].scanline_pad)));
 	}
 	XFree ((char *)pmf);
     }
@@ -300,9 +317,9 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     req_size = XExtendedMaxRequestSize(dpy);
     if (!req_size) req_size = XMaxRequestSize(dpy);
     last = new QListViewItem(next, last, i18n("Maximum Request Size"),
-		i18n("%1 Byte").arg(KGlobal::locale()->formatNumber(req_size*4,0)));
+		ByteString(req_size*4));
     last = new QListViewItem(next, last, i18n("Motion Buffer Size"),
-		i18n("%1 Byte").arg(KGlobal::locale()->formatNumber(XDisplayMotionBufferSize(dpy), 0)));
+		ByteString(XDisplayMotionBufferSize(dpy)));
 
     last = item = new QListViewItem(next, last, i18n("Bitmap"));
     last->setExpandable(true);
