@@ -67,7 +67,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
     layout->addWidget(mEntry, 1, 2);
 
     if (nsess) {
-	mButton = new QPushButton(i18n("\nStart\n&new\nsession\n"), winFrame, "button");
+	mButton = new QPushButton(i18n("\nStart\n&New\nSession\n"), winFrame, "button");
 	layout->addMultiCellWidget(mButton, 0,1, 3,3, AlignCenter);
 	connect(mButton, SIGNAL(clicked()), SIGNAL(startNewSession()));
 	mButton->installEventFilter(this);
