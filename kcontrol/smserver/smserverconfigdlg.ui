@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>SMServerConfigDlg</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>356</width>
-            <height>429</height>
+            <width>325</width>
+            <height>366</height>
         </rect>
     </property>
     <property name="caption">
@@ -50,8 +50,22 @@
                     <property name="text">
                         <string>Conf&amp;irm logout</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check this option if you want the session manager to display a logout confirmation dialog box.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>offerShutdownCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>O&amp;ffer shutdown options</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+F</string>
                     </property>
                 </widget>
             </vbox>
@@ -81,6 +95,9 @@
                     <property name="text">
                         <string>Restore &amp;previous session</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -88,6 +105,9 @@
                     </property>
                     <property name="text">
                         <string>Restore &amp;manually saved session</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -97,6 +117,9 @@
                     <property name="text">
                         <string>Start with an &amp;empty session</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
                 </widget>
             </vbox>
         </widget>
@@ -105,7 +128,7 @@
                 <cstring>sdGroup</cstring>
             </property>
             <property name="title">
-                <string>Default Action After Logout</string>
+                <string>Default Shutdown Option</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Here you can choose what should happen by default when you log out. This only has meaning, if you logged in through KDM.</string>
@@ -119,7 +142,10 @@
                         <cstring>logoutRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Login as different user</string>
+                        <string>&amp;Logout only</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -128,6 +154,9 @@
                     </property>
                     <property name="text">
                         <string>&amp;Turn off computer</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -156,7 +185,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Applications to be excluded from sessions:</string>
+                        <string>Applications to be e&amp;xcluded from sessions:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>excludeLineedit</cstring>
@@ -217,6 +246,18 @@
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
+    <connection>
+        <sender>offerShutdownCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sdGroup</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>offerShutdownCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>SMServerConfigDlg</receiver>
+        <slot>configChanged()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="global" impldecl="in implementation">kdialog.h</include>
@@ -224,9 +265,6 @@
 <slots>
     <slot>configChanged()</slot>
 </slots>
-<includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
-</includes>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>

@@ -23,6 +23,7 @@
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kconfig.h>
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <kgenericfactory.h>
@@ -61,6 +62,9 @@ void SMServerConfig::load()
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
   dialog->confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
+  bool en = c->readBoolEntry("offerShutdown", true);
+  dialog->offerShutdownCheck->setChecked(en);
+  dialog->sdGroup->setEnabled(en);
 
   QString s = c->readEntry( "loginMode" );
   if ( s == "default" )
@@ -93,6 +97,7 @@ void SMServerConfig::save()
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
   c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
+  c->writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());
   QString s = "restorePreviousLogout";
   if ( dialog->emptySessionRadio->isChecked() )
       s = "default";
@@ -121,6 +126,8 @@ void SMServerConfig::defaults()
 {
   dialog->previousSessionRadio->setChecked(true);
   dialog->confirmLogoutCheck->setChecked(true);
+  dialog->offerShutdownCheck->setChecked(true);
+  dialog->sdGroup->setEnabled(true);
   dialog->logoutRadio->setChecked(true);
   dialog->excludeLineedit->setText("");
 

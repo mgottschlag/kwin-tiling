@@ -956,6 +956,8 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         (confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
+    if (!config->readBoolEntry( "offerShutdown", true ))
+        maysd = false;
     if (sdtype == KApplication::ShutdownTypeDefault)
         sdtype = (KApplication::ShutdownType)
                  config->readNumEntry( "shutdownType", (int)KApplication::ShutdownTypeNone );
