@@ -9,8 +9,14 @@
             <x>0</x>
             <y>0</y>
             <width>704</width>
-            <height>634</height>
+            <height>475</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>0</width>
+            <height>450</height>
+        </size>
     </property>
     <vbox>
         <property name="name">
@@ -295,7 +301,6 @@ Recommended if you want sound.</string>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>
 </UI>
