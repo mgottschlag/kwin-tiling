@@ -53,7 +53,7 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #if defined(__linux__)
 # define DEFAULT_ERRORSTRING QString::null /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
-#elif defined(hpux)
+#elif defined(__hpux)
 # define DEFAULT_ERRORSTRING QString::null
 #else
 #define DEFAULT_ERRORSTRING  i18n("Maybe this system is not completely supported yet :-(")
@@ -470,7 +470,7 @@ static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool Wit
 #include "info_sgi.cpp"
 #elif __FreeBSD__
 #include "info_fbsd.cpp"
-#elif hpux
+#elif __hpux
 #include "info_hpux.cpp"
 #elif __NetBSD__
 #include "info_netbsd.cpp"
