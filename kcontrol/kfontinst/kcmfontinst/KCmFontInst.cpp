@@ -174,7 +174,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     setButtons(0);
     setRootOnlyMsg(i18n("<b>The fonts shown are your personal fonts.</b><br>To see (and install) "
-                        "system wide fonts, click on the \"Administrator Mode\" button below."));
+                        "system-wide fonts, click on the \"Administrator Mode\" button below."));
     setUseRootOnlyMsg(true);
     itsDirOp->setMode(KFile::Files);
 
@@ -312,12 +312,12 @@ QString CKCmFontInst::quickHelp() const
                       " fonts.</p><p>You may also install fonts using Konqueror:"
                       " type fonts:/ into Konqueror's location bar"
                       " and this will display your installed fonts. To install a"
-                      " font, simply copy one into the appropriate folder - "
+                      " font, simply copy it into the appropriate folder - "
                       " \"Personal\" for fonts available to just yourself, or "
-                      " \"System\" for sytem-wide fonts (available to all).</p>"
+                      " \"System\" for system-wide fonts (available to all).</p>"
                       "<p><b>NOTE:</b> As you are not logged in as \"root\", any"
                       " fonts installed will only be available to you. To install"
-                      " fonts system wide, use the \"Administrator Mode\""
+                      " fonts system-wide, use the \"Administrator Mode\""
                       " button to run this module as \"root\".</p>");
 }
 

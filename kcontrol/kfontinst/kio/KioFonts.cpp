@@ -1891,16 +1891,16 @@ bool CKioFonts::confirmMultiple(const KURL &url, const QStringList &files, EFold
 
         if(KMessageBox::No==messageBox(QuestionYesNo,
                                               OP_MOVE==op
-                                                ? i18n("<p>This font is located in a file alongside other fonts, in order "
+                                                ? i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the moving they will all have to be moved. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
                                                        "move all of these?</p>").arg(out)
                                             : OP_COPY==op
-                                                ? i18n("<p>This font is located in a file alongside other fonts, in order "
+                                                ? i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the copying they will all have to be copied. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
                                                        "copy all of these?</p>").arg(out)
-                                                : i18n("<p>This font is located in a file alongside other fonts, in order "
+                                                : i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the deleting they will all have to be deleted. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
                                                        "delete all of these?</p>").arg(out)))

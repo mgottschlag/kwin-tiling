@@ -509,11 +509,11 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                             punctuation(i18n("Numbers and characters",
                                             "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]")),
                             title(itsDescriptiveName.isEmpty()
-                                    ? i18n("ERROR: Could not determine font's name!")
+                                    ? i18n("ERROR: Could not determine font's name.")
                                     : itsDescriptiveName);
     
                     if(1==itsSizes.count())
-                        title=i18n("%2 [%1 pixels]").arg(itsSizes.first()).arg(title);
+                        title=i18n("%1 [1 pixel]", "%1 [%n pixels]", itsSizes.first()).arg(title);
     
                     painter.setFont(KGlobalSettings::generalFont());
                     painter.setPen(Qt::black);
