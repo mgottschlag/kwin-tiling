@@ -69,7 +69,7 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     // register existing windows
     const QValueList<WId> windows = kwin_module->windows();
     for (QValueList<WId>::ConstIterator it = windows.begin(); it != windows.end(); ++it )
-	windowAdded(*it);
+    windowAdded(*it);
 
     // set active window
     WId win = kwin_module->activeWindow();
@@ -112,28 +112,35 @@ Task* TaskManager::findTask(WId w)
 
 void TaskManager::windowAdded(WId w )
 {
-    NETWinInfo info (qt_xdisplay(),  w, qt_xrootwin(),
-		     NET::WMWindowType | NET::WMPid | NET::WMState );
+    NETWinInfo info(qt_xdisplay(),  w, qt_xrootwin(),
+                    NET::WMWindowType | NET::WMPid | NET::WMState);
 
     // ignore NET::Tool and other special window types
-    NET::WindowType wType = info.windowType( NET::NormalMask | NET::DesktopMask | NET::DockMask
-	| NET::ToolbarMask | NET::MenuMask | NET::DialogMask | NET::OverrideMask
-	| NET::TopMenuMask | NET::UtilityMask | NET::SplashMask );
-    if ( wType != NET::Normal
-        && wType != NET::Override
-        && wType != NET::Unknown
-        && wType != NET::Dialog
-	&& wType != NET::Utility)
-	return;
+    NET::WindowType wType =
+        info.windowType( NET::NormalMask | NET::DesktopMask | NET::DockMask |
+                         NET::ToolbarMask | NET::MenuMask | NET::DialogMask |
+                         NET::OverrideMask | NET::TopMenuMask |
+                         NET::UtilityMask | NET::SplashMask );
+
+    if (wType != NET::Normal &&
+        wType != NET::Override &&
+        wType != NET::Unknown &&
+        wType != NET::Dialog &&
+        wType != NET::Utility)
+    {
+        return;
+    }
 
     // ignore windows that want to be ignored by the taskbar
-    if ((info.state() & NET::SkipTaskbar) != 0) {
+    if ((info.state() & NET::SkipTaskbar) != 0)
+    {
         _skiptaskbar_windows.push_front( w ); // remember them though
-	return;
+        return;
     }
 
     Window transient_for_tmp;
-    if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp )) {
+    if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp ))
+    {
         WId transient_for = (WId) transient_for_tmp;
 
         // check if it's transient for a skiptaskbar window
@@ -143,17 +150,20 @@ void TaskManager::windowAdded(WId w )
         // lets see if this is a transient for an existing task
         if( transient_for != qt_xrootwin()
             && transient_for != 0
-            && wType != NET::Utility ) {
+            && wType != NET::Utility )
+        {
 
             Task* t = findTask(transient_for);
-            if (t) {
-	        if (t->window() != w) {
-		    t->addTransient(w, info);
+            if (t)
+            {
+                if (t->window() != w)
+                {
+                    t->addTransient(w, info);
                     // kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
                 }
-	        return;
+                return;
             }
-	}
+        }
     }
 
     Task* t = new Task(w, this);
@@ -203,9 +213,12 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // check if any state we are interested in is marked dirty
-    if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMVisibleIconName|NET::WMIconName|NET::WMState
-                    |NET::WMIcon|NET::XAWMState|NET::WMDesktop|NET::WMGeometry)) )
+    if(!(dirty & (NET::WMVisibleName | NET::WMName | NET::WMVisibleIconName |
+                  NET::WMIconName | NET::WMState | NET::WMIcon |
+                  NET::XAWMState | NET::WMDesktop | NET::WMGeometry)))
+    {
         return;
+    }
 
     // find task
     Task* t = findTask( w );
@@ -222,8 +235,15 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     else
         t->refresh();
 
-    if(dirty & (NET::WMDesktop|NET::WMState|NET::XAWMState|NET::WMGeometry))
-        emit windowChanged(w); // moved to different desktop or is on all or change in iconification/withdrawnnes
+    if (dirty & (NET::WMDesktop| NET::WMState | NET::XAWMState))
+    {
+        // moved to different desktop or is on all or change in iconification/withdrawnnes
+        emit windowChanged(w);
+    }
+    else if (dirty & NET::WMGeometry)
+    {
+        emit windowChangedGeometry(w);
+    }
 }
 
 void TaskManager::activeWindowChanged(WId w )
@@ -313,35 +333,43 @@ bool TaskManager::isOnTop(const Task* task)
 
     for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
          it != kwin_module->stackingOrder().end(); --it ) {
-	for (Task* t = _tasks.first(); t != 0; t = _tasks.next() ) {
-	    if ( (*it) == t->window() ) {
-		if ( t == task )
-		    return true;
-		if ( !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
-		    return false;
-		break;
-	    }
-	}
+        for (Task* t = _tasks.first(); t != 0; t = _tasks.next() ) {
+            if ( (*it) == t->window() ) {
+                if ( t == task )
+                    return true;
+                if ( !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
+                    return false;
+                break;
+            }
+        }
     }
     return false;
 }
 
 bool TaskManager::isOnScreen( int screen, const WId wid )
 {
-    if ( screen == -1 )
+    if (screen == -1)
     {
         return true;
     }
 
     KWin::WindowInfo wi = KWin::windowInfo( wid, NET::WMKDEFrameStrut );
+    QRect rect = wi.frameGeometry();
+
     return QApplication::desktop()->screenGeometry(screen).intersects( wi.frameGeometry() );
 }
 
 Task::Task(WId win, TaskManager * parent, const char *name)
   : QObject(parent, name),
-    _active(false), _win(win),
-    _lastWidth(0), _lastHeight(0), _lastResize(false), _lastIcon(),
-    _thumbSize(0.2), _thumb(), _grab()
+    _active(false),
+    _win(win),
+    _lastWidth(0),
+    _lastHeight(0),
+    _lastResize(false),
+    _lastIcon(),
+    _thumbSize(0.2),
+    _thumb(),
+    _grab()
 {
     _info = KWin::windowInfo(_win);
 
@@ -350,9 +378,13 @@ Task::Task(WId win, TaskManager * parent, const char *name)
 
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
-      KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
-						  KIcon::Small,KIcon::Small,
-						  KIcon::DefaultState, 0, true);
+    {
+        KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
+                                                    KIcon::Small,
+                                                    KIcon::Small,
+                                                    KIcon::DefaultState,
+                                                    0, true);
+    }
 
     // load xapp icon
     if (_pixmap.isNull())
@@ -381,9 +413,10 @@ void Task::refresh(bool icon)
         if (_pixmap.isNull())
             _pixmap = SmallIcon("kcmx");
 
-	_lastIcon.resize(0,0);
-	emit iconChanged();
+        _lastIcon.resize(0,0);
+        emit iconChanged();
     }
+
     emit changed(); // always changed ?  ... :(
 }
 
@@ -458,7 +491,7 @@ bool Task::demandsAttention() const
 
 bool Task::isOnScreen( int screen ) const
 {
-    return taskManager()->isOnScreen( screen, _win );
+    return TaskManager::isOnScreen( screen, _win );
 }
 
 void Task::updateDemandsAttentionState( WId w )
@@ -495,10 +528,10 @@ QString Task::className()
 {
     XClassHint hint;
     if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
-	QString nh( hint.res_name );
-	XFree( hint.res_name );
-	XFree( hint.res_class );
-	return nh;
+        QString nh( hint.res_name );
+        XFree( hint.res_name );
+        XFree( hint.res_class );
+        return nh;
     }
     return QString::null;
 }
@@ -507,10 +540,10 @@ QString Task::classClass()
 {
     XClassHint hint;
     if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
-	QString ch( hint.res_class );
-	XFree( hint.res_name );
-	XFree( hint.res_class );
-	return ch;
+        QString ch( hint.res_class );
+        XFree( hint.res_name );
+        XFree( hint.res_class );
+        return ch;
     }
     return QString::null;
 }
@@ -546,10 +579,10 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-	pixmap = KGlobal::iconLoader()->loadIcon( "go",
-						  KIcon::NoGroup,
-						  KIcon::SizeSmall );
-	isStaticIcon = true;
+        pixmap = KGlobal::iconLoader()->loadIcon( "go",
+                                                  KIcon::NoGroup,
+                                                  KIcon::SizeSmall );
+        isStaticIcon = true;
       }
     }
     break;
@@ -561,18 +594,18 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       //
       pixmap = icon( 34, 34, false  );
 
-      if ( ( pixmap.width() != 34 ) || ( pixmap.height() != 34 ) ) {
-	if ( ( pixmap.width() != 32 ) || ( pixmap.height() != 32 ) ) {
-	  pixmap = icon( 32, 32, true  );
-	}
+      if ( (( pixmap.width() != 34 ) || ( pixmap.height() != 34 )) &&
+           (( pixmap.width() != 32 ) || ( pixmap.height() != 32 )) )
+      {
+        pixmap = icon( 32, 32, true  );
       }
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-	pixmap = KGlobal::iconLoader()->loadIcon( "go",
-						  KIcon::NoGroup,
-						  KIcon::SizeMedium );
-	isStaticIcon = true;
+        pixmap = KGlobal::iconLoader()->loadIcon( "go",
+                            KIcon::NoGroup,
+                            KIcon::SizeMedium );
+        isStaticIcon = true;
       }
     }
     break;
@@ -583,27 +616,27 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // If not, try to get one from the classname
       if ( pixmap.isNull() || pixmap.width() != size || pixmap.height() != size ) {
-	pixmap = KGlobal::iconLoader()->loadIcon( className(),
-						  KIcon::NoGroup,
-						  size,
-						  KIcon::DefaultState,
-						  0L,
-						  true );
-	isStaticIcon = true;
+        pixmap = KGlobal::iconLoader()->loadIcon( className(),
+                            KIcon::NoGroup,
+                            size,
+                            KIcon::DefaultState,
+                            0L,
+                            true );
+        isStaticIcon = true;
       }
 
       // If we still don't have an icon then scale the one in the hints
       if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
-	pixmap = icon( size, size, true  );
-	isStaticIcon = false;
+        pixmap = icon( size, size, true  );
+        isStaticIcon = false;
       }
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-	pixmap = KGlobal::iconLoader()->loadIcon( "go",
-						  KIcon::NoGroup,
-						  size );
-	isStaticIcon = true;
+        pixmap = KGlobal::iconLoader()->loadIcon( "go",
+                                                  KIcon::NoGroup,
+                                                  size );
+        isStaticIcon = true;
       }
     }
   }
@@ -772,11 +805,11 @@ void Task::updateThumbnail()
    // by the thumbnail generation. This makes things much smoother
    // on slower machines.
    //
-  QWidget *rootWin = qApp->desktop();
-  QRect geom = _info.geometry();
+   QWidget *rootWin = qApp->desktop();
+   QRect geom = _info.geometry();
    _grab = QPixmap::grabWindow( rootWin->winId(),
-				geom.x(), geom.y(),
-				geom.width(), geom.height() );
+                                geom.x(), geom.y(),
+                                geom.width(), geom.height() );
 
    if ( !_grab.isNull() )
      QTimer::singleShot( 200, this, SLOT( generateThumbnail() ) );

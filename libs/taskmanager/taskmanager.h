@@ -202,7 +202,7 @@ public:
      * Returns the desktop on which this task's window resides.
      */
     int desktop() const { return _info.desktop(); }
-    
+
     /**
      * Returns true if the task is not active but demands user's attention.
      */
@@ -483,12 +483,12 @@ public:
      * Returns true if the specified task is on top.
      */
     bool isOnTop( const Task*);
-    
+
     /**
     * Returns whether the Window with WId wid is on the screen screen
     */
-    bool isOnScreen( int screen, const WId wid );
-    
+    static bool isOnScreen( int screen, const WId wid );
+
 signals:
     /**
      * Emitted when a new task has started.
@@ -521,6 +521,7 @@ signals:
      * Emitted when a window changes desktop.
      */
     void windowChanged(WId);
+    void windowChangedGeometry(WId);
 
 protected slots:
     //* @internal
