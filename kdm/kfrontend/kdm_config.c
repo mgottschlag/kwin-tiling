@@ -115,7 +115,6 @@ typedef struct ValArr {
 #define LOG_NAME "kdm_config"
 #define LOG_DEBUG_MASK DEBUG_CONFIG
 #define LOG_PANIC_EXIT 1
-#define CONST const
 #define STATIC static
 #include <printf.c>
 
@@ -424,10 +423,8 @@ PautoLoginX (Value *retval)
 #endif
 
 static const char
-    *guistyle[] = { "KDE", "Windows", "Platinum", 
-		    "Motif", "Motif+", "CDE", "SGI", 0 },
     *logoarea[] = { "None", "Logo", "Clock", 0 },
-    *showusers[] = { "All", "Selected", "None", 0 },
+    *showusers[] = { "NotHidden", "Selected", "None", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
     *sd_who[] = { "None", "Root", "All", 0 },
@@ -491,9 +488,9 @@ Ent entsCore[] = {
 { "StartInterval",	C_startInterval,	0,	"30" },
 { "Resources",		C_resources,		0,	"" },
 { "Xrdb",		C_xrdb,			0,	XBINDIR "/xrdb" },
-{ "Setup",		C_setup,		0,	KDMCONF "/Xsetup" },
-{ "Startup",		C_startup,		0,	KDMCONF "/Xstartup" },
-{ "Reset",		C_reset,		0,	KDMCONF "/Xreset" },
+{ "Setup",		C_setup,		0,	"" },
+{ "Startup",		C_startup,		0,	"" },
+{ "Reset",		C_reset,		0,	"" },
 { "Session",		C_session,		0,	KDMCONF "/Xsession" },
 { "UserPath",		C_userPath,		0,	DEF_USER_PATH },
 { "SystemPath",		C_systemPath,		0,	DEF_SYSTEM_PATH },
@@ -519,7 +516,7 @@ Ent entsCore[] = {
 
 Ent entsGreeter[] = {
 { "SessionTypes",	C_SessionTypes,		0,	"default,failsafe" },
-{ "GUIStyle",		C_GUIStyle | C_ENUM, guistyle,	"KDE" },
+{ "GUIStyle",		C_GUIStyle, 		0,	"KDE" },
 { "LogoArea",		C_LogoArea | C_ENUM, logoarea,	"Logo" },
 { "LogoPixmap",		C_LogoPixmap,		0,	"" },
 { "GreeterPosFixed",	C_GreeterPosFixed | C_BOOL, 0,	"false" },
@@ -530,9 +527,9 @@ Ent entsGreeter[] = {
 { "GreetString",	C_GreetString,		0,	"Welcome to %s at %n" },
 { "GreetFont",		C_GreetFont,		0,	"charter,24,5,0,50,0" },
 { "Language",		C_Language,		0,	"C" },
-{ "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "All" },
-{ "Users",		C_Users,		0,	"" },
-{ "NoUsers",		C_NoUsers,		0,	"" },
+{ "ShowUsers",		C_ShowUsers | C_ENUM, showusers, "NotHidden" },
+{ "SelectedUsers",	C_SelectedUsers,	0,	"" },
+{ "HiddenUsers",	C_HiddenUsers,		0,	"" },
 { "MinShowUID",		C_MinShowUID,		0,	"0" },
 { "MaxShowUID",		C_MaxShowUID,		0,	"65535" },
 { "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },

@@ -145,23 +145,7 @@ KDMConfig::KDMConfig()
     } else
 	_greeterPosX = -1;
 
-    switch (GetCfgInt (C_GUIStyle)) {
-#if QT_VERSION < 300
-    case GUI_Windows: kapp->setStyle (new QWindowsStyle); break;
-    case GUI_Platinum: kapp->setStyle (new QPlatinumStyle); break;
-    case GUI_Motif: kapp->setStyle (new QMotifStyle); break;
-    case GUI_MotifPlus: kapp->setStyle (new QMotifPlusStyle); break;
-    case GUI_CDE: kapp->setStyle (new QCDEStyle); break;
-    case GUI_SGI: kapp->setStyle (new QSGIStyle); break;
-#else
-    case GUI_Windows: kapp->setStyle ("windows"); break;
-    case GUI_Platinum: kapp->setStyle ("platinum"); break;
-    case GUI_Motif: kapp->setStyle ("motif"); break;
-    case GUI_MotifPlus: kapp->setStyle ("motifplus"); break;
-    case GUI_CDE: kapp->setStyle ("cde"); break;
-    case GUI_SGI: kapp->setStyle ("sgi"); break;
-#endif
-    }
+    kapp->setStyle (GetCfgStr (C_GUIStyle));
 
     _logoArea = GetCfgInt (C_LogoArea);
 
@@ -170,8 +154,8 @@ KDMConfig::KDMConfig()
 	_logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") );
 
     _showUsers = GetCfgInt (C_ShowUsers);
-    _users = GetCfgQStrList (C_Users);
-    _noUsers = GetCfgQStrList (C_NoUsers);
+    _users = GetCfgQStrList (C_SelectedUsers);
+    _noUsers = GetCfgQStrList (C_HiddenUsers);
     _lowUserId = GetCfgInt (C_MinShowUID);
     _highUserId = GetCfgInt (C_MaxShowUID);
     _sortUsers = GetCfgInt (C_SortUsers);
@@ -225,12 +209,3 @@ KDMConfig::KDMConfig()
     }
 #endif
 }
-
-/*
-KDMConfig::~KDMConfig(void)
-{
-    delete _normalFont;
-    delete _failFont;
-    delete _greetFont;
-}
-*/

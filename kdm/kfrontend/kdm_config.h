@@ -37,14 +37,7 @@
 #define C_liloMap		(C_TYPE_STR | 0x100a)
 
 #define C_SessionTypes		(C_TYPE_ARGV | 0x1010)
-#define C_GUIStyle		(C_TYPE_INT | 0x1011)
-# define GUI_KDE	0
-# define GUI_Windows	1
-# define GUI_Platinum	2
-# define GUI_Motif	3
-# define GUI_MotifPlus	4
-# define GUI_CDE	5
-# define GUI_SGI	6
+#define C_GUIStyle		(C_TYPE_STR | 0x1011)
 #define C_LogoArea		(C_TYPE_INT | 0x1012)	/* XXX to change */
 # define LOGO_NONE	0
 # define LOGO_LOGO	1
@@ -62,8 +55,8 @@
 # define SHOW_ALL	0
 # define SHOW_SEL	1
 # define SHOW_NONE	2
-#define C_Users			(C_TYPE_ARGV | 0x101d)
-#define C_NoUsers		(C_TYPE_ARGV | 0x101e)
+#define C_SelectedUsers		(C_TYPE_ARGV | 0x101d)
+#define C_HiddenUsers		(C_TYPE_ARGV | 0x101e)
 #define C_MinShowUID		(C_TYPE_INT | 0x101f)
 #define C_MaxShowUID		(C_TYPE_INT | 0x1020)
 #define C_SortUsers		(C_TYPE_INT | 0x1021)

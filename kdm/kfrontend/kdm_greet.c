@@ -45,7 +45,6 @@
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
 #define LOG_PANIC_EXIT EX_UNMANAGE_DPY
-#define CONST const
 #define STATIC
 #include <printf.c>
 

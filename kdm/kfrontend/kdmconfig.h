@@ -49,7 +49,6 @@ private:
 
 public:
     KDMConfig();
-//    ~KDMConfig();
 
     QFont	_normalFont;
     QFont	_failFont;
