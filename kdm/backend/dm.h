@@ -58,7 +58,6 @@ from the copyright holder.
 
 #include <time.h>
 #define Time_t time_t
-#define TO_INF 0x7fffffff
 
 #include <errno.h>
 

@@ -324,9 +324,9 @@ sd_cat (char **bp, SdRec *sdr)
 	str_cat (bp, "-1,", 3);
     else
 	*bp += sprintf (*bp, "%d,", sdr->timeout);
-    if (sdr->force == 2)
+    if (sdr->force == SHUT_FORCE)
 	str_cat (bp, "force", 5);
-    else if (sdr->force == 1)
+    else if (sdr->force == SHUT_FORCEMY)
 	str_cat (bp, "forcemy", 7);
     else
 	str_cat (bp, "cancel", 6);
@@ -459,7 +459,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1])
 		goto miss;
-	    sdr.force = 0;
+	    sdr.force = SHUT_CANCEL;
 	    if (fd >= 0 && !strcmp (ar[1], "status")) {
 		if (ar[2])
 		    goto exce;
@@ -525,9 +525,9 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 			if (!ar[4])
 			    goto miss;
 			if (!strcmp (ar[4], "force"))
-			    sdr.force = 2;
+			    sdr.force = SHUT_FORCE;
 			else if (d && !strcmp (ar[4], "forcemy"))
-			    sdr.force = 1;
+			    sdr.force = SHUT_FORCEMY;
 			else if (strcmp (ar[4], "cancel")) {
 			    fLog (d, fd, "bad", "invalid timeout action %\"s",
 				  ar[4]);
@@ -539,7 +539,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		} else {
 		    sdr.timeout = 0;
 		    if (!strcmp (ar[2], "forcenow"))
-			sdr.force = 2;
+			sdr.force = SHUT_FORCE;
 		    else if (!strcmp (ar[2], "schedule"))
 			sdr.timeout = TO_INF;
 		    else if (strcmp (ar[2], "trynow")) {
@@ -561,14 +561,14 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		if (!sdr.how && !sdr.start) 
 		    d->hstent->sdRec = sdr;
 		else {
-		    if (sdRec.how && sdRec.force == 2 &&
+		    if (sdRec.how && sdRec.force == SHUT_FORCE &&
 			((d->allowNuke == SHUT_NONE && sdRec.uid != sdr.uid) ||
 			 (d->allowNuke == SHUT_ROOT && sdr.uid)))
 		    {
 			fLog (d, fd, "perm", "overriding forced shutdown forbidden");
 			goto bust;
 		    }
-		    if (sdr.force == 2 &&
+		    if (sdr.force == SHUT_FORCE &&
 			(d->allowNuke == SHUT_NONE ||
 			 (d->allowNuke == SHUT_ROOT && sdr.uid)))
 		    {
@@ -589,7 +589,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    fLog (d, fd, "perm", "shutdown forbidden");
 		    goto bust;
 		}
-		if (sdRec.how && sdRec.force == 2 &&
+		if (sdRec.how && sdRec.force == SHUT_FORCE &&
 		    sdRec.uid != -1 && !fifoAllowNuke)
 		{
 		    fLog (d, fd, "perm", "overriding forced shutdown forbidden");
@@ -598,7 +598,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		if (!sdr.how)
 		    cancelShutdown ();
 		else {
-		    if (sdr.force) {
+		    if (sdr.force != SHUT_CANCEL) {
 			if (!fifoAllowNuke) {
 			    fLog (d, fd, "perm", "forced shutdown forbidden");
 			    goto bust;

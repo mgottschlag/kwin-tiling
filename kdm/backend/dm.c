@@ -733,7 +733,7 @@ processGPipe (struct display *d)
 	sdRec.timeout = 0;
 	switch (GRecvInt ()) {
 	case SHUT_FORCENOW:
-	    sdRec.force = 2;
+	    sdRec.force = SHUT_FORCE;
 	    break;
 	case SHUT_SCHEDULE:
 	    sdRec.timeout = TO_INF;
@@ -996,8 +996,8 @@ wouldShutdown (void)
 {
     struct display *d;
 
-    if (sdRec.force) {
-	if (sdRec.force == 1)
+    if (sdRec.force != SHUT_CANCEL) {
+	if (sdRec.force == SHUT_FORCEMY)
 	    for (d = displays; d; d = d->next)
 		if (d->status == remoteLogin ||
 		    (d->userSess >= 0 && d->userSess != sdRec.uid))
@@ -1468,7 +1468,7 @@ ExitDisplay (
     he->goodExit = goodExit;
     if (he->sdRec.how)
     {
-	if (!sdRec.how || sdRec.force != 2 ||
+	if (!sdRec.how || sdRec.force != SHUT_FORCE ||
 	    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
 	      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
 	{

@@ -125,6 +125,10 @@ from the copyright holder.
 # define SHUT_TRYNOW	1
 # define SHUT_FORCENOW	2
 # define SHUT_INTERACT	10
+# define SHUT_CANCEL	0
+# define SHUT_FORCEMY	1
+# define SHUT_FORCE	2
+# define TO_INF		0x7fffffff
 #define G_SessionExit	102	/* int code; async */
 #define G_GetCfg	103	/* int what; int sts, <variable>  */
 #define G_SetupDpy	104	/* ; int <syncer> */
