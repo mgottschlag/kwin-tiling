@@ -321,11 +321,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   {
     QRegExp match;
     QValueList<URLHint>::ConstIterator it;
-    bool isValidURL = isValidShortURL(cmd );
     for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
     {
         match = (*it).regexp;
-        if ( match.match( cmd, 0 ) == 0 && isValidURL )
+        if ( match.match( cmd, 0 ) == 0 )
         {
             cmd.prepend( (*it).prepend );
             setFilteredURI( data, cmd );
@@ -336,7 +335,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // If cmd is NOT a local resource, check if it
     // is a valid "shortURL" candidate and append
     // the default protocol the user supplied. (DA)
-    if ( url.isMalformed() && isValidURL )
+    if ( url.isMalformed() && isValidShortURL(cmd) )
     {
         cmd.insert( 0, m_strDefaultProtocol );
         setFilteredURI( data, cmd );
