@@ -19,6 +19,7 @@
 #include <ksimpleconfig.h>
 #include <kurifilter.h>
 #include <kstandarddirs.h>
+#include <kservice.h>
 
 #include "khotkeys.h"
 
@@ -98,6 +99,9 @@ void KHotKeysApp::start_general( const QString& action_P )
 QString KHotKeysApp::get_desktop_file( const QString& action_P )
     {
     KHotData* current = data[ action_P ];
+#if 1
+    return current->run;
+#else
     if( current->run.isEmpty())
         return QString::null;
     if( current->run.right( 8 ) != ".desktop" )
@@ -148,6 +152,7 @@ QString KHotKeysApp::get_desktop_file( const QString& action_P )
         data.write_config( cfg );
         }
     return current->run;
+#endif
     }
 
 // start menuentry configured by kmenuedit
@@ -157,7 +162,19 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
     if( desktop_file.isEmpty() )
         return;
     // run the menu entry's .desktop file
+#if 1
+    if( desktop_file.endsWith( ".desktop" ))
+        desktop_file.truncate( desktop_file.length() - 8 );
+    if( desktop_file.endsWith( ".kdelnk" ))
+        desktop_file.truncate( desktop_file.length() - 7 );
+    int slash = desktop_file.findRev( '/' );
+    if( slash >= 0 )
+        desktop_file = desktop_file.mid( slash + 1 );
+    desktop_file = desktop_file.lower();
+    kapp->startServiceByDesktopName( desktop_file );
+#else
     ( void ) new KRun( KGlobal::dirs()->findResource( "apps", desktop_file ));
+#endif
     data[ action_P ]->timeout.start( 1000, true ); // 1sec timeout
     }
 
@@ -176,8 +193,23 @@ void KHotKeysApp::reread_configuration()
         QString label;
         if( !desktop_file.isEmpty() )
             {
+#if 1
+            if( desktop_file.endsWith( ".desktop" ))
+                desktop_file.truncate( desktop_file.length() - 8 );
+            if( desktop_file.endsWith( ".kdelnk" ))
+                desktop_file.truncate( desktop_file.length() - 7 );
+            int slash = desktop_file.findRev( '/' );
+            if( slash >= 0 )
+                desktop_file = desktop_file.mid( slash + 1 );
+            desktop_file = desktop_file.lower();
+            KService::Ptr serv = KService::serviceByDesktopName( desktop_file );
+            if( serv == NULL )        
+                continue;
+            label = serv->name();
+#else
             KDesktopFile cfg( desktop_file, true );
             label = cfg.readEntry( "Name" );
+#endif
             }
         if( label.isEmpty() )
             label = it.currentKey();

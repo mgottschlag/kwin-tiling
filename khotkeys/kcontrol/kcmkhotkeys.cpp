@@ -30,6 +30,27 @@
 
 #include "kcmkhotkeys.h"
 
+static bool menuEntryMatch( QString s1, QString s2 )
+    {
+    if( s1.endsWith( ".desktop" ))
+        s1.truncate( s1.length() - 8 );
+    if( s1.endsWith( ".kdelnk" ))
+        s1.truncate( s1.length() - 7 );
+    int slash = s1.findRev( '/' );
+    if( slash >= 0 )
+        s1 = s1.mid( slash + 1 );
+    s1 = s1.lower();
+    if( s2.endsWith( ".desktop" ))
+        s2.truncate( s2.length() - 8 );
+    if( s2.endsWith( ".kdelnk" ))
+        s2.truncate( s2.length() - 7 );
+    slash = s2.findRev( '/' );
+    if( slash >= 0 )
+        s2 = s2.mid( slash + 1 );
+    s2 = s2.lower();
+    return s1 == s2;
+    }
+
 static void write_conf( KHotData_dict& data_P );
 //static bool edit_shortcut( const QString& action_name_P, KHotData* data_P,
 //    KHotData_dict& data_P1, const QString& shortcut_P );
@@ -50,7 +71,7 @@ QString khotkeys_get_menu_entry_shortcut( const QString& file_P )
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->menuentry && it.current()->run == file_P )
+        if( it.current()->menuentry && menuEntryMatch( it.current()->run, file_P ))
             return it.current()->shortcut;
     return "";
     }
@@ -65,12 +86,12 @@ bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P )
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->menuentry && it.current()->run == new_P )
+        if( it.current()->menuentry && menuEntryMatch( it.current()->run, new_P ))
             return false;
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->menuentry && it.current()->run == old_P )
+        if( it.current()->menuentry && menuEntryMatch( it.current()->run, old_P ))
             {
             it.current()->run = new_P;
             write_conf( data );
@@ -89,7 +110,7 @@ void khotkeys_menu_entry_deleted( const QString& entry_P )
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->menuentry && it.current()->run == entry_P )
+        if( it.current()->menuentry && menuEntryMatch( it.current()->run, entry_P ))
             {
             data.remove( it.currentKey());
             write_conf( data );
@@ -125,7 +146,7 @@ QString change_shortcut_internal( const QString& entry_P,
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->menuentry && it.current()->run == entry_P )
+        if( it.current()->menuentry && menuEntryMatch( it.current()->run, entry_P ))
             {
             name = it.currentKey();
             pos = data.take( name );
