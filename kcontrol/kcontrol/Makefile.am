@@ -26,23 +26,29 @@ bin_PROGRAMS =
 lib_LTLIBRARIES =
 kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
-kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
-	helpwidget.cpp modules.cpp proxywidget.cpp \
-	dockcontainer.cpp aboutwidget.cpp global.cpp \
-	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp \
-	kcrootonly.cpp moduleIface.cpp moduleIface.skel
+noinst_LTLIBRARIES = libkcontrolcommon.la libkcontrolglobal.la
+# global.cpp is used by three targets (needed by kcminit.la too)
+libkcontrolglobal_la_SOURCES = global.cpp 
+# those are the sources needed by kcontrol.la and kcmshell.la
+libkcontrolcommon_la_SOURCES = modules.cpp proxywidget.cpp kcrootonly.cpp
+libkcontrolcommon_la_LIBADD = libkcontrolglobal.la
 
-kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
+kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
+	helpwidget.cpp \
+	dockcontainer.cpp aboutwidget.cpp \
+	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp \
+	moduleIface.cpp moduleIface.skel
+
+kcontrol_la_LIBADD  = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
-kcmshell_la_SOURCES = kcmshell.cpp proxywidget.cpp modules.cpp \
-                      kcrootonly.cpp kcdialog.cpp global.cpp \
-                      kcdialog.skel
-kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
+
+kcmshell_la_SOURCES = kcmshell.cpp kcdialog.cpp kcdialog.skel
+kcmshell_la_LIBADD = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
-kcminit_la_SOURCES = kcminit.cpp global.cpp
-kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
+kcminit_la_SOURCES = kcminit.cpp
+kcminit_la_LIBADD   = libkcontrolglobal.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol
