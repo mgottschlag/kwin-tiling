@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kimageio.h>
 #include <kfiledialog.h>
+#include <kstddirs.h>
 
 #include <stdlib.h>
 #include <assert.h>
