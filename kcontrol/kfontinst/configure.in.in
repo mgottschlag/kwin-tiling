@@ -45,7 +45,7 @@ AC_SUBST(FONTINST_SUBDIR)
 dnl -- Xft/XRender --------------------------------------------------------------
 AC_MSG_CHECKING([for Xft/XRender X11/Xft/Xft.h])
 FOUND_XFT=NO
-AC_CHECK_HEADERS(X11/Xft/Xft.h,FOUND_XFT="YES",FOUND_XFT="NO")
+KDE_CHECK_HEADER(X11/Xft/Xft.h,FOUND_XFT="YES",FOUND_XFT="NO")
 if test "$FOUND_XFT" = YES; then
     AC_DEFINE_UNQUOTED(HAVE_XFT, 1, [Define if your system has Xft support])
 fi
