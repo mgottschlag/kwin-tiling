@@ -57,7 +57,7 @@ void CommandShortcutsModule::save()
 {
     for (treeItemListIterator it(m_changedItems); it.current(); ++it)
     {
-        KHotKeys::changeMenuEntryShortcut(it.current()->file(), it.current()->accel());
+        KHotKeys::changeMenuEntryShortcut(it.current()->storageId(), it.current()->accel());
     }
     m_changedItems.clear();
 }

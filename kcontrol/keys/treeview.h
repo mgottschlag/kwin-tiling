@@ -32,13 +32,12 @@ class AppTreeItem : public KListViewItem
 {
 
 public:
-    AppTreeItem(QListViewItem *parent, const QString& file);
-    AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& file);
-    AppTreeItem(QListView *parent, const QString& file);
-    AppTreeItem(QListView *parent, QListViewItem* after, const QString& file);
+    AppTreeItem(QListViewItem *parent, const QString& storageId);
+    AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& storageId);
+    AppTreeItem(QListView *parent, const QString& storageId);
+    AppTreeItem(QListView *parent, QListViewItem* after, const QString& storageId);
 
-    QString file() const { return m_file; }
-    void setFile(const QString& file) { m_file = file; }
+    QString storageId() const { return m_storageId; }
     void setDirectoryPath(const QString& path) { m_directoryPath = path; }
 
     QString name() const { return m_name; }
@@ -53,7 +52,7 @@ public:
 
 private:
     bool m_init : 1;
-    QString m_file;
+    QString m_storageId;
     QString m_name;
     QString m_directoryPath;
     QString m_accel;
@@ -67,9 +66,6 @@ public:
     AppTreeView(QWidget *parent=0, const char *name=0);
     ~AppTreeView();
     void fill();
-
-public slots:
-    void currentChanged(const QString& desktopFile);
 
 signals:
     void entrySelected(const QString&, const QString &, bool);

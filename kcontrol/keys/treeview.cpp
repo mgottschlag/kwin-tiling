@@ -34,17 +34,17 @@
 #include "treeview.moc"
 #include "khotkeys.h"
 
-AppTreeItem::AppTreeItem(QListViewItem *parent, const QString& file)
-    : KListViewItem(parent), m_init(false), m_file(file) {}
+AppTreeItem::AppTreeItem(QListViewItem *parent, const QString& storageId)
+    : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& file)
-    : KListViewItem(parent, after), m_init(false), m_file(file) {}
+AppTreeItem::AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& storageId)
+    : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListView *parent, const QString& file)
-    : KListViewItem(parent), m_init(false), m_file(file) {}
+AppTreeItem::AppTreeItem(QListView *parent, const QString& storageId)
+    : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListView *parent, QListViewItem *after, const QString& file)
-    : KListViewItem(parent, after), m_init(false), m_file(file) {}
+AppTreeItem::AppTreeItem(QListView *parent, QListViewItem *after, const QString& storageId)
+    : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
 void AppTreeItem::setName(const QString &name)
 {
@@ -161,9 +161,9 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
 
             AppTreeItem *item;
             if (parent == 0)
-                item = new AppTreeItem(this,  after, g->directoryEntryPath());
+                item = new AppTreeItem(this,  after, QString::null);
             else
-                item = new AppTreeItem(parent, after, g->directoryEntryPath());
+                item = new AppTreeItem(parent, after, QString::null);
 
             item->setName(groupCaption);
             item->setPixmap(0, appIcon(g->icon()));
@@ -182,12 +182,12 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
 
             AppTreeItem* item;
             if (parent == 0)
-                item = new AppTreeItem(this, after, s->desktopEntryPath());
+                item = new AppTreeItem(this, after, s->storageId());
             else
-                item = new AppTreeItem(parent, after, s->desktopEntryPath());
+                item = new AppTreeItem(parent, after, s->storageId());
 
             item->setName(serviceCaption);
-            item->setAccel(KHotKeys::getMenuEntryShortcut(s->desktopEntryPath()));
+            item->setAccel(KHotKeys::getMenuEntryShortcut(s->storageId()));
             item->setPixmap(0, appIcon(s->icon()));
 
             after = item;
@@ -201,19 +201,7 @@ void AppTreeView::itemSelected(QListViewItem *item)
 
     if(!item) return;
 
-    emit entrySelected(_item->file(), _item->accel(), _item->isDirectory());
-}
-
-void AppTreeView::currentChanged(const QString& file)
-{
-    AppTreeItem *item = (AppTreeItem*)selectedItem();
-    if (item == 0) return;
-
-    item->setFile(file);
-
-    KDesktopFile df(file);
-    item->setName(df.readName());
-    item->setPixmap(0, appIcon(df.readIcon()));
+    emit entrySelected(_item->storageId(), _item->accel(), _item->isDirectory());
 }
 
 QStringList AppTreeView::fileList(const QString& rPath)
