@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <qlabel.h>
 #include <qmsgbox.h>
@@ -172,21 +173,21 @@ void Tzone::load()
 
 void Tzone::save()
 {
-        QString tz;
-        QString selectedzone(tzonelist->currentText());
-        QString currentlySetZone;
+	QString tz;
+	QString selectedzone(tzonelist->currentText());
+	QString currentlySetZone;
 
-        if( selectedzone != i18n("[No selection]"))
-        {
-                QFile fTimezoneFile("/etc/timezone");
+	if( selectedzone != i18n("[No selection]"))
+	{
+		QFile fTimezoneFile("/etc/timezone");
 
-                if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
-                {
-                        QTextStream t(&fTimezoneFile);
-                        t << selectedzone;
-                        fTimezoneFile.close();
-                }
-        }
+		if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
+		{
+			QTextStream t(&fTimezoneFile);
+			t << selectedzone;
+			fTimezoneFile.close();
+		}
+	}
 
   tz.sprintf("/usr/share/zoneinfo/%s", (tzonelist->currentText()).data());
   tz.truncate(tz.length()-1);
@@ -196,11 +197,15 @@ void Tzone::save()
   // This is extremely ugly. Who knows the better way?
   unlink( "/etc/localtime" );
   if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
-        {
-                QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
-        }
-
-  // write some stuff
+	{
+		QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
+	}
+	
+	QString val = ":" + tz;
+	setenv("TZ", val.ascii(), 1);
+	tzset();
+  
+	// write some stuff
   KConfig *config = KGlobal::config();
   config->setGroup("tzone");
   config->writeEntry("TZ", tzonelist->currentItem() );

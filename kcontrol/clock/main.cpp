@@ -51,15 +51,13 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   tab->addTab(tzone, i18n("Time Zone"));
   connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-//  removing the Apply button to fix the time sync problem:CFR
-//  setButtons(Help|Reset|Cancel|Apply|Ok);
-  setButtons(Help|Reset|Cancel|Ok);
+  setButtons(Help|Reset|Cancel|Apply|Ok);
 }
 
 void KclockModule::save()
 {
-  dtime->save();
   tzone->save();
+  dtime->save();
 
     // restart kicker to sync up the time
     if (!kapp->dcopClient()->isAttached())

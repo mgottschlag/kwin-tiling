@@ -258,7 +258,8 @@ void Dtime::save()
   c_proc << BufS;
   c_proc.start( KProcess::Block );
 
-  if ( c_proc.exitStatus() != 0 ) {
+  if ( c_proc.exitStatus() != 0 ) 
+	{
     KMessageBox::error( this, i18n("Can not set date."));
     return;
   }
@@ -267,7 +268,7 @@ void Dtime::save()
   KProcess hwc_proc;
   hwc_proc.setExecutable( "hwclock" );
   hwc_proc << "--systohc";
-  hwc_proc.start();
+  hwc_proc.start(KProcess::Block);
 
   // restart time
   internalTimer.start( 1000 );
