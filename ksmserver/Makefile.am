@@ -40,7 +40,7 @@ update_DATA = ksmserver.upd move_session_config.sh
 updatedir = $(kde_datadir)/kconf_update
 
 
-check_PROGRAMS = testsh
+EXTRA_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
 
 testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
