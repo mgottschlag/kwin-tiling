@@ -555,7 +555,7 @@ void KCMStyle::defaults()
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(false);
-	cbTearOffHandles->setChecked(true);
+	cbTearOffHandles->setChecked(false);
 	cbMacMenubar->setChecked(false);
 }
 
@@ -885,7 +885,7 @@ void KCMStyle::loadMisc( KSimpleConfig& config )
 	config.setGroup("KDE");
 	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", false));
 	cbEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
-	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle",true));
+	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle", false));
 	cbMacMenubar->setChecked(config.readBoolEntry("macStyle", false));
 
 	m_bMacDirty = false;
