@@ -86,7 +86,10 @@ void ModuleTreeView::fill()
     {
       ModuleTreeItem *parent = 0;
       parent = getGroupItem(parent, module->groups());
-      new ModuleTreeItem(parent, module);
+      if (parent)
+        new ModuleTreeItem(parent, module);
+      else
+        new ModuleTreeItem(this, module);
     }
 
   setMinimumWidth(columnWidth(0));

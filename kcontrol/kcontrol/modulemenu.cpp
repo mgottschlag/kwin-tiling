@@ -46,8 +46,7 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
-      KPopupMenu *parent = 0;
-      parent = getGroupMenu(module->groups());
+      KPopupMenu *parent = getGroupMenu(module->groups());
   
       // Item names may contain ampersands. To avoid them being converted to 
       // accelators, replace them with two ampersands.
@@ -97,11 +96,16 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
     parGroup.append(groups[i]);
   KPopupMenu *parent = getGroupMenu(parGroup);
 
+  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
+  if (!group)
+  {
+     kdWarning() << KCGlobal::baseGroup()+path << " not found!\n";
+     return this;
+  }
+ 
   // create new menu
   KPopupMenu *menu = new KPopupMenu(parent);
   connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
-
-  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
 
   // Item names may contain ampersands. To avoid them being converted to 
   // accelators, replace them with two ampersands.

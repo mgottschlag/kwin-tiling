@@ -59,9 +59,10 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   pos = group.findRev('/');
   if (pos >= 0)
      group = group.left(pos);
+  else
+     group = QString::null;
 
-  QStringList groups;
-  splitString(group, '/', groups);
+  QStringList groups = QStringList::split('/', group);
   setGroups(groups);
 }
 
