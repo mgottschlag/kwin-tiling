@@ -129,12 +129,6 @@ void KMenuButton::insertSubmenu( const QString &text, const QString &tag,
 
 void KMenuButton::slotActivated( int index )
 {
-  // Update caption and iconset:
-  if ( m_current == index )
-    return;
-
-  setCurrentItem( index );
-
   // Forward event from popup menu as if it was emitted from this widget:
   emit activated( index );
 }
@@ -165,11 +159,6 @@ bool KMenuButton::containsTag( const QString &str ) const
   return m_tags->contains( str ) > 0;
 }
 
-QString KMenuButton::currentTag() const
-{
-  return *m_tags->at( currentItem() );
-}
-
 QString KMenuButton::tag( int i ) const
 {
   if ( i < 0 || i >= count() )
@@ -179,25 +168,3 @@ QString KMenuButton::tag( int i ) const
   }
   return *m_tags->at( i );
 }
-
-int KMenuButton::currentItem() const
-{
-  return m_current;
-}
-
-void KMenuButton::setCurrentItem( int i )
-{
-  if ( i < 0 || i >= count() )
-    return;
-  m_current = i;
-}
-
-void KMenuButton::setCurrentItem( const QString &code )
-{
-  int i = m_tags->findIndex( code );
-  if ( code.isNull() )
-    i = 0;
-  if ( i != -1 )
-    setCurrentItem( i );
-}
-

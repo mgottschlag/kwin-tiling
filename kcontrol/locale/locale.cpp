@@ -111,12 +111,16 @@ void KLocaleConfig::slotAddLanguage(int i)
 
   int pos = m_languages->currentItem();
   if ( pos < 0 ) pos = 0;
-  QStringList::Iterator it = languageList.at( pos );
 
   // If it's already in list, just move it (delete the old, then insert a new)
-  QStringList::Iterator oldIt = languageList.find( code );
-  if ( oldIt != languageList.end() )
-    languageList.remove( oldIt );
+  int oldPos = languageList.findIndex( code );
+  if ( oldPos != -1 )
+    languageList.remove( languageList.at(oldPos) );
+
+  if ( oldPos < pos )
+    --pos;
+
+  QStringList::Iterator it = languageList.at( pos );
  
   languageList.insert( it, code );
 
@@ -328,8 +332,7 @@ void KLocaleConfig::slotLocaleChanged()
       QString name;
       readLocale(*it, name, QString::null);
 
-      if ( !name.isEmpty() )
-	m_languages->insertItem(name);
+      m_languages->insertItem(name);
     }
   slotCheckButtons();
 

@@ -4,7 +4,7 @@
   written 1998 by Matthias Hoelzer
 
   Copyright 1998 Matthias Hoelzer.
-  Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>.
+  Copyright 1999-2001 Hans Petter Bieker <bieker@kde.org>.
   
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 class QTabWidget;
 class QGroupBox;
 
+class KConfig;
 class KLocale;
 class KLocaleConfig;
 class KLocaleConfigMoney;
@@ -72,6 +73,9 @@ private:
 
   QGroupBox           *m_gbox;
   KLocaleSample       *m_sample;
+
+  KConfig * m_globalConfig;
+  KConfig * m_nullConfig;
 };
 
 #endif

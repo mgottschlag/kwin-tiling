@@ -61,16 +61,8 @@ public:
   /*
    * Tag of the selected item
    */
-  QString currentTag() const;
   QString tag( int i ) const;
   bool containsTag( const QString &str ) const;
-
-  /*
-   * Set the current item
-   */
-  int currentItem() const;
-  void setCurrentItem( int i );
-  void setCurrentItem( const QString &code );
 
 signals:
   void activated( int index );
@@ -83,7 +75,6 @@ private:
   // work space for the new class
   QStringList *m_tags;  
   QPopupMenu  *m_popup, *m_oldPopup;
-  int         m_current;
 };
 
 #endif

@@ -51,6 +51,9 @@
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+  m_nullConfig = new KConfig(QString::null, false, false);
+  m_globalConfig = new KConfig(QString::null, false, true);
+
   m_locale = new KLocale(QString::fromLatin1("kcmlocale"), false);
   QVBoxLayout *l = new QVBoxLayout(this, 5);
   l->setAutoAdd(TRUE);
@@ -127,22 +130,18 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 KLocaleApplication::~KLocaleApplication()
 {
   delete m_locale;
+  delete m_globalConfig;
+  delete m_nullConfig;
 }
 
 void KLocaleApplication::load()
 {
-  //delete locale;
-  // #### HPB: Do not use environment variables here!
-  //  locale = new KLocale(QString::fromLatin1("kcmlocale"), false);
-  // *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false);
-  // #### HPB: KLocale has to be fixed so that it's possible to ask for a complete
-  // reload
-  //m_locale->setDefaultsOnly( false );
-  kdDebug() << "KLocaleApplication::load() not implemented" << endl;
+  m_globalConfig->reparseConfiguration();
+  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false, m_globalConfig);
 
-  emit changed(false);
-  emit languageChanged();
   emit localeChanged();
+  emit languageChanged();
+  emit changed(false);
 }
 
 void KLocaleApplication::save()
@@ -183,13 +182,10 @@ void KLocaleApplication::save()
 
 void KLocaleApplication::defaults()
 {
-  // #### HPB: Do not use user config here..
-  QStringList languageList(KLocale::defaultLanguage());
-  m_locale->setLanguage(languageList);
-  m_locale->setCountry(KLocale::defaultCountry());
-  m_locale->setDefaultsOnly( true );
+  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false, m_nullConfig);
 
   emit localeChanged();
+  emit languageChanged();
 }
 
 QString KLocaleApplication::quickHelp() const
