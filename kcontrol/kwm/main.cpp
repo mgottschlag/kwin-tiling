@@ -121,7 +121,9 @@ void KKWMApplication::apply()
 
 int main(int argc, char **argv)
 {
-    config = new KConfig("kwmrc");
+    static KInstance *instance = new KInstance( "kwm");
+    config = instance->config();
+    //config = new KConfig("kwmrc");
     KKWMApplication app(argc, argv, "kcmkwm");
     app.setTitle(i18n("Window manager style"));
     int result = 0;
