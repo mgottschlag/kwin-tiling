@@ -1,0 +1,28 @@
+/* XPM */
+static const char *smallLinuxODBC_xpm[] = {
+/* width height num_colors chars_per_pixel */
+"    16    16        5            1",
+/* colors */
+". c #000000",
+"# c #96586DB6FFFF",
+"a c #00000000FFFF",
+"b c None",
+"c c #FFFFD34C1861",
+/* pixels */
+"bbbbbbbbbbbbbbbb",
+"bbbbbb.#..bbbbbb",
+"bbbb.c######.bbb",
+"bbbcc########.bb",
+"bbccc.########.b",
+"b.cccc.#.######b",
+"bccccc.bbb.####.",
+"bcccc.bbbbb#####",
+"bcccc.bbbbb....#",
+"bcccc..bbb.aaaa.",
+"bccccc.bbb.aaaa.",
+"b.cccc.a.aaaaaa.",
+"b.ccccaaaaaaaa..",
+"bbb..caaaaaaa.bb",
+"bbbb.aaaaaaa.bbb",
+"bbbbbb....bbbbbb"
+};
