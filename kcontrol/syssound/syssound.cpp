@@ -30,6 +30,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+// X11 headers
+#undef None
+#undef Unsorted
+
 #include <qobject.h>
 #include <qlabel.h>
 #include <qtabwidget.h>
