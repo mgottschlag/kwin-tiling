@@ -349,6 +349,7 @@ CheckUtmp( void )
 {
 	static time_t modtim;
 	time_t nck;
+	time_t ends;
 	struct utmps *utp, **utpp;
 	struct stat st;
 #ifdef BSD_UTMP
@@ -423,7 +424,7 @@ CheckUtmp( void )
 		if (utp->state != UtActive) {
 			if (utp->state == UtDead) /* shouldn't happen ... */
 				utp->time = 0;
-			time_t ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
+			ends = utp->time + (utp->hadSess ? TIME_RELOG : TIME_LOG);
 			if (ends <= now) {
 #ifdef HAVE_VTS
 				ForEachDisplay( WakeDisplay );
