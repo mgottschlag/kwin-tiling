@@ -91,7 +91,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     but = new QPushButton(i18n("&Remove"), frame);
     hbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotRemove()));
-    but = new QPushButton(i18n("&Modify"), frame);
+    but = new QPushButton(i18n("&Modify..."), frame);
     hbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotModify()));
 
@@ -641,7 +641,7 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     m_FileEdit = new QLineEdit(frame);
     lbl->setBuddy(m_FileEdit);
     hbox->addWidget(m_FileEdit);
-    QPushButton *but = new QPushButton(i18n("&Browse"), frame);
+    QPushButton *but = new QPushButton(i18n("&Browse..."), frame);
     connect(but, SIGNAL(clicked()), SLOT(slotBrowse()));
     hbox->addWidget(but);
 

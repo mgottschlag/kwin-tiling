@@ -231,7 +231,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pColor2But, i18n("Click to choose a second color. If the"
       " background mode does not require a second color, this button is disabled.") );
 
-    m_pBGSetupBut = new QPushButton(i18n("&Setup"), m_pTab1);
+    m_pBGSetupBut = new QPushButton(i18n("&Setup..."), m_pTab1);
     m_pBGSetupBut->setFixedSize(bsize);
     grid->addWidget(m_pBGSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
@@ -277,7 +277,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
       " to use as wallpaper.") );
 
-    m_pBrowseBut = new QPushButton(i18n("&Browse"), m_pTab2);
+    m_pBrowseBut = new QPushButton(i18n("&Browse..."), m_pTab2);
     grid->addWidget(m_pBrowseBut, 2, 1, Qt::AlignLeft);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
@@ -288,7 +288,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
     grid->addWidget(m_pCBMulti, 3, 0, Qt::AlignLeft);
     connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
-    m_pMSetupBut = new QPushButton(i18n("S&etup"), m_pTab2);
+    m_pMSetupBut = new QPushButton(i18n("S&etup..."), m_pTab2);
     m_pMSetupBut->setFixedSize(bsize);
     grid->addWidget(m_pMSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
