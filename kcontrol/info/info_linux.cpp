@@ -13,6 +13,10 @@
  
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.11  2000/01/08 21:35:39  waba
+    WABA: Applied patch from Graham TerMarsch <gtermars@home.com>
+    (Adding status of AlsaSound driver)
+
     Revision 1.10  1999/12/03 03:32:39  deller
     - cleaned up Memory-Widget
     - much more information on X-Server (more will follow)
@@ -238,6 +242,15 @@ bool GetInfo_Partitions( QListView *lBox )
 
 // Some Ideas taken from garbazo from his source in info_fbsd.cpp
 
+#if SIZEOF_LONG > 4	
+#define LONG_TYPE	unsigned long 
+#else
+/* On 32-bit systems we would get an overflow in unsigned int for
+   drives bigger than 4GB. Let's use the ugly type double ! */
+/* I thought about using long long, but it's not always available ! */
+#define LONG_TYPE	double
+#endif
+
 bool GetInfo_Partitions (QListView *lbox)
 {
 	#define NUMCOLS 6
@@ -262,7 +275,7 @@ bool GetInfo_Partitions (QListView *lbox)
 #endif
 
  	struct statfs 	sfs;
-	unsigned long 	total,avail;
+	LONG_TYPE	total, avail;
 	QString		str;
 	QString 	MB(i18n("MB"));	// "MB" = "Mega-Byte"
 	
@@ -311,8 +324,9 @@ bool GetInfo_Partitions (QListView *lbox)
 		total = avail = 0;	// initialize size..
 		found_in_List = (Mounted_Partitions.contains(FS_NAME)>0);
 		if (found_in_List && statfs(FS_FILE,&sfs)==0) {
-    		    total = sfs.f_blocks * sfs.f_bsize;
-		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) * sfs.f_bsize;
+    		    total = ((LONG_TYPE)sfs.f_blocks) * sfs.f_bsize;
+		    avail = (getuid() ? sfs.f_bavail : sfs.f_bfree) 
+				* ((LONG_TYPE) sfs.f_bsize);
 		};
 		/*
 		if (stat(fstab_ent->fs_file,&st)!=0)
@@ -323,8 +337,8 @@ bool GetInfo_Partitions (QListView *lbox)
 		if (total)
             new QListViewItem(lbox, QString(FS_NAME) + "  ", QString(FS_FILE) + "  ",
                               QString(FS_TYPE) + "  ",
-                              Value(((total/1024)+512)/1024,6) + MB,
-                              Value(((avail/1024)+512)/1024,6) + MB,
+                              Value((int)(((total/1024)+512)/1024),6) + MB,
+                              Value((int)(((avail/1024)+512)/1024),6) + MB,
                               QString(FS_MNTOPS));
 		else
             new QListViewItem(lbox, QString(FS_NAME), QString(FS_FILE),
