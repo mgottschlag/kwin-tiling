@@ -88,8 +88,8 @@ void CKfiGlobal::destroy()
     theirXft=NULL;
 #endif
 
-    if(theirErrorDialog)
-        delete theirErrorDialog;
+    //
+    // Don't delete error dialog, Qt will remove this...
     theirErrorDialog=NULL;
 }
 
