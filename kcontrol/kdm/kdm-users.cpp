@@ -361,6 +361,8 @@ void KDMUsersWidget::save()
 
 void KDMUsersWidget::updateOptList( QListViewItem *item, QStringList &list )
 {
+    if ( !item )
+        return;
     QCheckListItem *itm = (QCheckListItem *)item;
     QStringList::iterator it = list.find( itm->text() );
     if (itm->isOn()) {

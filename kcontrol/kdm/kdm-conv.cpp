@@ -271,6 +271,8 @@ void KDMConvenienceWidget::slotSetPreselUser( const QString &user )
 
 void KDMConvenienceWidget::slotUpdateNoPassUser( QListViewItem *item )
 {
+    if ( !item )
+        return;
     QCheckListItem *itm = (QCheckListItem *)item;
     QStringList::iterator it = noPassUsers.find( itm->text() );
     if (itm->isOn()) {
