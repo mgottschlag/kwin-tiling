@@ -46,21 +46,21 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
   : QWidget(parent, name)
 {
     QGridLayout *layout = new QGridLayout(this, 6, 2,
-					  KDialog::marginHint(),
-					  KDialog::spacingHint());
+                                          KDialog::marginHint(),
+                                          KDialog::spacingHint());
 
     // general group
     QGroupBox *general_group = new QGroupBox(this);
     QGridLayout *grid = new QGridLayout(general_group, 4, 2,
-					KDialog::marginHint(),
-					KDialog::spacingHint());
+                                        KDialog::marginHint(),
+                                        KDialog::spacingHint());
     _isDeleted = true;
 
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
     _commentEdit = new KLineEdit(general_group);
     _execEdit = new KURLRequester(general_group);
-    _typeEdit = new KComboBox(true, general_group);
+    _typeEdit = new KComboBox(general_group);
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
@@ -74,13 +74,13 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // connect line inputs
     connect(_nameEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged(const QString&)));
     connect(_commentEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged(const QString&)));
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
-    connect(_typeEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged(const QString&)));
+    connect(_typeEdit, SIGNAL(activated(const QString&)),
+            SLOT(slotChanged(const QString&)));
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
@@ -89,8 +89,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     grid->addMultiCellWidget(_typeEdit, 3, 3, 1, 1);
 
 	// add values to the Type Combobox
-	_typeEdit->insertItem("Application");
-	_typeEdit->insertItem("Link");
+	_typeEdit->insertItem(i18n("Application")); //has to match the DesktopType enum!
+	_typeEdit->insertItem(i18n("Link"));
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -104,7 +104,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     // path group
     _path_group = new QGroupBox(this);
     QVBoxLayout *vbox = new QVBoxLayout(_path_group, KDialog::marginHint(),
-					KDialog::spacingHint());
+                                        KDialog::spacingHint());
 
     QHBox *hbox = new QHBox(_path_group);
     hbox->setSpacing(KDialog::spacingHint());
@@ -117,7 +117,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _pathLabel->setBuddy(_pathEdit);
 
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
     layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
 
@@ -137,7 +137,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _termOptLabel->setBuddy(_termOptEdit);
 
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
-	    SLOT(slotChanged(const QString&)));
+            SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
     layout->addMultiCellWidget(_term_group, 2, 2, 0, 1);
 
@@ -146,7 +146,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     // uid group
     _uid_group = new QGroupBox(this);
     vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
-			   KDialog::spacingHint());
+                           KDialog::spacingHint());
 
     _uidCB = new QCheckBox(i18n("Run as a &different user"), _uid_group);
     connect(_uidCB, SIGNAL(clicked()), SLOT(uidcb_clicked()));
@@ -174,8 +174,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addWidget( new QWidget(this), 5, 0 );
     layout->setRowStretch( 5, 4 );
     QGridLayout *grid_keybind = new QGridLayout(general_group_keybind, 3, 1,
-					KDialog::marginHint(),
-					KDialog::spacingHint());
+                                                KDialog::marginHint(),
+                                                KDialog::spacingHint());
 
     //_keyEdit = new KLineEdit(general_group_keybind);
     //_keyEdit->setReadOnly( true );
@@ -252,7 +252,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
         {
             general_group_keybind->setEnabled( true );
             _keyEdit->setShortcut( KHotKeys::getMenuEntryShortcut(
-                _desktopFile ));
+                                       _desktopFile ));
         }
     }
     else
@@ -262,26 +262,26 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     }
    // clean all disabled fields and return if it is not a .desktop file
     if (!isDF) {
-          _execEdit->lineEdit()->setText("");
-	  _typeEdit->setCurrentText("");
-	  _pathEdit->lineEdit()->setText("");
-	  _termOptEdit->setText("");
-	  _uidEdit->setText("");
-	  _terminalCB->setChecked(false);
-	  _uidCB->setChecked(false);
-          return;
+        _execEdit->lineEdit()->setText("");
+        _typeEdit->setCurrentText("");
+        _pathEdit->lineEdit()->setText("");
+        _termOptEdit->setText("");
+        _uidEdit->setText("");
+        _terminalCB->setChecked(false);
+        _uidCB->setChecked(false);
+        return;
     }
 
     _execEdit->lineEdit()->setText(df.readEntry("Exec"));
-	_typeEdit->setCurrentText(df.readType());
+	_typeEdit->setCurrentText(i18n(df.readType().utf8()));
     _pathEdit->lineEdit()->setText(df.readPath());
     _termOptEdit->setText(df.readEntry("TerminalOptions"));
     _uidEdit->setText(df.readEntry("X-KDE-Username"));
 
     if(df.readNumEntry("Terminal", 0) == 1)
-	_terminalCB->setChecked(true);
+        _terminalCB->setChecked(true);
     else
-	_terminalCB->setChecked(false);
+        _terminalCB->setChecked(false);
 
     _uidCB->setChecked(df.readBoolEntry("X-KDE-SubstituteUID", false));
 
@@ -296,9 +296,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 {
     // key binding part
     if( KHotKeys::present() && _khotkeysNeedsSave )
-        {
         KHotKeys::changeMenuEntryShortcut( _desktopFile, _keyEdit->shortcut().toStringInternal());
-        }
     _khotkeysNeedsSave = false;
 
     if( !desktopFileNeedsSave )
@@ -317,13 +315,13 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 	}
 
     df.writeEntry("Exec", _execEdit->lineEdit()->text());
-	df.writeEntry("Type", _typeEdit->currentText());
+    df.writeEntry("Type", desktopTypeToString((DesktopType)_typeEdit->currentItem()));
     df.writeEntry("Path", _pathEdit->lineEdit()->text());
 
     if (_terminalCB->isChecked())
-	df.writeEntry("Terminal", 1);
+        df.writeEntry("Terminal", 1);
     else
-	df.writeEntry("Terminal", 0);
+        df.writeEntry("Terminal", 0);
 
     df.writeEntry("TerminalOptions", _termOptEdit->text());
     df.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
@@ -335,7 +333,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 void BasicTab::reset()
 {
     if(_desktopFile != "")
-	setDesktopFile(_desktopFile, _name, _isDeleted);
+        setDesktopFile(_desktopFile, _name, _isDeleted);
 
     // key binding part
     _khotkeysNeedsSave = false;
@@ -384,4 +382,12 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
     _keyEdit->setShortcut(cut);
     emit changed( false );
     _khotkeysNeedsSave = true;
+}
+
+QString BasicTab::desktopTypeToString(DesktopType type) const
+{
+    if (type==Application)
+        return "Application"; //no i18n() here!!!
+    else
+        return "Link";
 }

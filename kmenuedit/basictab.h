@@ -74,6 +74,9 @@ protected:
     QString       _name;
     bool _khotkeysNeedsSave;
     bool _isDeleted;
+private:
+    enum DesktopType {Application=0, Link=1};
+    QString desktopTypeToString(DesktopType type) const;
 };
 
 #endif
