@@ -75,8 +75,8 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	decorationListBox = new QListBox( btnGroup );
 
 	QGroupBox* checkGroup = new QGroupBox( 1, Qt::Horizontal, i18n("General options (if available)"), page1 );
-	cbUseCustomButtonOrder = new QCheckBox( i18n("Use custom titlebar button &order"), checkGroup );
-	QWhatsThis::add( cbUseCustomButtonOrder, i18n(  "The appropriate settings can be found in the \"Buttons\"-Tab. "
+	cbUseCustomButtonPositions = new QCheckBox( i18n("Use custom titlebar button &positions"), checkGroup );
+	QWhatsThis::add( cbUseCustomButtonPositions, i18n(  "The appropriate settings can be found in the \"Buttons\"-Tab. "
                                                         "Please note that this option is not available on all styles yet!" ) );
 // Save this for later...
 //	cbUseMiniWindows = new QCheckBox( i18n( "Render mini &titlebars for all windows"), checkGroup );
@@ -117,7 +117,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	connect( dropSite, SIGNAL(changed()), this, SLOT(slotSelectionChanged()) );
 	connect( buttonSource, SIGNAL(selectionChanged()), this, SLOT(slotSelectionChanged()) );
 	connect( decorationListBox, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()) );
-	connect( cbUseCustomButtonOrder, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
+	connect( cbUseCustomButtonPositions, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 //	connect( cbUseMiniWindows, SIGNAL(clicked()), SLOT(slotSelectionChanged()) );
 
 	// Allow kwin dcop signal to update our selection list
@@ -282,7 +282,7 @@ void KWinDecorationModule::readConfig( KConfig* conf )
 {
 	// General tab
 	// ============
-	cbUseCustomButtonOrder->setChecked( conf->readBoolEntry("CustomButtonOrder", false));
+	cbUseCustomButtonPositions->setChecked( conf->readBoolEntry("CustomButtonPositions", false));
 //	cbUseMiniWindows->setChecked( conf->readBoolEntry("MiniWindowBorders", false));
 
 	// Find the corresponding decoration name to that of
@@ -331,7 +331,7 @@ void KWinDecorationModule::writeConfig( KConfig* conf )
     
 	// General settings
 	conf->writeEntry("PluginLib", libName);
-	conf->writeEntry("CustomButtonOrder", cbUseCustomButtonOrder->isChecked());
+	conf->writeEntry("CustomButtonPositions", cbUseCustomButtonPositions->isChecked());
 //	conf->writeEntry("MiniWindowBorders", cbUseMiniWindows->isChecked());
 
 	// Button settings
@@ -388,7 +388,7 @@ void KWinDecorationModule::save()
 void KWinDecorationModule::defaults()
 {
 	// Set the KDE defaults
-	cbUseCustomButtonOrder->setChecked( false );
+	cbUseCustomButtonPositions->setChecked( false );
 //	cbUseMiniWindows->setChecked( false);
 	decorationListBox->setSelected( 0, true );  // KDE2 default client
 

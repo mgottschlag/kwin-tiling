@@ -106,7 +106,6 @@ class ButtonDropSite: public QFrame
 		void drawButtonString( QPainter* p, QString& s, int offset );
 
 		QPoint mouseClickPoint;
-		QString titleText;
 };
 
 

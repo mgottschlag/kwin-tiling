@@ -78,7 +78,7 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 		// Page 1
 		QListBox* decorationListBox;
 		QValueList<DecorationInfo> decorations;
-		QCheckBox* cbUseCustomButtonOrder;
+		QCheckBox* cbUseCustomButtonPositions;
 		QCheckBox* cbUseMiniWindows;
 
 		// Page 2
