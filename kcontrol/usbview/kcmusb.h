@@ -36,7 +36,7 @@ public:
   void load();
   void save();
   void defaults();
-  
+
   int buttons();
   QString quickHelp() const;
   const KAboutData* aboutData() const;
@@ -46,10 +46,11 @@ public:
 protected slots:
 
   void selectionChanged(QListViewItem *item);
-
+  void refresh();
 
 private:
 
+  QIntDict<QListViewItem> _items;
   QListView *_devices;
   QTextView *_details;
 };

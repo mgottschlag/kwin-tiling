@@ -17,6 +17,7 @@
 #include <qlistview.h>
 #include <qtextview.h>
 #include <qheader.h>
+#include <qtimer.h>
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
@@ -58,6 +59,11 @@ USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
 
   splitter->setResizeMode(_devices, QSplitter::KeepSize);
 
+  QTimer *refreshTimer = new QTimer(this);
+  // 1 sec seems to be a good compromise between latency and polling load.
+  refreshTimer->start(1000);
+
+  connect(refreshTimer, SIGNAL(timeout()), SLOT(refresh()));
   connect(_devices, SIGNAL(selectionChanged(QListViewItem*)),
 	  this, SLOT(selectionChanged(QListViewItem*)));
 
@@ -71,10 +77,16 @@ USBViewer::~USBViewer()
 
 
 void USBViewer::load()
-{ 
-  QIntDict<QListViewItem> _items;
-
+{
+  _items.clear();
   _devices->clear();
+
+  refresh();
+}
+
+void USBViewer::refresh()
+{
+  QIntDict<QListViewItem> new_items;
 
   USBDevice::parse("/proc/bus/usb/devices");
 
@@ -91,11 +103,14 @@ void USBViewer::load()
 	  {
 	    if (level == 0)
 	      {
-		QListViewItem *item = new QListViewItem(_devices, 
-				it.current()->product(), 
+		QListViewItem *item = _items.find(it.current()->bus()*256+it.current()->device());
+		if (!item) {
+		    item = new QListViewItem(_devices,
+				it.current()->product(),
 				QString("%1").arg(it.current()->bus()),
 				QString("%1").arg(it.current()->device()) );
-		_items.insert(it.current()->bus()*256+it.current()->device(),
+		}
+		new_items.insert(it.current()->bus()*256+it.current()->device(),
 				item);
 		found = true;
 	      }
@@ -104,11 +119,15 @@ void USBViewer::load()
 		QListViewItem *parent = _items.find(it.current()->bus()*256+1);
 		if (parent)
 		  {
-		    QListViewItem *item = new QListViewItem(parent, 
+		    QListViewItem *item = _items.find(it.current()->bus()*256+it.current()->device());
+
+		    if (!item) {
+		        item = new QListViewItem(parent,
 				    it.current()->product(),
 				    QString("%1").arg(it.current()->bus()),
 				    QString("%1").arg(it.current()->device()) );
-		    _items.insert(it.current()->bus()*256+it.current()->device(),
+		    }
+		    new_items.insert(it.current()->bus()*256+it.current()->device(),
 				item);
 		    parent->setOpen(true);
 		    found = true;
@@ -119,7 +138,19 @@ void USBViewer::load()
       ++level;
     }
 
-  selectionChanged(_devices->firstChild());
+    // delete all items not in new_list
+    {
+        QIntDictIterator<QListViewItem> it(_items);
+        for (; it.current(); ++it) {
+            if (!new_items.find(it.currentKey()))
+	        delete it.current();
+        }
+    }
+
+    _items = new_items;
+
+    if (!_devices->selectedItem())
+        selectionChanged(_devices->firstChild());
 }
 
 
@@ -161,8 +192,9 @@ const KAboutData* USBViewer::aboutData() const
     new KAboutData(I18N_NOOP("kcmusb"), I18N_NOOP("KDE USB Viewer"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 2001 Matthias Hoelzer-Kluepfel"));
- 
+
     about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
- 
+    about->addCredit("Leo Savernik", "Live Monitoring of USB Bus", "l.savernik@aon.at");
+
     return about;
 }
