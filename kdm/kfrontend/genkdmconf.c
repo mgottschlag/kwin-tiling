@@ -28,12 +28,12 @@
 
 #include <sys/stat.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
+#include <fcntl.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
@@ -272,316 +272,316 @@ Ent entsDesktop[] = {
 };
 
 Ent entsGeneral[] = {
-{ "# If \"false\", KDM won't daemonize after startup. Use this, if you start
-# KDM from inittab with the respawn instruction. Default is true.
-", "DaemonMode",	"false", 0 },
-{ "# The file, where X-servers to be used by kdm are listed. The file is in
-# the usual xdm-Xservers format.
-# Default is " KDMCONF "/Xservers
-# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to
-# do this best.
-", "Xservers",		"", 0 },
-{ "# Where KDM should store its PID. Default is /var/run/xdm.pid - this
-# is an intentional conflict with \"plain\" XDM.
-", "PidFile",		"/var/run/kdm.pid", 0 },
-{ "# Whether KDM should lock the pid file to prevent having multiple KDM
-# instances running at once. Leave it \"true\", unless you're brave.
-", "LockPidFile",	"false", 0 },
-{ "# Where to store authorization files. Default is /var/lib/kdm
-", "AuthDir",		"/var/lib/xdm", 0 },
-{ "# Whether KDM should automatically re-read configuration files, if it
-# finds them having changed. Just keep it \"true\".
-", "AutoRescan",	"false", 0 },
-{ "# Additional environment variables KDM should pass on to the Xsetup, Xstartup,
-# Xsession, and Xreset programs. This shouldn't be necessary very often.
-# You may put QT_XFT here and export QT_XFT=1 before starting KDM to get
-# anti-aliased fonts until I implement a proper option for this.
-", "ExportList",	"QT_XFT,ANOTHER_IMPORTANT_VAR", 0 },
+{ "# If \"false\", KDM won't daemonize after startup. Use this, if you start\n"
+"# KDM from inittab with the respawn instruction. Default is true.\n", 
+"DaemonMode",	"false", 0 },
+{ "# The file, where X-servers to be used by kdm are listed. The file is in\n"
+"# the usual xdm-Xservers format.\n"
+"# Default is " KDMCONF "/Xservers\n"
+"# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
+"# do this best.\n", 
+"Xservers",	"", 0 },
+{ "# Where KDM should store its PID. Default is /var/run/xdm.pid - this\n"
+"# is an intentional conflict with \"plain\" XDM.\n", 
+"PidFile",	"/var/run/kdm.pid", 0 },
+{ "# Whether KDM should lock the pid file to prevent having multiple KDM\n"
+"# instances running at once. Leave it \"true\", unless you're brave.\n", 
+"LockPidFile",	"false", 0 },
+{ "# Where to store authorization files. Default is /var/lib/kdm\n", 
+"AuthDir",	"/var/lib/xdm", 0 },
+{ "# Whether KDM should automatically re-read configuration files, if it\n"
+"# finds them having changed. Just keep it \"true\".\n", 
+"AutoRescan",	"false", 0 },
+{ "# Additional environment variables KDM should pass on to the Xsetup, Xstartup,\n"
+"# Xsession, and Xreset programs. This shouldn't be necessary very often.\n"
+"# You may put QT_XFT here and export QT_XFT=1 before starting KDM to get\n"
+"# anti-aliased fonts until I implement a proper option for this.\n", 
+"ExportList",	"QT_XFT,ANOTHER_IMPORTANT_VAR", 0 },
 #if !defined(__linux__) && !defined(__OpenBSD__)
-{ "# Where KDM should fetch entropy from. Default is /dev/mem.
-", "RandomFile",	"", 0 },
+{ "# Where KDM should fetch entropy from. Default is /dev/mem.\n", 
+"RandomFile",	"", 0 },
 #endif
 };
 
 Ent entsXdmcp[] = {
-{ "# Whether KDM should listen to XDMCP requests. Default is true.
-", "Enable",	"false", 1 },
-{ "# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.
-", "Port",	"177", 0 },
-{ "# File with the private keys of X-terminals. Required for XDM authentication.
-# Default is " KDMCONF "/kdmkeys
-", "KeyFile",	"", 0 },
-{ "# XDMCP access control file in the usual xdm-Xaccess format.
-# Default is " KDMCONF "/Xaccess
-# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to
-# do this best.
-", "Xaccess",	"", 0 },
-{ "# Number of seconds to wait for display to respond after the user has
-# selected a host from the chooser. Default is 15.
-", "ChoiceTimeout",	"10", 0 },
-{ "# Strip domain name from remote display names if it is equal to the local
-# domain. Default is true
-", "RemoveDomainname", "false", 0 },
-{ "# Use the numeric IP address of the incoming connection instead of the
-# host name. Use this on multihomed hosts. Default is false
-", "SourceAddress",	"true", 0 },
-{ "# The program which is invoked to dynamically generate replies to XDMCP
-# BroadcastQuery requests.
-# By default no program is invoked and \"Willing to manage\" is sent.
-", "Willing",	KDMCONF "/Xwilling", 1 },
+{ "# Whether KDM should listen to XDMCP requests. Default is true.\n", 
+"Enable",	"false", 1 },
+{ "# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.\n", 
+"Port",		"177", 0 },
+{ "# File with the private keys of X-terminals. Required for XDM authentication.\n"
+"# Default is " KDMCONF "/kdmkeys\n", 
+"KeyFile",	"", 0 },
+{ "# XDMCP access control file in the usual xdm-Xaccess format.\n"
+"# Default is " KDMCONF "/Xaccess\n"
+"# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
+"# do this best.\n", 
+"Xaccess",	"", 0 },
+{ "# Number of seconds to wait for display to respond after the user has\n"
+"# selected a host from the chooser. Default is 15.\n", 
+"ChoiceTimeout",	"10", 0 },
+{ "# Strip domain name from remote display names if it is equal to the local\n"
+"# domain. Default is true\n", 
+"RemoveDomainname",	"false", 0 },
+{ "# Use the numeric IP address of the incoming connection instead of the\n"
+"# host name. Use this on multihomed hosts. Default is false\n", 
+"SourceAddress",	"true", 0 },
+{ "# The program which is invoked to dynamically generate replies to XDMCP\n"
+"# BroadcastQuery requests.\n"
+"# By default no program is invoked and \"Willing to manage\" is sent.\n", 
+"Willing",	KDMCONF "/Xwilling", 1 },
 };
 
 Ent entsShutdown[] = {
-{ "# The command to run to halt the system. Default is " HALT_CMD "
-", "HaltCmd",	"", 0 },
-{ "# The command to run to reboot the system. Default is " REBOOT_CMD "
-", "RebootCmd",	"", 0 },
+{ "# The command to run to halt the system. Default is " HALT_CMD "\n", 
+"HaltCmd",	"", 0 },
+{ "# The command to run to reboot the system. Default is " REBOOT_CMD "\n", 
+"RebootCmd",	"", 0 },
 #ifdef __linux__
-{ "# Offer LiLo boot options in shutdown dialog. Default is false
-", "UseLilo",	"true", 0 },
-{ "# The location of the LiLo binary. Default is /sbin/lilo
-", "LiloCmd",	"", 0 },
-{ "# The location of the LiLo map file. Default is /boot/map
-", "LiloMap",	"", 0 },
+{ "# Offer LiLo boot options in shutdown dialog. Default is false\n", 
+"UseLilo",	"true", 0 },
+{ "# The location of the LiLo binary. Default is /sbin/lilo\n", 
+"LiloCmd",	"", 0 },
+{ "# The location of the LiLo map file. Default is /boot/map\n", 
+"LiloMap",	"", 0 },
 #endif
 };
 
 Ent entsAnyCore[] = {
-{ "# How long to wait before retrying to start the display after various
-# errors. Default is 15
-", "OpenDelay",		"", 0 },
-{ "# How long to wait before timing out XOpenDisplay. Default is 120
-", "OpenTimeout",	"", 0 },
-{ "# How often to try the XOpenDisplay. Default is 5
-", "OpenRepeat",	"", 0 },
-{ "# Try at most that many times to start a display. If this fails, the display
-# is disabled. Default is 4
-", "StartAttempts",	"", 0 },
-{ "# The StartAttempt counter is reset after that many seconds. Default is 30
-", "StartInterval",	"", 0 },
-{ "# Ping remote display every that many minutes. Default is 5
-", "PingInterval",	"", 0 },
-{ "# Wait for a Pong that many minutes. Default is 5
-", "PingTimeout",	"", 0 },
-{ "# Restart instead of resetting the local X-server after session exit.
-# Use it if the server leaks memory, etc. Default is false
-", "TerminateServer","true", 0 },
-{ "# The signal needed to reset the local X-server. Default is 1 (SIGHUP)
-", "ResetSignal",	"", 0 },
-{ "# The signal needed to terminate the local X-server. Default is 15 (SIGTERM)
-", "TermSignal",	"", 0 },
-{ "# Need to reset the X-server to make it read initial Xauth file.
-# Default is false
-", "ResetForAuth",	"true", 0 },
-{ "# Create X-authorizations for local displays. Default is true
-", "Authorize",		"false", 0 },
-{ "# Which X-authorization mechanisms should be used.
-# Default is " DEF_AUTH_NAME "
-", "AuthNames",		"", 0 },
-{ "# The name of this X-server's Xauth file. Default is \"\", which means, that
-# a random name in the AuthDir directory will be used.
-", "AuthFile",		"", 0 },
-{ "# Specify a file with X-resources for the greeter, chooser and background.
-# The KDE frontend doesn't care for this, so you don't need it unless you
-# use an alternative chooser or another background generator than kdmdesktop.
-# Default is \"\"
-", "Resources",		"", 0 },
-{ "# The xrdb program to use to read the above specified recources.
-# Default is " XBINDIR "/xrdb" "
-", "Xrdb",		"", 0 },
-{ "# A program to run before the greeter is shown. You should start kdmdesktop
-# there. Also, xconsole can be started by this script.
-# Default is " KDMCONF "/Xsetup
-", "Setup",		"", 0 },
-{ "# A program to run before a user session starts. You should invoke sessreg
-# there and optionally change the ownership of the console, etc.
-# Default is " KDMCONF "/Xstartup
-", "Startup",		"", 0 },
-{ "# A program to run after a user session exits. You should invoke sessreg
-# there and optionally change the ownership of the console, etc.
-# Default is " KDMCONF "/Xreset
-", "Reset",		"", 0 },
-{ "# The program which is run as the user which logs in. It is supposed to
-# interpret the session argument and start an appropriate session according
-# to it. See SessionTypes.
-# Default is " KDMCONF "/Xsession
-", "Session",		"", 0 },
-{ "# The program to run if Session fails.
-# Default is " XBINDIR "/xterm
-", "FailsafeClient",	"", 0 },
-{ "# The PATH for the Session program. Default is 
-# " DEF_USER_PATH "
-", "UserPath",		"", 0 },
-{ "# The PATH for Setup, Startup and Reset, etc. Default is
-# " DEF_SYSTEM_PATH "
-", "SystemPath",	"", 0 },
-{ "# The default system shell. Default is /bin/sh
-", "SystemShell",	"/bin/bash", 0 },
-{ "# Where to put the user's X-server authorization file if ~/.Xauthority
-# cannot be created. Default is /tmp
-", "UserAuthDir",	"", 0 },
-{ "# The host chooser program to use.
-# Default is " KDE_BINDIR "/chooser
-# XXX this is going to be integrated into the greeter (probably).
-", "Chooser",		"", 0 },
-{ "# If \"true\", KDM will automatically restart a session after an X-server
-# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling this
-# opens a security hole: a secured display lock can be circumvented.
-# Default is false
-", "AutoReLogin",	"true", 0 },
-{ "# Allow root logins? Default is true
-", "AllowRootLogin",	"false", 1 },
-{ "# Allow to log in, when user has set an empty password? Default is true
-", "AllowNullPasswd",	"false", 1 },
-{ "# Where (relatively to the user's home directory) to store the last
-# selected session. Default is .wmrc
-", "SessSaveFile",	".wmrc", 0 },
-{ "# Command FiFo options.
-# XXX these options will probably change ...
-# Default is false
-", "FifoCreate",	"true", 0 },
-{ "# Default is -1
-", "FifoOwner",		"", 0 },
-{ "# Default is -1
-", "FifoGroup",		"", 0 },
+{ "# How long to wait before retrying to start the display after various\n"
+"# errors. Default is 15\n", 
+"OpenDelay",	"", 0 },
+{ "# How long to wait before timing out XOpenDisplay. Default is 120\n", 
+"OpenTimeout",	"", 0 },
+{ "# How often to try the XOpenDisplay. Default is 5\n", 
+"OpenRepeat",	"", 0 },
+{ "# Try at most that many times to start a display. If this fails, the display\n"
+"# is disabled. Default is 4\n", 
+"StartAttempts",	"", 0 },
+{ "# The StartAttempt counter is reset after that many seconds. Default is 30\n", 
+"StartInterval",	"", 0 },
+{ "# Ping remote display every that many minutes. Default is 5\n", 
+"PingInterval",	"", 0 },
+{ "# Wait for a Pong that many minutes. Default is 5\n", 
+"PingTimeout",	"", 0 },
+{ "# Restart instead of resetting the local X-server after session exit.\n"
+"# Use it if the server leaks memory, etc. Default is false\n", 
+"TerminateServer","true", 0 },
+{ "# The signal needed to reset the local X-server. Default is 1 (SIGHUP)\n", 
+"ResetSignal",	"", 0 },
+{ "# The signal needed to terminate the local X-server. Default is 15 (SIGTERM)\n", 
+"TermSignal",	"", 0 },
+{ "# Need to reset the X-server to make it read initial Xauth file.\n"
+"# Default is false\n", 
+"ResetForAuth",	"true", 0 },
+{ "# Create X-authorizations for local displays. Default is true\n", 
+"Authorize",	"false", 0 },
+{ "# Which X-authorization mechanisms should be used.\n"
+"# Default is " DEF_AUTH_NAME "\n", 
+"AuthNames",	"", 0 },
+{ "# The name of this X-server's Xauth file. Default is \"\", which means, that\n"
+"# a random name in the AuthDir directory will be used.\n", 
+"AuthFile",	"", 0 },
+{ "# Specify a file with X-resources for the greeter, chooser and background.\n"
+"# The KDE frontend doesn't care for this, so you don't need it unless you\n"
+"# use an alternative chooser or another background generator than kdmdesktop.\n"
+"# Default is \"\"\n", 
+"Resources",	"", 0 },
+{ "# The xrdb program to use to read the above specified recources.\n"
+"# Default is " XBINDIR "/xrdb\n", 
+"Xrdb",		"", 0 },
+{ "# A program to run before the greeter is shown. You should start kdmdesktop\n"
+"# there. Also, xconsole can be started by this script.\n"
+"# Default is " KDMCONF "/Xsetup\n", 
+"Setup",	"", 0 },
+{ "# A program to run before a user session starts. You should invoke sessreg\n"
+"# there and optionally change the ownership of the console, etc.\n"
+"# Default is " KDMCONF "/Xstartup\n", 
+"Startup",	"", 0 },
+{ "# A program to run after a user session exits. You should invoke sessreg\n"
+"# there and optionally change the ownership of the console, etc.\n"
+"# Default is " KDMCONF "/Xreset\n", 
+"Reset",	"", 0 },
+{ "# The program which is run as the user which logs in. It is supposed to\n"
+"# interpret the session argument and start an appropriate session according\n"
+"# to it. See SessionTypes.\n"
+"# Default is " KDMCONF "/Xsession\n", 
+"Session",	"", 0 },
+{ "# The program to run if Session fails.\n"
+"# Default is " XBINDIR "/xterm\n", 
+"FailsafeClient",	"", 0 },
+{ "# The PATH for the Session program. Default is\n"
+"# " DEF_USER_PATH "\n", 
+"UserPath",	"", 0 },
+{ "# The PATH for Setup, Startup and Reset, etc. Default is\n"
+"# " DEF_SYSTEM_PATH "\n", 
+"SystemPath",	"", 0 },
+{ "# The default system shell. Default is /bin/sh\n", 
+"SystemShell",	"/bin/bash", 0 },
+{ "# Where to put the user's X-server authorization file if ~/.Xauthority\n"
+"# cannot be created. Default is /tmp\n", 
+"UserAuthDir",	"", 0 },
+{ "# The host chooser program to use.\n"
+"# Default is " KDE_BINDIR "/chooser\n"
+"# XXX this is going to be integrated into the greeter (probably).\n", 
+"Chooser",		"", 0 },
+{ "# If \"true\", KDM will automatically restart a session after an X-server\n"
+"# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling this\n"
+"# opens a security hole: a secured display lock can be circumvented.\n"
+"# Default is false\n", 
+"AutoReLogin",	"true", 0 },
+{ "# Allow root logins? Default is true\n", 
+"AllowRootLogin",	"false", 1 },
+{ "# Allow to log in, when user has set an empty password? Default is true\n", 
+"AllowNullPasswd",	"false", 1 },
+{ "# Where (relatively to the user's home directory) to store the last\n"
+"# selected session. Default is .wmrc\n", 
+"SessSaveFile",	".wmrc", 0 },
+{ "# Command FiFo options.\n"
+"# XXX these options will probably change ...\n"
+"# Default is false\n", 
+"FifoCreate",	"true", 0 },
+{ "# Default is -1\n", 
+"FifoOwner",		"", 0 },
+{ "# Default is -1\n", 
+"FifoGroup",		"", 0 },
 };
 
 Ent entsAnyGreeter[] = {
-{ "# Session types the users can select. It is advisable to have \"default\" and
-# \"failsafe\" listed herein, which is also the default.
-# Note, that the meaning of this value is entirely up to your Session program.
-", "SessionTypes",	"default,kde,failsafe", 1 },
-{ "# Widget Style of the greeter:
-# KDE, Windows, Platinum, Motif, Motif+, CDE, SGI; Default is KDE
-", "GUIStyle",		"Windows", 0 },
-{ "# What should be shown righthand of the input lines:
-# \"Logo\" - the image specified by LogoPixmap (Default)
-# \"Clock\" - a neat analog clock
-# \"None\" - nothing
-", "LogoArea",		"None", 0 },
-{ "# The image to show when LogoArea=Logo. Default is kdelogo.png
-", "LogoPixmap",	"", 0 },
-{ "# Normally, the greeter is centered on the screen. Use this, if you want
-# it to appear elsewhere on the screen. Default is false
-", "GreeterPosFixed",	"true", 0 },
+{ "# Session types the users can select. It is advisable to have \"default\" and\n"
+"# \"failsafe\" listed herein, which is also the default.\n"
+"# Note, that the meaning of this value is entirely up to your Session program.\n", 
+"SessionTypes",	"default,kde,failsafe", 1 },
+{ "# Widget Style of the greeter:\n"
+"# KDE, Windows, Platinum, Motif, Motif+, CDE, SGI; Default is KDE\n", 
+"GUIStyle",	"Windows", 0 },
+{ "# What should be shown righthand of the input lines:\n"
+"# \"Logo\" - the image specified by LogoPixmap (Default)\n"
+"# \"Clock\" - a neat analog clock\n"
+"# \"None\" - nothing\n", 
+"LogoArea",	"None", 0 },
+{ "# The image to show when LogoArea=Logo. Default is kdelogo.png\n", 
+"LogoPixmap",	"", 0 },
+{ "# Normally, the greeter is centered on the screen. Use this, if you want\n"
+"# it to appear elsewhere on the screen. Default is false\n", 
+"GreeterPosFixed",	"true", 0 },
 { 0, "GreeterPosX",	"200", 0 },
 { 0, "GreeterPosY",	"100", 0 },
-{ "# The headline in the greeter.
-# The following character pairs are replaced:
-# - %d -> current display
-# - %h -> host name, possibly with domain name
-# - %n -> node name, most probably the host name without domain name
-# - %s -> the operating system
-# - %r -> the operating system's version
-# - %m -> the machine (hardware) type
-# - %% -> a single %
-# Default is \"Welcome to %s at %n\"
-", "GreetString",	"K Desktop Environment (%n)", 0 },
-{ "# The font for the headline. Default is charter,24,bold
-", "GreetFont",		"charter,24,5,0,50,0", 0 },
-{ "# The normal font used in the greeter. Default is helvetica,12
-", "StdFont",		"helvetica,12,5,0,50,0", 0 },
-{ "# The font used for the \"Login Failed\" message. Default is helvetica,12,bold
-", "FailFont",		"helvetica,12,5,0,75,0", 0 },
-{ "# Language to use in the greeter.
-# Use the default C or coutry codes like de, en, pl, etc.
-", "Language",		"de", 0 },
-{ "# Specify, which user names (along with pictures) should be shown in the
-# greeter.
-# \"All\" - all users from /etc/passwd except those listed in NoUsers (Default)
-# \"Selected\" - only the ones listed in Users
-# \"None\" - no user list will be shown at all
-", "ShowUsers",	"None", 0 },
-{ "# For ShowUsers=Selected. Default is \"\"
-", "Users",		"root,johndoe", 0 },
-{ "# For ShowUsers=All. Default is \"\"
-", "NoUsers",		"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,named,news,nobody,nscd,operator,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,reboot,rpc,rpcuser,rpm,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten", 1 },
-{ "# Special case of NoUsers: users with a UID less than this number (except root)
-# will not be shown as well. Default is 0
-", "MinShowUID",	"1000", 0 },
-{ "# Complement to MinShowUID: users with a UID greater than this number will
-# not be shown as well. Default is 65535
-", "MaxShowUID",	"29999", 0 },
-{ "# If false, the users are listed in the order they appear in /etc/passwd.
-# If true, they are sorted alphabetically. Default is true
-", "SortUsers",	"false", 0 },
-{ "# Specify, if/which user should be preselected for log in.
-# Note, that enabling this feature can be considered a security hole,
-# as it presents a valid login name to a potential attacker, so he \"only\"
-# needs to guess the password.
-# \"None\" - don't preselect any user (Default)
-# \"Previous\" - the user which successfully logged in last time
-# \"Default\" - the user specified in the DefaultUser field
-", "PreselectUser",	"Previous", 0 },
-{ "# The user to preselect if PreselectUser=Default
-", "DefaultUser",	"ethel", 0 },
-{ "# If this is true, the password input line is focused automatically if
-# a user is preselected. Default is false
-", "FocusPasswd",	"true", 0 },
-{ "# The password input fields cloak the typed in text. Specify, how to do it:
-# \"NoEcho\" - nothing is shown at all, the cursor doesn't move
-# \"OneStar\" - \"*\" is shown for every typed letter (Default)
-# \"ThreeStars\" - \"***\" is shown for every typed letter
-", "EchoMode",	"NoEcho", 0 },
-{ "# Who is allowed to shut down the system.
-# \"None\" - no \"Shutdown...\" button is shown at all
-# \"Root\" - the root password must be entered to shut down
-# \"All\" - everybody can shut down the machine (Default)
-", "AllowShutdown",	"Root", 1 },
-{ "# Hold the X-server grabbed the whole time the greeter is visible.
-# This may be more secure, but will disable any background. Default is false
-", "GrabServer",	"true", 0 },
-{ "# How many seconds to wait for grab to succeed. Default is 3
-", "GrabTimeout",	"", 0 },
+{ "# The headline in the greeter.\n"
+"# The following character pairs are replaced:\n"
+"# - %d -> current display\n"
+"# - %h -> host name, possibly with domain name\n"
+"# - %n -> node name, most probably the host name without domain name\n"
+"# - %s -> the operating system\n"
+"# - %r -> the operating system's version\n"
+"# - %m -> the machine (hardware) type\n"
+"# - %% -> a single %\n"
+"# Default is \"Welcome to %s at %n\"\n", 
+"GreetString",	"K Desktop Environment (%n)", 0 },
+{ "# The font for the headline. Default is charter,24,bold\n", 
+"GreetFont",	"charter,24,5,0,50,0", 0 },
+{ "# The normal font used in the greeter. Default is helvetica,12\n", 
+"StdFont",	"helvetica,12,5,0,50,0", 0 },
+{ "# The font used for the \"Login Failed\" message. Default is helvetica,12,bold\n", 
+"FailFont",	"helvetica,12,5,0,75,0", 0 },
+{ "# Language to use in the greeter.\n"
+"# Use the default C or coutry codes like de, en, pl, etc.\n", 
+"Language",	"de", 0 },
+{ "# Specify, which user names (along with pictures) should be shown in the\n"
+"# greeter.\n"
+"# \"All\" - all users from /etc/passwd except those listed in NoUsers (Default)\n"
+"# \"Selected\" - only the ones listed in Users\n"
+"# \"None\" - no user list will be shown at all\n", 
+"ShowUsers",	"None", 0 },
+{ "# For ShowUsers=Selected. Default is \"\"\n", 
+"Users",	"root,johndoe", 0 },
+{ "# For ShowUsers=All. Default is \"\"\n", 
+"NoUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,named,news,nobody,nscd,operator,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,reboot,rpc,rpcuser,rpm,sendmail,shutdown,sympa,sync,tty,uucp,xfs,xten", 1 },
+{ "# Special case of NoUsers: users with a UID less than this number (except root)\n"
+"# will not be shown as well. Default is 0\n", 
+"MinShowUID",	"1000", 0 },
+{ "# Complement to MinShowUID: users with a UID greater than this number will\n"
+"# not be shown as well. Default is 65535\n", 
+"MaxShowUID",	"29999", 0 },
+{ "# If false, the users are listed in the order they appear in /etc/passwd.\n"
+"# If true, they are sorted alphabetically. Default is true\n", 
+"SortUsers",	"false", 0 },
+{ "# Specify, if/which user should be preselected for log in.\n"
+"# Note, that enabling this feature can be considered a security hole,\n"
+"# as it presents a valid login name to a potential attacker, so he \"only\"\n"
+"# needs to guess the password.\n"
+"# \"None\" - don't preselect any user (Default)\n"
+"# \"Previous\" - the user which successfully logged in last time\n"
+"# \"Default\" - the user specified in the DefaultUser field\n", 
+"PreselectUser",	"Previous", 0 },
+{ "# The user to preselect if PreselectUser=Default\n", 
+"DefaultUser",	"ethel", 0 },
+{ "# If this is true, the password input line is focused automatically if\n"
+"# a user is preselected. Default is false\n", 
+"FocusPasswd",	"true", 0 },
+{ "# The password input fields cloak the typed in text. Specify, how to do it:\n"
+"# \"NoEcho\" - nothing is shown at all, the cursor doesn't move\n"
+"# \"OneStar\" - \"*\" is shown for every typed letter (Default)\n"
+"# \"ThreeStars\" - \"***\" is shown for every typed letter\n", 
+"EchoMode",	"NoEcho", 0 },
+{ "# Who is allowed to shut down the system.\n"
+"# \"None\" - no \"Shutdown...\" button is shown at all\n"
+"# \"Root\" - the root password must be entered to shut down\n"
+"# \"All\" - everybody can shut down the machine (Default)\n", 
+"AllowShutdown",	"Root", 1 },
+{ "# Hold the X-server grabbed the whole time the greeter is visible.\n"
+"# This may be more secure, but will disable any background. Default is false\n", 
+"GrabServer",	"true", 0 },
+{ "# How many seconds to wait for grab to succeed. Default is 3\n", 
+"GrabTimeout",	"", 0 },
 };
 
 Ent entsLocalCore[] = {
-{ "# How often to try to run the X-server. Running includes executing it and
-# waiting for it to come up. Default is 1
-", "ServerAttempts",	"", 0 },
-{ "# How long to wait for a local X-server to come up. Default is 15
-", "ServerTimeout",	"", 0 },
-{ "# See above.
-", "AllowRootLogin",	"true", 1 },
-{ "# See above.
-", "AllowNullPasswd",	"true", 1 },
-{ "# Enable password-less logins on this display. USE WITH EXTREME CARE!
-# Default is false
-", "NoPassEnable",	"true", 0 },
-{ "# The users that don't need to provide a password to log in. NEVER list root!
-", "NoPassUsers",	"fred,ethel", 0 },
+{ "# How often to try to run the X-server. Running includes executing it and\n"
+"# waiting for it to come up. Default is 1\n", 
+"ServerAttempts",	"", 0 },
+{ "# How long to wait for a local X-server to come up. Default is 15\n", 
+"ServerTimeout",	"", 0 },
+{ "# See above.\n", 
+"AllowRootLogin",	"true", 1 },
+{ "# See above.\n", 
+"AllowNullPasswd",	"true", 1 },
+{ "# Enable password-less logins on this display. USE WITH EXTREME CARE!\n"
+"# Default is false\n", 
+"NoPassEnable",	"true", 0 },
+{ "# The users that don't need to provide a password to log in. NEVER list root!\n", 
+"NoPassUsers",	"fred,ethel", 0 },
 };
 
 Ent entsLocalGreeter[] = {
-{ "# See above.
-", "AllowShutdown",	"All", 1 },
-{ "# Complain, if local X-authorization cannot be created. Default is true
-# XXX this is a dummy currently
-", "AuthComplain",	"false", 0 },
+{ "# See above.\n", 
+"AllowShutdown",	"All", 1 },
+{ "# Complain, if local X-authorization cannot be created. Default is true\n"
+"# XXX this is a dummy currently\n", 
+"AuthComplain",	"false", 0 },
 };
 
 Ent ents0Core[] = {
-{ "# Enable automatic login on this display. USE WITH EXTREME CARE!
-# Default is false
-", "AutoLoginEnable",	"true", 0 },
-{ "# The user to log in automatically. NEVER specify root!
-", "AutoLoginUser",	"fred", 0 },
-{ "# The password for the user to log in automatically. This is NOT required
-# unless the user is to be logged into a NIS or Kerberos domain. If you use
-# it, you must \"chmod 600 kdmrc\" for obvious reasons.
-", "AutoLoginPass",	"secret!", 0 },
-{ "# The session for the user to log in automatically. This becomes useless after
-# the user's first login, as the last used session will take precedence.
-", "AutoLoginSession",	"kde", 0 },
-{ "# If \"true\", the auto-login is truly automatic, i.e., the user is logged in
-# when KDM comes up. If \"false\", the auto-login must be initiated by crashing
-# the X-server with Alt-Ctrl-BackSpace. Default is true
-", "AutoLogin1st",	"false", 0 },
+{ "# Enable automatic login on this display. USE WITH EXTREME CARE!\n"
+"# Default is false\n", 
+"AutoLoginEnable",	"true", 0 },
+{ "# The user to log in automatically. NEVER specify root!\n", 
+"AutoLoginUser",	"fred", 0 },
+{ "# The password for the user to log in automatically. This is NOT required\n"
+"# unless the user is to be logged into a NIS or Kerberos domain. If you use\n"
+"# it, you must \"chmod 600 kdmrc\" for obvious reasons.\n", 
+"AutoLoginPass",	"secret!", 0 },
+{ "# The session for the user to log in automatically. This becomes useless after\n"
+"# the user's first login, as the last used session will take precedence.\n", 
+"AutoLoginSession",	"kde", 0 },
+{ "# If \"true\", the auto-login is truly automatic, i.e., the user is logged in\n"
+"# when KDM comes up. If \"false\", the auto-login must be initiated by crashing\n"
+"# the X-server with Alt-Ctrl-BackSpace. Default is true\n", 
+"AutoLogin1st",	"false", 0 },
 };
 
 Ent ents0Greeter[] = {
-{ "# See above.
-", "PreselectUser",	"Default", 0 },
+{ "# See above.\n", 
+"PreselectUser",	"Default", 0 },
 { 0, "DefaultUser",	"johndoe", 0 },
 };
 
@@ -589,59 +589,58 @@ Ent ents0Greeter[] = {
 #define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
 
 Sect allSects[] = { 
- { "# KDM configuration example.
-# Note, that all comments will be lost if you change this file with
-# the kcontrol frontend.
-#
-# Definition: the greeter is the login dialog, i.e., the part of KDM
-# which the user sees.
-#
-# You can configure every X-display individually.
-# Every display has a display name, which consists of a host name
-# (which is empty for local displays), a colon and a display number.
-# Additionally, a display belongs to a display class (which can be
-# ignored in most cases; the kcontrol config frontend does not support
-# this feature at all).
-# Sections with display-specific settings have the formal syntax
-# \"[X-\" host [\":\" number [ \"_\" class ]] \"-\" sub-section \"]\"
-# You can use the \"*\" wildcard for host, number and class. You may omit
-# trailing components; they are assumed to be \"*\".
-# The host part may be a domain specification like \".inf.tu-dresden.de\".
-# From which section a setting is actually taken is determined by these
-# rules:
-# - an exact match takes precedence over a partial match (for the host part), 
-#   which in turn takes precedence over a wildcard
-# - precedence decreases from left to right for equally exact matches
-# Example: display name \"myhost:0\", class \"dpy\".
-# [X-myhost:0_dpy] precedes
-# [X-myhost:0_*] (same as [X-myhost:0]) precedes
-# [X-myhost:*_dpy] precedes
-# [X-myhost:*_*] (same as [X-myhost]) precedes
-# [X-*:0_dpy] precedes
-# [X-*:0_*] (same as [X-*:0]) precedes
-# [X-*:*_*] (same as [X-*])
-# These sections do NOT match this display:
-# [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]
-# If a setting is not found in any matching section, a default is used.
-#
-# Every comment applies to the following section or key.
-#
-
-# XXX do this on a per-display basis: should be [X-*-Desktop]
-# HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org
-", "Desktop0", entsDesktop, as(entsDesktop), 1 },
+ { "# KDM configuration example.\n"
+"# Note, that all comments will be lost if you change this file with\n"
+"# the kcontrol frontend.\n"
+"#\n"
+"# Definition: the greeter is the login dialog, i.e., the part of KDM\n"
+"# which the user sees.\n"
+"#\n"
+"# You can configure every X-display individually.\n"
+"# Every display has a display name, which consists of a host name\n"
+"# (which is empty for local displays), a colon and a display number.\n"
+"# Additionally, a display belongs to a display class (which can be\n"
+"# ignored in most cases; the kcontrol config frontend does not support\n"
+"# this feature at all).\n"
+"# Sections with display-specific settings have the formal syntax\n"
+"# \"[X-\" host [\":\" number [ \"_\" class ]] \"-\" sub-section \"]\"\n"
+"# You can use the \"*\" wildcard for host, number and class. You may omit\n"
+"# trailing components; they are assumed to be \"*\".\n"
+"# The host part may be a domain specification like \".inf.tu-dresden.de\".\n"
+"# From which section a setting is actually taken is determined by these\n"
+"# rules:\n"
+"# - an exact match takes precedence over a partial match (for the host part),\n"
+"#   which in turn takes precedence over a wildcard\n"
+"# - precedence decreases from left to right for equally exact matches\n"
+"# Example: display name \"myhost:0\", class \"dpy\".\n"
+"# [X-myhost:0_dpy] precedes\n"
+"# [X-myhost:0_*] (same as [X-myhost:0]) precedes\n"
+"# [X-myhost:*_dpy] precedes\n"
+"# [X-myhost:*_*] (same as [X-myhost]) precedes\n"
+"# [X-*:0_dpy] precedes\n"
+"# [X-*:0_*] (same as [X-*:0]) precedes\n"
+"# [X-*:*_*] (same as [X-*])\n"
+"# These sections do NOT match this display:\n"
+"# [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]\n"
+"# If a setting is not found in any matching section, a default is used.\n"
+"#\n"
+"# Every comment applies to the following section or key.\n"
+"#\n"
+"\n"
+"# XXX do this on a per-display basis: should be [X-*-Desktop]\n"
+"# HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org\n", 
+"Desktop0", entsDesktop, as(entsDesktop), 1 },
  { 0, "General", entsGeneral, as(entsGeneral), 1 },
  { 0, "Xdmcp", entsXdmcp, as(entsXdmcp), 1 },
  { 0, "Shutdown", entsShutdown, as(entsShutdown), 1 },
- { "# Rough estimations about how many seconds KDM will spend at most on
-# - opening a connection to the X-server (OpenTime):
-#   OpenRepeat * (OpenTimeout + OpenDelay)
-# - starting a local X-server (SeverTime): ServerAttempts * ServerTimeout
-# - starting a display:
-#   - local display: StartAttempts * (ServerTime + OpenTime)
-#   - remote/foreign display: StartAttempts * OpenTime
-
-", "X-*-Core", entsAnyCore, as(entsAnyCore), 1 },
+ { "# Rough estimations about how many seconds KDM will spend at most on\n"
+"# - opening a connection to the X-server (OpenTime):\n"
+"#   OpenRepeat * (OpenTimeout + OpenDelay)\n"
+"# - starting a local X-server (SeverTime): ServerAttempts * ServerTimeout\n"
+"# - starting a display:\n"
+"#   - local display: StartAttempts * (ServerTime + OpenTime)\n"
+"#   - remote/foreign display: StartAttempts * OpenTime\n\n", 
+"X-*-Core", entsAnyCore, as(entsAnyCore), 1 },
  { 0, "X-*-Greeter", entsAnyGreeter, as(entsAnyGreeter), 1 },
  { 0, "X-:*-Core", entsLocalCore, as(entsLocalCore), 1 },
  { 0, "X-:*-Greeter", entsLocalGreeter, as(entsLocalGreeter), 1 },
@@ -1473,87 +1472,86 @@ static void
 genSuppFiles (void)
 {
     writeFile ("%s/Xaccess", 0644, "%s",
-"# Xaccess - Access control file for XDMCP connections
-#
-# To control Direct and Broadcast access:
-#
-#	pattern
-#
-# To control Indirect queries:
-#
-# 	pattern		list of hostnames and/or macros ...
-#
-# To use the chooser:
-#
-#	pattern		CHOOSER BROADCAST
-#
-# or
-#
-#	pattern		CHOOSER list of hostnames and/or macros ...
-#
-# To define macros:
-#
-#       %name		list of hosts ...
-#
-# The first form tells xdm which displays to respond to itself.
-# The second form tells xdm to forward indirect queries from hosts matching
-# the specified pattern to the indicated list of hosts.
-# The third form tells xdm to handle indirect queries using the chooser;
-# the chooser is directed to send its own queries out via the broadcast
-# address and display the results on the terminal.
-# The fourth form is similar to the third, except instead of using the
-# broadcast address, it sends DirectQuerys to each of the hosts in the list
-#
-# In all cases, xdm uses the first entry which matches the terminal;
-# for IndirectQuery messages only entries with right hand sides can
-# match, for Direct and Broadcast Query messages, only entries without
-# right hand sides can match.
-#
-
-*					#any host can get a login window
-
-#
-# To hardwire a specific terminal to a specific host, you can
-# leave the terminal sending indirect queries to this host, and
-# use an entry of the form:
-#
-
-#terminal-a	host-a
-
-
-#
-# The nicest way to run the chooser is to just ask it to broadcast
-# requests to the network - that way new hosts show up automatically.
-# Sometimes, however, the chooser can't figure out how to broadcast,
-# so this may not work in all environments.
-#
-
-*		CHOOSER BROADCAST	#any indirect host can get a chooser
-
-#
-# If you'd prefer to configure the set of hosts each terminal sees,
-# then just uncomment these lines (and comment the CHOOSER line above)
-# and edit the %hostlist line as appropriate
-#
-
-#%hostlist	host-a host-b
-
-#*		CHOOSER %hostlist	#
-");
+"# Xaccess - Access control file for XDMCP connections\n"
+"#\n"
+"# To control Direct and Broadcast access:\n"
+"#\n"
+"#	pattern\n"
+"#\n"
+"# To control Indirect queries:\n"
+"#\n"
+"# 	pattern		list of hostnames and/or macros ...\n"
+"#\n"
+"# To use the chooser:\n"
+"#\n"
+"#	pattern		CHOOSER BROADCAST\n"
+"#\n"
+"# or\n"
+"#\n"
+"#	pattern		CHOOSER list of hostnames and/or macros ...\n"
+"#\n"
+"# To define macros:\n"
+"#\n"
+"#       %name		list of hosts ...\n"
+"#\n"
+"# The first form tells xdm which displays to respond to itself.\n"
+"# The second form tells xdm to forward indirect queries from hosts matching\n"
+"# the specified pattern to the indicated list of hosts.\n"
+"# The third form tells xdm to handle indirect queries using the chooser;\n"
+"# the chooser is directed to send its own queries out via the broadcast\n"
+"# address and display the results on the terminal.\n"
+"# The fourth form is similar to the third, except instead of using the\n"
+"# broadcast address, it sends DirectQuerys to each of the hosts in the list\n"
+"#\n"
+"# In all cases, xdm uses the first entry which matches the terminal;\n"
+"# for IndirectQuery messages only entries with right hand sides can\n"
+"# match, for Direct and Broadcast Query messages, only entries without\n"
+"# right hand sides can match.\n"
+"#\n"
+"\n"
+"*					#any host can get a login window\n"
+"\n"
+"#\n"
+"# To hardwire a specific terminal to a specific host, you can\n"
+"# leave the terminal sending indirect queries to this host, and\n"
+"# use an entry of the form:\n"
+"#\n"
+"\n"
+"#terminal-a	host-a\n"
+"\n"
+"\n"
+"#\n"
+"# The nicest way to run the chooser is to just ask it to broadcast\n"
+"# requests to the network - that way new hosts show up automatically.\n"
+"# Sometimes, however, the chooser can't figure out how to broadcast,\n"
+"# so this may not work in all environments.\n"
+"#\n"
+"\n"
+"*		CHOOSER BROADCAST	#any indirect host can get a chooser\n"
+"\n"
+"#\n"
+"# If you'd prefer to configure the set of hosts each terminal sees,\n"
+"# then just uncomment these lines (and comment the CHOOSER line above)\n"
+"# and edit the %hostlist line as appropriate\n"
+"#\n"
+"\n"
+"#%hostlist	host-a host-b\n"
+"\n"
+"#*		CHOOSER %hostlist	#\n"
+);
     writeFile ("%s/Xservers", 0644, "%s",
-"# Xservers - local X-server list
-#
-# This file should contain an entry to start the server on the
-# local display; if you have more than one display (not screen),
-# you can add entries to the list (one per line).
-# If you also have some X terminals connected which do not support XDMCP,
-# you can add them here as well; you will want to leave those terminals
-# on and connected to the network, else kdm will have a tougher time
-# managing them. Each X terminal line should look like:
-#       XTerminalName:0 foreign
-#
-
-"
+"# Xservers - local X-server list\n"
+"#\n"
+"# This file should contain an entry to start the server on the\n"
+"# local display; if you have more than one display (not screen),\n"
+"# you can add entries to the list (one per line).\n"
+"# If you also have some X terminals connected which do not support XDMCP,\n"
+"# you can add them here as well; you will want to leave those terminals\n"
+"# on and connected to the network, else kdm will have a tougher time\n"
+"# managing them. Each X terminal line should look like:\n"
+"#       XTerminalName:0 foreign\n"
+"#\n"
+"\n"
 #ifdef __linux__
 ":0 local@tty1 " XBINDIR "/X vt7"
 #elif defined(sun)
@@ -1561,115 +1559,109 @@ genSuppFiles (void)
 #else
 ":0 local " XBINDIR "/X"
 #endif
-"
-
-");
+"\n\n");
     writeFile ("%s/Xwilling", 0755, "%s",
-"#!/bin/sh
-# The output of this script is displayed in the chooser window.
-# (instead of \"Willing to manage\")
-
-load=\"`uptime|sed -e 's/^.*load[^0-9]*//'`\"
-nrusers=\"`who|cut -c 1-8|sort -u|wc -l|sed 's/^[        ]*//'`\"
-s=\"\"; [ \"$nrusers\" != 1 ] && s=s
-
-echo \"${nrusers} user${s}, load: ${load}\"
-");
+"#!/bin/sh\n"
+"# The output of this script is displayed in the chooser window.\n"
+"# (instead of \"Willing to manage\")\n"
+"\n"
+"load=\"`uptime|sed -e 's/^.*load[^0-9]*//'`\"\n"
+"nrusers=\"`who|cut -c 1-8|sort -u|wc -l|sed 's/^[        ]*//'`\"\n"
+"s=\"\"; [ \"$nrusers\" != 1 ] && s=s\n"
+"\n"
+"echo \"${nrusers} user${s}, load: ${load}\"\n"
+);
     writeFile ("%s/Xsetup", 0755, "%s",
-"#!/bin/sh
-# Xsetup - run as root before the login dialog appears
-
-" KDE_BINDIR "/kdmdesktop &
-");
+"#!/bin/sh\n"
+"# Xsetup - run as root before the login dialog appears\n"
+"\n"
+KDE_BINDIR "/kdmdesktop &\n"
+);
     writeFile ("%s/Xstartup", 0755, "%s",
-"#!/bin/sh
-# Xstartup - run as root before session starts
-
-# By convention, both xconsole and xterm -C check that the
-# console is owned by the invoking user and is readable before attaching
-# the console output.  This way a random user can invoke xterm -C without
-# causing serious grief.
-# This is not required if you use PAM, as pam_console should handle it.
-#
-"
+"#!/bin/sh\n"
+"# Xstartup - run as root before session starts\n"
+"\n"
+"# By convention, both xconsole and xterm -C check that the\n"
+"# console is owned by the invoking user and is readable before attaching\n"
+"# the console output.  This way a random user can invoke xterm -C without\n"
+"# causing serious grief.\n"
+"# This is not required if you use PAM, as pam_console should handle it.\n"
+"#\n"
 #ifdef HAVE_PAM
-"#chown $USER /dev/console"
+"#chown $USER /dev/console\n"
 #else
-"chown $USER /dev/console"
+"chown $USER /dev/console\n"
 #endif
-"
-
-#exec sessreg -a -l $DISPLAY "
+"\n"
+"#exec sessreg -a -l $DISPLAY "
 #ifdef BSD
 "-x " KDMCONF "/Xservers "
 #endif
-"$USER
-");
+"$USER\n"
+);
     writeFile ("%s/Xreset", 0755, "%s",
-"#!/bin/sh
-# Xreset - run as root after session exits
-
-# Reassign ownership of the console to root, this should disallow
-# assignment of console output to any random users's xterm
-# This is not required if you use PAM, as pam_console should handle it.
-#
-"
+"#!/bin/sh\n"
+"# Xreset - run as root after session exits\n"
+"\n"
+"# Reassign ownership of the console to root, this should disallow\n"
+"# assignment of console output to any random users's xterm\n"
+"# This is not required if you use PAM, as pam_console should handle it.\n"
+"#\n"
 #ifdef HAVE_PAM
-"#chown root /dev/console
-#chmod 622 /dev/console"
+"#chown root /dev/console\n"
+"#chmod 622 /dev/console\n"
 #else
-"chown root /dev/console
-chmod 622 /dev/console"
+"chown root /dev/console\n"
+"chmod 622 /dev/console\n"
 #endif
-"
-
-#exec sessreg -d -l $DISPLAY "
+"\n"
+"#exec sessreg -d -l $DISPLAY "
 #ifdef BSD
 "-x " KDMCONF "/Xservers "
 #endif
-"$USER
-");
+"$USER\n"
+);
     writeFile ("%s/Xsession", 0755, "%s",
-"#!/bin/sh
-# Xsession - run as user
-
-# redirect errors to a file in user's home directory if we can
-for errfile in \"$HOME/.xsession-errors\" \"${TMPDIR-/tmp}/xses-$USER\" \"/tmp/xses-$USER\"
-do
-	if ( cp /dev/null \"$errfile\" 2> /dev/null )
-	then
-		chmod 600 \"$errfile\"
-		exec > \"$errfile\" 2>&1
-		break
-	fi
-done
-
-test -f $HOME/.xprofile && . $HOME/.xprofile
-
-sess=\"$1\"
-shift
-
-case \"$sess\" in
-    failsafe)
-	exec xterm -geometry 80x24-0-0 $*
-	;;
-    \"\"|default)
-	exec $HOME/.xsession $*
-	;;
-esac
-
-# start windowmanager
-type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*
-type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*
-type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*
-sess=`echo \"$sess\" | tr A-Z a-z`
-type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*
-type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*
-type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*
-
-# windowmanager not found, tell user
-exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"
-");
+"#!/bin/sh\n"
+"# Xsession - run as user\n"
+"\n"
+"# redirect errors to a file in user's home directory if we can\n"
+"for errfile in \"$HOME/.xsession-errors\" \"${TMPDIR-/tmp}/xses-$USER\" \"/tmp/xses-$USER\"\n"
+"do\n"
+"	if ( cp /dev/null \"$errfile\" 2> /dev/null )\n"
+"	then\n"
+"		chmod 600 \"$errfile\"\n"
+"		exec > \"$errfile\" 2>&1\n"
+"		break\n"
+"	fi\n"
+"done\n"
+"\n"
+"test -f $HOME/.xprofile && . $HOME/.xprofile\n"
+"\n"
+"sess=\"$1\"\n"
+"shift\n"
+"\n"
+"case \"$sess\" in\n"
+"    failsafe)\n"
+"	exec xterm -geometry 80x24-0-0 $*\n"
+"	;;\n"
+"    \"\"|default)\n"
+"	exec $HOME/.xsession $*\n"
+"	;;\n"
+"esac\n"
+"\n"
+"# start windowmanager\n"
+"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
+"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
+"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
+"sess=`echo \"$sess\" | tr A-Z a-z`\n"
+"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
+"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
+"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
+"\n"
+"# windowmanager not found, tell user\n"
+"exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"\n"
+);
 }
 
 static char *oldkdes[] = {
@@ -1700,27 +1692,27 @@ int main(int argc, char **argv)
 
     for (ap = 1; ap < argc; ap++) {
 	if (!strcmp(argv[ap], "--help")) {
-	    printf ("genconf - generate configuration files for kdm
-options:
-  --in /path/to/new/kdm-config-dir
-    In which directory to put the new configuration. You can use this
-    to support a $(DESTDIR), but not to change the final location of
-    the installation - the paths inside the files are not influenced.
-    Default is " KDMCONF ".
-  --old-xdm /path/to/old/xdm-dir
-    Where to look for the config files of an xdm/older kdm.
-    Default is to scan /etc/X11/kdm, $XLIBDIR/kdm, /etc/X11/xdm,
-    $XLIBDIR/xdm; there in turn look for kdm-config and xdm-config.
-  --old-kde /path/to/old/kde-config-dir
-    Where to look for the kdmrc of an older kdm.
-    Default is to scan " KDE_CONFDIR " and
-    {/usr,/usr/local,{/opt,/usr/local}/{kde2,kde,kde1}}/share/config.
-  --no-old
-    Don't look at other xdm/kdm configurations, just create default config.
-  --copy
-    Don't reference old positions, but copy files. 
-    Note that the generated config may be broken.
-");
+	    printf (
+"genconf - generate configuration files for kdm\n"
+"options:\n"
+"  --in /path/to/new/kdm-config-dir\n"
+"    In which directory to put the new configuration. You can use this\n"
+"    to support a $(DESTDIR), but not to change the final location of\n"
+"    the installation - the paths inside the files are not influenced.\n"
+"    Default is " KDMCONF ".\n"
+"  --old-xdm /path/to/old/xdm-dir\n"
+"    Where to look for the config files of an xdm/older kdm.\n"
+"    Default is to scan /etc/X11/kdm, $XLIBDIR/kdm, /etc/X11/xdm,\n"
+"    $XLIBDIR/xdm; there in turn look for kdm-config and xdm-config.\n"
+"  --old-kde /path/to/old/kde-config-dir\n"
+"    Where to look for the kdmrc of an older kdm.\n"
+"    Default is to scan " KDE_CONFDIR " and\n"
+"    {/usr,/usr/local,{/opt,/usr/local}/{kde2,kde,kde1}}/share/config.\n"
+"  --no-old\n"
+"    Don't look at other xdm/kdm configurations, just create default config.\n"
+"  --copy\n"
+"    Don't reference old positions, but copy files.\n"
+"    Note that the generated config may be broken.\n");
 	    exit (0);
 	}
 	if (!strcmp(argv[ap], "--no-old")) {
@@ -1788,25 +1780,21 @@ options:
 	sprintf (nname, "%s/README", newdir);
 	f = Create (nname, 0644);
 	fprintf (f, 
-"The configuration files in this directory were automatically derived 
-from these already present files:
-");
+"The configuration files in this directory were automatically derived\n"
+"from these already present files:\n");
 	if (oldkde)
 	    fprintf (f, "- %s/kdmrc\n", oldkde);
 	if (oldxdm)
 	    fprintf (f, "- %s/*\n", oldxdm);
 	fprintf (f, 
-"As the used algorithm is pretty dumb, the configuration may be broken.
-");
+"As the used algorithm is pretty dumb, the configuration may be broken.\n");
 	if (!copy_files && oldxdm)
-	    fprintf (f, "
-Note, that this configuration still depends on the already present
-config files in %s - don't delete them!
-", oldxdm);
-	fprintf (f, "
-Have a look at the program <kdebase-sources>/kdm/kfrontend/genkdmconf 
-if you want to generate another configuration.
-");
+	    fprintf (f, 
+"Note, that this configuration still depends on the already present\n"
+"config files in %s - don't delete them!\n", oldxdm);
+	fprintf (f, 
+"Have a look at the program <kdebase-sources>/kdm/kfrontend/genkdmconf\n"
+"if you want to generate another configuration.\n");
 	fclose (f);
     }
 
