@@ -21,8 +21,9 @@
   */
 
 #include <qcombobox.h>
-#include <qvgroupbox.h>
+#include <qgroupbox.h>
 #include <qlabel.h>
+#include <qvgroupbox.h>
 #include <qobjectlist.h>
 #include <qtabwidget.h>
 #include <qevent.h>
@@ -161,9 +162,9 @@ void KLocaleApplication::reTranslate()
 {
   // The untranslated string for QLabel are stored in 
   // the name() so we use that when retranslating
-  QObjectList *list = queryList("QLabel");
-  QObjectListIt it(*list);
   QObject *wc;
+  QObjectList *list = queryList("QWidget");
+  QObjectListIt it(*list);
   while ( (wc = it.current()) != 0 ) {
     ++it;
     
@@ -171,8 +172,12 @@ void KLocaleApplication::reTranslate()
     // retranslated. E.g. the example box should not be
     // retranslated from here.
     if (strcmp(wc->name(), "unnamed") == 0) continue;
-    
-    ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
+
+qDebug("%s", wc->className());
+    if (strcmp(wc->className(), "QLabel") == 0)
+      ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
+    else if (strcmp(wc->className(), "QVGroupBox") == 0)
+      ((QVGroupBox *)wc)->setTitle( locale->translate( wc->name() ) );
   }
   delete list;
 

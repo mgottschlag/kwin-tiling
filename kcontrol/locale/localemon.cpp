@@ -29,6 +29,8 @@
 #include <qobjectlist.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
+#include <qvgroupbox.h>
+#include <qhbox.h>
 
 #include <kglobal.h>
 #include <kdialog.h>
@@ -51,39 +53,58 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   QGridLayout *lay = new QGridLayout(this, 9, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
-  lay->setAutoAdd(TRUE);
 
   labMonCurSym = new QLabel(this, I18N_NOOP("Currency symbol:"));
+  lay->addWidget(labMonCurSym, 0, 0);
   edMonCurSym = new QLineEdit(this);
-  connect( edMonCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonCurSymChanged(const QString &) ) );
+  lay->addWidget(edMonCurSym, 0, 1);
+  connect( edMonCurSym, SIGNAL( textChanged(const QString &) ), SLOT( slotMonCurSymChanged(const QString &) ) );
 
   labMonDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
+  lay->addWidget(labMonDecSym, 1, 0);
   edMonDecSym = new QLineEdit(this);
-  connect( edMonDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonDecSymChanged(const QString &) ) );
+  lay->addWidget(edMonDecSym, 1, 1);
+  connect( edMonDecSym, SIGNAL( textChanged(const QString &) ), SLOT( slotMonDecSymChanged(const QString &) ) );
 
   labMonThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
+  lay->addWidget(labMonThoSep, 2, 0);
   edMonThoSep = new QLineEdit(this);
-  connect( edMonThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonThoSepChanged(const QString &) ) );
+  lay->addWidget(edMonThoSep, 2, 1);
+  connect( edMonThoSep, SIGNAL( textChanged(const QString &) ), SLOT( slotMonThoSepChanged(const QString &) ) );
 
   labMonFraDig = new QLabel(this, I18N_NOOP("Fract digits:"));
+  lay->addWidget(labMonFraDig, 3, 0);
   edMonFraDig = new QLineEdit(this);
-  connect( edMonFraDig, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonFraDigChanged(const QString &) ) );
+  lay->addWidget(edMonFraDig, 3, 1);
+  connect( edMonFraDig, SIGNAL( textChanged(const QString &) ),
+	   SLOT( slotMonFraDigChanged(const QString &) ) );
 
-  labMonPosPreCurSym =new QLabel(this, I18N_NOOP("Positive currency prefix:"));
-  chMonPosPreCurSym = new QCheckBox(this);
-  connect( chMonPosPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonPosPreCurSymChanged() ) );
+  QWidget *hbox = new QHBox(this);
+  lay->addMultiCellWidget(hbox, 4, 8, 0, 1);
+  QGroupBox *grp;
+  grp = new QVGroupBox(hbox, I18N_NOOP("Positive"));
+  grp->setColumns(2);
+  labMonPosPreCurSym = new QLabel(grp, I18N_NOOP("Currency symbol:"));
+  chMonPosPreCurSym = new QCheckBox(grp);
+  connect( chMonPosPreCurSym, SIGNAL( clicked() ),
+	   SLOT( slotMonPosPreCurSymChanged() ) );
 
-  labMonNegPreCurSym =new QLabel(this, I18N_NOOP("Negative currency prefix:"));
-  chMonNegPreCurSym = new QCheckBox(this);
-  connect( chMonNegPreCurSym, SIGNAL( clicked() ), this, SLOT( slotMonNegPreCurSymChanged() ) );
+  labMonPosMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
+  cmbMonPosMonSignPos = new QComboBox(grp, "signpos");
+  connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ),
+	   SLOT( slotMonPosMonSignPosChanged(int) ) );
 
-  labMonPosMonSignPos =new QLabel(this, I18N_NOOP("Sign position, positive:"));
-  cmbMonPosMonSignPos = new QComboBox(this, "signpos");
-  connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
+  grp = new QVGroupBox(hbox, I18N_NOOP("Negative"));
+  grp->setColumns(2);
+  labMonNegPreCurSym = new QLabel(grp, I18N_NOOP("Currency symbol:"));
+  chMonNegPreCurSym = new QCheckBox(grp);
+  connect( chMonNegPreCurSym, SIGNAL( clicked() ),
+	   SLOT( slotMonNegPreCurSymChanged() ) );
 
-  labMonNegMonSignPos =new QLabel(this, I18N_NOOP("Sign position, negative:"));
-  cmbMonNegMonSignPos = new QComboBox(this, "signpos");
-  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
+  labMonNegMonSignPos = new QLabel(grp, I18N_NOOP("Sign position:"));
+  cmbMonNegMonSignPos = new QComboBox(grp, "signpos");
+  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ),
+	   SLOT( slotMonNegMonSignPosChanged(int) ) );
 
   // insert some items
   int i = 5;
