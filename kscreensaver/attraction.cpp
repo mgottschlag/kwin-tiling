@@ -952,7 +952,8 @@ void kAttractionSetup::slotOkPressed()
 
 void kAttractionSetup::slotAbout()
 {
-	QMessageBox::message(glocale->translate("About Attraction"), 
+	QMessageBox::information(this,
+			     glocale->translate("About Attraction"), 
 			     glocale->translate("Attraction Version 1.0\n\n"
 				"Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
 				"Ported to kscreensaver by:\n\n"
