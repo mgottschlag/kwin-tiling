@@ -18,10 +18,10 @@ $(srcdir)/backend/Makefile: $(srcdir)/backend/Imakefile
 	    rm -f Makefile.bak
 
 all-local: $(srcdir)/backend/Makefile
-	$(MAKE) -C backend
+	$(MAKE) -C $(srcdir)/backend
 
 clean-local: $(srcdir)/backend/Makefile
-	$(MAKE) -C backend clean
+	$(MAKE) -C $(srcdir)/backend clean
 
 distclean-local:
 	rm -f $(srcdir)/backend/Makefile
