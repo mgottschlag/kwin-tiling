@@ -350,7 +350,7 @@ QString LiloInfo::getErrorDescription()
 				errorString = i18n ( "Boot map location is a non-existing file." );
 				break;
 			default:
-				errorString = i18n ( "Unkown error!" );
+				errorString = i18n ( "Unknown error!" );
 		}
 		// Reset the error state and return the error
 		error = 0;
