@@ -81,10 +81,12 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_pMonitor = new BGMonitor(m_monitorImage, "preview monitor");
    m_pMonitor->setGeometry(23, 14, 151, 115);
    connect(m_pMonitor, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
-
-   // desktop
-   connect(m_comboDesktop, SIGNAL(activated(int)),
-           SLOT(slotSelectDesk(int)));
+   if( m_multidesktop)
+     {
+       // desktop
+       connect(m_comboDesktop, SIGNAL(activated(int)),
+	       SLOT(slotSelectDesk(int)));
+     }
 
    // background image settings
    QIconSet iconSet = SmallIconSet(QString::fromLatin1("fileopen"));
