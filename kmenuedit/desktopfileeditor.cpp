@@ -49,8 +49,8 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     connect(_apply, SIGNAL(clicked()), SLOT(slotApply()));
     connect(_reset, SIGNAL(clicked()), SLOT(slotReset()));
     _desktopFileNeedsSave = false;
-    layout->addWidget(_reset, 2, 1);
-    layout->addWidget(_apply, 2, 2);
+    layout->addWidget(_apply, 2, 1);
+    layout->addWidget(_reset, 2, 2);
     layout->setColStretch(0, 9);
     layout->setColStretch(1, 3);
     layout->setColStretch(2, 3);
