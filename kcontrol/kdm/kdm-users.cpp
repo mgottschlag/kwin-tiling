@@ -358,7 +358,7 @@ void KDMUsersWidget::slotUsrToAll()
     QString user = userlb->currentText();
     alluserlb->insertItem(user);
     alluserlb->sort();
-    nouserlb->removeItem(id);
+    userlb->removeItem(id);
 }
 
 
