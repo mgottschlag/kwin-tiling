@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>464</width>
-            <height>381</height>
+            <width>412</width>
+            <height>402</height>
         </rect>
     </property>
     <property name="caption">
@@ -163,9 +163,9 @@
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>Layout12</cstring>
+                        <cstring>Layout11</cstring>
                     </property>
-                    <hbox>
+                    <grid>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
@@ -175,11 +175,39 @@
                         <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>Layout11</cstring>
+                        <spacer row="2" column="0">
+                            <property name="name" stdset="0">
+                                <cstring>Spacer6</cstring>
                             </property>
-                            <hbox>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox" row="0" column="1">
+                            <property name="name">
+                                <cstring>cb_pointershape</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Change pointer shape over icons</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QLayoutWidget" row="2" column="1">
+                            <property name="name">
+                                <cstring>Layout10</cstring>
+                            </property>
+                            <grid>
                                 <property name="name">
                                     <cstring>unnamed</cstring>
                                 </property>
@@ -189,9 +217,20 @@
                                 <property name="spacing">
                                     <number>6</number>
                                 </property>
-                                <spacer>
+                                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>lDelay</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>De&amp;lay:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>slAutoSelect</cstring>
+                                    </property>
+                                </widget>
+                                <spacer row="1" column="0">
                                     <property name="name" stdset="0">
-                                        <cstring>Spacer6</cstring>
+                                        <cstring>Spacer3</cstring>
                                     </property>
                                     <property name="orientation">
                                         <enum>Horizontal</enum>
@@ -202,24 +241,51 @@
                                     <property name="sizeHint">
                                         <size>
                                             <width>20</width>
-                                            <height>20</height>
+                                            <height>21</height>
                                         </size>
                                     </property>
                                 </spacer>
-                                <widget class="QCheckBox">
+                                <widget class="QLabel" row="2" column="1">
                                     <property name="name">
-                                        <cstring>cb_pointershape</cstring>
+                                        <cstring>lb_short</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>&amp;Change pointer shape over icons</string>
-                                    </property>
-                                    <property name="checked">
-                                        <bool>true</bool>
+                                        <string>Short</string>
                                     </property>
                                 </widget>
-                            </hbox>
+                                <widget class="QSlider" row="1" column="1" rowspan="1" colspan="2">
+                                    <property name="name">
+                                        <cstring>slAutoSelect</cstring>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>250</width>
+                                            <height>0</height>
+                                        </size>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>2000</number>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="2" column="2">
+                                    <property name="name">
+                                        <cstring>lb_long</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Long</string>
+                                    </property>
+                                    <property name="alignment">
+                                        <set>AlignVCenter|AlignRight</set>
+                                    </property>
+                                    <property name="hAlign" stdset="0">
+                                    </property>
+                                </widget>
+                            </grid>
                         </widget>
-                        <spacer>
+                        <spacer row="2" column="2">
                             <property name="name" stdset="0">
                                 <cstring>Spacer8</cstring>
                             </property>
@@ -236,7 +302,15 @@
                                 </size>
                             </property>
                         </spacer>
-                    </hbox>
+                        <widget class="QCheckBox" row="1" column="1">
+                            <property name="name">
+                                <cstring>cbAutoSelect</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Automatically select icons</string>
+                            </property>
+                        </widget>
+                    </grid>
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
@@ -263,182 +337,21 @@
                         <enum>Horizontal</enum>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget">
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>Layout2</cstring>
+                        <cstring>cbVisualActivate</cstring>
                     </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>cbVisualActivate</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Visual feedback on activation</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>cbLargeCursor</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Large cursor</string>
-                            </property>
-                        </widget>
-                    </hbox>
+                    <property name="text">
+                        <string>&amp;Visual feedback on activation</string>
+                    </property>
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>cbAutoSelect</cstring>
+                        <cstring>cbLargeCursor</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Automatically select icons</string>
+                        <string>&amp;Large cursor</string>
                     </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>Layout8</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer3</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>21</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>Layout5</cstring>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>200</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <property name="margin">
-                                    <number>0</number>
-                                </property>
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>lDelay</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>De&amp;lay:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>slAutoSelect</cstring>
-                                    </property>
-                                </widget>
-                                <widget class="QLayoutWidget">
-                                    <property name="name">
-                                        <cstring>Layout4</cstring>
-                                    </property>
-                                    <grid>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <property name="margin">
-                                            <number>0</number>
-                                        </property>
-                                        <property name="spacing">
-                                            <number>6</number>
-                                        </property>
-                                        <widget class="QLabel" row="1" column="1">
-                                            <property name="name">
-                                                <cstring>lb_long</cstring>
-                                            </property>
-                                            <property name="text">
-                                                <string>Long</string>
-                                            </property>
-                                            <property name="alignment">
-                                                <set>AlignVCenter|AlignRight</set>
-                                            </property>
-                                            <property name="hAlign" stdset="0">
-                                            </property>
-                                        </widget>
-                                        <widget class="QSlider" row="0" column="0" rowspan="1" colspan="2">
-                                            <property name="name">
-                                                <cstring>slAutoSelect</cstring>
-                                            </property>
-                                            <property name="minimumSize">
-                                                <size>
-                                                    <width>250</width>
-                                                    <height>0</height>
-                                                </size>
-                                            </property>
-                                            <property name="maxValue">
-                                                <number>2000</number>
-                                            </property>
-                                            <property name="orientation">
-                                                <enum>Horizontal</enum>
-                                            </property>
-                                        </widget>
-                                        <widget class="QLabel" row="1" column="0">
-                                            <property name="name">
-                                                <cstring>lb_short</cstring>
-                                            </property>
-                                            <property name="text">
-                                                <string>Short</string>
-                                            </property>
-                                        </widget>
-                                    </grid>
-                                </widget>
-                            </vbox>
-                        </widget>
-                        <spacer>
-                            <property name="name" stdset="0">
-                                <cstring>Spacer4</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </hbox>
                 </widget>
             </vbox>
         </widget>
@@ -468,17 +381,29 @@
         <receiver>cb_pointershape</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>singleClick</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cbAutoSelect</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>cbAutoSelect</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>slAutoSelect</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>rightHanded</tabstop>
     <tabstop>leftHanded</tabstop>
     <tabstop>singleClick</tabstop>
     <tabstop>cb_pointershape</tabstop>
+    <tabstop>cbAutoSelect</tabstop>
+    <tabstop>slAutoSelect</tabstop>
     <tabstop>doubleClick</tabstop>
     <tabstop>cbVisualActivate</tabstop>
     <tabstop>cbLargeCursor</tabstop>
-    <tabstop>cbAutoSelect</tabstop>
-    <tabstop>slAutoSelect</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
