@@ -169,20 +169,20 @@ public:
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
-        NoBlending, 
-	HorizontalBlending, 
-	VerticalBlending, 
+        NoBlending,
+	HorizontalBlending,
+	VerticalBlending,
 	PyramidBlending,
-	PipeCrossBlending, 
-	EllipticBlending, 
-	IntensityBlending, 
-	IntensityReversed, 
-	SaturateBlending, 
-	SaturateReversed, 
+	PipeCrossBlending,
+	EllipticBlending,
+	IntensityBlending,
+	IntensityReversed,
+	SaturateBlending,
+	SaturateReversed,
 	ContrastBlending,
 	ContrastReversed,
-	HueShiftBlending, 
-	HueShiftReversed, 
+	HueShiftBlending,
+	HueShiftReversed,
 	lastBlendMode
     };
 
@@ -216,14 +216,14 @@ public:
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
-    
+
     enum MinOptDepth {
         AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt };
-        
+
     void setMinOptimizationDepth( int mode );
     int minOptimizationDepth() const { return m_MinOptimizationDepth; }
     bool optimize() const;
-    
+
     void setUseShm( bool use );
     bool useShm() const { return m_bShm; }
 
@@ -267,6 +267,7 @@ private:
 
     KConfig *m_pConfig;
     KStandardDirs *m_pDirs;
+    bool m_bDeleteConfig;
 
 public:
     QMap<QString,int> m_BMMap;

@@ -143,7 +143,7 @@ void KBackgroundPattern::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-    
+
     m_pConfig->writeEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
@@ -330,7 +330,7 @@ void KBackgroundProgram::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-    
+
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->writeEntry("Executable", m_Executable);
     m_pConfig->writeEntry("Command", m_Command);
@@ -489,8 +489,12 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 	    configname.sprintf("kdesktop-screen-%drc", screen_number);
 
 	m_pConfig = new KConfig(configname, false, false);
+        m_bDeleteConfig = true;
     } else
+    {
 	m_pConfig = config;
+        m_bDeleteConfig = false;
+    }
 
     srand((unsigned int) time(0L));
 
@@ -503,6 +507,8 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 
 KBackgroundSettings::~KBackgroundSettings()
 {
+    if( m_bDeleteConfig )
+        delete m_pConfig;
 }
 
 

@@ -50,23 +50,6 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 {
     m_State = 0;
 
-    if (! config) {
-	int screen_number = 0;
-	if (qt_xdisplay())
-	    screen_number = DefaultScreen(qt_xdisplay());
-	QCString configname;
-	if (screen_number == 0)
-	    configname = "kdesktoprc";
-	else
-	    configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-	m_pConfig = new KConfig(configname, false, true);
-        m_bDeleteConfig = true;
-    } else {
-	m_pConfig = config;
-        m_bDeleteConfig = false;
-    }
-
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
@@ -82,9 +65,8 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
-    delete m_Tempfile; m_Tempfile = 0;
-    if( m_bDeleteConfig )
-        delete m_pConfig;
+    delete m_Tempfile;
+    m_Tempfile = 0;
 }
 
 
