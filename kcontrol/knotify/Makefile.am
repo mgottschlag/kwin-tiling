@@ -10,8 +10,6 @@ libkcm_knotify_la_METASOURCES = AUTO
 
 noinst_HEADERS = knotify.h eventview.h eventconfig.h
 
-KDE_ICON = knotify
-
 messages:
 	$(XGETTEXT) $(libkcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
 
