@@ -130,13 +130,12 @@ void KLocaleConfig::loadLanguageList()
       QString name = entry.readEntry(QString::fromLatin1("Name"),
 				     m_locale->translate("without name"));
       
-      QString path = *it;
-      int index = path.findRev('/');
-      path = path.left(index);
-      index = path.findRev('/');
-      path = path.mid(index+1);
-      m_comboLanguage->insertLanguage(path, name,
-				      QString::null, submenu, menu_index);
+      QString tag = *it;
+      int index = tag.findRev('/');
+      tag = tag.left(index);
+      index = tag.findRev('/');
+      tag = tag.mid(index+1);
+      m_comboLanguage->insertItem(name, tag, submenu, menu_index);
     }
 
   // restore the old global locale
@@ -199,7 +198,12 @@ void KLocaleConfig::loadCountryList()
       index = tag.findRev('/');
       tag = tag.mid(index+1);
       int menu_index = m_comboCountry->containsTag(tag) ? -1 : -2;
-      m_comboCountry->insertLanguage(tag, name, sub, submenu, menu_index);
+
+      QPixmap flag( locate( "locale",
+			    QString::fromLatin1( "l10n/%1/flag.png" )
+			    .arg(tag) ) );
+      QIconSet icon( flag );
+      m_comboCountry->insertItem( icon, name, tag, submenu, menu_index );
     }
 
   // restore the old global locale

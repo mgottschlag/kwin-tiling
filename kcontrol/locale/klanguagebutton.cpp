@@ -24,8 +24,6 @@
 #define INCLUDE_MENUITEM_DEF
 #include <qpopupmenu.h>
 #include <qiconset.h>
-#include <ksimpleconfig.h>
-#include <kstddirs.h>
 
 #include "klanguagebutton.h"
 #include "klanguagebutton.moc"
@@ -128,16 +126,6 @@ void KLanguageButton::insertSubmenu( const QString &text, const QString &tag,
                         SLOT( slotActivated( int ) ) );
   connect( p, SIGNAL( highlighted( int ) ), this,
                         SIGNAL( highlighted( int ) ) );
-}
-
-void KLanguageButton::insertLanguage( const QString& path, const QString& name,
-                        const QString& sub, const QString &submenu, int index )
-{
-  QString output = name + QString::fromLatin1( " (" ) + path +
-                   QString::fromLatin1( ")" );
-  QPixmap flag( locate( "locale", sub + path +
-                QString::fromLatin1( "/flag.png" ) ) );
-  insertItem( QIconSet( flag ), output, path, submenu, index );
 }
 
 void KLanguageButton::slotActivated( int index )

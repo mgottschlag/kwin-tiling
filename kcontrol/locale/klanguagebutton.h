@@ -58,10 +58,6 @@ public:
   int count() const;
   void clear();
   
-  void insertLanguage( const QString& path, const QString& name,
-                       const QString& sub = QString::null,
-                       const QString &submenu = QString::null, int index = -1);
-  
   /*
    * Tag of the selected item
    */
