@@ -253,7 +253,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
     if (modules.count() < 1) return -1;
 
     // create the dialog
-    KCMultiDialog * dlg = new KCMultiDialog(KCGlobal::baseGroup(), 0, 0, true);
+    KCMultiDialog * dlg = new KCMultiDialog(0, 0, true);
 
     // Needed for modules that use d'n'd (not really the right
     // solution for this though, I guess)
