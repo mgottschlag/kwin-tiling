@@ -25,6 +25,7 @@ class PasswordDlg : public LockDlgImpl
 
 public:
     PasswordDlg(LockProcess *parent, bool msess);
+    QString checkForUtf8(QString txt);
     virtual void show();
 
 signals:

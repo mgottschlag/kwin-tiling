@@ -73,6 +73,36 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
                         SLOT(passwordChecked(KProcess *)));
 }
 
+QString PasswordDlg::checkForUtf8(QString txt)
+{
+    /* Code borrowed from KGpg  which in turn took from Gpa */
+    const char *s;
+
+    /* Make sure the encoding is UTF-8. Test structure suggested by Werner Koch */
+    if (txt.isEmpty())
+        return "";
+
+    for (s = txt.ascii(); *s && !(*s & 0x80); s++);
+
+    if (*s && !strchr (txt.ascii(), 0xc3) && (txt.find("\\x")==-1))
+        return txt;
+
+    /* The string is not in UTF-8 */
+    if (txt.find("\\x") == -1)
+      return QString::fromUtf8(txt.ascii());
+
+    for ( int idx = 0 ; (idx = txt.find( "\\x", idx )) >= 0 ; ++idx ) {
+      char str[2] = "x";
+      str[0] = (char) QString( txt.mid( idx + 2, 2 ) ).toShort( 0, 16 );
+      txt.replace( idx, 4, str );
+    }
+
+    if (!strchr(txt.ascii(), 0xc3))
+      return QString::fromUtf8(txt.ascii());
+    else
+      return QString::fromUtf8(QString::fromUtf8(txt.ascii()).ascii());
+}
+
 //---------------------------------------------------------------------------
 //
 // Fetch current user id, and return "Firstname Lastname (username)"
@@ -90,7 +120,7 @@ QString PasswordDlg::labelText()
         fullname.truncate(fullname.find(','));
     }
 
-    QString username = QString::fromLocal8Bit(current->pw_name);
+    QString username = checkForUtf8(QString::fromLocal8Bit(current->pw_name));
 
     return i18n("Enter the password for user %1 (%2)").arg(fullname).arg(username);
 }
