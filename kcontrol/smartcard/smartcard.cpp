@@ -89,6 +89,26 @@ if (_ok) {
   config->writeEntry("Enable Polling", base->enablePolling->isChecked());
   config->writeEntry("Beep on Insert", base->beepOnInsert->isChecked());
   config->writeEntry("Launch Manager", base->launchManager->isChecked());
+
+  // Start or stop the server as needed
+  if (base->enableSupport->isChecked()) {
+	QByteArray data, retval;
+	QCString rettype;
+	QDataStream arg(data, IO_WriteOnly);
+	QCString modName = "kardsvc";
+	arg << modName;
+	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
+			         data, rettype, retval);
+  } else {
+	QByteArray data, retval;
+	QCString rettype;
+	QDataStream arg(data, IO_WriteOnly);
+	QCString modName = "kardsvc";
+	arg << modName;
+	kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)", 
+			         data, rettype, retval);
+  }
+
   config->sync();
 }
   emit changed(false);
