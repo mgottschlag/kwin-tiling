@@ -535,13 +535,25 @@ KGreeter::slotLoadPrevWM()
 void // private
 KGreeter::pluginSetup()
 {
-    if (kdmcfg->_preselUser != PRESEL_PREV)
-	stsFile->deleteEntry( dName, false );
-    if (kdmcfg->_preselUser != PRESEL_NONE)
-	verify->presetEntity(
+    if (verify->isPluginLocal()) {
+        if (kdmcfg->_preselUser != PRESEL_PREV)
+	    stsFile->deleteEntry( dName, false );
+	if (kdmcfg->_preselUser != PRESEL_NONE)
+	    verify->presetEntity(
 		kdmcfg->_preselUser == PRESEL_PREV ?
 		    stsFile->readEntry( dName ) : kdmcfg->_defaultUser,
 		kdmcfg->_focusPasswd );
+    } else {
+	QString pn( verify->pluginName() ), dn( dName + '_' + pn );
+        if (kdmcfg->_preselUser != PRESEL_PREV)
+	    stsFile->deleteEntry( dn, false );
+	if (kdmcfg->_preselUser != PRESEL_NONE)
+	    verify->presetEntity(
+		kdmcfg->_preselUser == PRESEL_PREV ?
+		    stsFile->readEntry( dn ) :
+		    verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant( "" ) ).toString(),
+		verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() );
+    }
     if (userView) {
 	if (verify->isPluginLocal())
 	    userView->show();
@@ -562,7 +574,11 @@ void
 KGreeter::verifyOk()
 {
     if (kdmcfg->_preselUser == PRESEL_PREV)
-	stsFile->writeEntry( dName, verify->getEntity() );
+	stsFile->writeEntry(
+		verify->isPluginLocal() ?
+			dName :
+			dName + '_' + verify->pluginName(),
+		verify->getEntity() );
     hide();
     if (curSel != -1) {
 	GSendInt( G_PutDmrc );

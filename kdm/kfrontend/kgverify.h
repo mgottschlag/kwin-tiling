@@ -99,6 +99,7 @@ public:
     void setUser( const QString &user );
     void selectPlugin( int id );
     bool isPluginLocal() const;
+    QString pluginName() const;
     void setEnabled( bool on );
     void abort();
     void suspend();
@@ -159,7 +160,6 @@ public: // from KGreetPluginHandler
     virtual void gplugStart();
     virtual void gplugActivity();
 
-private:
     static QVariant getConf( void *ctx, const char *key, const QVariant &dflt );
 };
 

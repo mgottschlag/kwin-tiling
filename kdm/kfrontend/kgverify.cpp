@@ -112,6 +112,17 @@ KGVerify::isPluginLocal() const
     return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Local;
 }
 
+QString // public
+KGVerify::pluginName() const
+{
+    QString name( greetPlugins[pluginList[curPlugin]].library->fileName() );
+    uint st = name.findRev( '/' ) + 1;
+    uint en = name.find( '.', st );
+    if (en - st > 7 && QConstString( name.unicode() + st, 7 ).string() == "kgreet_" )
+	st += 7;
+    return name.mid( st, en - st );
+}
+
 void // public
 KGVerify::selectPlugin( int id )
 {
@@ -794,7 +805,7 @@ KGVerify::MsgBox( QMessageBox::Icon typ, const QString &msg )
 }
 
 
-QVariant // private static
+QVariant // public static
 KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 {
     if (!qstrcmp( key, "EchoMode" ))
