@@ -227,7 +227,7 @@ public:
     void updateWallpaperFiles();
 
     QString currentWallpaper();
-    /*
+    /**
      * @return true if the currentWallpaper has changed
      */
     bool discardCurrentWallpaper();
