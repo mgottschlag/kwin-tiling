@@ -205,10 +205,8 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Add Page2 (Effects)
 	// -------------------
-	gbEffects = new QGroupBox( 1, Qt::Horizontal, i18n("GUI Effects"), page2 );
-	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), gbEffects );
-
-	containerFrame = new QFrame( gbEffects );
+	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
+	containerFrame = new QFrame( page2 );
 	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	containerFrame->setMargin(0);
 	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
@@ -258,11 +256,11 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	containerLayout->addItem( comboSpacer, 1, 2 );
 
 	// Separator.
-	QFrame* hline = new QFrame ( gbEffects );
+	QFrame* hline = new QFrame ( page2 );
 	hline->setFrameStyle( QFrame::HLine | QFrame::Sunken );
 
 	// Now implement the Menu Transparency container.
-	menuContainer = new QFrame( gbEffects );
+	menuContainer = new QFrame( page2 );
 	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	menuContainer->setMargin(0);
 	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,    // rows, columns
@@ -306,7 +304,11 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	menuContainerLayout->addMultiCellWidget( menuPreview, 0, 3, 1, 1 );
 
 	// Layout page2.
-	page2Layout->addWidget( gbEffects );
+	page2Layout->addWidget( cbEnableEffects );
+	page2Layout->addWidget( containerFrame );
+	page2Layout->addWidget( hline );
+	page2Layout->addWidget( menuContainer );
+
 	QSpacerItem* sp1 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	page2Layout->addItem( sp1 );
 
@@ -321,11 +323,11 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Add Page3 (Miscellaneous)
 	// -------------------------
-	gbToolbarSettings = new QGroupBox( 1, Qt::Horizontal, i18n("Toolbar Settings"), page3 );
-	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), gbToolbarSettings );
-	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), gbToolbarSettings );
+	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), page3 );
+	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), page3 );
 
-	QWidget * dummy = new QWidget( gbToolbarSettings );
+	QWidget * dummy = new QWidget( page3 );
+	
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( FALSE, dummy );
@@ -339,9 +341,12 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	box2->addWidget( comboToolbarIcons );
 	QSpacerItem* sp2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	box2->addItem( sp2 );
-
+	
+	page3Layout->addWidget( cbHoverButtons );
+	page3Layout->addWidget( cbTransparentToolbars );
+	page3Layout->addWidget( dummy );
+	
 	// Layout page3.
-	page3Layout->addWidget( gbToolbarSettings );
 	QSpacerItem* sp3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	page3Layout->addItem( sp3 );
 
@@ -373,7 +378,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Insert the pages into the tabWidget
 	tabWidget->insertTab( page1, i18n("&Style"));
 	tabWidget->insertTab( page2, i18n("&Effects"));
-	tabWidget->insertTab( page3, i18n("&Miscellaneous"));
+	tabWidget->insertTab( page3, i18n("&Toolbar"));
 
 	//Enable/disable the button for the initial style
 	updateConfigButton();
@@ -1038,7 +1043,7 @@ void KCMStyle::addWhatsThis()
 							"without having to apply it to the whole desktop.") );
 
 	// Page2
-	QWhatsThis::add( gbEffects, i18n("This page allows you to enable various widget style effects. "
+	QWhatsThis::add( page2, i18n("This page allows you to enable various widget style effects. "
 							"For best performance, it is advisable to disable all effects.") );
 	QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
 							"for different widgets like combo boxes, menus or tooltips.") );
@@ -1062,7 +1067,7 @@ void KCMStyle::addWhatsThis()
 	QWhatsThis::add( slOpacity, i18n("By adjusting this slider you can control the menu effect opacity.") );
 
 	// Page3
-	QWhatsThis::add( gbToolbarSettings, i18n("<b>Note:</b> that all widgets in this combobox "
+	QWhatsThis::add( page3, i18n("<b>Note:</b> that all widgets in this combobox "
 							"do not apply to Qt-only applications.") );
 	QWhatsThis::add( cbHoverButtons, i18n("If this option is selected, toolbar buttons will change "
 							"their color when the mouse cursor is moved over them." ) );

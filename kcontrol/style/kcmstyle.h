@@ -120,7 +120,6 @@ private:
 	QPalette palette;
 
 	// Page2 widgets
-	QGroupBox* gbEffects;
 	QCheckBox* cbEnableEffects;
 
 	QFrame* containerFrame;
@@ -147,7 +146,6 @@ private:
 	QCheckBox* cbMenuShadow;
 
 	// Page3 widgets
-	QGroupBox* gbToolbarSettings;
 	QGroupBox* gbVisualAppearance;
 
 	QCheckBox* cbHoverButtons;
