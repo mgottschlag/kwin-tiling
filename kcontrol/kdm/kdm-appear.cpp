@@ -25,7 +25,6 @@
 
 
 #include <qbuttongroup.h>
-#include <qcombobox.h>
 #include <qdragobject.h>
 #include <qlabel.h>
 #include <qlayout.h>

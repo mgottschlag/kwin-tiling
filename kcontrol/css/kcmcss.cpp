@@ -7,7 +7,6 @@
 #include <qcombobox.h>
 
 
-#include <klocale.h>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kapplication.h>

@@ -32,7 +32,6 @@
 // #include <qlineedit.h>
 // #include <qpushbutton.h>
 #include <qradiobutton.h>
-#include <qslider.h>
 // #include <qwhatsthis.h>
 
 #include <kconfig.h>
@@ -51,7 +50,6 @@
 #include <kgenericfactory.h>
 #include <kurlrequester.h>
 
-#include "accessibilityconfigwidget.h"
 
 #include "accessibility.moc"
 

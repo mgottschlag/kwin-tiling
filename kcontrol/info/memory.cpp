@@ -27,10 +27,8 @@
 
 #include <qlayout.h>
 #include <qpainter.h>
-#include <qpixmap.h>
 #include <qdrawutil.h>
 
-#include <klocale.h>
 #include <kglobal.h>
 #include <kseparator.h>
 

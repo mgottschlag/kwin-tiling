@@ -38,12 +38,9 @@
 
 #include <kaboutdata.h>
 #include <ksimpleconfig.h>
-#include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <kgenericfactory.h>
 #include <kprocess.h>
-#include <kservice.h>
 
 #include <kparts/componentfactory.h>
 #include "midi.h"

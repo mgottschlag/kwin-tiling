@@ -22,8 +22,6 @@
 #undef Unsorted
 #include <qbuffer.h>
 #include <qdir.h>
-#include <qmap.h>
-#include <qpixmap.h>
 #include <qsettings.h>
 
 #include <dcopclient.h>

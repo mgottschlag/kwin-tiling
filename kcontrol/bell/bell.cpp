@@ -25,7 +25,6 @@
 #include <qwhatsthis.h>
 #include <qgroupbox.h>
 
-#include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kapplication.h>

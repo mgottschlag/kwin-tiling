@@ -22,8 +22,6 @@
  */
 
 
-#include <klocale.h>
-#include <kglobal.h>
 #include <kconfig.h>
 
 

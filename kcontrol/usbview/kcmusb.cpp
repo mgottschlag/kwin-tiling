@@ -17,10 +17,7 @@
 #include <qlistview.h>
 #include <qtextview.h>
 #include <qheader.h>
-#include <qvaluelist.h>
 
-#include <klocale.h>
-#include <kglobal.h>
 #include <kgenericfactory.h>
 
 #include "usbdevices.h"

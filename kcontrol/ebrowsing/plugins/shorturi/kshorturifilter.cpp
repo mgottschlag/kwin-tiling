@@ -26,15 +26,10 @@
 #include <sys/stat.h>
 
 #include <qdir.h>
-#include <qptrlist.h>
 #include <qregexp.h>
 
-#include <kurl.h>
 #include <kdebug.h>
 #include <kprotocolinfo.h>
-#include <klocale.h>
-#include <kinstance.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 

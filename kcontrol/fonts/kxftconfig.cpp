@@ -23,7 +23,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <qregexp.h>
-#include <qfile.h>
 #include <qfileinfo.h>
 
 #include <klocale.h>

@@ -19,32 +19,22 @@
 #include <sys/wait.h>
 
 #include <qbuttongroup.h>
-#include <qpixmap.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qslider.h>
 #include <qlayout.h>
-#include <qtextstream.h>
 #include <qwhatsthis.h>
 #include <qtimer.h>
 #include <qlabel.h>
 #include <qlistview.h>
-#include <qspinbox.h>
 #include <qheader.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kprocess.h>
-#include <ksimpleconfig.h>
 #include <knuminput.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
-#include <kdesktopfile.h>
-#include <kcolordialog.h>
 #include <kiconloader.h>
-#include <kcmodule.h>
-#include <kglobal.h>
 #include <dcopclient.h>
 #include <kservicegroup.h>
 #include <kgenericfactory.h>

@@ -15,11 +15,10 @@
 
 #include <kaboutdata.h>
 
-#include <kcm_componentchooser.h>
+#include "kcm_componentchooser.h"
 #include <kcm_componentchooser.moc>
 #include <qlayout.h>
 #include <kglobal.h>
-#include <klocale.h>
 
 KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 	KCModule(parent,name) {

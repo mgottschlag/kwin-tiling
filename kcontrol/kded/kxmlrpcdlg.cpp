@@ -21,7 +21,7 @@
 #include <qspinbox.h>
 #include <kconfig.h>
 
-#include <kxmlrpcdlg.h>
+#include "kxmlrpcdlg.h"
 #include "kxmlrpcdlg.moc"
 
 #include <kxmlrpcdlgbase.h>

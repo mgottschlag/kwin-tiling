@@ -40,7 +40,6 @@
 #include <qtoolbutton.h>
 #include <kmessagebox.h>
 #include <ksharedpixmap.h>
-#include <kstdguiitem.h>
 #include <kimageeffect.h>
 #include <qimage.h>
 

@@ -17,11 +17,9 @@
 
 
 #include <qfile.h>
-#include <qptrlist.h>
 
 
 #include <klocale.h>
-#include <kglobal.h>
 
 
 #include "usbdb.h"

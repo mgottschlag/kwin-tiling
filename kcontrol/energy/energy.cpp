@@ -23,22 +23,18 @@
 #endif
 
 #include <qtooltip.h>
-#include <qglobal.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qgroupbox.h>
 #include <qwhatsthis.h>
 
 #include <kcursor.h>
 #include <krun.h>
-#include <kglobal.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <knuminput.h>
 #include <klocale.h>
-#include <kcmodule.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>

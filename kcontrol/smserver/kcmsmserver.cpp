@@ -23,9 +23,6 @@
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kdialog.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <kgenericfactory.h>

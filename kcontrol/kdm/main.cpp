@@ -26,8 +26,6 @@
 #include <qlayout.h>
 #include <qdragobject.h>
 
-#include <klocale.h>
-#include <kstandarddirs.h>
 #include <kimageio.h>
 #include <kmessagebox.h>
 #include <kaboutdata.h>

@@ -1,4 +1,3 @@
-#include <klocale.h>
 
 #include "kaccess.h"
 #include <kaboutdata.h>

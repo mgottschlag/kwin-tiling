@@ -5,12 +5,9 @@
 // Copyright (c)  Mark Donohoe 1998
 //
 
-#include <qpixmap.h>
 #include <qdrawutil.h>
-#include <qcolor.h>
 #include <qpainter.h>
 #include <qscrollbar.h>
-#include <qevent.h>
 #include <qbitmap.h>
 #include <qtooltip.h>
 #include <qstyle.h>
@@ -18,11 +15,9 @@
 
 #include <kcolordrag.h>
 #include <kpixmapeffect.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kcharsets.h>
 #include <kpixmap.h>
 
 #include "widgetcanvas.h"

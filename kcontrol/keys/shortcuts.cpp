@@ -26,14 +26,10 @@
 
 #include <qdir.h>
 #include <qlayout.h>
-#include <qhbox.h>
-#include <qhbuttongroup.h>
-#include <qregexp.h>
 #include <qwhatsthis.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kipc.h>
 #include <kkeynative.h>
 #include <klineeditdlg.h>
@@ -42,7 +38,6 @@
 #include <kshortcutlist.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kstdaccel.h>
 
 ShortcutsModule::ShortcutsModule( QWidget *parent, const char *name )
 : QWidget( parent, name )

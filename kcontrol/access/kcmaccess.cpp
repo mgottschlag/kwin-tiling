@@ -17,19 +17,11 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
-#include <qpushbutton.h>
 #include <qradiobutton.h>
-#include <qslider.h>
 #include <qwhatsthis.h>
 
 
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
-#include <krun.h>
-#include <kurl.h>
-#include <kinstance.h>
 #include <kcolorbutton.h>
 #include <kfiledialog.h>
 #include <knuminput.h>

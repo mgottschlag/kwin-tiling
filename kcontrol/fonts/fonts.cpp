@@ -17,14 +17,12 @@
 #include <qsettings.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qpixmap.h>
 #include <knuminput.h>
 
 
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <ksimpleconfig.h>
-#include <klocale.h>
 #include <kipc.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>

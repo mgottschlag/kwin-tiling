@@ -20,9 +20,7 @@
 #include "kcmsambaimports.h"
 #include "kcmsambalog.h"
 #include "kcmsambastatistics.h"
-#include <klocale.h>
 #include <qtabwidget.h>
-#include <kglobal.h>
 #include <qlayout.h>
 
 #include <kcmodule.h>

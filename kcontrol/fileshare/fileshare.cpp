@@ -19,13 +19,10 @@
 #include <qlayout.h>
 #include <qvbuttongroup.h>
 #include <qlabel.h>
-#include <klocale.h>
-#include <kglobal.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <qradiobutton.h>
 #include "fileshare.h"
-#include <qfile.h>
 #include <qdir.h>
 #include <kstandarddirs.h>
 

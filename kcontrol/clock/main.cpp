@@ -24,9 +24,6 @@
 #include <qlayout.h>
 
 #include <dcopclient.h>
-#include <kapplication.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 

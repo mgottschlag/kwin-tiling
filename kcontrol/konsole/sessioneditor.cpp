@@ -18,20 +18,15 @@
 #include "sessioneditor.h"
 #include "sessioneditor.moc"
 
-#include <qlabel.h>
-#include <qwmatrix.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
 #include <kdebug.h>
-#include <qcheckbox.h>
 #include <kstandarddirs.h>
 
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <klineeditdlg.h>
-#include <qtoolbutton.h>
 #include <kicondialog.h>
-#include <kstdguiitem.h>
 #include <kmessagebox.h>
 
 SessionEditor::SessionEditor(QWidget * parent, const char *name)

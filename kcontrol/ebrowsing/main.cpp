@@ -23,16 +23,9 @@
 
 #include <unistd.h>
 
-#include <qlayout.h>
 
-#include <kapplication.h>
 #include <dcopclient.h>
-#include <klocale.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kmessagebox.h>
 #include <kconfig.h>
-#include <kdialog.h>
 #include <kurifilter.h>
 #include <kgenericfactory.h>
 

@@ -17,7 +17,7 @@
 #define _KCM_KTEXTEDITORCHOOSER_H_
 
 #include <kcmodule.h>
-#include <componentchooser.h>
+#include "componentchooser.h"
 
 class KAboutData;
 

@@ -37,7 +37,6 @@
 #include <pwd.h>
 #include <unistd.h>
 
-#include <qcheckbox.h>
 #include <qfile.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -47,7 +46,6 @@
 #include <klineedit.h>
 #include <kcombobox.h>
 #include <kdialog.h>
-#include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kemailsettings.h>

@@ -18,12 +18,9 @@
 #include "kcmkonsole.h"
 
 #include <qlayout.h>
-#include <qstringlist.h>
 
 #include <dcopclient.h>
 
-#include <kglobal.h>
-#include <klocale.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kfontdialog.h>
@@ -33,8 +30,6 @@
 #include "sessioneditor.h"
 
 #include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qspinbox.h>
 #include <qtabwidget.h>
 
 typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;

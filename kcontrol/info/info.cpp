@@ -35,7 +35,6 @@
 
 #include <kglobalsettings.h>
 #include <kiconloader.h>
-#include <klocale.h>
 #include "info.h"		/* include the forward declares... */
 
 #include <X11/Xlib.h>

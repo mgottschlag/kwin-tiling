@@ -27,7 +27,6 @@
 
 #include <qgroupbox.h>
 #include <qlayout.h>
-#include <qlabel.h>
 #include <qwhatsthis.h>
 
 #include <kdebug.h>

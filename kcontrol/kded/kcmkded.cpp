@@ -21,7 +21,6 @@
 #include <qwhatsthis.h>
 #include <qvgroupbox.h>
 #include <qpushbutton.h>
-#include <qhbox.h>
 #include <qheader.h>
 #include <qtimer.h>
 
@@ -29,11 +28,9 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <klistview.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 #include <kstandarddirs.h>
 #include <kdesktopfile.h>
-#include <kservice.h>
 #include <kmessagebox.h>
 
 #include <dcopclient.h>

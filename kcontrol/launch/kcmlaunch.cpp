@@ -19,14 +19,10 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
-#include <qspinbox.h>
 #include <qlabel.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kdialog.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 #include <dcopclient.h>
 #include <knuminput.h>

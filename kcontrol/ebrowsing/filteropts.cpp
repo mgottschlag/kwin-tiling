@@ -22,19 +22,10 @@
 #include <unistd.h>
 
 #include <qlayout.h>
-#include <qgroupbox.h>
-#include <qhbox.h>
 #include <qlabel.h>
-#include <qlistbox.h>
-#include <qtabwidget.h>
 
-#include <kapplication.h>
-#include <kbuttonbox.h>
 #include <dcopclient.h>
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kconfig.h>
 
 #include "filteropts.h"
 

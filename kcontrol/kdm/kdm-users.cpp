@@ -20,7 +20,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
@@ -30,7 +29,6 @@
 #include <qpushbutton.h>
 #include <qdragobject.h>
 
-#include <ksimpleconfig.h>
 #include <kfiledialog.h>
 #include <kimageio.h>
 #include <kimagefilepreview.h>

@@ -21,10 +21,7 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qlistbox.h>
 #include <kconfig.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
 #include <libkmid/deviceman.h>
 #include <kurlrequester.h>
 #include <kgenericfactory.h>

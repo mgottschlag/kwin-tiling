@@ -21,7 +21,6 @@
 */
 
 #include <qcheckbox.h>
-#include <qhbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qslider.h>
@@ -32,9 +31,6 @@
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kconfig.h>
-#include <kcursor.h>
-#include <kglobal.h>
-#include <kmessagebox.h>
 #include <knotifydialog.h>
 #include <kparts/genericfactory.h>
 #include <kstandarddirs.h>

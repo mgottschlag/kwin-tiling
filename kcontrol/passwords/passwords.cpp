@@ -4,20 +4,13 @@
  * Copyright (C) 1999,2000 Geert Jansen <jansen@kde.org>
  */
 
-#include <qwidget.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
-#include <qstring.h>
-#include <qlabel.h>
 #include <qwhatsthis.h>
 
-#include <kapplication.h>
 #include <kconfig.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kcmodule.h>
 #include <kpassdlg.h>
 #include <kgenericfactory.h>
 #include <knuminput.h>

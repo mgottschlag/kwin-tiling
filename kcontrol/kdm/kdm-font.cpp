@@ -25,7 +25,6 @@
 #include <qapplication.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
 #include <qhgroupbox.h>
 #include <qvgroupbox.h>
 #include <qlabel.h>
@@ -33,7 +32,6 @@
 
 #include <ksimpleconfig.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
 
 #include "kdm-font.h"
 

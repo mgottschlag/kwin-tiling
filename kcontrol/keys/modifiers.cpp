@@ -1,19 +1,15 @@
 #include "modifiers.h"
 
-#include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qfont.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 
 #include <kapplication.h>
-#include <kcombobox.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kglobal.h>
 #include <kkeynative.h>
 #include <klistview.h>
 #include <klocale.h>

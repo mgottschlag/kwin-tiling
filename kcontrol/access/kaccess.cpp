@@ -9,7 +9,6 @@
 #include <kaudioplayer.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kwinmodule.h>
 #include <netwm.h>
 
 

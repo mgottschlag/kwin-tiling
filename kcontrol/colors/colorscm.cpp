@@ -15,31 +15,20 @@
 #include <qvgroupbox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
 #include <qslider.h>
-#include <qpixmap.h>
 #include <qpainter.h>
 #include <qcombobox.h>
-#include <klistbox.h>
 #include <qlayout.h>
-#include <qcursor.h>
-#include <qstringlist.h>
-#include <qfileinfo.h>
 #include <qwhatsthis.h>
 
 #include <kfiledialog.h>
-#include <ksimpleconfig.h>
 #include <kmessagebox.h>
 #include <kcursor.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klineeditdlg.h>
 #include <kstandarddirs.h>
 #include <kipc.h>
-#include <kcolordialog.h>
 #include <kcolorbutton.h>
-#include <kbuttonbox.h>
-#include <kstringhandler.h>
 #include <kgenericfactory.h>
 #include <kprocess.h>
 
@@ -51,7 +40,6 @@
 #include "../krdb/krdb.h"
 
 #include "colorscm.h"
-#include "widgetcanvas.h"
 
 
 /**** DLL Interface ****/

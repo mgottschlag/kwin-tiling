@@ -16,19 +16,14 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kgenericfactory.h>
 
 #include "kcmtaskbar.h"

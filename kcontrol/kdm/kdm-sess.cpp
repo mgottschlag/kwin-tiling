@@ -23,7 +23,6 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
@@ -32,7 +31,6 @@
 #include <karrowbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
 #include <kdialog.h>
 #include <kurlrequester.h>
 

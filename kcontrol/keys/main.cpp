@@ -25,21 +25,11 @@
 #include "modifiers.h"
 #include "shortcuts.h"
 
-#include <qdir.h>
 #include <qlayout.h>
-#include <qhbuttongroup.h>
-#include <qregexp.h>
-#include <qwhatsthis.h>
 
-#include <kaccelaction.h>
-#include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kipc.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <ksimpleconfig.h>
-#include <kstandarddirs.h>
 /*
 | Shortcut Schemes | Modifier Keys |
 

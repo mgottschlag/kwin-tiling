@@ -29,7 +29,6 @@
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
    example: we need the "define INFO_CPU_AVAILABLE" */
 #include "info.cpp"
-#include "info.h" 
 
 
 extern "C"
