@@ -22,6 +22,7 @@
 #define QT_CLEAN_NAMESPACE
 #endif
 
+#include <qtooltip.h>
 #include <qglobal.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -29,6 +30,8 @@
 #include <qgroupbox.h>
 #include <qwhatsthis.h>
 
+#include <kcursor.h>
+#include <krun.h>
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kstandarddirs.h>
@@ -71,7 +74,6 @@ static const int DFLT_SUSPEND   = 30;
 static const int DFLT_OFF   = 60;
 
 
-
 /**** DLL Interface ****/
 
 extern "C" {
@@ -95,6 +97,22 @@ extern "C" {
     }
 }
 
+/**** KEnergyStarLavel ****/
+
+class KEnergyStarLabel : public QLabel {
+  public:
+    KEnergyStarLabel(QWidget *parent) : QLabel(parent) {
+        setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
+        setCursor(KCursor::handCursor());
+        QToolTip::add(this, i18n("Learn more about the Energy Star program"));
+    }
+
+  protected:
+    void mouseReleaseEvent (QMouseEvent *) {
+        // KRun deletes itself
+        new KRun("http://www.energystar.gov/");
+    }
+};
 
 
 /**** KEnergy ****/
@@ -121,18 +139,18 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
 
     QLabel *lbl;
     if (m_bDPMS) {
-    m_pCBEnable= new QCheckBox(i18n("&Enable Display Energy Saving" ), this);
+    m_pCBEnable= new QCheckBox(i18n("&Enable display power management" ), this);
     connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotChangeEnable(bool)));
     hbox->addWidget(m_pCBEnable);
         QWhatsThis::add( m_pCBEnable, i18n("Check this option to enable the"
            " power saving features of your display.") );
     } else {
-    lbl = new QLabel(i18n("Your display has NO power saving features!"), this);
-    hbox->addWidget(lbl);
+        lbl = new QLabel(i18n("Your display does not support power saving."), this);
+         hbox->addWidget(lbl);
     }
 
-    lbl= new QLabel(this);
-    lbl->setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
+    lbl= new KEnergyStarLabel(this);
+
     hbox->addStretch();
     hbox->addWidget(lbl);
 
