@@ -30,12 +30,12 @@ from The Open Group.
  * Author:  Keith Packard, MIT X Consortium
  */
 
-# include   <X11/Xauth.h>
-# include   <X11/Xos.h>
+#include "dm.h"
+#include "dm_auth.h"
+#include "dm_error.h"
 
-# include   "dm.h"
-# include   "dm_auth.h"
-# include   "dm_error.h"
+#include <X11/Xauth.h>
+#include <X11/Xos.h>
 
 #include <errno.h>
 

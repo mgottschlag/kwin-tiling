@@ -36,9 +36,10 @@ from The Open Group.
  * generate Kerberos Version 5 authorization records
  */
 
+#include "dm.h"
+
 #ifdef K5AUTH
 
-#include "dm.h"
 #include "dm_error.h"
 
 #include <sys/types.h>

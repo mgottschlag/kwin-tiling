@@ -34,13 +34,13 @@ from The Open Group.
  * maintain the authorization generation daemon
  */
 
-#include <X11/X.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
+
+#include <X11/X.h>
+
+#include <sys/stat.h>
 
 #include <errno.h>
 #ifdef X_NOT_STDC_ENV

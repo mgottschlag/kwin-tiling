@@ -33,9 +33,10 @@ in this Software without prior written authorization from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_error.h"
 
 #ifdef XDMCP
+
+#include "dm_error.h"
 
 #include <sys/types.h>
 #ifdef X_NOT_STDC_ENV

@@ -34,11 +34,12 @@ from The Open Group.
  * a client remains connected with no windows.
  */
 
-# include	"dm.h"
-# include	"dm_error.h"
+#include "dm.h"
+#include "dm_error.h"
 
-# include	<X11/Xlib.h>
-# include	<signal.h>
+#include <X11/Xlib.h>
+
+#include <signal.h>
 
 /*ARGSUSED*/
 static int

@@ -32,15 +32,16 @@ from The Open Group.
  * server.c - manage the X server
  */
 
-# include	"dm.h"
-# include	"dm_error.h"
-# include 	"dm_socket.h"
+#include "dm.h"
+#include "dm_error.h"
+#include "dm_socket.h"
 
-# include	<X11/Xlib.h>
-# include	<X11/Xos.h>
-# include	<stdio.h>
-# include	<signal.h>
-# include	<errno.h>
+#include <X11/Xlib.h>
+#include <X11/Xos.h>
+
+#include <stdio.h>
+#include <signal.h>
+#include <errno.h>
 
 #ifdef MINIX
 # include <sys/ioctl.h>

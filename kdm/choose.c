@@ -32,14 +32,13 @@ in this Software without prior written authorization from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_error.h"
 
 #ifdef XDMCP
 
-#include <X11/X.h>
-#include <sys/types.h>
-
+#include "dm_error.h"
 #include "dm_socket.h"
+
+#include <X11/X.h>
 
 #ifndef MINIX
 # ifndef X_NO_SYS_UN
@@ -624,9 +623,7 @@ RunChooser (struct display *d)
     exit (REMANAGE_DISPLAY);
 }
 
-#endif /* XDMCP */
-
-#ifdef MINIX
+# ifdef MINIX
 void tcp_listen_cb(nbio_ref_t ref, int res, int err)
 {
 	if (!listen_inprogress)
@@ -637,4 +634,6 @@ void tcp_listen_cb(nbio_ref_t ref, int res, int err)
     		LogError("listen error: %s\n", strerror(err));
 	listen_inprogress= 0;
 }
-#endif
+# endif
+
+#endif /* XDMCP */

@@ -35,12 +35,12 @@ from The Open Group.
  * for MIT-MAGIC-COOKIE-1 type authorization
  */
 
-# include   <X11/Xos.h>
+#include "dm.h"
+#include "dm_auth.h"
 
-# include   "dm.h"
-# include   "dm_auth.h"
+#include <X11/Xos.h>
 
-# define AUTH_DATA_LEN	16	/* bytes of authorization data */
+#define AUTH_DATA_LEN	16	/* bytes of authorization data */
 static char	auth_name[256];
 static int	auth_name_len;
 

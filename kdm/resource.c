@@ -34,9 +34,10 @@ from The Open Group.
 
 #include "dm.h"
 #include "dm_error.h"
-#include <sys/stat.h>
+
 #include <X11/Intrinsic.h>
 
+#include <sys/stat.h>
 #include <ctype.h>
 
 char	*config;

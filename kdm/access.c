@@ -30,23 +30,24 @@ in this Software without prior written authorization from The Open Group.
  * and (potentially) a list of hosts to send ForwardQuery packets to
  */
 
-# include   "dm.h"
-# include   "dm_error.h"
+#include "dm.h"
 
 #ifdef XDMCP
 
-# include   <X11/Xos.h>
-# include   <X11/Xdmcp.h>
-# include   <X11/X.h>
-# include   <stdio.h>
-# include   <ctype.h>
+#include "dm_error.h"
+#include "dm_socket.h"
 
-# include   "dm_socket.h"
+#include <X11/Xos.h>
+#include <X11/Xdmcp.h>
+#include <X11/X.h>
+
+#include <stdio.h>
+#include <ctype.h>
 
 #ifndef MINIX
-# include   <netdb.h>
+# include <netdb.h>
 #else /* MINIX */
-# include   <net/gen/netdb.h>
+# include <net/gen/netdb.h>
 #endif /* !MINIX */
 
 #define ALIAS_CHARACTER	    '%'

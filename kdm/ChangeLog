@@ -1,7 +1,5 @@
 2001-03-19  Oswald Buddenhagen <ossi@kde.org>
 
-	* External greeter: kdm_greet
-	  - libKdmGreet.so is gone
 	* External config parser: kdm_getcfg
 	  - kdm will now use kdm-config, NOT xdm-config
 	* Stolen idea for console mode handling from dtlogin

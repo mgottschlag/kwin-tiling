@@ -32,39 +32,40 @@ from The Open Group.
  * xdmcp.c - Support for XDMCP
  */
 
-# include "dm.h"
-# include "dm_auth.h"
-# include "dm_error.h"
+#include "dm.h"
 
 #ifdef XDMCP
 
-# include	<X11/X.h>
-# include	<X11/Xfuncs.h>
-# include	<sys/types.h>
-# include	<ctype.h>
+#include "dm_auth.h"
+#include "dm_error.h"
+#include "dm_socket.h"
 
-# include	"dm_socket.h"
+#include <X11/X.h>
+#include <X11/Xfuncs.h>
+
+#include <sys/types.h>
+#include <ctype.h>
 
 #ifndef MINIX
-#ifndef X_NO_SYS_UN
-#ifndef Lynx
-#include	<sys/un.h>
-#else
-#include	<un.h>
-#endif
-#endif
-#include	<netdb.h>
+# ifndef X_NO_SYS_UN
+#  ifndef Lynx
+#   include <sys/un.h>
+#  else
+#   include <un.h>
+#  endif
+# endif
+# include <netdb.h>
 #else /* MINIX */
-#include <net/hton.h>
-#include <net/gen/netdb.h>
+# include <net/hton.h>
+# include <net/gen/netdb.h>
 #endif /* !MINIX */
 
 #ifdef X_NOT_STDC_ENV
-#define Time_t long
+# define Time_t long
 extern Time_t time ();
 #else
-#include <time.h>
-#define Time_t time_t
+# include <time.h>
+# define Time_t time_t
 #endif
 
 #ifdef MINIX
@@ -76,7 +77,7 @@ struct sockaddr_un
 static char read_buffer[XDM_MAX_MSGLEN+sizeof(udp_io_hdr_t)];
 static int read_inprogress;
 static int read_size;
-#define select(n,r,w,x,t) nbio_select(n,r,w,x,t)
+# define select(n,r,w,x,t) nbio_select(n,r,w,x,t)
 #endif
 
 #define getString(name,len)	((name = malloc (len + 1)) ? 1 : 0)
@@ -156,9 +157,9 @@ sendForward (
     case FamilyInternet:
 	addr = (struct sockaddr *) &in_addr;
 	bzero ((char *) &in_addr, sizeof (in_addr));
-#ifdef BSD44SOCKETS
+# ifdef BSD44SOCKETS
 	in_addr.sin_len = sizeof(in_addr);
-#endif
+# endif
 	in_addr.sin_family = AF_INET;
 	in_addr.sin_port = htons ((short) XDM_UDP_PORT);
 	if (address->length != 4)
@@ -1347,8 +1348,6 @@ CARD16Ptr   displayNumber)
 }
 #endif
 
-#endif /* XDMCP */
-
 #ifdef MINIX
 void udp_read_cb(nbio_ref_t ref, int res, int err)
 {
@@ -1367,3 +1366,5 @@ void udp_read_cb(nbio_ref_t ref, int res, int err)
 	read_inprogress= 0;
 }
 #endif
+
+#endif /* XDMCP */

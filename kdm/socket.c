@@ -33,33 +33,34 @@ from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_error.h"
 
 #ifdef XDMCP
 #ifndef STREAMSCONN
 
-#include <errno.h>
+#include "dm_error.h"
 #include "dm_socket.h"
 
+#include <errno.h>
+
 #ifndef MINIX
-#ifndef X_NO_SYS_UN
-#ifndef Lynx
-#include <sys/un.h>
-#else
-#include <un.h>
-#endif
-#endif
-#include <netdb.h>
+# ifndef X_NO_SYS_UN
+#  ifndef Lynx
+#   include <sys/un.h>
+#  else
+#   include <un.h>
+#  endif
+# endif
+# include <netdb.h>
 #else /* MINIX */
-#include <net/hton.h>
-#include <net/netlib.h>
-#include <net/gen/in.h>
-#include <net/gen/tcp.h>
-#include <net/gen/tcp_io.h>
-#include <net/gen/udp.h>
-#include <net/gen/udp_io.h>
-#include <sys/ioctl.h>
-#include <sys/nbio.h>
+# include <net/hton.h>
+# include <net/netlib.h>
+# include <net/gen/in.h>
+# include <net/gen/tcp.h>
+# include <net/gen/tcp_io.h>
+# include <net/gen/udp.h>
+# include <net/gen/udp_io.h>
+# include <sys/ioctl.h>
+# include <sys/nbio.h>
 #endif /* !MINIX */
 
 #ifdef X_NOT_STDC_ENV

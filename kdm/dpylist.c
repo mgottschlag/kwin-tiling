@@ -32,8 +32,8 @@ from The Open Group.
  * a simple linked list of known displays
  */
 
-# include "dm.h"
-# include "dm_error.h"
+#include "dm.h"
+#include "dm_error.h"
 
 static struct display	*displays;
 static struct disphist	*disphist;

@@ -34,10 +34,11 @@ from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_auth.h"
-#include "dm_error.h"
 
 #ifdef HASXDMAUTH
+
+#include "dm_auth.h"
+#include "dm_error.h"
 
 static char	auth_name[256];
 static int	auth_name_len;

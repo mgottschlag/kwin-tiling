@@ -32,14 +32,14 @@ from The Open Group.
  */
 /* $XFree86: xc/programs/xdm/policy.c,v 3.4 1998/12/06 06:08:48 dawes Exp $ */
 
-# include "dm.h"
-# include "dm_auth.h"
+#include "dm.h"
 
 #ifdef XDMCP
 
-# include <X11/X.h>
+#include "dm_auth.h"
+#include "dm_socket.h"
 
-# include "dm_socket.h"
+#include <X11/X.h>
 
 static ARRAY8 noAuthentication = { (CARD16) 0, (CARD8Ptr) 0 };
 

@@ -71,6 +71,9 @@ from The Open Group.
 #endif
 
 #include <utmp.h>
+#ifndef UTMP_FILE
+# define UTMP_FILE _PATH_UTMP
+#endif
 #ifdef linux
 # include <sys/ioctl.h>
 # include <linux/vt.h>

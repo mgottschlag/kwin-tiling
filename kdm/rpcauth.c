@@ -34,15 +34,17 @@ from The Open Group.
  * generate SecureRPC authorization records
  */
 
+#include "dm.h"
+
 #ifdef SECURE_RPC
 
-# include   <X11/Xos.h>
-# include   <rpc/rpc.h>
-# include   <rpc/key_prot.h>
+#include "dm_auth.h"
+#include "dm_error.h"
 
-# include   "dm.h"
-# include   "dm_auth.h"
-# include   "dm_error.h"
+#include <X11/Xos.h>
+
+#include <rpc/rpc.h>
+#include <rpc/key_prot.h>
 
 /*ARGSUSED*/
 void

@@ -32,13 +32,13 @@ from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_error.h"
-
-#include <X11/X.h>		/* FamilyInternet, etc. */
 
 #ifdef XDMCP
 
 #include "dm_socket.h"
+#include "dm_error.h"
+
+#include <X11/X.h>		/* FamilyInternet, etc. */
 
 #ifdef UNIXCONN
 #ifndef X_NO_SYS_UN

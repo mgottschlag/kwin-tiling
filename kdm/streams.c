@@ -33,10 +33,11 @@ from The Open Group.
  */
 
 #include "dm.h"
-#include "dm_error.h"
 
 #ifdef XDMCP
 #ifdef STREAMSCONN
+
+#include "dm_error.h"
 
 #include <fcntl.h>
 #include <tiuser.h>

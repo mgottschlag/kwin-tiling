@@ -38,8 +38,9 @@ from The Open Group.
 #include "greet.h"
 
 #include <X11/Xlib.h>
-#include <signal.h>
 #include <X11/Xatom.h>
+
+#include <signal.h>
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>

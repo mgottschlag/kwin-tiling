@@ -40,8 +40,8 @@ from The Open Group.
 # define RTLD_NOW 1
 #endif
 
-# include <stdio.h>
-# include <stdarg.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include <grp.h>	/* for initgroups */
 
