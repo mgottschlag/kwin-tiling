@@ -318,7 +318,8 @@ GetInfo_CPU( QListView *lBox )
           /* equivalent to uname -M */
           if ( odm_get_first(CuAt_CLASS, (char *)"name='sys0' and attribute='modelname'", &cuat) )
             {
-              strcpy(model_ID, cuat.value);
+              strncpy(model_ID, sizeof(model_ID), cuat.value);
+              model_ID[sizeof(model_ID) - 1] = 0;
               table = _4C_models;
             }
 

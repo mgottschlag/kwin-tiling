@@ -98,15 +98,17 @@ bool GetInfo_CPU( QListView *lBox ) {
 		inst.setNum( i );
 		kdata = (kstat_named_t *) kstat_data_lookup( ksp, "cpu_type" );
 		if( kdata != NULL ) {
-			strcpy( cputype, kdata->value.c );
+			strncpy( cputype, sizeof(cputype), kdata->value.c );
+            cputype[sizeof(cputype) - 1] = 0;
 		} else {
-			sprintf( cputype, "???" );
+			strcpy( cputype, "???" );
 		}
 		kdata = (kstat_named_t *) kstat_data_lookup( ksp, "fpu_type" );
 		if( kdata != NULL ) {
-			strcpy( fputype, kdata->value.c );
+			strncpy( fputype, sizeof(fputype), kdata->value.c );
+            fputype[sizeof(fputype) - 1] = 0;
 		} else {
-			sprintf( fputype, "???" );
+			strcpy( fputype, "???" );
 		}
 		kdata = (kstat_named_t *) kstat_data_lookup( ksp, "clock_MHz" );
 		if( kdata != NULL ) {

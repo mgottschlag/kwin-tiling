@@ -1,4 +1,4 @@
-#include <syscall.h>
+#include <sys/sysinfo.h>
 #include <linux/kernel.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -11,7 +11,7 @@ void KMemoryWidget::update()
   struct sysinfo info;
   int	shift_val;
   
-  syscall(SYS_sysinfo, &info);	/* Get Information from system... */
+  sysinfo(&info);	/* Get Information from system... */
   
   /* try to fix the change, introduced with kernel 2.3.25, which
      now counts the memory-information in pages (not bytes anymore) */
