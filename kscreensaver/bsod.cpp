@@ -643,7 +643,7 @@ amiga (Window window, int delay)
     xpmattrs.colormap = xgwa.colormap;
 # endif
 
-    result = XpmCreatePixmapFromData(qt_xdisplay(), window, amiga_hand,
+    result = XpmCreatePixmapFromData(qt_xdisplay(), window, (char**)amiga_hand,
 				     &pixmap, 0 /* mask */, &xpmattrs);
     if (!pixmap || (result != XpmSuccess && result != XpmColorError))
       pixmap = 0;
