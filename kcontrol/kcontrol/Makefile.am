@@ -17,8 +17,6 @@
 #  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 # 
 
-AM_CPPFLAGS = -DQT_NO_ASCII_CAST
-
 INCLUDES= $(all_includes)
 METASOURCES = AUTO
 
