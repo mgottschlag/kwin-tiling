@@ -75,4 +75,4 @@ KeepClipboardContents=true
 Number of Actions=14
 PopupAtMousePosition=false
 URLGrabberEnabled=true
-No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera
+No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera,gnumeric,Gnumeric
