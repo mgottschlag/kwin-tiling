@@ -211,7 +211,7 @@ int main(int _argc, char *_argv[])
             // create the dialog
             QCString embedStr = args->getOption("embed");
             bool embed = false;
-            int id;
+            int id = -1;
             if (!embedStr.isEmpty()) 
                id = embedStr.toInt(&embed);
             
