@@ -23,6 +23,7 @@
     */
 
 #include "kgreeter.h"
+#include "kconsole.h"
 #include "kdmconfig.h"
 #include "kdmclock.h"
 #include "kdm_greet.h"
@@ -109,11 +110,15 @@ KGreeter::KGreeter()
     stsFile = new KSimpleConfig( kdmcfg->_stsFile );
     stsFile->setGroup( "PrevUser" );
 
-    QGridLayout* main_grid = new QGridLayout( winFrame, 4, 2, 10 );
-    QBoxLayout* hbox1 = new QHBoxLayout( 10 );
-    QBoxLayout* hbox2 = new QHBoxLayout( 10 );
+#ifdef WITH_KDM_XCONSOLE
+    QGridLayout* main_grid = new QGridLayout( 1, 1, 10 );
+    layout->addLayout( main_grid, 0, 0 );
+#else
+    QGridLayout* main_grid = new QGridLayout( winFrame, 1, 1, 10, 10 );
+#endif
 
-    grid = new QGridLayout( 5, 4, 5 );
+    grid = new QGridLayout( 1, 1, 5 );
+    main_grid->addItem( grid, 2, 1 );
 
     if (!kdmcfg->_greetString.isEmpty()) {
 	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
@@ -150,14 +155,11 @@ KGreeter::KGreeter()
 	    break;
     }
 
-    main_grid->addItem( hbox1, 1, 1 );
-    main_grid->addItem( grid, 2, 1 );
-    main_grid->addItem( hbox2, 3, 1 );
     if (kdmcfg->_showUsers != SHOW_NONE) {
 	if (clock)
-	    hbox1->addWidget( clock, 0, AlignTop );
+	    main_grid->addWidget( clock, 1, 1, AlignCenter );
 	else if (pixLabel)
-	    hbox1->addWidget( pixLabel, 0, AlignTop );
+	    main_grid->addWidget( pixLabel, 1, 1, AlignCenter );
     } else {
 #if 0
 	if (clock)
@@ -183,29 +185,25 @@ KGreeter::KGreeter()
     grid->setColStretch( 3, 1 );
 
     goButton = new QPushButton( i18n("L&ogin"), winFrame );
-    goButton->setFixedWidth( goButton->sizeHint().width() );
     goButton->setDefault( true );
     connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
-    hbox2->addWidget( goButton );
-
     clearButton = new QPushButton( i18n("&Clear"), winFrame );
     connect( clearButton, SIGNAL(clicked()), SLOT(reject()) );
-    hbox2->addWidget( clearButton );
-
-    hbox2->addStretch( 1 );
-
     QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
+    //helpButton
 
-    hbox2->addWidget( menuButton );
-
+    QBoxLayout* hbox2 = new QHBoxLayout( 10 );
+    main_grid->addItem( hbox2, 3, 1 );
+    hbox2->addWidget( goButton );
+    hbox2->addWidget( clearButton );
     hbox2->addStretch( 1 );
-
-//helpButton
+    hbox2->addWidget( menuButton );
+    hbox2->addStretch( 1 );
 
     QWidget *prec;
     if (userView)
 	prec = userView;
-#ifdef WITH_KDM_XCONSOLE // XXX won't work when moved to kgdialog
+#ifdef WITH_KDM_XCONSOLE
     else if (consoleView)
 	prec = consoleView;
 #endif
@@ -239,14 +237,6 @@ KGreeter::KGreeter()
     completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
 
     menuButton->setPopup( optMenu );
-
-#ifdef WITH_KDM_XCONSOLE
-    move to kgdialog
-    if (kdmcfg->_showLog) {
-	consoleView = new KConsole( this, kdmcfg->_logSource );
-	main_grid->addMultiCellWidget( consoleView, 4,4, 0,1 );
-    }
-#endif
 
     pluginSetup();
 

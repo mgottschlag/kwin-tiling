@@ -30,7 +30,6 @@
 #include "kgdialog.h"
 
 class KdmClock;
-class KConsole;
 class UserListView;
 
 class KListView;

@@ -51,7 +51,12 @@ ChooserDlg::ChooserDlg()
 {
     completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), ALT+Key_L );
 
+#ifdef WITH_KDM_XCONSOLE
+    QBoxLayout *vbox = new QVBoxLayout(10);
+    layout->addLayout( vbox, 0, 0 );
+#else
     QBoxLayout *vbox = new QVBoxLayout(winFrame, 10, 10);
+#endif
 
     QLabel *title = new QLabel(i18n("XDMCP Host Menu"), winFrame);
     title->setAlignment(AlignCenter);
@@ -65,15 +70,15 @@ ChooserDlg::ChooserDlg()
     host_view->setResizeMode(QListView::LastColumn);
     vbox->addWidget(host_view);
 
-    QBoxLayout *hibox = new QHBoxLayout(vbox, 10);
     iline = new QLineEdit(winFrame);
     iline->setEnabled(TRUE);
     QLabel *itxt = new QLabel(iline, i18n("Hos&t:"), winFrame);
     QPushButton *addButton = new QPushButton(i18n("A&dd"), winFrame);
+    connect(addButton, SIGNAL(clicked()), SLOT(addHostname()));
+    QBoxLayout *hibox = new QHBoxLayout(vbox, 10);
     hibox->addWidget(itxt);
     hibox->addWidget(iline);
     hibox->addWidget(addButton);
-    connect(addButton, SIGNAL(clicked()), SLOT(addHostname()));
 
     // Buttons
     QPushButton *acceptButton = new QPushButton(i18n("&Accept"), winFrame);

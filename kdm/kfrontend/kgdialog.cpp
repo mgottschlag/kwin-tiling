@@ -23,6 +23,7 @@
     */
  
 #include "kgdialog.h"
+#include "kconsole.h"
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kdm_greet.h"
@@ -38,6 +39,14 @@
 
 KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 {
+#ifdef WITH_KDM_XCONSOLE
+    layout = new QGridLayout (winFrame, 1, 1, 10, 10 );
+    if (kdmcfg->_showLog) {
+	consoleView = new KConsole( winFrame, kdmcfg->_logSource );
+	layout->addWidget( consoleView, 1, 0 );
+    } else
+	consoleView = 0;
+#endif
 
     optMenu = new QPopupMenu( winFrame );
     optMenu->setCheckable( false );

@@ -32,6 +32,7 @@
 
 class QPopupMenu;
 class KConsole;
+class QGridLayout;
 
 #define ex_exit		1
 #define ex_greet	2
@@ -60,6 +61,7 @@ class KGDialog : public FDialog {
     QPopupMenu *optMenu;
 #ifdef WITH_KDM_XCONSOLE
     KConsole *consoleView;
+    QGridLayout *layout;
 #endif
 
   private:
