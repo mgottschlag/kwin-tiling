@@ -34,6 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <dcopobject.h>
 #include <kwin.h>
+#include <kstartupinfo.h>
 
 class Task: public QObject
 {
@@ -161,16 +162,15 @@ class Startup: public QObject
     Q_OBJECT
 
 public:
-    Startup(const QString &text, const QString &icon, pid_t pid, const QString & bin,
-            bool compliant, QObject * parent, const char *name = 0);
+    Startup( const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
+        const char *name = 0);
     virtual ~Startup();
 
-    QString text() const { return _text; }
-    QString bin() const { return _bin; }
-    QString icon() const { return _icon; }
-
-    pid_t pid() const { return _pid; }
-    bool compliant() const { return _compliant; }
+    QString text() const { return !_data.name().isEmpty() ? _data.name() : _data.bin(); }
+    QString bin() const { return _data.bin(); }
+    QString icon() const { return !_data.icon().isEmpty() ? _data.icon() : _data.bin(); }
+    void update( const KStartupInfoData& data ) { _data.update( data ); }
+    const KStartupInfoId& id() const { return _id; }
 
 signals:
     void killMe(Startup*);
@@ -179,22 +179,13 @@ protected:
     void timerEvent(QTimerEvent *);
 
 private:
-    QString     _bin;
-    QString     _text;
-    pid_t       _pid;
-    bool        _compliant;
-    QString     _icon;
+    KStartupInfoId _id;
+    KStartupInfoData _data;
 };
 
-class TaskManager : public QObject, virtual public DCOPObject
+class TaskManager : public QObject
 {
     Q_OBJECT
-    K_DCOP
-
-    k_dcop:
-    void clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant, int screennumber);
-    void clientDied(pid_t pid);
-
 public:
     TaskManager( QObject *parent = 0, const char *name = 0 );
     virtual ~TaskManager();
@@ -222,8 +213,12 @@ protected slots:
 
     void activeWindowChanged(WId);
     void currentDesktopChanged(int);
-    void killStartup(pid_t pid);
+    void killStartup( const KStartupInfoId& );
     void killStartup(Startup*);
+
+    void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
+    void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
+    void gotRemoveStartup( const KStartupInfoId& );
 
 protected:
     Task* findTask(WId w);
@@ -232,6 +227,7 @@ private:
     Task*               _active;
     QList<Task>         _tasks;
     QList<Startup>      _startups;
+    KStartupInfo*       _startup_info;
 };
 
 #endif

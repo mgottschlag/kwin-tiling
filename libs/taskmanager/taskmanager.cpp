@@ -41,7 +41,7 @@ template class QList<Task>;
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
-    : QObject(parent, name), DCOPObject("TaskbarApplet"), _active(0)
+    : QObject(parent, name), _active(0)
 {
     // create and connect kwin module
     kwin_module = new KWinModule(this);
@@ -60,11 +60,17 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     // set active window
     WId win = kwin_module->activeWindow();
     activeWindowChanged(win);
-
-    // application startup notification
-    connectDCOPSignal(0, 0, "clientDied(pid_t)", "clientDied(pid_t)", false);
-    connectDCOPSignal(0, 0, "clientStarted(QString,QString,pid_t,QString,bool,int)",
-                      "clientStarted(QString,QString,pid_t,QString,bool,int)", false);
+    
+    _startup_info = new KStartupInfo( true, this );
+    connect( _startup_info,
+        SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
+        SLOT( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )));
+    connect( _startup_info,
+        SIGNAL( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )),
+        SLOT( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )));
+    connect( _startup_info,
+        SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
+        SLOT( gotRemoveStartup( const KStartupInfoId& )));
 }
 
 TaskManager::~TaskManager()
@@ -108,68 +114,6 @@ void TaskManager::windowAdded(WId w )
             }
 	    return;
 	}
-    }
-
-    // Now do app-starting-notification stuff before we give the window
-    // a taskbar button.
-
-    // Strategy:
-    //
-    // Is this a NET_WM compliant app ?
-    // Yes -> kill relevant app-starting button
-    // No  -> Is the WM_CLASS.res_name for this app used by any existing
-    //        app-starting buttons ?
-    //        Yes -> kill relevant button.
-    //        No  -> kill all non-NET_WM-compliant app-starting buttons.
-
-    pid_t pid = info.pid();
-
-    if (pid != 0)
-        killStartup(pid);
-    else {
-
-        // Hard - this app is not NET_WM compliant
-
-        XClassHint hint;
-        Status ok = XGetClassHint(qt_xdisplay(), w, &hint);
-
-        bool found = false;
-
-        if (ok != 0) { // We managed to read the class hint
-
-            QString resName   (hint.res_name);
-            QString resClass  (hint.res_class);
-
-            for(Startup* s = _startups.first(); s != 0; s = _startups.next()) {
-
-                if (s->compliant()) // Ignore the compliant ones
-                    continue;
-
-                if (s->bin() == resName || (s->bin().lower() == resClass.lower())) {
-                    // Found it !
-                    found = true;
-                    _startups.removeRef(s);
-                    emit startupRemoved(s);
-                    delete s;
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            // Build a list of all non-compliant buttons.
-            QValueList<pid_t> buttonsToKill;
-
-            for(Startup* s = _startups.first(); s != 0; s = _startups.next()) {
-                if (!s->compliant())
-                    buttonsToKill << s->pid();
-            }
-
-            // Kill all non-compliant buttons.
-            QValueList<pid_t>::Iterator killit(buttonsToKill.begin());
-            for (; killit != buttonsToKill.end(); ++killit)
-                killStartup(*killit);
-        }
     }
 
     Task* t = new Task(w, this);
@@ -261,39 +205,35 @@ void TaskManager::currentDesktopChanged(int desktop)
     emit desktopChanged(desktop);
 }
 
-void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin,
-				bool compliant, int screennumber)
+void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    if ((long)pid == 0)
-	return;
-
-    int this_screen_number = 0;
-    if (qt_xdisplay())
-	this_screen_number = DefaultScreen(qt_xdisplay());
-
-    if (this_screen_number != screennumber)
-	return;
-
-    // kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
-
-    Startup * s = new Startup(name, icon, pid, bin, compliant, this);
+    Startup* s = new Startup( id, data, this );
     _startups.append(s);
 
     connect(s, SIGNAL(killMe(Startup*)), SLOT(killStartup(Startup*)));
     emit startupAdded(s);
 }
 
-void TaskManager::clientDied(pid_t pid)
+void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    if ((long)pid != 0)
-	killStartup(pid);
+    for( Startup* s = _startups.first(); s != 0; s = _startups.next()) {
+        if ( s->id() == id ) {
+        s->update( data );
+        return;
+        }
+    }
 }
 
-void TaskManager::killStartup(pid_t pid)
+void TaskManager::gotRemoveStartup( const KStartupInfoId& id )
+{
+    killStartup( id );
+}
+
+void TaskManager::killStartup( const KStartupInfoId& id )
 {
     Startup* s = 0;
     for(s = _startups.first(); s != 0; s = _startups.next()) {
-        if (s->pid() == pid)
+        if (s->id() == id)
             break;
     }
     if (s == 0) return;
@@ -715,12 +655,12 @@ void Task::generateThumbnail()
    emit thumbnailChanged();
 }
 
-Startup::Startup(const QString& text, const QString& icon, pid_t pid,
-                 const QString& bin, bool compliant, QObject * parent, const char *name)
-    : QObject(parent, name), _bin(bin), _text(text), _pid(pid),_compliant(compliant),_icon(icon)
+Startup::Startup( const KStartupInfoId& id, const KStartupInfoData& data,
+    QObject * parent, const char *name)
+    : QObject(parent, name), _id( id ), _data( data )
 {
     // go away after 20s if we weren't removed before.
-    startTimer(20000);
+    startTimer(20000); // CHECKME this is explicitly given less then in KStartupInfo
 }
 
 Startup::~Startup()
