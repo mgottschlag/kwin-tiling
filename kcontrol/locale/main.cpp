@@ -24,10 +24,10 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qobjectlist.h>
+#include <qtabwidget.h>
 
 #include <kcontrol.h>
 #include <klocale.h>
-
 #include <kglobal.h>
 
 #include "locale.h"
@@ -35,6 +35,7 @@
 #include "localemon.h"
 #include "localetime.h"
 #include "main.h"
+
 
 KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
@@ -46,18 +47,20 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
 
   if (runGUI())
     {
+#define i18n(a) (a)
       if (!pages || pages->contains("language"))
-        addPage(locale = new KLocaleConfig(dialog, "locale"), 
-		i18n("&Locale"), "locale-1.html");
+        addPage(locale = new KLocaleConfig(dialog, i18n("&Locale")), 
+		0, "locale-1.html");
       if (!pages || pages->contains("number"))
-        addPage(localenum = new KLocaleConfigNumber(dialog, "number"), 
-		i18n("&Numbers"), "locale-2.html");
+        addPage(localenum = new KLocaleConfigNumber(dialog, i18n("&Numbers")), 
+		0, "locale-2.html");
       if (!pages || pages->contains("money"))
-        addPage(localemon = new KLocaleConfigMoney(dialog, "money"), 
-		i18n("&Money"), "locale-3.html");
+        addPage(localemon = new KLocaleConfigMoney(dialog, i18n("&Money")), 
+		0, "locale-3.html");
       if (!pages || pages->contains("time"))
-        addPage(localetime = new KLocaleConfigTime(dialog, "time"), 
-		i18n("&Time && dates"), "locale-4.html");
+        addPage(localetime = new KLocaleConfigTime(dialog, i18n("&Time && dates")), 
+		0, "locale-4.html");
+#undef i18n
 
       reTranslate();
       updateSample();
@@ -118,6 +121,7 @@ void KLocaleApplication::reTranslate()
   QObjectList it;
   it.append(kapp-> mainWidget());
   reTranslate(it);
+  setTitle(i18n("Locale settings"));
 }
 
 void KLocaleApplication::reTranslate(QObjectListIt it)
@@ -142,6 +146,34 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
       {
         ((QLabel *)wc)->setText(i18n(wc->name()));
         ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
+      }
+      else if ( !qstrcmp(wc->className(), "QPushButton"))
+      {
+	const char *s = 0; 
+	if (!qstrcmp(wc->name(), "ok"))
+	  s = "&OK";
+	else if (!qstrcmp(wc->name(), "apply settings"))
+	  s = "&Apply";
+	else if (!qstrcmp(wc->name(), "cancel dialog"))
+	  s = "&Cancel";
+	else if (!qstrcmp(wc->name(), "back to default"))
+	  s = "&Defaults";
+	else if (!qstrcmp(wc->name(), "give help"))
+	  s = "&Help";
+
+	if (s)
+          ((QPushButton *)wc)->setText(i18n(s));
+      }
+      else if ( !qstrcmp(wc->className(), "QTabWidget"))
+      {
+	if (locale)
+          ((QTabWidget *)wc)->changeTab(locale, i18n(locale->name()));
+        if (localenum)
+          ((QTabWidget *)wc)->changeTab(localenum, i18n(localenum->name()));
+        if (localemon)
+          ((QTabWidget *)wc)->changeTab(localemon, i18n(localemon->name()));
+        if (localetime)
+          ((QTabWidget *)wc)->changeTab(localetime, i18n(localetime->name()));
       }
     }
 }
@@ -174,7 +206,6 @@ void KLocaleApplication::resetTime()
 int main(int argc, char **argv)
 {
   KLocaleApplication app(argc, argv, "kcmlocale");
-  app.setTitle(i18n("Locale settings"));
   
   if (app.runGUI())
     return app.exec();

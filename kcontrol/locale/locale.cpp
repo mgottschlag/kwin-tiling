@@ -292,6 +292,7 @@ void KLocaleConfig::changedCountry(int i)
   comboDate->setCurrentItem(country);
 
   ((KLocaleApplication*)kapp)->updateSample();
+  ((KLocaleApplication*)kapp)->reTranslate();
   ((KLocaleApplication*)kapp)->reset();
 }
 
@@ -321,6 +322,7 @@ void KLocaleConfig::changedLanguage(int i)
     comboLang->changeLanguage(name, j);
   }
 
+  ((KLocaleApplication*)kapp)->reTranslate();
   ((KLocaleApplication*)kapp)->updateSample();
 }
 
@@ -365,12 +367,4 @@ void KLocaleConfig::changedTime(int i)
 void KLocaleConfig::updateSample()
 {
   sample->update();
-}
-
-
-void KLocaleConfig::update()
-{
-  updateSample();
-
-  KLocaleApplication::reTranslate();
 }

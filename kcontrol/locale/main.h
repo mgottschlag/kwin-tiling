@@ -35,8 +35,8 @@ public:
   void apply();
   void defaultValues();
 
-  static void reTranslate();
-  static void reTranslate(QObjectListIt it);
+  void reTranslate();
+  void reTranslate(QObjectListIt it);
 
   void reset();
   void resetNum();

@@ -69,7 +69,6 @@ private slots:
   void changedNumber(int);
   void changedMoney(int);
   void changedTime(int);
-  void update();
   void readLocale(const QString &path, QString &name, const QString &sub) const;
 };
 
