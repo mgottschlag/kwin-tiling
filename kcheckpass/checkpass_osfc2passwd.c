@@ -46,6 +46,9 @@ AuthReturn Authenticate(const char *method,
   if (!osf1c2_getprpwent(c2passwd, login, sizeof(c2passwd)))
     return AuthBad;
 
+  if (!*c2passwd)
+    return AuthOk;
+
   if (!(passwd = conv(ConvGetHidden, 0)))
     return AuthAbort;
 

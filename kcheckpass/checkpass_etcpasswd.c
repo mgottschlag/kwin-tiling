@@ -43,6 +43,9 @@ AuthReturn Authenticate(const char *method,
   if (!(pw = getpwnam(login)))
     return AuthBad;
 
+  if (!*pw->pw_passwd)
+    return AuthOk;
+
   if (!(passwd = conv(ConvGetHidden, 0)))
     return AuthAbort;
 

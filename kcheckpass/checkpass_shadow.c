@@ -53,10 +53,13 @@ AuthReturn Authenticate(const char *method,
 
   if (!(pw = getpwnam(login)))
     return AuthAbort;
-  
+
   spw = getspnam(login);
   password = spw ? spw->sp_pwdp : pw->pw_passwd;
- 
+
+  if (!*password)
+    return AuthOk;
+
   if (!(typed_in_password = conv(ConvGetHidden, 0)))
     return AuthAbort;
 
