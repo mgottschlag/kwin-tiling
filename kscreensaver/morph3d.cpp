@@ -63,7 +63,7 @@ extern KLocale *glocale;
 #define Scale4Window               0.3
 #define Scale4Iconic               1.0
 
-#define VectMul(X1,Y1,Z1,X2,Y2,Z2) (Y1)*(Z2)-(Z1)*(Y2),(Z1)*(X2)-(X1)*(Z2),(X1)*(Y2)-(Y1)*(X2)
+#define glNormal3fMul(X1,Y1,Z1,X2,Y2,Z2) glNormal3f((Y1)*(Z2)-(Z1)*(Y2),(Z1)*(X2)-(X1)*(Z2),(X1)*(Y2)-(Y1)*(X2))
 #define sqr(A)                     ((A)*(A))
 
 /* Increasing this values produces better image quality, the price is speed. */
@@ -153,7 +153,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;      \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
+      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
       glVertex3f(VertX, VertY, VertZ);           \
                                                  \
       Xf=(float)(Ri-Ti-1)*Ax + (float)Ti*Bx;     \
@@ -165,7 +165,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;        \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
+      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
       glVertex3f(VertX, VertY, VertZ);           \
                                                  \
     }                                            \
@@ -178,7 +178,7 @@ static morph3dstruct *morph3d = NULL;
     VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;         \
     NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;  \
     NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;  \
-    glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));           \
+    glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);           \
     glVertex3f(VertX, VertY, VertZ);                 \
     glEnd();                                      \
   }                                               \
@@ -210,7 +210,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Y;         VertZ=Factor*Zf;   \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Y-VertY;  NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
+      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
       glVertex3f(VertX, VertY, VertZ);                                        \
                                                                               \
       Xa=Xf+0.001; Yb=Yf+0.001;                                               \
@@ -220,7 +220,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;        \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
+      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
       glVertex3f(VertX, VertY, VertZ);                                        \
     }                                                                         \
     glEnd();                                                                  \
@@ -255,7 +255,7 @@ static morph3dstruct *morph3d = NULL;
         VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;     \
         NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;  \
         NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;  \
-        glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));       \
+        glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);       \
 	glVertex3f(VertX, VertY, VertZ);                                     \
                                                                              \
         Xf=(float)(Ri-Ti-1)*x[Fi] + (float)Ti*x[Fi+1];                       \
@@ -267,7 +267,7 @@ static morph3dstruct *morph3d = NULL;
         VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;     \
         NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
         NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-        glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));       \
+        glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);       \
 	glVertex3f(VertX, VertY, VertZ);                                     \
                                                                              \
       }                                                                      \
@@ -280,7 +280,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;       \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;\
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;\
-      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));         \
+      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);         \
       glVertex3f(VertX, VertY, VertZ);                                       \
       glEnd();                                                               \
     }                                                                        \
