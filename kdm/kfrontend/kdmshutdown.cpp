@@ -539,8 +539,10 @@ void
 KDMSlimShutdown::slotReboot()
 {
     if (checkShutdown()) {
-	if (_useLilo)
+        #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
+        if (_useLilo)
 	    applyTarget();
+        #endif
 	doShutdown( SHUT_REBOOT );
     }
 }
