@@ -30,12 +30,6 @@
 #include <sys/utsname.h>
 
 //#include <qfile.h>
-#include <qmotifstyle.h>
-#include <qmotifplusstyle.h>
-#include <qcdestyle.h>
-#include <qsgistyle.h>
-#include <qwindowsstyle.h>
-#include <qplatinumstyle.h>
 #include <qtextcodec.h>	//XXX
 #include <qsettings.h> 
 
