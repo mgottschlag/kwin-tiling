@@ -71,6 +71,7 @@ private:
     QListViewItem *displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback = false);
 
     // Internet Keywords.
+    QGroupBox *gb_keywords;
     QCheckBox *cb_enableInternetKeywords;
     QComboBox *cmb_searchFallback;
     QLabel *lb_searchFallback;

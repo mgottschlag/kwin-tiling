@@ -38,9 +38,10 @@
 #include <qvbox.h>
 #include <qwhatsthis.h>
 
+#include <dcopclient.h>
+
 #include <kapp.h>
 #include <kbuttonbox.h>
-#include <dcopclient.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -59,11 +60,15 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     // This is the layout for the whole dialog box.
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(), KDialog::spacingHint() );
 
-    cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), this);
+    gb_keywords = new QGroupBox(this);
+    QVBoxLayout *gbkLay = new QVBoxLayout( gb_keywords, KDialog::marginHint(), KDialog::spacingHint() );
+    
+    cb_enableInternetKeywords = new QCheckBox(i18n("Enable Int&ernet Keywords"), gb_keywords);
     cb_enableInternetKeywords->adjustSize();
     cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
     connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you type Internet Keywords in its browser's address bar."));
+    gbkLay->addWidget(cb_enableInternetKeywords);
 
 /* Should replace the above after KDE 2.0...
     QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you use <em>Internet Keywords</em> "
@@ -72,24 +77,22 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
                                                     "re-directed to the appropriate site. For further details on this "
                                                     "feature visit <em>www.internetkeywords.org</em>."));
 */
-    lay->addWidget( cb_enableInternetKeywords );
 
     // We add the Fallback config stuff to a horizontal layout manager
-    // first so that we can: 1) Add the label and the combo side by side
-    // and two give it an indented look so that the option looks under
-    // the Enable IKWS checkbox.
-    QHBoxLayout *igbopts_lay = new QHBoxLayout( lay, KDialog::spacingHint() );
+    // first so that we can add the label and the combo side by side.
 
-    lb_searchFallback = new QLabel(i18n("Search &Fallback:"),this);
+    QHBoxLayout *igbopts_lay = new QHBoxLayout( gbkLay, KDialog::spacingHint() );
+
+    lb_searchFallback = new QLabel(i18n("Search &Fallback:"), gb_keywords);
+    lb_searchFallback->adjustSize();
+    lb_searchFallback->setMinimumSize(lb_searchFallback->size());
     igbopts_lay->addWidget( lb_searchFallback );
 
-    cmb_searchFallback = new QComboBox(false, this);
+    cmb_searchFallback = new QComboBox(false, gb_keywords);
+    cmb_searchFallback->adjustSize();
+    cmb_searchFallback->setMinimumSize(cmb_searchFallback->size());
     igbopts_lay->addWidget( cmb_searchFallback );
     lb_searchFallback->setBuddy(cmb_searchFallback);
-
-    // Pad the beginning and the end with space to give it an indented look.
-    igbopts_lay->insertSpacing( 0, 4 * KDialog::spacingHint() );
-    igbopts_lay->insertSpacing( -1, 10 * KDialog::spacingHint() );
 
     connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
     QString wtstr = i18n("Here you can select a search engine that will be used if what is typed is not an Internet Keyword. Select None if you do not want to do a search in this case.");
@@ -101,6 +104,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 */
     QWhatsThis::add(lb_searchFallback, wtstr);
     QWhatsThis::add(cmb_searchFallback, wtstr);
+
+    lay->addWidget(gb_keywords);
 
 /*  Feature to consider after KDE 2.0...
     cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Engine Shortcuts"), this);
@@ -115,16 +120,16 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lay->addWidget( cb_enableSearchKeywords );
 */
     gb_search = new QGroupBox( i18n("Search"), this );
-    QGridLayout *gbLay = new QGridLayout(gb_search, 11, 3, KDialog::marginHint(), KDialog::spacingHint());
+    QGridLayout *gbsLay = new QGridLayout(gb_search, 11, 3, KDialog::marginHint(), KDialog::spacingHint());
 
-    gbLay->addRowSpacing(0, 2* KDialog::spacingHint());
-    gbLay->addRowSpacing(3, 2* KDialog::spacingHint());
-    gbLay->addRowSpacing(4, 2* KDialog::spacingHint());
-    gbLay->addRowSpacing(6, 2* KDialog::spacingHint());
-    gbLay->addColSpacing(1, 2* KDialog::spacingHint());
-    gbLay->setRowStretch(9, 1);
-    gbLay->setColStretch(0, 3);
-    gbLay->setColStretch(2, 4); 
+    gbsLay->addRowSpacing(0, 2* KDialog::spacingHint());
+    gbsLay->addRowSpacing(3, 2* KDialog::spacingHint());
+    gbsLay->addRowSpacing(4, 2* KDialog::spacingHint());
+    gbsLay->addRowSpacing(6, 2* KDialog::spacingHint());
+    gbsLay->addColSpacing(1, 2* KDialog::spacingHint());
+    gbsLay->setRowStretch(9, 1);
+    gbsLay->setColStretch(0, 3);
+    gbsLay->setColStretch(2, 4); 
 
     lv_searchProviders = new QListView( gb_search );
     lv_searchProviders->setMultiSelection(false);
@@ -138,17 +143,17 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider(QListViewItem *)));
 
-    gbLay->addMultiCellWidget(lv_searchProviders, 1, 9, 0, 0);
+    gbsLay->addMultiCellWidget(lv_searchProviders, 1, 9, 0, 0);
 
     lb_searchProviderName = new QLabel(i18n("Search &Provider Name:"), gb_search);
     lb_searchProviderName->adjustSize();
     lb_searchProviderName->setMinimumSize(lb_searchProviderName->size());    
-    gbLay->addWidget(lb_searchProviderName, 1, 2);
+    gbsLay->addWidget(lb_searchProviderName, 1, 2);
 
     le_searchProviderName = new QLineEdit(gb_search);
     le_searchProviderName->adjustSize();
     le_searchProviderName->setMinimumSize(le_searchProviderName->size()); 
-    gbLay->addWidget(le_searchProviderName, 2, 2);
+    gbsLay->addWidget(le_searchProviderName, 2, 2);
 
     lb_searchProviderName->setBuddy(le_searchProviderName);
     connect(le_searchProviderName, SIGNAL(textChanged(const QString &)),
@@ -160,12 +165,12 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lb_searchProviderURI = new QLabel(i18n("Search &URI:"), gb_search);
     lb_searchProviderURI->adjustSize();
     lb_searchProviderURI->setMinimumSize(lb_searchProviderURI->size());
-    gbLay->addWidget(lb_searchProviderURI, 3, 2); 
+    gbsLay->addWidget(lb_searchProviderURI, 3, 2); 
     
     le_searchProviderURI = new QLineEdit(gb_search);
     le_searchProviderURI->adjustSize();
     le_searchProviderURI->setMinimumSize(le_searchProviderURI->size());  
-    gbLay->addWidget(le_searchProviderURI, 4, 2);
+    gbsLay->addWidget(le_searchProviderURI, 4, 2);
 
     lb_searchProviderURI->setBuddy(le_searchProviderURI);
     connect(le_searchProviderURI, SIGNAL(textChanged(const QString &)),
@@ -177,12 +182,12 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     lb_searchProviderShortcuts = new QLabel(i18n("UR&I Shortcuts:"), gb_search);
     lb_searchProviderShortcuts->adjustSize();
     lb_searchProviderShortcuts->setMinimumSize(lb_searchProviderShortcuts->size());
-    gbLay->addWidget(lb_searchProviderShortcuts, 5, 2);
+    gbsLay->addWidget(lb_searchProviderShortcuts, 5, 2);
 
     le_searchProviderShortcuts = new QLineEdit(gb_search);
     le_searchProviderShortcuts->adjustSize();
     le_searchProviderShortcuts->setMinimumSize(le_searchProviderShortcuts->size());
-    gbLay->addWidget(le_searchProviderShortcuts, 6, 2);
+    gbsLay->addWidget(le_searchProviderShortcuts, 6, 2);
 
     lb_searchProviderShortcuts->setBuddy(le_searchProviderShortcuts);
     connect(le_searchProviderShortcuts, SIGNAL(textChanged(const QString &)),
@@ -200,7 +205,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to delete the currently selected search engine from the list."));
     pb_delSearchProvider->setEnabled(false);
     connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-    gbLay->addWidget(bbox, 7, 2);
+    gbsLay->addWidget(bbox, 7, 2);
     bbox->layout();
     lay->addWidget( gb_search );
 
@@ -235,8 +240,9 @@ void InternetKeywordsOptions::load()
     QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator it = lstSearchEngines.begin();
     QValueList<KURISearchFilterEngine::SearchEntry>::ConstIterator end = lstSearchEngines.end();
 
-    for (; it != end; ++it)
-      displaySearchProvider(*it, searchFallbackName == (*it).m_strName);\
+    for (; it != end; ++it) {
+      displaySearchProvider(*it, searchFallbackName == (*it).m_strName);
+    }
 
     // Enable/Disable widgets accordingly.
     bool ikwsEnabled = searcher->isInternetKeywordsEnabled();

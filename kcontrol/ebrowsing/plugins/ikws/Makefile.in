@@ -69,6 +69,7 @@ host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
 ACCESS_SUBDIR = @ACCESS_SUBDIR@
+ARTSCCONFIG = @ARTSCCONFIG@
 AS = @AS@
 AUTODIRS = @AUTODIRS@
 CC = @CC@
@@ -84,6 +85,8 @@ DPMSLIB = @DPMSLIB@
 EXEEXT = @EXEEXT@
 EXTRA_LIBSMB_ADD = @EXTRA_LIBSMB_ADD@
 EXTRA_LIBSMB_FLAGS = @EXTRA_LIBSMB_FLAGS@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
 GLINC = @GLINC@
 GLLIB = @GLLIB@
 GL_SAVERS = @GL_SAVERS@
@@ -147,6 +150,7 @@ LIB_KWRITE = @LIB_KWRITE@
 LIB_LIBS = @LIB_LIBS@
 LIB_QT = @LIB_QT@
 LIB_SMB = @LIB_SMB@
+LIB_TRU64_MACH = @LIB_TRU64_MACH@
 LIB_X11 = @LIB_X11@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
@@ -227,14 +231,18 @@ xdmconfigsubdir = @xdmconfigsubdir@
 INCLUDES = $(all_includes)
 LDFLAGS = $(all_libraries)
 
-lib_LTLIBRARIES = libkuriikwsfilter.la
+lib_LTLIBRARIES = libkuriikwsfilter.la libkurisearchfilter.la
 
 libkuriikwsfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined 
 libkuriikwsfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
 
-libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp ikwsopts.cpp
+libkurisearchfilter_la_LDFLAGS = -version-info 1:0:0 -module -no-undefined
+libkurisearchfilter_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KDEUI)
 
-service_DATA = kuriikwsfilter.desktop
+libkuriikwsfilter_la_SOURCES = kuriikwsfiltereng.cpp kuriikwsfilter.skel kuriikwsfilter.cpp
+libkurisearchfilter_la_SOURCES = kurisearchfilter.cpp kurisearchfilter.skel kuriikwsfiltereng.cpp ikwsopts.cpp
+
+service_DATA = kuriikwsfilter.desktop kurisearchfilter.desktop
 servicedir = $(kde_servicesdir)
 
 rc_DATA = kuriikwsfilterrc
@@ -253,14 +261,21 @@ LIBS = @LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 libkuriikwsfilter_la_DEPENDENCIES = 
-#>- libkuriikwsfilter_la_OBJECTS =  kuriikwsfiltereng.lo kuriikwsfilter.lo \
-#>- ikwsopts.lo
-#>+ 5
-@KDE_USE_FINAL_FALSE@libkuriikwsfilter_la_OBJECTS = kuriikwsfiltereng.lo kuriikwsfilter.lo \
-ikwsopts.lo kuriikwsfilter_skel.lo \
+#>- libkuriikwsfilter_la_OBJECTS =  kuriikwsfiltereng.lo kuriikwsfilter.lo
+#>+ 4
+@KDE_USE_FINAL_FALSE@libkuriikwsfilter_la_OBJECTS = kuriikwsfiltereng.lo kuriikwsfilter.lo kuriikwsfilter_skel.lo \
 libkuriikwsfilter_la_meta_unload.lo 
 @KDE_USE_FINAL_TRUE@libkuriikwsfilter_la_OBJECTS = libkuriikwsfilter_la.all_cpp.lo 
 libkuriikwsfilter_la_final_OBJECTS = libkuriikwsfilter_la.all_cpp.lo 
+libkurisearchfilter_la_DEPENDENCIES = 
+#>- libkurisearchfilter_la_OBJECTS =  kurisearchfilter.lo \
+#>- kuriikwsfiltereng.lo ikwsopts.lo
+#>+ 5
+@KDE_USE_FINAL_FALSE@libkurisearchfilter_la_OBJECTS = kurisearchfilter.lo \
+kuriikwsfiltereng.lo ikwsopts.lo kurisearchfilter_skel.lo \
+libkurisearchfilter_la_meta_unload.lo 
+@KDE_USE_FINAL_TRUE@libkurisearchfilter_la_OBJECTS = libkurisearchfilter_la.all_cpp.lo 
+libkurisearchfilter_la_final_OBJECTS = libkurisearchfilter_la.all_cpp.lo 
 CXXFLAGS = @CXXFLAGS@
 #>- CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 #>+ 1
@@ -282,16 +297,16 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 #>- DEP_FILES =  .deps/ikwsopts.P .deps/kuriikwsfilter.P \
-#>- .deps/kuriikwsfiltereng.P
+#>- .deps/kuriikwsfiltereng.P .deps/kurisearchfilter.P
 #>+ 6
-@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/kuriikwsfilter_skel.P  $(DEPDIR)/libkuriikwsfilter_la.all_cpp.P \
+@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/kuriikwsfilter_skel.P $(DEPDIR)/kurisearchfilter_skel.P  $(DEPDIR)/libkuriikwsfilter_la.all_cpp.P $(DEPDIR)/libkurisearchfilter_la.all_cpp.P \
 	  .deps/ikwsopts.P .deps/kuriikwsfilter.P \
-.deps/kuriikwsfiltereng.P
-@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/kuriikwsfilter_skel.P   .deps/ikwsopts.P .deps/kuriikwsfilter.P \
-.deps/kuriikwsfiltereng.P
+.deps/kuriikwsfiltereng.P .deps/kurisearchfilter.P
+@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/kuriikwsfilter_skel.P $(DEPDIR)/kurisearchfilter_skel.P   .deps/ikwsopts.P .deps/kuriikwsfilter.P \
+.deps/kuriikwsfiltereng.P .deps/kurisearchfilter.P
 
-SOURCES = $(libkuriikwsfilter_la_SOURCES)
-OBJECTS = $(libkuriikwsfilter_la_OBJECTS)
+SOURCES = $(libkuriikwsfilter_la_SOURCES) $(libkurisearchfilter_la_SOURCES)
+OBJECTS = $(libkuriikwsfilter_la_OBJECTS) $(libkurisearchfilter_la_OBJECTS)
 
 #>- all: all-redirect
 #>+ 1
@@ -377,6 +392,12 @@ maintainer-clean-libtool:
 @KDE_USE_CLOSURE_TRUE@libkuriikwsfilter.la: libkuriikwsfilter.la.closure $(libkuriikwsfilter_la_OBJECTS) $(libkuriikwsfilter_la_DEPENDENCIES)
 @KDE_USE_CLOSURE_FALSE@libkuriikwsfilter.la: $(libkuriikwsfilter_la_OBJECTS) $(libkuriikwsfilter_la_DEPENDENCIES)
 	$(CXXLINK) -rpath $(libdir) $(libkuriikwsfilter_la_LDFLAGS) $(libkuriikwsfilter_la_OBJECTS) $(libkuriikwsfilter_la_LIBADD) $(LIBS)
+
+#>- libkurisearchfilter.la: $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_DEPENDENCIES)
+#>+ 2
+@KDE_USE_CLOSURE_TRUE@libkurisearchfilter.la: libkurisearchfilter.la.closure $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_DEPENDENCIES)
+@KDE_USE_CLOSURE_FALSE@libkurisearchfilter.la: $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_DEPENDENCIES)
+	$(CXXLINK) -rpath $(libdir) $(libkurisearchfilter_la_LDFLAGS) $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_LIBADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 .cpp.obj:
@@ -619,13 +640,18 @@ ikwsopts.moc: $(srcdir)/ikwsopts.h
 	$(MOC) $(srcdir)/ikwsopts.h -o ikwsopts.moc
 
 #>+ 4
+$(srcdir)/kurisearchfilter.cpp: kurisearchfilter.moc
+kurisearchfilter.moc: $(srcdir)/kurisearchfilter.h
+	$(MOC) $(srcdir)/kurisearchfilter.h -o kurisearchfilter.moc
+
+#>+ 4
 $(srcdir)/kuriikwsfilter.cpp: kuriikwsfilter.moc
 kuriikwsfilter.moc: $(srcdir)/kuriikwsfilter.h
 	$(MOC) $(srcdir)/kuriikwsfilter.h -o kuriikwsfilter.moc
 
 #>+ 3
 clean-metasources:
-	-rm -f  ikwsopts.moc kuriikwsfilter.moc
+	-rm -f  ikwsopts.moc kurisearchfilter.moc kuriikwsfilter.moc
 
 #>+ 5
 kuriikwsfilter.kidl: $(srcdir)/kuriikwsfilter.h $(DCOPIDL_DEPENDENCIES)
@@ -642,10 +668,26 @@ libkuriikwsfilter.la.closure: $(libkuriikwsfilter_la_OBJECTS) $(libkuriikwsfilte
 	@echo "timestamp" > libkuriikwsfilter.la.closure
 
 
-#>+ 4
+#>+ 5
+kurisearchfilter.kidl: $(srcdir)/kurisearchfilter.h $(DCOPIDL_DEPENDENCIES)
+	$(DCOPIDL) $(srcdir)/kurisearchfilter.h > kurisearchfilter.kidl || rm -f kurisearchfilter.kidl
+kurisearchfilter_skel.cpp: kurisearchfilter.kidl
+	$(DCOPIDL2CPP) --c++-suffix cpp --no-stub kurisearchfilter.kidl
+
+#>+ 8
+libkurisearchfilter.la.closure: $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_DEPENDENCIES)
+	@echo "int main() {return 0;}" > libkurisearchfilter_la_closure.cpp
+	@$(LTCXXCOMPILE) -c libkurisearchfilter_la_closure.cpp
+	@$(CXXLINK) libkurisearchfilter_la_closure.lo $(libkurisearchfilter_la_LDFLAGS) $(libkurisearchfilter_la_OBJECTS) $(libkurisearchfilter_la_LIBADD) $(LIBS)
+	@rm -f libkurisearchfilter_la_closure.* libkurisearchfilter.la.closure
+	@echo "timestamp" > libkurisearchfilter.la.closure
+
+
+#>+ 5
 clean-idl:
 	-rm -f \
-	kuriikwsfilter_skel.cpp kuriikwsfilter_skel.h kuriikwsfilter.kidl 
+	kuriikwsfilter_skel.cpp kuriikwsfilter_skel.h kuriikwsfilter.kidl \
+	kurisearchfilter_skel.cpp kurisearchfilter_skel.h kurisearchfilter.kidl 
 
 #>+ 2
 docs-am:
@@ -657,39 +699,62 @@ force-reedit:
 
 
 #>+ 10
-libkuriikwsfilter_la_meta_unload.cpp:  ikwsopts.moc kuriikwsfilter.moc
+libkuriikwsfilter_la_meta_unload.cpp:  kuriikwsfilter.moc
 	@echo 'creating libkuriikwsfilter_la_meta_unload.cpp'
 	-rm -f libkuriikwsfilter_la_meta_unload.cpp
 	@echo 'static const char * _metalist_libkuriikwsfilter_la[] = {' > libkuriikwsfilter_la_meta_unload.cpp
-	cat  ikwsopts.moc kuriikwsfilter.moc | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> libkuriikwsfilter_la_meta_unload.cpp
+	cat  kuriikwsfilter.moc | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> libkuriikwsfilter_la_meta_unload.cpp
 	@echo '0};' >> libkuriikwsfilter_la_meta_unload.cpp
 	@echo '#include <kunload.h>' >> libkuriikwsfilter_la_meta_unload.cpp
 	@echo '_UNLOAD(libkuriikwsfilter_la)' >> libkuriikwsfilter_la_meta_unload.cpp
 
 
+#>+ 10
+libkurisearchfilter_la_meta_unload.cpp:  ikwsopts.moc kurisearchfilter.moc
+	@echo 'creating libkurisearchfilter_la_meta_unload.cpp'
+	-rm -f libkurisearchfilter_la_meta_unload.cpp
+	@echo 'static const char * _metalist_libkurisearchfilter_la[] = {' > libkurisearchfilter_la_meta_unload.cpp
+	cat  ikwsopts.moc kurisearchfilter.moc | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> libkurisearchfilter_la_meta_unload.cpp
+	@echo '0};' >> libkurisearchfilter_la_meta_unload.cpp
+	@echo '#include <kunload.h>' >> libkurisearchfilter_la_meta_unload.cpp
+	@echo '_UNLOAD(libkurisearchfilter_la)' >> libkurisearchfilter_la_meta_unload.cpp
+
+
 #>+ 3
 clean-moc-classes:
-	-rm -f  libkuriikwsfilter_la_meta_unload.cpp
+	-rm -f  libkuriikwsfilter_la_meta_unload.cpp libkurisearchfilter_la_meta_unload.cpp
 
 #>+ 11
-libkuriikwsfilter_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kuriikwsfiltereng.cpp $(srcdir)/kuriikwsfilter.cpp $(srcdir)/ikwsopts.cpp kuriikwsfilter_skel.cpp libkuriikwsfilter_la_meta_unload.cpp   ikwsopts.moc kuriikwsfilter.moc 
+libkuriikwsfilter_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kuriikwsfiltereng.cpp $(srcdir)/kuriikwsfilter.cpp kuriikwsfilter_skel.cpp libkuriikwsfilter_la_meta_unload.cpp   ikwsopts.moc kurisearchfilter.moc kuriikwsfilter.moc 
 	@echo 'creating libkuriikwsfilter_la.all_cpp.cpp ...'; \
 	rm -f libkuriikwsfilter_la.all_cpp.files libkuriikwsfilter_la.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> libkuriikwsfilter_la.all_cpp.final; \
-	for file in kuriikwsfiltereng.cpp kuriikwsfilter.cpp ikwsopts.cpp kuriikwsfilter_skel.cpp libkuriikwsfilter_la_meta_unload.cpp ; do \
+	for file in kuriikwsfiltereng.cpp kuriikwsfilter.cpp kuriikwsfilter_skel.cpp libkuriikwsfilter_la_meta_unload.cpp ; do \
 	  echo "#include \"$$file\"" >> libkuriikwsfilter_la.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> libkuriikwsfilter_la.all_cpp.final; \
 	done; \
 	cat libkuriikwsfilter_la.all_cpp.final libkuriikwsfilter_la.all_cpp.files  > libkuriikwsfilter_la.all_cpp.cpp; \
 	rm -f libkuriikwsfilter_la.all_cpp.final libkuriikwsfilter_la.all_cpp.files
 
+#>+ 11
+libkurisearchfilter_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kurisearchfilter.cpp $(srcdir)/kuriikwsfiltereng.cpp $(srcdir)/ikwsopts.cpp kurisearchfilter_skel.cpp libkurisearchfilter_la_meta_unload.cpp  
+	@echo 'creating libkurisearchfilter_la.all_cpp.cpp ...'; \
+	rm -f libkurisearchfilter_la.all_cpp.files libkurisearchfilter_la.all_cpp.final; \
+	echo "#define KDE_USE_FINAL 1" >> libkurisearchfilter_la.all_cpp.final; \
+	for file in kurisearchfilter.cpp kuriikwsfiltereng.cpp ikwsopts.cpp kurisearchfilter_skel.cpp libkurisearchfilter_la_meta_unload.cpp ; do \
+	  echo "#include \"$$file\"" >> libkurisearchfilter_la.all_cpp.files; \
+	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> libkurisearchfilter_la.all_cpp.final; \
+	done; \
+	cat libkurisearchfilter_la.all_cpp.final libkurisearchfilter_la.all_cpp.files  > libkurisearchfilter_la.all_cpp.cpp; \
+	rm -f libkurisearchfilter_la.all_cpp.final libkurisearchfilter_la.all_cpp.files
+
 #>+ 3
 clean-final:
-	-rm -f libkuriikwsfilter_la.all_cpp.cpp
+	-rm -f libkuriikwsfilter_la.all_cpp.cpp libkurisearchfilter_la.all_cpp.cpp
 
 #>+ 2
 final:
-	$(MAKE) libkuriikwsfilter_la_OBJECTS="$(libkuriikwsfilter_la_final_OBJECTS)" all-am
+	$(MAKE) libkuriikwsfilter_la_OBJECTS="$(libkuriikwsfilter_la_final_OBJECTS)" libkurisearchfilter_la_OBJECTS="$(libkurisearchfilter_la_final_OBJECTS)" all-am
 #>+ 3
 cvs-clean:
 	$(MAKE) -f $(top_srcdir)/admin/Makefile.common cvs-clean
