@@ -1,5 +1,5 @@
 [Desktop Entry]
-Icon=smartcard
+Icon=identity
 Type=Application
 Exec=kcmshell smartcard
 DocPath=kcontrol/smartcard.html
@@ -7,8 +7,11 @@ X-KDE-ModuleType=Library
 X-KDE-Library=smartcard
 X-KDE-Init=smartcard
 Name=Smartcards
-Name[xxx]=xx
+Name[hu]=Smartcard-beállítások
 Comment=Configure smartcard support
+Comment[da]=Indstil smartcard støtte
+Comment[hu]=A smartcard-támogatás beállítóprogramja
 Keywords=Smartcard,PKCS,SSL,reader,smart,card
-Keywords[xxx]=xx
+Keywords[da]=Smartcard,PKCS,SSL,læser,smart,card
+Keywords[hu]=smartcard,PKCS,SSL,olvasó,smart,kártya
 
