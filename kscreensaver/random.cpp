@@ -43,11 +43,11 @@ void usage(char *name)
 				"Any arguments (except -setup) are passed on to the screen saver.").arg( name ).local8Bit().data());
 }
 
-static const char *appName = "random";
+static const char appName[] = "random";
 
-static const char *description = I18N_NOOP("Start a random KDE screen saver");
+static const char description[] = I18N_NOOP("Start a random KDE screen saver");
 
-static const char *version = "2.0.0";
+static const char version[] = "2.0.0";
 
 static const KCmdLineOptions options[] =
 {

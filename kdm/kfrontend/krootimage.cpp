@@ -31,10 +31,10 @@
 
 #include <stdlib.h>
 
-static const char *description =
+static const char description[] =
 	I18N_NOOP("Fancy desktop background for kdm");
 
-static const char *version = "v1.5";
+static const char version[] = "v1.5";
 
 static KCmdLineOptions options[] = {
     { "+config", I18N_NOOP("Name of the configuration file"), 0 },

@@ -26,8 +26,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include "server.h"
 
 
-static const char *version = "0.4";
-static const char *description = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
+static const char version[] = "0.4";
+static const char description[] = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
 
 static const KCmdLineOptions options[] =
 {

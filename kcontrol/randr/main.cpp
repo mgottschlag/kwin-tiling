@@ -26,7 +26,7 @@
 
 #include "krandrapp.h"
 
-static const char* krandrtrayVersion = "0.5";
+static const char krandrtrayVersion[] = "0.5";
 static const KCmdLineOptions options[] =
 {
 	{ "login", I18N_NOOP("Application is being auto-started at KDE session start"), 0L },
