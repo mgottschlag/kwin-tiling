@@ -125,7 +125,7 @@ void ThemePage::save()
 	c.writeEntry( "cursorTheme", selectedTheme );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
-				"changes to take affect."), i18n("Cursor Settings Changed"),
+				"changes to take effect."), i18n("Cursor Settings Changed"),
 				"CursorSettingsChanged" );
 
 	currentTheme = selectedTheme;
