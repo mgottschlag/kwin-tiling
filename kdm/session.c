@@ -38,6 +38,10 @@ from the X Consortium.
  * session.c
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "dm.h"
 #include "greet.h"
 #include <X11/Xlib.h>
@@ -1077,9 +1081,8 @@ char	*user, *home;
     return env;
 }
 
-#if defined(Lynx) || defined(SCO) && !defined(SCO_USA) || !defined(HAVE_CRYPT_H)
-char *crypt(s1, s2)
-	char	*s1, *s2;
+#if defined(Lynx) || defined(SCO) && !defined(SCO_USA)
+char *crypt(const char *s1, const char *s2)
 {
 	return(s2);
 }
