@@ -22,7 +22,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
+
 #include "kdmconfig.h"
 #include "kdm_greet.h"
 #include "kdm_config.h"
@@ -194,7 +194,7 @@ KDMConfig::KDMConfig()
 
     _numLockStatus = GetCfgInt (C_NumLock);
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     if ((_useLilo = GetCfgInt (C_useLilo))) {
 	_liloCmd = GetCfgQStr (C_liloCmd);
 	_liloMap = GetCfgQStr (C_liloMap);

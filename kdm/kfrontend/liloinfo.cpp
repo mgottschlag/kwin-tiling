@@ -22,7 +22,7 @@
 
     */
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
 
 #include "liloinfo.h"
 

@@ -22,7 +22,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
+
 
 #ifndef KDMSHUTDOWN_H
 #define KDMSHUTDOWN_H
@@ -45,7 +45,7 @@ class KDMShutdown : public FDialog {
 
 public:
     KDMShutdown( QWidget *_parent = 0 );
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__) )
     ~KDMShutdown();
 #endif
 
@@ -64,7 +64,7 @@ private:
     QRadioButton	*restart_rb, *force_rb, *try_rb;
     QTimer		*timer;
     bool		needRoot;
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     LiloInfo		*liloInfo;
     QComboBox		*targets;
     int			defaultLiloTarget, oldLiloTarget;

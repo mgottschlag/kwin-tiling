@@ -1931,7 +1931,7 @@ static Ent entsShutdown[] = {
 { "AllowFifoNow",	0, 0, 
 "# Whether one can abort still running sessions when shutting down the system\n"
 "# via the global command FiFo. Default is true\n" },
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
 { "UseLilo",		0, 0, 
 "# Offer LiLo boot options in shutdown dialog. Default is false\n" },
 { "LiloCmd",		0, 0, 
@@ -2293,7 +2293,7 @@ static DEnt dEntsShutdown[] = {
 { "RebootCmd",		"", 0 },
 { "AllowFifo",		"true", 0 },
 { "AllowFifoNow",	"false", 0 },
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
 { "UseLilo",		"true", 0 },
 { "LiloCmd",		"", 0 },
 { "LiloMap",		"", 0 },
@@ -2822,7 +2822,7 @@ mergeKdmRcOld (const char *path)
 	cpyval ("AutoLoginUser", 0);
     }
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     if (cfgSGroup ("Lilo")) {
 	setsect("Shutdown");
 	cpyval ("UseLilo", "Lilo");

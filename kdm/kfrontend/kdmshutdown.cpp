@@ -65,7 +65,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     connect( rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
     connect( restart_rb, SIGNAL(doubleClicked()), SLOT(bye_bye()) );
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     if (kdmcfg->_useLilo) {
 	QWidget *hlp = new QWidget( howGroup );
 	QHBoxLayout *hb = new QHBoxLayout( hlp );
@@ -167,7 +167,7 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
     when_changed( 0 );
 }
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
 KDMShutdown::~KDMShutdown()
 {
     delete liloInfo;
@@ -185,7 +185,7 @@ KDMShutdown::timerDone()
 void
 KDMShutdown::target_changed()
 {
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     restart_rb->setChecked( true );
 #endif
 }
@@ -219,7 +219,7 @@ KDMShutdown::bye_bye()
 	    return;
 	}
     }
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     if (kdmcfg->_useLilo && restart_rb->isChecked()) {
 	if (targets->currentItem() != oldLiloTarget) {
 	    if (targets->currentItem() == defaultLiloTarget)

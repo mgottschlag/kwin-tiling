@@ -22,7 +22,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
     */
- 
+
 
 #ifndef KDMCONFIG_H
 #define KDMCONFIG_H
@@ -67,7 +67,7 @@ public:
     int		_faceSource;
     QString	_faceDir;
     int		_echoMode;
-     
+
     QStringList	_sessionsDirs;
     QString	_stsFile;
 
@@ -76,7 +76,7 @@ public:
 
     int		_numLockStatus;
 
-#if defined(__linux__) && defined(__i386)
+#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
     bool	_useLilo;
     QString	_liloCmd;
     QString	_liloMap;
