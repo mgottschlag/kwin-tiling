@@ -10,6 +10,7 @@
             <Action name="activate_smallicons"/>
             <Action name="activate_mediumicons"/>
             <Action name="activate_largeicons"/>
+            <Action name="activate_hugeicons"/>
         </Menu>
     </Menu>
     <Menu name="help">

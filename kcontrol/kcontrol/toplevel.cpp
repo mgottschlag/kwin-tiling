@@ -64,6 +64,8 @@ TopLevel::TopLevel(const char* name)
     KCGlobal::setIconSize(KIcon::SizeSmall);
   else if (size == "Large")
     KCGlobal::setIconSize(KIcon::SizeLarge);
+  else if (size == "Huge")
+    KCGlobal::setIconSize(KIcon::SizeHuge);
   else
     KCGlobal::setIconSize(KIcon::SizeMedium);
 
@@ -172,6 +174,9 @@ TopLevel::~TopLevel()
     case KIcon::SizeLarge:
       config->writeEntry("IconSize", "Large");
       break;
+    case KIcon::SizeHuge:
+      config->writeEntry("IconSize", "Huge");
+      break;
     default:
       config->writeEntry("IconSize", "Medium");
       break;
@@ -222,6 +227,11 @@ void TopLevel::setupActions()
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
 
+  icon_huge = new KRadioAction
+    (i18n("&Huge"), 0, this, SLOT(activateHugeIcons()),
+     actionCollection(), "activate_hugeicons");
+  icon_huge->setExclusiveGroup( "iconsize" );
+
   about_module = new KAction(i18n("About Current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
   about_module->setEnabled(false);
 
@@ -251,6 +261,7 @@ void TopLevel::activateIconView()
   icon_small->setEnabled(true);
   icon_medium->setEnabled(true);
   icon_large->setEnabled(true);
+  icon_huge->setEnabled(true);
 
   switch(KCGlobal::iconSize())
     {
@@ -259,6 +270,9 @@ void TopLevel::activateIconView()
       break;
     case KIcon::SizeLarge:
       icon_large->setChecked(true);
+      break;
+    case KIcon::SizeHuge:
+      icon_huge->setChecked(true);
       break;
     default:
       icon_medium->setChecked(true);
@@ -274,6 +288,7 @@ void TopLevel::activateTreeView()
   icon_small->setEnabled(false);
   icon_medium->setEnabled(false);
   icon_large->setEnabled(false);
+  icon_huge->setEnabled(false);
 }
 
 void TopLevel::activateSmallIcons()
@@ -291,6 +306,12 @@ void TopLevel::activateMediumIcons()
 void TopLevel::activateLargeIcons()
 {
   KCGlobal::setIconSize(KIcon::SizeLarge);
+  _indextab->reload();
+}
+
+void TopLevel::activateHugeIcons()
+{
+  KCGlobal::setIconSize(KIcon::SizeHuge);
   _indextab->reload();
 }
 

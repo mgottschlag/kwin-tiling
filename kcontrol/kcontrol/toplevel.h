@@ -63,6 +63,7 @@ protected slots:
   void activateSmallIcons();
   void activateMediumIcons();
   void activateLargeIcons();
+  void activateHugeIcons();
 
   void deleteDummyAbout();
 
@@ -83,7 +84,7 @@ private:
   ModuleTitle    *_title;
 
   KToggleAction *tree_view, *icon_view;
-  KToggleAction *icon_small, *icon_medium, *icon_large;
+  KToggleAction *icon_small, *icon_medium, *icon_large, *icon_huge;
   KAction *report_bug, *about_module;
 
   IndexWidget  *_indextab;
