@@ -714,6 +714,7 @@ void KScreenSaver::slotTest()
         mTestWin->raise();
         mTestWin->setFocus();
         mTestWin->grabKeyboard();
+        mTestWin->grabMouse();
 
         mTestBt->setEnabled( FALSE );
 	mPreviewProc->kill();
@@ -739,6 +740,7 @@ void KScreenSaver::slotStopTest()
     if (mTestProc->isRunning()) {
         mTestProc->kill();
     }
+    mTestWin->releaseMouse();
     mTestWin->releaseKeyboard();
     mTestWin->hide();
     mTestBt->setEnabled(true);
