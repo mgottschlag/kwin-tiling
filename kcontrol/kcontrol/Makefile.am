@@ -65,6 +65,8 @@ rc_DATA = kcontrolui.rc
 data_DATA = KControl.desktop
 datadir = $(kde_appsdir)
 
+KDE_ICON=AUTO
+
 EXTRA_DIST = $(data_DATA)
 
 messages: rc.cpp
