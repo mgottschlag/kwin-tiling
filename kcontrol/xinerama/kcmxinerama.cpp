@@ -124,6 +124,12 @@ void KCMXinerama::load() {
 		xw->_enableResistance->setChecked(config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, true));
 		xw->_enablePlacement->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, true));
 		xw->_enableMaximize->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, true));
+		item = config->readNumEntry("Unmanaged", QApplication::desktop()->primaryScreen());
+		if ((item < 0 || item >= _displays) && (item != -3))
+			xw->_unmanagedDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());
+		else if (item == -3) // pointer warp
+			xw->_unmanagedDisplay->setCurrentItem(_displays);
+		else	xw->_unmanagedDisplay->setCurrentItem(item);
 
 		ksplashrc->setGroup("Xinerama");
 		item = ksplashrc->readNumEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
@@ -147,7 +153,10 @@ void KCMXinerama::save() {
 					xw->_enablePlacement->isChecked());
 		config->writeEntry(KWIN_XINERAMA_MAXIMIZE,
 					xw->_enableMaximize->isChecked());
+		int item = xw->_unmanagedDisplay->currentItem();
+		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
 		config->sync();
+
 		if (!kapp->dcopClient()->isAttached())
 			kapp->dcopClient()->attach();
 		kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
@@ -188,6 +197,9 @@ void KCMXinerama::indicateWindows() {
 }
 
 void KCMXinerama::windowIndicator(int dpy) {
+	if (dpy >= _displays)
+		return;
+
 	_timer.stop();
 
 	clearIndicator();
