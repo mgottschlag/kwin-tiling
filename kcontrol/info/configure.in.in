@@ -5,3 +5,6 @@ case "$host" in
     ;;
 esac
 AC_SUBST(LIB_TRU64_MACH)
+
+KDE_CHECK_LONG_LONG
+
