@@ -64,6 +64,8 @@
 #define KWIN_MOVE_RESIZE_MAXIMIZED "MoveResizeMaximizedWindows"
 #define KWIN_ALTTABMODE            "AltTabStyle"
 #define KWIN_CTRLTAB               "ControlTab"
+#define KWIN_SHADEHOVER            "ShadeHover"
+#define KWIN_SHADEHOVER_INTERVAL   "ShadeHoverInterval"
 
 
 extern "C" {
@@ -294,6 +296,43 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
     lay->addWidget(fcsBox);
 
+    shBox = new QButtonGroup(i18n("Shade Hover"), this);
+    QGridLayout *shLay = new QGridLayout(shBox, 3, 3,
+                                         KDialog::marginHint(),
+										 KDialog::spacingHint());
+    shLay->addRowSpacing(0,10);
+    shadeHoverOn = new QCheckBox(i18n("Enable Shade Hover"), shBox);
+    shLay->addWidget(shadeHoverOn, 1, 0);
+
+    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(shadeHoverChanged(bool)));
+
+    shlabel = new QLabel(i18n("Shade Hover Delay"), shBox);
+    shlabel->setAlignment(AlignVCenter | AlignHCenter);
+    shLay->addWidget(shlabel, 2, 0, AlignLeft);
+
+    shadeHoverNum = new QLCDNumber (4, shBox);
+    shadeHoverNum->setFrameStyle( QFrame::NoFrame );
+    shadeHoverNum->setFixedHeight(30);
+    shadeHoverNum->adjustSize();
+    shadeHoverNum->setMinimumSize(shadeHoverNum->size());
+    shLay->addWidget(shadeHoverNum, 1, 2);
+
+    shadeHover = new KIntNumInput(500, shBox);
+    shadeHover->setRange(0, 3000, 100, true);
+    shadeHover->setSteps(100, 100);
+    shLay->addMultiCellWidget(shadeHover, 2, 2, 1, 2);
+    connect(shadeHover, SIGNAL(valueChanged(int)), shadeHoverNum, SLOT(display(int)));
+
+    QWhatsThis::add(shadeHoverOn, i18n("If Shade Hover is enabled, a shaded window will un-shade automatically "
+                                       "when the mouse pointer has been over the title bar for some time."));
+
+    wtstr = i18n("Sets the time in milliseconds before the window unshades "
+                "when the mouse pointer goes over the shaded window.");
+    QWhatsThis::add(shadeHover, wtstr);
+    QWhatsThis::add(shadeHoverNum, wtstr);
+    QWhatsThis::add(shlabel, wtstr);
+
+    lay->addWidget(shBox);
 
     kbdBox = new QButtonGroup(i18n("Keyboard"), this);
     QGridLayout *kLay = new QGridLayout(kbdBox, 3, 4,
@@ -338,6 +377,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     connect(focusCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
     connect(fcsBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
     connect(autoRaise, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+    connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    connect(shadeHover, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
     connect(kdeMode, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect(cdeMode, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect(ctrlTab, SIGNAL(clicked()), this, SLOT(slotChanged()));
@@ -497,6 +538,28 @@ void KWindowConfig::autoRaiseOnTog(bool a) {
 void KWindowConfig::clickRaiseOnTog(bool ) {
 }
 
+void KWindowConfig::setShadeHover(bool on) {
+    shadeHoverOn->setChecked(on);
+    shadeHoverNum->setEnabled(on);
+    shadeHover->setEnabled(on);
+    shlabel->setEnabled(on);
+}
+
+void KWindowConfig::setShadeHoverInterval(int k) {
+    shadeHover->setValue(k);
+    shadeHoverNum->display(k);
+}
+
+int KWindowConfig::getShadeHoverInterval() {
+    return shadeHoverNum->intValue();
+}
+
+void KWindowConfig::shadeHoverChanged(bool a) {
+    shadeHover->setEnabled(a);
+    shadeHoverNum->setEnabled(a);
+    shlabel->setEnabled(a);
+}
+
 void KWindowConfig::setAnimateShade(bool a) {
     animateShade->setChecked(a);
 }
@@ -605,6 +668,12 @@ void KWindowConfig::load( void )
 
     setCtrlTab(config->readBoolEntry(KWIN_CTRLTAB, true));
 
+    key = config->readEntry(KWIN_SHADEHOVER, "off");
+    setShadeHover(key == "on");
+
+    k = config->readNumEntry(KWIN_SHADEHOVER_INTERVAL, 250);
+    setShadeHoverInterval(k);
+
 
 delete config;
 }
@@ -689,6 +758,15 @@ void KWindowConfig::save( void )
     config->writeEntry(KWIN_MOVE_RESIZE_MAXIMIZED, moveResizeMaximized->isChecked());
 
     config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
+
+    if (shadeHoverOn->isChecked())
+	config->writeEntry(KWIN_SHADEHOVER, "on");
+    else
+	config->writeEntry(KWIN_SHADEHOVER, "off");
+
+    v = getShadeHoverInterval();
+    if (v<0) v = 0;
+    config->writeEntry(KWIN_SHADEHOVER_INTERVAL, v);
 
     config->sync();
 

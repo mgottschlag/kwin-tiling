@@ -84,6 +84,7 @@ private slots:
   void autoRaiseOnTog(bool);//CT 23Oct1998
   void clickRaiseOnTog(bool);
   void slotChanged();
+  void shadeHoverChanged(bool);
 
 private:
 
@@ -94,6 +95,7 @@ private:
   int getPlacement( void ); //CT
   int getFocus( void );
   int getAutoRaiseInterval( void );
+  int getShadeHoverInterval (void );
 
   void setMove(int);
   void setMinimizeAnim(bool,int);
@@ -107,6 +109,8 @@ private:
   void setMoveResizeMaximized(bool);
   void setAltTabMode(bool);
   void setCtrlTab(bool);
+  void setShadeHover(bool);
+  void setShadeHoverInterval(int);
 
   QButtonGroup *windowsBox;
   QCheckBox *opaque;
@@ -132,6 +136,12 @@ private:
   QLabel *alabel;
   QLCDNumber *s;
   //CT  QLabel *sec;
+
+  QButtonGroup *shBox;
+  QCheckBox *shadeHoverOn;
+  KIntNumInput *shadeHover;
+  QLCDNumber *shadeHoverNum;
+  QLabel *shlabel;
 
   QButtonGroup *kbdBox;
   QRadioButton *kdeMode;
