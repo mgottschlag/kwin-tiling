@@ -530,7 +530,7 @@
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Black on White&lt;/b&gt;&lt;p&gt;This is what you normally see.&lt;/p</string>
+                                    <string>&lt;b&gt;Black on White&lt;/b&gt;&lt;p&gt;This is what you normally see.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="5"  column="0"  rowspan="1"  colspan="3" >
