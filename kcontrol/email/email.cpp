@@ -116,6 +116,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	btnBrowseClient = new QPushButton( grpClient, "btnBrowseClient" );
 	btnBrowseClient->setGeometry( QRect( 420, 20, 102, 26 ) ); 
 	btnBrowseClient->setText(i18n( "&Browse..." ) );
+	connect(btnBrowseClient, SIGNAL(clicked()), this, SLOT(selectEmailClient()));
 
 	chkRunTerminal = new QCheckBox( grpClient, "chkRunTerminal" );
 	chkRunTerminal->setGeometry( QRect( 20, 45, 106, 19 ) ); 
@@ -129,7 +130,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	topLayout->addWidget(grpIncoming);
 
 	grpICM = new QButtonGroup( grpIncoming, "grpICM" );
-	grpICM->setTitle(i18n( "Mail retrieval type" ) );
+	grpICM->setTitle(i18n( "Mail Retrieval Type" ) );
 	grpICM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
 	grpICM->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
@@ -145,7 +146,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	radICMLocal = new QRadioButton( grpICM, "radICMLocal" );
 	radICMLocal->setGeometry( QRect( 120, 20, 98, 19 ) ); 
-	radICMLocal->setText(i18n( "Local &mailbox" ) );
+	radICMLocal->setText(i18n( "Local &Mailbox" ) );
 	connect(radICMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	btnICMSettings = new QPushButton( grpIncoming, "btnICMRemoteSettings" );
@@ -156,29 +157,29 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 
 	grpOutgoing = new QGroupBox( 2, Qt::Horizontal, this, "grpOutgoing" );
 	grpOutgoing->setGeometry( QRect( 5, 370, 535, 80 ) ); 
-	grpOutgoing->setTitle( i18n( "Outgoing Mail Settings" ) );
+	grpOutgoing->setTitle( i18n( "Outgoing Mail" ) );
 	grpOutgoing->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	topLayout->addWidget(grpOutgoing);
+	topLayout->addWidget(grpOutgoing, 5);
 
 	grpOGM = new QButtonGroup(grpOutgoing, "grpOGM" );
 	grpOGM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
 	grpOGM->setTitle( i18n( "Mail Delivery Method" ) );
-	grpOGM->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+	grpOGM->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 	radSMTP = new QRadioButton( grpOGM, "radSMTP" );
 	radSMTP->setGeometry( QRect( 10, 20, 55, 19 ) ); 
-	radSMTP->setText( i18n("SMTP") );
+	radSMTP->setText( i18n("&SMTP") );
 	connect(radSMTP, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	radOGMLocal = new QRadioButton( grpOGM, "radOGMLocal" );
 	radOGMLocal->setGeometry( QRect( 75, 20, 103, 19 ) ); 
-	radOGMLocal->setText( i18n("Local Delivery") );
+	radOGMLocal->setText( i18n("&Local Delivery") );
 	connect(radOGMLocal, SIGNAL(clicked()), this, SLOT(configChanged()));
 
 	btnOGMSettings = new QPushButton( grpOutgoing, "btnOGMSMTPSettings" );
 	btnOGMSettings->setGeometry( QRect( 245, 15, 175, 26 ) ); 
 	btnOGMSettings->setText(i18n( "Outgoing mailbox settings..." ));
-	btnOGMSettings->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	btnOGMSettings->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 	connect(btnOGMSettings, SIGNAL(clicked()), this, SLOT(slotOGMSettings()));
 
 	grpOGM->setGeometry( QRect( 5, 20, 230, 50 ) ); 
@@ -300,6 +301,7 @@ void topKCMEmail::slotNewProfile()
 	lblName->setText(i18n("Name:"));
 	lblName->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 	QLineEdit *txtName = new QLineEdit(dlgAskName);
+	lblName->setBuddy(txtName);
 	layout->addWidget(lblName);
 	layout->addWidget(txtName);
 
@@ -314,6 +316,7 @@ void topKCMEmail::slotNewProfile()
 	layout->addWidget(btnCancel);
 	connect(btnOK, SIGNAL(clicked()), dlgAskName, SLOT(accept()));
 	connect(btnCancel, SIGNAL(clicked()), dlgAskName, SLOT(reject()));
+	txtName->setFocus();
 
 	if (dlgAskName->exec() == QDialog::Accepted) {
 		if (txtName->text().isEmpty()) {
