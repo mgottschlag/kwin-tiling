@@ -141,7 +141,7 @@ void ConfigModule::runAsRoot()
   _embedFrame = new QVBox( _module->parentWidget() );
   _embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
   QPalette pal( red );
-  pal.setColor( QColorGroup::Background, 
+  pal.setColor( QColorGroup::Background,
 		_module->parentWidget()->colorGroup().background() );
   _embedFrame->setPalette( pal );
   _embedFrame->setLineWidth( 2 );
@@ -197,7 +197,11 @@ void ConfigModule::runAsRoot()
 
       connect(_rootProcess, SIGNAL(processExited(KProcess*)), this, SLOT(rootExited(KProcess*)));
 
-      _rootProcess->start(KProcess::NotifyOnExit);
+      if ( !_rootProcess->start(KProcess::NotifyOnExit) )
+      {
+          delete _rootProcess;
+          _rootProcess = 0L;
+      }
 
       return;
     }
