@@ -2,6 +2,7 @@
  * smartcard.cpp
  *
  * Copyright (c) 2001 George Staikos <staikos@kde.org>
+ * Copyright (c) 2001 Fernando Llobregat <fernando.llobregat@free.fr>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@
 
 #include <kdebug.h>
 KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(parent, name),DCOPObject(name)
 {
   
   
@@ -51,7 +52,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   config = new KConfig("ksmartcardrc", false, false);
 
   DCOPClient *dc = KApplication::kApplication()->dcopClient();
-  dc->attach();
+  
   _ok = false;
   dc->remoteInterfaces("kded", "kardsvc", &_ok);
 
@@ -70,6 +71,8 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
      connect(base->launchManager, SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->beepOnInsert,  SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->enableSupport, SIGNAL(clicked()), this, SLOT(configChanged()));
+
+
      connect(base->enablePolling, SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->_readerHostsListView,
 	     SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
@@ -78,12 +81,23 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
 
 
   
+     if (!connectDCOPSignal("",
+			    "",
+			    "signalReaderListChanged(QStringList)",
+			    "loadReadersTab(QStringList)",
+			    FALSE))
+       
+       kdDebug()<<"Error connecting to DCOP server" <<endl;
+
      _cardDB= new KCardDB();
      load();
   } else {
      layout->add(new NoSmartcardBase(this));
   }
 }
+
+
+
 
 KSmartcardConfig::~KSmartcardConfig()
 {
@@ -118,51 +132,71 @@ void KSmartcardConfig::slotShowPopup(QListViewItem * item ,const QPoint & _point
 
 }
 
+void KSmartcardConfig::loadSmartCardSupportTab(){
 
 
+  
+  //Update the toggle buttons with the current configuration
 
-void KSmartcardConfig::load()
-{
+  if (_ok) {
+  base->enableSupport->setChecked(config->readBoolEntry("Enable Support", 
+							false));
+  base->enablePolling->setChecked(config->readBoolEntry("Enable Polling", 
+							true));
+  base->beepOnInsert->setChecked(config->readBoolEntry("Beep on Insert", 
+						       true));
+  base->launchManager->setChecked(config->readBoolEntry("Launch Manager", 
+							true));
 
+  
+  
+  }
+}
+
+void KSmartcardConfig::loadReadersTab( QStringList lr){
+
+  //Prepare data for dcop calls
   QByteArray data, retval;
   QCString rettype;
   QDataStream arg(data, IO_WriteOnly);
   QCString modName = "kardsvc";
   arg << modName;
-  KListViewItem * temp;
 
-if (_ok) {
-  base->enableSupport->setChecked(config->readBoolEntry("Enable Support", false));
-  base->enablePolling->setChecked(config->readBoolEntry("Enable Polling", true));
-  base->beepOnInsert->setChecked(config->readBoolEntry("Beep on Insert", true));
-  base->launchManager->setChecked(config->readBoolEntry("Launch Manager", true));
+  //  New view items
+  KListViewItem * temp;
   
+  //If the smartcard support is disabled we unload the kardsvc KDED module
+  //  and return
+
   base->_readerHostsListView->clear();
+  
   if (!config->readBoolEntry("Enable Support", false)){
+ 
+   
+
     
+    //  New view items
+    KListViewItem * temp;
     kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)", 
 			     data, rettype, retval);
     
-    (void) new KListViewItem(base->_readerHostsListView,i18n("Smart card support disabled"));
+    (void) new KListViewItem(base->_readerHostsListView,
+			     i18n("Smart card support disabled"));
+    
+    
     return;
+    
+  }  
 
+  if (lr.isEmpty()){
+
+
+    (void) new KListViewItem(base->_readerHostsListView,
+			     i18n("No readers found.Check 'pcscd' is running"));
+    return;
   }
   
-  kapp->dcopClient()->call("kded", "kardsvc", "getSlotList ()", 
-			   data, rettype, retval);
-  QStringList _readers;
-  _readers.clear();
-  QDataStream _retReader(retval, IO_ReadOnly);
-  _retReader>>_readers;
-
-  if (_readers.isEmpty()){
-
-
-    (void) new KListViewItem(base->_readerHostsListView,i18n("No readers found.Check 'pcscd' is running"));
-    return;
-  }
-
-  for (QStringList::Iterator _slot=_readers.begin();_slot!=_readers.end();++_slot){
+  for (QStringList::Iterator _slot=lr.begin();_slot!=lr.end();++_slot){
 
    temp= new KListViewItem(base->_readerHostsListView,*_slot);
    
@@ -176,8 +210,8 @@ if (_ok) {
 
    
    QString cardATR;
-   QDataStream _retReaderATR(retval, IO_ReadOnly);
-   _retReaderATR>>cardATR;
+   QDataStream retReaderATR(retval, IO_ReadOnly);
+   retReaderATR>>cardATR;
    
    if (cardATR.isNull()){
      
@@ -209,8 +243,37 @@ if (_ok) {
 
    
   }
-  emit changed(false);
+  
 }
+
+
+void KSmartcardConfig::load()
+{
+
+
+  //Prepare data for dcop calls
+  QByteArray data, retval;
+  QCString rettype;
+  QDataStream arg(data, IO_WriteOnly);
+  QCString modName = "kardsvc";
+  arg << modName;
+  
+  loadSmartCardSupportTab();
+  
+
+  // We call kardsvc to retrieve the current readers
+  kapp->dcopClient()->call("kded", "kardsvc", "getSlotList ()", 
+			   data, rettype, retval);
+  QStringList readers;
+  readers.clear();
+  QDataStream retReader(retval, IO_ReadOnly);
+  retReader>>readers;
+  
+  //And we update the panel
+  loadReadersTab(readers);
+
+  emit changed(false);
+ 
 }
 
 
@@ -222,32 +285,28 @@ if (_ok) {
   config->writeEntry("Beep on Insert", base->beepOnInsert->isChecked());
   config->writeEntry("Launch Manager", base->launchManager->isChecked());
 
-
-
+      
+  QByteArray data, retval;
+  QCString rettype;
+  QDataStream arg(data, IO_WriteOnly);
+  QCString modName = "kardsvc";
+  arg << modName;
+  
   // Start or stop the server as needed
   if (base->enableSupport->isChecked()) {
-    
-	QByteArray data, retval;
-	QCString rettype;
-	QDataStream arg(data, IO_WriteOnly);
-	QCString modName = "kardsvc";
-	arg << modName;
-	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
-			         data, rettype, retval);
 
-	config->sync();
-       
-	kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
-			         data, rettype, retval);
+    kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)", 
+			     data, rettype, retval);
+    config->sync();
+    
+    kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
+			     data, rettype, retval);
   } else {
+    
    
-	QByteArray data, retval;
-	QCString rettype;
-	QDataStream arg(data, IO_WriteOnly);
-	QCString modName = "kardsvc";
-	arg << modName;
-	kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)", 
-			         data, rettype, retval);
+
+    kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)", 
+			     data, rettype, retval);
   }
 
 

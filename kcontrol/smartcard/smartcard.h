@@ -30,14 +30,16 @@
 #include "smartcardbase.h"
 #include "nosmartcardbase.h"
 
+#include <dcopobject.h>
 class KConfig;
 class KCardDB;
 class KPopupMenu;
 
-class KSmartcardConfig : public KCModule
+class KSmartcardConfig : public KCModule, public DCOPObject
 {
-  Q_OBJECT
- 
+  K_DCOP
+    Q_OBJECT
+
 
 public:
   KSmartcardConfig(QWidget *parent = 0L, const char *name = 0L);
@@ -53,6 +55,12 @@ public:
   QString quickHelp() const;
   const KAboutData* aboutData() const;
   
+
+ k_dcop:
+  
+  void loadReadersTab (QStringList lr);
+
+
   public slots:
     
     void configChanged();
@@ -63,8 +71,7 @@ public:
   void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i); 
   void slotLaunchChooser();
   
-
-
+  
 
 private:
 
@@ -73,6 +80,7 @@ private:
   KCardDB * _cardDB;
   KPopupMenu * _popUpKardChooser;
 
+  void loadSmartCardSupportTab();
   
 };
 
