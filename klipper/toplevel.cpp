@@ -11,19 +11,22 @@
 
 #include <qclipboard.h>
 #include <qcursor.h>
+#include <qfile.h>
 #include <qintdict.h>
-#include <qmenudata.h>
 #include <qpainter.h>
-#include <qstrlist.h>
 
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 #include <kkeydialog.h>
 #include <klocale.h>
-#include <kwin.h>
+#include <kmessagebox.h>
+#include <kstddirs.h>
+#include <ksimpleconfig.h>
 #include <kstringhandler.h>
-#include <kiconloader.h>
+#include <kwin.h>
 #include <kdebug.h>
 
 #include "configdialog.h"
@@ -214,10 +217,22 @@ void TopLevel::clickedMenu(int id)
     case CONFIG_ITEM:
         slotConfigure();
         break;
-    case QUIT_ITEM:
+    case QUIT_ITEM: {
         saveProperties();
+        int autoStart = KMessageBox::questionYesNo( 0L, i18n("Shall Klipper start automatically\nwhen you log in?"), i18n("Automatically start Klipper?") );
+        
+        QString file = locateLocal( "data", "../autostart/klipper.desktop" );
+        if ( autoStart == KMessageBox::Yes )
+            QFile::remove( file );
+        else {
+            KSimpleConfig config( file );
+            config.setDesktopGroup();
+            config.writeEntry( "Hidden", true );
+            config.sync();
+        }
         kapp->quit();
         break;
+        }
 //    case URLGRAB_ITEM: // handled with an extra slot
 //	break;
     case EMPTY_ITEM:
@@ -235,7 +250,7 @@ void TopLevel::clickedMenu(int id)
 	}
 	break;
     default:
-	if ( id == URLGrabItem ) 
+	if ( id == URLGrabItem )
 	{
 	    break; // handled by its own slot
 	}
@@ -316,10 +331,10 @@ void TopLevel::readProperties(KConfig *kc)
   pQPMmenu->insertSeparator();
   toggleURLGrabAction->plug( pQPMmenu, -1 );
   URLGrabItem = pQPMmenu->idAt( pQPMmenu->count() - 1 );
-  
-  pQPMmenu->insertItem( SmallIcon("fileclose"), 
+
+  pQPMmenu->insertItem( SmallIcon("fileclose"),
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
-  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), 
+  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."),
 		       CONFIG_ITEM);
   pQPMmenu->insertSeparator();
   pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
