@@ -40,7 +40,7 @@
 #include <kdialog.h>
 #include <kapp.h>
 #include <dcopclient.h>
-#include <kdesktopwidget.h>
+#include <qdesktopwidget.h>
 
 #include <kglobal.h>
 
