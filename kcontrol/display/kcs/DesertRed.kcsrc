@@ -1,37 +1,6 @@
 # KDE Config File
 [Color Scheme]
 Name=Desert red
-Name[ca]=Roig desert
-Name[cs]=Pouštní červená
-Name[de]=Wüstenrot
-Name[el]=Κόκκινο της Ερήμου
-Name[eo]=Dezerta ruĝo
-Name[es]=Rojo desierto
-Name[et]=Dessertpunane
-Name[fi]=Aavikon punainen
-Name[fr]=Désert rouge
-Name[he]=ירבדמ םודא
-Name[hu]=Téglavörös
-Name[is]=Eyðimerkurrautt
-Name[it]=Rosso deserto
-Name[ja]=砂漠色
-Name[lt]=Raudona dykumos
-Name[lv]=Deserta sarkans
-Name[nl]=Woestijnrood
-Name[no]=Ørken Rød
-Name[no_NY]=Ørkenraud
-Name[pt]=Vermelho deserto
-Name[pt_BR]=Deserto vermelho
-Name[ro]=Deşert roşu
-Name[sk]=Púštna červená
-Name[sl]=Puščavska rdeča
-Name[sr]=Pustinjsko crvena
-Name[sv]=Ökenröd
-Name[ta]=À¡¨ÄÅÉ º¢ÅôÒ
-Name[tr]=Çöl kırmızısı
-Name[uk]=Червона пустеля
-Name[zh_CN.GB2312]=沙漠红
-Name[zh_TW.Big5]=沙漠紅
 background=214,205,187
 buttonBackground=214,205,187
 buttonForeground=0,0,0
