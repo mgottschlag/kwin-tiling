@@ -53,9 +53,9 @@ const QStringList& TaskbarConfig::actionList()
 {
     static QStringList list(
             QStringList() << I18N_NOOP("Show Task List") << I18N_NOOP("Show Operations Menu")
-            << I18N_NOOP("Activate, Raise or Iconify Task")
+            << I18N_NOOP("Activate, Raise or Minimize Task")
             << I18N_NOOP("Activate Task") << I18N_NOOP("Raise Task")
-            << I18N_NOOP("Lower Task") << I18N_NOOP("Iconify Task") );
+            << I18N_NOOP("Lower Task") << I18N_NOOP("Minimize Task") );
     return list;
 }
 
