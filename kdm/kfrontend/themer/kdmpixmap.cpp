@@ -19,10 +19,15 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <config.h>
+
 #include "kdmpixmap.h"
 
 #include <kimageeffect.h>
+#ifdef HAVE_LIBART
 #include <ksvgiconengine.h>
+#endif
+
 #include <kdebug.h>
 
 #include <qpainter.h>
@@ -113,6 +118,7 @@ KdmPixmap::loadPixmap( const QString &fileName, QPixmap &map, QString &fullName 
 void
 KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 {
+#ifdef HAVE_LIBART
 	// Special stuff for SVG icons
 	KSVGIconEngine *svgEngine = new KSVGIconEngine();
 
@@ -126,6 +132,10 @@ KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 	}
 
 	delete svgEngine;
+#else
+        Q_UNUSED(pClass);
+        Q_UNUSED(area);
+#endif
 }
 
 void
