@@ -40,7 +40,8 @@ public:
   KLocaleConfig( QWidget *parent=0, const char *name=0);
   ~KLocaleConfig( );
 
-  void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
+  void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
+  void loadCountryList(KLanguageCombo *combo);
 
   void load();
   void save();

@@ -86,13 +86,11 @@ KLocaleConfig::~KLocaleConfig ()
 {
 }
 
-void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first)
+void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &first)
 {
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = locale;
-
-  QString name;
 
   // clear the list
   combo->clear();
@@ -101,14 +99,14 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
   // add the primary languages for the country to the list
   for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
     {
-        QString str = locate("locale", sub + *it + QString::fromLatin1("/entry.desktop"));
+        QString str = locate("locale", *it + QString::fromLatin1("/entry.desktop"));
         if (!str.isNull())
           prilang << str;
     }
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-							   sub + QString::fromLatin1("*/entry.desktop"));
+							   QString::fromLatin1("*/entry.desktop"));
   alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
@@ -128,14 +126,75 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
         }
 	KSimpleConfig entry(*it);
 	entry.setGroup(QString::fromLatin1("KCM Locale"));
-	name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
+	QString name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
 	
 	QString path = *it;
 	int index = path.findRev('/');
 	path = path.left(index);
 	index = path.findRev('/');
 	path = path.mid(index+1);
-	combo->insertLanguage(path, name, sub, submenu);
+	combo->insertLanguage(path, name, QString::null, submenu);
+    }
+  // restore the old global locale
+  KGlobal::_locale = lsave;
+}
+
+void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
+{
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = locale;
+
+  QString sub = QString::fromLatin1("l10n/");
+
+  // clear the list
+  combo->clear();
+
+  QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
+							     sub + QString::fromLatin1("*.desktop"));
+  regionlist.sort();
+
+  for ( QStringList::ConstIterator it = regionlist.begin();
+	it != regionlist.end();
+	++it )
+  {
+    QString tag = *it;
+    int index;
+
+    index = tag.findRev('/');
+    if (index != -1) tag = tag.mid(index + 1);
+
+    index = tag.findRev('.');
+    if (index != -1) tag.truncate(index);
+
+    KSimpleConfig entry(*it);
+    entry.setGroup(QString::fromLatin1("KCM Locale"));
+    QString name = entry.readEntry(QString::fromLatin1("Name"),
+				   locale->translate("without name"));
+
+    combo->insertSubmenu( name, tag, sub );
+  }
+
+  // add all languages to the list
+  QStringList countrylist = KGlobal::dirs()->findAllResources("locale",
+							   sub + QString::fromLatin1("*/entry.desktop"));
+  countrylist.sort();
+
+  for ( QStringList::ConstIterator it = countrylist.begin();
+	it != countrylist.end(); ++it )
+    {
+	KSimpleConfig entry(*it);
+	entry.setGroup(QString::fromLatin1("KCM Locale"));
+	QString name = entry.readEntry(QString::fromLatin1("Name"),
+				       locale->translate("without name"));
+	QString submenu = entry.readEntry(QString::fromLatin1("Region"));
+	
+	QString tag = *it;
+	int index = tag.findRev('/');
+	tag.truncate(index);
+	index = tag.findRev('/');
+	tag = tag.mid(index+1);
+	combo->insertLanguage(tag, name, sub, submenu);
     }
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -165,8 +224,8 @@ void KLocaleConfig::load()
   if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
   // load lists into widgets
-  loadLocaleList(comboLang, QString::null, langs);
-  loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
+  loadLanguageList(comboLang, langs);
+  loadCountryList(comboCountry);
 
   // update widgets
   comboLang->setCurrentItem(locale->language());
@@ -209,7 +268,7 @@ void KLocaleConfig::defaults()
   locale->setCountry(C);
 
   reTranslateLists();
-  loadLocaleList(comboLang, QString::null, QStringList());
+  loadLanguageList(comboLang, QStringList());
 
   comboCountry->setCurrentItem(C);
   comboLang->setCurrentItem(C);
@@ -255,7 +314,7 @@ void KLocaleConfig::changedCountry(int i)
   locale->setCountry(country);
 
   reTranslateLists();
-  loadLocaleList(comboLang, QString::null, langs);
+  loadLanguageList(comboLang, langs);
 
   comboLang->setCurrentItem(lang);
 
