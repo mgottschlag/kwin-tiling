@@ -199,7 +199,7 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
         if( it.current()->shortcut == shortcut_P )
             shortcut_P = ""; // this shortcut is taken up by some other action
         }
-    map.insertAction( action_name_P, action_name_P, QString::null,
+    map.insert( action_name_P, action_name_P, QString::null,
         KShortcut(shortcut_P), KShortcut(shortcut_P) );
     QWidget* page = new QWidget( this );
     setMainWidget( page );         // CHECKME i18n
@@ -209,7 +209,7 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
     line->setText( item_P->run );
 //    line->setMinimumWidth( 500 );
     line->setReadOnly( true );
-    keychooser = new KKeyChooser( map, page, true, false, true );
+    keychooser = new KKeyChooser( map, page, KKeyChooser::ApplicationGlobal, false );
     connect( keychooser, SIGNAL( keyChange()), this, SLOT( key_changed()));
     QBoxLayout* main_layout = new QVBoxLayout( page, KDialog::marginHint(),
         KDialog::spacingHint());

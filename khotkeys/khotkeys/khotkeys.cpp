@@ -14,7 +14,7 @@
 #include <config.h>
 #endif
 
-//#include <kaccelbase.h>
+#include <kaccelaction.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
@@ -156,7 +156,7 @@ void KHotKeysApp::start_menuentry( const QString& action_P )
 
 void KHotKeysApp::reread_configuration()
     {
-    accel->clearActions();
+    accel->actions().clear();
     data.clear();
     KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
@@ -164,7 +164,7 @@ void KHotKeysApp::reread_configuration()
          it.current();
          ++it )
         {
-        accel->insertAction( it.currentKey(), it.currentKey(), QString::null,
+        accel->insert( it.currentKey(), it.currentKey(), QString::null,
             KShortcut(it.current()->shortcut), KShortcut(it.current()->shortcut),
             this, SLOT( accel_activated( const QString&, const QString&, const KKeySequence& )));
         }
