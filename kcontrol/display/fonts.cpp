@@ -153,7 +153,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("File manager")   << "FMSettings" << "StandardFont" << "konquerorrc"
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
-    << i18n("Window title")   << "WM"         << "titleFont"    << "";
+    << i18n("Window title")   << "WM"         << "activeFont"   << "";
 // Disabled these two for beta release, as they don't do anything.
 //    << i18n("Taskbar button") << "General"    << "taskbarFont"  << "kickerrc"
 //    << i18n("Panel clock")    << "General"    << "dateFont"     << "kickerrc";
