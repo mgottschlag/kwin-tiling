@@ -100,10 +100,17 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   show_recent_cb = new QCheckBox(i18n("Show recent documents submenu."), kmenu_group);
   connect(show_recent_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_recent_cb);
+  QWhatsThis::add( show_recent_cb, i18n("Enabling this option will make the panel show"
+    " a recent documents menu in your KDE menu, containing shortcuts to your most recently"
+    " edited documents. This assumes you've been using KDE applications to edit those documents,"
+    " as other applications will not be able to take advantage of this feature."));
 
   show_qb_cb = new QCheckBox(i18n("Show quickbrowser submenu."), kmenu_group);
   connect(show_qb_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_qb_cb);
+  QWhatsThis::add( show_qb_cb, i18n("Enabling this option will show the 'Quick Browser' in your"
+    " KDE menu, a fast way of accessing your files via submenus. You can also add a Quick Browser"
+    " as a panel button, using the panel context menu."));
 
   layout->addWidget(kmenu_group,2,0);
 

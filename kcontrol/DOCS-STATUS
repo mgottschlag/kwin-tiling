@@ -71,7 +71,6 @@ info:
 
 input:
   keyboard.cpp           [ ]        [x]         [x]         [x]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
   mouse.cpp              [ ]        [x]         [x]         [x]
 
 kcontrol:
@@ -85,7 +84,7 @@ kcontrol:
 kdm:
   backgnd.cpp            [ ]        [s]         [ ]         [ ]
   bgdialogs.cpp          [ ]        [ ]         [ ]         [ ]
-  kdm-appear.cpp         [ ]        [s]         [ ]         [ ]
+  kdm-appear.cpp         [ ]        [x]         [ ]         [ ]
   kdm-font.cpp           [ ]        [s]         [ ]         [ ]
   kdm-lilo.cpp           [ ]        [ ]         [ ]         [ ]
   kdm-sess.cpp           [ ]        [s]         [ ]         [ ]
@@ -96,11 +95,11 @@ kdm:
 keys:
   keyconfig.cpp          [ ]        [x]         [ ]         [ ]
   main.cpp               [ ]        [x]         [ ]         [ ]
-  kkeydialog in kdeui!   [ ]        [ ]         [ ]         [ ]
+  kkeydialog in kdeui!   [ ]        [x]         [ ]         [ ]
 
 kicker:
   buttontab.cpp          [ ]        [s]         [ ]         [ ]
-  lnftab.cpp             [ ]        [s]         [ ]         [ ]
+  lnftab.cpp             [ ]        [x]         [ ]         [ ]
   main.cpp               [ ]        [x]         [ ]         [ ]
   menutab.cpp            [ ]        [s]         [ ]         [ ]
   paneltab.cpp           [ ]        [s]         [ ]         [ ]
@@ -128,6 +127,8 @@ konq:
   rootopts.cpp           [ ]        [x]         [ ]         [ ]
   trashopts.cpp          [ ]        [x]         [x]         [x]
 
+// David said there'd probably still be changes to konqhtml stuff
+
 konqhtml:
   htmlopts.cpp           [ ]        [s]         [ ]         [ ]
   khttpoptdlg.cpp        [ ]        [ ]         [ ]         [ ]
@@ -140,21 +141,19 @@ kwm:
   advanced.cpp           [ ]        [ ]         [ ]         [ ]
   desktop.cpp            [ ]        [x]         [ ]         [ ]
   mouse.cpp              [ ]        [x]         [ ]         [ ]
-  titlebar.cpp           [ ]        [ ]         [ ]         [ ]  Is this not used anymore due to KWin's styles?
+  titlebar.cpp           [ ]        [ ]         [ ]         [ ]  Is this not used anymore due to KWin's clients code?
   windows.cpp            [ ]        [x]         [ ]         [ ]
 
 locale:
-  klocaleadv.cpp         [ ]        [ ]         [ ]         [ ]
-  klocalesample.cpp      [ ]        [s]         [ ]         [ ]
-  locale.cpp             [ ]        [s]         [ ]         [ ]
-  localemon.cpp          [ ]        [s]         [ ]         [ ]
-  localenum.cpp          [ ]        [s]         [ ]         [ ]
-  localetime.cpp         [ ]        [s]         [ ]         [ ]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
-  toplevel.cpp           [ ]        [ ]         [ ]         [ ]
+  klocalesample.cpp      [ ]        [x]         [ ]         [ ]
+  locale.cpp             [ ]        [x]         [ ]         [ ]
+  localemon.cpp          [ ]        [x]         [ ]         [ ]
+  localenum.cpp          [ ]        [x]         [ ]         [ ]
+  localetime.cpp         [ ]        [x]         [ ]         [ ]
+  toplevel.cpp           [ ]        [x]         [ ]         [ ]
 
 midi:
-  midi.cpp               [ ]        [ ]         [ ]         [ ]
+  midi.cpp               [ ]        [ ]         [ ]         [ ]   Is this being used?
 
 // odbc:
 //  KODBCConfig.cpp        [ ]        [ ]         [ ]         [ ]
@@ -172,8 +171,8 @@ midi:
 passwords:
   passwords.cpp          [ ]        [x]         [x]         [ ]
 
-root:
-  main.cpp               [ ]        [ ]         [ ]         [ ]
+// root:
+//  main.cpp               [ ]        [ ]         [ ]         [ ]      is this being used?
 
 samba:
   kcmsambaimports.cpp    [ ]        [x]         [ ]         [ ]
@@ -181,6 +180,8 @@ samba:
   kcmsambastatistics.cpp [ ]        [ ]         [ ]         [ ]
   ksmbstatus.cpp         [ ]        [ ]         [ ]         [ ]
   main.cpp               [ ]        [x]         [ ]         [ ]
+
+// will there be both knotify and system sounds?
 
 syssound:
   main.cpp               [ ]        [ ]         [ ]         [ ]

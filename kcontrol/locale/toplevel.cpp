@@ -142,7 +142,7 @@ QString KLocaleApplication::quickHelp()
   return locale->translate("<h1>Locale</h1>\n"
 	      "<p>From here you can configure language, numberic, and time \n"
 	      "settings for your particular region. In most cases it will be \n"
-	      "suffient to choose the country you live in. For instance KDE \n"
+	      "sufficient to choose the country you live in. For instance KDE \n"
 	      "will automatically choose \"German\" as language if you choose \n"
 	      "\"Germany\" from the list. It will also change the time format \n"
 	      "to use 24 hours and and use comma as decimal separator.</p>\n"

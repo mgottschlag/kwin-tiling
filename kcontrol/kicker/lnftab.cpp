@@ -54,7 +54,7 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
 
   // hide animation group
   hide_group = new QGroupBox(i18n("&Hide Animation"), this);
-  
+
   QVBoxLayout *vbox = new QVBoxLayout(hide_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
@@ -62,18 +62,22 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   hide_cb = new QCheckBox(i18n("Enabled"), hide_group);
   connect(hide_cb, SIGNAL(clicked()), SLOT(hide_clicked()));
   vbox->addWidget(hide_cb);
+  QWhatsThis::add( hide_cb, i18n("If hide buttons are enabled, check this option to make the"
+    " panel softly slide away when you click on the hide buttons. Else it will just disappear."));
 
   hide_input = new KIntNumInput(50, hide_group);
   hide_input->setRange(1, 200, 1, true);
   hide_input->setLabel(i18n("Speed:"), AlignLeft | AlignVCenter);
   connect(hide_input, SIGNAL(valueChanged(int)), SLOT(hide_changed(int)));
   vbox->addWidget(hide_input);
+  QWhatsThis::add( hide_input, i18n("Determines the speed of the hide animation, i.e. the"
+    " animation shown when you click on the panel's hide buttons.") );
 
   layout->addWidget(hide_group, 0, 0);
 
   // auto-hide animation group
   autohide_group = new QGroupBox(i18n("&Auto-Hide Animation"), this);
-  
+
   vbox = new QVBoxLayout(autohide_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
@@ -81,13 +85,17 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   autohide_cb = new QCheckBox(i18n("Enabled"), autohide_group);
   connect(autohide_cb, SIGNAL(clicked()), SLOT(autohide_clicked()));
   vbox->addWidget(autohide_cb);
+  QWhatsThis::add( autohide_cb, i18n("If auto-hide panel is enabled, check this option to make"
+    " the panel softly slide down after a certain amount of time. Else it will just disappear."));
 
   autohide_input = new KIntNumInput(5, autohide_group);
   autohide_input->setRange(1, 50, 1, true);
   autohide_input->setLabel(i18n("Speed:"), AlignLeft | AlignVCenter);
   connect(autohide_input, SIGNAL(valueChanged(int)), SLOT(autohide_changed(int)));
   vbox->addWidget(autohide_input);
-  
+  QWhatsThis::add( autohide_input, i18n("Determines the speed of the auto-hide animation,"
+    " i.e. the animation shown when the panel disappears after a certain amount of time."));
+
   layout->addWidget(autohide_group, 1, 0);
 
   // theme background group
@@ -139,10 +147,12 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  
+
   fade_out_cb = new QCheckBox(i18n("Fade out applet handels."), misc_group);
   connect(fade_out_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(fade_out_cb);
+  QWhatsThis::add( fade_out_cb, i18n("If this option is enabled, the handle on the left"
+    " of a panel applet will only be shown when the mouse cursor is moved over it."));
 
   layout->addWidget(misc_group, 3, 0);
 

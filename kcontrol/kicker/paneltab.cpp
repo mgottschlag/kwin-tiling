@@ -118,15 +118,20 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   ah_cb = new QCheckBox(i18n("Enabled"), ah_group);
   connect(ah_cb, SIGNAL(clicked()), SLOT(ah_clicked()));
   vbox->addWidget(ah_cb);
+  QWhatsThis::add( ah_cb, i18n("If this option is enabled the panel will automatically hide"
+    " after some time and reappear when you move the mouse to the screen edge the panel is attached to."
+    " This is particularly useful for small screen resolutions, for example, on laptops.") );
 
   ah_input = new KIntNumInput(3, ah_group);
   ah_input->setRange(1, 100, 1, true);
   ah_input->setLabel(i18n("&Delay in seconds:"), AlignLeft | AlignVCenter);
   connect(ah_input, SIGNAL(valueChanged(int)), SLOT(ah_input_changed(int)));
   vbox->addWidget(ah_input);
+  QWhatsThis::add( ah_input, i18n("Here you can change the delay after which the panel will disappear"
+    " if not used."));
 
   layout->addWidget(ah_group, 1, 1);
-  
+
   // hidebutton group
   hb_group = new QGroupBox(i18n("&Hide Buttons"), this);
 
@@ -136,14 +141,14 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   show_hbs = new QCheckBox(i18n("&Enabled"), hb_group);
   connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
-  QWhatsThis::add( show_hbs, i18n("If this option is selected, the panel"
+  QWhatsThis::add( show_hbs, i18n("If this option is enabled, the panel"
     " will have buttons on both ends that can be used to hide it. The"
     " panel will slide away, leaving more room for applications. There"
     " only remains a small button which can be used to show the panel again.") );
 
   highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over."), hb_group);
   connect(highlight_hbs, SIGNAL(clicked()), SIGNAL(changed()));
-  QWhatsThis::add( highlight_hbs, i18n("If this option is selected, the"
+  QWhatsThis::add( highlight_hbs, i18n("If this option is enabled, the"
     " hide buttons are highlighted when the mouse cursor is moved over them.") );
 
   hb_input = new KIntNumInput(10, hb_group);
@@ -168,7 +173,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   QHBox *hbox = new QHBox(misc_group);
   ta_label = new QLabel(i18n("Terminal application:"), hbox);
   ta_input = new KLineEdit(hbox);
-  connect (ta_input, SIGNAL(textChanged(const QString&)), SLOT(ta_input_changed(const QString&))); 
+  connect (ta_input, SIGNAL(textChanged(const QString&)), SLOT(ta_input_changed(const QString&)));
   hbox->setSpacing(KDialog::spacingHint());
   hbox->setStretchFactor(ta_input, 2);
   vbox->addWidget(hbox);

@@ -87,7 +87,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hlay->addWidget(clockRadio, 1, AlignLeft);
   grid->addWidget(label,2,0);
   grid->addMultiCellWidget(helper, 2,2, 1,2);
-  wtstr = i18n("You can choose to display the KDM logo or a clock");
+  wtstr = i18n("You can choose to display a custom logo (see below) or a clock.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( logoRadio, wtstr );
   QWhatsThis::add( clockRadio, wtstr );
@@ -101,9 +101,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->setMinimumSize(24,24);
   logobutton->setMaximumSize(80,80);
   logobutton->setIcon("kdelogo");
-  connect(logobutton, SIGNAL(iconChanged(QString)), 
+  connect(logobutton, SIGNAL(iconChanged(QString)),
 	  this, SLOT(slotLogoPixChanged(QString)));
-  connect(logobutton, SIGNAL(iconChanged(const QString&)), 
+  connect(logobutton, SIGNAL(iconChanged(const QString&)),
 	  this, SLOT(changed()));
   grid->addRowSpacing(3, 80);
   grid->addWidget(logoLabel, 3,0);
@@ -135,18 +135,19 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   group = new QGroupBox(i18n("Language"), this);
   vbox->addWidget(group);
 
-  QGridLayout *hbox = new QGridLayout(group, 2, 2);
-  hbox->addRowSpacing(0, 15);
-  hbox->addRowSpacing(5, 10);
-  hbox->addColSpacing(0, 10);
-  hbox->addColSpacing(3, 10);
-  hbox->setColStretch(2, 1);
+  QGridLayout *hbox = new QGridLayout(group, 2, 2, KDialog::marginHint(), KDialog::spacingHint() );
+//  hbox->addRowSpacing(0, 15);
+//  hbox->addRowSpacing(5, 10);
+//  hbox->addColSpacing(0, 10);
+//  hbox->addColSpacing(3, 10);
+//  hbox->setColStretch(2, 1);
 
   label = new QLabel(i18n("Language:"), group);
-  hbox->addWidget(label, 1, 1);
+  hbox->addWidget(label, 0, 0);
 
   langcombo = new KLanguageCombo(group);
-  hbox->addWidget(langcombo, 1, 2);
+  langcombo->setFixedHeight( langcombo->sizeHint().height() );
+  hbox->addWidget(langcombo, 0, 1);
   connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
 
   wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
@@ -155,11 +156,14 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( langcombo, wtstr );
 
   label = new QLabel(i18n("Country:"), group);
-  hbox->addWidget(label, 2, 1);
+  hbox->addWidget(label, 1, 0);
 
   countrycombo = new KLanguageCombo(group);
-  hbox->addWidget(countrycombo, 2, 2);
+  countrycombo->setFixedHeight( countrycombo->sizeHint().height() );
+  hbox->addWidget(countrycombo, 1, 1);
   connect(countrycombo, SIGNAL(activated(int)), this, SLOT(changed()));
+
+  hbox->setColStretch(1, 1);
 
   wtstr = i18n("Here you can choose a country setting for KDM. This setting doesn't affect"
     " a user's personal settings that will take effect after login.");

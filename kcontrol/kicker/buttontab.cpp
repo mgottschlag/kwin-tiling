@@ -52,10 +52,14 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QVBoxLayout *vbox = new QVBoxLayout(general_group, KDialog::marginHint(),
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
-  
+
   tiles_cb = new QCheckBox(i18n("Enable background tiles."), general_group);
   connect(tiles_cb, SIGNAL(clicked()), SLOT(tiles_clicked()));
   vbox->addWidget(tiles_cb);
+  QWhatsThis::add( tiles_cb, i18n("If this option is enabled, the panel will display"
+    " panel buttons using tile images instead of just drawing flat buttons. You can still"
+    " enable or disable usage of tiles for the different kind of panel buttons, using the"
+    " options below.") );
 
   layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
 
@@ -72,15 +76,18 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QVBox *vbox1 = new QVBox(hbox);
   kmenu_cb = new QCheckBox(i18n("Enabled"), vbox1);
   connect(kmenu_cb, SIGNAL(clicked()), SLOT(kmenu_clicked()));
-  
+
   kmenu_input = new KComboBox(vbox1);
   kmenu_input->setInsertionPolicy(QComboBox::NoInsertion);
   connect(kmenu_input, SIGNAL(activated(const QString&)), SLOT(kmenu_changed(const QString&)));
+  QWhatsThis::add( kmenu_cb, i18n("Enable or disable the usage of a tile image for the K menu.") );
+  QWhatsThis::add( kmenu_input, i18n("Choose a tile image for the K menu."));
 
   kmenu_label = new QLabel(hbox);
   kmenu_label->setFixedSize(56,56);
   kmenu_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   kmenu_label->setAlignment(AlignCenter);
+  QWhatsThis::add( kmenu_label, i18n("This is a preview of the tile that will be used for the K menu.") );
 
   vbox->addWidget(hbox);
   layout->addWidget(kmenu_group, 1, 0);
@@ -98,15 +105,18 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox1 = new QVBox(hbox);
   browser_cb = new QCheckBox(i18n("Enabled"), vbox1);
   connect(browser_cb, SIGNAL(clicked()), SLOT(browser_clicked()));
-  
+
   browser_input = new KComboBox(vbox1);
   browser_input->setInsertionPolicy(QComboBox::NoInsertion);
   connect(browser_input, SIGNAL(activated(const QString&)), SLOT(browser_changed(const QString&)));
+  QWhatsThis::add( browser_cb, i18n("Enable or disable the usage of tile images for Quick Browser buttons.") );
+  QWhatsThis::add( browser_input, i18n("Choose a tile image for Quick Browser buttons."));
 
   browser_label = new QLabel(hbox);
   browser_label->setFixedSize(56,56);
   browser_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   browser_label->setAlignment(AlignCenter);
+  QWhatsThis::add( browser_label, i18n("This is a preview of the tile that will be used for Quick Browser buttons.") );
 
   vbox->addWidget(hbox);
   layout->addWidget(browser_group, 1, 1);
@@ -124,15 +134,18 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox1 = new QVBox(hbox);
   url_cb = new QCheckBox(i18n("Enabled"), vbox1);
   connect(url_cb, SIGNAL(clicked()), SLOT(url_clicked()));
-  
+
   url_input = new KComboBox(vbox1);
   url_input->setInsertionPolicy(QComboBox::NoInsertion);
   connect(url_input, SIGNAL(activated(const QString&)), SLOT(url_changed(const QString&)));
+  QWhatsThis::add( url_cb, i18n("Enable or disable the usage of a tile image for buttons that launch applications.") );
+  QWhatsThis::add( url_input, i18n("Choose a tile image for buttons that launch applications."));
 
   url_label = new QLabel(hbox);
   url_label->setFixedSize(56,56);
   url_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   url_label->setAlignment(AlignCenter);
+  QWhatsThis::add( url_label, i18n("This is a preview of the tile that will be used for buttons that launch applications.") );
 
   vbox->addWidget(hbox);
   layout->addWidget(url_group, 2, 0);
@@ -150,15 +163,18 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox1 = new QVBox(hbox);
   exe_cb = new QCheckBox(i18n("Enabled"), vbox1);
   connect(exe_cb, SIGNAL(clicked()), SLOT(exe_clicked()));
-  
+
   exe_input = new KComboBox(vbox1);
   exe_input->setInsertionPolicy(QComboBox::NoInsertion);
   connect(exe_input, SIGNAL(activated(const QString&)), SLOT(exe_changed(const QString&)));
+  QWhatsThis::add( exe_cb, i18n("Enable or disable the usage of tile images for legacy application buttons.") );
+  QWhatsThis::add( exe_input, i18n("Choose a tile image for legacy application buttons."));
 
   exe_label = new QLabel(hbox);
   exe_label->setFixedSize(56,56);
   exe_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   exe_label->setAlignment(AlignCenter);
+  QWhatsThis::add( exe_label, i18n("This is a preview of the tile that will be used for legacy application buttons.") );
 
   vbox->addWidget(hbox);
   layout->addWidget(exe_group, 2, 1);
@@ -176,15 +192,18 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox1 = new QVBox(hbox);
   drawer_cb = new QCheckBox(i18n("Enabled"), vbox1);
   connect(drawer_cb, SIGNAL(clicked()), SLOT(drawer_clicked()));
-  
+
   drawer_input = new KComboBox(vbox1);
   drawer_input->setInsertionPolicy(QComboBox::NoInsertion);
   connect(drawer_input, SIGNAL(activated(const QString&)), SLOT(drawer_changed(const QString&)));
+  QWhatsThis::add( drawer_cb, i18n("Enable or disable the usage of tile images for drawer buttons.") );
+  QWhatsThis::add( drawer_input, i18n("Choose a tile image for drawer buttons."));
 
   drawer_label = new QLabel(hbox);
   drawer_label->setFixedSize(56,56);
   drawer_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   drawer_label->setAlignment(AlignCenter);
+  QWhatsThis::add( drawer_label, i18n("This is a preview of the tile that will be used for drawer buttons.") );
 
   vbox->addWidget(hbox);
   layout->addWidget(drawer_group, 3, 0);
@@ -196,7 +215,7 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
 void ButtonTab::tiles_clicked()
 {
   bool enabled = tiles_cb->isChecked();
- 
+
   kmenu_group->setEnabled(enabled);
   url_group->setEnabled(enabled);
   exe_group->setEnabled(enabled);
