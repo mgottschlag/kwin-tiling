@@ -53,6 +53,8 @@ Q_OBJECT
 public:
 	Fountain( QWidget * parent=0, const char * name=0 );
 	~Fountain();
+	void setSize( float newSize );
+	void setStars( bool doStars );
 protected:
 	/** paint the GL view */
 	void paintGL ();
@@ -60,8 +62,7 @@ protected:
 	void resizeGL ( int w, int h );
 	/** setup the GL enviroment */
 	void initializeGL ();
-	void setSize( float newSize );
-	void setStars( bool doStars );
+
 
 private:
 	/** load the partical file */
@@ -100,6 +101,9 @@ public:
 	void readSettings();
 public slots:
 	void blank();
+	void updateSize(int newSize);
+	void doStars(bool starState);
+//	void loadTextures(bool textures);
 private:
 	Fountain *fountain;
 	QTimer  *timer;
@@ -116,10 +120,11 @@ protected:
 
 private slots:
 	void slotOkPressed();
-
+	void aboutPressed();
 private:
-//	QWidget *preview;
 	KFountainSaver *saver;
+	float	size;
+	float	stars;
 };
 
 #endif

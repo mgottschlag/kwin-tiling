@@ -21,6 +21,8 @@
 #include <qimage.h>
 #include <kdebug.h>
 #include <qpainter.h>
+#include <qradiobutton.h>
+#include <qspinbox.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <math.h>
@@ -74,16 +76,12 @@ KFountainSetup::KFountainSetup( QWidget *parent, const char *name )
 
 	//KButtonBox *bbox = new KButtonBox(this);
 	//bbox->addStretch(1);
-
-	//button = bbox->addButton( i18n("OK"));
+;
 	connect( PushButton1, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
-
-	//button = bbox->addButton(i18n("Cancel"));
 	connect( PushButton2, SIGNAL( clicked() ), SLOT( reject() ) );
-	//bbox->layout();
-	//tl->addWidget(bbox);
+	connect(  SpinBox1, SIGNAL( valueChanged(int)), saver, SLOT( updateSize(int)));
+	connect( RadioButton1, SIGNAL( toggled(bool)), saver, SLOT( doStars(bool)));
 
-	//tl->freeze();
 }
 
 // read settings from config file
@@ -108,6 +106,10 @@ void KFountainSetup::slotOkPressed()
 	accept();
 }
 
+void KFountainSetup::aboutPressed()
+{
+
+}
 //-----------------------------------------------------------------------------
 
 
@@ -154,6 +156,7 @@ Fountain::Fountain( QWidget * parent, const char * name) : QGLWidget (parent,nam
 	slowdown=2.0f;
 	zoom=-40.0f;
 	index=0;
+	size = 0.75f;
 	obj = gluNewQuadric();
 
 }
@@ -255,7 +258,7 @@ void Fountain::initializeGL ()
 			particle[loop].xg=0.0f;					// Set Horizontal Pull To Zero
 			particle[loop].yg=-0.8f;				// Set Vertical Pull Downward
 			particle[loop].zg=0.0f;					// Set Pull On Z Axis To Zero
-			particle[loop].size=1.0f;				// Set particle size.
+			particle[loop].size=size;				// Set particle size.
 		}
 	}
 	else
@@ -360,7 +363,7 @@ void Fountain::paintGL ()
 				particle[loop].r=colors[col][0];			// Select Red From Color Table
 				particle[loop].g=colors[col][1];			// Select Green From Color Table
 				particle[loop].b=colors[col][2];			// Select Blue From Color Table
-				particle[loop].size=0.75f;
+				particle[loop].size=size;
 				if ((1+(random()%20)) == 10)
 				{
 				// Explode
@@ -376,7 +379,7 @@ void Fountain::paintGL ()
 					particle[loop].xg=0.0f;					// Set Horizontal Pull To Zero
 					particle[loop].yg=-0.8f;				// Set Vertical Pull Downward
 					particle[loop].zg=0.0f;					// Set Pull On Z Axis To Zero
-					particle[loop].size=1.0f;				// Set particle size.
+					particle[loop].size=size;				// Set particle size.
 				}
 			}
 			// Lets stir some things up
@@ -399,3 +402,13 @@ void Fountain::setStars( bool doStars )
 {
 	stars = doStars;
 }
+
+void KFountainSaver::updateSize(int newSize)
+{
+	fountain->setSize(newSize/100.0);
+}
+void KFountainSaver::doStars(bool starState)
+{
+	fountain->setStars(starState);
+}
+

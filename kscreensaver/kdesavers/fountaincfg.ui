@@ -37,12 +37,12 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout5</cstring>
+            <cstring>Layout4</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>0</x>
-                <y>0</y>
+                <x>1</x>
+                <y>1</y>
                 <width>398</width>
                 <height>206</height>
             </rect>
@@ -57,23 +57,37 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QLabel" row="0" column="0">
+            <widget class="QCheckBox" row="3" column="0">
                 <property name="name">
-                    <cstring>TextLabel1</cstring>
+                    <cstring>CheckBox1</cstring>
                 </property>
                 <property name="text">
-                    <string>Particle Size:</string>
+                    <string>Use textures</string>
                 </property>
             </widget>
-            <widget class="QPushButton" row="3" column="0">
+            <widget class="QPushButton" row="4" column="2">
                 <property name="name">
-                    <cstring>PushButton1</cstring>
+                    <cstring>PushButton3</cstring>
                 </property>
                 <property name="text">
-                    <string>Okay</string>
+                    <string>About</string>
                 </property>
             </widget>
-            <widget class="QPushButton" row="3" column="1">
+            <widget class="QSpinBox" row="1" column="0">
+                <property name="name">
+                    <cstring>SpinBox1</cstring>
+                </property>
+                <property name="maxValue">
+                    <number>500</number>
+                </property>
+                <property name="minValue">
+                    <number>10</number>
+                </property>
+                <property name="lineStep">
+                    <number>10</number>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="4" column="1">
                 <property name="name">
                     <cstring>PushButton2</cstring>
                 </property>
@@ -81,9 +95,15 @@
                     <string>Cancel</string>
                 </property>
             </widget>
-            <widget class="QWidget" row="0" column="1" rowspan="3" colspan="2">
+            <widget class="QPushButton" row="4" column="0">
                 <property name="name">
-                    <cstring>preview</cstring>
+                    <cstring>PushButton1</cstring>
+                </property>
+                <property name="text">
+                    <string>Okay</string>
+                </property>
+                <property name="default">
+                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QGroupBox" row="2" column="0">
@@ -95,14 +115,14 @@
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>Layout4</cstring>
+                        <cstring>Layout3</cstring>
                     </property>
                     <property name="geometry">
                         <rect>
                             <x>10</x>
                             <y>20</y>
                             <width>130</width>
-                            <height>80</height>
+                            <height>50</height>
                         </rect>
                     </property>
                     <vbox>
@@ -137,26 +157,17 @@
                     </vbox>
                 </widget>
             </widget>
-            <widget class="QPushButton" row="3" column="2">
+            <widget class="QWidget" row="0" column="1" rowspan="4" colspan="2">
                 <property name="name">
-                    <cstring>PushButton3</cstring>
-                </property>
-                <property name="text">
-                    <string>About</string>
+                    <cstring>preview</cstring>
                 </property>
             </widget>
-            <widget class="QSpinBox" row="1" column="0">
+            <widget class="QLabel" row="0" column="0">
                 <property name="name">
-                    <cstring>SpinBox1</cstring>
+                    <cstring>TextLabel1</cstring>
                 </property>
-                <property name="maxValue">
-                    <number>500</number>
-                </property>
-                <property name="minValue">
-                    <number>10</number>
-                </property>
-                <property name="lineStep">
-                    <number>10</number>
+                <property name="text">
+                    <string>Particle Size:</string>
                 </property>
             </widget>
         </grid>
