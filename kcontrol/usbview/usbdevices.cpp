@@ -56,8 +56,12 @@ void USBDevice::parseLine(QString line)
 	   &_bus, &_level, &_parent, &_port, &_count, &_device, &_speed, &_channels);
   else if (line.left(16) == "S:  Manufacturer")
     _manufacturer = line.mid(17);
-  else if (line.left(11) == "S:  Product")
+  else if (line.left(11) == "S:  Product") {
     _product = line.mid(12);
+    /* add bus number to root devices */
+    if (_device==1)
+	_product += QString(" (%1)").arg(_bus);
+  }
   else if (line.left(16) == "S:  SerialNumber")
     _serial = line.mid(17);
   else if (line.left(2) == "B:")
@@ -82,15 +86,14 @@ void USBDevice::parseLine(QString line)
 }
 
 
-USBDevice *USBDevice::find(int i)
+USBDevice *USBDevice::find(int bus, int device)
 {
   QListIterator<USBDevice> it(_devices);
   for ( ; it.current(); ++it)
-    if (it.current()->device() == i)
+    if (it.current()->bus() == bus && it.current()->device() == device)
       return it.current();
   return 0;
 }
-
 
 QString USBDevice::product()
 {

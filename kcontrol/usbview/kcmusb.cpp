@@ -71,12 +71,12 @@ USBViewer::~USBViewer()
 
 
 void USBViewer::load()
-{
+{ 
+  QIntDict<QListViewItem> _items;
+
   _devices->clear();
 
   USBDevice::parse("/proc/bus/usb/devices");
-
-  _items.clear();
 
   int level = 0;
   bool found = true;
@@ -91,17 +91,25 @@ void USBViewer::load()
 	  {
 	    if (level == 0)
 	      {
-		QListViewItem *item = new QListViewItem(_devices, it.current()->product(), QString("%1").arg(it.current()->device()));
-		_items.insert(it.current()->device(), item);
+		QListViewItem *item = new QListViewItem(_devices, 
+				it.current()->product(), 
+				QString("%1").arg(it.current()->bus()),
+				QString("%1").arg(it.current()->device()) );
+		_items.insert(it.current()->bus()*256+it.current()->device(),
+				item);
 		found = true;
 	      }
 	    else
 	      {
-		QListViewItem *parent = _items[it.current()->parent()];
+		QListViewItem *parent = _items.find(it.current()->bus()*256+1);
 		if (parent)
 		  {
-		    QListViewItem *item = new QListViewItem(parent, it.current()->product(), QString("%1").arg(it.current()->device()));
-		    _items.insert(it.current()->device(), item);
+		    QListViewItem *item = new QListViewItem(parent, 
+				    it.current()->product(),
+				    QString("%1").arg(it.current()->bus()),
+				    QString("%1").arg(it.current()->device()) );
+		    _items.insert(it.current()->bus()*256+it.current()->device(),
+				item);
 		    parent->setOpen(true);
 		    found = true;
 		  }
@@ -119,7 +127,8 @@ void USBViewer::selectionChanged(QListViewItem *item)
 {
   if (item)
     {
-      USBDevice *dev = USBDevice::find(item->text(1).toInt());
+      USBDevice *dev = USBDevice::find(item->text(1).toInt(),
+		      item->text(2).toInt());
       if (dev)
 	{
 	  _details->setText(dev->dump());

@@ -50,9 +50,6 @@ private:
 
   QListView *_devices;
   QTextView *_details;
-
-  QIntDict<QListViewItem> _items;
-
 };
 
 

@@ -3,7 +3,8 @@ lib_LTLIBRARIES = libkcm_usb.la
 libkcm_usb_la_SOURCES = kcmusb.cpp usbdevices.cpp usbdb.cpp
 
 libkcm_usb_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_usb_la_LIBADD = -lkdeui
+libkcm_usb_la_LIBADD = $(LIB_KDEUI)
+
 INCLUDES= $(all_includes) 
 
 libkcm_usb_la_METASOURCES = AUTO

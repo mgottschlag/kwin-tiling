@@ -31,12 +31,13 @@ public:
   int level() { return _level; };
   int device() { return _device; };
   int parent() { return _parent; };
+  int bus() { return _bus; };
   QString product();
 
   QString dump();
 
   static QList<USBDevice> &devices() { return _devices; };
-  static USBDevice *find(int i);
+  static USBDevice *find(int bus, int device);
   static void parse(QString fname);
 
 
