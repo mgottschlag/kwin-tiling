@@ -23,6 +23,7 @@ METASOURCES = AUTO
 ####### Build rules
 
 messages:
-	$(XGETTEXT) -C -ktranslate -kaliasLocale -ki18n -kI18N_NOOP -x $(includedir)/kde.pot *.cpp *.h -o $(podir)/kxsconfig.pot
-
+	grep Label= config/*rc | cut -d':' -f2- | sed -e "s#Label=\(.*\)#i18n(\"\1\");#" > labels.cpp
+	$(XGETTEXT) -C -ki18n -kI18N_NOOP -x $(includedir)/kde.pot *.cpp *.h -o $(podir)/kxsconfig.pot
+	-rm -f labels.cpp
 
