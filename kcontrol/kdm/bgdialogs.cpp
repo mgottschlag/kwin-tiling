@@ -79,24 +79,35 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     connect(m_ListView, SIGNAL(doubleClicked(QListViewItem *)),
 	    SLOT(slotItemDoubleClicked(QListViewItem *)));
 
+    connect(m_ListView, SIGNAL(selectionChanged()),
+            this,SLOT(slotSelectionChanged()));
+
     // Add/Remove/Modify buttons
     QVBoxLayout *vbox = new QVBoxLayout(spacingHint());
     QPushButton *but = new QPushButton(i18n("&Add..."), page);
     vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotAdd()));
-    but = new QPushButton(i18n("&Remove"), page);
-    vbox->addWidget(but);
-    connect(but, SIGNAL(clicked()), SLOT(slotRemove()));
-    but = new QPushButton(i18n("&Modify..."), page);
-    vbox->addWidget(but);
-    connect(but, SIGNAL(clicked()), SLOT(slotModify()));
+
+    removeBut = new QPushButton(i18n("&Remove"), page);
+    vbox->addWidget(removeBut);
+    connect(removeBut, SIGNAL(clicked()), SLOT(slotRemove()));
+    modifyBut = new QPushButton(i18n("&Modify..."), page);
+    vbox->addWidget(modifyBut);
+    connect(modifyBut, SIGNAL(clicked()), SLOT(slotModify()));
 
     vbox->addStretch(1);
 
     layout->addLayout(vbox, 1, 1);
+    slotSelectionChanged();
 }
 
-	
+void KProgramSelectDialog::slotSelectionChanged()
+{
+    bool state=m_ListView->currentItem();
+    removeBut->setEnabled(state);
+    modifyBut->setEnabled(state);
+}
+
 /*
  * Set the current program.
  */
@@ -181,6 +192,8 @@ void KProgramSelectDialog::slotRemove()
     prog.remove();
     updateItem(m_Current);
     m_Current = QString::null;
+    removeBut->setEnabled(false);
+    modifyBut->setEnabled(false);
 }
 
 
@@ -217,7 +230,8 @@ void KProgramSelectDialog::slotItemDoubleClicked(QListViewItem *item)
     if ( item )
     {
         m_Current = item->text(1);
-        accept();
+        slotModify();
+        //accept();
     }
 }
 
@@ -397,7 +411,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     layout->addLayout(vbox, 1, 1);
 }
 
-	
+
 /*
  * Set the current pattern.
  */

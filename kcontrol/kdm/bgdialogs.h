@@ -47,6 +47,7 @@ public slots:
     void slotModify();
     void slotItemClicked(QListViewItem *);
     void slotItemDoubleClicked(QListViewItem *);
+    void slotSelectionChanged();
 
 private:
     void updateItem(QString name, bool select=false);
@@ -54,6 +55,8 @@ private:
     QMap<QString,QListViewItem *> m_Items;
     QListView *m_ListView;
     QString m_Current;
+    QPushButton *removeBut;	
+    QPushButton *modifyBut; 
 };
 
 
