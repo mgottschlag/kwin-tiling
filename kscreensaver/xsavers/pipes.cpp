@@ -127,7 +127,7 @@ FIXME: this could be clearer done by a calculation on the position.
 
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#include "../../config.h"
 #endif
 
 #include <klocale.h>

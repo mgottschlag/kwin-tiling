@@ -46,7 +46,7 @@
 #include <kdebug.h>
 #include "xlock.h"
 #include "helpers.h"
-#include "../config.h"
+#include "../../config.h"
 
 #ifdef HAVE_GL
 

@@ -1,3 +1,7 @@
+2001-03-10 Martin R. Jones <mjones@kde.org>
+    * added libkscreensaver and ported KDE savers to it.
+    * big cleanup.
+
 2000-01-10 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
 	* banner.h, banner.cpp:
 	-added cycling color option
