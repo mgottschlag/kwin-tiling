@@ -534,6 +534,9 @@ void BGDialog::slotPreviewDone(int desk_done)
 
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
+   if (!r->image())
+       return;
+
    KPixmap pm;
    if (QPixmap::defaultDepth() < 15)
       pm.convertFromImage(*r->image(), KPixmap::LowColor);
