@@ -38,13 +38,17 @@ METASOURCES = AUTO
 messages:
 	$(XGETTEXT) -kni18n $(libkcm_display_la_SOURCES) -o $(podir)/kcmdisplay.pot
 
-lnf_DATA = colors.desktop fonts.desktop screensaver.desktop
+lnf_DATA = colors.desktop fonts.desktop screensaver.desktop icons.desktop
 lnfdir = $(kde_appsdir)/Settings/LookNFeel
 
 theme_DATA = style.desktop
 themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
 
-desktop_DATA = desktop.desktop advanced.desktop background.desktop borders.desktop icons.desktop
+# Temporary measure to avoid duplicates
+install-data-local:
+	-rm -f $(kde_appsdir)/Settings/LookNFeel/Desktop/icons.desktop
+
+desktop_DATA = desktop.desktop advanced.desktop background.desktop borders.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
 
 power_DATA = energy.desktop
