@@ -1,0 +1,8 @@
+[Desktop Entry]
+Icon=konsole
+Type=Application
+Exec=kcmshell konsole
+X-KDE-ModuleType=Library
+X-KDE-Library=konsole
+Name=Konsole
+
