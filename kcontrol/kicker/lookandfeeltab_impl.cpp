@@ -170,42 +170,80 @@ void LookAndFeelTab::load()
   m_zoom_cb->setChecked(zoom);
 
   QString tile;
-  c.setGroup("button_tiles");
+  c.setGroup("buttons");
 
-  if (c.readBoolEntry("EnableKMenuTiles", false))
+  if (c.readBoolEntry("EnableTileBackground", false))
   {
-    tile = c.readEntry("KMenuTile", "solid_blue");
-    m_kmenuTile->setCurrentItem(findComboEntry(m_kmenuTile, tile));
-  }
+    c.setGroup("button_tiles");
 
-  if (c.readBoolEntry("EnableDesktopButtonTiles", false))
-  {
-    tile = c.readEntry("DesktopButtonTile", "solid_orange");
-    m_desktopTile->setCurrentItem(findComboEntry(m_desktopTile, tile));
-  }
+    if (c.readBoolEntry("EnableKMenuTiles", false))
+    {
+      tile = c.readEntry("KMenuTile", "solid_blue");
+      m_kmenuTile->setCurrentItem(findComboEntry(m_kmenuTile, tile));
+    }
+    else
+    {
+      m_kmenuTile->setCurrentItem(0);
+    }
+
+    if (c.readBoolEntry("EnableDesktopButtonTiles", false))
+    {
+      tile = c.readEntry("DesktopButtonTile", "solid_orange");
+      m_desktopTile->setCurrentItem(findComboEntry(m_desktopTile, tile));
+    }
+    else
+    {
+      m_desktopTile->setCurrentItem(0);
+    }
   
-  if (c.readBoolEntry("EnableURLTiles", false))
-  {
-    tile = c.readEntry("URLTile", "solid_gray");
-    m_urlTile->setCurrentItem(findComboEntry(m_urlTile, tile));
+    if (c.readBoolEntry("EnableURLTiles", false))
+    {
+      tile = c.readEntry("URLTile", "solid_gray");
+      m_urlTile->setCurrentItem(findComboEntry(m_urlTile, tile));
+    }
+    else
+    {
+      m_urlTile->setCurrentItem(0);
+    }
+    
+    if (c.readBoolEntry("EnableBrowserTiles", false))
+    {
+      tile = c.readEntry("BrowserTile", "solid_green");
+      m_browserTile->setCurrentItem(findComboEntry(m_browserTile, tile));
+    }
+    else
+    {
+      m_browserTile->setCurrentItem(0);
+    }
+    
+    if (c.readBoolEntry("EnableExeTiles", false))
+    {
+      tile = c.readEntry("ExeTile", "solid_red");
+      m_exeTile->setCurrentItem(findComboEntry(m_exeTile, tile));
+    }
+    else
+    {
+      m_exeTile->setCurrentItem(0);
+    }
+    
+    if (c.readBoolEntry("EnableWindowListTiles", false))
+    {
+      tile = c.readEntry("WindowListTile", "solid_green");
+      m_wlTile->setCurrentItem(findComboEntry(m_wlTile, tile));
+    }
+    else
+    {
+      m_wlTile->setCurrentItem(0);
+    }
   }
-  
-  if (c.readBoolEntry("EnableBrowserTiles", false))
+  else
   {
-    tile = c.readEntry("BrowserTile", "solid_green");
-    m_browserTile->setCurrentItem(findComboEntry(m_browserTile, tile));
-  }
-  
-  if (c.readBoolEntry("EnableExeTiles", false))
-  {
-    tile = c.readEntry("ExeTile", "solid_red");
-    m_exeTile->setCurrentItem(findComboEntry(m_exeTile, tile));
-  }
-  
-  if (c.readBoolEntry("EnableWindowListTiles", false))
-  {
-    tile = c.readEntry("WindowListTile", "solid_green");
-    m_wlTile->setCurrentItem(findComboEntry(m_wlTile, tile));
+    m_kmenuTile->setCurrentItem(0);
+    m_desktopTile->setCurrentItem(0);
+    m_urlTile->setCurrentItem(0);
+    m_browserTile->setCurrentItem(0);
+    m_exeTile->setCurrentItem(0);
+    m_wlTile->setCurrentItem(0);
   }
 }
 
