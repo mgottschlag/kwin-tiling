@@ -1,7 +1,6 @@
 <!DOCTYPE kpartgui>
 <kpartgui name="kcontrol">
 <ToolBar fullWidth="true" name="mainToolBar">
-	<Action name="file_quit"/>
 	<Action name="help_contents"/>
 	<Action name="help_whats_this"/>
 </ToolBar>
