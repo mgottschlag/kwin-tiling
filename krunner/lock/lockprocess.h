@@ -46,6 +46,7 @@ protected slots:
     void hackExited(KProcess *);
     void slotStart();
     void sigtermPipeSignal();
+    void actuallySetLock();
 
 protected:
     void configure();

@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <signal.h>
 #include <qsocketnotifier.h>
+#include <qtimer.h>
 #include <kdebug.h>
 
 #include "lockprocess.h"
@@ -47,6 +48,7 @@
 #include <X11/Xatom.h>
 
 #define PASSDLG_HIDE_TIMEOUT        10000
+#define LOCK_GRACE_TIMEOUT          5000
 
 int ignoreXError(Display *, XErrorEvent *);
 static Window gVRoot = 0;
@@ -222,7 +224,16 @@ void LockProcess::configure()
     config.setGroup("ScreenSaver");
 
 //    bool e  = config->readBoolEntry("Enabled", false);
-    mLock     = config.readBoolEntry("Lock", false);
+
+    if(config.readBoolEntry("Lock", false))
+    {
+        QTimer::singleShot(LOCK_GRACE_TIMEOUT, this, SLOT(actuallySetLock()));
+    }
+    else
+    {
+        mLock = false;
+    }
+    
     mPriority = config.readNumEntry("Priority", 19);
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
@@ -893,3 +904,9 @@ int ignoreXError(Display *, XErrorEvent *)
 {
     return 0;
 }
+
+void LockProcess::actuallySetLock()
+{
+    mLock = true;
+}
+
