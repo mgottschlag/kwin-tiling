@@ -828,7 +828,7 @@ QString KXftConfig::description(SubPixel::Type t)
         case SubPixel::None:
             return i18n("None");
         case SubPixel::Greyscale:
-            return i18n("Greyscale");
+            return i18n("Grayscale");
         case SubPixel::Rgb:
             return i18n("RGB");
         case SubPixel::Bgr:
