@@ -32,7 +32,7 @@
 static const char description[] = I18N_NOOP("KDE control center editor");
 static const char version[] = "1.0";
 
-extern "C" int kdemain( int argc, char **argv )
+extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
 {
     KLocale::setMainCatalogue("kmenuedit");
     KAboutData aboutData("kcontroledit", I18N_NOOP("KDE Control Center Editor"),
