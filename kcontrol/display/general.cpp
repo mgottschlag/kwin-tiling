@@ -57,58 +57,59 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
 
     setTitle(i18n("Icon style"));
 
-    QGridLayout *grid = new QGridLayout(this, 4, 3, KDialog::marginHint(),
+    QGridLayout *grid = new QGridLayout(this, 7, 3, KDialog::marginHint(),
 					KDialog::spacingHint());
+    grid->addRowSpacing(0, fontMetrics().lineSpacing());
     QLabel *lbl = new QLabel(i18n("Normal"), this);
 
-    grid->addWidget(lbl, 0, 1);
+    grid->addWidget(lbl, 1, 1);
     lbl = new QLabel(i18n("Large"), this);
-    grid->addWidget(lbl, 0, 2);
+    grid->addWidget(lbl, 1, 2);
 
     // Panel
     lbl = new QLabel(i18n("Panel"), this);
-    grid->addWidget(lbl, 1, 0);
+    grid->addWidget(lbl, 2, 0);
     panelGroup = new QButtonGroup();
     connect(panelGroup, SIGNAL(clicked(int)), SLOT(slotPanel(int)));
     QRadioButton *rb = new QRadioButton(this);
     panelGroup->insert(rb);
-    grid->addWidget(rb, 1, 1);
+    grid->addWidget(rb, 2, 1);
     rb = new QRadioButton(this);
     panelGroup->insert(rb);
-    grid->addWidget(rb, 1, 2);
+    grid->addWidget(rb, 2, 2);
 
     // Konq
     lbl = new QLabel(i18n("Konqueror"), this);
-    grid->addWidget(lbl, 2, 0);
+    grid->addWidget(lbl, 3, 0);
     konqGroup = new QButtonGroup();
     connect(konqGroup, SIGNAL(clicked(int)), SLOT(slotKonq(int)));
     rb = new QRadioButton(this);
     konqGroup->insert(rb);
-    grid->addWidget(rb, 2, 1);
+    grid->addWidget(rb, 3, 1);
     rb = new QRadioButton(this);
     konqGroup->insert(rb);
-    grid->addWidget(rb, 2, 2);
+    grid->addWidget(rb, 3, 2);
 
     // KDE
     lbl = new QLabel(i18n("Other"), this);
-    grid->addWidget(lbl, 3, 0);
+    grid->addWidget(lbl, 4, 0);
     kdeGroup = new QButtonGroup();
     connect(kdeGroup, SIGNAL(clicked(int)), SLOT(slotKDE(int)));
     rb = new QRadioButton(this);
     kdeGroup->insert(rb);
-    grid->addWidget(rb, 3, 1);
+    grid->addWidget(rb, 4, 1);
     rb = new QRadioButton(this);
     kdeGroup->insert(rb);
-    grid->addWidget(rb, 3, 2);
+    grid->addWidget(rb, 4, 2);
 
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-    grid->addMultiCellWidget(frame, 4, 4, 0, 2);
+    grid->addMultiCellWidget(frame, 5, 5, 0, 2);
       
     singleClick = new QCheckBox(i18n("Single &click to activate"), this);
     connect(singleClick, SIGNAL(clicked()), SLOT(slotSingleClick()));
 
-    grid->addMultiCellWidget(singleClick, 5, 5, 0, 2);
+    grid->addMultiCellWidget(singleClick, 6, 6, 0, 2);
 
     config = new KConfig("kcmdisplayrc");
     load();
