@@ -545,7 +545,7 @@ void BGDialog::updateUI()
    if ((multiMode == KBackgroundSettings::NoMultiRandom) ||
        (multiMode == KBackgroundSettings::NoMulti))
    {
-      // No wallper
+      // No wallpaper
       if (wallpaperMode == KBackgroundSettings::NoWallpaper )
       {
          m_urlWallpaperBox->setEnabled(false);
