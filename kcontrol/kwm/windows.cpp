@@ -200,7 +200,7 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     QWhatsThis::add( kdeMode, wtstr );
     QWhatsThis::add( cdeMode, wtstr );
     
-    traverseAll = new QCheckBox( i18n( "Traverse all windows" ), kbdBox );
+    traverseAll = new QCheckBox( i18n( "Traverse windows on all desktops" ), kbdBox );
     kLay->addMultiCellWidget( traverseAll, 2, 2, 0, 2 );
     
     wtstr = i18n( "Leave this option disabled if you want limit walking through"
