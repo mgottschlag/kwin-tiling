@@ -91,9 +91,10 @@ int main(int argc, char *argv[])
   KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2002, The KDE Control Center Developers"));
+
+  aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-  aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
   aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );

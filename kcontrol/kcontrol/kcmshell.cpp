@@ -136,9 +136,11 @@ int main(int _argc, char *_argv[])
                           I18N_NOOP("A tool to start single KDE control modules"),
                           KAboutData::License_GPL,
                           "(c) 1999-2001, The KDE Developers");
+
+    aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
     aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+    aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
 
     KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
