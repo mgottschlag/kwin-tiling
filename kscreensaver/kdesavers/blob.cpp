@@ -32,6 +32,7 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qimage.h>
+#include <qvalidator.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -462,6 +463,7 @@ KBlobSetup::KBlobSetup
 	label = new QLabel(i18n("Frame Show (secs)"),
 		    this);
 	stime = new QLineEdit(this);
+        stime->setValidator(new QIntValidator(stime));
 	str.setNum(showtime);
 	stime->setText(str);
 	tl11->addWidget(label);
