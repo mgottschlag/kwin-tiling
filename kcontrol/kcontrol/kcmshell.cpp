@@ -18,6 +18,7 @@
 
 */
 
+#include <iostream>
 #include <stdlib.h>
 
 #include <qfile.h>
@@ -34,15 +35,19 @@
 #include <klibloader.h>
 #include <kaboutdata.h>
 
-#include "kcdialog.h"
 #include <kcmultidialog.h>
 #include <kcmoduleinfo.h>
 #include <kcmoduleloader.h>
+
+#include "kcdialog.h"
 #include "global.h"
 #include "kcmshell.h"
 #include "proxywidget.h"
+#include "modules.h"
 
 #include "version.h"
+
+using namespace std;
 
 static KCmdLineOptions options[] =
 {
@@ -105,6 +110,12 @@ kcmApplication::slotAppExit(const QCString &appId)
         deref();
 }
 
+static const QString stripPath(const QString& path)
+{
+    int pathEnd = path.findRev('/')+1;
+    int dot = path.findRev('.');
+    return path.mid(pathEnd, dot-pathEnd);
+}
 
 extern "C" int kdemain(int _argc, char *_argv[])
 {
@@ -128,46 +139,36 @@ extern "C" int kdemain(int _argc, char *_argv[])
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KGlobal::iconLoader()->addAppDir( "kcontrol" );
 
-	KGlobal::locale()->setLanguage(args->getOption("lang"));
-	
+    KGlobal::locale()->setLanguage(args->getOption("lang"));
+
     if (args->isSet("list")) {
-        QStringList files;
-        KGlobal::dirs()->findAllResources("apps",
-                                          KCGlobal::baseGroup() + "*.desktop",
-                                          true, true, files);
-        QStringList modules;
-        QStringList descriptions;
-        uint maxwidth = 0;
-        for (QStringList::ConstIterator it = files.begin(); it != files.end(); it++) {
 
-            if (KDesktopFile::isDesktopFile(*it)) {
-                KDesktopFile file(*it, true);
-                if (file.readEntry("Hidden") == "true")
-                    continue;
-                QString module = *it;
-                if (module.startsWith(KCGlobal::baseGroup()))
-                    module = module.mid(KCGlobal::baseGroup().length());
-                if (module.right(8) == ".desktop")
-                    module.truncate(module.length() - 8);
+        cout << i18n("The following modules are available:").local8Bit() << endl;
 
-                modules.append(module);
-                if (module.length() > maxwidth)
-                    maxwidth = module.length();
-                descriptions.append(QString("%2 (%3)").arg(file.readName()).arg(file.readComment()));
-            }
+        ConfigModuleList modules;
+        modules.readDesktopEntries();
+        ConfigModule *module = 0;
+
+        int maxLen=0;
+
+        for (module=modules.first(); module != 0; module=modules.next())
+        {
+            int len = stripPath(module->fileName()).length();
+            if (len > maxLen) maxLen = len;
         }
 
-        QByteArray vl;
-        vl.fill(' ', 80);
-        QString verylong = vl;
+        for (module=modules.first(); module != 0; module=modules.next())
+        {
 
-        for (uint i = 0; i < modules.count(); i++) {
-	    fprintf(stdout, "%s%s - %s\n",
-		    (*modules.at(i)).local8Bit().data(),
-		    verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit().data(),
+            QString entry("%1 - %2");
 
-		    (*descriptions.at(i)).local8Bit().data());
+            entry = entry.arg(stripPath(module->fileName()).leftJustify(maxLen, ' '));
+            entry = entry.arg(!module->comment().isEmpty() ? 
+                              module->comment() : i18n("No description available"));
+
+            cout << entry.local8Bit() << endl;
         }
+
 
         return 0;
     }
