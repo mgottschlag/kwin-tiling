@@ -26,7 +26,12 @@ extern  char caller[20];
  *****************************************************************/
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_PAM_PAM_APPL_H
+#include <pam/pam_appl.h>
+#else
 #include <security/pam_appl.h>
+#endif
 
 static const char *PAM_username;
 static const char *PAM_password;
