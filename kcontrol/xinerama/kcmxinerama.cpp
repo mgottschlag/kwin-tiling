@@ -182,7 +182,7 @@ QWidget *KCMXinerama::indicator(int dpy) {
 	r.setTop(r.top() + 5*r.height()/12);
 	r.setBottom(r.top() + 1*r.height()/6);
 
-	QWidget *_screenIndicator = new QWidget(0, "Screen Indicator");
+	QWidget *_screenIndicator = new QWidget(0, "Screen Indicator", WStyle_StaysOnTop | WStyle_Customize | WStyle_NoBorder);
 	_screenIndicator->setGeometry(r);
 
 	QLabel *l = new QLabel(QString::number(dpy+1), _screenIndicator);
@@ -195,11 +195,12 @@ QWidget *KCMXinerama::indicator(int dpy) {
 	l->resize(l->minimumSizeHint());
 	l->move(QPoint((_screenIndicator->width() - l->width())/2, (_screenIndicator->height() - l->height())/2));
 
-	_screenIndicator->showFullScreen();
 	_screenIndicator->setGeometry(r);
 	_screenIndicator->setBackgroundColor(QColor(0,0,0));
 	KWin::setOnAllDesktops(_screenIndicator->winId(), true);
-	KWin::setState(_screenIndicator->winId(), NET::StaysOnTop);
+	KWin::setState(_screenIndicator->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
+        KWin::setType(_screenIndicator->winId(), NET::Override);
+
 	_screenIndicator->show();
 
 	return _screenIndicator;
