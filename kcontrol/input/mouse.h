@@ -96,6 +96,7 @@ private:
   QLabel *lDelay;
   QSlider *slAutoSelect;
   QCheckBox *cbCursor;
+  QCheckBox *cbLargeCursor;
 };
 
 #endif

@@ -243,6 +243,13 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
      " changes whenever it is over an icon.");
   QWhatsThis::add( cbCursor, wtstr );
   
+  cbLargeCursor = new QCheckBox(i18n("&Large cursor"), this);
+  lay->addWidget(cbLargeCursor,Qt::AlignLeft);
+  connect(cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
+  
+  wtstr = i18n("Use high-visibility large cursor");
+  QWhatsThis::add( cbLargeCursor, wtstr );
+
   lay->addStretch(10);
   load();
 }
@@ -382,10 +389,13 @@ void MouseConfig::load()
   int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   bool changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 
+  bool largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
+  
   cbAutoSelect->setChecked( autoSelect >= 0 );
   if ( autoSelect < 0 ) autoSelect = 0;
   slAutoSelect->setValue( autoSelect );
   cbCursor->setChecked( changeCursor );
+  cbLargeCursor->setChecked(largeCursor);
   slotClick();
 
   delete config;
@@ -482,6 +492,7 @@ void MouseConfig::save()
   config->writeEntry( "AutoSelectDelay", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
   config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
 
+  config->writeEntry( "LargeCursor", cbLargeCursor->isChecked(), true, true );
   config->sync();
 
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
@@ -502,6 +513,7 @@ void MouseConfig::defaults()
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
+    cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     slotClick();
 }
 
