@@ -475,7 +475,7 @@ void TopLevel::slotHelpRequest()
 void TopLevel::reportBug()
 {
     // this assumes the user only opens one bug report at a time
-    static char buffer[30];
+    static char buffer[128];
 
     dummyAbout = 0;
     bool deleteit = false;
@@ -488,7 +488,7 @@ void TopLevel::reportBug()
             dummyAbout = const_cast<KAboutData*>(_active->aboutData());
         else
         {
-            sprintf(buffer, "kcm%s", _active->library().latin1());
+            snprintf(buffer, sizeof(buffer), "kcm%s", _active->library().latin1());
             dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
             deleteit = true;
         }
