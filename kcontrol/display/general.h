@@ -90,13 +90,16 @@ private:
     bool tbUseHilite, tbMoveTransparent;
     bool effectFadeMenu, effectAnimateMenu, effectAnimateCombo, effectFadeTooltip, effectAnimateTooltip, effectNoTooltip;
     QString tbUseText;
-/*
+
     QGroupBox *styles, *tbStyle;
+    /*
     QGroupBox *effectStyleMenu, *effectStyleTooltip;
     QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
     QCheckBox *tbHilite, *tbTransp;
     QCheckBox *cbRes;
+    */
     QCheckBox *cbMac;
+    /*
     QCheckBox *cbIcons;
     QRadioButton *effPlainMenu, *effFadeMenu, *effAnimateMenu, *effPlainTooltip, *effFadeTooltip, *effAnimateTooltip;
     QCheckBox *effAnimateCombo, *effNoTooltip;

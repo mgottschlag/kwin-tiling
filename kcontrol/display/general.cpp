@@ -294,7 +294,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     btnLay->addItem(spacer);
 
     connect(btnImport, SIGNAL(clicked()), SLOT(slotRunImporter()));
-/*
+
     // Drawing settings
     styles = new QGroupBox ( i18n( "Other settings for drawing" ), this );
     topLayout->addWidget(styles, 10);
@@ -312,7 +312,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
     vlay->addWidget( cbMac, 10 );
-
+/*
     cbRes = new QCheckBox( i18n( "&Apply colors to non-KDE apps" ), styles);
     connect( cbRes, SIGNAL( clicked() ), SLOT( slotUseResourceManager()  )  );
     vlay->addWidget( cbRes, 10 );
@@ -543,13 +543,13 @@ void KGeneral::slotUseIcons()
 }
 void KGeneral::slotMacStyle()
 {
-/*
+
     macStyle = cbMac->isChecked();
 
     m_bMacStyleDirty = true;
     m_bChanged = true;
     emit changed(true);
-*/
+
 }
 
 void KGeneral::readSettings()
@@ -593,8 +593,9 @@ void KGeneral::showSettings()
 {
 /*
     cbRes->setChecked(m_bExportColors);
-
+*/
     cbMac->setChecked(macStyle);
+/*
     cbIcons->setChecked( icons );
 
     tbHilite->setChecked(tbUseHilite);
