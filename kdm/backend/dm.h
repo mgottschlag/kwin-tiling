@@ -420,7 +420,7 @@ extern void SetupDisplay (void);
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
 extern void OpenGreeter (void);
-extern void CloseGreeter (int force);
+extern int CloseGreeter (int force);
 extern int CtrlGreeterWait (int wreply);
 extern void PrepErrorGreet (void);
 extern char *conv_interact (int what, const char *prompt);

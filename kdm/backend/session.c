@@ -405,15 +405,18 @@ OpenGreeter ()
     Debug ("greeter for %s ready\n", td->name);
 }
 
-void
+int
 CloseGreeter (int force)
 {
+    int ret;
+
     if (!greeter)
-	return;
-    (void) GClose (&grtproc, force);
+	return 0;
+    ret = GClose (&grtproc, force);
     DeleteXloginResources ();
     greeter = 0;
     Debug ("greeter for %s stopped\n", td->name);
+    return ret;
 }
 
 void
@@ -539,7 +542,8 @@ ManageSession (struct display *d)
 	alarm (0);
     }
 
-    CloseGreeter (FALSE);
+    if (CloseGreeter (FALSE))
+	SessionExit (EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
 
     if (!(clientPid = StartClient ())) {
 	LogError ("Client start failed\n");
