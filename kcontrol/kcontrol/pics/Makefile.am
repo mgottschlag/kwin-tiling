@@ -1,16 +1,11 @@
 # $Id$
 # kdebase/kcontrol/kcontrol/pics
 
-SUBDIRS = mini
-
-logo_DATA = kdekcc.xpm
-
+logo_DATA = kdekcc.png
 logodir = $(kde_datadir)/kcontrol/pics
 
-data_DATA = application_settings.xpm desktop_settings.xpm \
-general_settings.xpm information_settings.xpm input_devices_settings.xpm \
-network_settings.xpm panel_settings.xpm sound_settings.xpm kcontrol.xpm
+KDE_ICON = application_settings desktop_settings general_settings \
+	information_settings input_devices_settings kcontrol \
+	network_settings panel_settings sound_settings 
 
-datadir = $(kde_icondir)
-
-EXTRA_DIST = $(data_DATA) $(logo_DATA)
+EXTRA_DIST = $(logo_DATA)
