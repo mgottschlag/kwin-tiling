@@ -89,8 +89,6 @@ void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
   }
 
   if ( KeyType == "standard" ) {
-    // Bug: the useFourModifierKeys hasn't been set yet, so it defaults
-    //  to the 3-modifier key settings no matter what.
     for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
       KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
       keys->insertItem( KStdAccel::description(id),
@@ -143,14 +141,21 @@ void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
   QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
     " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
 
-  preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
-  if( !KAccel::keyboardHasMetaKey() )
-  	preferMetaBt->setEnabled( false );
-  preferMetaBt->setChecked( KAccel::useFourModifierKeys() );
-  connect( preferMetaBt, SIGNAL(clicked()), SLOT(slotPreferMeta()) );
-  QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
-	"like for KDE to always default to a 3-modifier configuration, then this options "
-	"should be unchecked.") );
+  // Hack to get this setting only displayed once.  It belongs in main.cpp instead.
+  // That move will take a lot of UI redesigning, though, so i'll do it once CVS
+  //  opens up for feature commits again. -- ellis
+  // If this is the "Global Keys" section of the KDE Control Center:
+  if( isGlobal && !bSeriesOnly ) {
+	preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
+	if( !KAccel::keyboardHasMetaKey() )
+		preferMetaBt->setEnabled( false );
+	preferMetaBt->setChecked( KAccel::useFourModifierKeys() );
+	connect( preferMetaBt, SIGNAL(clicked()), SLOT(slotPreferMeta()) );
+	QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
+		"like KDE to prefer the 3-modifier configuration defaults, then this option "
+		"should be unchecked.") );
+  } else
+	preferMetaBt = 0;
 
   KSeparator* line = new KSeparator( KSeparator::HLine, this );
 
@@ -171,7 +176,8 @@ void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
   topLayout->addWidget(addBt, 1, 1);
   topLayout->addWidget(removeBt, 2, 1);
-  topLayout->addWidget(preferMetaBt, 3, 0);
+  if( preferMetaBt )
+    topLayout->addWidget(preferMetaBt, 3, 0);
   topLayout->addMultiCellWidget(line, 4, 4, 0, 1);
   topLayout->addRowSpacing(3, 15);
   topLayout->addMultiCellWidget(kc, 5, 5, 0, 1);
@@ -195,8 +201,8 @@ void KKeyModule::load()
 
 void KKeyModule::save()
 {
-  KAccel::useFourModifierKeys( preferMetaBt->isChecked() );
-  KGlobal::config()->writeEntry( "User Four Modifier Keys", KAccel::useFourModifierKeys() ? "true" : "false", true, true );
+  if( preferMetaBt )
+    KAccel::useFourModifierKeys( preferMetaBt->isChecked() );
 
   keys->setKeyDict( dict );
   keys->writeSettings();
@@ -211,7 +217,8 @@ void KKeyModule::save()
 
 void KKeyModule::defaults()
 {
-  preferMetaBt->setChecked( KAccel::keyboardHasMetaKey() );
+  if( preferMetaBt )
+    preferMetaBt->setChecked( KAccel::keyboardHasMetaKey() );
   kc->allDefault();
 }
 
@@ -256,7 +263,7 @@ void KKeyModule::slotSave( )
 
 void KKeyModule::slotPreferMeta()
 {
-	// *** yet to be filled in / let children know -- ellis
+	kc->setPreferFourModifierKeys( preferMetaBt->isChecked() );
 }
 
 void KKeyModule::readScheme( int index )
@@ -442,13 +449,13 @@ void KKeyModule::init()
     cfg.deleteGroup( "Global Keys" );
     }
 
-  kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
+  /*kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
   KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
   QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
   KAccel::useFourModifierKeys( fourMods == "true" );
   bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
   KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", true, true );
-
+  */
   QWidget workaround;
   KAccel* keys = new KAccel( &workaround );
 

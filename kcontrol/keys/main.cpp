@@ -44,9 +44,9 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   tab->addTab(global, i18n("&Global Shortcuts"));
   connect(global, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  global = new KKeyModule(this, true, true, false);
-  tab->addTab(global, i18n("Shortcut Se&quences"));
-  connect(global, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  series = new KKeyModule(this, true, true, false);
+  tab->addTab(series, i18n("Shortcut Se&quences"));
+  connect(series, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   standard = new KKeyModule(this, false);
   tab->addTab(standard, i18n("&Application Shortcuts"));
@@ -62,6 +62,7 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
 void KeyModule::load()
 {
   global->load();
+  series->load();
   standard->load();
 }
 
@@ -69,6 +70,7 @@ void KeyModule::load()
 void KeyModule::save()
 {
   global->save();
+  series->save();
   standard->save();
 }
 
@@ -76,6 +78,7 @@ void KeyModule::save()
 void KeyModule::defaults()
 {
   global->defaults();
+  series->defaults();
   standard->defaults();
 }
 
