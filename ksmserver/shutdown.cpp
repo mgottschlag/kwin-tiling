@@ -65,7 +65,7 @@ void KSMShutdownFeedback::keyPressEvent( QKeyEvent * event )
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
-    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorderEx | WStyle_StaysOnTop ) //WType_Popup )
+    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WStyle_StaysOnTop ) //WType_Popup )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
