@@ -57,6 +57,8 @@
 #include <bgdialogs.h>
 #include <backgnd.h>
 
+#include "kimagefilepreview.h"
+
 /* as late as possible, as it includes some X headers without protecting them */
 #include <kwin.h>
 
@@ -100,6 +102,27 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
         e->ignore(rect());
 }
 
+/**** File open dialog with image preview ****/
+
+static KURL getImageOpenURL( const QString& startDir, QWidget *parent,
+			     const QString& caption)
+{
+    KFileDialog *dlg = new KFileDialog(startDir,
+	    KImageIO::pattern(KImageIO::Reading), parent, "filedialog", true);
+    dlg->setCaption(caption.isNull() ? i18n("Open") : caption);
+
+    KImageFilePreview *ip = new KImageFilePreview( dlg );
+    ip->show();
+    dlg->setPreviewWidget( ip );
+
+    dlg->exec();
+
+    KURL url = dlg->selectedURL();
+
+    delete dlg;
+
+    return url;
+}
 
 /**** KBackground ****/
 
@@ -847,10 +870,14 @@ void KBackground::slotBrowseWallpaper()
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
+/*
     KURL url = KFileDialog::getOpenURL(QString::null,
                                        KImageIO::pattern(KImageIO::Reading),
                                        0,
                                        i18n("Select Wallpaper"));
+*/
+    KURL url = getImageOpenURL(QString::null, 0, i18n("Select Wallpaper"));
+
     if (url.isEmpty())
         return;
     if (!url.isLocalFile()) {

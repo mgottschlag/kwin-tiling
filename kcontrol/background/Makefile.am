@@ -6,13 +6,13 @@ INCLUDES = $(all_includes)
 
 kde_module_LTLIBRARIES = libkcm_background.la
 
-libkcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp
+libkcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp kimagefilepreview.cpp
 libkcm_background_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 libkcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la
 
 METASOURCES = AUTO
 
-noinst_HEADERS = backgnd.h bgdialogs.h bgsettings.h bgrender.h
+noinst_HEADERS = backgnd.h bgdialogs.h bgsettings.h bgrender.h kimagefilepreview.h
 
 noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgsettings.cc bgrender.cc
