@@ -20,7 +20,7 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 kcmroot_LDADD   = -lkdeui -lkdecore -lqt -lXext -lX11
 
 icons_DATA = close.png
-iconsdir = $(kde_datadir)/kcontrol/pics
+iconsdir = $(kde_datadir)/kcontrol2/pics
 
 INCLUDES= $(all_includes)
 
