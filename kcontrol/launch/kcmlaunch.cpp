@@ -46,8 +46,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     QWhatsThis::add(GroupBox1, i18n(
      "<h1>Busy Cursor</h1>\n"
      "KDE offers a busy cursor for application startup notification.\n"
-     "To enable the busy cursor, check 'Enable busy cursor'.\n"
-     "To have the cursor blinking, check 'Enable blinking' below.\n"
+     "To enable the busy cursor, select one kind of visual feedback\n"
+     "from the combobox.\n"
      "It may occur, that some applications are not aware of this startup\n"
      "notification. In this case, the cursor stops blinking after the time\n"
      "given in the section 'Startup indication timeout'"));
@@ -63,8 +63,9 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
 
     cb_busyCursor = new QComboBox( GroupBox1, "cb_busyCursor" );
     cb_busyCursor->insertItem( i18n( "No Busy Cursor" ), 0 );
-    cb_busyCursor->insertItem( i18n( "Blinking Cursor" ), 1 );
-    cb_busyCursor->insertItem( i18n( "Bouncing Cursor" ), 2 );
+    cb_busyCursor->insertItem( i18n( "Passive Busy Cursor" ), 1 );
+    cb_busyCursor->insertItem( i18n( "Blinking Cursor" ), 2 );
+    cb_busyCursor->insertItem( i18n( "Bouncing Cursor" ), 3 );
     GroupBox1Layout->addWidget( cb_busyCursor, 0, 0 );
     connect( cb_busyCursor, SIGNAL( activated(int) ),
             SLOT ( slotBusyCursor(int)));
@@ -163,9 +164,11 @@ LaunchConfig::load()
   if ( !busyCursor )
      cb_busyCursor->setCurrentItem(0);
   else if ( busyBlinking )
-     cb_busyCursor->setCurrentItem(1);
-  else if ( busyBouncing )
      cb_busyCursor->setCurrentItem(2);
+  else if ( busyBouncing )
+     cb_busyCursor->setCurrentItem(3);
+  else
+     cb_busyCursor->setCurrentItem(1);
 
   c.setGroup( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
@@ -187,8 +190,8 @@ LaunchConfig::save()
 
   c.setGroup( "BusyCursorSettings" );
   c.writeEntry( "Timeout", sb_cursorTimeout->value());
-  c.writeEntry("Blinking", cb_busyCursor->currentItem() == 1);
-  c.writeEntry("Bouncing", cb_busyCursor->currentItem() == 2);
+  c.writeEntry("Blinking", cb_busyCursor->currentItem() == 2);
+  c.writeEntry("Bouncing", cb_busyCursor->currentItem() == 3);
 
   c.setGroup( "TaskbarButtonSettings" );
   c.writeEntry( "Timeout", sb_taskbarTimeout->value());
@@ -207,13 +210,13 @@ LaunchConfig::save()
   void
 LaunchConfig::defaults()
 {
-  cb_busyCursor->setCurrentItem(1);
+  cb_busyCursor->setCurrentItem(2);
   cb_taskbarButton->setChecked(Default & TaskbarButton);
 
   sb_cursorTimeout->setValue( 30 );
   sb_taskbarTimeout->setValue( 30 );
 
-  slotBusyCursor( 1 );
+  slotBusyCursor( 2 );
   slotTaskbarButton( Default & TaskbarButton );
  
   checkChanged();
@@ -244,8 +247,8 @@ LaunchConfig::checkChanged()
 
   bool newTaskbarButton =cb_taskbarButton->isChecked();
 
-  bool newBusyBlinking= cb_busyCursor->currentItem()==1;
-  bool newBusyBouncing= cb_busyCursor->currentItem()==2;
+  bool newBusyBlinking= cb_busyCursor->currentItem()==2;
+  bool newBusyBouncing= cb_busyCursor->currentItem()==3;
 
   unsigned int newCursorTimeout = sb_cursorTimeout->value();
   
