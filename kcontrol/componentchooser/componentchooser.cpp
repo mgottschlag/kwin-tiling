@@ -246,7 +246,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 void CfgTerminalEmulator::selectTerminalApp()
 {
 	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
+	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString::null, this);
 	if (dlg.exec() != QDialog::Accepted) return;
 	QString client = dlg.text();
 
