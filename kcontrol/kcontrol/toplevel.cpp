@@ -125,12 +125,6 @@ TopLevel::TopLevel(const char* name)
   connect(_dock, SIGNAL(changedModule(ConfigModule*)),
           SLOT(changedModule(ConfigModule*)));
 
-  // insert the about widget
-  AboutWidget *aw = new AboutWidget(this);
-  connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
-           SLOT( activateModule( ConfigModule * ) ) );
-  _dock->setBaseWidget(aw);
-
   // set the main view
   setCentralWidget( _splitter );
 
@@ -146,6 +140,8 @@ TopLevel::TopLevel(const char* name)
     activateIconView();
     icon_view->setChecked(true);
   }
+
+  // insert the about widget
   if (KCGlobal::isInfoCenter())
   {
       AboutWidget *aw = new AboutWidget( this, 0, _indextab->firstTreeViewItem());
@@ -155,6 +151,13 @@ TopLevel::TopLevel(const char* name)
       KWin::setIcons(  winId(),
 		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  32 ),
 		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  16 ) );
+  }
+  else
+  {
+      AboutWidget *aw = new AboutWidget(this);
+      connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
+                   SLOT( activateModule( ConfigModule * ) ) );
+      _dock->setBaseWidget(aw);
   }
 }
 
