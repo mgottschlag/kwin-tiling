@@ -19,6 +19,7 @@
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qheader.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -69,6 +70,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
     m_panelList->setSorting(-1);
+    m_panelList->header()->hide();
 
     // connections
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));

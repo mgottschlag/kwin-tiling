@@ -18,6 +18,7 @@
 
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
+#include <qheader.h>
 #include <qlabel.h>
 #include <qstring.h>
 #include <qslider.h>
@@ -46,7 +47,7 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     m_panelInfo(0)
 {
     m_panelList->setSorting(-1);
-
+    m_panelList->header()->hide();
     // connections
     connect(m_manual,SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_automatic, SIGNAL(toggled(bool)), SIGNAL(changed()));

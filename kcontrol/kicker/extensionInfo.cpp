@@ -74,7 +74,7 @@ void extensionInfo::load()
     _showLeftHB     = c.readBoolEntry("ShowLeftHideButton",  _showLeftHB);
     _showRightHB    = c.readBoolEntry("ShowRightHideButton", _showRightHB);
     _autohidePanel  = c.readBoolEntry("AutoHidePanel",       _autohidePanel);
-    _backgroundHide = c.readBoolEntry("AutoHidePanel",       _backgroundHide);
+    _backgroundHide = c.readBoolEntry("BackgroundHide",      _backgroundHide);
     _autoHideSwitch = c.readBoolEntry("AutoHideSwitch",      _autoHideSwitch);
     _autoHideDelay  = c.readNumEntry ("AutoHideDelay",       _autoHideDelay);
     _hideAnim       = c.readBoolEntry("HideAnimation",       _hideAnim);
