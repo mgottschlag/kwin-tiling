@@ -40,6 +40,7 @@
 #include <qglobal.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kdeversion.h>
 #include <stdio.h>
 #include <string.h>
 #include <fstream.h>
@@ -230,7 +231,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
                 << "FullName " << CKfiGlobal::fe().getFullName().latin1() << endl
                 << "FamilyName " << CKfiGlobal::fe().getFamilyName().latin1() << endl
                 << "Weight " << CFontEngine::weightStr(CKfiGlobal::fe().getWeight()).latin1() << endl
-                << "Notice Created with kfontinst v" << CKfi::constVersion << endl
+                << "Notice Created with kfontinst (KDE Version: " << KDE_VERSION_STRING << ')' << endl
                 << "ItalicAngle " << CKfiGlobal::fe().getItalicAngle() << endl
                 << "IsFixedPitch " << (CFontEngine::SPACING_MONOSPACED==CKfiGlobal::fe().getSpacing() ? "true" : "false") << endl
                 << "UnderlinePosition " << CKfiGlobal::fe().getUnderlinePosition() << endl

@@ -31,7 +31,7 @@
  
 #include "Config.h"
 #include "Misc.h"
-
+#include "FontListWidgetDcopIface.h"
 #include <klistview.h>
 #include <kurl.h>
 #include <qptrlist.h>
@@ -40,7 +40,7 @@ class QPainter;
 class QColorGroup;
 class QPopupMenu;
 
-class CFontListWidget : public KListView
+class CFontListWidget : public KListView, virtual public CFontListWidgetDcopIface
 {
     Q_OBJECT
 
@@ -145,7 +145,7 @@ class CFontListWidget : public KListView
     void          addFont(const QString &from, const QString &path, const QString &file, bool checkOpen=true);
     void          addSubDir(const QString &top, const QString &sub, bool checkOpen=true);
     void          changeStatus(bool status);
-    void          installFonts(const KURL::List &list);
+    void          installFonts(const KURL::List &list, bool dcop=false);
 
     public slots:
 
@@ -163,6 +163,8 @@ class CFontListWidget : public KListView
     void          createDir();
     void          toggleUnscaled();
     void          selectionChanged();
+    void          installFonts(QString list);
+    bool          ready();
 
     signals:
 
@@ -194,7 +196,8 @@ class CFontListWidget : public KListView
     private:
 
     bool            itsAdvancedMode,
-                    itsShowingProgress;
+                    itsShowingProgress,
+                    itsReady;
     QPopupMenu      *itsFontsPopup,
                     *itsDirsPopup;
     int             itsFixTtfPsNamesME,

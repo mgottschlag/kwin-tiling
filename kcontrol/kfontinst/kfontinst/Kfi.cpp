@@ -40,8 +40,6 @@
 #include <fstream.h>
 #include "kxftconfig.cpp" // CPD: Hack!!, this source file is located in kcontrol/fonts
 
-const char * CKfi::constVersion = "0.12";
- 
 CKfiMainWidget * CKfi::create(QWidget *parent)
 {
     CKfiGlobal::create(parent);

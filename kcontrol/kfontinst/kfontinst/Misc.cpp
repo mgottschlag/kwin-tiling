@@ -130,7 +130,7 @@ QString CMisc::dirSyntax(const QString &d)
 
         int slashPos=ds.findRev('/');
 
-        if(slashPos!=(ds.length()-1))
+        if(slashPos!=(((int)ds.length())-1))
             ds.append('/');
 
         return ds;

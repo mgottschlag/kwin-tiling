@@ -57,7 +57,9 @@
 #include <qmime.h>
 #include <qdragobject.h>
 #include <qcursor.h>
-
+#include <kapplication.h>
+#include <kcmdlineargs.h>
+#include <dcopclient.h>
 #include <iostream>
 
 static const QString constDisabledSubDir(".disabled");
@@ -602,8 +604,10 @@ void CFontItem::setEnabled(bool enabled)
 //#define ENABLE_DRAG
 CFontListWidget::CFontListWidget(QWidget *parent)
                : KListView(parent),
+                 DCOPObject("font_installer"),
                  itsAdvancedMode(CKfiGlobal::uicfg().isAdvancedMode()),
-                 itsShowingProgress(false)
+                 itsShowingProgress(false),
+                 itsReady(false)
 {
     addColumn(i18n("Folder/File"));
 
@@ -882,6 +886,8 @@ void CFontListWidget::scan()
             setEnabled(false);
         }
     }
+
+    itsReady=true;
 }
 
 void CFontListWidget::scanDir(const QString &dir, int sub)
@@ -1027,6 +1033,46 @@ void CFontListWidget::selectionChanged()
     }
 }
 
+static void addFontToList(KURL::List &list, const QString &str, int from, int to)
+{
+    QString font(str.mid(from, to-from));
+
+    if(QString::null!=font)
+    {
+        KURL    url;
+
+        url.setPath(CMisc::getDir(font));
+        url.setFileName(CMisc::getFile(font));
+        list.append(url);
+    }
+}
+
+void CFontListWidget::installFonts(QString list)
+{
+    // Receive a list of colon seperated fonts...
+
+    KURL::List urlList;
+    int        pos=0,
+               oldPos=0;
+
+    while(-1!=(pos=list.find(':', pos+1)))
+    {
+        addFontToList(urlList, list, oldPos, pos);
+        oldPos=pos+1;
+    }
+
+    if(oldPos<((int)list.length()))
+        addFontToList(urlList, list, oldPos, list.length()-oldPos);
+
+    if(urlList.count())
+        installFonts(urlList, true);
+}
+
+bool CFontListWidget::ready()
+{
+    return itsReady;
+}
+
 CFontListWidget::CListViewItem * CFontListWidget::getFirstSelectedItem()
 {
     CListViewItem *item=(CListViewItem *)firstChild();
@@ -1092,12 +1138,12 @@ void CFontListWidget::install()
     installFonts(nullList);
 }
 
-void CFontListWidget::installFonts(const KURL::List &suppliedList)
+void CFontListWidget::installFonts(const KURL::List &suppliedList, bool dcop)
 {
     CListViewItem *citem=NULL;
-    QString       selectedDir=itsAdvancedMode && (NULL!=(citem=getFirstSelectedItem())) ? citem->dir() : QString::null;
+    QString       selectedDir=!dcop && itsAdvancedMode && (NULL!=(citem=getFirstSelectedItem())) ? citem->dir() : QString::null;
 
-    if(itsAdvancedMode && (QString::null==selectedDir || CKfiGlobal::cfg().getFontsDir()==selectedDir))
+    if(!dcop && itsAdvancedMode && (QString::null==selectedDir || CKfiGlobal::cfg().getFontsDir()==selectedDir))
         KMessageBox::error(this, i18n("Please select destination folder first!"), i18n("Error"));
     else
     {
@@ -1122,9 +1168,9 @@ void CFontListWidget::installFonts(const KURL::List &suppliedList)
 
                 QString file    = url.fileName(),
                         dir     = url.directory(false),
-                        destDir = itsAdvancedMode ? selectedDir : CKfiGlobal::cfg().getFontsDir();
+                        destDir = itsAdvancedMode && !dcop ? selectedDir : CKfiGlobal::cfg().getFontsDir();
 
-                if(!itsAdvancedMode)
+                if(!itsAdvancedMode || dcop)
                     if(CFontEngine::isATtf(file.local8Bit()))
                         destDir+=CKfiGlobal::cfg().getTTSubDir();
                     else if(CFontEngine::isAType1(file.local8Bit()))

@@ -1,12 +1,12 @@
-#ifndef __KFI_H__
-#define __KFI_H__
+#ifndef __FONT_LIST_WIDGET_DCOP_IFACE_H__
+#define __FONT_LIST_WIDGET_DCOP_IFACE_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKfi
+// Class Name    : CFontListWidgetDcopIface
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
-// Creation Date : 01/05/2001
+// Creation Date : 03/08/2002
 // Version       : $Revision$ $Date$
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,20 +26,19 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001
+// (C) Craig Drummond, 2002
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <dcopobject.h>
 #include <qstring.h>
 
-class CKfiMainWidget;
-class QWidget;
-
-class CKfi
+class CFontListWidgetDcopIface : virtual public DCOPObject
 {
-    public:
+    K_DCOP
+    k_dcop:
 
-    static CKfiMainWidget * create(QWidget *parent);
-    static void             destroy();
+    virtual void installFonts(QString list)=0;
+    virtual bool ready()=0;
 };
 
 #endif
