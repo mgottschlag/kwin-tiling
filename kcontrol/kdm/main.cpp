@@ -165,8 +165,7 @@ QString KDModule::quickHelp() const
                     "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
                     "will offer you for logging in."
                     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
-		    "users not needing to provide a password to log in, and other features ideal for "
-		    "lazy people.<br>"
+		    "users not needing to provide a password to log in, and other convenience features.<br>"
 		    "Note, that these settings are security holes by their nature, so use them very carefully.");
 }
 
