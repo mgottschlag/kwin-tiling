@@ -37,7 +37,6 @@ class KickerConfig : public KCModule
 
 public:
     KickerConfig(QWidget *parent = 0L, const char *name = 0L);
-
     void load();
     void save();
     void defaults();

@@ -46,7 +46,6 @@
 // for multihead
 int KickerConfig::kickerconfig_screen_number = 0;
 
-
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -112,6 +111,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     //applettab = new AppletTab(this);
     //tab->addTab(applettab, i18n("&Applets"));
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
+    delete c;
 }
 
 void KickerConfig::initScreenNumber()
