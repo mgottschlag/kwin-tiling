@@ -9,54 +9,24 @@ desktop_DATA = kcmfontinst.desktop
 desktopdir = $(kde_appsdir)/Settings/System/
  
 kcm_fontinst_la_SOURCES = \
-	KfiCmModule.cpp \
-	Config.cpp \
-	DiskFontListWidget.cpp \
-	Encodings.cpp \
-	FontEngine.cpp \
-	FontListWidget.cpp\
-	FontListWidgetData.cpp \
-	FontsWidget.cpp \
-	FontsWidgetData.cpp \
-	InstalledFontListWidget.cpp \
-	Kfi.cpp \
-	KfiGlobal.cpp \
-	KfiMainWidget.cpp \
-	KfiMainWidgetData.cpp \
-	Misc.cpp \
-	SettingsWidget.cpp \
-	DirSettingsWidget.cpp \
-	DirSettingsWidgetData.cpp \
-	DisplaySettingsWidget.cpp \
-	DisplaySettingsWidgetData.cpp \
-	InstUninstSettingsWidget.cpp \
-	InstUninstSettingsWidgetData.cpp \
-	StarOfficeSettingsWidget.cpp \
-	StarOfficeSettingsWidgetData.cpp \
-	SysCfgSettingsWidget.cpp \
-	SysCfgSettingsWidgetData.cpp \
-	ErrorDialog.cpp \
-	ErrorDialogData.cpp \
-	Ttf.cpp \
-	AfmCreator.cpp \
-	SysConfigurer.cpp \
-	FontmapCreator.cpp \
-	BufferedFile.cpp \
-	StarOfficeConfig.cpp \
-	XConfig.cpp \
-	SettingsWizard.cpp \
-	SettingsWizardData.cpp \
-	XftConfigSettingsWidget.cpp \
-	XftConfigSettingsWidgetData.cpp \
-	XftConfig.cpp \
-	XftConfigRules.cpp \
-	XftConfigRulesData.cpp \
-	XftConfigEditor.cpp \
-	XftConfigEditorData.cpp \
-	XftConfigIncludesWidget.cpp \
-	XftConfigIncludesWidgetData.cpp \
-	FontPreview.cpp \
-	CompressedFile.cpp \
+        AfmCreator.cpp BufferedFile.cpp CompressedFile.cpp Config.cpp \
+        DirSettingsWidget.cpp DiskFontListWidget.cpp DisplaySettingsWidget.cpp \
+        Encodings.cpp ErrorDialog.cpp FontEngine.cpp FontListWidget.cpp \
+        FontPreview.cpp FontmapCreator.cpp FontsWidget.cpp \
+        InstUninstSettingsWidget.cpp InstalledFontListWidget.cpp \
+        Kfi.cpp KfiCmModule.cpp KfiGlobal.cpp KfiMainWidget.cpp \
+        Misc.cpp SettingsWidget.cpp SettingsWizard.cpp StarOfficeConfig.cpp \
+        StarOfficeSettingsWidget.cpp SysCfgSettingsWidget.cpp \
+        SysConfigurer.cpp Ttf.cpp XConfig.cpp XftConfig.cpp \
+        XftConfigEditor.cpp XftConfigIncludesWidget.cpp XftConfigRules.cpp \
+        XftConfigSettingsWidget.cpp \
+        DirSettingsWidgetData.ui DisplaySettingsWidgetData.ui \
+        ErrorDialogData.ui FontListWidgetData.ui FontsWidgetData.ui \
+        InstUninstSettingsWidgetData.ui KfiMainWidgetData.ui \
+        SettingsWizardData.ui StarOfficeSettingsWidgetData.ui \
+        SysCfgSettingsWidgetData.ui XftConfigEditorData.ui \
+        XftConfigIncludesWidgetData.ui XftConfigRulesData.ui \
+        XftConfigSettingsWidgetData.ui \
 	xftgram-kfi.c \
 	xftlex-kfi.c
 
@@ -72,28 +42,19 @@ EXTRA_DIST = \
 	Encodings.h \
 	FontEngine.h \
 	FontListWidget.h\
-	FontListWidgetData.h \
 	FontsWidget.h \
-	FontsWidgetData.h \
 	InstalledFontListWidget.h \
 	Kfi.h \
 	KfiGlobal.h \
 	KfiMainWidget.h \
-	KfiMainWidgetData.h \
 	Misc.h \
 	SettingsWidget.h \
 	DirSettingsWidget.h \
-	DirSettingsWidgetData.h \
 	DisplaySettingsWidget.h \
-	DisplaySettingsWidgetData.h \
 	InstUninstSettingsWidget.h \
-	InstUninstSettingsWidgetData.h \
 	StarOfficeSettingsWidget.h \
-	StarOfficeSettingsWidgetData.h \
 	SysCfgSettingsWidget.h \
-	SysCfgSettingsWidgetData.h \
 	ErrorDialog.h \
-	ErrorDialogData.h \
 	Ttf.h \
 	AfmCreator.h \
 	SysConfigurer.h \
@@ -102,14 +63,10 @@ EXTRA_DIST = \
 	StarOfficeConfig.h \
 	XConfig.h \
 	SettingsWizard.h \
-	SettingsWizardData.h \
 	XftConfigSettingsWidget.h \
-	XftConfigSettingsWidgetData.h \
 	XftConfig.h \
 	XftConfigRules.h \
-	XftConfigRulesData.h \
 	XftConfigEditor.h \
-	XftConfigEditorData.h \
 	XftRename.h \
 	FontPreview.h \
 	CompressedFile.h \
@@ -117,22 +74,6 @@ EXTRA_DIST = \
 	xftgram.h \
 	xftgram.c \
 	xftlex.c \
-	DirSettingsWidget.ui \
-	DisplaySettingsWidget.ui \
-	FontListWidget.ui \
-	FontsWidget.ui \
-	InstUninstSettingsWidget.ui \
-	KfiMainWidget.ui \
-	StarOfficeSettingsWidget.ui \
-	SysCfgSettingsWidget.ui \
-	ErrorDialog.ui \
-	SettingsWizard.ui \
-	XftConfigSettingsWidget.ui \
-	XftConfigRules.ui \
-        XftConfigEditor.ui \
-	XftConfigIncludesWidget.h \
-	XftConfigIncludesWidgetData.h \
-	XftConfigIncludesWidget.ui \
 	hi32-app-kcmfontinst.png \
 	hi48-app-kcmfontinst.png \
 	lo16-app-kcmfontinst.png \

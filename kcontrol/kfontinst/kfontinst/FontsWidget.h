@@ -59,6 +59,7 @@ class CFontsWidget : public CFontsWidgetData
 
     public slots:
 
+    void preview(const QString &) { }
     void initProgress(const QString &title, int numSteps);
     void progress(const QString &str);
     void stopProgress();

@@ -124,7 +124,7 @@
                         <property name="spacing">
                             <number>2</number>
                         </property>
-                        <widget class="QProgressBar" row="0" column="1">
+                        <widget class="KProgress" row="0" column="1">
                             <property name="name">
                                 <cstring>itsProgress</cstring>
                             </property>

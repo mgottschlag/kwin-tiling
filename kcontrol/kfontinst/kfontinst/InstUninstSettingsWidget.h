@@ -37,6 +37,9 @@ class CInstUninstSettingsWidget : public CInstUninstSettingsWidgetData
 
     CInstUninstSettingsWidget(QWidget *parent, const char *name=NULL);
     virtual ~CInstUninstSettingsWidget() {}
+    
+    virtual void moveToSelected(bool) { }
+    virtual void processAfmsSelected(bool) { }
 
     void fixTtfNamesSelected(bool on);
     void uninstallDirButtonPressed();
