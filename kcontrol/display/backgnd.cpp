@@ -41,7 +41,7 @@
 
 #include "backgnd.h"
 #include "backgnd.moc"
-#include "../../kwmmodules/kbgndwm/config-kbgndwm.h"
+#include "../../kdesktop/defaults.h"
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
