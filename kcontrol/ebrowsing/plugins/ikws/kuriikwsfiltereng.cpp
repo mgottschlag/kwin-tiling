@@ -206,7 +206,7 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map, const Q
 
 	PIDDBG << "Generating substitution map:\n";
 	// Generate substitution map from user query:
-	for (int i=0; i<=l.count(); i++) {
+	for (unsigned int i=0; i<=l.count(); i++) {
 		int j = 0;
 		int pos = 0;
 		QString v = "";
@@ -266,7 +266,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 		// Substitute reflists (\{ref1,ref2,...}):
 		while ((pos = reflist.match(newurl, 0, &len)) >= 0) {
 			bool found = false;
-			bool rest = false;
+			//bool rest = false;
 			QString v = "";
 			QString rlstring = newurl.mid(pos + 2, len - 3);
 			PDVAR ("  reference list", rlstring);
@@ -275,7 +275,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 				found = true;
 			}
 			QStringList rl = QStringList::split(",", rlstring);	// Todo: strip whitespaces around commas
-			int i = 0;
+			unsigned int i = 0;
 			while ((i<rl.count()) && !found) {
 				QString rlitem = rl[i];
 				QRegExp range("[0-9]*\\-[0-9]*");
@@ -338,7 +338,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 			PDVAR ("  newurl", newurl);
 			// Generate list of unmatched strings:
 			QString v = "";
-			for (int i=0; i<ql.count(); i++) {
+			for (unsigned int i=0; i<ql.count(); i++) {
 				v += " " + ql[i];
 			}
 			v = v.simplifyWhiteSpace();
@@ -369,7 +369,7 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
                                               const QString& cset1,
                                               const QString& cset2,
                                               const QString& query,
-                                              bool isMalformed,
+                                              bool /* isMalformed */,
                                               SubstMap& map ) const
 {
 	// Return nothing if userquery is empty:
