@@ -1,10 +1,20 @@
 # KDE Config File
-[KDMDESKTOP]
-BackGroundPicture=abnormal_fluid.jpg
-BackGroundPictureMode=None
-BackGroundColor1=0,0,128
-BackGroundColor2=0,255,255
-BackGroundColorMode=Vertical
+[Desktop0]
+BackgroundMode=VerticalGradient
+BlendBalance=100
+BlendMode=NoBlending
+ChangeInterval=60
+Color1=0,0,128
+Color2=0,255,255
+CurrentWallpaper=0
+LastChange=0
+MultiWallpaperMode=NoMulti
+Pattern=
+Program=
+ReverseBlending=false
+Wallpaper=
+WallpaperList=
+WallpaperMode=Tiled 
 [KDM]
 SortUsers=true
 #Users=root,johndoe

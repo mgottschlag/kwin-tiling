@@ -263,7 +263,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
-    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmdesktoprc"));
+    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
     m_Renderer = new KBackgroundRenderer(0, c);
     connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
