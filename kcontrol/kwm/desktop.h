@@ -31,15 +31,14 @@
 #include <qcheckbox.h> 
 #include <qpushbutton.h>
 
-#include <kcontrol.h>
-
+#include <kcmodule.h>
 #include <kwm.h>
 
 class KIntNumInput;
 class QButtonGroup;
 class QSlider;
 
-class KDesktopConfig : public KConfigWidget
+class KDesktopConfig : public KCModule
 {
   Q_OBJECT
 
@@ -48,20 +47,18 @@ public:
   KDesktopConfig( QWidget *parent=0, const char* name=0 );
   ~KDesktopConfig( );
 
-  //CT  void  resizeEvent(QResizeEvent *e);
-  void SaveSettings( void );
-
-  void loadSettings();
-  void applySettings();
+  void load();
+  void save();
+  void defaults();
 
 public  slots:
 
   void setEBorders();
+  void slotBrdrChanged(int);
+  void slotWndwChanged(int);
 
   
 private:
-
-  void GetSettings( void );
 
   bool getElectricBorders( void );
   int getElectricBordersDelay();

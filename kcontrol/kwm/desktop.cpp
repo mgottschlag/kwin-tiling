@@ -24,6 +24,7 @@
 #include <qslider.h>
 
 #include <kapp.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
@@ -43,22 +44,31 @@
 
 //CT 15mar 98 - magics
 #define KWM_BRDR_SNAP_ZONE                   "BorderSnapZone"
+#define KWM_BRDR_SNAP_ZONE_DEFAULT           10
 #define KWM_WNDW_SNAP_ZONE                   "WindowSnapZone"
+#define KWM_WNDW_SNAP_ZONE_DEFAULT           10
 
 #define MAX_BRDR_SNAP                          50
 #define MAX_WNDW_SNAP                          50
 #define MAX_EDGE_RES                         1000
+
 
 //CT 21Oct1998 - emptied
 KDesktopConfig::~KDesktopConfig ()
 {
 }
 
-extern KConfig *config;
+extern "C" {
+    KCModule *create_kwindesktop ( QWidget *parent, const char *name )
+    {
+      KGlobal::locale()->insertCatalogue("kcmkwm");
+      return new KDesktopConfig( parent, name );
+    }
+} 
 
 //CT 21Oct1998 - rewritten for using layouts
 KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
-  : KConfigWidget (parent, name)
+  : KCModule (parent, name)
 {
 
   QBoxLayout *lay = new QVBoxLayout(this, 5);
@@ -90,6 +100,12 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   lay->addWidget(ElectricBox,5);
 
+  // Electric borders are not in kwin yet => disable controls
+  enable->setEnabled(false);
+  movepointer->setEnabled(false);
+  delays->setEnabled(false);
+
+
   //CT 15mar98 - add EdgeResistance, BorderAttractor, WindowsAttractor config
   MagicBox = new QButtonGroup(i18n("Magic Borders"), this);
 
@@ -112,9 +128,21 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
 
-  GetSettings();
+  load();
+
+  connect( BrdrSnap, SIGNAL(valueChanged(int)), this, SLOT(slotBrdrChanged(int)));
+  connect( WndwSnap, SIGNAL(valueChanged(int)), this, SLOT(slotWndwChanged(int)));
 }
 
+void KDesktopConfig::slotBrdrChanged(int /* value */)
+{
+  emit changed(true);
+}
+
+void KDesktopConfig::slotWndwChanged(int /* value */)
+{
+  emit changed(true);
+}
 
 void KDesktopConfig::setEBorders()
 {
@@ -179,13 +207,15 @@ void KDesktopConfig::setWindowSnapZone(int pxls) {
   WndwSnap->setValue(pxls);
 }
 
-void KDesktopConfig::GetSettings( void )
+void KDesktopConfig::load( void )
 {
   int v;
   QString key;
 
-  config->setGroup( "General" );
+  KConfig *config = new KConfig("kwinrc");
+  config->setGroup( "Windows" );
 
+/* Electric borders are not in kwin yet (?)
   v = config->readNumEntry(KWM_ELECTRIC_BORDER);
   setElectricBorders(v != -1);
 
@@ -197,26 +227,32 @@ void KDesktopConfig::GetSettings( void )
   key = config->readEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER);
   if (key == "MiddleWarp")
     setElectricBordersMovePointer(TRUE);
-
+*/
   //CT 15mar98 - magics
-  v = config->readNumEntry(KWM_BRDR_SNAP_ZONE);
+  v = config->readNumEntry(KWM_BRDR_SNAP_ZONE, KWM_BRDR_SNAP_ZONE_DEFAULT);
   if (v > MAX_BRDR_SNAP) setBorderSnapZone(MAX_BRDR_SNAP);
   else if (v < 0) setBorderSnapZone (0);
   else setBorderSnapZone(v);
 
-  v = config->readNumEntry(KWM_WNDW_SNAP_ZONE);
+  v = config->readNumEntry(KWM_WNDW_SNAP_ZONE, KWM_WNDW_SNAP_ZONE_DEFAULT);
   if (v > MAX_WNDW_SNAP) setWindowSnapZone(MAX_WNDW_SNAP);
   else if (v < 0) setWindowSnapZone (0);
   else setWindowSnapZone(v);
   //CT ---
+  
+  emit changed(false);
+  delete config;
 }
 
-void KDesktopConfig::SaveSettings( void )
+void KDesktopConfig::save( void )
 {
   int v;
-  bool bv;
-  config->setGroup( "General" );
+//  bool bv;
 
+  KConfig *config = new KConfig("kwinrc", false, false);
+  config->setGroup( "Windows" );
+
+/* Electric borders are not in kwin yet
   v = getElectricBordersDelay()>10?80*getElectricBordersDelay():800;
   if (getElectricBorders())
     config->writeEntry(KWM_ELECTRIC_BORDER,v);
@@ -228,8 +264,7 @@ void KDesktopConfig::SaveSettings( void )
 
   bv = getElectricBordersMovePointer();
   config->writeEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER,bv?"MiddleWarp":"NoWarp");
-
-  config->sync();
+*/
 
   //CT 15mar98 - magics
   v = getBorderSnapZone();
@@ -238,18 +273,14 @@ void KDesktopConfig::SaveSettings( void )
   v = getWindowSnapZone();
   config->writeEntry(KWM_WNDW_SNAP_ZONE,v);
 
+  config->sync();
+  delete config;
 }
 
-void KDesktopConfig::loadSettings()
+void KDesktopConfig::defaults( void )
 {
-  GetSettings();
+  setWindowSnapZone(KWM_WNDW_SNAP_ZONE_DEFAULT);
+  setBorderSnapZone(KWM_BRDR_SNAP_ZONE_DEFAULT);
 }
-
-void KDesktopConfig::applySettings()
-{
-  SaveSettings();
-}
-
-
 
 #include "desktop.moc"
