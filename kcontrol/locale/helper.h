@@ -14,7 +14,7 @@ inline void checkInsertPos( QPopupMenu *popup, const QString & str,
     int w = ( a + b ) / 2;
 
     int id = popup->idAt( w );
-    int j = str.compare( popup->text( id ) );
+    int j = str.localeAwareCompare( popup->text( id ) );
 
     if ( j > 0 )
       a = w + 1;
