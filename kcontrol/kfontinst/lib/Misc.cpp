@@ -146,33 +146,6 @@ QString CMisc::changeExt(const QString &f, const QString &newExt)
     return newStr;
 }
 
-QString CMisc::removeSymbols(const QString &str)
-{
-    //
-    // Remove any non-alphanumeric (except ' ' & '_') chars from str
-    //
- 
-    QString constOk(" _");
-
-    QString      modified; 
-    unsigned int i,
-                 offset=0,
-                 slen=str.length();
- 
-    for(i=0; i<str.length()+1; ++i)
-        if(str[i].isLetterOrNumber() || constOk.contains(str[i]) || str[i].isNull())
-            modified[i-offset]=str[i];
-        else
-            if(i<slen && str[i+1].isSpace())  // If next char is a space, remove this char
-                offset++;
-            else
-                modified[i-offset]=QChar(' ');  // Else replace with a space
-
-    if(modified[modified.length()-1].isNull())
-        modified.truncate(modified.length()-1);
-    return modified;
-}
-
 void CMisc::createBackup(const QString &f)
 {
     const QString constExt(".bak");

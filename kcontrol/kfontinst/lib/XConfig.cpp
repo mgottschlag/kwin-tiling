@@ -983,7 +983,10 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                          xlfd+=CFontEngine::italicStr(CGlobal::fe().getItalic()).latin1();
                                          xlfd+="-";
                                          xlfd+=CFontEngine::widthStr(CGlobal::fe().getWidth()).latin1();
-                                         xlfd+="--0-0-0-0-";
+                                         xlfd+="-";
+                                         if(!CGlobal::fe().getAddStyle().isEmpty())
+                                             xlfd+=CGlobal::fe().getAddStyle().latin1();
+                                         xlfd+="-0-0-0-0-";
 
                                          QStringList::Iterator it;
 

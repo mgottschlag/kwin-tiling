@@ -62,7 +62,6 @@ class CMisc
     static bool    doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
     static QString changeExt(const QString &f, const QString &newExt);
     static QString afmName(const QString &f)     { return changeExt(f, "afm"); }
-    static QString removeSymbols(const QString &str);
     static bool    root() { return getuid()==0 ? true : false; }
     static void    createBackup(const QString &f);
     static int     stricmp(const char *s1, const char *s2);

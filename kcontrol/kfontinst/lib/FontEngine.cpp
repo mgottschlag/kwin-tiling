@@ -135,9 +135,8 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
     itsWeight=WEIGHT_MEDIUM;
     itsWidth=WIDTH_NORMAL;
     itsSpacing=SPACING_PROPORTIONAL;
-    itsItalicAngle=0;
     itsItalic=ITALIC_NONE;
-    itsEncoding=itsAfmEncoding=QString::null;
+    itsAddStyle=QString::null;
     itsFt.open=false;
     itsNumFaces=1;
     itsPixelSize=0;
@@ -166,11 +165,13 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
                     itsType=TYPE_1;
                 else
                 {
+                    closeFont();
                     ok=openFontTT(file, mask, face);
                     if(ok)
                         itsType=itsNumFaces>1 ? TT_COLLECTION : TRUE_TYPE;
                     else
                     {
+                        closeFont();
                         ok=openFontSpd(file, mask);
                         if(ok)
                             itsType=SPEEDO;
@@ -360,9 +361,8 @@ QStringList CFontEngine::getEncodings()
         case TRUE_TYPE:
         case TT_COLLECTION:
         case OPEN_TYPE:
-            return getEncodingsFt();
         case TYPE_1:
-            return getEncodingsT1();
+            return getEncodingsFt();
         case SPEEDO:
             return getEncodingsSpd();
         case BITMAP:
@@ -378,7 +378,7 @@ QStringList CFontEngine::getEncodings()
 CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
 {
     if(NULL==str)
-        return WEIGHT_UNKNOWN;
+        return WEIGHT_MEDIUM; // WEIGHT_UNKNOWN;
     else if(CMisc::stricmp(str, "Bold")==0)
         return WEIGHT_BOLD;
     else if(CMisc::stricmp(str, "Black")==0)
@@ -396,7 +396,7 @@ CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
     else if(CMisc::stricmp(str, "Medium")==0 || CMisc::stricmp(str, "Normal")==0 || CMisc::stricmp(str, "Roman")==0)
         return WEIGHT_MEDIUM;
     else if(CMisc::stricmp(str, "Regular")==0)
-        return WEIGHT_REGULAR;
+        return WEIGHT_MEDIUM; // WEIGHT_REGULAR;
     else if(CMisc::stricmp(str, "Demi")==0)
         return WEIGHT_DEMI;
     else if(CMisc::stricmp(str, "SemiBold")==0)
@@ -408,13 +408,13 @@ CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
     else if(CMisc::stricmp(str, "Book")==0)
         return WEIGHT_BOOK;
     else
-        return WEIGHT_UNKNOWN;
+        return WEIGHT_MEDIUM; // WEIGHT_UNKNOWN;
 }
 
 CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
 {
     if(str.isEmpty())
-        return WIDTH_UNKNOWN;
+        return WIDTH_NORMAL; // WIDTH_UNKNOWN;
     else if(str.contains("UltraCondensed", false))
         return WIDTH_ULTRA_CONDENSED;
     else if(str.contains("ExtraCondensed", false))
@@ -646,6 +646,55 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 //    TrueType, Type1, and Speedo
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void removeSymbols(QString &str)
+{
+    str.replace(QRegExp("[\\-\\[\\]()]"), " ");
+
+    int   len=str.length();
+    QChar space(' ');
+
+    for(int c=0; c<len; ++c)
+        if(str[c].unicode()<0x20 || str[c].unicode()>0x7E)
+            str[c]=space;
+
+    str=str.simplifyWhiteSpace();
+    str=str.stripWhiteSpace();
+}
+
+static void removeString(QString &str, const QString &remove)
+{
+    static const QChar space(' '),
+                       dash('-');
+    int                pos=str.find(remove, 0, false);
+    unsigned int       slen=remove.length();
+
+    if((0==pos || (pos>0 && (space==str[pos-1] || dash==str[pos-1]))) &&
+       (str.length()<=pos+slen || space==str[pos+slen] || dash==str[pos+slen]))
+        str.remove(pos, slen);
+}
+
+void CFontEngine::createAddStyle()
+{
+    //
+    // Get the extra style information. FreeType has a "style_name" field - this contains the info we want But may
+    // also contain "Bold", "Italic", etc - these aren't really needed, so will be removed.
+    if(itsFt.open)
+    {
+        itsAddStyle=itsFt.face->style_name;
+
+        removeString(itsAddStyle, CFontEngine::weightStr(itsWeight));
+        if(ITALIC_NONE!=itsItalic)
+            removeString(itsAddStyle, ITALIC_ITALIC==itsItalic ? "Italic" : constOblique);
+        removeString(itsAddStyle, constSlanted);
+        removeString(itsAddStyle, CFontEngine::widthStr(itsWidth));
+        removeString(itsAddStyle, "Cond");  // Some fonts just have Cond and not Condensed!
+        removeString(itsAddStyle, "Regular");
+        removeSymbols(itsAddStyle);
+    }
+    else
+        itsAddStyle=QString::null;
+}
+
 static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nameReturn)
 {
     int n = FT_Get_Sfnt_Name_Count(face);
@@ -767,7 +816,7 @@ static const char * getFoundry(const char *notice, bool retNull=false)
     return retNull ? NULL : constDefaultFoundry;
 }
 
-static const char * getFoundry(const FT_Face face)
+static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 {
     struct Map
     {
@@ -917,17 +966,16 @@ static const char * getFoundry(const FT_Face face)
         { NULL  ,  NULL}
     };
 
-    void   *table=FT_Get_Sfnt_Table(face, ft_sfnt_os2);
     static char vendor[constVendLen+1];
 
     vendor[0]='\0';
 
-    if(NULL!=table && 0xFFFF!=((TT_OS2*)table)->version)
+    if(NULL!=os2 && 0xFFFF!=os2->version)
     {
         const Map *entry;
         char      vend[constVendLen+1];
 
-        strncpy(vendor, (const char *)((TT_OS2*)table)->achVendID, constVendLen);
+        strncpy(vendor, (const char *)(os2->achVendID), constVendLen);
         vendor[constVendLen]='\0';
 
         for(int i=0; i<constVendLen; ++i)
@@ -953,13 +1001,6 @@ static const char * getFoundry(const FT_Face face)
                 
     const char *foundry=NULL;
 
-#if ((FREETYPE_MAJOR > 2) || ((FREETYPE_MAJOR == 2) && (FREETYPE_MINOR >= 1)))
-    PS_FontInfoRec t1info;
-
-    if(0==FT_Get_PS_Font_Info(face, &t1info))
-        foundry=getFoundry(t1info.notice, true);
-#endif
-
     if(!foundry)
         foundry=getFoundry(getName(face, TT_NAME_ID_TRADEMARK), true);
 
@@ -968,7 +1009,7 @@ static const char * getFoundry(const FT_Face face)
 
     if(!foundry && vendor[0] && !isspace(vendor[0]) && '-'!=vendor[0])  // Some fonts have a totally blank vendor field - just spaces!
     {
-        int i;
+       int i;
 
         // Remove any dashes...
         for(int i=constVendLen-1; i>0; i--)
@@ -988,150 +1029,6 @@ static const char * getFoundry(const FT_Face face)
     return foundry ? foundry : constDefaultFoundry;
 }
 
-static void removeString(QString &str, const QString &remove, QCString &removed, bool store=true)
-{
-    static const QChar space(' '),
-                       dash('-');
-    int                pos;
-    unsigned int       slen=remove.length();
-
-    if(0<(pos=str.find(remove, 0, false)) && (space==str[pos-1] || dash==str[pos-1]) &&
-       (str.length()<=pos+slen || space==str[pos+slen] || dash==str[pos+slen]))
-    {
-        str.remove(pos-1, slen+1);
-
-        if(store)
-        {
-            removed+=remove.latin1();
-            removed+=" ";
-        }
-    }
-}
-
-static QString createNames(const QString &familyName, QString &fullName)
-{
-    //
-    // Some fonts have a FamilyName like "Wibble Wobble"
-    // and a FullName like               "Wibble Wobble Bold Italic Oldstyle"
-    // ...Therefore can't just use the family name read in from the font - as this would ignore the "Oldstyle" part.
-    // So, use the "FullName", and remove the any style information (weight, width, italic/roman/oblique) from this...
-    //
-    // NOTE: Can't simply use FullName and remove style info - as this would convert "Times New Roman" to "Times New"!!
-    //
-
-    QString  family(fullName);
-    QCString removed;
-    bool     removedFamily=true;
-
-    //
-    // Remove family name...
-    if(!familyName.isEmpty())
-        if(0==family.find(familyName))    // This removes "Times New Roman" from "Times New Roman Bold" -- this is the gneral case...
-            family.remove(0, familyName.length());
-        else
-        {
-            //
-            // Some fonts have the family name listed with no spaces, but have spaces in the full name, e.g.
-            //
-            //     Family   : LuciduxMono
-            //     FullName : Lucidux Mono Italic Oldstyle
-            //
-            // ...therefore, need to remove each string from FullName that occurs in FamilyName
-            QString full(fullName),
-                    fam(familyName);
-
-            full.replace(" ", QString::null);   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
-            fam.replace(" ", QString::null);
-
-            if(0==full.find(fam))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set family to "ItalicOldstyle"
-            {
-                //
-                // Now we need to extract the family name, and the rest...
-                // i.e. Family: "LuciduxMono"
-                //      rest  : "Italic Oldstyle" -- this is what get's assigned to the 'family' varaible...
-
-                if(full.length()==fam.length())  // No style information...
-                    family="";
-                else  // Need to remove style info...
-                {
-                    unsigned int i;
-
-                    //
-                    // Remove familyName from family
-                    for(i=0; i<familyName.length() && family.length(); ++i)
-                    {
-                        if(family[0]==QChar(' '))
-                            family.remove(0, 1);
-                        if(family.length())
-                            family.remove(0, 1);
-                    }
-                }
-            }
-            else
-            {
-                //
-                // FamilyName and family name within FullName are different...
-                removedFamily=false;
-            }
-        }
-
-    //
-    // Remove widthm, weight, and italic stuff from fullName...
-    int prop;
-
-    for(prop=CFontEngine::WEIGHT_THIN; prop<=CFontEngine::WEIGHT_BLACK; prop++)
-        removeString(family, CFontEngine::weightStr((CFontEngine::EWeight)prop), removed);
-
-    removeString(family, "Italic", removed);
-    removeString(family, constOblique, removed);
-    removeString(family, constSlanted, removed);
-
-    //
-    // Most fonts don't list the roman part, if some do then we don't really
-    // want to show this - to make everything as similar as possible...
-    removeString(family, "Roman", removed, false);
-
-    for(prop=CFontEngine::WIDTH_ULTRA_CONDENSED; prop<=CFontEngine::WIDTH_ULTRA_EXPANDED; prop++)
-        removeString(family, CFontEngine::widthStr((CFontEngine::EWidth)prop), removed);
-
-    removeString(family, "Cond", removed);  // Some fonts just have Cond and not Condensed!
-
-    //
-    // Remvoe any "Plain:1.0", etc, strings...
-    int plPos;
-
-    if(-1!=(plPos=family.find(" Plain:")))
-    {
-        int spPos=family.find(QChar(' '), plPos+1);
-        family.remove(plPos, -1==spPos ? family.length()-plPos : spPos-plPos);
-    }
-
-    //
-    // Add the family name back on...
-    if(removedFamily && !familyName.isEmpty())
-        family=familyName+family;
-
-    //
-    // Replace any non-alphanumeric or space characters...
-    family.replace(QRegExp("&"), "And");
-    family=CMisc::removeSymbols(family);
-    family=family.simplifyWhiteSpace();
-    family=family.stripWhiteSpace();
-
-    if(!removed.isEmpty())
-    {
-        QCString fn(removedFamily ? family.latin1() : familyName.latin1());
-
-        fn+=" ";
-        fn+=removed;
-        fullName=fn.stripWhiteSpace();
-    }
-    else
-        fullName=removedFamily ? family : familyName;
-
-    return removedFamily ? family : familyName;
-}
-
 static CFontEngine::EItalic checkItalic(CFontEngine::EItalic it, const QString &full)
 {
     return (CFontEngine::ITALIC_ITALIC==it && (-1!=full.find(constOblique) || -1!=full.find(constSlanted)))
@@ -1144,292 +1041,97 @@ static CFontEngine::EItalic checkItalic(CFontEngine::EItalic it, const QString &
 //    TYPE 1
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const char * CFontEngine::getReadOnlyTokenT1(const char *str, const char *key)
-{
-    //
-    // Read only tokens have the format:
-    //
-    //   <key> ( <token> ) readonly def
-    // e.g. /FullName (Utopia Bold Italic) readonly def
-    //
-    static const int constMaxTokenLen=1024;
-
-    static char token[constMaxTokenLen];
-
-    char *start,
-         *end;
-
-    token[0]='\0';
-    if(NULL!=(start=strstr(str, key)) && NULL!=(start=strchr(start, '(')) && NULL!=(end=strstr(start, "readonly")))
-    {
-        start+=1;  // Move past open bracket
-        // go backwards from 'readonly', until we get to ')'
-
-        for(; end>start; end--)
-            if(*end==')')  // Then we've found it...
-            {
-                unsigned int numChars=end-start;
-
-                if(numChars>constMaxTokenLen-1)
-                    numChars=constMaxTokenLen-1;
-                strncpy(token, start, numChars);
-                token[numChars]='\0';
-                break;
-            }
-    }
-
-    return token[0]=='\0' ? NULL : token;
-}
-
-const char * CFontEngine::getTokenT1(const char *str, const char *key)
-{
-    //
-    // Tokens have the format:
-    //
-    //   <key> <token> def
-    // e.g. /isFixedPitch false def
-    //
-    static const int constMaxTokenLen=1024;
-
-    static char token[constMaxTokenLen];
-
-    char *start,
-         *end;
-
-    token[0]='\0';
-    if(NULL!=(start=strstr(str, key)) && NULL!=(end=strstr(start, "def")) && end>start)
-    {
-        for(start+=strlen(key); *start==' ' || *start=='\t'; ++start)  // Skip past any spaces...
-            ;
-
-        for(end--; *end==' ' || *end=='\t'; --end)   //  Ditto
-            ;
-        unsigned int numChars=(end-start)+1;
-
-        if(numChars>constMaxTokenLen-1)
-            numChars=constMaxTokenLen-1;
-        strncpy(token, start, numChars);
-        token[numChars]='\0';
-    }
-
-    return token[0]=='\0' ? NULL : token;
-}
-
 bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 {
-    const int constHeaderMaxLen=4096;  // Read in the first X bytes, this should be enough for just the header data.
+    bool status=FT_New_Face(itsFt.library, QFile::encodeName(file), 0, &itsFt.face) ? false : true;
 
-    char data[constHeaderMaxLen];
-    bool status=false;
+    if(status)
+        itsFt.open=true;
 
-    if(TEST==mask || mask&XLFD)
+    if(mask&NAME && status)
     {
-        if(FT_New_Face(itsFt.library, QFile::encodeName(file), 0, &itsFt.face))
-            return false;
-        else
-            itsFt.open=true;
-    }
+        PS_FontInfoRec t1info;
+        bool           famIsPs=false;
 
-    if(TEST==mask)
-        status=true; // If we've reached this point, then the FT_New_Face worked!
-    else
-    {
-        std::ifstream f(QFile::encodeName(file));
-
-        if(f)
+        if(0==FT_Get_PS_Font_Info(itsFt.face, &t1info))
         {
-            unsigned char *hdr=(unsigned char *)data;
+            itsFullName=t1info.full_name;
 
-            f.read(data, constHeaderMaxLen);
-            int bytesRead=f.tellg();
-            f.close();
-
-            data[bytesRead-1]='\0';
-
-            bool binary=(hdr[0]==0x80 && hdr[1]==0x01) || (hdr[0]==0x01 && hdr[1]==0x80);
-
-            if(bytesRead>2 && ( binary || (strstr(data, "%!")==data) ) )
+            if(NAME==mask && !itsFullName.isEmpty())
             {
-                const char *header,
-                           *str,
-                           *dict;
-                char       *end;
-                bool       foundName=false,
-                           foundFamily=false,
-                           foundPs=false,
-                           foundNotice=false,
-                           foundEncoding=false,
-                           familyIsFull=false;
-
-                header=binary ? &data[6] : data;
-
-                // Look for start of 'dict' section...
-                if((dict=strstr(header, "dict begin"))!=NULL)
-                {
-                    // Now look for the end of the 'dict' section
-                    if((end=strstr(dict, "currentdict end"))!=NULL)
-                        *end='\0';  // If found, then set to NULL - this should speed up the following strstr's
-
-                    // Having found the 'dict' section, now try to read the data...
-
-                    if(NULL!=(str=getTokenT1(dict, "/Encoding")))
-                    {
-                        itsEncoding=str;
-                        foundEncoding=true;
-                    }
-
-                    if((mask&NAME || mask&XLFD || mask&PROPERTIES) && !foundName && NULL!=(str=getReadOnlyTokenT1(dict, "/FullName")))
-                    {
-                        itsFullName=str;
-                        foundName=true;
-                    }
-
-                    if((mask&NAME || mask&XLFD || mask&PROPERTIES) && NULL!=(str=getTokenT1(dict, "/FontName")))
-                    {
-                        itsPsName=str[0]=='/' ? &str[1] : str;
-                        foundPs=true;
-                    }
-
-                    if(mask&NAME || mask&PROPERTIES || mask&XLFD)
-                    {
-                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/FamilyName")))
-                        {
-                            itsFamily=str;
-                            foundFamily=true;
-                        }
-                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/Weight")))
-                            itsWeight=strToWeight(str);
-                        if(NULL!=(str=getTokenT1(dict, "/ItalicAngle")))
-                        {
-                            itsItalicAngle=atof(str);
-                            itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-                        }
-                    }
-
-                    if(mask&XLFD)
-                    {
-                        if(NULL!=(str=getTokenT1(dict, "/isFixedPitch")))
-                            itsSpacing=strstr(str, "false")==str ? SPACING_PROPORTIONAL : SPACING_MONOSPACED;
-                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/Notice")))
-                        {
-                            itsFoundry=::getFoundry(str);
-                            foundNotice=true;
-                        }
-                    }
-
-                    if(mask&XLFD && !foundNotice)
-                    {
-                        foundNotice=true;
-                        itsFoundry=constDefaultFoundry;
-                    }
-                }
-
-                if(mask&NAME || mask&PROPERTIES || mask&XLFD)
-                    if(!foundName && foundPs)  // The Hershey fonts don't have the FullName or FamilyName parameters!...
-                    {
-                        itsFullName=itsPsName;
-                        itsFullName.replace(QRegExp("\\-"), " ");
-                        foundName=true;
-                    }
-
-                if(mask&PROPERTIES || mask&XLFD)
-                    if(!foundFamily && foundName)
-                    {
-                        itsFamily=itsFullName;
-                        familyIsFull=true;
-                        foundFamily=true;
-                    }
-
-                if((mask&XLFD || mask&NAME) && foundName)
-                    itsWidth=strToWidth(itsFullName);
-
-                if(mask&XLFD && !foundNotice)
-                {
-                    foundNotice=true;
-                    itsFoundry=constDefaultFoundry;
-                }
-
-                if(foundName && (mask&PROPERTIES || mask&XLFD || mask&NAME))
-                    itsItalic=checkItalic(itsItalic, itsFullName);
-
-                if(foundName && foundFamily)
-                    itsFamily=createNames(familyIsFull ? QString::null : itsFamily, itsFullName);
-
-                status= ( (mask&NAME && !foundName) || (mask&PROPERTIES && (!foundPs || !foundFamily)) ||
-                        (mask&XLFD && (!foundNotice || !foundName || !foundEncoding)) ) ? false : true;
+                removeSymbols(itsFullName);
+                return status;
             }
-        }
-    }
 
-    if(status && mask&XLFD && getIsArrayEncodingT1()) // Read encoding from .afm, if it exists...
-    {
-        QString afm(CMisc::afmName(file));
+            itsFamily=t1info.family_name;
 
-        if(CMisc::fExists(afm))
-        {
-            std::ifstream f(QFile::encodeName(afm));
- 
-            if(f)
-            {
-                const int  constMaxLen=512;
-                const char *contEncStr="EncodingScheme";
- 
-                char line[constMaxLen],
-                     enc[constMaxLen],
-                     *pos;
- 
-                do
+            if(itsFamily.isEmpty())
+                if(itsFullName.isEmpty())
                 {
-                    f.getline(line, constMaxLen);
- 
-                    if(f.good())
-                    {
-                        line[constMaxLen-1]='\0';
-                        if(NULL!=(pos=strstr(line, contEncStr)) && strlen(pos)>(strlen(contEncStr)+1) && 1==sscanf(&(pos[strlen(contEncStr)]), "%s", enc))
-                        {
-                            itsAfmEncoding=enc;
-                            break;
-                        }
-                   }
+                    famIsPs=true;
+                    itsFamily=itsFullName=FT_Get_Postscript_Name(itsFt.face);
                 }
-                while(!f.eof());
-                f.close();
+                else
+                    itsFamily=itsFullName;
+            else
+                if(itsFullName.isEmpty())
+                        itsFullName=itsFamily;
+
+                if(itsFullName.isEmpty())
+                    status=false;   // Hmm... couldn't find any of the names!
+        }
+        else
+            status=false;
+
+        if(status)
+        {
+            removeSymbols(itsFullName);
+
+            if(NAME!=mask)
+            {
+                removeSymbols(itsFamily);
+
+                //
+                // Algorithm taken from ttf2pt1.c ...
+                //
+                QString psName=famIsPs ? itsFamily : FT_Get_Postscript_Name(itsFt.face);
+
+                if(psName.isEmpty())
+                    psName=itsFullName;
+
+                itsPsName=psName;
+
+                // Must not start with a digit
+                if(!itsPsName.isEmpty())
+                {
+                    unsigned int ch,
+                                 ch2;
+
+                    if(itsPsName[0].isDigit())
+                        itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
+
+                    for(ch=1; ch<itsPsName.length(); ++ch)
+                        if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
+                            for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
+                                itsPsName[ch2]=itsPsName[ch2+1];
+                }
+
+                itsWeight=strToWeight(t1info.weight);
+                itsItalic=t1info.italic_angle <= -4 || t1info.italic_angle >= 4 ? ITALIC_ITALIC : ITALIC_NONE;
+                itsWidth=strToWidth(itsFullName);
+                itsItalic=checkItalic(itsItalic, itsFullName);
+
+                if(mask&XLFD)
+                {
+                    itsSpacing=t1info.is_fixed_pitch ? SPACING_MONOSPACED : SPACING_PROPORTIONAL;
+                    itsFoundry=::getFoundry(t1info.notice);
+                    createAddStyle();
+                }
             }
         }
     }
 
     return status;
-}
-
-QStringList CFontEngine::getEncodingsT1()
-{
-    QStringList enc;
-
-    if(getIsArrayEncodingT1())
-    {
-        if(!itsAfmEncoding.isEmpty() &&
-#ifdef HAVE_FONT_ENC
-           -1!=CGlobal::enc().getList().findIndex(itsAfmEncoding) &&
-#else
-           NULL!=CGlobal::enc().get8Bit(itsAfmEncoding) &&
-#endif
-           CEncodings::constT1Symbol!=itsAfmEncoding && 1==itsAfmEncoding.contains('-'))
-            enc.append(itsAfmEncoding);
-
-        enc.append(CEncodings::constT1Symbol);
-    }
-    else
-        enc=getEncodingsFt();
-
-    if(0==enc.count())
-        enc.append("adobe-standard");
-
-    return enc;
-}
-
-bool CFontEngine::getIsArrayEncodingT1()
-{
-    return itsType==TYPE_1 && itsEncoding.find("array")!=-1 ? true : false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1442,8 +1144,7 @@ bool CFontEngine::openFontAfm(const QString &file)
     QFile f(file);
     bool  foundName=false,
           foundFamily=false,
-          foundPs=false,
-          familyIsFull=false;
+          foundPs=false;
 
     if(f.open(IO_ReadOnly))
     {
@@ -1495,15 +1196,12 @@ bool CFontEngine::openFontAfm(const QString &file)
         if(!foundFamily && foundName)
         {
             itsFamily=itsFullName;
-            familyIsFull=true;
             foundFamily=true;
         }
 
         if(foundName)
             itsItalic=checkItalic(itsItalic, itsFullName);
-
-        if(foundName && foundFamily)
-            itsFamily=createNames(familyIsFull ? QString::null : itsFamily, itsFullName);
+        createAddStyle();
     }
 
     return foundPs && foundName && foundFamily;
@@ -1524,128 +1222,138 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
         itsNumFaces=itsFt.face->num_faces;
     }
 
-    if(TEST!=mask && status)
+    if(mask&NAME && status)
     {
-        if(mask&NAME || mask&PROPERTIES)
+        itsFullName=getName(itsFt.face, TT_NAME_ID_FULL_NAME);
+
+        if(NAME==mask && !itsFullName.isEmpty())
         {
-            bool famIsPs=false;
+            removeSymbols(itsFullName);
+            return status;
+        }
 
-            itsFamily=getName(itsFt.face, TT_NAME_ID_FONT_FAMILY);
-            itsFullName=getName(itsFt.face, TT_NAME_ID_FULL_NAME);
+        bool famIsPs=false;
 
-            if(itsFamily.isEmpty())
-                if(itsFullName.isEmpty())
+        itsFamily=getName(itsFt.face, TT_NAME_ID_FONT_FAMILY);
+
+        if(itsFamily.isEmpty())
+            if(itsFullName.isEmpty())
+            {
+                famIsPs=true;
+                itsFamily=itsFullName=FT_Get_Postscript_Name(itsFt.face);
+            }
+            else
+                itsFamily=itsFullName;
+        else
+            if(itsFullName.isEmpty())
+                itsFullName=itsFamily;
+
+        if(itsFullName.isEmpty())
+            status=false;   // Hmm... couldn't find any of the names!
+        else
+        {
+            removeSymbols(itsFullName);
+
+            if(NAME!=mask)
+            {
+                TT_Postscript *post=NULL;
+                TT_OS2        *os2=NULL;
+                TT_Header     *head=NULL;
+                
+                removeSymbols(itsFamily);
+
+                //
+                // Algorithm taken from ttf2pt1.c ...
+                //
+                QString psName=famIsPs ? itsFamily : FT_Get_Postscript_Name(itsFt.face);
+    
+                if(psName.isEmpty())
+                    psName=itsFullName;
+    
+                itsPsName=psName;
+    
+                // Must not start with a digit
+                if(!itsPsName.isEmpty())
                 {
-                    famIsPs=true;
-                    itsFamily=itsFullName=getName(itsFt.face, TT_NAME_ID_PS_NAME);
+                    unsigned int ch,
+                                ch2;
+    
+                    if(itsPsName[0].isDigit())
+                        itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
+    
+                    for(ch=1; ch<itsPsName.length(); ++ch)
+                        if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
+                            for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
+                                itsPsName[ch2]=itsPsName[ch2+1];
+                }
+    
+                bool gotItalic=false;
+    
+                if(NULL==(os2=(TT_OS2 *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2)) || 0xFFFF==os2->version)
+                {
+                    itsWidth=WIDTH_UNKNOWN;
+                    itsWeight=WEIGHT_UNKNOWN;
                 }
                 else
-                    itsFamily=itsFullName;
-            else
-                if(itsFullName.isEmpty())
-                    itsFullName=itsFamily;
-
-            if(itsFullName.isEmpty())
-                status=false;   // Hmm... couldn't find anby of the names!
-            else
-            {
-                if(mask&PROPERTIES)
                 {
-                    void *table=NULL;
-                    //
-                    // Algorithm taken from ttf2pt1.c ...
-                    //
-                    QString psName=famIsPs ? itsFamily : getName(itsFt.face, TT_NAME_ID_PS_NAME);
-
-                    if(psName.isEmpty())
-                        psName=itsFullName;
-
-                    itsPsName=psName;
-
-                    // Must not start with a digit
-                    if(!itsPsName.isEmpty())
-                    {
-                        unsigned int ch,
-                                     ch2;
-
-                        if(itsPsName[0].isDigit())
-                            itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
-
-                        for(ch=1; ch<itsPsName.length(); ++ch)
-                            if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
-                                for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
-                                    itsPsName[ch2]=itsPsName[ch2+1];
-                    }
-
-                    bool gotItalic=false;
-
-                    if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-                    {
-                        itsWidth=WIDTH_UNKNOWN;
-                        itsWeight=WEIGHT_UNKNOWN;
-                    }
-                    else
-                    {
-                        itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
-                        itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
-                        if(WEIGHT_UNKNOWN==itsWeight)
-                            itsWeight=((TT_OS2*)table)->fsSelection&(1 << 5) ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
-                        itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
-                        itsItalicAngle=ITALIC_ITALIC==itsItalic ? -12 : 0 ; // Hmm...
-                        gotItalic=true;
-                    }
-
-                    if(WEIGHT_UNKNOWN==itsWeight && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
-                        itsWeight=((TT_Header *)table)->Mac_Style & 1 ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
-
-                    if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
-                    {
-                        gotItalic=true;
-                        itsItalic=((TT_Header *)table)->Mac_Style & 2 ? ITALIC_ITALIC: ITALIC_NONE; 
-                    }
-
-                    if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
-                    {
-                        struct TFixed
-                        {
-                             TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
-
-                             short upper,
-                                   lower;
-
-                             float value() { return upper+(lower/65536.0); }
-                        };
-
-                        gotItalic=true;
-                        itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
-                        itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-                    }
-
-                    if(itsItalicAngle>45.0 || itsItalicAngle<-45.0)
-                        itsItalicAngle=0.0;
+                    itsWeight=mapWeightTT(os2->usWeightClass);
+                    itsWidth=mapWidthTT(os2->usWidthClass);
+                    if(WEIGHT_UNKNOWN==itsWeight && os2->fsSelection&(1 << 5))
+                        itsWeight=WEIGHT_BOLD;
+                    itsItalic=os2->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
+                    gotItalic=true;
                 }
-
+    
+                if(WEIGHT_UNKNOWN==itsWeight && NULL!=(head=(TT_Header *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)) && head->Mac_Style & 1)
+                    itsWeight=WEIGHT_BOLD;
+                if(WIDTH_UNKNOWN==itsWidth)
+                    itsWidth=WIDTH_NORMAL;
+    
+                if(!gotItalic && (head!=NULL || NULL!=(head=(TT_Header *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head))))
+                {
+                    gotItalic=true;
+                    itsItalic=head->Mac_Style & 2 ? ITALIC_ITALIC: ITALIC_NONE; 
+                }
+    
+                if(!gotItalic && NULL!=(post=(TT_Postscript *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
+                {
+                    struct TFixed
+                    {
+                        TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
+    
+                        short upper,
+                            lower;
+    
+                        float value() { return upper+(lower/65536.0); }
+                    };
+    
+                    gotItalic=true;
+                    itsItalic=0.0f==((TFixed)post->italicAngle).value() ? ITALIC_NONE : ITALIC_ITALIC;
+                }
+    
+                if(WEIGHT_UNKNOWN==itsWeight)
+                    itsWeight=WEIGHT_MEDIUM;
+    
+                itsItalic=checkItalic(itsItalic, itsFullName);
+    
                 if(mask&XLFD)
                 {
-                    void *table;
-
-                    if(NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)) && ((TT_Postscript*)table)->isFixedPitch)
-                        if(NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_hhea)) &&
-                           ((TT_HoriHeader *)table)->min_Left_Side_Bearing >= 0 && 
-                           ((TT_HoriHeader *)table)->xMax_Extent <= ((TT_HoriHeader *)table)->advance_Width_Max)
+                    if((NULL!=post || NULL!=(post=(TT_Postscript *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post))) && post->isFixedPitch)
+                    {
+                        TT_HoriHeader *hhea=NULL;
+    
+                        if(NULL!=(hhea=(TT_HoriHeader *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_hhea)) &&
+                        hhea->min_Left_Side_Bearing >= 0 && hhea->xMax_Extent <= hhea->advance_Width_Max)
                             itsSpacing=SPACING_CHARCELL;
                         else
                             itsSpacing=SPACING_MONOSPACED;
+                    }
                     else
                         itsSpacing=SPACING_PROPORTIONAL;
-
-                    itsFoundry=::getFoundry(itsFt.face);
+    
+                    itsFoundry=::getFoundry(itsFt.face, os2);
+                    createAddStyle();
                 }
-                if(mask&PROPERTIES || mask&XLFD || mask&NAME)
-                    itsItalic=checkItalic(itsItalic, itsFullName);
-
-                if(mask&NAME || mask&PROPERTIES)
-                    itsFamily=createNames(itsFamily, itsFullName);
             }
         }
     }
@@ -1679,7 +1387,7 @@ CFontEngine::EWeight CFontEngine::mapWeightTT(FT_UShort os2Weight)
         return WEIGHT_EXTRA_LIGHT;
     else if(weight<TTF_WEIGHT_LIGHT)
         return WEIGHT_LIGHT;
-    else if(weight<TTF_WEIGHT_NORMAL || weight<TTF_WEIGHT_MEDIUM)
+    else if(/*weight<TTF_WEIGHT_NORMAL || */ weight<TTF_WEIGHT_MEDIUM)
         return WEIGHT_MEDIUM;
     else if(weight<TTF_WEIGHT_SEMIBOLD)
         return WEIGHT_SEMI_BOLD;
@@ -2112,13 +1820,13 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                 memcpy(sourceName, &hdr[constSourceFontNameOffset], constSourceFontNameNumBytes);
                 sourceName[constSourceFontNameNumBytes]='\0';
                 itsFullName=sourceName;
-
-                itsFamily=createNames(itsFamily, itsFullName);
-
                 itsPsName=constNoPsName;
                 status=true;
 
-                if(mask&NAME || mask&PROPERTIES)
+                removeSymbols(itsFamily);
+                removeSymbols(itsFullName);
+
+                if(mask&PROPERTIES)
                 {
                     switch((hdr[constClassificationOffset]&constWeightMask)>>constWeightShift)
                     {
@@ -2164,7 +1872,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                             break;
                         case SPD_WEIGHT_UNKNOWN:
                         default:
-                            itsWeight=WEIGHT_UNKNOWN;
+                            itsWeight=WEIGHT_MEDIUM;
                     }
 
                     itsItalic=(0==(hdr[constItalicOffset]<<8 + hdr[constItalicOffset+1])) ? ITALIC_NONE : ITALIC_ITALIC;
@@ -2187,7 +1895,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
                             itsWidth=WIDTH_EXPANDED;
                             break;
                         default:
-                            itsWidth=WIDTH_UNKNOWN;
+                            itsWidth=WIDTH_NORMAL;
                     }
                 }
 
@@ -2293,7 +2001,7 @@ void CFontEngine::parseXlfdBmp()
         XLFD_WEIGHT,
         XLFD_SLANT,
         XLFD_WIDTH,
-        XLFD_UKNOWN,
+        XLFD_STYLE,
         XLFD_PIXEL_SIZE,
         XLFD_POINT_SIZE,
         XLFD_RESX,
@@ -2336,7 +2044,7 @@ void CFontEngine::parseXlfdBmp()
             case XLFD_WIDTH:
                 itsWidth=strToWidth(itsXlfd.mid(oldPos, pos-oldPos));
                 break;
-            case XLFD_UKNOWN:
+            case XLFD_STYLE:
                 break;
             case XLFD_PIXEL_SIZE:
                 itsPixelSize=itsXlfd.mid(oldPos, pos-oldPos).toInt();

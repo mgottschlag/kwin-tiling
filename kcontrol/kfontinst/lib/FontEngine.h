@@ -130,10 +130,10 @@ class CFontEngine
 
     enum EOpen
     {
-        TEST       = 0x0,    // Justr try to open font - used for checking if font is valid...
-        NAME       = 0x1,    // Read name
-        PROPERTIES = 0x2,    // Read weight, familiy, and postscript names
-        XLFD       = 0x4     // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
+        TEST       = 0x0,            // Justr try to open font - used for checking if font is valid...
+        NAME       = 0x1,            // Read name
+        PROPERTIES = 0x2|NAME,       // Read weight, familiy, and postscript names
+        XLFD       = 0x4|PROPERTIES  // Read extra details only needed for xlfd (i.e. foundry, width, and spacing)
     };
 
     private:
@@ -216,6 +216,7 @@ class CFontEngine
     ESpacing        getSpacing()      { return itsSpacing; }
 
     const QString & getFoundry()      { return itsFoundry; }
+    const QString & getAddStyle()     { return itsAddStyle; }
 
     EType           getType()         { return itsType; }
     int             getNumFaces()     { return itsNumFaces; }
@@ -245,12 +246,7 @@ class CFontEngine
     //
     // Type1 functions...
     //
-    const char *    getTokenT1(const char *str, const char *key);
-    const char *    getReadOnlyTokenT1(const char *str, const char *key);
     bool            openFontT1(const QString &file, unsigned short mask=NAME);
-    QStringList     getEncodingsT1();
-    bool            getIsArrayEncodingT1();
-    QString &       getAfmEncodingT1()                   { return itsAfmEncoding; }
 
     //
     // AFM...
@@ -262,7 +258,6 @@ class CFontEngine
     // TrueType functions...
     //
     bool            openFontTT(const QString &file, unsigned short mask=NAME, int face=0);
-    void            closeFontTT();
     static EWeight  mapWeightTT(FT_UShort os2Weight);
     static EWidth   mapWidthTT(FT_UShort os2Width);
         //
@@ -319,6 +314,9 @@ class CFontEngine
                          FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
 #endif
 
+    void       createAddStyle();
+
+
     private:
 
     EWeight        itsWeight;
@@ -329,12 +327,10 @@ class CFontEngine
     QString        itsFullName,
                    itsFamily,
                    itsPsName,
-                   itsEncoding,    // Used only for Type1 fonts
-                   itsAfmEncoding, // Used only for Type1 fonts
                    itsXlfd,        // Used for Bitmap fonts
                    itsFoundry,
+                   itsAddStyle,
                    itsPath;
-    float          itsItalicAngle;
     int            itsNumFaces,
                    itsPixelSize;   // Used for Bitmap fonts
     TFtData        itsFt;
