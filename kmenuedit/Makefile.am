@@ -8,7 +8,7 @@ CLEANFILES = dummy.cpp
 kmenuedit_la_SOURCES = namedlg.cpp advancedtab.cpp basictab.cpp treeview.cpp desktopfileeditor.cpp \
 			menueditview.cpp kmenuedit.cpp main.cpp khotkeys.cpp
 kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KFILE)
-kmenuedit_la_LDFLAGS = $(all_libraries) -module -avid-version
+kmenuedit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 kmenuedit_SOURCES = dummy.cpp
 kmenuedit_LDADD   = kmenuedit.la
