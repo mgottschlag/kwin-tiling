@@ -31,6 +31,7 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <klocale.h>
 
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
 #  include <grp.h>
@@ -67,9 +68,6 @@ void SessionExit(void*,void*,void*);
 #ifdef HAVE_LOGIN_CAP_H
 #include <login_cap.h>
 #include <klocale.h>
-#include <klocale.h>
-#include <klocale.h>
-#include <klocale.h>		/* BSDI-like login classes */
 #endif
 
 #ifdef TEST_KDM

@@ -35,7 +35,7 @@
 #include <X11/Xlib.h>
 
 #include "kaccel.h"
-
+#include <klocale.h>
 
 #include "keyconfig.h"
 #include "keyconfig.moc"

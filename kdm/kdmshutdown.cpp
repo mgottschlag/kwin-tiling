@@ -48,6 +48,7 @@ extern "C" {
 #include <kapp.h>
 
 #include "dm.h"
+#include <klocale.h>
 
 static inline void
 set_min( QWidget* w)
@@ -325,10 +326,6 @@ KDMShutdown::bye_bye()
 #ifdef TEST_KDM_SHUTDOWN
 
 #include <qapplication.h>
-#include <klocale.h>
-#include <klocale.h>
-#include <klocale.h>
-#include <klocale.h>
 
 int main(int argc, char **argv)
 {
