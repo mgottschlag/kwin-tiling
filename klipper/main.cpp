@@ -32,6 +32,10 @@ int main(int argc, char *argv[])
     "(c) 1998-2000, Andrew Stanley-Jones");
   aboutData.addAuthor("Andrew Stanley-Jones", 0, "asj@cban.com");
   aboutData.addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
+
+  // WABA: Make sure not to enable session management.
+  putenv(strdup("SESSION_MANAGER="));
+
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();
 
@@ -40,6 +44,7 @@ int main(int argc, char *argv[])
        exit(0);
   }
   KUniqueApplication app;
+  app.disableSessionManagement();
 
   TopLevel *toplevel = new TopLevel();
 
