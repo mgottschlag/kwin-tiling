@@ -1,26 +1,14 @@
 lib_LTLIBRARIES = libkfontinst.la
 
 libkfontinst_la_SOURCES = \
-CompressedFile.cpp \
-Encodings.cpp \
-FontEngine.cpp \
-Fontmap.cpp \
-GetPid.c \
-Global.cpp \
-KfiConfig.cpp \
 Misc.cpp \
-XConfig.cpp
+FcEngine.cpp
 
 noinst_HEADERS = \
-CompressedFile.h \
-Encodings.h \
-FontEngine.h \
-Fontmap.h \
-Global.h \
-KfiConfig.h \
 Misc.h \
-XConfig.h
+FcEngine.h \
+KfiConstants.h
 
-libkfontinst_la_LIBADD = ../../fonts/libkxftconfig.la $(LIB_FONT_ENC) $(LIB_KIO) $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS) $(LIBZ)
+libkfontinst_la_LIBADD = $(LIB_KDECORE) $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS) $(LIB_KIO) $(LIBXFT_LIB)
 libkfontinst_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(LIBFONTCONFIG_RPATH) $(LIBFREETYPE_RPATH) -no-undefined
-AM_CPPFLAGS= $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -DOS_$(UNAME) -I$(srcdir)/../../fonts $(all_includes) -D_LARGEFILE64_SOURCE
+AM_CPPFLAGS= $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) $(all_includes)-D_LARGEFILE64_SOURCE

@@ -3,7 +3,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CCompressedFile
+// Class Name    : KFI::CCompressedFile
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 28/11/2001
@@ -26,12 +26,15 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
 #include <qstring.h>
 #include <zlib.h>
+
+namespace KFI
+{
 
 class CCompressedFile
 {
@@ -72,6 +75,8 @@ class CCompressedFile
         FILE      *itsFile;
         gzFile    itsGzFile;
     };
+};
+
 };
 
 #endif

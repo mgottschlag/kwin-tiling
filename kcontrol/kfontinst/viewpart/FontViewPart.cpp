@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewPart
+// Class Name    : KFI::CFontViewPart
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 03/08/2002
@@ -23,16 +23,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003
+// (C) Craig Drummond, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontViewPart.h"
 #include "FontPreview.h"
-#include "FontEngine.h"
-#include "Global.h"
-#include "KfiConfig.h"
 #include "Misc.h"
-#include "XConfig.h"
+#include "KfiConstants.h"
 #include <klocale.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -56,37 +53,20 @@
 #define MIN_FONT_SIZE      8
 #define MAX_FONT_SIZE     72
 
-static KURL getDest(const QString &fname, bool system)
+static KURL getDest(const KURL &url, bool system)
 {
-    QString sub;
-
-    if(CMisc::root() || system)
-        switch(CGlobal::fe().getType())
-        {
-            case CFontEngine::TRUE_TYPE:
-            case CFontEngine::OPEN_TYPE:
-            case CFontEngine::TT_COLLECTION:
-                if(!CGlobal::cfg().getSysTTSubDir().isEmpty())
-                    sub=CGlobal::cfg().getSysTTSubDir();
-                break;
-            case CFontEngine::TYPE_1:
-                if(!CGlobal::cfg().getSysT1SubDir().isEmpty())
-                    sub=CGlobal::cfg().getSysT1SubDir();
-                break;
-            default:
-                break;
-        }
-
-    return KURL(QString("fonts:/")+
-                      (CMisc::root() ? sub
-                                     : QString((system ? i18n(KIO_FONTS_SYS) : i18n(KIO_FONTS_USER)) + QChar('/')+sub)) +
-                      fname);
+    return KURL(KFI::Misc::root()
+                  ? QString("fonts:/") + url.fileName()
+                  : QString("fonts:/") + QString(system ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER))
+                                       + QChar('/') + url.fileName());
 }
+
+namespace KFI
+{
 
 CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 {
     bool kcm=0==strcmp(name, "kcmfontinst");
-    CGlobal::create(true, false);
 
     itsFrame=new QFrame(parent, "frame");
 
@@ -105,16 +85,7 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     previewFrame->setFrameShape(QFrame::Panel);
     setInstance(new KInstance("kfontview"));
 
-    KConfig cfg(CGlobal::uiCfgFile());
-
-    cfg.setGroup(KFI_PREVIEW_GROUP);
-
-    int  previewSize=cfg.readNumEntry(KFI_PREVIEW_SIZE_KEY, DEFAULT_FONT_SIZE);
-    bool wf=cfg.readBoolEntry(KFI_PREVIEW_WATERFALL_KEY, false);
-
-    itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview",
-                                previewSize<MIN_FONT_SIZE || previewSize>MAX_FONT_SIZE ? DEFAULT_FONT_SIZE : previewSize,
-                                wf);
+    itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview");
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
     itsFaceSelector=new KIntNumInput(1, itsToolsFrame);
@@ -134,30 +105,12 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
 
-    itsZoomInAction=KStdAction::zoomIn(this, SLOT(zoomIn()), actionCollection(), "zoomIn");
-    itsZoomOutAction=KStdAction::zoomOut(this, SLOT(zoomOut()), actionCollection(), "zoomOut");
     itsChangeTextAction=new KAction(i18n("Change Text..."), "text", KShortcut(),
                                     this, SLOT(changeText()), actionCollection(), "changeText");
-    itsToggleWaterfallAction=new KToggleAction(i18n("Waterfall"), "textwaterfall", KShortcut(),
-                                    this, SLOT(toggleWaterfall()), actionCollection(), "toggleWaterfall");
-    itsZoomInAction->setEnabled(false);
-    itsZoomOutAction->setEnabled(false);
     itsChangeTextAction->setEnabled(false);
-    itsToggleWaterfallAction->setEnabled(false);
 
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
-}
-
-CFontViewPart::~CFontViewPart()
-{
-    CGlobal::destroy();
-
-    KConfig cfg(CGlobal::uiCfgFile());
-
-    cfg.setGroup(KFI_PREVIEW_GROUP);
-    cfg.writeEntry(KFI_PREVIEW_SIZE_KEY, itsPreview->currentSize());
-    cfg.writeEntry(KFI_PREVIEW_WATERFALL_KEY, itsPreview->waterfall());
 }
 
 bool CFontViewPart::openURL(const KURL &url)
@@ -167,7 +120,7 @@ bool CFontViewPart::openURL(const KURL &url)
 
     m_url=url;
 
-    if(KIO_FONTS_PROTOCOL==m_url.protocol() || m_url.isLocalFile())
+    if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol() || m_url.isLocalFile())
     {
         emit started( 0 );
         m_file = m_url.path();
@@ -187,49 +140,43 @@ bool CFontViewPart::openFile()
 {
     bool showFs=false;
 
-    itsShowInstallButton=false;
+    itsPreview->showFont(m_url);    
 
-    if(CGlobal::fe().openFont(m_url, CFontEngine::XLFD, true))
+    if(KFI_KIO_FONTS_PROTOCOL!=m_url.protocol() && itsPreview->engine().getNumIndexes()>1)
     {
-        if(CGlobal::fe().getNumFaces()>1)
-        {
-            showFs=true;
-            itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
-        }
+        showFs=true;
+        itsFaceSelector->setRange(1, itsPreview->engine().getNumIndexes(), 1, false);
     }
 
+    itsShowInstallButton=false;
     itsFaceLabel->setShown(showFs);
     itsFaceSelector->setShown(showFs);
     itsToolsFrame->hide();
 
-    if(KIO_FONTS_PROTOCOL!=m_url.protocol())
+    if(KFI_KIO_FONTS_PROTOCOL!=m_url.protocol())
     {
-        if(m_url.isLocalFile())
+        KURL          destUrl;
+        KIO::UDSEntry uds;
+
+        //
+        // Not from fonts:/, so try to see if font is already installed...
+        if(Misc::root())
         {
-            QString ds(CMisc::dirSyntax(CMisc::getDir(m_url.path())));
-            itsShowInstallButton=!CGlobal::sysXcfg().inPath(ds) && (CMisc::root() || !CGlobal::userXcfg().inPath(ds));
+            destUrl=QString("fonts:/")+itsPreview->engine().getName(m_url);
+            itsShowInstallButton=KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()) ? false : true;
         }
         else
-            itsShowInstallButton=true;
-
-        if(itsShowInstallButton) // OK so file wasn't in path, or its a non file:/ URL - so try to stat on the filename
         {
-            QString       fname(CMisc::getFile(m_url.path()));
-            KIO::UDSEntry uds;
-            KURL          destUrl(getDest(fname, true));
-
+            destUrl=QString("fonts:/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+itsPreview->engine().getName(m_url);
             if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
                 itsShowInstallButton=false;
-            else if(!CMisc::root())
+            else
             {
-                destUrl=getDest(fname, false);
-                if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-                    itsShowInstallButton=false;
+                destUrl=QString("fonts:/")+i18n(KFI_KIO_FONTS_USER)+QChar('/')+itsPreview->engine().getName(m_url);
+                itsShowInstallButton=KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()) ? false : true;
             }
         }
     }
-
-    itsPreview->showFont(m_url);
 
     return true;
 }
@@ -238,110 +185,76 @@ void CFontViewPart::previewStatus(bool st)
 {
     itsInstallButton->setShown(st && itsShowInstallButton);
     itsToolsFrame->setShown(itsInstallButton->isShown()||itsFaceSelector->isShown());
-
-// CPD: Need to handle bitmap only TTFs!!!
-    itsToggleWaterfallAction->setChecked(itsPreview->waterfall());
-    itsZoomInAction->setEnabled(!itsPreview->waterfall() && st && CGlobal::fe().isScaleable() &&
-                                itsPreview->currentSize()<MAX_FONT_SIZE);
-    itsZoomOutAction->setEnabled(!itsPreview->waterfall() && st && CGlobal::fe().isScaleable() && 
-                                 itsPreview->currentSize()>MIN_FONT_SIZE);
-    itsToggleWaterfallAction->setChecked(itsPreview->waterfall() && CGlobal::fe().isScaleable());
-    itsToggleWaterfallAction->setEnabled(st && CGlobal::fe().isScaleable());
     itsChangeTextAction->setEnabled(st);
 }
 
 void CFontViewPart::install()
 {
-    int resp=CMisc::root() ? KMessageBox::Yes
+    int resp=Misc::root() ? KMessageBox::Yes
                            : KMessageBox::questionYesNoCancel(itsFrame,
                                                               i18n("Where do you wish to install \"%1\" (%2)?\n"
                                                                    "\"%3\" - only accessible to you, or\n"
                                                                    "\"%4\" - accessible to all (requires administrator "
                                                                    "password)")
-                                                                   .arg(CGlobal::fe().getFullName()).arg(m_url.fileName())
-                                                                   .arg(i18n(KIO_FONTS_USER)).arg(i18n(KIO_FONTS_SYS)),
-                                                              i18n("Install"), i18n(KIO_FONTS_USER), i18n(KIO_FONTS_SYS));
+                                                                   .arg(itsPreview->engine().getName(m_url))
+                                                                   .arg(m_url.fileName())
+                                                                   .arg(i18n(KFI_KIO_FONTS_USER))
+                                                                   .arg(i18n(KFI_KIO_FONTS_SYS)),
+                                                              i18n("Install"), i18n(KFI_KIO_FONTS_USER),
+                                                              i18n(KFI_KIO_FONTS_SYS));
+
     if(KMessageBox::Cancel!=resp)
     {
-        KIO::UDSEntry uds;
-        KURL          destUrl(getDest(CMisc::getFile(m_url.path()), KMessageBox::No==resp));
+        KURL destUrl(getDest(m_url, KMessageBox::No==resp));
 
-        if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-            KMessageBox::error(itsFrame, i18n("%1:%2 already installed.").arg(m_url.protocol()).arg(m_url.path()),
-                               i18n("Error"));
-        else
-            if(KIO::NetAccess::copy(KURL(m_file), destUrl, itsFrame->parentWidget()))
+        if(KIO::NetAccess::copy(m_url, destUrl, itsFrame->parentWidget()))
+        {
+            //
+            // OK file copied, now look for any AFM or PFM file...
+            KURL::List urls;
+
+            Misc::getAssociatedUrls(m_url, urls);
+
+            if(urls.count())
             {
-                if(CFontEngine::TYPE_1==CGlobal::fe().getType())
+                KURL::List::Iterator it,
+                                     end=urls.end();
+
+                for(it=urls.begin(); it!=end; ++it)
                 {
-                    const char *others[]={ "afm", "AFM", NULL };
-
-                    for(int i=0; others[i]; i++)
-                    {
-                        KURL          afmUrl(m_url);
-                        KIO::UDSEntry uds;
-
-                        afmUrl.setPath(CMisc::changeExt(m_url.path(), others[i]));
-                        destUrl.setPath(CMisc::changeExt(destUrl.path(), others[i]));
-
-                        if(KIO::NetAccess::stat(afmUrl, uds, itsFrame->parentWidget()))
-                        {
-                           if(!KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
-                               KIO::NetAccess::copy(afmUrl, destUrl, itsFrame->parentWidget());
-                           break;
-                        }
-                    }
+                    destUrl=getDest(*it, KMessageBox::No==resp);
+                    KIO::NetAccess::copy(*it, destUrl, itsFrame->parentWidget());
                 }
-
-                KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.").arg(m_url.protocol())
-                                                       .arg(m_url.path()), i18n("Success"),
-                                         "FontViewPart_DisplayInstallationSuccess");
             }
-            else
-                KMessageBox::error(itsFrame, i18n("Could not install %1:%2").arg(m_url.protocol()).arg(m_url.path()),
-                                   i18n("Error"));
+
+            KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.").arg(m_url.protocol())
+                                                   .arg(m_url.path()), i18n("Success"),
+                                     "FontViewPart_DisplayInstallationSuccess");
+            itsShowInstallButton=false;
+            itsInstallButton->setShown(itsShowInstallButton);
+        }
+        else
+            KMessageBox::error(itsFrame, i18n("Could not install %1:%2").arg(m_url.protocol()).arg(m_url.path()),
+                               i18n("Error"));
     }
-}
-
-void CFontViewPart::zoomIn()
-{
-    itsPreview->showSize(itsPreview->currentSize()+FONT_SIZE_STEP);
-    if(itsPreview->currentSize()>=MAX_FONT_SIZE)
-        itsZoomInAction->setEnabled(false);
-    itsZoomOutAction->setEnabled(true);
-}
-
-void CFontViewPart::zoomOut()
-{
-    itsPreview->showSize(itsPreview->currentSize()-FONT_SIZE_STEP);
-    if(itsPreview->currentSize()<=MIN_FONT_SIZE)
-        itsZoomOutAction->setEnabled(false);
-    itsZoomInAction->setEnabled(true);
 }
 
 void CFontViewPart::changeText()
 {
     bool             status;
     QRegExpValidator validator(QRegExp(".*"), 0L);
-    QString          oldStr(CGlobal::fe().getPreviewString()),
+    QString          oldStr(itsPreview->engine().getPreviewString()),
                      newStr(KInputDialog::getText(i18n("Preview String"), i18n("Please enter new string:"),
                                                   oldStr, &status, itsFrame,
                                                   "preview string dialog", &validator));
 
     if(status && newStr!=oldStr)
     {
-        CGlobal::fe().setPreviewString(newStr);
+        itsPreview->engine().setPreviewString(newStr);
         itsPreview->showFont();
     }
 }
 
-void CFontViewPart::toggleWaterfall()
-{
-    itsZoomInAction->setEnabled(itsPreview->waterfall() && CGlobal::fe().isScaleable() &&
-                                itsPreview->currentSize()<MAX_FONT_SIZE);
-    itsZoomOutAction->setEnabled(itsPreview->waterfall() && CGlobal::fe().isScaleable() &&
-                                 itsPreview->currentSize()>MIN_FONT_SIZE);
-    itsPreview->showWaterfall(!itsPreview->waterfall());
-}
+};
 
 #include "FontViewPart.moc"

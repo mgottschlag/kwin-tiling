@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CEncodings
+// Class Name    : KFI::CEncodings
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 29/04/2001
@@ -23,15 +23,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Encodings.h"
-#include "Global.h"
-#include "KfiConfig.h"
 #include "Misc.h"
-#include "CompressedFile.h"
-#include <qdir.h>
 #include <qfile.h>
 #include <ctype.h>
 #include <fstream>
@@ -44,7 +40,14 @@ extern "C"
 {
 #include <X11/fonts/fontenc.h>
 }
+
+namespace KFI
+{
+
 #else
+
+namespace KFI
+{
 
 // Use the strict maps - needed for creating AFMs...
 #define STRICT_ENCODING_MAPS
@@ -606,7 +609,26 @@ static int jisx0201[CEncodings::T8Bit::NUM_MAP_ENTRIES]=
         -1,     -1,     -1,     -1,     -1,     -1,     -1,     -1
 };
 
-static const char * constBuiltin=" < B U I L T I N > ";
+CEncodings::T8Bit CEncodings::their8Bit[]=
+{
+    { "iso8859-1",       iso8859_1    },
+    { "iso8859-2",       iso8859_2    },
+    { "iso8859-3",       iso8859_3    },
+    { "iso8859-4",       iso8859_4    },
+    { "iso8859-5",       iso8859_5    },
+    { "iso8859-6",       iso8859_6    },
+    { "iso8859-7",       iso8859_7    },
+    { "iso8859-8",       iso8859_8    },
+    { "iso8859-9",       iso8859_9    },
+    { "iso8859-10",      iso8859_10   },
+    { "iso8859-15",      iso8859_15   },
+    { "fcd8859-15",      iso8859_15   },
+    { "koi8-r",          koi8r        },
+    { "koi8-ru",         koi8ru       },
+    { "jisx0201.1976-0", jisx0201     },
+    { "ascii-0",         asciiLetters },
+    { NULL,              NULL         }
+};
 
 #endif // HAVE_FONT_ENC
 
@@ -614,20 +636,9 @@ const QString CEncodings::constUnicode("iso10646-1");
 const QString CEncodings::constT1Symbol("adobe-fontspecific");
 const QString CEncodings::constTTSymbol("microsoft-symbol");
 
-#ifndef HAVE_FONT_ENC
-static void toLower(char *str)
-{
-    int ch,
-        len=strlen(str);
-
-    for(ch=0; ch<len; ++ch)
-        str[ch]=tolower(str[ch]);
-}
-#endif
-
+#ifdef HAVE_FONT_ENC
 CEncodings::CEncodings()
 {
-#ifdef HAVE_FONT_ENC
     static const char * const constStd[]=
     {
         "ascii-0",
@@ -711,310 +722,45 @@ CEncodings::CEncodings()
 
                     QString enc(line.section(' ', 0, 0));
 
-                    if(-1!=enc.find('-') && "adobe-dingbats"!=enc && -1==itsList.findIndex(enc) && -1==itsExtraList.findIndex(enc))
+                    if(-1!=enc.find('-') && "adobe-dingbats"!=enc && -1==itsList.findIndex(enc) &&
+                       -1==itsExtraList.findIndex(enc))
                         itsList+=enc;
                 }
             }
             sys.close();
         }
     }
-
-#else
-    its8BitList.setAutoDelete(true); 
-    its16BitList.setAutoDelete(true);
-    its8BitList.clear();
-    its16BitList.clear();
-    itsNumBuiltin=0;
-    addDir(CGlobal::cfg().getEncodingsDir());
-#endif
 }
-
-bool CEncodings::createEncodingsDotDir(const QString &dir)
-{
-    bool     status=false;
+#endif
 
 #ifdef HAVE_FONT_ENC
+bool CEncodings::createEncodingsDotDir(const QString &dir)
+{
     //
-    // Simply limk to the system file!
+    // Simply link to the system file!
+    bool    status=false;
     char    *sysFile=FontEncDirectory();
     QString destFile(dir+"encodings.dir");
 
-    if(sysFile && CMisc::getDir(sysFile)!=dir && CMisc::fExists(sysFile))
+    if(sysFile && Misc::getDir(sysFile)!=dir && Misc::fExists(sysFile))
     {
         QString destFile(dir+"encodings.dir"),
-                link(CMisc::linkedTo(destFile));
+                link(Misc::linkedTo(destFile));
 
-        if(!link.isNull() && sysFile==link)  // Already linked!
+        if(!link.isEmpty() && sysFile==link)  // Already linked!
             status=true;
         else
         {
-            if(CMisc::fExists(destFile))
+            if(Misc::fExists(destFile))
                 unlink(QFile::encodeName(destFile).data());
 
             status=0==symlink(QFile::encodeName(sysFile).data(), QFile::encodeName(destFile).data());
         }
     }
 
-#else
-    std::ofstream of(QFile::encodeName(QString(dir+"encodings.dir")));
-
-    if(of)
-    {
-        const T8Bit  *data8=NULL;
-        const T16Bit *data16=NULL;
-
-        of << (its8BitList.count() - itsNumBuiltin)+its16BitList.count() << std::endl;
-
-        for(data8=first8Bit(); data8; data8=next8Bit())
-            if(!isBuiltin(*data8))
-                of << QFile::encodeName(data8->name) << " " << QFile::encodeName(data8->file) << std::endl;
-
-        for(data16=first16Bit(); data16; data16=next16Bit())
-            of << QFile::encodeName(data16->name) << " " << QFile::encodeName(data16->file) << std::endl; 
-
-        of.close();
-        status=true;
-    }
-#endif
     return status;
 }
 
-#ifndef HAVE_FONT_ENC
-
-void CEncodings::addDir(const QString &path, int sub)
-{
-    if(its8BitList.isEmpty())  // Then add standard encodings
-    {
-        // Setup builtin encodings...
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-1", iso8859_1));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-2", iso8859_2));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-3", iso8859_3));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-4", iso8859_4));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-5", iso8859_5));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-6", iso8859_6));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-7", iso8859_7));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-8", iso8859_8));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-9", iso8859_9));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-10", iso8859_10));
-        its8BitList.append(new T8Bit(constBuiltin, "iso8859-15", iso8859_15));
-        its8BitList.append(new T8Bit(constBuiltin, "fcd8859-15", iso8859_15));
-        its8BitList.append(new T8Bit(constBuiltin, "koi8-r", koi8r));
-        its8BitList.append(new T8Bit(constBuiltin, "koi8-ru", koi8ru));
-        its8BitList.append(new T8Bit(constBuiltin, "jisx0201.1976-0", jisx0201));
-        its8BitList.append(new T8Bit(constBuiltin, "ascii-0", asciiLetters));
-        itsNumBuiltin=its8BitList.count();
-    }
-
-    if(sub<CMisc::MAX_SUB_DIRS)
-    {
-        QDir d(path);
-
-        if(d.isReadable())
-        {
-            const QFileInfoList *files=d.entryInfoList();
- 
-            if(files)
-            {
-                QFileInfoListIterator it(*files);
-                QFileInfo             *fInfo;
- 
-                for(; NULL!=(fInfo=it.current()); ++it)
-                    if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                        if(fInfo->isDir())
-                            addDir(fInfo->filePath(), sub+1);
-                        else
-                            if(isAEncFile(QFile::encodeName(fInfo->fileName())))
-                            {
-                                CCompressedFile ef(fInfo->filePath());
-
-                                if(ef)
-                                {
-                                    static const int constBufferSize=256;
-
-                                    char buffer[constBufferSize],
-                                         encName[constBufferSize],
-                                         *sep,
-                                         *line;
-                                    bool gotName=false,
-                                         sixteenBit=false;
-   
-                                    while(NULL!=ef.getString(buffer, constBufferSize))
-                                    {
-                                        buffer[constBufferSize-1]='\0';
-                                        toLower(buffer);
-                                        if(NULL!=(line=strstr(buffer, "startencoding")) &&
-                                           sscanf(line, "startencoding %s", encName)==1 && (sep=strchr(encName, '-'))!=NULL && sep!=encName)
-                                            gotName=true;
-                                        else if(NULL!=(line=strstr(buffer, "size")))
-                                        {
-                                            unsigned int dummy;
-
-                                            line+=strlen("size");
-
-                                            if(sscanf(line, "%x %x", &dummy, &dummy)==2 ||
-                                               sscanf(line, "%u %u", &dummy, &dummy)==2)
-                                                sixteenBit=true;
-                                        }
-                                        else if(NULL!=(line=strstr(buffer, "startmapping")))
-                                            break;
-
-                                        if(gotName && sixteenBit)
-                                            break;
-                                    }
-
-                                    if(gotName)
-                                        if(sixteenBit)
-                                        {
-                                            bool                     found=false;
-                                            const CEncodings::T16Bit *enc16;
-
-                                            for(enc16=first16Bit(); NULL!=enc16 && !found; enc16=next16Bit())
-                                                if(enc16->name==encName)
-                                                    found=true;
-
-                                            if(!found)
-                                                its16BitList.append(new T16Bit(fInfo->filePath(), encName));
-                                        }
-                                        else
-                                            if(NULL==get8Bit(encName))
-                                                its8BitList.append(new T8Bit(fInfo->filePath(), encName)); // Load mapping later...
-                                }
-                            }
-            }
-        }
-    }
-}
-
-CEncodings::T8Bit * CEncodings::get8Bit(const QString &enc)
-{
-    T8Bit *data=NULL;
-
-    for(data=first8Bit(); data; data=next8Bit())
-        if(enc==data->name)
-            break;
-
-    return data;
-}
-
-QString CEncodings::getFile8Bit(const QString &enc)
-{
-    const T8Bit *data=get8Bit(enc);
-
-    if(data && !isBuiltin(*data))
-        return data->file;
-    else
-        return QString::null;
-}
-
-bool CEncodings::isBuiltin(const T8Bit &enc)
-{
-    return enc.file==QString(constBuiltin);
-}
-
-bool CEncodings::isAEncFile(const char *file)
-{
-    int  len=strlen(file);
-    bool enc=false;
- 
-    if(len>7)
-        enc=(file[len-7]=='.' && tolower(file[len-6])=='e' && tolower(file[len-5])=='n' && tolower(file[len-4])=='c' &&
-             file[len-3]=='.' && tolower(file[len-2])=='g' && tolower(file[len-1])=='z');
- 
-    if(len>4 && (len<7 || !enc))
-        enc=(file[len-4]=='.' && tolower(file[len-3])=='e' && tolower(file[len-2])=='n' && tolower(file[len-1])=='c');
- 
-    return enc;
-}
-
-CEncodings::T8Bit::~T8Bit()
-{
-    if(!CEncodings::isBuiltin(*this))
-        if(map)
-            delete map;
-}
-
-bool CEncodings::T8Bit::load()
-{
-    if(!CEncodings::isBuiltin(*this) && NULL==map)
-    {
-        bool            status=false;
-        CCompressedFile ef(file);
- 
-        if(ef)
-        {
-            static const int constBufferSize=256;
-
-            char buffer[constBufferSize];
-            bool foundStart=false;
-            int  e1,
-                 e2,
-                 e3;
- 
-            while(NULL!=ef.getString(buffer, constBufferSize))
-            {
-                buffer[constBufferSize-1]='\0';
-                toLower(buffer);
-                if(foundStart)
-                    if(NULL!=strstr(buffer, "endmapping"))
-                        break;
-                    else
-                        if(NULL!=strstr(buffer, "undefine"))
-                            switch(sscanf(buffer, "undefine %i %i", &e1, &e2))
-                            {
-                                case 1:  // e1 == value to undefine
-                                    if(e1>=INDEX_OFFSET && e1<INDEX_OFFSET+NUM_MAP_ENTRIES)
-                                        map[e1-INDEX_OFFSET]=-1;
-                                    break;
-                                case 2:  // e1 == range start, e2 == range end
-                                    if(e1>=INDEX_OFFSET && e1<INDEX_OFFSET+NUM_MAP_ENTRIES && e2>e1 && e2<INDEX_OFFSET+NUM_MAP_ENTRIES)
-                                    {
-                                        int i;
-
-                                        for(i=e1; i<=e2; ++i)
-                                            map[i-INDEX_OFFSET]=-1;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-                        else
-                            switch(sscanf(buffer, "%i %i %i", &e1, &e2, &e3))
-                            {
-                                case 2:  // e1 == code, e2== Unicode value
-                                    if(e1>=INDEX_OFFSET && e1<INDEX_OFFSET+NUM_MAP_ENTRIES)
-                                        map[e1-INDEX_OFFSET]=e2;
-                                    break;
-                                case 3:  // e1 == range start, e2 == range end, e3== Unicode value
-                                    if(e1>=INDEX_OFFSET && e1<INDEX_OFFSET+NUM_MAP_ENTRIES && e2>e1 && e2<INDEX_OFFSET+NUM_MAP_ENTRIES)
-                                    {
-                                        int i;
-                                        for(i=0; i<=(e2-e1); ++i)
-                                            map[(i+e1)-INDEX_OFFSET]=e3+i;
-                                    }
-                                default:
-                                    break;
-                            }
-                else
-                    if(strstr(buffer, "startmapping")!=NULL && strstr(buffer, "unicode")!=NULL)
-                    {
-                        foundStart=true;
-                        map=new int [(int)NUM_MAP_ENTRIES];
-
-                        if(map)
-                        {
-                            memcpy(map, iso8859_1, sizeof(int)*NUM_MAP_ENTRIES);
-                            status=true;
-                        }
-                        else
-                            break;
-                    }
-            }
-        }
-
-        return status;
-    }
-    else
-        return true;
-}
-
 #endif
+
+};

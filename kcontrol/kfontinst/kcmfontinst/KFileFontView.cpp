@@ -48,13 +48,9 @@
 #include <kdebug.h>
 #include <kurldrag.h>
 #include "KFileFontView.h"
-#include "Global.h"
-#include "FontEngine.h"
-//#include "config-kfile.h"
 
 #define COL_NAME 0
-#define COL_FILE 1
-#define COL_SIZE 2
+#define COL_SIZE 1
 
 class CKFileFontView::CKFileFontViewPrivate
 {
@@ -76,7 +72,6 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     setViewName(i18n("Detailed View"));
 
     addColumn(i18n("Name"));
-    addColumn(i18n("File"));
     addColumn(i18n("Size"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
@@ -317,10 +312,6 @@ void CKFileFontView::slotSortingChanged(int col)
             break;
         // the following columns have no equivalent in QDir, so we set it
         // to QDir::Unsorted and remember the column (itsSortingCol)
-        case COL_FILE:
-            // grmbl, QDir::Unsorted == SortByMask.
-            sortSpec = (sort & ~QDir::SortByMask);// | QDir::Unsorted;
-            break;
         case COL_SIZE:
             sortSpec = (sort & ~QDir::SortByMask | QDir::Size);
             break;
@@ -625,7 +616,6 @@ void CFontListViewItem::init()
     CFontListViewItem::setPixmap(COL_NAME, itsInf->pixmap(KIcon::SizeSmall));
 
     setText(COL_NAME, itsInf->text());
-    setText(COL_FILE, itsInf->isDir() ? "" : itsInf->url().filename());
     setText(COL_SIZE, itsInf->isDir() ? "" : KGlobal::locale()->formatNumber(itsInf->size(), 0));
 }
 

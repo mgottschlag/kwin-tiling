@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewerApp, CFontViewAppMainWindow
+// Class Name    : KFI::CFontViewerApp, KFI::CFontViewAppMainWindow
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
 // Creation Date : 30/04/2004
@@ -33,6 +33,9 @@
 #include <kparts/part.h>
 #include <kparts/mainwindow.h>
 
+namespace KFI
+{
+
 class CFontViewerAppMainWindow : public KParts::MainWindow
 {
     Q_OBJECT
@@ -58,6 +61,8 @@ class CFontViewerApp : public KApplication
 
     CFontViewerApp();
     virtual ~CFontViewerApp() {}
+};
+
 };
 
 #endif

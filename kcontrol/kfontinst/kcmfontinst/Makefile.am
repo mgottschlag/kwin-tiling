@@ -9,15 +9,13 @@ xdg_apps_DATA = kcmfontinst.desktop
 kcm_fontinst_la_SOURCES = \
         KCmFontInst.cpp \
         KFileFontIconView.cpp \
-        KFileFontView.cpp \
-        RenameJob.cpp
+        KFileFontView.cpp
 
 EXTRA_DIST = \
 	$(xdg_apps_DATA) \
 	KCmFontInst.h \
         KFileFontIconView.h \
-        KFileFontView.h \
-        RenameJob.h
+        KFileFontView.h
 
 noinst_HEADERS = $(EXTRA_DIST)
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontThumbnail
+// Class Name    : KFI::CFontThumbnail
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 02/08/2003
@@ -23,50 +23,42 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontThumbnail.h"
-#include "FontEngine.h"
-#include "Misc.h"
-#include "CompressedFile.h"
-#include "Global.h"
-#include "KfiConfig.h"
+#include "KfiConstants.h"
 #include <qimage.h>
 #include <qbitmap.h>
 #include <qpainter.h>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
+#include <kurl.h>
 
 extern "C"
 {
     ThumbCreator *new_creator()
     {
-        return new CFontThumbnail;
+        return new KFI::CFontThumbnail;
     }
 }
 
+namespace KFI
+{
+
 CFontThumbnail::CFontThumbnail()
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
-}
-
-CFontThumbnail::~CFontThumbnail()
-{
-    CGlobal::destroy();
+    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
 }
 
 bool CFontThumbnail::create(const QString &path, int width, int height, QImage &img)
 {
-    if(CGlobal::fe().openFont(path, CFontEngine::NAME, true, 0))
+    QPixmap pix;
+
+    if(itsEngine.draw(KURL(path), width, height, pix, 0, true))
     {
-        QPixmap pix;
-        CGlobal::fe().createPreview(width, height, pix, 0);
-
         img=pix.convertToImage();
-
-        CGlobal::fe().closeFont();
         return true;
     }
 
@@ -77,3 +69,5 @@ ThumbCreator::Flags CFontThumbnail::flags() const
 {
     return DrawFrame;
 }
+
+};

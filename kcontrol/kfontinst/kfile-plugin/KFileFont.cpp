@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : KFileFont
+// Class Name    : KFI::KFileFont
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 20/03/2003
@@ -23,154 +23,15 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "KFileFont.h"
-#include "FontEngine.h"
-#include "Misc.h"
-#include "CompressedFile.h"
-#include "Global.h"
-#include "KfiConfig.h"
-#include <kgenericfactory.h>
-#include <kdeversion.h>
+#include "KfiConstants.h"
 #include <qfile.h>
+#include <qtextstream.h>
+#include <kgenericfactory.h>
 #include <kio/netaccess.h>
-
-typedef KGenericFactory<KFileFontPlugin> KFileFontPluginFactory;
-K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
-
-KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
-               : KFilePlugin(parent, name, args)
-{
-    addMimeType("application/x-font-ttf"),
-    addMimeType("application/x-font-type1");
-    addMimeType("application/x-font-speedo", false);
-    addMimeType("application/x-font-bdf", false);
-    addMimeType("application/x-font-pcf", false);
-    addMimeType("application/x-font-snf", false);
-    addMimeType("application/x-font-otf");
-    addMimeType("application/x-font-ttc");
-    addMimeType("application/x-afm");
-}
-
-KFileFontPlugin::~KFileFontPlugin()
-{
-    CGlobal::destroy();
-}
-
-void KFileFontPlugin::addMimeType(const char *mime, bool hasPs)
-{
-    KFileMimeTypeInfo            *info=addMimeTypeInfo(mime);
-    KFileMimeTypeInfo::GroupInfo *group=addGroupInfo(info, "General", i18n("General"));
-
-    addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
-    addItemInfo(group, "Family", i18n("Family"), QVariant::String);
-    if(hasPs)
-        addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
-    addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
-    addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
-    addItemInfo(group, "Width", i18n("Width"), QVariant::String);
-    addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
-    addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
-}
-
-static QString toStr(CFontEngine::ESpacing v)
-{
-    switch(v)
-    {
-        case CFontEngine::SPACING_MONOSPACED:
-            return i18n("Monospaced");
-        case CFontEngine::SPACING_PROPORTIONAL:
-            return i18n("Proportional");
-        case CFontEngine::SPACING_CHARCELL:
-            return i18n("Charcell");
-        default:
-            return i18n("<ERROR>");
-    }
-}
-
-static QString toStr(CFontEngine::EItalic v)
-{
-    switch(v)
-    {
-        case CFontEngine::ITALIC_NONE:
-            return i18n("Roman");
-        case CFontEngine::ITALIC_ITALIC:
-            return i18n("Italic");
-        case CFontEngine::ITALIC_OBLIQUE:
-            return i18n("Oblique");
-        default:
-            return i18n("<ERROR>");
-    }
-}
-
-QString toStr(enum CFontEngine::EWeight v)
-{
-    switch(v)
-    {
-        case CFontEngine::WEIGHT_THIN:
-            return i18n("Thin");
-        case CFontEngine::WEIGHT_ULTRA_LIGHT:
-            return i18n("Ultra Light");
-        case CFontEngine::WEIGHT_EXTRA_LIGHT:
-            return i18n("Extra Light");
-        case CFontEngine::WEIGHT_DEMI:
-            return i18n("Demi");
-        case CFontEngine::WEIGHT_LIGHT:
-            return i18n("Light");
-        case CFontEngine::WEIGHT_BOOK:
-            return i18n("Book");
-        case CFontEngine::WEIGHT_MEDIUM:
-            return i18n("Medium");
-        case CFontEngine::WEIGHT_REGULAR:
-            return i18n("Regular");
-        case CFontEngine::WEIGHT_SEMI_BOLD:
-            return i18n("Semi Bold");
-        case CFontEngine::WEIGHT_DEMI_BOLD:
-            return i18n("Demi Bold");
-        case CFontEngine::WEIGHT_BOLD:
-            return i18n("Bold");
-        case CFontEngine::WEIGHT_EXTRA_BOLD:
-            return i18n("Extra Bold");
-        case CFontEngine::WEIGHT_ULTRA_BOLD:
-            return i18n("Ultra Bold");
-        case CFontEngine::WEIGHT_HEAVY:
-            return i18n("Heavy");
-        case CFontEngine::WEIGHT_BLACK:
-            return i18n("Black");
-        case CFontEngine::WEIGHT_UNKNOWN:
-        default:
-            return i18n("Medium");
-    }
-}
-
-QString toStr(CFontEngine::EWidth v)
-{
-    switch(v)
-    {
-        case CFontEngine::WIDTH_ULTRA_CONDENSED:
-            return i18n("Ultra Condensed");
-        case CFontEngine::WIDTH_EXTRA_CONDENSED:
-            return i18n("Extra Condensed");
-        case CFontEngine::WIDTH_CONDENSED:
-            return i18n("Condensed");
-        case CFontEngine::WIDTH_SEMI_CONDENSED:
-            return i18n("Semi Condensed");
-        case CFontEngine::WIDTH_SEMI_EXPANDED:
-            return i18n("Semi Expanded");
-        case CFontEngine::WIDTH_EXPANDED:
-            return i18n("Expanded");
-        case CFontEngine::WIDTH_EXTRA_EXPANDED:
-            return i18n("Extra Expanded");
-        case CFontEngine::WIDTH_ULTRA_EXPANDED:
-            return i18n("Ultra Expanded");
-        case CFontEngine::WIDTH_NORMAL:
-        case CFontEngine::WIDTH_UNKNOWN:
-        default:
-            return i18n("Normal");
-    }
-}
 
 static void addEntry(int face, QString &existing, const QString &add)
 {
@@ -179,19 +40,270 @@ static void addEntry(int face, QString &existing, const QString &add)
     existing.append(add);
 }
 
+static int strToWeight(const QString &str)
+{
+    if(NULL==str)
+        return FC_WEIGHT_MEDIUM;
+    else if(str.contains("Bold", false))
+        return FC_WEIGHT_BOLD;
+    else if(str.contains("Heavy", false)) 
+        return FC_WEIGHT_HEAVY;
+    else if(str.contains("Black", false))
+        return FC_WEIGHT_BLACK;
+    else if(str.contains("ExtraBold", false))
+        return FC_WEIGHT_EXTRABOLD;
+    else if(str.contains("UltraBold", false))
+        return FC_WEIGHT_ULTRABOLD;
+    else if(str.contains("ExtraLight", false))
+        return FC_WEIGHT_EXTRALIGHT;
+    else if(str.contains("UltraLight", false))
+        return FC_WEIGHT_ULTRALIGHT;
+    else if(str.contains("Light", false))
+        return FC_WEIGHT_LIGHT;
+    else if(str.contains("Medium", false) || str.contains("Normal", false) || str.contains("Roman", false))
+        return FC_WEIGHT_MEDIUM;
+    else if(str.contains("Regular", false))
+        return FC_WEIGHT_REGULAR;
+    else if(str.contains("SemiBold", false))
+        return FC_WEIGHT_SEMIBOLD;
+    else if(str.contains("DemiBold", false))
+        return FC_WEIGHT_DEMIBOLD;
+    else if(str.contains("Thin", false))
+        return FC_WEIGHT_THIN;
+    else if(str.contains("Book", false))
+        return FC_WEIGHT_NORMAL;
+    else if(str.contains("Demi", false)) 
+        return FC_WEIGHT_NORMAL;
+    else
+        return FC_WEIGHT_MEDIUM;
+}
+
+static int strToWidth(const QString &str)
+{   
+    if(str.isEmpty())
+        return FC_WIDTH_NORMAL;
+    else if(str.contains("UltraCondensed", false))
+        return FC_WIDTH_ULTRACONDENSED;
+    else if(str.contains("ExtraCondensed", false))
+        return FC_WIDTH_EXTRACONDENSED;
+    else if(str.contains("SemiCondensed", false))
+        return FC_WIDTH_SEMICONDENSED;
+    else if(str.contains("Condensed", false))
+        return FC_WIDTH_CONDENSED;
+    else if(str.contains("SemiExpanded", false))
+        return FC_WIDTH_SEMIEXPANDED;
+    else if(str.contains("UltraExpanded", false))
+        return FC_WIDTH_ULTRAEXPANDED;
+    else if(str.contains("ExtraExpanded", false))
+        return FC_WIDTH_EXTRAEXPANDED;
+    else if(str.contains("Expanded", false))
+        return FC_WIDTH_EXPANDED;
+    else
+        return FC_WIDTH_NORMAL;
+}
+
+struct FoundryMap
+{
+    const char     *noticeStr,
+                   *foundry;
+    unsigned short len;
+};
+
+static const FoundryMap map[]=   // These are (mainly) taken from type1inst
+{
+    { "Bigelow",                            "B&H",         3},
+    { "Adobe",                              "Adobe",       5},
+    { "Bitstream",                          "Bitstream",   9},
+    { "Monotype",                           "Monotype",    8},
+    { "Linotype",                           "Linotype",    8},
+    { "LINOTYPE-HELL",                      "Linotype",    0},
+    { "IBM",                                "IBM",         3},
+    { "URW",                                "URW",         3},
+    { "International Typeface Corporation", "ITC",         3},
+    { "Tiro Typeworks",                     "Tiro",        4},
+    { "XFree86",                            "XFree86",     7},
+    { "Microsoft",                          "Microsoft",   9},
+    { "Omega",                              "Omega",       5},
+    { "Font21",                             "Hwan",        4},
+    { "HanYang System",                     "Hanyang",     7},
+    { "Richard Mitchell",                   "Mitchell",    8},
+    { "Doug Miles",                         "Miles",       5},
+    { "Hank Gillette",                      "Gillette",    8},
+    { "Three Islands Press",                "3ip",         3},
+    { "MacroMind",                          "Macromind",   9},
+    { "MWSoft",                             "MWSoft",      6},
+    { "Digiteyes Multimedia",               "DigitEyes",   9},
+    { "ZSoft",                              "ZSoft",       5},
+    { "Title Wave",                         "Titlewave",   9},
+    { "Southern Software",                  "Southern",    8},
+    { "Reasonable Solutions",               "Reasonable", 10},
+    { "David Rakowski",                     "Rakowski",    8},
+    { "D. Rakowski",                        "Rakowski",    0},
+    { "S. G. Moye",                         "Moye",        4},
+    { "S.G. Moye",                          "Moye",        0},
+    { "Andrew s. Meit",                     "Meit",        4},
+    { "A.S.Meit",                           "Meit",        0},
+    { "Hershey",                            "Hershey",     7},
+    { "FontBank",                           "FontBank",    8},
+    { "A. Carr",                            "Carr",        4},
+    { "Brendel Informatik",                 "Brendel",     7},
+    { "Jonathan Brecher",                   "Brecher",     7},
+    { "SoftMaker",                          "Softmaker",   9},
+    { "LETRASET",                           "Letraset",    8},
+    { "Corel Corp",                         "Corel",       5},
+    { "PUBLISHERS PARADISE",                "Paradise",    8},
+    { "Publishers Paradise",                "Paradise",    0},
+    { "Allied Corporation",                 "Allied",      6},
+    { NULL,                                 NULL,          0}
+};
+
+static const char * getFoundry(const char *notice)
+{
+    const FoundryMap *entry;
+
+    if(notice)
+        for(entry=map; NULL!=entry->foundry; entry++)
+            if(NULL!=strstr(notice, entry->noticeStr))
+                return entry->foundry;
+    
+    return NULL;
+}
+
+static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry, QString &weight,
+                    QString &width, QString &spacing, QString &slant)
+{
+    QFile f(file);
+    bool  foundName=false,
+          foundFamily=false;
+    int   intSpacing=FC_PROPORTIONAL,
+          intWidth=FC_WIDTH_NORMAL,
+          intWeight=FC_WEIGHT_NORMAL,
+          intSlant=FC_SLANT_ROMAN,
+          intItalic=FC_SLANT_ROMAN;
+
+    if(f.open(IO_ReadOnly))
+    {
+        QTextStream stream(&f);
+        QString     line;
+        bool        inMetrics=false;
+
+        while(!stream.atEnd())
+        {
+            line=stream.readLine();
+            line=line.simplifyWhiteSpace();
+    
+            if(inMetrics)
+            {
+                if(0==line.find("FullName "))
+                {
+                    full=line.mid(9);
+                    intWidth=strToWidth(full);
+                    foundName=true;
+                }
+                else if(0==line.find("FamilyName "))
+                {
+                    family=line.mid(11);
+                    foundFamily=true;
+                }
+                else if(0==line.find("Weight "))
+                    intWeight=strToWeight(line.mid(7));
+                else if(0==line.find("ItalicAngle "))
+                    intSlant=0.0f==line.mid(12).toFloat() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
+                else if(0==line.find("IsFixedPitch "))
+                    intSpacing=0==line.mid(13).find("false", 0, false) ? FC_PROPORTIONAL : FC_MONO;
+                else if(0==line.find("Notice "))  
+                    foundry=getFoundry(line.mid(7).latin1());
+                else if(0==line.find("StartCharMetrics"))
+                    break;
+            }
+            else
+                if(0==line.find("StartFontMetrics"))
+                    inMetrics=true;
+        };
+        f.close();
+
+        if(!foundFamily && foundName)
+        {
+            family=full;
+            foundFamily=true;
+        }
+
+        if(foundName && FC_SLANT_ITALIC==intItalic && (-1!=full.find("Oblique") || -1!=full.find("Slanted")))
+            intItalic=FC_SLANT_OBLIQUE;
+    }
+
+    if(foundName && foundFamily)
+    {
+        weight=KFI::CFcEngine::weightStr(intWeight, false);
+        width=KFI::CFcEngine::widthStr(intWidth, false);
+        slant=KFI::CFcEngine::slantStr(intSlant, false);
+        spacing=KFI::CFcEngine::spacingStr(intSpacing);
+
+        if(foundry.isEmpty())
+            foundry=i18n(KFI_UNKNOWN_FOUNDRY);
+
+        return true;
+    }
+    
+    return false;
+}   
+
+typedef KGenericFactory<KFI::KFileFontPlugin> KFileFontPluginFactory;
+K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
+
+namespace KFI
+{
+
+KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
+               : KFilePlugin(parent, name, args)
+{
+    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
+
+    addMimeType("application/x-font-ttf"),
+    addMimeType("application/x-font-type1");
+    addMimeType("application/x-font-speedo");
+    addMimeType("application/x-font-bdf");
+    addMimeType("application/x-font-pcf");
+    addMimeType("application/x-font-snf");
+    addMimeType("application/x-font-otf");
+    addMimeType("application/x-font-ttc");
+    addMimeType("application/x-afm");
+}
+
+void KFileFontPlugin::addMimeType(const char *mime)
+{
+    KFileMimeTypeInfo            *info=addMimeTypeInfo(mime);
+    KFileMimeTypeInfo::GroupInfo *group=addGroupInfo(info, "General", i18n("General"));
+
+    addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
+    addItemInfo(group, "Family", i18n("Family"), QVariant::String);
+    addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
+    addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
+    addItemInfo(group, "Width", i18n("Width"), QVariant::String);
+    addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
+    addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
+}
+
 bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 {
     QString full,
+            lastFull,
             family,
-            ps,
             foundry,
             weight,
             width,
             spacing,
-            slant;
+            slant,
+            fullAll,
+            familyAll,
+            foundryAll,
+            weightAll,
+            widthAll,
+            spacingAll,
+            slantAll;
     KURL    url(info.url());
     QString fName;
-    bool    fontsProt  = KIO_FONTS_PROTOCOL == url.protocol(),
+    bool    fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
             fileProt   = "file"             == url.protocol(),
             downloaded = false,
             status     = false;
@@ -199,71 +311,75 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     what=0;
 
     if(!fontsProt && !fileProt && KIO::NetAccess::download(url, fName, NULL))
+    {
         downloaded=true;
-    else
-        fName=url.path();
+        url=KURL(fName);
+    }
 
     if(downloaded || fontsProt || fileProt)
     {
-        int  face=0,
-             numFaces=0;
-        bool hasPs=false;
-
-        do
-        {
-            if(fontsProt
-                   ? CGlobal::fe().openFont(url , KFileMetaInfo::Fastest==what
-                                                       ? CFontEngine::NAME
-                                                       : CFontEngine::NAME|CFontEngine::PROPERTIES|CFontEngine::XLFD,
-                                                         true, face)
-                   : CGlobal::fe().openFont(fName , KFileMetaInfo::Fastest==what
-                                                       ? CFontEngine::NAME
-                                                       : CFontEngine::NAME|CFontEngine::PROPERTIES|CFontEngine::XLFD,
-                                                         true, face))
+        if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
+            status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll, spacingAll, slantAll);
+        else
+            for(int face=0; face<10; ++face)  // How to get num faces from fontconfig? don't know - so just try 1st 10...
             {
-                numFaces=CGlobal::fe().getNumFaces(); // Only really for TTC
-
-                addEntry(face, full, CGlobal::fe().getFullName());
-
-                if(KFileMetaInfo::Fastest!=what)
+                if(itsEngine.getInfo(url, face, full, family, foundry, weight, width, spacing, slant) &&
+                   !full.isEmpty() && full!=lastFull)
                 {
-                    addEntry(face, family, CGlobal::fe().getFamilyName());
-                    if(CGlobal::fe().hasPsInfo())
-                    {
-                        hasPs=true;
-                        addEntry(face, ps, CGlobal::fe().getPsName());
-                    }
-                    if(0==face)
-                        foundry=CGlobal::fe().getFoundry();
-                    addEntry(face, weight, toStr(CGlobal::fe().getWeight()));
-                    addEntry(face, width, toStr(CGlobal::fe().getWidth()));
-                    addEntry(face, spacing, toStr(CGlobal::fe().getSpacing()));
-                    addEntry(face, slant, toStr(CGlobal::fe().getItalic()));
-                }
+                    addEntry(face, fullAll, full);
+                    lastFull=full;
 
-                CGlobal::fe().closeFont();
-                status=true;
+                    if(KFileMetaInfo::Fastest!=what)
+                    {
+                        addEntry(face, familyAll, family);
+                        if(0==face)
+                        {
+                            foundryAll=foundry;
+
+                            if(foundryAll.isEmpty())
+                                foundryAll=i18n(KFI_UNKNOWN_FOUNDRY);
+                            else
+                            {
+                                // Try to make sure foundry is capitalised, and looks the same as that of
+                                // any AFM.
+                                foundryAll[0]=foundryAll[0].upper();
+
+                                const FoundryMap *entry;
+
+                                for(entry=map; NULL!=entry->foundry; entry++)
+                                    if(foundryAll.length()==entry->len && foundryAll.contains(entry->foundry, false))
+                                    {
+                                        foundryAll=entry->foundry;
+                                        break;
+                                    }
+                            }
+                        }
+                        addEntry(face, weightAll, weight);
+                        addEntry(face, widthAll, width);
+                        addEntry(face, spacingAll, spacing);
+                        addEntry(face, slantAll, slant);
+                    }
+                    status=true;
+                }
+                else
+                    break;
             }
-        }
-        while(++face<numFaces);
 
         if(status)
         {
             KFileMetaInfoGroup group;
 
             group=appendGroup(info, "General");
-            appendItem(group, "Full", full);
+            appendItem(group, "Full", fullAll);
 
             if(KFileMetaInfo::Fastest!=what)
             {
-                appendItem(group, "Family", family);
-                if(hasPs)
-                    appendItem(group, "PostScript", ps);
-                appendItem(group, "Foundry", foundry);
-                appendItem(group, "Weight", weight);
-                appendItem(group, "Width", width);
-                appendItem(group, "Spacing", spacing);
-                appendItem(group, "Slant", slant);
+                appendItem(group, "Family", familyAll);
+                appendItem(group, "Foundry", foundryAll);
+                appendItem(group, "Weight", weightAll);
+                appendItem(group, "Width", widthAll);
+                appendItem(group, "Spacing", spacingAll);
+                appendItem(group, "Slant", slantAll);
             }
         }
 
@@ -273,3 +389,5 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
     return status;
 }
+
+};

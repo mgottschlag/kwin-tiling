@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CMisc
+// Namespace     : KFI::Misc
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 01/05/2001
@@ -35,47 +35,42 @@
 #include <time.h>
 #include <qstring.h>
 #include <qstringlist.h>
+#include <kurl.h>
 
-class CMisc
+class QWidget;
+
+namespace KFI
 {
-    public:
 
+namespace Misc
+{
     enum EConstants
     {
-        MAX_SUB_DIRS = 4,
         FILE_PERMS   = 0644,
         DIR_PERMS    = 0755
     };
 
-    static bool    fExists(const QString &p, bool format=false);
-    static bool    dExists(const QString &p)     { return check(p, S_IFDIR, false); }
-    static bool    fWritable(const QString &p)   { return check(p, S_IFREG, true); }
-    static bool    dWritable(const QString &p)   { return check(p, S_IFDIR, true); }
-    static bool    isLink(const QString &i)      { return check(i, S_IFLNK, false); }
-    static QString linkedTo(const QString &i);
-    static QString dirSyntax(const QString &d);
-    static QString xDirSyntax(const QString &d);
-    static QString getDir(const QString &f);
-    static QString getFile(const QString &f);
-    static bool    createDir(const QString &dir);
-    static bool    doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
-    static QString changeExt(const QString &f, const QString &newExt);
-    static QString afmName(const QString &f)     { return changeExt(f, "afm"); }
-    static bool    root() { return getuid()==0 ? true : false; }
-    static void    createBackup(const QString &f);
-    static int     stricmp(const char *s1, const char *s2);
-    static QString getName(const QString &f);
-    static QString getSect(const QString &f)     { return f.section('/', 1, 1); }
-    static QString getSub(const QString &f)      { return root() ? f : f.section('/', 2); }
-    static void    removeAssociatedFiles(const QString realPath, bool d=false);
-    static bool    hidden(const QString &u, bool dir=false);
-    static time_t  getTimeStamp(const QString &item);
-    static void    setTimeStamps(const QString &ds);
-    static QString formatFileName(const QString &p);
+    extern bool    check(const QString &path, unsigned int fmt, bool checkW=false);
+    inline bool    fExists(const QString &p)     { return check(p, S_IFREG, false); }
+    inline bool    dExists(const QString &p)     { return check(p, S_IFDIR, false); }
+    inline bool    fWritable(const QString &p)   { return check(p, S_IFREG, true); }
+    inline bool    dWritable(const QString &p)   { return check(p, S_IFDIR, true); }
+    inline bool    isLink(const QString &i)      { return check(i, S_IFLNK, false); }
+    extern QString linkedTo(const QString &i);
+    extern QString dirSyntax(const QString &d);  // Has trailing slash:  /file/path/
+    extern QString xDirSyntax(const QString &d); // No trailing slash:   /file/path
+    inline QString fileSyntax(const QString &f)  { return xDirSyntax(f); }
+    extern QString getDir(const QString &f);
+    extern QString getFile(const QString &f);
+    extern bool    createDir(const QString &dir);
+    extern QString changeExt(const QString &f, const QString &newExt);
+    extern bool    doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
+    inline bool    root() { return 0==getuid(); }
+    extern void    getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm=true, QWidget *widget=NULL);
+    extern void    createBackup(const QString &f);
+    extern time_t  getTimeStamp(const QString &item);
+};
 
-    private:
-
-    static bool    check(const QString &path, unsigned int fmt, bool checkW=false);
 };
 
 #endif

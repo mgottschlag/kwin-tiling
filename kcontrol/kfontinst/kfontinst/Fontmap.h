@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontmap
+// Namespace     : KFI::Fontmap
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 06/06/2003
@@ -26,16 +26,19 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <qstring.h>
 #include <qstringlist.h>
 
-class CFontmap
+namespace KFI
 {
-    private:
 
+class CFontEngine;
+
+namespace Fontmap
+{
     class CFile
     {
         private:
@@ -63,23 +66,14 @@ class CFontmap
 
         private:
 
+        QString          itsDir;
         QPtrList<TEntry> itsEntries;
         unsigned int     itsLineCount;
     };
 
-    public:
+    extern bool create(const QString &dir, CFontEngine &fe);
+};
 
-    //
-    // Create per-folder fontmap file
-    static bool createLocal(const QString &dir);
-    //
-    // Create top-level fontmap file
-    static void createTopLevel();
-
-    private:
-
-    CFontmap();
-    ~CFontmap();
 };
 
 #endif

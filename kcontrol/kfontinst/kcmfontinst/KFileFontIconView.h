@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKFileFontIconView
+// Class Name    : KFI::CKFileFontIconView
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 01/08/2003
@@ -26,10 +26,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <kfileiconview.h>
+
+namespace KFI
+{
 
 class CKFileFontIconView : public KFileIconView
 {
@@ -45,6 +48,8 @@ class CKFileFontIconView : public KFileIconView
     void contentsDragMoveEvent(QDragMoveEvent *e);
     void contentsDropEvent(QDropEvent *e);
     bool acceptDrag(QDropEvent *e) const;
+};
+
 };
 
 #endif

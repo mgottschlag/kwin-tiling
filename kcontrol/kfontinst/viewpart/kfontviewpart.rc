@@ -2,10 +2,7 @@
 <kpartgui name="kfontviewpart" version="1">
 <ToolBar name="mainToolBar">
   <text>&amp;Main Toolbar</text>
-  <Action name="zoomIn"/>
-  <Action name="zoomOut"/>
   <Action name="changeText"/>
-  <Action name="toggleWaterfall"/>
 </ToolBar>
 </kpartgui>
 

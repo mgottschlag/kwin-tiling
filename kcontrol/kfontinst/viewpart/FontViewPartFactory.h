@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewPartFactory
+// Class Name    : KFI::CFontViewPartFactory
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 03/08/2002
@@ -26,13 +26,16 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003
+// (C) Craig Drummond, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <klibloader.h>
 
 class KInstance;
 class KAboutData;
+
+namespace KFI
+{
 
 class CFontViewPartFactory : public KLibFactory
 {
@@ -50,6 +53,8 @@ class CFontViewPartFactory : public KLibFactory
 
     static KInstance  *theirInstance;
     static KAboutData *theirAbout;
+};
+
 };
 
 #endif

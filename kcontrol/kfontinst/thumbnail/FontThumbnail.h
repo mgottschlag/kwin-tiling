@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontThumbnail
+// Class Name    : KFI::CFontThumbnail
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 02/08/2003
@@ -26,20 +26,30 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <kio/thumbcreator.h>
+#include "FcEngine.h"
+
+namespace KFI
+{
 
 class CFontThumbnail : public ThumbCreator
 {
     public:
 
     CFontThumbnail();
-    ~CFontThumbnail();
+    ~CFontThumbnail() {}
 
     bool  create(const QString &path, int width, int height, QImage &img);
     Flags flags() const;
+
+    private:
+
+    CFcEngine itsEngine;
+};
+
 };
 
 #endif

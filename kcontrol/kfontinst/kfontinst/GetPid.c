@@ -82,6 +82,8 @@
     6. Email me and let me know if it works!
 */
 
+unsigned int kfi_getPid(const char *proc, unsigned int ppid);
+
 #if defined OS_Linux || defined __Linux__
 
 #include <dirent.h>
@@ -398,8 +400,8 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                  time_c=-1,
                  cmd_c=-1;
 
-    char cmd[BUFSIZE+1];
-    FILE *p;
+    char         cmd[BUFSIZE+1];
+    FILE         *p;
 
     /* If this function has been run before, and we know the column positions, then we can grep for just our command */
     if(-1!=pid_c && -1!=ppid_c && -1!=time_c && -1!=cmd_c)
@@ -416,6 +418,7 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 
         /* Read 1st line to determine columns... */
         if((-1==pid_c || -1==ppid_c || -1==time_c || -1==cmd_c) && NULL!=fgets(line, BUFSIZE, p))
+        {
             for(linep=line; -1==pid_c || -1==ppid_c || -1==time_c || -1==cmd_c; linep=NULL)
                 if(NULL!=(token=strtok(linep, " \t\n")))
                 {
@@ -431,7 +434,7 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                 }
                 else
                     break;
-        
+        }
 
         /* If all column headings read, then look for details... */ 
         if(-1!=pid_c && -1!=ppid_c && -1!=time_c && -1!=cmd_c)
@@ -452,7 +455,7 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                         }
                         else if(c==ppid_c)
                         {
-                            if(atoi(token)!=ppid)
+                            if(((unsigned int)atoi(token))!=ppid)
                                 break;
                             found|=FOUND_PPID;
                         }
@@ -470,10 +473,12 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                         break;
 
                 if(FOUND_ALL==found)
+                {
                     if(pid)
                         error=true;
                     else
                         pid=ps_pid;
+                }
             }
         pclose(p);
     }

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontmap
+// Namespae      : KFI::Fontmap
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 06/06/2003
@@ -23,14 +23,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "KfiConfig.h"
 #include "Fontmap.h"
-#include "Global.h"
 #include "FontEngine.h"
 #include "XConfig.h"
+#include "FcEngine.h"
 #include <qdir.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -42,7 +41,7 @@
 
 using namespace std;
 
-char * findSpace(char *str)
+static char * findSpace(char *str)
 {
     while(str && *str!=' ' && *str!='\t')
         str++;
@@ -138,16 +137,16 @@ static QString createX11PsName(const QString &font)
     return newName;
 }
 
-static const char * getItalicStr(CFontEngine::EItalic it)
+static const char * getItalicStr(KFI::CFontEngine::EItalic it)
 {
     switch(it)
     {
         default:
-        case CFontEngine::ITALIC_NONE:
+        case KFI::CFontEngine::ITALIC_NONE:
             return NULL;
-        case CFontEngine::ITALIC_ITALIC:
+        case KFI::CFontEngine::ITALIC_ITALIC:
             return "Italic";
-        case CFontEngine::ITALIC_OBLIQUE:
+        case KFI::CFontEngine::ITALIC_OBLIQUE:
             return "Oblique";
     }
 }
@@ -172,18 +171,29 @@ static QString createName(const QString &family, const QString &weight, const ch
     return name;
 }
 
-static void addEntry(QStringList &list, const QString &name, const QString &file)
+static void addEntry(QStringList &list, const QString &name, const QString &file, const QString &fmapDir)
 {
+    // CPD: TODO: The check below should really be more robust, need to check if an alias for this psname has already
+    // been added, is so remove.
     QString      entry;
     QTextOStream str(&entry);
 
-    str << '/' << name << " (" << file << ") ;";
+    str << '/' << name << " (";
+
+    if(0==file.find(fmapDir))
+        str << file.mid(fmapDir.length());
+    else
+        str << file;
+
+    str << ") ;";
     if(-1==list.findIndex(entry))
         list.append(entry);
 }
 
 static void addAliasEntry(QStringList &list, const QString &x11Name, const QString &psName)
 {
+    // CPD: TODO: The check below should really be more robust, need to check that no other alias to this psname exists,
+    // and that the x11Name does not map onto anything else...
     if(x11Name!=psName)
     {
         QString      entry;
@@ -195,97 +205,148 @@ static void addAliasEntry(QStringList &list, const QString &x11Name, const QStri
     }
 }
 
-//
-// Create local may in fact be creating top level Fontmap - if dir==fontmap dir!
-bool CFontmap::createLocal(const QString &dir)
+static QString locateFile(const char *dir, const char *file, int level=0)
 {
-    KFI_DBUG << "CFontmap::createLocal(" << dir << ')' << endl;
-
-    CFile       old(dir);
-    QDir        d(dir);
-    QStringList entries;
-    bool        added=false;
-
-    if(d.isReadable())
+    if(level<5)
     {
-        const QFileInfoList *files=d.entryInfoList();
+        QDir d(dir);
 
-        if(files)
+        if(d.isReadable())
         {
-            QFileInfoListIterator it(*files);
-            QFileInfo             *fInfo;
+            const QFileInfoList *fList=d.entryInfoList();
 
-            for(; NULL!=(fInfo=it.current()); ++it)
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() &&
-                   CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
-                {
-                    const QStringList *existing=old.getEntries(fInfo->fileName());
+            if(fList)
+            {
+                QFileInfoListIterator it(*fList);
+                QFileInfo             *fInfo;
+                QString               str;
 
-                    if(existing && existing->count())
-                    {
-                        KFI_DBUG << "Use existing entries for " << fInfo->fileName() << endl;
-                        entries+=(*existing);
-                    }
-                    else
-                    {
-                        KFI_DBUG << "Need to create entries for " << fInfo->fileName() << endl;
-                        int face=0,
-                            numFaces=0;
-
-                        do
+                for(; NULL!=(fInfo=it.current()); ++it)
+                    if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
+                        if(fInfo->isDir())
                         {
-                            if(CGlobal::fe().openFont(fInfo->filePath(), CFontEngine::NAME|CFontEngine::PROPERTIES, false,
-                                                      face))
-                            {
-                                numFaces=CGlobal::fe().getNumFaces();  // Only really for TTC files...
-
-                                //
-                                // Add real
-                                addEntry(entries, CGlobal::fe().getPsName(), fInfo->fileName());
-                                added=true;
-
-                                //
-                                // Add fake entries for X11 generated names
-                                switch(CGlobal::fe().getWeight())
-                                {
-                                    case CFontEngine::WEIGHT_MEDIUM:
-                                    case CFontEngine::WEIGHT_REGULAR:
-                                    {
-                                        QString x11Ps(createX11PsName(CGlobal::fe().getFamilyName()));
-
-                                        if(CFontEngine::ITALIC_ITALIC!=CGlobal::fe().getItalic() &&
-                                           CFontEngine::ITALIC_OBLIQUE!=CGlobal::fe().getItalic())
-                                            addAliasEntry(entries,
-                                                          createName(x11Ps, "Roman",
-                                                          getItalicStr(CGlobal::fe().getItalic())),
-                                                          CGlobal::fe().getPsName());
-                                        addAliasEntry(entries,
-                                                      createName(x11Ps, NULL, getItalicStr(CGlobal::fe().getItalic())),
-                                                      CGlobal::fe().getPsName());
-                                        break;
-                                    }
-                                    case CFontEngine::WEIGHT_UNKNOWN:
-                                        break;
-                                    default:
-                                        addAliasEntry(entries,
-                                                      createName(createX11PsName(CGlobal::fe().getFamilyName()),
-                                                                 CFontEngine::weightStr(CGlobal::fe().getWeight()),
-                                                                 getItalicStr(CGlobal::fe().getItalic())),
-                                                      CGlobal::fe().getPsName());
-                                }
-                                CGlobal::fe().closeFont();
-                            }
+                            if(!(str=locateFile(QFile::encodeName(fInfo->filePath()+"/"), file, level+1)).isEmpty())
+                                return str;
                         }
-                        while(++face<numFaces);
-                    }
-                }
+                        else
+                            if(fInfo->fileName()==file)
+                                return fInfo->filePath();
+            }
         }
     }
 
+    return QString::null;
+}
+
+static QString locateFile(const char *file, const char **dirs)
+{
+    int     d;
+    QString str;
+
+    for(d=0; dirs[d]; ++d)
+        if(!(str=locateFile(dirs[d], file)).isEmpty())
+            return str;
+
+    return QString::null;
+}
+
+#define FONTMAP "Fontmap"
+
+namespace KFI
+{
+
+namespace Fontmap
+{
+
+bool create(const QString &dir, CFontEngine &fe)
+{
+    bool        root(Misc::root()),
+                added=false;
+    QString     fmapDir(Misc::dirSyntax(root ? "/etc/fonts/" : dir));
+    CFile       old(fmapDir);
+    QStringList entries;
+    int         i;
+    FcPattern   *pat = FcPatternCreate();
+    FcObjectSet *os = FcObjectSetBuild(FC_FILE, FC_SCALABLE, 0);
+    FcFontSet   *fs = FcFontList(0, pat, os);
+
+    FcPatternDestroy(pat);
+    FcObjectSetDestroy(os);
+
+    for (i = 0; i<fs->nfont; i++)
+    {
+        QString fName(Misc::fileSyntax(CFcEngine::getFcString(fs->fonts[i], FC_FILE)));
+        FcBool  scalable=FcFalse;
+
+        if(!fName.isEmpty() && (root || dir.isEmpty() || 0==fName.find(dir)) &&
+           FcResultMatch==FcPatternGetBool(fs->fonts[i], FC_SCALABLE, 0, &scalable) && scalable)
+        {
+            const QStringList *existing=old.getEntries(fName);
+
+            if(existing && existing->count())
+                entries+=(*existing);
+            else
+            {
+                int face=0,
+                    numFaces=0;
+
+                do
+                {
+                    if(fe.openFont(fName, face))
+                    {
+                        if(fe.hasPsInfo())
+                        {
+                            if(0==numFaces)
+                                numFaces=fe.getNumFaces();  // Only really for TTC files...
+
+                            //
+                            // Add real
+                            addEntry(entries, fe.getPsName(), fName, fmapDir);
+                            added=true;
+
+                            //
+                            // Add fake entries for X11 generated names
+                            switch(fe.getWeight())
+                            {
+                                case CFontEngine::WEIGHT_MEDIUM:
+                                case CFontEngine::WEIGHT_REGULAR:
+                                {
+                                    QString x11Ps(createX11PsName(fe.getFamilyName()));
+
+                                    if(CFontEngine::ITALIC_ITALIC!=fe.getItalic() &&
+                                       CFontEngine::ITALIC_OBLIQUE!=fe.getItalic())
+                                        addAliasEntry(entries,
+                                                      createName(x11Ps, "Roman",
+                                                      getItalicStr(fe.getItalic())),
+                                                      fe.getPsName());
+                                    addAliasEntry(entries,
+                                                  createName(x11Ps, NULL, getItalicStr(fe.getItalic())),
+                                                  fe.getPsName());
+                                    break;
+                                }
+                                case CFontEngine::WEIGHT_UNKNOWN:
+                                    break;
+                                default:
+                                    addAliasEntry(entries,
+                                                  createName(createX11PsName(fe.getFamilyName()),
+                                                             CFontEngine::weightStr(fe.getWeight()),
+                                                             getItalicStr(fe.getItalic())),
+                                                  fe.getPsName());
+                            }
+                        }
+                        fe.closeFont();
+                    }
+                }
+                while(++face<numFaces);
+            }
+        }
+    }
+
+    bool status=true;
+
     if(added || entries.count()!=old.getLineCount())
     {
-        KFI_DBUG << "Output local Fontmap, " << added << ' ' << entries.count() << ' ' << old.getLineCount() << endl;
-        ofstream out(QFile::encodeName(dir+"Fontmap"));
+        ofstream out(QFile::encodeName(fmapDir+FONTMAP));
 
         if(out)
         {
@@ -293,109 +354,35 @@ bool CFontmap::createLocal(const QString &dir)
 
             for(it=entries.begin(); it!=entries.end(); ++it)
                 out << (*it).latin1() << endl;
-            return true;
         }
+        else
+            status=false;
     }
 
-    return false;
-}
-
-void CFontmap::createTopLevel()
-{
-    KFI_DBUG << "CFontmap::createTopLevel" << endl;
     //
-    // Cat each sub-folders top-level fontmap file to top-level one...
-
-    QStringList xDirs;
-
-    CGlobal::userXcfg().getDirs(xDirs);
-
-    //
-    // If we're not root, and the 1 and only fonts dir is the GS dir - then just create fontmap if it
-    // does not exist.
-    if(!CMisc::root() && 1==xDirs.count() && xDirs.first()==CGlobal::cfg().getFontmapDir())
+    // Ensure GS's main Fontmap references our file...
+    if(root && status)
     {
-        if(!CMisc::fExists(CGlobal::cfg().getFontmapDir()+"Fontmap"))
+        static const char * constGhostscriptDirs[]=
         {
-            KFI_DBUG << "Not root, and the 1 and only fonts dir is the GS dir" << endl;
-            createLocal(CGlobal::cfg().getFontmapDir());
-        }
-    }
-    else
-    {
-        //
-        // Need to combine local fontmaps into 1 top-level one
-        QStringList           entries;
-        QStringList::Iterator it;
+            "/usr/share/ghostscript/",
+            "/usr/local/share/ghostscript/",
+            NULL
+        };
 
-        for(it=xDirs.begin(); it!=xDirs.end(); ++it)
+        QString gsFile=locateFile(FONTMAP, constGhostscriptDirs);
+
+        if(!gsFile.isEmpty())
         {
-            if(!CMisc::fExists((*it)+"Fontmap"))
-                createLocal(*it);
-
-            ifstream f(QFile::encodeName((*it)+"Fontmap"));
-
-            if(f)
-            {
-                static const int constMaxLine=512;
-
-                char    line[constMaxLine+1];
-                QString lastPsName;
-
-
-                while(!f.eof())
-                {
-                    QString ps,
-                            fname;
-                    bool    isAlias;
-
-                    f.getline(line, constMaxLine);
-
-                    if(!f.eof() && parseLine(line, ps, fname, isAlias) && !fname.contains('/'))
-                        if(isAlias)
-                        {
-                            if(!lastPsName.isEmpty() && fname==lastPsName)
-                                addAliasEntry(entries, ps, fname);  // fname => real Ps name
-                        }
-                        else
-                        {
-                            //
-                            // Check if file path contains top-level fontmap dir - if so remove
-                            QString ffile((*it)+fname);
-
-                            if(0==ffile.find(CGlobal::cfg().getFontmapDir()))
-                                addEntry(entries, ps, ffile.mid(CGlobal::cfg().getFontmapDir().length()));
-                            else
-                                addEntry(entries, ps, ffile);
-                            lastPsName=ps;
-                        }
-                }
-                f.close();
-            }
-        }
-
-        KFI_DBUG << "Save top-level Fontmap" << endl;
-
-        ofstream of(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
-
-        if(of)
-            for(it=entries.begin(); it!=entries.end(); ++it)
-                of << (*it).latin1() << endl;
-        of.close();
-
-        CMisc::setTimeStamps(CGlobal::cfg().getFontmapDir());
-
-        if(CMisc::root() && !CGlobal::cfg().getGhostscriptFile().isEmpty())  // Now ensure GS's Fontmap file .runlibfile's
-        {                                                                    //  our Fontmap file!
             const int constMaxLineLen=1024;
             const char *constRLF=".runlibfile";
 
             char     line[constMaxLineLen];
-            ifstream in(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+            ifstream in(QFile::encodeName(gsFile));
 
             if(in)
             {
-                QCString fmap(QFile::encodeName(CGlobal::cfg().getFontmapDir()+"Fontmap"));
+                QCString fmap(QFile::encodeName(fmapDir+FONTMAP));
                 int      lineNum=0,
                          kfiLine=-1,
                          gsLine=-1,
@@ -411,7 +398,7 @@ void CFontmap::createTopLevel()
 
                         if(strstr(line, fmap.data())!=NULL && strstr(line, constRLF)!=NULL)
                             kfiLine=lineNum;
-                        else if(strstr(line, "Fontmap.GS")!=NULL && strstr(line, constRLF)!=NULL)
+                        else if(strstr(line, FONTMAP".GS")!=NULL && strstr(line, constRLF)!=NULL)
                             gsLine=lineNum;
                         if(-1==ncLine && '%'!=line[0])
                             ncLine=lineNum;
@@ -471,9 +458,7 @@ void CFontmap::createTopLevel()
 
                         if(added) // Don't re-write GS's Fontmap unless we've actually added something...
                         {
-                            KFI_DBUG << "Modify GS's Fontmap" << endl;
-
-                            ofstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+                            ofstream out(QFile::encodeName(gsFile));
 
                             if(out)
                                 out << buffer;
@@ -484,12 +469,15 @@ void CFontmap::createTopLevel()
             }
         }
     }
+
+    return status;
 }
 
-CFontmap::CFile::CFile(const QString &dir)
-               : itsLineCount(0)
+CFile::CFile(const QString &dir)
+     : itsDir(dir),
+       itsLineCount(0)
 {
-    ifstream f(QFile::encodeName(dir+"Fontmap"));
+    ifstream f(QFile::encodeName(dir+FONTMAP));
 
     itsEntries.setAutoDelete(true);
 
@@ -514,11 +502,6 @@ CFontmap::CFile::CFile(const QString &dir)
                 {
                     itsLineCount++;
 
-                    QString d(CMisc::getDir(fname));
-
-                    if(d==dir)
-                        fname=CMisc::getFile(fname);
-
                     TEntry *entry=getEntry(&current, fname, isAlias);
 
                     if(!isAlias && entry && entry->psName.isEmpty())
@@ -533,14 +516,14 @@ CFontmap::CFile::CFile(const QString &dir)
     }
 }
 
-const QStringList * CFontmap::CFile::getEntries(const QString &fname)
+const QStringList * CFile::getEntries(const QString &fname)
 {
-    TEntry *entry=findEntry(fname, false);
+    TEntry *entry=findEntry(0==fname.find(itsDir) ? fname.mid(itsDir.length()) : fname, false);
 
     return entry ? &entry->entries : NULL;
 }
 
-CFontmap::CFile::TEntry * CFontmap::CFile::findEntry(const QString &fname, bool isAlias)
+CFile::TEntry * CFile::findEntry(const QString &fname, bool isAlias)
 {
     TEntry *entry=NULL;
 
@@ -551,7 +534,7 @@ CFontmap::CFile::TEntry * CFontmap::CFile::findEntry(const QString &fname, bool 
     return entry;
 }
 
-CFontmap::CFile::TEntry * CFontmap::CFile::getEntry(TEntry **current, const QString &fname, bool isAlias)
+CFile::TEntry * CFile::getEntry(TEntry **current, const QString &fname, bool isAlias)
 {
     //
     // See if its the current one...
@@ -573,3 +556,7 @@ CFontmap::CFile::TEntry * CFontmap::CFile::getEntry(TEntry **current, const QStr
     *current=entry;
     return entry;
 }
+
+};
+
+};

@@ -1,3 +1,13 @@
+KDE3.3 -> KDE3.4
+================
+1. Font listing comes from fontconfig. This means that fonts will be grouped, i.e.
+   previously each size of a bitmap font was shown seperately, now only 1 font
+   will be displayed which represents all sizes.
+2. Only fonts, and not folders (except System and Personal), are now shown.
+3. Creation of afms from pfa/pfb and a pfm file.
+4. Previews are drawn via Xft - previously FreeType was called directly.
+5. New font preview look.
+
 KDE3.2 -> KDE3.3
 ================
 1.  List fonts as "Full Name" -> i.e. "Times New Roman".

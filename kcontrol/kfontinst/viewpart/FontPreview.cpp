@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontPreview
+// Class Name    : KFI::CFontPreview
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 04/11/2001
@@ -23,27 +23,25 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontPreview.h"
-#include "Misc.h"
-#include "Global.h"
-#include "FontEngine.h"
 #include <kapplication.h>
 #include <klocale.h>
 #include <qpainter.h>
 #include <qimage.h>
 #include <stdlib.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name, int size, bool wf)
+namespace KFI
+{
+
+CFontPreview::CFontPreview(QWidget *parent, const char *name)
             : QWidget(parent, name),
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsSize(size),
-              itsBgndCol(eraseColor()),
-              itsWaterfall(wf)
+              itsBgndCol(eraseColor())
 {
 }
 
@@ -59,28 +57,15 @@ void CFontPreview::showFace(int face)
     showFont();
 }
 
-void CFontPreview::showSize(int size)
-{
-    itsSize=size;
-    showFont();
-}
-
-void CFontPreview::showWaterfall(bool wf)
-{
-    itsWaterfall=wf;
-    showFont();
-}
-
 void CFontPreview::showFont()
 {
     itsLastWidth=width();
     itsLastHeight=height();
 
-    if(!itsCurrentUrl.isEmpty() && CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::XLFD, true, itsCurrentFace-1))
+    if(!itsCurrentUrl.isEmpty() &&
+       itsEngine.draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, false))
     {
         setEraseColor(Qt::white);
-        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, itsSize, false,
-                                    itsWaterfall);
         update();
         emit status(true);
     }
@@ -124,5 +109,7 @@ QSize CFontPreview::minimumSizeHint() const
 {
     return QSize(32, 32);
 }
+
+};
 
 #include "FontPreview.moc"

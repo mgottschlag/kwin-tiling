@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewerApp, CFontViewerAppMainWindow
+// Class Names   : KFI::CFontViewerApp, KFI::CFontViewerAppMainWindow
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
 // Creation Date : 30/04/2004
@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontViewerApp.h"
+#include "KfiConstants.h"
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klibloader.h>
@@ -37,6 +38,9 @@
 
 #define CFG_GROUP    "FontViewer Settings"
 #define CFG_SIZE_KEY "Window Size"
+
+namespace KFI
+{
 
 CFontViewerAppMainWindow::CFontViewerAppMainWindow()
                         : KParts::MainWindow((QWidget *)0L)
@@ -96,9 +100,11 @@ void CFontViewerAppMainWindow::fileOpen()
 
 CFontViewerApp::CFontViewerApp()
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
+    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
     setMainWidget(new CFontViewerAppMainWindow());
 }
+
+};
 
 static KCmdLineOptions options[] =
 {
@@ -106,16 +112,17 @@ static KCmdLineOptions options[] =
     KCmdLineLastOption
 };
 
-static KAboutData aboutData("kfontview", I18N_NOOP("Font Viewer"), 0, 0, KAboutData::License_GPL,
-                            I18N_NOOP("Simple font viewer\n(c) Craig Drummond, 2004"));
+static KAboutData aboutData("kfontview", I18N_NOOP("Font Viewer"), 0, I18N_NOOP("Simple font viewer"),
+                            KAboutData::License_GPL,
+                            I18N_NOOP("(c) Craig Drummond, 2004"));
 
 int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions(options);
-    CFontViewerApp::addCmdLineOptions();
+    KFI::CFontViewerApp::addCmdLineOptions();
 
-    CFontViewerApp app;
+    KFI::CFontViewerApp app;
 
     return app.exec();
 }

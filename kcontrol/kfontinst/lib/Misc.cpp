@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CMisc
+// Namespace     : KFI::Misc
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 01/05/2001
@@ -23,22 +23,24 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Misc.h"
-#include <kprocess.h>
-#include <klargefile.h>
-#include <kstandarddirs.h>
-#include <qdir.h>
 #include <qfile.h>
-#include <qcombobox.h>
-#include <qregexp.h>
-#include <ctype.h>
+#include <kprocess.h> 
+#include <kstandarddirs.h>
+#include <klargefile.h>
+#include <kio/netaccess.h>
 #include <unistd.h>
-#include <utime.h>
 
-QString CMisc::linkedTo(const QString &i)
+namespace KFI
+{
+
+namespace Misc
+{
+
+QString linkedTo(const QString &i)
 {
     QString d;
 
@@ -57,7 +59,7 @@ QString CMisc::linkedTo(const QString &i)
     return d;
 }
 
-QString CMisc::dirSyntax(const QString &d)
+QString dirSyntax(const QString &d)
 {
     if(!d.isEmpty())
     {
@@ -76,12 +78,15 @@ QString CMisc::dirSyntax(const QString &d)
     return d;
 }
 
-QString CMisc::xDirSyntax(const QString &d)
+QString xDirSyntax(const QString &d)
 {
     if(!d.isEmpty())
     {
         QString ds(d);
-        int     slashPos=ds.findRev('/');
+
+        ds.replace("//", "/");
+
+        int slashPos=ds.findRev('/');
  
         if(slashPos==(((int)ds.length())-1))
             ds.remove(slashPos, 1);
@@ -91,7 +96,7 @@ QString CMisc::xDirSyntax(const QString &d)
     return d;
 }
 
-QString CMisc::getDir(const QString &f)
+QString getDir(const QString &f)
 {
     QString d(f);
 
@@ -103,7 +108,7 @@ QString CMisc::getDir(const QString &f)
     return dirSyntax(d);
 }
 
-QString CMisc::getFile(const QString &f)
+QString getFile(const QString &f)
 {
     QString d(f);
 
@@ -115,7 +120,7 @@ QString CMisc::getFile(const QString &f)
     return d;
 }
 
-bool CMisc::createDir(const QString &dir)
+bool createDir(const QString &dir)
 {
     //
     // Clear any umask before dir is created
@@ -126,7 +131,7 @@ bool CMisc::createDir(const QString &dir)
     return status;
 }
 
-bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)
+bool doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)
 {
     KProcess proc;
 
@@ -144,12 +149,14 @@ bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, cons
     return proc.normalExit() && proc.exitStatus()==0;
 }
 
-QString CMisc::changeExt(const QString &f, const QString &newExt)
+QString changeExt(const QString &f, const QString &newExt)
 {
     QString newStr(f);
-    int dotPos=newStr.findRev('.');
+    int     dotPos=newStr.findRev('.');
 
-    if(dotPos!=-1)
+    if(-1==dotPos)
+        newStr+=QChar('.')+newExt;
+    else
     {
         newStr.remove(dotPos+1, newStr.length());
         newStr+=newExt;
@@ -157,137 +164,68 @@ QString CMisc::changeExt(const QString &f, const QString &newExt)
     return newStr;
 }
 
-void CMisc::createBackup(const QString &f)
+void createBackup(const QString &f)
 {
     const QString constExt(".bak");
 
-    if(!fExists(f+constExt) && fExists(f) && dWritable(getDir(f)))
+    if(!fExists(f+constExt) && fExists(f))
         doCmd("cp", "-f", f, f+constExt);
 }
 
-int CMisc::stricmp(const char *s1, const char *s2)
+//
+// Get a list of files associated with a file, e.g.:
+//
+//    File: /home/a/courier.pfa
+//
+//    Associated: /home/a/courier.afm /home/a/courier.pfm
+//
+void getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm, QWidget *widget)
 {
-    char c1,
-         c2;
+    const char *afm[]={"afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL},
+               *pfm[]={"pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL};
+    bool       gotAfm=false,
+               localFile=url.isLocalFile();
+    int        e;
 
-    for(;;)
+    for(e=0; afm[e]; ++e)
     {
-        c1=*s1++;
-        c2=*s2++;
-        if(!c1 || !c2)
-            break;
-        if(isupper(c1))
-            c1=tolower (c1);
-        if(isupper(c2))
-            c2=tolower (c2);
-        if(c1!=c2)
-            break;
-    }
-    return (int)c2-(int)c1;
-}
+        KURL statUrl(url);
+        KIO::UDSEntry uds;
 
-QString CMisc::getName(const QString &f)
-{
-    //
-    // Ensure there is no trailing /, and no double //'s
-    if(!f.isEmpty())
-    {
-        QString nf(f);
+        statUrl.setPath(changeExt(url.path(), afm[e]));
 
-        nf.replace("//", "/");
-
-        int slashPos=nf.findRev('/');
-
-        if(slashPos==(((int)nf.length())-1))
-            nf.remove(slashPos, 1);
-
-        return -1==nf.find('/') ? nf : nf.section('/', -1);
-    }
-
-    return f.section('/', -1);
-}
-
-void CMisc::removeAssociatedFiles(const QString realPath, bool d)
-{
-    QDir dir(d ? realPath
-               : getDir(realPath),
-             d ? QString::null
-               : getFile(changeExt(realPath, "*")),
-             QDir::Name|QDir::IgnoreCase,
-             QDir::All|QDir::Hidden|QDir::System);
-
-    if(dir.isReadable())
-    {
-        const QFileInfoList *files=dir.entryInfoList();
-
-        if(files)
+        if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
         {
-            QFileInfoListIterator    it(*files);
-            QFileInfo                *fInfo;
-            for(; NULL!=(fInfo=it.current()); ++it)
-                if(!fInfo->isDir())
-                    unlink(QFile::encodeName(fInfo->filePath()));
+            list.append(statUrl);
+            gotAfm=true;
+            break;
         }
     }
+
+    if(afmAndPfm || !gotAfm)
+        for(e=0; pfm[e]; ++e)
+        {
+            KURL          statUrl(url);
+            KIO::UDSEntry uds;
+
+            statUrl.setPath(changeExt(url.path(), pfm[e]));
+            if(localFile ? fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+            {
+                list.append(statUrl);
+                break;
+            }
+        }
 }
 
-bool CMisc::hidden(const QString &u, bool dir)
-{
-    QString str;
-
-    if(dir)
-    {
-        QString str2(dirSyntax(u));
-
-        int slash=str2.findRev('/');
-
-        if(-1!=slash)
-            slash=str2.findRev('/', slash-1);
-        str= -1==slash ? str2 : str2.mid(slash+1);
-    }
-    else
-        str=getFile(u);
-
-    return QChar('.')==str[0];
-}
-
-time_t CMisc::getTimeStamp(const QString &item)
+time_t getTimeStamp(const QString &item)
 {
     KDE_struct_stat info;
 
     return !item.isEmpty() && 0==KDE_lstat(QFile::encodeName(item), &info) ? info.st_mtime : 0;
 }
 
-void CMisc::setTimeStamps(const QString &ds)
-{
-    QCString        dirC(QFile::encodeName(ds));
-    KDE_struct_stat dirStat;
 
-    utime(dirC, NULL);   // Set dir time-stamp to now...
-
-    if(0==KDE_lstat(dirC, &dirStat))  // Read timestamp back...
-    {
-        static const char *files[]=
-                          {
-                             "fonts.scale",
-                              "fonts.dir",
-                              "Fontmap",
-                              ".fonts-config-timestamp",  // Only on SuSE...
-                              NULL
-                          };
-        int               f;
-        struct utimbuf    times;
-
-        times.actime=dirStat.st_atime;
-        times.modtime=dirStat.st_mtime;
-
-        for(f=0; NULL!=files[f]; ++f)
-            if(CMisc::fExists(ds+files[f]))
-                utime(QFile::encodeName(ds+files[f]), &times);
-    }
-}
-
-bool CMisc::check(const QString &path, unsigned int fmt, bool checkW)
+bool check(const QString &path, unsigned int fmt, bool checkW)
 { 
     KDE_struct_stat info;
     QCString        pathC(QFile::encodeName(path));
@@ -295,23 +233,6 @@ bool CMisc::check(const QString &path, unsigned int fmt, bool checkW)
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }
 
-bool CMisc::fExists(const QString &p, bool format)
-{
-    if(!format)
-        return check(p, S_IFREG, false);
-    else
-        return check(p, S_IFREG, false) || check(formatFileName(p), S_IFREG, false);
-}
+};
 
-QString CMisc::formatFileName(const QString &p)
-{
-    QString fName(getFile(p)),
-            formatted(fName.lower());
-
-    formatted=formatted.replace(QChar('-'), "_");
-
-    if(formatted!=fName)
-        return getDir(p)+formatted;
-    else
-        return p;
-}
+};

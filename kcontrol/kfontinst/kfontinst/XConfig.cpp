@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CXConfig
+// Class Name    : KFI::CXConfig
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 05/05/2001
@@ -23,11 +23,10 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "XConfig.h"
-#include "Global.h"
 #include "FontEngine.h"
 #include "kxftconfig.h"
 #include <fstream>
@@ -40,10 +39,12 @@
 
 extern "C" unsigned int kfi_getPid(const char *proc, unsigned int ppid);
 
-static const QCString constFontpaths ("# KFontinst fontpaths file -- DO NOT EDIT");
 #define UNSCALED ":unscaled"
 
 using namespace std;
+
+namespace KFI
+{
 
 CXConfig::CXConfig(EType type, const QString &file)
         : itsType(type),
@@ -55,26 +56,20 @@ CXConfig::CXConfig(EType type, const QString &file)
     readConfig();
 }
 
-#ifdef HAVE_FONTCONFIG
-bool CXConfig::configureDir(const QString &dir)
-#else
-bool CXConfig::configureDir(const QString &dir, QStringList &symbolFamilies)
-#endif
+bool CXConfig::configureDir(const QString &dir, CFontEngine &fe)
 {
-#ifdef HAVE_FONTCONFIG
-    bool status=createFontsDotDir(dir);
-#else
-    bool status=createFontsDotDir(dir, symbolFamilies);
-#endif
-
+    bool status=createFontsDotDir(dir, fe);
+#ifdef HAVE_FONT_ENC
     if(status)
-        CGlobal::enc().createEncodingsDotDir(dir);
-
+        status=CEncodings::createEncodingsDotDir(dir);
+#endif
     return status;
 }
 
 bool CXConfig::readConfig()
 {
+    itsOk=false;
+
     switch(itsType)
     {
         case XFS:
@@ -83,14 +78,11 @@ bool CXConfig::readConfig()
         case X11:
             itsOk=processX11(true);
             break;
-        case KFI:
-            itsOk=readFontpaths();
-            break;
     }
 
     if(itsOk)
-        itsWritable=CMisc::fExists(itsFileName) ? CMisc::fWritable(itsFileName)
-                                                : CMisc::dWritable(CMisc::getDir(itsFileName));
+        itsWritable=Misc::fExists(itsFileName) ? Misc::fWritable(itsFileName)
+                                               : Misc::dWritable(Misc::getDir(itsFileName));
     else
         itsWritable=false;
 
@@ -104,7 +96,7 @@ bool CXConfig::writeConfig()
     //
     // Check if file has been written since we last read it. If so, then re-read
     // and add any new paths that we've added...
-    if(CMisc::fExists(itsFileName) && CMisc::getTimeStamp(itsFileName)!=itsTime)
+    if(Misc::fExists(itsFileName) && Misc::getTimeStamp(itsFileName)!=itsTime)
     {
         CXConfig newConfig(itsType, itsFileName);
 
@@ -128,9 +120,6 @@ bool CXConfig::writeConfig()
             case X11:
                 written=processX11(false);
                 break;
-            case KFI:
-                written=writeFontpaths();
-                break;
         }
     if(written)
         readConfig();
@@ -145,164 +134,67 @@ bool CXConfig::madeChanges()
         TPath *path;
  
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->orig || path->toBeRemoved)
+            if(!path->orig)
                 return true;
     }
 
     return false;
 }
  
-bool CXConfig::inPath(const QString &dir)
-{
-    TPath *path=findPath(dir);
- 
-    return NULL==path || path->toBeRemoved ? false : true;
-}
-
-bool CXConfig::subInPath(const QString &dir)
-{
-    //
-    // Look for /a/b/c/d/e/ in
-    //    /a/b/c/d/e/f/g/, /a/b/c/, /.....
-    // ... /a/b/c/e/f/g/ matches
-
-    TPath   *path=NULL;
-    QString ds(CMisc::dirSyntax(dir));
-
-
-    for(path=itsPaths.first(); path; path=itsPaths.next())
-        if(0==path->dir.find(dir))
-            return true;
-
-    return false;
-}
-
 void CXConfig::addPath(const QString &dir, bool unscaled)
 {
     if(itsWritable)
     {
-        QString ds(CMisc::dirSyntax(dir));
+        QString ds(Misc::dirSyntax(dir));
 
-        if(CMisc::dExists(dir))
+        if(Misc::dExists(dir))
         {
-            TPath   *path=findPath(ds);
+            TPath *path=findPath(ds);
 
             if(NULL==path)
                 itsPaths.append(new TPath(ds, unscaled, TPath::DIR, false));
-            else
-                if(path->toBeRemoved)
-                    path->toBeRemoved=false;
         }
     }
 }
 
-void CXConfig::removePath(const QString &dir)
-{
-    if(itsWritable)
-    {
-        QString ds(CMisc::dirSyntax(dir));
-        TPath   *path=findPath(ds);
- 
-        if(NULL!=path)
-            if(path->orig)
-                path->toBeRemoved=true;
-            else
-                itsPaths.removeRef(path);
-    }
-}
-
-bool CXConfig::getDirs(QStringList &list)
-{
-    if(itsOk)
-    {
-        TPath *path=NULL;
- 
-        for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->toBeRemoved && TPath::DIR==path->type && CMisc::dExists(path->dir))
-                list.append(path->dir);
-
-        return true;
-    }
-    else
-        return false;
-}
-
-bool CXConfig::xfsInPath()
+bool CXConfig::inPath(TPath::EType type)
 {
     if(itsOk && X11==itsType)
     {
         TPath *path=NULL;
 
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(TPath::FONT_SERVER==path->type)
+            if(type==path->type)
                 return true;
     }
 
     return false;
 }
 
-void CXConfig::refreshPaths()
-{
-    KFI_DBUG << "CXConfig::refreshPaths()" << endl;
-
-    if(itsOk && XFS!=itsType)
+void CXConfig::refreshPaths(bool xfs)
+{ 
+    if(xfs)
     {
-        TPath *path=NULL;
- 
-        for(path=itsPaths.first(); path; path=itsPaths.next())
+        if(Misc::root())
         {
-            QString dir(path->unscaled
-                        ? CMisc::xDirSyntax(path->dir)+QString(UNSCALED)
-                        : CMisc::xDirSyntax(path->dir));
+            unsigned int xfsPid=kfi_getPid("xfs", 1);
 
-            if(path->orig)
-            {
-                KFI_DBUG << "xset fp- " << dir << endl;
-                CMisc::doCmd("xset", "fp-", dir); // Remove path...
+            if(xfsPid)
+            { 
+                QString pid;
+
+                kill(xfsPid, SIGUSR1);
             }
-            if(!path->toBeRemoved && CMisc::dExists(path->dir) && CMisc::fExists(path->dir+"fonts.dir"))
-            {
-                ifstream in(QFile::encodeName(path->dir+"fonts.dir"));
-
-                if(in)
-                {
-                    int num;
-
-                    in >> num;
-
-                    if(in.good() && num)
-                    {
-                        KFI_DBUG << "xset fp+ " << dir << endl;
-                        CMisc::doCmd("xset", "fp+", dir);   // Add path...
-                    }
-                }
-            }
-        }
-    }
-
-    if(CMisc::root() && XFS==itsType)
-    {
-        unsigned int xfsPid=kfi_getPid("xfs", 1);
-
-        if(xfsPid)
-        {
-            QString pid;
-
-            KFI_DBUG << "kill -SIGUSR1 " << pid << endl;
-            kill(xfsPid, SIGUSR1);
         }
     }
     else
-    {
-        KFI_DBUG << "xset fp rehash" << endl;
-        CMisc::doCmd("xset", "fp", "rehash");
-    }
+        Misc::doCmd("xset", "fp", "rehash");
 }
 
 CXConfig::TPath * CXConfig::findPath(const QString &dir)
 {
     TPath   *path=NULL;
-    QString ds(CMisc::dirSyntax(dir));
+    QString ds(Misc::dirSyntax(dir));
  
     for(path=itsPaths.first(); path; path=itsPaths.next())
         if(path->dir==ds)
@@ -327,77 +219,6 @@ static void processPath(char *str, QString &path, bool &unscaled)
 
     if(str[strlen(str)-1]!='/')
         path+="/";
-}
-
-bool CXConfig::readFontpaths()
-{
-    //
-    // Fontpaths is a custom Kfontinst format, specified as:
-    // <paths...>
-
-    bool     status=false;
-    ifstream cfg(QFile::encodeName(itsFileName));
-
-    if(cfg)
-    {
-        itsTime=CMisc::getTimeStamp(itsFileName);
-
-        static const int constMaxLineLen=1024;  // Should be enough for 1 line!
- 
-        char line[constMaxLineLen];
- 
-        itsPaths.clear();
-        status=true;
-
-        do
-        {
-            cfg.getline(line, constMaxLineLen);
-
-            if(cfg.good())
-            {
-                line[constMaxLineLen-1]='\0';
-
-                if('#'!=line[0])
-                {
-                    QString path;
-                    bool    unscaled;
-
-                    processPath(line, path, unscaled);
-
-                    if(NULL==findPath(path))
-                        itsPaths.append(new TPath(KXftConfig::expandHome(path)));
-                }
-            }
-        }
-        while(!cfg.eof());
-        cfg.close();
-    }
-    else
-        if(!CMisc::fExists(itsFileName) && CMisc::dWritable(CMisc::getDir(itsFileName)))
-            status=true;
-
-    return status;
-}
-
-bool CXConfig::writeFontpaths()
-{
-    bool     status=false;
-    ofstream cfg(QFile::encodeName(itsFileName));
- 
-    if(cfg)
-    {
-        TPath *path;
-
-        status=true;
-        cfg << constFontpaths << endl;
-        for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->toBeRemoved && CMisc::dExists(path->dir))
-                cfg << QFile::encodeName(KXftConfig::contractHome(CMisc::xDirSyntax(path->dir))) << endl;
-
-        cfg.close();
-    }
- 
-    return status;
 }
 
 inline bool isWhitespace(char ch)
@@ -577,7 +398,7 @@ bool CXConfig::processX11(bool read)
 
     if(x11)
     {
-        itsTime=CMisc::getTimeStamp(itsFileName);
+        itsTime=Misc::getTimeStamp(itsFileName);
 
         bool closed=false;
 
@@ -627,7 +448,7 @@ bool CXConfig::processX11(bool read)
                             ok=true;
                         else
                         {
-                            CMisc::createBackup(itsFileName);
+                            Misc::createBackup(itsFileName);
 
                             ofstream of(QFile::encodeName(itsFileName));
 
@@ -661,10 +482,10 @@ bool CXConfig::processX11(bool read)
                                 of.write(from, filesEnd-from);
 
                                 for(path=itsPaths.first(); path; path=itsPaths.next())
-                                    if(!path->toBeRemoved && (TPath::DIR!=path->type || CMisc::dExists(path->dir)))
+                                    if(TPath::DIR!=path->type || Misc::dExists(path->dir))
                                     {
                                         of << "    FontPath \t\"";
-                                        of << QFile::encodeName(CMisc::xDirSyntax(path->dir));
+                                        of << QFile::encodeName(Misc::xDirSyntax(path->dir));
                                         if(path->unscaled)
                                             of << UNSCALED;
                                         of << "\"\n";
@@ -792,7 +613,7 @@ bool CXConfig::processXfs(bool read)
  
     if(xfs)
     {
-        itsTime=CMisc::getTimeStamp(itsFileName);
+        itsTime=Misc::getTimeStamp(itsFileName);
 
         bool closed=false;
  
@@ -866,7 +687,7 @@ bool CXConfig::processXfs(bool read)
  
                                                     if(!read) // then must be write...
                                                     {
-                                                        CMisc::createBackup(itsFileName);
+                                                        Misc::createBackup(itsFileName);
 
                                                         ofstream of(QFile::encodeName(itsFileName));
  
@@ -878,14 +699,14 @@ bool CXConfig::processXfs(bool read)
                                                             of.write(buffer, cat-buffer);
                                                             of << ' ';
                                                             for(p=itsPaths.first(); p; p=itsPaths.next())
-                                                                if(!p->toBeRemoved && CMisc::dExists(p->dir))
+                                                                if(Misc::dExists(p->dir))
                                                                 {
                                                                     if(!first)
                                                                     {
                                                                         of << ',';
                                                                         of << endl;
                                                                     }
-                                                                    of << QFile::encodeName(CMisc::xDirSyntax(p->dir));
+                                                                    of << QFile::encodeName(Misc::xDirSyntax(p->dir));
                                                                     if(p->unscaled)
                                                                         of << UNSCALED;
                                                                     first=false;
@@ -916,26 +737,19 @@ bool CXConfig::processXfs(bool read)
     return ok;
 }
 
-#ifdef HAVE_FONTCONFIG
-bool CXConfig::createFontsDotDir(const QString &dir)
-#else
-bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
-#endif
+bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
 {
-    KFI_DBUG << "CXConfig::createFontsDotDir(" << dir << ')' << endl;
+    QString ds(Misc::dirSyntax(dir));
+    QDir    d(ds);
+    bool    status=true;
 
-    bool status=false;
-    QDir d(dir);
- 
     if(d.isReadable())
     {
-        CFontsFile          fd(QFile::encodeName(QString(dir+"fonts.dir"))),
-                            fs(QFile::encodeName(QString(dir+"fonts.scale")));
+        CFontsFile          fd(QFile::encodeName(QString(ds+"fonts.dir"))),
+                            fs(QFile::encodeName(QString(ds+"fonts.scale")));
         const QFileInfoList *files=d.entryInfoList();
         QStringList         fdir,
                             fscale;
-        const QStringList   *origfd=NULL,
-                            *origfs=NULL;
         bool                addedFd=false,
                             addedFs=false;
  
@@ -946,57 +760,42 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
  
             for(; NULL!=(fInfo=it.current()); ++it)
             {
-                QCString cName(QFile::encodeName(fInfo->fileName()));
+                QCString          cName(QFile::encodeName(fInfo->fileName()));
+                const QStringList *origfd=NULL,
+                                  *origfs=NULL;
 
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && CFontEngine::isAFont(cName))
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                 {
-                    bool bitmap=CFontEngine::isABitmap(cName);
-
                     origfd=fd.getXlfds(fInfo->fileName());
                     origfs=fs.getXlfds(fInfo->fileName());
 
                     if(origfd)
-                    {
-                        KFI_DBUG << "Use origfd entry for fdir for " << fInfo->fileName() << endl;
                         fdir+=*origfd;
-                    }
                     else if(origfs)
-                    {
-                        KFI_DBUG << "Use origfs entry for fdir for " << fInfo->fileName() << endl;
                         fdir+=*origfs;
-                    }
 
                     if(origfs)
-                    {
-                        KFI_DBUG << "Use origfs entry for fscale for " << fInfo->fileName() << endl;
                         fscale+=*origfs;
-                    }
-                    else if(origfd && !bitmap)
-                    {
-                        KFI_DBUG << "Use origfd entry for fscale for " << fInfo->fileName() << endl;
-                        fscale+=*origfd;
-                    }
 
                     if(!origfd && !origfs)
                     {
-                        KFI_DBUG << "Need to create entries for " << fInfo->fileName() << endl;
-                        if(!bitmap)
+                        int face=0,
+                            numFaces=0;
+
+                        do
                         {
-                            int face=0,
-                                numFaces=0;
-
-                            do
+                            if(fe.openFont(fInfo->filePath(), face))
                             {
-                                if(CGlobal::fe().openFont(fInfo->filePath(), CFontEngine::NAME|CFontEngine::XLFD|CFontEngine::PROPERTIES, false, face))
+                                if(CFontEngine::BITMAP!=fe.getType())
                                 {
-                                     QStringList encodings=CGlobal::fe().getEncodings();
+                                     QStringList encodings=fe.getEncodings();
 
-                                     numFaces=CGlobal::fe().getNumFaces();   // Only really for TTC files..
+                                     numFaces=fe.getNumFaces();   // Only really for TTC files..
 
                                      if(encodings.count())
                                      {
                                          QCString xlfd;
-                                         QString  family=CGlobal::fe().getFamilyName();
+                                         QString  family=fe.getFamilyName();
 
                                          if(face>0)  // Again, only really for TTC files...
                                          {
@@ -1009,18 +808,19 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 
                                          xlfd+=QFile::encodeName(fInfo->fileName());
                                          xlfd+=" -";
-                                         xlfd+=CGlobal::fe().getFoundry().latin1();
+                                         xlfd+=fe.getFoundry().latin1();
                                          xlfd+="-";
                                          xlfd+=family.latin1();
                                          xlfd+="-";
-                                         xlfd+=CFontEngine::weightStr(CGlobal::fe().getWeight()).latin1();
+                                         xlfd+=CFontEngine::weightStr(fe.getWeight()).latin1();
                                          xlfd+="-";
-                                         xlfd+=CFontEngine::italicStr(CGlobal::fe().getItalic()).latin1();
+                                         xlfd+=CFontEngine::italicStr(fe.getItalic()).latin1();
                                          xlfd+="-";
-                                         xlfd+=CFontEngine::widthStr(CGlobal::fe().getWidth()).latin1();
+                                         xlfd+=CFontEngine::widthStr(fe.getWidth()).latin1();
                                          xlfd+="-";
-                                         if(!CGlobal::fe().getAddStyle().isEmpty())
-                                             xlfd+=CGlobal::fe().getAddStyle().latin1();
+                                         if(!fe.getAddStyle().isEmpty())
+                                             xlfd+=fe.getAddStyle().latin1();
+                                         //CPD: TODO Bitmap only ttfs!!!
                                          xlfd+="-0-0-0-0-";
 
                                          QStringList::Iterator it;
@@ -1030,10 +830,11 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                              QCString entry(xlfd);
 
                                              // Taken from ttmkfdir...
-                                             if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 || (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
+                                             if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 ||
+                                                (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
                                                  entry+='c';
                                              else
-                                                 entry+=CFontEngine::spacingStr(CGlobal::fe().getSpacing()).latin1();
+                                                 entry+=CFontEngine::spacingStr(fe.getSpacing()).latin1();
 
                                              entry+="-0-";
                                              entry+=(*it).latin1();
@@ -1051,22 +852,20 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 #endif
                                          }
                                      }
-                                     CGlobal::fe().closeFont();
-                                 }
+                                }
+                                else
+                                {
+                                    QCString entry(QFile::encodeName(fInfo->fileName()));
+        
+                                    entry+=" ";
+                                    entry+=fe.getXlfdBmp().latin1();
+                                    fdir.append(entry);
+                                    addedFd=true;
+                                }
+                                fe.closeFont();
                              }
-                             while(++face<numFaces);
                          }
-                         else
-                             if(CGlobal::fe().openFont(fInfo->filePath(), CFontEngine::XLFD)) // Bitmap fonts contain Xlfd embedded within...
-                             {
-                                 QCString entry(QFile::encodeName(fInfo->fileName()));
-
-                                 entry+=" ";
-                                 entry+=CGlobal::fe().getXlfdBmp().latin1();
-                                 fdir.append(entry);
-                                 CGlobal::fe().closeFont();
-                                 addedFd=true;
-                             }
+                         while(++face<numFaces);
                       }
                 }
             }
@@ -1075,11 +874,9 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
         //
         // Only output if we have added something, or the enumber of Xlfds is different (would mean a font was
         // removed)
-        if(addedFd || fdir.count()!=fd.xlfdCount() || 0==fdir.count())
+        if(addedFd || fdir.count()!=fd.xlfdCount() || (0==fdir.count() && 0!=fd.xlfdCount()))
         {
-            KFI_DBUG << "Ouput fonts.dir, " << addedFd << ' ' << fdir.count() << ' ' << fd.xlfdCount() << endl;
-
-            ofstream fontsDotDir(QFile::encodeName(QString(dir+"fonts.dir")));
+            ofstream fontsDotDir(QFile::encodeName(QString(ds+"fonts.dir")));
 
             if(fontsDotDir)
             {
@@ -1091,14 +888,13 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 
                 fontsDotDir.close();
             }
-            status=true;
+            else
+                status=false;
         }
 
-        if(addedFs || fscale.count()!=fs.xlfdCount())
+        if(status && (addedFs || fscale.count()!=fs.xlfdCount()))
         {
-            KFI_DBUG << "Ouput fonts.scale, " << addedFs << ' ' << fscale.count() << ' ' << fs.xlfdCount() << endl;
-
-            ofstream fontsDotScale(QFile::encodeName(QString(dir+"fonts.scale")));
+            ofstream fontsDotScale(QFile::encodeName(QString(ds+"fonts.scale")));
 
             if(fontsDotScale)
             {
@@ -1110,6 +906,8 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 
                 fontsDotScale.close();
             }
+            else
+                status=false;
         }
     }
 
@@ -1120,9 +918,13 @@ CXConfig::TPath::EType CXConfig::TPath::getType(const QString &d)
 {
     QString str(d);
 
-    return str.replace(QRegExp("\\s*"), "").find("unix/:")==0
+    str.replace(QRegExp("\\s*"), "");
+
+    return 0==str.find("unix/:")
                ? FONT_SERVER
-               : DIR;
+               : "fonconfig"==str
+                   ? FONT_CONFIG
+                   : DIR;
 }
 
 CXConfig::CFontsFile::CFontsFile(const char *file)
@@ -1227,3 +1029,4 @@ CXConfig::CFontsFile::TEntry * CXConfig::CFontsFile::getEntry(TEntry **current, 
     return entry;
 }
 
+};

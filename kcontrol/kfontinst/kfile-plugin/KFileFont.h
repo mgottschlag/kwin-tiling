@@ -26,24 +26,33 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <kfilemetainfo.h>
-#include "FontEngine.h"
+#include "FcEngine.h"
+
+namespace KFI
+{
 
 class KFileFontPlugin : public KFilePlugin
 {
     public:
 
     KFileFontPlugin(QObject *parent, const char *name, const QStringList& args);
-    virtual ~KFileFontPlugin();
+    virtual ~KFileFontPlugin() {}
 
     bool readInfo(KFileMetaInfo& info, uint what = KFileMetaInfo::Fastest);
 
     private:
 
-    void addMimeType(const char *mime, bool hasPs=true);
+    void addMimeType(const char *mime);
+
+    private:
+
+    CFcEngine itsEngine;
+};
+
 };
 
 #endif

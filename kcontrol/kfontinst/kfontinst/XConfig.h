@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CXConfig
+// Class Name    : KFI::CXConfig
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 05/05/2001
@@ -26,39 +26,40 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include "Misc.h"
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <time.h>
 
+namespace KFI
+{
+
+class CFontEngine;
+
 class CXConfig
 {
-    private:
+    public:
 
     struct TPath
     {
         enum EType
         {
             DIR,
-            FONT_SERVER
-            // NOTE: In future X11 config may allow "fontconfig" to be specified as a path!
+            FONT_SERVER,
+            FONT_CONFIG
         };
 
         TPath(const QString &d, bool u=false, EType t=DIR, bool o=true)
-           : dir(DIR==t ? CMisc::dirSyntax(d) : d), unscaled(u), toBeRemoved(false), orig(o), type(t) {}
+           : dir(DIR==t ? Misc::dirSyntax(d) : d), unscaled(u), orig(o), type(t) {}
 
         static EType getType(const QString &d);
 
         QString dir;
         bool    unscaled,
-                toBeRemoved,   // Whether dir should be removed when saving file
                 orig;          // Was dir in file when read?
         EType   type;
     };
@@ -93,53 +94,41 @@ class CXConfig
         unsigned int     itsXlfdCount;
     };
 
-    public:
-
     enum EType
     {
         XFS,
-        X11,
-        KFI
+        X11
     };
 
     public:
 
     CXConfig(EType type, const QString &file);
 
-#ifdef HAVE_FONTCONFIG
-    static bool configureDir(const QString &dir);
-#else
-    static bool configureDir(const QString &dir, QStringList &symbolFamilies);
-#endif
+    static bool configureDir(const QString &dir, CFontEngine &fe);
 
-    bool ok()                           { return itsOk; }
-    bool writable()                     { return itsWritable; }
-    bool readConfig();
-    bool writeConfig();
-    bool madeChanges();
-    bool inPath(const QString &dir);
-    bool subInPath(const QString &dir);
-    void addPath(const QString &dir, bool unscaled=false);
-    void removePath(const QString &dir);
-    bool getDirs(QStringList &list);
-    bool xfsInPath();
-    void refreshPaths();
-    void restart();
+    bool  ok()                       { return itsOk; }
+    bool  writable()                 { return itsWritable; }
+    bool  readConfig();
+    bool  writeConfig();
+    bool  madeChanges();
+    void  addPath(const QString &dir, bool unscaled=false);
+    bool  inPath(TPath::EType type);
+    bool  xfsInPath()                { return inPath(TPath::FONT_SERVER); }
+    bool  fcInPath()                 { return inPath(TPath::FONT_CONFIG); }
+    void  refreshPaths()             { refreshPaths(XFS==itsType); }
+    void  restart();
+    EType getType()                  { return itsType; }
+
+    static void refreshPaths(bool xfs);
 
     private:
 
-    bool readFontpaths();
-    bool writeFontpaths();
     bool processX11(bool read);
     bool processXfs(bool read);
 
     TPath * findPath(const QString &dir);
 
-#ifdef HAVE_FONTCONFIG
-    static bool createFontsDotDir(const QString &dir);
-#else
-    static bool createFontsDotDir(const QString &dir, QStringList &symbolFamilies);
-#endif
+    static bool createFontsDotDir(const QString &dir, CFontEngine &fe);
 
     private:
 
@@ -150,6 +139,8 @@ class CXConfig
     bool            itsOk,
                     itsWritable;
     time_t          itsTime;
+};
+
 };
 
 #endif

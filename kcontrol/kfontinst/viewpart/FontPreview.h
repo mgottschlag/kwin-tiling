@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontPreview
+// Class Name    : KFI::CFontPreview
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 04/11/2001
@@ -26,7 +26,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001, 2002, 2003
+// (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <qstring.h>
@@ -35,6 +35,10 @@
 #include <qwidget.h>
 #include <qcolor.h>
 #include <kurl.h>
+#include "FcEngine.h"
+
+namespace KFI
+{
 
 class CFontPreview : public QWidget
 {
@@ -42,38 +46,38 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL, int size=-1, bool wf=false);
+    CFontPreview(QWidget *parent, const char *name=NULL);
     virtual ~CFontPreview() {}
 
-    void            paintEvent(QPaintEvent *);
-    QSize           sizeHint() const;
-    QSize           minimumSizeHint() const;
-    int             currentSize() const { return itsSize; }
-    bool            waterfall() const   { return itsWaterfall; }
+    void        paintEvent(QPaintEvent *);
+    QSize       sizeHint() const;
+    QSize       minimumSizeHint() const;
 
-    void showFont(const KURL &url);
-    void showSize(int size);
-    void showWaterfall(bool wf);
-    void showFont();
+    void        showFont(const KURL &url);
+    void        showFont();
+
+    CFcEngine & engine() { return itsEngine; }
 
     public slots:
 
-    void showFace(int face);
+    void        showFace(int face);
 
     signals:
 
-    void status(bool);
+    void        status(bool);
 
     private:
 
-    QPixmap itsPixmap;
-    KURL    itsCurrentUrl;
-    int     itsCurrentFace,
-            itsLastWidth,
-            itsLastHeight,
-            itsSize;
-    QColor  itsBgndCol;
-    bool    itsWaterfall;
+    CFcEngine itsEngine;
+    QPixmap   itsPixmap;
+    KURL      itsCurrentUrl;
+    int       itsCurrentFace,
+              itsLastWidth,
+              itsLastHeight;
+    QColor    itsBgndCol;
+    QString   itsFontName;
+};
+
 };
 
 #endif

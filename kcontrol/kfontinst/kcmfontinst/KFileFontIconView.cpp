@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKFileFontIconView
+// Class Name    : KFI::CKFileFontIconView
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 31/05/2003
@@ -23,15 +23,18 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <qevent.h>
 #include <kfileitem.h>
 #include <kurldrag.h>
-#include "FontEngine.h"
 #include "KFileFontIconView.h"
 
+namespace KFI
+{
+
+// CPD: KDE4 should make acceptDrag() virtual there fore can get rid of all these ::contentsX functions...
 void CKFileFontIconView::contentsDragEnterEvent(QDragEnterEvent *e)
 {
     if(acceptDrag(e))
@@ -81,3 +84,5 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
     return KURLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontIconView*>(this)) &&
            (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
+
+};

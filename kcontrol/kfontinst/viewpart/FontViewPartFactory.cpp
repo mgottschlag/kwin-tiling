@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewPartFactory
+// Class Name    : KFI::CFontViewPartFactory
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 03/08/2002
@@ -23,7 +23,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003
+// (C) Craig Drummond, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "FontViewPartFactory.h"
@@ -38,9 +38,12 @@ extern "C"
     void* init_libkfontviewpart()
     {
         KGlobal::locale()->insertCatalogue("kfontinst");
-        return new CFontViewPartFactory;
+        return new KFI::CFontViewPartFactory;
     }
 }
+
+namespace KFI
+{
 
 KInstance * CFontViewPartFactory::theirInstance=NULL;
 KAboutData * CFontViewPartFactory::theirAbout=NULL;
@@ -77,5 +80,7 @@ KInstance* CFontViewPartFactory::instance()
     }
     return theirInstance;
 }
+
+};
 
 #include "FontViewPartFactory.moc"

@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKCmFontInst
+// Class Name    : KFI::CKCmFontInst
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 26/04/2003
@@ -26,21 +26,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include <qsize.h>
 #include <qstringlist.h>
-
+#include <qsize.h>
 #include <kcmodule.h>
+#include <kurl.h>
 #include <kconfig.h>
 #include <kio/job.h>
+#ifdef HAVE_XFT
 #include <kparts/part.h>
-#include <kurl.h>
+#endif
 
 class KDirOperator;
 class KAction;
@@ -49,9 +50,11 @@ class KActionMenu;
 class KFileItem;
 class QLabel;
 class QSplitter;
-class KURLLabel;
 class QDropEvent;
 class KFileItem;
+
+namespace KFI
+{
 
 class CKCmFontInst : public KCModule
 {
@@ -67,54 +70,43 @@ class CKCmFontInst : public KCModule
     public slots:
 
     QString quickHelp() const;
-    void    gotoTop();
-    void    goUp();
-    void    goBack();
-    void    goForward();
     void    listView();
     void    iconView();
     void    setupViewMenu();
-    void    urlEntered(const KURL &url);
     void    fileHighlighted(const KFileItem *item);
     void    loadingFinished();
     void    addFonts();
     void    removeFonts();
-    void    createFolder();
-    void    enable();
-    void    disable();
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
-    void    openUrlInBrowser(const QString &url);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
     void    jobResult(KIO::Job *job);
 
     private:
 
-    void    setUpAct();
-    void    enableItems(bool enable);
     void    addFonts(const KURL::List &src, const KURL &dest);
 
     private:
 
     KDirOperator         *itsDirOp;
     KURL                 itsTop;
-    KAction              *itsUpAct,
-                         *itsSepDirsAct,
+    KAction              *itsSepDirsAct,
                          *itsShowHiddenAct,
-                         *itsDeleteAct,
-                         *itsEnableAct,
-                         *itsDisableAct;
+                         *itsDeleteAct;
     KRadioAction         *itsListAct,
                          *itsIconAct;
     KActionMenu          *itsViewMenuAct;
-    KURLLabel            *itsLabel;
+#ifdef HAVE_XFT
     KParts::ReadOnlyPart *itsPreview;
+#endif
     QSplitter            *itsSplitter;
     KConfig              itsConfig;
     bool                 itsEmbeddedAdmin,
                          itsKCmshell;
     QLabel               *itsStatusLabel;
     QSize                itsSizeHint;
+};
+
 };
 
 #endif

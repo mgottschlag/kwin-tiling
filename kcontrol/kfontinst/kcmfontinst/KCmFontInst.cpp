@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKCmFontInst
+// Class Name    : KFI::CKCmFontInst
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 26/04/2003
@@ -26,35 +26,31 @@
 // (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "KCmFontInst.h"
+#include "KfiConstants.h"
 #include <qlayout.h>
-#include <qsplitter.h>
-
+#include <qlabel.h>
 #include <kaboutdata.h>
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kdirlister.h>
-#include <kdiroperator.h>
-#include <kfiledialog.h>
 #include <kgenericfactory.h>
-#include <kguiitem.h>
-#include <kio/job.h>
-#include <kio/netaccess.h>
-#include <klibloader.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
-#include <kpushbutton.h>
-#include <kstdaccel.h>
-#include <ktoolbar.h>
-#include <ktoolbarbutton.h>
-#include <kurllabel.h>
-
-#include "Global.h"
+#include <kdiroperator.h>
 #include "Misc.h"
-#include "FontEngine.h"
 #include "KFileFontIconView.h"
 #include "KFileFontView.h"
-#include "RenameJob.h"
-#include "KCmFontInst.h"
+#include <kpopupmenu.h>
+#include <ktoolbar.h>
+#include <ktoolbarbutton.h>
+#include <kstdaccel.h>
+#include <kfiledialog.h>
+#include <kmessagebox.h>
+#include <kcmdlineargs.h>
+#include <kapplication.h>
+#include <klibloader.h>
+#include <kio/job.h>
+#include <kio/netaccess.h>
+#include <kdirlister.h>
+#include <kpushbutton.h>
+#include <kguiitem.h>
+#include <qsplitter.h>
 
 #define CFG_GROUP          "Main Settings"
 #define CFG_LISTVIEW       "ListView"
@@ -62,25 +58,20 @@
 #define CFG_SPLITTER_SIZES "SplitterSizes"
 #define CFG_SIZE           "Size"
 
-//
-// Remove any fonts:/ status information added to name
-static QString formatName(const QString &name)
-{
-    QString n(name);
-
-    return n.remove(i18n(KIO_FONTS_DISABLED));
-}
-
-typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
+typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
+
+namespace KFI
+{
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "kfontinst"),
-              itsTop(CMisc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KIO_FONTS_USER)),
+#ifdef HAVE_XFT
               itsPreview(NULL),
-              itsConfig(CGlobal::uiCfgFile())
+#endif
+              itsConfig(KFI_UI_CFG_FILE)
 {
-    KGlobal::locale()->insertCatalogue("kfontinst");
+    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
 
     KAboutData* about = new KAboutData("kcmfontinst",
          I18N_NOOP("KDE Font Installer"),
@@ -94,7 +85,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     const char *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) &&
+    itsEmbeddedAdmin=Misc::root() && (NULL==appName || strcmp("kcontrol", appName) &&
                      KCmdLineArgs::parsedArgs()->isSet("embed"));
     itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) &&
                 !KCmdLineArgs::parsedArgs()->isSet("embed");
@@ -106,9 +97,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsConfig.setGroup(CFG_GROUP);
 
+#ifdef HAVE_XFT
     KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
-    QFrame      *fontsFrame,
-                *urlFrame=new QFrame(this);
+    QFrame      *fontsFrame;
 
     if(factory)
     {
@@ -129,43 +120,25 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     }
     else
     {
+#endif
         fontsFrame=new QFrame(this);
         fontsFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        urlFrame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
+#ifdef HAVE_XFT
     }
+#endif
 
     QGridLayout *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
-    QHBoxLayout *urlLayout=new QHBoxLayout(urlFrame, 1);
     QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
     KToolBar    *toolbar=new KToolBar(this);
 
     fontsFrame->setLineWidth(0);
-    urlFrame->setFrameShadow(QFrame::Sunken);
-    urlFrame->setFrameShape(QFrame::StyledPanel);
-    urlFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    itsLabel = new KURLLabel(urlFrame);
-    itsLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    urlLayout->addItem(new QSpacerItem(4, 4));
-    urlLayout->addWidget(new QLabel(i18n("Location: "), urlFrame));
-    urlLayout->addItem(new QSpacerItem(4, 4));
-    urlLayout->addWidget(itsLabel);
-    urlLayout->addItem(new QSpacerItem(4, 4));
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     toolbar->setMovingEnabled(false);
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
-    KURL    url(itsTop);
 
-    if(!previousPath.isEmpty())
-    {
-        KIO::UDSEntry uds;
-
-        url.setPath(previousPath);
-        if(!KIO::NetAccess::stat(url, uds, this))
-            url=itsTop;
-    }
-
-    itsDirOp = new KDirOperator(url, fontsFrame);
+    itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KFI_KIO_FONTS_USER),
+                                fontsFrame);
     itsDirOp->setViewConfig(&itsConfig, "ListView Settings");
     itsDirOp->setMinimumSize(QSize(96, 64));
 
@@ -178,9 +151,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
               << "application/x-font-bdf"
               << "application/x-font-pcf"
               << "application/x-font-snf"
-              << "application/x-font-speedo"
-              << "fonts/folder"
-              << "fonts/system-folder";
+              << "application/x-font-speedo";
 
     itsDirOp->setMimeFilter(mimeTypes);
     itsDirOp->dirLister()->setMainWindow(this);
@@ -194,13 +165,18 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     fontsLayout->addItem(new QSpacerItem(4, 4, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     layout->addWidget(toolbar);
-    layout->addWidget(urlFrame);
+#ifdef HAVE_XFT
     layout->addWidget(itsPreview ? itsSplitter : fontsFrame);
+#else
+    layout->addWidget(fontsFrame);
+#endif
     layout->addWidget(itsStatusLabel);
 
     setButtons(0);
-    setUseRootOnlyMsg(false);
-    itsDirOp->setMode((KFile::Mode)(KFile::Directory|KFile::Files));
+    setRootOnlyMsg(i18n("<b>The fonts shown are your personal fonts.</b><br>To see (and install) "
+                        "system wide fonts, click on the \"Administrator Mode\" button below."));
+    setUseRootOnlyMsg(true);
+    itsDirOp->setMode(KFile::Files);
 
     //
     // Now for the hack!
@@ -210,49 +186,15 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsViewMenuAct=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("view menu"));
     topMnu->popupMenu()->clear();
-    if((itsUpAct=itsDirOp->actionCollection()->action("up")))
-    {
-        itsUpAct->disconnect(SIGNAL(activated()), itsDirOp, SLOT(cdUp()));
-        connect(itsUpAct, SIGNAL(activated()), SLOT(goUp()));
-        itsUpAct->plug(toolbar);
-        if(url==itsTop)
-            itsUpAct->setEnabled(false);
-        topMnu->insert(itsUpAct);
-    }
-
-    if((act=itsDirOp->actionCollection()->action("back")))
-    {
-        act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(back()));
-        connect(act, SIGNAL(activated()), SLOT(goBack()));
-        act->plug(toolbar);
-        act->setEnabled(false);
-        topMnu->insert(act);
-    }
-
-    if((act=itsDirOp->actionCollection()->action("forward")))
-    {
-        act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(forward()));
-        connect(act, SIGNAL(activated()), SLOT(goForward()));
-        act->plug(toolbar);
-        act->setEnabled(false);
-        topMnu->insert(act);
-    }
+    if((act=itsDirOp->actionCollection()->action("up")))
+        act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(cdUp()));
 
     if((act=itsDirOp->actionCollection()->action("home")))
-    {
-        act->setIcon("fonts");
-        act->setText(i18n("Top Level"));
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(home()));
-        connect(act, SIGNAL(activated()), SLOT(gotoTop()));
-        act->plug(toolbar);
-        topMnu->insert(act);
-    }
 
     if((act=itsDirOp->actionCollection()->action("reload")))
         act->plug(toolbar);
 
-    topMnu->insert(sep);
-    toolbar->insertLineSeparator();
     topMnu->insert(itsViewMenuAct);
 
     if((itsIconAct=dynamic_cast<KRadioAction *>(itsDirOp->actionCollection()->action("short view"))))
@@ -269,16 +211,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsListAct->plug(toolbar);
     }
 
-    topMnu->insert(sep);
     toolbar->insertLineSeparator();
-
-    if((act=itsDirOp->actionCollection()->action("mkdir")))
-    {
-        act->plug(toolbar);
-        topMnu->insert(act);
-        disconnect(act, SIGNAL(activated()), itsDirOp, SLOT(mkdir()));
-        connect(act, SIGNAL(activated()), this, SLOT(createFolder()));
-    }
 
     act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
     act->plug(toolbar);
@@ -293,16 +226,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         connect(itsDeleteAct, SIGNAL(activated()), this, SLOT(removeFonts()));
     }
 
-    toolbar->insertLineSeparator();
-    itsEnableAct=new KAction(i18n("Enable"), "button_ok", 0, this, SLOT(enable()), itsDirOp->actionCollection(), "enable");
-    itsEnableAct->setEnabled(false);
-    itsEnableAct->plug(toolbar);
-    topMnu->insert(itsEnableAct);
-    itsDisableAct=new KAction(i18n("Disable"), "button_cancel", 0, this, SLOT(disable()), itsDirOp->actionCollection(),
-                              "disable");
-    itsDisableAct->setEnabled(false);
-    itsDisableAct->plug(toolbar);
-    topMnu->insert(itsDisableAct);
     topMnu->insert(sep);
 
     if((act=itsDirOp->actionCollection()->action("properties")) )
@@ -316,6 +239,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         setupViewMenu();
     }
 
+#ifdef HAVE_XFT
     if(itsPreview)
     {
         KActionCollection *previewCol=itsPreview->actionCollection();
@@ -338,8 +262,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             //    previewCol->action(i)->plug(toolbar);
         }
     }
-
-    setUpAct();
+#endif
 
     //
     // Set view...
@@ -350,16 +273,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsDirOp->dirLister()->setShowingDotFiles(true);
 
-    //
-    // Enter url...
-    urlEntered(url);
-
     connect(itsDirOp, SIGNAL(urlEntered(const KURL &)), SLOT(urlEntered(const KURL &)));
     connect(itsDirOp, SIGNAL(fileHighlighted(const KFileItem *)), SLOT(fileHighlighted(const KFileItem *)));
     connect(itsDirOp, SIGNAL(finishedLoading()), SLOT(loadingFinished()));
     connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
                       SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
-    connect(itsLabel, SIGNAL(leftClickedURL(const QString &)), SLOT(openUrlInBrowser(const QString &)));
     connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
     connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
 
@@ -373,6 +291,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
 CKCmFontInst::~CKCmFontInst()
 {
+#ifdef HAVE_XFT
     if(itsPreview)
     {
         itsConfig.setGroup(CFG_GROUP);
@@ -380,9 +299,8 @@ CKCmFontInst::~CKCmFontInst()
         if(itsKCmshell)
             itsConfig.writeEntry(CFG_SIZE, size());
     }
+#endif
     delete itsDirOp;
-
-    CGlobal::destroy();
 }
 
 QSize CKCmFontInst::sizeHint() const
@@ -392,42 +310,25 @@ QSize CKCmFontInst::sizeHint() const
 
 QString CKCmFontInst::quickHelp() const
 {
-    QString help(i18n("<h1>Font Installer</h1><p> This module allows you to"
+    return Misc::root()
+               ? i18n("<h1>Font Installer</h1><p> This module allows you to"
                       " install TrueType, Type1, Speedo, and Bitmap"
                       " fonts.</p><p>You may also install fonts using Konqueror:"
                       " type fonts:/ into Konqueror's location bar"
                       " and this will display your installed fonts. To install a"
-                      " font, simply copy one into the appropriate folder.</p>")),
-            rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
-                          " fonts installed will only be available to you. To install"
-                          " fonts system wide, use the \"Administrator Mode\""
-                          " button to run this module as \"root\".</p>"));
-
-    return CMisc::root() ? help : help+rootHelp;
-}
-
-void CKCmFontInst::gotoTop()
-{
-    itsDirOp->setURL(itsTop, true);
-    setUpAct();
-}
-
-void CKCmFontInst::goUp()
-{
-    itsDirOp->cdUp();
-    setUpAct();
-}
-
-void CKCmFontInst::goBack()
-{
-    itsDirOp->back();
-    setUpAct();
-}
-
-void CKCmFontInst::goForward()
-{
-    itsDirOp->forward();
-    setUpAct();
+                      " font, simply copy one into the folder.</p>")
+               : i18n("<h1>Font Installer</h1><p> This module allows you to"
+                      " install TrueType, Type1, Speedo, and Bitmap"
+                      " fonts.</p><p>You may also install fonts using Konqueror:"
+                      " type fonts:/ into Konqueror's location bar"
+                      " and this will display your installed fonts. To install a"
+                      " font, simply copy one into the appropriate folder - "
+                      " \"Personal\" for fonts available to just yourself, or "
+                      " \"System\" for sytem-wide fonts (available to all).</p>"
+                      "<p><b>NOTE:</b> As you are not logged in as \"root\", any"
+                      " fonts installed will only be available to you. To install"
+                      " fonts system wide, use the \"Administrator Mode\""
+                      " button to run this module as \"root\".</p>");
 }
 
 void CKCmFontInst::listView()
@@ -462,83 +363,13 @@ void CKCmFontInst::setupViewMenu()
     itsViewMenuAct->remove(itsShowHiddenAct);
 }
 
-static QString createLocationLabel(const KURL &url)
-{
-    QString               ret("<p>fonts:/");
-    QStringList           list(QStringList::split('/', url.path()));
-    QStringList::Iterator it;
-
-    for(it=list.begin(); it!=list.end(); ++it)
-    {
-        if(QChar('.')==(*it)[0])
-        {
-            ret+=QString("<i>");
-            ret+=*it;
-            ret+=QString("</i>");
-        }
-        else
-            ret+=*it;
-        ret+=QChar('/');
-    }
-
-    ret+=QString("</p>");
-    return ret;
-}
-
-void CKCmFontInst::urlEntered(const KURL &url)
-{
-    itsConfig.setGroup(CFG_GROUP);
-    itsConfig.writeEntry(CFG_PATH, url.path());
-
-    itsEnableAct->setEnabled(false);
-    itsDisableAct->setEnabled(false);
-    itsLabel->setText(createLocationLabel(url));
-    itsLabel->setURL(url.url());
-    if(itsEmbeddedAdmin)
-        itsConfig.sync();
-
-    updateInformation(0, 0);
-}
-
 void CKCmFontInst::fileHighlighted(const KFileItem *item)
 {
     const KFileItemList *list=itsDirOp->selectedItems();
 
-    if(list && list->count())
-    {
-        KFileItemListIterator it(*list);
-        bool                  doneEn=false,
-                              doneDis=false;
+    itsDeleteAct->setEnabled(list && list->count());
 
-        while(it.current() && !doneEn && !doneDis)
-        {
-            if(!doneEn && QChar('.')==(*it)->url().fileName()[0])
-            {
-                itsEnableAct->setEnabled(true);
-                doneEn=true;
-            }
-            else if(!doneDis)
-            {
-                itsDisableAct->setEnabled(true);
-                doneDis=true;
-            }
-
-            if(!doneDis)
-                itsDisableAct->setEnabled(false);
-            if(!doneEn)
-                itsEnableAct->setEnabled(false);
-
-            ++it;
-        }
-        itsDeleteAct->setEnabled(true);
-    }
-    else
-    {
-        itsDeleteAct->setEnabled(false);
-        itsEnableAct->setEnabled(false);
-        itsDisableAct->setEnabled(false);
-    }
-
+#ifdef HAVE_XFT
     if(itsPreview)
     {
         //
@@ -552,6 +383,7 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
         if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
             itsPreview->openURL(previewItem->url());
     }
+#endif
 }
 
 void CKCmFontInst::loadingFinished()
@@ -594,7 +426,7 @@ void CKCmFontInst::removeFonts()
 
         for(; it.current(); ++it)
         {
-            files.append(formatName((*it)->text()));
+            files.append((*it)->text());
             urls.append((*it)->url());
         }
 
@@ -607,70 +439,23 @@ void CKCmFontInst::removeFonts()
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
-                           i18n("Delete Item"), KGuiItem(i18n("Delete"), "editdelete"));
+                           i18n("Delete Font"), KGuiItem(i18n("Delete"), "editdelete"));
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                           i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
+                           i18n("translators: not called for n == 1", "Do you really want to delete these %n fonts?",
                                 files.count()),
-                           files, i18n("Delete Items"), KGuiItem(i18n("Delete"), "editdelete"));
+                           files, i18n("Delete Fonts"), KGuiItem(i18n("Delete"), "editdelete"));
         }
 
         if(doIt)
         {
-            KURL::List           copy(urls);
-            KURL::List::Iterator it;
-
-            //
-            // Check if deleting a Type1 font, if so look for corresponding .afm file to also delete
-            for(it=urls.begin(); it!=urls.end(); ++it)
-                if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
-                {
-                    const char *others[]={ "afm", "AFM", NULL };
-
-                    for(int i=0; others[i]; ++i)
-                    {
-                        KURL          afmUrl(*it);
-                        KIO::UDSEntry uds;
-
-                        afmUrl.setPath(CMisc::changeExt((*it).path(), others[i]));
-                        if(KIO::NetAccess::stat(afmUrl, uds, this))
-                        {
-                            copy+=afmUrl;
-                            break;
-                        }
-                    }
-                }
-
-            KIO::DeleteJob *job = KIO::del(copy, false, true);
+            KIO::DeleteJob *job = KIO::del(urls, false, true);
             connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
             job->setWindow(this);
             job->setAutoErrorHandlingEnabled(true, this);
         }
     }
-}
-
-void CKCmFontInst::createFolder()
-{
-    //
-    // Hack as when create folder, and go back - created folder does not appear!
-    KURL prevUrl=itsDirOp->url();
-
-    itsDirOp->mkdir();
-
-    if(prevUrl!=itsDirOp->url())
-        itsDirOp->dirLister()->updateDirectory(prevUrl);
-    fileHighlighted(NULL);
-}
-
-void CKCmFontInst::enable()
-{
-    enableItems(true);
-}
-
-void CKCmFontInst::disable()
-{
-    enableItems(false);
 }
 
 void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &urls)
@@ -679,49 +464,45 @@ void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &u
         addFonts(urls, i && i->isDir() ?  i->url() : itsDirOp->url());
 }
 
-void CKCmFontInst::openUrlInBrowser(const QString &url)
-{
-    if (kapp)
-    {
-        QString u(url);
-
-        if (itsEmbeddedAdmin)  // Need to open fonts:/System...
-        {
-            u.insert(strlen(KIO_FONTS_PROTOCOL)+1, i18n(KIO_FONTS_SYS));
-            u.insert(strlen(KIO_FONTS_PROTOCOL)+1, '/');
-        }
-        kapp->invokeBrowser(u);
-    }
-}
-
 void CKCmFontInst::infoMessage(const QString &msg)
 {
     itsStatusLabel->setText(msg);
 }
 
-void CKCmFontInst::updateInformation(int dirs, int fonts)
+static QString family(const QString &name)
+{
+    int commaPos=name.find(',');
+
+    return -1==commaPos ? name : name.left(commaPos);
+}
+
+void CKCmFontInst::updateInformation(int, int fonts)
 {
     KIO::filesize_t size=0;
-    QString         text(i18n("One Item", "%n Items", dirs+fonts));
+    QString         text(i18n("One Font", "%n Fonts", fonts));
+    QStringList     families;
 
     if(fonts>0)
     {
         KFileItem *item=NULL;
 
         for (item=itsDirOp->view()->firstFileItem(); item; item=itsDirOp->view()->nextItem(item))
-            if(item->isFile())
-                size+=item->size();
+        {
+            QString fam(family(item->text()));
+
+            size+=item->size();
+            if(-1==families.findIndex(fam))
+                families+=fam;
+        }
     }
 
-    text+=" - ";
-    text+=i18n("One Font", "%n Fonts", fonts);
     if(fonts>0)
     {
         text+=" ";
         text+=i18n("(%1 Total)").arg(KIO::convertSize(size));
     }
     text+=" - ";
-    text+=i18n("One Folder", "%n Folders", dirs);
+    text+=i18n("One Family", "%n Families", families.count());
     itsStatusLabel->setText(text);
 }
 
@@ -739,101 +520,6 @@ void CKCmFontInst::jobResult(KIO::Job *job)
     }
 }
 
-void CKCmFontInst::setUpAct()
-{
-    if(!CMisc::root() && (itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER)) ||
-                          itsDirOp->url().path()==(QString("/")+i18n(KIO_FONTS_USER)+QString("/")) ) )
-        itsUpAct->setEnabled(false);
-}
-
-void CKCmFontInst::enableItems(bool enable)
-{
-    const KFileItemList *items=itsDirOp->selectedItems();
-    KURL::List          urls;
-    QStringList         files;
-
-    if (items->isEmpty())
-        KMessageBox::information(this,
-                                enable ? i18n("You did not select anything to enable.")
-                                       : i18n("You did not select anything to disable."),
-                                enable ? i18n("Nothing to Enable") : i18n("Nothing to Disable"));
-    else
-    {
-        KFileItemListIterator it(*items);
-
-        for (; it.current(); ++it)
-        {
-            KURL url = (*it)->url();
-            bool disabled=QChar('.')==(*it)->url().fileName()[0];
-
-            if((enable && disabled) || (!enable && !disabled))
-            {
-                urls.append(url);
-                files.append(formatName((*it)->text()));
-            }
-        }
-    }
-
-    bool doIt=false;
-
-    switch(files.count())
-    {
-        case 0:
-            break;
-        case 1:
-            doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
-                       enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
-                              : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
-                       enable ? i18n("Enable Item") : i18n("Disable Item"),
-                       enable ? KGuiItem(i18n("Enable"), "button_ok") : KGuiItem(i18n("Disable"), "button_cancel"));
-            break;
-        default:
-            doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                       enable ? i18n("translators: not called for n == 1", "Do you really want to enable these %n items?",
-                                     files.count())
-                              : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?",
-                                     files.count()),
-                       files,
-                       enable ? i18n("Enable Items") : i18n("Disable Items"),
-                       enable ? KGuiItem(i18n("Enable"), "button_ok") : KGuiItem(i18n("Disable"), "button_cancel"));
-    }
-
-    if(doIt)
-    {
-        KURL::List::Iterator    it;
-        KURL::List              copy(urls);
-        CRenameJob::Entry::List renameList;
-
-        //
-        // Check if enabling/disabling a Type1 font, if so look for corresponding .afm file to also enable/disable
-        for(it=urls.begin(); it!=urls.end(); ++it)
-            if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
-            {
-                KURL          afmUrl(*it);
-                KIO::UDSEntry uds;
-
-                afmUrl.setPath(CMisc::changeExt((*it).path(), "afm"));
-                if(KIO::NetAccess::stat(afmUrl, uds, this))
-                    copy+=afmUrl;
-            }
-
-        for(it=copy.begin(); it!=copy.end(); ++it)
-        {
-            KURL url(*it);
-
-            url.setFileName(enable
-                         ? CMisc::getFile((*it).path()).mid(1)
-                         : QChar('.')+CMisc::getFile((*it).path()));
-            renameList.append(CRenameJob::Entry(*it, url));
-        }
-
-        CRenameJob *job = new CRenameJob(renameList, true);
-        connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
-        job->setWindow(this);
-        job->setAutoErrorHandlingEnabled(true, this);
-    }
-}
-
 void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
 {
     if(src.count())
@@ -842,20 +528,14 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
         KURL::List::ConstIterator it;
 
         //
-        // Check if installing a Type1 font, if so look for corresponding .afm file to also install
+        // Check if font has any associated AFM or PFM file...
         for(it=src.begin(); it!=src.end(); ++it)
-            if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
-            {
-                QString       afm(CMisc::changeExt((*it).path(), "afm"));
-                KURL          afmUrl(*it),
-                              destUrl(QString("fonts:/")+dest.path()+CMisc::getFile(afm));
-                KIO::UDSEntry uds;
+        {
+            KURL::List associatedUrls;
 
-                afmUrl.setPath(afm);
-                if(KIO::NetAccess::stat(afmUrl, uds, this) && !KIO::NetAccess::stat(destUrl, uds, this) &&
-                   -1==copy.findIndex(afmUrl))
-                    copy+=afmUrl;
-            }
+            Misc::getAssociatedUrls(*it, associatedUrls);
+            copy+=associatedUrls;
+        }
 
         KIO::CopyJob *job=KIO::copy(copy, dest, true);
         connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
@@ -863,5 +543,7 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
         job->setAutoErrorHandlingEnabled(true, this);
     }
 }
+
+};
 
 #include "KCmFontInst.moc"

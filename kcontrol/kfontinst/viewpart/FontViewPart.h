@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CFontViewPart
+// Class Name    : KFI::CFontViewPart
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
 // Creation Date : 03/08/2002
@@ -26,19 +26,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003
+// (C) Craig Drummond, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <kparts/part.h>
 
-class CFontPreview;
 class QPushButton;
 class QFrame;
 class QLabel;
 class KIntNumInput;
 class KAction;
-class KToggleAction;
 class KURL;
+
+namespace KFI
+{
+
+class CFontPreview;
 
 class CFontViewPart : public KParts::ReadOnlyPart
 {
@@ -47,7 +50,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     public:
 
     CFontViewPart(QWidget *parent=0, const char *name=0);
-    virtual ~CFontViewPart();
+    virtual ~CFontViewPart() {}
 
     protected:
 
@@ -58,10 +61,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     void previewStatus(bool st);
     void install();
-    void zoomIn();
-    void zoomOut();
     void changeText();
-    void toggleWaterfall();
 
     private:
 
@@ -71,11 +71,11 @@ class CFontViewPart : public KParts::ReadOnlyPart
                   *itsToolsFrame;
     QLabel        *itsFaceLabel;
     KIntNumInput  *itsFaceSelector;
-    KAction       *itsZoomInAction,
-                  *itsZoomOutAction,
-                  *itsChangeTextAction;
-    KToggleAction *itsToggleWaterfallAction;
+    KAction       *itsChangeTextAction;
     bool          itsShowInstallButton;
+    int           itsFace;
+};
+
 };
 
 #endif
