@@ -327,7 +327,6 @@ typedef struct Section {
 	const char	*name;
 	const char	*comment;
 	Entry		*ents;
-	int		active;
 } Section;
 
 static Section *config; /* the kdmrc data to be written */
@@ -364,13 +363,12 @@ getfqval (const char *sect, const char *key, const char *defval)
 
     for (cs = config; cs; cs = cs->next)
 	if (!strcmp (cs->name, sect)) {
-	    if (cs->active)
-		for (ce = cs->ents; ce; ce = ce->next)
-		    if (!strcmp (ce->spec->key, key)) {
-			if (ce->active && ce->written)
-			    return ce->value;
-			break;
-		    }
+	    for (ce = cs->ents; ce; ce = ce->next)
+		if (!strcmp (ce->spec->key, key)) {
+		    if (ce->active && ce->written)
+			return ce->value;
+		    break;
+		}
 	    break;
 	}
     return defval;
@@ -393,7 +391,6 @@ putfqval (const char *sect, const char *key, const char *value)
     cs->spec = findSect (sect);
     *csp = cs;
   havesec:
-    cs->active = 1;
 
     for (cep = &(cs->ents); (ce = *cep); cep = &(ce->next))
 	if (!strcmp(key, ce->spec->key))
@@ -427,9 +424,8 @@ wrconf (FILE *f)
 
     putfqval ("General", "ConfigVersion", RCVERSTR);
     for (cs = config; cs; cs = cs->next) {
-	fprintf (f, "%s%s[%s]\n",
-		 cs->comment ? cs->comment : "\n",
-		 cs->active ? "" : "#", cs->name);
+	fprintf (f, "%s[%s]\n",
+		 cs->comment ? cs->comment : "\n", cs->name);
 	for (ce = cs->ents; ce; ce = ce->next) {
 	    if (ce->spec->comment) {
 		cmt = ce->spec->comment;
@@ -448,8 +444,7 @@ wrconf (FILE *f)
 		cmt = "";
 	  havit:
 	    fprintf (f, "%s%s%s=%s\n", 
-		     cmt, (cs->active && ce->active) ? "" : "#", ce->spec->key, 
-		     ce->value);
+		     cmt, ce->active ? "" : "#", ce->spec->key, ce->value);
 	}
     }
 }
@@ -2604,7 +2599,7 @@ int main(int argc, char **argv)
     if (!old_scripts) {
 	locals = foreigns = 0;
 	for (cs = config; cs; cs = cs->next)
-	    if (cs->active && !strcmp (cs->spec->name, "-Core")) {
+	    if (!strcmp (cs->spec->name, "-Core")) {
 		for (ce = cs->ents; ce; ce = ce->next)
 		    if (ce->active &&
 			(!strcmp (ce->spec->key, "Setup") ||
@@ -2626,29 +2621,27 @@ int main(int argc, char **argv)
 	    } else {
 	      no_old_s:
 		for (cs = config; cs; cs = cs->next) {
-		    if (cs->active) {
-			if (!strcmp (cs->spec->name, "Xdmcp")) {
-			    for (ce = cs->ents; ce; ce = ce->next)
-				if (!strcmp (ce->spec->key, "Willing"))
+		    if (!strcmp (cs->spec->name, "Xdmcp")) {
+			for (ce = cs->ents; ce; ce = ce->next)
+			    if (!strcmp (ce->spec->key, "Willing"))
+				ce->active = ce->written = 0;
+		    } else if (!strcmp (cs->spec->name, "-Core")) {
+			for (cep = &cs->ents; (ce = *cep); ) {
+			    if (ce->active &&
+				(!strcmp (ce->spec->key, "Setup") ||
+				 !strcmp (ce->spec->key, "Startup") ||
+				 !strcmp (ce->spec->key, "Reset") ||
+				 !strcmp (ce->spec->key, "Session")))
+			    {
+				if (!memcmp (cs->name, "X-*-", 4))
 				    ce->active = ce->written = 0;
-			} else if (!strcmp (cs->spec->name, "-Core")) {
-			    for (cep = &cs->ents; (ce = *cep); ) {
-				if (ce->active &&
-				    (!strcmp (ce->spec->key, "Setup") ||
-				     !strcmp (ce->spec->key, "Startup") ||
-				     !strcmp (ce->spec->key, "Reset") ||
-				     !strcmp (ce->spec->key, "Session")))
-				{
-				    if (!memcmp (cs->name, "X-*-", 4))
-					ce->active = ce->written = 0;
-				    else {
-					*cep = ce->next;
-					free (ce);
-					continue;				    
-				    }
+				else {
+				    *cep = ce->next;
+				    free (ce);
+				    continue;				    
 				}
-				cep = &ce->next;
 			    }
+			    cep = &ce->next;
 			}
 		    }
 		}
