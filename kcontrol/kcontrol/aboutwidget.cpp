@@ -141,8 +141,8 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
                      "</tr>"
                      "<tr>"
                      "<td colspan=2>"
-                     + i18n("Click on the \"<b>Help</b>\" tab on the left to browse a help "
-                            "text on the active "
+                     + i18n("Click on the \"<b>Help</b>\" tab on the left to view help "
+                            "for the active "
                             "control module. Use the \"<b>Search</b>\" tab if you are unsure "
                             "where to look for "
                             "a particular configuration option.") +
