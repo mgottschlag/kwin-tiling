@@ -79,7 +79,10 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   // body text
   QLabel *body_text = new QLabel(body);
   body_text->setTextFormat(RichText);
-  body_text->setText("<table cellpadding=2 cellspacing=1 border=0  width=50%>"
+  body_text->setText("<table border=0 width=100%>"
+                     "<tr>"
+                     "<td>"
+                     "<table celpadding=2 cellspacing=1 border=0>"
                      "<tr>"
                      "<td>"
                      + i18n("KDE version:") +
@@ -133,11 +136,14 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
                      "<br>"
                      "</td>"
                      "</tr>"
+                     "</table>"
+                     "</td>"
+                     "</tr>"
                      "<tr>"
                      "<td colspan=2>"
-                     + i18n("Click on the \"Help\" tab on the left to browse a help "
+                     + i18n("Click on the \"<b>Help</b>\" tab on the left to browse a help "
                             "text on the active "
-                            "control module. Use the \"Search\" tab if you are unsure "
+                            "control module. Use the \"<b>Search</b>\" tab if you are unsure "
                             "where to look for "
                             "a particular configuration option.") +
                      "</td>"
