@@ -30,10 +30,10 @@ public:
 	KKeyModule( QWidget *parent, bool isGlobal, const char *name = 0 );
 	~KKeyModule ();
 
-        void load();
-        void save();
-        void defaults();
-        void init();
+        virtual void load();
+        virtual void save();
+        virtual void defaults();
+        static void init();
 
 public slots:
 	void slotPreviewScheme( int );

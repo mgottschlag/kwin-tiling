@@ -109,6 +109,10 @@ extern "C"
     KGlobal::locale()->insertCatalogue("kicker");
     return new KeyModule(parent, name);
   }
+  void init_keys()
+  {
+    KKeyModule::init();
+  }
 }
 
 

@@ -46,6 +46,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   keys = new KAccel( this );
 
   if ( KeyType == "global" ) {
+// see also KKeyModule::init() below !!!
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
@@ -135,13 +136,6 @@ KKeyModule::~KKeyModule (){
   delete keys;
 }
 
-void KKeyModule::init()
-{
-  KKeyModule *tmp=new KKeyModule(0, true);
-  tmp->keys->writeSettings();
-  delete tmp;
-}
-
 void KKeyModule::load()
 {
   for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) 
@@ -205,13 +199,7 @@ void KKeyModule::slotChanged( )
 void KKeyModule::slotSave( )
 {
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
-
-    config.setGroup( KeyScheme );
-    for (KKeyEntryMap::ConstIterator it = dict.begin();
-         it != dict.end(); ++it) {
-        config.writeEntry( it.key(),
-                           KAccel::keyToString( (*it).aConfigKeyCode, false ) );
-    }
+    KAccel::writeKeyMap( dict, KeyScheme, &config );
 }
 
 void KKeyModule::readScheme( int index )
@@ -222,43 +210,16 @@ void KKeyModule::readScheme( int index )
     kc->allDefault();
     return;
   } if ( index == 0 ) {
-    config  = KGlobal::config();
+    config  = new KConfig( "kdeglobals" );
   } else {
     config =
       new KSimpleConfig( *sFileList->at( index ), true );
   }
 
-  QMap<QString, QString> tmpMap;
-  if ( index == 0 )
-    tmpMap = config->entryMap(KeySet);
-  else
-    tmpMap = config->entryMap(KeyScheme);
-  QMap<QString, QString>::Iterator gIt(tmpMap.begin());
-
-  QDict< int >* newDict = new QDict<int> ( 37, false );
-  newDict->setAutoDelete( true );
-
-  int *keyCode;
-
-  for (; gIt != tmpMap.end(); ++gIt) {
-    if( gIt.key() == "SchemeName" )
-        continue;
-    keyCode = new int;
-    *keyCode = KAccel::stringToKey( *gIt );
-    newDict->insert( gIt.key(), keyCode);
-    //kdDebug() << gIt->currentKey() << ", " << *keyCode << endl;
-  }
-
-  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) {
-      if ( newDict->find( it.key() ) ) {
-      (*it).aConfigKeyCode = *newDict->find( it.key() );
-      (*it).aCurrentKeyCode = (*it).aConfigKeyCode;
-      // kdDebug() << "Change: " << kc->aIt->currentKey() << endl;
-    }
-  }
+  KAccel::readKeyMap( dict, index == 0 ? KeySet : KeyScheme, config );
 
   kc->listSync();
-  delete newDict;
+  delete config;
 }
 
 void KKeyModule::slotAdd()
@@ -457,3 +418,25 @@ void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
             }
         }
     }
+
+// write all the global keys to kdeglobals
+// this is needed to be able to check for conflicts with global keys in app's keyconfig
+// dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
+void KKeyModule::init()
+{
+    {
+    KSimpleConfig cfg( "kdeglobals" );
+    cfg.deleteGroup( "Global Keys" );
+    }
+  QWidget workaround;
+  KAccel* keys = new KAccel( &workaround );
+// this should match the included files above
+#include "../../klipper/klipperbindings.cpp"
+#include "../../kwin/kwinbindings.cpp"
+#include "../../kicker/core/kickerbindings.cpp"
+#include "../../kdesktop/kdesktopbindings.cpp"
+#include "../../kxkb/kxkbbindings.cpp"
+  keys->setConfigGlobal( true );
+  keys->setConfigGroup( "Global Keys" );
+  keys->writeSettings();
+}
