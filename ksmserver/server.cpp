@@ -253,7 +253,9 @@ void KSMServer::executeCommand( const QStringList& command )
     if ( command.isEmpty() )
         return;
     KProcess proc;
-    proc << command;
+    for ( QStringList::ConstIterator it = command.begin();
+          it != command.end(); ++it )
+        proc << (*it).latin1();
     proc.start( KProcess::Block );
 }
 
