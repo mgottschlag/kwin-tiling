@@ -52,6 +52,8 @@ public:
    void setShadowEnabled(bool enabled);
    void setTextLines(int lines);
    int textLines() const;
+   void setTextWidth(int width);
+   int textWidth() const;
 
    void updateUI();
 

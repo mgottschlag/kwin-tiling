@@ -202,6 +202,16 @@ int BGAdvancedDialog::textLines() const
     return dlg->m_spinTextLines->value();
 }
 
+void BGAdvancedDialog::setTextWidth(int width)
+{
+    dlg->m_spinTextWidth->setValue(width);
+}
+
+int BGAdvancedDialog::textWidth() const
+{
+    return dlg->m_spinTextWidth->value();
+}
+
 void BGAdvancedDialog::updateUI()
 {
     QString prog = r->KBackgroundProgram::name();

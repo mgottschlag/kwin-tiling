@@ -321,6 +321,8 @@ public:
 
     void setTextLines(int lines);
     int textLines() const { return m_textLines; }
+    void setTextWidth(int width);
+    int textWidth() const { return m_textWidth; }
 
     void readSettings();
     void writeSettings();
@@ -336,6 +338,7 @@ private:
     QColor m_TextBackgroundColor;
     bool m_shadowEnabled;
     int m_textLines;
+    int m_textWidth;
 
     KConfig *m_pConfig;
     bool m_bDeleteConfig;

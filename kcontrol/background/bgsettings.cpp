@@ -25,6 +25,7 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
+#include <konq_defaults.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
@@ -1149,6 +1150,14 @@ void KGlobalBackgroundSettings::setTextLines(int lines)
     m_textLines = lines;
 }
 
+void KGlobalBackgroundSettings::setTextWidth(int width)
+{
+    if (width == m_textWidth)
+        return;
+    dirty = true;
+    m_textWidth = width;
+}
+
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
@@ -1163,7 +1172,8 @@ void KGlobalBackgroundSettings::readSettings()
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
     m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled", true);
-    m_textLines = m_pConfig->readNumEntry("TextHeight", 2);
+    m_textLines = m_pConfig->readNumEntry("TextHeight", DEFAULT_TEXTHEIGHT);
+    m_textWidth = m_pConfig->readNumEntry("TextWidth", DEFAULT_TEXTWIDTH);
 
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
@@ -1190,6 +1200,7 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("ItemTextBackground", m_TextBackgroundColor);
     m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
     m_pConfig->writeEntry("TextHeight", m_textLines);
+    m_pConfig->writeEntry("TextWidth", m_textWidth);
     m_pConfig->sync();
     dirty = false;
 

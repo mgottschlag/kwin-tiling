@@ -923,6 +923,7 @@ void BGDialog::slotAdvanced()
     dlg.setTextBackgroundColor(m_pGlobals->textBackgroundColor());
     dlg.setShadowEnabled(m_pGlobals->shadowEnabled());
     dlg.setTextLines(m_pGlobals->textLines());
+    dlg.setTextWidth(m_pGlobals->textWidth());
 
     if (m_pGlobals->limitCache())
        dlg.setCacheSize( m_pGlobals->cacheSize() );
@@ -949,6 +950,7 @@ void BGDialog::slotAdvanced()
     m_pGlobals->setTextBackgroundColor(dlg.textBackgroundColor());
     m_pGlobals->setShadowEnabled(dlg.shadowEnabled());
     m_pGlobals->setTextLines(dlg.textLines());
+    m_pGlobals->setTextWidth(dlg.textWidth());
 
     r->stop();
     m_previewUpdates = true;

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>511</width>
-            <height>385</height>
+            <height>454</height>
         </rect>
     </property>
     <vbox>
@@ -180,23 +180,6 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer row="0" column="2" rowspan="2" colspan="1">
-                    <property name="name">
-                        <cstring>spacer7</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>220</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
                 <widget class="KColorButton" row="0" column="1">
                     <property name="name">
                         <cstring>m_colorText</cstring>
@@ -216,15 +199,49 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <string>Click here to change the color of the desktop font.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="2" column="0">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>m_cbShadow</cstring>
+                        <cstring>textLabel6</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Enable shadow</string>
+                        <string>&amp;Text color:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_colorText</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>
+                        <string>Click here to change the color of the desktop font.</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="2" rowspan="2" colspan="1">
+                    <property name="name">
+                        <cstring>spacer7</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>220</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KColorButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_colorTextBackground</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to select the solid background color. Choose a different color from the background text color to assure readability.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0">
@@ -238,18 +255,15 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <string>Check here if you want to use a solid background color. This is useful to ensure that the desktop text will be identifiable against all background colors and wallpapers, or in other words, that a background or wallpaper will not make a desktop text of a similar color difficult to read.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QCheckBox" row="2" column="0">
                     <property name="name">
-                        <cstring>textLabel6</cstring>
+                        <cstring>m_cbShadow</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Text color:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorText</cstring>
+                        <string>&amp;Enable shadow</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Click here to change the color of the desktop font.</string>
+                        <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -280,18 +294,35 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
                     </property>
                 </widget>
-                <widget class="KColorButton" row="1" column="1">
+                <widget class="QSpinBox" row="4" column="1">
                     <property name="name">
-                        <cstring>m_colorTextBackground</cstring>
+                        <cstring>m_spinTextWidth</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
+                    <property name="suffix">
                         <string></string>
                     </property>
+                    <property name="maxValue">
+                        <number>99999</number>
+                    </property>
+                    <property name="value">
+                        <number>0</number>
+                    </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Click here to select the solid background color. Choose a different color from the background text color to assure readability.</string>
+                        <string>Choose here the maximum width of text lines below an icon on the desktop.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel6_2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Width for icon text:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_colorText</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose here the maximum width of text lines below an icon on the desktop.</string>
                     </property>
                 </widget>
             </grid>
