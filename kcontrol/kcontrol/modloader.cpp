@@ -36,17 +36,29 @@
 
 static KCModule *load(const ModuleInfo &mod, const QString &libname, KLibLoader *loader)
 {
-    // attempt to load KDE3 modules (new loader)
-    
-    KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
-    if (module)
-	return module;
-    
-    // else do a fallback
-    kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
-    
+    // attempt to load modules with ComponentFactory, only if the symbol init_<lib> exists
+    // (this is because some modules, e.g. kcmkio with multiple modules in the library,
+    // cannot be ported to KGenericFactory)
     KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
     if (lib) {
+        QString initSym("init_");
+        initSym += libname.arg(mod.library());
+
+        if ( lib->hasSymbol(QFile::encodeName(initSym)) )
+        {
+            // Reuse "lib" instead of letting createInstanceFromLibrary recreate it
+            //KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(mod.library())));
+            KLibFactory *factory = lib->factory();
+            if ( factory )
+            {
+                KCModule *module = KParts::ComponentFactory::createInstanceFromFactory<KCModule>( factory );
+                if (module)
+                    return module;
+            }
+            // else do a fallback
+            kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
+        }
+    
 	// get the create_ function
 	QString factory("create_%1");
 	void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
@@ -58,6 +70,8 @@ static KCModule *load(const ModuleInfo &mod, const QString &libname, KLibLoader 
 		func = (KCModule* (*)(QWidget *, const char *)) create;
 		return  func(0, 0);
 	    }
+
+        lib->unload();
     }
     return 0;
 }
@@ -104,7 +118,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
 
 
   if(withfallback)
-      kapp->startServiceByDesktopPath(mod.fileName(), QString::null);
+      KApplication::startServiceByDesktopPath(mod.fileName(), QString::null);
   return 0;
 }
 
