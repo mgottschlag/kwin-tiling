@@ -226,17 +226,19 @@ KClassicGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 	exp = 1;
     else {
 	QString pr( prompt );
-	if (pr.find( QRegExp( "\\b(old|current)\\b", false ) ) >= 0) {
-	    handler->gplugReturnText( "",
-				      KGreeterPluginHandler::IsOldPassword |
-				      KGreeterPluginHandler::IsSecret );
-	    return;
-	} else if (pr.find( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
-				     false ) ) >= 0)
-	    exp = 3;
-	else if (pr.find( QRegExp( "\\bnew\\b", false ) ) >= 0)
-	    exp = 2;
-	else {
+	if (pr.find( QRegExp( "\\bpassword\\b", false ) ) >= 0) {
+	    if (pr.find( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
+				  false ) ) >= 0)
+		exp = 3;
+	    else if (pr.find( QRegExp( "\\bnew\\b", false ) ) >= 0)
+		exp = 2;
+	    else { // QRegExp( "\\b(old|current)\\b", false ) is too strict
+		handler->gplugReturnText( "",
+					  KGreeterPluginHandler::IsOldPassword |
+					  KGreeterPluginHandler::IsSecret );
+		return;
+	    }
+	} else {
 	    handler->gplugMsgBox( QMessageBox::Critical,
 				  i18n("Unrecognized prompt \"%1\"")
 				  .arg( prompt ) );
