@@ -9,6 +9,10 @@
 
  ------------------------------------------------------------- */
 
+// REMOVE when fixed in Qt.
+#define private public
+#include <qclipboard.h>
+#undef private
 
 #include <qcursor.h>
 #include <qintdict.h>
@@ -73,6 +77,9 @@ static const char*mouse[]={
 TopLevel::TopLevel()
   : KMainWindow(0)
 {
+    clip = new QClipboard( this, "hacked Qt QClipboard" );
+    //    clip = kapp->clipboard();
+    
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
 
@@ -128,6 +135,7 @@ TopLevel::~TopLevel()
     delete pQIDclipData;
     delete pQPpic;
     delete myURLGrabber;
+    delete clip;
 }
 
 void TopLevel::mousePressEvent(QMouseEvent *e)
@@ -149,7 +157,7 @@ void TopLevel::paintEvent(QPaintEvent *)
 
 void TopLevel::newClipData()
 {
-    QString clipData = kapp->clipboard()->text().stripWhiteSpace();
+    QString clipData = clip->text().stripWhiteSpace();
     // If the string is null bug out
     if(clipData.isEmpty())
         return;
@@ -204,7 +212,7 @@ void TopLevel::clickedMenu(int id)
         pQTcheck->stop();
         QString *data = pQIDclipData->find(id);
         if(data != 0x0 && *data != QSempty){
-            kapp->clipboard()->setText(*data);
+            clip->setText(*data);
             QSlast = data->copy();
         }
 
@@ -267,10 +275,10 @@ void TopLevel::readProperties(KConfig *kc)
   }
 
   QSempty = i18n("<empty clipboard>");
-  bClipEmpty = ((QString)kapp->clipboard()->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
+  bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
   if(bClipEmpty)
-    kapp->clipboard()->setText(QSempty);
+    clip->setText(QSempty);
   newClipData();
 }
 

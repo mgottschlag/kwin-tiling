@@ -16,11 +16,11 @@
 #include <kglobalaccel.h>
 #include <kmainwindow.h>
 #include <kpopupmenu.h>
-#include <qclipboard.h>
 #include <qintdict.h>
 #include <qtimer.h>
 #include <qpixmap.h>
 
+class QClipboard;
 class KToggleAction;
 class URLGrabber;
 
@@ -55,6 +55,8 @@ private slots:
     void slotConfigure();
 
 private:
+    QClipboard *clip;
+
     QString QSlast;
     KPopupMenu *pQPMmenu;
     KToggleAction *toggleURLGrabAction;

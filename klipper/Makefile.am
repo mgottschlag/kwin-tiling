@@ -7,7 +7,7 @@ CLEANFILES = dummy.cpp
 
 klipper_la_LIBADD = $(LIB_KDEUI)
 klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
-	keditablelistview.cpp
+	keditablelistview.cpp qclipboard_x11.cpp
 
 klipper_la_METASOURCES = AUTO
 klipper_la_LDFLAGS = $(all_libraries) -module -avoid-version
