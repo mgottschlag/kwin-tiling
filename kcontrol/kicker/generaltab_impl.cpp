@@ -148,4 +148,5 @@ void GeneralTab::defaults()
     m_expandCheckBox->setChecked( true );
     m_percentSlider->setValue( 100 );
     m_percentSpinBox->setValue( 100 );
+    m_terminalInput->setText("konsole");
 }
