@@ -35,7 +35,6 @@
 #include "menutab_impl.h"
 #include "lookandfeeltab_impl.h"
 //#include "applettab_impl.h"
-#include "extensionstab_impl.h"
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
@@ -48,15 +47,49 @@ int kickerconfig_screen_number = 0;
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+    m_extensionInfo.setAutoDelete(true);
+
     if (qt_xdisplay())
-	kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
+    kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
+
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+        configname = "kickerrc";
+    else
+        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
+
+    c->setGroup("General");
+    m_extensionInfo.append(new extensionInfo(QString::null, configname));
+    QStringList elist = c->readListEntry("Extensions2");
+    for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
+    {
+        // extension id
+        QString extensionId(*it);
+        QString group = extensionId;
+
+        // is there a config group for this extension?
+        if(!c->hasGroup(group))
+            continue;
+
+        // create a matching applet container
+        if (!extensionId.contains("Extension") > 0)
+            continue;
+
+        // set config group
+        c->setGroup(group);
+
+        QString df = KGlobal::dirs()->findResource("extensions", c->readEntry("DesktopFile"));
+        QString cf = c->readEntry("ConfigFile");
+        m_extensionInfo.append(new extensionInfo(df, cf));
+    }
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     tab = new QTabWidget(this);
     layout->addWidget(tab);
 
     positiontab = new PositionTab(this);
-    tab->addTab(positiontab, i18n("&Position"));
+    tab->addTab(positiontab, i18n("Arran&gement"));
     connect(positiontab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     hidingtab = new HidingTab(this);
@@ -64,7 +97,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(hidingtab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     lookandfeeltab = new LookAndFeelTab(this);
-    tab->addTab(lookandfeeltab, i18n("&Look && Feel"));
+    tab->addTab(lookandfeeltab, i18n("A&ppearance"));
     connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     menutab = new MenuTab(this);
@@ -74,10 +107,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     //applettab = new AppletTab(this);
     //tab->addTab(applettab, i18n("&Applets"));
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
-
-    extensionstab = new ExtensionsTab(this);
-    tab->addTab(extensionstab, i18n("&Extensions"));
-    connect(extensionstab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     load();
 }
@@ -94,7 +123,6 @@ void KickerConfig::load()
     menutab->load();
     lookandfeeltab->load();
     //applettab->load();
-    extensionstab->load();
     emit changed(false);
 }
 
@@ -105,7 +133,6 @@ void KickerConfig::save()
     menutab->save();
     lookandfeeltab->save();
     //applettab->save();
-    extensionstab->save();
 
     emit changed(false);
 
@@ -129,7 +156,6 @@ void KickerConfig::defaults()
     menutab->defaults();
     lookandfeeltab->defaults();
     //applettab->defaults();
-    extensionstab->defaults();
 
     emit changed(true);
 }
@@ -151,11 +177,44 @@ const KAboutData* KickerConfig::aboutData() const
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
                   0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter"));
+                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
 
-	 about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
+    about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
 
     return about;
+}
+
+void KickerConfig::populateExtensionInfoList(QListView* list)
+{
+    extensionInfoItem* last(0);
+    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    {
+       last = new extensionInfoItem(*it, list, last);
+    }
+}
+
+const extensionInfoList& KickerConfig::extensionsInfo()
+{
+    return m_extensionInfo;
+}
+
+void KickerConfig::reloadExtensionInfo()
+{
+    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    {
+       (*it)->load();
+    }
+
+    emit extensionInfoChanged();
+}
+
+void KickerConfig::saveExtentionInfo()
+{
+    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    {
+       (*it)->save();
+    }
 }
 
 extern "C"

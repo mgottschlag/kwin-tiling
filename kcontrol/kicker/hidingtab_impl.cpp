@@ -40,9 +40,13 @@
 extern int kickerconfig_screen_number;
 
 
-HidingTab::HidingTab( KickerConfig *parent, const char* name )
-  : HidingTabBase (parent, name)
+HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
+  : HidingTabBase (kcmKicker, name),
+    m_kcm(kcmKicker),
+    m_panelInfo(0)
 {
+    m_panelList->setSorting(-1);
+
     // connections
     connect(m_manual,SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_automatic, SIGNAL(toggled(bool)), SIGNAL(changed()));
@@ -58,44 +62,72 @@ HidingTab::HidingTab( KickerConfig *parent, const char* name )
     connect(m_lHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
+    connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
+
     load();
 }
 
 void HidingTab::load()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-	configname = "kickerrc";
-    else
-	configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
+    if (m_panelList->firstChild())
+    {
+        m_kcm->reloadExtensionInfo();
+        m_panelList->clear();
+    }
 
-    c.setGroup("General");
+    m_kcm->populateExtensionInfoList(m_panelList);
+    if (m_kcm->extensionsInfo().count() == 1)
+    {
+        m_panelList->hide();
+    }
+    
+    switchPanel(0);
+ }
+ 
+void HidingTab::switchPanel(QListViewItem* panelItem)
+{
+    blockSignals(true);
+    extensionInfoItem* listItem = reinterpret_cast<extensionInfoItem*>(panelItem);
 
-    if( c.readBoolEntry("AutoHidePanel", false) ) {
+    if (!listItem)
+    {
+        m_panelList->setSelected(m_panelList->firstChild(), true);
+        listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
+    }
+    
+    if (m_panelInfo)
+    {
+        storeInfo();
+    }
+
+    m_panelInfo = listItem->info();
+
+    if(m_panelInfo->_autohidePanel) 
+    {
        m_automatic->setChecked(true);
-    } else if( c.readBoolEntry("BackgroundHide", false) ) {
+    } 
+    else if(m_panelInfo->_backgroundHide) 
+    {
        m_background->setChecked(true);
-    } else {
+    } 
+    else 
+    {
        m_manual->setChecked(true);
     }
 
-    m_delaySpinBox->setValue(c.readNumEntry("AutoHideDelay"));
-    m_autoHideSwitch->setChecked( c.readBoolEntry("AutoHideSwitch", false) );
+    m_delaySpinBox->setValue(m_panelInfo->_autoHideDelay);
+    m_autoHideSwitch->setChecked(m_panelInfo->_autoHideSwitch);
 
-    bool showLHB = c.readBoolEntry("ShowLeftHideButton", false);
-    bool showRHB = c.readBoolEntry("ShowRightHideButton", true);
-    m_lHB->setChecked( showLHB );
-    m_rHB->setChecked( showRHB );
+    m_lHB->setChecked( m_panelInfo->_showLeftHB );
+    m_rHB->setChecked( m_panelInfo->_showRightHB );
 
-    m_animateHiding->setChecked(c.readBoolEntry("HideAnimation", true));
-    m_hideSlider->setValue(c.readNumEntry("HideAnimationSpeed", 40)/10);
+    m_animateHiding->setChecked(m_panelInfo->_hideAnim);
+    m_hideSlider->setValue(m_panelInfo->_hideAnimSpeed/10);
 
-    int unhideLocation = c.readNumEntry("UnhideLocation",BottomLeft);
-    if (unhideLocation > 0)
+    if (m_panelInfo->_unhideLocation > 0)
     {
         m_backgroundRaise->setChecked(true);
-        m_backgroundPos->setCurrentItem(triggerConfigToCombo(unhideLocation));
+        m_backgroundPos->setCurrentItem(triggerConfigToCombo(m_panelInfo->_unhideLocation));
     }
     else
     {
@@ -103,34 +135,35 @@ void HidingTab::load()
     }
 
     backgroundModeClicked();
+    blockSignals(false);
 }
 
 void HidingTab::save()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
+    storeInfo();
+    m_kcm->saveExtentionInfo();
+}
 
-    c.setGroup("General");
+void HidingTab::storeInfo()
+{
+    if (!m_panelInfo)
+    {
+        return;
+    }
 
-    c.writeEntry("AutoHidePanel", m_automatic->isChecked());
-    c.writeEntry("BackgroundHide", m_background->isChecked());
+    m_panelInfo->_autohidePanel = m_automatic->isChecked();
+    m_panelInfo->_backgroundHide = m_background->isChecked();
 
-    c.writeEntry("ShowLeftHideButton", m_lHB->isChecked());
-    c.writeEntry("ShowRightHideButton", m_rHB->isChecked());
-    c.writeEntry("HideAnimation", m_animateHiding->isChecked());
-    c.writeEntry("HideAnimationSpeed", m_hideSlider->value()*10);
+    m_panelInfo->_showLeftHB = m_lHB->isChecked();
+    m_panelInfo->_showRightHB = m_rHB->isChecked();
+    m_panelInfo->_hideAnim = m_animateHiding->isChecked();
+    m_panelInfo->_hideAnimSpeed = m_hideSlider->value() * 10;
 
-    c.writeEntry("AutoHideDelay", m_delaySpinBox->value());
-    c.writeEntry("AutoHideSwitch", m_autoHideSwitch->isChecked());
+    m_panelInfo->_autoHideDelay = m_delaySpinBox->value();
+    m_panelInfo->_autoHideSwitch = m_autoHideSwitch->isChecked();
 
-    c.writeEntry("UnhideLocation", m_backgroundRaise->isChecked() ?
-                                    triggerComboToConfig(m_backgroundPos->currentItem()) : 0);
-
-    c.sync();
+    m_panelInfo->_unhideLocation = m_backgroundRaise->isChecked() ?
+                                   triggerComboToConfig(m_backgroundPos->currentItem()) : 0;
 }
 
 void HidingTab::defaults()
@@ -194,5 +227,10 @@ void HidingTab::backgroundModeClicked()
 {
     m_backgroundPos->setEnabled(m_background->isChecked() &&
                                 m_backgroundRaise->isChecked());
+}
+
+void HidingTab::infoUpdated()
+{
+    switchPanel(0);
 }
 

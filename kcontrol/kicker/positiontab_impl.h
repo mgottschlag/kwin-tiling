@@ -20,17 +20,19 @@
 #ifndef __positiontab_impl_h__
 #define __positiontab_impl_h__
 
+#include "main.h"
 #include "positiontab.h"
 
 class QFrame;
 class KBackgroundRenderer;
+class KickerConfig;
 
 class PositionTab : public PositionTabBase
 {
     Q_OBJECT
 
 public:
-    PositionTab( QWidget *parent=0, const char* name=0 );
+    PositionTab(KickerConfig *kcmModule, const char* name=0);
     ~PositionTab();
 
     void load();
@@ -45,7 +47,10 @@ protected slots:
     void lengthenPanel(int);
     void panelDimensionsChanged();
     void slotBGPreviewReady(int);
-
+    void switchPanel(QListViewItem*);
+    void infoUpdated();
+    void storeInfo();
+    
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
     enum allignments { AlignLeft = 0, AlignCenter, AlignRight };
@@ -53,6 +58,9 @@ private:
     QFrame* m_pretendPanel;
     QWidget* m_pretendDesktop;
     KBackgroundRenderer* m_desktopPreview;
+    KickerConfig* m_kcm;
+    extensionInfo* m_panelInfo;
+    
     unsigned int m_panelPos;
     unsigned int m_panelAlign;
 };

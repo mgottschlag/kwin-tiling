@@ -35,6 +35,7 @@
 #include <kstandarddirs.h>
 
 #include "../background/bgrender.h"
+#include "extensionInfo.h"
 #include "positiontab_impl.h"
 #include "positiontab_impl.moc"
 
@@ -48,10 +49,12 @@ extern const int maxX = 151;
 extern const int maxY = 115;
 extern const int margin = 1;
 
-PositionTab::PositionTab( QWidget *parent, const char* name )
-  : PositionTabBase (parent, name),
+PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
+  : PositionTabBase(kcmKicker, name),
     m_pretendPanel(0),
     m_desktopPreview(0),
+    m_kcm(kcmKicker),
+    m_panelInfo(0),
     m_panelPos(PosBottom),
     m_panelAlign(AlignLeft)
 {
@@ -65,6 +68,7 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
     m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10, 
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
+    m_panelList->setSorting(-1);
 
     // connections
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
@@ -78,6 +82,9 @@ PositionTab::PositionTab( QWidget *parent, const char* name )
 
     m_desktopPreview = new KBackgroundRenderer(0);
     connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
+    
+    connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
+
     load();
 }
 
@@ -88,129 +95,27 @@ PositionTab::~PositionTab()
 
 void PositionTab::load()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
-
-    c.setGroup("General");
-
-    // Magic numbers stolen from kdebase/kicker/core/global.cpp
-    // PGlobal::sizeValue()
-    int panelSize = c.readNumEntry("Size", 30);
-    switch(panelSize) 
+    if (m_panelList->firstChild())
     {
-        case 24: 
-            m_sizeTiny->setChecked(true); 
-            break;
-        case 30: 
-            m_sizeSmall->setChecked(true); 
-            break;
-        case 46: 
-            m_sizeNormal->setChecked(true); 
-            break;
-        case 58: 
-            m_sizeLarge->setChecked(true); 
-            break;
-        default: 
-            m_sizeCustom->setChecked(true);
-            m_customSlider->setValue(panelSize);
-            m_customSpinbox->setValue(panelSize);
-        break;
+        m_kcm->reloadExtensionInfo();
+        m_panelList->clear();
     }
 
-    m_panelPos = c.readNumEntry("Position", PosBottom);
-    m_panelAlign = c.readNumEntry("Alignment", QApplication::reverseLayout() ? AlignRight : AlignLeft);
+    m_kcm->populateExtensionInfoList(m_panelList);
+    if (m_kcm->extensionsInfo().count() == 1)
+    {
+        m_panelList->hide();
+    }
 
-    if (m_panelPos == PosTop)
-    {
-        if (m_panelAlign == AlignLeft)
-            locationTopLeft->setOn(true);
-        else if (m_panelAlign == AlignCenter)
-            locationTop->setOn(true);
-        else // if (m_panelAlign == AlignRight
-            locationTopRight->setOn(true);
-    }
-    else if (m_panelPos == PosRight)
-    {
-        if (m_panelAlign == AlignLeft)
-            locationRightTop->setOn(true);
-        else if (m_panelAlign == AlignCenter)
-            locationRight->setOn(true);
-        else // if (m_panelAlign == AlignRight
-            locationRightBottom->setOn(true);
-    }
-    else if (m_panelPos == PosBottom)
-    {
-        if (m_panelAlign == AlignLeft)
-            locationBottomLeft->setOn(true);
-        else if (m_panelAlign == AlignCenter)
-            locationBottom->setOn(true);
-        else // if (m_panelAlign == AlignRight
-            locationBottomRight->setOn(true);
-    }
-    else // if (m_panelPos == PosLeft
-    {
-        if (m_panelAlign == AlignLeft)
-            locationLeftTop->setOn(true);
-        else if (m_panelAlign == AlignCenter)
-            locationLeft->setOn(true);
-        else // if (m_panelAlign == AlignRight
-            locationLeftBottom->setOn(true);
-    }
-    int sizepercentage = c.readNumEntry( "SizePercentage", 100 );
-    m_percentSlider->setValue( sizepercentage );
-    m_percentSpinBox->setValue( sizepercentage );
-
-    m_expandCheckBox->setChecked( c.readBoolEntry( "ExpandSize", true ) );
-    
-    lengthenPanel(sizepercentage);
+    switchPanel(0);
     m_desktopPreview->setPreview(m_pretendDesktop->size());
     m_desktopPreview->start();
 }
 
 void PositionTab::save()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
-
-    c.setGroup("General");
-
-    // Magic numbers stolen from kdebase/kicker/core/global.cpp
-    // PGlobal::sizeValue()
-    if (m_sizeTiny->isChecked())
-    {
-        c.writeEntry("Size",24);
-    }
-    else if (m_sizeSmall->isChecked())
-    {
-        c.writeEntry("Size",30);
-    }
-    else if (m_sizeNormal->isChecked())
-    {
-        c.writeEntry("Size",46);
-    }
-    else if (m_sizeLarge->isChecked())
-    {
-        c.writeEntry("Size",58);
-    }
-    else // if (m_sizeCustom->isChecked())
-    {
-        c.writeEntry("Size", m_customSlider->value());
-    }
-
-    c.writeEntry("Position", m_panelPos);
-    c.writeEntry("Alignment", m_panelAlign);
-
-    c.writeEntry( "SizePercentage", m_percentSlider->value() );
-    c.writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
-    c.sync();
+    storeInfo();
+    m_kcm->saveExtentionInfo();
 }
 
 void PositionTab::defaults()
@@ -424,6 +329,16 @@ void PositionTab::lengthenPanel(int sizePercent)
             }
             break;
     }
+    
+    if (x2 < 3)
+    {
+        x2 = 3;
+    }
+
+    if (y2 < 3)
+    {
+        y2 = 3;
+    }
 
     m_pretendPanel->setGeometry(x, y, x2, y2);
 }
@@ -448,5 +363,154 @@ void PositionTab::slotBGPreviewReady(int)
     m_pretendDesktop->setBackgroundPixmap(pm);
 }
 
+void PositionTab::switchPanel(QListViewItem* panelItem)
+{
+    blockSignals(true);
+    extensionInfoItem* listItem = reinterpret_cast<extensionInfoItem*>(panelItem);
+
+    if (!listItem)
+    {
+        m_panelList->setSelected(m_panelList->firstChild(), true);
+        listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
+    }
+    
+    if (m_panelInfo)
+    {
+        storeInfo();
+    }
+
+    m_panelInfo = listItem->info();
+    
+    switch(m_panelInfo->_size) 
+    {
+        case 0: 
+            m_sizeTiny->setChecked(true); 
+            break;
+        case 1: 
+            m_sizeSmall->setChecked(true); 
+            break;
+        case 2: 
+            m_sizeNormal->setChecked(true); 
+            break;
+        case 3: 
+            m_sizeLarge->setChecked(true); 
+            break;
+        default:
+            m_sizeCustom->setChecked(true);
+        break;
+    }
+
+    if (!m_panelInfo->_useStdSizes &&
+        m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax)
+    {
+        m_sizeCustom->setChecked(true);
+    }
+    
+    m_customSlider->setMinValue(m_panelInfo->_customSizeMin);
+    m_customSlider->setMaxValue(m_panelInfo->_customSizeMax);
+    m_customSlider->setValue(m_panelInfo->_customSize);
+    m_customSpinbox->setValue(m_panelInfo->_customSize);
+    m_customSlider->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
+    m_customSpinbox->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
+
+    m_sizeTiny->setEnabled(m_panelInfo->_useStdSizes);         
+    m_sizeSmall->setEnabled(m_panelInfo->_useStdSizes);
+    m_sizeNormal->setEnabled(m_panelInfo->_useStdSizes);
+    m_sizeLarge->setEnabled(m_panelInfo->_useStdSizes);
+    m_sizeCustom->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
+    m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
+
+    
+    m_panelPos = m_panelInfo->_position;
+    m_panelAlign = m_panelInfo->_alignment;
+
+    if (m_panelPos == PosTop)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationTopLeft->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationTop->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationTopRight->setOn(true);
+    }
+    else if (m_panelPos == PosRight)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationRightTop->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationRight->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationRightBottom->setOn(true);
+    }
+    else if (m_panelPos == PosBottom)
+    {
+        if (m_panelAlign == AlignLeft)
+            locationBottomLeft->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationBottom->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationBottomRight->setOn(true);
+    }
+    else // if (m_panelPos == PosLeft
+    {
+        if (m_panelAlign == AlignLeft)
+            locationLeftTop->setOn(true);
+        else if (m_panelAlign == AlignCenter)
+            locationLeft->setOn(true);
+        else // if (m_panelAlign == AlignRight
+            locationLeftBottom->setOn(true);
+    }
+
+    m_percentSlider->setValue(m_panelInfo->_sizePercentage);
+    m_percentSpinBox->setValue(m_panelInfo->_sizePercentage);
+
+    m_expandCheckBox->setChecked(m_panelInfo->_expandSize);
+    
+    lengthenPanel(m_panelInfo->_sizePercentage);
+    blockSignals(false);
+}
+
+void PositionTab::infoUpdated()
+{
+    switchPanel(0);
+}
+
+void PositionTab::storeInfo()
+{
+    if (!m_panelInfo)
+    {
+        return;
+    }
+   
+    // Magic numbers stolen from kdebase/kicker/core/global.cpp
+    // PGlobal::sizeValue()
+    if (m_sizeTiny->isChecked())
+    {
+        m_panelInfo->_size = 0;
+    }
+    else if (m_sizeSmall->isChecked())
+    {
+        m_panelInfo->_size = 1;
+    }
+    else if (m_sizeNormal->isChecked())
+    {
+        m_panelInfo->_size = 2;
+    }
+    else if (m_sizeLarge->isChecked())
+    {
+        m_panelInfo->_size = 3;
+    }
+    else // if (m_sizeCustom->isChecked())
+    {
+        m_panelInfo->_size = 4;
+        m_panelInfo->_customSize = m_customSlider->value();
+    }
+
+    m_panelInfo->_position = m_panelPos;
+    m_panelInfo->_alignment = m_panelAlign;
+
+    m_panelInfo->_sizePercentage = m_percentSlider->value();
+    m_panelInfo->_expandSize = m_expandCheckBox->isChecked();
+}
 
 

@@ -21,12 +21,14 @@
 
 #include "hidingtab.h"
 
+class KickerConfig;
+
 class HidingTab : public HidingTabBase
 {
     Q_OBJECT
 
 public:
-    HidingTab( KickerConfig *parent=0, const char* name=0 );
+    HidingTab( KickerConfig *kcmKicker, const char* name=0 );
 
     void load();
     void save();
@@ -37,6 +39,9 @@ signals:
 
 protected slots:
     void backgroundModeClicked();
+    void switchPanel(QListViewItem*);
+    void infoUpdated();
+    void storeInfo();
 
 private:
     enum Trigger { None = 0, Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft };
@@ -45,6 +50,9 @@ private:
     // this is why storing enums vs strings can be a BAD thing
     int triggerComboToConfig(int trigger);
     int triggerConfigToCombo(int trigger);
+    
+    KickerConfig* m_kcm;
+    extensionInfo* m_panelInfo;
 };
 
 #endif

@@ -108,7 +108,6 @@ void MenuTab::load()
  
     m_hiddenFiles->setChecked(c.readBoolEntry("ShowHiddenFiles", false));
     m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
-    m_maxQuickBrowserItems->setRange( 10, 30, true );
 
     if (c.readBoolEntry("DetailedMenuEntries", true))
     {
@@ -130,10 +129,10 @@ void MenuTab::load()
 
     // show the preferences menu?
     m_preferencesMenu = new kSubMenuItem(m_subMenus,
-					 i18n("Preferences"),
-					 QString::null,
-					 SmallIcon("package_settings"),
-					 c.readBoolEntry("UsePreferences", true));
+                                         i18n("Preferences"),
+                                         QString::null,
+                                         SmallIcon("package_settings"),
+                                         c.readBoolEntry("UsePreferences", true));
     connect(m_preferencesMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // show the bookmark menu?
@@ -185,7 +184,6 @@ void MenuTab::load()
         m_showFrequent->setChecked(true);
 
     m_maxQuickStartItems->setValue(c.readNumEntry("NumVisibleEntries", 5));
-    m_maxQuickStartItems->setRange( 0, 20, true );
 }
 
 void MenuTab::save()

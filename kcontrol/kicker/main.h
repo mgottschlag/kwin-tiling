@@ -20,6 +20,8 @@
 
 #include <kcmodule.h>
 
+#include "extensionInfo.h"
+
 class QTabWidget;
 class PositionTab;
 class HidingTab;
@@ -41,6 +43,14 @@ public:
     QString quickHelp() const;
     const KAboutData* aboutData() const;
     
+    void populateExtensionInfoList(QListView* list);
+    void reloadExtensionInfo();
+    void saveExtentionInfo();
+    const extensionInfoList& extensionsInfo();
+
+signals:
+    void extensionInfoChanged();
+
 public slots:
     void configChanged();
 
@@ -51,7 +61,7 @@ private:
     LookAndFeelTab *lookandfeeltab;
     MenuTab        *menutab;
     AppletTab      *applettab;
-    ExtensionsTab  *extensionstab;
+    extensionInfoList m_extensionInfo;
 };
 
 #endif // __main_h__

@@ -9,12 +9,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>424</width>
+            <width>534</width>
             <height>475</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form2</string>
+    </property>
+    <property name="whatsThis" stdset="0">
+        <string>This is a list of all the panels currently active on your desktop. Select one to configure.</string>
     </property>
     <grid>
         <property name="name">
@@ -26,7 +29,68 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0" rowspan="2" colspan="1">
+        <spacer row="2" column="1">
+            <property name="name">
+                <cstring>Spacer13</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="0" column="2">
+            <property name="name">
+                <cstring>m_monitorImage</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>151</width>
+                    <height>115</height>
+                </size>
+            </property>
+            <property name="scaledContents">
+                <bool>true</bool>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
+            </property>
+        </widget>
+        <spacer row="1" column="2">
+            <property name="name">
+                <cstring>Spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <spacer row="0" column="3">
+            <property name="name">
+                <cstring>Spacer13_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="0" column="1" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>Layout8</cstring>
             </property>
@@ -45,7 +109,7 @@
                         <cstring>m_locationGroup</cstring>
                     </property>
                     <property name="title">
-                        <string>Location</string>
+                        <string>Position</string>
                     </property>
                     <property name="exclusive">
                         <bool>true</bool>
@@ -926,65 +990,20 @@ how it is positioned on the screen and how much of the screen it should use.</st
                 </widget>
             </vbox>
         </widget>
-        <spacer row="0" column="2">
+        <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
+            <column>
+                <property name="text">
+                    <string>Panels</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizeable">
+                    <bool>true</bool>
+                </property>
+            </column>
             <property name="name">
-                <cstring>Spacer13_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <spacer row="2" column="0">
-            <property name="name">
-                <cstring>Spacer13</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <spacer row="1" column="1">
-            <property name="name">
-                <cstring>Spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="0" column="1">
-            <property name="name">
-                <cstring>m_monitorImage</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>151</width>
-                    <height>115</height>
-                </size>
-            </property>
-            <property name="scaledContents">
-                <bool>true</bool>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
+                <cstring>m_panelList</cstring>
             </property>
         </widget>
     </grid>
@@ -1056,6 +1075,12 @@ how it is positioned on the screen and how much of the screen it should use.</st
         <receiver>PositionTabBase</receiver>
         <slot>movePanel(int)</slot>
     </connection>
+    <connection>
+        <sender>m_panelList</sender>
+        <signal>selectionChanged(QListViewItem*)</signal>
+        <receiver>PositionTabBase</receiver>
+        <slot>switchPanel(QListViewItem*)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>locationTopLeft</tabstop>
@@ -1089,6 +1114,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
     <slot access="protected">lengthenPanel( int )</slot>
     <slot access="protected">movePanel( int )</slot>
     <slot access="protected">panelDimensionsChanged()</slot>
+    <slot access="protected">switchPanel(QListViewItem*)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

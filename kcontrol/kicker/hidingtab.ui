@@ -8,14 +8,14 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>578</width>
+            <width>645</width>
             <height>408</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,7 +25,18 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QButtonGroup">
+        <spacer row="3" column="1">
+            <property name="name">
+                <cstring>Spacer7</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+        </spacer>
+        <widget class="QButtonGroup" row="0" column="1">
             <property name="name">
                 <cstring>m_modeGroup</cstring>
             </property>
@@ -266,7 +277,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" row="1" column="1">
             <property name="name">
                 <cstring>m_manualGroup</cstring>
             </property>
@@ -319,7 +330,7 @@
                         <cstring>m_rHB</cstring>
                     </property>
                     <property name="text">
-                        <string>Show right panel-hidin&amp;g button</string>
+                        <string>Show right panel-hiding &amp;button</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -341,7 +352,7 @@
                 </spacer>
             </grid>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" row="2" column="1">
             <property name="name">
                 <cstring>m_manualGroup_2</cstring>
             </property>
@@ -558,18 +569,23 @@
                 </widget>
             </grid>
         </widget>
-        <spacer>
+        <widget class="QListView" row="0" column="0" rowspan="4" colspan="1">
+            <column>
+                <property name="text">
+                    <string>Panels</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizeable">
+                    <bool>true</bool>
+                </property>
+            </column>
             <property name="name">
-                <cstring>Spacer7</cstring>
+                <cstring>m_panelList</cstring>
             </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-    </vbox>
+        </widget>
+    </grid>
 </widget>
 <connections>
     <connection>
@@ -638,6 +654,12 @@
         <receiver>m_delaySpinBox</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>m_panelList</sender>
+        <signal>selectionChanged(QListViewItem*)</signal>
+        <receiver>HidingTabBase</receiver>
+        <slot>switchPanel(QListViewItem*)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>m_manual</tabstop>
@@ -654,10 +676,10 @@
 <includes>
     <include location="global" impldecl="in declaration">klineedit.h</include>
     <include location="global" impldecl="in implementation">knuminput.h</include>
-    <include location="local" impldecl="in implementation">hidingtab.ui.h</include>
 </includes>
 <slots>
     <slot access="protected">hideButtonsSet( int )</slot>
+    <slot access="protected">switchPanel(QListViewItem*)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
