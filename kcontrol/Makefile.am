@@ -1,3 +1,4 @@
+# 'colors' and 'fonts' should come after 'display'
 SUBDIRS = bell background filetypes samba display input info ioslaveinfo kdm kwm\
 	kicker locale launch keys kio konq thememgr \
 	konqhtml email ebrowsing arts kcontrol passwords knotify\
