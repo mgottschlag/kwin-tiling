@@ -92,27 +92,28 @@ void applyMultiHead(bool active)
 // Danimo: Why do we use the old interface?!
 extern "C"
 {
-	KCModule *create_style(QWidget *parent, const char*)
-	{
-		KGlobal::locale()->insertCatalogue("kcmstyle");
-		return new KCMStyle(parent, "kcmstyle");
-	}
+    KCModule *create_style(QWidget *parent, const char*)
+    {
+        KGlobal::locale()->insertCatalogue("kcmstyle");
+        return new KCMStyle(parent, "kcmstyle");
+    }
 
     void init_style()
-	{
-		uint flags = KRdbExportQtSettings | KRdbExportQtColors;
-		KConfig config("kcmdisplayrc", true, true);
-		config.setGroup("X11");
-		bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
-		if (exportKDEColors)
-			flags |= KRdbExportColors;
-		runRdb( flags );
+    {
+        uint flags = KRdbExportQtSettings | KRdbExportQtColors;
+        KConfig config("kcmdisplayrc", true /*readonly*/, false /*don't read kdeglobals etc.*/);
+        config.setGroup("X11");
 
-		bool isActive = !config.readBoolEntry( "disableMultihead", false) &&
-			                                      (ScreenCount(qt_xdisplay()) > 1);
-		applyMultiHead( isActive );
+        // This key is written by the "colors" module.
+        bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
+        if (exportKDEColors)
+            flags |= KRdbExportColors;
+        runRdb( flags );
 
-        config.setGroup("KDE");
+        // This key has no GUI apparently
+        bool isActive = !config.readBoolEntry( "disableMultihead", false) &&
+                        (ScreenCount(qt_xdisplay()) > 1);
+        applyMultiHead( isActive );
 
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
@@ -453,7 +454,7 @@ void KCMStyle::save()
 	item = comboMenuEffect->currentItem();
 	config.writeEntry( "EffectAnimateMenu", item == 1 );
 	config.writeEntry( "EffectFadeMenu", item == 2 );
-	
+
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
 	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
@@ -500,7 +501,7 @@ void KCMStyle::save()
 	if (m_bStyleDirty | m_bEffectsDirty)	// Export only if necessary
 	{
 		uint flags = KRdbExportQtSettings;
-		KConfig kconfig("kcmdisplayrc", true, true);
+		KConfig kconfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
 		kconfig.setGroup("X11");
 		bool exportKDEColors = kconfig.readBoolEntry("exportKDEColors", true);
 		if (exportKDEColors)
