@@ -27,7 +27,7 @@
 #include "modules.h"
 
 class KListBox;
-class QLineEdit;
+class KLineEdit;
 class QListBoxItem;
 
 class KeywordListEntry
@@ -70,7 +70,7 @@ protected slots:
 
 private:
   KListBox  *_keyList, *_resultList;
-  QLineEdit *_input; 
+  KLineEdit *_input; 
   QList<KeywordListEntry> _keywords;
 };
 

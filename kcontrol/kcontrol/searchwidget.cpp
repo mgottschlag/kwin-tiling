@@ -23,8 +23,8 @@
 #include <qregexp.h>
 #include <qdict.h>
 #include <qpixmap.h>
-#include <qlineedit.h>
 
+#include <klineedit.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <klistbox.h>
@@ -54,7 +54,7 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   QVBoxLayout * l = new QVBoxLayout(this, 0, 2);
 
   // input
-  _input = new QLineEdit(this);
+  _input = new KLineEdit(this);
   _input->setFocus();
   QLabel *inputl = new QLabel(_input, i18n("Se&arch:"), this);
 
