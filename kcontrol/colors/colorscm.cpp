@@ -221,12 +221,18 @@ void KColorScheme::setColorName( const QString &name, int id )
 
 void KColorScheme::load()
 {
-    sList->setCurrentItem(0);
+    KConfig *config = KGlobal::config();
+    config->setGroup("KDE");
+    sCurrentScheme = config->readEntry("colorScheme");
+
+    sList->setCurrentItem(findSchemeByName(sCurrentScheme));
     readScheme(0);
 
     cs->drawSampleWidgets();
     slotWidgetColor(0);
+    sb->blockSignals(true);
     sb->setValue(cs->contrast);
+    sb->blockSignals(false);
 
     m_bChanged = false;
     emit changed(false);
@@ -263,6 +269,7 @@ void KColorScheme::save()
 
     cfg->setGroup( "KDE" );
     cfg->writeEntry("contrast", cs->contrast, true, true);
+    cfg->writeEntry("colorScheme", sCurrentScheme, true, true);
     cfg->sync();
 
     // KDE-1.x support
@@ -300,7 +307,9 @@ void KColorScheme::defaults()
 
     cs->drawSampleWidgets();
     slotWidgetColor(0);
+    sb->blockSignals(true);
     sb->setValue(cs->contrast);
+    sb->blockSignals(false);
 
     m_bChanged = true;
     emit changed(true);
@@ -329,6 +338,8 @@ void KColorScheme::sliderValueChanged( int val )
     cs->contrast = val;
     cs->drawSampleWidgets();
 
+    sCurrentScheme = QString::null;
+
     m_bChanged = true;
     emit changed(true);
 }
@@ -336,8 +347,11 @@ void KColorScheme::sliderValueChanged( int val )
 
 void KColorScheme::slotSave( )
 {
-    KSimpleConfig *config =
-    new KSimpleConfig(sFileList[ sList->currentItem() ] );
+    sCurrentScheme = sFileList[ sList->currentItem() ];
+    KSimpleConfig *config = new KSimpleConfig(sCurrentScheme );
+    int i = sCurrentScheme.findRev('/');
+    if (i >= 0)
+      sCurrentScheme = sCurrentScheme.mid(i+1);
 
     config->setGroup("Color Scheme" );
     config->writeEntry("background", cs->back );
@@ -522,6 +536,8 @@ void KColorScheme::slotSelectColor(const QColor &col)
 
     cs->drawSampleWidgets();
 
+    sCurrentScheme = QString::null;
+
     m_bChanged = true;
     emit changed(true);
 }
@@ -573,6 +589,7 @@ void KColorScheme::readScheme( int index )
 
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
+      sCurrentScheme  = "<default>";
       cs->back        = widget;
       cs->txt         = black;
       cs->select      = kde2Blue;
@@ -598,13 +615,17 @@ void KColorScheme::readScheme( int index )
     }
 
     if (index == 0) {
-    // Current scheme
-    config = KGlobal::config();
-    config->setGroup("General");
+      // Current scheme
+      config = KGlobal::config();
+      config->setGroup("General");
     } else {
-    // Open scheme file
-    config = new KSimpleConfig(sFileList[index], true);
-    config->setGroup("Color Scheme");
+      // Open scheme file
+      sCurrentScheme = sFileList[ index ];
+      config = new KSimpleConfig(sCurrentScheme, true);
+      config->setGroup("Color Scheme");
+      int i = sCurrentScheme.findRev('/');
+      if (i >= 0)
+        sCurrentScheme = sCurrentScheme.mid(i+1);
     }
 
     // note: defaults should be the same as the KDE default
@@ -620,7 +641,7 @@ void KColorScheme::readScheme( int index )
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
 
     if (index == 0)
-    config->setGroup( "WM" );
+      config->setGroup( "WM" );
 
     cs->iaTitle = config->readColorEntry("inactiveBackground", &widget);
     cs->iaTxt = config->readColorEntry("inactiveForeground", &black);
@@ -633,7 +654,7 @@ void KColorScheme::readScheme( int index )
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
 
     if (index == 0)
-    config->setGroup( "KDE" );
+      config->setGroup( "KDE" );
 
     cs->contrast = config->readNumEntry( "contrast", 7 );
 }
@@ -699,6 +720,32 @@ void KColorScheme::readSchemeNames()
     }
 }
 
+/*
+ * Find scheme based on filename
+ */
+int KColorScheme::findSchemeByName(const QString &scheme)
+{
+   if (scheme.isEmpty())
+      return 0;
+   if (scheme == "<default>")
+      return 1;
+
+   QString search = scheme;
+   int i = search.findRev('/');
+   if (i >= 0)
+     search = search.mid(i+1);
+
+   i = nSysSchemes;
+   while (i < sFileList.count())
+   {
+      if (sFileList[i].contains(search))
+         return i;
+      i++;
+   }
+
+   return 0;
+}
+
 
 void KColorScheme::slotPreviewScheme(int indx)
 {
@@ -707,15 +754,17 @@ void KColorScheme::slotPreviewScheme(int indx)
     // Set various appropriate for the scheme
 
     cs->drawSampleWidgets();
+    sb->blockSignals(true);
     sb->setValue(cs->contrast);
+    sb->blockSignals(false);
     slotWidgetColor(0);
     if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
        removeBt->setEnabled(true);
 
-    m_bChanged = true;
-    emit changed(true);
+    m_bChanged = (indx != 0);
+    emit changed(m_bChanged);
 }
 
 

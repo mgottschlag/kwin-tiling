@@ -62,6 +62,7 @@ private:
     void setColorName( const QString &name, int id );
     void readScheme(int index=0);
     void readSchemeNames();
+    int findSchemeByName(const QString &scheme);
     QPalette createPalette();
     
     QColor &color(int index);
@@ -75,6 +76,7 @@ private:
     QPushButton *addBt, *removeBt;
     KListBox *sList;
     QStringList sFileList;
+    QString sCurrentScheme;
 
     KColorButton *colorButton;
     WidgetCanvas *cs;
