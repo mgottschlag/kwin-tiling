@@ -46,9 +46,11 @@ class PanelTab : public QWidget
   void save();
   void defaults();
 
+  QString quickHelp();
+
  signals:
   void changed();
-  
+
  protected slots:
   void position_clicked(int);
   void size_clicked(int);
