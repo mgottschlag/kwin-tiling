@@ -76,7 +76,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "server.moc"
 
 extern "C" {
-    int umask(...);
+    /* int umask(...); */
 
 static void the_reaper(int /*sig*/)
 {
