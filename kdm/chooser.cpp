@@ -58,7 +58,7 @@ MyApp::x11EventFilter( XEvent * ev){
   return FALSE;
 }
 
-main ( int argc, char **argv)
+int main( int argc, char **argv )
 {
 	CXdmcp *cxdmcp = new CXdmcp(argc, argv);
 
