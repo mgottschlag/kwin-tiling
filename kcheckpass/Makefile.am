@@ -3,7 +3,7 @@
 ##
 
 INCLUDES= $(all_includes)
-LDADD	= $(all_libraries) -lkdefakes $(LIBCRYPT) $(PAMLIBS) $(PASSWDLIB) $(LIBSOCKET)
+LDADD	= $(all_libraries) -lkdefakes $(PASSWDLIBS) $(LIBSOCKET)
 
 # for shadow passwords override the value
 INSTALL_PROGRAM = $(INSTALL) $(SETUIDFLAGS)

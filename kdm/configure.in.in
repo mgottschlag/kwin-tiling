@@ -8,15 +8,15 @@ KDE_BINDIR=`eval echo $kde_bindir`
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 AC_SUBST(KDE_BINDIR)
 
-dnl checks for X server
-AC_PATH_PROG(X_SERVER, X)
-if test ! -z "$X_SERVER"; then
-    XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'`
-    AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X server])
+KDE_FIND_PATH(X, X_SERVER, [ XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'` ],
+    [KDE_FIND_PATH(xrdb, XRDB, [ XBINDIR=`echo $XRDB | sed -e 's#/xrdb$##'` ])])
+if test "x$XBINDIR" = x; then
+  AC_MSG_ERROR([X binaries not found. Please make sure they are in PATH!])
+else
+  AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
 fi
 AC_SUBST(XBINDIR)
 
-dnl XXX not anywhere else?
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
 AC_SUBST(XMKMF)
 
@@ -178,9 +178,9 @@ if test "$kde_use_debug_code" = "yes"; then
     IMAKEFLAGS="$IMAKEFLAGS -DDEBUG"
 fi
 
-if test "$pam_support" = "yes"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=1 -DUSESHADOW=0"
-elif test "$shadow_support" = "yes"; then
+if test "$use_pam" = "yes"; then
+    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=1 -DPAMLIBS=\"$PAMLIBS\" -DUSESHADOW=0"
+elif test "$use_shadow" = "yes"; then
     IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=1"
 else
     IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=0"

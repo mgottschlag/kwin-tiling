@@ -60,7 +60,9 @@ KRB5SRCS = krb5auth.c
 
 #ifdef USEPAM
 #undef HasPam
+#undef PamLibraries
 #define HasPam USEPAM
+#define PamLibraries PAMLIBS
 #endif
 
 /* This is correct for Linux and FreeBSD */
