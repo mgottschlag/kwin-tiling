@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>483</width>
-            <height>400</height>
+            <width>458</width>
+            <height>375</height>
         </rect>
     </property>
     <property name="caption">
@@ -145,6 +145,9 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
                 <widget class="QLabel" row="2" column="0">
                     <property name="name">
                         <cstring>m_lblColorSecondary</cstring>
@@ -248,6 +251,9 @@
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
                 </property>
                 <widget class="KURLComboRequester" row="0" column="1" rowspan="1" colspan="2">
                     <property name="name">
@@ -395,6 +401,9 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
                 <widget class="QComboBox" row="0" column="1">
                     <property name="name">
                         <cstring>m_comboBlend</cstring>
@@ -485,10 +494,11 @@
 <includes>
     <include location="global" impldecl="in declaration">kcolorbutton.h</include>
     <include location="global" impldecl="in declaration">kcombobox.h</include>
+    <include location="global" impldecl="in implementation">kdialog.h</include>
 </includes>
-<layoutdefaults spacing="6" margin="11"/>
+<layoutdefaults spacing="6" margin="0"/>
+<layoutfunctions spacing="KDialog::spacingHint"/>
 <includehints>
-    <includehint>qwidget.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>kcolorbutton.h</includehint>
     <includehint>kcolorbutton.h</includehint>
