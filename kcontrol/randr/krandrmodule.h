@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2002 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -23,11 +23,11 @@
 
 class QButtonGroup;
 class KComboBox;
- 
+
 class KRandRModule : public KCModule, public RandRDisplay
 {
 	Q_OBJECT
-	
+
 public:
 	KRandRModule(QWidget *parent, const char *name, const QStringList& _args);
 
@@ -40,20 +40,22 @@ protected slots:
 	void slotRotationChanged();
 	void slotSizeChanged(int index);
 	void slotRefreshChanged(int index);
+	void setChanged();
 
 protected:
 	void apply();
-	void setChanged();
 	void update();
-	
+
 	void addRotationButton(int thisRotation, bool checkbox);
 	void populateRefreshRates();
-		
+
 	KComboBox*		m_screenSelector;
 	KComboBox*		m_sizeCombo;
 	QButtonGroup*	m_rotationGroup;
 	KComboBox*		m_refreshRates;
-	
+	QCheckBox*		m_applyOnStartup;
+	bool			m_oldApply;
+
 	bool			m_changed;
 };
 

@@ -4,6 +4,7 @@ Type=Application
 Exec=kcmshell randr
 X-KDE-ModuleType=Library
 X-KDE-Library=randr
+X-KDE-Init=randr
 
 Name=Size & Orientation
 Name[es]=Tamaño y orientación 

@@ -24,6 +24,7 @@
 #include <qptrlist.h>
 
 #include <kcmodule.h>
+#include <kconfig.h>
 
 #include <X11/Xlib.h>
 #define INT8 _X11INT8
@@ -98,6 +99,8 @@ public:
 	SizeID		proposedSize() const;
 	void		proposeSize(SizeID newSize);
 
+	void		load(KConfig& config);
+	void		save(KConfig& config) const;
 
 private:
 	XRRScreenConfiguration	*m_config;
@@ -152,6 +155,17 @@ public:
 
 	void	refresh();
 
+	/**
+	 * Loads settings. Loads the settings for individual screens if
+	 * loadScreens is true.
+	 *
+	 * Returns whether the settings should be applied on startup.
+	 */
+	bool	loadDisplay(KConfig& config, bool loadScreens = true);
+	void	saveDisplay(KConfig& config, bool applyOnStartup);
+
+	void	applyProposed(bool confirm = true);
+
 private:
 	int				m_numScreens;
 	int				m_currentScreenIndex;
@@ -161,7 +175,7 @@ private:
 	bool			m_valid;
 	QString			m_errorCode;
 	QString			m_version;
-	
+
 	int				m_eventBase;
 	int				m_errorBase;
 };

@@ -408,6 +408,22 @@ void RandRScreen::proposeSize(SizeID newSize)
 	m_proposedSize = newSize;
 }
 
+void RandRScreen::load(KConfig& config)
+{
+	config.setGroup(QString("Screen%1").arg(m_screen));
+	proposeRotation(config.readNumEntry("rotation", currentRotation()));
+	proposeSize(config.readNumEntry("size", currentSize()));
+	proposeRefreshRate(config.readNumEntry("refresh", currentRefreshRate()));
+}
+
+void RandRScreen::save(KConfig& config) const
+{
+	config.setGroup(QString("Screen%1").arg(m_screen));
+	config.writeEntry("rotation", m_currentRotation);
+	config.writeEntry("size", m_currentSize);
+	config.writeEntry("refresh", m_currentRefreshRate);
+}
+
 RandRDisplay::RandRDisplay()
 	: m_valid(true)
 {
@@ -497,6 +513,37 @@ RandRScreen* RandRDisplay::screen(int index)
 RandRScreen* RandRDisplay::currentScreen()
 {
 	return m_currentScreen;
+}
+
+bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
+{
+	if (loadScreens)
+		for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
+			s->load(config);
+
+	config.setGroup("Display");
+	return config.readBoolEntry("ApplyOnStartup");
+}
+
+void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup)
+{
+	config.setGroup("Display");
+	config.writeEntry("ApplyOnStartup", applyOnStartup);
+
+	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
+		s->save(config);
+}
+
+void RandRDisplay::applyProposed(bool confirm)
+{
+	for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
+		if (screen(screenIndex)->proposedChanged()) {
+			if (confirm)
+					screen(screenIndex)->applyProposedAndConfirm();
+			else
+					screen(screenIndex)->applyProposed();
+		}
+	}
 }
 
 #include "randr.moc"

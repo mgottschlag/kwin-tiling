@@ -4,7 +4,8 @@ General
 	Not tested with Xinerama / multiple screens (but should support them)
 
 Qt
-	Font sizes on newly started apps after a resolution change are incorrect (X bug?)
+	Font sizes on newly started apps after a resolution change are incorrect
+		This doesn't appear to happen with non-Xft font rendering, Xft/Qt interaction?
 
 Kwin
 	Support different sized virtual desktops
@@ -13,6 +14,5 @@ KDesktop
 	automatically make sure desktop icons are visible
 	
 RandR programs
-	Write a kded module (?) to retain a user-wide setting over logins
 	Support configuring different sized virtual desktops
 	Verify orientation stuff works

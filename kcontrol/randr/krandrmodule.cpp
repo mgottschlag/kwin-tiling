@@ -40,6 +40,20 @@ typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
 K_EXPORT_COMPONENT_FACTORY (libkcm_randr, KSSFactory("randr") );
 
 
+extern "C"
+{
+	void init_randr()
+	{
+		// Load settings and apply appropriate config
+		RandRDisplay* display = new RandRDisplay();
+		KConfig randrConfig("kcmrandrrc", true);
+		if (display->loadDisplay(randrConfig))
+			display->applyProposed(false);
+		delete display;
+	}
+}
+
+
 KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&)
     : KCModule(parent, name)
 	, m_changed(false)
@@ -49,7 +63,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		topLayout->addWidget(new KActiveLabel(i18n("Sorry, your X server does not support resizing and rotating the display. Please update to version 4.3 or greater.  You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.  Error code: %1").arg(errorCode()), this));
 		return;
 	}
-	
+
 	QVBoxLayout *topLayout = new QVBoxLayout(this);
 	topLayout->setAutoAdd(true);
 
@@ -67,7 +81,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	if (numScreens() <= 1)
 		m_screenSelector->setEnabled(false);
-	
+
 	QHBox* sizeBox = new QHBox(this);
 	new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
@@ -80,12 +94,18 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
-	
+
+	m_applyOnStartup = new QCheckBox(i18n("Apply settings on KDE startup"), this);
+	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
+
 	slotScreenChanged(DefaultScreen(qt_xdisplay()));
-	
+
 	layout()->addItem(new QSpacerItem(0,0));
 
 	setButtons(KCModule::Default | KCModule::Apply);
+
+	// just set the "apply settings on startup" box
+	load();
 }
 
 void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
@@ -102,18 +122,13 @@ void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
 	}
 }
 
-void KRandRModule::load()
-{
-	emit changed(false);
-}
-
 void KRandRModule::slotScreenChanged(int screen)
 {
 	setCurrentScreen(screen);
 
 	// Clear resolutions
 	m_sizeCombo->clear();
-	
+
 	// Add new resolutions
 	for (int i = 0; i < currentScreen()->numSizes(); i++) {
 		m_sizeCombo->insertItem(i18n("%1 x %2 (%3mm x %4mm)").arg(currentScreen()->size(i).width).arg(currentScreen()->size(i).height).arg(currentScreen()->size(i).mwidth).arg(currentScreen()->size(i).mheight));
@@ -131,7 +146,7 @@ void KRandRModule::slotScreenChanged(int screen)
 	// Create rotations
 	for (int i = 0; i < 6; i++)
 		addRotationButton(1 << i, i > 3);
-	
+
 	populateRefreshRates();
 	
 	update();
@@ -188,13 +203,13 @@ void KRandRModule::slotRefreshChanged(int index)
 void KRandRModule::populateRefreshRates()
 {
 	m_refreshRates->clear();
-	
+
 	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
-	
+
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++) {
 		m_refreshRates->insertItem(*it);
 	}
-	
+
 	if (rr.count() < 2)
 		m_refreshRates->setEnabled(false);
 	else
@@ -210,26 +225,44 @@ void KRandRModule::defaults()
 	} else {
 		currentScreen()->proposeOriginal();
 	}
-	
+
 	update();
+}
+
+void KRandRModule::load()
+{
+	KConfig config("kcmrandrrc");
+
+	// Don't load screen configurations:
+	// It will be correct already if they wanted to retain their settings over KDE restarts,
+	// and if it isn't correct they have changed a) their X configuration or b) the screen
+	// with another program.
+	m_oldApply = loadDisplay(config, false);
+	m_applyOnStartup->setChecked(m_oldApply);
+
+	setChanged();
 }
 
 void KRandRModule::save()
 {
+	KConfig config("kcmrandrrc");
+	m_oldApply = m_applyOnStartup->isChecked();
+	saveDisplay(config, m_oldApply);
 	apply();
 	setChanged();
 }
 
 void KRandRModule::setChanged()
 {
-	bool isChanged = false;
-	
-	for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-		if (screen(screenIndex)->proposedChanged()) {
-			isChanged = true;
-			break;
+	bool isChanged = (m_oldApply != m_applyOnStartup->isChecked());
+
+	if (!isChanged)
+		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
+			if (screen(screenIndex)->proposedChanged()) {
+				isChanged = true;
+				break;
+			}
 		}
-	}
 
 	if (isChanged != m_changed) {
 		m_changed = isChanged;
@@ -240,11 +273,7 @@ void KRandRModule::setChanged()
 void KRandRModule::apply()
 {
 	if (m_changed) {
-		for (int screenIndex = 0; screenIndex < numScreens(); screenIndex++) {
-			if (screen(screenIndex)->proposedChanged()) {
-				screen(screenIndex)->applyProposedAndConfirm();
-			}
-		}
+		applyProposed();
 
 		update();
 	}
