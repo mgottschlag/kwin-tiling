@@ -14,8 +14,8 @@ noinst_HEADERS = icons.h iconthemes.h main.h
 
 check_PROGRAMS = testicons
 testicons_SOURCES = testicons.cpp 
-testicons_LDFLAGS = icons.lo $(all_libraries)
-testicons_LDADD = $(LIB_KDEUI)
+testicons_LDFLAGS = $(all_libraries)
+testicons_LDADD = $(LIB_KDEUI) icons.lo
 
 messages:
 	$(XGETTEXT) -kni18n $(kcm_icons_la_SOURCES) -o $(podir)/kcmicons.pot
