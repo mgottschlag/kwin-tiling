@@ -522,7 +522,7 @@ void LockProcess::startSaver()
     if (!child_saver && !grabInput())
     {
         kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
-        return;
+        QApplication::exit(1); // quit, don't stay running and doing nothing
     }
     mBusy = false;
 
