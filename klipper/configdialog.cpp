@@ -112,7 +112,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     setTitle( i18n("Action settings (right-click to add/remove commands)") );
 
     listView = new KEditableListView( this, "list view" );
-    listView->addColumn( i18n("Regular expression") );
+    listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
 
     listView->setRootIsDecorated( true );
