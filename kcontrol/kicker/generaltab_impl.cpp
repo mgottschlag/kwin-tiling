@@ -40,6 +40,7 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_autoHide, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_autoHideSwitch, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_delaySlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
@@ -61,6 +62,10 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
                                      "screen edge the panel is attached to. "
                                      "This is particularly useful for small screen resolutions, "
                                      "for example, on laptops.") );
+
+    QWhatsThis::add(m_autoHideSwitch, i18n("If this option is enabled, the panel will automatically show "
+					   "itself for a brief period of time when the desktop is switched "
+					   "so you can see what desktop you are on.") );
 
     QString delaystr = i18n("Here you can change the delay after which the panel will disappear"
                             " if not used.");
@@ -86,9 +91,11 @@ void GeneralTab::load()
     m_locationGroup->setButton(c->readNumEntry("Position", 3));
 
     bool ah = c->readBoolEntry("AutoHidePanel", false);
+    bool ahs = c->readBoolEntry("AutoHideSwitch", false);
     int delay = c->readNumEntry("AutoHideDelay", 3);
 
     m_autoHide->setChecked(ah);
+    m_autoHideSwitch->setChecked(ahs);
     m_delaySlider->setValue(delay);
     m_delaySpinBox->setValue(delay);
     m_delaySlider->setEnabled(ah);
@@ -117,6 +124,7 @@ void GeneralTab::save()
     c->writeEntry("Size", m_sizeGroup->id(m_sizeGroup->selected()));
     c->writeEntry("Position", m_locationGroup->id(m_locationGroup->selected()));
     c->writeEntry("AutoHidePanel", m_autoHide->isChecked());
+    c->writeEntry("AutoHideSwitch", m_autoHideSwitch->isChecked());
     c->writeEntry("AutoHideDelay", m_delaySlider->value());
     c->writeEntry( "SizePercentage", m_percentSlider->value() );
     c->writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );

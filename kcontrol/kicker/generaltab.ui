@@ -360,7 +360,7 @@
                 <name>title</name>
                 <string>&amp;Automatic Hide</string>
             </property>
-            <vbox>
+            <grid>
                 <property stdset="1">
                     <name>margin</name>
                     <number>11</number>
@@ -369,18 +369,7 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_autoHide</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Enable automatic hide</string>
-                    </property>
-                </widget>
-                <widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
                     <class>QLayoutWidget</class>
                     <property stdset="1">
                         <name>name</name>
@@ -454,7 +443,29 @@
                         </widget>
                     </hbox>
                 </widget>
-            </vbox>
+                <widget row="0"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_autoHide</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Enable automatic hide</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_autoHideSwitch</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Show panel when switching desktop</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <spacer>
             <property>
@@ -480,6 +491,12 @@
     </vbox>
 </widget>
 <connections>
+    <connection>
+        <sender>m_autoHide</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_autoHideSwitch</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
     <connection>
         <sender>m_autoHide</sender>
         <signal>toggled(bool)</signal>
@@ -522,6 +539,7 @@
     <tabstop>m_normal</tabstop>
     <tabstop>m_large</tabstop>
     <tabstop>m_autoHide</tabstop>
+    <tabstop>m_autoHideSwitch</tabstop>
     <tabstop>m_delaySlider</tabstop>
     <tabstop>m_delaySpinBox</tabstop>
 </tabstops>
