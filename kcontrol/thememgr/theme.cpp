@@ -177,8 +177,8 @@ void Theme::cleanupWorkDir(void)
   int rc;
 
   // cleanup work directory
-  cmd.sprintf("rm -rf %s*", workDir().ascii());
-  rc = system(cmd.ascii());
+  cmd.sprintf("rm -rf %s*", workDir().local8Bit().data());
+  rc = system(cmd.local8Bit());
   if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
 }
 
@@ -215,7 +215,7 @@ bool Theme::load(const QString &aPath, QString &error)
     if (rc)
     {
       error = i18n("Theme contents could not be copied from\n%1\ninto\n%2")
-		.arg(aPath).arg(str);      
+		.arg(aPath).arg(str);
       return false;
     }
   }
@@ -302,10 +302,10 @@ void Theme::removeFile(const QString& aName, const QString &aDirName)
   if (aName.isEmpty()) return;
 
   if (aName[0] == '/' || aDirName.isEmpty())
-    unlink(aName.ascii());
+    QFile::remove( aName );
   else if (aDirName[aDirName.length()-1] == '/')
-    unlink((aDirName + aName).ascii());
-  else unlink((aDirName + '/' + aName).ascii());
+    QFile::remove( aDirName + aName );
+  else QFile::remove( (aDirName + '/' + aName) );
 }
 
 
@@ -351,8 +351,8 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
 
   if (!instOverwrite && finfo.exists()) // make backup copy
   {
-    unlink((dest+'~').ascii());
-    rename(dest.ascii(), (dest+'~').ascii());
+    QFile::remove( dest+'~' );
+    rename(dest.local8Bit(), (dest+'~').local8Bit());
     backupMade = true;
   }
 
@@ -384,7 +384,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   srcFile.close();
   destFile.close();
 
-  addInstFile(dest.ascii());
+  addInstFile(dest);
   kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
 
   return true;
@@ -439,7 +439,7 @@ bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
 
   KIO::NetAccess::dircopy(url1, url2);
 
-  addInstFile(dest.ascii());
+  addInstFile(dest);
   kdDebug() << "Installed " << src << " to " << dest << ". Backup: backupMade" << endl;
 
   return true;
@@ -460,7 +460,7 @@ int Theme::installGroup(const char* aGroupName)
   kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
   mConfig->setGroup(group);
-  
+
   if (!instOverwrite) uninstallFiles(aGroupName);
   else readInstFileList(aGroupName);
 
@@ -534,7 +534,7 @@ int Theme::installGroup(const char* aGroupName)
 
     for (; aIt != aMap.end(); ++aIt) {
       key = aIt.key();
-      if (stricmp(key.left(6).ascii(),"Config")==0) continue;
+      if ( key.left(6).lower() == "Config" ) continue;
       value = (*aIt).stripWhiteSpace();
       len = value.length();
       bool bInstallFile = false;
@@ -548,7 +548,7 @@ int Theme::installGroup(const char* aGroupName)
 	value.truncate(len - 1);
         bInstallDir = true;
       }
-      else 
+      else
       {
         bInstallFile = true;
       }
@@ -560,7 +560,7 @@ int Theme::installGroup(const char* aGroupName)
 	cfgKey = value.left(i);
 	cfgValue = value.mid(i+1, 1024);
       }
-      else 
+      else
       {
 	cfgKey = value;
 	cfgValue = QString::null;
@@ -573,7 +573,7 @@ int Theme::installGroup(const char* aGroupName)
 	if (!oldValue.isEmpty() && oldValue==emptyValue)
 	  oldValue = QString::null;
       }
-      else 
+      else
       {
          oldValue = QString::null;
       }
@@ -606,15 +606,15 @@ int Theme::installGroup(const char* aGroupName)
 
       bool bDeleteKey = false;
       // Determine config value
-      if (cfgValue.isEmpty()) 
+      if (cfgValue.isEmpty())
       {
          cfgValue = emptyValue;
          if (cfgValue.isEmpty())
            bDeleteKey = true;
       }
-      else if ((bInstallFile || bInstallDir) && absPath) 
+      else if ((bInstallFile || bInstallDir) && absPath)
          cfgValue = appDir + cfgValue;
- 
+
       // Set config entry
       kdDebug() << cfgKey << "=" << cfgValue << endl;
       if (bDeleteKey)
@@ -623,7 +623,7 @@ int Theme::installGroup(const char* aGroupName)
          cfg->writeEntry(cfgKey, cfgValue);
     }
 
-    if (!instCmd.isEmpty()) 
+    if (!instCmd.isEmpty())
        installCmd(cfg, instCmd, installed);
     group = mMappings->readEntry("ConfigNextGroup");
   }
@@ -662,7 +662,7 @@ void Theme::preInstallCmd(KSimpleConfig* aCfg, const QString& aCmd)
   }
   else
   {
-    kdWarning() << "Unknown pre-install command `" << aCmd << "' in theme.mappings file in group " 
+    kdWarning() << "Unknown pre-install command `" << aCmd << "' in theme.mappings file in group "
 	    << mMappings->group() << endl;
   }
 }
@@ -695,7 +695,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 		 << "file in group " << mMappings->group() << endl;
   }
 
-  if (stricmp(aCfg->group().ascii(), grp.ascii())!=0) 
+  if ( aCfg->group() != grp )
     aCfg->setGroup(grp);
 }
 
@@ -714,13 +714,13 @@ void Theme::applyIcons()
       break;
     config->setGroup(QString::fromLatin1(groups[i]) + "Icons");
     config->writeEntry("Size", icontheme.defaultSize(i));
-  } 
+  }
   delete config;
-  
+
   for (int i=0; i<KIcon::LastGroup; i++)
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
-  } 
+  }
 }
 
 
@@ -737,7 +737,7 @@ void Theme::doCmdList(void)
     kdDebug() << "do command: " << cmd << endl;
     if (cmd.startsWith("kfmclient"))
     {
-      system(cmd.ascii());
+      system(cmd.local8Bit());
     }
     else if (cmd == "applyColors")
     {
@@ -759,12 +759,11 @@ void Theme::doCmdList(void)
     else if (cmd.startsWith("restart"))
     {
       appName = cmd.mid(7).stripWhiteSpace();
-      str.sprintf(i18n("Restart %s to activate the new settings?").ascii(),
-		  appName.ascii());
+      str = i18n("Restart %1 to activate the new settings?").arg( appName );
       if (KMessageBox::questionYesNo(0, str) == KMessageBox::Yes) {
-          str.sprintf(mRestartCmd.ascii(), appName.ascii(), 
-                      appName.ascii());
-          system(str.ascii());
+          str.sprintf(mRestartCmd.local8Bit().data(), appName.local8Bit().data(),
+                      appName.local8Bit().data());
+          system(str.local8Bit());
       }
     }
   }
@@ -782,10 +781,10 @@ bool Theme::backupFile(const QString &fname) const
 
   if (!fi.exists()) return false;
 
-  unlink((fname + '~').ascii());
-  cmd.sprintf("mv \"%s\" \"%s~\"", fname.ascii(),
-	      fname.ascii());
-  rc = system(cmd.ascii());
+  QFile::remove((fname + '~'));
+  cmd.sprintf("mv \"%s\" \"%s~\"", fname.local8Bit().data(),
+	      fname.local8Bit().data());
+  rc = system(cmd.local8Bit());
   if (rc) kdWarning() << "Cannot make backup copy of "
           << fname << ": mv returned " << rc << endl;
   return (rc==0);
@@ -832,13 +831,13 @@ void Theme::uninstallFiles(const char* aGroupName)
   kdDebug() << "*** beginning uninstall of " << aGroupName << endl;
 
   readInstFileList(aGroupName);
-  for (QStringList::ConstIterator it=mInstFiles.begin(); 
+  for (QStringList::ConstIterator it=mInstFiles.begin();
        it != mInstFiles.end();
        ++it)
   {
     fname = *it;
     reverted = false;
-    if (unlink(QFile::encodeName(fname).data())==0) 
+    if (unlink(QFile::encodeName(fname).data())==0)
        reverted = true;
     finfo.setFile(fname+'~');
     if (finfo.exists())
@@ -849,7 +848,7 @@ void Theme::uninstallFiles(const char* aGroupName)
       else reverted = true;
     }
 
-    if (reverted) 
+    if (reverted)
     {
       kdDebug() << "uninstalled " << fname << endl;
       processed++;
@@ -932,7 +931,7 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
     return found;
 
   QMap<QString, QString> aMap = mConfig->entryMap(aName);
-  if (found && aNotEmpty) 
+  if (found && aNotEmpty)
     found = !aMap.isEmpty();
 
   return found;
