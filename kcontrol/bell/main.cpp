@@ -51,7 +51,7 @@ extern "C"
 
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
 
-    KSimpleConfig config("kwmsoundrc", true);
+    KSimpleConfig config("kwmsoundrc", true, false);
     config.setGroup("Bell");
 
     kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
