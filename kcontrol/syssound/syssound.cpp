@@ -23,36 +23,21 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
-// X11 headers
-#undef None
-#undef Unsorted
-
-#include <qobject.h>
 #include <qlabel.h>
 #include <qtabwidget.h>
-#include <qlistbox.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qdir.h>
 #include <qdragobject.h>
-#include <qfileinfo.h>
-#include <qmessagebox.h>
 
 #include <klocale.h>
-#include <ksimpleconfig.h>
+#include <kconfig.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kstddirs.h>
 #include <kapp.h>
 #include <kwin.h>
 #include <kmessagebox.h>
+#include <klistbox.h>
 #include <kdialog.h>
 
 #include "syssound.h"
@@ -61,408 +46,358 @@
 #include <X11/Xlib.h>
 #include <config.h>
 
-#define EVENT_COUNT 29
-
 #define SOUND_DEBUG 1
 
-template class QList<QString>;
-
-const char *eventNames[] =
-{
-    "GeneralBeep",
-    "Desktop1",
-    "Desktop2",
-    "Desktop3",
-    "Desktop4",
-    "Desktop5",
-
-    "Desktop6",
-    "Desktop7",
-    "Desktop8",
-    "WindowActivate",
-    "WindowOpen",
-    "WindowClose",
-    "Startup",
-    "WindowShadeUp",
-    "WindowShadeDown",
-    "WindowIconify",
-    "WindowDeIconify",
-    "WindowMaximize",
-    "WindowUnMaximize",
-    "WindowSticky",
-    "WindowUnSticky",
-    "WindowTransNew",
-    "WindowTransDelete",
-    "Logout",
-    "LogoutMessage",
-    "WindowMoveStart",
-    "WindowMoveEnd",
-    "WindowResizeStart",
-    "WindowResizeEnd",
+struct soundEvent { 
+   const char *name;
+   const char *title;
 };
 
+const soundEvent soundEvents[] =
+{
+    { "GeneralBeep", I18N_NOOP("General Beep") },
+    { "Desktop1", I18N_NOOP("Change to Desktop 1") },
+    { "Desktop2", I18N_NOOP("Change to Desktop 2") },
+    { "Desktop3", I18N_NOOP("Change to Desktop 3") },
+    { "Desktop4", I18N_NOOP("Change to Desktop 4") },
+    { "Desktop5", I18N_NOOP("Change to Desktop 5") },
+    { "Desktop6", I18N_NOOP("Change to Desktop 6") },
+    { "Desktop7", I18N_NOOP("Change to Desktop 7") },
+    { "Desktop8", I18N_NOOP("Change to Desktop 8") },
+    { "WindowActivate", I18N_NOOP("Activate Window") },
+    { "WindowOpen", I18N_NOOP("Open New Window") },
+    { "WindowClose", I18N_NOOP("Close Window") },
+    { "Startup", I18N_NOOP("Startup") },
+    { "WindowShadeUp", I18N_NOOP("Window Shade Up") },
+    { "WindowShadeDown", I18N_NOOP("Window Shade Down") },
+    { "WindowIconify", I18N_NOOP("Window Minimize") },
+    { "WindowDeIconify", I18N_NOOP("Window Restore") },
+    { "WindowMaximize", I18N_NOOP("Window Maximize") },
+    { "WindowUnMaximize", I18N_NOOP("Window UnMaximize") },
+    { "WindowSticky", I18N_NOOP("Window Sticky") },
+    { "WindowUnSticky", I18N_NOOP("Window UnSticky") },
+    { "WindowTransNew",I18N_NOOP("Window Trans New") },
+    { "WindowTransDelete", I18N_NOOP("Window Trans Delete") },
+    { "Logout", I18N_NOOP("Logout") },
+    { "LogoutMessage", I18N_NOOP("Logout Message") },
+    { "WindowMoveStart", I18N_NOOP("Window Move Start") },
+    { "WindowMoveEnd", I18N_NOOP("Window Move End") },
+    { "WindowResizeStart", I18N_NOOP("Window Resize Start") },
+    { "WindowResizeEnd", I18N_NOOP("Window Resize End") },
+    { 0, 0 }
+};
 
 KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
-    KCModule(parent, name), selected_event(0)
+    KCModule(parent, name), m_selectedEvent(0)
 {
+    m_none = QString::fromLatin1("(none)");
+    m_i18nNone = i18n("(none)");
+    QBoxLayout *layout = new QVBoxLayout(this);
+    m_tabs = new QTabWidget(this);
+    layout->addWidget(m_tabs);
 
-    QTabWidget *tabs;
-    QFrame *mainFrame, *bellFrame;
+    addMainTab();
+    addBellTab();
+    load();
+}
 
-    QBoxLayout *layout, *status_layout;
-    QGridLayout *grid_layout;
+KSoundWidget::~KSoundWidget()
+{
+}
 
-    QString path;
-    QDir dir;
-    QStringList list;
-    QLabel *eventlabel, *soundlabel, *statustext;
-
-    tabs = new QTabWidget(this);
-    layout = new QVBoxLayout(this);
-    layout->addWidget(tabs);
-
-    mainFrame = new QFrame(this);
-    bellFrame = new QFrame(this);
-
-    tabs->addTab(mainFrame, i18n("&Main"));
-    tabs->addTab(bellFrame, i18n("&Bell"));
-
+void KSoundWidget::addMainTab()
+{
+    QFrame *mainFrame = new QFrame(this);
+    m_tabs->addTab(mainFrame, i18n("&Main"));
     //
     // CC: Set up the List of known System Events
     //
 
-    eventlist = new QListBox(mainFrame);
-    eventlist->insertItem(i18n("General Beep"));
-    eventlist->insertItem(i18n("Change to Desktop 1"));
-    eventlist->insertItem(i18n("Change to Desktop 2"));
-    eventlist->insertItem(i18n("Change to Desktop 3"));
-    eventlist->insertItem(i18n("Change to Desktop 4"));
-    eventlist->insertItem(i18n("Change to Desktop 5"));
-    eventlist->insertItem(i18n("Change to Desktop 6"));
-    eventlist->insertItem(i18n("Change to Desktop 7"));
-    eventlist->insertItem(i18n("Change to Desktop 8"));
-
-    eventlist->insertItem(i18n("Activate Window"));
-    eventlist->insertItem(i18n("Open new window"));
-    eventlist->insertItem(i18n("Close Window"));
-    eventlist->insertItem(i18n("Startup"));
-
-    eventlist->insertItem(i18n("Window Shade Up"));
-    eventlist->insertItem(i18n("Window Shade Down"));
-    eventlist->insertItem(i18n("Window Iconify"));
-    eventlist->insertItem(i18n("Window DeIconify"));
-    eventlist->insertItem(i18n("Window Maximize"));
-    eventlist->insertItem(i18n("Window UnMaximize"));
-    eventlist->insertItem(i18n("Window Sticky"));
-    eventlist->insertItem(i18n("Window UnSticky"));
-    eventlist->insertItem(i18n("Window Trans New"));
-    eventlist->insertItem(i18n("Window Trans Delete"));
-    eventlist->insertItem(i18n("Logout"));
-    eventlist->insertItem(i18n("Logout Message"));
-    eventlist->insertItem(i18n("Window Move Start"));
-    eventlist->insertItem(i18n("Window Move End"));
-    eventlist->insertItem(i18n("Window Resize Start"));
-    eventlist->insertItem(i18n("Window Resize End"));
-
-    eventlist->setMinimumSize(eventlist->sizeHint());
+    m_eventList = new KListBox(mainFrame);
     //
     // CC: Now set up the list of known WAV Files
     //
 
-    soundlist = new QListBox(mainFrame);
-    soundlist->setAcceptDrops(true);
+    m_soundList = new KListBox(mainFrame);
+    m_soundList->setAcceptDrops(true);
     setAcceptDrops(true);
-    soundlist->installEventFilter(mainFrame);
+    m_soundList->installEventFilter(mainFrame);
 
-    soundlist->insertItem(i18n("(none)"));
 
-    list = KGlobal::dirs()->findAllResources("sound");
+    m_soundsEnabled = new QCheckBox(mainFrame);
+    m_soundsEnabled->setText(i18n("E&nable system sounds"));
+    connect(m_soundsEnabled, SIGNAL(clicked()), this, SLOT(changed()));
 
-    soundlist->insertStringList(list);
-    soundlist->setMinimumSize(soundlist->sizeHint());
+    m_testButton = new QPushButton(mainFrame);
+    m_testButton->setText(i18n("&Test"));
 
-    sounds_enabled = new QCheckBox(mainFrame);
-    sounds_enabled->setText(i18n("E&nable system sounds"));
-    connect(sounds_enabled, SIGNAL(clicked()), this, SLOT(changed()));
-
-    btn_test = new QPushButton(mainFrame);
-    btn_test->setText(i18n("&Test"));
-
-    eventlabel = new QLabel(eventlist, i18n("&Events:"), mainFrame);
-    soundlabel = new QLabel(soundlist, i18n("Available &Sounds:"), mainFrame);
-    statustext = new QLabel(i18n(
+    m_eventLabel = new QLabel(m_eventList, i18n("&Events:"), mainFrame);
+    m_soundLabel = new QLabel(m_soundList, i18n("Available &Sounds:"), mainFrame);
+    m_statusText = new QLabel(i18n(
 	"Additional WAV files can be dropped onto the sound list."
 	),mainFrame);
-    eventlabel->setAlignment(QLabel::AlignLeft);
-    soundlabel->setAlignment(QLabel::AlignLeft);
-    statustext->setAlignment(QLabel::AlignLeft);
+    m_eventLabel->setAlignment(QLabel::AlignLeft);
+    m_soundLabel->setAlignment(QLabel::AlignLeft);
+    m_statusText->setAlignment(QLabel::AlignLeft);
 
-    grid_layout = new QGridLayout(2, 2);
-    grid_layout->addWidget(eventlabel, 0, 0);
-    grid_layout->addWidget(eventlist, 1, 0);
-    grid_layout->addWidget(soundlabel, 0, 1);
-    grid_layout->addWidget(soundlist, 1, 1);
+    QGridLayout *grid_layout = new QGridLayout(2, 2);
+    grid_layout->addWidget(m_eventLabel, 0, 0);
+    grid_layout->addWidget(m_eventList, 1, 0);
+    grid_layout->addWidget(m_soundLabel, 0, 1);
+    grid_layout->addWidget(m_soundList, 1, 1);
     grid_layout->setRowStretch(1, 1);
     grid_layout->setColStretch(0, 30);
     grid_layout->setColStretch(1, 70);
 
-    layout = new QVBoxLayout(mainFrame, KDialog::marginHint(),
+    QBoxLayout *layout = new QVBoxLayout(mainFrame, KDialog::marginHint(),
 				 KDialog::spacingHint());
-    layout->addWidget(sounds_enabled,0,AlignLeft);
+    layout->addWidget(m_soundsEnabled,0,AlignLeft);
     layout->addLayout(grid_layout, 1);
 
-    status_layout = new QHBoxLayout();
-    status_layout->addWidget(statustext, 1);
-    status_layout->addWidget(btn_test);
+    QBoxLayout *status_layout = new QHBoxLayout();
+    status_layout->addWidget(m_statusText, 1);
+    status_layout->addWidget(m_testButton);
     layout->addLayout(status_layout);
 
+    connect(m_eventList, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
+    connect(m_soundList, SIGNAL(highlighted(int)), this, SLOT(soundSelected(int)));
+    connect(m_testButton, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
+}
+
+void KSoundWidget::addBellTab()
+{
+    QFrame *bellFrame = new QFrame(this);
+    m_tabs->addTab(bellFrame, i18n("&Bell"));
+
     QLabel *label = new QLabel(bellFrame);
-    QString setting = sounds_enabled->isChecked() ?
+    QString setting = m_soundsEnabled->isChecked() ?
 	i18n("enabled") : i18n("disabled");
     label->setText(i18n("The following settings are only relevant to the X bell or beep.\nIf you are using system sounds, the \"General Beep\" sound will override\nthese settings, but they will still apply to non-KDE programs.  Otherwise,\nthe values you specify here will be used.\n\nSystem sounds are currently %1.").arg(setting));
     // set up bell tab
-    layout = new QVBoxLayout(bellFrame, KDialog::marginHint(),
+    QBoxLayout *layout = new QVBoxLayout(bellFrame, KDialog::marginHint(),
 			     KDialog::spacingHint());
     layout->addWidget(label);
 
     // args: label, min, max, step, initial, units
-    volume = new KIntNumInput(50, bellFrame);
-    volume->setLabel(i18n("Volume:"));
-    volume->setRange(0, 100, 5);
-    volume->setSuffix("%");
-    volume->setSteps(5,25);
-    layout->addWidget(volume);
+    m_volume = new KIntNumInput(50, bellFrame);
+    m_volume->setLabel(i18n("Volume:"));
+    m_volume->setRange(0, 100, 5);
+    m_volume->setSuffix("%");
+    m_volume->setSteps(5,25);
+    layout->addWidget(m_volume);
 
-    pitch = new KIntNumInput(volume, 800, bellFrame);
-    pitch->setLabel(i18n("Pitch:"));
-    pitch->setRange(0, 2000, 20);
-    pitch->setSuffix(i18n("Hz"));
-    pitch->setSteps(40,200);
-    layout->addWidget(pitch);
+    m_pitch = new KIntNumInput(m_volume, 800, bellFrame);
+    m_pitch->setLabel(i18n("Pitch:"));
+    m_pitch->setRange(0, 2000, 20);
+    m_pitch->setSuffix(i18n("Hz"));
+    m_pitch->setSteps(40,200);
+    layout->addWidget(m_pitch);
 
-    duration = new KIntNumInput(pitch, 100, bellFrame);
-    duration->setLabel(i18n("Duration:"));
-    duration->setRange(0, 1000, 50);
-    duration->setSuffix(i18n("ms"));
-    duration->setSteps(20,100);
-    layout->addWidget(duration);
+    m_duration = new KIntNumInput(m_pitch, 100, bellFrame);
+    m_duration->setLabel(i18n("Duration:"));
+    m_duration->setRange(0, 1000, 50);
+    m_duration->setSuffix(i18n("ms"));
+    m_duration->setSteps(20,100);
+    layout->addWidget(m_duration);
 
     QFrame *hLine = new QFrame(bellFrame);
     hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
 
     layout->addWidget(hLine);
 
-    test = new QPushButton(i18n("&Test"), bellFrame, "test");
+    QPushButton *test = new QPushButton(i18n("&Test"), bellFrame, "test");
     layout->addWidget(test, 0, AlignRight);
     connect( test, SIGNAL(clicked()), SLOT(ringBell()));
 
     layout->addStretch(1);
 
-    setUpdatesEnabled(TRUE);
-
-    load();
-
-    connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
-    connect(soundlist, SIGNAL(highlighted(const QString &)),
-	    this, SLOT(soundSelected(const QString &)));
-    connect(btn_test, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
-
     // watch for changes
-    connect(volume, SIGNAL(valueChanged(int)),
+    connect(m_volume, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
-    connect(pitch, SIGNAL(valueChanged(int)),
+    connect(m_pitch, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
-    connect(duration, SIGNAL(valueChanged(int)),
+    connect(m_duration, SIGNAL(valueChanged(int)),
 	    this, SLOT(changed()));
-
-};
-
-KSoundWidget::~KSoundWidget()
-{
 }
 
 void KSoundWidget::load()
 {
-  QString hlp;
-  KSimpleConfig config("kwmsoundrc");
-  int lf;
+  KConfig config("kwmsoundrc");
 
   // CC: we need to read/write the config file of "kwmsound" and not
   // our own (that would be called syssoundrc)
 
   config.setGroup("SoundConfiguration");
 
-  soundnames.clear();
-  for( lf = 0; lf < EVENT_COUNT; lf++) {
+  m_allSounds = KGlobal::dirs()->findAllResources("sound");
+  m_allSounds.prepend(m_i18nNone);
 
-    QString str;
-    str = config.readEntry(eventNames[lf],"(none)");
-
-    if (str.at(0) == '/') {
+  m_soundSettings.clear();
+  
+  const soundEvent *event = soundEvents;
+  while(event && event->name)
+  {
+    QString sound = config.readEntry(event->name, m_none);
+   
+    if (!sound.isEmpty() && (sound[0] == '/')) 
+    {
       // CC: a file that is not in the default
       // sound directory-> add it to the soundlist too
-
-      addToSoundList(str);
+      
+      if (!m_allSounds.contains(sound))
+         m_allSounds.append(sound);
     }
 
-    soundnames.append(str);
-
+    m_soundSettings.append(sound);
+    event++;
   }
 
   config.setGroup("GlobalConfiguration");
 
-  hlp = config.readEntry("EnableSounds","No");
+  bool enableSounds = config.readBoolEntry("EnableSounds",false);
 
-  if (!stricmp(hlp.ascii(),"Yes"))
-    sounds_enabled->setChecked(True);
-  else
-    sounds_enabled->setChecked(False);
+  m_soundsEnabled->setChecked(enableSounds);
 
-  eventlist->setCurrentItem(0);
-  soundlist->setCurrentItem(0);
+  m_soundList->setCurrentItem(0);
 
   // bell
   XKeyboardState kbd;
   XGetKeyboardControl(kapp->getDisplay(), &kbd);
 
+#if 0
   config.setGroup("Bell");
   bellVolume = config.readNumEntry("Volume", kbd.bell_percent);
   bellPitch = config.readNumEntry("Pitch", kbd.bell_pitch);
   bellDuration = config.readNumEntry("Duration", kbd.bell_duration);
+#endif
 
   // the GUI should reflect the real values
   setBellVolume(kbd.bell_percent);
   setBellPitch(kbd.bell_pitch);
   setBellDuration(kbd.bell_duration);
+
+  initLists();
 }
 
-
-void KSoundWidget::eventSelected(int index){
-
-
-  int i;
-  uint listlen;
-  char found;
-  QString sname, hlp;
-
-  selected_event = index;
-
-  if (0 == index)
-    soundlist->setCurrentItem(0);
-  else {
-    // CC: at first, get the name of the sound file we want to select
-    sname = soundnames[index-1];
-    kdDebug() << "event " << index << " wants sound " << sname << endl;
-
-    i = 1;
-    listlen = soundlist->count();
-    found = 0;
-    while ( (!found) && (i < (int)listlen) ) {
-      hlp = soundlist->text(i);
-      if (hlp == sname)
-	found = 1;
-      else
-	i++;
-    }
-
-    if (found)
-      soundlist->setCurrentItem(i);
-    else
-      soundlist->setCurrentItem(0);
-      // CC: By default, select "no sound"
-
-  }
-
-  soundlist->centerCurrentItem();
-
-}
-
-void KSoundWidget::soundSelected(const QString &filename)
+void KSoundWidget::initLists()
 {
-  QString snd;
-  QStringList::Iterator it;
-
-  if (selected_event > 0) {
-      it = soundnames.at(selected_event - 1);
-      soundnames.remove(it);
-      soundnames.insert(it, filename);
-
-      emit KCModule::changed(true);
+  m_eventList->clear();
+  const soundEvent *event = soundEvents;
+  while(event && event->name)
+  {
+    m_eventList->insertItem(i18n(event->title));
+    event++;
   }
+  m_eventList->setMinimumSize(m_eventList->sizeHint());
+
+  m_soundList->clear();
+  m_soundList->insertStringList(m_allSounds);
+  m_soundList->setMinimumSize(m_soundList->sizeHint());
+  updateStatus();
+  m_eventList->setCurrentItem(0);
+  eventSelected(0);
+}
+
+
+void KSoundWidget::eventSelected(int index)
+{
+  m_selectedEvent = index;
+
+  QString sound = m_soundSettings[index];
+  
+  int soundIndex = m_allSounds.findIndex(sound);
+  if (soundIndex > 0)
+  {
+     m_soundList->setCurrentItem(soundIndex);
+  }
+  else
+  {
+     m_soundList->setCurrentItem(0);
+  }
+  m_soundList->centerCurrentItem();
+}
+
+void KSoundWidget::soundSelected(int index)
+{
+  QString sound = m_none;
+  if ((index > 0) && (index < (int) m_allSounds.count()))
+  {
+      sound = m_allSounds[index];
+  }
+  if (sound == m_soundSettings[m_selectedEvent]) 
+     return;
+  
+  m_soundSettings[m_selectedEvent] = sound;
+  emit KCModule::changed(true);
 }
 
 // set the slider and the LCD to 'val'
 void KSoundWidget::setBellVolume(int val)
 {
-    volume->setValue(val);
+    m_volume->setValue(val);
 }
 
 void KSoundWidget::setBellPitch(int val)
 {
-    pitch->setValue(val);
+    m_pitch->setValue(val);
 }
 
 void KSoundWidget::setBellDuration(int val)
 {
-    duration->setValue(val);
+    m_duration->setValue(val);
 }
 
 // return the current LCD setting
 int  KSoundWidget::getBellVolume()
 {
-    return volume->value();
+    return m_volume->value();
 }
 
 int  KSoundWidget::getBellPitch()
 {
-    return pitch->value();
+    return m_pitch->value();
 }
 
 int  KSoundWidget::getBellDuration()
 {
-    return duration->value();
+    return m_duration->value();
 }
 
 
 void KSoundWidget::save(){
 
-  KSimpleConfig config("kwmsoundrc");
-  QString sname, helper;
-  int lf;
-  KWin kwin;
-
+  KConfig config("kwmsoundrc");
   config.setGroup("SoundConfiguration");
 
-  for( lf = 0; lf < EVENT_COUNT; lf++) {
-    sname = soundnames[lf];
+  const soundEvent *event = soundEvents;
+  int i = 0;
+  while(event && event->name)
+  {
+    QString sound = m_soundSettings[i];
 
-    if (sname.isEmpty())
-      config.writeEntry(eventNames[lf],"(none)");
+    if (sound.isEmpty())
+      config.writeEntry(event->name, m_none);
     else {
       // keep configuration files language--independent
-
-      if (i18n("(none)") == sname)
-	config.writeEntry(eventNames[lf], "(none)");
+      if (sound == m_i18nNone)
+	config.writeEntry(event->name, m_none);
       else
-	config.writeEntry(eventNames[lf], sname);
+	config.writeEntry(event->name, sound);
 
     }
-
+    event++; i++;
   }
 
   config.setGroup("GlobalConfiguration");
 
-  if (sounds_enabled->isChecked())
-    config.writeEntry("EnableSounds", "Yes");
-  else
-    config.writeEntry("EnableSounds", "No");
+  config.writeEntry("EnableSounds", m_soundsEnabled->isChecked());
 
   // bell
   XKeyboardControl kbd;
 
-  bellVolume = getBellVolume();
-  bellPitch = getBellPitch();
-  bellDuration = getBellDuration();
+  int bellVolume = getBellVolume();
+  int bellPitch = getBellPitch();
+  int bellDuration = getBellDuration();
 
   kbd.bell_percent = bellVolume;
   kbd.bell_pitch = bellPitch;
@@ -510,14 +445,11 @@ void KSoundWidget::ringBell()
 
 void KSoundWidget::playCurrentSound()
 {
-  QString hlp, sname;
-  int soundno;
-
-//  audio.stop();
-  soundno = soundlist->currentItem();
-  if (soundno > 0) {
-      sname = locate("sound", soundlist->text(soundno));
-//      audio.play(sname);
+//audio.stop();
+  int soundno = m_soundList->currentItem();
+  if (soundno >= 0) {
+     QString sound = locate("sound", m_allSounds[soundno]);
+//   audio.play(sound);
   }
 }
 
@@ -554,7 +486,7 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
       QString fname = *it;
 
       // check for the ending ".wav"
-      if ( stricmp(".WAV",fname.right(4).latin1()) ) {
+      if ( fname.right(4) != QString::fromLatin1(".WAV")) {
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
 			 "to be a WAV--file.").arg(fname);
 
@@ -563,7 +495,7 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
       } else {
 
 	// CC: Hurra! Finally we've got a WAV file to add to the list
-	if (!addToSoundList(fname)) {
+	if (m_allSounds.contains(fname)) {
 
 	  // CC: did not add file because it is already in the list
 	  msg = i18n("The file\n"
@@ -571,8 +503,11 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
 			   "is already in the list").arg(fname);
 
 	  KMessageBox::information(this, msg);
-	
 	}
+        else {
+          m_allSounds.append(fname);
+          m_soundList->insertItem(fname);
+        }
       }
     }
   } else {
@@ -584,59 +519,45 @@ void KSoundWidget::soundlistDropEvent(QDropEvent *e)
   }
 }
 
-
-bool KSoundWidget::addToSoundList(QString sound){
-
-  // Add "sound" to the sound list, but only if it is not already there
-
-  char found = 0;
-  int i, len;
-
-  i = 0;
-  len = soundnames.count();
-
-  while ((!found) && (i < len)) {
-
-    found = (sound == soundnames[i]);
-    i++;
-  }
-
- if (!found) {
-
-   // CC: Fine, the sound is not already in the sound list!
-
-   QString *tmp = new QString(sound); // CC: take a copy...
-   soundlist->insertItem(*tmp);
-   soundlist->setTopItem(soundlist->count()-1);
-
- }
-
- return !found;
-
-}
-
-
 void KSoundWidget::defaults()
 {
-  QString none("none");
+  m_allSounds = KGlobal::dirs()->findAllResources("sound");
+  m_allSounds.prepend(m_i18nNone);
 
-  soundnames.clear();
-  for (int lf = 0; lf < EVENT_COUNT; lf++)
-    soundnames.append(none);
+  m_soundSettings.clear();
+  
+  const soundEvent *event = soundEvents;
+  while(event && event->name)
+  {
+    m_soundSettings.append(m_none);
+    event++;
+  }
 
-  sounds_enabled->setChecked(False);
-
-  eventlist->setCurrentItem(0);
-  soundlist->setCurrentItem(0);
+  m_soundsEnabled->setChecked(False);
 
   setBellVolume(100);
   setBellPitch(800);
   setBellDuration(100);
 
+  initLists();
+}
+
+void KSoundWidget::updateStatus()
+{
+  bool b = m_soundsEnabled->isChecked();
+
+  m_soundList->setEnabled(b);
+  m_eventList->setEnabled(b);
+  m_testButton->setEnabled(b);
+  m_eventLabel->setEnabled(b);
+  m_soundLabel->setEnabled(b);
+  m_statusText->setEnabled(b);
 }
 
 
 void KSoundWidget::changed()
 {
+  updateStatus();
+
   emit KCModule::changed(true);
 }

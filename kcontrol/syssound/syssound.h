@@ -19,36 +19,6 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-
-    $Log$
-    Revision 1.9  2000/03/27 21:44:07  granroth
-    No more mediatool or KAudio... waiting on Stefan for libkdemedia
-
-    Revision 1.8  2000/03/14 05:18:18  pbrown
-    merged bell settings into here. Other cleanups.
-
-    Revision 1.7  2000/01/08 18:59:26  kulow
-    some sparcCC fixes
-
-    Revision 1.6  1999/11/15 14:29:45  hoelzer
-    Ported to the new module concept.
-
-    Revision 1.5  1999/07/13 23:49:50  pbrown
-    KDND is dead, long live Xdnd.
-
-    Revision 1.4  1999/03/12 18:40:58  dfaure
-    Squashed more ksprintf and did some more Qt2.0 porting
-
-    Revision 1.3  1999/03/01 23:24:12  kulow
-    CVS_SILENT ported to Qt 2.0
-
-    Revision 1.2.4.1  1999/02/22 22:19:43  kulow
-    CVS_SILENT replaced old qt header names with new ones
-
-    Revision 1.2  1998/03/08 08:01:33  wuebben
-    Bernd: implemented support for all sound events
-
-
 */
 
 
@@ -59,12 +29,16 @@
 
 #include <qstringlist.h>
 #include <qstring.h>
-#include <qlistbox.h>
 #include <qcheckbox.h>
+#include <qtabwidget.h>
 
 //#include <mediatool.h>
 //#include <kaudio.h>
 #include <knuminput.h>
+
+class KListBox;
+class QLabel;
+class QPushButton;
 
 class KSoundWidget : public KCModule{
 
@@ -87,7 +61,7 @@ protected:
 
 private slots:
 	void eventSelected(int index);
-        void soundSelected(const QString &filename);
+        void soundSelected(int index);
 	void playCurrentSound();
 	void changed();
 
@@ -95,7 +69,10 @@ private slots:
 
 private:
 
-    bool addToSoundList(QString sound);
+    void addMainTab();
+    void addBellTab();
+    void initLists();
+    void updateStatus();
 
     int getBellVolume();
     int getBellPitch();
@@ -105,20 +82,24 @@ private:
     void setBellPitch(int);
     void setBellDuration(int);
 	
-    int selected_event;
-    QStringList soundnames;
-//    KAudio audio;
-    QCheckBox *sounds_enabled;
-    QListBox *eventlist, *soundlist;
-    QPushButton *btn_test;
+    int m_selectedEvent;
+    QStringList m_soundSettings;
+    QStringList m_allSounds;
+    QTabWidget *m_tabs;
+    QCheckBox *m_soundsEnabled;
+    KListBox *m_eventList;
+    KListBox *m_soundList;
+    QLabel *m_eventLabel;
+    QLabel *m_soundLabel;
+    QLabel *m_statusText;
+    QPushButton *m_testButton;
 
-
-    KIntNumInput *volume, *pitch, *duration;
-
-    QPushButton *test;
-
-    KConfig *config;
-    int bellVolume, bellPitch, bellDuration;
+    KIntNumInput *m_volume;
+    KIntNumInput *m_pitch;
+    KIntNumInput *m_duration;
+    
+    QString m_none;
+    QString m_i18nNone;
 };
 
 #endif
