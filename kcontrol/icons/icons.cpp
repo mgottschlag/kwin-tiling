@@ -381,7 +381,6 @@ void KIconConfig::defaults()
 
 void KIconConfig::slotUsage(int index)
 {
-    kdWarning() << KIcon::LastGroup << "::" << index << endl;
     mUsage = index;
     if ( mUsage == KIcon::Panel || mUsage == KIcon::LastGroup )
     {
