@@ -151,7 +151,7 @@ void QXEmbed::embed(WId w)
     QApplication::syncX();
     XResizeWindow(qt_xdisplay(), w, width(), height());
     XMapWindow(qt_xdisplay(),w);
-    extraData()->xDndProxy = w;
+    //extraData()->xDndProxy = w;
 
     if (this == qApp->focusWidget() )
 	sendFocusIn();
