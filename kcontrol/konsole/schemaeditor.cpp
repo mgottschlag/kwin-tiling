@@ -160,9 +160,9 @@ void SchemaEditor::updatePreview()
 	}
 	 else  //try to reload
 	{
-           if(!spix->loadFromShared(QString("DESKTOP1"))) 
+           if(!spix->loadFromShared(QString("DESKTOP1")))
               kdDebug(0) << "cannot load" << endl;
-	
+
 	}
       } else {
 	QPixmap pm;
@@ -206,7 +206,7 @@ void SchemaEditor::loadAllSchema()
     for (it = list.begin(); it != list.end(); ++it) {
 
 	QString name = (*it);
-	
+
 	filename.append(new QString(name));
 
 	QString title = readSchemaTitle(name);
@@ -215,7 +215,7 @@ void SchemaEditor::loadAllSchema()
 	    schemaList->insertItem(i18n("untitled"),i);
 	else
 	 schemaList->insertItem(title,i);
-	
+
 	i++;
     }
 
@@ -226,14 +226,19 @@ void SchemaEditor::imageSelect()
     QString start;
     start = backgndLine->text();
     if (start.isEmpty())
-	start = KGlobal::dirs()->kde_default("wallpaper");
-
+    {
+        QStringList list=KGlobal::dirs()->resourceDirs("wallpaper");
+        if(list.count()>0)
+            start= KGlobal::dirs()->resourceDirs("wallpaper").last();
+    }
 
     KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a background image"));
 // KURL url=KFileDialog::getOpenURL(start,"",0,i18n("Select a background image"));
-
-    backgndLine->setText(url.path());
-    updatePreview();
+    if(!url.path().isEmpty())
+    {
+        backgndLine->setText(url.path());
+        updatePreview();
+    }
 }
 
 void SchemaEditor::slotTypeChanged(int slot)
@@ -409,10 +414,10 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
 	return 0;
 
     FILE *sysin = fopen(QFile::encodeName(fPath), "r");
-    if (!sysin) 
+    if (!sysin)
 	return 0;
-    
-    
+
+
     char line[100];
     while (fscanf(sysin, "%80[^\n]\n", line) > 0)
 	if (strlen(line) > 5)
@@ -430,34 +435,34 @@ void SchemaEditor::readSchema(int num)
        Code taken from konsole/src/schema.C
 
      */
-     
+
     if (oldSchema != -1) {
-    
-    
+
+
 	if (defaultSchemaCB->isChecked()) {
 
 	    defaultSchema = *filename.at(oldSchema);
 
 	}
-    
+
     if(schMod) {
 	    disconnect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
-	    
+
 	    schemaList->setCurrentItem(oldSchema);
 	    if(KMessageBox::questionYesNo(this, i18n("The schema has been modified.\n"
 				"Do you want to save the changes ?"),
 		   i18n("Schema modified"))==KMessageBox::Yes)
-	
-		    saveCurrent();   
-		   
+
+		    saveCurrent();
+
 	    schemaList->setCurrentItem(num);
 	    connect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
 	    schMod=false;
-    
-    }
-     
 
-    
+    }
+
+
+
     }
 
     QString fPath = locate("data", "konsole/" + *filename.at(num));
