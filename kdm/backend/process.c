@@ -386,6 +386,7 @@ GClose (GProc *proc, int force)
         (WaitCode(ret) < EX_NORMAL || WaitCode(ret) > EX_MAX))
 	LogError ("Abnormal termination of %s, code %d, signal %d\n", 
 		  proc->pipe.who, WaitCode(ret), WaitSig(ret));
+    Debug ("closed %s\n", proc->pipe.who);
     if (proc->pipe.who)
 	free (proc->pipe.who);
     proc->pipe.who = 0;

@@ -367,7 +367,7 @@ GetHostname(char *buf, int maxlen)
 #else
     buf[0] = '\0';
     (void) gethostname (buf, maxlen);
-    buf [maxlen - 1] = '\0';
+    buf[maxlen - 1] = '\0';
     len = strlen(buf);
 #endif /* hpux */
     return len;

@@ -411,9 +411,9 @@ extern GTalk cnftalk;
 
 /* in session.c */
 extern struct display *td;
-extern char **defaultEnv (const char *user);
+extern char **baseEnv (const char *user);
 extern char **inheritEnv (char **env, const char **what);
-extern char **systemEnv (const char *user, const char *home);
+extern char **systemEnv (const char *user);
 extern int source (char **env, char *file);
 extern void DeleteXloginResources (void);
 extern void LoadXloginResources (void);

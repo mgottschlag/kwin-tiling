@@ -1044,7 +1044,7 @@ StartClient ()
     curuid = p->pw_uid;
     curgid = p->pw_gid;
 
-    env = defaultEnv (curuser);
+    env = baseEnv (curuser);
     xma = 0;
     if (td->fifoPath && StrDup (&xma, td->fifoPath)) {
 	if ((td->allowShutdown == SHUT_ALL ||
@@ -1068,16 +1068,16 @@ StartClient ()
 	env = setEnv (env, "XDM_MANAGED", xma);
 	free (xma);
     }
-    env = setEnv (env, "DISPLAY", td->name);
-    env = setEnv (env, "HOME", p->pw_dir);
     env = setEnv (env, "PATH", curuid ? td->userPath : td->systemPath);
     env = setEnv (env, "SHELL", p->pw_shell);
+    env = setEnv (env, "HOME", p->pw_dir);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
     if (krbtkfile[0] != '\0')
 	env = setEnv (env, "KRBTKFILE", krbtkfile);
 #endif
     userEnviron = inheritEnv (env, envvars);
-    systemEnviron = systemEnv (curuser, p->pw_dir);
+    env = systemEnv (curuser);
+    systemEnviron = setEnv (env, "HOME", p->pw_dir);
     Debug ("user environment:\n%[|''>'\n's"
 	   "system environment:\n%[|''>'\n's"
 	   "end of environments\n", 

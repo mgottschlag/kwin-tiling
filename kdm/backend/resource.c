@@ -49,14 +49,10 @@ GTalk cnftalk;
 static void
 OpenGetter ()
 {
-    char **env;
-
     GSet (&cnftalk);
     if (!getter.pid) {
-	env = defaultEnv((char *)0);
-	if (GOpen (&getter, originalArgv, "_config", env, strdup("config reader")))
+	if (GOpen (&getter, originalArgv, "_config", 0, strdup("config reader")))
 	    LogPanic ("Cannot run config reader\n");
-	freeStrArr (env);
     }
     Debug ("getter ready\n");
 }
@@ -506,14 +502,7 @@ LoadDisplayResources (struct display *d)
 	return 0;	/* may memleak */
     if (!startConfig (GC_gDisplay, &d->cfg.dep, FALSE))
 	return 1;
-    if ((d->displayType & d_origin) == dFromXDMCP && d->name[0] == ':') {
-	char *dname;
-	if (!ASPrintf (&dname, "localhost%s", d->name))
-	    return 0;
-	GSendStr (dname);
-	free (dname);
-    } else
-	GSendStr (d->name);
+    GSendStr (d->name);
     GSendStr (d->class2);
     LoadResources (&d->cfg);
 /*    Debug ("display(%s, %s) resources: %[*x\n", d->name, d->class2,

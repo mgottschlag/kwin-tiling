@@ -409,7 +409,7 @@ NetworkAddressToName(
 			&& !multiHomed)
 	    {
 		if (!strcmp (localhost, hostent->h_name))
-		    ASPrintf (&name, ":%d", displayNumber);
+		    ASPrintf (&name, "localhost:%d", displayNumber);
 		else
 		{
 		    if (removeDomainname)

@@ -394,7 +394,7 @@ OpenGreeter ()
     LoadXloginResources ();
 
     grttalk.pipe = &grtproc.pipe;
-    env = systemEnv (0, 0);
+    env = systemEnv ((char *) 0);
     if (GOpen (&grtproc, (char **)0, "_greet", env, name))
 	SessionExit (EX_UNMANAGE_DPY);
     freeStrArr (env);
@@ -615,7 +615,7 @@ LoadXloginResources ()
     char	**env = 0;
 
     if (!xResLoaded && td->resources[0] && access (td->resources, 4) == 0) {
-	env = systemEnv ((char *) 0, (char *) 0);
+	env = systemEnv ((char *) 0);
 	args = parseArgs ((char **) 0, td->xrdb);
 	args = parseArgs (args, td->resources);
 	Debug ("loading resource file: %s\n", td->resources);
@@ -633,7 +633,7 @@ SetupDisplay ()
 
     if (td->setup && td->setup[0])
     {
-	env = systemEnv ((char *) 0, (char *) 0);
+	env = systemEnv ((char *) 0);
 	(void) source (env, td->setup);
 	freeStrArr (env);
     }
@@ -693,7 +693,7 @@ inheritEnv (char **env, const char **what)
 }
 
 char **
-defaultEnv (const char *user)
+baseEnv (const char *user)
 {
     char	**env;
 
@@ -716,24 +716,24 @@ defaultEnv (const char *user)
     env = setEnv(env, "USRENVIRON:", 0);
 #endif
 
-    if (exportList)
-	env = inheritEnv (env, (const char **)exportList);
+    env = inheritEnv (env, (const char **)exportList);
+
+    env = setEnv (env, "DISPLAY",
+		memcmp (td->name, "localhost:", 10) ?
+		td->name : td->name + 9);
 
     return env;
 }
 
 char **
-systemEnv (const char *user, const char *home)
+systemEnv (const char *user)
 {
     char	**env;
 
-    env = defaultEnv (user);
-    if (home)
-	env = setEnv (env, "HOME", home);
-    env = setEnv (env, "DISPLAY", td->name);
-    env = setEnv (env, "PATH", td->systemPath);
-    env = setEnv (env, "SHELL", td->systemShell);
+    env = baseEnv (user);
     if (td->authFile)
 	env = setEnv (env, "XAUTHORITY", td->authFile);
+    env = setEnv (env, "PATH", td->systemPath);
+    env = setEnv (env, "SHELL", td->systemShell);
     return env;
 }
