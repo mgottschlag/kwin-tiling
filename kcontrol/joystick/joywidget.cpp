@@ -102,7 +102,6 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
 
   // calibrate button
   calibrate = new QPushButton(i18n("Calibrate"), mainVbox);
-  calibrate->setFixedWidth(calibrate->width());
   connect(calibrate, SIGNAL(clicked()), this, SLOT(calibrateDevice()));
   calibrate->setEnabled(false);
 
