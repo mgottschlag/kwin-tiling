@@ -5,6 +5,14 @@
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
  * 
+ * Based on old backgnd.cpp:
+ *
+ * Copyright (c)  Martin R. Jones 1996
+ * Converted to a kcc module by Matthias Hoelzer 1997
+ * Gradient backgrounds by Mark Donohoe 1997
+ * Pattern backgrounds by Stephan Kulow 1998
+ * Randomizing & dnd & new display modes by Matej Koss 1998
+ * 
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
