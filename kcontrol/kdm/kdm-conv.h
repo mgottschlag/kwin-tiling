@@ -32,7 +32,7 @@
 
 #include <klistbox.h>
 #include <kcombobox.h>
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <kurl.h>
 
 #include <pwd.h>

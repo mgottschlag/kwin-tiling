@@ -27,7 +27,7 @@
 #include <qfileinfo.h>
 #include <qpushbutton.h>
 
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <kurl.h>
 #include <kfiledialog.h>
 

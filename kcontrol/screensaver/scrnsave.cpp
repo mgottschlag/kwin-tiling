@@ -37,7 +37,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kdesktopfile.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include <kiconloader.h>
 #include <kcmodule.h>
 #include <kglobal.h>

@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>CSSConfigDialog</class>
-<include location="global">kcolorbtn.h</include>
+<include location="global">kcolorbutton.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
@@ -943,7 +943,7 @@
     </customwidget>
     <customwidget>
         <class>KColorButton</class>
-        <header location="global">kcolorbtn.h</header>
+        <header location="global">kcolorbutton.h</header>
         <sizehint>
             <width>40</width>
             <height>25</height>

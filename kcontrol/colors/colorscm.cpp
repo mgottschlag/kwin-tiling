@@ -35,7 +35,7 @@
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
 #include <kipc.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include <kcolorbutton.h>
 #include <kbuttonbox.h>
 #include <kgenericfactory.h>

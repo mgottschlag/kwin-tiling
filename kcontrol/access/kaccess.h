@@ -6,7 +6,7 @@
 #include <qcolor.h>
 
 
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 #include <kwinmodule.h>
 
 

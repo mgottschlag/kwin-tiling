@@ -11,7 +11,7 @@
 #ifndef __khotkeys_H
 #define __khotkeys_H
 
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 #include <qtimer.h>
 #include <dcopobject.h>
 #include <kurifilter.h>

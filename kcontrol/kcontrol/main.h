@@ -21,7 +21,7 @@
 #ifndef __main_h__
 #define __main_h__
 
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 
 class TopLevel;
 

@@ -13,7 +13,7 @@
 #include <kapplication.h>
 #include <klocale.h>
 #include <kconfig.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include <kbuttonbox.h>
 #include <kcolorbutton.h>
 #include <kglobal.h>
