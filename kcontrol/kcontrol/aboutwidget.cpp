@@ -40,7 +40,7 @@ const char * intro_text = I18N_NOOP("Welcome to the \"KDE Control Center\", "
                                 "Select an item from the index on the left "
                                 "to load a configuration module.");
 
-char * use_text = I18N_NOOP("Click on the \"<b>Help</b>\" tab on the left to view help "
+const char * use_text = I18N_NOOP("Click on the \"<b>Help</b>\" tab on the left to view help "
                         "for the active "
                         "control module. Use the \"<b>Search</b>\" tab if you are unsure "
                         "where to look for "
