@@ -597,11 +597,12 @@ spbad:
 
 /* restrict_time */
 #ifdef USE_LOGIN_CAP
+# ifdef HAVE_AUTH_TIMEOK
     if (!auth_timeok(lc, time(NULL))) {
 	login_close(lc);
 	FAILVV(V_BADTIME);
     }
-
+# endif
 
     login_close(lc);
 #endif
