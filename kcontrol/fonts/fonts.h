@@ -12,6 +12,7 @@
 #include <kfontdialog.h>
 #include <kcmodule.h>
 
+class QCheckBox;
 
 class FontUseItem : public QObject
 {
@@ -79,11 +80,14 @@ signals:
 
 protected slots:
     void fontChanged();
+    void slotUseAntiAliasing();
 
 private:
     bool _changed;
+    bool useAA, useAA_original;
+    void applyQtXFT(bool active);
     bool defaultCharset;
-
+    QCheckBox *cbAA;
     QList <FontUseItem> fontUseList;
 };
 

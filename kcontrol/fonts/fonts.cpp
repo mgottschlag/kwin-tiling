@@ -15,11 +15,15 @@
 #include <qwhatsthis.h>
 #include <qtooltip.h>
 #include <qframe.h>
+#include <qcheckbox.h>
 
 // X11 headers
 #undef Bool
 #undef Unsorted
 
+#include <kapp.h>
+#include <qbuttongroup.h>
+#include <dcopclient.h>
 #include <kglobalsettings.h>
 #include <kfontdialog.h>
 #include <kconfig.h>
@@ -30,6 +34,7 @@
 #include <kstddirs.h>
 #include <kcharsets.h>
 #include <kprocess.h>
+#include <kmessagebox.h>
 #include <stdlib.h>
 
 #include "fonts.h"
@@ -283,7 +288,20 @@ KFonts::KFonts(QWidget *parent, const char *name)
     ++count;
   }
 
-  fontUseLayout->setRowStretch( count, 1 );
+   cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
+   fontUseLayout->addWidget( cbAA, ++count, 0 );
+   QWhatsThis::add( cbAA, i18n("If this option is selected, KDE will use anti-aliased fonts and pixmaps, meaning fonts can use more than"
+                                                    "just one color to simulate curves.") );
+   fontUseLayout->setRowStretch( count, 1 );
+
+   connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
+
+   KConfig aacfg("kdeglobals", true, true);
+   aacfg.setGroup("KDE");
+   useAA = aacfg.readBoolEntry( "AntiAliasing", true);
+   useAA_original = useAA;
+
+   cbAA->setChecked(useAA);
 }
 
 KFonts::~KFonts()
@@ -324,8 +342,16 @@ void KFonts::load()
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->readFont();
 
+  KConfig aacfg("kdeglobals", true, true);
+  aacfg.setGroup("KDE");
+  useAA = aacfg.readBoolEntry( "AntiAliasing", false);
+  useAA_original = useAA;
+  kdDebug() << "AA:" << useAA << endl;
+  cbAA->setChecked(useAA);
+
   _changed = true;
   emit changed(false);
+
 }
 
 void KFonts::save()
@@ -359,6 +385,17 @@ void KFonts::save()
     QApplication::restoreOverrideCursor();
   }
 
+  applyQtXFT(useAA); // Apply config now
+
+  KConfig aacfg("kdeglobals");
+  aacfg.setGroup("KDE");
+  aacfg.writeEntry( "AntiAliasing", useAA);
+  aacfg.sync();
+
+  if(useAA != useAA_original) {
+    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change won't take effect before you restart KDE."), i18n("Anti-aliasing settings changed"), "AAsettingsChanged", false);
+    useAA_original = useAA;
+  }
   _changed = false;
   emit changed(false);
 }
@@ -366,6 +403,24 @@ void KFonts::save()
 int KFonts::buttons()
 {
   return KCModule::Help | KCModule::Default | KCModule::Apply;
+}
+
+void KFonts::slotUseAntiAliasing()
+{
+    useAA = cbAA->isChecked();
+    _changed = true;
+    emit changed(true);
+}
+
+void KFonts::applyQtXFT(bool active)
+{
+   // Pass env. var to kdeinit.
+   QCString name = "QT_XFT";
+   QCString value = active ? "1" : "0";
+   QByteArray params;
+   QDataStream stream(params, IO_WriteOnly);
+   stream << name << value;
+   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
 // vim:ts=2:sw=2:tw=78
