@@ -51,8 +51,6 @@
 
 typedef QMap<QString,QString> EntryMap;
 
-KInstance *KShortURIFilterFactory::s_instance = 0;
-
 KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
 	                          const QStringList & /*args*/ )
                 :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
@@ -379,24 +377,7 @@ void KShortURIFilter::configure()
     m_urlHints.append( URLHint(QFL1(HOSTPORT_PATTERN), QFL1("http://")) );
 }
 
-/***************************************** KShortURIFilterFactory *******************************************/
-
-KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *name )
-{
-    s_instance = new KInstance( "kshorturifilter" );
-}
-
-KShortURIFilterFactory::~KShortURIFilterFactory()
-{
-    delete s_instance;
-    s_instance = 0;
-}
-
-KInstance *KShortURIFilterFactory::instance()
-{
-    return s_instance;
-}
-
-K_EXPORT_COMPONENT_FACTORY( libkshorturifilter, KShortURIFilterFactory );
+K_EXPORT_COMPONENT_FACTORY( libkshorturifilter, 
+	                    KGenericFactory<KShortURIFilter>( "kshorturifilter" ) );
 
 #include "kshorturifilter.moc"

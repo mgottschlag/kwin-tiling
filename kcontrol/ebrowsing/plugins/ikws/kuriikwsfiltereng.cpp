@@ -32,11 +32,12 @@
 #include <ksimpleconfig.h>
 #include <kapp.h>
 #include <kstddirs.h>
+#include <kstaticdeleter.h>
 
 #include "kuriikwsfiltereng.h"
 #include "searchprovider.h"
 
-unsigned long KURISearchFilterEngine::s_refCnt = 0;
+KStaticDeleter<KURISearchFilterEngine> kurisearchfilterengsd;
 KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 
 #define IKW_KEY         "Internet Keywords"
@@ -143,29 +144,10 @@ QCString KURISearchFilterEngine::name() const
     return "kuriikwsfilter";
 }
 
-void KURISearchFilterEngine::incRef()
-{
-    s_refCnt++;
-}
-
-void KURISearchFilterEngine::decRef()
-{
-    s_refCnt--;
-    if ( s_refCnt == 0 && s_pSelf )
-	{
-	    delete s_pSelf;
-	    s_pSelf = 0;
-	}
-}
-
 KURISearchFilterEngine* KURISearchFilterEngine::self()
 {
     if (!s_pSelf)
-	{
-	    if ( s_refCnt == 0 )
-  	        s_refCnt++; //someone forgot to call incRef
-	    s_pSelf = new KURISearchFilterEngine;
-	}
+	kurisearchfilterengsd.setObject( s_pSelf, new KURISearchFilterEngine );
     return s_pSelf;
 }
 

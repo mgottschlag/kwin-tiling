@@ -31,19 +31,15 @@
 
 #define searcher KURISearchFilterEngine::self()
 
-KInstance *KURISearchFilterFactory::s_instance = 0L;
-
 KURISearchFilter::KURISearchFilter(QObject *parent, const char *name,
 	                           const QStringList & /*args*/)
                  :KURIFilterPlugin(parent, name ? name : "kurisearchfilter", 1.0),
                   DCOPObject("KURISearchFilterIface")
 {
-  KURISearchFilterEngine::incRef();
 }
 
 KURISearchFilter::~KURISearchFilter()
 {
-  KURISearchFilterEngine::decRef();
 }
 
 void KURISearchFilter::configure()
@@ -77,25 +73,7 @@ QString KURISearchFilter::configName() const
     return i18n("&Keywords");
 }
 
-
-KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) 
-{
-    KURISearchFilterEngine::incRef();
-    s_instance = new KInstance(searcher->name());
-}
-
-KURISearchFilterFactory::~KURISearchFilterFactory()
-{
-    KURISearchFilterEngine::decRef();
-    delete s_instance;
-    s_instance = 0;
-}
-
-KInstance *KURISearchFilterFactory::instance()
-{
-    return s_instance;
-}
-
-K_EXPORT_COMPONENT_FACTORY( libkurisearchfilter, KURISearchFilterFactory );
+K_EXPORT_COMPONENT_FACTORY( libkurisearchfilter, 
+	                    KGenericFactory<KURISearchFilter>( "kuriikwsfilter" ) );
 
 #include "kurisearchfilter.moc"

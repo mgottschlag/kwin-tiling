@@ -45,17 +45,5 @@ k_dcop:
     virtual void configure();
 };
 
-class KURIIKWSFilterFactory : public KGenericFactory<KURIIKWSFilter>
-{
-public:
-    KURIIKWSFilterFactory( QObject *parent = 0, const char *name = 0 );
-    ~KURIIKWSFilterFactory();
-
-    static KInstance *instance();
-
-private:
-    static KInstance *s_instance;
-};
-
 #endif
 

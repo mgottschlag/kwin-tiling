@@ -131,17 +131,4 @@ private:
     QString m_strDefaultProtocol;
 };
 
-
-class KShortURIFilterFactory : public KGenericFactory<KShortURIFilter>
-{
-public:
-    KShortURIFilterFactory( QObject *parent = 0, const char *name = 0 );
-    ~KShortURIFilterFactory();
-
-    static KInstance *instance();
-
-private:
-    static KInstance *s_instance;
-
-};
 #endif

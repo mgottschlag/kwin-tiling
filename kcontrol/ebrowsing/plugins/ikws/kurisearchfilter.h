@@ -47,17 +47,5 @@ k_dcop:
     virtual void configure();
 };
 
-class KURISearchFilterFactory : public KGenericFactory<KURISearchFilter>
-{
-public:
-    KURISearchFilterFactory( QObject *parent = 0, const char *name = 0 );
-    ~KURISearchFilterFactory();
-
-    static KInstance *instance();
-
-private:
-    static KInstance *s_instance;
-};
-
 #endif
 

@@ -84,7 +84,6 @@ private:
     bool m_bVerbose;
 
     static KURISearchFilterEngine *s_pSelf;
-    static unsigned long s_refCnt;
 };
 
 #endif
