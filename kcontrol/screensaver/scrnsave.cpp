@@ -308,6 +308,41 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     lbl->setEnabled(false);
 #endif
 
+    QGroupBox *mAutoLockGroup = new QGroupBox( i18n("Autolock"), this );
+    mAutoLockGroup->setColumnLayout( 0, Qt::Vertical );
+    vLayout->addWidget( mAutoLockGroup );
+    groupLayout = new QVBoxLayout( mAutoLockGroup->layout(), 10 );
+
+    m_topLeftCorner = new QCheckBox( i18n("Top-Left corner"), mAutoLockGroup );
+    groupLayout->addWidget( m_topLeftCorner);
+    m_topLeftCorner->setChecked(mTopLeftCorner);
+    connect( m_topLeftCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeTopLeftCorner( bool ) ) );
+
+
+
+    m_topRightCorner = new QCheckBox( i18n("Top-Right corner"), mAutoLockGroup );
+    groupLayout->addWidget( m_topRightCorner);
+    m_topRightCorner->setChecked(mTopRightCorner);
+    connect( m_topRightCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeTopRightCorner( bool ) ) );
+
+
+    m_bottomLeftCorner = new QCheckBox( i18n("Bottom-Left corner"), mAutoLockGroup );
+    groupLayout->addWidget( m_bottomLeftCorner);
+    m_bottomLeftCorner->setChecked(mBottomLeftCorner);
+    connect( m_bottomLeftCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeBottomLeftCorner( bool ) ) );
+
+
+    m_bottomRightCorner = new QCheckBox( i18n("Bottom-Right corner"), mAutoLockGroup );
+    groupLayout->addWidget( m_bottomRightCorner);
+    m_bottomRightCorner->setChecked(mBottomRightCorner);
+    connect( m_bottomRightCorner, SIGNAL( toggled( bool ) ),
+         this, SLOT( slotChangeBottomRightCorner( bool ) ) );
+
+
+
     //groupLayout->addStretch(1);
 
     vLayout->addStretch();
@@ -439,6 +474,12 @@ void KScreenSaver::readSettings()
     if (mPriority > 19) mPriority = 19;
     if (mTimeout < 60) mTimeout = 60;
 
+    mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
+    mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
+    mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft", false);
+    mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight", false);
+
+
     mChanged = false;
     delete config;
 }
@@ -500,6 +541,12 @@ void KScreenSaver::save()
     config->writeEntry("DPMS-dependent", mDPMS);
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
+    config->writeEntry("LockCornerTopLeft", m_topLeftCorner->isChecked());
+    config->writeEntry("LockCornerBottomLeft", m_bottomLeftCorner->isChecked());
+    config->writeEntry("LockCornerTopRight", m_topRightCorner->isChecked());
+    config->writeEntry("LockCornerBottomRight", m_bottomRightCorner->isChecked());
+
+
     if ( !mSaver.isEmpty() )
         config->writeEntry("Saver", mSaver);
     config->sync();
@@ -903,6 +950,35 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mSetupBt->setEnabled( true );
     setChanged(true);
 }
+
+void KScreenSaver::slotChangeBottomRightCorner( bool b)
+{
+    mBottomRightCorner = b;
+    mChanged = true;
+    emit changed(true);
+}
+
+void KScreenSaver::slotChangeBottomLeftCorner( bool b)
+{
+    mBottomLeftCorner = b;
+    mChanged = true;
+    emit changed(true);
+}
+
+void KScreenSaver::slotChangeTopRightCorner( bool b)
+{
+    mTopRightCorner = b;
+    mChanged = true;
+    emit changed(true);
+}
+
+void KScreenSaver::slotChangeTopLeftCorner( bool b)
+{
+    mTopLeftCorner = b;
+    mChanged = true;
+    emit changed(true);
+}
+
 
 //---------------------------------------------------------------------------
 //

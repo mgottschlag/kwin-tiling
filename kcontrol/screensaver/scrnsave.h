@@ -107,6 +107,10 @@ protected slots:
     // new preview
     void slotPreviewExited(KProcess *);
     void findSavers();
+    void slotChangeBottomRightCorner( bool );
+    void slotChangeBottomLeftCorner( bool );
+    void slotChangeTopRightCorner( bool );
+    void slotChangeTopLeftCorner( bool );
 
 protected:
     void writeSettings();
@@ -152,8 +156,15 @@ protected:
     bool	mDPMS;
     bool        mLock;
     bool        mEnabled;
+    bool        mTopLeftCorner;
+    bool        mTopRightCorner;
+    bool        mBottomLeftCorner;
+    bool        mBottomRightCorner;
     QString     mSaver;
-    
+    QCheckBox *m_topLeftCorner;
+    QCheckBox *m_bottomLeftCorner;
+    QCheckBox *m_topRightCorner;
+    QCheckBox *m_bottomRightCorner;
     bool        mImmutable;
 };
 
