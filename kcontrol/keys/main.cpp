@@ -21,6 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qlayout.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -35,7 +36,9 @@
 KeyModule::KeyModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+  QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);
+  layout->addWidget(tab);
 
   global = new KKeyModule(this, true);
   tab->addTab(global, i18n("&Global shortcuts"));
@@ -44,9 +47,6 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   standard = new KKeyModule(this, false);
   tab->addTab(standard, i18n("&Application shortcuts"));
   connect(standard, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-
-  setMinimumSize(global->sizeHint().width(),
-         global->sizeHint().height()+30);
 }
 
 
