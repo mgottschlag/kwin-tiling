@@ -17,6 +17,8 @@
 #include <qdict.h>
 #include "savescm.h"
 
+class QCheckBox;
+
 class KeyChooserSpec;
 
 class KKeyModule : public KCModule
@@ -51,6 +53,7 @@ protected:
 	QStringList *sFileList;
 	QPushButton *addBt;
 	QPushButton *removeBt;
+	QCheckBox *preferMetaBt;
 	int nSysSchemes;
 
 	void readSchemeNames();

@@ -57,16 +57,18 @@ private:
   QComboBox* coWin2;
   QComboBox* coWin3;
 
+  QComboBox* coAllKey;
   QComboBox* coAll1;
   QComboBox* coAll2;
   QComboBox* coAll3;
-  
+
   KConfig *config;
 
   const char* functionTiDbl(int);
   const char* functionTiAc(int);
   const char* functionTiInAc(int);
   const char* functionWin(int);
+  const char* functionAllKey(int);
   const char* functionAll(int);
 
   void setComboText(QComboBox* combo, const char* text);

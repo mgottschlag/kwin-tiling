@@ -16,6 +16,7 @@
 #include <qlayout.h>
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
+#include <qcheckbox.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -30,6 +31,7 @@
 #include <kseparator.h>
 #include <dcopclient.h>
 #include <kapp.h>
+#include <kaccel.h>	// Used in KKeyModule::init()
 
 #include "keyconfig.h"
 #include "keyconfig.moc"
@@ -79,16 +81,19 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   sList->clear();
   sFileList->clear();
-  sList->insertItem( i18n("Current scheme"), 0 );
+  sList->insertItem( i18n("Current Scheme"), 0 );
   sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE default"), 1 );
+  sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 1 );
   sFileList->append( "Not a kcsrc file" );
+  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 2 );
+  sFileList->append( "Not a kcsrc file" );
+  nSysSchemes = 3;
   readSchemeNames();
   sList->setCurrentItem( 0 );
   connect( sList, SIGNAL( highlighted( int ) ),
            SLOT( slotPreviewScheme( int ) ) );
 
-  QLabel *label = new QLabel( sList, i18n("&Key scheme"), this );
+  QLabel *label = new QLabel( sList, i18n("&Key Scheme"), this );
 
   wtstr = i18n("Here you can see a list of the existing key binding schemes with 'Current scheme'"
     " referring to the settings you are using right now. Select a scheme to use, remove or"
@@ -96,37 +101,45 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( sList, wtstr );
 
-  addBt = new QPushButton(  i18n("&Save scheme..."), this );
+  addBt = new QPushButton(  i18n("&Save Scheme..."), this );
   connect( addBt, SIGNAL( clicked() ), SLOT( slotAdd() ) );
   QWhatsThis::add(addBt, i18n("Click here to add a new key bindings scheme. You will be prompted for a name."));
 
-  removeBt = new QPushButton(  i18n("&Remove scheme"), this );
+  removeBt = new QPushButton(  i18n("&Remove Scheme"), this );
   removeBt->setEnabled(FALSE);
   connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
   QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
     " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
 
+  preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
+  if( !KAccel::keyboardHasMetaKey() )
+  	preferMetaBt->setEnabled( false );
+  preferMetaBt->setChecked( KAccel::useFourModifierKeys() );
+  connect( preferMetaBt, SIGNAL(clicked()), SLOT(slotPreferMeta()) );
+  QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
+	"like for KDE to always default to a 3-modifier configuration, then this options "
+	"should be unchecked.") );
+
   KSeparator* line = new KSeparator( KSeparator::HLine, this );
 
   dict = keys->keyDict();
-
-  //kdDebug() << "got key dict" << endl;
 
   kc =  new KeyChooserSpec( &dict, this, isGlobal );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
 
   readScheme();
 
-  QGridLayout *topLayout = new QGridLayout( this, 5, 3,
+  QGridLayout *topLayout = new QGridLayout( this, 6, 2,
                                             KDialog::marginHint(),
                                             KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
-  topLayout->addMultiCellWidget(addBt, 1, 1, 1, 2);
-  topLayout->addMultiCellWidget(removeBt, 2, 2, 1, 2);
-  topLayout->addMultiCellWidget(line, 3, 3, 0, 2);
+  topLayout->addWidget(addBt, 1, 1);
+  topLayout->addWidget(removeBt, 2, 1);
+  topLayout->addWidget(preferMetaBt, 3, 0);
+  topLayout->addMultiCellWidget(line, 4, 4, 0, 1);
   topLayout->addRowSpacing(3, 15);
-  topLayout->addMultiCellWidget(kc, 4, 4, 0, 2);
+  topLayout->addMultiCellWidget(kc, 5, 5, 0, 1);
 
   setMinimumSize(topLayout->sizeHint());
 }
@@ -147,6 +160,9 @@ void KKeyModule::load()
 
 void KKeyModule::save()
 {
+  KAccel::useFourModifierKeys( preferMetaBt->isChecked() );
+  KGlobal::config()->writeEntry( "User Four Modifier Keys", KAccel::useFourModifierKeys() ? "true" : "false", true, true );
+
   keys->setKeyDict( dict );
   keys->writeSettings();
   if ( KeyType == "global" ) {
@@ -160,6 +176,7 @@ void KKeyModule::save()
 
 void KKeyModule::defaults()
 {
+  preferMetaBt->setChecked( KAccel::keyboardHasMetaKey() );
   kc->allDefault();
 }
 
@@ -204,22 +221,19 @@ void KKeyModule::slotSave( )
 
 void KKeyModule::readScheme( int index )
 {
-  KConfigBase* config;
+  if( index == 1 )
+    kc->allDefault( true );
+  else if( index == 2 )
+    kc->allDefault( false );
+  else {
+    KConfigBase* config;
+    if( index == 0 )	config = new KConfig( "kdeglobals" );
+    else		config = new KSimpleConfig( *sFileList->at( index ), true );
 
-  if( index == 1 ) {
-    kc->allDefault();
-    return;
-  } if ( index == 0 ) {
-    config  = new KConfig( "kdeglobals" );
-  } else {
-    config =
-      new KSimpleConfig( *sFileList->at( index ), true );
+    KAccel::readKeyMap( dict, index == 0 ? KeySet : KeyScheme, config );
+    kc->listSync();
+    delete config;
   }
-
-  KAccel::readKeyMap( dict, index == 0 ? KeySet : KeyScheme, config );
-
-  kc->listSync();
-  delete config;
 }
 
 void KKeyModule::slotAdd()
@@ -357,9 +371,6 @@ void KKeyModule::slotPreviewScheme( int indx )
 
 void KKeyModule::readSchemeNames( )
 {
-  // Always a current and a default scheme
-  nSysSchemes = 2;
-
   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
 
   // This for system files
@@ -371,12 +382,7 @@ void KKeyModule::readSchemeNames( )
 
     sList->insertItem( str );
     sFileList->append( *it );
-
-    // bug?  this makes it impossible to delete any scheme.
-    //nSysSchemes++;
-
   }
-
 }
 
 void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
@@ -385,7 +391,7 @@ void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
     }
 
 KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent, bool global_P )
-    : KKeyChooser( aKeyDict, parent, global_P ), global( global_P )
+    : KKeyChooser( aKeyDict, parent, global_P, false, true ), global( global_P )
     {
     if( global )
         globalDict()->clear(); // don't check against global keys twice
@@ -436,7 +442,16 @@ void KKeyModule::init()
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
+
   keys->setConfigGlobal( true );
+
+  KAccel::readModifierMapping();
+
+  KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+  QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
+  KAccel::useFourModifierKeys( fourMods == "true" );
+  KGlobal::config()->writeEntry( "User Four Modifier Keys", KAccel::useFourModifierKeys() ? "true" : "false", true, true );
+
   keys->setConfigGroup( "Global Keys" );
   keys->readSettings();
   keys->writeSettings();

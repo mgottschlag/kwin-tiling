@@ -39,6 +39,8 @@
 #include <qwhatsthis.h>
 #include <qtl.h>
 
+#include <kaccel.h>	// For KAccel::keyboardHasMetaKey()
+
 KActionsConfig::~KActionsConfig ()
 {
 
@@ -47,7 +49,7 @@ KActionsConfig::~KActionsConfig ()
 KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *name)
   : KCModule (parent, name), config(_config)
 {
-  QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
+  QString strWin1, strWin2, strWin3, strAllKey, strAll1, strAll2, strAll3;
   QGridLayout *layout = new QGridLayout( this, 17, 4,
                      KDialog::marginHint(), 1);
   QLabel* label;
@@ -169,11 +171,11 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   // Inner window, titlebar and frame
 
-  strMouseButton1 = i18n("ALT + Left Button");
+  strMouseButton1 = i18n("Modifier Key + Left Button");
   strAll1 = i18n("In this row you can customize left click behavior when clicking into"
      " the titlebar or the frame.");
 
-  strMouseButton3 = i18n("ALT + Right Button");
+  strMouseButton3 = i18n("Modifier Key + Right Button");
   strAll3 = i18n("In this row you can customize right click behavior when clicking into"
      " the titlebar or the frame." );
 
@@ -183,18 +185,24 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
      qSwap(strAll1, strAll3);
   }
 
+  label = new QLabel("Modifier Key", this );
+  layout->addWidget(label, 13, 1);
+  strAllKey = i18n("Here you select whether holding the Meta key or Alt key "
+    "will allow you to perform the following actions.");
+  QWhatsThis::add( label, strAllKey );
+
   label = new QLabel(strMouseButton1, this);
-  layout->addWidget(label, 13,1);
+  layout->addWidget(label, 14,1);
   QWhatsThis::add( label, strAll1);
 
-  label = new QLabel(i18n("ALT + Middle Button"), this);
-  layout->addWidget(label, 14,1);
+  label = new QLabel(i18n("Modifier Key + Middle Button"), this);
+  layout->addWidget(label, 15,1);
   strAll2 = i18n("Here you can customize KDE's behavior when middle clicking into a window"
-    " while pressing the ALT key.");
+    " while pressing the modifier key.");
   QWhatsThis::add( label, strAll2 );
 
   label = new QLabel(strMouseButton3, this);
-  layout->addWidget(label, 15,1);
+  layout->addWidget(label, 16,1);
   QWhatsThis::add( label, strAll3);
 
   // Titlebar and frame, active, mouse button 1
@@ -314,15 +322,11 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   QWhatsThis::add( combo, strWin3 );
 
   combo = new QComboBox(this);
-  combo->insertItem(i18n("Move"));
-  combo->insertItem(i18n("Toggle raise and lower"));
-  combo->insertItem(i18n("Resize"));
-  combo->insertItem(i18n("Raise"));
-  combo->insertItem(i18n("Lower"));
-  combo->insertItem(i18n("Nothing"));
+  combo->insertItem(i18n("Meta"));
+  combo->insertItem(i18n("Alt"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 13,13, 2, 3);
-  coAll1 = combo;
+  coAllKey = combo;
   QWhatsThis::add( combo, strAll1 );
 
   combo = new QComboBox(this);
@@ -334,6 +338,18 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 14,14, 2, 3);
+  coAll1 = combo;
+  QWhatsThis::add( combo, strAll1 );
+
+  combo = new QComboBox(this);
+  combo->insertItem(i18n("Move"));
+  combo->insertItem(i18n("Toggle raise and lower"));
+  combo->insertItem(i18n("Resize"));
+  combo->insertItem(i18n("Raise"));
+  combo->insertItem(i18n("Lower"));
+  combo->insertItem(i18n("Nothing"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
+  layout->addMultiCellWidget(combo, 15,15, 2, 3);
   coAll2 = combo;
   QWhatsThis::add( combo, strAll2 );
 
@@ -345,7 +361,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 15,15, 2, 3);
+  layout->addMultiCellWidget(combo, 16,16, 2, 3);
   coAll3 =  combo;
   QWhatsThis::add( combo, strAll3 );
 
@@ -413,6 +429,14 @@ const char*  KActionsConfig::functionWin(int i)
   }
   return "";
 }
+const char*  KActionsConfig::functionAllKey(int i)
+{
+  switch (i){
+  case 0: return "Meta"; break;
+  case 1: return "Alt"; break;
+  }
+  return "";
+}
 const char*  KActionsConfig::functionAll(int i)
 {
   switch (i){
@@ -442,6 +466,7 @@ void KActionsConfig::load()
   setComboText(coWin1,config->readEntry("CommandWindow1","Activate, raise and pass click").ascii());
   setComboText(coWin2,config->readEntry("CommandWindow2","Activate and pass click").ascii());
   setComboText(coWin3,config->readEntry("CommandWindow3","Activate and pass click").ascii());
+  setComboText(coAllKey,config->readEntry("CommandAllKey","Meta").ascii());
   setComboText(coAll1,config->readEntry("CommandAll1","Move").ascii());
   setComboText(coAll2,config->readEntry("CommandAll2","Toggle raise and lower").ascii());
   setComboText(coAll3,config->readEntry("CommandAll3","Resize").ascii());
@@ -468,6 +493,7 @@ void KActionsConfig::save()
   config->writeEntry("CommandWindow1", functionWin(coWin1->currentItem()));
   config->writeEntry("CommandWindow2", functionWin(coWin2->currentItem()));
   config->writeEntry("CommandWindow3", functionWin(coWin3->currentItem()));
+  config->writeEntry("CommandAllKey", functionAllKey(coAllKey->currentItem()));
   config->writeEntry("CommandAll1", functionAll(coAll1->currentItem()));
   config->writeEntry("CommandAll2", functionAll(coAll2->currentItem()));
   config->writeEntry("CommandAll3", functionAll(coAll3->currentItem()));
@@ -484,6 +510,7 @@ void KActionsConfig::defaults()
   setComboText(coWin1,"Activate, raise and pass click");
   setComboText(coWin2,"Activate and pass click");
   setComboText(coWin3,"Activate and pass click");
+  setComboText(coAllKey, KAccel::keyboardHasMetaKey() ? "Meta" : "Alt");
   setComboText (coAll1,"Move");
   setComboText(coAll2,"Toggle raise and lower");
   setComboText(coAll3,"Resize");
