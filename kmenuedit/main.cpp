@@ -97,17 +97,13 @@ int main( int argc, char **argv )
 	  exit(1);
 	}
     }
-  global_pix_loader =KGlobal::iconLoader();
+  global_pix_loader = KGlobal::iconLoader();
   global_pix_sel = new KIconLoaderDialog;
   global_pix_sel2 = new KIconLoaderDialog;
-  QStringList icon_sel_list;
-  QStringList icon_sel_list2;
-  icon_sel_list.append(locate("icon", QString()));
-  icon_sel_list.append(KApplication::localkdedir()+"/share/icons");
-  icon_sel_list2.append(locate("mini", QString()));
-  icon_sel_list2.append(KApplication::localkdedir()+"/share/icons/mini");
-  global_pix_sel->setDir(icon_sel_list);
-  global_pix_sel2->setDir(icon_sel_list2);
+  QStringList icon_list = KGlobal::dirs()->findAllResources("icon");
+  QStringList icon_list2 = KGlobal::dirs()->findAllResources("mini");
+  global_pix_sel->addIcons(icon_list);
+  global_pix_sel2->addIcons(icon_list2);
 
   KMenuEdit edit;
   if( a.isRestored() )
