@@ -57,11 +57,20 @@ extern "C"
 #ifdef HAVE_XCURSOR
     config = KGlobal::config();
     config->setGroup("KDE");
-    QCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString("default")));
+    QCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
     QCString size = config->readEntry("cursorSize", QString()).local8Bit();
+    
+    // use a default value for theme only if it's not configured at all, not even in X resources
+    if( theme.isEmpty()
+        && QCString( XGetDefault( qt_xdisplay(), "Xcursor", "theme" )).isEmpty()
+        && QCString( XcursorGetTheme( qt_xdisplay())).isEmpty())
+    {
+        theme = "default";
+    }
 
      // Apply the KDE cursor theme to ourselves
-    XcursorSetTheme(qt_xdisplay(), theme.data());
+    if( !theme.isEmpty())
+        XcursorSetTheme(qt_xdisplay(), theme.data());
 
     if (!size.isEmpty())
     	XcursorSetDefaultSize(qt_xdisplay(), size.toUInt());
@@ -74,8 +83,10 @@ extern "C"
     // Tell klauncher to set the XCURSOR_THEME and XCURSOR_SIZE environment
     // variables when launching applications.
     DCOPRef klauncher("klauncher");
-    klauncher.send("setLaunchEnv", QCString("XCURSOR_THEME"), theme);
-    klauncher.send("setLaunchEnv", QCString("XCURSOR_SIZE"), size);
+    if( !theme.isEmpty())
+        klauncher.send("setLaunchEnv", QCString("XCURSOR_THEME"), theme);
+    if( !size.isEmpty())
+        klauncher.send("setLaunchEnv", QCString("XCURSOR_SIZE"), size);
 #endif
   }
 }

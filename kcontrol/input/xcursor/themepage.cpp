@@ -134,7 +134,7 @@ void ThemePage::save()
 
 	KConfig c( "kdeglobals" );
 	c.setGroup( "KDE" );
-	c.writeEntry( "cursorTheme", selectedTheme != "none" ? selectedTheme : QString::null );
+	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString::null );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
 				"changes to take effect."), i18n("Cursor Settings Changed"),
@@ -155,15 +155,15 @@ void ThemePage::load()
 	c->setGroup( "KDE" );
 	currentTheme = c->readEntry( "cursorTheme", currentTheme );
         if( currentTheme.isEmpty())
-            currentTheme = "none";
+            currentTheme = "system";
 
 	// Find the theme in the listview and select it
 	QListViewItem *item = listview->findItem( currentTheme, DirColumn );
-	if ( item ) {
-		selectedTheme = item->text( DirColumn );
-		listview->setSelected( item, true );
-		listview->ensureItemVisible( item );
-	}
+        if( !item )
+                item = listview->findItem( "system", DirColumn );
+	selectedTheme = item->text( DirColumn );
+	listview->setSelected( item, true );
+	listview->ensureItemVisible( item );
 
 	// Update the preview widget as well
 	if ( preview )
@@ -528,7 +528,9 @@ void ThemePage::insertThemes()
 	// Sort the theme list
 	listview->sort();
 
-	KListViewItem *item = new KListViewItem( listview, i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
+	KListViewItem *item = new KListViewItem( listview, ' ' + i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
+	listview->insertItem( item );
+	item = new KListViewItem( listview, ' ' + i18n( "System theme" ), i18n( "Do not change cursor theme") , /*hidden*/ "system" );
 	listview->insertItem( item );
         // no ThemeInfo object for this one
 }
