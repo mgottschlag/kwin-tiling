@@ -92,10 +92,10 @@
                                     </property>
                                 </widget>
                                 <widget>
-                                    <class>QLineEdit</class>
+                                    <class>QSpinBox</class>
                                     <property stdset="1">
                                         <name>name</name>
-                                        <cstring>m_pEditNum2Show</cstring>
+                                        <cstring>m_num2ShowSpinBox</cstring>
                                     </property>
                                     <property stdset="1">
                                         <name>sizePolicy</name>
@@ -103,6 +103,18 @@
                                             <hsizetype>5</hsizetype>
                                             <vsizetype>0</vsizetype>
                                         </sizepolicy>
+                                    </property>
+				    <property stdset="1">
+                                        <name>minValue</name>
+                                        <number>0</number>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>maxValue</name>
+                                        <number>20</number>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>value</name>
+                                        <number>5</number>
                                     </property>
                                 </widget>
                                 <spacer>
@@ -627,7 +639,7 @@
     <tabstop>m_hiddenFiles</tabstop>
     <tabstop>m_maxSlider</tabstop>
     <tabstop>m_maxSpinBox</tabstop>
-    <tabstop>m_pEditNum2Show</tabstop>
+    <tabstop>m_num2ShowSpinBox</tabstop>
     <tabstop>m_pRecent</tabstop>
     <tabstop>m_pOften</tabstop>
 </tabstops>
