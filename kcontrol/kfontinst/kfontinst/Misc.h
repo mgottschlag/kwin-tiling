@@ -36,7 +36,7 @@
 #include <qtl.h>
 #include <kglobal.h>
 #include <kinstance.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 class QComboBox;
 

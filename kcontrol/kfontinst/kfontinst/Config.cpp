@@ -34,7 +34,7 @@
 #include <qfileinfo.h>
 #include <kconfig.h>
 #include <kapp.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <kglobal.h>
