@@ -26,7 +26,7 @@
 
 
 /*
- * all following functions should return TRUE, when the Information 
+ * all following functions should return TRUE, when the Information
  * was filled into the lBox-Widget. Returning FALSE indicates that
  * information was not available.
  */
@@ -62,7 +62,7 @@ bool GetInfo_CPU(QListView *lBox)
 	{ 0,0,0 }
 	};
   hw_info_mib_list_t *hw_info_mib;
-  
+
   int mib[2], num;
   char *buf;
   size_t len;
@@ -100,7 +100,7 @@ bool GetInfo_CPU(QListView *lBox)
 // this is used to find out which devices are currently
 // on system
 static bool GetDmesgInfo(QListView *lBox, const char *filter,
-	void func(QListView *, QString s, void **, bool))
+	void func(QListView *, QCString s, void **, bool))
 {
         QFile *dmesg = new QFile("/var/run/dmesg.boot");
 	bool usepipe=false;
@@ -108,7 +108,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	QTextStream *t;
 	bool seencpu=false;
 	void *opaque=NULL;
-	QString s;
+	QCString s;
 	bool found=false;
 
 	if (dmesg->exists() && dmesg->open(IO_ReadOnly)) {
@@ -123,7 +123,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	}
 
 	QListViewItem *olditem = NULL;
-	while((s = t->readLine()) != "") {
+	while(!(s = t->readLine().local8Bit()).isEmpty()) {
 		if (!seencpu) {
 			if (s.contains("cpu"))
 				seencpu = true;
@@ -161,7 +161,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	return found;
 }
 
-void AddIRQLine(QListView *lBox, QString s, void **opaque, bool ending)
+void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool ending)
 {
 	QStrList *strlist = (QStrList *) *opaque;
 	const char *str;
@@ -246,7 +246,7 @@ bool GetInfo_Sound (QListView *lbox)
 			free(dev);
 		}
 	}
-	
+
 	return true;
 }
 
@@ -265,7 +265,7 @@ bool GetInfo_SCSI (QListView *lbox)
 
 bool GetInfo_Partitions (QListView *lbox)
 {
-	QString s;
+	QCString s;
 	char *line, *orig_line;
 	const char *device, *mountpoint, *type, *flags;
 	FILE *pipe = popen("/sbin/mount", "r");
@@ -283,7 +283,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("Mount Options"));
 
 	QListViewItem *olditem = 0;
-	while ((s = t->readLine()) != "") {
+	while (!(s = t->readLine().latin1()).isEmpty()) {
 		orig_line = line = strdup(s);
 
 		device = strsep(&line, " ");
