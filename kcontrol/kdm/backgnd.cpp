@@ -298,10 +298,10 @@ void KBackground::init()
 
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("No Wallpaper"));
-    m_pArrangementBox->insertItem(i18n("Centred"));
+    m_pArrangementBox->insertItem(i18n("Centered"));
     m_pArrangementBox->insertItem(i18n("Tiled"));
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
-    m_pArrangementBox->insertItem(i18n("Centred Maxpect"));
+    m_pArrangementBox->insertItem(i18n("Centered Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
 }
 
