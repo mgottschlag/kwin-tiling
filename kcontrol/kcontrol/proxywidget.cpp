@@ -90,10 +90,10 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
                       "allow modifications in this module."));
 
 	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
-                              "for system-wide modifications. Therefore it is "
+                              "for system-wide modifications; therefore, it is "
                               "required that you provide the root password to be "
-                              "able to change the modules properties. As long as "
-                              "you don't provide the password, the module will be "
+                              "able to change the module's properties.  If you "
+                              "do not provide the password, the module will be "
                               "disabled."));
 }
 
