@@ -9,6 +9,7 @@ Name[da]=Windows Skema (uden Win-tast)
 Name[de]=Windows-Schema (ohne Windows-Taste)
 Name[eo]=Vindoza aranĝo (sen Vindozoklavo)
 Name[es]=Esquema de Windows (sin la tecla Win)
+Name[et]=Windowsi skeem (Win klahvita)
 Name[fi]=Windows teema (ilman Win-näppäintä)
 Name[fr]=Modèle Windows (sans touche Windows)
 Name[he]=תצורת Windows (בלי מקש Win)
@@ -28,6 +29,7 @@ Name[sl]=Shema Windows (brez tipke z okni)
 Name[sv]=Windows-schema (utan Windows-tangent)
 Name[xh]=Ifestile Ezingagqibekanga (Ngaphandle kwe Win-key)
 Name[xx]=xx
+Name[zu]=Isikimu SamaWindi (Ngaphandle kwe Meta/Win-Ukhiye)
 Uses Win Modifer=false
 
 [Global Shortcuts]
