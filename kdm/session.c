@@ -258,7 +258,9 @@ static	struct dlfuncs	dlfuncs = {
 	endspent,
 #endif
 	getpwnam,
+#ifdef HAVE_CRYPT_H
 	crypt,
+#endif
 	};
 	
 #ifdef X_NOT_STDC_ENV
