@@ -370,9 +370,17 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 #endif /* USE_PAM */
 
 static int
+#if defined(USE_PAM) || defined(AIXV3)
 AccNoPass (const char *un)
 {
+    struct passwd *pw;
+#else
+AccNoPass (const char *un, struct passwd *pw)
+{
+#endif
+    struct group *gr;
     char **fp;
+    int hg;
 
     if (!*un)
 	return 0;
@@ -380,9 +388,32 @@ AccNoPass (const char *un)
     if (!strcmp (un, td->autoUser))
 	return 1;
 
-    for (fp = td->noPassUsers; *fp; fp++)
-	if (!strcmp (un, *fp))
+    for (hg = 0, fp = td->noPassUsers; *fp; fp++)
+	if (**fp == '@')
+	    hg = 1;
+	else if (!strcmp (un, *fp))
 	    return 1;
+
+#if defined(USE_PAM) || defined(AIXV3)
+    if (hg && (pw = getpwnam (un))) {
+#else
+    if (hg) {
+#endif
+	for (setgrent (); (gr = getgrent ()); )
+	    for (fp = td->noPassUsers; *fp; fp++)
+		if (**fp == '@' && !strcmp (gr->gr_name, *fp + 1)) {
+		    if (pw->pw_gid == gr->gr_gid) {
+			endgrent ();
+			return 1;
+		    }
+		    for (; *gr->gr_mem; gr->gr_mem++)
+			if (!strcmp (un, *gr->gr_mem)) {
+			    endgrent ();
+			    return 1;
+			}
+		}
+	endgrent ();
+    }
 
     return 0;
 }
@@ -576,7 +607,7 @@ Verify (GConvFunc gconv)
 	goto nplogin;
     }
 
-    if (AccNoPass (curuser)) {
+    if (AccNoPass (curuser, p)) {
       nplogin:
 	gconv (GCONV_PASS_ND, 0);
 	if (!*curpass) {
