@@ -52,7 +52,7 @@
 #include "kpartsaver.h"
 
 
-QList<KPartSaver> g_savers;
+QPtrList<KPartSaver> g_savers;
 bool g_inited = false;
 
 

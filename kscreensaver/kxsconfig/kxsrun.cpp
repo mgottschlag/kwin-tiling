@@ -37,7 +37,7 @@
 
 #define MAX_ARGS  20
 
-template class QList<KXSConfigItem>;
+template class QPtrList<KXSConfigItem>;
 
 //===========================================================================
 static const char *appName = "kxsrun";
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
   // read configuration args
   KConfig config(configFile);
 
-  QList<KXSConfigItem> configItemList;
+  QPtrList<KXSConfigItem> configItemList;
   int idx = 0;
 
   while (true)

@@ -36,7 +36,7 @@
 #include "kxsconfig.h"
 #include "kxscontrol.h"
 
-template class QList<KXSConfigItem>;
+template class QPtrList<KXSConfigItem>;
 
 //===========================================================================
 KXSConfigDialog::KXSConfigDialog(const QString &filename)
