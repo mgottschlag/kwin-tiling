@@ -115,14 +115,15 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 
 bool CFontViewPart::openURL(const KURL &url)
 {
+printf("openURLx \"%s\"\n", url.prettyURL().latin1());
     if (!url.isValid() || !closeURL())
         return false;
 
-    m_url=url;
-
-    if(KFI_KIO_FONTS_PROTOCOL==m_url.protocol() || m_url.isLocalFile())
+    if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || url.isLocalFile())
     {
-        emit started( 0 );
+        m_url=url;
+printf("m_url.protocol():\"%s\", path:\"%s\"\n", m_url.protocol().latin1(), m_url.path().latin1());
+        emit started(0);
         m_file = m_url.path();
         bool ret=openFile();
         if (ret)
@@ -138,11 +139,12 @@ bool CFontViewPart::openURL(const KURL &url)
 
 bool CFontViewPart::openFile()
 {
-    bool showFs=false;
+    bool showFs=false,
+         isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol();
 
-    itsPreview->showFont(m_url);    
+    itsPreview->showFont(isFonts ? m_url : m_file);
 
-    if(KFI_KIO_FONTS_PROTOCOL!=m_url.protocol() && itsPreview->engine().getNumIndexes()>1)
+    if(!isFonts && itsPreview->engine().getNumIndexes()>1)
     {
         showFs=true;
         itsFaceSelector->setRange(1, itsPreview->engine().getNumIndexes(), 1, false);
