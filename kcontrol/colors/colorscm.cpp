@@ -449,8 +449,8 @@ void KColorScheme::slotRemove()
     if (unlink(QFile::encodeName(entry->path).data())) {
         KMessageBox::error( 0,
           i18n("This color scheme could not be removed.\n"
-           "Perhaps you do not have permission to alter the file\n"
-            "system where the color scheme is stored." ));
+           "Perhaps you do not have permission to alter the file"
+           "system where the color scheme is stored." ));
         return;
     }
 

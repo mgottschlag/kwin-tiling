@@ -86,7 +86,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
                     CKfiGlobal::xft().newFile();
             }
             else
-                KMessageBox::error(this, i18n("File does not exist\n"
+                KMessageBox::error(this, i18n("File does not exist "
                                               "and directory is not writeable."), i18n("File error"));
         }
         else
@@ -95,7 +95,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
 
             if(!ok)
             {
-                KMessageBox::error(this, i18n("Parse error,\n"
+                KMessageBox::error(this, i18n("Parse error, "
                                               "incorrect file?"), i18n("File error"));
                 CKfiGlobal::xft().read(CKfiGlobal::cfg().getXftConfigFile());
             }

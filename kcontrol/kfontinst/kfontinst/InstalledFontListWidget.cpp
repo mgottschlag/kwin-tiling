@@ -117,9 +117,8 @@ void CInstalledFontListWidget::configure()
         KMessageBox::information(this, i18n("No changes have been made."));
     else
         if(KMessageBox::questionYesNo(this, i18n("Apply system changes now?\n"
-                                                 "\n"
-                                                 "This will create various required configuration files.\n"
-                                                 "You do not need to do this after each install/uninstall -\n"
+                                                 "This will create various required configuration files. "
+                                                 "You do not need to do this after each install/uninstall - "
                                                  "it is only necessary after you have finished."),
                                             i18n("Configure System"))==KMessageBox::Yes)
             emit configureSystem();

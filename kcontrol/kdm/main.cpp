@@ -61,7 +61,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 	QStringList qs = QStringList::split('\n', KImageIO::pattern());
 	qs.remove(qs.begin());
 
-	QString msg = i18n( "Sorry, but %1\n"
+	QString msg = i18n( "Sorry, but %1 "
 			    "does not seem to be an image file.\n"
 			    "Please use files with these extensions:\n"
 			    "%2")

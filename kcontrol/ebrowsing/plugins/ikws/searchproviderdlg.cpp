@@ -133,7 +133,7 @@ void SearchProviderDialog::accept()
     if ((m_query->text().find("\\{") == -1)
         && KMessageBox::warningContinueCancel(0,
             i18n("The URI does not contain a \\{...} placeholder for the user query.\n"
-                 "This means that the same page is always going to be visited, \n"
+                 "This means that the same page is always going to be visited, "
                  "regardless of what the user types..."),
             QString::null, i18n("Keep It")) == KMessageBox::Cancel)
         return;

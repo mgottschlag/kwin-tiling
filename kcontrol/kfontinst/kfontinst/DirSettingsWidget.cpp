@@ -102,7 +102,7 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
                 ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
                                                          "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
             else
-                KMessageBox::error(this, i18n("File does not exist\n"
+                KMessageBox::error(this, i18n("File does not exist "
                                               "and directory is not writeable."), i18n("File error"));
         else
             ok=true;
@@ -151,7 +151,7 @@ void CDirSettingsWidget::xConfigButtonPressed()
                 ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
                                                          "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
             else
-                KMessageBox::error(this, i18n("File does not exist\n"
+                KMessageBox::error(this, i18n("File does not exist "
                                               "and directory is not writeable."), i18n("File error"));
         else
             ok=true;

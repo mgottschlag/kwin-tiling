@@ -238,7 +238,7 @@ void KKeyModule::defaults()
   if ( !d.remove( *sFileList->at( ind ) ) ) {
     KMessageBox::sorry( 0,
                         i18n("This key scheme could not be removed.\n"
-                             "Perhaps you do not have permission to alter the file\n"
+                             "Perhaps you do not have permission to alter the file "
                              "system where the key scheme is stored." ));
     return;
   }
