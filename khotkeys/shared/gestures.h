@@ -19,7 +19,6 @@
 
 namespace KHotKeys
 {
-#define MAX_SEQUENCE_DEF_VALUE 25
 
 class Gesture;
 extern Gesture* gesture_handler;
@@ -28,15 +27,15 @@ class Stroke
     {
     public:
     // maximum number of numbers in stroke
-        static const int MAX_SEQUENCE;
+        enum { MAX_SEQUENCE = 25 };
     // largest number of points allowed to be sampled
-        static const int MAX_POINTS;
+        enum { MAX_POINTS = 5000 };
     // default percentage of sample points in a bin from all points to be valid
-        static const int MIN_BIN_POINTS_PERCENTAGE;
+        enum { MIN_BIN_POINTS_PERCENTAGE = 5 };
     // default threshold of size of smaller axis needed for it to define its own bin size
-        static const int SCALE_RATIO;
+        enum { SCALE_RATIO = 4 };
     // default number of sample points required to have a valid stroke
-        static const int MIN_POINTS;
+        enum { MIN_POINTS = 10 };
 	Stroke();
 	~Stroke();
 	bool record( int x, int y );
@@ -58,7 +57,7 @@ class Stroke
 	    int y;
 	    };
 	point* points;
-	char ret_val[ MAX_SEQUENCE_DEF_VALUE ];
+	char ret_val[ MAX_SEQUENCE ];
     };
 
 class Gesture

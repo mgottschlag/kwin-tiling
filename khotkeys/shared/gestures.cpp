@@ -415,17 +415,6 @@ int Stroke::bin( int x, int y )
     return bin_num;
     }
 
-// maximum number of numbers in stroke
-const int Stroke::MAX_SEQUENCE = MAX_SEQUENCE_DEF_VALUE;
-// largest number of points allowed to be sampled
-const int Stroke::MAX_POINTS = 5000;
-// default percentage of sample points in a bin from all points to be valid
-const int Stroke::MIN_BIN_POINTS_PERCENTAGE = 5;
-// default threshold of size of smaller axis needed for it to define its own bin size
-const int Stroke::SCALE_RATIO = 4;
-// default number of sample points required to have a valid stroke
-const int Stroke::MIN_POINTS = 10;
-
 } // namespace KHotKeys
 
 #include "gestures.moc"
