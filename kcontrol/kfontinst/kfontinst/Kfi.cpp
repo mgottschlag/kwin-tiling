@@ -34,7 +34,7 @@
 #include <qapplication.h>
 #include <qnamespace.h>
 
-const char * CKfi::constVersion = "0.10";
+const char * CKfi::constVersion = "0.11";
  
 CKfiMainWidget * CKfi::create(QWidget *parent)
 {
