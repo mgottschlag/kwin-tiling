@@ -658,6 +658,7 @@ void KCMStyle::setStyleDirty()
 struct StyleEntry {
 	QString name;
 	QString desc;
+	bool hidden;
 };
 
 void KCMStyle::loadStyle( KSimpleConfig& config )
@@ -689,6 +690,10 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		entry->name = config.readEntry("Name");
 		entry->desc = config.readEntry("Comment", i18n("No description available."));
 
+		// Check if this style should be shown
+		config.setGroup("Desktop Entry");
+		entry->hidden = config.readBoolEntry("Hidden", false);
+
 		// Insert the entry into our dictionary.
 		styleEntries.insert(strWidgetStyle, entry);
 	}
@@ -699,6 +704,8 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	{
 		// Find a match for the key in the dictionary
 		if ((entry = styleEntries.find(*it)) != 0) {
+			if (entry->hidden)
+				continue;
 			if (entry->name.isNull())
 				lvStyle->insertItem( new QListViewItem(lvStyle, *it,
 												   entry->desc, *it) );
