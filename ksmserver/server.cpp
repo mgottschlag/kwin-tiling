@@ -1304,7 +1304,7 @@ void KSMServer::discardSession()
         // case up to KDE and Qt < 3.1
         int i = 1;
         while ( i <= count &&
-                config->readListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
+                config->readPathListEntry( QString("discardCommand") + QString::number(i) ) != discardCommand )
             i++;
         if ( i <= count )
             executeCommand( discardCommand );
@@ -1317,7 +1317,7 @@ void KSMServer::storeSession()
     config->setGroup( sessionGroup );
     int count =  config->readNumEntry( "count" );
     for ( int i = 1; i <= count; i++ ) {
-        QStringList discardCommand = config->readListEntry( QString("discardCommand") + QString::number(i) );
+        QStringList discardCommand = config->readPathListEntry( QString("discardCommand") + QString::number(i) );
         if ( discardCommand.isEmpty())
             continue;
         // check that non of the new clients uses the exactly same
@@ -1359,7 +1359,7 @@ void KSMServer::storeSession()
         config->writeEntry( QString("program")+n, program );
         config->writeEntry( QString("clientId")+n, c->clientId() );
         config->writeEntry( QString("restartCommand")+n, restartCommand );
-        config->writeEntry( QString("discardCommand")+n, c->discardCommand() );
+        config->writePathEntry( QString("discardCommand")+n, c->discardCommand() );
         config->writeEntry( QString("restartStyleHint")+n, restartHint );
         config->writeEntry( QString("userId")+n, c->userId() );
     }
