@@ -42,6 +42,8 @@ KColorConfig::KColorConfig(QWidget *parent, const char* name)
     itemCombo->insertItem(i18n("Taskbar background"), Taskbar_ID);
     itemCombo->insertItem(i18n("Taskbar button foreground"), TaskBtnFg_ID);
     itemCombo->insertItem(i18n("Taskbar button background"), TaskBtnBg_ID);
+    itemCombo->insertItem(i18n("Busy indicator foreground"), BlinkHigh_ID);
+    itemCombo->insertItem(i18n("Busy indicator background"), BlinkLow_ID);
 
     QLabel *warnLbl = new QLabel(i18n("Notice: These settings should be merged with\n\
 kcmdisplay's color preview widget after beta status."), this);
@@ -105,6 +107,10 @@ void KColorConfig::loadSettings()
                                                   &foregroundColor());
     colors[TaskBtnBg_ID] = config->readColorEntry("TaskbarBackground",
                                                   &backgroundColor());
+    colors[BlinkHigh_ID] = config->readColorEntry("BlinkHighlight",
+                                                  &green);
+    colors[BlinkLow_ID] = config->readColorEntry("BlinkLowlight",
+                                                  &darkGreen);
 }
 
 void KColorConfig::saveSettings()
@@ -117,6 +123,8 @@ void KColorConfig::saveSettings()
     config->writeEntry("TaskbarFrameBackground", colors[Taskbar_ID]);
     config->writeEntry("TaskbarForeground", colors[TaskBtnFg_ID]);
     config->writeEntry("TaskbarBackground", colors[TaskBtnBg_ID]);
+    config->writeEntry("BlinkHighlight", colors[BlinkHigh_ID]);
+    config->writeEntry("BlinkLowlight", colors[BlinkLow_ID]);
     config->sync();
 }
 
