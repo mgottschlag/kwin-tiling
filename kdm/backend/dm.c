@@ -355,6 +355,20 @@ main (int argc, char **argv)
 }
 
 
+#ifdef HAVE_VTS
+void
+activateVT (int vt)
+{
+    int con = open ("/dev/console", O_RDONLY);
+    if (con >= 0)
+    {
+	ioctl (con, VT_ACTIVATE, vt);
+	close (con);
+    }
+}
+#endif
+
+
 enum utState { UtWait, UtActive };
 
 #ifndef UT_LINESIZE
@@ -525,14 +539,7 @@ SwitchToTty (struct display *d)
     utmpList = utp;
 #ifdef HAVE_VTS	/* chvt */
     if (!memcmp(d->console, "tty", 3))
-    {
-	int con = open ("/dev/console", O_RDONLY);
-	if (con >= 0)
-	{
-	    ioctl (con, VT_ACTIVATE, atoi (d->console + 3));
-	    close (con);
-	}
-    }
+	activateVT (atoi (d->console + 3));
 #endif
     if (!CheckUtmp ())
     {

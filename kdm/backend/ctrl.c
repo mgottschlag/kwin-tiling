@@ -468,6 +468,30 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		fLog (d, fd, "noent", "no reserve display available");
 		goto bust;
 	    }
+#ifdef HAVE_VTS
+	} else if (!strcmp (ar[0], "activate")) {
+	    if (!ar[1])
+		goto miss;
+	    if (ar[2])
+		goto exce;
+	    if (d && (d->displayType & d_location) != dLocal) {
+		fLog (d, fd, "perm", "display is not local");
+		goto bust;
+	    }
+	    if (!(di = FindDisplayByName (ar[1]))) {
+		fLog (d, fd, "noent", "display not found");
+		goto bust;
+	    }
+	    if ((di->displayType & d_location) != dLocal) {
+		fLog (d, fd, "inval", "target display is not local");
+		goto bust;
+	    }
+	    if (!di->serverVT) {
+		fLog (d, fd, "noent", "target display has no VT assigned");
+		goto bust;
+	    }
+	    activateVT (di->serverVT);
+#endif
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1])
 		goto miss;
