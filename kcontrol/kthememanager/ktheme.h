@@ -122,6 +122,7 @@ public:
 
     /**
      * Creates a preview file called theme_name.preview.png
+     * (i.e. takes a snapshot of the current desktop)
      */
     void addPreview();
 

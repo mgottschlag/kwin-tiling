@@ -164,6 +164,12 @@ QString KTheme::createYourself( bool pack )
             break;
     }
 
+    // 11. Screensaver
+    desktopConf.setGroup( "ScreenSaver" );
+    QDomElement saverElem = m_dom.createElement( "screensaver" );
+    saverElem.setAttribute( "name", desktopConf.readEntry( "Saver" ) );
+    m_root.appendChild( saverElem );
+
     // 3. Icons
     globalConf->setGroup( "Icons" );
     QDomElement iconElem = m_dom.createElement( "icons" );
@@ -285,7 +291,6 @@ QString KTheme::createYourself( bool pack )
     widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle" ) );
     m_root.appendChild( widgetsElem );
 
-
     // Save the XML
     QFile file( m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".xml" );
     if ( file.open( IO_WriteOnly ) ) {
@@ -352,6 +357,16 @@ void KTheme::apply()
                 break;          // stop here
         }
     }
+
+    // 11. Screensaver
+    QDomElement saverElem = m_dom.elementsByTagName( "screensaver" ).item( 0 ).toElement();
+
+    if ( !saverElem.isNull() )
+    {
+        desktopConf.setGroup( "ScreenSaver" );
+        desktopConf.writeEntry( "Saver", saverElem.attribute( "name" ) );
+    }
+
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
     DCOPClient *client = kapp->dcopClient();

@@ -32,6 +32,8 @@
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 
 class QString;
+
+/*
 class KIconViewItem;
 
 class KThemeDetailsItem: public KIconViewItem
@@ -47,6 +49,7 @@ public:
 private:
     QString m_exec;
 };
+*/
 
 /**
  *

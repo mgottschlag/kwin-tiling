@@ -65,6 +65,7 @@ Sample XML theme config file:
     <transparent value="true|false" />
 </panel>
 <widgets name="qstyle_lib_name" />
+<screensaver name="saver.desktop" />
 </kdetheme>
 
 
