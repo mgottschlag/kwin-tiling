@@ -403,6 +403,7 @@ void CFontmap::createTopLevel()
                 // Also, ensure ours is .runlibfile'd before the main GS one - else problems can occur
                 if(-1==kfiLine || kfiLine>gsLine)
                 {
+                    in.clear();
                     in.seekg(0, ios::end);
                     int size= (streamoff) in.tellg();
                     in.seekg(0, ios::beg);
