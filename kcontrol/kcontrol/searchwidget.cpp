@@ -173,7 +173,7 @@ void SearchWidget::populateKeyListBox(const QString& s)
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
-      if ( QRegExp(s, false, true).match(k->name()) >= 0)
+      if ( QRegExp(s, false, true).search(k->name()) >= 0)
         matches.append(k->name());
     }
 
