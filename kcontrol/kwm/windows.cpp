@@ -116,34 +116,34 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     " while resizing it, instead of just showing a window 'skeleton'. The result may not be satisfying"
     " on slow machines.") );
 
-  // resize animation - CT 27May98; 19Oct1998
-  resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
-                    windowsBox);
-  rLay->addWidget(resizeAnimTitleLabel,0,0);
+//   // resize animation - CT 27May98; 19Oct1998
+//   resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
+//                     windowsBox);
+//   rLay->addWidget(resizeAnimTitleLabel,0,0);
 
-  resizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
-  resizeAnimSlider->setSteps(10,1);
-  rLay->addMultiCellWidget(resizeAnimSlider,0,0,1,2);
+//   resizeAnimSlider = new QSlider(0,10,10,0,QSlider::Horizontal, windowsBox);
+//   resizeAnimSlider->setSteps(10,1);
+//   rLay->addMultiCellWidget(resizeAnimSlider,0,0,1,2);
 
-  resizeAnimNoneLabel= new QLabel(i18n("None"),windowsBox);
-  resizeAnimNoneLabel->setAlignment(AlignTop|AlignLeft);
-  rLay->addWidget(resizeAnimNoneLabel,1,1);
+//   resizeAnimNoneLabel= new QLabel(i18n("None"),windowsBox);
+//   resizeAnimNoneLabel->setAlignment(AlignTop|AlignLeft);
+//   rLay->addWidget(resizeAnimNoneLabel,1,1);
 
-  resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
-  resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
-  rLay->addWidget(resizeAnimFastLabel,1,2);
+//   resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
+//   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
+//   rLay->addWidget(resizeAnimFastLabel,1,2);
 
-  wtstr = i18n("Here you can set the speed for the resize animation shown when windows are"
-    " maximized or minimized. Drag the slider to the left edge to avoid a resize animation.");
-  QWhatsThis::add( resizeAnimTitleLabel, wtstr );
-  QWhatsThis::add( resizeAnimSlider, wtstr );
-  QWhatsThis::add( resizeAnimNoneLabel, wtstr );
-  QWhatsThis::add( resizeAnimFastLabel, wtstr );
+//   wtstr = i18n("Here you can set the speed for the resize animation shown when windows are"
+//     " maximized or minimized. Drag the slider to the left edge to avoid a resize animation.");
+//   QWhatsThis::add( resizeAnimTitleLabel, wtstr );
+//   QWhatsThis::add( resizeAnimSlider, wtstr );
+//   QWhatsThis::add( resizeAnimNoneLabel, wtstr );
+//   QWhatsThis::add( resizeAnimFastLabel, wtstr );
 
-  resizeAnimTitleLabel->setEnabled(false);
-  resizeAnimSlider->setEnabled(false);
-  resizeAnimNoneLabel->setEnabled(false);
-  resizeAnimFastLabel->setEnabled(false);
+//   resizeAnimTitleLabel->setEnabled(false);
+//   resizeAnimSlider->setEnabled(false);
+//   resizeAnimNoneLabel->setEnabled(false);
+//   resizeAnimFastLabel->setEnabled(false);
 
   lay->addWidget(windowsBox);
 
@@ -277,7 +277,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   connect(vertOnly, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
   connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
-  connect(resizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+//   connect(resizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
   connect(placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   connect(focusCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   connect(fcsBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
@@ -333,15 +333,15 @@ void KWindowConfig::setFocus(int foc)
   setAutoRaiseEnabled();
 }
 
-int KWindowConfig::getResizeAnim()
-{
-  return resizeAnimSlider->value();
-}
+// int KWindowConfig::getResizeAnim()
+// {
+//   return resizeAnimSlider->value();
+// }
 
-void KWindowConfig::setResizeAnim(int anim)
-{
-  resizeAnimSlider->setValue(anim);
-}
+// void KWindowConfig::setResizeAnim(int anim)
+// {
+//   resizeAnimSlider->setValue(anim);
+// }
 
 int KWindowConfig::getResizeOpaque()
 {

@@ -91,7 +91,7 @@ private slots:
 private:
 
   int getMove( void );
-  int getResizeAnim( void );
+//   int getResizeAnim( void );
   int getResizeOpaque ( void );
   int getPlacement( void ); //CT
   int getFocus( void );
@@ -99,7 +99,7 @@ private:
   int getAutoRaiseInterval( void );
 
   void setMove(int);
-  void setResizeAnim(int);
+//   void setResizeAnim(int);
   void setResizeOpaque(int);
   void setPlacement(int); //CT
   void setFocus(int);
@@ -112,8 +112,8 @@ private:
   QCheckBox *opaque, *vertOnly;
 
   QCheckBox *resizeOpaqueOn;
-  QSlider *resizeAnimSlider;
-  QLabel *resizeAnimTitleLabel, *resizeAnimNoneLabel, *resizeAnimFastLabel;
+//   QSlider *resizeAnimSlider;
+//   QLabel *resizeAnimTitleLabel, *resizeAnimNoneLabel, *resizeAnimFastLabel;
 
   //CT 19jan98; 21Oct1998
   QButtonGroup *plcBox;
