@@ -35,9 +35,6 @@ public:
     QString quickHelp() const;
     const KAboutData* aboutData() const;
 
-protected slots:
-    void slotChildChanged(bool);
-
 private:
     BGDialog      *m_base;
     KConfig       *m_pConfig;

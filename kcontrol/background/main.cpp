@@ -65,7 +65,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     // reparenting that is done.
     setAcceptDrops(true);
 
-    connect(m_base, SIGNAL(changed(bool)), SLOT(slotChildChanged(bool)));
+    connect(m_base, SIGNAL(changed(bool)), SLOT(setChanged(bool)));
 }
 
 void KBackground::load()
@@ -99,12 +99,6 @@ void KBackground::defaults()
 {
     m_base->defaults();
 }
-
-void KBackground::slotChildChanged(bool different)
-{
-   setChanged(different);
-}
-
 
 QString KBackground::quickHelp() const
 {
