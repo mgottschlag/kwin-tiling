@@ -59,6 +59,8 @@ protected:
 	void resizeGL ( int w, int h );
 	/** setup the GL enviroment */
 	void initializeGL ();
+	void setSize( float newSize );
+	void setStars( bool doStars );
 
 private:
 	/** load the partical file */
@@ -75,7 +77,8 @@ private:
 	float	xspeed;						// Base X Speed (To Allow Keyboard Direction Of Tail)
 	float	yspeed;						// Base Y Speed (To Allow Keyboard Direction Of Tail)
 	float	zoom;					// Used To Zoom Out
-
+	float	size;
+	float	stars;
 	GLuint	loop;						// Misc Loop Variable
 	GLuint	col;						// Current Color Selection
 	GLuint	delay;						// Rainbow Effect Delay

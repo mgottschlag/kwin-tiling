@@ -255,7 +255,7 @@ void Fountain::initializeGL ()
 			particle[loop].xg=0.0f;					// Set Horizontal Pull To Zero
 			particle[loop].yg=-0.8f;				// Set Vertical Pull Downward
 			particle[loop].zg=0.0f;					// Set Pull On Z Axis To Zero
-			particle[loop].size=0.75f;				// Set particle size.
+			particle[loop].size=1.0f;				// Set particle size.
 		}
 	}
 	else
@@ -320,7 +320,10 @@ void Fountain::paintGL ()
                                particle[loop].life );
 
                     /* Build Quad From A Triangle Strip */
-                    glBegin( GL_TRIANGLE_FAN );
+		  if( !stars )
+		    glBegin( GL_TRIANGLE_STRIP );
+		  else
+		    glBegin( GL_TRIANGLE_FAN );
                       /* Top Right */
                       glTexCoord2d( 1, 1 );
                       glVertex3f( x + particle[loop].size, y + particle[loop].size, z );
@@ -358,6 +361,23 @@ void Fountain::paintGL ()
 				particle[loop].g=colors[col][1];			// Select Green From Color Table
 				particle[loop].b=colors[col][2];			// Select Blue From Color Table
 				particle[loop].size=0.75f;
+				if ((1+(random()%20)) == 10)
+				{
+				// Explode
+					particle[loop].active=true;				// Make All The Particles Active
+					particle[loop].life=1.0f;				// Give All The Particles Full Life
+					particle[loop].fade=float(rand()%100)/1000.0f+0.003f;	// Random Fade Speed
+					particle[loop].r=colors[(loop+1)/(MAX_PARTICLES/12)][0];	// Select Red Rainbow Color
+					particle[loop].g=colors[(loop+1)/(MAX_PARTICLES/12)][1];	// Select Green Rainbow Color
+					particle[loop].b=colors[(loop+1)/(MAX_PARTICLES/12)][2];	// Select Blue Rainbow Color
+					particle[loop].xi=float((rand()%50)-26.0f)*10.0f;	// Random Speed On X Axis
+					particle[loop].yi=float((rand()%50)-25.0f)*10.0f;	// Random Speed On Y Axis
+					particle[loop].zi=float((rand()%50)-25.0f)*10.0f;	// Random Speed On Z Axis
+					particle[loop].xg=0.0f;					// Set Horizontal Pull To Zero
+					particle[loop].yg=-0.8f;				// Set Vertical Pull Downward
+					particle[loop].zg=0.0f;					// Set Pull On Z Axis To Zero
+					particle[loop].size=1.0f;				// Set particle size.
+				}
 			}
 			// Lets stir some things up
 			index += 0.001;
@@ -370,4 +390,12 @@ void Fountain::paintGL ()
 
 	swapBuffers ();
 	glFlush();
+}
+void Fountain::setSize( float newSize )
+{
+	size = newSize;
+}
+void Fountain::setStars( bool doStars )
+{
+	stars = doStars;
 }
