@@ -111,10 +111,14 @@ void TaskManager::windowAdded(WId w )
 		     NET::WMWindowType | NET::WMPid | NET::WMState );
 
     // ignore NET::Tool and other special window types
-    if (info.windowType() != NET::Normal
-        && info.windowType() != NET::Override
-        && info.windowType() != NET::Unknown
-        && info.windowType() != NET::Dialog)
+    NET::WindowType wType = info.windowType( NET::NormalMask | NET::DesktopMask | NET::DockMask
+	| NET::ToolbarMask | NET::MenuMask | NET::DialogMask | NET::OverrideMask
+	| NET::TopMenuMask | NET::UtilityMask | NET::SplashMask );
+    if ( wType != NET::Normal
+        && wType != NET::Override
+        && wType != NET::Unknown
+        && wType != NET::Dialog
+	&& wType != NET::Utility)
 	return;
 
     // ignore windows that want to be ignored by the taskbar
@@ -378,9 +382,14 @@ bool Task::isMaximized() const
     return(_info.state & NET::Max);
 }
 
+bool Task::isMinimized() const
+{
+    return _info.isMinimized();
+}
+
 bool Task::isIconified() const
 {
-    return (_info.mappingState == NET::Iconic);
+    return _info.isMinimized();
 }
 
 bool Task::isAlwaysOnTop() const
@@ -572,7 +581,7 @@ void Task::maximize()
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     ni.setState( NET::Max, NET::Max );
 
-    if (_info.mappingState == NET::Iconic)
+    if (isIconified())
         activate();
 }
 
@@ -581,7 +590,7 @@ void Task::restore()
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     ni.setState( 0, NET::Max );
 
-    if (_info.mappingState == NET::Iconic)
+    if (isIconified())
         activate();
 }
 

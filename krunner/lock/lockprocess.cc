@@ -392,7 +392,7 @@ void LockProcess::saveVRoot()
 //
 void LockProcess::setVRoot(Window win, Window vr)
 {
-    assert( KWin::info(winId()).mappingState != NET::Withdrawn );
+    assert( KWin::windowInfo(winId()).mappingState() != NET::Withdrawn );
 
     if (gVRoot)
         removeVRoot(gVRoot);
@@ -546,7 +546,7 @@ void LockProcess::startSaver()
 
 void LockProcess::slotStart()
 {
-    if (KWin::info(winId()).mappingState == NET::Withdrawn) {
+    if (KWin::windowInfo(winId()).mappingState() == NET::Withdrawn) {
         QTimer::singleShot(100, this, SLOT(slotStart()));
         return;
     }

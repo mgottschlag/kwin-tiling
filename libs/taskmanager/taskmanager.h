@@ -55,6 +55,8 @@ class Task: public QObject
     Q_PROPERTY( QString visibleIconName READ visibleIconName )
     Q_PROPERTY( QPixmap pixmap READ pixmap )
     Q_PROPERTY( bool maximized READ isMaximized )
+    Q_PROPERTY( bool minimized READ isMinimized )
+    // KDE4 deprecated
     Q_PROPERTY( bool iconified READ isIconified )
     Q_PROPERTY( bool shaded READ isShaded WRITE setShaded )
     Q_PROPERTY( bool active READ isActive )
@@ -136,7 +138,13 @@ public:
     bool isMaximized() const;
 
     /**
-     * Returns true if the task's window is iconified.
+     * Returns true if the task's window is minimized.
+     */
+    bool isMinimized() const;
+
+    /**
+     * @deprecated
+     * Returns true if the task's window is minimized(iconified).
      */
     bool isIconified() const;
 
