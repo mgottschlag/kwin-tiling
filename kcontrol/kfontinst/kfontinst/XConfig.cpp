@@ -791,9 +791,11 @@ bool CXConfig::createFontsDotDir(const QString &dir
                                         scalableFonts.append(entry);
 
 #ifdef HAVE_XFT
-                                        if((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it) &&
+                                        if(CFontEngine::isATtf(fInfo->fileName().local8Bit()) &&
+                                          ((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it)) &&
                                           !find(symbolFamilies, family))
                                             symbolFamilies.append(family);
+
                                         if(mono && !find(monoFamilies, family))
                                             monoFamilies.append(family);
 #endif
