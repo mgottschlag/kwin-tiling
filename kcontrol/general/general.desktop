@@ -1,0 +1,16 @@
+[Desktop Entry]
+Exec=kcmshell general 
+Icon=general
+Type=Application
+DocPath=kcontrol/general.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=general
+X-KDE-FactoryName=general
+X-KDE-Init=general
+
+Name=General Widget Options
+
+Comment=Allows to manipulate the behavior of some widgets.
+
+Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
