@@ -1,17 +1,16 @@
-lib_LTLIBRARIES = libkcm_email.la
+INCLUDES= $(all_includes) -I/usr/include/coas
 
-libkcm_email_la_SOURCES = email.cpp 
+lib_LTLIBRARIES = libkcm_daemons.la
 
-libkcm_email_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_email_la_LIBADD = -lkdeui  
-INCLUDES= $(all_includes) 
+libkcm_daemons_la_SOURCES = daemons.cpp
 
-libkcm_email_la_METASOURCES = AUTO
+libkcm_daemons_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+libkcm_daemons_la_LIBADD = $(LIB_KDEUI)
 
-noinst_HEADERS = email.h
+libkcm_daemons_la_METASOURCES = AUTO
 
-KDE_ICON = email
+noinst_HEADERS = daemons.h
 
-messages:
-	$(XGETTEXT) $(libkcm_email_la_SOURCES) -o $(podir)/kcmemail.pot
-
+data_DATA = daemons.desktop
+datadir = $(kde_appsdir)/Settings/COAS
+EXTRA_DIST = $(data_DATA)
