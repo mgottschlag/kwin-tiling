@@ -71,6 +71,21 @@ typedef QPtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
+
+const KAboutData* KCMNic::aboutData() const
+{
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcminfo"),
+		I18N_NOOP("KDE Panel System Information Control Module"),
+		0, 0, KAboutData::License_GPL,
+		I18N_NOOP("(c) 2001 - 2002 Alexander Neundorf"));
+
+    about->addAuthor("Alexander Neundorf", 0, "neundorf@kde.org");
+
+    return about;
+}
+
+
 KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    :KCModule(KCMNicFactory::instance(), parent,name)
 {

@@ -28,6 +28,7 @@
 #include <qlistview.h>
 
 #include <kcmodule.h>
+#include <kaboutdata.h>
 
 class KCMNic:public KCModule
 {
@@ -35,6 +36,7 @@ class KCMNic:public KCModule
    public:
       KCMNic(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList( ));
       virtual ~KCMNic() {};
+      const KAboutData* aboutData() const;
 
    protected slots:
       void update();
