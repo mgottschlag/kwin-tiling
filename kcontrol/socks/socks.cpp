@@ -41,7 +41,7 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kmessagebox.h>
-
+#include <ksocks.h>
 
 #include "socks.h"
 
@@ -51,9 +51,9 @@ KSocksConfig::KSocksConfig(QWidget *parent, const char *name)
 {
 QGridLayout *grid;
 QString whatstr;
-QFrame *frame;
+QWidget *frame;
 
-  frame = new QFrame(this);
+  frame = this;
   grid = new QGridLayout(frame, 13, 5, KDialog::marginHint(),
                                        KDialog::spacingHint());
 
@@ -190,9 +190,20 @@ void KSocksConfig::customPathChanged(const QString&)
 
 void KSocksConfig::testClicked()
 {
-  KMessageBox::information(NULL,
-                           "Sorry, this isn't implemented yet.",
-                           i18n("SOCKS Support"));
+  
+  if (KSocks::self()->hasSocks()) {
+     KMessageBox::information(NULL,
+                              i18n("SOCKS was found and initialized."),
+                              i18n("SOCKS Support"));
+     // Eventually we could actually attempt to connect to a site here.
+  } else {
+      KMessageBox::information(NULL,
+                               i18n("SOCKS could not be loaded."),
+                               i18n("SOCKS Support"));
+  }
+
+  KSocks::self()->die();
+
 }
 
 
