@@ -25,7 +25,8 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-
+#include <kstddirs.h>
+#include <ksimpleconfig.h>
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
@@ -37,10 +38,15 @@
 #include "main.h"
 
 
+KSimpleConfig *c;
+
 KDModule::KDModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
   QStringList show_users;
+
+  c = new KSimpleConfig(*KGlobal::dirs()->resourceDirs("config").begin() + 
+			"kdmrc");
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
@@ -75,6 +81,10 @@ KDModule::KDModule(QWidget *parent, const char *name)
   top->addWidget(tab);
 }
 
+KDModule::~KDModule()
+{
+  delete c;
+}
 
 QString KDModule::quickHelp() const
 {

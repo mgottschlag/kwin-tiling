@@ -43,7 +43,6 @@
 #include <qtabwidget.h>
 
 #include <kapp.h>
-#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -62,6 +61,8 @@
 #include <bgdialogs.h>
 #include <backgnd.h>
 
+
+extern KSimpleConfig *c;
 
 /**** DLL Interface ****/
 
@@ -263,7 +264,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
-    KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
     m_Renderer = new KBackgroundRenderer(0, c);
     connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 

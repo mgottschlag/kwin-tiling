@@ -33,6 +33,8 @@
 #include "kdm-font.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -95,15 +97,13 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 void KDMFontWidget::save()
 {
   //kdDebug() << "KDMFontWidget::applySettings()" << endl;
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
+
   // write font
   c->writeEntry("StdFont", stdfont, true);
   c->writeEntry("GreetFont", greetfont, true);
   c->writeEntry("FailFont", failfont, true);
-
-  delete c;
 }
 
 
@@ -111,8 +111,6 @@ void KDMFontWidget::load()
 {
   QString str;
 
-  // Get config object
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // Read the fonts
@@ -124,8 +122,6 @@ void KDMFontWidget::load()
   greetfont = c->readFontEntry("GreetFont", &greetfont);
 
   slotSetFont(fontcombo->currentItem());
-
-  delete c;
 }
 
 

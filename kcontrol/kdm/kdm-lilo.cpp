@@ -31,6 +31,8 @@
 #include "kdm-lilo.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMLiloWidget::KDMLiloWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -70,21 +72,16 @@ KDMLiloWidget::KDMLiloWidget(QWidget *parent, const char *name)
 
 void KDMLiloWidget::save()
 {
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
-
   c->setGroup("Lilo");
 
   c->writeEntry("Lilo", useLilo->isChecked());
   c->writeEntry("LiloCommand", liloCmd->text());
   c->writeEntry("LiloMap", liloMap->text());
-
-  delete c;
 }
 
 
 void KDMLiloWidget::load()
 {
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("Lilo");
 
   bool use = c->readBoolEntry("Lilo", false);
@@ -92,8 +89,6 @@ void KDMLiloWidget::load()
 
   liloCmd->setText(c->readEntry("LiloCommand", "/sbin/lilo"));
   liloMap->setText(c->readEntry("LiloMap", "/boot/map"));
-
-  delete c;
 
   liloClicked();
 }

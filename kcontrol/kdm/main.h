@@ -26,9 +26,7 @@
 
 #include <qtabwidget.h>
 
-
 #include <kcmodule.h>
-
 
 class KDMAppearanceWidget;
 class KBackground;
@@ -38,7 +36,6 @@ class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
 
-
 class KDModule : public KCModule
 {
   Q_OBJECT
@@ -46,6 +43,7 @@ class KDModule : public KCModule
 public:
 
   KDModule(QWidget *parent, const char *name);
+  ~KDModule();
 
   void load();
   void save();

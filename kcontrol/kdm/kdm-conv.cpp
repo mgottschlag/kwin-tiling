@@ -37,6 +37,8 @@
 #include "kdm-conv.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QStringList *show_users)
     : KCModule(parent, name)
 {
@@ -232,7 +234,6 @@ void KDMConvenienceWidget::slotEnPLChanged()
 
 void KDMConvenienceWidget::save()
 {
-    KSimpleConfig *c = new KSimpleConfig(locate("config", QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
     c->writeEntry( "AutoLoginEnable", cbalen->isChecked() );
@@ -249,17 +250,12 @@ void KDMConvenienceWidget::save()
 
     c->writeEntry( "AutoReLogin", cbarlen->isChecked() );
     c->writeEntry( "ShowPrevious", cbshwen->isChecked() );
-
-    delete c;
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
 
 void KDMConvenienceWidget::load(QStringList *show_users)
 {
-    // Get config object
-    KSimpleConfig *c = new KSimpleConfig(locate("config", 
-					QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
     show_users->remove("root");
@@ -289,8 +285,6 @@ void KDMConvenienceWidget::load(QStringList *show_users)
 
     cbarlen->setChecked(c->readBoolEntry( "AutoReLogin", false) );
     cbshwen->setChecked(c->readBoolEntry( "ShowPrevious", false) );
-
-    delete c;
 
     slotEnALChanged();
     slotEnPLChanged();

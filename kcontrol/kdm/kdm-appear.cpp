@@ -46,6 +46,8 @@
 #include "kdm-appear.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -368,8 +370,6 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 void KDMAppearanceWidget::save()
 {
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
-
   c->setGroup("KDM");
 
   // write greeting string
@@ -404,15 +404,11 @@ void KDMAppearanceWidget::save()
   // Not used..
   c->writeEntry("Money",    countrycombo->currentTag());
   c->writeEntry("Numbers",  countrycombo->currentTag());
-
-  delete c;
 }
 
 
 void KDMAppearanceWidget::load()
 {
-  // Get config object
-  KConfig *c = new KConfig("kdmrc");
   c->setGroup("KDM");
 
   // Read the greeting string

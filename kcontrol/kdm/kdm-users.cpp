@@ -39,6 +39,8 @@
 #include "kdm-users.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
     : KCModule(parent, name)
 {
@@ -381,7 +383,6 @@ void KDMUsersWidget::slotUserSelected(const QString &user)
 
 void KDMUsersWidget::save()
 {
-    KSimpleConfig *c = new KSimpleConfig(locate("config", QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
     c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
@@ -403,8 +404,6 @@ void KDMUsersWidget::save()
         usrstr.append(",");
     }
     c->writeEntry( "Users", usrstr );
-
-    delete c;
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -414,9 +413,6 @@ void KDMUsersWidget::load(QStringList *show_users)
     iconloader = KGlobal::iconLoader();
     QString str;
 
-    // Get config object
-    KSimpleConfig *c = new KSimpleConfig(locate("config", 
-					QString::fromLatin1("kdmrc")));
     c->setGroup("KDM");
 
     QString su = c->readEntry( "ShowUsers");
@@ -464,7 +460,6 @@ void KDMUsersWidget::load(QStringList *show_users)
 
     cbusrsrt->setChecked(c->readBoolEntry("SortUsers", true));
 
-    delete c;
     remuserlb->setCurrentItem(0);
     slotUserSelected(remuserlb->currentText());
 }

@@ -38,6 +38,8 @@
 #include "kdm-sess.moc"
 
 
+extern KSimpleConfig *c;
+
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -251,7 +253,6 @@ void KDMSessionsWidget::slotSetAllowShutdown(int s)
 void KDMSessionsWidget::save()
 {
   //kdDebug() << "KDMSessionsWidget::applySettings()" << endl;
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDM");
 
@@ -291,8 +292,6 @@ void KDMSessionsWidget::save()
     }
     c->writeEntry( "SessionTypes", sesstr );
   }
-
-  delete c;
 }
 
 
@@ -300,8 +299,6 @@ void KDMSessionsWidget::load()
 {
   QString str;
 
-  // Get config object
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
   c->setGroup("KDM");
 
   // read restart and shutdown cmds
@@ -323,8 +320,6 @@ void KDMSessionsWidget::load()
   QStringList sessions = c->readListEntry( "SessionTypes");
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
-
-  delete c;
 }
 
 

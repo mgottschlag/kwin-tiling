@@ -32,6 +32,8 @@
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"
 
+extern KSimpleConfig *c;
+
 void KBGMonitor::setAllowDrop(bool a)
 {
   if(a == allowdrop)
@@ -505,7 +507,6 @@ void KDMBackgroundWidget::showSettings()
 void KDMBackgroundWidget::applySettings()
 {
   //kdDebug() << "KDMBackgroundWidget::applySettings()" << endl;
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
   c->setGroup("KDMDESKTOP");
 
@@ -570,8 +571,6 @@ void KDMBackgroundWidget::applySettings()
       c->writeEntry( "BackGroundPictureMode", "Fancy" );
     break;
   } // switch
-
-  delete c;
 }
 
 void KDMBackgroundWidget::loadSettings()
@@ -579,10 +578,8 @@ void KDMBackgroundWidget::loadSettings()
     iconloader = KGlobal::iconLoader();
   QString str;
   
-  // Get config object
-  KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
-
   c->setGroup("KDMDESKTOP");
+
   color1  = c->readColorEntry( "BackGroundColor1", &darkCyan);
   color2  = c->readColorEntry( "BackGroundColor2", &darkBlue);
 
@@ -633,8 +630,6 @@ void KDMBackgroundWidget::loadSettings()
     wpMode = Fancy;
   else
     wpMode = Tile;
-
-  delete c;
 }
 
 

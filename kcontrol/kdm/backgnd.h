@@ -33,9 +33,7 @@ class QTabWidget;
 
 class KColorButton;
 class KBackgroundRenderer;
-class KConfig;
 class KStandardDirs;
-
 
 /**
  * This class handles drops on the preview monitor.
