@@ -102,7 +102,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	layout()->addItem(new QSpacerItem(0,0));
 
-	setButtons(KCModule::Default | KCModule::Apply);
+	setButtons(KCModule::Apply);
 
 	// just set the "apply settings on startup" box
 	load();
