@@ -1551,7 +1551,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
         // Delete any previous bitmap if size is differnt to previous
         if(NULL!=itsFt.bmp.data && oldW!=itsFt.bmp.w && oldH!=itsFt.bmp.h)
         {
-            delete itsFt.bmp.data;
+            delete [] itsFt.bmp.data;
             itsFt.bmp.data=NULL;
         }
 
@@ -2350,7 +2350,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                         }
                     }
                 }
-                delete props;
+                delete [] props;
             }
         }
 
@@ -2587,9 +2587,9 @@ bool CFontEngine::openFontPcf(const QString &file, unsigned short mask)
                                                     }
                                             }
                                         }
-                                        delete str;
+                                        delete [] str;
                                     }
-                                    delete props;
+                                    delete [] props;
                                 }
                             }
                         }

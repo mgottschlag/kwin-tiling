@@ -81,7 +81,7 @@ CTtf::CTtf()
 CTtf::~CTtf()
 {
     if(itsBuffer)
-        delete itsBuffer;
+        delete [] itsBuffer;
 }
 
 CTtf::EStatus CTtf::fixPsNames(const QString &nameAndPath)
@@ -260,7 +260,7 @@ CTtf::EStatus CTtf::readFile(const QString &nameAndPath)
         itsBufferSize=ff.tellg();
 
         if(itsBuffer)
-            delete itsBuffer;
+            delete [] itsBuffer;
  
         itsBuffer=new char [itsBufferSize];
         ff.seekg(0, ios::beg);
@@ -378,7 +378,7 @@ CTtf::EStatus CTtf::fixGlyphName(int index, const char *newName)
                                 memcpy(name, newName, strlen(newName));
                                 memcpy(tmpBuffer, name+strlen(nameStr), remainderSize);
                                 memcpy(name+strlen(newName), tmpBuffer, remainderSize);
-                                delete tmpBuffer;
+                                delete [] tmpBuffer;
                             }
                             else
                             {
@@ -390,7 +390,7 @@ CTtf::EStatus CTtf::fixGlyphName(int index, const char *newName)
                                 memcpy(&newBuffer[(name-itsBuffer)+strlen(newName)], &itsBuffer[(name-itsBuffer)+strlen(nameStr)], 
                                        remainderSize);         // copy remainder 
 
-                                delete itsBuffer; 
+                                delete [] itsBuffer; 
                                 itsBuffer=newBuffer;
                             }
                             itsBufferSize=itsBufferSize+diff;
