@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
  *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
+ *   Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,20 +48,137 @@
 #include "treeview.h"
 #include "treeview.moc"
 #include "khotkeys.h"
+#include "menufile.h"
 
-const char* clipboard_prefix = ".kmenuedit_clipboard/";
+#define MOVE_FOLDER "M"
+#define COPY_FOLDER "C"
+#define MOVE_FILE   "m"
+#define COPY_FILE   "c"
+
+// Add sub menu
+void FolderInfo::add(FolderInfo *info)
+{
+   subFolders.append(info);
+}
+
+// Remove sub menu (without deleting it)
+void FolderInfo::take(FolderInfo *info)
+{
+   subFolders.take(subFolders.findRef(info));
+}
+
+// Remove sub menu (without deleting it)
+bool FolderInfo::takeRecursive(FolderInfo *info)
+{
+   int i = subFolders.findRef(info);
+   if (i >= 0)
+   {
+      subFolders.take(i);
+      return true;
+   }
+   
+   for(FolderInfo *subFolderInfo = subFolders.first();
+       subFolderInfo; subFolderInfo = subFolders.next())
+   {
+      if (subFolderInfo->takeRecursive(info))
+         return true;
+   }
+   return false;
+}
+    
+// Add entry
+void FolderInfo::add(KService *s)
+{
+   entries.append(s);
+}
+    
+// Remove entry
+void FolderInfo::take(const QString &file)
+{
+    for(KService::List::Iterator it = entries.begin();
+        it != entries.end(); ++it) 
+    {
+       if ((*it)->desktopEntryPath() == file)
+       {
+          entries.remove(it);
+          break;
+       }
+    }
+}
+
+
+// Return a unique sub-menu caption inspired by @p caption
+QString FolderInfo::uniqueMenuCaption(const QString &caption)
+{
+   QString result = caption;
+   for(int n = 1; ++n; )
+   {
+      bool ok = true;
+      for(FolderInfo *subFolderInfo = subFolders.first();
+          subFolderInfo; subFolderInfo = subFolders.next())
+      {
+         if (subFolderInfo->caption == result)
+         {
+            ok = false;
+            break;
+         }
+      }
+      if (ok)
+         return result;
+      
+      result = caption + QString("-%1").arg(n);
+   }
+   return QString::null; // Never reached
+}
+
+// Return a unique item caption inspired by @p caption
+QString FolderInfo::uniqueItemCaption(const QString &caption, const QString &exclude)
+{
+   QString result = caption;
+   for(int n = 1; ++n; )
+   {
+      bool ok = true;
+      if (result == exclude)
+         ok = false;
+      for(KService::List::Iterator it = entries.begin();
+          ok && (it != entries.end()); ++it) 
+      {
+         if ((*it)->name() == result)
+            ok = false;
+      }
+      if (ok)
+         return result;
+      
+      result = caption + QString("-%1").arg(n);
+   }
+   return QString::null; // Never reached
+}
+
+// Return a list of existing submenu ids
+QStringList FolderInfo::existingMenuIds()
+{
+   QStringList result;
+   for(FolderInfo *subFolderInfo = subFolders.first();
+       subFolderInfo; subFolderInfo = subFolders.next())
+   {
+       result.append(subFolderInfo->id);
+qWarning("Existing Id: %s", subFolderInfo->id.latin1());
+   }
+   return result;
+}
+
 
 TreeItem::TreeItem(QListViewItem *parent, const QString& file)
-    :QListViewItem(parent), _hidden(false), _init(false), _file(file) {}
+    :QListViewItem(parent), _hidden(false), _init(false), _file(file), m_folderInfo(0) {}
 
 TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file)
-    :QListViewItem(parent, after), _hidden(false), _init(false), _file(file) {}
+    :QListViewItem(parent, after), _hidden(false), _init(false), _file(file), m_folderInfo(0) {}
 
 TreeItem::TreeItem(QListView *parent, const QString& file)
-    : QListViewItem(parent), _hidden(false), _init(false), _file(file) {}
+    : QListViewItem(parent), _hidden(false), _init(false), _file(file), m_folderInfo(0) {}
 
 TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& file)
-    : QListViewItem(parent, after), _hidden(false), _init(false), _file(file) {}
+    : QListViewItem(parent, after), _hidden(false), _init(false), _file(file), m_folderInfo(0) {}
 
 void TreeItem::setName(const QString &name)
 {
@@ -93,11 +211,11 @@ void TreeItem::setOpen(bool o)
 
 void TreeItem::load()
 {
-    if (!_directoryPath.isEmpty() && !_init)
+    if (m_folderInfo && !_init)
     {
        _init = true;
        TreeView *tv = static_cast<TreeView *>(listView());
-       tv->fillBranch(_directoryPath, this);
+       tv->fillBranch(m_folderInfo, this);
     }
 }
 
@@ -116,7 +234,7 @@ static QPixmap appIcon(const QString &iconName)
 
 
 TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
-    : KListView(parent, name), _ac(ac), _rmb(0)
+    : KListView(parent, name), m_ac(ac), m_rmb(0), m_clipboardInfo(0)
 {
     setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
@@ -143,10 +261,12 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
 	    SLOT(slotRMBPressed(QListViewItem*, const QPoint&)));
 
     // connect actions
-    connect(_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
-    connect(_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
+    connect(m_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
+    connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
 
     cleanupClipboard();
+
+    m_menuFile = new MenuFile( locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
 }
 
 TreeView::~TreeView() {
@@ -155,65 +275,113 @@ TreeView::~TreeView() {
 
 void TreeView::setViewMode(bool showHidden)
 {
-    delete _rmb;
+    delete m_rmb;
 
     // setup rmb menu
-    _rmb = new QPopupMenu(this);
+    m_rmb = new QPopupMenu(this);
     KAction *action;
 
-    action = _ac->action("edit_cut");
+    action = m_ac->action("edit_cut");
     if(action) {
-        action->plug(_rmb);
+        action->plug(m_rmb);
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(cut()));
     }
 
-    action = _ac->action("edit_copy");
+    action = m_ac->action("edit_copy");
     if(action) {
-        action->plug(_rmb);
+        action->plug(m_rmb);
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(copy()));
     }
 
-    action = _ac->action("edit_paste");
+    action = m_ac->action("edit_paste");
     if(action) {
-        action->plug(_rmb);
+        action->plug(m_rmb);
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(paste()));
     }
 
-    _rmb->insertSeparator();
+    m_rmb->insertSeparator();
 
-    action = _ac->action("delete");
+    action = m_ac->action("delete");
     if(action) {
-        action->plug(_rmb);
+        action->plug(m_rmb);
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(del()));
     }
 
-    action = _ac->action("undelete");
+    action = m_ac->action("undelete");
     if(action) {
-        action->plug(_rmb);
+        action->plug(m_rmb);
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(undel()));
     }
 
-    _rmb->insertSeparator();
+    m_rmb->insertSeparator();
 
-    if(_ac->action("newitem"))
-	_ac->action("newitem")->plug(_rmb);
-    if(_ac->action("newsubmenu"))
-	_ac->action("newsubmenu")->plug(_rmb);
+    if(m_ac->action("newitem"))
+	m_ac->action("newitem")->plug(m_rmb);
+    if(m_ac->action("newsubmenu"))
+	m_ac->action("newsubmenu")->plug(m_rmb);
 
-    _showHidden = showHidden;
+    m_showHidden = showHidden;
+    readFolderInfo();
     fill();
+}
+
+void TreeView::readFolderInfo(FolderInfo *folderInfo, KServiceGroup::Ptr folder, const QString &prefix)
+{
+    if (!folderInfo)
+    {
+       folderInfo = &m_rootFolder;
+       folder = KServiceGroup::root();
+    }
+
+    if (!folder || !folder->isValid())
+        return;
+
+    folderInfo->caption = folder->caption();
+
+    // Item names may contain ampersands. To avoid them being converted
+    // to accelerators, replace them with two ampersands.
+    folderInfo->caption.replace("&", "&&");
+    folderInfo->hidden = folder->noDisplay();
+    folderInfo->directoryFile = folder->directoryEntryPath();
+    folderInfo->icon = folder->icon();
+    QString id = folder->relPath();
+    int i = id.findRev('/', -2);
+    id = id.mid(i+1);
+    folderInfo->id = id;
+    folderInfo->fullId = prefix + id;
+
+    KServiceGroup::List list = folder->entries(true, !m_showHidden);
+
+    for(KServiceGroup::List::ConstIterator it = list.begin();
+        it != list.end(); ++it) 
+    {
+        KSycocaEntry * e = *it;
+
+        if (e->isType(KST_KServiceGroup)) 
+        {
+            KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
+            FolderInfo *subFolderInfo = new FolderInfo();
+            readFolderInfo(subFolderInfo, g, folderInfo->fullId);
+            folderInfo->add(subFolderInfo);
+qWarning("Adding %s (%s)", subFolderInfo->caption.latin1(), subFolderInfo->fullId.latin1());
+        }
+        else if (e->isType(KST_KService)) 
+        {
+            folderInfo->add(static_cast<KService *>(e));
+        }
+    }
 }
 
 void TreeView::fill()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     clear();
-    fillBranch(QString::null, 0);
+    fillBranch(&m_rootFolder, 0);
     QApplication::restoreOverrideCursor();
 }
 
@@ -252,75 +420,60 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
     return name;
 }
 
-void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, FolderInfo *folderInfo)
 {
-    // get rid of leading slash in the relative path
-    QString relPath = rPath;
-    if(relPath[0] == '/')
-	relPath = relPath.mid(1, relPath.length());
+   TreeItem *item;		
+   if (parent == 0)
+      item = new TreeItem(this,  after, folderInfo->directoryFile);
+   else
+      item = new TreeItem(parent, after, folderInfo->directoryFile);
 
-    // We ask KSycoca to give us all services (sorted).
-    KServiceGroup::Ptr root = KServiceGroup::group(relPath);
+   item->setFolderInfo(folderInfo);
+   item->setName(folderInfo->caption);
+   item->setPixmap(0, appIcon(folderInfo->icon));
+   item->setDirectoryPath(folderInfo->fullId);
+   item->setHidden(folderInfo->hidden);
+   item->setExpandable(true);
+   return item;
+}
 
-    if (!root || !root->isValid())
-        return;
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, KService *s)
+{
+   QString serviceCaption = s->name();
 
-    KServiceGroup::List list = root->entries(true, !_showHidden);
+   // Item names may contain ampersands. To avoid them being converted
+   // to accelerators, replace them with two ampersands.
+   serviceCaption.replace("&", "&&");
 
-    QListViewItem *after = 0;
+   bool hidden = s->noDisplay();
 
-    for(KServiceGroup::List::ConstIterator it = list.begin();
-        it != list.end(); ++it) 
+   TreeItem* item;
+   if (parent == 0)
+      item = new TreeItem(this, after, s->desktopEntryPath());
+   else
+      item = new TreeItem(parent, after, s->desktopEntryPath());
+
+   item->setName(serviceCaption);
+   item->setPixmap(0, appIcon(s->icon()));
+
+   item->setHidden(hidden);
+   return item;
+}
+
+void TreeView::fillBranch(FolderInfo *folderInfo, TreeItem *parent)
+{
+    QString relPath = parent ? parent->directory() : QString::null;
+    QPtrListIterator<FolderInfo> it( folderInfo->subFolders );
+    TreeItem *after = 0;
+    for (FolderInfo *subFolder; (subFolder = it.current()); ++it)
     {
-        KSycocaEntry * e = *it;
-
-        if (e->isType(KST_KServiceGroup)) 
-        {
-            KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
-            QString groupCaption = g->caption();
-
-            // Item names may contain ampersands. To avoid them being converted
-            // to accelerators, replace them with two ampersands.
-            groupCaption.replace("&", "&&");
-
-            bool hidden = g->noDisplay();
-
-            TreeItem *item;		
-            if (parent == 0)
-                item = new TreeItem(this,  after, g->directoryEntryPath());
-            else
-                item = new TreeItem(parent, after, g->directoryEntryPath());
-
-            item->setName(groupCaption);
-            item->setPixmap(0, appIcon(g->icon()));
-            item->setDirectoryPath(g->relPath());
-            item->setHidden(hidden);
-            item->setExpandable(true);
-            after = item;
-        }
-        else if (e->isType(KST_KService)) 
-        {
-            KService::Ptr s(static_cast<KService *>(e));
-            QString serviceCaption = s->name();
-
-            // Item names may contain ampersands. To avoid them being converted
-            // to accelerators, replace them with two ampersands.
-            serviceCaption.replace("&", "&&");
-
-            bool hidden = s->noDisplay();
-
-            TreeItem* item;
-            if (parent == 0)
-                item = new TreeItem(this, after, s->desktopEntryPath());
-            else
-                item = new TreeItem(parent, after, s->desktopEntryPath());
-
-            item->setName(serviceCaption);
-            item->setPixmap(0, appIcon(s->icon()));
-
-            item->setHidden(hidden);
-            after = item;
-        }
+       after = createTreeItem(parent, after, subFolder);
+    }
+    
+    for(KService::List::ConstIterator it = folderInfo->entries.begin();
+        it != folderInfo->entries.end(); ++it) 
+    {
+       after = createTreeItem(parent, after, *it);
     }
 }
 
@@ -332,28 +485,18 @@ void TreeView::itemSelected(QListViewItem *item)
     if (_item) {
         selected = true;
         dselected = _item->isHidden();
-
-#if 0
-        // Check if the file is Writeable for us
-        QFileInfo finfo((KGlobal::dirs()->findResourceDir("apps", _item->file())) + _item->file());
-
-        if (finfo.isWritable() && (_item->name() != i18n("Settings")))
-            _ac->action("delete")->setEnabled(true);
-        else
-            _ac->action("delete")->setEnabled(false);
-#endif
     }
 
-    _ac->action("edit_cut")->setEnabled(selected);
-    _ac->action("edit_copy")->setEnabled(selected);
+    m_ac->action("edit_cut")->setEnabled(selected);
+    m_ac->action("edit_copy")->setEnabled(selected);
 
-    if (_ac->action("delete"))
-        _ac->action("delete")->setEnabled(selected && !dselected);
-    if (_ac->action("undelete"))
-        _ac->action("undelete")->setEnabled(selected && dselected);
+    if (m_ac->action("delete"))
+        m_ac->action("delete")->setEnabled(selected && !dselected);
+    if (m_ac->action("undelete"))
+        m_ac->action("undelete")->setEnabled(selected && dselected);
 
     if(!item) return;
-
+qWarning("entrySelected: %s", _item->file().latin1());
     emit entrySelected(_item->file(), _item->name(), dselected);
 }
 
@@ -367,223 +510,6 @@ void TreeView::currentChanged(const QString& file)
     KDesktopFile df(file);
     item->setName(findName(&df, item->isHidden()));
     item->setPixmap(0, appIcon(df.readIcon()));
-}
-
-// moving = src will be removed later
-void TreeView::copyFile(const QString& src, const QString& dest, bool moving)
-{
-    // We can't simply copy a .desktop file as several prefixes might
-    // contain a version of that file. To make sure to copy all groups
-    // and keys we read all groups and keys via KConfig which handles
-    // the merging. We then write out the destination .desktop file
-    // in a writeable prefix we get using locateLocal().
-
-    if (src == dest) return;
-
-    kdDebug() << "copyFile: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
-
-    // read-only + don't merge in kdeglobals
-    KConfig s(src, true, false, "apps");
-
-    KSimpleConfig d(locateLocal("apps", dest));
-
-    // don't copy hidden files
-    if(s.readBoolEntry("Hidden", false) == true)
-	return;
-
-    // loop through all groups
-    QStringList groups = s.groupList();
-    for (QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it) {
-        if(*it == "<default>")
-            continue;
-
-        if((*it).contains("Desktop Entry"))
-            d.setDesktopGroup();
-        else
-            d.setGroup(*it);
-
-        // get a map of keys/value pairs
-        QMap<QString, QString> map = s.entryMap(*it);
-
-        // iterate through the map and write out key/value pairs to the dest file
-        QMap<QString, QString>::ConstIterator iter;
-        for (iter = map.begin(); iter != map.end(); ++iter)
-            d.writeEntry(iter.key(), iter.data());
-    }
-
-    // unset "Hidden"
-    d.setDesktopGroup();
-    d.writeEntry("Hidden", false);
-
-    d.sync();
-
-    if( moving && KHotKeys::present()) // tell khotkeys this menu entry has moved
-        KHotKeys::menuEntryMoved( dest, src );
-}
-
-// moving = src will be removed later
-void TreeView::copyDir(const QString& s, const QString& d, bool moving )
-{
-    // We create the destination directory in a writeable prefix returned
-    // by locateLocal(), copy the .directory and the .desktop files over.
-    // Then process the subdirs.
-
-    QString src = s;
-    QString dest = d;
-
-    // truncate "/.directory"
-    int pos = src.findRev("/.directory");
-    if (pos > 0) src.truncate(pos);
-    pos = dest.findRev("/.directory");
-    if (pos > 0) dest.truncate(pos);
-
-    if (src == dest) return;
-
-    kdDebug() << "copyDir: " << src.local8Bit() << " to " << dest.local8Bit() << endl;
-
-    QStringList dirlist = dirList(src);
-    QStringList filelist = fileList(src);
-
-    // copy .directory file
-    copyFile(src + "/.directory", dest + "/.directory", moving );
-
-    kdDebug() << "###" << dest.local8Bit() << endl;
-    // copy files
-    for (QStringList::ConstIterator it = filelist.begin(); it != filelist.end(); ++it) {
-        QString file = (*it).mid((*it).findRev('/'), (*it).length());
-        copyFile(src + file, dest + file, moving );
-    }
-    // process subdirs
-    for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it) {
-        QString file = (*it).mid((*it).findRev('/'), (*it).length());
-        copyDir(src + file, dest + file, moving );
-    }
-
-    // unset hidden flag
-    KConfig c(dest + "/.directory", false, false, "apps");
-    c.setDesktopGroup();
-    c.writeEntry("Hidden", false);
-    c.sync();
-}
-
-// Return value: 0 - removed everything
-//               1 - removed only local
-//               2 - removed none
-bool TreeView::deleteFile(const QString& deskfile, bool move)
-{
-    // We search for the file in all prefixes and remove all writeable
-    // ones. If we were not able to remove all (because of lack of permissons)
-    // we set the "Hidden" flag in a writeable local file in a path returned
-    // by localeLocal().
-    bool hasLocal = false;
-    bool hasGlobal = false;
-    bool isLocal = true;
-
-    // search the selected item in all resource dirs
-    QStringList resdirs = KGlobal::dirs()->resourceDirs("apps");
-    QString localFile = resdirs.first()+deskfile;
-
-    for (QStringList::ConstIterator it = resdirs.begin(); it != resdirs.end(); ++it) {
-        QFile f((*it) + deskfile);
-
-        // continue if it does not exist in this resource dir
-        if(f.exists())
-        {
-           if (isLocal)
-              hasLocal = true;
-           else
-              hasGlobal = true;
-        }
-
-        isLocal = false;
-    }
-
-    if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
-        KHotKeys::menuEntryDeleted( deskfile );
-
-    if (hasLocal)
-    {
-        ::unlink(QFile::encodeName(localFile).data());
-    }
-
-    if(hasGlobal) {
-	KSimpleConfig c(localFile);
-        c.setDesktopGroup();
-        if (move)
-        {
-           c.writeEntry("Name", "empty");
-           c.writeEntry("Hidden", true);
-        }
-        else
-        {
-           c.writeEntry("NoDisplay", true);
-        }
-        c.sync();
-    }
-
-    return true;
-}
-
-bool TreeView::deleteDir(const QString& d, bool move)
-{
-    // We delete all .desktop files and then process with the subdirs.
-    // Afterwards the .directory file gets deleted from all prefixes
-    // and we try to rmdir the directory in all prefixes.
-    // If we don't succed in deleting the directory from all prefixes
-    // we add a .directory file with the "Hidden" flag set in a local
-    // writeable dir return by locateLocal().
-    bool allremoved = true;
-
-    QString directory = d;
-
-    // truncate "/.directory"
-    int pos = directory.findRev("/.directory");
-    if (pos > 0) directory.truncate(pos);
-
-    kdDebug() << "deleteDir: " << directory.local8Bit() << endl;
-
-    QStringList dirlist = dirList(directory);
-    QStringList filelist = fileList(directory);
-
-    // delete files
-    for (QStringList::ConstIterator it = filelist.begin(); it != filelist.end(); ++it)
-	deleteFile(*it);
-
-    // process subdirs
-    for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it)
-	deleteDir(*it);
-
-    // delete .directory file in all prefixes
-    deleteFile(directory + "/.directory");
-
-    // try to rmdir the directory in all prefixes
-#if 0
-    QDir dir;
-    QStringList dirs = KGlobal::dirs()->findDirs("apps", directory);
-    for (QStringList::ConstIterator it = dirs.begin(); it != dirs.end(); ++it) {
-        // remove all writeable files
-        if(!dir.rmdir(*it))
-            allremoved = false;
-    }
-#endif
-
-    if(move) {
-        KSimpleConfig c(locateLocal("apps", directory + "/.directory"));
-        c.setDesktopGroup();
-        c.writeEntry("Name", "empty");
-        c.writeEntry("Hidden", true);
-        c.sync();
-    }
-    return allremoved;
-}
-
-void TreeView::hideDir(const QString& d, const QString name, bool hide) {
-	QString directory = d;
-        KConfig c(directory + "/.directory", false, false, "apps");
-	c.setDesktopGroup();
-	c.writeEntry("Name", name);
-	c.writeEntry("NoDisplay", hide);
-	c.sync();
 }
 
 QStringList TreeView::fileList(const QString& rPath)
@@ -663,77 +589,206 @@ QStringList TreeView::dirList(const QString& rPath)
     return dirlist;
 }
 
-bool TreeView::acceptDrag(QDropEvent* event) const
+bool TreeView::acceptDrag(QDropEvent* e) const
 {
-    return (QString(event->format()).contains("text/plain"));
+    return QString(e->format()).contains("application/x-kmenuedit-internal") &&
+           (e->source() == this);
 }
+
+static QString createDesktopFile(const QString &file, bool duplicate)
+{
+   QString base = file.mid(file.findRev('/')+1);
+   base = base.left(base.findRev('.'));
+   
+   QString result;
+   int i = duplicate ? 2 : 1;
+   while(true)
+   {
+      if (i == 1)
+         result = base + ".desktop";
+      else
+         result = base + QString("-%1.desktop").arg(i);
+
+      if (locate("xdgdata-apps", result).isEmpty())
+         break;
+      i++;
+   }
+   result = locateLocal("xdgdata-apps", result);
+   if (duplicate)
+   {
+      KDesktopFile df(file);
+      KConfig *cfg = df.copyTo(result);
+      cfg->sync();
+      delete cfg;
+   }
+   return result;
+}
+
+static QString createDirectoryFile(const QString &file, bool duplicate)
+{
+   QString base = file.mid(file.findRev('/')+1);
+   base = base.left(base.findRev('.'));
+   
+   QString result;
+   int i = duplicate ? 2 : 1;
+   while(true)
+   {
+      if (i == 1)
+         result = base + ".directory";
+      else
+         result = base + QString("-%1.directory").arg(i);
+
+      if (locate("xdgdata-dirs", result).isEmpty())
+         break;
+      i++;
+   }
+   result = locateLocal("xdgdata-dirs", result);
+   if (duplicate)
+   {
+      KDesktopFile df(file);
+      KConfig *cfg = df.copyTo(result);
+      cfg->sync();
+      delete cfg;
+   }
+   return result;
+}
+
 
 void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem*after)
 {
-    if(!e) return;
+   if(!e) return;
 
-    // first move the item in the listview
-    TreeItem *item = (TreeItem*)selectedItem();
+   if (e->source() != this) return; // Only internal drags are supported atm
+    
+   TreeItem *parentItem = static_cast<TreeItem*>(parent);
 
-    moveItem(item, parent, after);
-    setOpen(parent, true);
-    setSelected(item, true);
+   // is there content in the clipboard?
+   if (m_drag.isEmpty()) return;
 
-    // get source path from qdropevent
-    QByteArray a = e->encodedData("text/plain");
-    if (a.isEmpty()) return;
-    QString src(a);
+   // get destination folder
+   QString folder = parentItem ? parentItem->directory() : QString::null;
+   FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+   QString command = m_drag.left(1);
+   if (command == MOVE_FOLDER)
+   {
+      FolderInfo *folderInfo = m_dragInfo;
+      if (e->action() == QDropEvent::Copy)
+      {
+         // Ugh.. this is hard :)
+         // * Create new .directory file
+         // Add 
+      }
+      else
+      {
+         del(m_dragItem, false);
+         // Move menu
+         QString oldFolder = folderInfo->fullId;
+         QString folderName = folderInfo->id;
+         QString newFolder = m_menuFile->uniqueMenuName(folder, folderName, parentFolderInfo->existingMenuIds());
+         folderInfo->id = newFolder;
 
-    bool isDir = src.find(".directory") > 0;
+         // Add file to menu
+         m_menuFile->moveMenu(oldFolder, folder + newFolder);
 
-    kdDebug() << "src: " << src.local8Bit() << endl;
+         // Make sure caption is unique
+         QString newCaption = parentFolderInfo->uniqueMenuCaption(folderInfo->caption);
+         if (newCaption != folderInfo->caption)
+         {
+            folderInfo->caption = newCaption;
+            // TODO: Update caption in .directory file.
+         }
 
-    // get source file
-    int pos = src.findRev('/');
-    if (isDir)
-	pos = src.findRev('/', pos-1);
-    QString srcfile;
+         folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
+         parentFolderInfo->add(folderInfo);
+          
+         // create the TreeItem
+         TreeItem *newItem = createTreeItem(parentItem, after, folderInfo);
 
-    if (pos < 0)
-	srcfile = src;
-    else
-	srcfile = src.mid(pos + 1, src.length());
+         setSelected ( newItem, true);
+         itemSelected( newItem);
+      }
+   }
+   else if (command == MOVE_FILE)
+   {
+      QString file = m_dragItem->file();
+      if (file.isEmpty()) return; // Error
 
-    // get dest path
-    QString dest;
-    if (item->parent())
-	dest = ((TreeItem*)item->parent())->file();
+      KDesktopFile *df = 0;
+      if (e->action() == QDropEvent::Copy)
+      {
+         // Need to copy file and then add it
+         file = createDesktopFile(file, true); // Duplicate
 
-    // truncate file
-    pos = dest.findRev('/');
-    if (pos > 0) dest.truncate(pos);
+         df = new KDesktopFile(file);
+         QString oldCaption = df->readName();
+         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
+         if (oldCaption != newCaption)
+            df->writeEntry("Name", newCaption);
+      }
+      else
+      {
+         del(m_dragItem, false);
+         df = new KDesktopFile(file);
+         QString oldCaption = df->readName();
+         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
+         if (oldCaption != newCaption)
+            df->writeEntry("Name", newCaption);
+      }
+      // Add file to menu
+      m_menuFile->addEntry(folder, file);
 
-    if(dest.isNull())
-	dest = srcfile;
-    else
-	dest += '/' + srcfile;
+      KService *s = new KService(df);
 
-    kdDebug() << "dest: " << dest.local8Bit() << endl;
+      // update fileInfo data
+      parentFolderInfo->add(s);
 
-    item->setFile(dest);
-    if(src == dest) return;
+      // create the TreeItem
+      if(parentItem)
+         parentItem->setOpen(true);
 
-    if(isDir) {
-        copyDir(src, dest, true );
-        deleteDir(src, true);
-    }
-    else {
-        copyFile(src, dest, true );
-        deleteFile(src, true);
-    }
+      TreeItem *newItem = createTreeItem(parentItem, after, s);
+      delete df;
+
+      setSelected ( newItem, true);
+      itemSelected( newItem);
+   }
+   else
+   {
+      // Error
+   }
+   m_drag = QString::null;
 }
+
+
+void TreeView::startDrag()
+{
+  QDragObject *drag = dragObject();
+  
+  if (!drag)
+     return;
+            
+  drag->dragMove();
+}                  
 
 QDragObject *TreeView::dragObject()
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return 0;
 
-    QTextDrag *d = new QTextDrag(item->file(), (QWidget*)this);
+    if (item->isDirectory())
+    {
+       m_drag = MOVE_FOLDER;
+       m_dragInfo = item->folderInfo();
+       m_dragItem = item;
+    }
+    else
+    {
+       m_drag = MOVE_FILE;
+       m_dragInfo = 0;
+       m_dragItem = item;
+    }
+
+    QStoredDrag *d = new QStoredDrag("application/x-kmenuedit-internal", this);
     if ( item->pixmap(0) )
         d->setPixmap(*item->pixmap(0));
     return d;
@@ -744,171 +799,148 @@ void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return;
 
-    if(_rmb) _rmb->exec(p);
+    if(m_rmb) m_rmb->exec(p);
 }
 
 void TreeView::newsubmenu()
 {
-    bool ok;
-    QString dirname = KInputDialog::getText( i18n( "New Submenu" ),
+   TreeItem *parentItem = 0;
+   TreeItem *item = (TreeItem*)selectedItem();
+
+   // nil selected? -> nil to paste to
+   if (item == 0) return;
+
+   bool ok;
+   QString caption = KInputDialog::getText( i18n( "New Submenu" ),
         i18n( "Submenu name:" ), QString::null, &ok, this );
 
-    if (!ok) return;
+   if (!ok) return;
 
-    TreeItem *item = (TreeItem*)selectedItem();
+   QString file = caption;
+   file.replace('/', '-');
 
-    QListViewItem* parent = 0;
-    QListViewItem* after = 0;
+   file = createDirectoryFile(file, false); // Create
 
-    QString sfile;
+qWarning("CreateDirectoryFile: %s", file.latin1());
+    
+   // get destination folder
+   QString folder;
 
-    if(item && item->isDirectory()){
-	if(item->isExpandable())
-	    parent = item;
-	else {
-            parent = item->parent();
-            after = item;
-        }
-	sfile = item->file();
-    }
+   if(item->isDirectory())
+   {
+      parentItem = item;
+      item = 0;
+      folder = parentItem->directory();
+   }
+   else
+   {
+      parentItem = static_cast<TreeItem*>(item->parent());
+      folder = parentItem ? parentItem->directory() : QString::null;
+   }
 
-    if(parent)
-        parent->setOpen(true);
+   FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+   FolderInfo *folderInfo = new FolderInfo();
+   folderInfo->caption = parentFolderInfo->uniqueMenuCaption(caption);
+   folderInfo->id = m_menuFile->uniqueMenuName(folder, caption, parentFolderInfo->existingMenuIds());
+   folderInfo->directoryFile = file;
+   folderInfo->icon = "package";
+   folderInfo->hidden = false;
 
-    QString dir = sfile;
+   KDesktopFile *df = new KDesktopFile(file);
+   df->writeEntry("Name", folderInfo->caption);
+   df->writeEntry("Icon", folderInfo->icon);
+   df->sync();
+   
+   // Add file to menu
+   m_menuFile->addMenu(folder + folderInfo->id, file);
 
-    if(sfile.find(".directory") > 0) {
-        // truncate "blah/.directory"
+   folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
 
-        int pos = dir.findRev('/');
-        int pos2 = dir.findRev('/', pos-1);
+   // update fileInfo data
+   parentFolderInfo->add(folderInfo);
+         
+   // create the TreeItem
+   if(parentItem)
+      parentItem->setOpen(true);
 
-        if (pos2 >= 0)
-            pos = pos2;
+   TreeItem *newItem = createTreeItem(parentItem, item, folderInfo);
 
-        if (pos > 0)
-            dir.truncate(pos);
-        else
-            dir = QString::null;
-    }
-    else if (dir.find(".desktop")) {
-        // truncate "blah.desktop"
-        int pos = dir.findRev('/');
-
-        if (pos > 0)
-            dir.truncate(pos);
-        else
-            dir = QString::null;
-    }
-    if(!dir.isEmpty())
-	dir += '/';
-
-    dir += dirname + "/.directory";
-
-    QFile f(locateLocal("apps", dir));
-    if (f.exists()) {
-    	KMessageBox::sorry(0, i18n("A file already exists with that name. Please provide another name."), i18n("File Exists"));
-	return;
-    }
-
-    TreeItem* newitem;
-
-    if (!parent)
-	newitem = new TreeItem(this, after, dir);
-    else
-	newitem = new TreeItem(parent, after, dir);
-
-    newitem->setName(dirname);
-    newitem->setPixmap(0, appIcon("package"));
-    newitem->setExpandable(true);
-
-    KConfig c(locateLocal("apps", dir));
-    c.setDesktopGroup();
-    c.writeEntry("Name", dirname);
-    c.writeEntry("Icon", "package");
-    c.sync();
-    setSelected ( newitem, true);
-    itemSelected( newitem);
+   setSelected ( newItem, true);
+   itemSelected( newItem);
 }
 
 void TreeView::newitem()
 {
-    bool ok;
-    QString filename = KInputDialog::getText( i18n( "New Item" ),
+   TreeItem *parentItem = 0;
+   TreeItem *item = (TreeItem*)selectedItem();
+
+   // nil selected? -> nil to paste to
+   if (item == 0) return;
+
+   bool ok;
+   QString caption = KInputDialog::getText( i18n( "New Item" ),
         i18n( "Item name:" ), QString::null, &ok, this );
 
-    if (!ok) return;
+   if (!ok) return;
 
-    if ( filename.contains('/'))
-    {
-        KMessageBox::error( this,  i18n("Item name cannot contain '/'"));
-        return;
-    }
-    TreeItem *item = (TreeItem*)selectedItem();
+   QString file = caption;
+   file.replace('/', '-');
 
-    QListViewItem* parent = 0;
-    QListViewItem* after = 0;
+   file = createDesktopFile(file, false); // Create
+    
+   KDesktopFile *df = new KDesktopFile(file);
+   df->writeEntry("Name", caption);
+   df->writeEntry("Type", "Application");
+   df->sync();
 
-    QString sfile;
+   // get destination folder
+   QString folder;
 
-    if(item){
-	if(item->isExpandable())
-	    parent = item;
-        else {
-            parent = item->parent();
-            after = item;
-        }
-	sfile = item->file();
-    }
+   if(item->isDirectory())
+   {
+      parentItem = item;
+      item = 0;
+      folder = parentItem->directory();
+   }
+   else
+   {
+      parentItem = static_cast<TreeItem*>(item->parent());
+      folder = parentItem ? parentItem->directory() : QString::null;
+   }
 
-    if(parent)
-        parent->setOpen(true);
+   FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
 
-    QString dir = sfile;
+   // Add file to menu
+   m_menuFile->addEntry(folder, file);
 
-    // truncate ".directory" or "blah.desktop"
+   KService *s = new KService(df);
 
-    int pos = dir.findRev('/');
+   // update fileInfo data
+   parentFolderInfo->add(s);
 
-    if (pos > 0)
-	dir.truncate(pos);
-    else
-	dir = QString::null;
+   // create the TreeItem
+   if(parentItem)
+      parentItem->setOpen(true);
 
-    if(!dir.isEmpty())
-	dir += '/';
-    dir += filename + ".desktop";
+   TreeItem *newItem = createTreeItem(parentItem, item, s);
+   delete df;
 
-    QFile f(locate("apps", dir));
-    if (f.exists()) {
-    	KMessageBox::sorry(0, i18n("A file already exists with that name. Please provide another name."), i18n("File Exists"));
-	return;
-    }
-
-    TreeItem* newitem;
-
-    if (!parent)
-	newitem = new TreeItem(this, after, dir);
-    else
-	newitem = new TreeItem(parent, after, dir);
-
-    newitem->setName(filename);
-    newitem->setPixmap(0, appIcon("unknown"));
-
-    KConfig c(locateLocal("apps", dir));
-    c.setDesktopGroup();
-    c.writeEntry("Name", filename);
-    c.writeEntry("Icon", filename);
-    c.writeEntry("Type", "Application");
-    c.sync();
-    setSelected ( newitem, true);
-    itemSelected( newitem);
+   setSelected ( newItem, true);
+   itemSelected( newItem);
 }
 
 void TreeView::cut()
 {
     copy( true );
-    del();
+
+    m_ac->action("edit_cut")->setEnabled(false);
+    m_ac->action("edit_copy")->setEnabled(false);
+    m_ac->action("delete")->setEnabled(false);
+
+    // Select new current item
+    setSelected( currentItem(), true );
+    // Switch the UI to show that item
+    itemSelected( selectedItem() );
 }
 
 void TreeView::copy()
@@ -916,7 +948,7 @@ void TreeView::copy()
     copy( false );
 }
 
-void TreeView::copy( bool moving )
+void TreeView::copy( bool cutting )
 {
     TreeItem *item = (TreeItem*)selectedItem();
 
@@ -926,118 +958,189 @@ void TreeView::copy( bool moving )
     // clean up old stuff
     cleanupClipboard();
 
-    QString file = item->file();
+    // is item a folder or a file?
+    if(item->isDirectory())
+    {
+        QString folder = item->directory();
+        if (cutting)
+        {
+           // Place in clipboard
+           m_clipboard = MOVE_FOLDER;
+           m_clipboardInfo = item->folderInfo();
 
-    // is file a .directory or a .desktop file
-    if(file.find(".directory") > 0) {
-        _clipboard = file;
+           del(item, false);
+#if 0
+           // Remove FolderInfo
+           TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
+           FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+           parentFolderInfo->take(m_clipboardInfo);
 
-        // truncate path
-        int pos = _clipboard.findRev('/');
-        int pos2 = _clipboard.findRev('/', pos-1);
-        if (pos2 >= 0)
-            pos = pos2+1;
+           // Remove from menu
+           m_menuFile->removeMenu(folder);
+           
+           // Remove tree item
+           delete item;
+#endif
+        }
         else
-            pos = 0;
-
-        if (pos > 0)
-            _clipboard = _clipboard.mid(pos, _clipboard.length());
-
-        copyDir(file, QString(clipboard_prefix) + _clipboard, moving );
+        {
+           // Place in clipboard
+           m_clipboard = COPY_FOLDER;
+           m_clipboardInfo = item->folderInfo();
+        }
     }
-    else if (file.find(".desktop")) {
-        _clipboard = file;
+    else
+    {
+        QString file = item->file();
 
-        // truncate path
-        int pos = _clipboard.findRev('/');
-        if (pos >= 0)
-            _clipboard = _clipboard.mid(pos+1, _clipboard.length());
+        if (cutting)
+        {
+           // Place in clipboard
+           m_clipboard = MOVE_FILE + file;
 
-        copyFile(file, QString(clipboard_prefix) + _clipboard, moving );
+           del(item, false);
+#if 0
+           // Remove FolderInfo
+           TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
+           FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+           parentFolderInfo->take(file);
+
+           // Remove from menu
+           QString folder = parentItem ? parentItem->directory() : QString::null;
+           m_menuFile->removeEntry(folder, file);
+           
+           // Remove tree item
+           delete item;
+#endif
+        }
+        else
+        {
+           // Place in clipboard
+           m_clipboard = COPY_FILE + file;
+        }
     }
-    _ac->action("edit_paste")->setEnabled(true);
+
+    m_ac->action("edit_paste")->setEnabled(true);
 }
+
 
 void TreeView::paste()
 {
-    TreeItem *item = (TreeItem*)selectedItem();
+   TreeItem *parentItem = 0;
+   TreeItem *item = (TreeItem*)selectedItem();
 
-    // nil selected? -> nil to paste to
-    if (item == 0) return;
-    // is there content in the clipboard?
-    if (_clipboard.isEmpty()) return;
+   // nil selected? -> nil to paste to
+   if (item == 0) return;
 
-    // get dest
-    QString dest = item->file();
+   // is there content in the clipboard?
+   if (m_clipboard.isEmpty()) return;
 
-    // truncate ".directory"
-    int pos = dest.findRev(".directory");
-    if (pos > 0) dest.truncate(pos);
+   // get destination folder
+   QString folder;
 
-    // truncate '/'
-    pos = dest.findRev('/');
-    if (pos > 0) dest.truncate(pos);
+   if(item->isDirectory())
+   {
+      parentItem = item;
+      item = 0;
+      folder = parentItem->directory();
+   }
+   else
+   {
+      parentItem = static_cast<TreeItem*>(item->parent());
+      folder = parentItem ? parentItem->directory() : QString::null;
+   }
 
-    // truncate ".desktop" and file name
-    pos = dest.findRev(".desktop");
-    if (pos > 0) {
-        dest.truncate(pos);
+   FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+   QString command = m_clipboard.left(1);
+   if ((command == COPY_FOLDER) || (command == MOVE_FOLDER))
+   {
+      FolderInfo *folderInfo = m_clipboardInfo;
+      if (command == COPY_FOLDER)
+      {
+         // Ugh.. this is hard :)
+         // * Create new .directory file
+         // Add 
+      }
+      else if (command == MOVE_FOLDER)
+      {
+         // Move menu
+         QString oldFolder = folderInfo->fullId;
+         QString folderName = folderInfo->id;
+         QString newFolder = m_menuFile->uniqueMenuName(folder, folderName, parentFolderInfo->existingMenuIds());
+         folderInfo->id = newFolder;
 
-        // truncate file name
-        pos = dest.findRev('/');
-        if (pos < 0) pos = 0;
-        dest.truncate(pos);
-    }
-    QString newname = _clipboard;
-    QFile f(locate("apps", dest + '/' + newname));
+         // Add file to menu
+         m_menuFile->moveMenu(oldFolder, folder + newFolder);
 
-    while (f.exists()) {
-        pos = newname.findRev(".desktop");
-        if ( pos!=-1)// .directory
-            newname.insert(pos, " (Copy)");
-        else
-            newname.insert(newname.length(), " (Copy)");
-        f.setName(locate("apps", dest + '/' + newname));
-    }
-    kdDebug() << "### clip: " << _clipboard.local8Bit() << " dest: " << dest.local8Bit() << " ###" << endl;
+         // Make sure caption is unique
+         QString newCaption = parentFolderInfo->uniqueMenuCaption(folderInfo->caption);
+         if (newCaption != folderInfo->caption)
+         {
+            folderInfo->caption = newCaption;
+            // TODO: Update caption in .directory file.
+         }
 
-    // is _clipboard a .directory or a .desktop file
-    if(_clipboard.find(".directory") > 0)// if cut&paste is done, assume it's moving too
-        copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + newname, true );
-    else if (_clipboard.find(".desktop"))
-        copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + newname, true );
+         folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
+         parentFolderInfo->add(folderInfo);
+          
+         // create the TreeItem
+         TreeItem *newItem = createTreeItem(parentItem, item, folderInfo);
 
-    // create the TreeItems:
-    QListViewItem* parent = 0;
+         setSelected ( newItem, true);
+         itemSelected( newItem);
+      }
 
-    if(item){
-	if(item->isExpandable()) {
-	    parent = item;
-	    item = 0;
-	}
-	else
-	    parent = item->parent();
-    }
+      m_clipboard = COPY_FOLDER; // Next one copies.
+   }
+   else if ((command == COPY_FILE) || (command == MOVE_FILE))
+   {
+      QString file = m_clipboard.mid(1);
+      if (file.isEmpty()) return; // Error
 
-    if(parent)
-        parent->setOpen(true);
-    TreeItem* newitem;
-    if (!parent)
-	newitem = new TreeItem(this, item, "");
-    else
-	newitem = new TreeItem(parent, item, "");
+      KDesktopFile *df = 0;
+      if (command == COPY_FILE)
+      {
+         // Need to copy file and then add it
+         file = createDesktopFile(file, true); // Duplicate
 
-    KDesktopFile df(locateLocal("apps", dest + '/' + newname));
+         df = new KDesktopFile(file);
+         QString oldCaption = df->readName();
+         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption, oldCaption);
+         if (oldCaption != newCaption)
+            df->writeEntry("Name", newCaption);
+      }
+      else if (command == MOVE_FILE)
+      {
+         m_clipboard = COPY_FILE + file; // Next one copies.
 
-    newitem->setName(findName(&df, false));
-    if(!dest.isEmpty())
-        newitem->setFile(dest + '/' + newname);
-    else
-        newitem->setFile(newname);
-    newitem->setPixmap(0, appIcon(df.readIcon()));
-    fillBranch(newitem->file(), newitem);
-    setSelected ( newitem, true);
-    itemSelected( newitem);
+         df = new KDesktopFile(file);
+         QString oldCaption = df->readName();
+         QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
+         if (oldCaption != newCaption)
+            df->writeEntry("Name", newCaption);
+      }
+      // Add file to menu
+      m_menuFile->addEntry(folder, file);
+
+      KService *s = new KService(df);
+
+      // update fileInfo data
+      parentFolderInfo->add(s);
+
+      // create the TreeItem
+      if(parentItem)
+         parentItem->setOpen(true);
+
+      TreeItem *newItem = createTreeItem(parentItem, item, s);
+      delete df;
+
+      setSelected ( newItem, true);
+      itemSelected( newItem);
+   }
+   else
+   {
+      return; // Error
+   }
 }
 
 void TreeView::del()
@@ -1047,11 +1150,11 @@ void TreeView::del()
     // nil selected? -> nil to delete
     if (item == 0) return;
     
-    del(item);
+    del(item, true);
 
-    _ac->action("edit_cut")->setEnabled(false);
-    _ac->action("edit_copy")->setEnabled(false);
-    _ac->action("delete")->setEnabled(false);
+    m_ac->action("edit_cut")->setEnabled(false);
+    m_ac->action("edit_copy")->setEnabled(false);
+    m_ac->action("delete")->setEnabled(false);
 
     // Select new current item
     setSelected( currentItem(), true );
@@ -1059,38 +1162,57 @@ void TreeView::del()
     itemSelected( selectedItem() );
 }
 
-void TreeView::del(TreeItem *item)
+void TreeView::del(TreeItem *item, bool deleteInfo)
 {
-    QString file = item->file();
-
     // is file a .directory or a .desktop file
-    if(file.endsWith("/.directory"))
+    if(item->isDirectory())
     {
-        KDesktopFile df(item->file());
-        hideDir(file.mid(0, file.find("/.directory")), findName(&df, false), true);
-    }
-    else if (file.find(".desktop"))
-    {
-        deleteFile(file);
-    }
-    else
-    {
-        return; // Should not happen.
-    }
+        FolderInfo *folderInfo = item->folderInfo();
+         
+        // Remove FolderInfo
+        TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
+        FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+        parentFolderInfo->take(folderInfo);
 
-    item->load();
-    
-    QListViewItem * myChild = item->firstChild();
-    while( myChild ) {
-        TreeItem *childItem = static_cast<TreeItem*>(myChild);
-        del(childItem);
-        myChild = myChild->nextSibling();
-    }
-    
-    if (_showHidden)
-        item->setHidden(true);
-    else
+        if (m_clipboard == COPY_FOLDER && (m_clipboardInfo == folderInfo))
+        {
+           // Copy + Del == Cut
+           m_clipboard = MOVE_FOLDER; // Clipboard now owns folderInfo
+           
+        }
+        else
+        {
+           if (folderInfo->takeRecursive(m_clipboardInfo))
+              m_clipboard = MOVE_FOLDER; // Clipboard now owns m_clipboardInfo
+              
+           if (deleteInfo)
+              delete folderInfo; // Delete folderInfo
+        }
+
+        // Remove from menu
+        m_menuFile->removeMenu(item->directory());
+
+        // Remove tree item
         delete item;
+qWarning("Deleting folder: SubFolder count = %d Entries count = %d TreeItem count = %d", parentFolderInfo->subFolders.count(), parentFolderInfo->entries.count(), parentItem ? parentItem->childCount() : childCount());
+    }
+    else
+    {
+        QString file = item->file();
+
+        // Remove FolderInfo
+        TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
+        FolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : &m_rootFolder;
+        parentFolderInfo->take(file);
+
+        // Remove from menu
+        QString folder = parentItem ? parentItem->directory() : QString::null;
+        m_menuFile->removeEntry(folder, file);
+           
+        // Remove tree item
+        delete item;
+qWarning("Deleting file: SubFolder count = %d Entries count = %d TreeItem count = %d", parentFolderInfo->subFolders.count(), parentFolderInfo->entries.count(), parentItem ? parentItem->childCount() : childCount());
+    }
 }
 
 void TreeView::undel()
@@ -1102,9 +1224,9 @@ void TreeView::undel()
     
     undel(item);
     
-    _ac->action("edit_cut")->setEnabled(false);
-    _ac->action("edit_copy")->setEnabled(false);
-    _ac->action("delete")->setEnabled(false);
+    m_ac->action("edit_cut")->setEnabled(false);
+    m_ac->action("edit_copy")->setEnabled(false);
+    m_ac->action("delete")->setEnabled(false);
 
     // Select new current item
     setSelected( currentItem(), true );
@@ -1133,41 +1255,9 @@ void TreeView::undel(TreeItem *item)
 }
 
 void TreeView::cleanupClipboard() {
-	cleanupClipboard(locateLocal("apps", ".kmenuedit_clipboard"));
-}
+    if (m_clipboard == MOVE_FOLDER)
+       delete m_clipboardInfo;
+    m_clipboardInfo = 0;
 
-void TreeView::cleanupClipboard(const QString path)
-{
-    QDir d(path);
-    d.setFilter(QDir::Dirs);
-    QStringList dirlist = d.entryList();
-
-    if (!dirlist.isEmpty()) {
-    	QStringList::ConstIterator it = dirlist.begin();
-	int i = 0;
-	do {
-		if (i<2) {	// get rid of the "./" and  "../"
-			++it;
-			i++;
-			continue;
-		}
-		cleanupClipboard(path + "/" + *it);
-		i++;
-		++it;
-	} while (it != dirlist.end());
-    }
-
-    d.setFilter(QDir::Files | QDir::Hidden);
-    QStringList filelist = d.entryList();
-    if (!filelist.isEmpty()) {
- 	QStringList::ConstIterator it = filelist.begin();
-	QFile f;
-	while (it != filelist.end()) {
-		f.setName(path + "/" + *it);
-		f.remove();
-		++it;
-	}
-    }
-
-    d.rmdir(path);
+    m_clipboard = QString::null;
 }

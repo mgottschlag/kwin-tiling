@@ -44,7 +44,11 @@ KMenuEdit::KMenuEdit (QWidget *, const char *name)
     int w = config->readNumEntry("Width",640);
     int h = config->readNumEntry("Height", 480);
     resize(w, h);
+#if 0
     m_showHidden = config->readBoolEntry("ShowHidden");
+#else
+    m_showHidden = false;
+#endif
 
     // setup GUI
     setupActions();
@@ -70,8 +74,10 @@ void KMenuEdit::setupActions()
     m_actionDelete = 0;
     m_actionUndelete = 0;
 
+#if 0
     m_actionShowHidden = new KToggleAction(i18n("Show &Hidden Items"), KShortcut(), this, SLOT( slotChangeView()), actionCollection(), "show_hidden");
     m_actionShowHidden->setChecked(m_showHidden);
+#endif
 
     KStdAction::quit(this, SLOT( slotClose() ), actionCollection());
     KStdAction::cut(0, 0, actionCollection());
@@ -93,7 +99,11 @@ void KMenuEdit::setupView()
 
 void KMenuEdit::slotChangeView()
 {
+#if 0
     m_showHidden = m_actionShowHidden->isChecked();
+#else
+    m_showHidden = false;
+#endif
 
     // disabling the updates prevents unnecessary redraws
     setUpdatesEnabled( false );
