@@ -16,5 +16,5 @@ KDE_ICON = smartcard
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmsmartcard.pot
 
-data_DATA = smartcard.desktop
-datadir = $(kde_appsdir)/Settings/Peripherals
+kcmsmartcard_data_DATA = smartcard.desktop
+kcmsmartcard_datadir = $(kde_appsdir)/Settings/Peripherals

@@ -12,6 +12,6 @@ kcm_samba_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(kcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot
 
-data_DATA = smbstatus.desktop
-datadir = $(kde_appsdir)/Settings/Information
+kcmsamba_data_DATA = smbstatus.desktop
+kcmsamba_datadir = $(kde_appsdir)/Settings/Information
 

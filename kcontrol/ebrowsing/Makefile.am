@@ -17,5 +17,5 @@ kcm_kurifilt_la_LIBADD = $(LIB_KSYCOCA)
 messages:
 	$(XGETTEXT) $(kcm_kurifilt_la_SOURCES) plugins/ikws/*.cpp plugins/shorturi/*.cpp -o $(podir)/kcmkurifilt.pot
 
-data_DATA = ebrowsing.desktop
-datadir = $(kde_appsdir)/Settings/Network/WebBrowsing
+kcmkurifilt_data_DATA = ebrowsing.desktop
+kcmkurifilt_datadir = $(kde_appsdir)/Settings/Network/WebBrowsing

@@ -15,5 +15,5 @@ kcm_kdm_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(kcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot
 
-data_DATA = kdm.desktop
-datadir = $(kde_appsdir)/Settings/System
+kcmkdm_data_DATA = kdm.desktop
+kcmkdm_datadir = $(kde_appsdir)/Settings/System

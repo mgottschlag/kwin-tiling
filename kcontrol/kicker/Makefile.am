@@ -23,15 +23,15 @@ messages: rc.cpp
 	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
 	$(XGETTEXT) rc.cpp $(kcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
-data_DATA = panel.desktop 
-datadir = $(kde_appsdir)/Settings/Desktop/
-data2_DATA = panel_appearance.desktop 
-data2dir = $(kde_appsdir)/Settings/LookNFeel/
-data3_DATA = kicker_config.desktop kicker_config_appearance.desktop
-data3dir = $(kde_appsdir)/.hidden
+kcmkicker_data_DATA = panel.desktop 
+kcmkicker_datadir = $(kde_appsdir)/Settings/Desktop/
+kcmkicker_data2_DATA = panel_appearance.desktop 
+kcmkicker_data2dir = $(kde_appsdir)/Settings/LookNFeel/
+kcmkicker_data3_DATA = kicker_config.desktop kicker_config_appearance.desktop
+kcmkicker_data3dir = $(kde_appsdir)/.hidden
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel.desktop
 
-EXTRA_DIST = $(data_DATA)
+EXTRA_DIST = $(kcmkicker_data_DATA)

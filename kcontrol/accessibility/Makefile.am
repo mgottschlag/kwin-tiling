@@ -9,8 +9,8 @@ kcm_accessibility_la_LIBADD = $(LIB_KIO)
 
 noinst_HEADERS = accessibility.h
 
-data_DATA = accessibility.desktop
-datadir = $(kde_appsdir)/Settings/Accessibility
+kcmaccessibility_data_DATA = accessibility.desktop
+kcmaccessibility_datadir = $(kde_appsdir)/Settings/Accessibility
 
 messages: rc.cpp
 	$(EXTRACTRC) *.ui *.rc >> rc.cpp

@@ -1,4 +1,4 @@
-data_DATA = KDE_Beep_Ahem.wav KDE_Beep_Beep.wav KDE_Beep_Bottles.wav \
+sounds_data_DATA = KDE_Beep_Ahem.wav KDE_Beep_Beep.wav KDE_Beep_Bottles.wav \
 	KDE_Beep_ClassicBeep.wav KDE_Beep_ClockChime.wav KDE_Beep_Connect.wav \
 	KDE_Beep_Door.wav KDE_Beep_Honk.wav KDE_Beep_Lightning.wav \
 	KDE_Beep_Pop.wav KDE_Beep_RimShot.wav KDE_Beep_RingRing.wav \
@@ -12,6 +12,6 @@ data_DATA = KDE_Beep_Ahem.wav KDE_Beep_Beep.wav KDE_Beep_Bottles.wav \
 	KDE_Window_Shade_Down.wav KDE_Window_Shade_Up.wav KDE_Window_Sticky.wav \
 	KDE_Window_UnMaximize.wav KDE_Window_UnSticky.wav
  
-datadir = $(kde_sounddir)
+sounds_datadir = $(kde_sounddir)
  
-EXTRA_DIST = $(data_DATA)
+EXTRA_DIST = $(sounds_data_DATA)

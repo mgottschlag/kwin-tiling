@@ -14,8 +14,8 @@ kcm_input_la_METASOURCES = AUTO
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcminput.pot
 
-data_DATA = mouse.desktop
-datadir = $(kde_appsdir)/Settings/Peripherals
+kcminput_data_DATA = mouse.desktop
+kcminput_datadir = $(kde_appsdir)/Settings/Peripherals
 
 fontdir = $(kde_datadir)/kcminput
 font_DATA = cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz

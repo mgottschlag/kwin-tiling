@@ -12,8 +12,8 @@ kcm_ioslaveinfo_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(kcm_ioslaveinfo_la_SOURCES) -o $(podir)/kcmioslaveinfo.pot
 
-data_DATA = ioslaveinfo.desktop
-datadir = $(kde_appsdir)/Settings/Information
+kcmioslave_data_DATA = ioslaveinfo.desktop
+kcmioslave_datadir = $(kde_appsdir)/Settings/Information
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/Information

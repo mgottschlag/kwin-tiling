@@ -15,8 +15,8 @@ noinst_HEADERS = kcmkonsole.h schemaeditor.h sessioneditor.h schemadialog.h sess
 
 KDE_ICON = konsole
 
-data_DATA = kcmkonsole.desktop
-datadir = $(kde_appsdir)/.hidden
+kcmkonsole_data_DATA = kcmkonsole.desktop
+kcmkonsole_datadir = $(kde_appsdir)/.hidden
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkonsole.pot

@@ -14,5 +14,5 @@ KDE_ICON = bell
 messages:
 	$(XGETTEXT) $(kcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot
 
-data_DATA = bell.desktop
-datadir = $(kde_appsdir)/Settings/Sound
+kcmbell_data_DATA = bell.desktop
+kcmbell_datadir = $(kde_appsdir)/Settings/Sound

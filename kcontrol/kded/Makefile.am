@@ -14,5 +14,5 @@ KDE_ICON = kded
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkded.pot
 
-data_DATA = kcmkded.desktop
-datadir = $(kde_appsdir)/Settings/Components
+kcmkded_data_DATA = kcmkded.desktop
+kcmkded_datadir = $(kde_appsdir)/Settings/Components
