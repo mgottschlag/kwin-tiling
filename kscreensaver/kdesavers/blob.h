@@ -11,9 +11,7 @@
 #include <qtimer.h>
 #include <qlist.h>
 #include <qdialog.h>
-#include <qlineedit.h>
-#include <qlistbox.h>
-#include "saver.h"
+#include <kscreensaver.h>
 
 #define RAMP		64
 #define SPEED		10
@@ -26,12 +24,12 @@ enum blob_alg {
 	ALG_LAST,
 	ALG_RANDOM = ALG_LAST };
 
-class KBlobSaver : public kScreenSaver
+class KBlobSaver : public KScreenSaver
 {
     Q_OBJECT
 
 public:
-    KBlobSaver( Drawable drawable );
+    KBlobSaver( WId id );
     virtual ~KBlobSaver();
 
     void setDimension(int d)
@@ -88,6 +86,9 @@ protected slots:
     void slotTimeout();
 };
 
+class QListBox;
+class QLineEdit;
+
 class KBlobSetup : public QDialog
 {
     Q_OBJECT
@@ -106,6 +107,9 @@ protected:
 private slots:
     void slotOkPressed();
     void slotAbout();
+
+private:
+    KBlobSaver *saver;
 };
 
 #endif

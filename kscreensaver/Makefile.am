@@ -10,7 +10,7 @@ LDADD = $(LIB_KDEUI) -lm
 
 bin_PROGRAMS = kswarm.kss krock.kss \
 	kpyro.kss khop.kss $(XPM_SAVERS) $(GL_SAVERS) \
-	kblob.kss kbouboule.kss kscience.kss \
+	kbouboule.kss kscience.kss \
 	kslidescreen.kss krandom.kss kbsod.kss
 
 EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
@@ -40,7 +40,6 @@ kmatrix_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) matrix.cpp
 kmatrix_kss_LDADD= $(LDADD) $(XPMLIB)
 
 khop_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) hop.cpp
-kblob_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) blob.cpp
 kbouboule_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) bouboule.cpp
 kmorph3d_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) morph3d.cpp
 kmorph3d_kss_LDADD = $(LDADD) $(GLLIB)
@@ -55,15 +54,12 @@ kvm_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) vm_random.c vm.c kvm.cpp
 kvm_kss_LDADD= $(LDADD) $(XPMLIB) -lm
 
 METASOURCES = saver.moc demowin.moc rock.moc \
-		pyro.moc hop.moc swarm.moc \
-		morph3d.moc blob.moc space.moc bouboule.moc \
-		science.moc pipes.moc \
-		slidescreen.moc bsod.moc matrix.moc \
+		pyro.moc hop.moc swarm.moc morph3d.moc space.moc bouboule.moc \
+		science.moc pipes.moc slidescreen.moc bsod.moc matrix.moc \
 		kvm.moc
 
 noinst_HEADERS = saver.h demowin.h xlock.h rock.h \
-		pyro.h hop.h swarm.h \
-		blob.h space.h bouboule.h  science.h \
+		pyro.h hop.h swarm.h space.h bouboule.h  science.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
 		slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h \
@@ -77,7 +73,7 @@ messages:
 data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
-desktop_DATA = KBlob.desktop KBouboule.desktop KBsod.desktop \
+desktop_DATA = KBouboule.desktop KBsod.desktop \
 	KHop.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
 	KPyro.desktop KRandom.desktop KRock.desktop \
 	KScience.desktop KSlidescreen.desktop \

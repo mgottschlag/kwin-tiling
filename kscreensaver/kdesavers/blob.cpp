@@ -29,26 +29,44 @@
 #include <qlineedit.h>
 #include <qlistbox.h>
 #include <qlayout.h>
+#include <qpainter.h>
+#include <qpixmap.h>
+#include <qimage.h>
 
 #include <kapp.h>
 #include <kconfig.h>
 #include <kmessagebox.h>
 #include <kbuttonbox.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <krandomsequence.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include "xlock.h"
 
 #include "blob.moc"
 #include "blob.h"
 
-#include "helpers.h"
-
 #define SMALLRAND(a)	(int)(rnd->getLong(a)+1)
 
-static KBlobSaver *saver = NULL;
+
+// libkscreensaver interface
+extern "C"
+{
+    const char *kss_applicationName = "kblob.kss";
+    const char *kss_description = I18N_NOOP( "KBlob" );
+    const char *kss_version = "2.2.0";
+
+    KScreenSaver *kss_create( WId id )
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KBlobSaver( id );
+    }
+
+    QDialog *kss_setup()
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KBlobSetup();
+    }
+}
+
 static KRandomSequence *rnd = 0;
 
 QString alg_str[5];
@@ -64,11 +82,8 @@ void initAlg()
 //-----------------------------------------------------------------------------
 // the blob screensaver's code
 
-KBlobSaver::KBlobSaver
-(
-	Drawable drawable
-)
-: kScreenSaver(drawable)
+KBlobSaver::KBlobSaver ( WId id)
+    : KScreenSaver( id )
 {
 	rnd = new KRandomSequence();
  initAlg();
@@ -77,18 +92,16 @@ KBlobSaver::KBlobSaver
 	QString msg =
 	  i18n("Sorry. This screensaver needs a color display");
 
+    blank();
+
 	// needs colors to work this one
 	if (QPixmap::defaultDepth() < 8)
 	{
-		XSetForeground(qt_xdisplay(), mGc, white.pixel());
-		XDrawString(qt_xdisplay(), mDrawable, mGc, mWidth/2, mHeight/2,
-			    msg.local8Bit(), msg.length());
+        QPainter p(this);
+        p.setPen( white );
+        p.drawText( width()/2, height()/2, msg );
 		return;
 	}
-
-    // Clear to background colour when exposed
-    XSetWindowBackground(qt_xdisplay(), mDrawable,
-                            BlackPixel(qt_xdisplay(), qt_xscreen()));
 
 	colorContext = QColor::enterAllocContext();
 
@@ -110,16 +123,16 @@ KBlobSaver::KBlobSaver
 	else
 	{
 		// make special provision for preview mode
-		if (mHeight < 400)
+		if (height() < 400)
 		{
-			if (QPixmap::defaultDepth() >= 24)
+			if (QPixmap::defaultDepth() > 8 )
 				setColorInc(7);
 			else
 				setColorInc(4);
 		}
 		else
 		{
-			if (QPixmap::defaultDepth() >= 24)
+			if (QPixmap::defaultDepth() > 8 )
 				setColorInc(3);
 			else
 				setColorInc(2);
@@ -127,14 +140,14 @@ KBlobSaver::KBlobSaver
 	}
 
 	// the dimensions of the blob painter
-	dim = mHeight/70+1;
+	dim = height()/70+1;
 
 	// record starting time to know when to change frames
 	start = time(NULL);
 
 	// init some parameters used by all algorithms
-	xhalf = mWidth/2;
-	yhalf = mHeight/2;
+	xhalf = width()/2;
+	yhalf = height()/2;
 
 	// means a new algorithm should be set at entrance of timer
 	newalg = newalgp = 1;
@@ -187,8 +200,8 @@ void KBlobSaver::lnSetup()
 	ln_yinc = SMALLRAND(2);
 
 	// start position
-	tx = SMALLRAND(mWidth-dim-ln_xinc*2);
-	ty = SMALLRAND(mHeight-dim-ln_yinc*2);
+	tx = SMALLRAND(width()-dim-ln_xinc*2);
+	ty = SMALLRAND(height()-dim-ln_yinc*2);
 }
 
 void KBlobSaver::hsSetup()
@@ -204,8 +217,8 @@ void KBlobSaver::cbSetup()
 	cb_radians = 0.0;
 	cb_rinc = (2.0*M_PI)/360.0;
 	cb_sradians = 0.0;
-	cb_deviate = SMALLRAND(mHeight/20)+(mHeight/15);
-	cb_radius = mHeight/2-cb_deviate*2-2*dim;
+	cb_deviate = SMALLRAND(height()/20)+(height()/15);
+	cb_radius = height()/2-cb_deviate*2-2*dim;
         cb_devradinc = (rnd->getDouble()*10.0*2.0*M_PI)/360.0;
 }
 
@@ -249,7 +262,7 @@ void KBlobSaver::lnNextFrame()
 	// depending on the algorithm to use, move the blob painter to
 	// a new location
 	// check for wall hit to change direction
-	if (tx+dim+ln_xinc > (int)mWidth-1 || tx+ln_xinc < 0)
+	if (tx+dim+ln_xinc > (int)width()-1 || tx+ln_xinc < 0)
 	{
 		if (ln_xinc > 0)
 			dir = -1;
@@ -257,7 +270,7 @@ void KBlobSaver::lnNextFrame()
 			dir = 1;
 		ln_xinc = SMALLRAND(3.0)*dir;
 	}
-	if (ty+dim+ln_yinc > (int)mHeight-1 || ty+ln_yinc < 0)
+	if (ty+dim+ln_yinc > (int)height()-1 || ty+ln_yinc < 0)
 	{
 		if (ln_yinc > 0)
 			dir = -1;
@@ -276,8 +289,8 @@ void KBlobSaver::lnNextFrame()
 
 void KBlobSaver::hsNextFrame()
 {
-	static int xlen = mWidth-(4*dim);
-	static int ylen = mHeight-(4*dim);
+	static int xlen = width()-(4*dim);
+	static int ylen = height()-(4*dim);
 
 	// calc x as offset on angle line and y as vertical offset
 	// on interval -1..1 sine of angle
@@ -324,7 +337,7 @@ void KBlobSaver::cbNextFrame()
 
 void KBlobSaver::pcNextFrame()
 {
-	static float scale = (float)mHeight/3.0 - 4.0*dim;
+	static float scale = (float)height()/3.0 - 4.0*dim;
 
 	// simple polar coordinate equation
 	if (pc_div < 1.0)
@@ -347,73 +360,64 @@ void KBlobSaver::pcNextFrame()
 	}
 }
 
-void KBlobSaver::box
-(
-	int x,
-	int y
-)
+void KBlobSaver::box ( int x, int y )
 {
-	XImage *img;
-	int idx;
-
 	// for bad behaving algorithms that wants to cause an X trap
 	// confine to the valid region before using potentially fatal XGetImage
-	if ((uint)(x+dim) >= mWidth)
-		x = mWidth-dim-1;
+	if ((x+dim) >= width())
+		x = width()-dim-1;
 	else if (x < 0)
 		x = 0;
-	if ((uint)(y+dim) > mHeight)
-		y = mHeight-dim-1;
+	if ((y+dim) > height())
+		y = height()-dim-1;
 	else if (y < 0)
 		y = 0;
 
 	// get the box region from the display to upgrade
-	if (!(img = XGetImage(qt_xdisplay(), mDrawable, x, y, dim, dim, ULONG_MAX, ZPixmap)))
-		return;
+    QImage img = QPixmap::grabWindow(winId(), x, y, dim, dim).convertToImage();
 
 	// depending on the depth of the display, use either lookup table for
 	// next rgb val ( 8-bit ) or ramp the color directly for other displays
-	if (QPixmap::defaultDepth() == 8)
+	if ( img.depth() == 8)
 	{
 		// manipulate image by upgrading each pixel with 1 using a lookup
 		// table as the color allocation could have resulted in a spread out
 		// configuration of the color ramp
-		for (int j = 0; j < img->height; j++)
+		for (int j = 0; j < img.height(); j++)
 		{
-			for (int i = 0; i < img->width; i++)
+			for (int i = 0; i < img.width(); i++)
 			{
-				idx = j*img->bytes_per_line+i;
-				img->data[idx] = lookup[(unsigned char)(img->data[idx])];
+				img.scanLine(j)[i] = lookup[img.scanLine(j)[i]];
 			}
 		}
 	}
-	else if (QPixmap::defaultDepth() == 15 || QPixmap::defaultDepth() == 16)
+	else
 	{
-		// the 16 and higher depths are much easier as X
-		// has a handy func for creating a suitable effect
-		XAddPixel(img, (colorInc<<11));
-	}
-	else if (QPixmap::defaultDepth() >= 24)
-	{
-		XAddPixel(img, (colorInc<<18));
+		for (int j = 0; j < img.height(); j++)
+		{
+			for (int i = 0; i < img.width(); i++)
+			{
+                QRgb p = img.pixel( i, j );
+                p += (colorInc<<18);
+                img.setPixel( i, j, p );
+			}
+		}
 	}
 
 	// put the image back onto the screen
-	XPutImage(qt_xdisplay(), mDrawable, mGc, img, 0, 0, x, y, dim, dim);
-
-	// get rid of memory used by grabbed image
-	XDestroyImage(img);
+    QPainter p(this);
+    p.drawImage( x, y, img );
 }
 
 void KBlobSaver::blank()
 {
-	XSetWindowBackground(qt_xdisplay(), mDrawable, black.pixel());
-	XClearWindow(qt_xdisplay(), mDrawable);
+    setBackgroundColor( black );
+    erase();
 }
 
 void KBlobSaver::readSettings()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
     config->setGroup("Settings");
 
     // number of seconds to spend on a frame
@@ -426,8 +430,6 @@ void KBlobSaver::readSettings()
     else
 	newalg = 2;
     newalgp = newalg;
-
-    delete config;
 }
 
 //-----------------------------------------------------------------------------
@@ -446,9 +448,6 @@ KBlobSetup::KBlobSetup
 	QPushButton *button;
 	QString str;
 
-	delete saver;
-	saver = NULL;
-
 	// get saver configuration from kde registry
 	readSettings();
 
@@ -464,9 +463,7 @@ KBlobSetup::KBlobSetup
 	// seconds to generate on a frame
 	label = new QLabel(i18n("Frame Show sec."),
 		    this);
-	min_size(label);
 	stime = new QLineEdit(this);
-	fixed_size(stime);
 	str.setNum(showtime);
 	stime->setText(str);
 	tl11->addWidget(label);
@@ -475,7 +472,6 @@ KBlobSetup::KBlobSetup
 
 	// available algorithms
 	label = new QLabel(i18n("Algorithm"), this);
-	min_size(label);
 	algs = new QListBox(this);
 	algs->setMinimumSize(150, 105);
 	for (int i = 0; i <= ALG_RANDOM; i++)
@@ -493,7 +489,7 @@ KBlobSetup::KBlobSetup
 	tl1->addWidget(preview);
 	saver = new KBlobSaver(preview->winId());
 	saver->setDimension(3);
-	if (QPixmap::defaultDepth() >= 24)
+	if (QPixmap::defaultDepth() > 8)
 		saver->setColorInc(7);
 	else
 		saver->setColorInc(4);
@@ -524,7 +520,7 @@ KBlobSetup::KBlobSetup
 
 void KBlobSetup::readSettings()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
     config->setGroup("Settings");
 
     // number of seconds to spend on a frame
@@ -532,14 +528,12 @@ void KBlobSetup::readSettings()
 
     // algorithm to use. if not set then use random
     alg = config->readNumEntry("Algorithm", ALG_LAST);
-
-    delete config;
 }
 
 // Ok pressed - save settings and exit
 void KBlobSetup::slotOkPressed()
 {
-    KConfig *config = klock_config();
+    KConfig *config = KGlobal::config();
 
     config->setGroup("Settings");
 
@@ -547,7 +541,6 @@ void KBlobSetup::slotOkPressed()
     config->writeEntry("Algorithm", algs->currentItem());
 
     config->sync();
-    delete config;
 
     accept();
 }
@@ -560,27 +553,4 @@ void KBlobSetup::slotAbout()
 		saver->setAlgorithm(algs->currentItem());
 }
 
-//-----------------------------------------------------------------------------
-// standard screen saver interface functions
-//
-void startScreenSaver( Drawable d )
-{
-	if ( saver )
-		return;
-	saver = new KBlobSaver( d );
-}
-
-void stopScreenSaver()
-{
-	if ( saver )
-		delete saver;
-	saver = NULL;
-}
-
-int setupScreenSaver()
-{
-	KBlobSetup dlg;
-
-	return dlg.exec();
-}
 
