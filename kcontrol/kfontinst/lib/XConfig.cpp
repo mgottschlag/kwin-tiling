@@ -35,7 +35,8 @@
 #include <klocale.h>
 
 #include "kxftconfig.cpp" // CPD: HACK!!! How to sym-link in CVS???
-#include "GetPid.c"  // #included as want function to be static...
+
+extern "C" unsigned int kfi_getPid(const char *proc, unsigned int ppid);
 
 static const QCString constFontpaths ("# KFontinst fontpaths file -- DO NOT EDIT");
 #define UNSCALED ":unscaled"
@@ -251,7 +252,7 @@ void CXConfig::refreshPaths()
 
     if(CMisc::root() && XFS==itsType)
     {
-        unsigned int xfsPid=getPid("xfs", 1);
+        unsigned int xfsPid=kfi_getPid("xfs", 1);
 
         if(xfsPid)
         {

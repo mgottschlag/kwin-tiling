@@ -6,6 +6,7 @@ Config.cpp \
 Encodings.cpp \
 FontEngine.cpp \
 Fontmap.cpp \
+GetPid.c \
 Global.cpp \
 Misc.cpp \
 XConfig.cpp
@@ -18,8 +19,7 @@ FontEngine.h \
 Fontmap.h \
 Global.h \
 Misc.h \
-XConfig.h \
-GetPid.c
+XConfig.h
 
 libkfontinst_la_LIBADD = $(LIB_FONT_ENC) $(LIB_KIO) $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS)
 libkfontinst_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(LIBFONTCONFIG_RPATH) $(LIBFREETYPE_RPATH) -no-undefined

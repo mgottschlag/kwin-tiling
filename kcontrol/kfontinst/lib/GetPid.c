@@ -80,12 +80,13 @@
 #if defined OS_Linux || defined __Linux__
 
 #include <dirent.h>
+#include <ctype.h>
 
 #define FOUND_NAME 1
 #define FOUND_PPID 2
 #define FOUND_ALL (FOUND_NAME+FOUND_PPID)
 
-static unsigned int getPid(const char *proc, unsigned int ppid)
+unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 {
     bool           error=false;
     unsigned int   pid=0;
@@ -166,7 +167,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #include <sys/time.h>
 #include <sys/user.h>
 #include <unistd.h>
-static unsigned int getPid(const char *proc, unsigned int ppid)
+unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 {
     bool              error=false;
     unsigned int      pid=0;
@@ -238,7 +239,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #endif 
 #include <sys/sysinfo.h>
 
-static unsigned int getPid(const char *proc, pid_t ppid)
+unsigned int kfi_getPid(const char *proc, pid_t ppid)
 {
     DIR	         *procdir;
     bool         error=false;
@@ -297,7 +298,7 @@ static unsigned int getPid(const char *proc, pid_t ppid)
 #include <sys/pstat.h>
 #define MAX_PROCS 50
 
-static unsigned int getPid(const char *proc, unsigned int ppid)
+unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 {
     bool              error=false;
     unsigned int      pid=0;
@@ -326,7 +327,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #include <procinfo.h>
 #define MAX_PROCS 50
 
-static unsigned int getPid(const char *proc, unsigned int ppid)
+unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 {
     bool             error=false;
     unsigned int     pid=0;
@@ -377,7 +378,7 @@ static int checkCmd(const char *proc, const char *cmd)
     return strcmp(proc, cmd);
 }
 
-static unsigned int getPid(const char *proc, unsigned int ppid)
+unsigned int kfi_getPid(const char *proc, unsigned int ppid)
 {
     bool         error=false;
     unsigned int pid=0;
@@ -475,7 +476,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 int main(int argc, char *argv[])
 {
     if(3==argc)
-        printf("PID %u\n", getPid(argv[1], atoi(argv[2])));
+        printf("PID %u\n", kfi_getPid(argv[1], atoi(argv[2])));
     else
         printf("Usage: %s <process> <parent-process-id>\n", argv[0]);
     return 0;
