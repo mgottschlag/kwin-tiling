@@ -314,6 +314,8 @@ main(int argc, char **argv)
   uid_t		uid;
   long          lasttime;
 
+  AuthReturn ret;
+
   openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
 #ifdef HAVE_OSF_C2_PASSWD
@@ -371,7 +373,7 @@ main(int argc, char **argv)
 #endif  
 
   /* Now do the fandango */
-  AuthReturn ret = Authenticate(method, sfd < 0 ? conv_legacy : conv_server);
+  ret = Authenticate(method, sfd < 0 ? conv_legacy : conv_server);
   if (ret == AuthOk || ret == AuthBad) {
     /* Security: Don't undermine the shadow system. */
     uid = getuid();
