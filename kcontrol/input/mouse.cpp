@@ -157,7 +157,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     // Advanced tab
     tab2 = new QWidget(0, "Advanced Tab");
-    tabwidget->addTab(tab2, i18n("&Advanced"));
+    tabwidget->addTab(tab2, i18n("Advanced"));
 
     QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
               KDialog::spacingHint());

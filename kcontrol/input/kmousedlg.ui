@@ -95,7 +95,7 @@
                         <cstring>rightHanded</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Right handed</string>
+                        <string>Right handed</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -197,7 +197,7 @@
                                 <cstring>cb_pointershape</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Change pointer shape over icons</string>
+                                <string>Change pointer shape over icons</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -307,7 +307,7 @@
                                 <cstring>cbAutoSelect</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Automatically select icons</string>
+                                <string>Automatically select icons</string>
                             </property>
                         </widget>
                     </grid>
@@ -317,7 +317,7 @@
                         <cstring>doubleClick</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Double-click to open files and folders (select icons on first click)</string>
+                        <string>Double-click to open files and folders (select icons on first click)</string>
                     </property>
                     <property name="checked">
                         <bool>false</bool>
