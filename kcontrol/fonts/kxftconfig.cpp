@@ -196,7 +196,9 @@ static QString getEntry(QDomElement element, const char *type, unsigned int numA
 
 static KXftConfig::SubPixel::Type strToType(const char *str)
 {
-    if(0==strcmp(str, "rgb"))
+    if(0==strcmp(str, "\0"))
+        return KXftConfig::SubPixel::Greyscale;
+    else if(0==strcmp(str, "rgb"))
         return KXftConfig::SubPixel::Rgb;
     else if(0==strcmp(str, "bgr")) 
         return KXftConfig::SubPixel::Bgr;
@@ -223,7 +225,9 @@ static KXftConfig::Hint::Style strToStyle(const char *str)
 #else
 static bool strToType(const char *str, KXftConfig::SubPixel::Type &type)
 {   
-    if(0==memcmp(str, "rgb", 3))
+    if(0==memcmp(str, "\0", 1))
+        type=KXftConfig::SubPixel::Greyscale;
+    else if(0==memcmp(str, "rgb", 3))
         type=KXftConfig::SubPixel::Rgb;
     else if(0==memcmp(str, "bgr", 3))
         type=KXftConfig::SubPixel::Bgr;
@@ -823,6 +827,8 @@ QString KXftConfig::description(SubPixel::Type t)
         default:
         case SubPixel::None:
             return i18n("None");
+        case SubPixel::Greyscale:
+            return i18n("Greyscale");
         case SubPixel::Rgb:
             return i18n("RGB");
         case SubPixel::Bgr:
@@ -841,6 +847,8 @@ const char * KXftConfig::toStr(SubPixel::Type t)
         default:
         case SubPixel::None:
             return "none";
+        case SubPixel::Greyscale:
+            return "";
         case SubPixel::Rgb:
             return "rgb";
         case SubPixel::Bgr:

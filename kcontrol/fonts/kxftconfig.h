@@ -89,6 +89,7 @@ class KXftConfig
         enum Type
         {
             None,
+            Greyscale,
             Rgb,
             Bgr,
             Vrgb,
