@@ -52,14 +52,10 @@ extern "C" {
     }
 
     void init_style() {
-        KConfig config("kcmdisplayrc");
+        KConfig config("kcmdisplayrc", true, false);
         config.setGroup("X11");
         if (config.readBoolEntry( "useResourceManager", true ))
-        {
-            KProcess proc;
-            proc.setExecutable("krdb");
-            proc.start( KProcess::Block );
-        }
+            kapp->startServiceByDesktopName("krdb");
         // Write some Qt root property.
        QByteArray properties;
        QDataStream d(properties, IO_WriteOnly);
