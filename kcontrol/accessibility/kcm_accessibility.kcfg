@@ -18,7 +18,7 @@
 	</group>
 	<group name="CustomBell">
 		<entry name="Sound" type="Path">
-			<label>The path to the custom sound, if it's used</label>
+			<label>The path to the custom sound, if it is used</label>
 		</entry>
 	</group>
 	<group name="Visible">
