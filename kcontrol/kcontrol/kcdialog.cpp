@@ -42,7 +42,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     client->reparent(this,0,QPoint(0,0),true);
     setMainWidget(client);
     connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-    clientChanged(false);
+    clientChanged(client->changed());
 
     KCGlobal::repairAccels( topLevelWidget() );
 }
