@@ -236,7 +236,16 @@
                                     <string>Triple click selects &amp;only from the current word forward</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="6" column="0" rowspan="1" colspan="1">
+                            <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>allowResizeCB</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allow progr&amp;ams to resize terminal window</string>
+                                </property>
+                            </widget>
+
+                            <widget class="QLabel" row="7" column="0" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>TextLabel1_4</cstring>
                                 </property>
@@ -255,7 +264,7 @@
                                     <cstring>line_spacingSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="6" column="1" rowspan="1" colspan="1">
+                            <widget class="KIntNumInput" row="7" column="1" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>line_spacingSB</cstring>
                                 </property>
@@ -274,7 +283,7 @@
                                     </sizepolicy>
                                 </property>
                             </widget>
-                            <spacer row="6" column="3">
+                            <spacer row="7" column="3">
                                 <property name="name" stdset="0">
                                     <cstring>Spacer2</cstring>
                                 </property>
@@ -285,7 +294,7 @@
                                     <enum>Expanding</enum>
                                 </property>
                             </spacer>
-                            <widget class="QLabel" row="7" column="0" rowspan="1" colspan="1">
+                            <widget class="QLabel" row="8" column="0" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>SilenceLabel</cstring>
                                 </property>
@@ -304,7 +313,7 @@
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="7" column="1" rowspan="1" colspan="1">
+                            <widget class="KIntNumInput" row="8" column="1" rowspan="1" colspan="1">
                                 <property name="name">
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
@@ -320,7 +329,7 @@
                                     </sizepolicy>
                                 </property>
                             </widget>
-                            <spacer row="7" column="3">
+                            <spacer row="8" column="3">
                                 <property name="name" stdset="0">
                                     <cstring>Spacer3</cstring>
                                 </property>

@@ -53,6 +53,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->warnCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->ctrldragCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->cutToBeginningOfLineCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->allowResizeCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
@@ -74,6 +75,7 @@ void KCMKonsole::load()
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
     dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
     dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
+    dialog->allowResizeCB->setChecked(config->readBoolEntry("AllowResize",true));
     dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
     dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
@@ -132,6 +134,7 @@ void KCMKonsole::save()
     config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
     config->writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
     config->writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
+    config->writeEntry("AllowResize", dialog->allowResizeCB->isChecked());
     config->writeEntry("BlinkingCursor", dialog->blinkingCB->isChecked());
     config->writeEntry("has frame", dialog->frameCB->isChecked());
     config->writeEntry("LineSpacing" , dialog->line_spacingSB->value());
@@ -165,6 +168,7 @@ void KCMKonsole::defaults()
     dialog->warnCB->setChecked(true);
     dialog->ctrldragCB->setChecked(false);
     dialog->cutToBeginningOfLineCB->setChecked(false);
+    dialog->allowResizeCB->setChecked(true);
     dialog->blinkingCB->setChecked(false);
     dialog->frameCB->setChecked(true);
     dialog->terminalCB->setChecked(true);
