@@ -155,7 +155,7 @@ void KIconConfig::initDefaults()
 {
     mDefaultEffect[0].type = KIconEffect::NoEffect;
     mDefaultEffect[1].type = KIconEffect::NoEffect;
-    mDefaultEffect[2].type = KIconEffect::NoEffect;
+    mDefaultEffect[2].type = KIconEffect::ToGray;
     mDefaultEffect[0].transparant = false;
     mDefaultEffect[1].transparant = false;
     mDefaultEffect[2].transparant = true;
