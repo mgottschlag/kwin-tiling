@@ -3,14 +3,14 @@ Encoding=UTF-8
 Icon=kcmkicker
 Type=Application
 DocPath=kcontrol/panel/index.html
-Exec=kcmshell panel
+Exec=kcmshell kicker
 
 X-KDE-ModuleType=Library
 X-KDE-Library=kicker
 X-KDE-FactoryName=kicker
-X-KDE-ParentApp=kcontrol
+X-KDE-ParentApp=kicker
 
-Name=Panels
+Name=Arrangement
 Name[af]=panele
 Name[be]=Панэлі
 Name[bs]=Paneli
