@@ -85,7 +85,7 @@ static QString format_MB( t_memsize value)
 #else 	// I don't know for other archs... please fill in !
   double   mb = value / 1048576.0; /* divide by (1024*1024) */
 #endif
-  return i18n("%1 MB").arg(mb,7,'f',2);
+  return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(mb, 2));
 }
 
 KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
@@ -189,7 +189,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	vbox->addWidget(g,2);
     	vbox->addSpacing(SPACING/2);
 
-        Widget = new QLabel("",this);  /* xx MB used. */
+        Widget = new QLabel(this);  /* xx MB used. */
 	Widget->setAlignment(AlignCenter);
 	GraphLabel[i] = Widget;
 	vbox->addWidget(Widget);
@@ -276,7 +276,7 @@ void KMemoryWidget::update_Values()
 	    label->clear();
 	else
 	    label->setText(
-		i18n("%1 bytes =").arg(Memory_Info[i],10) );
+		i18n("%1 bytes =").arg(KGlobal::locale()->formatNumber(Memory_Info[i], 0)));
     }
 
     /* now update the MB-strings */
