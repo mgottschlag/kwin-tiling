@@ -328,7 +328,7 @@ void KSMSaveYourselfRequestProc (
     } else if ( !global ) {
 	SmsSaveYourself( smsConn, saveType, FALSE, interactStyle, fast );
 	SmsSaveComplete( smsConn );
-    } 
+    }
     // else checkpoint only, ksmserver does not yet support this
     // mode. Will come for KDE 3.1
 }
@@ -1359,6 +1359,8 @@ void KSMServer::restoreSession()
     connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()",
                        "restoreSessionInternal()", true);
 
+    upAndRunning( "ksmserver" );
+    
     if ( !wmCommand.isEmpty() ) {
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
