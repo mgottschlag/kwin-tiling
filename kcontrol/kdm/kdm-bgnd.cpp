@@ -84,7 +84,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       label->setPixmap( p );
 
       monitor = new KBGMonitor( label );
-      monitor->setGeometry( 20, 10, 157, 111 );
+      monitor->setGeometry( 23, 14, 151, 115 );
       QBoxLayout *tLayout = new QVBoxLayout(tGroup, 10, 10, "tLayout");
       tLayout->addSpacing(tGroup->fontMetrics().height()/2);
       tLayout->addWidget(label, 1, AlignCenter);

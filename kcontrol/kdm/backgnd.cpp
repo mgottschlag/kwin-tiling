@@ -119,7 +119,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setFixedSize(lbl->sizeHint());
     top->addWidget(lbl, 0,0); // 0,1, AlignCenter);
     m_pMonitor = new KBGMonitor(lbl);
-    m_pMonitor->setGeometry(20, 10, 157, 111);
+    m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
 
     QWhatsThis::add( m_pMonitor,
