@@ -88,8 +88,6 @@ KDE_ICON = kcmfontinst
 pics_DATA = kcmfontinst_star_office.png
 picsdir = $(kde_datadir)/kcmfontinst/pics
 
-DISTCLEANFILES = $(lib_fontinst_METASOURCES)
-
 xftparser: $(xftparserfiles)
 	cd $(srcdir); \
 	flex -PKfiXftConfig -oxftlex.c xftlex.l ;\

@@ -11,8 +11,6 @@ kcm_arts_la_METASOURCES = AUTO
 
 KDE_ICON = arts
 
-DISTCLEANFILES = $(lib_arts_METASOURCES)
-
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmarts.pot
 
