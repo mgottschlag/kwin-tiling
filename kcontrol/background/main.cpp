@@ -102,7 +102,7 @@ void KBackground::defaults()
 
 void KBackground::slotChildChanged(bool different)
 {
-   emit changed(different);
+   emit setChanged(different);
 }
 
 

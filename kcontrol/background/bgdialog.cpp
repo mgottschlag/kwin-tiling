@@ -34,6 +34,7 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kfiledialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kpixmap.h>
@@ -286,19 +287,31 @@ void BGDialog::initUI()
    }
 
    // Wallpapers
+   // the following QMap is lower cased names mapped to cased names and URLs
+   // this way we get case insensitive sorting
    QMap<QString, QPair<QString, QString> > papers;
    QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      QString s = (*it).mid((*it).findRev('/')+1), rs = s, lrs;
+      int slash = (*it).findRev('/') + 1;
+      int endDot = (*it).findRev('.');
+
+      QString s;
+      // strip the extension if it exists
+      if (endDot != -1 && endDot > slash)
+         s = (*it).mid(slash, endDot - slash);
+      else
+         s = (*it).mid(slash);
+
       // avoid name collisions
-      for (int n = 0; ; ) {
+      QString rs = s;
+      QString lrs = rs.lower();
+      for (int n = 1; papers.find(lrs) != papers.end(); ++n)
+      {
+         rs = s + " (" + QString::number(n) + ')';
          lrs = rs.lower();
-         if ( papers.find(lrs) == papers.end() )
-            break;
-         rs = s + " (" + QString::number(++n) + ")";
       }
-      papers[lrs] = qMakePair(rs, (*it));
+      papers[lrs] = qMakePair(rs, *it);
    }
 
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
@@ -365,6 +378,8 @@ void BGDialog::setWallpaper(const QString &s)
       {
          comboWallpaper->setCurrentItem(m_Wallpaper[s]);
       }
+
+      m_urlWallpaper->fileDialog()->setURL(s);
    }
    comboWallpaper->blockSignals(false);
 }
@@ -554,6 +569,7 @@ void BGDialog::slotWallpaper(int i)
       r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
       r->setWallpaperMode(m_wallpaperPos);
       r->setWallpaper(uri);
+      m_urlWallpaper->fileDialog()->setURL(uri);
    }
 
    setBlendingEnabled(i > 0);
