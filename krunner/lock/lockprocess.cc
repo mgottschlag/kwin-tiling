@@ -15,23 +15,11 @@
 //crashes (e.g. because it's set to multiple wallpapers and
 //some image will be corrupted).
 
-/*Fading code stolen from xscreensaver: */
-
-/* xscreensaver, Copyright (c) 1992-1997, 2003 Jamie Zawinski <jwz@jwz.org>
- *
- * Permission to use, copy, modify, distribute, and sell this software and its
- * documentation for any purpose is hereby granted without fee, provided that
- * the above copyright notice appear in all copies and that both that
- * copyright notice and this permission notice appear in supporting
- * documentation.  No representations are made about the suitability of this
- * software for any purpose.  It is provided "as is" without express or 
- * implied warranty.
- */
-
 #include <config.h>
 
 #include "lockprocess.h"
 #include "lockdlg.h"
+#include "autologout.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -88,6 +76,7 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 #endif
 
 #define LOCK_GRACE_DEFAULT          5000
+#define AUTOLOGOUT_DEFAULT          600
 
 static Window gVRoot = 0;
 static Window gVRootData = 0;
@@ -107,7 +96,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mSuspended(false),
       mVisibility(false),
       mRestoreXF86Lock(false),
-      mForbidden(false)
+      mForbidden(false),
+      mAutoLogout(false)
 {
     setupSignals();
 
@@ -196,6 +186,16 @@ static void sigterm_handler(int)
 {
     char tmp;
     ::write( sigterm_pipe[1], &tmp, 1);
+}
+
+void LockProcess::timerEvent(QTimerEvent *ev)
+{
+	if (ev->timerId() == mAutoLogoutTimerId)
+	{
+		killTimer(mAutoLogoutTimerId);
+		AutoLogout autologout(this);
+		execDialog(&autologout);
+	}
 }
 
 void LockProcess::setupSignals()
@@ -311,6 +311,13 @@ void LockProcess::configure()
     }
     else
         mLockGrace = -1;
+
+    if (config.readBoolEntry("AutoLogout", false))
+    {
+        mAutoLogout = true;
+        mAutoLogoutTimeout = config.readNumEntry("AutoLogoutTimeout", AUTOLOGOUT_DEFAULT);
+        mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
+    }
 
 #ifdef HAVE_DPMS
     //if the user  decided that the screensaver should run independent from
@@ -630,26 +637,6 @@ bool LockProcess::startSaver()
     return true;
 }
 
-// void LockProcess::fadeToBlack()
-// {
-// 	int seconds = 2;
-// 	int ticks = 20;
-// 
-// 	Display *dpy = qt_xdisplay();
-// 
-// 	fprintf (stderr, "fading %d screen%s\n", ScreenCount(dpy), ScreenCount(dpy) == 1 ? "" : "s");
-// 	XSync(dpy, False);
-// 	xf86_gamma_fade (dpy, 0, 0, seconds, ticks, True, False);
-// }
-// 
-// void LockProcess::originalGamma()
-// {
-// 	Display *dpy = qt_xdisplay();
-// 	XSync(dpy, False);
-// 	xf86_gamma_fade(dpy, 0, 0, 0, 0, False, False);
-// }
-
-
 //---------------------------------------------------------------------------
 //
 // Stop the screen saver.
@@ -743,7 +730,6 @@ bool LockProcess::startLock()
 //
 bool LockProcess::startHack()
 {
-//     fade = new Fade(qt_xdisplay());
     if (mSaverExec.isEmpty())
     {
         return false;
@@ -781,13 +767,11 @@ bool LockProcess::startHack()
 	{
 		if (mHackProc.start() == true)
 		{
-// 		fade->fadeOut(2, 30);
 #ifdef HAVE_SETPRIORITY
 			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
  			return true;
 		}
-//  		fade->restoreOriginal();
 	}
 	else // we aren't allowed to start the specified screensaver according to the kiosk restrictions
 	{
@@ -849,6 +833,7 @@ void LockProcess::resume()
 //
 bool LockProcess::checkPass()
 {
+    killTimer(mAutoLogoutTimerId);
     PasswordDlg passDlg( this, &greetPlugin);
 
     return execDialog( &passDlg ) == QDialog::Accepted;
@@ -929,6 +914,11 @@ bool LockProcess::x11Event(XEvent *event)
             {
                 stopSaver();
                 kapp->quit();
+            }
+            else if (mAutoLogout) // we need to restart the auto logout countdown
+            {
+                killTimer(mAutoLogoutTimerId);
+                mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout);
             }
             mBusy = false;
             return true;
@@ -1086,6 +1076,5 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 
     execDialog( &box );
 }
-
 
 #include "lockprocess.moc"

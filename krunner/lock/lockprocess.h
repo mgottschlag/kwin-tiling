@@ -60,6 +60,7 @@ public slots:
 
 protected:
     virtual bool x11Event(XEvent *);
+    virtual void timerEvent(QTimerEvent *);
 
 private slots:
     void hackExited(KProcess *);
@@ -84,8 +85,6 @@ private:
     void ungrabInput();
     void cantLock(const QString &reason);
     bool startSaver();
-//     void fadeToBlack();
-//     void originalGamma();
     void stopSaver();
     bool startHack();
     void stopHack();
@@ -122,6 +121,9 @@ private:
     QString     mMethod;
     GreeterPluginHandle greetPlugin;
     QPixmap     mSavedScreen;
+    int         mAutoLogoutTimerId;
+    int         mAutoLogoutTimeout;
+    bool        mAutoLogout;
 };
 
 #endif
