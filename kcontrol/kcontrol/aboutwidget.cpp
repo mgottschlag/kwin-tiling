@@ -237,7 +237,7 @@ void AboutWidget::updatePixmap()
     int boxX = 25;
     int boxY = 184 + 50;
     int bheight = height() - 184 - 50 - 40;
-    int bwidth = width() - _part3->width() + 60;
+    int bwidth = width() - 50;
 
     if (bheight < 0) bheight = 0;
     if (bwidth < 0) bheight = 0;
