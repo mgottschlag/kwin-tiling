@@ -41,7 +41,7 @@ CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsString(str.isNull() ? i18n(" No preview available") : str),
+              itsString(str.isEmpty() ? i18n(" No preview available") : str),
               itsBgndCol(eraseColor())
 {
 }

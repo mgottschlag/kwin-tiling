@@ -133,11 +133,11 @@ void CFontViewPart::install()
                 case CFontEngine::TRUE_TYPE:
                 case CFontEngine::OPEN_TYPE:
                 case CFontEngine::TT_COLLECTION:
-                    if(!CGlobal::cfg().getSysTTSubDir().isNull())
+                    if(!CGlobal::cfg().getSysTTSubDir().isEmpty())
                         sub=CGlobal::cfg().getSysTTSubDir();
                     break;
                 case CFontEngine::TYPE_1:
-                    if(!CGlobal::cfg().getSysT1SubDir().isNull())
+                    if(!CGlobal::cfg().getSysT1SubDir().isEmpty())
                         sub=CGlobal::cfg().getSysT1SubDir();
                     break;
                 default:
