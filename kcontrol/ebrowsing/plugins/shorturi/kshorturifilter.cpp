@@ -29,6 +29,7 @@
 #include <qlist.h>
 
 #include <kurl.h>
+#include <kdebug.h>
 #include <kprotocolmanager.h>
 #include <kinstance.h>
 #include <kglobal.h>
@@ -124,6 +125,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         if( (cmd.left((*it).length()).lower() == *it) &&
             !data.uri().isMalformed() && !data.uri().isLocalFile() )
         {
+            setFilteredURI( data, cmd );
             setURIType( data, KURIFilterData::NET_PROTOCOL );
             return data.hasBeenFiltered();
         }
@@ -170,14 +172,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
 */
 
-    // Local file and directory processing.
-    // Strip off "file:/" in order to expand local
-    // URLs if necessary.
-    // Use KURL::path, which does the right thing.
-    // The previous hack made "/" an empty string. (David)
-    if( data.uri().isLocalFile() )
-      cmd = data.uri().path();
-    cmd = QDir::cleanDirPath( cmd );
+    if( !data.uri().isMalformed() && data.uri().isLocalFile() )
+    {
+      // Local file and directory processing.
+      // Strip off "file:/" in order to expand local
+      // URLs if necessary.
+      // Use KURL::path, which does the right thing.
+      // The previous hack made "/" an empty string. (David)
+      cmd = QDir::cleanDirPath( data.uri().path() );
+    }
 
     // HOME directory ?
     if( cmd[0] == '~' )
