@@ -50,6 +50,7 @@ class CSysCfgSettingsWidget : public CSysCfgSettingsWidgetData
     void afmEncodingSelected(const QString &str);
     void t1AfmSelected(bool on);
     void ttAfmSelected(bool on);
+    void overwriteAfmsSelected(bool on);
 
     signals:
 

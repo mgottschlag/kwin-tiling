@@ -126,6 +126,11 @@ void CSysCfgSettingsWidget::ttAfmSelected(bool on)
         generateAfmsSelected(false);
 }
 
+void CSysCfgSettingsWidget::overwriteAfmsSelected(bool on)
+{
+    CKfiGlobal::cfg().setOverwriteAfms(on);
+}
+
 void CSysCfgSettingsWidget::scanEncodings()
 {
     const CEncodings::T8Bit  *enc8;

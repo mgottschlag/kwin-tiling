@@ -69,12 +69,17 @@ CAfmCreator::EStatus CAfmCreator::go(const QString &dir)
                    ((CFontEngine::isAType1(fInfo->fileName().local8Bit()) && CKfiGlobal::cfg().getDoT1Afms()) ||
                     (CFontEngine::isATtf(fInfo->fileName().local8Bit()) && CKfiGlobal::cfg().getDoTtAfms()) ))
                 {
+                    bool createAfm = CMisc::fExists(CMisc::afmName(fInfo->filePath())) 
+                                         ? CKfiGlobal::cfg().getOverwriteAfms() ? true : false 
+                                         : true;
+
                     emit step(i18n("Creating AFM: ")+CMisc::afmName(fInfo->filePath())); 
-                    if((st=create(fInfo->filePath()))!=SUCCESS && KMessageBox::questionYesNo(NULL,
+
+                    if(createAfm && (st=create(fInfo->filePath()))!=SUCCESS && KMessageBox::questionYesNo(NULL,
                                                                        i18n("There was an error creating:\n")+
                                                                        CMisc::afmName(fInfo->fileName())+
                                                                        i18n("\nDo you wish to continue?"), i18n("AFM Error"))==KMessageBox::No)
-                        status=st;
+                            status=st;
                 }
         }
     }

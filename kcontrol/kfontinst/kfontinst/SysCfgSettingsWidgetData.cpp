@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:40 2001
+** Created: Wed Nov 21 00:35:21 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,12 +31,45 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
 {
     if ( !name )
 	setName( "CSysCfgSettingsWidgetData" );
-    resize( 579, 280 ); 
+    resize( 480, 307 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, sizePolicy().hasHeightForWidth() ) );
     setCaption( tr2i18n( "Form3" ) );
     CSysCfgSettingsWidgetDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CSysCfgSettingsWidgetDataLayout"); 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
     CSysCfgSettingsWidgetDataLayout->addItem( spacer, 2, 0 );
+
+    ButtonGroup5_2_2 = new QButtonGroup( this, "ButtonGroup5_2_2" );
+    ButtonGroup5_2_2->setTitle( tr2i18n( "Command To Refresh X's Font List" ) );
+    ButtonGroup5_2_2->setColumnLayout(0, Qt::Vertical );
+    ButtonGroup5_2_2->layout()->setSpacing( 6 );
+    ButtonGroup5_2_2->layout()->setMargin( 11 );
+    ButtonGroup5_2_2Layout = new QGridLayout( ButtonGroup5_2_2->layout() );
+    ButtonGroup5_2_2Layout->setAlignment( Qt::AlignTop );
+
+    itsXsetRadio = new QRadioButton( ButtonGroup5_2_2, "itsXsetRadio" );
+    itsXsetRadio->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsXsetRadio->sizePolicy().hasHeightForWidth() ) );
+    itsXsetRadio->setText( tr2i18n( "&xset fp rehash" ) );
+    itsXsetRadio->setChecked( TRUE );
+
+    ButtonGroup5_2_2Layout->addMultiCellWidget( itsXsetRadio, 0, 0, 0, 1 );
+
+    itsXfsRadio = new QRadioButton( ButtonGroup5_2_2, "itsXfsRadio" );
+    itsXfsRadio->setText( tr2i18n( "/e&tc/rc.d/init.d/xfs restart" ) );
+
+    ButtonGroup5_2_2Layout->addMultiCellWidget( itsXfsRadio, 1, 1, 0, 1 );
+
+    itsCustomRadio = new QRadioButton( ButtonGroup5_2_2, "itsCustomRadio" );
+    itsCustomRadio->setText( tr2i18n( "C&ustom:" ) );
+
+    ButtonGroup5_2_2Layout->addWidget( itsCustomRadio, 2, 0 );
+
+    itsRestartXfsCommand = new QLineEdit( ButtonGroup5_2_2, "itsRestartXfsCommand" );
+    itsRestartXfsCommand->setEnabled( FALSE );
+    QWhatsThis::add( itsRestartXfsCommand, tr2i18n( "This is the command that can be issued upon successful system configuration to restart the X font server." ) );
+
+    ButtonGroup5_2_2Layout->addWidget( itsRestartXfsCommand, 2, 1 );
+
+    CSysCfgSettingsWidgetDataLayout->addWidget( ButtonGroup5_2_2, 1, 0 );
 
     GroupBox4_2 = new QGroupBox( this, "GroupBox4_2" );
     GroupBox4_2->setTitle( tr2i18n( "General:" ) );
@@ -95,6 +128,13 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
 
     GroupBox4_2Layout->addWidget( itsGenAfmsCheck, 2, 0 );
 
+    TextLabel1_2 = new QLabel( GroupBox4_2, "TextLabel1_2" );
+    TextLabel1_2->setText( tr2i18n( "encoding" ) );
+
+    GroupBox4_2Layout->addWidget( TextLabel1_2, 2, 3 );
+    QSpacerItem* spacer_2 = new QSpacerItem( 16, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
+    GroupBox4_2Layout->addItem( spacer_2, 1, 1 );
+
     itsTtAfmCheck = new QCheckBox( GroupBox4_2, "itsTtAfmCheck" );
     itsTtAfmCheck->setEnabled( FALSE );
     itsTtAfmCheck->setText( tr2i18n( "T&rueType" ) );
@@ -104,47 +144,15 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
 
     GroupBox4_2Layout->addWidget( itsTtAfmCheck, 3, 1 );
 
-    TextLabel1_2 = new QLabel( GroupBox4_2, "TextLabel1_2" );
-    TextLabel1_2->setText( tr2i18n( "encoding" ) );
+    itsOverwriteAfmsCheck = new QCheckBox( GroupBox4_2, "itsOverwriteAfmsCheck" );
+    itsOverwriteAfmsCheck->setEnabled( FALSE );
+    itsOverwriteAfmsCheck->setText( tr2i18n( "&Overwrite existing AFMs" ) );
+    QToolTip::add( itsOverwriteAfmsCheck, tr2i18n( "" ) );
+    QWhatsThis::add( itsOverwriteAfmsCheck, tr2i18n( "Select this option to force AFMs to be recreated - otherwise an AFM will not be generated if one already exists for the font. In general you will <b>not</b> want to overwrite any supplied AFMs." ) );
 
-    GroupBox4_2Layout->addWidget( TextLabel1_2, 2, 3 );
-    QSpacerItem* spacer_2 = new QSpacerItem( 16, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
-    GroupBox4_2Layout->addItem( spacer_2, 1, 1 );
+    GroupBox4_2Layout->addMultiCellWidget( itsOverwriteAfmsCheck, 4, 4, 1, 2 );
 
     CSysCfgSettingsWidgetDataLayout->addWidget( GroupBox4_2, 0, 0 );
-
-    ButtonGroup5_2_2 = new QButtonGroup( this, "ButtonGroup5_2_2" );
-    ButtonGroup5_2_2->setTitle( tr2i18n( "Command To Refresh X's Font List" ) );
-    ButtonGroup5_2_2->setColumnLayout(0, Qt::Vertical );
-    ButtonGroup5_2_2->layout()->setSpacing( 6 );
-    ButtonGroup5_2_2->layout()->setMargin( 11 );
-    ButtonGroup5_2_2Layout = new QGridLayout( ButtonGroup5_2_2->layout() );
-    ButtonGroup5_2_2Layout->setAlignment( Qt::AlignTop );
-
-    itsXsetRadio = new QRadioButton( ButtonGroup5_2_2, "itsXsetRadio" );
-    itsXsetRadio->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsXsetRadio->sizePolicy().hasHeightForWidth() ) );
-    itsXsetRadio->setText( tr2i18n( "&xset fp rehash" ) );
-    itsXsetRadio->setChecked( TRUE );
-
-    ButtonGroup5_2_2Layout->addMultiCellWidget( itsXsetRadio, 0, 0, 0, 1 );
-
-    itsXfsRadio = new QRadioButton( ButtonGroup5_2_2, "itsXfsRadio" );
-    itsXfsRadio->setText( tr2i18n( "/e&tc/rc.d/init.d/xfs restart" ) );
-
-    ButtonGroup5_2_2Layout->addMultiCellWidget( itsXfsRadio, 1, 1, 0, 1 );
-
-    itsCustomRadio = new QRadioButton( ButtonGroup5_2_2, "itsCustomRadio" );
-    itsCustomRadio->setText( tr2i18n( "C&ustom:" ) );
-
-    ButtonGroup5_2_2Layout->addWidget( itsCustomRadio, 2, 0 );
-
-    itsRestartXfsCommand = new QLineEdit( ButtonGroup5_2_2, "itsRestartXfsCommand" );
-    itsRestartXfsCommand->setEnabled( FALSE );
-    QWhatsThis::add( itsRestartXfsCommand, tr2i18n( "This is the command that can be issued upon successful system configuration to restart the X font server." ) );
-
-    ButtonGroup5_2_2Layout->addWidget( itsRestartXfsCommand, 2, 1 );
-
-    CSysCfgSettingsWidgetDataLayout->addWidget( ButtonGroup5_2_2, 1, 0 );
 
     // signals and slots connections
     connect( itsCustomRadio, SIGNAL( toggled(bool) ), itsRestartXfsCommand, SLOT( setEnabled(bool) ) );
@@ -162,6 +170,8 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     connect( itsT1AfmCheck, SIGNAL( toggled(bool) ), this, SLOT( t1AfmSelected(bool) ) );
     connect( itsGenAfmsCheck, SIGNAL( toggled(bool) ), itsTtAfmCheck, SLOT( setEnabled(bool) ) );
     connect( itsGenAfmsCheck, SIGNAL( toggled(bool) ), itsT1AfmCheck, SLOT( setEnabled(bool) ) );
+    connect( itsGenAfmsCheck, SIGNAL( toggled(bool) ), itsOverwriteAfmsCheck, SLOT( setEnabled(bool) ) );
+    connect( itsOverwriteAfmsCheck, SIGNAL( toggled(bool) ), this, SLOT( overwriteAfmsSelected(bool) ) );
 
     // tab order
     setTabOrder( itsX11EncodingCheck, itsX11EncodingCombo );
@@ -211,6 +221,11 @@ void CSysCfgSettingsWidgetData::encodingSelected(const QString &)
 void CSysCfgSettingsWidgetData::generateAfmsSelected(bool)
 {
     qWarning( "CSysCfgSettingsWidgetData::generateAfmsSelected(bool): Not implemented yet!" );
+}
+
+void CSysCfgSettingsWidgetData::overwriteAfmsSelected(bool)
+{
+    qWarning( "CSysCfgSettingsWidgetData::overwriteAfmsSelected(bool): Not implemented yet!" );
 }
 
 void CSysCfgSettingsWidgetData::t1AfmSelected(bool)

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Wed Oct 24 21:21:40 2001
+** Created: Wed Nov 21 00:35:21 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -30,6 +30,11 @@ public:
     CSysCfgSettingsWidgetData( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
     ~CSysCfgSettingsWidgetData();
 
+    QButtonGroup* ButtonGroup5_2_2;
+    QRadioButton* itsXsetRadio;
+    QRadioButton* itsXfsRadio;
+    QRadioButton* itsCustomRadio;
+    QLineEdit* itsRestartXfsCommand;
     QGroupBox* GroupBox4_2;
     QCheckBox* itsX11EncodingCheck;
     QComboBox* itsX11EncodingCombo;
@@ -37,13 +42,9 @@ public:
     QComboBox* itsAfmEncodingCombo;
     QCheckBox* itsT1AfmCheck;
     QCheckBox* itsGenAfmsCheck;
-    QCheckBox* itsTtAfmCheck;
     QLabel* TextLabel1_2;
-    QButtonGroup* ButtonGroup5_2_2;
-    QRadioButton* itsXsetRadio;
-    QRadioButton* itsXfsRadio;
-    QRadioButton* itsCustomRadio;
-    QLineEdit* itsRestartXfsCommand;
+    QCheckBox* itsTtAfmCheck;
+    QCheckBox* itsOverwriteAfmsCheck;
 
 
 public slots:
@@ -53,6 +54,7 @@ public slots:
     virtual void encodingSelected(bool);
     virtual void encodingSelected(const QString &);
     virtual void generateAfmsSelected(bool);
+    virtual void overwriteAfmsSelected(bool);
     virtual void t1AfmSelected(bool);
     virtual void ttAfmSelected(bool);
     virtual void xfsRestartSelected(bool);
@@ -60,8 +62,8 @@ public slots:
 
 protected:
     QGridLayout* CSysCfgSettingsWidgetDataLayout;
-    QGridLayout* GroupBox4_2Layout;
     QGridLayout* ButtonGroup5_2_2Layout;
+    QGridLayout* GroupBox4_2Layout;
 };
 
 #endif // CSYSCFGSETTINGSWIDGETDATA_H
