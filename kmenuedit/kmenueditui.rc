@@ -19,7 +19,7 @@
 </Menu>
 </MenuBar>
 
-<ToolBar name="mainToolBar" noMerge="1" fullWidth="true">
+<ToolBar name="mainToolBar" noMerge="1" fullWidth="true"><text>Main Toolbar</text>
  <Action name="newitem"/>
  <Action name="newsubmenu"/>
  <Separator/>
