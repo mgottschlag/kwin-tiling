@@ -7,25 +7,32 @@ DocPath=kcontrol/widgetstyle.html
 X-KDE-ModuleType=Library
 X-KDE-Library=widgetsettings
 X-KDE-FactoryName=widgetsettings
-X-KDE-Init=widgetsettings
+#X-KDE-Init=widgetsettings
 
 Name=Widget Settings 
 
 Comment=Allows the behavior of some widgets to be manipulated.
 Comment[az]=Bəzi pəncərəciklərin davranışını idarə edər.
 Comment[da]=Tillader manipulering af visse dimsers opførsel.
+Comment[de]=Erlaubt die Änderung des Verhaltens einiger Bedienelemente
 Comment[en_GB]=Allows the behaviour of some widgets to be manipulated.
 Comment[es]=Permite manipular el comportamiento de algunos widgets (objetos visuales)
+Comment[he]=שינוי הגדרות התפקוד של פריטים מסויימים
 Comment[lv]=Atļauj manipulēt ar dažu widžetu izturēšanos.
 Comment[nl]=hier kunt u gedrag van sommige widgets manipuleren
+Comment[pt]=Permite manipular o comportamento de alguns itens gráficos (widgets).
+Comment[pt_BR]=Permite manipular o comportamento de alguns itens gráficos (widgets).
 Comment[sk]=Umožňuje upraviť chovanie niektorých prvkov.
+Comment[sv]=Tillåter att beteendet hos vissa grafiska komponenter ändras.
 Comment[xh]=Ivumela ukuziphatha kwezinye iwidgets zihanahaniswe.
 Comment[xx]=xx
+Comment[zu]=Ivumela unikezelo lobekuziphatha kwamanye ama widgets
 
 Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
 Keywords[az]=tərz,tərzlər,görünüş,dekorlar,örtük,örtüklər,parçacıq,menyu,MacOS,menyu çubuğu,timsal,timsallar,vasitə çubuğu,mətn,düymə,siçan,şəffaf,hərəkət,ekran,proqram,proqramlar,KDE proqramları
 Keywords[da]=stil,udseende,dims,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
 Keywords[es]=estilo,estilos,temas,aspecto,objeto visual,widget,texto,resaltado,botones, aplicaciones, aplicaciones KDE
+Keywords[he]=סגנון,מראה,פריטים,סמלים,סרגל כלים,טקסט,הדגשה,יישומים,יישומים של KDE
 Keywords[nl]=stijl,stijlen,look,uiterlijk,widget,icons,iconen,pictogrammen,werkbalken,tekst,highlight,accentuatie,apps,KDE applicaties,programma's,KDE-programma's,toepassingen
 Keywords[pt]=estilo,estilos,aparência,elemento,ícones,ferramentas,texto,realce,aplicações,aplicações do KDE
 Keywords[pt_BR]=estilo,estilos,aparência,elemento,ícones,ferramentas,texto,realce,aplicações,aplicações do KDE
