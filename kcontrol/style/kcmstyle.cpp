@@ -381,7 +381,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Insert the pages into the tabWidget
 	tabWidget->insertTab( page1, i18n("&Style"));
-	tabWidget->insertTab( page2, i18n("Effe&cts"));
+	tabWidget->insertTab( page2, i18n("&Effects"));
 	tabWidget->insertTab( page3, i18n("&Miscellaneous"));
 }
 
