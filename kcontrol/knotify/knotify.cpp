@@ -65,7 +65,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     requester = new KURLRequester( hbox );
     requester->setEnabled( false );
     l->setBuddy( requester );
-    
+
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
     playButton->setPixmap( UserIcon("play") );
@@ -176,6 +176,9 @@ void KNotifyWidget::loadAll()
 void KNotifyWidget::save()
 {
     m_events->save();
+    if ( !kapp->dcopClient()->isAttached() )
+	kapp->dcopClient()->attach();
+    kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
 }
 
 void KNotifyWidget::slotItemActivated( QListViewItem *i )
