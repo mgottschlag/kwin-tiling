@@ -44,7 +44,6 @@ public:
     virtual ~Task();
 
     WId window() const { return _win; }
-    QPixmap pixmap() { return _pixmap; }
     QString name() { return _info.name; }
     QString visibleName() { return _info.visibleName; }
     QString visibleNameWithState() { return _info.visibleNameWithState(); }
@@ -53,6 +52,22 @@ public:
     QString className();
 
     QValueList<WId> transients() { return _transients; }
+
+    /**
+     * Returns a 16x16 (KIcon::Small) icon for the task.
+     */
+    QPixmap pixmap() { return _pixmap; }
+
+    /**
+     * Tries to find an icon for the task with the specified size. If there
+     * is no icon that matches then it will either resize the closest available
+     * icon or return a null pixmap depending on the value of allowResize.
+     *
+     * Note that the last icon is cached, so a sequence of calls with the same
+     * parameters will only query the NET properties if the icon has changed or
+     * none was found.
+     */
+    QPixmap icon( int width, int height, bool allowResize = false );
 
     // state
     bool isMaximized() const;
@@ -86,6 +101,7 @@ public:
 
 signals:
     void changed();
+    void iconChanged();
     void activated();
     void deactivated();
 
@@ -95,6 +111,11 @@ private:
     QPixmap             _pixmap;
     KWin::Info          _info;
     QValueList<WId>     _transients;
+
+    int                 _lastWidth;
+    int                 _lastHeight;
+    bool                _lastResize;
+    QPixmap             _lastIcon;
 };
 
 class Startup: public QObject

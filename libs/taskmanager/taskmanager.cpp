@@ -340,9 +340,24 @@ bool TaskManager::isOnTop(Task* task)
 
 
 Task::Task(WId win, QObject * parent, const char *name)
-    : QObject(parent, name), _active(false), _win(win)
+  : QObject(parent, name),
+    _active(false), _win(win),
+    _lastWidth(0), _lastHeight(0), _lastResize(false)    
 {
-    refresh(true);
+    _info = KWin::info(_win);
+
+    // try to load icon via net_wm
+    _pixmap = KWin::icon(_win, 16, 16, true);
+
+    // try to guess the icon from the classhint
+    if(_pixmap.isNull())
+      KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
+						  KIcon::Small,KIcon::Small,
+						  KIcon::DefaultState, 0, true);
+
+    // load xapp icon
+    if (_pixmap.isNull())
+      _pixmap = SmallIcon("kcmx");
 }
 
 Task::~Task()
@@ -365,6 +380,9 @@ void Task::refresh(bool icon)
         // load xapp icon
         if (_pixmap.isNull())
             _pixmap = SmallIcon("kcmx");
+
+	_lastIcon.resize(0,0);
+	emit iconChanged();
     }
     emit changed();
 }
@@ -431,6 +449,25 @@ QString Task::className()
     if(XGetClassHint(qt_xdisplay(), _win, &hint))
         return QString(hint.res_name);
     return QString::null;
+}
+
+QPixmap Task::icon( int width, int height, bool allowResize )
+{
+  if ( (width == _lastWidth)
+       && (height == _lastHeight)
+       && (allowResize == _lastResize )
+       && (!_lastIcon.isNull()) )
+    return _lastIcon;
+
+  QPixmap newIcon = KWin::icon( _win, width, height, allowResize );
+  if ( !newIcon.isNull() ) {
+    _lastIcon = newIcon;
+    _lastWidth = width;
+    _lastHeight = height;
+    _lastResize = allowResize;
+  }
+
+  return newIcon;
 }
 
 void Task::maximize()
