@@ -20,6 +20,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#if defined(INFO_OPENGL_AVAILABLE)
+
 #define KCMGL_DO_GLU  
 
 #include <qregexp.h> 
@@ -426,10 +428,10 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       		
 		if (glGetError() == GL_NONE) {
 			QString s;
-		 	if (!tfloat && count == 1) s.sprintf("%d", max[0]); else
-		 	if (!tfloat && count == 2) s.sprintf("%d, %d", max[0], max[1]); else
-		 	if (tfloat && count == 2) s.sprintf("%f - %f", fmax[0], fmax[1]); else
-			if (tfloat && count == 1) s.sprintf("%f", fmax[0]);
+		 	if (!tfloat && count == 1) s = QString::number(max[0]); else
+		 	if (!tfloat && count == 2) s = QString("%1, %2").arg(max[0]).arg(max[1]); else
+		 	if (tfloat && count == 2) s = QString("%1 - %2").arg(fmax[0],0,'f',6).arg(fmax[1],0,'f',6); else
+			if (tfloat && count == 1) s = QString::number(fmax[0],'f',6);
    			if (l3) l3 = new QListViewItem(l2, l3, cur_token->name, s); 
    	   			else l3 = new QListViewItem(l2, cur_token->name, s);
 			
@@ -639,4 +641,7 @@ static bool GetInfo_OpenGL_Generic( QListView *lBox )
 bool GetInfo_OpenGL(QListView * lBox)
 {
     return GetInfo_OpenGL_Generic(lBox);
-}  
+}
+
+#endif /* INFO_OPENGL_AVAILABLE */
+
