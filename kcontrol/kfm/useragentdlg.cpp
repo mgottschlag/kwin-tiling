@@ -84,7 +84,6 @@ UserAgentOptions::UserAgentOptions( QWidget * parent, const char * name ) :
 		   SLOT( listboxHighlighted( const QString& ) ) );
 
   loadSettings();
-  setMinimumSize(480,300);
 }
 
 

@@ -174,10 +174,10 @@ void KfmApplication::apply()
 
 int main(int argc, char **argv)
 {
-  g_pConfig = new KConfig( "kfmrc");
-  KfmApplication app( argc, argv, "kcmkfm" );
+  g_pConfig = new KConfig( "konquerorrc");
+  KfmApplication app( argc, argv, "kcmkonq" );
     
-  app.setTitle(i18n( "KFM Configuration"));
+  app.setTitle(i18n( "Konqueror Configuration"));
 
   int ret;
   if (app.runGUI())

@@ -108,8 +108,6 @@ KRootOptions::KRootOptions( QWidget *parent, const char *name )
         lay->activate();
  
         loadSettings();
- 
-        setMinimumSize( 480, 180 );
 }
 
 void KRootOptions::loadSettings()

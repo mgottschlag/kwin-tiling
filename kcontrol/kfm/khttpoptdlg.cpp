@@ -54,8 +54,6 @@ KHTTPOptions::KHTTPOptions(QWidget *parent, const char *name)
   // defaultCharsets = QString("utf-8 ")+klocale->charset()+" iso-8859-1";
   defaultCharsets = QString("utf-8 ")+" iso-8859-1"; // TODO
 
-  setMinimumSize(480,300);
-
   // finaly read the options
   loadSettings();
 }

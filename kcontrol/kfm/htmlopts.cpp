@@ -113,8 +113,6 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
     connect( bg, SIGNAL( clicked( int ) ), SLOT( slotFontSize( int ) ) );
 
     loadSettings();
-  
-    setMinimumSize( 480, 180 );
 }
 
 void KFontOptions::getFontList( QStrList &list, const char *pattern )
@@ -351,8 +349,6 @@ KColorOptions::KColorOptions( QWidget *parent, const char *name )
     lay->addMultiCellWidget(forceDefaultsbox,10,10,1,3);
 
     loadSettings();
-
-    setMinimumSize( 400, 180 );
 }
 
 void KColorOptions::slotBgColorChanged( const QColor &col )

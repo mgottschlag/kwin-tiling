@@ -133,8 +133,6 @@ KCookiesOptions::KCookiesOptions(QWidget *parent, const char *name)
 
   lay->activate();
 
-  setMinimumSize(480,300);
-
   // finally read the options
   loadSettings();
 }

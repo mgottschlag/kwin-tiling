@@ -26,7 +26,7 @@ KProxyOptions::KProxyOptions(QWidget *parent, const char *name)
   lay->addRowSpacing(4,20);
   lay->addRowSpacing(6,20);
   lay->addColSpacing(0,10);
-  lay->addColSpacing(3,20);
+  lay->addColSpacing(3,10);
   lay->addColSpacing(7,10);
 
   lay->setRowStretch(0,1);
@@ -96,8 +96,6 @@ KProxyOptions::KProxyOptions(QWidget *parent, const char *name)
   lay->activate();
 
   connect( cp_down, SIGNAL( clicked() ), SLOT( copyDown() ) );
-
-  setMinimumSize(480,300);
 
   // finally read the options
   loadSettings();

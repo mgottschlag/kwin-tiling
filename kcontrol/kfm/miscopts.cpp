@@ -48,8 +48,6 @@ KMiscOptions::KMiscOptions( QWidget *parent, const char *name )
     lay->activate();
     
     loadSettings();
-    
-    setMinimumSize( 400, 100 );
 }
 
 void KMiscOptions::loadSettings()
