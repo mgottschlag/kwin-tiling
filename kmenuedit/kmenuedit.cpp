@@ -140,9 +140,6 @@ void KMenuEdit::slotChangeView()
        setupView();
     createGUI("kmenueditui.rc");
 
-    // make it look nice
-    toolBar(0)->setIconText(KToolBar::IconTextBottom);
-
     m_tree->setViewMode(m_showHidden);
 }
 
