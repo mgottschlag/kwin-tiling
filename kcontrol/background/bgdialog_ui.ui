@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>495</width>
-            <height>350</height>
+            <width>650</width>
+            <height>441</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>BGDialog_UI</string>
     </property>
     <grid>
         <property name="name">
@@ -32,7 +35,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Setting for &amp;Desktop:</string>
+                <string>Setting for &amp;desktop:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>m_comboDesktop</cstring>
@@ -463,7 +466,7 @@
                         <cstring>m_radioNoPicture</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;No Picture</string>
+                        <string>&amp;No picture</string>
                     </property>
                     <property name="accel">
                         <string>Alt+N</string>
@@ -477,7 +480,7 @@
                         <cstring>m_radioSlideShow</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Slide Show:</string>
+                        <string>&amp;Slide show:</string>
                     </property>
                     <property name="accel">
                         <string>Alt+S</string>
@@ -519,7 +522,7 @@
                         <cstring>m_buttonSetupWallpapers</cstring>
                     </property>
                     <property name="text">
-                        <string>Set &amp;Up...</string>
+                        <string>Set&amp;up...</string>
                     </property>
                     <property name="accel">
                         <string>Alt+U</string>
@@ -554,6 +557,8 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_buttonGroupBackground</sender>
@@ -585,11 +590,7 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
-    <includehint>kcombobox.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
-    <includehint>kcombobox.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
