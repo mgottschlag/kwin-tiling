@@ -449,16 +449,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
         "the screen saver has been started. To restore the "
         "display, enter your account password at the prompt. "
         "You can specify in the spinbox below a delay "
-        "after which the display will be actually locked."  ) );
+        "after which the display will actually be locked."  ) );
     hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
     hbox->addSpacing(30);
     mLockLbl = new QLabel(i18n("After:"), mSettingsGroup);
     mLockLbl->setEnabled(mEnabled && mLock);
     QWhatsThis::add( mLockLbl, i18n(
-        "Should the period after which the display will be locked."
+        "The period after which the display will be locked."
         "To prevent the display from being locked, disable the "
-        "above option." ) );
+        "option above." ) );
     hbox->addWidget(mLockLbl);
     mWaitLockEdit = new QSpinBox(mSettingsGroup);
     mWaitLockEdit->setSteps(1, 10);
