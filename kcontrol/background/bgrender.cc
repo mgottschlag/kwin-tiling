@@ -161,12 +161,15 @@ int KBackgroundRenderer::doBackground(bool quit)
     static unsigned int tileWidth = 0;
     static unsigned int tileHeight = 0;
     if( tileWidth == 0 )
-    // some dithering may be needed even with bpb==16, so don't use tileWidth==1
+        {
+        int tile_val = QPixmap::defaultDepth() >= 24 ? 1 : 2;
+    // some dithering may be needed even with bpb==15/16, so don't use tileWidth==1
+    // for them
     // with tileWidth>2, repainting the desktop causes nasty effect (XFree86 4.1.0 )
-        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), 2, 2,
+        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), tile_val, tile_val,
             &tileWidth, &tileHeight ) != Success )
-            tileWidth = tileHeight = 2; // some defaults
-
+            tileWidth = tileHeight = tile_val; // some defaults
+    }
     switch (bgmode) {
 
     case Flat:
