@@ -802,9 +802,7 @@ void kSlideShowSetup::readSettings()
   num = config->readNumEntry("Delay", 20);
   mDelay->setValue(num);
 
-  QString str;
-  str.sprintf("%s %d %s", (const char*)i18n("Delay:"),
-	      num, (const char*)i18n("Seconds"));
+  QString str = i18n("Delay: %1 seconds").arg(num);
   mLblDelay->setText(str);
 
   curDir = config->readEntry("Directory");
@@ -871,12 +869,9 @@ void kSlideShowSetup::writeSettings()
 //-----------------------------------------------------------------------------
 void kSlideShowSetup::slotDelay(int x)
 {
-  QString str;
-
   writeSettings();
 
-  str.sprintf("%s %d %s", (const char*)i18n("Delay:"),
-	      x, (const char*)i18n("Seconds"));
+  QString str = i18n("Delay: %1 seconds").arg(x);
   mLblDelay->setText(str);
 }
 
