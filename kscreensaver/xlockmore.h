@@ -138,9 +138,7 @@
 #define size_t unsigned
 #endif
 #endif
-#if HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 #if HAVE_MEMORY_H
 #include <memory.h>
 #endif
