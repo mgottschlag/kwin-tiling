@@ -566,6 +566,7 @@ void ButtonTab::defaults()
   exe_cb->setChecked(true);
   wl_cb->setChecked(true);
   desktop_cb->setChecked(true);
+  zoom_cb->setChecked(true);
 }
 
 void ButtonTab::fill_tile_input()

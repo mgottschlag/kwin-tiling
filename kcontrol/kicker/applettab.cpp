@@ -217,6 +217,7 @@ void AppletTab::save()
 void AppletTab::defaults()
 {
   new_rb->setChecked(true);
+  list_group->setEnabled(false);
 }
 
 QString AppletTab::quickHelp() const

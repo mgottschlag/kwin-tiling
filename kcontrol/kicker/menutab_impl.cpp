@@ -183,6 +183,7 @@ void MenuTab::defaults()
   m_showRecent->setChecked(true);
   m_showQuickBrowser->setChecked(true);
   m_hiddenFiles->setChecked(false);
+  m_showBookmarks->setChecked(true);
 
   m_pOften->setChecked(true);
   m_num2ShowSpinBox->setValue(5);
