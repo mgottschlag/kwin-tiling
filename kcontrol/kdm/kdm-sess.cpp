@@ -366,6 +366,8 @@ void KDMSessionsWidget::load()
   c->setGroup("X-*-Greeter");
   readSD(sdrcombo, "Root");
   QStringList sessions = c->readListEntry( "SessionTypes");
+  if (sessions.isEmpty())
+    sessions << "default" << "kde" << "failsafe";
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
 
@@ -393,7 +395,7 @@ void KDMSessionsWidget::defaults()
 
   sessionslb->clear();
   sessionslb->insertItem("default");
-  sessionslb->insertItem("kde2");
+  sessionslb->insertItem("kde");
   sessionslb->insertItem("failsafe");
 
 #ifdef __linux__
