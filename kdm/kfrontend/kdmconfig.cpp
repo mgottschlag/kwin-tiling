@@ -130,6 +130,8 @@ QColor KDMConfig::Str2Color (QString aValue)
 
 KDMConfig::KDMConfig()
 {
+    KGlobal::locale()->setLanguage (GetCfgQStr (C_Language));
+
     _allowShutdown = GetCfgInt (C_AllowShutdown);
 
     if (GetCfgInt (C_GreeterPosFixed)) {
