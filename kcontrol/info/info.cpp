@@ -1,18 +1,18 @@
-/* 	
+/*
 	$Id$
-	
+
 	Main Widget for showing system-dependent information.
 	(But all functions in THIS FILE should be system independent !)
 
 	(C) 1998-1999 by Helge Deller (deller@gmx.de)
-	
+
 	** main.cpp includes this file ! **
 
 	This source-file includes another system-dependet sourcefile called
 	info_<systemname>.cpp
 	which should define one or more of the following defines to
 	indicate, that this information is really available.
-	
+
         #define INFO_CPU_AVAILABLE
 	#define INFO_IRQ_AVAILABLE
         #define INFO_DMA_AVAILABLE
@@ -23,9 +23,9 @@
 	#define INFO_SCSI_AVAILABLE
         #define INFO_PARTITIONS_AVAILABLE
 	#define INFO_XSERVER_AVAILABLE
-	
-	right now, there is the problem, that also the .desktop-files should 
-	depend on the systemname, so that only available .desktop-files will 
+
+	right now, there is the problem, that also the .desktop-files should
+	depend on the systemname, so that only available .desktop-files will
 	be copied to kde/applnk/Settings/Information !!
 */
 
@@ -42,7 +42,7 @@
 
 #include <X11/Xlib.h>
 
-/* All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special 
+/* All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special
    error-message should be shown to the user....
    If GetInfo_ErrorString is not modified in the function, the default string
    DEFAULT_ERRORSTRING will be used...
@@ -56,8 +56,8 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #if defined(__linux)
 # define DEFAULT_ERRORSTRING QString("") /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
-#elif defined(hpux) 
-# define DEFAULT_ERRORSTRING QString("") 
+#elif defined(hpux)
+# define DEFAULT_ERRORSTRING QString("")
 #else
 #define DEFAULT_ERRORSTRING  i18n("Maybe this system is not completely supported yet :-(")
 #endif
@@ -69,7 +69,7 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 /* easier to read with such a define ! */
 #define I18N_MAX(txt,in,fm,maxw) \
     { int n = fm.width(txt=in); if (n>maxw) maxw=n; }
-    
+
 #define PIXEL_ADD	20	// add x Pixel to multicolumns..
 
 #define HEXDIGITS (sizeof(int)*8/4)	/* 4 Byte = 32 Bit = 8 Hex-Digits */
@@ -84,7 +84,7 @@ static QString HexStr(unsigned long val, int digits )
     int i;
     hexstr = QString("0x%1").arg(val, digits, 16/*=HEX*/);
     for (i=hexstr.length()-1; i>0; --i)
-     if (hexstr[i]==' ') 
+     if (hexstr[i]==' ')
          hexstr[i] = '0';
     return hexstr;
 }
@@ -121,7 +121,7 @@ static struct _event_table {
     { 0L, 0 }};
 
 
-static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewItem *last, 
+static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewItem *last,
 	    Display *dpy, int scr, int default_scr)
 {
     unsigned	width, height;
@@ -131,7 +131,7 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
 		*depths;
     Screen 	*s = ScreenOfDisplay(dpy,scr);  /* opaque structure */
     QListViewItem *item;
-    
+
     /*
      * there are 2.54 centimeters to an inch; so there are 25.4 millimeters.
      *
@@ -139,10 +139,10 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
      *         = N pixels / (M inch / 25.4)
      *         = N * 25.4 pixels / M inch
      */
-     
+
     xres = ((double)(DisplayWidth(dpy,scr) *25.4)/DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr)*25.4)/DisplayHeightMM(dpy,scr));
-    
+
     item = new QListViewItem(lBox,last, i18n("Screen # %1").arg((int)scr,-1),
 		(scr==default_scr) ? i18n("(Default Screen)") : QString::null );
     item->setExpandable(true);
@@ -154,31 +154,31 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
 		.arg( (int)DisplayHeight(dpy,scr) )
 		.arg( (int)DisplayWidthMM(dpy,scr) )
 		.arg( (int)DisplayHeightMM (dpy,scr) ));
-    
-    last = new QListViewItem(item, last, i18n("Resolution"), 
+
+    last = new QListViewItem(item, last, i18n("Resolution"),
 		i18n("%1 x %2 dpi")
 		.arg( (int)(xres+0.5) )
 		.arg( (int)(yres+0.5) ));
-    
+
     ndepths = 0;
     depths  = 0;
     depths = XListDepths (dpy, scr, &ndepths);
     if (depths) {
 	QString txt;
-    
-        for (i = 0; i < ndepths; i++) {	
+
+        for (i = 0; i < ndepths; i++) {
             txt = txt + Value(depths[i]);
             if (i < ndepths - 1)
                 txt = txt + QString(", ");
         }
-    
+
         last = new QListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
         XFree((char *) depths);
     }
 
-    last = new QListViewItem(item, last, i18n("Root Window ID"), 
+    last = new QListViewItem(item, last, i18n("Root Window ID"),
 		HexStr((unsigned long)RootWindow(dpy,scr),HEXDIGITS));
-    last = new QListViewItem(item, last, i18n("Depth of Root Window"), 
+    last = new QListViewItem(item, last, i18n("Depth of Root Window"),
 		(DisplayPlanes (dpy, scr) == 1)
 		?	i18n("%1 plane").arg(DisplayPlanes(dpy,scr))   /*singular*/
 		:	i18n("%1 planes").arg(DisplayPlanes(dpy,scr)));/*plural*/
@@ -222,10 +222,10 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     return item;
 }
 
-QString Order( int order ) 
+QString Order( int order )
 {
     if (order==LSBFirst) return i18n("LSBFirst"); else
-    if (order==MSBFirst) return i18n("MSBFirst"); else 
+    if (order==MSBFirst) return i18n("MSBFirst"); else
 	return i18n("Unknown Order %1").arg(order);
 }
 
@@ -235,7 +235,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 
     int i,n;
     long req_size;
-    
+
     Display *dpy;
     XPixmapFormatValues *pmf;
 
@@ -249,14 +249,14 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     lBox->addColumn(i18n("Information") );
     lBox->addColumn(i18n("Value") );
     sorting_allowed = false;
-			
+
     next = new QListViewItem(lBox, i18n("Server Information"));
     next->setPixmap(0, SmallIcon("kcmx"));
     next->setOpen(true);
     next->setSelectable(false);
     next->setExpandable(false);
-    
-    last = new QListViewItem(next, i18n("Name of the Display"), 
+
+    last = new QListViewItem(next, i18n("Name of the Display"),
 		DisplayString(dpy));
 
     last = new QListViewItem(next, last, i18n("Vendor String"), QString(ServerVendor(dpy)));
@@ -297,7 +297,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 
     last = item = new QListViewItem(next, last, i18n("Bitmap"));
     last->setExpandable(true);
-    item = new QListViewItem(last, item, i18n("Unit"), 
+    item = new QListViewItem(last, item, i18n("Unit"),
 		Value(BitmapUnit(dpy)) );
     item = new QListViewItem(last, item, i18n("Order"),
 		Order(BitmapBitOrder(dpy)));
@@ -329,7 +329,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 #define SCREEN_XY_OFFSET 20
 
 void KInfoListWidget::defaults()
-{  
+{
     bool ok = false;
 
     delete lBox;
@@ -343,27 +343,27 @@ void KInfoListWidget::defaults()
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
                           width() -2*SCREEN_XY_OFFSET,
                           height()-2*SCREEN_XY_OFFSET);
-        
-	/*  Delete the user-visible ErrorString, before calling the 
+
+	/*  Delete the user-visible ErrorString, before calling the
 	    retrieve-function. If the function wants the widget to show
 	    another string, then it change *GetInfo_ErrorString ! */
         ErrorString = i18n("Sorry, no information available about %1!").arg(title)
 		    + QString("\n\n") + DEFAULT_ERRORSTRING;
 	GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
-	
+
 	sorting_allowed = true; 	/* the functions may set that */
         lBox->setSorting(-1);   	/* No Sorting per default */
-        
+
         if (getlistbox)
             ok = (*getlistbox)(lBox);	/* retrieve the information */
 
-        if (lBox->header()->count()<=1) 
+        if (lBox->header()->count()<=1)
             lBox->addColumn(title);	/* set default title */
         if (ok)
             lBox->show();
 
 	/* is the user allowed to use sorting ? */
-        lBox->header()->setClickEnabled(sorting_allowed); 
+        lBox->header()->setClickEnabled(sorting_allowed);
 	lBox->setShowSortIndicator(sorting_allowed);
     }
 
@@ -371,7 +371,7 @@ void KInfoListWidget::defaults()
         if (lBox) {
             delete lBox;
             lBox = 0;
-        }	    
+        }
         if (NoInfoText)
             NoInfoText->setText(ErrorString);
         else
@@ -386,15 +386,15 @@ void KInfoListWidget::defaults()
 
 QString KInfoListWidget::quickHelp() const
 {
-  return i18n( "All the information modules return information about a certain aspect of your computer hardware or your operating system. Not all modules are available on all hardware architectures and/or operating systems." );
+  return i18n( "<h1>System Information</h1>All the information modules return information about a certain aspect of your computer hardware or your operating system. Not all modules are available on all hardware architectures and/or operating systems." );
 }
 
 
-KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const char *name, 
+KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const char *name,
                                  bool _getlistbox(QListView *lbox))
     : KCModule(parent, name),
       title(_title)
-{   
+{
     getlistbox 	= _getlistbox;
     lBox 	= 0;
     NoInfoText  = 0;

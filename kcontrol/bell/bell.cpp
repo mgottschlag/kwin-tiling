@@ -181,3 +181,11 @@ void KBellConfig::defaults()
   m_pitch->setValue(800);
   m_duration->setValue(100);
 }
+
+QString KBellConfig::quickHelp() const
+{
+  return i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"
+    " i.e. the \"beeep\" you always hear when there's something wrong. Note that you can further"
+    " customize this sound using the \"Accessibility\" control module: for example you can choose"
+    " a sound file to be played instead of the standard bell.");
+}
