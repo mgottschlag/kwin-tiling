@@ -3,9 +3,7 @@
 bin_PROGRAMS = khotkeys
 lib_LTLIBRARIES = khotkeys.la
 
-#khotkeys_la_SOURCES = khkglobalaccel.cpp khotkeys.cpp main.cpp \
-khotkeys_la_SOURCES = khotkeys.cpp main.cpp \
-	khotkeys_skel.cpp
+khotkeys_la_SOURCES = khotkeys.cpp main.cpp khotkeys.skel
 khotkeys_la_LIBADD   = ../shared/libshared.la -lksycoca
 khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
