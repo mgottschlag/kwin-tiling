@@ -260,9 +260,10 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
     else {
         KWin::Info i = KWin::info( winId() );
         QRect g = i.geometry;
+	QRect screen = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(g.center()));
 
-        if ( g.x() > QApplication::desktop()->width()/2 &&
-             g.y() + menu->height() > QApplication::desktop()->height() )
+        if ( g.x()-screen.x() > screen.width()/2 &&
+             g.y()-screen.y() + menu->height() > screen.height() )
             menu->popup(QPoint( g.x(), g.y() - menu->height()));
         else
             menu->popup(QPoint( g.x() + width(), g.y() + height()));
