@@ -204,7 +204,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     thresh = new KIntNumInput(accel, 20, tab2);
     thresh->setLabel(i18n("Pointer threshold:"));
-    thresh->setRange(0,20,2);
+    thresh->setRange(0,20,1);
     thresh->setSuffix(i18n(" pixels"));
     thresh->setSteps(1,1);
     lay->addWidget(thresh);
@@ -256,7 +256,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
     dragStartDist->setLabel(i18n("Drag start distance:"));
-    dragStartDist->setRange(1, 20, 2);
+    dragStartDist->setRange(1, 20, 1);
     dragStartDist->setSuffix(i18n(" pixels"));
     dragStartDist->setSteps(1,1);
     lay->addWidget(dragStartDist);
@@ -269,7 +269,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
     wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
-    wheelScrollLines->setRange(1, 12, 2);
+    wheelScrollLines->setRange(1, 12, 1);
     wheelScrollLines->setSuffix(i18n(" lines"));
     wheelScrollLines->setSteps(1,1);
     lay->addWidget(wheelScrollLines);
