@@ -1204,7 +1204,7 @@ StartClient()
 	removeAuth = 1;
 	chownCtrl( &td->ctrl, curuid );
 	endpwent();
-#if !defined(USE_PAM) && !defined(_AIX)
+#if !defined(USE_PAM) && defined(USE_SHADOW) && !defined(_AIX)
 	endspent();
 #endif
 	ClearCloseOnFork( mstrtalk.pipe->wfd );
