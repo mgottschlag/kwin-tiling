@@ -185,7 +185,7 @@ void TopLevel::newClipData()
             clipData.truncate(47);
             clipData.append("...");
         }
-        long int id = pQPMmenu->insertItem(clipData.simplifyWhiteSpace(), -2, -1); // -2 means unique id, -1 means at end
+        long int id = pQPMmenu->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, -1); // -2 means unique id, -1 means at end
         pQIDclipData->insert(id, data);
 
         if (pSelectedItem != -1)
@@ -276,7 +276,7 @@ void TopLevel::readProperties(KConfig *kc)
       for (QStringList::ConstIterator it = dataList.begin();
            it != dataList.end(); ++it)
       {
-          id = pQPMmenu->insertItem( KStringHandler::csqueeze(*it, 40), -2, -1 );
+          id = pQPMmenu->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1 );
           pQIDclipData->insert( id, new QString( *it ));
       }
   }

@@ -134,7 +134,7 @@ void URLGrabber::slotActionMenu()
             QListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( kapp->miniIcon(), action->description() +
-                                   i18n(" -  Actions for: ") + KStringHandler::csqueeze(myClipData) );
+                                   i18n(" -  Actions for: ") + KStringHandler::csqueeze(myClipData, 45) );
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;
                 if ( item.isEmpty() )
