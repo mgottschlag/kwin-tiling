@@ -51,7 +51,7 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 {
   _keywords.setAutoDelete(true);
 
-  QVBoxLayout * l = new QVBoxLayout(this, 2, 2);
+  QVBoxLayout * l = new QVBoxLayout(this, 0, 2);
 
   // input
   _input = new QLineEdit(this);

@@ -29,7 +29,7 @@
 HelpWidget::HelpWidget(QWidget *parent , const char *name)
   : QWidget(parent, name)
 {
-  QVBoxLayout *l = new QVBoxLayout(this, 2);
+  QVBoxLayout *l = new QVBoxLayout(this);
 
   _browser = new QuickHelp(this);
   connect(_browser, SIGNAL(urlClick(const QString &)),
