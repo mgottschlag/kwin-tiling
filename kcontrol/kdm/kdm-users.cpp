@@ -197,8 +197,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     // read only mode
     if (getuid() != 0)
       {
-	usrGroup->setEnabled(false);
-	minGroup->setEnabled(false);
+	rbnoneusr->setEnabled(false);
+	rbselusr->setEnabled(false);
+	rballusr->setEnabled(false);
+	cbusrsrt->setEnabled(false);
+	leminuid->setReadOnly(true);
 	userbutton->setEnabled(false);
 	remuserlb->setEnabled(false);
 	nouserlb->setEnabled(false);

@@ -184,6 +184,10 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
 	wp_to_np->setEnabled(false);
 	np_to_wp->setEnabled(false);
 	cbarlen->setEnabled(false);
+	npRadio->setEnabled(false);
+	ppRadio->setEnabled(false);
+	spRadio->setEnabled(false);
+	puserlb->setEnabled(false);
 	cbjumppw->setEnabled(false);
       }
 }
