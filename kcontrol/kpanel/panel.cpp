@@ -64,20 +64,20 @@ KPanelConfig::KPanelConfig( QWidget *parent, const char* name )
 
     QVBoxLayout *vbox = new QVBoxLayout(loc_group,10);
     vbox->addSpacing(loc_group->fontMetrics().height());
-    
+
     loc_buttons[0] = new QRadioButton( i18n("&Top"), loc_group );
     loc_buttons[1] = new QRadioButton( i18n("&Left"), loc_group );
     loc_buttons[2] = new QRadioButton( i18n("&Bottom"), loc_group);
     loc_buttons[3] = new QRadioButton( i18n("&Right"), loc_group);
 
-    for (i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++)
       vbox->addWidget(loc_buttons[i]);
     layout->addWidget(loc_group,0,0);
-    
+
     loc_buttons[location]->setChecked(true);
     connect(loc_group, SIGNAL(clicked(int)), SLOT(location_clicked(int)));
-    
-    
+
+
     task_group = new QButtonGroup(i18n("Taskbar"), this);
 
     vbox = new QVBoxLayout(task_group,10);
@@ -91,10 +91,10 @@ KPanelConfig::KPanelConfig( QWidget *parent, const char* name )
 
     connect(task_group, SIGNAL(clicked(int)), SLOT(taskbar_clicked(int)));
 
-    for (i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++)
       vbox->addWidget(task_buttons[i]);
     layout->addWidget(task_group,0,1);
-   
+
 
     style_group = new QButtonGroup(i18n("Style"), this);
 
@@ -106,8 +106,8 @@ KPanelConfig::KPanelConfig( QWidget *parent, const char* name )
     style_buttons[2] = new QRadioButton( i18n("L&arge"), style_group);
     connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
 
-    for (i = 0; i < 3; i++) 
-      vbox->addWidget(style_buttons[0]);
+    for (i = 0; i < 3; i++)
+      vbox->addWidget(style_buttons[i]);
     layout->addWidget(style_group, 1, 0);
 
     loadSettings();
@@ -149,15 +149,15 @@ void KPanelConfig::resizeEvent(QResizeEvent *e) {
     rect.setTop(rect.top() + 5);
     for (i = 0;  i < 4; i++)
 	loc_buttons[i]->move(10, 10 + (i+1)*o + i*h);
-   
+
     rect = style_group->contentsRect();
     h = style_buttons[0]->height();
     o = (rect.height() - 3*h) / 4;
     rect.setTop(rect.top() + 5);
     for (i = 0;  i < 3; i++)
 	style_buttons[i]->move(10, 10 + (i+1)*o + i*h);
-   
-/*   
+
+/*
     rect = loc_group->contentsRect();
     h = rect.top() +
 	(rect.height() - loc_buttons[0]->sizeHint().height()) / 2;
