@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <config.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -35,7 +36,6 @@
 #include <kipc.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
-#include <kprocess.h>
 #include <kbuttonbox.h>
 
 #include <X11/Xlib.h>
@@ -278,44 +278,15 @@ void KColorScheme::save()
     config->sync();
     delete config;
 
+    QApplication::setOverrideCursor( waitCursor );
+    QStringList args;
+    args.append("style");
+    kapp->kdeinitExecWait("kcminit", args);
+    QApplication::restoreOverrideCursor();
+    QApplication::flushX();
 
     // Notify all KDE applications
-
     KIPC::sendMessageAll(KIPC::PaletteChanged);
-
-    // Write some Qt root property.
-    QByteArray properties;
-    QDataStream d(properties, IO_WriteOnly);
-    d << createPalette() << KGlobalSettings::generalFont();
-    Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
-
-    // do it for all root windows - multihead support
-    int screen_count = ScreenCount(qt_xdisplay());
-    for (int i = 0; i < screen_count; i++) {
-	XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
-			a, a, 8, PropModeReplace,
-			(unsigned char*) properties.data(), properties.size());
-
-	// Notify non Qt apps ?
-	if (useRM) {
-	    QApplication::setOverrideCursor( waitCursor );
-	    KProcess proc;
-	    proc << "kcminit" << "style" << "-display";
-
-	    // display name
-	    QCString dpyname = XDisplayString(qt_xdisplay());
-	    int pos = dpyname.findRev('.');
-	    if (pos != -1)
-		dpyname.remove(pos, 10);
-	    dpyname.sprintf("%s.%d", dpyname.data(), i);
-	    proc << dpyname;
-
-	    proc.start(KProcess::Block);
-	    QApplication::restoreOverrideCursor();
-	}
-    }
-
-    QApplication::flushX();
 
     m_bChanged = false;
     emit changed(false);
