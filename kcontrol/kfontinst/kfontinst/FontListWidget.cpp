@@ -126,7 +126,7 @@ class CAdvancedFontItem : CFontListWidget::CListViewItem
         else
             setText(1, constFontOpenError);
     }
- 
+
     virtual ~CAdvancedFontItem()
     {
     }
@@ -147,7 +147,7 @@ class CAdvancedFontItem : CFontListWidget::CListViewItem
     }
 
     private:
- 
+
     CDirectoryItem *itsParentDir;
 };
 
@@ -173,7 +173,7 @@ class CBasicFontItem : CFontListWidget::CListViewItem
         }
         if(CKfiGlobal::fe().openFont(fullName()))
         {
-            setText(1, CKfiGlobal::fe().getFullName().latin1());
+            setText(1, CKfiGlobal::fe().getFullName().local8Bit());
             CKfiGlobal::fe().closeFont();
         }
         else
@@ -255,7 +255,7 @@ void CDirectoryItem::setOpen(bool open)
                 QFileInfoListIterator it(*files);
                 QFileInfo             *fInfo;
 
-                itsListWidget->progressInit("Scanning folder "+fullName()+":", files->count());
+                itsListWidget->progressInit(i18n("Scanning folder %1:").arg(fullName()), files->count());
                 for(; NULL!=(fInfo=it.current()); ++it)
                 {
                     if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
@@ -470,7 +470,7 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
             QFileInfo             *fInfo;
 
             if(0==sub && files->count())
-                progressInit("Scaning folder " + dir + ":", 0);
+                progressInit(i18n("Scaning folder %1:").arg(dir), 0);
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())

@@ -70,7 +70,7 @@ CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *
 void CXftConfigSettingsWidget::fileButtonPressed()
 {
     QString file=KFileDialog::getSaveFileName(CConfig::constNotFound==itsConfigFileText->text() ? QString::null : itsConfigFileText->text(),
-                                              "XftConfig .xftconfig", this, "Select Anti-Alias configuration file");
+                                              "XftConfig .xftconfig", this, i18n("Select Anti-Alias configuration file"));
  
     if(QString::null!=file && file!=itsConfigFileText->text())
     {
@@ -80,13 +80,13 @@ void CXftConfigSettingsWidget::fileButtonPressed()
         {
             if(CMisc::dWritable(CMisc::getDir(file)))
             {
-                ok=KMessageBox::questionYesNo(this, i18n("Files does not exist,\n"
+                ok=KMessageBox::questionYesNo(this, i18n("File does not exist,\n"
                                                          "create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
                 if(ok)
                     CKfiGlobal::xft().init();
             }
             else
-                KMessageBox::error(this, i18n("Files does not exist,\n"
+                KMessageBox::error(this, i18n("File does not exist,\n"
                                               "and directory is not writeable"), i18n("File error"));
         }
         else

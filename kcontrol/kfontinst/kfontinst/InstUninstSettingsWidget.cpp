@@ -30,6 +30,7 @@
 #include "KfiGlobal.h"
 #include "Config.h"
 #include <kglobal.h>
+#include <klocale.h>
 #include <kiconloader.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
@@ -64,7 +65,7 @@ void CInstUninstSettingsWidget::moveToSelected(bool on)
 
 void CInstUninstSettingsWidget::uninstallDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(itsUninstallDirText->text(), this, "Select Uninstall Folder");
+    QString dir=KFileDialog::getExistingDirectory(itsUninstallDirText->text(), this, i18n("Select Uninstall Folder"));
  
     if(QString::null!=dir && dir!=itsUninstallDirText->text())
     {

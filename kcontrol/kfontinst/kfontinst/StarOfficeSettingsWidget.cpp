@@ -96,7 +96,7 @@ static bool isAPpd(const char *fname)
 
 static const char * getName(const QString &file)
 {
-    ifstream     f(file.latin1());
+    ifstream     f(file.local8Bit());
     const char * retVal="<Unknown>";
 
     if(f)

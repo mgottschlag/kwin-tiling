@@ -153,5 +153,5 @@ xftparser: $(xftparserfiles)
 	flex -PXftConfig -oxftlex.c xftlex.l ;\
 	bison -pXftConfig -t -d -o xftgram.c xftgram.y
 
-messages:
-	$(XGETTEXT) -kni18n $(libkcm_kfontinst_la_SOURCES) -o $(podir)/kfontinst.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kfontinst.pot

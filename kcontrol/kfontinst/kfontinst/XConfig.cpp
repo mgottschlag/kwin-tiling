@@ -298,7 +298,7 @@ bool CXConfig::writeFontpaths()
         cfg << constFontpaths << endl;
         for(path=itsPaths.first(); path; path=itsPaths.next())
             if(!path->disabled && CMisc::dExists(path->dir))
-                cfg << path->dir.latin1() << endl;
+                cfg << path->dir.local8Bit() << endl;
 
         cfg.close();
     }
@@ -376,7 +376,7 @@ bool CXConfig::writeXF86Config()
 
     if(changed)
     {
-        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().latin1(), "FontPath", itsInsertPos, false);
+        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos, false);
        
         if(cfg)
         {
@@ -511,7 +511,7 @@ static char * getXfsPath(char *buffer, unsigned int &totalSize, unsigned int off
 
 bool CXConfig::processXfs(const QString &fname, bool read)
 {
-    ifstream xfs(fname.latin1());
+    ifstream xfs(fname.local8Bit());
     bool     ok=false;
  
     if(xfs)
@@ -600,7 +600,7 @@ bool CXConfig::processXfs(const QString &fname, bool read)
  
                                                     if(!read) // then must be write...
                                                     {
-                                                        ofstream of(fname.latin1());
+                                                        ofstream of(fname.local8Bit());
  
                                                         if(of)
                                                         {
@@ -617,7 +617,7 @@ bool CXConfig::processXfs(const QString &fname, bool read)
                                                                         of << ',';
                                                                         of << endl;
                                                                     }
-                                                                    of << p->dir.latin1();
+                                                                    of << p->dir.local8Bit();
                                                                     if(p->unscaled)
                                                                         of << ":unscaled";
                                                                     first=false;
@@ -767,17 +767,17 @@ bool CXConfig::createFontsDotDir(const QString &dir)
  
             for(sIt=scalableFonts.begin(); sIt!=scalableFonts.end(); ++sIt)
             {
-                fontsDotDir << (*sIt).latin1() << endl;
+                fontsDotDir << (*sIt).local8Bit() << endl;
                 if(fontsDotScale)
-                    fontsDotScale << (*sIt).latin1() << endl;
+                    fontsDotScale << (*sIt).local8Bit() << endl;
             }
 
             if(fontsDotScale)
                 fontsDotScale.close();
 
             for(sIt=bitmapFonts.begin(); sIt!=bitmapFonts.end(); ++sIt)
-                fontsDotDir << (*sIt).latin1() << endl;
- 
+                fontsDotDir << (*sIt).local8Bit() << endl;
+
             status=true;
             fontsDotDir.close();
         }

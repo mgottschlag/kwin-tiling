@@ -44,7 +44,7 @@ CTtf::CTtf()
     : itsBuffer(NULL),
       itsBufferSize(0)
 {
-    ifstream ps(CMisc::locate("psnames").latin1());
+    ifstream ps(CMisc::locate("psnames").local8Bit());
 
     if(ps)
     {
@@ -130,7 +130,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
 {
     QList<TKerning> *list=NULL;
 
-    ifstream ttf(nameAndPath.latin1());
+    ifstream ttf(nameAndPath.local8Bit());
 
     if(ttf)
     {
@@ -239,7 +239,7 @@ CTtf::EStatus CTtf::readFile(const QString &nameAndPath)
 {
     EStatus status=SUCCESS;
 
-    fstream ff(nameAndPath.latin1(), ios::in|ios::binary);
+    fstream ff(nameAndPath.local8Bit(), ios::in|ios::binary);
 
     if(ff)
     {
@@ -265,7 +265,7 @@ CTtf::EStatus CTtf::writeFile(const QString &nameAndPath)
 {
     EStatus status=SUCCESS;
 
-    fstream ff(nameAndPath.latin1(), ios::out|ios::binary);
+    fstream ff(nameAndPath.local8Bit(), ios::out|ios::binary);
 
     if(ff)
     {

@@ -456,11 +456,11 @@ bool CXftConfig::read(const QString &f)
 {
     bool retVal=false;
 
-    if(CMisc::fExists(f.latin1()))
+    if(CMisc::fExists(f.local8Bit()))
     {
         init();
         xft=this;
-        XftConfigLexFile((char *)f.latin1());
+        XftConfigLexFile((char *)f.local8Bit().data());
         retVal=XftConfigparse() ? false : true;
     }
     else
@@ -477,7 +477,7 @@ bool CXftConfig::read(const QString &f)
 
 bool CXftConfig::save(const QString &f, const QStringList &dirs)
 {
-    ofstream of(f.latin1());
+    ofstream of(f.local8Bit());
 
     if(of)
     {
@@ -503,7 +503,7 @@ bool CXftConfig::save(const QString &f, const QStringList &dirs)
                 QString dir(*sIt);
 
                 dir.remove(dir.length()-1, 1); // Remove trailing /
-                of << "dir \"" << dir.latin1() << '\"' << endl;
+                of << "dir \"" << dir.local8Bit() << '\"' << endl;
             }
         }
 
@@ -515,7 +515,7 @@ bool CXftConfig::save(const QString &f, const QStringList &dirs)
                << "# Include other configuration files, and complain if missing" << endl
                << '#' << endl;
             for(sIt=itsIncludes.begin(); sIt!=itsIncludes.end(); ++sIt)
-                of << "include \"" << (*sIt).latin1() << '\"' << endl;
+                of << "include \"" << (*sIt).local8Bit() << '\"' << endl;
         }
 
         // Ouput any includes...
@@ -526,7 +526,7 @@ bool CXftConfig::save(const QString &f, const QStringList &dirs)
                << "# Include other configuration files, but don't complain if missing" << endl
                << '#' << endl;
             for(sIt=itsIncludeIfs.begin(); sIt!=itsIncludeIfs.end(); ++sIt)
-                of << "includeif \"" << (*sIt).latin1() << '\"' << endl;
+                of << "includeif \"" << (*sIt).local8Bit() << '\"' << endl;
         }
 
         // Output the entry details... 

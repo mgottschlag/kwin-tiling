@@ -67,12 +67,12 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
     {
         QString       xp3Dir(xp3Directory()),
                       ppdFileName(xp3Dir+"ppds/"+CKfiGlobal::cfg().getSOPpd());
-        CBufferedFile ppdFile(ppdFileName.latin1(), CBufferedFile::createGuard(constSOGuardStr, path.latin1()), "*Font ");
+        CBufferedFile ppdFile(ppdFileName.local8Bit(), CBufferedFile::createGuard(constSOGuardStr, path.local8Bit()), "*Font ");
 
         if(ppdFile)
         {
             QString       psStdFontsFileName(xp3Dir+"psstd.fonts");
-            CBufferedFile psStdFontsFile(psStdFontsFileName.latin1(), CBufferedFile::createGuard(constSOGuardStr, path.latin1(), false), NULL, true, true);
+            CBufferedFile psStdFontsFile(psStdFontsFileName.local8Bit(), CBufferedFile::createGuard(constSOGuardStr, path.local8Bit(), false), NULL, true, true);
 
             if(psStdFontsFile)
             {
@@ -90,7 +90,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
                         {
                             QString afmName=CMisc::afmName(fInfo->fileName());
 
-                            emit step(i18n("Adding ")+fInfo->filePath()+i18n(" to StarOffice"));
+                            emit step(i18n("Adding %1 to StarOffice").arg(fInfo->filePath()));
 
                             if(CMisc::fExists(path+afmName))  // Does the .afm exists in the X11 dir?
                             {
@@ -217,7 +217,7 @@ QString CStarOfficeConfig::getAfmName(const QString &file)
     if(!CMisc::root())
     {
         char *user=getlogin();
- 
+
         if(!user)
             user=getenv("LOGNAME");
         if(!user)
@@ -240,23 +240,23 @@ QString CStarOfficeConfig::statusToStr(EStatus st)
     switch(st)
     {
         case SUCCESS: 
-            return "Success";
+            return i18n("Success");
         case COULD_NOT_OPEN_X11_DIR:
-            return "Could not open X11 folder";
+            return i18n("Could not open X11 folder");
         case COULD_NOT_OPEN_PSSTD_FONTS:
-            return "Could not open psstd.fonts";
+            return i18n("Could not open psstd.fonts");
         case COULD_NOT_OPEN_PPD_FILE:
-            return "Could not open printer file";
+            return i18n("Could not open printer file");
         case COULD_NOT_OPEN_FONTS_DOT_SCALE:
-            return "Could not open X11 fonts.scale";
+            return i18n("Could not open X11 fonts.scale");
         case COULD_NOT_MODIFY_XPRINTER_DOT_PROLOG:
-            return "Could not modify xprinter.prolog";
+            return i18n("Could not modify xprinter.prolog");
         case COULD_NOT_LINK_XPRINTER_DOT_PROLOG:
-            return "Could not link xprinter.prolog";
+            return i18n("Could not link xprinter.prolog");
         case COULD_NOT_RESTORE_XPRINTER_DOT_PROLOG:
-            return "Could not restore xprinter.prolog";
+            return i18n("Could not restore xprinter.prolog");
         default:
-            return "Unknown";
+            return i18n("Unknown");
     }
 }
 #include "StarOfficeConfig.moc"

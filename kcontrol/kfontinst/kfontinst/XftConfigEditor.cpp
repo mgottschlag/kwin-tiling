@@ -384,7 +384,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
 
                         if(getValue(val, field, value, false))
                         {
-                            *tst=XftTestCreate(qual, field.latin1(), strToOp(op), val);
+                            *tst=XftTestCreate(qual, field.local8Bit(), strToOp(op), val);
                             tst=&((*tst)->next);
                         }
                     }
@@ -429,7 +429,7 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
                     break;
             }
 
-            retVal->edit=XftEditCreate(itsEditFieldNameCombo->currentText().latin1(), strToOp(itsEditAssignCombo->currentText()), expr);
+            retVal->edit=XftEditCreate(itsEditFieldNameCombo->currentText().local8Bit(), strToOp(itsEditAssignCombo->currentText()), expr);
         }
 
         return retVal;
@@ -609,9 +609,9 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
         val.u.s=(char *)malloc(edit ? strVal.length()+1 : strVal.length()-1);
 
         if(edit)
-            strcpy(val.u.s, strVal.latin1());
+            strcpy(val.u.s, strVal.local8Bit());
         else
-            strcpy(val.u.s, strVal.mid(1, strVal.length()-2).latin1());  // Need to remove quotes from each end of the string...
+            strcpy(val.u.s, strVal.mid(1, strVal.length()-2).local8Bit());  // Need to remove quotes from each end of the string...
     }
     else if("spacing"==field)
     {
@@ -684,7 +684,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
         else
             if(constOther==strVal) // Its an integer...
                 v=strVal.toInt();
- 
+
         val.type=XftTypeInteger;
         val.u.i=v;
     }
@@ -699,7 +699,7 @@ bool CXftConfigEditor::getValue(XftValue &val, const QString &field, const QStri
             // Not sure about this...
             val.type=XftTypeString;
             val.u.s=(char *)malloc(strVal.length()+1);
-            strcpy(val.u.s, strVal.latin1());
+            strcpy(val.u.s, strVal.local8Bit());
         }
         else if("rgba"==field)
         {

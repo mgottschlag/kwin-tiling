@@ -156,7 +156,7 @@ void CFontmapCreator::scanFiles(TListEntry **list, const QString &path)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() &&
                   (CFontEngine::isAType1(fInfo->fileName()) || CFontEngine::isATtf(fInfo->fileName())))
                 {
-                    emit step(i18n("Adding ") + fInfo->filePath() + i18n(" to Fontmap"));
+                    emit step(i18n("Adding %1 to Fontmap").arg(fInfo->filePath()));
 
                     if(CKfiGlobal::fe().openFont(fInfo->filePath(), CFontEngine::NAME|CFontEngine::PROPERTIES))
                     {
@@ -549,7 +549,7 @@ bool CFontmapCreator::go(const QString &dir)
 {
     bool status=false;
  
-    CBufferedFile file(CKfiGlobal::cfg().getGhostscriptFile().latin1(), CBufferedFile::createGuard(constGSGuardStr, dir.latin1(), false), NULL, true, true);
+    CBufferedFile file(CKfiGlobal::cfg().getGhostscriptFile().local8Bit(), CBufferedFile::createGuard(constGSGuardStr, dir.local8Bit(), false), NULL, true, true);
 
     if(file)
     {

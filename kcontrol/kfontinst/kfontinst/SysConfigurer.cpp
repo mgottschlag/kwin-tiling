@@ -226,7 +226,7 @@ void CSysConfigurer::go()
         for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
         {
             CStarOfficeConfig::EStatus st;
- 
+
             status(i18n("Configuring StarOffice (")+CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])+")...");
             if((st=itsSo.go(CKfiGlobal::cfg().getModifiedDirs()[d]))!=CStarOfficeConfig::SUCCESS)
             {
@@ -278,7 +278,7 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
                 if(ok)
                     emit successful();
                 else
-                    KMessageBox::error(itsParent, i18n("There was an error using the X refresh command:\n")+cmd, i18n("Error"));
+                    KMessageBox::error(itsParent, i18n("There was an error using the X refresh command:\n%1").arg(cmd), i18n("Error"));
             }
             else
                 emit successful();

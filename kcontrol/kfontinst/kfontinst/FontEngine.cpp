@@ -853,13 +853,13 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 
     if(mask&PREVIEW || mask&XLFD)
     {
-        if(FT_New_Face(itsFt.library, file.latin1(), 0, &itsFt.face))
+        if(FT_New_Face(itsFt.library, file.local8Bit(), 0, &itsFt.face))
             return false;
         else
             itsFt.open=true;
     }
 
-    gzFile f=gzopen(file.latin1(), "r");
+    gzFile f=gzopen(file.local8Bit(), "r");
  
     if(f)
     {
@@ -1040,7 +1040,7 @@ bool CFontEngine::getIsArrayEncodingT1()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
 {
-    bool status=FT_New_Face(itsFt.library, file.latin1(), 0, &itsFt.face) ? false : true;
+    bool status=FT_New_Face(itsFt.library, file.local8Bit(), 0, &itsFt.face) ? false : true;
 
     if(status)
         itsFt.open=true;
@@ -1559,7 +1559,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
     };
 
     bool     status=false;
-    ifstream spd(file.latin1());
+    ifstream spd(file.local8Bit());
 
     if(spd)
     {
@@ -1881,7 +1881,7 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
 bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
 {
     bool   status=false;
-    gzFile bdf=gzopen(file.latin1(), "r");
+    gzFile bdf=gzopen(file.local8Bit(), "r");
 
     if(bdf)
     {
@@ -2064,7 +2064,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                      indirect;  // true if value is a string
     };
 
-    gzFile snf=gzopen(file.latin1(), "r");
+    gzFile snf=gzopen(file.local8Bit(), "r");
  
     if(NULL!=snf)
     {
@@ -2254,7 +2254,7 @@ bool CFontEngine::openFontPcf(const QString &file, unsigned short mask)
 {
     bool status=false;
 
-    gzFile pcf=gzopen(file.latin1(), "r");
+    gzFile pcf=gzopen(file.local8Bit(), "r");
 
     if(pcf)
     {
