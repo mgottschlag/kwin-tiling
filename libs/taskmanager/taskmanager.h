@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qvaluelist.h>
 #include <qptrlist.h>
 #include <qpixmap.h>
+#include <qrect.h>
 
 #include <dcopobject.h>
 #include <kwin.h>
@@ -206,6 +207,10 @@ public:
      * Returns true if the task is not active but demands user's attention.
      */
     bool demandsAttention() const;
+    /**
+    * Returns true if the window is on the specified screen of a multihead configuration
+    */
+    bool isOnScreen( int screen, bool debug = false ) const;
 
     // internal
 
@@ -428,7 +433,6 @@ private:
 typedef QPtrList<Task> TaskList;
 typedef QPtrList<Startup> StartupList;
 
-
 /**
  * A generic API for task managers. This class provides an easy way to
  * build NET compliant task managers. It provides support for startup
@@ -479,6 +483,12 @@ public:
      * Returns true if the specified task is on top.
      */
     bool isOnTop( const Task*);
+    
+    /**
+    * Returns whether the Window with WId wid is on the screen screen
+    */
+    bool isOnScreen( int screen, const WId wid );
+    
 signals:
     /**
      * Emitted when a new task has started.

@@ -27,9 +27,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <kwinmodule.h>
+#include <kwin.h>
 #include <netwm.h>
 #include <qtimer.h>
 #include <qimage.h>
+#include <qapplication.h>
+#include <qdesktopwidget.h>
+
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -37,6 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskmanager.h"
 #include "taskmanager.moc"
+
 
 template class QPtrList<Task>;
 
@@ -69,7 +74,6 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     // set active window
     WId win = kwin_module->activeWindow();
     activeWindowChanged(win);
-
     configure_startup();
 }
 
@@ -200,7 +204,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
     // check if any state we are interested in is marked dirty
     if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMVisibleIconName|NET::WMIconName|NET::WMState
-                    |NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
+                    |NET::WMIcon|NET::XAWMState|NET::WMDesktop|NET::WMGeometry)) )
         return;
 
     // find task
@@ -218,7 +222,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     else
         t->refresh();
 
-    if(dirty & (NET::WMDesktop|NET::WMState|NET::XAWMState))
+    if(dirty & (NET::WMDesktop|NET::WMState|NET::XAWMState|NET::WMGeometry))
         emit windowChanged(w); // moved to different desktop or is on all or change in iconification/withdrawnnes
 }
 
@@ -322,6 +326,17 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
+bool TaskManager::isOnScreen( int screen, const WId wid )
+{
+    if ( screen == -1 )
+    {
+        return true;
+    }
+
+    KWin::WindowInfo wi = KWin::windowInfo( wid, NET::WMKDEFrameStrut );
+    return QApplication::desktop()->screenGeometry(screen).intersects( wi.frameGeometry() );
+}
+
 Task::Task(WId win, TaskManager * parent, const char *name)
   : QObject(parent, name),
     _active(false), _win(win),
@@ -343,6 +358,7 @@ Task::Task(WId win, TaskManager * parent, const char *name)
     if (_pixmap.isNull())
       _pixmap = SmallIcon("kcmx");
 }
+
 
 Task::~Task()
 {
@@ -438,6 +454,11 @@ bool Task::demandsAttention() const
 {
     return (_info.state() & NET::DemandsAttention)
         || _transients_demanding_attention.count() > 0;
+}
+
+bool Task::isOnScreen( int screen, bool debug ) const
+{
+    return taskManager()->isOnScreen( screen, _win );
 }
 
 void Task::updateDemandsAttentionState( WId w )
