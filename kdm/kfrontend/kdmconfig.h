@@ -63,7 +63,7 @@ public:
     int		_showUsers;
     int		_preselUser;
     QString	_defaultUser;
-    bool	_jumpToPasswd;
+    bool	_focusPasswd;
     bool	_sortUsers;
     QStringList	_users;
     QStringList	_noUsers;

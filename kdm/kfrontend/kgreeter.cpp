@@ -357,7 +357,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    loginEdit->setText (stsfile->readEntry (enam));
 	} else
 	    loginEdit->setText (kdmcfg->_defaultUser);
-	if (kdmcfg->_jumpToPasswd && !loginEdit->text().isEmpty())
+	if (kdmcfg->_focusPasswd && !loginEdit->text().isEmpty())
 	    passwdEdit->setFocus();
 	else
 	    loginEdit->selectAll();

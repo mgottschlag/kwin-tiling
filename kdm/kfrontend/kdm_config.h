@@ -71,7 +71,7 @@
 # define PRESEL_PREV	1
 # define PRESEL_DEFAULT	2
 #define C_DefaultUser		(C_TYPE_STR | 0x1022)
-#define C_JumpToPasswd		(C_TYPE_INT | 0x1023)
+#define C_FocusPasswd		(C_TYPE_INT | 0x1023)
 #define C_EchoMode		(C_TYPE_INT | 0x1024)
 # define ECHO_ONE	0	/* HACK! This must be equal to KPasswordEdit::EchoModes (kpassdlg.h) */
 # define ECHO_THREE	1

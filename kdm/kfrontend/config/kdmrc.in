@@ -296,7 +296,7 @@ NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,i
 #DefaultUser=ethel
 # If this is true, the password input line is focused automatically if
 # a user is preselected. Default is false
-#JumpToPasswd=true
+#FocusPasswd=true
 # The password input fields cloak the typed in text. Specify, how to do it:
 # "NoEcho" - nothing is shown at all, the cursor doesn't move
 # "OneStar" - "*" is shown for every typed letter (Default)

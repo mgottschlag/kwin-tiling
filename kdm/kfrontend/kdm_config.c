@@ -525,7 +525,7 @@ Ent entsGreeter[] = {
 { "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },
 { "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
 { "DefaultUser",	C_DefaultUser,		0,	"" },
-{ "JumpToPasswd",	C_JumpToPasswd | C_BOOL, 0,	"false" },
+{ "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
 { "EchoMode",		C_EchoMode | C_ENUM, echomode, "OneStar" },
 { "AllowShutdown",	C_AllowShutdown | C_ENUM, shutdown, "All" },
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },

@@ -193,7 +193,7 @@ KDMConfig::KDMConfig()
 
     _preselUser = GetCfgInt (C_PreselectUser);
     _defaultUser = GetCfgQStr (C_DefaultUser);
-    _jumpToPasswd = GetCfgInt (C_JumpToPasswd);
+    _focusPasswd = GetCfgInt (C_FocusPasswd);
 
 #ifdef __linux__
     if ((_useLilo = GetCfgInt (C_useLilo))) {
