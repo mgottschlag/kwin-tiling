@@ -3,6 +3,8 @@ ksmserver - the KDE session management server
 
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
+relatively small extensions by Oswald Buddenhagen <ob6@inf.tu-dresden.de>
+
 some code taken from the dcopserver (part of the KDE libraries), which is
 Copyright (c) 1999 Matthias Ettrich <ettrich@kde.org>
 Copyright (c) 1999 Preston Brown <pbrown@kde.org>
@@ -753,7 +755,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     dialogActive = false;
     KConfig* config = KGlobal::config();
     config->setGroup("General" );
-    saveSession = config->readBoolEntry( "saveSession", FALSE );
     clientInteracting = 0;
 
     only_local = _only_local;
@@ -961,11 +962,19 @@ void KSMServer::shutdown()
     if ( dialogActive )
         return;
     dialogActive = true;
-    if ( KSMShutdown::shutdown( saveSession ) ) {
+    KConfig *cfg = new KConfig("ksmserverrc", false, false);
+    cfg->setGroup("General" );
+    bool old_saveSession = saveSession = 
+	cfg->readBoolEntry( "saveSession", FALSE );
+    bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
+    delete cfg;
+    if ( !confirmLogout || KSMShutdown::shutdown( saveSession ) ) {
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
-	KConfig* config = KGlobal::config();
-	config->setGroup("General" );
-	config->writeEntry( "saveSession", saveSession?"true":"false");
+	if (saveSession != old_saveSession) {
+	    KConfig* config = KGlobal::config();
+	    config->setGroup("General" );
+	    config->writeEntry( "saveSession", saveSession);
+	}
 	if ( saveSession )
 	    discardSession();
 	state = Shutdown;
