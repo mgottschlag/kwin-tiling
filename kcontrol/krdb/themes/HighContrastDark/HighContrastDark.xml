@@ -20,90 +20,90 @@
     <Animated value="1" object="desktop" />
     <DoublePixels value="0" object="desktop" />
     <Size value="32" object="desktop" />
-    <ActiveColor rgb="#000066" object="desktop" />
-    <ActiveColor2 rgb="#ffff66" object="desktop" />
+    <ActiveColor rgb="#ffff66" object="desktop" />
+    <ActiveColor2 rgb="#000066" object="desktop" />
     <ActiveEffect name="tomonochrome" object="desktop" />
     <ActiveSemiTransparent value="0" object="desktop" />
     <ActiveValue value="1" object="desktop" />
-    <DefaultColor rgb="#000000" object="desktop" />
-    <DefaultColor2 rgb="#ffffff" object="desktop" />
+    <DefaultColor rgb="#ffffff" object="desktop" />
+    <DefaultColor2 rgb="#000000" object="desktop" />
     <DefaultEffect name="tomonochrome" object="desktop" />
     <DefaultSemiTransparent value="0" object="desktop" />
     <DefaultValue value="1" object="desktop" />
-    <DisabledColor rgb="#333333" object="desktop" />
-    <DisabledColor2 rgb="#808080" object="desktop" />
+    <DisabledColor rgb="#808080" object="desktop" />
+    <DisabledColor2 rgb="#333333" object="desktop" />
     <DisabledEffect name="tomonochrome" object="desktop" />
     <DisabledSemiTransparent value="0" object="desktop" />
     <DisabledValue value="1" object="desktop" />
     <Animated value="0" object="mainToolbar" />
     <DoublePixels value="0" object="mainToolbar" />
     <Size value="22" object="mainToolbar" />
-    <ActiveColor rgb="#000066" object="mainToolbar" />
-    <ActiveColor2 rgb="#ffff66" object="mainToolbar" />
+    <ActiveColor rgb="#ffff66" object="mainToolbar" />
+    <ActiveColor2 rgb="#000066" object="mainToolbar" />
     <ActiveEffect name="tomonochrome" object="mainToolbar" />
     <ActiveSemiTransparent value="0" object="mainToolbar" />
     <ActiveValue value="1" object="mainToolbar" />
-    <DefaultColor rgb="#000000" object="mainToolbar" />
-    <DefaultColor2 rgb="#ffffff" object="mainToolbar" />
+    <DefaultColor rgb="#ffffff" object="mainToolbar" />
+    <DefaultColor2 rgb="#000000" object="mainToolbar" />
     <DefaultEffect name="tomonochrome" object="mainToolbar" />
     <DefaultSemiTransparent value="0" object="mainToolbar" />
     <DefaultValue value="1" object="mainToolbar" />
-    <DisabledColor rgb="#333333" object="mainToolbar" />
-    <DisabledColor2 rgb="#808080" object="mainToolbar" />
+    <DisabledColor rgb="#808080" object="mainToolbar" />
+    <DisabledColor2 rgb="#333333" object="mainToolbar" />
     <DisabledEffect name="tomonochrome" object="mainToolbar" />
     <DisabledSemiTransparent value="0" object="mainToolbar" />
     <DisabledValue value="1" object="mainToolbar" />
     <Animated value="0" object="panel" />
     <DoublePixels value="0" object="panel" />
     <Size value="32" object="panel" />
-    <ActiveColor rgb="#000066" object="panel" />
-    <ActiveColor2 rgb="#ffff66" object="panel" />
+    <ActiveColor rgb="#ffff66" object="panel" />
+    <ActiveColor2 rgb="#000066" object="panel" />
     <ActiveEffect name="tomonochrome" object="panel" />
     <ActiveSemiTransparent value="0" object="panel" />
     <ActiveValue value="1" object="panel" />
-    <DefaultColor rgb="#000000" object="panel" />
-    <DefaultColor2 rgb="#ffffff" object="panel" />
+    <DefaultColor rgb="#ffffff" object="panel" />
+    <DefaultColor2 rgb="#000000" object="panel" />
     <DefaultEffect name="tomonochrome" object="panel" />
     <DefaultSemiTransparent value="0" object="panel" />
     <DefaultValue value="1" object="panel" />
-    <DisabledColor rgb="#333333" object="panel" />
-    <DisabledColor2 rgb="#808080" object="panel" />
+    <DisabledColor rgb="#808080" object="panel" />
+    <DisabledColor2 rgb="#333333" object="panel" />
     <DisabledEffect name="tomonochrome" object="panel" />
     <DisabledSemiTransparent value="0" object="panel" />
     <DisabledValue value="1" object="panel" />
     <Animated value="0" object="small" />
     <DoublePixels value="0" object="small" />
     <Size value="16" object="small" />
-    <ActiveColor rgb="#000066" object="small" />
-    <ActiveColor2 rgb="#ffff66" object="small" />
+    <ActiveColor rgb="#ffff66" object="small" />
+    <ActiveColor2 rgb="#000066" object="small" />
     <ActiveEffect name="tomonochrome" object="small" />
     <ActiveSemiTransparent value="0" object="small" />
     <ActiveValue value="1" object="small" />
-    <DefaultColor rgb="#000000" object="small" />
-    <DefaultColor2 rgb="#ffffff" object="small" />
+    <DefaultColor rgb="#ffffff" object="small" />
+    <DefaultColor2 rgb="#000000" object="small" />
     <DefaultEffect name="tomonochrome" object="small" />
     <DefaultSemiTransparent value="0" object="small" />
     <DefaultValue value="1" object="small" />
-    <DisabledColor rgb="#333333" object="small" />
-    <DisabledColor2 rgb="#808080" object="small" />
+    <DisabledColor rgb="#808080" object="small" />
+    <DisabledColor2 rgb="#333333" object="small" />
     <DisabledEffect name="tomonochrome" object="small" />
     <DisabledSemiTransparent value="0" object="small" />
     <DisabledValue value="1" object="small" />
     <Animated value="0" object="toolbar" />
     <DoublePixels value="0" object="toolbar" />
     <Size value="22" object="toolbar" />
-    <ActiveColor rgb="#000066" object="toolbar" />
-    <ActiveColor2 rgb="#ffff66" object="toolbar" />
+    <ActiveColor rgb="#ffff66" object="toolbar" />
+    <ActiveColor2 rgb="#000066" object="toolbar" />
     <ActiveEffect name="tomonochrome" object="toolbar" />
     <ActiveSemiTransparent value="0" object="toolbar" />
     <ActiveValue value="1" object="toolbar" />
-    <DefaultColor rgb="#000000" object="toolbar" />
-    <DefaultColor2 rgb="#ffffff" object="toolbar" />
+    <DefaultColor rgb="#ffffff" object="toolbar" />
+    <DefaultColor2 rgb="#000000" object="toolbar" />
     <DefaultEffect name="tomonochrome" object="toolbar" />
     <DefaultSemiTransparent value="0" object="toolbar" />
     <DefaultValue value="1" object="toolbar" />
-    <DisabledColor rgb="#333333" object="toolbar" />
-    <DisabledColor2 rgb="#808080" object="toolbar" />
+    <DisabledColor rgb="#808080" object="toolbar" />
+    <DisabledColor2 rgb="#333333" object="toolbar" />
     <DisabledEffect name="tomonochrome" object="toolbar" />
     <DisabledSemiTransparent value="0" object="toolbar" />
     <DisabledValue value="1" object="toolbar" />
