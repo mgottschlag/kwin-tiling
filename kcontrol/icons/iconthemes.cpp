@@ -335,7 +335,8 @@ void IconThemesConfig::updateRemoveButton()
     QFileInfo fi(icontheme.dir());
     enabled = fi.isWritable();
     // Don't let users remove the current theme.
-    if(m_themeNames[selected->text(0)] == KIconTheme::current())
+    if(m_themeNames[selected->text(0)] == KIconTheme::current() || 
+			 m_themeNames[selected->text(0)] == KIconTheme::defaultThemeName())
       enabled = false;
   }
   m_removeButton->setEnabled(enabled);
