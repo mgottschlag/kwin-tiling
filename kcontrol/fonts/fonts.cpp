@@ -269,10 +269,14 @@ KFonts::KFonts(QWidget *parent, const char *name)
     ++count;
   }
 
+   QHBoxLayout *lay = new QHBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+   QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+   lay->addItem( spacer );
    QPushButton * fontAdjustButton = new QPushButton(i18n("Adjust all fonts"), this);
-   QWhatsThis::add(fontAdjustButton, i18n("Click to adjust fonts"));
+   QWhatsThis::add(fontAdjustButton, i18n("Click to change all fonts"));
+   lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
-   layout->addWidget(fontAdjustButton);
+   layout->addItem(lay);
 
    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
 
