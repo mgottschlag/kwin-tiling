@@ -288,7 +288,7 @@ void LockProcess::readSaver()
         if (config.hasActionGroup("Root"))
         {
             config.setActionGroup("Root");
-            mSaverExec = config.readEntry("Exec");
+            mSaverExec = config.readPathEntry("Exec");
         }
     }
 }
