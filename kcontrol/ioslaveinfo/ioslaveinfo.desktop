@@ -1,10 +1,23 @@
 [Desktop Entry]
 Comment=Information about the available ioslaves
+Comment[da]=Information om de tilgængelige iuslaver
+Comment[hu]=A rendelkezésre álló ioslaves-ek jellemzői
+Comment[is]=Upplýsingar um I/Ú-þrælana sem eru á lífi
+Comment[nl]=informatie over de beschikbare ioslaves
+Comment[no_NY]=Informasjon om dei tilgjengelege IU-slavane
+Comment[pt_BR]=Informações sobre os ioslaves disponíveis
+Comment[ro]=Informaţii despre modulele I/O disponibile
+Comment[zh_CN.GB2312]=可用的 ioslaves 的信息
 DocPath=kcontrol/windows-shares.html
 Exec=kcmshell Information/ioslaveinfo
 Icon=samba
-Keywords=
+Keywords=Samba,IO slaves,Slaves,Network,Information
 Name=KDE IOSlaves
+Name[da]=KDE IUslaver
+Name[is]=I/Ú þrælar KDE
+Name[no_NY]=KDE-IU-slavar
+Name[pt_BR]=IOSlaves do KDE
+Name[ro]=Module I/O KDE
 SwallowExec=
 SwallowTitle=
 Terminal=false
