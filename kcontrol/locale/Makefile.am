@@ -6,10 +6,10 @@ LDADD    = $(LIB_KDEUI) $(LIB_KDECORE)
 SUBDIRS = pics default
 
 lib_LTLIBRARIES = libkcm_locale.la
-libkcm_locale_la_SOURCES = klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 
+libkcm_locale_la_SOURCES = ktagcombobox.cpp klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 
 
-METASOURCES = klocaleadv.moc toplevel.moc locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
-noinst_HEADERS = klocaleadv.h toplevel.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
+METASOURCES = ktagcombobox.moc klocaleadv.moc toplevel.moc locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
+noinst_HEADERS = ktagcombobox.h klocaleadv.h toplevel.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
 
 libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries)
 

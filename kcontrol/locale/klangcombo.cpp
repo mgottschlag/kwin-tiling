@@ -21,13 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define INCLUDE_MENUITEM_DEF 1
-#include <qpainter.h>
-#include <qdrawutil.h>
-#include <qpixmap.h>
 #include <qiconset.h>
-#include <qpopupmenu.h>
-#include <qmenudata.h>
 
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
@@ -37,174 +31,11 @@
 
 KLanguageCombo::~KLanguageCombo ()
 {
-  delete popup;
-  delete tags;
 }
 
 KLanguageCombo::KLanguageCombo (QWidget * parent, const char *name)
-  : QWidget(parent, name)
+  : KTagComboBox(parent, name)
 {
-  popup = new QPopupMenu;
-  tags = new QStringList;
-  connect( popup, SIGNAL(activated(int)),
-                        SLOT(internalActivate(int)) );
-  connect( popup, SIGNAL(highlighted(int)),
-                        SLOT(internalHighlight(int)) );
-  setFocusPolicy( TabFocus );
-}
-
-void KLanguageCombo::popupMenu()
-{
-   popup->popup( mapToGlobal( QPoint(0,0) ), current );
-}
-
-void KLanguageCombo::keyPressEvent( QKeyEvent *e )
-{
-    int c;
-
-    if ( ( e->key() == Key_F4 && e->state() == 0 ) || 
-         ( e->key() == Key_Down && (e->state() & AltButton) ) ||
-         ( e->key() == Key_Space ) ) {
-        if ( count() ) { 
-            popup->setActiveItem( current );
-            popupMenu();
-        }
-        return;
-    } else {
-        e->ignore();
-        return;
-    }
-
-    c = currentItem();
-    emit highlighted( c );
-    emit activated( c );
-}
-
-void KLanguageCombo::mousePressEvent( QMouseEvent * /*e*/ )
-{
-  popupMenu();
-}
-
-QSize KLanguageCombo::sizeHint() const
-{
-  QString tmp;
-  int i;
-  QFontMetrics fm = fontMetrics();
-  int maxH = QMAX(12, fm.height());
-  int maxW = count() ? 18 : 7 * fm.width(QChar('x')) + 18;
-
-  for(i = 0; i < count(); i++)
-  {
-    tmp = popup->text(i);
-    int h = fm.width( tmp );
-    if (h > maxW)
-      maxW = h;
-    h = fm.width( tmp );
-    if (h > maxH)
-      maxH = h;
-  }
-
-  maxW += 2*4 + 20;
-  maxH += 2*5;
-  return QSize (maxW, maxH);
-}
-
-void KLanguageCombo::internalActivate( int index )
-{
-  if (current == index) return;
-  current = index;
-  emit activated( index );
-  debug("activated: %s", tag( index ).ascii());
-  repaint();
-}
-
-void KLanguageCombo::internalHighlight( int index )
-{
-  emit highlighted( index );
-}
-
-void KLanguageCombo::clear()
-{
-  popup->clear();
-  tags->clear();
-}
-
-int KLanguageCombo::count() const
-{
-  return tags->count();
-}
-
-void KLanguageCombo::insertItem(const QIconSet& icon, const QString &text, const QString &tag, const QString &submenu, int index )
-{
-  // find first Other
-  int pos = tags->findIndex(submenu);
-
-  QPopupMenu *pi = 0;
-  if (pos != -1)
-  {
-    QMenuItem *p = popup->findItem(popup->idAt(pos));
-    pi = p?p->popup():0;
-  }
-  if (!pi) pi = popup;
-
-  if (index >= (int)pi->count())
-    index = -1;
-  pi->insertItem(icon, text, count(), index);
-  tags->append(tag);
-}
-
-void KLanguageCombo::changeItem( const QString &text, int index )
-{
-  popup->changeItem( text, index);
-  if (index == current)
-    repaint();
-}
-
-void KLanguageCombo::paintEvent( QPaintEvent * )
-{
-  QPainter p (this);
-  const QColorGroup & colorgr = colorGroup();
-  QRect clip(2, 2, width() - 4, height() - 4);
-  int dist, buttonH, buttonW;
-  getMetrics( &dist, &buttonW, &buttonH );
-  int posx = width() - (dist + buttonW + 1);
-
-  // the largest box
-  qDrawShadePanel( &p, rect(), colorgr, FALSE, style().defaultFrameWidth(),
-                         &colorgr.brush( QColorGroup::Button ) );
-
-  qDrawShadePanel( &p, posx, (height() - buttonH)/2,
-                         buttonW, buttonH, colorgr, FALSE, style().defaultFrameWidth());
-  // Text
-  p.drawText(clip, AlignCenter | SingleLine, popup->text( current) );
-
-  // Icon
-  QIconSet *icon = popup->iconSet( this->current );
-  if (icon) {
-    QPixmap pm = icon->pixmap();
-    p.drawPixmap( 4, (height()-pm.height())/2, pm );
-  }
-
-  if ( hasFocus() )
-    p.drawRect( posx - 5, 4, width() - posx + 1 , height() - 8 );
-}
-
-void KLanguageCombo::insertSeparator(int index)
-{
-  if (index < 0 || index >= count()) index = count();
-  popup->insertSeparator(index);
-  tags->insert(tags->at(index), QString::null);
-}
-
-void KLanguageCombo::insertSubmenu(const QString &text, const QString &tag)
-{
-  QPopupMenu *p = new QPopupMenu;
-  popup->insertItem(text, p, count());
-  tags->append(tag);
-  connect( p, SIGNAL(activated(int)),
-                        SLOT(internalActivate(int)) );
-  connect( p, SIGNAL(highlighted(int)),
-                        SLOT(internalHighlight(int)) );
 }
 
 void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub, const QString &submenu)
@@ -217,51 +48,6 @@ void KLanguageCombo::insertLanguage(const QString& path, const QString& name, co
 void KLanguageCombo::changeLanguage(const QString& name, int i)
 {
   if (i < 0 || i >= count()) return;
-  QString output = name + QString::fromLatin1(" (") + *tags->at(i) + QString::fromLatin1(")");
+  QString output = name + QString::fromLatin1(" (") + tag(i) + QString::fromLatin1(")");
   changeItem(output, i);
-}
-
-QString KLanguageCombo::currentTag() const
-{
-  return *tags->at(currentItem());
-}
-
-QString KLanguageCombo::tag(int i) const
-{
-  if (i < 0 || i >= count())
-  {
-    debug("KLanguageCombo::tag(), unknown tag %d", i);
-    return QString::null;
-  }
-  return *tags->at(i);
-}
-
-int KLanguageCombo::currentItem() const
-{
-  return current;
-}
-
-void KLanguageCombo::setCurrentItem(int i)
-{
-  if (i < 0 || i >= count()) return;
-  current = i;
-  repaint();
-}
-
-void KLanguageCombo::setCurrentItem(const QString &code)
-{
-  int i = tags->findIndex(code);
-  if (code.isNull())
-    i = 0;
-  if (i != -1)
-    setCurrentItem(i);
-}
-
-bool KLanguageCombo::getMetrics( int *dist, int *buttonW, int *buttonH ) const
-{
-  *dist = 8;
-  *buttonW = 11;
-  *buttonH = 7;
-
-  return TRUE;
 }
