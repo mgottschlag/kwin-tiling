@@ -31,7 +31,6 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <klocale.h>
 
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
 #  include <grp.h>
@@ -41,15 +40,14 @@
 #include <qmessagebox.h>
 #include <qtextstream.h>
 
+#include <kimgio.h>
+#include <klocale.h>
+
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
 #include "dm.h"
 #include "greet.h"
-
-#include <kiconloader.h>
-#include <kimgio.h>
-#include <qtextstream.h>
 
 // Make the C++ compiler shut the f... up:
 extern "C" {
@@ -69,7 +67,6 @@ void SessionExit(void*,void*,void*);
 
 #ifdef HAVE_LOGIN_CAP_H
 #include <login_cap.h>
-#include <klocale.h>
 #endif
 
 #ifdef TEST_KDM
@@ -163,7 +160,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      QGridLayout* grid = new QGridLayout( 4, 2, 5);
 
-     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString()->data(), winFrame);
+     QLabel* welcomeLabel = new QLabel( *kdmcfg->greetString(), winFrame);
      welcomeLabel->setAlignment(AlignCenter);
      welcomeLabel->setFont( *kdmcfg->greetFont());
      set_min( welcomeLabel);
@@ -184,8 +181,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      kimgioRegister();
 
      QPixmap pixmap;
-     if( QFile::exists( kdmcfg->logo()->data()))
-	  pixmap.load( kdmcfg->logo()->data());
+     if( QFile::exists( *kdmcfg->logo()))
+	  pixmap.load( *kdmcfg->logo());
      else
 	  pixmap.resize( 100,100);
      pixLabel->setPixmap( pixmap);
@@ -241,42 +238,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      sessionargBox = new QComboBox( false, winFrame);
 
      QStrListIterator it ( *kdmcfg->sessionTypes());
-     sessiontags.clear();
-     KIconLoader iconLoader;
-     for( ; it.current(); ++it) {
-#if 0
-	  QString output = QString(it.current());
-	  QPixmap sesspix(iconLoader.loadIcon(QString("session_") 
-					      + it.current() + ".xpm"));
-	  QPainter p;
-	  QPainter pmask;
-	  QFontMetrics fm = sessionargBox->fontMetrics();
-	  QPixmap pm( sesspix.width() + fm.width( it.current() ) + 6,
-		      QMAX( sesspix.height(), fm.lineSpacing() + 1 ));
-	  QBitmap mask( sesspix.width() + fm.width( it.current() ) + 6,
-			QMAX( sesspix.height(), fm.lineSpacing() + 1 ), true);
-	  pm.fill(colorGroup().background());
-	  p.begin(&pm);
-	  pmask.begin( &mask);
-	  p.drawPixmap( 3, 0, sesspix);
-	  if( !sesspix.isNull())
-	       pmask.drawPixmap( 3, 0, sesspix.createHeuristicMask());
-	  int yPos;
-	  if ( sesspix.height() < fm.height() )
-	       yPos = fm.ascent() + fm.leading()/2;
-	  else
-	       yPos = sesspix.height()/2 - fm.height()/2 + fm.ascent();
-	  p.drawText( sesspix.width() + 5, yPos, it.current() );
-	  pmask.drawText( sesspix.width() + 5, yPos, it.current() );
-	  p.end();
-	  pmask.end();
-	  pm.setMask( mask);
-	  sessionargBox->insertItem( pm);
-#else
-	  sessionargBox->insertItem( it.current());
-#endif
-	  sessiontags.append(it.current());
-     }
+     sessionargBox->insertStrList( *kdmcfg->sessionTypes() );
      set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
      
@@ -401,16 +363,8 @@ static inline void switch_to_root( int gidset_size, gid_t *gidset)
 void
 KGreeter::save_wm()
 {
-     // read passwd
-     pwd = getpwnam(greet->name);
-     endpwent();
-     if (!pwd) return;
-     // we don't need the password
-     memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
-
-     QString file;
-     file.sprintf("%s/"WMRC, pwd->pw_dir);
-     QString sesstype (sessiontags.at( sessionargBox->currentItem()));
+     QString file(pwd->pw_dir);
+     file += "/" WMRC;
 
      // open file as user which is loging in
      int gidset_size;
@@ -418,10 +372,12 @@ KGreeter::save_wm()
      gid_t *gidset = switch_to_user( &gidset_size, pwd);
      if( gidset == 0) return;
 
-     FILE *f = fopen(file.data(), "w");
-     if (f) {
-	  fprintf(f, "%s\n", sesstype.data());
-	  fclose(f);
+     QFile f(file);
+     if ( f.open(IO_WriteOnly) )
+     {
+        QTextStream t( &f );
+	t << sessionargBox->currentText();
+        f.close();
      }
 
      // Go root
@@ -438,30 +394,33 @@ KGreeter::load_wm()
      // we don't need the password
      memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
 
-     QString file;
-     file.sprintf( "%s/"WMRC, pwd->pw_dir);
+     QString file(pwd->pw_dir);
+     file += "/" WMRC;
      
-     int wm = -1;
      int gidset_size;
      // Go user
      gid_t *gidset = switch_to_user( &gidset_size, pwd);
      if( gidset == 0) return;
 
      // open file as user which is loging in
-     FILE *f = fopen(file.data(), "r");
-     if (f) {
-	  char s[255];
-	  
-	  fgets(s, sizeof s, f);
-	  fclose(f);
-	 
-	  if (char *p = strchr(s, '\n')) *p = 0;     
-	  wm = sessiontags.find( s);
+     QFile f(file);
+     if ( f.open(IO_ReadOnly) )
+     {
+        QTextStream t( &f );
+        QString s (t.readLine());
+        f.close();
+
+	int i;
+	for (i = 0; i < sessionargBox->count(); i++)
+	   if (sessionargBox->text(i) == s)
+	   {
+	      sessionargBox->setCurrentItem(i);
+	      break;
+	   }
      }
 
-     //Go root
+     // Go root
      switch_to_root( gidset_size, gidset);
-     if( wm != -1) sessionargBox->setCurrentItem(wm);
 }
 #else
 void
@@ -719,8 +678,7 @@ KGreeter::go_button_clicked()
 
      // Set session argument:
      verify->argv = parseArgs( verify->argv, 
-			       sessiontags.at(
-				    sessionargBox->currentItem()));
+				    sessionargBox->currentText());
 
      save_wm();
      //qApp->desktop()->setCursor( waitCursor);
@@ -844,10 +802,10 @@ GreetUser(
       */
      if (source (verify->systemEnviron, d->startup) != 0)
      {
-          QString buf = QString("Startup program %1 exited with non-zero status.\n"
+          QString buf = i18n("Startup program %1 exited with non-zero status.\n"
 		  "Please contact your system administrator.\n").arg(d->startup);
 	  qApp->restoreOverrideCursor();
-	  QMessageBox::critical(0, "Login aborted", buf, "Retry");
+	  QMessageBox::critical(0, i18n("Login aborted"), buf, i18n("Retry"));
 	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);
      }
 
