@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002 Stephan Binner <binner@kde.org>
+ *  Copyright (c) 2005      Stefan Nikolaus <stefan.nikolaus@kdemail.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 #include "positionconfig.h"
 #include "positionconfig.moc"
-#include <kdialog.h>
+
 PositionConfig::PositionConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
