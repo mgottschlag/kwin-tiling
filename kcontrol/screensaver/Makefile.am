@@ -17,6 +17,6 @@ messages:
 	$(XGETTEXT) -kni18n $(kcm_screensaver_la_SOURCES) -o $(podir)/kcmscreensaver.pot
 
 lnf_DATA = screensaver.desktop
-lnfdir = $(kde_appsdir)/Settings/Desktop
+lnfdir = $(kde_appsdir)/Settings/LookNFeel
 
 EXTRA_DIST = $(lnf_DATA)
