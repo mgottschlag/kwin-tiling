@@ -203,7 +203,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
         KService::Ptr service = locateModule(args->arg(0));
         if (!service)
 	{
-	   kdDebug() << "Could not find module '" << args->arg(0) << "'." << endl;
+	   kdWarning() << "Could not find module '" << args->arg(0) << "'." << endl;
            return 1; // error
 	}
 
@@ -272,7 +272,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
 		modules.append(service);
 		continue;
 	}
-	kdDebug() << "Could not find module '" << args->arg(i) << "'." << endl;
+	kdWarning() << "Could not find module '" << args->arg(i) << "'." << endl;
     }
 
     if (modules.count() < 1) return -1;
