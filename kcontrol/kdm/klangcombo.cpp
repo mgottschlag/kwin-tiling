@@ -28,7 +28,7 @@
 #include <kapp.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
-
+#include <kstddirs.h>
 
 #include "klangcombo.h"
 #include "klangcombo.moc"
