@@ -108,8 +108,8 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
     globalKeys->updateConnections();
     toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
-    connect( toggleURLGrabAction, SIGNAL( toggled( bool )), this,
-	     SLOT( setURLGrabberEnabled( bool )));
+    connect( toggleURLGrabAction, SIGNAL( toggled( bool )), 
+             this, SLOT( setURLGrabberEnabled( bool )));
     setBackgroundMode(X11ParentRelative);
 
     QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
@@ -466,7 +466,7 @@ void TopLevel::slotRepeatAction()
 void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
-    //toggleURLGrabAction->setChecked( enable );
+    toggleURLGrabAction->setChecked( enable );
     KConfig *kc = m_config;
     kc->setGroup("General");
     kc->writeEntry("URLGrabberEnabled", bURLGrabber);
