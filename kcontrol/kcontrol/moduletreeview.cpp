@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    ModuleTreeView* treeView;;
+    ModuleTreeView* treeView;
 };
 
 ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const char * name)
