@@ -747,7 +747,7 @@ void TreeView::newitem()
 
     QString filename = _ndlg->text();
     if (filename.isEmpty()) {
-    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18("Invalid Name"));
+    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18n("Invalid Name"));
 	return;
     }
 
