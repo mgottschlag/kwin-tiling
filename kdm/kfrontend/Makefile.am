@@ -25,7 +25,7 @@ kdm_greet_SOURCES = \
     kchooser.cpp \
     kgreeter.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(XTESTLIB) $(LIB_KDEUI) $(XCONSOLE_LDADD)
+kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB) $(XCONSOLE_LDADD)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(KDE_RPATH) $(all_libraries)
