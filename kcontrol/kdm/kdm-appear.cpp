@@ -37,6 +37,7 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <kimageio.h>
+#include <kcombobox.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
@@ -188,7 +189,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
   hglay->setColStretch(2, 1);
 
-  guicombo = new QComboBox(false, hlp);
+  guicombo = new KComboBox(false, hlp);
   guicombo->insertStringList(QStyleFactory::keys());
   label = new QLabel(guicombo, i18n("GUI S&tyle:"), hlp);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
@@ -429,7 +430,7 @@ void KDMAppearanceWidget::load()
   setLogo( c->readEntry("LogoPixmap", ""));
 
   // Check the GUI type
-  guicombo->setCurrentText (c->readEntry("GUIStyle", "Default"));
+  guicombo->setCurrentItem (c->readEntry("GUIStyle", "Default"), true, 0);
 
   // Check the echo mode
   QString echostr = c->readEntry("EchoMode", "OneStar");
@@ -457,16 +458,16 @@ void KDMAppearanceWidget::load()
 
 void KDMAppearanceWidget::defaults()
 {
-  greetstr_lined->setText(i18n("Welcome to %s at %n"));
+  greetstr_lined->setText( i18n("Welcome to %s at %n") );
   logoRadio->setChecked( true );
   slotAreaRadioClicked( KdmLogo );
   posCenterRadio->setChecked( true );
   slotPosRadioClicked( 0 );
-  setLogo("");
-  guicombo->setCurrentItem(0);
-  echocombo->setCurrentItem(1);
+  setLogo( "" );
+  guicombo->setCurrentItem( QString::fromLatin1("Default"), true, 0 );
+  echocombo->setCurrentItem( 1 );
 
-  langcombo->setCurrentItem("C");
+  langcombo->setCurrentItem( "en_US" );
 }
 
 QString KDMAppearanceWidget::quickHelp() const

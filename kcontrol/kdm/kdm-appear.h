@@ -35,6 +35,7 @@
 #include "klanguagebutton.h"
 
 class QComboBox;
+class KComboBox;
 class QLabel;
 class QRadioButton;
 class QLineEdit;
@@ -86,7 +87,7 @@ private:
 	QLineEdit    *xLineEdit;
 	QLabel	     *yLineLabel;
 	QLineEdit    *yLineEdit;
-	QComboBox    *guicombo;
+	KComboBox    *guicombo;
 	QComboBox    *echocombo;
 	KLanguageButton *langcombo;
 
