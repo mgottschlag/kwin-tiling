@@ -94,7 +94,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 
     cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
                                 this );
-    cbSaveContents = new QCheckBox( i18n("Sa&ve clipboard contents on exit"),
+    cbSaveContents = new QCheckBox( i18n("Save clipboard contents on e&xit"),
                                     this );
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
@@ -118,28 +118,16 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                           "application exits, the clipboard would usually be "
                           "emptied.") );
 
-    // make a QLabel because using popupTimeout->setLabel messes up layout
-    QLabel *lblTimeout = new QLabel( i18n("Tim&eout for action popups:" ), this );
-    // workaround for KIntNumInput making a huge QSpinBox
-    QHBox *box = new QHBox( this );
-    popupTimeout = new KIntNumInput( box );
-    lblTimeout->setBuddy( popupTimeout );
-    popupTimeout->setRange( 0, 200, 1, false );
+    popupTimeout = new KIntNumInput( this );
+    popupTimeout->setLabel( i18n( "Tim&eout for action popups:" ) );
+    popupTimeout->setRange( 0, 200, 1, true );
+    popupTimeout->setSuffix( i18n( " sec" ) );
     QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
 
-    QLabel *lblSeconds = new QLabel( i18n("seconds"), box );
-    box->setStretchFactor( lblSeconds, 10 );
-    box->setSpacing(6);
-
-    QLabel *lblMaxItems = new QLabel( i18n("&Clipboard history size:"), this );
-    QHBox *maxItemsBox = new QHBox( this );
-    maxItems = new KIntNumInput( maxItemsBox );
-    lblMaxItems->setBuddy( maxItems );
-    maxItems->setRange( 2, 25, 1, false );
-
-    QLabel *lblItems = new QLabel( i18n("items"), maxItemsBox );
-    maxItemsBox->setStretchFactor( lblItems, 10 );
-    maxItemsBox->setSpacing(6);
+    maxItems = new KIntNumInput( this );
+    maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
+    maxItems->setRange( 2, 25, 1, true );
+    maxItems->setSuffix( i18n( " items" ) );
 
     // Add some spacing at the end
     QLabel *dummy = new QLabel( this );
@@ -193,7 +181,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
 
     listView = new ListView( configWidget, this, "list view" );
     lblAction->setBuddy( listView );
-    listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
+    listView->addColumn( i18n("Regular Expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
 
     listView->setRenameable(0);
