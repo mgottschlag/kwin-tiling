@@ -37,12 +37,10 @@
 
 KLocale *glocale;
 
-extern "C" {
-  extern void startScreenSaver( Drawable d );
-  extern void stopScreenSaver();
-  extern int  setupScreenSaver();
-  extern const char *getScreenSaverName();
-}
+extern void startScreenSaver( Drawable d );
+extern void stopScreenSaver();
+extern int  setupScreenSaver();
+extern QString getScreenSaverName();
 
 int mode = MODE_NONE, lock = FALSE, passOk = FALSE;
 bool canGetPasswd;
@@ -383,7 +381,7 @@ int main( int argc, char *argv[] )
 		    setCorners( argv[++i] );
 		    break;
 		case descr:
-		    printf( "%s\n", getScreenSaverName() );
+		    printf( "%s\n", getScreenSaverName().data() );
 		    exit( 0 );
 		case arg_nice:
 #ifdef HAVE_NICE

@@ -486,7 +486,7 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-const char *getScreenSaverName()
+QString getScreenSaverName()
 {
 	return glocale->translate("Space (GL)");
 }

@@ -7,12 +7,10 @@
 #include <kapp.h>
 #include <X11/Xlib.h>
 
-extern "C" {
-  void startScreenSaver( Drawable d );
-  void stopScreenSaver();
-  int setupScreenSaver();
-  const char *getScreenSaverName();
-}
+void startScreenSaver( Drawable d );
+void stopScreenSaver();
+int setupScreenSaver();
+QString getScreenSaverName();
 
 class kScreenSaver : public QObject
 {

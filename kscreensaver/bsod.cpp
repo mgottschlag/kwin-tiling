@@ -1188,7 +1188,7 @@ int setupScreenSaver ()
 	return 0;
 }
 
-const char *getScreenSaverName ()
+QString getScreenSaverName ()
 {
 	return glocale->translate("Black Screen of Death");
 }
