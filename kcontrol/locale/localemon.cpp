@@ -162,10 +162,10 @@ void KLocaleConfigMoney::save()
 		       .arg(m_locale->monetaryThousandsSeparator()),
 		       true, true);
 
-  i = ent.readNumEntry("FractDigits", 2);
-  config->deleteEntry("FractDigits", false, true);
+  i = ent.readNumEntry("FracDigits", 2);
+  config->deleteEntry("FracDigits", false, true);
   if (i != m_locale->fracDigits())
-    config->writeEntry("FractDigits", m_locale->fracDigits(), true, true);
+    config->writeEntry("FracDigits", m_locale->fracDigits(), true, true);
 
   b = ent.readNumEntry("PositivePrefixCurrencySymbol", true);
   config->deleteEntry("PositivePrefixCurrencySymbol", false, true);
