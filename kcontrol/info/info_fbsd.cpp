@@ -4,12 +4,16 @@
  * info_fbsd.cpp is part of the KDE program kcminfo.  This displays
  * various information about the system (hopefully a FreeBSD system)
  * it's running on.
+ *
+ * All of the devinfo bits were blatantly stolen from the devinfo utility
+ * provided with FreeBSD 5.0 (and later).  No gross hacks were harmed 
+ * during the creation of info_fbsd.cpp.  Thanks Mike.
  */
 
 #define INFO_CPU_AVAILABLE
 #define INFO_IRQ_AVAILABLE
 #define INFO_DMA_AVAILABLE
-//#define INFO_PCI_AVAILABLE
+#define INFO_PCI_AVAILABLE
 #define INFO_IOPORTS_AVAILABLE
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEVICES_AVAILABLE
@@ -24,18 +28,30 @@
  * information was not available.
  */
 
+#ifdef HAVE_CONFIG_H
+	#include <config.h>
+#endif
+
 #include <sys/types.h>
+#include <sys/param.h>
 #include <sys/sysctl.h>
 
-#include <fstab.h>
-#include <stdio.h>
-#include <stdlib.h>
+#if __FreeBSD_version >= 500042
+	//#define HAVE_DEVINFO_H
+#endif
 
-#include <iostream.h>
+#ifdef HAVE_DEVINFO_H
+	extern "C" {
+		#include <devinfo.h>
+	}
+#endif
+
+#include <errno.h>
+#include <fstab.h>
+#include <string.h>
 
 #include <qdict.h>
 #include <qfile.h>
-#include <qfontmetrics.h>
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qtextstream.h>
@@ -52,6 +68,15 @@ public:
 void ProcessChildren(QString name);
 QString GetController(const QString &line);
 Device *GetDevice(const QString &line);
+
+#ifdef HAVE_DEVINFO_H
+extern "C" {
+	int print_irq(struct devinfo_rman *rman, void *arg);
+	int print_dma(struct devinfo_rman *rman, void *arg);
+	int print_ioports(struct devinfo_rman *rman, void *arg);
+	int print_resource(struct devinfo_res *res, void *arg);
+}
+#endif
 
 bool GetInfo_CPU (QListView *lBox)
 {
@@ -85,23 +110,47 @@ bool GetInfo_CPU (QListView *lBox)
 	return true;
 }
 
-bool GetInfo_IRQ (QListView *)
+bool GetInfo_IRQ (QListView *lbox)
 {
+#ifdef HAVE_DEVINFO_H
 	/* systat lists the interrupts assigned to devices as well as how many were
 	   generated.  Parsing its output however is about as fun as a sandpaper
 	   enema.  The best idea would probably be to rip out the guts of systat.
 	   Too bad it's not very well commented */
+	/* Oh neat, current now has a neat little utility called devinfo */
+	if (devinfo_init())
+		return false;
+	devinfo_foreach_rman(print_irq, lbox);
+	return true;
+#else
 	return false;
+#endif
 }
 
-bool GetInfo_DMA (QListView *)
+bool GetInfo_DMA (QListView *lbox)
 {
+#ifdef HAVE_DEVINFO_H
+	/* Oh neat, current now has a neat little utility called devinfo */
+	if (devinfo_init())
+		return false;
+	devinfo_foreach_rman(print_dma, lbox);
+	return true;
+#else
 	return false;
+#endif
 }
 
-bool GetInfo_IO_Ports (QListView *)
+bool GetInfo_IO_Ports (QListView *lbox)
 {
+#ifdef HAVE_DEVINFO_H
+	/* Oh neat, current now has a neat little utility called devinfo */
+	if (devinfo_init())
 	return false;
+	devinfo_foreach_rman(print_ioports, lbox);
+	return true;
+#else
+	return false;
+#endif
 }
 
 bool GetInfo_Sound (QListView *lbox)
@@ -268,11 +317,86 @@ QString GetController(const QString &line)
 
 Device *GetDevice(const QString &line)
 {
-	Device *dev = new Device;
-	if (line.find(":") == -1)
+	Device *dev;
+	int colon = line.find(":");
+	if (colon == -1)
 		return 0;
-	dev->name = line.mid(0, line.find(":"));
+	dev = new Device;
+	dev->name = line.mid(0, colon);
 	dev->description = line.mid(line.find("<")+1, line.length());
 	dev->description.remove(dev->description.find(">"), dev->description.length());
 	return dev;
 }
+
+#ifdef HAVE_DEVINFO_H
+
+int print_irq(struct devinfo_rman *rman, void *arg)
+{
+	QListView *lbox = (QListView *)arg;
+        if (strcmp(rman->dm_desc, "Interrupt request lines")==0) {
+		(void)new QListViewItem(lbox, 0, rman->dm_desc);
+		devinfo_foreach_rman_resource(rman, print_resource, arg);
+        }
+        return(0);
+}
+
+int print_dma(struct devinfo_rman *rman, void *arg)
+{
+	QListView *lbox = (QListView *)arg;
+        if (strcmp(rman->dm_desc, "DMA request lines")==0) {
+		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		devinfo_foreach_rman_resource(rman, print_resource, arg);
+        }
+        return(0);
+}
+
+int print_ioports(struct devinfo_rman *rman, void *arg)
+{
+	QListView *lbox = (QListView *)arg;
+
+	if (strcmp(rman->dm_desc, "I/O ports")==0) {
+		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		devinfo_foreach_rman_resource(rman, print_resource, arg);
+        }
+	else if (strcmp(rman->dm_desc, "I/O memory addresses")==0) {
+		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		devinfo_foreach_rman_resource(rman, print_resource, arg);
+	}
+        return(0);
+}
+
+int print_resource(struct devinfo_res *res, void *arg)
+{
+        struct devinfo_dev      *dev;
+        struct devinfo_rman     *rman;
+        int                     hexmode;
+
+	QListView *lbox;
+
+	lbox = (QListView *)arg;
+
+	QString s, tmp;
+
+        rman = devinfo_handle_to_rman(res->dr_rman);
+        hexmode =  (rman->dm_size > 100) || (rman->dm_size == 0);
+        tmp.sprintf(hexmode ? "0x%lx" : "%lu", res->dr_start);
+	s += tmp;
+        if (res->dr_size > 1) {
+                tmp.sprintf(hexmode ? "-0x%lx" : "-%lu",
+                    res->dr_start + res->dr_size - 1);
+		s += tmp;
+	}
+
+        dev = devinfo_handle_to_device(res->dr_device);
+        if ((dev != NULL) && (dev->dd_name[0] != 0)) {
+                tmp.sprintf(" (%s)", dev->dd_name);
+        } else {
+                tmp.sprintf(" ----");
+        }
+	s += tmp;
+
+	(void)new QListViewItem(lbox, lbox->lastItem(), s);
+        return(0);
+}
+
+#endif
