@@ -219,8 +219,8 @@ void IndexListItem::paintCell(QPainter *p, const QColorGroup &cg, int column, in
 
   if (_module->isActive())
     {
-      colorgroup.setColor(QColorGroup::Text, Qt::green);
-      colorgroup.setColor(QColorGroup::HighlightedText, Qt::green);
+      colorgroup.setColor(QColorGroup::Text, Qt::darkGreen);
+      colorgroup.setColor(QColorGroup::HighlightedText, Qt::darkGreen);
     }
   if (_module->isChanged())
     {

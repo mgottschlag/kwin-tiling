@@ -36,15 +36,14 @@
 
 
 KDockContainer::KDockContainer(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+  : QTabWidget(parent, name)
 {
-  _tabs = new QTabWidget(this);
 }
 
 
 void KDockContainer::addWidget(QWidget *widget, QPixmap icon)
 {
-  _tabs->addTab(widget, QIconSet(icon), widget->caption());
+  addTab(widget, QIconSet(icon), widget->caption());
 }
 
 
@@ -52,20 +51,14 @@ void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
 {
   _children.append(widget);
 
-  _tabs->addTab(widget, QIconSet(icon), widget->caption());
-  _tabs->showPage(widget);
+  addTab(widget, QIconSet(icon), widget->caption());
+  showPage(widget);
 }
 
 
 void KDockContainer::removeDockWidget(KDockWidget *widget)
 {
   _children.remove(widget);
-}
-
-
-void KDockContainer::resizeEvent(QResizeEvent *)
-{
-  _tabs->setGeometry(0,0,width(),height());
 }
 
 
@@ -76,11 +69,11 @@ void KDockContainer::dragChild(KDockWidget *child)
 
   // compute the docking area
   QPoint topLeft = mapToGlobal(QPoint(0,0));
-  QSize size    = _tabs->childrenRect().size();
-  if (_tabs->currentPage())
+  QSize size    = childrenRect().size();
+  if (currentPage())
     {
-      size = _tabs->currentPage()->size();
-      topLeft += QPoint(0,_tabs->childrenRect().height()-_tabs->currentPage()->height());
+      size = currentPage()->size();
+      topLeft += QPoint(0,childrenRect().height()-currentPage()->height());
     }
   _tbManager->addHotSpot(QRect(topLeft, size));  
   connect(_tbManager, SIGNAL(onHotSpot(int)), this, SLOT(onHotSpot(int)));

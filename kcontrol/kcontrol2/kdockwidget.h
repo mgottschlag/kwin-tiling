@@ -35,7 +35,7 @@ class KDockWidget;
 class KToolBoxManager;
 
 
-class KDockContainer : public QWidget
+class KDockContainer : public QTabWidget
 {
   Q_OBJECT
 
@@ -46,11 +46,8 @@ public:
   KDockContainer(QWidget *parent=0, const char *name=0);
 
   void addWidget(QWidget *widget, QPixmap icon);
-  void showPage(QWidget *widget) { _tabs->showPage(widget); };
 
 protected:
-
-  void resizeEvent(QResizeEvent *event);
 
   void addDockWidget(KDockWidget *widget, QPixmap icon);
   void removeDockWidget(KDockWidget *widget);
@@ -66,7 +63,6 @@ public slots:
 private:
 
   QList<KDockWidget> _children;
-  QTabWidget         *_tabs;
   KToolBoxManager    *_tbManager;
   bool               _dockSpot;
 
