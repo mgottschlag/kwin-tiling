@@ -16,7 +16,7 @@ ConditionsCount=0
 [Data_1_1]
 Comment=After pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.\n
 Enabled=false
-Name=Activate KSIRC window
+Name=Activate KSIRC Window
 Type=ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA
 
 [Data_1_1Actions]
@@ -217,10 +217,10 @@ Key=Alt+Ctrl+B
 Type=SHORTCUT
 
 [Data_1_7]
-Comment=Ok, Konqy in KDE3.1 has tabs, and now you can also have gestures. No need to use other browsers >;).\n\nJust press the middle mouse button and start drawing one of the gestures, and after you're finished, release the mouse button. If you only need to paste the selection, it still works, simply only click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are these gestures available:\nmove right and back left - Forward (ALt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n (As soon as I find out which ones are in Opera or Mozilla, I'll add more and make sure they are the same. Or if you do it yourself, feel free to help me and send me your khotkeysrc.)\n\nThe gestures shapes (some of the dialogs are from KGesture, thanks to Mike Pilone) can be simply entered by performing them in the configuration dialog. You can also look at your numeric pad to help you, gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it's possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse moving more than once (i.e. do e.g. 45654 or 74123 as they are simple to perform but e.g. 1236987 may be already quite difficult).\n\nThe condition for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').\n
+Comment=Ok, Konqi in KDE3.1 has tabs, and now you can also have gestures. No need to use other browsers >;).\n\nJust press the middle mouse button and start drawing one of the gestures, and after you're finished, release the mouse button. If you only need to paste the selection, it still works, simply only click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are these gestures available:\nmove right and back left - Forward (ALt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n (As soon as I find out which ones are in Opera or Mozilla, I'll add more and make sure they are the same. Or if you do it yourself, feel free to help me and send me your khotkeysrc.)\n\nThe gestures shapes (some of the dialogs are from KGesture, thanks to Mike Pilone) can be simply entered by performing them in the configuration dialog. You can also look at your numeric pad to help you, gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it's possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse moving more than once (i.e. do e.g. 45654 or 74123 as they are simple to perform but e.g. 1236987 may be already quite difficult).\n\nThe condition for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').\n
 DataCount=4
 Enabled=false
-Name=Konqy gestures ;)
+Name=Konqi Gestures
 SystemGroup=0
 Type=ACTION_DATA_GROUP
 
@@ -385,7 +385,7 @@ Type=GESTURE
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).\n
 Enabled=false
-Name=Go to KDE website
+Name=Go to KDE Website
 Type=COMMAND_URL_SHORTCUT_ACTION_DATA
 
 [Data_1_8Actions]

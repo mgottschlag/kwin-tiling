@@ -87,7 +87,7 @@
                 <cstring>window_groupbox</cstring>
             </property>
             <property name="title">
-                <string>Windows To Exclude</string>
+                <string>Windows to Exclude</string>
             </property>
             <vbox>
                 <property name="name">
