@@ -426,7 +426,7 @@ QStringList TreeView::fileList(const QString& rPath)
         if(!dir.exists()) continue;
 
         dir.setFilter(QDir::Files);
-        dir.setNameFilter("*.desktop");
+        dir.setNameFilter("*.desktop;*.kdelnk");
 
         // build a list of files
         QStringList files = dir.entryList();
