@@ -92,18 +92,14 @@ int	choiceTimeout;	/* chooser choice timeout */
 #define DEF_SESSION XDMDIR"/Xsession" /* QUOTE(XBINDIR) "xterm -ls" */
 #endif
 #ifndef DEF_USER_PATH
-#  ifdef __FreeBSD__
-#    define DEF_USER_PATH "/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin"
-#  elif __linux__
+#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 #    define DEF_USER_PATH "/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin"
 #  else
 #    define DEF_USER_PATH "/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin:/usr/ucb"
 #  endif
 #endif
 #ifndef DEF_SYSTEM_PATH
-#  ifdef __FreeBSD__
-#    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin"
-#  elif __linux__
+#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 #    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin"
 #  else
 #    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" QUOTE(XBINDIR) ":/usr/local/bin:/etc:/usr/ucb"
@@ -153,7 +149,7 @@ int	choiceTimeout;	/* chooser choice timeout */
 #define DEF_GREETER_LIB ""
 #endif
 #ifndef DEF_PID_FILE
-#  ifdef __FreeBSD__
+#  if defined(__FreeBSD__) || defined(__NetBSD__)
 #    define DEF_PID_FILE _PATH_VARRUN"kdm.pid"
 #  else
 /* this may be readonly
