@@ -136,9 +136,6 @@ private:
     void upAndRunning( const QString& msg );
     void publishProgress( int progress, bool max  = false  );
 
-    // kmapnotif interface
-    void enableMapNotify( bool enable );
-
     int progress;
 };
 

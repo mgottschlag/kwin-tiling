@@ -218,13 +218,12 @@ void KSMServer::startApplication( const QStringList& command )
     QCString app = command[0].latin1();
     QValueList<QCString> argList;
 
-    for ( int i=1; i < n; i++)
-       argList.append( QCString(command[i].latin1()));
-
-    QByteArray params;
-    QDataStream stream(params, IO_WriteOnly);
-    stream << app << argList;
-    kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
+    for ( int i=1; i < n; i++) {
+      QByteArray params;
+      QDataStream stream(params, IO_WriteOnly);
+      stream << app << argList;
+      kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
+    }
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -1176,7 +1175,7 @@ void KSMServer::restoreSession()
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
 		progress--;
 		wmCommand = config->readListEntry( QString("restartCommand")+n );
-		break;
+	break;
 	    }
 	}
     }
@@ -1186,9 +1185,7 @@ void KSMServer::restoreSession()
     if ( wmCommand.isEmpty() ) {
 	restoreSessionInternal();
     } else {
-	enableMapNotify( false );
 	startApplication( wmCommand );
-	enableMapNotify( true );
 	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
     }
 }
@@ -1203,9 +1200,7 @@ void KSMServer::startDefaultSession()
     upAndRunning( "start session" );
     progress = 1;
     publishProgress( progress, true );
-    enableMapNotify( false );
     startApplication( wm );
-    enableMapNotify( true );
 }
 
 
@@ -1221,20 +1216,6 @@ void KSMServer::restoreSessionInternal()
 	}
     }
 }
-
-
-void KSMServer::enableMapNotify( bool enable )
-{
-    QByteArray params;
-    QDataStream stream(params, IO_WriteOnly);
-    QCString replyType;
-    QByteArray replyData;
-    stream << QCString("KDE_DISABLE_KMAPNOTIFY") << ( enable? "0" : "1" );
-    kapp->dcopClient()->call(launcher, launcher,
-			     "setLaunchEnv(QCString,QCString)", params, replyType,
-			     replyData);
-}
-
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
