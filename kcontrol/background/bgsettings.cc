@@ -492,10 +492,10 @@ KBackgroundSettings::~KBackgroundSettings()
 }
 
 
-void KBackgroundSettings::load(int desk)
+void KBackgroundSettings::load(int desk, bool reparseConfig)
 {
     m_Desk = desk;
-    readSettings(true);
+    readSettings(reparseConfig);
 }
 
 

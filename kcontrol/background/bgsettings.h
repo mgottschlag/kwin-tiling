@@ -150,7 +150,7 @@ public:
     ~KBackgroundSettings();
 
     int desk() const { return m_Desk; }
-    void load(int desk);
+    void load(int desk, bool reparseConfig=true);
 
     void setColorA(const QColor &color);
     QColor colorA() const { return m_ColorA; }

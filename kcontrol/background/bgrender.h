@@ -42,7 +42,7 @@ public:
     KBackgroundRenderer(int desk, KConfig *config=0);
     ~KBackgroundRenderer();
 
-    void load(int desk);
+    void load(int desk, bool reparseConfig=true);
 
     void setPreview(QSize size);
     void setTile(bool tile);

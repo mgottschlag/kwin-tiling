@@ -576,7 +576,7 @@ QImage *KBackgroundRenderer::image()
 }
 
 
-void KBackgroundRenderer::load(int desk)
+void KBackgroundRenderer::load(int desk, bool reparseConfig)
 {
     if (m_State & Rendering)
         stop();
@@ -585,7 +585,7 @@ void KBackgroundRenderer::load(int desk)
     m_bTile = false;
     m_Size = m_rSize;
 
-    KBackgroundSettings::load(desk);
+    KBackgroundSettings::load(desk, reparseConfig);
 }
 
 
