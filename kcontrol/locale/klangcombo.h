@@ -48,6 +48,7 @@ public:
   // work space
   void insertItem(const QIconSet& icon, const QString &text, const QString &tag, int index=-1 );
   void insertSeparator(int index=-1 );
+  void insertOther();
   void changeItem( const QString &text, int index );
 
   // count number of installed items

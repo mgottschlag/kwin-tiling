@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
  * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
- * Copyright (c) 1999 Hans Petter Bieker <bieker@pvv.ntnu.no>
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -152,6 +152,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
         if ((*it).isNull())
         {
 	  combo->insertSeparator();
+	  combo->insertOther();
           continue;
         }
 	KSimpleConfig entry(*it);
@@ -214,7 +215,6 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
 
 void KLocaleConfig::applySettings()
 {
-  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
@@ -364,7 +364,10 @@ void KLocaleConfig::reTranslateLists()
 
   for (j = 0; j < comboLang->count(); j++)
   {
-    readLocale(comboLang->tag(j), name, 0);
+    if (comboLang->tag(j) == "other")
+      name = i18n("Other");
+    else
+      readLocale(comboLang->tag(j), name, 0);
     comboLang->changeLanguage(name, j);
   }
 }

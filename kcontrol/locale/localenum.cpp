@@ -63,13 +63,13 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl1->addColSpacing(3, 10);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel(i18n("Decimal symbol"), gbox);
+  label = new QLabel("1", gbox, i18n("Decimal symbol"));
   edDecSym = new QLineEdit(gbox);
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edDecSym, 1, 2);
 
-  label = new QLabel(i18n("Thousands separator"), gbox);
+  label = new QLabel("1", gbox, i18n("Thousands separator"));
   edThoSep = new QLineEdit(gbox);
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);

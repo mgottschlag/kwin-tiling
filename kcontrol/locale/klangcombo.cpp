@@ -21,11 +21,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#define INCLUDE_MENUITEM_DEF 1
 #include <qpainter.h>
 #include <qdrawutil.h>
 #include <qpixmap.h>
 #include <qiconset.h>
 #include <qpopupmenu.h>
+#include <qmenudata.h>
 
 #include <kiconloader.h>
 #include <kapp.h>
@@ -131,11 +133,23 @@ void KLanguageCombo::clear()
 
 int KLanguageCombo::count() const
 {
-  return popup->count();
+  return tags->count();
 }
 
 void KLanguageCombo::insertItem(const QIconSet& icon, const QString &text, const QString &tag, int index)
 {
+  if (index == -1)
+  {
+    QMenuItem *p = popup->findItem(popup->idAt(popup->count() - 1));
+    QPopupMenu *pi = p?p->popup():0;
+    if(pi)
+      {
+        pi->insertItem(icon, text, count());
+        tags->append(tag);
+        return;
+      }
+  }
+
   if (index < 0 || index >= count())
     index = count();
   popup->insertItem(icon, text, index, index);
@@ -183,19 +197,24 @@ void KLanguageCombo::insertSeparator(int index)
   tags->insert(tags->at(index), QString::null);
 }
 
-void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub)
+void KLanguageCombo::insertOther()
 {
-  if (path.isNull())
-    insertSeparator();
-  else
-  {
-    QString output = name + " (" + path + ")";
-    QPixmap flag(locate("locale", sub + path + "/flag.png"));
-    insertItem(QIconSet(flag), output, path);
-  }
+  QPopupMenu *p = new QPopupMenu;
+  popup->insertItem(i18n("Other"), p);
+  tags->append("other");
+  connect( p, SIGNAL(activated(int)),
+                        SLOT(internalActivate(int)) );
+  connect( p, SIGNAL(highlighted(int)),
+                        SLOT(internalHighlight(int)) );
 }
 
-// does not work
+void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub)
+{
+  QString output = name + " (" + path + ")";
+  QPixmap flag(locate("locale", sub + path + "/flag.png"));
+  insertItem(QIconSet(flag), output, path);
+}
+
 void KLanguageCombo::changeLanguage(const QString& name, int i)
 {
   if (i < 0 || i >= count()) return;

@@ -63,13 +63,13 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   tl1->addColSpacing(3, 10);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel(i18n("Time format"), gbox);
+  label = new QLabel("1", gbox, i18n("Time format"));
   edTimeFmt = new QLineEdit(gbox);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edTimeFmt, 1, 2);
 
-  label = new QLabel(i18n("Date format"), gbox);
+  label = new QLabel("1", gbox, i18n("Date format"));
   edDateFmt = new QLineEdit(gbox);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);

@@ -2,7 +2,7 @@
  * locale.cpp
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
- * Copyright (c) 1999 Hans Petter Bieker <bieker@pvv.ntnu.no>
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
