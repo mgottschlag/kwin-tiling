@@ -75,6 +75,7 @@ private:
     static QPixmap *_part1;
     static QPixmap *_part2;
     static QPixmap *_part3;
+    static QPixmap *_part4TopRight;
 
     // Also for performance reasons we apply the KPixmapEffect only once
     static KPixmap *_part3Effect;

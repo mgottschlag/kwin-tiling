@@ -76,6 +76,7 @@ QPixmap *AboutWidget::_part1 = 0L;
 QPixmap *AboutWidget::_part2 = 0L;
 QPixmap *AboutWidget::_part3 = 0L;
 KPixmap *AboutWidget::_part3Effect = 0L;
+QPixmap *AboutWidget::_part4TopRight = 0L;
 
 AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category, const QString &caption)
    : QWidget(parent, name),
@@ -98,11 +99,12 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
       _part1 = new QPixmap;
       _part2 = new QPixmap;
       _part3 = new QPixmap;
+      _part4TopRight = new QPixmap;
       _part3Effect = new KPixmap;
     }
 
     // sanity check
-    if(_part1->isNull() || _part2->isNull() || _part3->isNull()) {
+    if(_part1->isNull() || _part2->isNull() || _part3->isNull() || _part4TopRight->isNull()) {
         kdError() << "AboutWidget::AboutWidget: Image loading error!" << endl;
         setBackgroundColor(QColor(49,121,172));
     }
@@ -133,6 +135,7 @@ void AboutWidget::initPixmaps()
   _part1 = new QPixmap( locate( "data", "kcontrol/pics/part1.png" ) );
   _part2 = new QPixmap( locate( "data", "kcontrol/pics/part2.png" ) );
   _part3 = new QPixmap( locate( "data", "kcontrol/pics/part3.png" ) );
+  _part4TopRight = new QPixmap( locate( "data", "kcontrol/pics/top-right.png" ) );
 
   _part3Effect = new KPixmap( _part3->size() );
 
@@ -152,10 +155,12 @@ void AboutWidget::freePixmaps()
   delete _part2;
   delete _part3;
   delete _part3Effect;
+  delete _part4TopRight;
   _part1 = 0L;
   _part2 = 0L;
   _part3 = 0L;
   _part3Effect = 0L;
+  _part4TopRight = 0L;
 }
 
 void AboutWidget::paintEvent(QPaintEvent* e)
@@ -184,7 +189,7 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
 void AboutWidget::updatePixmap()
 {
-    if(_part1->isNull() || _part2->isNull() || _part3->isNull())
+    if(_part1->isNull() || _part2->isNull() || _part3->isNull() || _part4TopRight->isNull())
         return;
 
     _buffer.resize(width(), height());
@@ -192,6 +197,7 @@ void AboutWidget::updatePixmap()
     QPainter p(&_buffer);
 
     // draw part1
+    p.drawPixmap(width() - _part4TopRight->width(), 0, *_part4TopRight);
     p.drawPixmap(0, 0, *_part1);
 
     int xoffset = _part1->width();
@@ -200,7 +206,7 @@ void AboutWidget::updatePixmap()
     // draw part2 tiled
     int xpos = xoffset;
     if(width() > xpos)
-        p.drawTiledPixmap(xpos, 0, width() - xpos, _part2->height(), *_part2);
+        p.drawTiledPixmap(xpos, 0, width() - xpos - _part4TopRight->width(), _part2->height(), *_part2);
 
     QFont f1 = font();
     QFont f2 = f1;
@@ -222,7 +228,7 @@ void AboutWidget::updatePixmap()
 
     //draw the caption text
     p.setFont(f3);
-    p.setPen(gray);
+    p.setPen(QColor(139, 163, 198));
     p.drawText(220, 60, caption);
     p.setPen(black);
     p.drawText(217, 57, caption);
@@ -232,7 +238,7 @@ void AboutWidget::updatePixmap()
     
     
     // draw title text
-    p.setPen(white);
+    p.setPen(black);
     p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, title);
 
     // draw intro text
