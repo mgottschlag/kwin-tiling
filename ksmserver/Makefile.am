@@ -18,15 +18,20 @@
 SUBDIRS = . 
 
 INCLUDES=  $(all_includes)
-ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-ksmserver_LDADD = $(LIB_KDECORE)
 
 bin_PROGRAMS = ksmserver
+lib_LTLIBRARIES = ksmserver.la
 noinst_HEADERS = global.h server.h shutdown.h
 
-ksmserver_METASOURCES = AUTO
+ksmserver_la_METASOURCES = AUTO
 # Order is important for --enable-final!
-ksmserver_SOURCES = main.cpp server.cpp shutdown.cpp
+ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp
+ksmserver_SOURCES = dummy.cpp
+
+ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
+ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+ksmserver_la_LIBADD = $(LIB_KDECORE)
+ksmserver_LDADD = ksmserver.la
 
 check_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
@@ -37,3 +42,5 @@ testsh_LDADD = $(LIB_KDECORE)
 messages:
 	$(XGETTEXT) $(ksmserver_SOURCES) -o $(podir)/ksmserver.pot
 
+dummy.cpp:
+	echo > dummy.cpp
