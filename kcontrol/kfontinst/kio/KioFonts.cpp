@@ -35,6 +35,7 @@
  ***************************************************************************/
 
 #include "KioFonts.h"
+#include <stdlib.h>
 #include <pwd.h>
 #include <grp.h>
 #include <sys/types.h>
