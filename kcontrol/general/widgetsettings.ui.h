@@ -90,7 +90,7 @@ void  KWidgetSettingsModule::load()
 		cbToolbarIcons->setCurrentItem(3);
 
 	config.setGroup(QString::fromLatin1("KDE"));
-        cboxIconSupport->setChecked( config.readBoolEntry(QString::fromLatin1("showIcons"), true ));
+        cboxIconSupport->setChecked( config.readBoolEntry(QString::fromLatin1("ShowIconsOnPushButtons"), true ));
 
 }
 
@@ -154,7 +154,7 @@ void  KWidgetSettingsModule::save()
 
 	config.writeEntry(QString::fromLatin1("IconText"), tbIcon, true, true);
         config.setGroup(QString::fromLatin1("KDE"));
-        config.writeEntry(QString::fromLatin1("showIcons"), cboxIconSupport->isChecked() );
+        config.writeEntry(QString::fromLatin1("ShowIconsOnPushButtons"), cboxIconSupport->isChecked() );
 
 	// Notify all KApplications && KWin about the updated style stuff
 	KIPC::sendMessageAll(KIPC::StyleChanged);
