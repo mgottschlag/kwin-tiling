@@ -154,7 +154,7 @@ void ConfigModule::runAsRoot()
   _embedWidget = new QXEmbed(_embedFrame );
   _module->hide();
   _embedFrame->show();
-  QLabel *_busy = new QLabel(i18n("<big>Loading ...</big>"), _embedWidget);
+  QLabel *_busy = new QLabel(i18n("<big>Loading...</big>"), _embedWidget);
   _busy->setAlignment(AlignCenter);
   _busy->setTextFormat(RichText);
   _busy->setGeometry(0,0, _module->width(), _module->height());

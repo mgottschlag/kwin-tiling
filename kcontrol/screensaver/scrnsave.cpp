@@ -207,7 +207,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " screen savers. Select the one you want to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
-    mSetupBt = new QPushButton(  i18n("&Setup ..."), mSaverGroup );
+    mSetupBt = new QPushButton(  i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
     hlay->addWidget( mSetupBt );

@@ -75,7 +75,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   soundButton = new QPushButton(i18n("&Browse..."), grp);
   hbox->addWidget(soundButton);
   QString wtstr = i18n("If the option \"Use customized bell\" is enabled, you can choose a sound file here."
-    " Click \"Browse ...\" to choose a sound file using the file dialog.");
+    " Click \"Browse...\" to choose a sound file using the file dialog.");
   QWhatsThis::add( soundEdit, wtstr );
   QWhatsThis::add( soundLabel, wtstr );
   QWhatsThis::add( soundButton, wtstr );

@@ -95,7 +95,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 	      SLOT(slotLiloCheckToggled(bool)));
       connect(lilo_check, SIGNAL(toggled(bool)),
 	      SLOT(changed()));
-      wtstr = i18n("Enable Lilo boot options in the \"Shutdown ...\" dialog.");
+      wtstr = i18n("Enable Lilo boot options in the \"Shutdown...\" dialog.");
       QWhatsThis::add( lilo_check, wtstr );
 
       lilocmd_lined = new KURLRequester(group4);
