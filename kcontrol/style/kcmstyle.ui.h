@@ -7,6 +7,7 @@
 *****************************************************************************/
 
 #include <qsettings.h>
+#include <qstylefactory.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -32,6 +33,9 @@ void  KCMStyle::init()
 	connect(cboxTearOffHandles, SIGNAL(toggled(bool)), SLOT(setDirty()));
 
 	containerFrame->setEnabled(false);
+
+	// read all styles
+	lbStyles->insertStringList(QStyleFactory::keys());
 
 }
 

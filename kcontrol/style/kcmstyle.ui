@@ -78,13 +78,8 @@
                                 <number>6</number>
                             </property>
                             <widget class="QListBox" row="0" column="0">
-                                <item>
-                                    <property name="text">
-                                        <string>All the Styles go here</string>
-                                    </property>
-                                </item>
                                 <property name="name">
-                                    <cstring>ListBox1</cstring>
+                                    <cstring>lbStyles</cstring>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget" row="1" column="0">
@@ -770,7 +765,7 @@
 </connections>
 <tabstops>
     <tabstop>TabWidget2</tabstop>
-    <tabstop>ListBox1</tabstop>
+    <tabstop>lbStyles</tabstop>
     <tabstop>PushButton1</tabstop>
     <tabstop>cboxEnableGUIEffects</tabstop>
     <tabstop>cbComboEffect</tabstop>
