@@ -20,9 +20,9 @@
 #ifndef __aboutwidget_h__
 #define __aboutwidget_h__
 
-#include <qvbox.h>
+#include <qwidget.h>
 
-class AboutWidget : public QVBox
+class AboutWidget : public QWidget
 {  
   Q_OBJECT    
   

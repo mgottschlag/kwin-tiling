@@ -36,8 +36,9 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   , _basew(0L)
   , _module(0L)
 {
-  _busy = new QLabel(i18n("Loading..."), this);
+  _busy = new QLabel(i18n("<big>Loading ...</big>"), this);
   _busy->setAlignment(AlignCenter);
+  _busy->setTextFormat(RichText);
   _busy->setGeometry(0,0, width(), height());
   _busy->hide();
 }

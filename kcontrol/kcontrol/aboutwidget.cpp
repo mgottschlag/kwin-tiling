@@ -17,9 +17,10 @@
  
 */                                                                            
 
-#include <qcolor.h>
+#include <qlayout.h>
+#include <qhbox.h>
+#include <qlabel.h>
 
-#include <ktextbrowser.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
@@ -30,121 +31,127 @@
 #include "aboutwidget.moc"
 
 AboutWidget::AboutWidget(QWidget *parent , const char *name)
-  : QVBox(parent, name)
+  : QWidget(parent, name)
 {
-  KTextBrowser *browser = new KTextBrowser(this);
-  QColorGroup clgrp = colorGroup();
-  clgrp.setColor( QColorGroup::Base, clgrp.background() );
-  browser->setPaperColorGroup( clgrp );
-  browser->setFrameStyle(QFrame::NoFrame);
-  browser->setFocusPolicy(NoFocus);
-  browser->setNotifyClick(true);
+  // main layout
+  QVBoxLayout *mainlayout = new QVBoxLayout(this, 10, 15);
 
-  QString wizard = locate("data", "kcontrol/pics/wizard.png");
-  QString kcontrol = KGlobal::iconLoader()->iconPath("kcontrol", KIcon::SizeLarge);
+  // title hbox
+  QHBox *title = new QHBox(this);
+  title->setSpacing(10); 
 
-  QString text = "<p>"
-    "<table cellpadding=\"2\" cellspacing=\"1\" border=\"0\"  width=\"98%\">"
-    "<tr>"
-    "<td width=\"1%\">"
-    "<img src=\""
-    + kcontrol +
-    "\" border=\"0\">"
-    "</td>"
-    "<td width=\"90%\">"
-    "<b><big><big>"
-    + i18n("KDE Control Center") +
-    "</big></big></b>"
-    "<br>"
-    + i18n("Configure your desktop environment.") +
-    "</td></tr>"
-    "</table>"
-    "</p>"
-    "<p>"
-    + i18n("Welcome to the \"KDE Control Center\", a central place to configure your "
-           "desktop environment. "
-           "Select a item from the index on the left to load a configuration module. ") +
-    "</p>"
-    "<p>"
-    "<table cellpadding=0 cellspacing=0 border=0  width=100%>"
-    "<tr>"
+  // title image
+  QLabel *title_image = new QLabel(title);
+  title_image->setPixmap(KGlobal::iconLoader()->loadIcon("kcontrol",
+                                                         KIcon::Desktop, KIcon::SizeLarge));
+  // title text
+  QLabel *title_text = new QLabel(title);
+  title_text->setTextFormat(RichText);
+  title_text->setText("<big><big>"
+                      + i18n("KDE Control Center")
+                      + "</big></big>"
+                      + "<br>"
+                      + i18n("Configure your desktop environment."));
 
-    "<td>"
+  // give title text as much space as possible
+  title->setStretchFactor(title_text, 10);
 
-    "<table cellpadding=2 cellspacing=1 border=0  width=50%>"
-    "<tr>"
-    "<td>"
-    + i18n("KDE version:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::kdeVersion() +
-    "</b></td>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    + i18n("User:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::userName() +
-    "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    + i18n("Hostname:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::hostName() +
-    "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    + i18n("System:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::systemName() +
-    "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    + i18n("Release:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::systemRelease() +
-    "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td>"
-    + i18n("Machine:") +
-    "</td>"
-    "<td><b>"
-    + KCGlobal::systemMachine() +
-    "</td></b>"
-    "</tr>"
-    "<tr>"
-    "<td colspan=2>"
-    + i18n("Click on the \"Help\" tab on the left to browse a help text on the active "
-           "control module. Use the \"Search\" tab if you are unsure where to look for "
-           "a particular configuration option.") +
-    "</td>"
-    "</tr>"
-    "</table>"
-    "</td>"
+  // add title to mainlayout
+  mainlayout->addWidget(title);
 
-    "<td>"
-    "<table cellpadding=2 cellspacing=1 border=0  width=50%>"
-    "<tr>"
-    "<td>"
-    "<img src=\""
-    + wizard +
-    "\" align=\"left\" border=\"0\">"
-    "</td>"
-    "</tr>"
-    "</table>"
-    "</td>"
+  // intro text widget
+  QLabel *intro_text = new QLabel(this);
+  intro_text->setTextFormat(RichText);
+  intro_text->setText(i18n("Welcome to the \"KDE Control Center\", "
+                           "a central place to configure your "
+                           "desktop environment. "
+                           "Select a item from the index on the left "
+                           "to load a configuration module."));
 
-    "</tr>"
-    "</table>"
-    "</p>";
+  // add intro text to mainlayout
+  mainlayout->addWidget(intro_text);
+  mainlayout->setStretchFactor(intro_text, 1);
 
-  browser->setText(text);
+  // body hbox
+  QHBox *body = new QHBox(this);
+  body->setSpacing(10);
+
+  // body text
+  QLabel *body_text = new QLabel(body);
+  body_text->setTextFormat(RichText);
+  body_text->setText("<table cellpadding=2 cellspacing=1 border=0  width=50%>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("KDE version:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::kdeVersion() +
+                     "</b></td>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("User:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::userName() +
+                     "</td></b>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("Hostname:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::hostName() +
+                     "</td></b>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("System:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::systemName() +
+                     "</td></b>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("Release:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::systemRelease() +
+                     "</td></b>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     + i18n("Machine:") +
+                     "</td>"
+                     "<td><b>"
+                     + KCGlobal::systemMachine() +
+                     "</td></b>"
+                     "</tr>"
+                     "<tr>"
+                     "<td>"
+                     "<br>"
+                     "</td>"
+                     "</tr>"
+                     "<tr>"
+                     "<td colspan=2>"
+                     + i18n("Click on the \"Help\" tab on the left to browse a help "
+                            "text on the active "
+                            "control module. Use the \"Search\" tab if you are unsure "
+                            "where to look for "
+                            "a particular configuration option.") +
+                     "</td>"
+                     "</tr>"
+                     "</table>");
+
+  // body image
+  QLabel *body_image = new QLabel(body);
+  body_image->setPixmap(QPixmap(locate("data", "kcontrol/pics/wizard.png")));
+
+  // add body to mainlayout
+  mainlayout->addWidget(body);
+  mainlayout->setStretchFactor(body, 10);
+  
+  // start the party
+  mainlayout->activate();
 }
