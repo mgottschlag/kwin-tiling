@@ -57,7 +57,6 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   tab->addTab( localemon, "1" ); 
   localetime = new KLocaleConfigTime( this, i18n("&Time && dates") );
   tab->addTab( localetime, "1" ); 
-#undef i18n
 
   connect(locale,     SIGNAL(resample()), this, SLOT(update()));
   connect(localenum,  SIGNAL(resample()), this, SLOT(update()));
@@ -68,6 +67,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   gbox = new QGroupBox("1", this, i18n("Examples"));
   l->addWidget(gbox);
   sample = new KLocaleSample(gbox);
+#undef i18n
 
   reTranslate();
   updateSample();
@@ -133,23 +133,6 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
       {
         ((QLabel *)wc)->setText(i18n(wc->name()));
         ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
-      }
-      else if ( !qstrcmp(wc->className(), "QPushButton"))
-      {
-	const char *s = 0; 
-	if (!qstrcmp(wc->name(), "ok"))
-	  s = "&OK";
-	else if (!qstrcmp(wc->name(), "apply settings"))
-	  s = "&Apply";
-	else if (!qstrcmp(wc->name(), "cancel dialog"))
-	  s = "&Cancel";
-	else if (!qstrcmp(wc->name(), "back to default"))
-	  s = "&Defaults";
-	else if (!qstrcmp(wc->name(), "give help"))
-	  s = "&Help";
-
-	//if (s)
-	  // ((QPushButton *)wc)->setText(i18n(s));
       }
       else if ( !qstrcmp(wc->className(), "QComboBox"))
       {
