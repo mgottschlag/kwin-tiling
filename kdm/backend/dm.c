@@ -253,7 +253,7 @@ main( int argc, char **argv )
 	/*
 	 * Step 1 - load configuration parameters
 	 */
-	if (!InitResources( opts ) || !ScanConfigs( FALSE ))
+	if (!InitResources( opts ) || ScanConfigs( FALSE ) < 0)
 		LogPanic( "Config reader failed. Aborting ...\n" );
 
 	/* SUPPRESS 560 */
@@ -772,13 +772,15 @@ processGPipe( struct display *d )
 static int
 ScanConfigs( int force )
 {
-	if (!LoadDMResources( force ))
-		return FALSE;
+	int ret;
+
+	if ((ret = LoadDMResources( force )) <= 0)
+		return ret;
 	ScanServers();
 #ifdef XDMCP
 	ScanAccessDatabase( force );
 #endif
-	return TRUE;
+	return 1;
 }
 
 static void
@@ -790,7 +792,7 @@ MarkDisplay( struct display *d )
 static void
 RescanConfigs( int force )
 {
-	if (ScanConfigs( force )) {
+	if (ScanConfigs( force ) > 0) {
 #ifdef XDMCP
 		UpdateListenSockets();
 #endif
@@ -1288,7 +1290,7 @@ StartDisplay( struct display *d )
 		return;
 #endif
 
-	if (!LoadDisplayResources( d )) {
+	if (LoadDisplayResources( d ) < 0) {
 		LogError( "Unable to read configuration for display %s; stopping it.\n",
 		          d->name );
 		StopDisplay( d );

@@ -199,16 +199,16 @@ checkDep( int idx )
 static int
 needsReScan( int what, CfgDep *dep )
 {
-	int idx;
+	int widx, idx;
 	long mt;
 
-	for (idx = 0; idx < as(cfgMap); idx++)
-		if (cfgMapT[idx] == what)
-			break;
-	idx = cfgMap[idx];
-	if (checkDep( idx ))
+	for (widx = 0; cfgMapT[widx] != what; widx++);
+	idx = cfgMap[widx];
+	if (checkDep( idx )) {
 		if (!GetDeps())
-			return 0;
+			return -1;
+		idx = cfgMap[widx];
+	}
 	mt = mTime( cfgFiles[idx].name->str );
 	if (dep->name != cfgFiles[idx].name) {
 		if (dep->name)
@@ -227,8 +227,10 @@ needsReScan( int what, CfgDep *dep )
 int
 startConfig( int what, CfgDep *dep, int force )
 {
-	if (!needsReScan( what, dep ) && !force)
-		return 0;
+	int ret;
+
+	if ((ret = needsReScan( what, dep )) < 0 || (!ret && !force))
+		return ret;
 	OpenGetter();
 	GSendInt( GC_GetConf );
 	GSendInt( what );
@@ -370,20 +372,20 @@ LoadDMResources( int force )
 	char **ent;
 
 	if (Setjmp( cnftalk.errjmp ))
-		return 0; /* may memleak, but we probably have to abort anyway */
-	if (!startConfig( GC_gGlobal, &cfg.dep, force ))
-		return 1;
+		return -1; /* may memleak, but we probably have to abort anyway */
+	if ((ret = startConfig( GC_gGlobal, &cfg.dep, force )) <= 0)
+		return ret;
 	LoadResources( &cfg );
 /*	Debug( "manager resources: %[*x\n",
            cfg.numCfgEnt, ((char **)cfg.data) + cfg.numCfgEnt );*/
 	ret = 1;
 	for (i = 0; i < as(globVal); i++) {
 		if (!(ent = FindCfgEnt( 0, globVal[i].id )))
-			ret = 0;
+			ret = -1;
 		else
 			ApplyResource( globVal[i].id, ent, globVal[i].off );
 	}
-	if (!ret)
+	if (ret < 0)
 		LogError( "Internal error: config reader supplied incomplete data\n" );
 	return ret;
 }
@@ -403,9 +405,9 @@ LoadDisplayResources( struct display *d )
 	char **ent;
 
 	if (Setjmp( cnftalk.errjmp ))
-		return 0; /* may memleak */
-	if (!startConfig( GC_gDisplay, &d->cfg.dep, FALSE ))
-		return 1;
+		return -1; /* may memleak */
+	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, FALSE )) <= 0)
+		return ret;
 	GSendStr( d->name );
 	GSendStr( d->class2 );
 	LoadResources( &d->cfg );
@@ -414,12 +416,12 @@ LoadDisplayResources( struct display *d )
 	ret = 1;
 	for (i = 0; i < as(dpyVal); i++) {
 		if (!(ent = FindCfgEnt( d, dpyVal[i].id )))
-			ret = 0;
+			ret = -1;
 		else
 			ApplyResource( dpyVal[i].id, ent,
 			               (char **)(((char *)d) + dpyVal[i].off) );
 	}
-	if (!ret)
+	if (ret < 0)
 		LogError( "Internal error: config reader supplied incomplete data\n" );
 	return ret;
 }

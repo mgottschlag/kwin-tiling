@@ -152,7 +152,7 @@ ScanAccessDatabase( int force )
 	Debug( "ScanAccessDatabase\n" );
 	if (Setjmp( cnftalk.errjmp ))
 		return; /* may memleak */
-	if (!startConfig( GC_gXaccess, &accData->dep, force ))
+	if (startConfig( GC_gXaccess, &accData->dep, force ) <= 0)
 		return;
 	if (accData->hostList)
 		free( accData->hostList );
