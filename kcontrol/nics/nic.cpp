@@ -99,11 +99,10 @@ KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    m_list->addColumn(i18n("Network Mask"));
    m_list->addColumn(i18n("Type"));
    m_list->addColumn(i18n("State"));
-   QHBoxLayout *hbox=new QHBoxLayout(this);
+   QHBoxLayout *hbox=new QHBoxLayout(box);
    m_updateButton=new QPushButton(i18n("&Update"),this);
    hbox->addWidget(m_updateButton);
    hbox->addStretch(1);
-   box->addLayout(hbox);
    QTimer* timer=new QTimer(this);
    timer->start(60000);
    connect(m_updateButton,SIGNAL(clicked()),this,SLOT(update()));
