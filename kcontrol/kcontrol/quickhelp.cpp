@@ -24,7 +24,7 @@ QuickHelp::QuickHelp(QWidget *parent , const char *name)
     : KTextBrowser( parent, name)
 {
   setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  setFocusPolicy( NoFocus );
+  setFocusPolicy( ClickFocus );
   setHScrollBarMode( QScrollView::AlwaysOff );
   setNotifyClick(true);
 }
