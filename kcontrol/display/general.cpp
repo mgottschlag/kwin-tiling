@@ -207,8 +207,6 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
 
     if (!currentItem())
         setSelected(firstChild(), true);
-    // Disabled for now
-    setEnabled(false);
 }
 
 void KThemeListBox::readThemeDir(const QString &directory)
@@ -262,7 +260,7 @@ void KThemeListBox::writeSettings()
         return;
 
     // Disabled for now (mosfet)
-    //KThemeBase::applyConfigFile(currentItem()->text(2));
+    KThemeBase::applyConfigFile(currentItem()->text(2));
 }
 
 //------------------------------------------------------------------
