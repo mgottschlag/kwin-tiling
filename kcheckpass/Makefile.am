@@ -4,9 +4,6 @@
 
 INCLUDES= $(all_includes)
 
-# for shadow passwords override the value
-INSTALL_PROGRAM = $(INSTALL) $(SETUIDFLAGS)
-
 bin_PROGRAMS = kcheckpass
 
 kcheckpass_SOURCES = kcheckpass.c \
@@ -22,3 +19,9 @@ PAM = $(KCHECKPASS_PAM_SERVICE)
 
 install-data-local:
 	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)
+
+install-exec-hook:
+	@(chown root $(DESTDIR)$(bindir)/kcheckpass && chmod 4755 $(DESTDIR)$(bindir)/kcheckpass) \
+	|| echo "Error: Could not install kcheckpass as setuid root (possibly you won't be able to unlock)!!\n"
+
+	
