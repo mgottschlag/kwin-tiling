@@ -1,6 +1,7 @@
 [Settings]
 Name=KDE Default for 3 Modifier Keys
 Name[af]=kde verstek vir 3 modifiseerder sleutels
+Name[ar]=اعداد KDE الإفتراضي لـ3 أزرار تعديل
 Name[cs]=Výchozí pro KDE (3 modifikátory)
 Name[da]=KDE-standard for 3 modifikatortaster
 Name[de]=KDE-Voreinstellung für drei Modifikationstasten
@@ -17,6 +18,7 @@ Name[pt_BR]=KDE por Omissão para 3 Modificadores
 Name[sk]=KDE štandardná pre 3 modifikátory
 Name[sl]=Privzeto za KDE za 3 modifikatorje
 Name[sv]=KDE-förinställt för 3 väljartangenter
+Name[ta]=3 Á¡üÈ¢¸ÙìÌÃ¢Â KDE ¦¸¡¼¡¿¢¨Ä
 Name[xx]=xx
 Uses Win Modifer=false
 

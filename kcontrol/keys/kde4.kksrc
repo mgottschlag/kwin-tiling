@@ -1,6 +1,7 @@
 [Settings]
 Name=KDE Default for 4 Modifier Keys
 Name[af]=kde verstek vir 4 modifiseerder sleutels
+Name[ar]=اعداد KDE الإفتراضي ل4 أزرار تعديل
 Name[cs]=Výchozí pro KDE (4 modifikátory)
 Name[da]=KDE-standard for 4 modifikatortaster
 Name[de]=KDE-Voreinstellung für vier Modifikationstasten
@@ -17,6 +18,7 @@ Name[pt_BR]=KDE por Omissão para 4 Modificadores
 Name[sk]=KDE štandardná pre 4 modifikátory
 Name[sl]=Privzeto za KDE za 4 modifikatorje
 Name[sv]=KDE-förinställt för 4 väljartangenter
+Name[ta]=4 Á¡üÈ¢¸ÙìÌÃ¢Â KDE ¦¸¡¼¡¿¢¨Ä
 Name[xx]=xx
 Uses Win Modifer=true
 
