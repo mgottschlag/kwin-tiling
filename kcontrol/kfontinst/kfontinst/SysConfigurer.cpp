@@ -100,7 +100,8 @@ void CSysConfigurer::go()
                  totalT1Fonts=0,
                  d;
 #ifdef HAVE_XFT
-    QStringList  symbolFamilies;
+    QStringList  symbolFamilies,
+                 monoFamilies;
 #endif
 
     if(CKfiGlobal::cfg().getModifiedDirs().count())
@@ -173,7 +174,7 @@ void CSysConfigurer::go()
     {
         status(i18n("Configuring X (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
 #ifdef HAVE_XFT
-        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d], symbolFamilies))
+        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d], symbolFamilies, monoFamilies))
 #else
         if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d]))
 #endif
@@ -203,7 +204,7 @@ void CSysConfigurer::go()
 
         status(i18n("Saving XRender configuration file..."));
 
-        if(!CKfiGlobal::xft().save(CKfiGlobal::cfg().getXftConfigFile(), dirs, symbolFamilies))
+        if(!CKfiGlobal::xft().save(CKfiGlobal::cfg().getXftConfigFile(), dirs, symbolFamilies, monoFamilies))
         {
             status(i18n("Could not save XRender configuration file"), i18n("File permissions?"), true);
             return;

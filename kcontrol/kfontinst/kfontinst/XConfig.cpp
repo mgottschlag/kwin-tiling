@@ -50,17 +50,19 @@ CXConfig::CXConfig()
     readConfig();
 }
 
+bool CXConfig::go(const QString &dir
 #ifdef HAVE_XFT
-bool CXConfig::go(const QString &dir, QStringList &symbolFamilies)
-#else
-bool CXConfig::go(const QString &dir)
+        ,
+        QStringList &symbolFamilies,
+        QStringList &monoFamilies
 #endif
+    )
 {
+    bool status=createFontsDotDir(dir
 #ifdef HAVE_XFT
-    bool status=createFontsDotDir(dir, symbolFamilies);
-#else
-    bool status=createFontsDotDir(dir);
+                , symbolFamilies, monoFamilies
 #endif
+    );
 
     if(status)
     {
@@ -671,10 +673,25 @@ bool CXConfig::writeXfsConfig()
 }
 
 #ifdef HAVE_XFT
-bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
-#else
-bool CXConfig::createFontsDotDir(const QString &dir)
+bool find(const QStringList &list, const QString &val)
+{
+    QStringList::Iterator it;
+
+    for(it=((QStringList &)list).begin(); it!=((QStringList &)list).end(); ++it)
+        if(0==strcmp((*it).latin1(), val.latin1()))
+            return true;
+
+    return false;
+}
 #endif
+
+bool CXConfig::createFontsDotDir(const QString &dir
+#ifdef HAVE_XFT
+        ,
+        QStringList &symbolFamilies,
+        QStringList &monoFamilies
+#endif
+    )
 {
     bool status=false;
     QDir d(dir);
@@ -709,6 +726,10 @@ bool CXConfig::createFontsDotDir(const QString &dir)
 
                                 if(encodings.count())
                                 {
+#ifdef HAVE_XFT
+                                    bool     mono=false;
+#endif
+                         
                                     QCString xlfd(fInfo->fileName().local8Bit());
                                     QString  family=CKfiGlobal::fe().getFamilyName();
 
@@ -742,7 +763,13 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                         if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 || (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
                                             entry+='c';
                                         else
+                                        {
                                             entry+=CFontEngine::spacingStr(CKfiGlobal::fe().getSpacing()).latin1();
+#ifdef HAVE_XFT
+                                            if(!mono)
+                                                mono=CFontEngine::SPACING_MONOSPACED==CKfiGlobal::fe().getSpacing();
+#endif
+                                        }
 
                                         entry+="-";
                                         entry+="0";
@@ -754,8 +781,11 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                         scalableFonts.append(entry);
 
 #ifdef HAVE_XFT
-                                        if((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it) && !CMisc::find(symbolFamilies, family))
+                                        if((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it) &&
+                                          !find(symbolFamilies, family))
                                             symbolFamilies.append(family);
+                                        if(mono && !find(monoFamilies, family))
+                                            monoFamilies.append(family);
 #endif
                                     }
                                 }

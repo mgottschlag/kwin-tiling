@@ -33,6 +33,7 @@
 #include "XftRename.h"
 #include <qstring.h>
 #include <qglobal.h>
+#include <qregexp.h>
 #include <fstream.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -243,12 +244,15 @@ static void printInteger(QCString &str, char *field, int ival)
     str+=num;
 }
 
-static void printTest(QCString &str, XftTest *test)
+static const QCString constTestIndent("\n      ");
+
+static void printTest(QCString &str, XftTest *test, bool indent=false)
 {
     if(test)
     {
-        str+="\n";
-        str+="    ";
+        if(indent)
+            str+=constTestIndent;
+
         str+=(const char *)(test->qual==XftQualAny ? "any" : "all");
         str+=" ";
         str+=test->field;
@@ -283,7 +287,7 @@ static void printTest(QCString &str, XftTest *test)
         }
 
         str+=" ";
-        printTest(str, test->next);
+        printTest(str, test->next, true);
     }
 }
 
@@ -412,14 +416,10 @@ static void printEdit(QCString &str, XftEdit *edit)
 {
     if(edit)
     {
-        str+="\n";
-        str+="    ";
         str+=edit->field;
         str+=" ";
         str+=opToStr(edit->op);
         printExpr(str, edit->expr, edit->field);
-        str+="\n";
-        printEdit(str, edit->next);
     }
 }
 
@@ -541,53 +541,78 @@ bool CXftConfig::save(const QString &f, const QStringList &dirs)
         return false;
 }
 
-bool CXftConfig::save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies)
+bool CXftConfig::save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies,
+                      const QStringList &monoFamilies)
+{
+    addEntries(symbolFamilies, "encoding", constSymbolEncoding.latin1(), 0);
+    addEntries(monoFamilies, "spacing", NULL, XFT_MONO);
+    return save(f, dirs);
+}
+
+CXftConfig::TEntry * createEntry(char *sval)
+{
+    XftValue           value;
+    CXftConfig::TEntry *entry=new CXftConfig::TEntry;
+
+    value.u.s=sval;
+    value.type=XftTypeString;
+    entry->test=XftTestCreate(XftQualAny, "family", XftOpEqual, value);
+
+    return entry;
+}
+
+void CXftConfig::addEntries(const QStringList &list, const char *field, const char *charSetting, int intSetting)
 {
     QStringList::Iterator sIt;
 
-    for(sIt=((QStringList &)symbolFamilies).begin(); sIt!=((QStringList &)symbolFamilies).end(); ++sIt)
+    for(sIt=((QStringList &)list).begin(); sIt!=((QStringList &)list).end(); ++sIt)
     {
         TEntry *entry=findFamilyEntry(*sIt);  // See if there is already a rule for this family...
-        bool   newEntry=false;
+        bool   newEntry=false,
+               haveEdit=false;
 
         if(NULL==entry)  // If no rule was found, then create a new one...
         {
-            XftValue value;
-
-            entry=new TEntry;
-            value.u.s=(char *)((*sIt).latin1());
-            value.type=XftTypeString;
-            entry->test=XftTestCreate(XftQualAny, "family", XftOpEqual, value);
+            entry=createEntry((char *)((*sIt).latin1()));
             newEntry=true;
         }
 
-        // Now look for "edit encoding=constSymbolEncoding" ...
-        XftEdit **edit=&(entry->edit);
-
-        while(*edit)
-        {
-            if(0==CMisc::stricmp((*edit)->field, "encoding") && XftOpAssign==(*edit)->op && (*edit)->expr &&
-               XftOpString==(*edit)->expr->op)
+        // Now look for "edit 'field'='setting'" ...
+        if(entry->edit)
+            if(0==CMisc::stricmp(entry->edit->field, field) && XftOpAssign==entry->edit->op && entry->edit->expr &&
+               XftOpString==entry->edit->expr->op)
             {
-                if(CMisc::stricmp((*edit)->expr->u.sval, constSymbolEncoding.latin1()))
+                if(NULL!=charSetting)
                 {
-                    free((*edit)->expr->u.sval);
-                    (*edit)->expr->u.sval=_XftSaveString(constSymbolEncoding.latin1());
+                    if(CMisc::stricmp(entry->edit->expr->u.sval, charSetting))
+                    {
+                        free(entry->edit->expr->u.sval);
+                        entry->edit->expr->u.sval=_XftSaveString(charSetting);
+                    }
                 }
-                break;
-            }
-            else
-                edit=&((*edit)->next);
-        }
+                else
+                    if(entry->edit->expr->u.ival!=intSetting)
+                        entry->edit->expr->u.ival=intSetting;
 
-        if(NULL==*edit)
-            *edit=XftEditCreate("encoding", XftOpAssign, XftExprCreateString(constSymbolEncoding.latin1()));
+                haveEdit=true;
+            }
+
+        if(!haveEdit)
+        {
+            if(!newEntry)
+            {
+                entry=createEntry((char *)((*sIt).latin1()));
+                newEntry=true;
+            }
+
+            entry->edit=XftEditCreate(field, XftOpAssign, NULL!=charSetting ?
+                                                              XftExprCreateString(charSetting) :
+                                                              XftExprCreateInteger(intSetting));
+       }
 
         if(newEntry)
             itsList.append(entry);
     }
-
-    return save(f, dirs);
 }
 
 void CXftConfig::addEntry(XftTest *test, XftEdit *edit)
@@ -797,15 +822,21 @@ void CXftConfig::TEntry::clear()
 
 void CXftConfig::TEntry::output(ofstream &of)
 {
-    of << "match";
+    QCString tStr=testStr(),
+             eStr=editStr();
 
-    if(testStr().length())
-        of << testStr();
+    if(eStr.length())
+    {
+        of << "match ";
 
-    of << endl
-       << "edit"
-       << editStr()
-       << ";\n\n";
+        if(tStr.length())
+        {
+            tStr.replace(QRegExp(constTestIndent), "");
+            of << tStr;
+        }
+
+        of << "edit " << eStr << ";\n";
+    }
 }
 
 QCString CXftConfig::TEntry::testStr()

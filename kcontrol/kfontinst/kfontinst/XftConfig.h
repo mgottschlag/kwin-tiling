@@ -75,8 +75,7 @@ class CXftConfig
 
     bool read(const QString &f);
     bool save(const QString &f, const QStringList &dirs);
-    bool save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies);
-
+    bool save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies, const QStringList &monoFamilies);
     void newFile()                                         { init(); itsMadeChanges=true; }
 
     bool getExcludeRange(double &from, double &to);
@@ -108,6 +107,10 @@ class CXftConfig
     void addEntry(XftTest *test, XftEdit *edit);
     void addInclude(const char *dir);
     void addIncludeIf(const char *dir);
+
+    private:
+
+    void addEntries(const QStringList &list, const char *field, const char *charSetting, int intSetting);
 
     private:
 

@@ -72,11 +72,14 @@ class CXConfig : public QObject
 
     CXConfig();
 
+    bool go(const QString &dir
 #ifdef HAVE_XFT
-    bool go(const QString &dir, QStringList &symbolFamilies);
-#else
-    bool go(const QString &dir);
+        ,
+        QStringList &symbolFamilies,
+        QStringList &monoFamilies
 #endif
+    );
+
     bool ok()                           { return NONE!=itsType; }
     bool custom()                       { return KFONTINST==itsType; }
     bool writable()                     { return itsWritable; }
@@ -108,11 +111,13 @@ class CXConfig : public QObject
 
     TPath * findPath(const QString &dir);
 
+    bool createFontsDotDir(const QString &dir
 #ifdef HAVE_XFT
-    bool createFontsDotDir(const QString &dir, QStringList &symbolFamilies);
-#else
-    bool createFontsDotDir(const QString &dir);
+        ,
+        QStringList &symbolFamilies,
+        QStringList &monoFamilies
 #endif
+    );
 
     private:
 
