@@ -1169,7 +1169,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   //the icon loader for the buttons
   iconLoader = new KIconLoader();
 
-  iconLoader->getDirList()->clear();
+  iconLoader->getDirList().clear();
    
   iconLoader->insertDirectory(0, kapp->localkdedir()+"/share/apps/kwm/pics");
   iconLoader->insertDirectory(1, kapp->kde_datadir()+"/kwm/pics");
