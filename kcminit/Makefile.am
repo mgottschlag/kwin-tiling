@@ -18,6 +18,9 @@
 # 
 
 kdeinit_LTLIBRARIES = kcminit.la
+bin_PROGRAMS=
+lib_LTLIBRARIES=
+
 kcminit_la_SOURCES = main.cpp
 kcminit_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
