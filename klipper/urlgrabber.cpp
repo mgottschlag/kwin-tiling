@@ -10,6 +10,7 @@
 
  ------------------------------------------------------------- */
 
+#include <qtimer.h>
 #include <kapp.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
