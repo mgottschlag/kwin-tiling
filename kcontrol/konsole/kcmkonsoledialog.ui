@@ -193,7 +193,7 @@
                                     <cstring>terminalSizeHintCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Show Terminal Si&amp;ze when Resizing</string>
+                                    <string>Show terminal si&amp;ze when resizing</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
@@ -201,7 +201,7 @@
                                     <cstring>frameCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Show &amp;Frame</string>
+                                    <string>Show &amp;frame</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
@@ -209,7 +209,7 @@
                                     <cstring>warnCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Warn for Open Sessions on Quit</string>
+                                    <string>&amp;Confirm quit with open sessions</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
@@ -217,7 +217,7 @@
                                     <cstring>blinkingCB</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Blinking Cursor</string>
+                                    <string>&amp;Blinking cursor</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
@@ -241,7 +241,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>Line Spacing:</string>
+                                    <string>Line spacing:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>line_spacingSB</cstring>
