@@ -132,21 +132,39 @@ void KSMClient::resetState()
  * client ID, so we fake one.
  */
 static KStaticDeleter<QString> smy_addr;
-char * safeSmsGenerateClientID( SmsConn c )
+char * safeSmsGenerateClientID( SmsConn /*c*/ )
 {
-    char *ret = SmsGenerateClientID(c);
+//  Causes delays with misconfigured network :-/.
+//    char *ret = SmsGenerateClientID(c);
+    char* ret = NULL;
     if (!ret) {
         static QString *my_addr = 0;
        if (!my_addr) {
-           qWarning("Can't get own host name. Your system is severely misconfigured\n");
+//           qWarning("Can't get own host name. Your system is severely misconfigured\n");
            smy_addr.setObject(my_addr,new QString);
 
            /* Faking our IP address, the 0 below is "unknown" address format
               (1 would be IP, 2 would be DEC-NET format) */
-           my_addr->sprintf("0%.8x", KApplication::random());
+           char hostname[ 256 ];
+           if( gethostname( hostname, 255 ) != 0 )
+               my_addr->sprintf("0%.8x", KApplication::random());
+           else {
+               // create some kind of hash for the hostname
+               int addr[ 4 ] = { 0, 0, 0, 0 };
+               int pos = 0;
+               for( unsigned int i = 0;
+                    i < strlen( hostname );
+                    ++i, ++pos )
+                  addr[ pos % 4 ] += hostname[ i ];
+               *my_addr = "0";
+               for( int i = 0;
+                    i < 4;
+                    ++i )
+                  *my_addr += QString::number( addr[ i ], 16 );
+           }
        }
        /* Needs to be malloc(), to look the same as libSM */
-       ret = (char *)malloc(1+9+13+10+4+1 + /*safeness*/ 10);
+       ret = (char *)malloc(1+9+my_addr->length()+10+4+1 + /*safeness*/ 10);
        static int sequence = 0;
 
        if (ret == NULL)
