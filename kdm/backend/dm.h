@@ -179,8 +179,11 @@ typedef struct GProc {
     int pid;
 } GProc;
 
-typedef enum displayStatus { running, notRunning, zombie, phoenix, raiser,
+typedef enum displayStatus { notRunning = 0, running, zombie, phoenix, raiser,
 			     textMode, reserve, remoteLogin } DisplayStatus;
+
+typedef enum serverStatus { ignore = 0, awaiting, starting,
+			    terminated, killed, pausing } ServerStatus;
 
 typedef struct RcStr {
     struct RcStr	*next;
@@ -215,8 +218,9 @@ struct display {
 	int		zstatus;	/*  substatus while zombie */
 	int		pid;		/* process id of child */
 	int		serverPid;	/* process id of server (-1 if none) */
+	ServerStatus	serverStatus;	/* X server startup state */
 	Time_t		lastStart;	/* time of last display start */
-	int		startTries;	/* current start try; foreign from file only */
+	int		startTries;	/* current start try */
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
@@ -335,6 +339,7 @@ struct protoDisplay {
 #define D_Shutdown	3
 #define D_ChooseHost	4
 #define D_RemoteHost	5
+#define D_XConnOk	6
 
 extern int	request_port;
 extern int	debugLevel;
@@ -364,6 +369,7 @@ extern void BecomeDaemon (void);
 /* in dm.c */
 extern char *prog, *progpath;
 extern void StartDisplay (struct display *d);
+extern void StartDisplayP2 (struct display *d);
 extern void StopDisplay (struct display *d);
 extern void SetTitle (const char *name);
 
@@ -478,7 +484,13 @@ extern char **userEnviron, **systemEnviron;
 extern char *curuser, *curpass, *curtype, *dmrcuser, *curdmrc, *newdmrc;
 
 /* server.c */
-extern int StartServer (struct display *d);
+extern void StartServer (struct display *d);
+extern void AbortStartServer (struct display *d);
+extern void StartServerSuccess (void);
+extern void StartServerFailed (void);
+extern void StartServerTimeout (void);
+struct display *startingServer;
+
 extern void WaitForServer (struct display *d);
 extern void ResetServer (struct display *d);
 extern int PingServer(struct display *d);

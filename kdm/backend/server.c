@@ -45,42 +45,29 @@ from The Open Group.
 
 #include <stdio.h>
 
-static int receivedUsr1;
 
-static int serverPause (unsigned t, int serverPid);
+struct display *startingServer;
+static int savedAlarm;
 
-Display *dpy;
-
-/* ARGSUSED */
-static SIGVAL
-CatchUsr1 (int n ATTR_UNUSED)
+static void
+StartServerOnce ()
 {
-#ifdef SIGNALS_RESET_WHEN_CAUGHT
-    (void) Signal (SIGUSR1, CatchUsr1);
-#endif
-    /* Debug ("display manager caught SIGUSR1\n"); */
-    ++receivedUsr1;
-}
-
-static int
-StartServerOnce (struct display *d)
-{
+    struct display *d = startingServer;
     char	**argv;
     int		pid;
 
-    Debug ("StartServer for %s\n", d->name);
-    receivedUsr1 = 0;
-    (void) Signal (SIGUSR1, CatchUsr1);
+    Debug ("StartServerOnce for %s, try %d\n", d->name, ++d->startTries);
+    d->serverStatus = starting;
     switch (pid = Fork ()) {
     case 0:
 	argv = d->serverArgv;
 	if (d->authFile) {
-	    argv = addStrArr (argv, "-auth", 5);
-	    argv = addStrArr (argv, d->authFile, -1);
-	}
-	if (!argv) {
-	    LogError ("StartServer: no arguments\n");
-	    exit (EX_UNMANAGE_DPY);
+	    if (!(argv = addStrArr (argv, "-auth", 5)) ||
+		!(argv = addStrArr (argv, d->authFile, -1)))
+	    {
+		LogOutOfMem ("StartServerOnce");
+		exit (47);
+	    }
 	}
 	Debug ("exec %\"[s\n", argv);
 	/*
@@ -91,117 +78,105 @@ StartServerOnce (struct display *d)
 	(void) Signal (SIGUSR1, SIG_IGN);
 	(void) execv (argv[0], argv);
 	LogError ("X server %\"s cannot be executed\n", argv[0]);
-	sleep ((unsigned) d->openDelay);
-	exit (0);
+	exit (47);
     case -1:
-	LogError ("X server fork failed, sleeping\n");
-	return 0;
+	LogError ("X server fork failed\n");
+	StartServerFailed ();
+	break;
     default:
+	Debug ("X server forked, pid %d\n", pid);
+	d->serverPid = pid;
+	alarm (d->serverTimeout);
 	break;
     }
-    Debug ("X server forked, pid %d\n", pid);
-    if (serverPause ((unsigned) d->serverTimeout, pid))
-	return FALSE;
-    d->serverPid = pid;
-    return TRUE;
 }
 
-int
+void
 StartServer (struct display *d)
 {
-    int	i;
-    int	ret = FALSE;
+    startingServer = d;
+    savedAlarm = alarm (0);
+    d->startTries = 0;
+    StartServerOnce ();
+}
 
-    i = 0;
-    while (d->serverAttempts == 0 || i < d->serverAttempts)
+void
+AbortStartServer (struct display *d)
+{
+    if (startingServer == d)
     {
-	if ((ret = StartServerOnce (d)) == TRUE)
-	    break;
-	sleep (d->openDelay);
-	i++;
-    }
-    return ret;
-}
-
-/*
- * sleep for t seconds, return 1 if the server is dead when
- * the sleep finishes, 0 else
- */
-
-static Jmp_buf	pauseAbort;
-static int	serverPauseRet;
-
-/* ARGSUSED */
-static SIGVAL
-serverPauseAbort (int n ATTR_UNUSED)
-{
-    Longjmp (pauseAbort, 1);
-}
-
-/* ARGSUSED */
-static SIGVAL
-serverPauseUsr1 (int n ATTR_UNUSED)
-{
-    Debug ("display manager paused til SIGUSR1\n");
-    ++receivedUsr1;
-    Longjmp (pauseAbort, 1);
-}
-
-static int
-serverPause (unsigned t, int serverPid)
-{
-    int		pid;
-    SIGFUNC	oldAlrm;
-
-    serverPauseRet = 0;
-    if (!Setjmp (pauseAbort)) {
-	oldAlrm = Signal (SIGALRM, serverPauseAbort);
-	(void) Signal (SIGUSR1, serverPauseUsr1);
-	if (!receivedUsr1)
-	    (void) alarm (t);
-	else
-#ifdef SYSV
-	    (void) alarm ((unsigned) 1);
-#else
-	    Debug ("already received USR1\n");
-#endif
-	for (;;) {
-#if defined(SYSV) && defined(X_NOT_POSIX)
-	    pid = wait ((waitType *) 0);
-#else
-	    if (!receivedUsr1)
-		pid = wait ((waitType *) 0);
-	    else
-#ifndef X_NOT_POSIX
-		pid = waitpid (-1, (int *) 0, WNOHANG);
-#else
-		pid = wait3 ((waitType *) 0, WNOHANG,
-			     (struct rusage *) 0);
-#endif /* X_NOT_POSIX */
-#endif /* SYSV */
-	    if (pid == serverPid ||
-		(pid == -1 && errno == ECHILD))
-	    {
-		Debug ("X server dead\n");
-		serverPauseRet = 1;
-		break;
-	    }
-#if !defined(SYSV) || !defined(X_NOT_POSIX)
-	    if (pid == 0) {
-		Debug ("X server alive and kicking\n");
-		break;
-	    }
-#endif
+	if (d->serverStatus != ignore)
+	{
+	    d->serverStatus = ignore;
+	    alarm (savedAlarm);
+	    Debug ("aborting X server start\n");
 	}
+	startingServer = 0;
     }
-    (void) alarm ((unsigned) 0);
-    (void) Signal (SIGALRM, oldAlrm);
-    (void) Signal (SIGUSR1, CatchUsr1);
-    if (serverPauseRet)
-	LogError ("X server unexpectedly died\n");
-    return serverPauseRet;
 }
 
+void
+StartServerSuccess ()
+{
+    struct display *d = startingServer;
+    d->serverStatus = ignore;
+    alarm (savedAlarm);
+    Debug ("X server ready, starting session\n");
+    StartDisplayP2 (d);
+}
+
+void
+StartServerFailed ()
+{
+    struct display *d = startingServer;
+    if (!d->serverAttempts || d->startTries < d->serverAttempts)
+    {
+	d->serverStatus = pausing;
+	alarm (d->openDelay);
+    }
+    else
+    {
+	d->serverStatus = ignore;
+	alarm (savedAlarm);
+	startingServer = 0;
+	LogError ("X server for display %s can't be started,"
+		  " session disabled\n", d->name);
+	StopDisplay (d);
+    }
+}
+
+void
+StartServerTimeout ()
+{
+    struct display *d = startingServer;
+    switch (d->serverStatus) {
+    case ignore:
+    case awaiting:
+	break; /* cannot happen */
+    case starting:
+	LogError ("X server startup timeout, terminating\n");
+	kill (d->serverPid, d->termSignal);
+	d->serverStatus = d->termSignal == SIGKILL ? killed : terminated;
+	alarm (d->serverTimeout);
+	break;
+    case terminated:
+	LogInfo ("X server termination timeout, killing\n");
+	kill (d->serverPid, SIGKILL);
+	d->serverStatus = killed;
+	alarm (10);
+	break;
+    case killed:
+	LogInfo ("X server is stuck in D state; leaving it alone\n");
+	StartServerFailed ();
+	break;
+    case pausing:
+	StartServerOnce ();
+	break;
+    }
+}
+
+
+Display *dpy;
 
 /*
  * this code is complicated by some TCP failings.  On
@@ -297,7 +272,6 @@ WaitForServer (struct display *d)
 		    GetRemoteAddress (d, ConnectionNumber (dpy));
 #endif
 		RegisterCloseOnFork (ConnectionNumber (dpy));
-		(void) fcntl (ConnectionNumber (dpy), F_SETFD, 0);
 		return;
 	    }
 	    Debug ("OpenDisplay(%s) attempt %d failed: %s\n",
@@ -313,12 +287,14 @@ WaitForServer (struct display *d)
     exit (EX_OPENFAILED_DPY);
 }
 
+
 void
 ResetServer (struct display *d)
 {
     if (dpy && (d->displayType & d_origin) != dFromXDMCP)
 	pseudoReset ();
 }
+
 
 static Jmp_buf	pingTime;
 

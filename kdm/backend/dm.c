@@ -318,6 +318,7 @@ main (int argc, char **argv)
     (void) Signal (SIGHUP, SigHandler);
     (void) Signal (SIGCHLD, SigHandler);
     (void) Signal (SIGALRM, SigHandler);
+    (void) Signal (SIGUSR1, SigHandler);
 
     /*
      * Step 2 - run a sub-daemon for each entry
@@ -327,7 +328,6 @@ main (int argc, char **argv)
     ScanAccessDatabase (0);
 #endif
     ScanServers (0);
-    StartDisplays ();
     MainLoop ();
     closeFifo (&fifoFd, fifoPath);
     if (sdAction)
@@ -487,7 +487,6 @@ CheckUtmp (void)
 		*utpp = utp->next;
 		free (utp);
 		d->status = notRunning;
-		StartDisplays ();
 		continue;
 	    }
 	    else
@@ -515,6 +514,7 @@ SwitchToTty (struct display *d)
 
     if (!d->console || !d->console[0])
     {
+	/* should not get here if greeter is not nuts */
 	LogError("No console for %s specified - cannot use console mode\n",
 		 d->name);
 	d->status = notRunning;
@@ -552,6 +552,22 @@ SwitchToTty (struct display *d)
     }
     d->status = textMode;
 }
+
+static void
+SwitchToX (struct display *d)
+{
+    struct utmps *utp, **utpp;
+
+    for (utpp = &utmpList; (utp = *utpp); utpp = &(*utpp)->next)
+	if (utp->d == d)
+	{
+	    *utpp = utp->next;
+	    free (utp);
+	    d->status = notRunning;
+	    return;
+	}
+}
+
 
 static void
 StartRemoteLogin (struct display *d)
@@ -765,6 +781,9 @@ processDPipe (struct display *d)
 	    free (d->remoteHost);
 	d->remoteHost = GRecvStr ();
 	break;
+    case D_XConnOk:
+	startingServer = 0;
+	break;
     default:
 	LogError ("Internal error: unknown D_* command %d\n", cmd);
 	StopDisplay (d);
@@ -853,7 +872,7 @@ processDFifo (const char *buf, int len, void *ptr)
 	} else
 	    LogInfo ("Remote display %s attempted FiFo command \"reserve\"\n", d->name);
     } else if (!strcmp (ar[0], "suicide")) {
-	if (d->pid != -1) {
+	if (d->status == running && d->pid != -1) {
 	    TerminateProcess (d->pid, SIGTERM);
 	    d->status = raiser;
 	}
@@ -911,13 +930,15 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	    free (args);
 	} else
 	    setNLogin (d, ar[3], ar[4], 0, 2);
-	if (d->pid != -1) {
+	if (d->status == running && d->pid != -1) {
 	    if (d->userSess < 0 || !strcmp (ar[2], "now")) {
 		TerminateProcess (d->pid, SIGTERM);
 		d->status = raiser;
 	    }
-	} else
-	    StartDisplay (d);
+	} else if (d->status == reserve)
+	    d->status = notRunning;
+	else if (d->status == textMode && !strcmp (ar[2], "now"))
+	    SwitchToX (d);
     } else
 	LogInfo ("Invalid FiFo command %\"s\n", ar[0]);
     freeStrArr (ar);
@@ -940,7 +961,6 @@ RescanConfigs (void)
 #ifdef XDMCP
     ScanAccessDatabase (1);
 #endif
-    StartDisplays ();
 }
 
 static void
@@ -1082,13 +1102,18 @@ ReapChildren (void)
 		d->status = notRunning;
 		break;
 	    case raiser:
-		/* this should not happen */
-		d->status = notRunning;
 		LogError ("X server for display %s terminated unexpectedly\n",
 			  d->name);
 		/* don't kill again */
 		break;
 	    case running:
+		if (startingServer == d && d->serverStatus != ignore)
+		{
+		    if (d->serverStatus == starting && waitCode (status) != 47)
+			LogError ("X server died during startup\n");
+		    StartServerFailed ();
+		    break;
+		}
 		LogError ("X server for display %s terminated unexpectedly\n",
 			  d->name);
 		if (d->pid != -1)
@@ -1111,7 +1136,6 @@ ReapChildren (void)
 	    Debug ("unknown child termination\n");
 	}
     }
-    StartDisplays ();
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
     AddOtherEntropy ();
 #endif
@@ -1176,6 +1200,8 @@ MainLoop (void)
 #endif
 	   (Stopping ? AnyRunningDisplays() : AnyDisplaysLeft ()))
     {
+	if (!Stopping)
+	    StartDisplays ();
 	reads = WellKnownSocketsMask;
 #ifdef hpux
 	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
@@ -1212,7 +1238,14 @@ MainLoop (void)
 		    ReapChildren ();
 		    break;
 		case SIGALRM:
-		    CheckUtmp ();
+		    if (startingServer && startingServer->serverStatus != ignore)
+			StartServerTimeout ();
+		    else
+			CheckUtmp ();
+		    break;
+		case SIGUSR1:
+		    if (startingServer) /* just in case .... */
+			StartServerSuccess ();
 		    break;
 		}
 		continue;
@@ -1255,6 +1288,8 @@ CheckDisplayStatus (struct display *d)
 	if (d->stillThere) {
 	    if (d->status == notRunning)
 		StartDisplay (d);
+	    if (d->serverStatus == awaiting && !startingServer)
+		StartServer (d);
 	} else
 	    StopDisplay (d);
     }
@@ -1270,18 +1305,12 @@ StartDisplays (void)
 void
 StartDisplay (struct display *d)
 {
-    char	*cname;
-    int		pid;
-
     if (sdAction)
     {
 	Debug ("stopping display %s because shutdown is scheduled\n", d->name);
 	StopDisplay (d);
 	return;
     }
-
-    Debug ("StartDisplay %s, try %d\n", d->name, d->startTries + 1);
-    time (&d->lastStart);
 
     if (!LoadDisplayResources (d))
     {
@@ -1291,8 +1320,10 @@ StartDisplay (struct display *d)
 	return;
     }
 
+    d->status = running;
     if ((d->displayType & d_location) == dLocal)
     {
+	Debug ("StartDisplay %s\n", d->name);
 	/* don't bother pinging local displays; we'll
 	 * certainly notice when they exit
 	 */
@@ -1309,19 +1340,28 @@ StartDisplay (struct display *d)
 	    if (d->serverPid != -1 && d->resetForAuth && d->resetSignal)
 		kill (d->serverPid, d->resetSignal);
 	}
-	if (d->serverPid == -1 && !StartServer (d))
+	if (d->serverPid == -1)
 	{
-	    LogError ("X server for display %s can't be started, session disabled\n", d->name);
-	    StopDisplay (d);
+	    d->serverStatus = awaiting;
 	    return;
 	}
     }
     else
     {
+	Debug ("StartDisplay %s, try %d\n", d->name, d->startTries + 1);
 	/* this will only happen when using XDMCP */
 	if (d->authorizations)
 	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
     }
+    StartDisplayP2 (d);
+}
+
+void
+StartDisplayP2 (struct display *d)
+{
+    char	*cname;
+    int		pid;
+
     openFifo (&d->fifofd, &d->fifoPath, d->name);
 #ifdef nofork_session
     if (!nofork_session) {
@@ -1349,9 +1389,18 @@ StartDisplay (struct display *d)
 	(void) Signal (SIGPIPE, SIG_IGN);
 	SetAuthorization (d);
 	WaitForServer (d);
+#ifdef nofork_session
+	if (!pid)
+#endif
+	if ((d->displayType & d_location) == dLocal) {
+	    GSet (&mstrtalk);
+	    GSendInt (D_XConnOk);
+	}
 	ManageSession (d);
 	/* NOTREACHED */
     case -1:
+	closeFifo (&d->fifofd, d->fifoPath);
+	d->status = notRunning;
 	break;
     default:
 	Debug ("forked session, pid %d\n", pid);
@@ -1360,9 +1409,9 @@ StartDisplay (struct display *d)
 	RegisterInput (d->pipe.rfd);
 
 	d->pid = pid;
-	d->status = running;
 	d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit = 
 	    d->hstent->sd_how = d->hstent->sd_when = 0;
+	time (&d->lastStart);
 	break;
     }
 }
@@ -1375,6 +1424,7 @@ static void
 rStopDisplay (struct display *d, int endState)
 {
     Debug ("stopping display %s to state %d\n", d->name, endState);
+    AbortStartServer (d);
     if (d->serverPid != -1 || d->pid != -1)
     {
 	if (d->pid != -1)
@@ -1392,7 +1442,10 @@ rStopDisplay (struct display *d, int endState)
     else if (endState == DS_REMOTE)
 	StartRemoteLogin (d);
     else
+    {
+	SwitchToX (d);
 	RemoveDisplay (d);
+    }
 }
 
 void

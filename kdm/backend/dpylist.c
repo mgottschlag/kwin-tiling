@@ -148,7 +148,7 @@ Debug("StartReserveDisplay\n");
     {
 Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
 	rd->idleTimeout = lt;
-	StartDisplay (rd);
+	rd->status = notRunning;
     }
 }
 
@@ -308,7 +308,6 @@ NewDisplay (const char *name, const char *class2)
 	return 0;
     }
     /* initialize fields (others are 0) */
-    d->status = notRunning;
     d->pid = -1;
     d->serverPid = -1;
     d->fifofd = -1;
