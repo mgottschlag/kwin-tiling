@@ -284,8 +284,8 @@ Ent entsGeneral[] = {
 { "# If \"false\", KDM won't daemonize after startup. Use this, if you start\n"
 "# KDM from inittab with the respawn instruction. Default is true.\n", 
 "DaemonMode",	"false", 0 },
-{ "# The file, where X-servers to be used by kdm are listed. The file is in\n"
-"# the usual xdm-Xservers format.\n"
+{ "# The file, where X-servers to be used by KDM are listed. The file is in\n"
+"# the usual XDM-Xservers format.\n"
 "# Default is " KDMCONF "/Xservers\n"
 "# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
 "# do this best.\n", 
@@ -320,7 +320,7 @@ Ent entsXdmcp[] = {
 { "# File with the private keys of X-terminals. Required for XDM authentication.\n"
 "# Default is " KDMCONF "/kdmkeys\n", 
 "KeyFile",	"", 0 },
-{ "# XDMCP access control file in the usual xdm-Xaccess format.\n"
+{ "# XDMCP access control file in the usual XDM-Xaccess format.\n"
 "# Default is " KDMCONF "/Xaccess\n"
 "# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
 "# do this best.\n", 
@@ -434,8 +434,8 @@ Ent entsAnyCore[] = {
 "# XXX this is going to be integrated into the greeter (probably).\n", 
 "Chooser",		"", 0 },
 { "# If \"true\", KDM will automatically restart a session after an X-server\n"
-"# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling this\n"
-"# opens a security hole: a secured display lock can be circumvented.\n"
+"# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling\n"
+"# this opens a security hole: a secured display lock can be circumvented.\n"
 "# Default is false\n", 
 "AutoReLogin",	"true", 0 },
 { "# Allow root logins? Default is true\n", 
@@ -444,7 +444,7 @@ Ent entsAnyCore[] = {
 "AllowNullPasswd",	"false", 1 },
 { "# Where (relatively to the user's home directory) to store the last\n"
 "# selected session. Default is .wmrc\n", 
-"SessSaveFile",	".wmrc", 0 },
+"SessSaveFile",	"", 0 },
 { "# Command FiFo options.\n"
 "# XXX these options will probably change ...\n"
 "# Default is false\n", 
@@ -804,7 +804,7 @@ wrconf (FILE *f)
 	for (ce = cs->ents; ce; ce = ce->next) {
 	    fprintf (f, "%s%s%s=%s\n", 
 		     ce->comment ? ce->comment : "",
-		     ce->active ? "" : "#",
+		     (cs->active && ce->active) ? "" : "#",
 		     ce->key, ce->value);
 	}
 	fprintf (f, "\n");
@@ -1706,7 +1706,7 @@ int main(int argc, char **argv)
     for (ap = 1; ap < argc; ap++) {
 	if (!strcmp(argv[ap], "--help")) {
 	    printf (
-"genconf - generate configuration files for kdm\n"
+"genkdmconf - generate configuration files for kdm\n"
 "options:\n"
 "  --in /path/to/new/kdm-config-dir\n"
 "    In which directory to put the new configuration. You can use this\n"
