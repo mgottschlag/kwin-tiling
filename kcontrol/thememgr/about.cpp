@@ -11,6 +11,7 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kseparator.h>
 
 #include "about.h"
 #include "themecreator.h"
@@ -24,7 +25,6 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
 {
   QBoxLayout* box;
   QLabel* lbl;
-  QFrame* frm;
   QString str;
   QFont fnt;
 
@@ -49,10 +49,9 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
   lblHomepage = new QLabel(" ", this);
   box->addWidget(lblHomepage);
 
-  frm = new QFrame(this);
-  frm->setFrameStyle(QFrame::HLine|QFrame::Raised);
+  KSeparator *sep = new KSeparator(KSeparator::HLine, this);
   box->addSpacing(5);
-  box->addWidget(frm);
+  box->addWidget(sep);
   box->addSpacing(5);
 
   lbl = new QLabel(i18n("KDE Theme Manager"), this);
