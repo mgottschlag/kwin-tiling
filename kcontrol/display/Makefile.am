@@ -5,7 +5,6 @@ INCLUDES = $(all_includes) -I$(top_srcdir)/kdesktop
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB) $(top_builddir)/kdesktop/libbgnd.la
 
-CXXFLAGS=-g
 SUBDIRS = . kcs ad pics maps
 
 bin_PROGRAMS = kcmdisplay
