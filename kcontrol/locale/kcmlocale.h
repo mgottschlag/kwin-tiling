@@ -1,5 +1,5 @@
 /*
- * locale.h
+ * kcmlocale.h
  *
  * Copyright (c) 1998 Matthias Hoelzer <hoelzer@physik.uni-wuerzburg.de>
  * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
