@@ -48,7 +48,7 @@ public:
 private:
   QListView 	*lBox;
   bool 		(*getlistbox) (QListView *);
-  QString 	title;
+  const char 	*title;
   
   QLabel	*NoInfoText;
 

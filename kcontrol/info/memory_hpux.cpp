@@ -1,21 +1,20 @@
-// $Id$
-//
-// This file will be included by memory.cpp !
-//
-// HP-UX is really ugly to retrieve information from !
-// Implemented on 24.04.1999 by Helge Deller (deller@gmx.de)
-// Tested on an HP9000/715/64 under HPUX-10.20.
-// Updated for QT 2.0 on 27.04.1999 (deller)
-//
-// Sorry, but I don't know, who implemented the first (little) version of 
-// update(), but it showed wrong sizes !
-//
-// Many thanks goes also to Mike Romberg, who implemented such functions in
-// the program "xosview". Here's his copyright:
-//  Copyright (c) 1994, 1995 by Mike Romberg ( romberg@fsl.noaa.gov )
-//
-// Last Updates: 
-// 29.04.1999 deller	corrected swap-file-size determination
+/* $Id$
+
+    This file will be included by memory.cpp !
+
+    HP-UX is really ugly to retrieve information from !
+    Implemented on 24.04.1999 by Helge Deller (deller@gmx.de)
+    Tested on an HP9000/715/64 under HPUX-10.20.
+    Updated for QT 2.0 on 27.04.1999 (deller)
+
+    Sorry, but I don't know, who implemented the first (little) version of 
+    update(), but it showed wrong sizes !
+
+    Many thanks goes also to Mike Romberg, who implemented such functions in
+    the program "xosview". Here's his copyright:
+    Copyright (c) 1994, 1995 by Mike Romberg ( romberg@fsl.noaa.gov )
+
+*/
 
 #include <stdio.h>
 #include <unistd.h>

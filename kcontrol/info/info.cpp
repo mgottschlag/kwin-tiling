@@ -218,6 +218,7 @@ KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name,
     : KCModule(parent, name)
 {   
     getlistbox 	= _getlistbox;
+    title	= name;
     lBox 	= 0;
     NoInfoText  = 0;
     GetInfo_ErrorString = "";

@@ -1,26 +1,4 @@
-/* $Id$ 
- *
- * $Log$
- * Revision 1.17  1999/11/13 18:29:58  granroth
- * no more .moc files
- *
- * Revision 1.16  1999/11/13 11:04:49  hoelzer
- * Moved to the new module schema.
- *
- * Revision 1.15  1999/08/26 04:09:40  corey
- * Give it a proper height; couldn't see anything before.
- *
- * Revision 1.14  1999/07/27 21:35:09  deller
- *
- * info-widgets use now the user-defined font from kcmdisplay.
- *
- * Revision 1.13  1999/07/26 11:12:59  deller
- *
- * memory-info is now displayed again; it seemed to be a bug in qt20, where
- * QLabel->setAutoResize() didn't worked and needed adjustSize() ?
- * 
- *
- */
+/* $Id$ */
 
 #include <qtabbar.h>
 #include "memory.h"
@@ -59,11 +37,11 @@ static QLabel   *MemSizeLabel[MEM_LAST_ENTRY][2];
 static QString format( t_memsize value)
 {
 #ifdef linux
-  double   mb = value / 1024000.0; // with Linux divide by (1024*1000) !
+  double   mb = value / 1024000.0; /* with Linux divide by (1024*1000) */
 #elif hpux	
-  double   mb = value / 1048576.0; // with hpux divide by (1024*1024) !
+  double   mb = value / 1048576.0; /* with hpux divide by (1024*1024) */
 #else 	// I don't know for other archs... please fill in !
-  double   mb = value / 1048576.0; // divide by (1024*1024) !
+  double   mb = value / 1048576.0; /* divide by (1024*1024) */
 #endif
   return i18n("%1 bytes = %2 MB").arg(value,10).arg(mb,7,'f',2);
 }
@@ -80,7 +58,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 
     setButtons(Ok|Help);
 
-    fontinfo = new QFontInfo(fixedfont);	// make same font-sizes..
+    fontinfo = new QFontInfo(fixedfont);	/* make same font-sizes.. */
     i  = fontinfo->pointSize();
     delete fontinfo;
     fontinfo = new QFontInfo(generalfont);
@@ -117,7 +95,7 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
 	titleWidget = new QLabel(initial_str, this); /* then the Label for the size */
         titleWidget->move(-1000,-1000);	// initially invisible !
         titleWidget->setFont(fixedfont);
-//        titleWidget->setAutoResize(TRUE); // BUG in QT2.0 ?-> needs adjustSize()!
+//        titleWidget->setAutoResize(TRUE); /* BUG in QT2.0 ?-> needs adjustSize()! */
         titleWidget->adjustSize();
 	MemSizeLabel[i][1] = titleWidget;
   }
