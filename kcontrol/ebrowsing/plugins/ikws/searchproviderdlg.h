@@ -22,11 +22,11 @@
 
 #include <kdialogbase.h>
 
-class KLineEdit;
-class KComboBox;
 class SearchProvider;
+class SearchProviderDlgUI;
 
-class SearchProviderDialog : public KDialogBase {
+class SearchProviderDialog : public KDialogBase
+{
     Q_OBJECT
 
 public:
@@ -40,11 +40,7 @@ protected slots:
 
 private:
     SearchProvider *m_provider;
-
-    KLineEdit *m_name;
-    KLineEdit *m_query;
-    KLineEdit *m_keys;
-    KComboBox *m_charset;
+    SearchProviderDlgUI *m_dlg;
 };
 
 #endif

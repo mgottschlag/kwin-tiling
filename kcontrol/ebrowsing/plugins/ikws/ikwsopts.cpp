@@ -22,9 +22,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qlistview.h>
 #include <qwhatsthis.h>
 #include <qpushbutton.h>
 
@@ -32,6 +30,8 @@
 #include <kconfig.h>
 #include <ktrader.h>
 #include <klocale.h>
+#include <kcombobox.h>
+#include <klistview.h>
 #include <dcopclient.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
@@ -39,6 +39,7 @@
 #include <kstandarddirs.h>
 
 #include "ikwsopts.h"
+#include "ikwsopts_ui.h"
 #include "kuriikwsfiltereng.h"
 #include "searchprovider.h"
 #include "searchproviderdlg.h"
@@ -73,91 +74,62 @@ private:
 FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *name)
               :KCModule(instance, parent, name)
 {
-    QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
-                                        KDialog::spacingHint() );
-    lay->setAutoAdd( true );
+    QVBoxLayout *mainLayout = new QVBoxLayout( this, 0, 0);
 
-    // Auto Web Search label and combobox
-    QVBox *vbox = new QVBox (this);
-    vbox->setSpacing (KDialog::spacingHint());
-    lb_defaultSearchEngine = new QLabel(i18n("Defa&ult search engine:"), vbox);
-    lb_defaultSearchEngine->setSizePolicy (QSizePolicy::Maximum,QSizePolicy::Preferred);
+    m_dlg = new FilterOptionsUI (this);
+    mainLayout->addWidget(m_dlg);
 
-    cmb_defaultSearchEngine = new QComboBox(false, vbox);
-    lb_defaultSearchEngine->setBuddy(cmb_defaultSearchEngine);
-    connect(cmb_defaultSearchEngine, SIGNAL(activated(const QString &)), this,
+    QString wtstr = i18n("Enable shortcuts that allow you to quickly search for "
+                         "information on the web. For example, entering the "
+                         "shortcut <em>gg:KDE</em> will result in a search of "
+                         "the word <em>KDE</em> on the Google(TM) search engine.");
+    QWhatsThis::add(m_dlg->cbEnableShortcuts, wtstr);
+
+
+    wtstr = i18n("List of search providers and their associated shortcuts.");
+    QWhatsThis::add(m_dlg->lvSearchProviders, wtstr);
+    m_dlg->lvSearchProviders->setMultiSelection(false);
+    m_dlg->lvSearchProviders->addColumn(i18n("Name"));
+    m_dlg->lvSearchProviders->addColumn(i18n("Shortcuts"));
+    m_dlg->lvSearchProviders->setSorting(0);
+
+    QWhatsThis::add(m_dlg->pbNew, i18n("Add a search provider"));
+    QWhatsThis::add(m_dlg->pbChange, i18n("Modify a search provider"));
+    QWhatsThis::add(m_dlg->pbDelete, i18n("Delete the selected search provider"));
+
+    wtstr = i18n("Select the search engine to use for input boxes that provide "
+                 "automatic lookup services when you type in normal words and "
+                 "phrases instead of a URL. To disable this feature select "
+                 "<em>None</em> from the list.");
+    QWhatsThis::add(m_dlg->lbDefaultEngine, wtstr);
+    QWhatsThis::add(m_dlg->cmbDefaultEngine, wtstr);
+
+    wtstr = i18n("Choose the delimiter that separates the word or phrase "
+                 "to be looked up from the keyword.");
+    QWhatsThis::add(m_dlg->lbDelimiter, wtstr);
+    QWhatsThis::add(m_dlg->cmbDelimiter, wtstr);
+
+    m_dlg->pbChange->setEnabled(false);
+    m_dlg->pbDelete->setEnabled(false);
+
+    connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
+           this, SLOT(updateSearchProvider()));
+    connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
+    connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
+
+    connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
+            SLOT(setWebShortcutState()));
+    connect(m_dlg->cmbDefaultEngine, SIGNAL(activated(const QString &)), this,
+            SLOT(moduleChanged()));
+    connect(m_dlg->cmbDelimiter, SIGNAL(activated(const QString &)), this,
             SLOT(moduleChanged()));
 
-    QString wtstr = i18n("Select a search engine to be used for looking up "
-                         "normal words or phrases when they are typed into "
-                         "applications that have built-in support for this "
-                         "feature. To disable it, simply select <em>None</em> "
-                         "from the list.");
-    QWhatsThis::add(lb_defaultSearchEngine, wtstr);
-    QWhatsThis::add(cmb_defaultSearchEngine, wtstr);
+    connect(m_dlg->pbNew, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
+    connect(m_dlg->pbChange, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
+    connect(m_dlg->pbDelete, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
 
-    // Deals with the web short cut features...
-    gb_autoWebSearch = new QGroupBox (i18n("Web Shortcuts"), this );
-    // lay->setStretchFactor( gb_autoWebSearch, 10 );
-    gb_autoWebSearch->setColumnLayout( 0, Qt::Horizontal );
-    QGridLayout *w_grid = new QGridLayout( gb_autoWebSearch->layout(), 3, 2,
-                                           KDialog::spacingHint() );
-    w_grid->setColStretch(0, 2);
-    w_grid->setRowStretch(2, 2);
-
-    cb_enableWebShortcuts = new QCheckBox(i18n("&Enable"), gb_autoWebSearch);
-    connect(cb_enableWebShortcuts, SIGNAL(clicked()), this, SLOT(setWebShortcutState()));
-    QWhatsThis::add(cb_enableWebShortcuts, i18n("Enable shortcuts for quickly searching on "
-                                                "the web. For example, entering the shortcut "
-                                                "<em>gg:KDE</em> will result in a lookup of "
-                                                "the word <em>KDE</em> on the Google(TM) "
-                                                "search engine."));
-    w_grid->addMultiCellWidget(cb_enableWebShortcuts, 0, 0, 0, 1);
-    lv_searchProviders = new QListView( gb_autoWebSearch );
-    lv_searchProviders->setMultiSelection(false);
-    lv_searchProviders->addColumn(i18n("Name"));
-    lv_searchProviders->addColumn(i18n("Shortcuts"));
-    lv_searchProviders->setSorting(0);
-    wtstr = i18n("List of search providers and their associated "
-                 "shortcuts.");
-    QWhatsThis::add(lv_searchProviders, wtstr);
-
-    connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
-           this, SLOT(updateSearchProvider()));
-    connect(lv_searchProviders, SIGNAL(doubleClicked(QListViewItem *)),
-           this, SLOT(changeSearchProvider()));
-    connect(lv_searchProviders, SIGNAL(returnPressed(QListViewItem *)),
-           this, SLOT(changeSearchProvider()));
-    w_grid->addMultiCellWidget(lv_searchProviders, 1, 2, 0, 0);
-
-    vbox = new QVBox( gb_autoWebSearch );
-    vbox->setSpacing( KDialog::spacingHint() );
-    pb_addSearchProvider = new QPushButton( i18n("&New..."), vbox );
-    QWhatsThis::add(pb_addSearchProvider, i18n("Add a search provider."));
-    connect(pb_addSearchProvider, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
-
-    pb_chgSearchProvider = new QPushButton( i18n("Chan&ge..."), vbox );
-    QWhatsThis::add(pb_chgSearchProvider, i18n("Modify a search provider."));
-    pb_chgSearchProvider->setEnabled(false);
-    connect(pb_chgSearchProvider, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-
-    pb_delSearchProvider = new QPushButton( i18n("De&lete"), vbox );
-    QWhatsThis::add(pb_delSearchProvider, i18n("Delete the selected search provider."));
-    pb_delSearchProvider->setEnabled(false);
-    connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-
-#if 0
-    pb_impSearchProvider = new QPushButton( i18n("Import..."), vbox );
-    QWhatsThis::add(pb_delSearchProvider, i18n("Click here to import a search provider from a file."));
-    connect(pb_impSearchProvider, SIGNAL(clicked()), this, SLOT(importSearchProvider()));
-
-    pb_expSearchProvider = new QPushButton(i18n("Export..."), vbox );
-    QWhatsThis::add(pb_expSearchProvider, i18n("Click here to export a search provider to a file."));
-    pb_expSearchProvider->setEnabled(false);
-    connect(pb_expSearchProvider, SIGNAL(clicked()), this, SLOT(exportSearchProvider()));
-#endif
-
-    w_grid->addWidget(vbox, 1, 1);
     // Load the options
     load();
 }
@@ -178,11 +150,15 @@ QString FilterOptions::quickHelp() const
 void FilterOptions::load()
 {
     // Clear state first.
-    lv_searchProviders->clear();
+    m_dlg->lvSearchProviders->clear();
+    m_dlg->cmbDefaultEngine->clear();
 
-    cmb_defaultSearchEngine->clear();
+    // Populate the delimiter combobox.
+    m_dlg->cmbDelimiter->insertItem (i18n("Colon"), 0);
+    m_dlg->cmbDelimiter->insertItem (i18n("Space"), 1);
 
-    cmb_defaultSearchEngine->insertItem (i18n("None"), 0);
+    // Populate the default search engine combobox.
+    m_dlg->cmbDefaultEngine->insertItem (i18n("None"), 0);
 
     KConfig config( KURISearchFilterEngine::self()->name() + "rc", false, false );
     config.setGroup("General");
@@ -191,18 +167,46 @@ void FilterOptions::load()
 
     const KTrader::OfferList services = KTrader::self()->query("SearchProvider");
 
-    for (KTrader::OfferList::ConstIterator it = services.begin(); it != services.end(); ++it)
+    for (KTrader::OfferList::ConstIterator it = services.begin();
+         it != services.end(); ++it)
     {
       displaySearchProvider(new SearchProvider(*it),
-                            (*it)->desktopEntryName() == defaultSearchEngine);
+                            ((*it)->desktopEntryName() == defaultSearchEngine));
     }
 
-    // Enable/Disable widgets accordingly.
     bool webShortcutsEnabled = config.readBoolEntry("EnableWebShortcuts", true);
-    cb_enableWebShortcuts->setChecked( webShortcutsEnabled );
+    m_dlg->cbEnableShortcuts->setChecked( webShortcutsEnabled );
+
+    setDelimiter (config.readNumEntry ("KeywordDelimiter", ':'));
+
     setWebShortcutState();
-    if (lv_searchProviders->childCount())
-      lv_searchProviders->setSelected(lv_searchProviders->firstChild(), true);
+    if (m_dlg->lvSearchProviders->childCount())
+      m_dlg->lvSearchProviders->setSelected(m_dlg->lvSearchProviders->firstChild(), true);
+}
+
+char FilterOptions::delimiter ()
+{
+  switch (m_dlg->cmbDelimiter->currentItem())
+  {
+    case 1:
+      return ' ';
+    case 0:
+    default:
+      return ':';
+  };
+}
+
+void FilterOptions::setDelimiter (char sep)
+{
+  switch (sep)
+  {
+    case ' ':
+      m_dlg->cmbDelimiter->setCurrentItem (1);
+      break;
+    case ':':
+    default:
+      m_dlg->cmbDelimiter->setCurrentItem (0);
+  };
 }
 
 void FilterOptions::save()
@@ -210,14 +214,15 @@ void FilterOptions::save()
   KConfig config( KURISearchFilterEngine::self()->name() + "rc", false, false );
 
   config.setGroup("General");
-  config.writeEntry("EnableWebShortcuts", cb_enableWebShortcuts->isChecked());
+  config.writeEntry("EnableWebShortcuts", m_dlg->cbEnableShortcuts->isChecked());
+  config.writeEntry("KeywordDelimiter", delimiter() );
 
   QString engine;
 
-  if (cmb_defaultSearchEngine->currentItem() == 0)
+  if (m_dlg->cmbDefaultEngine->currentItem() == 0)
     engine = QString::null;
   else
-    engine = cmb_defaultSearchEngine->currentText();
+    engine = m_dlg->cmbDefaultEngine->currentText();
 
   config.writeEntry("DefaultSearchEngine", m_defaultEngineMap[engine]);
 
@@ -225,7 +230,7 @@ void FilterOptions::save()
 
   QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
 
-  for (QListViewItemIterator it(lv_searchProviders); it.current(); ++it)
+  for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
   {
     SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
 
@@ -314,7 +319,8 @@ void FilterOptions::save()
 
 void FilterOptions::defaults()
 {
-  load();
+  setDelimiter (':');
+  m_dlg->cmbDefaultEngine->setCurrentItem (0);
 }
 
 void FilterOptions::moduleChanged()
@@ -331,13 +337,15 @@ void FilterOptions::setAutoWebSearchState()
 
 void FilterOptions::setWebShortcutState()
 {
-  bool use_keywords = cb_enableWebShortcuts->isChecked();
-  lv_searchProviders->setEnabled(use_keywords);
-  pb_addSearchProvider->setEnabled(use_keywords);
-  pb_chgSearchProvider->setEnabled(use_keywords);
-  pb_delSearchProvider->setEnabled(use_keywords);
-  //pb_impSearchProvider->setEnabled(use_keywords);
-  //pb_expSearchProvider->setEnabled(use_keywords);
+  bool use_keywords = m_dlg->cbEnableShortcuts->isChecked();
+  m_dlg->lvSearchProviders->setEnabled(use_keywords);
+  m_dlg->pbNew->setEnabled(use_keywords);
+  m_dlg->pbChange->setEnabled(use_keywords);
+  m_dlg->pbDelete->setEnabled(use_keywords);
+  m_dlg->lbDelimiter->setEnabled (use_keywords);
+  m_dlg->cmbDelimiter->setEnabled (use_keywords);
+  m_dlg->lbDefaultEngine->setEnabled (use_keywords);
+  m_dlg->cmbDefaultEngine->setEnabled (use_keywords);
   moduleChanged();
 }
 
@@ -346,50 +354,50 @@ void FilterOptions::addSearchProvider()
   SearchProviderDialog dlg(0, this);
   if (dlg.exec())
   {
-      lv_searchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
+      m_dlg->lvSearchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
       moduleChanged();
   }
 }
 
 void FilterOptions::changeSearchProvider()
 {
-  SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(lv_searchProviders->currentItem());
+  SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(m_dlg->lvSearchProviders->currentItem());
   Q_ASSERT(item);
 
   SearchProviderDialog dlg(item->provider(), this);
 
   if (dlg.exec())
   {
-    lv_searchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
+    m_dlg->lvSearchProviders->setSelected(displaySearchProvider(dlg.provider()), true);
     moduleChanged();
   }
 }
 
 void FilterOptions::deleteSearchProvider()
 {
-  SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(lv_searchProviders->currentItem());
+  SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(m_dlg->lvSearchProviders->currentItem());
   Q_ASSERT(item);
 
   // Update the combo box to go to None if the fallback was deleted.
-  int current = cmb_defaultSearchEngine->currentItem();
-  for (int i = 1, count = cmb_defaultSearchEngine->count(); i < count; ++i)
+  int current = m_dlg->cmbDefaultEngine->currentItem();
+  for (int i = 1, count = m_dlg->cmbDefaultEngine->count(); i < count; ++i)
   {
-    if (cmb_defaultSearchEngine->text(i) == item->provider()->name())
+    if (m_dlg->cmbDefaultEngine->text(i) == item->provider()->name())
     {
-      cmb_defaultSearchEngine->removeItem(i);
+      m_dlg->cmbDefaultEngine->removeItem(i);
       if (i == current)
-        cmb_defaultSearchEngine->setCurrentItem(0);
+        m_dlg->cmbDefaultEngine->setCurrentItem(0);
       else if (current > i)
-        cmb_defaultSearchEngine->setCurrentItem(current - 1);
+        m_dlg->cmbDefaultEngine->setCurrentItem(current - 1);
 
       break;
     }
   }
 
   if (item->nextSibling())
-      lv_searchProviders->setSelected(item->nextSibling(), true);
+      m_dlg->lvSearchProviders->setSelected(item->nextSibling(), true);
   else if (item->itemAbove())
-      lv_searchProviders->setSelected(item->itemAbove(), true);
+      m_dlg->lvSearchProviders->setSelected(item->itemAbove(), true);
 
   if (!item->provider()->desktopEntryName().isEmpty())
       m_deletedProviders.append(item->provider()->desktopEntryName());
@@ -401,9 +409,8 @@ void FilterOptions::deleteSearchProvider()
 
 void FilterOptions::updateSearchProvider()
 {
-  pb_chgSearchProvider->setEnabled(lv_searchProviders->currentItem());
-  pb_delSearchProvider->setEnabled(lv_searchProviders->currentItem());
-  //pb_expSearchProvider->setEnabled(lv_searchProviders->currentItem());
+  m_dlg->pbChange->setEnabled(m_dlg->lvSearchProviders->currentItem());
+  m_dlg->pbDelete->setEnabled(m_dlg->lvSearchProviders->currentItem());
 }
 
 SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool fallback)
@@ -411,7 +418,7 @@ SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool
   // Show the provider in the list.
   SearchProviderItem *item = 0L;
 
-  QListViewItemIterator it(lv_searchProviders);
+  QListViewItemIterator it(m_dlg->lvSearchProviders);
 
   for (; it.current(); ++it)
   {
@@ -429,19 +436,19 @@ SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool
   {
     // Put the name in the default search engine combo box.
     int itemCount;
-    int totalCount = cmb_defaultSearchEngine->count();
+    int totalCount = m_dlg->cmbDefaultEngine->count();
 
-    item = new SearchProviderItem(lv_searchProviders, p);
+    item = new SearchProviderItem(m_dlg->lvSearchProviders, p);
 
     for (itemCount = 1; itemCount < totalCount; itemCount++)
     {
-      if (cmb_defaultSearchEngine->text(itemCount) > p->name())
+      if (m_dlg->cmbDefaultEngine->text(itemCount) > p->name())
       {
-        int currentItem = cmb_defaultSearchEngine->currentItem();
-        cmb_defaultSearchEngine->insertItem(p->name(), itemCount);
+        int currentItem = m_dlg->cmbDefaultEngine->currentItem();
+        m_dlg->cmbDefaultEngine->insertItem(p->name(), itemCount);
         m_defaultEngineMap[p->name ()] = p->desktopEntryName ();
         if (currentItem >= itemCount)
-          cmb_defaultSearchEngine->setCurrentItem(currentItem+1);
+          m_dlg->cmbDefaultEngine->setCurrentItem(currentItem+1);
         break;
       }
     }
@@ -449,16 +456,16 @@ SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool
     // Append it to the end of the list...
     if (itemCount == totalCount)
     {
-      cmb_defaultSearchEngine->insertItem(p->name(), itemCount);
+      m_dlg->cmbDefaultEngine->insertItem(p->name(), itemCount);
       m_defaultEngineMap[p->name ()] = p->desktopEntryName ();
     }
 
     if (fallback)
-      cmb_defaultSearchEngine->setCurrentItem(itemCount);
+      m_dlg->cmbDefaultEngine->setCurrentItem(itemCount);
   }
 
   if (!it.current())
-    lv_searchProviders->sort();
+    m_dlg->lvSearchProviders->sort();
 
   return item;
 }

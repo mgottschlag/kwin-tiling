@@ -1,0 +1,188 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>FilterOptionsUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>FilterOptionsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>341</width>
+            <height>323</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>FilterOptionsUI</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cbEnableShortcuts</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Enable web shortcuts</string>
+            </property>
+            <property name="accel">
+                <string>Alt+E</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout10</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>lbDelimiter</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Keyword delimiter:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>cmbDelimiter</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>lbDefaultEngine</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Default &amp;search engine:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>cmbDefaultEngine</cstring>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="4" column="1">
+                    <property name="name">
+                        <cstring>cmbDefaultEngine</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="1" column="2">
+                    <property name="name">
+                        <cstring>pbChange</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Chan&amp;ge...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+G</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="2" column="2">
+                    <property name="name">
+                        <cstring>pbDelete</cstring>
+                    </property>
+                    <property name="text">
+                        <string>De&amp;lete</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>pbNew</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;New...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
+                    </property>
+                </widget>
+                <spacer row="3" column="2" rowspan="3" colspan="1">
+                    <property name="name">
+                        <cstring>spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>21</width>
+                            <height>170</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KListView" row="0" column="0" rowspan="4" colspan="2">
+                    <property name="name">
+                        <cstring>lvSearchProviders</cstring>
+                    </property>
+                    <property name="showSortIndicator">
+                        <bool>true</bool>
+                    </property>
+                    <property name="treeStepSize">
+                        <number>0</number>
+                    </property>
+                </widget>
+                <widget class="KComboBox" row="5" column="1">
+                    <property name="name">
+                        <cstring>cmbDelimiter</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </vbox>
+</widget>
+<tabstops>
+    <tabstop>cbEnableShortcuts</tabstop>
+    <tabstop>lvSearchProviders</tabstop>
+    <tabstop>pbNew</tabstop>
+    <tabstop>pbChange</tabstop>
+    <tabstop>pbDelete</tabstop>
+    <tabstop>cmbDefaultEngine</tabstop>
+    <tabstop>cmbDelimiter</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>klistview.h</includehint>
+    <includehint>kcombobox.h</includehint>
+</includehints>
+</UI>

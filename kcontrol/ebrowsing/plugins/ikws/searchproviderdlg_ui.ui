@@ -1,0 +1,101 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>SearchProviderDlgUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>SearchProviderDlgUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>399</width>
+            <height>220</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>SearchProviderDlgUI</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KLineEdit" row="1" column="0">
+            <property name="name">
+                <cstring>leName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="6" column="0">
+            <property name="name">
+                <cstring>lbCharset</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Charset:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>cbCharset</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>lbQuery</cstring>
+            </property>
+            <property name="text">
+                <string>Search &amp;URI:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leQuery</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>lbName</cstring>
+            </property>
+            <property name="text">
+                <string>Search &amp;provider name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leName</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="5" column="0">
+            <property name="name">
+                <cstring>leShortcut</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>lbShortcut</cstring>
+            </property>
+            <property name="text">
+                <string>UR&amp;I shortcuts:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>leShortcut</cstring>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="3" column="0">
+            <property name="name">
+                <cstring>leQuery</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="7" column="0">
+            <property name="name">
+                <cstring>cbCharset</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>leName</tabstop>
+    <tabstop>leQuery</tabstop>
+    <tabstop>leShortcut</tabstop>
+    <tabstop>cbCharset</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kcombobox.h</includehint>
+</includehints>
+</UI>

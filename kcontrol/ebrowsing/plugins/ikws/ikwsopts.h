@@ -26,14 +26,7 @@
 #include <kcmodule.h>
 #include <kservice.h>
 
-class QLabel;
-class QLineEdit;
-class QCheckBox;
-class QComboBox;
-class QGroupBox;
-class QListView;
-class QPushButton;
-class QListViewItem;
+class FilterOptionsUI;
 class SearchProvider;
 class SearchProviderItem;
 
@@ -63,39 +56,16 @@ protected slots:
 private:
     SearchProviderItem *displaySearchProvider(SearchProvider *p, bool fallback = false);
 
+    void setDelimiter (char);
+    char delimiter ();
+
     // The names of the providers that the user deleted,
     // these are marked as deleted in the user's homedirectory
     // on save if a global service file exists for it.
     QStringList m_deletedProviders;
-
-    QGroupBox *gb_autoWebSearch;
-
-    // Default Search Engine
-    QLabel *lb_defaultSearchEngine;
-    QComboBox *cmb_defaultSearchEngine;
-
-    // Web Shortcuts
-    QGroupBox *gb_webShortcuts;
-    QCheckBox *cb_enableWebShortcuts;
-    QListView *lv_searchProviders;
-
-    // Search providers
-    QLabel *lb_searchProviderName;
-    QLineEdit *le_searchProviderName;
-
-    QLabel *lb_searchProviderShortcuts;
-    QLineEdit *le_searchProviderShortcuts;
-
-    QLabel *lb_searchProviderURI;
-    QLineEdit *le_searchProviderURI;
-
-    QPushButton *pb_addSearchProvider;
-    QPushButton *pb_chgSearchProvider;
-    QPushButton *pb_delSearchProvider;
-    QPushButton *pb_impSearchProvider;
-    QPushButton *pb_expSearchProvider;
-
     QMap <QString, QString> m_defaultEngineMap;
+
+    FilterOptionsUI* m_dlg;
 };
 
 #endif
