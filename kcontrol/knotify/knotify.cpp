@@ -56,7 +56,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 {
     updating = true;
     currentItem = 0L;
-    setButtons( Help | Apply | Cancel );
+    setButtons( Help | Apply );
 
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
 					KDialog::spacingHint() );
