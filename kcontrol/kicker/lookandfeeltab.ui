@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>421</width>
-            <height>421</height>
+            <width>402</width>
+            <height>441</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>LookAndFeelTabBase</string>
     </property>
     <property name="whatsThis" stdset="0">
         <string>If this option is selected, informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
@@ -19,9 +22,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
         <widget class="QGroupBox">
             <property name="name">
                 <cstring>general_group</cstring>
@@ -29,7 +29,7 @@
             <property name="title">
                 <string>General</string>
             </property>
-            <vbox>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -39,6 +39,9 @@
                     </property>
                     <property name="text">
                         <string>Enable icon &amp;zooming</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Z</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected the button icons are zoomed when the mouse cursor is moved over them.</string>
@@ -51,11 +54,14 @@
                     <property name="text">
                         <string>Sh&amp;ow tooltips</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
+                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
                     </property>
                 </widget>
-            </vbox>
+            </hbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
@@ -411,9 +417,9 @@
                 </spacer>
             </grid>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QButtonGroup">
             <property name="name">
-                <cstring>GroupBox10</cstring>
+                <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
                 <string>Panel Background</string>
@@ -422,31 +428,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_transparent</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable &amp;transparency</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_backgroundImage</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enable &amp;background image</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
-                    </property>
-                </widget>
                 <spacer row="2" column="0" rowspan="2" colspan="1">
                     <property name="name">
                         <cstring>spacer5</cstring>
@@ -469,10 +450,13 @@
                         <cstring>m_colorizeImage</cstring>
                     </property>
                     <property name="enabled">
-                        <bool>true</bool>
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>Colorize to &amp;match the desktop color scheme</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -486,7 +470,7 @@
                         <cstring>m_backgroundLabel</cstring>
                     </property>
                     <property name="enabled">
-                        <bool>true</bool>
+                        <bool>false</bool>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -533,7 +517,7 @@
                         <cstring>m_backgroundInput</cstring>
                     </property>
                     <property name="enabled">
-                        <bool>true</bool>
+                        <bool>false</bool>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -546,6 +530,28 @@
                     <property name="whatsThis" stdset="0">
                         <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.
 This option is only active if 'Enable background image' is selected.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_backgroundImage</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable &amp;background image</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_transparent</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable &amp;transparency</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+T</string>
                     </property>
                 </widget>
             </grid>
@@ -588,27 +594,28 @@ This option is only active if 'Enable background image' is selected.</string>
                 </spacer>
             </hbox>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
-    <connection>
-        <sender>m_backgroundImage</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_backgroundLabel</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_backgroundImage</sender>
-        <signal>clicked()</signal>
-        <receiver>m_backgroundInput</receiver>
-        <slot>setFocus()</slot>
-    </connection>
-    <connection>
-        <sender>m_backgroundImage</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_backgroundInput</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
     <connection>
         <sender>m_backgroundInput</sender>
         <signal>urlSelected(const QString&amp;)</signal>
@@ -622,6 +629,12 @@ This option is only active if 'Enable background image' is selected.</string>
         <slot>launchAdvancedDialog()</slot>
     </connection>
     <connection>
+        <sender>m_backgroundInput</sender>
+        <signal>returnPressed(const QString&amp;)</signal>
+        <receiver>LookAndFeelTabBase</receiver>
+        <slot>browseTheme(const QString&amp;)</slot>
+    </connection>
+    <connection>
         <sender>m_transparent</sender>
         <signal>toggled(bool)</signal>
         <receiver>LookAndFeelTabBase</receiver>
@@ -630,14 +643,20 @@ This option is only active if 'Enable background image' is selected.</string>
     <connection>
         <sender>m_backgroundImage</sender>
         <signal>toggled(bool)</signal>
+        <receiver>m_backgroundInput</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_backgroundImage</sender>
+        <signal>toggled(bool)</signal>
         <receiver>m_colorizeImage</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>m_backgroundInput</sender>
-        <signal>returnPressed(const QString&amp;)</signal>
-        <receiver>LookAndFeelTabBase</receiver>
-        <slot>browseTheme(const QString&amp;)</slot>
+        <sender>m_backgroundImage</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_backgroundLabel</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -655,8 +674,6 @@ This option is only active if 'Enable background image' is selected.</string>
     <tabstop>m_wlColor</tabstop>
     <tabstop>m_exeTile</tabstop>
     <tabstop>m_exeColor</tabstop>
-    <tabstop>m_transparent</tabstop>
-    <tabstop>m_backgroundImage</tabstop>
     <tabstop>m_backgroundInput</tabstop>
     <tabstop>m_colorizeImage</tabstop>
     <tabstop>advancedOptionsButton</tabstop>
@@ -673,4 +690,7 @@ This option is only active if 'Enable background image' is selected.</string>
 </slots>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

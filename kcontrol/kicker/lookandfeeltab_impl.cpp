@@ -20,6 +20,7 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <qradiobutton.h>
 #include <qregexp.h>
 
 #include <kcolorbutton.h>
@@ -66,14 +67,14 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_exeColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
   connect(m_wlColor, SIGNAL(changed(const QColor&)), SIGNAL(changed()));
 
-  connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
-  connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
+  connect(m_transparent, SIGNAL(toggled(bool)), SIGNAL(changed()));
+  connect(m_backgroundImage, SIGNAL(toggled(bool)), SIGNAL(changed()));
   connect(m_colorizeImage, SIGNAL(toggled(bool)), SIGNAL(changed()));
   connect(m_colorizeImage, SIGNAL(toggled(bool)), SLOT(browseTheme()));
 
   connect(m_backgroundInput->lineEdit(), SIGNAL(lostFocus()), SLOT(browseTheme()));
-  m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
-  m_backgroundInput->fileDialog()->setCaption(i18n("Select Image File"));
+  m_backgroundInput->setFilter(KImageIO::pattern(KImageIO::Reading));
+  m_backgroundInput->setCaption(i18n("Select Image File"));
 
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
@@ -111,6 +112,7 @@ void LookAndFeelTab::enableTransparency( bool enable )
     m_backgroundImage->setDisabled( enable );
     m_backgroundInput->setDisabled( enable || !b );
     m_backgroundLabel->setDisabled( enable || !b );
+    m_colorizeImage->setDisabled( enable || !b );
 }
 
 void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)

@@ -31,8 +31,8 @@
 #include "positiontab_impl.h"
 #include "hidingtab_impl.h"
 #include "menutab_impl.h"
+#include "lookandfeeltab_impl.h"
 
-#include "lookandfeeltab_kcm.h"
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
@@ -64,6 +64,10 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     menutab = new MenuTab(this);
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
+
+    lookandfeeltab = new LookAndFeelTab(this);
+    tab->addTab(lookandfeeltab, i18n("&Appearance"));
+    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     load();
 
@@ -132,6 +136,7 @@ void KickerConfig::load()
     positiontab->load();
     hidingtab->load();
     menutab->load();
+    lookandfeeltab->load();
 
     emit changed(false);
     connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
@@ -143,6 +148,7 @@ void KickerConfig::save()
     positiontab->save();
     hidingtab->save();
     menutab->save();
+    lookandfeeltab->save();
 
     emit changed(false);
 
@@ -169,6 +175,7 @@ void KickerConfig::defaults()
     positiontab->defaults();
     hidingtab->defaults();
     menutab->defaults();
+    lookandfeeltab->defaults();
 
     emit changed(true);
 }
@@ -447,16 +454,10 @@ extern "C"
                                          "kicker/applets");
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
                                          "kicker/extensions");
-        return new KickerConfig(parent, "kcmkicker");
-    }
-
-    KCModule *create_kicker_behaviour(QWidget *parent, const char *)
-    {
-        KImageIO::registerFormats();
         KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
                                          "kicker/tiles");
         KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
                                          "kcmkicker/pics");
-        return new LookAndFeelConfig(parent, "kcmkicker");
+        return new KickerConfig(parent, "kcmkicker");
     }
 }

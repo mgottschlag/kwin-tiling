@@ -3,16 +3,16 @@ kde_module_LTLIBRARIES = kcm_kicker.la
 kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui \
 			positiontab_impl.cpp hidingtab_impl.cpp lookandfeeltab_impl.cpp \
 			menutab_impl.cpp extensionInfo.cpp main.cpp main.skel \
-                        lookandfeeltab_kcm.cpp advancedOptions.ui advancedDialog.cpp
+                         advancedOptions.ui advancedDialog.cpp
 
 kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_kicker_la_LIBADD =  ../background/libbgnd.la $(LIB_KIO)
-INCLUDES= -I$(srcdir)/../background $(all_includes)
+AM_CPPFLAGS = -I$(srcdir)/../background $(all_includes)
 
 kcm_kicker_la_METASOURCES = AUTO
 
 noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menutab_impl.h \
-		extensionInfo.h main.h lookandfeeltab_kcm.h advancedDialog.h
+		extensionInfo.h main.h  advancedDialog.h
 
 KDE_ICON = kmenu
 
@@ -23,13 +23,14 @@ messages: rc.cpp
 	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkicker.pot
 
-xdg_apps_DATA = panel.desktop panel_appearance.desktop 
+xdg_apps_DATA = panel.desktop
+EXTRA_DIST = $(xdg_apps_DATA)
 
-kcmkicker_data3_DATA = kicker_config.desktop kicker_config_appearance.desktop
+kcmkicker_data3_DATA = kicker_config.desktop
 kcmkicker_data3dir = $(kde_appsdir)/.hidden
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel.desktop
-
-EXTRA_DIST = $(xdg_apps_DATA)
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel_appearance.desktop
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(xdg_appsdir)/panel_appearance.desktop

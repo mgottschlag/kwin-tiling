@@ -29,7 +29,7 @@ class KDirWatch;
 class PositionTab;
 class HidingTab;
 class MenuTab;
-//class LookAndFeelTab;
+class LookAndFeelTab;
 //class AppletTab;
 class ExtensionsTab;
 
@@ -79,7 +79,7 @@ private:
     KDirWatch      *configFileWatch; 
     PositionTab    *positiontab;
     HidingTab      *hidingtab;
-//    LookAndFeelTab *lookandfeeltab;
+    LookAndFeelTab *lookandfeeltab;
     MenuTab        *menutab;
 //    AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
