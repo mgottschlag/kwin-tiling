@@ -39,9 +39,7 @@ void TaskLMBMenu::fillMenu( TaskList* tasks )
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
 
-		// make sure it starts with an upper case char (looks nicer)
 		QString text = t->visibleNameWithState().replace(QRegExp("&"), "&&");
-		text = text.left( 1 ).upper() + text.mid( 1, text.length() - 1 );
 
 		int id = insertItem( QIconSet( t->pixmap() ), text,
 				     t, SLOT( activateRaiseOrIconify() ) );
