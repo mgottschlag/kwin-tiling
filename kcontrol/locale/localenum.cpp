@@ -99,7 +99,6 @@ void KLocaleConfigNumber::load()
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
   locale->setDecimalSymbol(str);
-qDebug("Deciaml: %s", str.latin1());
 
   // ThousandsSeparator
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"));
