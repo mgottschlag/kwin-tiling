@@ -79,7 +79,8 @@ void CommandShortcutsModule::initGUI()
 
     KActiveLabel* label = new KActiveLabel(this);
     label->setText(i18n("<qt>Below is a list of known commands which you may assign keyboard shortcuts to. "
-                        "To edit, add or remove entries from this list use the <a href=\"launchMenuEditor\">KDE menu editor</a>.</qt>"));
+                        "To edit, add or remove entries from this list use the "
+                        "<a href=\"launchMenuEditor\">KDE menu editor</a>.</qt>"));
     label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     disconnect(label, SIGNAL(linkClicked(const QString &)), label, SLOT(openLink(const QString &)));
     connect(label, SIGNAL(linkClicked(const QString &)), this, SLOT(launchMenuEditor()));
