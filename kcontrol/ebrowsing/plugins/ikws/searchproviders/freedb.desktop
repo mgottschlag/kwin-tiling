@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Type=Service
 Name=FreeDB
+Name[eo]=Libera Civilizludo
+Name[ta]=இலவசடிபி
+Name[xx]=xxFreeDBxx
 ServiceTypes=SearchProvider
 Keys=fdb,freedb
 Query=http://www.freedb.org/freedb_search.php?words=\\{@}
