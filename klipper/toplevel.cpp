@@ -332,6 +332,7 @@ void TopLevel::readProperties(KConfig *kc)
 		       CONFIG_ITEM);
   m_popup->insertSeparator();
   m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
+  m_popup->insertTearOffHandle();
 
   if (bClipEmpty)
       setEmptyClipboard();
