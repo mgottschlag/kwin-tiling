@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=FSF/UNESCO Free Software Directory
+ServiceTypes=SearchProvider
+Keys=fsd
+Query=http://directory.fsf.org/search/fsd-search.py?q=\\{@}
+
+
