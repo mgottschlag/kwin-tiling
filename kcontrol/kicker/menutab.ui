@@ -11,15 +11,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>583</width>
-            <height>480</height>
+            <width>600</width>
+            <height>434</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>Form2</string>
     </property>
-    <vbox>
+    <grid>
         <property stdset="1">
             <name>margin</name>
             <number>11</number>
@@ -28,142 +28,28 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget>
-            <class>QButtonGroup</class>
+        <widget row="0"  column="0" >
+            <class>QLayoutWidget</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>m_kmenuGroup</cstring>
+                <cstring>layout</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>&amp;K Menu Layout</string>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                </sizepolicy>
-            </property>
-            <vbox>
+            <grid>
                 <property stdset="1">
                     <name>margin</name>
-                    <number>11</number>
+                    <number>0</number>
                 </property>
                 <property stdset="1">
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_showBookmarks</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Show "&amp;Bookmarks" submenu</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_showRecent</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Show "&amp;Recent Documents" submenu</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_showQuickBrowser</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Show "&amp;Quick Browser" submenu</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_mergeLocations</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Merge &amp;different menu locations</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>m_cacheGroup</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Menu &amp;Cache</string>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                </sizepolicy>
-            </property>
-            <vbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget>
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_clearCache</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Clear menu c&amp;ache</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget>
+                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
                     <class>QLayoutWidget</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Layout30</cstring>
+                        <cstring>vbox</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property stdset="1">
                             <name>margin</name>
                             <number>0</number>
@@ -173,211 +59,506 @@
                             <number>6</number>
                         </property>
                         <widget>
-                            <class>QLabel</class>
+                            <class>QLayoutWidget</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>TextLabel6</cstring>
+                                <cstring>hbox_3</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Clear after x seconds:</string>
-                            </property>
+                            <hbox>
+                                <property stdset="1">
+                                    <name>margin</name>
+                                    <number>0</number>
+                                </property>
+                                <property stdset="1">
+                                    <name>spacing</name>
+                                    <number>6</number>
+                                </property>
+                                <widget>
+                                    <class>QLabel</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>TextLabel2</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Max number of "Quick Start" entries:</string>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>sizePolicy</name>
+                                        <sizepolicy>
+                                            <hsizetype>5</hsizetype>
+                                            <vsizetype>1</vsizetype>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QLineEdit</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>m_pEditNum2Show</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>sizePolicy</name>
+                                        <sizepolicy>
+                                            <hsizetype>5</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                        </sizepolicy>
+                                    </property>
+                                </widget>
+                                <spacer>
+                                    <property>
+                                        <name>name</name>
+                                        <cstring>Spacer5_2_2_3</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>orientation</name>
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>sizeType</name>
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property>
+                                        <name>sizeHint</name>
+                                        <size>
+                                            <width>20</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                            </hbox>
                         </widget>
                         <widget>
-                            <class>QSlider</class>
+                            <class>QButtonGroup</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>m_clearSlider</cstring>
+                                <cstring>m_pRecentOrderGroup</cstring>
                             </property>
                             <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
+                                <name>title</name>
+                                <string>"Quick Start" section contains</string>
                             </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>tickmarks</name>
-                                <enum>Right</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>1</number>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>600</number>
-                            </property>
-                            <property stdset="1">
-                                <name>value</name>
-                                <number>60</number>
-                            </property>
-                            <property stdset="1">
-                                <name>pageStep</name>
-                                <number>50</number>
-                            </property>
+                            <vbox>
+                                <property stdset="1">
+                                    <name>margin</name>
+                                    <number>11</number>
+                                </property>
+                                <property stdset="1">
+                                    <name>spacing</name>
+                                    <number>6</number>
+                                </property>
+                                <widget>
+                                    <class>QRadioButton</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>m_pRecent</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Most &amp;recently used items</string>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QRadioButton</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>m_pOften</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Most &amp;frequently used items</string>
+                                    </property>
+                                </widget>
+                            </vbox>
                         </widget>
-                        <widget>
-                            <class>QSpinBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>m_clearSpinBox</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>1</number>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>600</number>
-                            </property>
-                            <property stdset="1">
-                                <name>value</name>
-                                <number>60</number>
-                            </property>
-                        </widget>
-                    </hbox>
+                    </vbox>
                 </widget>
-            </vbox>
-        </widget>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>m_browserGroup</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Bro&amp;wser menus</string>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                </sizepolicy>
-            </property>
-            <vbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget>
-                    <class>QCheckBox</class>
+                <widget row="1"  column="1" >
+                    <class>QGroupBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>m_hiddenFiles</cstring>
+                        <cstring>m_browserGroup</cstring>
                     </property>
                     <property stdset="1">
-                        <name>text</name>
-                        <string>Show &amp;hidden files in browser menus</string>
+                        <name>title</name>
+                        <string>Bro&amp;wser menus</string>
                     </property>
                     <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>4</vsizetype>
+                        </sizepolicy>
                     </property>
-                </widget>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout30_2</cstring>
-                    </property>
-                    <hbox>
+                    <vbox>
                         <property stdset="1">
                             <name>margin</name>
-                            <number>0</number>
+                            <number>11</number>
                         </property>
                         <property stdset="1">
                             <name>spacing</name>
                             <number>6</number>
                         </property>
                         <widget>
-                            <class>QLabel</class>
+                            <class>QLayoutWidget</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>TextLabel6_2</cstring>
+                                <cstring>vbox1_2</cstring>
+                            </property>
+                            <vbox>
+                                <property stdset="1">
+                                    <name>margin</name>
+                                    <number>0</number>
+                                </property>
+                                <property stdset="1">
+                                    <name>spacing</name>
+                                    <number>6</number>
+                                </property>
+                                <widget>
+                                    <class>QCheckBox</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>m_hiddenFiles</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Show &amp;hidden files in browser menus</string>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>checked</name>
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QLabel</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>TextLabel1</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Maximum browser menu entries:</string>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QLayoutWidget</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>hbox1_2</cstring>
+                                    </property>
+                                    <hbox>
+                                        <property stdset="1">
+                                            <name>margin</name>
+                                            <number>0</number>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>spacing</name>
+                                            <number>6</number>
+                                        </property>
+                                        <widget>
+                                            <class>QSlider</class>
+                                            <property stdset="1">
+                                                <name>name</name>
+                                                <cstring>m_maxSlider</cstring>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>orientation</name>
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>enabled</name>
+                                                <bool>true</bool>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>tickmarks</name>
+                                                <enum>Right</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>20</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>maxValue</name>
+                                                <number>1000</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>value</name>
+                                                <number>200</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>pageStep</name>
+                                                <number>50</number>
+                                            </property>
+                                        </widget>
+                                        <widget>
+                                            <class>QSpinBox</class>
+                                            <property stdset="1">
+                                                <name>name</name>
+                                                <cstring>m_maxSpinBox</cstring>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>enabled</name>
+                                                <bool>true</bool>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>20</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>maxValue</name>
+                                                <number>1000</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>value</name>
+                                                <number>200</number>
+                                            </property>
+                                        </widget>
+                                    </hbox>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QButtonGroup</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_kmenuGroup</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>&amp;K Menu Layout</string>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>4</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <vbox>
+                        <property stdset="1">
+                            <name>margin</name>
+                            <number>11</number>
+                        </property>
+                        <property stdset="1">
+                            <name>spacing</name>
+                            <number>6</number>
+                        </property>
+                        <widget>
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>m_showBookmarks</cstring>
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Maximum browser menu entries:</string>
+                                <string>Show "&amp;Bookmarks" submenu</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
                             </property>
                         </widget>
                         <widget>
-                            <class>QSlider</class>
+                            <class>QCheckBox</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>m_maxSlider</cstring>
+                                <cstring>m_showRecent</cstring>
                             </property>
                             <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
+                                <name>text</name>
+                                <string>Show "Recent &amp;Documents" submenu</string>
                             </property>
                             <property stdset="1">
-                                <name>enabled</name>
+                                <name>checked</name>
                                 <bool>true</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>tickmarks</name>
-                                <enum>Right</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>20</number>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>1000</number>
-                            </property>
-                            <property stdset="1">
-                                <name>value</name>
-                                <number>200</number>
-                            </property>
-                            <property stdset="1">
-                                <name>pageStep</name>
-                                <number>50</number>
                             </property>
                         </widget>
                         <widget>
-                            <class>QSpinBox</class>
+                            <class>QCheckBox</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>m_maxSpinBox</cstring>
+                                <cstring>m_showQuickBrowser</cstring>
                             </property>
                             <property stdset="1">
-                                <name>enabled</name>
+                                <name>text</name>
+                                <string>Show "&amp;Quick Browser" submenu</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
                                 <bool>true</bool>
                             </property>
+                        </widget>
+                        <widget>
+                            <class>QCheckBox</class>
                             <property stdset="1">
-                                <name>minValue</name>
-                                <number>20</number>
+                                <name>name</name>
+                                <cstring>m_mergeLocations</cstring>
                             </property>
                             <property stdset="1">
-                                <name>maxValue</name>
-                                <number>1000</number>
+                                <name>text</name>
+                                <string>Merge &amp;different menu locations</string>
                             </property>
                             <property stdset="1">
-                                <name>value</name>
-                                <number>200</number>
+                                <name>checked</name>
+                                <bool>true</bool>
                             </property>
                         </widget>
-                    </hbox>
+                    </vbox>
                 </widget>
-            </vbox>
+                <widget row="1"  column="0" >
+                    <class>QGroupBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>m_cacheGroup</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>title</name>
+                        <string>Menu &amp;Cache</string>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>4</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <vbox>
+                        <property stdset="1">
+                            <name>margin</name>
+                            <number>11</number>
+                        </property>
+                        <property stdset="1">
+                            <name>spacing</name>
+                            <number>6</number>
+                        </property>
+                        <widget>
+                            <class>QLayoutWidget</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>vbox2_2</cstring>
+                            </property>
+                            <vbox>
+                                <property stdset="1">
+                                    <name>margin</name>
+                                    <number>0</number>
+                                </property>
+                                <property stdset="1">
+                                    <name>spacing</name>
+                                    <number>6</number>
+                                </property>
+                                <widget>
+                                    <class>QCheckBox</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>m_clearCache</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Clear menu c&amp;ache</string>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>checked</name>
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QLabel</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>TextLabel</cstring>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>text</name>
+                                        <string>Clear after x seconds:</string>
+                                    </property>
+                                </widget>
+                                <widget>
+                                    <class>QLayoutWidget</class>
+                                    <property stdset="1">
+                                        <name>name</name>
+                                        <cstring>hbox2_2</cstring>
+                                    </property>
+                                    <hbox>
+                                        <property stdset="1">
+                                            <name>margin</name>
+                                            <number>0</number>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>spacing</name>
+                                            <number>6</number>
+                                        </property>
+                                        <widget>
+                                            <class>QSlider</class>
+                                            <property stdset="1">
+                                                <name>name</name>
+                                                <cstring>m_clearSlider</cstring>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>orientation</name>
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>enabled</name>
+                                                <bool>true</bool>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>tickmarks</name>
+                                                <enum>Right</enum>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>1</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>maxValue</name>
+                                                <number>600</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>value</name>
+                                                <number>60</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>pageStep</name>
+                                                <number>50</number>
+                                            </property>
+                                        </widget>
+                                        <widget>
+                                            <class>QSpinBox</class>
+                                            <property stdset="1">
+                                                <name>name</name>
+                                                <cstring>m_clearSpinBox</cstring>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>enabled</name>
+                                                <bool>true</bool>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>minValue</name>
+                                                <number>1</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>maxValue</name>
+                                                <number>600</number>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>value</name>
+                                                <number>60</number>
+                                            </property>
+                                        </widget>
+                                    </hbox>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </vbox>
+                </widget>
+            </grid>
         </widget>
-        <spacer>
+        <spacer row="1"  column="0" >
             <property>
                 <name>name</name>
-                <cstring>Spacer27</cstring>
+                <cstring>Spacer10</cstring>
             </property>
             <property stdset="1">
                 <name>orientation</name>
@@ -394,15 +575,8 @@
                     <height>20</height>
                 </size>
             </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
         </spacer>
-    </vbox>
+    </grid>
 </widget>
 <connections>
     <connection>
@@ -442,4 +616,19 @@
         <slot>setValue(int)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>m_showBookmarks</tabstop>
+    <tabstop>m_showRecent</tabstop>
+    <tabstop>m_showQuickBrowser</tabstop>
+    <tabstop>m_mergeLocations</tabstop>
+    <tabstop>m_clearCache</tabstop>
+    <tabstop>m_clearSlider</tabstop>
+    <tabstop>m_clearSpinBox</tabstop>
+    <tabstop>m_hiddenFiles</tabstop>
+    <tabstop>m_maxSlider</tabstop>
+    <tabstop>m_maxSpinBox</tabstop>
+    <tabstop>m_pEditNum2Show</tabstop>
+    <tabstop>m_pRecent</tabstop>
+    <tabstop>m_pOften</tabstop>
+</tabstops>
 </UI>

@@ -19,6 +19,10 @@
 #include <qslider.h>
 #include <qspinbox.h>
 #include <qwhatsthis.h>
+#include <qlineedit.h>
+#include <qbuttongroup.h>
+#include <qradiobutton.h>
+#include <qvalidator.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -26,6 +30,9 @@
 
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
+
+const int knMinNum2Show  = 0;
+const int knMaxNum2Show = 20;
 
 MenuTab::MenuTab( QWidget *parent, const char* name )
   : MenuTabBase (parent, name)
@@ -41,6 +48,14 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_showBookmarks, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showQuickBrowser, SIGNAL(clicked()), SIGNAL(changed()));
+		
+		m_pEditNum2Show->setMaxLength(2);
+		m_pEditNum2Show->setValidator(
+				new QIntValidator(knMinNum2Show, knMaxNum2Show, m_pEditNum2Show));
+		connect(m_pEditNum2Show, SIGNAL(textChanged(const QString &)), SIGNAL(changed()));
+
+		m_pRecentOrderGroup->setRadioButtonExclusive(true);
+		connect(m_pRecentOrderGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
 
 
     // whats this help
@@ -114,6 +129,18 @@ void MenuTab::load()
 
   m_hiddenFiles->setChecked(c->readBoolEntry("ShowHiddenFiles", true));
 
+	m_pEditNum2Show->setText(c->readEntry("NumVisibleEntries", "5"));
+
+	bool bRecentVsOften = c->readBoolEntry("RecentVsOften", false);
+	if (bRecentVsOften)
+	{
+		m_pRecent->setChecked(true);
+	}
+	else
+	{
+		m_pOften->setChecked(true);
+	}
+
   delete c;
 }
 
@@ -131,6 +158,16 @@ void MenuTab::save()
   c->writeEntry("UseRecent", m_showRecent->isChecked());
   c->writeEntry("UseBrowser", m_showQuickBrowser->isChecked());
   c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
+
+	QString str(m_pEditNum2Show->text());
+	bool bOK;
+	int nNum = str.toInt(&bOK);
+	if (bOK && nNum >= knMinNum2Show && nNum <= knMaxNum2Show)
+	{
+		c->writeEntry("NumVisibleEntries", nNum);
+	}
+	bool bRecentVsOften = m_pRecent->isChecked();
+	c->writeEntry("RecentVsOften", bRecentVsOften);
 
   c->sync();
 
@@ -150,4 +187,7 @@ void MenuTab::defaults()
   m_showRecent->setChecked(true);
   m_showQuickBrowser->setChecked(true);
   m_hiddenFiles->setChecked(true);
+
+  m_pOften->setChecked(true);
+	m_pEditNum2Show->setText(QString().setNum(5));
 }
