@@ -8,7 +8,7 @@ INCLUDES= $(all_includes)
 
 libkcm_email_la_METASOURCES = AUTO
 
-noinst_HEADERS = email.h emailsettings.h
+noinst_HEADERS = email.h
 
 KDE_ICON = email
 
