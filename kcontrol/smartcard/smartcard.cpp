@@ -110,6 +110,11 @@ if (_ok) {
   }
 
   config->sync();
+	QByteArray data, retval;
+	QCString rettype;
+	QDataStream arg(data, IO_WriteOnly);
+	kapp->dcopClient()->call("kded", "kardsvc", "reconfigure()", 
+			         data, rettype, retval);
 }
   emit changed(false);
 }
