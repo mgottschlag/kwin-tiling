@@ -55,6 +55,7 @@ acimake:
 	@echo HASXDMAUTH=1
 #endif
 	@echo XBINDIR=$(BINDIR)
+	@echo XLIBDIR=$(LIBDIR)
 EOF
     $XMKMF >&5 2>&1
     if test -f Makefile; then
@@ -83,7 +84,8 @@ fi
 
 AC_MSG_RESULT([checking for X binary directory... $XBINDIR])
 AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
-AC_SUBST(XBINDIR)
+AC_MSG_RESULT([checking for X library directory... $XLIBDIR])
+AC_DEFINE_UNQUOTED(XLIBDIR, "$XLIBDIR", [Define where to find the X libraries])
 
 AC_CHECK_LIB(Xau, main, [:], 
 	[
