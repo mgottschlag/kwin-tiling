@@ -78,6 +78,7 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_MEDIUM;
 }
 
+#ifdef KFI_FC_HAS_WIDTHS
 static int strToWidth(const QString &str)
 {   
     if(str.isEmpty())
@@ -101,6 +102,7 @@ static int strToWidth(const QString &str)
     else
         return FC_WIDTH_NORMAL;
 }
+#endif
 
 struct FoundryMap
 {
@@ -170,13 +172,18 @@ static const char * getFoundry(const char *notice)
 }
 
 static bool readAfm(const QString &file, QString &full, QString &family, QString &foundry, QString &weight,
-                    QString &width, QString &spacing, QString &slant)
+#ifdef KFI_FC_HAS_WIDTHS
+                    QString &width,
+#endif
+                    QString &spacing, QString &slant)
 {
     QFile f(file);
     bool  foundName=false,
           foundFamily=false;
     int   intSpacing=FC_PROPORTIONAL,
+#ifdef KFI_FC_HAS_WIDTHS
           intWidth=FC_WIDTH_NORMAL,
+#endif
           intWeight=FC_WEIGHT_NORMAL,
           intSlant=FC_SLANT_ROMAN,
           intItalic=FC_SLANT_ROMAN;
@@ -197,7 +204,9 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                 if(0==line.find("FullName "))
                 {
                     full=line.mid(9);
+#ifdef KFI_FC_HAS_WIDTHS
                     intWidth=strToWidth(full);
+#endif
                     foundName=true;
                 }
                 else if(0==line.find("FamilyName "))
@@ -235,7 +244,9 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
     if(foundName && foundFamily)
     {
         weight=KFI::CFcEngine::weightStr(intWeight, false);
+#ifdef KFI_FC_HAS_WIDTHS
         width=KFI::CFcEngine::widthStr(intWidth, false);
+#endif
         slant=KFI::CFcEngine::slantStr(intSlant, false);
         spacing=KFI::CFcEngine::spacingStr(intSpacing);
 
@@ -279,7 +290,9 @@ void KFileFontPlugin::addMimeType(const char *mime)
     addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
     addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
+#ifdef KFI_FC_HAS_WIDTHS
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
+#endif
     addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
     addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
 }
@@ -291,14 +304,18 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             family,
             foundry,
             weight,
+#ifdef KFI_FC_HAS_WIDTHS
             width,
+#endif
             spacing,
             slant,
             fullAll,
             familyAll,
             foundryAll,
             weightAll,
+#ifdef KFI_FC_HAS_WIDTHS
             widthAll,
+#endif
             spacingAll,
             slantAll;
     KURL    url(info.url());
@@ -319,11 +336,19 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     if(downloaded || fontsProt || fileProt)
     {
         if("application/x-afm"==info.mimeType())  // Then fontconfig can't give us the data :-(
-            status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll, widthAll, spacingAll, slantAll);
+            status=readAfm(url.path(), fullAll, familyAll, foundryAll, weightAll,
+#ifdef KFI_FC_HAS_WIDTHS
+                           widthAll,
+#endif
+                           spacingAll, slantAll);
         else
             for(int face=0; face<10; ++face)  // How to get num faces from fontconfig? don't know - so just try 1st 10...
             {
-                if(itsEngine.getInfo(url, face, full, family, foundry, weight, width, spacing, slant) &&
+                if(itsEngine.getInfo(url, face, full, family, foundry, weight,
+#ifdef KFI_FC_HAS_WIDTHS
+                                     width,
+#endif
+                                     spacing, slant) &&
                    !full.isEmpty() && full!=lastFull)
                 {
                     addEntry(face, fullAll, full);
@@ -355,7 +380,9 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                             }
                         }
                         addEntry(face, weightAll, weight);
+#ifdef KFI_FC_HAS_WIDTHS
                         addEntry(face, widthAll, width);
+#endif
                         addEntry(face, spacingAll, spacing);
                         addEntry(face, slantAll, slant);
                     }
@@ -377,7 +404,9 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 appendItem(group, "Family", familyAll);
                 appendItem(group, "Foundry", foundryAll);
                 appendItem(group, "Weight", weightAll);
+#ifdef KFI_FC_HAS_WIDTHS
                 appendItem(group, "Width", widthAll);
+#endif
                 appendItem(group, "Spacing", spacingAll);
                 appendItem(group, "Slant", slantAll);
             }
