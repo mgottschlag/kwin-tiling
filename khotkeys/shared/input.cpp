@@ -152,12 +152,11 @@ void Kbd::key_slot( QString key_P )
             return;
     }
     
-} // namespace KHotKeys
 
-    
 #ifdef HAVE_XTEST
-#include <X11/extensions/XTest.h>
 
+} // namespace KHotKeys
+#include <X11/extensions/XTest.h>
 namespace KHotKeys
 {
 
