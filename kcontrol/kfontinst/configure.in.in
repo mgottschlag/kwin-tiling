@@ -22,6 +22,7 @@ if test "$FREETYPE_INC" != NO; then
         AC_DEFINE_UNQUOTED(HAVE_FT2_FTSNAMES, 1, [Define if your system has ftsnames.h])
     fi
 
+    LDFLAGS="$LDFLAGS $X_LDFLAGS"
     AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
     if test "$FREETYPE_LIB" = NO; then
         AC_MSG_WARN([FreeType2 library not found!])
