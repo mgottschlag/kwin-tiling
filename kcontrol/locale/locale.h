@@ -49,6 +49,7 @@ public:
 
 public slots:
   void reTranslateLists();
+  void countryChanged();
 
 signals:
   void translate();

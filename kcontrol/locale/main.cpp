@@ -49,8 +49,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   l->addWidget(tab);
 
 #define i18n(a) (a)
-  locale = new KLocaleConfig( this, i18n("&Locale") );
-  tab->addTab( locale, "1");
+  localemain = new KLocaleConfig( this, i18n("&Locale") );
+  tab->addTab( localemain, "1");
   localenum = new KLocaleConfigNumber( this, i18n("&Numbers") );
   tab->addTab( localenum, "1" );
   localemon = new KLocaleConfigMoney( this, i18n("&Money") );
@@ -58,10 +58,11 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   localetime = new KLocaleConfigTime( this, i18n("&Time && dates") );
   tab->addTab( localetime, "1" ); 
 
-  connect(locale,     SIGNAL(resample()), this, SLOT(update()));
-  connect(localenum,  SIGNAL(resample()), this, SLOT(update()));
-  connect(localemon,  SIGNAL(resample()), this, SLOT(update()));
-  connect(localetime, SIGNAL(resample()), this, SLOT(update()));
+  connect(localemain, SIGNAL(resample()),       SLOT(update()));
+  connect(localenum,  SIGNAL(resample()),       SLOT(update()));
+  connect(localemon,  SIGNAL(resample()),       SLOT(update()));
+  connect(localetime, SIGNAL(resample()),       SLOT(update()));
+  connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
 
   // Examples
   gbox = new QGroupBox("1", this, i18n("Examples"));
@@ -76,7 +77,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
 
 void KLocaleApplication::load()
 {
-    locale->load();
+    localemain->load();
     localenum->load();
     localemon->load();
     localetime->load();
@@ -84,7 +85,7 @@ void KLocaleApplication::load()
 
 void KLocaleApplication::save()
 {
-    locale->save();
+    localemain->save();
     localenum->save();
     localemon->save();
     localetime->save();
@@ -92,7 +93,7 @@ void KLocaleApplication::save()
 
 void KLocaleApplication::defaults()
 {
-    locale->defaults();
+    localemain->defaults();
     localenum->defaults();
     localemon->defaults();
     localetime->defaults();
@@ -108,11 +109,13 @@ void KLocaleApplication::reTranslate()
   QObjectList it;
   it.append( this );
   reTranslate(it);
-  //CT ?  setTitle(i18n("Locale settings"));
+  //CT ?  setTitle(locale->translate("Locale settings"));
 }
 
 void KLocaleApplication::reTranslate(QObjectListIt it)
 {
+    KLocale *locale = KGlobal::locale();
+
     QObject *wc;
     while( (wc = it.current()) != 0 ) {
       ++it;
@@ -126,31 +129,31 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
 
       if ( !qstrcmp(wc->className(), "QGroupBox"))
       {
-        ((QGroupBox *)wc)->setTitle(i18n(wc->name()));
+        ((QGroupBox *)wc)->setTitle(locale->translate(wc->name()));
         ((QGroupBox *)wc)->setMinimumSize(((QGroupBox *)wc)->sizeHint());
       }
       else if ( !qstrcmp(wc->className(), "QLabel"))
       {
-        ((QLabel *)wc)->setText(i18n(wc->name()));
+        ((QLabel *)wc)->setText(locale->translate(wc->name()));
         ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
       }
       else if ( !qstrcmp(wc->className(), "QComboBox"))
       {
 	if (!qstrcmp(wc->name(), "signpos"))
 	{
-	  ((QComboBox*)wc)->changeItem(i18n("Parens around"), 0);
-	  ((QComboBox*)wc)->changeItem(i18n("Before quantity money"), 1);
-	  ((QComboBox*)wc)->changeItem(i18n("After quantity money"), 2);
-	  ((QComboBox*)wc)->changeItem(i18n("Before money"), 3);
-	  ((QComboBox*)wc)->changeItem(i18n("After money"), 4);
+	  ((QComboBox*)wc)->changeItem(locale->translate("Parens around"), 0);
+	  ((QComboBox*)wc)->changeItem(locale->translate("Before quantity money"), 1);
+	  ((QComboBox*)wc)->changeItem(locale->translate("After quantity money"), 2);
+	  ((QComboBox*)wc)->changeItem(locale->translate("Before money"), 3);
+	  ((QComboBox*)wc)->changeItem(locale->translate("After money"), 4);
 	}
       }
       else if ( !qstrcmp(wc->className(), "QTabWidget"))
       {
-          ((QTabWidget *)wc)->changeTab(locale, i18n(locale->name()));
-          ((QTabWidget *)wc)->changeTab(localenum, i18n(localenum->name()));
-          ((QTabWidget *)wc)->changeTab(localemon, i18n(localemon->name()));
-          ((QTabWidget *)wc)->changeTab(localetime, i18n(localetime->name()));
+          ((QTabWidget *)wc)->changeTab(localemain, locale->translate(localemain->name()));
+          ((QTabWidget *)wc)->changeTab(localenum, locale->translate(localenum->name()));
+          ((QTabWidget *)wc)->changeTab(localemon, locale->translate(localemon->name()));
+          ((QTabWidget *)wc)->changeTab(localetime, locale->translate(localetime->name()));
       }
     }
 }

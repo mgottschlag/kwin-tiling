@@ -55,7 +55,7 @@ public slots:
 
 private:
   QTabWidget          *tab;
-  KLocaleConfig       *locale;
+  KLocaleConfig       *localemain;
   KLocaleConfigNumber *localenum;
   KLocaleConfigMoney  *localemon;
   KLocaleConfigTime   *localetime;

@@ -280,6 +280,7 @@ void KLocaleConfig::changedCountry(int i)
   comboDate->setCurrentItem(country);
 
   emit resample();
+  emit countryChanged();
 }
 
 void KLocaleConfig::changedLanguage(int i)
