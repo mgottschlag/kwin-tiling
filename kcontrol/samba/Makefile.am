@@ -1,16 +1,15 @@
+lib_LTLIBRARIES = libkcm_samba.la
 
-INCLUDES = $(all_includes) 
-LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-LDADD    = $(LIB_KDEUI) 
+libkcm_samba_la_SOURCES = main.cpp ksmbstatus.cpp kcmsambaimports.cpp kcmsambalog.cpp kcmsambastatistics.cpp
 
-bin_PROGRAMS = kcmsamba
+libkcm_samba_la_LDFLAGS  = $(all_libraries) -module -avoid-version 
+libkcm_samba_la_LIBADD = -lkdeui
 
-kcmsamba_SOURCES = main.cpp ksmbstatus.cpp
-METASOURCES = ksmbstatus.moc
-noinst_HEADERS = ksmbstatus.h
+INCLUDES= $(all_includes)
 
-KDE_ICON = smbstatus
+SUBDIRS = 
+
+libkcm_samba_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsamba_SOURCES) && mv messages.po $(podir)/kcmsamba.pot
-
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
