@@ -138,7 +138,7 @@ QString CKfiCmModule::quickHelp() const
                       " system, then this can also be configured.</p>")),
             rootHelp(i18n("<p><b>NOTE:</b> As you are not logged in as \"root\", any"
                           " fonts installed will only be available to you. To install"
-                          " fonts system wide, then use the \"Aministrator Mode\""
+                          " fonts system wide, then use the \"Administrator Mode\""
                           " button to run this module as \"root\".</p>"));
 
     return CMisc::root() ? help : help+rootHelp;
