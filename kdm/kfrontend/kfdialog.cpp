@@ -37,11 +37,16 @@
 FDialog::FDialog( QWidget *parent, const char *name, bool modal )
    : inherited( parent, name, modal, WStyle_NoBorder )
 {
-    winFrame = new QFrame( this );
+    winFrame = new QFrame( this, 0, WNoAutoErase );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
-    QVBoxLayout *vbox = new QVBoxLayout( this );
-    vbox->addWidget( winFrame );
+}
+
+void
+FDialog::resizeEvent( QResizeEvent *e )
+{
+    inherited::resizeEvent( e );
+    winFrame->resize( size() );
 }
 
 void
@@ -117,15 +122,15 @@ FDialog::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
 KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text )
    : inherited( parent )
 {
-    QLabel *label1 = new QLabel( winFrame );
+    QLabel *label1 = new QLabel( this );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
-    QLabel *label2 = new QLabel( text, winFrame );
-    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
+    QLabel *label2 = new QLabel( text, this );
+    KPushButton *button = new KPushButton( KStdGuiItem::ok(), this );
     button->setDefault( true );
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
 
-    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    QGridLayout *grid = new QGridLayout( this, 2, 2, 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );

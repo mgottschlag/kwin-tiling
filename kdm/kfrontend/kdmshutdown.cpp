@@ -59,7 +59,7 @@ PluginList KDMShutdownBase::pluginList;
 
 KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
     : inherited( _parent )
-    , box( new QVBoxLayout( winFrame, KDmh, KDsh ) )
+    , box( new QVBoxLayout( this, KDmh, KDsh ) )
     , mayNuke( false )
     , doesNuke( false )
     , mayOk( true )
@@ -86,29 +86,29 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	(_allowShutdown == SHUT_ROOT ||
 	 (mayNuke && _allowNuke == SHUT_ROOT)))
     {
-	rootlab = new QLabel( i18n("Root authorization required."), winFrame );
+	rootlab = new QLabel( i18n("Root authorization required."), this );
 	box->addWidget( rootlab );
 	if (curPlugin < 0) {
 	    curPlugin = 0;
 	    pluginList = KGVerify::init( _pluginsShutdown );
 	}
-	verify = new KGVerify( this, winFrame,
+	verify = new KGVerify( this, this,
 			       prevWidget, "root",
 			       pluginList, KGreeterPlugin::Authenticate,
 			       KGreeterPlugin::Shutdown );
 	verify->selectPlugin( curPlugin );
 	box->addLayout( verify->getLayout() );
-	QAccel *accel = new QAccel( winFrame );
+	QAccel *accel = new QAccel( this );
 	accel->insertItem( ALT+Key_A, 0 );
 	connect( accel, SIGNAL(activated(int)), SLOT(slotActivatePlugMenu()) );
     }
 
-    box->addWidget( new KSeparator( KSeparator::HLine, winFrame ) );
+    box->addWidget( new KSeparator( KSeparator::HLine, this ) );
 
     QBoxLayout *hlay = new QHBoxLayout( box, KDsh );
     hlay->addStretch( 1 );
     if (mayOk) {
-	okButton = new KPushButton( KStdGuiItem::ok(), winFrame );
+	okButton = new KPushButton( KStdGuiItem::ok(), this );
 	okButton->setSizePolicy( fp );
 	okButton->setDefault( true );
 	hlay->addWidget( okButton );
@@ -117,13 +117,13 @@ KDMShutdownBase::complete( QWidget *prevWidget )
     }
     if (maySched) {
 	KPushButton *schedButton =
-		new KPushButton( KGuiItem( i18n("&Schedule...") ), winFrame );
+		new KPushButton( KGuiItem( i18n("&Schedule...") ), this );
 	schedButton->setSizePolicy( fp );
 	hlay->addWidget( schedButton );
 	hlay->addStretch( 1 );
 	connect( schedButton, SIGNAL(clicked()), SLOT(slotSched()) );
     }
-    cancelButton = new KPushButton( KStdGuiItem::cancel(), winFrame );
+    cancelButton = new KPushButton( KStdGuiItem::cancel(), this );
     cancelButton->setSizePolicy( fp );
     if (!mayOk)
 	cancelButton->setDefault( true );
@@ -286,7 +286,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
     QHBoxLayout *hlay = new QHBoxLayout( box, KDsh );
 
-    howGroup = new QVButtonGroup( i18n("Shutdown Type"), winFrame );
+    howGroup = new QVButtonGroup( i18n("Shutdown Type"), this );
     hlay->addWidget( howGroup, 0, AlignTop );
 
     QRadioButton *rb;
@@ -316,7 +316,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
     howGroup->setSizePolicy( fp );
 
-    schedGroup = new QGroupBox( i18n("Scheduling"), winFrame );
+    schedGroup = new QGroupBox( i18n("Scheduling"), this );
     hlay->addWidget( schedGroup, 0, AlignTop );
 
     le_start = new QLineEdit( schedGroup );
@@ -462,9 +462,9 @@ KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
 KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
     : inherited( _parent )
 {
-    QHBoxLayout* hbox = new QHBoxLayout( winFrame, KDmh, KDsh );
+    QHBoxLayout* hbox = new QHBoxLayout( this, KDmh, KDsh );
 
-    QFrame* lfrm = new QFrame( winFrame );
+    QFrame* lfrm = new QFrame( this );
     lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     hbox->addWidget( lfrm, AlignCenter );
     QLabel* icon = new QLabel( lfrm );
@@ -477,21 +477,21 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
     buttonlay->addStretch( 1 );
 
     KPushButton* btnHalt = new
-	KPushButton( KGuiItem( i18n("&Turn Off Computer"), "exit"), winFrame );
+	KPushButton( KGuiItem( i18n("&Turn Off Computer"), "exit"), this );
     buttonlay->addWidget( btnHalt );
     connect( btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
 
     buttonlay->addSpacing( KDialog::spacingHint() );
 
     KPushButton* btnReboot = new
-	KPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), winFrame );
+	KPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), this );
     buttonlay->addWidget( btnReboot );
     connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     if (_useLilo) {
-	setupTargets( winFrame );
-	QLabel *bol = new QLabel( targets, i18n("Next &boot:"), winFrame );
+	setupTargets( this );
+	QLabel *bol = new QLabel( targets, i18n("Next &boot:"), this );
 	QHBoxLayout *hb = new QHBoxLayout( buttonlay, KDsh );
 	hb->addWidget( bol );
 	hb->addWidget( targets );
@@ -503,18 +503,18 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
     if (_scheduledSd != SHUT_NEVER) {
 	KPushButton* btnSched = new
-	    KPushButton( KGuiItem( i18n("&Schedule...") ), winFrame );
+	    KPushButton( KGuiItem( i18n("&Schedule...") ), this );
 	buttonlay->addWidget( btnSched );
 	connect( btnSched, SIGNAL(clicked()), SLOT(slotSched()) );
 
 	buttonlay->addStretch( 1 );
     }
 
-    buttonlay->addWidget( new KSeparator( winFrame ) );
+    buttonlay->addWidget( new KSeparator( this ) );
 
     buttonlay->addSpacing( 0 );
 
-    KPushButton* btnBack = new KPushButton( KStdGuiItem::cancel(), winFrame );
+    KPushButton* btnBack = new KPushButton( KStdGuiItem::cancel(), this );
     buttonlay->addWidget( btnBack );
     connect( btnBack, SIGNAL(clicked()), SLOT(reject()) );
 
@@ -587,9 +587,9 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 	    mayOk = false;
 	QLabel *lab = new QLabel( mayOk ?
 	    i18n("Abort active sessions:") :
-	    i18n("No permission to abort active sessions:"), winFrame );
+	    i18n("No permission to abort active sessions:"), this );
 	box->addWidget( lab );
-	QListView *lv = new QListView( winFrame );
+	QListView *lv = new QListView( this );
 	lv->setSelectionMode( QListView::NoSelection );
 	lv->setResizeMode( QListView::AllColumns );
 	lv->setAllColumnsShowFocus( true );
@@ -638,7 +638,7 @@ KDMCancelShutdown::KDMCancelShutdown(
     }
     QLabel *lab = new QLabel( mayOk ?
 	    i18n("Abort pending shutdown:") :
-	    i18n("No permission to abort pending shutdown:"), winFrame );
+	    i18n("No permission to abort pending shutdown:"), this );
     box->addWidget( lab );
     QDateTime qdt;
     QString strt, end;
@@ -675,7 +675,7 @@ KDMCancelShutdown::KDMCancelShutdown(
 		  force == SHUT_FORCEMY ?
 		    i18n("abort own sessions") :
 		    i18n("cancel shutdown") );
-    lab = new QLabel( trg, winFrame );
+    lab = new QLabel( trg, this );
     box->addWidget( lab );
     complete( 0 );
 }

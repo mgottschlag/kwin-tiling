@@ -40,9 +40,9 @@
 KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 {
 #ifdef WITH_KDM_XCONSOLE
-    layout = new QGridLayout (winFrame, 1, 1, 10, 10 );
+    layout = new QGridLayout (this, 1, 1, 10, 10 );
     if (_showLog) {
-	consoleView = new KConsole( winFrame );
+	consoleView = new KConsole( this );
 	layout->addWidget( consoleView, 1, 0 );
     } else
 	consoleView = 0;
@@ -60,7 +60,7 @@ KGDialog::completeMenu()
 {
 #ifdef HAVE_VTS
     if (_isLocal) {
-	dpyMenu = new QPopupMenu( winFrame );
+	dpyMenu = new QPopupMenu( this );
 	inserten( i18n("Sw&itch User"), ALT+Key_I, dpyMenu );
 	connect( dpyMenu, SIGNAL(activated(int)),
 		 SLOT(slotDisplaySelected(int)) );
@@ -85,7 +85,7 @@ KGDialog::completeMenu()
 
     if (_allowShutdown != SHUT_NONE) {
 	inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown()) );
-	QAccel *accel = new QAccel( winFrame );
+	QAccel *accel = new QAccel( this );
 	accel->insertItem( ALT+CTRL+Key_Delete );
 	connect( accel, SIGNAL(activated(int)), SLOT(slotShutdown()) );
     }
@@ -95,7 +95,7 @@ void
 KGDialog::ensureMenu()
 {
     if (!optMenu) {
-	optMenu = new QPopupMenu( winFrame );
+	optMenu = new QPopupMenu( this );
 	optMenu->setCheckable( false );
 	needSep = false;
     } else if (needSep) {

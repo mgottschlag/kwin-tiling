@@ -57,14 +57,14 @@ ChooserDlg::ChooserDlg()
     QBoxLayout *vbox = new QVBoxLayout(10);
     layout->addLayout( vbox, 0, 0 );
 #else
-    QBoxLayout *vbox = new QVBoxLayout(winFrame, 10, 10);
+    QBoxLayout *vbox = new QVBoxLayout(this, 10, 10);
 #endif
 
-    QLabel *title = new QLabel(i18n("XDMCP Host Menu"), winFrame);
+    QLabel *title = new QLabel(i18n("XDMCP Host Menu"), this);
     title->setAlignment(AlignCenter);
     vbox->addWidget(title);
 
-    host_view = new QListView(winFrame, "hosts");
+    host_view = new QListView(this, "hosts");
     host_view->addColumn(i18n("Hostname"));
     host_view->setColumnWidth(0, fontMetrics().width("login.crap.net"));
     host_view->addColumn(i18n("Status"));
@@ -72,10 +72,10 @@ ChooserDlg::ChooserDlg()
     host_view->setResizeMode(QListView::LastColumn);
     vbox->addWidget(host_view);
 
-    iline = new QLineEdit(winFrame);
+    iline = new QLineEdit(this);
     iline->setEnabled(TRUE);
-    QLabel *itxt = new QLabel(iline, i18n("Hos&t:"), winFrame);
-    QPushButton *addButton = new QPushButton(i18n("A&dd"), winFrame);
+    QLabel *itxt = new QLabel(iline, i18n("Hos&t:"), this);
+    QPushButton *addButton = new QPushButton(i18n("A&dd"), this);
     connect(addButton, SIGNAL(clicked()), SLOT(addHostname()));
     QBoxLayout *hibox = new QHBoxLayout(vbox, 10);
     hibox->addWidget(itxt);
@@ -83,9 +83,9 @@ ChooserDlg::ChooserDlg()
     hibox->addWidget(addButton);
 
     // Buttons
-    QPushButton *acceptButton = new QPushButton(i18n("&Accept"), winFrame);
+    QPushButton *acceptButton = new QPushButton(i18n("&Accept"), this);
     acceptButton->setDefault(true);
-    QPushButton *pingButton = new QPushButton(i18n("&Refresh"), winFrame);
+    QPushButton *pingButton = new QPushButton(i18n("&Refresh"), this);
 
     QBoxLayout *hbox = new QHBoxLayout(vbox, 20);
     hbox->addWidget(acceptButton);
@@ -93,13 +93,13 @@ ChooserDlg::ChooserDlg()
     hbox->addStretch( 1 );
 
     if (optMenu) {
-	QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
+	QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
 	menuButton->setPopup( optMenu );
 	hbox->addWidget(menuButton);
 	hbox->addStretch( 1 );
     }
 
-//    QPushButton *helpButton = new QPushButton(i18n("&Help"), winFrame);
+//    QPushButton *helpButton = new QPushButton(i18n("&Help"), this);
 //    hbox->addWidget(helpButton);
 
     sn = new QSocketNotifier (rfd, QSocketNotifier::Read, this);

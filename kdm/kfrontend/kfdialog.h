@@ -46,8 +46,10 @@ public:
     void MsgBox( QMessageBox::Icon typ, const QString &msg ) { box( this, typ, msg ); }
 
 protected:
+    virtual void resizeEvent( QResizeEvent *e );
     void adjustGeometry();
 
+private:
     QFrame *winFrame;
 };
 

@@ -116,11 +116,11 @@ KGreeter::KGreeter()
     QBoxLayout *main_box = new QHBoxLayout( 10 );
     layout->addLayout( main_box, 0, 0 );
 #else
-    QBoxLayout *main_box = new QHBoxLayout( winFrame, 10, 10 );
+    QBoxLayout *main_box = new QHBoxLayout( this, 10, 10 );
 #endif
 
     if (_userList) {
-	userView = new UserListView( winFrame );
+	userView = new UserListView( this );
 	main_box->addWidget(userView);
 	connect( userView, SIGNAL(clicked( QListViewItem * )),
 		 SLOT(slotUserClicked( QListViewItem * )) );
@@ -132,7 +132,7 @@ KGreeter::KGreeter()
 
     if (!_authorized && _authComplain) {
 	QLabel* complainLabel = new QLabel(
-	    i18n("Warning: this is an unsecured session"), winFrame );
+	    i18n("Warning: this is an unsecured session"), this );
 	QToolTip::add( complainLabel,
 	    i18n("This display requires no X authorization.\n"
 		 "This means that anybody can connect to it,\n"
@@ -143,7 +143,7 @@ KGreeter::KGreeter()
 	inner_box->addWidget( complainLabel );
     }
     if (!_greetString.isEmpty()) {
-	QLabel* welcomeLabel = new QLabel( _greetString, winFrame );
+	QLabel* welcomeLabel = new QLabel( _greetString, this );
 	welcomeLabel->setAlignment( AlignCenter );
 	welcomeLabel->setFont( _greetFont );
 	inner_box->addWidget( welcomeLabel );
@@ -155,13 +155,13 @@ KGreeter::KGreeter()
 
     switch (_logoArea) {
 	case LOGO_CLOCK:
-	    clock = new KdmClock( winFrame, "clock" );
+	    clock = new KdmClock( this, "clock" );
 	    break;
 	case LOGO_LOGO:
 	    {
 		QPixmap pixmap;
 		if (pixmap.load( _logo )) {
-		    pixLabel = new QLabel( winFrame );
+		    pixLabel = new QLabel( this );
 		    pixLabel->setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
 		    pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 		    pixLabel->setAutoResize( true );
@@ -184,10 +184,10 @@ KGreeter::KGreeter()
 	    main_box->addWidget( pixLabel, 0, AlignCenter );
     }
 
-    goButton = new QPushButton( i18n("L&ogin"), winFrame );
+    goButton = new QPushButton( i18n("L&ogin"), this );
     goButton->setDefault( true );
     connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
-    QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
+    QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
     //helpButton
 
     QWidget *prec;
@@ -203,13 +203,13 @@ KGreeter::KGreeter()
 	curPlugin = 0;
 	pluginList = KGVerify::init( _pluginsLogin );
     }
-    verify = new KGVerify( this, winFrame, prec, QString::null,
+    verify = new KGVerify( this, this, prec, QString::null,
 			   pluginList, KGreeterPlugin::Authenticate,
 			   KGreeterPlugin::Login );
     inner_box->addLayout( verify->getLayout() );
     verify->selectPlugin( curPlugin );
 
-    inner_box->addWidget( new KSeparator( KSeparator::HLine, winFrame ) );
+    inner_box->addWidget( new KSeparator( KSeparator::HLine, this ) );
 
     QBoxLayout* hbox2 = new QHBoxLayout( inner_box, 10 );
     hbox2->addWidget( goButton );
@@ -217,7 +217,7 @@ KGreeter::KGreeter()
     hbox2->addWidget( menuButton );
     hbox2->addStretch( 1 );
 
-    sessMenu = new QPopupMenu( winFrame );
+    sessMenu = new QPopupMenu( this );
     connect( sessMenu, SIGNAL(activated(int)),
 	     SLOT(slotSessionSelected(int)) );
     insertSessions();

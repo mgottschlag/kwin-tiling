@@ -848,22 +848,22 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
     , verify( 0 )
 {
     QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    okButton = new KPushButton( KStdGuiItem::ok(), winFrame );
+    okButton = new KPushButton( KStdGuiItem::ok(), this );
     okButton->setSizePolicy( fp );
     okButton->setDefault( true );
-    cancelButton = new KPushButton( KStdGuiItem::cancel(), winFrame );
+    cancelButton = new KPushButton( KStdGuiItem::cancel(), this );
     cancelButton->setSizePolicy( fp );
 
-    verify = new KGVerify( this, winFrame, cancelButton, user, pluginList, func, ctx );
+    verify = new KGVerify( this, this, cancelButton, user, pluginList, func, ctx );
     verify->selectPlugin( curPlugin );
 
-    QVBoxLayout *box = new QVBoxLayout( winFrame, 10 );
+    QVBoxLayout *box = new QVBoxLayout( this, 10 );
 
-    box->addWidget( new QLabel( i18n("Changing authentication token"), winFrame ), 0, AlignHCenter );
+    box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, AlignHCenter );
 
     box->addLayout( verify->getLayout() );
 
-    box->addWidget( new KSeparator( KSeparator::HLine, winFrame ) );
+    box->addWidget( new KSeparator( KSeparator::HLine, this ) );
 
     QHBoxLayout *hlay = new QHBoxLayout( box );
     hlay->addStretch( 1 );
