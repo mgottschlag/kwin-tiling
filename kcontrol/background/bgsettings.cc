@@ -25,7 +25,6 @@
 #include <netwm.h>
 #include <kapplication.h>
 #include <kglobal.h>
-#include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
@@ -165,7 +164,7 @@ bool KBackgroundPattern::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(m_File.latin1());
+    return !unlink(QFile::encodeName(m_File));
 }
 
 
@@ -351,7 +350,7 @@ bool KBackgroundProgram::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(m_File.latin1());
+    return !unlink(QFile::encodeName(m_File));
 }
 
 
@@ -478,19 +477,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     #undef ADD_STRING
 
     m_pDirs = KGlobal::dirs();
-    if (! config) {
-	int screen_number = 0;
-	if (qt_xdisplay())
-	    screen_number = DefaultScreen(qt_xdisplay());
-	QCString configname;
-	if (screen_number == 0)
-	    configname = "kdesktoprc";
-	else
-	    configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-	m_pConfig = new KConfig(configname, false, false);
-    } else
-	m_pConfig = config;
+    m_pConfig = config;
 
     srand((unsigned int) time(0L));
 
@@ -503,9 +490,6 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 
 KBackgroundSettings::~KBackgroundSettings()
 {
-  if( m_bDeleteConfig )
-    delete m_pConfig;
-
 }
 
 
@@ -779,8 +763,8 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
     m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
     m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
-    m_pConfig->writeEntry( "MinOptimizationDepth", m_MinOptimizationDepth );
-    m_pConfig->writeEntry( "UseSHM", m_bShm );
+    m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
+    m_pConfig->writeEntry("UseSHM", m_bShm);
 
     m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
@@ -841,22 +825,10 @@ void KBackgroundSettings::changeWallpaper(bool init)
     }
 
     m_LastChange = (int) time(0L);
-
-    // sync random config to file without syncing the rest
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
-    if (screen_number == 0)
-	configname = "kdesktoprc";
-    else
-	configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-    KConfig cfg(configname, false, false);
-    cfg.setGroup(QString("Desktop%1").arg(m_Desk));
-    cfg.writeEntry("CurrentWallpaper", m_CurrentWallpaper);
-    cfg.writeEntry("LastChange", m_LastChange);
-    cfg.sync();
+    m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
+    m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
+    m_pConfig->writeEntry("LastChange", m_LastChange);
+    m_pConfig->sync();
 
     hashdirty = true;
 }
@@ -932,9 +904,9 @@ int KBackgroundSettings::hash()
 
 /**** KGlobalBackgroundSettings ****/
 
-KGlobalBackgroundSettings::KGlobalBackgroundSettings()
+KGlobalBackgroundSettings::KGlobalBackgroundSettings(KConfig *_config)
 {
-    dirty = false;
+    m_pConfig = _config;
 
     readSettings();
 }
@@ -1004,22 +976,12 @@ void KGlobalBackgroundSettings::setExportBackground(bool _export)
 
 void KGlobalBackgroundSettings::readSettings()
 {
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
-    if (screen_number == 0)
-	configname = "kdesktoprc";
-    else
-	configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-    KConfig cfg(configname, true, false);
-    cfg.setGroup("Background Common");
-    m_bCommon = cfg.readBoolEntry("CommonDesktop", _defCommon);
-    m_bDock = cfg.readBoolEntry("Dock", _defDock);
-    m_bExport = cfg.readBoolEntry("Export", _defExport);
-    m_bLimitCache = cfg.readBoolEntry("LimitCache", _defLimitCache);
-    m_CacheSize = cfg.readNumEntry("CacheSize", _defCacheSize);
+    m_pConfig->setGroup("Background Common");
+    m_bCommon = m_pConfig->readBoolEntry("CommonDesktop", _defCommon);
+    m_bDock = m_pConfig->readBoolEntry("Dock", _defDock);
+    m_bExport = m_pConfig->readBoolEntry("Export", _defExport);
+    m_bLimitCache = m_pConfig->readBoolEntry("LimitCache", _defLimitCache);
+    m_CacheSize = m_pConfig->readNumEntry("CacheSize", _defCacheSize);
 
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
@@ -1035,22 +997,13 @@ void KGlobalBackgroundSettings::writeSettings()
     if (!dirty)
 	return;
 
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
-    if (screen_number == 0)
-	configname = "kdesktoprc";
-    else
-	configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-    KConfig cfg(configname, false, false);
-    cfg.setGroup("Background Common");
-    cfg.writeEntry("CommonDesktop", m_bCommon);
-    cfg.writeEntry("Dock", m_bDock);
-    cfg.writeEntry("Export", m_bExport);
-    cfg.writeEntry("LimitCache", m_bLimitCache);
-    cfg.writeEntry("CacheSize", m_CacheSize);
+    m_pConfig->setGroup("Background Common");
+    m_pConfig->writeEntry("CommonDesktop", m_bCommon);
+    m_pConfig->writeEntry("Dock", m_bDock);
+    m_pConfig->writeEntry("Export", m_bExport);
+    m_pConfig->writeEntry("LimitCache", m_bLimitCache);
+    m_pConfig->writeEntry("CacheSize", m_CacheSize);
+    m_pConfig->sync();
 
     dirty = false;
 }

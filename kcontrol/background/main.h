@@ -65,6 +65,7 @@ protected slots:
 
 private:
     Backgnd       *m_base;
+    KConfig       *m_pConfig;
 };
 
 

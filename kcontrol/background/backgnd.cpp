@@ -49,7 +49,6 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
-#include <dcopclient.h>
 #include <kimageio.h>
 #include <kgenericfactory.h>
 
@@ -95,66 +94,41 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 }
 
 /**** KBackground ****/
-Backgnd::~Backgnd( ){
+Backgnd::~Backgnd()
+{
     delete m_pGlobals;
-    delete m_pConfig;
 }
 
 Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const char* name, WFlags fl)
-    : QWidget(parent, name)
+    : QWidget(parent, name, fl)
 {
-    m_multidesktop= _multidesktop;
-    m_Max = m_multidesktop ? KWin::numberOfDesktops(): 1;
-    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
-    m_multidesktop= _multidesktop;
-
-    m_pGlobals = new KGlobalBackgroundSettings();
+    m_pGlobals = new KGlobalBackgroundSettings(_config);
+    m_multidesktop = _multidesktop;
+    m_Max = m_multidesktop ? KWin::numberOfDesktops() : 1;
     m_Desk = m_multidesktop ? (KWin::currentDesktop() - 1) : 0;
+    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
 
-    if(m_pGlobals->commonBackground())
-        m_Desk = 0;
-
+    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
+    m_Renderer.setAutoDelete(true);
     for (int i=0; i<m_Max; i++) {
 	m_Renderer.insert(i, new KBackgroundRenderer(i, _config));
 	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 
-
-    // get number of desktops
-    NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
-    bool hideDesktopWidget = (info.numberOfDesktops() == 1 || !m_multidesktop);
-
-
-    kdDebug() << "KBackground\n";
-    m_Renderer.setAutoDelete(true);
     KImageIO::registerFormats();
 
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
-    if (screen_number == 0)
-	configname = "kdesktoprc";
-    else
-	configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-    m_pConfig = new KConfig(configname);
     m_pDirs = KGlobal::dirs();
 
     m_oldMode = KBackgroundSettings::Centred;
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 3, 2);
-    top->setSpacing(10); top->setMargin(10);
+    QGridLayout *top = new QGridLayout(this, 3, 2, 10, 10);
     top->setColStretch(0, 1);
     top->setColStretch(1, 2);
 
     // Desktop chooser at (0, 0)
     QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
-    top->addWidget(group, 0, 0);
-    QVBoxLayout *vbox = new QVBoxLayout(group);
-    vbox->setMargin(10);
-    vbox->setSpacing(10);
+    QVBoxLayout *vbox = new QVBoxLayout(group, 10, 10);
     vbox->addSpacing(10);
     m_pDeskList = new QListBox(group);
     connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
@@ -170,14 +144,8 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
 				       " the same background settings for all desktops. If this option is not"
 				       " checked, the background settings can be customized for each desktop.") );
 
-    if ( hideDesktopWidget )
-    {
-        group->hide();
-    }
-
     // Preview monitor at (0,1)
     QHBoxLayout *hbox = new QHBoxLayout();
-    top->addLayout(hbox, 0, 1);
     QLabel *lbl = new QLabel(this);
     lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
     lbl->setFixedSize(lbl->sizeHint());
@@ -186,6 +154,17 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
+
+    if ( KWin::numberOfDesktops() == 1 || !m_multidesktop )
+    {
+        group->hide();
+        top->addMultiCellLayout(hbox, 0,0, 0,1, AlignHCenter);
+    }
+    else
+    {
+        top->addWidget(group, 0, 0);
+        top->addLayout(hbox, 0, 1);
+    }
 
     // Tabwidget at (1,0) - (1,1)
     m_pTabWidget = new QTabWidget(this);
@@ -382,16 +361,8 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pCacheBox, wtstr );
 
-    m_Desk = KWin::currentDesktop() - 1;
-    m_pGlobals = new KGlobalBackgroundSettings();
-    for (int i=0; i<m_Max; i++) {
-	m_Renderer.insert(i, new KBackgroundRenderer(i));
-	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
-    }
 
-
-
-    // Doing this only in KBGMonitor only doesn't work, probably due to the
+    // Doing this only in KBGMonitor doesn't work, probably due to the
     // reparenting that is done.
     setAcceptDrops(true);
 
@@ -456,10 +427,7 @@ void Backgnd::init()
 
 void Backgnd::apply()
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     // Desktop names
     if (m_pGlobals->commonBackground()) {
@@ -576,12 +544,9 @@ void Backgnd::apply()
 
 void Backgnd::load()
 {
-    delete m_pGlobals;
-    m_pGlobals = new KGlobalBackgroundSettings();
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    m_Renderer[desk]->load(desk);
+    m_pGlobals->readSettings();
+    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
+    m_Renderer[m_eDesk]->load(m_eDesk);
 
     apply();
     emit changed(false);
@@ -595,32 +560,19 @@ void Backgnd::save()
     for (int i=0; i<m_Max; i++)
         m_Renderer[i]->writeSettings();
 
-    // reconfigure kdesktop. kdesktop will notify all clients
-    DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached())
-	client->attach();
-
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString appname;
-    if (screen_number == 0)
-	appname = "kdesktop";
-    else
-	appname.sprintf("kdesktop-screen-%d", screen_number);
-
-    client->send(appname, "BackgndIface", "configure()", "");
-
     emit changed(false);
 }
 
 
 void Backgnd::defaults()
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    m_pGlobals->setCommonBackground(_defCommon);
+    m_pGlobals->setLimitCache(_defLimitCache);
+    m_pGlobals->setCacheSize(_defCacheSize);
+
+    m_eDesk = _defCommon ? 0 : m_Desk;
+
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (r->isActive())
         r->stop();
@@ -638,9 +590,6 @@ void Backgnd::defaults()
     r->setBlendMode(_defBlendMode);
     r->setBlendBalance(_defBlendBalance);
     r->setReverseBlending(_defReverseBlending);
-    m_pGlobals->setCommonBackground(_defCommon);
-    m_pGlobals->setLimitCache(_defLimitCache);
-    m_pGlobals->setCacheSize(_defCacheSize);
     apply();
     emit changed(true);
 }
@@ -653,7 +602,7 @@ void Backgnd::slotSelectDesk(int desk)
 
     if (m_Renderer[m_Desk]->isActive())
         m_Renderer[m_Desk]->stop();
-    m_Desk = desk;
+    m_eDesk = m_Desk = desk;
     apply();
 }
 
@@ -664,6 +613,7 @@ void Backgnd::slotCommonDesk(bool common)
         return;
 
     m_pGlobals->setCommonBackground(common);
+    m_eDesk = common ? 0 : m_Desk;
     apply();
     emit changed(true);
 }
@@ -674,10 +624,7 @@ void Backgnd::slotCommonDesk(bool common)
  */
 void Backgnd::slotBGMode(int mode)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (mode == r->backgroundMode())
         return;
@@ -693,10 +640,7 @@ void Backgnd::slotBGMode(int mode)
  */
 void Backgnd::slotBlendMode(int mode)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (mode == r->blendMode())
         return;
@@ -717,10 +661,7 @@ void Backgnd::slotBlendMode(int mode)
  */
 void Backgnd::slotBlendBalance(int value)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (value == r->blendBalance())
         return;
@@ -736,10 +677,7 @@ void Backgnd::slotBlendBalance(int value)
  */
 void Backgnd::slotReverseBlending(bool value)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (value == r->reverseBlending())
         return;
@@ -756,10 +694,7 @@ void Backgnd::slotReverseBlending(bool value)
  */
 void Backgnd::slotBGSetup()
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     switch (r->backgroundMode()) {
     case KBackgroundSettings::Pattern:
@@ -796,10 +731,7 @@ void Backgnd::slotBGSetup()
 
 void Backgnd::slotColor1(const QColor &color)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (color == r->colorA())
         return;
@@ -813,10 +745,7 @@ void Backgnd::slotColor1(const QColor &color)
 
 void Backgnd::slotColor2(const QColor &color)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (color == r->colorB())
         return;
@@ -830,10 +759,7 @@ void Backgnd::slotColor2(const QColor &color)
 
 void Backgnd::slotImageDropped(QString uri)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper ||
 	 r->multiWallpaperMode() == KBackgroundSettings::InOrder ||
@@ -860,10 +786,7 @@ void Backgnd::slotImageDropped(QString uri)
 
 void Backgnd::slotWallpaperType( int type )
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     bool multi = (r->multiWallpaperMode() != KBackgroundSettings::NoMulti);
     int mode = r->wallpaperMode();
@@ -924,10 +847,7 @@ void Backgnd::slotWallpaperType( int type )
 
 void Backgnd::slotWallpaper(const QString &wallpaper)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     if (wallpaper == r->wallpaper())
         return;
@@ -941,10 +861,7 @@ void Backgnd::slotWallpaper(const QString &wallpaper)
 
 void Backgnd::slotBrowseWallpaper()
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     KURL url = KFileDialog::getImageOpenURL(
                           KGlobal::dirs()->findDirs("wallpaper", "").first(),
@@ -979,10 +896,7 @@ void Backgnd::slotBrowseWallpaper()
  */
 void Backgnd::slotWPMode(int mode)
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     mode++;
 
@@ -998,10 +912,7 @@ void Backgnd::slotWPMode(int mode)
 
 void Backgnd::slotSetupMulti()
 {
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     KMultiWallpaperDialog dlg(r);
     if (dlg.exec() == QDialog::Accepted) {
@@ -1028,22 +939,36 @@ void Backgnd::slotCacheSize(int size)
 
 void Backgnd::makeReadOnly()
 {
-    m_pDeskList->setEnabled( false );
-    m_pCBCommon->setEnabled( false );
+//    m_pDeskList->setEnabled( false );
+//    m_pCBCommon->setEnabled( false );
     m_pMonitor->setEnabled( false );
-    m_pTabWidget->setEnabled( false );
+
+    m_pBackgroundBox->setEnabled( false );
+
+    m_pColor1But->setEnabled( false );
+    m_pColor2But->setEnabled( false );
+    m_pBGSetupBut->setEnabled( false );
+
+    m_WallpaperType->setEnabled( false );
+    m_pArrangementBox->setEnabled( false );
+    m_pWallpaperBox->setEnabled( false );
+    m_pBrowseBut->setEnabled( false );
+    m_pMSetupBut->setEnabled( false );
+
+    m_pBlendBox->setEnabled( false );
+    m_pBlendSlider->setEnabled( false );
+    m_pReverseBlending->setEnabled( false );
+    m_pCBLimit->setEnabled( false );
+    m_pCacheBox->setEnabled( false );
 }
 
 void Backgnd::slotPreviewDone(int desk_done)
 {
     kdDebug() << "Preview for desktop " << desk_done << " done" << endl;
 
-    int desk = m_Desk;
-    if (m_pGlobals->commonBackground())
-        desk = 0;
-    if (desk != desk_done)
+    if (m_eDesk != desk_done)
         return;
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
     KPixmap pm;
     if (QPixmap::defaultDepth() < 15)

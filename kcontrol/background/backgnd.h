@@ -68,7 +68,7 @@ class Backgnd: public QWidget
     Q_OBJECT
 
 public:
-    Backgnd(QWidget* parent = 0, KConfig *_config = 0L , bool _multidesktop = true, const char* name = 0, WFlags fl = 0);
+    Backgnd(QWidget* parent, KConfig* _config, bool _multidesktop = true, const char* name = 0, WFlags fl = 0);
     ~Backgnd();
 
     virtual void load();
@@ -77,6 +77,7 @@ public:
 
     QString quickHelp() const;
     void makeReadOnly();
+
 signals:
     void changed(bool);
 
@@ -104,7 +105,7 @@ private:
     void init();
     void apply();
 
-    int m_Desk, m_Max;
+    int m_Desk, m_eDesk, m_Max;
     int m_oldMode;
 
     QListBox *m_pDeskList;
@@ -126,7 +127,6 @@ private:
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;
 
-    KConfig *m_pConfig;
     KStandardDirs *m_pDirs;
     bool m_multidesktop;
 };

@@ -146,7 +146,7 @@ class KBackgroundSettings
       public KBackgroundProgram
 {
 public:
-    KBackgroundSettings(int desk, KConfig *config=0);
+    KBackgroundSettings(int desk, KConfig *config);
     ~KBackgroundSettings();
 
     int desk() const { return m_Desk; }
@@ -275,7 +275,7 @@ public:
 class KGlobalBackgroundSettings
 {
 public:
-    KGlobalBackgroundSettings();
+    KGlobalBackgroundSettings(KConfig *config);
 
     QString deskName(int desk);
     //void setDeskName(int desk, QString name);

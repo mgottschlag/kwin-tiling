@@ -54,20 +54,12 @@ K_EXPORT_COMPONENT_FACTORY( kcm_background, KBackGndFactory("kcmbackground"));
 /**** KBackground ****/
 KBackground::~KBackground( )
 {
+    delete m_pConfig;
 }
 
 KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/* */)
     : KCModule(KBackGndFactory::instance(), parent, name)
 {
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    m_base = new Backgnd(this);
-    m_base->show();
-    layout->add(m_base);
-
-
-    kdDebug() << "KBackground\n";
-    KImageIO::registerFormats();
-
     int screen_number = 0;
     if (qt_xdisplay())
 	screen_number = DefaultScreen(qt_xdisplay());
@@ -76,6 +68,16 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
 	configname = "kdesktoprc";
     else
 	configname.sprintf("kdesktop-screen-%drc", screen_number);
+    m_pConfig = new KConfig(configname, false, false);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    m_base = new Backgnd(this, m_pConfig);
+    m_base->show();
+    layout->add(m_base);
+
+
+    kdDebug() << "KBackground\n";
+    KImageIO::registerFormats();
 
     // reparenting that is done.
     setAcceptDrops(true);
@@ -111,8 +113,6 @@ void KBackground::save()
 	appname.sprintf("kdesktop-screen-%d", screen_number);
 
     client->send(appname, "KBackgroundIface", "configure()", "");
-
-    emit changed(false);
 }
 
 void KBackground::defaults()
