@@ -9,12 +9,12 @@ kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
 
 kdm_greet_SOURCES = \
     kdm_greet.c \
+    liloinfo.cpp \
     kdmconfig.cpp \
     kdmshutdown.cpp \
     kfdialog.cpp \
     kdmclock.cpp \
-    kgreeter.cpp \
-    liloinfo.cpp
+    kgreeter.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(XTESTLIB) $(LIBXINERAMA) $(LIB_KDEUI)
 
