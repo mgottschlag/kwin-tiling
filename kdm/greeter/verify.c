@@ -277,7 +277,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 #endif
 #ifdef HAVE_LOGIN_CAP_H
 # ifdef __bsdi__
-    // This only works / is needed on BSDi
+    /* This only works / is needed on BSDi */
     struct login_cap_t	*lc;
 # else
     struct login_cap	*lc;
@@ -467,7 +467,7 @@ done:
 #endif
 
 
-// restrict_nologin
+/* restrict_nologin */
 #ifndef USE_PAM
 
 #ifndef _PATH_NOLOGIN
@@ -499,10 +499,10 @@ done:
 nolog_succ:
 #endif
 #endif /* !USE_PAM */
-// restrict_nologin
+/* restrict_nologin */
 
 
-// restrict_nohome
+/* restrict_nohome */
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 
     if (login_getcapbool(lc, "requirehome", 0)) {
@@ -515,10 +515,10 @@ nolog_succ:
     }
 
 #endif
-// restrict_nohome
+/* restrict_nohome */
 
 
-// restrict_expired
+/* restrict_expired */
 #if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
 
 #define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
@@ -577,16 +577,16 @@ nolog_succ:
     }
 
 #endif /* HAVE_PW_EXPIRE || USESHADOW */
-// restrict_expired
+/* restrict_expired */
 
 
-// restrict_time
+/* restrict_time */
 #ifdef USE_LOGIN_CAP
     if (!auth_timeok(lc, time(NULL))) {
 	login_close(lc);
 	FAILVV(V_BADTIME);
     }
-// restrict_time
+/* restrict_time */
 
 
     login_close(lc);
