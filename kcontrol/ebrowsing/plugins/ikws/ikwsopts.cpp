@@ -121,7 +121,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
     w_grid->setColStretch(0, 2);
     w_grid->setRowStretch(2, 2);
 
-    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &web shortcuts"), gb_search);
+    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Web shortcuts"), gb_search);
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
     QWhatsThis::add(cb_enableSearchKeywords, i18n("If this box is checked, KDE will let you use the shortcuts "
                                                   "defined below to quickly search the Internet. For example, "

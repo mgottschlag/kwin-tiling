@@ -147,8 +147,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect( faceGroup, SIGNAL(clicked( int )), SLOT(slotFaceOpts()) );
     connect( faceGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
     rbadmonly = new QRadioButton( i18n("Admin"), faceGroup );
-    rbprefadm = new QRadioButton( i18n("Admin, User"), faceGroup );
-    rbprefusr = new QRadioButton( i18n("User, Admin"), faceGroup );
+    rbprefadm = new QRadioButton( i18n("Admin, user"), faceGroup );
+    rbprefusr = new QRadioButton( i18n("User, admin"), faceGroup );
     rbusronly = new QRadioButton( i18n("User"), faceGroup );
 
     QGroupBox *picGroup = new QVGroupBox( i18n("User Images"), this );
