@@ -147,7 +147,7 @@ void LookAndFeelTab::load()
   c.setGroup("General");
 
   bool use_theme = c.readBoolEntry("UseBackgroundTheme", true);
-  QString theme = c.readEntry("BackgroundTheme", "wallpapers/default.png").stripWhiteSpace();
+  QString theme = c.readPathEntry("BackgroundTheme", "wallpapers/default.png").stripWhiteSpace();
 
   bool transparent = c.readBoolEntry( "Transparent", false );
 
@@ -248,7 +248,7 @@ void LookAndFeelTab::save()
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
   c.writeEntry("ColorizeBackground", m_colorizeImage->isChecked());
   c.writeEntry("Transparent", m_transparent->isChecked());
-  c.writeEntry("BackgroundTheme", m_backgroundInput->url());
+  c.writePathEntry("BackgroundTheme", m_backgroundInput->url());
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
 
   c.setGroup("button_tiles");
