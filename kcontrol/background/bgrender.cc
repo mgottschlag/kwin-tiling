@@ -225,6 +225,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 	if (file.isEmpty())
 	    break;
 
+        delete m_pProc;
         m_pProc = new KShellProcess;
         *m_pProc << file;
         connect(m_pProc, SIGNAL(processExited(KProcess *)),
