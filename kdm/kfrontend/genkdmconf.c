@@ -459,7 +459,7 @@ static void
 upd_language(char **p)
 {
     if (!strcmp (*p, "C"))
-	*p = "en_US";
+	*p = (char *)"en_US";
 }
 
 static void
@@ -476,34 +476,34 @@ static void
 upd_echomode(char **p)
 {
     if (!strcmp (*p, "NoStars"))
-	*p = "NoEcho";
+	*p = (char *)"NoEcho";
 }
 
 static void
 upd_guistyle(char **p)
 {
     if (!strcmp (*p, "Motif+"))
-	*p = "MotifPlus";
+	*p = (char *)"MotifPlus";
     else if (!strcmp (*p, "KDE"))
-	*p = "Default";
+	*p = (char *)"Default";
 }
 
 static void
 upd_showusers(char **p)
 {
     if (!strcmp (*p, "All"))
-	*p = "NotHidden";
+	*p = (char *)"NotHidden";
 }
 
 static void
 upd_logoarea(char **p)
 {
     if (!strcmp (*p, "KdmLogo"))
-	*p = "Logo";
+	*p = (char *)"Logo";
     else if (!strcmp (*p, "KdmClock"))
-	*p = "Clock";
+	*p = (char *)"Clock";
     else if (strcmp (*p, "Logo") && strcmp (*p, "Clock"))
-	*p = "None";
+	*p = (char *)"None";
 }
 
 #define F_FILE644	1
