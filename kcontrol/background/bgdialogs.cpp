@@ -97,7 +97,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     layout->addLayout(vbox, 1, 1);
 }
 
-	
+
 /*
  * Set the current program.
  */
@@ -398,7 +398,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     layout->addLayout(vbox, 1, 1);
 }
 
-	
+
 /*
  * Set the current pattern.
  */
@@ -701,15 +701,16 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     vbox->addWidget(hbox);
     QPushButton *pbut = new QPushButton(i18n("&Add..."), hbox);
     connect(pbut, SIGNAL(clicked()), SLOT(slotAdd()));
-    pbut = new QPushButton(i18n("&Remove"), hbox);
-    connect(pbut, SIGNAL(clicked()), SLOT(slotRemove()));
+    pbutRemove = new QPushButton(i18n("&Remove"), hbox);
+    pbutRemove->setEnabled(m_pListBox->count()>0);
+    connect(pbutRemove, SIGNAL(clicked()), SLOT(slotRemove()));
 }
 
 
 void KMultiWallpaperDialog::slotAdd()
 {
-    KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(), 
-			   KImageIO::pattern(), this, 
+    KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
+			   KImageIO::pattern(), this,
 			   0L, true);
 
     fileDialog.setCaption(i18n("Select"));
@@ -724,6 +725,7 @@ void KMultiWallpaperDialog::slotAdd()
 	return;
 
     m_pListBox->insertStringList(files);
+    pbutRemove->setEnabled(true);
 }
 
 
@@ -733,6 +735,7 @@ void KMultiWallpaperDialog::slotRemove()
     if (item == -1)
 	return;
     m_pListBox->removeItem(item);
+    pbutRemove->setEnabled(m_pListBox->count()>0);
 }
 
 

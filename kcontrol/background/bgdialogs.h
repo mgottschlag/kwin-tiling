@@ -179,6 +179,7 @@ private:
     KMultiWallpaperList *m_pListBox;
 
     KBackgroundSettings *m_pSettings;
+    QPushButton *pbutRemove;
 };
 
 
