@@ -87,7 +87,7 @@
                         <cstring>previousSessionRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Restore session as it was before logging out</string>
+                        <string>Restore &amp;previous session</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -95,7 +95,7 @@
                         <cstring>savedSessionRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>Restore &amp;saved session</string>
+                        <string>Restore &amp;manually saved session</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
