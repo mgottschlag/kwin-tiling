@@ -59,12 +59,10 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     m_bChanged = false;
     nSysSchemes = 2;
 
-#if 0
     KConfig *cfg = new KConfig("kcmdisplayrc");
     cfg->setGroup("X11");
-    cfg->readBoolEntry("useResourceManager", true);
+    useRM = cfg->readBoolEntry("useResourceManager", true);
     delete cfg;
-#endif
 
     cs = new WidgetCanvas( this );
     cs->setCursor( KCursor::handCursor() );
