@@ -6,7 +6,7 @@
             <Action name="activate_iconview"/>
             <Action name="activate_treeview"/>
         </Menu>
-        <Menu name="view_iconsize"><text>Icon &amp;size</text>
+        <Menu name="view_iconsize"><text>Icon &amp;Size</text>
             <Action name="activate_smallicons"/>
             <Action name="activate_mediumicons"/>
             <Action name="activate_largeicons"/>
