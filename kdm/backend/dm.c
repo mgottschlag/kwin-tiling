@@ -681,12 +681,14 @@ static void
 openFifo (int *fifofd, char **fifopath, const char *dname)
 {
     if (*fifoDir && *fifofd < 0) {
-	if (mkdir (fifoDir, 0755) < 0  &&  errno != EEXIST) {
-	    LogError ("mkdir %\"s failed; no control FiFos will be available\n", 
-		      fifoDir);
-	    return;
-	}
-	chmod (fifoDir, 0755); /* override umask */
+	if (mkdir (fifoDir, 0755)) {
+	    if (errno != EEXIST) {
+		LogError ("mkdir %\"s failed; no control FiFos will be available\n", 
+			  fifoDir);
+		return;
+	    }
+	} else
+	    chmod (fifoDir, 0755); /* override umask */
 	if (!*fifopath)
 	    if (!StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
 			 dname, (char *)0))
