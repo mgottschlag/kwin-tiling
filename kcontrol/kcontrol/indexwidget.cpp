@@ -70,7 +70,7 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 
   emit moduleActivated(m);
 
-  if (obj->inherits("ModuleIconView") && _icon)
+  if (obj->inherits("ModuleIconView") && _tree)
 	{
 	  _tree->makeVisible(m);
 
@@ -79,7 +79,7 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 	  connect(_tree, SIGNAL(moduleSelected(ConfigModule*)),
 			  this, SLOT(moduleSelected(ConfigModule*)));
 	}
-  else if (obj->inherits("ModuleTreeView") && _tree)
+  else if (obj->inherits("ModuleTreeView") && _icon)
 	{
 	  _icon->makeVisible(m);
 
