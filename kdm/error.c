@@ -43,14 +43,9 @@ from the X Consortium.
 
 # include "dm.h"
 # include <stdio.h>
-#if NeedVarargsPrototypes
 # include <stdarg.h>
-#else
-/* this type needs to be big enough to contain int or pointer */
-typedef long Fmtarg_t;
-#endif
 
-#if NeedVarargsPrototypes && !HAVE_VSYSLOG
+#if !HAVE_VSYSLOG
 #undef USE_SYSLOG
 #endif
 
@@ -60,19 +55,11 @@ typedef long Fmtarg_t;
 
 /*VARARGS1*/
 void 
-LogInfo(
-#if NeedVarargsPrototypes
-    char * fmt, ...)
-#else
-    fmt, arg1, arg2, arg3, arg4, arg5, arg6)
-    char *fmt;
-    Fmtarg_t arg1, arg2, arg3, arg4, arg5, arg6;
-#endif
+LogInfo(char * fmt, ...)
 {
 #ifndef USE_SYSLOG
     fprintf (stderr, "xdm info (pid %d): ", (int)getpid());
 #endif
-#if NeedVarargsPrototypes
     {
 	va_list args;
 	va_start(args, fmt);
@@ -83,13 +70,6 @@ LogInfo(
 #  endif
 	va_end(args);
     }
-#else
-#  ifdef USE_SYSLOG
-    syslog (LOG_INFO, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  else
-    fprintf (stderr, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  endif
-#endif
 #ifdef USE_SYSLOG
     fflush (stderr);
 #endif
@@ -188,18 +168,10 @@ char	*mesg;
 
 /*VARARGS1*/
 int
-Debug (
-#if NeedVarargsPrototypes
-    char * fmt, ...)
-#else
-    fmt, arg1, arg2, arg3, arg4, arg5, arg6)
-    char *fmt;
-    Fmtarg_t arg1, arg2, arg3, arg4, arg5, arg6;
-#endif
+Debug (char * fmt, ...)
 {
     if (debugLevel > 0)
     {
-#if NeedVarargsPrototypes
 	va_list args;
 	va_start(args, fmt);
 #  ifdef USE_SYSLOG
@@ -207,12 +179,6 @@ Debug (
 #  endif
 	vprintf (fmt, args);
 	va_end(args);
-#else
-#  ifdef USE_SYSLOG
-	syslog (LOG_DEBUG, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  endif
-	printf (fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#endif
 #ifndef USE_SYSLOG
 	fflush (stdout);
 #endif
