@@ -225,7 +225,7 @@ void LnFTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
 
-  c->setGroup("panel");
+  c->setGroup("General");
 
   use_theme = c->readBoolEntry("UseBackgroundTheme", false);
   theme = c->readEntry("BackgroundTheme", QString::null);
@@ -275,7 +275,7 @@ void LnFTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
 
-  c->setGroup("panel");
+  c->setGroup("General");
 
   c->writeEntry("UseBackgroundTheme", use_theme);
   c->writeEntry("BackgroundTheme", theme);

@@ -49,10 +49,10 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 {
   int i;
 
-  layout = new QGridLayout(this, 3, 2, 
+  layout = new QGridLayout(this, 3, 2,
 			   KDialog::marginHint(),
 			   KDialog::spacingHint());
-  
+
   // position button group
   pos_group = new QButtonGroup(i18n("&Location"), this);
 
@@ -106,7 +106,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   QHBox *hbox2 = new QHBox(hb_group);
   QVBox *vbox2 = new QVBox(hbox2);
-  
+
 
   show_hbs = new QCheckBox(i18n("&Enabled"), vbox2);
   connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
@@ -204,7 +204,7 @@ void PanelTab::show_hbs_clicked()
   bool showHBs = show_hbs->isChecked();
 
   hb_preview->setEnabled(show_hbs->isChecked());
-  
+
   highlight_hbs->setEnabled(showHBs);
   hb_input->setEnabled(showHBs);
 
@@ -236,8 +236,8 @@ void PanelTab::ta_input_changed(const QString&)
 void PanelTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
-  c->setGroup("panel");
+
+  c->setGroup("General");
 
   size = static_cast<Size>(c->readNumEntry("Size", Normal));
   size_buttons[size]->setChecked(true);
@@ -274,8 +274,8 @@ void PanelTab::load()
 void PanelTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
-  
-  c->setGroup("panel");
+
+  c->setGroup("General");
 
   c->writeEntry("Size", static_cast<int>(size));
   c->writeEntry("Position", static_cast<int>(position));
@@ -298,7 +298,7 @@ void PanelTab::defaults()
 {
   position = Bottom;
   size = Normal;
-   
+
   pos_buttons[position]->setChecked(true);
   size_buttons[size]->setChecked(true);
   show_hbs->setChecked(true);
@@ -362,7 +362,7 @@ void HBPreview::paintEvent(QPaintEvent*)
 	p.fillRect(brect, colorGroup().brush(QColorGroup::Background));
   else
 	p.fillRect(brect, colorGroup().brush(QColorGroup::Light));
-  
+
   // draw button
   p.setPen(colorGroup().light());
   p.drawLine(0, 0, brect.right()-1, 0);
@@ -370,7 +370,7 @@ void HBPreview::paintEvent(QPaintEvent*)
   p.setPen(Qt::black);
   p.drawLine(0, brect.bottom()-1, brect.right()-1, brect.bottom()-1);
   p.drawLine(brect.right()-1, 0, brect.right()-1, brect.bottom()-1);
-  
+
   if(_width < 10) return; // don't draw arrows if we are to small
 
   QApplication::style().drawArrow(&p, Qt::LeftArrow, false,

@@ -130,14 +130,14 @@ void AppletTab::load()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
 
-  c->setGroup("Applets");
+  c->setGroup("General");
 
   available.clear();
   l_available.clear();
   l_trusted.clear();
 
   int level = c->readNumEntry("SecurityLevel", 1);
-
+  
   switch(level)
     {
     case 0:
@@ -190,7 +190,7 @@ void AppletTab::save()
 {
   KConfig *c = new KConfig("kickerrc", false, false);
 
-  c->setGroup("Applets");
+  c->setGroup("General");
 
   int level = 0;
   if(new_rb->isChecked()) level = 1;
@@ -205,7 +205,7 @@ void AppletTab::save()
 
 void AppletTab::defaults()
 {
-  trusted_rb->setChecked(true);
+  new_rb->setChecked(true);
 }
 
 QString AppletTab::quickHelp() const
