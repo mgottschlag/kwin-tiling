@@ -51,63 +51,6 @@
 
 //===========================================================================
 //
-CornerButton::CornerButton( QWidget *parent, int num, char _action )
-	: QLabel( parent )
-{
-	popupMenu.insertItem(  i18n("Ignore"), 'i' );
-	popupMenu.insertItem(  i18n("Save Screen"), 's' );
-	popupMenu.insertItem(  i18n("Lock Screen"), 'l' );
-    
-	connect( &popupMenu, SIGNAL( activated( int ) ),
-             SLOT( slotActionSelected( int ) ) );
-    
-	number = num;
-	action = _action;
-    
-	setActionText();
-    
-	setAlignment( AlignCenter );
-}
-
-void CornerButton::setActionText()
-{
-	switch ( action ) {
-    case 'i':
-        setText( "" );
-        break;
-        
-    case 's':
-        setText( "s" );
-        break;
-        
-    case 'l':
-        setText( "l" );
-        break;
-	}
-}
-
-void CornerButton::mousePressEvent( QMouseEvent *me )
-{
-	QPoint p = mapToGlobal( me->pos() );
-
-	popupMenu.popup( p );
-}
-
-void CornerButton::slotActionSelected( int a )
-{
-	action = a;
-	setActionText();
-	emit cornerAction( number, action );
-}
-
-
-int discardError(Display *, XErrorEvent *)
-{
-	return 0;
-}
-
-//===========================================================================
-//
 //
 SaverConfig::SaverConfig()
 {
@@ -129,6 +72,16 @@ bool SaverConfig::read(QString file)
     }
     
     return !mSaver.isEmpty();
+}
+
+//===========================================================================
+//
+int SaverList::compareItems(QCollection::Item item1, QCollection::Item item2)
+{
+    SaverConfig *s1 = (SaverConfig *)item1;
+    SaverConfig *s2 = (SaverConfig *)item2;
+
+    return s1->name().compare(s2->name());
 }
 
 //===========================================================================
@@ -160,7 +113,15 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 
     mTestWin = 0;
     mTestProc = 0;
+    mPrevSelected = -1;
+    mMonitor = 0;
 
+    // Add non-KDE path
+    KGlobal::dirs()->addResourceType("scrsav",
+                                    KGlobal::dirs()->kde_default("apps") +
+                                    "apps/ScreenSavers/");
+
+    // Add KDE specific screensaver path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
                                      "ScreenSavers/");
@@ -198,31 +159,6 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
 	topLayout->addMultiCellWidget( mMonitorLabel, 1, 1, 1, 2 );
     
-	mMonitor = new KSSMonitor( mMonitorLabel );
-	mMonitor->setBackgroundColor( black );
-	mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+20,
-                           (mMonitorLabel->height()-160)/2+10, 157, 111 );
-    
-	CornerButton *corner = new CornerButton( mMonitor, 0, mCornerAction[0].latin1() );
-	corner->setGeometry( 0, 0, CORNER_SIZE, CORNER_SIZE );
-	connect( corner, SIGNAL( cornerAction( int, char ) ),
-             SLOT( slotCornerAction( int, char ) ) );
-    
-	corner = new CornerButton( mMonitor, 1, mCornerAction[1].latin1() );
-	corner->setGeometry( mMonitor->width()-CORNER_SIZE, 0, CORNER_SIZE, CORNER_SIZE );
-	connect( corner, SIGNAL( cornerAction( int, char ) ),
-             SLOT( slotCornerAction( int, char ) ) );
-    
-	corner = new CornerButton( mMonitor, 2, mCornerAction[2].latin1() );
-	corner->setGeometry( 0, mMonitor->height()-CORNER_SIZE, CORNER_SIZE, CORNER_SIZE );
-	connect( corner, SIGNAL( cornerAction( int, char ) ),
-             SLOT( slotCornerAction( int, char ) ) );
-    
-	corner = new CornerButton( mMonitor, 3, mCornerAction[3].latin1() );
-	corner->setGeometry( mMonitor->width()-CORNER_SIZE, mMonitor->height()-CORNER_SIZE, CORNER_SIZE, CORNER_SIZE );
-	connect( corner, SIGNAL( cornerAction( int, char ) ),
-             SLOT( slotCornerAction( int, char ) ) );
-    
 	QGroupBox *group = new QGroupBox(i18n("Screen Saver"), this );
 	
 	topLayout->addWidget( group, 2, 1 );
@@ -257,11 +193,13 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
 	mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
 	connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
-	
+    mSetupBt->setEnabled(mEnabled);
+
 	hlay->addWidget( mSetupBt );
     
 	mTestBt = new QPushButton(  i18n("&Test"), group );
 	connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
+    mTestBt->setEnabled(mEnabled);
 	
 	hlay->addWidget( mTestBt );
 	groupLayout->activate();
@@ -274,7 +212,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	
 	stackLayout->addWidget( group, 15 );
 	
-	mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60, i18n("min"), 10, false, group);
+	mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60,
+                                 i18n("min"), 10, false, group);
     mWaitEdit->setLabelAlignment(AlignCenter);
     connect( mWaitEdit, SIGNAL( valueChanged(int) ),
              SLOT( slotTimeoutChanged(int) ) );
@@ -286,6 +225,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	mStarsCheckBox = new QCheckBox( i18n("Show &password as stars"), group );
 	mStarsCheckBox->setChecked(mPasswordStars);
 	connect( mStarsCheckBox, SIGNAL( toggled( bool ) ), SLOT( slotStars( bool ) ) );
+    
+	groupLayout->activate();
     
 	group = new QGroupBox(  i18n("Priority"), this );
 	
@@ -322,8 +263,11 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 
 void KScreenSaver::resizeEvent( QResizeEvent * )
 {
-    mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+20,
-                           (mMonitorLabel->height()-160)/2+10, 157, 111 );
+    if (mMonitor)
+    {
+        mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+20,
+                               (mMonitorLabel->height()-160)/2+10, 157, 111 );
+    }
 }
 
 KScreenSaver::~KScreenSaver()
@@ -355,7 +299,6 @@ void KScreenSaver::readSettings( int )
 	mLock = config->readBoolEntry("Lock", false);
 	mTimeout = config->readNumEntry("Timeout", 300);
 	mPriority = config->readNumEntry("Priority", 0);
-	mCornerAction = config->readEntry("CornerAction", "iiii");
 	mPasswordStars = config->readBoolEntry("PasswordAsStars", true);
 	mSaver = config->readEntry("Saver");
     
@@ -389,10 +332,6 @@ void KScreenSaver::defaultSettings()
 	slotPriorityChanged( 0 );
 	slotLock( false );
 	slotStars( true );
-	slotCornerAction( 0, 'i' );
-	slotCornerAction( 1, 'i' );
-	slotCornerAction( 2, 'i' );
-	slotCornerAction( 3, 'i' );
 	updateValues();
 }
 
@@ -410,7 +349,6 @@ void KScreenSaver::writeSettings()
 	config->writeEntry("Timeout", mTimeout);
 	config->writeEntry("Lock", mLock);
 	config->writeEntry("Priority", mPriority);
-	config->writeEntry("CornerAction", mCornerAction);
 	config->writeEntry("PasswordAsStars", mPasswordStars);
     config->writeEntry("Saver", mSaver);
 	config->sync();
@@ -422,7 +360,7 @@ void KScreenSaver::writeSettings()
 void KScreenSaver::findSavers()
 {
 	QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                                                                "*.desktop");
+                                                    "*.desktop", false, true);
     
 	QStringList::Iterator it = saverFileList.begin();
 	for ( ; it != saverFileList.end(); ++it ) {
@@ -433,6 +371,8 @@ void KScreenSaver::findSavers()
         else 
             delete saver;
 	}
+
+    mSaverList.sort();
 }
 
 //---------------------------------------------------------------------------
@@ -451,8 +391,21 @@ void KScreenSaver::setMonitor()
 //
 void KScreenSaver::slotPreviewExited(KProcess *)
 {
-    mMonitor->setBackgroundColor(black);
-    mMonitor->erase();
+    // Ugly hack to prevent continual respawning of savers that crash
+    if (mSelected == mPrevSelected)
+        return;
+
+    // Some xscreensaver hacks do something nasty to the window that
+    // requires a new one to be created (or proper investigation of the
+    // problem).
+    if (mMonitor)
+        delete mMonitor;
+
+	mMonitor = new KSSMonitor(mMonitorLabel);
+	mMonitor->setBackgroundColor(black);
+	mMonitor->setGeometry((mMonitorLabel->width()-200)/2+20,
+                          (mMonitorLabel->height()-160)/2+10, 157, 111);
+    mMonitor->show();
 
     if (mEnabled)
     {
@@ -463,7 +416,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
         
         QString word;
         ts >> word;
-        QString path = locate("exe", word);
+        QString path = KStandardDirs::findExe(word);
 
         if (!path.isEmpty())
         {
@@ -482,6 +435,8 @@ void KScreenSaver::slotPreviewExited(KProcess *)
             mPreviewProc->start();
         }
     }
+
+    mPrevSelected = mSelected;
 }
 
 //---------------------------------------------------------------------------
@@ -495,8 +450,8 @@ void KScreenSaver::slotScreenSaver(int indx)
 	}
 	else {
 		if (!mSetupProc->isRunning())
-			mSetupBt->setEnabled( true );
-		mTestBt->setEnabled( true );
+			mSetupBt->setEnabled(!mSaverList.at(indx - 1)->setup().isEmpty());
+		mTestBt->setEnabled(true);
         mSaver = mSaverList.at(indx - 1)->file();
 		mEnabled = true;
 	}
@@ -525,7 +480,7 @@ void KScreenSaver::slotSetup()
 
     QString word;
     ts >> word;
-    QString path = locate("exe", word);
+    QString path = KStandardDirs::findExe(word);
 
     if (!path.isEmpty())
     {
@@ -558,7 +513,7 @@ void KScreenSaver::slotTest()
 
     QString word;
     ts >> word;
-    QString path = locate("exe", word);
+    QString path = KStandardDirs::findExe(word);
 
     if (!path.isEmpty())
     {
@@ -647,17 +602,9 @@ void KScreenSaver::slotPriorityChanged( int val )
 //
 void KScreenSaver::slotSetupDone(KProcess *)
 {
+    mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
 	setMonitor();
 	mSetupBt->setEnabled( true );
-}
-
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotCornerAction( int num, char action )
-{
-	mCornerAction[num] = action;
-	mChanged = true;
 }
 
 //---------------------------------------------------------------------------

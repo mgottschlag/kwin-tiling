@@ -24,29 +24,6 @@
 class KIntNumInput;
 
 //===========================================================================
-class CornerButton : public QLabel
-{
-    Q_OBJECT
-public:
-    CornerButton( QWidget *parent, int num, char _action );
-
-signals:
-    void cornerAction( int corner, char action );
-
-protected:
-    virtual void mousePressEvent( QMouseEvent * );
-    void setActionText();
-
-protected slots:
-    void slotActionSelected( int );
-
-protected:
-    QPopupMenu popupMenu;
-    int number;
-    char action;
-};
-
-//===========================================================================
 class KSSMonitor : public QWidget
 {
     Q_OBJECT
@@ -77,6 +54,13 @@ protected:
     QString mSaver;
     QString mName;
     QString mFile;
+};
+
+//===========================================================================
+class SaverList : public QList<SaverConfig>
+{
+protected:
+    virtual int compareItems(QCollection::Item item1, QCollection::Item item2);
 };
 
 //===========================================================================
@@ -118,7 +102,6 @@ protected slots:
     void slotStars( bool );
     void slotPriorityChanged( int val );
     void slotSetupDone(KProcess*);
-    void slotCornerAction( int, char );
     // when selecting a new screensaver, the old preview will
     // be killed. -- This callback is responsible for restarting the
     // new preview
@@ -146,9 +129,10 @@ protected:
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QLabel      *mMonitorLabel;
-    QList<SaverConfig> mSaverList;
+    SaverList   mSaverList;
 
     int         mSelected;
+    int         mPrevSelected;
     bool        mChanged;
 
     // Settings
@@ -158,7 +142,6 @@ protected:
     bool        mEnabled;
     bool        mPasswordStars;
     QString     mSaver;
-    QString     mCornerAction;
 };
 
 #endif
