@@ -9,11 +9,11 @@ LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) -lm
 
 bin_PROGRAMS = kswarm.kss krock.kss \
-	kpyro.kss khop.kss $(XPM_SAVERS) $(GL_SAVERS) \
+	kpyro.kss khop.kss $(GL_SAVERS) \
 	kbouboule.kss kscience.kss \
 	kslidescreen.kss krandom.kss kbsod.kss
 
-EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss
+EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss
 
 
 BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
@@ -21,7 +21,7 @@ BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
 XS_SRCS = xs_colors.c xs_hsv.c xs_visual.c
 XL_SRCS = xlock.cpp
 
-SUBDIRS = libkscreensaver kdesavers pixmaps bitmaps kxsconfig
+SUBDIRS = libkscreensaver kdesavers kxsconfig
 
 krandom_kss_SOURCES = random.cpp
 
@@ -36,9 +36,6 @@ kslidescreen_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) $(XS_SRCS) slidescreen.cpp
 
 kpyro_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) pyro.cpp
 
-kmatrix_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) matrix.cpp
-kmatrix_kss_LDADD= $(LDADD) $(XPMLIB)
-
 khop_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) hop.cpp
 kbouboule_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) bouboule.cpp
 kmorph3d_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) morph3d.cpp
@@ -52,14 +49,14 @@ kscience_kss_LDADD = $(LDADD) -lm
 
 METASOURCES = saver.moc demowin.moc rock.moc \
 		pyro.moc hop.moc swarm.moc morph3d.moc space.moc bouboule.moc \
-		science.moc pipes.moc slidescreen.moc bsod.moc matrix.moc
+		science.moc pipes.moc slidescreen.moc bsod.moc
 
 noinst_HEADERS = saver.h demowin.h xlock.h rock.h \
 		pyro.h hop.h swarm.h space.h bouboule.h  science.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
 		slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h \
-		vroot.h matrix.h
+		vroot.h
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/klock.pot
@@ -70,7 +67,7 @@ data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
 desktop_DATA = KBouboule.desktop KBsod.desktop \
-	KHop.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
+	KHop.desktop KMorph3D.desktop KPipes.desktop \
 	KPyro.desktop KRandom.desktop KRock.desktop \
 	KScience.desktop KSlidescreen.desktop \
 	KSpace.desktop KSwarm.desktop

@@ -5,6 +5,7 @@
  * ported to KDE 1.1.2 by Dmitry DELTA Malykhanov <d.malykhanov@iname.com> in August 1999
  * ported to KDE 2.0 and setup dialog fixup by Thorsten Westheider
  * <thorsten.westheider@teleos-web.de> in March 2000
+ * ported to libkscreensaver Martin R. Jones <mjones@kde.org> 2001/03/11
  *
  * Additional contributors:
  *
@@ -15,8 +16,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#undef Below // Namespace collision
 
 #include <qbuttongroup.h>
 #include <qcolor.h>
@@ -35,42 +34,56 @@
 #include <krandomsequence.h>
 #include <kmessagebox.h>
 
-#include "helpers.h"
-
-#include <X11/xpm.h>
-
 #ifdef DEBUG_MEM
 #include <mcheck.h>
 #endif
 
 #include "matrix.h"
 
+
+// libkscreensaver interface
+extern "C"
+{
+    const char *kss_applicationName = "kmatrix.kss";
+    const char *kss_description =
+            I18N_NOOP( "Kmatrix \"The Matrix\" movie style screen saver" );
+    const char *kss_version = "2.2.0";
+
+    KScreenSaver *kss_create( WId id )
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KMatrixSaver( id );
+    }
+
+    QDialog *kss_setup()
+    {
+        KLocale::setMainCatalogue("klock");
+        return new KMatrixSetup();
+    }
+}
+
 static KRandomSequence *rnd = 0;
 
-static KMatrixSaver *saver = NULL;
-const char progname[] = "KMatrix";
 static const QString inserts[] = { "top", "bottom", "both" };
 
 
 void KMatrixSaverCfg::readSettings() {
   QString str;
 
-  KConfig *config = klock_config();
+  KConfig *config = KGlobal::config();
   config->setGroup("Settings");
 
   background = config->readColorEntry("BackgroundColor", &Qt::black);
   foreground = config->readColorEntry("ForegroundColor", &Qt::green);
   //str = config->readEntry("Mono");
-  mono = False;
+  mono = false;
   density = config->readNumEntry("Density", 25);
   speed = config->readNumEntry("Speed", 100);
   insert = config->readEntry("Insert", "bottom");
-
-  delete config;
 }
 
 void KMatrixSaverCfg::writeSettings() {
-  KConfig *config = klock_config();
+  KConfig *config = KGlobal::config();
   config->setGroup( "Settings" );
 
   config->writeEntry("BackgroundColor", background);
@@ -80,41 +93,13 @@ void KMatrixSaverCfg::writeSettings() {
   config->writeEntry("Speed", speed);
   config->writeEntry("Insert", insert);
   config->sync();
-  delete config;
 }
 
-//--------------------------------------------------------------------
-// standard screen saver interface functions
-//
-void startScreenSaver( Drawable d ) {
-  if ( saver )
-    return;
-#ifdef DEBUG_MEM
-  mtrace();
-#endif
-  saver = new KMatrixSaver( d );
-}
-
-void stopScreenSaver() {
-  if ( saver )
-    delete saver;
-  saver = NULL;
-}
-
-int setupScreenSaver() {
-  KMatrixSetup dlg;
-
-  return dlg.exec();
-}
-
-QString getScreenSaverName() {
-  return i18n("Kmatrix \"The Matrix\" movie style screen saver");
-}
 
 //--------------------------------------------------------------------
 // KMatrixSaver code
 
-KMatrixSaver::KMatrixSaver( Drawable drawable ) : kScreenSaver( drawable ) {
+KMatrixSaver::KMatrixSaver( WId id ) : KScreenSaver( id ) {
   rnd = new KRandomSequence();
   readSettings();
 
@@ -126,7 +111,7 @@ KMatrixSaver::KMatrixSaver( Drawable drawable ) : kScreenSaver( drawable ) {
 
 void KMatrixSaver::slotTimeout() {
   draw_matrix();
-  XSync(qt_xdisplay(), False);
+  kapp->syncX();
 }
 
 KMatrixSaver::~KMatrixSaver() {
@@ -152,8 +137,6 @@ void KMatrixSaver::setDensity(int den) {
   if( den>0 && den <=100 ) {
     cfg.density = den;
     restart_matrix();
-  } else {
-    fprintf(stderr, "%s: unsupported density %d\n", progname, den);
   }
 }
 
@@ -175,8 +158,8 @@ inline void KMatrixSaver::readSettings() {
 
 void KMatrixSaver::blank()
 {
-  XSetWindowBackground( qt_xdisplay(), mDrawable, cfg.background.pixel() );
-  XClearWindow( qt_xdisplay(), mDrawable );
+    QPainter p(this);
+    p.fillRect( 0, 0, width(), height(), black );
 }
 
 //---------------------------------------------------------------------
@@ -191,8 +174,6 @@ inline void KMatrixSaver::restart_matrix() {
    this function is not a part of original xmatrix code */
 void KMatrixSaver::shutdown_matrix() {
   if( state!=NULL ) {
-    XFreeGC(state->dpy, state->draw_gc);
-    XFreeGC(state->dpy, state->erase_gc);
     if( state->cells!=NULL ) {
       free(state->cells); state->cells = NULL;
     }
@@ -222,7 +203,7 @@ void KMatrixSaver::shutdown_matrix() {
  * does things differently.
  */
 
-#include "pixmaps/matrix_font.xpm"
+#include "matrix_font.xpm"
 
 //#define CHAR_HEIGHT 31
 /* I'm using smaller font. Delta */
@@ -230,37 +211,11 @@ void KMatrixSaver::shutdown_matrix() {
 
 /* load images */
 void KMatrixSaver::load_images () {
-  if (!cfg.mono && state->xgwa.depth > 1)
+  if (!cfg.mono && QPixmap::defaultDepth() > 1 )
     {
-      XpmAttributes xpmattrs;
-      int result;
-      xpmattrs.valuemask = 0;
-
-# ifdef XpmCloseness
-      xpmattrs.valuemask |= XpmCloseness;
-      xpmattrs.closeness = 40000;
-# endif
-# ifdef XpmVisual
-      xpmattrs.valuemask |= XpmVisual;
-      xpmattrs.visual = state->xgwa.visual;
-# endif
-# ifdef XpmDepth
-      xpmattrs.valuemask |= XpmDepth;
-      xpmattrs.depth = state->xgwa.depth;
-# endif
-# ifdef XpmColormap
-      xpmattrs.valuemask |= XpmColormap;
-      xpmattrs.colormap = state->xgwa.colormap;
-# endif
-
-      result = XpmCreatePixmapFromData (state->dpy, state->window, (char **)matrix_font,
-                                        &state->images, 0 /* mask */,
-                                        &xpmattrs);
-      if (!state->images || (result != XpmSuccess && result != XpmColorError))
-        state->images = 0;
-
-      state->image_width = xpmattrs.width;
-      state->image_height = xpmattrs.height;
+      state->images = QPixmap( matrix_font );
+      state->image_width = state->images.width();
+      state->image_height = state->images.height();
       state->nglyphs = state->image_height / CHAR_HEIGHT;
       //fprintf(stderr, "nglyphs = %d\n", state->nglyphs);
     }
@@ -268,27 +223,16 @@ void KMatrixSaver::load_images () {
 
 /* initialize matrix */
 void KMatrixSaver::init_matrix () {
-  XGCValues gcv;
-  state = (m_state *) calloc (sizeof(*state), 1);
-  state->dpy = qt_xdisplay();
-  state->window = mDrawable;
+  state = new m_state;
+  state->w = this;
 
-  XGetWindowAttributes (state->dpy, state->window, &state->xgwa);
   load_images();
-
-  gcv.foreground = cfg.foreground.pixel();
-  gcv.background = cfg.background.pixel();
-  state->draw_gc = XCreateGC (state->dpy, state->window,
-                              GCForeground|GCBackground, &gcv);
-  gcv.foreground = gcv.background;
-  state->erase_gc = XCreateGC (state->dpy, state->window,
-                               GCForeground|GCBackground, &gcv);
 
   state->char_width = state->image_width / 2;
   state->char_height = CHAR_HEIGHT;
 
-  state->grid_width  = state->xgwa.width  / state->char_width;
-  state->grid_height = state->xgwa.height / state->char_height;
+  state->grid_width  = width()  / state->char_width;
+  state->grid_height = height() / state->char_height;
   state->grid_width++;
   state->grid_height++;
 
@@ -301,32 +245,32 @@ void KMatrixSaver::init_matrix () {
   QString insert = cfg.insert;
   if (insert == "top")
     {
-      state->insert_top_p = True;
-      state->insert_bottom_p = False;
+      state->insert_top_p = true;
+      state->insert_bottom_p = false;
     }
   else if (insert == "bottom")
     {
-      state->insert_top_p = False;
-      state->insert_bottom_p = True;
+      state->insert_top_p = false;
+      state->insert_bottom_p = true;
     }
   else if (insert == "both")
     {
-      state->insert_top_p = True;
-      state->insert_bottom_p = True;
+      state->insert_top_p = true;
+      state->insert_bottom_p = true;
     }
   else
     {
       if (!insert.isEmpty())
         kdError() << "`insert' must be `top', `bottom', or `both', not " << insert << endl;
-      state->insert_top_p = False;
-      state->insert_bottom_p = True;
+      state->insert_top_p = false;
+      state->insert_bottom_p = true;
     }
 
   /* return state; */
 }
 
 void KMatrixSaver::insert_glyph (int glyph, int x, int y) {
-  Bool bottom_feeder_p = (y >= 0);
+  bool bottom_feeder_p = (y >= 0);
   m_cell *from, *to;
 
   if (y >= state->grid_height)
@@ -343,13 +287,13 @@ void KMatrixSaver::insert_glyph (int glyph, int x, int y) {
           from = &state->cells[state->grid_width * (y-1) + x];
           to   = &state->cells[state->grid_width * y     + x];
           *to = *from;
-          to->changed = True;
+          to->changed = true;
         }
       to = &state->cells[x];
     }
 
   to->glyph = glyph;
-  to->changed = True;
+  to->changed = true;
 
   if (!to->glyph)
     ;
@@ -427,7 +371,7 @@ void KMatrixSaver::hack_matrix () {
           if (cell->glyph && cell->glow == 0)
             {
               cell->glow = rnd->getLong(10);
-              cell->changed = True;
+              cell->changed = true;
             }
         }
     }
@@ -436,7 +380,7 @@ void KMatrixSaver::hack_matrix () {
   for (x = 0; x < state->grid_width; x++)
     {
       m_feeder *f = &state->feeders[x];
-      Bool bottom_feeder_p;
+      bool bottom_feeder_p;
 
       if (f->remaining > 0)	/* never change if pipe isn't empty */
         continue;
@@ -469,6 +413,8 @@ void KMatrixSaver::draw_matrix () {
   feed_matrix ();
   hack_matrix ();
 
+  QPainter p(this);
+
   for (y = 0; y < state->grid_height; y++)
     for (x = 0; x < state->grid_width; x++)
       {
@@ -481,25 +427,20 @@ void KMatrixSaver::draw_matrix () {
           continue;
 
         if (cell->glyph == 0)
-          XFillRectangle (state->dpy, state->window, state->erase_gc,
-                          x * state->char_width,
-                          y * state->char_height,
-                          state->char_width,
-                          state->char_height);
+          p.fillRect( x * state->char_width, y * state->char_height,
+                      state->char_width, state->char_height, black);
         else
-          XCopyArea (state->dpy, state->images, state->window, state->draw_gc,
-                     (cell->glow ? state->char_width : 0),
-                     (cell->glyph - 1) * state->char_height,
-                     state->char_width, state->char_height,
-                     x * state->char_width,
-                     y * state->char_height);
+          p.drawPixmap(  x * state->char_width, y * state->char_height,
+                        state->images, (cell->glow ? state->char_width : 0),
+                        (cell->glyph - 1) * state->char_height,
+                        state->char_width, state->char_height );
 
-        cell->changed = False;
+        cell->changed = false;
 
         if (cell->glow > 0)
           {
             cell->glow--;
-            cell->changed = True;
+            cell->changed = true;
           }
       }
 
@@ -531,7 +472,6 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   QHBoxLayout *dhb = new QHBoxLayout;
   tl11->addLayout(dhb);
   label = new QLabel( i18n("Density:"), this);
-  min_size(label);
   dhb->addWidget(label);
   /*
   densityEd = new QLineEdit(this);
@@ -542,7 +482,6 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
 	  SLOT(slotDensityEdit(const QString &)));
   dhb->addWidget(densityEd);
   */
-#undef Below
   densitySld = new QSlider(0, 100, 1, cfg.density, QSlider::Horizontal,
 			   this, "Density");
   densitySld->setTickmarks(QSlider::Below);
@@ -557,7 +496,6 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   QHBoxLayout *shb = new QHBoxLayout;
   tl11->addLayout(shb);
   label = new QLabel( i18n("Speed:"), this);
-  min_size(label);
   shb->addWidget(label);
   /*
   speedEd = new QLineEdit(this);
@@ -586,19 +524,16 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   grpvbox->addSpacing(metrics.height()/2+4);
   rb = new QRadioButton( insertRbGrp);
   rb->setText( i18n("Top"));
-  min_size(rb);
   if( cfg.insert==inserts[i++] ) rb->setChecked(TRUE);
     else rb->setChecked(FALSE);
   grpvbox->addWidget(rb);
   rb = new QRadioButton( insertRbGrp);
   rb->setText( i18n("Bottom"));
-  min_size(rb);
   if( cfg.insert == inserts[i++] ) rb->setChecked(TRUE);
     else rb->setChecked(FALSE);
   grpvbox->addWidget(rb);
   rb = new QRadioButton( insertRbGrp);
   rb->setText( i18n("Both"));
-  min_size(rb);
   if( cfg.insert == inserts[i++] ) rb->setChecked(TRUE);
     else rb->setChecked(FALSE);
   grpvbox->addWidget(rb);

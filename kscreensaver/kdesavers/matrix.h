@@ -1,17 +1,11 @@
 #ifndef __MATRIX_H
 #define __MATRIX_H
 
-#include <X11/Xlib.h>
-
-#include <qbuttongroup.h>
 #include <qcolor.h>
-#include <qpushbutton.h>
 #include <qtimer.h>
 #include <qstring.h>
-
-#include "kcolordlg.h"
-
-#include "saver.h"
+#include <kcolordlg.h>
+#include <kscreensaver.h>
 
 class KMatrixSaver;
 
@@ -24,11 +18,16 @@ class KMatrixSaverCfg {
  public:
   // parameters
   QColor background, foreground;
-  Bool mono;
+  bool mono;
   int density;
   int speed;
   QString insert;
 };
+
+class QPushButton;
+class QLineEdit;
+class QSlider;
+class QButtonGroup;
 
 class KMatrixSetup : public QDialog {
   Q_OBJECT
@@ -71,7 +70,7 @@ extern const char progname[];
 /* xmatrix data structures */
 typedef struct m_cell_tag {
   int glyph;
-  Bool changed;
+  bool changed;
   int glow;
 } m_cell;
 
@@ -82,25 +81,22 @@ typedef struct m_feeder_tag {
 } m_feeder;
 
 typedef struct m_state_tag {
-  Display *dpy;
-  Window window;
-  XWindowAttributes xgwa;
-  GC draw_gc, erase_gc;
+  QWidget *w;
   int grid_width, grid_height;
   int char_width, char_height;
   m_cell *cells;
   m_feeder *feeders;
-  Bool insert_top_p, insert_bottom_p;
+  bool insert_top_p, insert_bottom_p;
   int density;
-  Pixmap images;
+  QPixmap images;
   int image_width, image_height;
   int nglyphs;
 } m_state;
 
-class KMatrixSaver : public kScreenSaver {
+class KMatrixSaver : public KScreenSaver {
   Q_OBJECT
 public:
-  KMatrixSaver(Drawable drawable);
+  KMatrixSaver( WId id );
   virtual ~KMatrixSaver();
 
   void setBackgroundColor(const QColor &col);
