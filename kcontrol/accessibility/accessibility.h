@@ -37,19 +37,19 @@ class QSlider;
 class KNumInput;
 class KAboutData;
 
-class KAccessConfig : public AccessibilityConfigWidget {
+class AccessibilityConfig : public AccessibilityConfigWidget {
    Q_OBJECT
 
    public:
       /**
        * Constructor
        */   
-      KAccessConfig(QWidget *parent = 0L, const char *name = 0L);
+      AccessibilityConfig(QWidget *parent = 0L, const char *name = 0L);
 
       /**
        * Destructor
        */            
-      virtual ~KAccessConfig();
+      virtual ~AccessibilityConfig();
   
       /**
        * This method is invoked whenever the module should read its 

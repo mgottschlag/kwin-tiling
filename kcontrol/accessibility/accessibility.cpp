@@ -74,7 +74,7 @@
 //    return false; // don't need it
 // }
 
-KAccessConfig::KAccessConfig(QWidget *parent, const char *)
+AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *)
   : AccessibilityConfigWidget(parent, "accessibility"){
 //    QVBoxLayout *main = new QVBoxLayout(this, 0,0);
 //    QTabWidget *tab = new QTabWidget(this);
@@ -258,16 +258,16 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 }
 
 
-KAccessConfig::~KAccessConfig(){
+AccessibilityConfig::~AccessibilityConfig(){
 }
 
-void KAccessConfig::changeFlashScreenColor(){
+void AccessibilityConfig::changeFlashScreenColor(){
 //    invertScreen->setChecked(false);
 //    flashScreen->setChecked(true);
 //    configChanged();
 }
 
-void KAccessConfig::selectSound(){
+void AccessibilityConfig::selectSound(){
 //    QStringList list = KGlobal::dirs()->findDirs("sound", "");
 //    QString start;
 //    if (list.count()>0){
@@ -281,12 +281,12 @@ void KAccessConfig::selectSound(){
 }
 
 
-void KAccessConfig::configChanged(){
+void AccessibilityConfig::configChanged(){
    emit changed(true);
 }
 
 
-void KAccessConfig::load(){
+void AccessibilityConfig::load(){
 //    KConfig *config = new KConfig("kaccessrc", true);
 // 
 //    config->setGroup("Bell");
@@ -322,7 +322,7 @@ void KAccessConfig::load(){
 }
 
 
-void KAccessConfig::save(){
+void AccessibilityConfig::save(){
 //    KConfig *config= new KConfig("kaccessrc", false);
 // 
 //    config->setGroup("Bell");
@@ -374,7 +374,7 @@ void KAccessConfig::save(){
 }
 
 
-void KAccessConfig::defaults(){
+void AccessibilityConfig::defaults(){
 //    systemBell->setChecked(true);
 //    customBell->setChecked(false);
 //    soundEdit->setText("");
@@ -401,17 +401,17 @@ void KAccessConfig::defaults(){
 }
 
 
-void KAccessConfig::invertClicked(){
+void AccessibilityConfig::invertClicked(){
 //   flashScreen->setChecked(false);
 }
 
 
-void KAccessConfig::flashClicked(){
+void AccessibilityConfig::flashClicked(){
 //   invertScreen->setChecked(false);
 }
 
 
-void KAccessConfig::checkAccess(){
+void AccessibilityConfig::checkAccess(){
 //    bool custom = customBell->isChecked();
 //    soundEdit->setEnabled(custom);
 //    soundButton->setEnabled(custom);
@@ -431,12 +431,12 @@ void KAccessConfig::checkAccess(){
 //    bounceKeysDelay->setEnabled(bounceKeys->isChecked());
 }
 
-QString KAccessConfig::quickHelp() const{
-//    kdDebug() << "Running: KAccessConfig::quickHelp()"<< endl;
+QString AccessibilityConfig::quickHelp() const{
+//    kdDebug() << "Running: AccessibilityConfig::quickHelp()"<< endl;
 //    return i18n("<h1>Accessibility</h1>");
 }
 
-const KAboutData* KAccessConfig::aboutData() const{
+const KAboutData* AccessibilityConfig::aboutData() const{
 //    KAboutData *about =
 //    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
 //                   0, 0, KAboutData::License_GPL,
@@ -448,7 +448,7 @@ const KAboutData* KAccessConfig::aboutData() const{
 //    return about;
 }
 
-typedef KGenericFactory<KAccessConfig, QWidget> AccessibilityFactory;
+typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
 //K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibility") );
 
 
