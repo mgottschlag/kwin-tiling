@@ -959,7 +959,7 @@ static void
 setAuthNumber (Xauth *auth, const char *name)
 {
     char	*colon;
-    char	*dot, *number;
+    char	*dot;
 
     Debug ("setAuthNumber %s\n", name);
     colon = strrchr(name, ':');
@@ -974,8 +974,7 @@ setAuthNumber (Xauth *auth, const char *name)
 	    LogOutOfMem ("setAuthNumber");
 	    auth->number_length = 0;
 	}
-	auth->number = number;
-	Debug ("setAuthNumber: %s\n", number);
+	Debug ("setAuthNumber: %s\n", auth->number);
     }
 }
 
