@@ -95,20 +95,21 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   if (!mGui)
     return;
 
-  mGrid = new QGridLayout(this, 2, 3, 6, 6);
+  QGridLayout *grid = new QGridLayout(this, 2, 3, KDialog::marginHint(),
+      KDialog::spacingHint());
   mThemesList = new ThemeListBox(this);
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
   connect(mThemesList, SIGNAL(filesDropped(const KURL::List&)), SLOT(slotFilesDropped(const KURL::List&)));
-  mGrid->addMultiCellWidget(mThemesList, 0, 1, 0, 0);
+  grid->addMultiCellWidget(mThemesList, 0, 1, 0, 0);
 
   mPreview = new QLabel(this);
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-  mGrid->addWidget(mPreview, 0, 1);
+  grid->addWidget(mPreview, 0, 1);
 
   bbox = new KButtonBox(this, KButtonBox::Vertical, 0, 6);
-  mGrid->addMultiCellWidget(bbox, 0, 1, 2, 2);
+  grid->addMultiCellWidget(bbox, 0, 1, 2, 2);
 
   mBtnAdd = bbox->addButton(i18n("Add..."));
   connect(mBtnAdd, SIGNAL(clicked()), SLOT(slotAdd()));
@@ -124,18 +125,15 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mText = new QMultiLineEdit(this);
   mText->setMinimumSize(mText->sizeHint());
   mText->setReadOnly(true);
-  mGrid->addWidget(mText, 1, 1);
+  grid->addWidget(mText, 1, 1);
 
-  mGrid->setColStretch(0, 1);
-  mGrid->setColStretch(1, 3);
-  mGrid->setRowStretch(0, 3);
-  mGrid->setRowStretch(1, 1);
+  grid->setColStretch(0, 1);
+  grid->setColStretch(1, 3);
+  grid->setRowStretch(0, 3);
+  grid->setRowStretch(1, 1);
 
-  KConfig cnf("ksplashrc");
-  cnf.setGroup("KSplash");
-  mDefaultTheme = cnf.readEntry("Theme","Default");
   readThemesList();
-  defaults();
+  load();
 }
 
 
@@ -223,12 +221,15 @@ void SplashInstaller::readThemesList()
 //-----------------------------------------------------------------------------
 void SplashInstaller::defaults()
 {
-  mThemesList->setCurrentItem(findTheme(mDefaultTheme));
+  mThemesList->setCurrentItem(findTheme("Default"));
 }
 
 void SplashInstaller::load()
 {
-  kdDebug() << "SplashInstaller::load() called" << endl;
+  KConfig cnf("ksplashrc");
+  cnf.setGroup("KSplash");
+  QString curTheme = cnf.readEntry("Theme","Default");
+  mThemesList->setCurrentItem(findTheme(curTheme));
 }
 
 //-----------------------------------------------------------------------------
@@ -284,8 +285,8 @@ void SplashInstaller::slotSetTheme(int id)
 
   if (id < 0)
   {
-    mPreview->setText("");
-    mText->setText("");
+    mPreview->setText(QString::null);
+    mText->setText(QString::null);
     enabled = false;
   }
   else
@@ -340,7 +341,7 @@ void SplashInstaller::slotSetTheme(int id)
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("(Could not load theme)"));
-      mText->setText("");
+      mText->setText(QString::null);
       KMessageBox::sorry(this, error);
     }
     else

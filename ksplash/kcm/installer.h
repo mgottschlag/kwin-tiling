@@ -17,7 +17,6 @@
 #include <klistbox.h>
 #include <kurl.h>
 
-class QGridLayout;
 class QLabel;
 class QMultiLineEdit;
 class QPushButton;
@@ -54,8 +53,6 @@ protected:
 
 private:
   bool mGui;
-  QString mDefaultTheme;
-  QGridLayout *mGrid;
   ThemeListBox *mThemesList;
   QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
   QMultiLineEdit *mText;
