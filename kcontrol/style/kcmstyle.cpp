@@ -779,7 +779,7 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 	// for other styles being previewed. (e.g SGI style)
 	w->unsetPalette();
 
-	QPalette newPalette(w->palette());
+	QPalette newPalette(KApplication::createApplicationPalette());
 	s->polish( newPalette );
 	w->setPalette(newPalette);
 
