@@ -28,6 +28,7 @@
 #include <qlayout.h>
 #include <qpainter.h>
 #include <qpixmap.h>
+#include <qdrawutil.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -320,8 +321,8 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 	
     /* draw surrounding box */
     paint.setPen(pen);
-    paint.drawRect(graph->rect());
-    
+    QRect r = graph->rect();
+    qDrawShadePanel(&paint, r.x(), r.y(), r.width(), r.height(), palette().active(), true, 1);
     paint.end();
     bitBlt(graph, 0, 0, &pm);
 
