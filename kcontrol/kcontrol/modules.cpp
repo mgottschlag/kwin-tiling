@@ -37,7 +37,7 @@
 #include "modules.moc"
 #include "global.h"
 #include "proxywidget.h"
-#include "modloader.h"
+#include <kcmoduleloader.h>
 #include "kcrootonly.h"
 
 #include <X11/Xlib.h>

@@ -28,23 +28,21 @@ bin_PROGRAMS = kcontrol kcmshell kcminit
 lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
 kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
-	helpwidget.cpp moduleinfo.cpp modules.cpp proxywidget.cpp \
-	modloader.cpp dockcontainer.cpp aboutwidget.cpp global.cpp \
+	helpwidget.cpp modules.cpp proxywidget.cpp \
+	dockcontainer.cpp aboutwidget.cpp global.cpp \
 	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp \
-	kecdialog.cpp kcrootonly.cpp moduleIface.cpp moduleIface.skel
+	kcrootonly.cpp moduleIface.cpp moduleIface.skel
 
-kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils 
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
-
-kcmshell_la_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp kecdialog.cpp \
-			proxywidget.cpp kcdialog.cpp global.cpp \
-			kcdialog.skel
-kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcmshell_la_SOURCES = kcmshell.cpp proxywidget.cpp \
+	                  kcdialog.cpp global.cpp kcdialog.skel
+kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils 
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
 kcminit_la_SOURCES = kcminit.cpp global.cpp
-kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 kcontrol_SOURCES = dummy.cpp

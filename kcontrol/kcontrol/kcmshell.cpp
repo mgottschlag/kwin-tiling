@@ -34,9 +34,9 @@
 #include <kaboutdata.h>
 
 #include "kcdialog.h"
-#include "kecdialog.h"
-#include "moduleinfo.h"
-#include "modloader.h"
+#include <kcmultidialog.h>
+#include <kcmoduleinfo.h>
+#include <kcmoduleloader.h>
 #include "global.h"
 #include "kcmshell.h"
 #include "proxywidget.h"
