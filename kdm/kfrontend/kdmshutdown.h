@@ -55,6 +55,7 @@ private slots:
 
 private:
     QLabel		*label;
+    QLabel 		*plb;
     QButtonGroup	*howGroup, *whenGroup;
     QPushButton		*okButton;
     QPushButton		*cancelButton;

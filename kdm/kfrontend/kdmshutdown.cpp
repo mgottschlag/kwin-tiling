@@ -123,7 +123,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
     pswdEdit->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
 
-    QLabel *plb = new QLabel (pswdEdit, i18n("Root &Password:"), winFrame);
+    plb = new QLabel (pswdEdit, i18n("Root &Password:"), winFrame);
 
     timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
@@ -174,8 +174,15 @@ KDMShutdown::when_changed(int)
 	       (kdmcfg->_allowNuke == SHUT_ROOT && force_rb->isChecked());
     bool can = needRoot && !timer->isActive();
     pswdEdit->setEnabled (can);
-    if (can)
+    if (can) {
 	pswdEdit->setFocus();
+    	pswdEdit->show();
+	plb->show();
+     }
+     else {
+	pswdEdit->hide();
+	plb->hide();
+      }
 }
 
 void
