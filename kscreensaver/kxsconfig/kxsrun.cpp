@@ -55,6 +55,7 @@ static const KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
+  KLocale::setMainCatalogue("kxsconfig");
   KCmdLineArgs::init(argc, argv, appName, description, version);
 
   KCmdLineArgs::addCmdLineOptions(options);

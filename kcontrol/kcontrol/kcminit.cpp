@@ -32,13 +32,15 @@
 
 int main(int argc, char *argv[])
 {
+  KLocale::setMainCatalogue("kcontrol");
   KAboutData aboutData( "kcminit", I18N_NOOP("KCMInit"),
-	"$Id:  $",
+	"$Id$",
 	I18N_NOOP("KCMInit - runs startups initialisation for Control Modules."));
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
   KApplication app;
+  KLocale::setMainCatalogue(0);
 
   // locate the desktop files
   KService::List list = KService::allInitServices();

@@ -13,3 +13,6 @@ EXTRA_DIST = $(data_DATA)
 bin_PROGRAMS = krdb
 
 krdb_SOURCES = krdb.cpp
+
+messages:
+	$(XGETTEXT) *.cpp -o $(podir)/krdb.pot

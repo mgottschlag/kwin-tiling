@@ -38,7 +38,7 @@ void usage(char *name)
 
 static const char *appName = "random";
 
-static const char *description = i18n("Start a random KDE screen saver");
+static const char *description = I18N_NOOP("Start a random KDE screen saver");
 
 static const char *version = "2.0.0";
 
@@ -55,6 +55,7 @@ static const KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
+    KLocale::setMainCatalogue("klock");
     KCmdLineArgs::init(argc, argv, appName, description, version);
 
     KCmdLineArgs::addCmdLineOptions(options);
