@@ -30,9 +30,9 @@
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "Misc.h"
+#include "CompressedFile.h"
 #include <qdir.h>
 #include <ctype.h>
-#include <zlib.h>
 #include <fstream.h>
 
 // Use the strict maps - needed for creating AFMs...
@@ -688,7 +688,7 @@ void CEncodings::addDir(const QString &path, int sub)
                         else
                             if(isAEncFile(fInfo->fileName().local8Bit()))
                             {
-                                gzFile ef=gzopen(fInfo->filePath().local8Bit(), "r");
+                                CCompressedFile ef(fInfo->filePath().local8Bit());
 
                                 if(ef)
                                 {
@@ -701,7 +701,7 @@ void CEncodings::addDir(const QString &path, int sub)
                                     bool gotName=false,
                                          sixteenBit=false;
    
-                                    while(NULL!=gzgets(ef, buffer, constBufferSize))
+                                    while(NULL!=ef.getString(buffer, constBufferSize))
                                     {
                                         buffer[constBufferSize-1]='\0';
                                         toLower(buffer);
@@ -736,7 +736,6 @@ void CEncodings::addDir(const QString &path, int sub)
                                         else
                                             if(NULL==get8Bit(encName))
                                                 its8BitList.append(new T8Bit(fInfo->filePath(), encName)); // Load mapping later...
-                                    gzclose(ef);
                                 }
                             }
             }
@@ -796,8 +795,8 @@ bool CEncodings::T8Bit::load()
 {
     if(!CEncodings::isBuiltin(*this) && NULL==map)
     {
-        bool   status=false;
-        gzFile ef=gzopen(file.local8Bit(), "r");
+        bool            status=false;
+        CCompressedFile ef(file.local8Bit());
  
         if(ef)
         {
@@ -809,7 +808,7 @@ bool CEncodings::T8Bit::load()
                  e2,
                  e3;
  
-            while(NULL!=gzgets(ef, buffer, constBufferSize))
+            while(NULL!=ef.getString(buffer, constBufferSize))
             {
                 buffer[constBufferSize-1]='\0';
                 toLower(buffer);
@@ -868,8 +867,6 @@ bool CEncodings::T8Bit::load()
                             break;
                     }
             }
-
-            gzclose(ef);
         }
 
         return status;
