@@ -305,6 +305,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mLoadTimer = new QTimer( this );
     connect( mLoadTimer, SIGNAL(timeout()), SLOT(findSavers()) );
     mLoadTimer->start( 100 );
+    mChanged = false;
+    emit changed(false);
 }
 
 //---------------------------------------------------------------------------
@@ -366,6 +368,7 @@ void KScreenSaver::load()
     }
 
     updateValues();
+    mChanged = false;
     emit changed(false);
 }
 
@@ -612,6 +615,8 @@ void KScreenSaver::slotScreenSaver(int indx)
     if (!mEnabled)
         return;
 
+    bool bChanged = (indx != mSelected);
+
     if (!mSetupProc->isRunning())
         mSetupBt->setEnabled(!mSaverList.at(indx)->setup().isEmpty());
     mTestBt->setEnabled(true);
@@ -621,8 +626,11 @@ void KScreenSaver::slotScreenSaver(int indx)
     mSelected = indx;
 
     setMonitor();
-    mChanged = true;
-    emit changed(true);
+    if (bChanged)
+    {
+       mChanged = true;
+       emit changed(true);
+    }
 }
 
 //---------------------------------------------------------------------------
