@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libodbcdrvcfg2S.la
 
-INCLUDES = -I../ $(all_includes)
+INCLUDES = -I$(srcdir)/../ $(all_includes)
 
 AM_CPPFLAGS = -DUNIXODBC 
 
