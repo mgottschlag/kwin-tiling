@@ -517,6 +517,11 @@ extern "C"
     if (config->readBoolEntry("VisibleBell", false))
       run = true;
 
+    config->setGroup("Mouse");
+
+    if (config->readBoolEntry("MouseKeys", false))
+      run = true;
+
     delete config;
     if (run)
       kapp->startServiceByDesktopName("kaccess");
