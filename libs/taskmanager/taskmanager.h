@@ -260,7 +260,8 @@ public slots:
     /**
      * Maximise the main window of this task.
      */
-    void maximize();
+    void setMaximized(bool);
+    void toggleMaximized();
 
     /**
      * Restore the main window of the task (if it was iconified).
@@ -270,7 +271,8 @@ public slots:
     /**
      * Iconify the task.
      */
-    void iconify();
+    void setIconified(bool);
+    void toggleIconified();
 
     /**
      * Close the task's window.

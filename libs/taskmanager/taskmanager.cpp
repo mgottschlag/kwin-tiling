@@ -686,35 +686,95 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
 }
 
 
-void Task::maximize()
+void Task::setMaximized(bool maximize)
 {
-    KWin::WindowInfo info = KWin::windowInfo( _win, NET::WMState | NET::XAWMState | NET::WMDesktop );
+    KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
-    if( !on_current )
-        KWin::setCurrentDesktop( info.desktop());
-    if( info.isMinimized())
-        KWin::deIconifyWindow( _win );
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
-    ni.setState( NET::Max, NET::Max );
-    if( !on_current )
-        KWin::forceActiveWindow( _win );
+
+    if (!on_current)
+    {
+        KWin::setCurrentDesktop(info.desktop());
+    }
+
+    if (info.isMinimized())
+    {
+        KWin::deIconifyWindow(_win);
+    }
+
+    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+
+    if (maximize)
+    {
+        ni.setState(NET::Max, NET::Max);
+    }
+    else
+    {
+        ni.setState(0, NET::Max);
+    }
+    
+    if (!on_current)
+    {
+        KWin::forceActiveWindow(_win);
+    }
+}
+
+void Task::toggleMaximized()
+{
+    setMaximized(!isMaximized());
 }
 
 void Task::restore()
 {
-    KWin::WindowInfo info = KWin::windowInfo( _win, NET::WMState | NET::XAWMState | NET::WMDesktop );
+    KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
     bool on_current = info.isOnCurrentDesktop();
-    if( !on_current )
-        KWin::setCurrentDesktop( info.desktop());
+
+    if (!on_current)
+    {
+        KWin::setCurrentDesktop(info.desktop());
+    }
+
     if( info.isMinimized())
-        KWin::deIconifyWindow( _win );
-    if( !on_current )
+    {
+        KWin::deIconifyWindow(_win);
+    }
+
+    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+    ni.setState(0, NET::Max);
+
+    if (!on_current)
+    {
         KWin::forceActiveWindow( _win );
+    }
 }
 
-void Task::iconify()
+void Task::setIconified(bool iconify)
 {
-    KWin::iconifyWindow( _win );
+    if (iconify)
+    {
+        KWin::iconifyWindow(_win);
+    }
+    else
+    {
+        KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
+        bool on_current = info.isOnCurrentDesktop();
+
+        if (!on_current)
+        {
+            KWin::setCurrentDesktop(info.desktop());
+        }
+
+        KWin::deIconifyWindow(_win);
+
+        if (!on_current)
+        {
+            KWin::forceActiveWindow(_win);
+        }
+    }
+}
+
+void Task::toggleIconified()
+{
+    setIconified(!isIconified());
 }
 
 void Task::close()
@@ -746,12 +806,17 @@ void Task::activate()
 
 void Task::activateRaiseOrIconify()
 {
-    if ( !isActive() || isIconified() ) {
+    if (!isActive() || isIconified())
+    {
         activate();
-    } else if ( !isOnTop() ) {
+    }
+    else if (!isOnTop())
+    {
        raise();
-    } else {
-       iconify();
+    }
+    else
+    {
+       setIconified(true);
     }
 }
 

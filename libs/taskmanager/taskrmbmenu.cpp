@@ -55,38 +55,33 @@ TaskRMBMenu::TaskRMBMenu(Task *task, bool show, QWidget *parent, const char *nam
 
 void TaskRMBMenu::fillMenu(Task *t)
 {
-	int id;
-	setCheckable( true );
+    int id;
+    setCheckable(true);
 
-	id = insertItem( i18n( "Mi&nimize" ), t, SLOT( iconify() ) );
-	setItemEnabled( id, !t->isIconified() );
-	id = insertItem( i18n( "Ma&ximize" ), t, SLOT( maximize() ) );
-	setItemEnabled( id, !t->isMaximized() );
-	id = insertItem( i18n( "&Restore" ), t, SLOT( restore() ) );
-	setItemEnabled( id, t->isIconified() || t->isMaximized() );
+    id = insertItem(i18n("&Always on Top"), t, SLOT(toggleAlwaysOnTop()));
+    setItemChecked(id, t->isAlwaysOnTop());
 
-	insertSeparator();
+    if (TaskManager::the()->numberOfDesktops() > 1)
+    {
+        insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
 
-	id = insertItem( i18n( "&Shade" ), t, SLOT( toggleShaded() ) );
-	setItemChecked( id, t->isShaded() );
-	id = insertItem( i18n( "&Always on Top" ), t, SLOT( toggleAlwaysOnTop() ) );
-	setItemChecked( id, t->isAlwaysOnTop() );
+        if (showAll)
+        {
+            id = insertItem(i18n("&To Current Desktop"), t, SLOT(toCurrentDesktop()));
+            setItemEnabled( id, !t->isOnCurrentDesktop() );
+        }
+    }
 
-	insertSeparator();
+    id = insertItem(i18n("Mi&nimize"), t, SLOT(toggleIconified()));
+    setItemChecked(id, t->isIconified());
+    id = insertItem(i18n("Ma&ximize"), t, SLOT(toggleMaximized()));
+    setItemChecked(id, t->isMaximized());
+    id = insertItem(i18n("&Shade"), t, SLOT(toggleShaded()));
+    setItemChecked(id, t->isShaded());
 
-	id = insertItem( SmallIcon( "fileclose" ), i18n( "&Close" ), t, SLOT( close() ) );
+    insertSeparator();
 
-	if (TaskManager::the()->numberOfDesktops() > 1)
-	{
-		insertSeparator();
-
-		insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
-		if ( showAll )
-		{
-			id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
-			setItemEnabled( id, !t->isOnCurrentDesktop() );
-		}
-	}
+    id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t, SLOT(close()));
 }
 
 void TaskRMBMenu::fillMenu(TaskList *tasks)
@@ -106,7 +101,27 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 
 	insertSeparator();
 
-	bool enable = false;
+    bool enable = false;
+
+    if (TaskManager::the()->numberOfDesktops() > 1)
+    {
+        id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu(tasks));
+
+        id = insertItem(i18n("All &to Current Desktop"), this, SLOT(slotAllToCurrentDesktop()));
+        for(QPtrListIterator<Task> it(*tasks); *it; ++it)
+        {
+            if (!(*it)->isOnCurrentDesktop())
+            {
+                enable = true;
+                break;
+            }
+        }
+        setItemEnabled(id, enable);
+
+        insertSeparator();
+    }
+
+    enable = false;
 
 	id = insertItem( i18n( "Mi&nimize All" ), this, SLOT( slotMinimizeAll() ) );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
@@ -155,24 +170,6 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 	*/
 
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
-
-	if (TaskManager::the()->numberOfDesktops() > 1)
-	{
-		insertSeparator();
-
-		id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu(tasks));
-
-		enable = false;
-
-		id = insertItem( i18n( "All &to Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
-		for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
-			if( !(*it)->isOnCurrentDesktop() ) {
-				enable = true;
-				break;
-			}
-		}
-		setItemEnabled( id, enable );
-	}
 }
 
 QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task* t)
@@ -217,16 +214,18 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu(TaskList*)
 
 void TaskRMBMenu::slotMinimizeAll()
 {
-	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
-		(*it)->iconify();
-	}
+    for(QPtrListIterator<Task> it(*tasks); *it; ++it)
+    {
+        (*it)->setIconified(true);
+    }
 }
 
 void TaskRMBMenu::slotMaximizeAll()
 {
-	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
-		(*it)->maximize();
-	}
+    for(QPtrListIterator<Task> it(*tasks); *it; ++it)
+    {
+        (*it)->setMaximized(true);
+    }
 }
 
 void TaskRMBMenu::slotRestoreAll()
