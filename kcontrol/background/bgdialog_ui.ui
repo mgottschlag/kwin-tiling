@@ -156,7 +156,7 @@
                                 </sizepolicy>
                             </property>
                             <property name="text">
-                                <string>Advanced Options...</string>
+                                <string>Advanced Options</string>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>Click this button to set the icon text colors and shadow, set up a program to run for the background picture or control the size of the background cache.</string>
