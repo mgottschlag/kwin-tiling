@@ -17,7 +17,6 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include <fstream.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -28,6 +27,8 @@
 #include <stdarg.h>
 #endif
 #include "kxftconfig.h"
+
+using namespace std;
 
 static QString dirSyntax(const QString &d)
 {
@@ -1031,12 +1032,12 @@ void KXftConfig::removeItems(QPtrList<ListItem> &list)
             docElem.removeChild(item->node);
 }
 #else
-void KXftConfig::outputDir(ofstream &f, const QString &str)
+void KXftConfig::outputDir(std::ofstream &f, const QString &str)
 {
     f << "dir \"" << str.local8Bit() << "\"" << endl;
 }
 
-void KXftConfig::outputNewDirs(ofstream &f)
+void KXftConfig::outputNewDirs(std::ofstream &f)
 {
     ListItem *item;
 

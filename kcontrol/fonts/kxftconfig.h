@@ -28,12 +28,11 @@
 #include <qstring.h>
 #include <qptrlist.h>
 #include <stdio.h>
+#include <fstream>
 
 #ifdef USE_FONTS_CONF
 #include <qdom.h>
 #endif
-
-class ofstream;
 
 class KXftConfig
 {
@@ -165,12 +164,12 @@ class KXftConfig
     void        applyExcludeRange();
     void        removeItems(QPtrList<ListItem> &list);
 #else
-    void        outputDir(ofstream &f, const QString &str);
-    void        outputNewDirs(ofstream &f);
-    void        outputSymbolFamily(ofstream &f, const QString &str);
-    void        outputNewSymbolFamilies(ofstream &f);
-    void        outputSubPixelType(ofstream &f, bool ifNew);
-    void        outputExcludeRange(ofstream &f, bool ifNew);
+    void        outputDir(std::ofstream &f, const QString &str);
+    void        outputNewDirs(std::ofstream &f);
+    void        outputSymbolFamily(std::ofstream &f, const QString &str);
+    void        outputNewSymbolFamilies(std::ofstream &f);
+    void        outputSubPixelType(std::ofstream &f, bool ifNew);
+    void        outputExcludeRange(std::ofstream &f, bool ifNew);
 #endif
 
     private:
