@@ -63,18 +63,11 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
-
-    load();
 }
 
 void HidingTab::load()
 {
-    if (m_panelList->firstChild())
-    {
-        m_kcm->reloadExtensionInfo();
-        m_panelList->clear();
-    }
-
+    m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
     if (m_kcm->extensionsInfo().count() == 1)
     {

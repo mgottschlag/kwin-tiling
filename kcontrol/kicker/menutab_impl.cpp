@@ -86,8 +86,6 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
     m_browserGroupLayout->setColStretch( 1, 1 );
     m_pRecentOrderGroupLayout->setColStretch( 1, 1 );
-
-    load();
 }
 
 void MenuTab::load()

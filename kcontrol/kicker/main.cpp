@@ -104,11 +104,16 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
+    load();
+
+    QObject::connect(positiontab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
+                     this, SLOT(positionPanelChanged(QListViewItem*)));
+    QObject::connect(hidingtab->m_panelList, SIGNAL(selectionChanged(QListViewItem*)),
+                     this, SLOT(hidingPanelChanged(QListViewItem*)));
+
     //applettab = new AppletTab(this);
     //tab->addTab(applettab, i18n("&Applets"));
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
-
-    load();
 }
 
 void KickerConfig::configChanged()
@@ -214,6 +219,53 @@ void KickerConfig::saveExtentionInfo()
     for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
     {
        (*it)->save();
+    }
+}
+
+void KickerConfig::positionPanelChanged(QListViewItem* item)
+{
+    if (!item)
+    {
+        return;
+    }
+
+    extensionInfo* info = static_cast<extensionInfoItem*>(item)->info();
+    extensionInfoItem* hidingItem = 
+        static_cast<extensionInfoItem*>(hidingtab->m_panelList->firstChild());
+
+    while (hidingItem)
+    {
+        if (hidingItem->info() == info)
+        {
+            hidingtab->m_panelList->setSelected(hidingItem, true);
+            return;
+        }
+        
+        hidingItem = static_cast<extensionInfoItem*>(hidingItem->nextSibling());
+    }
+}
+
+
+void KickerConfig::hidingPanelChanged(QListViewItem* item)
+{
+    if (!item)
+    {
+        return;
+    }
+
+    extensionInfo* info = static_cast<extensionInfoItem*>(item)->info();
+    extensionInfoItem* positionItem =
+        static_cast<extensionInfoItem*>(positiontab->m_panelList->firstChild());
+
+    while (positionItem)
+    {
+        if (positionItem->info() == info)
+        {
+            positiontab->m_panelList->setSelected(positionItem, true);
+            return;
+        }
+        
+        positionItem = static_cast<extensionInfoItem*>(positionItem->nextSibling());
     }
 }
 

@@ -84,8 +84,6 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
     
     connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
-
-    load();
 }
 
 PositionTab::~PositionTab()
@@ -95,13 +93,9 @@ PositionTab::~PositionTab()
 
 void PositionTab::load()
 {
-    if (m_panelList->firstChild())
-    {
-        m_kcm->reloadExtensionInfo();
-        m_panelList->clear();
-    }
-
+    m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
+
     if (m_kcm->extensionsInfo().count() == 1)
     {
         m_panelList->hide();

@@ -54,6 +54,10 @@ signals:
 public slots:
     void configChanged();
 
+protected slots:
+    void positionPanelChanged(QListViewItem*);
+    void hidingPanelChanged(QListViewItem*);
+
 private:
     QTabWidget     *tab;
     PositionTab    *positiontab;
@@ -62,6 +66,8 @@ private:
     MenuTab        *menutab;
     AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
+    PositionTab*      m_positiontab;
+    HidingTab*        m_hidingtab;
 };
 
 #endif // __main_h__

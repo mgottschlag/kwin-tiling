@@ -74,7 +74,6 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
   fillTileCombos();
-  load();
 }
 
 void LookAndFeelTab::browse_theme(const QString& newtheme)
