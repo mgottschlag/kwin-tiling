@@ -31,11 +31,7 @@
 
 #include <stdio.h>
 #include <qstring.h>
-#ifdef KFI_USE_KFILTERDEV
-#include <qiodevice.h>
-#else
 #include <zlib.h>
-#endif
 
 class CCompressedFile
 {
@@ -44,18 +40,13 @@ class CCompressedFile
     enum EType
     {
         GZIP,
-        Z,
-        NORM
+        Z
     };
 
     CCompressedFile(const QString &fname);
     virtual ~CCompressedFile();
 
-#ifdef KFI_USE_KFILTERDEV
-    operator bool() { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
-#else
     operator bool() { return  GZIP==itsType ? NULL!=itsGzFile : NULL!=itsFile; }
-#endif
 
     void   open(const QString &fname);
     void   close();
@@ -63,11 +54,7 @@ class CCompressedFile
     int    getChar();
     char * getString(char *data, unsigned int len);
     int    seek(int offset, int whence);
-#ifdef KFI_USE_KFILTERDEV
-    bool   eof()    { return GZIP==itsType ? itsDev && itsDev->atEnd() : feof(itsFile); }
-#else
     bool   eof()    { return GZIP==itsType ? gzeof(itsGzFile) : feof(itsFile); }
-#endif
 
     private:
 
@@ -83,11 +70,7 @@ class CCompressedFile
     union
     {
         FILE      *itsFile;
-#ifdef KFI_USE_KFILTERDEV
-        QIODevice *itsDev;
-#else
         gzFile    itsGzFile;
-#endif
     };
 };
 

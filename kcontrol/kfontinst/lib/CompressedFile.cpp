@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "CompressedFile.h"
-#ifdef KFI_USE_KFILTERDEV
-#include <kfilterdev.h>
-#endif
 #include <kprocess.h>
 #include <qfile.h>
 
 CCompressedFile::CCompressedFile(const QString &fname) 
-               : itsType(NORM),
+               : itsType(GZIP),
                  itsFName(fname),
                  itsFile(NULL) 
 { 
@@ -47,36 +44,16 @@ CCompressedFile::~CCompressedFile()
     close();
 }
 
-static CCompressedFile::EType getType(const QString &fname)
-{
-    // Check for .gz...
-    if(fname.endsWith(".gz"))
-        return CCompressedFile::GZIP;
-
-    // Check for .Z
-    if(fname.endsWith(".Z"))
-        return CCompressedFile::Z;
-
-    // Else assume its a normal file...
-        return CCompressedFile::NORM;
-}
-
 void CCompressedFile::open(const QString &fname)
 {
-    itsType=getType(fname);
+    itsType=fname.endsWith(".Z") ? CCompressedFile::Z : CCompressedFile::GZIP;
     itsFName=fname;
     itsPos=0;
 
     switch(itsType)
     {
         case GZIP:
-#ifdef KFI_USE_KFILTERDEV
-            itsDev=KFilterDev::deviceForFile(fname, "application/x-gzip");
-            if(itsDev && !itsDev->open(IO_ReadOnly))
-                close();
-#else
             itsGzFile=gzopen(QFile::encodeName(fname), "r");
-#endif
             break;
         case Z:
         {
@@ -84,8 +61,6 @@ void CCompressedFile::open(const QString &fname)
             itsFile=popen(QFile::encodeName(cmd), "r");
             break;
         }
-        case NORM:
-            itsFile=fopen(QFile::encodeName(fname), "r");
     }
 }
 
@@ -95,14 +70,8 @@ void CCompressedFile::close()
         switch(itsType)
         {
             case GZIP:
-#ifdef KFI_USE_KFILTERDEV
-                if(itsDev)
-                    delete itsDev;
-                itsDev=NULL;
-#else
                 gzclose(itsGzFile);
                 itsGzFile=NULL;
-#endif
                 break;
             case Z:
                 while(!eof())
@@ -110,9 +79,6 @@ void CCompressedFile::close()
                 pclose(itsFile);
                 itsFile=NULL;
                 break;
-            case NORM:
-                fclose(itsFile);
-                itsFile=NULL;
         }
 }
 
@@ -121,14 +87,7 @@ int CCompressedFile::read(void *data, unsigned int len)
     int r=0;
 
     if(GZIP==itsType)
-#ifdef KFI_USE_KFILTERDEV
-    {
-        if(itsDev)
-            r=itsDev->readBlock((char *)data, len);
-    }
-#else
         r=gzread(itsGzFile, data, len);
-#endif
     else
         r=fread(data, 1, len, itsFile);
 
@@ -142,14 +101,7 @@ int CCompressedFile::getChar()
     int c=EOF;
 
     if(GZIP==itsType)
-#ifdef KFI_USE_KFILTERDEV
-    {
-        if(itsDev)
-            c=itsDev->getch();
-    }
-#else
         c=gzgetc(itsGzFile);
-#endif
     else
         c=fgetc(itsFile);
 
@@ -158,7 +110,6 @@ int CCompressedFile::getChar()
     return c;
 }
 
-#ifndef KFI_USE_KFILTERDEV
 // Copied from zlib 1.2.1 source as some installtion seem not to have gzgets()
 char * kfi_gzgets(gzFile file, char *buf, int len)
 {
@@ -173,21 +124,13 @@ char * kfi_gzgets(gzFile file, char *buf, int len)
 
     return b == buf && len > 0 ? Z_NULL : b;
 }
-#endif
 
 char * CCompressedFile::getString(char *data, unsigned int len)
 {
     char *s=NULL;
 
     if(GZIP==itsType)
-#ifdef KFI_USE_KFILTERDEV
-    {
-        if(itsDev)
-            s=itsDev->readLine(data, len)!=-1 ? data : NULL;
-    }
-#else
         s=kfi_gzgets(itsGzFile, data, len);
-#endif
     else
         s=fgets(data, len, itsFile);
 
@@ -199,30 +142,25 @@ char * CCompressedFile::getString(char *data, unsigned int len)
 
 int CCompressedFile::seek(int offset, int whence)
 {
-    if(NORM==itsType)
-        return fseek(itsFile, offset, whence);
-    else
+    int c;
+
+    switch(whence)
     {
-        int c;
-
-        switch(whence)
-        {
-            case SEEK_CUR:
-                break;
-            case SEEK_SET:
-                if(offset<itsPos)
-                {
-                    close();
-                    open(itsFName);
-                }
-                offset-=itsPos;
-                break;
-            default:
-                offset=-1;
-        }
-
-        for(c=0; c<offset && -1!=getChar(); c++)
-            ;
-        return c==offset ? 0 : -1;
+        case SEEK_CUR:
+            break;
+        case SEEK_SET:
+            if(offset<itsPos)
+            {
+                close();
+                open(itsFName);
+            }
+            offset-=itsPos;
+            break;
+        default:
+            offset=-1;
     }
+
+    for(c=0; c<offset && -1!=getChar(); c++)
+        ;
+    return c==offset ? 0 : -1;
 }
