@@ -27,6 +27,7 @@
 #include <qslider.h>
 
 #include <kapp.h>
+#include <kdebug.h>
 #include <kbuttonbox.h>
 #include <kcolordlg.h>
 #include <kconfig.h>
@@ -57,33 +58,14 @@ void KMatrixSaverCfg::readSettings() {
   KConfig *config = klock_config();
   config->setGroup("Settings");
 
-  str = config->readEntry("BackgroundColor");
-  if ( !str.isNull() )
-    background.setNamedColor( str );
-  else
-    background = Qt::black;
-  str = config->readEntry("ForegroundColor");
-  if ( !str.isNull() )
-    foreground.setNamedColor( str );
-  else
-    foreground = Qt::green;
+  background = config->readColorEntry("BackgroundColor", &Qt::black);
+  foreground = config->readColorEntry("ForegroundColor", &Qt::green);
   //str = config->readEntry("Mono");
   mono = False;
-  str = config->readEntry("Density");
-  if( !str.isNull() )
-    density = str.toInt();
-  else
-    density = 25;
-  str = config->readEntry("Speed");
-  if( !str.isNull() )
-    speed = str.toInt();
-  else
-    speed = 100;
-  str = config->readEntry("Insert");
-  if( !str.isNull() )
-    insert = str;
-  else
-    insert = "bottom";
+  density = config->readNumEntry("Density", 25);
+  speed = config->readNumEntry("Speed", 100);
+  insert = config->readEntry("Insert", "bottom");
+
   delete config;
 }
 
@@ -91,19 +73,11 @@ void KMatrixSaverCfg::writeSettings() {
   KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
-  QString str;
-
-  str.sprintf("#%02x%02x%02x",
-	      background.red(), background.green(), background.blue());
-  config->writeEntry("BackgroundColor", str);
-  str.sprintf("#%02x%02x%02x",
-	      foreground.red(), foreground.green(), foreground.blue());
-  config->writeEntry("ForegroundColor", str);
+  config->writeEntry("BackgroundColor", background);
+  config->writeEntry("ForegroundColor", foreground);
   //config->writeEntry("Mono", str);
-  str.sprintf("%d", density);
-  config->writeEntry("Density", str);
-  str.sprintf("%d", speed);
-  config->writeEntry("Speed", str);
+  config->writeEntry("Density", density);
+  config->writeEntry("Speed", speed);
   config->writeEntry("Insert", insert);
   config->sync();
   delete config;
@@ -133,7 +107,7 @@ int setupScreenSaver() {
   return dlg.exec();
 }
 
-const char *getScreenSaverName() {
+QString getScreenSaverName() {
   return i18n("Kmatrix \"The Matrix\" movie style screen saver");
 }
 
@@ -301,7 +275,6 @@ void KMatrixSaver::load_images () {
 /* initialize matrix */
 void KMatrixSaver::init_matrix () {
   XGCValues gcv;
-  char *insert;
   state = (m_state *) calloc (sizeof(*state), 1);
   state->dpy = qt_xdisplay();
   state->window = mDrawable;
@@ -331,34 +304,29 @@ void KMatrixSaver::init_matrix () {
 
   state->density = cfg.density;
 
-  insert = strdup(cfg.insert);
-  if (insert && !strcmp(insert, "top"))
+  QString insert = cfg.insert;
+  if (insert == "top")
     {
       state->insert_top_p = True;
       state->insert_bottom_p = False;
     }
-  else if (insert && !strcmp(insert, "bottom"))
+  else if (insert == "bottom")
     {
       state->insert_top_p = False;
       state->insert_bottom_p = True;
     }
-  else if (insert && !strcmp(insert, "both"))
+  else if (insert == "both")
     {
       state->insert_top_p = True;
       state->insert_bottom_p = True;
     }
   else
     {
-      if (insert && *insert)
-        fprintf (stderr,
-                 "%s: `insert' must be `top', `bottom', or `both', not `%s'\n",
-                 progname, insert);
+      if (!insert.isEmpty())
+        kdError() << "`insert' must be `top', `bottom', or `both', not " << insert << endl;
       state->insert_top_p = False;
       state->insert_bottom_p = True;
     }
-
-  if (insert)
-    free (insert);
 
   /* return state; */
 }
@@ -576,8 +544,8 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   fixed_size(densityEd);
   tmps.sprintf("%d", cfg.density);
   densityEd->setText(tmps);
-  connect(densityEd, SIGNAL(textChanged(const char *)),
-	  SLOT(slotDensityEdit(const char *)));
+  connect(densityEd, SIGNAL(textChanged(const QString &)),
+	  SLOT(slotDensityEdit(const QString &)));
   dhb->addWidget(densityEd);
   */
 #undef Below
@@ -602,8 +570,8 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   fixed_size(speedEd);
   tmps.sprintf("%d", SPEED2SL(cfg.speed));
   speedEd->setText(tmps);
-  connect(speedEd, SIGNAL(textChanged(const char *)),
-	  SLOT(slotSpeedEdit(const char *)));
+  connect(speedEd, SIGNAL(textChanged(const QString &)),
+	  SLOT(slotSpeedEdit(const QString &)));
   shb->addWidget(speedEd);
   */
   speedSld = new QSlider(0, 100, 1, SPEED2SL(cfg.speed), QSlider::Horizontal,
@@ -631,13 +599,13 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   rb = new QRadioButton( insertRbGrp);
   rb->setText( i18n("Bottom"));
   min_size(rb);
-  if( !qstrcmp(cfg.insert, inserts[i++]) ) rb->setChecked(TRUE);
+  if( cfg.insert == inserts[i++] ) rb->setChecked(TRUE);
     else rb->setChecked(FALSE);
   grpvbox->addWidget(rb);
   rb = new QRadioButton( insertRbGrp);
   rb->setText( i18n("Both"));
   min_size(rb);
-  if( !qstrcmp(cfg.insert, inserts[i++]) ) rb->setChecked(TRUE);
+  if( cfg.insert == inserts[i++] ) rb->setChecked(TRUE);
     else rb->setChecked(FALSE);
   grpvbox->addWidget(rb);
   connect(insertRbGrp, SIGNAL(clicked(int)), SLOT(slotInsert(int)));
@@ -737,15 +705,15 @@ void KMatrixSetup::slotInsert(int id) {
   saver->setInsert(cfg.insert);
 }
 
-void KMatrixSetup::slotDensityEdit(const char *s) {
-  int val = atoi(s);
+void KMatrixSetup::slotDensityEdit(const QString &s) {
+  int val = s.toInt();
   //fprintf(stderr, "slotDensityEdit: arg = %s\n", s);
   setDensity(val);
   densitySld->setValue(val);
 }
 
-void KMatrixSetup::slotSpeedEdit(const char *s) {
-  int val = atoi(s);
+void KMatrixSetup::slotSpeedEdit(const QString &s) {
+  int val = s.toInt();
   //fprintf(stderr, "slotSpeedEdit: arg = %s\n", s);
   setSpeed(val);
   speedSld->setValue(val);

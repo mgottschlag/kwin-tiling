@@ -301,19 +301,9 @@ void kSwarmSaver::readSettings()
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
-	QString str;
+	speed = MAXSPEED - config->readNumEntry( "Speed", MAXSPEED - DEFSPEED );
+	maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
-	else
-		speed = DEFSPEED;
-
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
 	delete config;
 }
 

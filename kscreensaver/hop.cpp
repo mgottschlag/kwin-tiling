@@ -281,25 +281,10 @@ void kHopSaver::readSettings()
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
-    QString str;
+    speed = MAXSPEED - config->readNumEntry( "Speed", MAXSPEED - (MAXSPEED-MINSPEED)/2);
+    maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
+    numPoints = config->readNumEntry( "NumPoints", DEFCYCLES );
 
-    str = config->readEntry( "Speed" );
-    if ( !str.isNull() )
-	speed = MAXSPEED - atoi( str );
-    else
-	speed = (MAXSPEED-MINSPEED)/2;
-
-    str = config->readEntry( "MaxLevels" );
-    if ( !str.isNull() )
-	maxLevels = atoi( str );
-    else
-	maxLevels = DEFBATCH;
-
-    str = config->readEntry( "NumPoints" );
-    if ( !str.isNull() )
-	numPoints = atoi( str );
-    else
-	numPoints = DEFCYCLES;
     delete config;
 }
 
@@ -398,28 +383,15 @@ void kHopSetup::readSettings()
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
-    QString str;
-
-    str = config->readEntry( "Speed" );
-    if ( !str.isNull() )
-	speed = atoi( str );
-
+    speed = config->readNumEntry( "Speed", speed );
     if ( speed > MAXSPEED )
 	speed = MAXSPEED;
     else if ( speed < MINSPEED )
 	speed = MINSPEED;
 
-    str = config->readEntry( "MaxLevels" );
-    if ( !str.isNull() )
-	maxLevels = atoi( str );
-    else
-	maxLevels = DEFBATCH;
+    maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
+    numPoints = config->readNumEntry( "NumPoints", DEFCYCLES );
 
-    str = config->readEntry( "NumPoints" );
-    if ( !str.isNull() )
-	numPoints = atoi( str );
-    else
-	numPoints = DEFCYCLES;
     delete config;
 }
 

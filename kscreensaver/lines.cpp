@@ -362,21 +362,14 @@ void kLinesSaver::readSettings(){
     config->setGroup("Settings");
 
     numLines=config->readNumEntry("Length", 10);
-    str = config->readEntry("Speed");
-    if(!str.isNull()) speed=100-atoi(str);
-    else speed=50;
+    speed = 100- config->readNumEntry("Speed", 50);
     if(numLines>MAXLENGTH) numLines=MAXLENGTH;
     else if(numLines<1) numLines = 1;
 
-    str=config->readEntry("StartColor");
-    if(!str.isNull()) colstart.setNamedColor(str);
-    else colstart=white;
-    str=config->readEntry("MidColor");
-    if(!str.isNull()) colmid.setNamedColor(str);
-    else colmid=blue;
-    str=config->readEntry("EndColor");
-    if(!str.isNull()) colend.setNamedColor(str);
-    else colend=black;
+    colstart=config->readColorEntry("StartColor", &white);
+    colmid=config->readColorEntry("MidColor", &blue);
+    colend=config->readColorEntry("EndColor", &black);
+
     delete config;
 }
 

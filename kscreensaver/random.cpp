@@ -30,9 +30,9 @@
 
 void usage(char *name)
 {
-    printf(i18n("Usage: %1 [-setup] [args]\n").arg(name));
-    printf(i18n("Starts a random screensaver.\n"));
-    printf(i18n("Any arguments (except -setup) are passed on to the screensaver.\n"));
+    printf(i18n("Usage: %1 [-setup] [args]\n").arg(name).local8Bit());
+    printf(i18n("Starts a random screensaver.\n").local8Bit());
+    printf(i18n("Any arguments (except -setup) are passed on to the screensaver.\n").local8Bit());
 }
 
 int main(int argc, char *argv[])

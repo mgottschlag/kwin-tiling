@@ -645,7 +645,7 @@ void kSlideShowSaver::loadNextImage()
 
   if (!mImage.load(fpath))
   {
-    printf("Failed to load image '%s'\n", (const char*)fpath);
+    printf(i18n("Failed to load image \"%1\"\n").arg(fpath).local8Bit());
     mFileList.remove(fname);
     mRandomList.remove(fname);
     if (!mFileList.isEmpty()) loadNextImage();

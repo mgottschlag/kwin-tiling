@@ -45,9 +45,9 @@ private slots:
   void slotForegrColor();
   void slotBackgrColor();
   void slotDensity(int val);
-  void slotDensityEdit(const char *s);
+  void slotDensityEdit(const QString &s);
   void slotSpeed(int val);
-  void slotSpeedEdit(const char *s);
+  void slotSpeedEdit(const QString &s);
   void slotInsert(int id);
   void slotOkPressed();
   void slotAbout();

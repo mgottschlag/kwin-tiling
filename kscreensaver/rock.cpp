@@ -508,31 +508,11 @@ void kRockSaver::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
+	speed = 100 - config->readNumEntry( "Speed", 50 );
+	number = config->readNumEntry( "Number", 50 );
+	move = config->readNumEntry( "Move", false );
+	rotate = config->readBoolEntry( "Rotate", false );
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = 100 - atoi( str );
-	else
-		speed = 50;
-
-	str = config->readEntry( "Number" );
-	if ( !str.isNull() )
-		number = atoi( str );
-	else
-		number = 50;
-
-	str = config->readEntry( "Move" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		move = TRUE;
-	else
-		move = FALSE;
-
-	str = config->readEntry( "Rotate" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		rotate = TRUE;
-	else
-		rotate = FALSE;
 	delete config;
 }
 
@@ -633,35 +613,21 @@ void kRockSetup::readSettings()
 
 	QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-
+	speed = config->readNumEntry( "Speed", speed );
 	if ( speed > 100 )
 		speed = 100;
 	else if ( speed < 50 )
 		speed = 50;
 
-	str = config->readEntry( "Number" );
-	if ( !str.isNull() )
-		number = atoi( str );
-
+	number = config->readNumEntry( "Number", number );
 	if ( number > 260 )
 		number = 260;
 	else if ( speed < 50 )
 		number = 50;
 
-	str = config->readEntry( "Move" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		move = TRUE;
-	else
-		move = FALSE;
+	move = config->readBoolEntry( "Move", false );
+	rotate = config->readBoolEntry( "Rotate", false );
 
-	str = config->readEntry( "Rotate" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		rotate = TRUE;
-	else
-		rotate = FALSE;
 	delete config;
 }
 

@@ -417,18 +417,10 @@ void KBlobSaver::readSettings()
     config->setGroup("Settings");
 
     // number of seconds to spend on a frame
-    str = config->readEntry("Showtime");
-    if (!str.isNull())
-	showlen = atoi(str);
-    else
-	showlen = 3*60;
+    showlen = config->readNumEntry("Showtime", 3*60);
 
     // algorithm to use. if not set then use random
-    str = config->readEntry("Algorithm");
-    if (!str.isNull())
-	alg = atoi(str);
-    else
-	alg = ALG_RANDOM;
+    alg = config->readNumEntry("Algorithm", ALG_RANDOM);
     if (alg == ALG_RANDOM)	
 	newalg = 1;
     else
@@ -537,18 +529,10 @@ void KBlobSetup::readSettings()
     config->setGroup("Settings");
 
     // number of seconds to spend on a frame
-    str = config->readEntry("Showtime");
-    if (!str.isNull())
-	showtime = atoi(str);
-    else
-	showtime = 3*60;
+    showtime = config->readNumEntry("Showtime", 3*60);
 
     // algorithm to use. if not set then use random
-    str = config->readEntry("Algorithm");
-    if (!str.isNull())
-	alg = atoi(str);
-    else
-	alg = ALG_LAST;
+    alg = config->readNumEntry("Algorithm", ALG_LAST);
 
     delete config;
 }
@@ -557,15 +541,11 @@ void KBlobSetup::readSettings()
 void KBlobSetup::slotOkPressed()
 {
     KConfig *config = klock_config();
-    QString str;
 
     config->setGroup("Settings");
 
-    str = stime->text();
-    config->writeEntry("Showtime", str);
-
-    str.setNum(algs->currentItem());
-    config->writeEntry("Algorithm", str);
+    config->writeEntry("Showtime", stime->text());
+    config->writeEntry("Algorithm", algs->currentItem());
 
     config->sync();
     delete config;

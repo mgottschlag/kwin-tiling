@@ -21,6 +21,7 @@
 #include <qpushbutton.h>
 
 #include <kapp.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kbuttonbox.h>
@@ -509,7 +510,7 @@ void KBannerSaver::slotTimeout()
 
 	XSetForeground( qt_xdisplay(), mGc, fontColor.pixel() );
 
-   if (showTime) message = QTime::currentTime().toString();
+   if (showTime) message = KGlobal::locale()->formatTime(QTime::currentTime(), true);
    XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
 }
 

@@ -959,37 +959,11 @@ void kBoubouleSaver::readSettings()
     KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = MAXSPEED - atoi( str );
-	else
-		speed = DEFSPEED;
-
-	str = config->readEntry( "NumPoints" );
-	if ( !str.isNull() )
-		numPoints = atoi( str );
-	else
-		numPoints = DEFPOINTS;
-
-	str = config->readEntry( "PointSize" );
-	if ( !str.isNull() )
-		pointSize = atoi( str );
-	else
-		pointSize = DEFSIZE;
-
-	str = config->readEntry( "ColorCycleDelay" );
-	if ( !str.isNull() )
-		colorCycleDelay = atoi( str );
-	else
-		colorCycleDelay = DEFCCSPEED;
-
-	str = config->readEntry( "3DMode" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		flag_3dmode = TRUE;
-	else
-		flag_3dmode = FALSE;
+	speed = MAXSPEED - config->readNumEntry( "Speed", MAXSPEED - DEFSPEED );
+	numPoints = config->readNumEntry( "NumPoints", DEFPOINTS );
+	pointSize = config->readNumEntry( "PointSize", DEFSIZE );
+	colorCycleDelay = config->readNumEntry( "ColorCycleDelay", DEFCCSPEED );
+	flag_3dmode = config->readBoolEntry( "3DMode", false );
 
 	delete config;
 }
@@ -1112,43 +1086,16 @@ void kBoubouleSetup::readSettings()
     KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-	else
-		speed = DEFSPEED;
-
+	speed = config->readNumEntry( "Speed", DEFSPEED );
 	if ( speed > MAXSPEED )
 		speed = MAXSPEED;
 	else if ( speed < MINSPEED )
 		speed = MINSPEED;
 
-	str = config->readEntry( "NumPoints" );
-	if ( !str.isNull() )
-		numPoints = atoi( str );
-	else
-		numPoints = DEFPOINTS;
-
-	str = config->readEntry( "PointSize" );
-	if ( !str.isNull() )
-		pointSize = atoi( str );
-	else
-		pointSize = DEFSIZE;
-
-
-	str = config->readEntry( "ColorCycleDelay" );
-	if ( !str.isNull() )
-		colorCycleDelay = atoi( str );
-	else
-		colorCycleDelay = DEFSIZE;
-
-	str = config->readEntry( "3DMode" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		flag_3dmode = TRUE;
-	else
-		flag_3dmode = FALSE;
+	numPoints = config->readNumEntry( "NumPoints", DEFPOINTS );
+	pointSize = config->readNumEntry( "PointSize", DEFSIZE );
+	colorCycleDelay = config->readNumEntry( "ColorCycleDelay", DEFSIZE );
+	flag_3dmode = config->readBoolEntry( "3DMode", false );
 
 	delete config;
 }

@@ -511,19 +511,8 @@ void kBatSaver::readSettings()
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
-    QString str;
-
-    str = config->readEntry( "Speed" );
-    if ( !str.isNull() )
-	speed = MAXSPEED - atoi( str );
-    else
-	speed = DEFSPEED;
-
-    str = config->readEntry( "MaxLevels" );
-    if ( !str.isNull() )
-	maxLevels = atoi( str );
-    else
-	maxLevels = DEFBATCH;
+    speed = MAXSPEED - config->readNumEntry( "Speed", MAXSPEED - DEFSPEED );
+    maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 
     delete config;
 
@@ -615,20 +604,14 @@ void kBatSetup::readSettings()
 
     QString str;
 
-    str = config->readEntry( "Speed" );
-    if ( !str.isNull() )
-	speed = atoi( str );
+    speed = config->readNumEntry( "Speed", speed );
 
     if ( speed > MAXSPEED )
 	speed = MAXSPEED;
     else if ( speed < MINSPEED )
 	speed = MINSPEED;
 
-    str = config->readEntry( "MaxLevels" );
-    if ( !str.isNull() )
-	maxLevels = atoi( str );
-    else
-	maxLevels = DEFBATCH;
+    maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 
     delete config;
 }

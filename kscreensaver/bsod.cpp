@@ -1133,11 +1133,7 @@ config->writeEntry("SparcLinux.font", config->readEntry("SparcLinux.font", "-*-c
 config->writeEntry("SparcLinux.font2", config->readEntry("SparcLinux.font2", "-*-courier-bold-r-*-*-*-140-*-*-m-*-*-*"));
 config->writeEntry("SparcLinux.foreground", config->readEntry("SparcLinux.foreground", "White"));
 config->writeEntry("SparcLinux.background", config->readEntry("SparcLinux.background", "Black"));
-str = config->readEntry("Delay");
-if ( !str.isNull() )
-	delay = (unsigned int)atoi( str );
-else
-	delay = DEFDELAY;
+delay = config->readNumEntry("Delay", DEFDELAY);
 
 config->sync();
 }

@@ -162,8 +162,6 @@ void kPolygonSetup::readSettings()
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
     
-    QString str;
-    
     length = config->readNumEntry( "Length", length );
     if ( length > MAXLENGTH )
         length = MAXLENGTH;
@@ -291,30 +289,23 @@ void kPolygonSaver::setSpeed( int spd )
 // read configuration settings from config file
 void kPolygonSaver::readSettings()
 {
-    QString str;
-    
     KConfig *config = klock_config();
     config->setGroup( "Settings" );
 
     numLines = config->readNumEntry( "Length", 10 );
-
-    numVertices = config->readNumEntry( "Vertices", 3 );
-
-    str = config->readEntry( "Speed" );
-    if ( !str.isNull() )
-	    speed = 100 - atoi( str );
-    else
-	    speed = 50;
-
     if ( numLines > 50 )
 	    numLines = 50;
     else if ( numLines < 1 )
 	    numLines = 1;
-    
+
+    numVertices = config->readNumEntry( "Vertices", 3 );
     if ( numVertices > 20 )
 	    numVertices = 20;
     else if ( numVertices < 3 )
 	    numVertices = 3;
+
+    speed = 100 - config->readNumEntry( "Speed", 50 );
+    
     delete config;
 }
 

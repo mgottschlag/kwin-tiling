@@ -492,19 +492,9 @@ void kPyroSaver::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
+	number = config->readNumEntry( "Number", 100 );
+	cloud = config->readBoolEntry( "Cloud", false );
 
-	str = config->readEntry( "Number" );
-	if ( !str.isNull() )
-		number = atoi( str );
-	else
-		number = 100;
-
-	str = config->readEntry( "Cloud" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		cloud = TRUE;
-	else
-		cloud = FALSE;
 	delete config;
 }
 
@@ -583,22 +573,14 @@ void kPyroSetup::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Number" );
-	if ( !str.isNull() )
-		number = atoi( str );
-
+	number = config->readNumEntry( "Number", number );
 	if ( number > 200 )
 		number = 200;
 	else if ( number < 100 )
 		number = 100;
 
-	str = config->readEntry( "Cloud" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		cloud = TRUE;
-	else
-		cloud = FALSE;
+	cloud = config->readBoolEntry( "Cloud", false );
+
 	delete config;
 }
 

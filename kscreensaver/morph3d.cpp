@@ -1010,12 +1010,8 @@ void kMorph3dSaver::readSettings()
 	else
 		speed = DEFSPEED;
 
-	str = config->readEntry( "MaxLevels" );
+	maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 	// CC: fixed MaxLevels <-> ObjectType inconsistency
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
 
 	delete config;
 }
@@ -1082,23 +1078,14 @@ void kMorph3dSetup::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-
+	speed = config->readNumEntry( "Speed", speed );
 	if ( speed > MAXSPEED )
 		speed = MAXSPEED;
 	else if ( speed < MINSPEED )
 		speed = MINSPEED;
 
-	str = config->readEntry( "MaxLevels" );
+	maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 	// CC: fixed MaxLevels <-> ObjectType inconsistency
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
 
 	delete config;
 }

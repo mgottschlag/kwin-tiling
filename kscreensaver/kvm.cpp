@@ -256,7 +256,7 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-const char *getScreenSaverName()
+QString getScreenSaverName()
 {
 	return i18n("Virtual Machine");
 }
@@ -312,18 +312,9 @@ void kVmSaver::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
+	speed = config->readNumEntry( "Speed", 50 );
+	refreshTimeout = config->readNumEntry( "DisplayRefreshTimeout", 0 );
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-	else
-		speed = 50;
-	str = config->readEntry( "DisplayRefreshTimeout" );
-	if ( !str.isNull() )
-		refreshTimeout = atoi( str );
-	else
-		refreshTimeout = 0;
 	delete config;
 }
 int kVmSaver::getRandom( const int max_value ) {
@@ -449,27 +440,17 @@ void kVmSetup::readSettings()
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-	else
-		speed = 50;
-fprintf( stderr, "setup: read speed = %i\n", speed );
+	speed = config->readNumEntry( "Speed", 50 );
 	if ( speed > 100 )
 		speed = 100;
 	else if ( speed < 0 )
 		speed = 0;
-	str = config->readEntry( "DisplayRefreshTimeout" );
-	if ( !str.isNull() )
-		refreshTimeout = atoi( str );
-	else
-		refreshTimeout = 0;
+	refreshTimeout = config->readNumEntry( "DisplayRefreshTimeout", 0 );
 	if ( refreshTimeout > MAX_REFRESH_TIMEOUT )
 		refreshTimeout = MAX_REFRESH_TIMEOUT;
 	else if ( refreshTimeout < 0 )
 		refreshTimeout = 0;
+
 	delete config;
 }
 

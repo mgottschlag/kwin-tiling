@@ -56,7 +56,7 @@
 static KScienceSaver *saver = 0;
 
 struct {
-	char name[32];
+	QString name;
 	bool inverseEnable;
 	} modeInfo[MAX_MODES];
 
@@ -64,22 +64,22 @@ enum { MODE_WHIRL=0, MODE_CURVATURE, MODE_SPHERE, MODE_WAVE, MODE_EXPONENTIAL, M
 
 void initModeInfo()
 {
-	strncpy( modeInfo[MODE_WHIRL].name, i18n( "Whirl" ), 32 );
+	modeInfo[MODE_WHIRL].name = i18n( "Whirl" );
 	modeInfo[MODE_WHIRL].inverseEnable = true;
 
-	strncpy( modeInfo[MODE_SPHERE].name, i18n( "Sphere" ), 32 );
+	modeInfo[MODE_SPHERE].name = i18n( "Sphere" );
 	modeInfo[MODE_SPHERE].inverseEnable = true;
 
-	strncpy( modeInfo[MODE_EXPONENTIAL].name, i18n( "Exponential" ), 32 );
+	modeInfo[MODE_EXPONENTIAL].name = i18n( "Exponential" );
 	modeInfo[MODE_EXPONENTIAL].inverseEnable = false;
 
-	strncpy( modeInfo[MODE_CONTRACTION].name, i18n( "Contraction" ), 32 );
+	modeInfo[MODE_CONTRACTION].name = i18n( "Contraction" );
 	modeInfo[MODE_CONTRACTION].inverseEnable = false;
 
-	strncpy( modeInfo[MODE_WAVE].name, i18n( "Wave" ), 32 );
+	modeInfo[MODE_WAVE].name = i18n( "Wave" );
 	modeInfo[MODE_WAVE].inverseEnable = false;
 
-	strncpy( modeInfo[MODE_CURVATURE].name, i18n( "Curvature" ), 32 );
+	modeInfo[MODE_CURVATURE].name = i18n( "Curvature" );
 	modeInfo[MODE_CURVATURE].inverseEnable = true;
 }
 
@@ -175,9 +175,9 @@ void KPrepareDlg::hide()
 	frame->hide();
 }
 
-void KPrepareDlg::setText( const char *msg )
+void KPrepareDlg::setText( const QString & msg )
 {
-	if( msg != 0 )
+	if( !msg.isNull() ) // FIXME: why??
 	{
 		label->setText( msg );	
 		kapp->processEvents();

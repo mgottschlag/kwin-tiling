@@ -30,7 +30,7 @@ public:
 	virtual ~KPrepareDlg();
 	void   hide();
 	void   show();
-	void   setText( const char *msg );
+	void   setText( const QString & msg );
 	XImage *save;
 	int    x, y, w, h, bpl;
 

@@ -2,6 +2,8 @@
 # Makefile.am for kscreensave.
 #
 
+AM_CPPFLAGS = -UQT_NO_ASCII_CAST
+
 INCLUDES = $(all_includes) -I/usr/X11R6/include
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) -lm
