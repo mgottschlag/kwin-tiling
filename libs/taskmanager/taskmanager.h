@@ -121,6 +121,10 @@ public:
      */
     QPixmap icon( int width, int height, bool allowResize = false );
 
+    /**
+     * Returns true iff the windows with the specified ids should be grouped
+     * together in the task list.
+     */
     static bool idMatch(const QString &, const QString &);
 
     // state
