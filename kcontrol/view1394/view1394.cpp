@@ -294,7 +294,7 @@ OuiDb::OuiDb()
    char* data=ba.data();
    while(bytesLeft>8)
    {
-      char *eol=memchr(data, '\n',bytesLeft);
+      char *eol=(char*)memchr((const void*)data, '\n',bytesLeft);
       if (eol==0)
          break;
       if ((eol-data)<8)
