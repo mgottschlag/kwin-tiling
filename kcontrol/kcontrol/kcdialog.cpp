@@ -21,6 +21,7 @@
 
 #include <klocale.h>
 #include <kapp.h>
+#include <kwin.h>
 
 #include "kcdialog.h"
 #include "kcdialog.moc"
@@ -30,9 +31,10 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
   : KDialogBase(parent, name, modal, QString::null,
                 (b & KCModule::Help ? Help : 0) |
                 (b & KCModule::Default ? User1 : 0) |
-                (b & KCModule::Apply ? Apply : 0) |
-                Cancel | Ok,
-                Ok, true, i18n("Use &Defaults")),
+                (b & KCModule::Apply ? (Ok | Apply | Cancel) : Close),
+                (b & KCModule::Apply ? Ok : Close), 
+                true, i18n("Use &Defaults")),
+    DCOPObject("dialog"),
     _client(client)
 {
     client->reparent(this,0,QPoint(0,0),true);
@@ -65,4 +67,10 @@ void KCDialog::slotApply()
 {
     _client->save();
     clientChanged(false);
+}
+
+void KCDialog::activate()
+{
+    KWin::setOnDesktop(winId(), KWin::currentDesktop());
+    KWin::setActiveWindow(winId());
 }

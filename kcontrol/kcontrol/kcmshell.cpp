@@ -22,6 +22,8 @@
 
 #include <qfile.h>
 
+#include <dcopclient.h>
+
 #include <kapp.h>
 #include <kglobal.h>
 #include <kdebug.h>
@@ -40,7 +42,7 @@
 #include "moduleinfo.h"
 #include "modloader.h"
 #include "global.h"
-
+#include "kcmshell.h"
 
 static KCmdLineOptions options[] =
 {
@@ -80,6 +82,47 @@ static QString locateModule(const QCString module)
     return path;
 }
 
+void 
+kcmApplication::setDCOPName(const QCString &dcopName)
+{
+    m_dcopName = "kcmshell_"+dcopName;
+    dcopClient()->registerAs(m_dcopName, false);
+}
+
+bool
+kcmApplication::isRunning()
+{
+    if (dcopClient()->appId() == m_dcopName)
+       return false; // We are the one and only.
+
+    dcopClient()->setNotifications(true);
+
+    QCString replyType;
+    QByteArray replyData;
+    if (!dcopClient()->call(m_dcopName, "dialog", "activate()", QByteArray(),
+		replyType, replyData))
+    {
+        return false; // Error, we have to do it ourselves.
+    }
+    return true;
+}
+
+void
+kcmApplication::waitForExit()
+{
+    connect(dcopClient(), SIGNAL(applicationRemoved(const QCString&)),
+            this, SLOT(slotAppExit(const QCString&)));
+    exec();
+}
+
+void
+kcmApplication::slotAppExit(const QCString &appId)
+{
+    if (appId == m_dcopName)
+        quit();
+}
+
+
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
@@ -93,7 +136,7 @@ int main(int _argc, char *_argv[])
     KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KLocale::setMainCatalogue("kcontrol");
-    KApplication app;
+    kcmApplication app;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KGlobal::iconLoader()->addAppDir( "kcontrol" );
@@ -144,6 +187,12 @@ int main(int _argc, char *_argv[])
     }
 
     if (args->count() == 1) {
+        app.setDCOPName(args->arg(0));
+        if (app.isRunning())
+        {
+           app.waitForExit();
+           return 0;
+        }
 
         QString path = locateModule(args->arg(0));
         if (path.isEmpty())
@@ -222,3 +271,4 @@ int main(int _argc, char *_argv[])
     delete dlg;
     return ret;
 }
+#include "kcmshell.moc"

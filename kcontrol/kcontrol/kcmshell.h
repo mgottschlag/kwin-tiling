@@ -1,6 +1,5 @@
 /*
-   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
-   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+   Copyright (c) 2001 Waldo Bastian <bastian@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,34 +18,22 @@
 
 */
 
-#ifndef __kcdialog_h__
-#define __kcdialog_h__
+#ifndef __kcmshell_h__
+#define __kcmshell_h__
 
-#include <dcopobject.h>
-#include <kdialogbase.h>
+#include <kapp.h>
 
-class KCModule;
-
-class KCDialog : public KDialogBase, public DCOPObject
+class kcmApplication : public KApplication
 {
-  Q_OBJECT
-  K_DCOP
+    Q_OBJECT
 public:
-  KCDialog(KCModule *client, int b, const QString &docpath=QString::null, QWidget *parent=0, const char *name=0, bool modal=false);
-
-k_dcop:
-  virtual void activate();
-
+    bool isRunning();
+    void waitForExit();  
+    void setDCOPName(const QCString &dcopName);
 protected slots:
-    //virtual void slotDefault();
-  virtual void slotUser1(); // Reset
-  virtual void slotApply();
-  virtual void slotOk();
-  void clientChanged(bool state);
-
-
+    void slotAppExit(const QCString &appId);
 private:
-  KCModule    *_client;
+    QCString m_dcopName;
 };
 
 #endif
