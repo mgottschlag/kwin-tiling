@@ -114,14 +114,14 @@ int chown(int a,int b,int c) {}
 
 struct AuthProtocol {
     unsigned short  name_length;
-    char	    *name;
-    void	    (*InitAuth)(unsigned short len, char *name);
-    Xauth	    *(*GetAuth)(unsigned short len, char *name);
+    const char	    *name;
+    void	    (*InitAuth)(unsigned short len, const char *name);
+    Xauth	    *(*GetAuth)(unsigned short len, const char *name);
 #ifdef XDMCP
     void	    (*GetXdmcpAuth)(
     			struct protoDisplay	*pdpy,
-    			unsigned short	authorizationNameLen,
-    			char		*authorizationName);
+    			unsigned short		authorizationNameLen,
+    			const char		*authorizationName);
 #endif
     int		    inited;
 };
@@ -154,7 +154,7 @@ static struct AuthProtocol AuthProtocols[] = {
 };
 
 static struct AuthProtocol *
-findProtocol (unsigned short name_length, char *name)
+findProtocol (unsigned short name_length, const char *name)
 {
     unsigned	i;
 
@@ -168,7 +168,7 @@ findProtocol (unsigned short name_length, char *name)
 }
 
 int
-ValidAuthorization (unsigned short name_length, char *name)
+ValidAuthorization (unsigned short name_length, const char *name)
 {
     if (findProtocol (name_length, name))
 	return TRUE;
@@ -176,7 +176,7 @@ ValidAuthorization (unsigned short name_length, char *name)
 }
 
 static Xauth *
-GenerateAuthorization (unsigned short name_length, char *name)
+GenerateAuthorization (unsigned short name_length, const char *name)
 {
     struct AuthProtocol	*a;
     Xauth   *auth = 0;
@@ -212,7 +212,7 @@ void
 SetProtoDisplayAuthorization (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
-    char		*authorizationName)
+    const char		*authorizationName)
 {
     struct AuthProtocol	*a;
     Xauth   *auth;
@@ -248,7 +248,7 @@ SetProtoDisplayAuthorization (
 #endif /* XDMCP */
 
 void
-CleanUpFileName (char *src, char *dst, int len)
+CleanUpFileName (const char *src, char *dst, int len)
 {
     while (*src) {
 	if (--len <= 0)
@@ -453,7 +453,7 @@ SetAuthorization (struct display *d)
 }
 
 static int
-openFiles (char *name, char *new_name, FILE **oldp, FILE **newp)
+openFiles (const char *name, char *new_name, FILE **oldp, FILE **newp)
 {
 	strcat (strcpy (new_name, name), "-n");
 	if (!(*newp = 
@@ -465,16 +465,6 @@ openFiles (char *name, char *new_name, FILE **oldp, FILE **newp)
 	Debug ("opens succeeded %s %s\n", name, new_name);
 	return 1;
 }
-
-static int
-binaryEqual (char *a, char *b, unsigned short len)
-{
-	while (len-- > 0)
-		if (*a++ != *b++)
-			return FALSE;
-	return TRUE;
-}
-
 
 struct addrList {
 	unsigned short	family;
@@ -567,11 +557,11 @@ checkEntry (Xauth *auth)
 	for (a = addrs; a; a = a->next) {
 		if (a->family == auth->family &&
 		    a->address_length == auth->address_length &&
- 		    binaryEqual (a->address, auth->address, auth->address_length) &&
+ 		    !memcmp (a->address, auth->address, auth->address_length) &&
 		    a->number_length == auth->number_length &&
- 		    binaryEqual (a->number, auth->number, auth->number_length) &&
+ 		    !memcmp (a->number, auth->number, auth->number_length) &&
 		    a->name_length == auth->name_length &&
-		    binaryEqual (a->name, auth->name, auth->name_length))
+		    !memcmp (a->name, auth->name, auth->name_length))
 		{
 			return 1;
 		}
@@ -623,7 +613,7 @@ DefineLocal (FILE *file, Xauth *auth)
 	char	displayname[100];
 	char	tmp_displayname[100];
 
-	strcpy(tmp_displayname, "");
+	tmp_displayname[0] = 0;
 
 	/* stolen from xinit.c */
 
@@ -966,7 +956,7 @@ DefineSelf (int fd, int file, int auth)
 #endif /* XDMCP */
 
 static void
-setAuthNumber (Xauth *auth, char *name)
+setAuthNumber (Xauth *auth, const char *name)
 {
     char	*colon;
     char	*dot, *number;
@@ -980,11 +970,7 @@ setAuthNumber (Xauth *auth, char *name)
 	    auth->number_length = dot - colon;
 	else
 	    auth->number_length = strlen (colon);
-	number = malloc (auth->number_length + 1);
-	if (number) {
-	    strncpy (number, colon, auth->number_length);
-	    number[auth->number_length] = '\0';
-	} else {
+	if (!StrNDup (&auth->number, colon, auth->number_length)) {
 	    LogOutOfMem ("setAuthNumber");
 	    auth->number_length = 0;
 	}
@@ -994,7 +980,7 @@ setAuthNumber (Xauth *auth, char *name)
 }
 
 static void
-writeLocalAuth (FILE *file, Xauth *auth, char *name)
+writeLocalAuth (FILE *file, Xauth *auth, const char *name)
 {
 #ifdef XDMCP
     int	fd;
@@ -1037,7 +1023,7 @@ writeLocalAuth (FILE *file, Xauth *auth, char *name)
 #ifdef XDMCP
 
 static void
-writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, char *name)
+writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const char *name)
 {
     int	    family = FamilyLocal;
     char    *addr;
@@ -1066,7 +1052,7 @@ static void
 startUserAuth (struct verify_info *verify, char *buf, char *nbuf, 
 	       FILE **old, FILE **new)
 {
-    char	*home;
+    const char	*home;
     int		lockStatus;
 
     initAddrs ();
@@ -1088,7 +1074,7 @@ startUserAuth (struct verify_info *verify, char *buf, char *nbuf,
 }
 
 static void
-endUserAuth (FILE *old, FILE *new, char *nname)
+endUserAuth (FILE *old, FILE *new, const char *nname)
 {
     Xauth	*entry;
     struct stat	statb;
@@ -1112,7 +1098,7 @@ endUserAuth (FILE *old, FILE *new, char *nname)
 }
 
 static char *
-moveUserAuth (char *name, char *new_name, char *envname)
+moveUserAuth (const char *name, char *new_name, char *envname)
 {
     if (unlink (name) == -1)
 	Debug ("unlink %s failed\n", name);

@@ -47,17 +47,17 @@ from The Open Group.
 
 /*ARGSUSED*/
 void
-SecureRPCInitAuth (unsigned short name_len, char *name)
+SecureRPCInitAuth (unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED)
 {
 }
 
 Xauth *
 SecureRPCGetAuth (
     unsigned short  namelen,
-    char	    *name)
+    const char	    *name)
 {
-    char    key[MAXNETNAMELEN+1];
     Xauth   *new;
+    char    key[MAXNETNAMELEN+1];
 
     new = (Xauth *) malloc (sizeof *new);
     if (!new)

@@ -108,8 +108,8 @@ static void	StartDisplays (void);
 static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
 static int	CheckUtmp (void);
 static void	SwitchToTty (struct display *d);
-static void	openFifo (int *fifofd, char **fifoPath, char *dname);
-static void	closeFifo (int *fifofd, char *fifoPath);
+static void	openFifo (int *fifofd, char **fifoPath, const char *dname);
+static void	closeFifo (int *fifofd, const char *fifoPath);
 static void	stoppen (int force);
 
 int	Rescan;
@@ -612,7 +612,7 @@ extern int      WellKnownSocketsMax;
 #endif
 
 static void
-openFifo (int *fifofd, char **fifopath, char *dname)
+openFifo (int *fifofd, char **fifopath, const char *dname)
 {
     if (*fifoDir && *fifofd < 0) {
 	if (mkdir (fifoDir, 0755) < 0  &&  errno != EEXIST) {
@@ -650,7 +650,7 @@ openFifo (int *fifofd, char **fifopath, char *dname)
 }
 
 static void
-closeFifo (int *fifofd, char *fifopath)
+closeFifo (int *fifofd, const char *fifopath)
 {
     if (*fifofd >= 0) {
 #ifdef HAS_SELECT_ON_FIFO
@@ -663,9 +663,10 @@ closeFifo (int *fifofd, char *fifopath)
 }
 
 static char **
-splitCmd (char *string, int len)
+splitCmd (const char *string, int len)
 {
-    char *word, **argv;
+    const char *word;
+    char **argv;
 
     argv = initStrArr (0);
     for (word = string; ; string++, len--)
@@ -678,7 +679,8 @@ splitCmd (char *string, int len)
 }
 
 static void
-setNLogin (struct display *d, char *nuser, char *npass, char **nargs, int rl)
+setNLogin (struct display *d, 
+	   const char *nuser, const char *npass, char **nargs, int rl)
 {
     struct disphist *he = d->hstent;
     ReStr (&he->nuser, nuser);
@@ -692,7 +694,7 @@ setNLogin (struct display *d, char *nuser, char *npass, char **nargs, int rl)
 static int sd_how, sd_when;
 
 static void
-processDPipe (char *buf, int len, void *ptr)
+processDPipe (const char *buf, int len, void *ptr)
 {
     struct display *d = (struct display *)ptr;
     char **ar = splitCmd (buf, len);
@@ -748,7 +750,7 @@ parseSd (char **ar, int *how, int *when, int wdef)
 }
 
 static void
-processDFifo (char *buf, int len, void *ptr)
+processDFifo (const char *buf, int len, void *ptr)
 {
     struct display *d = (struct display *)ptr;
     char **ar = splitCmd (buf, len);
@@ -804,7 +806,7 @@ processDFifo (char *buf, int len, void *ptr)
 }
 
 static void
-processFifo (char *buf, int len, void *ptr ATTR_UNUSED)
+processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 {
     struct display *d;
     char **ar = splitCmd (buf, len);
@@ -883,7 +885,8 @@ static CfgDep xsDep;
 static void
 ScanServers (int force)
 {
-    char		*name, *class2, *console, **argv, *dtx;
+    char		*name, *class2, *console, **argv;
+    const char		*dtx;
     struct display	*d;
     int			nserv, type;
 
@@ -1501,12 +1504,12 @@ UnlockPidFile (void)
 #endif
 
 
-void SetTitle (char *name, ...)
+void SetTitle (const char *name, ...)
 {
 #ifndef NOXDMTITLE
     char	*p = Title;
     int	left = TitleLen;
-    char	*s;
+    const char	*s;
     va_list	args;
 
     va_start(args, name);
@@ -1520,7 +1523,7 @@ void SetTitle (char *name, ...)
 	    *p++ = *s++;
 	    left--;
 	}
-	s = va_arg (args, char *);
+	s = va_arg (args, const char *);
     }
     while (left > 0)
     {

@@ -70,7 +70,7 @@ longtochars (long l, unsigned char *c)
 
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 static int
-sumFile (char *name, long sum[2])
+sumFile (const char *name, long sum[2])
 {
     long    buf[1024*2];
     int	    cnt;

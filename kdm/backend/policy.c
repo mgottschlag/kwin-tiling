@@ -81,7 +81,7 @@ CheckAuthentication (
     ARRAY8Ptr		data)
 {
 #ifdef HASXDMAUTH
-    if (name->length && !strncmp ((char *)name->data, "XDM-AUTHENTICATION-1", 20))
+    if (name->length && !memcmp ((char *)name->data, "XDM-AUTHENTICATION-1", 20))
 	return XdmCheckAuthentication (pdpy, displayID, name, data);
 #endif
     return TRUE;
@@ -125,12 +125,12 @@ Willing_msg (char *mbuf)
 {
 #ifdef linux
     int fd;
-    char *fail_msg = "Willing to manage";
-    char buf[1024];
+    int numcpu;
+    const char *fail_msg = "Willing to manage";
     FILE *f;
     float load[3];
     float mhz = 0.0;
-    int numcpu = 0;
+    char buf[1024];
 
     fd = open ("/proc/loadavg", O_RDONLY);
     if (fd == -1) {
@@ -198,8 +198,8 @@ Willing (
     ARRAY8Ptr	    status,
     xdmOpCode	    type)
 {
-    char	statusBuf[256];
     int		ret;
+    char	statusBuf[256];
     
     ret = AcceptableDisplayAddress (addr, connectionType, type);
     if (!ret)

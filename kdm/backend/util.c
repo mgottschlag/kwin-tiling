@@ -63,7 +63,7 @@ WipeStr (char *str)
 
 /* duplicate src; wipe & free old dst string */
 int
-ReStrN (char **dst, char *src, int len)
+ReStrN (char **dst, const char *src, int len)
 {
     char *ndst = 0;
 
@@ -83,14 +83,14 @@ ReStrN (char **dst, char *src, int len)
 }
 
 int
-ReStr (char **dst, char *src)
+ReStr (char **dst, const char *src)
 {
     return ReStrN (dst, src, -1);
 }
 
 /* duplicate src */
 int
-StrNDup (char **dst, char *src, int len)
+StrNDup (char **dst, const char *src, int len)
 {
     if (src) {
 	if (len < 0)
@@ -105,7 +105,7 @@ StrNDup (char **dst, char *src, int len)
 }
 
 int
-StrDup (char **dst, char *src)
+StrDup (char **dst, const char *src)
 {
     return StrNDup (dst, src, -1);
 }
@@ -188,7 +188,7 @@ extStrArr (char ***arr)
 }
 
 char **
-addStrArr (char **arr, char *str, int len)
+addStrArr (char **arr, const char *str, int len)
 {
     char **dst;
 
@@ -237,9 +237,10 @@ freeStrArr (char **arr)
 
 
 char **
-parseArgs (char **argv, char *string)
+parseArgs (char **argv, const char *string)
 {
-    char *word, ch;
+    const char *word;
+    char ch;
 
     argv = initStrArr (argv);
     for (word = string; ; ++string) {
@@ -255,8 +256,8 @@ parseArgs (char **argv, char *string)
 }
 
 
-char *
-getEnv (char **e, char *name)
+const char *
+getEnv (char **e, const char *name)
 {
     if (e) {
 	int l = strlen (name);
@@ -268,7 +269,7 @@ getEnv (char **e, char *name)
 }
 
 char **
-setEnv (char **e, char *name, char *value)
+setEnv (char **e, const char *name, const char *value)
 {
     char **new, **old;
     char *newe;
@@ -317,7 +318,7 @@ setEnv (char **e, char *name, char *value)
 }
 
 char **
-putEnv(char *string, char **env)
+putEnv(const char *string, char **env)
 {
     char *b, *n;
 
@@ -361,7 +362,7 @@ GetHostname(char *buf, int maxlen)
 static char localHostbuf[256];
 static int  gotLocalHostname;
 
-char *
+const char *
 localHostname (void)
 {
     if (!gotLocalHostname)
@@ -395,7 +396,7 @@ Reader (int fd, void *buf, int count)
 }
 
 void
-FdGetsCall (int fd, void (*func)(char *, int, void *), void *ptr)
+FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr)
 {
     char	*p;
     int		bpos, bend, llen, ll, rt, ign;

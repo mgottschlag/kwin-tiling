@@ -45,7 +45,8 @@ static int runs;
 static void
 OpenGetter ()
 {
-    char *ret, **env;
+    const char *ret;
+    char **env;
 
     if (!runs) {
 	runs = 1;
@@ -119,7 +120,7 @@ delStr (RcStr *str)
 
 
 static long
-mTime (char *fn)
+mTime (const char *fn)
 {
     struct stat st;
 

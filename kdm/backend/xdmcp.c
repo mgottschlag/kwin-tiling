@@ -92,7 +92,7 @@ static void request_respond (struct sockaddr *from, int fromlen, int length);
 static void send_accept (struct sockaddr *to, int tolen, CARD32 sessionID, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr authorizationName, ARRAY8Ptr authorizationData);
 static void send_alive (struct sockaddr *from, int fromlen, int length);
 static void send_decline (struct sockaddr *to, int tolen, ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData, ARRAY8Ptr status);
-static void send_failed (struct sockaddr *from, int fromlen, char *name, CARD32 sessionID, char *reason);
+static void send_failed (struct sockaddr *from, int fromlen, const char *name, CARD32 sessionID, const char *reason);
 static void send_refuse (struct sockaddr *from, int fromlen, CARD32 sessionID);
 static void send_unwilling (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status);
 static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenticationName, ARRAY8Ptr status);
@@ -370,15 +370,13 @@ static ARRAY8	Hostname;
 
 void
 registerHostname (
-    char    *name,
-    int	    namelen)
+    const char	*name,
+    int		namelen)
 {
-    int	i;
-
     if (!XdmcpReallocARRAY8 (&Hostname, namelen))
 	return;
-    for (i = 0; i < namelen; i++)
-	Hostname.data[i] = name[i];
+    memcpy (Hostname.data, name, namelen);
+	
 }
 
 static void
@@ -437,7 +435,7 @@ NetworkAddressToName(
 	    CARD8		*data;
 	    struct hostent	*hostent;
 	    char		*name;
-	    char		*localhost;
+	    const char		*localhost;
 	    int			 multiHomed = 0;
 
 	    data = connectionAddress->data;
@@ -977,7 +975,7 @@ manage (
 	    }
 	    if (displayClass.length)
 	    {
-		if (!StrNDup(&class2, displayClass.data, displayClass.length))
+		if (!StrNDup(&class2, (char *)displayClass.data, displayClass.length))
 		{
 		    send_failed (from, fromlen, name, sessionID, "out of memory");
 		    goto abort;
@@ -997,7 +995,7 @@ manage (
 	    }
 	    d->displayType = dForeign | dTransient | dFromXDMCP;
 	    d->sessionID = pdpy->sessionID;
-	    d->from.data = from_save;
+	    d->from.data = (unsigned char *)from_save;
 	    d->from.length = fromlen;
 	    d->displayNumber = pdpy->displayNumber;
 	    ClientAddress (from, &clientAddress, &clientPort, &connectionType);
@@ -1044,7 +1042,7 @@ abort:
 void
 SendFailed (
     struct display  *d,
-    char	    *reason)
+    const char	    *reason)
 {
     Debug ("Display start failed, sending Failed\n");
     send_failed ((struct sockaddr *)(d->from.data), d->from.length, d->name, d->sessionID, reason);
@@ -1054,9 +1052,9 @@ static void
 send_failed (
     struct sockaddr *from,
     int		    fromlen,
-    char	    *name,
+    const char	    *name,
     CARD32	    sessionID,
-    char	    *reason)
+    const char	    *reason)
 {
     char	buf[360];
     XdmcpHeader	header;
@@ -1183,9 +1181,9 @@ NetworkAddressToHostname (
 #if 0
 static int
 HostnameToNetworkAddress (
-char	    *name,
-CARD16	    connectionType,
-ARRAY8Ptr   connectionAddress)
+    const char	*name,
+    CARD16	connectionType,
+    ARRAY8Ptr	connectionAddress)
 {
     switch (connectionType)
     {
@@ -1215,10 +1213,10 @@ ARRAY8Ptr   connectionAddress)
  */
 static int
 NameToNetworkAddress(
-char	    *name,
-CARD16Ptr   connectionTypep,
-ARRAY8Ptr   connectionAddress,
-CARD16Ptr   displayNumber)
+    const char	*name,
+    CARD16Ptr	connectionTypep,
+    ARRAY8Ptr	connectionAddress,
+    CARD16Ptr	displayNumber)
 {
     char    *colon, *display_number;
     char    hostname[1024];

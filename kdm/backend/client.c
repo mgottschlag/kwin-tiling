@@ -53,9 +53,9 @@ from The Open Group.
 #elif defined(AIXV3) /* USE_PAM */
 # include <login.h>
 # include <usersec.h>
-extern int loginrestrictions (char *Name, int Mode, char *Tty, char **Msg);
-extern int loginfailed (char *User, char *Host, char *Tty);
-extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
+extern int loginrestrictions (const char *Name, const int Mode, const char *Tty, char **Msg);
+extern int loginfailed (const char *User, const char *Host, const char *Tty);
+extern int loginsuccess (const char *User, const char *Host, const char *Tty, char **Msg);
 #else /* USE_PAM || AIXV3 */
 # ifdef USESHADOW
 #  include <shadow.h>
@@ -86,11 +86,11 @@ extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
 #endif
 
 #ifdef X_NOT_STDC_ENV
-char *getenv();
+const char *getenv();
 #endif
 
 #ifdef QNX4
-extern char *crypt(char *, char *);
+extern char *crypt(const char *, const char *);
 #endif
 
 
@@ -189,7 +189,7 @@ static char krbtkfile[MAXPATHLEN];
 static int krb4_authed;
 
 static int
-krb4_auth(struct passwd *p, char *password)
+krb4_auth(struct passwd *p, const char *password)
 {
     int ret;
     char realm[REALM_SZ];
@@ -232,7 +232,7 @@ static int		pwinited;
 static struct passwd	*p;
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
 static struct spwd	*sp;
-static char		*user_pass;
+static const char	*user_pass;
 # define arg_shadow , int shadow
 # define NSHADOW , 0
 # define YSHADOW , 1
@@ -244,7 +244,7 @@ static char		*user_pass;
 #endif
 
 static int
-init_pwd(char *name arg_shadow)
+init_pwd(const char *name arg_shadow)
 {
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
     if (pwinited == 2) {
@@ -292,7 +292,7 @@ static char tty[16], hostname[100];
 #endif
 
 static int
-init_vrf(struct display *d, char *name, char *password)
+init_vrf(struct display *d, const char *name, const char *password)
 {
 #ifdef USE_PAM
     int		pretc;
@@ -340,7 +340,7 @@ init_vrf(struct display *d, char *name, char *password)
 	    return V_ERROR;
 	}
 # ifdef PAM_FAIL_DELAY
-	pam_set_item(pamh, PAM_FAIL_DELAY, fail_delay);
+	pam_set_item(pamh, PAM_FAIL_DELAY, (void *)fail_delay);
 # endif
     } else
 	if (pam_set_item(pamh, PAM_USER, name) != PAM_SUCCESS) {
@@ -397,7 +397,7 @@ init_vrf(struct display *d, char *name, char *password)
 }
 
 static int
-AccNoPass (struct display *d, char *un)
+AccNoPass (struct display *d, const char *un)
 {
     char **fp;
 
@@ -412,7 +412,7 @@ AccNoPass (struct display *d, char *un)
 }
 
 int
-Verify (struct display *d, char *name, char *pass)
+Verify (struct display *d, const char *name, const char *pass)
 {
     int		pretc;
 #if !defined(USE_PAM) && defined(AIXV3)
@@ -751,7 +751,7 @@ Restrict (struct display *d)
 }
 
 
-static char *envvars[] = {
+static const char *envvars[] = {
     "TZ",			/* SYSV and SVR4, but never hurts */
 #ifdef AIXV3
     "AUTHSTATE",		/* for kerberos */
@@ -774,7 +774,8 @@ static char *envvars[] = {
 };
 
 static char **
-userEnv (struct display *d, int isRoot, char *user, char *home, char *shell)
+userEnv (struct display *d, int isRoot, 
+         const char *user, const char *home, const char *shell)
 {
     char	**env, *xma;
 
@@ -813,7 +814,7 @@ userEnv (struct display *d, int isRoot, char *user, char *home, char *shell)
 
 
 static int
-SetGid (char *name, int gid)
+SetGid (const char *name, int gid)
 {
     if (setgid(gid) < 0)
     {
@@ -832,7 +833,7 @@ SetGid (char *name, int gid)
 }
 
 static int
-SetUid (char *name, int uid)
+SetUid (const char *name, int uid)
 {
     if (setuid(uid) < 0)
     {
@@ -844,7 +845,7 @@ SetUid (char *name, int uid)
 }
 
 static int
-SetUser (char *name, int uid, int gid)
+SetUser (const char *name, int uid, int gid)
 {
     return SetGid (name, gid) && SetUid (name, uid);
 }
@@ -854,9 +855,10 @@ static int removeAuth = 0;
 static int sourceReset = 0;
 
 int
-StartClient(struct display *d, char *name, char *pass, char **sessargs)
+StartClient (struct display *d,
+	     const char *name, char *pass, char **sessargs)
 {
-    char	*shell, *home;
+    const char	*shell, *home;
     char	**argv;
 #ifdef USE_PAM
     char	**pam_env;
@@ -1320,14 +1322,14 @@ SessionExit (struct display *d, int status)
 
 
 static void
-addData (char *buf, int len, void *ptr)
+addData (const char *buf, int len, void *ptr)
 {
     char ***sp = (char ***)ptr;
     *sp = addStrArr (*sp, buf, len);
 }
 
 void
-RdUsrData (struct display *d, char *usr, char ***args)
+RdUsrData (struct display *d, const char *usr, char ***args)
 {
     struct passwd *pw;
     int len, pid, fd, pfd[2];
@@ -1365,7 +1367,7 @@ RdUsrData (struct display *d, char *usr, char ***args)
 
 
 #if (defined(Lynx) && !defined(HAS_CRYPT)) || defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS)
-char *crypt(char *s1, char *s2)
+char *crypt(const char *s1, const char *s2)
 {
     return(s2);
 }

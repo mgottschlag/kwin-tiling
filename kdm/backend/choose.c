@@ -69,7 +69,7 @@ int listen_completed;
 /* XXX use SNPrintf for this? */
 static int
 FormatBytes (
-    unsigned char *data,
+    const unsigned char *data,
     int	    length,
     char    *buf,
     int	    buflen)
@@ -187,12 +187,12 @@ IsIndirectClient (
 static int
 FormatChooserArgument (char *buf, int len)
 {
-    unsigned char   addr_buf[1024];
-    int		    addr_len = sizeof (addr_buf);
-    unsigned char   result_buf[1024];
-    int		    result_len = 0;
+    int		    addr_len, result_len;
     int		    netfamily;
+    unsigned char   addr_buf[1024], result_buf[1024];
 
+    addr_len = sizeof (addr_buf);
+    result_len = 0;
     if (GetChooserAddr ((char *)addr_buf, &addr_len) == -1)
     {
 	LogError ("Cannot get return address for chooser socket\n");
@@ -387,7 +387,6 @@ void
 ProcessChooserSocket (int fd)
 {
     int		client_fd;
-    char	buf[1024];
     int		len;
     XdmcpBuffer	buffer;
     ARRAY8	clientAddress;
@@ -403,6 +402,7 @@ ProcessChooserSocket (int fd)
     char *tcp_device;
     int new_fd, flags, r;
 #endif /* MINIX */
+    char	buf[1024];
 
     Debug ("Process chooser socket\n");
     len = sizeof (buf);
@@ -582,9 +582,8 @@ ProcessChooserSocket (int fd)
 void
 RunChooser (struct display *d)
 {
-    char **args;
+    char **args, **env;
     char buf[1024];
-    char **env;
 
     Debug ("RunChooser %s\n", d->name);
     SetTitle (d->name, "chooser", (char *) 0);

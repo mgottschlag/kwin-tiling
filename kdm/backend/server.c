@@ -63,9 +63,9 @@ CatchUsr1 (int n ATTR_UNUSED)
     ++receivedUsr1;
 }
 
-char *_SysErrorMsg (int n)
+const char *_SysErrorMsg (int n)
 {
-    char *s = strerror(n);
+    const char *s = strerror(n);
     return (s ? s : "unknown error");
 }
 

@@ -149,7 +149,7 @@ Debug ("Host pattern %s\n", accData->hostList[i].entry.hostPattern);
 	    break;
 	case HOST_ADDRESS:
 	    da = &accData->hostList[i].entry.displayAddress;
-	    da->hostAddress.data = cptr;
+	    da->hostAddress.data = (unsigned char *)cptr;
 	    cptr += (da->hostAddress.length = GRecvArrBuf (cptr));
 	    switch (GRecvInt ())
 	    {
@@ -208,7 +208,7 @@ Debug ("Entry at %p: %d entries at %d, %d hosts at %d, flags %d\n",
 /* Returns non-0 if string is matched by pattern.  Does case folding.
  */
 static int
-patternMatch (char *string, char *pattern)
+patternMatch (const char *string, const char *pattern)
 {
     int	    p, s;
 

@@ -178,8 +178,9 @@ execute (char **argv, char **environ)
      * a reasonable thing
      */
     if (errno != ENOENT) {
-	char	program[1024], *e, **newargv;
+	char	*e, **newargv;
 	FILE	*f;
+	char	program[1024];
 
 	/*
 	 * emulate BSD kernel behaviour -- read
@@ -243,8 +244,8 @@ GCloseAll ()
     close (ipipe[1]);
 }
 
-char *
-GOpen (char **argv, char *what, char **env)
+const char *
+GOpen (char **argv, const char *what, char **env)
 {
     char **margv, coninfo[20];
 
@@ -331,7 +332,7 @@ GRead (void *buf, int len)
 }
 
 static void
-GWrite (void *buf, int len)
+GWrite (const void *buf, int len)
 {
 #if 0
     int ret;
@@ -379,7 +380,7 @@ GRecvCmd (int *cmd)
 
 #ifdef XDMCP
 void
-GSendArr (int len, char *data)
+GSendArr (int len, const char *data)
 {
     GDebug ("Sending array[%d] %02[*{hhx to helper\n", len, len, data);
     GWrite (&len, sizeof(len));
@@ -455,7 +456,7 @@ GRecvStrBuf (char *buf)
 }
 
 void
-GSendStr (char *buf)
+GSendStr (const char *buf)
 {
     int len;
 

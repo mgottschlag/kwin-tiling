@@ -128,7 +128,7 @@ ForEachDisplay (void (*f)(struct display *))
 }
 
 struct display *
-FindDisplayByName (char *name)
+FindDisplayByName (const char *name)
 {
     struct display *d;
 
@@ -229,7 +229,7 @@ Debug ("Removing display %s\n", d->name);
 }
 
 static struct disphist *
-FindHist (char *name)
+FindHist (const char *name)
 {
     struct disphist *hstent;
 
@@ -240,7 +240,7 @@ FindHist (char *name)
 }
 
 struct display *
-NewDisplay (char *name, char *class2)
+NewDisplay (const char *name, const char *class2)
 {
     struct display	*d;
     struct disphist	*hstent;

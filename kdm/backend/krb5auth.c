@@ -48,7 +48,7 @@ from The Open Group.
 
 /*ARGSUSED*/
 void
-Krb5InitAuth (unsigned short name_len, char *name)
+Krb5InitAuth (unsigned short name_len ATTR_UNUSED, const char *name ATTR_UNUSED)
 {
     krb5_init_ets();		/* initialize error_message() tables */
 }
@@ -58,10 +58,10 @@ Krb5InitAuth (unsigned short name_len, char *name)
  * name should be freed by caller.
  */
 char *
-Krb5CCacheName(char *dname)
+Krb5CCacheName(const char *dname)
 {
     char *name;
-    char *tmpdir;
+    const char *tmpdir;
 
     tmpdir = getenv("TMPDIR");
     if (!tmpdir)
@@ -75,7 +75,7 @@ Krb5CCacheName(char *dname)
 }
 
 krb5_error_code
-Krb5DisplayCCache(char *dname, krb5_ccache *ccache_return)
+Krb5DisplayCCache(const char *dname, krb5_ccache *ccache_return)
 {
     krb5_error_code code;
     char *name;
@@ -90,7 +90,7 @@ Krb5DisplayCCache(char *dname, krb5_ccache *ccache_return)
 }
 
 Xauth *
-Krb5GetAuthFor(unsigned short namelen, char *name, char *dname)
+Krb5GetAuthFor(unsigned short namelen, char *name, const char *dname)
 {
     Xauth   *new;
     char *filename;
@@ -140,7 +140,7 @@ Krb5GetAuthFor(unsigned short namelen, char *name, char *dname)
 
 
 Xauth *
-Krb5GetAuth (unsigned short namelen, char *name)
+Krb5GetAuth (unsigned short namelen, const char *name)
 {
     return Krb5GetAuthFor(namelen, name, NULL);
 }
@@ -158,8 +158,8 @@ int preauth_search_list[] = {
  */
 int
 Krb5Init(
-    char *name,
-    char *passwd,
+    const char *name,
+    const char *passwd,
     struct display *d)		/* k5_ccache filled in if successful */
 {
     krb5_ccache ccache;

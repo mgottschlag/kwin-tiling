@@ -94,13 +94,13 @@ static void
 fmtint (OutCh dopr_outch, void *bp,
 	long value, int base, int min, int max, int flags)
 {
-    unsigned long uvalue;
-    char convert[20];
     const char *ctab;
+    unsigned long uvalue;
     int signvalue = 0;
     int place = 0;
     int spadlen = 0;		/* amount to space pad */
     int zpadlen = 0;		/* amount to zero pad */
+    char convert[20];
 
     if (max < 0)
 	max = 0;
@@ -483,7 +483,7 @@ static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
 #  define Time_t time_t
 # endif
 # define InitLog() while(0)
-static char *lognams[] = { "debug", "info", "error", "panic" };
+static const char *lognams[] = { "debug", "info", "error", "panic" };
 
 static void
 logTime (char *dbuf)

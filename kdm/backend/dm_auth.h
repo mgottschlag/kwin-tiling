@@ -39,17 +39,17 @@ authorization.
 
 #include "dm.h"	/* for struct display */
 
-extern void	MitInitAuth (unsigned short name_len, char *name);
-extern Xauth	*MitGetAuth (unsigned short namelen, char *name);
+extern void	MitInitAuth (unsigned short name_len, const char *name);
+extern Xauth	*MitGetAuth (unsigned short namelen, const char *name);
 
 #ifdef HASXDMAUTH
-extern void	XdmInitAuth (unsigned short name_len, char *name);
-extern Xauth	*XdmGetAuth (unsigned short namelen, char *name);
+extern void	XdmInitAuth (unsigned short name_len, const char *name);
+extern Xauth	*XdmGetAuth (unsigned short namelen, const char *name);
 # ifdef XDMCP
 extern void	XdmGetXdmcpAuth (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
-    char		*authorizationName);
+    const char		*authorizationName);
 extern int	XdmCheckAuthentication (
     struct protoDisplay	*pdpy,
     ARRAY8Ptr		displayID, 
@@ -61,17 +61,17 @@ extern int	XdmCheckAuthentication (
 #endif
 
 #ifdef SECURE_RPC
-extern void	SecureRPCInitAuth (unsigned short name_len, char *name);
-extern Xauth	*SecureRPCGetAuth (unsigned short namelen, char *name);
+extern void	SecureRPCInitAuth (unsigned short name_len, const char *name);
+extern Xauth	*SecureRPCGetAuth (unsigned short namelen, const char *name);
 #endif
 
 #ifdef K5AUTH
-extern void	Krb5InitAuth (unsigned short name_len, char *name);
-extern Xauth	*Krb5GetAuth (unsigned short namelen, char *name);
+extern void	Krb5InitAuth (unsigned short name_len, const char *name);
+extern Xauth	*Krb5GetAuth (unsigned short namelen, const char *name);
 #endif
 
 /* auth.c */
-extern int ValidAuthorization (unsigned short name_length, char *name);
+extern int ValidAuthorization (unsigned short name_length, const char *name);
 
 
 #ifdef XDMCP
@@ -80,12 +80,12 @@ extern void
 SetProtoDisplayAuthorization (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
-    char		*authorizationName);
+    const char		*authorizationName);
 
 #endif /* XDMCP */
 
 extern int SaveServerAuthorizations (struct display *d, Xauth **auths, int count);
-extern void CleanUpFileName (char *src, char *dst, int len);
+extern void CleanUpFileName (const char *src, char *dst, int len);
 extern void RemoveUserAuthorization (struct display *d, struct verify_info *verify);
 extern void SetAuthorization (struct display *d);
 extern void SetLocalAuthorization (struct display *d);

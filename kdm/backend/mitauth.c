@@ -45,7 +45,7 @@ static char	auth_name[256];
 static int	auth_name_len;
 
 void
-MitInitAuth (unsigned short name_len, char *name)
+MitInitAuth (unsigned short name_len, const char *name)
 {
     if (name_len > 256)
 	name_len = 256;
@@ -54,7 +54,7 @@ MitInitAuth (unsigned short name_len, char *name)
 }
 
 Xauth *
-MitGetAuth (unsigned short namelen, char *name)
+MitGetAuth (unsigned short namelen, const char *name)
 {
     Xauth   *new;
     new = (Xauth *) malloc (sizeof (Xauth));

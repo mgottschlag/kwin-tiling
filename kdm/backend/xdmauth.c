@@ -45,7 +45,7 @@ static int	auth_name_len;
 void
 XdmInitAuth (
     unsigned short  name_len,
-    char	    *name)
+    const char	    *name)
 {
     if (name_len > 256)
 	name_len = 256;
@@ -65,7 +65,7 @@ XdmInitAuth (
 static Xauth *
 XdmGetAuthHelper (
     unsigned short  namelen,
-    char	    *name,
+    const char	    *name,
     int	    includeRho)
 {
     Xauth   *new;
@@ -111,7 +111,7 @@ XdmGetAuthHelper (
 Xauth *
 XdmGetAuth (
     unsigned short  namelen,
-    char	    *name)
+    const char	    *name)
 {
     return XdmGetAuthHelper (namelen, name, TRUE);
 }
@@ -122,7 +122,7 @@ void
 XdmGetXdmcpAuth (
     struct protoDisplay	*pdpy,
     unsigned short	authorizationNameLen,
-    char		*authorizationName)
+    const char		*authorizationName)
 {
     Xauth   *fileauth, *xdmcpauth;
 
@@ -164,7 +164,8 @@ XdmGetXdmcpAuth (
 	   xdmcpauth->data_length, xdmcpauth->data, 
 	   fileauth->data_length, fileauth->data);
     /* encrypt the session key for its trip back to the server */
-    XdmcpWrap (xdmcpauth->data, (unsigned char *)&pdpy->key, xdmcpauth->data, 8);
+    XdmcpWrap ((unsigned char *)xdmcpauth->data, (unsigned char *)&pdpy->key,
+	       (unsigned char *)xdmcpauth->data, 8);
     pdpy->fileAuthorization = fileauth;
     pdpy->xdmcpAuthorization = xdmcpauth;
 }
@@ -174,7 +175,7 @@ XdmGetXdmcpAuth (
 		 'A' <= c && c <= 'F' ? c - 'A' + 10 : -1)
 
 static int
-HexToBinary (char    *key)
+HexToBinary (char *key)
 {
     char    *out, *in;
     int	    top, bottom;
@@ -204,9 +205,9 @@ HexToBinary (char    *key)
  */
 
 static int
-XdmGetKey (pdpy, displayID)
-    struct protoDisplay	*pdpy;
-    ARRAY8Ptr		displayID;
+XdmGetKey (
+    struct protoDisplay	*pdpy,
+    ARRAY8Ptr		displayID)
 {
     FILE    *keys;
     char    line[1024], id[1024], key[1024];

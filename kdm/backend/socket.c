@@ -77,7 +77,7 @@ CreateWellKnownSockets (void)
     int flags;
     nbio_ref_t ref;
 #endif /* !MINIX */
-    char *name;
+    const char *name;
 
     if (request_port == 0)
 	    return;

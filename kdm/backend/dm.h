@@ -82,10 +82,10 @@ extern int errno;
 #endif
 
 #ifdef XDMCP
-#if defined(__osf__)
+# if defined(__osf__)
 /* someone somewhere defines QUERY under Tru64 which confuses Xdmcp.h */
-#undef QUERY
-#endif
+#  undef QUERY
+# endif
 # include <X11/Xdmcp.h>
 #endif
 
@@ -375,21 +375,21 @@ extern void BecomeDaemon (void);
 extern char *prog, *progpath;
 extern void CheckFifos (void);
 extern void StartDisplay (struct display *d);
-extern void SetTitle (char *name, ...);
+extern void SetTitle (const char *name, ...);
 
 /* in dpylist.c */
 extern int AnyDisplaysLeft (void);
 extern void ForEachDisplay (void (*f)(struct display *));
 extern void RemoveDisplay (struct display *old);
 extern struct display
-	*FindDisplayByName (char *name),
+	*FindDisplayByName (const char *name),
 #ifdef XDMCP
 	*FindDisplayBySessionID (CARD32 sessionID),
 	*FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber),
 #endif /* XDMCP */
 	*FindDisplayByPid (int pid),
 	*FindDisplayByServerPid (int serverPid),
-	*NewDisplay (char *name, char *class2);
+	*NewDisplay (const char *name, const char *class2);
 extern int AnyActiveDisplays (void);
 extern int AllLocalDisplaysLocked (struct display *dp);
 extern void StartReserveDisplay (int lt);
@@ -409,9 +409,9 @@ extern RcStr *newStr (char *str);
 extern void delStr (RcStr *str);
 
 /* in session.c */
-extern char **defaultEnv (char *user);
-extern char **inheritEnv (char **env, char **what);
-extern char **systemEnv (struct display *d, char *user, char *home);
+extern char **defaultEnv (const char *user);
+extern char **inheritEnv (char **env, const char **what);
+extern char **systemEnv (struct display *d, const char *user, const char *home);
 extern int source (char **environ, char *file);
 extern void DeleteXloginResources (struct display *d);
 extern void LoadXloginResources (struct display *d);
@@ -430,16 +430,16 @@ extern void execute (char **argv, char **environ);
 extern int runAndWait (char **args, char **environ);
 extern void TerminateProcess (int pid, int sig);
 extern Jmp_buf GErrJmp;
-extern char *GOpen (char **argv, char *what, char **env);
+extern const char *GOpen (char **argv, const char *what, char **env);
 extern int GClose (int force);
 extern void GSendInt (int val);
 extern int GRecvInt (void);
 extern int GRecvCmd (int *cmd);
-extern void GSendArr (int len, char *data);
+extern void GSendArr (int len, const char *data);
 extern char *GRecvArr (int *len);
 extern int GRecvStrBuf (char *buf);
 extern int GRecvArrBuf (char *buf);
-extern void GSendStr (char *buf);
+extern void GSendStr (const char *buf);
 extern char *GRecvStr (void);
 extern void GSendArgv (char **argv);
 extern void GSendStrArr (int len, char **data);
@@ -447,14 +447,14 @@ extern char **GRecvStrArr (int *len);
 extern char **GRecvArgv (void);
 
 /* client.c */
-extern int Verify (struct display *d, char *name, char *pass);
+extern int Verify (struct display *d, const char *name, const char *pass);
 extern void Restrict (struct display *d);
-extern int StartClient(struct display *d, char *name, char *pass, char **sessargs);
+extern int StartClient(struct display *d, const char *name, char *pass, char **sessargs);
 extern void SessionExit (struct display *d, int status) ATTR_NORETURN;
-extern void RdUsrData (struct display *d, char *usr, char ***args);
+extern void RdUsrData (struct display *d, const char *usr, char ***args);
 
 /* server.c */
-extern char *_SysErrorMsg (int n);
+extern const char *_SysErrorMsg (int n);
 extern int StartServer (struct display *d);
 extern int WaitForServer (struct display *d);
 extern void ResetServer (struct display *d);
@@ -465,26 +465,26 @@ extern int GetChooserAddr (char *addr, int *lenp);
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
-extern int ReStrN (char **dst, char *src, int len);
-extern int ReStr (char **dst, char *src);
-extern int StrNDup (char **dst, char *src, int len);
-extern int StrDup (char **dst, char *src);
+extern int ReStrN (char **dst, const char *src, int len);
+extern int ReStr (char **dst, const char *src);
+extern int StrNDup (char **dst, const char *src, int len);
+extern int StrDup (char **dst, const char *src);
 extern int StrApp (char **dst, ...);
 extern void WipeStr (char *str);
 extern int arrLen (char **arr);
 extern char **initStrArr (char **arr);
 extern char **extStrArr (char ***arr);
-extern char **addStrArr (char **arr, char *str, int len);
+extern char **addStrArr (char **arr, const char *str, int len);
 extern char **xCopyStrArr (int rn, char **arr);
 extern void mergeStrArrs (char ***darr, char **arr);
 extern void freeStrArr (char **arr);
-extern char **parseArgs (char **argv, char *string);
-extern char **setEnv (char **e, char *name, char *value);
-extern char **putEnv (char *string, char **env);
-extern char *getEnv (char **e, char *name);
-extern char *localHostname (void);
+extern char **parseArgs (char **argv, const char *string);
+extern char **setEnv (char **e, const char *name, const char *value);
+extern char **putEnv (const char *string, char **env);
+extern const char *getEnv (char **e, const char *name);
+extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
-extern void FdGetsCall (int fd, void (*func)(char *, int, void *), void *ptr);
+extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
 #if defined(XDMCP) || defined(HAS_SELECT_ON_FIFO)
 /* in xdmcp.c */
@@ -497,9 +497,9 @@ extern void WaitForSomething (void);
 extern char *NetworkAddressToHostname (CARD16 connectionType, ARRAY8Ptr connectionAddress);
 extern int AnyWellKnownSockets (void);
 extern void DestroyWellKnownSockets (void);
-extern void SendFailed (struct display *d, char *reason);
+extern void SendFailed (struct display *d, const char *reason);
 extern void init_session_id(void);
-extern void registerHostname(char *name, int namelen);
+extern void registerHostname(const char *name, int namelen);
 
 /* in netaddr.c */
 extern char *NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp);

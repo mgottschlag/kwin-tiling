@@ -45,7 +45,8 @@ from The Open Group.
 static int
 AutoLogon (struct display *d)
 {
-    char	*str, *name, *pass, **args;
+    const char	*str;
+    char	*name, *pass, **args;
     Time_t	tdiff;
     int		pid, fargs;
 
@@ -205,7 +206,8 @@ static int
 GreetUser (struct display *d)
 {
     int		i, cmd, type, pid, exitCode;
-    char	*ptr, *name, *pass, **avptr, **args, **env;
+    char	*name, *pass, **avptr, **args, **env;
+    const char	*ret;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
 #endif
@@ -227,8 +229,8 @@ GreetUser (struct display *d)
     if (Setjmp (GErrJmp))
 	SessionExit (d, EX_RESERVER_DPY);
     env = systemEnv (d, 0, 0);
-    if ((ptr = GOpen ((char **)0, "_greet", env))) {
-	LogError ("Cannot run greeter: %s\n", ptr);
+    if ((ret = GOpen ((char **)0, "_greet", env))) {
+	LogError ("Cannot run greeter: %s\n", ret);
 	goto bail;
     }
     freeStrArr (env);
@@ -277,7 +279,7 @@ GreetUser (struct display *d)
 		    aptr = *(ARRAY8Ptr *)avptr;
 		    Debug (" -> sending array %02[*:hhx\n", 
 			   aptr->length, aptr->data);
-		    GSendArr (aptr->length, aptr->data);
+		    GSendArr (aptr->length, (char *)aptr->data);
 		    break;
 #endif
 		}
@@ -493,7 +495,7 @@ source (char **environ, char *file)
 }
 
 char **
-inheritEnv (char **env, char **what)
+inheritEnv (char **env, const char **what)
 {
     char	*value;
 
@@ -504,7 +506,7 @@ inheritEnv (char **env, char **what)
 }
 
 char **
-defaultEnv (char *user)
+defaultEnv (const char *user)
 {
     char	**env;
 
@@ -528,13 +530,13 @@ defaultEnv (char *user)
 #endif
 
     if (exportList)
-	env = inheritEnv (env, exportList);
+	env = inheritEnv (env, (const char **)exportList);
 
     return env;
 }
 
 char **
-systemEnv (struct display *d, char *user, char *home)
+systemEnv (struct display *d, const char *user, const char *home)
 {
     char	**env;
 
