@@ -8,7 +8,7 @@ BackGroundColorMode=Vertical
 [KDM]
 SortUsers=true
 #Users=root;johndoe
-NoUsers=bin;daemon;games;halt;mail;man;news;nobody;reboot;shutdown;sync;uucp;xten;
+NoUsers=bin;daemon;games;halt;mail;man;news;nobody;reboot;shutdown;sync;uucp;xten;operator;bind;kmem;tty;pop;
 GreetString=K Desktop Environment [HOSTNAME]
 UserView=true
 #ShutdownButton=RootOnly
