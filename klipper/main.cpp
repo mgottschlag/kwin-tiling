@@ -23,7 +23,7 @@
 static const char *description =
 	I18N_NOOP("KDE Cut & Paste history utility");
 
-static const char *version = "v0.8";
+static const char *version = "v0.9";
 
 int main(int argc, char *argv[])
 {
