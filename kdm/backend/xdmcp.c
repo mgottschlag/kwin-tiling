@@ -1300,6 +1300,9 @@ extern int Rescan, ChildReady, ChkUtmp;
 
 FD_TYPE	WellKnownSocketsMask;
 int	WellKnownSocketsMax;
+#ifdef HAS_SELECT_ON_FIFO
+int	NumOfFifos;
+#endif
 
 void
 WaitForSomething (void)
@@ -1309,8 +1312,12 @@ WaitForSomething (void)
 
     Debug ("WaitForSomething\n");
     if (!ChildReady
-#ifdef XDMCP
+#if defined(XDMCP) && defined(HAS_SELECT_ON_FIFO)
+	&& (NumOfFifos || AnyWellKnownSockets ())
+#elif defined(XDMCP)
 	&& AnyWellKnownSockets ()
+#elif defined(HAS_SELECT_ON_FIFO)
+	&& NumOfFifos
 #endif
 	) 
     {

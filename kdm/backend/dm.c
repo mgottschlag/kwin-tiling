@@ -149,21 +149,33 @@ main (int argc, char **argv)
     (void) close (0);
     open ("/dev/null", O_RDONLY);
 
-    if (argv[0][0] == '/')
-	StrDup (&progpath, argv[0]);
-    else
-#if 0
-	Panic ("Must be invoked with full path specification\n");
+    if (argv[0][0] == '/') {
+	if (!StrDup (&progpath, argv[0]))
+	    Panic ("Out of memory\n");
+    } else
+#ifdef linux
+    {
+	int len;
+	char buf[16], fullpath[PATH_MAX];
+	sprintf (buf, "/proc/%d/exe", getpid());
+	if ((len = readlink (buf, fullpath, sizeof(fullpath))) < 0)
+	    Panic ("Invoke with full path specification or mount /proc\n");
+	if (!StrNDup (&progpath, fullpath, len))
+	    Panic ("Out of memory\n");
+    }
 #else
+# if 0
+	Panic ("Must be invoked with full path specification\n");
+# else
     {
 	char directory[PATH_MAX+1];
-# if !defined(X_NOT_POSIX) || defined(SYSV) || defined(WIN32)
-        if (!getcwd(directory, PATH_MAX + 1))
+#  if !defined(X_NOT_POSIX) || defined(SYSV) || defined(WIN32)
+        if (!getcwd(directory, sizeof(directory)))
 	    Panic ("Can't find myself (getcwd failed)\n");
-# else
+#  else
         if (!getwd(directory))
 	    Panic ("Can't find myself (getwd failed)\n");
-# endif
+#  endif
 	if (strchr(argv[0], '/'))
 	    StrApp (&progpath, directory, "/", argv[0], (char *)0);
 	else
@@ -201,6 +213,7 @@ main (int argc, char **argv)
 		Panic ("Out of memory\n");
 	}
     }
+# endif
 #endif
     prog = strrchr(progpath, '/') + 1;
 
@@ -607,8 +620,9 @@ doShutdown (int how, int when)
 
 
 #ifdef HAS_SELECT_ON_FIFO
-extern FD_TYPE  WellKnownSocketsMask;
-extern int      WellKnownSocketsMax;
+extern FD_TYPE	WellKnownSocketsMask;
+extern int	WellKnownSocketsMax;
+extern int	NumOfFifos;
 #endif
 
 static void
@@ -637,6 +651,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 		    FD_SET (*fifofd, &WellKnownSocketsMask);
 		    if (*fifofd > WellKnownSocketsMax)
 			WellKnownSocketsMax = *fifofd;
+		    NumOfFifos++;
 #endif
 		    return;
 		}
@@ -655,6 +670,7 @@ closeFifo (int *fifofd, const char *fifopath)
     if (*fifofd >= 0) {
 #ifdef HAS_SELECT_ON_FIFO
 	FD_CLR (*fifofd, &WellKnownSocketsMask);
+	NumOfFifos--;
 #endif
 	CloseNClearCloseOnFork (*fifofd);
 	*fifofd = -1;
@@ -1271,6 +1287,7 @@ StartDisplay (struct display *d)
 	    FD_SET (d->pipefd[0], &WellKnownSocketsMask);
 	    if (d->pipefd[0] > WellKnownSocketsMax)
 		WellKnownSocketsMax = d->pipefd[0];
+	    NumOfFifos++;
 #endif
 	    RegisterCloseOnFork (d->pipefd[0]);
 	}
@@ -1326,6 +1343,7 @@ rStopDisplay (struct display *d, int endState)
     if (d->pipefd[0] >= 0) {
 #ifdef HAS_SELECT_ON_FIFO
 	FD_CLR (d->pipefd[0], &WellKnownSocketsMask);
+	NumOfFifos--;
 #endif
 	CloseNClearCloseOnFork (d->pipefd[0]); 
 	close (d->pipefd[1]); 
