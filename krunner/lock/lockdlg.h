@@ -44,6 +44,7 @@ protected slots:
     void layoutClicked();
 
 private:
+    void setLayoutText( const QString &txt );
     void startCheckPassword();
     void capsLocked();
     void updateLabel();

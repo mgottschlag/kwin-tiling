@@ -18,6 +18,8 @@
 #include <qsimplerichtext.h>
 #include <qlabel.h>
 #include <qstringlist.h>
+#include <qfontmetrics.h>
+#include <qstyle.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
@@ -80,32 +82,38 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
 	QString currentLayout = kxkb.call("getCurrentLayout");
 	if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
 	    connect(mLayout, SIGNAL(clicked()), this, SLOT(layoutClicked()));
-	    mLayout->setText(currentLayout);
-	    mLayout->show();
-	    return;
+	    setLayoutText(currentLayout);
 	}
+    } else {
+	// no kxkb running :(
+	mLayout->hide();
     }
-    // no kxkb running :(
-    mLayout->hide();
 }
 
 void PasswordDlg::layoutClicked()
 {
-    QStringList::iterator it = layoutsList.find(mLayout->text());
-    if( it==layoutsList.end() ) {  // huh?
-	mLayout->setText("err");
-	return;
+    QStringList::iterator it = layoutsList.find( mLayout->text() );
+    if( it == layoutsList.end() ) {  // huh?
+
+	setLayoutText( "err" );
+
+    } else {
+
+	if( ++it == layoutsList.end() )
+	    it = layoutsList.begin();
+
+	DCOPRef kxkb("kxkb", "kxkb");
+	setLayoutText( kxkb.call("setLayout", *it) ? *it : "err" );
+
     }
+}
 
-    if( ++it==layoutsList.end() )
-	it = layoutsList.begin();
-
-    DCOPRef kxkb("kxkb", "kxkb");
-    bool res = kxkb.call("setLayout", *it);
-    if( res )
-	mLayout->setText(*it);
-    else
-	mLayout->setText("err");
+void PasswordDlg::setLayoutText( const QString &txt )
+{
+    mLayout->setText( txt );
+    QSize sz = mLayout->fontMetrics().size( 0, txt );
+    int mrg = mLayout->style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
+    mLayout->setFixedSize( sz.width() + mrg, sz.height() + mrg );
 }
 
 QString PasswordDlg::checkForUtf8(QString txt)
