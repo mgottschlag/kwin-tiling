@@ -39,7 +39,7 @@ private slots:
 
     void slotEchoMode(int);
     void slotKeep(bool);
-
+    void configChanged(){emit changed(true);}
 private:
     QButtonGroup *m_EMGroup;
     QCheckBox *m_KeepBut;

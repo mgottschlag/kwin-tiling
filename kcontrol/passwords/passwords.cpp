@@ -91,6 +91,9 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
     m_TimeoutEdit->setSteps(5, 10);
     m_TimeoutEdit->setSuffix(i18n(" minutes"));
     m_TimeoutEdit->setFixedSize(m_TimeoutEdit->sizeHint());
+
+    connect(m_TimeoutEdit,SIGNAL(valueChanged ( int )),this,SLOT(configChanged()));
+
     hbox->addWidget(m_TimeoutEdit);
     hbox->addStretch();
 
