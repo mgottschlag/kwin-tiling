@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kcmshell fileshare
+Icon=fileshare
+Type=Application
+DocPath=kcontrol/fileshare.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=fileshare
+
+X-KDE-RootOnly=true
+
+Name=File Share
+
+Comment=File Share Configuration
+
+Keywords=Share
