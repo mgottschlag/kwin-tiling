@@ -61,14 +61,12 @@
 #include <klocale.h>
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 #include <space.h>
 #include <math.h>
 #include <X11/Intrinsic.h>
-#ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
-#endif
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -418,7 +416,7 @@ initSpace(Window window)
 
 	if (!getVisual(wantVis)) {
 	  if (!getVisual(wantVis)) {
-	    (void) fprintf(stderr, glocale->translate(
+	    (void) fprintf(stderr, i18n(
 		       "GL can not render with root visual\n"));
 	    return;
 	  }
@@ -580,13 +578,13 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( glocale->translate("Setup KSpace") );
+	setCaption( i18n("Setup KSpace") );
 
 	QLabel *label;
 	QPushButton *button;
 	QSlider *slider;
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	label->setGeometry( 15, 15, 60, 20 );
 
 	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
@@ -596,7 +594,7 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
     slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
-	label = new QLabel( glocale->translate("Warp Interval:"), this );
+	label = new QLabel( i18n("Warp Interval:"), this );
 	label->setGeometry( 15, 65, 90, 20 );
 
 	slider = new QSlider(MINWARP, MAXWARP, 3, warpinterval,
@@ -612,15 +610,15 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
 	preview->show();    // otherwise saver does not get correct size
 	saver = new kSpaceSaver( preview->winId() );
 
-	button = new QPushButton( glocale->translate("About"), this );
+	button = new QPushButton( i18n("About"), this );
 	button->setGeometry( 130, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
 
-	button = new QPushButton( glocale->translate("OK"), this );
+	button = new QPushButton( i18n("OK"), this );
 	button->setGeometry( 235, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = new QPushButton( glocale->translate("Cancel"), this );
+	button = new QPushButton( i18n("Cancel"), this );
 	button->setGeometry( 300, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 }
@@ -685,7 +683,7 @@ void kSpaceSetup::slotOkPressed()
 void kSpaceSetup::slotAbout()
 {
 	KMessageBox::about(this,
-		glocale->translate("KSpace\nCopyright (c) 1998\n"
+		i18n("KSpace\nCopyright (c) 1998\n"
 				   "Bernd Johannes Wuebben <wuebben@kde.org>"));
 }
 

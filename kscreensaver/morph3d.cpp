@@ -48,13 +48,11 @@
 #include <klocale.h>
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 #include <math.h>
 #include <X11/Intrinsic.h>
-#ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
-#endif
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -63,7 +61,7 @@ extern KLocale *glocale;
 #define Scale4Window               0.3
 #define Scale4Iconic               1.0
 
-#define glNormal3fMul(X1,Y1,Z1,X2,Y2,Z2) glNormal3f((Y1)*(Z2)-(Z1)*(Y2),(Z1)*(X2)-(X1)*(Z2),(X1)*(Y2)-(Y1)*(X2))
+#define VectMul(X1,Y1,Z1,X2,Y2,Z2) (Y1)*(Z2)-(Z1)*(Y2),(Z1)*(X2)-(X1)*(Z2),(X1)*(Y2)-(Y1)*(X2)
 #define sqr(A)                     ((A)*(A))
 
 /* Increasing this values produces better image quality, the price is speed. */
@@ -153,7 +151,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;      \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
+      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
       glVertex3f(VertX, VertY, VertZ);           \
                                                  \
       Xf=(float)(Ri-Ti-1)*Ax + (float)Ti*Bx;     \
@@ -165,7 +163,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;        \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
+      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
       glVertex3f(VertX, VertY, VertZ);           \
                                                  \
     }                                            \
@@ -178,7 +176,7 @@ static morph3dstruct *morph3d = NULL;
     VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;         \
     NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;  \
     NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;  \
-    glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);           \
+    glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));           \
     glVertex3f(VertX, VertY, VertZ);                 \
     glEnd();                                      \
   }                                               \
@@ -210,7 +208,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Y;         VertZ=Factor*Zf;   \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Y-VertY;  NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
+      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
       glVertex3f(VertX, VertY, VertZ);                                        \
                                                                               \
       Xa=Xf+0.001; Yb=Yf+0.001;                                               \
@@ -220,7 +218,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;        \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);          \
+      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));          \
       glVertex3f(VertX, VertY, VertZ);                                        \
     }                                                                         \
     glEnd();                                                                  \
@@ -255,7 +253,7 @@ static morph3dstruct *morph3d = NULL;
         VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;     \
         NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;  \
         NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;  \
-        glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);       \
+        glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));       \
 	glVertex3f(VertX, VertY, VertZ);                                     \
                                                                              \
         Xf=(float)(Ri-Ti-1)*x[Fi] + (float)Ti*x[Fi+1];                       \
@@ -267,7 +265,7 @@ static morph3dstruct *morph3d = NULL;
         VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;     \
         NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ; \
         NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ; \
-        glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);       \
+        glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));       \
 	glVertex3f(VertX, VertY, VertZ);                                     \
                                                                              \
       }                                                                      \
@@ -280,7 +278,7 @@ static morph3dstruct *morph3d = NULL;
       VertX=Factor*Xf;        VertY=Factor*Yf;        VertZ=Factor*Zf;       \
       NeiAX=Factor1*Xa-VertX; NeiAY=Factor1*Yf-VertY; NeiAZ=Factor1*Zf-VertZ;\
       NeiBX=Factor2*Xf-VertX; NeiBY=Factor2*Yb-VertY; NeiBZ=Factor2*Zf-VertZ;\
-      glNormal3fMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ);         \
+      glNormal3f(VectMul(NeiAX, NeiAY, NeiAZ, NeiBX, NeiBY, NeiBZ));         \
       glVertex3f(VertX, VertY, VertZ);                                       \
       glEnd();                                                               \
     }                                                                        \
@@ -838,7 +836,7 @@ initmorph3d(Window window)
 		   so fall back on color, but keep the mono "look & feel". */
 		if (!getVisual(wantVis)) {
 			if (!getVisual(wantVis)) {
-				(void) fprintf(stderr, glocale->translate("GL can not render with root visual\n"));
+				(void) fprintf(stderr, i18n("GL can not render with root visual\n"));
 				return;
 			}
 		}
@@ -1017,13 +1015,13 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( glocale->translate("Setup KMorph3d") );
+	setCaption( i18n("Setup KMorph3d") );
 
 	QLabel *label;
 	QPushButton *button;
 	QSlider *slider;
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	label->setGeometry( 15, 15, 60, 20 );
 
 	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
@@ -1033,7 +1031,7 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
     slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
-	label = new QLabel( glocale->translate("Object Type:"), this );
+	label = new QLabel( i18n("Object Type:"), this );
 	label->setGeometry( 15, 65, 90, 20 );
 
 	slider = new QSlider(MINBATCH, MAXBATCH, 1, maxLevels,
@@ -1049,15 +1047,15 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 	preview->show();    // otherwise saver does not get correct size
 	saver = new kMorph3dSaver( preview->winId() );
 
-	button = new QPushButton( glocale->translate("About"), this );
+	button = new QPushButton( i18n("About"), this );
 	button->setGeometry( 130, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
 
-	button = new QPushButton( glocale->translate("OK"), this );
+	button = new QPushButton( i18n("OK"), this );
 	button->setGeometry( 235, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = new QPushButton( glocale->translate("Cancel"), this );
+	button = new QPushButton( i18n("Cancel"), this );
 	button->setGeometry( 300, 210, 50, 25 );
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 }
@@ -1123,7 +1121,7 @@ void kMorph3dSetup::slotOkPressed()
 void kMorph3dSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Morph3D\n\nCopyright (c) 1997 by Marcelo F. Vianna\n\nPorted to kscreensave by Emanuel Pirker."));
+			     i18n("Morph3D\n\nCopyright (c) 1997 by Marcelo F. Vianna\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

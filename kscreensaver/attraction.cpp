@@ -693,7 +693,7 @@ void attr_cleanup()
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kAttractionSaver *saver = NULL;
 
@@ -806,7 +806,7 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	number = 15;
 
 	readSettings();
-	setCaption( glocale->translate("Setup KAttraction") );
+	setCaption( i18n("Setup KAttraction") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -817,7 +817,7 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);
 
-	label = new QLabel( glocale->translate("Number:"), this );
+	label = new QLabel( i18n("Number:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -830,15 +830,15 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Mode:"), this);
+	label = new QLabel( i18n("Mode:"), this);
 	min_size(label);
 	tl11->addWidget(label, 0, 0);
 
 	QComboBox *combo = new QComboBox( this );
-	combo->insertItem(  glocale->translate("Balls"), 0 );
-	combo->insertItem(  glocale->translate("Lines"), 1 );
-	combo->insertItem(  glocale->translate("Polygons"), 2 );
-	combo->insertItem(  glocale->translate("Tails"), 3 );
+	combo->insertItem(  i18n("Balls"), 0 );
+	combo->insertItem(  i18n("Lines"), 1 );
+	combo->insertItem(  i18n("Polygons"), 2 );
+	combo->insertItem(  i18n("Tails"), 3 );
 	if (strcmp(mode, "Lines") == 0)
 	  combo->setCurrentItem( 1 );
 	else if (strcmp(mode, "Polygons") == 0)
@@ -851,7 +851,7 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	connect( combo, SIGNAL( activated( const QString& ) ),
 			SLOT( slotMode( const QString& ) ) );
 
-	QCheckBox *cb = new QCheckBox( glocale->translate("Glow"), this );
+	QCheckBox *cb = new QCheckBox( i18n("Glow"), this );
 	min_size(cb);
 	cb->setChecked( glow );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotGlow( bool ) ) );
@@ -866,14 +866,14 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -953,7 +953,7 @@ void kAttractionSetup::slotOkPressed()
 void kAttractionSetup::slotAbout()
 {
 	KMessageBox::about(this,
-		glocale->translate("Attraction Version 1.0\n\n"
+		i18n("Attraction Version 1.0\n\n"
 				   "Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
 				   "Ported to kscreensaver by:\n\n"
 				   "Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"));

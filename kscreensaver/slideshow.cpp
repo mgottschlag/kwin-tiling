@@ -5,7 +5,6 @@
  */
 
 
-// Need to redefine the QWidget::create(Window) call to use it
 #define protected public
 #include <qwidget.h>
 #undef protected
@@ -40,51 +39,9 @@
 
 // This refers to klock.po. If you want an extra dictionary,
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kSlideShowSaver *sSaver = NULL;
-
-
-//=============================================================================
-//  Class SaverWidget
-//=============================================================================
-SaverWidget::SaverWidget(): Inherited()
-{
-}
-
-SaverWidget::~SaverWidget()
-{
-}
-
-void SaverWidget::mousePressEvent(QMouseEvent*)
-{
-  stopScreenSaver();
-  exit (0);
-}
-
-void SaverWidget::keyPressEvent(QKeyEvent*)
-{
-  stopScreenSaver();
-  exit (0);
-}
-
-void SaverWidget::create(Drawable drawable)
-{
-  unsigned int w=0, h=0, udummy;
-  Window rootWin;
-  int dummy;
-
-  if (drawable)
-  {
-    XGetGeometry(qt_xdisplay(), drawable, &rootWin, &dummy, &dummy,
-		 &w, &h, &udummy, &udummy);
-  }
-  if (w == 0) w = 600;
-  if (h == 0) h = 420;
-
-  Inherited::create((WId)drawable);
-  resize(w, h);
-}
 
 
 //=============================================================================
@@ -99,8 +56,10 @@ kSlideShowSaver::kSlideShowSaver(Drawable drawable): kScreenSaver(drawable)
 
   kimgioRegister();
 
-  mWidget.create(drawable);
+  mWidget.resize(1,1);
+  mWidget.create((WId)drawable);
   mWidget.setBackgroundColor(black);
+  mWidget.resize(800,600);
   blank();
 
   mEffect = NULL;
@@ -573,7 +532,7 @@ void kSlideShowSaver::createNextScreen()
   {
     p.setPen(QColor("white"));
     p.drawText(20 + (rand() % (ww>>1)), 20 + (rand() % (wh>>1)),
-	       glocale->translate("No images found"));
+	       i18n("No images found"));
   }
   else
   {
@@ -713,9 +672,11 @@ void kSlideShowSaver::blank()
 kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   QDialog(aParent, aName, TRUE )
 {
-  setCaption(glocale->translate("Setup Slide Show"));
+  setCaption(i18n("Setup Slide Show"));
 
+  QLabel *label;
   QPushButton *button;
+
   mSaver = NULL;
 
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
@@ -725,7 +686,7 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl1->addLayout(tl11);
 
   mCboDir = new QComboBox(false, this);
-  mCboDir->insertItem(glocale->translate("Select..."));
+  mCboDir->insertItem(i18n("Select..."));
   mCboDir->setMaxCount(21);
   mCboDir->setSizeLimit(20);
   minSize(mCboDir);
@@ -734,26 +695,25 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl11->addWidget(mCboDir);
   tl11->addSpacing(5);
 
-  mCbxZoom = new QCheckBox(glocale->translate("Zoom pictures"), this);
+  mCbxZoom = new QCheckBox(i18n("Zoom pictures"), this);
   connect(mCbxZoom, SIGNAL(clicked()), SLOT(writeSettings()));
   minSize(mCbxZoom);
   tl11->addWidget(mCbxZoom);
 
-  mCbxRandom = new QCheckBox(glocale->translate("Random play"), this);
+  mCbxRandom = new QCheckBox(i18n("Random play"), this);
   connect(mCbxRandom, SIGNAL(clicked()), SLOT(writeSettings()));
   minSize(mCbxRandom);
   tl11->addWidget(mCbxRandom);
 
-  mCbxShowName = new QCheckBox(glocale->translate("Show names"), this);
+  mCbxShowName = new QCheckBox(i18n("Show names"), this);
   connect(mCbxShowName, SIGNAL(clicked()), SLOT(writeSettings()));
   minSize(mCbxShowName);
   tl11->addWidget(mCbxShowName);
   tl11->addSpacing(5);
 
-  mLblDelay = new QLabel(glocale->translate("Delay:"), this);
-  minSize(mLblDelay);
-  mLblDelay->setMaximumWidth(32767);
-  tl11->addWidget(mLblDelay);
+  label = new QLabel(i18n("Delay:"), this);
+  minSize(label);
+  tl11->addWidget(label);
 
   mDelay = new QSlider(1, 60, 10, 1, QSlider::Horizontal, this);
   mDelay->setMinimumSize(90, 20);
@@ -774,14 +734,14 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl1->addWidget(mPreview);
 
   KButtonBox *bbox = new KButtonBox(this);	
-  button = bbox->addButton(glocale->translate("About"));
+  button = bbox->addButton(i18n("About"));
   connect(button, SIGNAL(clicked()), SLOT(slotAbout()));
   bbox->addStretch(1);
 
-  button = bbox->addButton(glocale->translate("OK"));	
+  button = bbox->addButton(i18n("OK"));	
   connect(button, SIGNAL(clicked()), SLOT(slotOkPressed()));
 
-  button = bbox->addButton(glocale->translate("Cancel"));
+  button = bbox->addButton(i18n("Cancel"));
   connect(button, SIGNAL(clicked()), SLOT(reject()));
   bbox->layout();
   tl->addWidget(bbox);
@@ -803,14 +763,7 @@ void kSlideShowSetup::readSettings()
   mCbxRandom->setChecked(config->readBoolEntry("ShowRandom", true));
   mCbxZoom->setChecked(config->readBoolEntry("ZoomImages", false));
   mCbxShowName->setChecked(config->readBoolEntry("PrintName", true));
-  num = config->readNumEntry("Delay", 20);
-  mDelay->setValue(num);
-
-  QString str;
-  str.sprintf("%s %d %s", (const char*)glocale->translate("Delay:"),
-	      num, (const char*)glocale->translate("Seconds"));
-  mLblDelay->setText(str);
-
+  mDelay->setValue(config->readNumEntry("Delay", 5));
   curDir = config->readEntry("Directory");
 
   config->setGroup("Slide Show");
@@ -873,15 +826,9 @@ void kSlideShowSetup::writeSettings()
 
 
 //-----------------------------------------------------------------------------
-void kSlideShowSetup::slotDelay(int x)
+void kSlideShowSetup::slotDelay(int)
 {
-  QString str;
-
   writeSettings();
-
-  str.sprintf("%s %d %s", (const char*)glocale->translate("Delay:"),
-	      x, (const char*)glocale->translate("Seconds"));
-  mLblDelay->setText(str);
 }
 
 
@@ -891,8 +838,13 @@ void kSlideShowSetup::slotDirSelected(int aIdx)
   if (aIdx <= 0)
   {
     QString dirName;
+#ifdef AFTER_KRASH_API
     dirName = KFileDialog::getExistingDirectory(QDir::homeDirPath(), this,
-		   glocale->translate("Choose Images Directory") );
+		   i18n("Choose Images Directory") );
+#else
+    dirName = KFileBaseDialog::getDirectory(QDir::homeDirPath(), this,
+			    i18n("Choose Images Directory"));
+#endif
     if (dirName.isEmpty()) return;
     mCboDir->insertItem(dirName, 1);
     mCboDir->setCurrentItem(1);
@@ -913,7 +865,7 @@ void kSlideShowSetup::slotOkPressed()
 void kSlideShowSetup::slotAbout()
 {
   KMessageBox::about(this,
-     glocale->translate("SlideShow Version 1.1\n\n"
+     i18n("SlideShow Version 1.1\n\n"
 			"Copyright (c) 1999 by\n"
 			"Stefan Taferner <taferner@kde.org>\n"));
 }

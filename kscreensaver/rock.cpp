@@ -417,7 +417,7 @@ void rock_setRotate( bool rotate )
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kRockSaver *saver = NULL;
 
@@ -551,7 +551,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( glocale->translate("Setup krock") );
+	setCaption( i18n("Setup krock") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -563,7 +563,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -576,7 +576,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Number:"), this );
+	label = new QLabel( i18n("Number:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -589,13 +589,13 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	QCheckBox *cb = new QCheckBox( glocale->translate("Move"), this );
+	QCheckBox *cb = new QCheckBox( i18n("Move"), this );
 	min_size(cb);
 	cb->setChecked( move );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotMove( bool ) ) );
 	tl11->addWidget(cb);
 
-	cb = new QCheckBox( glocale->translate("Rotate"), this );
+	cb = new QCheckBox( i18n("Rotate"), this );
 	min_size(cb);
 	cb->setChecked( rotate );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotRotate( bool ) ) );
@@ -610,14 +610,14 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -720,6 +720,6 @@ void kRockSetup::slotOkPressed()
 void kRockSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Rock Version 3.3\n\nCopyright (c) 1992 by Jamie Zawinski\n\nPorted to kscreensave by Martin Jones."));
+			     i18n("Rock Version 3.3\n\nCopyright (c) 1992 by Jamie Zawinski\n\nPorted to kscreensave by Martin Jones."));
 }
 

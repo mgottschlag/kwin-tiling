@@ -832,7 +832,7 @@ release_bouboule()
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kBoubouleSaver *saver = NULL;
 
@@ -1004,7 +1004,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( glocale->translate("Setup KBouboule") );
+	setCaption( i18n("Setup KBouboule") );
 //	setGeometry (x,0,300,250);
 
 	QLabel *label;
@@ -1017,7 +1017,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);		
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -1031,7 +1031,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Number of points:"), this );
+	label = new QLabel( i18n("Number of points:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -1045,7 +1045,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Point size:"), this );
+	label = new QLabel( i18n("Point size:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -1059,7 +1059,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	freqlabel = new QLabel( glocale->translate("Color-change frequency:"), this );
+	freqlabel = new QLabel( i18n("Color-change frequency:"), this );
 	min_size(freqlabel);
 	tl11->addWidget(freqlabel);
 	freqlabel->setEnabled( !flag_3dmode );
@@ -1075,7 +1075,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl11->addSpacing(5);
 	freqslider->setEnabled( !flag_3dmode );
 
-	QCheckBox *cb = new QCheckBox( glocale->translate("3D mode"), this );
+	QCheckBox *cb = new QCheckBox( i18n("3D mode"), this );
 	min_size(cb);
 	cb->setChecked( flag_3dmode );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slot3DMode( bool ) ) );
@@ -1090,14 +1090,14 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -1222,7 +1222,7 @@ void kBoubouleSetup::slotOkPressed()
 void kBoubouleSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Bouboule v0.1 -- a glob of spheres twisting and changing size\n\nCopyright (c) 1996 by Jeremie PETIT\n\nPorted to kscreensave by Cedric Tefft"));
+			     i18n("Bouboule v0.1 -- a glob of spheres twisting and changing size\n\nCopyright (c) 1996 by Jeremie PETIT\n\nPorted to kscreensave by Cedric Tefft"));
 }
 
 

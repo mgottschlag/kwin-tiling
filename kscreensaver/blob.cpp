@@ -46,7 +46,7 @@
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 #define SMALLRAND(a)	(int)(random()%(int)(a)+1)
 
@@ -55,11 +55,11 @@ static KBlobSaver *saver = NULL;
 QString alg_str[5];
 void initAlg() 
 {
-  alg_str[0] = glocale->translate("Random Linear");
-  alg_str[1] = glocale->translate("Horizonal Sine");
-  alg_str[2] = glocale->translate("Circular Bounce");
-  alg_str[3] = glocale->translate("Polar Coordinates");
-  alg_str[4] = glocale->translate("Random");
+  alg_str[0] = i18n("Random Linear");
+  alg_str[1] = i18n("Horizonal Sine");
+  alg_str[2] = i18n("Circular Bounce");
+  alg_str[3] = i18n("Polar Coordinates");
+  alg_str[4] = i18n("Random");
 }
 
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ KBlobSaver::KBlobSaver
  QColor color;
 	float ramp = (256.0-64.0)/(float)RAMP;
 	QString msg = 
-	  glocale->translate("Sorry. This screensaver needs a color display");
+	  i18n("Sorry. This screensaver needs a color display");
 
 	// needs colors to work this one
 	if (QPixmap::defaultDepth() < 8)
@@ -462,7 +462,7 @@ KBlobSetup::KBlobSetup
 	// get saver configuration from kde registry
 	readSettings();
 
-	setCaption(glocale->translate("Setup Blob Saver"));
+	setCaption(i18n("Setup Blob Saver"));
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -472,7 +472,7 @@ KBlobSetup::KBlobSetup
 	tl1->addLayout(tl11);
 
 	// seconds to generate on a frame
-	label = new QLabel(glocale->translate("Frame Show sec."), 
+	label = new QLabel(i18n("Frame Show sec."), 
 		    this);
 	min_size(label);
 	stime = new QLineEdit(this);
@@ -484,7 +484,7 @@ KBlobSetup::KBlobSetup
 	tl11->addSpacing(10);
 
 	// available algorithms
-	label = new QLabel(glocale->translate("Algorithm"), this);
+	label = new QLabel(i18n("Algorithm"), this);
 	min_size(label);
 	algs = new QListBox(this);
 	algs->setMinimumSize(150, 105);
@@ -515,16 +515,16 @@ KBlobSetup::KBlobSetup
 	KButtonBox *bbox = new KButtonBox(this);
 
 	// show an address to send flame mail to
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
 	// means attempt to register settings with kde registry
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	// ignore changes
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -575,7 +575,7 @@ void KBlobSetup::slotOkPressed()
 void KBlobSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Blobsaver Version 0.1\n\nwritten by Tiaan Wessels 1997\ntiaan@netsys.co.za"));
+			     i18n("Blobsaver Version 0.1\n\nwritten by Tiaan Wessels 1997\ntiaan@netsys.co.za"));
 	if (saver)
 		saver->setAlgorithm(algs->currentItem());
 }

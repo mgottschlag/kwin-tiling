@@ -269,7 +269,7 @@ drawslip(Window win)
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kSlipSaver *saver = NULL;
 
@@ -368,7 +368,7 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( glocale->translate("Setup KSlip") );
+	setCaption( i18n("Setup KSlip") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -380,7 +380,7 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -394,7 +394,7 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Batchcount:"), this );
+	label = new QLabel( i18n("Batchcount:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -416,14 +416,14 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -491,7 +491,7 @@ void kSlipSetup::slotOkPressed()
 void kSlipSetup::slotAbout()
 {
 	KMessageBox::about(this,
-		glocale->translate("Slip\n\nCopyright (c) 1991 by Scott Draves\n\nPorted to kscreensave by Emanuel Pirker."));
+		i18n("Slip\n\nCopyright (c) 1991 by Scott Draves\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

@@ -417,7 +417,7 @@ void pyro_setCloud( int c )
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kPyroSaver *saver = NULL;
 
@@ -521,7 +521,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( glocale->translate("Setup KPyro") );
+	setCaption( i18n("Setup KPyro") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -533,7 +533,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);
 
-	label = new QLabel( glocale->translate("Number:"), this );
+	label = new QLabel( i18n("Number:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -546,7 +546,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	QCheckBox *cb = new QCheckBox( glocale->translate("Cloud"), this );
+	QCheckBox *cb = new QCheckBox( i18n("Cloud"), this );
 	min_size(cb);
 	cb->setChecked( cloud );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotCloud( bool ) ) );
@@ -561,14 +561,14 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -633,7 +633,7 @@ void kPyroSetup::slotOkPressed()
 void kPyroSetup::slotAbout()
 {
 	KMessageBox::about(this,
-		glocale->translate("Pyro Version 3.4\n\n"
+		i18n("Pyro Version 3.4\n\n"
 				   "Copyright (c) 1991 by Patrick J. Naughton\n\n"
 				   "Ported to kscreensave by Martin Jones."));
 }

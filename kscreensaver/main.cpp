@@ -20,7 +20,7 @@
 #include "saver.h"
 #include "vroot.h"
 
-KLocale *glocale = 0;
+//KLocale *glocale = 0;
 
 void usage( char *name );
 
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     KApplication app(argc, argv, "kscreensaver");
 
     // For the kdebase package we use a single strings file.
-    glocale = new KLocale("klock");
+//    glocale = new KLocale("klock");
 
     DemoWindow *demoWidget = 0;
 	Window saveWin = 0;
@@ -106,9 +106,9 @@ int main(int argc, char *argv[])
 //----------------------------------------------------------------------------
 void usage(char *name)
 {
-	printf(glocale->translate(
+	printf(i18n(
 	   "Usage: %1 [-setup|-window-id wid|-root|-help]\n").arg(name)); 
-	printf(glocale->translate(
+	printf(i18n(
     "Without any parameters, a demo of the screensaver is displayed\n"\
 	"  -setup            Setup screen saver\n"\
 	"  -window-id wid    Run in the specified XWindow\n"\

@@ -1,3 +1,14 @@
+2000-01-10 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
+	* banner.h, banner.cpp:
+	-added cycling color option
+	-added "show current time" option
+	-replaced the readEntry()'s with the appropriate read*Entry()'s
+	* replaced the glocale->translate with i18n in 
+	attraction.cpp, banner.cpp, bat.cpp, blankscrn.cpp, blob.cpp,
+	bouboule.cpp, flame.cpp, forest.cpp, hop.cpp, laser.cpp, lines.cpp,
+	lissie.cpp, main.cpp, morph3d.cpp, pipes.cpp, polygon.cpp, pyro.cpp, rock.cpp,
+	slidescreen.cpp, slideshow.cpp, slip.cpp, space.cpp, swarm.cpp
+
 1999-04-28  Christophe Prud'homme  <Christophe.Prudhomme@ann.jussieu.fr>
 
 	* bouboule.cpp: the global variable initialized in bouboule is

@@ -182,7 +182,7 @@ drawforest(Window win)
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kForestSaver *saver = NULL;
 
@@ -280,7 +280,7 @@ kForestSetup::kForestSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( glocale->translate("Setup KForest") );
+	setCaption( i18n("Setup KForest") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -292,7 +292,7 @@ kForestSetup::kForestSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -306,7 +306,7 @@ kForestSetup::kForestSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Num of Trees:"), this );
+	label = new QLabel( i18n("Num of Trees:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -327,14 +327,14 @@ kForestSetup::kForestSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -401,7 +401,7 @@ void kForestSetup::slotOkPressed()
 void kForestSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Forest\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Emanuel Pirker."));
+			     i18n("Forest\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

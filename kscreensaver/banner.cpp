@@ -5,7 +5,7 @@
 // Copyright (c)  Martin R. Jones 1996
 //
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
-
+// clock function and color cycling added 2000/01/09 by Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
 #include <stdlib.h>
 
 #include <qcolor.h>
@@ -17,6 +17,7 @@
 #include <qslider.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
+#include <qdatetime.h>
 
 #include <kapp.h>
 #include <klocale.h>
@@ -28,15 +29,12 @@
 
 #include "kcolordlg.h"
 #include "banner.h"
+#include <iostream.h>
 
 
 #include "banner.moc"
 
 #undef Below
-
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-extern KLocale *glocale;
 
 static KBannerSaver *saver = NULL;
 
@@ -71,6 +69,7 @@ static int  sizes[] = { 12, 14, 18, 24, 48, 96, 0 };
 
 KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	: QDialog( parent, name, TRUE )
+,ed(0)
 {
 	saver = NULL;
 	speed = 50;
@@ -91,11 +90,11 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	QGroupBox *group = new QGroupBox( glocale->translate("Font"), this );
-	QGridLayout *gl = new QGridLayout(group, 5, 2, 5);
+	QGroupBox *group = new QGroupBox( i18n("Font"), this );
+	QGridLayout *gl = new QGridLayout(group, 6, 2, 5);
 	gl->addRowSpacing(0, 10);
 
-	label = new QLabel( glocale->translate("Family:"), group );
+	label = new QLabel( i18n("Family:"), group );
 	gl->addWidget(label, 1, 0);
 
 	combo = new QComboBox( FALSE, group);
@@ -112,7 +111,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	connect( combo, SIGNAL( activated( const QString& ) ),
 			SLOT( slotFamily( const QString& ) ) );
 
-	label = new QLabel( glocale->translate("Size:"), group );
+	label = new QLabel( i18n("Size:"), group );
 	gl->addWidget(label, 2, 0);	
 
 	combo = new QComboBox( FALSE, group );
@@ -130,27 +129,33 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	gl->addWidget(combo, 2, 1);
 	connect( combo, SIGNAL( activated( int ) ), SLOT( slotSize( int ) ) );
 
-	label = new QLabel( glocale->translate("Color:"), group );
-	gl->addWidget(label, 3, 0);
-
-	colorPush = new QPushButton( group );
-	colorPush->setFixedHeight(20);
-	gl->addWidget(colorPush, 3, 1);
-	QColorGroup colgrp( black, fontColor, fontColor.light(),
-			fontColor.dark(), fontColor.dark(120), black, white );
-	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
-	connect( colorPush, SIGNAL( clicked() ), SLOT( slotColor() ) );
-	
-	QCheckBox *cb = new QCheckBox( glocale->translate("Bold"), 
+	QCheckBox *cb = new QCheckBox( i18n("Bold"), 
 				       group );
 	cb->setChecked( bold );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotBold( bool ) ) );
-	gl->addWidget(cb, 4, 0);
+	gl->addWidget(cb, 3, 0);
 
-	cb = new QCheckBox( glocale->translate("Italic"), group );
+	cb = new QCheckBox( i18n("Italic"), group );
 	cb->setChecked( italic );
-	gl->addWidget(cb, 4, 1);
+	gl->addWidget(cb, 3, 1);
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotItalic( bool ) ) );
+
+	label = new QLabel( i18n("Color:"), group );
+	gl->addWidget(label, 4, 0);
+
+	colorPush = new QPushButton( group );
+	colorPush->setFixedHeight(20);
+	gl->addWidget(colorPush, 4, 1);
+   QColorGroup colgrp( black, fontColor, fontColor.light(),
+			fontColor.dark(), fontColor.dark(120), black, white );
+	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
+	connect( colorPush, SIGNAL( clicked() ), SLOT( slotColor() ) );
+
+   QCheckBox *cyclingColorCb=new QCheckBox(i18n("Cycling color"),group);
+   cyclingColorCb->setMinimumSize(cyclingColorCb->sizeHint());
+   gl->addMultiCellWidget(cyclingColorCb,5,5,0,1);
+   connect(cyclingColorCb,SIGNAL(toggled(bool)),this,SLOT(slotCyclingColor(bool)));
+   cyclingColorCb->setChecked(cyclingColor);
 
 	preview = new QWidget( this );
 	preview->setFixedSize( 220, 170 );
@@ -161,7 +166,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 
 	tl11->addWidget(group);
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	tl11->addStretch(1);
 	tl11->addWidget(label);
 
@@ -176,25 +181,31 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QHBoxLayout *tl2 = new QHBoxLayout;
 	tl->addLayout(tl2);
 
-	label = new QLabel( glocale->translate("Message:"), this );
+	label = new QLabel( i18n("Message:"), this );
 	tl2->addWidget(label);
 
-	QLineEdit *ed = new QLineEdit( this );
+	ed = new QLineEdit( this );
 	fixed_height(ed);
 	tl2->addWidget(ed);
 	ed->setText( message );
 	connect( ed, SIGNAL( textChanged( const QString & ) ), 
 			SLOT( slotMessage( const QString &  ) ) );
 
-	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+   QCheckBox *timeCb=new QCheckBox( i18n("Show current time"),this);
+   timeCb->setFixedSize(timeCb->sizeHint());
+   tl->addWidget(timeCb,0,Qt::AlignLeft);
+   connect(timeCb,SIGNAL(toggled(bool)),this,SLOT(slotTimeToggled(bool)));
+   timeCb->setChecked(showTime);
+
+   KButtonBox *bbox = new KButtonBox(this);	
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -208,51 +219,27 @@ void KBannerSetup::readSettings()
 	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
-	QString str;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-	if ( speed > 100 )
+   speed=config->readNumEntry("Speed",50);
+/*	if ( speed > 100 )
 		speed = 100;
 	else if ( speed < 50 )
-		speed = 50;
+		speed = 50;*/
 
-	str = config->readEntry( "Message" );
-	if ( !str.isNull() )
-		message = str;
-	else
-		message = "KDE";
+   message=config->readEntry("Message","KDE");
+
+   showTime=config->readBoolEntry("ShowTime",FALSE);
 	
-	str = config->readEntry( "FontFamily" );
-	if ( !str.isNull() )
-		fontFamily = str;
-	else
-		fontFamily = "Times";
+   fontFamily=config->readEntry("FontFamily","Times");
 	
-	str = config->readEntry( "FontSize" );
-	if ( !str.isNull() )
-		fontSize = atoi( str );
-	else
-		fontSize = 48;
+   fontSize=config->readNumEntry("FontSize",48);
 
-	str = config->readEntry( "FontColor" );
-	if ( !str.isNull() )
-		fontColor.setNamedColor( str );
-	else
-		fontColor = red;
+   fontColor.setNamedColor(config->readEntry("FontColor","red"));
 
-	str = config->readEntry( "FontBold" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		bold = TRUE;
-	else
-		bold = FALSE;
+   cyclingColor=config->readBoolEntry("CyclingColor",FALSE);
 
-	str = config->readEntry( "FontItalic" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		italic = TRUE;
-	else
-		italic = FALSE;
+   bold=config->readBoolEntry("FontBold",FALSE);
+
+   italic=config->readBoolEntry("FontItalic",FALSE);
 }
 
 void KBannerSetup::slotFamily( const QString& fam )
@@ -279,7 +266,28 @@ void KBannerSetup::slotColor()
 	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
 
 	if ( saver )
-		saver->setFont( fontFamily, fontSize, fontColor, bold, italic );
+		saver->setColor(fontColor);
+}
+
+void KBannerSetup::slotCyclingColor(bool on)
+{
+   colorPush->setEnabled(!on);
+   cyclingColor=on;
+   
+   if (saver) saver->setCyclingColor( cyclingColor );
+   if (!cyclingColor)
+   {
+      if (saver) saver->setColor( fontColor );
+      QColorGroup colgrp( black, fontColor, fontColor.light(),
+                          fontColor.dark(), fontColor.dark(120), black, white );
+      colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
+   }
+   else
+   {
+      QColorGroup colgrp( black, fontColor.dark(150), fontColor,
+                          fontColor.dark(300), fontColor.dark(200), black, white );
+      colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
+   };
 }
 
 void KBannerSetup::slotBold( bool state )
@@ -310,17 +318,32 @@ void KBannerSetup::slotMessage( const QString &msg )
 		saver->setMessage( message );
 }
 
+void KBannerSetup::slotTimeToggled( bool on )
+{
+   ed->setEnabled(!on);
+   showTime=on;
+   if (saver)
+   {
+      if (showTime)
+         saver->setTimeDisplay();
+      else
+      {
+         message=ed->text();
+         saver->setMessage(message);
+      };
+   };
+}
+
 // Ok pressed - save settings and exit
 void KBannerSetup::slotOkPressed()
 {
     KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
+	config->writeEntry( "Speed", speed );
 
 	config->writeEntry( "Message", message );
+	config->writeEntry( "ShowTime", showTime );
 
 	config->writeEntry( "FontFamily", fontFamily );
 
@@ -332,9 +355,10 @@ void KBannerSetup::slotOkPressed()
 	colName.sprintf( "#%02x%02x%02x", fontColor.red(), fontColor.green(),
 		fontColor.blue() );
 	config->writeEntry( "FontColor", colName );
+	config->writeEntry( "CyclingColor", cyclingColor );
 
-	config->writeEntry( "FontBold", bold ? QString( "yes" ) : QString( "no" ) );
-	config->writeEntry( "FontItalic", italic ? QString( "yes" ) : QString( "no" ) );
+	config->writeEntry( "FontBold", bold );
+	config->writeEntry( "FontItalic", italic );
 
 	config->sync();
 
@@ -344,7 +368,7 @@ void KBannerSetup::slotOkPressed()
 void KBannerSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Banner Version 0.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org"));
+			     i18n("Banner Version 0.1.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org\nextended by Alexander Neundorf 2000\nalexander.neundorf@rz.tu-ilmenau.de\n"));
 }
 
 //-----------------------------------------------------------------------------
@@ -352,12 +376,9 @@ void KBannerSetup::slotAbout()
 KBannerSaver::KBannerSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
 	readSettings();
-	initialise();
-
+	initialize();
 	colorContext = QColor::enterAllocContext();
-
 	blank();
-
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
 }
@@ -386,11 +407,24 @@ void KBannerSaver::setFont( const QString& family, int size, const QColor &color
 	italic = i;
 
 	blank();
-	initialise();
+	initialize();
+}
+
+void KBannerSaver::setColor(QColor &color)
+{
+   fontColor=color;
+};
+
+void KBannerSaver::setCyclingColor( bool on )
+{
+   cyclingColor=on;
+   if (cyclingColor)
+      fontColor.setHsv(0,SATURATION,VALUE);
 }
 
 void KBannerSaver::setMessage( const QString &msg )
 {
+   showTime=FALSE;
 	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
 	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message,
                  message.length() );
@@ -399,59 +433,54 @@ void KBannerSaver::setMessage( const QString &msg )
 	fwidth = XTextWidth( fontInfo, message, message.length() );
 }
 
+void KBannerSaver::setTimeDisplay()
+{
+	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
+	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message,
+                 message.length() );
+   showTime=TRUE;
+   message = QTime::currentTime().toString();
+	fwidth = XTextWidth( fontInfo, message, message.length() );
+}
+
 // read settings from config file
 void KBannerSaver::readSettings()
 {
-    QString str;
-    
-    KConfig *config = KApplication::kApplication()->config();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
-	str = config->readEntry( "Speed" );
+/*	str = config->readEntry( "Speed" );
 	if ( !str.isNull() )
 		speed = 101 - atoi( str );
 	else
-		speed = 50;
+		speed = 50;*/
 
-	str = config->readEntry( "FontFamily" );
-	if ( !str.isNull() )
-		fontFamily = str;
-	else
-		fontFamily = "Times";
+   speed=101-config->readNumEntry("Speed",50);
 
-	str = config->readEntry( "FontSize" );
-	if ( !str.isNull() )
-		fontSize = atoi( str );
-	else
-		fontSize = 48;
+   message=config->readEntry("Message","KDE");
 
-	str = config->readEntry( "FontColor" );
-	if ( !str.isNull() )
-		fontColor.setNamedColor( str );
-	else
-		fontColor = red;
+   showTime=config->readBoolEntry("ShowTime",FALSE);
+	
+   fontFamily=config->readEntry("FontFamily","Times");
+	
+   fontSize=config->readNumEntry("FontSize",48);
 
-	str = config->readEntry( "FontBold" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		bold = TRUE;
-	else
-		bold = FALSE;
+   fontColor.setNamedColor(config->readEntry("FontColor","red"));
 
-	str = config->readEntry( "FontItalic" );
-	if ( !str.isNull() && str.find( "yes" ) == 0 )
-		italic = TRUE;
-	else
-		italic = FALSE;
+   cyclingColor=config->readBoolEntry("CyclingColor",FALSE);
 
-	str = config->readEntry( "Message" );
-	if ( !str.isNull() )
-		message = str;
-	else
-		message = glocale->translate("KDE is great");
+   bold=config->readBoolEntry("FontBold",FALSE);
+   italic=config->readBoolEntry("FontItalic",FALSE);
+   
+	if ( cyclingColor )
+   {
+      currentHue=0;
+      fontColor.setHsv(0,SATURATION,VALUE);
+   };
 }
 
-// initialise font
-void KBannerSaver::initialise()
+// initialize font
+void KBannerSaver::initialize()
 {
 	QString font;
 	int size;
@@ -482,6 +511,11 @@ void KBannerSaver::initialise()
 // erase old text and draw in new position
 void KBannerSaver::slotTimeout()
 {
+   if (cyclingColor)
+   {
+      currentHue=(currentHue+4)%360;
+      fontColor.setHsv(currentHue,SATURATION,VALUE);
+   };
 	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
 	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
 
@@ -490,7 +524,9 @@ void KBannerSaver::slotTimeout()
 		xpos = mWidth;
 
 	XSetForeground( qt_xdisplay(), mGc, fontColor.pixel() );
-	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
+
+   if (showTime) message = QTime::currentTime().toString();
+   XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
 }
 
 void KBannerSaver::blank()

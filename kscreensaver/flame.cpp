@@ -287,7 +287,7 @@ drawflame(Window win)
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kFlameSaver *saver = NULL;
 
@@ -400,7 +400,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( glocale->translate("Setup KFlame") );
+	setCaption( i18n("Setup KFlame") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -412,7 +412,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -425,7 +425,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Max Levels:"), this );
+	label = new QLabel( i18n("Max Levels:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -439,7 +439,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	tl11->addSpacing(5);
 
 
-	label = new QLabel( glocale->translate("Num Points:"), this );
+	label = new QLabel( i18n("Num Points:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -461,14 +461,14 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -553,7 +553,7 @@ void kFlameSetup::slotOkPressed()
 void kFlameSetup::slotAbout()
 {
   KMessageBox::about(this,
-		       glocale->translate("Flame Version 3.3\n\nCopyright (c) 1991 by Scott Draves <spot@draves.org>\n\nPorted to kscreensave by Martin Jones."));
+		       i18n("Flame Version 3.3\n\nCopyright (c) 1991 by Scott Draves <spot@draves.org>\n\nPorted to kscreensave by Martin Jones."));
 }
 
 

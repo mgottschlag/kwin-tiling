@@ -32,12 +32,9 @@
 #define MAXLENGTH	65
 #define MAXVERTICES	19
 
-template class QList<Polygon>;
-template class QArray<XPoint>;
-
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kPolygonSaver *saver = NULL;
 
@@ -83,7 +80,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	QPushButton *button;
 	QSlider *sb;
 
-	setCaption( glocale->translate("Setup kpolygon") );
+	setCaption( i18n("Setup kpolygon") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -91,7 +88,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	label = new QLabel( glocale->translate("Length:"), this );
+	label = new QLabel( i18n("Length:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -104,7 +101,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	tl11->addWidget(sb);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Vertices:"), this );
+	label = new QLabel( i18n("Vertices:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -118,7 +115,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	tl11->addWidget(sb);
 	tl11->addSpacing(5);
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -139,14 +136,14 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -239,7 +236,7 @@ void kPolygonSetup::slotOkPressed()
 void kPolygonSetup::slotAbout()
 {
 	KMessageBox::information(this,
-			     glocale->translate("Polygon Version 0.1\n\n"\
+			     i18n("Polygon Version 0.1\n\n"\
 					       "written by Martin R. Jones 1996\n"\
 					       "mjones@kde.org"));
 }

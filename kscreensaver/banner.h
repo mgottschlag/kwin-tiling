@@ -16,6 +16,9 @@
 #include "saver.h"
 
 
+#define SATURATION 100
+#define VALUE 255
+
 class KBannerSaver : public kScreenSaver
 {
 	Q_OBJECT
@@ -27,10 +30,13 @@ public:
 	void setFont( const QString &family, int size, const QColor &color,
 			bool b, bool i );
 	void setMessage( const QString &msg );
-
+	void setTimeDisplay();
+   void setCyclingColor(bool on);
+   void setColor( QColor &color);
+   
 private:
 	void readSettings();
-	void initialise();
+	void initialize();
 	void blank();
 
 protected slots:
@@ -44,7 +50,10 @@ protected:
 	bool		bold;
 	bool		italic;
 	QColor		fontColor;
-	QString		message;
+   bool cyclingColor;
+   int currentHue;
+   QString		message;
+   bool showTime;
 	int			xpos, ypos, step;
 	int			fwidth;
 	int			speed;
@@ -65,23 +74,28 @@ private slots:
 	void slotFamily( const QString & );
 	void slotSize( int );
 	void slotColor();
+   void slotCyclingColor(bool on);
 	void slotBold( bool );
 	void slotItalic( bool );
 	void slotSpeed( int );
 	void slotMessage( const QString & );
 	void slotOkPressed();
 	void slotAbout();
+   void slotTimeToggled(bool on);
 
 private:
 	QWidget *preview;
 	QPushButton *colorPush;
 	KBannerSaver *saver;
+   QLineEdit *ed;
 
 	QString	message;
-	QString fontFamily;
+   bool showTime;
+   QString fontFamily;
 	int		fontSize;
 	QColor	fontColor;
-	bool	bold;
+   bool cyclingColor;
+   bool	bold;
 	bool	italic;
 	int		speed;
 };

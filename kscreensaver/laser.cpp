@@ -310,7 +310,7 @@ void laser_cleanup()
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 
 static kLaserSaver *saver = NULL;
 
@@ -396,7 +396,7 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( glocale->translate("Setup KLaser") );
+	setCaption( i18n("Setup KLaser") );
 
 	QLabel *label;
 	QPushButton *button;
@@ -408,7 +408,7 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	label = new QLabel( glocale->translate("Speed:"), this );
+	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
 	tl11->addWidget(label);
 
@@ -429,14 +429,14 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 	tl1->addWidget(preview);
 
 	KButtonBox *bbox = new KButtonBox(this);	
-	button = bbox->addButton( glocale->translate("About"));
+	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( glocale->translate("OK"));	
+	button = bbox->addButton( i18n("OK"));	
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(glocale->translate("Cancel"));
+	button = bbox->addButton(i18n("Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
@@ -485,6 +485,6 @@ void kLaserSetup::slotOkPressed()
 void kLaserSetup::slotAbout()
 {
 	KMessageBox::about(this,
-			     glocale->translate("Laser Version 3.3\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Martin Jones."));
+			     i18n("Laser Version 3.3\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Martin Jones."));
 }
 

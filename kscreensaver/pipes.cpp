@@ -123,7 +123,7 @@ FIXME: this could be clearer done by a calculation on the position.
 #include <klocale.h>
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
-extern KLocale *glocale;
+//extern KLocale *glocale;
 #include <kapp.h>
 #include <kconfig.h>
 
@@ -131,11 +131,10 @@ extern KLocale *glocale;
 #include <X11/Intrinsic.h>
 
 #ifdef HAVE_GL
-#ifdef HAVE_GL_XMESA_H
+
 #include <GL/xmesa.h>
-#endif
 #include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glut.h>
 #include <GL/glx.h>
 
 // GL related helper routines /////////////////////////////////////////////////
@@ -238,7 +237,7 @@ void initGL(Window window)
 
   if (!getVisual(wantVis)) {
     if (!getVisual(wantVis)) {
-      (void) fprintf(stderr, glocale->translate(
+      (void) fprintf(stderr, i18n(
            "GL can not render with root visual\n"));
       return;
     }
@@ -728,13 +727,13 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
 {
   readSettings();
 
-  setCaption( glocale->translate("Setup KPipes") );
+  setCaption( i18n("Setup KPipes") );
 
   QLabel *label;
   QPushButton *button;
   QSlider *slider;
 
-  label = new QLabel( glocale->translate("Number of Pipes"), this );
+  label = new QLabel( i18n("Number of Pipes"), this );
   label->setGeometry( 15, 15, 100, 20 );
 
   slider = new QSlider(1, MAXPIPES, 1, pipes, QSlider::Horizontal, this );
@@ -749,15 +748,15 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
   preview->show();    // otherwise saver does not get correct size
   saver = new kPipesSaver( preview->winId() );
 
-  button = new QPushButton( glocale->translate("About"), this );
+  button = new QPushButton( i18n("About"), this );
   button->setGeometry( 130, 210, 50, 25 );
   connect( button, SIGNAL( clicked() ), SLOT( slotAbout() ) );
 
-  button = new QPushButton( glocale->translate("OK"), this );
+  button = new QPushButton( i18n("OK"), this );
   button->setGeometry( 235, 210, 50, 25 );
   connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-  button = new QPushButton( glocale->translate("Cancel"), this );
+  button = new QPushButton( i18n("Cancel"), this );
   button->setGeometry( 300, 210, 50, 25 );
   connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 }
@@ -799,7 +798,7 @@ void kPipesSetup::slotOkPressed()
 void kPipesSetup::slotAbout()
 {
   KMessageBox::about(this,
-	glocale->translate("KPipes\nCopyright (c) 1998\n"
+	i18n("KPipes\nCopyright (c) 1998\n"
 			   "Lars Doelle <lars.doelle@on-line.de>"));
 }
 
