@@ -176,6 +176,7 @@ execute (char **argv, char **env)
     if (errno != ENOENT) {
 	char	*e, **newargv;
 	FILE	*f;
+	int	nu;
 	char	program[1024];
 
 	/*
@@ -200,9 +201,14 @@ execute (char **argv, char **env)
 	    newargv = parseArgs (0, program + 2);
 	else
 	    newargv = addStrArr (0, "/bin/sh", 7);
-	mergeStrArrs (&newargv, argv);
-	Debug ("shell script execution: %[s\n", newargv);
-	execve (newargv[0], newargv, env);
+	if (!newargv)
+	    return;
+	nu = arrLen (newargv);
+	if (!(argv = xCopyStrArr (nu, argv)))
+	    return;
+	memcpy (argv, newargv, sizeof(char *) * nu);
+	Debug ("shell script execution: %[s\n", argv);
+	execve (argv[0], argv, env);
     }
 }
 

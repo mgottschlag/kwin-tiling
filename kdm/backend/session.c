@@ -616,11 +616,12 @@ LoadXloginResources ()
 
     if (!xResLoaded && td->resources[0] && access (td->resources, 4) == 0) {
 	env = systemEnv ((char *) 0);
-	args = parseArgs ((char **) 0, td->xrdb);
-	args = parseArgs (args, td->resources);
-	Debug ("loading resource file: %s\n", td->resources);
-	(void) runAndWait (args, env);
-	freeStrArr (args);
+	if ((args = parseArgs ((char **) 0, td->xrdb)) &&
+	    (args = addStrArr (args, td->resources, -1))) {
+	    Debug ("loading resource file: %s\n", td->resources);
+	    (void) runAndWait (args, env);
+	    freeStrArr (args);
+	}
 	freeStrArr (env);
 	xResLoaded = TRUE;
     }
@@ -661,19 +662,13 @@ DeleteXloginResources ()
 int
 source (char **env, char *file)
 {
-    char	**args, *args_safe[2];
+    char	**args;
     int		ret;
 
     if (file && file[0]) {
 	Debug ("source %s\n", file);
-	args = parseArgs ((char **) 0, file);
-	if (!args)
-	{
-	    args = args_safe;
-	    args[0] = file;
-	    args[1] = NULL;
-	    return runAndWait (args, env);
-	}
+	if (!(args = parseArgs ((char **) 0, file)))
+	    return waitCompose (0,0,3);
 	ret = runAndWait (args, env);
 	freeStrArr (args);
 	return ret;

@@ -116,8 +116,11 @@ ReStrN (char **dst, const char *src, int len)
 	    len = strlen (src);
 	if (*dst && !memcmp (*dst, src, len) && !(*dst)[len])
 	    return 1;
-	if (!(ndst = Malloc (len + 1)))
+	if (!(ndst = Malloc (len + 1))) {
+	    WipeStr (*dst);
+	    *dst = 0;
 	    return 0;
+	}
 	memcpy (ndst, src, len);
 	ndst[len] = 0;
     }
@@ -164,7 +167,7 @@ StrApp (char **dst, ...)
     
     len = 1;
     if (*dst)
-	len += strlen(*dst);
+	len += strlen (*dst);
     va_start (va, dst);
     for (;;) {
 	pt = va_arg (va, char *);
@@ -173,14 +176,19 @@ StrApp (char **dst, ...)
 	len += strlen (pt);
     }
     va_end (va);
-    if (!(bk = Malloc (len)))
+    if (!(bk = Malloc (len))) {
+	if (*dst) {
+	    free (*dst);
+	    *dst = 0;
+	}
 	return 0;
+    }
     dp = bk;
     if (*dst) {
-	len = strlen(*dst);
+	len = strlen (*dst);
 	memcpy (dp, *dst, len);
 	dp += len;
-	free(*dst);
+	free (*dst);
     }
     va_start (va, dst);
     for (;;) {
@@ -201,9 +209,8 @@ StrApp (char **dst, ...)
 char **
 initStrArr (char **arr)
 {
-    if (!arr)
-	if ((arr = Malloc (sizeof(char *))))
-	    arr[0] = 0;
+    if (!arr && (arr = Malloc (sizeof(char *))))
+	arr[0] = 0;
     return arr;
 }
 
@@ -217,28 +224,21 @@ arrLen (char **arr)
 }
 
 char **
-extStrArr (char ***arr)
+addStrArr (char **arr, const char *str, int len)
 {
     char **rarr;
     int nu;
 
-    nu = arrLen (*arr);
-    if ((rarr = Realloc (*arr, sizeof (char *) * (nu + 2)))) {
-	*arr = rarr;
+    nu = arrLen (arr);
+    if ((rarr = Realloc (arr, sizeof (char *) * (nu + 2)))) {
 	rarr[nu + 1] = 0;
-	return rarr + nu;
+	if (StrNDup (rarr + nu, str, len))
+	    return rarr;
+	freeStrArr (rarr);
+	return 0;
     }
+    freeStrArr (arr);
     return 0;
-}
-
-char **
-addStrArr (char **arr, const char *str, int len)
-{
-    char **dst;
-
-    if ((dst = extStrArr (&arr)))
-	(void) StrNDup (dst, str, len);
-    return arr;    
 }
 
 char **
@@ -251,20 +251,6 @@ xCopyStrArr (int rn, char **arr)
     if ((rarr = Calloc (sizeof(char *), nu + rn + 1)))
 	memcpy (rarr + rn, arr, sizeof(char *) * nu);
     return rarr;
-}
-
-void
-mergeStrArrs (char ***darr, char **arr)
-{
-    char **rarr;
-    int nu;
-
-    nu = arrLen (*darr);
-    if ((rarr = xCopyStrArr (nu, arr))) {
-	memcpy (rarr, *darr, sizeof(char *) * nu);
-	free (*darr);
-	*darr = rarr;
-    }
 }
 
 void
@@ -286,12 +272,14 @@ parseArgs (char **argv, const char *string)
     const char *word;
     char ch;
 
-    argv = initStrArr (argv);
+    if (!(argv = initStrArr (argv)))
+	return 0;
     for (word = string; ; ++string) {
 	ch = *string;
 	if (!ch || ch == ' ' || ch == '\t') {
 	    if (word != string)
-		argv = addStrArr (argv, word, string - word);
+		if (!(argv = addStrArr (argv, word, string - word)))
+		    return 0;
 	    if (!ch)
 		return argv;
 	    word = string + 1;

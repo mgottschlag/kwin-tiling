@@ -1352,15 +1352,15 @@ StartClient ()
 	else
 	    sessargs = "";
       gotit:
-	argv = parseArgs ((char **)0, td->session);
-	if (argv && argv[0] && *argv[0]) {
-		argv = addStrArr (argv, sessargs, -1);
-		Debug ("executing session %\"[s\n", argv);
-		execute (argv, userEnviron);
-		LogError ("Session %\"s execution failed: %m\n", argv[0]);
-	} else {
-		LogError ("Session has no command/arguments\n");
-	}
+	if (!(argv = parseArgs ((char **)0, td->session)) ||
+	    !(argv = addStrArr (argv, sessargs, -1)))
+	    exit (1);
+	if (argv[0] && *argv[0]) {
+	    Debug ("executing session %\"[s\n", argv);
+	    execute (argv, userEnviron);
+	    LogError ("Session %\"s execution failed: %m\n", argv[0]);
+	} else
+	    LogError ("Session has no command/arguments\n");
 	failsafeArgv[0] = td->failsafeClient;
 	failsafeArgv[1] = 0;
 	execute (failsafeArgv, userEnviron);

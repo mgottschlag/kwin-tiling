@@ -386,7 +386,7 @@ extern struct display
 #endif /* XDMCP */
 	*FindDisplayByPid (int pid),
 	*FindDisplayByServerPid (int serverPid),
-	*NewDisplay (const char *name, const char *class2);
+	*NewDisplay (const char *name);
 extern int AnyActiveDisplays (void);
 extern int AnyRunningDisplays (void);
 extern int AnyReserveDisplays (void);
@@ -503,21 +503,21 @@ extern void CreateWellKnownSockets (void);
 extern void *Calloc (size_t nmemb, size_t size);
 extern void *Malloc (size_t size);
 extern void *Realloc (void *ptr, size_t size);
+extern void WipeStr (char *str);
 extern int StrCmp (const char *s1, const char *s2);
-extern int ReStrN (char **dst, const char *src, int len);
-extern int ReStr (char **dst, const char *src);
 extern int StrNDup (char **dst, const char *src, int len);
 extern int StrDup (char **dst, const char *src);
-extern int StrApp (char **dst, ...);
-extern void WipeStr (char *str);
 extern int arrLen (char **arr);
-extern char **initStrArr (char **arr);
-extern char **extStrArr (char ***arr);
-extern char **addStrArr (char **arr, const char *str, int len);
-extern char **xCopyStrArr (int rn, char **arr);
-extern void mergeStrArrs (char ***darr, char **arr);
 extern void freeStrArr (char **arr);
+extern char **initStrArr (char **arr);
+extern char **xCopyStrArr (int rn, char **arr);
+/* Note: the following functions free the old data even in case of failure */
+extern int ReStrN (char **dst, const char *src, int len);
+extern int ReStr (char **dst, const char *src);
+extern int StrApp (char **dst, ...);
+extern char **addStrArr (char **arr, const char *str, int len);
 extern char **parseArgs (char **argv, const char *string);
+/* End note */
 extern char **setEnv (char **e, const char *name, const char *value);
 extern char **putEnv (const char *string, char **env);
 extern const char *getEnv (char **e, const char *name);

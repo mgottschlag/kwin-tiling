@@ -920,12 +920,14 @@ manage (
 		goto abort;
 	    }
 	    memmove( from_save, from, fromlen);
-	    if (!(d = NewDisplay (name, class2)))
+	    if (!(d = NewDisplay (name)))
 	    {
 		free ((char *) from_save);
 		send_failed (from, fromlen, name, sessionID, "out of memory");
 		goto abort;
 	    }
+	    d->class2 = class2;
+	    class2 = 0;
 	    d->displayType = dForeign | dTransient | dFromXDMCP;
 	    d->sessionID = pdpy->sessionID;
 	    d->from.data = (unsigned char *)from_save;

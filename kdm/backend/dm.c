@@ -228,7 +228,10 @@ main (int argc, char **argv)
      */
     noDaemonMode = getppid();
     errorLogFile = 0;
-    opts = 0; *extStrArr (&opts) = (char *)"";
+    if (!(opts = Malloc (2 * sizeof(char *))))
+	return 1;
+    opts[0] = (char *)"";
+    opts[1] = 0;
     while (*++argv) {
 	if (**argv != '-')
 	    break;
@@ -251,7 +254,7 @@ main (int argc, char **argv)
 	else if (argv[1] && !strcmp (pt, "config"))
 	    StrDup (opts, *++argv);
 	else if (argv[1] && !strcmp (pt, "xrm"))
-	    StrDup (extStrArr (&opts), *++argv);
+	    opts = addStrArr (opts, *++argv, -1);
 	else if (argv[1] && !strcmp (pt, "debug"))
 	    sscanf (*++argv, "%i", &debugLevel);
 	else if (argv[1] && (!strcmp (pt, "error") || !strcmp (pt, "logfile")))
@@ -582,16 +585,14 @@ StartRemoteLogin (struct display *d)
     case 0:
 	argv = d->serverArgv;
 	if (d->authFile) {
-	    argv = addStrArr (argv, "-auth", 5);
-	    argv = addStrArr (argv, d->authFile, -1);
+	    if (!(argv = addStrArr (argv, "-auth", 5)) ||
+		!(argv = addStrArr (argv, d->authFile, -1)))
+		exit (1);
 	}
-	argv = addStrArr (argv, "-once", 5);
-	argv = addStrArr (argv, "-query", 6);
-	argv = addStrArr (argv, d->remoteHost, -1);
-	if (!argv) {
-	    LogError ("StartRemoteLogin: no arguments\n");
+	if (!(argv = addStrArr (argv, "-once", 5)) ||
+	    !(argv = addStrArr (argv, "-query", 6)) ||
+	    !(argv = addStrArr (argv, d->remoteHost, -1)))
 	    exit (1);
-	}
 	Debug ("exec %\"[s\n", argv);
 	(void) execv (argv[0], argv);
 	LogError ("X server %\"s cannot be executed\n", argv[0]);
@@ -704,10 +705,12 @@ splitCmd (const char *string, int len)
     const char *word;
     char **argv;
 
-    argv = initStrArr (0);
+    if (!(argv = initStrArr (0)))
+	return 0;
     for (word = string; ; string++, len--)
 	if (!len || *string == '\t') {
-	    argv = addStrArr (argv, word, string - word);
+	    if (!(argv = addStrArr (argv, word, string - word)))
+		return 0;
 	    if (!len)
 		return argv;
 	    word = string + 1;
@@ -719,10 +722,10 @@ setNLogin (struct display *d,
 	   const char *nuser, const char *npass, char *nargs, int rl)
 {
     struct disphist *he = d->hstent;
-    ReStr (&he->nuser, nuser);
-    ReStr (&he->npass, npass);
-    ReStr (&he->nargs, nargs);
-    he->rLogin = rl;
+    he->rLogin =
+       (ReStr (&he->nuser, nuser) &&
+	ReStr (&he->npass, npass) &&
+	ReStr (&he->nargs, nargs)) ? rl : 0;
     Debug ("set next login for %s, level %d\n", nuser, rl);
 }
 

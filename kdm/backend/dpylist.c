@@ -277,7 +277,7 @@ FindHist (const char *name)
 }
 
 struct display *
-NewDisplay (const char *name, const char *class2)
+NewDisplay (const char *name)
 {
     struct display	*d;
     struct disphist	*hstent;
@@ -297,10 +297,6 @@ NewDisplay (const char *name, const char *class2)
     d->next = displays;
     d->hstent = hstent;
     d->name = hstent->name;
-    if (!StrDup (&d->class2, class2)) {
-	free ((char *) d);
-	return 0;
-    }
     /* initialize fields (others are 0) */
     d->pid = -1;
     d->serverPid = -1;

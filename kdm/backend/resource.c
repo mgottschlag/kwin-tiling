@@ -549,15 +549,16 @@ ScanServers (int force)
 	argv = GRecvArgv ();
 	if ((d = FindDisplayByName (name)))
 	{
-	    ReStr (&d->class2, class2);
-	    ReStr (&d->console, console);
+	    if (d->class2)
+		free (d->class2);
+	    if (d->console)
+		free (d->console);
 	    freeStrArr (d->serverArgv);
 	    dtx = "existing";
 	}
 	else
 	{
-	    d = NewDisplay (name, class2);
-	    StrDup (&d->console, console);
+	    d = NewDisplay (name);
 	    dtx = "new";
 	}
 	d->stillThere = 1;
@@ -565,6 +566,8 @@ ScanServers (int force)
 	       dtx, d->name, d->class2, 
 	       ((type & d_location) == dLocal) ? "local" : "foreign",
 	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);
+	d->class2 = class2;
+	d->console = console;
 	d->serverArgv = argv;
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
@@ -572,10 +575,6 @@ ScanServers (int force)
 	else if ((type & d_lifetime) != dReserve && d->status == reserve)
 	    d->status = notRunning;
 	free (name);
-	if (class2)
-	    free (class2);
-	if (console)
-	    free (console);
     }
 }
 
