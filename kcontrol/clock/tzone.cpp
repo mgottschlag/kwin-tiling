@@ -36,6 +36,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
+#include <kio/netaccess.h>
 
 //#include "xpm/world.xpm"
 #include "tzone.h"
@@ -284,11 +285,12 @@ void Tzone::save()
 
         kdDebug() << "Set time zone " << tz << endl;
 
-        // This is extremely ugly. Who knows the better way?
-        unlink( "/etc/localtime" );
-        if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
-            KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
-                                i18n("Timezone Error"));
+	if (!QFile::remove("/etc/localtime")) 
+		//After the KDE 3.2 release, need to add an error message
+	else
+		if (!KIO::NetAccess::file_copy(KURL(tz),KURL("/etc/localtime")))
+			KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
+                        		    i18n("Timezone Error"));
 
         QString val = ":" + tz;
 #endif // !USE_SOLARIS
