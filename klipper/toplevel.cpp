@@ -654,19 +654,15 @@ void Klipper::clipboardSignalArrived( bool selectionMode )
 
 void Klipper::checkClipData( const QString& text, bool selectionMode )
 {
-    if ( selectionMode && bIgnoreSelection )
-        return;
-    
-    clip->setSelectionMode( selectionMode );
+   clip->setSelectionMode( selectionMode );
 
-    if ( ignoreClipboardChanges() )
+    if ( ignoreClipboardChanges() ) // internal to klipper, ignoring QSpinBox selections
     {
         // keep our old clipboard, thanks
         setClipboard( selectionMode ? m_lastSelection : m_lastClipboard,
                       selectionMode );
         return;
     }
-
 
 
     bool clipEmpty = (clip->data()->format() == 0L);
@@ -691,12 +687,18 @@ void Klipper::checkClipData( const QString& text, bool selectionMode )
 
     // lastClipRef has the new value now, if any
 
+
+    // this must be below the "bNoNullClipboard" handling code!
+    if ( selectionMode && bIgnoreSelection )
+        return;
+    
+ 
     // If the string is null bug out
     if (lastClipRef.isEmpty()) {
-	if (m_selectedItem != -1) {
+        if (m_selectedItem != -1) {
             m_popup->setItemChecked(m_selectedItem, false);
-	    m_selectedItem = -1;
-	}
+            m_selectedItem = -1;
+        }
 
         if ( m_clipDict.isEmpty() ) {
             setEmptyClipboard();
