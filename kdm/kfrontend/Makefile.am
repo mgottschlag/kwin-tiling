@@ -21,6 +21,8 @@ METASOURCES = kdmshutdown.moc kdmclock.moc kgreeter.moc liloinfo.moc kfdialog.mo
 
 EXTRA_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
+genkdmconf_LDFLAGS = $(all_libraries)
+genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local: genkdmconf
 	@if test ! -d $(DESTDIR)$(kde_confdir)/kdm; then \

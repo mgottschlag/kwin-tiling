@@ -35,7 +35,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <X11/Xlib.h>
+#include <X11/Xresource.h>
+
 #define KDMCONF KDE_CONFDIR "/kdm"
+
+static int no_old, copy_files;
+static char *newdir = KDMCONF, *oldxdm, *oldkde;
 
 
 #define NO_LOGGER
@@ -96,6 +102,34 @@ ASPrintf (char **strp, const char *fmt, ...)
     len = VASPrintf (strp, fmt, args);
     va_end(args);
     return len;
+}
+
+
+static char *
+sed (const char *text, const char *alt, const char *neu)
+{
+    const char *cptr, *ncptr;
+    char *ntext, *dptr;
+    int alen, nlen, tlen, ntlen, nma;
+
+    alen = strlen(alt);
+    nlen = strlen(neu);
+    tlen = strlen(text);
+    for (cptr = text, nma = 0; 
+	 (cptr = strstr (cptr, alt)); 
+	 cptr += alen, nma++);
+    ntlen = tlen + (nlen - alen) * nma;
+    if ((ntext = malloc (ntlen))) {
+	for (cptr = text, dptr = ntext; 
+	     (ncptr = strstr (cptr, alt)); 
+	     cptr = ncptr + alen, dptr += nlen)
+	{
+	    memcpy (dptr, cptr, (ncptr - cptr));
+	    memcpy ((dptr += (ncptr - cptr)), neu, nlen);    
+	}
+	memcpy (dptr, cptr, (text + tlen - cptr) + 1);
+    }
+    return ntext;
 }
 
 
@@ -294,7 +328,7 @@ Ent entsXdmcp[] = {
 { "# The program which is invoked to dynamically generate replies to XDMCP
 # BroadcastQuery requests.
 # By default no program is invoked and \"Willing to manage\" is sent.
-", "Xwilling",	KDMCONF "/Xwilling", 1 },
+", "Willing",	KDMCONF "/Xwilling", 1 },
 };
 
 Ent entsShutdown[] = {
@@ -770,6 +804,38 @@ wrconf (FILE *f)
 }
 
 
+static FILE *
+Create (const char *fn, int mode)
+{
+    FILE *f;
+    if (!(f = fopen (fn, "w"))) {
+	fprintf (stderr, "Cannot create %s\n", fn);
+	exit (1);
+    }
+    chmod (fn, mode);
+    return f;
+}
+
+static void
+writeFile (const char *fsp, int mode, const char *fmt, ...)
+{
+    va_list args;
+    char *fn, *buf;
+    FILE *f;
+    int len;
+
+    ASPrintf (&fn, fsp, newdir);
+    f = Create (fn, mode);
+    free (fn);
+    va_start(args, fmt);
+    len = VASPrintf (&buf, fmt, args);
+    va_end(args);
+    fwrite (buf, len, 1, f);
+    free (buf);
+    fclose (f);
+}
+
+
 /*
  * read rc file structure
  */
@@ -959,6 +1025,7 @@ mergeKdmRc (const char *path)
 	free (p);
 	return 0;
     }
+    printf ("Information: reading old kdmrc %s\n", p);
     free (p);
 
     setsect("Desktop0");
@@ -1094,6 +1161,298 @@ mergeKdmRc (const char *path)
     return 1;
 }
 
+typedef struct XResEnt {
+    const char *xname;
+    const char *ksec, *kname;
+    void (*func)(const char *, const char *, char **);
+} XResEnt;
+
+static void
+handleXdmVal (const char *dpy, const char *key, char *value,
+	      const XResEnt *ents, int nents)
+{
+    const char *kname;
+    int i;
+    char knameb[80], sname[80];
+
+    for (i = 0; i < nents; i++)
+	if (!strcmp (key, ents[i].xname) ||
+	    (key[0] == toupper (ents[i].xname[0]) && 
+	     !strcmp (key + 1, ents[i].xname + 1)))
+	{
+	    sprintf (sname, ents[i].ksec, dpy);
+	    if (ents[i].kname)
+		kname = ents[i].kname;
+	    else {
+		kname = knameb;
+		sprintf (knameb, "%c%s", 
+			 toupper (ents[i].xname[0]), ents[i].xname + 1);
+	    }
+	    if (ents[i].func)
+		ents[i].func (sname, kname, &value);
+	    putfqval (sname, kname, value);
+	    break;
+	}
+}
+
+static void 
+P_List (const char *sect, const char *key, char **value)
+{
+    int is, d, s;
+    char *st;
+
+    for (st = *value, is = d = s = 0; st[s]; s++)
+	if (st[s] == ' ' || st[s] == '\t') {
+	    if (!is)
+		st[d++] = ',';
+	    is = 1;
+	} else {
+	    st[d++] = st[s];
+	    is = 0;
+	}
+    st[d] = 0;
+}
+
+static const char *xdmpath;
+
+static void 
+handFile (const char *sect, const char *key, char **value, int mode)
+{
+    char *buf, *obuf, *bname;
+    FILE *f;
+    File file;
+    char nname[160];
+
+    if (copy_files) {
+	if (!readFile (&file, *value)) {
+	    fprintf (stderr, "Warning: cannot copy file %s\n", *value);
+	    return;
+	}
+	bname = strrchr (*value, '/') + 1;
+	ASPrintf (value, KDMCONF "/%s", bname);
+	sprintf (nname, "%s/%s", newdir, bname);
+	f = Create (nname, mode);
+	if (mode == 0755 && (file.buf[0] != '#' || file.buf[1] != '!'))
+	    fwrite (file.buf, file.eof - file.buf, 1, f);
+	else {
+	    ASPrintf (&obuf, "%.*s", file.eof - file.buf, file.buf);
+	    buf = sed (obuf, xdmpath, KDMCONF);
+	    fwrite (buf, strlen(buf), 1, f);
+	    free (buf);
+	    free (obuf);
+	}
+	fclose (f);
+    }
+}
+
+static void 
+P_File (const char *sect, const char *key, char **value)
+{
+    handFile (sect, key, value, 0644);
+}
+
+static void 
+P_Prog (const char *sect, const char *key, char **value)
+{
+    handFile (sect, key, value, 0755);
+}
+
+static void 
+P_authDir (const char *sect, const char *key, char **value)
+{
+    struct stat st;
+
+    if (!stat (*value, &st) && (st.st_uid != 0 || (st.st_mode & 2)))
+	ASPrintf (value, "%s/authdir", *value);
+}
+
+static void 
+P_openDelay (const char *sect, const char *key, char **value)
+{
+    putfqval (sect, "ServerTimeout", *value);
+}
+
+static void 
+P_noPassUsers (const char *sect, const char *key, char **value)
+{
+    putfqval (sect, "NoPassEnable", "true");
+}
+
+static void 
+P_autoUser (const char *sect, const char *key, char **value)
+{
+    putfqval (sect, "AutoLoginEnable", "true");
+}
+
+static void 
+P_requestPort (const char *sect, const char *key, char **value)
+{
+    if (!strcmp (*value, "0")) {
+	putfqval (sect, "Enable", "false");
+	*value = 0;
+    }
+}
+
+static int kdmrcmode = 0644;
+
+static void 
+P_autoPass (const char *sect, const char *key, char **value)
+{
+    kdmrcmode = 0600;
+}
+
+XResEnt globents[] = {
+{ "servers", "General", "Xservers", P_File },
+{ "requestPort", "Xdmcp", "Port", P_requestPort },
+{ "daemonMode", "General", 0, 0 },
+{ "pidFile", "General", 0, 0 },
+{ "lockPidFile", "General", 0, 0 },
+{ "authDir", "General", 0, P_authDir },
+{ "autoRescan", "General", 0, 0 },
+{ "removeDomainname", "Xdmcp", 0, 0 },
+{ "keyFile", "Xdmcp", 0, 0 },
+{ "accessFile", "Xdmcp", "Xaccess", P_File },
+{ "exportList", "General", 0, P_List },
+#if !defined(__linux__) && !defined(__OpenBSD__)
+{ "randomFile", "General", 0, 0 },
+#endif
+{ "choiceTimeout", "Xdmcp", 0, 0 },
+{ "sourceAddress", "Xdmcp", 0, 0 },
+{ "willing", "Xdmcp", 0, P_Prog },
+{ "autoLogin", "General", 0, 0 },
+}, dpyents[] = {
+{ "serverAttempts", "X-%s-Core", 0, 0 },
+{ "openDelay", "X-%s-Core", 0, P_openDelay },
+{ "openRepeat", "X-%s-Core", 0, 0 },
+{ "openTimeout", "X-%s-Core", 0, 0 },
+{ "startAttempts", "X-%s-Core", 0, 0 },
+{ "pingInterval", "X-%s-Core", 0, 0 },
+{ "pingTimeout", "X-%s-Core", 0, 0 },
+{ "terminateServer", "X-%s-Core", 0, 0 },
+{ "grabServer", "X-%s-Core", 0, 0 },
+{ "grabTimeout", "X-%s-Core", 0, 0 },
+{ "resetSignal", "X-%s-Core", 0, 0 },
+{ "termSignal", "X-%s-Core", 0, 0 },
+{ "resetForAuth", "X-%s-Core", 0, 0 },
+{ "authorize", "X-%s-Core", 0, 0 },
+{ "authComplain", "X-%s-Greeter", 0, 0 },
+{ "authName", "X-%s-Core", "AuthNames", 0 },
+{ "authFile", "X-%s-Core", 0, 0 },
+{ "fifoCreate", "X-%s-Core", 0, 0 },
+{ "fifoOwner", "X-%s-Core", 0, 0 },
+{ "fifoGroup", "X-%s-Core", 0, 0 },
+{ "startInterval", "X-%s-Core", 0, 0 },
+{ "resources", "X-%s-Core", 0, 0 },
+{ "xrdb", "X-%s-Core", 0, 0 },
+{ "setup", "X-%s-Core", 0, P_Prog },
+{ "startup", "X-%s-Core", 0, P_Prog },
+{ "reset", "X-%s-Core", 0, P_Prog },
+{ "session", "X-%s-Core", 0, P_Prog },
+{ "userPath", "X-%s-Core", 0, 0 },
+{ "systemPath", "X-%s-Core", 0, 0 },
+{ "systemShell", "X-%s-Core", 0, 0 },
+{ "failsafeClient", "X-%s-Core", 0, 0 },
+{ "userAuthDir", "X-%s-Core", 0, 0 },
+{ "chooser", "X-%s-Core", 0, 0 },	/* XXX to kill */
+{ "noPassUsers", "X-%s-Core", 0, P_noPassUsers },
+{ "autoUser", "X-%s-Core", "AutoLoginUser", P_autoUser },
+{ "autoPass", "X-%s-Core", "AutoLoginPass", P_autoPass },
+{ "autoString", "X-%s-Core", "AutoLoginSession", 0 },
+{ "autoLogin1st", "X-%s-Core", 0, 0 },
+{ "autoReLogin", "X-%s-Core", 0, 0 },
+{ "allowNullPasswd", "X-%s-Core", 0, 0 },
+{ "allowRootLoing", "X-%s-Core", 0, 0 },
+};
+
+static XrmQuark XrmQString, empty = NULLQUARK;
+
+static Bool 
+DumpEntry(
+    XrmDatabase         *db,
+    XrmBindingList      bindings,
+    XrmQuarkList        quarks,
+    XrmRepresentation   *type,
+    XrmValuePtr         value,
+    XPointer            data)
+{
+    char *dpy, *key, dpybuf[80];
+    int el, hasu;
+
+    if (*type != XrmQString)
+	return False;
+    if (*bindings == XrmBindLoosely || 
+	strcmp (XrmQuarkToString (*quarks), "DisplayManager"))
+	return False;
+    bindings++, quarks++;
+    if (!*quarks)
+	return False;
+    if (*bindings != XrmBindLoosely && !quarks[1]) {	/* DM.foo */
+	key = XrmQuarkToString (*quarks);
+	handleXdmVal (0, key, value->addr, globents, as(globents));
+	return False;
+    } else if (*bindings == XrmBindLoosely && !quarks[1]) { /* DM*bar */
+	dpy = "*";
+	key = XrmQuarkToString (*quarks);
+    } else if (*bindings != XrmBindLoosely && quarks[1] &&
+	       *bindings != XrmBindLoosely && !quarks[2]) { /* DM.foo.bar */
+	dpy = dpybuf + 4;
+	strcpy (dpy, XrmQuarkToString (*quarks));
+	for (hasu = 0, el = 0; dpy[el]; el++)
+	    if (dpy[el] == '_')
+		hasu = 1;
+	if (!hasu/* && isupper (dpy[0])*/) {
+	    dpy = dpybuf;
+	    memcpy (dpy, "*:*_", 4);
+	} else {
+	    for (; --el >= 0; )
+		if (dpy[el] == '_') {
+		    dpy[el] = ':';
+		    for (; --el >= 0; )
+			if (dpy[el] == '_')
+			    dpy[el] = '.';
+		    break;
+		}
+	}
+	key = XrmQuarkToString (quarks[1]);
+    } else
+	return False;
+    handleXdmVal (dpy, key, value->addr, dpyents, as(dpyents));
+    return False;
+}
+
+static char *xdmconfs[] = { "%s/kdm-config", "%s/xdm-config" };
+
+static int
+mergeXdmCfg (const char *path)
+{
+    char *p;
+    XrmDatabase db;
+    int i;
+
+    for (i = 0; i < as(xdmconfs); i++) {
+	ASPrintf (&p, xdmconfs[i], path);
+	if (!p)
+	    return 0;
+	if ((db = XrmGetFileDatabase (p))) {
+	    printf ("Information: reading old xdm config file %s\n", p);
+	    free (p);
+	    xdmpath = path;
+	    setsect ("X-*-Core");
+	    putval ("Setup", "");
+	    putval ("Startup", "");
+	    putval ("Reset", "");
+	    setsect ("Xdmcp");
+	    putval ("Willing", "");
+	    putval ("Enable", "true");
+	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
+				 DumpEntry, (XPointer) 0);
+	    return 1;
+	}
+	free (p);
+    }
+    return 0;
+}
+
 static void
 addKdePath (const char *where, const char *defpath)
 {
@@ -1110,44 +1469,10 @@ addKdePath (const char *where, const char *defpath)
     }
 }
 
-static int no_old, copy_files;
-static char *newdir = KDMCONF, *oldxdm, *oldkde;
-
-static FILE *
-Create (const char *fn)
-{
-    FILE *f;
-    if (!(f = fopen (fn, "w"))) {
-	fprintf (stderr, "Cannot create %s\n", fn);
-	exit (1);
-    }
-    return f;
-}
-
-static void
-writeFile (const char *fsp, int mode, const char *fmt, ...)
-{
-    va_list args;
-    char *fn, *buf;
-    FILE *f;
-    int len;
-
-    ASPrintf (&fn, fsp, newdir);
-    f = Create (fn);
-    chmod (fn, mode);
-    free (fn);
-    va_start(args, fmt);
-    len = VASPrintf (&buf, fmt, args);
-    va_end(args);
-    fwrite (buf, len, 1, f);
-    free (buf);
-    fclose (f);
-}
-
 static void
 genSuppFiles (void)
 {
-    writeFile ("%s/Xaccess", 0644,
+    writeFile ("%s/Xaccess", 0644, "%s",
 "# Xaccess - Access control file for XDMCP connections
 #
 # To control Direct and Broadcast access:
@@ -1168,7 +1493,7 @@ genSuppFiles (void)
 #
 # To define macros:
 #
-#       %%name		list of hosts ...
+#       %name		list of hosts ...
 #
 # The first form tells xdm which displays to respond to itself.
 # The second form tells xdm to forward indirect queries from hosts matching
@@ -1208,14 +1533,14 @@ genSuppFiles (void)
 #
 # If you'd prefer to configure the set of hosts each terminal sees,
 # then just uncomment these lines (and comment the CHOOSER line above)
-# and edit the %%hostlist line as appropriate
+# and edit the %hostlist line as appropriate
 #
 
-#%%hostlist	host-a host-b
+#%hostlist	host-a host-b
 
-#*		CHOOSER %%hostlist	#
+#*		CHOOSER %hostlist	#
 ");
-    writeFile ("%s/Xservers", 0644,
+    writeFile ("%s/Xservers", 0644, "%s",
 "# Xservers - local X-server list
 #
 # This file should contain an entry to start the server on the
@@ -1239,7 +1564,7 @@ genSuppFiles (void)
 "
 
 ");
-    writeFile ("%s/Xwilling", 0755,
+    writeFile ("%s/Xwilling", 0755, "%s",
 "#!/bin/sh
 # The output of this script is displayed in the chooser window.
 # (instead of \"Willing to manage\")
@@ -1250,13 +1575,13 @@ s=\"\"; [ \"$nrusers\" != 1 ] && s=s
 
 echo \"${nrusers} user${s}, load: ${load}\"
 ");
-    writeFile ("%s/Xsetup", 0755,
+    writeFile ("%s/Xsetup", 0755, "%s",
 "#!/bin/sh
 # Xsetup - run as root before the login dialog appears
 
 " KDE_BINDIR "/kdmdesktop &
 ");
-    writeFile ("%s/Xstartup", 0755,
+    writeFile ("%s/Xstartup", 0755, "%s",
 "#!/bin/sh
 # Xstartup - run as root before session starts
 
@@ -1280,7 +1605,7 @@ echo \"${nrusers} user${s}, load: ${load}\"
 #endif
 "$USER
 ");
-    writeFile ("%s/Xreset", 0755,
+    writeFile ("%s/Xreset", 0755, "%s",
 "#!/bin/sh
 # Xreset - run as root after session exits
 
@@ -1304,7 +1629,7 @@ chmod 622 /dev/console"
 #endif
 "$USER
 ");
-    writeFile ("%s/Xsession", 0755,
+    writeFile ("%s/Xsession", 0755, "%s",
 "#!/bin/sh
 # Xsession - run as user
 
@@ -1359,18 +1684,28 @@ static char *oldkdes[] = {
     "/usr/share/config",
 };
 
+static char *oldxdms[] = {
+    "/etc/X11/kdm", 
+    XLIBDIR "/kdm",
+    "/etc/X11/xdm", 
+    XLIBDIR "/xdm",
+};
+
 int main(int argc, char **argv)
 {
     int i, ap;
     char **where, *newkdmrc;
     FILE *f;
+    char nname[80];
 
     for (ap = 1; ap < argc; ap++) {
 	if (!strcmp(argv[ap], "--help")) {
 	    printf ("genconf - generate configuration files for kdm
 options:
-  --in /path/to/new/config
-    In which directory to put the new configuration.
+  --in /path/to/new/kdm-config-dir
+    In which directory to put the new configuration. You can use this
+    to support a $(DESTDIR), but not to change the final location of
+    the installation - the paths inside the files are not influenced.
     Default is " KDMCONF ".
   --old-xdm /path/to/old/xdm-dir
     Where to look for the config files of an xdm/older kdm.
@@ -1426,14 +1761,54 @@ options:
 		    oldkde = oldkdes[i];
 		    break;
 		}
+	XrmInitialize ();
+	XrmQString = XrmPermStringToQuark("String");
+	if (oldxdm) {
+	    if (!mergeXdmCfg (oldxdm))
+		fprintf (stderr, 
+			 "Cannot read old kdm-config/xdm-config at specified position\n");
+	} else
+	    for (i = 0; i < as(oldxdms); i++)
+		if (mergeXdmCfg (oldxdms[i])) {
+		    oldxdm = oldxdms[i];
+		    break;
+		}
     }
     addKdePath ("UserPath", DEF_USER_PATH);
     addKdePath ("SystemPath", DEF_SYSTEM_PATH);
     ASPrintf (&newkdmrc, "%s/kdmrc", newdir);
-    f = Create (newkdmrc);
+    f = Create (newkdmrc, kdmrcmode);
     wrconf (f);
     fclose (f);
-    genSuppFiles ();
+
+    if (no_old || !oldxdm)
+	genSuppFiles ();
+
+    if (oldxdm || oldkde) {
+	sprintf (nname, "%s/README", newdir);
+	f = Create (nname, 0644);
+	fprintf (f, 
+"The configuration files in this directory were automatically derived 
+from these already present files:
+");
+	if (oldkde)
+	    fprintf (f, "- %s/kdmrc\n", oldkde);
+	if (oldxdm)
+	    fprintf (f, "- %s/*\n", oldxdm);
+	fprintf (f, 
+"As the used algorithm is pretty dumb, the configuration may be broken.
+");
+	if (!copy_files && oldxdm)
+	    fprintf (f, "
+Note, that this configuration still depends on the already present
+config files in %s - don't delete them!
+", oldxdm);
+	fprintf (f, "
+Have a look at the program <kdebase-sources>/kdm/kfrontend/genkdmconf 
+if you want to generate another configuration.
+");
+	fclose (f);
+    }
 
     return 0;
 }
