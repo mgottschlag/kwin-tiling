@@ -68,7 +68,13 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder), child_saver(child), parent(0), mUseBlankOnly(useBlankOnly)
+    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder),
+      child_saver(child),
+      parent(0),
+      mUseBlankOnly(useBlankOnly),
+      mSuspended(false),
+      mVisibility(false),
+      mActiveDialog(NULL)
 {
     KWin::setState( winId(), NET::StaysOnTop );
     KWin::setOnAllDesktops( winId(), true );
@@ -113,6 +119,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
+
+    connect(&suspendTimer, SIGNAL( timeout()), SLOT( suspend()));
 
     QStringList dmopt =
         QStringList::split( QChar( ',' ),
@@ -566,8 +574,10 @@ void LockProcess::slotStart()
 void LockProcess::stopSaver()
 {
     kdDebug(1204) << "LockProcess: stopping saver" << endl;
+    resume();
     stopHack();
     hideSaverWindow();
+    mVisibility = false;
     if (!child_saver) {
         xdmFifoLockCmd("unlock\n");
         ungrabInput();
@@ -651,13 +661,31 @@ void LockProcess::hackExited( KProcess * )
         setBackgroundColor(black);
 }
 
+void LockProcess::suspend()
+{
+    if( !mSuspended )
+        mHackProc.kill(SIGSTOP);
+    mSuspended = true;
+}
+
+void LockProcess::resume()
+{
+    if( mActiveDialog != NULL )
+        return; // no resuming with dialog visible
+    if( !mVisibility )
+        return; // no need to resume, not visible
+    if( mSuspended )
+        mHackProc.kill(SIGCONT);
+    mSuspended = false;
+}
+
 //---------------------------------------------------------------------------
 //
 // Show the password dialog
 //
 bool LockProcess::checkPass()
 {
-    mHackProc.kill(SIGSTOP);
+    suspend();
     PasswordDlg passDlg(this, !mXdmFifoName.isNull());
     connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
 
@@ -674,13 +702,12 @@ bool LockProcess::checkPass()
 
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
 	     arrowCursor.handle(), CurrentTime);
+    mActiveDialog = &passDlg;
     bool rt = passDlg.exec();
+    mActiveDialog = NULL;
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
 	     blankCursor.handle(), CurrentTime);
-    if (!rt)
-    {
-        mHackProc.kill(SIGCONT);
-    }
+    resume();
     return rt;
 }
 
@@ -713,11 +740,19 @@ bool LockProcess::x11Event(XEvent *event)
             return true;
 
         case VisibilityNotify:
-            if (event->xvisibility.state != VisibilityUnobscured &&
-                event->xvisibility.window == winId())
-            {
-                raise();
-                QApplication::flushX();
+            if( event->xvisibility.window == winId())
+            {  // mVisibility == false means the screensaver is not visible at all
+               // e.g. when switched to text console
+                mVisibility = !( event->xvisibility.state == VisibilityFullyObscured );
+                if( !mVisibility )
+                    suspendTimer.start( 2000, true );
+                else
+                    resume();
+                if (event->xvisibility.state != VisibilityUnobscured )
+                {
+                    raise();
+                    QApplication::flushX();
+                }
             }
             break;
 

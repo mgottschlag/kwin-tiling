@@ -10,6 +10,7 @@
 
 #include <qwidget.h>
 #include <kprocess.h>
+#include <qtimer.h>
 
 #include <X11/Xlib.h>
 
@@ -47,6 +48,8 @@ private slots:
     void sigtermPipeSignal();
     void startNewSession();
     void actuallySetLock();
+    void suspend();
+    void resume();
 
 private:
     void configure();
@@ -84,6 +87,10 @@ private:
     QValueList<int> child_sockets;
     int         parent;
     bool	mUseBlankOnly;
+    bool        mSuspended;
+    QTimer      suspendTimer;
+    bool        mVisibility;
+    QWidget*    mActiveDialog;
 };
 
 #endif
