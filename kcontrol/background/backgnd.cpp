@@ -564,6 +564,8 @@ void KBackground::apply()
 
 void KBackground::load()
 {
+    delete m_pGlobals;
+    m_pGlobals = new KGlobalBackgroundSettings();
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
         desk = 0;
