@@ -797,6 +797,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         QCString display = ::getenv("DISPLAY");
 	// strip the screen number from the display
 	display.replace(QRegExp("\\.[0-9]+$"), "");
+        int i;
+        while( (i = display.find(':')) >= 0)
+           display[i] = '_';
 
         fName += "-"+display;
 	FILE *f;
@@ -867,6 +870,9 @@ void KSMServer::cleanUp()
     QCString display = ::getenv("DISPLAY");
     // strip the screen number from the display
     display.replace(QRegExp("\\.[0-9]+$"), "");
+    int i;
+    while( (i = display.find(':')) >= 0)
+         display[i] = '_';
 
     fName += "-"+display;
     ::unlink(fName.data());
