@@ -54,8 +54,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 
 	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand services"), this );
 	QWhatsThis::add(gb, i18n("This is a list of available KDE services which will "
-			"be started on demand. They are only listed for convinience, you "
-			"cannot manipulate these services"));
+			"be started on demand. They are only listed for convenience, as you "
+			"cannot manipulate these services."));
 	lay->addWidget( gb );
 		
 	_lvLoD = new KListView( gb );
@@ -68,7 +68,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
  	gb = new QVGroupBox(i18n("Startup services"), this );
 	QWhatsThis::add(gb, i18n("This shows all KDE services that can be loaded "
 				"on KDE startup. Checked services will be invoked on next startup. "
-				"Be careful with deactivation unknown services."));
+				"Be careful with deactivation of unknown services."));
 	lay->addWidget( gb );
 
 	_lvStartup = new KListView( gb );
@@ -157,7 +157,7 @@ void KDEDConfig::getServiceStatus()
 
 		_lvLoD->setEnabled( false );
 		_lvStartup->setEnabled( false );
-		KMessageBox::error(this, i18n("Cannot contact KDED!"));
+		KMessageBox::error(this, i18n("Unable to contact KDED!"));
 		return;
 	}
 	else {
@@ -252,10 +252,10 @@ const KAboutData* KDEDConfig::aboutData() const
 
 QString KDEDConfig::quickHelp() const
 { 
-	return i18n("<h1>KDE Services</h1><p>This modules allows you get an overview about all plugins of the "
-			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of services:</p>"
+	return i18n("<h1>KDE Services</h1><p>This module allows you to have an overview of all plugins of the "
+			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
-			"<p>The latter are only listed for convinience, the startup services can be started and stopped and "
-			"you can also define wether they should be loaded at startup.</p><p><b> Use this with care. Some "
+			"<p>The latter are only listed for convenience. The startup services can be started and stopped, and "
+			"you can also define whether they should be loaded at startup.</p><p><b> Use this with care. Some "
 			"services are vital for KDE. Don't deactivate services if you don't know what you are doing!</b></p>");
 }
