@@ -83,7 +83,7 @@ KEnergy::KEnergy(QWidget *parent, Mode m)
 	connect(cbEnable, SIGNAL(clicked()), SLOT(slotChangeEnable()));
 
 	QLabel *pixlabel= new QLabel(this);
-	pixlabel->setPixmap( QPixmap(locate("data", "kcontrol/pics/energybig.xpm")));
+	pixlabel->setPixmap( QPixmap(locate("data", "kcontrol/pics/energybig.png")));
 	
 	topLayout->addLayout(h1Layout);
 	h1Layout->addWidget( cbEnable);

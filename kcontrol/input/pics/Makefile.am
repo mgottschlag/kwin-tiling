@@ -1,6 +1,5 @@
 # $Id$
 # kdebase/kcontrol/input/pics
 
-kde_icon_DATA = keyboard.xpm mouse.xpm
+KDE_ICON = keyboard mouse
 
-EXTRA_DIST = $(kde_icon_DATA)

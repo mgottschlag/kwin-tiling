@@ -210,7 +210,7 @@ KBackground::KBackground(QWidget *parent, Mode m)
     
     monitorLabel = new QLabel( this );
     monitorLabel->setAlignment( AlignCenter );
-    monitorLabel->setPixmap( QPixmap(locate("data", "kcontrol/pics/monitor.xpm")));
+    monitorLabel->setPixmap( QPixmap(locate("data", "kcontrol/pics/monitor.png")));
     monitorLabel->adjustSize();
     monitorLabel->setMinimumSize(monitorLabel->size());
 	
