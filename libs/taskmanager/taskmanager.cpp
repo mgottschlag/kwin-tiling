@@ -137,7 +137,8 @@ void TaskManager::windowAdded(WId w )
 
         // lets see if this is a transient for an existing task
         if( transient_for != qt_xrootwin()
-            && transient_for != 0 ) {
+            && transient_for != 0
+            && wType != NET::Utility ) {
 
             Task* t = findTask(transient_for);
             if (t) {
