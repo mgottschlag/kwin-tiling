@@ -222,6 +222,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
     m_bChanged = false;
+    m_bToolbarsDirty = false;
     useRM = true;
     macStyle = false;
 
@@ -337,19 +338,20 @@ void KGeneral::slotChangeStylePlugin(QListViewItem *)
 void KGeneral::slotChangeTbStyle()
 {
     if (tbIcon->isChecked() )
-    tbUseText = 0;
+        tbUseText = "IconOnly";
     else if (tbText->isChecked() )
-    tbUseText = 2;
+        tbUseText = "TextOnly";
     else if (tbAside->isChecked() )
-    tbUseText = 1;
+        tbUseText = "IconTextRight";
     else if (tbUnder->isChecked() )
-    tbUseText = 3;
+        tbUseText = "IconTextBottom";
     else
-    tbUseText = 0 ;
+        tbUseText = "IconOnly";
 
     tbUseHilite = tbHilite->isChecked();
     tbMoveTransparent = tbTransp->isChecked();
 
+    m_bToolbarsDirty = true;
     m_bChanged = true;
     emit changed(true);
 }
@@ -386,7 +388,7 @@ void KGeneral::readSettings()
     macStyle = config->readBoolEntry( "macStyle", false);
 
     config->setGroup( "Toolbar style" );
-    tbUseText = config->readNumEntry( "IconText", 0);
+    tbUseText = config->readEntry( "IconText", "IconOnly");
     int val = config->readNumEntry( "Highlighting", 1);
     tbUseHilite = val? true : false;
     tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
@@ -404,22 +406,11 @@ void KGeneral::showSettings()
     tbHilite->setChecked(tbUseHilite);
     tbTransp->setChecked(tbMoveTransparent);
 
-    switch (tbUseText) {
-    case 0:
-        tbIcon->setChecked(true);
-        break;
-    case 1:
-        tbAside->setChecked(true);
-        break;
-    case 2:
-        tbText->setChecked(true);
-        break;
-    case 3:
-        tbUnder->setChecked(true);
-        break;
-    default:
-        tbIcon->setChecked(true);
-    }
+
+    tbIcon->setChecked( true ); // we need a default
+    tbAside->setChecked( tbUseText == "IconTextRight" );
+    tbText->setChecked( tbUseText == "TextOnly" );
+    tbUnder->setChecked( tbUseText == "IconTextBottom" );
 }
 
 
@@ -427,7 +418,7 @@ void KGeneral::defaults()
 {
     useRM = true;
     macStyle = false;
-    tbUseText = 0;
+    tbUseText = "IconOnly";
     tbUseHilite = true;
     tbMoveTransparent = true;
 
@@ -490,6 +481,8 @@ void KGeneral::save()
     }
 
     KIPC::sendMessageAll(KIPC::StyleChanged);
+    if ( m_bToolbarsDirty )
+        KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 /* we could use later for finer granularity */);
     QApplication::syncX();
 
     m_bChanged = false;

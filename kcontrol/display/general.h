@@ -56,7 +56,7 @@ private:
 class KGeneral: public KCModule
 {
     Q_OBJECT
-	
+
 public:
     KGeneral(QWidget *parent, const char *name);
     ~KGeneral();
@@ -80,11 +80,11 @@ private:
     void readSettings();
     void showSettings();
 
-    bool m_bChanged;
+    bool m_bChanged, m_bToolbarsDirty;
     bool useRM, macStyle;
     bool tbUseHilite, tbMoveTransparent;
 
-    int tbUseText;
+    QString tbUseText;
 
     QGroupBox *styles, *tbStyle;
     QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
