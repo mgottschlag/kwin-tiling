@@ -37,7 +37,8 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include <artsconfig.h>
+#include <arts_general.h>
+#include <arts_soundio.h>
 
 
 class KProcess;
@@ -48,7 +49,7 @@ class KArtsModule : public KCModule
 
 public:
 
-  KArtsModule(QWidget *parent=0, const char *name=0, const QStringList & = QStringList());
+  KArtsModule(QWidget *parent=0, const char *name=0);
   ~KArtsModule();
   void saveParams( void );
 
@@ -88,7 +89,10 @@ private:
   QLineEdit *samplingRate;
   QLineEdit *messageApplication;
   KIntNumInput *suspendTime;
-  ArtsConfig *artsConfig;
+  ArtsGeneral *general;
+  ArtsSoundIO *soundIO;
+  KCModule *mixer;
+  KCModule *midi;
   KConfig *config;
   int latestProcessStatus;
   int fragmentCount;

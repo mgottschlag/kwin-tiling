@@ -1,0 +1,266 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>ArtsSoundIO</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>ArtsSoundIO</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>446</width>
+            <height>433</height>
+        </rect>
+    </property>
+    <property name="layoutMargin" stdset="0">
+    </property>
+    <property name="layoutSpacing" stdset="0">
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string> Audio Buffer Size (response time) </string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLabel" row="2" column="1">
+                    <property name="name">
+                        <cstring>TextLabel9_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&lt;ul&gt;
+&lt;li&gt;low CPU usage&lt;/li&gt;
+&lt;li&gt;slow response&lt;/li&gt;
+&lt;li&gt;less dropouts&lt;/li&gt;
+&lt;/ul&gt;</string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                    <property name="hAlign" stdset="0">
+                    </property>
+                </widget>
+                <widget class="QSlider" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>latencySlider</cstring>
+                    </property>
+                    <property name="minValue">
+                        <number>10</number>
+                    </property>
+                    <property name="maxValue">
+                        <number>500</number>
+                    </property>
+                    <property name="pageStep">
+                        <number>10</number>
+                    </property>
+                    <property name="value">
+                        <number>150</number>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="tickmarks">
+                        <enum>Right</enum>
+                    </property>
+                    <property name="tickInterval">
+                        <number>20</number>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel9</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&lt;ul&gt;
+&lt;li&gt;high CPU usage&lt;/li&gt;
+&lt;li&gt;fast response&lt;/li&gt;
+&lt;li&gt;more dropouts&lt;/li&gt;
+&lt;/ul&gt;</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>latencyLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Latency: 150 milliseconds (7 fragments, 4096 bytes)</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>customRate</cstring>
+            </property>
+            <property name="text">
+                <string>Use custom s&amp;ampling rate:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>soundQualityLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Sound quality:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="2">
+            <property name="name">
+                <cstring>samplingRate</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="5" column="2">
+            <item>
+                <property name="text">
+                    <string>Autodetect</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>16 bits (high)</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>8 bits (low)</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>soundQuality</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>audioIOLabel</cstring>
+            </property>
+            <property name="text">
+                <string>Sound I/O &amp;method:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>audioIO</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
+            <item>
+                <property name="text">
+                    <string>Autodetect</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>audioIO</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="2">
+            <property name="name">
+                <cstring>deviceName</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>customOptions</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Other custom options:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="4" column="2">
+            <property name="name">
+                <cstring>addOptions</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>fullDuplex</cstring>
+            </property>
+            <property name="text">
+                <string>Enable full &amp;duplex operation</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This enables the soundserver to record and play sound at the same time. If you use applications like Internet telephony, voice recognition or similar, you probably want this.</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>customDevice</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Use custom sound device:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="7" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property name="text">
+                <string>If you are using a Yamaha soundcard, you might need to set the sampling rate to 48000 Hz.</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter|AlignLeft</set>
+            </property>
+            <property name="wordwrap" stdset="0">
+            </property>
+        </widget>
+        <spacer row="8" column="2">
+            <property name="name" stdset="0">
+                <cstring>Spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>audioIO</tabstop>
+    <tabstop>fullDuplex</tabstop>
+    <tabstop>customDevice</tabstop>
+    <tabstop>deviceName</tabstop>
+    <tabstop>customRate</tabstop>
+    <tabstop>samplingRate</tabstop>
+    <tabstop>customOptions</tabstop>
+    <tabstop>addOptions</tabstop>
+    <tabstop>soundQuality</tabstop>
+    <tabstop>latencySlider</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in declaration">knuminput.h</include>
+</includes>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

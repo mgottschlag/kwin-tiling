@@ -34,6 +34,7 @@
 #include <qdir.h>
 #include <qwhatsthis.h>
 #include <qregexp.h>
+#include <qtabwidget.h>
 
 #include <kaboutdata.h>
 #include <ksimpleconfig.h>
@@ -42,15 +43,21 @@
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
 #include <kprocess.h>
+#include <kservice.h>
 
+#include <kparts/componentfactory.h>
+#include "midi.h"
 #include "arts.h"
 
 extern "C" {
 	void init_arts();
-}
 
-typedef KGenericFactory<KArtsModule, QWidget> KArtsModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_arts, KArtsModuleFactory( "kcmarts" ) );
+	KCModule *create_arts(QWidget *parent, const char *name)
+	{
+		KGlobal::locale()->insertCatalogue("kcmarts");
+		return new KArtsModule(parent, name);
+	}
+}
 
 /*
  * This function uses artsd -A to init audioIOList with the possible audioIO
@@ -108,31 +115,105 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 	}
 }
 
-KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(KArtsModuleFactory::instance(), parent, name), configChanged(false)
+
+static KCModule *load(QWidget *parent, const QString &libname, const QString &library, const QString &handle)
+{
+    KLibLoader *loader = KLibLoader::self();
+    // attempt to load modules with ComponentFactory, only if the symbol init_<lib> exists
+    // (this is because some modules, e.g. kcmkio with multiple modules in the library,
+    // cannot be ported to KGenericFactory)
+    KLibrary *lib = loader->library(QFile::encodeName(libname.arg(library)));
+    if (lib) {
+        QString initSym("init_");
+        initSym += libname.arg(library);
+
+        if ( lib->hasSymbol(QFile::encodeName(initSym)) )
+        {
+            // Reuse "lib" instead of letting createInstanceFromLibrary recreate it
+            //KCModule *module = KParts::ComponentFactory::createInstanceFromLibrary<KCModule>(QFile::encodeName(libname.arg(library)));
+            KLibFactory *factory = lib->factory();
+            if ( factory )
+            {
+                KCModule *module = KParts::ComponentFactory::createInstanceFromFactory<KCModule>( factory );
+                if (module)
+                    return module;
+            }
+        }
+    
+	// get the create_ function
+	QString factory("create_%1");
+	void *create = lib->symbol(QFile::encodeName(factory.arg(handle)));
+	
+	if (create)
+	    {
+		// create the module
+		KCModule* (*func)(QWidget *, const char *);
+		func = (KCModule* (*)(QWidget *, const char *)) create;
+		return  func(parent, 0);
+	    }
+
+        lib->unload();
+    }
+    return 0;
+}
+
+static KCModule *loadModule(QWidget *parent, const QString &module)
+{
+    KService::Ptr service = KService::serviceByDesktopName(module);
+    if (!service)
+       return 0;
+    QString library = service->library();
+    
+    if (library.isEmpty())
+       return 0;
+
+    QString handle =  service->property("X-KDE-FactoryName").toString();
+    if (handle.isEmpty())
+       handle = library;
+
+    KCModule *kcm = load(parent, "kcm_%1", library, handle);
+    if (!kcm)
+       kcm = load(parent, "libkcm_%1", library, handle);
+    return kcm;
+}
+
+
+KArtsModule::KArtsModule(QWidget *parent, const char *name)
+  : KCModule(parent, name), configChanged(false)
 {
 	setButtons(Default|Apply);
 
 	initAudioIOList();
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	artsConfig = new ArtsConfig(this);
-	layout->addWidget(artsConfig);
+	QTabWidget *tab = new QTabWidget(this);
+	layout->addWidget(tab);
 	layout->setMargin(0);
+	
+	general = new ArtsGeneral(tab);
+	soundIO = new ArtsSoundIO(tab);
+	mixer = loadModule(tab, "kmixcfg");
+	midi = new KMidConfig(tab, "kmidconfig");
+	
+	tab->addTab(general, i18n("&aRTs"));
+	tab->addTab(soundIO, i18n("&Sound I/O"));
+	if (mixer)
+	   tab->addTab(mixer, i18n("&Mixer"));
+	tab->addTab(midi, i18n("M&IDI"));
 
-	startServer = artsConfig->startServer;
-	networkTransparent = artsConfig->networkTransparent;
-	x11Comm = artsConfig->x11Comm;
-	startRealtime = artsConfig->startRealtime;
-	fullDuplex = artsConfig->fullDuplex;
-	customDevice = artsConfig->customDevice;
-	deviceName = artsConfig->deviceName;
-	customRate = artsConfig->customRate;
-	samplingRate = artsConfig->samplingRate;
-	autoSuspend = artsConfig->autoSuspend;
-	suspendTime = artsConfig->suspendTime;
-	displayMessage = artsConfig->displayMessage;
-	messageApplication = artsConfig->messageApplication;
+	startServer = general->startServer;
+	networkTransparent = general->networkTransparent;
+	x11Comm = general->x11Comm;
+	startRealtime = general->startRealtime;
+	fullDuplex = soundIO->fullDuplex;
+	customDevice = soundIO->customDevice;
+	deviceName = soundIO->deviceName;
+	customRate = soundIO->customRate;
+	samplingRate = soundIO->samplingRate;
+	autoSuspend = general->autoSuspend;
+	suspendTime = general->suspendTime;
+	displayMessage = general->displayMessage;
+	messageApplication = general->messageApplication;
 
    	QString deviceHint = i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards.");
 
@@ -144,17 +225,17 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	QWhatsThis::add(deviceName, deviceHint);
 	QWhatsThis::add(customRate, rateHint);
 	QWhatsThis::add(samplingRate, rateHint);
-	QWhatsThis::add(artsConfig->customOptions, optionsHint);
-	QWhatsThis::add(artsConfig->addOptions, optionsHint);
+	QWhatsThis::add(soundIO->customOptions, optionsHint);
+	QWhatsThis::add(soundIO->addOptions, optionsHint);
 
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
-		artsConfig->audioIO->insertItem(i18n(a->fullName.utf8()));
+		soundIO->audioIO->insertItem(i18n(a->fullName.utf8()));
 
 
 	config = new KConfig("kcmartsrc");
 	GetSettings();
 
-    suspendTime->setRange( 0, 999, 1, true );
+	suspendTime->setRange( 0, 999, 1, true );
 
 	connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
 	connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
@@ -166,22 +247,26 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name, const QStringList &)
 	connect(customRate, SIGNAL(clicked()), SLOT(slotChanged()));
 	connect(samplingRate, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
 
-	connect(artsConfig->audioIO,SIGNAL(highlighted(int)),SLOT(slotChanged()));
-	connect(artsConfig->customOptions,SIGNAL(clicked()),SLOT(slotChanged()));
-	connect(artsConfig->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
-	connect(artsConfig->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
-	connect(artsConfig->latencySlider,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
+	connect(soundIO->audioIO,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(soundIO->customOptions,SIGNAL(clicked()),SLOT(slotChanged()));
+	connect(soundIO->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
+	connect(soundIO->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(soundIO->latencySlider,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
 	connect(suspendTime,SIGNAL(valueChanged(int)),SLOT(slotChanged()));
 	connect(displayMessage, SIGNAL(clicked()), SLOT(slotChanged()));
 	connect(messageApplication, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
-	connect(artsConfig->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(general->loggingLevel,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 
 #if 0
-	connect(artsConfig->restartServer, SIGNAL(clicked()),
+	connect(general->restartServer, SIGNAL(clicked()),
 	        this, SLOT(slotRestartServer()));
 #endif
-	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
+	connect(general->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
+	
+	if (mixer)
+	   connect(mixer, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
+	connect(midi, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 }
 
 void KArtsModule::GetSettings( void )
@@ -197,12 +282,12 @@ void KArtsModule::GetSettings( void )
 	suspendTime->setValue(config->readNumEntry("SuspendTime",60));
 	deviceName->setText(config->readEntry("DeviceName",QString::null));
 	customDevice->setChecked(!deviceName->text().isEmpty());
-	artsConfig->addOptions->setText(config->readEntry("AddOptions",QString::null));
-	artsConfig->customOptions->setChecked(!artsConfig->addOptions->text().isEmpty());
-	artsConfig->latencySlider->setValue(config->readNumEntry("Latency",250));
+	soundIO->addOptions->setText(config->readEntry("AddOptions",QString::null));
+	soundIO->customOptions->setChecked(!soundIO->addOptions->text().isEmpty());
+	soundIO->latencySlider->setValue(config->readNumEntry("Latency",250));
 	messageApplication->setText(config->readEntry("MessageApplication","artsmessage"));
 	displayMessage->setChecked(!messageApplication->text().isEmpty());
-	artsConfig->loggingLevel->setCurrentItem(3 - config->readNumEntry("LoggingLevel",3));
+	general->loggingLevel->setCurrentItem(3 - config->readNumEntry("LoggingLevel",3));
 
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
@@ -218,23 +303,23 @@ void KArtsModule::GetSettings( void )
 
 	switch (config->readNumEntry("Bits", 0)) {
 	case 0:
-		artsConfig->soundQuality->setCurrentItem(0);
+		soundIO->soundQuality->setCurrentItem(0);
 		break;
 	case 16:
-		artsConfig->soundQuality->setCurrentItem(1);
+		soundIO->soundQuality->setCurrentItem(1);
 		break;
 	case 8:
-		artsConfig->soundQuality->setCurrentItem(2);
+		soundIO->soundQuality->setCurrentItem(2);
 		break;
 	}
 
 	QString audioIO = config->readEntry("AudioIO", QString::null);
-	artsConfig->audioIO->setCurrentItem(0);
+	soundIO->audioIO->setCurrentItem(0);
 	for(AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 	{
 		if(a->name == audioIO)		// first item: "autodetect"
 		  {
-			artsConfig->audioIO->setCurrentItem(audioIOList.at() + 1);
+			soundIO->audioIO->setCurrentItem(audioIOList.at() + 1);
 			break;
 		  }
 
@@ -253,7 +338,7 @@ void KArtsModule::saveParams( void )
 {
 	QString audioIO;
 
-	int item = artsConfig->audioIO->currentItem() - 1;	// first item: "default"
+	int item = soundIO->audioIO->currentItem() - 1;	// first item: "default"
 
 	if (item >= 0) {
 		audioIO = audioIOList.at(item)->name;
@@ -263,15 +348,15 @@ void KArtsModule::saveParams( void )
 	QString app = displayMessage->isChecked() ? messageApplication->text() : QString::null;
 	int rate = customRate->isChecked()?samplingRate->text().toLong() : 0;
 	QString addOptions;
-	if(artsConfig->customOptions->isChecked())
-		addOptions = artsConfig->addOptions->text();
+	if(soundIO->customOptions->isChecked())
+		addOptions = soundIO->addOptions->text();
 
-	int latency = artsConfig->latencySlider->value();
+	int latency = soundIO->latencySlider->value();
 	int bits = 0;
 
-	if (artsConfig->soundQuality->currentItem() == 1)
+	if (soundIO->soundQuality->currentItem() == 1)
 		bits = 16;
-	else if (artsConfig->soundQuality->currentItem() == 2)
+	else if (soundIO->soundQuality->currentItem() == 2)
 		bits = 8;
 
 	config->setGroup("Arts");
@@ -289,7 +374,7 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("AutoSuspend", autoSuspend->isChecked());
 	config->writeEntry("SuspendTime", suspendTime->value());
 	config->writeEntry("MessageApplication",app);
-	config->writeEntry("LoggingLevel",3 - artsConfig->loggingLevel->currentItem());
+	config->writeEntry("LoggingLevel",3 - general->loggingLevel->currentItem());
 
 	calculateLatency();
 	// Save arguments string in case any other process wants to restart artsd.
@@ -299,7 +384,7 @@ void KArtsModule::saveParams( void )
 					fragmentCount, fragmentSize, dev, rate, bits,
 					audioIO, addOptions, autoSuspend->isChecked(),
 					suspendTime->value(), app,
-				    3 - artsConfig->loggingLevel->currentItem()));
+				    3 - general->loggingLevel->currentItem()));
 
 	config->sync();
 }
@@ -307,6 +392,9 @@ void KArtsModule::saveParams( void )
 void KArtsModule::load()
 {
 	GetSettings();
+	if (mixer)
+		mixer->load();
+	midi->load();
 }
 
 void KArtsModule::save() {
@@ -315,6 +403,9 @@ void KArtsModule::save() {
 		saveParams();
 		restartServer();
 	}
+	if (mixer)
+		mixer->save();
+	midi->save();
 }
 
 int KArtsModule::userSavedChanges()
@@ -433,14 +524,19 @@ void KArtsModule::defaults()
 	deviceName->setText(QString::null);
 	customRate->setChecked(false);
 	samplingRate->setText(QString::null);
-	artsConfig->customOptions->setChecked(false);
-	artsConfig->addOptions->setText(QString::null);
-	artsConfig->audioIO->setCurrentItem(0);
-	artsConfig->soundQuality->setCurrentItem(0);
-	artsConfig->latencySlider->setValue(250);
+	soundIO->customOptions->setChecked(false);
+	soundIO->addOptions->setText(QString::null);
+	soundIO->audioIO->setCurrentItem(0);
+	soundIO->soundQuality->setCurrentItem(0);
+	soundIO->latencySlider->setValue(250);
 	displayMessage->setChecked(true);
 	messageApplication->setText("artsmessage");
-	artsConfig->loggingLevel->setCurrentItem(0);
+	general->loggingLevel->setCurrentItem(0);
+
+	if (mixer)
+		mixer->defaults();
+	midi->defaults();
+
 	slotChanged();
 }
 
@@ -469,7 +565,7 @@ void KArtsModule::calculateLatency()
 {
 	int latencyInBytes, latencyInMs;
 
-	if(artsConfig->latencySlider->value() < 490)
+	if(soundIO->latencySlider->value() < 490)
 	{
 		int rate = customRate->isChecked() ? samplingRate->text().toLong() : 44100;
 
@@ -477,9 +573,9 @@ void KArtsModule::calculateLatency()
 			rate = 44100;
 		}
 
-		int sampleSize = (artsConfig->soundQuality->currentItem() == 2) ? 2 : 4;
+		int sampleSize = (soundIO->soundQuality->currentItem() == 2) ? 2 : 4;
 
-		latencyInBytes = artsConfig->latencySlider->value()*rate*sampleSize/1000;
+		latencyInBytes = soundIO->latencySlider->value()*rate*sampleSize/1000;
 
 		fragmentSize = 2;
 		do {
@@ -488,7 +584,7 @@ void KArtsModule::calculateLatency()
 		} while (fragmentCount > 8 && fragmentSize != 4096);
 
 		latencyInMs = (fragmentSize*fragmentCount*1000) / rate / sampleSize;
-		artsConfig->latencyLabel->setText(
+		soundIO->latencyLabel->setText(
 						  i18n("%1 milliseconds (%2 fragments with %3 bytes)")
 						  .arg(latencyInMs).arg(fragmentCount).arg(fragmentSize));
 	}
@@ -496,7 +592,7 @@ void KArtsModule::calculateLatency()
 	{
 		fragmentCount = 128;
 		fragmentSize = 8192;
-		artsConfig->latencyLabel->setText(i18n("as large as possible"));
+		soundIO->latencyLabel->setText(i18n("as large as possible"));
 	}
 }
 
@@ -517,9 +613,9 @@ void KArtsModule::updateWidgets()
 	deviceName->setEnabled(startServerIsChecked && customDevice->isChecked());
 	customRate->setEnabled(startServerIsChecked);
 	samplingRate->setEnabled(startServerIsChecked && customRate->isChecked());
-	artsConfig->customOptions->setEnabled(startServerIsChecked);
-	artsConfig->addOptions->setEnabled(startServerIsChecked && artsConfig->customOptions->isChecked());
-	artsConfig->soundIO->setEnabled(startServerIsChecked);
+	soundIO->customOptions->setEnabled(startServerIsChecked);
+	soundIO->addOptions->setEnabled(startServerIsChecked && soundIO->customOptions->isChecked());
+	soundIO->setEnabled(startServerIsChecked);
 	autoSuspend->setEnabled(startServerIsChecked);
 	suspendTime->setEnabled(startServerIsChecked && autoSuspend->isChecked());
 	displayMessage->setEnabled(startServerIsChecked);
@@ -530,15 +626,15 @@ void KArtsModule::updateWidgets()
 #if 0
 	if (artsdRunning) {
 		if (startServerIsChecked)
-			artsConfig->restartServer->setText(i18n("Restart Server"));
+			general->restartServer->setText(i18n("Restart Server"));
 		else
-			artsConfig->restartServer->setText(i18n("Stop Server"));
+			general->restartServer->setText(i18n("Stop Server"));
 	} else {
-		artsConfig->restartServer->setText(i18n("Start Server"));
-		artsConfig->restartServer->setEnabled(startServerIsChecked);
+		general->restartServer->setText(i18n("Start Server"));
+		general->restartServer->setEnabled(startServerIsChecked);
 	}
 #endif
-	artsConfig->testSound->setEnabled(artsdRunning);
+	general->testSound->setEnabled(artsdRunning);
 }
 
 void KArtsModule::slotChanged()
