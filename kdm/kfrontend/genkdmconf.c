@@ -3434,6 +3434,9 @@ int main(int argc, char **argv)
     if (memcmp (newdir, KDMCONF, sizeof(KDMCONF)))
 	use_destdir = 1;
 
+    if (!mkdirp (newdir, 0755, "target", 1))
+	exit (1);
+
     mkdefconf();
     newer = 0;
     if (no_old) {
@@ -3623,8 +3626,7 @@ int main(int argc, char **argv)
 "Old files that would have been overwritten were renamed to <oldname>.bak.\n");
     }
     fprintf (f, 
-"\nTry '<kdebase-sources>/kdm/kfrontend/genkdmconf --help' if you want to\n"
-"generate another configuration.\n"
+"\nTry 'genkdmconf --help' if you want to generate another configuration.\n"
 "\nYou may delete this README.\n");
     fclose (f);
 

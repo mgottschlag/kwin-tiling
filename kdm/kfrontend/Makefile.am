@@ -33,14 +33,13 @@ krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 METASOURCES = AUTO
 
-noinst_PROGRAMS = genkdmconf
+bin_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
 genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local: genkdmconf
-	@$(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm
-	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(SRCDIR)/pics
+	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(SRCDIR)/pics $(GENKDMCONF_FLAGS)
 
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
