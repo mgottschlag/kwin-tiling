@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>LookAndFeelTabBase</class>
+<include location="global">kurlrequester.h</include>
 <widget class="QWidget">
     <property name="name">
         <cstring>LookAndFeelTabBase</cstring>
