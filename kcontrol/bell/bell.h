@@ -42,7 +42,6 @@ class KBellConfig : public KConfigWidget
 public:
   KBellConfig( QWidget *parent=0, const char *name=0, bool init=FALSE );
   ~KBellConfig( );
-  void resizeEvent( QResizeEvent * );
   void saveParams( void );
 
 public slots:

@@ -31,6 +31,8 @@
 #include <qfileinfo.h> 
 #include <qstring.h>
 #include <qmessagebox.h> 
+#include <qlayout.h>
+
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -55,42 +57,46 @@ KBellConfig::~KBellConfig ()
 KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
     : KConfigWidget (parent, name)
 {
-    GUI = !init;
-    
-    if (GUI) {
-        // args: label, min, max, step, initial, units
-        volume = new KSliderControl(i18n("Volume"), 0, 100, 5, 50, "%", this);
-        pitch = new KSliderControl(i18n("Pitch"),  0, 2000, 20, 800, i18n("Hz"), this);
-        duration = new KSliderControl(i18n("Duration"), 0, 1000, 50, 100, i18n("ms"), this);
-      
-        // tickmarks: minor, major
-        volume->setSteps(5,25);
-        pitch->setSteps(40,200);
-        duration->setSteps(20,100);
-        
-        test = new QPushButton(i18n("&Test"),this,"test");
-        connect( test, SIGNAL(clicked()), SLOT(ringBell()));
-    }
+  GUI = !init;
+  
+  if (GUI) {
+    QVBoxLayout *layout = new QVBoxLayout(this, 10);
 
-    config = kapp->getConfig();
-    
-    GetSettings();
-    
-    if (init)
-        saveParams();
-}
+    // args: label, min, max, step, initial, units
+    volume = new KSliderControl(i18n("Volume:"), 0, 100, 5, 50, "%", this);
+    volume->setSteps(5,25);
+    layout->addWidget(volume);
 
-void KBellConfig::resizeEvent(QResizeEvent *)
-{
-    int w = width() - 2*SPACE_XO;
+    pitch = new KSliderControl(i18n("Pitch:"),  0, 2000, 20, 800, 
+			       i18n("Hz"), this);
+    pitch->setSteps(40,200);
+    layout->addWidget(pitch);
+
+    duration = new KSliderControl(i18n("Duration:"), 0, 1000, 50, 100,
+				  i18n("ms"), this);
+    duration->setSteps(20,100);
+    layout->addWidget(duration);
+
+    QFrame *hLine = new QFrame(this);
+    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
+
+    layout->addWidget(hLine);
     
-    volume->move(SPACE_XO, SPACE_YO);
-    volume->resize(w, volume->minimumSize().height() );
-    pitch->move(SPACE_XO, volume->y() + volume->height() + SPACE_YO);
-    pitch->resize(w, pitch->minimumSize().height() );
-    duration->move(SPACE_XO, pitch->y() + pitch->height() + SPACE_YO);
-    duration->resize(w, duration->minimumSize().height() );
-    test->move(SPACE_XO, duration->y() + duration->height() + SPACE_YO); 
+    test = new QPushButton(i18n("&Test"), this, "test");
+    layout->addWidget(test, 0, AlignLeft);
+    connect( test, SIGNAL(clicked()), SLOT(ringBell()));
+
+    layout->addStretch(5);
+
+    layout->activate();
+  }
+  
+  config = kapp->getConfig();
+  
+  GetSettings();
+  
+  if (init)
+    saveParams();
 }
 
 // set the slider and the LCD to 'val'
