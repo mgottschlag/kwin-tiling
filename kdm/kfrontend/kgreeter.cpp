@@ -559,9 +559,10 @@ KGreeter::verifyUser(bool haveto)
 					"at the moment."));
 	    break;
 	case V_NOLOGIN:
+	    msg = GRecvStr();
 	    {
 		QFile f;
-		f.setName(QString::fromLocal8Bit(GRecvStr()));
+		f.setName(QString::fromLocal8Bit(msg));
 		f.open(IO_ReadOnly);
 	        QTextStream t( &f );
 		QString mesg;
@@ -576,6 +577,7 @@ KGreeter::verifyUser(bool haveto)
 		else
 		    MsgBox (sorrybox, mesg);
 	    }
+	    free (msg);
 	    break;
 	case V_MSGERR:
 	    msg = GRecvStr ();
