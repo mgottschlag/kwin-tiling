@@ -98,7 +98,7 @@ void TaskManager::windowAdded(WId w )
 	if (t) {
 	    if (t->window() != w) {
 		t->addTransient(w);
-                kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
+                // kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
             }
 	    return;
 	}
@@ -170,7 +170,7 @@ void TaskManager::windowAdded(WId w )
     Task* t = new Task(w, this);
     _tasks.append(t);
 
-    kdDebug() << "TM: Task added for WId: " << w << endl;
+    // kdDebug() << "TM: Task added for WId: " << w << endl;
 
     emit taskAdded(t);
 }
@@ -188,11 +188,11 @@ void TaskManager::windowRemoved(WId w )
 
         if(t == _active) _active = 0;
         delete t;
-        kdDebug() << "TM: Task for WId " << w << " removed." << endl;
+        //kdDebug() << "TM: Task for WId " << w << " removed." << endl;
     }
     else {
         t->removeTransient( w );
-        kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
+        //kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
     }
 }
 
@@ -218,23 +218,21 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
 void TaskManager::activeWindowChanged(WId w )
 {
+    //kdDebug() << "TaskManager::activeWindowChanged" << endl;
+
     Task* t = findTask( w );
     if (!t) {
         if (_active) {
             _active->setActive(false);
-            _active->refresh();
             _active = 0;
         }
     }
     else {
-        if (_active) {
+        if (_active)
             _active->setActive(false);
-            _active->refresh();
-        }
 
         _active = t;
         _active->setActive(true);
-        _active->refresh();
     }
 }
 
@@ -246,7 +244,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 void TaskManager::clientStarted(QString name, QString icon, pid_t pid, QString bin, bool compliant)
 {
     if ((long)pid == 0) return;
-    kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
+    //kdDebug() << "TM: clientStarted(" << name << ", " << icon << ", " << (long)pid << "d)" << endl;
 
     Startup * s = new Startup(name, icon, pid, bin, compliant, this);
     _startups.append(s);
@@ -285,6 +283,22 @@ int TaskManager::numberOfDesktops()
     return kwin_module->numberOfDesktops();
 }
 
+bool TaskManager::isOnTop(Task* task)
+{
+    if(!task) return false;
+
+    Task* t = 0;
+
+    for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
+         it != kwin_module->stackingOrder().end(); --it ) {
+
+        t = findTask(*it);
+        if ( t && t != task && (t->staysOnTop() == task->staysOnTop()) )
+            return true;
+    }
+    return false;
+}
+
 
 Task::Task(WId win, QObject * parent, const char *name)
     : QObject(parent, name), _active(false), _win(win)
@@ -305,6 +319,12 @@ void Task::refresh(bool icon)
             _pixmap = SmallIcon("xapp");
     }
     emit changed();
+}
+
+void Task::setActive(bool a)
+{
+    _active = a;
+    refresh();
 }
 
 bool Task::maximized() const

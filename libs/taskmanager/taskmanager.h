@@ -56,6 +56,7 @@ public:
     bool onAllDesktops() const;
     bool staysOnTop() const;
     bool active() const;
+    int desktop() const { return _info.desktop; }
 
     // actions
     void maximize();
@@ -72,7 +73,7 @@ public:
     void addTransient( WId w ) { _transients.append( w ); }
     void removeTransient( WId w ) { _transients.remove( w ); }
     bool hasTransient( WId w ) const { return _transients.contains( w ); }
-    void setActive(bool a) { _active = a; }
+    void setActive(bool a);
 
 signals:
     void changed();
@@ -131,6 +132,7 @@ public:
 
     QString desktopName(int);
     int numberOfDesktops();
+    bool isOnTop(Task*);
 
 signals:
     void taskAdded(Task*);
