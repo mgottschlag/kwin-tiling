@@ -310,9 +310,7 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuF
      item = new TreeItem(parent, after, QString::null, _init);
 
    item->setMenuFolderInfo(folderInfo);
-   QString tmp = folderInfo->caption;
-   tmp.replace("&", "&&");
-   item->setName(tmp);
+   item->setName(folderInfo->caption);
    item->setPixmap(0, appIcon(folderInfo->icon));
    item->setDirectoryPath(folderInfo->fullId);
    item->setHidden(folderInfo->hidden);
@@ -322,12 +320,6 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuF
 
 TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo, bool _init)
 {
-   QString serviceCaption = entryInfo->caption;
-
-   // Item names may contain ampersands. To avoid them being converted
-   // to accelerators, replace them with two ampersands.
-   serviceCaption.replace("&", "&&");
-
    bool hidden = entryInfo->hidden;
 
    TreeItem* item;
@@ -337,7 +329,7 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuE
      item = new TreeItem(parent, after, entryInfo->menuId(),_init);
 
    item->setMenuEntryInfo(entryInfo);
-   item->setName(serviceCaption);
+   item->setName(entryInfo->caption);
    item->setPixmap(0, appIcon(entryInfo->icon));
 
    item->setHidden(hidden);
@@ -396,9 +388,7 @@ void TreeView::currentChanged(MenuFolderInfo *folderInfo)
     if (item == 0) return;
     if (folderInfo == 0) return;
 
-    QString tmp = folderInfo->caption;
-    tmp.replace("&", "&&");
-    item->setName(tmp);
+    item->setName(folderInfo->caption);
     item->setPixmap(0, appIcon(folderInfo->icon));
 }
 
