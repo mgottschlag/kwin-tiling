@@ -202,13 +202,15 @@ private:
 
   KConfig *config;
 
-  bool getElectricBorders( void );
+  int getElectricBorders( void );
   int getElectricBorderDelay();
-  void setElectricBorders( bool );
+  void setElectricBorders( int );
   void setElectricBorderDelay( int );
 
   QVButtonGroup *electricBox;
-  QCheckBox *enable;
+  QRadioButton *active_disable;
+  QRadioButton *active_move;
+  QRadioButton *active_always;
   KIntNumInput *delays;
 };
 

@@ -477,24 +477,28 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     electricBox = new QVButtonGroup(i18n("Active Desktop Borders"), this);
     electricBox->setMargin(15);
 
-    enable= new QCheckBox(i18n("Enable &active desktop borders"), electricBox);
-    QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
+    QWhatsThis::add( electricBox, i18n("If this option is enabled, moving the mouse to a screen border"
        " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
        " to the other.") );
+    active_disable = new QRadioButton(i18n("&Disabled"), electricBox);
+    active_move    = new QRadioButton(i18n("Only when &moving windows"), electricBox);
+    active_always  = new QRadioButton(i18n("&Always enabled"), electricBox);
 
     delays = new KIntNumInput(10, electricBox);
     delays->setRange(0, MAX_EDGE_RES, 50, true);
     delays->setSuffix(i18n("ms."));
-    delays->setLabel(i18n("&Desktop switch delay:"));
+    delays->setLabel(i18n("Desktop &switch delay:"));
     QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
        " borders feature. Desktops will be switched after the mouse has been pushed against a screen border"
        " for the specified number of milliseconds.") );
 
-    connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
+    connect( electricBox, SIGNAL(clicked(int)), this, SLOT(setEBorders()));
+
+    // Any changes goes to slotChanged()
+    connect(electricBox, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
+    connect(delays, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
 
     lay->addWidget(electricBox);
-
-
 
     lay->addStretch();
     load();
@@ -567,7 +571,7 @@ void KAdvancedConfig::load( void )
     xineramaMaximizeEnable->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, false));
 #endif
 
-    setElectricBorders(config->readBoolEntry(KWM_ELECTRIC_BORDER, false));
+    setElectricBorders(config->readNumEntry(KWM_ELECTRIC_BORDER, false));
     setElectricBorderDelay(config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY, 150));
 }
 
@@ -603,18 +607,22 @@ void KAdvancedConfig::defaults()
     setShadeHover(false);
     setShadeHoverInterval(250);
     setXinerama(false);
-    setElectricBorders(false);
+    setElectricBorders(0);
     setElectricBorderDelay(150);
 }
 
 void KAdvancedConfig::setEBorders()
 {
-    delays->setEnabled(enable->isChecked());
+    delays->setEnabled(!active_disable->isChecked());
 }
 
-bool KAdvancedConfig::getElectricBorders()
+int KAdvancedConfig::getElectricBorders()
 {
-    return  enable->isChecked();
+    if (active_move->isChecked())
+       return 1;
+    if (active_always->isChecked())
+       return 2;
+    return 0;
 }
 
 int KAdvancedConfig::getElectricBorderDelay()
@@ -622,8 +630,13 @@ int KAdvancedConfig::getElectricBorderDelay()
     return delays->value();
 }
 
-void KAdvancedConfig::setElectricBorders(bool b){
-    enable->setChecked(b);
+void KAdvancedConfig::setElectricBorders(int i){
+    switch(i)
+    {
+      case 1: active_move->setChecked(true); break;
+      case 2: active_always->setChecked(true); break;
+      default: active_disable->setChecked(true); break;
+    }
     setEBorders();
 }
 
