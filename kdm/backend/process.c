@@ -309,9 +309,7 @@ GClose (int force)
     return ret;
 }
 
-static void GError (void) ATTR_NORETURN;
-
-static void
+static void ATTR_NORETURN
 GError ()
 {
     (void) GClose (1);
