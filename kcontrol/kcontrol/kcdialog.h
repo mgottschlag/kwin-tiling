@@ -41,11 +41,13 @@ protected slots:
   virtual void slotDefault();
   virtual void slotApply();
   virtual void slotOk();
+  virtual void slotHelp();
   void clientChanged(bool state);
 
 
 private:
   KCModule    *_client;
+  QString     _docPath;
 };
 
 #endif

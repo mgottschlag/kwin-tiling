@@ -28,6 +28,9 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klibloader.h>
+#include <krun.h>
+#include <kprocess.h>
+#include <kurl.h>
 #include <global.h>
 
 #include "kecdialog.h"
@@ -79,6 +82,20 @@ void KExtendedCDialog::slotOk()
     accept();
 }
 
+void KExtendedCDialog::slotHelp()
+{
+    KProcess process;
+    KURL url( KURL("help:/"), _docPath.local8Bit() );
+
+    if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
+        process << "khelpcenter"
+                << url.url();
+        process.start(KProcess::DontCare);
+    } else {
+        new KRun(url);
+    }
+}
+
 void KExtendedCDialog::clientChanged(bool state)
 {
     enableButton(Apply, state);
@@ -128,6 +145,7 @@ void KExtendedCDialog::aboutToShow(QWidget *page)
     module->reparent(page,0,QPoint(0,0),true);
     connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
     //setHelp( docpath, QString::null );
+    _docPath = info.docPath();
     modules.append(module);
 
     KCGlobal::repairAccels( topLevelWidget() );

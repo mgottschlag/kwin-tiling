@@ -23,6 +23,8 @@
 #include <kapplication.h>
 #include <kwin.h>
 #include <global.h>
+#include <kprocess.h>
+#include <krun.h>
 
 #include "kcdialog.h"
 #include "kcdialog.moc"
@@ -36,14 +38,12 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
                 (b & KCModule::Apply ? Ok : Close),
                 true),
     DCOPObject("dialog"),
-    _client(client)
+    _client(client),
+    _docPath(docpath)
 {
     client->reparent(this,0,QPoint(0,0),true);
     setMainWidget(client);
     connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-
-    setHelp( docpath, QString::null );
-
     enableButton(Apply, false);
 
     KCGlobal::repairAccels( topLevelWidget() );
@@ -70,6 +70,20 @@ void KCDialog::slotApply()
 {
     _client->save();
     clientChanged(false);
+}
+
+void KCDialog::slotHelp()
+{
+    KProcess process;
+    KURL url( KURL("help:/"), _docPath.local8Bit() );
+
+    if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
+        process << "khelpcenter"
+                << url.url();
+        process.start(KProcess::DontCare);
+    } else {
+        new KRun(url);
+    }
 }
 
 void KCDialog::activate()

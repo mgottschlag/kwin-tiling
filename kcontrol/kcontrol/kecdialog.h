@@ -41,6 +41,7 @@ protected slots:
     virtual void slotDefault();
     virtual void slotApply();
     virtual void slotOk();
+    virtual void slotHelp();
     void clientChanged(bool state);
     void aboutToShow(QWidget *);
 
@@ -54,6 +55,7 @@ private:
     };
     QPtrList<KCModule> modules;
     QPtrDict<LoadInfo> moduleDict;
+    QString _docPath;
 };
 
 #endif
