@@ -64,6 +64,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
 
    viewStatistics->setAllColumnsShowFocus(TRUE);
    viewStatistics->setFocusPolicy(QWidget::ClickFocus);
+   viewStatistics->setShowSortIndicator(true);
    
    viewStatistics->addColumn(i18n("Nr"),50);
    viewStatistics->addColumn(i18n("Event"),150);

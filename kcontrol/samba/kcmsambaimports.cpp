@@ -45,6 +45,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     topLayout->setSpacing(10);
     
     list.setAllColumnsShowFocus(true);
+    list.setShowSortIndicator(true);
     list.setMinimumSize(425,200);
     list.addColumn(i18n("Type"), 50);
     list.addColumn(i18n("Resource"), 200);

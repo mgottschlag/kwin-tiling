@@ -102,6 +102,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 
    viewHistory.setAllColumnsShowFocus(TRUE);
    viewHistory.setFocusPolicy(QWidget::ClickFocus);
+   viewHistory.setShowSortIndicator(true);
 
    viewHistory.addColumn(i18n("Date & Time"),130);
    viewHistory.addColumn(i18n("Event"),150);

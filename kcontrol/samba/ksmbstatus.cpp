@@ -69,6 +69,8 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
     list->setAllColumnsShowFocus(true);
     list->setMinimumSize(425,200);
+    list->setShowSortIndicator(true);
+
     list->addColumn(i18n("Type"));
     list->addColumn(i18n("Service"));
     list->addColumn(i18n("Accessed from"));
