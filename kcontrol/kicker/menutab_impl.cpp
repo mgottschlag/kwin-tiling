@@ -39,11 +39,9 @@
 #include <kiconloader.h>
 #include <kapplication.h>
 
+#include "main.h"
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
-
-
-extern int kickerconfig_screen_number;
 
 kSubMenuItem::kSubMenuItem(QListView* parent, 
                            const QString& visibleName,
@@ -89,13 +87,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
-
+    KConfig c(KickerConfig::configName(), false, false);
     c.setGroup("KMenu");
 
     m_showPixmap->setChecked(c.readBoolEntry("UseSidePixmap", true));
@@ -168,13 +160,7 @@ void MenuTab::load()
 
 void MenuTab::save()
 {
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-    KConfig c(configname, false, false);
-
+    KConfig c(KickerConfig::configName(), false, false);
 
     c.setGroup("KMenu");
 

@@ -27,24 +27,17 @@
 
 #include <dcopclient.h>
 
+#include "main.h"
 #include "lookandfeeltab_kcm.moc"
 #include "lookandfeeltab_impl.h"
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
 
-
-// for multihead
-extern int kickerconfig_screen_number;
-
-
 LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-    kickerconfig_screen_number=0;
-    if (qt_xdisplay())
-      kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
-
+    KickerConfig::initScreenNumber();
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     lookandfeeltab = new LookAndFeelTab(this);
@@ -73,16 +66,7 @@ void LookAndFeelConfig::save()
     emit changed(false);
 
     // Tell kicker about the new config file.
-    if (!kapp->dcopClient()->isAttached())
-        kapp->dcopClient()->attach();
-    QByteArray data;
-
-    QCString appname;
-    if (kickerconfig_screen_number == 0)
-	appname = "kicker";
-    else
-	appname.sprintf("kicker-screen-%d", kickerconfig_screen_number);
-    kapp->dcopClient()->send( appname, "kicker", "configure()", data );
+    KickerConfig::notifyKicker();
 }
 
 void LookAndFeelConfig::defaults()

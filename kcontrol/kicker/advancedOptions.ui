@@ -1,0 +1,137 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>advancedKickerOptions</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>advancedKickerOptions</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>289</width>
+            <height>117</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;b&gt;Advanced Options&lt;/b&gt;</string>
+            </property>
+        </widget>
+        <spacer row="2" column="2" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>Spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>139</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Hide button size:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>hideButtonSize</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This setting defines how large the panel hide buttons will be if they are visible.</string>
+            </property>
+        </widget>
+        <widget class="KIntSpinBox" row="2" column="1">
+            <property name="name">
+                <cstring>hideButtonSize</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This setting defines how large the panel hide buttons will be if they are visible.</string>
+            </property>
+        </widget>
+        <widget class="Line" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>Line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <spacer row="4" column="2">
+            <property name="name">
+                <cstring>Spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>139</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>fadeOutHandles</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Fade out applet handles</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>All applets that appear on the KDE panel have a small handle associated with them. By selecting this option these handles will be faded out and not shown by default.</string>
+            </property>
+        </widget>
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>Spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

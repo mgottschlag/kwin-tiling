@@ -33,6 +33,7 @@
 #include <qimage.h>
 #include <qregexp.h>
 
+#include <main.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
@@ -40,17 +41,16 @@
 #include <klocale.h>
 #include <kcombobox.h>
 #include <kimageio.h>
+#include <knuminput.h>
 #include <kiconeffect.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <klineedit.h>
 
+#include "advancedDialog.h"
 #include "lookandfeeltab_impl.h"
 #include "lookandfeeltab_impl.moc"
-
-
-extern int kickerconfig_screen_number;
 
 LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   : LookAndFeelTabBase (parent, name)
@@ -71,13 +71,12 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   m_backgroundInput->fileDialog()->setCaption(i18n("Select an Image File"));
   m_backgroundInput->lineEdit()->setReadOnly(true);
 
-  connect(m_backgroundInput, SIGNAL(urlSelected(const QString&)), SLOT(browse_theme(const QString&)));
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
   fillTileCombos();
 }
 
-void LookAndFeelTab::browse_theme(const QString& newtheme)
+void LookAndFeelTab::browseTheme(const QString& newtheme)
 {
     if (theme == newtheme) return;
     if (newtheme.isEmpty()) return;
@@ -99,14 +98,15 @@ void LookAndFeelTab::browse_theme(const QString& newtheme)
     KMessageBox::error(this, i18n("Failed to load image file."), i18n("Failed to Load Image File"));
 }
 
+void LookAndFeelTab::launchAdvancedDialog()
+{
+    advancedDialog* dialog = new advancedDialog(this, "advancedDialog");
+    dialog->exec();
+}
+
 void LookAndFeelTab::load()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig c(configname, false, false);
+  KConfig c(KickerConfig::configName(), false, false);
 
   c.setGroup("General");
 
@@ -148,7 +148,6 @@ void LookAndFeelTab::load()
   }
 
   m_showToolTips->setChecked( c.readBoolEntry( "ShowToolTips", true ) );
-  m_fadeOutAppletHandles=c.readBoolEntry( "FadeOutAppletHandles", false);
 
   c.setGroup("buttons");
 
@@ -235,18 +234,12 @@ void LookAndFeelTab::load()
 
 void LookAndFeelTab::save()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig c(configname, false, false);
+  KConfig c(KickerConfig::configName(), false, false);
 
   c.setGroup("General");
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
   c.writeEntry("BackgroundTheme", theme);
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
-  c.writeEntry( "FadeOutAppletHandles", m_fadeOutAppletHandles );
 
   c.setGroup("button_tiles");
   bool enableTiles = false;

@@ -49,6 +49,11 @@ public:
     void saveExtentionInfo();
     const extensionInfoList& extensionsInfo();
 
+    // now that it's all split up, bring the code dupe under control
+    static void initScreenNumber();
+    static QString configName();
+    static void notifyKicker();
+
 signals:
     void extensionInfoChanged();
 
@@ -67,6 +72,7 @@ private:
 //    MenuTab        *menutab;
 //    AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
+    static int kickerconfig_screen_number;
 };
 
 #endif // __main_h__

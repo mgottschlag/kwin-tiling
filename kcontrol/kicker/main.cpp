@@ -44,7 +44,7 @@
 
 
 // for multihead
-int kickerconfig_screen_number = 0;
+static int KickerConfig::kickerconfig_screen_number = 0;
 
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
@@ -52,14 +52,9 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 {
     m_extensionInfo.setAutoDelete(true);
 
-    if (qt_xdisplay())
-    kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
+    initScreenNumber();
 
-    QCString configname;
-    if (kickerconfig_screen_number == 0)
-        configname = "kickerrc";
-    else
-        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    QString configname = configName();
     KConfig *c = new KConfig(configname, false, false);
 
     c->setGroup("General");
@@ -119,6 +114,12 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
 }
 
+void KickerConfig::initScreenNumber()
+{
+    if (qt_xdisplay())
+        kickerconfig_screen_number = DefaultScreen(qt_xdisplay());
+}
+
 void KickerConfig::configChanged()
 {
     emit changed(true);
@@ -144,6 +145,11 @@ void KickerConfig::save()
 
     emit changed(false);
 
+    notifyKicker();
+}
+
+void KickerConfig::notifyKicker()
+{
     // Tell kicker about the new config file.
     if (!kapp->dcopClient()->isAttached())
         kapp->dcopClient()->attach();
@@ -270,6 +276,14 @@ void KickerConfig::hidingPanelChanged(QListViewItem* item)
 
         positionItem = static_cast<extensionInfoItem*>(positionItem->nextSibling());
     }
+}
+
+QString KickerConfig::configName()
+{
+    if (kickerconfig_screen_number == 0)
+        return "kickerrc";
+    else
+        return QString("kicker-screen-%1rc").arg(kickerconfig_screen_number);
 }
 
 extern "C"

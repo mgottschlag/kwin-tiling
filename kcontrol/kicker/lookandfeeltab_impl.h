@@ -47,13 +47,12 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void fillTileCombos();
 
  protected slots:
-  void browse_theme(const QString&);
+  void browseTheme(const QString&);
+  void launchAdvancedDialog();
 
  private:
   QString theme;
   QPixmap theme_preview;
-  
-  bool    m_fadeOutAppletHandles;
   QStringList m_tilename;
 };
 

@@ -74,6 +74,7 @@ void extensionInfo::load()
     _xineramaScreen = c.readNumEntry ("XineramaScreen",      _xineramaScreen);
     _showLeftHB     = c.readBoolEntry("ShowLeftHideButton",  _showLeftHB);
     _showRightHB    = c.readBoolEntry("ShowRightHideButton", _showRightHB);
+    _hideButtonSize = c.readNumEntry ("HideButtonSize",      _hideButtonSize);
     _autohidePanel  = c.readBoolEntry("AutoHidePanel",       _autohidePanel);
     _backgroundHide = c.readBoolEntry("BackgroundHide",      _backgroundHide);
     _autoHideSwitch = c.readBoolEntry("AutoHideSwitch",      _autoHideSwitch);
@@ -104,6 +105,7 @@ void extensionInfo::setDefaults()
     _size           = 2;
     _showLeftHB     = true;
     _showRightHB    = false;
+    _hideButtonSize = 14;
     _autohidePanel  = false;
     _backgroundHide = false;
     _autoHideSwitch = false;
@@ -130,6 +132,7 @@ void extensionInfo::save()
     c.writeEntry("XineramaScreen",      _xineramaScreen);
     c.writeEntry("ShowLeftHideButton",  _showLeftHB);
     c.writeEntry("ShowRightHideButton", _showRightHB);
+    c.writeEntry("HideButtonSize",      _hideButtonSize);
     c.writeEntry("AutoHidePanel",       _autohidePanel);
     c.writeEntry("BackgroundHide",      _backgroundHide);
     c.writeEntry("AutoHideSwitch",      _autoHideSwitch);

@@ -38,10 +38,6 @@
 #include "applettab_impl.h"
 #include "applettab_impl.moc"
 
-
-extern int kickerconfig_screen_number;
-
-
 AppletTab::AppletTab( QWidget *parent, const char* name )
   : AppletTabBase (parent, name)
 {
@@ -93,20 +89,14 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
 void AppletTab::load()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig *c = new KConfig(configname, false, false);
-
-  c->setGroup("General");
+  KConfig c(KickerConfig::configName(), false, false);
+  c.setGroup("General");
 
   available.clear();
   l_available.clear();
   l_trusted.clear();
 
-  int level = c->readNumEntry("SecurityLevel", 1);
+  int level = c.readNumEntry("SecurityLevel", 1);
 
   switch(level)
     {
@@ -131,9 +121,9 @@ void AppletTab::load()
       available << fi.baseName();
     }
 
-  if(c->hasKey("TrustedApplets"))
+  if(c.hasKey("TrustedApplets"))
     {
-      QStringList list = c->readListEntry("TrustedApplets");
+      QStringList list = c.readListEntry("TrustedApplets");
       for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
         {
           if(available.contains(*it))
@@ -152,30 +142,20 @@ void AppletTab::load()
 
   updateTrusted();
   updateAvailable();
-
-  delete c;
 }
 
 void AppletTab::save()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig *c = new KConfig(configname, false, false);
-
-  c->setGroup("General");
+  KConfig c(KickerConfig::configName(), false, false);
+  c.setGroup("General");
 
   int level = 0;
   if(new_rb->isChecked()) level = 1;
   else if (all_rb->isChecked()) level = 2;
 
-  c->writeEntry("SecurityLevel", level);
-  c->writeEntry("TrustedApplets", l_trusted);
-  c->sync();
-
-  delete c;
+  c.writeEntry("SecurityLevel", level);
+  c.writeEntry("TrustedApplets", l_trusted);
+  c.sync();
 }
 
 void AppletTab::defaults()

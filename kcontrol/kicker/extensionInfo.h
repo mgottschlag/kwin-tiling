@@ -48,6 +48,7 @@ class extensionInfo
         int      _customSize;
         bool     _showLeftHB;
         bool     _showRightHB;
+        int      _hideButtonSize;
         bool     _autohidePanel;
         bool     _backgroundHide;
         bool     _autoHideSwitch;
