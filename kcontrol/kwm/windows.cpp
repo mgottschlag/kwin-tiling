@@ -347,6 +347,7 @@ void KFocusConfig::load( void )
     key = config->readEntry(KWIN_ALTTABMODE, "KDE");
     setAltTabMode(key == "KDE");
 
+    config->setGroup("Desktops");
     setCtrlTab(config->readBoolEntry(KWIN_CTRLTAB, true));
 }
 
@@ -385,6 +386,7 @@ void KFocusConfig::save( void )
     else
         config->writeEntry(KWIN_ALTTABMODE, "CDE");
 
+    config->setGroup("Desktops");
     config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
 }
 
