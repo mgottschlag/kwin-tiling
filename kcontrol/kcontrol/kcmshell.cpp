@@ -85,9 +85,12 @@ kcmApplication::isRunning()
 
     dcopClient()->setNotifications(true);
 
+    QByteArray data;
+    QDataStream str( data, IO_WriteOnly );
+    str << kapp->startupId();
     QCString replyType;
     QByteArray replyData;
-    if (!dcopClient()->call(m_dcopName, "dialog", "activate()", QByteArray(),
+    if (!dcopClient()->call(m_dcopName, "dialog", "activate(QCString)", data,
 		replyType, replyData))
     {
         return false; // Error, we have to do it ourselves.

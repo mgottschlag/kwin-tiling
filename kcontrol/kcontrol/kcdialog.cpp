@@ -23,6 +23,10 @@
 #include "global.h"
 #include <kprocess.h>
 #include <krun.h>
+#include <kstartupinfo.h>
+#include <netwm.h>
+#include <kwin.h>
+#include <kapplication.h>
 
 #include "kcdialog.h"
 #include "kcdialog.moc"
@@ -90,4 +94,27 @@ void KCDialog::slotHelp()
 void KCDialog::activate()
 {
     KWin::setActiveWindow(winId());
+}
+
+void KCDialog::activate( QCString asn_id )
+{
+      kapp->setStartupId( asn_id );
+      // from KUniqueApplication::newInstance()
+      bool activate = true;
+      if( !kapp->startupId().isEmpty() && kapp->startupId() != "0" )
+      {
+          NETRootInfo i( qt_xdisplay(), NET::Supported );
+          if( i.isSupported( NET::WM2StartupId ))
+          {
+              KStartupInfo::setWindowStartupId( winId(), kapp->startupId());
+              KStartupInfo::handleAutoAppStartedSending();
+              activate = false; // WM will take care of it
+          }
+      }
+      if( activate )
+      // This is not very nice, but there's no way how to get any
+      // usable timestamp without ASN, so force activating the window.
+      // And even with ASN, it's not possible to get the timestamp here,
+      // so if the WM doesn't have support for ASN, it can't be used either.
+          KWin::setActiveWindow( winId());
 }

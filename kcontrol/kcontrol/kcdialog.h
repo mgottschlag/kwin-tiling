@@ -35,7 +35,8 @@ public:
   KCDialog(KCModule *client, int b, const QString &docpath=QString::null, QWidget *parent=0, const char *name=0, bool modal=false);
 
 k_dcop:
-  virtual void activate();
+  virtual void activate( QCString asn_id );
+  virtual void activate(); // KDE4 - remove
 
 protected slots:
   virtual void slotDefault();
