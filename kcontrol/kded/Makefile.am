@@ -11,8 +11,8 @@ kcm_kded_la_METASOURCES = AUTO
 
 KDE_ICON = kded
 
-messages:
-	$(XGETTEXT) $(kcm_kded_la_SOURCES) -o $(podir)/kcmkded.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkded.pot
 
 data_DATA = kcmkded.desktop
 datadir = $(kde_appsdir)/Settings/Components
