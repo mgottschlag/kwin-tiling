@@ -25,12 +25,24 @@
 #include <qdatetime.h> 
 #include <qlineedit.h> 
 #include <qspinbox.h> 
+#include <qstring.h>
 #include <qtimer.h>
 #include <qvalidator.h>
+#include <qwidget.h>
 
 #include <kdatepicker.h>
+#include <knuminput.h>
 
 class Kclock;
+
+class HMSTimeWidget : public KIntSpinBox
+{
+  Q_OBJECT
+ public:
+  HMSTimeWidget(QWidget *parent=0, const char *name=0);
+ protected:
+  QString mapValueToText(int);
+};
 
 class Dtime : public QWidget
 {
@@ -48,9 +60,6 @@ signals:
 
  private slots:
   void	timeout();
-  void	inc_time();
-  void	dec_time();
-  void	joke(QLineEdit* edit,int incr,int Max,int Min,bool refr);
   void	set_time();
   void	changeDate(QDate);
 
@@ -59,9 +68,9 @@ private:
   QComboBox	*month;
   QSpinBox	*year;
 
-  QLineEdit	*hour;
-  QLineEdit	*minute;
-  QLineEdit	*second;
+  HMSTimeWidget	*hour;
+  HMSTimeWidget	*minute;
+  HMSTimeWidget	*second;
 
   Kclock        *kclock;
   

@@ -38,6 +38,20 @@
 #include "dtime.h"
 #include "dtime.moc"
 
+HMSTimeWidget::HMSTimeWidget(QWidget *parent, const char *name) :
+	KIntSpinBox(parent, name)
+{
+}
+
+QString HMSTimeWidget::mapValueToText(int value)
+{
+  QString s = QString::number(value);
+  if( value < 10 ) {
+    s = "0" + s;
+  }
+  return s;
+}
+
 Dtime::Dtime(QWidget * parent, const char *name)
   : QWidget(parent, name)
 {
@@ -62,7 +76,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   kclock = new Kclock( timeBox, "kclock" );
   kclock->setMinimumHeight(150);
   v2->addWidget( kclock );
-//  QWhatsThis::add( kclock, i18n("") );
 
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
@@ -72,15 +85,13 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // left to right.
   bool isRTL = QApplication::reverseLayout();
 
-//  v3->setColStretch( 0, 1 );
-
   QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer1, 0, 1, 1, 1);
 
-  hour = new QLineEdit( timeBox, "LineEdit_1" );
-  connect( hour, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
-  hour->setMaxLength( 2 );
-  hour->setFrame( TRUE );
+  hour = new HMSTimeWidget( timeBox );
+  connect( hour, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  hour->setWrapping(true);
+  hour->setMaxValue(23);
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
   v3->addMultiCellWidget(hour, 0, 1, isRTL ? 6 : 2, isRTL ? 6 : 2 );
 
@@ -89,10 +100,11 @@ Dtime::Dtime(QWidget * parent, const char *name)
   dots1->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots1, 0, 1, 3, 3 );
 
-  minute = new QLineEdit( timeBox, "LineEdit_2" );
-  connect( minute, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
-  minute->setMaxLength( 2 );
-  minute->setFrame( TRUE );
+  minute = new HMSTimeWidget( timeBox );
+  connect( minute, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  minute->setWrapping(true);
+  minute->setMinValue(0);
+  minute->setMaxValue(59);
   minute->setValidator(new KStrictIntValidator(0, 59, minute));
   v3->addMultiCellWidget(minute, 0, 1, 4, 4 );
 
@@ -101,46 +113,25 @@ Dtime::Dtime(QWidget * parent, const char *name)
   dots2->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots2, 0, 1, 5, 5 );
 
-  second = new QLineEdit( timeBox, "LineEdit_3" );
-  connect( second, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
-  second->setMaxLength( 2 );
-  second->setFrame( TRUE );
+  second = new HMSTimeWidget( timeBox );
+  connect( second, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  second->setWrapping(true);
+  second->setMinValue(0);
+  second->setMaxValue(59);
   second->setValidator(new KStrictIntValidator(0, 59, second));
   v3->addMultiCellWidget(second, 0, 1, isRTL ? 2 : 6, isRTL ? 2 : 6 );
 
-  int w = 2*hour->fontMetrics().width("00");
-  hour->setMaximumWidth(w);
-  minute->setMaximumWidth(w);
-  second->setMaximumWidth(w);
-
   v3->addColSpacing(7, 7);
-
-  QPushButton* plusPB = new QPushButton( "+", timeBox, "plusPB" );
-  connect( plusPB, SIGNAL(pressed()), this, SLOT(inc_time()) );
-  plusPB->setAutoRepeat( TRUE );
-  v3->addWidget(plusPB, 0, 8 );
-
-  QPushButton* minusPB = new QPushButton( "-", timeBox, "minusPB" );
-  connect( minusPB, SIGNAL(pressed()), this, SLOT(dec_time()) );
-  minusPB->setAutoRepeat( TRUE );
-  v3->addWidget(minusPB, 1, 8 );
 
   QString wtstr = i18n("Here you can change the system time. Click into the"
     " hours, minutes or seconds field to change the relevant value, either"
     " using the up and down buttons to the right or by entering a new value.");
-  QWhatsThis::add( minusPB, wtstr );
-  QWhatsThis::add( plusPB, wtstr );
   QWhatsThis::add( hour, wtstr );
   QWhatsThis::add( minute, wtstr );
   QWhatsThis::add( second, wtstr );
 
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer3, 0, 1, 9, 9);
-
-  plusPB->setFixedSize( 20, hour->height()/2 );
-  minusPB->setFixedSize( 20, hour->height()/2 );
-
-//  v3->setColStretch( 8, 1 );
 
   v2->addItem( v3 );
 
@@ -161,12 +152,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
   if (getuid() != 0)
     {
       cal->setEnabled(false);
-      hour->setReadOnly(true);
-      minute->setReadOnly(true);
-      second->setReadOnly(true);
+      hour->setEnabled(false);
+      minute->setEnabled(false);
+      second->setEnabled(false);
       kclock->setEnabled(false);
-      plusPB->setEnabled(false);
-      minusPB->setEnabled(false);
     }
 
 }
@@ -178,7 +167,7 @@ void Dtime::set_time()
 
   internalTimer.stop();
 
-  time.setHMS( hour->text().toInt(), minute->text().toInt(), second->text().toInt() );
+  time.setHMS( hour->value(), minute->value(), second->value() );
   kclock->setTime( time );
 
   emit timeChanged( TRUE );
@@ -212,13 +201,12 @@ void Dtime::save()
   BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
                date.year(),
                date.month(), date.day(),
-               hour->text().toInt(), minute->text().toInt(),
-               second->text().toInt());
+               hour->value(), minute->value(), second->value());
 #else
   BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
                date.month(), date.day(),
-               hour->text().toInt(), minute->text().toInt(),
-               date.year(), second->text().toInt());
+               hour->value(), minute->value(),
+               date.year(), second->value());
 #endif
 
   kdDebug() << "Set date " << BufS << endl;
@@ -246,53 +234,15 @@ void Dtime::save()
   internalTimer.start( 1000 );
 }
 
-void Dtime::inc_time()
-{
-  if ( hour->hasFocus() )
-    joke(hour,1,0,23,TRUE);
-  if ( minute->hasFocus() )
-    joke(minute,1,0,59,TRUE);
-  if ( second->hasFocus() )
-    joke(second,1,0,59,TRUE);
-}
-
-void Dtime::dec_time()
-{
-  if ( hour->hasFocus() )
-    joke(hour,-1,0,23,TRUE);
-  if ( minute->hasFocus() )
-    joke(minute,-1,0,59,TRUE);
-  if ( second->hasFocus() )
-    joke(second,-1,0,59,TRUE);
-}
-
-void Dtime::joke(QLineEdit *edit,int incr,int Min,int Max,bool refr)
-{
-  if ( refr )
-    refresh = FALSE;
-  BufI=edit->text().toInt();
-  BufI=BufI + incr;
-  if ( BufI > Max ) BufI = Min;
-  if ( BufI < Min ) BufI = Max;
-  if ( Max > 99 )
-    BufS.sprintf("%04d",BufI);
-  else
-    BufS.sprintf("%02d",BufI);
-  edit->setText(BufS);
-}
-
 void Dtime::timeout()
 {
   // get current time
   time = QTime::currentTime();
 
   ontimeout = TRUE;
-  BufS.sprintf("%02d",time.second());
-  second->setText(BufS);
-  BufS.sprintf("%02d",time.minute());
-  minute->setText(BufS);
-  BufS.sprintf("%02d",time.hour());
-  hour->setText(BufS);
+  second->setValue(time.second());
+  minute->setValue(time.minute());
+  hour->setValue(time.hour());
   ontimeout = FALSE;
 
   kclock->setTime( time );
