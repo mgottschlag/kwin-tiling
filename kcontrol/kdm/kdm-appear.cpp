@@ -526,13 +526,13 @@ void KDMAppearanceWidget::load()
   }
 
   // See if we use alternate logo
-  setLogo( config->readPathEntry("LogoPixmap"));
+  setLogo(config->readEntry("LogoPixmap"));
 
   // Check the GUI type
-  guicombo->setCurrentId (config->readEntry("GUIStyle", ""));
+  guicombo->setCurrentId(config->readEntry("GUIStyle"));
 
   // Check the Color Scheme
-  colcombo->setCurrentId (config->readEntry("ColorScheme", ""));
+  colcombo->setCurrentId(config->readEntry("ColorScheme"));
 
   // Check the echo mode
   QString echostr = config->readEntry("EchoMode", "OneStar");
