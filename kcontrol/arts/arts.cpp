@@ -117,7 +117,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	initAudioIOList();
 
-	QVBoxLayout *layout = new QVBoxLayout(this, 10);
+	QVBoxLayout *layout = new QVBoxLayout(this);
 	artsConfig = new ArtsConfig(this);
 	layout->addWidget(artsConfig);
 	layout->setMargin(0);
