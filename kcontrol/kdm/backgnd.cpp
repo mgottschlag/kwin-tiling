@@ -36,6 +36,7 @@
 
 #include <kapp.h>
 #include <kconfig.h>
+#include <kdebug.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>

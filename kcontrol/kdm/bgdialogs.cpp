@@ -25,6 +25,7 @@
 
 #include <kapp.h>
 #include <kglobal.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kbuttonbox.h>
