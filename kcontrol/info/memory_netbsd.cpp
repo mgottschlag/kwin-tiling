@@ -9,9 +9,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#include <vm/vm_swap.h>
 #ifdef UVM
 #include <uvm/uvm_extern.h>
+#else
+#include <vm/vm_swap.h>
 #endif
 
 void KMemoryWidget::update()
