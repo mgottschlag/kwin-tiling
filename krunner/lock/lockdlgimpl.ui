@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>440</width>
-            <height>200</height>
+            <height>181</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,65 +19,13 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <spacer row="1" column="2">
-            <property name="name">
-                <cstring>spacer6</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>&lt;h2&gt;&lt;b&gt;Unlock Screen&lt;/b&gt;&lt;/h2&gt;</string>
+                <string>&lt;b&gt;Screen is locked&lt;/b&gt;</string>
             </property>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>mLabel</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>31</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
         </widget>
         <widget class="QLayoutWidget" row="3" column="1" rowspan="1" colspan="2">
             <property name="name">
@@ -146,7 +94,59 @@
                 </size>
             </property>
         </spacer>
-        <widget class="Line" row="6" column="0" rowspan="1" colspan="3">
+        <spacer row="1" column="2">
+            <property name="name">
+                <cstring>spacer6</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="2" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout7</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>mLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>310</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="Line" row="5" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>line1</cstring>
             </property>
@@ -160,7 +160,7 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="7" column="1" rowspan="1" colspan="2">
+        <widget class="QLayoutWidget" row="6" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>layout2</cstring>
             </property>
@@ -211,7 +211,7 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLayoutWidget" row="0" column="0" rowspan="6" colspan="1">
+        <widget class="QLayoutWidget" row="0" column="0" rowspan="5" colspan="1">
             <property name="name">
                 <cstring>layout7</cstring>
             </property>
