@@ -247,6 +247,7 @@ void KEmailConfig::load()
 
   bGrp->setButton(config->readNumEntry("ServerType", 0));
 
+  config->setGroup("ClientInfo");
   emailClient->setText(config->readEntry("EmailClient", "kmail"));
   cTerminalClient->setChecked(config->readBoolEntry("TerminalClient", false));
 
@@ -278,6 +279,7 @@ void KEmailConfig::save()
     sType = 2;
   config->writeEntry("ServerType", sType);
 
+  config->setGroup("ClientInfo");
   config->writeEntry("EmailClient", emailClient->text());
   config->writeEntry("TerminalClient", cTerminalClient->isChecked());
 
@@ -307,8 +309,7 @@ void KEmailConfig::defaults()
 
   emailAddr->setText(tmp);
 
-  QString client;
-  client = KGlobal::dirs()->findResource("exe", "kmail");
+  QString client = KGlobal::dirs()->findResource("exe", "kmail");
 
   if (client.isEmpty())
     client = "kmail";
