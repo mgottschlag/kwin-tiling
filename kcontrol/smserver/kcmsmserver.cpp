@@ -18,9 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
-#include <qcheckbox.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 
 #include <dcopclient.h>
 #include <kapp.h>
@@ -28,32 +26,22 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <qcheckbox.h>
 
 #include "kcmsmserver.h"
+#include "smserverconfigimpl.h"
 
 SMServerConfig::SMServerConfig( QWidget *parent, const char* name )
   : KCModule (parent, name)
 {
-  confirmLogoutCheck = new QCheckBox(i18n("Confirm &logout"), this);
-  connect(confirmLogoutCheck, SIGNAL(clicked()), SLOT(configChanged()));
-  QWhatsThis::add(confirmLogoutCheck, i18n("Check this option if you want"
-    " the session manager to display a logout confirmation dialog box."));
+    QVBoxLayout *topLayout = new QVBoxLayout(this);
+    dialog = new SMServerConfigImpl(this);
+    connect(dialog, SIGNAL(changed()), SLOT(configChanged()));
 
-  saveSessionCheck = new QCheckBox(
-    i18n("&Restore previous session when logging in"), this);
-  connect(saveSessionCheck, SIGNAL(clicked()), SLOT(configChanged()));
-  QWhatsThis::add(saveSessionCheck, i18n("Check this option if you want"
-    " the session manager to save the running session when logging out"
-    " and restore it on the next login."));
+    dialog->show();
+    topLayout->add(dialog);
+    load();
 
-  QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
-                                                  KDialog::spacingHint());
-  top_layout->addWidget(confirmLogoutCheck);
-  top_layout->addWidget(saveSessionCheck);
-  
-  top_layout->addStretch(1);
-
-  load();
 }
 
 SMServerConfig::~SMServerConfig()
@@ -69,8 +57,8 @@ void SMServerConfig::load()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
-  confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
-  saveSessionCheck->setChecked(c->readBoolEntry("saveSession", true));
+  dialog->confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
+  dialog->saveSessionCheck->setChecked(c->readBoolEntry("saveSession", true));
   delete c;
 
   emit changed(false);
@@ -80,8 +68,8 @@ void SMServerConfig::save()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
-  c->writeEntry( "saveSession", saveSessionCheck->isChecked());
-  c->writeEntry( "confirmLogout", confirmLogoutCheck->isChecked());
+  c->writeEntry( "saveSession", dialog->saveSessionCheck->isChecked());
+  c->writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
   c->sync();
   delete c;
 
@@ -90,8 +78,8 @@ void SMServerConfig::save()
 
 void SMServerConfig::defaults()
 {
-  saveSessionCheck->setChecked(true);
-  confirmLogoutCheck->setChecked(true);
+  dialog->saveSessionCheck->setChecked(true);
+  dialog->confirmLogoutCheck->setChecked(true);
 
   emit changed(true);
 }

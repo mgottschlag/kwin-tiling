@@ -23,7 +23,8 @@
 
 #include <kcmodule.h>
 
-class QCheckBox;
+class SMServerConfigImpl;
+
 
 class SMServerConfig : public KCModule
 {
@@ -43,8 +44,8 @@ protected slots:
   void configChanged();
 
 private:
-  QCheckBox    *confirmLogoutCheck;
-  QCheckBox    *saveSessionCheck;
+  SMServerConfigImpl* dialog;
+
 };
 
 #endif
