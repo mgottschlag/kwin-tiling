@@ -99,6 +99,7 @@ private:
     bool    bold;
     bool    italic;
     int	    speed;
+    QValueList<int> sizes;
 };
 
 #endif

@@ -20,6 +20,7 @@
 #include <qlayout.h>
 #include <qdatetime.h>
 #include <qpushbutton.h>
+#include <qfontdatabase.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -86,7 +87,8 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 
 	combo = new QComboBox( FALSE, group);
 	int i = 0;
-	QStringList fonts = QFontDatabase::families();
+	QFontDatabase database;
+	QStringList fonts = database.families();
 	while ( !fonts[i].isNull() )
 	{
 		combo->insertItem( fonts[i], i );
@@ -103,7 +105,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 
 	combo = new QComboBox( FALSE, group );
 	i = 0;
-	sizes = QFontDatabase::pointSizes( fontFamily );
+	sizes = database.pointSizes( fontFamily );
 	sizes << 96 << 0;
 	while ( sizes[i] )
 	{
