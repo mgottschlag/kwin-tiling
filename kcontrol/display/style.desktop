@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmdisplay/kdisplay-6.html
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=style
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 X-KDE-Init=style
 
 Name=Style
@@ -94,5 +92,6 @@ Keywords[pl]=styl,style,motyw,motywy,temat,wygląd
 Keywords[pt]=estilo,estilos,tema,temas,aparência
 Keywords[ro]=stil,stiluri,temă,teme,aspect,tematică
 Keywords[sl]=stil,slog,slogi,tema,teme,videz,izgled
+Keywords[ta]=பாநஂதமஂ,பாநஂதஙஂகளஂ,உருகரு,உருகருகஂகளஂ,பாரஂைவ
 Keywords[tr]=stil,stiller,tema,temalar,görünüm
 Keywords[uk]=стиль,дизайн,тем,теми,вигляд,schema
