@@ -61,7 +61,6 @@ signals:
 
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate, *comboChset;
-  bool changedFlag;
 
 private slots:
   void changedCountry(int);

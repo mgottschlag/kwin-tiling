@@ -33,7 +33,6 @@
 #include <kconfig.h>
 #include <kglobal.h>
 
-#include <kmessagebox.h>
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
 #include <kcharsets.h>
@@ -52,7 +51,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 {
     QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
     tl1->setColStretch( 2, 1);
-    changedFlag = FALSE;
 
     QLabel *label = new QLabel(this, I18N_NOOP("&Country"));
     comboCountry = new KLanguageCombo(this);
@@ -243,29 +241,10 @@ void KLocaleConfig::save()
   config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
-
-  if (changedFlag)
-  {
-    // temperary use of our locale as the global locale
-    KLocale *lsave = KGlobal::_locale;
-    KGlobal::_locale = locale;
-
-    KMessageBox::information(this,
-			     locale->translate("Changed language settings apply only to newly started "
-				  "applications.\nTo change the language of all "
-				  "programs, you will have to logout first."),
-                             locale->translate("Applying language settings"));
-    // restore the old global locale
-    KGlobal::_locale = lsave;
-  }
-
-  changedFlag = FALSE;
 }
 
 void KLocaleConfig::defaults()
 {
-  changedFlag = FALSE;
-
   QString C = QString::fromLatin1("C");
   locale->setLanguage(C);
   locale->setCountry(C);
@@ -286,8 +265,6 @@ void KLocaleConfig::defaults()
 
 void KLocaleConfig::changedCountry(int i)
 {
-  changedFlag = TRUE;
-
   QString country = comboCountry->tag(i);
 
   KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
@@ -312,8 +289,6 @@ void KLocaleConfig::changedCountry(int i)
 
 void KLocaleConfig::changedLanguage(int i)
 {
-  changedFlag = TRUE;
-
   locale->setLanguage(comboLang->tag(i));
 
   reTranslateLists();
@@ -323,41 +298,36 @@ void KLocaleConfig::changedLanguage(int i)
 
 void KLocaleConfig::changedNumber(int i)
 {
-  changedFlag = TRUE;
-
   locale->setCountry(comboNumber->tag(i),
                      QString::null,
                      QString::null);
+
   emit numberChanged();
   emit resample();
 }
 
 void KLocaleConfig::changedMoney(int i)
 {
-  changedFlag = TRUE;
-
   locale->setCountry(QString::null,
                      comboMoney->tag(i),
                      QString::null);
+
   emit moneyChanged();
   emit resample();
 }
 
 void KLocaleConfig::changedTime(int i)
 {
-  changedFlag = TRUE;
-
   locale->setCountry(QString::null,
                       QString::null,
                       comboDate->tag(i));
+
   emit timeChanged();
   emit resample();
 }
 
 void KLocaleConfig::changedCharset(int)
 {
-  changedFlag = TRUE;
-
   locale->setChset(comboChset->currentTag());
 
   emit chsetChanged();
@@ -397,3 +367,11 @@ void KLocaleConfig::reTranslate()
     QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates."));
     QToolTip::add(comboChset, locale->translate("The prefered charset for fonts."));
 }
+
+
+
+
+
+
+
+

@@ -29,6 +29,7 @@
 #include <kcharsets.h>
 #include <kconfig.h>
 #include <kcmodule.h>
+#include <kmessagebox.h>
 #include <kglobal.h>
 #include <klocale.h>
 
@@ -99,6 +100,18 @@ void KLocaleApplication::save()
     localenum->save();
     localemon->save();
     localetime->save();
+
+    // temperary use of our locale as the global locale
+    KLocale *lsave = KGlobal::_locale;
+    KGlobal::_locale = locale;
+
+    KMessageBox::information(this,
+			     locale->translate("Changed language settings apply only to newly started "
+				  "applications.\nTo change the language of all "
+				  "programs, you will have to logout first."),
+                             locale->translate("Applying language settings"));
+    // restore the old global locale
+    KGlobal::_locale = lsave;
 }
 
 void KLocaleApplication::defaults()
