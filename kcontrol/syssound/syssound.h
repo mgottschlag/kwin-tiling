@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.3  1999/03/01 23:24:12  kulow
+    CVS_SILENT ported to Qt 2.0
+
     Revision 1.2.4.1  1999/02/22 22:19:43  kulow
     CVS_SILENT replaced old qt header names with new ones
 
@@ -62,7 +65,7 @@ public:
 private slots:
 
 	void eventSelected(int index);
-        void soundSelected(const char *filename);
+        void soundSelected(const QString &filename);
 	void saveConfiguration();
 	void playCurrentSound();
 

@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.8  1999/03/02 15:54:56  kulow
+    CVS_SILENT replacing klocale->translate with i18n
+
     Revision 1.7  1999/03/01 23:24:11  kulow
     CVS_SILENT ported to Qt 2.0
 
@@ -53,7 +56,6 @@
 #include <kapp.h>
 #include <kwm.h>
 #include <drag.h>
-#include <kstring.h>
 
 #include "syssound.h"
 #include "syssound.moc"
@@ -260,8 +262,8 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   readConfig();
 
   connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
-  connect(soundlist, SIGNAL(highlighted(const char*)), 
-	  this, SLOT(soundSelected(const char*)));
+  connect(soundlist, SIGNAL(highlighted(const QString &)), 
+	  this, SLOT(soundSelected(const QString &)));
   connect(btn_test, SIGNAL(clicked()), this, SLOT(playCurrentSound()));
 
   connect(audiodrop, SIGNAL(dropAction(KDNDDropZone*)), 
@@ -364,7 +366,7 @@ void KSoundWidget::eventSelected(int index){
 
 }
 
-void KSoundWidget::soundSelected(const char *filename) 
+void KSoundWidget::soundSelected(const QString &filename) 
 {
   QString *snd;
 
@@ -471,8 +473,8 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
       // CC: Now check for the ending ".wav"
 
       if (stricmp(".WAV",url.right(4))) {
-        ksprintf(&msg, i18n("Sorry, but \n%s\ndoes not seem "\
-			    "to be a WAV--file."), url.data());
+        msg.sprintf(i18n("Sorry, but \n%s\ndoes not seem "\
+			 "to be a WAV--file."), url.data());
 
 	QMessageBox::warning(this, i18n("Improper File Extension"), msg);
 
@@ -485,9 +487,9 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 	if (!addToSoundList(url)) {
 
 	  // CC: did not add file because it is already in the list
-	  ksprintf(&msg, i18n("The file\n"
-			      "%s\n"
-			      "is already in the list"), url.data());
+	  msg.sprintf(i18n("The file\n"
+		           "%s\n"
+			   "is already in the list"), url.data());
 
 	  QMessageBox::warning(this, i18n("File Already in List"), msg);
 
