@@ -92,8 +92,8 @@ void KCDialog::slotHelp()
 }
 
 void KCDialog::activate()
-{
-    KWin::setActiveWindow(winId());
+{ // KDE4 remove?
+    KWin::forceActiveWindow(winId());
 }
 
 void KCDialog::activate( QCString asn_id )

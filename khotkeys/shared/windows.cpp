@@ -128,7 +128,7 @@ WId Windows::find_window( const Windowdef_list* window_P )
 
 void Windows::activate_window( WId id_P )
     {
-    KWin::setActiveWindow( id_P );
+    KWin::forceActiveWindow( id_P );
     }
     
 // Window_data

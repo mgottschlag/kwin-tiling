@@ -615,7 +615,7 @@ void Task::maximize()
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
     ni.setState( NET::Max, NET::Max );
     if( !on_current )
-        KWin::setActiveWindow( _win, 0 );
+        KWin::forceActiveWindow( _win );
 }
 
 void Task::restore()
@@ -629,7 +629,7 @@ void Task::restore()
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
     ni.setState( 0, NET::Max );
     if( !on_current )
-        KWin::setActiveWindow( _win, 0 );
+        KWin::forceActiveWindow( _win );
 }
 
 void Task::iconify()
@@ -661,8 +661,7 @@ void Task::activate()
     WId w = _win;
     if( _transients_demanding_attention.count() > 0 )
         w = _transients_demanding_attention.last();
-    NETRootInfo ri( qt_xdisplay(), 0 );
-    ri.setActiveWindow( w );
+    KWin::forceActiveWindow( w );
 }
 
 void Task::activateRaiseOrIconify()
@@ -682,7 +681,7 @@ void Task::toDesktop(int desk)
     if (desk == 0) {
         if (_info.onAllDesktops()) {
             ni.setDesktop(kwin_module->currentDesktop());
-            KWin::setActiveWindow(_win,0);
+            KWin::forceActiveWindow(_win);
         }
         else
             ni.setDesktop(NETWinInfo::OnAllDesktops);
@@ -690,7 +689,7 @@ void Task::toDesktop(int desk)
     }
     ni.setDesktop(desk);
     if(desk == kwin_module->currentDesktop())
-        KWin::setActiveWindow(_win,0);
+        KWin::forceActiveWindow(_win);
 }
 
 void Task::toCurrentDesktop()
