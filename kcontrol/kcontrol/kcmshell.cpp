@@ -43,6 +43,7 @@
 #include "modloader.h"
 #include "global.h"
 #include "kcmshell.h"
+#include "proxywidget.h"
 
 static KCmdLineOptions options[] =
 {
@@ -205,36 +206,37 @@ int main(int _argc, char *_argv[])
 
         if (module) {
             // create the dialog
-            KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
-            dlg->setCaption(info.name());
-
-            // Needed for modules that use d'n'd (not really the right
-            // solution for this though, I guess)
-            dlg->setAcceptDrops(true);
-
-            // if we are going to be embedded, embed
-            QCString embed = args->getOption("embed");
-            if (!embed.isEmpty())
+            QCString embedStr = args->getOption("embed");
+            bool embed = false;
+            int id;
+            if (!embedStr.isEmpty()) 
+               id = embedStr.toInt(&embed);
+            
+            if (!embed)
             {
-                bool ok;
-                int id = embed.toInt(&ok);
-                if (ok)
-	            {
-	              // NOTE: This relies on a bug in QT 2.x:
-		      // When calling QDialog::show on a modal dialog
-		      // it will enter an event loop. Unfortunately,
-		      // QXEmbed calls show, so we shouldn't call exec
-		      // afterwards. This has to be changed for QT 3.0!
-                      QXEmbed::embedClientIntoWindow(dlg, id);
-		      delete dlg;
-		      ModuleLoader::unloadModule(info);
-		      return 0;
-		    }
-            }
+               KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
+               dlg->setCaption(info.name());
+
+               // Needed for modules that use d'n'd (not really the right
+               // solution for this though, I guess)
+               dlg->setAcceptDrops(true);
 	   
-            // run the dialog
-            dlg->exec();
-            delete dlg;
+               // run the dialog
+               dlg->exec();
+               delete dlg;
+            }
+            // if we are going to be embedded, embed
+            else
+            {
+               QWidget *dlg = new ProxyWidget(module, info.name(), "kcmshell", false);
+               // Needed for modules that use d'n'd (not really the right
+               // solution for this though, I guess)
+               dlg->setAcceptDrops(true);
+
+               QXEmbed::embedClientIntoWindow(dlg, id);
+               kapp->exec();
+               delete dlg;
+            }
             ModuleLoader::unloadModule(info);
             return 0;
         }
