@@ -1,0 +1,9 @@
+[Desktop Entry]
+Charset=ISO-8859-15
+Encoding=UTF-8
+Hidden=false
+Keys=grec
+Name=Great Dictionary of the Catalan Language (GRan Enciclopèdia  Catalana)
+Query=http://www.grec.net/cgibin/lexicx.pgm?GECART=\\{@}
+ServiceTypes=SearchProvider
+Type=Service
