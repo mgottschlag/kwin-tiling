@@ -160,6 +160,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     eventlist->insertItem(i18n("Window Resize Start"));
     eventlist->insertItem(i18n("Window Resize End"));
 
+    eventlist->setMinimumSize(eventlist->sizeHint());
     //
     // CC: Now set up the list of known WAV Files
     //
@@ -174,7 +175,8 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     list = KGlobal::dirs()->findAllResources("sound");
     
     soundlist->insertStringList(list);
-    
+    soundlist->setMinimumSize(soundlist->sizeHint());
+
     sounds_enabled = new QCheckBox(mainFrame);
     sounds_enabled->setText(i18n("E&nable system sounds"));
     connect(sounds_enabled, SIGNAL(clicked()), this, SLOT(changed()));
@@ -211,7 +213,9 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
     layout->addLayout(status_layout);
 
     QLabel *label = new QLabel(bellFrame);
-    label->setText(i18n("The following settings are only relevant to the X bell or beep.\nIf you are using system sounds, the \"General Beep\" sound will override\nthese settings, but they will still apply to non-KDE programs.\nOtherwise, these settings will be used."));
+    QString setting = sounds_enabled->isChecked() ? 
+	i18n("enabled") : i18n("disabled");
+    label->setText(i18n("The following settings are only relevant to the X bell or beep.\nIf you are using system sounds, the \"General Beep\" sound will override\nthese settings, but they will still apply to non-KDE programs.  Otherwise,\nthe values you specify here will be used.\n\nSystem sounds are currently %1.").arg(setting));
     // set up bell tab
     layout = new QVBoxLayout(bellFrame, KDialog::marginHint(),
 			     KDialog::spacingHint());
