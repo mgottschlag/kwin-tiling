@@ -26,7 +26,7 @@
 #include <qlayout.h>
 #include <qvbox.h>
 #include <qlabel.h>
-#include <klined.h>
+#include <klineedit.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <kconfig.h>
