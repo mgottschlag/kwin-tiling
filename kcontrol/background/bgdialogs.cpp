@@ -226,14 +226,18 @@ void KProgramSelectDialog::slotHelp()
 
 void KProgramSelectDialog::slotItemClicked(QListViewItem *item)
 {
-    m_Current = item->text(1);
+    if ( item )
+        m_Current = item->text(1);
 }
 
 
 void KProgramSelectDialog::slotItemDoubleClicked(QListViewItem *item)
 {
-    m_Current = item->text(1);
-    accept();
+    if ( item )
+    {
+        m_Current = item->text(1);
+        accept();
+    }
 }
 
 
