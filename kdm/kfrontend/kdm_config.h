@@ -71,13 +71,15 @@
 # define PRESEL_PREV	1
 # define PRESEL_DEFAULT	2
 #define C_DefaultUser		(C_TYPE_STR | 0x1022)
-#define C_EchoMode		(C_TYPE_INT | 0x1023)
+#define C_JumpToPasswd		(C_TYPE_INT | 0x1023)
+#define C_EchoMode		(C_TYPE_INT | 0x1024)
 # define ECHO_ONE	0	/* HACK! This must be equal to KPasswordEdit::EchoModes (kpassdlg.h) */
 # define ECHO_THREE	1
 # define ECHO_NONE	2
-#define C_ShutdownButton	(C_TYPE_INT | 0x1024)
-#define C_ShutdownNeedsRoot	(C_TYPE_INT | 0x1025)
-#define C_JumpToPasswd		(C_TYPE_INT | 0x1026)	/* XXX move up */
+#define C_AllowShutdown		(C_TYPE_INT | 0x1025)
+# define SHUT_NONE	0
+# define SHUT_ROOT	1
+# define SHUT_ALL	2
 
 #define C_BackgroundMode	(C_TYPE_STR | 0x1100)
 #define C_BlendBalance		(C_TYPE_INT | 0x1101)

@@ -60,7 +60,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
 				      10, 10);
     QString shutdownmsg =  i18n( "Shutdown or reboot?");
-    if( kdmcfg->_shutdownNeedsRoot)
+    if( kdmcfg->_allowShutdown == SHUT_ROOT)
 	shutdownmsg += '\n' + i18n( "(Enter Root Password)");
 
     label = new QLabel( shutdownmsg, winFrame);
@@ -124,7 +124,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     btGroup->insert( restart_rb);
 
     // Passwd line edit
-    if( kdmcfg->_shutdownNeedsRoot) {
+    if( kdmcfg->_allowShutdown == SHUT_ROOT) {
 	pswdEdit = new KPasswordEdit( winFrame, "edit", kdmcfg->_echoMode);
 	pswdEdit->setFocusPolicy( StrongFocus);
 	pswdEdit->setFocus();

@@ -130,8 +130,7 @@ QColor KDMConfig::Str2Color (QString aValue)
 
 KDMConfig::KDMConfig()
 {
-    _shutdownButton = GetCfgInt (C_ShutdownButton);
-    _shutdownNeedsRoot = GetCfgInt (C_ShutdownNeedsRoot);
+    _allowShutdown = GetCfgInt (C_AllowShutdown);
 
     if (GetCfgInt (C_GreeterPosFixed)) {
 	_greeterPosX = GetCfgInt (C_GreeterPosX);

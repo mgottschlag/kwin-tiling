@@ -127,7 +127,8 @@ void KGreeter::keyPressEvent( QKeyEvent *e )
 	ReturnPressed();
 	return;
     } else if ( !(~e->state() & (AltButton | ControlButton)) &&
-	        e->key() == Key_Delete ) {
+	        e->key() == Key_Delete && 
+		kdmcfg->_allowShutdown != SHUT_NONE) {
 	shutdown_button_clicked();
 	return;
     }
@@ -315,7 +316,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     hbox2->addStretch( 1);
 
     int sbw = 0;
-    if (kdmcfg->_shutdownButton)
+    if (kdmcfg->_allowShutdown != SHUT_NONE)
     {
 	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
 	connect( shutdownButton, SIGNAL(clicked()),

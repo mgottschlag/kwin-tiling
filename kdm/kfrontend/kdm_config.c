@@ -424,7 +424,8 @@ static char
     *logoarea[] = { "None", "Logo", "Clock", 0 },
     *showusers[] = { "All", "Selected", "None", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
-    *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 };
+    *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
+    *shutdown[] = { "None", "Root", "All", 0 };
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	PdaemonMode,	"true" },
@@ -526,8 +527,7 @@ Ent entsGreeter[] = {
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "JumpToPasswd",	C_JumpToPasswd | C_BOOL, 0,	"false" },
 { "EchoMode",		C_EchoMode | C_ENUM, echomode, "OneStar" },
-{ "ShutdownButton",	C_ShutdownButton | C_BOOL, 0,	"true" },
-{ "ShutdownNeedsRoot",	C_ShutdownNeedsRoot | C_BOOL, 0, "false" },
+{ "AllowShutdown",	C_AllowShutdown | C_ENUM, shutdown, "All" },
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
 { "GrabTimeout",	C_grabTimeout,		0,	"3" },
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
