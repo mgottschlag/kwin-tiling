@@ -27,6 +27,7 @@
 #include <qdragobject.h>
 #include <qdatastream.h>
 #include <qcstring.h>
+#include <qpopupmenu.h>
 
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -76,16 +77,19 @@ TreeView::TreeView( QWidget *parent, const char *name )
     setAcceptDrops(true);
     setDropVisualizer(true);
     setDragEnabled(true);
-
-    connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*)),
-	    SLOT(slotDropped(QDropEvent*, QListViewItem*)));
-
-
+    
     addColumn("");
     header()->hide();
 
-    connect(this, SIGNAL(clicked( QListViewItem* )), SLOT(itemSelected( QListViewItem* )));
-
+    connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*)),
+	    SLOT(slotDropped(QDropEvent*, QListViewItem*)));
+    
+    connect(this, SIGNAL(clicked( QListViewItem* )),
+	    SLOT(itemSelected( QListViewItem* )));
+    
+    connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+	    SLOT(slotRMBPressed(QListViewItem*, const QPoint&)));
+    
     fill();
 }
 
@@ -241,7 +245,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
     // We create the destination directory in a writeable prefix returned
     // by locateLocal(), copy the .directory and the .desktop files over.
     // Then process the subdirs.
-    
+
     QString src = s;
     QString dest = d;
 
@@ -543,6 +547,34 @@ QDragObject *TreeView::dragObject() const
     return d;
 }
 
+void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)
+{
+    QPopupMenu mnu(this);
+    mnu.insertItem(i18n("C&ut") , 100);
+    mnu.insertItem(i18n("&Copy"), 101);
+    mnu.insertItem(i18n("&Paste"), 102);
+    mnu.insertSeparator();
+    mnu.insertItem(i18n("&Delete"), 103);
+    
+    int result = mnu.exec(p);
+    
+    switch (result)
+	{
+	case 100:
+	    cut();
+	    break;
+	case 101:
+	    copy();
+	    break;
+	case 102:
+	    paste();
+	    break;
+	case 103:
+	    del();
+	    break;
+	}
+}
+
 void TreeView::newsubmenu()
 {
 
@@ -574,7 +606,7 @@ void TreeView::copy()
     // is file a .directory or a .desktop file
     if(file.find(".directory") > 0)
 	{
-	    _clipboard = file; 
+	    _clipboard = file;
 		
 	    // truncate path
 	    int pos = _clipboard.findRev('/');
@@ -583,10 +615,10 @@ void TreeView::copy()
 		pos = pos2+1;
 	    else
 		pos = 0;
-	    
+	
 	    if (pos > 0)
 		_clipboard = _clipboard.mid(pos, _clipboard.length());
-	    
+	
 	    copyDir(file, QString(clipboard_prefix) + _clipboard);
 	}
     else if (file.find(".desktop"))
@@ -597,7 +629,7 @@ void TreeView::copy()
 	    int pos = _clipboard.findRev('/');
 	    if (pos >= 0)
 		_clipboard = _clipboard.mid(pos+1, _clipboard.length());
-	    
+	
 	    copyFile(file, QString(clipboard_prefix) + _clipboard);
 	}
 }
@@ -636,7 +668,7 @@ void TreeView::paste()
 	}
 
     cout << "### clip: " << _clipboard.local8Bit() << " dest: " << dest.local8Bit() << " ###" << endl;
-    
+
     // is _clipboard a .directory or a .desktop file
     if(_clipboard.find(".directory") > 0)
 	{
@@ -650,7 +682,7 @@ void TreeView::paste()
     // create the TreeItems:
 
     QListViewItem* parent = 0;
-    
+
     if(item){
 	if(item->childCount() > 0) {
 	    parent = item;
@@ -674,7 +706,7 @@ void TreeView::paste()
     else
 	newitem->setFile(_clipboard);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-    
+
 
     fillBranch(newitem->file(), newitem);
 }

@@ -48,7 +48,7 @@ public:
 
 public slots:
     void currentChanged();
-    
+
     void newsubmenu();
     void newitem();
 
@@ -56,14 +56,15 @@ public slots:
     void copy();
     void paste();
     void del();
-    
+
 signals:
     void entrySelected(const QString&);
 
 protected slots:
     void itemSelected(QListViewItem *);
     void slotDropped(QDropEvent *, QListViewItem *);
-
+    void slotRMBPressed(QListViewItem*, const QPoint&);
+    
 protected:
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
@@ -73,7 +74,7 @@ protected:
 
     void deleteFile(const QString& deskfile);
     void deleteDir(const QString& dir);
-    
+
     void cleanupClipboard();
 
     QStringList fileList(const QString& relativePath);
@@ -81,7 +82,7 @@ protected:
 
     bool acceptDrag(QDropEvent* event) const;
     QDragObject *dragObject() const;
-    
+
 private:
     QString _clipboard;
 };
