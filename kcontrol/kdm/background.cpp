@@ -63,13 +63,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
     top->addWidget(m_pCBEnable);
     top->addWidget(m_background);
     connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
-
+    connect( m_pCBEnable, SIGNAL( toggled( bool )), SLOT( slotEmitChange()));
 
 }
 
 KBackground::~KBackground()
 {
     delete m_simpleConf;
+}
+
+void KBackground::slotEmitChange()
+{
+    emit changed(true );
 }
 
 void KBackground::moduleChanged(bool b)
