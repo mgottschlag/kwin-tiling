@@ -27,8 +27,8 @@
 
 #include "urlgrabber.h"
 
-class KAccelActions;
 class KGlobalAccel;
+class KKeyChooser;
 class KListView;
 class QPushButton;
 class QDialog;
@@ -103,7 +103,7 @@ private:
     QCheckBox *cbUseGUIRegExpEditor;
 };
 
-class KeysWidget : public QVBox
+/*class KeysWidget : public QVBox
 {
     Q_OBJECT
 
@@ -115,7 +115,7 @@ public:
 
 private:
     KKeyChooser *keyChooser;
-};
+};*/
 
 
 class ConfigDialog : public KDialogBase
@@ -123,7 +123,7 @@ class ConfigDialog : public KDialogBase
     Q_OBJECT
 
 public:
-    ConfigDialog( const ActionList *list, KAccelActions &keyMap );
+    ConfigDialog( const ActionList *list, KGlobalAccel *accel );
     ~ConfigDialog();
 
     ActionList * actionList() const { return actionWidget->actionList(); }
@@ -191,11 +191,12 @@ public:
     }
 
     virtual void show();
+    void commitShortcuts();
 
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;
-    KeysWidget *keysWidget;
+    KKeyChooser *keysWidget;
 
 };
 

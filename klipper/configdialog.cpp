@@ -28,7 +28,7 @@
 
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog( const ActionList *list, KAccelActions &keyMap )
+ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel )
     : KDialogBase( KDialogBase::Tabbed, i18n("Klipper Preferences"),
                     KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
                     KDialogBase::Ok, 0L, "config dialog" )
@@ -42,7 +42,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KAccelActions &keyMap )
     actionWidget = new ActionWidget( list, this, w, "actions widget" );
 
     w = addVBoxPage( i18n("&Shortcuts") );
-    keysWidget = new KeysWidget( keyMap, w, "shortcuts widget" );
+    keysWidget = new KKeyChooser( accel, w );
 
 
     /* hmmm, this sort of sucks...
@@ -83,6 +83,11 @@ void ConfigDialog::show()
     }
 
     KDialogBase::show();
+}
+
+void ConfigDialog::commitShortcuts()
+{
+    keysWidget->commitChanges();
 }
 
 /////////////////////////////////////////
@@ -415,7 +420,7 @@ void AdvancedWidget::setWMClasses( const QStringList& items )
 ///////////////////////////////////////////////////////
 //////////
 
-
+/*
 KeysWidget::KeysWidget( KAccelActions &keyMap, QWidget *parent, const char *name)
     : QVBox( parent, name )
 {
@@ -425,6 +430,6 @@ KeysWidget::KeysWidget( KAccelActions &keyMap, QWidget *parent, const char *name
 KeysWidget::~KeysWidget()
 {
 }
-
+*/
 
 #include "configdialog.moc"
