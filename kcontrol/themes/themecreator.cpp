@@ -263,7 +263,7 @@ void ThemeCreator::extractIcons(void)
 
 //-----------------------------------------------------------------------------
 void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
-			      int aInstalled)
+			      int)
 {
   QString grp = aCfg->group();
   QString value, cmd;

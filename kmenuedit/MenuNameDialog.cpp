@@ -27,3 +27,5 @@ MenuNameDialog::~MenuNameDialog()
 {
 
 }
+
+#undef Inherited

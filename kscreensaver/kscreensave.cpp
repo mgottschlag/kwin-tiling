@@ -52,7 +52,7 @@ void kForceLocker()
 		kdisplayConfig->setGroup("ScreenSaver");
 		bool allowRoot = kdisplayConfig->readBoolEntry( "allowRoot", false );
 		delete kdisplayConfig;
-		char *root = "-allow-root";
+		const char *root = "-allow-root";
 		if( !allowRoot )
 			root = 0;
 

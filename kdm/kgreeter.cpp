@@ -770,7 +770,7 @@ GreetUser(
      greet = greet2;
      
      int argc = 4;
-     char* argv[5] = {"kdm", "-display", NULL, NULL, NULL};
+     const char* argv[5] = {"kdm", "-display", NULL, NULL, NULL};
  
      struct sigaction sig;
  
@@ -778,7 +778,7 @@ GreetUser(
      sigaction(SIGCHLD, NULL, &sig);
  
      argv[2] = d->name;
-     MyApp myapp( argc, argv );
+     MyApp myapp( argc, const_cast<char**>(argv) );
      QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );
      

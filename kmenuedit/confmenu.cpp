@@ -57,20 +57,7 @@ PMenuItem *global_drop_buffer = NULL;
 extern KStatusBar *global_status_bar;
 extern bool changes_to_save;
 
-static bool isKdelnkFile(const char* name){
-  QFile file(name);
-  if (file.open(IO_ReadOnly)){
-    char s[19];
-    int r = file.readLine(s, 18);
-    if(r > -1){
-      s[r] = '\0';
-      file.close();
-      return (QString(s).left(17) == "# KDE Config File");
-    }
-    file.close();
-  }
-  return FALSE;
-}
+extern bool isKdelnkFile(const char* name);
 
 //----------------------------------------------------------------------
 //---------------  MENUBUTTON  -----------------------------------------

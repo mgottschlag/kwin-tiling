@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.14  1999/05/23 21:26:08  kulow
+    more changes
+
     Revision 1.13  1999/05/23 20:48:55  kulow
     some more fixes
 
@@ -87,7 +90,7 @@
 
 #define SOUND_DEBUG 1
 
-char *eventNames[2][29] = {
+const char *eventNames[2][29] = {
 
   {
     "Desktop1", 

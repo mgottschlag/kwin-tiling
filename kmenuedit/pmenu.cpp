@@ -48,7 +48,7 @@ extern "C" {
 
 extern KIconLoader *global_pix_loader;
 
-static bool isKdelnkFile(const char* name){
+bool isKdelnkFile(const char* name){
   QFile file(name);
   if (file.open(IO_ReadOnly)){
     char s[19];

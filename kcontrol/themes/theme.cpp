@@ -684,7 +684,7 @@ void Theme::doCmdList(void)
 {
   QString cmd, str, appName;
   bool kwmRestart = false;
-  int rc;
+  //  int rc;
 
   for (cmd=mCmdList.first(); !cmd.isNull(); cmd=mCmdList.next())
   {
@@ -1174,7 +1174,6 @@ void Theme::clear(void)
 bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
 {
   QDir dir;
-  QString dirStr = aDir;
   const char* dirName;
   int oldMask = umask(077);
 
@@ -1182,7 +1181,9 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
   else if (aDir[0]!='/') dir.cd(kapp->localkdedir());
   else dir.cd("/");
 
-  for (dirName=strtok(dirStr.data(),"/"); dirName; dirName=strtok(0, "/"))
+  char *buffer = qstrdup(aDir);
+
+  for (dirName=strtok(buffer,"/"); dirName; dirName=strtok(0, "/"))
   {
     if (dirName[0]=='\0') continue;
     if (!dir.exists(dirName))
@@ -1204,6 +1205,7 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
     }
   }
 
+  delete [] buffer;
   umask(oldMask);
   return true;
 }

@@ -22,34 +22,8 @@
 #include "fonts.moc"
 
 extern int dropError(Display *, XErrorEvent *);
-
-//Matthias
-static int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p){
-  Atom real_type;
-  int format;
-  unsigned long n, extra;
-  int status;
-
-  status = XGetWindowProperty(qt_xdisplay(), w, a, 0L, len, False, type, &real_type, &format, &n, &extra, p);
-  if (status != Success || *p == 0)
-    return -1;
-  if (n == 0)
-    XFree((char*) *p);
-  return n;
-}
-
-//Matthias
-static bool getSimpleProperty(Window w, Atom a, long &result){
-  long *p = 0;
-
-  if (_getprop(w, a, a, 1L, (unsigned char**)&p) <= 0){
-    return false;
-  }
-
-  result = p[0];
-  XFree((char *) p);
-  return true;
-}
+extern int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p);
+extern bool getSimpleProperty(Window w, Atom a, long &result);
 
 FontUseItem::FontUseItem( const QString& n, QFont default_fnt, bool f )
 	: selected(0)

@@ -567,13 +567,13 @@ void KScreenSaver::apply( bool force )
 
 	if ( pid == 0 )
 	{
-		char *lock1, *lock2;
+		const char *lock1, *lock2;
 
 		if( lock ) {
 			lock1 = "-lock";
-			lock2 = (allowRoot) ? (char *)"-allow-root" : 0;
+			lock2 = (allowRoot) ? "-allow-root" : 0;
 		} else {
-			lock1 = (allowRoot) ? (char *)"-allow-root" : 0;
+			lock1 = (allowRoot) ? "-allow-root" : 0;
 			lock2 = 0;
 		}
 

@@ -106,3 +106,5 @@ MenuNameDialogData::MenuNameDialogData
 MenuNameDialogData::~MenuNameDialogData()
 {
 }
+
+#undef Inherited

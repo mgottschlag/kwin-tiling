@@ -67,26 +67,24 @@ extern KLocale *glocale;
 #define DEFDELAY 10
 
 extern "C" {
-  char *get_string_resource (const char*, char*);
-  int get_integer_resource (char*, char*);
-  unsigned int get_pixel_resource (const char*, char*, Colormap);
   static Bool macsbug (Window window, int delay);
 }
 
-char *
-get_string_resource (const char *res_name, char *res_class)
+const char *
+get_string_resource (const char *res_name, const char *res_class)
 {
   KConfig *config = KApplication::getKApplication()->getConfig();
   config->setGroup("Default");
-  return (char*)config->readEntry(res_name,config->readEntry(res_class)).ascii();
+  return config->readEntry(res_name,config->readEntry(res_class)).ascii();
 }
 
 int 
-get_integer_resource (char *res_name, char *res_class)
+get_integer_resource (const char *res_name, const char *res_class)
 {
   int val;
-  char c, *s = get_string_resource (res_name, res_class);
-  char *ss = s;
+  const char *s = get_string_resource (res_name, res_class);
+  char c;
+  const char *ss = s;
   if (!s) return 0;
 
   while (*ss && *ss <= ' ') ss++;			/* skip whitespace */
@@ -114,11 +112,11 @@ get_integer_resource (char *res_name, char *res_class)
 }
 
 unsigned int
-get_pixel_resource (const char *res_name, char *res_class,
+get_pixel_resource (const char *res_name, const char *res_class,
 		    Colormap cmap)
 {
   XColor color;
-  char *s = get_string_resource (res_name, res_class);
+  char *s = qstrdup(get_string_resource (res_name, res_class));
   char *s2;
   if (!s) goto DEFAULT;
 
@@ -138,10 +136,10 @@ get_pixel_resource (const char *res_name, char *res_class,
       fprintf (stderr, "%s: couldn't allocate color %s\n", progname, s);
       goto DEFAULT;
     }
-  //free (s);
+  delete [] s;
   return color.pixel;
  DEFAULT:
-  //if (s) free (s);
+  delete [] s;
   return ((strlen(res_class) >= 10 &&
 	   !strcmp ("Background", res_class + strlen(res_class) - 10))
 	  ? BlackPixel (qt_xdisplay(), DefaultScreen (qt_xdisplay()))
@@ -424,7 +422,7 @@ sco (Window window, int delay)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc;
@@ -501,7 +499,7 @@ sparc_linux (Window window, int delay)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc;
@@ -576,7 +574,7 @@ amiga (Window window, int delay)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc, gc2;
@@ -790,7 +788,7 @@ mac (Window window, int delay)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc;
@@ -864,7 +862,7 @@ macsbug (Window window, int delay)
 {
   XGCValues gcv;
   XWindowAttributes xgwa;
-  char *fontname;
+  const char *fontname;
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc, gc2;

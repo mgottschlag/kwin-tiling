@@ -91,3 +91,5 @@ DesktopPathDialogData::DesktopPathDialogData
 DesktopPathDialogData::~DesktopPathDialogData()
 {
 }
+
+#undef Inherited
