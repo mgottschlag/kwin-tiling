@@ -150,8 +150,6 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
 
     setTitle( i18n("Action settings") );
 
-    cbEnableActions = new QCheckBox( i18n("&Enable Actions"), this );
-
     QLabel *lblAction = new QLabel( i18n("Action &list (right click to add/remove commands):"),
 				    this );
     listView = new KListView( this, "list view" );

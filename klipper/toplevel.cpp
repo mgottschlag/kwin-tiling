@@ -36,7 +36,7 @@
 #define URLGRAB_ITEM 70
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   6
+#define MENU_ITEMS   7
 // the <clipboard empty> item
 #define EMPTY (pQPMmenu->count() - MENU_ITEMS)
 
@@ -80,6 +80,9 @@ TopLevel::TopLevel()
     pSelectedItem = -1;
     QSempty = i18n("<empty clipboard>");
 
+    toggleURLGrabAction = new KToggleAction( this );
+    toggleURLGrabAction->setEnabled( true );
+
     myURLGrabber = 0L;
     KConfig *kc = kapp->config();
     readConfiguration( kc );
@@ -113,7 +116,10 @@ TopLevel::TopLevel()
     globalKeys->connectItem("toggle-clipboard-actions", this,
                             SLOT( toggleURLGrabber()));
     globalKeys->readSettings();
+    toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
+    connect( toggleURLGrabAction, SIGNAL( toggled( bool )), this,
+	     SLOT( setURLGrabberEnabled( bool )));
     setBackgroundMode(X11ParentRelative);
 }
 
@@ -305,6 +311,7 @@ void TopLevel::readProperties(KConfig *kc)
   bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
   pQPMmenu->insertSeparator();
+  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
   pQPMmenu->insertItem( SmallIcon("fileclose"), 
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), 
@@ -386,7 +393,7 @@ void TopLevel::slotConfigure()
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
     dlg->setMaxItems( maxClipItems );
     dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
-    dlg->setEnableActions( haveURLGrabber );
+//    dlg->setEnableActions( haveURLGrabber );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
@@ -394,8 +401,9 @@ void TopLevel::slotConfigure()
         bReplayActionInHistory = dlg->replayActionInHistory();
         globalKeys->setKeyDict( map );
         globalKeys->writeSettings();
+	toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
-	haveURLGrabber = dlg->enableActions();
+//	haveURLGrabber = dlg->enableActions();
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
@@ -426,6 +434,7 @@ void TopLevel::slotRepeatAction()
 void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
+    toggleURLGrabAction->setChecked( enable );
     KConfig *kc = kapp->config();
     kc->setGroup("General");
     kc->writeEntry("URLGrabberEnabled", bURLGrabber);
@@ -434,9 +443,11 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     if ( !bURLGrabber ) {
         delete myURLGrabber;
         myURLGrabber = 0L;
+	toggleURLGrabAction->setText(i18n("Enable &actions"));
     }
 
     else {
+	toggleURLGrabAction->setText(i18n("&Actions enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber();
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),

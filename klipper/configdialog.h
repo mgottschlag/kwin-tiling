@@ -71,7 +71,6 @@ private slots:
 private:
     KListView *listView;
     KEditListBox *editListBox;
-    QCheckBox  *cbEnableActions;
 };
 
 class KeysWidget : public QVGroupBox
@@ -118,9 +117,6 @@ public:
     QStringList noActionsFor() const {
 	return actionWidget->editListBox->items();
     }
-    bool enableActions() const {
-	return actionWidget->cbEnableActions->isChecked();
-    }
 
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
@@ -139,9 +135,6 @@ public:
     }
     void setNoActionsFor( const QStringList& items ) {
 	actionWidget->editListBox->insertStringList( items );
-    }
-    void setEnableActions( bool enable ) {
-	actionWidget->cbEnableActions->setChecked( enable );
     }
 
     virtual void show();

@@ -59,6 +59,7 @@ private:
 
     QString QSlast;
     KPopupMenu *pQPMmenu;
+    KToggleAction *toggleURLGrabAction;
     QIntDict<QString> *pQIDclipData;
     QTimer *pQTcheck;
     QPixmap *pQPpic;
