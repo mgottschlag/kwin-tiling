@@ -7,7 +7,8 @@ DocPath=kinfocenter/index.html
 X-KDE-StartupNotify=true
 OnlyShowIn=KDE;
 
-Name=Info Center
+Name=KInfoCenter
+GenericName=Info Center
 Name[af]=Inligting Sentrum
 Name[ar]=مركز المعلومات
 Name[az]=Mə'lumat Mərkəzi
@@ -30,6 +31,7 @@ Name[eu]=Info gunea
 Name[fa]=مرکز اطلاعات
 Name[fi]=Tietokeskus
 Name[fr]=Centre d'informations
+Name[fy]=Ynformaasjesintrum
 Name[ga]=Lárionad Eolais
 Name[gl]=Centro de Información
 Name[he]=מרכז המידע
