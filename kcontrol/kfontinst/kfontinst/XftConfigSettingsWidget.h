@@ -33,9 +33,10 @@
 #include "config.h"
 #endif
 
+#include "XftConfigSettingsWidgetData.h"
+
 #ifdef HAVE_XFT
 #include <qpushbutton.h>
-#include "XftConfigSettingsWidgetData.h"
 
 class CXftConfigRules;
 #endif
