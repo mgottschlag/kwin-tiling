@@ -9,5 +9,5 @@ datadir = $(kde_datadir)/kdisplay/app-defaults
 
 EXTRA_DIST = $(data_DATA)
 
-bin_SCRIPTS = krdb
+#bin_SCRIPTS = krdb
 
