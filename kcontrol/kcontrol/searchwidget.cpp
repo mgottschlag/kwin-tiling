@@ -52,7 +52,7 @@ public:
  ModuleName()
  { }
 
- QString name() const { return m_name; };
+ QString moduleName() const { return m_name; };
 
  ConfigModule *module() const { return m_module; };
 
@@ -146,7 +146,7 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
           for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
             {
               // if there is an entry for this keyword, add the module to the entries modul list
-              if (k->name() == name)
+              if (k->moduleName() == name)
                 {
                   k->addModule(module);
                   found = true;
@@ -173,8 +173,8 @@ void SearchWidget::populateKeyListBox(const QString& s)
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
-      if ( QRegExp(s, false, true).search(k->name()) >= 0)
-        matches.append(k->name().stripWhiteSpace());
+      if ( QRegExp(s, false, true).search(k->moduleName()) >= 0)
+        matches.append(k->moduleName().stripWhiteSpace());
     }
 
   matches.sort();
@@ -193,12 +193,12 @@ void SearchWidget::populateResultListBox(const QString& s)
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
-      if (k->name() == s)
+      if (k->moduleName() == s)
         {
           QPtrList<ConfigModule> modules = k->modules();
 
           for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
-              results.append(new ModuleName(m->name(),m));
+              results.append(new ModuleName(m->moduleName(),m));
         }
     }
 
@@ -207,7 +207,7 @@ void SearchWidget::populateResultListBox(const QString& s)
   for(ModuleName *it = results.first(); it != 0L; it=results.next())
   {
     _resultList->insertItem(KGlobal::iconLoader()->loadIcon(
-	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->name());
+	  it->module()->icon(), KIcon::Desktop, KIcon::SizeSmall), it->moduleName());
     _results += it->module()->fileName();
   }
 }

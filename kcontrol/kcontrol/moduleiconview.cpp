@@ -198,7 +198,7 @@ void ModuleIconView::fill()
     else
       icon = LoadMedium(module->icon());
 
-    ModuleIconItem *i = new ModuleIconItem(this, module->name(), icon, module);
+    ModuleIconItem *i = new ModuleIconItem(this, module->moduleName(), icon, module);
 	i->setDragEnabled(false);
   }
 }

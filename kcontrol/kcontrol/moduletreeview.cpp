@@ -288,7 +288,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, " " + module->name());
+          setText(0, " " + module->moduleName());
           setPixmap(0, SmallIcon(module->icon()));
         }
 }
@@ -300,7 +300,7 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, " " + module->name());
+          setText(0, " " + module->moduleName());
           setPixmap(0, SmallIcon(module->icon()));
         }
 }

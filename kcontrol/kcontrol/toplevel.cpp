@@ -325,7 +325,7 @@ void TopLevel::changedModule(ConfigModule *changed)
 {
     if (!changed)
         return;
-    setCaption(changed->name(), changed->isChanged() );
+    setCaption(changed->moduleName(), changed->isChanged() );
 }
 
 void TopLevel::moduleActivated(ConfigModule *module)
@@ -445,7 +445,7 @@ void TopLevel::activateModule(const QString& name)
         if (mod->aboutData())
         {
            about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
-               handleAmpersand( mod->name())));
+               handleAmpersand( mod->moduleName())));
            about_module->setIcon(mod->icon());
            about_module->setEnabled(true);
         }
@@ -489,7 +489,7 @@ void TopLevel::reportBug()
         else
         {
             snprintf(buffer, sizeof(buffer), "kcm%s", _active->library().latin1());
-            dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
+            dummyAbout = new KAboutData(buffer, _active->moduleName().utf8(), "2.0");
             deleteit = true;
         }
     }

@@ -402,7 +402,7 @@ void AboutWidget::updatePixmap()
             KCModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
             if (module)
             {
-                szName = module->name();
+                szName = module->moduleName();
                 szComment = module->comment();
                 p.setFont(f2);
                 QRect bounds;

@@ -38,7 +38,7 @@ class KeywordListEntry
   
   void addModule(ConfigModule* module);
 
-  QString name() { return _name; }
+  QString moduleName() { return _name; }
   QPtrList<ConfigModule> modules() { return _modules; }
   
  private:

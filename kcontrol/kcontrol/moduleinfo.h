@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2003 Daniel Molkentin <molkentin@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,39 +19,62 @@
 
 */
 
-#ifndef __moduleinfo_h__
-#define __moduleinfo_h__
-
-#include <qobject.h>
-#include <qstring.h>
-#include <qpixmap.h>
-#include <qstringlist.h>
-
+#ifndef KCMODULEINFO_H
+#define KCMODULEINFO_H
 
 #include <kservice.h>
 
+class QPixmap;
+class QString;
+class QStringList;
 
-class KCModuleInfo : public QObject
+/**
+ * A class that provides information about a Control Module
+ * 
+ * @internal
+ * @author Matthias Hoelzer-Kluepfel <mhk@kde.org> 
+ * @author Matthias Elter <elter@kde.org>
+ * @author Daniel Molkentin <molkentin@kde.org>
+ * @since 3.2
+ *
+ */
+class KCModuleInfo
 {
-  Q_OBJECT
 
 public:
 
+  /**
+   * Constructs a CSModuleInfo, note that you will have to take care about the deletion
+   * yoruself!
+   **/
   KCModuleInfo(QString desktopFile);
-  ~KCModuleInfo();
+  virtual ~KCModuleInfo();
 
-  const QString fileName() const;
-  const QStringList &groups() const;
-  const QStringList &keywords() const;
-  QString name() const;
-  KService::Ptr service() const;
-  QString comment() const;
-  QString icon() const;
+  /** @return the filename pass in the constructor **/
+  QString fileName() const { return _fileName; };
+  /** @return **/
+  const QStringList &groups() const { return _groups; };
+  /** @return **/
+  const QStringList &keywords() const { return _keywords; };
+  
+  // changed from moduleName() to avoid abiguity with QObject::moduleName() on multiple inheritance
+  /** @return the modules name **/
+  QString moduleName() const { return _name; };
+  /** @return a pointer to KService created from the modules .desktop file **/
+  KService::Ptr service() const { return _service; };
+  /** @return the comment field **/
+  QString comment() const { return _comment; };
+  /** @return the icon name **/
+  QString icon() const { return _icon; };
+  /** @return the path of the module documentation **/
   QString docPath() const;
-  QString library() const;
+  /** @return the library name **/
+  QString library() const { return _lib; };
+  /** @return a handle (usually the contents of the FactoryName field) **/
   QString handle() const;
-  bool isDirectory() const;
+  /** @return wether the module might require root permissions **/
   bool needsRootPrivileges() const;
+  /** @return the isHiddenByDefault attribute. @deprecated **/
   bool isHiddenByDefault() const;
 
   QCString moduleId() const;
@@ -62,7 +86,6 @@ protected:
   void setName(const QString &name) { _name = name; };
   void setComment(const QString &comment) { _comment = comment; };
   void setIcon(const QString &icon) { _icon = icon; };
-  void setDirectory(bool dir) { _directory = dir; };
   void setLibrary(const QString &lib) { _lib = lib; };
   void setHandle(const QString &handle) { _handle = handle; };
   void setNeedsRootPrivileges(bool needsRootPrivileges) { _needsRootPrivileges = needsRootPrivileges; };
@@ -74,12 +97,13 @@ private:
 
   QStringList _groups, _keywords;
   QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
-  bool        _directory, _needsRootPrivileges, _isHiddenByDefault;
+  bool        _needsRootPrivileges, _isHiddenByDefault;
   bool        _allLoaded;
 
   KService::Ptr _service;
 
 };
 
+#endif // KCMODULEINFO_H
+
 // vim: ts=2 sw=2 et
-#endif

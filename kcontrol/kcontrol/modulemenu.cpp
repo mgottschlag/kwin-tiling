@@ -54,7 +54,7 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   
       // Item names may contain ampersands. To avoid them being converted to 
       // accelators, replace them with two ampersands.
-      QString name = module->name();
+      QString name = module->moduleName();
       name.replace(QRegExp("&"), "&&");
       
       int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)

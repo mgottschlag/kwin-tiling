@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2003 Daniel Molkentin <molkentin@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -64,11 +65,7 @@ KCModuleInfo::KCModuleInfo(QString desktopFile)
   setGroups(groups);
 }
 
-KCModuleInfo::~KCModuleInfo()
-{
-  _name = QString::null;
-  _comment = QString::null;
-}
+KCModuleInfo::~KCModuleInfo() { }
 
 void
 KCModuleInfo::loadAll() 
@@ -84,7 +81,7 @@ KCModuleInfo::loadAll()
   setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
   // does the module need to be shown to root only?
-  // Depricated !
+  // Deprecated !
   setIsHiddenByDefault(desktop.readBoolEntry("X-KDE-IsHiddenByDefault", false));
 
   // get the documentation path
@@ -101,54 +98,10 @@ KCModuleInfo::moduleId() const
   QStringList::ConstIterator it;
   for (it = _groups.begin(); it != _groups.end(); ++it)
     res.append(*it+"-");
-  res.append(name());
+  res.append(moduleName());
 
   return res.ascii();
 }
-
-const QString
-KCModuleInfo::fileName() const
-{
-   return _fileName;
-};
-
-const QStringList &
-KCModuleInfo::groups() const
-{
-   return _groups;
-};
-
-
-KService::Ptr 
-KCModuleInfo::service() const
-{
-  return _service;
-}
-
-
-const QStringList &
-KCModuleInfo::keywords() const
-{
-   return _keywords;
-};
-
-QString
-KCModuleInfo::name() const
-{
-   return _name;
-};
-
-QString
-KCModuleInfo::comment() const
-{
-   return _comment;
-};
-
-QString
-KCModuleInfo::icon() const
-{
-   return _icon;
-};
 
 QString
 KCModuleInfo::docPath() const
@@ -157,12 +110,6 @@ KCModuleInfo::docPath() const
     const_cast<KCModuleInfo*>(this)->loadAll();
 
   return _doc;
-};
-
-QString
-KCModuleInfo::library() const
-{
-  return _lib;
 };
 
 QString
@@ -175,12 +122,6 @@ KCModuleInfo::handle() const
      return _lib;
 
   return _handle;
-};
-
-bool
-KCModuleInfo::isDirectory() const
-{
-   return _directory;
 };
 
 bool

@@ -78,7 +78,7 @@ ProxyWidget *ConfigModule::module()
   if (modWidget)
     {
 
-      _module = new ProxyWidget(modWidget, name(), "", run_as_root);
+      _module = new ProxyWidget(modWidget, moduleName(), "", run_as_root);
       connect(_module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
       connect(_module, SIGNAL(closed()), this, SLOT(clientClosed()));
       connect(_module, SIGNAL(helpRequest()), this, SIGNAL(helpRequest()));
@@ -269,3 +269,4 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      }
   }
 }
+

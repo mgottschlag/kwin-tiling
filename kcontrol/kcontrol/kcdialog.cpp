@@ -32,8 +32,8 @@
 
 KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
   : KDialogBase(parent, name, modal, QString::null,
-                (b & KCModule::Help ? Help : 0) |
-                (b & KCModule::Default ? Default : 0) |
+                (b & KCModule::Help ? (int)Help : 0) |
+                (b & KCModule::Default ? (int)Default : 0) |
                 (b & KCModule::Apply ? (Ok | Apply | Cancel) : Close),
                 (b & KCModule::Apply ? Ok : Close),
                 true),

@@ -237,7 +237,7 @@ int main(int _argc, char *_argv[])
              if (!embed)
              {
                 KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
-                dlg->setCaption(info.name());
+                dlg->setCaption(info.moduleName());
 
                 // Needed for modules that use d'n'd (not really the right
                 // solution for this though, I guess)
@@ -250,7 +250,7 @@ int main(int _argc, char *_argv[])
              // if we are going to be embedded, embed
              else
              {
-                QWidget *dlg = new ProxyWidget(module, info.name(), "kcmshell", false);
+                QWidget *dlg = new ProxyWidget(module, info.moduleName(), "kcmshell", false);
                 // Needed for modules that use d'n'd (not really the right
                 // solution for this though, I guess)
                 dlg->setAcceptDrops(true);

@@ -17,18 +17,14 @@
 
 */
 
-#ifndef __modules_h__
-#define __modules_h__
-
-#include <qobject.h>
-#include <qstringlist.h>
-#include <qptrlist.h>
-#include <qpixmap.h>
+#ifndef MODULES_H
+#define MODULES_H
 
 #include "moduleinfo.h"
+#include <qobject.h>
 
-
-class QWidget;
+template<class ConfigModule> class QPtrList;
+class QStringList;
 class KAboutData;
 class KCModule;
 class ProxyWidget;
@@ -37,7 +33,7 @@ class QXEmbed;
 class QVBoxLayout;
 class QVBox;
 
-class ConfigModule : public KCModuleInfo
+class ConfigModule : public QObject, public KCModuleInfo
 {
   Q_OBJECT
 
