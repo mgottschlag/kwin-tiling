@@ -1244,7 +1244,7 @@ MainLoop (void)
 			CheckUtmp ();
 		    break;
 		case SIGUSR1:
-		    if (startingServer) /* just in case .... */
+		    if (startingServer && startingServer->serverStatus == starting)
 			StartServerSuccess ();
 		    break;
 		}
