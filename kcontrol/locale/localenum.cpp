@@ -30,19 +30,16 @@
 
 #include <kglobal.h>
 
-#define KLocaleConfigAdvanced KLocaleConfigNumber
-#include <klocale.h>
-#undef KLocaleConfigAdvanced
-
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
+#include "klocaleadv.h"
 #include "toplevel.h"
 #include "localenum.h"
 #include "localenum.moc"
 
-extern KLocale *locale;
+extern KLocaleAdvanced *locale;
 
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
  : QWidget(parent, name)
@@ -85,10 +82,10 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 
 void KLocaleConfigNumber::load()
 {
-  edDecSym->setText(locale->_decimalSymbol);
-  edThoSep->setText(locale->_thousandsSeparator);
-  edMonPosSign->setText(locale->_positiveSign);
-  edMonNegSign->setText(locale->_negativeSign);
+  edDecSym->setText(locale->decimalSymbol());
+  edThoSep->setText(locale->thousandsSeparator());
+  edMonPosSign->setText(locale->positiveSign());
+  edMonNegSign->setText(locale->negativeSign());
 }
 
 void KLocaleConfigNumber::save()
@@ -105,20 +102,20 @@ void KLocaleConfigNumber::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getNumber() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
 
   str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
   str = config->readEntry(QString::fromLatin1("DecimalSymbol"), str);
-  if (str != locale->_decimalSymbol)
-    config->writeEntry(QString::fromLatin1("DecimalSymbol"), locale->_decimalSymbol, true, true);
+  if (str != locale->decimalSymbol())
+    config->writeEntry(QString::fromLatin1("DecimalSymbol"), locale->decimalSymbol(), true, true);
 
   str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"), str);
-  if (str != locale->_thousandsSeparator)
-    config->writeEntry(QString::fromLatin1("ThousandsSeparator"), locale->_thousandsSeparator, true, true);
+  if (str != locale->thousandsSeparator())
+    config->writeEntry(QString::fromLatin1("ThousandsSeparator"), locale->thousandsSeparator(), true, true);
 
   delete config;
 }
@@ -130,39 +127,39 @@ void KLocaleConfigNumber::defaults()
 
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
 {
-  locale->_decimalSymbol = t;
+  locale->setDecimalSymbol(t);
   emit resample();
 }
 
 void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
 {
-  locale->_thousandsSeparator = t;
+  locale->setThousandsSeparator(t);
   emit resample();
 }
 
 void KLocaleConfigNumber::slotMonPosSignChanged(const QString &t)
 {
-  locale->_positiveSign = t;
+  locale->setPositiveSign(t);
   emit resample();
 }
 
 void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 {
-  locale->_negativeSign = t;
+  locale->setNegativeSign(t);
   emit resample();
 }
 
 void KLocaleConfigNumber::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->number + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getNumber() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
 
-  locale->_decimalSymbol = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
-  locale->_thousandsSeparator = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
-  locale->_positiveSign = ent.readEntry(QString::fromLatin1("PositiveSign"));
-  locale->_negativeSign = ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-"));
+  locale->setDecimalSymbol(ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1(".")));
+  locale->setThousandsSeparator(ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(",")));
+  locale->setPositiveSign(ent.readEntry(QString::fromLatin1("PositiveSign")));
+  locale->setNegativeSign(ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-")));
 
   load();
 }

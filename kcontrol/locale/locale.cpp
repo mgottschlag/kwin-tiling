@@ -33,22 +33,19 @@
 #include <kconfig.h>
 #include <kglobal.h>
 
-#define KLocaleConfigAdvanced KLocaleConfig
-#include <klocale.h>
-#undef KLocaleConfigAdvanced
-
 #include <kmessagebox.h>
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
 #include <kcharsets.h>
 
+#include "klocaleadv.h"
 #include "klangcombo.h"
 #include "klocalesample.h"
 #include "locale.h"
 #include "locale.moc"
 #include "toplevel.h"
 
-extern KLocale *locale;
+extern KLocaleAdvanced *locale;
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : QWidget (parent, name)
@@ -357,7 +354,7 @@ void KLocaleConfig::changedCharset(int)
 {
   changedFlag = TRUE;
 
-  locale->chset = comboChset->currentTag();
+  locale->setChset(comboChset->currentTag());
 
   emit chsetChanged();
 }

@@ -35,10 +35,11 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
+#include "klocaleadv.h"
 #include "klangcombo.h"
 #include "klangcombo.moc"
 
-extern KLocale *locale;
+extern KLocaleAdvanced *locale;
 
 KLanguageCombo::~KLanguageCombo ()
 {

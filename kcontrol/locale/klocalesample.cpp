@@ -29,9 +29,10 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+#include "klocaleadv.h"
 #include "klocalesample.h"
 
-extern KLocale *locale;
+extern KLocaleAdvanced *locale;
 
 KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   : QGridLayout(parent, 6, 4, 5, -1, name)

@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+#include "klocaleadv.h"
 #include "locale.h"
 #include "localenum.h"
 #include "localemon.h"
@@ -40,12 +41,12 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
-KLocale *locale = 0;
+KLocaleAdvanced *locale = 0;
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  locale = new KLocale(QString::fromLatin1("kcmlocale"));
+  locale = new KLocaleAdvanced(QString::fromLatin1("kcmlocale"));
   QVBoxLayout *l = new QVBoxLayout(this, 5);
 
   tab = new QTabWidget(this);

@@ -31,19 +31,16 @@
 
 #include <kglobal.h>
 
-#define KLocaleConfigAdvanced KLocaleConfigTime
-#include <klocale.h>
-#undef KLocaleConfigAdvanced
-
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
+#include "klocaleadv.h"
 #include "toplevel.h"
 #include "localetime.h"
 #include "localetime.moc"
 
-extern KLocale *locale;
+extern KLocaleAdvanced *locale;
 
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
@@ -83,9 +80,9 @@ KLocaleConfigTime::~KLocaleConfigTime()
 
 void KLocaleConfigTime::load()
 {
-  edTimeFmt->setText(locale->_timefmt);
-  edDateFmt->setText(locale->_datefmt);
-  edDateFmtShort->setText(locale->_datefmtshort);
+  edTimeFmt->setText(locale->timeFormat());
+  edDateFmt->setText(locale->dateFormat());
+  edDateFmtShort->setText(locale->dateFormatShort());
 }
 
 void KLocaleConfigTime::save()
@@ -103,25 +100,25 @@ void KLocaleConfigTime::save()
   KConfigBase *config = new KConfig;
   config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getTime() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
 
   str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
   str = config->readEntry(QString::fromLatin1("TimeFormat"), str);
-  if (str != locale->_timefmt)
-    config->writeEntry(QString::fromLatin1("TimeFormat"), locale->_timefmt, true, true);
+  if (str != locale->timeFormat())
+    config->writeEntry(QString::fromLatin1("TimeFormat"), locale->timeFormat(), true, true);
 
   str = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
   str = config->readEntry(QString::fromLatin1("DateFormat"), str);
-  if (str != locale->_datefmt)
-    config->writeEntry(QString::fromLatin1("DateFormat"), locale->_datefmt, true, true);
+  if (str != locale->dateFormat())
+    config->writeEntry(QString::fromLatin1("DateFormat"), locale->dateFormat(), true, true);
 
   str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
   str = config->readEntry(QString::fromLatin1("DateFormatShort"), str);
-  if (str != locale->_datefmtshort)
-    config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->_datefmtshort, true, true);
+  if (str != locale->dateFormatShort())
+    config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->dateFormatShort(), true, true);
 
   delete config;
 }
@@ -133,30 +130,30 @@ void KLocaleConfigTime::defaults()
 
 void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
 {
-  locale->_timefmt = t;
+  locale->setTimeFormat(t);
   emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 {
-  locale->_datefmt = t;
+  locale->setDateFormat(t);
   emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
-  locale->_datefmtshort = t;
+  locale->setDateFormat(t);
   emit resample();
 }
 
 void KLocaleConfigTime::reset()
 {
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time + QString::fromLatin1("/entry.desktop")), true);
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->getTime() + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
-  locale->_timefmt = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
-  locale->_datefmt = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
-  locale->_datefmtshort = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
+  locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p")));
+  locale->setDateFormat(ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y")));
+  locale->setDateFormatShort(ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y")));
 
   load();
 }
