@@ -151,7 +151,6 @@ PAM_conv (int num_msg,
 	  void *appdata_ptr)
 {
     int count;
-    const char *prompt;
     struct pam_response *reply;
     struct pam_data *pd = (struct pam_data *)appdata_ptr;
 
@@ -180,10 +179,6 @@ PAM_conv (int num_msg,
 		switch (msg[count]->msg_style) {
 		case PAM_PROMPT_ECHO_ON:
 		    Debug( " PAM_PROMPT_ECHO_ON (usecur): %s\n", msg[count]->msg );
-		    if (StrCmp (msg[count]->msg, "<user>")) {
-			LogError( "Unexpected PAM prompt: %s\n", msg[count]->msg );
-			goto conv_err;
-		    }
 		    StrDup (&reply[count].resp, curuser);
 		    break;
 		case PAM_PROMPT_ECHO_OFF:
@@ -199,14 +194,12 @@ PAM_conv (int num_msg,
 	    } else {
 		switch (msg[count]->msg_style) {
 		case PAM_PROMPT_ECHO_ON:
-		    prompt = strcmp (msg[count]->msg, "<user>") ? msg[count]->msg : 0;
-		    Debug( " PAM_PROMPT_ECHO_ON: %s\n", prompt );
-		    reply[count].resp = pd->gconv (GCONV_NORMAL, prompt);
+		    Debug( " PAM_PROMPT_ECHO_ON: %s\n", msg[count]->msg );
+		    reply[count].resp = pd->gconv (GCONV_NORMAL, msg[count]->msg);
 		    break;
 		case PAM_PROMPT_ECHO_OFF:
-		    prompt = memcmp (msg[count]->msg, "Password:", 9) ? msg[count]->msg : 0;
-		    Debug( " PAM_PROMPT_ECHO_OFF: %s\n", prompt );
-		    reply[count].resp = pd->gconv (GCONV_HIDDEN, prompt);
+		    Debug( " PAM_PROMPT_ECHO_OFF: %s\n", msg[count]->msg );
+		    reply[count].resp = pd->gconv (GCONV_HIDDEN, msg[count]->msg);
 		    break;
 		case PAM_BINARY_PROMPT:
 		    Debug( " PAM_BINARY_PROMPT\n" );
@@ -329,8 +322,6 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	if ((pretc = pam_set_item (pamh, PAM_TTY, td->name)) != PAM_SUCCESS)
 	    goto pam_bail;
 	if ((pretc = pam_set_item (pamh, PAM_RHOST, "")) != PAM_SUCCESS)
-	    goto pam_bail;
-	if ((pretc = pam_set_item (pamh, PAM_USER_PROMPT, "<user>")) != PAM_SUCCESS)
 	    goto pam_bail;
 # ifdef PAM_FAIL_DELAY
 	pam_set_item (pamh, PAM_FAIL_DELAY, (void *)fail_delay);
