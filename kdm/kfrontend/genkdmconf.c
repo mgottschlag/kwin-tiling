@@ -1307,10 +1307,10 @@ mem_mem(char *mem, int lmem, const char *smem, int lsmem)
 }
 #endif
 
+#ifdef HAVE_VTS
 static void
 upd_servervts(Entry *ce, Section *cs ATTR_UNUSED)
 {
-#ifdef HAVE_VTS
     File it;
     char *p, *eol, *ep;
     int tty, maxtty;
@@ -1345,8 +1345,8 @@ upd_servervts(Entry *ce, Section *cs ATTR_UNUSED)
 	}
 #endif
     }
-#endif
 }
+#endif
 
 #ifdef XDMCP
 static void
