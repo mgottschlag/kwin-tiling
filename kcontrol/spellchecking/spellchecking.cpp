@@ -50,6 +50,7 @@ KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name):
   grid->setMargin(KDialog::marginHint()+fontMetrics().height() + 5);
   spellConfig  = new KSpellConfig(box, 0L ,0L, false );
   grid->addWidget(spellConfig,0,0);
+  layout->addStretch();
   connect(spellConfig,SIGNAL(configChanged()),this,SLOT(configChanged()));
 }
 
