@@ -4,6 +4,7 @@ Exec=kcmshell interrupts
 Icon=kcmmemory
 Type=Application
 DocPath=kinfocenter/interrupts/index.html
+Categories=Qt;KDE;X-KDE-information;
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info

@@ -206,4 +206,4 @@ Keywords[xx]=xxMouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,
 Keywords[zh_CN]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,鼠标,鼠标加速,鼠标加速阈值,鼠标按钮,选择,光标形状,输入设备,按钮映射,单击,图标,反馈,拖放,双击,映射,右手习惯,左手习惯
 Keywords[zh_TW]=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed,滑鼠,滑鼠游標加速,滑鼠游標加速間距,滑鼠按鈕,選擇,指標外觀,輸入設備,按鍵對應,單擊,圖示,反饋,指標,拖放,雙擊,映射,習慣右手,習慣左手 
 Keywords[zu]=i-Mouse,Ukugijimisa kwe-Mouse,i-Mouse threshold, Izinkinobho ze-Mouse,Ukhetho,Isimo senkomba,Amthuluzi Omphumela wangaphakathi,Ukuqondanisa Izinkinobho,Cofa,Izimpawu zezithombe, umphumela obuyayo,Izinkomba zendawo yokubhala,Hudula,Cofa-kabili, ukuqondanisa,okwesanadla sangakwesokudla,okwesandla sangakwesokunxele
-
+Categories=Qt;KDE;X-KDE-settings-peripherals;

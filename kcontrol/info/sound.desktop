@@ -188,4 +188,4 @@ Keywords[uk]=звук,аудіо,sound,audio,звукова плата,midi,oss,
 Keywords[uz]=MIDI,OSS,Товуш,Аудио,Товуш картаси,Тизм ҳақида маълумот
 Keywords[xx]=xxSound,Audio,Soundcard,MIDI,OSS,System Informationxx
 Keywords[zh_CN]=Sound,Audio,Soundcard,MIDI,OSS,System Information,音频,音响,声卡,系统信息
-
+Categories=Qt;KDE;X-KDE-information;

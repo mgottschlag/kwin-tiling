@@ -4,6 +4,7 @@ Exec=kcmshell bell
 Icon=bell
 Type=Application
 DocPath=kcontrol/bell/index.html
+Categories=Qt;KDE;X-KDE-settings-sound;
 
 X-KDE-ModuleType=Library
 X-KDE-Library=bell

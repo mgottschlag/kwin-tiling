@@ -4,6 +4,7 @@ Exec=kcmshell devices
 Icon=kcmdevices
 Type=Application
 DocPath=kinfocenter/devices/index.html
+Categories=Qt;KDE;X-KDE-information;
 
 X-KDE-ModuleType=Library
 X-KDE-Library=info
