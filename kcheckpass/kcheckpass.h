@@ -33,6 +33,9 @@
  *      Other parts were taken from kscreensaver's passwd.cpp
  *****************************************************************/
 
+#ifndef KCHECKPASS_H_
+#define KCHECKPASS_H_
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -71,6 +74,25 @@
 #define HAVE_ETCPASSWD
 #endif
 
+/* Make sure there is only one! */
+#if defined(HAVE_PAM)
+#undef HAVE_SHADOW
+#undef HAVE_OSF_C2_PASSWD
+#undef HAVE_ETCPASSWD
+#endif
+
+#if defined(HAVE_OSF_C2_PASSWD)
+#undef HAVE_SHADOW
+#undef HAVE_ETCPASSWD
+#endif
+
+#if defined(HAVE_SHADOW)
+#undef HAVE_ETCPASSWD
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif  
 
 /*****************************************************************
  * This function authenticates the user, returning
@@ -83,3 +105,8 @@ int authenticate(const char *login, const char *pass);
  * Output a message to syslog (and to stderr as well, if available)
  *****************************************************************/
 void message(const char *, ...);
+
+#ifdef __cplusplus
+}
+#endif  
+#endif
