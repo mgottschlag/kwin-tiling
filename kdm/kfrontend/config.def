@@ -1613,9 +1613,7 @@ Type: bool
 Default: true
 User: core
 User: greeter(showRoot)
-# sensible?
 Instance: */false
-Instance: :*/true
 Merge: xdm
 Comment:
  Allow root logins?
