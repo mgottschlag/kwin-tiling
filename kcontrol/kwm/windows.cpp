@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
+#include <kdialog.h>
 
 #include <kglobal.h>
 
@@ -69,17 +70,19 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   : KCModule (parent, name)
 {
 
-  QBoxLayout *lay = new QVBoxLayout (this, 5);
+  QBoxLayout *lay = new QVBoxLayout (this, KDialog::marginHint(),
+				     KDialog::spacingHint());
 
   windowsBox = new QButtonGroup(i18n("Windows"), this);	
 
-  QBoxLayout *wLay = new QVBoxLayout (windowsBox,10,5);
-  wLay->addSpacing(10);
+  QBoxLayout *wLay = new QVBoxLayout (windowsBox,KDialog::marginHint(),
+				      KDialog::spacingHint());
+  wLay->addSpacing(fontMetrics().lineSpacing());
 
-  QBoxLayout *bLay = new QVBoxLayout(5);
+  QBoxLayout *bLay = new QVBoxLayout;
   wLay->addLayout(bLay);
 
-  QGridLayout *rLay = new QGridLayout(2,3,5);
+  QGridLayout *rLay = new QGridLayout(2,3);
   wLay->addLayout(rLay);
   rLay->setColStretch(0,0);
   rLay->setColStretch(1,1);
@@ -127,8 +130,10 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   // placement policy --- CT 19jan98, 13mar98 ---
   plcBox = new QButtonGroup(i18n("Placement policy"),this);
 
-  QGridLayout *pLay = new QGridLayout(plcBox,3,3,10,5);
-  pLay->addRowSpacing(0,10);
+  QGridLayout *pLay = new QGridLayout(plcBox,3,3,
+				      KDialog::marginHint(),
+				      KDialog::spacingHint());
+  pLay->addRowSpacing(0,fontMetrics().lineSpacing());
 
   placementCombo = new QComboBox(false, plcBox);
   placementCombo->insertItem(i18n("Smart"), SMART_PLACEMENT);
@@ -152,15 +157,17 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   interactiveTrigger = new QSpinBox(0, 500, 1, plcBox);
   pLay->addWidget(interactiveTrigger,1,2);
 
-  pLay->addRowSpacing(2,10);
+  pLay->addRowSpacing(2,KDialog::spacingHint());
 
   lay->addWidget(plcBox);
 
   // focus policy
   fcsBox = new QButtonGroup(i18n("Focus policy"),this);
 
-  QGridLayout *fLay = new QGridLayout(fcsBox,5,3,10,5);
-  fLay->addRowSpacing(0,10);
+  QGridLayout *fLay = new QGridLayout(fcsBox,5,3,
+				      KDialog::marginHint(),
+				      KDialog::spacingHint());
+  fLay->addRowSpacing(0,fontMetrics().lineSpacing());
   fLay->setColStretch(0,0);
   fLay->setColStretch(1,1);
   fLay->setColStretch(2,1);
