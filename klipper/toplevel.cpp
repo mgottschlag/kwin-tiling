@@ -566,12 +566,12 @@ QString Klipper::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
 
-    QString contents = clip->text().stripWhiteSpace();
+    QString contents = clip->text();
 
     if ( contents == m_lastSelection )
     {
         clip->setSelectionMode( false );
-        QString clipContents = clip->text().stripWhiteSpace();
+        QString clipContents = clip->text();
         if ( clipContents != m_lastClipboard )
             contents = clipContents;
         else
@@ -691,8 +691,8 @@ void Klipper::checkClipData( const QString& text, bool selectionMode )
     // this must be below the "bNoNullClipboard" handling code!
     if ( selectionMode && bIgnoreSelection )
         return;
-    
- 
+
+
     // If the string is null bug out
     if (lastClipRef.isEmpty()) {
         if (m_selectedItem != -1) {
