@@ -130,7 +130,7 @@ static const char *mocs[] = {
 };
 
 KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name) {
-    setMocClasses(mocs)
+    setMocClasses(mocs);
     KURISearchFilterEngine::incRef();
     s_instance = new KInstance(KURISearchFilterEngine::self()->name());
 }
