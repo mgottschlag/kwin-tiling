@@ -57,6 +57,7 @@ protected:
 
 protected slots:
    void slotSelectDesk(int desk);
+   void slotWallpaperTypeChanged(int i);
    void slotWallpaper(int i);
    void slotWallpaperPos(int);
    void slotSetupMulti();
@@ -88,7 +89,6 @@ protected:
 
    BGMonitor *m_pMonitor;
 
-   int m_comboWallpaperSpecial;
    bool m_previewUpdates;
    bool m_copyAllDesktops;
 };

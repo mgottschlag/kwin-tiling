@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>BGDialog_UI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,20 +8,23 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>491</width>
-            <height>333</height>
+            <width>495</width>
+            <height>350</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>BGDialog_UI</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>0</number>
+            <number>1</number>
         </property>
-        <widget class="QLabel" row="0" column="1" rowspan="3" colspan="1">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
-                <cstring>m_monitorImage</cstring>
+                <cstring>m_pDesktopLabel</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
@@ -31,221 +34,196 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="minimumSize">
-                <size>
-                    <width>100</width>
-                    <height>0</height>
-                </size>
-            </property>
             <property name="text">
-                <string>Monitor</string>
+                <string>Setting for &amp;Desktop:</string>
             </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
+            <property name="buddy" stdset="0">
+                <cstring>m_comboDesktop</cstring>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>This picture of a monitor contains a preview of what the current settings will look like on your desktop.</string>
+                <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="KComboBox" row="0" column="1">
+            <item>
+                <property name="text">
+                    <string>All Desktops</string>
+                </property>
+            </item>
             <property name="name">
-                <cstring>m_groupDesktop</cstring>
+                <cstring>m_comboDesktop</cstring>
             </property>
-            <hbox>
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
+            </property>
+        </widget>
+        <spacer row="0" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>Spacer37</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>270</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="3" column="2">
+            <property name="name">
+                <cstring>spacer68</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>6</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="1" column="3" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>layout36</cstring>
+            </property>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
                 <widget class="QLabel">
                     <property name="name">
-                        <cstring>m_pDesktopLabel</cstring>
+                        <cstring>m_monitorImage</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>0</hsizetype>
-                            <vsizetype>5</vsizetype>
+                            <vsizetype>1</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>100</width>
+                            <height>0</height>
+                        </size>
                     </property>
                     <property name="text">
-                        <string>Setting for des&amp;ktop:</string>
+                        <string>Monitor</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_comboDesktop</cstring>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
+                        <string>This picture of a monitor contains a preview of what the current settings will look like on your desktop.</string>
                     </property>
                 </widget>
-                <widget class="KComboBox">
-                    <item>
-                        <property name="text">
-                            <string>All Desktops</string>
-                        </property>
-                    </item>
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>m_comboDesktop</cstring>
+                        <cstring>layout35</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>true</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
-                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer80</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Minimum</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>4</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>m_buttonAdvanced</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>Advanced Options...</string>
+                            </property>
+                            <property name="accel">
+                                <string></string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click this button to set the icon text colors, set up a program to run for the background picture or control the size of the background cache.</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer81</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Minimum</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>4</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
                 </widget>
                 <spacer>
                     <property name="name">
-                        <cstring>Spacer37</cstring>
+                        <cstring>spacer13</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Vertical</enum>
                     </property>
                     <property name="sizeType">
-                        <enum>Expanding</enum>
+                        <enum>MinimumExpanding</enum>
                     </property>
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>20</height>
+                            <height>0</height>
                         </size>
                     </property>
                 </spacer>
-            </hbox>
+            </vbox>
         </widget>
-        <widget class="QPushButton" row="3" column="1">
-            <property name="name">
-                <cstring>m_buttonAdvanced</cstring>
-            </property>
-            <property name="text">
-                <string>Advanced Options...</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Click this button to set the icon text colors, set up a program to run for the background picture or control the size of the background cache.</string>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="1" column="0">
-            <property name="name">
-                <cstring>groupBox2</cstring>
-            </property>
-            <property name="title">
-                <string>Background Picture</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <widget class="KURLComboRequester" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_urlWallpaper</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click to choose a picture to use as the background picture from the list. You may add a new picture by clicking on the button beside the list.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Pict&amp;ure:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_urlWallpaper</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click to choose a picture to use as the background picture from the list. You may add a new picture by clicking on the button beside the list.</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_buttonSetupWallpapers</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Set Up Slide Sho&amp;w...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+W</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click this button to select a set of images to be used as background pictures. One picture at a time will be shown for a specified amount of time, after which another image from the set will be shown. Images can be shown at random or in the order you specify them.</string>
-                    </property>
-                </widget>
-                <spacer row="1" column="2">
-                    <property name="name">
-                        <cstring>spacer6</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>187</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
-        </widget>
-        <spacer row="4" column="1" rowspan="2" colspan="1">
-            <property name="name">
-                <cstring>spacer13</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>220</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="5" column="0">
-            <property name="name">
-                <cstring>spacer12</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>160</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QGroupBox" row="2" column="0" rowspan="3" colspan="1">
+        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>groupBox3</cstring>
             </property>
@@ -256,15 +234,12 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>m_lblWallpaperPos</cstring>
                     </property>
                     <property name="text">
-                        <string>Positio&amp;n:</string>
+                        <string>Posi&amp;tion:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_comboWallpaperPos</cstring>
@@ -281,36 +256,17 @@
 &lt;/ul&gt;&lt;/qt&gt;</string>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
+                <widget class="QComboBox" row="5" column="1">
                     <property name="name">
-                        <cstring>m_comboWallpaperPos</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
- &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
-&lt;/ul&gt;&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>m_lblBlending</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Blendin&amp;g:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
                         <cstring>m_comboBlend</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If you have selected to use a background picture you can choose various methods of blending the background colors with the picture. The default option of "No Blending" means that the picture simply obscures the background colors below.</string>
+                    </property>
                 </widget>
-                <widget class="QLayoutWidget" row="3" column="1" rowspan="1" colspan="2">
+                <widget class="QLayoutWidget" row="3" column="1">
                     <property name="name">
-                        <cstring>layout2</cstring>
+                        <cstring>layout31</cstring>
                     </property>
                     <hbox>
                         <property name="name">
@@ -340,30 +296,9 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_comboBlend</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If you have selected to use a background picture you can choose various methods of blending the background colors with the picture. The default option of "No Blending" means that the picture simply obscures the background colors below.</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="2" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_comboPattern</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="2" column="0">
                     <property name="name">
-                        <cstring>textLabel5</cstring>
+                        <cstring>m_lblColors</cstring>
                     </property>
                     <property name="text">
                         <string>Co&amp;lors:</string>
@@ -372,43 +307,20 @@
                         <cstring>m_comboPattern</cstring>
                     </property>
                 </widget>
-                <spacer row="4" column="2">
+                <widget class="QLabel" row="5" column="0">
                     <property name="name">
-                        <cstring>spacer6_2</cstring>
+                        <cstring>m_lblBlending</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
+                    <property name="text">
+                        <string>&amp;Blending:</string>
                     </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_comboBlend</cstring>
                     </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="1" column="1">
+                </widget>
+                <widget class="QLayoutWidget" row="6" column="1">
                     <property name="name">
-                        <cstring>spacer6_2_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLayoutWidget" row="6" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>layout4</cstring>
+                        <cstring>layout23</cstring>
                     </property>
                     <hbox>
                         <property name="name">
@@ -419,7 +331,7 @@
                                 <cstring>m_lblBlendBalance</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Balance:</string>
+                                <string>Balance:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>m_sliderBlend</cstring>
@@ -456,31 +368,209 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
+                <widget class="QCheckBox" row="7" column="1">
                     <property name="name">
                         <cstring>m_cbBlendReverse</cstring>
                     </property>
                     <property name="text">
-                        <string>R&amp;everse roles</string>
+                        <string>Reverse roles</string>
                     </property>
                     <property name="accel">
-                        <string>Alt+E</string>
+                        <string></string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>For some types of blending, you can reverse the role of the background and the picture by checking this option.</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_comboPattern</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <spacer row="1" column="1">
+                    <property name="name">
+                        <cstring>spacer6_2_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>120</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="4" column="1">
+                    <property name="name">
+                        <cstring>spacer6_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>130</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>m_comboWallpaperPos</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string></string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;You can choose here how a background picture is shown on the desktop:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Centered:&lt;/em&gt; Center the picture on the desktop.&lt;/li&gt;
+ &lt;li&gt;&lt;em&gt;Tiled:&lt;/em&gt; Tile the picture beginning at the top left of the desktop, so the desktop is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Center Tiled:&lt;/em&gt; Center the picture on the desktop and then tile around it so that the background is totally covered up.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Maxpect:&lt;/em&gt; Magnify the picture without distorting it until it fills either the width or height of the desktop, and then center it on the desktop.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Scaled:&lt;/em&gt;Magnify the picture, until the entire desktop is covered. This may result in some distortion of the picture.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Centered Auto Fit:&lt;/em&gt; If the picture fits the desktop this mode works like the Centered option. If the picture is larger than the desktop it is scaled down to fit while keeping the aspect ratio.&lt;/li&gt;
+&lt;/ul&gt;&lt;/qt&gt;</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>m_buttonGroupBackground</cstring>
+            </property>
+            <property name="title">
+                <string>Background</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>m_radioNoPicture</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;No Picture</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>No picture, color only</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>m_radioSlideShow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Slide Show:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_radioPicture</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Picture:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>spacer20</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>260</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_buttonSetupWallpapers</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Set &amp;Up...</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+U</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click this button to select a set of images to be used as background pictures. One picture at a time will be shown for a specified amount of time, after which another image from the set will be shown. Images can be shown at random or in the order you specify them.</string>
+                    </property>
+                </widget>
+                <spacer row="2" column="2">
+                    <property name="name">
+                        <cstring>spacer19</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>110</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KURLComboRequester" row="1" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_urlWallpaper</cstring>
                     </property>
                 </widget>
             </grid>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
+<connections>
+    <connection>
+        <sender>m_buttonGroupBackground</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>groupBox3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>m_comboDesktop</tabstop>
+    <tabstop>m_radioPicture</tabstop>
     <tabstop>m_urlWallpaper</tabstop>
-    <tabstop>m_comboWallpaperPos</tabstop>
     <tabstop>m_buttonSetupWallpapers</tabstop>
+    <tabstop>m_comboWallpaperPos</tabstop>
     <tabstop>m_comboPattern</tabstop>
     <tabstop>m_colorPrimary</tabstop>
     <tabstop>m_colorSecondary</tabstop>
@@ -498,6 +588,11 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>kcombobox.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

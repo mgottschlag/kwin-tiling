@@ -24,9 +24,11 @@
    Boston, MA 02111-1307, USA.
 */
 
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpainter.h>
+#include <qradiobutton.h>
 #include <qslider.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
@@ -51,8 +53,6 @@
 
 #define NR_PREDEF_PATTERNS 6
 
-static const char *slide_show = I18N_NOOP("<Slide Show>");
-
 BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
   : BGDialog_UI(parent, "BGDialog")
 {
@@ -65,8 +65,6 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_Desk = m_multidesktop ? KWin::currentDesktop() : 1;
    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
    m_copyAllDesktops = true;
-
-   m_comboWallpaperSpecial = -1;
 
    if (!m_multidesktop)
    {
@@ -85,6 +83,8 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_comboDesktop, SIGNAL(activated(int)),
            SLOT(slotSelectDesk(int)));
 
+   connect(m_buttonGroupBackground, SIGNAL(clicked(int)),
+           SLOT(slotWallpaperTypeChanged(int)));
    connect(m_urlWallpaper->comboBox(), SIGNAL(activated(int)),
            SLOT(slotWallpaper(int)));
    connect(m_urlWallpaper, SIGNAL(urlSelected(const QString &)),
@@ -126,6 +126,11 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_wallpaperPos = m_Renderer[m_eDesk]->wallpaperMode();
    if (m_wallpaperPos == KBackgroundSettings::NoWallpaper)
       m_wallpaperPos = KBackgroundSettings::Centred; // Default
+
+   if ((m_slideShowRandom == KBackgroundSettings::NoMultiRandom) ||
+            (m_slideShowRandom == KBackgroundSettings::NoMulti))
+      m_radioSlideShow->setEnabled(false);
+
 
    // Blend modes: make sure these match with kdesktop/bgrender.cc !!
    m_comboBlend->insertItem(i18n("No Blending"));
@@ -315,14 +320,14 @@ void BGDialog::initUI()
    }
 
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
-   comboWallpaper->insertItem(i18n("<None>"));
    int i = 0;
    for (QMap<QString, QPair<QString, QString> >::Iterator it = papers.begin();
         it != papers.end();
         ++it)
    {
       comboWallpaper->insertItem(it.data().first);
-      m_Wallpaper[it.data().second] = ++i;
+      m_Wallpaper[it.data().second] = i;
+      i++;
    }
 
    // Wallpaper tilings: again they must match the ones from bgrender.cc
@@ -339,48 +344,25 @@ void BGDialog::setWallpaper(const QString &s)
 {
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->blockSignals(true);
-   bool noWallpaper = s.isEmpty();
-   setBlendingEnabled(!noWallpaper);
+   setBlendingEnabled(true);
 
-   if (noWallpaper)
+   if (m_Wallpaper.find(s) == m_Wallpaper.end())
    {
-      comboWallpaper->setCurrentItem(0);
-   }
-   else if (s.startsWith("<"))
-   {
-      if (m_comboWallpaperSpecial == -1)
+      int i = comboWallpaper->count();
+      if (comboWallpaper->text(i-1) == s)
       {
-         int i = comboWallpaper->count();
-         comboWallpaper->insertItem(s);
-         m_comboWallpaperSpecial = i;
+         i--;
+         comboWallpaper->removeItem(i);
       }
-      else
-      {
-         comboWallpaper->changeItem(s, m_comboWallpaperSpecial);
-      }
-      comboWallpaper->setCurrentItem(m_comboWallpaperSpecial);
+      comboWallpaper->insertItem(KStringHandler::lsqueeze(s, 45));
+      m_Wallpaper[s] = i;
+      comboWallpaper->setCurrentItem(i);
    }
    else
    {
-      if (m_Wallpaper.find(s) == m_Wallpaper.end())
-      {
-         int i = comboWallpaper->count();
-         if (comboWallpaper->text(i-1) == s)
-         {
-            i--;
-            comboWallpaper->removeItem(i);
-         }
-         comboWallpaper->insertItem(KStringHandler::lsqueeze(s, 45));
-         m_Wallpaper[s] = i;
-         comboWallpaper->setCurrentItem(i);
-      }
-      else
-      {
-         comboWallpaper->setCurrentItem(m_Wallpaper[s]);
-      }
-
-      m_urlWallpaper->fileDialog()->setURL(s);
+      comboWallpaper->setCurrentItem(m_Wallpaper[s]);
    }
+   m_urlWallpaper->fileDialog()->setURL(s);
    comboWallpaper->blockSignals(false);
 }
 
@@ -404,7 +386,8 @@ void BGDialog::updateUI()
    {
       m_comboWallpaperPos->setEnabled(false);
       m_lblWallpaperPos->setEnabled(false);
-      setWallpaper(QString::null);
+      m_buttonGroupBackground->setButton(0);
+//      slotWallpaperTypeChanged(m_buttonGroupBackground->id(m_radioNoPicture));
    }
    else if ((multiMode == KBackgroundSettings::NoMultiRandom) ||
             (multiMode == KBackgroundSettings::NoMulti))
@@ -417,7 +400,8 @@ void BGDialog::updateUI()
    {
       m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
-      setWallpaper(i18n(slide_show));
+      m_buttonGroupBackground->setButton(1);
+//      slotWallpaperTypeChanged(m_buttonGroupBackground->id(m_radioSlideShow));
    }
 
    m_comboWallpaperPos->setCurrentItem(r->wallpaperMode()-1);
@@ -474,7 +458,7 @@ void BGDialog::updateUI()
     m_sliderBlend->blockSignals(false);
 
     // turn it off if there is no background picture set!
-    setBlendingEnabled(m_urlWallpaper->comboBox()->currentItem() > 0);
+    setBlendingEnabled(wallpaperMode != KBackgroundSettings::NoWallpaper);
 
     // Start preview render
     r->setPreview(m_pMonitor->size());
@@ -522,30 +506,30 @@ void BGDialog::slotImageDropped(const QString &uri)
    emit changed(true);
 }
 
-void BGDialog::slotWallpaper(int i)
+void BGDialog::slotWallpaperTypeChanged(int i)
 {
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
    r->stop();
-   if (i == 0)
+   if (i == m_buttonGroupBackground->id(m_radioNoPicture))  //None
    {
       m_comboWallpaperPos->setEnabled(false);
       m_lblWallpaperPos->setEnabled(false);
       r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
+      setBlendingEnabled(false);
    }
-   else if (i == m_comboWallpaperSpecial)
+   else if (i == m_buttonGroupBackground->id(m_radioSlideShow))
    {
-      if (m_urlWallpaper->comboBox()->currentText() == i18n(slide_show))
-      {
-         m_comboWallpaperPos->setEnabled(true);
-         m_lblWallpaperPos->setEnabled(true);
-         m_comboWallpaperPos->blockSignals(true);
-         m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
-         m_comboWallpaperPos->blockSignals(false);
+      m_comboWallpaperPos->setEnabled(true);
+      m_lblWallpaperPos->setEnabled(true);
+      m_comboWallpaperPos->blockSignals(true);
+      m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
+      m_comboWallpaperPos->blockSignals(false);
 
-         r->setMultiWallpaperMode(m_slideShowRandom);
-         r->setWallpaperMode(m_wallpaperPos);
-      }
+      r->setMultiWallpaperMode(m_slideShowRandom);
+      r->setWallpaperMode(m_wallpaperPos);
+      setWallpaper(r->wallpaper());
+      setBlendingEnabled(true);
    }
    else
    {
@@ -554,28 +538,34 @@ void BGDialog::slotWallpaper(int i)
       m_comboWallpaperPos->blockSignals(true);
       m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
       m_comboWallpaperPos->blockSignals(false);
+      int j = m_urlWallpaper->comboBox()->currentItem();
       QString uri;
       for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
           it != m_Wallpaper.end();
           ++it)
       {
-         if (it.data() == i)
+         if (it.data() == j)
          {
             uri = it.key();
             break;
          }
       }
-
       r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
       r->setWallpaperMode(m_wallpaperPos);
       r->setWallpaper(uri);
       m_urlWallpaper->fileDialog()->setURL(uri);
+      setBlendingEnabled(true);
    }
-
-   setBlendingEnabled(i > 0);
+   m_buttonGroupBackground->setButton(i);
 
    r->start();
    m_copyAllDesktops = true;
+   emit changed(true);
+}
+
+void BGDialog::slotWallpaper(int i)
+{
+   slotWallpaperTypeChanged(m_buttonGroupBackground->id(m_radioPicture));
    emit changed(true);
 }
 
@@ -609,8 +599,10 @@ void BGDialog::slotSetupMulti()
 {
     KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
+    r->setMultiWallpaperMode(m_slideShowRandom);
     BGMultiWallpaperDialog dlg(r, topLevelWidget());
     if (dlg.exec() == QDialog::Accepted) {
+        m_radioSlideShow->setEnabled(true);
         r->stop();
         m_slideShowRandom = r->multiWallpaperMode();
         r->setWallpaperMode(m_wallpaperPos);
