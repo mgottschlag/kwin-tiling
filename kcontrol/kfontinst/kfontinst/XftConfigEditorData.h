@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigEditor.ui'
 **
-** Created: Mon Sep 17 00:15:51 2001
+** Created: Wed Oct 24 21:21:40 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -53,6 +53,7 @@ public:
     QLineEdit* itsEditString;
     QComboBox* itsEditCombo;
     QLineEdit* itsEditOther;
+
 
 public slots:
     virtual void addMatch();

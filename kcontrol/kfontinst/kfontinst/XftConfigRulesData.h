@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigRules.ui'
 **
-** Created: Tue Sep 18 12:04:33 2001
+** Created: Wed Oct 24 21:21:41 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

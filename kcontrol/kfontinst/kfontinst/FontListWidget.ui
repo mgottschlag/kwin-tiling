@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CFontListWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,192 +27,161 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CFontListWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>403</width>
-            <height>155</height>
+            <width>401</width>
+            <height>121</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
-    <property>
-        <name>layoutSpacing</name>
+    <property name="layoutSpacing" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>0</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>0</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0">
+            <property name="name">
                 <cstring>itsBox</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Label</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QListView</class>
+                <widget class="QListView" row="0" column="0" rowspan="1" colspan="3">
                     <column>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Directory/File</string>
                         </property>
-                        <property>
-                            <name>clickable</name>
+                        <property name="clickable">
                             <bool>true</bool>
                         </property>
-                        <property>
-                            <name>resizeable</name>
+                        <property name="resizeable">
                             <bool>true</bool>
                         </property>
                     </column>
                     <column>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Name</string>
                         </property>
-                        <property>
-                            <name>clickable</name>
+                        <property name="clickable">
                             <bool>true</bool>
                         </property>
-                        <property>
-                            <name>resizeable</name>
+                        <property name="resizeable">
                             <bool>true</bool>
                         </property>
                     </column>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>itsList</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
+                    <property name="minimumSize">
                         <size>
                             <width>0</width>
                             <height>24</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>selectionMode</name>
+                    <property name="selectionMode">
                         <enum>Extended</enum>
                     </property>
-                    <property stdset="1">
-                        <name>allColumnsShowFocus</name>
+                    <property name="allColumnsShowFocus">
                         <bool>true</bool>
                     </property>
-                    <property stdset="1">
-                        <name>showSortIndicator</name>
+                    <property name="showSortIndicator">
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="2">
+                    <property name="name">
                         <cstring>itsButton2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
+                    <property name="minimumSize">
                         <size>
                             <width>0</width>
                             <height>0</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
+                    <property name="maximumSize">
                         <size>
                             <width>32767</width>
                             <height>32767</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Action</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="0">
+                    <property name="name">
                         <cstring>itsButton1</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
                             <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
+                    <property name="minimumSize">
                         <size>
                             <width>0</width>
                             <height>0</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
+                    <property name="maximumSize">
                         <size>
                             <width>32767</width>
                             <height>32767</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Action</string>
                     </property>
                 </widget>
-                <spacer row="1"  column="1" >
-                    <property>
-                        <name>name</name>
+                <spacer row="1" column="1">
+                    <property name="name" stdset="0">
                         <cstring>Spacer1</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
-                    <property>
-                        <name>sizeHint</name>
+                    <property name="sizeHint">
                         <size>
                             <width>20</width>
                             <height>20</height>
@@ -236,6 +205,9 @@
         <receiver>CFontListWidgetData</receiver>
         <slot>selectionChanged()</slot>
     </connection>
-    <slot access="public">selectionChanged()</slot>
 </connections>
+<slots>
+    <slot>selectionChanged()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

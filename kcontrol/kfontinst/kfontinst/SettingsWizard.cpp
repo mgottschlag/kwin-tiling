@@ -36,6 +36,7 @@
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "Misc.h"
+#include <klocale.h>
 #include <qwizard.h>
 #include <qlabel.h>
 #include <fstream.h>
@@ -49,6 +50,11 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
         itsNonRootText->hide();
         checkAndModifyFontmapFile();
         checkAndModifyXConfigFile();
+
+        QString fnfTxt=itsFnFText->text();
+
+        itsFnFText->setText(fnfTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, then it is probable that you are not using the CUPS"
+                                        " printing system - in which case just ensure that the chekbox is not selected.").arg(CConfig::constNotFound));
     }
 
     itsSOWidget->hideNote();
@@ -56,12 +62,6 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
 #ifndef HAVE_XFT
     removePage(itsAAPage);
 #endif
-
-/*
-    if(CConfig::constNotFound!=CKfiGlobal::cfg().getFontsDir() && CConfig::constNotFound!=CKfiGlobal::cfg().getGhostscriptFile() &&
-       CConfig::constNotFound!=CKfiGlobal::cfg().getXConfigFile())
-        removePage(itsDirsAndFilesPage);
-*/
 
     this->setFinishEnabled(itsCompletePage, true);
 }

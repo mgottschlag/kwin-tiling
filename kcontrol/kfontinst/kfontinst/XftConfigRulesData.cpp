@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'XftConfigRules.ui'
 **
-** Created: Tue Sep 18 12:04:33 2001
+** Created: Wed Oct 24 21:21:41 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -34,18 +34,16 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
     if ( !name )
 	setName( "Form1" );
     resize( 537, 416 ); 
-    setCaption( tr2i18n( "XftConfig", "" ) );
-    Form1Layout = new QGridLayout( this ); 
-    Form1Layout->setSpacing( 6 );
-    Form1Layout->setMargin( 11 );
+    setCaption( tr2i18n( "XftConfig" ) );
+    Form1Layout = new QGridLayout( this, 1, 1, 11, 6, "Form1Layout"); 
 
     itsCancelButton = new QPushButton( this, "itsCancelButton" );
-    itsCancelButton->setText( tr2i18n( "&Cancel", "" ) );
+    itsCancelButton->setText( tr2i18n( "&Cancel" ) );
 
     Form1Layout->addWidget( itsCancelButton, 1, 2 );
 
     itsOkButton = new QPushButton( this, "itsOkButton" );
-    itsOkButton->setText( tr2i18n( "&OK", "" ) );
+    itsOkButton->setText( tr2i18n( "&OK" ) );
 
     Form1Layout->addWidget( itsOkButton, 1, 1 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -54,23 +52,19 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
     TabWidget2 = new QTabWidget( this, "TabWidget2" );
 
     itsRulesTab = new QWidget( TabWidget2, "itsRulesTab" );
-    itsRulesTabLayout = new QGridLayout( itsRulesTab ); 
-    itsRulesTabLayout->setSpacing( 6 );
-    itsRulesTabLayout->setMargin( 11 );
+    itsRulesTabLayout = new QGridLayout( itsRulesTab, 1, 1, 11, 6, "itsRulesTabLayout"); 
 
     GroupBox1 = new QGroupBox( itsRulesTab, "GroupBox1" );
-    GroupBox1->setTitle( tr2i18n( "Entries:", "" ) );
+    GroupBox1->setTitle( tr2i18n( "Entries:" ) );
     GroupBox1->setColumnLayout(0, Qt::Vertical );
-    GroupBox1->layout()->setSpacing( 0 );
-    GroupBox1->layout()->setMargin( 0 );
+    GroupBox1->layout()->setSpacing( 6 );
+    GroupBox1->layout()->setMargin( 11 );
     GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
     GroupBox1Layout->setAlignment( Qt::AlignTop );
-    GroupBox1Layout->setSpacing( 6 );
-    GroupBox1Layout->setMargin( 11 );
 
     itsList = new QListView( GroupBox1, "itsList" );
-    itsList->addColumn( tr2i18n( "Match:", "" ) );
-    itsList->addColumn( tr2i18n( "Edit:", "" ) );
+    itsList->addColumn( tr2i18n( "Match:" ) );
+    itsList->addColumn( tr2i18n( "Edit:" ) );
     itsList->setAllColumnsShowFocus( TRUE );
 
     GroupBox1Layout->addMultiCellWidget( itsList, 0, 0, 0, 3 );
@@ -79,44 +73,42 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
 
     itsRemoveButton = new QPushButton( GroupBox1, "itsRemoveButton" );
     itsRemoveButton->setEnabled( FALSE );
-    itsRemoveButton->setText( tr2i18n( "&Remove", "" ) );
+    itsRemoveButton->setText( tr2i18n( "&Remove" ) );
 
     GroupBox1Layout->addWidget( itsRemoveButton, 1, 3 );
 
     itsAddButton = new QPushButton( GroupBox1, "itsAddButton" );
     itsAddButton->setEnabled( FALSE );
-    itsAddButton->setText( tr2i18n( "&Add...", "" ) );
+    itsAddButton->setText( tr2i18n( "&Add..." ) );
 
     GroupBox1Layout->addWidget( itsAddButton, 1, 1 );
 
     itsEditButton = new QPushButton( GroupBox1, "itsEditButton" );
     itsEditButton->setEnabled( FALSE );
-    itsEditButton->setText( tr2i18n( "&Edit...", "" ) );
+    itsEditButton->setText( tr2i18n( "&Edit..." ) );
 
     GroupBox1Layout->addWidget( itsEditButton, 1, 2 );
 
     itsRulesTabLayout->addWidget( GroupBox1, 0, 0 );
-    TabWidget2->insertTab( itsRulesTab, tr2i18n( "R&ules", "" ) );
+    TabWidget2->insertTab( itsRulesTab, tr2i18n( "R&ules" ) );
 
     itsIncludesTab = new QWidget( TabWidget2, "itsIncludesTab" );
-    itsIncludesTabLayout = new QGridLayout( itsIncludesTab ); 
-    itsIncludesTabLayout->setSpacing( 6 );
-    itsIncludesTabLayout->setMargin( 11 );
+    itsIncludesTabLayout = new QGridLayout( itsIncludesTab, 1, 1, 11, 6, "itsIncludesTabLayout"); 
 
     itsIncludes = new CXftConfigIncludesWidget( itsIncludesTab, "itsIncludes" );
     QWhatsThis::add( itsIncludes, tr2i18n( "List here any other Xft files that you want included from your Xft file.\n"
 "\n"
-"NOTE: Xft will complain if any files from this list are not found.", "" ) );
+"NOTE: Xft will complain if any files from this list are not found." ) );
 
     itsIncludesTabLayout->addWidget( itsIncludes, 0, 0 );
 
     itsIncludeIfs = new CXftConfigIncludesWidget( itsIncludesTab, "itsIncludeIfs" );
     QWhatsThis::add( itsIncludeIfs, tr2i18n( "List here any other Xft files that you want included from your Xft file.\n"
 "\n"
-"NOTE: Xft will *not* complain if any files from this list are not found.", "" ) );
+"NOTE: Xft will *not* complain if any files from this list are not found." ) );
 
     itsIncludesTabLayout->addWidget( itsIncludeIfs, 1, 0 );
-    TabWidget2->insertTab( itsIncludesTab, tr2i18n( "&Include Directives", "" ) );
+    TabWidget2->insertTab( itsIncludesTab, tr2i18n( "&Include Directives" ) );
 
     Form1Layout->addMultiCellWidget( TabWidget2, 0, 0, 0, 2 );
 

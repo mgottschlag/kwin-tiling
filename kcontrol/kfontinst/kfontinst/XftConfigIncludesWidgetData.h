@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigIncludesWidget.ui'
 **
-** Created: Wed Jul 4 01:45:44 2001
+** Created: Wed Oct 24 21:21:41 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,6 +32,7 @@ public:
     QPushButton* itsRemoveButton;
     QPushButton* itsEditButton;
     QPushButton* itsAddButton;
+
 
 public slots:
     virtual void addPressed();

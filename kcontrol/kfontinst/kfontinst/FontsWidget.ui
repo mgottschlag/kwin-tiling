@@ -35,8 +35,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>603</width>
-            <height>397</height>
+            <width>552</width>
+            <height>314</height>
         </rect>
     </property>
     <property name="caption">
@@ -401,7 +401,7 @@
                             </property>
                         </widget>
                         <spacer row="0" column="2">
-                            <property name="name">
+                            <property name="name" stdset="0">
                                 <cstring>Spacer1</cstring>
                             </property>
                             <property name="orientation">

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Tue Sep 18 12:17:29 2001
+** Created: Wed Oct 24 21:21:40 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,25 +33,21 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
 	setName( "CSysCfgSettingsWidgetData" );
     resize( 579, 280 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, sizePolicy().hasHeightForWidth() ) );
-    setCaption( tr2i18n( "Form3", "" ) );
-    CSysCfgSettingsWidgetDataLayout = new QGridLayout( this ); 
-    CSysCfgSettingsWidgetDataLayout->setSpacing( 6 );
-    CSysCfgSettingsWidgetDataLayout->setMargin( 11 );
+    setCaption( tr2i18n( "Form3" ) );
+    CSysCfgSettingsWidgetDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CSysCfgSettingsWidgetDataLayout"); 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
     CSysCfgSettingsWidgetDataLayout->addItem( spacer, 2, 0 );
 
     GroupBox4_2 = new QGroupBox( this, "GroupBox4_2" );
-    GroupBox4_2->setTitle( tr2i18n( "General:", "" ) );
+    GroupBox4_2->setTitle( tr2i18n( "General:" ) );
     GroupBox4_2->setColumnLayout(0, Qt::Vertical );
-    GroupBox4_2->layout()->setSpacing( 0 );
-    GroupBox4_2->layout()->setMargin( 0 );
+    GroupBox4_2->layout()->setSpacing( 6 );
+    GroupBox4_2->layout()->setMargin( 11 );
     GroupBox4_2Layout = new QGridLayout( GroupBox4_2->layout() );
     GroupBox4_2Layout->setAlignment( Qt::AlignTop );
-    GroupBox4_2Layout->setSpacing( 6 );
-    GroupBox4_2Layout->setMargin( 11 );
 
     itsX11EncodingCheck = new QCheckBox( GroupBox4_2, "itsX11EncodingCheck" );
-    itsX11EncodingCheck->setText( tr2i18n( "&Configure X to only use", "" ) );
+    itsX11EncodingCheck->setText( tr2i18n( "&Configure X to only use" ) );
 
     GroupBox4_2Layout->addWidget( itsX11EncodingCheck, 0, 0 );
 
@@ -62,7 +58,7 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     GroupBox4_2Layout->addMultiCellWidget( itsX11EncodingCombo, 0, 0, 1, 2 );
 
     TextLabel1 = new QLabel( GroupBox4_2, "TextLabel1" );
-    TextLabel1->setText( tr2i18n( "encoding", "" ) );
+    TextLabel1->setText( tr2i18n( "encoding" ) );
 
     GroupBox4_2Layout->addWidget( TextLabel1, 0, 3 );
 
@@ -71,21 +67,21 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     itsAfmEncodingCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, itsAfmEncodingCombo->sizePolicy().hasHeightForWidth() ) );
     QWhatsThis::add( itsAfmEncodingCombo, tr2i18n( "AFMs (Adobe Font Metrics) are files that may be used by programs (such as StarOffice) to obtain detailed \"metrics\" (e.g. sizes) of each character in a font - so that it may be displayed/printed correctly. \n"
 "\n"
-"AFMs may only contain one encoding, so here you can specify which one should be used.", "" ) );
+"AFMs may only contain one encoding, so here you can specify which one should be used." ) );
 
     GroupBox4_2Layout->addMultiCellWidget( itsAfmEncodingCombo, 2, 2, 1, 2 );
 
     itsT1AfmCheck = new QCheckBox( GroupBox4_2, "itsT1AfmCheck" );
     itsT1AfmCheck->setEnabled( FALSE );
-    itsT1AfmCheck->setText( tr2i18n( "Type&1", "" ) );
+    itsT1AfmCheck->setText( tr2i18n( "Type&1" ) );
     QWhatsThis::add( itsT1AfmCheck, tr2i18n( "Check this item to enable creation of AFMs for Type1 fonts.\n"
 "\n"
-"These are required by StarOffice, and some other apps (such as AbiWord).", "" ) );
+"These are required by StarOffice, and some other apps (such as AbiWord)." ) );
 
     GroupBox4_2Layout->addWidget( itsT1AfmCheck, 3, 2 );
 
     itsGenAfmsCheck = new QCheckBox( GroupBox4_2, "itsGenAfmsCheck" );
-    itsGenAfmsCheck->setText( tr2i18n( "&Generate AFMs, with", "" ) );
+    itsGenAfmsCheck->setText( tr2i18n( "&Generate AFMs, with" ) );
     QWhatsThis::add( itsGenAfmsCheck, tr2i18n( "AFMs (Adobe Font Metrics) are files that\n"
 "may be used by programs (such as\n"
 "StarOffice) to obtain detailed \"metrics\"\n"
@@ -95,21 +91,21 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
 "\n"
 "AFMs may only contain one encoding,\n"
 "so here you can specify which one\n"
-"should be used.", "" ) );
+"should be used." ) );
 
     GroupBox4_2Layout->addWidget( itsGenAfmsCheck, 2, 0 );
 
     itsTtAfmCheck = new QCheckBox( GroupBox4_2, "itsTtAfmCheck" );
     itsTtAfmCheck->setEnabled( FALSE );
-    itsTtAfmCheck->setText( tr2i18n( "T&rueType", "" ) );
+    itsTtAfmCheck->setText( tr2i18n( "T&rueType" ) );
     QWhatsThis::add( itsTtAfmCheck, tr2i18n( "Check this item to enable creation of AFM files for TrueType fonts.\n"
 "\n"
-"NOTE: StarOffice v6 (onwards), and OpenOffice, no longer require AFMs for TrueType fonts.", "" ) );
+"NOTE: StarOffice v6 (onwards), and OpenOffice, no longer require AFMs for TrueType fonts." ) );
 
     GroupBox4_2Layout->addWidget( itsTtAfmCheck, 3, 1 );
 
     TextLabel1_2 = new QLabel( GroupBox4_2, "TextLabel1_2" );
-    TextLabel1_2->setText( tr2i18n( "encoding", "" ) );
+    TextLabel1_2->setText( tr2i18n( "encoding" ) );
 
     GroupBox4_2Layout->addWidget( TextLabel1_2, 2, 3 );
     QSpacerItem* spacer_2 = new QSpacerItem( 16, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -118,35 +114,33 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     CSysCfgSettingsWidgetDataLayout->addWidget( GroupBox4_2, 0, 0 );
 
     ButtonGroup5_2_2 = new QButtonGroup( this, "ButtonGroup5_2_2" );
-    ButtonGroup5_2_2->setTitle( tr2i18n( "Command To Refresh X's Font List", "" ) );
+    ButtonGroup5_2_2->setTitle( tr2i18n( "Command To Refresh X's Font List" ) );
     ButtonGroup5_2_2->setColumnLayout(0, Qt::Vertical );
-    ButtonGroup5_2_2->layout()->setSpacing( 0 );
-    ButtonGroup5_2_2->layout()->setMargin( 0 );
+    ButtonGroup5_2_2->layout()->setSpacing( 6 );
+    ButtonGroup5_2_2->layout()->setMargin( 11 );
     ButtonGroup5_2_2Layout = new QGridLayout( ButtonGroup5_2_2->layout() );
     ButtonGroup5_2_2Layout->setAlignment( Qt::AlignTop );
-    ButtonGroup5_2_2Layout->setSpacing( 6 );
-    ButtonGroup5_2_2Layout->setMargin( 11 );
 
     itsXsetRadio = new QRadioButton( ButtonGroup5_2_2, "itsXsetRadio" );
     itsXsetRadio->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsXsetRadio->sizePolicy().hasHeightForWidth() ) );
-    itsXsetRadio->setText( tr2i18n( "&xset fp rehash", "" ) );
+    itsXsetRadio->setText( tr2i18n( "&xset fp rehash" ) );
     itsXsetRadio->setChecked( TRUE );
 
     ButtonGroup5_2_2Layout->addMultiCellWidget( itsXsetRadio, 0, 0, 0, 1 );
 
     itsXfsRadio = new QRadioButton( ButtonGroup5_2_2, "itsXfsRadio" );
-    itsXfsRadio->setText( tr2i18n( "/e&tc/rc.d/init.d/xfs restart", "" ) );
+    itsXfsRadio->setText( tr2i18n( "/e&tc/rc.d/init.d/xfs restart" ) );
 
     ButtonGroup5_2_2Layout->addMultiCellWidget( itsXfsRadio, 1, 1, 0, 1 );
 
     itsCustomRadio = new QRadioButton( ButtonGroup5_2_2, "itsCustomRadio" );
-    itsCustomRadio->setText( tr2i18n( "C&ustom:", "" ) );
+    itsCustomRadio->setText( tr2i18n( "C&ustom:" ) );
 
     ButtonGroup5_2_2Layout->addWidget( itsCustomRadio, 2, 0 );
 
     itsRestartXfsCommand = new QLineEdit( ButtonGroup5_2_2, "itsRestartXfsCommand" );
     itsRestartXfsCommand->setEnabled( FALSE );
-    QWhatsThis::add( itsRestartXfsCommand, tr2i18n( "This is the command that can be issued upon successful system configuration to restart the X font server.", "" ) );
+    QWhatsThis::add( itsRestartXfsCommand, tr2i18n( "This is the command that can be issued upon successful system configuration to restart the X font server." ) );
 
     ButtonGroup5_2_2Layout->addWidget( itsRestartXfsCommand, 2, 1 );
 

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Fri Sep 21 00:08:56 2001
+** Created: Wed Oct 24 21:21:38 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -29,22 +29,18 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
 {
     if ( !name )
 	setName( "CFontsWidgetData" );
-    resize( 603, 397 ); 
-    setCaption( tr2i18n( "Form1", "" ) );
-    CFontsWidgetDataLayout = new QGridLayout( this ); 
-    CFontsWidgetDataLayout->setSpacing( 6 );
-    CFontsWidgetDataLayout->setMargin( 11 );
+    resize( 552, 314 ); 
+    setCaption( tr2i18n( "Form1" ) );
+    CFontsWidgetDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CFontsWidgetDataLayout"); 
 
     itsBox = new QGroupBox( this, "itsBox" );
     itsBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsBox->sizePolicy().hasHeightForWidth() ) );
-    itsBox->setTitle( tr2i18n( "Preview:", "" ) );
+    itsBox->setTitle( tr2i18n( "Preview:" ) );
     itsBox->setColumnLayout(0, Qt::Vertical );
-    itsBox->layout()->setSpacing( 0 );
-    itsBox->layout()->setMargin( 0 );
+    itsBox->layout()->setSpacing( 6 );
+    itsBox->layout()->setMargin( 6 );
     itsBoxLayout = new QGridLayout( itsBox->layout() );
     itsBoxLayout->setAlignment( Qt::AlignTop );
-    itsBoxLayout->setSpacing( 6 );
-    itsBoxLayout->setMargin( 6 );
 
     itsBackground = new QFrame( itsBox, "itsBackground" );
     QPalette pal;
@@ -103,9 +99,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     itsBackground->setPalette( pal );
     itsBackground->setFrameShape( QFrame::WinPanel );
     itsBackground->setFrameShadow( QFrame::Sunken );
-    itsBackgroundLayout = new QGridLayout( itsBackground ); 
-    itsBackgroundLayout->setSpacing( 0 );
-    itsBackgroundLayout->setMargin( 2 );
+    itsBackgroundLayout = new QGridLayout( itsBackground, 1, 1, 2, 0, "itsBackgroundLayout"); 
 
     itsProgress = new KProgress( itsBackground, "itsProgress" );
     itsProgress->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsProgress->sizePolicy().hasHeightForWidth() ) );
@@ -117,7 +111,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     itsLabel = new QLabel( itsBackground, "itsLabel" );
     itsLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, itsLabel->sizePolicy().hasHeightForWidth() ) );
     itsLabel->setMinimumSize( QSize( 0, 32 ) );
-    itsLabel->setText( tr2i18n( "No preview available", "" ) );
+    itsLabel->setText( tr2i18n( "No preview available" ) );
 
     itsBackgroundLayout->addWidget( itsLabel, 0, 1 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

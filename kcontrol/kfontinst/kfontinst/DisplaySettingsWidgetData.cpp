@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DisplaySettingsWidget.ui'
 **
-** Created: Tue Sep 18 12:10:11 2001
+** Created: Wed Oct 24 21:21:37 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -30,34 +30,30 @@ CDisplaySettingsWidgetData::CDisplaySettingsWidgetData( QWidget* parent,  const 
 	setName( "CDisplaySettingsWidgetData" );
     resize( 444, 234 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, sizePolicy().hasHeightForWidth() ) );
-    setCaption( tr2i18n( "Form5", "" ) );
-    CDisplaySettingsWidgetDataLayout = new QGridLayout( this ); 
-    CDisplaySettingsWidgetDataLayout->setSpacing( 6 );
-    CDisplaySettingsWidgetDataLayout->setMargin( 11 );
+    setCaption( tr2i18n( "Form5" ) );
+    CDisplaySettingsWidgetDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CDisplaySettingsWidgetDataLayout"); 
 
     ButtonGroup5_3 = new QButtonGroup( this, "ButtonGroup5_3" );
     ButtonGroup5_3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, ButtonGroup5_3->sizePolicy().hasHeightForWidth() ) );
-    ButtonGroup5_3->setTitle( tr2i18n( "Mode:", "" ) );
+    ButtonGroup5_3->setTitle( tr2i18n( "Mode:" ) );
     ButtonGroup5_3->setColumnLayout(0, Qt::Vertical );
-    ButtonGroup5_3->layout()->setSpacing( 0 );
-    ButtonGroup5_3->layout()->setMargin( 0 );
+    ButtonGroup5_3->layout()->setSpacing( 6 );
+    ButtonGroup5_3->layout()->setMargin( 11 );
     ButtonGroup5_3Layout = new QGridLayout( ButtonGroup5_3->layout() );
     ButtonGroup5_3Layout->setAlignment( Qt::AlignTop );
-    ButtonGroup5_3Layout->setSpacing( 6 );
-    ButtonGroup5_3Layout->setMargin( 11 );
 
     itsAdvanced = new QRadioButton( ButtonGroup5_3, "itsAdvanced" );
-    itsAdvanced->setText( tr2i18n( "&Advanced", "" ) );
+    itsAdvanced->setText( tr2i18n( "&Advanced" ) );
     QWhatsThis::add( itsAdvanced, tr2i18n( "In \"advanced\" mode the complete X11 fonts folder structure is displayed - allowing you to specify exactly where a font should be installed.\n"
 "\n"
-"This mode also allows you to install Speedo and bitmap fonts.", "" ) );
+"This mode also allows you to install Speedo and bitmap fonts." ) );
 
     ButtonGroup5_3Layout->addWidget( itsAdvanced, 0, 0 );
 
     itsBasic = new QRadioButton( ButtonGroup5_3, "itsBasic" );
-    itsBasic->setText( tr2i18n( "&Basic", "" ) );
+    itsBasic->setText( tr2i18n( "&Basic" ) );
     itsBasic->setChecked( TRUE );
-    QWhatsThis::add( itsBasic, tr2i18n( "This mode only displays TrueType and Type1 fonts - and will hide the underlying folder structure.", "" ) );
+    QWhatsThis::add( itsBasic, tr2i18n( "This mode only displays TrueType and Type1 fonts - and will hide the underlying folder structure." ) );
 
     ButtonGroup5_3Layout->addWidget( itsBasic, 0, 1 );
 
@@ -68,35 +64,33 @@ CDisplaySettingsWidgetData::CDisplaySettingsWidgetData( QWidget* parent,  const 
     CDisplaySettingsWidgetDataLayout->addItem( spacer_2, 5, 1 );
 
     itsCustomCheck = new QCheckBox( this, "itsCustomCheck" );
-    itsCustomCheck->setText( tr2i18n( "&Custom preview string:", "" ) );
+    itsCustomCheck->setText( tr2i18n( "&Custom preview string:" ) );
 
     CDisplaySettingsWidgetDataLayout->addMultiCellWidget( itsCustomCheck, 4, 4, 0, 1 );
 
     itsCustomText = new QLineEdit( this, "itsCustomText" );
     itsCustomText->setEnabled( FALSE );
-    QWhatsThis::add( itsCustomText, tr2i18n( "Enter your custom preview string. This will be used in the font lists in the \"Fonts\" tab.", "" ) );
+    QWhatsThis::add( itsCustomText, tr2i18n( "Enter your custom preview string. This will be used in the font lists in the \"Fonts\" tab." ) );
 
     CDisplaySettingsWidgetDataLayout->addWidget( itsCustomText, 4, 2 );
     QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
     CDisplaySettingsWidgetDataLayout->addItem( spacer_3, 3, 1 );
 
     ButtonGroup2 = new QButtonGroup( this, "ButtonGroup2" );
-    ButtonGroup2->setTitle( tr2i18n( "Font Lists:", "" ) );
+    ButtonGroup2->setTitle( tr2i18n( "Font Lists:" ) );
     ButtonGroup2->setColumnLayout(0, Qt::Vertical );
-    ButtonGroup2->layout()->setSpacing( 0 );
-    ButtonGroup2->layout()->setMargin( 0 );
+    ButtonGroup2->layout()->setSpacing( 6 );
+    ButtonGroup2->layout()->setMargin( 11 );
     ButtonGroup2Layout = new QGridLayout( ButtonGroup2->layout() );
     ButtonGroup2Layout->setAlignment( Qt::AlignTop );
-    ButtonGroup2Layout->setSpacing( 6 );
-    ButtonGroup2Layout->setMargin( 11 );
 
     itsLeftAndRight = new QRadioButton( ButtonGroup2, "itsLeftAndRight" );
-    itsLeftAndRight->setText( tr2i18n( "&Left and right", "" ) );
+    itsLeftAndRight->setText( tr2i18n( "&Left and right" ) );
 
     ButtonGroup2Layout->addWidget( itsLeftAndRight, 0, 0 );
 
     itsTopAndBottom = new QRadioButton( ButtonGroup2, "itsTopAndBottom" );
-    itsTopAndBottom->setText( tr2i18n( "&Top and bottom", "" ) );
+    itsTopAndBottom->setText( tr2i18n( "&Top and bottom" ) );
     itsTopAndBottom->setChecked( TRUE );
 
     ButtonGroup2Layout->addWidget( itsTopAndBottom, 0, 1 );
