@@ -81,9 +81,9 @@ int MyApplication::newInstance()
 int main(int argc, char *argv[])
 {
 
-  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), "v2.0pre", I18N_NOOP("KDE Control Centre - configuration manager for KDE"),
-              KAboutData::GPL, "(c) 1999-2000, The Konqueror developers" );
-  KCmdLineArgs::init( argc, argv, "konqueror","","");
+  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"), "v2.0pre", I18N_NOOP("KDE Control Center - configuration manager for KDE"),
+              KAboutData::GPL, "(c) 1999-2000, The Control Center developers" );
+  KCmdLineArgs::init( argc, argv, "kcontrol","","");
 
   KCmdLineArgs::addCmdLineOptions( options );
   
@@ -101,3 +101,4 @@ int main(int argc, char *argv[])
 
   return app.exec();
 }
+
