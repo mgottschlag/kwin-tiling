@@ -12,9 +12,6 @@
             <height>474</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>Form1</string>
-    </property>
     <property name="whatsThis" stdset="0">
         <string>If this option is selected, informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
     </property>
