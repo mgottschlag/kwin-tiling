@@ -35,8 +35,6 @@ public:
     int buttons();
     QString quickHelp() const;
 
-signals:
-    void changed(bool);
 
 private slots:
 
