@@ -123,17 +123,17 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 
 QString SchemaEditor::schema()
 {
+    QString filename = defaultSchema;
+
     int i = schemaList->currentItem();
-    if (defaultSchemaCB->isChecked())
-	if(i>=0) {
-	    QString filename = ((SchemaListBoxText *) schemaList->item(i))->filename();
+    if (defaultSchemaCB->isChecked() && i>=0)
+      filename = ((SchemaListBoxText *) schemaList->item(i))->filename();
+
 	    int j = filename.findRev('/');
 	    if (j > -1)
 	        filename = filename.mid(j+1);
-	    return filename;
-        }
-    return defaultSchema;
 
+    return filename;    
 }
 
 
@@ -319,7 +319,12 @@ void SchemaEditor::removeCurrent()
 	    return;
     }
 
-    if(base==schema())
+    QString base_filename = base;
+    int j = base_filename.findRev('/');
+    if (j > -1)
+        base_filename = base_filename.mid(j+1);
+
+    if(base_filename==schema())
      setSchema("");
 
     if (!QFile::remove(base))
