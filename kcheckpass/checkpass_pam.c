@@ -39,10 +39,10 @@ struct pam_data {
 
 #ifdef PAM_MESSAGE_NONCONST
 typedef struct pam_message pam_message_type;
-typedef void ** pam_gi_type;
+typedef void *pam_gi_type;
 #else
 typedef const struct pam_message pam_message_type;
-typedef const void ** pam_gi_type;
+typedef const void *pam_gi_type;
 #endif
 
 static int
@@ -131,7 +131,7 @@ AuthReturn Authenticate(const char *caller, const char *method,
 {
   const char	*tty;
   pam_handle_t	*pamh;
-  void		*pam_item;
+  pam_gi_type	pam_item;
   const char	*pam_service;
   char		pservb[64];
   int		pam_error;
@@ -176,7 +176,7 @@ AuthReturn Authenticate(const char *caller, const char *method,
   }
 
   /* just in case some module is stupid enough to ignore a preset PAM_USER */
-  pam_error = pam_get_item (pamh, PAM_USER, (pam_gi_type)&pam_item);
+  pam_error = pam_get_item (pamh, PAM_USER, &pam_item);
   if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);
     return AuthError;
