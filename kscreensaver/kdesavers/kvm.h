@@ -1,19 +1,16 @@
 //-----------------------------------------------------------------------------
 //
-// klaser - port of "laser" from xlock
+// kvm screensaver
 //
 
 #ifndef __KVM_H__
 #define __KVM_H__
 
-#include <X11/Xlib.h>
-
 #include <qtimer.h>
 #include <qlist.h>
 #include <qdialog.h>
 #include <qlineedit.h>
-#include "saver.h"
-#include "xlock.h"
+#include <kscreensaver.h>
 
 extern "C" {
 #include "vm.h"
@@ -26,10 +23,7 @@ extern "C" {
 #define	MAX_REFRESH_TIMEOUT	40
 
 typedef struct {
-  Display *dpy;
-  Window window;
-  XWindowAttributes xgwa;
-  GC draw_gc, erase_gc;
+  QWidget *w; 
   int grid_width, grid_height;
   int grid_margin_x;
   int grid_margin_y;
@@ -40,18 +34,18 @@ typedef struct {
   char*	modified;
   int	show_threads;
 
-  Pixmap images;
+  QPixmap images;
   int image_width, image_height;
   int nglyphs;
 
 } m_state;
 
 
-class kVmSaver : public kScreenSaver
+class kVmSaver : public KScreenSaver
 {
 	Q_OBJECT
 public:
-	kVmSaver( Drawable drawable );
+	kVmSaver( WId id );
 	virtual ~kVmSaver();
 
 	void setSpeed( int spd );

@@ -1,4 +1,4 @@
-EXTRA_DIST = matrix_font.xbm vm.xbm
+EXTRA_DIST = matrix_font.xbm
 
 
 

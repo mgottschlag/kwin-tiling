@@ -33,25 +33,22 @@
 /* for AIX at least */
 #include <time.h>
 
-#undef Below // Namespace collision
-
 #include <qbuttongroup.h>
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qslider.h>
+#include <qpainter.h>
+#include <qbitmap.h>
 
 #include <kapp.h>
 #include <kbuttonbox.h>
 #include <kcolordlg.h>
 #include <kconfig.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <kmessagebox.h>
-
-#include "helpers.h"
-
-#include <X11/xpm.h>
 
 #ifdef DEBUG_MEM
 #include <mcheck.h>
@@ -59,117 +56,66 @@
 
 #include "kvm.h"
 
- /* #include "matrix.moc.cpp" */ /* ??????? */
-
-#include "helpers.h"
-
-#include "pixmaps/vm.xpm"
-#include "bitmaps/vm.xbm"
+#include "vm.xpm"
+#include "vm.xbm"
 
 #define CHAR_HEIGHT 22
 
-unsigned int
-get_color(char * s, Display *dpy, Colormap cmap)
-{
-  XColor color;
 
-  if (! XParseColor (dpy, cmap, s, &color))
+// libkscreensaver interface
+extern "C"
+{
+    const char *kss_applicationName = "kvm.kss";
+    const char *kss_description = I18N_NOOP( "Virtual Machine" );
+    const char *kss_version = "2.2.0";
+
+    KScreenSaver *kss_create( WId id )
     {
-      fprintf (stderr, "Can't parse color %s\n", s);
-      return 0;
+        KLocale::setMainCatalogue("klock");
+        return new kVmSaver( id );
     }
-  if (! XAllocColor (dpy, cmap, &color))
+
+    QDialog *kss_setup()
     {
-      fprintf (stderr, "Couldn't allocate color %s\n", s);
-      return 0;
+        KLocale::setMainCatalogue("klock");
+        return new kVmSetup();
     }
-  return color.pixel;
-} 
+}
+
 
 
 static void
 load_images (m_state *state)
 {
-  if ( state->xgwa.depth > 1)
+  if ( QPixmap::defaultDepth() > 1 )
     {
-      XpmAttributes xpmattrs;
-      int result;
-      xpmattrs.valuemask = 0;
-
-# ifdef XpmCloseness
-      xpmattrs.valuemask |= XpmCloseness;
-      xpmattrs.closeness = 40000;
-# endif
-# ifdef XpmVisual
-      xpmattrs.valuemask |= XpmVisual;	
-      xpmattrs.visual = state->xgwa.visual;
-# endif
-# ifdef XpmDepth
-      xpmattrs.valuemask |= XpmDepth;
-      xpmattrs.depth = state->xgwa.depth;
-# endif
-# ifdef XpmColormap
-      xpmattrs.valuemask |= XpmColormap;
-      xpmattrs.colormap = state->xgwa.colormap;
-# endif
-
-      result = XpmCreatePixmapFromData (state->dpy, state->window, (char **)vm,
-                                        &state->images, 0 /* mask */,
-                                        &xpmattrs);
-      if (!state->images || (result != XpmSuccess && result != XpmColorError))
-        state->images = 0;
-
-      state->image_width = xpmattrs.width;
-      state->image_height = xpmattrs.height;
-      state->nglyphs = state->image_height / CHAR_HEIGHT;
+      state->images = QPixmap( vm );
     }
   else
-
     {
-      unsigned long fg, bg;
-      state->image_width = vm_width;
-      state->image_height = vm_height;
-      state->nglyphs = state->image_height / CHAR_HEIGHT;
-
-      /** MOI... Mettre autre chose ici, pris du req par exemple **/
-      fg = get_color((char*)"green", state->dpy, state->xgwa.colormap);
-      bg = get_color((char*)"black", state->dpy, state->xgwa.colormap);
-      state->images =
-        XCreatePixmapFromBitmapData (state->dpy, state->window,
-                                     (char *) vm_bits,
-                                     state->image_width, state->image_height,
-                                     bg, fg, state->xgwa.depth);
+      state->images = QBitmap( vm_width, vm_height, vm_bits );
     }
+  state->image_width = state->images.width();
+  state->image_height = state->images.height();
+  state->nglyphs = state->image_height / CHAR_HEIGHT;
 }
 
 
 static m_state *
-init_pool ( Drawable mDrawable )
+init_pool ( QWidget *w )
 {
-  XGCValues gcv;
-  m_state *state = (m_state *) calloc (sizeof(*state), 1);
-  state->dpy = qt_xdisplay();
-  state->window = mDrawable;
-  XGetWindowAttributes (state->dpy, mDrawable, &state->xgwa);
+  m_state *state = new m_state;
+  state->w = w;
 
   load_images (state);
-
-  gcv.foreground = get_color((char*)"green", state->dpy, state->xgwa.colormap);
-  gcv.background = get_color((char*)"black", state->dpy, state->xgwa.colormap);
-
-  state->draw_gc = XCreateGC (state->dpy, state->window,
-                              GCForeground|GCBackground, &gcv);
-  gcv.foreground = gcv.background;
-  state->erase_gc = XCreateGC (state->dpy, state->window,
-                               GCForeground|GCBackground, &gcv);
 
   state->char_width = state->image_width / 4;
   state->char_height = CHAR_HEIGHT;
 
-  state->grid_width  = state->xgwa.width  / state->char_width;
-  state->grid_height = state->xgwa.height / state->char_height;
-  state->grid_margin_x = state->xgwa.width%state->char_width/2;
-  state->grid_margin_y = state->xgwa.height%state->char_height/2;
+  state->grid_width  = w->width()  / state->char_width;
+  state->grid_height = w->height() / state->char_height;
+  state->grid_margin_x = w->width()%state->char_width/2;
+  state->grid_margin_y = w->height()%state->char_height/2;
   state->show_threads = 1;
   vm_init_pool( &(state->pool), state->grid_width*state->grid_height, 
                 THREAD_MAX_STACK_SIZE, MAX_THREADS_NUM );
@@ -225,48 +171,22 @@ draw_pool (m_state *state)
         if( state->show_threads )
          if( state->modified[index] == 1 )
           pos_x += 2;
-        XCopyArea (state->dpy, state->images, state->window, state->draw_gc,
-                   pos_x*state->char_width,
-                   pos_y*state->char_height,
-                   state->char_width, state->char_height,
-                   state->grid_margin_x + x*state->char_width,
-                   state->grid_margin_y + y*state->char_height);
+          QPainter p(state->w);
+          p.setPen( Qt::green );
+          p.setBrush( Qt::black );
+          p.drawPixmap( state->grid_margin_x + x*state->char_width,
+                         state->grid_margin_y + y*state->char_height,
+                         state->images, pos_x*state->char_width,
+                         pos_y*state->char_height,
+                         state->char_width, state->char_height );
        --state->modified[index];
       }
     }
 }
 
-static kVmSaver *saver = NULL;
-
-void startScreenSaver( Drawable d )
-{
-	if ( saver )
-		return;
-	saver = new kVmSaver( d );
-}
-
-void stopScreenSaver()
-{
-	if ( saver )
-		delete saver;
-	saver = NULL;
-}
-
-int setupScreenSaver()
-{
-	kVmSetup dlg;
-
-	return dlg.exec();
-}
-
-QString getScreenSaverName()
-{
-	return i18n("Virtual Machine");
-}
-
 //-----------------------------------------------------------------------------
 
-kVmSaver::kVmSaver( Drawable drawable ) : kScreenSaver( drawable )
+kVmSaver::kVmSaver( WId id ) : KScreenSaver( id )
 {
 	readSettings();
 
@@ -278,7 +198,7 @@ kVmSaver::kVmSaver( Drawable drawable ) : kScreenSaver( drawable )
 
         refreshStep = 0;
 
-        pool_state = init_pool( mDrawable );
+        pool_state = init_pool( this );
         vm_default_initstate( time(0), &(pool_state->pool->vm_random_data) );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
         timer.start( 100 - speed );
@@ -295,8 +215,8 @@ kVmSaver::~kVmSaver()
 
 void kVmSaver::blank()
 {
-  XSetWindowBackground( qt_xdisplay(), mDrawable, QColor(0, 0, 0).pixel() );
-  XClearWindow( qt_xdisplay(), mDrawable );
+  setBackgroundColor( black );
+  erase();
 }
 
 void kVmSaver::setSpeed( int spd )
@@ -312,13 +232,11 @@ void kVmSaver::setRefreshTimeout( const int refreshTimeout )
 
 void kVmSaver::readSettings()
 {
-	KConfig *config = klock_config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	speed = config->readNumEntry( "Speed", 50 );
 	refreshTimeout = config->readNumEntry( "DisplayRefreshTimeout", 0 );
-
-	delete config;
 }
 int kVmSaver::getRandom( const int max_value ) {
  return (int)( vm_random(&(pool_state->pool->vm_random_data))*1.0*(max_value + 1.0)/
@@ -379,7 +297,6 @@ kVmSetup::kVmSetup( QWidget *parent, const char *name )
 	tl1->addLayout(tl11);	
 
 	label = new QLabel( i18n("Virtual machine speed"), this );
-	min_size(label);
 	tl11->addWidget(label);
 
 	slider = new QSlider( QSlider::Horizontal, this );
@@ -393,7 +310,6 @@ kVmSetup::kVmSetup( QWidget *parent, const char *name )
 	tl11->addStretch(1);
 
 	label = new QLabel( i18n("Display update speed"), this );
-	min_size(label);
 	tl11->addWidget(label);
 
 	slider = new QSlider( QSlider::Horizontal, this );
@@ -431,14 +347,11 @@ kVmSetup::kVmSetup( QWidget *parent, const char *name )
 	tl->addWidget(bbox);
 
 	tl->freeze();
-       
-        XSync( qt_xdisplay(), 0 ); // ???
 }
 
 void kVmSetup::readSettings()
 {
-	//KConfig *config = KApplication::getKApplication()->getConfig();
-	KConfig *config = klock_config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	speed = config->readNumEntry( "Speed", 50 );
@@ -451,8 +364,6 @@ void kVmSetup::readSettings()
 		refreshTimeout = MAX_REFRESH_TIMEOUT;
 	else if ( refreshTimeout < 0 )
 		refreshTimeout = 0;
-
-	delete config;
 }
 
 void kVmSetup::slotSpeed( int num )
@@ -470,7 +381,7 @@ void kVmSetup::slotRefreshTimeout( int num )
 
 void kVmSetup::slotOkPressed()
 {
-	KConfig *config = klock_config();
+	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -480,7 +391,6 @@ void kVmSetup::slotOkPressed()
 	config->writeEntry( "DisplayRefreshTimeout", sspeed );
 
 	config->sync();
-	delete config;
 	accept();
 }
 

@@ -7,7 +7,7 @@ CPPFLAGS="$ac_save_CPPFLAGS"
 ],
 GL_SAVERS="")
 AC_SUBST(GL_SAVERS)
-AC_HAVE_XPM(XPM_SAVERS="kmatrix.kss kvm.kss",XPM_SAVERS="")
+AC_HAVE_XPM(XPM_SAVERS="kmatrix.kss",XPM_SAVERS="")
 AC_SUBST(XPM_SAVERS)
 
 AC_CHECK_FUNCS(gettimeofday)

@@ -13,7 +13,7 @@ bin_PROGRAMS = kswarm.kss krock.kss \
 	kbouboule.kss kscience.kss \
 	kslidescreen.kss krandom.kss kbsod.kss
 
-EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
+EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss
 
 
 BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
@@ -50,20 +50,16 @@ kspace_kss_LDADD = $(LDADD) $(GLLIB)
 kscience_kss_SOURCES = $(BASE_SRCS) science.cpp
 kscience_kss_LDADD = $(LDADD) -lm
 
-kvm_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) vm_random.c vm.c kvm.cpp
-kvm_kss_LDADD= $(LDADD) $(XPMLIB) -lm
-
 METASOURCES = saver.moc demowin.moc rock.moc \
 		pyro.moc hop.moc swarm.moc morph3d.moc space.moc bouboule.moc \
-		science.moc pipes.moc slidescreen.moc bsod.moc matrix.moc \
-		kvm.moc
+		science.moc pipes.moc slidescreen.moc bsod.moc matrix.moc
 
 noinst_HEADERS = saver.h demowin.h xlock.h rock.h \
 		pyro.h hop.h swarm.h space.h bouboule.h  science.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
 		slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h \
-		vroot.h matrix.h vm_random.h vm.h kvm.h
+		vroot.h matrix.h
 
 messages:
 	$(XGETTEXT) *.cpp *.h -o $(podir)/klock.pot
@@ -77,7 +73,7 @@ desktop_DATA = KBouboule.desktop KBsod.desktop \
 	KHop.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
 	KPyro.desktop KRandom.desktop KRock.desktop \
 	KScience.desktop KSlidescreen.desktop \
-	KSpace.desktop KSwarm.desktop KVm.desktop
+	KSpace.desktop KSwarm.desktop
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 
 EXTRA_DIST = kscience.gif kscience-small.gif kscreensave-0.3.3.lsm $(desktop_DATA)
