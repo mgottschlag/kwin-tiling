@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>443</width>
-            <height>393</height>
+            <height>430</height>
         </rect>
     </property>
     <property name="caption">
@@ -31,6 +31,12 @@
         <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>general_group</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>Box</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
             <property name="title">
                 <string>General</string>
@@ -518,6 +524,7 @@
     <tabstop>m_backgroundInput</tabstop>
 </tabstops>
 <includes>
+    <include location="global" impldecl="in declaration">kcombobox.h</include>
     <include location="global" impldecl="in declaration">kurlrequester.h</include>
 </includes>
 <slots>

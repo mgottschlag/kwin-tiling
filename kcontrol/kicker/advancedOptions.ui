@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>217</width>
-            <height>97</height>
+            <width>254</width>
+            <height>107</height>
         </rect>
     </property>
     <property name="caption">
@@ -142,5 +142,8 @@
         </spacer>
     </grid>
 </widget>
+<includes>
+    <include location="global" impldecl="in declaration">knuminput.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
