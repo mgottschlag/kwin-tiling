@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <config.h>
 
 #include <qlabel.h>
 #include <qmsgbox.h>
