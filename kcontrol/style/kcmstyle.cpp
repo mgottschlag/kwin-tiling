@@ -108,7 +108,7 @@ extern "C"
 			flags |= KRdbExportColors;
 		runRdb( flags );
 
-		bool isActive = !config.readBoolEntry( "disableMultihead", false) && 
+		bool isActive = !config.readBoolEntry( "disableMultihead", false) &&
 			                                      (ScreenCount(qt_xdisplay()) > 1);
 		applyMultiHead( isActive );
 
@@ -319,7 +319,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbToolbarSettings = new QGroupBox( 1, Qt::Horizontal, i18n("Misc Toolbar Settings"), page3 );
 	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), gbToolbarSettings );
 	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), gbToolbarSettings );
-	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbToolbarSettings );
 
 	QWidget * dummy = new QWidget( gbToolbarSettings );
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
@@ -338,6 +337,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	gbVisualAppearance = new QGroupBox( 1, Qt::Horizontal, i18n("Visual Appearance"), page3 );
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbVisualAppearance );
+	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbVisualAppearance );
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbVisualAppearance );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual an properly reimplemented
 	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbVisualAppearance );
@@ -494,7 +494,7 @@ void KCMStyle::save()
 	config.writeEntry( "IconText", tbIcon, true, true );
 	config.sync();
 
-	// Export the changes we made to qtrc, and update all qt-only 
+	// Export the changes we made to qtrc, and update all qt-only
 	// applications on the fly, ensuring that we still follow the user's
 	// export fonts/colors settings.
 	if (m_bStyleDirty | m_bEffectsDirty)	// Export only if necessary
