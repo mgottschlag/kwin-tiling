@@ -112,30 +112,32 @@ void TestWin::keyPressEvent(QKeyEvent *)
 KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	: KDisplayModule( parent, m )
 {
-	if (mode() == Init) 
-        return;
-
+    mSetupProc = 0;
+    mPreviewProc = 0;
     mTestWin = 0;
     mTestProc = 0;
     mPrevSelected = -1;
     mMonitor = 0;
-
+     
+    if (mode() == Init) 
+        return;
+    
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
-                                    KGlobal::dirs()->kde_default("apps") +
-                                    "apps/ScreenSavers/");
-
+                                     KGlobal::dirs()->kde_default("apps") +
+                                     "apps/ScreenSavers/");
+    
     // Add KDE specific screensaver path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
                                      "ScreenSavers/");
-
+    
 	readSettings();
 	
-	setName( i18n("Screen Saver").ascii() );
-
-	mSetupProc = new KProcess;
-	connect(mSetupProc, SIGNAL(processExited(KProcess *)),
+    setName( i18n("Screen Saver").ascii() );
+    
+    mSetupProc = new KProcess;
+    connect(mSetupProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotSetupDone(KProcess *)));
     
 	mPreviewProc = new KProcess;
