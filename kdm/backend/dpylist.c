@@ -78,17 +78,18 @@ Debug("AllLocalDisplaysLocked?\n");
 void
 StartReserveDisplay (int lt)
 {
-    struct display *d;
+    struct display *d, *rd;
 
 Debug("StartReserveDisplay\n");
-    for (d = displays; d; d = d->next)
+    for (rd = 0, d = displays; d; d = d->next)
 	if (d->status == reserve)
-	{
-Debug("starting reserve display %s, timeout %d\n", d->name, lt);
-	    d->idleTimeout = lt;
-	    StartDisplay (d);
-	    break;
-	}
+	    rd = d;
+    if (rd)
+    {
+Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
+	rd->idleTimeout = lt;
+	StartDisplay (rd);
+    }
 }
 
 void
