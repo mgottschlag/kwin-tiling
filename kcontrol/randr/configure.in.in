@@ -10,7 +10,7 @@ if test "$xrandr_h" = yes; then
     RANDR_SUBDIR="randr"
   ], [
     RANDR_SUBDIR=""
-  ], -lXrender $X_EXTRA_LIBS)
+  ], -lXrender -lXext $X_EXTRA_LIBS)
 else
   LIB_XRANDR=
 fi
