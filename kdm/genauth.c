@@ -57,9 +57,8 @@ extern Time_t time ();
 #endif
 
 #ifndef X_GETTIMEOFDAY
-//#define X_GETTIMEOFDAY(t) gettimeofday(t)
-//WABA: According to the man page gettimeofday takes a second argument
-//if this breaks on your system, we need to have a configure test.
+/*WABA: According to the man page gettimeofday takes a second argument */
+/*if this breaks on your system, we need to have a configure test.     */
 #define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
 #endif
 
