@@ -97,7 +97,7 @@ extern "C"
 #endif
   }
 
-  KCModule *create_devices(QWidget *parent, const char * /*name*/)
+  KDE_EXPORT KCModule *create_devices(QWidget *parent, const char * /*name*/)
   { 
 #ifdef INFO_DEVICES_AVAILABLE
     return new KInfoListWidget(i18n("Devices"), parent, "kcminfo", GetInfo_Devices);
