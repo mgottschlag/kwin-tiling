@@ -79,8 +79,7 @@ KLoginLineEdit::focusOutEvent( QFocusEvent *e)
 class MyApp : public KApplication {
 
 public:
-    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") 
-    { disableAutoDcopRegistration(); };
+    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") {};
     virtual bool x11EventFilter( XEvent * );
 };
 
@@ -665,6 +664,7 @@ extern "C" void
 kg_main(int argc, char **argv)
 {
     kde_have_kipc = false;
+    KApplication::disableAutoDcopRegistration();
     MyApp myapp(argc, argv);
 
     kdmcfg = new KDMConfig();
