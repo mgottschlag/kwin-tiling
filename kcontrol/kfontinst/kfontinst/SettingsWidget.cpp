@@ -46,51 +46,57 @@
 #include <qlineedit.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <klineedit.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <fstream>
 
 void CSettingsWidget::reset()
 {
-    itsFontsDirText->setText(CKfiGlobal::cfg().getFontsDir());
-    itsEncodingsDirText->setText(CKfiGlobal::cfg().getEncodingsDir());
-    itsGhostscriptFileText->setText(CKfiGlobal::cfg().getGhostscriptFile());
-    itsGhostscriptCheck->setChecked(CKfiGlobal::cfg().getDoGhostscript());
-    itsXConfigFileText->setText(CKfiGlobal::cfg().getXConfigFile());
-    itsFontsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
-    itsEncodingsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
-    itsGhostscriptFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
-    itsXConfigFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    itsFontsDirReq->setShowLocalProtocol(false);
+    itsFontsDirReq->setURL(CKfiGlobal::cfg().getFontsDir());
+    itsFontsDirReq->lineEdit()->setReadOnly(true);
+
+    itsEncodingsDirReq->setShowLocalProtocol(false);
+    itsEncodingsDirReq->setURL(CKfiGlobal::cfg().getEncodingsDir());
+    itsEncodingsDirReq->lineEdit()->setReadOnly(true);
+
+    itsGhostscriptFileReq->setShowLocalProtocol(false);
+    itsGhostscriptFileReq->setURL(CKfiGlobal::cfg().getGhostscriptFile());
+    itsGhostscriptFileReq->lineEdit()->setReadOnly(true);
+    bool b = CKfiGlobal::cfg().getDoGhostscript();
+    itsGhostscriptCheck->setChecked(b);
+    itsGhostscriptFileReq->setEnabled(b);
+
+    itsXConfigFileReq->setShowLocalProtocol(false);
+    itsXConfigFileReq->setURL(CKfiGlobal::cfg().getXConfigFile());
+    itsXConfigFileReq->lineEdit()->setReadOnly(true);
 
     if(CMisc::root())
     {
-        itsCupsDirText->setText(CKfiGlobal::cfg().getCupsDir());
-        itsCupsCheck->setChecked(CKfiGlobal::cfg().getDoCups());
-        itsCupsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+        itsCupsDirReq->setShowLocalProtocol(false);
+        itsCupsDirReq->setURL(CKfiGlobal::cfg().getCupsDir());
+        itsCupsDirReq->lineEdit()->setReadOnly(true);
+        bool b = CKfiGlobal::cfg().getDoCups();
+        itsCupsCheck->setChecked(b);
+        itsCupsDirReq->setEnabled(b);
     }
     else
     {
-        itsCupsDirText->hide();
+        itsCupsDirReq->hide();
         itsCupsCheck->hide();
-        itsCupsDirButton->hide();
     }
     setupSubDirCombos();
 
-    if(CKfiGlobal::cfg().getSOConfigure())
-    {
-        itsCheck->setChecked(true);
-        itsDirButton->setEnabled(true);
-        itsPpdCombo->setEnabled(true);
-    }
-    else
-    {
-        itsCheck->setChecked(false);
-        itsDirButton->setEnabled(false);
-        itsPpdCombo->setEnabled(false);
-    }
-    itsDirText->setText(CKfiGlobal::cfg().getSODir());
+    b = CKfiGlobal::cfg().getSOConfigure();
+    itsCheck->setChecked(b);
+    itsStarOfficeDirReq->setEnabled(b);
+    itsPpdCombo->setEnabled(b);
 
-    itsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    itsStarOfficeDirReq->setShowLocalProtocol(false);
+    itsStarOfficeDirReq->setURL(CKfiGlobal::cfg().getSODir());
+    itsStarOfficeDirReq->lineEdit()->setReadOnly(true);
+
     setupPpdCombo();
 
     itsGenAfmsCheck->setChecked(CKfiGlobal::cfg().getDoAfm());
@@ -104,101 +110,119 @@ void CSettingsWidget::reset()
 
 void CSettingsWidget::encodingsDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
-                                                  this, i18n("Select Encodings Folder"));
+    KFileDialog *dlg = itsEncodingsDirReq->fileDialog();
+    dlg->setMode(KFile::Directory | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select Encodings Folder"));
+}
 
-    if(QString::null!=dir && dir!=itsEncodingsDirText->text())
-    {
-        itsEncodingsDirText->setText(dir);
-        CKfiGlobal::cfg().setEncodingsDir(dir);
-        CKfiGlobal::enc().clear();
-        CKfiGlobal::enc().addDir(dir);
-        scanEncodings();
-        emit madeChanges();
-    }
+void CSettingsWidget::encodingsDirChanged(const QString& dir)
+{
+    CKfiGlobal::cfg().setEncodingsDir(dir);
+    CKfiGlobal::enc().clear();
+    CKfiGlobal::enc().addDir(dir);
+    scanEncodings();
+    emit madeChanges();
 }
 
 void CSettingsWidget::gsFontmapButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound.utf8())==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
-                                              "Fontmap*", this, i18n("Select Ghostscript \"Fontmap\""));
+    KFileDialog *dlg = itsGhostscriptFileReq->fileDialog();
+    dlg->setMode(KFile::File | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select Ghostscript \"Fontmap\""));
+    dlg->setFilter("Fontmap");
+}
 
-    if(QString::null!=file && file!=itsGhostscriptFileText->text())
+void CSettingsWidget::gsFontmapChanged(const QString &file)
+{
+    bool ok=false;
+
+    if(!(CMisc::fExists(file)))
+       if(CMisc::dWritable(CMisc::getDir(file)))
+          ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
+                                                   "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
+       else
+          KMessageBox::error(this, i18n("File does not exist "
+                                        "and folder is not writeable."), i18n("File error"));
+    else
+       ok=true;
+
+    if(ok)
     {
-        bool ok=false;
-
-        if(!(CMisc::fExists(file)))
-            if(CMisc::dWritable(CMisc::getDir(file)))
-                ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
-                                                         "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
-            else
-                KMessageBox::error(this, i18n("File does not exist "
-                                              "and folder is not writeable."), i18n("File error"));
-        else
-            ok=true;
-
-        if(ok)
-        {
-            setGhostscriptFile(file);
-            emit madeChanges();
-        }
+       setGhostscriptFile(file);
+       emit madeChanges();
     }
 }
 
 void CSettingsWidget::cupsButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
-                                                  this, i18n("Select CUPS Folder"));
+    KFileDialog *dlg = itsCupsDirReq->fileDialog();
+    dlg->setMode(KFile::Directory | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select CUPS Folder"));
+}
 
-    if(QString::null!=dir && dir!=itsCupsDirText->text())
-    {
-        itsCupsDirText->setText(dir);
-        CKfiGlobal::cfg().setCupsDir(dir);
-    }
+void CSettingsWidget::cupsChanged(const QString &dir)
+{
+    CKfiGlobal::cfg().setCupsDir(dir);
+    emit madeChanges();
 }
 
 void CSettingsWidget::xDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
-                                                  this, i18n("Select Fonts Folder"));
+    KFileDialog *dlg = itsFontsDirReq->fileDialog();
+    dlg->setMode(KFile::Directory | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select Fonts Folder"));
+}
 
-    if(QString::null!=dir && dir!=itsFontsDirText->text())
-    {
-        itsFontsDirText->setText(dir);
-        CKfiGlobal::cfg().setFontsDir(dir);
-        setupSubDirCombos();
-        emit madeChanges();
-    }
+void CSettingsWidget::xDirChanged(const QString &dir)
+{
+    CKfiGlobal::cfg().setFontsDir(dir);
+    setupSubDirCombos();
+    emit madeChanges();
 }
 
 void CSettingsWidget::xConfigButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound.utf8())==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
-                                              NULL, this, i18n("Select X config file"));
+    KFileDialog *dlg = itsXConfigFileReq->fileDialog();
+    dlg->setMode(KFile::File | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select X config file"));
+}
 
-    if(QString::null!=file && file!=itsXConfigFileText->text())
-    {
-        bool ok=false;
+void CSettingsWidget::xConfigChanged(const QString &file)
+{
+    bool ok=false;
 
-        if(!(CMisc::fExists(file)))
-            if(CMisc::dWritable(CMisc::getDir(file)))
-                ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
-                                                         "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
-            else
-                KMessageBox::error(this, i18n("File does not exist "
-                                              "and folder is not writeable."), i18n("File error"));
+    if(!(CMisc::fExists(file)))
+        if(CMisc::dWritable(CMisc::getDir(file)))
+            ok=KMessageBox::questionYesNo(this, i18n("File does not exist.\n"
+                                                     "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
         else
-            ok=true;
+            KMessageBox::error(this, i18n("File does not exist "
+                                          "and folder is not writeable."), i18n("File error"));
+    else
+        ok=true;
 
-        if(ok)
-        {
-            setXConfigFile(file);
-            emit madeChanges();
-            if(!CKfiGlobal::xcfg().ok())
-                KMessageBox::information(this, i18n("File format not recognized!\n"
-                                                    "Advanced mode folder operations will not be available."));
-        }
+    if(ok)
+    {
+        setXConfigFile(file);
+        emit madeChanges();
+        if(!CKfiGlobal::xcfg().ok())
+            KMessageBox::information(this, i18n("File format not recognized!\n"
+                                                "Advanced mode folder operations will not be available."));
     }
+}
+
+void CSettingsWidget::dirButtonPressed()
+{
+    KFileDialog *dlg = itsStarOfficeDirReq->fileDialog();
+    dlg->setMode(KFile::Directory | KFile::LocalOnly);
+    dlg->setCaption(i18n("Select StarOffice Folder"));
+}
+
+void CSettingsWidget::dirChanged(const QString &dir)
+{
+    CKfiGlobal::cfg().setSODir(dir);
+    setupPpdCombo();
+    emit madeChanges();
 }
 
 void CSettingsWidget::setupSubDirCombos()
@@ -297,34 +321,21 @@ void CSettingsWidget::cupsChecked(bool on)
 
 void CSettingsWidget::setGhostscriptFile(const QString &f)
 {
-    itsGhostscriptFileText->setText(f);
+    itsGhostscriptFileReq->setURL(f);
     CKfiGlobal::cfg().setGhostscriptFile(f);
 }
 
 void CSettingsWidget::setXConfigFile(const QString &f)
 {
-    itsXConfigFileText->setText(f);
+    itsXConfigFileReq->setURL(f);
     CKfiGlobal::cfg().setXConfigFile(f);
     CKfiGlobal::xcfg().readConfig();
 }
 
-void CSettingsWidget::dirButtonPressed()
-{
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsDirText->text() ? QString::null : itsDirText->text(),
-                                                  this, i18n("Select StarOffice Folder"));
-
-    if(QString::null!=dir && dir!=itsDirText->text())
-    {
-        itsDirText->setText(dir);
-        CKfiGlobal::cfg().setSODir(dir);
-        setupPpdCombo();
-        emit madeChanges();
-    }
-}
 
 void CSettingsWidget::configureSelected(bool on)
 {
-    itsDirButton->setEnabled(on);
+    itsStarOfficeDirReq->setEnabled(on);
     itsPpdCombo->setEnabled(on);
     itsCheck->setChecked(on);
     CKfiGlobal::cfg().setSOConfigure(on);

@@ -29,6 +29,7 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <kurlrequester.h>
 #include "SettingsWidgetData.h"
 
 class CSettingsWidget : public CSettingsWidgetData
@@ -41,12 +42,20 @@ class CSettingsWidget : public CSettingsWidgetData
     virtual ~CSettingsWidget()     { }
 
     void reset();
+
     void encodingsDirButtonPressed();
     void gsFontmapButtonPressed();
     void cupsButtonPressed();
     void xDirButtonPressed();
     void xConfigButtonPressed();
-    void xftConfigFileButtonPressed();
+    void dirButtonPressed();
+    void encodingsDirChanged(const QString &);
+    void gsFontmapChanged(const QString &);
+    void cupsChanged(const QString &);
+    void xDirChanged(const QString &);
+    void xConfigChanged(const QString &);
+    void dirChanged(const QString &);
+
     void t1SubDir(const QString &str);
     void ttSubDir(const QString &str);
     void ghostscriptChecked(bool on);
@@ -54,7 +63,6 @@ class CSettingsWidget : public CSettingsWidgetData
     void xftChecked(bool on);
     void setGhostscriptFile(const QString &f);
     void setXConfigFile(const QString &f);
-    void dirButtonPressed();
     void configureSelected(bool on);
     void ppdSelected(const QString &str);
     void generateAfmsSelected(bool on);
