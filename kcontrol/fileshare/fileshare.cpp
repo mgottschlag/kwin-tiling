@@ -84,13 +84,13 @@ void KFileShareConfig::load()
     QFile file( "/etc/security/fileshare.conf");
     if ( !file.open( IO_ReadWrite ) )
     {
+        // The defaults if the file doesn't exist
         noSharing->setChecked( false );
         sharing->setChecked( true );
     }
     else
     {
         QString str(QCString(file.readAll()));
-        kdDebug() << "-" << str << "-" << endl;
         if ( str=="RESTRICT=yes")
         {
             sharing->setChecked( false );
