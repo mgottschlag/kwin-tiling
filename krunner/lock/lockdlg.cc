@@ -72,8 +72,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
 
     KUser user;
     QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
-            i18n("<nobr><b>The screen is locked</b><br>") :
-            i18n("<nobr><b>The screen is locked by %1</b><br>").arg( user.fullName() ), frame );
+            i18n("<nobr><b>The session is locked</b><br>") :
+            i18n("<nobr><b>The session is locked by %1</b><br>").arg( user.fullName() ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( QLabel::AlignCenter );
@@ -83,7 +83,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
 
     KSeparator *sep = new KSeparator( KSeparator::HLine, frame );
 
-    mNewSessButton = new KPushButton( i18n("&Start New Session"), frame );
+    mNewSessButton = new KPushButton( KGuiItem(i18n("&Start New Session..."), "fork"), frame );
     ok = new KPushButton( KStdGuiItem::ok(), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
 
@@ -416,7 +416,7 @@ void PasswordDlg::cantCheck()
 {
     greet->failed();
     static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical,
-        i18n("Cannot unlock the screen, as the authentication system fails to work.\n"
+        i18n("Cannot unlock the session, as the authentication system fails to work.\n"
              "You must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
     greet->revive();
 }

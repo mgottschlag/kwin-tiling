@@ -48,7 +48,7 @@ bool MyApp::x11EventFilter( XEvent *ev )
 
 static KCmdLineOptions options[] =
 {
-   { "forcelock", I18N_NOOP("Force screen locking"), 0 },
+   { "forcelock", I18N_NOOP("Force session locking"), 0 },
    { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
    { "blank", I18N_NOOP("Only use the blank screensaver"), 0 },
    KCmdLineLastOption
@@ -60,14 +60,14 @@ int main( int argc, char **argv )
 {
     KLocale::setMainCatalogue("kdesktop");
 
-    KCmdLineArgs::init( argc, argv, "kdesktop_lock", I18N_NOOP("KDesktop Locker"), I18N_NOOP("Screen Locker for KDesktop"), "2.0" );
+    KCmdLineArgs::init( argc, argv, "kdesktop_lock", I18N_NOOP("KDesktop Locker"), I18N_NOOP("Session Locker for KDesktop"), "2.0" );
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     putenv(strdup("SESSION_MANAGER="));
 
     KApplication::disableAutoDcopRegistration(); // not needed
-    
+
     int kdesktop_screen_number = 0;
     int starting_screen = 0;
 
