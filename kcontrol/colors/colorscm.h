@@ -98,6 +98,9 @@ public:
     SaveScm(QWidget *parent, const char *name, const QString &def);
 	
     KLineEdit* nameLine;
+
+private slots:
+    void slotTextChanged(const QString & _text);
 };
 
 #endif

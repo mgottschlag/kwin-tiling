@@ -847,6 +847,7 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
     QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
 
     nameLine = new KLineEdit( page );
+    connect(nameLine, SIGNAL(textChanged ( const QString & )),this,SLOT( slotTextChanged(const QString &)));
     nameLine->setFocus();
     nameLine->setMaxLength(18);
     nameLine->setFixedHeight( nameLine->sizeHint().height() );
@@ -864,7 +865,12 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
     topLayout->addWidget( tmpQLabel );
     topLayout->addWidget( nameLine );
     topLayout->addStretch( 10 );
+    enableButtonOK( !nameLine->text().isEmpty() );
 }
 
+void SaveScm::slotTextChanged(const QString & _text)
+{
+  enableButtonOK( !_text.isEmpty() );
+}
 
 #include "colorscm.moc"
