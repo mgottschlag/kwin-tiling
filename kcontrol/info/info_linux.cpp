@@ -14,6 +14,9 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.21  2002/01/26 19:22:12  deller
+    display raw device information correctly, closes #29258
+
     Revision 1.20  2001/10/23 22:48:49  mueller
     CVS_SILENT: fixincludes -e
 
@@ -280,10 +283,11 @@ bool GetInfo_Partitions(QListView * lBox)
 
 
 
-#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H)
-#include <linux/raw.h>
+#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H) && defined(__GNUC__) && !defined(__STRICT_ANSI__)
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <linux/raw.h>
+
 /* 
  * get raw device bindings and information
  */
