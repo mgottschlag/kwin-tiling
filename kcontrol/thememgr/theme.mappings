@@ -80,7 +80,7 @@
 #   The commands depend very much on the proper settings in this file.
 #   Known commands are:
 #   - setColorScheme: create a color scheme out of the themes color settings.
-#   - oneDesktopMode: activates oneDesktopMode if exactly one wallpaper
+#   - oneDesktopMode: activates common desktop feature
 #   - setWallPaperMode: corrects wallpaper settings.
 #   - setSound: enable sound notification
 #   - setKWM: enable kwm theme
@@ -183,7 +183,7 @@ ConfigAppDir=wallpapers
 ConfigAbsolutePaths=true
 Wallpaper1=Wallpaper
 WallpaperMode1=WallpaperMode!
-ColorMode=ColorMode!
+ColorMode1=ColorMode!
 Color1_1=Color1!
 Color2_1=Color2!
 BackgroundMode1=BackgroundMode!
@@ -293,6 +293,7 @@ ConfigFile=kdesktoprc
 ConfigGroup=Background Common
 ConfigNextGroup=Display-textcolor
 ConfigInstallCmd=oneDesktopMode
+CommonDesktop=CommonDesktop!
 #
 #
 #-----------------------------------------------------------------------------
@@ -496,7 +497,7 @@ ConfigFile=kwinrc
 ConfigGroup=Style
 ConfigInstallCmd=setKWM3
 ConfigAppDir=apps/kwin/styles
-PluginLib=PluginLib
+PluginLib=PluginLib!
 #
 [Window Titlebar]
 ConfigFile=kdeglobals

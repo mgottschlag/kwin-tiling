@@ -838,9 +838,12 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "oneDesktopMode")
   {
-    bool flag = (aInstalled==1);
-    aCfg->writeEntry("CommonDesktop",  flag);
-    if (flag) aCfg->writeEntry("DeskNum", 0);
+    bool flag = (aInstalled == 1);
+    bool value = aCfg->readBoolEntry("CommonDesktop", false);
+    if (flag || value)
+      aCfg->writeEntry("CommonDesktop", true);
+    if (flag) 
+      aCfg->writeEntry("DeskNum", 0);
   }
   else if (cmd == "setSound")
   {
@@ -877,10 +880,12 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "setKWM3")
   {
-    if ((mKwmCount == 8) && (aCfg->readEntry("PluginLib").isEmpty()))
-    {
+    QString plugin = aCfg->readEntry("PluginLib");
+    kdDebug() << "KWin Plugin: " << plugin << endl;
+    if ((mKwmCount == 8) && (plugin.isEmpty()))
        aCfg->writeEntry("PluginLib", "libkwinkwmtheme");
-    }
+    else if (!plugin.isEmpty())  //an installed kwin client
+       aCfg->writeEntry("PluginLib", plugin);
   }
   else if (cmd == "setKicker")
   {
@@ -1345,7 +1350,7 @@ void Theme::updateColorScheme(KSimpleConfig *config)
     config->writeEntry("colorScheme", sCurrentScheme, true, true);
 
     colorScheme->setGroup("Color Scheme" );
-    colorScheme->writeEntry("Name", "Theme Colors");
+    colorScheme->writeEntry("Name", i18n("Theme Colors"));
     colorScheme->writeEntry("background", back );
     colorScheme->writeEntry("selectBackground", select );
     colorScheme->writeEntry("foreground", txt );

@@ -40,7 +40,7 @@ CommonDesktop=true
 # Name of the wallpaper image
 Wallpaper0=
 # Wallpaper mode: Tiled, Centred, CentredMaxpect, etc.
-# (take it from WallpaperMode from ~/.kde/share/config/display#rc)
+# (take it from WallpaperMode from ~/.kde/share/config/kdesktoprc)
 WallpaperMode0=
 # Color mode: Flat or Gradient
 ColorMode0=
@@ -129,6 +129,9 @@ shapePixmapTopLeft=
 shapePixmapTopRight=
 shapePixmapBottomLeft=
 shapePixmapBottomRight=
+# name of the kwin decoration library, e.g. 'libkwinb2' for B II
+# new in KDE 2.2+
+# PluginLib=
 #
 #-----------------------------------------------------------------------------
 [Window Titlebar]

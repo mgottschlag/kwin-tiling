@@ -187,7 +187,7 @@ int Installer::addTheme(const QString &path)
     int i = tmp.findRev('/');
     if (i >= 0)
        tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
-    QString p = Theme::removeExtension(tmp).utf8();
+    QString p = Theme::removeExtension(tmp);
     tmp = i18n( p.utf8() );
     i = mThemesList->count();
     while((i > 0) && (mThemesList->text(i-1) > tmp))
@@ -269,7 +269,7 @@ void Installer::slotCreate()
 
   name = dlg.fileName();
   if (!theme->create(name)) return;
-  theme->setName(dlg.themeName().latin1());
+  theme->setName(dlg.themeName().local8Bit());
   theme->setAuthor(dlg.author());
   theme->setEmail(dlg.email());
   theme->setHomepage(dlg.homepage());

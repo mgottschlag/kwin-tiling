@@ -103,6 +103,7 @@ bool ThemeCreator::extract(void)
   if (instWallpapers) extractGroup("Display");
   if (instColors) extractGroup("Colors");
   if (instSounds) extractGroup("Sounds");
+  if (instWM) extractGroup("Window Border");
 
   kdDebug() << "Theme::extract() done" << endl;
 

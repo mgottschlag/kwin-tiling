@@ -66,8 +66,9 @@ NewThemeDlg::NewThemeDlg(QWidget *parent):
   mPreviewLabel->setMinimumSize(QSize(160,120));
   mGrid->addMultiCellWidget(mPreviewLabel, 0, 3, 2, 3);
 
-  QPushButton *browseBut = new QPushButton(i18n("&Browse..."), page);
-  mGrid->addWidget(browseBut, 4, 2);
+  //lukas: no op ... ?
+  //QPushButton *browseBut = new QPushButton(i18n("&Browse..."), page);
+  //mGrid->addWidget(browseBut, 4, 2);
 
   QPushButton *snapshotBut = new QPushButton(i18n("&Snapshot"), page);
   mGrid->addWidget(snapshotBut, 4, 3);
