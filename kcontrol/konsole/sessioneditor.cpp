@@ -58,6 +58,7 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
   connect(fontCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
   connect(keytabCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
   connect(schemaCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
+  removeButton->setEnabled(sessionList->count()>1);
 }
 
 SessionEditor::~SessionEditor()
@@ -206,67 +207,69 @@ void SessionEditor::loadAllSession()
 
 void SessionEditor::readSession(int num)
 {
-  int i,counter;
-  QString str;  
-  KSimpleConfig* co;
+    int i,counter;
+    QString str;
+    KSimpleConfig* co;
 
-  if(sesMod) {
-    disconnect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
+    if(sesMod) {
+        disconnect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
 
-    sessionList->setCurrentItem(oldSession);
-    if(KMessageBox::questionYesNo(this, i18n("The session has been modified.\n"
-      "Do you want to save the changes ?"),
-      i18n("Session modified"))==KMessageBox::Yes)
-        saveCurrent();
+        sessionList->setCurrentItem(oldSession);
+        if(KMessageBox::questionYesNo(this, i18n("The session has been modified.\n"
+                                                 "Do you want to save the changes ?"),
+                                      i18n("Session modified"))==KMessageBox::Yes)
+            saveCurrent();
 
-    sessionList->setCurrentItem(num);
-    connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
+        sessionList->setCurrentItem(num);
+        connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
+        sesMod=false;
+    }
+
+    if(sessionFilename.at(num))
+    {
+        co = new KSimpleConfig(*sessionFilename.at(num),TRUE);
+
+        co->setDesktopGroup();
+        str = co->readEntry("Name");
+        nameLine->setText(str);
+
+        str = co->readEntry("Comment");
+        commentLine->setText(str);
+
+        str = co->readEntry("Exec");
+        executeLine->setText(str);
+
+        str = co->readEntry("Icon","openterm");
+        previewIcon->setIcon(str);
+
+        i = co->readUnsignedNumEntry("Font",-1);
+        fontCombo->setCurrentItem(i+1);
+
+        str = co->readEntry("Term","xterm");
+        termLine->setText(str);
+
+        str = co->readEntry("KeyTab","");
+        i=0;
+        counter=0;
+        for (QString *it = keytabFilename.first(); it != 0; it = keytabFilename.next()) {
+            if (str == (*it))
+                i = counter;
+            counter++;
+        }
+        keytabCombo->setCurrentItem(i);
+
+        str = co->readEntry("Schema","");
+        i=0;
+        counter=0;
+        for (QString *it = schemaFilename.first(); it != 0; it = schemaFilename.next()) {
+            if (str == (*it))
+                i = counter;
+            counter++;
+        }
+        schemaCombo->setCurrentItem(i);
+    }
     sesMod=false;
-  }
-
-  co = new KSimpleConfig(*sessionFilename.at(num),TRUE);
-  co->setDesktopGroup();
-  
-  str = co->readEntry("Name");
-  nameLine->setText(str);
-
-  str = co->readEntry("Comment");
-  commentLine->setText(str);
-
-  str = co->readEntry("Exec");
-  executeLine->setText(str);
-
-  str = co->readEntry("Icon","openterm");
-  previewIcon->setIcon(str);
-
-  i = co->readUnsignedNumEntry("Font",-1);
-  fontCombo->setCurrentItem(i+1);
-
-  str = co->readEntry("Term","xterm");
-  termLine->setText(str);
-
-  str = co->readEntry("KeyTab","");
-  i=0;
-  counter=0;
-  for (QString *it = keytabFilename.first(); it != 0; it = keytabFilename.next()) {
-    if (str == (*it))
-      i = counter;
-    counter++;
-  }
-  keytabCombo->setCurrentItem(i);
-
-  str = co->readEntry("Schema","");
-  i=0;
-  counter=0;
-  for (QString *it = schemaFilename.first(); it != 0; it = schemaFilename.next()) {
-    if (str == (*it))
-      i = counter;
-    counter++;
-  }
-  schemaCombo->setCurrentItem(i);
-
-  sesMod=false;
-  oldSession=num;
+    oldSession=num;
 }
 
 void SessionEditor::saveCurrent()
@@ -312,6 +315,7 @@ void SessionEditor::saveCurrent()
   loadAllSession();
   readSession(0);
   sessionList->setCurrentItem(0);
+  removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::removeCurrent()
@@ -323,10 +327,10 @@ void SessionEditor::removeCurrent()
       i18n("Error removing session"));
     return;
   }
-
   loadAllSession();
   readSession(0);
   sessionList->setCurrentItem(0);
+  removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::sessionModified()
