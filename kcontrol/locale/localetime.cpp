@@ -142,7 +142,7 @@ void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 
 void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
-  locale->setDateFormat(t);
+  locale->setDateFormatShort(t);
   emit resample();
 }
 
