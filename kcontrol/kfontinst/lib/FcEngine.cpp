@@ -977,7 +977,10 @@ XftFont * CFcEngine::getFont(int size, QPixmap *pix)
 
 void CFcEngine::getSizes(QPixmap *pix)
 {
-    static const int constSizes[]={8, 10, 12, 14, 16, 18, 24, 36, 48, 72, 96, 0};
+    static const int constNumSizes=11;
+    static const int constNumSizeRanges=2;
+    static const int constSizes[constNumSizeRanges][constNumSizes]= { {8, 10, 12, 14, 16, 18, 24, 36, 48, 72, 96},
+                                                                      {7, 9,  11, 13, 15, 17, 23, 35, 47, 71, 95} };
     static const int constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0};
     static const int constAlphaSize=24;
 
@@ -1029,32 +1032,34 @@ void CFcEngine::getSizes(QPixmap *pix)
         // sizes, and ask fontconfig for a font of that sizes. Then check the retured size, family, etc is what was asked
         // for!
         if(!itsScalable && !gotSizes)
-            for (int i=0; constSizes[i]; ++i)
-            {
-                double  px;
-                int     iv;
-                FcChar8 *str;
-
-                f=getFont(constSizes[i], pix);
-
-                if(f)
+            for(int l=0; l<constNumSizeRanges && !gotSizes; ++l)
+                for(int i=0; i<constNumSizes; ++i)
                 {
-                    if(FcResultMatch==FcPatternGetDouble(f->pattern, FC_PIXEL_SIZE, 0, &px) && equal(constSizes[i], px) &&
-                       FcResultMatch==FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &iv) && equalWeight(iv,itsWeight) &&
-                       FcResultMatch==FcPatternGetInteger(f->pattern, FC_SLANT, 0, &iv) && equalSlant(iv, itsSlant) &&
-#ifndef KFI_FC_NO_WIDTHS
-                       FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv) && equalWidth(iv, itsWidth) &&
-#endif
-                       FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
-                       0==strcmp((const char *)str, itsName.latin1()))
+                    double  px;
+                    int     iv;
+                    FcChar8 *str;
+
+                    f=getFont(constSizes[l][i], pix);
+
+                    if(f)
                     {
-                        itsSizes.append(constSizes[i]);
-                        if(constSizes[i]<=constAlphaSize)
-                            itsAlphaSize=constSizes[i];
+                        if(FcResultMatch==FcPatternGetDouble(f->pattern, FC_PIXEL_SIZE, 0, &px) && equal(constSizes[l][i], px) &&
+                           FcResultMatch==FcPatternGetInteger(f->pattern, FC_WEIGHT, 0, &iv) && equalWeight(iv,itsWeight) &&
+                           FcResultMatch==FcPatternGetInteger(f->pattern, FC_SLANT, 0, &iv) && equalSlant(iv, itsSlant) &&
+#ifndef KFI_FC_NO_WIDTHS
+                           FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv) && equalWidth(iv, itsWidth) &&
+#endif
+                           FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
+                           0==strcmp((const char *)str, itsName.latin1()))
+                        {
+                            itsSizes.append(constSizes[l][i]);
+                            gotSizes=true;
+                            if(constSizes[l][i]<=constAlphaSize)
+                                itsAlphaSize=constSizes[l][i];
+                        }
+                        XftFontClose(KFI_DISPLAY(pix), f);
                     }
-                    XftFontClose(KFI_DISPLAY(pix), f);
                 }
-            }
     }
 
     if(itsScalable)
