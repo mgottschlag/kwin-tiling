@@ -255,6 +255,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
 
+    groupLayout->addStretch(1);
+
     mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
     mLockCheckBox->setChecked( mLock );
     mLockCheckBox->setEnabled( mEnabled );
@@ -275,12 +277,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
       " above, each character you type in the password will be echoed as an"
       " asterisk (*) symbol. Otherwise, there will be no visual feedback.") );
 
-    hbox = new QHBoxLayout();
-    groupLayout->addLayout(hbox);
+    groupLayout->addStretch(1);
+
+    QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
+    gl->setColStretch( 2, 10 );
     
     lbl = new QLabel(i18n("&Priority"), group);
-    hbox->addWidget(lbl);
-    hbox->addSpacing(20);
+    gl->addWidget(lbl, 0, 0);
 
     mPrioritySlider = new QSlider(QSlider::Horizontal, group);
     mPrioritySlider->setRange(0, 19);
@@ -290,7 +293,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     connect(mPrioritySlider, SIGNAL( valueChanged(int)),
 	    SLOT(slotPriorityChanged(int)));
     lbl->setBuddy(mPrioritySlider);
-    hbox->addWidget(mPrioritySlider);
+    gl->addMultiCellWidget(mPrioritySlider, 0, 0, 1, 3);
     QWhatsThis::add( mPrioritySlider, i18n("Use this slider to change the"
       " processing priority for the screen saver over other jobs that are"
       " being executed in the background. For a processor-intensive screen"
@@ -301,13 +304,17 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     lbl->setEnabled(false);
     mPrioritySlider->setEnabled(false);
 #endif
+    lbl = new QLabel(i18n("Low Priority", "Low"), group);
+    gl->addWidget(lbl, 1, 1);
     
     lbl = new QLabel(i18n("High Priority", "High"), group);
-    hbox->addWidget(lbl);
+    gl->addWidget(lbl, 1, 3);
     
 #ifndef HAVE_SETPRIORITY
     lbl->setEnabled(false);
 #endif
+
+    groupLayout->addStretch(1);
 
     topLayout->activate();
 
