@@ -44,7 +44,6 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
-#include <qgroupbox.h>
 #include <kurllabel.h>
 #include <kapplication.h>
 #include <kio/job.h>
@@ -78,16 +77,16 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #ifdef HAVE_FT_CACHE
     itsSplitter=new QSplitter(this);
 
-    QFrame            *fontsFrame=new QGroupBox(itsSplitter),
-                      *previewFrame=new QGroupBox(itsSplitter);
+    QFrame            *fontsFrame=new QFrame(itsSplitter),
+                      *previewFrame=new QFrame(itsSplitter);
     QGridLayout       *previewLayout=new QGridLayout(previewFrame, 2, 2, 1, 1);
 #else
-    QFrame            *fontsFrame=new QGroupBox(this);
+    QFrame            *fontsFrame=new QFrame(this);
 #endif
-    QFrame            *urlFrame=new QGroupBox(this);
+    QFrame            *urlFrame=new QFrame(this);
     QGridLayout       *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
     QHBoxLayout       *urlLayout=new QHBoxLayout(urlFrame, 4);
-    QVBoxLayout       *layout=new QVBoxLayout(this, 4);
+    QVBoxLayout       *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
     KToolBar          *toolbar=new KToolBar(this);
 
     fontsFrame->setLineWidth(0);
