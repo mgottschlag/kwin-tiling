@@ -64,13 +64,11 @@ extern "C"
 
     KScreenSaver *kss_create( WId id )
     {
-        KLocale::setMainCatalogue("klock");
         return new KScienceSaver( id );
     }
 
     QDialog *kss_setup()
     {
-        KLocale::setMainCatalogue("klock");
         return new KScienceSetup();
     }
 }

@@ -41,13 +41,11 @@ extern "C"
 
     KScreenSaver *kss_create( WId id )
     {
-        KLocale::setMainCatalogue("klock");
         return new kLinesSaver( id );
     }
 
     QDialog *kss_setup()
     {
-        KLocale::setMainCatalogue("klock");
         return new kLinesSetup();
     }
 }
