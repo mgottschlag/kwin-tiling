@@ -19,8 +19,7 @@ libbgnd_la_SOURCES = bgrender.cpp bgsettings.cpp
 libkcmbgnd_la_SOURCES = bgdialog.cpp bgdialog_ui.ui bgwallpaper_ui.ui \
                 bgwallpaper.cpp bgadvanced_ui.ui bgadvanced.cpp bgmonitor.cpp
 
-$(srcdir)/main.cpp: bgdialog_ui.h
-
+main.lo: bgdialog_ui.h
 
 messages: rc.cpp
 	$(EXTRACTRC) *.ui *.rc >> rc.cpp
