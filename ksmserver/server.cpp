@@ -155,7 +155,7 @@ char * safeSmsGenerateClientID( SmsConn c )
         static QString *my_addr = 0;
        if (!my_addr) {
            qWarning("Can't get own host name. Your system is severely misconfigured\n");
-           my_addr = smy_addr.setObject(new QString);
+           smy_addr.setObject(my_addr,new QString);
 
            /* Faking our IP address, the 0 below is "unknown" address format
               (1 would be IP, 2 would be DEC-NET format) */
@@ -821,7 +821,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( restoreNextInternal() ) );
     connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
 
-    KNotifyClient::event( "startkde" ); // this is the time KDE is up
+    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
 }
 
 KSMServer::~KSMServer()
@@ -1008,7 +1008,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         // Set the real desktop background to black so that exit looks
         // clean regardless of what was on "our" desktop.
         kapp->desktop()->setBackgroundColor( Qt::black );
-        KNotifyClient::event( "exitkde" ); // KDE says good bye
+        KNotifyClient::event( 0, "exitkde" ); // KDE says good bye
         state = Shutdown;
         wmPhase1WaitingCount = 0;
         saveType = saveSession?SmSaveBoth:SmSaveGlobal;
