@@ -1,3 +1,5 @@
+# $Id$
+
 if include_kcontrol_access
 ACCESS_SUBDIR=access
 endif
