@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_khotkeys.la
+kde_module_LTLIBRARIES = libkcm_khotkeys.la
 
 libkcm_khotkeys_la_SOURCES = kcmkhotkeys.cpp
 libkcm_khotkeys_la_LIBADD  = ../shared/libshared.la -lksycoca
