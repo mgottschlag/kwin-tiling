@@ -104,6 +104,7 @@ private:
   void setAutoRaise(bool);
   void setClickRaise(bool);
   void setAnimateShade(bool);
+  void setMoveResizeMaximized(bool);
   void setAltTabMode(bool);
   void setCtrlTab(bool);
 
@@ -115,6 +116,7 @@ private:
   QSlider *minimizeAnimSlider;
   QLabel *minimizeAnimSlowLabel, *minimizeAnimFastLabel;
   QCheckBox *animateShade;
+  QCheckBox *moveResizeMaximized;
 
   //CT 19jan98; 21Oct1998
   //QButtonGroup *plcBox;

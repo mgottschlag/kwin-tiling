@@ -51,18 +51,19 @@
 
 
 // kwin config keywords
-#define KWIN_FOCUS     "FocusPolicy"
-#define KWIN_PLACEMENT "Placement"
-#define KWIN_MOVE      "MoveMode"
-#define KWIN_MINIMIZE_ANIM       "AnimateMinimize"
-#define KWIN_MINIMIZE_ANIM_SPEED "AnimateMinimizeSpeed"
-#define KWIN_RESIZE_OPAQUE       "ResizeMode"
-#define KWIN_AUTORAISE_INTERVAL  "AutoRaiseInterval"
-#define KWIN_AUTORAISE  "AutoRaise"
-#define KWIN_CLICKRAISE "ClickRaise"
-#define KWIN_ANIMSHADE  "AnimateShade"
-#define KWIN_ALTTABMODE "AltTabStyle"
-#define KWIN_CTRLTAB    "ControlTab"
+#define KWIN_FOCUS                 "FocusPolicy"
+#define KWIN_PLACEMENT             "Placement"
+#define KWIN_MOVE                  "MoveMode"
+#define KWIN_MINIMIZE_ANIM         "AnimateMinimize"
+#define KWIN_MINIMIZE_ANIM_SPEED   "AnimateMinimizeSpeed"
+#define KWIN_RESIZE_OPAQUE         "ResizeMode"
+#define KWIN_AUTORAISE_INTERVAL    "AutoRaiseInterval"
+#define KWIN_AUTORAISE             "AutoRaise"
+#define KWIN_CLICKRAISE            "ClickRaise"
+#define KWIN_ANIMSHADE             "AnimateShade"
+#define KWIN_MOVE_RESIZE_MAXIMIZED "MoveResizeMaximizedWindows"
+#define KWIN_ALTTABMODE            "AltTabStyle"
+#define KWIN_CTRLTAB               "ControlTab"
 
 
 extern "C" {
@@ -116,7 +117,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     rLay->setColStretch(0,0);
     rLay->setColStretch(1,1);
 
-    minimizeAnimOn = new QCheckBox(i18n("Minimize animation"),
+    minimizeAnimOn = new QCheckBox(i18n("Animate Minimize and Restore"),
                                    windowsBox);
     QWhatsThis::add( minimizeAnimOn, i18n("Enable this option if you want an animation shown when"
                                           " windows are minimized or restored." ) );
@@ -149,7 +150,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
     //                    KDialog::spacingHint());
     //pLay->addRowSpacing(0,fontMetrics().lineSpacing());
 
-    bLay->addSpacing(20);
+
+    moveResizeMaximized = new QCheckBox( i18n("Allow Moving and Resizing of maximized windows"), windowsBox);
+    bLay->addWidget(moveResizeMaximized);
+    QWhatsThis::add(moveResizeMaximized, i18n("When enabled, this feature activates the border of maximized windows"
+                                              " and allows you to move or to resize them,"
+                                              " just like for normal windows"));
+
 
     rLay = new QGridLayout(1,3);
     bLay->addLayout(rLay);
@@ -494,6 +501,10 @@ void KWindowConfig::setAnimateShade(bool a) {
     animateShade->setChecked(a);
 }
 
+void KWindowConfig::setMoveResizeMaximized(bool a) {
+    moveResizeMaximized->setChecked(a);
+}
+
 void KWindowConfig::setAltTabMode(bool a) {
     kdeMode->setChecked(a);
 }
@@ -587,6 +598,8 @@ void KWindowConfig::load( void )
 
     setAnimateShade(config->readBoolEntry(KWIN_ANIMSHADE, true));
 
+    setMoveResizeMaximized(config->readBoolEntry(KWIN_MOVE_RESIZE_MAXIMIZED, true));
+
     key = config->readEntry(KWIN_ALTTABMODE, "KDE");
     setAltTabMode(key == "KDE");
 
@@ -673,6 +686,8 @@ void KWindowConfig::save( void )
 
     config->writeEntry(KWIN_ANIMSHADE, animateShade->isChecked());
 
+    config->writeEntry(KWIN_MOVE_RESIZE_MAXIMIZED, moveResizeMaximized->isChecked());
+
     config->writeEntry(KWIN_CTRLTAB, ctrlTab->isChecked());
 
     config->sync();
@@ -692,6 +707,7 @@ void KWindowConfig::defaults()
     setFocus(CLICK_TO_FOCUS);
     setAutoRaise(false);
     setClickRaise(false);
+    setMoveResizeMaximized(true);
     setAltTabMode(true);
     setCtrlTab(true);
 }
