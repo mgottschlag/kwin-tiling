@@ -85,6 +85,7 @@ bool KShortURIFilter::expandEnvVar( QString& cmd ) const
     else
       env_loc++; // skip past the '$' or end up in endless loop!!
   }
+  kdDebug() << "expandEnvVar: returning " << cmd << endl;
   return ( env_len ) ? true : false;
 }
 
@@ -106,15 +107,20 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   KURL url = data.uri();
   QString cmd = url.url();
 
+  // Environment variable expansion.
+  // (Before the absolute-path thing so that $QTDIR/src works - DF)
+  if ( expandEnvVar( cmd ) )
+    setFilteredURI( data, cmd );
+
   // Before beginning the filtering see if there is any
   // absolute path and apply it so that it can be correctly
   // filtered as well.
-  if( data.hasAbsolutePath() && KURL::isRelativeURL(cmd) )
+  // DF: KURL::isRelativeURL returns true for /blah !
+  if( data.hasAbsolutePath() && KURL::isRelativeURL(cmd) && cmd[0]!='/' )
+  {
+    //kdDebug() << "prepending " << data.absolutePath() << endl;
     cmd = data.absolutePath() + '/' +  cmd;
-
-  // Environment variable expansion.
-  if ( expandEnvVar( cmd ) )
-    setFilteredURI( data, cmd );
+  }
 
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
@@ -216,6 +222,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if( cmd[0] == '/' )
   {
     struct stat buff;
+    kdDebug() << "stating " << cmd << endl;
     int status = stat( cmd.local8Bit().data() , &buff );
     if( status == 0 )
     {
@@ -230,6 +237,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       if( isDir || S_ISREG( buff.st_mode ) )
       {
         // cmd.insert( 0, QFL1("file:") );  KURL will automatically take care of this.
+        kdDebug() << "local" << endl;
         setFilteredURI( data, cmd );
         setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
         return true;
@@ -238,6 +246,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     else
     {
         fileNotFound = true;
+        kdDebug() << "file not found" << endl;
     }
   }
 
@@ -325,6 +334,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
                             "<center><b>%1</b></center>"
                             "was not found!").arg(cmd) );
 */
+    kdDebug() << " FILE NOT FOUND " << endl;
     setURIType( data, KURIFilterData::ERROR );
     return true;
   }
@@ -333,6 +343,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // this thing so simply return false so that
   // other filters, if present, can take a crack
   // at it.
+  kdDebug() << "return false" << endl;
   return false;
 }
 
