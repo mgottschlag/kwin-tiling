@@ -100,6 +100,7 @@ void KLocaleConfigNumber::load()
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"));
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   locale->setThousandsSeparator(str);
  
   // PositiveSign
@@ -149,6 +150,7 @@ void KLocaleConfigNumber::save()
 
   str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"), str);
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   if (str != locale->thousandsSeparator())
     config->writeEntry(QString::fromLatin1("ThousandsSeparator"), locale->thousandsSeparator(), true, true);
 
@@ -193,10 +195,15 @@ void KLocaleConfigNumber::reset()
 
   QString str;
 
-  locale->setDecimalSymbol(ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1(".")));
-  locale->setThousandsSeparator(ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(",")));
+  locale->setDecimalSymbol(ent.readEntry(QString::fromLatin1("DecimalSymbol"),
+					 QString::fromLatin1(".")));
+  str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"),
+		      QString::fromLatin1(","));
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
+  locale->setThousandsSeparator(str);
   locale->setPositiveSign(ent.readEntry(QString::fromLatin1("PositiveSign")));
-  locale->setNegativeSign(ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-")));
+  locale->setNegativeSign(ent.readEntry(QString::fromLatin1("NegativeSign"),
+					QString::fromLatin1("-")));
 
   edDecSym->setText(locale->decimalSymbol());
   edThoSep->setText(locale->thousandsSeparator());

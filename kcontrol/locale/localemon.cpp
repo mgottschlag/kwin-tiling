@@ -134,6 +134,7 @@ void KLocaleConfigMoney::load()
   str = config->readEntry(QString::fromLatin1("MonetaryThousendSeparator"));
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1(","));
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   locale->setMonetaryThousandsSeparator(str);
 
   // Fract digits
@@ -218,6 +219,7 @@ void KLocaleConfigMoney::save()
 
   str = ent.readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1(","));
   str = config->readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), str);
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   if (str != locale->monetaryThousandsSeparator())
     config->writeEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1("$0")+locale->monetaryThousandsSeparator()+QString::fromLatin1("$0"), true, true);
 
@@ -324,7 +326,9 @@ void KLocaleConfigMoney::reset()
 
   locale->setCurrencySymbol(ent.readEntry(QString::fromLatin1("CurrencySymbol"), QString::fromLatin1("$")));
   locale->setMonetaryDecimalSymbol(ent.readEntry(QString::fromLatin1("MonetaryDecimalSymbol"), QString::fromLatin1(".")));
-  locale->setMonetaryThousandsSeparator(ent.readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1(",")));
+  QString str = ent.readEntry(QString::fromLatin1("MonetaryThousandsSeparator"), QString::fromLatin1(","));
+  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
+  locale->setMonetaryThousandsSeparator(str);
   locale->setFracDigits(ent.readNumEntry(QString::fromLatin1("FractDigits"), 2));
   locale->setPositivePrefixCurrencySymbol(ent.readBoolEntry(QString::fromLatin1("PositivePrefixCurrencySymbol"), true));
   locale->setNegativePrefixCurrencySymbol(ent.readBoolEntry(QString::fromLatin1("NegativePrefixCurrencySymbol"), true));
