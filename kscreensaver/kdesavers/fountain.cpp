@@ -26,11 +26,12 @@
 #include <qpainter.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <math.h>
 // libkscreensaver interface
 extern "C"
 {
 	const char *kss_applicationName = "kfountain.kss";
-	const char *kss_description = I18N_NOOP( "Partical Fountain Screen Saver" );
+	const char *kss_description = I18N_NOOP( "Particle Fountain Screen Saver" );
 	const char *kss_version = "2.2.0";
 
 	KScreenSaver *kss_create( WId id )
@@ -162,6 +163,7 @@ Fountain::Fountain( QWidget * parent, const char * name) : QGLWidget (parent,nam
 	rainbow=true;
 	slowdown=2.0f;
 	zoom=-40.0f;
+	index=0;
 }
 
 Fountain::~Fountain()
@@ -169,8 +171,8 @@ Fountain::~Fountain()
 
 }
 
-/** load the partical file */
-bool Fountain::loadPartical()
+/** load the particle file */
+bool Fountain::loadParticle()
 {
     /* Status indicator */
     bool Status = TRUE;
@@ -221,7 +223,7 @@ void Fountain::initializeGL ()
 	{0.5f,1.0f,0.5f},{0.5f,1.0f,0.75f},{0.5f,1.0f,1.0f},{0.5f,0.75f,1.0f},
 	{0.5f,0.5f,1.0f},{0.75f,0.5f,1.0f},{1.0f,0.5f,1.0f},{1.0f,0.5f,0.75f}};
 
-	if (loadPartical())						// Jump To Texture Loading Routine
+	if (loadParticle())						// Jump To Texture Loading Routine
 	{
 		kdDebug() << "InitGL" << endl;
 		glShadeModel(GL_SMOOTH);					// Enable Smooth Shading
@@ -286,7 +288,11 @@ void Fountain::paintGL ()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear Screen And Depth Buffer
 
-	glLoadIdentity();						// Reset The ModelView Matrix
+	glLoadIdentity();
+						// Reset The ModelView Matrix
+	transIndex++;
+	glTranslatef( GLfloat(4.0*sin(2*3.14*transIndex/360)), GLfloat(4.0*cos(2*3.14*transIndex/360)), 0.0 );
+
 
 	for (loop=0;loop<MAX_PARTICLES;loop++)				// Loop Through All The Particles
 	{
@@ -321,7 +327,7 @@ void Fountain::paintGL ()
 
 			if (particle[loop].life<0.0f)					// If Particle Is Burned Out
 			{
-				particle[loop].life=1.0f;				// Give It New Life
+				particle[loop].life=1.5f;				// Give It New Life
 				particle[loop].fade=float(rand()%100)/1000.0f+0.003f;	// Random Fade Value
 				particle[loop].x=0.0f;					// Center On X Axis
 				particle[loop].y=0.0f;					// Center On Y Axis
@@ -334,14 +340,10 @@ void Fountain::paintGL ()
 				particle[loop].b=colors[col][2];			// Select Blue From Color Table
 			}
 			// Lets stir some things up
-			/*if ( particle[loop].yg < 1.5f )
-			particle[loop].yg += rand();
-			else if ( particle[loop].yg > -1.5f )
-			particle[loop].yg -= rand();
-			if ( particle[loop].xg < 1.5f )
-			particle[loop].xg += rand();
-			else if ( particle[loop].xg > -1.5f )
-			particle[loop].xg -= rand();*/
+			index += 0.001;
+			particle[loop].yg =2.0*sin(2*3.14*index/360);
+			particle[loop].xg =2.0*cos(2*3.14*index/360);
+
 		}
 	}
 

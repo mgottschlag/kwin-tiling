@@ -55,7 +55,7 @@ protected:
 
 private:
 	/** load the partical file */
-	bool loadPartical();
+	bool loadParticle();
 
 	particles particle[MAX_PARTICLES];
 
@@ -74,8 +74,9 @@ private:
 	GLuint	delay;						// Rainbow Effect Delay
 	GLuint	texture[1];
 	QImage  tex;
-	//private:
-	//	qglWidget *mainGLView;
+	float	index;
+	float	transIndex;
+	GLfloat scale;
 };
 
 class KFountainSaver : public KScreenSaver
