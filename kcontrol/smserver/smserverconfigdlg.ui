@@ -164,6 +164,12 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
     </vbox>
 </widget>
@@ -175,20 +181,14 @@
         <slot>configChanged()</slot>
     </connection>
     <connection>
-        <sender>haltRadio</sender>
-        <signal>toggled(bool)</signal>
+        <sender>loginGroup</sender>
+        <signal>clicked(int)</signal>
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
     <connection>
-        <sender>rebootRadio</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>SMServerConfigDlg</receiver>
-        <slot>configChanged()</slot>
-    </connection>
-    <connection>
-        <sender>logoutRadio</sender>
-        <signal>toggled(bool)</signal>
+        <sender>sdGroup</sender>
+        <signal>clicked(int)</signal>
         <receiver>SMServerConfigDlg</receiver>
         <slot>configChanged()</slot>
     </connection>
