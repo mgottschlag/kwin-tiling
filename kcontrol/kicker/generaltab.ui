@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>559</width>
+            <width>555</width>
             <height>480</height>
         </rect>
     </property>
@@ -466,6 +466,17 @@
                     </property>
                 </widget>
             </grid>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>m_showToolTips</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>S&amp;how tooltips</string>
+            </property>
         </widget>
         <spacer>
             <property>

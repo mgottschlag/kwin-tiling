@@ -46,6 +46,7 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
 
     // whats this help
     QWhatsThis::add(m_locationGroup, i18n("This sets the position of the panel"
@@ -107,6 +108,8 @@ void GeneralTab::load()
 
     m_expandCheckBox->setChecked( c->readBoolEntry( "ExpandSize", true ) );
 
+    m_showToolTips->setChecked( c->readBoolEntry( "ShowToolTips", true ) );
+
     delete c;
 }
 
@@ -128,7 +131,7 @@ void GeneralTab::save()
     c->writeEntry("AutoHideDelay", m_delaySlider->value());
     c->writeEntry( "SizePercentage", m_percentSlider->value() );
     c->writeEntry( "ExpandSize", m_expandCheckBox->isChecked() );
-
+    c->writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
     c->sync();
 
     delete c;
@@ -147,4 +150,5 @@ void GeneralTab::defaults()
     m_expandCheckBox->setChecked( true );
     m_percentSlider->setValue( 100 );
     m_percentSpinBox->setValue( 100 );
+    m_showToolTips->setChecked(true);
 }
