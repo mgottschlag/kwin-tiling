@@ -48,7 +48,7 @@ static const KCmdLineOptions options[] =
   { "window-id wid", I18N_NOOP("Run in the specified XWindow."), 0 },
   { "root", I18N_NOOP("Run in the root XWindow."), 0 },
 //  { "+-- [options]", I18N_NOOP("Options to pass to the screen saver."), 0 }
-  { 0,0,0 }
+  KCmdLineLastOption
 };
 
 //----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     Window windowId = 0;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-	
+
 #if 0
     // To be implemented
     if (args->isSet("setup"))

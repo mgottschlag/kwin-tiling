@@ -39,13 +39,13 @@ static KCmdLineOptions options[] =
              "has no effect unless startonshow is specified and implies keeprunning." ), 0 },
   /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu.\n"
       "The item should have the form text:command." ), 0 },*/
-  { 0, 0, 0 }
+  KCmdLineLastOption
 };
 
 int main( int argc, char *argv[] )
 {
   KAboutData aboutData( "ksystraycmd", I18N_NOOP( "KSysTrayCmd" ),
-			"KSysTrayCmd 0.1", 
+			"KSysTrayCmd 0.1",
 			I18N_NOOP( "Allows any application to be kept in the system tray." ),
 			KAboutData::License_GPL,
 			"(C) 2001-2002 Richard Moore (rich@kde.org)" );

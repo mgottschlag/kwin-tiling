@@ -31,7 +31,7 @@ static KCmdLineOptions options[] =
    { "forcelock", I18N_NOOP("Force screen locking"), 0 },
    { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
    { "blank", I18N_NOOP("Only use the blank screensaver"), 0 },
-   { 0, 0, 0 }
+   KCmdLineLastOption
 };
 
 // -----------------------------------------------------------------------------

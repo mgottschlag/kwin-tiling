@@ -27,17 +27,18 @@
 
 #include "krootimage.h"
 
-#include <X11/Xlib.h>  
+#include <X11/Xlib.h>
 
 #include <stdlib.h>
 
-static const char *description = 
+static const char *description =
 	I18N_NOOP("Fancy desktop background for kdm");
 
 static const char *version = "v1.5";
 
 static KCmdLineOptions options[] = {
-    { "+config", I18N_NOOP("Name of the configuration file"), 0 }
+    { "+config", I18N_NOOP("Name of the configuration file"), 0 },
+    KCmdLineLastOption
 };
 
 
@@ -71,14 +72,14 @@ int main(int argc, char *argv[])
     args->usage();
   MyApplication app( args->arg( 0 ) );
   args->clear();
-  
+
   // Keep color resources after termination
   XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
 
   app.exec();
 
   app.flushX();
-  
+
   return 0;
 }
 
