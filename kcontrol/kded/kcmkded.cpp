@@ -139,46 +139,55 @@ void KDEDConfig::load() {
 	}
 
 	// Special case: kxmlrpcd
-	clitem = new CheckListItem(_lvStartup, QString::null);
-	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-        {
-		KConfig config("kxmlrpcdrc", true);
-		config.setGroup("General");
-		clitem->setOn(config.readBoolEntry("StartServer", KXMLRPCD_DEFAULT));
-        }
-	item = clitem;
-	item->setText(1, i18n("XML-RPC Daemon"));
-	item->setText(2, QString::null);
-	item->setText(3, i18n("Not running"));
-	item->setText(4, QString::fromLatin1(KXMLRPCD));
+	if (!kapp->dirs()->findResource("services", "kxmlrpcd.desktop").isEmpty())
+	{
+		clitem = new CheckListItem(_lvStartup, QString::null);
+		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+		{
+			KConfig config("kxmlrpcdrc", true);
+			config.setGroup("General");
+			clitem->setOn(config.readBoolEntry("StartServer", KXMLRPCD_DEFAULT));
+		}
+		item = clitem;
+		item->setText(1, i18n("XML-RPC Daemon"));
+		item->setText(2, QString::null);
+		item->setText(3, i18n("Not running"));
+		item->setText(4, QString::fromLatin1(KXMLRPCD));
+	}
 
 	// Special case: kalarmd
-	clitem = new CheckListItem(_lvStartup, QString::null);
-	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+	if (!kapp->dirs()->findResource("apps", ".hidden/kalarmd.desktop").isEmpty())
+	{
+		clitem = new CheckListItem(_lvStartup, QString::null);
+		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
         {
-		KConfig config("kalarmdrc", true);
-		config.setGroup("General");
-		clitem->setOn(config.readBoolEntry("Autostart", KALARMD_DEFAULT));
+			KConfig config("kalarmdrc", true);
+			config.setGroup("General");
+			clitem->setOn(config.readBoolEntry("Autostart", KALARMD_DEFAULT));
         }
-	item = clitem;
-	item->setText(1, i18n("Alarm Daemon"));
-	item->setText(2, QString::null);
-	item->setText(3, i18n("Not running"));
-	item->setText(4, QString::fromLatin1(KALARMD));
+		item = clitem;
+		item->setText(1, i18n("Alarm Daemon"));
+		item->setText(2, QString::null);
+		item->setText(3, i18n("Not running"));
+		item->setText(4, QString::fromLatin1(KALARMD));
+	}
 
 	// Special case: kwrited
-	clitem = new CheckListItem(_lvStartup, QString::null);
-	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+	if (!kapp->dirs()->findResource("services", "kwrited.desktop").isEmpty())
+	{
+		clitem = new CheckListItem(_lvStartup, QString::null);
+		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
         {
-		KConfig config("kwritedrc", true);
-		config.setGroup("General");
-		clitem->setOn(config.readBoolEntry("Autostart", KWRITED_DEFAULT));
+			KConfig config("kwritedrc", true);
+			config.setGroup("General");
+			clitem->setOn(config.readBoolEntry("Autostart", KWRITED_DEFAULT));
         }
-	item = clitem;
-	item->setText(1, i18n("KWrite Daemon"));
-	item->setText(2, QString::null);
-	item->setText(3, i18n("Not running"));
-	item->setText(4, QString::fromLatin1(KWRITED));
+		item = clitem;
+		item->setText(1, i18n("KWrite Daemon"));
+		item->setText(2, QString::null);
+		item->setText(3, i18n("Not running"));
+		item->setText(4, QString::fromLatin1(KWRITED));
+	}
 
 	getServiceStatus();
 }
