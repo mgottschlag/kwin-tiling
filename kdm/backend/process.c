@@ -194,12 +194,10 @@ AttachGdb (char *path, int pid)
 
     if (debugLevel & DEBUG_GDB) {
 	switch ((dpid = fork ())) {
-	case -1:
-	    abort ();
 	case 0:
 	    if (!fork ()) {
 		if (!pipe (pip)) {
-		    sleep (1);
+		    sleep (2);
 		    write (pip[1], cmds, sizeof (cmds) - 1);
 		    dup2 (pip[0], 0);
 		    sprintf (pbuf, "%d", pid);
@@ -209,6 +207,7 @@ AttachGdb (char *path, int pid)
 	    exit (0);
 	default:
 	    Wait4 (dpid);
+	case -1:
 	}
     }
 }
@@ -359,6 +358,7 @@ GOpen (char **argv, char *what, char **env)
 	GCloseAll ();
 	return "fork() failed";
     case 0:
+	(void) Signal (SIGPIPE, SIG_IGN);
 	sprintf (coninfo, "CONINFO=%d %d", opipe[0], ipipe[1]);
 	env = putEnv (coninfo, env);
 	execute (margv, env);
@@ -367,9 +367,9 @@ GOpen (char **argv, char *what, char **env)
 	close (opipe[0]);
 	close (ipipe[1]);
 	(void) Signal (SIGPIPE, SIG_IGN);
+	Debug ("Forked helper %s, pid %d\n", margv[0], gpid);
 	GSendInt (debugLevel);
 	AttachGdb (margv[0], gpid);
-	Debug ("Started helper %s, pid %d\n", margv[0], gpid);
 	freeStrArr (margv);
 	return (char *)0;
     }
