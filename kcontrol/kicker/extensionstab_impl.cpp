@@ -29,6 +29,7 @@
 #include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <kdebug.h>
+#include <qlabel.h>
 
 #include "extensionstab_impl.h"
 #include "extensionstab_impl.moc"
@@ -52,7 +53,7 @@ ExtensionsTab::ExtensionsTab( QWidget *parent, const char* name )
     connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SLOT(slotChanged()));
 
     connect(m_extensionsListView, SIGNAL(selectionChanged(QListViewItem*)), SLOT(loadConfig(QListViewItem*)));
-
+    connect( m_autoHide, SIGNAL( toggled(bool) ),TextLabel6, SLOT( setEnabled(bool) ) );
     // whats this help
     QWhatsThis::add(m_locationGroup, i18n("This sets the position of the panel extension"
                                           " i.e. the screen border it is attached to. You can also change this"
@@ -152,7 +153,7 @@ void ExtensionsTab::loadConfig( QListViewItem* item )
 	m_delaySpinBox->setValue(delay);
 	m_delaySlider->setEnabled(ah);
 	m_delaySpinBox->setEnabled(ah);
-
+	TextLabel6->setEnabled(ah);
 	// reconnect
 	connect(m_delaySlider, SIGNAL(valueChanged(int)), SLOT(slotChanged()));
 	connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SLOT(slotChanged()));
