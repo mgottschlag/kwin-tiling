@@ -42,7 +42,7 @@ extern "C"
   { 
 #ifdef INFO_CPU_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("Processor(s)"), GetInfo_CPU);
+    return new KInfoListWidget(i18n("Processor(s)"), parent, "Processor(s)", GetInfo_CPU);
 #else
     return 0;
 #endif
@@ -52,7 +52,7 @@ extern "C"
   { 
 #ifdef INFO_IRQ_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("Interrupt"), GetInfo_IRQ);
+    return new KInfoListWidget(i18n("Interrupt"), parent, "Interrupt", GetInfo_IRQ);
 #else
     return 0;
 #endif
@@ -62,7 +62,7 @@ extern "C"
   { 
 #ifdef INFO_PCI_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("PCI"), GetInfo_PCI);
+    return new KInfoListWidget(i18n("PCI"), parent, "PCI", GetInfo_PCI);
 #else
     return 0;
 #endif
@@ -72,7 +72,7 @@ extern "C"
   { 
 #ifdef INFO_DMA_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("DMA-Channel"), GetInfo_DMA);
+    return new KInfoListWidget(i18n("DMA-Channel"), parent, "DMA-Channel", GetInfo_DMA);
 #else
     return 0;
 #endif
@@ -82,7 +82,7 @@ extern "C"
   { 
 #ifdef INFO_IOPORTS_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("I/O-Port"), GetInfo_IO_Ports);
+    return new KInfoListWidget(i18n("I/O-Port"), parent, "I/O-Port", GetInfo_IO_Ports);
 #else
     return 0;
 #endif
@@ -92,7 +92,7 @@ extern "C"
   { 
 #ifdef INFO_SOUND_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("Soundcard"), GetInfo_Sound);
+    return new KInfoListWidget(i18n("Soundcard"), parent, "Soundcard", GetInfo_Sound);
 #else
     return 0;
 #endif
@@ -102,7 +102,7 @@ extern "C"
   { 
 #ifdef INFO_SCSI_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("SCSI"), GetInfo_SCSI);
+    return new KInfoListWidget(i18n("SCSI"), parent, "SCSI", GetInfo_SCSI);
 #else
     return 0;
 #endif
@@ -112,7 +112,7 @@ extern "C"
   { 
 #ifdef INFO_DEVICES_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("Devices"), GetInfo_Devices);
+    return new KInfoListWidget(i18n("Devices"), parent, "Devices", GetInfo_Devices);
 #else
     return 0;
 #endif
@@ -122,7 +122,7 @@ extern "C"
   { 
 #ifdef INFO_PARTITIONS_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("Partitions"), GetInfo_Partitions);
+    return new KInfoListWidget(i18n("Partitions"), parent, "Partitions", GetInfo_Partitions);
 #else
     return 0;
 #endif
@@ -132,7 +132,7 @@ extern "C"
   { 
 #ifdef INFO_XSERVER_AVAILABLE
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KInfoListWidget(parent, i18n("X-Server"), GetInfo_XServer_and_Video);
+    return new KInfoListWidget(i18n("X-Server"), parent, "X-Server", GetInfo_XServer_and_Video);
 #else
     return 0;
 #endif
@@ -141,7 +141,7 @@ extern "C"
   KCModule *create_memory(QWidget *parent, const char * /*name*/)
   { 
     KGlobal::locale()->insertCatalogue("kcminfo");
-    return new KMemoryWidget(parent, i18n("Memory"));
+    return new KMemoryWidget(parent, "Memory");
   }
 
 }

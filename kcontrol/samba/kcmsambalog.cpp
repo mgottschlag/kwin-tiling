@@ -27,6 +27,7 @@
 #include <kmessagebox.h>
 
 #include <qlayout.h>
+#include <qfile.h>
 #include <qwhatsthis.h>
 
 #include "kcmsambalog.h"
@@ -173,7 +174,7 @@ void LogView::save()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-   ifstream logFile(logFileName.text());
+   ifstream logFile(QFile::encodeName(logFileName.text()));
    if (logFile.good())
    {
       QApplication::setOverrideCursor(waitCursor);
@@ -232,20 +233,20 @@ void LogView::updateList()
                c=strstr(buf," as user");
                *c='\0';
                *c1='\0';
-               new QListViewItemX(&viewHistory,time,i18n("CONNECTION OPENED"),c1+connOpenLen,buf+2);
+               new QListViewItemX(&viewHistory,time,I18N_NOOP("CONNECTION OPENED"),c1+connOpenLen,buf+2);
                connectionsCount++;
             }
             else if (c2!=0)
             {
                *c2='\0';
-               new QListViewItemX(&viewHistory,time,i18n("CONNECTION CLOSED"),c2+connCloseLen,buf+2);
+               new QListViewItemX(&viewHistory,time,I18N_NOOP("CONNECTION CLOSED"),c2+connCloseLen,buf+2);
             }
             else if (c3!=0)
             {
                c=strstr(buf," read=");
                *c='\0';
                *c3='\0';
-               new QListViewItemX(&viewHistory,time,i18n("            FILE OPENED"),c3+fileOpenLen,buf+2);
+               new QListViewItemX(&viewHistory,time,I18N_NOOP("            FILE OPENED"),c3+fileOpenLen,buf+2);
                filesCount++;
             }
             else if (c4!=0)
@@ -253,7 +254,7 @@ void LogView::updateList()
                c=strstr(buf," (numopen=");
                *c='\0';
                *c4='\0';
-               new QListViewItemX(&viewHistory,time,i18n("            FILE CLOSED"),c4+fileCloseLen,buf+2);
+               new QListViewItemX(&viewHistory,time,I18N_NOOP("            FILE CLOSED"),c4+fileCloseLen,buf+2);
             };
          };
       };

@@ -26,7 +26,9 @@
 #include <qlayout.h>
 
 #include <kapp.h>
+#include <kglobal.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <iostream.h>
 
@@ -121,11 +123,8 @@ void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnect
    dataList=list;
    filesCount=nrOfFiles;
    connectionsCount=nrOfConnections;
-   QString tmp("");
-   tmp.sprintf("%d",connectionsCount);
-   connectionsL.setText(QString(i18n("Connections: "))+tmp);
-   tmp.sprintf("%d",filesCount);
-   filesL.setText(QString(i18n("File accesses: "))+tmp);
+   connectionsL.setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount)));
+   filesL.setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount)));
    clearStatistics();
 };
 
@@ -134,7 +133,7 @@ void StatisticsView::calculate()
    if (dataList==0) return;
    QApplication::setOverrideCursor(waitCursor);
    int connCount(0);
-   if (QString(eventCb.currentText())==i18n("Connection"))
+   if (eventCb.currentText()==i18n("Connection"))
       connCount=1;
    //something has to be counted exactly
    if ((expandedInfoCb.isChecked()) || (expandedUserCb.isChecked()))
@@ -228,14 +227,14 @@ void StatisticsView::clearStatistics()
 
 void SambaLog::printItems()
 {
-   cout<<"****** printing items: ******"<<endl;
+   kdDebug() << "****** printing items: ******" << endl;
    for (LogItem* tmpItem=items.first();tmpItem!=0;tmpItem=items.next())
    {
-      cout<<"SERVICE: "<<tmpItem->name<<endl;
+      kdDebug() << "SERVICE: " << tmpItem->name << endl;
       for (SmallLogItem* tmpLog=tmpItem->accessed.first();tmpLog!=0;tmpLog=tmpItem->accessed.next())
-         cout<<"      accessed by: "<<tmpLog->name<<"  "<<tmpLog->count<<endl;
+         kdDebug() << "      accessed by: " << tmpLog->name << "  " << tmpLog->count << endl;
    };
-   cout<<"------ end of printing ------"<<endl<<endl;
+   kdDebug() << "------ end of printing ------" << endl << endl;
 };
 
 LogItem* SambaLog::itemInList(QString name)

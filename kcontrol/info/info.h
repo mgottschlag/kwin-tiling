@@ -1,7 +1,6 @@
 #ifndef _INFO_H_
 #define _INFO_H_
 
-
 #include <qwidget.h>
 #include <qframe.h>
 #include <qlabel.h>
@@ -14,10 +13,7 @@
 
 #include <kcmodule.h>
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
 
 /* function call-back-prototypes... */
 
@@ -32,31 +28,25 @@ bool GetInfo_SCSI( QListView *lBox );
 bool GetInfo_Partitions( QListView *lBox );
 bool GetInfo_XServer_and_Video( QListView *lBox );
 
-
-
 class KInfoListWidget : public KCModule
 {
   Q_OBJECT
 
 public:
-
-  KInfoListWidget(QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
-
+  KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
   virtual void defaults();
   
 private:
   QListView 	*lBox;
   bool 		(*getlistbox) (QListView *);
-  const char 	*title;
+  QString title;
   
   QLabel	*NoInfoText;
   QString	ErrorString;
 
 protected:
   virtual void resizeEvent( QResizeEvent * );
-
 };
-
 
 #endif

@@ -382,12 +382,12 @@ void KInfoListWidget::defaults()
 }
 
 
-KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name, 
+KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const char *name, 
                                  bool _getlistbox(QListView *lbox))
-    : KCModule(parent, name)
+    : KCModule(parent, name),
+      title(_title)
 {   
     getlistbox 	= _getlistbox;
-    title	= name;
     lBox 	= 0;
     NoInfoText  = 0;
     GetInfo_ErrorString = 0;

@@ -229,21 +229,21 @@ void InternetKeywordsOptions::changeSearchFallback(const QString &name) {
 }
 
 void InternetKeywordsOptions::textChanged(const QString &) {
-    const char *provider = le_searchProviderName->text();
-    const char *uri = le_searchProviderURI->text();
-    const char *shortcuts = le_searchProviderShortcuts->text();
+    QString provider = le_searchProviderName->text();
+    QString uri = le_searchProviderURI->text();
+    QString shortcuts = le_searchProviderShortcuts->text();
 
     bool known = false, same = false;
 
     KURISearchFilterEngine::SearchEntry e = searcher->searchEntryByName(provider);
-    if (known = (e.m_strName != QString::null)) {
+    if (known = (!e.m_strName.isNull())) {
 	pb_chgSearchProvider->setText(i18n("Ch&ange"));
 	same = e.m_strQuery == uri && e.m_lstKeys.join(", ") == shortcuts;
     } else {
 	pb_chgSearchProvider->setText(i18n("&Add"));
     }
 
-    if (!same && provider && *provider && uri && (*uri || !strncmp(provider, "RealNames", 9))) {
+    if (!same && !provider.isEmpty() && !uri.isNull() && (!uri.isEmpty() || provider.left(9) == "RealNames")) {
 	pb_chgSearchProvider->setEnabled(true);
     } else {
 	pb_chgSearchProvider->setEnabled(false);
@@ -253,25 +253,25 @@ void InternetKeywordsOptions::textChanged(const QString &) {
 }
 
 void InternetKeywordsOptions::changeSearchProvider() {
-    const char *provider = le_searchProviderName->text();
-    const char *uri = le_searchProviderURI->text();
+    QString provider = le_searchProviderName->text();
+    QString uri = le_searchProviderURI->text();
 
-    if (!*provider) {
+    if (provider.isEmpty()) {
     	KMessageBox::error( 0,
                               i18n("You must enter a search provider name first!") );
         return;
     }
-    if (!*uri && strncmp(provider, "RealNames", 9)) {
+    if (uri.isEmpty() && provider.left(9) != "RealNames") {
     	KMessageBox::error( 0,
                               i18n("You must enter a search provider URI first!") );
         return;
     }
     
-    if (*uri) {
+    if (!uri.isEmpty()) {
 	QString tmp(uri);
 	if (tmp.find("\\1") < 0) {
-	    if (QMessageBox::warning(0, i18n("Warning"),
-		i18n("The URI does not contain a \\1 placeholder for the user query.\nThis means that the same page is always going to be visited, \nregardless of what the user types..."), i18n("Keep It"), i18n("Cancel"), 0, 1) == 1) {
+	    if (KMessageBox::warningContinueCancel(0,
+		i18n("The URI does not contain a \\1 placeholder for the user query.\nThis means that the same page is always going to be visited, \nregardless of what the user types..."), QString::null, i18n("Keep It")) == KMessageBox::Cancel) {
 		return;
 	    }
 	}
@@ -331,7 +331,7 @@ void InternetKeywordsOptions::deleteSearchProvider() {
 }
 
 void InternetKeywordsOptions::updateSearchProvider(QListViewItem *lvi) {
-    const char *provider = "", *uri = "", *shortcuts = "";
+    QString provider, uri, shortcuts;
 
     if (lvi) {
 	const KURISearchFilterEngine::SearchEntry &e = searcher->searchEntryByName(lvi->text(0));
