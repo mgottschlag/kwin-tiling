@@ -256,6 +256,12 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	load();
 }
 
+void topKCMEmail::load()
+{
+       cmbCurProfile->clear();
+       load(QString::null);
+}
+
 void topKCMEmail::load(const QString &s)
 {
 	if (s == QString::null) {
