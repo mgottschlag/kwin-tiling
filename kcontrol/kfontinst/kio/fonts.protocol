@@ -13,3 +13,4 @@ linking=false
 Icon=font
 defaultMimetype=application/octet-stream
 maxInstances=1
+Class=:local

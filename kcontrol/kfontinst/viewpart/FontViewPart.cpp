@@ -136,7 +136,7 @@ void CFontViewPart::install()
                     break;
             }
 
-        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? "Personal" : "System"))+QChar('/')+sub);
+        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? i18n("Personal") : i18n("System")))+QChar('/')+sub);
         KURL          destUrl(QString("fonts:/")+destDir+CMisc::getFile(m_url.path()));
         KIO::UDSEntry uds;
 

@@ -223,7 +223,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     if((act=itsDirOp->actionCollection()->action("home")))
     {
         act->setIcon("fonts");
-        act->setText("Top Level");
+        act->setText(i18n("Top Level"));
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(home()));
         connect(act, SIGNAL(activated()), SLOT(gotoTop()));
         act->plug(toolbar);
@@ -356,7 +356,7 @@ const KAboutData * CKCmFontInst::aboutData() const
                                           KAboutData::License_GPL,
                                           I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
                                                     "(c) Craig Drummond, 2000 - 2003"));
-        that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "craig@kde.org");
+        that->itsAboutData->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
     }
 
     return itsAboutData;
@@ -464,7 +464,7 @@ void CKCmFontInst::urlEntered(const KURL &url)
     itsConfig.writeEntry(CFG_PATH, url.path());
 
     itsEnableAct->setEnabled(false);
-    itsDisableAct->setEnabled(false); 
+    itsDisableAct->setEnabled(false);
     itsLabel->setText(createLocationLabel(url));
     itsLabel->setURL(url.url());
     if(itsAutoSync)
