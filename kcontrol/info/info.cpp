@@ -415,6 +415,8 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
 #include "info_openbsd.cpp"
 #elif __svr4__
 #include "info_svr4.cpp"
+#elif _AIX
+#include "info_aix.cpp"
 #else
 #include "info_generic.cpp"	/* Default for unsupportet systems.... */
 #endif
