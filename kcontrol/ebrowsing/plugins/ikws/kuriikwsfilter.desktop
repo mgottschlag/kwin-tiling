@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Service
+Name=InternetKeywordsFilter
+X-KDE-Library=libkuriikwsfilter
+ServiceTypes=KURIFilter/Plugin
