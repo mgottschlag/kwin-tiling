@@ -114,7 +114,7 @@ static int
 PAM_conv (int num_msg,
 	  pam_message_type **msg,
 	  struct pam_response **resp,
-	  void *appdata_ptr)
+	  void *appdata_ptr ATTR_UNUSED)
 {
     int count;
     struct pam_response *reply;
@@ -174,7 +174,7 @@ static struct pam_conv PAM_conversation = {
 };
 
 # ifdef HAVE_PAM_FAIL_DELAY
-static void fail_delay(int retval, unsigned usec_delay, void *appdata_ptr) {}
+static void fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED, void *appdata_ptr ATTR_UNUSED) {}
 # endif
 
 static pam_handle_t *pamh;
@@ -635,16 +635,13 @@ Restrict (struct display *d)
 
 # ifdef HAVE_GETUSERSHELL
     for (;;) {
-	s = getusershell();
-	if (s == NULL) {
-	    /* did not find the shell in /etc/shells  -> failure */
+	if (!(s = getusershell())) {
 	    Debug("shell not in /etc/shells\n");
 	    endusershell();
 	    GSendInt (V_BADSHELL);
 	    return;
 	}
-	if (strcmp(s, p->pw_shell) == 0) {
-	    /* found the shell in /etc/shells */
+	if (!strcmp(s, p->pw_shell)) {
 	    endusershell();
 	    break;
 	}
@@ -796,14 +793,12 @@ nolog_succ:
 spbad:
 #  endif
 
-# else
+# endif /* HAVE_PW_EXPIRE || USESHADOW */
 
     GSendInt (V_OK);
-#  ifdef USE_LOGIN_CAP
+# ifdef USE_LOGIN_CAP
     login_close(lc);
-#  endif
-
-# endif /* HAVE_PW_EXPIRE || USESHADOW */
+# endif
 
 
 #endif /* USE_PAM || AIXV3 */
@@ -1265,7 +1260,7 @@ SessionExit (struct display *d, int status)
 {
     /* make sure the server gets reset after the session is over */
     if (d->serverPid >= 2 && d->resetSignal)
-	kill (d->serverPid, d->resetSignal);
+	TerminateProcess (d->serverPid, d->resetSignal);
     else
 	ResetServer (d);
     if (sourceReset) {

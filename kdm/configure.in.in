@@ -11,25 +11,8 @@ AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 AC_SUBST(KDE_BINDIR)
 exec_prefix="$savex"
 
-KDE_FIND_PATH(X, X_SERVER)
-if test -n "$X_SERVER"; then
-    XBINDIR=`echo $X_SERVER | sed -e 's#/X$##'`
-else
-    KDE_FIND_PATH(xrdb, XRDB)
-    if test -n "$XRDB"; then
-        XBINDIR=`echo $XRDB | sed -e 's#/xrdb$##'`
-    else
-	AC_MSG_ERROR([X binaries not found. Please make sure they are in PATH!])
-    fi
-fi
-AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
-AC_SUBST(XBINDIR)
-
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
 AC_SUBST(XMKMF)
-
-dnl doesn't work currently
-dnl AC_CHECK_FUNCS(getsecretkey getloadavg getusershell login_getclass auth_timeok)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
@@ -58,21 +41,18 @@ RANDOM_DEFINES = -DARC4_RANDOM
 RANDOM_DEFINES = -DDEV_RANDOM
 #endif
 
-#if HasSetUserContext
-USER_CONTEXT_DEFINES = -DHAS_SETUSERCONTEXT
-#endif
-
 #if HasLibCrypt && !defined(SpecialLibCrypt) && defined(LynxOSArchitecture)
 CRYPT_DEFINES = -DHAS_CRYPT
 #endif
 
-XDM_CFLAGS = $(BASIC_FLAGS) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(USER_CONTEXT_DEFINES) $(CRYPT_DEFINES)
+XDM_CFLAGS = $(BASIC_FLAGS) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES)
 
 acimake:
 	@echo XDM_CFLAGS=\"$(XDM_CFLAGS)\"
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
 #endif
+	@echo XBINDIR=$(BINDIR)
 EOF
     $XMKMF >&5 2>&1
     if test -f Makefile; then
@@ -99,10 +79,9 @@ else
     AC_MSG_RESULT([no])
 fi
 
-AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
-AC_SUBST(LIBUTIL)
-AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
-AC_SUBST(LIB_LIBS)
+AC_MSG_RESULT([checking for X binary directory... $XBINDIR])
+AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
+AC_SUBST(XBINDIR)
 
 AC_CHECK_LIB(Xau, main, [:], 
 	[
@@ -204,10 +183,38 @@ AC_SUBST(KERBEROS_INCS)dnl
 AC_SUBST(KERBEROS_LIBS)dnl
 AC_SUBST(KRB_RPATH)
 
-AC_MSG_CHECKING([which CFLAGS to use for xdm core])
-if eval "test \"`echo '$ac_cv_func_vsyslog'`\" = yes"; then
-    XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG"
+AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
+AC_SUBST(LIBUTIL)
+AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
+AC_SUBST(LIB_LIBS)
+
+AC_CHECK_HEADER(krb5/krb5.h, [ XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH" ])
+AC_CHECK_HEADER(rpc/rpc.h, [ XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC" ])
+
+dnl should be:
+dnl AC_CHECK_MEMBER(struct passwd.pw_expire, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
+dnl but somehow it doesn't work. so we make it by hand ...
+AC_MSG_CHECKING([for pw_expire in struct passwd])
+AC_CACHE_VAL(ac_cv_have_pw_expire,
+    [ AC_TRY_COMPILE(
+	  [#include <pwd.h>],
+	  [struct passwd pwd; pwd.pw_expire = 0;],
+	  [ac_cv_have_pw_expire="yes"],
+	  [ac_cv_have_pw_expire="no"])
+    ])
+AC_MSG_RESULT($ac_cv_have_pw_expire)
+if test "$ac_cv_have_pw_expire" = "yes"; then
+    XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE"
 fi
+
+ac_save_libs=$LIBS
+LIBS="$LIBS $LIBUTIL"
+AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
+AC_CHECK_FUNC(getusershell, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
+AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
+AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
+LIBS=$ac_save_libs
+AC_CHECK_FUNC(vsyslog, [ XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG" ])
 if test "x$use_pam" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DUSE_PAM"
 elif test "x$use_shadow" = xyes; then
@@ -222,13 +229,7 @@ if test "x$with_krb4" != xno; then
 	XDM_CFLAGS="$XDM_CFLAGS -DNO_AFS"
     fi
 fi
-if eval "test \"`echo '$ac_cv_header_krb5_krb5_h'`\" = yes"; then
-    XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH"
-fi
-if eval "test \"`echo '$ac_cv_header_rpc_rpc_h'`\" = yes"; then
-    XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC"
-fi
-AC_MSG_RESULT([$XDM_CFLAGS])
+AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
 
 dnl AC_OUTPUT(kdm/kfrontend/config/kdmrc)
