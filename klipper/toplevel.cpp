@@ -59,11 +59,13 @@
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
+extern bool qt_qclipboard_bailout_hack;
 
 // config == kapp->config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent ), DCOPObject( "klipper" ), m_config( config )
 {
+    qt_qclipboard_bailout_hack = true;
     updateTimestamp(); // read initial X user time
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
@@ -119,6 +121,7 @@ KlipperWidget::~KlipperWidget()
     delete myURLGrabber;
     if( m_config != kapp->config())
         delete m_config;
+    qt_qclipboard_bailout_hack = false;
 }
 
 void KlipperWidget::adjustSize()
