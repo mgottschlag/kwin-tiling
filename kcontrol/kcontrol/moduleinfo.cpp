@@ -37,7 +37,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 
   //kdDebug() << "desktopFile = " << desktopFile << endl;
   _service = KService::serviceByDesktopPath(desktopFile);
-  assert(_service);
+  assert(_service != 0L);
 
   // set the modules simple attributes
   setName(_service->name());
