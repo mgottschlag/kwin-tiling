@@ -173,7 +173,6 @@ void KLocaleApplication::reTranslate()
     // retranslated from here.
     if (strcmp(wc->name(), "unnamed") == 0) continue;
 
-qDebug("%s", wc->className());
     if (strcmp(wc->className(), "QLabel") == 0)
       ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
     else if (strcmp(wc->className(), "QVGroupBox") == 0)
