@@ -3158,13 +3158,9 @@ static const char *oldkdes[] = {
 
     "/opt/kde2/share/config",
     "/usr/local/kde2/share/config",
-    "/opt/kde1/share/config",
-    "/usr/local/kde1/share/config",
 };
 
 static const char *oldxdms[] = {
-    "/etc/X11/kdm", 
-    XLIBDIR "/kdm",
     "/etc/X11/xdm", 
     XLIBDIR "/xdm",
 };
