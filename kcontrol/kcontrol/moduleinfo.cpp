@@ -24,7 +24,6 @@
 #include <kdebug.h>
 
 #include "moduleinfo.h"
-#include "moduleinfo.moc"
 
 KCModuleInfo::KCModuleInfo(const QString& desktopFile, const QString& baseGroup)
   : _fileName(desktopFile)
