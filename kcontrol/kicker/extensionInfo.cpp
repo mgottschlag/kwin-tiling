@@ -132,7 +132,6 @@ void extensionInfo::save()
     c.writeEntry("XineramaScreen",      _xineramaScreen);
     c.writeEntry("ShowLeftHideButton",  _showLeftHB);
     c.writeEntry("ShowRightHideButton", _showRightHB);
-    c.writeEntry("HideButtonSize",      _hideButtonSize);
     c.writeEntry("AutoHidePanel",       _autohidePanel);
     c.writeEntry("BackgroundHide",      _backgroundHide);
     c.writeEntry("AutoHideSwitch",      _autoHideSwitch);
@@ -142,7 +141,12 @@ void extensionInfo::save()
     c.writeEntry("UnhideLocation",      _unhideLocation);
     c.writeEntry("SizePercentage",      _sizePercentage );
     c.writeEntry("ExpandSize",          _expandSize );
-    
+
+    // FIXME: this is set only for the main panel and only in the
+    // look 'n feel (aka appearance) tab. so we can't save it here
+    // this should be implemented properly. - AJS
+    //c.writeEntry("HideButtonSize",      _hideButtonSize);
+
     if (_resizeable)
     {
         c.writeEntry("Size",       _size);
