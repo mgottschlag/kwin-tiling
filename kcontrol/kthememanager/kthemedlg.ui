@@ -3,7 +3,7 @@
 <author>Lukas Tinkl &lt;lukas@kde.org&gt;</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Form1</cstring>
+        <cstring>KThemeDlg</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -20,9 +20,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
-    </property>
-    <property name="caption">
-        <string>Form1</string>
     </property>
     <grid>
         <property name="name">
@@ -416,37 +413,37 @@
     <connection>
         <sender>lbGet</sender>
         <signal>leftClickedURL(const QString&amp;)</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startKonqui(const QString&amp;)</slot>
     </connection>
     <connection>
         <sender>btnBackground</sender>
         <signal>clicked()</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startBackground()</slot>
     </connection>
     <connection>
         <sender>btnColors</sender>
         <signal>clicked()</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startColors()</slot>
     </connection>
     <connection>
         <sender>btnStyle</sender>
         <signal>clicked()</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startStyle()</slot>
     </connection>
     <connection>
         <sender>btnIcons</sender>
         <signal>clicked()</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startIcons()</slot>
     </connection>
     <connection>
         <sender>btnSaver</sender>
         <signal>clicked()</signal>
-        <receiver>Form1</receiver>
+        <receiver>KThemeDlg</receiver>
         <slot>startSaver()</slot>
     </connection>
 </connections>

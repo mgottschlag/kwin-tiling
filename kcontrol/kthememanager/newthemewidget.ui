@@ -3,7 +3,7 @@
 <author>Lukas Tinkl &lt;lukas@kde.org&gt;</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Form1</cstring>
+        <cstring>NewThemeWidget</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -12,9 +12,6 @@
             <width>537</width>
             <height>431</height>
         </rect>
-    </property>
-    <property name="caption">
-        <string>Form1</string>
     </property>
     <grid>
         <property name="name">
