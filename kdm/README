@@ -19,6 +19,28 @@ Have a look at README.pam in the kdebase top level directory if your
 system uses PAM.
 
 
+The Xservers file
+-----------------
+
+This file tells kdm which/when/how X-Servers ("desktop sessions", 
+"login screens") should be started. The file is backwards compatible with 
+XDM's Xservers file, but it contains some extensions:
+* @tty. The idea for this is stolen from Solaris (TM). You can specifiy here,
+  which text console an X-Server is "covering", so KDM knows which virtual
+  terminal to switch to when you select "Console login" and it knows which
+  console it should monitor for activity to find out when you're done with
+  your console work.
+  This is not perfectly suited for Linux, as there X-Servers don't actually
+  cover consoles (gettys), but hey, it works. :-)
+* reserve. A server marked as reserve is not started at KDM's startup time,
+  but when the user explicitly requests it. See "Command FiFos" below.
+
+Example:
+
+:0 local@tty1 /usr/bin/X11/X vt7
+:1 local reserve /usr/bin/X11/X :1 vt8
+
+
 Running KDM from init
 ---------------------
 
@@ -87,20 +109,16 @@ Per-display Fifo commands:
    session at this display exits.
 
 "lock"
- - The display is marked as locked. If the x-server crashes in this state,
-   no auto-relogin will be performed even if the option is on. If all local 
-   displays are locked and reserve displays are specified in Xservers, a 
-   new login screen is started.
+ - The display is marked as locked. If the X-Server crashes in this state,
+   no auto-relogin will be performed even if the option is on.
 
 "unlock"
- - Reverse the effects of "lock". Re-enable auto-relogin and remove the 
-   reserve login screen, if it's not used.
+ - Reverse the effect of "lock": re-enable auto-relogin.
 
 "reserve" [timeout in seconds]
  - Start a reserve login screen. If nobody logs in within the specified amount
    of time (one minute by default), the display is removed again. When the
-   session on the display exits and there are other non-locked local displays,
-   the display is removed.
+   session on the display exits, the display is removed, too.
 
 "suicide"
  - The currently running session is forcibly terminated. No auto-relogin is
