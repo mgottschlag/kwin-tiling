@@ -159,6 +159,8 @@ void KLanguageCombo::insertItem(const QIconSet& icon, const QString &text, const
 void KLanguageCombo::changeItem( const QString &text, int index )
 {
   popup->changeItem( text, index);
+  if (index == current)
+    repaint();
 }
 
 void KLanguageCombo::paintEvent( QPaintEvent * )
