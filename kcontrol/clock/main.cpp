@@ -47,6 +47,7 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
 
   about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
   about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
+  about->addAuthor("Benjamin Meyer", I18N_NOOP("Added NTP support"), "ben+kcmclock@meyerhome.net");
   setAboutData( about );
 
   KGlobal::locale()->insertCatalogue("timezones"); // For time zone translations

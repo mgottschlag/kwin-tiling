@@ -29,6 +29,7 @@
 #include <qtimer.h>
 #include <qvalidator.h>
 #include <qwidget.h>
+#include <qcheckbox.h>
 
 #include <kdatepicker.h>
 #include <knuminput.h>
@@ -56,14 +57,23 @@ class Dtime : public QWidget
   QString quickHelp() const;
 
 signals:
-	void timeChanged(bool);
+  void	timeChanged(bool);
 
  private slots:
+  void	configChanged();
+  void	serverTimeCheck(); 
   void	timeout();
   void	set_time();
   void	changeDate(QDate);
 
 private:
+  void	findNTPutility();
+  QString	ntpUtility;
+
+  QWidget*	privateLayoutWidget;
+  QCheckBox	*setDateTimeAuto;
+  QComboBox	*timeServerList;
+
   KDatePicker	*cal;
   QComboBox	*month;
   QSpinBox	*year;
@@ -72,11 +82,11 @@ private:
   HMSTimeWidget	*minute;
   HMSTimeWidget	*second;
 
-  Kclock        *kclock;
+  Kclock	*kclock;
   
   QTime		time;
   QDate		date;
-  QTimer        internalTimer;
+  QTimer	internalTimer;
   
   QString	BufS;
   int		BufI;

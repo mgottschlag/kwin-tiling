@@ -29,12 +29,15 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qwhatsthis.h>
+#include <qcheckbox.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
+#include <kconfig.h>
 
 #include "dtime.h"
 #include "dtime.moc"
@@ -59,6 +62,26 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // *************************************************************
   // Start Dialog
   // *************************************************************
+
+  // Time Server
+
+  privateLayoutWidget = new QWidget( this, "layout1" );
+  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget, 0, 0, "ntplayout"); 
+
+  setDateTimeAuto = new QCheckBox( privateLayoutWidget, "setDateTimeAuto" );
+  setDateTimeAuto->setText(i18n("Set Date and Time &automatically:"));
+  connect(setDateTimeAuto, SIGNAL(toggled(bool)), this, SLOT(serverTimeCheck()));
+  connect(setDateTimeAuto, SIGNAL(toggled(bool)), SLOT(configChanged()));
+  layout1->addWidget( setDateTimeAuto );
+
+  timeServerList = new QComboBox( false, privateLayoutWidget, "timeServerList" );
+  connect(timeServerList, SIGNAL(activated(int)), SLOT(configChanged()));
+  connect(timeServerList, SIGNAL(textChanged(const QString &)), SLOT(configChanged()));
+  connect(setDateTimeAuto, SIGNAL(toggled(bool)), timeServerList, SLOT(setEnabled(bool)));
+  timeServerList->setEnabled(false);
+  timeServerList->setEditable(true);
+  layout1->addWidget( timeServerList );
+  findNTPutility();
 
   // Date box
   QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
@@ -131,9 +154,11 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer3, 0, 1, 9, 9);
 
-  QHBoxLayout *top = new QHBoxLayout( this, 0, KDialog::spacingHint() );
-  top->addWidget(dateBox, 1);
-  top->addWidget(timeBox, 1);
+  QGridLayout *top = new QGridLayout( this, 2,2, KDialog::spacingHint() );
+
+  top->addWidget(dateBox, 1,0);
+  top->addWidget(timeBox, 1,1);
+  top->addMultiCellWidget(privateLayoutWidget, 0,0, 0,1);
 
   // *************************************************************
   // End Dialog
@@ -155,8 +180,39 @@ Dtime::Dtime(QWidget * parent, const char *name)
       minute->setEnabled(false);
       second->setEnabled(false);
       kclock->setEnabled(false);
+      timeServerList->setEnabled(false);
+      setDateTimeAuto->setEnabled(false);
     }
+}
 
+void Dtime::serverTimeCheck() {
+  bool enabled = !setDateTimeAuto->isChecked();
+  cal->setEnabled(enabled);
+  hour->setEnabled(enabled);
+  minute->setEnabled(enabled);
+  second->setEnabled(enabled);
+  kclock->setEnabled(enabled);
+}
+
+void Dtime::findNTPutility(){
+  KProcess proc;
+  proc << "which" << "ntpdate";
+  proc.start(KProcess::Block);
+  if(proc.exitStatus() == 0) {
+    ntpUtility = "ntpdate";
+    kdDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    return;
+  }
+  proc.clearArguments();
+  proc << "which" << "rdate";
+  proc.start(KProcess::Block);
+  if(proc.exitStatus() == 0) {
+    ntpUtility = "rdate";
+    kdDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    return;
+  }
+  privateLayoutWidget->hide();
+  kdDebug() << "ntpUtility not found!" << endl;
 }
 
 void Dtime::set_time()
@@ -178,8 +234,22 @@ void Dtime::changeDate(QDate d)
   emit timeChanged( TRUE );
 }
 
+void Dtime::configChanged(){
+  emit timeChanged( TRUE );
+}
+
 void Dtime::load()
 {
+  KConfig config("kcmclockrc", true, false);
+  config.setGroup("NTP");
+  timeServerList->insertStringList(QStringList::split(',', config.readEntry("servers", 
+    "Public Time Server (pool.ntp.org),\
+asia.pool.ntp.org,\
+europe.pool.ntp.org,\
+north-america.pool.ntp.org,\
+oceania.pool.ntp.org")));
+  setDateTimeAuto->setChecked(config.readBoolEntry("enabled", false));
+
   // Reset to the current date and time
   time = QTime::currentTime();
   date = QDate::currentDate();
@@ -193,39 +263,80 @@ void Dtime::load()
 
 void Dtime::save()
 {
-  KProcess c_proc;
+  KConfig config("kcmclockrc", false, false);
+  config.setGroup("NTP");
 
-// BSD systems reverse year compared to Susv3
+  // Save the order, but don't duplicate!
+  QStringList list;
+  if( timeServerList->count() != 0)
+    list.append(timeServerList->currentText());
+  for ( int i=0; i<timeServerList->count();i++ ) {
+    QString text = timeServerList->text(i);
+    if( list.find(text) == list.end())
+      list.append(text);
+    // Limit so errors can go away and not stored forever
+    if( list.count() == 10)
+      break;
+  }
+  config.writeEntry("servers", list.join(","));
+  config.writeEntry("enabled", setDateTimeAuto->isChecked());
+  
+  if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
+    // NTP Time setting
+    QString timeServer = timeServerList->currentText();
+    if( timeServer.find( QRegExp(".*\\(.*\\)$") ) != -1 ) {
+      timeServer.replace( QRegExp(".*\\("), "" );
+      timeServer.replace( QRegExp("\\).*"), "" );
+      // Would this be better?: s/^.*\(([^)]*)\).*$/\1/
+    }
+    KProcess proc;
+    proc << ntpUtility << timeServer;
+    proc.start( KProcess::Block );
+    if( proc.exitStatus() != 0 ){
+      KMessageBox::error( this, i18n(QString("Unable to contact time server: %1.").arg(timeServer).latin1()));
+      setDateTimeAuto->setChecked( false );
+    }
+    else {
+        // success
+        kdDebug() << "Set date from time server " << timeServer.latin1() << " success!" << endl;
+    }
+  }
+  else {
+    // User time setting
+    KProcess c_proc;
+
+  // BSD systems reverse year compared to Susv3
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
-  BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
+    BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
                date.year(),
                date.month(), date.day(),
                hour->value(), minute->value(), second->value());
 #else
-  BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
+    BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
                date.month(), date.day(),
                hour->value(), minute->value(),
                date.year(), second->value());
 #endif
 
-  kdDebug() << "Set date " << BufS << endl;
+    kdDebug() << "Set date " << BufS << endl;
 
-  c_proc << "date" << BufS;
-  c_proc.start( KProcess::Block );
-  int result = c_proc.exitStatus();
-  if (result != 0
+    c_proc << "date" << BufS;
+    c_proc.start( KProcess::Block );
+    int result = c_proc.exitStatus();
+    if (result != 0
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__)
-  	&& result != 2	// can only set local date, which is okay
+  	  && result != 2	// can only set local date, which is okay
 #endif
-    ) {
-    KMessageBox::error( this, i18n("Can not set date."));
-    return;
-  }
+      ) {
+      KMessageBox::error( this, i18n("Can not set date."));
+      return;
+    }
 
-  // try to set hardware clock. We do not care if it fails
-  KProcess hwc_proc;
-  hwc_proc << "hwclock" << "--systohc";
-  hwc_proc.start(KProcess::Block);
+    // try to set hardware clock. We do not care if it fails
+    KProcess hwc_proc;
+    hwc_proc << "hwclock" << "--systohc";
+    hwc_proc.start(KProcess::Block);
+  }
 
   // restart time
   internalTimer.start( 1000 );
