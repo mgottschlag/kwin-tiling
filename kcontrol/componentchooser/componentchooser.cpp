@@ -395,7 +395,7 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
 	ServiceChooser->sort();
-	connect(ServiceChooser,SIGNAL(clicked(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
+	connect(ServiceChooser,SIGNAL(highlighted(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
 	ServiceChooser->setSelected(0,true);
 	slotServiceSelected(ServiceChooser->item(0));
 
