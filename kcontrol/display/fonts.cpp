@@ -72,7 +72,7 @@ void FontUseItem::writeFont()
 {
 	KConfigBase *config;
 	if ( _rcfile.isEmpty() ) {
-	    config  = kapp->getConfig();
+ 	    config = kapp->getConfig();
 	    config->setGroup( _rcgroup );
 	    config->writeEntry( _rckey, _font, true, true );
 	} else {
@@ -92,8 +92,6 @@ KFonts::KFonts(QWidget *parent, Mode m)
 	int i;
 	changed = false;
 
-	//debug("KFonts::KFonts");
-	
 	// if we are just initialising we don't need to create setup widget
 	if (mode() == Init)
 		return;
@@ -203,6 +201,7 @@ void KFonts::writeSettings()
 		fontUseList.at( i )->writeFont();	
 	
 	fontUseList.at( lbFonts->currentItem() );
+
 }
 
 void KFonts::apply()

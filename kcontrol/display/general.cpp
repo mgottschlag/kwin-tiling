@@ -536,6 +536,7 @@ void KGeneral::apply()
 	if ( !changed )
 		return;
 	
+	debug("KDEChangeGeneral in general.cpp");
 	XEvent ev;
 	unsigned int i, nrootwins;
 	Window dw1, dw2, *rootwins;

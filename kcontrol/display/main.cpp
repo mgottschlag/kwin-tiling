@@ -146,6 +146,8 @@ void KDisplayApplication::apply()
   if (general)
     general->applySettings();
 
+  kapp->getConfig()->sync();
+  
   if (colors || fonts) {
       QPalette pal = colors?colors->createPalette():qApp->palette();
 
@@ -156,6 +158,8 @@ void KDisplayApplication::apply()
       font = config->readFontEntry( "font", &font);
       writeQDesktopProperties( pal, font);
   }
+
+  
   
   if ( runResourceManager ) {
       QApplication::setOverrideCursor( waitCursor );
