@@ -50,7 +50,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
     connect(m_hideButtons, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_backgroundButton, SIGNAL(clicked()), SIGNAL(browse_theme()));
+    connect(m_backgroundButton, SIGNAL(clicked()), SLOT(browse_theme()));
 
     // whats this help
     QWhatsThis::add(m_manualHideAnimation, i18n("If hide buttons are enabled, check this option to make the "
