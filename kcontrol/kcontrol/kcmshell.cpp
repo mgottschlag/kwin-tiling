@@ -52,6 +52,7 @@ static KCmdLineOptions options[] =
 {
     { "list", I18N_NOOP("List all possible modules"), 0},
     { "+module", I18N_NOOP("Configuration module to open."), 0 },
+    { "lang <language>", I18N_NOOP("Specify a certain language."), 0 },
     { "embed <id>", I18N_NOOP("Window ID to embed into."), 0 },
     { "silent", I18N_NOOP("Do not display main window."), 0 },
     KCmdLineLastOption
@@ -150,6 +151,8 @@ int main(int _argc, char *_argv[])
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KGlobal::iconLoader()->addAppDir( "kcontrol" );
 
+	KGlobal::locale()->setLanguage(args->getOption("lang"));
+	
     if (args->isSet("list")) {
         QStringList files;
         KGlobal::dirs()->findAllResources("apps",
