@@ -99,6 +99,7 @@ KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    m_list->addColumn(i18n("Network Mask"));
    m_list->addColumn(i18n("Type"));
    m_list->addColumn(i18n("State"));
+   m_list->setAllColumnsShowFocus(true);
    QHBoxLayout *hbox=new QHBoxLayout(box);
    m_updateButton=new QPushButton(i18n("&Update"),this);
    hbox->addWidget(m_updateButton);
