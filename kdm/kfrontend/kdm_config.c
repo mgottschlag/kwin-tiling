@@ -1,7 +1,8 @@
-#define rcsid "$Id$"
     /*
 
     Read options from kdmrc
+
+    $Id$
 
     Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
 
@@ -23,7 +24,9 @@
     */
 
 #include <config.h>
+
 #include "kdm_config.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -31,6 +34,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <errno.h>
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 
@@ -102,6 +106,17 @@ typedef struct ValArr {
 } ValArr;
 
 
+#ifdef HAVE_VSYSLOG
+# define USE_SYSLOG
+#endif
+
+#define LOG_NAME "kdm_config"
+#define LOG_LOCAL
+#define LOG_DEBUG_MASK DEBUG_CONFIG
+#define LOG_PANIC_EXIT 1
+#include <printf.c>
+
+
 static void
 MkDSpec (DSpec *spec, const char *dname, const char *dclass)
 {
@@ -116,33 +131,69 @@ MkDSpec (DSpec *spec, const char *dname, const char *dclass)
 
 static int rfd, wfd;
 
+static int
+Reader (void *buf, int count)
+{
+    int ret, rlen;
+
+    for (rlen = 0; rlen < count; ) {
+      dord:
+	ret = read (rfd, (void *)((char *)buf + rlen), count - rlen);
+	if (ret < 0) {
+	    if (errno == EINTR)
+		goto dord;
+	    if (errno == EAGAIN)
+		break;
+	    return -1;
+	}
+	if (!ret)
+	    break;
+	rlen += ret;
+    }
+    return rlen;
+}
+
+static void
+GRead (void *buf, int count)
+{
+    if (Reader (buf, count) != count)
+	LogPanic ("Can't read from core\n");
+}
+
+static void
+GWrite (const void *buf, int count)
+{
+    if (write (wfd, buf, count) != count)
+	LogPanic ("Can't write to core\n");
+}
+
 static void
 GSendInt (int val)
 {
-    write (wfd, &val, sizeof(val));
+    GWrite (&val, sizeof(val));
 }
 
 static void
 GSendStr (const char *buf)
 {
     int len = strlen (buf) + 1;
-    write (wfd, &len, sizeof(len));
-    write (wfd, buf, len);
+    GWrite (&len, sizeof(len));
+    GWrite (buf, len);
 }
 
 static void
 GSendNStr (const char *buf, int len)
 {
     int tlen = len + 1;
-    write (wfd, &tlen, sizeof(tlen));
-    write (wfd, buf, len);
-    write (wfd, "", 1);
+    GWrite (&tlen, sizeof(tlen));
+    GWrite (buf, len);
+    GWrite ("", 1);
 }
 
 static int
 GRecvCmd (int *val)
 {
-    if (read (rfd, val, sizeof(*val)) != sizeof(*val))
+    if (Reader (val, sizeof(*val)) != sizeof(*val))
 	return 0;
     return 1;
 }
@@ -152,8 +203,7 @@ GRecvInt ()
 {
     int val;
 
-    if (read (rfd, &val, sizeof(val)) != sizeof(val))
-	exit (1);
+    GRead (&val, sizeof(val));
     return val;
 }
 
@@ -167,86 +217,11 @@ GRecvStr ()
     if (!len)
 	return 0;
     if (!(buf = malloc (len)))
-	exit (2);
-    if (read (rfd, buf, len) != len)
-	exit (1);
+	LogPanic ("No memory for read buffer");
+    GRead (buf, len);
     return buf;
 }
 
-/*
- * NOTE: Logging can be only done, when the core expects it, i.e.,
- * after a command was invoked and before real results are returned.
- * That's why Debug() is currently a printf.
- */
-
-void
-LogOutOfMem (const char *fkt)
-{
-    char buf[100];
-
-    GSendInt (DM_ERR);
-    sprintf (buf, "Out of memory in %s()", fkt);
-    GSendStr (buf);
-}
-
-#define OCLBufMisc
-#define OCLBufInit
-#define OCLBufPrint \
-	GSendInt (oclbp->type); \
-	GSendNStr (oclbp->buf, oclbp->clen);
-#include <printf.c>
-
-static int debugLevel;
-
-static void
-Debug (const char *fmt, ...)
-{
-    va_list args;
-
-    if (debugLevel & DEBUG_CONFIG)
-    {
-	va_start(args, fmt);
-#if 0
-	Logger (DM_DEBUG, fmt, args);
-#else
-	vprintf (fmt, args);
-#endif
-	va_end(args);
-    }
-}
-
-static void 
-LogInfo(const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_INFO, fmt, args);
-    va_end(args);
-}
-
-static void
-LogError (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_ERR, fmt, args);
-    va_end(args);
-}
-
-/*
-static void
-LogPanic (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_PANIC, fmt, args);
-    va_end(args);
-    exit (4);
-}
-*/
 
 /* #define WANT_CLOSE 1 */
 
@@ -989,7 +964,6 @@ SendValues (ValArr *va)
     Value *cst;
     int i, nu;
 
-    GSendInt (-1);
 Debug ("sending values\n");
     GSendInt (va->nents);
     GSendInt (va->totlen + va->nents * (sizeof(int) + sizeof(char *)));
@@ -1062,8 +1036,10 @@ int main(int argc, char **argv)
     if (sscanf (ci, "%d %d", &rfd, &wfd) != 2)
         return 1;
 
-    if ((debugLevel = GRecvInt ()) & DEBUG_GDB)
-	sleep (15);
+    InitLog();
+
+    if ((debugLevel = GRecvInt ()) & DEBUG_WCONFIG)
+	sleep (100);
 
 /*Debug ("parsing command line\n");*/
     for (ap = 1; ap < argc; ap++) {
@@ -1095,7 +1071,6 @@ int main(int argc, char **argv)
 	LogError ("Unknown command line option '%s'\n", argv[ap]);
       oke:
     }
-    GSendInt (-1);
 
     for (;;) {
 /*	Debug ("Awaiting command ...\n");*/
@@ -1105,7 +1080,6 @@ int main(int argc, char **argv)
 	case GC_Files:
 /*	    Debug ("GC_Files\n");*/
 	    /* ReadConf (); */
-	    GSendInt (-1);
 	    GSendInt (1);
 	    GSendStr (kdmrc); GSendInt (-1);
 	    for (; (what = GRecvInt ()) != -1; ) {

@@ -375,7 +375,6 @@ extern void StopDisplay (struct display *d);
 extern void WaitForChild (void);
 
 /* process.c */
-extern void AttachGdb (char *path, int pid);
 extern void RegisterCloseOnFork (int fd);
 extern void ClearCloseOnFork (int fd);
 extern int Fork (void);

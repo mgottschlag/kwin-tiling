@@ -184,39 +184,6 @@ Wait4 (int pid)
 }
 
 
-/*
- * Hack alert! It sucks, but it mostly works ...
- */
-
-#define cmds "set pagination off\ncont\nwhere full\nkill\nq\n"
-
-void
-AttachGdb (char *path, int pid)
-{
-    int dpid, pip[2];
-    char pbuf[10];
-
-    if (debugLevel & DEBUG_GDB) {
-	switch ((dpid = fork ())) {
-	case 0:
-	    if (!fork ()) {
-		if (!pipe (pip)) {
-		    sleep (2);
-		    write (pip[1], cmds, sizeof (cmds) - 1);
-		    dup2 (pip[0], 0);
-		    sprintf (pbuf, "%d", pid);
-		    execlp ("gdb", "gdb", "--quiet", path, pbuf, 0);
-		}
-	    }
-	    exit (0);
-	default:
-	    Wait4 (dpid);
-	case -1:
-	}
-    }
-}
-
-
 void
 execute (char **argv, char **environ)
 {
@@ -368,13 +335,12 @@ GOpen (char **argv, char *what, char **env)
 	execute (margv, env);
 	LogPanic ("Cannot execute '%s'\n", margv[0]);
     default:
+	Debug ("Forked helper %s, pid %d\n", margv[0], gpid);
+	freeStrArr (margv);
 	close (opipe[0]);
 	close (ipipe[1]);
 	(void) Signal (SIGPIPE, SIG_IGN);
-	Debug ("Forked helper %s, pid %d\n", margv[0], gpid);
 	GSendInt (debugLevel);
-	AttachGdb (margv[0], gpid);
-	freeStrArr (margv);
 	return (char *)0;
     }
 }
@@ -396,7 +362,7 @@ GClose ()
 	    waitCode(ret), waitSig(ret));
     if (waitSig (ret))
 	LogError ("Helper program crashed. "
-		  "Please run \"%s -debug 255\".\n", prog);
+		  "Please run \"%s -debug 15\".\n", prog);
     return ret;
 }
 
@@ -405,8 +371,6 @@ static void GError (void) ATTR_NORETURN;
 static void
 GError ()
 {
-    LogError ("Fatal error while communicating with helper.\n");
-sleep (100);
     GClose ();
     Longjmp (GErrJmp, 1);
 }
@@ -414,8 +378,10 @@ sleep (100);
 static void
 GRead (void *buf, int len)
 {
-    if (Reader (ipipe[0], buf, len) != len)
+    if (Reader (ipipe[0], buf, len) != len) {
+	LogError ("Cannot read from helper\n");
 	GError ();
+    }
 }
 
 static void
@@ -426,11 +392,13 @@ GWrite (void *buf, int len)
     do {
 	ret = write (opipe[1], buf, len);
     } while (ret < 0 && errno == EINTR);
-    if (ret != len)
+    if (ret != len) {
 #else
-    if (write (opipe[1], buf, len) != len)
+    if (write (opipe[1], buf, len) != len) {
 #endif
+	LogError ("Cannot write to helper\n");
 	GError ();
+    }
 }
 
 void

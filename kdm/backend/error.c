@@ -40,73 +40,12 @@ from The Open Group.
 #include "dm_error.h"
 
 #include <stdio.h>
-#include <ctype.h>
 
-#ifdef USE_SYSLOG
-# include <syslog.h>
-#endif
-
-#ifdef USE_SYSLOG
-static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
-#else
-static char *lognams[] = { "debug", "info", "error", "panic" };
-#endif
-
-void
-GLogger (const char *who, int type, const char *msg)
-{
-#ifdef USE_SYSLOG
-    openlog(prog, LOG_PID, LOG_DAEMON);
-    syslog (lognums[type], "%s: %s", who, msg);
-#else
-    Time_t tim;
-    char dbuf[20];
-
-    (void) time (&tim);
-    strftime (dbuf, sizeof(dbuf), "%b %e %H:%M:%S", localtime (&tim));
-    fprintf (stderr, "%s %s[%d] %s: %s: %s\n", 
-	     dbuf, prog, (int)getpid(), lognams[type], who, msg);
-    fflush (stderr);
-#endif
-}
-
-#ifdef USE_SYSLOG
-# define OCLBufMisc int fl;
-# define OCLBufInit oclb.fl = 0;
-# define OCLBufPrint \
-	if (!oclbp->fl) { \
-	    oclbp->fl = 1; \
-	    openlog(prog, LOG_PID, LOG_DAEMON); \
-	} \
-	syslog (lognums[oclbp->type], "%.*s", oclbp->clen, oclbp->buf);
-#else
-# define OCLBufMisc
-# define OCLBufInit
-# define OCLBufPrint \
-	Time_t tim; \
-	char dbuf[20]; \
-	(void) time (&tim); \
-	strftime (dbuf, sizeof(dbuf), "%b %e %H:%M:%S", localtime (&tim)); \
-	fprintf (stderr, "%s %s[%d] %s: %.*s\n", dbuf, prog, (int)getpid(), \
-		 lognams[oclbp->type], oclbp->clen, oclbp->buf); \
-	fflush (stderr);
-#endif
 #define PRINT_QUOTES
 #define PRINT_ARRAYS
+#define LOG_DEBUG_MASK DEBUG_CORE
+#define LOG_PANIC_EXIT 1
 #include "printf.c"
-
-void
-Debug (const char *fmt, ...)
-{
-    va_list args;
-
-    if (debugLevel & DEBUG_CORE)
-    {
-	va_start(args, fmt);
-	Logger (DM_DEBUG, fmt, args);
-	va_end(args);
-    }
-}
 
 void
 GDebug (const char *fmt, ...)
@@ -121,68 +60,38 @@ GDebug (const char *fmt, ...)
     }
 }
 
-void 
-LogInfo(const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_INFO, fmt, args);
-    va_end(args);
-}
-
-void
-LogError (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_ERR, fmt, args);
-    va_end(args);
-}
-
-void
-LogPanic (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_PANIC, fmt, args);
-    va_end(args);
-    exit (1);
-}
-
-void
-LogOutOfMem (const char *fkt)
-{
-#ifdef USE_SYSLOG
-    openlog(prog, LOG_PID, LOG_DAEMON);
-    syslog (LOG_ALERT, "Out of memory in %s()", fkt);
-#else
-    fprintf (stderr, "%s[%d] %s: Out of memory in %s()\n", 
-	     prog, (int)getpid(), lognams[DM_ERR], fkt);
-    fflush (stderr);
-#endif
-}
-
 void
 Panic (const char *mesg)
 {
 #ifdef USE_SYSLOG
-    openlog(prog, LOG_PID, LOG_DAEMON);
-    syslog(LOG_EMERG, mesg);
+    syslog(LOG_ALERT, mesg);
 #else
     int i = creat ("/dev/console", 0666);
-    write (i, "xdm panic: ", 11);
+    write (i, prog, strlen(prog));
+    write (i, " panic: ", 8);
     write (i, mesg, strlen (mesg));
 #endif
     exit (1);
 }
 
+#if defined(USE_SYSLOG) && defined(USE_PAM)
+void
+ReInitErrorLog ()
+{
+    InitLog ();
+}
+#endif
 
 void
 InitErrorLog (const char *errorLogFile)
 {
+#ifdef USE_SYSLOG
+# ifdef USE_PAM
+    ReInitErrorLog ();
+# else
+    InitLog ();
+# endif
+#endif
     /* We do this independently of using syslog, as we cannot redirect
      * the output of external programs to syslog.
      */

@@ -42,7 +42,6 @@ authorization.
 
 #include <stdarg.h>
 
-extern void GLogger	(const char *who, int type, const char *msg);
 extern void GDebug	(const char *fmt, ...);
 extern void Debug	(const char *fmt, ...);
 extern void LogInfo	(const char *fmt, ...);
@@ -51,5 +50,10 @@ extern void LogPanic	(const char *fmt, ...) ATTR_NORETURN;
 extern void LogOutOfMem	(const char *fkt);
 extern void Panic	(const char *mesg) ATTR_NORETURN;
 extern void InitErrorLog(const char *errorLogFile);
+#ifdef USE_SYSLOG
+extern void ReInitErrorLog(void);
+#else
+# define ReInitErrorLog() while(0)
+#endif
 
 #endif /* _DM_ERROR_H_ */

@@ -225,16 +225,6 @@ GreetUser (struct display *d, char **namer, char **passr, char ***sessargs)
     while (GRecvCmd (&cmd)) {
 	switch (cmd)
 	{
-	case G_Log:
-	    /*Debug ("G_GetCfg\n");*/
-	    type = GRecvInt ();
-	    /*Debug ( " level %d\n", type);*/
-	    ptr = GRecvStr ();
-	    /*Debug (" message '%s'\n", ptr);*/
-	    GLogger ("Greeter", type, ptr);
-	    /*Debug (" ok\n");*/
-	    free (ptr);
-	    break;
 	case G_GetCfg:
 	    Debug ("G_GetCfg\n");
 	    type = GRecvInt ();

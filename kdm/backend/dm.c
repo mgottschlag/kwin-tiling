@@ -114,7 +114,6 @@ int	Rescan;
 int	ChkUtmp;
 long	ServersModTime, AccessFileModTime;	/* XXX kill! */
 
-int	debugLevel;
 #define nofork_session (debugLevel & DEBUG_NOFORK)
 
 #ifndef NOXDMTITLE
@@ -154,7 +153,7 @@ main (int argc, char **argv)
 	StrDup (&progpath, argv[0]);
     else
 #if 0
-	Panic ("xdm must be invoked with full path specification\n");
+	Panic ("Must be invoked with full path specification\n");
 #else
     {
 	char directory[PATH_MAX+1];
@@ -235,11 +234,6 @@ main (int argc, char **argv)
     {
 	fprintf (stderr, "Only root wants to run %s\n", prog);
 	exit (1);
-    }
-
-    if (debugLevel & DEBUG_GDB) {
-	AttachGdb (progpath, getpid());
-	sleep (15);
     }
 
     /*
@@ -933,10 +927,8 @@ StartDisplay (struct display *d)
     switch (pid)
     {
     case 0:
-	if (debugLevel & DEBUG_GDB) {
-	    AttachGdb (progpath, getpid());
+	if (debugLevel & DEBUG_WSESS)
 	    sleep (100);
-	}
     case -2:
 	(void) Signal (SIGPIPE, SIG_IGN);
 	if (d->pipefd[0] >= 0)

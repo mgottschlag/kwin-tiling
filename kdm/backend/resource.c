@@ -40,21 +40,6 @@ from The Open Group.
 
 static char **originalArgv;
 
-static void
-GetterErrChk ()
-{
-    int type;
-    char *str;
-
-    Debug ("entering GetterErrChk\n");
-    while ((type = GRecvInt ()) != -1) {
-	str = GRecvStr ();
-	GLogger ("Config", type, str);
-	free (str);
-    }
-    Debug ("leaving GetterErrChk\n");
-}
-
 static int runs;
 
 static void
@@ -66,7 +51,6 @@ OpenGetter ()
 	runs = 1;
 	if ((ret = GOpen (originalArgv, "_config", 0)))
 	    LogPanic ("Cannot run config reader: %s\n", ret);
-	GetterErrChk ();
     }
     Debug ("Getter ready\n");
 }
@@ -163,7 +147,6 @@ GetDeps ()
 
     OpenGetter ();
     GSendInt (GC_Files);
-    GetterErrChk ();
     ncf = GRecvInt ();
     if (!(cf = malloc (ncf * sizeof (*cf)))) {
 	LogOutOfMem ("GetDeps");
@@ -427,7 +410,6 @@ LoadDMResources (int force)
 	return 0;
     if (!startConfig (GC_gGlobal, &cfg.dep, force))
 	return 1;
-    GetterErrChk ();
     LoadResources (&cfg);
 /*    Debug ("Manager resources: %[*x\n", 
 	    cfg.numCfgEnt, ((char **)cfg.data) + cfg.numCfgEnt);*/
@@ -503,7 +485,6 @@ LoadDisplayResources (struct display *d)
 	return 1;
     GSendStr (d->name);
     GSendStr (d->class2);
-    GetterErrChk ();
     LoadResources (&d->cfg);
 /*    Debug ("Display(%s, %s) resources: %[*x\n", d->name, d->class2,
 	    d->cfg.numCfgEnt, ((char **)d->cfg.data) + d->cfg.numCfgEnt);*/

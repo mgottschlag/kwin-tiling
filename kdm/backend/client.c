@@ -329,27 +329,31 @@ init_vrf(struct display *d, const char *name, const char *password)
     if (!pamh) {
 	Debug("opening new PAM handle\n");
 	if (pam_start(PAMService, name, &PAM_conversation, &pamh) != PAM_SUCCESS) {
-	    Debug("pam_start() failed\n");
+	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
-	Debug("PAM handle open\n");
 	if ((pretc = pam_set_item(pamh, PAM_TTY, d->name)) != PAM_SUCCESS) {
 	    pam_end(pamh, pretc);
 	    pamh = NULL;
+	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
-	Debug("tty set\n");
-/*	if ((pretc = pam_set_item(pamh, PAM_RHOST, "")) != PAM_SUCCESS) {
+	if ((pretc = pam_set_item(pamh, PAM_RHOST, "")) != PAM_SUCCESS) {
 	    pam_end(pamh, pretc);
 	    pamh = NULL;
+	    ReInitErrorLog ();
 	    return V_ERROR;
-	}*/
+	}
 # ifdef HAVE_PAM_FAIL_DELAY
 	pam_set_item(pamh, PAM_FAIL_DELAY, fail_delay);
 # endif
     } else
-	if (pam_set_item(pamh, PAM_USER, name) != PAM_SUCCESS)
+	if (pam_set_item(pamh, PAM_USER, name) != PAM_SUCCESS) {
+	    ReInitErrorLog ();
 	    return V_ERROR;
+	}
+    ReInitErrorLog ();
+
 
     if (infostr) {
 	free (infostr);
@@ -434,8 +438,11 @@ Verify (struct display *d, const char *name, const char *pass)
 #ifdef USE_PAM
 
     if (pam_authenticate(pamh, d->allowNullPasswd ?
-				0 : PAM_DISALLOW_NULL_AUTHTOK) != PAM_SUCCESS)
+				0 : PAM_DISALLOW_NULL_AUTHTOK) != PAM_SUCCESS) {
+	ReInitErrorLog ();
 	return V_AUTH;
+    }
+    ReInitErrorLog ();
 
 #elif defined(AIXV3) /* USE_PAM */
 
@@ -592,6 +599,7 @@ Restrict (struct display *d)
 #ifdef USE_PAM
 
     pretc = pam_acct_mgmt(pamh, 0);
+    ReInitErrorLog ();
     if (errstr) {
 	GSendInt (V_MSGERR);
 	GSendStr (errstr);
@@ -861,7 +869,9 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
     int		pretc, nargs;
     char	*shell, *home;
     char	**argv, **avpt;
-#ifndef USE_PAM
+#ifdef USE_PAM
+    char	**pam_env;
+#else
 # ifdef AIXV3
     char	*msg;
 # else
@@ -978,8 +988,8 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 
     Debug ("now starting the session\n");
 #ifdef USE_PAM
-    if (pamh)
-	pam_open_session(pamh, 0);
+    pam_open_session(pamh, 0);
+    ReInitErrorLog ();
 #endif    
     removeAuth = 1;
     switch (pid = Fork ()) {
@@ -1018,17 +1028,13 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	}
 #  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
 #  ifdef USE_PAM
-	if (pamh) {
-	    int i;
-	    char **pam_env;
-
-	    pam_setcred(pamh, 0);
-
-	    /* pass in environment variables set by libpam and modules it called */
-	    pam_env = pam_getenvlist(pamh);
-	    for(i = 0; pam_env && pam_env[i]; i++)
-		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
-	}
+	pam_setcred(pamh, 0);
+	/* pass in environment variables set by libpam and modules it called */
+	pam_env = pam_getenvlist(pamh);
+	ReInitErrorLog ();
+	if (pam_env)
+	    for(; *pam_env; pam_env++)
+		verify->userEnviron = putEnv(*pam_env, verify->userEnviron);
 #  endif
 #  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(name) < 0)
@@ -1283,6 +1289,7 @@ SessionExit (struct display *d, int status)
 	    pam_close_session(pamh, 0);
 	    pam_end(pamh, PAM_SUCCESS);
 	    pamh = NULL;
+	    ReInitErrorLog ();
 	}
 #endif
 	setgid (d->verify->gid);
@@ -1328,6 +1335,7 @@ SessionExit (struct display *d, int status)
 	if (pamh) {
 	    pam_end(pamh, PAM_SUCCESS);
 	    pamh = NULL;
+	    ReInitErrorLog ();
 	}
 #endif
     }

@@ -24,9 +24,9 @@
 
     */
 
-#include "kdm_greet.h"
+#include <config.h>
 
-/*#include <X11/Xlib.h>*/
+#include "kdm_greet.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,33 +35,80 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <errno.h>
+
+#ifdef HAVE_VSYSLOG
+# define USE_SYSLOG
+#endif
+
+#define LOG_NAME "kdm_greet"
+#define LOG_DEBUG_MASK DEBUG_GREET
+#define LOG_PANIC_EXIT EX_UNMANAGE_DPY
+#include <printf.c>
+
 
 char *dname;
 int disLocal;
 
 static int rfd, wfd;
 
+static int
+Reader (void *buf, int count)
+{
+    int ret, rlen;
+
+    for (rlen = 0; rlen < count; ) {
+      dord:
+	ret = read (rfd, (void *)((char *)buf + rlen), count - rlen);
+	if (ret < 0) {
+	    if (errno == EINTR)
+		goto dord;
+	    if (errno == EAGAIN)
+		break;
+	    return -1;
+	}
+	if (!ret)
+	    break;
+	rlen += ret;
+    }
+    return rlen;
+}
+
+static void
+GRead (void *buf, int count)
+{
+    if (Reader (buf, count) != count)
+	LogPanic ("Can't read from core\n");
+}
+
+static void
+GWrite (const void *buf, int count)
+{
+    if (write (wfd, buf, count) != count)
+	LogPanic ("Can't write to core\n");
+}
+
 void
 GSendInt (int val)
 {
-    write (wfd, &val, sizeof(val));
+    GWrite (&val, sizeof(val));
 }
 
 void
 GSendStr (const char *buf)
 {
     int len = strlen (buf) + 1;
-    write (wfd, &len, sizeof(len));
-    write (wfd, buf, len);
+    GWrite (&len, sizeof(len));
+    GWrite (buf, len);
 }
 
 static void
 GSendNStr (const char *buf, int len)
 {
     int tlen = len + 1;
-    write (wfd, &tlen, sizeof(tlen));
-    write (wfd, buf, len);
-    write (wfd, "", 1);
+    GWrite (&tlen, sizeof(tlen));
+    GWrite (buf, len);
+    GWrite ("", 1);
 }
 
 int
@@ -69,8 +116,7 @@ GRecvInt ()
 {
     int val;
 
-    if (read (rfd, &val, sizeof(val)) != sizeof(val))
-	exit (1);
+    GRead (&val, sizeof(val));
     return val;
 }
 
@@ -84,9 +130,8 @@ GRecvStr ()
     if (!len)
 	return NULL;
     if (!(buf = malloc (len)))
-	exit (2);
-    if (read (rfd, buf, len) != len)
-	exit (1);
+	LogPanic ("No memory for read buffer\n");
+    GRead (buf, len);
     return buf;
 }
 
@@ -100,7 +145,7 @@ GRecvStrArr (int *rnum)
     if (!num)
 	return (char **)0;
     if (!(argv = malloc (num * sizeof(char *))))
-	exit (2);
+	LogPanic ("No memory for read buffer\n");
     for (cargv = argv; --num >= 0; cargv++)
 	*cargv = GRecvStr ();
     return argv;
@@ -148,76 +193,11 @@ SessionExit (int ret)
     exit (0);
 }
 
-static void
-LogOutOfMem (const char *fkt)
-{
-    char buf[100];
-
-    GSendInt (G_Log);
-    GSendInt (DM_ERR);
-    sprintf (buf, "Out of memory in %s()", fkt);
-    GSendStr (buf);
-}
-
-#define OCLBufMisc
-#define OCLBufInit
-#define OCLBufPrint \
-	GSendInt (G_Log); \
-	GSendInt (oclbp->type); \
-	GSendNStr (oclbp->buf, oclbp->clen);
-#include <printf.c>
-
-static int debugLevel;
-
-void
-Debug (const char *fmt, ...)
-{
-    va_list args;
-
-    if (debugLevel & DEBUG_GREET)
-    {
-	va_start(args, fmt);
-	Logger (DM_DEBUG, fmt, args);
-	va_end(args);
-    }
-}
-
-void 
-LogInfo(const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_INFO, fmt, args);
-    va_end(args);
-}
-
-void
-LogError (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_ERR, fmt, args);
-    va_end(args);
-}
-
-void
-LogPanic (const char *fmt, ...)
-{
-    va_list args;
-
-    va_start(args, fmt);
-    Logger (DM_PANIC, fmt, args);
-    va_end(args);
-    SessionExit (EX_UNMANAGE_DPY);
-}
-
 
 static int
 ignoreErrors (Display *dpy, XErrorEvent *event)
 {
-    Debug ("ignoring error\n");
+    Debug ("ignoring X error\n");
     return 0;
 }
 
@@ -400,8 +380,10 @@ main (int argc, char **argv)
     if (sscanf (ci, "%d %d", &rfd, &wfd) != 2)
 	return 1;
 
-    if ((debugLevel = GRecvInt ()) & DEBUG_GDB)
-	sleep (15);
+    InitLog();
+
+    if ((debugLevel = GRecvInt ()) & DEBUG_WGREET)
+	sleep (100);
 
     dname = GetCfgStr (C_name);
     dgrabServer = GetCfgInt (C_grabServer);

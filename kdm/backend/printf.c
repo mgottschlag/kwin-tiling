@@ -53,10 +53,13 @@ from The Open Group.
  */
 
 /**************************************************************
+ * (C) 2001 Oswald Buddenhagen <ossi@kde.org>
  * Partially stolen from OpenSSH's OpenBSD compat directory.
  * (C) Patrick Powell, Brandon Long, Thomas Roessler, 
  *     Michael Elkins, Ben Lindstrom
  **************************************************************/
+
+#include <ctype.h>
 
 /* format flags - Bits */
 #define DP_F_MINUS	(1 << 0)
@@ -456,16 +459,62 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 
 /*
  * Logging function for xdm and helper programs.
- * You must define the macros:
- * - OCLBufMisc - additional fields in the buffer structure
- * - OCLBufInit - initializer for additional fields
- * - OCLBufPrint - code to actually output the buffer contents
  */
+
+#ifdef USE_SYSLOG
+# include <syslog.h>
+# ifdef LOG_NAME
+#  define InitLog() openlog(LOG_NAME, LOG_PID, LOG_DAEMON)
+# else
+#  define InitLog() openlog(prog, LOG_PID, LOG_DAEMON)
+# endif
+static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
+#else
+# include <stdio.h>
+# include <time.h>	/* XXX this will break on stone-age systems */
+# ifndef Time_t
+#  define Time_t time_t
+# endif
+# define InitLog while(0)
+static char *lognams[] = { "debug", "info", "error", "panic" };
+
+static void
+logTime (char *dbuf)
+{
+    Time_t tim;
+    (void) time (&tim);
+    strftime (dbuf, 20, "%b %e %H:%M:%S", localtime (&tim));
+}
+#endif
+
+#ifdef LOG_LOCAL
+# define STATIC static
+#else
+# define STATIC
+#endif
+
+STATIC void
+LogOutOfMem (const char *fkt)
+{
+#ifdef USE_SYSLOG
+    syslog (LOG_CRIT, "Out of memory in %s()", fkt);
+#else
+    char dbuf[20];
+    logTime (dbuf);
+    fprintf (stderr, "%s "
+# ifdef LOG_NAME
+	LOG_NAME "[%d]: Out of memory in %s()\n", dbuf, 
+# else
+	"%s[%d]: Out of memory in %s()\n", dbuf, prog, 
+# endif
+	(int)getpid(), fkt);
+    fflush (stderr);
+#endif
+}
 
 typedef struct {
     char *buf;
     int clen, blen, type;
-    OCLBufMisc
     char lmbuf[100];
 } OCLBuf;
 
@@ -473,7 +522,20 @@ static void
 OutChLFlush (OCLBuf *oclbp)
 {
     if (oclbp->clen) {
-	OCLBufPrint
+#ifdef USE_SYSLOG
+	syslog (lognums[oclbp->type], "%.*s", oclbp->clen, oclbp->buf);
+#else
+	char dbuf[20];
+	logTime (dbuf);
+	fprintf (stderr, "%s "
+# ifdef LOG_NAME
+	    LOG_NAME  "[%d] %s: %.*s\n", dbuf, 
+# else
+	    "%s[%d] %s: %.*s\n", dbuf, prog, 
+# endif
+	    (int)getpid(), lognams[oclbp->type], oclbp->clen, oclbp->buf);
+	fflush (stderr);
+#endif
 	oclbp->clen = 0;
     }
     if (oclbp->buf) {
@@ -518,7 +580,6 @@ Logger (int type, const char *fmt, va_list args)
 {
     static OCLBuf oclb;
 
-    OCLBufInit
     if (oclb.type != type) {
 	OutChLFlush (&oclb);
 	oclb.type = type;
@@ -526,3 +587,56 @@ Logger (int type, const char *fmt, va_list args)
     DoPr(OutChL, &oclb, fmt, args);
 }
 
+#ifdef LOG_DEBUG_MASK
+STATIC int debugLevel;
+
+STATIC void
+Debug (const char *fmt, ...)
+{
+    va_list args;
+
+    if (debugLevel & LOG_DEBUG_MASK)
+    {
+	va_start(args, fmt);
+	Logger (DM_DEBUG, fmt, args);
+	va_end(args);
+    }
+}
+#endif
+
+#ifndef LOG_NO_INFO
+STATIC void 
+LogInfo(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    Logger (DM_INFO, fmt, args);
+    va_end(args);
+}
+#endif
+
+#ifndef LOG_NO_ERROR
+STATIC void
+LogError (const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    Logger (DM_ERR, fmt, args);
+    va_end(args);
+}
+#endif
+
+#ifdef LOG_PANIC_EXIT
+STATIC void
+LogPanic (const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    Logger (DM_PANIC, fmt, args);
+    va_end(args);
+    exit (LOG_PANIC_EXIT);
+}
+#endif

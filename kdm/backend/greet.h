@@ -36,7 +36,9 @@ from The Open Group.
 #define DEBUG_CONFIG	0x02
 #define DEBUG_GREET	0x04
 #define DEBUG_HLPCON	0x08
-#define DEBUG_GDB	0x10
+#define DEBUG_WSESS	0x10
+#define DEBUG_WCONFIG	0x20
+#define DEBUG_WGREET	0x40
 #define DEBUG_AUTH	0x100
 #define DEBUG_NOFORK	0x200
 
@@ -73,7 +75,6 @@ from The Open Group.
 /*
  * Command codes greeter -> core
  */
-#define G_Log		1	/* int type, str msg; async */
 #define G_SessionExit	2	/* int code; async */
 #define G_Verify	3	/* str name, str pass; int V_ret */
 #define G_Restrict	4	/* str name; <variable> */
@@ -101,8 +102,8 @@ from The Open Group.
 #define GE_BadType	3	/* unknown config entry type */
 
 /*
- * Log levels
- * The greeter has to (suppress debug) and (exit on emerg) itself
+ * Log levels.
+ * Used independently in core, greeter & config reader.
  */
 #define DM_DEBUG	0
 #define DM_INFO		1
@@ -130,7 +131,7 @@ from The Open Group.
 /*
  * Config/Runtime data keys
  */
-#define C_WHO_MASK	  0x00ff0000	/* Non-zero for proprietary extensions (see table [to be written]) */
+#define C_WHO_MASK	  0x00ff0000	/* Non-zero for proprietary extensions (see manufacturer table [to be written]) */
 #define C_TYPE_MASK	  0x0f000000	/* Type of the value */
 # define C_TYPE_INT	  0x00000000	/*  Integer */
 # define C_TYPE_STR	  0x01000000	/*  String */
