@@ -414,7 +414,7 @@ void KWindowConfig::load( void )
 //     config->writeEntry(KWM_RESIZE_ANIM, 1);
 //   }
 
-  key = config->readEntry(KWM_RESIZE_OPAQUE, "Opaque");
+  key = config->readEntry(KWM_RESIZE_OPAQUE, "Transparent");
   if( key == "Opaque")
     setResizeOpaque(RESIZE_OPAQUE);
   else if ( key == "Transparent")
@@ -558,7 +558,7 @@ void KWindowConfig::save( void )
 void KWindowConfig::defaults()
 {
     setMove(OPAQUE);
-    setResizeOpaque(RESIZE_OPAQUE);
+    setResizeOpaque(RESIZE_TRANSPARENT);
     setPlacement(SMART_PLACEMENT);
     setFocus(CLICK_TO_FOCUS);
 }
