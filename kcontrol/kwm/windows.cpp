@@ -313,6 +313,7 @@ void KFocusConfig::clickRaiseOnTog(bool ) {
 
 void KFocusConfig::setAltTabMode(bool a) {
     kdeMode->setChecked(a);
+    cdeMode->setChecked(!a);
 }
 
 void KFocusConfig::setCtrlTab(bool a) {
