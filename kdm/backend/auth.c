@@ -398,14 +398,9 @@ openFiles( const char *name, char *new_name, FILE **oldp, FILE **newp )
 }
 
 struct addrList {
-	unsigned short family;
-	unsigned short address_length;
-	char *address;
-	unsigned short number_length;
-	char *number;
-	unsigned short name_length;
-	char *name;
 	struct addrList *next;
+	unsigned short family, address_length, number_length;
+	char data[1];
 };
 
 static struct addrList *addrs;
@@ -422,53 +417,23 @@ doneAddrs( void )
 	struct addrList *a, *n;
 	for (a = addrs; a; a = n) {
 		n = a->next;
-		if (a->address)
-			free( a->address );
-		if (a->number)
-			free( a->number );
-		free( (char *)a );
+		free( a );
 	}
 }
-
-static int checkEntry( Xauth *auth );
 
 static void
 saveEntry( Xauth *auth )
 {
 	struct addrList *new;
 
-	if (!(new = (struct addrList *)Malloc( sizeof(struct addrList) )))
+	if (!(new = Malloc( offsetof(struct addrList, data) +
+	                    auth->address_length + auth->number_length )))
 		return;
-	if ((new->address_length = auth->address_length) > 0) {
-		new->address = Malloc( auth->address_length );
-		if (!new->address) {
-			free( (char *)new );
-			return;
-		}
-		memmove( new->address, auth->address, (int)auth->address_length );
-	} else
-		new->address = 0;
-	if ((new->number_length = auth->number_length) > 0) {
-		new->number = Malloc( auth->number_length );
-		if (!new->number) {
-			free( new->address );
-			free( (char *)new );
-			return;
-		}
-		memmove( new->number, auth->number, (int)auth->number_length );
-	} else
-		new->number = 0;
-	if ((new->name_length = auth->name_length) > 0) {
-		new->name = Malloc( auth->name_length );
-		if (!new->name) {
-			free( new->number );
-			free( new->address );
-			free( (char *)new );
-			return;
-		}
-		memmove( new->name, auth->name, (int)auth->name_length );
-	} else
-		new->name = 0;
+	new->address_length = auth->address_length;
+	new->number_length = auth->number_length;
+	memcpy( new->data, auth->address, (int)auth->address_length );
+	memcpy( new->data + (int)auth->address_length,
+	        auth->number, (int)auth->number_length );
 	new->family = auth->family;
 	new->next = addrs;
 	addrs = new;
@@ -482,14 +447,11 @@ checkEntry( Xauth *auth )
 	for (a = addrs; a; a = a->next)
 		if (a->family == auth->family &&
 		    a->address_length == auth->address_length &&
-		    !memcmp( a->address, auth->address, auth->address_length ) &&
+		    !memcmp( a->data, auth->address, auth->address_length ) &&
 		    a->number_length == auth->number_length &&
-		    !memcmp( a->number, auth->number, auth->number_length ) &&
-		    a->name_length == auth->name_length &&
-		    !memcmp( a->name, auth->name, auth->name_length ))
-		{
+		    !memcmp( a->data + a->address_length,
+		             auth->number, auth->number_length ))
 			return 1;
-		}
 	return 0;
 }
 
@@ -522,7 +484,8 @@ writeAddr( int family, int addr_length, char *addr, FILE *file, Xauth *auth )
 	auth->address = addr;
 	Debug( "writeAddr: writing and saving an entry\n" );
 	writeAuth( file, auth );
-	saveEntry( auth );
+	if (!checkEntry( auth ))
+		saveEntry( auth );
 }
 
 static void
