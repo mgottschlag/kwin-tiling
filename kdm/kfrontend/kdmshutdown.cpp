@@ -122,7 +122,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
 	pswdEdit->setSizePolicy( QSizePolicy( QSizePolicy::Ignored,
 					      QSizePolicy::Preferred ) );
 
-	QLabel *plb = new QLabel( pswdEdit, i18n("Root &Password:"), winFrame );
+	QLabel *plb = new QLabel( pswdEdit, i18n("Root &password:"), winFrame );
 
 	QHBoxLayout *qhb = new QHBoxLayout( box, 10 );
 	qhb->addWidget( plb );

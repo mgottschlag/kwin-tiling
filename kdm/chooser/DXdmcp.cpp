@@ -187,7 +187,7 @@ ChooserDlg::ChooserDlg(CXdmcp * cxdmcp, QWidget * parent, const char *name,
     QBoxLayout *hibox = new QHBoxLayout(vbox, 10);
     iline = new QLineEdit(winFrame);
     iline->setEnabled(TRUE);
-    QLabel *itxt = new QLabel(iline, i18n("A&dd Host:"), winFrame);
+    QLabel *itxt = new QLabel(iline, i18n("A&dd host:"), winFrame);
     hibox->addWidget(itxt);
     hibox->addWidget(iline);
 

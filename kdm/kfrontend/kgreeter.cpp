@@ -228,7 +228,7 @@ KGreeter::KGreeter()
     passwdLabel = new QLabel( passwdEdit, i18n("&Password:"), winFrame );
 
     sessargBox = new QComboBox( false, winFrame );
-    sessargLabel = new QLabel( sessargBox, i18n("Session &Type:"), winFrame );
+    sessargLabel = new QLabel( sessargBox, i18n("Session &type:"), winFrame );
     sessargBox->insertStringList( kdmcfg->_sessionTypes );
     sessargStat = new QWidget( winFrame );
     sasPrev = new QLabel( i18n("session type", "(previous)"), sessargStat );

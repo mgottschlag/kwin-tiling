@@ -185,7 +185,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     // left column
     QBoxLayout *vLayout = new QVBoxLayout(helperLayout, 10);
 
-    mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
+    mSaverGroup = new QGroupBox(i18n("Screensaver"), this );
     vLayout->addWidget(mSaverGroup);
     QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup, 10 );
     groupLayout->addSpacing(10);

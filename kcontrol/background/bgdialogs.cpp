@@ -50,7 +50,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select Background Program:"), page);
+    QLabel *lbl = new QLabel(i18n("Select background program:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
@@ -353,7 +353,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select Pattern:"), page);
+    QLabel *lbl = new QLabel(i18n("Select pattern:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
