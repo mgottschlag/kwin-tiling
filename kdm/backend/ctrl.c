@@ -404,8 +404,13 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    goto bust;
 	} else if (fd >= 0 && !strcmp (ar[0], "list")) {
+	    int all = 0;
 	    if (ar[1]) {
-		if (strcmp (ar[1], "all")) {
+		if (!strcmp (ar[1], "all"))
+		    all = 1;
+		else if (!strcmp (ar[1], "alllocal"))
+		    all = 3;
+		else {
 		    fLog (d, fd, "bad", "invalid list scope %\"s", ar[1]);
 		    goto bust;
 		}
@@ -414,8 +419,9 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    Reply ("ok");
 	    for (di = displays; di; di = di->next) {
-		if (di->status != remoteLogin &&
-		    (ar[1] ? di->status != running : di->userSess < 0))
+		if (((all & 2) && (di->displayType & d_location) != dLocal) ||
+		    (di->status != remoteLogin &&
+		     ((all & 1) ? di->status != running : di->userSess < 0)))
 		    continue;
 		bp = cbuf;
 		*bp++ = '\t';
