@@ -1,14 +1,17 @@
+lib_LTLIBRARIES = libkcm_sample.la
 
-INCLUDES = $(all_includes) 
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD =       $(LIB_KDEUI)
+libkcm_sample_la_SOURCES = sample.cpp 
 
-noinst_PROGRAMS = kcmsample
+libkcm_sample_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+libkcm_sample_la_LIBADD = -lkdeui  
+INCLUDES= $(all_includes) 
 
-kcmsample_SOURCES = main.cpp
+libkcm_sample_la_METASOURCES = AUTO
+
+noinst_HEADERS = sample.h
 
 KDE_ICON = sample
 
 messages:
-	$(XGETTEXT) $(kcmsample_SOURCES) -o $(podir)/kcmsample.pot
+	$(XGETTEXT) $(libkcm_sample_la_SOURCES) -o $(podir)/kcmsample.pot
 
