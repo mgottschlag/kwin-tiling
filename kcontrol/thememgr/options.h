@@ -46,13 +46,11 @@ protected:
   virtual void updateStatus(const char* groupName, QLabel* status);
 
 protected:
-  QCheckBox *mCbxPanel, *mCbxIcons, *mCbxColors, *mCbxWindowBorder;
-  QCheckBox *mCbxWindowTitlebar, *mCbxWallpapers, *mCbxSounds;
-  QCheckBox *mCbxWindowButtonLayout, *mCbxGimmick, *mCbxKfm;
+  QCheckBox *mCbxColors;
+  QCheckBox *mCbxWallpapers;
   QCheckBox *mCbxOverwrite;
-  QLabel *mStatPanel, *mStatIcons, *mStatColors, *mStatWindowBorder;
-  QLabel *mStatWindowTitlebar, *mStatWallpapers, *mStatSounds;
-  QLabel *mStatWindowButtonLayout, *mStatGimmick, *mStatKfm;
+  QLabel *mStatColors;
+  QLabel *mStatWallpapers;
   QGridLayout *mGrid;
   bool mGui;
   int mGridRow;

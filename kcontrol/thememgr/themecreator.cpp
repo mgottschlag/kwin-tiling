@@ -74,7 +74,7 @@ bool ThemeCreator::create(const QString aThemeName)
     return false;
   }
 
-  mThemercFile = aThemeName + ".themerc";
+  mThemercFile = mThemePath + aThemeName + ".themerc";
   mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
@@ -95,15 +95,8 @@ bool ThemeCreator::extract(void)
 
   loadMappings();
 
-  if (instPanel) extractGroup("Panel");
-  if (instSounds) extractGroup("Sounds");
-  if (instWindowBorder) extractGroup("Window Border");
-  if (instWindowTitlebar) extractGroup("Window Titlebar");
-  if (instWindowButtonLayout) extractGroup("Window Button Layout");
-  if (instWindowGimmick) extractGroup("Window Gimmick");
   if (instWallpapers) extractGroup("Display");
   if (instColors) extractGroup("Colors");
-  if (instIcons) extractIcons();
 
   kdDebug() << "Theme::extract() done" << endl;
 

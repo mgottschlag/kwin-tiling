@@ -64,9 +64,9 @@
 #
 # * ConfigActivateCmd: These commands are executed after the theme is
 #   installed. Case does matter. Known commands are:
-#   - kwmcom <arg>: Calls kwmcom with <arg> as the argument.
 #   - kfmclient <arg>: Calls kfmclient with <arg> as the argument.
 #   - applyColors: Sends a color-scheme-changed signal to all windows.
+#   - applyWallpaper: Changes wallpaper.
 #   - restart <app>: Restart application <app>.
 #
 # * ConfigInstallCmd: This command is executed after the current group
@@ -86,31 +86,24 @@
 #   - winGimmickMode: activates or deactivates gimmick mode
 #
 #-----------------------------------------------------------------------------
-[Panel]
-ConfigFile=kpanelrc
-ConfigGroup=kpanel
-ConfigAppDir=apps/kpanel/pics
-ConfigActivateCmd=kwmcom kpanel:restart
-#ConfigInstallCmd=panelBack
-background=BackgroundTexture
-#
-#-----------------------------------------------------------------------------
 [Colors]
-ConfigFile=KDERC
+ConfigFile=kdeglobals
 ConfigGroup=WM
 ConfigNextGroup=Colors-2
 ConfigActivateCmd=applyColors
 activeBlend=!
-inactiveBackground=!
 activeBackground=!
-inactiveBlend=!
-inactiveForeground=!
 activeForeground=!
+activeTitleBtnBg=!
+inactiveBlend=!
+inactiveBackground=!
+inactiveForeground=!
+inactiveTitleBtnBg=!
 #
 [Colors-2]
 ConfigGroup=KDE
 ConfigNextGroup=Colors-3
-Contrast=!
+contrast=!
 #
 [Colors-3]
 ConfigGroup=General
@@ -119,213 +112,139 @@ foreground=!
 selectForeground=!
 selectBackground=!
 background=!
+buttonBackground=!
+buttonForeground=!
 windowForeground=!
 windowBackground=!
-#
-#-----------------------------------------------------------------------------
-[Sounds]
-ConfigAppDir=sounds
-ConfigFile=kwmsoundrc
-ConfigGroup=SoundConfiguration
-ConfigEmpty=(none)
-ConfigAbsolutePaths=true
-ConfigInstallCmd=enableSounds
-ConfigActivateCmd=kwmcom syssnd_restart
-Desktop1=
-Desktop2=
-Desktop3=
-Desktop4=
-Desktop5=
-Desktop6=
-Desktop7=
-Desktop8=
-Logout=
-LogoutMessage=
-Startup=
-WindowActivate=
-WindowClose=
-WindowDeIconify=
-WindowIconify=
-WindowMaximize=
-WindowMoveEnd=
-WindowMoveStart=
-WindowOpen=
-WindowResizeEnd=
-WindowResizeStart=
-WindowShadeDown=
-WindowShadeUp=
-WindowSticky=
-WindowTransDelete=
-WindowTransNew=
-WindowUnMaximize=
-WindowUnSticky=
-#
-#-----------------------------------------------------------------------------
-[Window Titlebar]
-ConfigFile=kwmrc
-ConfigGroup=General
-ConfigAppDir=apps/kwm/pics
-ConfigNextGroup=Window Titlebar-2
-ConfigInstallCmd=winTitlebar
-ConfigActivateCmd=kwmcom restart
-CloseButton=-:close
-MaximizeButton=-:maximize
-MaximizeDownButton=-:maximizedown
-MenuButton=-:menu
-MinimizeButton=-:iconify
-StickyButton=-:pinup
-StickyDownButton=-:pindown
-TitlebarPixmapActive=-:activetitlebar
-TitlebarPixmapInactive=-:inactivetitlebar
-PixmapUnderTitleText=!
-TitleFrameShaded=!
-TitleAlignment=!
-#
-[Window Titlebar-2]
-ConfigFile=KDERC
-ConfigGroup=WM
-TitleFont=!
-#
-#-----------------------------------------------------------------------------
-[Window Border]
-ConfigGroup=General
-ConfigAppDir=apps/kwm/pics
-ConfigFile=kwmrc
-ConfigActivateCmd=kwmcom restart
-#ConfigPreInstallCmd=stretchBorders
-ConfigInstallCmd=winShapeMode
-ShapePixmapBottom=-:wm_bottom
-ShapePixmapBottomLeft=-:wm_bottomleft
-ShapePixmapBottomRight=-:wm_bottomright
-ShapePixmapLeft=-:wm_left
-ShapePixmapRight=-:wm_right
-ShapePixmapTop=-:wm_top
-ShapePixmapTopLeft=-:wm_topleft
-ShapePixmapTopRight=-:wm_topright
-#
-#-----------------------------------------------------------------------------
-[Window Button Layout]
-ConfigGroup=Buttons
-ConfigAppDir=apps/kwm/pics
-ConfigFile=kwmrc
-ConfigActivateCmd=kwmcom configure
-ButtonA=!
-ButtonB=!
-ButtonC=!
-ButtonD=!
-ButtonE=!
-ButtonF=!
-#
-#-----------------------------------------------------------------------------
-[Window Gimmick]
-ConfigFile=kwmrc
-ConfigAppDir=apps/kwm/pics
-ConfigGroup=Gimmick
-ConfigActivateCmd=kwmcom configure
-ConfigInstallCmd=winGimmickMode
-PositionX=GimmickPositionX!
-PositionY=GimmickPositionY!
-OffsetX=GimmickOffsetX!
-OffsetY=GimmickOffsetY!
-Pixmap=
+linkColor=!
+visitedLinkColor=!
 #
 #-----------------------------------------------------------------------------
 [Display]
 ConfigNextGroup=Display-1
 ConfigGroup=Desktop0
 ConfigAppDir=wallpapers
-ConfigFile=desktop0rc
+ConfigFile=kdesktoprc
 ConfigAbsolutePaths=true
 ConfigInstallCmd=setWallpaperMode
+ConfigActivateCmd=applyWallpaper
 Wallpaper0=Wallpaper
 WallpaperMode0=WallpaperMode!
 ColorMode0=ColorMode!
 Color1_0=Color1!
 Color2_0=Color2!
+BackgroundMode0=BackgroundMode!
+BlendBalance0=BlendBalance!
+BlendMode0=BlendMode!
+Pattern0=Pattern!
+ReverseBlending0=ReverseBlending!
 #
 [Display-1]
 ConfigNextGroup=Display-2
-ConfigGroup=Desktop0
+ConfigGroup=Desktop1
 ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
-ConfigFile=desktop1rc
 ConfigAbsolutePaths=true
 Wallpaper1=Wallpaper
 WallpaperMode1=WallpaperMode!
 ColorMode=ColorMode!
 Color1_1=Color1!
 Color2_1=Color2!
+BackgroundMode1=BackgroundMode!
+BlendBalance1=BlendBalance!
+BlendMode1=BlendMode!
+Pattern1=Pattern!
+ReverseBlending1=ReverseBlending!
 #
 [Display-2]
 ConfigNextGroup=Display-3
-ConfigGroup=Desktop0
+ConfigGroup=Desktop2
 ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
-ConfigFile=desktop2rc
 ConfigAbsolutePaths=true
 Wallpaper2=Wallpaper
 WallpaperMode2=WallpaperMode!
 ColorMode2=ColorMode!
 Color1_2=Color1!
 Color2_2=Color2!
+BackgroundMode2=BackgroundMode!
+BlendBalance2=BlendBalance!
+BlendMode2=BlendMode!
+Pattern2=Pattern!
+ReverseBlending2=ReverseBlending!
 #
 [Display-3]
 ConfigNextGroup=Display-4
-ConfigGroup=Desktop0
+ConfigGroup=Desktop3
 ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
-ConfigFile=desktop3rc
 ConfigAbsolutePaths=true
 Wallpaper3=Wallpaper
 WallpaperMode3=WallpaperMode!
 ColorMode3=ColorMode!
 Color1_3=Color1!
 Color2_3=Color2!
+BackgroundMode3=BackgroundMode!
+BlendBalance3=BlendBalance!
+BlendMode3=BlendMode!
+Pattern3=Pattern!
+ReverseBlending3=ReverseBlending!
 #
 [Display-4]
 ConfigNextGroup=Display-5
-ConfigGroup=Desktop0
+ConfigGroup=Desktop4
 ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
-ConfigFile=desktop4rc
 ConfigAbsolutePaths=true
 Wallpaper4=Wallpaper
 WallpaperMode4=WallpaperMode!
 ColorMode4=ColorMode!
 Color1_4=Color1!
 Color2_4=Color2!
+BackgroundMode4=BackgroundMode!
+BlendBalance4=BlendBalance!
+BlendMode4=BlendMode!
+Pattern4=Pattern!
+ReverseBlending4=ReverseBlending!
 #
 [Display-5]
 ConfigNextGroup=Display-6
-ConfigGroup=Desktop0
+ConfigGroup=Desktop5
 ConfigAppDir=wallpapers
 ConfigInstallCmd=setWallpaperMode
-ConfigFile=desktop5rc
 ConfigAbsolutePaths=true
 Wallpaper5=Wallpaper
 WallpaperMode5=WallpaperMode!
 ColorMode5=ColorMode!
 Color1_5=Color1!
 Color2_5=Color2!
+BackgroundMode5=BackgroundMode!
+BlendBalance5=BlendBalance!
+BlendMode5=BlendMode!
+Pattern5=Pattern!
+ReverseBlending5=ReverseBlending!
 #
 [Display-6]
 ConfigNextGroup=Display-7
-ConfigGroup=Desktop0
+ConfigGroup=Desktop6
 ConfigInstallCmd=setWallpaperMode
 ConfigAppDir=wallpapers
-ConfigFile=desktop6rc
 ConfigAbsolutePaths=true
 Wallpaper6=Wallpaper
 WallpaperMode6=WallpaperMode!
 ColorMode6=ColorMode!
 Color1_6=Color1!
 Color2_6=Color2!
+BackgroundMode6=BackgroundMode!
+BlendBalance6=BlendBalance!
+BlendMode6=BlendMode!
+Pattern6=Pattern!
+ReverseBlending6=ReverseBlending!
 #
 [Display-7]
-ConfigGroup=Desktop0
+ConfigGroup=Desktop7
 ConfigAppDir=wallpapers
 ConfigInstallCmd=setWallpaperMode
-ConfigFile=desktop7rc
 ConfigAbsolutePaths=true
 ConfigNextGroup=Display-dtm
 Wallpaper7=Wallpaper
@@ -333,50 +252,14 @@ WallpaperMode7=WallpaperMode!
 ColorMode7=ColorMode!
 Color1_7=Color1!
 Color2_7=Color2!
+BackgroundMode7=BackgroundMode!
+BlendBalance7=BlendBalance!
+BlendMode7=BlendMode!
+Pattern7=Pattern!
+ReverseBlending7=ReverseBlending!
 #
 [Display-dtm]
-ConfigFile=kcmdisplayrc
-ConfigGroup=Desktop Common
+ConfigFile=kdesktoprc
+ConfigGroup=Background Common
 ConfigInstallCmd=oneDesktopMode
-ConfigActivateCmd=kwmcom kbgwm_reconfigure
-ConfigNextGroup=Display-root-icon-style
-CommonDesktop=oneDesktopMode!
-#
-[Display-root-icon-style]
-ConfigFile=kfmrc
-ConfigGroup=KFM Root Icons
-ConfigActivateCmd=kfmclient configure
-RootIconTextStyle=Style!
-RootIconTextForeground=Foreground!
-RootIconTextBackground=Background!
-#
-#-----------------------------------------------------------------------------
-[File Manager]
-ConfigFile=kfmrc
-ConfigAppDir=wallpapers
-ConfigGroup=KFM HTML Defaults
-ConfigActivateCmd=kfmclient configure
-ConfigAbsolutePaths=true
-backgroundImage=BgImage
-htmlBackground=BgColor!
-htmlForeground=TextColor!
-htmlLinks=LinkColor!
-htmlFollowedLinks=VLinkColor!
-#
-#-----------------------------------------------------------------------------
-# This group is special. Here are all the icons that do not match
-# exactly one kdelnk icon entry. The icon name is the name of the icon
-# it will have when it is copied to ~/.kde/share/icons and 
-# ~/.kde/share/icons/mini
-# If a path is given then the path will be treated relative to ~/.kde/share,
-# and the icons will be copied there.
-# A colon separates the name of the icon from the name of the mini
-# icon. If the mini icon is '-' then no mini icon will be installed.
-[Icons]
-ConfigActivateCmd=restart kfm
-Trash=kfm_trash
-TrashFull=kfm_fulltrash
-PanelGo=apps/kpanel/pics/go:apps/kpanel/pics/mini/go
-PanelExit=apps/kpanel/pics/exit:-
-PanelKey=apps/kpanel/pics/key:-
-PanelWindowList=apps/kpanel/pics/window_list:apps/kpanel/pics/mini/window_list
+

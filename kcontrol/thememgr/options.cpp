@@ -57,18 +57,6 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   // details dialog.
   mCbxColors = newLine("Colors", i18n("Colors"), &mStatColors);
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
-  mCbxPanel = newLine("Panel", i18n("Panel"), &mStatPanel);
-  mCbxSounds = newLine("Sounds", i18n("Sounds"), &mStatSounds);
-  mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
-  mCbxWindowBorder = newLine("Window Border", i18n("Window Border"), 
-			     &mStatWindowBorder);
-  mCbxWindowTitlebar = newLine("Window Titlebar", i18n("Window Titlebar"), 
-			       &mStatWindowTitlebar);
-  mCbxGimmick = newLine("Window Gimmick", i18n("Window Gimmick"), 
-			&mStatGimmick);
-  mCbxWindowButtonLayout = newLine("Window Button Layout", 
-		i18n("Window Button Layout"), &mStatWindowButtonLayout);
-  mCbxKfm = newLine("File Manager", i18n("File Manager"), &mStatKfm);
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -142,15 +130,7 @@ void Options::load()
 void Options::save()
 {
   theme->instColors = mCbxColors->isChecked();
-  theme->instWindowBorder = mCbxWindowBorder->isChecked();
-  theme->instWindowTitlebar = mCbxWindowTitlebar->isChecked();
-  theme->instWindowButtonLayout = mCbxWindowButtonLayout->isChecked();
   theme->instWallpapers = mCbxWallpapers->isChecked();
-  theme->instPanel = mCbxPanel->isChecked();
-  theme->instSounds = mCbxSounds->isChecked();
-  theme->instIcons = mCbxIcons->isChecked();
-  theme->instWindowGimmick = mCbxGimmick->isChecked();
-  theme->instKfm = mCbxKfm->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
 
@@ -159,15 +139,7 @@ void Options::save()
 void Options::slotInvert()
 {
   mCbxColors->setChecked(!mCbxColors->isChecked());
-  mCbxWindowBorder->setChecked(!mCbxWindowBorder->isChecked());
-  mCbxWindowTitlebar->setChecked(!mCbxWindowTitlebar->isChecked());
-  mCbxWindowButtonLayout->setChecked(!mCbxWindowButtonLayout->isChecked());
   mCbxWallpapers->setChecked(!mCbxWallpapers->isChecked());
-  mCbxPanel->setChecked(!mCbxPanel->isChecked());
-  mCbxSounds->setChecked(!mCbxSounds->isChecked());
-  mCbxIcons->setChecked(!mCbxIcons->isChecked());
-  mCbxGimmick->setChecked(!mCbxGimmick->isChecked());
-  mCbxKfm->setChecked(!mCbxKfm->isChecked());
   save();
 }
 
@@ -176,15 +148,7 @@ void Options::slotInvert()
 void Options::slotClear()
 {
   mCbxColors->setChecked(false);
-  mCbxWindowBorder->setChecked(false);
-  mCbxWindowTitlebar->setChecked(false);
-  mCbxWindowButtonLayout->setChecked(false);
   mCbxWallpapers->setChecked(false);
-  mCbxPanel->setChecked(false);
-  mCbxSounds->setChecked(false);
-  mCbxIcons->setChecked(false);
-  mCbxGimmick->setChecked(false);
-  mCbxKfm->setChecked(false);
   save();
 }
 
@@ -249,15 +213,7 @@ void Options::updateStatus(const char* aGroupName, QLabel* aLblStatus)
 void Options::updateStatus(void)
 {
   updateStatus("Colors", mStatColors);
-  updateStatus("Window Border", mStatWindowBorder);
-  updateStatus("Window Titlebar", mStatWindowTitlebar);
-  updateStatus("Window Button Layout", mStatWindowButtonLayout);
   updateStatus("Display", mStatWallpapers);
-  updateStatus("Panel", mStatPanel);
-  updateStatus("Sounds", mStatSounds);
-  updateStatus("Icons", mStatIcons);
-  updateStatus("Gimmick", mStatGimmick);
-  updateStatus("File Manager", mStatKfm);
 }
 
 
@@ -268,16 +224,8 @@ void Options::writeConfig()
 
   cfg->setGroup("Options");
   cfg->writeEntry("overwrite", !mCbxOverwrite->isChecked());
-  cfg->writeEntry("panel", mCbxPanel->isChecked());
-  cfg->writeEntry("icons", mCbxIcons->isChecked());
   cfg->writeEntry("colors", mCbxColors->isChecked());
-  cfg->writeEntry("window-border", mCbxWindowBorder->isChecked());
-  cfg->writeEntry("window-titlebar", mCbxWindowTitlebar->isChecked());
-  cfg->writeEntry("window-button-layout", mCbxWindowButtonLayout->isChecked());
-  cfg->writeEntry("window-gimmick", mCbxGimmick->isChecked());
   cfg->writeEntry("wallpapers", mCbxWallpapers->isChecked());
-  cfg->writeEntry("sounds", mCbxSounds->isChecked());
-  cfg->writeEntry("file-manager", mCbxKfm->isChecked());
 }
 
 
@@ -288,16 +236,8 @@ void Options::readConfig()
 
   cfg->setGroup("Options");
   mCbxOverwrite->setChecked(!cfg->readBoolEntry("overwrite", false));
-  mCbxPanel->setChecked(cfg->readBoolEntry("panel", true));
-  mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
   mCbxColors->setChecked(cfg->readBoolEntry("colors", true));
-  mCbxWindowBorder->setChecked(cfg->readBoolEntry("window-border", true));
-  mCbxWindowTitlebar->setChecked(cfg->readBoolEntry("window-titlebar", true));
-  mCbxWindowButtonLayout->setChecked(cfg->readBoolEntry("window-button-layout", false));
-  mCbxGimmick->setChecked(cfg->readBoolEntry("window-gimmick", true));
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
-  mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
-  mCbxKfm->setChecked(cfg->readBoolEntry("file-manager", true));
   save();
 }
 

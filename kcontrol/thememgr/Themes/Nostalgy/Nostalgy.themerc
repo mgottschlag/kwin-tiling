@@ -8,9 +8,8 @@ description=A simple original theme that tries to combine the best aspects of fa
 version=0.1
 #-----------------------------------------------------------------------------
 [Display]
-CommonDesktop=true
 Wallpaper0=Nostalgy.jpg
-WallpaperMode0=tiled
+WallpaperMode0=Tiled
 RootIconTextStyle=1
 RootIconTextForeground=255,255,255
 RootIconTextBackground=0,0,0

@@ -75,6 +75,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
 
   mPreview = new QLabel(this);
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+  mPreview->setMinimumSize(QSize(100,100));
   mGrid->addWidget(mPreview, 0, 1);
 
   bbox = new KButtonBox(this, KButtonBox::Horizontal, 0, 6);

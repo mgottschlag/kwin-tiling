@@ -40,6 +40,9 @@
 #include <qpainter.h>
 #include <qwindowdefs.h>
 
+#include <dcopclient.h>
+
+#include <kapp.h>
 #include <kconfigbackend.h>
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -322,8 +325,8 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
 
   if (aSrc.isEmpty()) return true;
 
-  if (aDest[0] == '/') dest = aDest;
-  dest = locateLocal("appdata", aDest);
+  assert(aDest[0] == '/');
+  dest = aDest;
 
   src = mThemePath + aSrc;
 
@@ -521,6 +524,7 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
       {
 	if (!themeValue.isEmpty())
 	{
+          KStandardDirs::makeDir(appDir);
 	  if (installFile(themeValue, appDir + cfgValue))
 	    installed++;
 	  else doInstall = false;
@@ -622,11 +626,6 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     }
   }
   */
-  else if (cmd == "enableSounds")
-  {
-    aCfg->setGroup("GlobalConfiguration");
-    aCfg->writeEntry("EnableSounds", (bool) (aInstalled>0));
-  }
   else if (cmd == "setWallpaperMode")
   {
     value = aCfg->readEntry("wallpaper",QString::null);
@@ -634,9 +633,8 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "oneDesktopMode")
   {
-    flag = readBoolEntry("CommonDesktop", true);
-    flag |= (aInstalled==1);
-    aCfg->writeEntry("OneDesktopMode",  flag);
+    flag = (aInstalled==1);
+    aCfg->writeEntry("CommonDesktop",  flag);
     if (flag) aCfg->writeEntry("DeskNum", 0);
   }
   else
@@ -655,19 +653,11 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 void Theme::doCmdList(void)
 {
   QString cmd, str, appName;
-  bool kwmRestart = false;
   //  int rc;
-#if 0
   for (cmd=mCmdList.first(); !cmd.isNull(); cmd=mCmdList.next())
   {
     kdDebug() << "do command: " << cmd << endl;
-    if (cmd.left(6) == "kwmcom")
-    {
-      cmd = cmd.mid(6,256).stripWhiteSpace();
-      if (stricmp(cmd.ascii(),"restart") == 0) kwmRestart = true;
-      else KWM::sendKWMCommand(cmd);
-    }
-    else if (cmd.left(9) == "kfmclient")
+    if (cmd.left(9) == "kfmclient")
     {
       system(cmd.ascii());
     }
@@ -675,6 +665,14 @@ void Theme::doCmdList(void)
     {
       colorSchemeApply();
       runKrdb();
+    }
+    else if (cmd == "applyWallpaper")
+    {
+       // reconfigure kdesktop. kdesktop will notify all clients
+       DCOPClient *client = kapp->dcopClient();
+       if (!client->isAttached())
+          client->attach();
+       client->send("kdesktop", "KBackgroundIface", "configure()", "");
     }
     else if (strncmp(cmd.ascii(), "restart", 7) == 0)
     {
@@ -689,9 +687,7 @@ void Theme::doCmdList(void)
     }
   }
 
-  if (kwmRestart) KWM::sendKWMCommand("restart");
   mCmdList.clear();
-#endif
 }
 
 
@@ -957,16 +953,8 @@ void Theme::install(void)
   loadMappings();
   mCmdList.clear();
 
-  if (instPanel) installGroup("Panel");
-  if (instSounds) installGroup("Sounds");
-  if (instWindowBorder) installGroup("Window Border");
-  if (instWindowTitlebar) installGroup("Window Titlebar");
-  if (instWindowButtonLayout) installGroup("Window Button Layout");
-  if (instWindowGimmick) installGroup("Window Gimmick");
   if (instWallpapers) installGroup("Display");
-  if (instKfm) installGroup("File Manager");
   if (instColors) installGroup("Colors");
-  if (instIcons) installIcons();
 
   kdDebug() << "*** executing command list" << endl;
 
