@@ -197,7 +197,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << ""
-    << i18n("Taskbar")        << "General"    << "taskbarFont"  << "ktaskbarrc";
+    << i18n("Taskbar")        << "General"    << "taskbarFont"  << "";
 
   QValueList<QFont> defaultFontList;
 
