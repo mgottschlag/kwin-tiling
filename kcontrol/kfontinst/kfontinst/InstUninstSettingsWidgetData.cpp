@@ -36,7 +36,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addItem( spacer, 3, 1 );
 
     GroupBox5 = new QGroupBox( this, "GroupBox5" );
-    GroupBox5->setTitle( tr2i18n( "Upon Install:" ) );
+    GroupBox5->setTitle( tr2i18n( "Upon Install" ) );
     GroupBox5->setColumnLayout(0, Qt::Vertical );
     GroupBox5->layout()->setSpacing( 6 );
     GroupBox5->layout()->setMargin( 11 );
@@ -56,7 +56,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addMultiCellWidget( GroupBox5, 0, 0, 0, 1 );
 
     ButtonGroup1 = new QButtonGroup( this, "ButtonGroup1" );
-    ButtonGroup1->setTitle( tr2i18n( "Uninstall - \"Move\" To Folder:" ) );
+    ButtonGroup1->setTitle( tr2i18n( "Uninstall - \"Move\" To Folder" ) );
     ButtonGroup1->setColumnLayout(0, Qt::Vertical );
     ButtonGroup1->layout()->setSpacing( 6 );
     ButtonGroup1->layout()->setMargin( 11 );

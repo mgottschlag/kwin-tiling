@@ -99,7 +99,7 @@
                 <cstring>GroupBox4_3</cstring>
             </property>
             <property name="title">
-                <string>X:</string>
+                <string>X Settings</string>
             </property>
             <property name="layoutMargin" stdset="0">
             </property>
@@ -118,7 +118,7 @@
                         <cstring>GroupBox3</cstring>
                     </property>
                     <property name="title">
-                        <string>Basic Mode Sub-Folders:</string>
+                        <string>Basic Mode Sub-Folders</string>
                     </property>
                     <grid>
                         <property name="name">

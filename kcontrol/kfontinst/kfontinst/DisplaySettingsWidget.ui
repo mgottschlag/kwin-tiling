@@ -73,7 +73,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Mode:</string>
+                <string>Mode</string>
             </property>
             <grid>
                 <property name="name">
@@ -189,7 +189,7 @@ This mode also allows you to install Speedo and bitmap fonts.</string>
                 <cstring>ButtonGroup2</cstring>
             </property>
             <property name="title">
-                <string>Font Lists:</string>
+                <string>Font Lists</string>
             </property>
             <grid>
                 <property name="name">

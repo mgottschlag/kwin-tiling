@@ -147,7 +147,7 @@
                 <cstring>GroupBox4_2</cstring>
             </property>
             <property name="title">
-                <string>General:</string>
+                <string>General</string>
             </property>
             <grid>
                 <property name="name">

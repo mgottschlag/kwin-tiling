@@ -72,7 +72,7 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     CSysCfgSettingsWidgetDataLayout->addWidget( ButtonGroup5_2_2, 1, 0 );
 
     GroupBox4_2 = new QGroupBox( this, "GroupBox4_2" );
-    GroupBox4_2->setTitle( tr2i18n( "General:" ) );
+    GroupBox4_2->setTitle( tr2i18n( "General" ) );
     GroupBox4_2->setColumnLayout(0, Qt::Vertical );
     GroupBox4_2->layout()->setSpacing( 6 );
     GroupBox4_2->layout()->setMargin( 11 );

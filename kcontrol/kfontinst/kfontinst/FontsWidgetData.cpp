@@ -35,7 +35,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
 
     itsBox = new QGroupBox( this, "itsBox" );
     itsBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsBox->sizePolicy().hasHeightForWidth() ) );
-    itsBox->setTitle( tr2i18n( "Preview:" ) );
+    itsBox->setTitle( tr2i18n( "Preview" ) );
     itsBox->setColumnLayout(0, Qt::Vertical );
     itsBox->layout()->setSpacing( 6 );
     itsBox->layout()->setMargin( 6 );

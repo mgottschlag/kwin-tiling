@@ -82,7 +82,7 @@
                 <cstring>GroupBox5</cstring>
             </property>
             <property name="title">
-                <string>Upon Install:</string>
+                <string>Upon Install</string>
             </property>
             <grid>
                 <property name="name">
@@ -116,7 +116,7 @@ Selecting this option will cause the installer to automatically correct any brok
                 <cstring>ButtonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Uninstall - "Move" To Folder:</string>
+                <string>Uninstall - "Move" To Folder</string>
             </property>
             <grid>
                 <property name="name">

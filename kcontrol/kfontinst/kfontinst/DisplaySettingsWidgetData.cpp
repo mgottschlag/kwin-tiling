@@ -35,7 +35,7 @@ CDisplaySettingsWidgetData::CDisplaySettingsWidgetData( QWidget* parent,  const 
 
     ButtonGroup5_3 = new QButtonGroup( this, "ButtonGroup5_3" );
     ButtonGroup5_3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, ButtonGroup5_3->sizePolicy().hasHeightForWidth() ) );
-    ButtonGroup5_3->setTitle( tr2i18n( "Mode:" ) );
+    ButtonGroup5_3->setTitle( tr2i18n( "Mode" ) );
     ButtonGroup5_3->setColumnLayout(0, Qt::Vertical );
     ButtonGroup5_3->layout()->setSpacing( 6 );
     ButtonGroup5_3->layout()->setMargin( 11 );
@@ -77,7 +77,7 @@ CDisplaySettingsWidgetData::CDisplaySettingsWidgetData( QWidget* parent,  const 
     CDisplaySettingsWidgetDataLayout->addItem( spacer_3, 3, 1 );
 
     ButtonGroup2 = new QButtonGroup( this, "ButtonGroup2" );
-    ButtonGroup2->setTitle( tr2i18n( "Font Lists:" ) );
+    ButtonGroup2->setTitle( tr2i18n( "Font Lists" ) );
     ButtonGroup2->setColumnLayout(0, Qt::Vertical );
     ButtonGroup2->layout()->setSpacing( 6 );
     ButtonGroup2->layout()->setMargin( 11 );

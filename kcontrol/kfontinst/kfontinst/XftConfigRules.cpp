@@ -59,8 +59,8 @@ CXftConfigRules::CXftConfigRules(QWidget *parent, const char *name)
                : CXftConfigRulesData(parent, name, true),
                  itsEditor(NULL)
 {
-    itsIncludes->setName(i18n("Include:"));
-    itsIncludeIfs->setName(i18n("Include If:"));
+    itsIncludes->setName(i18n("Include"));
+    itsIncludeIfs->setName(i18n("Include If"));
     connect(itsIncludes, SIGNAL(changed()), SLOT(enableOk()));
     connect(itsIncludeIfs, SIGNAL(changed()), SLOT(enableOk()));
 }

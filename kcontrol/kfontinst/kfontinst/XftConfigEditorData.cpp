@@ -37,7 +37,7 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     CXftConfigEditorDataLayout = new QGridLayout( this, 1, 1, 11, 6, "CXftConfigEditorDataLayout"); 
 
     GroupBox10 = new QGroupBox( this, "GroupBox10" );
-    GroupBox10->setTitle( tr2i18n( "Match:" ) );
+    GroupBox10->setTitle( tr2i18n( "Match" ) );
     GroupBox10->setColumnLayout(0, Qt::Vertical );
     GroupBox10->layout()->setSpacing( 6 );
     GroupBox10->layout()->setMargin( 11 );
@@ -127,7 +127,7 @@ CXftConfigEditorData::CXftConfigEditorData( QWidget* parent,  const char* name, 
     CXftConfigEditorDataLayout->addItem( spacer_2, 2, 0 );
 
     GroupBox10_2 = new QGroupBox( this, "GroupBox10_2" );
-    GroupBox10_2->setTitle( tr2i18n( "Edit:" ) );
+    GroupBox10_2->setTitle( tr2i18n( "Edit" ) );
     GroupBox10_2->setColumnLayout(0, Qt::Vertical );
     GroupBox10_2->layout()->setSpacing( 6 );
     GroupBox10_2->layout()->setMargin( 11 );

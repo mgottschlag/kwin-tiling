@@ -47,13 +47,13 @@
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
               itsSysConfigurer(NULL),
-              itsPreviousTitle(i18n("Preview:")),
+              itsPreviousTitle(i18n("Preview")),
               itsPreviousStr(i18n(" No preview available"))
 {
     QPalette    pal(itsBox->palette());
     QColorGroup dis(pal.disabled());
 
-    itsBox->setTitle(i18n(i18n("Preview:").utf8()));
+    itsBox->setTitle(i18n(i18n("Preview").utf8()));
     itsLabel->setText(i18n(i18n(" No preview available").utf8()));
 
     dis.setColor(QColorGroup::Text , pal.active().text());
@@ -105,7 +105,7 @@ void CFontsWidget::setPreviewMode(bool on)
         }
         else
         {
-            itsBox->setTitle(i18n("Preview:"));
+            itsBox->setTitle(i18n("Preview"));
             itsLabel->setText(i18n(" No preview available"));
         }
 
@@ -224,7 +224,7 @@ void CFontsWidget::preview(const QString &dir, const QString &file)
         CKfiGlobal::fe().closeFont();
     }
     else
-        itsBox->setTitle(i18n("Preview:"));
+        itsBox->setTitle(i18n("Preview"));
 
     if(!createdBitmap)
         itsLabel->setText(i18n(" No preview available"));

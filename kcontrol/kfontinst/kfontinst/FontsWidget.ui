@@ -65,7 +65,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Preview:</string>
+                <string>Preview</string>
             </property>
             <property name="layoutMargin" stdset="0">
             </property>

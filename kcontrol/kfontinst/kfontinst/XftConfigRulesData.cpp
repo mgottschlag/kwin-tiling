@@ -55,7 +55,7 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
     itsRulesTabLayout = new QGridLayout( itsRulesTab, 1, 1, 11, 6, "itsRulesTabLayout"); 
 
     GroupBox1 = new QGroupBox( itsRulesTab, "GroupBox1" );
-    GroupBox1->setTitle( tr2i18n( "Entries:" ) );
+    GroupBox1->setTitle( tr2i18n( "Entries" ) );
     GroupBox1->setColumnLayout(0, Qt::Vertical );
     GroupBox1->layout()->setSpacing( 6 );
     GroupBox1->layout()->setMargin( 11 );
@@ -63,8 +63,8 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
     GroupBox1Layout->setAlignment( Qt::AlignTop );
 
     itsList = new QListView( GroupBox1, "itsList" );
-    itsList->addColumn( tr2i18n( "Match:" ) );
-    itsList->addColumn( tr2i18n( "Edit:" ) );
+    itsList->addColumn( tr2i18n( "Match" ) );
+    itsList->addColumn( tr2i18n( "Edit" ) );
     itsList->setAllColumnsShowFocus( TRUE );
 
     GroupBox1Layout->addMultiCellWidget( itsList, 0, 0, 0, 3 );

@@ -38,7 +38,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     CDirSettingsWidgetDataLayout->addItem( spacer_2, 1, 1 );
 
     GroupBox4_3 = new QGroupBox( this, "GroupBox4_3" );
-    GroupBox4_3->setTitle( tr2i18n( "X:" ) );
+    GroupBox4_3->setTitle( tr2i18n( "X Settings" ) );
     GroupBox4_3->setColumnLayout(0, Qt::Vertical );
     GroupBox4_3->layout()->setSpacing( 6 );
     GroupBox4_3->layout()->setMargin( 11 );
@@ -46,7 +46,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     GroupBox4_3Layout->setAlignment( Qt::AlignTop );
 
     GroupBox3 = new QGroupBox( GroupBox4_3, "GroupBox3" );
-    GroupBox3->setTitle( tr2i18n( "Basic Mode Sub-Folders:" ) );
+    GroupBox3->setTitle( tr2i18n( "Basic Mode Sub-Folders" ) );
     GroupBox3->setColumnLayout(0, Qt::Vertical );
     GroupBox3->layout()->setSpacing( 6 );
     GroupBox3->layout()->setMargin( 11 );

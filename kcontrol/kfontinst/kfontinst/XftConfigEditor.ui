@@ -57,7 +57,7 @@
                 <cstring>GroupBox10</cstring>
             </property>
             <property name="title">
-                <string>Match:</string>
+                <string>Match</string>
             </property>
             <grid>
                 <property name="name">
@@ -304,7 +304,7 @@
                 <cstring>GroupBox10_2</cstring>
             </property>
             <property name="title">
-                <string>Edit:</string>
+                <string>Edit</string>
             </property>
             <grid>
                 <property name="name">
