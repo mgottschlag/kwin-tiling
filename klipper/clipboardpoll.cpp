@@ -96,7 +96,7 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
 
 void ClipboardPoll::timeout()
 {
-    KlipperWidget::updateXTime();
+    KlipperWidget::updateTimestamp();
     bool signal = false;
     if( !kapp->clipboard()->ownsSelection())
         signal = signal || checkTimestamp( selection );

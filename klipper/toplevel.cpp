@@ -64,7 +64,7 @@
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent ), DCOPObject( "klipper" ), m_config( config )
 {
-    updateXTime(); // read initial X time
+    updateTimestamp(); // read initial X user time
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
     m_selectedItem = -1;
@@ -139,7 +139,7 @@ QString KlipperWidget::getClipboardContents()
 // DCOP - don't call from Klipper itself
 void KlipperWidget::setClipboardContents(QString s)
 {
-    updateXTime();
+    updateTimestamp();
     setClipboard( s, Clipboard | Selection);
     newClipData();
 }
@@ -147,14 +147,14 @@ void KlipperWidget::setClipboardContents(QString s)
 // DCOP - don't call from Klipper itself
 void KlipperWidget::clearClipboardContents()
 {
-    updateXTime();
+    updateTimestamp();
     slotClearClipboard();
 }
 
 // DCOP - don't call from Klipper itself
 void KlipperWidget::clearClipboardHistory()
 {
-  updateXTime();
+  updateTimestamp();
   slotClearClipboard();
   trimClipHistory(0);
   saveSession();
@@ -823,29 +823,18 @@ bool KlipperWidget::ignoreClipboardChanges() const
     return false;
 }
 
-extern Time qt_x_time;
-
-// QClipboard uses qt_x_time as the timestamp for selection operations.
+// QClipboard uses qt_x_user_time as the timestamp for selection operations.
 // It is updated mainly from user actions, but Klipper polls the clipboard
-// without any user action triggering it, so qt_x_time may be old,
+// without any user action triggering it, so qt_x_user_time may be old,
 // which could possibly lead to QClipboard reporting empty clipboard.
-// Therefore, qt_x_time needs to be updated to current X server timestamp.
+// Therefore, qt_x_user_time needs to be updated to current X server timestamp.
 
-// Call only from functions that are called from outside (DCOP),
-// or from QTimer timeout !
-void KlipperWidget::updateXTime()
+// Call KApplication::updateUserTime() only from functions that are
+// called from outside (DCOP), or from QTimer timeout !
+void KlipperWidget::updateTimestamp()
 {
-    static QWidget* w = 0;
-    if ( !w )
-	w = new QWidget;
-    long data = 1;
-    XChangeProperty(qt_xdisplay(), w->winId(), XA_ATOM, XA_ATOM, 32,
-		    PropModeAppend, (unsigned char*) &data, 1);
-    XEvent ev;
-    XWindowEvent( qt_xdisplay(), w->winId(), PropertyChangeMask, &ev );
-    qt_x_time = ev.xproperty.time;
+    kapp->updateUserTimestamp( 0 );
 }
-
 
 Klipper::Klipper( QWidget* parent )
     : KlipperWidget( parent, kapp->config())

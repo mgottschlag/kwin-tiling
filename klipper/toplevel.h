@@ -47,7 +47,7 @@ public:
     QPopupMenu* popup() { return m_popup; }
     KGlobalAccel *globalKeys;
 
-    static void updateXTime();
+    static void updateTimestamp();
 
 public slots:
     void saveSession();
