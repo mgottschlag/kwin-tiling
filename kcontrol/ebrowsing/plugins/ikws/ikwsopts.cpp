@@ -245,9 +245,9 @@ void InternetKeywordsOptions::load()
     lb_searchFallback->setEnabled( ikwsEnabled );
 
     // Feature to be considered after KDE 2.0...
-    // bool searchEnabled = searcher->isSearchKeywordsEnabled();
+    bool searchEnabled = searcher->isSearchKeywordsEnabled();
     // cb_enableSearchKeywords->setChecked( searchEnabled );
-    // gb_search->setEnabled( searchEnabled );
+    gb_search->setEnabled( searchEnabled );
 
     if (lv_searchProviders->childCount())
       lv_searchProviders->setSelected(lv_searchProviders->firstChild(), true);
