@@ -436,7 +436,7 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     
     m_panelPos = m_panelInfo->_position;
     m_panelAlign = m_panelInfo->_alignment;
-    if(m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
+    if(m_panelInfo->_xineramaScreen >= 0 && m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
         m_xineramaScreenComboBox->setCurrentItem(m_panelInfo->_xineramaScreen);
     else
         m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
