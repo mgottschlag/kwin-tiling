@@ -139,6 +139,8 @@ void KDesktopConfig::save()
   // set number of desktops
   NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
   info.setNumberOfDesktops(_numSlider->value());
+  XSync(qt_xdisplay(), FALSE);
+  info.activate();
 
   // set desktop names
   for(int i = 1; i <= 16; i++)
