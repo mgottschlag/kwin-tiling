@@ -3,7 +3,7 @@ INCLUDES = $(all_includes) -I..
 LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 LDADD    = $(LIB_KDEUI) $(LIB_KDECORE) 
 
-SUBDIRS = pics
+SUBDIRS = pics default
 
 bin_PROGRAMS = kcmlocale
 
