@@ -74,7 +74,7 @@ void classDSNList::Load( int nSource )
 	else
 	{
 		SQLSetConfigMode( ODBC_BOTH_DSN );
-		qsError.sprintf( "Could not load (%s) This is most likely because of a lack of privs. Try running as root user the first time you run this program, when you are working with System DSN's or when you are adding/removing Drivers.", szINI );
+		qsError.sprintf( "Could not load (%s) This is most likely because of a lack of privs.\nTry running as root user the first time you run this program,\nwhen you are working with System DSN's\nor when you are adding/removing Drivers.", szINI );
 		QMessageBox::information(	this, "ODBC Config",  qsError );
 
 		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
