@@ -23,9 +23,9 @@
 #ifndef _ACCESSIBILITY_H_
 #define _ACCESSIBILITY_H_
 
-
 #include <kcmodule.h>
 
+#include "accessibilityconfigwidget.h"
 
 class QCheckBox;
 class QLabel;
@@ -37,7 +37,7 @@ class QSlider;
 class KNumInput;
 class KAboutData;
 
-class KAccessConfig : public KCModule {
+class KAccessConfig : public AccessibilityConfigWidget {
    Q_OBJECT
 
    public:

@@ -49,31 +49,33 @@
 #include <kaboutdata.h>
 #include <kdebug.h>
 
-#include "accessibility.moc"
 #include "accessibilityconfigwidget.h"
+
+#include "accessibility.moc"
+
 
 /**
  * This function checks if the kaccess daemon needs to be run
  * This function will be depricated since the kaccess daemon will be part of kded
  */
-static bool needToRunKAccessDaemon( KConfig *config )
-{
-    KConfigGroup group( config, "Bell" );
+static bool needToRunKAccessDaemon( KConfig *config ){
+   KConfigGroup group( config, "Bell" );
     
-    if (!group.readBoolEntry("SystemBell", true))
-        return true;
-    if (group.readBoolEntry("ArtsBell", false))
-        return true;
-    if (group.readBoolEntry("VisibleBell", false))
-        return true;
-    
-    return false; // don't need it
+   if(!group.readBoolEntry("SystemBell", true)){
+      return true;
+   }
+   if(group.readBoolEntry("ArtsBell", false)){
+      return true;
+   }
+   if(group.readBoolEntry("VisibleBell", false)){
+      return true;
+   }
+   return false; // don't need it
 }
 
 KAccessConfig::KAccessConfig(QWidget *parent, const char *)
-  : KCModule(parent, "kcmaccess")
-{
-  QVBoxLayout *main = new QVBoxLayout(this, 0,0);
+  : AccessibilityConfigWidget(parent, "accessibility"){
+/*  QVBoxLayout *main = new QVBoxLayout(this, 0,0);
   QTabWidget *tab = new QTabWidget(this);
   main->addWidget(tab);
 
@@ -251,7 +253,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   tab->addTab(keys, i18n("&Keyboard"));
 
-  load();
+  load();*/
 }
 
 
@@ -478,5 +480,3 @@ extern "C"
       kapp->startServiceByDesktopName("kaccess");
   }
 }
-
-

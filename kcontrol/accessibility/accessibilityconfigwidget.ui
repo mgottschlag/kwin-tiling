@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>528</width>
+            <width>672</width>
             <height>480</height>
         </rect>
     </property>
@@ -24,7 +24,7 @@
         </property>
         <widget class="QTabWidget">
             <property name="name">
-                <cstring>tabWidget3</cstring>
+                <cstring>mainTab</cstring>
             </property>
             <widget class="QWidget">
                 <property name="name">
@@ -47,87 +47,87 @@
                         <property name="whatsThis" stdset="0">
                             <string>This is the configuration of the Audible Bell.&lt;br&gt;</string>
                         </property>
-                        <widget class="QCheckBox">
+                        <vbox>
                             <property name="name">
-                                <cstring>sustomBell</cstring>
+                                <cstring>unnamed</cstring>
                             </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>11</x>
-                                    <y>57</y>
-                                    <width>460</width>
-                                    <height>25</height>
-                                </rect>
-                            </property>
-                            <property name="text">
-                                <string>Use &amp;customized bell</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Check this option if you want to use a customized bell, playing a sound file. If you do this, you will probably want to turn off the system bell.&lt;br&gt;
-Please note that on slow machines this may cause a "lag" between the event causing the bell and the sound being played.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>soundToPlayLabel</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>41</x>
-                                    <y>88</y>
-                                    <width>128</width>
-                                    <height>29</height>
-                                </rect>
-                            </property>
-                            <property name="text">
-                                <string>Sound &amp;to play:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>soundToPlay</cstring>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>If the option "Use customized bell" is enabled, you can choose a sound file here.</string>
-                            </property>
-                        </widget>
-                        <widget class="KURLRequester">
-                            <property name="name">
-                                <cstring>soundToPlay</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>175</x>
-                                    <y>88</y>
-                                    <width>296</width>
-                                    <height>29</height>
-                                </rect>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>systemBell</cstring>
-                            </property>
-                            <property name="geometry">
-                                <rect>
-                                    <x>11</x>
-                                    <y>26</y>
-                                    <width>460</width>
-                                    <height>25</height>
-                                </rect>
-                            </property>
-                            <property name="text">
-                                <string>Use &amp;system bell</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>If this option is checked, the default system bell will be used. See the "System Bell" control module for how to customize the system bell.&lt;br&gt;
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>systemBell</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use &amp;system bell</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>If this option is checked, the default system bell will be used. See the "System Bell" control module for how to customize the system bell.&lt;br&gt;
 Normally, this is just a "beep".</string>
-                            </property>
-                        </widget>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>customBell</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use &amp;customized bell</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check this option if you want to use a customized bell, playing a sound file. If you do this, you will probably want to turn off the system bell.&lt;br&gt;
+Please note that on slow machines this may cause a "lag" between the event causing the bell and the sound being played.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout9</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>soundToPlaySpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>soundToPlayLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Sound &amp;to play:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>soundToPlay</cstring>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>If the option "Use customized bell" is enabled, you can choose a sound file here.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KURLRequester">
+                                        <property name="name">
+                                            <cstring>soundToPlay</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -142,134 +142,182 @@ Normally, this is just a "beep".</string>
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>checkBox3</cstring>
+                                    <cstring>visibleBell</cstring>
                                 </property>
                                 <property name="text">
                                     <string>&amp;Use visible bell</string>
                                 </property>
                             </widget>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>radioButton1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>I&amp;nvert screen</string>
-                                </property>
-                            </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout10</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QRadioButton">
-                                        <property name="name">
-                                            <cstring>radioButton2</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>F&amp;lash screen</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="KColorButton">
-                                        <property name="name">
-                                            <cstring>kColorButton1</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                        <property name="color">
-                                            <color>
-                                                <red>255</red>
-                                                <green>0</green>
-                                                <blue>0</blue>
-                                            </color>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>flashScreenSpacer</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>0</width>
-                                                <height>15</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </hbox>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout11</cstring>
+                                    <cstring>layout19</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KIntSpinBox" row="1" column="0">
+                                    <spacer row="0" column="0">
                                         <property name="name">
-                                            <cstring>duration</cstring>
-                                        </property>
-                                        <property name="suffix">
-                                            <string> msec</string>
-                                        </property>
-                                        <property name="maxValue">
-                                            <number>2000</number>
-                                        </property>
-                                        <property name="minValue">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="lineStep">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>500</number>
-                                        </property>
-                                    </widget>
-                                    <widget class="QSlider" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>durationSlider</cstring>
-                                        </property>
-                                        <property name="minValue">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="maxValue">
-                                            <number>2000</number>
-                                        </property>
-                                        <property name="lineStep">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="pageStep">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>500</number>
+                                            <cstring>visibleBellOptionsSpacer</cstring>
                                         </property>
                                         <property name="orientation">
                                             <enum>Horizontal</enum>
                                         </property>
-                                        <property name="tickmarks">
-                                            <enum>Right</enum>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
                                         </property>
-                                    </widget>
-                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLayoutWidget" row="1" column="1">
                                         <property name="name">
-                                            <cstring>durationLabel</cstring>
+                                            <cstring>flashScreenLayout</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>flashScreen</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>F&amp;lash screen</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="KColorButton">
+                                                <property name="name">
+                                                    <cstring>flashScreenColor</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string></string>
+                                                </property>
+                                                <property name="color">
+                                                    <color>
+                                                        <red>255</red>
+                                                        <green>0</green>
+                                                        <blue>0</blue>
+                                                    </color>
+                                                </property>
+                                            </widget>
+                                            <spacer>
+                                                <property name="name">
+                                                    <cstring>flashScreenSpacer</cstring>
+                                                </property>
+                                                <property name="orientation">
+                                                    <enum>Horizontal</enum>
+                                                </property>
+                                                <property name="sizeType">
+                                                    <enum>Expanding</enum>
+                                                </property>
+                                                <property name="sizeHint">
+                                                    <size>
+                                                        <width>0</width>
+                                                        <height>15</height>
+                                                    </size>
+                                                </property>
+                                            </spacer>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QRadioButton" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>invertScreen</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Duration:</string>
+                                            <string>I&amp;nvert screen</string>
                                         </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>duration</cstring>
+                                        <property name="checked">
+                                            <bool>true</bool>
                                         </property>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="2" column="1">
+                                        <property name="name">
+                                            <cstring>visibleBellDurationLayout</cstring>
+                                        </property>
+                                        <grid>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="KIntSpinBox" row="1" column="0">
+                                                <property name="name">
+                                                    <cstring>visibleBellDuration</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="suffix">
+                                                    <string> msec</string>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>2000</number>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>100</number>
+                                                </property>
+                                                <property name="lineStep">
+                                                    <number>100</number>
+                                                </property>
+                                                <property name="value">
+                                                    <number>500</number>
+                                                </property>
+                                            </widget>
+                                            <widget class="QSlider" row="1" column="1">
+                                                <property name="name">
+                                                    <cstring>visibleBellDurationSlider</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>100</number>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>2000</number>
+                                                </property>
+                                                <property name="lineStep">
+                                                    <number>100</number>
+                                                </property>
+                                                <property name="pageStep">
+                                                    <number>100</number>
+                                                </property>
+                                                <property name="value">
+                                                    <number>500</number>
+                                                </property>
+                                                <property name="orientation">
+                                                    <enum>Horizontal</enum>
+                                                </property>
+                                                <property name="tickmarks">
+                                                    <enum>Right</enum>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel" row="0" column="0">
+                                                <property name="name">
+                                                    <cstring>visibleBellDurationLabel</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;Duration:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>visibleBellDuration</cstring>
+                                                </property>
+                                            </widget>
+                                        </grid>
                                     </widget>
                                 </grid>
                             </widget>
@@ -277,7 +325,7 @@ Normally, this is just a "beep".</string>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer2</cstring>
+                            <cstring>bellSpacer</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -307,7 +355,7 @@ Normally, this is just a "beep".</string>
                     </property>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox10</cstring>
+                            <cstring>stickyKeysGroup</cstring>
                         </property>
                         <property name="title">
                             <string>S&amp;ticky Keys</string>
@@ -318,25 +366,58 @@ Normally, this is just a "beep".</string>
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>checkBox18</cstring>
+                                    <cstring>stickyKeys</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Use &amp;sticky keys</string>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>checkBox19</cstring>
+                                    <cstring>layout11</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>&amp;Lock with sticky keys</string>
-                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>lockWithStickyKeysSpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>lockWithStickyKeys</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Lock with sticky keys</string>
+                                        </property>
+                                        <property name="checked">
+                                            <bool>true</bool>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </vbox>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox11</cstring>
+                            <cstring>slowKeysGroup</cstring>
                         </property>
                         <property name="title">
                             <string>Slo&amp;w Keys</string>
@@ -347,7 +428,7 @@ Normally, this is just a "beep".</string>
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>checkBox20</cstring>
+                                    <cstring>slowKeys</cstring>
                                 </property>
                                 <property name="text">
                                     <string>&amp;Use slow keys</string>
@@ -361,7 +442,7 @@ Normally, this is just a "beep".</string>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KIntSpinBox" row="1" column="0">
+                                    <widget class="KIntSpinBox" row="1" column="1">
                                         <property name="name">
                                             <cstring>slowKeysDelay</cstring>
                                         </property>
@@ -381,7 +462,7 @@ Normally, this is just a "beep".</string>
                                             <number>500</number>
                                         </property>
                                     </widget>
-                                    <widget class="QSlider" row="1" column="1">
+                                    <widget class="QSlider" row="1" column="2">
                                         <property name="name">
                                             <cstring>slowKeysDelaySlider</cstring>
                                         </property>
@@ -407,7 +488,24 @@ Normally, this is just a "beep".</string>
                                             <enum>Right</enum>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <spacer row="0" column="0">
+                                        <property name="name">
+                                            <cstring>slowKeysSpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel" row="0" column="1">
                                         <property name="name">
                                             <cstring>slowKeysDelayLabel</cstring>
                                         </property>
@@ -424,7 +522,7 @@ Normally, this is just a "beep".</string>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox11_2</cstring>
+                            <cstring>bounceKeysGroup</cstring>
                         </property>
                         <property name="title">
                             <string>&amp;Bounce Keys</string>
@@ -435,7 +533,7 @@ Normally, this is just a "beep".</string>
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>checkBox20_2</cstring>
+                                    <cstring>bounceKeys</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Use bou&amp;nce keys</string>
@@ -449,27 +547,7 @@ Normally, this is just a "beep".</string>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="KIntSpinBox" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>bounceKeysDelay</cstring>
-                                        </property>
-                                        <property name="suffix">
-                                            <string> msec</string>
-                                        </property>
-                                        <property name="maxValue">
-                                            <number>2000</number>
-                                        </property>
-                                        <property name="minValue">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="lineStep">
-                                            <number>100</number>
-                                        </property>
-                                        <property name="value">
-                                            <number>500</number>
-                                        </property>
-                                    </widget>
-                                    <widget class="QSlider" row="1" column="1">
+                                    <widget class="QSlider" row="1" column="2">
                                         <property name="name">
                                             <cstring>bounceKeysDelaySlider</cstring>
                                         </property>
@@ -495,7 +573,44 @@ Normally, this is just a "beep".</string>
                                             <enum>Right</enum>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <spacer row="0" column="0">
+                                        <property name="name">
+                                            <cstring>bounceKeysDelaySpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="KIntSpinBox" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>bounceKeysDelay</cstring>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="1">
                                         <property name="name">
                                             <cstring>bounceKeysDelayLabel</cstring>
                                         </property>
@@ -512,7 +627,7 @@ Normally, this is just a "beep".</string>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer6</cstring>
+                            <cstring>keyboardSpacer</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -542,7 +657,7 @@ Normally, this is just a "beep".</string>
                     </property>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox13</cstring>
+                            <cstring>mouseNavigationGroup</cstring>
                         </property>
                         <property name="title">
                             <string>M&amp;ouse Navigation</string>
@@ -553,7 +668,7 @@ Normally, this is just a "beep".</string>
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>checkBox22</cstring>
+                                    <cstring>moveWithKeyboard</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Mo&amp;ve mouse with keyboard</string>
@@ -561,115 +676,374 @@ Normally, this is just a "beep".</string>
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout18</cstring>
+                                    <cstring>moveWithKeyboardLayout</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLabel" row="1" column="0">
+                                    <widget class="KIntSpinBox" row="2" column="2">
                                         <property name="name">
-                                            <cstring>textLabel4_4</cstring>
+                                            <cstring>accelerationTime</cstring>
                                         </property>
-                                        <property name="text">
-                                            <string>&amp;Aceleration delay:</string>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>5000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>250</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>1000</number>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="4" column="0">
+                                    <widget class="QSlider" row="2" column="3">
                                         <property name="name">
-                                            <cstring>textLabel4_7</cstring>
+                                            <cstring>accelerationTimeSlider</cstring>
                                         </property>
-                                        <property name="text">
-                                            <string>&amp;Aceleration delay:</string>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
-                                    </widget>
-                                    <widget class="QLabel" row="2" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel4_5</cstring>
+                                        <property name="minValue">
+                                            <number>1</number>
                                         </property>
-                                        <property name="text">
-                                            <string>&amp;Aceleration delay:</string>
+                                        <property name="maxValue">
+                                            <number>5000</number>
                                         </property>
-                                    </widget>
-                                    <widget class="QSlider" row="0" column="2">
-                                        <property name="name">
-                                            <cstring>slider4</cstring>
+                                        <property name="lineStep">
+                                            <number>250</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>2500</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>1000</number>
                                         </property>
                                         <property name="orientation">
                                             <enum>Horizontal</enum>
                                         </property>
-                                    </widget>
-                                    <widget class="KIntSpinBox" row="4" column="1">
-                                        <property name="name">
-                                            <cstring>kIntSpinBox4_7</cstring>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
                                         </property>
                                     </widget>
-                                    <widget class="QSlider" row="4" column="2">
+                                    <widget class="QLabel" row="3" column="1">
                                         <property name="name">
-                                            <cstring>slider4_7</cstring>
+                                            <cstring>maximumSpeedLabel</cstring>
                                         </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                    </widget>
-                                    <widget class="QSlider" row="3" column="2">
-                                        <property name="name">
-                                            <cstring>slider4_6</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                    </widget>
-                                    <widget class="KIntSpinBox" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>kIntSpinBox4_4</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="KIntSpinBox" row="2" column="1">
-                                        <property name="name">
-                                            <cstring>kIntSpinBox4_5</cstring>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLabel" row="0" column="0">
-                                        <property name="name">
-                                            <cstring>textLabel4</cstring>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Aceleration delay:</string>
+                                            <string>Ma&amp;ximum speed:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>AlignVCenter|AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>maximumSpeed</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="QLabel" row="3" column="0">
+                                    <widget class="QLabel" row="2" column="1">
                                         <property name="name">
-                                            <cstring>textLabel4_6</cstring>
+                                            <cstring>accelerationTimeLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Aceleration delay:</string>
+                                            <string>Acceleration &amp;time:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>AlignVCenter|AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>accelerationTime</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="QSlider" row="1" column="2">
+                                    <widget class="QSlider" row="0" column="3">
                                         <property name="name">
-                                            <cstring>slider4_4</cstring>
+                                            <cstring>accelerationDelaySlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>50</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>500</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>160</number>
                                         </property>
                                         <property name="orientation">
                                             <enum>Horizontal</enum>
                                         </property>
-                                    </widget>
-                                    <widget class="KIntSpinBox" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>kIntSpinBox4</cstring>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
                                         </property>
                                     </widget>
-                                    <widget class="KIntSpinBox" row="3" column="1">
+                                    <widget class="KIntSpinBox" row="3" column="2">
                                         <property name="name">
-                                            <cstring>kIntSpinBox4_6</cstring>
+                                            <cstring>maximumSpeed</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
                                         </property>
                                     </widget>
-                                    <widget class="QSlider" row="2" column="2">
+                                    <widget class="KIntSpinBox" row="1" column="2">
                                         <property name="name">
-                                            <cstring>slider4_5</cstring>
+                                            <cstring>repeatInterval</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>5</number>
+                                        </property>
+                                    </widget>
+                                    <spacer row="0" column="0">
+                                        <property name="name">
+                                            <cstring>moveWithKeyboardSpacer</cstring>
                                         </property>
                                         <property name="orientation">
                                             <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QSlider" row="3" column="3">
+                                        <property name="name">
+                                            <cstring>maximumSpeedSlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                        <property name="tickInterval">
+                                            <number>50</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>repeatIntervalLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Repeat interval:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>AlignVCenter|AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>repeatInterval</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="0" column="2">
+                                        <property name="name">
+                                            <cstring>accelerationDelay</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>1</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>50</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>160</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="4" column="1">
+                                        <property name="name">
+                                            <cstring>accelerationProfileLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Aceleration &amp;profile:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>AlignVCenter|AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>accelerationProfile</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="4" column="2">
+                                        <property name="name">
+                                            <cstring>accelerationProfile</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>-1000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="4" column="3">
+                                        <property name="name">
+                                            <cstring>accelerationProfileSlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>-1000</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                        <property name="tickInterval">
+                                            <number>100</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="1" column="3">
+                                        <property name="name">
+                                            <cstring>repeatInternalSlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>1000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>5</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                        <property name="tickInterval">
+                                            <number>50</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>accelerationDelayLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Acceleration delay:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>AlignVCenter|AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>accelerationDelay</cstring>
                                         </property>
                                     </widget>
                                 </grid>
@@ -678,7 +1052,7 @@ Normally, this is just a "beep".</string>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer8</cstring>
+                            <cstring>mouseSpacer</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -700,27 +1074,27 @@ Normally, this is just a "beep".</string>
 </widget>
 <connections>
     <connection>
-        <sender>sustomBell</sender>
+        <sender>customBell</sender>
         <signal>toggled(bool)</signal>
         <receiver>soundToPlay</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>sustomBell</sender>
+        <sender>customBell</sender>
         <signal>toggled(bool)</signal>
         <receiver>soundToPlayLabel</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>duration</sender>
+        <sender>visibleBellDuration</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>durationSlider</receiver>
+        <receiver>visibleBellDurationSlider</receiver>
         <slot>setValue(int)</slot>
     </connection>
     <connection>
-        <sender>durationSlider</sender>
+        <sender>visibleBellDurationSlider</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>duration</receiver>
+        <receiver>visibleBellDuration</receiver>
         <slot>setValue(int)</slot>
     </connection>
     <connection>
@@ -747,7 +1121,239 @@ Normally, this is just a "beep".</string>
         <receiver>bounceKeysDelay</receiver>
         <slot>setValue(int)</slot>
     </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>invertScreen</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>flashScreen</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>flashScreenColor</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>visibleBellDuration</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>visibleBellDurationLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>visibleBellDurationSlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>stickyKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lockWithStickyKeys</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationDelaySlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationDelay</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>repeatInterval</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>repeatInternalSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>repeatInternalSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>repeatInterval</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationTime</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationTimeSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationTimeSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationTime</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>maximumSpeed</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>maximumSpeedSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>maximumSpeedSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>maximumSpeed</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationProfile</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationProfileSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>accelerationProfileSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>accelerationProfile</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationDelayLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationDelay</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationDelaySlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>repeatIntervalLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>repeatInterval</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>repeatInternalSlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationTimeLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationTime</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationTimeSlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>maximumSpeedLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>maximumSpeed</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>maximumSpeedSlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationProfileLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationProfile</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>accelerationProfileSlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>systemBell</sender>
+        <signal>clicked()</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChaged()</slot>
+    </connection>
 </connections>
+<tabstops>
+    <tabstop>mainTab</tabstop>
+    <tabstop>systemBell</tabstop>
+    <tabstop>customBell</tabstop>
+    <tabstop>soundToPlay</tabstop>
+    <tabstop>visibleBell</tabstop>
+    <tabstop>invertScreen</tabstop>
+    <tabstop>flashScreen</tabstop>
+    <tabstop>flashScreenColor</tabstop>
+    <tabstop>visibleBellDuration</tabstop>
+    <tabstop>visibleBellDurationSlider</tabstop>
+    <tabstop>stickyKeys</tabstop>
+    <tabstop>lockWithStickyKeys</tabstop>
+    <tabstop>slowKeys</tabstop>
+    <tabstop>slowKeysDelay</tabstop>
+    <tabstop>slowKeysDelaySlider</tabstop>
+    <tabstop>bounceKeys</tabstop>
+    <tabstop>bounceKeysDelay</tabstop>
+    <tabstop>bounceKeysDelaySlider</tabstop>
+    <tabstop>moveWithKeyboard</tabstop>
+    <tabstop>accelerationDelay</tabstop>
+    <tabstop>accelerationDelaySlider</tabstop>
+    <tabstop>repeatInterval</tabstop>
+    <tabstop>repeatInternalSlider</tabstop>
+    <tabstop>accelerationTime</tabstop>
+    <tabstop>accelerationTimeSlider</tabstop>
+    <tabstop>maximumSpeed</tabstop>
+    <tabstop>maximumSpeedSlider</tabstop>
+    <tabstop>accelerationProfile</tabstop>
+    <tabstop>accelerationProfileSlider</tabstop>
+</tabstops>
+<slots>
+    <slot access="private">configChaged()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kcmodule.h</includehint>
