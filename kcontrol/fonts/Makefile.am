@@ -17,7 +17,7 @@ kcm_fonts_la_METASOURCES = fonts.moc
 
 noinst_HEADERS = fonts.h kxftconfig.h
 
-messages:
-	$(XGETTEXT) -kni18n $(kcm_fonts_la_SOURCES) -o $(podir)/kcmfonts.pot
+messages: rc.cpp
+	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmfonts.pot
 
 xdg_apps_DATA = fonts.desktop

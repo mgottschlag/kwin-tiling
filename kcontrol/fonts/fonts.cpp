@@ -237,7 +237,7 @@ FontAASettings::FontAASettings(QWidget *parent)
        " have a linear ordering of RGB sub-pixel, some have BGR."));
 
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-    subPixelType->insertItem(aaPixmaps[t-1], KXftConfig::description((KXftConfig::SubPixel::Type)t));
+    subPixelType->insertItem(aaPixmaps[t-1], i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).utf8()));
 
 #ifdef HAVE_FONTCONFIG
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
@@ -245,7 +245,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   hintingStyle=new QComboBox(false, mw);
   layout->addMultiCellWidget(hintingStyle, 2, 2, 1, 3);
   for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
-    hintingStyle->insertItem(KXftConfig::description((KXftConfig::Hint::Style)s));
+    hintingStyle->insertItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).utf8()));
 
   QString hintingText(i18n("Hinting is a process used to enhance the quality of fonts at small sizes."));
   QWhatsThis::add(hintingStyle, hintingText);
@@ -396,7 +396,7 @@ int FontAASettings::getIndex(KXftConfig::SubPixel::Type spType)
   int index;
 
   for(index=0; index<subPixelType->count(); ++index)
-    if(subPixelType->text(index)==KXftConfig::description(spType))
+    if(subPixelType->text(index)==i18n(KXftConfig::description(spType).utf8()))
     {
       pos=index;
       break;
@@ -410,7 +410,7 @@ KXftConfig::SubPixel::Type FontAASettings::getSubPixelType()
   int t;
 
   for(t=KXftConfig::SubPixel::None; t<=KXftConfig::SubPixel::Vbgr; ++t)
-    if(subPixelType->currentText()==KXftConfig::description((KXftConfig::SubPixel::Type)t))
+    if(subPixelType->currentText()==i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).utf8()))
       return (KXftConfig::SubPixel::Type)t;
 
   return KXftConfig::SubPixel::None;
@@ -423,7 +423,7 @@ int FontAASettings::getIndex(KXftConfig::Hint::Style hStyle)
   int index;
 
   for(index=0; index<hintingStyle->count(); ++index)
-    if(hintingStyle->text(index)==KXftConfig::description(hStyle))
+    if(hintingStyle->text(index)==i18n(KXftConfig::description(hStyle).utf8()))
     {
       pos=index;
       break;
@@ -438,7 +438,7 @@ KXftConfig::Hint::Style FontAASettings::getHintStyle()
   int s;
 
   for(s=KXftConfig::Hint::NotSet; s<=KXftConfig::Hint::Full; ++s)
-    if(hintingStyle->currentText()==KXftConfig::description((KXftConfig::Hint::Style)s))
+    if(hintingStyle->currentText()==i18n(KXftConfig::description((KXftConfig::Hint::Style)s).utf8()))
       return (KXftConfig::Hint::Style)s;
 
   return KXftConfig::Hint::Medium;
