@@ -430,6 +430,11 @@ bool Task::isModified() const
   return ( modStrPos != -1 );
 }
 
+bool Task::demandsAttention() const
+{
+    return (_info.state & NET::DemandsAttention);
+}
+
 QString Task::iconName() const
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconName);
