@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(srcdir)/../../backend -I$(srcdir)/.. -I.. \
+AM_CPPFLAGS = -I$(srcdir)/../../backend -I$(srcdir)/.. -I../.. \
     $(all_includes) $(XDM_DEFINES)
 
 noinst_LIBRARIES = libkdmthemer.a
@@ -12,3 +12,4 @@ libkdmthemer_a_SOURCES = \
 
 METASOURCES = AUTO
 
+libkdmthemer_a_COMPILE_FIRST = ../../config.ci

@@ -1,9 +1,9 @@
 # use 'make GENKDMCONF_FLAGS=... install' to override
 GENKDMCONF_FLAGS =
 
-SUBDIRS = . themer themes pics sessions
+SUBDIRS = themer themes pics sessions
 
-AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
+AM_CPPFLAGS = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/kcontrol/background \
     $(all_includes) $(XDM_DEFINES)
 
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf kdmctl
@@ -78,11 +78,7 @@ noinst_HEADERS = \
 
 include_HEADERS = kgreeterplugin.h
 
-kdm_greet_COMPILE_FIRST = config.ci
-kdm_config_COMPILE_FIRST = config.ci
-genkdmconf_COMPILE_FIRST = config.ci
+kdm_greet_COMPILE_FIRST = ../config.ci
+kdm_config_COMPILE_FIRST = ../config.ci
+genkdmconf_COMPILE_FIRST = ../config.ci
 
-config.ci: $(srcdir)/config.def $(srcdir)/confproc.pl
-	$(PERL) -w $(srcdir)/confproc.pl $(srcdir)/config.def $@
-
-CLEANFILES = config.ci

@@ -1,5 +1,4 @@
-# frontend must come first, as it generates config.ci
-SUBDIRS = kfrontend backend
+SUBDIRS = . backend kfrontend
 
 PAM = @KDM_PAM_SERVICE@
 
@@ -8,6 +7,11 @@ kdmdoc_DATA = README
 
 install-data-local:
 	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || { $(top_srcdir)/mkpamserv $(PAM) && $(top_srcdir)/mkpamserv -P $(PAM)-np; }
+
+config.ci: $(srcdir)/config.def $(srcdir)/confproc.pl
+	$(PERL) -w $(srcdir)/confproc.pl $(srcdir)/config.def $@
+
+CLEANFILES = config.ci
 
 ### this is *only* for the kdm home page maintainer! ###
 hp:
