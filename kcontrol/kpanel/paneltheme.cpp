@@ -56,17 +56,31 @@ void KPanelTheme::loadSettings()
 
 void KPanelTheme::saveSettings()
 {
+    QColor test;
+
     config->setGroup("kpanel");
-    config->writeEntry("PanelBackground",
-                       canvas->colors[WidgetCanvas::C_Panel]);
-    config->writeEntry("IconBackground",
-                       canvas->colors[WidgetCanvas::C_Icon]);
-    config->writeEntry("TaskbarFrameBackground",
-                       canvas->colors[WidgetCanvas::C_TBar]);
-    config->writeEntry("TaskbarBackground",
-                       canvas->colors[WidgetCanvas::C_TBtn]);
-    config->writeEntry("TaskbarForeground",
-                       canvas->colors[WidgetCanvas::C_TText]);
+
+    test = ( canvas->colors[WidgetCanvas::C_Panel] == backgroundColor())? "" :
+      canvas->colors[WidgetCanvas::C_Panel];
+    config->writeEntry("PanelBackground", test );
+
+    test = ( canvas->colors[WidgetCanvas::C_Icon] == backgroundColor())? "" :
+      canvas->colors[WidgetCanvas::C_Icon];
+    config->writeEntry("IconBackground", test );
+
+    test = ( canvas->colors[WidgetCanvas::C_TBar] == backgroundColor())? "" :
+      canvas->colors[WidgetCanvas::C_TBar];
+    config->writeEntry("TaskbarFrameBackground", test );
+
+    test = ( canvas->colors[WidgetCanvas::C_TBtn] == backgroundColor())? "" :
+      canvas->colors[WidgetCanvas::C_TBtn];
+    config->writeEntry("TaskbarBackground", test );
+
+    test = ( canvas->colors[WidgetCanvas::C_TText] == foregroundColor())? "" :
+      canvas->colors[WidgetCanvas::C_TText];
+    config->writeEntry("TaskbarForeground", test );
+
+
 
     config->writeEntry("BackgroundTexture",
                        pixNames[WidgetCanvas::C_Panel]);
