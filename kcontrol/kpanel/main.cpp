@@ -65,6 +65,8 @@ KKPanelApplication::KKPanelApplication(int &argc, char **argv,
 {
     panel = 0; desktops = 0; options = 0, disknav = 0, theme=0;
 
+    ::config = new KConfig("kpanelrc");
+
     if (runGUI())
 	{
 	    if (!pages || pages->contains("panel"))
@@ -119,9 +121,6 @@ void KKPanelApplication::apply()
 
 int main(int argc, char **argv)
 {
-    KInstance *tmp = new KInstance( "kcmkpanel" );
-    config = new KConfig("kpanelrc");
-    delete tmp;
     KKPanelApplication app(argc, argv, "kcmkpanel");
 
     app.setTitle(i18n("KPanel Configuration"));
