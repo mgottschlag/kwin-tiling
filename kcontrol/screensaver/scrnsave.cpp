@@ -176,7 +176,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
     mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
     vLayout->addWidget(mSaverGroup);
-    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(), 
+    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(),
         KDialog::spacingHint() );
 
     mSaverListView = new QListView( mSaverGroup );
@@ -184,6 +184,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSaverListView->header()->hide();
     mSelected = -1;
     groupLayout->addWidget( mSaverListView, 10 );
+    connect( mSaverListView, SIGNAL(doubleClicked ( QListViewItem *)), this, SLOT( slotSetup()));
     QWhatsThis::add( mSaverListView, i18n("This is a list of the available"
       " screen savers. Select the one you want to use.") );
 
@@ -216,7 +217,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
     vLayout->addWidget( mSettingsGroup );
-    groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 
+    groupLayout = new QVBoxLayout( mSettingsGroup->layout(),
         KDialog::spacingHint() );
 
 
@@ -422,9 +423,9 @@ void KScreenSaver::load()
 void KScreenSaver::readSettings()
 {
     KConfig *config = new KConfig( "kdesktoprc");
-    
+
     mImmutable = config->groupIsImmutable("ScreenSaver");
-    
+
     config->setGroup( "ScreenSaver" );
 
     mEnabled = config->readBoolEntry("Enabled", false);
@@ -465,7 +466,7 @@ void KScreenSaver::updateValues()
 void KScreenSaver::defaults()
 {
     if (mImmutable) return;
-    
+
     slotScreenSaver( 0 );
 
     QListViewItem *item = mSaverListView->firstChild();
@@ -731,6 +732,8 @@ void KScreenSaver::slotSetup()
     mSetupProc->clearArguments();
 
     QString saver = mSaverList.at(mSelected)->setup();
+    if( saver.isEmpty())
+        return;
     QTextStream ts(&saver, IO_ReadOnly);
 
     QString word;
