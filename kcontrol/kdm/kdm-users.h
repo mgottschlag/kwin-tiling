@@ -23,11 +23,11 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qimage.h>
-#include <qlistbox.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 
+#include <klistbox.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
 
@@ -54,7 +54,7 @@ protected:
 	void userButtonDropEvent(QDropEvent *e);
 	
 private slots:
-        void slotUserSelected(int);
+        void slotUserSelected(const QString &user);
         void slotAllToNo();
         void slotAllToUsr();
         void slotUsrToAll();
@@ -69,9 +69,10 @@ private:
         QCheckBox    *cbusrshw, *cbusrsrt;
         KIconButton *userbutton;
         QLabel       *userlabel;
-	QListBox     *alluserlb, *nouserlb, *userlb;
+	KListBox     *alluserlb, *nouserlb, *userlb;
 	bool         showallusers;
-
+	QString      m_userPixDir;
+	QString      m_defaultText;
 };
 
 #endif

@@ -26,10 +26,11 @@
 #include <kapp.h>
 #include <ksimpleconfig.h>
 #include <kicondialog.h>
-#include <kio/job.h>
+#include <kio/netaccess.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kimageio.h>
 #include <kmessagebox.h>
 #include "kdm-users.moc"
 
@@ -37,6 +38,11 @@
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+    // WABA: This is ugly!
+    QString default_pix(locate("data", "kdm/pics/users/default.png"));
+    m_userPixDir = default_pix.left(default_pix.findRev('/')+1);
+    m_defaultText = i18n("<default>");
+
     QString wtstr;
     QHBoxLayout *main = new QHBoxLayout(this, 10);
     QGridLayout *rLayout = new QGridLayout(main, 4, 3, 10);
@@ -90,7 +96,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     rLayout->setRowStretch(7, 1);
 
-    alluserlb = new QListBox(this);
+    alluserlb = new KListBox(this);
     rLayout->addMultiCellWidget(alluserlb, 1, 7, 0, 0);
     wtstr = i18n("This is the list of users for which no explicit show policy has been set,"
       " i.e. they will only be shown by KDM if the option \"Show all users but no-show users\""
@@ -98,24 +104,24 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     QWhatsThis::add( alluserlb, wtstr );
     QWhatsThis::add( a_label, wtstr );
 
-    userlb = new QListBox(this);
+    userlb = new KListBox(this);
     rLayout->addMultiCellWidget(userlb, 1, 3, 2, 2);
     wtstr = i18n("This is the list of users KDM will show in its login dialog in any case.");
     QWhatsThis::add( userlb, wtstr );
     QWhatsThis::add( s_label, wtstr );
 
-    nouserlb = new QListBox(this);
+    nouserlb = new KListBox(this);
     rLayout->addMultiCellWidget(nouserlb, 5, 7, 2, 2);
     wtstr = i18n("This is the list of users KDM will not show in its login dialog.");
     QWhatsThis::add( nouserlb, wtstr );
     QWhatsThis::add( n_label, wtstr );
 
-    connect( userlb, SIGNAL( highlighted( int ) ),
-             SLOT( slotUserSelected( int ) ) );
-    connect( alluserlb, SIGNAL( highlighted( int ) ),
-             SLOT( slotUserSelected( int ) ) );
-    connect( nouserlb, SIGNAL( highlighted( int ) ),
-             SLOT( slotUserSelected( int ) ) );
+    connect( userlb, SIGNAL( highlighted( const QString & ) ),
+             SLOT( slotUserSelected( const QString & ) ) );
+    connect( alluserlb, SIGNAL( highlighted( const QString & ) ),
+             SLOT( slotUserSelected( const QString & ) ) );
+    connect( nouserlb, SIGNAL( highlighted( const QString & ) ),
+             SLOT( slotUserSelected( const QString & ) ) );
 
     QRadioButton *rb;
     QVBoxLayout *lLayout = new QVBoxLayout(main, 10);
@@ -128,10 +134,10 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     userbutton = new KIconButton(this);
     userbutton->setAcceptDrops(true);
     userbutton->installEventFilter(this); // for drag and drop
-    userbutton->setIcon("default");
     userbutton->setFixedSize(80, 80);
     connect(userbutton, SIGNAL(iconChanged(QString)), SLOT(slotUserPixChanged(QString)));
     connect(userbutton, SIGNAL(iconChanged(QString)), this, SLOT(slotChanged()));
+
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
     lLayout->addWidget(userbutton);
     wtstr = i18n("Here you can see the username of the currently selected user and the"
@@ -188,23 +194,23 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
 void KDMUsersWidget::slotUserPixChanged(QString)
 {
-    debug("KDMUsersWidget::slotUserPixChanged()");
-    QString msg, user(userlabel->text());
-    if(user.isEmpty()) {
-        if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"))
-            == KMessageBox::Yes)
-            user = "default";
-        else
-            return;
+    QString user(userlabel->text().stripWhiteSpace());
+    if(user == m_defaultText) 
+    {
+       user = "default";
+       if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"))
+            != KMessageBox::Yes)
+          return;
     }
-    QString userpix = locate("icon", user + ".png");
+
+    QString userpix = m_userPixDir + user + ".png";
     const QPixmap *p = userbutton->pixmap();
     if(!p)
         return;
     if(!p->save(userpix, "PNG")) {
-        msg  = i18n("There was an error saving the image:\n>");
+        QString msg  = i18n("There was an error saving the image:\n");
         msg += userpix;
-        msg += i18n("<");
+        msg += i18n("\n");
         KMessageBox::sorry(this, msg);
     }
     userbutton->adjustSize();
@@ -240,67 +246,39 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
     if (QUriDrag::decodeToUnicodeUris(e, uris) && (uris.count() > 0)) {
         KURL url(*uris.begin());
 
-        QString fileName = url.fileName();
-        QString msg, userpixname;
-        QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
-        QString local = KGlobal::dirs()->saveLocation("data", "kdm/pics/", false);
-        QStringList::ConstIterator it = dirs.begin();
-        if ((*it).left(local.length()) == local)
-            it++;
-        QString pixurl("file:"+ *it);
+        QString pixpath;
         QString user(userlabel->text());
-        QString userpixurl = pixurl + "users/";
-        int last_dot_idx = fileName.findRev('.');
         bool istmp = false;
 
-        // CC: Now check for the extension
-        QString ext(".png .xpm .xbm");
-        //#ifdef HAVE_LIBGIF
-        ext += " .gif";
-        //#endif
-#ifdef HAVE_LIBJPEG
-        ext += " .jpg";
-#endif
-
-        if( !ext.contains(fileName.right(fileName.length()-
-                                         last_dot_idx), false) ) {
-            msg =  i18n("Sorry, but \n");
-            msg += fileName;
+        QString mimetype = KImageIO::mimeType(url.url());
+        
+        if( !KImageIO::isSupported(mimetype, KImageIO::Reading) ) 
+        {
+            QString msg =  i18n("Sorry, but \n");
+            msg += url.url();
             msg += i18n("\ndoes not seem to be an image file");
-            msg += i18n("\nPlease use files with these extensions\n");
-            msg += ext;
+            msg += i18n("\nThe following image types are understood:\n");
+            msg += KImageIO::types(KImageIO::Reading).join(", ");
             KMessageBox::sorry( this, msg);
         } else {
             // we gotta check if it is a non-local file and make a tmp copy at the hd.
-            if( !url.isLocalFile() ) {
-                pixurl += url.fileName();
-		KIO::file_copy(url, pixurl);
-                url = pixurl;
+            if( url.isLocalFile() )
+            {
+                pixpath = url.path();
+            } else {
+		KIO::NetAccess::download(url, pixpath);
                 istmp = true;
             }
-            // By now url should be "file:/..."
-            if (user.isEmpty()) {
-                if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"))
-                    == KMessageBox::Yes)
-                    user = "default";
-                else
-                    return;
-            }
             // Finally we've got an image file to add to the user
-            QPixmap p(url.path());
+            QPixmap p(pixpath);
+            if (istmp)
+                KIO::NetAccess::removeTempFile(pixpath); 
             if(!p.isNull()) { // Save image as <userpixdir>/<user>.<ext>
                 userbutton->setPixmap(p);
-                userbutton->adjustSize();
-                userpixurl += user;
-                userpixurl += fileName.right( fileName.length()-(last_dot_idx) );
-                //debug("destination: %s", userpixurl.ascii());
-                if(istmp)
-                    KIO::file_move(url, userpixurl);
-                else
-                    KIO::file_copy(url, userpixurl);
+                slotUserPixChanged(user);
             } else {
-                msg  = i18n("There was an error loading the image:\n>");
-                msg += url.path();
+                QString msg  = i18n("There was an error loading the image:\n>");
+                msg += url.prettyURL();
                 msg += i18n("<\nIt will not be saved...");
                 KMessageBox::sorry(this, msg);
             }
@@ -312,81 +290,70 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 void KDMUsersWidget::slotAllToNo()
 {
     int id = alluserlb->currentItem();
-    if(id >= 0) {
-        nouserlb->inSort(alluserlb->text(id));
-        alluserlb->removeItem(id);
-    }
+    if (id < 0) 
+       return;
+    QString user = alluserlb->currentText();
+    if (user == m_defaultText)
+       return;
+    nouserlb->inSort(user);
+    alluserlb->removeItem(id);
 }
 
 
 void KDMUsersWidget::slotNoToAll()
 {
     int id = nouserlb->currentItem();
-    if(id >= 0) {
-        alluserlb->inSort(nouserlb->text(id));
-        nouserlb->removeItem(id);
-    }
+    if (id < 0)
+       return;
+    QString user = nouserlb->currentText();
+    alluserlb->inSort(user);
+    nouserlb->removeItem(id);
 }
 
 
 void KDMUsersWidget::slotAllToUsr()
 {
     int id = alluserlb->currentItem();
-    if(id >=0) {
-        userlb->inSort(alluserlb->text(id));
-        alluserlb->removeItem(id);
-    }
+    if (id < 0) 
+       return;
+    QString user = alluserlb->currentText();
+    if (user == m_defaultText)
+       return;
+    userlb->inSort(user);
+    alluserlb->removeItem(id);
 }
 
 
 void KDMUsersWidget::slotUsrToAll()
 {
     int id = userlb->currentItem();
-    if(id >= 0) {
-        alluserlb->inSort(userlb->text(id));
-        userlb->removeItem(id);
-    }
+    if (id < 0)
+       return;
+    QString user = userlb->currentText();
+    alluserlb->inSort(user);
+    nouserlb->removeItem(id);
 }
 
 
-void KDMUsersWidget::slotUserSelected(int)
+void KDMUsersWidget::slotUserSelected(const QString &user)
 {
-    QString default_pix(locate("data", "kdm/pics/users/default.png"));
-    QString user_pix_dir = default_pix.left(default_pix.findRev('/')-1);
+   userlabel->setText(user);
 
-    QString name;
-    QListBox *lb;
-
-    // Get the listbox with the focus
-    // If this is not a listbox we segfault :-(
-    QWidget *w = kapp->focusWidget();
-    if(!w)               // Had to add this otherwise I can't find the listbox
-        w = focusWidget(); // when the app is swallowed in kcontrol.
-
-    // Maybe this is enough?
-    if(w->isA("QListBox")) {
-        kapp->processEvents();
-        // There seems to be an error in QListBox. When a listbox item is selected
-        // for the first time it emits a "highlighted()" signal with the correct
-        // index an emmidiatly after a signal with index 0.
-        // Therefore I have to use currentItem instead of the index emitted.
-        lb = (QListBox*)w;
-        name = user_pix_dir + lb->text(lb->currentItem()) + ".png";
-        QPixmap p( name );
-        if(p.isNull())
-            p = QPixmap(default_pix);
-        userbutton->setPixmap(p);
-        userbutton->adjustSize();
-        userlabel->setText(lb->text(lb->currentItem()));
-    }
-    else
-        debug("Not a QListBox");
+   QString name;
+   if (user == m_defaultText)
+      name = m_userPixDir + "default.png";
+   else
+      name = m_userPixDir + user + ".png";
+   QPixmap p( name );
+   if(p.isNull())
+      p = QPixmap(m_userPixDir+"default.png");
+   userbutton->setPixmap(p);
+   userbutton->adjustSize();
 }
 
 
 void KDMUsersWidget::save()
 {
-    //debug("KDMUsersWidget::applySettings()");
     KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
 
     c->setGroup("KDM");
@@ -436,7 +403,8 @@ void KDMUsersWidget::load()
     nouserlb->clear();
     nouserlb->insertStringList(no_users);
 
-    QStrList allusers;
+    QStringList allusers;
+    allusers.append(m_defaultText);
     struct passwd *ps;
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
     setpwent();
@@ -450,19 +418,22 @@ void KDMUsersWidget::load()
             ( no_users.contains( ps->pw_name) == 0)) {
             //  kapp->processEvents(50);
             // we might have a real user, insert him/her
-            allusers.inSort( ps->pw_name);
+            allusers.append( QString::fromLocal8Bit(ps->pw_name));
         }
     }
     endpwent();
 #undef CHECK_STRING
+    allusers.sort();
     alluserlb->clear();
-    alluserlb->insertStrList(&allusers);
+    alluserlb->insertStringList(allusers);
 
     cbusrsrt->setChecked(c->readNumEntry("SortUsers", true));
     cbusrshw->setChecked(c->readNumEntry("UserView", true));
     usrGroup->setButton(showallusers ? 0 : 1);
 
     delete c;
+    alluserlb->setCurrentItem(0);
+    slotUserSelected(alluserlb->currentText());
 }
 
 

@@ -103,7 +103,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->setIcon("kdelogo");
   connect(logobutton, SIGNAL(iconChanged(QString)),
 	  this, SLOT(slotLogoPixChanged(QString)));
-  connect(logobutton, SIGNAL(iconChanged(const QString&)),
+  connect(logobutton, SIGNAL(iconChanged(QString)),
 	  this, SLOT(changed()));
   grid->addRowSpacing(3, 80);
   grid->addWidget(logoLabel, 3,0);
