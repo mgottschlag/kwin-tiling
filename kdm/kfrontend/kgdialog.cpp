@@ -185,8 +185,7 @@ KGDialog::slotPopulateDisplays()
 #ifdef HAVE_VTS
     dpyMenu->clear();
     dpySpec *sessions = fetchSessions( 1 );
-    for (dpySpec *sess = sessions; sess; sess = sess->next )
-	if (*sess->display == ':') {
+    for (dpySpec *sess = sessions; sess; sess = sess->next ) {
 	    QString tit =
 		!sess->user ?
 		    i18n("Unused") :
@@ -205,7 +204,7 @@ KGDialog::slotPopulateDisplays()
 		dpyMenu->setItemEnabled( id, false );
 	    if (sess->self)
 		dpyMenu->setItemChecked( id, true );
-	}
+    }
     disposeSessions( sessions );
 #endif
 }

@@ -717,7 +717,7 @@ static void
 processGPipe (struct display *d)
 {
     struct display *di;
-    int cmd, all;
+    int cmd, alllocal;
     GTalk dpytalk;
 
     dpytalk.pipe = &d->gpipe;
@@ -747,11 +747,11 @@ processGPipe (struct display *d)
 	GSendInt (sdRec.uid);
 	break;
     case G_List:
-	all = GRecvInt ();
+	alllocal = GRecvInt ();
 	for (di = displays; di; di = di->next)
-	    if ((di->status == running &&
-		 (di->displayType & d_location) == dLocal && all) ||
-		di->status == remoteLogin || di->userSess >= 0)
+	    if ((!alllocal || (di->displayType & d_location) == dLocal) &&
+		(di->status == remoteLogin ||
+		 (alllocal ? di->status == running : di->userSess >= 0)))
 	    {
 		GSendStr (di->name);
 		GSendInt (di->serverVT);
