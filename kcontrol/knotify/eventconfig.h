@@ -20,6 +20,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.3  2000/04/09 02:21:38  charles
+    Yeah Baby! this rewrite is going good... very slowly.  Now it's a matter of
+    connecting the UI to it.  fun, fun!
+
+    KConfig is still broken it seems.  I will patch it if nobody else does :)
+
     Revision 1.1  2000/04/08 22:50:45  charles
     Totally broken for a change in design.
     I'll start doing some "object oriented programming" now! Who would've
@@ -51,9 +57,18 @@ class EventConfig : public QObject
 {
 Q_OBJECT
 public:
+	class EventListViewItem : public QListViewItem
+	{
+	public:
+		EventListViewItem(const EventConfig *ev);
+	protected:
+		const EventConfig *event;
+	};
+
 	EventConfig(const ProgramConfig *parent=0) {application=parent;}
 	
 	void load(KConfig &conf);
+	
 	
 	const ProgramConfig *application;
 	int present;
@@ -67,15 +82,29 @@ public:
 /**
  * Contains a single program
  **/
-class ProgramConfig
+class ProgramConfig : public QObject
 {
+Q_OBJECT
 public:
+	class ProgramListViewItem : public QListViewItem
+	{
+	public:
+		ProgramListViewItem(const ProgramConfig *prog);
+	protected:
+		const ProgramConfig *program;
+	};
+
 	ProgramConfig() {}
 	~ProgramConfig();
 	/**
 	 * Load the data for this class, and it's child Events
 	 */
 	void load(KConfig &conf);
+	
+	/**
+	 * shows it to the GUI
+	 **/
+	void show();
 		
 	QString configfile;
 	QString appname;
@@ -88,11 +117,18 @@ public:
 /**
  * Contains all the programs
  **/
-class Programs
+class Programs : public QObject
 {
+Q_OBJECT
 public:
-	Programs();
+	Programs(EventView *_eventview=0, QListView *_programs=0,
+	         QListView *_events=0);
 	~Programs();
+	
+	/**
+	 * To the GUI!!!!
+	 **/
+	void show();
 	
 	static EventView *eventview;
 	static QListView *programs;

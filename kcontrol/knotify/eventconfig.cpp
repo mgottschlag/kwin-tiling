@@ -20,9 +20,15 @@
     Boston, MA 02111-1307, USA.
 
 */
-
+#include "eventview.h"
+#include <qlistview.h>
 #include <eventconfig.h>
 #include <kstddirs.h>
+#include "eventconfig.moc"
+
+EventView *Programs::eventview=0;
+QListView *Programs::programs=0;
+QListView *Programs::events=0;
 
 void EventConfig::load(KConfig &conf)
 {
@@ -75,8 +81,16 @@ void ProgramConfig::load(KConfig &conf)
 
 }
 
-Programs::Programs()
+Programs::Programs(EventView *_eventview, QListView *_programs,
+	              QListView *_events)
 {
+	if (_eventview)
+		eventview=_eventview;
+	if (_programs)
+		programs=_programs;
+	if (_events)
+		events=_events;
+	
 	QStringList dirs(locate("config", "eventsrc")); // load system-wide eventsrc
 	dirs+=KGlobal::dirs()->findAllResources("data", "*/eventsrc");
 	
@@ -96,5 +110,36 @@ Programs::~Programs()
 	programlist.setAutoDelete(true);
 }
 
+void Programs::show()
+{
+	// Unload what we have now
+	
+	// Load the new goods.
 
+	// Put them in the app list
+	for (ProgramConfig *prog=programlist.first(); prog != 0; prog=programlist.next())
+		new ProgramConfig::ProgramListViewItem(prog);
+	
+	Programs::programs->setSelected(Programs::programs->firstChild(),true);
+}
 
+void ProgramConfig::show()
+{
+	// Unload the old events
+	
+	// and show the new ones
+	for (EventConfig *ev=eventlist.first(); ev != 0; ev=eventlist.next())
+		new EventConfig::EventListViewItem(ev);
+	
+	Programs::events->setSelected(Programs::events->firstChild(),true);
+}
+
+ProgramConfig::ProgramListViewItem::ProgramListViewItem(const ProgramConfig *prog)
+	: QListViewItem(Programs::programs, prog->appname, prog->description),
+	  program(prog)
+{}
+
+EventConfig::EventListViewItem::EventListViewItem(const EventConfig *ev)
+	: QListViewItem(Programs::events, ev->friendly, ev->description),
+	  event(ev)
+{}

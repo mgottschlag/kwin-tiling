@@ -23,18 +23,20 @@
 #include <kapp.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include "knotify.h"
-#include "knotify.moc"
 #include <kstddirs.h>
 #include <kiconloader.h>
 #include <qdir.h>
-#include <stdio.h>
 
 #include <qlayout.h>
+
+#include "eventconfig.h"
+#include "knotify.h"
+#include "knotify.moc"
 
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
 {
+
 	QVBoxLayout *layout=new QVBoxLayout(this,0,3);
 	//layout->setAutoAdd(true);
 	
@@ -65,6 +67,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	connect(events, SIGNAL(selectionChanged(QListViewItem*)),
 		SLOT(eventSelected(QListViewItem*)));
 	
+	
+	applications = new Programs(eventview, apps, events);
+	applications->show();
 	loadAll();
 };
 
@@ -85,13 +90,6 @@ void KNotifyWidget::changed()
 
 void KNotifyWidget::loadAll()
 {
-	QStringList dirs(locate("config", "eventsrc")); // load system-wide eventsrc
-	dirs+=KGlobal::dirs()->findAllResources("data", "*/eventsrc");
-	
-	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
-	{
-	
-	}
 
 }
 
