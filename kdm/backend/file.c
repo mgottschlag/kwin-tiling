@@ -73,7 +73,7 @@ freeSomeArgs (char **args, int n)
 void
 ParseDisplay (char *source)
 {
-    char		**args, **argv, **a, *dtx, *atPos;
+    char		**args, **argv, *dtx, *atPos;
     char		*name, *class2, *type;
     struct display	*d;
     int			usedDefault;

@@ -36,6 +36,8 @@ from The Open Group.
  * generate Kerberos Version 5 authorization records
  */
 
+#ifdef K5AUTH
+
 #include "dm.h"
 #include "dm_error.h"
 
@@ -255,3 +257,5 @@ Krb5Init(
     krb5_cc_close(ccache);
     return 0;
 }
+
+#endif

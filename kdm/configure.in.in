@@ -28,6 +28,9 @@ AC_SUBST(XBINDIR)
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
 AC_SUBST(XMKMF)
 
+dnl doesn't work currently
+dnl AC_CHECK_FUNCS(getsecretkey getloadavg getusershell login_getclass auth_timeok)
+
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
 AC_CACHE_VAL(kde_cv_defines_imake,
@@ -35,16 +38,45 @@ AC_CACHE_VAL(kde_cv_defines_imake,
 if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'
+BASIC_FLAGS = StandardDefines ConnectionFlags 
+
+#if HasXdmAuth
+XDMAUTH_DEFINES = -DHASXDMAUTH
+#endif
+
+#if HasBSD44Sockets
+SOCK_DEFINES = -DBSD44SOCKETS
+#endif
+
+#if defined(i386Architecture) || defined(AmigaArchitecture)
+FRAGILE_DEFINES = -DFRAGILE_DEV_MEM
+#endif
+
+#ifdef OpenBSDArchitecture
+RANDOM_DEFINES = -DARC4_RANDOM
+#elif defined(LinuxArchitecture)
+RANDOM_DEFINES = -DDEV_RANDOM
+#endif
+
+#if HasSetUserContext
+USER_CONTEXT_DEFINES = -DHAS_SETUSERCONTEXT
+#endif
+
+#if HasLibCrypt && !defined(SpecialLibCrypt) && defined(LynxOSArchitecture)
+CRYPT_DEFINES = -DHAS_CRYPT
+#endif
+
+XDM_CFLAGS = $(BASIC_FLAGS) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(USER_CONTEXT_DEFINES) $(CRYPT_DEFINES)
+
 acimake:
+	@echo XDM_CFLAGS=\"$(XDM_CFLAGS)\"
 #if HasXdmAuth
 	@echo HASXDMAUTH=1
 #endif
 EOF
     $XMKMF >&5 2>&1
     if test -f Makefile; then
-changequote(, )
-	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`
-changequote([, ])
+	[kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep '^[^ ]*='`]
 	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
 	AC_MSG_ERROR([$XMKF (imake) failed])
@@ -62,12 +94,11 @@ fi
 AC_MSG_CHECKING([whether to use xdm authorization])
 if test -n "$HASXDMAUTH"; then
     AC_MSG_RESULT([yes])
-    AC_DEFINE(HASXDMAUTH, 1, [Use the different XDM authorization schemes])
+    AC_DEFINE(HASXDMAUTH, 1, [Use encrypted XDM authorization])
 else
     AC_MSG_RESULT([no])
 fi
 
-dnl XXX still used in chooser and konsole
 AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
 AC_SUBST(LIBUTIL)
 AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
@@ -102,10 +133,8 @@ if test -n "$XDMCP"; then
 are installed or use --without-xdmcp to disable XDMCP support!])
     DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
-else
-  IMAKEFLAGS="-DNOXDMCP"
 fi
-AC_SUBST(LIBXDMCP)	dnl XXX phase out
+AC_SUBST(LIBXDMCP)
 AC_SUBST(kdmchooserdir)	dnl XXX phase out
 
 AC_MSG_CHECKING(whether to use Kerberos v4)
@@ -121,11 +150,9 @@ AC_ARG_WITH(krb4,
 case "$with_krb4" in
 no)
   AC_MSG_RESULT(no)
-  IMAKEFLAGS="$IMAKEFLAGS -DUSEKRB4=0"
   ;;
 *)
   AC_MSG_RESULT(yes)
-  IMAKEFLAGS="$IMAKEFLAGS -DUSEKRB4=1"
   AC_DEFINE_UNQUOTED(KRB4, 1, [ define if you have Kerberos IV ])
   KERBEROS_ROOT="$with_krb4"
   KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
@@ -157,11 +184,11 @@ AC_ARG_WITH(afs,
   [ with_afs=no ])
 if test "$with_afs" = no; then
   AC_MSG_RESULT(no)
-  IMAKEFLAGS="$IMAKEFLAGS -DNOAFS"
 else
   if test "$with_krb4" = no; then
     AC_MSG_RESULT(no)
     AC_MSG_WARN("AFS requires Kerberos v4 support.")
+    with_afs=no
   else
     AC_MSG_RESULT(yes)
     AC_DEFINE_UNQUOTED(AFS, 1, [ define if you have KTH Kerberos IV and AFS ])
@@ -177,23 +204,32 @@ AC_SUBST(KERBEROS_INCS)dnl
 AC_SUBST(KERBEROS_LIBS)dnl
 AC_SUBST(KRB_RPATH)
 
-if test "$with_krb4" != "no"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DKrbIVLibraries=\"$KERBEROS_LIBS\""
+AC_MSG_CHECKING([which CFLAGS to use for xdm core])
+if eval "test \"`echo '$ac_cv_func_vsyslog'`\" = yes"; then
+    XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG"
 fi
-
-if test "$kde_use_debug_code" = "yes"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DDEBUG"
+if test "x$use_pam" = xyes; then
+    XDM_CFLAGS="$XDM_CFLAGS -DUSE_PAM"
+elif test "x$use_shadow" = xyes; then
+    XDM_CFLAGS="$XDM_CFLAGS -DUSESHADOW"
 fi
-
-if test "$use_pam" = "yes"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=1 -DPAMLIBS=\"$PAMLIBS\" -DUSESHADOW=0"
-elif test "$use_shadow" = "yes"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=1"
-else
-    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=0"
+if test "x$XDMCP" != x; then
+    XDM_CFLAGS="$XDM_CFLAGS -DXDMCP"
 fi
-
-AC_SUBST(IMAKEFLAGS)
+if test "x$with_krb4" != xno; then
+    XDM_CFLAGS="$XDM_CFLAGS -DKERBEROS"
+    if test "x$with_afs" = xno; then
+	XDM_CFLAGS="$XDM_CFLAGS -DNO_AFS"
+    fi
+fi
+if eval "test \"`echo '$ac_cv_header_krb5_krb5_h'`\" = yes"; then
+    XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH"
+fi
+if eval "test \"`echo '$ac_cv_header_rpc_rpc_h'`\" = yes"; then
+    XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC"
+fi
+AC_MSG_RESULT([$XDM_CFLAGS])
+AC_SUBST(XDM_CFLAGS)
 
 dnl AC_OUTPUT(kdm/kfrontend/config/kdmrc)
 dnl AC_OUTPUT(kdm/kfrontend/config/Xservers)

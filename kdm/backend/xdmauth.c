@@ -33,11 +33,11 @@ from The Open Group.
  * generate authorization data for XDM-AUTHORIZATION-1 as per XDMCP spec
  */
 
+#ifdef HASXDMAUTH
+
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
-
-#ifdef HASXDMAUTH
 
 static char	auth_name[256];
 static int	auth_name_len;

@@ -45,6 +45,13 @@ extern int errno;
 
 #include <pwd.h>
 #include <grp.h>
+#ifdef SECURE_RPC
+# include <rpc/rpc.h>
+# include <rpc/key_prot.h>
+#endif
+#ifdef K5AUTH
+# include <krb5/krb5.h>
+#endif
 #ifdef USE_PAM
 # include <security/pam_appl.h>
 #elif defined(AIXV3) /* USE_PAM */
@@ -63,13 +70,6 @@ extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
 #  ifndef NO_AFS
 #   include <kafs.h>
 #  endif
-# endif
-# ifdef SECURE_RPC
-#  include <rpc/rpc.h>
-#  include <rpc/key_prot.h>
-# endif
-# ifdef K5AUTH
-#  include <krb5/krb5.h>
 # endif
 # ifdef CSRG_BASED
 #  include <sys/param.h>
@@ -866,7 +866,7 @@ static int sourceReset = 0;
 int
 StartClient(struct display *d, char *name, char *pass, char **sessargs)
 {
-    int		pretc, nargs;
+    int		i, pretc, nargs;
     char	*shell, *home;
     char	**argv, **avpt;
 #ifdef USE_PAM
@@ -875,7 +875,6 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 # ifdef AIXV3
     char	*msg;
 # else
-    int 	i;
 #  ifdef HAS_SETUSERCONTEXT
     char	**e, **envinit;
     extern char	**environ;
@@ -938,10 +937,9 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
      * for user-based authorization schemes,
      * add the user to the server's allowed "hosts" list.
      */
-#if !defined(USE_PAM) && !defined(AIXV3)
     for (i = 0; i < d->authNum; i++)
     {
-# ifdef SECURE_RPC
+#ifdef SECURE_RPC
 	if (d->authorizations[i]->name_length == 9 &&
 	    memcmp(d->authorizations[i]->name, "SUN-DES-1", 9) == 0)
 	{
@@ -954,10 +952,10 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    addr.family = FamilyNetname;
 	    addr.length = strlen (netname);
 	    addr.address = netname;
-	    XAddHost (d, &addr);
+	    XAddHost (d->dpy, &addr);
 	}
-# endif
-# ifdef K5AUTH
+#endif
+#ifdef K5AUTH
 	if (d->authorizations[i]->name_length == 14 &&
 	    memcmp(d->authorizations[i]->name, "MIT-KERBEROS-5", 14) == 0)
 	{
@@ -973,9 +971,8 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 		Krb5GetAuthFor(14, "MIT-KERBEROS-5", d->name);
 	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
 	}
-# endif
+#endif
     }
-#endif /* USE_PAM && AIXV3 */
 
     /*
      * Run system-wide initialization file
@@ -1134,11 +1131,10 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	 * for user-based authorization schemes,
 	 * use the password to get the user's credentials.
 	 */
-#if !defined(USE_PAM) && !defined(AIXV3)
-# ifdef SECURE_RPC
+#ifdef SECURE_RPC
 	/* do like "keylogin" program */
 	if (!pass[0])
-	    LogError("Warning: no password for NIS provided.\n");
+	    LogInfo("no password for NIS provided.\n");
 	else
 	{
 	    char    netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
@@ -1191,11 +1187,11 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    }
 	    bzero(secretkey, strlen(secretkey));
 	}
-# endif
-# ifdef K5AUTH
+#endif
+#ifdef K5AUTH
 	/* do like "kinit" program */
 	if (!pass[0])
-	    LogError("Warning: no password for Kerberos5 provided.\n");
+	    LogInfo("no password for Kerberos5 provided.\n");
 	else
 	{
 	    int i, j;
@@ -1223,8 +1219,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 		}
 	    }
 	}
-# endif /* K5AUTH */
-#endif /* USE_PAM */
+#endif /* K5AUTH */
 	if (pass)
 	    bzero(pass, strlen(pass));
 	SetUserAuthorization (d, verify);
@@ -1295,8 +1290,7 @@ SessionExit (struct display *d, int status)
 	setgid (d->verify->gid);
 	setuid (d->verify->uid);
 	RemoveUserAuthorization (d, d->verify);
-#if !defined(USE_PAM) && !defined(AIXV3)
-# ifdef K5AUTH
+#ifdef K5AUTH
 	/* do like "kdestroy" program */
         {
 	    krb5_error_code code;
@@ -1319,7 +1313,8 @@ SessionExit (struct display *d, int status)
 		krb5_cc_close(ccache);
 	    }
 	}
-# endif /* K5AUTH */
+#endif /* K5AUTH */
+#if !defined(USE_PAM) && !defined(AIXV3)
 # ifdef KERBEROS
 	if (krbtkfile[0]) {
 	    (void) dest_tkt();
