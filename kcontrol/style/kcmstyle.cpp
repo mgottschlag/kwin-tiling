@@ -448,12 +448,12 @@ void KCMStyle::save()
 	item = comboTooltipEffect->currentItem();
 	config.writeEntry( "EffectAnimateTooltip", item == 1);
 	config.writeEntry( "EffectFadeTooltip", item == 2 );
+	item = comboMenuHandle->currentItem();
+	config.writeEntry( "InsertTearOffHandle", item );
 	item = comboMenuEffect->currentItem();
 	config.writeEntry( "EffectAnimateMenu", item == 1 );
 	config.writeEntry( "EffectFadeMenu", item == 2 );
-	item = comboMenuHandle->currentItem();
-	config.writeEntry( "InsertTearOffHandle", item );
-
+	
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
 	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
