@@ -21,8 +21,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-
 #include <qdir.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
@@ -38,6 +36,7 @@
 #include "locale.h"
 #include "locale.moc"
 #include <stdlib.h>
+#include "config.h"	// needed for setenv() on HP-UX...
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : KConfigWidget (parent, name)
