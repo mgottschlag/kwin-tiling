@@ -30,8 +30,8 @@
 #include "kuriikwsfiltereng.h"
 #include "kurisearchfilter.h"
 
-typedef KGenericFactory<KURISearchFilter> KURISeachFilterFactory;
-K_EXPORT_COMPONENT_FACTORY(libkurisearchfilter, KURISeachFilterFactory("kuriikwsfilter"));
+typedef KGenericFactory<KURISearchFilter> KURISearchFilterFactory;
+K_EXPORT_COMPONENT_FACTORY(libkurisearchfilter, KURISearchFilterFactory("kuriikwsfilter"));
 
 KURISearchFilter::KURISearchFilter(QObject *parent, const char *name, 
                                    const QStringList &)
@@ -69,7 +69,7 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 
 KCModule *KURISearchFilter::configModule(QWidget *parent, const char *name) const
 {
-  return new FilterOptions( KURISeachFilterFactory::instance(), parent, name);
+  return new FilterOptions( KURISearchFilterFactory::instance(), parent, name);
 }
 
 QString KURISearchFilter::configName() const
