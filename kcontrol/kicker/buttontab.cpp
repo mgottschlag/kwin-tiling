@@ -52,14 +52,22 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QVBoxLayout *vbox = new QVBoxLayout(general_group, KDialog::marginHint(),
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
-
+  
+  QHBoxLayout* hbl = new QHBoxLayout( vbox );
   tiles_cb = new QCheckBox(i18n("Enable background tiles"), general_group);
   connect(tiles_cb, SIGNAL(clicked()), SLOT(tiles_clicked()));
-  vbox->addWidget(tiles_cb);
+  hbl->addWidget(tiles_cb);
   QWhatsThis::add( tiles_cb, i18n("If this option is enabled, the panel will display"
     " panel buttons using tile images instead of just drawing flat buttons. You can still"
     " enable or disable usage of tiles for the different kind of panel buttons, using the"
     " options below.") );
+
+  zoom_cb = new QCheckBox(i18n("Enable icon zooming"), general_group);
+  connect(zoom_cb, SIGNAL(clicked()), SIGNAL(changed() ) );
+  hbl->addWidget(zoom_cb);
+  QWhatsThis::add( zoom_cb, i18n("If this option is enabled, the button icons"
+     " are zoomed when the mouse cursor  is moved over them."));
+
 
   layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
 
@@ -426,6 +434,9 @@ void ButtonTab::load()
   wl_group->setEnabled(tiles);
   desktop_group->setEnabled(tiles);
 
+  bool zoom = c->readBoolEntry("EnableIconZoom", true);
+  zoom_cb->setChecked(zoom);
+  
   c->setGroup("button_tiles");
 
   bool kmenu_tiles = c->readBoolEntry("EnableKMenuTiles", true);
@@ -546,6 +557,7 @@ void ButtonTab::save()
   c->setGroup("buttons");
 
   c->writeEntry("EnableTileBackground", tiles_cb->isChecked());
+  c->writeEntry("EnableIconZoom", zoom_cb->isChecked());
 
   c->setGroup("button_tiles");
   c->writeEntry("EnableKMenuTiles", kmenu_cb->isChecked());
