@@ -114,8 +114,8 @@ void KLanguageCombo::internalActivate( int index )
 {
   if (current == index) return;
   current = index;
-  repaint();
   emit activated( index );
+  repaint();
 }
 
 void KLanguageCombo::internalHighlight( int index )
