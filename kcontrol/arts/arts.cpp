@@ -79,7 +79,7 @@ void KArtsModule::initAudioIOList()
 
 	if (!artsd->start(KProcess::Block, KProcess::Stderr)) {
 		KMessageBox::error(0, i18n("Unable to start aRts sound server to "
-		                           "retrive possible sound I/O methods.\n"
+		                           "retrieve possible sound I/O methods.\n"
 		                           "Only automatic detection will be "
 		                           "available"));
 	}
