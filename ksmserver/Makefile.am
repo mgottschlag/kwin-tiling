@@ -29,7 +29,7 @@ ksmserver_la_METASOURCES = AUTO
 ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
-ksmserver_la_LIBADD = $(top_srcdir)/kdmlib/libdmctl.la $(LIB_KDEUI)
+ksmserver_la_LIBADD = ../kdmlib/libdmctl.la $(LIB_KDEUI)
 
 picsdir = $(kde_datadir)/ksmserver/pics
 pics_DATA = shutdownkonq.png
