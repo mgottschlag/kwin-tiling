@@ -46,7 +46,8 @@ public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
-  void syncWithKLocale();
+  void syncWithKLocaleMon();
+  void syncWithKLocaleNum();
 
 private slots:
   // Numbers
@@ -60,6 +61,9 @@ private slots:
   void slotMonPosSignChanged(const QString &t);
   void slotMonNegSignChanged(const QString &t);
   void slotMonFraDigChanged(const QString &t);
+//  void slotMonPosPreCurSymChanged();
+  void slotMonPosMonSignPosChanged(int i);
+  void slotMonNegMonSignPosChanged(int i);
 
 private:
   KLocaleSample *sample;

@@ -29,6 +29,9 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kconfig.h>
+#include <ksimpleconfig.h>
+#include <kstddirs.h>
 
 #include "klocalesample.h"
 #include "localeadv.h"
@@ -133,12 +136,22 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
   connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
   tl1->addWidget(label, 9, 1);
   tl1->addWidget(cmbMonPosMonSignPos, 9, 2);
+  cmbMonPosMonSignPos->insertItem("0");
+  cmbMonPosMonSignPos->insertItem("1");
+  cmbMonPosMonSignPos->insertItem("2");
+  cmbMonPosMonSignPos->insertItem("3");
+  cmbMonPosMonSignPos->insertItem("4");
 
   label = new QLabel("1", gbox, i18n("Sign position, negative"));
   cmbMonNegMonSignPos = new QComboBox(gbox);
-  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotNegPosMonSignPosChanged(int) ) );
+  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonNegMonSignPosChanged(int) ) );
   tl1->addWidget(label, 10, 1);
   tl1->addWidget(cmbMonNegMonSignPos, 10, 2);
+  cmbMonNegMonSignPos->insertItem("0");
+  cmbMonNegMonSignPos->insertItem("1");
+  cmbMonNegMonSignPos->insertItem("2");
+  cmbMonNegMonSignPos->insertItem("3");
+  cmbMonNegMonSignPos->insertItem("4");
 
   tl1->activate();
 
@@ -148,7 +161,8 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
   sample = new KLocaleSample(gbox);
 
   sample->update();
-  syncWithKLocale();
+  syncWithKLocaleNum();
+  syncWithKLocaleMon();
 }
 
 KLocaleConfigAdvanced::~KLocaleConfigAdvanced()
@@ -163,6 +177,21 @@ void KLocaleConfigAdvanced::loadSettings()
 void KLocaleConfigAdvanced::applySettings()
 {
   debug("apply");
+  KConfigBase *config = KGlobal::config();
+
+  config->setGroup("Locale");
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  ent.setGroup("KCM Locale");
+
+  QString str;
+
+  str = ent.readEntry("DecimalSymbol");
+  if (str != edDecSym->text())
+    config->writeEntry("DecimalSymbol", edDecSym->text());
+
+  str = ent.readEntry("ThousandsSeparator");
+  if (str != edThoSep->text())
+    config->writeEntry("ThousandsSeparator", edThoSep->text());
 }
 
 void KLocaleConfigAdvanced::defaultSettings()
@@ -218,12 +247,26 @@ void KLocaleConfigAdvanced::slotMonFraDigChanged(const QString &t)
   sample->update();
 }
 
-void KLocaleConfigAdvanced::syncWithKLocale()
+void KLocaleConfigAdvanced::slotMonPosMonSignPosChanged(int i)
+{
+  KGlobal::locale()->_positiveMonetarySignPosition = i;
+  sample->update();
+}
+
+void KLocaleConfigAdvanced::slotMonNegMonSignPosChanged(int i)
+{
+  KGlobal::locale()->_negativeMonetarySignPosition = i;
+  sample->update();
+}
+
+void KLocaleConfigAdvanced::syncWithKLocaleNum()
 {
   // Numbers
   edDecSym->setText(KGlobal::locale()->_decimalSymbol);
   edThoSep->setText(KGlobal::locale()->_thousandsSeparator);
-
+}
+void KLocaleConfigAdvanced::syncWithKLocaleMon()
+{
   // Money
   edMonCurSym->setText(KGlobal::locale()->_currencySymbol);
   edMonDecSym->setText(KGlobal::locale()->_monetaryDecimalSymbol);
@@ -235,5 +278,5 @@ void KLocaleConfigAdvanced::syncWithKLocale()
   chMonPosPreCurSym->setChecked(KGlobal::locale()->_positivePrefixCurrencySymbol);
   chMonNegPreCurSym->setChecked(KGlobal::locale()->_negativePrefixCurrencySymbol);
   cmbMonPosMonSignPos->setCurrentItem(KGlobal::locale()->_positiveMonetarySignPosition);
-  cmbMonPosMonSignPos->setCurrentItem(KGlobal::locale()->_negativeMonetarySignPosition);
+  cmbMonNegMonSignPos->setCurrentItem(KGlobal::locale()->_negativeMonetarySignPosition);
 }

@@ -69,7 +69,7 @@ void KLocaleApplication::apply()
 {
   if (locale)
     locale->applySettings();
-  if (locale)
+  if (localeadv)
     localeadv->applySettings();
 }
 
@@ -112,6 +112,27 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
         ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
       }
     }
+}
+
+void KLocaleApplication::resetAdvanced()
+{
+  if (localeadv)
+  {
+    localeadv->syncWithKLocaleNum();
+    localeadv->syncWithKLocaleMon();
+  }
+}
+
+void KLocaleApplication::resetAdvancedMon()
+{
+  if (localeadv)
+    localeadv->syncWithKLocaleMon();
+}
+
+void KLocaleApplication::resetAdvancedNum()
+{
+  if (localeadv)
+    localeadv->syncWithKLocaleNum();
 }
 
 int main(int argc, char **argv)

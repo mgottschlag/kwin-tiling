@@ -35,6 +35,10 @@ public:
   static void reTranslate();
   static void reTranslate(QObjectListIt it);
 
+  void resetAdvanced();
+  void resetAdvancedMon();
+  void resetAdvancedNum();
+
 private:
   KLocaleConfig *locale;
   KLocaleConfigAdvanced *localeadv;
