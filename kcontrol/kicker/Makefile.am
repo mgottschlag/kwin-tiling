@@ -13,8 +13,8 @@ noinst_HEADERS = generaltab_impl.h lookandfeeltab_impl.h buttontab.h menutab_imp
 
 KDE_ICON = go
 
-messages:
-	$(XGETTEXT) $(libkcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
+messages: rc.cpp
+	$(XGETTEXT) rc.cpp $(libkcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
 data_DATA = panel.desktop
 datadir = $(kde_appsdir)/Settings/LookNFeel/
