@@ -326,8 +326,8 @@ CConfig::CConfig()
 
     setGroup("Appearance");
     itsAdvancedMode=readBoolEntry("AdvancedMode");
-    intVal=readNumEntry("FontListsOrientation", Qt::Vertical);
-    itsFontListsOrientation=intVal==Qt::Horizontal ? (Qt::Orientation)intVal : Qt::Vertical;
+    intVal=readNumEntry("FontListsOrientation", Qt::Horizontal);
+    itsFontListsOrientation=intVal==Qt::Vertical ? Qt::Vertical : Qt::Horizontal;
     itsUseCustomPreviewStr=readBoolEntry("UseCustomPreviewStr");
     itsCustomPreviewStr=readEntry("CustomPreviewStr");
     if(QString::null==itsCustomPreviewStr)
@@ -424,10 +424,16 @@ CConfig::CConfig()
     if(!CMisc::root() && !itsConfigured && QString(defaultFontsDir)==itsFontsDir)
     {
         if(!CMisc::dExists(QString(defaultFontsDir)+QString(constDefaultTTSubDir)))
+        {
             CMisc::createDir(QString(defaultFontsDir)+QString(constDefaultTTSubDir));
+            addModifiedDir(QString(defaultFontsDir)+QString(constDefaultTTSubDir));
+        }
 
         if(!CMisc::dExists(QString(defaultFontsDir)+QString(constDefaultT1SubDir)))
+        {
             CMisc::createDir(QString(defaultFontsDir)+QString(constDefaultT1SubDir));
+            addModifiedDir(QString(defaultFontsDir)+QString(constDefaultT1SubDir));
+        }
     }
 
     itsTTSubDir=getDir(itsTTSubDir, constTTSubDirs, itsFontsDir);
