@@ -12,3 +12,6 @@ kcm_ksplashthemes_la_LIBADD = $(LIB_KIO)
 kcm_ksplashthemes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
 xdg_apps_DATA = ksplashthememgr.desktop
+
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/ksplashthemes.pot

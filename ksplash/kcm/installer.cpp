@@ -264,7 +264,7 @@ void SplashInstaller::slotRemove()
   {
      KURL url;
      url.setPath(themeDir);
-     if (KMessageBox::questionYesNo(this,i18n("Delete directory %1 and its contents?").arg(themeDir))==KMessageBox::Yes)
+     if (KMessageBox::questionYesNo(this,i18n("Delete folder %1 and its contents?").arg(themeDir))==KMessageBox::Yes)
        rc = KIO::NetAccess::del(url,this);
   }
   if (!rc)
@@ -383,7 +383,7 @@ void SplashInstaller::slotAdd()
   static QString path;
   if (path.isEmpty()) path = QDir::homeDirPath();
 
-  KFileDialog dlg(path, "*.tgz *.tar.gz *.tar.bz2|KSplash theme files", 0, 0, true);
+  KFileDialog dlg(path, "*.tgz *.tar.gz *.tar.bz2|" + i18n( "KSplash theme files" ), 0, 0, true);
   dlg.setCaption(i18n("Add Theme"));
   if (!dlg.exec())
     return;

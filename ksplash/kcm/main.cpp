@@ -96,7 +96,7 @@ void KSplashThemeMgr::defaults()
 
 const KAboutData* KSplashThemeMgr::aboutData() const
 {
-  KAboutData *about = new KAboutData( I18N_NOOP("kcmksplash")
+  KAboutData *about = new KAboutData( "kcmksplash"
                                       ,I18N_NOOP("KDE Splash Screen Theme Manager")
                                       ,"0.1"
                                       ,0
@@ -104,6 +104,6 @@ const KAboutData* KSplashThemeMgr::aboutData() const
                                       ,I18N_NOOP("(c) 2003 KDE developers") );
   about->addAuthor("Ravikiran Rajagopal", 0, "ravi@ee.eng.ohio-state.edu");
   about->addCredit("Brian Ledbetter", I18N_NOOP("Original KSplash/ML author"), "brian@shadowcom.net");
-  about->addCredit("KDE Theme Manager authors", I18N_NOOP("Original installer code") );
+  about->addCredit(I18N_NOOP("KDE Theme Manager authors" ), I18N_NOOP("Original installer code") );
   return about;
 }
