@@ -22,9 +22,13 @@
 #define __buttontab_h__
 
 #include <qwidget.h>
+#include <qstringlist.h>
 
 class QGridLayout;
 class QGroupBox;
+class KComboBox;
+class QLabel;
+class QCheckBox;
 
 class ButtonTab : public QWidget
 {
@@ -42,8 +46,61 @@ class ButtonTab : public QWidget
  signals:
   void changed();
 
+ protected:
+  void fill_tile_input();
+  QStringList queryAvailableTiles();
+
+ protected slots:
+  void tiles_clicked();
+  void kmenu_clicked();
+  void kmenu_changed(const QString&);
+  void url_clicked();
+  void url_changed(const QString&);
+  void browser_clicked();
+  void browser_changed(const QString&);
+  void exe_clicked();
+  void exe_changed(const QString&);
+  void drawer_clicked();
+  void drawer_changed(const QString&);
+
  private:
   QGridLayout *layout;
+  QStringList tiles;
+
+  // general group
+  QGroupBox    *general_group;
+  QCheckBox    *highlight_cb;
+  QCheckBox    *tiles_cb;
+
+  // kmenu button-tiles group
+  QGroupBox    *kmenu_group;
+  QCheckBox    *kmenu_cb;
+  QLabel       *kmenu_label;
+  KComboBox    *kmenu_input;
+
+  // url button-tiles group
+  QGroupBox    *url_group;
+  QCheckBox    *url_cb;
+  QLabel       *url_label;
+  KComboBox    *url_input;
+
+  // browser button-tiles group
+  QGroupBox    *browser_group;
+  QCheckBox    *browser_cb;
+  QLabel       *browser_label;
+  KComboBox    *browser_input;
+
+  // exe button-tiles group
+  QGroupBox    *exe_group;
+  QCheckBox    *exe_cb;
+  QLabel       *exe_label;
+  KComboBox    *exe_input;
+
+  // drawer button-tiles group
+  QGroupBox    *drawer_group;
+  QCheckBox    *drawer_cb;
+  QLabel       *drawer_label;
+  KComboBox    *drawer_input;
 };
 
 #endif

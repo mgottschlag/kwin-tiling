@@ -175,6 +175,9 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
 
   layout->addWidget(misc_group, 3, 1);
 
+  // TODO : Enable as soon as kicker supports move modes.
+  move_group->setEnabled(false);
+
   load();
 }
 

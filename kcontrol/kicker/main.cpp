@@ -109,6 +109,8 @@ extern "C"
   {
     KImageIO::registerFormats();
     KGlobal::locale()->insertCatalogue("kcmkicker");
+    KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
+                                     "kicker/tiles");
     return new KickerConfig(parent, name);
   };
 }
