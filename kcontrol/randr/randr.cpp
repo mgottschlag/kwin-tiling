@@ -275,18 +275,17 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 QPixmap RandRScreen::rotationIcon(int rotation) const
 {
 	// Adjust icons for current screen orientation
-	// FIXME untested, this might even be working the wrong way
 	if (!(m_currentRotation & RR_Rotate_0) && rotation & (RR_Rotate_0 | RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270)) {
 		int currentAngle = m_currentRotation & (RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270);
 		switch (currentAngle) {
 			case RR_Rotate_90:
-				rotation <<= 1;
+				rotation <<= 3;
 				break;
 			case RR_Rotate_180:
 				rotation <<= 2;
 				break;
 			case RR_Rotate_270:
-				rotation <<= 3;
+				rotation <<= 1;
 				break;
 		}
 
@@ -300,11 +299,11 @@ QPixmap RandRScreen::rotationIcon(int rotation) const
 		case RR_Rotate_0:
 			return SmallIcon("up");
 		case RR_Rotate_90:
-			return SmallIcon("forward");
+			return SmallIcon("back");
 		case RR_Rotate_180:
 			return SmallIcon("down");
 		case RR_Rotate_270:
-			return SmallIcon("back");
+			return SmallIcon("forward");
 		case RR_Reflect_X:
 		case RR_Reflect_Y:
 		default:
