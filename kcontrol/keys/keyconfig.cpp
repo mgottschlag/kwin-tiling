@@ -14,7 +14,7 @@
 #endif
 
 #include <qlabel.h>
-#include <qdir.h> 
+#include <qdir.h>
 #include <qlayout.h>
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
@@ -52,6 +52,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   if ( KeyType == "global" ) {
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/kickerbindings.cpp"
+#include "../../kdesktop/kdesktopbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
     check_against_std_keys  = true ;
@@ -112,15 +113,15 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   tmpQFrame->setMinimumHeight(15);
 
   dict = keys->keyDict();
-  
+
   //debug("got key dict");
-  
+
   kc =  new KKeyChooser( &dict, this, check_against_std_keys );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
-  
+
   readScheme();
 
-  QGridLayout *topLayout = new QGridLayout( this, 5, 3, 
+  QGridLayout *topLayout = new QGridLayout( this, 5, 3,
 					    KDialog::marginHint(),
 					    KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
@@ -169,17 +170,17 @@ void KKeyModule::slotRemove()
   QString kksPath = getenv( "HOME" );
   kksPath += "/.kde/share/apps/kcmkeys/";
   kksPath += KeyType ;
-  
+
   QDir d( kksPath );
   if (!d.exists()) // what can we do?
     return;
-  
+
   d.setFilter( QDir::Files );
   d.setSorting( QDir::Name );
   d.setNameFilter("*.kksrc");
-  
+
   uint ind = sList->currentItem();
-  
+
   if ( !d.remove( *sFileList->at( ind ) ) ) {
     KMessageBox::sorry( 0,
                         i18n("This key scheme could not be removed.\n"
@@ -187,7 +188,7 @@ void KKeyModule::slotRemove()
                              "system where the key scheme is stored." ));
     return;
   }
-  
+
   sList->removeItem( ind );
   sFileList->remove( sFileList->at(ind) );
 }
@@ -204,25 +205,25 @@ void KKeyModule::slotSave( )
 {
   KSimpleConfig *config =
     new KSimpleConfig( *sFileList->at( sList->currentItem() ) );
-  
+
   config->setGroup( KeyScheme );
-  
+
   kc->aIt->toFirst();
   while ( kc->aIt->current() ) {
     config->writeEntry( kc->aIt->currentKey(),
 			KAccel::keyToString( kc->aIt->current()->aConfigKeyCode ) );
     ++ ( *kc->aIt );
   }
-  
+
   config->sync();
-  
+
   saveBt->setEnabled( FALSE );
 }
 
 void KKeyModule::readScheme( int index )
 {
   KConfigBase* config;
-  
+
   if( index == 1 ) {
     kc->allDefault();
     return;
@@ -232,23 +233,23 @@ void KKeyModule::readScheme( int index )
     config =
       new KSimpleConfig( *sFileList->at( index ), true );
   }
-  
+
   QMap<QString, QString> tmpMap;
   if ( index == 0 )
     tmpMap = config->entryMap(KeySet);
   else
     tmpMap = config->entryMap(KeyScheme);
   QMap<QString, QString>::Iterator gIt(tmpMap.begin());
-  
+
   int *keyCode;
-  
+
   for (; gIt != tmpMap.end(); ++gIt) {
     keyCode = new int;
     *keyCode = KAccel::stringToKey( *gIt );
     globalDict->insert( gIt.key(), keyCode);
     //debug( " %s, %d", gIt->currentKey(), *keyCode );
   }
-  
+
   kc->aIt->toFirst();
   while ( kc->aIt->current() ) {
     if ( globalDict->find( kc->aIt->currentKey() ) ) {
@@ -258,53 +259,53 @@ void KKeyModule::readScheme( int index )
     }
     ++ ( *kc->aIt );
   }
-  
+
   kc->listSync();
 }
 
 void KKeyModule::slotAdd()
 {
   SaveScm *ss = new SaveScm( 0,  "save scheme" );
-  
+
   bool nameValid;
   QString sName;
   QString sFile;
-  
+
   do {
-    
+
     nameValid = TRUE;
-    
+
     if ( ss->exec() ) {
       sName = ss->nameLine->text();
       if ( sName.stripWhiteSpace().isEmpty() )
         return;
-      
+
       sName = sName.simplifyWhiteSpace();
       sFile = sName;
-      
+
       int ind = 0;
       while ( ind < (int) sFile.length() ) {
-        
+
         // parse the string for first white space
-        
+
         ind = sFile.find(" ");
         if (ind == -1) {
           ind = sFile.length();
           break;
         }
-        
+
         // remove from string
-        
+
         sFile.remove( ind, 1);
 			
         // Make the next letter upper case
-        
+
         QString s = sFile.mid( ind, 1 );
         s = s.upper();
         sFile.replace( ind, 1, s );
-        
+
       }
-      
+
       for ( int i = 0; i < (int) sList->count(); i++ ) {
         if ( sName.lower() == (sList->text(i)).lower() ) {
           nameValid = FALSE;
@@ -315,53 +316,53 @@ void KKeyModule::slotAdd()
         }
       }
     } else return;
-    
+
   } while ( nameValid == FALSE );
-  
+
   disconnect( sList, SIGNAL( highlighted( int ) ), this,
               SLOT( slotPreviewScheme( int ) ) );
-  
+
   sList->insertItem( sName );
   sList->setFocus();
   sList->setCurrentItem( sList->count()-1 );
-  
+
   QString kksPath( getenv( "HOME" ) );
-  
+
   kksPath += "/.kde/share/apps/kcmkeys/";
-  
+
   QDir d( kksPath );
   if ( !d.exists() )
     if ( !d.mkdir( kksPath ) ) {
       warning("KKeyModule: Could not make directory to store user info.");
       return;
     }
-  
+
   kksPath +=  KeyType ;
   kksPath += "/";
-  
+
   d.setPath( kksPath );
   if ( !d.exists() )
     if ( !d.mkdir( kksPath ) ) {
       warning("KKeyModule: Could not make directory to store user info.");
       return;
     }
-  
+
   sFile.prepend( kksPath );
   sFile += ".kksrc";
   sFileList->append( sFile );
-  
+
   KSimpleConfig *config =
     new KSimpleConfig( sFile );
-  
+
   config->setGroup( KeyScheme );
   config->writeEntry( "SchemeName", sName );
   delete config;
-  
+
   slotSave();
-  
+
   connect( sList, SIGNAL( highlighted( int ) ), this,
            SLOT( slotPreviewScheme( int ) ) );
-  
+
   slotPreviewScheme( sList->currentItem() );
 }
 
