@@ -118,7 +118,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         hbox->addWidget( tgrp, AlignTop );
         connect( tgrp, SIGNAL( clicked(int) ), SLOT( slotSdMode(int) ) );
 #if 0
-        mgrp = new QVButtonGroup( i18n("Shutdown mode"), frame );
+        mgrp = new QVButtonGroup( i18n("Shutdown Mode"), frame );
         rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
         if (maynuke)
             rForce = new QRadioButton( i18n("&Force Now"), mgrp );

@@ -43,7 +43,7 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
 
     // Echo mode
-    m_EMGroup = new QVButtonGroup(i18n("Echo Characters as"), this);
+    m_EMGroup = new QVButtonGroup(i18n("Echo Characters As"), this);
     m_EMGroup->layout()->setSpacing( KDialog::spacingHint() );
     QWhatsThis::add( m_EMGroup,  i18n("You can select the type of visual feedback given"
       " when you enter a password in kdesu. Choose one of the following options:<p>"

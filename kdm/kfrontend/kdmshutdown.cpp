@@ -46,7 +46,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
 
     QHBoxLayout *hlay = new QHBoxLayout( box );
 
-    howGroup = new QVButtonGroup( i18n("Shutdown type"), winFrame );
+    howGroup = new QVButtonGroup( i18n("Shutdown Type"), winFrame );
     hlay->addWidget( howGroup, 0, AlignTop );
 
     QRadioButton *rb;
@@ -88,7 +88,7 @@ KDMShutdown::KDMShutdown( QWidget* _parent )
     set_fixed( howGroup );
 
     if (!kdmcfg->_interactiveSd) {
-	whenGroup = new QVButtonGroup( i18n("Shutdown mode"), winFrame );
+	whenGroup = new QVButtonGroup( i18n("Shutdown Mode"), winFrame );
 	hlay->addWidget( whenGroup, 0, AlignTop );
 
 	rb = new QRadioButton( i18n("verb!", "&Schedule"), whenGroup );

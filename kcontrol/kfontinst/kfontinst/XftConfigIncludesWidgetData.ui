@@ -61,7 +61,7 @@
                 <cstring>itsGroupBox</cstring>
             </property>
             <property name="title">
-                <string>"Include":</string>
+                <string>Include</string>
             </property>
             <grid>
                 <property name="name">

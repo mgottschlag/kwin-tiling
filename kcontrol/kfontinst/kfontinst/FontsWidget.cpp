@@ -120,7 +120,7 @@ void CFontsWidget::setPreviewMode(bool on)
         if(pix)
             itsPreviousPixmap=*pix;
 
-        itsBox->setTitle(i18n("Progress:"));
+        itsBox->setTitle(i18n("Progress"));
         itsLabel->setText("");
         if(itsProgress->totalSteps()>0)
             itsProgress->show();
