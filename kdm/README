@@ -170,7 +170,7 @@ KDM accepts two command line options related to logging:
     64 (0x40) - wait after starting greeter.
 	the wait options are only useful, if you need to attach a debugger
 	to a process but it crashes before you are able to do so without
-	the delay.
+	the delay. see below.
     256 (0x100) - core Xauth debugging.
     512 (0x200) - don't fork session sub-daemon, but manage one session
 	in the master daemon. not for real-world use.
@@ -194,6 +194,49 @@ KDM accepts two command line options related to logging:
 Send me all the logs together with a detailed description of what you did
 and what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your kdm config directory.
+
+If i request a backtrace from you and kdm didn't create one yet via the
+usual drkonqi procedure, you'll have to do that yourself. The keyphrase
+is "attaching gdb". How exactly this is done depends on the part that
+crashes:
+- master daemon. Actually you should never need to attach to it, as
+  you can start it within the debugger already:
+  # gdb --args kdm -nodaemon -debug 7
+  (gdb) run
+- display subdaemon. Find (using ps) the process with a name like
+  "-:0" (where :0 is actually the display this process is for). This
+  process' PPID is the master daemon. Attach to it this way:
+  # gdb kdm <the PID you found>
+  (gdb) cont
+  If the subdaemon crashes before you can attach, add 16 to the debug flags
+  when you start kdm.
+- config reader. You will have to add 32 to the debug flags almost certainly.
+  The PPID will be the master daemon as well.
+  # gdb kdm_config $(pidof kdm_config)
+  (gdb) cont
+- greeter. If it's to fast, add 64 to -debug. The PPID wil be the subdaemon.
+  # gdb kdm_greet $(pidof kdm_greet)
+  (gdb) cont
+  The simplification with "pidof" works only if you have only one display,
+  otherwise you have to find the PID manually (by using ps -fx).
+Once you got gdb attached to the offending process, do whatever is needed
+to make it crash (probably nothing, if you had to use a delay parameter).
+Once it crashed, gdb will tell you a signal name, like SIGSEGV - that's the
+first interesting part for me. Then you have to create the actual backtrace:
+  (gdb) bt
+The output of this command is interesting for me.
+I might request a backtrace even if nothing crashes, but instead hangs. In
+this case don't use "cont" after attaching, but use "bt" right away. If the
+process is already running, interrupt it with ctrl-c.
+For obvious reasons you have to run gdb on a different virtual terminal than
+the X server run. To get there, press alt-ctrl-f1 and log in as root. To
+switch to the X server's vt, press alt-ctrl-f7 (the exact function key may
+be different on your system). You may also use a remote login from a
+second machine. In any case it is advantageous to have mouse support on the
+debugging console for copying the backtrace.
+Note that a backtrace is usually _much_ more useful if the binary contains
+debugging info, so you should install from source with the --enable-debug
+configure flag if at all possible.
 
 
 Random rambings and license information
