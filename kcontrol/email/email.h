@@ -39,6 +39,7 @@ public:
   void defaults();
   
   int buttons();
+  QString quickHelp();
   
 public slots:
   void configChanged();
