@@ -35,7 +35,7 @@ bool MyApp::x11EventFilter( XEvent *ev )
 {
     if (ev->type == XKeyPress || ev->type == ButtonPress)
         emit activity();
-    return false;
+    return KApplication::x11EventFilter( ev );
 }
 
 
