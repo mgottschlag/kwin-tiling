@@ -86,12 +86,8 @@ public:
   void setE( QPixmap *pm );
   void setF( QPixmap *pm );
   void removeAll(void);
-  void setPixmapSize(int x, int y);
-protected:
-  void paintEvent( QPaintEvent * );
 private:
   QLabel *a, *b, *c, *d, *e, *f;
-  int xa, xb, xc, xd, xe, xf;
 };
 
 
@@ -101,7 +97,6 @@ class KTitlebarButtons : public KConfigWidget
 public:
   KTitlebarButtons( QWidget *parent=0, const char* name=0 );
   ~KTitlebarButtons( );
-  void  resizeEvent(QResizeEvent *e);
   void SaveSettings( void );
 
   void loadSettings();
@@ -121,12 +116,9 @@ private:
 
  void drawPreview(bool draw);
 
- QFrame *titlebarFrame;
-
  TitlebarPreview *blankTitlebar;
 
  QLabel *right, *left, *off;
- QLabel *minB, *maxB, *stickyB, *closeB, *menuB;
  QLabel *minP, *maxP, *stickyP, *closeP, *menuP;
  QButtonGroup *minBox, *maxBox, *stickyBox, *closeBox, *menuBox;
  QRadioButton *minRB[3], *maxRB[3], *stickyRB[3], *closeRB[3], *menuRB[3];

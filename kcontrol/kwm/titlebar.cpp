@@ -69,251 +69,109 @@ extern KConfig *config;
 
 KTitlebarButtons::~KTitlebarButtons ()
 {
-  delete minB;
-  delete maxB;
-  delete stickyB;
-  delete closeB;
-  delete menuB;
-
-  delete minP;
-  delete maxP;
-  delete stickyP;
-  delete closeP;
-  delete menuP;
-
-  delete left;
-  delete right;
-  delete off;
-
-  for (int i=0; i<3; i++) {
-      delete minRB[i];
-      delete maxRB[i];
-      delete stickyRB[i];
-      delete closeRB[i];
-      delete menuRB[i];
-    }
-
+  // We need to delete ButtonBoxes only since all other
+  // widgets will be deleted by layout
   delete minBox;
   delete maxBox;
   delete stickyBox;
   delete closeBox;
   delete menuBox;
-
-  delete blankTitlebar;
-  delete titlebarFrame;
-
 }
 
 KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   : KConfigWidget (parent, name)
 {
   int i;
+  QGridLayout *lay = new QGridLayout( this, 7, 4, 15);
 
-  //CT 08Apr1999 - layout - finally
-  QGridLayout *lay = new QGridLayout( this, 11, 15, 10);
-  lay->addRowSpacing( 0, 20);
-  lay->addRowSpacing( 2, 20);
-  lay->addRowSpacing( 4, 10);
-  lay->addRowSpacing( 6, 10);
-  lay->addRowSpacing( 6, 10);
-  lay->addRowSpacing( 8, 10);
-  lay->addRowSpacing(10, 10);
-  lay->addRowSpacing(12, 10);
-  lay->addRowSpacing(14, 20);
-
-  lay->addColSpacing( 0, 20);
-  lay->addColSpacing( 2, 20);
-  lay->addColSpacing( 4, 10);
-  lay->addColSpacing( 6, 10);
-  lay->addColSpacing( 6, 10);
-  lay->addColSpacing( 8, 10);
-  lay->addColSpacing( 9, 10);
-  lay->addColSpacing(10, 20);
-  
-
-  lay->setRowStretch( 0,  0);
-  lay->setRowStretch( 1,  0);
-  lay->setRowStretch( 2,  1);
-  lay->setRowStretch( 3,  0);
-  lay->setRowStretch( 4,  1);
-  lay->setRowStretch( 5,  0);
-  lay->setRowStretch( 6,  1);
-  lay->setRowStretch( 7,  0);
-  lay->setRowStretch( 8,  1);
-  lay->setRowStretch( 9,  0);
-  lay->setRowStretch(10,  1);
-  lay->setRowStretch(11,  0);
-  lay->setRowStretch(12,  1);
-  lay->setRowStretch(13,  0);
-  lay->setRowStretch(14,  0);
-
-  lay->setColStretch( 0,  0);
-  lay->setColStretch( 1,  0);
-  lay->setColStretch( 2,  1);
-  lay->setColStretch( 3,  0);
-  lay->setColStretch( 4,  1);
-  lay->setColStretch( 5,  0);
-  lay->setColStretch( 6,  1);
-  lay->setColStretch( 7,  0);
-  lay->setColStretch( 8,  1);
-  lay->setColStretch( 9,  0);
-  lay->setColStretch(10,  0);
-
-  titlebarFrame = new QFrame(this, "testframe");
-  titlebarFrame ->setFrameStyle(QFrame::WinPanel | QFrame::Raised );
-  blankTitlebar = new TitlebarPreview(titlebarFrame, "blanktbar");
-
-  lay->addMultiCellWidget (titlebarFrame, 1, 1, 1, 7, 10);
+  blankTitlebar = new TitlebarPreview(this, "blanktbar");
+  lay->addMultiCellWidget (blankTitlebar, 0, 0, 0, 4);
 
   // button name labels
-  minB = new QLabel(i18n("Minimize"), this);
-
-  lay->addWidget( minB, 5, 1, 10);
-
-  maxB = new QLabel(i18n("Maximize"), this);
-
-  lay->addWidget( maxB, 7, 1, 10);
-
-  stickyB = new QLabel(i18n("Sticky"), this);
-
-  lay->addWidget( stickyB, 9, 1, 10);
-
-  closeB = new QLabel(i18n("Close"), this);
-
-  lay->addWidget( closeB, 11, 1, 10);
-
-  menuB = new QLabel(i18n("Menu"), this);
-
-  lay->addWidget( menuB, 13, 1, 10);
+  lay->addWidget(new QLabel(i18n("Minimize"), this), 2, 0);
+  lay->addWidget(new QLabel(i18n("Maximize"), this), 3, 0);
+  lay->addWidget(new QLabel(i18n("Sticky"), this), 4, 0);
+  lay->addWidget(new QLabel(i18n("Close"), this), 5, 0);
+  lay->addWidget(new QLabel(i18n("Menu"), this), 6, 0);
 
   KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "kwm/pics/");
 
   // pixmap labels to show which button is which
   minP = new QLabel("", this);
   minP->setPixmap( QPixmap(locate("kwm_pics", "iconify.xpm")));
-
-  lay->addWidget( minP, 5, 3, 10);
+  lay->addWidget( minP, 2, 1);
 
   maxP = new QLabel("", this);
   maxP->setPixmap( QPixmap(locate("kwm_pics", "maximize.xpm")));
-
-  lay->addWidget( maxP, 7, 3, 10);
+  lay->addWidget( maxP, 3, 1);
 
   stickyP = new QLabel("", this);
   stickyP->setPixmap( QPixmap(locate("kwm_pics", "pinup.xpm")));
-
-  lay->addWidget( stickyP, 9, 3, 10);
+  lay->addWidget( stickyP, 4, 1);
 
   closeP = new QLabel("", this);
   closeP->setPixmap( QPixmap(locate("kwm_pics", "close.xpm")));
-
-  lay->addWidget( closeP, 11, 3, 10);
+  lay->addWidget( closeP, 5, 1);
 
   menuP = new QLabel("", this);
   menuP->setPixmap( QPixmap(locate("kwm_pics", "menu.xpm")));
-
-  lay->addWidget( menuP, 13, 3, 10);
+  lay->addWidget( menuP, 6, 1);
 
   // left/right/off column labels
   left = new QLabel(i18n("Left"), this);
-
-  lay->addWidget( left, 3, 5, 10);
+  lay->addWidget( left, 1, 2);
 
   right = new QLabel(i18n("Right"), this);
-
-  lay->addWidget( right, 3, 7, 10);
+  lay->addWidget( right, 1, 3);
 
   off = new QLabel(i18n("Off"), this);
-
-  lay->addWidget( off, 3, 9, 10);
+  lay->addWidget( off, 1, 4);
 
   // left/right/off radio buttons and groups
-  QBoxLayout *hlay;
-
-  minBox = new QButtonGroup("", this, NULL);
-  minBox->setFrameStyle( QFrame::NoFrame );
-
-  lay->addMultiCellWidget(minBox, 5, 5, 5, 9, 10);
-
-  hlay = new QHBoxLayout( minBox, 10);
+  minBox = new QButtonGroup();
   for (i=0; i<3; i++)
     {
-      minRB[i] = new QRadioButton(" ", minBox, NULL);
-      hlay->addWidget(minRB[i], 10);
+      minBox->insert(minRB[i] = new QRadioButton(this));
+      lay->addWidget(minRB[i], 2, 2+i);
       connect(minRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
-  hlay->addStretch(0);
 
-  maxBox = new QButtonGroup(" ", this, NULL);
-  maxBox->setFrameStyle( QFrame::NoFrame );
-
-  lay->addMultiCellWidget(maxBox, 7, 7, 5, 9, 10);
-
-  hlay = new QHBoxLayout( maxBox, 10);
+  maxBox = new QButtonGroup();
   for (i=0; i<3; i++)
     {
-      maxRB[i] = new QRadioButton(" ", maxBox, NULL);
-      hlay->addWidget(maxRB[i], 10);
+      maxBox->insert(maxRB[i] = new QRadioButton(this));
+      lay->addWidget(maxRB[i], 3, 2+i);
       connect(maxRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
-  stickyBox = new QButtonGroup("", this, NULL);
-  stickyBox->setFrameStyle( QFrame::NoFrame );
-
-  lay->addMultiCellWidget(stickyBox, 9, 9, 5, 9, 10);
-
-  hlay = new QHBoxLayout( stickyBox, 10);
+  stickyBox = new QButtonGroup();
   for (i=0; i<3; i++)
     {
-      stickyRB[i] = new QRadioButton(" ", stickyBox, NULL);
-      hlay->addWidget(stickyRB[i], 10);
+      stickyBox->insert(stickyRB[i] = new QRadioButton(this));
+      lay->addWidget(stickyRB[i], 4, 2+i);
       connect(stickyRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
-  closeBox = new QButtonGroup("", this, NULL);
-  closeBox->setFrameStyle( QFrame::NoFrame );
-
-  lay->addMultiCellWidget(closeBox, 11, 11, 5, 9, 10);
-
-  hlay = new QHBoxLayout( closeBox, 10);
+  closeBox = new QButtonGroup();
   for (i=0; i<3; i++)
     {
-      closeRB[i] = new QRadioButton(" ", closeBox, NULL);
-      hlay->addWidget(closeRB[i], 10);
+      closeBox->insert(closeRB[i] = new QRadioButton(this));
+      lay->addWidget(closeRB[i], 5, 2+i);
       connect(closeRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
-  menuBox = new QButtonGroup("", this, NULL);
-  menuBox->setFrameStyle( QFrame::NoFrame );
-
-  lay->addMultiCellWidget(menuBox, 13, 13, 5, 9, 10);
-
-  hlay = new QHBoxLayout( menuBox, 10);
+  menuBox = new QButtonGroup();
   for (i=0; i<3; i++)
     {
-      menuRB[i] = new QRadioButton(" ", menuBox, NULL);
-      hlay->addWidget(menuRB[i], 10);
+      menuBox->insert(menuRB[i] = new QRadioButton(this));
+      lay->addWidget(menuRB[i], 6, 2+i);
       connect(menuRB[i], SIGNAL(clicked()), this, SLOT(updatePreview()));
     }
 
+  lay->setRowStretch(7, 1);
+  lay->activate();
+
   GetSettings();
-}
-
-void KTitlebarButtons::resizeEvent(QResizeEvent *)
-{
-  int h = SPACE_YO;
-  int column_h = h + 2*SPACE_YO;   // vertical position of column headings
-
-  h = column_h + left->height() + SPACE_YO;
-
-  // use the previews own setGeometry to do what we mean
-  titlebarFrame->setGeometry( SPACE_XO, SPACE_YO,
-			      width() - 2*SPACE_XO, minP->height() + 8 );
-  blankTitlebar->setGeometry( 4, 4,
-			      width() - 2*SPACE_XO - 8, minP->height() );
-  blankTitlebar->setPixmapSize( minP->width(), minP->height() );
-
-
   drawPreview(true);
 }
 
@@ -802,44 +660,37 @@ void KTitlebarButtons::applySettings()
   SaveSettings();
 }
 
-
-// titlebar preview code
 TitlebarPreview::~TitlebarPreview( )
 {
-  delete a;
-  delete b;
-  delete c;
-  delete d;
-  delete e;
-  delete f;
+  // All buttons are delete by layout
 }
 
 TitlebarPreview::TitlebarPreview( QWidget *parent, const char *name )
         : QFrame( parent, name )
 {
-  a = new QLabel("", this, "a", 0);
-  a->hide();
-  b = new QLabel("", this, "b", 0);
-  b->hide();
-  c = new QLabel("", this, "c", 0);
-  c->hide();
-  d = new QLabel("", this, "d", 0);
-  d->hide();
-  e = new QLabel("", this, "e", 0);
-  e->hide();
-  f = new QLabel("", this, "f", 0);
-  f->hide();
-  setBackgroundColor( QColor( 0, 10, 160 ) );
-}
+  setFrameStyle(QFrame::WinPanel | QFrame::Raised );
 
-void TitlebarPreview::setPixmapSize(int w, int /*unused*/ )
-{
-  xa = 0;
-  xb = w;
-  xc = 2*w;
-  xd = width() - 3*w;
-  xe = width() - 2*w;
-  xf = width() - w;
+  QHBoxLayout *hlay = new QHBoxLayout(this, 4, 1);
+
+  hlay->addWidget(a = new QLabel(this, "a"));
+  a->hide();
+  hlay->addWidget(b = new QLabel(this, "b"));
+  b->hide();
+  hlay->addWidget(c = new QLabel(this, "c"));
+  c->hide();
+
+  QWidget *tmp = new QWidget(this);
+  tmp->setBackgroundColor( QColor( 0, 10, 160 ) );
+  hlay->addWidget(tmp, 1);
+
+  hlay->addWidget(d = new QLabel(this, "d"));
+  d->hide();
+  hlay->addWidget(e = new QLabel(this, "e"));
+  e->hide();
+  hlay->addWidget(f = new QLabel(this, "f"));
+  f->hide();
+
+  hlay->activate();
 }
 
 void TitlebarPreview::setA( QPixmap *pm )
@@ -880,16 +731,6 @@ void TitlebarPreview::removeAll( void )
   d->hide();
   e->hide();
   f->hide();
-}
-
-void TitlebarPreview::paintEvent( QPaintEvent * )
-{
-  a->move(xa, 0);
-  b->move(xb, 0);
-  c->move(xc, 0);
-  d->move(xd, 0);
-  e->move(xe, 0);
-  f->move(xf, 0);
 }
 
 // appearance dialog
@@ -1012,7 +853,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   gradBox = new QGroupBox(i18n("Gradient"), optOpts);
   
-  QBoxLayout *gradLay = new QVBoxLayout(optOpts, 10);
+  QBoxLayout *gradLay = new QVBoxLayout(optOpts);
   gradLay->addSpacing(10);
 
   gradientTypes = new QListBox(gradBox);
@@ -1079,7 +920,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lay->addMultiCellWidget(titleAnim,3,0, 1, 1);
 
   GetSettings();
-
+  
   gradientTypes->setCurrentItem((int) gradient);
 }
 
