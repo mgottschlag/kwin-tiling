@@ -206,11 +206,13 @@ public:
     //* @internal
     void refresh(bool icon = false);
     //* @internal
-    void addTransient( WId w ) { _transients.append( w ); }
+    void addTransient( WId w, const NETWinInfo& info );
     //* @internal
-    void removeTransient( WId w ) { _transients.remove( w ); }
+    void removeTransient( WId w );
     //* @internal
     bool hasTransient( WId w ) const { return _transients.contains( w ); }
+    //* @internal
+    void updateDemandsAttentionState( WId w );
     //* @internal
     void setActive(bool a);
 
@@ -357,6 +359,7 @@ private:
     QPixmap             _pixmap;
     KWin::WindowInfo    _info;
     QValueList<WId>     _transients;
+    QValueList<WId>     _transients_demanding_attention;
 
     int                 _lastWidth;
     int                 _lastHeight;

@@ -143,7 +143,7 @@ void TaskManager::windowAdded(WId w )
             Task* t = findTask(transient_for);
             if (t) {
 	        if (t->window() != w) {
-		    t->addTransient(w);
+		    t->addTransient(w, info);
                     // kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
                 }
 	        return;
@@ -208,6 +208,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
     //kdDebug() << "TaskManager::windowChanged " << w << " " << dirty << endl;
 
+    if( dirty & NET::WMState )
+        t->updateDemandsAttentionState( w );
 
     // refresh icon pixmap if necessary
     if (dirty & NET::WMIcon)
@@ -365,7 +367,7 @@ void Task::refresh(bool icon)
 	_lastIcon.resize(0,0);
 	emit iconChanged();
     }
-    emit changed();
+    emit changed(); // always changed ?  ... :(
 }
 
 void Task::setActive(bool a)
@@ -433,7 +435,38 @@ bool Task::isModified() const
 
 bool Task::demandsAttention() const
 {
-    return (_info.state() & NET::DemandsAttention);
+    return (_info.state() & NET::DemandsAttention)
+        || _transients_demanding_attention.count() > 0;
+}
+
+void Task::updateDemandsAttentionState( WId w )
+{
+    if( window() != w ) { // 'w' is a transient for this task
+        NETWinInfo i( qt_xdisplay(), w, qt_xrootwin(), NET::WMState );
+        if( i.state() & NET::DemandsAttention ) {
+            if( !_transients_demanding_attention.contains( w )) {
+                _transients_demanding_attention.append( w );
+            }
+        } else {
+            _transients_demanding_attention.remove( w );
+        }
+    }
+}
+
+void Task::addTransient( WId w, const NETWinInfo& info )
+{
+    _transients.append( w );
+    if( info.state() & NET::DemandsAttention )
+        {
+        _transients_demanding_attention.append( w );
+        emit changed();
+        }
+}
+
+void Task::removeTransient( WId w )
+{
+    _transients.remove( w );
+    _transients_demanding_attention.remove( w );
 }
 
 QString Task::className()
