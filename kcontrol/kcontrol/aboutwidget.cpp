@@ -30,15 +30,12 @@
 #include <sys/utsname.h>
 #include <stdlib.h>
 
-
 #include <qlayout.h>
 #include <qlabel.h>
-
 
 #include <kglobal.h>
 #include <klocale.h>
 #include <kiconloader.h>
-
 
 #include "config.h"
 #include "aboutwidget.h"
@@ -50,70 +47,56 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
 {
   char buf[128];
   struct utsname info;
+  QString str;
+  QHBoxLayout *hbox;
+  QVBoxLayout *vbox1,*vbox2;
 
   setCaption(i18n("About"));
 
-  QGridLayout *grid = new QGridLayout(this, 0, 0, 6, 6);
+  QVBoxLayout *top = new QVBoxLayout(this,10,10);
   
   QLabel *label = new QLabel(i18n("KDE Control Center"), this);
   label->setFont(QFont("times", 24, QFont::Bold, true));
-  grid->addMultiCellWidget(label, 0,0, 0,2, AlignCenter);
+  label->setAlignment(AlignLeft);
+  label->setMaximumHeight(40);
+  top->addWidget(label);
 
-  label = new QLabel(i18n("KDE Version:"), this);
-  grid->addWidget(label, 2,0);
-  label = new QLabel(VERSION, this);
-  grid->addWidget(label, 2,2);
+  hbox = new QHBoxLayout(top);
+  hbox->addStretch();
+  vbox1 = new QVBoxLayout(hbox);
+  hbox->addSpacing(20);
+  vbox2 = new QVBoxLayout(hbox);
 
-  label = new QLabel(i18n("User:"), this);
-  grid->addWidget(label, 3,0);
+  vbox1->addWidget( new QLabel(i18n("KDE Version:"), this) );
+  vbox2->addWidget( new QLabel(VERSION, this) );
 
-  QString str;
-  char *login = getlogin();
-  if (!login)
-    login = getenv("LOGNAME");
-  if (!login)
-    str = i18n("Unknown");
-  else 
-    str = login;
-
-  label = new QLabel(str, this);
-  grid->addWidget(label, 3,2);
-
-  uname(&info);
+  char *user = getlogin();
+  if (!user) user = getenv("LOGNAME");
+  if (!user) str = i18n("Unknown");  else str = user;
+  vbox1->addWidget( new QLabel(i18n("User:"), this) );
+  vbox2->addWidget( new QLabel(user, this) );
 
   gethostname(buf, 128);
-  label = new QLabel(i18n("Hostname:"), this);
-  grid->addWidget(label, 4,0);
-  label = new QLabel(buf, this);
-  grid->addWidget(label, 4,2);
+  vbox1->addWidget( new QLabel(i18n("Hostname:"), this) );
+  vbox2->addWidget( new QLabel(buf, this) );
   
-  label = new QLabel(i18n("System:"), this);
-  grid->addWidget(label, 5,0);
-  label = new QLabel(info.sysname, this);
-  grid->addWidget(label, 5,2);
+  uname(&info);
+  vbox1->addWidget( new QLabel(i18n("System:"), this) );
+  vbox2->addWidget( new QLabel(info.sysname, this) );
   
-  label = new QLabel(i18n("Release:"), this);
-  grid->addWidget(label, 6,0);
-  label = new QLabel(info.release, this);
-  grid->addWidget(label, 6,2);
+  vbox1->addWidget( new QLabel(i18n("Release:"), this) );
+  vbox2->addWidget( new QLabel(info.release, this) );
   
-  label = new QLabel(i18n("Version:"), this);
-  grid->addWidget(label, 7,0);
-  label = new QLabel(info.version, this);
-  grid->addWidget(label, 7,2);
+  vbox1->addWidget( new QLabel(i18n("Version:"), this) );
+  vbox2->addWidget( new QLabel(info.version, this) );
   
-  label = new QLabel(i18n("Machine:"), this);
-  grid->addWidget(label, 8,0);
-  label = new QLabel(info.machine, this);
-  grid->addWidget(label, 8,2);
+  vbox1->addWidget( new QLabel(i18n("Machine:"), this) );
+  vbox2->addWidget( new QLabel(info.machine, this) );
+
+  hbox->addStretch();
     
   label = new QLabel(this);  
   label->setPixmap(KGlobal::iconLoader()->loadIcon("kdekcc"));
-  grid->addMultiCellWidget(label, 9, 9, 0,2);
-
-  grid->setColStretch(2, 1);
-  grid->addColSpacing(1, 16);
-  grid->setRowStretch(0, 10);
-  grid->setRowStretch(1, 5);
-  grid->setRowStretch(10,100);
+  label->setAlignment(AlignCenter);
+  top->addWidget( label );
 }
