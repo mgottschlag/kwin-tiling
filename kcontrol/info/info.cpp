@@ -2,6 +2,8 @@
 	$Id$
 	
 	Main Widget for showing system-dependent information.
+
+	written 1998-1999 by Helge Deller (deller@gmx.de)
 	
 	** main.cpp includes this file ! **
 
@@ -24,9 +26,6 @@
 	right now, there is the problem, that also the .kdelnk-files should 
 	depend on the systemname, so that only available .kdelnk-files will 
 	be copied to kde/applnk/Settings/Information !!
-
-
-	written 1998-1999 by Helge Deller [deller@gmx.de]
 	
 */
 
@@ -46,7 +45,8 @@
    DEFAULT_ERRORSTRING will be used...
 */
 
-static const char *GetInfo_ErrorString;
+static QString *GetInfo_ErrorString;	/* should allways point to:
+					    KInfoListWidget::ErrorString */
 static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 #define DEFAULT_ERRORSTRING \
@@ -69,11 +69,11 @@ static QListViewItem* XServer_fill_screen_info( QListView *lBox, QListViewItem* 
     double xres, yres;
     int ndepths = 0, *depths = 0;
     
-    xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
-    yres = ((double)(DisplayHeight(dpy,scr) * 25.4) / DisplayHeightMM(dpy,scr));
+    xres = ((double)(DisplayWidth(dpy,scr) *25.4)/DisplayWidthMM(dpy,scr) );
+    yres = ((double)(DisplayHeight(dpy,scr)*25.4)/DisplayHeightMM(dpy,scr));
     
     QListViewItem* item;
-    item = new QListViewItem(lBox, last, i18n("Screen # %1").arg((int)scr,-1) );
+    item = new QListViewItem(lBox,last,i18n("Screen # %1").arg((int)scr,-1));
     
     last = new QListViewItem(item, i18n("Dimensions"),
 		i18n("%1 x %2 Pixel (%3 x %4 mm)")
@@ -168,7 +168,7 @@ void KInfoListWidget::defaults()
     lBox  = new QListView(this);
 
     if (lBox) {
-	lBox->setFont(KGlobal::generalFont()); // default font
+	lBox->setFont(KGlobal::generalFont()); /* default font */
         lBox->setAllColumnsShowFocus(true);
         setMinimumSize( 200,6*SCREEN_XY_OFFSET );
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
@@ -177,16 +177,18 @@ void KInfoListWidget::defaults()
         
 	/*  Delete the user-visible ErrorString, before calling the 
 	    retrieve-function. If the function wants the widget to show
-	    another string, then it should modify GetInfo_ErrorString ! */
-        GetInfo_ErrorString = 0;
-	sorting_allowed = true; 	// the functions may set that !
-        lBox->setSorting(-1);   	// No Sorting per default
+	    another string, then it change *GetInfo_ErrorString ! */
+        ErrorString = "";
+	GetInfo_ErrorString = &ErrorString;  /* save the adress of ErrorString */
+	
+	sorting_allowed = true; 	/* the functions may set that */
+        lBox->setSorting(-1);   	/* No Sorting per default */
         
         if (getlistbox)
-            ok = (*getlistbox)(lBox);	// retrieve the information !
+            ok = (*getlistbox)(lBox);	/* retrieve the information */
 
         if (lBox->header()->count()<=1) 
-            lBox->addColumn(title);
+            lBox->addColumn(title);	/* set default title */
         if (ok)
             lBox->show();
 
@@ -199,12 +201,12 @@ void KInfoListWidget::defaults()
             delete lBox;
             lBox = 0;
         }	    
-        if (!GetInfo_ErrorString)
-            GetInfo_ErrorString = DEFAULT_ERRORSTRING;
+        if (ErrorString.isEmpty())
+            ErrorString = DEFAULT_ERRORSTRING;
         if (NoInfoText)
-            NoInfoText->setText(GetInfo_ErrorString);
+            NoInfoText->setText(ErrorString);
         else
-            NoInfoText = new QLabel(GetInfo_ErrorString,this);
+            NoInfoText = new QLabel(ErrorString,this);
         NoInfoText->setAutoResize(true);
         NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
         NoInfoText->move( width()/2,height()/2 ); // -120 -30

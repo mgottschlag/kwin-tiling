@@ -51,7 +51,7 @@ private:
   const char 	*title;
   
   QLabel	*NoInfoText;
-
+  QString	ErrorString;
 
 protected:
   virtual void resizeEvent( QResizeEvent * );
