@@ -24,6 +24,7 @@
 #include <kglobalsettings.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <krandomsequence.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
@@ -867,8 +868,32 @@ void KBackgroundSettings::updateWallpaperFiles()
 	    }
 	}
     }
+
+   if (m_MultiMode == Random)
+       randomizeWallpaperFiles();
 }
 
+// Randomize the m_WallpaperFiles in a non-repeating method.
+void KBackgroundSettings::randomizeWallpaperFiles()
+{
+   if (m_WallpaperFiles.count() < 4)
+      return;
+
+   KRandomSequence rseq;
+   QStringList tmpList = m_WallpaperFiles;
+   QStringList randomList;
+   randomList.append(tmpList.front());
+   tmpList.pop_front();
+   while(tmpList.count())
+   {
+      randomList.insert(randomList.at(
+         rseq.getLong(randomList.count()+1)),
+         1, tmpList.front());
+
+      tmpList.pop_front();
+   }
+   m_WallpaperFiles = randomList;
+}
 
 QStringList KBackgroundSettings::wallpaperList() const
 {
@@ -904,7 +929,13 @@ void KBackgroundSettings::changeWallpaper(bool init)
 	break;
 
     case Random:
-	m_CurrentWallpaper = kapp->random() % m_WallpaperFiles.count();
+      // Random: m_WallpaperFiles is randomized in a non-repeating
+      //  method.  Hence we just increment the index.
+      m_CurrentWallpaper++;
+      if (init || (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())) {
+         m_CurrentWallpaper = 0;
+         randomizeWallpaperFiles(); // Get a new random-ordered list.
+      }
 	break;
     default:
 	break;

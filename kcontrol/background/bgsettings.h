@@ -224,6 +224,7 @@ public:
 
     void changeWallpaper(bool init=false);
     void updateWallpaperFiles();
+    void randomizeWallpaperFiles();
 
     QString currentWallpaper();
     /**
