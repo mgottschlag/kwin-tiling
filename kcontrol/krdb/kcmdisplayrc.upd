@@ -1,0 +1,7 @@
+# This is comment
+Id=kde3
+File=kcmdisplayrc
+Group=X11
+Options=copy
+Key=useResourceManager,exportKDEColors
+Key=useResourceManager,exportKDEFonts

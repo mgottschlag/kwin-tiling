@@ -1,0 +1,27 @@
+[Color Scheme]
+Name=Redmond XP
+Name[eo]=Redmondo XP
+Name[lv]=Redmonda XP
+Name[ru]=Редмонд XP
+Name[xx]=xx
+Name[zu]=iRedmond XP
+activeBackground=47,103,255
+activeBlend=41,93,180
+activeForeground=255,255,255
+activeTitleBtnBg=220,220,220
+alternateBackground=240,240,240
+background=238,238,230
+buttonBackground=238,234,222
+buttonForeground=0,0,0
+contrast=7
+foreground=0,0,0
+inactiveBackground=220,220,220
+inactiveBlend=220,220,220
+inactiveForeground=0,0,0
+inactiveTitleBtnBg=220,220,220
+linkColor=0,0,192
+selectBackground=74,121,205
+selectForeground=255,255,255
+visitedLinkColor=128,0,128
+windowBackground=255,255,255
+windowForeground=0,0,0
