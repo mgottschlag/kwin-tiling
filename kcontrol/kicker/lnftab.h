@@ -1,8 +1,7 @@
 /*
- *  menutab.h
+ *  lnftab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
- *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,22 +18,26 @@
  */
 
 
-#ifndef __menutab_h__
-#define __menutab_h__
+#ifndef __lnftab_h__
+#define __lnftab_h__
 
 #include <qwidget.h>
 
 class QGridLayout;
 class QGroupBox;
+class QPushButton;
 class QCheckBox;
+class QLabel;
+class QString;
+class KLineEdit;
 class KIntNumInput;
 
-class MenuTab : public QWidget
+class LnFTab : public QWidget
 {
   Q_OBJECT
 
  public:
-  MenuTab( QWidget *parent=0, const char* name=0 );
+  LnFTab( QWidget *parent=0, const char* name=0 );
 
   void load();
   void save();
@@ -46,26 +49,39 @@ class MenuTab : public QWidget
   void changed();
 
  protected slots:
-  void cache_time_changed(int);
-  void max_entries_changed(int);
-  void clear_cache_clicked();
+  void use_theme_clicked();
+  void browse_theme();
+  void hide_clicked();
+  void autohide_clicked();
+  void hide_changed(int);
+  void autohide_changed(int);
 
  private:
   QGridLayout *layout;
 
-  // general group
-  QGroupBox    *general_group;
-  QCheckBox    *clear_cache_cb;
-  KIntNumInput *cache_time_input;
+  // hide animation group
+  QGroupBox    *hide_group;
+  QCheckBox    *hide_cb;
+  KIntNumInput *hide_input;
 
-  //browser menu group
-  QGroupBox    *browser_group;
-  QCheckBox    *show_hidden_cb;
-  KIntNumInput *max_entries_input;
+  // auto-hide animation group
+  QGroupBox    *autohide_group;
+  QCheckBox    *autohide_cb;
+  KIntNumInput *autohide_input;
 
-  // kmenu group
-  QGroupBox    *kmenu_group;
-  QCheckBox    *merge_cb, *show_recent_cb, *show_qb_cb;
+  // theme group
+  QGroupBox    *theme_group;
+  QCheckBox    *use_theme_cb;
+  QLabel       *theme_label;
+  KLineEdit    *theme_input;
+  QPushButton  *browse_button;
+  bool         use_theme;
+  QString      theme;
+  QPixmap      theme_preview;
+
+  // misc group
+  QGroupBox    *misc_group;
+  QCheckBox    *fade_out_cb;
 };
 
 #endif

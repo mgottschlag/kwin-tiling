@@ -1,5 +1,5 @@
 /*
- *  main.h
+ *  buttontab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
@@ -17,38 +17,34 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
 
-#include <kcmodule.h>
+#ifndef __buttontab_h__
+#define __buttontab_h__
 
-class QTabWidget;
-class PanelTab;
-class MenuTab;
-class ButtonTab;
-class LnFTab;
+#include <qwidget.h>
 
-class KickerConfig : public KCModule
+class QGridLayout;
+class QGroupBox;
+
+class ButtonTab : public QWidget
 {
   Q_OBJECT
 
  public:
-  KickerConfig(QWidget *parent = 0L, const char *name = 0L);
-  virtual ~KickerConfig();
-  
+  ButtonTab( QWidget *parent=0, const char* name=0 );
+
   void load();
   void save();
   void defaults();
-  
- public slots:
-  void configChanged();
- 
+
+  QString quickHelp();
+
+ signals:
+  void changed();
+
  private:
-  QTabWidget   *tab;
-  PanelTab     *paneltab;
-  LnFTab       *lnftab;
-  MenuTab      *menutab;
-  ButtonTab    *buttontab;
+  QGridLayout *layout;
 };
 
-#endif // __main_h__
+#endif
+

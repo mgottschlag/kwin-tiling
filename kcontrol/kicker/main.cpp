@@ -31,7 +31,9 @@
 
 #include "main.h"
 #include "paneltab.h"
+#include "lnftab.h"
 #include "menutab.h"
+#include "buttontab.h"
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
@@ -41,13 +43,21 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
   layout->addWidget(tab);
 
   paneltab = new PanelTab(this);
-  tab->addTab(paneltab, i18n("&Panel"));
+  tab->addTab(paneltab, i18n("&General"));
   connect(paneltab, SIGNAL(changed()), this, SLOT(configChanged()));
+
+  lnftab = new LnFTab(this);
+  tab->addTab(lnftab, i18n("&Look &  Feel"));
+  connect(lnftab, SIGNAL(changed()), this, SLOT(configChanged()));
 
   menutab = new MenuTab(this);
   tab->addTab(menutab, i18n("&Menus"));
   connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
+  buttontab = new ButtonTab(this);
+  tab->addTab(buttontab, i18n("&Buttons"));
+  connect(buttontab, SIGNAL(changed()), this, SLOT(configChanged()));
+  
   load();
 }
 
@@ -62,14 +72,19 @@ void KickerConfig::configChanged()
 void KickerConfig::load()
 {
   paneltab->load();
+  lnftab->load();
   menutab->load();
+  buttontab->load();
   emit changed(false);
 }
 
 void KickerConfig::save()
 {
   paneltab->save();
+  lnftab->save();
   menutab->save();
+  buttontab->save();
+  
   emit changed(false);
 
   // Tell kicker about the new config file.
@@ -82,7 +97,9 @@ void KickerConfig::save()
 void KickerConfig::defaults()
 {
   paneltab->defaults();
+  lnftab->defaults();
   menutab->defaults();
+  buttontab->defaults();
   emit changed(true);
 }
 

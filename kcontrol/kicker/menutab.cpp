@@ -57,13 +57,26 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   connect(cache_time_input, SIGNAL(valueChanged(int)), SLOT(cache_time_changed(int)));
   vbox->addWidget(cache_time_input);
 
-  max_entries_input = new KIntNumInput(200, general_group);
+  layout->addWidget(general_group,0,0);
+
+  // browser menu group
+  browser_group = new QGroupBox(i18n("Browser Menus"), this);
+  
+  vbox = new QVBoxLayout(browser_group, KDialog::marginHint(),
+                                      KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
+
+  show_hidden_cb = new QCheckBox(i18n("Show hidden files."), browser_group);
+  connect(show_hidden_cb, SIGNAL(clicked()), SIGNAL(changed()));
+  vbox->addWidget(show_hidden_cb);
+
+  max_entries_input = new KIntNumInput(200, browser_group);
   max_entries_input->setRange(20, 1000, 1, true);
   max_entries_input->setLabel(i18n("Maximum browser menu entries:"));
   connect(max_entries_input, SIGNAL(valueChanged(int)), SLOT(max_entries_changed(int)));
   vbox->addWidget(max_entries_input);
 
-  layout->addWidget(general_group,0,0);
+  layout->addWidget(browser_group,1,0);
 
   // kmenu group
   kmenu_group = new QGroupBox(i18n("K Menu"), this);
@@ -92,12 +105,10 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   connect(show_qb_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_qb_cb);
 
-  layout->addWidget(kmenu_group,1,0);
+  layout->addWidget(kmenu_group,2,0);
 
   load();
 }
-
-MenuTab::~MenuTab( ) {}
 
 void MenuTab::cache_time_changed(int)
 {
@@ -132,6 +143,8 @@ void MenuTab::load()
   show_recent_cb->setChecked(c->readBoolEntry("UseRecent", true));
   show_qb_cb->setChecked(c->readBoolEntry("UseBrowser", true));
 
+  show_hidden_cb->setChecked(c->readBoolEntry("ShowHiddenFiles", true));
+
   delete c;
 }
 
@@ -147,6 +160,7 @@ void MenuTab::save()
   c->writeEntry("MergeKDEDirs", merge_cb->isChecked());
   c->writeEntry("UseRecent", show_recent_cb->isChecked());
   c->writeEntry("UseBrowser", show_qb_cb->isChecked());
+  c->writeEntry("ShowHiddenFiles", show_hidden_cb->isChecked());
 
   c->sync();
 
@@ -162,6 +176,7 @@ void MenuTab::defaults()
   merge_cb->setChecked(true);
   show_recent_cb->setChecked(true);
   show_qb_cb->setChecked(true);
+  show_hidden_cb->setChecked(true);
 }
 
 QString MenuTab::quickHelp()

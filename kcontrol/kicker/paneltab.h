@@ -27,13 +27,11 @@
 class QGridLayout;
 class QButtonGroup;
 class QGroupBox;
-class QPushButton;
 class QRadioButton;
 class QCheckBox;
 class QLabel;
-class QString;
-class QSlider;
 class KLineEdit;
+class KIntNumInput;
 
 class PanelTab : public QWidget
 {
@@ -41,7 +39,6 @@ class PanelTab : public QWidget
 
  public:
   PanelTab( QWidget *parent=0, const char* name=0 );
-  ~PanelTab( );
 
   void load();
   void save();
@@ -55,11 +52,12 @@ class PanelTab : public QWidget
  protected slots:
   void position_clicked(int);
   void size_clicked(int);
+  void move_clicked(int);
   void show_hbs_clicked();
-  void highlight_hbs_clicked();
-  void hbs_size_changed(int);
-  void use_theme_clicked();
-  void browse_theme();
+  void hbs_input_changed(int);
+  void ah_clicked();
+  void ah_input_changed(int);
+  void ta_input_changed(const QString&);
 
  private:
   QGridLayout *layout;
@@ -71,27 +69,28 @@ class PanelTab : public QWidget
   
   // size group
   QButtonGroup *size_group;
-  QCheckBox *mergeCB;
   QRadioButton *size_buttons[3];
-  enum Size {Tiny=0, Normal, Large} size;
+  enum Size { Tiny=0, Normal, Large } size;
 
   // hide button group
   QGroupBox    *hb_group;
-  QSlider      *hb_size;
-  QLabel       *hb_size_label;
+  KIntNumInput *hb_input;
   QCheckBox    *show_hbs, *highlight_hbs;
-  bool showHBs, highlightHBs;
-  int HBwidth;
 
-  // theme group
-  QGroupBox    *theme_group;
-  QCheckBox    *use_theme_cb;
-  QLabel       *theme_label;
-  KLineEdit    *theme_input;
-  QPushButton  *browse_button;
-  bool         use_theme;
-  QString      theme;
-  QPixmap      theme_preview;
+  // move mode group
+  QButtonGroup *move_group;
+  QRadioButton *move_buttons[2];
+  enum MoveMode { Free = 0, Fixed } movemode; 
+
+  // auto-hide group
+  QGroupBox    *ah_group;
+  QCheckBox    *ah_cb;
+  KIntNumInput *ah_input;
+
+  // misc group
+  QGroupBox    *misc_group;
+  KLineEdit    *ta_input;
+  QLabel       *ta_label;
 };
 
 #endif
