@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <kaboutdata.h>
+#include <kwin.h>
 
 #include <kcmultidialog.h>
 #include <kcmoduleinfo.h>
@@ -118,6 +119,16 @@ static const QString stripPath(const QString& path)
     int pathEnd = path.findRev('/')+1;
     int dot = path.findRev('.');
     return path.mid(pathEnd, dot-pathEnd);
+}
+
+static void setIcon(QWidget *w, const QString &iconName)
+{
+    QPixmap icon = DesktopIcon(iconName);
+    QPixmap miniIcon = SmallIcon(iconName);
+    w->setIcon( icon ); //standard X11
+#if defined Q_WS_X11 && ! defined K_WS_QTONLY
+    KWin::setIcons(w->winId(), icon, miniIcon );
+#endif
 }
 
 extern "C" int kdemain(int _argc, char *_argv[])
@@ -211,6 +222,10 @@ extern "C" int kdemain(int _argc, char *_argv[])
                 KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
                 QString caption = (kapp->caption() != i18n("KDE Control Module")) ?
                                    kapp->caption() : info.moduleName();
+                if (kapp->iconName() != kapp->name())
+                    setIcon(dlg, kapp->iconName());
+                else
+                    setIcon(dlg, info.icon());
                 dlg->setPlainCaption(i18n("Configure - %1").arg(caption));
 
                 // Needed for modules that use d'n'd (not really the right
@@ -281,6 +296,8 @@ extern "C" int kdemain(int _argc, char *_argv[])
         }
     }
 
+    if (kapp->iconName() != kapp->name())
+        setIcon(dlg, kapp->iconName());
     dlg->setPlainCaption(i18n("Configure - %1").arg(kapp->caption()));
 
     // run the dialog
