@@ -39,8 +39,6 @@ RandRScreen::RandRScreen(int screenIndex)
 {
 	m_root = RootWindow(qt_xdisplay(), m_screen);
 
-	XRRSelectInput(qt_xdisplay(), QPaintDevice::x11AppRootWindow(m_screen), RRScreenChangeNotifyMask);
-
 	loadSettings();
 	setOriginal();
 }
@@ -501,10 +499,10 @@ int RandRDisplay::currentScreenIndex() const
 	return m_currentScreenIndex;
 }
 
-void RandRDisplay::refresh(int screen)
+void RandRDisplay::refresh()
 {
-	if (screen < (int)m_screens.count())
-		m_screens.at(screen)->loadSettings();
+	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
+		s->loadSettings();
 }
 
 int RandRDisplay::numScreens() const

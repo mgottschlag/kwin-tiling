@@ -36,7 +36,6 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	setPixmap(SmallIcon("kscreensaver"));
 	connect(contextMenu(), SIGNAL(activated(int)), SLOT(slotSwitchScreen()));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
-	connect(KApplication::desktop(), SIGNAL(resized(int)), SLOT(slotConfigChanged(int)));
 }
 
 void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
@@ -86,9 +85,9 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	action->plug(menu);
 }
 
-void KRandRSystemTray::slotConfigChanged(int screen)
+void KRandRSystemTray::configChanged()
 {
-	refresh(screen);
+	refresh();
 
 	KRandrPassivePopup::message(
 	    i18n("Screen configuration has changed"),
