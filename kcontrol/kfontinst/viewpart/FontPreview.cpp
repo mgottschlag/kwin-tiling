@@ -28,74 +28,57 @@
 
 #include "FontPreview.h"
 #include "Misc.h"
+#include "Global.h"
+#include "FontEngine.h"
 #include <kapplication.h>
 #include <klocale.h>
 #include <qpainter.h>
+#include <qimage.h>
 #include <stdlib.h>
 
 CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str)
             : QWidget(parent, name),
+              itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsJob(NULL),
               itsString(str.isNull() ? i18n(" No preview available") : str)
 {
 }
 
-void CFontPreview::showFont(const QString &file)
+void CFontPreview::showFont(const QString &file, int face)
 {
     KURL url;
 
     url.setPath(CMisc::getDir(file));
     url.setFileName(CMisc::getFile(file));
-    itsCurrentUrl=url;
-    showFont();
+    showFont(url, face);
 }
 
-void CFontPreview::showFont(const KURL &url)
+void CFontPreview::showFont(const KURL &url, int face)
 {
     itsCurrentUrl=url;
+    showFace(face);
+}
+
+void CFontPreview::showFace(int face)
+{
+    itsCurrentFace=face;
     showFont();
 }
 
 void CFontPreview::showFont()
 {
-    KURL::List urls;
-
-    urls.append(itsCurrentUrl);
     itsLastWidth=width();
     itsLastHeight=height();
-    itsJob=KIO::filePreview(urls, width(), height(), 0, 0, true, false);
-    connect(itsJob, SIGNAL(result(KIO::Job *)), SLOT(result(KIO::Job *)));
-    connect(itsJob, SIGNAL(gotPreview(const KFileItem *, const QPixmap &)), 
-                    SLOT(gotPreview(const KFileItem *, const QPixmap &)));
-    connect(itsJob, SIGNAL(failed(const KFileItem *)), SLOT(failed(const KFileItem *)));
-}
 
-void CFontPreview::result(KIO::Job *job)
-{
-    disconnect(job, SIGNAL(result(KIO::Job *)), this, SLOT(result(KIO::Job *)));
-    disconnect(job, SIGNAL(gotPreview(const KFileItem *, const QPixmap &)), this,
-                    SLOT(gotPreview(const KFileItem *, const QPixmap &)));
-    disconnect(job, SIGNAL(failed(const KFileItem *)), this, SLOT(failed(const KFileItem *)));
-
-    if(job==itsJob)
-        itsJob=NULL;
-}
-
-void CFontPreview::gotPreview(const KFileItem *item, const QPixmap &pix)
-{
-    if(item->url()==itsCurrentUrl)
+    if(CGlobal::fe().openKioFont(itsCurrentUrl.path(), CFontEngine::NAME, true, itsCurrentFace-1))
     {
-        itsPixmap=pix;
+        CGlobal::fe().createPreview(itsCurrentUrl.path(), itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
         update();
         emit status(true);
+        CGlobal::fe().closeFont();
     }
-}
-
-void CFontPreview::failed(const KFileItem *item)
-{
-    if(item->url()==itsCurrentUrl)
+    else
     {
         QPixmap nullPix;
 

@@ -34,6 +34,8 @@
 class CFontPreview;
 class QPushButton;
 class QFrame;
+class QLabel;
+class KIntNumInput;
 
 class CFontViewPart : public KParts::ReadOnlyPart
 {
@@ -52,12 +54,15 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     void previewStatus(bool st);
     void install();
+    void showFace(int face);
 
     private:
 
     CFontPreview *itsPreview;
     QPushButton  *itsInstallButton;
     QFrame       *itsFrame;
+    QLabel       *itsFaceLabel;
+    KIntNumInput *itsFaceSelector;
 };
 
 #endif

@@ -34,9 +34,6 @@
 #include <qsize.h>
 #include <qwidget.h>
 #include <kurl.h>
-#include <kio/job.h>
-#include <kio/previewjob.h>
-#include <kfileitem.h>
 
 class CFontPreview : public QWidget
 {
@@ -53,11 +50,9 @@ class CFontPreview : public QWidget
 
     public slots:
 
-    void showFont(const QString &file);
-    void showFont(const KURL &url);
-    void result(KIO::Job *job);
-    void gotPreview(const KFileItem *item, const QPixmap &pix);
-    void failed(const KFileItem *item);
+    void showFont(const QString &file, int face=1);
+    void showFont(const KURL &url, int face=1);
+    void showFace(int face);
 
     signals:
 
@@ -69,12 +64,12 @@ class CFontPreview : public QWidget
 
     private:
 
-    QPixmap         itsPixmap;
-    KURL            itsCurrentUrl;
-    int             itsLastWidth,
-                    itsLastHeight;
-    KIO::PreviewJob *itsJob;
-    QString         itsString;
+    QPixmap itsPixmap;
+    KURL    itsCurrentUrl;
+    int     itsCurrentFace,
+            itsLastWidth,
+            itsLastHeight;
+    QString itsString;
 };
 
 #endif

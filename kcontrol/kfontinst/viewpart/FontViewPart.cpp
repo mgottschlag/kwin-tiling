@@ -37,9 +37,11 @@
 #include <qpushbutton.h>
 #include <qframe.h>
 #include <qfile.h>
+#include <qlabel.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
-#include "../kio/KioFonts.h"
+#include <knuminput.h>
+#include "KioFonts.h"
 
 CFontViewPart::CFontViewPart(QWidget *parent, const char *)
 {
@@ -55,13 +57,20 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *)
     itsPreview=new CFontPreview(itsFrame, "FontViewPart::Preview", i18n("Loading file..."));
     itsPreview->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
                               itsPreview->sizePolicy().hasHeightForWidth()));
+    itsFaceLabel=new QLabel(i18n("Face:"), itsFrame);
+    itsFaceSelector=new KIntNumInput(1, itsFrame);
     itsInstallButton=new QPushButton(i18n("Install..."), itsFrame, "button");
     itsInstallButton->hide();
-    layout->addMultiCellWidget(itsPreview, 0, 0, 0, 1);
-    layout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 0);
-    layout->addWidget(itsInstallButton, 1, 1);
+    layout->addMultiCellWidget(itsPreview, 0, 0, 0, 3);
+    layout->addWidget(itsFaceLabel, 1, 0);
+    layout->addWidget(itsFaceSelector, 1, 1);
+    itsFaceLabel->hide();
+    itsFaceSelector->hide();
+    layout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 2);
+    layout->addWidget(itsInstallButton, 1, 3);
     connect(itsPreview, SIGNAL(status(bool)), SLOT(previewStatus(bool)));
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
+    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
     setWidget(itsFrame);
 }
 
@@ -72,7 +81,22 @@ CFontViewPart::~CFontViewPart()
 
 bool CFontViewPart::openFile()
 {
+    if(CFontEngine::isATtc(QFile::encodeName(m_url.path())) && CGlobal::fe().openKioFont(m_file, CFontEngine::TEST, true))
+    {
+        if(CGlobal::fe().getNumFaces()>1)
+        {
+            itsFaceLabel->show();
+            itsFaceSelector->show();
+            itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
+        }
+        CGlobal::fe().closeFont();
+    }
+
+    if(KIO_FONTS_PROTOCOL!=m_url.protocol())
+        itsInstallButton->show();
+
     itsPreview->showFont(m_file);
+
     return true;
 }
 
@@ -138,6 +162,11 @@ void CFontViewPart::install()
             else
                 KMessageBox::error(itsFrame, i18n("Could not install %1:%2").arg(m_url.protocol()).arg(m_url.path()), i18n("Error"));
     }
+}
+
+void CFontViewPart::showFace(int face)
+{
+    itsPreview->showFace(face);
 }
 
 #include "FontViewPart.moc"
