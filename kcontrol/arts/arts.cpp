@@ -540,13 +540,19 @@ bool KArtsModule::realtimeIsPossible()
 
 	connect(checkProcess, SIGNAL(processExited(KProcess*)),
 	        this, SLOT(slotArtsdExited(KProcess*)));
-	if ( !checkProcess->start(KProcess::Block) )
-            delete checkProcess;
-
-	if (latestProcessStatus == 0)
-		realtimePossible =  true;
-	else
+	if (!checkProcess->start(KProcess::Block))
+	{
+		delete checkProcess;
 		realtimePossible =  false;
+	}
+	else if (latestProcessStatus == 0)
+	{
+		realtimePossible =  true;
+	}
+	else
+	{
+		realtimePossible =  false;
+	}
 
 	checked = true;
 
