@@ -31,7 +31,7 @@
 
 ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
                             bool isApplet )
-    : KDialogBase( Tabbed, i18n("Klipper Preferences"),
+    : KDialogBase( Tabbed, i18n("Configure"),
                     Ok | Cancel | Help,
                     Ok, 0L, "config dialog" )
 {
