@@ -146,7 +146,7 @@ void ModuleIconView::fill()
 		  
 		  QString path = module->groups().join(QString::null);
 		  if(path == _path)
-			(void) new ModuleIconItem(this, module->name(), module->largeIcon(), module);
+            (void) new ModuleIconItem(this, module->name(), module->largeIcon(), module);
 		}
     }
 
