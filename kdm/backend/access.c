@@ -175,9 +175,12 @@ Debug ("Address %02[:*hhx, type %d\n",
 	    da->hostAddress.data,
 	    da->connectionType);
 	    break;
-	default:
-Debug ("Other host type %d\n", accData->hostList[i].type);
+	case HOST_BROADCAST:
+Debug ("Broadcast\n");
 	    break;
+	default:
+	    LogError ("Received unknown host type %d from config reader\n", accData->hostList[i].type);
+	    return;
 	}
     }
     for (i = 0; i < accData->nAliases; i++) {
