@@ -298,194 +298,86 @@ int KBackgroundRenderer::doWallpaper(bool quit)
     }
 wp_out:
 
-    if ( m_pBackground->isNull()) {
-      m_pBackground->create(10, 10, 32);
-      m_pBackground->fill(colorA().rgb());
+    if (m_pBackground->isNull()) {
+	m_pBackground->create(10, 10, 32);
+	m_pBackground->fill(colorA().rgb());
     }
 
-    int ww = wp.width();
-    int wh = wp.height();
     int retval = Done;
 
-    switch (wpmode) {
-    case NoWallpaper:
+    int w = m_Size.width();	// desktop width/height
+    int h = m_Size.height();
+
+    int ww = wp.width();	// wallpaper width/height
+    int wh = wp.height();
+
+    QRect d;	// to be filled destination rectangle; may exceed screen!
+
+    switch (wpmode)
     {
-	if (bTile)
-	    *m_pImage = *m_pBackground;
-	else  {
-	    m_pImage->create(m_Size, 32);
-	    tile(m_pImage, QRect(0, 0, m_Size.width(), m_Size.height()),
-		    m_pBackground);
-	}
-	break;
+	case NoWallpaper:
+	    break;
+	case Centred:
+	    d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
+	    break;
+	case Tiled:
+	    d.setRect(0, 0, w, h);
+	    break;
+	case CenterTiled:
+	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w, h);
+	    break;
+	case Scaled: 
+	    wp = wp.smoothScale(ww = w, wh = h);
+	    d.setRect(0, 0, w, h);
+	    break;
+	case CentredMaxpect:
+            double sx = (double) w / ww;
+            double sy = (double) h / wh;
+            if (sx > sy) {
+                ww = (int)(sy * ww);
+                wh = h;
+            } else {
+                wh = (int)(sx * wh);
+                ww = w;
+            }
+            wp = wp.smoothScale(ww, wh);
+	    d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
+	    break;
     }
 
-    case Tiled:
-    case CenterTiled:
-    {
-	int w = m_Size.width();
-	int h = m_Size.height();
-	int x, y, xa, ya;
-
-	if (wpmode == CenterTiled) {
-	    xa = -ww + ((w - ww) / 2) % ww;
-	    ya = -wh + ((h - wh) / 2) % wh;
-	} else {
-	    xa = 0;
-	    ya = 0;
-	}
-
-	if (m_pBackground->size() == m_Size) {
-
-	  if (blmode != NoBlending)
+    // copy background to m_pImage (whole desktop or just a preview tile?)
+    if (m_pBackground->size() == m_Size) {
+	if (blmode != NoBlending)
 	    *m_pImage = m_pBackground->copy();
-	  else
-	    *m_pImage = *m_pBackground;
-	  if (m_pImage->depth() < 32)
-	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
-	}
-	else {
-	    int tw = w, th = h;
-	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (bTile) {
-		tw = QMIN(bw * ((ww + bw - 1) / bw), w);
-		th = QMIN(bh * ((wh + bh - 1) / bh), h);
-	    }
-	    m_pImage->create(tw, th, 32);
-            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
-	}
+	else
+	    tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
 
-	for (y = ya; y < h; y += wh) {
-	    for (x = xa; x < w; x += ww) {
+	if (m_pImage->depth() < 32)
+	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
+
+    } else {
+	int tw = w, th = h;
+	int bw = m_pBackground->width(), bh = m_pBackground->height();
+	if (bTile) {
+	    tw = QMIN(bw * ((ww + bw - 1) / bw), w);
+	    th = QMIN(bh * ((wh + bh - 1) / bh), h);
+	}
+	
+	m_pImage->create(tw, th, 32);
+        tile(m_pImage, QRect(0, 0, tw, th), m_pBackground);
+    }
+   
+    // blend wallpaper to destination rectangle of m_pImage
+    if (d.isValid())
+        for (int y = d.top(); y < d.bottom(); y += wh) {
+	    for (int x = d.left(); x < d.right(); x += ww) {
 		blend(m_pImage, QRect(x, y, ww, wh), &wp,
 			QPoint(-QMIN(x, 0), -QMIN(y, 0)));
 	    }
 	}
-	break;
-    }
 
-    case Scaled:
-    {
-	int w = m_Size.width();
-	int h = m_Size.height();
-	wp = wp.smoothScale(w, h);
 
-        if (m_pBackground->size() == m_Size) {
-
-	    if (blmode != NoBlending)
-	        *m_pImage = m_pBackground->copy();
-	    else
-	        *m_pImage = *m_pBackground;
-	    if (m_pImage->depth() < 32)
-	        *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
-	}
-	else {
-	    int tw = w, th = h;
-	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (bTile) {
-		tw = QMIN(bw * ((ww + bw - 1) / bw), w);
-		th = QMIN(bh * ((wh + bh - 1) / bh), h);
-	    }
-	    m_pImage->create(tw, th, 32);
-            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
-	}
-
-	blend(m_pImage, QRect(0, 0, w, h), &wp);
-        break;
-    }
-
-    case Centred:
-    {
-	int w = m_Size.width();
-	int h = m_Size.height();
-        int xa = (w - ww) / 2;
-        int ya = (h - wh) / 2;
-        int offx, offy;
-
-        // Check if anchor point is not outside the screen
-        if (xa <= 0) {
-            offx = -xa; ww = w; xa = 0;
-        } else
-            offx = 0;
-        if (ya <= 0) {
-            offy = -ya; wh = h; ya = 0;
-        } else
-            offy = 0;
-
-	// Background is no tile?
-	if (m_pBackground->size() == m_Size) {
-
-	  // if we blend, we need a deep copy
-	  if (blmode != NoBlending)
-	    *m_pImage = m_pBackground->copy();
-	  else
-	    *m_pImage = *m_pBackground;
-	  if (m_pImage->depth() < 32)
-	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
-	}
-	else {
-	    int tw = w, th = h;
-	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (bTile) {
-		tw = QMIN(bw * ((xa + ww + bw - 1) / bw), w);
-		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
-	    }
-	    m_pImage->create(tw, th, 32);
-            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
-	}
-
-	// And copy the centred image
-	blend(m_pImage, QRect(xa, ya, ww, wh), &wp, QPoint(offx, offy));
-        break;
-    }
-
-    case CentredMaxpect:
-    {
-	int w = m_Size.width();
-	int h = m_Size.height();
-
-        double sx = (double) w / ww;
-        double sy = (double) h / wh;
-        if (sx > sy) {
-            ww = (int) (sy*ww);
-            wh = h;
-        } else {
-            ww = w;
-            wh = (int) (sx*wh);
-        }
-        wp = wp.smoothScale(ww, wh);
-
-        int xa = (w - ww) / 2;
-        int ya = (h - wh) / 2;
-
-	if (m_pBackground->size() == m_Size) {
-
-	  if (blmode != NoBlending)
-	    *m_pImage = m_pBackground->copy();
-	  else
-	    *m_pImage = *m_pBackground;
-
-	  if (m_pImage->depth() < 32)
-	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
-
-	}
-	else {
-	    int tw = w, th = h;
-	    int bw = m_pBackground->width(), bh = m_pBackground->height();
-	    if (bTile) {
-		tw = QMIN(bw * ((xa + ww + bw - 1) / bw), w);
-		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
-	    }
-	    m_pImage->create(tw, th, 32);
-            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
-	}
-
-	blend(m_pImage, QRect(xa, ya, ww, wh), &wp);
-        break;
-    }
-
-    }
-
+    // blend whole desktop
     if (wpmode != NoWallpaper) {
       int bal = blendBalance();
 
