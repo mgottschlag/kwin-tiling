@@ -1278,6 +1278,8 @@ void CKioFonts::cfgDir(const QString &ds)
                 for(it=symFamilies.begin(); it!=symFamilies.end(); ++it)
                     CGlobal::userXft().addSymbolFamily(*it);
             }
+#else
+            CXConfig::configureDir(ds);
 #endif
             CGlobal::userXcfg().refreshPaths();
             if(CGlobal::userXft().changed())
