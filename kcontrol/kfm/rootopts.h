@@ -13,7 +13,7 @@
 #include <qtabdialog.h>
 #include <qstrlist.h>
 #include <qcheckbox.h>
-#include <kspinbox.h>
+#include <qspinbox.h>
 #include <kcolorbtn.h>
 
 #include <kconfig.h>
@@ -46,8 +46,8 @@ public:
 private:
         QLabel * bgLabel;
 
-        KNumericSpinBox *hspin;
-        KNumericSpinBox *vspin;
+        QSpinBox *hspin;
+        QSpinBox *vspin;
         QCheckBox *iconstylebox;
         KColorButton *fgColorBtn;
         KColorButton *bgColorBtn;

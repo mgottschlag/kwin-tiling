@@ -39,9 +39,9 @@ public:
 
 public slots:
   void slotFontSize( int );
-  void slotStandardFont( const char *n );
-  void slotFixedFont( const char *n );
-  void slotCharset( const char *n );
+  void slotStandardFont(const QString& n);
+  void slotFixedFont(const QString& n);
+  void slotCharset( const QString& n);
 
 private:
   void getFontList( QStrList &list, const char *pattern );

@@ -20,58 +20,36 @@
 KMiscOptions::KMiscOptions( QWidget *parent, const char *name )
     : KConfigWidget( parent, name )
 {
-        QVBoxLayout *lay = new QVBoxLayout(this, 40 /* big border */, 20);
- 
-        //----------------- "Per-url settings" checkbox ---------
-        urlpropsbox = new QCheckBox(i18n("&Allow per-URL settings"),
-                                    this);
-        urlpropsbox->adjustSize();
-        urlpropsbox->setMinimumSize(urlpropsbox->size());
-        lay->addWidget(urlpropsbox);
-        //-------------------------------
- 
-        //----------------- "Tree view" checkbox ---------
-        treefollowbox = new QCheckBox(i18n("Tree &view follows navigation"),
-                                    this);
-        treefollowbox->adjustSize();
-        treefollowbox->setMinimumSize(treefollowbox->size());
-        lay->addWidget(treefollowbox);
-        //-------------------------------
-
-        //---------------- "Terminal" lineedit ---------------
-        QHBoxLayout *hlay = new QHBoxLayout(10);
-        lay->addLayout(hlay);
-        QLabel * label = new QLabel(i18n("Terminal"),this);
-        label->adjustSize();
-        label->setMinimumSize(label->size());
-        hlay->addWidget(label, 1);
+    QVBoxLayout *lay = new QVBoxLayout(this, 40 /* big border */, 20);
         
-        leTerminal = new QLineEdit(this);
-        leTerminal->adjustSize();
-        leTerminal->setMinimumSize(leTerminal->size());
-        hlay->addWidget(leTerminal, 5);
-        //-------------------------------
+    urlpropsbox = new QCheckBox(i18n("&Allow per-URL settings"), this);
+    lay->addWidget(urlpropsbox);
+ 
+    treefollowbox = new QCheckBox(i18n("Tree &view follows navigation"), this);
+    lay->addWidget(treefollowbox);
 
-        //---------------- "Editor" lineedit ---------------
-        hlay = new QHBoxLayout(10);
-        lay->addLayout(hlay);
-        label = new QLabel(i18n("Editor"),this);
-        label->adjustSize();
-        label->setMinimumSize(label->size());
-        hlay->addWidget(label, 1);
+    QHBoxLayout *hlay = new QHBoxLayout(10);
+    lay->addLayout(hlay);
+    QLabel * label = new QLabel(i18n("Terminal"),this);
+    hlay->addWidget(label, 1);
         
-        leEditor = new QLineEdit(this);
-        leEditor->adjustSize();
-        leEditor->setMinimumSize(leEditor->size());
-        hlay->addWidget(leEditor, 5);
-        //-------------------------------
+    leTerminal = new QLineEdit(this);
+    hlay->addWidget(leTerminal, 5);
 
-        lay->addStretch(10);
-        lay->activate();
- 
-        loadSettings();
- 
-        setMinimumSize( 400, 100 );
+    hlay = new QHBoxLayout(10);
+    lay->addLayout(hlay);
+    label = new QLabel(i18n("Editor"),this);
+    hlay->addWidget(label, 1);
+        
+    leEditor = new QLineEdit(this);
+    hlay->addWidget(leEditor, 5);
+
+    lay->addStretch(10);
+    lay->activate();
+    
+    loadSettings();
+    
+    setMinimumSize( 400, 100 );
 }
 
 void KMiscOptions::loadSettings()

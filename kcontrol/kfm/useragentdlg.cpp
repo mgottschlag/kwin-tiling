@@ -18,8 +18,6 @@
 UserAgentOptions::UserAgentOptions( QWidget * parent, const char * name ) :
   KConfigWidget( parent, name )
 {
-
-  //CT 12Nov1998 layout management
   QGridLayout *lay = new QGridLayout(this,7,5,10,5);
   lay->addRowSpacing(0,10);
   lay->addRowSpacing(3,25);
@@ -40,90 +38,50 @@ UserAgentOptions::UserAgentOptions( QWidget * parent, const char * name ) :
   lay->setColStretch(2,1);
   lay->setColStretch(3,1);
   lay->setColStretch(4,0);
-  //CT
 
   onserverLA = new QLabel( i18n( "On server:" ), this );
   onserverLA->setAlignment( AlignRight|AlignVCenter );
-  //CT 12Nov1998 layout management
-  onserverLA->adjustSize();
-  onserverLA->setMinimumSize(onserverLA->size());
   lay->addWidget(onserverLA,1,1);
-  //CT
 
   onserverED = new QLineEdit( this );
-  //CT 12Nov1998 layout management
-  onserverED->adjustSize();
-  onserverED->setMinimumSize(onserverED->size());
   lay->addWidget(onserverED,1,2);
-  //CT
 
-  connect( onserverED, SIGNAL( textChanged( const char* ) ),
-		   SLOT( textChanged( const char* ) ) );
-  // Commented out because in a kcontrol module  Return => OK
-  // One can use 'Alt+A' instead (English version at least)
-  //connect( onserverED, SIGNAL( returnPressed() ),
-  //		   SLOT( returnPressed() ) );
+  connect( onserverED, SIGNAL( textChanged(const QString&) ),
+		   SLOT( textChanged( const QString&) ) );
 
   loginasLA = new QLabel( i18n( "login as:" ), this );
   loginasLA->setAlignment( AlignRight|AlignVCenter );
-  //CT 12Nov1998 layout management
-  loginasLA->adjustSize();
-  loginasLA->setMinimumSize(loginasLA->size());
   lay->addWidget(loginasLA,2,1);
-  //CT
 
   loginasED = new QLineEdit( this );
-  //CT 12Nov1998 layout management
-  loginasED->adjustSize();
-  loginasED->setMinimumSize(loginasED->size());
   lay->addWidget(loginasED,2,2);
-  //CT
 
-  connect( loginasED, SIGNAL( textChanged( const char* ) ),
-		   SLOT( textChanged( const char* ) ) );
-  // connect( loginasED, SIGNAL( returnPressed() ),
-  //  SLOT( returnPressed() ) );
+  connect( loginasED, SIGNAL( textChanged(const QString&) ),
+		   SLOT( textChanged(const QString&) ) );
 
   addPB = new QPushButton( i18n( "&Add" ), this );
-  //CT 12Nov1998 layout management
-  addPB->adjustSize();
-  addPB->setMinimumSize(addPB->size());
   lay->addWidget(addPB,1,3);
-  //CT
 
   addPB->setEnabled( false );
   connect( addPB, SIGNAL( clicked() ), SLOT( addClicked() ) );
   
   deletePB = new QPushButton( i18n( "&Delete" ), this );
-  //CT 12Nov1998 layout management
-  deletePB->adjustSize();
-  deletePB->setMinimumSize(deletePB->size());
   lay->addWidget(deletePB,2,3);
-  //CT
 
   deletePB->setEnabled( false );
   connect( deletePB, SIGNAL( clicked() ), SLOT( deleteClicked() ) );
 
   bindingsLA = new QLabel( i18n( "Known bindings:" ), this );
-  //CT 12Nov1998 layout management
-  bindingsLA->adjustSize();
-  bindingsLA->setMinimumSize(bindingsLA->size());
   lay->addMultiCellWidget(bindingsLA,4,4,2,3);
-  //CT
 
   bindingsLB = new QListBox( this );
-  //CT 12Nov1998 layout management
-  bindingsLB->adjustSize();
-  bindingsLB->setMinimumSize(bindingsLB->size());
   lay->addMultiCellWidget(bindingsLB,5,5,2,3);
 
   lay->activate();
-  //CT
 
   bindingsLB->setMultiSelection( false );
-  bindingsLB->setScrollBar( true );
-  connect( bindingsLB, SIGNAL( highlighted( const char* ) ),
-		   SLOT( listboxHighlighted( const char* ) ) );
+  connect( bindingsLB, SIGNAL( highlighted( const QString&) ),
+		   SLOT( listboxHighlighted( const QString& ) ) );
 
   loadSettings();
   setMinimumSize(480,300);
@@ -133,8 +91,6 @@ UserAgentOptions::UserAgentOptions( QWidget * parent, const char * name ) :
 UserAgentOptions::~UserAgentOptions()
 {
 }
-
-static QStrList settingsList( true ); // convenience var.
 
 void UserAgentOptions::loadSettings()
 {
@@ -148,14 +104,17 @@ void UserAgentOptions::loadSettings()
           key.sprintf( "Entry%d", i );
           QString entry = g_pConfig->readEntry( key, "" );
           if (entry.left( 12 ) == "*:Konqueror/") // update version number
-            settingsList.append( QString("*:"+DEFAULT_USERAGENT_STRING).ascii() );
+            settingsList.append( "*:"+DEFAULT_USERAGENT_STRING );
           else
-            settingsList.append( entry.ascii() );
+            settingsList.append( entry );
         }
-  if( entries == 0 )
+  if( entries == 0 ) {
     defaultSettings();
-  bindingsLB->clear();
-  bindingsLB->insertStrList( &settingsList );
+  }
+  else {
+    bindingsLB->clear();
+    bindingsLB->insertStringList( settingsList );
+  }
 }
 
 void UserAgentOptions::defaultSettings()
@@ -186,7 +145,7 @@ void UserAgentOptions::saveSettings()
     g_pConfig->sync();
 }
 
-void UserAgentOptions::textChanged( const char* )
+void UserAgentOptions::textChanged( const QString& )
 {
   if( !loginasED->text().isEmpty() && !onserverED->text().isEmpty() )
 	addPB->setEnabled( true );
@@ -220,7 +179,7 @@ void UserAgentOptions::deleteClicked()
 }
 
 
-void UserAgentOptions::listboxHighlighted( const char* _itemtext )
+void UserAgentOptions::listboxHighlighted( const QString& _itemtext )
 {
   QString itemtext( _itemtext );
   int colonpos = itemtext.find( ':' );

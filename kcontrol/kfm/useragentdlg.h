@@ -36,11 +36,11 @@ public:
   virtual void defaultSettings();
   
 private slots:
-  void textChanged( const char* );
+  void textChanged(const QString&);
 //  void returnPressed();
   void addClicked();
   void deleteClicked();
-  void listboxHighlighted( const char* );
+  void listboxHighlighted( const QString& );
   
 private:
   QLabel* onserverLA;
@@ -57,6 +57,8 @@ private:
   QPushButton* okPB;
   QPushButton* cancelPB;
   QPushButton* helpPB;
+
+  QStringList settingsList;
 
   int highlighted_item;
 };

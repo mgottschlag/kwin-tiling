@@ -47,8 +47,6 @@ KCookiesOptions::KCookiesOptions(QWidget *parent, const char *name)
   lay->setColStretch(4,0);
   
   cb_enableCookies = new QCheckBox( i18n("&Enable Cookies"), this );
-  cb_enableCookies->adjustSize();
-  cb_enableCookies->setMinimumSize(cb_enableCookies->size());
   connect( cb_enableCookies, SIGNAL( clicked() ), this, SLOT( changeCookiesEnabled() ) );
   lay->addWidget(cb_enableCookies,ROW_ENABLE_COOKIES,1);
 
@@ -63,22 +61,16 @@ KCookiesOptions::KCookiesOptions(QWidget *parent, const char *name)
     bgLay->setRowStretch(1,0);
 
     rb_gbPolicyAccept = new QRadioButton( i18n("Accept"), bg );
-    rb_gbPolicyAccept->adjustSize();
-    rb_gbPolicyAccept->setMinimumSize(rb_gbPolicyAccept->size());
     bgLay->addWidget(rb_gbPolicyAccept, 1, 0);
 
     rb_gbPolicyAsk = new QRadioButton( i18n("Ask"), bg );
-    rb_gbPolicyAsk->adjustSize();
-    rb_gbPolicyAsk->setMinimumSize(rb_gbPolicyAsk->size());
     bgLay->addWidget(rb_gbPolicyAsk, 1, 1);
 
     rb_gbPolicyReject = new QRadioButton( i18n("Reject"), bg );
-    rb_gbPolicyReject->adjustSize();
-    rb_gbPolicyReject->setMinimumSize(rb_gbPolicyReject->size());
     bgLay->addWidget(rb_gbPolicyReject, 1, 2);
 
     bgLay->activate();
-    lay->addMultiCellWidget(bg,ROW_DEFAULT_ACCEPT,ROW_DEFAULT_ACCEPT+1,3,3);
+    lay->addWidget(bg, ROW_DEFAULT_ACCEPT+1, ROW_DEFAULT_ACCEPT);
   }
 
   // CREATE SPLIT LIST BOX
@@ -108,23 +100,15 @@ KCookiesOptions::KCookiesOptions(QWidget *parent, const char *name)
     bgLay->setRowStretch(5,0);
 
     le_domain = new QLineEdit(bg);
-    le_domain->adjustSize();
-    le_domain->setMinimumSize(le_domain->size());
     bgLay->addMultiCellWidget(le_domain,1,1,0,2);
               
     rb_domPolicyAccept = new QRadioButton( i18n("Accept"), bg );
-    rb_domPolicyAccept->adjustSize();
-    rb_domPolicyAccept->setMinimumSize(rb_domPolicyAccept->size());
     bgLay->addWidget(rb_domPolicyAccept, 3, 0);
 
     rb_domPolicyAsk = new QRadioButton( i18n("Ask"), bg );
-    rb_domPolicyAsk->adjustSize();
-    rb_domPolicyAsk->setMinimumSize(rb_domPolicyAsk->size());
     bgLay->addWidget(rb_domPolicyAsk, 3, 1);
 
     rb_domPolicyReject = new QRadioButton( i18n("Reject"), bg );
-    rb_domPolicyReject->adjustSize();
-    rb_domPolicyReject->setMinimumSize(rb_domPolicyReject->size());
     rb_domPolicyAsk->setChecked( true );
     bgLay->addWidget(rb_domPolicyReject, 3, 2);
 

@@ -33,7 +33,6 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
 {
     QLabel *label;
 
-    //CT 12Nov1998 layout management
     QGridLayout *lay = new QGridLayout(this,8,5,10,5);
     lay->addRowSpacing(0,10);
     lay->addRowSpacing(4,10);
@@ -53,7 +52,6 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
     lay->setColStretch(1,1);
     lay->setColStretch(2,2);
     lay->setColStretch(3,0);
-    //CT
 
     QButtonGroup *bg = new QButtonGroup( i18n("Font Size"), this );
     QGridLayout *bgLay = new QGridLayout(bg,2,3,10,5);
@@ -63,18 +61,12 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
     bg->setExclusive( TRUE );
   
     m_pSmall = new QRadioButton( i18n("Small"), bg );
-    m_pSmall->adjustSize();
-    m_pSmall->setMinimumSize(m_pSmall->size());
     bgLay->addWidget(m_pSmall,1,0);
 
     m_pMedium = new QRadioButton( i18n("Medium"), bg );
-    m_pMedium->adjustSize();
-    m_pMedium->setMinimumSize(m_pMedium->size());
     bgLay->addWidget(m_pMedium,1,1);
 
     m_pLarge = new QRadioButton( i18n("Large"), bg );
-    m_pLarge->adjustSize();
-    m_pLarge->setMinimumSize(m_pLarge->size());
     bgLay->addWidget(m_pLarge,1,2);
 
     bgLay->activate();
@@ -82,52 +74,41 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
 
 
     label = new QLabel( i18n("Standard Font"), this );    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,3,1);
 
     m_pStandard = new QComboBox( false, this );
-    m_pStandard->adjustSize();
-    m_pStandard->setMinimumSize(m_pStandard->size());
     lay->addWidget(m_pStandard,3,2);
 
     getFontList( standardFonts, "-*-*-*-*-*-*-*-*-*-*-p-*-*-*" );
     m_pStandard->insertStrList( &standardFonts );
-    connect( m_pStandard, SIGNAL( activated( const char * ) ),
-             SLOT( slotStandardFont( const char * ) ) );
+    connect( m_pStandard, SIGNAL( activated(const QString&) ),
+             SLOT( slotStandardFont(const QString&) ) );
   
     label = new QLabel( i18n( "Fixed Font"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,4,1);
 
     m_pFixed = new QComboBox( false, this );
-    m_pFixed->adjustSize();
-    m_pFixed->setMinimumSize(m_pFixed->size());
     lay->addWidget(m_pFixed,4,2);
     m_pFixed->setGeometry( 120, 130, 180, 25 );
     getFontList( fixedFonts, "-*-*-*-*-*-*-*-*-*-*-m-*-*-*" );
     m_pFixed->insertStrList( &fixedFonts );
   
-    connect( m_pFixed, SIGNAL( activated( const char * ) ),
-             SLOT( slotFixedFont( const char * ) ) );
+    connect( m_pFixed, SIGNAL( activated(const QString&) ),
+             SLOT( slotFixedFont(const QString&) ) );
   
     // default charset Lars Knoll 17Nov98 (moved by David)
     label = new QLabel( i18n( "Default Charset"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,5,1);
     lay->activate();
 
     m_pCharset = new QComboBox( false, this );
     charsets = KGlobal::charsets()->availableCharsetNames();
-    charsets.insert(0, i18n("Use language charset"));
+    charsets.prepend(i18n("Use language charset"));
     m_pCharset->insertStringList( charsets );
-
-    m_pCharset->adjustSize();
-    m_pCharset->setMinimumSize(m_pCharset->size());
     lay->addWidget(m_pCharset,5,2);
-    connect( m_pCharset, SIGNAL( activated( const char * ) ),
-             SLOT( slotCharset( const char * ) ) );
+    
+    connect( m_pCharset, SIGNAL( activated(const QString& ) ),
+             SLOT( slotCharset(const QString&) ) );
 
     connect( bg, SIGNAL( clicked( int ) ), SLOT( slotFontSize( int ) ) );
 
@@ -185,17 +166,17 @@ void KFontOptions::slotFontSize( int i )
     fSize = i+3;
 }
 
-void KFontOptions::slotStandardFont( const char *n )
+void KFontOptions::slotStandardFont(const QString& n )
 {
     stdName = n;
 }
 
-void KFontOptions::slotFixedFont( const char *n )
+void KFontOptions::slotFixedFont(const QString& n )
 {
     fixedName = n;
 }
 
-void KFontOptions::slotCharset( const char *n )
+void KFontOptions::slotCharset(const QString& n)
 {
     charsetName = n;
 }
@@ -291,7 +272,6 @@ KColorOptions::KColorOptions( QWidget *parent, const char *name )
 {
     QLabel *label;
 
-    //CT 12Nov1998 layout management
     QGridLayout *lay = new QGridLayout(this,12,5,10,5);
     lay->addRowSpacing(0,10);
     lay->addRowSpacing(1,30);
@@ -325,74 +305,49 @@ KColorOptions::KColorOptions( QWidget *parent, const char *name )
     lay->setColStretch(2,1);
     lay->setColStretch(3,0);
     lay->setColStretch(4,1);
-    //CT
 
     label = new QLabel( i18n("Background Color:"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,1,1);
 
     m_pBg = new KColorButton( bgColor, this );
-    m_pBg->adjustSize();
-    m_pBg->setMinimumSize(m_pBg->size());
     lay->addWidget(m_pBg,1,3);
     connect( m_pBg, SIGNAL( changed( const QColor & ) ),
              SLOT( slotBgColorChanged( const QColor & ) ) );
 
     label = new QLabel( i18n("Normal Text Color:"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,3,1);
   
     m_pText = new KColorButton( textColor, this );
-    m_pText->adjustSize();
-    m_pText->setMinimumSize(m_pText->size());
     lay->addWidget(m_pText,3,3);
     connect( m_pText, SIGNAL( changed( const QColor & ) ),
              SLOT( slotTextColorChanged( const QColor & ) ) );
 
     label = new QLabel( i18n("URL Link Color:"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,5,1);
 
     m_pLink = new KColorButton( linkColor, this );
-    m_pLink->adjustSize();
-    m_pLink->setMinimumSize(m_pLink->size());
     lay->addWidget(m_pLink,5,3);
     connect( m_pLink, SIGNAL( changed( const QColor & ) ),
              SLOT( slotLinkColorChanged( const QColor & ) ) );
 
     label = new QLabel( i18n("Followed Link Color:"), this );
-    label->adjustSize();
-    label->setMinimumSize(label->size());
     lay->addWidget(label,7,1);
 
     m_pVLink = new KColorButton( vLinkColor, this );
-    m_pVLink->adjustSize();
-    m_pVLink->setMinimumSize(m_pVLink->size());
     lay->addWidget(m_pVLink,7,3);
     connect( m_pVLink, SIGNAL( changed( const QColor & ) ),
              SLOT( slotVLinkColorChanged( const QColor & ) ) );
 
     cursorbox = new QCheckBox(i18n("Change cursor over link."),
                               this);
-    cursorbox->adjustSize();
-    cursorbox->setMinimumSize(cursorbox->size());
     lay->addMultiCellWidget(cursorbox,8,8,1,3);
 
     underlinebox = new QCheckBox(i18n("Underline links"),
                                  this);
-
-    underlinebox->adjustSize();
-    underlinebox->setMinimumSize(underlinebox->size());
     lay->addMultiCellWidget(underlinebox,9,9,1,3);
 
     forceDefaultsbox = new QCheckBox(i18n("Always use my colors"),
                                  this);
-
-    forceDefaultsbox->adjustSize();
-    forceDefaultsbox->setMinimumSize(forceDefaultsbox->size());
     lay->addMultiCellWidget(forceDefaultsbox,10,10,1,3);
 
     loadSettings();

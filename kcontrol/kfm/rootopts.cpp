@@ -33,7 +33,6 @@
 KRootOptions::KRootOptions( QWidget *parent, const char *name )
     : KConfigWidget( parent, name )
 {
-        //CT 12Nov1998 
         QGridLayout *lay = new QGridLayout(this,10 /*rows*/,5 /*cols*/,
                                            10 /*border*/,5 /*autoborder*/);
         lay->addRowSpacing(0,15);
@@ -68,75 +67,45 @@ KRootOptions::KRootOptions( QWidget *parent, const char *name )
         lay->setColStretch(2,1);
         lay->setColStretch(3,0);
         lay->setColStretch(4,1);
-        //CT
  
         QLabel *label;
         label = new QLabel( i18n("Horizontal Root Grid Spacing:"), this );
-        label->adjustSize();
-        label->setMinimumSize(label->size());
         lay->addWidget(label,ROW_HGRID,1);
  
-        hspin  = new KNumericSpinBox(this);
-        hspin->adjustSize();
-        hspin->setMinimumSize(hspin->size());
+        hspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
         lay->addWidget(hspin,ROW_HGRID,3);
-        hspin->setRange(0,DEFAULT_GRID_MAX - DEFAULT_GRID_MIN);
  
         label = new QLabel( i18n("Vertical Root Grid Spacing:"), this );
-        label->adjustSize();
-        label->setMinimumSize(label->size());
         lay->addWidget(label,ROW_VGRID,1);
  
-        vspin  = new KNumericSpinBox(this);
-        vspin->adjustSize();
-        vspin->setMinimumSize(vspin->size());
+        vspin  = new QSpinBox(0, DEFAULT_GRID_MAX - DEFAULT_GRID_MIN, 1, this);
         lay->addWidget(vspin,ROW_VGRID,3);
-        vspin->setRange(0,DEFAULT_GRID_MAX - DEFAULT_GRID_MIN);
  
         iconstylebox = new QCheckBox(i18n("&Transparent Text for Desktop Icons."),
                                   this);
-        //CT 12Nov1998
-        iconstylebox->adjustSize();
-        iconstylebox->setMinimumSize(iconstylebox->size());
         lay->addMultiCellWidget(iconstylebox,ROW_TRANSPARENT,ROW_TRANSPARENT,1,3);
-        //CT 
  
         connect(iconstylebox,SIGNAL(toggled(bool)),this,SLOT(makeBgActive(bool)));
  
-        //CT 12Nov1998 color buttons
         label = new QLabel(i18n("Icon foreground color:"),this);
-        label->adjustSize();
-        label->setMinimumSize(label->size());
         lay->addWidget(label,ROW_ICON_FG,1);
  
         fgColorBtn = new KColorButton(icon_fg,this);
-        fgColorBtn->adjustSize();
-        fgColorBtn->setMinimumSize(fgColorBtn->size());
         lay->addWidget(fgColorBtn,ROW_ICON_FG,3);
         connect( fgColorBtn, SIGNAL( changed( const QColor & ) ),
                 SLOT( slotIconFgColorChanged( const QColor & ) ) );
  
         bgLabel = new QLabel(i18n("Icon background color:"),this);
-        bgLabel->adjustSize();
-        bgLabel->setMinimumSize(bgLabel->size());
         lay->addWidget(bgLabel,ROW_ICON_BG,1);
  
         bgColorBtn = new KColorButton(icon_bg,this);
-        bgColorBtn->adjustSize();
-        bgColorBtn->setMinimumSize(bgColorBtn->size());
         lay->addWidget(bgColorBtn,ROW_ICON_BG,3);
         connect( bgColorBtn, SIGNAL( changed( const QColor & ) ),
                 SLOT( slotIconBgColorChanged( const QColor & ) ) );
  
-        //Michael 21Dec98
         showHiddenBox = new QCheckBox(i18n("Show &Hidden Files on Desktop"), this);
-        
-        showHiddenBox->adjustSize();
-        showHiddenBox->setMinimumSize(showHiddenBox->size());
         lay->addMultiCellWidget(showHiddenBox,ROW_SHOWHIDDEN,ROW_SHOWHIDDEN,1,3);
-        //Michael
         lay->activate();
-        //CT
  
         loadSettings();
  
@@ -204,8 +173,8 @@ void KRootOptions::saveSettings()
     g_pConfig->writeEntry( "Background", icon_bg);
     //CT
     g_pConfig->setGroup( "KFM Misc Defaults" );
-    g_pConfig->writeEntry( "GridWidth", hspin->getValue()+DEFAULT_GRID_MIN);
-    g_pConfig->writeEntry( "GridHeight", vspin->getValue()+DEFAULT_GRID_MIN);
+    g_pConfig->writeEntry( "GridWidth", hspin->value()+DEFAULT_GRID_MIN);
+    g_pConfig->writeEntry( "GridHeight", vspin->value()+DEFAULT_GRID_MIN);
 
     g_pConfig->sync();
 }

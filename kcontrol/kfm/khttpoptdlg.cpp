@@ -12,8 +12,6 @@
 KHTTPOptions::KHTTPOptions(QWidget *parent, const char *name)
   : KConfigWidget(parent, name)
 {
-
-  //CT 12Nov1998 layout management
   QGridLayout *lay = new QGridLayout(this,9,3,10,5);
   lay->addRowSpacing(0,10);
   lay->addRowSpacing(3,10);
@@ -35,43 +33,23 @@ KHTTPOptions::KHTTPOptions(QWidget *parent, const char *name)
   lay->setColStretch(0,0);
   lay->setColStretch(1,1);
   lay->setColStretch(2,0);
-  //CT
   
   lb_languages = new QLabel(i18n("Accept languages:"), this);
-  //CT 12Nov1998 layout management
-  lb_languages->adjustSize();
-  lb_languages->setMinimumSize(lb_languages->size());
   lay->addWidget(lb_languages,1,1);
-  //CT
 
   le_languages = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_languages->adjustSize();
-  le_languages->setMinimumSize(le_languages->size());
   lay->addWidget(le_languages,2,1);
-  //CT
   
   lb_charsets = new QLabel(i18n("Accept character sets:"), this);
-  //CT 12Nov1998 layout management
-  lb_charsets->adjustSize();
-  lb_charsets->setMinimumSize(lb_charsets->size());
   lay->addWidget(lb_charsets,4,1);
-  //CT
+  
   le_charsets = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_charsets->adjustSize();
-  le_charsets->setMinimumSize(le_charsets->size());
   lay->addWidget(le_charsets,5,1);
-  //CT
 
   cb_assumeHTML = new QCheckBox( i18n("Assume HTML"), this );
-  //CT 12Nov1998 layout management
-  cb_assumeHTML->adjustSize();
-  cb_assumeHTML->setMinimumSize(cb_assumeHTML->size());
   lay->addWidget(cb_assumeHTML,7,1);
 
   lay->activate();
-  //CT
 
   // defaultCharsets = QString("utf-8 ")+klocale->charset()+" iso-8859-1";
   defaultCharsets = QString("utf-8 ")+" iso-8859-1"; // TODO

@@ -22,144 +22,84 @@ KProxyOptions::KProxyOptions(QWidget *parent, const char *name)
   : KConfigWidget(parent, name)
 {
 
-	//CT 12Nov1998 layout management
-	QGridLayout *lay = new QGridLayout(this,7,8,10,5);
-	lay->addRowSpacing(4,20);
-	lay->addRowSpacing(6,20);
-	lay->addColSpacing(0,10);
-	lay->addColSpacing(3,20);
-	lay->addColSpacing(7,10);
+  QGridLayout *lay = new QGridLayout(this,7,8,10,5);
+  lay->addRowSpacing(4,20);
+  lay->addRowSpacing(6,20);
+  lay->addColSpacing(0,10);
+  lay->addColSpacing(3,20);
+  lay->addColSpacing(7,10);
 
-	lay->setRowStretch(0,1);
-	lay->setRowStretch(1,0); // USEPROXY
-	lay->setRowStretch(2,0); // HTTP
-	lay->setRowStretch(3,0); // FTP
-	lay->setRowStretch(4,2);
-	lay->setRowStretch(5,0); // NOPROXY
-	lay->setRowStretch(6,20);
+  lay->setRowStretch(0,1);
+  lay->setRowStretch(1,0); // USEPROXY
+  lay->setRowStretch(2,0); // HTTP
+  lay->setRowStretch(3,0); // FTP
+  lay->setRowStretch(4,2);
+  lay->setRowStretch(5,0); // NOPROXY
+  lay->setRowStretch(6,20);
 
-	lay->setColStretch(0,0);
-	lay->setColStretch(1,0);
-	lay->setColStretch(2,1);
-	lay->setColStretch(3,1);
-	lay->setColStretch(4,0);
-	lay->setColStretch(5,1);
-	lay->setColStretch(6,1);
-	lay->setColStretch(7,0);
-	//CT
-
-// Commented out, since in any KControl module, one has to save ("OK" or "Apply") :)
-#if 0
-  lb_info = new QLabel( i18n("Don't forget to save your settings!"), this);
-  //CT 12Nov1998 layout management
-  lb_info->adjustSize();
-  lb_info->setMinimumSize(lb_info->size());
-  lay->addMultiCellWidget(lb_info,1,1,1,6);
-  //CT
-#endif
+  lay->setColStretch(0,0);
+  lay->setColStretch(1,0);
+  lay->setColStretch(2,1);
+  lay->setColStretch(3,1);
+  lay->setColStretch(4,0);
+  lay->setColStretch(5,1);
+  lay->setColStretch(6,1);
+  lay->setColStretch(7,0);
 
   cb_useProxy = new QCheckBox( i18n("Use proxy"), this );
-  //CT 12Nov1998 layout management
-  cb_useProxy->adjustSize();
-  cb_useProxy->setMinimumSize(cb_useProxy->size());
   lay->addMultiCellWidget(cb_useProxy,ROW_USEPROXY,ROW_USEPROXY,1,6);
-  //CT
-
+  
   connect( cb_useProxy, SIGNAL( clicked() ), SLOT( changeProxy() ) );
   
   lb_http_url = new QLabel( i18n("HTTP Proxy:"), this);
   lb_http_url->setAlignment(AlignVCenter);
-  //CT 12Nov1998 layout management
-  lb_http_url->adjustSize();
-  lb_http_url->setMinimumSize(lb_http_url->size());
   lay->addWidget(lb_http_url,ROW_HTTP,1);
-  //CT
 
   le_http_url = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_http_url->adjustSize();
-  le_http_url->setMinimumSize(le_http_url->size());
   lay->addWidget(le_http_url,ROW_HTTP,2);
-  //CT
 
   lb_http_port = new QLabel( i18n("Port:"), this);
   lb_http_port->setAlignment(AlignVCenter);
-  //CT 12Nov1998 layout management
-  lb_http_port->adjustSize();
-  lb_http_port->setMinimumSize(lb_http_port->size());
   lay->addWidget(lb_http_port,ROW_HTTP,4);
-  //CT
 
   le_http_port = new QLineEdit(this);
   le_http_port->setGeometry(280, 110, 55, 30);
-  //CT 12Nov1998 layout management
-  le_http_port->adjustSize();
-  le_http_port->setMinimumSize(le_http_port->size());
   lay->addWidget(le_http_port,ROW_HTTP,5);
-  //CT
 
   lb_ftp_url = new QLabel( i18n("FTP Proxy:"), this);
   lb_ftp_url->setAlignment(AlignVCenter);
-  //CT 12Nov1998 layout management
-  lb_ftp_url->adjustSize();
-  lb_ftp_url->setMinimumSize(lb_ftp_url->size());
   lay->addWidget(lb_ftp_url,ROW_FTP,1);
-  //CT
 
   le_ftp_url = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_ftp_url->adjustSize();
-  le_ftp_url->setMinimumSize(le_ftp_url->size());
   lay->addWidget(le_ftp_url,ROW_FTP,2);
-  //CT
 
   lb_ftp_port = new QLabel( i18n("Port:"), this);
   lb_ftp_port->setAlignment(AlignVCenter);
-  //CT 12Nov1998 layout management
-  lb_ftp_port->adjustSize();
-  lb_ftp_port->setMinimumSize(lb_ftp_port->size());
   lay->addWidget(lb_ftp_port,ROW_FTP,4);
-  //CT
 
   le_ftp_port = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_ftp_port->adjustSize();
-  le_ftp_port->setMinimumSize(le_ftp_port->size());
   lay->addWidget(le_ftp_port,ROW_FTP,5);
-  //CT
 
   lb_no_prx = new QLabel(i18n("No Proxy for:"), this);
   lb_no_prx->setAlignment(AlignVCenter);
-  //CT 12Nov1998 layout management
-  lb_no_prx->adjustSize();
-  lb_no_prx->setMinimumSize(lb_no_prx->size());
   lay->addWidget(lb_no_prx,ROW_NOPROXY,1);
-  //CT
 
   le_no_prx = new QLineEdit(this);
-  //CT 12Nov1998 layout management
-  le_no_prx->adjustSize();
-  le_no_prx->setMinimumSize(le_no_prx->size());
   lay->addMultiCellWidget(le_no_prx,ROW_NOPROXY,ROW_NOPROXY,2,5);
-  //CT
-
 
   QString path;
   cp_down = new QPushButton( this );
   cp_down->setPixmap( ICON("down.xpm") );
-  //CT 12Nov1998
   cp_down->setFixedSize(20,20);
-  cp_down->setMinimumSize(cp_down->size());
   lay->addWidget(cp_down,ROW_HTTP,6);
 
   lay->activate();
-  //CT
 
   connect( cp_down, SIGNAL( clicked() ), SLOT( copyDown() ) );
 
   setMinimumSize(480,300);
 
-  // finaly read the options
+  // finally read the options
   loadSettings();
 }
 
@@ -279,7 +219,7 @@ void KProxyOptions::setProxy()
 
 void KProxyOptions::changeProxy()
 {
-  useProxy = (! useProxy);
+  useProxy = cb_useProxy->isChecked();
   setProxy();
 }
 
