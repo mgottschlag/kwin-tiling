@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -55,8 +55,8 @@ private:
     QMap<QString,QListViewItem *> m_Items;
     QListView *m_ListView;
     QString m_Current;
-    QPushButton *removeBut;	
-    QPushButton *modifyBut; 
+    QPushButton *removeBut;
+    QPushButton *modifyBut;
 };
 
 
@@ -68,7 +68,7 @@ class KProgramEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L, 
+    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -76,13 +76,15 @@ public:
 
 public slots:
     void slotOk();
+protected slots:
+    void slotExecFileNameChanged( const QString &);
 
 private:
     QString m_Program;
     QLineEdit *m_NameEdit, *m_CommentEdit;
     KURLRequester *m_ExecEdit;
     QLineEdit *m_CommandEdit;
-    QLineEdit *m_PreviewEdit; 
+    QLineEdit *m_PreviewEdit;
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;
 };
@@ -125,7 +127,7 @@ class KPatternEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KPatternEditDialog(QString pattern=QString::null, QWidget *parent=0L, 
+    KPatternEditDialog(QString pattern=QString::null, QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -134,13 +136,15 @@ public:
 public slots:
     void slotOk();
     void slotBrowse();
+private slots:
+    void slotFileNameChanged( const QString & );
 
 private:
     QString m_Pattern;
     QLineEdit *m_NameEdit, *m_FileEdit;
     QLineEdit *m_CommentEdit;
 };
-    
+
 
 /**
  * QListBox with DND
@@ -166,7 +170,7 @@ class KMultiWallpaperDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KMultiWallpaperDialog(KBackgroundSettings *settings, 
+    KMultiWallpaperDialog(KBackgroundSettings *settings,
 	    QWidget *parent=0L, char *name=0L);
 
 public slots:
