@@ -265,6 +265,6 @@ class CFontEngine
 #endif
 };
 
-};
+}
 
 #endif

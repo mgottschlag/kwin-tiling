@@ -1860,4 +1860,4 @@ CFontEngine::TFtData::~TFtData()
     FT_Done_FreeType(library);
 }
 
-};
+}

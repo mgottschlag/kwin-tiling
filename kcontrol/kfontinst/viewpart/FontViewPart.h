@@ -76,6 +76,6 @@ class CFontViewPart : public KParts::ReadOnlyPart
     int           itsFace;
 };
 
-};
+}
 
 #endif

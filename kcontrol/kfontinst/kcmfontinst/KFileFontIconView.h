@@ -50,6 +50,6 @@ class CKFileFontIconView : public KFileIconView
     bool acceptDrag(QDropEvent *e) const;
 };
 
-};
+}
 
 #endif

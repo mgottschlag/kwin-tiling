@@ -70,4 +70,4 @@ ThumbCreator::Flags CFontThumbnail::flags() const
     return DrawFrame;
 }
 
-};
+}

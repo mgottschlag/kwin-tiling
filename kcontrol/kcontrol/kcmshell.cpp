@@ -153,7 +153,7 @@ static void setIcon(QWidget *w, const QString &iconName)
 #endif
 }
 
-extern "C" int kdemain(int _argc, char *_argv[])
+extern "C" KDE_EXPORT int kdemain(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
                           KCONTROL_VERSION,

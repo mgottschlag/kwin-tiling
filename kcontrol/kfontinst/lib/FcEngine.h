@@ -19,7 +19,7 @@ typedef struct _XftFont  XftFont;
 namespace KFI
 {
 
-class CFcEngine
+class KDE_EXPORT CFcEngine
 {
     public:
 
@@ -71,6 +71,6 @@ class CFcEngine
     FcBool          itsScalable;
 };
 
-};
+}
 
 #endif

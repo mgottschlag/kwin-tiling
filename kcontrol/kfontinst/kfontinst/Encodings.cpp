@@ -763,4 +763,4 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
 
 #endif
 
-};
+}

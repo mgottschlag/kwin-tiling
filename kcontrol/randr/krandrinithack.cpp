@@ -24,7 +24,7 @@
 #include <kapplication.h>
 
 extern "C"
-int kdemain( int argc, char* argv[] )
+KDE_EXPORT int kdemain( int argc, char* argv[] )
 {
 	KCmdLineArgs::init( argc, argv, "krandrinithack", "RANDR hack", "RANDR hack", "0.1" );
 	    { // avoid creating KApplication in case it won't be needed

@@ -72,8 +72,8 @@ namespace Fontmap
     };
 
     extern bool create(const QString &dir, CFontEngine &fe);
-};
+}
 
-};
+}
 
 #endif

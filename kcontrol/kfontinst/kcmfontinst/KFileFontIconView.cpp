@@ -85,4 +85,4 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
            (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
 
-};
+}

@@ -55,6 +55,6 @@ class CFontViewPartFactory : public KLibFactory
     static KAboutData *theirAbout;
 };
 
-};
+}
 
 #endif

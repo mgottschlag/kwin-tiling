@@ -53,6 +53,6 @@ class KFileFontPlugin : public KFilePlugin
     CFcEngine itsEngine;
 };
 
-};
+}
 
 #endif

@@ -168,4 +168,4 @@ int CCompressedFile::seek(int offset, int whence)
     return c==offset ? 0 : -1;
 }
 
-};
+}

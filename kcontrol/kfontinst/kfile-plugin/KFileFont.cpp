@@ -390,4 +390,4 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
     return status;
 }
 
-};
+}

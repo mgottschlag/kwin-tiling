@@ -78,6 +78,6 @@ class CFontPreview : public QWidget
     QString   itsFontName;
 };
 
-};
+}
 
 #endif

@@ -104,7 +104,7 @@ CFontViewerApp::CFontViewerApp()
     setMainWidget(new CFontViewerAppMainWindow());
 }
 
-};
+}
 
 static KCmdLineOptions options[] =
 {

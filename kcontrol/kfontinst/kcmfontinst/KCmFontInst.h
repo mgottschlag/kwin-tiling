@@ -107,6 +107,6 @@ class CKCmFontInst : public KCModule
     QSize                itsSizeHint;
 };
 
-};
+}
 
 #endif

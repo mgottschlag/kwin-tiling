@@ -2032,4 +2032,4 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
     }
 }
 
-};
+}

@@ -534,6 +534,6 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
     }
 }
 
-};
+}
 
 #include "KCmFontInst.moc"

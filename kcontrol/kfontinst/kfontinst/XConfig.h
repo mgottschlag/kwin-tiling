@@ -141,6 +141,6 @@ class CXConfig
     time_t          itsTime;
 };
 
-};
+}
 
 #endif

@@ -557,6 +557,6 @@ CFile::TEntry * CFile::getEntry(TEntry **current, const QString &fname, bool isA
     return entry;
 }
 
-};
+}
 
-};
+}

@@ -63,6 +63,6 @@ class CFontViewerApp : public KApplication
     virtual ~CFontViewerApp() {}
 };
 
-};
+}
 
 #endif

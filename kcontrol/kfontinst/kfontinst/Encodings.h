@@ -95,6 +95,6 @@ class CEncodings
 #endif
 };
 
-};
+}
 
 #endif

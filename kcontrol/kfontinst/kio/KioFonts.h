@@ -130,6 +130,6 @@ class CKioFonts : public KIO::SlaveBase
                  itsKfiParams[8];
 };
 
-};
+}
 
 #endif

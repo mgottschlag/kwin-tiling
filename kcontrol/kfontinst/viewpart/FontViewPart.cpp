@@ -255,6 +255,6 @@ void CFontViewPart::changeText()
     }
 }
 
-};
+}
 
 #include "FontViewPart.moc"

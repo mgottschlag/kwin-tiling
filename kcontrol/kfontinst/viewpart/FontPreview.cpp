@@ -110,6 +110,6 @@ QSize CFontPreview::minimumSizeHint() const
     return QSize(32, 32);
 }
 
-};
+}
 
 #include "FontPreview.moc"

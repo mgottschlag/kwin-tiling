@@ -81,6 +81,6 @@ KInstance* CFontViewPartFactory::instance()
     return theirInstance;
 }
 
-};
+}
 
 #include "FontViewPartFactory.moc"

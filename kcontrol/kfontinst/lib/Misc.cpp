@@ -233,6 +233,6 @@ bool check(const QString &path, unsigned int fmt, bool checkW)
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }
 
-};
+}
 
-};
+}

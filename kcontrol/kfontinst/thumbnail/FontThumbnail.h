@@ -50,6 +50,6 @@ class CFontThumbnail : public ThumbCreator
     CFcEngine itsEngine;
 };
 
-};
+}
 
 #endif

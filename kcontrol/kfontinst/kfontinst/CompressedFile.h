@@ -77,6 +77,6 @@ class CCompressedFile
     };
 };
 
-};
+}
 
 #endif

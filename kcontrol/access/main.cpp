@@ -3,7 +3,7 @@
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 
-extern "C" int kdemain(int argc, char * argv[] )
+extern "C" KDE_EXPORT int kdemain(int argc, char * argv[] )
 {
   KAboutData about(I18N_NOOP("kaccess"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,

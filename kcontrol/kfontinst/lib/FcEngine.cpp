@@ -1037,4 +1037,4 @@ void CFcEngine::getSizes(QPixmap *pix)
 }
 #endif
 
-};
+}

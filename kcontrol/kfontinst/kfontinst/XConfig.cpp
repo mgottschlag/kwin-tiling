@@ -1029,4 +1029,4 @@ CXConfig::CFontsFile::TEntry * CXConfig::CFontsFile::getEntry(TEntry **current, 
     return entry;
 }
 
-};
+}
