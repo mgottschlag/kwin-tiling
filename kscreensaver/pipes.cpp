@@ -177,10 +177,11 @@ void doneGL()
 
 static XVisualInfo *glVis[MAXSCREENS];
 
-int getVisual(XVisualInfo * wantVis){
+int getVisual(XVisualInfo * wantVis, int visual_count) {
 
         Display    *display = dsp;
         static int  first;
+	int i;
 
 
         if (first) {
@@ -204,14 +205,18 @@ int getVisual(XVisualInfo * wantVis){
                         glVis[screen] = glXChooseVisual(display, screen, attribList);
                 }
         }
+	
+        // Make sure we have a visual
+        if (!glVis[screen])
+	  return (0);
 
         /* check if GL can render into root window. */
-
-        if ((!glVis[screen]) || (glVis[screen]->visual != wantVis->visual)) {
-                return (0);
-        }
-
-        return (1);             /* success */
+        for(i=0;i<visual_count;i++)
+	  if ( (glVis[screen]->visual == (wantVis+i)->visual) )
+	    return (1); // success
+	
+        // The visual we received did not match one we asked for
+        return (0);
 }
 
 void initGL(Window window)
@@ -251,8 +256,8 @@ void initGL(Window window)
   /* if User asked for mono.  Might fail on 16/24 bit displays,
      so fall back on color, but keep the mono "look & feel". */
 
-  if (!getVisual(wantVis)) {
-    if (!getVisual(wantVis)) {
+  if (!getVisual(wantVis, n)) {
+    if (!getVisual(wantVis, n)) {
       (void) fprintf(stderr, i18n(
            "GL can not render with root visual\n"));
       return;
@@ -268,6 +273,9 @@ void initGL(Window window)
 
 
   glXMakeCurrent(display, window, glx_context);
+
+  // Make sure we draw to the correct buffer.
+  glDrawBuffer(GL_FRONT);
 
   if (mono) {
     glIndexi(WhitePixel(display, screen));
