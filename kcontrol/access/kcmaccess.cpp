@@ -190,7 +190,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
 
-  bounceKeys = new QCheckBox(i18n("Use s&low keys"), grp);
+  bounceKeys = new QCheckBox(i18n("Use &bounce keys"), grp);
   vvbox->addWidget(bounceKeys);
 
   hbox = new QHBoxLayout(vvbox, 6);
