@@ -18,7 +18,13 @@ Command_1: enabled=true
 Command_2: commandline=mozilla -remote "openURL(%s, new-window)"
 Command_2: description=Open with &Mozilla
 Command_2: enabled=true
-Number of commands=3
+Command_3: commandline=kmail --body  '%s'
+Command_3: description=Send &URL
+Command_3: enabled=true
+Command_4: commandline=kmail  --attach '%s'
+Command_4: description=Send &Page
+Command_4: enabled=true
+Number of commands=5
 
 [Action_2]
 Action description=Mail-URL
@@ -42,9 +48,31 @@ Command_1: description=Launch K&Write
 Command_1: enabled=true
 Number of commands=2
 
+[Action_4]
+Action description=URI
+Action regexp=^file:.
+Command_0: commandline=kmail --body  '%s'
+Command_0: description=Send &URL
+Command_0: enabled=true
+Command_1: commandline=kmail  --attach '%s'
+Command_1: description=Send &File
+Command_1: enabled=true
+Number of commands=2
+
+[Action_5]
+Action description=URI
+Action regexp=^gopher:.
+Command_0: commandline=kmail --body  '%s'
+Command_0: description=Send &URL
+Command_0: enabled=true
+Command_1: commandline=kmail  --attach '%s'
+Command_1: description=Send &File
+Command_1: enabled=true
+Number of commands=2
+
 [General]
 KeepClipboardContents=true
-Number of Actions=4
+Number of Actions=14
 PopupAtMousePosition=false
 URLGrabberEnabled=true
 No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera
