@@ -127,7 +127,7 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	fontUseList.append( item );
 	
 	item = new FontUseItem( i18n("Fixed font"),
-				QFont( "fixed", 10 ), true );
+				QFont( "fixed", 12 ), true );
 	item->setRC( "General", "fixedFont" );
 	fontUseList.append( item );
 	
