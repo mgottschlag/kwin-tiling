@@ -57,11 +57,11 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   }
 
   if ( KeyType == "standard" ) {
-	  for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++)
-		  keys->insertStdItem((KStdAccel::StdAccel)i);
-	  KeyScheme = "Standard Key Scheme " ;
-	  KeySet    = "Keys" ;
-	  check_against_std_keys  = false ;
+          for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++)
+                  keys->insertStdItem((KStdAccel::StdAccel)i);
+          KeyScheme = "Standard Key Scheme " ;
+          KeySet    = "Keys" ;
+          check_against_std_keys  = false ;
   }
 
   keys->setConfigGlobal( true );
@@ -120,8 +120,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   readScheme();
 
   QGridLayout *topLayout = new QGridLayout( this, 5, 3,
-					    KDialog::marginHint(),
-					    KDialog::spacingHint());
+                                            KDialog::marginHint(),
+                                            KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
   topLayout->addWidget(addBt, 1, 1);
@@ -287,7 +287,7 @@ void KKeyModule::slotAdd()
         // remove from string
 
         sFile.remove( ind, 1);
-			
+
         // Make the next letter upper case
 
         QString s = sFile.mid( ind, 1 );
@@ -321,7 +321,7 @@ void KKeyModule::slotAdd()
   QDir d( kksPath );
   if ( !d.exists() )
     if ( !d.mkdir( kksPath ) ) {
-      warning("KKeyModule: Could not make directory to store user info.");
+      qWarning("KKeyModule: Could not make directory to store user info.");
       return;
     }
 
@@ -331,7 +331,7 @@ void KKeyModule::slotAdd()
   d.setPath( kksPath );
   if ( !d.exists() )
     if ( !d.mkdir( kksPath ) ) {
-      warning("KKeyModule: Could not make directory to store user info.");
+      qWarning("KKeyModule: Could not make directory to store user info.");
       return;
     }
 
@@ -357,9 +357,9 @@ void KKeyModule::slotAdd()
 void KKeyModule::slotPreviewScheme( int indx )
 {
   readScheme( indx );
-	
+
   // Set various appropriate for the scheme
-	
+
   if ( indx < nSysSchemes ) {
     removeBt->setEnabled( FALSE );
     saveBt->setEnabled( FALSE );
@@ -391,5 +391,5 @@ void KKeyModule::readSchemeNames( )
     //nSysSchemes++;
 
   }
-		
+
 }
