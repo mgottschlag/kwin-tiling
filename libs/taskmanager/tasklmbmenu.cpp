@@ -22,8 +22,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qregexp.h>
-
 #include "tasklmbmenu.h"
 #include "tasklmbmenu.moc"
 
@@ -46,7 +44,7 @@ void TaskLMBMenu::fillMenu( TaskList* tasks )
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
 
-		QString text = t->visibleNameWithState().replace(QRegExp("&"), "&&");
+		QString text = t->visibleNameWithState().replace("&", "&&");
 
 		int id = insertItem( QIconSet( t->pixmap() ), text,
 				     t, SLOT( activateRaiseOrIconify() ) );
