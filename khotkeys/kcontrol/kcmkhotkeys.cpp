@@ -167,10 +167,13 @@ void write_conf( KHotData_dict& data_P )
         KSimpleConfig cfg( CONFIG_FILE, false );
         data_P.write_config( cfg );
         }
-    DCOPClient* client = kapp->dcopClient();
-    QByteArray data;
-    client->send( "khotkeys", "khotkeys", "reread_configuration()", data );
-      // tell daemon to reread cfg file
+    if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+        KApplication::kdeinitExec( "khotkeys" );
+    else
+        {
+        QByteArray data;
+        kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+        }
     }
 
 /*
