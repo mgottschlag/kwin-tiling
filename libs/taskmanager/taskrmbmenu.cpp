@@ -179,7 +179,7 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
 	m->insertSeparator();
 
 	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
-		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ) );
+		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ).replace( '&', "&&" ) );
 		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
@@ -199,7 +199,7 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( TaskList*, TaskManager* manager )
 	m->insertSeparator();
 
 	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
-		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ) );
+		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ).replace( '&', "&&" ) );
 		id = m->insertItem( name, this, SLOT( slotAllToDesktop(int) ) );
 		m->setItemParameter( id, i );
 	}
