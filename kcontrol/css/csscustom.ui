@@ -348,9 +348,6 @@
                     <property name="text">
                         <string>&amp;Black on white</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
