@@ -34,10 +34,9 @@
 
 extern "C"
 {
-  KCModule *create_mouse(QWidget *parent, const char *name) 
-  { 
-    KGlobal::locale()->insertCatalogue("kcminput");
-    return new MouseConfig(parent, name);
+  KCModule *create_mouse(QWidget *parent, const char *)
+  {
+    return new MouseConfig(parent, "kcminput");
   }
 
   void init_mouse()
