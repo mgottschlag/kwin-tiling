@@ -6,7 +6,7 @@ Exec=kcmshell Personalization/email
 X-KDE-ModuleType=Library
 X-KDE-Library=email
 
-Name=EMail
+Name=E-Mail
 Name[ca]=Correu E
 Name[da]=Epost
 Name[de]=E-Mail
