@@ -26,6 +26,8 @@
 
 #ifdef HAVE_OSF_C2_PASSWD
 
+char *osf1c2crypt(const char *pw, char *salt);
+
 /*******************************************************************
  * This is the authentication code for OSF C2 security passwords
  *******************************************************************/
