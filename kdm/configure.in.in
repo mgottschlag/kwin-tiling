@@ -17,9 +17,8 @@ AC_SUBST(XMKMF)
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
 imkv=2
-if test -n "$kde_cv_defines_imake" && test "$kde_cv_defines_imake_version" = $imkv; then
-  _AS_ECHO_N([(cached) ])
-else
+test "$kde_cv_defines_imake_version" = $imkv || unset kde_cv_defines_imake
+AC_CACHE_VAL(kde_cv_defines_imake, [
   rm -fr conftestdir
   if mkdir conftestdir; then
     cd conftestdir
@@ -85,7 +84,7 @@ On some systems a missing /lib/cpp symlink is at fault.])
     AC_MSG_RESULT([failed])
     AC_MSG_ERROR([cannot create temporary directory])
   fi
-fi
+])
 AC_MSG_RESULT([done])
 eval "$kde_cv_defines_imake"
 
