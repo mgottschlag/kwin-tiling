@@ -40,6 +40,7 @@ private:
 	void fillMenu( Task* t, TaskManager* manager );
 	void fillMenu( TaskList* tasks, TaskManager* manager );
 	QPopupMenu* makeDesktopsMenu( Task* t, TaskManager* manager );
+	QPopupMenu* makeDesktopsMenu( TaskList* tasks, TaskManager* manager );
 	
 private slots:
 	void slotMinimizeAll();
@@ -47,6 +48,8 @@ private slots:
 	void slotRestoreAll();
 	void slotShadeAll();
 	void slotCloseAll();
+	void slotAllToDesktop( int desktop );
+	void slotAllToCurrentDesktop();
 	
 private:
 	TaskList* tasks;

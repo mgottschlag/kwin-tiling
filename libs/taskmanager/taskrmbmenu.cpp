@@ -139,18 +139,24 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 		}
 	}
 	setItemEnabled( id, enable );
-	
-	deskpopup = new QPopupMenu( this );
-	deskpopup->setCheckable( TRUE );
-	
-	connect( deskpopup, SIGNAL( aboutToShow() ), this, SLOT( initDeskPopup() ) );
-	connect( deskpopup, SIGNAL( activated( int ) ), this, SLOT( sendToDesktop( int ) ) );
-	
-	insertItem( i18n("To &Desktop"), deskpopup );
-	insertItem( i18n( "&To Current Desktop" ), ToCurrentOp );
 	*/
 	
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
+	
+	insertSeparator();
+	
+	id = insertItem( i18n("All To &Desktop"), makeDesktopsMenu( tasks, manager ) );
+	
+	enable = false;
+	
+	id = insertItem( i18n( "All &To Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
+	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
+		if( !(*it)->isOnCurrentDesktop() ) {
+			enable = true;
+			break;
+		}
+	}
+	setItemEnabled( id, enable );
 }
 
 QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
@@ -169,6 +175,25 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
 		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
+	}
+	
+	return m;
+}
+
+QPopupMenu* TaskRMBMenu::makeDesktopsMenu( TaskList*, TaskManager* manager )
+{
+	QPopupMenu* m = new QPopupMenu( this );
+	m->setCheckable( true );
+	
+	int id = m->insertItem( i18n("&All Desktops"), this, SLOT( slotAllToDesktop(int) ) );
+	m->setItemParameter( id, 0 ); // 0 means all desktops
+	
+	m->insertSeparator();
+	
+	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
+		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ) );
+		id = m->insertItem( name, this, SLOT( slotAllToDesktop(int) ) );
+		m->setItemParameter( id, i );
 	}
 	
 	return m;
@@ -206,5 +231,19 @@ void TaskRMBMenu::slotCloseAll()
 {
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		(*it)->close();
+	}
+}
+
+void TaskRMBMenu::slotAllToDesktop( int desktop )
+{
+	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
+		(*it)->toDesktop( desktop );
+	}
+}
+
+void TaskRMBMenu::slotAllToCurrentDesktop()
+{
+	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
+		(*it)->toCurrentDesktop();
 	}
 }
