@@ -180,7 +180,11 @@ void RandRScreen::desktopResized()
 
 QString RandRScreen::changedMessage() const
 {
-	return i18n("New configuration:\nResolution: %1 x %1\nOrientation: %1\nRefresh rate: %1").arg(currentPixelWidth()).arg(currentPixelHeight()).arg(currentRotationDescription()).arg(currentRefreshRateDescription());
+	return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4")
+	    .arg(currentPixelWidth())
+	    .arg(currentPixelHeight())
+	    .arg(currentRotationDescription())
+	    .arg(currentRefreshRateDescription());
 }
 
 bool RandRScreen::changedFromOriginal() const

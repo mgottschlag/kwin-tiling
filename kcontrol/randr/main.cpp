@@ -22,6 +22,7 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kglobal.h>
 
 #include "krandrapp.h"
 
@@ -37,6 +38,7 @@ int main(int argc, char **argv)
 	KAboutData aboutData("krandrtray", I18N_NOOP("Resize and Rotate"), krandrtrayVersion, I18N_NOOP("Resize and Rotate System Tray App"), KAboutData::License_GPL, "(c) 2002 Hamish Rodda", 0L, "");
 	aboutData.addAuthor("Hamish Rodda",I18N_NOOP("Maintainer"),
 						"meddie@yoyo.its.monash.edu.au");
+	KGlobal::locale()->setMainCatalogue("krandr");
 
 	KCmdLineArgs::init(argc,argv,&aboutData);
 	KCmdLineArgs::addCmdLineOptions(options);
