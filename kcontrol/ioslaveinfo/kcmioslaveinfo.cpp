@@ -39,6 +39,7 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
+#include <kiconloader.h>
 #include <kio/job.h>
 #include <kdebug.h>
 #include <qtextcodec.h>
@@ -69,7 +70,9 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    QStringList protocols=KProtocolInfo::protocols();
    for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); it++)
    {
-      m_ioslavesLb->insertItem(*it);
+      QString proto = *it;
+      m_ioslavesLb->insertItem( SmallIcon( KProtocolInfo::icon( proto )), 
+                                proto );
    };
    m_ioslavesLb->sort();
    m_ioslavesLb->setSelected(0, true);
