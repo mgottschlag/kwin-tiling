@@ -65,7 +65,8 @@ void KHotData_dict::write_config( KSimpleConfig& cfg_P ) const
         cfg_P.writeEntry( "Run", it.current()->run );
         cfg_P.writeEntry( "MenuEntry", it.current()->menuentry );
         }
-    while( cfg_P.deleteGroup( QString( "Section%1" ).arg( sect )))
+    while( cfg_P.hasGroup( QString( "Section%1" ).arg( sect ))
+             && cfg_P.deleteGroup( QString( "Section%1" ).arg( sect )))
         ++sect;   // delete unneeded sections
     }
 
