@@ -40,17 +40,31 @@
 
 #include <X11/Xlib.h>
 
+inline const char * gtkEnvVar(int version)
+{
+    return 2==version ? "GTK2_RC_FILES" : "GTK_RC_FILES";
+}
+
+inline const char * sysGtkrc(int version)
+{
+    return 2==version ? "/etc/gtk-2.0/gtkrc" : "/etc/gtk/gtkrc";
+}
+
+inline const char * userGtkrc(int version)
+{
+    return 2==version  ? "/.gtkrc-2.0" : "/.gtkrc";
+}
 
 // -----------------------------------------------------------------------------
-static void applyGtkStyles(bool active)
+static void applyGtkStyles(bool active, int version)
 {
-   QString gtkkde = QDir::homeDirPath()+"/.gtkrc-kde";
-   QCString gtkrc = getenv("GTK_RC_FILES");
+   QString gtkkde = locateLocal("config", "gtkrc");
+   QCString gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
    if (list.count() == 0)
    {
-      list.append(QString::fromLatin1("/etc/gtk/gtkrc"));
-      list.append(QDir::homeDirPath()+"/.gtkrc");
+      list.append(QString::fromLatin1(sysGtkrc(version)));
+      list.append(QDir::homeDirPath()+userGtkrc(version));
    }
    list.remove(gtkkde);
    list.append(gtkkde);
@@ -58,7 +72,7 @@ static void applyGtkStyles(bool active)
       ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
-   QCString name = "GTK_RC_FILES";
+   QCString name = gtkEnvVar(version);
    QCString value = QFile::encodeName(list.join(":"));
    QByteArray params;
    QDataStream stream(params, IO_WriteOnly);
@@ -289,9 +303,7 @@ static QString color( const QColor& col )
 
 static void createGtkrc( bool exportColors, const QColorGroup& cg )
 {
-    QCString filename = ::getenv("HOME");
-    filename += "/.gtkrc-kde";
-    QFile f( filename );
+    QFile f( locateLocal("config", "gtkrc" ) );
 
     if ( f.open( IO_WriteOnly) ) {
         QTextStream t( &f );
@@ -445,7 +457,8 @@ void runRdb( uint flags )
 
   tmpFile.unlink();
 
-  applyGtkStyles(exportColors);
+  applyGtkStyles(exportColors, 1);
+  applyGtkStyles(exportColors, 2);
 
   /* Qt exports */
   if ( exportQtColors || exportQtSettings )
