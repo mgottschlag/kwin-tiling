@@ -1,0 +1,37 @@
+[Desktop Entry]
+Exec=kcmshell style
+Icon=style
+Type=Application
+DocPath=kcontrol/style.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=style
+X-KDE-FactoryName=style
+#X-KDE-Init=style
+
+Name=Style Settings 
+
+Comment=Allows the the manipulation of widget behaviour and allows changing the Style for KDE
+Comment[de]=Erm�glicht das Einstellen bestimmter Bildschirmelemente sowie das �ndern der Stile f�r KDE
+
+Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
+Keywords[af]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE programme
+Keywords[ar]=مظهر,مظاهر,مظهر,متحكم,أيقونات, شريط أدوات, نص, تظليل,تطبيقات, تطبيقات KDE
+Keywords[az]=tərz,tərzlər,görünüş,dekorlar,örtük,örtüklər,parçacıq,menyu,MacOS,menyu çubuğu,timsal,timsallar,vasitə çubuğu,mətn,düymə,siçan,şəffaf,hərəkət,ekran,proqram,proqramlar,KDE proqramları
+Keywords[da]=stil,udseende,dims,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
+Keywords[de]=Stile,Designs,Themes,Schema,Elemente,Bildschirmelemente,Icons,Bedienelemente,Schriften,Symbole,Werkzeugleisten,Text,Hervorhebungen,Knöpfe,Anwendungen,Programme,KDE-Programme
+Keywords[es]=estilo,estilos,temas,aspecto,objeto visual,widget,texto,resaltado,botones, aplicaciones, aplicaciones KDE
+Keywords[fr]=style,styles,thème,apparence,widget,barre de menus,MacOS,police,couleur,non KDE,icône,icônes,barre d'outils,barres d'outils,barres de menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,écran,applications,programmes,programmes non KDE,applications non KDE
+Keywords[he]=סגנון,מראה,פריטים,סמלים,סרגל כלים,טקסט,הדגשה,יישומים,יישומים של KDE
+Keywords[hu]=stílus,stílusok,kinézet,grafikus elem,ikonok,eszköztárak,szöveg,kiemelés,alkalmazások,KDE alkalmazások
+Keywords[nl]=stijl,stijlen,look,uiterlijk,widget,icons,iconen,pictogrammen,werkbalken,tekst,highlight,accentuatie,apps,KDE applicaties,programma's,KDE-programma's,toepassingen
+Keywords[nn]=stil,tema,utsjånad,bunad,element,skjermelement,verktøylinje,tekst,markering,program,KDE-program
+Keywords[pt]=estilo,estilos,aparência,elemento,ícones,ferramentas,texto,realce,aplicações,aplicações do KDE
+Keywords[pt_BR]=estilo,estilos,aparência,widget,ícones,barra de ferramentas,texto,realce,aplicativos,aplicativos não-KDE
+Keywords[sk]=štýl,štýly,vzhľad,prvok,ikony,KDE aplikácie,panely nástrojov,text,zvýraznenie,aplikácie
+Keywords[sl]=slog,slogi,stil,stili,teme,videz,izgled,gradnik,menujska vrstica,osvetlitev,programi,programi za KDEi
+Keywords[sv]=stil,stilar,utseende,komponent,ikoner,verktygrader,text,färgläggning, pogram,KDE-program
+Keywords[tr]=simgeler,stil,stiller,dekor,dekorlar,tema,temalar,görünüm,parçacık,menü,KDE uygulamaları,araç çubukları,uygulamalar
+Keywords[xh]=uhlobo, iintlobo, jonga, widget, icons, iibar zesixhobo, okubhaliweyo, phawula, apps, KDE izicelo
+Keywords[xx]=xx
+Keywords[zu]=izitayela,izitayela,ukubukeka,widget,ama icon,ithuluzi lamabhazi,okubhaliweyo,khanyisa,apps,KDE izingeniso
