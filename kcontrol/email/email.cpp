@@ -74,7 +74,7 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
 	m_email = new KCMEmailBase(this);
 	topLayout->add(m_email);
 
-	connect(m_email->cmbCurProfile, SIGNAL(textChanged(const QString &)), SLOT(slotComboChanged(const QString &)) );
+ 	connect(m_email->cmbCurProfile, SIGNAL(activated(const QString &)), this, SLOT(slotComboChanged(const QString &)) );
 	connect(m_email->btnNewProfile, SIGNAL(clicked()), SLOT(slotNewProfile()) );
 	connect(m_email->btnICMSettings, SIGNAL(clicked()), SLOT(slotICMSettings()) );
 	connect(m_email->btnOGMSettings, SIGNAL(clicked()), SLOT(slotOGMSettings()) );
