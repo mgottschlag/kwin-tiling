@@ -26,6 +26,9 @@
 class QGridLayout;
 class QButtonGroup;
 class QRadioButton;
+class QCheckBox;
+class QLabel;
+class QSlider;
 
 class PanelTab : public QWidget
 {
@@ -45,7 +48,9 @@ class PanelTab : public QWidget
  protected slots:
   void position_clicked(int);
   void size_clicked(int);
-  
+  void show_hbs_clicked();
+  void hbs_size_changed(int);
+
  private:
   QGridLayout *layout;
   
@@ -56,6 +61,14 @@ class PanelTab : public QWidget
   enum Size {Tiny=0, Normal, Large} size;
   QRadioButton *size_buttons[3];
   QButtonGroup *size_group;
+
+  bool showHBs;
+  int HBwidth;
+
+  QSlider      *hb_size;
+  QLabel       *hb_size_label;
+  QCheckBox    *show_hbs;
+  QButtonGroup *hb_group;
 };
 
 #endif
