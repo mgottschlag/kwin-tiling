@@ -18,7 +18,7 @@
 #include <qmap.h>
 #include <qevent.h>
 #include <qwidget.h>
-#include <qvector.h>
+#include <qptrvector.h>
 
 #include <kcmodule.h>
 #include <bgdefaults.h>
@@ -120,7 +120,7 @@ private:
     QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
 
-    QVector<KBackgroundRenderer> m_Renderer;
+    QPtrVector<KBackgroundRenderer> m_Renderer;
     KGlobalBackgroundSettings *m_pGlobals;
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;
