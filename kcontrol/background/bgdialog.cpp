@@ -142,7 +142,8 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    initUI();
    updateUI();
-#ifdef XRANDR_SUPPORT
+
+#if (QT_VERSION-0 >= 0x030200)
    connect( qApp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized())); // RANDR support
 #endif
 }
