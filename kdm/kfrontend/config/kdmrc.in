@@ -232,7 +232,7 @@ AllowNullPasswd=false
 # Session types the users can select. It is advisable to have "default" and
 # "failsafe" listed herein, which is also the default.
 # Note, that the meaning of this value is entirely up to your Xsession script.
-SessionTypes=default,kde2,failsafe
+SessionTypes=default,kde,failsafe
 # Widget Style of the greeter:
 # KDE, Windows, Platinum, Motif, Motif+, CDE, SGI; Default is KDE
 GUIStyle=KDE
