@@ -41,6 +41,7 @@
 
 #include "general.h"
 
+#include <X11/Xlib.h>
 
 /**** DLL Interface for kcontrol ****/
 
