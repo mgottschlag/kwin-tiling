@@ -2579,10 +2579,11 @@ int main(int argc, char **argv)
 	if ((dir = opendir (newdir))) {
 	    struct dirent *ent;
 	    char bn[PATH_MAX];
-	    readdir (dir); /* . */
-	    readdir (dir); /* .. */
 	    while ((ent = readdir (dir))) {
-		int l = sprintf (bn, "%s/%s", newdir, ent->d_name); /* cannot overflow (kernel would not allow the creation of a longer path) */
+		int l;
+	    	if (!strcmp (ent->d_name, ".") || !strcmp (ent->d_name, ".."))
+		    continue;
+		l = sprintf (bn, "%s/%s", newdir, ent->d_name); /* cannot overflow (kernel would not allow the creation of a longer path) */
 		if (!stat (bn, &st) && !S_ISREG (st.st_mode))
 		    continue;
 		if (no_backup || !memcmp (bn + l - 4, ".bak", 5))
