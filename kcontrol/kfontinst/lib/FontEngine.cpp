@@ -510,8 +510,8 @@ static bool getCharMap(FT_Face &face, const QString &str)
         bool         found=true;
 
         FT_Set_Charmap(face, face->charmaps[cm]);
-		unsigned int strLenght( str.length());
-        for(ch=0; ch< strLenght && found; ch++)
+		unsigned int strLength( str.length());
+        for(ch=0; ch< strLength && found; ch++)
             if(FT_Get_Char_Index(face, str[ch].unicode())==0)
                 found=false;
 
