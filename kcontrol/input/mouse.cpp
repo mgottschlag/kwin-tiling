@@ -6,6 +6,9 @@
  * Layout management, enhancements:
  * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
  *
+ * SC/DC/AutoSelect/ChangeCursor:
+ * Copyright (c) 2000 David Faure <faure@kde.org>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -36,8 +39,11 @@
 #include <qhbuttongroup.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+#include <qcheckbox.h>
+#include <qslider.h>
 
 #include <klocale.h>
+#include <kdialog.h>
 #include <kconfig.h>
 
 #include "mouse.h"
@@ -46,6 +52,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#undef Below
 
 MouseConfig::MouseConfig (QWidget * parent, const char *name)
   : KCModule(parent, name)
@@ -76,6 +83,49 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   lay->addWidget(handedBox);
 
   handedEnabled = true;
+
+  // SC/DC/AutoSelect/ChangeCursor
+
+    singleClick = new QCheckBox(i18n("Single &click to activate"), this);
+    connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
+    lay->addWidget(singleClick);
+
+    cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), this);
+    lay->addWidget(cbAutoSelect);
+    connect(cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
+
+    //----------
+    QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
+
+    int row = 0;
+    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, this);
+    slAutoSelect->setSteps( 125, 125 );
+    slAutoSelect->setTickmarks( QSlider::Below );
+    slAutoSelect->setTickInterval( 250 );
+    slAutoSelect->setTracking( true );
+    grid->addMultiCellWidget(slAutoSelect,row,row,1,2);
+    connect(slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+    lDelay = new QLabel(slAutoSelect, i18n("De&lay:"), this);
+    lDelay->adjustSize();
+    grid->addWidget(lDelay, row, 0);
+
+    row++;
+    QLabel * label = new QLabel(i18n("Small"), this);
+    grid->addWidget(label,row,1);
+
+    label = new QLabel(i18n("Large"), this);
+    grid->addWidget(label,row,2, Qt::AlignRight);
+
+    //lay->addLayout( grid );
+    //----------
+
+    cbCursor = new QCheckBox(i18n("&Change cursor shape when over an icon"), this);
+    lay->addWidget(cbCursor,Qt::AlignLeft);
+    connect(cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
+
+    connect( singleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
 
   lay->addStretch(10);
   load();
@@ -202,6 +252,19 @@ void MouseConfig::load()
   setThreshold(threshold);
   setHandedness(h);
 
+  // SC/DC/AutoSelect/ChangeCursor
+  config->setGroup(QString::fromLatin1("KDE"));
+  bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), DEFAULT_SINGLECLICK);
+  singleClick->setChecked(b);
+  int  autoSelect = config->readNumEntry("AutoSelect", DEFAULT_AUTOSELECT);
+  if ( autoSelect < 0 ) autoSelect = 0;
+  bool changeCursor = config->readBoolEntry("ChangeCursor", DEFAULT_CHANGECURSOR);
+
+  cbAutoSelect->setChecked( autoSelect > 0 );
+  slAutoSelect->setValue( autoSelect );
+  cbCursor->setChecked( changeCursor );
+  slotClick();
+
   delete config;
 }
 
@@ -288,7 +351,13 @@ void MouseConfig::save()
   else
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
 
+  config->setGroup(QString::fromLatin1("KDE"));
+  config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
+  config->writeEntry( "AutoSelect", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
+  config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
+
   config->sync();
+
 
   delete config;
 }
@@ -299,8 +368,22 @@ void MouseConfig::defaults()
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
+    singleClick->setChecked( DEFAULT_SINGLECLICK );
+    cbAutoSelect->setChecked( DEFAULT_AUTOSELECT != -1 );
+    slAutoSelect->setValue( DEFAULT_AUTOSELECT == -1 ? 50 : DEFAULT_AUTOSELECT );
+    cbCursor->setChecked( DEFAULT_CHANGECURSOR );
+    slotClick();
 }
 
+void MouseConfig::slotClick()
+{
+  // Autoselect has a meaning only in single-click mode
+  cbAutoSelect->setEnabled(singleClick->isChecked());
+  // Delay has a meaning only for autoselect
+  bool bDelay = cbAutoSelect->isChecked() && singleClick->isChecked();
+  slAutoSelect->setEnabled( bDelay );
+  lDelay->setEnabled( bDelay );
+}
 
 void MouseConfig::changed()
 {

@@ -3,6 +3,12 @@
  *
  * Copyright (c) 1997 Patrick Dowler dowler@morgul.fsh.uvic.ca
  *
+ * Layout management, enhancements:
+ * Copyright (c) 1999 Dirk A. Mueller <dmuell@gmx.net>
+ *
+ * SC/DC/AutoSelect/ChangeCursor:
+ * Copyright (c) 2000 David Faure <faure@kde.org>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -34,11 +40,15 @@
 
 #include <kapp.h>
 #include <knuminput.h>
+#include "mousedefaults.h"
 
 #include <kcmodule.h>
 
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1
+
+class QCheckBox;
+class QSlider;
 
 class MouseConfig : public KCModule
 {
@@ -52,9 +62,9 @@ public:
 
 private slots:
 
+  void slotClick();
   void changed();
 
-    
 private:
 
   int getAccel();
@@ -76,6 +86,11 @@ private:
 
   int accelRate, thresholdMove, handed;
 
+  QCheckBox *singleClick;
+  QCheckBox *cbAutoSelect;
+  QLabel *lDelay;
+  QSlider *slAutoSelect;
+  QCheckBox *cbCursor;
 };
 
 #endif

@@ -1,0 +1,8 @@
+#ifndef __MOUSE_DEFAULTS_H
+#define __MOUSE_DEFAULTS_H
+
+#define DEFAULT_SINGLECLICK true
+#define DEFAULT_AUTOSELECT -1
+#define DEFAULT_CHANGECURSOR false
+
+#endif
