@@ -82,7 +82,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   kclock = new Kclock( frame2, "kclock" );
   kclock->setMinimumHeight(150);
   v2->addWidget( kclock );
-  QWhatsThis::add( kclock, i18n("") );
+//  QWhatsThis::add( kclock, i18n("") );
 
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
