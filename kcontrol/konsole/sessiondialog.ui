@@ -426,9 +426,11 @@
 <tabstops>
     <tabstop>nameLine</tabstop>
     <tabstop>executeLine</tabstop>
+    <tabstop>directoryLine</tabstop>
     <tabstop>sessionList</tabstop>
     <tabstop>saveButton</tabstop>
     <tabstop>removeButton</tabstop>
+    <tabstop>previewIcon</tabstop>
     <tabstop>fontCombo</tabstop>
     <tabstop>termLine</tabstop>
     <tabstop>keytabCombo</tabstop>
