@@ -29,15 +29,18 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qspinbox.h>
 
 KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
 :KCModule(parent, name)
 {
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     dialog = new KCMKonsoleDialog(this);
+    dialog->SpinBox1->setRange(1,999999);
     dialog->show();
     topLayout->add(dialog);
     load();
+
 
     connect(dialog->fontPB, SIGNAL(clicked()), this, SLOT(setupFont()));
     connect(dialog->fullScreenCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -47,6 +50,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
     connect(dialog->showFrameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->historyCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 
 }
 
@@ -54,8 +58,10 @@ void KCMKonsole::load()
 {
 
     KConfig *config = new KConfig("konsolerc", false, true);
-    config->setGroup("options");
+    config->setDesktopGroup();
 
+
+    dialog->historyCB->setChecked(config->readBoolEntry("historyenabled",true));
 
     dialog->fullScreenCB->setChecked(config->readBoolEntry("Fullscreen",false));
     dialog->showMenuBarCB->setChecked(config->readEntry("MenuBar","Enabled") == "Enabled");
@@ -64,6 +70,7 @@ void KCMKonsole::load()
     dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",1));
     dialog->fontCO->setCurrentItem(config->readNumEntry("font",3));
     currentFont = config->readFontEntry("defaultfont");
+    dialog->SpinBox1->setValue(config->readNumEntry("history",0));
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
 
@@ -103,8 +110,11 @@ void KCMKonsole::save()
 {
 
     KConfig *config = new KConfig("konsolerc", false, true);
-    config->setGroup("options");
+    config->setDesktopGroup();
 
+
+    config->writeEntry("historyenabled", dialog->historyCB->isChecked());
+    config->writeEntry("history", dialog->SpinBox1->text());
     config->writeEntry("Fullscreen", dialog->fullScreenCB->isChecked());
     config->writeEntry("MenuBar", dialog->showMenuBarCB->isChecked()? "Enabled" : "Disabled");
     config->writeEntry("WarnQuit", dialog->warnCB->isChecked());
@@ -130,6 +140,10 @@ void KCMKonsole::save()
 
 void KCMKonsole::defaults()
 {
+
+
+    dialog->historyCB->setChecked(true);
+
     dialog->fullScreenCB->setChecked(false);
     dialog->showMenuBarCB->setChecked(true);
     dialog->warnCB->setChecked(true);
@@ -138,7 +152,7 @@ void KCMKonsole::defaults()
     dialog->terminalCB->setChecked(false);
     
     // Check if -e is needed, I do not think so
-    dialog->terminalLE->setText(i18n( "xterm -e " ) );
+    dialog->terminalLE->setText("xterm");  //No need for i18n
     dialog->fontCO->setCurrentItem(4);
 
     configChanged();
