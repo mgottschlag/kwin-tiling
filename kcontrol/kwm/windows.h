@@ -35,6 +35,7 @@ class QLabel;
 class QSlider;
 class QButtonGroup;
 class QSpinBox;
+class QVButtonGroup;
 
 class KIntNumInput;
 
@@ -125,6 +126,9 @@ private slots:
   void slotChanged();
   void shadeHoverChanged(bool);
 
+  //copied from kcontrol/konq/kwindesktop, aleXXX
+  void setEBorders();
+
 private:
 
   int getMove( void );
@@ -166,6 +170,31 @@ private:
   QLabel *shlabel;
 
   KConfig *config;
+
+  //copied from kcontrol/konq/kwindesktop, aleXXX
+  bool getElectricBorders( void );
+  int getElectricBordersDelay();
+  bool getElectricBordersMovePointer( void );
+
+  void setElectricBorders( bool );
+  void setElectricBordersDelay( int );
+  void setElectricBordersMovePointer( bool );
+
+  int getBorderSnapZone();
+  void setBorderSnapZone( int );
+  
+  int getWindowSnapZone();
+  void setWindowSnapZone( int );
+
+  QVButtonGroup *ElectricBox;
+  QCheckBox *enable, *movepointer;
+  KIntNumInput *delays;
+  QLabel *sec;
+
+  QVButtonGroup *MagicBox;
+  KIntNumInput *BrdrSnap, *WndwSnap;
+  QCheckBox *OverlapSnap;
+
 };
 
 #endif

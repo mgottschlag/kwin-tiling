@@ -26,6 +26,7 @@
 #include <qslider.h>
 #include <qwhatsthis.h>
 #include <qbuttongroup.h>
+#include <qvbuttongroup.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qlabel.h>
@@ -66,6 +67,32 @@
 #define KWIN_TRAVERSE_ALL          "TraverseAll"
 #define KWIN_SHADEHOVER            "ShadeHover"
 #define KWIN_SHADEHOVER_INTERVAL   "ShadeHoverInterval"
+
+
+/*
+ * Some inter-widget spacing constants
+ */
+#define SPACE_XO 20
+#define SPACE_YO 20
+#define SPACE_XI 10
+#define SPACE_YI 10
+
+#define max(a,b) ((a > b) ? a:b)
+
+// kwm config keywords
+#define KWM_ELECTRIC_BORDER                  "ElectricBorder"
+#define KWM_ELECTRIC_BORDER_DELAY            "ElectricBorderNumberOfPushes"
+#define KWM_ELECTRIC_BORDER_MOVE_POINTER     "ElectricBorderPointerWarp"
+
+//CT 15mar 98 - magics
+#define KWM_BRDR_SNAP_ZONE                   "BorderSnapZone"
+#define KWM_BRDR_SNAP_ZONE_DEFAULT           10
+#define KWM_WNDW_SNAP_ZONE                   "WindowSnapZone"
+#define KWM_WNDW_SNAP_ZONE_DEFAULT           10
+
+#define MAX_BRDR_SNAP                          100
+#define MAX_WNDW_SNAP                          100
+#define MAX_EDGE_RES                         1000
 
 
 KFocusConfig::~KFocusConfig ()
@@ -574,8 +601,6 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
 
     lay->addWidget(shBox);
 
-    lay->addStretch();
-
     // Any changes goes to slotChanged()
     connect(opaque, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
@@ -586,6 +611,74 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     connect(animateShade, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     connect(shadeHover, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+
+    //copied from kcontrol/konq/kwindesktop, aleXXX
+//CT disabled <i>sine die</i>
+//  ElectricBox = new QVButtonGroup(i18n("Active desktop borders"),
+//                 this);
+//  ElectricBox->setMargin(15);
+//
+//  enable= new QCheckBox(i18n("Enable &active desktop borders"), ElectricBox);
+//  QWhatsThis::add( enable, i18n("If this option is enabled, moving the mouse to a screen border"
+//    " will change your desktop. This is e.g. useful if you want to drag windows from one desktop"
+//    " to the other.") );
+//
+//  movepointer = new QCheckBox(i18n("&Move pointer towards center after switch"),
+//                              ElectricBox);
+//  QWhatsThis::add( movepointer, i18n("If this option is enabled, after switching desktops using"
+//    " the active borders feature the mouse pointer will be moved to the middle of the screen. This"
+//    " way you don't repeatedly change desktops because the mouse pointer is still on the border"
+//    " of the screen.") );
+//
+//  delays = new KIntNumInput(10, ElectricBox);
+//  delays->setRange(0, MAX_EDGE_RES/10, 10, true);
+//  delays->setLabel(i18n("&Desktop switch delay:"));
+//  QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
+//    " borders feature. Desktops will be switched after the mouse has been touching a screen border"
+//    " for the specified number of seconds.") );
+//
+//  connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
+//
+//  lay->addWidget(ElectricBox);
+//
+//  // Electric borders are not in kwin yet => disable controls
+//  enable->setEnabled(false);
+//  movepointer->setEnabled(false);
+//  delays->setEnabled(false);
+    //CT 15mar98 - add EdgeResistance, BorderAttractor, WindowsAttractor config
+    MagicBox = new QVButtonGroup(i18n("Magic borders"), this);
+    MagicBox->setMargin(15);
+
+    BrdrSnap = new KIntNumInput(10, MagicBox);
+    BrdrSnap->setRange( 0, MAX_BRDR_SNAP);
+    BrdrSnap->setLabel(i18n("&Border snap zone:"));
+    BrdrSnap->setSuffix(i18n(" pixels"));
+    BrdrSnap->setSteps(1,1);
+    QWhatsThis::add( BrdrSnap, i18n("Here you can set the snap zone for screen borders, i.e."
+                                    " the 'strength' of the magnetic field which will make windows snap to the border when"
+                                    " moved near it.") );
+
+    WndwSnap = new KIntNumInput(10, MagicBox);
+    WndwSnap->setRange( 0, MAX_WNDW_SNAP);
+    WndwSnap->setLabel(i18n("&Window snap zone:"));
+    WndwSnap->setSuffix( i18n(" pixels"));
+    BrdrSnap->setSteps(1,1);
+    QWhatsThis::add( WndwSnap, i18n("Here you can set the snap zone for windows, i.e."
+                                    " the 'strength' of the magnetic field which will make windows snap to eachother when"
+                                    " they're moved near another window.") );
+
+    OverlapSnap=new QCheckBox(i18n("Snap windows only when &overlapping"),MagicBox);
+    QWhatsThis::add( OverlapSnap, i18n("Here you can set that windows will be only"
+                                       " snapped if you try to overlap them, i.e. they won't be snapped if the windows"
+                                       " comes only near another window or border.") );
+
+    lay->addWidget(MagicBox);
+    lay->addStretch();
+    load();
+
+    connect( BrdrSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+    connect( WndwSnap, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+    connect( OverlapSnap, SIGNAL(clicked()), this, SLOT(slotChanged()));
 
     load();
 }
@@ -774,6 +867,38 @@ void KAdvancedConfig::load( void )
 
     int k = config->readNumEntry(KWIN_SHADEHOVER_INTERVAL, 250);
     setShadeHoverInterval(k);
+
+    //copied from kcontrol/konq/kwindesktop, aleXXX
+    int v;
+    config->setGroup( "Windows" );
+
+/* Electric borders are not in kwin yet (?)
+  v = config->readNumEntry(KWM_ELECTRIC_BORDER);
+  setElectricBorders(v != -1);
+
+  v = config->readNumEntry(KWM_ELECTRIC_BORDER_DELAY);
+  setElectricBordersDelay(v);
+
+  //CT 17mar98 re-allign this reading with the one in kwm  ("on"/"off")
+  // matthias: this is obsolete now. Should be fixed in 1.1 with NoWarp, MiddleWarp, FullWarp
+  key = config->readEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER);
+  if (key == "MiddleWarp")
+    setElectricBordersMovePointer(TRUE);
+*/
+    //CT 15mar98 - magics
+    v = config->readNumEntry(KWM_BRDR_SNAP_ZONE, KWM_BRDR_SNAP_ZONE_DEFAULT);
+    if (v > MAX_BRDR_SNAP) setBorderSnapZone(MAX_BRDR_SNAP);
+    else if (v < 0) setBorderSnapZone (0);
+    else setBorderSnapZone(v);
+
+    v = config->readNumEntry(KWM_WNDW_SNAP_ZONE, KWM_WNDW_SNAP_ZONE_DEFAULT);
+    if (v > MAX_WNDW_SNAP) setWindowSnapZone(MAX_WNDW_SNAP);
+    else if (v < 0) setWindowSnapZone (0);
+    else setWindowSnapZone(v);
+    //CT ---
+
+    OverlapSnap->setChecked(config->readBoolEntry("SnapOnlyWhenOverlapping",false));
+
 }
 
 void KAdvancedConfig::save( void )
@@ -831,6 +956,31 @@ void KAdvancedConfig::save( void )
     v = getShadeHoverInterval();
     if (v<0) v = 0;
     config->writeEntry(KWIN_SHADEHOVER_INTERVAL, v);
+
+  //copied from kcontrol/konq/kwindesktop, aleXXX
+  config->setGroup( "Windows" );
+
+/* Electric borders are not in kwin yet
+  int v = getElectricBordersDelay()>10?80*getElectricBordersDelay():800;
+  if (getElectricBorders())
+    config->writeEntry(KWM_ELECTRIC_BORDER,v);
+  else
+    config->writeEntry(KWM_ELECTRIC_BORDER,-1);
+
+
+  config->writeEntry(KWM_ELECTRIC_BORDER_DELAY,getElectricBordersDelay());
+
+  bv = getElectricBordersMovePointer();
+  config->writeEntry(KWM_ELECTRIC_BORDER_MOVE_POINTER,bv?"MiddleWarp":"NoWarp");
+*/
+
+  //CT 15mar98 - magics
+  config->writeEntry(KWM_BRDR_SNAP_ZONE,getBorderSnapZone());
+
+  config->writeEntry(KWM_WNDW_SNAP_ZONE,getWindowSnapZone());
+
+  config->writeEntry("SnapOnlyWhenOverlapping",OverlapSnap->isChecked());
+
 }
 
 void KAdvancedConfig::defaults()
@@ -839,7 +989,77 @@ void KAdvancedConfig::defaults()
     setResizeOpaque(RESIZE_TRANSPARENT);
     setPlacement(SMART_PLACEMENT);
     setMoveResizeMaximized(true);
+
+    //copied from kcontrol/konq/kwindesktop, aleXXX
+    setWindowSnapZone(KWM_WNDW_SNAP_ZONE_DEFAULT);
+    setBorderSnapZone(KWM_BRDR_SNAP_ZONE_DEFAULT);
+    OverlapSnap->setChecked(false);
+
 }
+
+void KAdvancedConfig::setEBorders()
+{
+    delays->setEnabled(enable->isChecked());
+    movepointer->setEnabled(enable->isChecked());
+}
+
+bool KAdvancedConfig::getElectricBorders()
+{
+    return  enable->isChecked();
+}
+
+int KAdvancedConfig::getElectricBordersDelay()
+{
+    return delays->value();
+}
+
+bool KAdvancedConfig::getElectricBordersMovePointer()
+{
+    return movepointer->isChecked();
+}
+
+void KAdvancedConfig::setElectricBordersMovePointer(bool move){
+
+  if(move){
+    movepointer->setEnabled(true);
+    movepointer->setChecked(true);
+  }
+  else{
+    movepointer->setEnabled(false);
+    movepointer->setChecked(false);
+  }
+
+  movepointer->setEnabled(enable->isChecked());
+
+}
+
+void KAdvancedConfig::setElectricBorders(bool b){
+    enable->setChecked(b);
+    setEBorders();
+}
+
+void KAdvancedConfig::setElectricBordersDelay(int delay)
+{
+    delays->setValue(delay);
+}
+
+
+int KAdvancedConfig::getBorderSnapZone() {
+  return BrdrSnap->value();
+}
+
+void KAdvancedConfig::setBorderSnapZone(int pxls) {
+  BrdrSnap->setValue(pxls);
+}
+
+int KAdvancedConfig::getWindowSnapZone() {
+  return WndwSnap->value();
+}
+
+void KAdvancedConfig::setWindowSnapZone(int pxls) {
+  WndwSnap->setValue(pxls);
+}
+
 
 
 #include "windows.moc"
