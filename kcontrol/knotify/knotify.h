@@ -29,6 +29,7 @@
 #include <qlistview.h>
 #include <qstring.h>
 #include <qtooltip.h>
+#include <qpushbutton.h>
 
 #include <kcmodule.h>
 
