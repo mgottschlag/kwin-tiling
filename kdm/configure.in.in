@@ -219,21 +219,7 @@ else
     [ AC_MSG_ERROR([--with-rpcauth requires Sun RPC header files.])])
 fi
 
-  dnl should be:
-  dnl AC_CHECK_MEMBER(struct passwd.pw_expire, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
-  dnl but somehow it doesn't work. so we make it by hand ...
-  AC_MSG_CHECKING([for pw_expire in struct passwd])
-  AC_CACHE_VAL(ac_cv_have_pw_expire,
-      [ AC_TRY_COMPILE(
-	  [#include <pwd.h>],
-	  [struct passwd pwd; pwd.pw_expire = 0;],
-	  [ac_cv_have_pw_expire="yes"],
-	  [ac_cv_have_pw_expire="no"])
-      ])
-  AC_MSG_RESULT($ac_cv_have_pw_expire)
-  if test "$ac_cv_have_pw_expire" = "yes"; then
-      XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE"
-  fi
+  AC_CHECK_MEMBER([struct passwd.pw_expire], [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
 
   ac_save_libs=$LIBS
   LIBS="$LIBS $LIBUTIL"
