@@ -95,7 +95,7 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     konqGroup->insert(rb);
     grid->addWidget(rb, 3, 2);
     rb = new QRadioButton(this);
-    panelGroup->insert(rb);
+    konqGroup->insert(rb);
     grid->addWidget(rb, 3, 3);
 
     // KDE
