@@ -45,8 +45,6 @@
 #include "toplevel.h"
 #include "toplevel.moc"
 
-KLocaleAdvanced *locale = 0;
-
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
@@ -76,8 +74,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localenum,  SIGNAL(resample()),                    SLOT(update()  ));
   connect(localemon,  SIGNAL(resample()),                    SLOT(update()  ));
   connect(localetime, SIGNAL(resample()),                    SLOT(update()  ));
-  connect(localemain, SIGNAL(languageChanged()), localenum, SLOT(reset()   ));
-  connect(localemain, SIGNAL(languageChanged()), localemon, SLOT(reset()   ));
+  connect(localemain, SIGNAL(languageChanged()), localenum,  SLOT(reset()   ));
+  connect(localemain, SIGNAL(languageChanged()), localemon,  SLOT(reset()   ));
   connect(localemain, SIGNAL(languageChanged()), localetime, SLOT(reset()   ));
   connect(localemain, SIGNAL(countryChanged()),              SLOT(reset   ()));
   connect(localemain, SIGNAL(chsetChanged()),                SLOT(newChset()));
@@ -98,30 +96,36 @@ void KLocaleApplication::load()
 
 void KLocaleApplication::save()
 {
-    localemain->save();
-    localenum->save();
-    localemon->save();
-    localetime->save();
-
     // temperary use of our locale as the global locale
     KLocale *lsave = KGlobal::_locale;
     KGlobal::_locale = locale;
-
     KMessageBox::information(this, locale->translate
 			     ("Changed language settings apply only to "
 			      "newly started applications.\nTo change the "
 			      "language of all programs, you will have to "
 			      "logout first."),
                              locale->translate("Applying language settings"));
-
-    // rebuild the date base
-    // TODO: check if the _language_ was changed?
-    KProcess proc;
-    proc << QString::fromLatin1("kbuildsycoca");
-    proc.start(KProcess::DontCare);
-
     // restore the old global locale
     KGlobal::_locale = lsave;
+
+    KConfig *config = KGlobal::config();
+    KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
+
+    bool langChanged = config->readEntry(QString::fromLatin1("Language"))
+           != locale->language();
+
+    localemain->save();
+    localenum->save();
+    localemon->save();
+    localetime->save();
+
+    // rebuild the date base if language was changed
+    if (langChanged)
+    {
+      KProcess proc;
+      proc << QString::fromLatin1("kbuildsycoca");
+      proc.start(KProcess::DontCare);
+    }
 }
 
 void KLocaleApplication::defaults()
