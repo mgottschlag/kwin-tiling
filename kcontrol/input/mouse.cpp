@@ -47,7 +47,7 @@
 
 #include <qfileinfo.h>
 #include <qstring.h>
-#include <qhbuttongroup.h>
+#include <qbuttongroup.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
@@ -87,6 +87,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     top->addWidget(tabwidget);
 	
 	tab1 = new KMouseDlg(this);
+    QButtonGroup *group = new QButtonGroup( tab1 );
+    group->setExclusive( true );
+    group->hide();
+    group->insert( tab1->singleClick );
+    group->insert( tab1->doubleClick );
 
     tabwidget->addTab(tab1, i18n("&General"));
 
@@ -114,7 +119,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     wtstr = i18n("Activates and opens a file or folder with a single click."
           "When this option is checked, the shape of the mouse pointer"
          " changes whenever it is over an icon.");
-    QWhatsThis::add( tab1->cbCursor, wtstr );
+    QWhatsThis::add( tab1->singleClick, wtstr );
 
 
     connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
@@ -149,8 +154,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     connect(tab1->cb_pointershape, SIGNAL(clicked()), this, SLOT(changed()));
 
-    connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(changed()));
-    connect(tab1->cbCursor, SIGNAL(clicked()), this, SLOT(slotClick()));
+    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(slotClick()));
 
     connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
     connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
@@ -336,6 +341,7 @@ void MouseConfig::load()
   dragStartDist->setValue(settings->dragStartDist);
   wheelScrollLines->setValue(settings->wheelScrollLines);
 
+  tab1->singleClick->setChecked( settings->changeCursor );
   tab1->doubleClick->setChecked(!settings->singleClick);
   tab1->cb_pointershape->setChecked(settings->changeCursor);
   tab1->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
@@ -344,7 +350,6 @@ void MouseConfig::load()
   else
      tab1->slAutoSelect->setValue( settings->autoSelectDelay );
   tab1->cbVisualActivate->setChecked( settings->visualActivate );
-  tab1->cbCursor->setChecked( settings->changeCursor );
   tab1->cbLargeCursor->setChecked( settings->largeCursor );
   slotClick();
 }
@@ -362,7 +367,7 @@ void MouseConfig::save()
   settings->singleClick = !tab1->doubleClick->isChecked();
   settings->autoSelectDelay = tab1->cbAutoSelect->isChecked()? tab1->slAutoSelect->value():-1;
   settings->visualActivate = tab1->cbVisualActivate->isChecked();
-//  settings->changeCursor = tab1->cbCursor->isChecked();
+//  settings->changeCursor = tab1->singleClick->isChecked();
   settings->changeCursor = tab1->cb_pointershape->isChecked();
   settings->largeCursor = tab1->cbLargeCursor->isChecked();
 
@@ -390,7 +395,7 @@ void MouseConfig::defaults()
     tab1->doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
     tab1->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     tab1->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
-    tab1->cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
+    tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
     tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     slotClick();
 }
@@ -408,7 +413,7 @@ QString MouseConfig::quickHelp() const
 void MouseConfig::slotClick()
 {
   // Autoselect has a meaning only in single-click mode
-  tab1->cbAutoSelect->setEnabled(!tab1->doubleClick->isChecked() || tab1->cbCursor->isChecked());
+  tab1->cbAutoSelect->setEnabled(!tab1->doubleClick->isChecked() || tab1->singleClick->isChecked());
   // Delay has a meaning only for autoselect
   bool bDelay = tab1->cbAutoSelect->isChecked() && ! tab1->doubleClick->isChecked();
    tab1->slAutoSelect->setEnabled( bDelay );
