@@ -22,6 +22,7 @@
 #include <qframe.h>
 #include <qsizepolicy.h>
 #include <qwhatsthis.h>
+#include <qtextstream.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -95,6 +96,7 @@ KThemeListBox::~KThemeListBox()
 
 void KThemeListBox::readThemeDir(const QString &directory)
 {
+    qDebug("Reading theme dir: %s", directory.latin1());
     QString name, desc;
 
     kconfig->setGroup("KDE");
@@ -142,6 +144,29 @@ void KThemeListBox::save()
 {
     if (currentItem()->text(0) == curName)
         return;
+    // check for legacy theme
+    KSimpleConfig configTest(currentItem()->text(2));
+    configTest.setGroup("Misc");
+    if(configTest.hasKey("RCPath")){
+        qDebug("Legacy theme");
+        QFile input(configTest.readEntry("RCPath"));
+        if(!input.open(IO_ReadOnly)){
+            qDebug("Could not open input file!");
+            return;
+        }
+        QFile output(QDir::home().absPath() + "/.gtkrc");
+        if(!output.open(IO_WriteOnly)){
+            qDebug("Could not open output file!");
+            return;
+        }
+        QTextStream outStream(&output);
+        QTextStream inStream(&input);
+        outStream << "pixmap_path \"" << configTest.readEntry("PixmapPath") << "\""<< endl;
+        while(!inStream.atEnd())
+            outStream << inStream.readLine() << endl;
+        input.close();
+        output.close();
+    }
 
     KThemeBase::applyConfigFile(currentItem()->text(2));
     curItem = currentItem();
