@@ -14,6 +14,20 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.27  2002/10/30 09:14:22  hausmann
+    -#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H) && <more stuff>
+    +#if ( defined(HAVE_LINUX_RAW_H) || defined(HAVE_SYS_RAW_H) ) && <more stuff>
+     #include <sys/ioctl.h>
+     #include <fcntl.h>
+    +
+    +#if defined(HAVE_LINUX_RAW_H)
+     #include <linux/raw.h>
+    +#elif defined(HAVE_SYS_RAW_H)
+    +#include <sys/raw.h>
+    +#endif
+    (plus check for sys/raw.h in configure.in.in)
+    CCMAIL: 49695-done@bugs.kde.org
+
     Revision 1.26  2002/08/12 08:58:59  binner
     CVS_SILENT scheck'ed GUI, use "cvslastchange" or X-WebCVS header line to view
 
@@ -308,10 +322,10 @@ bool GetInfo_Partitions(QListView * lBox)
 #include <sys/ioctl.h>
 #include <fcntl.h>
 
-#if defined(HAVE_LINUX_RAW_H)
-#include <linux/raw.h>
-#elif defined(HAVE_SYS_RAW_H)
+#if defined(HAVE_SYS_RAW_H)
 #include <sys/raw.h>
+#elif defined(HAVE_LINUX_RAW_H)
+#include <linux/raw.h>
 #endif
 
 /* 
