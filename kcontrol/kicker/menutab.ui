@@ -278,7 +278,7 @@
                                 <number>10</number>
                             </property>
                             <property name="maxValue">
-                                <number>30</number>
+                                <number>100</number>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>When browsing directories that contain a lot of files, the QuickBrowser can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser. This is particularly useful for low screen resolutions.</string>
