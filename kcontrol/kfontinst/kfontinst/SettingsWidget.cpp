@@ -129,7 +129,7 @@ void CSettingsWidget::gsFontmapChanged(const QString &file)
                                                    "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
        else
           KMessageBox::error(this, i18n("File does not exist "
-                                        "and folder is not writeable."), i18n("File error"));
+                                        "and folder is not writable."), i18n("File error"));
     else
        ok=true;
 
@@ -184,7 +184,7 @@ void CSettingsWidget::xConfigChanged(const QString &file)
                                                      "Create new file?"), i18n("File error"))==KMessageBox::Yes ? true : false;
         else
             KMessageBox::error(this, i18n("File does not exist "
-                                          "and folder is not writeable."), i18n("File error"));
+                                          "and folder is not writable."), i18n("File error"));
     else
         ok=true;
 

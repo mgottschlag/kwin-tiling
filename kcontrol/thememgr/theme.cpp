@@ -413,7 +413,7 @@ QString Theme::findFile(const QString &aSrc)
 
   if (finfo.isDir())
   {
-    kdDebug() << src << " is a direcotry instead of a file." << endl;
+    kdDebug() << src << " is a directory instead of a file." << endl;
     return QString::null;
   }
   return src;

@@ -437,7 +437,7 @@ void KLocaleConfigTime::slotTranslate()
 
   old = m_comboDateFmtShort->currentText();
   m_comboDateFmtShort->clear();
-  str = i18n("some resasonable short date formats for the language",
+  str = i18n("some reasonable short date formats for the language",
 	     "YYYY-MM-DD\n"
 	     "dD.mM.YYYY\n"
 	     "DD.MM.YYYY");

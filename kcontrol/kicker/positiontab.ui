@@ -1001,7 +1001,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                 <set>AlignCenter</set>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
+                                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the position of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
                             </property>
                         </widget>
                         <spacer>

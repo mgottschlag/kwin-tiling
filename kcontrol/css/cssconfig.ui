@@ -155,11 +155,11 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>U&amp;se accessiblity stylesheet defined in "Customize"-tab</string>
+                                    <string>U&amp;se accessibility stylesheet defined in "Customize"-tab</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse. Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                                    <string>&lt;b&gt;Use accessibility stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse. Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                             <widget row="0"  column="0" >
