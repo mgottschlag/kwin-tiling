@@ -454,7 +454,6 @@ GRecvCmd (int *cmd)
     return 0;
 }
 
-#ifdef XDMCP
 void
 GSendArr (int len, const char *data)
 {
@@ -462,7 +461,6 @@ GSendArr (int len, const char *data)
     GWrite (&len, sizeof(len));
     GWrite (data, len);
 }
-#endif
 
 static char *
 iGRecvArr (int *rlen)

@@ -733,9 +733,12 @@ static void
 processDPipe (struct display *d)
 {
     char *user, *pass, *args;
-    int cmd, how, ct, len;
+    int cmd, how;
     GTalk dpytalk;
+#ifdef XDMCP
+    int ct, len;
     ARRAY8 ca, ha;
+#endif
 
     dpytalk.pipe = &d->pipe;
     if (Setjmp (dpytalk.errjmp)) {
@@ -766,6 +769,7 @@ processDPipe (struct display *d)
 	doShutdown (how, GRecvInt ());
 	/* XXX after this all displays could be gone */
 	break;
+#ifdef XDMCP
     case D_ChooseHost:
 	ca.data = (unsigned char *)GRecvArr (&len);
 	ca.length = (CARD16) len;
@@ -781,6 +785,7 @@ processDPipe (struct display *d)
 	    free (d->remoteHost);
 	d->remoteHost = GRecvStr ();
 	break;
+#endif
     case D_XConnOk:
 	startingServer = 0;
 	break;

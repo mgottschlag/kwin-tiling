@@ -21,6 +21,8 @@
 
     */
 
+#ifdef XDMCP
+
 #include "kchooser.h"
 #include "kdmconfig.h"
 #include "kdm_greet.h"
@@ -217,3 +219,5 @@ void ChooserDlg::slotReadPipe()
 }
 
 #include "kchooser.moc"
+
+#endif

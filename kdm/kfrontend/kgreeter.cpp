@@ -235,7 +235,11 @@ KGreeter::KGreeter()
 	needSep = true;
     }
 
+#ifdef XDMCP
     completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
+#else
+    completeMenu();
+#endif
 
     if (optMenu)
 	menuButton->setPopup( optMenu );

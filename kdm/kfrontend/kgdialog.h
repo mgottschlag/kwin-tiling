@@ -54,7 +54,11 @@ class KGDialog : public FDialog {
     void slotShutdown();
 
   protected:
+#ifdef XDMCP
     void completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel );
+#else
+    void completeMenu();
+#endif
     void adjustGeometry();
     void inserten( const QString& txt, int accel, const char *member );
     void inserten( const QString& txt, int accel, QPopupMenu *cmnu );

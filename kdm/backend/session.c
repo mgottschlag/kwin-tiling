@@ -530,13 +530,16 @@ ManageSession (struct display *d)
 	}
 	Signal (SIGALRM, IdleTOJmp);
 	alarm (td->idleTimeout);
+#ifdef XDMCP
 	if (((d->displayType & d_location) == dLocal) &&
 	    d->loginMode >= LOGIN_DEFAULT_REMOTE)
 	    goto choose;
+#endif
 	for (;;) {
 	    GSendInt (G_Greet);
 	  gcont:
 	    cmd = CtrlGreeterWait (TRUE);
+#ifdef XDMCP
 	  recmd:
 	    if (cmd == G_DChoose) {
 	      choose:
@@ -545,6 +548,7 @@ ManageSession (struct display *d)
 	    }
 	    if (cmd == G_DGreet)
 		continue;
+#endif
 	    alarm (0);
 	    if (cmd == G_Ready)
 		break;

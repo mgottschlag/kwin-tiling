@@ -27,7 +27,9 @@
 #include "kdmconfig.h"
 #include "kgapp.h"
 #include "kgreeter.h"
-#include "kchooser.h"
+#ifdef XDMCP
+# include "kchooser.h"
+#endif
 
 #include <kprocess.h>
 #include <kcmdlineargs.h>
@@ -139,41 +141,45 @@ kg_main( const char *argv0 )
 
     setCursor( dpy, app.desktop()->winId(), XC_left_ptr );
 
-  redo:
-    int rslt, cmd = GRecvInt();
+    for (;;) {
+	int rslt, cmd = GRecvInt();
     
-    if (cmd == G_ErrorGreet) {
-	if (KGVerify::handleFailVerify( qApp->desktop()->screen( kdmcfg->_greeterScreen ) ))
-	    goto done;
-	cmd = G_Greet;
-    }
+	if (cmd == G_ErrorGreet) {
+	    if (KGVerify::handleFailVerify( qApp->desktop()->screen( kdmcfg->_greeterScreen ) ))
+		break;
+	    cmd = G_Greet;
+	}
 
-    app.setOverrideCursor( Qt::WaitCursor );
-    FDialog *dialog;
-    if (cmd == G_Greet)
-	dialog = new KGreeter;
-    else {
-	dialog = new ChooserDlg;
-	GSendInt( G_Ready );	/* tell chooser to go into async mode */
-	GRecvInt();		/* ack */
-    }
-    app.restoreOverrideCursor();
-    Debug( "entering event loop\n" );
-    rslt = dialog->exec();
-    Debug( "left event loop\n" );
-    delete dialog;
-    switch (rslt) {
-    case ex_greet:
-	GSendInt( G_DGreet );
-	goto redo;
-    case ex_choose:
-	GSendInt( G_DChoose );
-	goto redo;
-    default:
+	app.setOverrideCursor( Qt::WaitCursor );
+	FDialog *dialog;
+#ifdef XDMCP
+	if (cmd == G_Choose) {
+	    dialog = new ChooserDlg;
+	    GSendInt( G_Ready );	/* tell chooser to go into async mode */
+	    GRecvInt();			/* ack */
+	} else
+#endif
+	    dialog = new KGreeter;
+	app.restoreOverrideCursor();
+	Debug( "entering event loop\n" );
+	rslt = dialog->exec();
+	Debug( "left event loop\n" );
+	delete dialog;
+#ifdef XDMCP
+	switch (rslt) {
+	case ex_greet:
+	    GSendInt( G_DGreet );
+	    continue;
+	case ex_choose:
+	    GSendInt( G_DChoose );
+	    continue;
+	default:
+	    break;
+	}
+#endif
 	break;
     }
 
-  done:
     KGVerify::done();
 
     delete proc;

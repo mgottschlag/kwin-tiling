@@ -83,7 +83,9 @@ public:
     QString	_liloMap;
 #endif
 
+#ifdef XDMCP
     int		_loginMode;
+#endif
 
     int		_forgingSeed;
 

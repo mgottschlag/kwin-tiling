@@ -120,8 +120,10 @@ if test "x$with_xdmcp" = xyes; then
 are installed or use --without-xdmcp to disable XDMCP support!])
     DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
+  XDMCP_DEFINE=-DXDMCP
 fi
 AC_SUBST(LIBXDMCP)
+AC_SUBST(XDMCP_DEFINE)
 
 KRB4_INCS=
 KRB4_LIBS=
@@ -245,9 +247,6 @@ if test "x$use_pam" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DUSE_PAM"
 elif test "x$use_shadow" = xyes; then
     XDM_CFLAGS="$XDM_CFLAGS -DUSESHADOW"
-fi
-if test "x$with_xdmcp" = xyes; then
-    XDM_CFLAGS="$XDM_CFLAGS -DXDMCP"
 fi
 if test "x$with_krb4" != xno; then
     XDM_CFLAGS="$XDM_CFLAGS -DKERBEROS"

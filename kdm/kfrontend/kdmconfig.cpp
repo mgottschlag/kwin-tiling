@@ -201,7 +201,9 @@ KDMConfig::KDMConfig()
     }
 #endif
 
+#ifdef XDMCP
     _loginMode = GetCfgInt (C_loginMode);
+#endif
 
     _forgingSeed = GetCfgInt (C_ForgingSeed);
 

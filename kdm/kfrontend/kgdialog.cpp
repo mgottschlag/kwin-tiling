@@ -54,16 +54,22 @@ KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 }
 
 void
+#ifdef XDMCP
 KGDialog::completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel )
+#else
+KGDialog::completeMenu()
+#endif
 {
     if (kdmcfg->_allowClose)
 	inserten( kdmcfg->_isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
 	      ALT+Key_E, SLOT(slotExit()) );
 
+#ifdef XDMCP
     if (kdmcfg->_isLocal && kdmcfg->_loginMode != _switchIf) {
 	switchCode = _switchCode;
 	inserten( _switchMsg, _switchAccel, SLOT(slotSwitch()) );
     }
+#endif
 
     if (kdmcfg->_hasConsole)
 	inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
@@ -123,13 +129,17 @@ KGDialog::slotExit()
 void
 KGDialog::slotSwitch()
 {
+#ifdef XDMCP
     QTimer::singleShot( 0, this, SLOT(slotReallySwitch()) );
+#endif
 }
 
 void
 KGDialog::slotReallySwitch()
 {
+#ifdef XDMCP
     done( switchCode );
+#endif
 }
 
 void
