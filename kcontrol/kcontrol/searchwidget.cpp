@@ -205,10 +205,10 @@ void SearchWidget::slotModuleSelected(const QString & s)
   emit moduleSelected(s);
 }
 
-
 void SearchWidget::slotModuleClicked(QListBoxItem *item)
 {
-  emit moduleSelected(item->text());
+  if (item)
+    emit moduleSelected(item->text());
 }
 
 
