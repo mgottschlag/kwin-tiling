@@ -73,30 +73,6 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
   return true;
 }
 
-bool KShortURIFilter::expandEnvVar( QString& cmd ) const
-{
-  // ENVIRONMENT variable expansion
-  int env_loc = 0;
-  bool matchFound = false;
-  QRegExp r (QFL1(ENV_VAR_PATTERN));
-  while( 1 )
-  {
-    env_loc = r.search( cmd, env_loc );
-    if( env_loc == -1 ) break;
-    const char* exp = getenv( cmd.mid( env_loc + 1, r.matchedLength() - 1 ).local8Bit().data() );
-    if(exp)
-    {
-      cmd.replace( env_loc, r.matchedLength(), QString::fromLocal8Bit(exp) );
-      matchFound = true;
-    }
-    else
-    {
-      env_loc++; // skip past the '$' or end up in endless loop!!
-    }
-  }
-  return matchFound;
-}
-
 QString KShortURIFilter::removeArgs( const QString& _cmd ) const
 {
   QString cmd( _cmd );
@@ -132,17 +108,18 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   */
   KURL url = data.uri();
   QString cmd = url.url();
+  QString extra; // stuff that must appended to the cmd
   bool isMalformed = url.isMalformed();
 
   // Extract path if URL is local
   // (this removes "file:" but also decodes back %20 etc.)
-  if( url.isLocalFile() && !isMalformed )
+  if( url.isLocalFile() && !isMalformed ) {
     cmd = url.path();
+    if ( url.hasRef() )
+        extra = QFL1("#") + url.ref();
+  }
 
   // Note: do NOT use "url" below this point
-
-  // Environment variable expansion.
-  (void)expandEnvVar( cmd );
 
   bool isLocalFullPath = cmd[0] == '/';
   //kdDebug() << "KShortURIFilter::filterURI cmd=" << cmd << endl;
@@ -169,15 +146,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::HELP );
-    return true;
-  }
-
-  // Filter for the about command.
-  if ( cmd == ( QFL1("about:") ) )
-  {
-    cmd = QFL1("about:konqueror");
-    setFilteredURI( data, cmd );
-    setURIType( data, KURIFilterData::NET_PROTOCOL );
     return true;
   }
 
@@ -214,6 +182,16 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
     isLocalFullPath = cmd[0] == '/';
   }
+  else if ( cmd[0] == '$' ) {
+      // Environment variable expansion.
+      QRegExp r (QFL1(ENV_VAR_PATTERN));
+      if ( r.search( cmd ) == 0 ) {
+          const char* exp = getenv( cmd.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
+          if(exp)
+              cmd.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
+      }
+      isLocalFullPath = cmd[0] == '/';
+  }
 
   // Checking for local resource match...
   // Determine if "uri" is an absolute path to a local resource  OR
@@ -236,7 +214,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     abs = QDir::cleanDirPath(abs + '/' + cmd);
     //kdDebug() << "checking whether " << abs << " exists." << endl;
     // Check if it exists
-    if( stat( abs.local8Bit().data() , &buff ) == 0 ) {
+    if( stat( abs.local8Bit().data(), &buff ) == 0 ) {
         cmd = abs; // yes -> store as the new cmd
         exists = true;
         isLocalFullPath = true;
@@ -263,6 +241,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
+      cmd += extra;
       setFilteredURI( data, cmd );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;

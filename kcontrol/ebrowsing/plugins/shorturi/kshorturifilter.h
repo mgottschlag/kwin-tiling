@@ -104,19 +104,6 @@ protected:
      */
     bool isValidShortURL( const QString& /*str*/ ) const;
 
-    /**
-     * Expands any environment variables
-     *
-     * This functions expands any environment variables
-     * it can find.  The results are the same as what
-     * you would get when enviroment variables are expanded
-     * in a *nix shell.
-     *
-     * @param string the url that contains variable to be expanded
-     * @return true if an environment variable was sucessfully expanded
-     */
-    bool expandEnvVar( QString& ) const;
-
     QString removeArgs( const QString& cmd ) const;
 
 private:
