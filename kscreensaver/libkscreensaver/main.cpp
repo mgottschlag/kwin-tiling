@@ -56,7 +56,7 @@ class DemoWindow : public QWidget
 public:
     DemoWindow() : QWidget()
     {
-        setFixedSize(600, 420);
+	setFixedSize(600, 420);
     }
 
 protected:
@@ -125,6 +125,9 @@ int main(int argc, char *argv[])
     }
 
     target = kss_create( saveWin );
+
+    if ( demoWidget )
+	demoWidget->setFixedSize(600, 420);
 
     app.exec();
 
