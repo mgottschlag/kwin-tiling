@@ -159,9 +159,9 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 */
 
 #include <qlayout.h>
-#include <qobjcoll.h>
+#include <qcollection.h>
 #include <qwidget.h>
-#include <qwidcoll.h>
+#include <qwidgetlist.h>
 
 
 #define SCREEN_XY_OFFSET 20

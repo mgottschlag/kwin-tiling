@@ -9,7 +9,7 @@
 #define __ENERGY_H__
 
 #include <qwidget.h>
-#include <qlined.h>
+#include <qlineedit.h>
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qpainter.h>

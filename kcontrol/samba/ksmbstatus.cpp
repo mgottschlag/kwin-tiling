@@ -1,12 +1,12 @@
 #include <qlayout.h>
 #include <qlistview.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qpoint.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include <kapp.h>
-#include <qpushbt.h>
+#include <qpushbutton.h>
 #include <qfont.h>
 #include <kmenubar.h>
 #include <ktmainwindow.h>
