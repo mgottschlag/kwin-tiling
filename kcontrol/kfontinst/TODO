@@ -1,4 +1,3 @@
 1. Support other X server config file types - if there are any other types...
 2. When FreeType2 adds support for BDF, and PCF files, then allow these to be previewed.
 3. Support drag-and-drop from Konqueror, etc.
-4. Remove settings wizard - no longer required?

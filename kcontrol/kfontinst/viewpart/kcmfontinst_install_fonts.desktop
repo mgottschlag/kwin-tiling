@@ -1,0 +1,7 @@
+[Desktop Entry]
+ServiceTypes=application/x-font-ttf,application-x-font-type1
+Actions=installFont
+
+[Desktop Action installFont]
+Name=Install...
+Exec=kcmfontinst_install_fonts.sh %U

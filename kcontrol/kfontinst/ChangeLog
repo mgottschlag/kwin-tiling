@@ -1,16 +1,18 @@
-0.11->0.12
-==========
-1. Re-design of UI - removed "Install From" view.
-2. Created a KIO/thumbnail font preview class
-3. Fonts are installed/uninstalled on "Apply"
-4. Settings are saved on "Apply"
-5. Settings tab simplified - some uneccesary settings removed
-6. Removal of Anti-Alias tab - relevant settings moved to kcmfonts
-7. Add kfile-plugin to display Meta data for fonts
-8. Remove settings wizard
+0.11-> KDE3.1
+=============
+1.  Re-design of UI - removed "Install From" view.
+2.  Created a KIO/thumbnail font preview class.
+3.  Fonts are installed/uninstalled on "Apply".
+4.  Settings are saved on "Apply".
+5.  Settings tab simplified - some uneccesary settings removed.
+6.  Removal of Anti-Alias tab - relevant settings moved to kcmfonts.
+7.  Add kfile-plugin to display Meta data for fonts.
+8.  Remove settings wizard.
+9.  Drop use of internal version numbering - not tagging CVS anyway, so whats the point?
+10. DCOP interface.
 
-0.10->0.11
-==========
+0.10->0.11 (KDE3.0)
+===================
 1.  Port to KDE3/Qt3.
 2.  Add support for CUPS's Fontmap.
 3.  Create backups of system files.
