@@ -216,8 +216,11 @@ AC_SUBST(LIB_LIBS)
 AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h)
 
 AC_CHECK_LIB(Xau, main, [:], 
-	AC_MSG_ERROR([Cannot build KDM! Make sure that libXau.a is installed!]), 
-	$X_LDFLAGS -lX11 $LIBSOCKET)
+	[
+	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
+	  DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
+	], 
+	  $X_LDFLAGS -lX11 $LIBSOCKET)
 
 AC_ARG_WITH(xdmcp,
 	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
@@ -237,8 +240,9 @@ if test -n "$XDMCP"; then
     ac_cpp=$ac_cpp_safe
   fi
   if test -z "$HAVE_X11_XDMCP_H"; then
-    AC_MSG_ERROR([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
+    AC_MSG_WARN([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
 are installed or use --without-xdmcp to disable XDMCP support!])
+    DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
   AC_DEFINE(XDMCP, 1, [ build KDM with XDMCP support ])
 fi
