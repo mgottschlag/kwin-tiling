@@ -409,9 +409,13 @@ void topKCMEmail::slotICMSettings()
 {
 	if (!m_email->radICMLocal->isChecked()) {
 		UserNameDlg *ud = new UserNameDlg(this, i18n("Incoming Mail Retrieval Settings"));
+		QString long_num;
 		ud->txtUsername->setText(m_sICMUsername);
 		ud->txtPass->setText(m_sICMPassword);
 		ud->txtHost->setText(m_sICMHost);
+		long_num.setNum(m_uICMPort);
+		ud->txtPort->setText(long_num);
+		ud->chkTLS->setChecked(m_bICMSecure);
 		if (ud->exec() == QDialog::Accepted) {
 			m_sICMUsername = ud->txtUsername->text();
 			m_bICMSecure = ud->chkTLS->isChecked();
