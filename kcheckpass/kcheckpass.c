@@ -140,7 +140,7 @@ usage(int exitval)
 int
 main(int argc, char **argv)
 {
-  char		*login, passbuffer[1024], *passwd,*ca,username[128];
+  char		*login, passbuffer[1024], *passwd,*ca,*un,username[128];
   int		with_U;
   struct passwd	*pw;
   int		status, c;
@@ -207,6 +207,14 @@ main(int argc, char **argv)
   if (ca) strncpy(caller,ca,19);
   caller[19] = '\000';  /* Make sure caller can never be longer than 19 characters */
   unsetenv("KDE_PAM_ACTION");
+
+  un = getenv("KCHECKPASS_USER");
+  if (un) {
+    strncpy(username, un, 127);
+    username[127] = '\000';
+    with_U = 1;
+  }  
+  
 #endif  
 
   if (with_U) {
@@ -222,7 +230,7 @@ main(int argc, char **argv)
       exit(10);
     }
   }
-  
+ 
   if ((login = strdup(pw->pw_name)) == NULL) {
     message("Out of memory on strdup'ing user name \"%.100s\"\n", pw->pw_name);
     exit(10);
