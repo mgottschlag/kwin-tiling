@@ -189,8 +189,6 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             width,
             spacing,
             slant;
-
-#if KDE_IS_VERSION(3,1,90)
     KURL    url(info.url());
     QString fName;
     bool    fontsProt  = KIO_FONTS_PROTOCOL == url.protocol(),
@@ -207,16 +205,9 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
     if(downloaded || fontsProt || fileProt)
     {
-#else
-
-    QString fName  = info.path();
-    bool    status = false;
-
-    what=0;
-
-#endif
-        int face=0,
-            numFaces=0;
+        int  face=0,
+             numFaces=0;
+        bool hasPs=false;
 
         do
         {
@@ -232,7 +223,10 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 {
                     addEntry(face, family, CGlobal::fe().getFamilyName());
                     if(CGlobal::fe().hasPsInfo())
+                    {
+                        hasPs=true;
                         addEntry(face, ps, CGlobal::fe().getPsName());
+                    }
                     if(0==face)
                         foundry=CGlobal::fe().getFoundry();
                     addEntry(face, weight, toStr(CGlobal::fe().getWeight()));
@@ -247,27 +241,29 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
         }
         while(++face<numFaces);
 
-        KFileMetaInfoGroup group;
-
-        group=appendGroup(info, "General");
-        appendItem(group, "Full", full);
-
-        if(KFileMetaInfo::Fastest!=what)
+        if(status)
         {
-            appendItem(group, "Family", family);
-            appendItem(group, "PostScript", ps);
-            appendItem(group, "Foundry", foundry);
-            appendItem(group, "Weight", weight);
-            appendItem(group, "Width", width);
-            appendItem(group, "Spacing", spacing);
-            appendItem(group, "Slant", slant);
+            KFileMetaInfoGroup group;
+
+            group=appendGroup(info, "General");
+            appendItem(group, "Full", full);
+
+            if(KFileMetaInfo::Fastest!=what)
+            {
+                appendItem(group, "Family", family);
+                if(hasPs)
+                    appendItem(group, "PostScript", ps);
+                appendItem(group, "Foundry", foundry);
+                appendItem(group, "Weight", weight);
+                appendItem(group, "Width", width);
+                appendItem(group, "Spacing", spacing);
+                appendItem(group, "Slant", slant);
+            }
         }
 
-#if KDE_IS_VERSION(3,1,90)
         if(downloaded)
             KIO::NetAccess::removeTempFile(fName);
     }
-#endif
 
     return status;
 }
