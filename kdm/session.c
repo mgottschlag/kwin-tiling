@@ -721,6 +721,7 @@ StartClient (verify, d, pidp, name, passwd)
          * We need to do this before setusercontext() because that may
          * set or reset some environment variables.
          */
+	envinit[0] = NULL;
         environ = envinit;
 
 	/*
