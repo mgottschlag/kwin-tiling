@@ -21,6 +21,7 @@ services_DATA =	acronym.desktop \
 		google_images.desktop \
 		google_lucky.desktop \
 		hotbot.desktop \
+                imdb.desktop \
 		jeeves.desktop \
 		leo.desktop \
 		lycos.desktop \
