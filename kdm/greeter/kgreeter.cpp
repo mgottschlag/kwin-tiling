@@ -764,6 +764,8 @@ creat_greet(void * /* ptr */)
     QApplication::restoreOverrideCursor();
 }
 
+extern bool kde_have_kipc;
+
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    This function is a BIG mess. It needs A LOT of cleanup.
 */
@@ -837,6 +839,7 @@ GreetUser(
     argv[2] = ::d->name;
     KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
+    kde_have_kipc = false;
     MyApp myapp;
     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + QString::fromLatin1("kdm/pics/users/"));
     QApplication::setOverrideCursor( Qt::waitCursor );
