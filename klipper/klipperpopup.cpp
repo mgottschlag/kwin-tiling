@@ -199,7 +199,15 @@ void KlipperPopup::rebuild( const QString& filter ) {
             insertItem( QSnomatch, -1, TOP_HISTORY_ITEM_INDEX );
         }
         n_history_items++;
+    } else {
+        if ( history()->topIsUserSelected() ) {
+            int id = idAt( TOP_HISTORY_ITEM_INDEX );
+            if ( id != -1 ) {
+                setItemChecked( id,true );
+            }
+        }
     }
+
 
     m_dirty = false;
 

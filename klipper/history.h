@@ -104,6 +104,13 @@ public:
      */
     unsigned max_size() const { return m_max_size; }
 
+    /**
+     * returns true if the user has selected the top item
+     */
+    bool topIsUserSelected() {
+        return m_topIsUserSelected;
+    }
+
 public slots:
     /**
      * move the history in position pos to top
@@ -142,6 +149,11 @@ private:
      * The number of clipboard items stored.
      */
     unsigned m_max_size;
+
+    /**
+     * True if the top is selected by the user
+     */
+    bool m_topIsUserSelected;
 
 };
 

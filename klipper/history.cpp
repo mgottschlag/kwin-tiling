@@ -27,7 +27,8 @@
 
 History::History( QWidget* parent, const char* name )
     : QObject( parent,  name ),
-      m_popup( new KlipperPopup( this, parent, "main_widget" ) )
+      m_popup( new KlipperPopup( this, parent, "main_widget" ) ),
+      m_topIsUserSelected( false )
 {
     connect( this, SIGNAL( changed() ), m_popup,  SLOT( slotHistoryChanged() ) );
     itemList.setAutoDelete( true );
@@ -45,6 +46,8 @@ History::iterator History::youngest() {
 void History::insert( const HistoryItem* item ) {
     if ( !item )
         return;
+
+    m_topIsUserSelected = false;
 
     // Optimisation: Compare with top item.
     if ( !itemList.isEmpty() && *itemList.first() == *item ) {
@@ -101,6 +104,9 @@ void History::slotMoveToTop(int pos ) {
         kdDebug() << "Argument pos out of range: " << pos << endl;
         return;
     }
+
+    m_topIsUserSelected = true;
+
     itemList.first();
     for ( ; pos; pos-- ) {
         itemList.next();
