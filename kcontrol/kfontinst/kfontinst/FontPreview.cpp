@@ -53,15 +53,15 @@ void CFontPreview::setPixmap(const QPixmap &pixmap)
 
 void CFontPreview::paintEvent(QPaintEvent *)
 {
-    QRect    r(rect());
     QPainter paint( this );
 
-    r.setX(r.x()+1);
-
     if(itsText.isEmpty())
-        paint.drawPixmap(r, itsPixmap);
+        paint.drawPixmap(0, 0, itsPixmap);
     else
     {
+        QRect r(rect());
+
+        r.setX(r.x()+1);
         r.setY(r.y()+((height()-fontMetrics().height())/2));
         paint.setPen(kapp->palette().active().text());
         paint.drawText(r, AlignLeft, itsText);
