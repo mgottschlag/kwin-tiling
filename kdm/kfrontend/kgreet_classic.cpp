@@ -325,7 +325,7 @@ KClassicGreeter::revive()
     } else {
 	setActive( true );
 	passwdEdit->erase();
-	if (loginEdit->text().isEmpty())
+	if (loginEdit && loginEdit->text().isEmpty())
 	    loginEdit->setFocus();
 	else
 	    passwdEdit->setFocus();
