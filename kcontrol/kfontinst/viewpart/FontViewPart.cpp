@@ -136,14 +136,14 @@ void CFontViewPart::install()
                     break;
             }
 
-        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? KIO_FONTS_USER_DIR : KIO_FONTS_SYS_DIR))+sub);
+        QString       destDir(CMisc::root() ? sub : QString((KMessageBox::Yes==resp ? KIO_FONTS_USER_DIR : KIO_FONTS_SYS_DIR))+QChar('/')+sub);
         KURL          destUrl(QString("fonts:/")+destDir+CMisc::getFile(m_url.path()));
         KIO::UDSEntry uds;
 
-        if(KIO::NetAccess::stat(destUrl, uds))
+        if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
             KMessageBox::error(itsFrame, i18n("%1:%2 already installed!").arg(m_url.protocol()).arg(m_url.path()), i18n("Error"));
         else
-            if(KIO::NetAccess::copy(m_file, destUrl))
+            if(KIO::NetAccess::copy(m_file, destUrl, itsFrame->parentWidget()))
             {
                 if(CFontEngine::isAType1(QFile::encodeName(m_url.path())))
                 {
@@ -153,8 +153,8 @@ void CFontViewPart::install()
                     afmUrl.setPath(CMisc::changeExt(m_url.path(), "afm"));
                     destUrl.setPath(CMisc::changeExt(destUrl.path(), "afm"));
 
-                    if(KIO::NetAccess::stat(afmUrl, uds) && !KIO::NetAccess::stat(destUrl, uds))
-                        KIO::NetAccess::copy(afmUrl, destUrl);
+                    if(KIO::NetAccess::stat(afmUrl, uds, itsFrame->parentWidget()) && !KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
+                        KIO::NetAccess::copy(afmUrl, destUrl, itsFrame->parentWidget());
                 }
 
                 KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed!").arg(m_url.protocol()).arg(m_url.path()), i18n("Success"),
