@@ -18,13 +18,13 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
     char fname[256];
     FILE *file;
 
-    // read passwd
+    /* read passwd */
     struct passwd *pwd = getpwnam( usr );
     endpwent();
     if (!pwd)
 	return 0;
 
-    // Go user
+    /* Go user */
     gidset_size = getgroups(0, 0);
     if (!(gidset = malloc (sizeof(gid_t) * gidset_size)))
 	return 0;
@@ -33,7 +33,7 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
 	setegid(pwd->pw_gid) != 0 ||
         seteuid(pwd->pw_uid) != 0
     ) {
-	// Error, back out
+	/* Error, back out */
 	seteuid(0);
         setegid(0);
 	setgroups( gidset_size, gidset);
@@ -41,7 +41,7 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
 	return 0;
     }
 
-    // open file as user which is loging in
+    /* open file as user which is loging in */
     sprintf(fname, "%s/" WMRC, pwd->pw_dir);
     rv = 0;
     if (rd) {
@@ -60,7 +60,7 @@ rdwr_wm (char *wm, int wml, const char *usr, int rd)
 	}
     }
 
-    // Go root
+    /* Go root */
     seteuid(0);
     setegid(0);
     setgroups(gidset_size, gidset);
