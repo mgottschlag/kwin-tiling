@@ -786,7 +786,6 @@ void KSMServer::removeConnection( KSMConnection* conn )
  */
 void KSMServer::ioError( IceConn /*iceConn*/ )
 {
-    /*
     QListIterator<KSMClient> it ( clients );
     while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
 	++it;
@@ -798,13 +797,13 @@ void KSMServer::ioError( IceConn /*iceConn*/ )
     }
     IceSetShutdownNegotiation (iceConn, False);
     IceCloseConnection( iceConn );
-    */
 }
 
 void KSMServer::processData( int /*socket*/ )
 {
-//     (void) IceProcessMessages( ((KSMConnection*)sender())->iceConn, 0, 0 );
+    (void) IceProcessMessages( ((KSMConnection*)sender())->iceConn, 0, 0 );
 
+    /*    // this instead of ioError handling above. Seems to make trouble
     IceConn iceConn = ((KSMConnection*)sender())->iceConn;
     IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
     if ( status == IceProcessMessagesIOError ) {
@@ -820,6 +819,7 @@ void KSMServer::processData( int /*socket*/ )
 	}
 	(void) IceCloseConnection( iceConn );
     }
+    */
 }
 
 KSMClient* KSMServer::newClient( SmsConn conn )
