@@ -17,6 +17,7 @@
  *
  */
 
+
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -33,6 +34,7 @@
 #include <kdesktopfile.h>
 #include <kurlrequester.h>
 #include <kfiledialog.h>
+#include "khotkeys.h"
 
 
 #include "basictab.h"
@@ -41,7 +43,7 @@
 BasicTab::BasicTab( QWidget *parent, const char *name )
   : QWidget(parent, name)
 {
-    QGridLayout *layout = new QGridLayout(this, 4, 2,
+    QGridLayout *layout = new QGridLayout(this, 6, 2,
 					  KDialog::marginHint(),
 					  KDialog::spacingHint());
 
@@ -146,6 +148,30 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     layout->setRowStretch(0, 2);
 
+    // key binding group
+    general_group_keybind = new QGroupBox(this);
+    layout->addMultiCellWidget( general_group_keybind, 4, 4, 0, 1 );
+    // dummy widget in order to make it look a bit better
+    layout->addWidget( new QWidget(this), 5, 0 );
+    layout->setRowStretch( 1, 4 );
+    QGridLayout *grid_keybind = new QGridLayout(general_group_keybind, 3, 1,
+					KDialog::marginHint(),
+					KDialog::spacingHint());
+
+    grid_keybind->addWidget(new QLabel(i18n("Current key"), general_group_keybind), 0, 0);
+    _keyEdit = new KLineEdit(general_group_keybind);
+    _keyEdit->setReadOnly( true );
+    _keyEdit->setText( "" );
+    QPushButton* _keyButton = new QPushButton( i18n( "Change" ),
+                                               general_group_keybind );
+    connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
+    grid_keybind->addWidget(_keyEdit, 0, 1);
+    grid_keybind->addWidget(_keyButton, 0, 2 );
+    if( !KHotKeys::present())
+        setEnabled( false ); // disable the whole tab if no KHotKeys found
+    _khotkeysNeedsSave = false;
+
+
     //disable all group at the begining.
     //because there is not file selected.
     _nameEdit->setEnabled(false);
@@ -155,6 +181,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _path_group->setEnabled(false);
     _term_group->setEnabled(false);
     _uid_group->setEnabled(false);
+    // key binding part
+    general_group_keybind->setEnabled( false );
 
     connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
@@ -162,6 +190,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 void BasicTab::setDesktopFile(const QString& desktopFile)
 {
     _desktopFile = desktopFile;
+    // key binding part
+    _khotkeysNeedsSave = false;
 
     KDesktopFile df(desktopFile);
 
@@ -191,9 +221,22 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
 	  _uidEdit->setText("");
 	  _terminalCB->setChecked(false);
 	  _uidCB->setChecked(false);
-
-	  return;
+          return;
     }
+
+    // key binding part
+    if( desktopFile.find(".desktop") > 0 )
+    {
+        if( KHotKeys::present())
+        {
+            general_group_keybind->setEnabled( true );
+            _keyEdit->setText( KHotKeys::getMenuEntryShortcut(
+                _desktopFile ));
+        }
+    }
+    else
+        general_group_keybind->setEnabled( false ); // not a menu entry - no shortcut
+
 
     _execEdit->lineEdit()->setText(df.readEntry("Exec"));
     _typeEdit->setText(df.readType());
@@ -214,6 +257,13 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
 
 void BasicTab::apply( bool desktopFileNeedsSave )
 {
+    // key binding part
+    if( KHotKeys::present() && _khotkeysNeedsSave )
+        {
+        KHotKeys::changeMenuEntryShortcut( _desktopFile, _keyEdit->text());
+        }
+    _khotkeysNeedsSave = false;
+
     if( !desktopFileNeedsSave )
         return;
     QString local = locateLocal("apps", _desktopFile);
@@ -249,6 +299,9 @@ void BasicTab::reset()
 {
     if(_desktopFile != "")
 	setDesktopFile(_desktopFile);
+
+    // key binding part
+    _khotkeysNeedsSave = false;
 }
 
 void BasicTab::slotChanged(const QString&)
@@ -271,4 +324,18 @@ void BasicTab::uidcb_clicked()
 {
     _uidEdit->setEnabled(_uidCB->isChecked());
     emit changed();
+}
+
+// key bindign method
+void BasicTab::keyButtonPressed()
+{
+    if( !KHotKeys::present())
+        return;
+    QString new_shortcut = KHotKeys::editMenuEntryShortcut( _desktopFile,
+        _keyEdit->text(), false );
+    if( new_shortcut == _keyEdit->text())
+        return;
+    _keyEdit->setText( new_shortcut );
+    emit changed( false );
+    _khotkeysNeedsSave = true;
 }

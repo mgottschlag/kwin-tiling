@@ -23,7 +23,6 @@
 #include <qwidget.h>
 
 class BasicTab;
-class AdvancedTab;
 class QPushButton;
 class QTabWidget;
 
@@ -47,7 +46,6 @@ protected slots:
 
 protected:
     BasicTab      *_basicTab;
-    AdvancedTab   *_advancedTab;
     QPushButton   *_apply, *_reset;
     QTabWidget    *_tabs;
     bool          _desktopFileNeedsSave;

@@ -16,7 +16,6 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
@@ -26,7 +25,6 @@
 #include <kseparator.h>
 
 #include "basictab.h"
-#include "advancedtab.h"
 #include "desktopfileeditor.h"
 #include "desktopfileeditor.moc"
 
@@ -38,11 +36,8 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     // setup tabs
     _tabs = new QTabWidget(this);
     _basicTab = new BasicTab(this);
-    _advancedTab = new AdvancedTab(this);
     _tabs->addTab(_basicTab, i18n("General"));
-    _tabs->addTab(_advancedTab, i18n("Advanced"));
     connect(_basicTab, SIGNAL(changed(bool)), SLOT(slotChanged(bool)));
-    connect(_advancedTab, SIGNAL(changed(bool)), SLOT(slotChanged(bool)));
     layout->addMultiCellWidget(_tabs, 0, 0, 0, 2);
 
     // setup separator
@@ -67,7 +62,6 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
 void DesktopFileEditor::setDesktopFile(const QString& desktopFile)
 {
     _basicTab->setDesktopFile(desktopFile);
-    _advancedTab->setDesktopFile(desktopFile);
     _apply->setEnabled(false);
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;
@@ -84,7 +78,6 @@ void DesktopFileEditor::slotChanged( bool desktopFileNeedsSave )
 void DesktopFileEditor::slotApply()
 {
     _basicTab->apply( _desktopFileNeedsSave );
-    _advancedTab->apply( _desktopFileNeedsSave );
     _apply->setEnabled(false);
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;
@@ -94,7 +87,6 @@ void DesktopFileEditor::slotApply()
 void DesktopFileEditor::slotReset()
 {
     _basicTab->reset();
-    _advancedTab->reset();
     _apply->setEnabled(false);
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;

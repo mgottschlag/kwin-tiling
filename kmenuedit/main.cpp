@@ -27,15 +27,16 @@
 
 #include "kmenuedit.h"
 
-static const char *description = I18N_NOOP("KDE Menu Editor");
-static const char *version = "0.2";
+static const char *description = I18N_NOOP("KDE Menu editor");
+static const char *version = "0.3";
 
 int main( int argc, char **argv )
 {
     KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
 			 version, description, KAboutData::License_GPL,
-			 "(c) 2000, Matthias Elter");
-    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+			 "(c) 2001, Raffaele Sandrini");
+    aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Maintainer"), "sandrini@kde.org");
+    aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();

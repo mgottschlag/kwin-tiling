@@ -21,6 +21,9 @@
 #define __basictab_h__
 
 #include <qwidget.h>
+#include <qstring.h>
+
+#include <klineedit.h>
 
 class KLineEdit;
 class KIconButton;
@@ -50,16 +53,18 @@ protected slots:
     void slotChanged();
     void termcb_clicked();
     void uidcb_clicked();
+    void keyButtonPressed();
 
 protected:
-    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit;
+    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit, *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB;
     KIconButton  *_iconButton;
-    QGroupBox    *_path_group, *_term_group, *_uid_group;
+    QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
 
     QString       _desktopFile;
+    bool _khotkeysNeedsSave;
 };
 
 #endif
