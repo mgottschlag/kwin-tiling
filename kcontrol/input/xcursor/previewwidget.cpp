@@ -176,8 +176,8 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 
 PreviewCursor::~PreviewCursor()
 {
-	XFreeCursor( QPaintDevice::x11AppDisplay(), m_handle );
-	XRenderFreePicture( QPaintDevice::x11AppDisplay(), m_pict );
+	if ( m_handle ) XFreeCursor( QPaintDevice::x11AppDisplay(), m_handle );
+	if ( m_pict ) XRenderFreePicture( QPaintDevice::x11AppDisplay(), m_pict );
 }
 
 
