@@ -41,6 +41,7 @@ signals:
 
 private slots:
     void loadConfig( QListViewItem* item );
+    void locationChanged();
     void slotChanged();
 };
 
@@ -57,16 +58,18 @@ public:
 
     // Configuration settings
     int      _position;
+    int      _alignment;
     int      _HBwidth;
     bool     _showLeftHB;
     bool     _showRightHB;
-    bool     _autoHide;
+    int      _hideMode;
     bool     _autoHideSwitch;
     int      _autoHideDelay;
     bool     _hideAnim;
     bool     _autoHideAnim;
     int      _hideAnimSpeed;
     int      _autoHideAnimSpeed;
+    int      _unhideLocation;
     bool     _showToolTips;
     int      _sizePercentage;
     bool     _expandSize;

@@ -21,11 +21,15 @@
 #include <qstring.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <qradiobutton.h>
+#include <qgroupbox.h>
+#include <qbuttongroup.h>
 
 #include <kconfig.h>
 #include <kcombobox.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 
 #include "main.h"
 #include "hidingtab_impl.h"
@@ -39,53 +43,62 @@ HidingTab::HidingTab( KickerConfig *parent, const char* name )
   : HidingTabBase (parent, name)
 {
     kconf = parent;
+
     // connections
-    connect(m_manualHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_autoHide, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_autoHideSwitch, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_delaySlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_autoHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_lHB, SIGNAL(clicked()), SLOT(hideButtonsClicked()));
-    connect(m_rHB, SIGNAL(clicked()), SLOT(hideButtonsClicked()));
+    connect(m_manual,SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_automatic,SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_background,SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_lHB, SIGNAL(toggled(bool)), SLOT(hideButtonsClicked()));
+    connect(m_rHB, SIGNAL(toggled(bool)), SLOT(hideButtonsClicked()));
     connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_autoHideSwitch, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_none, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_top, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_topRight, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_right, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_bottomRight, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_bottomLeft, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_left, SIGNAL(toggled(bool)), SIGNAL(changed()));
+    connect(m_topLeft, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // whats this help
-    QWhatsThis::add(m_manualHideAnimation, i18n("If hide buttons are enabled, check this option to make the "
-                                                "panel softly slide away when you click on the hide buttons. "
-                                                "Otherwise it will just disappear."));
-
-    QWhatsThis::add(m_manualHideSlider, i18n("Determines the speed of the hide animation, i.e. the "
-                                             "animation shown when you click on the panel's hide buttons."));
-
-    QWhatsThis::add(m_autoHide, i18n("If this option is enabled, the panel will automatically hide "
-                                     "after some time and reappear when you move the mouse to the "
-                                     "screen edge the panel is attached to. "
-                                     "This is particularly useful for small screen resolutions, "
-                                     "for example, on laptops.") );
-
-    QWhatsThis::add(m_autoHideSwitch, i18n("If this option is enabled, the panel will automatically show "
-					   "itself for a brief period of time when the desktop is switched "
-					   "so you can see which desktop you are on.") );
-
-    QString delaystr = i18n("Here you can change the delay after which the panel will disappear"
-                            " if not used.");
-
-    QWhatsThis::add(m_delaySlider, delaystr);
-    QWhatsThis::add(m_delaySpinBox, delaystr);
-
-    QWhatsThis::add(m_autoHideAnimation, i18n("If auto-hide panel is enabled, check this option to make "
-                                              "the panel softly slide down after a certain amount of time. "
-                                              "Otherwise it will just disappear."));
-
-    QWhatsThis::add(m_autoHideSlider, i18n("Determines the speed of the auto-hide animation, "
-                                           "i.e. the animation shown when the panel disappears after "
-                                           "a certain amount of time."));
-
-    QWhatsThis::add(m_hideButtonSlider, i18n("Here you can change the size of the hide buttons."));
-
+    QWhatsThis::add(m_manual, i18n(
+        "If this option is selected, the only way to hide the panel "
+        "will be via the hide buttons at its side."));
+    QWhatsThis::add(m_automatic, i18n(
+        "If this option is selected, the panel will automatically hide "
+        "after some time and reappear when you move the mouse to the "
+        "screen edge where the panel is hidden. "
+        "This is particularly useful for small screen resolutions, "
+        "for example, on laptops."));
+    QWhatsThis::add(m_background, i18n(
+        "If this option is selected, the panel will allow itself to "
+        "be covered by other windows. Raise the panel to the top by "
+        "moving the mouse to the screen edge specified by the unhide location "
+        "below."));
+    QWhatsThis::add(m_hideButtonSlider, i18n(
+        "Here you can change the size of the hide buttons."));
+    QWhatsThis::add(m_manualHideSlider, i18n(
+        "Determines the speed of the animation shown when you click "
+        "the panel's hide buttons. To disable the animation, move the "
+        "slider all the way to the left."));
+    QWhatsThis::add(m_delaySpinBox, i18n(
+        "Here you can change the delay after which the panel will disappear "
+        "if not used."));
+    QWhatsThis::add(m_autoHideSlider, i18n(
+        "Determines the speed of the animation shown when the panel "
+        "automatically hides itself. To disable the animation, move the "
+        "slider all the way to the left."));
+    QWhatsThis::add(m_autoHideSwitch, i18n(
+        "If this option is enabled, the panel will automatically show "
+        "itself for a brief period of time when the desktop is switched "
+        "so you can see which desktop you are on.") );
+    QWhatsThis::add(m_backgroundGroup, i18n(
+        "Here you can set the location on the screen's edge that will "
+        "bring the panel to front."));
     load();
 }
 
@@ -100,37 +113,38 @@ void HidingTab::load()
 
     c->setGroup("General");
 
-    bool hideanim = c->readBoolEntry("HideAnimation", true);
-    bool autohideanim = c->readBoolEntry("AutoHideAnimation", true);
-
-    m_manualHideSlider->setValue(c->readNumEntry("HideAnimationSpeed", 40));
-    m_autoHideSlider->setValue(c->readNumEntry("AutoHideAnimationSpeed", 40));
-
-    m_manualHideSlider->setEnabled(hideanim);
-    m_autoHideSlider->setEnabled(autohideanim);
-
-    m_manualHideAnimation->setChecked(hideanim);
-    m_autoHideAnimation->setChecked(autohideanim);
+    if( c->readBoolEntry("AutoHidePanel", false) ) {
+       m_automatic->setChecked(true);
+    } else if( c->readBoolEntry("BackgroundHide", false) ) {
+       m_background->setChecked(true);
+    } else {
+       m_manual->setChecked(true);
+    }
+    m_automaticGroup->setEnabled(m_automatic->isChecked());
 
     bool showLHB = c->readBoolEntry("ShowLeftHideButton", false);
     bool showRHB = c->readBoolEntry("ShowRightHideButton", true);
-
     m_lHB->setChecked( showLHB );
     m_rHB->setChecked( showRHB );
-
     m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 14));
     m_hideButtonSlider->setEnabled(showLHB || showRHB);
 
-    bool ah = c->readBoolEntry("AutoHidePanel", false);
-    bool ahs = c->readBoolEntry("AutoHideSwitch", false);
-    int delay = c->readNumEntry("AutoHideDelay", 3);
+    if( c->readBoolEntry("HideAnimation", true) ) {
+       m_manualHideSlider->setValue(c->readNumEntry("HideAnimationSpeed", 40)/10);
+    } else {
+       m_manualHideSlider->setValue(0);
+    }
 
-    m_autoHide->setChecked(ah);
-    m_autoHideSwitch->setChecked(ahs);
-    m_delaySlider->setValue(delay);
-    m_delaySpinBox->setValue(delay);
-    m_delaySlider->setEnabled(ah);
-    m_delaySpinBox->setEnabled(ah);
+    m_delaySpinBox->setValue( c->readNumEntry("AutoHideDelay", 3) );
+    if( c->readBoolEntry("AutoHideAnimation", true) ) {
+       m_autoHideSlider->setValue(c->readNumEntry("AutoHideAnimationSpeed", 40)/10);
+    } else {
+       m_manualHideSlider->setValue(0);
+    }
+    m_autoHideSwitch->setChecked( c->readBoolEntry("AutoHideSwitch", false) );
+
+    m_backgroundGroup->setButton( c->readNumEntry("UnhideLocation",BottomLeft) );
+    m_backgroundGroup->setEnabled(m_background->isChecked());
 
     delete c;
 }
@@ -146,17 +160,22 @@ void HidingTab::save()
 
     c->setGroup("General");
 
-    c->writeEntry("HideAnimation", m_manualHideAnimation->isChecked());
-    c->writeEntry("AutoHidePanel", m_autoHide->isChecked());
-    c->writeEntry("AutoHideSwitch", m_autoHideSwitch->isChecked());
-    c->writeEntry("AutoHideDelay", m_delaySlider->value());
-    c->writeEntry("AutoHideAnimation", m_autoHideAnimation->isChecked());
-    c->writeEntry("HideAnimationSpeed", m_manualHideSlider->value());
-    c->writeEntry("AutoHideAnimationSpeed", m_autoHideSlider->value());
+    c->writeEntry("AutoHidePanel", m_automatic->isChecked());
+    c->writeEntry("BackgroundHide", m_background->isChecked());
+
     c->writeEntry("ShowLeftHideButton", m_lHB->isChecked());
     c->writeEntry("ShowRightHideButton", m_rHB->isChecked());
-
     c->writeEntry("HideButtonSize", m_hideButtonSlider->value());
+    c->writeEntry("HideAnimation", m_manualHideSlider->value() != 0);
+    c->writeEntry("HideAnimationSpeed", m_manualHideSlider->value()*10);
+
+    c->writeEntry("AutoHideDelay", m_delaySpinBox->value());
+    c->writeEntry("AutoHideAnimation", m_autoHideSlider->value() != 0);
+    c->writeEntry("AutoHideAnimationSpeed", m_autoHideSlider->value()*10);
+    c->writeEntry("AutoHideSwitch", m_autoHideSwitch->isChecked());
+
+    c->writeEntry("UnhideLocation", m_backgroundGroup->id(m_backgroundGroup->selected()));
+
     c->sync();
 
     delete c;
@@ -164,24 +183,18 @@ void HidingTab::save()
 
 void HidingTab::defaults()
 {
-    m_manualHideAnimation->setChecked(true);
-    m_autoHideAnimation->setChecked(true);
-
-    m_manualHideSlider->setEnabled(true);
-    m_autoHideSlider->setEnabled(true);
-
-    m_manualHideSlider->setValue(100);
-    m_autoHideSlider->setValue(25);
-
-    m_autoHide->setChecked(false);
-    m_delaySlider->setValue(3);
-    m_delaySpinBox->setValue(3);
-    m_delaySlider->setEnabled(false);
-    m_delaySpinBox->setEnabled(false);
+    m_manual->setChecked(true);
 
     m_lHB->setChecked( false );
     m_rHB->setChecked( true );
     m_hideButtonSlider->setValue(10);
+    m_manualHideSlider->setValue(100);
+
+    m_delaySpinBox->setValue(3);
+    m_autoHideSlider->setValue(30);
+    m_autoHideSwitch->setChecked(false);
+
+    m_backgroundGroup->setButton(BottomLeft);
 }
 
 void HidingTab::hideButtonsClicked()

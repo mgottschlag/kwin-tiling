@@ -151,7 +151,7 @@ void ModifiersModule::setupMacModifierKeys()
 {
 	const int CODE_Ctrl_L = 0x25, CODE_Ctrl_R = 0x6d;
 	const int CODE_Win_L  = 0x73, CODE_Win_R  = 0x74;
-	const int CODE_Alt_L  = 0x40, CODE_Alt_R  = 0x71;
+	//const int CODE_Alt_L  = 0x40, CODE_Alt_R  = 0x71;
 	int keyCodeMin, keyCodeMax, nKeyCodes, nSymsPerCode;
 
 	XDisplayKeycodes( qt_xdisplay(), &keyCodeMin, &keyCodeMax );
@@ -161,14 +161,18 @@ void ModifiersModule::setupMacModifierKeys()
 
 	SET_CODE_SYM( CODE_Ctrl_L, XK_Super_L )
 	SET_CODE_SYM( CODE_Ctrl_R, XK_Super_R )
-	SET_CODE_SYM( CODE_Win_L,  XK_Alt_L )
-	SET_CODE_SYM( CODE_Win_R,  XK_Alt_R )
-	SET_CODE_SYM( CODE_Alt_L,  XK_Control_L )
-	SET_CODE_SYM( CODE_Alt_R,  XK_Control_R )
+	SET_CODE_SYM( CODE_Win_L,  XK_Control_L )
+	SET_CODE_SYM( CODE_Win_R,  XK_Control_R )
+	//SET_CODE_SYM( CODE_Win_L,  XK_Alt_L )
+	//SET_CODE_SYM( CODE_Win_R,  XK_Alt_R )
+	//SET_CODE_SYM( CODE_Alt_L,  XK_Control_L )
+	//SET_CODE_SYM( CODE_Alt_R,  XK_Control_R )
 
-	SET_MOD_CODE( ControlMapIndex, CODE_Alt_L, CODE_Alt_R );
-	SET_MOD_CODE( Mod1MapIndex,    CODE_Win_L, CODE_Win_R );
+	SET_MOD_CODE( ControlMapIndex, CODE_Win_L, CODE_Win_R );
 	SET_MOD_CODE( Mod4MapIndex,    CODE_Ctrl_L, CODE_Ctrl_R );
+	//SET_MOD_CODE( ControlMapIndex, CODE_Alt_L, CODE_Alt_R );
+	//SET_MOD_CODE( Mod1MapIndex,    CODE_Win_L, CODE_Win_R );
+	//SET_MOD_CODE( Mod4MapIndex,    CODE_Ctrl_L, CODE_Ctrl_R );
 
 	XSetModifierMapping( qt_xdisplay(), xmk );
 	XChangeKeyboardMapping( qt_xdisplay(), keyCodeMin, nSymsPerCode, rgKeySyms, nKeyCodes );
@@ -290,8 +294,8 @@ void ModifiersModule::updateWidgets()
 			m_plblWin->setText( i18n("Control") );  // Win in Ctrl's place
 		} else {
 			m_plblCtrl->setText( i18n("Control") ); // Ctrl labeled Control
-			m_plblAlt->setText( i18n("Command") );  // Alt labeled Command
-			m_plblWin->setText( i18n("Option") );   // Win labeled Option
+			m_plblAlt->setText( i18n("Option") );  // Alt labeled Command
+			m_plblWin->setText( i18n("Command") );   // Win labeled Option
 		}
 		m_pchkMacSwap->setEnabled( true );
 	} else {

@@ -38,6 +38,7 @@ protected slots:
     void hideButtonsClicked();
 
 private:
+    enum Trigger { None = 0, Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft };
     KickerConfig* kconf;
 };
 
