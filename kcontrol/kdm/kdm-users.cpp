@@ -127,7 +127,6 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect( nouserlb, SIGNAL( highlighted( const QString & ) ),
              SLOT( slotUserSelected( const QString & ) ) );
 
-    QRadioButton *rb;
     QVBoxLayout *lLayout = new QVBoxLayout(main, 10);
     lLayout->addSpacing(20);
 

@@ -232,7 +232,6 @@ void KDesktopConfig::setWindowSnapZone(int pxls) {
 void KDesktopConfig::load( void )
 {
   int v;
-  QString key;
 
   KConfig *config = new KConfig("kwinrc");
   config->setGroup( "Windows" );
