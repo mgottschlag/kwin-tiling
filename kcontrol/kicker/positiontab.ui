@@ -13,6 +13,9 @@
             <height>462</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>PositionTabBase</string>
+    </property>
     <property name="whatsThis" stdset="0">
         <string>This is a list of all the panels currently active on your desktop. Select one to configure.</string>
     </property>
@@ -377,7 +380,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                 <string>Si&amp;ze</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>This sets the size of the panel. You can also access this option via the panel context menu by right-clicking on some free space on the panel.</string>
+                <string>This sets the size of the panel.</string>
             </property>
             <grid>
                 <property name="name">
@@ -505,20 +508,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
                             </property>
                         </widget>
                     </hbox>
-                </widget>
-                <widget class="QCheckBox" row="2" column="1">
-                    <property name="name">
-                        <cstring>m_resizeableHandle</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Allo&amp;w free resizing</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>When this option is selected, the panel can be resized by clicking on an edge with the mouse and dragging it.</string>
-                    </property>
                 </widget>
             </grid>
         </widget>
@@ -1035,8 +1024,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_percentSlider</sender>
@@ -1134,6 +1121,8 @@ how it is positioned on the screen and how much of the screen it should use.</st
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
 </includehints>

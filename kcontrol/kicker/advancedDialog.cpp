@@ -57,8 +57,6 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
             this, SLOT(changed()));
     connect(m_advancedWidget->hideButtonSize, SIGNAL(valueChanged(int)),
             this, SLOT(changed()));
-    connect(m_advancedWidget->resizeableHandle, SIGNAL(toggled(bool)),
-            this, SLOT(changed()));
     connect(m_advancedWidget->tintColorB, SIGNAL(clicked()),
             this, SLOT(changed()));
     connect(m_advancedWidget->tintSlider, SIGNAL(valueChanged(int)),
@@ -86,8 +84,6 @@ void advancedDialog::load()
 
     int defaultHideButtonSize = c.readNumEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
-    bool resizeableHandle = c.readBoolEntry( "ResizeableHandle", false);
-    m_advancedWidget->resizeableHandle->setChecked(resizeableHandle);
     QColor color = c.readColorEntry( "TintColor", &colorGroup().mid() );
     m_advancedWidget->tintColorB->setColor( color );
     int tintValue = c.readNumEntry( "TintValue", 0 );
@@ -142,8 +138,7 @@ void advancedDialog::save()
 
         extConfig.sync();
     }
-    c.writeEntry("ResizeableHandle",
-                 m_advancedWidget->resizeableHandle->isChecked());
+   
     c.sync();
 
     KickerConfig::notifyKicker();

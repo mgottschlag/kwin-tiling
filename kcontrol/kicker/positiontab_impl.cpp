@@ -129,7 +129,6 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_customSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_resizeableHandle, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     m_desktopPreview = new KBackgroundRenderer(0);
     connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
@@ -201,7 +200,6 @@ void PositionTab::sizeChanged(int which)
     bool custom = which == KPanelExtension::SizeCustom;
     m_customSlider->setEnabled(custom);
     m_customSpinbox->setEnabled(custom);
-    m_resizeableHandle->setEnabled(custom);
 }
 
 void PositionTab::movePanel(int whichButton)
@@ -539,8 +537,6 @@ void PositionTab::switchPanel(int panelItem)
     m_customSpinbox->setMinValue(m_panelInfo->_customSizeMin);
     m_customSpinbox->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSpinbox->setValue(m_panelInfo->_customSize);
-    m_resizeableHandle->setChecked(m_panelInfo->_resizeableHandle);
-
     m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
     m_panelPos = m_panelInfo->_position;
     m_panelAlign = m_panelInfo->_alignment;
@@ -654,7 +650,6 @@ void PositionTab::storeInfo()
     {
         m_panelInfo->_size = KPanelExtension::SizeCustom;
         m_panelInfo->_customSize = m_customSlider->value();
-        m_panelInfo->_resizeableHandle = m_resizeableHandle->isChecked();
     }
 
     m_panelInfo->_position = m_panelPos;

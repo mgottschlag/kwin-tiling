@@ -70,11 +70,9 @@ class extensionInfo
         int      _orig_alignment;
         int      _orig_size;
         int      _orig_customSize;
-        bool     _orig_resizeableHandle;
 
         // Size info
         bool    _resizeable;
-        bool    _resizeableHandle;
         bool    _useStdSizes;
         int     _customSizeMin;
         int     _customSizeMax;
