@@ -43,6 +43,7 @@ public:
     bool clearWebCache();
     bool clearQuickStartMenu();
     bool clearRecentDocuments();
+    bool clearFavIcons();
 
 private:
     bool isApplicationRegistered(QString appName);

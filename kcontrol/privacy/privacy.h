@@ -65,8 +65,8 @@ private:
       QCheckListItem *clearFormCompletion;
       QCheckListItem *clearRecentDocuments;
       QCheckListItem *clearQuickStartMenu;
+      QCheckListItem *clearFavIcons;
       //QCheckListItem *clearFileDialogHistory;
-      //QCheckListItem *clearFavIcons;
 
 
 };

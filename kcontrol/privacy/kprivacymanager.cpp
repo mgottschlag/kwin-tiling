@@ -32,6 +32,7 @@
 
 #include <qstringlist.h>
 #include <qfile.h>
+#include <qdir.h>
 
 KPrivacyManager::KPrivacyManager()
 {
@@ -111,15 +112,28 @@ bool KPrivacyManager::clearWebHistory()
                                    "notifyClear(QCString)", "" );
 }
 
+bool KPrivacyManager::clearFavIcons()
+{
+  QDir *favIconDir = new QDir(KGlobal::dirs()->saveLocation( "cache", "favicons/" ));
+  bool error = false;
+
+  QStringList entries = favIconDir->entryList();
+
+  // erase all files in favicon directory
+  for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
+    if(!favIconDir->remove(*it)) error = true;
+
+  return error;
+}
+
+
 bool KPrivacyManager::isApplicationRegistered(QString appName)
 {
 
   QCStringList regApps = kapp->dcopClient()->registeredApplications();
 
   for ( QCStringList::Iterator it = regApps.begin(); it != regApps.end(); ++it )
-  {
     if((*it).find(appName.latin1()) != -1) return true;
-  }
 
   return false;
 }

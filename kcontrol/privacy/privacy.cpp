@@ -81,6 +81,8 @@ Privacy::Privacy(QWidget *parent, const char *name)
       i18n("Clear Recent Documents"),QCheckListItem::CheckBox);
   clearQuickStartMenu = new QCheckListItem(generalCLI,
       i18n("Clear Quick Start Menu"),QCheckListItem::CheckBox);
+  clearFavIcons = new QCheckListItem(webbrowsingCLI,
+      i18n("Clear favicons"),QCheckListItem::CheckBox);
 
   clearRunCommandHistory->setEnabled(true);
 
@@ -115,6 +117,7 @@ void Privacy::load()
     clearFormCompletion->setOn(c->readBoolEntry("ClearFormCompletion", true));
     clearRecentDocuments->setOn(c->readBoolEntry("ClearRecentDocuments", true));
     clearQuickStartMenu->setOn(c->readBoolEntry("ClearQuickStartMenu", true));
+    clearFavIcons->setOn(c->readBoolEntry("ClearFavIcons", true));
   }
 
   { 
@@ -139,6 +142,7 @@ void Privacy::defaults()
   clearWebHistory->setOn(false);
   clearRecentDocuments->setOn(false);
   clearQuickStartMenu->setOn(false);
+  clearFavIcons->setOn(false);
 
   emit changed(true);
 }
@@ -158,6 +162,7 @@ void Privacy::save()
     c->writeEntry("ClearFormCompletion", clearFormCompletion->isOn());
     c->writeEntry("ClearRecentDocuments", clearRecentDocuments->isOn());
     c->writeEntry("ClearQuickStartMenu", clearQuickStartMenu->isOn());
+    c->writeEntry("ClearFavIcons", clearQuickStartMenu->isOn());
   }
 
   {
@@ -236,6 +241,13 @@ void Privacy::cleanup()
     if(!m_privacymanager->clearQuickStartMenu())
       cleaningDialog->statusTextEdit->append(i18n("Clearing of Quick Start menu failed."));
   }
+
+  if(clearFavIcons->isOn()) {
+    cleaningDialog->statusTextEdit->append(i18n("Clearing FavIcons.."));
+    if(!m_privacymanager->clearFavIcons())
+      cleaningDialog->statusTextEdit->append(i18n("Clearing of FavIcons failed."));
+  }
+
 
 
   cleaningDialog->statusTextEdit->append(i18n("Clean up finished."));
