@@ -3,5 +3,7 @@ SUBDIRS = backend kfrontend @kdmchooserdir@
 
 EXTRA_DIST = misc
 
+PAM = @KDM_PAM_SERVICE@
+
 install-data-local:
-	@test -n "$(DESTDIR)" || $(top_srcdir)/mkpamserv @KDM_PAM_SERVICE@
+	@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)
