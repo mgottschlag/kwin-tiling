@@ -20,6 +20,8 @@
    Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <qcheckbox.h>
 #include <qevent.h>
 #include <qpushbutton.h>
@@ -142,8 +144,14 @@ void BGMultiWallpaperDialog::setEnabledMoveButtons()
 
 void BGMultiWallpaperDialog::slotAdd()
 {
+    QString pattern = KImageIO::pattern();
+#ifdef HAVE_LIBART
+    pattern = "*.svg *.svgz " + pattern;
+    pattern += "\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics";
+#endif
+
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
-			   KImageIO::pattern(), this,
+			   pattern, this,
 			   0L, true);
 
     fileDialog.setCaption(i18n("Select Image"));
