@@ -813,6 +813,7 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
     mSetupBt->setEnabled( true );
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
