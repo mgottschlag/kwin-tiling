@@ -38,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstartupinfo.h>
 #include <kwin.h>
 
+class KWinModule;
 class TaskManager;
 
 /**
@@ -73,10 +74,8 @@ class KDE_EXPORT Task: public QObject
     Q_PROPERTY( QPixmap thumbnail READ thumbnail )
 
 public:
-    Task( WId win, TaskManager * parent, const char *name = 0 );
+    Task(WId win, QObject *parent, const char *name = 0);
     virtual ~Task();
-
-    TaskManager* taskManager() const { return (TaskManager*) parent(); }
 
     WId window() const { return _win; }
 #if 0 // this would use (_NET_)WM_ICON_NAME, which is shorter, but can be different from window name
@@ -451,8 +450,8 @@ class KDE_EXPORT TaskManager : public QObject
     Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
 
 public:
-    TaskManager( QObject *parent = 0, const char *name = 0 );
-    virtual ~TaskManager();
+    static TaskManager* the();
+    ~TaskManager();
 
     /**
      * Returns a list of all current tasks. Return type changed to
@@ -490,6 +489,8 @@ public:
     * Returns whether the Window with WId wid is on the screen screen
     */
     static bool isOnScreen( int screen, const WId wid );
+
+    KWinModule* winModule() const { return m_winModule; }
 
 signals:
     /**
@@ -557,11 +558,16 @@ protected:
     void configure_startup();
 
 private:
+    TaskManager();
+
     Task*               _active;
     TaskList            _tasks;
     QValueList< WId >   _skiptaskbar_windows;
     StartupList         _startups;
     KStartupInfo*       _startup_info;
+    KWinModule* m_winModule;
+
+    static TaskManager* m_self;
 
     class TaskManagerPrivate *d;
 };

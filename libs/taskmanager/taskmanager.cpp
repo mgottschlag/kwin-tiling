@@ -22,7 +22,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qapplication.h>
-#include <qdesktopwidget.h>
 #include <qimage.h>
 #include <qtimer.h>
 
@@ -31,48 +30,45 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kwin.h>
+#include <kstaticdeleter.h>
 #include <kwinmodule.h>
 #include <netwm.h>
-
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 #include "taskmanager.h"
 #include "taskmanager.moc"
 
+TaskManager* TaskManager::m_self = 0;
+static KStaticDeleter<TaskManager> staticTaskManagerDeleter;
 
-template class QPtrList<Task>;
-
-// Hack: create a global KWinModule without a parent. We
-// can't make it a child of TaskManager because more than one
-// TaskManager might be created. We can't make it a class
-// variable without changing Task, which also uses it.
-// So, we'll leak a little memory, but it's better than crashing.
-// The real problem is that KWinModule should be a singleton.
-KWinModule* kwin_module = NULL;
-
-TaskManager::TaskManager(QObject *parent, const char *name)
-    : QObject(parent, name), _active(0), _startup_info( NULL )
+TaskManager* TaskManager::the()
 {
-    if ( kwin_module == NULL )
-        kwin_module = new KWinModule();
+    if (!m_self)
+    {
+        staticTaskManagerDeleter.setObject(m_self, new TaskManager());
+    }
+    return m_self;
+}
 
+TaskManager::TaskManager()
+    : QObject(),
+      _active(0),
+      _startup_info(0),
+      m_winModule(new KWinModule())
+{
     KGlobal::locale()->insertCatalogue("libtaskmanager");
-    connect(kwin_module, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
-    connect(kwin_module, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
-    connect(kwin_module, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
-    connect(kwin_module, SIGNAL(currentDesktopChanged(int)), SLOT(currentDesktopChanged(int)));
-    connect(kwin_module, SIGNAL(windowChanged(WId,unsigned int)), SLOT(windowChanged(WId,unsigned int)));
+    connect(m_winModule, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
+    connect(m_winModule, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
+    connect(m_winModule, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
+    connect(m_winModule, SIGNAL(currentDesktopChanged(int)), SLOT(currentDesktopChanged(int)));
+    connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)), SLOT(windowChanged(WId,unsigned int)));
 
     // register existing windows
-    const QValueList<WId> windows = kwin_module->windows();
+    const QValueList<WId> windows = m_winModule->windows();
     for (QValueList<WId>::ConstIterator it = windows.begin(); it != windows.end(); ++it )
     windowAdded(*it);
 
     // set active window
-    WId win = kwin_module->activeWindow();
+    WId win = m_winModule->activeWindow();
     activeWindowChanged(win);
     configure_startup();
 }
@@ -327,20 +323,20 @@ void TaskManager::killStartup(Startup* s)
 
 QString TaskManager::desktopName(int desk) const
 {
-    return kwin_module->desktopName(desk);
+    return m_winModule->desktopName(desk);
 }
 
 int TaskManager::numberOfDesktops() const
 {
-    return kwin_module->numberOfDesktops();
+    return m_winModule->numberOfDesktops();
 }
 
 bool TaskManager::isOnTop(const Task* task)
 {
     if(!task) return false;
 
-    for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
-         it != kwin_module->stackingOrder().end(); --it ) {
+    for (QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
+         it != m_winModule->stackingOrder().end(); --it) {
         for (Task* t = _tasks.first(); t != 0; t = _tasks.next() ) {
             if ( (*it) == t->window() ) {
                 if ( t == task )
@@ -371,7 +367,7 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     return window.intersects(desktop);
 }
 
-Task::Task(WId win, TaskManager * parent, const char *name)
+Task::Task(WId win, QObject *parent, const char *name)
   : QObject(parent, name),
     _active(false),
     _win(win),
@@ -490,7 +486,7 @@ bool Task::isActive() const
 
 bool Task::isOnTop() const
 {
-    return taskManager()->isOnTop( this );
+    return TaskManager::the()->isOnTop(this);
 }
 
 bool Task::isModified() const
@@ -751,7 +747,7 @@ void Task::toDesktop(int desk)
     NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
     if (desk == 0) {
         if (_info.onAllDesktops()) {
-            ni.setDesktop(kwin_module->currentDesktop());
+            ni.setDesktop(TaskManager::the()->winModule()->currentDesktop());
             KWin::forceActiveWindow(_win);
         }
         else
@@ -759,13 +755,13 @@ void Task::toDesktop(int desk)
         return;
     }
     ni.setDesktop(desk);
-    if(desk == kwin_module->currentDesktop())
+    if(desk == TaskManager::the()->winModule()->currentDesktop())
         KWin::forceActiveWindow(_win);
 }
 
 void Task::toCurrentDesktop()
 {
-    toDesktop(kwin_module->currentDesktop());
+    toDesktop(TaskManager::the()->winModule()->currentDesktop());
 }
 
 void Task::setAlwaysOnTop(bool stay)
@@ -869,5 +865,5 @@ void Startup::update( const KStartupInfoData& data )
 
 int TaskManager::currentDesktop() const
 {
-    return kwin_module->currentDesktop();
+    return m_winModule->currentDesktop();
 }

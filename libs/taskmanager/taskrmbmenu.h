@@ -27,21 +27,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <qpopupmenu.h>
 
-#include "taskmanager.h"
-
 class KDE_EXPORT TaskRMBMenu : public QPopupMenu
 {
 	Q_OBJECT
 
 public:
-	TaskRMBMenu( TaskList* tasks, TaskManager* manager, bool showAll = true, QWidget *parent = 0, const char *name = 0 );
-	TaskRMBMenu( Task* tasks, TaskManager* manager, bool showAll = true, QWidget *parent = 0, const char *name = 0 );
+	TaskRMBMenu(TaskList*, bool showAll = true, QWidget *parent = 0, const char *name = 0);
+	TaskRMBMenu(Task*, bool showAll = true, QWidget *parent = 0, const char *name = 0);
 
 private:
-	void fillMenu( Task* t, TaskManager* manager );
-	void fillMenu( TaskList* tasks, TaskManager* manager );
-	QPopupMenu* makeDesktopsMenu( Task* t, TaskManager* manager );
-	QPopupMenu* makeDesktopsMenu( TaskList* tasks, TaskManager* manager );
+	void fillMenu(Task*);
+	void fillMenu(TaskList*);
+	QPopupMenu* makeDesktopsMenu(Task*);
+	QPopupMenu* makeDesktopsMenu(TaskList*);
 
 private slots:
 	void slotMinimizeAll();

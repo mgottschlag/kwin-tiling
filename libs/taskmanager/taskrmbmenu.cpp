@@ -27,31 +27,33 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kiconloader.h>
 #include <klocale.h>
 
+#include "taskmanager.h"
+
 #include "taskrmbmenu.h"
 #include "taskrmbmenu.moc"
 
-TaskRMBMenu::TaskRMBMenu( TaskList* theTasks, TaskManager* manager, bool show, QWidget *parent, const char *name )
+TaskRMBMenu::TaskRMBMenu(TaskList* theTasks, bool show, QWidget *parent, const char *name)
 	: QPopupMenu( parent, name )
 	, tasks( theTasks )
 	, showAll( show )
 {
 	assert( tasks->count() > 0 );
 	if( tasks->count() == 1 ) {
-		fillMenu( tasks->first(), manager );
+		fillMenu(tasks->first());
 	} else {
-		fillMenu( tasks, manager );
+		fillMenu(tasks);
 	}
 }
 
-TaskRMBMenu::TaskRMBMenu( Task* task, TaskManager* manager, bool show, QWidget* parent, const char* name )
+TaskRMBMenu::TaskRMBMenu(Task *task, bool show, QWidget *parent, const char *name)
 	: QPopupMenu( parent, name )
 	, tasks(0)
 	, showAll( show )
 {
-	fillMenu( task, manager );
+	fillMenu(task);
 }
 
-void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
+void TaskRMBMenu::fillMenu(Task *t)
 {
 	int id;
 	setCheckable( true );
@@ -74,11 +76,11 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 
 	id = insertItem( SmallIcon( "fileclose" ), i18n( "&Close" ), t, SLOT( close() ) );
 
-	if ( manager->numberOfDesktops() > 1 )
+	if (TaskManager::the()->numberOfDesktops() > 1)
 	{
 		insertSeparator();
 
-		insertItem( i18n("To &Desktop"), makeDesktopsMenu( t, manager ) );
+		insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
 		if ( showAll )
 		{
 			id = insertItem( i18n( "&To Current Desktop" ), t, SLOT( toCurrentDesktop() ) );
@@ -87,7 +89,7 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 	}
 }
 
-void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
+void TaskRMBMenu::fillMenu(TaskList *tasks)
 {
 	int id;
 	setCheckable( true );
@@ -97,7 +99,7 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 
 		id = insertItem( QIconSet( t->pixmap() ),
 				 t->visibleNameWithState(),
-		                 new TaskRMBMenu( t, manager, this ) );
+		                 new TaskRMBMenu(t, this) );
 		setItemChecked( id, t->isActive() );
 		connectItem( id, t, SLOT( activateRaiseOrIconify() ) );
 	}
@@ -154,11 +156,11 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 
-	if ( manager->numberOfDesktops() > 1 )
+	if (TaskManager::the()->numberOfDesktops() > 1)
 	{
 		insertSeparator();
 
-		id = insertItem( i18n("All to &Desktop"), makeDesktopsMenu( tasks, manager ) );
+		id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu(tasks));
 
 		enable = false;
 
@@ -173,7 +175,7 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 	}
 }
 
-QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
+QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task* t)
 {
 	QPopupMenu* m = new QPopupMenu( this );
 	m->setCheckable( true );
@@ -184,8 +186,8 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
 
 	m->insertSeparator();
 
-	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
-		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ).replace( '&', "&&" ) );
+	for (int i = 1; i <= TaskManager::the()->numberOfDesktops(); i++) {
+		QString name = QString("&%1 %2").arg(i).arg(TaskManager::the()->desktopName(i).replace('&', "&&"));
 		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
@@ -194,7 +196,7 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( Task* t, TaskManager* manager )
 	return m;
 }
 
-QPopupMenu* TaskRMBMenu::makeDesktopsMenu( TaskList*, TaskManager* manager )
+QPopupMenu* TaskRMBMenu::makeDesktopsMenu(TaskList*)
 {
 	QPopupMenu* m = new QPopupMenu( this );
 	m->setCheckable( true );
@@ -204,8 +206,8 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu( TaskList*, TaskManager* manager )
 
 	m->insertSeparator();
 
-	for( int i = 1; i <= manager->numberOfDesktops(); i++ ) {
-		QString name = QString( "&%1 %2" ).arg( i ).arg( manager->desktopName( i ).replace( '&', "&&" ) );
+	for (int i = 1; i <= TaskManager::the()->numberOfDesktops(); i++) {
+		QString name = QString("&%1 %2").arg(i).arg(TaskManager::the()->desktopName(i).replace('&', "&&"));
 		id = m->insertItem( name, this, SLOT( slotAllToDesktop(int) ) );
 		m->setItemParameter( id, i );
 	}
