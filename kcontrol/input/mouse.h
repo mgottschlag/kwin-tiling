@@ -73,7 +73,6 @@ public:
  bool changeCursor;
  bool largeCursor;
  int wheelScrollLines;
- bool autoCopy;
 };
 
 class MouseConfig : public KCModule
@@ -115,7 +114,6 @@ private:
   QRadioButton *leftHanded, *rightHanded;
   QCheckBox *doubleClick;
   QCheckBox *cbAutoSelect;
-  QCheckBox *cbAutoCopy;
   QLabel *lDelay;
   QSlider *slAutoSelect;
   QCheckBox *cbVisualActivate;
