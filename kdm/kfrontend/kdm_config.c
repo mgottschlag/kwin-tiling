@@ -358,7 +358,7 @@ PautoLoginX (Value *retval)
 
 
 #ifndef HALT_CMD
-# ifdef CSRG_BASED
+# ifdef BSD
 #  define HALT_CMD	"/sbin/shutdown -h now"
 #  define REBOOT_CMD	"/sbin/shutdown -r now"
 # elif defined(__SVR4)
@@ -371,14 +371,14 @@ PautoLoginX (Value *retval)
 #endif
 
 #ifndef DEF_USER_PATH
-#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(linux)
+#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 #    define DEF_USER_PATH "/bin:/usr/bin:" XBINDIR ":/usr/local/bin"
 #  else
 #    define DEF_USER_PATH "/bin:/usr/bin:" XBINDIR ":/usr/local/bin:/usr/ucb"
 #  endif
 #endif
 #ifndef DEF_SYSTEM_PATH
-#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(linux)
+#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 #    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" XBINDIR ":/usr/local/bin"
 #  else
 #    define DEF_SYSTEM_PATH "/sbin:/usr/sbin:/bin:/usr/bin:" XBINDIR ":/usr/local/bin:/etc:/usr/ucb"
@@ -497,6 +497,7 @@ Ent entsGreeter[] = {
 { "Users",		C_Users,		0,	"" },
 { "NoUsers",		C_NoUsers,		0,	"" },
 { "MinShowUID",		C_MinShowUID,		0,	"0" },
+{ "MaxShowUID",		C_MaxShowUID,		0,	"65535" },
 { "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },
 { "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
 { "DefaultUser",	C_DefaultUser,		0,	"" },

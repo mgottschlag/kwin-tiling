@@ -65,18 +65,19 @@
 #define C_Users			(C_TYPE_ARGV | 0x101d)
 #define C_NoUsers		(C_TYPE_ARGV | 0x101e)
 #define C_MinShowUID		(C_TYPE_INT | 0x101f)
-#define C_SortUsers		(C_TYPE_INT | 0x1020)
-#define C_PreselectUser		(C_TYPE_INT | 0x1021)
+#define C_MaxShowUID		(C_TYPE_INT | 0x1020)
+#define C_SortUsers		(C_TYPE_INT | 0x1021)
+#define C_PreselectUser		(C_TYPE_INT | 0x1022)
 # define PRESEL_NONE	0
 # define PRESEL_PREV	1
 # define PRESEL_DEFAULT	2
-#define C_DefaultUser		(C_TYPE_STR | 0x1022)
-#define C_FocusPasswd		(C_TYPE_INT | 0x1023)
-#define C_EchoMode		(C_TYPE_INT | 0x1024)
+#define C_DefaultUser		(C_TYPE_STR | 0x1023)
+#define C_FocusPasswd		(C_TYPE_INT | 0x1024)
+#define C_EchoMode		(C_TYPE_INT | 0x1025)
 # define ECHO_ONE	0	/* HACK! This must be equal to KPasswordEdit::EchoModes (kpassdlg.h) */
 # define ECHO_THREE	1
 # define ECHO_NONE	2
-#define C_AllowShutdown		(C_TYPE_INT | 0x1025)
+#define C_AllowShutdown		(C_TYPE_INT | 0x1026)
 # define SHUT_NONE	0
 # define SHUT_ROOT	1
 # define SHUT_ALL	2

@@ -36,6 +36,7 @@
 #include <qsgistyle.h>
 #include <qwindowsstyle.h>
 #include <qplatinumstyle.h>
+#include <qtextcodec.h>	//XXX
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -131,6 +132,7 @@ QColor KDMConfig::Str2Color (QString aValue)
 KDMConfig::KDMConfig()
 {
     KGlobal::locale()->setLanguage (GetCfgQStr (C_Language));
+    qApp->setDefaultCodec(QTextCodec::codecForName(KGlobal::locale()->language().latin1()));
 
     _allowShutdown = GetCfgInt (C_AllowShutdown);
 
@@ -159,6 +161,7 @@ KDMConfig::KDMConfig()
     _users = GetCfgQStrList (C_Users);
     _noUsers = GetCfgQStrList (C_NoUsers);
     _lowUserId = GetCfgInt (C_MinShowUID);
+    _highUserId = GetCfgInt (C_MaxShowUID);
     _sortUsers = GetCfgInt (C_SortUsers);
 
     _sessionTypes = GetCfgQStrList (C_SessionTypes);

@@ -155,18 +155,19 @@ KGreeter::insertUsers( QIconView *iconview)
 	    QString username = QFile::decodeName ( ps->pw_name );
 	    if( CHECK_STRING(ps->pw_dir) &&
 		CHECK_STRING(ps->pw_shell) &&
-		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId ||
-		ps->pw_uid == 0) &&
-        	( kdmcfg->_noUsers.contains( username ) == 0)
+		(ps->pw_uid >= (unsigned)kdmcfg->_lowUserId || 
+		 username == "root") &&
+		ps->pw_uid <= (unsigned)kdmcfg->_highUserId &&
+        	!kdmcfg->_noUsers.contains( username )
 	    ) {
 		// we might have a real user, insert him/her
 		QPixmap p( locate("user_pic",
 				  username + QString::fromLatin1(".png")));
 		if( p.isNull())
 		    p = default_pix;
-		    QIconViewItem *item = new QIconViewItem( iconview,
+		QIconViewItem *item = new QIconViewItem( iconview,
 							     username, p);
-		    item->setDragEnabled(false);
+		item->setDragEnabled(false);
 	    }
 	}
 	endpwent();
@@ -677,7 +678,7 @@ kg_main(int argc, char **argv)
 				     KStandardDirs::kde_default("data") +
 				     QString::fromLatin1("kdm/pics/users/"));
 
-    QApplication::setOverrideCursor( Qt::waitCursor );
+    qApp->setOverrideCursor( Qt::waitCursor );
 
     myapp.setFont( kdmcfg->_normalFont);
 
@@ -734,10 +735,9 @@ kg_main(int argc, char **argv)
     QApplication::restoreOverrideCursor();
     Debug ("entering event loop\n");
     kapp->exec();
-    // Give focus to root window:
-//    QApplication::desktop()->setActiveWindow();
     delete kgreeter;
     qApp->restoreOverrideCursor();
+    //qApp->desktop()->setActiveWindow();
     delete kdmcfg;
     UnsecureDisplay (qt_xdisplay());
 }

@@ -67,7 +67,7 @@ public:
     bool	_sortUsers;
     QStringList	_users;
     QStringList	_noUsers;
-    int		_lowUserId;
+    int		_lowUserId, _highUserId;
     int		_echoMode;
      
     QStringList	_sessionTypes;
