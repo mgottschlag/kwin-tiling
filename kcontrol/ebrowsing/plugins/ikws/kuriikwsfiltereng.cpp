@@ -251,7 +251,7 @@ void KURISearchFilterEngine::loadConfig()
     m_lstInternetKeywordsEngine.clear();
 
     // Load the config.
-    KSimpleConfig config( name() + "rc");
+    KConfig config( name() + "rc");
     QStringList engines;
     QString selIKWSEngine, selIKWSFallback;
 
@@ -336,18 +336,20 @@ void KURISearchFilterEngine::loadConfig()
       if (e.m_strName == selIKWSFallback)
 	    m_currSearchKeywordsEngine = e;
     }
-    // Remove the OLD group [Internet Keywords].
-    // Instead all generic info that has to do with
-    // shortcuts will be saved under [General].
-    config.deleteGroup( IKW_KEY );
 }
 
 void KURISearchFilterEngine::saveConfig() const
 {
     kdDebug() << "(" << getpid() << ") Keywords Engine: Saving config..." << endl;
 
-    KConfig config(name() + "rc");
+    KSimpleConfig config(name() + "rc");
     QStringList search_engines, ikws_engines;
+
+    // Remove the OLD group [Internet Keywords].
+    // Instead all generic info that has to do with
+    // shortcuts will be saved under [General].
+    if( config.hasGroup(IKW_KEY) )
+      config.deleteGroup( IKW_KEY );
 
     // DUMP OUT THE SEARCH ENGINE INFO	
     QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
