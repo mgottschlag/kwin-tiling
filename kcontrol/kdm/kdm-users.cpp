@@ -239,7 +239,7 @@ void KDMUsersWidget::slotFaceOpts()
 void KDMUsersWidget::slotUserSelected()
 {
     QString user = usercombo->currentText();
-    QPixmap p;
+    QImage p;
     if (user != m_defaultText &&
 	p.load( m_userPixDir + user + ".face.icon" )) {
 	rstuserbutton->setEnabled( !getuid() );
@@ -247,7 +247,7 @@ void KDMUsersWidget::slotUserSelected()
 	p.load( m_userPixDir + ".default.face.icon" );
 	rstuserbutton->setEnabled( false );
     }
-    userbutton->setPixmap( p );
+    userbutton->setPixmap( p.smoothScale( 48, 48, QImage::ScaleMin ) );
 }
 
 
