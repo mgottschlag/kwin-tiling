@@ -245,6 +245,8 @@ CtrlGreeterWait (int wreply)
 		i = (td->displayType & d_location) == dLocal;
 	    else if (type == C_hasConsole)
 		i = td->console != 0;
+	    else if (type == C_isAuthorized)
+		i = td->authorizations != 0;
 	    else
 		goto normal;
 	    GSendInt (GE_Ok);

@@ -47,6 +47,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qtooltip.h>
 
 #include <pwd.h>
 #include <grp.h>
@@ -129,6 +130,18 @@ KGreeter::KGreeter()
 
     QBoxLayout *inner_box = new QVBoxLayout( main_box, 10 );
 
+    if (!_authorized && _authComplain) {
+	QLabel* complainLabel = new QLabel(
+	    i18n("Warning: this is an unsecured session"), winFrame );
+	QToolTip::add( complainLabel,
+	    i18n("This display requires no X authorization.\n"
+		 "This means that anybody can connect to it,\n"
+		  "open windows on it or intercept your input.") );
+	complainLabel->setAlignment( AlignCenter );
+	complainLabel->setFont( _failFont );
+	complainLabel->setPaletteForegroundColor( Qt::red );
+	inner_box->addWidget( complainLabel );
+    }
     if (!_greetString.isEmpty()) {
 	QLabel* welcomeLabel = new QLabel( _greetString, winFrame );
 	welcomeLabel->setAlignment( AlignCenter );

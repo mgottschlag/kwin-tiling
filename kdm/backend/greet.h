@@ -208,6 +208,7 @@ from the copyright holder.
 /* display variables */
 #define C_isLocal		(C_TYPE_INT | 0x200)
 #define C_hasConsole		(C_TYPE_INT | 0x201)
+#define C_isAuthorized		(C_TYPE_INT | 0x202)
 
 /**
  ** for struct display

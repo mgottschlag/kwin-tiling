@@ -1192,11 +1192,11 @@ Key: AuthComplain
 Type: bool
 Default: true
 User: greeter
-Instance: #:*/!
+Instance: #*/!
 Merge: xdm
 Comment:
- Warn, if local X-authorization cannot be created.
- BUG: this is a dummy currently.
+ Warn, if display has no X-authorization (local auth cannot be created,
+ XDMCP display sent no auth, or display is foreign from file).
 
 Key: LoginMode
 If: defined(XDMCP)

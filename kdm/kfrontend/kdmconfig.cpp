@@ -37,6 +37,7 @@ CONF_GREET_DEFS
 
 QString	_stsFile;
 bool	_isLocal;
+bool	_authorized;
 
 static QString GetCfgQStr (int id)
 {
@@ -99,6 +100,7 @@ void init_config( void )
 
     _isLocal = GetCfgInt (C_isLocal);
     _hasConsole = _hasConsole && GetCfgInt (C_hasConsole);
+    _authorized = GetCfgInt (C_isAuthorized);
 
     if (_greeterScreen < 0) {
 	QDesktopWidget *dsk = kapp->desktop();

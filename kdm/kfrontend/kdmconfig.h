@@ -38,6 +38,7 @@
 
 extern QString	_stsFile;
 extern bool	_isLocal;
+extern bool	_authorized;
 
 CONF_GREET_CPP_DECLS
 
