@@ -325,6 +325,7 @@ void ShortcutsModule::slotSelectScheme( int )
 	m_prbPre->setChecked( true );
 	m_prbNew->setEnabled( false );
 	m_pbtnSave->setEnabled( false );
+	emit changed(true);
 }
 
 void ShortcutsModule::slotSaveSchemeAs()
