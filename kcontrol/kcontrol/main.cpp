@@ -55,6 +55,7 @@ KControlApp::KControlApp()
   toplevel = new TopLevel();
 
   setMainWidget(toplevel);
+  KGlobal::setActiveInstance(this);
 
   // KUniqueApplication does dcop regitration for us
   ModuleIface *modIface = new ModuleIface(toplevel, "moduleIface");
