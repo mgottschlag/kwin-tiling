@@ -176,8 +176,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << "";
-//    << i18n("Taskbar button") << "General"    << "taskbarFont"  << "kickerrc"
-//    << i18n("Panel clock")    << "General"    << "dateFont"     << "kickerrc";
 
   QValueList<QFont> defaultFontList;
 
@@ -204,8 +202,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
     <<  false
     <<  false
     <<  false
-    <<  false
-    <<  false
     <<  false;
 
   QStringList quickHelpList;
@@ -217,9 +213,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("Used to display the names of icons in the file manager.")
     << i18n("Used to display text beside toolbar icons.")
     << i18n("Used by menu bars and popup menus.")
-    << i18n("Used by the window titlebar.")
-    << i18n("Used by panel taskbar buttons.")
-    << i18n("Used by the panel clock.");
+    << i18n("Used by the window titlebar.");
 
   QGridLayout * fontUseLayout =
     new QGridLayout(
