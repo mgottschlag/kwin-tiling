@@ -22,4 +22,4 @@ appdatadir = $(kde_datadir)/kfontview
 
 kfontview_SOURCES = FontViewerApp.cpp
 
-KDE_ICON = AUTO
+
