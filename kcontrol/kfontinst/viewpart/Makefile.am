@@ -10,3 +10,6 @@ kde_services_DATA = kfontviewpart.desktop
 
 INCLUDES = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS)
 METASOURCES = AUTO
+
+partdir = $(kde_datadir)/kfontinst
+part_DATA = kfontviewpart.rc

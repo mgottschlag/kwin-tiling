@@ -60,6 +60,7 @@
 #include "Misc.h"
 #include "CompressedFile.h"
 #include <kurl.h>
+#include <kconfig.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -135,69 +136,67 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
 
     KFI_DBUG << "openFont(" << file << ')' << endl;
 
-    closeFont();
-
-    itsType=getType(QFile::encodeName(file));
-    itsWeight=WEIGHT_MEDIUM;
-    itsWidth=WIDTH_NORMAL;
-    itsSpacing=SPACING_PROPORTIONAL;
-    itsItalic=ITALIC_NONE;
-    itsAddStyle=QString::null;
-    itsFt.open=false;
-    itsNumFaces=1;
-    itsPixelSize=0;
-    itsPath=file;
-
-    switch(itsType)
+    if(file==itsPath && face==itsFaceIndex)
     {
-        case TRUE_TYPE:
-        case TT_COLLECTION:
-        case OPEN_TYPE:
-            ok=openFontTT(file, mask, face);
-            break;
-        case TYPE_1:
-            ok=openFontT1(file, mask);
-            break;
-        case SPEEDO:
-            ok=openFontSpd(file, mask);
-            break;
-        case BDF:
-            ok=openFontBdf(file);
-            break;
-        case PCF:
-            ok=openFontPcf(file);
-            break;
-        case SNF:
-            ok=openFontSnf(file);
-            break;
-        case TYPE_1_AFM:
-            ok=openFontAfm(file);
-            break;
-        default:
-            if(force)
-                if((ok=openFontT1(file, mask)))
-                    itsType=TYPE_1;
-                else
-                {
-                    closeFont();
-                    ok=openFontTT(file, mask, face);
-                    if(ok)
-                        itsType=itsNumFaces>1 ? TT_COLLECTION : TRUE_TYPE;
-                    else
-                    {
-                        closeFont();
-                        if((ok=openFontAfm(file)))
-                            itsType=TYPE_1_AFM;
-                        else if((ok=openFontPcf(file)))
-                            itsType=PCF;
-                        else if((ok=openFontSpd(file)))
-                            itsType=SPEEDO;
-                        else if((ok=openFontBdf(file)))
-                            itsType=BDF;
-                        else if((ok=openFontSnf(file)))
-                            itsType=SNF;
-                    }
-                }
+        KFI_DBUG << "openFont, same as previous - therefore not reopening" << endl;
+        ok=NONE!=itsType;
+    }
+    else
+    {
+        closeFont();
+
+        itsType=getType(QFile::encodeName(file));
+        itsWeight=WEIGHT_MEDIUM;
+        itsWidth=WIDTH_NORMAL;
+        itsSpacing=SPACING_PROPORTIONAL;
+        itsItalic=ITALIC_NONE;
+        itsAddStyle=QString::null;
+        itsPixelSize=0;
+        itsPath=file;
+        itsFaceIndex=face;
+
+        switch(itsType)
+        {
+            case TRUE_TYPE:
+            case TT_COLLECTION:
+            case OPEN_TYPE:
+                ok=openFontTT(file, mask);
+                break;
+            case TYPE_1:
+                ok=openFontT1(file, mask);
+                break;
+            case SPEEDO:
+                ok=openFontSpd(file, mask);
+                break;
+            case BDF:
+                ok=openFontBdf(file);
+                break;
+            case PCF:
+                ok=openFontPcf(file);
+                break;
+            case SNF:
+                ok=openFontSnf(file);
+                break;
+            case TYPE_1_AFM:
+                ok=openFontAfm(file);
+                break;
+            default:
+                if(force)
+                    if((ok=openFontT1(file, mask)))
+                        itsType=TYPE_1;
+                    else if((ok=openFontTT(file, mask)))
+                        itsType=itsFt.face->num_faces>1 ? TT_COLLECTION : TRUE_TYPE;
+                    else if((ok=openFontAfm(file)))
+                        itsType=TYPE_1_AFM;
+                    else if((ok=openFontPcf(file)))
+                        itsType=PCF;
+                    else if((ok=openFontSpd(file)))
+                        itsType=SPEEDO;
+                    else if((ok=openFontBdf(file)))
+                        itsType=BDF;
+                    else if((ok=openFontSnf(file)))
+                        itsType=SNF;
+        }
     }
 
     KFI_DBUG << "openFont, status:" << ok << endl;
@@ -232,12 +231,9 @@ bool CFontEngine::openFont(const KURL &url, unsigned short mask, bool force, int
 
 void CFontEngine::closeFont()
 {
-    if(itsFt.open)
-    {
-        FT_Done_Face(itsFt.face);
-        itsFt.open=false;
-    }
-
+    closeFaceFt();
+    itsPath=QString::null;
+    itsFaceIndex=-1;
     itsType=NONE;
 }
 
@@ -249,16 +245,18 @@ bool CFontEngine::isA(const char *fname, const char *ext, bool z)
     if(z)
     {
         if(len>7)                 // Check for .ext.gz
-            fnt=(fname[len-7]=='.' && tolower(fname[len-6])==ext[0] && tolower(fname[len-5])==ext[1] && tolower(fname[len-4])==ext[2] &&
-                 fname[len-3]=='.' && tolower(fname[len-2])=='g' && tolower(fname[len-1])=='z');
+            fnt=(fname[len-7]=='.' && tolower(fname[len-6])==ext[0] && tolower(fname[len-5])==ext[1] &&
+                 tolower(fname[len-4])==ext[2] && fname[len-3]=='.' && tolower(fname[len-2])=='g' &&
+                 tolower(fname[len-1])=='z');
 
         if(!fnt && len>6)         // Check for .ext.Z
-            fnt=(fname[len-6]=='.' && tolower(fname[len-5])==ext[0] && tolower(fname[len-4])==ext[1] && tolower(fname[len-3])==ext[2] &&
-                 fname[len-2]=='.' && toupper(fname[len-1])=='Z');
+            fnt=(fname[len-6]=='.' && tolower(fname[len-5])==ext[0] && tolower(fname[len-4])==ext[1] &&
+                 tolower(fname[len-3])==ext[2] && fname[len-2]=='.' && toupper(fname[len-1])=='Z');
     }
 
     if(!fnt && len>4)  // Check for .ext
-        fnt=(fname[len-4]=='.' && tolower(fname[len-3])==ext[0] && tolower(fname[len-2])==ext[1] && tolower(fname[len-1])==ext[2]);
+        fnt=(fname[len-4]=='.' && tolower(fname[len-3])==ext[0] && tolower(fname[len-2])==ext[1] &&
+             tolower(fname[len-1])==ext[2]);
 
     return fnt;
 }
@@ -523,7 +521,30 @@ static void drawText(QPainter &painter, int x, int y, int width, const QString &
     painter.drawText(x, y, s);
 }
 
-void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
+QString CFontEngine::getPreviewString()
+{
+    KConfig cfg(CGlobal::uiCfgFile());
+
+    cfg.setGroup(KFI_PREVIEW_GROUP);
+
+    QString str(cfg.readEntry(KFI_PREVIEW_STRING_KEY));
+
+    return str.isEmpty() ? i18n("A sentence that uses all of the letters of the alphabet",
+                                   "The quick brown fox jumps over the lazy dog")
+                         : str;
+}
+
+void CFontEngine::setPreviewString(const QString &str)
+{
+    KConfig cfg(CGlobal::uiCfgFile());
+
+    cfg.setGroup(KFI_PREVIEW_GROUP);
+    cfg.writeEntry(KFI_PREVIEW_STRING_KEY, str);
+}
+
+#define FONT_CHAR_SIZE_MOD 0.75
+
+void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo, int fSize, bool thumb)
 {
     FT_Size          size;
     FT_Face          face;
@@ -533,12 +554,15 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
 #else
     FTC_Image_Desc   font;
 #endif
-    bool             thumb=width==height && height<=128,
-                     isBitmap=isABitmap(itsType);
-    int              fontSize=28,
+    bool             isBitmap=isABitmap(itsType);
+    int              fontSize=fSize<0 || thumb ? 28 : fSize,
                      offset=4,
                      space=8,
                      fontHeight;
+
+    if(thumb && (width!=height || width>128))
+        thumb=false;
+
     if(thumb)
     {
         if(height<=32)
@@ -595,6 +619,8 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
             info=name.mid(pos);
             name=name.left(pos);
         }
+        else if(fSize>0)
+            name+=i18n(", %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD));
 
         title.setPixelSize(12);
         painter.setFont(title);
@@ -632,7 +658,8 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                 unsigned int ch;
 
                 for(ch=0; ch<str.length(); ++ch)
-                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, str[ch].unicode()),  x, y, width, height, startX, stepY))
+                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, str[ch].unicode()),  x, y, width, height, startX,
+                                 stepY))
                         break;
             }
             else
@@ -642,8 +669,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
         }
         else
         {
-            QString  quote(i18n("A sentence that uses all of the letters of the alphabet",
-                                "The quick brown fox jumps over the lazy dog"));
+            QString  quote(getPreviewString());
             bool     foundCmap=getCharMap(face, quote);
 
             if(foundCmap)
@@ -651,14 +677,15 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo)
                 unsigned int ch;
 
                 for(ch=0; ch<quote.length(); ++ch)
-                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX, stepY, space))
+                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX,
+                                 stepY, space))
                         break;
             }
 
             if(!isBitmap)
 #if KFI_FT_IS_GE(2, 1, 8)
             {
-                font.width=font.height=point2Pixel((int)(fontSize*0.75));
+                font.width=font.height=point2Pixel((int)(fontSize*FONT_CHAR_SIZE_MOD));
                 scaler.width=scaler.height=font.width;
             }
 #else
@@ -763,7 +790,8 @@ static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nam
         FT_SfntName name;
 
         for(i=0; i<n; i++)
-            if(0==FT_Get_Sfnt_Name(face, i, &name) && name.name_id == nid && name.platform_id == pid && (eid < 0 || name.encoding_id == eid))
+            if(0==FT_Get_Sfnt_Name(face, i, &name) && name.name_id == nid && name.platform_id == pid &&
+               (eid < 0 || name.encoding_id == eid))
             {
                 switch(name.platform_id)
                 {
@@ -773,7 +801,8 @@ static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nam
                             continue;
                         break;
                     case TT_PLATFORM_MICROSOFT:
-                        if(name.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES && name.language_id != TT_MS_LANGID_ENGLISH_UNITED_KINGDOM)
+                        if(name.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES &&
+                           name.language_id != TT_MS_LANGID_ENGLISH_UNITED_KINGDOM)
                             continue;
                         break;
                     default:
@@ -796,10 +825,11 @@ static QCString getName(FT_Face face, int nid)
     FT_SfntName name;
     QCString    str;
 
-    if(lookupName(face, nid, TT_PLATFORM_MICROSOFT, TT_MS_ID_UNICODE_CS, &name) || lookupName(face, nid, TT_PLATFORM_APPLE_UNICODE, -1, &name))
+    if(lookupName(face, nid, TT_PLATFORM_MICROSOFT, TT_MS_ID_UNICODE_CS, &name) ||
+       lookupName(face, nid, TT_PLATFORM_APPLE_UNICODE, -1, &name))
         for(unsigned int i=0; i < name.string_len / 2; i++)
             str+=0 == name.string[2*i] ? name.string[(2*i)+1] : '_';
-    else if(lookupName(face, nid, TT_PLATFORM_MACINTOSH, TT_MAC_ID_ROMAN, &name)) // Pretend that Apple Roman is ISO 8859-1.
+    else if(lookupName(face, nid, TT_PLATFORM_MACINTOSH, TT_MAC_ID_ROMAN, &name)) // Pretend that Apple Roman is ISO 8859-1
         for(unsigned int i=0; i < name.string_len; i++)
             str+=name.string[i];
 
@@ -1065,7 +1095,7 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
     if(!foundry)
         foundry=getFoundry(getName(face, TT_NAME_ID_MANUFACTURER), true);
 
-    if(!foundry && vendor[0] && !isspace(vendor[0]) && '-'!=vendor[0])  // Some fonts have a totally blank vendor field - just spaces!
+    if(!foundry && vendor[0] && !isspace(vendor[0]) && '-'!=vendor[0])  // Some fonts have a totally blank vendor field
     {
        int i;
 
@@ -1189,6 +1219,9 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
         }
     }
 
+    if(!status)
+        closeFaceFt();
+
     return status;
 }
 
@@ -1270,15 +1303,12 @@ bool CFontEngine::openFontAfm(const QString &file)
 //    TRUE TYPE
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
+bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
 {
-    bool status=FT_New_Face(itsFt.library, QFile::encodeName(file), face, &itsFt.face) ? false : true;
+    bool status=FT_New_Face(itsFt.library, QFile::encodeName(file), itsFaceIndex, &itsFt.face) ? false : true;
 
     if(status)
-    {
         itsFt.open=true;
-        itsNumFaces=itsFt.face->num_faces;
-    }
 
     if(mask&NAME && status)
     {
@@ -1362,7 +1392,8 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
                     gotItalic=true;
                 }
     
-                if(WEIGHT_UNKNOWN==itsWeight && NULL!=(head=(TT_Header *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)) && head->Mac_Style & 1)
+                if(WEIGHT_UNKNOWN==itsWeight && NULL!=(head=(TT_Header *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)) &&
+                   head->Mac_Style & 1)
                     itsWeight=WEIGHT_BOLD;
                 if(WIDTH_UNKNOWN==itsWidth)
                     itsWidth=WIDTH_NORMAL;
@@ -1396,7 +1427,8 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
     
                 if(mask&XLFD)
                 {
-                    if((NULL!=post || NULL!=(post=(TT_Postscript *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post))) && post->isFixedPitch)
+                    if((NULL!=post || NULL!=(post=(TT_Postscript *)FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post))) &&
+                       post->isFixedPitch)
                     {
                         TT_HoriHeader *hhea=NULL;
     
@@ -1415,6 +1447,9 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask, int face)
             }
         }
     }
+
+    if(!status)
+        closeFaceFt();
 
     return status;
 }
@@ -1499,6 +1534,15 @@ CFontEngine::EWidth CFontEngine::mapWidthTT(FT_UShort os2Width)
     }
 }
 
+void CFontEngine::closeFaceFt()
+{
+    if(itsFt.open)
+    {
+        FT_Done_Face(itsFt.face);
+        itsFt.open=false;
+    }
+}
+
 #ifndef HAVE_FONT_ENC
 bool CFontEngine::has16BitEncodingFt(const QString &enc)
 {
@@ -1509,7 +1553,8 @@ bool CFontEngine::has16BitEncodingFt(const QString &enc)
     else if(enc=="big5.et-0")
         return FT_Select_Charmap(itsFt.face, ft_encoding_big5) ? false : true;
     else if(enc=="ksc5601.1987-0")
-        return FT_Select_Charmap(itsFt.face, ft_encoding_wansung) ?  FT_Select_Charmap(itsFt.face, ft_encoding_johab) ?  false : true : true;
+        return FT_Select_Charmap(itsFt.face, ft_encoding_wansung) ?  FT_Select_Charmap(itsFt.face, ft_encoding_johab) ? 
+               false : true : true;
     else
         return false;
 }
@@ -1677,7 +1722,8 @@ bool CFontEngine::checkEncodingFt(const QString &enc)
                                 if(0==FT_Get_Char_Index(itsFt.face, c))
                                     failed++;
                                 total++;
-                                if((encoding->size <= 1 && failed > 0) || ((float)failed >= constBigEncodingFuzz * estimate))
+                                if((encoding->size <= 1 && failed > 0) ||
+                                   ((float)failed >= constBigEncodingFuzz * estimate))
                                     return false;
                             }
                         }
@@ -1986,8 +2032,8 @@ void CFontEngine::createNameBmp(int pointSize, int res, const QString &enc)
 
     ptStr.setNum(pointSize/10);
     resStr.setNum(res);
-    itsFullName=itsFamily+" "+weightStr(itsWeight)+(ITALIC_ITALIC==itsItalic ? constBmpItalic : ITALIC_OBLIQUE==itsItalic ? constBmpOblique : constBmpRoman)+
-                      " ("+ptStr+"pt, "+resStr+"dpi, "+enc+")";
+    itsFullName=itsFamily+" "+weightStr(itsWeight)+(ITALIC_ITALIC==itsItalic ? constBmpItalic : ITALIC_OBLIQUE==itsItalic
+                ? constBmpOblique : constBmpRoman)+" ("+ptStr+"pt, "+resStr+"dpi, "+enc+")";
 }
 
 static CFontEngine::EItalic charToItalic(char c)
@@ -2115,7 +2161,8 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
     unsigned int keyLen=strlen(key),
                  sLen=strlen(str);
 
-    if(keyLen+1<sLen && NULL!=(s=strstr(str, key)) && (s==str || (!isalnum(s[-1]) && '_'!=s[-1])) && (!noquotes || (noquotes && s[keyLen+1]=='-')))
+    if(keyLen+1<sLen && NULL!=(s=strstr(str, key)) && (s==str || (!isalnum(s[-1]) && '_'!=s[-1])) &&
+      (!noquotes || (noquotes && s[keyLen+1]=='-')))
     {
         const int   constMaxTokenSize=256;
         static char tokenBuffer[constMaxTokenSize];
@@ -2269,12 +2316,13 @@ bool CFontEngine::openFontSnf(const QString &file)
            && ntohl(genInfo.numProps)<constBitmapMaxProps)
         {
             TProp        *props=new TProp[ntohl(genInfo.numProps)];
-            unsigned int numChars=((ntohl(genInfo.lastCol) - ntohl(genInfo.firstCol)) + 1) * ((ntohl(genInfo.lastRow) - ntohl(genInfo.firstRow)) + 1),
+            unsigned int numChars=((ntohl(genInfo.lastCol) - ntohl(genInfo.firstCol)) + 1) * 
+                                  ((ntohl(genInfo.lastRow) - ntohl(genInfo.firstRow)) + 1),
                          glyphInfoSize=((genInfo.maxBounds.byteOffset()+3) & ~0x3);
 
             if(props)
             {
-                if(-1!=snf.seek(numChars*sizeof(TCharInfo)+glyphInfoSize, SEEK_CUR))  // Skip past character info & glyphs...
+                if(-1!=snf.seek(numChars*sizeof(TCharInfo)+glyphInfoSize, SEEK_CUR))  // Skip character info & glyphs...
                 {
                     unsigned int p;
                     bool         error=false;
@@ -2628,8 +2676,8 @@ bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
 
         align32(bmp);
 
-        QPixmap glyphPix(QImage(bmp.buffer, bmp.width, bmp.height, bmp.mono ? 1 : 8, bmp.mono ? clut1 : clut8, bmp.mono ? 2 : bmp.greys,
-                                QImage::BigEndian));
+        QPixmap glyphPix(QImage(bmp.buffer, bmp.width, bmp.height, bmp.mono ? 1 : 8, bmp.mono ? clut1 : clut8,
+                                bmp.mono ? 2 : bmp.greys, QImage::BigEndian));
 
         bitBlt(&pix, x+left, y-top, &glyphPix, 0, 0, glyphPix.width(), glyphPix.height(), Qt::AndROP);
 

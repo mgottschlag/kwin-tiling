@@ -51,11 +51,17 @@
 #include <qpaintdevice.h>
 #endif
 
+// Config file...
+#define KFI_PREVIEW_GROUP      "Preview Settings"
+#define KFI_PREVIEW_STRING_KEY "String"
+#define KFI_PREVIEW_SIZE_KEY   "Size"
+
 // OK - some macros to make determining the FreeType version easier...
 #define KFI_FREETYPE_VERSION      KDE_MAKE_VERSION(FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH)
 #define KFI_FT_IS_GE(a,b,c)       (KFI_FREETYPE_VERSION >= KDE_MAKE_VERSION(a,b,c))
 
 class KURL;
+class KConfig;
 
 class CFontEngine
 {
@@ -239,7 +245,7 @@ class CFontEngine
     const QString & getAddStyle()     { return itsAddStyle; }
 
     EType           getType()         { return itsType; }
-    int             getNumFaces()     { return itsNumFaces; }
+    int             getNumFaces()     { return itsFt.open ? itsFt.face->num_faces : 1; }
 
     bool            hasPsInfo()       { return itsType<=TYPE_1_AFM; }
     static bool     hasPsInfo(const char *fname) { return getType(fname)<=TYPE_1_AFM; }
@@ -255,8 +261,10 @@ class CFontEngine
     QString         createName(const QString &file, bool force=false);
 
 #ifdef HAVE_FT_CACHE
-    void            createPreview(int width, int height, QPixmap &pix, int faceNo);
+    QString         getPreviewString();
+    void            setPreviewString(const QString &str);
 
+    void            createPreview(int width, int height, QPixmap &pix, int faceNo=0, int fSize=-1, bool thumb=true);
     static int      point2Pixel(int point)
     {
         return (point* /*QPaintDevice::x11AppDpiX()*/ 75 +36)/72;
@@ -277,12 +285,13 @@ class CFontEngine
     //
     // TrueType functions...
     //
-    bool            openFontTT(const QString &file, unsigned short mask=NAME, int face=0);
+    bool            openFontTT(const QString &file, unsigned short mask=NAME);
     static EWeight  mapWeightTT(FT_UShort os2Weight);
     static EWidth   mapWidthTT(FT_UShort os2Width);
         //
         //  TrueType & Type1 shared functionality (FreeType2)
         //
+    void            closeFaceFt();
     bool            setCharmapFt(FT_CharMap &charMap)    { return FT_Set_Charmap(itsFt.face, charMap) ? false : true; }
     unsigned int    getGlyphIndexFt(unsigned short code) { return FT_Get_Char_Index(itsFt.face, code); }
     bool            setCharmapUnicodeFt()                { return FT_Select_Charmap(itsFt.face, ft_encoding_unicode) ? false : true; }
@@ -352,21 +361,22 @@ class CFontEngine
 
     private:
 
-    EWeight        itsWeight;
-    EWidth         itsWidth;
-    EType          itsType;
-    EItalic        itsItalic;
-    ESpacing       itsSpacing;
-    QString        itsFullName,
-                   itsFamily,
-                   itsPsName,
-                   itsXlfd,        // Used for Bitmap fonts
-                   itsFoundry,
-                   itsAddStyle,
-                   itsPath;
-    int            itsNumFaces,
-                   itsPixelSize;   // Used for Bitmap fonts
-    TFtData        itsFt;
+    EWeight  itsWeight;
+    EWidth   itsWidth;
+    EType    itsType;
+    EItalic  itsItalic;
+    ESpacing itsSpacing;
+    QString  itsFullName,
+             itsFamily,
+             itsPsName,
+             itsXlfd,        // Used for Bitmap fonts
+             itsFoundry,
+             itsAddStyle,
+             itsPath;
+    int      itsNumFaces,
+             itsPixelSize,   // Used for Bitmap fonts
+             itsFaceIndex;   // Only for TTC fonts - at the moment...
+    TFtData  itsFt;
 };
 
 #endif

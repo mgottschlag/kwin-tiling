@@ -36,6 +36,8 @@ class QPushButton;
 class QFrame;
 class QLabel;
 class KIntNumInput;
+class KAction;
+class KURL;
 
 class CFontViewPart : public KParts::ReadOnlyPart
 {
@@ -48,21 +50,28 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     protected:
 
-    virtual bool openFile();
+    bool openURL(const KURL &url);
+    bool openFile();
 
     private slots:
 
     void previewStatus(bool st);
     void install();
-    void showFace(int face);
+    void zoomIn();
+    void zoomOut();
+    void changeText();
 
     private:
 
     CFontPreview *itsPreview;
     QPushButton  *itsInstallButton;
-    QFrame       *itsFrame;
+    QFrame       *itsFrame,
+                 *itsToolsFrame;
     QLabel       *itsFaceLabel;
     KIntNumInput *itsFaceSelector;
+    KAction      *itsZoomInAction,
+                 *itsZoomOutAction,
+                 *itsChangeTextAction;
 };
 
 #endif

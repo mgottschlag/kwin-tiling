@@ -36,20 +36,21 @@
 #include <qimage.h>
 #include <stdlib.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str)
+CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str, int size)
             : QWidget(parent, name),
               itsCurrentFace(1),
               itsLastWidth(0),
               itsLastHeight(0),
+              itsSize(size),
               itsString(str.isEmpty() ? i18n(" No preview available") : str),
               itsBgndCol(eraseColor())
 {
 }
 
-void CFontPreview::showFont(const KURL &url, int face)
+void CFontPreview::showFont(const KURL &url)
 {
     itsCurrentUrl=url;
-    showFace(face);
+    showFace(1);
 }
 
 void CFontPreview::showFace(int face)
@@ -58,18 +59,23 @@ void CFontPreview::showFace(int face)
     showFont();
 }
 
+void CFontPreview::showSize(int size)
+{
+    itsSize=size;
+    showFont();
+}
+
 void CFontPreview::showFont()
 {
     itsLastWidth=width();
     itsLastHeight=height();
 
-    if(CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::NAME, true, itsCurrentFace-1))
+    if(!itsCurrentUrl.isEmpty() && CGlobal::fe().openFont(itsCurrentUrl, CFontEngine::NAME, true, itsCurrentFace-1))
     {
         setEraseColor(Qt::white);
-        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1);
+        CGlobal::fe().createPreview(itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, itsSize, false);
         update();
         emit status(true);
-        CGlobal::fe().closeFont();
     }
     else
     {
@@ -104,7 +110,7 @@ void CFontPreview::paintEvent(QPaintEvent *)
 
 QSize CFontPreview::sizeHint() const
 {
-    return QSize(160, 200);
+    return QSize(132, 132);
 }
 
 QSize CFontPreview::minimumSizeHint() const

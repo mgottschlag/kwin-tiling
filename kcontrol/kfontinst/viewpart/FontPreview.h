@@ -42,17 +42,23 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null);
+    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null, int size=-1);
     virtual ~CFontPreview() {}
 
-    void  paintEvent(QPaintEvent *);
-    QSize sizeHint() const;
-    QSize minimumSizeHint() const;
+    void            paintEvent(QPaintEvent *);
+    QSize           sizeHint() const;
+    QSize           minimumSizeHint() const;
+    int             currentSize() const { return itsSize; }
 
     public slots:
 
-    void showFont(const KURL &url, int face=1);
+    void showFont(const KURL &url);
     void showFace(int face);
+    void showSize(int size);
+
+    public:
+
+    void showFont();
 
     signals:
 
@@ -60,15 +66,12 @@ class CFontPreview : public QWidget
 
     private:
 
-    void showFont();
-
-    private:
-
     QPixmap itsPixmap;
     KURL    itsCurrentUrl;
     int     itsCurrentFace,
             itsLastWidth,
-            itsLastHeight;
+            itsLastHeight,
+            itsSize;
     QString itsString;
     QColor  itsBgndCol;
 };
