@@ -19,12 +19,9 @@ SUBDIRS = .
 
 INCLUDES=  $(all_includes)
 ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-ksmserver_LDADD = $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-
+ksmserver_LDADD = $(LIB_KDECORE)
 
 bin_PROGRAMS = ksmserver
-
-include_HEADERS = 
 noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_METASOURCES = AUTO
