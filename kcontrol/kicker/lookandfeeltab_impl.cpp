@@ -346,7 +346,7 @@ void LookAndFeelTab::save()
 
 void LookAndFeelTab::defaults()
 {
-  m_zoom_cb->setChecked(true);
+  m_zoom_cb->setChecked(false);
   m_showToolTips->setChecked(true);
 
   m_kmenuTile->setCurrentItem(0);
