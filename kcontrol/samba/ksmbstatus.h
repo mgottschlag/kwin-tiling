@@ -33,6 +33,7 @@
 
 class QListView;
 class QListViewItem;
+class KProcess;
 
 class NetMon : public QWidget
 {
@@ -43,6 +44,7 @@ public:
    void load() {};
 private:
    KConfig *configFile;
+   KProcess *showmountProc;
    QListView *list;
    QLabel *version;
    QTimer *timer;
@@ -57,12 +59,18 @@ private:
 
    QCString strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
+   bool m_nothingReceived;
 
 private slots:
+   void killShowmount();
    void update();
-   void help();
-   void Kill();
-   void Killmenu(QListViewItem *row, const QPoint &pos, int column);
+   //this killing stuff is kindof pointless
+   //it kills the smbd which serves a client, this smbd will be started
+   //again instantly so smbd mounted stuff or users from windows
+   //won't notice it at all
+   //aleXXX
+/*   void Kill();
+   void Killmenu(QListViewItem *row, const QPoint &pos, int column);*/
    void slotReceivedData(KProcess *proc, char *buffer, int buflen);
 };
 

@@ -2,8 +2,6 @@
  * ksmbstatus.cpp
  *
  *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,6 +31,7 @@
 #include <qmessagebox.h>
 #include <qpoint.h>
 #include <qfont.h>
+#include <qtimer.h>
 
 #include <kprocess.h>
 #include <kapp.h>
@@ -48,6 +47,7 @@
 NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    : QWidget(parent, name)
    ,configFile(config)
+   ,showmountProc(0)
    ,strShare("")
    ,strUser("")
    ,strGroup("")
@@ -58,6 +58,7 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    ,iGroup(0)
    ,iMachine(0)
    ,iPid(0)
+   ,m_nothingReceived(TRUE)
 {
     QBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setAutoAdd(true);
@@ -80,19 +81,13 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     list->addColumn(i18n("Open Files"));
 
     timer = new QTimer(this);
-    timer->start(10000);
+    timer->start(15000);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    menu = new KPopupMenu();
+    /*menu = new KPopupMenu();
     QObject::connect(list,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
-		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));
+		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));*/
     update();
 };
-
-void NetMon::help()
-{
-//        KNetMon->invokeHTMLHelp("","");
-
-}
 
 void NetMon::processNFSLine(char *bufline, int)
 {
@@ -127,12 +122,6 @@ void NetMon::processSambaLine(char *bufline, int)
 
       line=line.mid(iMachine,line.length());
       strMachine=line;
-      /*strSince=s.after(")");
-       strSince=strSince.afterRXwhite();
-       strSince=strSince.afterRXwhite();
-       strSince=strSince.afterRXwhite();
-       strSince=strSince.afterRXwhite();
-       strSince=strSince.before(" ");*/
       new QListViewItem(list,"SMB",strShare,strMachine, strUser,strGroup,strPid/*,strSince*/);
    }
    else if (readingpart==connexions)
@@ -149,49 +138,6 @@ void NetMon::processSambaLine(char *bufline, int)
          (lo)[pid]++;
       }
    };
-/* char *tok;
-   int pid;
-   QListViewItem *row;
-   int column;
-
-   rownumber++;
-   if (rownumber == 2)
-      version->setText(bufline); // second line = samba version
-    else if ((rownumber >= 5) && (readingpart==connexions))
-    {
-
-       if (linelen<=1)
-          readingpart=locked_files; // stop after first empty line.
-       else
-       {
-          row = new QListViewItem(list);
-          column=0;
-          tok=strtok(bufline," ");
-          row->setText(column++,tok);
-          while (column<5)
-          {
-             tok=strtok(NULL," ");
-             row->setText(column++,tok);
-          }
-       }
-    }
-    else if (readingpart==locked_files)
-    {
-       if ((strncmp(bufline,"No",2) == 0) || (linelen<=1))
-       {
-          // "No locked files"
-          readingpart=finished;
-          //kdDebug() << "finished" << endl;
-       }
-       else
-          if ((strncmp(bufline,"Pi", 2) !=0) // "Pid DenyMode ..."
-              && (strncmp(bufline,"--", 2) !=0)) // "------------"
-          {
-             tok=strtok(bufline," ");
-             pid=atoi(tok);
-             (lo)[pid]++;
-          }
-    }*/
 }
 
 // called when we get some data from smbstatus
@@ -199,6 +145,7 @@ void NetMon::processSambaLine(char *bufline, int)
 // half of one ...)
 void NetMon::slotReceivedData(KProcess *, char *buffer, int )
 {
+   m_nothingReceived=false;
    char s[250],*start,*end;
    size_t len;
    start = buffer;
@@ -251,31 +198,47 @@ void NetMon::update()
       }
    }
    delete process;
+   process=0;
 
    readingpart=nfs;
-   process=new KProcess();
-   *process<<"showmount"<<"-a"<<"localhost";
-   connect(process,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
-   if (!process->start(KProcess::Block,KProcess::Stdout)) // run smbstatus
+   if (showmountProc!=0)
+      delete showmountProc;
+   showmountProc=new KProcess();
+   *showmountProc<<"showmount"<<"-a"<<"localhost";
+   connect(showmountProc,SIGNAL(receivedStdout(KProcess *, char *, int)),SLOT(slotReceivedData(KProcess *, char *, int)));
+   m_nothingReceived=TRUE;
+   //without this timer showmount hangs up to 5 minutes
+   //if the portmapper daemon isn't running
+   QTimer::singleShot(5000,this,SLOT(killShowmount()));
+   if (!showmountProc->start(KProcess::Block,KProcess::Stdout)) // run showmount
       version->setText(version->text()+i18n(" Error: Unable to run showmount"));
-   delete process;
-   process=0;
+   delete showmountProc;
+   showmountProc=0;
 
    version->adjustSize();
    list->show();
 }
 
-void NetMon::Kill()
+void NetMon::killShowmount()
+{
+   if ((m_nothingReceived) && (showmountProc!=0))
+   {
+      //this one kills showmount
+      delete showmountProc;
+      showmountProc=0;
+   };
+
+};
+
+/*void NetMon::Kill()
 {
    QString a(killrow->text(5));
-//   cerr<<"NetMon::killing -"<<a<<"-"<<endl;
    kill(a.toUInt(),15);
    update();
 }
 
-void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int /* column */)
+void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int )
 {
-   // WABA: column not used, is this ok?
    if (row!=0)
    {
        killrow=row;
@@ -284,5 +247,5 @@ void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int /* column */)
        menu->setTitle("//"+row->text(2)+"/"+row->text(1));
        menu->popup(pos);
    }
-}
+}*/
 
