@@ -88,16 +88,17 @@ void FontUseItem::writeFont()
     KConfigBase *config;
     
     if (_rcfile.isEmpty()) {
-	config = new KConfig(QString::fromLatin1("kcontrolrc"));
+	config = KGlobal::config();
 	config->setGroup(_rcgroup);
 	config->writeEntry(_rckey, _font, true, true);
+	config->sync();
     } else {
 	config = new KSimpleConfig(locate("config", _rcfile));
 	config->setGroup(_rcgroup);
 	config->writeEntry(_rckey, _font);
 	config->sync();
+	delete config;
     }
-    delete config;
 }
 
 
@@ -109,10 +110,9 @@ KFonts::KFonts(QWidget *parent, const char *name)
     int i;
     _changed = false;
 
-    KConfig *cfg = new KConfig("kcmdisplayrc");
+    KConfig *cfg = KGlobal::config();
     cfg->setGroup("X11");
     useRM = cfg->readBoolEntry("useResourceManager", true);
-    delete cfg;
     
     QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
     QBoxLayout *pushLayout = new QHBoxLayout( 5 );
