@@ -261,10 +261,10 @@ static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
 	while (strlen(Entry->Name))
 	{	if (strncmp(Entry->Name,Machine,len)==0)
 		{
-		    str = QString(i18n("PA-RISC Processor")) + TAB 
+		    str = i18n("PA-RISC Processor") + TAB 
 			+ QString(PA_NAME[Entry->parisc_name]);
 		    lBox->insertItem( str );
-		    str = QString(i18n("PA-RISC Revision")) + TAB 
+		    str = i18n("PA-RISC Revision") + TAB 
 			+ QString("PA-RISC ") 
 			+ QString(PA_REVISION[Entry->parisc_rev]);
 		    lBox->insertItem( str );
@@ -318,7 +318,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
 	{	QTextStream *t = new QTextStream(pipe, IO_ReadOnly);
 		str = t->readLine();
                 m = fm.width(str); if (m>maxwidth) maxwidth=m;
-		str = QString(i18n("Model")) + TAB + str;
+		str = i18n("Model") + TAB + str;
 		lBox->insertItem(str);
 		delete t;
 	}
@@ -339,7 +339,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
   pstat_getprocessor( &pro, sizeof(pro), 1, 0 );
   I18N_MAX(str,i18n("CPU Clock"),fm,maxwidth);
   str += TAB + Value(pro.psp_iticksperclktick/10000) 
-             + QString(" ") + QString(i18n("MHz"));
+             + QString(" ") + i18n("MHz");
   lBox->insertItem(str);
   
   i = sysconf(_SC_CPU_VERSION);
@@ -377,11 +377,11 @@ bool GetInfo_CPU( KTabListBox *lBox )
   str += TAB 
       + Value(((pst.physical_memory*pst.page_size)/1024/1024)) 
       + QString(" ")
-      + QString(i18n("MB"));	// Mega-Byte
+      + i18n("MB");	// Mega-Byte
   lBox->insertItem(str);
 
   I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth);
-  str += TAB + Value(pst.page_size) + QString(" ") + QString(i18n("Bytes"));
+  str += TAB + Value(pst.page_size) + QString(" ") + i18n("Bytes");
   lBox->insertItem(str);
 
    
@@ -585,7 +585,7 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		str =  QString(fstab_ent->fs_spec) + TAB
 		    +  QString(fstab_ent->fs_file) + TAB 
 		    +  QString("  ")
-		    +  (svfs.f_basetype[0] ? QString(svfs.f_basetype) : QString(i18n("n/a")));
+		    +  (svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a"));
 		if (svfs.f_basetype[0])
 		    str += TAB
 			+  Value((total+512)/1024,6) + MB + TAB
