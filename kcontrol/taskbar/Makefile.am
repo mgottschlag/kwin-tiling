@@ -15,7 +15,7 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot
 
 data_DATA = kcmtaskbar.desktop
-datadir = $(kde_appsdir)/Settings/Panel/
+datadir = $(kde_appsdir)/Settings/Desktop/
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
