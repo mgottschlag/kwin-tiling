@@ -43,6 +43,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <klocale.h>
+#include <kglobal.h>
 #include <kconfig.h>
 
 extern KIconLoader *global_pix_loader;
@@ -254,7 +255,7 @@ short PMenuItem::parse( QString &s, PMenu *menu)
 
 short PMenuItem::parse( QFileInfo *fi, PMenu *menu )
 {
-  QString lang = KApplication::getKApplication()->getLocale()->language();
+  QString lang = KGlobal::locale()->language();
   real_name = fi->fileName().copy();
   old_name = real_name;
   QString type_string = "";
