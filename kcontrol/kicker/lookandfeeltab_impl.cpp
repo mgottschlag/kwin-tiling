@@ -330,17 +330,17 @@ void LookAndFeelTab::defaults()
 void LookAndFeelTab::fillTileCombos()
 {
   m_kmenuTile->clear();
-  m_kmenuTile->insertItem(i18n("No tile"));
+  m_kmenuTile->insertItem(i18n("No Tile"));
   m_desktopTile->clear();
-  m_desktopTile->insertItem(i18n("No tile"));
+  m_desktopTile->insertItem(i18n("No Tile"));
   m_urlTile->clear();
-  m_urlTile->insertItem(i18n("No tile"));
+  m_urlTile->insertItem(i18n("No Tile"));
   m_browserTile->clear();
-  m_browserTile->insertItem(i18n("No tile"));
+  m_browserTile->insertItem(i18n("No Tile"));
   m_exeTile->clear();
-  m_exeTile->insertItem(i18n("No tile"));
+  m_exeTile->insertItem(i18n("No Tile"));
   m_wlTile->clear();
-  m_wlTile->insertItem(i18n("No tile"));
+  m_wlTile->insertItem(i18n("No Tile"));
 
   QStringList list = KGlobal::dirs()->findAllResources("tiles","*_tiny_up.png");
   int minHeight = 0;
