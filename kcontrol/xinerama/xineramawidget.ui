@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>657</width>
-            <height>449</height>
+            <width>658</width>
+            <height>484</height>
         </rect>
     </property>
     <property name="caption">
@@ -139,66 +139,6 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>Layout1</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Show KDM on:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>_kdmDisplay</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Show unmanaged windows on:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>_unmanagedDisplay</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>_kdmDisplay</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>_unmanagedDisplay</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
         <widget class="QPushButton" row="3" column="1">
             <property name="name">
                 <cstring>_identify</cstring>
@@ -224,6 +164,82 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>_kdmDisplay</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Show Unmanaged Windows On:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>_unmanagedDisplay</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="2" column="1">
+                    <property name="name">
+                        <cstring>_ksplashDisplay</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Show KDE Display Manager On:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>_kdmDisplay</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2_2</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Show KDE Splash Screen On:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>_unmanagedDisplay</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>_unmanagedDisplay</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -301,6 +317,24 @@
     </connection>
     <connection>
         <sender>_unmanagedDisplay</sender>
+        <signal>activated(int)</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_enableXinerama</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel2_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_enableXinerama</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>_ksplashDisplay</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_ksplashDisplay</sender>
         <signal>activated(int)</signal>
         <receiver>XineramaWidget</receiver>
         <slot>emitConfigChanged()</slot>

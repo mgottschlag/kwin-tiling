@@ -53,7 +53,7 @@ public slots:
 
 private:
 	QWidget* indicator(int dpy);
-	KConfig *config;
+	KConfig *config, *ksplashrc;
 	XineramaWidget *xw;
 	QTimer _timer;
 	QPtrList<QWidget> _indicators;

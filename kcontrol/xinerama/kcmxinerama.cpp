@@ -42,6 +42,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 	_indicators.setAutoDelete(true);
 
 	config = new KConfig("kdeglobals", false, false);
+	ksplashrc = new KConfig("ksplashrc", false, false);
 
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));
 
@@ -64,6 +65,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 			QRect geom = QApplication::desktop()->screenGeometry(i);
 			xw->_kdmDisplay->insertItem(l);
 			xw->_unmanagedDisplay->insertItem(l);
+			xw->_ksplashDisplay->insertItem(l);
 			dpyList.append(l);
 			xw->headTable->setText(i, 0, QString::number(geom.x()));
 			xw->headTable->setText(i, 1, QString::number(geom.y()));
@@ -71,8 +73,12 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 			xw->headTable->setText(i, 3, QString::number(geom.height()));
 		}
 
+		xw->_unmanagedDisplay->insertItem(i18n("Display Containing The Pointer"));
+
 		xw->headTable->setRowLabels(dpyList);
 
+		connect(xw->_ksplashDisplay, SIGNAL(activated(int)),
+			this, SLOT(windowIndicator(int)));
 		connect(xw->_kdmDisplay, SIGNAL(activated(int)),
 			this, SLOT(windowIndicator(int)));
 		connect(xw->_unmanagedDisplay, SIGNAL(activated(int)),
@@ -93,6 +99,8 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 
 KCMXinerama::~KCMXinerama() {
 	_timer.stop();
+	delete ksplashrc;
+	ksplashrc = 0;
 	delete config;
 	config = 0;
 	clearIndicator();
@@ -110,11 +118,19 @@ void KCMXinerama::configChanged() {
 
 void KCMXinerama::load() {
 	if (QApplication::desktop()->isVirtualDesktop()) {
+		int item = 0;
 		config->setGroup("Windows");
 		xw->_enableXinerama->setChecked(config->readBoolEntry(KWIN_XINERAMA, true));
 		xw->_enableResistance->setChecked(config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, true));
 		xw->_enablePlacement->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, true));
 		xw->_enableMaximize->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, true));
+
+		ksplashrc->setGroup("Xinerama");
+		item = ksplashrc->readNumEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
+		if (item < 0 || item >= _displays)
+			xw->_ksplashDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());
+		else xw->_ksplashDisplay->setCurrentItem(item);
+
 	}
 	emit changed(false);
 }
@@ -135,6 +151,10 @@ void KCMXinerama::save() {
 		if (!kapp->dcopClient()->isAttached())
 			kapp->dcopClient()->attach();
 		kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
+
+		ksplashrc->setGroup("Xinerama");
+		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentItem() : -2 /* ignore Xinerama */);
+		ksplashrc->sync();
 	}
 	emit changed(false);
 }
@@ -148,6 +168,8 @@ void KCMXinerama::defaults() {
 		xw->_kdmDisplay->setCurrentItem(
 				QApplication::desktop()->primaryScreen());
 		xw->_unmanagedDisplay->setCurrentItem(
+				QApplication::desktop()->primaryScreen());
+		xw->_ksplashDisplay->setCurrentItem(
 				QApplication::desktop()->primaryScreen());
 		emit changed(true);
 	} else {
