@@ -22,6 +22,8 @@
 #include <kconfig.h>
 
 #include <kxmlrpcdlg.h>
+#include "kxmlrpcdlg.moc"
+
 #include <kxmlrpcdlgbase.h>
 
 KXmlRpcDialog::KXmlRpcDialog(QWidget* parent, const char* name)
@@ -30,11 +32,11 @@ KXmlRpcDialog::KXmlRpcDialog(QWidget* parent, const char* name)
 {
   mWidget = new KXmlRpcDialogBase(this);
   setMainWidget(mWidget);
-  
+
   mConfig = new KConfig("kxmlrpcdrc", false, false);
   mConfig->setGroup("General");
   int port = mConfig->readUnsignedNumEntry("Port", 0);
-  
+
   if (port)
   {
      mWidget->manualPort->setChecked(true);
@@ -59,7 +61,7 @@ void KXmlRpcDialog::slotOk()
      port = mWidget->port->value();
   mConfig->setGroup("General");
   mConfig->writeEntry("Port", port);
-    
+
   accept();
 }
 
