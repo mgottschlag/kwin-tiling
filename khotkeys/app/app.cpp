@@ -94,10 +94,8 @@ int KDE_EXPORT kdemain( int argc, char** argv )
     {
         {
 	// multiheaded hotkeys
-	KInstance inst("khotkeys-multihead");
-	KConfig config("kdeglobals", true);
-	config.setGroup("X11");
-	if (config.readBoolEntry("enableMultihead")) {
+        QCString multiHead = getenv("KDE_MULTIHEAD");
+        if (multiHead.lower() == "true") {
 	    Display *dpy = XOpenDisplay(NULL);
 	    if (! dpy) {
 		fprintf(stderr, "%s: FATAL ERROR while trying to open display %s\n",

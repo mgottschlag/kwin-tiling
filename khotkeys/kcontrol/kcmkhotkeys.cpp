@@ -17,6 +17,7 @@
 #include "kcmkhotkeys.h"
 
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <qlayout.h>
 #include <qsplitter.h>
@@ -59,11 +60,11 @@ void init_khotkeys()
     cfg.setGroup( "Main" );
     if( !cfg.readBoolEntry( "Autostart", false ))
         return;
-    cfg.setGroup("X11"); // from kdeglobals actually
     // Non-xinerama multhead support in KDE is just a hack
     // involving forking apps per-screen. Don't bother with
     // kded modules in such case.
-    if( cfg.readBoolEntry( "enableMultihead" ))
+    QCString multiHead = getenv("KDE_MULTIHEAD");
+    if (multiHead.lower() == "true")
         kapp->kdeinitExec( "khotkeys" );
     else
         {
