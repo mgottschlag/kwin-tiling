@@ -22,14 +22,12 @@ METASOURCES = AUTO
 
 noinst_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
-genkdmconf_LDFLAGS = $(all_libraries)
+genkdmconf_LDFLAGS = -L$(x_libraries)
 genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local:
-	@if test ! -d $(DESTDIR)$(kde_confdir)/kdm; then \
-	    $(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm; \
-	    ./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm; \
-	fi
+	@$(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm
+	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm
 
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot

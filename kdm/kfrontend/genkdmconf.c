@@ -46,6 +46,8 @@
 # define ATTR_UNUSED
 #endif
 
+#define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
+
 #define KDMCONF KDE_CONFDIR "/kdm"
 
 static int no_old, copy_files;
@@ -53,7 +55,6 @@ static const char *newdir = KDMCONF, *oldxdm, *oldkde;
 
 
 #define NO_LOGGER
-#define CONST const
 #define STATIC static
 #include <printf.c>
 
@@ -166,7 +167,7 @@ readFile (File *file, const char *fn)
 # ifdef WANT_CLOSE
     file->ismapped = 0;
 # endif
-    file->buf = mmap(0, flen, PROT_READ, MAP_PRIVATE, fd, 0);
+    file->buf = mmap(0, flen + 1, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 # ifdef WANT_CLOSE
     if (file->buf)
 	file->ismapped = 1;
@@ -176,7 +177,7 @@ readFile (File *file, const char *fn)
 # endif
 #endif
     {
-	if (!(file->buf = malloc (flen))) {
+	if (!(file->buf = malloc (flen + 1))) {
 	    close (fd);
 	    fprintf (stderr, "Out of memory\n");
 	    return 0;
@@ -248,250 +249,465 @@ freeFile (File *file)
 # endif
 #endif
 
+const char def_xaccess[] = 
+"# Xaccess - Access control file for XDMCP connections\n"
+"#\n"
+"# To control Direct and Broadcast access:\n"
+"#\n"
+"#	pattern\n"
+"#\n"
+"# To control Indirect queries:\n"
+"#\n"
+"# 	pattern		list of hostnames and/or macros ...\n"
+"#\n"
+"# To use the chooser:\n"
+"#\n"
+"#	pattern		CHOOSER BROADCAST\n"
+"#\n"
+"# or\n"
+"#\n"
+"#	pattern		CHOOSER list of hostnames and/or macros ...\n"
+"#\n"
+"# To define macros:\n"
+"#\n"
+"#       %name		list of hosts ...\n"
+"#\n"
+"# The first form tells xdm which displays to respond to itself.\n"
+"# The second form tells xdm to forward indirect queries from hosts matching\n"
+"# the specified pattern to the indicated list of hosts.\n"
+"# The third form tells xdm to handle indirect queries using the chooser;\n"
+"# the chooser is directed to send its own queries out via the broadcast\n"
+"# address and display the results on the terminal.\n"
+"# The fourth form is similar to the third, except instead of using the\n"
+"# broadcast address, it sends DirectQuerys to each of the hosts in the list\n"
+"#\n"
+"# In all cases, xdm uses the first entry which matches the terminal;\n"
+"# for IndirectQuery messages only entries with right hand sides can\n"
+"# match, for Direct and Broadcast Query messages, only entries without\n"
+"# right hand sides can match.\n"
+"#\n"
+"\n"
+"*					#any host can get a login window\n"
+"\n"
+"#\n"
+"# To hardwire a specific terminal to a specific host, you can\n"
+"# leave the terminal sending indirect queries to this host, and\n"
+"# use an entry of the form:\n"
+"#\n"
+"\n"
+"#terminal-a	host-a\n"
+"\n"
+"\n"
+"#\n"
+"# The nicest way to run the chooser is to just ask it to broadcast\n"
+"# requests to the network - that way new hosts show up automatically.\n"
+"# Sometimes, however, the chooser can't figure out how to broadcast,\n"
+"# so this may not work in all environments.\n"
+"#\n"
+"\n"
+"*		CHOOSER BROADCAST	#any indirect host can get a chooser\n"
+"\n"
+"#\n"
+"# If you'd prefer to configure the set of hosts each terminal sees,\n"
+"# then just uncomment these lines (and comment the CHOOSER line above)\n"
+"# and edit the %hostlist line as appropriate\n"
+"#\n"
+"\n"
+"#%hostlist	host-a host-b\n"
+"\n"
+"#*		CHOOSER %hostlist	#\n";
+
+const char def_xservers[] = 
+"# Xservers - local X-server list\n"
+"#\n"
+"# This file should contain an entry to start the server on the\n"
+"# local display; if you have more than one display (not screen),\n"
+"# you can add entries to the list (one per line).\n"
+"# If you also have some X terminals connected which do not support XDMCP,\n"
+"# you can add them here as well; you will want to leave those terminals\n"
+"# on and connected to the network, else kdm will have a tougher time\n"
+"# managing them. Each X terminal line should look like:\n"
+"#       XTerminalName:0 foreign\n"
+"#\n"
+"\n"
+#ifdef __linux__
+":0 local@tty1 " XBINDIR "/X vt7"
+#elif defined(sun)
+":0 local@console " XBINDIR "/X"
+#elif defined(_AIX)
+":0 local@lft0 " XBINDIR "/X"
+#else
+":0 local " XBINDIR "/X"
+#endif
+"\n\n";
+
+const char def_willing[] = 
+"#!/bin/sh\n"
+"# The output of this script is displayed in the chooser window.\n"
+"# (instead of \"Willing to manage\")\n"
+"\n"
+"load=\"`uptime|sed -e 's/^.*load[^0-9]*//'`\"\n"
+"nrusers=\"`who|cut -c 1-8|sort -u|wc -l|sed 's/^[        ]*//'`\"\n"
+"s=\"\"; [ \"$nrusers\" != 1 ] && s=s\n"
+"\n"
+"echo \"${nrusers} user${s}, load: ${load}\"\n";
+
+const char def_setup[] = 
+"#!/bin/sh\n"
+"# Xsetup - run as root before the login dialog appears\n"
+"\n"
+KDE_BINDIR "/kdmdesktop &\n";
+
+const char def_startup[] = 
+"#!/bin/sh\n"
+"# Xstartup - run as root before session starts\n"
+"\n"
+"# By convention, both xconsole and xterm -C check that the\n"
+"# console is owned by the invoking user and is readable before attaching\n"
+"# the console output.  This way a random user can invoke xterm -C without\n"
+"# causing serious grief.\n"
+"# This is not required if you use PAM, as pam_console should handle it.\n"
+"#\n"
+#ifdef HAVE_PAM
+"#chown $USER /dev/console\n"
+#else
+"chown $USER /dev/console\n"
+#endif
+"\n"
+"#exec sessreg -a -l $DISPLAY "
+#ifdef BSD
+"-x " KDMCONF "/Xservers "
+#endif
+"$USER\n";
+
+const char def_reset[] = 
+"#!/bin/sh\n"
+"# Xreset - run as root after session exits\n"
+"\n"
+"# Reassign ownership of the console to root, this should disallow\n"
+"# assignment of console output to any random users's xterm\n"
+"# This is not required if you use PAM, as pam_console should handle it.\n"
+"#\n"
+#ifdef HAVE_PAM
+"#chown root /dev/console\n"
+"#chmod 622 /dev/console\n"
+#else
+"chown root /dev/console\n"
+"chmod 622 /dev/console\n"
+#endif
+"\n"
+"#exec sessreg -d -l $DISPLAY "
+#ifdef BSD
+"-x " KDMCONF "/Xservers "
+#endif
+"$USER\n";
+
+const char def_session[] = 
+"#!/bin/sh\n"
+"# Xsession - run as user\n"
+"\n"
+"# redirect errors to a file in user's home directory if we can\n"
+"for errfile in \"$HOME/.xsession-errors\" \"${TMPDIR-/tmp}/xses-$USER\" \"/tmp/xses-$USER\"\n"
+"do\n"
+"	if ( cp /dev/null \"$errfile\" 2> /dev/null )\n"
+"	then\n"
+"		chmod 600 \"$errfile\"\n"
+"		exec > \"$errfile\" 2>&1\n"
+"		break\n"
+"	fi\n"
+"done\n"
+"\n"
+"test -f $HOME/.xprofile && . $HOME/.xprofile\n"
+"\n"
+"sess=\"$1\"\n"
+"shift\n"
+"\n"
+"case \"$sess\" in\n"
+"    failsafe)\n"
+"	exec xterm -geometry 80x24-0-0 $*\n"
+"	;;\n"
+"    \"\"|default)\n"
+"	exec $HOME/.xsession $*\n"
+"	;;\n"
+"esac\n"
+"\n"
+"# start windowmanager\n"
+"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
+"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
+"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
+"sess=`echo \"$sess\" | tr A-Z a-z`\n"
+"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
+"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
+"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
+"\n"
+"# windowmanager not found, tell user\n"
+"exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"\n";
+
+#define F_FILE644	1
+#define F_FILE755	2
+#define F_PATH		4
+
 typedef struct Ent {
-	const char *comment;
-	const char *key;
-	const char *value;
-	int active;
+	const char	*key;
+	int		flags;
+	const char	*param;
+	const char	*comment;
 } Ent;
 
-typedef struct Sect {
-	const char *comment;
-	const char *name;
-	Ent *ents;
-	int nents;
-	int active;
-} Sect;
-
-Ent entsDesktop[] = {
-{ 0, "BackgroundMode",	"Wallpaper", 1 },
-{ 0, "BlendBalance",	"100", 1 },
-{ 0, "BlendMode",	"NoBlending", 1 },
-{ 0, "ChangeInterval",	"60", 1 },
-{ 0, "Color1",		"30,114,160", 1 },
-{ 0, "Color2",		"192,192,192", 1 },
-{ 0, "CurrentWallpaper", "0", 1 },
-{ 0, "LastChange",	"0", 1 },
-{ 0, "MultiWallpaperMode", "NoMulti", 1 },
-{ 0, "Pattern",		"", 1 },
-{ 0, "Program",		"", 1 },
-{ 0, "ReverseBlending",	"false", 1 },
-{ 0, "Wallpaper",	"default_blue.jpg", 1 },
-{ 0, "WallpaperList",	"", 1 },
-{ 0, "WallpaperMode",	"Scaled", 1 },
+static Ent entsDesktop[] = {
+{ "BackgroundMode",	0, 0, 0 },
+{ "BlendBalance",	0, 0, 0 },
+{ "BlendMode",		0, 0, 0 },
+{ "ChangeInterval",	0, 0, 0 },
+{ "Color1",		0, 0, 0 },
+{ "Color2",		0, 0, 0 },
+{ "CurrentWallpaper",	0, 0, 0 },
+{ "LastChange",		0, 0, 0 },
+{ "MultiWallpaperMode",	0, 0, 0 },
+{ "Pattern",		0, 0, 0 },
+{ "Program",		0, 0, 0 },
+{ "ReverseBlending",	0, 0, 0 },
+{ "Wallpaper",		0, 0, 0 },
+{ "WallpaperList",	0, 0, 0 },
+{ "WallpaperMode",	0, 0, 0 },
 };
 
-Ent entsGeneral[] = {
-{ "# If \"false\", KDM won't daemonize after startup. Use this, if you start\n"
-"# KDM from inittab with the respawn instruction. Default is true.\n", 
-"DaemonMode",	"false", 0 },
-{ "# The file, where X-servers to be used by KDM are listed. The file is in\n"
+static Ent entsGeneral[] = {
+{ "DaemonMode",		0, 0, 
+"# If \"false\", KDM won't daemonize after startup. Use this, if you start\n"
+"# KDM from inittab with the respawn instruction. Default is true.\n" },
+{ "Xservers",		F_FILE644, def_xservers,
+"# The file, where X-servers to be used by KDM are listed. The file is in\n"
 "# the usual XDM-Xservers format.\n"
 "# Default is " KDMCONF "/Xservers\n"
 "# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
-"# do this best.\n", 
-"Xservers",	"", 0 },
-{ "# Where KDM should store its PID. Default is /var/run/xdm.pid - this\n"
-"# is an intentional conflict with \"plain\" XDM.\n", 
-"PidFile",	"/var/run/kdm.pid", 0 },
-{ "# Whether KDM should lock the pid file to prevent having multiple KDM\n"
-"# instances running at once. Leave it \"true\", unless you're brave.\n", 
-"LockPidFile",	"false", 0 },
-{ "# Where to store authorization files. Default is /var/run/xauth\n", 
-"AuthDir",	"/tmp", 0 },
-{ "# Whether KDM should automatically re-read configuration files, if it\n"
-"# finds them having changed. Just keep it \"true\".\n", 
-"AutoRescan",	"false", 0 },
-{ "# Additional environment variables KDM should pass on to the Xsetup, Xstartup,\n"
-"# Xsession, and Xreset programs. This shouldn't be necessary very often.\n"
-"# You may put QT_XFT here and export QT_XFT=1 before starting KDM to get\n"
-"# anti-aliased fonts until I implement a proper option for this.\n", 
-"ExportList",	"QT_XFT,ANOTHER_IMPORTANT_VAR", 0 },
+"# do this best.\n" },
+{ "PidFile",		0, 0,
+"# Where KDM should store its PID. Default is /var/run/xdm.pid - this\n"
+"# is an intentional conflict with \"plain\" XDM.\n" },
+{"LockPidFile",		0, 0, 
+ "# Whether KDM should lock the pid file to prevent having multiple KDM\n"
+"# instances running at once. Leave it \"true\", unless you're brave.\n" },
+{ "AuthDir",		0, 0, 
+"# Where to store authorization files. Default is /var/run/xauth\n" },
+{ "AutoRescan",		0, 0, 
+"# Whether KDM should automatically re-read configuration files, if it\n"
+"# finds them having changed. Just keep it \"true\".\n" },
+{ "ExportList",		0, 0, 
+"# Additional environment variables KDM should pass on to the Xsetup, Xstartup,\n"
+"# Xsession, and Xreset programs. This shouldn't be necessary very often.\n" },
 #if !defined(__linux__) && !defined(__OpenBSD__)
-{ "# Where KDM should fetch entropy from. Default is /dev/mem.\n", 
-"RandomFile",	"", 0 },
+{ "RandomFile",		0, 0, 
+"# Where KDM should fetch entropy from. Default is /dev/mem.\n" },
 #endif
-{ "# Where the command FiFos should be created. Make it empty to disable\n"
-"# the FiFos. Default is /var/run/xdmctl\n", 
-"FifoDir",	"/tmp", 0 },
-{ "# To which group the command FiFos should belong.\n"
-"# Default is -1 (effectively root)\n", 
-"FifoGroup",	"xdmctl", 0 },
+{ "FifoDir",		0, 0, 
+"# Where the command FiFos should be created. Make it empty to disable\n"
+"# the FiFos. Default is /var/run/xdmctl\n" },
+{ "FifoGroup",		0, 0, 
+"# To which group the command FiFos should belong.\n"
+"# Default is -1 (effectively root)\n" },
 };
 
-Ent entsXdmcp[] = {
-{ "# Whether KDM should listen to XDMCP requests. Default is true.\n", 
-"Enable",	"false", 1 },
-{ "# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.\n", 
-"Port",		"177", 0 },
-{ "# File with the private keys of X-terminals. Required for XDM authentication.\n"
-"# Default is " KDMCONF "/kdmkeys\n", 
-"KeyFile",	"", 0 },
-{ "# XDMCP access control file in the usual XDM-Xaccess format.\n"
+static Ent entsXdmcp[] = {
+{ "Enable",		0, 0, 
+"# Whether KDM should listen to XDMCP requests. Default is true.\n" },
+{ "Port",		0, 0, 
+"# The UDP port KDM should listen on for XDMCP requests. Don't change the 177.\n" },
+{ "KeyFile",		F_FILE644, 0, 
+"# File with the private keys of X-terminals. Required for XDM authentication.\n"
+"# Default is " KDMCONF "/kdmkeys\n" },
+{ "Xaccess",		F_FILE644, def_xaccess, 
+"# XDMCP access control file in the usual XDM-Xaccess format.\n"
 "# Default is " KDMCONF "/Xaccess\n"
 "# XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to\n"
-"# do this best.\n", 
-"Xaccess",	"", 0 },
-{ "# Number of seconds to wait for display to respond after the user has\n"
-"# selected a host from the chooser. Default is 15.\n", 
-"ChoiceTimeout",	"10", 0 },
-{ "# Strip domain name from remote display names if it is equal to the local\n"
-"# domain. Default is true\n", 
-"RemoveDomainname",	"false", 0 },
-{ "# Use the numeric IP address of the incoming connection instead of the\n"
-"# host name. Use this on multihomed hosts. Default is false\n", 
-"SourceAddress",	"true", 0 },
-{ "# The program which is invoked to dynamically generate replies to XDMCP\n"
+"# do this best.\n" },
+{ "ChoiceTimeout",	0, 0, 
+"# Number of seconds to wait for display to respond after the user has\n"
+"# selected a host from the chooser. Default is 15.\n" },
+{ "RemoveDomainname",	0, 0, 
+"# Strip domain name from remote display names if it is equal to the local\n"
+"# domain. Default is true\n" },
+{ "SourceAddress",	0, 0, 
+"# Use the numeric IP address of the incoming connection instead of the\n"
+"# host name. Use this on multihomed hosts. Default is false\n" },
+{ "Willing",		F_FILE755, def_willing, 
+"# The program which is invoked to dynamically generate replies to XDMCP\n"
 "# BroadcastQuery requests.\n"
-"# By default no program is invoked and \"Willing to manage\" is sent.\n", 
-"Willing",	KDMCONF "/Xwilling", 1 },
+"# By default no program is invoked and \"Willing to manage\" is sent.\n" },
 };
 
-Ent entsShutdown[] = {
-{ "# The command to run to halt the system. Default is " HALT_CMD "\n", 
-"HaltCmd",	"", 0 },
-{ "# The command to run to reboot the system. Default is " REBOOT_CMD "\n", 
-"RebootCmd",	"", 0 },
-{ "# Whether one can shut down the system via the global command FiFo.\n"
-"# Default is false\n",
-"AllowFifo",	"true", 0 },
+static Ent entsShutdown[] = {
+{ "HaltCmd",		0, 0, 
+"# The command to run to halt the system. Default is " HALT_CMD "\n" },
+{ "RebootCmd",		0, 0, 
+"# The command to run to reboot the system. Default is " REBOOT_CMD "\n" },
+{ "AllowFifo",		0, 0, 
+"# Whether one can shut down the system via the global command FiFo.\n"
+"# Default is false\n" },
 #if defined(__linux__) && defined(__i386__)
-{ "# Offer LiLo boot options in shutdown dialog. Default is false\n", 
-"UseLilo",	"true", 0 },
-{ "# The location of the LiLo binary. Default is /sbin/lilo\n", 
-"LiloCmd",	"", 0 },
-{ "# The location of the LiLo map file. Default is /boot/map\n", 
-"LiloMap",	"", 0 },
+{ "UseLilo",		0, 0, 
+"# Offer LiLo boot options in shutdown dialog. Default is false\n" },
+{ "LiloCmd",		0, 0, 
+"# The location of the LiLo binary. Default is /sbin/lilo\n" },
+{ "LiloMap",		0, 0, 
+"# The location of the LiLo map file. Default is /boot/map\n" },
 #endif
 };
 
-Ent entsAnyCore[] = {
-{ "# How long to wait before retrying to start the display after various\n"
-"# errors. Default is 15\n", 
-"OpenDelay",	"", 0 },
-{ "# How long to wait before timing out XOpenDisplay. Default is 120\n", 
-"OpenTimeout",	"", 0 },
-{ "# How often to try the XOpenDisplay. Default is 5\n", 
-"OpenRepeat",	"", 0 },
-{ "# Try at most that many times to start a display. If this fails, the display\n"
-"# is disabled. Default is 4\n", 
-"StartAttempts",	"", 0 },
-{ "# The StartAttempt counter is reset after that many seconds. Default is 30\n", 
-"StartInterval",	"", 0 },
-{ "# Ping remote display every that many minutes. Default is 5\n", 
-"PingInterval",	"", 0 },
-{ "# Wait for a Pong that many minutes. Default is 5\n", 
-"PingTimeout",	"", 0 },
-{ "# Restart instead of resetting the local X-server after session exit.\n"
-"# Use it if the server leaks memory, etc. Default is false\n", 
-"TerminateServer","true", 0 },
-{ "# The signal needed to reset the local X-server. Default is 1 (SIGHUP)\n", 
-"ResetSignal",	"", 0 },
-{ "# The signal needed to terminate the local X-server. Default is 15 (SIGTERM)\n", 
-"TermSignal",	"", 0 },
-{ "# Need to reset the X-server to make it read initial Xauth file.\n"
-"# Default is false\n", 
-"ResetForAuth",	"true", 0 },
-{ "# Create X-authorizations for local displays. Default is true\n", 
-"Authorize",	"false", 0 },
-{ "# Which X-authorization mechanisms should be used.\n"
-"# Default is " DEF_AUTH_NAME "\n", 
-"AuthNames",	"", 0 },
-{ "# The name of this X-server's Xauth file. Default is \"\", which means, that\n"
-"# a random name in the AuthDir directory will be used.\n", 
-"AuthFile",	"", 0 },
-{ "# Specify a file with X-resources for the greeter, chooser and background.\n"
+static Ent entsCore[] = {
+{ "OpenDelay",		0, 0, 
+"# How long to wait before retrying to start the display after various\n"
+"# errors. Default is 15\n" },
+{ "OpenTimeout",	0, 0, 
+"# How long to wait before timing out XOpenDisplay. Default is 120\n" },
+{ "OpenRepeat",		0, 0, 
+"# How often to try the XOpenDisplay. Default is 5\n" },
+{ "StartAttempts",	0, 0, 
+"# Try at most that many times to start a display. If this fails, the display\n"
+"# is disabled. Default is 4\n" },
+{ "StartInterval",	0, 0, 
+"# The StartAttempt counter is reset after that many seconds. Default is 30\n" },
+{ "PingInterval",	0, 0, 
+"# Ping remote display every that many minutes. Default is 5\n" },
+{ "PingTimeout",	0, 0, 
+"# Wait for a Pong that many minutes. Default is 5\n" },
+{ "TerminateServer",	0, 0, 
+"# Restart instead of resetting the local X-server after session exit.\n"
+"# Use it if the server leaks memory, etc. Default is false\n" },
+{ "ResetSignal",	0, 0, 
+"# The signal needed to reset the local X-server. Default is 1 (SIGHUP)\n" },
+{ "TermSignal",		0, 0, 
+"# The signal needed to terminate the local X-server. Default is 15 (SIGTERM)\n" },
+{ "ResetForAuth",	0, 0, 
+"# Need to reset the X-server to make it read initial Xauth file.\n"
+"# Default is false\n" },
+{ "Authorize",		0, 0, 
+"# Create X-authorizations for local displays. Default is true\n" },
+{ "AuthNames",		0, 0, 
+"# Which X-authorization mechanisms should be used.\n"
+"# Default is " DEF_AUTH_NAME "\n" },
+{ "AuthFile",		0, 0, 
+"# The name of this X-server's Xauth file. Default is \"\", which means, that\n"
+"# a random name in the AuthDir directory will be used.\n" },
+{ "Resources",		F_FILE644, 0, 
+"# Specify a file with X-resources for the greeter, chooser and background.\n"
 "# The KDE frontend doesn't care for this, so you don't need it unless you\n"
 "# use an alternative chooser or another background generator than kdmdesktop.\n"
-"# Default is \"\"\n", 
-"Resources",	"", 0 },
-{ "# The xrdb program to use to read the above specified recources.\n"
-"# Default is " XBINDIR "/xrdb\n", 
-"Xrdb",		"", 0 },
-{ "# A program to run before the greeter is shown. You should start kdmdesktop\n"
+"# Default is \"\"\n" },
+{ "Xrdb",		0, 0, 
+"# The xrdb program to use to read the above specified recources.\n"
+"# Default is " XBINDIR "/xrdb\n" },
+{ "Setup",		F_FILE755, def_setup, 
+"# A program to run before the greeter is shown. You should start kdmdesktop\n"
 "# there. Also, xconsole can be started by this script.\n"
-"# Default is " KDMCONF "/Xsetup\n", 
-"Setup",	"", 0 },
-{ "# A program to run before a user session starts. You should invoke sessreg\n"
+"# Default is \"\"\n" },
+{ "Startup",		F_FILE755, def_startup, 
+"# A program to run before a user session starts. You should invoke sessreg\n"
 "# there and optionally change the ownership of the console, etc.\n"
-"# Default is " KDMCONF "/Xstartup\n", 
-"Startup",	"", 0 },
-{ "# A program to run after a user session exits. You should invoke sessreg\n"
+"# Default is \"\"\n" },
+{ "Reset",		F_FILE755, def_reset, 
+"# A program to run after a user session exits. You should invoke sessreg\n"
 "# there and optionally change the ownership of the console, etc.\n"
-"# Default is " KDMCONF "/Xreset\n", 
-"Reset",	"", 0 },
-{ "# The program which is run as the user which logs in. It is supposed to\n"
+"# Default is \"\"\n" },
+{ "Session",		F_FILE755, def_session, 
+"# The program which is run as the user which logs in. It is supposed to\n"
 "# interpret the session argument and start an appropriate session according\n"
 "# to it. See SessionTypes.\n"
-"# Default is " KDMCONF "/Xsession\n", 
-"Session",	"", 0 },
-{ "# The program to run if Session fails.\n"
-"# Default is " XBINDIR "/xterm\n", 
-"FailsafeClient",	"", 0 },
-{ "# The PATH for the Session program. Default is\n"
-"# " DEF_USER_PATH "\n", 
-"UserPath",	"", 0 },
-{ "# The PATH for Setup, Startup and Reset, etc. Default is\n"
-"# " DEF_SYSTEM_PATH "\n", 
-"SystemPath",	"", 0 },
-{ "# The default system shell. Default is /bin/sh\n", 
-"SystemShell",	"/bin/bash", 0 },
-{ "# Where to put the user's X-server authorization file if ~/.Xauthority\n"
-"# cannot be created. Default is /tmp\n", 
-"UserAuthDir",	"", 0 },
-{ "# The host chooser program to use.\n"
+"# Default is " KDMCONF "/Xsession\n" },
+{ "FailsafeClient",	0, 0, 
+"# The program to run if Session fails.\n"
+"# Default is " XBINDIR "/xterm\n" },
+{ "UserPath",		F_PATH, DEF_USER_PATH, 
+"# The PATH for the Session program. Default is\n"
+"# " DEF_USER_PATH "\n" },
+{ "SystemPath",		F_PATH, DEF_SYSTEM_PATH, 
+"# The PATH for Setup, Startup and Reset, etc. Default is\n"
+"# " DEF_SYSTEM_PATH "\n" },
+{ "SystemShell",	0, 0, 
+"# The default system shell. Default is /bin/sh\n" },
+{ "UserAuthDir",	0, 0, 
+"# Where to put the user's X-server authorization file if ~/.Xauthority\n"
+"# cannot be created. Default is /tmp\n" },
+{ "Chooser",		0, 0, 
+"# The host chooser program to use.\n"
 "# Default is " KDE_BINDIR "/chooser\n"
-"# XXX this is going to be integrated into the greeter (probably).\n", 
-"Chooser",		"", 0 },
-{ "# If \"true\", KDM will automatically restart a session after an X-server\n"
+"# XXX this is going to be integrated into the greeter (probably).\n" },
+{ "AutoReLogin",	0, 0, 
+"# If \"true\", KDM will automatically restart a session after an X-server\n"
 "# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling\n"
 "# this opens a security hole: a secured display lock can be circumvented.\n"
-"# Default is false\n", 
-"AutoReLogin",	"true", 0 },
-{ "# Allow root logins? Default is true\n", 
-"AllowRootLogin",	"false", 1 },
-{ "# Allow to log in, when user has set an empty password? Default is true\n", 
-"AllowNullPasswd",	"false", 1 },
-{ "# Who is allowed to shut down the system. This applies both to the\n"
+"# Default is false\n" },
+{ "AllowRootLogin",	0, 0, 
+"# Allow root logins? Default is true\n" },
+{ "AllowNullPasswd",	0, 0, 
+"# Allow to log in, when user has set an empty password? Default is true\n" },
+{ "AllowShutdown",	0, 0, 
+"# Who is allowed to shut down the system. This applies both to the\n"
 "# greeter and to the command FiFo. Default is All\n"
 "# \"None\" - no \"Shutdown...\" button is shown at all\n"
 "# \"Root\" - the root password must be entered to shut down\n"
-"# \"All\" - everybody can shut down the machine (Default)\n", 
-"AllowShutdown",	"Root", 1 },
-{ "# Who is allowed to abort all still running sessions when shutting down.\n"
-"# Same options as for AllowShutdown. Default is All\n",
-"AllowSdForceNow",	"Root", 0 },
-{ "# The shutdown condition/timing choosen by default. Default is Schedule\n"
+"# \"All\" - everybody can shut down the machine (Default)\n" },
+{ "AllowSdForceNow",	0, 0, 
+"# Who is allowed to abort all still running sessions when shutting down.\n"
+"# Same options as for AllowShutdown. Default is All\n" },
+{ "DefaultSdMode",	0, 0, 
+"# The shutdown condition/timing choosen by default. Default is Schedule\n"
 "# \"Schedule\" - shutdown after all sessions exit (possibly at once)\n"
 "# \"TryNow\" - shutdown, if no sessions are open, otherwise do nothing\n"
-"# \"ForceNow\" - shutdown unconditionally\n",
-"DefaultSdMode",	"ForceNow", 0}, 
-{ "# Where (relatively to the user's home directory) to store the last\n"
-"# selected session. Default is .wmrc\n", 
-"SessSaveFile",	"", 0 },
+"# \"ForceNow\" - shutdown unconditionally\n" }, 
+{ "SessSaveFile",	0, 0, 
+"# Where (relatively to the user's home directory) to store the last\n"
+"# selected session. Default is .wmrc\n" },
+{ "ServerAttempts",	0, 0, 
+"# How often to try to run the X-server. Running includes executing it and\n"
+"# waiting for it to come up. Default is 1\n" },
+{ "ServerTimeout",	0, 0, 
+"# How long to wait for a local X-server to come up. Default is 15\n" },
+{ "NoPassEnable",	0, 0, 
+"# Enable password-less logins on this display. USE WITH EXTREME CARE!\n"
+"# Default is false\n" },
+{ "NoPassUsers",	0, 0, 
+"# The users that don't need to provide a password to log in. NEVER list root!\n" },
+{ "AutoLoginEnable",	0, 0, 
+"# Enable automatic login on this display. USE WITH EXTREME CARE!\n"
+"# Default is false\n" },
+{ "AutoLoginUser",	0, 0, 
+"# The user to log in automatically. NEVER specify root!\n" },
+{ "AutoLoginPass",	0, 0, 
+"# The password for the user to log in automatically. This is NOT required\n"
+"# unless the user is to be logged into a NIS or Kerberos domain. If you use\n"
+"# it, you must \"chmod 600 kdmrc\" for obvious reasons.\n" },
+{ "AutoLoginSession",	0, 0, 
+"# The session for the user to log in automatically. This becomes useless after\n"
+"# the user's first login, as the last used session will take precedence.\n" },
+{ "AutoLogin1st",	0, 0, 
+"# If \"true\", the auto-login is truly automatic, i.e., the user is logged in\n"
+"# when KDM comes up. If \"false\", the auto-login must be initiated by crashing\n"
+"# the X-server with Alt-Ctrl-BackSpace. Default is true\n" },
 };
 
-Ent entsAnyGreeter[] = {
-{ "# Session types the users can select. It is advisable to have \"default\" and\n"
+static Ent entsGreeter[] = {
+{ "SessionTypes",	0, 0, 
+"# Session types the users can select. It is advisable to have \"default\" and\n"
 "# \"failsafe\" listed herein, which is also the default.\n"
-"# Note, that the meaning of this value is entirely up to your Session program.\n", 
-"SessionTypes",	"default,kde,failsafe", 1 },
-{ "# Widget Style of the greeter:\n"
-"# KDE, Windows, Platinum, Motif, Motif+, CDE, SGI; Default is KDE\n", 
-"GUIStyle",	"Windows", 0 },
-{ "# What should be shown righthand of the input lines:\n"
+"# Note, that the meaning of this value is entirely up to your Session program.\n" },
+{ "GUIStyle",		0, 0, 
+"# Widget Style of the greeter:\n"
+"# KDE, Windows, Platinum, Motif, MotifPlus, CDE, SGI; Default is KDE\n" },
+{ "LogoArea",		0, 0, 
+"# What should be shown righthand of the input lines:\n"
 "# \"Logo\" - the image specified by LogoPixmap (Default)\n"
 "# \"Clock\" - a neat analog clock\n"
-"# \"None\" - nothing\n", 
-"LogoArea",	"None", 0 },
-{ "# The image to show when LogoArea=Logo. Default is kdelogo.png\n", 
-"LogoPixmap",	"", 0 },
-{ "# Normally, the greeter is centered on the screen. Use this, if you want\n"
-"# it to appear elsewhere on the screen. Default is false\n", 
-"GreeterPosFixed",	"true", 0 },
-{ 0, "GreeterPosX",	"200", 0 },
-{ 0, "GreeterPosY",	"100", 0 },
-{ "# The headline in the greeter.\n"
+"# \"None\" - nothing\n" },
+{ "LogoPixmap",		0, 0, 
+"# The image to show when LogoArea=Logo. Default is kdelogo.png\n" },
+{ "GreeterPosFixed",	0, 0, 
+"# Normally, the greeter is centered on the screen. Use this, if you want\n"
+"# it to appear elsewhere on the screen. Default is false\n" },
+{ "GreeterPosX",	0, 0, 0 },
+{ "GreeterPosY",	0, 0, 0 },
+{ "GreetString",	0, 0, 
+"# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
 "# - %d -> current display\n"
 "# - %h -> host name, possibly with domain name\n"
@@ -500,116 +716,240 @@ Ent entsAnyGreeter[] = {
 "# - %r -> the operating system's version\n"
 "# - %m -> the machine (hardware) type\n"
 "# - %% -> a single %\n"
-"# Default is \"Welcome to %s at %n\"\n", 
-"GreetString",	"K Desktop Environment (%n)", 0 },
-{ "# The font for the headline. Default is charter,24,bold\n", 
-"GreetFont",	"charter,24,5,0,50,0", 0 },
-{ "# The normal font used in the greeter. Default is helvetica,12\n", 
-"StdFont",	"helvetica,12,5,0,50,0", 0 },
-{ "# The font used for the \"Login Failed\" message. Default is helvetica,12,bold\n", 
-"FailFont",	"helvetica,12,5,0,75,0", 0 },
-{ "# Language to use in the greeter.\n"
-"# Use the default C or coutry codes like de, en, pl, etc.\n", 
-"Language",	"de", 0 },
-{ "# Specify, which user names (along with pictures) should be shown in the\n"
+"# Default is \"Welcome to %s at %n\"\n" },
+{ "GreetFont",		0, 0, 
+"# The font for the headline. Default is charter,24,bold\n" },
+{ "StdFont",		0, 0, 
+"# The normal font used in the greeter. Default is helvetica,12\n" },
+{ "FailFont",		0, 0, 
+"# The font used for the \"Login Failed\" message. Default is helvetica,12,bold\n" },
+{ "Language",		0, 0, 
+"# Language to use in the greeter.\n"
+"# Use the default C or coutry codes like de, en, pl, etc.\n" },
+{ "ShowUsers",		0, 0, 
+"# Specify, which user names (along with pictures) should be shown in the\n"
 "# greeter.\n"
-"# \"All\" - all users from /etc/passwd except those listed in NoUsers (Default)\n"
-"# \"Selected\" - only the ones listed in Users\n"
-"# \"None\" - no user list will be shown at all\n", 
-"ShowUsers",	"None", 0 },
-{ "# For ShowUsers=Selected. Default is \"\"\n", 
-"Users",	"root,johndoe", 0 },
-{ "# For ShowUsers=All. Default is \"\"\n", 
-"NoUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nfsnobody,nobody,nscd,ntp,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,radvd,reboot,rpc,rpcuser,rpm,sendmail,shutdown,squid,sympa,sync,tty,uucp,xfs,xten", 1 },
-{ "# Special case of NoUsers: users with a UID less than this number (except root)\n"
-"# will not be shown as well. Default is 0\n", 
-"MinShowUID",	"1000", 0 },
-{ "# Complement to MinShowUID: users with a UID greater than this number will\n"
-"# not be shown as well. Default is 65535\n", 
-"MaxShowUID",	"29999", 0 },
-{ "# If false, the users are listed in the order they appear in /etc/passwd.\n"
-"# If true, they are sorted alphabetically. Default is true\n", 
-"SortUsers",	"false", 0 },
-{ "# Specify, if/which user should be preselected for log in.\n"
+"# \"NotHidden\" - all users except those listed in HiddenUsers (Default)\n"
+"# \"Selected\" - only the users listed in SelectedUsers\n"
+"# \"None\" - no user list will be shown at all\n" },
+{ "SelectedUsers",	0, 0, 
+"# For ShowUsers=Selected. Default is \"\"\n" },
+{ "HiddenUsers",	0, 0, 
+"# For ShowUsers=NotHidden. Default is \"\"\n" },
+{ "MinShowUID",		0, 0, 
+"# Special case of HiddenUsers: users with a UID less than this number\n"
+"# (except root) will not be shown as well. Default is 0\n" },
+{ "MaxShowUID",		0, 0, 
+"# Complement to MinShowUID: users with a UID greater than this number will\n"
+"# not be shown as well. Default is 65535\n" },
+{ "SortUsers",		0, 0, 
+"# If false, the users are listed in the order they appear in /etc/passwd.\n"
+"# If true, they are sorted alphabetically. Default is true\n" },
+{ "PreselectUser",	0, 0, 
+"# Specify, if/which user should be preselected for log in.\n"
 "# Note, that enabling this feature can be considered a security hole,\n"
 "# as it presents a valid login name to a potential attacker, so he \"only\"\n"
 "# needs to guess the password.\n"
 "# \"None\" - don't preselect any user (Default)\n"
 "# \"Previous\" - the user which successfully logged in last time\n"
-"# \"Default\" - the user specified in the DefaultUser field\n", 
-"PreselectUser",	"Previous", 0 },
-{ "# The user to preselect if PreselectUser=Default\n", 
-"DefaultUser",	"ethel", 0 },
-{ "# If this is true, the password input line is focused automatically if\n"
-"# a user is preselected. Default is false\n", 
-"FocusPasswd",	"true", 0 },
-{ "# The password input fields cloak the typed in text. Specify, how to do it:\n"
+"# \"Default\" - the user specified in the DefaultUser field\n" },
+{ "DefaultUser",	0, 0, 
+"# The user to preselect if PreselectUser=Default\n" },
+{ "FocusPasswd",	0, 0, 
+"# If this is true, the password input line is focused automatically if\n"
+"# a user is preselected. Default is false\n" },
+{ "EchoMode",		0, 0, 
+"# The password input fields cloak the typed in text. Specify, how to do it:\n"
 "# \"NoEcho\" - nothing is shown at all, the cursor doesn't move\n"
 "# \"OneStar\" - \"*\" is shown for every typed letter (Default)\n"
-"# \"ThreeStars\" - \"***\" is shown for every typed letter\n", 
-"EchoMode",	"NoEcho", 0 },
-{ "# Hold the X-server grabbed the whole time the greeter is visible.\n"
-"# This may be more secure, but will disable any background. Default is false\n", 
-"GrabServer",	"true", 0 },
-{ "# How many seconds to wait for grab to succeed. Default is 3\n", 
-"GrabTimeout",	"", 0 },
+"# \"ThreeStars\" - \"***\" is shown for every typed letter\n" },
+{ "GrabServer",		0, 0, 
+"# Hold the X-server grabbed the whole time the greeter is visible.\n"
+"# This may be more secure, but will disable any background. Default is false\n" },
+{ "GrabTimeout",	0, 0, 
+"# How many seconds to wait for grab to succeed. Default is 3\n" },
+{ "AuthComplain",	0, 0, 
+"# Warn, if local X-authorization cannot be created. Default is true\n"
+"# XXX this is a dummy currently\n" },
 };
 
-Ent entsLocalCore[] = {
-{ "# How often to try to run the X-server. Running includes executing it and\n"
-"# waiting for it to come up. Default is 1\n", 
-"ServerAttempts",	"", 0 },
-{ "# How long to wait for a local X-server to come up. Default is 15\n", 
-"ServerTimeout",	"", 0 },
-{ "# See above.\n", 
-"AllowRootLogin",	"true", 1 },
-{ "# See above.\n", 
-"AllowNullPasswd",	"true", 1 },
-{ "# Enable password-less logins on this display. USE WITH EXTREME CARE!\n"
-"# Default is false\n", 
-"NoPassEnable",	"true", 0 },
-{ "# The users that don't need to provide a password to log in. NEVER list root!\n", 
-"NoPassUsers",	"fred,ethel", 0 },
+typedef struct Sect {
+	const char	*name;
+	Ent		*ents;
+	int		nents;
+} Sect;
+
+static Sect allSects[] = { 
+{ "Desktop0",		entsDesktop, as(entsDesktop) },
+{ "General",		entsGeneral, as(entsGeneral) },
+{ "Xdmcp",		entsXdmcp, as(entsXdmcp) },
+{ "Shutdown",		entsShutdown, as(entsShutdown) },
+{ "-Core",		entsCore, as(entsCore) },
+{ "-Greeter",		entsGreeter, as(entsGreeter) },
 };
 
-Ent entsLocalGreeter[] = {
-{ "# See above.\n", 
-"AllowShutdown",	"All", 1 },
-{ "# Complain, if local X-authorization cannot be created. Default is true\n"
-"# XXX this is a dummy currently\n", 
-"AuthComplain",	"false", 0 },
+typedef struct DEnt {
+	const char	*key;
+	const char	*value;
+	int		active;
+} DEnt;
+
+static DEnt dEntsDesktop[] = {
+{ "BackgroundMode",	"Wallpaper", 1 },
+{ "BlendBalance",	"100", 1 },
+{ "BlendMode",		"NoBlending", 1 },
+{ "ChangeInterval",	"60", 1 },
+{ "Color1",		"30,114,160", 1 },
+{ "Color2",		"192,192,192", 1 },
+{ "CurrentWallpaper",	"0", 1 },
+{ "LastChange",		"0", 1 },
+{ "MultiWallpaperMode",	"NoMulti", 1 },
+{ "Pattern",		"", 1 },
+{ "Program",		"", 1 },
+{ "ReverseBlending",	"false", 1 },
+{ "Wallpaper",		"default_blue.jpg", 1 },
+{ "WallpaperList",	"", 1 },
+{ "WallpaperMode",	"Scaled", 1 },
 };
 
-Ent ents0Core[] = {
-{ "# Enable automatic login on this display. USE WITH EXTREME CARE!\n"
-"# Default is false\n", 
-"AutoLoginEnable",	"true", 0 },
-{ "# The user to log in automatically. NEVER specify root!\n", 
-"AutoLoginUser",	"fred", 0 },
-{ "# The password for the user to log in automatically. This is NOT required\n"
-"# unless the user is to be logged into a NIS or Kerberos domain. If you use\n"
-"# it, you must \"chmod 600 kdmrc\" for obvious reasons.\n", 
-"AutoLoginPass",	"secret!", 0 },
-{ "# The session for the user to log in automatically. This becomes useless after\n"
-"# the user's first login, as the last used session will take precedence.\n", 
-"AutoLoginSession",	"kde", 0 },
-{ "# If \"true\", the auto-login is truly automatic, i.e., the user is logged in\n"
-"# when KDM comes up. If \"false\", the auto-login must be initiated by crashing\n"
-"# the X-server with Alt-Ctrl-BackSpace. Default is true\n", 
-"AutoLogin1st",	"false", 0 },
+static DEnt dEntsGeneral[] = {
+{ "DaemonMode",		"false", 0 },
+{ "Xservers",		"", 0 },
+{ "PidFile",		"/var/run/kdm.pid", 0 },
+{ "LockPidFile",	"false", 0 },
+{ "AuthDir",		"/tmp", 0 },
+{ "AutoRescan",		"false", 0 },
+{ "ExportList",		"SOME_VAR,ANOTHER_IMPORTANT_VAR", 0 },
+#if !defined(__linux__) && !defined(__OpenBSD__)
+{ "RandomFile",		"", 0 },
+#endif
+{ "FifoDir",		"/tmp", 0 },
+{ "FifoGroup",		"xdmctl", 0 },
 };
 
-Ent ents0Greeter[] = {
-{ "# See above.\n", 
-"PreselectUser",	"Default", 0 },
-{ 0, "DefaultUser",	"johndoe", 0 },
+DEnt dEntsXdmcp[] = {
+{ "Enable",		"false", 1 },
+{ "Port",		"177", 0 },
+{ "KeyFile",		"", 0 },
+{ "Xaccess",		"", 0 },
+{ "ChoiceTimeout",	"10", 0 },
+{ "RemoveDomainname",	"false", 0 },
+{ "SourceAddress",	"true", 0 },
+{ "Willing",		KDMCONF "/Xwilling", 1 },
 };
 
+static DEnt dEntsShutdown[] = {
+{ "HaltCmd",		"", 0 },
+{ "RebootCmd",		"", 0 },
+{ "AllowFifo",		"true", 0 },
+#if defined(__linux__) && defined(__i386__)
+{ "UseLilo",		"true", 0 },
+{ "LiloCmd",		"", 0 },
+{ "LiloMap",		"", 0 },
+#endif
+};
 
-#define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
+static DEnt dEntsAnyCore[] = {
+{ "OpenDelay",		"", 0 },
+{ "OpenTimeout",	"", 0 },
+{ "OpenRepeat",		"", 0 },
+{ "StartAttempts",	"", 0 },
+{ "StartInterval",	"", 0 },
+{ "PingInterval",	"", 0 },
+{ "PingTimeout",	"", 0 },
+{ "TerminateServer",	"true", 0 },
+{ "ResetSignal",	"", 0 },
+{ "TermSignal",		"", 0 },
+{ "ResetForAuth",	"true", 0 },
+{ "Authorize",		"false", 0 },
+{ "AuthNames",		"", 0 },
+{ "AuthFile",		"", 0 },
+{ "Resources",		"", 0 },
+{ "Xrdb",		"", 0 },
+{ "Setup",		KDMCONF "/Xsetup", 1 },
+{ "Startup",		KDMCONF "/Xstartup", 1 },
+{ "Reset",		KDMCONF "/Xreset", 1 },
+{ "Session",		"/etc/X11/Xsession", 0 },
+{ "FailsafeClient",	"", 0 },
+{ "UserPath",		"", 0 },
+{ "SystemPath",		"", 0 },
+{ "SystemShell",	"/bin/bash", 0 },
+{ "UserAuthDir",	"", 0 },
+{ "Chooser",		"", 0 },
+{ "AutoReLogin",	"true", 0 },
+{ "AllowRootLogin",	"false", 1 },
+{ "AllowNullPasswd",	"false", 1 },
+{ "AllowShutdown",	"Root", 1 },
+{ "AllowSdForceNow",	"Root", 0 },
+{ "DefaultSdMode",	"ForceNow", 0}, 
+{ "SessSaveFile",	"", 0 },
+};
 
-Sect allSects[] = { 
- { "# KDM configuration example.\n"
+static DEnt dEntsAnyGreeter[] = {
+{ "SessionTypes",	"default,kde,failsafe", 1 },
+{ "GUIStyle",		"Windows", 0 },
+{ "LogoArea",		"None", 0 },
+{ "LogoPixmap",		"", 0 },
+{ "GreeterPosFixed",	"true", 0 },
+{ "GreeterPosX",	"200", 0 },
+{ "GreeterPosY",	"100", 0 },
+{ "GreetString",	"K Desktop Environment (%n)", 0 },
+{ "GreetFont",		"charter,24,5,0,50,0", 0 },
+{ "StdFont",		"helvetica,12,5,0,50,0", 0 },
+{ "FailFont",		"helvetica,12,5,0,75,0", 0 },
+{ "Language",		"de", 0 },
+{ "ShowUsers",		"None", 0 },
+{ "SelectedUsers",	"root,johndoe", 0 },
+{ "HiddenUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nfsnobody,nobody,nscd,ntp,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,radvd,reboot,rpc,rpcuser,rpm,sendmail,shutdown,squid,sympa,sync,tty,uucp,xfs,xten", 1 },
+{ "MinShowUID",		"1000", 0 },
+{ "MaxShowUID",		"29999", 0 },
+{ "SortUsers",		"false", 0 },
+{ "PreselectUser",	"Previous", 0 },
+{ "DefaultUser",	"ethel", 0 },
+{ "FocusPasswd",	"true", 0 },
+{ "EchoMode",		"NoEcho", 0 },
+{ "GrabServer",		"true", 0 },
+{ "GrabTimeout",	"", 0 },
+};
+
+static DEnt dEntsLocalCore[] = {
+{ "ServerAttempts",	"", 0 },
+{ "ServerTimeout",	"", 0 },
+{ "AllowShutdown",	"All", 1 },
+{ "AllowRootLogin",	"true", 1 },
+{ "AllowNullPasswd",	"true", 1 },
+{ "NoPassEnable",	"true", 0 },
+{ "NoPassUsers",	"fred,ethel", 0 },
+};
+
+static DEnt dEntsLocalGreeter[] = {
+{ "AuthComplain",	"false", 0 },
+};
+
+static DEnt dEnts0Core[] = {
+{ "AutoLoginEnable",	"true", 0 },
+{ "AutoLoginUser",	"fred", 0 },
+{ "AutoLoginPass",	"secret!", 0 },
+{ "AutoLoginSession",	"kde", 0 },
+{ "AutoLogin1st",	"false", 0 },
+};
+
+static DEnt dEnts0Greeter[] = {
+{ "PreselectUser",	"Default", 0 },
+{ "DefaultUser",	"johndoe", 0 },
+};
+
+typedef struct DSect {
+	const char	*name;
+	DEnt		*ents;
+	int		nents;
+	int		active;
+	const char	*comment;
+} DSect;
+
+static DSect dAllSects[] = { 
+{ "Desktop0",		dEntsDesktop, as(dEntsDesktop), 1, 
+"# KDM configuration example.\n"
 "# Note, that all comments will be lost if you change this file with\n"
 "# the kcontrol frontend.\n"
 "#\n"
@@ -625,7 +965,7 @@ Sect allSects[] = {
 "# Sections with display-specific settings have the formal syntax\n"
 "# \"[X-\" host [\":\" number [ \"_\" class ]] \"-\" sub-section \"]\"\n"
 "# You can use the \"*\" wildcard for host, number and class. You may omit\n"
-"# trailing components; they are assumed to be \"*\".\n"
+"# trailing components; they are assumed to be \"*\" then.\n"
 "# The host part may be a domain specification like \".inf.tu-dresden.de\".\n"
 "# From which section a setting is actually taken is determined by these\n"
 "# rules:\n"
@@ -642,30 +982,36 @@ Sect allSects[] = {
 "# [X-*:*_*] (same as [X-*])\n"
 "# These sections do NOT match this display:\n"
 "# [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]\n"
-"# If a setting is not found in any matching section, a default is used.\n"
+"# If a setting is not found in any matching section, the default is used.\n"
 "#\n"
 "# Every comment applies to the following section or key.\n"
 "#\n"
 "\n"
+"# Greeter background\n"
 "# XXX do this on a per-display basis: should be [X-*-Desktop]\n"
-"# HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org\n", 
-"Desktop0", entsDesktop, as(entsDesktop), 1 },
- { 0, "General", entsGeneral, as(entsGeneral), 1 },
- { 0, "Xdmcp", entsXdmcp, as(entsXdmcp), 1 },
- { 0, "Shutdown", entsShutdown, as(entsShutdown), 1 },
- { "# Rough estimations about how many seconds KDM will spend at most on\n"
+"# HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org\n" },
+{ "General",		dEntsGeneral, as(dEntsGeneral), 1, 0 },
+{ "Xdmcp",		dEntsXdmcp, as(dEntsXdmcp), 1, 0 },
+{ "Shutdown",		dEntsShutdown, as(dEntsShutdown), 1, 0 },
+{ "X-*-Core",		dEntsAnyCore, as(dEntsAnyCore), 1, 
+"# Rough estimations about how many seconds KDM will spend at most on\n"
 "# - opening a connection to the X-server (OpenTime):\n"
 "#   OpenRepeat * (OpenTimeout + OpenDelay)\n"
 "# - starting a local X-server (SeverTime): ServerAttempts * ServerTimeout\n"
 "# - starting a display:\n"
 "#   - local display: StartAttempts * (ServerTime + OpenTime)\n"
-"#   - remote/foreign display: StartAttempts * OpenTime\n\n", 
-"X-*-Core", entsAnyCore, as(entsAnyCore), 1 },
- { 0, "X-*-Greeter", entsAnyGreeter, as(entsAnyGreeter), 1 },
- { 0, "X-:*-Core", entsLocalCore, as(entsLocalCore), 1 },
- { 0, "X-:*-Greeter", entsLocalGreeter, as(entsLocalGreeter), 1 },
- { 0, "X-:0-Core", ents0Core, as(ents0Core), 1 },
- { 0, "X-:0-Greeter", ents0Greeter, as(ents0Greeter), 1 },
+"#   - remote/foreign display: StartAttempts * OpenTime\n\n"
+"# Core config for all displays\n" },
+{ "X-*-Greeter",	dEntsAnyGreeter, as(dEntsAnyGreeter), 1, 
+"# Greeter config for all displays\n" },
+{ "X-:*-Core",		dEntsLocalCore, as(dEntsLocalCore), 1, 
+"# Core config for local displays\n" },
+{ "X-:*-Greeter",	dEntsLocalGreeter, as(dEntsLocalGreeter), 1, 
+"# Greeter config for local displays\n" },
+{ "X-:0-Core",		dEnts0Core, as(dEnts0Core), 1, 
+"# Core config for 1st local display\n" },
+{ "X-:0-Greeter",	dEnts0Greeter, as(dEnts0Greeter), 1, 
+"# Greeter config for 1st local display\n" },
 };
 
 
@@ -674,23 +1020,24 @@ Sect allSects[] = {
  */
 
 typedef struct Entry {
-	struct Entry *next;
-	const char *comment;
-	const char *key;
-	const char *value;
-	int active;
+	struct Entry	*next;
+	Ent		*spec;
+	const char	*value;
+	int		active;
 } Entry;
 
 typedef struct Section {
-	struct Section *next;
-	const char *comment;
-	const char *name;
-	Entry *ents;
-	int active;
+	struct Section	*next;
+	Sect		*spec;
+	const char	*name;
+	const char	*comment;
+	Entry		*ents;
+	int		active;
 } Section;
 
-Section *config;
+static Section *config;
 
+/*
 static const char *
 getfqval (const char *sect, const char *key, const char *defval)
 {
@@ -701,7 +1048,7 @@ getfqval (const char *sect, const char *key, const char *defval)
 	if (!strcmp (cs->name, sect)) {
 	    if (cs->active)
 		for (ce = cs->ents; ce; ce = ce->next)
-		    if (!strcmp (ce->key, key)) {
+		    if (!strcmp (ce->spec->key, key)) {
 			if (ce->active)
 			    return ce->value;
 			break;
@@ -709,6 +1056,36 @@ getfqval (const char *sect, const char *key, const char *defval)
 	    break;
 	}
     return defval;
+}
+*/
+
+static Sect *
+findSect (const char *name)
+{
+    const char *p;
+    int i;
+
+    p = strrchr (name, '-');
+    if (!p)
+	p = name;
+    for (i = 0; i < as(allSects); i++)
+	if (!strcmp (allSects[i].name, p))
+	    return allSects + i;
+    fprintf (stderr, "Internal error: unknown section %s\n", name);
+    exit(1);
+}
+
+static Ent *
+findEnt (Sect *sect, const char *key)
+{
+    int i;
+
+    for (i = 0; i < sect->nents; i++)
+	if (!strcmp (sect->ents[i].key, key))
+	    return sect->ents + i;
+    fprintf (stderr, "Internal error: unknown key %s in section %s\n", 
+	     key, sect->name);
+    exit(1);
 }
 
 static void
@@ -732,22 +1109,19 @@ putfqval (const char *sect, const char *key, const char *value)
 	fprintf (stderr, "Out of memory\n");
 	return;
     }
+    cs->spec = findSect (sect);
     *csp = cs;
   havesec:
     cs->active = 1;
 
     for (cep = &(cs->ents); (ce = *cep); cep = &(ce->next))
-	if (!strcmp(key, ce->key))
+	if (!strcmp(key, ce->spec->key))
 	    goto haveent;
     if (!(ce = calloc (1, sizeof(*ce)))) {
 	fprintf (stderr, "Out of memory\n");
 	return;
     }
-    if (!(ce->key = strdup(key))) {
-	free (ce);
-	fprintf (stderr, "Out of memory\n");
-	return;
-    }
+    ce->spec = findEnt (cs->spec, key);
     *cep = ce;
   haveent:
     if (!(ce->value = strdup(value))) {
@@ -777,48 +1151,27 @@ mkdefconf (void)
     Entry *ce, **cep;
     int sc, ec;
 
-    for (csp = &config, sc = 0; sc < as(allSects); csp = &(cs->next), sc++) {
+    for (csp = &config, sc = 0; sc < as(dAllSects); csp = &(cs->next), sc++) {
 	if (!(cs = calloc (1, sizeof(*cs)))) {
 	    fprintf (stderr, "Out of memory\n");
 	    return;
 	}
 	*csp = cs;
-	cs->name = allSects[sc].name;
-	cs->comment = allSects[sc].comment;
-	cs->active = allSects[sc].active;
-	for (cep = &(cs->ents), ec = 0; ec < allSects[sc].nents; 
+	cs->spec = findSect (dAllSects[sc].name);
+	cs->name = dAllSects[sc].name;
+	cs->comment = dAllSects[sc].comment;
+	cs->active = dAllSects[sc].active;
+	for (cep = &(cs->ents), ec = 0; ec < dAllSects[sc].nents; 
 	     cep = &(ce->next), ec++) {
 	    if (!(ce = calloc (1, sizeof(*ce)))) {
 		fprintf (stderr, "Out of memory\n");
 		return;
 	    }
 	    *cep = ce;
-	    ce->key = allSects[sc].ents[ec].key;
-	    ce->value = allSects[sc].ents[ec].value;
-	    ce->comment = allSects[sc].ents[ec].comment;
-	    ce->active = allSects[sc].ents[ec].active;
+	    ce->spec = findEnt (cs->spec, dAllSects[sc].ents[ec].key);
+	    ce->value = dAllSects[sc].ents[ec].value;
+	    ce->active = dAllSects[sc].ents[ec].active;
 	}
-    }
-}
-
-static void
-wrconf (FILE *f)
-{
-    Section *cs;
-    Entry *ce;
-
-    for (cs = config; cs; cs = cs->next) {
-	fprintf (f, "%s%s[%s]\n", 
-		 cs->comment ? cs->comment : "",
-		 cs->active ? "" : "#",
-		 cs->name);
-	for (ce = cs->ents; ce; ce = ce->next) {
-	    fprintf (f, "%s%s%s=%s\n", 
-		     ce->comment ? ce->comment : "",
-		     (cs->active && ce->active) ? "" : "#",
-		     ce->key, ce->value);
-	}
-	fprintf (f, "\n");
     }
 }
 
@@ -835,6 +1188,110 @@ Create (const char *fn, int mode)
     return f;
 }
 
+static void 
+handFile (Entry *ce)
+{
+    char *buf, *bname, *fname;
+    FILE *f;
+    File file;
+    int mode = ce->spec->flags & F_FILE644 ? 0644 : 0755;
+    struct stat st;
+    char nname[160];
+
+    if (!(fname = strchr (ce->value, '/')))
+	return;
+    bname = strrchr (fname, '/');
+    sprintf (nname, "%s/%s", newdir, bname + 1);
+
+    if (stat (fname, &st)) {
+	if (ce->spec->param) {
+	    f = Create (nname, mode);
+	    fputs (ce->spec->param, f);
+	    fclose (f);
+	}
+    } else if (strcmp (nname, fname) && copy_files) {
+	if (!readFile (&file, fname)) {
+	    fprintf (stderr, "Warning: cannot copy file %s\n", ce->value);
+	    return;
+	}
+	f = Create (nname, mode);
+	if (mode == 0755 && (file.buf[0] != '#' || file.buf[1] != '!'))
+	    fwrite (file.buf, file.eof - file.buf, 1, f);
+	else {
+	    *bname = 0;
+	    *file.eof = 0;
+	    buf = sed (file.buf, fname, KDMCONF);
+	    fputs (buf, f);
+	    free (buf);
+	}
+	fclose (f);
+    } else
+	return;
+    ASPrintf ((char **)&ce->value, "%.*s" KDMCONF "/%s", 
+	      fname - ce->value, ce->value, bname + 1);
+}
+
+static void
+addKdePath (Entry *ce)
+{
+    char *p;
+    const char *path;
+
+    path = ce->active ? ce->value : ce->spec->param;
+    if (!(p = strstr (path, KDE_BINDIR)) ||
+        (p != path && *(p-1) != ':') ||
+        (p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
+	ASPrintf ((char **)&ce->value, KDE_BINDIR ":%s", path);
+}
+
+typedef struct StrList {
+    struct StrList	*next;
+    const char		*str;
+} StrList;
+
+static void
+wrconf (FILE *f)
+{
+    Section *cs;
+    Entry *ce;
+    StrList *sl = 0, *sp;
+    const char *cmt;
+
+    for (cs = config; cs; cs = cs->next) {
+	fprintf (f, "%s%s[%s]\n",
+		 cs->comment ? cs->comment : "",
+		 cs->active ? "" : "#", cs->name);
+	for (ce = cs->ents; ce; ce = ce->next) {
+	    if (ce->spec->flags & (F_FILE644 | F_FILE755))
+		handFile (ce);
+	    else if (ce->spec->flags & F_PATH)
+		addKdePath (ce);
+	    if (ce->spec->comment) {
+		cmt = ce->spec->comment;
+		for (sp = sl; sp; sp = sp->next)
+		    if (sp->str == cmt) {
+			cmt = "# See above\n";
+			goto havit;
+		    }
+		if (!(sp = malloc (sizeof(*sp))))
+		    fprintf (stderr, "Out of memory\n");
+		else {
+		    sp->str = cmt;
+		    sp->next = sl; sl = sp;
+		}
+	    } else
+		cmt = "";
+	  havit:
+	    fprintf (f, "%s%s%s=%s\n", 
+		     cmt, (cs->active && ce->active) ? "" : "#", ce->spec->key, 
+		     ce->value);
+	}
+	fprintf (f, "\n");
+    }
+}
+
+
+/*
 static void
 writeFile (const char *fsp, int mode, const char *fmt, ...)
 {
@@ -853,22 +1310,22 @@ writeFile (const char *fsp, int mode, const char *fmt, ...)
     free (buf);
     fclose (f);
 }
-
+*/
 
 /*
  * read rc file structure
  */
 
 typedef struct REntry {
-	struct REntry *next;
-	char *key;
-	char *value;
+	struct REntry	*next;
+	char		*key;
+	char		*value;
 } REntry;
 
 typedef struct RSection {
-	struct RSection *next;
-	char *name;
-	REntry *ents;
+	struct RSection	*next;
+	char		*name;
+	REntry		*ents;
 } RSection;
 
 static RSection *
@@ -906,7 +1363,8 @@ ReadConf (const char *fname)
 	    while ((e > sl) && isspace (*e))
 		e--;
 	    if (*e != ']') {
-		fprintf (stderr, "Invalid section header at %s:%d\n", fname, line);
+		fprintf (stderr, "Invalid section header at %s:%d\n", 
+			 fname, line);
 		continue;
 	    }
 	    sectmoan = 0;
@@ -916,8 +1374,9 @@ ReadConf (const char *fname)
 		if (!memcmp (nstr, cursec->name, nlen) &&
 		    !cursec->name[nlen])
 		{
-		    fprintf (stderr, "Multiple occurences of section [%.*s] in %s. "
-			     "Consider merging them.\n", nlen, nstr, fname);
+		    fprintf (stderr, "Warning: Multiple occurences of section "
+				     "[%.*s] in %s. Consider merging them.\n", 
+			     nlen, nstr, fname);
 		    goto secfnd;
 		}
 	    if (!(cursec = malloc (sizeof(*cursec)))) {
@@ -935,7 +1394,8 @@ ReadConf (const char *fname)
 	if (!cursec) {
 	    if (sectmoan) {
 		sectmoan = 0;
-		fprintf (stderr, "Entry outside any section at %s:%d", fname, line);
+		fprintf (stderr, "Entry outside any section at %s:%d",
+			 fname, line);
 	    }
 	    goto sktoeol;
 	}
@@ -949,7 +1409,8 @@ ReadConf (const char *fname)
       haveeq:
 	for (ek = s - 1;; ek--) {
 	    if (ek < sl) {
-		fprintf (stderr, "Invalid entry (empty key) at %s:%d\n", fname, line);
+		fprintf (stderr, "Invalid entry (empty key) at %s:%d\n", 
+			 fname, line);
 		goto sktoeol;
 	    }
 	    if (!isspace (*ek))
@@ -1022,6 +1483,30 @@ cpyval (const char *nk, const char *ok)
     putval (nk, cfgEnt (ok ? ok : nk));
 }
 
+static void
+cpyfqval (const char *sect, const char *nk, const char *ok)
+{
+    putfqval (sect, nk, cfgEnt (ok ? ok : nk));
+}
+
+static void
+cpygents (Sect *sect)
+{
+    int i;
+
+    for (i = 0; i < sect->nents; i++)
+	cpyval (sect->ents[i].key, 0);
+}
+
+static void
+cpygroup (Sect *sect)
+{
+    if (cfgSGroup (sect->name)) {
+	setsect(sect->name);
+	cpygents (sect);
+    }
+}
+
 static int
 isTrue (const char *val)
 {
@@ -1032,10 +1517,9 @@ isTrue (const char *val)
 }
 
 static int
-mergeKdmRc (const char *path)
+mergeKdmRcOld (const char *path)
 {
     char *p, *p2;
-    REntry *ce;
 
     ASPrintf (&p, "%s/kdmrc", path);
     if (!p)
@@ -1044,7 +1528,7 @@ mergeKdmRc (const char *path)
 	free (p);
 	return 0;
     }
-    printf ("Information: reading old kdmrc %s\n", p);
+    printf ("Information: reading old kdmrc %s (from kde < 2.2)\n", p);
     free (p);
 
     setsect("Desktop0");
@@ -1072,9 +1556,7 @@ mergeKdmRc (const char *path)
 	cpyval ("Color1", "BackGroundColor1");
 	cpyval ("Color2", "BackGroundColor2");
     }
-    if (cfgSGroup ("Desktop0"))
-	for (ce = cursect->ents; ce; ce = ce->next)
-	    putval (ce->key, ce->value);
+    cpygroup (allSects);	/* Desktop0 */
 
     setsect ("X-*-Greeter");
 
@@ -1095,25 +1577,43 @@ mergeKdmRc (const char *path)
 	    else
 		putval ("EchoMode", p);
 	}
+	if ((p = cfgEnt("GUIStyle"))) {
+	    if (!strcmp (p, "Motif+"))
+		putval ("GUIStyle", "MotifPlus");
+	    else
+		putval ("GUIStyle", p);
+	}
 	cpyval ("StdFont", 0);
 	cpyval ("GreetFont", 0);
 	cpyval ("FailFont", 0);
 	cpyval ("SessionTypes", 0);
-	cpyval ("GUIStyle", 0);
 	cpyval ("MinShowUID", "UserIDLow");
 	cpyval ("MinShowUID", 0);
 	cpyval ("SortUsers", 0);
-	cpyval ("Users", 0);	/* SelectedUsers */
-	cpyval ("NoUsers", 0);	/* HiddenUsers */
-	cpyval ("ShowUsers", 0);
+	cpyval ("SelectedUsers", "Users");
+	cpyval ("HiddenUsers", "NoUsers");
+	if ((p = cfgEnt ("ShowUsers"))) {
+	    if (!strcmp (p, "All"))
+		putval ("ShowUsers", "NotHidden");
+	    else
+		putval ("ShowUsers", p);
+	} else
 	if ((p = cfgEnt ("UserView"))) {
 	    if (isTrue (p)) {
 		if (!(p = cfgEnt ("Users")) || !p[0])
-		    putval ("ShowUsers", "All");
+		    putval ("ShowUsers", "NotHidden");
 		else
 		    putval ("ShowUsers", "Selected");
 	    } else
 		putval ("ShowUsers", "None");
+	}
+	if ((p = cfgEnt("LogoPixmap"))) {
+	    if (!strcmp (p, "/dev/null"))
+		putval ("LogoArea", "None");
+	    else {
+		putval ("LogoPixmap", p);
+		putval ("LogoArea", "Logo");
+	    }
 	}
 	if ((p = cfgEnt("LogoArea"))) {
 	    if (!strcmp (p, "Logo") || !strcmp (p, "KdmLogo"))
@@ -1122,28 +1622,6 @@ mergeKdmRc (const char *path)
 		putval ("LogoArea", "Clock");
 	    else
 		putval ("LogoArea", "None");
-	}
-	if ((p = cfgEnt("LogoPixmap"))) {
-	    if (!strcmp (p, "/dev/null"))
-		putval ("LogoArea", "None");
-	    else
-		putval ("LogoPixmap", p);
-	}
-	if (((p = cfgEnt("ShutDownButton"))) || 
-	    ((p = cfgEnt("ShutdownButton")))) {
-	    if (!strcmp (p, "All")) {
-		putval ("AllowShutdown", "All");
-		putfqval ("X-:*-Greeter", "AllowShutdown", "All");
-	    } else if (!strcmp (p, "RootOnly")) {
-		putval ("AllowShutdown", "Root");
-		putfqval ("X-:*-Greeter", "AllowShutdown", "Root");
-	    } else if (!strcmp (p, "ConsoleOnly")) {
-		putval ("AllowShutdown", "None");
-		putfqval ("X-:*-Greeter", "AllowShutdown", "All");
-	    } else {
-		putval ("AllowShutdown", "None");
-		putfqval ("X-:*-Greeter", "AllowShutdown", "None");
-	    }
 	}
 	cpyval ("GreeterPosFixed", 0);
 	cpyval ("GreeterPosX", 0);
@@ -1157,6 +1635,22 @@ mergeKdmRc (const char *path)
 
 	setsect ("X-*-Core");
 	cpyval ("AutoReLogin", 0);
+	if (((p = cfgEnt("ShutDownButton"))) || 
+	    ((p = cfgEnt("ShutdownButton")))) {
+	    if (!strcmp (p, "All")) {
+		putval ("AllowShutdown", "All");
+		putfqval ("X-:*-Core", "AllowShutdown", "All");
+	    } else if (!strcmp (p, "RootOnly")) {
+		putval ("AllowShutdown", "Root");
+		putfqval ("X-:*-Core", "AllowShutdown", "Root");
+	    } else if (!strcmp (p, "ConsoleOnly")) {
+		putval ("AllowShutdown", "None");
+		putfqval ("X-:*-Core", "AllowShutdown", "All");
+	    } else {
+		putval ("AllowShutdown", "None");
+		putfqval ("X-:*-Core", "AllowShutdown", "None");
+	    }
+	}
 
 	setsect ("X-:*-Core");
 	cpyval ("NoPassEnable", 0);
@@ -1180,10 +1674,66 @@ mergeKdmRc (const char *path)
     return 1;
 }
 
+static int
+mergeKdmRcNewer (const char *path)
+{
+    char *p, *p2;
+    int i;
+
+    ASPrintf (&p, "%s/kdm/kdmrc", path);
+    if (!p)
+	return 0;
+    if (!cfgRead(p)) {
+	free (p);
+	return 0;
+    }
+    printf ("Information: reading old kdmrc %s (from kde >= 2.2.x)\n", p);
+    free (p);
+
+    for (i = 0; i < 4; i++)
+	cpygroup (allSects + i);
+
+    for (cursect = rootsect; cursect; cursect = cursect->next)
+	if (!strncmp (cursect->name, "X-", 2)) {
+	    setsect(cursect->name);
+	    if ((p = strchr (cursect->name + 2, '-'))) {
+		if (!strcmp (p + 1, "Core")) {
+		    cpygents (allSects + 4);
+		} else if (!strcmp (p + 1, "Greeter")) {
+		    cpygents (allSects + 5);
+		    /* ugly stuff begin */
+		    ASPrintf (&p2, "X-%.*s-Core", 
+			      p - (cursect->name + 2), cursect->name + 2);
+		    if (p2) {
+			cpyfqval (p2, "AllowShutdown", 0);
+			free (p2);
+		    }
+		    if ((p = cfgEnt("GUIStyle"))) {
+			if (!strcmp (p, "Motif+"))
+			    putval ("GUIStyle", "MotifPlus");
+			else
+			    putval ("GUIStyle", p);
+		    }
+		    if ((p = cfgEnt("ShowUsers"))) {
+			if (!strcmp (p, "All"))
+			    putval ("ShowUsers", "NotHidden");
+			else
+			    putval ("ShowUsers", p);
+		    }
+		    cpyval ("HiddenUsers", "NoUsers");
+		    cpyval ("SelectedUsers", "Users");
+		    /* ugly stuff end */
+		}
+	    }
+	}
+
+    return 1;
+}
+
 typedef struct XResEnt {
-    const char *xname;
-    const char *ksec, *kname;
-    void (*func)(const char *, const char *, char **);
+    const char	*xname;
+    const char	*ksec, *kname;
+    void	(*func)(const char *, const char *, char **);
 } XResEnt;
 
 static void
@@ -1230,50 +1780,6 @@ P_List (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 	    is = 0;
 	}
     st[d] = 0;
-}
-
-static const char *xdmpath;
-
-static void 
-handFile (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value, int mode)
-{
-    char *buf, *obuf, *bname;
-    FILE *f;
-    File file;
-    char nname[160];
-
-    if (copy_files) {
-	if (!readFile (&file, *value)) {
-	    fprintf (stderr, "Warning: cannot copy file %s\n", *value);
-	    return;
-	}
-	bname = strrchr (*value, '/') + 1;
-	ASPrintf (value, KDMCONF "/%s", bname);
-	sprintf (nname, "%s/%s", newdir, bname);
-	f = Create (nname, mode);
-	if (mode == 0755 && (file.buf[0] != '#' || file.buf[1] != '!'))
-	    fwrite (file.buf, file.eof - file.buf, 1, f);
-	else {
-	    ASPrintf (&obuf, "%.*s", file.eof - file.buf, file.buf);
-	    buf = sed (obuf, xdmpath, KDMCONF);
-	    fwrite (buf, strlen(buf), 1, f);
-	    free (buf);
-	    free (obuf);
-	}
-	fclose (f);
-    }
-}
-
-static void 
-P_File (const char *sect, const char *key, char **value)
-{
-    handFile (sect, key, value, 0644);
-}
-
-static void 
-P_Prog (const char *sect, const char *key, char **value)
-{
-    handFile (sect, key, value, 0755);
 }
 
 static void 
@@ -1326,9 +1832,10 @@ static void
 P_requestPort (const char *sect, const char *key ATTR_UNUSED, char **value)
 {
     if (!strcmp (*value, "0")) {
-	putfqval (sect, "Enable", "false");
 	*value = 0;
-    }
+	putfqval (sect, "Enable", "false");
+    } else
+	putfqval (sect, "Enable", "true");
 }
 
 static int kdmrcmode = 0644;
@@ -1340,7 +1847,7 @@ P_autoPass (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **va
 }
 
 XResEnt globents[] = {
-{ "servers", "General", "Xservers", P_File },
+{ "servers", "General", "Xservers", 0 },
 { "requestPort", "Xdmcp", "Port", P_requestPort },
 { "daemonMode", "General", 0, 0 },
 { "pidFile", "General", 0, 0 },
@@ -1349,14 +1856,14 @@ XResEnt globents[] = {
 { "autoRescan", "General", 0, 0 },
 { "removeDomainname", "Xdmcp", 0, 0 },
 { "keyFile", "Xdmcp", 0, 0 },
-{ "accessFile", "Xdmcp", "Xaccess", P_File },
+{ "accessFile", "Xdmcp", "Xaccess", 0 },
 { "exportList", "General", 0, P_List },
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "randomFile", "General", 0, 0 },
 #endif
 { "choiceTimeout", "Xdmcp", 0, 0 },
 { "sourceAddress", "Xdmcp", 0, 0 },
-{ "willing", "Xdmcp", 0, P_Prog },
+{ "willing", "Xdmcp", 0, 0 },
 { "autoLogin", "General", 0, 0 },
 }, dpyents[] = {
 { "serverAttempts", "X-%s-Core", 0, 0 },
@@ -1376,16 +1883,13 @@ XResEnt globents[] = {
 { "authComplain", "X-%s-Greeter", 0, 0 },
 { "authName", "X-%s-Core", "AuthNames", 0 },
 { "authFile", "X-%s-Core", 0, 0 },
-{ "fifoCreate", "X-%s-Core", 0, 0 },
-{ "fifoOwner", "X-%s-Core", 0, 0 },
-{ "fifoGroup", "X-%s-Core", 0, 0 },
 { "startInterval", "X-%s-Core", 0, 0 },
 { "resources", "X-%s-Core", 0, 0 },
 { "xrdb", "X-%s-Core", 0, 0 },
-{ "setup", "X-%s-Core", 0, P_Prog },
-{ "startup", "X-%s-Core", 0, P_Prog },
-{ "reset", "X-%s-Core", 0, P_Prog },
-{ "session", "X-%s-Core", 0, P_Prog },
+{ "setup", "X-%s-Core", 0, 0 },
+{ "startup", "X-%s-Core", 0, 0 },
+{ "reset", "X-%s-Core", 0, 0 },
+{ "session", "X-%s-Core", 0, 0 },
 { "userPath", "X-%s-Core", 0, 0 },
 { "systemPath", "X-%s-Core", 0, 0 },
 { "systemShell", "X-%s-Core", 0, 0 },
@@ -1399,7 +1903,7 @@ XResEnt globents[] = {
 { "autoLogin1st", "X-%s-Core", 0, 0 },
 { "autoReLogin", "X-%s-Core", 0, 0 },
 { "allowNullPasswd", "X-%s-Core", 0, 0 },
-{ "allowRootLoing", "X-%s-Core", 0, 0 },
+{ "allowRootLogin", "X-%s-Core", 0, 0 },
 };
 
 static XrmQuark XrmQString, empty = NULLQUARK;
@@ -1459,6 +1963,7 @@ DumpEntry(
     return False;
 }
 
+static const char *xdmpath;
 static const char *xdmconfs[] = { "%s/kdm-config", "%s/xdm-config" };
 
 static int
@@ -1476,13 +1981,6 @@ mergeXdmCfg (const char *path)
 	    printf ("Information: reading old xdm config file %s\n", p);
 	    free (p);
 	    xdmpath = path;
-	    setsect ("X-*-Core");
-	    putval ("Setup", "");
-	    putval ("Startup", "");
-	    putval ("Reset", "");
-	    setsect ("Xdmcp");
-	    putval ("Willing", "");
-	    putval ("Enable", "true");
 	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
 				 DumpEntry, (XPointer) 0);
 	    return 1;
@@ -1492,230 +1990,20 @@ mergeXdmCfg (const char *path)
     return 0;
 }
 
-static void
-addKdePath (const char *where, const char *defpath)
-{
-    char *p;
-    const char *path;
-
-    path = getfqval ("X-*-Core", where, defpath);
-    if (!(p = strstr (path, KDE_BINDIR)) ||
-        (p != path && *(p-1) != ':') ||
-        (p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
-    {
-	ASPrintf (&p, KDE_BINDIR ":%s", path);
-	putfqval ("X-*-Core", where, p);
-    }
-}
-
-static void
-genSuppFiles (void)
-{
-    writeFile ("%s/Xaccess", 0644, "%s",
-"# Xaccess - Access control file for XDMCP connections\n"
-"#\n"
-"# To control Direct and Broadcast access:\n"
-"#\n"
-"#	pattern\n"
-"#\n"
-"# To control Indirect queries:\n"
-"#\n"
-"# 	pattern		list of hostnames and/or macros ...\n"
-"#\n"
-"# To use the chooser:\n"
-"#\n"
-"#	pattern		CHOOSER BROADCAST\n"
-"#\n"
-"# or\n"
-"#\n"
-"#	pattern		CHOOSER list of hostnames and/or macros ...\n"
-"#\n"
-"# To define macros:\n"
-"#\n"
-"#       %name		list of hosts ...\n"
-"#\n"
-"# The first form tells xdm which displays to respond to itself.\n"
-"# The second form tells xdm to forward indirect queries from hosts matching\n"
-"# the specified pattern to the indicated list of hosts.\n"
-"# The third form tells xdm to handle indirect queries using the chooser;\n"
-"# the chooser is directed to send its own queries out via the broadcast\n"
-"# address and display the results on the terminal.\n"
-"# The fourth form is similar to the third, except instead of using the\n"
-"# broadcast address, it sends DirectQuerys to each of the hosts in the list\n"
-"#\n"
-"# In all cases, xdm uses the first entry which matches the terminal;\n"
-"# for IndirectQuery messages only entries with right hand sides can\n"
-"# match, for Direct and Broadcast Query messages, only entries without\n"
-"# right hand sides can match.\n"
-"#\n"
-"\n"
-"*					#any host can get a login window\n"
-"\n"
-"#\n"
-"# To hardwire a specific terminal to a specific host, you can\n"
-"# leave the terminal sending indirect queries to this host, and\n"
-"# use an entry of the form:\n"
-"#\n"
-"\n"
-"#terminal-a	host-a\n"
-"\n"
-"\n"
-"#\n"
-"# The nicest way to run the chooser is to just ask it to broadcast\n"
-"# requests to the network - that way new hosts show up automatically.\n"
-"# Sometimes, however, the chooser can't figure out how to broadcast,\n"
-"# so this may not work in all environments.\n"
-"#\n"
-"\n"
-"*		CHOOSER BROADCAST	#any indirect host can get a chooser\n"
-"\n"
-"#\n"
-"# If you'd prefer to configure the set of hosts each terminal sees,\n"
-"# then just uncomment these lines (and comment the CHOOSER line above)\n"
-"# and edit the %hostlist line as appropriate\n"
-"#\n"
-"\n"
-"#%hostlist	host-a host-b\n"
-"\n"
-"#*		CHOOSER %hostlist	#\n"
-);
-    writeFile ("%s/Xservers", 0644, "%s",
-"# Xservers - local X-server list\n"
-"#\n"
-"# This file should contain an entry to start the server on the\n"
-"# local display; if you have more than one display (not screen),\n"
-"# you can add entries to the list (one per line).\n"
-"# If you also have some X terminals connected which do not support XDMCP,\n"
-"# you can add them here as well; you will want to leave those terminals\n"
-"# on and connected to the network, else kdm will have a tougher time\n"
-"# managing them. Each X terminal line should look like:\n"
-"#       XTerminalName:0 foreign\n"
-"#\n"
-"\n"
-#ifdef __linux__
-":0 local@tty1 " XBINDIR "/X vt7"
-#elif defined(sun)
-":0 local@console " XBINDIR "/X"
-#elif defined(_AIX)
-":0 local@lft0 " XBINDIR "/X"
-#else
-":0 local " XBINDIR "/X"
-#endif
-"\n\n");
-    writeFile ("%s/Xwilling", 0755, "%s",
-"#!/bin/sh\n"
-"# The output of this script is displayed in the chooser window.\n"
-"# (instead of \"Willing to manage\")\n"
-"\n"
-"load=\"`uptime|sed -e 's/^.*load[^0-9]*//'`\"\n"
-"nrusers=\"`who|cut -c 1-8|sort -u|wc -l|sed 's/^[        ]*//'`\"\n"
-"s=\"\"; [ \"$nrusers\" != 1 ] && s=s\n"
-"\n"
-"echo \"${nrusers} user${s}, load: ${load}\"\n"
-);
-    writeFile ("%s/Xsetup", 0755, "%s",
-"#!/bin/sh\n"
-"# Xsetup - run as root before the login dialog appears\n"
-"\n"
-KDE_BINDIR "/kdmdesktop &\n"
-);
-    writeFile ("%s/Xstartup", 0755, "%s",
-"#!/bin/sh\n"
-"# Xstartup - run as root before session starts\n"
-"\n"
-"# By convention, both xconsole and xterm -C check that the\n"
-"# console is owned by the invoking user and is readable before attaching\n"
-"# the console output.  This way a random user can invoke xterm -C without\n"
-"# causing serious grief.\n"
-"# This is not required if you use PAM, as pam_console should handle it.\n"
-"#\n"
-#ifdef HAVE_PAM
-"#chown $USER /dev/console\n"
-#else
-"chown $USER /dev/console\n"
-#endif
-"\n"
-"#exec sessreg -a -l $DISPLAY "
-#ifdef BSD
-"-x " KDMCONF "/Xservers "
-#endif
-"$USER\n"
-);
-    writeFile ("%s/Xreset", 0755, "%s",
-"#!/bin/sh\n"
-"# Xreset - run as root after session exits\n"
-"\n"
-"# Reassign ownership of the console to root, this should disallow\n"
-"# assignment of console output to any random users's xterm\n"
-"# This is not required if you use PAM, as pam_console should handle it.\n"
-"#\n"
-#ifdef HAVE_PAM
-"#chown root /dev/console\n"
-"#chmod 622 /dev/console\n"
-#else
-"chown root /dev/console\n"
-"chmod 622 /dev/console\n"
-#endif
-"\n"
-"#exec sessreg -d -l $DISPLAY "
-#ifdef BSD
-"-x " KDMCONF "/Xservers "
-#endif
-"$USER\n"
-);
-    writeFile ("%s/Xsession", 0755, "%s",
-"#!/bin/sh\n"
-"# Xsession - run as user\n"
-"\n"
-"# redirect errors to a file in user's home directory if we can\n"
-"for errfile in \"$HOME/.xsession-errors\" \"${TMPDIR-/tmp}/xses-$USER\" \"/tmp/xses-$USER\"\n"
-"do\n"
-"	if ( cp /dev/null \"$errfile\" 2> /dev/null )\n"
-"	then\n"
-"		chmod 600 \"$errfile\"\n"
-"		exec > \"$errfile\" 2>&1\n"
-"		break\n"
-"	fi\n"
-"done\n"
-"\n"
-"test -f $HOME/.xprofile && . $HOME/.xprofile\n"
-"\n"
-"sess=\"$1\"\n"
-"shift\n"
-"\n"
-"case \"$sess\" in\n"
-"    failsafe)\n"
-"	exec xterm -geometry 80x24-0-0 $*\n"
-"	;;\n"
-"    \"\"|default)\n"
-"	exec $HOME/.xsession $*\n"
-"	;;\n"
-"esac\n"
-"\n"
-"# start windowmanager\n"
-"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
-"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
-"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
-"sess=`echo \"$sess\" | tr A-Z a-z`\n"
-"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
-"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
-"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
-"\n"
-"# windowmanager not found, tell user\n"
-"exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"\n"
-);
-}
-
 static const char *oldkdes[] = {
     KDE_CONFDIR, 
-    "/opt/kde2/share/config",
-    "/usr/local/kde2/share/config",
+    "/opt/kde3/share/config",
+    "/usr/local/kde3/share/config",
+
     "/opt/kde/share/config",
     "/usr/local/kde/share/config",
-    "/opt/kde1/share/config",
-    "/usr/local/kde1/share/config",
     "/usr/local/share/config",
     "/usr/share/config",
+
+    "/opt/kde2/share/config",
+    "/usr/local/kde2/share/config",
+    "/opt/kde1/share/config",
+    "/usr/local/kde1/share/config",
 };
 
 static const char *oldxdms[] = {
@@ -1730,7 +2018,7 @@ int main(int argc, char **argv)
     const char **where;
     char *newkdmrc;
     FILE *f;
-    int i, ap;
+    int i, ap, newer;
     char nname[80];
 
     for (ap = 1; ap < argc; ap++) {
@@ -1750,7 +2038,7 @@ int main(int argc, char **argv)
 "  --old-kde /path/to/old/kde-config-dir\n"
 "    Where to look for the kdmrc of an older kdm.\n"
 "    Default is to scan " KDE_CONFDIR " and\n"
-"    {/usr,/usr/local,{/opt,/usr/local}/{kde2,kde,kde1}}/share/config.\n"
+"    {/usr,/usr/local,{/opt,/usr/local}/{kde3,kde,kde2,kde1}}/share/config.\n"
 "  --no-old\n"
 "    Don't look at other xdm/kdm configurations, just create default config.\n"
 "  --copy\n"
@@ -1774,50 +2062,50 @@ int main(int argc, char **argv)
 	else if (!strcmp(argv[ap], "--old-kde"))
 	    where = &oldkde;
 	else {
-	    fprintf (stderr, "Unknown command line option '%s'\n", argv[ap]);
+	    fprintf (stderr, "Unknown command line option '%s', try --help\n", argv[ap]);
 	    exit (1);
 	}
 	if (ap + 1 == argc || argv[ap + 1][0] == '-') {
-	    fprintf (stderr, "Missing argument to option %s\n", argv[ap]);
+	    fprintf (stderr, "Missing argument to option %s, try --help\n", argv[ap]);
 	    exit (1);
 	}
 	*where = argv[++ap];
     }
 
     mkdefconf();
+    newer = 0;
     if (!no_old) {
 	if (oldkde) {
-	    if (!mergeKdmRc (oldkde))
+	    if (!(newer = mergeKdmRcNewer (oldkde)) && !mergeKdmRcOld (oldkde))
 		fprintf (stderr, 
 			 "Cannot read old kdmrc at specified position\n");
 	} else
 	    for (i = 0; i < as(oldkdes); i++)
-		if (mergeKdmRc (oldkdes[i])) {
+		if ((newer = mergeKdmRcNewer (oldkdes[i])) || 
+		    mergeKdmRcOld (oldkdes[i]))	{
 		    oldkde = oldkdes[i];
 		    break;
 		}
-	XrmInitialize ();
-	XrmQString = XrmPermStringToQuark("String");
-	if (oldxdm) {
-	    if (!mergeXdmCfg (oldxdm))
-		fprintf (stderr, 
-			 "Cannot read old kdm-config/xdm-config at specified position\n");
+	if (!newer) {
+	    XrmInitialize ();
+	    XrmQString = XrmPermStringToQuark("String");
+	    if (oldxdm) {
+		if (!mergeXdmCfg (oldxdm))
+		    fprintf (stderr, 
+			     "Cannot read old kdm-config/xdm-config at specified position\n");
+	    } else
+		for (i = 0; i < as(oldxdms); i++)
+		    if (mergeXdmCfg (oldxdms[i])) {
+			oldxdm = oldxdms[i];
+			break;
+		    }
 	} else
-	    for (i = 0; i < as(oldxdms); i++)
-		if (mergeXdmCfg (oldxdms[i])) {
-		    oldxdm = oldxdms[i];
-		    break;
-		}
+	    oldxdm = 0;
     }
-    addKdePath ("UserPath", DEF_USER_PATH);
-    addKdePath ("SystemPath", DEF_SYSTEM_PATH);
     ASPrintf (&newkdmrc, "%s/kdmrc", newdir);
     f = Create (newkdmrc, kdmrcmode);
     wrconf (f);
     fclose (f);
-
-    if (no_old || !oldxdm)
-	genSuppFiles ();
 
     if (oldxdm || oldkde) {
 	sprintf (nname, "%s/README", newdir);
@@ -1826,7 +2114,7 @@ int main(int argc, char **argv)
 "The configuration files in this directory were automatically derived\n"
 "from these already present files:\n");
 	if (oldkde)
-	    fprintf (f, "- %s/kdmrc\n", oldkde);
+	    fprintf (f, "- %s/%skdmrc\n", oldkde, newer ? "kdm/" : "");
 	if (oldxdm)
 	    fprintf (f, "- %s/*\n", oldxdm);
 	fprintf (f, 
