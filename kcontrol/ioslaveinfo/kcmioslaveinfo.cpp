@@ -14,7 +14,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char * name)
 :KCModule(parent,name)
 ,m_ioslavesLb(0)
 {
-   setButtons(0);
+   setButtons(Help);
    QVBoxLayout *layout=new QVBoxLayout(this,10,15);
 
    QLabel* label=new QLabel(i18n("Available IOSlaves"),this);
