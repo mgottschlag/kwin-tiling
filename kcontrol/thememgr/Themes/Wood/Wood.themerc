@@ -14,6 +14,7 @@ Name[ja]=ウッド
 Name[ko]=숲
 Name[lt]=Medis
 Name[lv]=Koka
+Name[mt]=Injam
 Name[nl]=Hout
 Name[no_NY]=Tre
 Name[pl]=Drewno
@@ -32,6 +33,8 @@ author=Georg Russell
 email=russell@kde.org
 info=
 Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
+Comment[de]=Eine Holz-Optik für Ihre Arbeitsumgebunga\nvon Georg Russell <russell@kde.org>.
+Comment[mt]=Dehra tal-injam għad-desktop tiegħek\nMinn Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]
