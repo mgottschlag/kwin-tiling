@@ -14,6 +14,7 @@ kdm_SOURCES = \
     auth.c \
     choose.c \
     client.c \
+    ctrl.c \
     daemon.c \
     dm.c \
     dpylist.c \

@@ -92,6 +92,18 @@ AnyReserveDisplays (void)
     return 0;
 }
 
+int
+idleReserveDisplays (void)
+{
+    struct display *d;
+    int cnt = 0;
+
+    for (d = displays; d; d = d->next)
+	if (d->status == reserve)
+	    cnt++;
+    return cnt;
+}
+
 #ifdef AUTO_RESERVE
 int
 AllLocalDisplaysLocked (struct display *dp)
@@ -134,7 +146,7 @@ Debug ("killing reserve display %s\n", rd->name);
 }
 #endif /* AUTO_RESERVE */
 
-void
+int
 StartReserveDisplay (int lt)
 {
     struct display *d, *rd;
@@ -148,7 +160,9 @@ Debug("StartReserveDisplay\n");
 Debug("starting reserve display %s, timeout %d\n", rd->name, lt);
 	rd->idleTimeout = lt;
 	rd->status = notRunning;
+	return 1;
     }
+    return 0;
 }
 
 void
@@ -318,9 +332,12 @@ NewDisplay (const char *name)
     /* initialize fields (others are 0) */
     d->pid = -1;
     d->serverPid = -1;
-    d->fifofd = -1;
+    d->ctrl.fd = -1;
+    d->ctrl.fifo.fd = -1;
     d->pipe.rfd = -1;
     d->pipe.wfd = -1;
+    d->gpipe.rfd = -1;
+    d->gpipe.wfd = -1;
     d->userSess = -1;
 #ifdef XDMCP
     d->xdmcpFd = -1;

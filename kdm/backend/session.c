@@ -730,6 +730,9 @@ baseEnv (const char *user)
 		memcmp (td->name, "localhost:", 10) ?
 		td->name : td->name + 9);
 
+    if (td->ctrl.path)
+    	env = setEnv (env, "DM_CONTROL", fifoDir);
+
     return env;
 }
 

@@ -1140,7 +1140,7 @@ StartClient ()
 
     env = baseEnv (curuser);
     xma = 0;
-    if (td->fifoPath && StrDup (&xma, td->fifoPath)) {
+    if (td->ctrl.fpath && StrDup (&xma, td->ctrl.fpath)) {
 	if ((td->allowShutdown == SHUT_ALL ||
 	     (td->allowShutdown == SHUT_ROOT && !curuser)) &&
 	    StrApp (&xma, ",maysd", (char *)0))
@@ -1238,8 +1238,7 @@ StartClient ()
     ReInitErrorLog ();
 #endif    
     removeAuth = 1;
-    if (td->fifoPath)
-	chown (td->fifoPath, curuid, -1);
+    chownCtrl (&td->ctrl, curuid, -1);
     endpwent ();
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */
@@ -1529,8 +1528,7 @@ SessionExit (int status)
     }
     if (removeAuth)
     {
-	if (td->fifoPath)
-	    chown (td->fifoPath, 0, -1);
+	chownCtrl (&td->ctrl, 0, -1);
 #ifdef USE_PAM
 	if (pamh) {
 	    int pretc;

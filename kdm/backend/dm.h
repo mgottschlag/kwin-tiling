@@ -201,6 +201,28 @@ typedef struct CfgArr {
 	int		numCfgEnt;	/* number of config entries */
 } CfgArr;
 
+struct bsock {
+	int		fd;
+	int		buflen;
+	char		*buffer;
+};
+
+struct cmdsock {
+	struct cmdsock	*next;
+	struct bsock	sock;		/* buffered fd of the socket */
+};
+
+typedef struct {
+	struct cmdsock	*css;		/* open connections */
+
+	char		*path;		/* filename of the socket */
+	int		fd;		/* fd of the socket */
+	int		gid;		/* owner group of the socket */
+
+	char		*fpath;		/* filename of the fifo */
+	struct bsock	fifo;		/* buffered fd of the fifo */
+} CtrlRec;
+
 struct display {
 	struct display	*next;
 	struct disphist	*hstent;	/* display history entry */
@@ -226,7 +248,7 @@ struct display {
 	int		startTries;	/* current start try */
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
-	int		fifofd;		/* command fifo */
+	CtrlRec		ctrl;		/* command socket & fifo */
 	GPipe		pipe;		/* comm master <-> slave */
 	GPipe		gpipe;		/* comm master <-> greeter */
 #ifdef XDMCP
@@ -255,7 +277,6 @@ struct display {
 	Xauth		**authorizations;/* authorization data */
 	int		authNum;	/* number of authorizations */
 	char		*authFile;	/* file to store authorization in */
-	char		*fifoPath;	/* filename of the command fifo */
 };
 
 struct disphist {
@@ -318,6 +339,18 @@ void StartDisplay (struct display *d);
 void StartDisplayP2 (struct display *d);
 void StopDisplay (struct display *d);
 void SetTitle (const char *name);
+void SwitchToX (struct display *d);
+void setNLogin (struct display *d, 
+		const char *nuser, const char *npass, char *nargs,
+		int rl);
+void doShutdown (int how, int when);
+
+/* in ctrl.c */
+void openCtrl (struct display *d);
+void closeCtrl (struct display *d);
+int handleCtrl (FD_TYPE *reads, struct display *d);
+void chownCtrl (CtrlRec *cr, int uid, int gid);
+void updateCtrl (void);
 
 /* in dpylist.c */
 extern struct display *displays;	/* that's ugly ... */
@@ -339,8 +372,9 @@ struct display
 int AnyActiveDisplays (void);
 int AnyRunningDisplays (void);
 int AnyReserveDisplays (void);
+int idleReserveDisplays (void);
 int AllLocalDisplaysLocked (struct display *dp);
-void StartReserveDisplay (int lt);
+int StartReserveDisplay (int lt);
 void ReapReserveDisplays (void);
 
 /* in reset.c */
@@ -474,7 +508,6 @@ const char *getEnv (char **e, const char *name);
 const char *localHostname (void);
 int Reader (int fd, void *buf, int len);
 int Writer (int fd, const void *buf, int len);
-void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
 /* in inifile.c */
 char *iniLoad (const char *fname);

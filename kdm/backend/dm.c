@@ -108,8 +108,6 @@ static void	ExitDisplay (struct display *d, int endState, int serverCmd, int goo
 static void	rStopDisplay (struct display *d, int endState);
 static int	CheckUtmp (void);
 static void	SwitchToTty (struct display *d);
-static void	openFifo (int *fifofd, char **fifoPath, const char *dname);
-static void	closeFifo (int *fifofd, char **fifoPath);
 static void	stoppen (int force);
 static void	ReapChildren (void);
 static void	MainLoop (void);
@@ -122,9 +120,6 @@ static int TitleLen;
 #endif
 
 static int StorePid (void);
-
-static int fifoFd = -1;
-static char *fifoPath;
 
 static int sdAction, Stopping;
 
@@ -328,9 +323,9 @@ main (int argc, char **argv)
 #ifdef XDMCP
     UpdateListenSockets ();
 #endif
-    openFifo (&fifoFd, &fifoPath, 0);
+    openCtrl (0);
     MainLoop ();
-    closeFifo (&fifoFd, &fifoPath);
+    closeCtrl (0);
     if (sdAction)
     {
 	if (Fork() <= 0)
@@ -553,7 +548,7 @@ SwitchToTty (struct display *d)
     d->status = textMode;
 }
 
-static void
+void
 SwitchToX (struct display *d)
 {
     struct utmps *utp, **utpp;
@@ -633,7 +628,7 @@ stoppen (int force)
 }
 
 
-static void
+void
 doShutdown (int how, int when)
 {
     switch (when) {
@@ -652,76 +647,7 @@ doShutdown (int how, int when)
     sdAction = how;
 }
 
-
-static void
-openFifo (int *fifofd, char **fifopath, const char *dname)
-{
-    if (*fifoDir && *fifofd < 0) {
-	if (mkdir (fifoDir, 0755)) {
-	    if (errno != EEXIST) {
-		LogError ("mkdir %\"s failed; no control FiFos will be available\n", 
-			  fifoDir);
-		return;
-	    }
-	} else
-	    chmod (fifoDir, 0755); /* override umask */
-	StrApp (fifopath, fifoDir, dname ? "/xdmctl-" : "/xdmctl", 
-		dname, (char *)0);
-	if (*fifopath) {
-	    unlink (*fifopath);
-	    if (mkfifo (*fifopath, 0) < 0)
-		LogError ("Cannot create control FiFo %\"s\n", *fifopath);
-	    else {
-		chown (*fifopath, -1, fifoGroup);
-		chmod (*fifopath, 0620);
-		if ((*fifofd = open (*fifopath, O_RDWR | O_NONBLOCK)) >= 0) {
-		    RegisterCloseOnFork (*fifofd);
-		    RegisterInput (*fifofd);
-		    return;
-		}
-		unlink (*fifopath);
-		LogError ("Cannot open control FiFo %\"s\n", *fifopath);
-	    }
-	    free (*fifopath);
-	    *fifopath = 0;
-	}
-    }
-}
-
-static void
-closeFifo (int *fifofd, char **fifopath)
-{
-    if (*fifofd >= 0) {
-	UnregisterInput (*fifofd);
-	CloseNClearCloseOnFork (*fifofd);
-	*fifofd = -1;
-	unlink (*fifopath);
-	*strrchr (*fifopath, '/') = 0;
-	rmdir (*fifopath);
-	free (*fifopath);
-	*fifopath = 0;
-    }
-}
-
-static char **
-splitCmd (const char *string, int len)
-{
-    const char *word;
-    char **argv;
-
-    if (!(argv = initStrArr (0)))
-	return 0;
-    for (word = string; ; string++, len--)
-	if (!len || *string == '\t') {
-	    if (!(argv = addStrArr (argv, word, string - word)))
-		return 0;
-	    if (!len)
-		return argv;
-	    word = string + 1;
-	}
-}
-
-static void
+void
 setNLogin (struct display *d, 
 	   const char *nuser, const char *npass, char *nargs, int rl)
 {
@@ -824,159 +750,6 @@ processGPipe (struct display *d)
     }
 }
 
-static int
-parseSd (char **ar, int *how, int *when, int wdef)
-{
-    if (strcmp (ar[0], "shutdown"))
-	return 0;
-    *how = 0;
-    if (!ar[1] || (!ar[2] && wdef < 0)) {
-	LogInfo ("Missing argument(s) to FiFo command \"shutdown\"\n");
-	return 1;
-    }
-    if (ar[2]) {
-	if (!strcmp (ar[2], "forcenow"))
-	    *when = SHUT_FORCENOW;
-	else if (!strcmp (ar[2], "trynow"))
-	    *when = SHUT_TRYNOW;
-	else if (!strcmp (ar[2], "schedule"))
-	    *when = SHUT_SCHEDULE;
-	else {
-	    LogInfo ("Invalid mode spec %\"s to FiFo command \"shutdown\"\n", ar[2]);
-	    return 1;
-	}
-    } else
-	*when = wdef;
-    if (!strcmp (ar[1], "reboot"))
-	*how = SHUT_REBOOT;
-    else if (!strcmp (ar[1], "halt"))
-	*how = SHUT_HALT;
-    else
-	LogInfo ("Invalid type spec %\"s to FiFo command \"shutdown\"\n", ar[1]);
-    return 1;
-}
-
-static void
-processDFifo (const char *buf, int len, void *ptr)
-{
-    struct display *d = (struct display *)ptr;
-    char **ar = splitCmd (buf, len);
-    int how, when;
-
-    if (!ar[0])
-	return;
-    if (parseSd (ar, &how, &when, d->defSdMode))
-    {
-	if (!how)
-	    return;
-	if (d->allowShutdown == SHUT_NONE ||
-	    (d->allowShutdown == SHUT_ROOT && d->userSess))
-	{
-	    LogInfo ("Display %s attempted FiFo command \"shutdown\"\n", d->name);
-	    return;
-	}
-	if (when == SHUT_FORCENOW &&
-	    (d->allowNuke == SHUT_NONE ||
-	    (d->allowNuke == SHUT_ROOT && d->userSess)))
-	{
-	    LogInfo ("Display %s attempted FiFo command \"shutdown forcenow\"\n",
-		     d->name);
-	    return;
-	}
-	d->hstent->sd_how = how;
-	d->hstent->sd_when = when;
-    } else if (!strcmp (ar[0], "lock")) {
-	d->hstent->lock = 1;
-#ifdef AUTO_RESERVE
-	if (AllLocalDisplaysLocked (0))
-	    StartReserveDisplay (0);
-#endif
-    } else if (!strcmp (ar[0], "unlock")) {
-	d->hstent->lock = 0;
-#ifdef AUTO_RESERVE
-	ReapReserveDisplays ();
-#endif
-    } else if (!strcmp (ar[0], "reserve")) {
-	if ((d->displayType & d_location) == dLocal) {
-	    int lt = 0;
-	    if (ar[1])
-		lt = atoi (ar[1]);
-	    StartReserveDisplay (lt ? lt : 60); /* XXX maybe make configurable? */
-	} else
-	    LogInfo ("Remote display %s attempted FiFo command \"reserve\"\n", d->name);
-    } else if (!strcmp (ar[0], "suicide")) {
-	if (d->status == running && d->pid != -1) {
-	    TerminateProcess (d->pid, SIGTERM);
-	    d->status = raiser;
-	}
-    } else
-	LogInfo ("Invalid FiFo command %\"s from display %s\n", ar[0], d->name);
-    freeStrArr (ar);
-}
-
-static void
-processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
-{
-    struct display *d;
-    char **ar = splitCmd (buf, len), *args, *asp, *adp;
-    int how, when;
-
-    if (!ar[0])
-	return;
-    if (parseSd (ar, &how, &when, -1)) {
-	if (!how)
-	    return;
-	if (!fifoAllowShutdown)
-	{
-	    LogInfo ("System shutdown via command FiFo forbidden\n");
-	    return;
-	}
-	if (when == SHUT_FORCENOW && !fifoAllowNuke)
-	{
-	    LogInfo ("Forced system shutdown via command FiFo forbidden\n");
-	    return;
-	}
-	doShutdown (how, when);
-    } else if (!strcmp (ar[0], "login")) {
-	if (arrLen (ar) < 5) {
-	    LogInfo ("Missing argument(s) to FiFo command %s\"\n", ar[0]);
-	    return;
-	}
-	if (!(d = FindDisplayByName (ar[1]))) {
-	    LogInfo ("Display %s in FiFo command %\"s not found\n", ar[1], ar[0]);
-	    return;
-	}
-	if (ar[5] && StrDup (&args, ar[5])) {
-	    for (asp = adp = args; *asp; asp++, adp++)
-		if (*asp == '\\')
-		    switch (*++asp) {
-		    case 0: asp--; /* fallthrough */
-		    case '\\': *adp = '\\'; break;
-		    case 'n': *adp = '\n'; break;
-		    case 't': *adp = '\t'; break;
-		    default: *adp++ = '\\'; *adp = *asp; break;
-		    }
-		else
-		    *adp = *asp;
-	    *adp = 0;
-	    setNLogin (d, ar[3], ar[4], args, 2);
-	    free (args);
-	} else
-	    setNLogin (d, ar[3], ar[4], 0, 2);
-	if (d->status == running && d->pid != -1) {
-	    if (d->userSess < 0 || !strcmp (ar[2], "now")) {
-		TerminateProcess (d->pid, SIGTERM);
-		d->status = raiser;
-	    }
-	} else if (d->status == reserve)
-	    d->status = notRunning;
-	else if (d->status == textMode && !strcmp (ar[2], "now"))
-	    SwitchToX (d);
-    } else
-	LogInfo ("Invalid FiFo command %\"s\n", ar[0]);
-    freeStrArr (ar);
-}
-
 
 static int
 ScanConfigs (int force)
@@ -997,31 +770,13 @@ MarkDisplay (struct display *d)
 }
 
 static void
-UpdateFifo (void)
-{
-    char *ffp;
-    unsigned ffl;
-
-    if (fifoPath) {
-	ffp = fifoPath;
-	ffl = strrchr (ffp, '/') - ffp;
-    } else
-	ffl = 0;
-    if (ffl != strlen (fifoDir) || memcmp (fifoDir, ffp, ffl)) {
-	closeFifo (&fifoFd, &fifoPath);
-	openFifo (&fifoFd, &fifoPath, 0);
-    } else if (fifoPath)
-	chown (fifoPath, -1, fifoGroup);
-}
-
-static void
 RescanConfigs (int force)
 {
     if (ScanConfigs (force)) {
 #ifdef XDMCP
 	UpdateListenSockets ();
 #endif
-	UpdateFifo ();
+	updateCtrl ();
     }
 }
 
@@ -1050,7 +805,7 @@ ReapChildren (void)
 	    GClosen (&d->pipe);
 	    UnregisterInput (d->gpipe.rfd);
 	    GClosen (&d->gpipe);
-	    closeFifo (&d->fifofd, &d->fifoPath);
+	    closeCtrl (d);
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
 		Debug ("display exited with EX_TEXTLOGIN\n");
@@ -1332,19 +1087,14 @@ MainLoop (void)
 	    if (ProcessListenSockets (&reads))
 		continue;
 #endif	/* XDMCP */
-	    if (fifoFd >= 0 && FD_ISSET (fifoFd, &reads))
-	    {
-		FdGetsCall (fifoFd, processFifo, 0);
+	    if (handleCtrl (&reads, 0))
 		continue;
-	    }
 	    /* Must be last (because of the breaks)! */
+	  again:
 	    for (d = displays; d; d = d->next)
 	    {
-		if (d->fifofd >= 0 && FD_ISSET (d->fifofd, &reads))
-		{
-		    FdGetsCall (d->fifofd, processDFifo, d);
-		    break;
-		}
+		if (handleCtrl (&reads, d))
+		    goto again;
 		if (d->pipe.rfd >= 0 && FD_ISSET (d->pipe.rfd, &reads))
 		{
 		    processDPipe (d);
@@ -1537,7 +1287,7 @@ StartDisplayP2 (struct display *d)
     char	*cname, *cgname;
     int		pid;
 
-    openFifo (&d->fifofd, &d->fifoPath, d->name);
+    openCtrl (d);
     Debug ("forking session\n");
     ASPrintf (&cname, "sub-daemon for display %s", d->name);
     ASPrintf (&cgname, "greeter for display %s", d->name);
@@ -1560,7 +1310,7 @@ StartDisplayP2 (struct display *d)
 	ManageSession (d);
 	/* NOTREACHED */
     case -1:
-	closeFifo (&d->fifofd, &d->fifoPath);
+	closeCtrl (d);
 	d->status = notRunning;
 	break;
     default:
