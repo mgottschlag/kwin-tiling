@@ -62,6 +62,7 @@ protected slots:
     void termcb_clicked();
     void uidcb_clicked();
     void slotCapturedShortcut(const KShortcut&);
+    void slotExecSelected();
 
 protected:
     void enableWidgets(bool isDF, bool isDeleted);

@@ -38,6 +38,7 @@
 #include <kfiledialog.h>
 #include <kcombobox.h>
 #include <kkeydialog.h>
+#include <kprocess.h>
 #include "khotkeys.h"
 
 #include "menuinfo.h"
@@ -65,13 +66,13 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
-	_nameEdit->setAcceptDrops(false);
+    _nameEdit->setAcceptDrops(false);
     _descriptionEdit = new KLineEdit(general_group);
     _descriptionEdit->setAcceptDrops(false);
     _commentEdit = new KLineEdit(general_group);
-	_commentEdit->setAcceptDrops(false);
+    _commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
-	_execEdit->lineEdit()->setAcceptDrops(false);
+    _execEdit->lineEdit()->setAcceptDrops(false);
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
     _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
 
@@ -94,16 +95,18 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
             SLOT(slotChanged()));
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
+    connect(_execEdit, SIGNAL(urlSelected(const QString&)),
+            SLOT(slotExecSelected()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
     grid->addMultiCellWidget(_descriptionEdit, 1, 1, 1, 1);
-    grid->addMultiCellWidget(_commentEdit, 2, 2, 1, 1);
-    grid->addMultiCellWidget(_execEdit, 3, 3, 1, 1);
-    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 1);
-    grid->addMultiCellWidget(_systrayCB, 5, 5, 0, 1);
+    grid->addMultiCellWidget(_commentEdit, 2, 2, 1, 2);
+    grid->addMultiCellWidget(_execEdit, 3, 3, 1, 2);
+    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 2);
+    grid->addMultiCellWidget(_systrayCB, 5, 5, 0, 2);
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -126,7 +129,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     _pathEdit = new KURLRequester(hbox);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
-	_pathEdit->lineEdit()->setAcceptDrops(false);
+    _pathEdit->lineEdit()->setAcceptDrops(false);
 
     _pathLabel->setBuddy(_pathEdit);
 
@@ -148,7 +151,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     hbox->setSpacing(KDialog::spacingHint());
     _termOptLabel = new QLabel(i18n("Terminal &options:"), hbox);
     _termOptEdit = new KLineEdit(hbox);
-	_termOptEdit->setAcceptDrops(false);
+    _termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
@@ -171,7 +174,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     hbox->setSpacing(KDialog::spacingHint());
     _uidLabel = new QLabel(i18n("&Username:"), hbox);
     _uidEdit = new KLineEdit(hbox);
-	_uidEdit->setAcceptDrops(false);
+    _uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
@@ -269,7 +272,9 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
 
     _nameEdit->setText(folderInfo->caption);
     _descriptionEdit->setText(folderInfo->genericname);
+    _descriptionEdit->setCursorPosition(0);
     _commentEdit->setText(folderInfo->comment);
+    _commentEdit->setCursorPosition(0);
     _iconButton->setIcon(folderInfo->icon);
 
     // clean all disabled fields and return
@@ -321,7 +326,9 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
 
     _nameEdit->setText(df->readName());
     _descriptionEdit->setText(df->readGenericName());
+    _descriptionEdit->setCursorPosition(0);
     _commentEdit->setText(df->readComment());
+    _commentEdit->setCursorPosition(0);
     _iconButton->setIcon(df->readIcon());
 
     // key binding part
@@ -432,6 +439,13 @@ void BasicTab::uidcb_clicked()
     _uidEdit->setEnabled(_uidCB->isChecked());
     _uidLabel->setEnabled(_uidCB->isChecked());
     slotChanged();
+}
+
+void BasicTab::slotExecSelected()
+{
+    QString path = _execEdit->lineEdit()->text();
+    if (!path.startsWith("'"))
+        _execEdit->lineEdit()->setText(KProcess::quote(path));
 }
 
 void BasicTab::slotCapturedShortcut(const KShortcut& cut)
