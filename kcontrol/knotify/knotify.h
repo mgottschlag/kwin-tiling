@@ -20,6 +20,18 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.3  2000/03/21 23:42:51  charles
+    Can anyone try to get the Layout to work properly? Is this a QT bug?
+    Is this my own fault?
+
+    It's horribly huge.
+
+    Oh, and it lists the programs properly (thanks coolo!).
+    That means that every program can/should now officially create
+    $KDEDIR/share/apps/appname/eventsrc
+
+    Or I shall stabilize the API first :D
+
     Revision 1.2  2000/03/19 07:23:28  charles
     the module actually "exists" now :D
     Just wait until I start to DO something with it!
@@ -68,6 +80,7 @@ private slots:
 	 */
 	void loadAll();
 	void appSelected(QListViewItem *);
+	void eventSelected(QListViewItem *);
 	
 protected:
 	QListView *apps;
@@ -83,5 +96,12 @@ public:
 	QString file;
 };
 
+class EventListViewItem : public QListViewItem
+{
+public:
+	EventListViewItem(QListView *parent, const QString &eventname, const QString &configfile, const QString &r1, const QString &r2=0);
+	QString file;
+	QString event;
+};
 
 #endif

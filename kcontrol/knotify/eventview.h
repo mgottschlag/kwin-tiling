@@ -20,6 +20,14 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.1  2000/03/19 07:23:28  charles
+    the module actually "exists" now :D
+    Just wait until I start to DO something with it!
+
+    And how do you debug these darned things?
+    cd knotify
+    make --dammit it_work
+
 */  
 
 
@@ -49,6 +57,7 @@ signals:
 	void changed();
 
 protected:
+	KConfig *conf;
 	QListBox *eventslist;
 	QCheckBox *enabled;
 	KLineEdit *file;

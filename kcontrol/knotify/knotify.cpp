@@ -52,7 +52,10 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	layout->setStretchFactor(events, 1);
 	eventview=new EventView(this);
 	loadAll();
-	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), SLOT(appSelected(QListViewmItem*)));
+	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), 
+		SLOT(appSelected(QListViewItem*)));
+	connect(events, SIGNAL(selectionChanged(QListViewItem*)),
+		SLOT(eventSelected(QListViewItem*)));
 	
 };
 
@@ -81,7 +84,9 @@ void KNotifyWidget::loadAll()
 		conf.setGroup("!Global!");
 		QString appname(conf.readEntry("appname", "Unknown Title"));
 		QString desc(conf.readEntry("description"));
-		(new ListViewItem(apps, *it, appname, desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/library", KIconLoader::Small));
+		(new ListViewItem(apps, *it, appname, desc))->setPixmap
+			(0, KGlobal::instance()->iconLoader()->loadIcon("apps/library", 
+				KIconLoader::Small));
 		kapp->processEvents();
 	}
 	apps->setSelected(apps->firstChild(), true);
@@ -104,19 +109,32 @@ void KNotifyWidget::appSelected(QListViewItem *_i)
 		QString friendly(conf.readEntry("friendly", *it));
 		QString desc(conf.readEntry("description"));
 		
-		(new ListViewItem(events, *it, friendly, desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/knotify", KIconLoader::Small));
+		(new EventListViewItem(events, *it, (const char*)((ListViewItem*)_i)->file, friendly,
+			desc))->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("apps/knotify",
+				KIconLoader::Small));
 		kapp->processEvents();
 	}
 
 }
 
-ListViewItem::ListViewItem(QListView *parent, const QString &configfile, const QString &r1, const QString &r2)
-	: QListViewItem(parent, r1,r2), file(configfile)
+void KNotifyWidget::eventSelected(QListViewItem *_i)
 {
+	QString file=((EventListViewItem*)_i)->file;
+	QString event=((EventListViewItem*)_i)->event;
+	
+	KConfig *conf = new KConfig(file,false,false);
+	eventview->load(conf,event);
 }
 
 
+ListViewItem::ListViewItem(QListView *parent, const QString &configfile,
+	const QString &r1, const QString &r2)
+	: QListViewItem(parent, r1,r2), file(configfile)
+{}
 
-
+EventListViewItem::EventListViewItem(QListView *parent, const QString &eventname,
+	const QString &configfile, const QString &r1, const QString &r2)
+	: QListViewItem(parent, r1,r2), file(configfile), event(eventname)
+{}
 
 
