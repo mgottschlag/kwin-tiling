@@ -179,6 +179,12 @@ X-KDE-RootOnly
 	with root permissions. The control center will then show
     the module only if run in system mode. (kcontrol --system)
 
+X-KDE-ControlModuleType
+
+	Depending on the module type the control module will or wont be listed	
+	in the current kcontrol mode. Common modes are "User","System"
+	and "Info". "kcontrol --type Info" for example lists control
+	modules with X-KDE-ControlModuleType=Info only.
 
 X-KDE-Group
 
