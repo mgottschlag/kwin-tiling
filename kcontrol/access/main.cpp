@@ -17,5 +17,6 @@ extern "C" int kdemain(int argc, char * argv[] )
     return 0;
 
   KAccessApp app;
+  app.disableSessionManagement();
   return app.exec();
 }
