@@ -80,7 +80,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     itsStatusLabel->setFrameShape(QFrame::Panel);
     itsStatusLabel->setFrameShadow(QFrame::Sunken);
     itsStatusLabel->setLineWidth(1);
-    itsStatusLabel->setAlignment(Qt::AlignHCenter);
 
 #ifdef HAVE_FT_CACHE
     itsSplitter=new QSplitter(this);
@@ -620,14 +619,16 @@ void CKCmFontInst::removeFonts()
                 doIt = KMessageBox::Continue==KMessageBox::warningContinueCancel(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
                            i18n("Delete Item"),
-                           i18n("Delete"));
+                           i18n("Delete"),
+                           QString::null, KMessageBox::Dangerous);
             break;
             default:
                 doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n items?", files.count()),
                            files,
                            i18n("Delete Items"),
-                           i18n("Delete"));
+                           i18n("Delete"),
+                           QString::null, KMessageBox::Dangerous);
         }
 
         if(doIt)
@@ -796,7 +797,8 @@ void CKCmFontInst::enableItems(bool enable)
                        enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
                               : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
                        enable ? i18n("Enable Item") : i18n("Disable Item"),
-                       enable ? i18n("Enable") : i18n("Disable"));
+                       enable ? i18n("Enable") : i18n("Disable"),
+                       QString::null, KMessageBox::Dangerous);
             break;
         default:
             doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
@@ -804,7 +806,8 @@ void CKCmFontInst::enableItems(bool enable)
                               : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?", files.count()),
                        files,
                        enable ? i18n("Enable Items") : i18n("Disable Items"),
-                       enable ? i18n("Enable") : i18n("Disable"));
+                       enable ? i18n("Enable") : i18n("Disable"),
+                       QString::null, KMessageBox::Dangerous);
     }
 
     if(doIt)
