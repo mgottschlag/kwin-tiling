@@ -140,6 +140,18 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
 
+  label = new QLabel(i18n("&Echo mode:"), group);
+  echocombo = new QComboBox(false, group);
+  label->setBuddy( echocombo );
+  echocombo->insertItem(i18n("No echo"));
+  echocombo->insertItem(i18n("Stars"));
+  echocombo->insertItem(i18n("Many Stars"));
+  connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  grid->addWidget(label, 5,0);
+  grid->addWidget(echocombo, 5, 1);
+  wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( echocombo, wtstr );
 
   // The Language group box
   group = new QGroupBox(0, Vertical, i18n("Language"), this);
@@ -196,6 +208,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
       logoRadio->setEnabled(false);
       clockRadio->setEnabled(false);
       guicombo->setEnabled(false);
+      echocombo->setEnabled(false);
       langcombo->setEnabled(false);
       countrycombo->setEnabled(false);
     }
@@ -375,6 +388,14 @@ void KDMAppearanceWidget::save()
   else
     c->writeEntry("GUIStyle", "Windows", true);
 
+  // write echo mode
+  if (echocombo->currentItem() == 0)
+    c->writeEntry("EchoMode", "NoEcho", true);
+  else if (echocombo->currentItem() == 1)
+    c->writeEntry("EchoMode", "OneStar", true);
+  else
+    c->writeEntry("EchoMode", "ThreeStars", true);
+
   // write language
   c->setGroup("Locale");
   c->writeEntry("Language", langcombo->currentTag());
@@ -426,6 +447,15 @@ void KDMAppearanceWidget::load()
   else
     guicombo->setCurrentItem(0);
 
+  // Check the echo mode
+  QString echostr = c->readEntry("EchoMode", "OneStar").lower();
+  if ((echostr == "noecho") || (echostr == "nostars"))
+    echocombo->setCurrentItem(0);
+  else if (echostr == "threestars")
+    echocombo->setCurrentItem(2);
+  else // "onestar"
+    echocombo->setCurrentItem(1);
+
   // get the language
   c->setGroup("Locale");
   QString lang = c->readEntry("Language", "C");
@@ -448,6 +478,7 @@ void KDMAppearanceWidget::defaults()
   slotRadioClicked( KdmLogo );
   setLogo("kdelogo");
   guicombo->setCurrentItem(0);
+  echocombo->setCurrentItem(1);
   langcombo->setCurrentItem("C");
   countrycombo->setCurrentItem("C");
 }

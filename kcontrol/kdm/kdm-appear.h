@@ -74,6 +74,7 @@ private:
 	QRadioButton *logoRadio;
 	QRadioButton *clockRadio;
 	QComboBox    *guicombo;
+	QComboBox    *echocombo;
         KLanguageCombo *langcombo;
         KLanguageCombo *countrycombo;
 
