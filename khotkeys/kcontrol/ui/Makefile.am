@@ -13,3 +13,6 @@ INCLUDES= -I$(srcdir)/.. -I$(top_srcdir)/khotkeys/shared $(all_includes)
 
 dummy.cpp:
 	echo > dummy.cpp
+
+DISTCLEANFILES = dummy.cpp
+
