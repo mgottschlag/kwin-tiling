@@ -545,7 +545,6 @@ registerBroadcastForPing (void)
 {
     struct sockaddr_in in_addr;
 
-    Debug("registering broadcast\n");
 #ifdef __GNU__
     in_addr.sin_addr.s_addr = htonl(0xFFFFFFFF);
     in_addr.sin_port = htons(XDM_UDP_PORT);
