@@ -558,6 +558,37 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
   return pixmap;
 }
 
+bool Task::idMatch( const QString& id1, const QString& id2 )
+{
+  if ( id1.isEmpty() || id2.isEmpty() )
+    return false;
+
+  if ( id1.contains( id2 ) > 0 )
+    return true;
+  
+  if ( id2.contains( id1 ) > 0 )
+    return true;
+  
+  // add hacks here ;-)
+    if ( ( id1 == "navigator" && id2 == "netscape")
+	 || ( id1 == "netscape" && id2 == "navigator")
+	 || ( id1 == "kfmclient" && id2 == "konqueror")
+	 || ( id1 == "konqueror" && id2 == "kfmclient")
+	 || ( id1 == "command_shell" && id2 == "ddd" )
+	 || ( id1 == "ddd" && id2 == "command_shell" )
+	 || ( id1 == "gimp_startup" && id2 == "toolbox" )
+	 || ( id1 == "toolbox" && id2 == "gimp_startup" )
+	 || ( id1 == "gimp" && id2 == "toolbox" )
+	 || ( id1 == "toolbox" && id2 == "gimp" )
+	 || ( id1 == "xmms" && id2 == "xmms_player" )
+	 || ( id1 == "xmms_player" && id2 == "xmms" )
+	)
+      return true;
+
+    return false;
+}
+
+
 void Task::maximize()
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);

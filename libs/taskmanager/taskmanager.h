@@ -86,6 +86,8 @@ public:
      */
     QPixmap icon( int width, int height, bool allowResize = false );
 
+    static bool idMatch(const QString &, const QString &);
+
     // state
     bool isMaximized() const;
     bool isIconified() const;
