@@ -21,7 +21,11 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char * name)
 
    QHBox *hbox=new QHBox(this);
    m_ioslavesLb=new QListBox(hbox);
-   m_info=new QTextView(hbox);
+   //TODO make something useful after 2.1 is released
+   //m_info=new QTextView(hbox);
+/*   QWidget *dummy=new QWidget(hbox);
+   hbox->setStretchFactor(dummy,1);
+   hbox->setStretchFactor(m_ioslavesLb,1);*/
    hbox->setSpacing(15);
 
    layout->addWidget(label);
@@ -33,9 +37,9 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char * name)
       m_ioslavesLb->insertItem(*it);
    };
    m_ioslavesLb->sort();
-   connect(m_ioslavesLb,SIGNAL(highlighted( const QString&)),this,SLOT(showInfo(const QString&)));
+   //connect(m_ioslavesLb,SIGNAL(highlighted( const QString&)),this,SLOT(showInfo(const QString&)));
    //connect(m_ioslavesLb,SIGNAL(highlighted( QListBoxItem *item )),this,SLOT(showInfo(QListBoxItem *item)));
-   showInfo(m_ioslavesLb->text(0));
+   //showInfo(m_ioslavesLb->text(0));
    //showInfo(m_ioslavesLb->firstItem());
 };
 
@@ -46,7 +50,7 @@ QString KCMIOSlaveInfo::quickHelp() const
 
 void KCMIOSlaveInfo::showInfo(const QString& protocol)
 {
-   m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
+   //m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
 };
 
 /*void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
