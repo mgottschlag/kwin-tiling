@@ -40,7 +40,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kdialog.h>
 #include <klocale.h>
