@@ -36,7 +36,9 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <time.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #if defined(HAVE_XTEST) || defined(HAVE_XKB)
 # include <X11/Xlib.h>
@@ -205,12 +207,22 @@ GetCfgStrArr (int id, int *len)
     return GRecvStrArr (len);
 }
 
+static void ATTR_NORETURN
+exitGreeter (void)
+{
+    char buf[128];
+
+    sprintf (buf, "rm -rf %s", getenv ("HOME"));
+    system (buf);
+    exit (0);
+}
+
 void
 SessionExit (int ret)
 {
     GSendInt (G_SessionExit);
     GSendInt (ret);
-    exit (0);
+    exitGreeter();
 }
 
 
@@ -551,6 +563,9 @@ int
 main (int argc, char **argv)
 {
     char *ci;
+    FILE *f;
+    int i;
+    char qtrc[25];
 
     if (!(ci = getenv("CONINFO"))) {
 	fprintf(stderr, "This program is part of kdm and should not be run manually.\n");
@@ -564,6 +579,27 @@ main (int argc, char **argv)
     if ((debugLevel = GRecvInt ()) & DEBUG_WGREET)
 	sleep (100);
 
+    /* for QSettings */
+    srand( time( 0 ) );
+    for (i = 0; i < 10000; i++) {
+	sprintf( qtrc, "/tmp/%010d", rand() );
+	if (!mkdir( qtrc, 0700 ))
+	    goto okay;
+    }
+    LogPanic( "Cannot create $HOME\n" );
+  okay:
+    if (setenv( "HOME", qtrc, 1 ))
+	LogPanic( "Cannot set $HOME\n" );
+    strcat( qtrc, "/.qt" );
+    mkdir( qtrc, 0700 );
+    strcat( qtrc, "/qtrc" );
+    if (!(f = fopen( qtrc, "w" )))
+	LogPanic( "Cannot create qt config\n" );
+    fprintf( f, "[General]\nuseXft=%s\n",
+		GetCfgInt (C_AntiAliasing) ? "true" : "false" );
+    /* XXX add plugin path, etc. */
+    fclose( f );
+
     dname = GetCfgStr (C_name);
     dgrabServer = GetCfgInt (C_grabServer);
     dgrabTimeout = GetCfgInt (C_grabTimeout);
@@ -575,7 +611,9 @@ main (int argc, char **argv)
 	free (ci);
     }
 
-    setenv("HOME", "/tmp", 1);	/* for QSettings */
     kg_main(argc, argv);
+
+    exitGreeter();
+
     return 0;
 }
