@@ -321,6 +321,16 @@ void KAccessConfig::save()
   config->sync();
   delete config;
 
+  if (systemBell->isChecked() ||
+      customBell->isChecked() ||
+      visibleBell->isChecked())
+  {
+    KConfig cfg("kdeglobals", false, false);
+    cfg.setGroup("General");
+    cfg.writeEntry("UseSystemBell", true);
+    cfg.sync();
+  }
+
   // restart kaccess
   kapp->startServiceByDesktopName("kaccess");
 
