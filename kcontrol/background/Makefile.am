@@ -6,7 +6,7 @@ kde_module_LTLIBRARIES = kcm_background.la
 
 kcm_background_la_SOURCES = main.cpp
 kcm_background_la_LDFLAGS = $(KDE_RPATH) -module -avoid-version $(all_libraries) -no-undefined
-kcm_background_la_LIBADD = libkcmbgnd.la libbgnd.la $(LIB_KFILE)
+kcm_background_la_LIBADD = libkcmbgnd.la libbgnd.la $(LIB_KFILE) -lknewstuff
 
 METASOURCES = AUTO
 

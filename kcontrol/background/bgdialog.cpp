@@ -51,6 +51,7 @@
 #include <kurlrequester.h>
 #include <kwin.h>
 #include <kimagefilepreview.h>
+#include <knewstuff/downloaddialog.h>
 
 #include "bgmonitor.h"
 #include "bgwallpaper.h"
@@ -127,6 +128,9 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    // advanced options
    connect(m_buttonAdvanced, SIGNAL(clicked()),
            SLOT(slotAdvanced()));
+
+   connect(m_buttonGetNew, SIGNAL(clicked()),
+           SLOT(slotGetNewStuff()));
 
    // renderers
    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max + 1 );
@@ -324,6 +328,33 @@ void BGDialog::initUI()
          m_comboPattern->insertItem(pat.comment());
    }
 
+   loadWallpaperFilesList();
+
+   // Wallpaper tilings: again they must match the ones from bgrender.cc
+   m_comboWallpaperPos->insertItem(i18n("Centered"));
+   m_comboWallpaperPos->insertItem(i18n("Tiled"));
+   m_comboWallpaperPos->insertItem(i18n("Center Tiled"));
+   m_comboWallpaperPos->insertItem(i18n("Centered Maxpect"));
+   m_comboWallpaperPos->insertItem(i18n("Tiled Maxpect"));
+   m_comboWallpaperPos->insertItem(i18n("Scaled"));
+   m_comboWallpaperPos->insertItem(i18n("Centered Auto Fit"));
+
+   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
+   m_comboBlend->insertItem(i18n("No Blending"));
+   m_comboBlend->insertItem(i18n("Flat"));
+   m_comboBlend->insertItem(i18n("Horizontal"));
+   m_comboBlend->insertItem(i18n("Vertical"));
+   m_comboBlend->insertItem(i18n("Pyramid"));
+   m_comboBlend->insertItem(i18n("Pipecross"));
+   m_comboBlend->insertItem(i18n("Elliptic"));
+   m_comboBlend->insertItem(i18n("Intensity"));
+   m_comboBlend->insertItem(i18n("Saturation"));
+   m_comboBlend->insertItem(i18n("Contrast"));
+   m_comboBlend->insertItem(i18n("Hue Shift"));
+}
+
+void BGDialog::loadWallpaperFilesList() {
+
    // Wallpapers
    // the following QMap is lower cased names mapped to cased names and URLs
    // this way we get case insensitive sorting
@@ -412,6 +443,8 @@ void BGDialog::initUI()
    }
 
    KComboBox *comboWallpaper = m_urlWallpaperBox;
+   comboWallpaper->clear();
+   m_Wallpaper.clear();
    int i = 0;
    for (QMap<QString, QPair<QString, QString> >::Iterator it = papers.begin();
         it != papers.end();
@@ -421,29 +454,6 @@ void BGDialog::initUI()
       m_Wallpaper[it.data().second] = i;
       i++;
    }
-
-   // Wallpaper tilings: again they must match the ones from bgrender.cc
-   m_comboWallpaperPos->insertItem(i18n("Centered"));
-   m_comboWallpaperPos->insertItem(i18n("Tiled"));
-   m_comboWallpaperPos->insertItem(i18n("Center Tiled"));
-   m_comboWallpaperPos->insertItem(i18n("Centered Maxpect"));
-   m_comboWallpaperPos->insertItem(i18n("Tiled Maxpect"));
-   m_comboWallpaperPos->insertItem(i18n("Scaled"));
-   m_comboWallpaperPos->insertItem(i18n("Centered Auto Fit"));
-   m_comboWallpaperPos->insertItem(i18n("Scale and Crop"));
-
-   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
-   m_comboBlend->insertItem(i18n("No Blending"));
-   m_comboBlend->insertItem(i18n("Flat"));
-   m_comboBlend->insertItem(i18n("Horizontal"));
-   m_comboBlend->insertItem(i18n("Vertical"));
-   m_comboBlend->insertItem(i18n("Pyramid"));
-   m_comboBlend->insertItem(i18n("Pipecross"));
-   m_comboBlend->insertItem(i18n("Elliptic"));
-   m_comboBlend->insertItem(i18n("Intensity"));
-   m_comboBlend->insertItem(i18n("Saturation"));
-   m_comboBlend->insertItem(i18n("Contrast"));
-   m_comboBlend->insertItem(i18n("Hue Shift"));
 }
 
 void BGDialog::setWallpaper(const QString &s)
@@ -960,6 +970,21 @@ void BGDialog::slotAdvanced()
     updateUI();
     m_copyAllDesktops = true;
     emit changed(true);
+}
+
+void BGDialog::slotGetNewStuff()
+{
+   //FIXME set this to a server when we get one
+   //should really be in a .rc file but could be either
+   //kcmshellrc or kcontrolrc
+   KConfig* config = KGlobal::config();
+   config->setGroup("KNewStuff");
+   config->writeEntry( "ProvidersUrl", "http://kde.me.uk/knewstuff/providers.xml" );
+   config->writeEntry( "StandardResource", "wallpaper" );
+   config->sync();
+
+   KNS::DownloadDialog::open("wallpapers");
+   loadWallpaperFilesList();
 }
 
 void BGDialog::slotBlendMode(int mode)

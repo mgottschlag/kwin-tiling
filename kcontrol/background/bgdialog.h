@@ -55,6 +55,8 @@ protected:
 
    void setWallpaper(const QString &);
 
+   void loadWallpaperFilesList();
+
 protected slots:
    void slotSelectDesk(int desk);
    void slotWallpaperTypeChanged(int i);
@@ -68,6 +70,7 @@ protected slots:
    void slotImageDropped(const QString &uri);
    void slotPreviewDone(int);
    void slotAdvanced();
+   void slotGetNewStuff();
    void slotBlendMode(int mode);
    void slotBlendBalance(int value);
    void slotBlendReverse(bool b);
