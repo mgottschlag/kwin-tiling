@@ -3,64 +3,68 @@ Please help keep this file up-to-date. Thanks.
 [s] started
 [x] done
 
+Programmers: please mark those modules as "Ready" which are not still
+facing changes to the UI, i.e. those modules we can start documenting.
+Please delete modules from the list if they are going to be obsolete.
+
 Please start translating QWhatsThis only when it is marked
 as proof-read. Thanks.
 
 
-                        WhatsThis   proof-read    Manual
-arts                       [ ]         [ ]         [ ] 
-bell                       [ ]         [ ]         [ ]
-clock                      [ ]         [ ]         [ ]
+                        Ready   WhatsThis   proof-read    Manual
+arts                     [ ]        [ ]         [ ]         [ ]
+bell                     [ ]        [ ]         [ ]         [ ]
+clock                    [ ]        [ ]         [ ]         [ ]
 display                    
-  advanced.cpp             [ ]         [ ]         [ ]
-  backgnd.cpp              [x]         [ ]         [ ]
-  colorscm.cpp             [x]         [x]         [ ]
-  energy.cpp               [x]         [ ]         [ ]
-  fonts.cpp                [x]         [ ]         [ ]
-  general.cpp              [s]         [ ]         [ ]
-  icons.cpp                [ ]         [ ]         [ ]
-  scrnsave.cpp             [x]         [ ]         [ ]
-drkonqi                    [ ]         [ ]         [ ]
-ebrowsing                  [ ]         [ ]         [ ]
+  advanced.cpp           [ ]        [ ]         [ ]         [ ]
+  backgnd.cpp            [ ]        [x]         [ ]         [ ]
+  colorscm.cpp           [ ]        [x]         [x]         [ ]
+  energy.cpp             [ ]        [x]         [ ]         [ ]
+  fonts.cpp              [ ]        [x]         [ ]         [ ]
+  general.cpp            [ ]        [s]         [ ]         [ ]
+  icons.cpp              [ ]        [ ]         [ ]         [ ]
+  scrnsave.cpp           [ ]        [x]         [ ]         [ ]
+drkonqi                  [ ]        [ ]         [ ]         [ ]
+ebrowsing                [ ]        [ ]         [ ]         [ ]
 email                      
-  email.cpp                [x]         [x]         [ ]
+  email.cpp              [ ]        [x]         [x]         [ ]
 filetypes                  
-  filetypesview.cpp        [x]         [x]         [ ]
-  newtypedlg.cpp           [x]         [x]         [ ]
-info                       [ ]         [ ]         [ ]
+  filetypesview.cpp      [ ]        [x]         [x]         [ ]
+  newtypedlg.cpp         [ ]        [x]         [x]         [ ]
+info                     [ ]        [ ]         [ ]         [ ]
 input                      
-  keyboard.cpp             [x]         [x]         [ ]
-  mouse.cpp                [x]         [x]         [ ]
-kdm                        [ ]         [ ]         [ ]
-keys                       [ ]         [ ]         [ ]
-kicker                     [s]         [ ]         [ ]
-kio                        
-  kcookiesdlg.cpp          [s]         [ ]         [ ]
-  kproxydlg.cpp            [ ]         [ ]         [ ]
-  ksmboptdlg.cpp           [s]         [ ]         [ ]
-  useragentdlg.cpp         [s]         [ ]         [ ]
-knotify                    [ ]         [ ]         [ ]
+  keyboard.cpp           [ ]        [x]         [x]         [ ]
+  mouse.cpp              [ ]        [x]         [x]         [ ]
+kdm                      [ ]        [ ]         [ ]         [ ]
+keys                     [ ]        [ ]         [ ]         [ ]
+kicker                   [ ]        [s]         [ ]         [ ]
+kio
+  kcookiesdlg.cpp        [ ]        [s]         [ ]         [ ]
+  kproxydlg.cpp          [ ]        [ ]         [ ]         [ ]
+  ksmboptdlg.cpp         [ ]        [s]         [ ]         [ ]
+  useragentdlg.cpp       [ ]        [s]         [ ]         [ ]
+knotify                  [ ]        [ ]         [ ]         [ ]
 konq                       
-  behavior.cpp             [x]         [x]         [ ]
-  fontopts.cpp             [x]         [x]         [ ]
-  main.cpp                 [x]         [x]         [ ]
-  miscopts.cpp             [x]         [x]         [ ]
-  rootopts.cpp             [x]         [ ]         [ ]
-  trashopts.cpp            [x]         [x]         [ ]
-konqhtml                   [s]         [ ]         [ ]
-kwm                        [ ]         [ ]         [ ]
-locale                     [s]         [ ]         [ ]
-midi                       [ ]         [ ]         [ ]
-odbc                       [ ]         [ ]         [ ]
+  behavior.cpp           [ ]        [x]         [x]         [ ]
+  fontopts.cpp           [ ]        [x]         [x]         [ ]
+  main.cpp               [ ]        [x]         [x]         [ ]
+  miscopts.cpp           [ ]        [x]         [x]         [ ]
+  rootopts.cpp           [ ]        [x]         [ ]         [ ]
+  trashopts.cpp          [ ]        [x]         [x]         [ ]
+konqhtml                 [ ]        [s]         [ ]         [ ]
+kwm                      [ ]        [ ]         [ ]         [ ]
+locale                   [ ]        [s]         [ ]         [ ]
+midi                     [ ]        [ ]         [ ]         [ ]
+odbc                     [ ]        [ ]         [ ]         [ ]
 passwords                  
-  passwords.cpp            [x]         [x]         [ ]
-root                       [ ]         [ ]         [ ]
+  passwords.cpp          [ ]        [x]         [x]         [ ]
+root                     [ ]        [ ]         [ ]         [ ]
 samba                      
-  kcmsambaimports.cpp      [x]         [ ]         [ ]
-  kcmsambalog.cpp          [x]         [ ]         [ ]
-  kcmsambastatistics.cpp   [ ]         [ ]         [ ]
-  ksmbstatus.cpp           [ ]         [ ]         [ ]
-  main.cpp                 [x]         [ ]         [ ]
-syssound                   [ ]         [ ]         [ ]
-themes                     [ ]         [ ]         [ ]
+  kcmsambaimports.cpp    [ ]        [x]         [ ]         [ ]
+  kcmsambalog.cpp        [ ]        [x]         [ ]         [ ]
+  kcmsambastatistics.cpp [ ]        [ ]         [ ]         [ ]
+  ksmbstatus.cpp         [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [x]         [ ]         [ ]
+syssound                 [ ]        [ ]         [ ]         [ ]
+themes                   [ ]        [ ]         [ ]         [ ]
 
