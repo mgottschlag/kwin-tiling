@@ -351,7 +351,7 @@ void KLocaleConfig::slotTranslate()
         ( "This is where you live. KDE will use the defaults for "
           "this country.") );
   QToolTip::add(m_addLanguage, m_locale->translate
-	( "This will a language to the list. If the language is already "
+	( "This will add a language to the list. If the language is already "
 	  "in the list, the old one will be moved instead." ) );
 
   QToolTip::add(m_removeLanguage, m_locale->translate
@@ -359,7 +359,7 @@ void KLocaleConfig::slotTranslate()
 
   QToolTip::add(m_languages, m_locale->translate
         ( "KDE program will be displayed in the first available language in "
-	  "this list. If none of the languages were available, English US "
+	  "this list. If none of the languages are available, US English "
 	  "will be used.") );
 
   QString str;
