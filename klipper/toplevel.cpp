@@ -190,9 +190,6 @@ void KlipperWidget::clickedMenu(int id)
             config->writeEntry("AutoStart", false);
         }else  // cancel chosen don't quit
 	    break;
-	config->sync();
-        kapp->quit();
-        break;
     }
 //    case URLGRAB_ITEM: // handled with an extra slot
 //	break;
@@ -560,7 +557,8 @@ QString KlipperWidget::clipboardContents( bool *isSelection )
 {
     clip->setSelectionMode( true );
 
-    QString contents = clip->text();
+    QString contents = "";
+    if(!bClipEmpty) contents = clip->text();
 
     if ( contents == m_lastSelection )
     {
@@ -641,10 +639,13 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
     clip->setSelectionMode( selectionMode );
-    QString text = clip->text();
-//     qDebug("-> text is: %s", text.latin1());
 
-    checkClipData( text, selectionMode );
+    if(!bClipEmpty) 
+    {
+      QString text = clip->text();
+//     qDebug("-> text is: %s", text.latin1());
+      checkClipData( text, selectionMode );
+    }
     m_checkTimer->start(1000);
 }
 
@@ -661,7 +662,6 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
     }
 
 
-    bool clipEmpty = (clip->data()->format() == 0L);
 //     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
 
 //     const char *format;
@@ -677,7 +677,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 
     if ( text != lastClipRef ) {
         // keep old clipboard after someone set it to null
-        if ( clipEmpty && bNoNullClipboard )
+        if ( bClipEmpty && bNoNullClipboard )
             setClipboard( lastClipRef, selectionMode );
         else
             lastClipRef = text;
