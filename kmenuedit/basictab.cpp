@@ -172,7 +172,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addMultiCellWidget( general_group_keybind, 4, 4, 0, 1 );
     // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 5, 0 );
-    layout->setRowStretch( 1, 4 );
+    layout->setRowStretch( 5, 4 );
     QGridLayout *grid_keybind = new QGridLayout(general_group_keybind, 3, 1,
 					KDialog::marginHint(),
 					KDialog::spacingHint());
