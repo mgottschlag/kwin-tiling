@@ -7,8 +7,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <kstat.h>
+
+/* Stop <sys/swap.h> from crapping out on 32-bit architectures. */
+
+#if !defined(_LP64) && _FILE_OFFSET_BITS == 64
+# undef _FILE_OFFSET_BITS
+# define _FILE_OFFSET_BITS 32
+#endif
+
 #include <sys/stat.h>
 #include <sys/swap.h>
+#include <vm/anon.h>
 
 #define PAGETOK(a) (( (t_memsize) sysconf( _SC_PAGESIZE )) *  (t_memsize) a)
 
@@ -58,55 +67,27 @@ void KMemoryWidget::update() {
 	/*
 	 *  Swap Info
 	 */
-	struct swaptable	*swt;
-	struct swapent		*ste;
-	int			i;
-	int			ndevs;
+
+	struct anoninfo		am_swap;
 	long			swaptotal;
 	long			swapfree;
-	char			dummy[128];
+	long			swapused;
+
+	swaptotal = swapused = swapfree = 0L;
 
 	/*
-	 *  allocate memory to hold info for all swap devices
+	 *  Retrieve overall swap information from anonymous memory structure -
+	 *  which is the same way "swap -s" retrieves it's statistics.
+	 *
+	 *  swapctl(SC_LIST, void *arg) does not return what we are looking for.
 	 */
-	if( (ndevs = swapctl( SC_GETNSWP, NULL )) < 1 )
+
+	if (swapctl(SC_AINFO, &am_swap) == -1)
 		return;
-	if( (swt = (struct swaptable *) malloc(
-			sizeof( int )
-			+ ndevs * sizeof( struct swapent ))) == NULL ) {
-		return;
-	}
 
-	/*
-	 *  fill in the required fields and retrieve the info thru swapctl()
-	 */
-	swt->swt_n = ndevs;
-	ste = &(swt->swt_ent[0]);
-	for( i = 0; i < ndevs; i++ ) {
-		/*
-		 *  since we're not interested in the path(s),
-		 *  we'll re-use the same buffer
-		 */
-		ste->ste_path = dummy;
-		ste++;
-	}
-	swapctl( SC_LIST, swt );
-
-	/*
-	 *  sum up the total/free pages
-	 */
-	swaptotal = swapfree = 0L;
-	ste = &(swt->swt_ent[0]);
-	for( i = 0; i < ndevs; i++ ) {
-		if( (! (ste->ste_flags & ST_INDEL))
-				&& (! (ste->ste_flags & ST_DOINGDEL)) ) {
-			swaptotal += ste->ste_pages;
-			swapfree += ste->ste_free;
-		}
-		ste++;
-	}
-	free( swt );
-
+	swaptotal = am_swap.ani_max;
+	swapused = am_swap.ani_resv;
+	swapfree = swaptotal - swapused;
 
 	Memory_Info[SWAP_MEM]     = PAGETOK(swaptotal);
 	Memory_Info[FREESWAP_MEM] = PAGETOK(swapfree);
