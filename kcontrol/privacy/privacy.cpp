@@ -70,7 +70,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
 
 
   generalCLI     = new KListViewItem(sw, i18n("General") );
-  webbrowsingCLI = new KListViewItem(sw, i18n("Webbrowsing") );
+  webbrowsingCLI = new KListViewItem(sw, i18n("Web Browsing") );
 
   generalCLI->setOpen(true);
   webbrowsingCLI->setOpen(true);
@@ -100,7 +100,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   clearRunCommandHistory->setText(1, i18n("Clears the history of commands run through the Run Command tool on the desktop"));
   clearAllCookies->setText(1, i18n("Clears all stored cookies set by websites"));
   clearWebHistory->setText(1, i18n("Clears the history of visited websites"));
-  clearSavedClipboardContents->setText(1, i18n("Clears the clipboard contents stored by klipper"));
+  clearSavedClipboardContents->setText(1, i18n("Clears the clipboard contents stored by Klipper"));
   clearWebCache->setText(1, i18n("Clears the temporary cache of websites visited"));
   clearFormCompletion->setText(1, i18n("Clears values which were entered into forms on websites"));
   clearRecentDocuments->setText(1, i18n("Clears the list of recently used documents from the KDE applications menu"));
