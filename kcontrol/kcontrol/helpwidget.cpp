@@ -75,5 +75,5 @@ void HelpWidget::urlClicked(const QString & url)
 
 void HelpWidget::mailClicked(const QString &,const QString & addr)
 {
-	kapp->invokeMailer(addr, QString::null);
+  kapp->invokeMailer(addr, QString::null);
 }
