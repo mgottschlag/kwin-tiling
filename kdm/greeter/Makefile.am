@@ -39,5 +39,11 @@ messages:
 
 noinst_HEADERS = kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h
 
-kde_conf_DATA = @kdmrc@
+install-data-local:
+	@if test ! -f $(DESTDIR)$(kde_confdir)/kdmrc; then \
+	    $(mkinstalldirs) $(DESTDIR)$(kde_confdir); \
+	    echo $(INSTALL_DATA) kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
+	    $(INSTALL_DATA) kdmrc $(DESTDIR)$(kde_confdir)/kdmrc; \
+	fi
+
 EXTRA_DIST = kdmrc

@@ -706,10 +706,9 @@ StartClient (
     int	pid;
 #ifdef HAS_SETUSERCONTEXT
     login_cap_t *lc = NULL;
-    extern char **environ;
-    char ** e;
     struct passwd *pwd;
-    char *envinit[1];
+    char **e, **envinit;
+    extern char **environ;
 #endif
 #ifdef USE_PAM 
     pam_handle_t **pamh = thepamh();
@@ -816,13 +815,19 @@ StartClient (
 	    return (0);
 	}
 #else /* HAS_SETUSERCONTEXT */
-        /*
-         * Destroy environment unless user has requested its preservation.
-         * We need to do this before setusercontext() because that may
-         * set or reset some environment variables.
-         */
+	/*
+	 * Destroy environment unless user has requested its preservation.
+	 * We need to do this before setusercontext() because that may
+	 * set or reset some environment variables.
+	 */
+	envinit = malloc(sizeof(char*));
+	if (NULL == envinit) {
+		LogError("malloc() of initial environment failed, errno=%d\n",
+			 errno);
+		return (0);
+	}
 	envinit[0] = NULL;
-        environ = envinit;
+	environ = envinit;
 
 	/*
 	 * Set the user's credentials: uid, gid, groups,
@@ -839,7 +844,7 @@ StartClient (
 	    if (setusercontext(NULL, pwd, pwd->pw_uid, LOGIN_SETALL) < 0)
 	    {
 		LogError("setusercontext for \"%s\" failed, errno=%d\n", name,
-		    errno);
+			 errno);
 		return (0);
 	    }
 	    endpwent();
@@ -867,43 +872,43 @@ StartClient (
 	    return (0);
 	}
 	{ 
-	  char *usrTag, *sysTag;
-	  extern char **newenv; /* from libs.a, this is set up by setpenv */
+	    char *usrTag, *sysTag;
+	    extern char **newenv; /* from libs.a, this is set up by setpenv */
 
-	 /*
-	  * Save pointers to tags. Note: changes to the locations of these
-	  * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
-	  * or USR_ENV_TAG.
-	  */
-#	  define SYS_ENV_TAG 0
-#	  define USR_ENV_TAG 3
+	    /*
+	     * Save pointers to tags. Note: changes to the locations of these
+	     * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
+	     * or USR_ENV_TAG.
+	     */
+#	    define SYS_ENV_TAG 0
+#	    define USR_ENV_TAG 3
 
-	  sysTag = verify->userEnviron[SYS_ENV_TAG];
-	  usrTag = verify->userEnviron[USR_ENV_TAG];
+	    sysTag = verify->userEnviron[SYS_ENV_TAG];
+	    usrTag = verify->userEnviron[USR_ENV_TAG];
 
-	 /*
-	  * Set the users process environment. Store protected variables and
-	  * obtain updated user environment list. This call will initialize
-	  * global 'newenv'. 
-	  */
-	  if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
-	              verify->userEnviron, NULL) != 0) {
+	    /*
+	     * Set the users process environment. Store protected variables and
+	     * obtain updated user environment list. This call will initialize
+	     * global 'newenv'. 
+	     */
+	    if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
+			verify->userEnviron, NULL) != 0) {
 
-	      Debug("Can't set process environment (user=%s)\n",name);
-	      return(0);
-	  }
+		Debug("Can't set process environment (user=%s)\n",name);
+		return(0);
+	    }
 
-	 /*
-	  * Restore pointers to tags (in order to be properly freed).
-	  */
-	  verify->userEnviron[SYS_ENV_TAG] = sysTag;
-	  verify->userEnviron[USR_ENV_TAG] = usrTag;
+	    /*
+	     * Restore pointers to tags (in order to be properly freed).
+	     */
+	    verify->userEnviron[SYS_ENV_TAG] = sysTag;
+	    verify->userEnviron[USR_ENV_TAG] = usrTag;
 
-	 /*
-	  * Free old userEnviron and replace with newenv from setpenv().
-	  */
-	  freeEnv(verify->userEnviron);
-	  verify->userEnviron = newenv;
+	    /*
+	     * Free old userEnviron and replace with newenv from setpenv().
+	     */
+	    freeEnv(verify->userEnviron);
+	    verify->userEnviron = newenv;
 	}
 #endif /* AIXV3 */
 

@@ -1,3 +1,4 @@
+
 dnl this is for kdm:
 
 AC_REQUIRE([AC_PATH_KDE])
@@ -8,11 +9,11 @@ AC_CHECK_FUNCS(getsecretkey getloadavg)
 dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
 if test ! -z "$X_SERVER"; then
-    X_SERVER=`echo $X_SERVER | sed -e 's+/X$++'`
+    X_SERVER=`echo $X_SERVER | sed -e 's#/X$##'`
     AC_DEFINE_UNQUOTED(XBINDIR,$X_SERVER, [Define where to find the X server])
     XBINDIR=$X_SERVER
-    AC_SUBST(XBINDIR)
 fi
+AC_SUBST(XBINDIR)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
@@ -146,15 +147,6 @@ AC_SUBST(XDMDIR)
 AC_DEFINE_UNQUOTED(XDMDIR, "$ac_xdmdir", [Define where to find the XDM configurations])
 AC_SUBST(xdmconfigsubdir)
 
-AC_MSG_CHECKING([for kdmrc])
-if test -f $kdecfg/kdmrc; then
-    AC_MSG_RESULT([found])
-else
-    AC_MSG_RESULT([installing defaults in $kdecfg])
-    kdmrc=kdmrc
-fi
-AC_SUBST(kdmrc)
-
 AC_PATH_PAM
 if test "x$no_pam" = "xyes"; then 
 	pam_support="no"
@@ -269,7 +261,6 @@ AC_SUBST(LIB_LIBS)
 
 AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h)
 
-AC_MSG_CHECKING([whether to build KDM with XDMCP support])
 AC_ARG_WITH(xdmcp,
 	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]],
 	[ if test "$withval" = yes; then
@@ -278,10 +269,8 @@ AC_ARG_WITH(xdmcp,
 	    XDMCP=
 	  fi
 	], [XDMCP=1])
-
 if test -n "$XDMCP"; then
   kdmchooserdir=chooser
-  AC_MSG_RESULT([yes])
   AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
   if test -n "$LIBXDMCP"; then
     ac_cpp_safe=$ac_cpp
@@ -294,12 +283,9 @@ if test -n "$XDMCP"; then
 are installed or use --without-xdmcp to disable XDMCP support!])
   fi
   AC_DEFINE(XDMCP, 1, [ build KDM with XDMCP support ])
-else
-  AC_MSG_RESULT([no])
 fi
 AC_SUBST(LIBXDMCP)
 AC_SUBST(kdmchooserdir)
 
 dnl AC_OUTPUT(kdm/xdmconfig/xdm-config)
 dnl AC_OUTPUT(kdm/xdmconfig/Xservers)
-
