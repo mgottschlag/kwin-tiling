@@ -2,7 +2,9 @@
 Charset=utf8
 Keys=tvtome
 Name=TV Tome
+Name[bn]=টিভি টোম
 Name[da]=TV-Tome
+Name[nb]=Stor TV
 Name[sv]=TV-tome
 Name[xx]=xxTV Tomexx
 Query=http://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}
