@@ -66,35 +66,35 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     labLang = new QLabel(this, I18N_NOOP("Language:"));
     comboLang = new KLanguageCombo(this);
     comboLang->setFixedHeight(comboLang->sizeHint().height());
-    labLang->setBuddy(comboLang);
+    //    labLang->setBuddy(comboLang);
     connect( comboLang, SIGNAL(activated(int)),
 	     this, SLOT(changedLanguage(int)) );
 
-    labNumber = new QLabel(this, I18N_NOOP(N&umbers:"));
+    labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
     comboNumber = new KLanguageCombo(this);
     comboNumber->setFixedHeight(comboNumber->sizeHint().height());
-    labNumber->setBuddy(comboNumber);
+    //labNumber->setBuddy(comboNumber);
     connect( comboNumber, SIGNAL(activated(int)),
 	     this, SLOT(changedNumber(int)) );
 
-    labMoney = new QLabel(this, I18N_NOOP(Mon&ey:"));
+    labMoney = new QLabel(this, I18N_NOOP("Money:"));
     comboMoney = new KLanguageCombo(this);
     comboMoney->setFixedHeight(comboMoney->sizeHint().height());
-    labMoney->setBuddy(comboMoney);
+    //labMoney->setBuddy(comboMoney);
     connect( comboMoney, SIGNAL(activated(int)),
 	     this, SLOT(changedMoney(int)) );
 
     labDate = new QLabel(this, I18N_NOOP("Date and time:"));
     comboDate = new KLanguageCombo(this);
     comboDate->setFixedHeight(comboDate->sizeHint().height());
-    labDate->setBuddy(comboDate);
+    //labDate->setBuddy(comboDate);
     connect( comboDate, SIGNAL(activated(int)),
 	     this, SLOT(changedTime(int)) );
 
     labChset = new QLabel(this, I18N_NOOP("Charset:"));
     comboChset = new KLanguageCombo(this);
     comboChset->setFixedHeight(comboChset->sizeHint().height());
-    labChset->setBuddy(comboChset);
+    //labChset->setBuddy(comboChset);
     connect( comboChset, SIGNAL(activated(int)),
 	     this, SLOT(changedCharset(int)) );
 
