@@ -68,7 +68,6 @@ else
 fi
 
 dnl XXX still used in chooser and konsole
-AC_REQUIRE([KDE_MISC_TESTS])
 AC_CHECK_LIB(util, main, [LIBUTIL="-lutil"]) dnl for FreeBSD
 AC_SUBST(LIBUTIL)
 AC_CHECK_LIB(s, main, [LIB_LIBS="-ls"]) dnl for AIX
