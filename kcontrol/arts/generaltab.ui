@@ -98,7 +98,7 @@ Recommended if you want sound.</string>
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&lt;i&gt;If your sound is skipping during playback enable running with highest possible priority. Increasing your sound buffer might also help.&lt;/i&gt;</string>
+                        <string>&lt;i&gt;If your sound is skipping during playback, enable running with highest possible priority. Increasing your sound buffer might also help.&lt;/i&gt;</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
