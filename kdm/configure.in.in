@@ -18,41 +18,46 @@ AC_SUBST(XBINDIR)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
-rm -fr conftestdir
+AC_CACHE_VAL(kde_cv_defines_imake,
+[rm -fr conftestdir
 if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'
 acimake:
-	@echo XDMDIR="$(XDMDIR)"\;
-	@echo CONN_FLAGS=^ConnectionFlags^\;
-	@echo STD_DEFINES=^StandardDefines^\;
+	@echo XDMDIR=$(XDMDIR)
+	@echo CONN_FLAGS=^ConnectionFlags^
+	@echo STD_DEFINES=^StandardDefines^
 #if HasXdmAuth
-	@echo HASXDMAUTH=1\;
+	@echo HASXDMAUTH=1
 #endif
 #if defined(i386Architecture) || defined(AmigaArchitecture)
-	@echo FRAGILE_DEV_MEM=1\;
+	@echo FRAGILE_DEV_MEM=1
 #endif
 #ifndef SharedLibXdmGreet
 # define SharedLibXdmGreet YES
 #endif
 #if !SharedLibXdmGreet
-	@echo GREET_USER_STATIC=1\;
+	@echo GREET_USER_STATIC=1
 #endif
 #if NeedVarargsPrototypes
-	@echo NEED_VARARGS_PROTOTYPES=1\;
+	@echo NEED_VARARGS_PROTOTYPES=1
 #endif
 EOF
     xmkmf > /dev/null 2> /dev/null 
     if test -f Makefile; then
-	eval `${MAKE-make} acimake 2> /dev/null | grep -v make | tr ^ \"`
+	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep -v make | tr ^ \"`
+	kde_cv_defines_imake=`echo $kde_cv_defines_imake`
     else
 	AC_MSG_ERROR([xmkmf (imake) failed])
     fi
     cd ..
     rm -fr conftestdir
-    AC_MSG_RESULT([done])
 else
-    AC_MSG_ERROR([cannot create temporary directory])
+    AC_MSG_ERROR([mkdir failed])
+fi])
+if test -n "$kde_cv_defines_imake"; then
+    eval $kde_cv_defines_imake
+    AC_MSG_RESULT([done])
 fi
 
 AC_MSG_CHECKING([which xdm connection flags to use])
