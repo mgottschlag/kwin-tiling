@@ -41,7 +41,8 @@
 using namespace std;
 
 LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
-  : LookAndFeelTabBase (parent, name)
+  : LookAndFeelTabBase (parent, name),
+    m_advDialog(0)
 {
   connect(m_zoom_cb, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
@@ -98,11 +99,20 @@ void LookAndFeelTab::browseTheme(const QString& newtheme)
 
 void LookAndFeelTab::launchAdvancedDialog()
 {
-    advancedDialog* dialog = new advancedDialog(this, "advancedDialog");
-    dialog->exec();
-    delete dialog;
+    if (!m_advDialog)
+    {
+        m_advDialog = new advancedDialog(this, "advancedDialog");
+        connect(m_advDialog, SIGNAL(finished()), this, SLOT(finishAdvancedDialog()));
+        m_advDialog->show();
+    }
+    m_advDialog->setActiveWindow();
 }
 
+void LookAndFeelTab::finishAdvancedDialog()
+{
+    m_advDialog->delayedDestruct();
+    m_advDialog = 0;
+}
 void LookAndFeelTab::enableTransparency( bool enable )
 {
     bool b = m_backgroundImage->isChecked();

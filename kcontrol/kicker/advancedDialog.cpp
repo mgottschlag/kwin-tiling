@@ -38,7 +38,7 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
                   Cancel,
                   parent,
                   name,
-                  true, false)
+                  false, false)
 {
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(save()));

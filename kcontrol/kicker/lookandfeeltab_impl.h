@@ -26,6 +26,7 @@
 
 class QLabel;
 class QStringList;
+class advancedDialog;
 
 class LookAndFeelTab : public LookAndFeelTabBase
 {
@@ -52,6 +53,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
   void browseTheme();
   void browseTheme(const QString&);
   void launchAdvancedDialog();
+  void finishAdvancedDialog();
   void enableTransparency( bool );
   void kmenuTileChanged(int i);
   void desktopTileChanged(int i);
@@ -62,6 +64,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
  private:
   QPixmap theme_preview;
   QStringList m_tilename;
+  advancedDialog *m_advDialog;
 };
 
 #endif
