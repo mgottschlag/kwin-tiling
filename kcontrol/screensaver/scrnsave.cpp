@@ -566,7 +566,7 @@ void KScreenSaver::findSavers()
             mTestBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
         }
 
-        connect( mSaverListView, SIGNAL( clicked( QListViewItem * ) ),
+        connect( mSaverListView, SIGNAL( currentChanged( QListViewItem * ) ),
                  this, SLOT( slotScreenSaver( QListViewItem * ) ) );
 
         setMonitor();
