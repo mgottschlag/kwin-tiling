@@ -6,7 +6,8 @@
 	with some pieces of code from Aubert Pierre.
 
 	Last modified:	done:
-	1999-06-18	added support for 64-Bit HP-UX in CPU-detection (deller)
+	1999-06-21	added more models to the lookup-table (deller)
+	1999-06-18	added support for 64-Bit HP-UX in CPU-detection(deller)
 	1999-05-04	added audio(alib)-support (deller)
 	1999-04-27	[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
 			added support for nearly all categories 
@@ -52,7 +53,7 @@
 #define INFO_SCSI_AVAILABLE
 
 #define INFO_PARTITIONS_AVAILABLE
-#	define INFO_PARTITIONS_1 	FSTAB	// = "/etc/fstab" (defined in fstab.h)
+#	define INFO_PARTITIONS_1 	FSTAB	// = "/etc/fstab" (in fstab.h)
 #	define INFO_PARTITIONS_2 	"/etc/checklist"
 
 #define INFO_XSERVER_AVAILABLE
@@ -60,7 +61,11 @@
 
 
 /*	The following table is from an HP-UX 10.20 System
-	build out of the file "/usr/lib/sched.models"....
+	build out of the files
+
+	    "/usr/lib/sched.models" 
+		    or
+	    "/opt/langtools/lib/sched.models"
 	
 	If you have more entries, then please add them !!
 	(Helge Deller,  deller@gmx.de)
@@ -82,13 +87,13 @@ static char PA_REVISION[V_LAST][8]
 enum PA_ENTRIES 
     {	PA7000,
 	PA7100, PA7100LC, PA7200, PA7300,
-	PA8000,
+	PA8000, PA8200,   PA8500,
 	PARISC_PA_LAST };
 			
 static char PA_NAME[PARISC_PA_LAST][12]
     = { "PA7000",
 	"PA7100", "PA7100LC", "PA7200", "PA7300",
-	"PA8000" };
+	"PA8000", "PA8200",   "PA8500" };
 
 struct _type_LOOKUPTABLE {
 	 char 			Name[8]; 
@@ -96,39 +101,57 @@ struct _type_LOOKUPTABLE {
 	 enum PA_ENTRIES 	parisc_name; 
 };
 	 
+
 static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {	
-/* VERSION A.00.07    (taken from file: /usr/lib/sched.models) */
+/* 			VERSION A.00.07    
+    (there seems to exist several different files with same version-number !)*/
 { "600"		,V_1x0	,PA7000		},
 { "635"		,V_1x0	,PA7000		},
 { "645"		,V_1x0	,PA7000		},
 { "700"		,V_1x1	,PA7000		},
 { "705"		,V_1x1a	,PA7000		},
-{ "715"		,V_1x1c	,PA7100LC	},
 { "710"		,V_1x1a	,PA7000		},
 { "712"		,V_1x1c	,PA7100LC	},
+{ "715"		,V_1x1c	,PA7100LC	},
 { "720"		,V_1x1a	,PA7000		},
 { "722"		,V_1x1c	,PA7100LC	},
 { "725"		,V_1x1c	,PA7100LC	},
 { "728"		,V_1x1d	,PA7200		},
 { "730"		,V_1x1a	,PA7000		},
 { "735"		,V_1x1b	,PA7100		},
-{ "743"		,V_1x1b	,PA7100		},
+{ "742"		,V_1x1b	,PA7100		},
+{ "743"		,V_1x1b	,PA7100		},	// or a 1.1c,PA7100LC !!
+{ "744"		,V_1x1e	,PA7300		},
 { "745"		,V_1x1b	,PA7100		},
 { "747"		,V_1x1b	,PA7100		},
 { "750"		,V_1x1a	,PA7000		},
 { "755"		,V_1x1b	,PA7100		},
 { "770"		,V_1x1d	,PA7200		},
-{ "800"		,V_1x0	,PA7000		},
+{ "777"		,V_1x1d	,PA7200		},
+{ "778"		,V_1x1e	,PA7300		},
+{ "779"		,V_1x1e	,PA7300		},
+{ "780"		,V_2x0	,PA8000		},
+{ "781"		,V_2x0	,PA8000		},
+{ "782"		,V_2x0	,PA8200		},
+{ "783"		,V_2x0	,PA8500		},
+{ "785"		,V_2x0	,PA8500		},
+{ "800"		,V_1x0	,PA7000		},	// and one with: 2.0 / PA8000
 { "801"		,V_1x1c	,PA7100LC	},
+{ "802"		,V_2x0	,PA8000		},
+{ "803"		,V_1x1e	,PA7300		},
+{ "804"		,V_2x0	,PA8000		},
 { "806"		,V_1x1c	,PA7100LC	},
 { "807"		,V_1x1a	,PA7000		},
 { "808"		,V_1x0	,PA7000		},
 { "809"		,V_1x1d	,PA7200		},
+{ "810"		,V_2x0	,PA8000		},
 { "811"		,V_1x1c	,PA7100LC	},
+{ "813"		,V_1x1e	,PA7300		},
 { "815"		,V_1x0	,PA7000		},
 { "816"		,V_1x1c	,PA7100LC	},
 { "817"		,V_1x1a	,PA7000		},
 { "819"		,V_1x1d	,PA7200		},
+{ "820"		,V_2x0	,PA8000		},
 { "821"		,V_1x1d	,PA7200		},
 { "822"		,V_1x0	,PA7000		},
 { "825"		,V_1x0	,PA7000		},
@@ -145,7 +168,6 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 { "841"		,V_1x1d	,PA7200		},
 { "842"		,V_1x0	,PA7000		},
 { "845"		,V_1x0	,PA7000		},
-{ "845"		,V_1x0	,PA7000		},
 { "847"		,V_1x1a	,PA7000		},
 { "849"		,V_1x1d	,PA7200		},
 { "850"		,V_1x0	,PA7000		},
@@ -158,7 +180,6 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 { "860"		,V_1x0	,PA7000		},
 { "861"		,V_2x0	,PA8000		},
 { "865"		,V_1x0	,PA7000		},
-{ "867"		,V_1x1a	,PA7000		},
 { "869"		,V_1x1d	,PA7200		},
 { "870"		,V_1x0	,PA7000		},
 { "871"		,V_2x0	,PA8000		},
@@ -167,76 +188,120 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 { "887"		,V_1x1b	,PA7100		},
 { "889"		,V_2x0	,PA8000		},
 { "890"		,V_1x0	,PA7000		},
+{ "891"		,V_1x1b	,PA7100		},
+{ "892"		,V_1x1b	,PA7100		},
+{ "893"		,V_2x0	,PA8000		},
+{ "895"		,V_2x0	,PA8000		},
+{ "896"		,V_2x0	,PA8000		},
 { "897"		,V_1x1b	,PA7100		},
+{ "898"		,V_2x0	,PA8200		},
+{ "899"		,V_2x0	,PA8200		},
 { "900"		,V_1x0	,PA7000		},
-{ "F10"		,V_1x1a	,PA7000		},
-{ "F20"		,V_1x1a	,PA7000		},
-{ "H20"		,V_1x1a	,PA7000		},
-{ "F30"		,V_1x1a	,PA7000		},
-{ "G30"		,V_1x1a	,PA7000		},
-{ "H30"		,V_1x1a	,PA7000		},
-{ "I30"		,V_1x1a	,PA7000		},
-{ "G40"		,V_1x1a	,PA7000		},
-{ "H40"		,V_1x1a	,PA7000		},
-{ "I40"		,V_1x1a	,PA7000		},
-{ "G50"		,V_1x1b	,PA7100		},
-{ "H50"		,V_1x1b	,PA7100		},
-{ "I50"		,V_1x1b	,PA7100		},
-{ "G60"		,V_1x1b	,PA7100		},
-{ "H60"		,V_1x1b	,PA7100		},
-{ "I60"		,V_1x1b	,PA7100		},
-{ "G70"		,V_1x1b	,PA7100		},
-{ "H70"		,V_1x1b	,PA7100		},
-{ "I70"		,V_1x1b	,PA7100		},
+{ "B115"	,V_1x1e	,PA7300		},
+{ "B120"	,V_1x1e	,PA7300		},
+{ "B132L"	,V_1x1e	,PA7300		},
+{ "B160L"	,V_1x1e	,PA7300		},
+{ "B180L"	,V_1x1e	,PA7300		},
+{ "C100"	,V_1x1d	,PA7200		},
+{ "C110"	,V_1x1d	,PA7200		},
+{ "C115"	,V_1x1e	,PA7300		},
+{ "C120"	,V_1x1e	,PA7300		},
+{ "C130"	,V_2x0	,PA8000		},
+{ "C140"	,V_2x0	,PA8000		},
+{ "C160L"	,V_1x1e	,PA7300		},
+{ "C160"	,V_2x0	,PA8000		},
+{ "C180L"	,V_1x1e	,PA7300		},
+{ "C180-XP"	,V_2x0	,PA8000		},
+{ "C180"	,V_2x0	,PA8000		},
+{ "C200+"	,V_2x0	,PA8200		},
+{ "C230+"	,V_2x0	,PA8200		},
+{ "C240+"	,V_2x0	,PA8200		},
+{ "CB260"	,V_2x0	,PA8200		},
+{ "D200"	,V_1x1d	,PA7200		}, // or: 1.1c, PA7100LC
+{ "D210"	,V_1x1d	,PA7200		}, // or: 1.1c, PA7100LC
+{ "D220"	,V_1x1e	,PA7300		},
+{ "D230"	,V_1x1e	,PA7300		},
+{ "D250"	,V_1x1d	,PA7200		},
+{ "D260"	,V_1x1d	,PA7200		},
+{ "D270"	,V_2x0	,PA8000		},
+{ "D280"	,V_2x0	,PA8000		},
+{ "D310"	,V_1x1c	,PA7100LC	},
+{ "D320"	,V_1x1e	,PA7300		},
+{ "D330"	,V_1x1e	,PA7300		},
+{ "D350"	,V_1x1d	,PA7200		},
+{ "D360"	,V_1x1d	,PA7200		},
+{ "D370"	,V_2x0	,PA8000		},
+{ "D380"	,V_2x0	,PA8000		},
+{ "D400"	,V_1x1d	,PA7200		},
+{ "D410"	,V_1x1d	,PA7200		},
+{ "D650"	,V_2x0	,PA8000		},
+{ "DX0"		,V_1x1c	,PA7100LC	},
+{ "DX5"		,V_1x1c	,PA7100LC	},
+{ "DXO"		,V_1x1c	,PA7100LC	},
 { "E25"		,V_1x1c	,PA7100LC	},
 { "E35"		,V_1x1c	,PA7100LC	},
 { "E45"		,V_1x1c	,PA7100LC	},
 { "E55"		,V_1x1c	,PA7100LC	},
-{ "T500"	,V_1x1c	,PA7100LC	},
+{ "F10"		,V_1x1a	,PA7000		},
+{ "F20"		,V_1x1a	,PA7000		},
+{ "F30"		,V_1x1a	,PA7000		},
+{ "G30"		,V_1x1a	,PA7000		},
+{ "G40"		,V_1x1a	,PA7000		},
+{ "G50"		,V_1x1b	,PA7100		},
+{ "G60"		,V_1x1b	,PA7100		},
+{ "G70"		,V_1x1b	,PA7100		},
+{ "H20"		,V_1x1a	,PA7000		},
+{ "H30"		,V_1x1a	,PA7000		},
+{ "H40"		,V_1x1a	,PA7000		},
+{ "H50"		,V_1x1b	,PA7100		},
+{ "H60"		,V_1x1b	,PA7100		},
+{ "H70"		,V_1x1b	,PA7100		},
+{ "I30"		,V_1x1a	,PA7000		},
+{ "I40"		,V_1x1a	,PA7000		},
+{ "I50"		,V_1x1b	,PA7100		},
+{ "I60"		,V_1x1b	,PA7100		},
+{ "I70"		,V_1x1b	,PA7100		},
+{ "J200"	,V_1x1d	,PA7200		},
+{ "J210XC"	,V_1x1d	,PA7200		},
+{ "J210"	,V_1x1d	,PA7200		},
+{ "J220"	,V_2x0	,PA8000		},
+{ "J2240"	,V_2x0	,PA8200		},
+{ "J280"	,V_2x0	,PA8000		},
+{ "J282"	,V_2x0	,PA8000		},
+{ "J400"	,V_2x0	,PA8000		},
+{ "J410"	,V_2x0	,PA8000		},
 { "K100"	,V_1x1d	,PA7200		},
 { "K200"	,V_1x1d	,PA7200		},
 { "K210"	,V_1x1d	,PA7200		},
 { "K230"	,V_1x1d	,PA7200		},
+{ "K250"	,V_2x0	,PA8000		},
+{ "K260"	,V_2x0	,PA8000		},
+{ "K370"	,V_2x0	,PA8200		},
+{ "K380"	,V_2x0	,PA8200		},
 { "K400"	,V_1x1d	,PA7200		},
 { "K410"	,V_1x1d	,PA7200		},
+{ "K420"	,V_1x1d	,PA7200		},
 { "K430"	,V_1x1d	,PA7200		},
-{ "DXO"		,V_1x1c	,PA7100LC	},
-{ "DX5"		,V_1x1c	,PA7100LC	},
-{ "D200"	,V_1x1d	,PA7200		},
-{ "D400"	,V_1x1d	,PA7200		},
-{ "D210"	,V_1x1d	,PA7200		},
-{ "D410"	,V_1x1d	,PA7200		},
-{ "J200"	,V_1x1d	,PA7200		},
-{ "J210"	,V_1x1d	,PA7200		},
-{ "C100"	,V_1x1d	,PA7200		},
-{ "J220"	,V_2x0	,PA8000		},
-{ "S715"	,V_1x1e	,PA7300		},
-{ "S760"	,V_1x1e	,PA7300		},
-{ "D650"	,V_2x0	,PA8000		},
-{ "J410"	,V_2x0	,PA8000		},
-{ "J400"	,V_2x0	,PA8000		},
-{ "J210XC"	,V_1x1d	,PA7200		},
-{ "C140"	,V_2x0	,PA8000		},
-{ "C130"	,V_2x0	,PA8000		},
-{ "C120"	,V_1x1e	,PA7300		},
-{ "C115"	,V_1x1e	,PA7300		},
-{ "B120"	,V_1x1e	,PA7300		},
-{ "B115"	,V_1x1e	,PA7300		},
-{ "S700i"	,V_1x1e	,PA7300		},
-{ "S744"	,V_1x1e	,PA7300		},
-{ "D330"	,V_1x1e	,PA7300		},
-{ "D230"	,V_1x1e	,PA7300		},
-{ "D320"	,V_1x1e	,PA7300		},
-{ "D220"	,V_1x1e	,PA7300		},
-{ "D360"	,V_1x1d	,PA7200		},
+{ "K450"	,V_2x0	,PA8000		},
 { "K460"	,V_2x0	,PA8000		},
-{ "K260"	,V_2x0	,PA8000		},
-{ "D260"	,V_1x1d	,PA7200		},
-{ "D270"	,V_2x0	,PA8000		},
-{ "D370"	,V_2x0	,PA8000		},
-{ ""		,V_LAST	,PARISC_PA_LAST	}  // Last Entry has to be empty !!!!
-};
+{ "K470"	,V_2x0	,PA8200		},
+{ "K570"	,V_2x0	,PA8200		},
+{ "K580"	,V_2x0	,PA8200		},
+{ "S700i"	,V_1x1e	,PA7300		},
+{ "S715"	,V_1x1e	,PA7300		},
+{ "S744"	,V_1x1e	,PA7300		},
+{ "S760"	,V_1x1e	,PA7300		},
+{ "T500"	,V_1x1c	,PA7100LC	}, // or: 1.1b, PA7100
+{ "T520"	,V_1x1b	,PA7100 	},
+{ "T540"	,V_2x0	,PA8000		},
+{ "T600"	,V_2x0	,PA8000		},
+{ "V2000"	,V_2x0	,PA8000		},
+{ "V2200"	,V_2x0	,PA8200		},
+{ "V2250"	,V_2x0	,PA8200		},
+{ "V2500"	,V_2x0	,PA8500		},
 
+{ ""		,V_LAST	,PARISC_PA_LAST	}  /* Last Entry has to be empty. */
+};
 
 
 
@@ -260,7 +325,7 @@ static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
 	if (*Machine) ++Machine; else Machine=machine;
 	len = strlen(Machine);
 	
-	while (strlen(Entry->Name))
+	while (Entry->Name[0])
 	{	if (strncmp(Entry->Name,Machine,len)==0)
 		{
 		    str = i18n("PA-RISC Processor") + TAB 
@@ -328,7 +393,8 @@ bool GetInfo_CPU( KTabListBox *lBox )
   delete model;
   
   I18N_MAX(str,i18n("Machine Identification Number"),fm,maxwidth);
-  str += TAB + (strlen(info.__idnumber) ? QString(info.__idnumber) : i18n("(none)") );
+  str += TAB + (	strlen(info.__idnumber) ? 
+                  QString(info.__idnumber) : i18n("(none)") );
   lBox->insertItem( str );
 
   lBox->insertItem( "" );
@@ -352,11 +418,11 @@ bool GetInfo_CPU( KTabListBox *lBox )
 	case CPU_PA_RISC1_2:	str2 = "PA-RISC 1.2";		break;
 	case CPU_PA_RISC2_0:	
 #if defined(_SC_KERNEL_BITS)
-              			switch (sysconf(_SC_KERNEL_BITS)) {
-              			    case 64: str2 = "PA-RISC 2.0w (64 bit)";	break;
-              			    case 32: str2 = "PA-RISC 2.0n (32 bit)";	break;
-              			    default: str2 = "PA-RISC 2.0"; 		break;
-              			};				break;
+              	switch (sysconf(_SC_KERNEL_BITS)) {
+              	    case 64: str2 = "PA-RISC 2.0w (64 bit)";	break;
+              	    case 32: str2 = "PA-RISC 2.0n (32 bit)";	break;
+              	    default: str2 = "PA-RISC 2.0"; 		break;
+              	};						break;
 #else  /* !defined(_SC_KERNEL_BITS) */
 				str2 = "PA-RISC 2.0";		break;
 #endif
@@ -366,7 +432,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
   str += TAB + str2;
   lBox->insertItem(str);
   
-  Find_in_LOOKUPTABLE( lBox, info.machine );	// Get extended Information !
+  Find_in_LOOKUPTABLE( lBox, info.machine );// try to get extended Information.
 
   for (i=PS_PA83_FPU; i<=PS_PA89_FPU; ++i)
   {	I18N_MAX(str,i18n("Numerical Coprocessor (FPU)"),fm,maxwidth);
@@ -389,7 +455,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
       + i18n("MB");	// Mega-Byte
   lBox->insertItem(str);
 
-  I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth);	// ..of one Memory Page.
+  I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth); // ..of one Memory Page.
   str += TAB + Value(pst.page_size) + QString(" ") + i18n("Bytes");
   lBox->insertItem(str);
 
@@ -588,13 +654,14 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 		if (!maxwidth[3])
 		    maxwidth[3] = maxwidth[4] = fm.width("999999 MB");
 
-		if (!strcmp(fstab_ent->fs_type,FSTAB_XX))	// valid drive ?
+		if (!strcmp(fstab_ent->fs_type,FSTAB_XX))  // valid drive ?
 			svfs.f_basetype[0] = 0;
 			    		
 		str =  QString(fstab_ent->fs_spec) + TAB
 		    +  QString(fstab_ent->fs_file) + TAB 
 		    +  QString("  ")
-		    +  (svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a"));
+		    +  (svfs.f_basetype[0] ? 
+			    QString(svfs.f_basetype) : i18n("n/a"));
 		if (svfs.f_basetype[0])
 		    str += TAB
 			+  Value((total+512)/1024,6) + MB + TAB
@@ -675,7 +742,8 @@ bool GetInfo_Sound( KTabListBox *lBox )
     lBox->insertItem(str + TAB + QString(audio->vendor));
     
     I18N_MAX(str,i18n("Alib Version"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->alib_major_version) + QString(".") + Value(audio->alib_minor_version));
+    lBox->insertItem(str+TAB+Value(audio->alib_major_version) 
+	    + QString(".") + Value(audio->alib_minor_version));
     
     I18N_MAX(str,i18n("Protocol Revision"),fm,maxwidth);
     str += TAB + Value(audio->proto_major_version) 
@@ -700,16 +768,18 @@ bool GetInfo_Sound( KTabListBox *lBox )
 
     I18N_MAX(str,i18n("Bit Order"),fm,maxwidth);
     str += TAB + QString(  
-	    (audio->sound_bit_order==ALeastSignificant)? i18n("ALeastSignificant (LSB)"):(
-	    (audio->sound_bit_order==AMostSignificant) ? i18n("AMostSignificant (MSB)"):
-					    i18n("Invalid Bitorder !")) );
+	    (audio->sound_bit_order==ALeastSignificant)? 
+		i18n("ALeastSignificant (LSB)") :
+	    ((audio->sound_bit_order==AMostSignificant) ? 
+		i18n("AMostSignificant (MSB)"):i18n("Invalid Bitorder !")) );
     lBox->insertItem(str);
 
     lBox->insertItem("");
     I18N_MAX(str,i18n("Data Formats"),fm,maxwidth);
     for ( i = 0;  i < audio->n_data_format; i++ ) {
 	if (audio->data_format_list[i] <= ADFLin8Offset)
-	    lBox->insertItem(str + TAB + QString(formatNames[audio->data_format_list[i]]));
+	    lBox->insertItem(str + TAB + 
+		    QString(formatNames[audio->data_format_list[i]]));
 	str = "";
     }
 
@@ -775,14 +845,18 @@ bool GetInfo_Sound( KTabListBox *lBox )
 
     lBox->insertItem("");
     I18N_MAX(str,i18n("Input Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_input_gain) + QString(" ") + Value(audio->max_input_gain));
+    lBox->insertItem(str+TAB+Value(audio->min_input_gain) + QString(" ") 
+			    + Value(audio->max_input_gain));
     I18N_MAX(str,i18n("Output Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_output_gain) + QString(" ") + Value(audio->max_output_gain));
+    lBox->insertItem(str+TAB+Value(audio->min_output_gain) + QString(" ") 
+			    + Value(audio->max_output_gain));
     I18N_MAX(str,i18n("Monitor Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_monitor_gain) + QString(" ") + Value(audio->max_monitor_gain));
+    lBox->insertItem(str+TAB+Value(audio->min_monitor_gain) + QString(" ") 
+			    + Value(audio->max_monitor_gain));
     I18N_MAX(str,i18n("Gain Restricted"),fm,maxwidth);    
     lBox->insertItem(str+TAB+Value(audio->gm_gain_restricted));
-    /* printf( "sample rate tolerance  %f %f\n", audio->sample_rate_lo_tolerance,audio->sample_rate_hi_tolerance ); */
+    /*	printf( "sample rate tolerance  %f %f\n", 
+        audio->sample_rate_lo_tolerance,audio->sample_rate_hi_tolerance ); */
     I18N_MAX(str,i18n("Lock"),fm,maxwidth);    
     lBox->insertItem(str+TAB+Value(audio->lock));
     I18N_MAX(str,i18n("Queue Length"),fm,maxwidth);    
