@@ -20,6 +20,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.11  2000/04/15 19:46:05  charles
+    Here's a commit. Happy David? :)
+
+    Oh. yeah. it does something.  It's done.  Well, unless you don't speak english.
+    I'm working on that now :)
+
     Revision 1.10  2000/04/14 19:35:17  charles
     CVS_SILENT
 
@@ -116,13 +122,6 @@ public:
 	 * reload the data from the configuration file
 	 **/
 	void reload();
-	
-	/**
-	 * Get the config locale string.  This means that, you
-	 * pass a "description" and the config file, and it'l
-	 * translation closest to the locale.
-	 **/
-	static QString localeVersion(const QString &key, KConfig conf);
 	
 	const ProgramConfig *application;
 	int present;

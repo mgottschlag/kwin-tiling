@@ -238,13 +238,3 @@ void Programs::save()
 	for (ProgramConfig *prog=programlist.first(); prog != 0; prog=programlist.next())
 		prog->save();
 }
-
-
-QString EventConfig::localeVersion(const QString &key, KConfig conf)
-{
-
-
-}
-
-
-
