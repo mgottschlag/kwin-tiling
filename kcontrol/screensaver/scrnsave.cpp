@@ -514,6 +514,8 @@ void KScreenSaver::findSavers()
             mSaverListBox->insertItem(s->name());
         }
     }
+
+    mSaverListBox->setEnabled(mEnabled);
 }
 
 //---------------------------------------------------------------------------
