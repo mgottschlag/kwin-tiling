@@ -51,13 +51,15 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 	init( isGlobal, false, false );
 }
 
-void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
+void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 {
   QString wtstr;
 
   KeyType = isGlobal ? "global" : "standard";
 
   keys = new KAccel( this );
+
+  bSeriesOnly = _bSeriesOnly;
 
   if ( KeyType == "global" ) {
 // see also KKeyModule::init() below !!!
@@ -113,9 +115,9 @@ void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
   sFileList->clear();
   sList->insertItem( i18n("Current Scheme"), 0 );
   sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 1 );
+  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 1 );
   sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 2 );
+  sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
   sFileList->append( "Not a kcsrc file" );
   nSysSchemes = 3;
   readSchemeNames();
@@ -218,7 +220,8 @@ void KKeyModule::save()
 void KKeyModule::defaults()
 {
   if( preferMetaBt )
-    preferMetaBt->setChecked( KAccel::keyboardHasMetaKey() );
+    preferMetaBt->setChecked( false );
+  KAccel::useFourModifierKeys( false );
   kc->allDefault();
 }
 
@@ -258,7 +261,12 @@ void KKeyModule::slotChanged( )
 void KKeyModule::slotSave( )
 {
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
-    KAccel::writeKeyMap( dict, KeyScheme, &config );
+    // If this is a series only scheme, then let 'global=true' in
+    //  the writeKeyMap().  This is necessary in order to
+    //  let both 'Global Shortcuts' and 'Shortcut Sequences' be
+    //  written to the same scheme file, because 'Global Shortcuts' in
+    //  written first.
+    KAccel::writeKeyMap( dict, KeyScheme, &config, bSeriesOnly );
 }
 
 void KKeyModule::slotPreferMeta()
@@ -268,10 +276,11 @@ void KKeyModule::slotPreferMeta()
 
 void KKeyModule::readScheme( int index )
 {
+  kdDebug(125) << "readScheme( " << index << " )\n";
   if( index == 1 )
-    kc->allDefault( true );
-  else if( index == 2 )
     kc->allDefault( false );
+  else if( index == 2 )
+    kc->allDefault( true );
   else {
     KConfigBase* config;
     if( index == 0 )	config = new KConfig( "kdeglobals" );

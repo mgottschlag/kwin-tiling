@@ -62,6 +62,7 @@ protected:
 	QPushButton *removeBt;
 	QCheckBox *preferMetaBt;
 	int nSysSchemes;
+	bool bSeriesOnly;
 
 	void readSchemeNames();
 	void readScheme( int index=0 );
