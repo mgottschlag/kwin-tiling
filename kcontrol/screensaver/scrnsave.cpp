@@ -18,11 +18,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-// X11 headers
-#undef Above
-#undef Below
-#undef None
-
 #include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qpixmap.h>
@@ -54,6 +49,11 @@
 #include <X11/Xlib.h>
 
 #include "scrnsave.h"
+
+// X11 headers
+#undef Above
+#undef Below
+#undef None
 
 template class QPtrList<SaverConfig>;
 
@@ -233,18 +233,18 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
 
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
+    mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
     vLayout->addWidget( mSettingsGroup );
-    groupLayout = new QVBoxLayout( mSettingsGroup, 10, 10 );
-    groupLayout->addSpacing(10);
+    groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 10 );
 
     QBoxLayout *hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
-    QLabel *lbl = new QLabel(i18n("&Wait for"), mSettingsGroup);
+    QLabel *lbl = new QLabel(i18n("&Wait for:"), mSettingsGroup);
     hbox->addWidget(lbl);
     mWaitEdit = new QSpinBox(mSettingsGroup);
     mWaitEdit->setSteps(1, 10);
     mWaitEdit->setRange(1, 120);
-    mWaitEdit->setSuffix(i18n(" min."));
+    mWaitEdit->setSuffix(i18n(" min"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
@@ -254,8 +254,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " to 120 minutes) after which the screen saver should start.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
-
-    groupLayout->addStretch(1);
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
@@ -267,17 +265,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " will be locked when the screen saver starts. To restore the display,"
       " enter your account password at the prompt.") );
 
-    groupLayout->addStretch(1);
-
     QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
     gl->setColStretch( 2, 10 );
 
-    lbl = new QLabel(i18n("&Priority"), mSettingsGroup);
+    lbl = new QLabel(i18n("&Priority:"), mSettingsGroup);
     gl->addWidget(lbl, 0, 0);
 
     mPrioritySlider = new QSlider(QSlider::Horizontal, mSettingsGroup);
     mPrioritySlider->setRange(0, 19);
     mPrioritySlider->setSteps(1, 5);
+    mPrioritySlider->setTickmarks(QSlider::Below);
     mPrioritySlider->setValue(19 - mPriority);
     mPrioritySlider->setEnabled( mEnabled );
     connect(mPrioritySlider, SIGNAL( valueChanged(int)),
@@ -294,8 +291,13 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     lbl->setEnabled(false);
     mPrioritySlider->setEnabled(false);
 #endif
+
     lbl = new QLabel(i18n("Low Priority", "Low"), mSettingsGroup);
     gl->addWidget(lbl, 1, 1);
+
+#ifndef HAVE_SETPRIORITY
+    lbl->setEnabled(false);
+#endif
 
     lbl = new QLabel(i18n("High Priority", "High"), mSettingsGroup);
     gl->addWidget(lbl, 1, 3);
@@ -304,7 +306,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     lbl->setEnabled(false);
 #endif
 
-    groupLayout->addStretch(1);
+    //groupLayout->addStretch(1);
 
     vLayout->addStretch();
 
@@ -611,12 +613,6 @@ void KScreenSaver::slotEnable(bool e)
     mSettingsGroup->setEnabled( e );
     mSaverListBox->setEnabled( e );
     mTestBt->setEnabled( e && (mSelected>=0) );
-    mWaitEdit->setEnabled( e );
-    mLockCheckBox->setEnabled( e );
-#ifdef HAVE_SETPRIORITY
-    mPrioritySlider->setEnabled( e );
-#endif
-
 
     mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
     setMonitor();
