@@ -32,7 +32,7 @@
 
 extern "C"
 {
-    KPanelApplet* init(QWidget *parent, const QString& configFile)
+    KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
         KGlobal::locale()->insertCatalogue("klipper");
         int actions = KPanelApplet::Preferences | KPanelApplet::About | KPanelApplet::Help;
