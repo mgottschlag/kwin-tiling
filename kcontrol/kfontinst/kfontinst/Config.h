@@ -62,7 +62,7 @@ class CConfig : public KConfig
     };
 
     CConfig();
-    virtual ~CConfig()                              { }
+    virtual ~CConfig();
 
     bool              firstTime()                   { return !itsConfigured; }
     void              configured();
@@ -128,7 +128,8 @@ class CConfig : public KConfig
     void setUninstallDir(const QString &s);
     void setInstallDir(const QString &s);
 
-    void setAdvancedDirs(EListWidget w, const QStringList &l);
+    void addAdvancedDir(EListWidget w, const QString &d);
+    void removeAdvancedDir(EListWidget w, const QString &d);
     void setAdvancedTopItem(EListWidget w, const QString &s);
  
     void setSOConfigure(bool b);
@@ -168,10 +169,10 @@ class CConfig : public KConfig
 
     private:
 
-    void write(const QString &key, const QString &value);
-    void write(const QString &key, const QStringList &value);
-    void write(const QString &key, bool value);
-    void write(const QString &key, int value);
+    void write(const QString &sect, const QString &key, const QString &value);
+    void write(const QString &sect, const QString &key, const QStringList &value);
+    void write(const QString &sect, const QString &key, bool value);
+    void write(const QString &sect, const QString &key, int value);
 
     private:
 

@@ -50,36 +50,41 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
 {
     public:
 
-    CDirectoryItem(CFontListWidget *listWidget, QStringList &list, QListView *parent, const QString &dir, const QString &name, const QString &icon)
+    CDirectoryItem(CFontListWidget *listWidget, CConfig::EListWidget amDirType, QListView *parent, const QString &dir, const QString &name, const QString &icon)
         : CFontListWidget::CListViewItem(parent, name, CFontListWidget::CListViewItem::DIR),
           itsName(dir),
           itsParentDir(NULL),
           itsListWidget(listWidget),
-          itsList(list)
+          itsAmDirType(amDirType)
     {
         if(QString::null!=icon)
             setPixmap(0, KGlobal::iconLoader()->loadIcon(icon, KIcon::Small));
 
-        setOpen(0==itsList.count() || -1!=itsList.findIndex(fullName()) ? true : false);
+        const QStringList &list=CKfiGlobal::cfg().getAdvancedDirs(itsAmDirType);
+
+        setOpen(0==list.count() || -1!=list.findIndex(fullName()) ? true : false);
     }
 
-    CDirectoryItem(CFontListWidget *listWidget, QStringList &list, CDirectoryItem *parent, const QString &name)
+    CDirectoryItem(CFontListWidget *listWidget, CConfig::EListWidget amDirType, CDirectoryItem *parent, const QString &name)
         : CFontListWidget::CListViewItem(parent, name, CListViewItem::DIR),
           itsName(name),
           itsParentDir(parent),
           itsListWidget(listWidget),
-          itsList(list)
+          itsAmDirType(amDirType)
     {
         bool readable=QDir(fullName()).isReadable();
 
         setPixmap(0, KGlobal::iconLoader()->loadIcon(readable ? "folder" : "folder_locked" , KIcon::Small));
-
-        if(readable && -1!=itsList.findIndex(fullName()))
-            setOpen(true);
     }
 
     virtual ~CDirectoryItem()
     {
+    }
+
+    void open()
+    {
+        if(QDir(fullName()).isReadable() && -1!=CKfiGlobal::cfg().getAdvancedDirs(itsAmDirType).findIndex(fullName()))
+            setOpen(true);
     }
 
     void setup()
@@ -97,10 +102,10 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
 
     private:
 
-    QString         itsName;
-    CDirectoryItem  *itsParentDir;
-    CFontListWidget *itsListWidget;
-    QStringList     &itsList;
+    QString              itsName;
+    CDirectoryItem       *itsParentDir;
+    CFontListWidget      *itsListWidget;
+    CConfig::EListWidget itsAmDirType;
 };
 
 class CFontItem : public CFontListWidget::CListViewItem
@@ -234,8 +239,7 @@ void CDirectoryItem::setOpen(bool open)
     {
         QDir dir(fullName());
 
-        if(-1==itsList.findIndex(fullName()))
-            itsList.append(fullName());
+        CKfiGlobal::cfg().addAdvancedDir(itsAmDirType, fullName());
 
         if(!dir.isReadable())
         {
@@ -248,8 +252,14 @@ void CDirectoryItem::setOpen(bool open)
 
             if(files)
             {
-                QFileInfoListIterator it(*files);
-                QFileInfo             *fInfo;
+                QFileInfoListIterator   it(*files);
+                QFileInfo               *fInfo;
+                CDirectoryItem          *ndItem;
+#if QT_VERSION >= 300
+                QPtrList<CDirectoryItem> newDirs;
+#else
+                QList<CDirectoryItem>    newDirs;
+#endif
 
                 itsListWidget->progressInit(i18n("Scanning folder %1:").arg(fullName()), files->count());
                 for(; NULL!=(fInfo=it.current()); ++it)
@@ -258,13 +268,19 @@ void CDirectoryItem::setOpen(bool open)
                     {
                         itsListWidget->progressShow(fInfo->fileName());
                         if(fInfo->isDir())
-                            new CDirectoryItem(itsListWidget, itsList, this, fInfo->fileName());
+                        {
+                            CDirectoryItem *newDir=new CDirectoryItem(itsListWidget, itsAmDirType, this, fInfo->fileName());
+                            newDirs.append(newDir);
+                        }
                         else
                             if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                                 new CAdvancedFontItem(this, fInfo->fileName());
                     }
                 }
                 itsListWidget->progressStop();
+
+                for(ndItem=newDirs.first(); ndItem; ndItem=newDirs.next())
+                    ndItem->open();
             }
         }
     }
@@ -272,8 +288,7 @@ void CDirectoryItem::setOpen(bool open)
     {
         QListViewItem *item=firstChild();
 
-        if(-1!=itsList.findIndex(fullName()))
-            itsList.remove(fullName());
+        CKfiGlobal::cfg().removeAdvancedDir(itsAmDirType, fullName());
 
         while(NULL!=item)
         {
@@ -344,14 +359,21 @@ CFontListWidget::CFontListWidget(QWidget *parent, CConfig::EListWidget t, bool u
                  itsAdvancedData(dir1, dir1Name, dir1Icon, dir2, dir2Name, dir2Icon, showButton2Advanced),
                  itsBasicData(basicDir, useSubDirs),
                  itsBoxTitle(boxLabel),
-                 itsType(t),
-                 itsOpenItems(CKfiGlobal::cfg().getAdvancedDirs(t))
+                 itsType(t)
 {
     itsBox->setTitle(boxLabel);
     itsButton1->setText(button1Label);
     itsButton1->setEnabled(false);
     itsButton2->setText(button2Label);
     itsList->setTreeStepSize(12);
+}
+
+CFontListWidget::~CFontListWidget()
+{
+    QListViewItem         *item=itsList->itemAt(QPoint(0, 0));
+ 
+    if(item && ((CListViewItem*)item)->fullName()!=CKfiGlobal::cfg().getAdvancedTopItem(itsType))
+        CKfiGlobal::cfg().setAdvancedTopItem(itsType, ((CListViewItem*)item)->fullName());
 }
 
 void CFontListWidget::setAdvanced(bool on)
@@ -446,7 +468,7 @@ void CFontListWidget::addSubDir(const QString &top, const QString &sub)
                 if(item->fullName()==top)
                 {
                     if(item->isOpen() && !contains(item->firstChild(), sub))
-                        new CDirectoryItem(this, itsOpenItems, (CDirectoryItem *)item, sub);
+                        new CDirectoryItem(this, itsType, (CDirectoryItem *)item, sub);
                     break;
                 }
             item=(CListViewItem *)(item->itemBelow());
@@ -513,15 +535,9 @@ void CFontListWidget::scan()
     }
 }
 
-void CFontListWidget::hideEvent(QHideEvent *event)
-{
-    saveListData();
-    CFontListWidgetData::hideEvent(event);
-}
-
 void CFontListWidget::addDir(const QString &dir, const QString &name, const QString &icon)
 {
-    new CDirectoryItem(this, itsOpenItems, itsList, dir, name, icon);
+    new CDirectoryItem(this, itsType, itsList, dir, name, icon);
 }
 
 void CFontListWidget::scanDir(const QString &dir, int sub)
@@ -650,22 +666,6 @@ void CFontListWidget::progressStop()
         emit stopProgress();
         itsShowingProgress=false;
     }
-}
-
-void CFontListWidget::saveListData()
-{
-    QListViewItem         *item=itsList->itemAt(QPoint(0, 0));
-    QStringList::Iterator it;
- 
-    if(item && ((CListViewItem*)item)->fullName()!=CKfiGlobal::cfg().getAdvancedTopItem(itsType))
-        CKfiGlobal::cfg().setAdvancedTopItem(itsType, ((CListViewItem*)item)->fullName());
- 
-    for(it=itsOpenItems.begin(); it!=itsOpenItems.end(); ++it)
-        if(-1==CKfiGlobal::cfg().getAdvancedDirs(itsType).findIndex(*it))
-        {
-            CKfiGlobal::cfg().setAdvancedDirs(itsType, itsOpenItems);
-            break;
-        }
 }
 
 #include "FontListWidget.moc"

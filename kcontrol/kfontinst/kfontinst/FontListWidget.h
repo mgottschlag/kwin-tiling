@@ -103,7 +103,7 @@ class CFontListWidget : public CFontListWidgetData
                     const QString &dir1, const QString &dir1Name, const QString &dir1Icon,
                     const QString &dir2=QString::null, const QString &dir2Name=QString::null, const QString &dir2Icon=QString::null);
 
-    virtual ~CFontListWidget()          { saveListData(); }
+    virtual ~CFontListWidget();
 
     void         setAdvanced(bool on);
     unsigned int getNumSelected(CListViewItem::EType type);
@@ -115,7 +115,6 @@ class CFontListWidget : public CFontListWidgetData
     void         progressShow(const QString &step);
     void         progressStop();
     void         scan();
-    void         hideEvent(QHideEvent *event);
 
     static const QString & getDir(const QListViewItem *item);
 
@@ -141,10 +140,6 @@ class CFontListWidget : public CFontListWidgetData
 
     CListViewItem * getFirstSelectedItem();
 
-    private:
-
-    void saveListData();
-
     protected:
 
     bool                 itsAdvancedMode,
@@ -153,7 +148,6 @@ class CFontListWidget : public CFontListWidgetData
     TBasic               itsBasicData;
     QString              itsBoxTitle;
     CConfig::EListWidget itsType;
-    QStringList          itsOpenItems;
 };
 
 #endif

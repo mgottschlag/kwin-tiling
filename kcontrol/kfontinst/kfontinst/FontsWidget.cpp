@@ -44,13 +44,22 @@
 #include <klocale.h>
 #include <stdlib.h>
 
+static const QString constDefaultPreviewStr("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890");
+static const QString constNoPreviewStr(i18n(" No preview available"));
+static const QString constPreviewTitle(i18n("Preview:"));
+
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
-              itsSysConfigurer(NULL)
+              itsSysConfigurer(NULL),
+              itsPreviousTitle(constPreviewTitle),
+              itsPreviousStr(constNoPreviewStr)
 {
     QPalette    pal(itsBox->palette());
     QColorGroup dis(pal.disabled());
 
+    itsBox->setTitle(constPreviewTitle);
+    itsLabel->setText(constNoPreviewStr);
+    
     dis.setColor(QColorGroup::Text , pal.active().text());
     pal.setDisabled(dis);
     itsBox->setPalette(pal);
@@ -81,10 +90,6 @@ CFontsWidget::~CFontsWidget()
     if(itsSysConfigurer)
         delete itsSysConfigurer;
 }
-
-static const QString constDefaultPreviewStr("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890");
-static const QString constNoPreviewStr(i18n(" No preview available"));
-static const QString constPreviewTitle(i18n("Preview:"));
 
 void CFontsWidget::setPreviewMode(bool on)
 {
