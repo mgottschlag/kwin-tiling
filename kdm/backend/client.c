@@ -43,6 +43,7 @@ from The Open Group.
 extern int errno;
 #endif
 
+#include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
 #ifdef SECURE_RPC
@@ -80,13 +81,10 @@ extern int loginsuccess (char *User, char *Host, char *Tty, char **Msg);
 # endif
 /* for nologin */
 # include <sys/types.h>
-# include <sys/stat.h>
 # include <unistd.h>
 /* for expiration */
 # include <time.h>
 #endif	/* USE_PAM || AIXV3 */
-
-#include <sys/stat.h>
 
 #if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__) || defined(__GNU__)
 # define setpgrp setpgid
@@ -176,7 +174,10 @@ static struct pam_conv PAM_conversation = {
 };
 
 # ifdef HAVE_PAM_FAIL_DELAY
-static void fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED, void *appdata_ptr ATTR_UNUSED) {}
+static void
+fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED, 
+	   void *appdata_ptr ATTR_UNUSED)
+{}
 # endif
 
 static pam_handle_t *pamh;
@@ -239,6 +240,7 @@ static char		*user_pass;
 # define arg_shadow
 # define NSHADOW
 # define YSHADOW
+# define user_pass p->pw_passwd
 #endif
 
 static int
@@ -259,23 +261,13 @@ init_pwd(const char *name arg_shadow)
 	    Debug ("getpwnam() failed.\n");
 	    return 0;
 	}
-#if !defined(USE_PAM) && !defined(AIXV3)
-# ifdef linux	/* only Linux? */
-	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
-	    Debug ("The account is locked, no login allowed.\n");
-	    return 0;
-	}
-# endif
-# ifdef USESHADOW
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
 	user_pass = p->pw_passwd;
-# endif
-#endif	/* !USE_PAM */
+#endif
 	pwinited = 1;
     }
 
-#if defined(USE_PAM) || defined(AIXV3) || !defined(USESHADOW)
-# define user_pass p->pw_passwd
-#else
+#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
     if (shadow) {
 	Debug("reading sp for %s\n", name);
 	errno = 0;
@@ -302,11 +294,12 @@ static char tty[16], hostname[100];
 static int
 init_vrf(struct display *d, const char *name, const char *password)
 {
-#if !defined(USE_PAM) && defined(AIXV3)
+#ifdef USE_PAM
+    int		pretc;
+#elif defined(AIXV3)
     int		i;
     char	*tmpch;
 #endif
-    int		pretc;
     static char	*pname;
 
     if (!strlen (name)) {
@@ -451,7 +444,7 @@ Verify (struct display *d, const char *name, const char *pass)
     enduserdb();
     msg = NULL;
     if (authenticate(name, pass, &reenter, &msg) || reenter) {
-	Debug("authenticate() - %s\n", msg ? msg : "Error\n");
+	Debug("authenticate() - %s\n", msg ? msg : "error");
 	if (msg)
 	    free((void *)msg);
 	loginfailed(name, hostname, tty);
@@ -468,6 +461,12 @@ Verify (struct display *d, const char *name, const char *pass)
 # ifdef KERBEROS
     if (!krb4_auth(p, pass))
 # endif  /* KERBEROS */
+# ifdef linux	/* only Linux? */
+	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+	    Debug ("account is locked\n");
+	    return V_AUTH;
+	}
+# endif
 # if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user(p, pass, NULL) < 0)
 # else
@@ -476,16 +475,9 @@ Verify (struct display *d, const char *name, const char *pass)
 	{
 	    if(!d->allowNullPasswd || user_pass[0]) {
 		Debug ("password verify failed\n");
-# ifdef USESHADOW
-		bzero(user_pass, strlen(user_pass));
-# endif
 		return V_AUTH;
 	    } /* else: null passwd okay */
 	}
-
-# ifdef USESHADOW
-    bzero(user_pass, strlen(user_pass));
-# endif
 
 #endif /* USE_PAM && AIXV3 */
 
@@ -567,7 +559,7 @@ Restrict (struct display *d)
 #  endif
 #  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
     int			expire;
-    int			retv = V_OK;
+    int			retv;
 #  endif
 # endif /* AIXV3 */
 #endif
@@ -668,19 +660,13 @@ Restrict (struct display *d)
 #  define _PATH_NOLOGIN "/etc/nologin"
 # endif
 
+    if ((
 # ifdef USE_LOGIN_CAP
     /* Do we ignore a nologin file? */
-    if (login_getcapbool(lc, "ignorenologin", 0))
-	goto nolog_succ;
-
-    nolg = login_getcapstr(lc, "nologin", "", NULL);
-    if (!stat(nolg, &st))
-	goto nolog;
+	!login_getcapbool(lc, "ignorenologin", 0)) &&
+	(!stat((nolg = login_getcapstr(lc, "nologin", "", NULL)), &st) ||
 # endif
-
-    nolg = _PATH_NOLOGIN;
-    if (!stat(nolg, &st)) {
-      nolog:
+	 !stat((nolg = _PATH_NOLOGIN), &st))) {
 	GSendInt (V_NOLOGIN);
 	GSendStr (nolg);
 # ifdef USE_LOGIN_CAP
@@ -688,9 +674,6 @@ Restrict (struct display *d)
 # endif
 	return;
     }
-# ifdef USE_LOGIN_CAP
-nolog_succ:
-# endif
 
 
 /* restrict_nohome */
@@ -721,79 +704,80 @@ nolog_succ:
 # if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
 
 #  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
-    if (!sp)
-	goto spbad;
+    if (sp)
 #  endif
+    {
 
 #  define DEFAULT_WARN  (2L * 7L)  /* Two weeks */
 
-    tim = time(NULL) / 86400L;
+	tim = time(NULL) / 86400L;
 
 #  ifdef USE_LOGIN_CAP
-    quietlog = login_getcapbool(lc, "hushlogin", 0);
-    warntime = login_getcaptime(lc, "warnexpire",
-				DEFAULT_WARN * 86400L, DEFAULT_WARN * 86400L
-			       ) / 86400L;
+	quietlog = login_getcapbool(lc, "hushlogin", 0);
+	warntime = login_getcaptime(lc, "warnexpire",
+				    DEFAULT_WARN * 86400L, 
+				    DEFAULT_WARN * 86400L) / 86400L;
 #  else
-    quietlog = 0;
+	quietlog = 0;
 #   ifdef USESHADOW
-    warntime = sp->sp_warn != -1 ? sp->sp_warn : DEFAULT_WARN;
+	warntime = sp->sp_warn != -1 ? sp->sp_warn : DEFAULT_WARN;
 #   else
-    warntime = DEFAULT_WARN;
+	warntime = DEFAULT_WARN;
 #   endif
 #  endif
 
-#  ifdef HAVE_PW_EXPIRE
-    exp = p->pw_expire / 86400L;
-    if (exp) {
-#  else
-    if (sp->sp_expire != -1) {
-	exp = sp->sp_expire;
-#  endif
-	if (tim > exp) {
-	    GSendInt (V_AEXPIRED);
-#  ifdef USE_LOGIN_CAP
-	    login_close(lc);
-#  endif
-	    return;
-	} else if (tim > (exp - warntime) && !quietlog) {
-	    expire = exp - tim;
-	    retv = V_AWEXPIRE;
-	}
-    }
+	retv = V_OK;
 
 #  ifdef HAVE_PW_EXPIRE
-    exp = p->pw_change / 86400L;
-    if (exp) {
+	exp = p->pw_expire / 86400L;
+	if (exp) {
 #  else
-    if (sp->sp_max != -1) {
-	exp = sp->sp_lstchg + sp->sp_max;
+	if (sp->sp_expire != -1) {
+	    exp = sp->sp_expire;
 #  endif
-	if (tim > exp) {
-	    GSendInt (V_PEXPIRED);
+	    if (tim > exp) {
+		GSendInt (V_AEXPIRED);
 #  ifdef USE_LOGIN_CAP
-	    login_close(lc);
+		login_close(lc);
 #  endif
-	    return;
-	} else if (tim > (exp - warntime) && !quietlog) {
-	    if (retv == V_OK || expire > exp)
+		return;
+	    } else if (tim > (exp - warntime) && !quietlog) {
 		expire = exp - tim;
-	    retv = V_PWEXPIRE;
+		retv = V_AWEXPIRE;
+	    }
 	}
-    }
 
-    if (retv != V_OK) {
-	GSendInt (retv);
-	GSendInt (expire);
+#  ifdef HAVE_PW_EXPIRE
+	exp = p->pw_change / 86400L;
+	if (exp) {
+#  else
+	if (sp->sp_max != -1) {
+	    exp = sp->sp_lstchg + sp->sp_max;
+#  endif
+	    if (tim > exp) {
+		GSendInt (V_PEXPIRED);
 #  ifdef USE_LOGIN_CAP
-	login_close(lc);
+		login_close(lc);
 #  endif
-	return;
-    }
+		return;
+	    } else if (tim > (exp - warntime) && !quietlog) {
+		if (retv == V_OK || expire > exp) {
+		    expire = exp - tim;
+		    retv = V_PWEXPIRE;
+		}
+	    }
+	}
 
-#  if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
-spbad:
+	if (retv != V_OK) {
+	    GSendInt (retv);
+	    GSendInt (expire);
+#  ifdef USE_LOGIN_CAP
+	    login_close(lc);
 #  endif
+	    return;
+	}
+
+    }
 
 # endif /* HAVE_PW_EXPIRE || USESHADOW */
 
