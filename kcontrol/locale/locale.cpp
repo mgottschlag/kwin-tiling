@@ -2,6 +2,7 @@
  * locale.cpp
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -23,29 +24,32 @@
 
 
 #include <qdir.h>
-#include <kapp.h>
-#include <klocale.h>
+#include <qmessagebox.h>
+#include <qlayout.h>
 #include <qlabel.h>
+#include <qgroupbox.h>
+
 #include <kconfig.h>
-#include <ksimpleconfig.h>
-#include <kmsgbox.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <kstddirs.h>
 
 #include "locale.h"
 #include "locale.moc"
-#include <qlayout.h>
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : KConfigWidget (parent, name)
 {
-  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
-  QGridLayout *tl1 = new QGridLayout(5, 4, 5);
-  tl->addLayout(tl1);
-  tl->addStretch(1);
+  // allow localization of numbers and money
+  KGlobal::locale()->enableNumericLocale(true);  
 
-  gbox = new QGroupBox(i18n("Language"), this);
-  tl1->addMultiCellWidget(gbox, 0, 4, 0, 3);
-  tl1->addRowSpacing(0, 10);
-  tl1->addRowSpacing(4, 15);
+  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
+  QGroupBox *gbox = new QGroupBox(i18n("Language"), this);
+  tl->addWidget(gbox);
+
+  QGridLayout *tl1 = new QGridLayout(gbox, 5, 4, 5);
+  tl1->addRowSpacing(0, 15);
+  tl1->addRowSpacing(4, 10);
   tl1->addColSpacing(0, 10);
   tl1->addColSpacing(3, 10);
   tl1->setColStretch(2, 1);
@@ -82,6 +86,55 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   tl1->addWidget(label, 3, 1);
   tl1->addWidget(combo3, 3, 2);
 
+  tl1->activate();
+
+  gbox = new QGroupBox(i18n("Examples"), this);
+  tl->addWidget(gbox);
+
+  tl1 = new QGridLayout(gbox, 6, 4, 5);
+  tl1->addRowSpacing(0, 15);
+  tl1->addRowSpacing(5, 10);
+  tl1->addColSpacing(0, 10);
+  tl1->addColSpacing(3, 10);
+  tl1->setColStretch(2, 1);
+
+  label = new QLabel(i18n("Numbers:"), gbox);
+  label->setMinimumSize(label->sizeHint());
+  tl1->addWidget(label, 1, 1);
+
+  numberSample = new QLabel(gbox);
+  tl1->addWidget(numberSample, 1, 2);
+  numberSample->setText(KGlobal::locale()->formatNumber(1234567.89) +
+			" / " +
+			KGlobal::locale()->formatNumber(-1234567.89));
+
+  label = new QLabel(i18n("Money:"), gbox);
+  label->setMinimumSize(label->sizeHint());
+  tl1->addWidget(label, 2, 1);
+
+  moneySample = new QLabel(gbox);
+  tl1->addWidget(moneySample, 2, 2);
+  moneySample->setText(KGlobal::locale()->formatMoney(123456789.00) +
+		       " / " + 
+		       KGlobal::locale()->formatMoney(-123456789.00));
+
+  label = new QLabel(i18n("Date:"), gbox);
+  label->setMinimumSize(label->sizeHint());
+  tl1->addWidget(label, 3, 1);
+
+  dateSample = new QLabel(gbox);
+  tl1->addWidget(dateSample, 3, 2);
+  dateSample->setText(KGlobal::locale()->formatDate(QDate::currentDate()));
+
+  label = new QLabel(i18n("Time:"), gbox);
+  label->setMinimumSize(label->sizeHint());
+  tl1->addWidget(label, 4, 1);
+
+  timeSample = new QLabel(gbox);
+  tl1->addWidget(timeSample, 4, 2);
+  timeSample->setText(KGlobal::locale()->formatTime(QTime::currentTime()));
+
+  tl->addStretch(1);
   tl->activate();
 
   loadSettings();
@@ -95,7 +148,7 @@ KLocaleConfig::~KLocaleConfig ()
 
 void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
 {
-  KConfig *config = kapp->getConfig();
+  KConfigBase *config = KGlobal::config();
   QString name;
 
   combo->clear();
@@ -124,7 +177,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
 
 void KLocaleConfig::loadSettings()
 {
-  KSimpleConfig config(QDir::homeDirPath()+"/.kde/share/config/kdeglobals");
+  KConfig *config = KGlobal::config();
 
   loadLanguageList(combo1);
   loadLanguageList(combo2);
@@ -136,8 +189,8 @@ void KLocaleConfig::loadSettings()
   QString languages, lang;
   int i=0, pos;
 
-  config.setGroup("Locale");
-  languages = config.readEntry("Language");
+  config->setGroup("Locale");
+  languages = config->readEntry("Language");
 
   while (1) {
     lang = languages.left(languages.find(':'));
@@ -166,22 +219,23 @@ void KLocaleConfig::loadSettings()
 
 void KLocaleConfig::applySettings()
 {
-  KSimpleConfig config(QDir::homeDirPath()+"/.kde/share/config/kdeglobals");
+  KConfigBase *config = KGlobal::config();
+
   QString value;
 
   value.sprintf("%s:%s:%s", tags.at(combo1->currentItem()),
                             tags.at(combo2->currentItem()),
                             tags.at(combo3->currentItem()));
 
-  config.setGroup("Locale");
-  config.writeEntry("Language", value);  
-  config.sync();
+  config->setGroup("Locale");
+  config->writeEntry("Language", value);  
+  config->sync();
 
   if (changedFlag)
-    KMsgBox::message(this,i18n("Applying language settings"),
-      i18n("Changed language settings apply only to newly started "
-                         "applications.\nTo change the language of all "
-                         "programs, you will have to logout first."));
+    QMessageBox::information(this,i18n("Applying language settings"),
+			     i18n("Changed language settings apply only to newly started "
+				  "applications.\nTo change the language of all "
+				  "programs, you will have to logout first."));
 
   changedFlag = FALSE;
 }
@@ -198,4 +252,15 @@ void KLocaleConfig::defaultSettings()
 void KLocaleConfig::changed(int)
 {
   changedFlag = TRUE;
+
+  // should update the locale here before redisplaying samples.
+  numberSample->setText(KGlobal::locale()->formatNumber(1234567.89) +
+			" / " +
+			KGlobal::locale()->formatNumber(-1234567.89));
+
+  moneySample->setText(KGlobal::locale()->formatMoney(123456789.00) +
+		       " / " + 
+		       KGlobal::locale()->formatMoney(-123456789.00));
+  dateSample->setText(KGlobal::locale()->formatDate(QDate::currentDate()));
+  timeSample->setText(KGlobal::locale()->formatTime(QTime::currentTime()));
 }

@@ -27,10 +27,10 @@
 
 
 #include <kcontrol.h>
-#include <qgroupbox.h>
 
 #include "klangcombo.h"
 
+class QLabel;
 
 class KLocaleConfig : public KConfigWidget
 {
@@ -52,8 +52,13 @@ public slots:
 private:
 
   KLanguageCombo *combo1, *combo2, *combo3;
-  QGroupBox *gbox;
-  
+
+  // samples for how things will display w/selected locale
+  QLabel *numberSample;
+  QLabel *moneySample;
+  QLabel *timeSample;
+  QLabel *dateSample;
+
   QStrList tags, languages;
   bool changedFlag;
 

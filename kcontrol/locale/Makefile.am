@@ -10,13 +10,13 @@ bin_PROGRAMS = kcmlocale
 kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp
 METASOURCES = locale.moc klangcombo.moc
 noinst_HEADERS = locale.h klangcombo.h
-EXTRA_DIST = kcmlocale.kdelnk locale.xpm mini-locale.xpm
+EXTRA_DIST = kcmlocalerc locale.xpm mini-locale.xpm
 
 kde_icon_DATA = locale.xpm
 
 install-data-local: 
 	$(mkinstalldirs) $(kde_confdir)
-	$(INSTALL_DATA) $(srcdir)/kcmlocale.kdelnk $(kde_confdir)/kcmlocalerc
+	$(INSTALL_DATA) $(srcdir)/kcmlocalerc $(kde_confdir)
 	$(mkinstalldirs) $(kde_minidir)
 	$(INSTALL_DATA) $(srcdir)/mini-locale.xpm $(kde_minidir)/locale.xpm
 
