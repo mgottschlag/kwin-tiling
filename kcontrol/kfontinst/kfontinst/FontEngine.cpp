@@ -338,7 +338,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask)
 {
     closeFont();
 
-    itsType=getType(file.local8Bit());
+    itsType=getType(QFile::encodeName(file));
     itsWeight=WEIGHT_MEDIUM;
     itsWidth=WIDTH_NORMAL;
     itsSpacing=SPACING_PROPORTIONAL;
@@ -361,7 +361,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask)
             return false;
     }
 }
-        
+
 void CFontEngine::closeFont()
 {
     if((TRUE_TYPE==itsType || TYPE_1==itsType)&&itsFt.open)
@@ -388,7 +388,7 @@ bool CFontEngine::isA(const char *fname, const char *ext, bool z)
 {
     int  len=strlen(fname);
     bool fnt=false;
- 
+
     if(z)
     {
         if(len>7)                 // Check for .ext.gz
@@ -399,13 +399,13 @@ bool CFontEngine::isA(const char *fname, const char *ext, bool z)
             fnt=(fname[len-6]=='.' && tolower(fname[len-5])==ext[0] && tolower(fname[len-4])==ext[1] && tolower(fname[len-3])==ext[2] &&
                  fname[len-2]=='.' && toupper(fname[len-1])=='Z');
     }
- 
+
     if(!fnt && len>4)  // Check for .ext
         fnt=(fname[len-4]=='.' && tolower(fname[len-3])==ext[0] && tolower(fname[len-2])==ext[1] && tolower(fname[len-1])==ext[2]);
- 
+
     return fnt;
 }
- 
+
 bool CFontEngine::correctType(const char *fname, CFontEngine::EType type)
 {
     return ((type==TRUE_TYPE && isATtf(fname)) || (type==TYPE_1 && isAType1(fname)) ||
@@ -413,7 +413,7 @@ bool CFontEngine::correctType(const char *fname, CFontEngine::EType type)
            ? true
            : false;
 }
- 
+
 CFontEngine::EType CFontEngine::getType(const char *fname)
 {
     if(isATtf(fname))
@@ -494,7 +494,7 @@ QString CFontEngine::widthStr(enum EWidth w)
             return "Normal";
     }
 }
- 
+
 QString CFontEngine::spacingStr(enum ESpacing s)
 {
     switch(s)
@@ -540,7 +540,7 @@ QStringList CFontEngine::get8BitEncodings()
         default:
         {
             QStringList empty;
- 
+
             return empty;
         }
     }
@@ -565,7 +565,7 @@ CFontEngine::EWeight CFontEngine::strToWeight(const char *str)
     else if(CMisc::stricmp(str, "Light")==0)
         return WEIGHT_LIGHT;
     else if(CMisc::stricmp(str, "Medium")==0 || CMisc::stricmp(str, "Normal")==0 || CMisc::stricmp(str, "Roman")==0)
-        return WEIGHT_MEDIUM; 
+        return WEIGHT_MEDIUM;
     else if(CMisc::stricmp(str, "Regular")==0)
         return WEIGHT_REGULAR;
     else if(CMisc::stricmp(str, "Demi")==0)
@@ -775,23 +775,23 @@ static QString createNames(const QString &familyName, QString &fullName)
             // ...therefore, need to remove each string from FullName that occurs in FamilyName
             QString full(fullName),
                     fam(familyName);
- 
+
             full.replace(QRegExp(" "), "");   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
             fam.replace(QRegExp(" "), "");
- 
+
             if(0==full.find(fam))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set family to "ItalicOldstyle"
             {
                 //
                 // Now we need to extract the family name, and the rest...
                 // i.e. Family: "LuciduxMono"
                 //      rest  : "Italic Oldstyle" -- this is what get's assigned to the 'family' varaible...
- 
+
                 if(full.length()==fam.length())  // No style information...
                     family="";
                 else  // Need to remove style info...
                 {
                     unsigned int i;
- 
+
                     //
                     // Remove familyName from family
                     for(i=0; i<familyName.length() && family.length(); ++i)
@@ -810,11 +810,11 @@ static QString createNames(const QString &familyName, QString &fullName)
                 removedFamily=false;
             }
         }
- 
+
     //
     // Remove widthm, weight, and italic stuff from fullName...
     int prop;
- 
+
     for(prop=CFontEngine::WEIGHT_THIN; prop<=CFontEngine::WEIGHT_BLACK; prop++)
         removeString(family, CFontEngine::weightStr((CFontEngine::EWeight)prop), removed);
 
@@ -825,10 +825,10 @@ static QString createNames(const QString &familyName, QString &fullName)
     // Most fonts don't list the roman part, if some do then we don't really
     // want to show this - to make everything as similar as possible...
     removeString(family, "Roman", removed, false);
- 
+
     for(prop=CFontEngine::WIDTH_ULTRA_CONDENSED; prop<=CFontEngine::WIDTH_ULTRA_EXPANDED; prop++)
         removeString(family, CFontEngine::widthStr((CFontEngine::EWidth)prop), removed);
- 
+
     removeString(family, "Cond", removed);  // Some fonts just have Cond and not Condensed!
 
     //
@@ -845,12 +845,12 @@ static QString createNames(const QString &familyName, QString &fullName)
     // Add the family name back on...
     if(removedFamily && QString::null!=familyName)
         family=familyName+family;
- 
+
     //
     // Replace any non-alphanumeric or space characters...
     family.replace(QRegExp("&"), "And");
     family=CMisc::removeSymbols(family);
- 
+
     family.simplifyWhiteSpace();
 
     if(removed.length())
@@ -918,12 +918,12 @@ const char * CFontEngine::getTokenT1(const char *str, const char *key)
     // e.g. /isFixedPitch false def
     //
     static const int constMaxTokenLen=1024;
- 
+
     static char token[constMaxTokenLen];
- 
+
     char *start,
          *end;
- 
+
     token[0]='\0';
     if(NULL!=(start=strstr(str, key)) && NULL!=(end=strstr(start, "def")) && end>start)
     {
@@ -933,7 +933,7 @@ const char * CFontEngine::getTokenT1(const char *str, const char *key)
         for(end--; *end==' ' || *end=='\t'; --end)   //  Ditto
             ;
         unsigned int numChars=(end-start)+1;
- 
+
         if(numChars>constMaxTokenLen-1)
             numChars=constMaxTokenLen-1;
         strncpy(token, start, numChars);
@@ -963,14 +963,14 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
     else
     {
         CCompressedFile f(file.local8Bit());
- 
+
         if(f)
         {
             unsigned char *hdr=(unsigned char *)data;
 
             int bytesRead=f.read(data, constHeaderMaxLen);
             f.close();
- 
+
             data[bytesRead-1]='\0';
 
             bool binary=(hdr[0]==0x80 && hdr[1]==0x01) || (hdr[0]==0x01 && hdr[1]==0x80);
@@ -1271,7 +1271,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
 
                 if(itsItalicAngle>45.0 || itsItalicAngle<-45.0)
                     itsItalicAngle=0.0;
- 
+
                 if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
                     itsWidth=WIDTH_UNKNOWN;
                 else
@@ -1299,7 +1299,7 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                     itsSpacing=SPACING_PROPORTIONAL;
                 else
                     itsSpacing=((TT_Postscript*)table)->isFixedPitch ? SPACING_MONOSPACED : SPACING_PROPORTIONAL;
-            
+
                 unsigned int slen=strlen(code);
 
                 itsFoundry=constDefaultFoundry;
@@ -1360,7 +1360,7 @@ CFontEngine::EWeight CFontEngine::mapWeightTT(FT_UShort os2Weight)
             return WEIGHT_UNKNOWN;
     }
 }
- 
+
 CFontEngine::EWidth CFontEngine::mapWidthTT(FT_UShort os2Width)
 {
     enum ETtfWidth
@@ -1407,15 +1407,15 @@ QCString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdu
     int          j;
     bool         found=false;
     QCString     buffer;
- 
+
     FT_UInt     numNames=FT_Get_Sfnt_Name_Count(itsFt.face);
     FT_SfntName fName;
- 
+
     for(i=0; !found && i<numNames && !FT_Get_Sfnt_Name(itsFt.face, i, &fName); ++i)
         if(fName.name_id==index )
         {
             // The following code was inspired from Mark Leisher's ttf2bdf package
- 
+
             // Try to find a Microsoft English name
             if (fName.platform_id==TT_PLATFORM_MICROSOFT)
                 for(j=TT_MS_ID_UNICODE_CS; j>=TT_MS_ID_SYMBOL_CS; j-- )
@@ -1424,10 +1424,10 @@ QCString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdu
                         found=true;
                         break;
                     }
- 
+
             if (!found && fName.platform_id==TT_PLATFORM_APPLE_UNICODE && fName.language_id==TT_MAC_LANGID_ENGLISH)
                 found=true;
- 
+
             // Found a Unicode Name.
             if(found)
                 for(i=1; i<fName.string_len; i+=2)
@@ -1481,10 +1481,10 @@ bool CFontEngine::has8BitEncodingFt(CEncodings::T8Bit *data)
 QStringList CFontEngine::get8BitEncodingsFt()
 {
     QStringList enc;
- 
+
     // Do 8-bit encodings...
     CEncodings::T8Bit *enc8;
- 
+
     for(enc8=CKfiGlobal::enc().first8Bit(); enc8; enc8=CKfiGlobal::enc().next8Bit())
         if(has8BitEncodingFt(enc8))
             enc.append(enc8->name);
@@ -1529,7 +1529,7 @@ QStringList CFontEngine::getEncodingsFt()
                     enc.append(enc16->name);
         }
     }
- 
+
     return enc;
 }
 
@@ -1554,10 +1554,10 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
             delete itsFt.bmp.data;
             itsFt.bmp.data=NULL;
         }
- 
+
         if(NULL==itsFt.bmp.data)
             itsFt.bmp.data=new unsigned char[itsFt.bmp.w*itsFt.bmp.h];
- 
+
         if(NULL!=itsFt.bmp.data)
         {
             FT_GlyphSlot   slot=itsFt.face->glyph;
@@ -1621,7 +1621,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
 
                     if(width<slot->bitmap.width)
                         break;
- 
+
                     pos+=slot->bitmap.width+2;
                     if(pos>=itsFt.bmp.w)
                         break;
@@ -1645,7 +1645,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
             pix=img;
         }
     }
- 
+
     return pix;
 }
 
@@ -1834,7 +1834,7 @@ QStringList CFontEngine::getEncodingsSpd()
 {
     QStringList enc;
 
-    enc.append("iso8859-1"); 
+    enc.append("iso8859-1");
     return enc;
 }
 
@@ -1967,7 +1967,7 @@ void CFontEngine::createNameFromXlfdBmp()
 
 bool CFontEngine::getFileEncodingBmp(const char *str)
 {
-    if(strlen(str)) 
+    if(strlen(str))
     {
          int ch,
              numDash=0;
@@ -1996,7 +1996,7 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
         static char token[constMaxTokenSize];
 
         char        *end=NULL;
- 
+
         strncpy(token, s, constMaxTokenSize);
         token[constMaxTokenSize-1]='\0';
 
@@ -2009,7 +2009,7 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
                 return s;
             }
         }
-        else 
+        else
             if(NULL!=(s=strchr(token, '\"')))
             {
                 s++;
@@ -2020,7 +2020,7 @@ static const char * getTokenBdf(const char *str, const char *key, bool noquotes=
                 }
             }
     }
- 
+
     return NULL;
 }
 
@@ -2061,7 +2061,7 @@ bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
                 }
                 else if(!foundWeight && NULL!=(str=getTokenBdf(buffer, "WEIGHT_NAME")))
                 {
-                    itsWeight=strToWeight(str); 
+                    itsWeight=strToWeight(str);
                     foundWeight=true;
                 }
                 else if(!foundSlant && NULL!=(str=getTokenBdf(buffer, "SLANT")))
@@ -2137,32 +2137,32 @@ bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
 static const char * readStrSnf(CCompressedFile &f)
 {
     static const int constMaxChars=512;
- 
+
     static char buffer[constMaxChars];
     int         pos=0;
     char        ch;
- 
+
     buffer[0]='\0';
- 
+
     while(-1!=(ch=f.getChar()))
     {
         buffer[pos++]=ch;
         if('\0'==ch)
             break;
     }
- 
+
     return buffer;
 }
 
 bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
 {
     bool status=false;
- 
+
     struct TCharInfo
     {
         bool         exists()     { return ntohl(misc)&0x80; }
         unsigned int byteOffset() { return (ntohl(misc)&0xFFFFFF00) >> 8; }
- 
+
         short        leftSideBearing,
                      rightSideBearing,
                      characterWidth,
@@ -2171,7 +2171,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                      attributes;
         unsigned int misc;
     };
- 
+
     struct TGenInfo
     {
         unsigned int version1,
@@ -2201,7 +2201,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                      glyphSets,
                      version2;
     };
- 
+
     struct TProp
     {
         unsigned int name,      // string offset of name
@@ -2210,12 +2210,12 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
     };
 
     CCompressedFile snf(file.local8Bit());
- 
+
     if(snf)
     {
         TGenInfo genInfo;
         bool     foundXlfd=false;
- 
+
         if((snf.read(&genInfo, sizeof(TGenInfo))==sizeof(TGenInfo)) && (ntohl(genInfo.version1)==ntohl(genInfo.version2))
            && ntohl(genInfo.numProps)<constBitmapMaxProps)
         {
@@ -2241,7 +2241,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                     unsigned int p,
                                  res=0,
                                  pointSize=0;
- 
+
                     // Now read properties data...
                     for(p=0; p<ntohl(genInfo.numProps); ++p)
                         if(snf.read(&props[p], sizeof(TProp))!=sizeof(TProp))
@@ -2252,11 +2252,11 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                     if(!error)
                     {
                         const unsigned int constMaxLen=1024;
- 
+
                         char       buffer[constMaxLen];
                         const char *value=NULL,
                                    *name=NULL;
- 
+
                         for(p=0; p<ntohl(genInfo.numProps) && !status; ++p)
                         {
                             if(ntohl(props[p].indirect))
@@ -2360,7 +2360,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
             status=true;
         }
     }
- 
+
     return status;;
 }
 

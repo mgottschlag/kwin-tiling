@@ -96,7 +96,7 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
     void    setOpen(bool open);
     QString fullName() const;
     QString dir() const
-    { 
+    {
         return fullName();
     }
 
@@ -134,7 +134,7 @@ class CFontItem : public CFontListWidget::CListViewItem
 class CAdvancedFontItem : public CFontItem
 {
     public:
- 
+
     CAdvancedFontItem(CDirectoryItem *parent, const QString &fileName)
         : CFontItem(parent, fileName),
           itsParentDir(parent)
@@ -273,7 +273,7 @@ void CDirectoryItem::setOpen(bool open)
                             newDirs.append(newDir);
                         }
                         else
-                            if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
+                            if(CFontEngine::isAFont(QFile::encodeName(fInfo->fileName())))
                                 new CAdvancedFontItem(this, fInfo->fileName());
                     }
                 }
@@ -320,7 +320,7 @@ QString CDirectoryItem::fullName() const
 
 void CFontItem::setupDisplay()
 {
-    switch(CFontEngine::getType(fullName().local8Bit()))
+    switch(CFontEngine::getType(QFile::encodeName(fullName())))
     {
         case CFontEngine::TRUE_TYPE:
             setPixmap(0, KGlobal::iconLoader()->loadIcon("font_truetype", KIcon::Small));
@@ -373,7 +373,7 @@ CFontListWidget::~CFontListWidget()
     if(itsAdvancedMode)
     {
         QListViewItem *item=itsList->itemAt(QPoint(0, 0));
- 
+
         if(item && ((CListViewItem*)item)->fullName()!=CKfiGlobal::cfg().getAdvancedTopItem(itsType))
             CKfiGlobal::cfg().setAdvancedTopItem(itsType, ((CListViewItem*)item)->fullName());
     }
@@ -392,7 +392,7 @@ unsigned int CFontListWidget::getNumSelected(CListViewItem::EType type)
 {
     unsigned int  num=0;
     CListViewItem *item=(CListViewItem *)(itsList->firstChild());
- 
+
     while(NULL!=item)
     {
         if(item->isSelected() && item->getType()==type)
@@ -405,17 +405,17 @@ unsigned int CFontListWidget::getNumSelected(CListViewItem::EType type)
 void CFontListWidget::getNumSelected(int &numTT, int &numT1)
 {
     CListViewItem *item=(CListViewItem *)itsList->firstChild();
- 
+
     numTT=numT1=0;
- 
+
     while(item!=NULL)
     {
         if(item->isSelected())
             if(CListViewItem::FONT==item->getType())
-                if(CFontEngine::isATtf(item->text(0).local8Bit()))
+                if(CFontEngine::isATtf(QFile::encodeName(item->text(0))))
                     numTT++;
                 else
-                    if(CFontEngine::isAType1(item->text(0).local8Bit()))
+                    if(CFontEngine::isAType1(QFile::encodeName(item->text(0))))
                         numT1++;
         item=(CListViewItem *)(item->itemBelow());
     }
@@ -441,7 +441,7 @@ void CFontListWidget::addFont(const QString &path, const QString &file)
     if(itsAdvancedMode) // Need to find branch, and whether it's open...
     {
         CListViewItem *item=(CListViewItem *)(itsList->firstChild());
- 
+
         while(NULL!=item)
         {
             if(item->getType()==CListViewItem::DIR)
@@ -464,7 +464,7 @@ void CFontListWidget::addSubDir(const QString &top, const QString &sub)
     if(itsAdvancedMode) // Need to find branch, and whether it's open...
     {
         CListViewItem *item=(CListViewItem *)(itsList->firstChild());
- 
+
         while(NULL!=item)
         {
             if(item->getType()==CListViewItem::DIR)
@@ -512,7 +512,7 @@ void CFontListWidget::scan()
             itsButton2->hide();
 
         addDir(itsAdvancedData.dir1, itsAdvancedData.dir1Name, itsAdvancedData.dir1Icon);
- 
+
         if(QString::null!=itsAdvancedData.dir2)
             addDir(itsAdvancedData.dir2, itsAdvancedData.dir2Name, itsAdvancedData.dir2Icon);
 
@@ -550,7 +550,7 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
     if(d.isReadable())
     {
         const QFileInfoList *files=d.entryInfoList();
- 
+
         if(files)
         {
             QFileInfoListIterator it(*files);
@@ -558,7 +558,7 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
 
             if(0==sub && files->count())
                 progressInit(i18n("Scanning folder %1:").arg(dir), 0);
- 
+
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                     if(fInfo->isDir())
@@ -567,7 +567,8 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
                             scanDir(dir+fInfo->fileName()+"/", sub+1);
                     }
                     else
-                        if(CFontEngine::isAType1(fInfo->fileName().local8Bit()) || CFontEngine::isATtf(fInfo->fileName().local8Bit()))
+                        if(CFontEngine::isAType1(QFile::encodeName(fInfo->fileName())) ||
+                           CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())))
                         {
                             progressShow(fInfo->fileName());
                             new CBasicFontItem(itsList, fInfo->fileName(), dir);
@@ -633,12 +634,12 @@ void CFontListWidget::selectionChanged()
 CFontListWidget::CListViewItem * CFontListWidget::getFirstSelectedItem()
 {
     CListViewItem *item=(CListViewItem *)itsList->firstChild();
- 
+
     while(NULL!=item)
     {
         if(item->isSelected())
             return item;
- 
+
         item=(CListViewItem *)(item->itemBelow());
     }
 
