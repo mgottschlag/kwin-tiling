@@ -150,7 +150,7 @@ void KThemeListBox::readTheme(const QString &file)
     QString desc = config.readEntry("Comment", i18n("No description available."));
     config.setGroup( "KDE" );
 
-    QString style = config.readEntry( "widgetStyle" );
+    QString style = config.readEntry( "WidgetStyle" );
     QListViewItem *item = new QListViewItem(this, name, desc, file);
     if (file == curTheme) {
         curItem = item;
@@ -514,7 +514,7 @@ void KGeneral::slotMacStyle()
 void KGeneral::readSettings()
 {
     config->setGroup("KDE");
-    QString str = config->readEntry( "widgetStyle", "Platinum" );
+    QString str = config->readEntry( "WidgetStyle", "Platinum" );
     if ( str == "Platinum" )
     applicationStyle = WindowsStyle;
     else if ( str == "Windows 95" )
