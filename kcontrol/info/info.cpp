@@ -379,7 +379,7 @@ void KInfoListWidget::load()
     {
         widgetStack->raiseWidget(lBox);
     }
-    else 
+    else
     {
         NoInfoText->setText(ErrorString);
         widgetStack->raiseWidget(NoInfoText);
@@ -443,27 +443,25 @@ const KAboutData* KInfoListWidget::aboutData() const
 static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool WithEmptyLines = true )
 {
     FILE *pipe;
-    QTextStream *t;
-    QListViewItem* olditem = 0;
+    QListViewItem* olditem = 0L;
     QString s;
-  
+
     if ((pipe = popen(FileName, "r")) == NULL) {
 	pclose(pipe);
 	return 0;
     }
 
-    t = new QTextStream(pipe, IO_ReadOnly);
+    QTextStream t(pipe, IO_ReadOnly);
 
-    while (!t->eof()) {
-	s = t->readLine();
+    while (!t.atEnd()) {
+	s = t.readLine();
 	if (!WithEmptyLines && s.length()==0)
 		continue;
        	olditem = new QListViewItem(lBox, olditem, s);
     }
-  
-    delete t; 
+
     pclose(pipe);
-  
+
     return (lBox->childCount());
 }
 
