@@ -118,6 +118,8 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 #include "info_fbsd.cpp"
 #elif hpux
 #include "info_hpux.cpp"
+#elif __svr4__
+#include "info_svr4.cpp"
 #else
 #include "info_generic.cpp"	/* Default for unsupportet systems.... */
 #endif
