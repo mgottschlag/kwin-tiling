@@ -159,6 +159,7 @@ KClassicGreeter::setUser( const QString &user )
     // assert (fixedUser.isEmpty());
     curUser = user;
     loginEdit->setText( user );
+    passwdEdit->setFocus();
 }
 
 void // virtual
