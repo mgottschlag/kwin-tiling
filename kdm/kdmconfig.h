@@ -85,6 +85,7 @@ private:
      QString        _greetString;
      QStringList    _sessionTypes;
      int            _shutdownButton;
+	 int			_low_user_id;
      QString        _shutdown;
      QString        _restart;
      QString        _logo;

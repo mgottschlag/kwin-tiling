@@ -56,6 +56,7 @@ KDMConfig::insertUsers( QIconView *iconview, QStringList s, bool sorted)
 	       QString username = QFile::decodeName ( ps->pw_name );
                if( CHECK_STRING(ps->pw_dir) &&
                    CHECK_STRING(ps->pw_shell) &&
+				(ps->pw_uid >= _low_user_id || ps->pw_uid == 0) &&
                    ( no_users.find( username ) == no_users.end())){
 		    // we might have a real user, insert him/her
 		    QPixmap p( locate("user_pic",
@@ -87,6 +88,7 @@ KDMConfig::insertUsers( QIconView *iconview, QStringList s, bool sorted)
 
 void KDMConfig::getConfig()
 {
+	_low_user_id = 0;
     kc = new KConfig( QString::fromLatin1("kdmrc") ); // kalle
     kc->setGroup( QString::fromLatin1("KDM") );
     
@@ -97,6 +99,7 @@ void KDMConfig::getConfig()
 
 	// Read low user ID
    QString low_user_id = kc->readEntry( QString::fromLatin1("UserIDLow") );
+	_low_user_id=low_user_id.toInt();
 
     QString greet_string = kc->readEntry( QString::fromLatin1("GreetString"));
     _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"));
