@@ -5,7 +5,6 @@
 
 class KSSMonitor : public QXEmbed
 {
-    Q_OBJECT
 public:
     KSSMonitor( QWidget *parent ) : QXEmbed( parent ) {}
 
