@@ -30,7 +30,7 @@
 
 #include <kurl.h>
 #include <kdebug.h>
-#include <kprotocolmanager.h>
+#include <kprotocolinfo.h>
 #include <kinstance.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -214,7 +214,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // Process URLs of known and supported protocols so we don't have
   // to resort to the pattern matching scheme below which can possibly
   // be slow things down...
-  QStringList protocols = KProtocolManager::self().protocols();
+  QStringList protocols = KProtocolInfo::protocols();
   for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
   {
     if( (cmd.left((*it).length()).lower() == *it) &&

@@ -23,7 +23,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kurl.h>
-#include <kprotocolmanager.h>
+#include <kprotocolinfo.h>
 #include <kinstance.h>
 #include <kglobal.h>
 
@@ -64,7 +64,7 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
     if (kurl.isMalformed())
         return false;
 
-    if (!KProtocolManager::self().protocols().contains(kurl.protocol())) {
+    if (!KProtocolInfo::isKnownProtocol(kurl.protocol())) {
 	QString query = QString::null;
 	int pos = -1;
 
