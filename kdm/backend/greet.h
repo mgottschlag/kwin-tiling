@@ -100,6 +100,7 @@ from the copyright holder.
 # define G_Ch_Exit		305
 #endif
 #define G_SessMan	4	/* start "session manager" */
+#define G_ConfShutdown	5	/* confirm forced shutdown */
 
 #ifdef XDMCP
 #define G_Ch_Refresh		10	/* XXX change */
@@ -118,16 +119,16 @@ from the copyright holder.
 #define G_DChoose	3	/* run chooser */
 #endif
 
-#define G_Shutdown	101	/* int how; int when; async */
+#define G_Shutdown	101	/* 5*int; async */
 # define SHUT_REBOOT	1	/* how */
 # define SHUT_HALT	2
-# define SHUT_SCHEDULE	0	/* when */
+# define SHUT_SCHEDULE	0	/* when; config only */
 # define SHUT_TRYNOW	1
 # define SHUT_FORCENOW	2
-# define SHUT_INTERACT	10
-# define SHUT_CANCEL	0
+# define SHUT_CANCEL	0	/* force */
 # define SHUT_FORCEMY	1
 # define SHUT_FORCE	2
+# define SHUT_ASK	3
 # define TO_INF		0x7fffffff
 #define G_SessionExit	102	/* int code; async */
 #define G_GetCfg	103	/* int what; int sts, <variable>  */
@@ -138,6 +139,8 @@ from the copyright holder.
 #define G_PutDmrc	108	/* str key, str value; async - newdmrc */
 #define G_Verify	109	/* str type; ..., int V_ret */
 #define G_VerifyRootOK	110	/* str type; ..., int V_ret */
+#define G_List		111	/* int all; ?*(str,int,str,str), int 0 */
+#define G_QueryShutdown	112	/* ; 5*int */
 
 /*
  * Command codes core -> config reader

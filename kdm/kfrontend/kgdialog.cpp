@@ -150,8 +150,10 @@ KGDialog::slotConsole()
 void
 KGDialog::slotShutdown()
 {
-    KDMShutdown k( winFrame );
-    k.exec();
+    if (_scheduledSd == SHUT_ALWAYS)
+	KDMShutdown::scheduleShutdown( this );
+    else
+	KDMSlimShutdown( this ).exec();
 }
 
 #include "kgdialog.moc"

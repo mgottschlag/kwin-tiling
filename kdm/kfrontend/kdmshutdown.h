@@ -34,35 +34,43 @@ class LiloInfo;
 class QLabel;
 class KPushButton;
 class QButtonGroup;
+class QGroupBox;
 class QComboBox;
+class QCheckBox;
+class QLineEdit;
 
-class KDMShutdown : public FDialog, public KGVerifyHandler {
+enum { Authed = QDialog::Accepted + 1, Schedule };
+
+class KDMShutdownBase : public FDialog, public KGVerifyHandler {
     Q_OBJECT
     typedef FDialog inherited;
 
 public:
-    KDMShutdown( QWidget *_parent = 0 );
-    ~KDMShutdown();
+    KDMShutdownBase( int _uid, QWidget *_parent );
+    virtual ~KDMShutdownBase();
 
-public slots:
-    void accept();
-    void slotTargetChanged();
-    void slotWhenChanged();
+protected slots:
+    virtual void accept();
+
+protected:
+    virtual void accepted();
+
+protected:
+    void updateNeedRoot();
+    void complete( QWidget *prevWidget );
+
+    QVBoxLayout		*box;
+    bool		mayNuke, doesNuke, mayOk, maySched;
+
+private slots:
+    void slotSched();
     void slotActivatePlugMenu();
 
 private:
-    void bye_bye();
-    
-    QButtonGroup	*howGroup, *whenGroup;
     KPushButton		*okButton, *cancelButton;
-    QRadioButton	*restart_rb, *force_rb, *try_rb;
+    QLabel		*rootlab;
     KGVerify		*verify;
-    int 		needRoot;
-#if defined(__linux__) && ( defined(__i386__)  || defined(__amd64__) )
-    LiloInfo		*liloInfo;
-    QComboBox		*targets;
-    int			defaultLiloTarget, oldLiloTarget;
-#endif
+    int 		needRoot, uid;
 
     static int		curPlugin;
     static PluginList	pluginList;
@@ -73,6 +81,53 @@ public: // from KGVerifyHandler
     virtual void verifyFailed();
     virtual void verifyRetry();
     virtual void verifySetUser( const QString &user );
+};
+
+
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+class LiloHandler {
+public:
+    LiloHandler();
+    ~LiloHandler();
+    void setupTargets( QWidget *parent );
+    void applyTarget();
+
+    LiloInfo		*liloInfo;
+    QComboBox		*targets;
+    int			defaultLiloTarget, oldLiloTarget;
+};
+#endif
+
+class KDMShutdown : public KDMShutdownBase
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+		  , public LiloHandler
+#endif
+{
+    Q_OBJECT
+    typedef KDMShutdownBase inherited;
+
+public:
+    KDMShutdown( int _uid, QWidget *_parent = 0 );
+    static void scheduleShutdown( QWidget *_parent = 0 );
+
+protected slots:
+    virtual void accept();
+
+protected:
+    virtual void accepted();
+
+private slots:
+    void slotTargetChanged();
+    void slotWhenChanged();
+
+private:
+    QButtonGroup	*howGroup;
+    QGroupBox		*schedGroup;
+    QRadioButton	*restart_rb;
+    QLineEdit		*le_start, *le_timeout;
+    QCheckBox		*cb_force;
+    int 		sch_st, sch_to;
+
 };
 
 class KDMRadioButton : public QRadioButton
@@ -89,6 +144,46 @@ private:
 signals:
     void doubleClicked();
 
+};
+
+class KDMSlimShutdown : public FDialog
+#if defined(__linux__) && (defined(__i386__) || defined(__amd64__))
+		      , public LiloHandler
+#endif
+{
+    Q_OBJECT
+    typedef FDialog inherited;
+
+public:
+    KDMSlimShutdown( QWidget *_parent = 0 );
+    static void externShutdown( int type, int uid );
+
+private slots:
+    void slotHalt();
+    void slotReboot();
+    void slotSched();
+
+private:
+    bool checkShutdown();
+
+};
+
+class KDMConfShutdown : public KDMShutdownBase {
+    Q_OBJECT
+    typedef KDMShutdownBase inherited;
+
+public:
+    KDMConfShutdown( int _uid, struct dpySpec *sess, QWidget *_parent = 0 );
+};
+
+class KDMCancelShutdown : public KDMShutdownBase {
+    Q_OBJECT
+    typedef KDMShutdownBase inherited;
+
+public:
+    KDMCancelShutdown(
+	int how, int start, int timeout, int force, int uid,
+	QWidget *_parent );
 };
 
 #endif /* KDMSHUTDOWN_H */

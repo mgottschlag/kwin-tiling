@@ -332,7 +332,9 @@ sd_cat (char **bp, SdRec *sdr)
 	str_cat (bp, "-1,");
     else
 	*bp += sprintf (*bp, "%d,", sdr->timeout);
-    if (sdr->force == SHUT_FORCE)
+    if (sdr->force == SHUT_ASK)
+	str_cat (bp, "ask");
+    else if (sdr->force == SHUT_FORCE)
 	str_cat (bp, "force");
     else if (sdr->force == SHUT_FORCEMY)
 	str_cat (bp, "forcemy");
@@ -546,7 +548,9 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    }
 		} else {
 		    sdr.timeout = 0;
-		    if (!strcmp (ar[2], "forcenow"))
+		    if (d && !strcmp (ar[2], "ask"))
+			sdr.force = SHUT_ASK;
+		    else if (!strcmp (ar[2], "forcenow"))
 			sdr.force = SHUT_FORCE;
 		    else if (!strcmp (ar[2], "schedule"))
 			sdr.timeout = TO_INF;
@@ -561,7 +565,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    if (d) {
 		sdr.uid = d->userSess >= 0 ? d->userSess : 0;
 		if (d->allowShutdown == SHUT_NONE ||
-		    (d->allowShutdown == SHUT_ROOT && sdr.uid))
+		    (d->allowShutdown == SHUT_ROOT && sdr.uid &&
+		     sdr.force != SHUT_ASK))
 		{
 		    fLog (d, fd, "perm", "shutdown forbidden");
 		    goto bust;

@@ -46,6 +46,15 @@ int GetCfgInt (int id);
 char *GetCfgStr (int id);
 char **GetCfgStrArr (int id, int *len);
 
+typedef struct dpySpec {
+    struct dpySpec *next;
+    char *display, *user, *session;
+    int vt;
+} dpySpec;
+
+dpySpec *fetchSessions( int all );
+void disposeSessions( dpySpec *sess );
+
 void freeStrArr (char **arr);
 
 void Debug (const char *fmt, ...);

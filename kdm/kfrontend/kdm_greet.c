@@ -294,6 +294,44 @@ GetCfgStrArr (int id, int *len)
     return GRecvStrArr (len);
 }
 
+dpySpec *
+fetchSessions( int all )
+{
+    dpySpec *sess, *sessions = 0;
+    char *disp;
+
+    GSet( 1 );
+    GSendInt( G_List );
+    GSendInt( all );
+    while ((disp = GRecvStr())) {
+	if (!(sess = malloc( sizeof(*sess) )))
+	    LogPanic ("Out of memory\n");
+	sess->display = disp;
+	sess->vt = GRecvInt();
+	sess->user = GRecvStr();
+	sess->session = GRecvStr();
+	sess->next = sessions;
+	sessions = sess;
+    }
+    GSet( 0 );
+    return sessions;
+}
+
+void
+disposeSessions( dpySpec *sess )
+{
+    while (sess) {
+	dpySpec *nsess = sess->next;
+	free( sess->display );
+	if (sess->user)
+	    free( sess->user );
+	if (sess->session)
+	    free( sess->session );
+	free( sess );
+	sess = nsess;
+    }
+}
+
 void
 freeStrArr (char **arr)
 {

@@ -706,7 +706,8 @@ processDPipe (struct display *d)
 static void
 processGPipe (struct display *d)
 {
-    int cmd;
+    struct display *di;
+    int cmd, all;
     GTalk dpytalk;
 
     dpytalk.pipe = &d->gpipe;
@@ -723,18 +724,31 @@ processGPipe (struct display *d)
     switch (cmd) {
     case G_Shutdown:
 	sdRec.how = GRecvInt ();
-	sdRec.force = 0;
-	sdRec.start = 0;
-	sdRec.timeout = 0;
-	switch (GRecvInt ()) {
-	case SHUT_FORCENOW:
-	    sdRec.force = SHUT_FORCE;
-	    break;
-	case SHUT_SCHEDULE:
-	    sdRec.timeout = TO_INF;
-	    break;
-	}
+	sdRec.start = GRecvInt ();
+	sdRec.timeout = GRecvInt ();
+	sdRec.force = GRecvInt ();
 	sdRec.uid = GRecvInt ();
+	break;
+    case G_QueryShutdown:
+	GSendInt (sdRec.how);
+	GSendInt (sdRec.start);
+	GSendInt (sdRec.timeout);
+	GSendInt (sdRec.force);
+	GSendInt (sdRec.uid);
+	break;
+    case G_List:
+	all = GRecvInt ();
+	for (di = displays; di; di = di->next)
+	    if ((di->status == running &&
+		 (di->displayType & d_location) == dLocal && all) ||
+		di->status == remoteLogin || di->userSess >= 0)
+	    {
+		GSendStr (di->name);
+		GSendInt (di->serverVT);
+		GSendStr (di->status == remoteLogin ? "" : di->userName);
+		GSendStr (di->sessName);
+	    }
+	GSendInt (0);
 	break;
     default:
 	LogError ("Internal error: unknown G_* command %d\n", cmd);
@@ -1463,15 +1477,23 @@ ExitDisplay (
     he->goodExit = goodExit;
     if (he->sdRec.how)
     {
-	if (!sdRec.how || sdRec.force != SHUT_FORCE ||
-	    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
-	      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
+	if (he->sdRec.force == SHUT_ASK &&
+	    (AnyActiveDisplays () || d->allowShutdown == SHUT_ROOT))
 	{
-	    sdRec = he->sdRec;
-	    if (now < sdRec.timeout || wouldShutdown ())
-		endState = DS_REMOVE;
+	    endState = DS_RESTART;
 	}
-	he->sdRec.how = 0;
+	else
+	{
+	    if (!sdRec.how || sdRec.force != SHUT_FORCE ||
+		!((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
+		  (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
+	    {
+		sdRec = he->sdRec;
+		if (now < sdRec.timeout || wouldShutdown ())
+		    endState = DS_REMOVE;
+	    }
+	    he->sdRec.how = 0;
+	}
     }
     if (d->status == zombie)
 	rStopDisplay (d, d->zstatus);

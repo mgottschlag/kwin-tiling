@@ -534,6 +534,17 @@ ManageSession (struct display *d)
 	/* NOTREACHED */
 #endif
 
+    if (d->hstent->sdRec.how) {
+	OpenGreeter ();
+	GSendInt (G_ConfShutdown);
+	GSendInt (d->hstent->sdRec.how);
+	GSendInt (d->hstent->sdRec.uid);
+	if (CtrlGreeterWait (TRUE) != G_Ready) {
+	    LogError ("Received unknown command %d from greeter\n", cmd);
+	    CloseGreeter (TRUE);
+	}
+    }
+
     if (AutoLogon ()) {
 	if (!StrDup (&curtype, "classic") || !Verify (conv_auto, FALSE))
 	    goto gcont;

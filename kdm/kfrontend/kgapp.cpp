@@ -23,6 +23,7 @@
     */
 
 #include "kdm_greet.h"
+#include "kdmshutdown.h"
 #include "kdmconfig.h"
 #include "kgapp.h"
 #include "kgreeter.h"
@@ -159,6 +160,13 @@ kg_main( const char *argv0 )
     for (;;) {
 	int rslt, cmd = GRecvInt();
     
+	if (cmd == G_ConfShutdown) {
+	    int how = GRecvInt(), uid = GRecvInt();
+	    KDMSlimShutdown::externShutdown( how, uid );
+	    GSendInt( G_Ready );
+	    continue;
+	}
+
 	if (cmd == G_ErrorGreet) {
 	    if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ) ))
 		break;

@@ -1685,23 +1685,17 @@ Comment: &
 Description:
  The default choice for the shutdown condition/timing.
 
-Key: InteractiveSd
-Type: bool
-Default: true
+Key: ScheduledSd
+Type: enum
+ Never/SHUT_NEVER: not at all
+ Optional/SHUT_OPTION: as a button in the simple shutdown dialogs
+ Always/SHUT_ALWAYS: instead of the simple shutdown dialogs
+Default: Never
 User: greeter
-Instance: #*/!
-Comment:
- Whether to do the shutdown condition/timing choice on demand or in advance.
- BUG: currently this equals AllowSdForceNow=true & DefaultSdMode=ForceNow!
+Instance: #*/Optional
+Comment: &
 Description:
- If disabled, the user must select the shutdown condition/timing already
- in the shutdown dialog. Otherwise he won't be bothered with the options,
- but will be asked what to do if there are active sessions actually.
- </para><para>
- BUG: the interaction is currently not implemented. If this option is
- enabled, a normal forced shutdown will be performed (without caring for 
- <option>AllowSdForceNow</option>!), i.e., &kdm; will behave exactly as
- before &kde; 3.0.
+ How to offer shutdown scheduling options:
 
 Key: NoPassEnable
 Type: bool
