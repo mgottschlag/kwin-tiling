@@ -821,19 +821,20 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 
 void KMultiWallpaperDialog::slotAdd()
 {
-    KFileDialog fileDialog(QString::null, "*", this, "fileDialog", true);
+    KFileDialog fileDialog(QString::null, QString::null, this, "fileDialog", true);
 
     fileDialog.setCaption(i18n("Select"));
     KFile::Mode mode = static_cast<KFile::Mode> (KFile::File |
                                                  KFile::Directory |
-                                                 KFile::ExistingOnly);
+                                                 KFile::ExistingOnly |
+                                                 KFile::LocalOnly);
     fileDialog.setMode(mode);
     fileDialog.exec();
     KURL url = fileDialog.selectedFile();
     if (url.isEmpty())
 	return;
 
-    m_pListBox->insertItem(url.url());
+    m_pListBox->insertItem(url.path());
 }
 
 
