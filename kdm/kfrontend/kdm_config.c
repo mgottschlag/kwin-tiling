@@ -1468,7 +1468,7 @@ Debug ("read console %s\n", atPos);
 	word = ReadWord (&file, &len, TRUE);
 	if (word && !strcmp (word, "reserve")) {
 Debug ("display is reserve\n");
-	    (*serverPtr)->type = (*serverPtr)->type & ~d_lifetime | dReserve;
+	    (*serverPtr)->type = ((*serverPtr)->type & ~d_lifetime) | dReserve;
 	    word = ReadWord (&file, &len, TRUE);
 	}
 	(*serverPtr)->argc = 0;

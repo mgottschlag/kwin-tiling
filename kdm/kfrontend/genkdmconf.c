@@ -1279,7 +1279,6 @@ P_Prog (const char *sect, const char *key, char **value)
 static void 
 P_authDir (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **value)
 {
-    struct stat st;
     int l;
 
     l = strlen (*value);

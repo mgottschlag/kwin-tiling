@@ -311,14 +311,12 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     hbox2->addStretch( 1);
 
-    int sbw = 0;
     if (kdmcfg->_allowShutdown != SHUT_NONE)
     {
 	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
 	connect( shutdownButton, SIGNAL(clicked()),
 		 SLOT(shutdown_button_clicked()));
 	hbox2->addWidget( shutdownButton);
-	sbw = shutdownButton->width();
     }
 
     timer = new QTimer( this );
@@ -663,12 +661,9 @@ extern "C" void
 kg_main(int argc, char **argv)
 {
     kde_have_kipc = false;
-    // !! DO NOT COMMENT OUT THE DCOP REGISTRATION DISABLING LINE BELOW !!
-    // it happened a few times already and it's very annoying cause it
-    // completely breaks the greeter. the dcopclient tries to register,
-    // sees no $HOME is set and aborts the process right away
-    // (Simon)
+#if QT_VERSION >= 300
     KApplication::disableAutoDcopRegistration();
+#endif
     MyApp myapp(argc, argv);
 
     kdmcfg = new KDMConfig();

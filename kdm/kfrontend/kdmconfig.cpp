@@ -73,7 +73,6 @@ QStringList GetCfgQStrList (int id)
 // Based on kconfigbase.cpp
 QFont KDMConfig::Str2Font (QString aValue)
 {
-    bool chOldEntry;
     uint nFontBits;
     QFont aRetFont;
     QString chStr;
