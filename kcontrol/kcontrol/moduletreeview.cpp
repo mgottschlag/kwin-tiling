@@ -126,6 +126,11 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   ModuleTreeItem *item;
   
   item = static_cast<ModuleTreeItem*>(firstChild());
+
+  // collapse all
+  QList<QListViewItem> parents;
+  expandItem(firstChild(), &parents);
+
   setOpen(item, true);
 
   QStringList::ConstIterator it;
