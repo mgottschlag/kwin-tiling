@@ -372,7 +372,7 @@ KScreenSaver::~KScreenSaver()
     {
         if (mPreviewProc->isRunning())
         {
-            int pid = mPreviewProc->getPid();
+            int pid = mPreviewProc->pid();
             mPreviewProc->kill( );
             waitpid(pid, (int *) 0,0);
         }

@@ -558,7 +558,7 @@ void LockProcess::startSaver()
     move(0, 0);
     show();
     setCursor( blankCursor );
-    
+
     raise();
     XSync(qt_xdisplay(), False);
     if (!child_saver)
@@ -642,7 +642,7 @@ bool LockProcess::startHack()
         if (mHackProc.start() == true)
         {
 #ifdef HAVE_SETPRIORITY
-            setpriority(PRIO_PROCESS, mHackProc.getPid(), mPriority);
+            setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
             return true;
         }
