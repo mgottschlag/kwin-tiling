@@ -54,7 +54,7 @@ public:
         } else if ( i ) {
             return i18n("The %1 configuration group. Click to open it.").arg( i->text(0) );
         }
-        return i18n("This treeview display all available control modules. Click on one of the modules to receive more detailed information.");
+        return i18n("This treeview displays all available control modules. Click on one of the modules to receive more detailed information.");
     }
 
 private:
