@@ -22,9 +22,14 @@
  */
 
 
+#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmodule.h>
+#include <ksimpleconfig.h>
+
+
+#include <X11/Xlib.h>
 
 
 #include "syssound.h"
@@ -37,6 +42,24 @@ extern "C"
   { 
     KGlobal::locale()->insertCatalogue("kcmsyssound");
     return new KSoundWidget(parent, name);
+  }
+
+  void init_sound()
+  {
+    XKeyboardState kbd;
+    XKeyboardControl kbdc;
+
+    XGetKeyboardControl(kapp->getDisplay(), &kbd);
+  
+    KSimpleConfig config("kwmsoundrc");
+    config.setGroup("Bell");
+  
+    kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
+    kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
+    kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
+    XChangeKeyboardControl(kapp->getDisplay(),
+			   KBBellPercent | KBBellPitch | KBBellDuration,
+			   &kbdc);    
   }
 
 }
