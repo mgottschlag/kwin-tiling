@@ -30,6 +30,7 @@
 */
 
 #include <qheader.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -333,6 +334,7 @@ void KInfoListWidget::defaults()
 
     delete lBox;
     lBox  = new QListView(this);
+    QWhatsThis::add( lBox, i18n( "This list displays system information on the selected category." ) );
 
     if (lBox) {
 	lBox->setFont(KGlobalSettings::generalFont()); /* default font */
@@ -379,6 +381,12 @@ void KInfoListWidget::defaults()
         NoInfoText->move( width()/2,height()/2 ); // -120 -30
         NoInfoText->adjustSize();
     }
+}
+
+
+QString KInfoListWidget::quickHelp() const
+{
+  return i18n( "All the information modules return information about a certain aspect of your computer hardware or your operating system. Not all modules are available on all hardware architectures and/or operating systems." );
 }
 
 

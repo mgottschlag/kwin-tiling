@@ -36,6 +36,8 @@ public:
   KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
   virtual void defaults();
+
+  QString quickHelp() const;
   
 private:
   QListView 	*lBox;
