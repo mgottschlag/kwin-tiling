@@ -264,6 +264,10 @@ UtmpNotify (int n)
 
 enum utState { UtWait, UtActive };
 
+#ifndef UT_LINESIZE
+#define UT_LINESIZE 32
+#endif
+
 struct utmps {
     struct utmps *next;
     struct display *d;
@@ -291,9 +295,9 @@ CheckUtmp (void)
     struct stat st;
     struct utmp ut;
 
-    if (stat(_PATH_UTMP, &st))
+    if (stat(UTMP_FILE, &st))
     {
-	LogError (_PATH_UTMP " not found - cannot use console mode\n");
+	LogError (UTMP_FILE " not found - cannot use console mode\n");
 	return 0;
     }
     if (!utmpList)
@@ -303,14 +307,14 @@ CheckUtmp (void)
     {
 	int fd;
 
-	Debug ("Rescanning " _PATH_UTMP "\n");
+	Debug ("Rescanning " UTMP_FILE "\n");
 #ifdef CSRG_BASED
 	for (utp = utmpList; utp; utp = utp->next)
 	    utp->checked = 0;
 #endif
-	if ((fd = open (_PATH_UTMP, O_RDONLY)) < 0)
+	if ((fd = open (UTMP_FILE, O_RDONLY)) < 0)
 	{
-	    LogError ("Cannot open " _PATH_UTMP " - cannot use console mode\n");
+	    LogError ("Cannot open " UTMP_FILE " - cannot use console mode\n");
 	    return 0;
 	}
 	while ((cnt = Reader (fd, &ut, sizeof(ut))) == sizeof(ut))

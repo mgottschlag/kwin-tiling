@@ -10,7 +10,7 @@ bin_PROGRAMS = kdm
 EXTRA_PROGRAMS = greetest
 greetest_SOURCES = greetest.c
 
-DBGFLAGS = -g
+DBGFLAGS =
 AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) $(DBGFLAGS)
 
 # this is for static linking - inserted into KDM_GREET_LIBS by configure
