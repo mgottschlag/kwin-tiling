@@ -31,6 +31,7 @@
 #include <kconfig.h>
 #include <kshortcutlist.h>
 #include <kkeybutton.h>
+#include <kkeydialog.h>
 
 #include "kcmkhotkeys.h"
 #include "windowdef_list_widget.h"
@@ -215,8 +216,6 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
     lay->addWidget( bt, 0 , Qt::AlignHCenter );
     lay->addStretch();
     clear_data();
-    // KHotKeys::Module::changed()
-    connect( bt, SIGNAL( capturedShortcut( const KShortcut& )), module, SLOT( changed()));
     connect( bt, SIGNAL( capturedShortcut( const KShortcut& )),
         this, SLOT( capturedShortcut( const KShortcut& )));
     }
@@ -228,7 +227,11 @@ void Shortcut_trigger_widget::clear_data()
 
 void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
     {
-    // CHECKME some checks?
+    if( KKeyChooser::checkGlobalShortcutsConflict( s_P, true, topLevelWidget())
+        || KKeyChooser::checkStandardShortcutsConflict( s_P, true, topLevelWidget()))
+        return;
+    // KHotKeys::Module::changed()
+    module->changed();
     bt->setShortcut( s_P, false );
     }
 

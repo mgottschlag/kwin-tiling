@@ -37,6 +37,7 @@
 #include <kurlrequester.h>
 #include <kfiledialog.h>
 #include <kcombobox.h>
+#include <kkeydialog.h>
 #include "khotkeys.h"
 
 #include "menuinfo.h"
@@ -372,6 +373,10 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
 {
     if (signalsBlocked())
        return;
+
+    if( KKeyChooser::checkGlobalShortcutsConflict( cut, true, topLevelWidget())
+        || KKeyChooser::checkStandardShortcutsConflict( cut, true, topLevelWidget()))
+        return;
 
     if ( KHotKeys::present() )
     {
