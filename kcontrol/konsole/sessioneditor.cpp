@@ -63,6 +63,7 @@ SessionEditor::~SessionEditor()
 
 void SessionEditor::show()
 {
+  removeButton->setEnabled(sessionList->count()>1);
   if (! loaded) {
     loadAllKeytab();
     loadAllSession();
@@ -71,7 +72,6 @@ void SessionEditor::show()
     loaded = true;
   }
   SessionDialog::show();
-  removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::loadAllKeytab()
@@ -112,6 +112,7 @@ QString SessionEditor::readKeymapTitle(const QString & file)
 
   if (fPath.isNull())
     fPath = locate("data", file);
+  removeButton->setEnabled( QFileInfo (fPath).isWritable () );
 
   if (fPath.isNull())
     return 0;
@@ -180,9 +181,9 @@ void SessionEditor::readSession(int num)
         connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
         sesMod=false;
     }
-
     if(sessionFilename.at(num))
     {
+        removeButton->setEnabled( QFileInfo (*sessionFilename.at(num)).isWritable () );
         co = new KSimpleConfig(*sessionFilename.at(num),TRUE);
 
         co->setDesktopGroup();
@@ -331,10 +332,10 @@ void SessionEditor::removeCurrent()
       i18n("Error Removing Session"));
     return;
   }
+  removeButton->setEnabled(sessionList->count()>1);
   loadAllSession();
   readSession(0);
   sessionList->setCurrentItem(0);
-  removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::sessionModified()
