@@ -44,7 +44,7 @@ protected:
 static int echoMode;
 
 KClassicGreeter::KClassicGreeter(
-	KGreeterPluginHandler *_handler, QWidget *parent, QWidget *predecessor,
+	KGreeterPluginHandler *_handler, QWidget *parent, QWidget *pred,
 	const QString &_fixedEntity, Function _func, Context _ctx ) :
     QObject(),
     KGreeterPlugin( _handler ),
@@ -57,7 +57,6 @@ KClassicGreeter::KClassicGreeter(
 {
     QGridLayout *grid = new QGridLayout( 0, 0, 10 );
     layoutItem = grid;
-    QWidget *pred = predecessor;
     int line = 0;
 
     loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
