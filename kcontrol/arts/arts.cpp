@@ -88,7 +88,7 @@ createArgs(bool netTrans, bool duplex, int responseTime, QString deviceName)
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-    setButtons(Cancel|Apply|Ok);
+    setButtons(Reset|Default|Cancel|Apply|Ok);
 
     QVBoxLayout *layout = new QVBoxLayout(this, 10);
 
@@ -254,7 +254,7 @@ void KArtsModule::defaults()
     networkTransparent->setChecked(false);
     x11Comm->setChecked(false);
     fullDuplex->setChecked(false);
-    responseButton[1]->setChecked(true);
+    responseButton[2]->setChecked(true);
 	customDevice->setChecked(false);
 	deviceName->setText("");
 }
