@@ -19,7 +19,7 @@
 #include <kcharsets.h>
 #include <kpixmap.h>
 
-#define MAX_HOTSPOTS   19
+#define MAX_HOTSPOTS   28
 #define SCROLLBAR_SIZE 16
 
 class HotSpot
@@ -38,7 +38,9 @@ class WidgetCanvas : public QWidget
 	Q_OBJECT
 public:
 	WidgetCanvas( QWidget *parent=0, const char *name=0 );
-	void drawSampleWidgets();
+        void drawSampleWidgets();
+        void resetTitlebarPixmaps(const QColor &active,
+                                  const QColor &inactive);
 	QPixmap smplw;
 	
 	QColor iaTitle;
@@ -54,7 +56,14 @@ public:
 	QColor window;
 	QColor windowTxt;
 	QColor button;
-	QColor buttonTxt;
+        QColor buttonTxt;
+        QColor aTitleBtn;
+        QColor iTitleBtn;
+        QColor aTitleBtnBack;
+        QColor iTitleBtnBack;
+        QColor aTitleBtnBlend;
+        QColor iTitleBtnBlend;
+
 	
 	int contrast;
 

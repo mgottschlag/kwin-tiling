@@ -1,0 +1,23 @@
+[Color Scheme]
+activeBackground=192,192,192
+activeBlend=192,192,192
+activeForeground=0,0,0
+activeTitleBtnBg=192,192,192
+activeTitleBtnBlend=0,0,0
+activeTitleBtnFg=174,200,221
+background=192,192,192
+buttonBackground=192,192,192
+buttonForeground=0,0,0
+contrast=4
+foreground=0,0,0
+inactiveBackground=192,192,192
+inactiveBlend=192,192,192
+inactiveForeground=128,128,128
+inactiveTitleBtnBg=192,192,192
+inactiveTitleBtnBlend=0,0,0
+inactiveTitleBtnFg=174,200,221
+name=System
+selectBackground=0,0,128
+selectForeground=255,255,255
+windowBackground=255,255,255
+windowForeground=0,0,0

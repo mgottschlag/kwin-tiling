@@ -168,7 +168,14 @@ KColorScheme::KColorScheme(QWidget *parent, Mode m)
 	wcCombo->insertItem(  i18n("Window background") );
 	wcCombo->insertItem(  i18n("Window text") );
 	wcCombo->insertItem(  i18n("Button background") );
-	wcCombo->insertItem(  i18n("Button text") );
+        wcCombo->insertItem(  i18n("Button text") );
+        wcCombo->insertItem(  i18n("Active title button") );
+        wcCombo->insertItem(  i18n("Inactive title button") );
+        wcCombo->insertItem(  i18n("Active title button background") );
+        wcCombo->insertItem(  i18n("Inactive title button background") );
+        wcCombo->insertItem(  i18n("Active title button blend") );
+        wcCombo->insertItem(  i18n("Inactive title button blend") );
+
 	wcCombo->adjustSize();
 	connect( wcCombo, SIGNAL( activated(int) ),
 			SLOT( slotWidgetColor(int)  )  );
@@ -263,7 +270,14 @@ void KColorScheme::slotSave( )
 	config->writeEntry( "contrast", cs->contrast );
 	config->writeEntry( "buttonForeground", cs->buttonTxt );
 	config->writeEntry( "buttonBackground", cs->button );
-	
+        config->writeEntry( "activeTitleBtnFg", cs->aTitleBtn);
+        config->writeEntry( "inactiveTitleBtnFg", cs->iTitleBtn);
+        config->writeEntry( "activeTitleBtnBg", cs->aTitleBtnBack);
+        config->writeEntry( "inactiveTitleBtnBg", cs->iTitleBtnBack);
+        config->writeEntry( "activeTitleBtnBlend", cs->aTitleBtnBlend);
+        config->writeEntry( "inactiveTitleBtnBlend", cs->iTitleBtnBlend);
+        
+        
 	config->sync();
 	
 	saveBt->setEnabled( FALSE );
@@ -431,6 +445,18 @@ void KColorScheme::slotSelectColor( const QColor &col )
 					break;
 		case 14:	cs->buttonTxt = colorPushColor;
 					break;
+		case 15:	cs->aTitleBtn = colorPushColor;
+					break;
+		case 16:	cs->iTitleBtn = colorPushColor;
+					break;
+		case 17:	cs->aTitleBtnBack = colorPushColor;
+					break;
+		case 18:	cs->iTitleBtnBack = colorPushColor;
+					break;
+		case 19:	cs->aTitleBtnBlend = colorPushColor;
+					break;
+		case 20:	cs->iTitleBtnBlend = colorPushColor;
+					break;
 	}
 	
 	cs->drawSampleWidgets();
@@ -482,6 +508,18 @@ void KColorScheme::slotWidgetColor( int indx )
 					break;
 		case 14:	col = cs->buttonTxt;
 					break;
+		case 15:	col = cs->aTitleBtn;
+					break;
+		case 16:	col = cs->iTitleBtn;
+					break;
+		case 17:	col = cs->aTitleBtnBack;
+					break;
+		case 18:	col = cs->iTitleBtnBack;
+					break;
+		case 19:	col = cs->aTitleBtnBlend;
+					break;
+		case 20:	col = cs->iTitleBtnBlend;
+					break;
 	}
 
 	colorButton->setColor( col );
@@ -526,6 +564,13 @@ void KColorScheme::readScheme( int index )
     cs->aBlend = black;
     cs->button = cs->back;
     cs->buttonTxt = cs->txt;
+    cs->aTitleBtn = lightGray;
+    cs->iTitleBtn = lightGray;
+    cs->aTitleBtnBack = lightGray;
+    cs->iTitleBtnBack = lightGray;
+    cs->aTitleBtnBlend = lightGray;
+    cs->iTitleBtnBlend = lightGray;
+    
     cs->contrast = 7;
 
     return;
@@ -585,6 +630,25 @@ void KColorScheme::readScheme( int index )
   cs->aBlend =
     config->readColorEntry( "activeBlend", &black );
 
+  cs->aTitleBtn =
+      config->readColorEntry( "activeTitleBtnFg", &cs->back );
+
+  cs->iTitleBtn =
+      config->readColorEntry( "inactiveTitleBtnFg", &cs->back );
+
+  cs->aTitleBtnBack =
+      config->readColorEntry( "activeTitleBtnBg", &cs->back );
+
+  cs->iTitleBtnBack =
+      config->readColorEntry( "inactiveTitleBtnBg", &cs->back );
+
+  cs->aTitleBtnBlend =
+      config->readColorEntry( "activeTitleBtnBlend", &cs->back );
+
+  cs->iTitleBtnBlend =
+      config->readColorEntry( "inactiveTitleBtnBlend", &cs->back );
+
+  
   if ( index == 0 ) config->setGroup( "KDE" );
 
   cs->contrast =
@@ -674,6 +738,12 @@ void KColorScheme::writeSettings()
   sys->writeEntry("activeBackground", cs->aTitle, true, true);
   sys->writeEntry("activeBlend", cs->aBlend, true, true);
   sys->writeEntry("inactiveForeground", cs->iaTxt, true, true);
+  sys->writeEntry("activeTitleBtnFg", cs->aTitleBtn, true, true);
+  sys->writeEntry("inactiveTitleBtnFg", cs->iTitleBtn, true, true);
+  sys->writeEntry("activeTitleBtnBg", cs->aTitleBtnBack, true, true);
+  sys->writeEntry("inactiveTitleBtnBg", cs->iTitleBtnBack, true, true);
+  sys->writeEntry("activeTitleBtnBlend", cs->aTitleBtnBlend, true, true);
+  sys->writeEntry("inactiveTitleBtnBlend", cs->iTitleBtnBlend, true, true);
 
   sys->setGroup( "KDE" );
   sys->writeEntry("contrast", cs->contrast, true, true);

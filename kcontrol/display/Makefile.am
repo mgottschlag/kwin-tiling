@@ -17,7 +17,7 @@ METASOURCES = AUTO
 
 noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h \
 		general.h widgetcanvas.h fonts.h energy.h bgdialogs.h \
-		advanced.h
+		advanced.h stdclient_bitmaps.h
 
 EXTRA_DIST = README
 
