@@ -901,7 +901,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
             QString     thumbUrl;
             QTextStream stream(&file);
 
-            stream >> thumbUrl;
+            thumbUrl=stream.readLine();
             isThumbnailUrl=0==thumbUrl.find(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KURL(thumbUrl), faceNo, all);
             file.close();
         }
