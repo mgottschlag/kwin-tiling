@@ -88,10 +88,6 @@ save these options to .dmrc?
 - support lilo -A mode
 - support grub (#63800)
 
-- set LC_ALL in the backend for i18n-capable PAM libs - does one exist?
-  alternative hack: interpret PAM's messages. generalizing that to the
-  non-PAM case, the V_* marshalling overhead would go away.
-
 - add language selection (export as LC_*). kde should respect this until the
   language is explicitly configured. and later? option "use system setting"?
   (#55379, #63804)
@@ -215,6 +211,7 @@ thoughts (not really todo):
   button somewhere. relates #63401, #61492
 - pipe .xsession-errors through the daemon and put a size limit on it.
   remove old logs in disk-full situation.
+- set LC_ALL in the backend for i18n-capable PAM libs - does one exist?
 
 
 last sync with XFree86 HEAD: 2004-04-02

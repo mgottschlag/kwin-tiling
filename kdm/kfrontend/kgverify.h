@@ -146,8 +146,8 @@ private:
     bool		authTok, hasBegun;
 
     static void VMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
-    static bool handleNTVerify( QWidget *parent, int ret, const QString &user );
-    static bool handleTVerify( QWidget *parent, int ret, const QString &user );
+    static void VErrBox( QWidget *parent, const QString &user, const char *msg );
+    static void VInfoBox( QWidget *parent, const QString &user, const char *msg );
 
     static QValueVector<GreeterPluginHandle> greetPlugins;
 

@@ -126,10 +126,19 @@ static char krbtkfile[MAXPATHLEN];
 # endif
 #endif
 
-#define V_RET(e) \
+#define V_RET_AUTH \
 	do { \
 		PrepErrorGreet (); \
-		GSendInt (e); \
+		GSendInt (V_AUTH); \
+		return 0; \
+	} while(0)
+
+#define V_RET_FAIL(m) \
+	do { \
+		PrepErrorGreet (); \
+		GSendInt (V_MSG_ERR); \
+		GSendStr (m); \
+		GSendInt (V_FAIL); \
 		return 0; \
 	} while(0)
 
@@ -315,7 +324,7 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	  pam_bail2:
 	    ReInitErrorLog ();
 	    LogError ("PAM error: %s\n", pam_strerror (pamh, pretc));
-	    V_RET (V_ERROR);
+	    V_RET_FAIL (0);
 	}
 	if ((pretc = pam_set_item (pamh, PAM_USER, curuser)) != PAM_SUCCESS)
 	    goto pam_bail;
@@ -361,9 +370,9 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	case PAM_AUTH_ERR:
 	case PAM_MAXTRIES: /* should handle this better ... */
 	case PAM_AUTHINFO_UNAVAIL: /* returned for unknown users ... bogus */
-	    V_RET (V_AUTH);
+	    V_RET_AUTH;
 	default:
-	    V_RET (V_ERROR);
+	    V_RET_FAIL (0);
 	}
     }
     return 1;
@@ -440,6 +449,8 @@ Verify (GConvFunc gconv, int rootok)
 #else
     struct stat		st;
     const char		*nolg;
+    char		*buf;
+    int			fd;
 # ifdef HAVE_GETUSERSHELL
     char		*s;
 # endif
@@ -533,12 +544,15 @@ Verify (GConvFunc gconv, int rootok)
 	    if (msg)
 		free (msg);
 	    loginfailed (curuser, hostname, tty);
-	    V_RET (i == ENOENT || i == ESAD ? V_AUTH : V_ERROR);
+	    if (i == ENOENT || i == ESAD)
+		V_RET_AUTH;
+	    else
+		V_RET_FAIL (0);
 	}
 	if (reenter) {
 	    LogError ("authenticate() requests more data: %s\n", msg);
 	    free (msg);
-	    V_RET (V_ERROR);
+	    V_RET_FAIL (0);
 	}
     } else if (!strcmp (curtype, "generic")) {
 	if (!gconv (GCONV_USER, 0))
@@ -550,7 +564,10 @@ Verify (GConvFunc gconv, int rootok)
 		if (msg)
 		    free (msg);
 		loginfailed (curuser, hostname, tty);
-		V_RET (i == ENOENT || i == ESAD ? V_AUTH : V_ERROR);
+		if (i == ENOENT || i == ESAD)
+		    V_RET_AUTH;
+		else
+		    V_RET_FAIL (0);
 	    }
 	    if (curret)
 		free (curret);
@@ -562,7 +579,7 @@ Verify (GConvFunc gconv, int rootok)
 	}
     } else {
 	LogError ("Unsupported authentication type %\"s requested\n", curtype);
-	V_RET (V_ERROR);
+	V_RET_FAIL (0);
     }
     if (msg) {
 	PrepErrorGreet ();
@@ -577,7 +594,7 @@ Verify (GConvFunc gconv, int rootok)
 
     if (strcmp (curtype, "classic")) {
 	LogError ("Unsupported authentication type %\"s requested\n", curtype);
-	V_RET (V_ERROR);
+	V_RET_FAIL (0);
     }
 
     if (!gconv (GCONV_USER, 0))
@@ -585,12 +602,12 @@ Verify (GConvFunc gconv, int rootok)
 
     if (!(p = getpwnam (curuser))) {
 	Debug ("getpwnam() failed.\n");
-	V_RET (V_AUTH);
+	V_RET_AUTH;
     }
 # ifdef linux	/* only Linux? */
     if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
 	Debug ("account is locked\n");
-	V_RET (V_AUTH);
+	V_RET_AUTH;
     }
 # endif
 
@@ -604,7 +621,7 @@ Verify (GConvFunc gconv, int rootok)
     if (!*p->pw_passwd) {
 	if (!td->allowNullPasswd) {
 	    Debug ("denying user with empty password\n");
-	    V_RET (V_AUTH);
+	    V_RET_AUTH;
 	}
 	goto nplogin;
     }
@@ -628,7 +645,7 @@ Verify (GConvFunc gconv, int rootok)
 
 	if (krb_get_lrealm (realm, 1)) {
 	    LogError ("Can't get KerberosIV realm.\n");
-	    V_RET (V_ERROR);
+	    V_RET_FAIL (0);
 	}
 
 	sprintf (krbtkfile, "%s.%.*s", TKT_ROOT, MAXPATHLEN - strlen(TKT_ROOT) - 2, td->name);
@@ -644,7 +661,7 @@ Verify (GConvFunc gconv, int rootok)
 	    LogError ("KerberosIV verification failure %\"s for %s\n",
 		      krb_get_err_text (ret), curuser);
 	    krbtkfile[0] = '\0';
-	    V_RET (V_ERROR);
+	    V_RET_FAIL (0);
 	}
 	Debug ("KerberosIV verify failed: %s\n", krb_get_err_text (ret));
     }
@@ -658,7 +675,7 @@ Verify (GConvFunc gconv, int rootok)
 # endif
     {
 	Debug ("password verify failed\n");
-	V_RET (V_AUTH);
+	V_RET_AUTH;
     }
 
   done:
@@ -670,12 +687,12 @@ Verify (GConvFunc gconv, int rootok)
 #if defined(USE_PAM) || defined(AIXV3)
     if (!(p = getpwnam (curuser))) {
 	LogError ("getpwnam(%s) failed.\n", curuser);
-	V_RET (V_ERROR);
+	V_RET_FAIL (0);
     }
 #endif
     if (!p->pw_uid) {
 	if (!rootok && !td->allowRootLogin)
-	    V_RET (V_NOROOT);
+	    V_RET_FAIL ("Root logins are not allowed.");
 	return 1;	/* don't deny root to log in */
     }
 
@@ -708,14 +725,14 @@ Verify (GConvFunc gconv, int rootok)
 	    if (pretc == PAM_SUCCESS)
 		break;
 	    /* effectively there is only PAM_AUTHTOK_ERR */
-	    GSendInt (V_RETRY);
+	    GSendInt (V_FAIL);
 	}
 	if (curpass)
 	    free (curpass);
 	curpass = newpass;
 	newpass = 0;
     } else if (pretc != PAM_SUCCESS)
-	V_RET (V_AUTH);
+	V_RET_AUTH;
 
 #elif defined(AIXV3)	/* USE_PAM */
 
@@ -744,7 +761,7 @@ Verify (GConvFunc gconv, int rootok)
 	if (!(s = getusershell ())) {
 	    Debug ("shell not in /etc/shells\n");
 	    endusershell ();
-	    V_RET (V_BADSHELL);
+	    V_RET_FAIL ("Your login shell is not listed in /etc/shells");
 	}
 	if (!strcmp (s, p->pw_shell)) {
 	    endusershell ();
@@ -760,7 +777,7 @@ Verify (GConvFunc gconv, int rootok)
     lc = login_getpwclass (p);
 #  endif
     if (!lc)
-	V_RET (V_ERROR);
+	V_RET_FAIL (0);
 # endif
 
 
@@ -778,8 +795,23 @@ Verify (GConvFunc gconv, int rootok)
 	 !stat ((nolg = _PATH_NOLOGIN), &st)))
     {
 	PrepErrorGreet ();
-	GSendInt (V_NOLOGIN);
-	GSendStr (nolg);
+	GSendInt (V_MSG_ERR);
+	if (st.st_size && (fd = open (nolg, O_RDONLY)) >= 0) {
+	    if ((buf = Malloc (st.st_size + 1))) {
+		if (read (fd, buf, st.st_size) == st.st_size) {
+		    buf[st.st_size] = 0;
+		    GSendStr (buf);
+		    free (buf);
+		    close (fd);
+		    GSendInt (V_FAIL);
+		    LC_RET0;
+		}
+		free (buf);
+	    }
+	    close (fd);
+	}
+	GSendStr ("Logins are not allowed at the moment.\nTry again later");
+	GSendInt (V_FAIL);
 	LC_RET0;
     }
 
@@ -790,7 +822,9 @@ Verify (GConvFunc gconv, int rootok)
 	struct stat st;
 	if (!*p->pw_dir || stat (p->pw_dir, &st) || st.st_uid != p->pw_uid) {
 	    PrepErrorGreet ();
-	    GSendInt (V_NOHOME);
+	    GSendInt (V_MSG_ERR);
+	    GSendStr ("Home folder not available");
+	    GSendInt (V_FAIL);
 	    LC_RET0;
 	}
     }
@@ -802,7 +836,9 @@ Verify (GConvFunc gconv, int rootok)
 #  ifdef HAVE_AUTH_TIMEOK
     if (!auth_timeok (lc, time (NULL))) {
 	PrepErrorGreet ();
-	GSendInt (V_BADTIME);
+	GSendInt (V_MSG_ERR);
+	GSendStr ("You are not allowed to login at the moment");
+	GSendInt (V_FAIL);
 	LC_RET0;
     }
 #  endif
@@ -844,12 +880,21 @@ Verify (GConvFunc gconv, int rootok)
 #  endif
 	    if (tim > expir) {
 		PrepErrorGreet ();
-		GSendInt (V_AEXPIRED);
+		GSendInt (V_MSG_ERR);
+		GSendStr ("Your account has expired;"
+			  " please contact your system administrator");
+		GSendInt (V_FAIL);
 		LC_RET0;
 	    } else if (tim > (expir - warntime) && !quietlog) {
-		PrepErrorGreet ();
-		GSendInt (V_AWEXPIRE);
-		GSendInt (expir - tim);
+		ASPrintf (&buf,
+			  "Warning: your account will expire in %d day(s)",
+			  expir - tim);
+		if (buf) {
+		    PrepErrorGreet ();
+		    GSendInt (V_MSG_INFO);
+		    GSendStr (buf);
+		    free (buf);
+		}
 	    }
 	}
 
@@ -859,28 +904,41 @@ Verify (GConvFunc gconv, int rootok)
 #  else
 	if (!sp->sp_lstchg) {
 	    PrepErrorGreet ();
-	    GSendInt (V_PFEXPIRED);
+	    GSendInt (V_MSG_ERR);
+	    GSendStr ("You are required to change your password immediately"
+		      " (root enforced)");
 	    /* XXX todo password change */
-	    GSendInt (V_AUTH);
+	    GSendInt (V_FAIL);
 	    LC_RET0;
 	} else if (sp->sp_max != -1) {
 	    expir = sp->sp_lstchg + sp->sp_max;
 	    if (sp->sp_inact != -1 && tim > expir + sp->sp_inact) {
 		PrepErrorGreet ();
-		GSendInt (V_APEXPIRED);
+		GSendInt (V_MSG_ERR);
+		GSendStr ("Your account has expired;"
+			  " please contact your system administrator");
+		GSendInt (V_FAIL);
 		LC_RET0;
 	    }
 #  endif
 	    if (tim > expir) {
 		PrepErrorGreet ();
-		GSendInt (V_PEXPIRED);
+		GSendInt (V_MSG_ERR);
+		GSendStr ("You are required to change your password immediately"
+			  " (password aged)");
 		/* XXX todo password change */
-		GSendInt (V_AUTH);
+		GSendInt (V_FAIL);
 		LC_RET0;
 	    } else if (tim > (expir - warntime) && !quietlog) {
-		PrepErrorGreet ();
-		GSendInt (V_PWEXPIRE);
-		GSendInt (expir - tim);
+		ASPrintf (&buf,
+			  "Warning: your password will expire in %d day(s)",
+			  expir - tim);
+		if (buf) {
+		    PrepErrorGreet ();
+		    GSendInt (V_MSG_INFO);
+		    GSendStr (buf);
+		    free (buf);
+		}
 	    }
 	}
 

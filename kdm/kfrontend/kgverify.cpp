@@ -35,6 +35,7 @@
 #include <kstdguiitem.h>
 #include <kpushbutton.h>
 
+#include <qregexp.h>
 #include <qpopupmenu.h>
 #include <qlayout.h>
 #include <qfile.h>
@@ -325,134 +326,63 @@ KGVerify::VMsgBox( QWidget *parent, const QString &user,
 	mesg : i18n("Authenticating %1 ...\n\n").arg(user) + mesg );
 }
 
-bool // private static
-KGVerify::handleNTVerify( QWidget *parent, int ret, const QString &user )
+static const char *msgs[]= {
+    I18N_NOOP("You are required to change your password immediately (password aged)."),
+    I18N_NOOP("You are required to change your password immediately (root enforced)."),
+    I18N_NOOP("You are not allowed to login at the moment."),
+    I18N_NOOP("Home folder not available."),
+    I18N_NOOP("Logins are not allowed at the moment.\nTry again later."),
+    I18N_NOOP("Your login shell is not listed in /etc/shells."),
+    I18N_NOOP("Root logins are not allowed."),
+    I18N_NOOP("Your account has expired; please contact your system administrator.")
+};
+
+void // private static
+KGVerify::VErrBox( QWidget *parent, const QString &user, const char *msg )
 {
-    char *msg;
-    int expire;
-    QString mesg;
     QMessageBox::Icon icon;
-
-    switch (ret) {
-    case V_MSG_ERR:
-	Debug( " V_MSG_ERR\n" );
-	msg = GRecvStr();
-	Debug( "  message %\"s\n", msg );
-	mesg = QString::fromLocal8Bit( msg );
-	free( msg );
-	icon = sorrybox;
-	break;
-    case V_MSG_INFO:
-	Debug( " V_MSG_INFO\n" );
-	msg = GRecvStr();
-	Debug( "  message %\"s\n", msg );
-	mesg = QString::fromLocal8Bit( msg );
-	free( msg );
-	icon = infobox;
-	break;
-    case V_PEXPIRED:
-	Debug( " V_PEXPIRED\n" );
-	mesg = i18n("You are required to change your password immediately (password aged).");
-	icon = sorrybox;
-	break;
-    case V_PFEXPIRED:
-	Debug( " V_PFEXPIRED\n" );
-	mesg = i18n("You are required to change your password immediately (root enforced).");
-	icon = sorrybox;
-	break;
-    case V_AWEXPIRE:
-	Debug( " V_AWEXPIRE\n" );
-	expire = GRecvInt();
-	Debug( "  in %d days\n", expire );
-	mesg = expire ?
-	    i18n("Your account expires tomorrow.", "Your account expires in %n days.", expire) :
-	    i18n("Your account expires today.");
-	icon = infobox;
-	break;
-    case V_PWEXPIRE:
-	Debug( " V_PWEXPIRE\n" );
-	expire = GRecvInt();
-	Debug( "  in %d days\n", expire );
-	mesg = expire ?
-	    i18n("Your password expires tomorrow.", "Your password expires in %n days.", expire) :
-	    i18n("Your password expires today.");
-	icon = infobox;
-	break;
-    default:
-	return false;
-    }
-    VMsgBox( parent, user, icon, mesg );
-    return true;
-}
-
-bool // private static
-KGVerify::handleTVerify( QWidget *parent, int ret, const QString &user )
-{
-    char *msg;
     QString mesg;
-    QMessageBox::Icon icon;
 
-    switch (ret) {
-    case V_ERROR:
-	Debug( " V_ERROR\n" );
+    if (!msg) {
 	mesg = i18n("A critical error occurred.\n"
 		    "Please look at KDM's logfile(s) for more information\n"
 		    "or contact your system administrator.");
 	icon = errorbox;
-	break;
-    case V_NOHOME:
-	Debug( " V_NOHOME\n" );
-	mesg = i18n("Home folder not available.");
-	icon = sorrybox;
-	break;
-    case V_NOROOT:
-	Debug( " V_NOROOT\n" );
-	mesg = i18n("Root logins are not allowed.");
-	icon = sorrybox;
-	break;
-    case V_BADSHELL:
-	Debug( " V_BADSHELL\n" );
-	mesg = i18n("Your login shell is not listed in /etc/shells.");
-	icon = sorrybox;
-	break;
-    case V_AEXPIRED:
-	Debug( " V_AEXPIRED\n" );
-	mesg = i18n("Your account has expired.");
-	icon = sorrybox;
-	break;
-    case V_APEXPIRED:
-	Debug( " V_APEXPIRED\n" );
-	mesg = i18n("Your account has expired (failed to change password).");
-	icon = sorrybox;
-	break;
-    case V_BADTIME:
-	Debug( " V_BADTIME\n" );
-	mesg = i18n("You are not allowed to login at the moment.");
-	icon = sorrybox;
-	break;
-    case V_NOLOGIN:
-	Debug( " V_NOLOGIN\n" );
-	msg = GRecvStr();
-	Debug( "  file %\"s\n", msg );
+    } else {
 	mesg = QString::fromLocal8Bit( msg );
-	free( msg );
-	{
-	    QFile f( mesg );
-	    f.open( IO_ReadOnly );
-	    QByteArray tx( f.readAll() );
-	    f.close();
-	    mesg = QString::fromLocal8Bit( tx.data(), tx.size() );
-	}
-	if (mesg.isEmpty())
-	    mesg = i18n("Logins are not allowed at the moment.\n"
-			"Try again later.");
+	QString mesg1 = mesg + '.';
+	for (uint i = 0; i < as(msgs); i++)
+	    if (mesg1 == msgs[i]) {
+		mesg = i18n( msgs[i] );
+		break;
+	    }
 	icon = sorrybox;
-	break;
-    default:
-	return false;
     }
     VMsgBox( parent, user, icon, mesg );
-    return true;
+}
+
+void // private static
+KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
+{
+    QString mesg = QString::fromLocal8Bit( msg );
+    QRegExp rx( "^Warning: your account will expire in (\\d+) day" );
+    if (rx.search( mesg ) >= 0) {
+	int expire = rx.cap( 1 ).toInt();
+	mesg = expire ?
+		i18n("Your account expires tomorrow.",
+		     "Your account expires in %n days.", expire) :
+		i18n("Your account expires today.");
+    } else {
+	rx.setPattern( "^Warning: your password will expire in (\\d+) day" );
+	if (rx.search( mesg ) >= 0) {
+	    int expire = rx.cap( 1 ).toInt();
+	    mesg = expire ?
+		    i18n("Your password expires tomorrow.",
+			 "Your password expires in %n days.", expire) :
+		    i18n("Your password expires today.");
+	}
+    }
+    VMsgBox( parent, user, infobox, mesg );
 }
 
 bool // public static
@@ -492,9 +422,22 @@ KGVerify::handleFailVerify( QWidget *parent )
 			       KGreeterPlugin::Login );
 		return chtok.exec();
 	    }
-	}
-	if (handleNTVerify( parent, ret, user ))
+	case V_MSG_ERR:
+	    Debug( " V_MSG_ERR\n" );
+	    msg = GRecvStr();
+	    Debug( "  message %\"s\n", msg );
+	    VErrBox( parent, user, msg );
+	    if (msg)
+		free( msg );
 	    continue;
+	case V_MSG_INFO:
+	    Debug( " V_MSG_INFO\n" );
+	    msg = GRecvStr();
+	    Debug( "  message %\"s\n", msg );
+	    VInfoBox( parent, user, msg );
+	    free( msg );
+	    continue;
+	}
 
 	// terminal status
 	switch (ret) {
@@ -505,10 +448,12 @@ KGVerify::handleFailVerify( QWidget *parent )
 	    Debug( " V_AUTH\n" );
 	    VMsgBox( parent, user, sorrybox, i18n("Authentication failed") );
 	    return false;
-	}
-	if (!handleTVerify( parent, ret, user ))
+	case V_FAIL:
+	    Debug( " V_FAIL\n" );
+	    return false;
+	default:
 	    LogPanic( "Unknown V_xxx code %d from core\n", ret );
-	return false;
+	}
     }
 }
 
@@ -604,20 +549,19 @@ KGVerify::handleVerify()
 	    msg = GRecvStr();
 	    Debug( "  message %\"s\n", msg );
 	    if (!greet->textMessage( msg, true ))
-		VMsgBox( parent, user, sorrybox, QString::fromLocal8Bit( msg ) );
-	    free( msg );
+		VErrBox( parent, user, msg );
+	    if (msg)
+		free( msg );
 	    continue;
 	case V_MSG_INFO:
 	    Debug( " V_MSG_INFO\n" );
 	    msg = GRecvStr();
 	    Debug( "  message %\"s\n", msg );
 	    if (!greet->textMessage( msg, false ))
-		VMsgBox( parent, user, infobox, QString::fromLocal8Bit( msg ) );
+		VInfoBox( parent, user, msg );
 	    free( msg );
 	    continue;
 	}
-	if (handleNTVerify( parent, ret, user ))
-	    continue;
 
 	// terminal status
 	coreLock = 0;
@@ -646,10 +590,6 @@ KGVerify::handleVerify()
 	Debug( "greet->failed()\n" );
 	greet->failed();
 
-	if (ret == V_RETRY) {
-	    Debug( " V_RETRY\n" );
-	    goto retry;
-	}
 	if (ret == V_AUTH) {
 	    Debug( " V_AUTH\n" );
 	    failed = true;
@@ -658,12 +598,9 @@ KGVerify::handleVerify()
 	    timer.start( 1500 + kapp->random()/(RAND_MAX/1000) );
 	    return;
 	}
-	if (!handleTVerify( parent, ret, user ))
+	if (ret != V_FAIL)
 	    LogPanic( "Unknown V_xxx code %d from core\n", ret );
-	curUser = QString::null;
-	handler->verifySetUser( QString::null );
-	Debug( "greet->clear()\n" );
-	greet->clear();
+	Debug( " V_FAIL\n" );
       retry:
 	Debug( "greet->revive()\n" );
 	greet->revive();

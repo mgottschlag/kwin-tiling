@@ -163,27 +163,15 @@ from The Open Group.
  */
 /* terminal status codes */
 #define V_OK		0
-#define V_ERROR		10	/* problem with authentication system */
-#define V_RETRY		11	/* whatever, already reported with V_MSG_* */
-#define V_AUTH		12	/* authentication failed */
-#define V_NOHOME	20	/* $HOME invalid */
-#define V_NOLOGIN	21	/* /etc/nologin present; file name attached */
-#define V_NOROOT	22	/* root logins forbidden */
-#define V_BADSHELL	23	/* $SHELL invalid */
-#define V_BADTIME	24	/* login not permitted at this time */
-#define V_AEXPIRED	25	/* account expired (aged) */
-#define V_APEXPIRED	26	/* account expired (failed to change password) */
+#define V_FAIL		10	/* whatever, already reported with V_MSG_* */
+#define V_AUTH		11	/* authentication failed */
 /* non-terminal status codes */
 #define V_MSG_INFO	110	/* info message attached */
-#define V_MSG_ERR	111	/* error message attached */
+#define V_MSG_ERR	111	/* error message attached (null for generic) */
 #define V_PUT_USER	112	/* user name attached; only with pam & no user send */
 #define V_CHTOK 	113	/* password expired; change now */
 #define V_CHTOK_AUTH	114	/* password expired; change now, but authenticate first */
 #define V_PRE_OK	115	/* authentication succeeded, continue with password change */
-#define V_AWEXPIRE	120	/* account will expire; number attached */
-#define V_PWEXPIRE	121	/* password will expire; number attached */
-#define V_PEXPIRED	122	/* password expired (aged) */
-#define V_PFEXPIRED	123	/* password expired (root enforced) */
 /* queries */
 #define V_GET_TEXT	200	/* str prompt, int echo, int ndelay; str return, int tag */
 # define V_IS_SECRET		1
