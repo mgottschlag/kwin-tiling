@@ -1,5 +1,5 @@
 /*
- * localenum.h
+ * localetime.h
  *
  * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __KLOCALECONFIGNUM_H__
-#define __KLOCALECONFIGNUM_H__
+#ifndef __KLOCALECONFIGTIME_H__
+#define __KLOCALECONFIGTIME_H__
 
 #include <kcontrol.h>
 
@@ -34,32 +34,32 @@ class QLineEdit;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfigNumber : public KConfigWidget
+class KLocaleConfigTime : public KConfigWidget
 {
   Q_OBJECT
 
 public:
-  KLocaleConfigNumber( QWidget *parent=0, const char *name=0);
-  ~KLocaleConfigNumber( );
+  KLocaleConfigTime( QWidget *parent=0, const char *name=0);
+  ~KLocaleConfigTime( );
 
 public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
-  void syncWithKLocaleNum();
+  void syncWithKLocaleTime();
   void updateSample();
 
 private slots:
-  // Numbers
-  void slotDecSymChanged(const QString &t);
-  void slotThoSepChanged(const QString &t);
+  // Time & dates
+  void slotTimeFmtChanged(const QString &t);
+  void slotDateFmtChanged(const QString &t);
 
 private:
   KLocaleSample *sample;
 
-  // Numbers
-  QLineEdit *edDecSym;
-  QLineEdit *edThoSep;
+  // Time & dates
+  QLineEdit *edTimeFmt;
+  QLineEdit *edDateFmt;
 };
 
 #endif

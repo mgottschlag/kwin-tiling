@@ -38,6 +38,7 @@
 #include <kstddirs.h>
 
 #include "klocalesample.h"
+#include "main.h"
 #include "localemon.h"
 #include "localemon.moc"
 
@@ -139,7 +140,6 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   tl->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
-  sample->update();
   syncWithKLocaleMon();
 }
 
@@ -149,82 +149,74 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
 
 void KLocaleConfigMoney::loadSettings()
 {
-  debug("load");
 }
 
 void KLocaleConfigMoney::applySettings()
 {
-  debug("apply");
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->money + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
-
-/*
-  str = ent.readEntry("DecimalSymbol");
-  if (str != edDecSym->text())
-    config->writeEntry("DecimalSymbol", edDecSym->text());
-
-  str = ent.readEntry("ThousandsSeparator");
-  if (str != edThoSep->text())
-    config->writeEntry("ThousandsSeparator", edThoSep->text());
-*/
 }
 
 void KLocaleConfigMoney::defaultSettings()
 {
-  debug("default");
+}
+
+void KLocaleConfigMoney::updateSample()
+{
+  sample->update();
 }
 
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
 {
   KGlobal::locale()->_currencySymbol = t;
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonDecSymChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryDecimalSymbol = t;
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonThoSepChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryThousandsSeparator = t;
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonNegSignChanged(const QString &t)
 {
   KGlobal::locale()->_negativeSign = t;
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonPosSignChanged(const QString &t)
 {
   KGlobal::locale()->_positiveSign = t;
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
 {
   KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
-  sample->update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonPosMonSignPosChanged(int i)
 {
-  KGlobal::locale()->_positiveMonetarySignPosition = i;
-  sample->update();
+  KGlobal::locale()->_positiveMonetarySignPosition = (KLocale::SignPosition)i;
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 {
-  KGlobal::locale()->_negativeMonetarySignPosition = i;
-  sample->update();
+  KGlobal::locale()->_negativeMonetarySignPosition = (KLocale::SignPosition)i;
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfigMoney::syncWithKLocaleMon()

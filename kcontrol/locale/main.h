@@ -21,8 +21,10 @@
 
 #include <kcontrol.h>
 
+class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
+class KLocaleConfigTime;
 
 class KLocaleApplication : public KControlApplication
 {
@@ -39,9 +41,12 @@ public:
   void reset();
   void resetNum();
   void resetMon();
+  void resetTime();
+  void updateSample();
 
 private:
   KLocaleConfig *locale;
   KLocaleConfigNumber *localenum;
   KLocaleConfigMoney *localemon;
+  KLocaleConfigTime *localetime;
 };

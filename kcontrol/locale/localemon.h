@@ -47,6 +47,7 @@ public slots:
   void applySettings();
   void defaultSettings();
   void syncWithKLocaleMon();
+  void updateSample();
 
 private slots:
   // Money

@@ -1,5 +1,5 @@
 /*
- * localenum.cpp
+ * localetime.cpp
  *
  * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
@@ -29,7 +29,7 @@
 
 #include <kglobal.h>
 
-#define KLocaleConfigAdvanced KLocaleConfigNumber
+#define KLocaleConfigAdvanced KLocaleConfigTime
 #include <klocale.h>
 #undef KLocaleConfigAdvanced
 
@@ -39,12 +39,12 @@
 
 #include "klocalesample.h"
 #include "main.h"
-#include "localenum.h"
-#include "localenum.moc"
+#include "localetime.h"
+#include "localetime.moc"
 
 #define i18n(a) (a)
 
-KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
+KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : KConfigWidget(parent, name)
 {
   QLabel *label;
@@ -52,8 +52,8 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
 
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
-  // Numbers
-  gbox = new QGroupBox(this, i18n("Numbers"));
+  // Time
+  gbox = new QGroupBox(this, i18n("Date && Time"));
   tl->addWidget(gbox);
 
   QGridLayout *tl1 = new QGridLayout(gbox, 2, 4, 5);
@@ -63,17 +63,17 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl1->addColSpacing(3, 10);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel(i18n("Decimal symbol"), gbox);
-  edDecSym = new QLineEdit(gbox);
-  connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
+  label = new QLabel(i18n("Time format"), gbox);
+  edTimeFmt = new QLineEdit(gbox);
+  connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
-  tl1->addWidget(edDecSym, 1, 2);
+  tl1->addWidget(edTimeFmt, 1, 2);
 
-  label = new QLabel(i18n("Thousands separator"), gbox);
-  edThoSep = new QLineEdit(gbox);
-  connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
+  label = new QLabel(i18n("Date format"), gbox);
+  edDateFmt = new QLineEdit(gbox);
+  connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
-  tl1->addWidget(edThoSep, 2, 2);
+  tl1->addWidget(edDateFmt, 2, 2);
 
   tl1->activate();
 
@@ -82,62 +82,60 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 
-  syncWithKLocaleNum();
+  syncWithKLocaleTime();
 }
 
-KLocaleConfigNumber::~KLocaleConfigNumber()
+KLocaleConfigTime::~KLocaleConfigTime()
 {
 }
 
-void KLocaleConfigNumber::loadSettings()
+void KLocaleConfigTime::loadSettings()
 {
 }
 
-void KLocaleConfigNumber::applySettings()
+void KLocaleConfigTime::applySettings()
 {
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
-  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->number + "/entry.desktop"), true);
+  KSimpleConfig ent(locate("locale", "l10n/" + KGlobal::locale()->time + "/entry.desktop"), true);
   ent.setGroup("KCM Locale");
 
   QString str;
 
-  str = ent.readEntry("DecimalSymbol");
-  if (str != edDecSym->text())
-    config->writeEntry("DecimalSymbol", edDecSym->text());
+  str = ent.readEntry("TimeFormat");
+  if (str != edTimeFmt->text())
+    config->writeEntry("TimeFormat", edTimeFmt->text());
 
-  str = ent.readEntry("ThousandsSeparator");
-  if (str != edThoSep->text())
-    config->writeEntry("ThousandsSeparator", edThoSep->text());
+  str = ent.readEntry("DateFormat");
+  if (str != edDateFmt->text())
+    config->writeEntry("DateFormat", edDateFmt->text());
 }
 
-void KLocaleConfigNumber::defaultSettings()
+void KLocaleConfigTime::defaultSettings()
 {
 }
 
-void KLocaleConfigNumber::updateSample()
+void KLocaleConfigTime::updateSample()
 {
   if (sample)
     sample->update();
 }
 
-
-
-void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
+void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
 {
-  KGlobal::locale()->_decimalSymbol = t;
+  KGlobal::locale()->_timefmt = t;
   ((KLocaleApplication*)kapp)->updateSample();
 }
 
-void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
+void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 {
-  KGlobal::locale()->_thousandsSeparator = t;
+  KGlobal::locale()->_datefmt = t;
   sample->update();
 }
 
-void KLocaleConfigNumber::syncWithKLocaleNum()
+void KLocaleConfigTime::syncWithKLocaleTime()
 {
-  edDecSym->setText(KGlobal::locale()->_decimalSymbol);
-  edThoSep->setText(KGlobal::locale()->_thousandsSeparator);
+  edTimeFmt->setText(KGlobal::locale()->_timefmt);
+  edDateFmt->setText(KGlobal::locale()->_datefmt);
 }

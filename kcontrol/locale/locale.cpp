@@ -110,7 +110,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl->addStretch(1);
     tl->activate();
 
-    update();
     loadSettings();
 }
 
@@ -292,7 +291,7 @@ void KLocaleConfig::changedCountry(int i)
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);
 
-  update();
+  ((KLocaleApplication*)kapp)->updateSample();
   ((KLocaleApplication*)kapp)->reset();
 }
 
@@ -322,7 +321,7 @@ void KLocaleConfig::changedLanguage(int i)
     comboLang->changeLanguage(name, j);
   }
 
-  update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfig::changedNumber(int i)
@@ -335,7 +334,7 @@ void KLocaleConfig::changedNumber(int i)
                       QString::null,
                       QString::null);
   ((KLocaleApplication*)kapp)->resetNum();
-  update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfig::changedMoney(int i)
@@ -348,7 +347,7 @@ void KLocaleConfig::changedMoney(int i)
                       comboDate->tag(i),
                       QString::null);
   ((KLocaleApplication*)kapp)->resetMon();
-  update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
 
 void KLocaleConfig::changedTime(int i)
@@ -360,12 +359,18 @@ void KLocaleConfig::changedTime(int i)
                       QString::null,
                       QString::null,
                       comboDate->tag(i));
-  update();
+  ((KLocaleApplication*)kapp)->updateSample();
 }
+
+void KLocaleConfig::updateSample()
+{
+  sample->update();
+}
+
 
 void KLocaleConfig::update()
 {
-  sample->update();
+  updateSample();
 
   KLocaleApplication::reTranslate();
 }

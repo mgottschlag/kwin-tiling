@@ -47,6 +47,7 @@ public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
+  void updateSample();
     
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;

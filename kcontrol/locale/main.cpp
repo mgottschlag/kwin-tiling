@@ -33,12 +33,16 @@
 #include "locale.h"
 #include "localenum.h"
 #include "localemon.h"
+#include "localetime.h"
 #include "main.h"
 
 KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
   locale = 0;
+  localenum = 0;
+  localemon = 0;
+  localetime = 0;
 
   if (runGUI())
     {
@@ -51,14 +55,18 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
       if (!pages || pages->contains("money"))
         addPage(localemon = new KLocaleConfigMoney(dialog, "money"), 
 		i18n("&Money"), "locale-3.html");
+      if (!pages || pages->contains("time"))
+        addPage(localetime = new KLocaleConfigTime(dialog, "time"), 
+		i18n("&Time && dates"), "locale-4.html");
 
       reTranslate();
+      updateSample();
 
-      if (locale || localenum || localemon)
+      if (locale || localenum || localemon || localetime)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmlocale [-init | language | number | money]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmlocale [-init | language | number | money | time]\n").ascii());
 	  justInit = TRUE;
         }
     }
@@ -77,6 +85,8 @@ void KLocaleApplication::apply()
     localenum->applySettings();
   if (localemon)
     localemon->applySettings();
+  if (localetime)
+    localetime->applySettings();
 }
 
 void KLocaleApplication::defaultValues()
@@ -87,6 +97,20 @@ void KLocaleApplication::defaultValues()
     localemon->defaultSettings();
   if (localemon)
     localemon->defaultSettings();
+  if (localetime)
+    localetime->defaultSettings();
+}
+
+void KLocaleApplication::updateSample()
+{
+  if (locale)
+    locale->updateSample();
+  if (localenum)
+    localenum->updateSample();
+  if (localemon)
+    localemon->updateSample();
+  if (localetime)
+    localetime->updateSample();
 }
 
 void KLocaleApplication::reTranslate()
@@ -126,6 +150,7 @@ void KLocaleApplication::reset()
 {
   resetNum();
   resetMon();
+  resetTime();
 }
 
 void KLocaleApplication::resetMon()
@@ -138,6 +163,12 @@ void KLocaleApplication::resetNum()
 {
   if (localenum)
     localenum->syncWithKLocaleNum();
+}
+
+void KLocaleApplication::resetTime()
+{
+  if (localetime)
+    localetime->syncWithKLocaleTime();
 }
 
 int main(int argc, char **argv)
