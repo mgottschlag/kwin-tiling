@@ -44,7 +44,6 @@ protected:
 protected slots:
     void slotSave();
     void slotChangeView();
-    void slotConfigureKeys();
 protected:
     TreeView           *m_tree;
     BasicTab           *m_basicTab;

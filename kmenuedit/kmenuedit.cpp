@@ -25,7 +25,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kkeydialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kservice.h>
@@ -84,12 +83,8 @@ void KMenuEdit::setupActions()
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
-    KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
-}
-
-void KMenuEdit::slotConfigureKeys()
-{
-  KKeyDialog::configure( actionCollection(), this );
+    KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), 
+actionCollection());
 }
 
 void KMenuEdit::setupView()
