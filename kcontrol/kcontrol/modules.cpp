@@ -183,9 +183,12 @@ void ConfigModule::runAsRoot()
       // returns before the module is running and that doesn't work.
       // We also don't have a way to close the module in that case.
       *_rootProcess << "--n"; // Don't keep password.
-      if (kdeshell)
-        *_rootProcess << "kcmshell";
-      *_rootProcess << QString("%1 --embed %2").arg(cmd).arg(_embedWidget->winId());
+      if (kdeshell) {
+         *_rootProcess << QString("kcmshell %1 --embed %2").arg(cmd).arg(_embedWidget->winId());
+      }
+      else {
+         *_rootProcess << QString("%1 --embed %2").arg(cmd).arg(_embedWidget->winId());
+      }
 
       connect(_rootProcess, SIGNAL(processExited(KProcess*)), this, SLOT(rootExited(KProcess*)));
 
