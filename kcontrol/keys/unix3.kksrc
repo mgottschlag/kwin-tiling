@@ -1,6 +1,7 @@
 [Settings]
 Name=UNIX Scheme
 Name[be]=Схема UNIX
+Name[bs]=UNIX šema
 Name[cs]=Schéma Unix
 Name[de]=UNIX-Schema
 Name[es]=Esquema UNIX
@@ -8,6 +9,7 @@ Name[he]=תצורת יוניקס
 Name[hu]=UNIX-összeállítás
 Name[mt]=Skema UNIX
 Name[nb]=Unix-oppsett
+Name[nl]=UNIX-schema
 Name[pt_BR]=Esquema UNIX
 Name[sv]=Unix-schema
 Uses Win Modifer=false
