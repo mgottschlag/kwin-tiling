@@ -1074,8 +1074,16 @@ void KSMServer::saveCurrentSessionAs( QString session )
 // callbacks
 void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 {
-    if ( state == Idle )
+    if ( state == Idle ) {
+        // State saving when it's not shutdown or checkpoint. Probably
+        // a shutdown was cancelled and the client is finished saving
+        // only now. Discard the saved state in order to avoid
+        // the saved data building up.
+        QStringList discard = client->discardCommand();
+        if( !discard.isEmpty())
+            executeCommand( discard );
         return;
+    }
     if ( success ) {
         client->saveYourselfDone = true;
         completeShutdownOrCheckpoint();
@@ -1165,8 +1173,15 @@ void KSMServer::cancelShutdown( KSMClient* c )
 {
     kdDebug( 1218 ) << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
     clientInteracting = 0;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() )
+    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         SmsShutdownCancelled( c->connection() );
+        if( c->saveYourselfDone ) {
+            // Discard also saved state.
+            QStringList discard = c->discardCommand();
+            if( !discard.isEmpty())
+                executeCommand( discard );
+        }
+    }
     state = Idle;
 }
 
