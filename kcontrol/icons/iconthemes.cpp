@@ -22,7 +22,6 @@
 #include <unistd.h>
 
 #include <qfile.h>
-#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -259,7 +258,7 @@ bool IconThemesConfig::installThemes(QStringList themes, QString archiveName)
       continue;
     }
 
-    currentTheme->copyTo(QDir(localThemesDir + "/" + *it));
+    currentTheme->copyTo(localThemesDir + *it);
     progressDiag.progressBar()->advance(1);
   }
 
