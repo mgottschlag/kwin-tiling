@@ -63,7 +63,7 @@ private slots:
 private:
 	QWidget *preview;
 	kBoubouleSaver *saver;
-	KSlider *freqslider;
+	QSlider *freqslider;
 	QLabel *freqlabel;
 
 	int			speed;

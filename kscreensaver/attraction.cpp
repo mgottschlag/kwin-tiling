@@ -57,16 +57,6 @@
 #include <stdio.h>
 #include <math.h>
 
-//=============================================================
-
-// xscreensaver includes:
-
-#include "xlock.h"
-
-extern "C" {
-#include "xs_colors.h"
-}
-
 //================================================================
 
 // Qt includes:
@@ -77,10 +67,9 @@ extern "C" {
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include <qcombobox.h>
+#include <qslider.h>
 
-#include "kslider.h"
 #include "attraction.h"
-
 #include "attraction.moc"
 
 #include <qlayout.h>
@@ -90,6 +79,17 @@ extern "C" {
 #include <klocale.h>
 #include <kconfig.h>
 
+//=============================================================
+
+// xscreensaver includes:
+
+#include "xlock.h"
+
+extern "C" {
+#include "xs_colors.h"
+}
+
+#undef Below        // fscking X
 
 //================================================================
 
@@ -805,7 +805,6 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -817,11 +816,10 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	QSlider *slider = new QSlider(5, 55, 5, number, QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 5, 55 );
-	slider->setSteps( 5, 10 );
-	slider->setValue( number );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(5);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotNumber( int ) ) );
 	tl11->addWidget(slider);

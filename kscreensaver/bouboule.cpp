@@ -22,6 +22,8 @@
 */
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
+#include <qslider.h>
+
 #include "xlock.h"		/* in xlockmore distribution */
 
 
@@ -810,14 +812,11 @@ release_bouboule()
 
 //---------------------------------------------------
 
- 
-
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "bouboule.h"
 
@@ -830,6 +829,7 @@ release_bouboule()
 #include <klocale.h>
 #include <kconfig.h>
 
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -1006,7 +1006,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -1018,11 +1018,11 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this );
 	slider->setMinimumSize( 135, 20 );
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
@@ -1032,11 +1032,11 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINPOINTS, MAXPOINTS, 50, numPoints,
+                        QSlider::Horizontal, this );
 	slider->setMinimumSize( 135, 20 );
-	slider->setRange( MINPOINTS, MAXPOINTS );
-	slider->setSteps( (MAXPOINTS-MINPOINTS)/4, (MAXPOINTS-MINPOINTS)/2 );
-	slider->setValue( numPoints );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(50);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotPoints( int ) ) );
 	tl11->addWidget(slider);
@@ -1046,11 +1046,11 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSIZE, MAXSIZE, 5, pointSize,
+                        QSlider::Horizontal, this );
 	slider->setMinimumSize( 135, 20 );
-	slider->setRange( MINSIZE, MAXSIZE );
-	slider->setSteps( (MAXSIZE-MINSIZE)/4, (MAXSIZE-MINSIZE)/2 );
-	slider->setValue( pointSize );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(5);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSize( int ) ) );
 	tl11->addWidget(slider);
@@ -1061,14 +1061,13 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 	tl11->addWidget(freqlabel);
 	freqlabel->setEnabled( !flag_3dmode );
 
-	freqslider = new KSlider( KSlider::Horizontal, this );
-	freqslider->setRange( MINCCSPEED, MAXCCSPEED );
-	freqslider->setSteps( (MAXCCSPEED-MINCCSPEED)/4, 
-			      (MAXCCSPEED-MINCCSPEED)/2 );
-	freqslider->setValue( colorCycleDelay );
+	freqslider = new QSlider(MINCCSPEED, MAXCCSPEED, 10, colorCycleDelay,
+                            QSlider::Horizontal, this );
+	freqslider->setMinimumSize( 135, 20 );
+    freqslider->setTickmarks(QSlider::Below);
+    freqslider->setTickInterval(10);
 	connect( freqslider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotColorCycle( int ) ) );
-	freqslider->setMinimumSize( 135, 20 );
 	tl11->addWidget(freqslider);
 	tl11->addSpacing(5);
 	freqslider->setEnabled( !flag_3dmode );

@@ -151,8 +151,8 @@ private slots:
 private:
 	KPreviewWidget *preview;
 	KScienceSaver *saver;
-	KSlider *slideSize, *slideSpeed, *slideIntensity;
-	KSlider *slideMoveX, *slideMoveY;
+	QSlider *slideSize, *slideSpeed, *slideIntensity;
+	QSlider *slideMoveX, *slideMoveY;
 	QCheckBox *checkInverse, *checkGravity, *checkHideBG;	
 	
 	int  mode;

@@ -12,10 +12,10 @@
 #include <qpushbutton.h>
 #include <qscrollbar.h>
 #include <qmessagebox.h>
+#include <qslider.h>
 #include <kapp.h>
 #include <time.h>
 
-#include "kslider.h"
 
 #include "polygon.h"
 
@@ -27,6 +27,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 
+#undef Below
 
 #define MAXLENGTH	65
 #define MAXVERTICES	19
@@ -77,7 +78,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	QString str;
 	QLabel *label;
 	QPushButton *button;
-	KSlider *sb;
+	QSlider *sb;
 
 	setCaption( glocale->translate("Setup kpolygon") );
 
@@ -91,11 +92,10 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	sb = new KSlider( KSlider::Horizontal, this );
+	sb = new QSlider(1, MAXLENGTH, 10, length, QSlider::Horizontal, this );
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 1, MAXLENGTH );
-	sb->setSteps( 8, 32 );
-	sb->setValue( length );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(10);
 	connect( sb, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotLength( int ) ) );
 	tl11->addWidget(sb);
@@ -106,11 +106,10 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	tl11->addWidget(label);
 
 
-	sb = new KSlider( KSlider::Horizontal, this );
+	sb = new QSlider(3, MAXVERTICES, 2, vertices, QSlider::Horizontal, this);
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 3, MAXVERTICES );
-	sb->setSteps( 2, 2 );
-	sb->setValue( vertices );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(2);
 	connect( sb, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotVertices( int ) ) );
 	tl11->addWidget(sb);
@@ -120,11 +119,10 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	sb = new KSlider( KSlider::Horizontal, this );
+	sb = new QSlider(0, 100, 10, speed, QSlider::Horizontal, this);
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 0, 100 );
-	sb->setSteps( 25, 50 );
-	sb->setValue( speed );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(10);
 	connect( sb, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(sb);

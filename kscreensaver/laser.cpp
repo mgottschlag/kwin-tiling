@@ -16,6 +16,8 @@ static char sccsid[] = "@(#)laser.c	3.3 95/09/26 xlockmore";
  */
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
+#include <qslider.h>
+
 #include "xlock.h"
 
 #define MINREDRAW 3  /* Number of redrawn on each frame */
@@ -291,7 +293,6 @@ void laser_cleanup()
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "laser.h"
 
@@ -304,6 +305,7 @@ void laser_cleanup()
 #include <klocale.h>
 #include <kconfig.h>
 
+#undef Below // X sux
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -393,7 +395,7 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -405,11 +407,10 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(0, 100, 10, speed, QSlider::Horizontal, this );
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 0, 100 );
-	slider->setSteps( 25, 50 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);

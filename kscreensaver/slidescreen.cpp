@@ -36,7 +36,6 @@ extern "C" {
 #include <qlabel.h>
 //#include <qcombobox.h>
 
-#include "kslider.h"
 #include "slidescreen.h"
 
 #include "slidescreen.moc"

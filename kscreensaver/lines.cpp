@@ -9,16 +9,16 @@
 
 
 #include <stdlib.h>
+#include <time.h>
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qscrollbar.h>
-#include <kapp.h>
 #include <qmessagebox.h>
-#include <time.h>
+#include <qslider.h>
+#include <kapp.h>
 
 #include "kcolordlg.h"
-#include "kslider.h"
 #include "lines.h"
 #include "lines.moc"
 
@@ -27,6 +27,8 @@
 #include "helpers.h"
 #include <klocale.h>
 #include <kconfig.h>
+
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -127,7 +129,7 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	QString str;
 	QLabel *label;
 	QPushButton *button;
-	KSlider *sb;
+	QSlider *sb;
 
 	setCaption(glocale->translate("Setup klines"));
 
@@ -141,12 +143,11 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	min_size(label);
 	tl11->addWidget(label);
 
-	sb=new KSlider(KSlider::Horizontal, this);
-	sb->setRange(1, MAXLENGTH+1);
-	sb->setSteps(MAXLENGTH/4, MAXLENGTH/2);
-	sb->setValue(length);
-	connect(sb, SIGNAL(valueChanged(int)), SLOT(slotLength(int)));
+	sb=new QSlider(1, MAXLENGTH+1, 16, length, QSlider::Horizontal, this);
 	sb->setMinimumSize(90, 20);
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(16);
+	connect(sb, SIGNAL(valueChanged(int)), SLOT(slotLength(int)));
 	tl11->addWidget(sb);
 	tl11->addSpacing(5);
 
@@ -154,12 +155,11 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	min_size(label);
 	tl11->addWidget(label);
 
-	sb=new KSlider( KSlider::Horizontal, this );
-	sb->setRange( 0, 100 );
-	sb->setSteps( 25, 50 );
-	sb->setValue( speed );
-	connect( sb, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
+	sb=new QSlider(0, 100, 10, speed, QSlider::Horizontal, this);
 	sb->setMinimumSize(90, 20);
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(10);
+	connect( sb, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(sb);
 	tl11->addSpacing(5);
 

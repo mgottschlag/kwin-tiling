@@ -19,6 +19,7 @@
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 #include <qlayout.h>
+#include <qslider.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
 
@@ -273,7 +274,6 @@ drawflame(Window win)
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "flame.h"
 #include <kapp.h>
@@ -281,6 +281,8 @@ drawflame(Window win)
 #include <kconfig.h>
 
 #include "flame.moc"
+
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -397,7 +399,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -409,11 +411,10 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(0, 100, 10, speed, QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 0, 100 );
-	slider->setSteps( 25, 50 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
@@ -423,11 +424,10 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(10, 110, 10, maxLevels, QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 10, 110 );
-	slider->setSteps( 25, 50 );
-	slider->setValue( maxLevels );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotLevels( int ) ) );
 	tl11->addWidget(slider);
@@ -438,11 +438,11 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(1000, 11000, 1000, numPoints, QSlider::Horizontal,
+                        this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 1000, 11000 );
-	slider->setSteps( 2500, 5000 );
-	slider->setValue( numPoints );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(1000);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotPoints( int ) ) );
 	tl11->addWidget(slider);

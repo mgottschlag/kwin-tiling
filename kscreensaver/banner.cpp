@@ -14,6 +14,7 @@
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qmessagebox.h>
+#include <qslider.h>
 #include <kapp.h>
 
 #include <qgroupbox.h>
@@ -21,13 +22,14 @@
 #include <kbuttonbox.h>
 #include "helpers.h"
 
-#include "kslider.h"
 #include "kcolordlg.h"
 #include "banner.h"
 #include <klocale.h>
 #include <kconfig.h>
 
 #include "banner.moc"
+
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -75,7 +77,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QString str;
 	QLabel *label;
 	QPushButton *button;
-	KSlider *sb;
+	QSlider *sb;
 	QComboBox *combo;
 
 	setCaption( i18n("Setup kbanner") );
@@ -160,12 +162,11 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	tl11->addStretch(1);
 	tl11->addWidget(label);
 
-	sb = new KSlider( KSlider::Horizontal, this );
+	sb = new QSlider(0, 100, 10, speed, QSlider::Horizontal, this );
 	sb->setMinimumWidth( 180);
 	sb->setFixedHeight(20);
-	sb->setRange( 0, 100 );
-	sb->setSteps( 25, 50 );
-	sb->setValue( speed );	
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(10);
 	tl11->addWidget(sb);
 	connect( sb, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 

@@ -10,7 +10,7 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss klissie.kss kbanner.kss \
 	klines.kss kblankscrn.kss krock.kss kflame.kss klaser.kss \
 	kpyro.kss khop.kss $(XPM_SAVERS) $(GL_SAVERS) kslip.kss \
 	kforest.kss kblob.kss kbouboule.kss kscience.kss \
-	kattraction.kss kslidescreen.kss kbsod.kss
+	kattraction.kss kslidescreen.kss kbsod.kss krandom.kss
 
 EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss
 
@@ -22,6 +22,8 @@ XS_SRCS = xs_colors.c xs_hsv.c xs_visual.c
 XL_SRCS = xlock.cpp
 
 SUBDIRS = pixmaps bitmaps
+
+krandom_kss_SOURCES = random.cpp
 
 kbsod_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) bsod.cpp
 kbsod_kss_LDADD= $(LDADD) $(XPMLIB)

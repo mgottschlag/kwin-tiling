@@ -22,6 +22,7 @@ static char sccsid[] = "@(#)pyro.c	3.4 95/11/04 xlockmore";
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 
+#include <qslider.h>
 #include "xlock.h"
 #include <math.h>
 #define TWOPI (2*M_PI)
@@ -399,7 +400,6 @@ void pyro_setCloud( int c )
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 #include "pyro.h"
 
 #include "pyro.moc"
@@ -410,6 +410,8 @@ void pyro_setCloud( int c )
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -517,7 +519,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -529,11 +531,10 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(100, 200, 10, number, QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( 100, 200 );
-	slider->setSteps( 25, 50 );
-	slider->setValue( number );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotNumber( int ) ) );
 	tl11->addWidget(slider);

@@ -38,6 +38,8 @@
 #define LONG64
 #define QT_CLEAN_NAMESPACE
 
+#include <qslider.h>
+
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
@@ -907,13 +909,14 @@ release_morph3d()
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 #include <kapp.h>
 #include <kconfig.h>
 
 #include "morph3d.h"
 
 #include "morph3d.moc"
+
+#undef Below    // X sux
 
 static kMorph3dSaver *saver = NULL;
 
@@ -1014,26 +1017,26 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	label = new QLabel( glocale->translate("Speed:"), this );
 	label->setGeometry( 15, 15, 60, 20 );
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this);
 	slider->setGeometry( 15, 35, 90, 20 );
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
 	label = new QLabel( glocale->translate("Object Type:"), this );
 	label->setGeometry( 15, 65, 90, 20 );
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINBATCH, MAXBATCH, 1, maxLevels,
+                        QSlider::Horizontal, this);
 	slider->setGeometry( 15, 85, 90, 20 );
-	slider->setRange( MINBATCH, MAXBATCH );
-	slider->setSteps( (MAXBATCH-MINBATCH)/4, (MAXBATCH-MINBATCH)/2 );
-	slider->setValue( maxLevels );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(1);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotLevels( int ) ) );
 
 	preview = new QWidget( this );
@@ -1057,7 +1060,7 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 
 void kMorph3dSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1098,7 +1101,7 @@ void kMorph3dSetup::slotLevels( int num )
 
 void kMorph3dSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

@@ -112,6 +112,7 @@ FIXME: this could be clearer done by a calculation on the position.
 #include "config.h"
 
 #define QT_CLEAN_NAMESPACE
+#include <qslider.h>
 
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
@@ -270,9 +271,10 @@ void initGL(Window window)
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "pipes.moc"
+
+#undef Below
 
 static kPipesSaver *saver = NULL;
 
@@ -725,16 +727,15 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
 
   QLabel *label;
   QPushButton *button;
-  KSlider *slider;
+  QSlider *slider;
 
   label = new QLabel( glocale->translate("Number of Pipes"), this );
   label->setGeometry( 15, 15, 100, 20 );
 
-  slider = new KSlider( KSlider::Horizontal, this );
+  slider = new QSlider(1, MAXPIPES, 1, pipes, QSlider::Horizontal, this );
   slider->setGeometry( 15, 35, 100, 20 );
-  slider->setRange( 1, MAXPIPES );
-  slider->setSteps( 1,1 );
-  slider->setValue( pipes );
+  slider->setTickmarks(QSlider::Below);
+  slider->setTickInterval(1);
   connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotPipes( int ) ) );
 
   preview = new QWidget( this );

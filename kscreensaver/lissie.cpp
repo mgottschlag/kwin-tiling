@@ -16,6 +16,7 @@
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 
+#include <qslider.h>
 #include "xlock.h"
 #include <math.h>
 
@@ -199,7 +200,6 @@ drawlissie(Window win, lissiestruct * lissie)
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "lissie.h"
 
@@ -212,6 +212,7 @@ drawlissie(Window win, lissiestruct * lissie)
 #include <klocale.h>
 #include <kconfig.h>
 
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -327,7 +328,7 @@ kLissieSetup::kLissieSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -339,11 +340,11 @@ kLissieSetup::kLissieSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
@@ -353,11 +354,11 @@ kLissieSetup::kLissieSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINBATCH, MAXBATCH, 10, maxLevels,
+                        QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( MINBATCH, MAXBATCH );
-	slider->setSteps( (MAXBATCH-MINBATCH)/4, (MAXBATCH-MINBATCH)/2 );
-	slider->setValue( maxLevels );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotLevels( int ) ) );
 	tl11->addWidget(slider);
@@ -367,11 +368,11 @@ kLissieSetup::kLissieSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);	
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINCYCLES, MAXCYCLES, 200, numPoints,
+                        QSlider::Horizontal, this);
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( MINCYCLES, MAXCYCLES );
-	slider->setSteps( (MAXCYCLES-MINCYCLES)/4, (MAXCYCLES-MINCYCLES)/2 );
-	slider->setValue( numPoints );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(200);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotPoints( int ) ) );
 	tl11->addWidget(slider);

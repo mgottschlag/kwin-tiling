@@ -21,6 +21,7 @@
 #define MINBATCH 0
 #define DEFBATCH 20
 
+#include <qslider.h>
 #include "xlock.h"
 
 #define TIMES	4		/* number of time positions recorded */
@@ -216,7 +217,6 @@ drawswarm(Window win)
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 
 #include "swarm.h"
 
@@ -228,6 +228,7 @@ drawswarm(Window win)
 #include <klocale.h>
 #include <kconfig.h>
 
+#undef Below
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -329,7 +330,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -341,11 +342,11 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this );
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
@@ -355,11 +356,11 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINBATCH, MAXBATCH, 20, maxLevels,
+                        QSlider::Horizontal, this );
 	slider->setMinimumSize( 90, 20 );
-	slider->setRange( MINBATCH, MAXBATCH );
-	slider->setSteps( (MAXBATCH-MINBATCH)/4, (MAXBATCH-MINBATCH)/2 );
-	slider->setValue( maxLevels );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(20);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotLevels( int ) ) );
 	tl11->addWidget(slider);

@@ -23,12 +23,12 @@
 #include <qcheckbox.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <qslider.h>
 
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
 
-#include "kslider.h"
 #include "science.h"
 #include "science.moc"
 
@@ -48,6 +48,8 @@
 #define SCI_DEFAULT_HIDE      false
 #define SCI_MAX_SPEED           100
 #define SCI_MAX_MOVE             20
+
+#undef Below
 
 static KScienceSaver *saver = 0;
 extern KLocale *glocale;
@@ -975,7 +977,7 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	QLabel *label;
 	QPushButton *button;
 	QCheckBox *cbox;
-	KSlider *sb;
+	QSlider *sb;
 	
 	QVBoxLayout *lt  = new QVBoxLayout( this, 10, 10);
 	QHBoxLayout *ltu = new QHBoxLayout() ;
@@ -1035,11 +1037,11 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	min_size( label );
 	ltc->addWidget( label );
 		
-	sb = slideSize = new KSlider( KSlider::Horizontal, this );
+	sb = slideSize = new QSlider(9, 50, 5, size[mode], QSlider::Horizontal,
+                                this );
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 9, 50 );
-	sb->setSteps( 5, 20 );
-	sb->setValue( size[mode] );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(5);
 	connect( sb, SIGNAL( sliderMoved( int ) ), SLOT( slotSize( int ) ) );
 	connect( sb, SIGNAL( sliderPressed()    ), SLOT( slotSliderPressed() ) );
 	connect( sb, SIGNAL( sliderReleased()   ), SLOT( slotSliderReleased() ) );
@@ -1052,11 +1054,11 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	min_size( label );
 	ltc->addWidget( label );
 		
-	sb = slideIntensity = new KSlider( KSlider::Horizontal, this );
+	sb = slideIntensity = new QSlider(0, 10, 1, intensity[mode],
+                                     QSlider::Horizontal, this );
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 0, 10 );
-	sb->setSteps( 1, 5 );
-	sb->setValue( intensity[mode] );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(1);
 	connect( sb, SIGNAL( sliderMoved( int ) ), SLOT( slotIntensity( int )) );
 	connect( sb, SIGNAL( sliderPressed()    ), SLOT( slotSliderPressed() ) );
 	connect( sb, SIGNAL( sliderReleased()   ), SLOT( slotSliderReleased() ) );
@@ -1068,11 +1070,11 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	min_size( label );
 	ltc->addWidget( label );
 	
-	sb = slideSpeed = new KSlider( KSlider::Horizontal, this );
+	sb = slideSpeed = new QSlider(0, SCI_MAX_SPEED, 10, speed[mode],
+                             QSlider::Horizontal, this );
 	sb->setMinimumSize( 90, 20 );
-	sb->setRange( 0, SCI_MAX_SPEED );
-	sb->setSteps( 10, 50 );
-	sb->setValue( speed[mode] );	
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(10);
 	connect( sb, SIGNAL( sliderMoved( int ) ), SLOT( slotSpeed( int ) ) );
 	ltc->addWidget( sb );
 	ltc->addSpacing( 3 );
@@ -1085,19 +1087,19 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	QHBoxLayout *ltcm = new QHBoxLayout() ;
 	ltc->addLayout( ltcm );
 	
-	sb = slideMoveX = new KSlider( KSlider::Horizontal, this );
+	sb = slideMoveX = new QSlider(0, SCI_MAX_MOVE, 5, moveX[mode],
+                                 QSlider::Horizontal, this );
 	sb->setMinimumSize( 40, 20 );
-	sb->setRange( 0, SCI_MAX_MOVE );
-	sb->setSteps( 5, SCI_MAX_MOVE );
-	sb->setValue( moveX[mode] );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(5);
 	connect( sb, SIGNAL( sliderMoved( int ) ), SLOT( slotMoveX( int ) ) );
 	ltcm->addWidget( sb );
 
-	sb = slideMoveY = new KSlider( KSlider::Horizontal, this );
+	sb = slideMoveY = new QSlider(0, SCI_MAX_MOVE, 5, moveY[mode],
+                                QSlider::Horizontal, this );
 	sb->setMinimumSize( 40, 20 );
-	sb->setRange( 0, SCI_MAX_MOVE );
-	sb->setSteps( 5, SCI_MAX_MOVE );
-	sb->setValue( moveY[mode] );
+    sb->setTickmarks(QSlider::Below);
+    sb->setTickInterval(5);
 	connect( sb, SIGNAL( sliderMoved( int ) ), SLOT( slotMoveY( int ) ) );
 	ltcm->addWidget( sb );		
 

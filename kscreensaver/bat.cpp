@@ -48,6 +48,8 @@
 
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
+#include <qslider.h>
+
 #include "xlock.h"
 #include <math.h>
 
@@ -417,6 +419,8 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 
 // --------------------------------------------------------------------
 
+#undef Below
+
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -424,7 +428,6 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include <qmessagebox.h>
 #include <qlayout.h>
 #include <kbuttonbox.h>
-#include "kslider.h"
 #include "helpers.h"
 
 #include "bat.h"
@@ -433,6 +436,7 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include <kconfig.h>
 
 #include "bat.moc"
+
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -537,7 +541,7 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 	
 	QVBoxLayout *tl = new QVBoxLayout(this, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -549,12 +553,12 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this );
 	slider->setFixedHeight(20);
 	slider->setMinimumWidth(90);
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
@@ -564,12 +568,12 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 	min_size(label);
 	tl11->addWidget(label);
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINBATCH, MAXBATCH, 5, maxLevels,
+                        QSlider::Horizontal, this );
 	slider->setFixedHeight(20);
 	slider->setMinimumWidth(90);
-	slider->setRange( MINBATCH, MAXBATCH );
-	slider->setSteps( (MAXBATCH-MINBATCH)/4, (MAXBATCH-MINBATCH)/2 );
-	slider->setValue( maxLevels );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(5);
 	connect( slider, SIGNAL( valueChanged( int ) ), 
 		 SLOT( slotLevels( int ) ) );
 	tl11->addWidget(slider);

@@ -49,6 +49,7 @@
 #define LONG64
 #define QT_CLEAN_NAMESPACE
 
+#include <qslider.h>
 #include "xlock.h"
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
@@ -458,11 +459,12 @@ initSpace(Window window)
 #include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
-#include "kslider.h"
 #include <kapp.h>
 #include <kconfig.h>
 
 #include "space.moc"
+
+#undef Below
 
 static kSpaceSaver *saver = NULL;
 
@@ -578,26 +580,26 @@ kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
 
 	QLabel *label;
 	QPushButton *button;
-	KSlider *slider;
+	QSlider *slider;
 
 	label = new QLabel( glocale->translate("Speed:"), this );
 	label->setGeometry( 15, 15, 60, 20 );
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINSPEED, MAXSPEED, 10, speed, QSlider::Horizontal,
+                        this );
 	slider->setGeometry( 15, 35, 90, 20 );
-	slider->setRange( MINSPEED, MAXSPEED );
-	slider->setSteps( (MAXSPEED-MINSPEED)/4, (MAXSPEED-MINSPEED)/2 );
-	slider->setValue( speed );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(10);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotSpeed( int ) ) );
 
 	label = new QLabel( glocale->translate("Warp Interval:"), this );
 	label->setGeometry( 15, 65, 90, 20 );
 
-	slider = new KSlider( KSlider::Horizontal, this );
+	slider = new QSlider(MINWARP, MAXWARP, 3, warpinterval,
+                        QSlider::Horizontal, this );
 	slider->setGeometry( 15, 85, 90, 20 );
-	slider->setRange( MINWARP, MAXWARP );
-	slider->setSteps( (MAXWARP-MINWARP)/4, (MAXWARP-MINWARP)/2 );
-	slider->setValue( warpinterval );
+    slider->setTickmarks(QSlider::Below);
+    slider->setTickInterval(3);
 	connect( slider, SIGNAL( valueChanged( int ) ), SLOT( slotWarp( int ) ) );
 
 	preview = new QWidget( this );

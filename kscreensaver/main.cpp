@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	} parameter;
 	
 	const char *strings[] = { 
-	    "-setup", "-window-id", "-root", "-desc", "-help", 0
+	    "-setup", "-window-id", "-root", "-help", 0
 	};
 
 	int i = 1;
@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
     if (saveWin == 0)
     {
         demoWidget = new DemoWindow();
-//        demoWidget->setBackgroundMode(QWidget::NoBackground);
-        demoWidget->setBackgroundColor(Qt::black);
+        demoWidget->setBackgroundMode(QWidget::NoBackground);
+//        demoWidget->setBackgroundColor(Qt::black);
         demoWidget->show();
         saveWin = demoWidget->winId();
         app.setMainWidget(demoWidget);
