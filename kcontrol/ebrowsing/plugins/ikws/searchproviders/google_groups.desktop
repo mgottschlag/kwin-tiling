@@ -46,7 +46,7 @@ Name[sk]=Diskusné skupiny Google
 Name[sl]=Novičarske skupine Google
 Name[sr]=Google групе
 Name[sr@Latn]=Google grupe
-Name[ss]=Emacembu ye Google 
+Name[ss]=Emacembu ye Google
 Name[sv]=Google-grupper
 Name[ta]=கூகுல் குழுக்கள்
 Name[tg]=Гурӯҳҳои Google
@@ -62,3 +62,4 @@ Name[zu]=Amaqembu e-Google
 ServiceTypes=SearchProvider
 Keys=ggg,groups,dj,deja
 Query=http://groups.google.com/groups?oi=djq&as_q=\\{@}
+Query[fi]=http://groups.google.fi/groups?oi=djq&as_q=\\{@}

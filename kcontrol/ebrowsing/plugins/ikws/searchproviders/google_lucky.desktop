@@ -22,7 +22,7 @@ Name[fi]=Google (Kokeile onneasi)
 Name[fo]=Google (ein heppin dagur)
 Name[fr]=Google (J'ai de la chance)
 Name[gl]=Google(Síntome Afortunado)
-Name[hi]=गूगल (आज मेरी क़िस्मत अच्छी है)
+Name[hi]=गूगल (आज मेरी क़िस्मत चमक़ी है)
 Name[hr]=Google (osjećam se sretnim)
 Name[is]=Google (Ég er heppin(n) í dag)
 Name[it]=Google (Mi sento fortunato)
@@ -60,4 +60,5 @@ Name[zu]=Google (Ngizizwa Ngisenhlanhleni)
 ServiceTypes=SearchProvider
 Keys=ggl,gglucky
 Query=http://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Query[fi]=http://www.google.fi/search?q=\\{@}&btnI=Kokeilen+onneani&ie=UTF-8&oe=UTF-8
 Charset=utf8

@@ -10,7 +10,7 @@ Name[bn]=গুগল্ চিত্র অনুসন্ধান
 Name[bs]=Google traženje slika
 Name[ca]=Recerca d'imatges a Google
 Name[cs]=Hledání obrázků (Google)
-Name[cy]=Chwilio Delweddau Google 
+Name[cy]=Chwilio Delweddau Google
 Name[da]=Google billedsøgning
 Name[de]=Google-Bildsuche
 Name[el]=Αναζήτηση εικόνων του Google
@@ -50,7 +50,7 @@ Name[sk]=Hľadanie obrázkov Google
 Name[sl]=Iskanje slik z Google
 Name[sr]=Google претраживање слика
 Name[sr@Latn]=Google pretraživanje slika
-Name[ss]=Kusesha kwemfanekiso ku Google 
+Name[ss]=Kusesha kwemfanekiso ku Google
 Name[sv]=Google bildsökning
 Name[ta]=கூகுல் சித்திர தேடு
 Name[tg]=Ҷусуҷӯи тасвири Google
@@ -68,3 +68,4 @@ Name[zu]=Ukusesha isithombe kwe-Google
 ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
+Query[fi]=http://images.google.fi/images?q=\\{@}

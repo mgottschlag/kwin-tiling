@@ -43,7 +43,7 @@ Name[sk]=Hľadanie PHP
 Name[sl]=Iskanje po PHP
 Name[sr]=PHP претраживање
 Name[sr@Latn]=PHP pretraživanje
-Name[ss]=Kusesha kwe PHP 
+Name[ss]=Kusesha kwe PHP
 Name[sv]=PHP search
 Name[ta]=PHP தேடு
 Name[tg]=Ҷустуҷӯи PHP
@@ -57,5 +57,6 @@ Name[zh_CN]=PHP 搜索
 Name[zh_TW]=PHP 搜尋
 Name[zu]=Usesho lwe-PHP
 Query=http://www.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
+Query[fi]=http://fi2.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
 ServiceTypes=SearchProvider
 Type=Service
