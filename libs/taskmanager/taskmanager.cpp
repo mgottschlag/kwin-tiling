@@ -80,7 +80,7 @@ void TaskManager::configure_startup()
     c.setGroup("FeedbackStyle");
     if (!c.readBoolEntry("TaskbarButton", true))
         return;
-    _startup_info = new KStartupInfo( true, this );
+    _startup_info = new KStartupInfo( KStartupInfo::CleanOnCantDetect, this );
     connect( _startup_info,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )));
