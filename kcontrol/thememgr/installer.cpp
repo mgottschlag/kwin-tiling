@@ -202,7 +202,12 @@ void Installer::addNewTheme(const KURL &srcURL)
 {
   QString dir = KGlobal::dirs()->saveLocation("themes");
   KURL url;
-  url.setPath(dir+srcURL.fileName());
+  QString filename = srcURL.fileName();
+  int i = filename.findRev('.');
+  // Convert extension to lower case.
+  if (i >= 0)
+     filename = filename.left(i)+filename.mid(i).lower(); 
+  url.setPath(dir+filename);
   bool rc = KIO::NetAccess::copy(srcURL, url);
   if (!rc)
   {
@@ -340,7 +345,7 @@ void Installer::slotAdd()
   static QString path;
   if (path.isEmpty()) path = QDir::homeDirPath();
 
-  KFileDialog dlg(path, "*"+Theme::defaultExtension(), 0, 0, true);
+  KFileDialog dlg(path, Theme::allExtensions(), 0, 0, true);
   dlg.setCaption(i18n("Add Theme"));
   if (!dlg.exec()) return;
 

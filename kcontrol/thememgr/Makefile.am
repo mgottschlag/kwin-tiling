@@ -29,12 +29,15 @@ themesdir =  $(kde_datadir)/kthememgr/Themes
 themes_DATA = Template.themerc
 
 install-data-local:
-	cd $(srcdir)/Themes; \
+	cp -r $(srcdir)/Themes BuildThemes; \
+	rm -rf `find BuildThemes -type d -name CVS -print`; \
+	( cd BuildThemes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
-	    tar -b 16 -c -f - `find $$f -type f -print|grep -v '/CVS/'`| gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
+	    tar -b 16 -c -f - $$f| gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
 	  fi; \
-	done
+	done ); \
+	rm -rf BuildThemes;
 
 messages:
 	$(XGETTEXT) $(libkcm_themes_la_SOURCES) -o $(podir)/kcmthemes.pot

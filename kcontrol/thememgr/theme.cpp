@@ -20,7 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
+ 
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -31,8 +31,8 @@
 
 #include <qdir.h>
 #include <qfile.h>
+#include <qtextstream.h>
 #include <qfileinfo.h>
-#include <qstrlist.h>
 #include <kapp.h>
 #include <qdir.h>
 #include <qpixmap.h>
@@ -133,6 +133,7 @@ const QString Theme::baseDir()
 bool Theme::checkExtension(const QString &file)
 {
   return ((file.right(4) == ".tgz") ||
+	  (file.right(4) == ".zip") ||
           (file.right(7) == ".tar.gz") ||
           (file.right(7) == ".ktheme"));
 }
@@ -141,6 +142,8 @@ QString Theme::removeExtension(const QString &file)
 {
   QString result = file;
   if (file.right(4) == ".tgz")
+     result.truncate(file.length()-4);
+  else if (file.right(4) == ".zip")
      result.truncate(file.length()-4);
   else if (file.right(7) == ".tar.gz")
      result.truncate(file.length()-7);
@@ -153,6 +156,11 @@ QString Theme::removeExtension(const QString &file)
 QString Theme::defaultExtension()
 {
    return QString::fromLatin1(".ktheme");
+}
+
+QString Theme::allExtensions()
+{
+   return i18n("*.tgz *.zip *.tar.gz *.ktheme|Theme files");
 }
 
 //-----------------------------------------------------------------------------
@@ -183,6 +191,26 @@ void Theme::cleanupWorkDir(void)
   if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
 }
 
+void Theme::findThemerc(const QString &path, const QStringList &list)
+{
+  for(QStringList::ConstIterator it = list.begin();
+      it != list.end(); ++it)
+  {
+     QString filename = (*it).lower();
+     if (filename.right(8) == ".themerc")
+     {
+        mThemeType = Theme_KDE;
+        mThemercFile = path + *it;
+        break;
+     }
+     if (filename.right(6) == ".theme")
+     {
+        mThemeType = Theme_Windows;
+        mThemercFile = path + *it;
+        break;
+     }
+  }
+}
 
 //-----------------------------------------------------------------------------
 bool Theme::load(const QString &aPath, QString &error)
@@ -220,6 +248,20 @@ bool Theme::load(const QString &aPath, QString &error)
       return false;
     }
   }
+  else if (aPath.right(4) == ".zip")
+  {
+    // The theme given is a zip archive. Unpack the archive.
+    cmd = QString("cd \"%1\"; unzip -qq \"%2\"")
+             .arg(workDir()).arg(aPath);
+    kdDebug() << cmd << endl;
+    rc = system(QFile::encodeName(cmd).data());
+    if (rc)
+    {
+      error = i18n("Theme contents could not be extracted from\n%1\ninto\n%1")
+                .arg(aPath).arg(workDir());
+      return false;
+    }
+  }
   else
   {
     // The theme given is a tar package. Unpack theme package.
@@ -236,33 +278,67 @@ bool Theme::load(const QString &aPath, QString &error)
   }
 
   // Let's see if the theme is stored in a subdirectory.
-  QDir dir(workDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
-  for (i=0, mThemePath=QString::null, num=0; dir[i]!=0; i++)
-  {
-    if (dir[i][0]=='.') continue;
-    finfo.setFile(workDir() + dir[i]);
-    if (!finfo.isDir()) break;
-    mThemePath = dir[i];
-    num++;
-  }
-  if (num==1) mThemePath = workDir() + mThemePath + '/';
-  else mThemePath = workDir();
+  mThemercFile = QString::null;
+  mThemePath = workDir();
+  QDir dir(mThemePath, QString::null, QDir::Name, QDir::Files|QDir::Dirs);
+  QStringList list = dir.entryList();
+  findThemerc(mThemePath, list);
 
-  // Search for the themerc file
-  dir.setNameFilter("*.themerc");
-  dir.setPath(mThemePath);
-  mThemercFile = dir[0];
   if (mThemercFile.isEmpty())
   {
-    error = i18n("Theme does not contain a .themerc file.");
+    bool hasDir = false;
+    for(QStringList::ConstIterator it = list.begin();
+         it != list.end(); ++it)
+    {
+       if ((*it)[0] == '.') continue;
+       finfo.setFile(mThemePath + *it);
+       if (finfo.isDir())
+       {
+          mThemePath += *it + '/';
+          hasDir = true;
+          break;
+       }
+    }
+
+    if (hasDir)
+    {
+       dir.setPath(mThemePath);
+       list = dir.entryList();
+       findThemerc(mThemePath, list);
+    }
+  }
+
+  if (mThemercFile.isEmpty())
+  {
+    error = i18n("Theme does not contain a .themerc nor a .theme file.");
     return false;
   }
-  mThemercFile = mThemePath+mThemercFile;
 
   // Search for the preview image
   dir.setNameFilter("*.preview.*");
   mPreviewFile = dir[0];
   mPreviewFile = mThemePath+mPreviewFile;
+
+  if (mThemeType == Theme_Windows)
+  {
+    // Convert '\' to '/'. 
+    // KSimpleConfig uses '\' for escaping, so we have to do that here!
+    QFile file1(mThemercFile);
+    QFile file2(mThemercFile+"_rc");
+    if (file1.open(IO_ReadOnly) && file2.open(IO_WriteOnly))
+    {
+       mThemercFile += "_rc";
+       QTextStream stream1(&file1);
+       QTextStream stream2(&file2);
+       QRegExp reg("\\\\");
+       while(!stream1.atEnd())
+       {
+          QString line(stream1.readLine());
+          line.replace(reg, "/");
+          stream2 << line << endl;
+       }
+    }
+  }
 
   // read theme config file
   mConfig = new KSimpleConfig(mThemercFile);
@@ -316,30 +392,31 @@ void Theme::removeFile(const QString& aName, const QString &aDirName)
 //-----------------------------------------------------------------------------
 bool Theme::installFile(const QString& aSrc, const QString& aDest)
 {
-  QString cmd, dest, src;
+  QString cmd, dest;
+  QString src(aSrc);
   QFileInfo finfo;
   QFile srcFile, destFile;
   int len, i;
   char buf[32768];
   bool backupMade = false;
 
-  if (aSrc.isEmpty()) return true;
+  if (src.isEmpty()) return true;
 
   assert(aDest[0] == '/');
   dest = aDest;
 
-  src = mThemePath + aSrc;
+  src = mThemePath + src;
 
   finfo.setFile(src);
   if (!finfo.exists())
   {
-    kdDebug() << "File " << aSrc << " is not in theme package." << endl;
+    kdDebug() << "File " << src << " is not in theme package." << endl;
     return false;
   }
 
   if (finfo.isDir())
   {
-    kdDebug() << aSrc << " is a direcotry instead of a file." << endl;
+    kdDebug() << src << " is a direcotry instead of a file." << endl;
     return false;
   }
 
@@ -349,7 +426,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     len = dest.length();
     if (dest[len-1]=='/') dest[len-1] = '\0';
     i = src.findRev('/');
-    dest = dest + '/' + src.mid(i+1,1024);
+    dest = dest + '/' + src.mid(i+1);
     finfo.setFile(dest);
   }
 
@@ -462,6 +539,13 @@ int Theme::installGroup(const char* aGroupName)
   const char* missing = 0;
 
   group = aGroupName;
+  if (mThemeType == Theme_Windows)
+  {
+    if (group == "Colors")
+      group = "Control Panel/Colors";
+    else if (group == "Display")
+      group = "Control Panel/Desktop";
+  }
   mConfig->setGroup(group);
 
   if (!instOverwrite) uninstallFiles(aGroupName);
@@ -557,7 +641,7 @@ int Theme::installGroup(const char* aGroupName)
       if (i >= 0)
       {
 	cfgKey = value.left(i);
-	cfgValue = value.mid(i+1, 1024);
+	cfgValue = value.mid(i+1);
       }
       else
       {
@@ -578,11 +662,31 @@ int Theme::installGroup(const char* aGroupName)
       }
 
       themeValue = mConfig->readEntry(key);
+      if (group.left(20) == "Control Panel/Colors")
+      {
+        themeValue.replace((const QRegExp&) "\\s", (const QString&) ",");
+      }
+      else if (group.left(21) == "Control Panel/Desktop")
+      {
+	if (key == "Wallpaper")
+        {
+	  themeValue = (themeValue.findRev('%') >= 0) ? 
+	    themeValue.right(themeValue.length() - themeValue.findRev('%') - 1) :
+	    themeValue;
+        }
+	else if (key == "WallpaperStyle")
+        {
+	  themeValue = "Scaled";
+        }
+      }
       if (cfgValue.isEmpty()) cfgValue = themeValue;
 
       // Install file
       if (bInstallFile)
       {
+        i = cfgValue.findRev('/');
+        if (i != -1)
+           cfgValue = cfgValue.mid(i+1);
 	if (!themeValue.isEmpty())
 	{
           KStandardDirs::makeDir(appDir);
@@ -970,18 +1074,35 @@ void Theme::loadGroupGeneral(void)
   QColor col;
   col.setRgb(192,192,192);
 
-  mConfig->setGroup("General");
-  mName = mConfig->readEntry("Name");
-  if (mName.isEmpty())
-	  mName = mConfig->readEntry("name", "<unknown>");
-  mDescription = mConfig->readEntry("Comment");
-  if (mDescription.isEmpty())
-	  mDescription = mConfig->readEntry("description", i18n("%1 Theme").arg(mName));
-  mAuthor = mConfig->readEntry("author");
-  mEmail = mConfig->readEntry("email");
-  mHomePage = mConfig->readEntry("homepage");
-  mVersion = mConfig->readEntry("version");
-
+  if (mThemeType == Theme_Windows) 
+  {
+    mName = mThemercFile;
+    int i = mName.findRev('/');
+    if (i != -1)
+       mName = mName.mid(i+1);
+    i = mName.findRev('.');
+    if (i != -1)
+       mName = mName.left(i);
+    mDescription = mName + " Theme";
+    mAuthor = "Divide by Zero's WinTheme patch imported";
+    mEmail = "";
+    mHomePage = "";
+    mVersion = "";
+  } 
+  else 
+  {
+    mConfig->setGroup("General");
+    mName = mConfig->readEntry("Name");
+    if (mName.isEmpty())
+       mName = mConfig->readEntry("name", "<unknown>");
+    mDescription = mConfig->readEntry("Comment");
+    if (mDescription.isEmpty())
+       mDescription = mConfig->readEntry("description", i18n("%1 Theme").arg(mName));
+    mAuthor = mConfig->readEntry("author");
+    mEmail = mConfig->readEntry("email");
+    mHomePage = mConfig->readEntry("homepage");
+    mVersion = mConfig->readEntry("version");
+  }
   if (!mPreviewFile.isEmpty())
   {
     if (!mPreview.load(mPreviewFile))
@@ -996,12 +1117,23 @@ void Theme::loadGroupGeneral(void)
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-  bool found = mConfig->hasGroup(aName);
+  bool found;
+  QString gName;
+  
+  if (mThemeType == Theme_Windows) 
+  {
+    if (aName == "Colors")
+	gName = "Control Panel/Colors";
+    else if (aName == "Display")
+	gName = "Control Panel/Desktop";
+  } else
+    gName = aName;
+  found = mConfig->hasGroup(gName);
 
   if (!aNotEmpty)
     return found;
 
-  QMap<QString, QString> aMap = mConfig->entryMap(aName);
+  QMap<QString, QString> aMap = mConfig->entryMap(gName);
   if (found && aNotEmpty)
     found = !aMap.isEmpty();
 
@@ -1076,7 +1208,7 @@ void Theme::colorSchemeApply(void)
 const QString Theme::fileOf(const QString& aName) const
 {
   int i = aName.findRev('/');
-  if (i >= 0) return aName.mid(i+1, 1024);
+  if (i >= 0) return aName.mid(i+1);
   return aName;
 }
 

@@ -90,6 +90,9 @@ public:
   /** default extension for the file **/
   static QString defaultExtension();
 
+  /** filter expression for KFileDialog **/
+  static QString allExtensions();
+
   /** Uninstall files of last theme installation for given group */
   virtual void uninstallFiles(const char* groupName);
 
@@ -194,10 +197,15 @@ protected:
   /** Returns path of given file+path (up to the last slash) */
   virtual const QString pathOf(const QString&) const;
 
+  /** Find .theme file in a list of files. **/
+  void findThemerc(const QString &path, const QStringList &list);
 
 protected:
   bool mValid; 		   // Whether the theme can be applied.
 
+  enum ThemeType { Theme_KDE, Theme_Windows };
+
+  ThemeType mThemeType;	   
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
   QString mThemercFile;    // Name of the .themerc file

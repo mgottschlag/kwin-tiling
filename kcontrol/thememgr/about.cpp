@@ -61,10 +61,12 @@ About::About (QWidget * aParent, const char *aName, bool aInit)
 
   str = i18n("Version %1\n\n"
 		   "Copyright (C) 1998-2000 by\n%2\n%3\n\n"
+		   "Support for M$-Windows' Themes\nCopyright (C) 2001 by\n%4\n\n\n"
 		   "Gnu Public License (GPL)")
 	      .arg(KTHEME_VERSION)
 	      .arg("Stefan Taferner <taferner@kde.org>")
-              .arg("Waldo Bastian <bastian@kde.org>");
+              .arg("Waldo Bastian <bastian@kde.org>")
+	      .arg("Divide by Zero <divide@priv.onet.pl>");
   lbl = new QLabel(str, this);
   lbl->setMinimumSize(lbl->sizeHint());
   box->addWidget(lbl);

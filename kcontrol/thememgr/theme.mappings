@@ -117,6 +117,40 @@ linkColor=!
 visitedLinkColor=!
 #
 #-----------------------------------------------------------------------------
+[Control Panel/Colors]
+ConfigFile=kdeglobals
+ConfigGroup=WM
+ConfigNextGroup=Control Panel/Colors-2
+ConfigActivateCmd=applyColors
+GradientActiveTitle=activeBlend!
+ActiveTitle=activeBackground!
+TitleText=activeForeground!
+activeTitleBtnBg=!
+GradientInactiveTitle=inactiveBlend!
+InactiveTitle=inactiveBackground!
+InactiveTitleText=inactiveForeground!
+inactiveTitleBtnBg=!
+#
+[Control Panel/Colors-2]
+ConfigGroup=KDE
+ConfigNextGroup=Control Panel/Colors-3
+contrast=!
+#
+[Control Panel/Colors-3]
+ConfigGroup=General
+ConfigNextGroup=
+ButtonText=foreground!
+HilightText=selectForeground!
+Hilight=selectBackground!
+ButtonFace=background!
+buttonBackground=!
+buttonForeground=!
+WindowText=windowForeground!
+Window=windowBackground!
+linkColor=!
+visitedLinkColor=!
+#
+#-----------------------------------------------------------------------------
 [Display]
 ConfigNextGroup=Display-1
 ConfigGroup=Desktop0
@@ -254,6 +288,29 @@ ConfigGroup=Background Common
 ConfigNextGroup=Display-textcolor
 ConfigInstallCmd=oneDesktopMode
 #
+#
+#-----------------------------------------------------------------------------
+[Control Panel/Desktop]
+ConfigNextGroup=Display-dtm
+ConfigGroup=Desktop0
+ConfigAppDir=wallpapers
+ConfigFile=kdesktoprc
+ConfigAbsolutePaths=true
+ConfigInstallCmd=setWallpaperMode
+ConfigActivateCmd=applyWallpaper
+Wallpaper=
+WallpaperStyle=WallpaperMode!
+ColorMode0=ColorMode!
+Color1_0=Color1!
+Color2_0=Color2!
+BackgroundMode0=BackgroundMode!
+BlendBalance0=BlendBalance!
+BlendMode0=BlendMode!
+Pattern0=Pattern!
+ReverseBlending0=ReverseBlending!
+#
+#
+#-----------------------------------------------------------------------------
 [Display-textcolor]
 ConfigInstallCmd=
 ConfigGroup=FMSettings
