@@ -95,7 +95,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox2->setTitle( i18n( "Taskbar Notification" ) );
     QWhatsThis::add(GroupBox2, i18n("<H1>Taskbar Notification</H1>\n"
     "You can enable a second method of startup notification which is\n"
-    "used by the taskbar where a button with a rotating disk appears,\n"
+    "used by the taskbar where a button with a rotating hourglass appears,\n"
     "symbolizing that your started application is loading.\n"
     "It may occur, that some applications are not aware of this startup\n"
      "notification. In this case, the button disappears after the time\n"
