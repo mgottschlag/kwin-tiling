@@ -365,7 +365,7 @@ void Kclock::paintEvent( QPaintEvent * )
 
 QValidator::State KStrictIntValidator::validate( QString & input, int & d ) const 
 {
-  if( input == "" )
+  if( input.isEmpty() )
     return Valid;
   
   State st = QIntValidator::validate( input, d );

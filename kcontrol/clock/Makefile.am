@@ -10,4 +10,4 @@ INCLUDES= $(all_includes)
 libkcm_clock_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) $(libkcm_clock_la_SOURCES) -o $(podir)/clockconfig.pot
+	$(XGETTEXT) $(libkcm_clock_la_SOURCES) -o $(podir)/kcmkclock.pot
