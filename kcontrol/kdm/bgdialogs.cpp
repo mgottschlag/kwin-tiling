@@ -224,7 +224,7 @@ void KProgramSelectDialog::slotItemDoubleClicked(QListViewItem *item)
 /**** KProgramEditDialog ****/
 
 KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *name)
-    : KDialogBase(parent, name, true, i18n("Configure background Program"),
+    : KDialogBase(parent, name, true, i18n("Configure Background Program"),
 	Ok | Cancel, Ok, true)
 {
     QFrame *frame = makeMainWidget();
