@@ -427,7 +427,7 @@ void KCMStyle::save()
 
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
-	if (item == 3)	// Make Translucent
+	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
 		switch( comboMenuEffectType->currentItem())	
 		{
 			case 1: engine = "SoftwareBlend"; break;
