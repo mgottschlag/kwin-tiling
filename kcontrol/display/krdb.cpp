@@ -60,12 +60,13 @@ static void applyGtkStyles(bool active)
 
 static void applyQtStyles(bool active)
 {
-   QSettings settings;
    bool found;
    QStringList actcg, inactcg, discg;
    QString font,style;
    if(active)
    {
+      QSettings settings;
+      
       /* find out whether we already have backups... silly QSettings doesn't seem to have an exists() */
       settings.readListEntry("/qt/QTorig/active", &found);
       if(!found)
@@ -93,8 +94,6 @@ static void applyQtStyles(bool active)
          styleorig = settings.readEntry("/qt/style", QString::null, &found);
          if(found)
             settings.writeEntry("/qt/QTorig/style", styleorig);
-
-
       }
 
       KSimpleConfig kconfig("kstylerc",true); /* open the style data read-only */
@@ -124,6 +123,8 @@ static void applyQtStyles(bool active)
    }
    else
    {
+      QSettings settings;
+
       /* restore qt color settings, if we have any saved */
       actcg = settings.readListEntry("/qt/QTorig/active", &found);
       if(found)
@@ -152,6 +153,9 @@ static void applyQtStyles(bool active)
       settings.removeEntry("/qt/QTorig/font");
       settings.removeEntry("/qt/QTorig/style");
    }
+   QApplication::setDesktopSettingsAware( true );
+   QApplication::x11_apply_settings();
+   QApplication::setDesktopSettingsAware( false );
 }
 
 // -----------------------------------------------------------------------------
