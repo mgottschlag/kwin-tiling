@@ -37,7 +37,7 @@
 
 #include "slideshow.h"
 
-// This refers to klock.po. If you want an extra dictionary, 
+// This refers to klock.po. If you want an extra dictionary,
 // create an extra KLocale instance here.
 extern KLocale *glocale;
 
@@ -309,7 +309,7 @@ int kSlideShowSaver::effectRandom(bool /*aInit*/)
   {
     x = (rand() % w) << fact;
     y = (rand() % h) << fact;
-    bitBlt(&mWidget, x, y, &mNextScreen, x, y, sz, sz, CopyROP, true);    
+    bitBlt(&mWidget, x, y, &mNextScreen, x, y, sz, sz, CopyROP, true);
   }
   showNextScreen();
 
@@ -725,7 +725,7 @@ kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   tl11->addSpacing(5);
 
   tl11->addStretch(1000);
-  
+
   mPreview = new QWidget(this);
   mPreview->setFixedSize(220, 170);
   mPreview->setBackgroundColor(black);
@@ -838,8 +838,13 @@ void kSlideShowSetup::slotDirSelected(int aIdx)
   if (aIdx <= 0)
   {
     QString dirName;
+#ifdef AFTER_KRASH_API
+    dirName = KFileDialog::getExistingDirectory(QDir::homeDirPath(), this,
+		   glocale->translate("Choose Images Directory") );
+#else
     dirName = KFileBaseDialog::getDirectory(QDir::homeDirPath(), this,
 			    glocale->translate("Choose Images Directory"));
+#endif
     if (dirName.isEmpty()) return;
     mCboDir->insertItem(dirName, 1);
     mCboDir->setCurrentItem(1);
