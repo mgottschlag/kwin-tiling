@@ -15,6 +15,14 @@ KDE_CHECK_HEADER(X11/extensions/xf86misc.h,
     [
     #include <X11/Xlib.h>
     ])
-
 AC_SUBST(LIB_XF86MISC)
+
+if test -n "$LIB_XF86MISC"; then
+    AC_CHECK_LIB(Xxf86misc,XF86MiscSetGrabKeysState,
+	[
+        AC_DEFINE(HAVE_XF86MISCSETGRABKEYSSTATE, 1, [Define if you have XF86MiscSetGrabKeysState()])
+        ],
+        [], [ -lXext -lX11 $X_PRE_LIBS ])
+fi
+
 LDFLAGS="$xss_save_ldflags"

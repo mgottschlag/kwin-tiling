@@ -862,7 +862,7 @@ void LockProcess::checkDPMSActive()
 #endif
 }
 
-#ifdef HAVE_XF86MISC
+#if defined(HAVE_XF86MISC) && defined(HAVE_XF86MISCSETGRABKEYSSTATE)
 // see http://cvsweb.xfree86.org/cvsweb/xc/programs/Xserver/hw/xfree86/common/xf86Events.c#rev3.113
 // This allows enabling the "Allow{Deactivate/Closedown}Grabs" options in XF86Config,
 // and kdesktop_lock will still lock the screen.
