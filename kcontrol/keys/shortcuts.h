@@ -64,7 +64,7 @@ class ShortcutsModule : public QWidget
 
  private:
 	QTabWidget* m_pTab;
-	QRadioButton *m_prbCur, *m_prbNew, *m_prbPre;
+	QRadioButton *m_prbPre, *m_prbNew;
 	KComboBox* m_pcbSchemes;
 	QPushButton* m_pbtnSave, * m_pbtnRemove;
 	int m_nSysSchemes;

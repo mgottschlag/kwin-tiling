@@ -2,6 +2,7 @@
  * shortcuts.cpp
  *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+ * Copyright (c) 2001 Ellis Whitehead <ellis@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -26,6 +27,7 @@
 
 #include <qdir.h>
 #include <qlayout.h>
+#include <qhbox.h>
 #include <qhbuttongroup.h>
 #include <qregexp.h>
 #include <qwhatsthis.h>
@@ -111,47 +113,52 @@ void ShortcutsModule::initGUI()
 	createActionsApplication();
 
 	kdDebug(125) << "F-----------" << endl;
-	QGridLayout* pLayout = new QGridLayout( this, 6, 3, KDialog::marginHint(), KDialog::spacingHint() );
+	//QGridLayout* pLayout = new QGridLayout( this, 6, 3 );//, KDialog::marginHint(), KDialog::spacingHint() );
+	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );//, 0, KDialog::spacingHint() );
 
-	// What's QButtonGroup for?
+	pVLayout->addSpacing( KDialog::marginHint() );
+
+	// (o) [Current      ] <Remove>   ( ) New <Save>
+
+	QHBoxLayout *pHLayout = new QHBoxLayout( pVLayout, KDialog::spacingHint() );
 	QButtonGroup* pGroup = new QButtonGroup( this );
 	pGroup->hide();
 
-	m_prbCur = new QRadioButton( i18n("Current scheme"), this );
-	pGroup->insert( m_prbCur );
-	pLayout->addWidget( m_prbCur, 1, 0 );
-	connect( m_prbCur, SIGNAL(clicked()), SLOT(slotSchemeCur()) );
-
-	m_prbNew = new QRadioButton( i18n("New scheme"), this );
-	m_prbNew->setEnabled( false );
-	pGroup->insert( m_prbNew );
-	pLayout->addWidget( m_prbNew, 1, 1 );
-
-	m_prbPre = new QRadioButton( i18n("Preset scheme"), this );
-	m_prbPre->setEnabled( false );
+	m_prbPre = new QRadioButton( "", this );
+	connect( m_prbPre, SIGNAL(clicked()), SLOT(slotSchemeCur()) );
 	pGroup->insert( m_prbPre );
-	pLayout->addWidget( m_prbPre, 1, 2 );
+	pHLayout->addWidget( m_prbPre );
 
 	m_pcbSchemes = new KComboBox( this );
-	pLayout->addMultiCellWidget( m_pcbSchemes, 2, 2, 0, 2 );
-	//QWhatsThis::add( rb, i18n("The selected action will not be associated with any key.") );
 	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );
+	pHLayout->addWidget( m_pcbSchemes );
 
-	m_pbtnSave = new QPushButton( i18n("&Save Scheme..."), this );
-	m_pbtnSave->setEnabled( false );
-	QWhatsThis::add( m_pbtnSave, i18n("Click here to add a new key bindings scheme. You will be prompted for a name.") );
-	pLayout->addWidget( m_pbtnSave, 3, 0 );
-	connect( m_pbtnSave, SIGNAL(clicked()), SLOT(slotSaveSchemeAs()) );
+	pHLayout->addSpacing( KDialog::marginHint() );
 
-	m_pbtnRemove = new QPushButton( i18n("&Remove Scheme"), this );
+	m_pbtnRemove = new QPushButton( i18n("&Remove"), this );
 	m_pbtnRemove->setEnabled( false );
 	connect( m_pbtnRemove, SIGNAL(clicked()), SLOT(slotRemoveScheme()) );
 	QWhatsThis::add( m_pbtnRemove, i18n("Click here to remove the selected key bindings scheme. You can not"
 		" remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
-	pLayout->addWidget( m_pbtnRemove, 3, 1 );
+	pHLayout->addWidget( m_pbtnRemove );
+
+	pHLayout->addSpacing( KDialog::marginHint() * 3 );
+
+	m_prbNew = new QRadioButton( i18n("New scheme"), this );
+	m_prbNew->setEnabled( false );
+	pGroup->insert( m_prbNew );
+	pHLayout->addWidget( m_prbNew );
+
+	m_pbtnSave = new QPushButton( i18n("&Save..."), this );
+	m_pbtnSave->setEnabled( false );
+	QWhatsThis::add( m_pbtnSave, i18n("Click here to add a new key bindings scheme. You will be prompted for a name.") );
+	connect( m_pbtnSave, SIGNAL(clicked()), SLOT(slotSaveSchemeAs()) );
+	pHLayout->addWidget( m_pbtnSave );
+
+	pHLayout->addStretch( 1 );
 
 	m_pTab = new QTabWidget( this );
-	pLayout->addMultiCellWidget( m_pTab, 5, 5, 0, 2 );
+	pVLayout->addWidget( m_pTab );
 
 	m_pkcGeneral = new KKeyChooser( m_actionsGeneral, this, true, false, true );
 	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
@@ -290,22 +297,17 @@ void ShortcutsModule::slotSelectScheme( int )
 		m_actionsGeneral.readActions( "Global Shortcuts", 0 );
 		m_actionsSequence.readActions( "Global Shortcuts", 0 );
 		m_actionsApplication.readActions( "Shortcuts", 0 );
-
-		m_prbCur->setChecked( true );
-		m_prbNew->setEnabled( false );
-		m_pbtnSave->setEnabled( false );
 	} else {
 		KSimpleConfig config( sFilename );
 
 		m_actionsGeneral.readActions( "Global Shortcuts", &config );
 		m_actionsSequence.readActions( "Global Shortcuts", &config );
 		m_actionsApplication.readActions( "Shortcuts", &config );
-
-		m_prbNew->setEnabled( false );
-		m_prbPre->setEnabled( true );
-		m_prbPre->setChecked( true );
-		m_pbtnSave->setEnabled( false );
 	}
+
+	m_prbPre->setChecked( true );
+	m_prbNew->setEnabled( false );
+	m_pbtnSave->setEnabled( false );
 
 	m_pkcGeneral->listSync();
 	m_pkcSequence->listSync();
