@@ -108,6 +108,7 @@ EXTRA_DIST = \
 	XftConfigRulesData.h \
 	XftConfigEditor.h \
 	XftConfigEditorData.h \
+	XftRename.h \
 	xftint.h \
 	xftgram.h \
 	xftgram.c \

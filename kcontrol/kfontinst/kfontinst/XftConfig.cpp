@@ -30,6 +30,7 @@
 #include "XftConfig.h"
 
 #ifdef HAVE_XFT
+#include "XftRename.h"
 #include <qstring.h>
 #include <qglobal.h>
 #include <fstream.h>
@@ -88,9 +89,6 @@ _XftNameConstantLookup (char *string)
     return 0;
 }
 
-#if QT_VERSION < 300
-//
-// Qt links against Xft, so these functions no longer need to be defined...
 Bool
 XftNameConstant (char *string, int *result)
 {
@@ -115,7 +113,6 @@ _XftSaveString (const char *s)
     strcpy (r, s);
     return r;
 }
-#endif
 
 // Re-defined functions...
 Bool

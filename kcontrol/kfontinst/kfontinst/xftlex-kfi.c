@@ -19,5 +19,6 @@
 /* Add XFT guard around xftlex.c... */
  
 #ifdef HAVE_XFT
+#include "XftRename.h"
 #include "xftlex.c"
 #endif
