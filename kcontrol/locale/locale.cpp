@@ -3,6 +3,7 @@
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
  * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@pvv.ntnu.no>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -25,167 +26,155 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
+#include <qobjectlist.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kstddirs.h>
 #include <kmessagebox.h>
+#include <kstddirs.h>
 #include <ksimpleconfig.h>
 
 #include "locale.h"
 #include "locale.moc"
 
-#include "config.h"
+#define i18n(a) (a)
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : KConfigWidget (parent, name)
 {
-    locale = new KLocale("kdelibs");
-    
-    // allow localization of numbers and money
-    // not used by KDE it self?
-    // locale->enableNumericLocale(true);
-    
+    locale =  KGlobal::locale();
+
     QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
-    QGroupBox *gbox = new QGroupBox(i18n("Language"), this);
+    QGroupBox *gbox = new QGroupBox(this, i18n("Locale"));
     tl->addWidget(gbox);
-    
+
     QGridLayout *tl1 = new QGridLayout(gbox, 5, 4, 5);
     tl1->addRowSpacing(0, 15);
     tl1->addRowSpacing(4, 10);
     tl1->addColSpacing(0, 10);
     tl1->addColSpacing(3, 10);
     tl1->setColStretch(2, 1);
-    
+
     changedFlag = FALSE;
-    
-    QLabel *label = new QLabel(i18n("&First"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo1 = new KLanguageCombo(gbox);
-    combo1->setMinimumWidth(combo1->sizeHint().width());
-    combo1->setFixedHeight(combo1->sizeHint().height());
-    label->setBuddy(combo1);
-    connect(combo1,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+
+    QLabel *label = new QLabel(gbox, i18n("&Country"));
+    comboCountry = new KLanguageCombo(gbox);
+    //comboCountry->setMinimumWidth(comboCountry->sizeHint().width());
+    comboCountry->setFixedHeight(comboCountry->sizeHint().height());
+    label->setBuddy(comboCountry);
+    connect(comboCountry,SIGNAL(highlighted(int)),this,SLOT(changedCountry(int)));
     tl1->addWidget(label, 1, 1);
-    tl1->addWidget(combo1, 1, 2);
-    
-    label = new QLabel(i18n("&Second"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo2 = new KLanguageCombo(gbox);
-    combo2->setMinimumWidth(combo2->sizeHint().width());
-    combo2->setFixedHeight(combo2->sizeHint().height());
-    label->setBuddy(combo2);
-    connect(combo2,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+    tl1->addWidget(comboCountry, 1, 2);
+
+    label = new QLabel(gbox, i18n("&Language"));
+    comboLang = new KLanguageCombo(gbox);
+    //comboLang->setMinimumWidth(comboLang->sizeHint().width());
+    comboLang->setFixedHeight(comboLang->sizeHint().height());
+    label->setBuddy(comboLang);
+    connect(comboLang,SIGNAL(highlighted(int)),this,SLOT(changedLanguage(int)));
     tl1->addWidget(label, 2, 1);
-    tl1->addWidget(combo2, 2, 2);
-    
-    label = new QLabel(i18n("&Third"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo3 = new KLanguageCombo(gbox);
-    combo3->setMinimumWidth(combo3->sizeHint().width());
-    combo3->setFixedHeight(combo3->sizeHint().height());
-    label->setBuddy(combo3);
-    connect(combo3,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+    tl1->addWidget(comboLang, 2, 2);
+
+    label = new QLabel(gbox, i18n("&Numbers"));
+    comboNumber = new KLanguageCombo(gbox);
+    //comboNumber->setMinimumWidth(comboNumber->sizeHint().width());
+    comboNumber->setFixedHeight(comboNumber->sizeHint().height());
+    label->setBuddy(comboNumber);
+    connect(comboNumber,SIGNAL(highlighted(int)),this,SLOT(changedNumber(int)));
     tl1->addWidget(label, 3, 1);
-    tl1->addWidget(combo3, 3, 2);
-    
-    label = new QLabel(i18n("&Numbers"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo4 = new KLanguageCombo(gbox);
-    combo4->setMinimumWidth(combo4->sizeHint().width());
-    combo4->setFixedHeight(combo4->sizeHint().height());
-    label->setBuddy(combo4);
-    connect(combo4,SIGNAL(highlighted(int)),this,SLOT(changedNumber(int)));
+    tl1->addWidget(comboNumber, 3, 2);
+
+    label = new QLabel(gbox, i18n("&Money"));
+    comboMoney = new KLanguageCombo(gbox);
+    //comboMoney->setMinimumWidth(comboMoney->sizeHint().width());
+    comboMoney->setFixedHeight(comboMoney->sizeHint().height());
+    label->setBuddy(comboMoney);
+    connect(comboMoney,SIGNAL(highlighted(int)),this,SLOT(changedMoney(int)));
     tl1->addWidget(label, 4, 1);
-    tl1->addWidget(combo4, 4, 2);
+    tl1->addWidget(comboMoney, 4, 2);
 
-    label = new QLabel(i18n("&Money"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo5 = new KLanguageCombo(gbox);
-    combo5->setMinimumWidth(combo5->sizeHint().width());
-    combo5->setFixedHeight(combo5->sizeHint().height());
-    label->setBuddy(combo5);
-    connect(combo5,SIGNAL(highlighted(int)),this,SLOT(changedMoney(int)));
+    label = new QLabel(gbox, i18n("&Date and time"));
+    comboDate = new KLanguageCombo(gbox);
+    //comboDate->setMinimumWidth(comboDate->sizeHint().width());
+    comboDate->setFixedHeight(comboDate->sizeHint().height());
+    label->setBuddy(comboDate);
+    connect(comboDate,SIGNAL(highlighted(int)),this,SLOT(changedTime(int)));
     tl1->addWidget(label, 5, 1);
-    tl1->addWidget(combo5, 5, 2);
-
-    label = new QLabel(i18n("&Date and time"), gbox);
-    label->setMinimumSize(label->sizeHint());
-    combo6 = new KLanguageCombo(gbox);
-    combo6->setMinimumWidth(combo6->sizeHint().width());
-    combo6->setFixedHeight(combo6->sizeHint().height());
-    label->setBuddy(combo6);
-    connect(combo6,SIGNAL(highlighted(int)),this,SLOT(changedTime(int)));
-    tl1->addWidget(label, 6, 1);
-    tl1->addWidget(combo6, 6, 2);
+    tl1->addWidget(comboDate, 5, 2);
 
     tl1->activate();
-    
-    gbox = new QGroupBox(i18n("Examples"), this);
+
+    gbox = new QGroupBox(this, i18n("Examples"));
     tl->addWidget(gbox);
-    
+
     tl1 = new QGridLayout(gbox, 6, 4, 5);
     tl1->addRowSpacing(0, 15);
     tl1->addRowSpacing(5, 10);
     tl1->addColSpacing(0, 10);
     tl1->addColSpacing(3, 10);
     tl1->setColStretch(2, 1);
-    
-    label = new QLabel(i18n("Numbers:"), gbox);
-    label->setMinimumSize(label->sizeHint());
+
+    label = new QLabel("1", gbox, i18n("Numbers:"));
     tl1->addWidget(label, 1, 1);
-    
+
     numberSample = new QLabel(gbox);
     tl1->addWidget(numberSample, 1, 2);
 
-    label = new QLabel(i18n("Money:"), gbox);
-    label->setMinimumSize(label->sizeHint());
+    label = new QLabel("1", gbox, i18n("Money:"));
     tl1->addWidget(label, 2, 1);
-    
+
     moneySample = new QLabel(gbox);
     tl1->addWidget(moneySample, 2, 2);
 
-    label = new QLabel(i18n("Date:"), gbox);
-    label->setMinimumSize(label->sizeHint());
+    label = new QLabel("1", gbox, i18n("Date:"));
     tl1->addWidget(label, 3, 1);
-    
+
     dateSample = new QLabel(gbox);
     tl1->addWidget(dateSample, 3, 2);
 
-    label = new QLabel(i18n("Time:"), gbox);
-    label->setMinimumSize(label->sizeHint());
+    label = new QLabel("1", gbox, i18n("Time:"));
     tl1->addWidget(label, 4, 1);
-    
+
     timeSample = new QLabel(gbox);
     tl1->addWidget(timeSample, 4, 2);
 
     tl->addStretch(1);
     tl->activate();
 
+    updateSample();
     loadSettings();
 }
-
 
 KLocaleConfig::~KLocaleConfig ()
 {
 }
 
-
-void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
+void KLocaleConfig::loadLanguageList(KLanguageCombo *combo, const QStringList &first)
 {
-  KConfigBase *config = KGlobal::config();
   QString name;
 
   combo->clear();
-  tags.clear();
+  combo->tags.clear();
 
-  config->setGroup("C");
-  combo->insertLanguage("C;" + config->readEntry("Name"));
-  tags.append("C");
- 
-  QStringList filelist = KGlobal::dirs()->findAllResources("locale",
+  QStringList filelist;
+  for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
+    {
+        QString str = locate("locale", *it + "/entry.desktop");
+        if (!str.isNull())
+          filelist << str;
+        printf("%s\n", str.ascii());
+    }
+  if (filelist.isEmpty())
+  {
+    KConfigBase *config = KGlobal::config();
+    config->setGroup("C");
+    combo->insertLanguage("C", config->readEntry("Name"));
+
+    filelist = KGlobal::dirs()->findAllResources("locale",
 							   "*/entry.desktop");
+  }
+
   for ( QStringList::ConstIterator it = filelist.begin();
 	it != filelist.end(); ++it )
     {
@@ -200,132 +189,167 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
 	path = path.left(index);
 	index = path.findRev('/');
 	path = path.mid(index+1);
-	combo->insertLanguage(path + ";" + name);
-	tags.append(path);
+	combo->insertLanguage(path, name);
     }
 }
 
+void KLocaleConfig::loadCountryList(KLanguageCombo *combo, const QStringList &first)
+{
+  KConfigBase *config = KGlobal::config();
+  QString name;
+
+  combo->clear();
+  combo->tags.clear();
+
+  config->setGroup("C");
+  combo->insertLanguage("C", config->readEntry("Name"), "l10n/");
+
+  QStringList filelist = KGlobal::dirs()->findAllResources("locale",
+							   "l10n/*/entry.desktop");
+  for ( QStringList::ConstIterator it = first.fromLast(); it != first.end(); --it )
+    {
+        int i;
+        if ((i = filelist.findIndex(locate("locale", "l10n/" + *it + "/entry.desktop"))) > 0)
+          {
+              filelist.prepend(*filelist.at(i));
+              filelist.remove(filelist.at(i + 1));
+          }
+    }
+
+  for ( QStringList::ConstIterator it = filelist.begin();
+	it != filelist.end(); ++it )
+    {
+	KSimpleConfig entry(*it);
+	entry.setGroup("KCM Locale");
+	name = entry.readEntry("Name");
+	if (name.isEmpty())
+	    name = "without name!";
+	
+	QString path = *it;
+	int index = path.findRev('/');
+	path = path.left(index);
+	index = path.findRev('/');
+	path = path.mid(index+1);
+	combo->insertLanguage(path, name, "l10n/");
+    }
+}
 
 void KLocaleConfig::loadSettings()
 {
+  loadCountryList(comboCountry, 0);
+  loadLanguageList(comboLang, 0);
+  loadCountryList(comboNumber, 0);
+  loadCountryList(comboMoney, 0);
+  loadCountryList(comboDate, 0);
+
   KConfig *config = KGlobal::config();
-
-  loadLanguageList(combo1);
-  loadLanguageList(combo2);
-  loadLanguageList(combo3);
-  loadLanguageList(combo4);
-  loadLanguageList(combo5);
-  loadLanguageList(combo6);
-  combo4->insertItem(i18n("Same as language"), 0);
-  combo5->insertItem(i18n("Same as language"), 0);
-  combo6->insertItem(i18n("Same as language"), 0);
-
-
-  // This code is adopted from klocale.cpp
-
-  QString languages, lang;
-  int i=0, pos;
-
   config->setGroup("Locale");
-  languages = config->readEntry("Language");
 
-  while (i < 3) {
-    lang = languages.left(languages.find(':'));
-    languages = languages.right(languages.length() - lang.length() - 1);
-    if (lang.isEmpty() || lang == "C")
-        break;
-    i++;
-    switch (i) {
-      case 1: pos = tags.findIndex(lang); 
-              if (pos >= 0)
-                combo1->setCurrentItem(pos);
-              break;
-      case 2: pos = tags.findIndex(lang); 
-              if (pos >= 0)
-                combo2->setCurrentItem(pos);
-              break;
-      case 3: pos = tags.findIndex(lang); 
-              if (pos >= 0)
-                combo3->setCurrentItem(pos);
-              break;        
-    }
-  } 
+  QString str = config->readEntry("Country");
+  comboCountry->setItem(str);
+
+  // Language
+  str = config->readEntry("Language");
+  str = str.left(str.find(':')); // for compatible -- FIXME in KDE3
+  comboLang->setItem(str);
 
   // Numeric
-  QString str = config->readEntry("Numeric");
-  pos = tags.findIndex(str);
-  combo4->setCurrentItem(pos + 1);
+  str = config->readEntry("Numeric");
+  comboNumber->setItem(str);
 
   // Money
   str = config->readEntry("Monetary");
-  pos = tags.findIndex(str);
-  combo5->setCurrentItem(pos + 1);
+  comboMoney->setItem(str);
 
   // Date and time
   str = config->readEntry("Time");
-  pos = tags.findIndex(str);
-  combo6->setCurrentItem(pos + 1);
-
-  changed(combo1->currentItem());
+  comboDate->setItem(str);
 }
-
 
 void KLocaleConfig::applySettings()
 {
   KConfigBase *config = KGlobal::config();
 
-  QString value;
-
-  value = QString("%1:%2:%3")
-                            .arg(*tags.at(combo1->currentItem()))
-                            .arg(*tags.at(combo2->currentItem()))
-                            .arg(*tags.at(combo3->currentItem()));
-
   config->setGroup("Locale");
-  config->writeEntry("Language", value, true, true);
 
-  QString str1 = combo4->currentItem()?*tags.at(combo4->currentItem() - 1):QString::null;
-  QString str2 = combo5->currentItem()?*tags.at(combo5->currentItem() - 1):QString::null;
-  QString str3 = combo6->currentItem()?*tags.at(combo6->currentItem() - 1):QString::null;
-  config->writeEntry("Numeric", str1);
-  config->writeEntry("Monetary", str2);
-  config->writeEntry("Time", str3);
+  config->writeEntry("Country", comboCountry->currentTag());
+  config->writeEntry("Language", comboLang->currentTag());
+  config->writeEntry("Numeric", comboNumber->currentTag());
+  config->writeEntry("Monetary", comboMoney->currentTag());
+  config->writeEntry("Time", comboDate->currentTag());
+
   config->sync();
-
-  // Apply new settings to the runing locale... experimental.
-  if (str1.isNull()) str1 = *tags.at(combo1->currentItem());
-  if (str2.isNull()) str2 = *tags.at(combo1->currentItem());
-  if (str3.isNull()) str3 = *tags.at(combo1->currentItem());
 
   if (changedFlag)
     KMessageBox::information(this,
 			     i18n("Changed language settings apply only to newly started "
-                      "applications.\nTo change the language of all "
-                      "programs, you will have to logout first."));
+				  "applications.\nTo change the language of all "
+				  "programs, you will have to logout first."),
+                             i18n("Applying language settings"));
 
   changedFlag = FALSE;
 }
 
-
 void KLocaleConfig::defaultSettings()
 {
-  combo1->setCurrentItem(0);
-  combo2->setCurrentItem(0);
-  combo3->setCurrentItem(0);
-  combo4->setCurrentItem(0);
-  combo5->setCurrentItem(0);
-  combo6->setCurrentItem(0);
+  comboCountry->setCurrentItem(0);
+  comboLang->setCurrentItem(0);
+  comboNumber->setCurrentItem(0);
+  comboMoney->setCurrentItem(0);
+  comboDate->setCurrentItem(0);
+}
+
+void KLocaleConfig::changedCountry(int i)
+{
+  changedFlag = TRUE;
+
+  QString country = *comboCountry->tags.at(i);
+
+  KSimpleConfig ent(locate("locale", "l10n/" + country + "/entry.desktop"), true);
+  ent.setGroup("KCM Locale");
+  QStringList langs = ent.readListEntry("Languages");
+  if (langs.isEmpty()) langs = QString("C");
+
+  locale->setLanguage(*langs.at(0),
+                      *langs.at(0), // FIXME -- this is obsoleted
+                      country,
+                      country,
+                      country);
+
+//  loadCountryList(comboCountry, country);
+  loadLanguageList(comboLang, langs);
+//  loadCountryList(comboNumber, country);
+//  loadCountryList(comboMoney, country);
+//  loadCountryList(comboDate, country);
+
+
+  comboLang->setItem((*langs.at(0)).isNull()?QString::fromLatin1("C"):*langs.at(0));
+  comboNumber->setItem(country);
+  comboMoney->setItem(country);
+  comboDate->setItem(country);
+
+  updateSample();
+}
+
+void KLocaleConfig::changedLanguage(int i)
+{
+  changedFlag = TRUE;
+
+  locale->setLanguage(*comboLang->tags.at(i),
+                      *comboLang->tags.at(i),
+                      QString::null,
+                      QString::null,
+                      QString::null);
+  updateSample();
 }
 
 void KLocaleConfig::changedNumber(int i)
 {
   changedFlag = TRUE;
 
-  QString str = i?*tags.at(i - 1):QString::null;
-  if (str.isNull()) str = locale->language();
   locale->setLanguage(QString::null,
                       QString::null,
-                      str,
+                      *comboMoney->tags.at(i),
                       QString::null,
                       QString::null);
   updateSample();
@@ -335,12 +359,10 @@ void KLocaleConfig::changedMoney(int i)
 {
   changedFlag = TRUE;
 
-  QString str = i?*tags.at(i - 1):QString::null;
-  if (str.isNull()) str = locale->language();
   locale->setLanguage(QString::null,
                       QString::null,
                       QString::null,
-                      str,
+                      *comboDate->tags.at(i),
                       QString::null);
   updateSample();
 }
@@ -349,48 +371,56 @@ void KLocaleConfig::changedTime(int i)
 {
   changedFlag = TRUE;
 
-  QString str = i?*tags.at(i - 1):QString::null;
-  if (str.isNull()) str = locale->language();
   locale->setLanguage(QString::null,
                       QString::null,
                       QString::null,
                       QString::null,
-                      str);
+                      *comboDate->tags.at(i));
   updateSample();
 }
 
-void KLocaleConfig::changed(int i)
+#undef i18n
+void scani18n(QObjectListIt it)
 {
-  changedFlag = TRUE;
+    QObject *wc;
+    while( wc = it.current() ) {
+      ++it;
+      if (wc->children())
+        scani18n(QObjectListIt(*wc->children()));
 
-  // default to the selected language if no special locale for numbers/money/time
-  QString str1 = combo4->currentItem()?*tags.at(combo4->currentItem() - 1):QString::null;
-  QString str2 = combo5->currentItem()?*tags.at(combo5->currentItem() - 1):QString::null;
-  QString str3 = combo6->currentItem()?*tags.at(combo6->currentItem() - 1):QString::null;
-  if (str1.isNull()) str1 = *tags.at(i);
-  if (str2.isNull()) str2 = *tags.at(i);
-  if (str3.isNull()) str3 = *tags.at(i);
+      if ( !qstrcmp(wc->name(), "unnamed") )
+         continue;
+      if ( !wc->isWidgetType() )
+         continue;
 
-  // should update the locale here before redisplaying samples.
-  locale->setLanguage(*tags.at(i),
-                      *tags.at(i),
-                      str1,
-                      str2,
-                      str3);
-
-  updateSample();
+      if ( !qstrcmp(wc->className(), "QGroupBox"))
+      {
+        ((QGroupBox *)wc)->setTitle(i18n(wc->name()));
+        ((QGroupBox *)wc)->setMinimumSize(((QGroupBox *)wc)->sizeHint());
+      }
+      else if ( !qstrcmp(wc->className(), "QLabel"))
+      {
+        ((QLabel *)wc)->setText(i18n(wc->name()));
+        ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
+      }
+    }
 }
+#define i18n(a) (a)
 
 void KLocaleConfig::updateSample()
 {
-   numberSample->setText(locale->formatNumber(1234567.89) +
- 			" / " +
- 			locale->formatNumber(-1234567.89));
+  numberSample->setText(locale->formatNumber(1234567.89) +
+			" / " +
+			locale->formatNumber(-1234567.89));
 
-   moneySample->setText(locale->formatMoney(123456789.00) +
+  moneySample->setText(locale->formatMoney(123456789.00) +
 		       " / " +
-		       " / " +
- 		       locale->formatMoney(-123456789.00));
-   dateSample->setText(locale->formatDate(QDate::currentDate()));
-   timeSample->setText(locale->formatTime(QTime::currentTime()));
+		       locale->formatMoney(-123456789.00));
+  dateSample->setText(locale->formatDate(QDate::currentDate()));
+  timeSample->setText(locale->formatTime(QTime::currentTime()));
+
+  QObject *w = this;
+  while (w->parent())
+    w = w->parent();
+  scani18n(QObjectListIt(*w->children() ));
 }

@@ -21,7 +21,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <kiconloader.h>
@@ -33,28 +32,25 @@
 #include "klangcombo.h"
 #include "klangcombo.moc"
 
-
 KLanguageCombo::~KLanguageCombo ()
 {
 }
-
 
 KLanguageCombo::KLanguageCombo (QWidget * parent, const char *name)
   : QComboBox(parent, name)
 {
 }
 
-
-void KLanguageCombo::insertLanguage(const QString& lang)
+void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub)
 {
   QPainter p;
 
-  QString output = language(lang) + " ("+tag(lang)+")";
+  QString output = name + " (" + path + ")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
 
-  QPixmap flag(locate("locale", tag(lang) + "/flag.png"));
+  QPixmap flag(locate("locale", sub + path + "/flag.png"));
   pm.fill(colorGroup().background());
   p.begin(&pm);
 
@@ -63,30 +59,19 @@ void KLanguageCombo::insertLanguage(const QString& lang)
     p.drawPixmap(1,1,flag);
   p.end();
   insertItem(pm);
+  tags.append(path);
 }
 
-
-QString KLanguageCombo::tag(const QString& lang)
+QString KLanguageCombo::currentTag() const
 {
-  QString tag(lang);
-
-  int pos = tag.find(";");
-  if (pos == -1)
-    return "";
-  else
-    return tag.left(pos);
+  return *tags.at(currentItem());
 }
 
-
-QString KLanguageCombo::language(const QString& lang)
+void KLanguageCombo::setItem(const QString &code)
 {
-  QString name(lang);
-
-  int pos = name.find(";");
-  if (pos == -1)
-    return name;
-  else
-    return name.right(name.length()-pos-1);
+  int i = tags.findIndex(code);
+  if (code.isNull())
+    i = 0;
+  if (i != -1)
+    setCurrentItem(i);
 }
-
-

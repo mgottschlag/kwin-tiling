@@ -38,11 +38,11 @@ class KLocaleConfig : public KConfigWidget
   Q_OBJECT
 
 public:
-
   KLocaleConfig( QWidget *parent=0, const char *name=0);
   ~KLocaleConfig( );
 
-  void loadLanguageList(KLanguageCombo *combo);
+  void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
+  void loadCountryList(KLanguageCombo *combo, const QStringList &first);
 
 public slots:
 
@@ -51,29 +51,25 @@ public slots:
   void defaultSettings();
     
 private:
-
-  KLanguageCombo *combo1, *combo2, *combo3, *combo4, *combo5, *combo6;
+  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
 
   // samples for how things will display w/selected locale
+  QLabel *textSample;
   QLabel *numberSample;
   QLabel *moneySample;
   QLabel *timeSample;
   QLabel *dateSample;
 
-  QStringList tags;
   bool changedFlag;
   KLocale *locale;
 
 private slots:
-
-  void changed(int);
+  void changedCountry(int);
+  void changedLanguage(int);
   void changedNumber(int);
   void changedMoney(int);
   void changedTime(int);
   void updateSample();
-
 };
 
-
 #endif
-

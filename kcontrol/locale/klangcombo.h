@@ -38,13 +38,19 @@ public:
   KLanguageCombo(QWidget *parent=0, const char *name=0);
   ~KLanguageCombo();
 
-  void insertLanguage(const QString& lang);  
+  void insertLanguage(const QString& path, const QString& name, const QString& sub = 0);
 
-  QString tag(const QString& lang);   
-  QString language(const QString& lang);
-  
+  /*
+   * Tag of the selected item
+   */
+  QString currentTag() const;
+
+  /*
+   * Set the current item
+   */
+  void setItem(const QString &code);
+
+  QStringList tags;  
 };
 
-
 #endif
-
