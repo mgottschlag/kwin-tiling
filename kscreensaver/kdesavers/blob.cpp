@@ -268,7 +268,7 @@ void KBlobSaver::lnNextFrame()
 			dir = -1;
 		else
 			dir = 1;
-		ln_xinc = SMALLRAND(3.0)*dir;
+		ln_xinc = int(SMALLRAND(3.0)*dir);
 	}
 	if (ty+dim+ln_yinc > (int)height()-1 || ty+ln_yinc < 0)
 	{
@@ -276,7 +276,7 @@ void KBlobSaver::lnNextFrame()
 			dir = -1;
 		else
 			dir = 1;
-		ln_yinc = SMALLRAND(2.0)*dir;
+		ln_yinc = int(SMALLRAND(2.0)*dir);
 	}
 
 	// move box to new position
