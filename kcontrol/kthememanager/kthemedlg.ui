@@ -72,7 +72,7 @@
                         <string>Get new themes...</string>
                     </property>
                     <property name="url" stdset="0">
-                        <string>http://www.kde-look.org</string>
+                        <string>http://themes.kde.org</string>
                     </property>
                     <property name="tipText">
                         <string>Go to the KDE themes website</string>
