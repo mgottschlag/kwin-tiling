@@ -1,4 +1,9 @@
-dnl libmach for Tru64
+# $Id$
+
+# libmach for Tru64
+# linux/raw.h for Linux
+# devinfo.h, libdevinfo for the list of {IRQ,DMA,IOPORTS/MEMRANGES} for FreeBSD
+
 case "$host" in
   *-*-osf*)
     AC_CHECK_LIB(mach, vm_statistics, LIB_TRU64_MACH="-lmach")dnl
@@ -6,8 +11,11 @@ case "$host" in
   *-*-linux*)
     AC_CHECK_HEADERS(linux/raw.h)dnl
     ;;
+  *-*-freebsd*)
+    AC_CHECK_HEADERS(devinfo.h)
+    AC_CHECK_LIB(devinfo, devinfo_foreach_rman, LIBDEVINFO="-ldevinfo")
+    ;;
 esac
 AC_SUBST(LIB_TRU64_MACH)
 
 KDE_CHECK_LONG_LONG
-
