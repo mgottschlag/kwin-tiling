@@ -248,8 +248,7 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
 
 void TopLevel::readProperties(KConfig *kc)
 {
-  QString  data;
-  QStrList dataList;
+  QStringList dataList;
   pQPMmenu->clear();
   pQPMmenu->insertTitle(i18n("Klipper - Clipboard Tool"));
   pQPMmenu->insertItem(i18n("&Quit"), QUIT_ITEM );
@@ -260,11 +259,14 @@ void TopLevel::readProperties(KConfig *kc)
   long int id;
 
   if (bKeepContents) { // load old clipboard if configured
-      kc->readListEntry("ClipboardData", dataList);
+      KConfigGroupSaver(kc, "General");
+      dataList = kc->readListEntry("ClipboardData");
 
-      for (data = dataList.first(); !data.isEmpty(); data = dataList.next()) {
-          id = pQPMmenu->insertItem( KStringHandler::csqueeze(data, 40), -2, -1 );
-          pQIDclipData->insert( id, new QString( dataList.current() ));
+      for (QStringList::ConstIterator it = dataList.begin();
+           it != dataList.end(); ++it)
+      {
+          id = pQPMmenu->insertItem( KStringHandler::csqueeze(*it, 40), -2, -1 );
+          pQIDclipData->insert( id, new QString( *it ));
       }
   }
 
@@ -303,12 +305,13 @@ void TopLevel::saveProperties()
 {
   if (bKeepContents) { // save the clipboard eventually
       QString  *data;
-      QStrList dataList;
+      QStringList dataList;
       KConfig  *kc = kapp->config();
+      KConfigGroupSaver(kc, "General");
       QIntDictIterator<QString> it( *pQIDclipData );
 
       while ( (data = it.current()) ) {
-          dataList.insert( 0, (*data).local8Bit() );
+          dataList.prepend( *it );
           ++it;
       }
 
