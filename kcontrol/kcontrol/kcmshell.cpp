@@ -33,6 +33,7 @@
 #include <kdesktopfile.h>
 #include <qxembed.h>
 #include <kiconloader.h>
+#include <kmessagebox.h>
 
 #include "kcdialog.h"
 #include "kecdialog.h"
@@ -149,7 +150,7 @@ int main(int _argc, char *_argv[])
         // load the module
         ModuleInfo info(path);
 
-        KCModule *module = ModuleLoader::loadModule(info);
+        KCModule *module = ModuleLoader::loadModule(info, false);
 
         if (module) {
             // create the dialog
@@ -176,6 +177,8 @@ int main(int _argc, char *_argv[])
             ModuleLoader::unloadModule(info);
             return ret;
         }
+
+        KMessageBox::error(0, i18n("There was an error loading the module. Please check console output"));
 
         return 0;
     }
