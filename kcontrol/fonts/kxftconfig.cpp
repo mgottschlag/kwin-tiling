@@ -415,30 +415,27 @@ bool KXftConfig::reset()
     if(m_doc.documentElement().isNull())
         m_doc.appendChild(m_doc.createElement("fontconfig"));
 #else
-    std::ifstream f(QFile::encodeName(m_file));
+    QFile f( m_file );
 
     m_size=0;
-
     if(m_data)
     {
         delete [] m_data;
         m_data=NULL;
     }
 
-    if(f)
+    if(f.open( IO_Raw| IO_ReadOnly ))
     {
-        f.seekg(0, std::ios::end);
-        m_size=f.tellg();
-
+        m_size = f.size();
         ok=true;
+
         if(m_size>0)
         {
             m_data=new char [m_size+1];
 
             if(m_data)
             {
-                f.seekg(0, std::ios::beg);
-                f.read(m_data, m_size);
+                f.readBlock( m_data, m_size );
                 m_data[m_size]='\0';
                 readContents();
             }
