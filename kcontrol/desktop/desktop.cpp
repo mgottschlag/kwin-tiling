@@ -61,10 +61,15 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
                      KDialog::marginHint(),
                      KDialog::spacingHint());
 
-  QLabel *label = new QLabel(i18n("Number of Desktops: "), number_group);
+  QLabel *label = new QLabel(i18n("&Number of Desktops: "), number_group);
   _numLabel = new QLabel("4", number_group);
   _numSlider = new QSlider(1, 16, 1, 4, Horizontal, number_group);
   connect(_numSlider, SIGNAL(valueChanged(int)), SLOT(slotValueChanged(int)));
+  label->setBuddy( _numSlider );
+  QString wtstr = i18n( "Here you can set how many virtual desktops you want on your KDE desktop. Move the slider to change the value." );
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( _numLabel, wtstr );
+  QWhatsThis::add( _numSlider, wtstr );
 
   lay->addWidget(label);
   lay->addWidget(_numLabel);
@@ -88,6 +93,10 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
       _nameLabel[i+8] = new QLabel(i18n("Desktop%1:").arg(i+8+1), name_group);
       _nameInput[i] = new KLineEdit(name_group);
       _nameInput[i+8] = new KLineEdit(name_group);
+      QWhatsThis::add( _nameLabel[i], i18n( "Here you can enter the name for desktop %1" ).arg( i+1 ) );
+      QWhatsThis::add( _nameInput[i], i18n( "Here you can enter the name for desktop %1" ).arg( i+1 ) );
+      QWhatsThis::add( _nameLabel[i+8], i18n( "Here you can enter the name for desktop %1" ).arg( i+8+1 ) );
+      QWhatsThis::add( _nameInput[i+8], i18n( "Here you can enter the name for desktop %1" ).arg( i+8+1 ) );
 
       connect(_nameInput[i], SIGNAL(textChanged(const QString&)),
           SLOT(slotTextChanged(const QString&)));
@@ -154,7 +163,7 @@ void KDesktopConfig::defaults()
 
 QString KDesktopConfig::quickHelp() const
 {
-  return i18n("<h1>Desktop Number&Names</h1>");
+  return i18n("<h1>Desktop Number&Names</h1>In this module, you can configure how many virtual desktops you want and how these should be labelled.");
 }
 
 void KDesktopConfig::slotValueChanged(int n)
