@@ -175,8 +175,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mSaverListBox = new QListBox( group );
     mSaverListBox->insertItem( i18n("No screensaver"), 0 );
     mSaverListBox->setCurrentItem( 0 );
-    mSaverListBox->setFixedHeight(120);
-    
+    /* mSaverListBox->setFixedHeight(120); */
+
     SaverConfig *saver;
     mSelected = 0;
     for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next())
