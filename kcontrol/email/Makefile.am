@@ -14,7 +14,7 @@ noinst_HEADERS = email.h
 KDE_ICON = email
 
 data_DATA = email.desktop
-datadir = $(kde_appsdir)/Settings/Network
+datadir = $(kde_appsdir)/Settings
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmemail.pot

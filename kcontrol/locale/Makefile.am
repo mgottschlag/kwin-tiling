@@ -12,12 +12,12 @@ noinst_HEADERS = toplevel.h kcmlocale.h klanguagebutton.h klocalesample.h menuit
 
 kcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_locale_la_LIBADD = $(LIB_KDEUI)
- 
+
 messages:
 	$(XGETTEXT) $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 
 data_DATA = language.desktop
-datadir = $(kde_appsdir)/Settings/Personalization
+datadir = $(kde_appsdir)/Settings
 
 EXTRA_DIST = $(data_DATA)
 
