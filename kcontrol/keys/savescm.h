@@ -10,6 +10,9 @@ public:
 	SaveScm( QWidget *parent, const char *name, const QString &def );
 	
 	KLineEdit* nameLine;
+protected slots:
+    void slotTextChanged(const QString &);
+
 };
 
 #endif

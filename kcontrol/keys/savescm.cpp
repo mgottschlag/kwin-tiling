@@ -22,6 +22,8 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
     nameLine->setText(def);
     nameLine->selectAll();
 
+    connect(nameLine,SIGNAL(textChanged ( const QString & )),this, SLOT(slotTextChanged(const QString & )));
+
     QLabel* tmpQLabel;
     tmpQLabel = new QLabel( nameLine,
      i18n("Enter a name for the key scheme:"), page );
@@ -33,4 +35,10 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
     topLayout->addWidget( tmpQLabel );
     topLayout->addWidget( nameLine );
     topLayout->addStretch( 10 );
+    enableButtonOK(!nameLine->text().isEmpty());
+}
+
+void SaveScm::slotTextChanged(const QString & _text)
+{
+    enableButtonOK(!_text.isEmpty());
 }
