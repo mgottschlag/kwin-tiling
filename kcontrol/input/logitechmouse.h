@@ -34,7 +34,6 @@
 
 #include "logitechmouse_base.h"
 
-#ifdef HAVE_LIBUSB
 #include <usb.h>
 
 #define VENDOR_LOGITECH 0x046D
@@ -98,8 +97,6 @@ private:
     bool m_has800cpi; // true if the mouse does 800cpi resolution
     int m_mouseCapabilityFlags;
 };
-
-#endif
 
 #endif
 

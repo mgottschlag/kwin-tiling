@@ -65,7 +65,6 @@
 #include <config.h>
 
 #include "mouse.h"
-#include "logitechmouse.h"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
