@@ -38,6 +38,7 @@
 #include <klocale.h>
 #include <qdir.h>
 #include <qstringlist.h>
+#include <qfileinfo.h>
 #include "XftConfig.h"
 
 static const QString constFinishedStr("Finished");
@@ -135,7 +136,11 @@ void CSysConfigurer::go()
         totalSteps= (CKfiGlobal::cfg().getModifiedDirs().count()*2) + totalfonts; // For XConfig stuff (initial message, one-per-font, encodings.dir)
 
         if(CKfiGlobal::cfg().getDoGhostscript())                                  // Fontmap (initial message, one-per-font, Writing...)
+        {
             totalSteps+=(CKfiGlobal::cfg().getModifiedDirs().count()*2) + totalTtFonts + totalT1Fonts;
+            if(CMisc::root() && CKfiGlobal::cfg().getDoCups())
+                totalSteps++;
+        }
 
         if(CKfiGlobal::cfg().getDoAfm())                                          // Initial message, one-per-font...
         {
@@ -207,15 +212,42 @@ void CSysConfigurer::go()
 #endif
 
     if(CKfiGlobal::cfg().getDoGhostscript())
+    {
         for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
         {
             status(i18n("Creating Fontmap (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
             if(!itsFm.go(CKfiGlobal::cfg().getModifiedDirs()[d]))
             {
-                status(i18n("Could not configure Fontmap (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), "File permissions?", true);
+                status(i18n("Could not configure Fontmap (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), i18n("File permissions?"), true);
                 return;
             }
         }
+
+        if(CMisc::root() && CKfiGlobal::cfg().getDoCups())
+        {
+            const QString constCupsFontmap("pstoraster/Fontmap");
+
+            QString   cupsFontmap=CKfiGlobal::cfg().getCupsDir()+constCupsFontmap;
+            QFileInfo info(cupsFontmap);
+
+            status(i18n("Configuring CUPS..."));
+            if(cupsFontmap!=CKfiGlobal::cfg().getGhostscriptFile() && info.readLink()!=CKfiGlobal::cfg().getGhostscriptFile())
+            {
+                QString constExt(".bak");
+                bool    moved=!CMisc::fExists(cupsFontmap+constExt) ?
+                                  CMisc::moveFile(cupsFontmap, cupsFontmap+constExt) :
+                                  false;
+
+                if(moved)
+                    if(!CMisc::linkFile(CKfiGlobal::cfg().getGhostscriptFile(), cupsFontmap))
+                    {
+                        status(i18n("Could not configure CUPS"), i18n("File permissions?"), true);
+                        CMisc::moveFile(cupsFontmap+constExt, cupsFontmap);
+                        return;
+                    }
+            }
+        }
+    }
 
     if(CKfiGlobal::cfg().getDoAfm())
         for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)

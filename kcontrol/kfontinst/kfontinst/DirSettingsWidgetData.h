@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DirSettingsWidget.ui'
 **
-** Created: Tue Sep 18 12:13:40 2001
+** Created: Wed Oct 24 21:21:36 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -46,12 +46,17 @@ public:
     QCheckBox* itsGhostscriptCheck;
     QLabel* itsGhostscriptFileText;
     QPushButton* itsGhostscriptFileButton;
+    QLabel* itsCupsDirText;
+    QCheckBox* itsCupsCheck;
+    QPushButton* itsCupsDirButton;
 
 
 public slots:
+    virtual void cupsButtonPressed();
     virtual void encodingsDirButtonPressed();
     virtual void ghostscriptChecked(bool);
     virtual void gsFontmapButtonPressed();
+    virtual void cupsChecked(bool);
     virtual void t1SubDir(const QString &);
     virtual void ttSubDir(const QString &);
     virtual void xConfigButtonPressed();

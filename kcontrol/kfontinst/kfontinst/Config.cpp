@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <kglobal.h>
+#include <klocale.h>
 
 #ifdef HAVE_XFT
 #include "xftint.h"
@@ -50,6 +51,7 @@ static const QCString constDefaultXConfigFile           ("/etc/X11/XF86Config");
 static const QCString constDefaultEncodingsDir          ("/usr/X11R6/lib/X11/fonts/encodings/");
 static const QCString constDefaultGhostscriptDir        ("/usr/share/ghostscript/");
 static const QCString constDefaultGhostscriptFile       ("Fontmap"); 
+static const QCString constDefaultCupsDir               ("/usr/share/cups/");
 static const QCString constDefaultUninstallDir          ("/tmp/");
 static const QCString constDefaultSODir                 ("/opt/office52/");
 static const QCString constDefaultSOPpd                 ("SGENPRT.PS");
@@ -219,6 +221,11 @@ const QString CConfig::constGhostscriptDirs[]=
     "/usr/local/share/ghostscript/",
     QString::null
 };
+const QString CConfig::constCupsDirs[]=
+{
+    constDefaultCupsDir,
+    QString::null
+};
 const QString CConfig::constGhostscriptFiles[]=
 { 
     constDefaultGhostscriptFile, 
@@ -258,7 +265,7 @@ const QString CConfig::constXftConfigFiles[]=
 };
 #endif
 
-const QString CConfig::constNotFound ("<Not Found>");
+const QString CConfig::constNotFound(i18n("<Not Found>"));
 
 CConfig::CConfig()
        : KConfig("kcmfontinstrc")
@@ -331,6 +338,12 @@ CConfig::CConfig()
     val=readEntry("GhostscriptFile");
     itsGhostscriptFile=val.length()>0 ? val : defaultGhostscriptFile;
     itsDoGhostscript=readBoolEntry("DoGhostscript", true);
+    if(CMisc::root())
+    {
+        val=readEntry("CupsDir");
+        itsCupsDir=val.length()>0 ? val : constDefaultCupsDir;
+        itsDoCups=readBoolEntry("DoCups", true);
+    }
 #ifdef HAVE_XFT
     setGroup("AntiAlias");
     val=readEntry("XftConfigFile");
@@ -444,11 +457,16 @@ CConfig::CConfig()
     }
 
     if(CMisc::root())
+    {
         if(QString::null==(itsGhostscriptFile=getFile(itsGhostscriptFile, constGhostscriptDirs, constGhostscriptFiles)))
         {
             itsGhostscriptFile=constNotFound;
             itsDoGhostscript=false;
         }
+
+        if(QString::null==(itsCupsDir=getDir(itsCupsDir, constCupsDirs)))
+            itsCupsDir=constNotFound;
+    }
 
     if(QString::null==(itsSODir=getDir(itsSODir, constSODirs)))
         itsSODir="/";
@@ -565,6 +583,22 @@ void CConfig::setDoGhostscript(bool b)
  
     write("DoGhostscript", b);
     itsDoGhostscript=b;
+}
+
+void CConfig::setCupsDir(const QString &s)
+{
+    KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
+
+    write("CupsDir", s);
+    itsCupsDir=s;
+}
+
+void CConfig::setDoCups(bool b)
+{
+    KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
+
+    write("DoCups", b);
+    itsDoCups=b;
 }
 
 void CConfig::setFixTtfPsNamesUponInstall(bool b)

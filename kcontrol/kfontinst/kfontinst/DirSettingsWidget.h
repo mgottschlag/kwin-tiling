@@ -42,12 +42,14 @@ class CDirSettingsWidget : public CDirSettingsWidgetData
 
     void encodingsDirButtonPressed();
     void gsFontmapButtonPressed();
+    void cupsButtonPressed();
     void xDirButtonPressed();
     void xConfigButtonPressed();
     void xftConfigFileButtonPressed();
     void t1SubDir(const QString &str);
     void ttSubDir(const QString &str);
     void ghostscriptChecked(bool on);
+    void cupsChecked(bool on);
     void xftChecked(bool on);
     void setGhostscriptFile(const QString &f);
     void setXConfigFile(const QString &f);

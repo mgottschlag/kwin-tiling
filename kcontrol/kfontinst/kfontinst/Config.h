@@ -69,6 +69,8 @@ class CConfig : public KConfig
     const QString &   getEncodingsDir()             { return itsEncodingsDir; }
     const QString &   getGhostscriptFile()          { return itsGhostscriptFile; }
     bool              getDoGhostscript()            { return itsDoGhostscript; }
+    const QString &   getCupsDir()                  { return itsCupsDir; }
+    bool              getDoCups()                   { return itsDoCups; }
 
     bool              getFixTtfPsNamesUponInstall() { return itsFixTtfPsNamesUponInstall; }
     const QString &   getUninstallDir()             { return itsUninstallDir; }
@@ -104,6 +106,8 @@ class CConfig : public KConfig
     void setEncodingsDir(const QString &s);
     void setGhostscriptFile(const QString &s);
     void setDoGhostscript(bool b);
+    void setCupsDir(const QString &s);
+    void setDoCups(bool b);
  
     void setFixTtfPsNamesUponInstall(bool b);
     void setUninstallDir(const QString &s);
@@ -139,6 +143,7 @@ class CConfig : public KConfig
     static const QString constEncodingsSubDirs[];  // sub dirs of <X11>, /usr/share, /usr/local/share, etc...
     static const QString constGhostscriptDirs[];   // Excludes version number
     static const QString constGhostscriptFiles[];
+    static const QString constCupsDirs[];
     static const QString constSODirs[];
     static const QString constNotFound;
 
@@ -161,6 +166,7 @@ class CConfig : public KConfig
 #endif
                       itsEncodingsDir,
                       itsGhostscriptFile,
+                      itsCupsDir,
                       itsUninstallDir,
                       itsInstallDir,
                       itsSODir,
@@ -169,6 +175,7 @@ class CConfig : public KConfig
                       itsAfmEncoding,
                       itsCustomXRefreshCmd;
     bool              itsDoGhostscript,
+                      itsDoCups,
                       itsAdvancedMode,
                       itsUseCustomPreviewStr,
                       itsFixTtfPsNamesUponInstall,

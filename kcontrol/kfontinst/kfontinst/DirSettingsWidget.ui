@@ -35,8 +35,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>482</width>
-            <height>466</height>
+            <width>497</width>
+            <height>403</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -60,8 +60,8 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer row="3" column="0">
-            <property name="name">
+        <spacer row="4" column="0">
+            <property name="name" stdset="0">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -78,7 +78,7 @@
             </property>
         </spacer>
         <spacer row="1" column="1">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1_2_2</cstring>
             </property>
             <property name="orientation">
@@ -202,7 +202,7 @@
                         <string>TextLabel1</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This is the top level X11 fonts folder. Located within this will be the folders containing your fonts, and encodings files. Usually this will be (for Linux) either:
@@ -245,7 +245,7 @@
                     </property>
                 </widget>
                 <spacer row="2" column="1">
-                    <property name="name">
+                    <property name="name" stdset="0">
                         <cstring>Spacer1_2</cstring>
                     </property>
                     <property name="orientation">
@@ -262,7 +262,7 @@
                     </property>
                 </spacer>
                 <spacer row="1" column="2">
-                    <property name="name">
+                    <property name="name" stdset="0">
                         <cstring>Spacer2</cstring>
                     </property>
                     <property name="orientation">
@@ -287,7 +287,7 @@
                     </property>
                 </widget>
                 <spacer row="1" column="0">
-                    <property name="name">
+                    <property name="name" stdset="0">
                         <cstring>Spacer1_2</cstring>
                     </property>
                     <property name="orientation">
@@ -356,7 +356,7 @@
                         <string>TextLabel1</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).
@@ -377,7 +377,7 @@ This folder is normaly a sub-folder of the system X11 fonts folder - and is usua
                     </property>
                 </widget>
                 <spacer row="4" column="1">
-                    <property name="name">
+                    <property name="name" stdset="0">
                         <cstring>Spacer1_2_3_2</cstring>
                     </property>
                     <property name="orientation">
@@ -415,7 +415,7 @@ This folder is normaly a sub-folder of the system X11 fonts folder - and is usua
                         <string>TextLabel2</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This is the configuration file used by X to determine where to look for fonts.
@@ -438,7 +438,7 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
                         <string>Configuration file:</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                        <set>AlignVCenter|AlignLeft</set>
                     </property>
                     <property name="wordwrap" stdset="0">
                     </property>
@@ -509,7 +509,7 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
                 <string>TextLabel2</string>
             </property>
             <property name="alignment">
-                <set>AlignAuto|AlignVCenter|AlignLeft</set>
+                <set>AlignVCenter|AlignLeft</set>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.
@@ -530,6 +530,91 @@ For normal (non-root) users, this file will usually be:
         <widget class="QPushButton" row="2" column="2">
             <property name="name">
                 <cstring>itsGhostscriptFileButton</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>22</width>
+                    <height>22</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>.</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Select File.</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="1">
+            <property name="name">
+                <cstring>itsCupsDirText</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="frameShape">
+                <enum>Panel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="text">
+                <string>TextLabel2</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.
+
+(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)
+
+For normal (non-root) users, this file will usually be:
+
+    ~/.kde/share/config/fonts/Fontmap
+
+...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:
+
+    /usr/share/ghostscript/5.50/Fontmap</string>
+            </property>
+            <property name="wordwrap" stdset="0">
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0">
+            <property name="name">
+                <cstring>itsCupsCheck</cstring>
+            </property>
+            <property name="text">
+                <string>CUPS folder:</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Check this box to enable configuration of CUPS.</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="2">
+            <property name="name">
+                <cstring>itsCupsDirButton</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
@@ -612,6 +697,24 @@ For normal (non-root) users, this file will usually be:
         <receiver>CDirSettingsWidgetData</receiver>
         <slot>ghostscriptChecked(bool)</slot>
     </connection>
+    <connection>
+        <sender>itsCupsDirButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CDirSettingsWidgetData</receiver>
+        <slot>cupsButtonPressed()</slot>
+    </connection>
+    <connection>
+        <sender>itsCupsCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CDirSettingsWidgetData</receiver>
+        <slot>cupsChecked(bool)</slot>
+    </connection>
+    <connection>
+        <sender>itsCupsCheck</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>itsCupsDirButton</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>itsFontsDirButton</tabstop>
@@ -619,16 +722,21 @@ For normal (non-root) users, this file will usually be:
     <tabstop>itsT1Combo</tabstop>
     <tabstop>itsXConfigFileButton</tabstop>
     <tabstop>itsEncodingsDirButton</tabstop>
+    <tabstop>itsGhostscriptCheck</tabstop>
     <tabstop>itsGhostscriptFileButton</tabstop>
+    <tabstop>itsCupsCheck</tabstop>
+    <tabstop>itsCupsDirButton</tabstop>
 </tabstops>
 <slots>
-    <slot>encodingsDirButtonPressed()</slot>
-    <slot>ghostscriptChecked(bool)</slot>
-    <slot>gsFontmapButtonPressed()</slot>
-    <slot>t1SubDir(const QString &amp;)</slot>
-    <slot>ttSubDir(const QString &amp;)</slot>
-    <slot>xConfigButtonPressed()</slot>
-    <slot>xDirButtonPressed()</slot>
+    <slot specifier="pure virtual">cupsButtonPressed()</slot>
+    <slot specifier="pure virtual">encodingsDirButtonPressed()</slot>
+    <slot specifier="pure virtual">ghostscriptChecked(bool)</slot>
+    <slot specifier="pure virtual">gsFontmapButtonPressed()</slot>
+    <slot specifier="pure virtual">cupsChecked(bool)</slot>
+    <slot specifier="pure virtual">t1SubDir(const QString &amp;)</slot>
+    <slot specifier="pure virtual">ttSubDir(const QString &amp;)</slot>
+    <slot specifier="pure virtual">xConfigButtonPressed()</slot>
+    <slot specifier="pure virtual">xDirButtonPressed()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

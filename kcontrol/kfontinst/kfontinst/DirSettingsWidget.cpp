@@ -57,6 +57,19 @@ CDirSettingsWidget::CDirSettingsWidget(QWidget *parent, const char *name)
     itsGhostscriptFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
     itsXConfigFileButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
 
+    if(CMisc::root())
+    {
+        itsCupsDirText->setText(CKfiGlobal::cfg().getCupsDir());
+        itsCupsCheck->setChecked(CKfiGlobal::cfg().getDoCups());
+        itsCupsDirButton->setPixmap(KGlobal::iconLoader()->loadIcon("fileopen", KIcon::Small));
+    }
+    else
+    {
+        itsCupsDirText->hide();
+        itsCupsCheck->hide();
+        itsCupsDirButton->hide();
+    }
+
     setupSubDirCombos();
 }
  
@@ -96,6 +109,18 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
 
         if(ok)
             setGhostscriptFile(file);
+    }
+}
+
+void CDirSettingsWidget::cupsButtonPressed()
+{
+    QString dir=KFileDialog::getExistingDirectory(CConfig::constNotFound==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
+                                                  this, i18n("Select CUPS Folder"));
+
+    if(QString::null!=dir && dir!=itsCupsDirText->text())
+    {
+        itsCupsDirText->setText(dir);
+        CKfiGlobal::cfg().setCupsDir(dir);
     }
 }
 
@@ -220,6 +245,15 @@ void CDirSettingsWidget::ttSubDir(const QString &str)
 void CDirSettingsWidget::ghostscriptChecked(bool on)
 {
     CKfiGlobal::cfg().setDoGhostscript(on);
+    if(!on)
+        cupsChecked(false);
+}
+
+void CDirSettingsWidget::cupsChecked(bool on)
+{
+    CKfiGlobal::cfg().setDoCups(on);
+    if(on)
+        ghostscriptChecked(true);
 }
 
 void CDirSettingsWidget::setGhostscriptFile(const QString &f)
