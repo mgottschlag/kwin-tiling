@@ -77,7 +77,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout9</cstring>
+                                    <cstring>soundToPlayLayout</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -150,7 +150,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout19</cstring>
+                                    <cstring>visibleBellLayout</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
@@ -374,7 +374,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout11</cstring>
+                                    <cstring>lockWithStickyKeysLayout</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -1316,6 +1316,18 @@ Please note that on slow machines this may cause a "lag" between the event causi
     <connection>
         <sender>systemBell</sender>
         <signal>clicked()</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChaged()</slot>
+    </connection>
+    <connection>
+        <sender>customBell</sender>
+        <signal>clicked()</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChaged()</slot>
+    </connection>
+    <connection>
+        <sender>soundToPlay</sender>
+        <signal>textChanged(const QString&amp;)</signal>
         <receiver>AccessibilityConfigWidget</receiver>
         <slot>configChaged()</slot>
     </connection>

@@ -54,6 +54,8 @@
 
 #include "accessibility.moc"
 
+typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibility") );
 
 /**
  * This function checks if the kaccess daemon needs to be run
@@ -74,8 +76,8 @@
 //    return false; // don't need it
 // }
 
-AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *)
-  : AccessibilityConfigWidget(parent, "accessibility"){
+AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &foo)
+  : AccessibilityConfigWidget(parent, name){
 //    QVBoxLayout *main = new QVBoxLayout(this, 0,0);
 //    QTabWidget *tab = new QTabWidget(this);
 //    main->addWidget(tab);
@@ -447,9 +449,6 @@ const KAboutData* AccessibilityConfig::aboutData() const{
 // 
 //    return about;
 }
-
-typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
-//K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibility") );
 
 
 // extern "C"

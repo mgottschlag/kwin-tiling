@@ -44,7 +44,7 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
       /**
        * Constructor
        */   
-      AccessibilityConfig(QWidget *parent = 0L, const char *name = 0L);
+      AccessibilityConfig(QWidget *parent = 0L, const char *name = 0L, const QStringList &foo = QStringList());
 
       /**
        * Destructor
