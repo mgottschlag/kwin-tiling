@@ -316,7 +316,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), hbox),
    aaExcludeFrom=new KDoubleNumInput(0, 72, 8.0, 1, 1, hbox),
    aaExcludeFrom->setSuffix(i18n(" pt"));
-   (void) new QLabel(i18n(" to "), hbox);
+   aaExcludeToLabel = new QLabel(i18n(" to "), hbox);
    aaExcludeTo=new KDoubleNumInput(0, 72, 15.0, 1, 1, hbox);
    aaExcludeTo->setSuffix(i18n(" pt"));
    QWidget *dummy = new QWidget(hbox);
@@ -336,12 +336,6 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    setAaWidgets();
 
    connect(aaExcludeRange, SIGNAL(toggled(bool)),
-           aaExcludeFrom, SLOT(setEnabled(bool)));
-   connect(aaExcludeRange, SIGNAL(toggled(bool)),
-           aaExcludeTo, SLOT(setEnabled(bool)));
-   connect(aaUseSubPixel, SIGNAL(toggled(bool)),
-           aaSubPixelType, SLOT(setEnabled(bool)));
-   connect(aaExcludeRange, SIGNAL(toggled(bool)),
            this, SLOT(slotAaChange()));
    connect(aaUseSubPixel, SIGNAL(toggled(bool)),
            this, SLOT(slotAaChange()));
@@ -360,6 +354,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
    useAA = QSettings().readBoolEntry("/qt/useXft");
    useAA_original = useAA;
+
+   enableAaWidgets();
 
    cbAA->setChecked(useAA);
 }
@@ -388,6 +384,7 @@ void KFonts::defaults()
   aaExcludeFrom->setValue(8.0);
   aaExcludeTo->setValue(15.0);
   aaUseSubPixel->setChecked(false);
+  enableAaWidgets();
 
   _changed = true;
   emit changed(true);
@@ -500,12 +497,15 @@ void KFonts::slotApplyFontDiff()
 void KFonts::slotUseAntiAliasing()
 {
     useAA = cbAA->isChecked();
+    enableAaWidgets();
     _changed = true;
     emit changed(true);
 }
 
 void KFonts::slotAaChange()
 {
+    enableAaWidgets();
+
     _changed = true;
     emit changed(true);
 }
@@ -523,9 +523,6 @@ void KFonts::setAaWidgets()
        aaFrom=8.0;
        aaTo=15.0;
    }
-
-   aaExcludeFrom->setEnabled(aaExcludeRange->isChecked());
-   aaExcludeTo->setEnabled(aaExcludeRange->isChecked());
 
    aaExcludeFrom->setValue(aaFrom);
    aaExcludeTo->setValue(aaTo);
@@ -546,7 +543,8 @@ void KFonts::setAaWidgets()
        else
            aaUseSubPixel->setChecked(false);
    }
-   aaSubPixelType->setEnabled(aaUseSubPixel->isChecked());
+
+   enableAaWidgets(); 
 }
 
 int KFonts::getIndex(KXftConfig::SubPixel::Type aaSpType)
@@ -573,6 +571,16 @@ KXftConfig::SubPixel::Type KFonts::getAaSubPixelType()
             return (KXftConfig::SubPixel::Type)t;
 
     return KXftConfig::SubPixel::None;
+}
+
+void KFonts::enableAaWidgets()
+{
+    aaExcludeRange->setEnabled(useAA);
+    aaExcludeFrom->setEnabled(aaExcludeRange->isChecked() && useAA);
+    aaExcludeTo->setEnabled(aaExcludeRange->isChecked() && useAA);
+    aaExcludeToLabel->setEnabled(aaExcludeRange->isChecked() && useAA);
+    aaUseSubPixel->setEnabled(useAA);
+    aaSubPixelType->setEnabled(aaUseSubPixel->isChecked() && useAA);
 }
 
 // vim:ts=2:sw=2:tw=78

@@ -85,6 +85,7 @@ protected slots:
 
 private:
     void setAaWidgets();
+    void enableAaWidgets();
     int getIndex(KXftConfig::SubPixel::Type aaSpType);
     KXftConfig::SubPixel::Type getAaSubPixelType();
 
@@ -97,6 +98,7 @@ private:
     QCheckBox *aaUseSubPixel;
     KDoubleNumInput *aaExcludeFrom;
     KDoubleNumInput *aaExcludeTo;
+    QLabel *aaExcludeToLabel;
     QComboBox *aaSubPixelType;
 };
 
