@@ -39,6 +39,8 @@
 #include <dcopclient.h>
 #include <klocale.h>
 
+#include <kaboutdata.h>
+
 
 #include "main.h"
 #include "main.moc"
@@ -78,16 +80,21 @@ int MyApplication::newInstance()
 
 int main(int argc, char *argv[])
 {
-  KCmdLineArgs::init(argc, argv, "kcontrol", 
-	I18N_NOOP("KDE Control Centre - configuration manager for KDE."),
-        "v2.0pre");
+
+  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), "v2.0pre", I18N_NOOP("KDE Control Centre - configuration manager for KDE"),
+              KAboutData::GPL, "(c) 1999-2000, The Konqueror developers" );
+  KCmdLineArgs::init( argc, argv, "konqueror","","");
+
   KCmdLineArgs::addCmdLineOptions( options );
-
-
+  
   if (!MyApplication::start())
-      exit(0); // Don't do anything if we are already running
-
-  MyApplication app;
+    exit(0); // Don't do anything if we are already running
+  
+  MyApplication app; //&aboutData
+  // TODO: MyApplication (a KUniqueApplication) doesn't 
+  // support KApplication::KApplication(KAboutData *)
+  // So, I'm leaving this alone, and will let the 
+  // maintainter of kcontrol finish it up!
 
   // show the whole stuff
   app.mainWidget()->show();
