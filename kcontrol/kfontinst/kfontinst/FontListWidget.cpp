@@ -1494,7 +1494,7 @@ CFontListWidget::EStatus CFontListWidget::uninstall(const QString &path, bool de
 
     if(SUCCESS==status)
     {
-        CKfiGlobal::cfg().addModifiedDir(path);
+        CKfiGlobal::cfg().addModifiedDir(dir);
         if(deleteAfm)
         {
             if(CMisc::fExists(CMisc::afmName(fontFile)))
