@@ -165,7 +165,7 @@ void Options::slotDetails()
 
   if (!groupName || !groupName[0])
   {
-    warning("Empty group name ?!");
+    kdWarning() << "Empty group name ?!";
     return;
   }
 

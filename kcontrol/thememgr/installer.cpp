@@ -206,7 +206,8 @@ void Installer::addNewTheme(const KURL &srcURL)
   bool rc = KIO::NetAccess::copy(srcURL, url);
   if (!rc)
   {
-    warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(srcURL.fileName()).arg(dir).ascii());
+    kdWarning() << "Failed to copy theme " << srcURL.fileName() 
+        << " into themes directory " << dir << endl;
     return;
   }
 
@@ -257,7 +258,7 @@ void Installer::slotCreate()
 
   name = dlg.fileName();
   if (!theme->create(name)) return;
-  theme->setName(dlg.themeName());
+  theme->setName(dlg.themeName().latin1());
   theme->setAuthor(dlg.author());
   theme->setEmail(dlg.email());
   theme->setHomepage(dlg.homepage());  

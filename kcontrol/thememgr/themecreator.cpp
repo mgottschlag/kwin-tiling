@@ -71,7 +71,7 @@ bool ThemeCreator::create(const QString aThemeName)
   mFileName = aThemeName;
   if (!KStandardDirs::makeDir(mThemePath))
   {
-    warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)).ascii());
+    kdWarning() << "Failed to create directory " << mThemePath << ": " << strerror(errno) << endl;
     return false;
   }
 
@@ -161,10 +161,9 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     if (cfgGroup.isEmpty()) missing = "ConfigGroup";
     if (missing)
     {
-      warning(i18n("Internal error in theme mappings\n"
-		   "(file theme.mappings) in group %s:\n\n"
-		   "Entry `%s' is missing or has no value.").ascii(),
-	      group.ascii(), missing);
+      kdWarning() << "Internal error in theme mappings "
+		   << "(file theme.mappings) in group " << group << ":" << endl
+		   << "Entry `" << missing << "' is missing or has no value." << endl;
       break;
     }
 
@@ -325,15 +324,14 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
   srcFile.setName(aFileName);
   if (!srcFile.open(IO_ReadOnly))
   {
-    warning(i18n("Cannot open file %s for reading").ascii(), aFileName.ascii());
+    kdWarning() << "Cannot open file " << aFileName << " for reading" << endl;
     return 0;
   }
 
   destFile.setName(mThemePath + fname);
   if (!destFile.open(IO_WriteOnly))
   {
-    warning(i18n("Cannot open file %s for writing").ascii(), 
-	    (mThemePath + fname).ascii());
+    kdWarning() << "Cannot open file " << mThemePath << fname << " for writing" << endl; 
     return 0;
   }
 
@@ -343,8 +341,8 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     if (len <= 0) break;
     if (destFile.writeBlock(buf, len) != len)
     {
-      warning(i18n("Write error to %s:\n%s").ascii(), 
-	      (mThemePath + fname).ascii(), strerror(errno));
+      kdWarning() << "Write error to " << mThemePath << fname
+          << ": " << strerror(errno) << endl;
       return 0;
     }
   }

@@ -162,7 +162,7 @@ void Theme::loadMappings()
   file.setName(locate("data", "kthememgr/theme.mappings"));
   if (!file.exists())
   {
-     fatal(i18n("Mappings file theme.mappings not found.").ascii());
+     kdFatal() << "Mappings file theme.mappings not found." << endl;
   }
 
   if (mMappings) delete mMappings;
@@ -179,8 +179,7 @@ void Theme::cleanupWorkDir(void)
   // cleanup work directory
   cmd.sprintf("rm -rf %s*", workDir().ascii());
   rc = system(cmd.ascii());
-  if (rc) warning(i18n("Error during cleanup of work directory: rc=%d\n%s").ascii(),
-		  rc, cmd.ascii());
+  if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
 }
 
 
@@ -360,14 +359,14 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   srcFile.setName(src);
   if (!srcFile.open(IO_ReadOnly))
   {
-    warning(i18n("Cannot open file %s for reading").ascii(), src.ascii());
+    kdWarning() << "Cannot open file " << src << " for reading" << endl;
     return false;
   }
 
   destFile.setName(dest);
   if (!destFile.open(IO_WriteOnly))
   {
-    warning(i18n("Cannot open file %s for writing").ascii(), dest.ascii());
+    kdWarning() << "Cannot open file " << dest << " for writing" << endl;
     return false;
   }
 
@@ -377,8 +376,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
     if (len <= 0) break;
     if (destFile.writeBlock(buf, len) != len)
     {
-      warning(i18n("Write error to %s:\n%s").ascii(), dest.ascii(),
-	      strerror(errno));
+      kdWarning() <<"Write error to " << dest << ": " << strerror(errno) << endl;
       return false;
     }
   }
@@ -504,10 +502,8 @@ int Theme::installGroup(const char* aGroupName)
     if (cfgGroup.isEmpty()) missing = "ConfigGroup";
     if (missing)
     {
-      warning(i18n("Internal error in theme mappings\n"
-		   "(file theme.mappings) in group %s:\n\n"
-		   "Entry `%s' is missing or has no value.").ascii(),
-	      group.ascii(), missing);
+      kdWarning() << "Internal error in theme mappings (file theme.mappings) in group " << group << ":" << endl
+		   << "Entry `" << missing << "' is missing or has no value." << endl;
       break;
     }
 
@@ -666,9 +662,8 @@ void Theme::preInstallCmd(KSimpleConfig* aCfg, const QString& aCmd)
   }
   else
   {
-    warning(i18n("Unknown pre-install command `%s' in\n"
-		 "theme.mappings file in group %s.").ascii(), 
-	    aCmd.ascii(), mMappings->group().ascii());
+    kdWarning() << "Unknown pre-install command `" << aCmd << "' in theme.mappings file in group " 
+	    << mMappings->group() << endl;
   }
 }
 
@@ -696,9 +691,8 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else
   {
-    warning(i18n("Unknown command `%s' in theme.mappings\n"
-		 "file in group %s.").ascii(), aCmd.ascii(),
-	    mMappings->group().ascii());
+    kdWarning() << "Unknown command `" << aCmd << "' in theme.mappings "
+		 << "file in group " << mMappings->group() << endl;
   }
 
   if (stricmp(aCfg->group().ascii(), grp.ascii())!=0) 
@@ -792,8 +786,8 @@ bool Theme::backupFile(const QString &fname) const
   cmd.sprintf("mv \"%s\" \"%s~\"", fname.ascii(),
 	      fname.ascii());
   rc = system(cmd.ascii());
-  if (rc) warning(i18n("Cannot make backup copy of %s: mv returned %d").ascii(),
-		  fname.ascii(), rc);
+  if (rc) kdWarning() << "Cannot make backup copy of "
+          << fname << ": mv returned " << rc << endl;
   return (rc==0);
 }
 
@@ -850,9 +844,8 @@ void Theme::uninstallFiles(const char* aGroupName)
     if (finfo.exists())
     {
       if (rename(QFile::encodeName(fname+'~').data(), QFile::encodeName(fname).data()))
-	warning(i18n("Failed to rename %s to %s~:\n%s").ascii(),
-		fname.ascii(), fname.ascii(),
-		strerror(errno));
+	kdWarning() << "Failed to rename " << fname << " to "
+        << fname << "~:" << strerror(errno) << endl;
       else reverted = true;
     }
 
@@ -923,7 +916,7 @@ void Theme::loadGroupGeneral(void)
   {
     if (!mPreview.load(mPreviewFile))
     {
-      warning(i18n("Failed to load preview image %s").ascii(), mPreviewFile.ascii());
+      kdWarning() << "Failed to load preview image " << mPreviewFile << endl;
       mPreview.resize(0,0);
     }
   }
