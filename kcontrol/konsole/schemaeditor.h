@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <qptrlist.h>
 #include <kapplication.h>
 #include <qwidget.h>
 class QPixmap;
@@ -35,7 +34,7 @@ class SchemaEditor : public SchemaDialog
 {
   Q_OBJECT 
   public:
-    /** construtor */
+    /** constructor */
     SchemaEditor(QWidget* parent=0, const char *name=0);
     /** destructor */
     ~SchemaEditor();
@@ -47,6 +46,7 @@ class SchemaEditor : public SchemaDialog
 
   signals:
   	void changed();
+	void schemaListChanged(const QStringList &titles, const QStringList &filenames);
 
   public slots:
   	void slotColorChanged(int);
@@ -56,26 +56,28 @@ class SchemaEditor : public SchemaDialog
 	void saveCurrent();
 	void removeCurrent();
 	void previewLoaded(bool l);		
+	void getList();
   private slots:
-        void schemaModified();
-	void schemaModified(int);
-	void schemaModified(const QString&);
+	void show();
+	void schemaModified();
 	void loadAllSchema();
 	void updatePreview();
   private:
 	bool schMod;
   	QMemArray<QColor> color;
-	QMemArray<int> type; // 0= custom, 1= sysfg, 2=sysbg
+	QMemArray<int> type; // 0= custom, 1= sysfg, 2=sysbg, 3=rcolor
 	QMemArray<bool> transparent;
 	QMemArray<bool> bold;
 	QPixmap pix;
 	KSharedPixmap *spix;
-	QPtrList<QString> filename;
 	QString defaultSchema;	
 	bool loaded;
+	bool schemaLoaded;
+	bool change;
 	int oldSchema;
 	int oldSlot;
 	QString readSchemaTitle(const QString& filename);
+	void schemaListChanged();
 
 };
 

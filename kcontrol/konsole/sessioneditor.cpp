@@ -39,34 +39,41 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
 {
   sesMod=false;
   oldSession=-1;
+  loaded=false;
 
   KGlobal::locale()->insertCatalogue("konsole"); // For schema and keytab translations
-
-  loadAllKeytab();
-  loadAllSchema();
-  loadAllSession();
-  readSession(0);
-  sessionList->setCurrentItem(0);
 
   connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCurrent()));
   connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
 
-  connect(nameLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
-  connect(directoryLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
-  connect(executeLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
-  connect(termLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified(const QString&)));
+  connect(nameLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified()));
+  connect(directoryLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified()));
+  connect(executeLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified()));
+  connect(termLine, SIGNAL(textChanged(const QString&)), this, SLOT(sessionModified()));
 
-  connect(previewIcon, SIGNAL(iconChanged(QString)), this, SLOT(iconModified(QString)));
+  connect(previewIcon, SIGNAL(iconChanged(QString)), this, SLOT(sessionModified()));
 
-  connect(fontCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
-  connect(keytabCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
-  connect(schemaCombo, SIGNAL(activated(int)), this, SLOT(sessionModified(int)));
-  removeButton->setEnabled(sessionList->count()>1);
+  connect(fontCombo, SIGNAL(activated(int)), this, SLOT(sessionModified()));
+  connect(keytabCombo, SIGNAL(activated(int)), this, SLOT(sessionModified()));
+  connect(schemaCombo, SIGNAL(activated(int)), this, SLOT(sessionModified()));
 }
 
 SessionEditor::~SessionEditor()
 {
+}
+
+void SessionEditor::show()
+{
+  if (! loaded) {
+    loadAllKeytab();
+    loadAllSession();
+    readSession(0);
+    sessionList->setCurrentItem(0);
+    loaded = true;
+  }
+  SessionDialog::show();
+  removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::loadAllKeytab()
@@ -134,61 +141,6 @@ QString SessionEditor::readKeymapTitle(const QString & file)
   return 0;
 }
 
-void SessionEditor::loadAllSchema()
-{
-  QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.schema");
-  schemaCombo->clear();
-  schemaFilename.clear();
-
-  schemaCombo->insertItem(i18n("Konsole Default"),0);
-  schemaFilename.append(new QString(""));
-
-  int i = 1;
-  for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
-
-    QString name = (*it);
-    QString title = readSchemaTitle(name);
-
-    int j = name.findRev('/');
-    if (j > -1)
-      name = name.mid(j+1);
-    schemaFilename.append(new QString(name));
-
-    if (title.isNull() || title.isEmpty())
-      schemaCombo->insertItem(i18n("untitled"),i);
-    else
-      schemaCombo->insertItem(title,i);
-
-    i++;
-  }
-}
-
-QString SessionEditor::readSchemaTitle(const QString & file)
-{
-  // Code taken from konsole/konsole/schema.cpp
-  QString fPath = locate("data", "konsole/" + file);
-
-  if (fPath.isNull())
-    fPath = locate("data", file);
-
-  if (fPath.isNull())
-    return 0;
-
-  FILE *sysin = fopen(QFile::encodeName(fPath), "r");
-  if (!sysin)
-    return 0;
-
-  char line[100];
-  while (fscanf(sysin, "%80[^\n]\n", line) > 0)
-    if (strlen(line) > 5)
-      if (!strncmp(line, "title", 5)) {
-	fclose(sysin);
-	return i18n(line + 6);
-      }
-
-  return 0;
-}
-
 void SessionEditor::loadAllSession()
 {
   QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.desktop", false, true);
@@ -212,6 +164,7 @@ void SessionEditor::loadAllSession()
 
     i++;
   }
+  emit getList();
 }
 
 void SessionEditor::readSession(int num)
@@ -291,28 +244,51 @@ void SessionEditor::querySave()
     }
 }
 
+void SessionEditor::schemaListChanged(const QStringList &titles, const QStringList &filenames)
+{
+  const QString text = schemaCombo->currentText();
+
+  schemaCombo->clear();
+  schemaFilename.clear();
+
+  schemaCombo->insertItem(i18n("Konsole Default"),0);
+  schemaFilename.append(new QString(""));
+
+  schemaCombo->insertStringList(titles, 1);
+  for (QStringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+      schemaFilename.append(new QString(*it));
+
+  // Restore current item
+  int item = 0;
+  for (int i = 0; i < schemaCombo->count(); i++)
+      if (schemaCombo->text(i) == text) {
+          item = i;
+          break;
+      }
+  schemaCombo->setCurrentItem(item);
+}
+
 void SessionEditor::saveCurrent()
 {
-  QString base;
-  if (sessionList->currentText() == nameLine->text()) {
-    base = *sessionFilename.at(sessionList->currentItem());
-    int j = base.findRev('/');
-    if (j > -1)
-      base = base.mid(j+1);
-  }
-  else
-    base = nameLine->text().stripWhiteSpace().simplifyWhiteSpace()+".desktop";
-  
-  KLineEditDlg dlg(i18n("Filename:"), base, this);
-  dlg.setCaption(i18n("Save Session"));
-  if (!dlg.exec()) return;
-
-  QString name=dlg.text();
   QString fullpath;
-  if (name[0] == '/')
-    fullpath = name;
-  else
-    fullpath = KGlobal::dirs()->saveLocation("data", "konsole/") + name;
+  if (sessionList->currentText() == nameLine->text()) {
+    fullpath = *sessionFilename.at(sessionList->currentItem());
+    int j = fullpath.findRev('/');
+    if (j > -1)
+      fullpath = fullpath.mid(j+1);
+  }
+  else {
+    // Only ask for a name for changed nameLine, considered a "save as"
+    fullpath = nameLine->text().stripWhiteSpace().simplifyWhiteSpace()+".desktop";
+
+    KLineEditDlg dlg(i18n("Filename:"), fullpath, this);
+    dlg.setCaption(i18n("Save Session"));
+    if (!dlg.exec()) return;
+    fullpath = dlg.text();
+  }
+
+  if (fullpath[0] != '/')
+    fullpath = KGlobal::dirs()->saveLocation("data", "konsole/") + fullpath;
 
   KSimpleConfig* co = new KSimpleConfig(fullpath);
   co->setDesktopGroup();
@@ -340,6 +316,16 @@ void SessionEditor::saveCurrent()
 void SessionEditor::removeCurrent()
 {
   QString base = *sessionFilename.at(sessionList->currentItem());
+
+  // Query if system sessions should be removed
+  if (locateLocal("data", "konsole/" + base.section('/', -1)) != base) {
+    int code = KMessageBox::warningContinueCancel(this,
+      i18n("You are trying to remove a system session. Are you sure?"),
+      i18n("Removing System Session"));
+    if (code != KMessageBox::Continue)
+      return;
+  }
+
   if (!QFile::remove(base)) {
     KMessageBox::error(this,
       i18n("Cannot remove the session.\nMaybe it is a system session\n"),
@@ -354,24 +340,7 @@ void SessionEditor::removeCurrent()
 
 void SessionEditor::sessionModified()
 {
-  sesMod=true;
-  emit changed();
-}
-
-void SessionEditor::sessionModified(int)
-{
-  sesMod=true;
-  emit changed();
-}
-
-void SessionEditor::sessionModified(const QString&)
-{
-  sesMod=true;
-  emit changed();
-}
-
-void SessionEditor::iconModified(QString)
-{
+  saveButton->setEnabled(nameLine->text().length() != 0);
   sesMod=true;
   emit changed();
 }

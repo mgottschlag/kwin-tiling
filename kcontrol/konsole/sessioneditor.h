@@ -23,6 +23,7 @@
 #endif
 
 #include <qptrlist.h>
+#include <qstringlist.h>
 #include <kapplication.h>
 #include <qwidget.h>
 
@@ -40,25 +41,26 @@ class SessionEditor : public SessionDialog
 
   signals:
     void changed();
+    void getList();
+
+  public slots:
+    void schemaListChanged(const QStringList &titles, const QStringList &filenames);
 
   private slots:
     void readSession(int);
     void saveCurrent();
     void removeCurrent();
     void sessionModified();
-    void sessionModified(int);
-    void sessionModified(const QString&);
-    void iconModified(QString);
 
   private: 
+    void show();
     void loadAllKeytab();
-    void loadAllSchema();
     void loadAllSession();
     QString readKeymapTitle(const QString& filename);
-    QString readSchemaTitle(const QString& filename);
 
     bool sesMod;
     int oldSession;
+    bool loaded;
     QPtrList<QString> keytabFilename;
     QPtrList<QString> schemaFilename;
     QPtrList<QString> sessionFilename;

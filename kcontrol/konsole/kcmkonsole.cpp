@@ -65,6 +65,9 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->SchemaEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
     connect(dialog->SessionEditor1, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(dialog->SchemaEditor1, SIGNAL(schemaListChanged(const QStringList &,const QStringList &)),
+            dialog->SessionEditor1, SLOT(schemaListChanged(const QStringList &,const QStringList &)));
+    connect(dialog->SessionEditor1, SIGNAL(getList()), dialog->SchemaEditor1, SLOT(getList()));
 }
 
 void KCMKonsole::load()

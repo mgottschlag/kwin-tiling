@@ -44,11 +44,29 @@
 #include <kimageeffect.h>
 #include <qimage.h>
 
+// SchemaListBoxText is a list box text item with schema filename
+class SchemaListBoxText : public QListBoxText
+{
+  public:
+    SchemaListBoxText(const QString &title, const QString &filename): QListBoxText(title)
+    {
+      m_filename = filename;
+    };
+
+    const QString filename() { return m_filename; };
+
+  private:
+    QString m_filename;
+};
+
+
 SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 :SchemaDialog(parent, name)
 {
     schMod= false;
     loaded = false;
+    schemaLoaded = false;
+    change = false;
     oldSlot = 0;
     oldSchema = -1;
     color.resize(20);
@@ -57,8 +75,6 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     transparent.resize(20);
     defaultSchema = "";
     spix = new KSharedPixmap;
-
-    filename.setAutoDelete(true);
 
     connect(spix, SIGNAL(done(bool)), SLOT(previewLoaded(bool)));
 
@@ -80,8 +96,6 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 
     KGlobal::locale()->insertCatalogue("konsole"); // For schema translations
 
-    loadAllSchema();
-
     connect(imageBrowse, SIGNAL(clicked()), this, SLOT(imageSelect()));
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCurrent()));
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
@@ -93,11 +107,11 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(updatePreview()));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(updatePreview()));
 
-    connect(titleLine, SIGNAL(textChanged(const QString&)), this, SLOT(schemaModified(const QString&)));
+    connect(titleLine, SIGNAL(textChanged(const QString&)), this, SLOT(schemaModified()));
     connect(shadeColor, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
     connect(shadeSlide, SIGNAL(valueChanged(int)), this, SLOT(schemaModified()));
     connect(transparencyCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
-    connect(modeCombo, SIGNAL(activated(int)), this, SLOT(schemaModified(int)));
+    connect(modeCombo, SIGNAL(activated(int)), this, SLOT(schemaModified()));
     connect(backgndLine, SIGNAL(returnPressed()), this, SLOT(schemaModified()));
     connect(transparentCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(boldCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
@@ -109,9 +123,10 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 
 QString SchemaEditor::schema()
 {
+    int i = schemaList->currentItem();
     if (defaultSchemaCB->isChecked())
-     if(schemaList->currentItem()>=0)
-	return *filename.at(schemaList->currentItem());
+	if(i>=0)
+	    return ((SchemaListBoxText *) schemaList->item(i))->filename();
 
     return defaultSchema;
 
@@ -122,13 +137,10 @@ void SchemaEditor::setSchema(QString sch)
 {
     defaultSchema = sch;
 
-    QString *it;
-    int i = 0, sc = -1;
-    for (it = filename.first(); it != 0; it = filename.next()) {
-	if (sch == (*it))
+    int sc = -1;
+    for (int i = 0; i < (int) schemaList->count(); i++)
+	if (sch == ((SchemaListBoxText *) schemaList->item(i))->filename())
 	    sc = i;
-	i++;
-    }
 
     oldSchema = sc;
     if (sc == -1)
@@ -195,6 +207,22 @@ void SchemaEditor::previewLoaded(bool l)
 }
 
 
+void SchemaEditor::getList()
+{
+    if (! schemaLoaded) {
+	loadAllSchema();
+	setSchema(defaultSchema);
+	schemaLoaded = true;
+	change = true;
+    }
+}
+
+void SchemaEditor::show()
+{
+    getList();
+    SchemaDialog::show();
+}
+
 
 void SchemaEditor::loadAllSchema()
 {
@@ -203,24 +231,22 @@ void SchemaEditor::loadAllSchema()
     schemaList->clear();
 
 //    schemaList->setCurrentItem(0);
-    filename.clear();
-    int i = 0;
     for (it = list.begin(); it != list.end(); ++it) {
 
 	QString name = (*it);
 
-	filename.append(new QString(name));
-
 	QString title = readSchemaTitle(name);
 
-	if (title.isNull() || title.isEmpty())
-	    schemaList->insertItem(i18n("untitled"),i);
-	else
-	 schemaList->insertItem(title,i);
-
-	i++;
+	// Only insert new items so that local items override global
+	if (schemaList->findItem(title, ExactMatch) == 0) {
+	    if (title.isNull() || title.isEmpty())
+		schemaList->insertItem(new SchemaListBoxText(i18n("untitled"), name));
+	    else
+		schemaList->insertItem(new SchemaListBoxText(title, name));
+	}
     }
-
+    schemaList->sort();
+    schemaListChanged();
 }
 
 void SchemaEditor::imageSelect()
@@ -247,9 +273,7 @@ void SchemaEditor::slotTypeChanged(int slot)
 {
     schemaModified();
 
-    bool active = false;
-    if (slot == 0)
-	active = true;
+    bool active = slot == 0 || slot == 3;
     colorButton->setEnabled(active);
     boldCheck->setEnabled(active);
     transparentCheck->setEnabled(active);
@@ -264,20 +288,34 @@ void SchemaEditor::slotColorChanged(int slot)
     bold[oldSlot] = boldCheck->isChecked();
     transparent[oldSlot] = transparentCheck->isChecked();
 
+    change = false; // Don't mark as modified
     transparentCheck->setChecked(transparent[slot]);
     boldCheck->setChecked(bold[slot]);
     typeCombo->setCurrentItem(type[slot]);
     colorButton->setColor(color[slot]);
     oldSlot = slot;
+    change = true;
 }
 
 void SchemaEditor::removeCurrent()
 {
-    if(schemaList->currentItem()==-1)
+    int i = schemaList->currentItem();
+    if(i==-1)
         return;
-    QString base = *filename.at(schemaList->currentItem());
+    QString base = ((SchemaListBoxText *) schemaList->item(i))->filename();
+
+    // Query if system schemas should be removed
+    if (locateLocal("data", "konsole/" + base.section('/', -1)) != base) {
+	int code = KMessageBox::warningContinueCancel(this,
+	    i18n("You are trying to remove a system schema. Are you sure?"),
+	    i18n("Removing System Schema"));
+	if (code != KMessageBox::Continue)
+	    return;
+    }
+
     if(base==schema())
      setSchema("");
+
     if (!QFile::remove(base))
 	KMessageBox::error(this,
 			   i18n("Cannot remove the schema.\nMaybe it is a system schema\n"),
@@ -295,31 +333,26 @@ void SchemaEditor::saveCurrent()
     //This is to update the color table
     slotColorChanged(0);
 
-    QString base;
+    QString fullpath;
     if (schemaList->currentText() == titleLine->text()) {
-      base = *filename.at(schemaList->currentItem());
-      int j = base.findRev('/');
-      if (j > -1)
-        base = base.mid(j+1);
-
-      const QString extension = ".schema";
-      if (base.right(extension.length()) == extension)
-	base = base.left(base.length() - extension.length());
+	int i = schemaList->currentItem();
+	fullpath = ((SchemaListBoxText *) schemaList->item(i))->filename();
+	int j = fullpath.findRev('/');
+	if (j > -1)
+	    fullpath = fullpath.mid(j+1);
     }
-    else
-      base = titleLine->text();
+    else {
+	// Only ask for a name for changed titleLine, considered a "save as"
+	fullpath = titleLine->text().stripWhiteSpace().simplifyWhiteSpace()+".schema";
 
-    KLineEditDlg dlg(i18n("Filename:"), base, this);
-    dlg.setCaption(i18n("Save Schema"));
-    if (!dlg.exec()) return;
+	KLineEditDlg dlg(i18n("Filename:"), fullpath, this);
+	dlg.setCaption(i18n("Save Schema"));
+	if (!dlg.exec()) return;
+	fullpath = dlg.text();
+    }
 
-    QString fullpath = dlg.text().stripWhiteSpace().simplifyWhiteSpace() + ".schema";
     if (fullpath[0] != '/')
-      fullpath = KGlobal::dirs()->saveLocation("data", "konsole/") + fullpath;
-
-    kdDebug(0) << fullpath << endl;
-
-
+        fullpath = KGlobal::dirs()->saveLocation("data", "konsole/") + fullpath;
 
     QFile f(fullpath);
     if (f.open(IO_WriteOnly)) {
@@ -375,11 +408,17 @@ void SchemaEditor::saveCurrent()
 		scol.sprintf("sysfg %2d             %2d %1d # %s", i,
 			     transparent[i], bold[i],
 			     (const char *) colorCombo->text(i).utf8());
-	    else
+	    else if (type[i] == 2)
 		scol.sprintf("sysbg %2d             %2d %1d # %s", i,
 			     transparent[i], bold[i],
 			     (const char *) colorCombo->text(i).utf8());
-
+	    else {
+		int ch, cs, cv;
+		color[i].hsv(&ch, &cs, &cv);
+		scol.sprintf("rcolor %1d %3d %3d     %2d %1d # %s", i,
+			     cs, cv, transparent[i], bold[i],
+			     (const char *) colorCombo->text(i).utf8());
+	    }
 	    t << scol << endl;
 	}
 
@@ -389,28 +428,19 @@ void SchemaEditor::saveCurrent()
 	KMessageBox::error(this, i18n("Cannot save the schema.\nMaybe permission denied\n"),
 			   i18n("Error Saving Schema"));
 
-
+    schMod=false;
     loadAllSchema();
-    setSchema(defaultSchema);
+    setSchema(fullpath);
 
 }
 
 void SchemaEditor::schemaModified()
 {
-    schMod=true;
-    emit changed();
-}
-
-void SchemaEditor::schemaModified(int)
-{
-    schMod=true;
-    emit changed();
-}
-
-void SchemaEditor::schemaModified(const QString&)
-{
-    schMod=true;
-    emit changed();
+    if (change) {
+	saveButton->setEnabled(titleLine->text().length() != 0);
+	schMod=true;
+	emit changed();
+    }
 }
 
 QString SchemaEditor::readSchemaTitle(const QString & file)
@@ -445,6 +475,20 @@ QString SchemaEditor::readSchemaTitle(const QString & file)
     return 0;
 }
 
+void SchemaEditor::schemaListChanged()
+{
+    QStringList titles, filenames;
+    SchemaListBoxText *item;
+
+    for (int index = 0; index < (int) schemaList->count(); index++) {
+      item = (SchemaListBoxText *) schemaList->item(index);
+      titles.append(item->text());
+      filenames.append(item->filename().section('/', -1));
+    }
+
+    emit schemaListChanged(titles, filenames);
+}
+
 void SchemaEditor::querySave()
 {
     int result = KMessageBox::questionYesNo(this,
@@ -471,7 +515,7 @@ void SchemaEditor::readSchema(int num)
 
 	if (defaultSchemaCB->isChecked()) {
 
-	    defaultSchema = *filename.at(oldSchema);
+	    defaultSchema = ((SchemaListBoxText *) schemaList->item(oldSchema))->filename();
 
 	}
 
@@ -486,10 +530,12 @@ void SchemaEditor::readSchema(int num)
 
     }
 
-    QString fPath = locate("data", "konsole/" + *filename.at(num));
+    QString fPath = locate("data", "konsole/" +
+			   ((SchemaListBoxText *) schemaList->item(num))->filename());
 
     if (fPath.isNull())
-	fPath = locate("data", *filename.at(num));
+	fPath = locate("data",
+		       ((SchemaListBoxText *) schemaList->item(num))->filename());
 
     if (fPath.isNull()) {
 	KMessageBox::error(this, i18n("Cannot find the schema."),
@@ -557,7 +603,27 @@ void SchemaEditor::readSchema(int num)
 		shadeColor->setColor(QColor(rr, rg, rb));
 
 	    }
-
+            if (!strncmp(line,"rcolor",6)) {
+                int fi,ch,cs,cv,tr,bo;
+                if(sscanf(line,"rcolor %d %d %d %d %d",&fi,&cs,&cv,&tr,&bo) != 5)
+                    continue;
+                if (!(0 <= fi && fi <= TABLE_COLORS))
+                    continue;
+                ch = 0; // Random hue - set to zero
+                if (!(0 <= cs && cs <= 255         ))
+                    continue;
+                if (!(0 <= cv && cv <= 255         ))
+                    continue;
+                if (!(0 <= tr && tr <= 1           ))
+                    continue;
+                if (!(0 <= bo && bo <= 1           ))
+                    continue;
+                color[fi] = QColor();
+                color[fi].setHsv(ch,cs,cv);
+                transparent[fi] = tr;
+                bold[fi] = bo;
+                type[fi] = 3;
+            }
 	    if (!strncmp(line, "color", 5)) {
 		int fi, cr, cg, cb, tr, bo;
 		if (sscanf(line, "color %d %d %d %d %d %d", &fi, &cr, &cg, &cb, &tr, &bo) != 6)
@@ -619,9 +685,10 @@ void SchemaEditor::readSchema(int num)
     typeCombo->setCurrentItem(type[ii]);
     colorButton->setColor(color[ii]);
 
-    boldCheck->setDisabled(type[ii]);
-    transparentCheck->setDisabled(type[ii]);
-    colorButton->setDisabled(type[ii]);
+    bool inactive = type[ii] == 1 || type[ii] == 2;
+    boldCheck->setDisabled(inactive);
+    transparentCheck->setDisabled(inactive);
+    colorButton->setDisabled(inactive);
 
     oldSchema = num;
     updatePreview();

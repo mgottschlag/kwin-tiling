@@ -154,6 +154,11 @@
                             <string>System Foreground</string>
                         </property>
                     </item>
+                    <item>
+                        <property name="text">
+                            <string>Random Hue</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>typeCombo</cstring>
                     </property>
