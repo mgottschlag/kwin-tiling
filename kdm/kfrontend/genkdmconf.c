@@ -306,12 +306,15 @@ mkdirp (const char *name, int mode, const char *what, int existok)
     for (i = 1; mfname[i]; i++)
 	if (mfname[i] == '/') {
 	    mfname[i] = 0;
-	    if (mkdir (mfname, 0755) && errno != EEXIST) {
-		fprintf (stderr, "Cannot create parent %s of %s directory %s: %s\n",
-			 mfname, what, name, strerror (errno));
-		free (mfname);
-		return 0;
-	    }
+	    if (mkdir (mfname, 0755)) {
+		if (errno != EEXIST) {
+		    fprintf (stderr, "Cannot create parent %s of %s directory %s: %s\n",
+			     mfname, what, name, strerror (errno));
+		    free (mfname);
+		    return 0;
+		}
+	    } else
+		chmod (mfname, 0755);
 	    mfname[i] = '/';
 	}
     free (mfname);
@@ -321,9 +324,9 @@ mkdirp (const char *name, int mode, const char *what, int existok)
 		     what, name, strerror (errno));
 	    return 0;
 	}
-	if (!existok)
-	    return 0;
+	return existok;
     }
+    chmod (name, mode);
     return 1;
 }
 
