@@ -84,7 +84,6 @@ KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
     delete m_Tempfile; m_Tempfile = 0;
-    delete m_pTimer;
     if( m_bDeleteConfig )
         delete m_pConfig;
 }
