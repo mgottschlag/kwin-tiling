@@ -132,7 +132,9 @@ void FontUseItem::readFont()
   if ( _charset == "default" )
   {
     _charset = i18n("default");
+#if QT_VERSION < 300
     KGlobal::charsets()->setQFont(_font, KGlobal::locale()->charset());
+#endif
   }
   if (deleteme) delete config;
   updateLabel();
@@ -163,13 +165,16 @@ void FontUseItem::choose()
 {
   KFontDialog dlg( prnt, "Font Selector", fixed, true, QStringList(), true );
   dlg.setFont( _font, fixed );
+#if QT_VERSION <300
   dlg.setCharset( _charset );
-
+#endif
   int result = dlg.exec();
   if (KDialog::Accepted == result)
   {
     _font = dlg.font();
+#if QT_VERSION < 300
     _charset = dlg.charset();
+#endif
     updateLabel();
     emit changed();
   }
