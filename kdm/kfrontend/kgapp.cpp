@@ -58,8 +58,7 @@ sigAlarm( int )
 
 GreeterApp::GreeterApp()
 {
-    pingInterval = ((GetCfgInt( C_displayType ) & d_location) == dLocal) ?
-		      0 : _pingInterval;
+    pingInterval = _isLocal ? 0 : _pingInterval;
     if (pingInterval) {
 	struct sigaction sa;
 	sigemptyset( &sa.sa_mask );
