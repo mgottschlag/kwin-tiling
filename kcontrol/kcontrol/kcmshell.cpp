@@ -224,7 +224,9 @@ int main(int _argc, char *_argv[])
              if (!embed)
              {
                 KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true );
-                dlg->setCaption(info.moduleName());
+                QString caption = (kapp->caption() != i18n("KDE Control Module")) ?
+                                   kapp->caption() : info.moduleName();
+                dlg->setPlainCaption(i18n("Configure - %1").arg(caption));
 
                 // Needed for modules that use d'n'd (not really the right
                 // solution for this though, I guess)
@@ -286,13 +288,15 @@ int main(int _argc, char *_argv[])
         bool ok;
         int id = embed.toInt(&ok);
         if (ok)
-	    {
-              // NOTE: This has to be changed for QT 3.0. See above!
-              QXEmbed::embedClientIntoWindow(dlg, id);
-	      delete dlg;
-	      return 0;
-	    }
+        {
+            // NOTE: This has to be changed for QT 3.0. See above!
+            QXEmbed::embedClientIntoWindow(dlg, id);
+            delete dlg;
+          return 0;
+        }
     }
+
+    dlg->setPlainCaption(i18n("Configure - %1").arg(kapp->caption()));
 
     // run the dialog
     dlg->exec();
