@@ -292,7 +292,7 @@ void Privacy::cleanup()
 
 QString Privacy::quickHelp() const
 {
-  return i18n("The privacy module allows a user to erase traces which KDE leaves on"
+  return i18n("The privacy module allows a user to erase traces which KDE leaves on "
               "the system, such as command histories or browser caches.");
 }
 

@@ -1,16 +1,21 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Screen Resize & Rotate
+Name[ca]=Rota i amida la pantalla
 Name[da]=Ændr skærm & Rotér
+Name[es]=Ajustar tamaño & rotar pantalla
 Name[hu]=A képernyő felbontása, tájolása
+Name[nl]=Scherm roteren en grootte wijzigen
 Name[pt_BR]=Redimensionar tela & Rotacionar
 Name[sr]=Промена величине и ротација екрана
 Name[sv]=Ändra skärmstorlek och rotera
 Name[wa]=Candjî l' grandeu del waitroûle eyet l' tourner
 Name[xx]=xxScreen Resize & Rotatexx
-Comment=A panel applet for resizing and reorienting X screens.
+Comment=A panel applet for resizing and reorientating X screens.
+Comment[ca]=Un applet del plafó per amidar i reorientar les pantalles X.
 Comment[da]=En panel-applet til at ændre størrelse og reorientere X-skørme.
 Comment[hu]=Kisalkalmazás a képernyő átméretezéséhez, elforgatásához.
+Comment[nl]=Een paneelapplet waarmee u de grootte en oriëntatie van uw X-weergave kunt wijzigen
 Comment[pt_BR]=Mini-aplicativo para redimensionamento e reorientação de telas do X
 Comment[sr]=Аплет за панел за промену величине и оријентације X-евих екрана.
 Comment[sv]=Ett miniprogram för att ändra storlek och orientering på X-skärmar.

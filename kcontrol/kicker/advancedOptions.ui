@@ -209,7 +209,7 @@
                         <string></string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Click on this button to set the colour to use when tinting transparent panels.</string>
+                        <string>Click on this button to set the color to use when tinting transparent panels.</string>
                     </property>
                 </widget>
                 <spacer row="2" column="0" rowspan="2" colspan="1">
@@ -310,7 +310,7 @@
                         <cstring>tintColorB</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Click on this button to set the colour to use when tinting transparent panels.</string>
+                        <string>Click on this button to set the color to use when tinting transparent panels.</string>
                     </property>
                 </widget>
             </grid>

@@ -70,7 +70,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   vvbox->addWidget(customBell);
   QWhatsThis::add( systemBell, i18n("If this option is checked, the default system bell will be used. See the"
     " \"System Bell\" control module for how to customize the system bell."
-    " Normally, this is just a \"beeep\".") );
+    " Normally, this is just a \"beep\".") );
   QWhatsThis::add( customBell, i18n("Check this option if you want to use a customized bell, playing"
     " a sound file. If you do this, you will probably want to turn off the system bell.<p> Please note"
     " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.") );
