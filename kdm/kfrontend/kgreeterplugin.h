@@ -75,7 +75,7 @@ public:
  */
 class KGreeterPlugin {
 public:
-    KGreeterPlugin::KGreeterPlugin( KGreeterPluginHandler *h ) : handler( h ) {}
+    KGreeterPlugin( KGreeterPluginHandler *h ) : handler( h ) {}
     virtual ~KGreeterPlugin() {}
 
     /**
