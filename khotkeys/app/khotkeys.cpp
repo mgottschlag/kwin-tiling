@@ -19,6 +19,7 @@
 #include <settings.h>
 #include <input.h>
 #include <action_data.h>
+#include <gestures.h>
 
 namespace KHotKeys
 {
@@ -52,6 +53,9 @@ void KHotKeysApp::reread_configuration()
     khotkeys_set_active( false );
     Settings settings;
     settings.read_settings( false );
+    gesture_handler->enable( !settings.gestures_disabled_globally );
+    gesture_handler->set_mouse_button( settings.gesture_mouse_button );
+    gesture_handler->set_timeout( settings.gesture_timeout );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif

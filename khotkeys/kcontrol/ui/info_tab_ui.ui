@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>KHotKeys::Info_tab_ui</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>588</width>
-            <height>480</height>
+            <height>483</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Info_tab_ui</string>
     </property>
     <vbox>
         <property name="name">
@@ -32,6 +35,12 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
         <widget class="QLabel">
             <property name="name">
@@ -51,17 +60,6 @@
             <property name="hAlign" stdset="0">
             </property>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
         <widget class="QLabel">
             <property name="name">
                 <cstring>version_label</cstring>
@@ -75,17 +73,32 @@
             <property name="hAlign" stdset="0">
             </property>
         </widget>
-        <spacer>
+        <widget class="Line">
             <property name="name">
-                <cstring>Spacer3</cstring>
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Horizontal</enum>
             </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>warning_label</cstring>
             </property>
-        </spacer>
+            <property name="text">
+                <string>&lt;p&gt;This module allows configuring input actions, like mouse gestures, keyboard shortcuts for performing commands, launching applications or DCOP calls, and similar.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;NOTE: &lt;/b&gt;If you're not an experienced user, you should be careful with modifying the actions, and should limit your changes mainly to enabling/disabling actions, and changing triggers.&lt;/p&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>Spacer7</cstring>
@@ -96,8 +109,18 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
     </vbox>
 </widget>
+<includes>
+    <include location="global" impldecl="in implementation">kdialog.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>

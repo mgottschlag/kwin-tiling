@@ -69,6 +69,9 @@ class Gesture
     public:
         Gesture( bool enabled_P, QObject* parent_P );
         virtual ~Gesture();
+        void enable( bool enable_P );
+        void set_mouse_button( unsigned int button_P );
+        void set_timeout( int time_P );
     signals:
         void handle_gesture( const QString &gesture );
     protected:
@@ -83,6 +86,8 @@ class Gesture
         int start_x, start_y;
         QTimer nostroke_timer;
         bool recording;
+        unsigned int button;
+        int timeout;
     };
 
 // Gesture class must be QWidget derived because of x11Event()

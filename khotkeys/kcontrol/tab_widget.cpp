@@ -37,6 +37,7 @@
 #include "kcmkhotkeys.h"
 #include "condition_list_widget.h"
 #include "gesture_triggers_tab.h"
+#include "gestures_settings_tab.h"
 
 // CHECKME
 //nejak lip ty typeid
@@ -52,6 +53,7 @@ Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
     : QTabWidget( parent_P, name_P )
     {
     pages[ TAB_INFO ] = new Info_tab;
+    pages[ TAB_GESTURES_SETTINGS ] = new Gestures_settings_tab;
     General_tab* general_tab;
     pages[ TAB_GENERAL ] = general_tab = new General_tab;
     connect( general_tab, SIGNAL( action_type_changed( int )),
@@ -71,7 +73,7 @@ Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
          i < TAB_END;
          ++i )
         connect( this, SIGNAL( clear_pages_signal()), pages[ i ], SLOT( clear_data()));
-    show_pages( TAB_INFO );
+    show_pages(( TAB_INFO, TAB_GESTURES_SETTINGS ));
     current_type = NONE;
     current_data_type = TYPE_GENERIC;
     }
@@ -89,7 +91,11 @@ Tab_widget::~Tab_widget()
     
 void Tab_widget::save_current_action_changes()
     {
-    if( current_type == GROUP )
+    if( current_type == NONE ) // info, global settings
+        {
+        static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->get_data(); // saves
+        }
+    else if( current_type == GROUP )
         {
         Action_data_group* old =
             static_cast< Action_data_group* >( module->current_action_data());
@@ -214,7 +220,11 @@ void Tab_widget::save_current_action_changes()
 void Tab_widget::load_current_action()
     {
     check_action_type();
-    if( current_type == GROUP )
+    if( current_type == NONE ) // info, global settings
+        {
+        static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->set_data(); // loads
+        }
+    else if( current_type == GROUP )
         {
         static_cast< Action_group_tab* >( pages[ TAB_GROUP_GENERAL ] )->set_data( 
             static_cast< Action_data_group* >( module->current_action_data()));
@@ -320,7 +330,7 @@ void Tab_widget::check_action_type()
         kdDebug( 1217 ) << "setting none" << endl;
         if( current_type == NONE )
             return;
-        show_pages( TAB_INFO );
+        show_pages(( TAB_INFO, TAB_GESTURES_SETTINGS ));
         current_type = NONE;
         return;
         }
@@ -387,6 +397,7 @@ void Tab_widget::set_action_type_slot( int type_P )
 
 const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
     I18N_NOOP( "Info" ),  // TAB_INFO
+    I18N_NOOP( "Gestures settings" ), // TAB_GESTURES_SETTINGS
     I18N_NOOP( "General" ), // TAB_GENERAL
     I18N_NOOP( "General" ), // TAB_GROUP_GENERAL
     I18N_NOOP( "Triggers" ), // TAB_TRIGGERS

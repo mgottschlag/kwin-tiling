@@ -29,6 +29,7 @@ class KHListView
         KHListView( QWidget* parent_P, const char* name_P = NULL );
         virtual void clear();
         virtual void insertItem( QListViewItem* item_P );
+        virtual void clearSelection();
         bool forceSelect() const;
         void setForceSelect( bool force_P );
     signals:

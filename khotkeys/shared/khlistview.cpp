@@ -88,6 +88,12 @@ void KHListView::insertItem( QListViewItem* item_P )
         }
     }
 
+void KHListView::clearSelection()
+    {
+    saved_current_item = NULL;
+    QListView::clearSelection();
+    }
+
 // items are often inserted using the QListViewItem constructor,
 // which means that a derived class are not yet fully created
 void KHListView::slot_insert_select()

@@ -488,5 +488,9 @@
     <slot access="protected" specifier="pure virtual">window_role_combo_changed(int)</slot>
     <slot access="protected" specifier="pure virtual">window_title_combo_changed(int)</slot>
 </slots>
+<includes>
+    <include location="global" impldecl="in implementation">kdialog.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 </UI>

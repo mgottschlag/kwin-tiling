@@ -65,10 +65,21 @@ void Actions_listview_widget::set_action_data( Action_data_base* data_P, bool re
 void Actions_listview_widget::current_changed( QListViewItem* item_P )
     {
     kdDebug( 1217 ) << "current_changed:" << item_P << endl;
+    set_current_action( static_cast< Action_listview_item* >( item_P ));
+    }
+
+void Actions_listview_widget::set_current_action( Action_listview_item* item_P )
+    {
     if( item_P == saved_current_item )
         return;
     recent_item = saved_current_item;
-    saved_current_item = static_cast< Action_listview_item* >( item_P );
+    saved_current_item = item_P;
+    if( actions_listview->currentItem() != item_P )
+        {
+        if( item_P == NULL )
+            actions_listview->clearSelection();
+        actions_listview->setCurrentItem( item_P );
+        }
     emit current_action_changed();
     }
 

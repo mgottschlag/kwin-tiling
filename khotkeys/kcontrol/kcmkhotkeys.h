@@ -14,6 +14,7 @@
 #include <kcmodule.h>
 
 #include <actions.h>
+#include <settings.h>
 
 namespace KHotKeys
 {
@@ -39,6 +40,12 @@ class Module
         Action_data_base* current_action_data();
         void action_name_changed( const QString& name_P );
         Action_data_group* actions_root() const;
+        void set_gestures_disabled( bool set );
+        bool gestures_disabled() const;
+        void set_gesture_button( int button );
+        int gesture_button() const;
+        void set_gesture_timeout( int time );
+        int gesture_timeout() const;
     public slots:
         void changed();
     protected:
@@ -50,6 +57,7 @@ class Module
         Action_data_base* _current_action_data;
         bool listview_is_changed;
         bool deleting_action;
+        Settings settings;
     protected slots:
         void listview_current_action_changed();
         void new_action();
@@ -78,6 +86,42 @@ Action_data_base* Module::current_action_data()
     return _current_action_data;
     }
     
+inline
+void Module::set_gestures_disabled( bool set )
+    {
+    settings.gestures_disabled_globally = set;
+    }
+
+inline
+bool Module::gestures_disabled() const
+    {
+    return settings.gestures_disabled_globally;
+    }
+
+inline
+void Module::set_gesture_button( int button )
+    {
+    settings.gesture_mouse_button = button;
+    }
+
+inline
+int Module::gesture_button() const
+    {
+    return settings.gesture_mouse_button;
+    }
+
+inline
+void Module::set_gesture_timeout( int time )
+    {
+    settings.gesture_timeout = time;
+    }
+
+inline
+int Module::gesture_timeout() const
+    {
+    return settings.gesture_timeout;
+    }
+
 } // namespace KHotKeys
 
 #endif

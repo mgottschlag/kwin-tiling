@@ -33,7 +33,6 @@
 
 #include <input.h>
 #include <triggers.h>
-#include <settings.h>
 #include <action_data.h>
 
 #include "tab_widget.h"
@@ -93,7 +92,6 @@ void Module::load()
     {
     actions_listview_widget->clear();
     delete _actions_root;
-    Settings settings;
     settings.read_settings( true );
     _actions_root = settings.actions;
     kdDebug( 1217 ) << "actions_root:" << _actions_root << endl;
@@ -105,7 +103,6 @@ void Module::load()
 void Module::save()
     {
     tab_widget->save_current_action_changes();
-    Settings settings;
     settings.actions = _actions_root;
     settings.write_settings();
     if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
@@ -152,7 +149,7 @@ void Module::set_new_current_action( bool save_old_P )
     tab_widget->load_current_action();
     buttons_widget->enable_delete( current_action_data() != NULL );
     }
-    
+
 // CHECKME volano jen z Tab_widget pro nastaveni zmenenych dat ( novy Action_data_base )
 void Module::set_current_action_data( Action_data_base* data_P )
     {
@@ -261,7 +258,8 @@ void Module::delete_action()
 
 void Module::global_settings()
     {
-    // CHECKME TODO
+    actions_listview_widget->set_current_action( NULL );
+    set_new_current_action( true );
     }
     
 void Module::changed()

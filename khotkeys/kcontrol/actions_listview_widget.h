@@ -30,6 +30,7 @@ class Actions_listview_widget
     public:
         Actions_listview_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         Action_listview_item* current_action() const;
+        void set_current_action( Action_listview_item* item );
         Action_data_base* current_action_data() const; 
         void set_action_data( Action_data_base* data_P, bool recent_action_P = false );
         void action_name_changed( const QString& name_P );

@@ -60,6 +60,10 @@ void Settings::read_settings( bool include_disabled_P )
         case -1234576: // no config file
           break;
         }
+    cfg.setGroup( "Gestures" );
+    gestures_disabled_globally = cfg.readBoolEntry( "Disabled", false );
+    gesture_mouse_button = cfg.readNumEntry( "MouseButton", 2 );
+    gesture_timeout = cfg.readNumEntry( "Timeout", 1000 );
     }
 
 void Settings::write_settings()
@@ -77,6 +81,10 @@ void Settings::write_settings()
     int cnt = write_actions_recursively_v2( cfg, actions, true );
     cfg.setGroup( "Main" );
     cfg.writeEntry( "Autostart", cnt != 0 );
+    cfg.setGroup( "Gestures" );
+    cfg.writeEntry( "Disabled", gestures_disabled_globally );
+    cfg.writeEntry( "MouseButton", gesture_mouse_button );
+    cfg.writeEntry( "Timeout", gesture_timeout );
     }
 
 // return value means the number of enabled actions written in the cfg file

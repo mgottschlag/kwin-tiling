@@ -25,6 +25,9 @@ class Settings
         void read_settings( bool include_disabled_P );
         void write_settings();
         Action_data_group* actions;
+        bool gestures_disabled_globally;
+        int gesture_mouse_button;
+        int gesture_timeout;
     protected:
         void read_settings_v1( KConfig& cfg_P );
         void read_settings_v2( KConfig& cfg_P, bool include_disabled_P );

@@ -42,12 +42,26 @@ namespace KHotKeys
 Gesture* gesture_handler;
 
 Gesture::Gesture( bool enabled_P, QObject* parent_P )
-    : _enabled( enabled_P ), recording( false )
+    : _enabled( false ), recording( false )
     {
     (void) new DeleteObject( this, parent_P );
     assert( gesture_handler == NULL );
     gesture_handler = this;
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
+    enable( enabled_P );
+    }
+      
+Gesture::~Gesture()
+    {
+    enable( false );
+    gesture_handler = NULL;
+    }
+
+void Gesture::enable( bool enabled_P )
+    {
+    if( _enabled == enabled_P )
+        return;
+    _enabled = enabled_P;
     if( _enabled )
         {
         kapp->installX11EventFilter( this );
@@ -55,29 +69,27 @@ Gesture::Gesture( bool enabled_P, QObject* parent_P )
         // + seznam oken, pro ktere nedelat grab?
         grab_mouse( true );
         }
-    }
-      
-Gesture::~Gesture()
-    {
-    if( _enabled )
+    else
+        {
         grab_mouse( false );
-    gesture_handler = NULL;
+        kapp->removeX11EventFilter( this );
+        }
     }
 
 bool Gesture::x11Event( XEvent* ev_P )
     {
-    if( ev_P->type == ButtonPress && ev_P->xbutton.button == Button2 )
+    if( ev_P->type == ButtonPress && ev_P->xbutton.button == button )
         {
         kdDebug( 1217 ) << "GESTURE: mouse press" << endl;
         stroke.reset();
         stroke.record( ev_P->xbutton.x, ev_P->xbutton.y );
-        nostroke_timer.start( 1000, true ); // CHECKME nastavitelne?
+        nostroke_timer.start( timeout, true );
         recording = true;
         start_x = ev_P->xbutton.x_root;
         start_y = ev_P->xbutton.y_root;
         return true;
         }
-    else if( ev_P->type == ButtonRelease && ev_P->xbutton.button == Button2
+    else if( ev_P->type == ButtonRelease && ev_P->xbutton.button == button
         && recording )
         {
         recording = false;
@@ -119,9 +131,8 @@ void Gesture::stroke_timeout()
 
 void Gesture::mouse_replay( bool release_P )
     {
-    // CHECKME spravny button
     grab_mouse( false );
-    Mouse::send_mouse_button( Button2, release_P );
+    Mouse::send_mouse_button( button, release_P );
     grab_mouse( true );
     }
     
@@ -131,14 +142,36 @@ void Gesture::grab_mouse( bool grab_P )
         {
         // CHECKME podle nastaveni
         KXErrorHandler handler;
-        int ret = XGrabButton( qt_xdisplay(), Button2, AnyModifier, qt_xrootwin(), False,
-            ButtonPressMask | ButtonReleaseMask | Button2MotionMask, GrabModeAsync, GrabModeAsync,
+        static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,
+            Button4MotionMask, Button5MotionMask, ButtonMotionMask, ButtonMotionMask,
+            ButtonMotionMask, ButtonMotionMask };
+        int ret = XGrabButton( qt_xdisplay(), button, AnyModifier, qt_xrootwin(), False,
+            ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
             None, None );
         bool err = handler.error( true );
         kdDebug( 1217 ) << "Grab:" << ret << ":" << err << endl;
         }
     else
-        XUngrabButton( qt_xdisplay(), Button2, AnyModifier, qt_xrootwin());
+        XUngrabButton( qt_xdisplay(), button, AnyModifier, qt_xrootwin());
+    }
+
+void Gesture::set_mouse_button( unsigned int button_P )
+    {
+    if( button == button_P )
+        return;
+    if( !_enabled )
+        {
+        button = button_P;
+        return;
+        }
+    grab_mouse( false );
+    button = button_P;
+    grab_mouse( true );
+    }
+
+void Gesture::set_timeout( int timeout_P )
+    {
+    timeout = timeout_P;
     }
     
 Stroke::Stroke()
