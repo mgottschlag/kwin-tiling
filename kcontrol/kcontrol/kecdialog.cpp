@@ -40,10 +40,13 @@ KExtendedCDialog::KExtendedCDialog(QWidget *parent, const char *name, bool modal
                 parent, name, modal, true, i18n("Use &Defaults"))
 {
     enableButton(Apply, false);
+    connect(this, SIGNAL(aboutToShowPage(QWidget *)), this, SLOT(aboutToShow(QWidget *)));
+    setInitialSize(QSize(640,480));
 }
 
 KExtendedCDialog::~KExtendedCDialog()
 {
+    moduleDict.setAutoDelete(true);
 }
 
 void KExtendedCDialog::slotUser1()
@@ -84,26 +87,51 @@ void KExtendedCDialog::addModule(const QString& path, bool withfallback)
 {
     kdDebug(1208) << "KExtendedCDialog::addModule " << path << endl;
 
-    // load the module
     ModuleInfo info(path);
-    KCModule *module = ModuleLoader::loadModule(info, withfallback);
 
-    if (!module)
-    {
-        KMessageBox::error(this, i18n("There was an error loading module\n'%1'\nThe diagnostics is:\n%2")
-                           .arg(path).arg(KLibLoader::self()->lastErrorMessage()));
-        return;
-    }
     QHBox* page = addHBoxPage(info.name(), info.comment(),
                               KGlobal::iconLoader()->loadIcon(info.icon(), KIcon::Desktop, KIcon::SizeMedium));
     if(!page) {
-        delete module;
         ModuleLoader::unloadModule(info);
+        return;
     }
+    moduleDict.insert(page, new LoadInfo(path, withfallback));
+    if (modules.isEmpty())
+       aboutToShow(page);
+}
+
+void KExtendedCDialog::aboutToShow(QWidget *page)
+{
+    LoadInfo *loadInfo = moduleDict[page];
+    if (!loadInfo)
+       return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    moduleDict.remove(page);
+
+    ModuleInfo info(loadInfo->path);
+
+    KCModule *module = ModuleLoader::loadModule(info, loadInfo->withfallback);
+
+
+    if (!module)
+    {
+        QApplication::restoreOverrideCursor();
+        KMessageBox::error(this, i18n("There was an error loading module\n'%1'\nThe diagnostics is:\n%2")
+                           .arg(loadInfo->path).arg(KLibLoader::self()->lastErrorMessage()));
+        delete loadInfo;
+        return;
+    }
+
     module->reparent(page,0,QPoint(0,0),true);
     connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
     //setHelp( docpath, QString::null );
     modules.append(module);
 
     KCGlobal::repairAccels( topLevelWidget() );
+
+    delete loadInfo;
+
+    QApplication::restoreOverrideCursor();
 }

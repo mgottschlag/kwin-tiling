@@ -22,6 +22,7 @@
 #define __kecdialog_h__
 
 #include <qptrlist.h>
+#include <qptrdict.h>
 
 #include <kdialogbase.h>
 #include <kcmodule.h>
@@ -41,9 +42,18 @@ protected slots:
     virtual void slotApply();
     virtual void slotOk();
     void clientChanged(bool state);
+    void aboutToShow(QWidget *);
 
 private:
+    struct LoadInfo { 
+      LoadInfo(const QString &_path, bool _withfallback) 
+         : path(_path), withfallback(_withfallback) 
+         { }
+      QString path; 
+      bool withfallback;
+    };
     QPtrList<KCModule> modules;
+    QPtrDict<LoadInfo> moduleDict;
 };
 
 #endif
