@@ -4,15 +4,11 @@
   would reactivate the greeter. this would require lots of magic (suid root
   (disable -config option or make audit!) and make it write the fifo).
 
-- maybe don't expect fixed vt numbers in Xservers. instead, allocate a free
-  vt dynamically (lowest vt configurable) and force the Xserver on that.
-  dragging this further, one could drop Xservers alltogether, but that gives
-  problems with sessreg on BSD. see #56329
+- FreeBSD has virtual consoles as well; use them.
 
-- possibly parse Xserver log to find the vt, whether the config is busted or
-  the display is busy, etc.
+- get rid of Xservers file. consider sessreg vs. BSD. see #56329
 
-- dealloc vt after reserve Xserver shutdown (#65346)
+- possibly parse Xserver log to find failure cause. this is very hacky.
 
 - try harder to get rid of processes, see X servers failure cleanup path
 
@@ -61,9 +57,6 @@ save these options to .dmrc?
 - Add XDMCP _client_ to core (for remote login like in dtlogin).
   Currently this is done by simply restarting the x-server with -query.
 
-- bidirectional command sockets for better integration with kde session.
-  relates to #25304
-
 - add login restrictions for reserve displays (#59353)
 
 - possibly do the authentication for the reserve display on the display it
@@ -100,12 +93,6 @@ and the session. .dmrc later affects only the session, not the greeter.
 - TryExec for "custom" session type. always show the entry, but disable it
   if it is unavailable for the selected user.
 
-- more differentiated & logically named scripts: SetupServer, PreGreet,
-  PostGreet, PreSession, PostSession. maybe SetupServer should be called
-  only _instead_ of PreGreet when no greeter is started? then there is the
-  option not to introduce the *Greet scripts, but tell Setup and Startup
-  via an argument whether the greeter is used.
-
 - greeter theming support. possibly compatible to gdm. (#37349)
 
 - cursor theming support via Xcursor (#66829)
@@ -133,8 +120,6 @@ and the session. .dmrc later affects only the session, not the greeter.
   on statistical analysis of actual users ... severe overkill!?
 
 - export password to the startup/session scripts. somehow ... (#35396)
-
-- actually implement AuthComplain
 
 - actually implement InteractiveSd (#65543, relates #25304)
 
@@ -164,6 +149,17 @@ and the session. .dmrc later affects only the session, not the greeter.
 - ssh-agent/gpg-agent integration (#44177, #65709)
 
 - lbxproxy integration (tell ghakko)
+
+- in kcm_kdm, detach backgroundrc change status from kdmrc change status.
+
+- gdm changelog indicates that PAM sometimes
+  - continues despite PAM_CONV_ERR
+  - asks user name twice
+- gdm avoids the PAM_MESSAGE message box vs. prompt problem by displaying
+  everything in one "error area". all messages are simply appended; an empty
+  message clears the area.
+- gdm stops cursor blinking on not used (remote) displays after 20 secs to
+  save bandwidth.
 
 internal stuff:
 - improve signal handling in the subdaemon, it's incredibly racy (GOpen/GClose).

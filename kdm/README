@@ -296,8 +296,6 @@ KDM accepts two command line options related to logging:
 	the delay. See below.
     128 (0x80) - don't use syslog for internally generated messages.
     256 (0x100) - core Xauth debugging.
-    512 (0x200) - don't fork session sub-daemon, but manage one session
-		  in the master daemon. not for real-world use.
     1024 (0x400) - run config reader and greeter through valgrind.
     2048 (0x800) - run config reader and greeter through strace.
 

@@ -2,6 +2,22 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2004-07-28  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added control sockets. Control FiFos are now obsolete.
+	  Added control socket command line client 'kdmctl'.
+	* The Setup program is now run even for automatic logins.
+	  Setup, Startup and Reset have the arg "auto" for automatic logins.
+
+2004-07-23  Oswald Buddenhagen <ossi@kde.org>
+
+	* Dynamic VT allocation added; option ServerVTs
+
+2004-07-10  Oswald Buddenhagen <ossi@kde.org>
+
+	* GreeterPosX, GreeterPosY and GreeterPosFixed replaced with
+	  single GreeterPos which is a pair of relative coordinates
+
 2004-07-01  Oswald Buddenhagen <ossi@kde.org>
 
 	* The greeter can now run a "session preloader"; option Preloader
