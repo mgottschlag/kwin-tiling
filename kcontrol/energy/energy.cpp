@@ -417,7 +417,7 @@ void KEnergy::slotChangeOff(int value)
 
 QString KEnergy::quickHelp() const
 {
-    return i18n("<h1>Energy Saving For Display</h1> If your display supports"
+    return i18n("<h1>Display Power Control</h1> If your display supports"
       " power saving features, you can configure them using this module.<p>"
       " There are three levels of power saving: standby, suspend, and off."
       " The greater the level of power saving, the longer it takes for the"

@@ -883,7 +883,7 @@ void KScreenSaver::slotSetupDone(KProcess *)
 //
 QString KScreenSaver::quickHelp() const
 {
-    return i18n("<h1>Screen saver</h1> This module allows you to enable and"
+    return i18n("<h1>Screen Saver</h1> This module allows you to enable and"
        " configure a screen saver. Note that you can enable a screen saver"
        " even if you have power saving features enabled for your display.<p>"
        " Besides providing an endless variety of entertainment and"

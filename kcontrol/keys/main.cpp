@@ -105,7 +105,7 @@ void KeyModule::defaults()
 
 QString KeyModule::quickHelp() const
 {
-  return i18n("<h1>Shortcuts</h1> Using shortcuts you can configure certain actions to be"
+  return i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
     " 'Copy'. KDE allows you to store more than one 'scheme' of shortcuts, so you might want"
     " to experiment a little setting up your own scheme while you can still change back to the"

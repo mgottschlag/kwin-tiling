@@ -543,7 +543,7 @@ void KArtsModule::defaults()
 
 QString KArtsModule::quickHelp() const
 {
-	return i18n("<h1>The aRts sound server</h1> Here you can configure aRts, KDE's sound server."
+	return i18n("<h1>Sound System</h1> Here you can configure aRts, KDE's sound server."
 		    " This program not only allows you to hear your system sounds while simultaneously"
 		    " listening to some MP3 file or playing a game with a background music. It also allows you"
 		    " to apply different effects to your system sounds and provides programmers with"

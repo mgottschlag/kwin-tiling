@@ -493,7 +493,7 @@ const KAboutData* KDEDConfig::aboutData() const
 
 QString KDEDConfig::quickHelp() const
 {
-	return i18n("<h1>KDE Services</h1><p>This module allows you to have an overview of all plugins of the "
+	return i18n("<h1>Service Manager</h1><p>This module allows you to have an overview of all plugins of the "
 			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
 			"<p>The latter are only listed for convenience. The startup services can be started and stopped. "

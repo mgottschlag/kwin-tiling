@@ -620,7 +620,7 @@ const KAboutData* KCMStyle::aboutData() const
 
 QString KCMStyle::quickHelp() const
 {
-	return i18n("<h1>Style Settings</h1>"
+	return i18n("<h1>Style</h1>"
 			"This module allows you to modify the visual appearance "
 			"of user interface elements, such as the widget style "
 			"and effects.");

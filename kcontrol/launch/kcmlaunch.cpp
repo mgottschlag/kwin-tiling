@@ -280,7 +280,7 @@ LaunchConfig::quickHelp() const
 {
   return i18n
     (
-     "<h1>Launch</h1>"
+     "<h1>Launch Feedback</h1>"
      " You can configure the application-launch feedback here."
     );
 }
