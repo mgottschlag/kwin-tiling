@@ -1,5 +1,8 @@
 [Color Scheme]
 Name=Redmond 2000
+Name[lv]=Redmonda 2000
+Name[xh]=iRedmond
+Name[zu]=iRedmond 2000
 activeBackground=0,36,104
 activeBlend=168,204,240
 activeForeground=255,255,255

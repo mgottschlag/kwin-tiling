@@ -1,6 +1,9 @@
 #KDE Config File
 [Color Scheme]
 Name=Redmond 95
+Name[lv]=Redmonda 95
+Name[xh]=iRedmond
+Name[zu]=iRedmond 95
 background=#c3c3c3
 buttonBackground=#c3c3c3
 buttonForeground=#000000
