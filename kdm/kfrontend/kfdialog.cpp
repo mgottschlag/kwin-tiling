@@ -36,7 +36,7 @@
 #include <X11/Xlib.h>
 
 FDialog::FDialog( QWidget *parent, const char *name, bool modal )
-   : QDialog( parent, name, modal, WStyle_NoBorder )
+   : inherited( parent, name, modal, WStyle_NoBorder )
 {
     winFrame = new QFrame( this );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
@@ -48,16 +48,16 @@ FDialog::FDialog( QWidget *parent, const char *name, bool modal )
 int
 FDialog::exec()
 {
-    QDialog::show();
+    inherited::show();
     XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
-    QDialog::exec();
+    inherited::exec();
     if (parentWidget())
 	parentWidget()->setActiveWindow();
     return result();
 }
 
 KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text )
-   : FDialog( parent )
+   : inherited( parent )
 {
     QLabel *label1 = new QLabel( winFrame );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
@@ -79,5 +79,3 @@ KFMsgBox::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
     KFMsgBox dlg( parent, type, text.stripWhiteSpace() );
     dlg.exec();
 }
-
-#include "kfdialog.moc"

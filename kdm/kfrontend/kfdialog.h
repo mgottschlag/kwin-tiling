@@ -32,7 +32,7 @@
 #include <qmessagebox.h>
 
 class FDialog : public QDialog {
-    Q_OBJECT
+    typedef QDialog inherited;
 
 public:
     FDialog( QWidget *parent = 0, const char* name = 0, bool modal = true );
@@ -43,6 +43,7 @@ protected:
 };
 
 class KFMsgBox : public FDialog {
+    typedef FDialog inherited;
 
 private:
     KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
