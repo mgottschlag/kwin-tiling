@@ -580,8 +580,25 @@ KGVerify::handleVerify()
 		handler->verifyOk();
 		return;
 	    }
+	case V_MSG_ERR:
+	    Debug( " V_MSG_ERR\n" );
+	    msg = GRecvStr();
+	    Debug( "  message %\"s\n", msg );
+	    if (!greet->textMessage( msg, true ))
+		VMsgBox( parent, user, sorrybox, QString::fromLocal8Bit( msg ) );
+	    free( msg );
+	    goto ntdone;
+	case V_MSG_INFO:
+	    Debug( " V_MSG_INFO\n" );
+	    msg = GRecvStr();
+	    Debug( "  message %\"s\n", msg );
+	    if (!greet->textMessage( msg, false ))
+		VMsgBox( parent, user, infobox, QString::fromLocal8Bit( msg ) );
+	    free( msg );
+	    goto ntdone;
 	}
 	if (handleNTVerify( parent, ret, user )) {
+	  ntdone:
 	    if (authTok)
 		reAuthTok = true;
 	    continue;

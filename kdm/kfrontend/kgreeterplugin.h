@@ -114,6 +114,15 @@ public:
     virtual void setEnabled( bool on ) = 0;
 
     /**
+     * Called when a message from the authentication backend arrives. The
+     * plugin may handle it and return true, otherwise return false and let
+     * the greeter display it in a message box.
+     * If error is true, the message is an error message, otherwise it's an
+     * informational message.
+     */
+    virtual bool textMessage( const char *message, bool error ) = 0;
+
+    /**
      * Prompt the user for data. Reply by calling handler->gplugReturnText().
      * If nonBlocking is true report whatever is already available,
      * otherwise wait for user input.

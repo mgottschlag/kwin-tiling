@@ -49,6 +49,7 @@ public:
     virtual QString getEntity() const;
     virtual void setUser( const QString &user );
     virtual void setEnabled( bool on );
+    virtual bool textMessage( const char *message, bool error );
     virtual void textPrompt( const char *prompt, bool echo, bool nonBlocking );
     virtual void binaryPrompt( const char *prompt, bool nonBlocking );
     virtual void start();

@@ -194,6 +194,12 @@ KClassicGreeter::returnData()
     }
 }
 
+bool // virtual
+KClassicGreeter::textMessage( const char *, bool )
+{
+    return false;
+}
+
 void // virtual
 KClassicGreeter::textPrompt( const char *, bool, bool nonBlocking )
 {

@@ -358,13 +358,15 @@ void PasswordDlg::handleVerify()
         case ConvPutInfo:
             if (!GRecvArr( &arr ))
                 break;
-            static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Information, QString::fromLocal8Bit( arr ) );
+            if (!greet->textMessage( arr, false ))
+                static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Information, QString::fromLocal8Bit( arr ) );
             ::free( arr );
             continue;
         case ConvPutError:
             if (!GRecvArr( &arr ))
                 break;
-            static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
+            if (!greet->textMessage( arr, true ))
+                static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
             ::free( arr );
             continue;
         }
