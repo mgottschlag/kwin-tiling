@@ -261,3 +261,9 @@ bool KTagComboBox::getMetrics( int *dist, int *buttonW, int *buttonH ) const
 
   return TRUE;
 }
+
+void KTagComboBox::setFont( const QFont &font )
+{
+  QWidget::setFont( font );
+  popup->setFont( font );
+}

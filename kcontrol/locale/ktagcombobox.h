@@ -65,6 +65,8 @@ public:
 
   // widget stuff
   QSize sizeHint() const;
+  virtual void setFont( const QFont & );
+
 signals:
   void activated( int index );
   void highlighted( int index );
