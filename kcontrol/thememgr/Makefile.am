@@ -13,7 +13,7 @@ noinst_HEADERS = theme.h installer.h \
 	options.h version.h groupdetails.h \
 	themecreator.h newthemedlg.h
 
-kcm_themes_la_LIBADD = $(LIB_KIO) 
+kcm_themes_la_LIBADD = $(LIB_KIO)
 kcm_themes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
 apps_DATA = kthememgr.desktop
@@ -27,6 +27,12 @@ kdemimedir = $(kde_mimedir)/application
 
 themesdir =  $(kde_datadir)/kthememgr/Themes
 themes_DATA = Template.themerc
+
+# Service menu for installing themes
+konqservice_DATA = kthemeservice.desktop
+konqservicedir = $(kde_datadir)/konqueror/servicemenus
+
+bin_SCRIPTS = kdeinstallktheme
 
 install-data-local:
 	cp -r $(srcdir)/Themes BuildThemes; \

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Installs a KDE theme (into the user's theme dir)
+appsdir=`kde-config --path data | sed -e 's/:.*//'`
+if test -n "$appsdir"; then
+  test -d $appsdir || mkdir $appsdir
+  test -d $appsdir/kthememgr || mkdir $appsdir/kthememgr
+  test -d $appsdir/kthememgr/Themes || mkdir $appsdir/kthememgr/Themes
+  cp -f "$1" $appsdir/kthememgr/Themes
+fi

@@ -1,0 +1,9 @@
+[Desktop Action Installtheme]
+Exec=kdeinstallktheme %f
+Icon=kthememgr
+Name=Install KDE Theme
+
+[Desktop Entry]
+Actions=Installtheme
+Icon=kthememgr
+ServiceTypes=application/x-ktheme
