@@ -23,6 +23,9 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
         <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>Layout2</cstring>
