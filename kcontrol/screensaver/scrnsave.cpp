@@ -179,7 +179,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     // left column
     QBoxLayout *vLayout = new QVBoxLayout(helperLayout, 10);
 
-    mSaverGroup = new QGroupBox(i18n("Screensaver"), this );
+    mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
     vLayout->addWidget(mSaverGroup);
     QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup, 10 );
     groupLayout->addSpacing(10);
@@ -222,9 +222,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 10 );
 
 
-    mEnabledCheckBox = new QCheckBox(i18n("Start screensaver a&utomatically"), mSettingsGroup);
+    mEnabledCheckBox = new QCheckBox(i18n("Start screen saver a&utomatically"), mSettingsGroup);
     mEnabledCheckBox->setChecked(mEnabled);
-    QWhatsThis::add( mEnabledCheckBox, i18n("When you check this option, the selected screensaver will be started"
+    QWhatsThis::add( mEnabledCheckBox, i18n("When you check this option, the selected screen saver will be started"
                                             " automatically after a certain number of minutes of inactivity."
                                             " This time out period can be defined in the spinbox below") );
     connect(mEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnable(bool)));
@@ -249,11 +249,11 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     hbox->addStretch(1);
     QString wtstr = i18n("Choose the period of inactivity (from 1"
       " to 120 minutes) after which the screen saver should start."
-      "To prevent the screensaver from automatically starting, choose zero minutes.");
+      " To prevent the screen saver from automatically starting, choose zero minutes.");
     QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
     
-    mLockCheckBox = new QCheckBox( i18n("&Require password to stop screensaver"), mSettingsGroup );
+    mLockCheckBox = new QCheckBox( i18n("&Require password to stop screen saver"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
          this, SLOT( slotLock( bool ) ) );
