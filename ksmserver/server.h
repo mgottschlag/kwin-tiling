@@ -33,7 +33,7 @@ extern "C" {
 #include <X11/SM/SMlib.h>
 }
 
-#include "dcopobject.h"
+#include <dcopobject.h>
 
 typedef QValueList<QCString> QCStringList;
 class KSMListener;
@@ -67,7 +67,7 @@ private:
     SmsConn smsConn;
 };
 
-class KSMServer : public QObject, DCOPObject
+class KSMServer : public QObject, public DCOPObject
 {
 Q_OBJECT
 public:
@@ -90,8 +90,9 @@ public:
     void ioError( IceConn iceConn );
 
     // DCOP processing
-    bool process(const QCString &, const QByteArray &,
-                 QCString&, QByteArray &);
+    bool process( const QCString &, const QByteArray &,
+                  QCString&, QByteArray & );
+    QCStringList functions();
 
     // notification
     void clientSetProgram( KSMClient* client );
@@ -99,13 +100,11 @@ public:
     // public API
     void restoreSession();
     void startDefaultSession();
+    void shutdown( KApplication::ShutdownConfirm confirm,
+                   KApplication::ShutdownType sdtype,
+                   KApplication::ShutdownMode sdmode );
 
 public slots:
-    void shutdown();
-    // If fast shutdown is select, the confirmation dialog will be skipped.
-    // This allows users whose default is to confirm to shutdown immediately.
-    // It does not yet allow for confirmation when immediate shutdown is the default.
-    void shutdown( bool bFast );
     void cleanUp();
 
 private slots:

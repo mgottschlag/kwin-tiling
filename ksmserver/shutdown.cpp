@@ -11,6 +11,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qlayout.h>
 #include <qgroupbox.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
+#include <qvbuttongroup.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qvbox.h>
@@ -64,7 +66,10 @@ void KSMShutdownFeedback::keyPressEvent( QKeyEvent * event )
 
 //////
 
-KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
+KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
+  bool saveSession,
+  bool maysd, bool maynuke,
+  KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
     : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WStyle_StaysOnTop ) //WType_Popup )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
@@ -82,24 +87,68 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
          "<center><b><big><big>End KDE Session?</big></big></b></center>"),
 	 frame );
     vbox->addWidget( label );
-    vbox->addStretch();
+
+    if (maysd)
+    {
+        QHBoxLayout* hbox = new QHBoxLayout( vbox );
+        QVButtonGroup *tgrp = new QVButtonGroup( i18n("Action"), frame );
+        rLogout = new QRadioButton( i18n("&Logout"), tgrp );
+        rHalt = new QRadioButton( i18n("&Halt"), tgrp );
+        rReboot = new QRadioButton( i18n("&Reboot"), tgrp );
+        hbox->addWidget( tgrp, AlignTop );
+        connect( tgrp, SIGNAL( clicked(int) ), SLOT( slotSdMode(int) ) );
+        mgrp = new QVButtonGroup( i18n("Shutdown mode"), frame );
+        rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
+        if (maynuke)
+            rForce = new QRadioButton( i18n("&Force Now"), mgrp );
+        rTry = new QRadioButton( i18n("&Try Now"), mgrp );
+        hbox->addWidget( mgrp, AlignTop );
+    }
+    else
+        vbox->addStretch();
 
     checkbox = new QCheckBox( i18n("&Save session for future logins"), frame );
-    vbox->addWidget( checkbox, 0, AlignRight  );
+    vbox->addWidget( checkbox, 0, AlignLeft  );
     vbox->addStretch();
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    QPushButton* yes = new QPushButton(i18n("&Logout"), frame );
-    connect( yes, SIGNAL( clicked() ), this, SLOT( accept() ) );
+    QPushButton* yes = new QPushButton(maysd ? i18n("&OK") : i18n("&Logout"), frame );
+    connect( yes, SIGNAL( clicked() ), SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
+    hbox->addStretch();
     QPushButton* cancel = new QPushButton(i18n("&Cancel"), frame );
-    connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
+    connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
     hbox->addWidget( cancel );
+    hbox->addStretch();
 
     QTimer::singleShot( 0, this, SLOT( requestFocus() ) );
     checkbox->setFocus();
+
+    checkbox->setChecked( saveSession );
+    if (maysd)
+    {
+        if (sdtype == KApplication::ShutdownTypeHalt)
+            rHalt->setChecked( true );
+        else if (sdtype == KApplication::ShutdownTypeReboot)
+            rReboot->setChecked( true );
+        else
+            rLogout->setChecked( true );
+	slotSdMode(0);
+
+        if (sdmode == KApplication::ShutdownModeSchedule)
+            rSched->setChecked( true );
+        else if (sdmode == KApplication::ShutdownModeTryNow)
+            rTry->setChecked( true );
+        else
+            rForce->setChecked( true );
+    }
+}
+
+void KSMShutdownDlg::slotSdMode(int)
+{
+    mgrp->setEnabled( !rLogout->isChecked() );
 }
 
 void KSMShutdownDlg::requestFocus()
@@ -107,11 +156,14 @@ void KSMShutdownDlg::requestFocus()
     XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
 }
 
-bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
+bool KSMShutdownDlg::confirmShutdown( bool& saveSession, 
+  bool maysd, bool maynuke,
+  KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
 {
     kapp->enableStyles();
-    KSMShutdownDlg* l = new KSMShutdownDlg( KSMShutdownFeedback::self() );
-    l->checkbox->setChecked( saveSession );
+    KSMShutdownDlg* l = new KSMShutdownDlg( KSMShutdownFeedback::self(), 
+                                            saveSession,
+					    maysd, maynuke, sdtype, sdmode );
 
     // Show dialog (will save the background in showEvent)
     QSize sh = l->sizeHint();
@@ -123,13 +175,22 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
     QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
     l->move(rect.x() + (rect.width() - sh.width())/2,
     	    rect.y() + (rect.height() - sh.height())/2);
-    l->exec();
-    saveSession = l->checkbox->isChecked();
-    bool result = l->result();
+    bool result = l->exec();
     l->hide();
 
     // Restore background
     bitBlt( KSMShutdownFeedback::self(), l->x(), l->y(), &l->pixmap() );
+
+    if (maysd)
+    {
+        sdtype = l->rHalt->isChecked()   ? KApplication::ShutdownTypeHalt :
+                 l->rReboot->isChecked() ? KApplication::ShutdownTypeReboot :
+                                           KApplication::ShutdownTypeNone;
+	sdmode = l->rSched->isChecked() ? KApplication::ShutdownModeSchedule :
+                 l->rTry->isChecked()   ? KApplication::ShutdownModeTryNow :
+                                          KApplication::ShutdownModeForceNow;
+    }
+    saveSession = l->checkbox->isChecked();
 
     delete l;
 

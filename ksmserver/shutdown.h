@@ -10,6 +10,10 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qpixmap.h>
 #include <qdialog.h>
 class QCheckBox;
+class QRadioButton;
+class QVButtonGroup;
+
+#include <kapplication.h>
 
 // The (singleton) widget that makes the desktop gray.
 class KSMShutdownFeedback : public QWidget
@@ -44,12 +48,15 @@ class KSMShutdownDlg : public QDialog
 {
     Q_OBJECT
 public:
-    KSMShutdownDlg( QWidget* parent = 0 );
+    KSMShutdownDlg( QWidget* parent, bool saveSession, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
     ~KSMShutdownDlg() {}
 
-    static bool confirmShutdown( bool& saveSession );
+    static bool confirmShutdown( bool& saveSession, bool maysd, bool maynuke, KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode );
 
     const QPixmap & pixmap() { return pm; }
+
+public slots:
+    void slotSdMode(int);
 
 private slots:
     void requestFocus();
@@ -58,6 +65,8 @@ private:
     virtual void mousePressEvent( QMouseEvent * ){}
     virtual void showEvent( QShowEvent * e );
     QCheckBox* checkbox;
+    QRadioButton *rLogout, *rHalt, *rReboot, *rSched, *rTry, *rForce;
+    QVButtonGroup *mgrp;
     QPixmap pm;
 };
 

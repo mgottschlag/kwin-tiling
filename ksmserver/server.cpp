@@ -319,7 +319,11 @@ void KSMSaveYourselfRequestProc (
     Bool		/* global */
 )
 {
-    the_server->shutdown( fast );
+    the_server->shutdown( fast ?
+                            KApplication::ShutdownConfirmNo :
+                            KApplication::ShutdownConfirmDefault,
+                          KApplication::ShutdownTypeDefault,
+                          KApplication::ShutdownModeDefault );
 }
 
 void KSMSaveYourselfPhase2RequestProc (
@@ -972,11 +976,8 @@ void KSMServer::newConnection( int /*socket*/ )
     }
 }
 
-
-void KSMServer::shutdown()
-    { shutdown( false ); }
-
-void KSMServer::shutdown( bool bFast )
+void KSMServer::shutdown( KApplication::ShutdownConfirm confirm, 
+    KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
 {
     if ( state != Idle )
 	return;
@@ -984,28 +985,79 @@ void KSMServer::shutdown( bool bFast )
         return;
     dialogActive = true;
 
+    bool maysd, maynuke;
+    KApplication::ShutdownMode defsdmode;
+    QString fifoname;
+    QStringList dmopt =
+        QStringList::split( QChar( ',' ),
+                            QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
+    if ( dmopt.isEmpty() || dmopt.first()[0] != QChar( '/' ) ) {
+        fifoname = QString::null;
+        maysd = maynuke = false;
+        defsdmode = KApplication::ShutdownModeSchedule;
+    } else {
+        fifoname = dmopt.first();
+        maysd = dmopt.contains( QString::fromLatin1( "maysd" ) ) != 0;
+        maynuke = dmopt.contains( QString::fromLatin1( "mayfn" ) ) != 0;
+        if ( dmopt.contains( QString::fromLatin1( "fn" ) ) != 0 )
+            defsdmode = KApplication::ShutdownModeForceNow;
+        else if ( dmopt.contains( QString::fromLatin1( "tn" ) ) != 0 )
+            defsdmode = KApplication::ShutdownModeTryNow;
+        else
+            defsdmode = KApplication::ShutdownModeSchedule;
+    }
+
     // don't use KGlobal::config here! config may have changed!
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
     bool old_saveSession = saveSession =
-	cfg->readBoolEntry( "saveSession", FALSE );
-    bool confirmLogout = !bFast && cfg->readBoolEntry( "confirmLogout", TRUE );
+        cfg->readBoolEntry( "saveSession", FALSE );
+    bool logoutConfirmed =
+        (confirm == KApplication::ShutdownConfirmYes) ? false :
+        (confirm == KApplication::ShutdownConfirmNo) ? true :
+        !cfg->readBoolEntry( "confirmLogout", TRUE );
+    KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
+        cfg->readNumEntry( "shutdownType",
+                           (int)KApplication::ShutdownModeSchedule );
+    if (sdtype == KApplication::ShutdownTypeDefault)
+        sdtype = old_sdtype;
+    KApplication::ShutdownMode old_sdmode = (KApplication::ShutdownMode)
+        cfg->readNumEntry( "shutdownMode", (int)defsdmode );
+    if (sdmode == KApplication::ShutdownModeDefault)
+        sdmode = old_sdmode;
     delete cfg;
 
-    if ( confirmLogout ) {
+    if (!maysd)
+        sdtype = KApplication::ShutdownTypeNone;
+    if (!maynuke && sdmode == KApplication::ShutdownModeForceNow)
+        sdmode = KApplication::ShutdownModeSchedule;
+
+    if ( !logoutConfirmed ) {
         KSMShutdownFeedback::start(); // make the screen gray
-        connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), SLOT( cancelShutdown() ) );
+        connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), 
+                 SLOT( cancelShutdown() ) );
+        logoutConfirmed =
+            KSMShutdownDlg::confirmShutdown( saveSession, 
+                                             maysd, maynuke, sdtype, sdmode );
+    // ###### We can't make the screen remain gray while talking to the apps,
+    // because this prevents interaction ("do you want to save", etc.)
+    // TODO: turn the feedback widget into a list of apps to be closed,
+    // with an indicator of the current status for each.
+        KSMShutdownFeedback::stop(); // make the screen become normal again
     }
 
-    if ( !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
+    if ( logoutConfirmed ) {
 	// Set the real desktop background to black so that exit looks
 	// clean regardless of what was on "our" desktop.
 	kapp->desktop()->setBackgroundColor( Qt::black );
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
-	if (saveSession != old_saveSession) {
+	if (saveSession != old_saveSession ||
+	    sdtype != old_sdtype || sdmode != old_sdmode) {
 	    KConfig* config = KGlobal::config();
 	    config->setGroup("General" );
 	    config->writeEntry( "saveSession", saveSession);
+	    config->writeEntry( "shutdownType", (int)sdtype);
+	    config->writeEntry( "shutdownMode", (int)sdmode);
 	}
 	if ( saveSession )
 	    discardSession();
@@ -1018,13 +1070,21 @@ void KSMServer::shutdown( bool bFast )
 	}
 	if ( clients.isEmpty() )
 	    completeShutdown();
+	if ( sdtype != KApplication::ShutdownTypeNone ) {
+            QFile fifo( fifoname );
+            if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
+                QCString cmd( "shutdown\t" );
+                cmd.append( sdtype == KApplication::ShutdownTypeReboot ? 
+			    "reboot\t" : "halt\t" );
+                cmd.append( sdmode == KApplication::ShutdownModeForceNow ?
+                            "forcenow\n" :
+                            sdmode == KApplication::ShutdownModeTryNow ?
+                            "trynow\n" : "schedule\n" );
+                fifo.writeBlock( cmd.data(), cmd.length() );
+                fifo.close();
+            }
+	}
     }
-    // ###### We can't make the screen remain gray while talking to the apps,
-    // because this prevents interaction ("do you want to save", etc.)
-    // TODO: turn the feedback widget into a list of apps to be closed,
-    // with an indicator of the current status for each.
-    //else
-        KSMShutdownFeedback::stop(); // so that the screen becomes normal again
     dialogActive = false;
 }
 
@@ -1313,7 +1373,36 @@ bool KSMServer::process(const QCString &fun, const QByteArray &data,
        replyType = "void";
        return true;
     }
+    else if (fun == "logout(int,int,int)")
+    {
+	int confirm, sdtype, sdmode;
+	QDataStream arg( data, IO_ReadOnly );
+	arg >> confirm;
+	arg >> sdtype;
+	arg >> sdmode;
+        shutdown( (KApplication::ShutdownConfirm)confirm,
+                  (KApplication::ShutdownType)sdtype,
+                  (KApplication::ShutdownMode)sdmode );
+	replyType = "void"; 
+        return true;
+    }
     return DCOPObject::process(fun, data, replyType, replyData);
+}
+
+/*
+QCStringList KSMServer::interfaces()
+{
+    QCStringList ifaces = DCOPObject::interfaces();
+    ifaces += "ksmserver";
+    return ifaces;
+}
+*/
+
+QCStringList KSMServer::functions()
+{
+    QCStringList funcs = DCOPObject::functions();
+    funcs << "void logout(int,int,int)";
+    return funcs;
 }
 
 void KSMServer::autoStart()
