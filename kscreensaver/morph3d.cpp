@@ -52,11 +52,22 @@
 
 #include <math.h>
 #include <X11/Intrinsic.h>
+
 #ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
 #endif
 #include <GL/gl.h>
+#ifdef HAVE_GL_GLUT_H
+// We don't need GLUT, but some BROKEN GLU implemenations, such as the one
+// used in SuSE Linux 6.3, do. :(
+#include <GL/glut.h>  
+#endif
+#include <GL/glu.h>
 #include <GL/glx.h>
+
+
+
+
 
 //ModeSpecOpt morph3d_opts = {0, NULL, 0, NULL, NULL};
 
