@@ -278,7 +278,11 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 	if (type == "timed" || type == "config" || type == "suspend")
 		return false;	// not implemented (yet)
 	if (type == "chooser")
+#ifdef XDMCP
 		return _loginMode != LOGIN_LOCAL_ONLY;
+#else
+		return false;
+#endif
 	if (type == "halt" || type == "reboot")
 		return _allowShutdown != SHUT_NONE;
 //	if (type == "system")
