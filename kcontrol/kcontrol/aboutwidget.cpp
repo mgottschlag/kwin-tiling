@@ -361,7 +361,10 @@ void AboutWidget::updatePixmap()
         // it to false when this is reparented (malte)
         setMouseTracking(true);
         QFont headingFont = f2;
-        headingFont.setPointSize(headingFont.pointSize()+5);
+        int fs = headingFont.pointSize();
+        if (fs == -1)
+           fs = QFontInfo(headingFont).pointSize();
+        headingFont.setPointSize(fs+5);
         QFont lf = f2;
         lf.setUnderline(true);
 
