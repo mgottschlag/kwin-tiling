@@ -265,7 +265,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Bro&amp;wser menus</string>
+                <string>Bro&amp;wser Menus</string>
             </property>
             <vbox>
                 <property name="name">
@@ -469,7 +469,7 @@
                         <cstring>m_pRecentOrderGroup</cstring>
                     </property>
                     <property name="title">
-                        <string>"Quick Start" section contains</string>
+                        <string>"Quick Start" Section Contains</string>
                     </property>
                     <hbox>
                         <property name="name">

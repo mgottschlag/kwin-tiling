@@ -157,7 +157,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
 
-    group = new QGroupBox(i18n("Widget color"), this);
+    group = new QGroupBox(i18n("Widget Color"), this);
     stackLayout->addWidget(group);
     groupLayout = new QVBoxLayout(group, 10);
     groupLayout->addSpacing(10);

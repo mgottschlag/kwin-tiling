@@ -60,7 +60,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
 
     QVBoxLayout *lay = new QVBoxLayout( this, KDialog::marginHint(),
 					KDialog::spacingHint() );
-    QVGroupBox *box = new QVGroupBox( i18n("System notification settings"),
+    QVGroupBox *box = new QVGroupBox( i18n("System Notification Settings"),
 				      this );
     lay->addWidget( box );
     view =  new QListView( box );
