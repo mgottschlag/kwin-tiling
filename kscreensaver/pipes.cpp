@@ -734,11 +734,7 @@ void kPipesSaver::readSettings()
 
   QString str;
 
-  str = config->readEntry( "Pipes" );
-  if ( !str.isNull() )
-    pipes = atoi( str );
-  else
-    pipes = DEFPIPES;
+  pipes = config->readEntry( "Pipes", DEFPIPES );
   if (pipes < 2) pipes = 2;
   if (pipes > MAXPIPES) pipes = MAXPIPES;
   delete config;
@@ -787,11 +783,7 @@ void kPipesSetup::readSettings()
   KConfig *config = klock_config();
   config->setGroup( "Settings" );
 
-  QString str;
-
-  str = config->readEntry( "Pipes" );
-  if ( !str.isNull() )
-    pipes = atoi( str );
+  pipes = config->readNumEntry( "Pipes", pipes );
   delete config;
 }
 

@@ -226,13 +226,11 @@ void kLinesSetup::readSettings(){
 
     QString str;
 
-    str = config->readEntry("Length");
-    if(!str.isNull()) length=atoi(str);
+    length = config->readNumEntry("Length", length);
     if(length>MAXLENGTH) length=MAXLENGTH;
     else if(length<1) length=1;
 
-    str=config->readEntry("Speed");
-    if(!str.isNull()) speed=atoi(str);
+    speed = config->readNumEntry("Speed", speed);
     if(speed>100) speed=100;
     else if(speed<50) speed=50;
 
@@ -363,9 +361,7 @@ void kLinesSaver::readSettings(){
     KConfig *config=klock_config();
     config->setGroup("Settings");
 
-    str=config->readEntry("Length");
-    if(!str.isNull()) numLines=atoi(str);
-    else numLines=10;
+    numLines=config->readNumEntry("Length", 10);
     str = config->readEntry("Speed");
     if(!str.isNull()) speed=100-atoi(str);
     else speed=50;

@@ -551,12 +551,7 @@ void kSpaceSaver::readSettings()
 	else
 		speed = DEFSPEED;
 
-	str = config->readEntry( "WarpInterval" );
-	// CC: fixed MaxLevels <-> ObjectType inconsistency
-	if ( !str.isNull() )
-		warpinterval = atoi( str );
-	else
-	  warpinterval = 15.0;
+	warpinterval = config->readNumEntry( "WarpInterval", 15 );
 	delete config;
 }
 
@@ -635,21 +630,15 @@ void kSpaceSetup::readSettings()
 
 	QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
+	speed = config->readNumEntry( "Speed", speed );
 
 	if ( speed > MAXSPEED )
 		speed = MAXSPEED;
 	else if ( speed < MINSPEED )
 		speed = MINSPEED;
 
-	str = config->readEntry( "WarpInterval" );
+	warpinterval = config->readEntry( "WarpInterval", 15 );
 
-	if ( !str.isNull() )
-		warpinterval = atoi( str );
-	else
-	  warpinterval = 15; 
 	delete config;
 }
 

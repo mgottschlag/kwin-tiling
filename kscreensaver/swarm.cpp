@@ -399,20 +399,14 @@ void kSwarmSetup::readSettings()
 
 	QString str;
 
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
+	speed = config->readNumEntry( "Speed", speed );
 
 	if ( speed > MAXSPEED )
 		speed = MAXSPEED;
 	else if ( speed < MINSPEED )
 		speed = MINSPEED;
 
-	str = config->readEntry( "MaxLevels" );
-	if ( !str.isNull() )
-		maxLevels = atoi( str );
-	else
-		maxLevels = DEFBATCH;
+	maxLevels = config->readNumEntry( "MaxLevels", DEFBATCH );
 	delete config;
 }
 
