@@ -198,7 +198,8 @@ public:
     void setThumbnailSize( double size ) { _thumbSize = size; }
 
     /**
-     * Returns true if this task has a thumbnail.
+     * Returns true if this task has a thumbnail. Note that this method
+     * can only ever return true after a call to updateThumbnail().
      */
     bool hasThumbnail() const { return !_thumb.isNull(); }
 
@@ -341,8 +342,19 @@ public:
         const char *name = 0);
     virtual ~Startup();
 
+    /**
+     * The name of the starting task (if known).
+     */
     QString text() const { return _data.findName(); }
+
+    /**
+     * The name of the executable of the starting task.
+     */
     QString bin() const { return _data.bin(); }
+
+    /**
+     * The name of the icon to be used for the starting task.
+     */
     QString icon() const { return _data.findIcon(); }
     void update( const KStartupInfoData& data ) { _data.update( data ); }
     const KStartupInfoId& id() const { return _id; }
@@ -367,6 +379,7 @@ class TaskManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY( int currentDesktop READ currentDesktop )
+    Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
 
 public:
     TaskManager( QObject *parent = 0, const char *name = 0 );
