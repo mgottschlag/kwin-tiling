@@ -117,7 +117,7 @@ private:
     QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
 
-    KBackgroundRenderer *m_Renderer[_maxDesktops];
+    QArray<KBackgroundRenderer*> m_Renderer;
     KGlobalBackgroundSettings *m_pGlobals;
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;

@@ -265,7 +265,7 @@ public:
     KGlobalBackgroundSettings();
 
     QString deskName(int desk);
-    void setDeskName(int desk, QString name);
+    //void setDeskName(int desk, QString name);
 
     int cacheSize() { return m_CacheSize; }
     void setCacheSize(int size);

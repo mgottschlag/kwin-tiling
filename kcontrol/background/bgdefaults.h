@@ -13,8 +13,6 @@
 
 
 // Globals
-#define _maxDesktops 8
-
 #define _defCommon false
 #define _defDock true
 #define _defExport false

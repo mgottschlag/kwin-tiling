@@ -22,6 +22,7 @@
 #include <qfileinfo.h>
 #include <qdir.h>
 
+#include <netwm.h>
 #include <kapp.h>
 #include <kglobal.h>
 #include <kdebug.h>
@@ -861,19 +862,19 @@ KGlobalBackgroundSettings::KGlobalBackgroundSettings()
 
 QString KGlobalBackgroundSettings::deskName(int desk)
 {
-    if (desk < _maxDesktops)
-	return m_Names[desk];
-    return QString();
+    return m_Names[desk];
 }
 
 
+/*
 void KGlobalBackgroundSettings::setDeskName(int desk, QString name)
 {
-    if ((desk >= _maxDesktops) || (name == m_Names[desk]))
+    if (name == m_Names[desk])
 	return;
     dirty = true;
     m_Names[desk] = name;
 }
+*/
 
 
 void KGlobalBackgroundSettings::setCacheSize(int size)
@@ -931,15 +932,11 @@ void KGlobalBackgroundSettings::readSettings()
     m_bLimitCache = cfg.readBoolEntry("LimitCache", _defLimitCache);
     m_CacheSize = cfg.readNumEntry("CacheSize", _defCacheSize);
 
-
-    // TODO: kwinrc ??
-    KConfig cfg2("kwmrc");
-    cfg2.setGroup("Desktops");
     m_Names.clear();
-    for (int i=0; i<_maxDesktops; i++)
-	m_Names += cfg2.readEntry(QString("Desktop%1").arg(i+1),
-		QString("Desktop %1").arg(i+1));
-
+    NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
+    for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
+      m_Names.append( info.desktopName(i+1) );
+    
     dirty = false;
 }
 
@@ -956,11 +953,6 @@ void KGlobalBackgroundSettings::writeSettings()
     cfg.writeEntry("Export", m_bExport);
     cfg.writeEntry("LimitCache", m_bLimitCache);
     cfg.writeEntry("CacheSize", m_CacheSize);
-
-    KConfig cfg2("kwmrc");
-    cfg2.setGroup("Desktops");
-    for (int i=0; i<_maxDesktops; i++)
-	cfg2.writeEntry(QString("Desktop%1").arg(i+1), m_Names[i]);
 
     dirty = false;
 }
