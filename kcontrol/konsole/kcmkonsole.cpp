@@ -146,6 +146,8 @@ void KCMKonsole::save()
 
     DCOPClient *dcc = kapp->dcopClient();
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());
+    dcc->send("kdesktop", "default", "configure()", QByteArray());
+    dcc->send("klauncher", "klauncher", "reparseConfiguration()", QByteArray());
 }
 
 void KCMKonsole::defaults()
