@@ -18,7 +18,6 @@
  */
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qtabwidget.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -33,12 +32,10 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
 {
     QGridLayout *layout = new QGridLayout(this, 3, 3, 2, 2);
 
-    // setup tabs
-    _tabs = new QTabWidget(this);
+    // setup tab
     _basicTab = new BasicTab(this);
-    _tabs->addTab(_basicTab, i18n("General"));
     connect(_basicTab, SIGNAL(changed(bool)), SLOT(slotChanged(bool)));
-    layout->addMultiCellWidget(_tabs, 0, 0, 0, 2);
+    layout->addMultiCellWidget(_basicTab, 0, 0, 0, 2);
 
     // setup separator
     KSeparator *_separator = new KSeparator(KSeparator::HLine, this);
