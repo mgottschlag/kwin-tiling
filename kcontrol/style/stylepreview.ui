@@ -1,0 +1,232 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>StylePreview</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>StylePreview</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>370</width>
+            <height>214</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>StylePreview</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>titleBar</cstring>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>20</height>
+                </size>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>127</blue>
+                </color>
+            </property>
+            <property name="frameShape">
+                <enum>Panel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <property name="text">
+                <string>Preview Window</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>Frame4</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QTabWidget">
+                    <property name="name">
+                        <cstring>TabWidget2</cstring>
+                    </property>
+                    <widget class="QWidget">
+                        <property name="name">
+                            <cstring>tab</cstring>
+                        </property>
+                        <attribute name="title">
+                            <string>Tab 1</string>
+                        </attribute>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QProgressBar" row="0" column="1" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>ProgressBar1</cstring>
+                                </property>
+                                <property name="progress">
+                                    <number>70</number>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="2" column="2">
+                                <property name="name">
+                                    <cstring>PushButton1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Button</string>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="2" column="1">
+                                <property name="name">
+                                    <cstring>SpinBox1</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="2">
+                                <item>
+                                    <property name="text">
+                                        <string>ComboBox</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>ComboBox1</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QButtonGroup" row="0" column="0" rowspan="4" colspan="1">
+                                <property name="name">
+                                    <cstring>ButtonGroup1</cstring>
+                                </property>
+                                <property name="title">
+                                    <string>Button Group</string>
+                                </property>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>RadioButton2</cstring>
+                                    </property>
+                                    <property name="geometry">
+                                        <rect>
+                                            <x>11</x>
+                                            <y>49</y>
+                                            <width>103</width>
+                                            <height>22</height>
+                                        </rect>
+                                    </property>
+                                    <property name="text">
+                                        <string>RadioButton</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>RadioButton1</cstring>
+                                    </property>
+                                    <property name="geometry">
+                                        <rect>
+                                            <x>11</x>
+                                            <y>21</y>
+                                            <width>103</width>
+                                            <height>22</height>
+                                        </rect>
+                                    </property>
+                                    <property name="text">
+                                        <string>RadioButton</string>
+                                    </property>
+                                    <property name="checked">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="QCheckBox">
+                                    <property name="name">
+                                        <cstring>CheckBox1</cstring>
+                                    </property>
+                                    <property name="geometry">
+                                        <rect>
+                                            <x>11</x>
+                                            <y>77</y>
+                                            <width>103</width>
+                                            <height>22</height>
+                                        </rect>
+                                    </property>
+                                    <property name="text">
+                                        <string>CheckBox</string>
+                                    </property>
+                                    <property name="checked">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="tristate">
+                                        <bool>false</bool>
+                                    </property>
+                                </widget>
+                            </widget>
+                            <widget class="QSlider" row="1" column="1" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>Slider1</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QWidget">
+                        <property name="name">
+                            <cstring>tab</cstring>
+                        </property>
+                        <attribute name="title">
+                            <string>Tab 2</string>
+                        </attribute>
+                    </widget>
+                </widget>
+            </vbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">stylepreview.ui.h</include>
+</includes>
+<slots>
+    <slot>init()</slot>
+    <slot returnType="bool">eventFilter( QObject * obj, QEvent * ev )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
