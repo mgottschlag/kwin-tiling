@@ -13,38 +13,20 @@ KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please mak
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([X paths])
-imkv=6
+imkv=7
 test "$kde_cv_defines_imake_version" = $imkv || unset kde_cv_defines_imake
 AC_CACHE_VAL(kde_cv_defines_imake, [
   rm -fr conftestdir
   if mkdir conftestdir; then
     cd conftestdir
     cat > Imakefile <<'EOF'[
-PATH_DEFINES = -DXBINDIR=\"$(BINDIR)\" -DXLIBDIR=\"$(LIBDIR)\"
 
 acimake:
-	@set crap $(PATH_DEFINES); shift; for i in "$$@"; do echo "PATH_DEFINES=$$i"; done
+	@echo "XBINDIR=\"$(BINDIR)\" XLIBDIR=\"$(LIBDIR)\""
 
 ]EOF
     if $XMKMF >&5 2>&1 && test -f Makefile; then
-	[edit='
-while (<>) {
-  if (/^([^=]+)=(.*)\n$/) {
-    push @{ $va{$1} }, $2;
-  }
-}
-for $v (keys %va) {
-  $vd = $v."=";
-  for $i (@{ $va{$v} }) {
-    $i =~ s,([\\"'\''`\t ]),\\$1,g;
-    $vd .= $i." ";
-  }
-  $vd =~ s,([\\"'\''`\t ]),\\$1,g;
-  $ou .= $vd." ";
-}
-print $ou."\n";
-']
-	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | perl -e "$edit"`
+	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null`
 	kde_cv_defines_imake_version=$imkv
     else
         AC_MSG_RESULT([failed])
