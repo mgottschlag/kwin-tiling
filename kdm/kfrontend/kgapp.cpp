@@ -116,7 +116,7 @@ xIOErr (Display *)
 void
 kg_main( const char *argv0 )
 {
-    KProcess *proc = 0;
+    KProcess *proc = 0, *proc2 = 0;
 
     static char *argv[] = { (char *)"kdmgreet", 0 };
     KCmdLineArgs::init( 1, argv, *argv, 0, 0, 0, true );
@@ -152,6 +152,11 @@ kg_main( const char *argv0 )
 	}
 	GSendInt( G_SetupDpy );
 	GRecvInt();
+    }
+    if (*_preloader) {
+	proc2 = new KProcess;
+	*proc2 << _preloader;
+	proc2->start();
     }
 
     GSendInt( G_Ready );
@@ -200,6 +205,7 @@ kg_main( const char *argv0 )
     KGVerify::done();
 
     delete proc;
+    delete proc2;
     UnsecureDisplay( dpy );
     restore_modifiers();
 
