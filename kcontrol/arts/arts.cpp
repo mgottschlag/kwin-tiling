@@ -550,11 +550,11 @@ QString createArgs(bool netTrans,
 	return args;
 }
 
-void dummy() {
+#ifdef I18N_ONLY
 	//lukas: these are hacks to allow translation of the following
-	(void) i18n("No audio input/output");
-	(void) i18n("Advanced Linux Sound Architecture");
-	(void) i18n("Open Sound System");
-}
+	I18N_NOOP("No audio input/output");
+	I18N_NOOP("Advanced Linux Sound Architecture");
+	I18N_NOOP("Open Sound System");
+#endif
 
 #include "arts.moc"
