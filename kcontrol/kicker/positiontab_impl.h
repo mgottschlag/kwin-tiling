@@ -16,17 +16,17 @@
  */
 
 
-#ifndef __generaltab_impl_h__
-#define __generaltab_impl_h__
+#ifndef __positiontab_impl_h__
+#define __positiontab_impl_h__
 
-#include "generaltab.h"
+#include "positiontab.h"
 
-class GeneralTab : public GeneralTabBase
+class PositionTab : public PositionTabBase
 {
     Q_OBJECT
 
 public:
-    GeneralTab( QWidget *parent=0, const char* name=0 );
+    PositionTab( QWidget *parent=0, const char* name=0 );
 
     void load();
     void save();

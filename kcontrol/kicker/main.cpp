@@ -30,10 +30,10 @@
 
 #include "main.h"
 #include "main.moc"
-#include "generaltab_impl.h"
-#include "lookandfeeltab_impl.h"
+#include "positiontab_impl.h"
+#include "hidingtab_impl.h"
 #include "menutab_impl.h"
-#include "buttontab.h"
+#include "lookandfeeltab_impl.h"
 #include "applettab.h"
 #include "extensionstab_impl.h"
 
@@ -54,21 +54,21 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     tab = new QTabWidget(this);
     layout->addWidget(tab);
 
-    generaltab = new GeneralTab(this);
-    tab->addTab(generaltab, i18n("&General"));
-    connect(generaltab, SIGNAL(changed()), this, SLOT(configChanged()));
+    positiontab = new PositionTab(this);
+    tab->addTab(positiontab, i18n("&Position"));
+    connect(positiontab, SIGNAL(changed()), this, SLOT(configChanged()));
 
-    lnftab = new LookAndFeelTab(this);
-    tab->addTab(lnftab, i18n("&Look && Feel"));
-    connect(lnftab, SIGNAL(changed()), this, SLOT(configChanged()));
+    hidingtab = new HidingTab(this);
+    tab->addTab(hidingtab, i18n("&Hiding"));
+    connect(hidingtab, SIGNAL(changed()), this, SLOT(configChanged()));
+
+    lookandfeeltab = new LookAndFeelTab(this);
+    tab->addTab(lookandfeeltab, i18n("&Look && Feel"));
+    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     menutab = new MenuTab(this);
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
-
-    buttontab = new ButtonTab(this);
-    tab->addTab(buttontab, i18n("&Buttons"));
-    connect(buttontab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     applettab = new AppletTab(this);
     tab->addTab(applettab, i18n("&Applets"));
@@ -88,10 +88,10 @@ void KickerConfig::configChanged()
 
 void KickerConfig::load()
 {
-    generaltab->load();
-    lnftab->load();
+    positiontab->load();
+    hidingtab->load();
     menutab->load();
-    buttontab->load();
+    lookandfeeltab->load();
     applettab->load();
     extensionstab->load();
     emit changed(false);
@@ -99,10 +99,10 @@ void KickerConfig::load()
 
 void KickerConfig::save()
 {
-    generaltab->save();
-    lnftab->save();
+    positiontab->save();
+    hidingtab->save();
     menutab->save();
-    buttontab->save();
+    lookandfeeltab->save();
     applettab->save();
     extensionstab->save();
 
@@ -123,10 +123,10 @@ void KickerConfig::save()
 
 void KickerConfig::defaults()
 {
-    generaltab->defaults();
-    lnftab->defaults();
+    positiontab->defaults();
+    hidingtab->defaults();
     menutab->defaults();
-    buttontab->defaults();
+    lookandfeeltab->defaults();
     applettab->defaults();
     extensionstab->defaults();
 
@@ -146,8 +146,8 @@ QString KickerConfig::quickHelp() const
 
 bool KickerConfig::horizontal()
 {
-    return (generaltab->m_topButton->isChecked() ||
-            generaltab->m_bottomButton->isChecked());
+    return (positiontab->m_topButton->isChecked() ||
+            positiontab->m_bottomButton->isChecked());
 }
 
 extern "C"

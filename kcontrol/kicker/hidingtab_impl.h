@@ -15,43 +15,30 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
+#ifndef __hidingtab_impl_h__
+#define __hidingtab_impl_h__
 
-#include <kcmodule.h>
+#include "hidingtab.h"
 
-class QTabWidget;
-class PositionTab;
-class HidingTab;
-class MenuTab;
-class LookAndFeelTab;
-class AppletTab;
-class ExtensionsTab;
-
-class KickerConfig : public KCModule
+class HidingTab : public HidingTabBase
 {
     Q_OBJECT
 
 public:
-    KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+    HidingTab( KickerConfig *parent=0, const char* name=0 );
 
     void load();
     void save();
     void defaults();
-    QString quickHelp() const;
-    bool horizontal();
-    
-public slots:
-    void configChanged();
+
+signals:
+    void changed();
+
+protected slots:
+    void hideButtonsClicked();
 
 private:
-    QTabWidget     *tab;
-    PositionTab    *positiontab;
-    HidingTab      *hidingtab;
-    LookAndFeelTab *lookandfeeltab;
-    MenuTab        *menutab;
-    AppletTab      *applettab;
-    ExtensionsTab  *extensionstab;
+    KickerConfig* kconf;
 };
 
-#endif // __main_h__
+#endif

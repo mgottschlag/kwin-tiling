@@ -1,4 +1,6 @@
 /*
+ *  lookandfeeltab.h
+ *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -15,36 +17,58 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __lookandfeeltab_impl_h__
-#define __lookandfeeltab_impl_h__
 
-#include <qstring.h>
-#include <qpixmap.h>
+#ifndef __lookandfeeltab_h__
+#define __lookandfeeltab_h__
 
 #include "lookandfeeltab.h"
 
+class QLabel;
+class QStringList;
+
 class LookAndFeelTab : public LookAndFeelTabBase
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    LookAndFeelTab( KickerConfig *parent=0, const char* name=0 );
+ public:
+  LookAndFeelTab( QWidget *parent=0, const char* name=0 );
 
-    void load();
-    void save();
-    void defaults();
+  void load();
+  void save();
+  void defaults();
 
-signals:
-    void changed();
+  QString quickHelp() const;
 
-protected slots:
-    void browse_theme();
-    void hideButtonsClicked();
+ signals:
+  void changed();
 
-private:
-    QString theme;
-    QPixmap theme_preview;
-    KickerConfig* kconf;
+ protected:
+  void setLabel( QLabel *label, const QString &t );
+  void fill_tile_input();
+  QStringList queryAvailableTiles();
+
+ protected slots:
+  void browse_theme();
+  void tiles_clicked();
+  void kmenu_clicked();
+  void kmenu_changed(const QString&);
+  void url_clicked();
+  void url_changed(const QString&);
+  void browser_clicked();
+  void browser_changed(const QString&);
+  void exe_clicked();
+  void exe_changed(const QString&);
+  void desktop_clicked();
+  void desktop_changed(const QString&);
+  void wl_clicked();
+  void wl_changed(const QString&);
+
+
+ private:
+  QString theme;
+  QPixmap theme_preview;
+  QStringList tiles;
 };
 
 #endif
+

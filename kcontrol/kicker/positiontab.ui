@@ -1,18 +1,18 @@
 <!DOCTYPE UI><UI>
-<class>GeneralTabBase</class>
+<class>PositionTabBase</class>
 <include location="global">klineedit.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>GeneralTabBase</cstring>
+        <cstring>PositionTabBase</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>547</width>
+            <width>535</width>
             <height>480</height>
         </rect>
     </property>
@@ -51,6 +51,10 @@
                         <cstring>m_locationGroup</cstring>
                     </property>
                     <property stdset="1">
+                        <name>enabled</name>
+                        <bool>true</bool>
+                    </property>
+                    <property stdset="1">
                         <name>sizePolicy</name>
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
@@ -60,6 +64,10 @@
                     <property stdset="1">
                         <name>title</name>
                         <string>Panel Lo&amp;cation</string>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Vertical</enum>
                     </property>
                     <vbox>
                         <property stdset="1">
@@ -343,141 +351,6 @@
                 </widget>
             </vbox>
         </widget>
-        <widget>
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>m_autoHideGroup</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>4</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>&amp;Automatic Hide</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout30</cstring>
-                    </property>
-                    <hbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel6</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Delay in seconds:</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QSlider</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>m_delaySlider</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>0</number>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>10</number>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>tickmarks</name>
-                                <enum>Right</enum>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QSpinBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>m_delaySpinBox</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>10</number>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>0</number>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget row="0"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_autoHide</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Enable automatic hide</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>m_autoHideSwitch</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Show panel when switching desktop</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>m_showToolTips</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>S&amp;how tooltips</string>
-            </property>
-        </widget>
         <spacer>
             <property>
                 <name>name</name>
@@ -503,36 +376,6 @@
 </widget>
 <connections>
     <connection>
-        <sender>m_autoHide</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_autoHideSwitch</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_autoHide</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_delaySlider</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_autoHide</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_delaySpinBox</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_delaySlider</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>m_delaySpinBox</receiver>
-        <slot>setValue(int)</slot>
-    </connection>
-    <connection>
-        <sender>m_delaySpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>m_delaySlider</receiver>
-        <slot>setValue(int)</slot>
-    </connection>
-    <connection>
         <sender>m_percentSlider</sender>
         <signal>valueChanged(int)</signal>
         <receiver>m_percentSpinBox</receiver>
@@ -549,9 +392,5 @@
     <tabstop>m_bottomButton</tabstop>
     <tabstop>m_normal</tabstop>
     <tabstop>m_large</tabstop>
-    <tabstop>m_autoHide</tabstop>
-    <tabstop>m_autoHideSwitch</tabstop>
-    <tabstop>m_delaySlider</tabstop>
-    <tabstop>m_delaySpinBox</tabstop>
 </tabstops>
 </UI>

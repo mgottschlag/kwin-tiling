@@ -1,8 +1,8 @@
 kde_module_LTLIBRARIES = libkcm_kicker.la
 
-libkcm_kicker_la_SOURCES = generaltab.ui lookandfeeltab.ui menutab.ui extensionstab.ui \
-			generaltab_impl.cpp lookandfeeltab_impl.cpp menutab_impl.cpp \
-			extensionstab_impl.cpp buttontab.cpp applettab.cpp main.cpp
+libkcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui extensionstab.ui \
+			positiontab_impl.cpp hidingtab_impl.cpp lookandfeeltab_impl.cpp menutab_impl.cpp \
+			extensionstab_impl.cpp applettab.cpp main.cpp
 
 libkcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kicker_la_LIBADD = $(LIB_KSYCOCA) $(LIB_KFILE)
@@ -10,8 +10,8 @@ INCLUDES= $(all_includes)
 
 libkcm_kicker_la_METASOURCES = AUTO
 
-noinst_HEADERS = generaltab_impl.h lookandfeeltab_impl.h extensionstab_impl.h buttontab.h \
-		menutab_impl.h applettab.h main.h
+noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menutab_impl.h \
+		extensionstab_impl.h applettab.h main.h
 
 KDE_ICON = go
 
