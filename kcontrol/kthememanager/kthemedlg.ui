@@ -355,6 +355,46 @@
                     <property name="toolTip" stdset="0">
                         <string>Customize the icon theme</string>
                     </property>
+                 </widget>
+                 <widget class="QToolButton">
+                    <property name="name">
+                       <cstring>btnFonts</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                       <sizepolicy>
+                          <hsizetype>5</hsizetype>
+                          <vsizetype>0</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                       </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                       <size>
+                          <width>80</width>
+                          <height>60</height>
+                       </size>
+                    </property>
+                    <property name="maximumSize">
+                       <size>
+                          <width>32767</width>
+                          <height>60</height>
+                       </size>
+                    </property>
+                    <property name="focusPolicy">
+                       <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                       <string></string>
+                    </property>
+                    <property name="usesTextLabel">
+                       <bool>true</bool>
+                    </property>
+                    <property name="textLabel">
+                       <string>Fonts</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                       <string>Customize the font theme</string>
+                    </property>
                 </widget>
                 <widget class="QToolButton">
                     <property name="name">
@@ -432,6 +472,12 @@
         <signal>clicked()</signal>
         <receiver>KThemeDlg</receiver>
         <slot>startIcons()</slot>
+     </connection>
+     <connection>
+        <sender>btnFonts</sender>
+        <signal>clicked()</signal>
+        <receiver>KThemeDlg</receiver>
+        <slot>startFonts()</slot>
     </connection>
     <connection>
         <sender>btnSaver</sender>
@@ -449,6 +495,7 @@
     <tabstop>btnColors</tabstop>
     <tabstop>btnStyle</tabstop>
     <tabstop>btnIcons</tabstop>
+    <tabstop>btnFonts</tabstop>
     <tabstop>btnSaver</tabstop>
 </tabstops>
 <includes>
@@ -460,6 +507,7 @@
     <slot specifier="non virtual">startColors()</slot>
     <slot specifier="non virtual">startStyle()</slot>
     <slot specifier="non virtual">startIcons()</slot>
+    <slot specifier="non virtual">startFonts()</slot>
     <slot specifier="non virtual">startSaver()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>

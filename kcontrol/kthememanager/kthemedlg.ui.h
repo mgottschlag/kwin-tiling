@@ -37,6 +37,11 @@ void KThemeDlg::startIcons()
     KRun::runCommand("kcmshell icons");
 }
 
+void KThemeDlg::startFonts()
+{
+   KRun::runCommand("kcmshell fonts");
+}
+
 
 void KThemeDlg::startSaver()
 {

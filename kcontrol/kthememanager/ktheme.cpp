@@ -24,6 +24,7 @@
 #include <qpixmap.h>
 #include <qregexp.h>
 #include <qtextstream.h>
+#include <qdir.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -184,6 +185,11 @@ QString KTheme::createYourself( bool pack )
     globalConf->setGroup( "Icons" );
     QDomElement iconElem = m_dom.createElement( "icons" );
     iconElem.setAttribute( "name", globalConf->readEntry( "Theme" ) );
+    createIconElems( "DesktopIcons", "desktop", iconElem, globalConf );
+    createIconElems( "MainToolbarIcons", "mainToolbar", iconElem, globalConf );
+    createIconElems( "PanelIcons", "panel", iconElem, globalConf );
+    createIconElems( "SmallIcons", "small", iconElem, globalConf );
+    createIconElems( "ToolbarIcons", "toolbar", iconElem, globalConf );
     m_root.appendChild( iconElem );
 
     // 4. Sounds
@@ -301,6 +307,37 @@ QString KTheme::createYourself( bool pack )
     widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle" ) );
     m_root.appendChild( widgetsElem );
 
+    // 12. 
+    QDomElement fontsElem = m_dom.createElement( "fonts" );
+    QStringList fonts;
+    fonts   << "General"    << "font"
+            << "General"    << "fixed"
+            << "General"    << "toolBarFont"
+            << "General"    << "menuFont"
+            << "WM"         << "activeFont"
+            << "General"    << "taskbarFont"
+            << "FMSettings" << "StandardFont";
+
+    for ( QStringList::Iterator it = fonts.begin(); it != fonts.end(); ++it ) {
+        QString group = *it; ++it;
+        QString key   = *it;
+        QString value;
+
+        if ( group == "FMSettings" ) {
+            desktopConf.setGroup( group );
+            value = desktopConf.readEntry( key );
+        }
+        else {
+            globalConf->setGroup( group );
+            value = globalConf->readEntry( key );
+        }
+        QDomElement fontElem = m_dom.createElement( key );
+        fontElem.setAttribute( "object", group );
+        fontElem.setAttribute( "value", value );
+        fontsElem.appendChild( fontElem );
+    }
+    m_root.appendChild( fontsElem );
+
     // Save the XML
     QFile file( m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".xml" );
     if ( file.open( IO_WriteOnly ) ) {
@@ -394,6 +431,35 @@ void KTheme::apply()
         KConfig * iconConf = KGlobal::config();
         iconConf->setGroup( "Icons" );
         iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), true, true );
+
+        QDomNodeList iconList = iconElem.childNodes();
+        for ( uint i = 0; i < iconList.count(); i++ )
+        {
+           QDomElement iconSubElem = iconList.item( i ).toElement();
+           QString object = iconSubElem.attribute( "object" );
+           if ( object == "desktop" )
+              iconConf->setGroup( "DesktopIcons" );
+           else if ( object == "mainToolbar" )
+              iconConf->setGroup( "MainToolbarIcons" );
+           else if ( object == "panel" )
+              iconConf->setGroup( "PanelIcons" );
+           else if ( object == "small" )
+              iconConf->setGroup( "SmallIcons" );
+           else if ( object == "toolbar" )
+              iconConf->setGroup( "ToolbarIcons" );
+
+           QString iconName = iconSubElem.tagName();
+           if (iconName.contains( "Color" )) {
+               QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
+               iconConf->writeEntry( iconName, iconColor, true, true );
+           }
+           else if ( iconName.contains( "Value" ) || iconName == "Size" )
+               iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), true, true );
+           else if ( iconName.contains( "Effect" ) )
+               iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), true, true );
+           else
+               iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), true, true );
+        }
         iconConf->sync();
 
         for (int i = 0; i < KIcon::LastGroup; i++)
@@ -493,9 +559,15 @@ void KTheme::apply()
         if ( type == "builtin" )
             kwinConf.writeEntry( "PluginLib", wmElem.attribute( "name" ) );
         //else // TODO support custom themes
-        kwinConf.writeEntry( "CustomButtonPositions", true );
-        kwinConf.writeEntry( "ButtonsOnLeft", getProperty( wmElem, "buttons", "left" ) );
-        kwinConf.writeEntry( "ButtonsOnRight", getProperty( wmElem, "buttons", "right" ) );
+        QDomNodeList buttons = wmElem.elementsByTagName ("buttons");
+        if (buttons.count() > 0) {
+            kwinConf.writeEntry( "CustomButtonPositions", true );
+            kwinConf.writeEntry( "ButtonsOnLeft", getProperty( wmElem, "buttons", "left" ) );
+            kwinConf.writeEntry( "ButtonsOnRight", getProperty( wmElem, "buttons", "right" ) );
+        }
+        else {
+           kwinConf.writeEntry( "CustomButtonPositions", false );
+        }
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
@@ -549,6 +621,40 @@ void KTheme::apply()
         widgetConf->sync();
         KIPC::sendMessageAll( KIPC::StyleChanged );
     }
+
+    // 12. Fonts
+    QDomElement fontsElem = m_dom.elementsByTagName( "fonts" ).item( 0 ).toElement();
+    if ( !fontsElem.isNull() )
+    {
+        KConfig * fontsConf = KGlobal::config();
+        KConfig * kde1xConf = new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
+        kde1xConf->setGroup( "General" );
+
+        QDomNodeList fontList = fontsElem.childNodes();
+        for ( uint i = 0; i < fontList.count(); i++ )
+        {
+            QDomElement fontElem = fontList.item( i ).toElement();
+            QString fontName  = fontElem.tagName();
+            QString fontValue = fontElem.attribute( "value" );
+            QString fontObject = fontElem.attribute( "object" );
+
+            if ( fontObject == "FMSettings" ) {
+                desktopConf.setGroup( fontObject );
+                desktopConf.writeEntry( fontName, fontValue, true, true );
+                desktopConf.sync();
+            }
+            else {
+                fontsConf->setGroup( fontObject );
+                fontsConf->writeEntry( fontName, fontValue, true, true );
+            }
+            kde1xConf->writeEntry( fontName, fontValue, true, true );
+        }
+
+        fontsConf->sync();
+        kde1xConf->sync();
+        KIPC::sendMessageAll( KIPC::FontChanged );
+    }
+
 }
 
 bool KTheme::remove( const QString & name )
@@ -591,17 +697,47 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
     }
 }
 
+void KTheme::createIconElems( const QString & group, const QString & object,
+                              QDomElement parent, KConfig * cfg )
+{
+    cfg->setGroup( group );
+    QStringList elemNames;
+    elemNames << "Animated" << "DoublePixels" << "Size"
+          << "ActiveColor" << "ActiveColor2" << "ActiveEffect"
+          << "ActiveSemiTransparent" << "ActiveValue"
+          << "DefaultColor" << "DefaultColor2" << "DefaultEffect"
+          << "DefaultSemiTransparent" << "DefaultValue"
+          << "DisabledColor" << "DisabledColor2" << "DisabledEffect"
+          << "DisabledSemiTransparent" << "DisabledValue";
+    for ( QStringList::ConstIterator it = elemNames.begin(); it != elemNames.end(); ++it ) {
+       if ((*it).contains( "Color" ))
+          createColorElem( *it, object, parent, cfg );
+       else {
+          QDomElement tmpCol = m_dom.createElement( *it );
+          tmpCol.setAttribute( "object", object );
+
+          if ( (*it).contains( "Value" ) || *it == "Size" )
+             tmpCol.setAttribute( "value", cfg->readNumEntry( *it, 1 ) );
+          else if ( (*it).contains( "Effect" ) )
+             tmpCol.setAttribute( "name", cfg->readEntry( *it, "none" ) );
+          else
+             tmpCol.setAttribute( "value", cfg->readBoolEntry( *it, false ) );
+          parent.appendChild( tmpCol );
+       }
+    }
+}
+
 void KTheme::createColorElem( const QString & name, const QString & object,
                               QDomElement parent, KConfig * cfg )
 {
-    QColor color = cfg->readColorEntry( name );
-    if ( color.isValid() )
-    {
-        QDomElement tmpCol = m_dom.createElement( name );
-        tmpCol.setAttribute( "rgb", color.name() );
-        tmpCol.setAttribute( "object", object );
-        parent.appendChild( tmpCol );
-    }
+   QColor color = cfg->readColorEntry( name );
+   if ( color.isValid() )
+   {
+      QDomElement tmpCol = m_dom.createElement( name );
+      tmpCol.setAttribute( "rgb", color.name() );
+      tmpCol.setAttribute( "object", object );
+      parent.appendChild( tmpCol );
+   }
 }
 
 void KTheme::createSoundList( const QStringList & events, const QString & object,

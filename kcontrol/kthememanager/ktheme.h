@@ -152,6 +152,16 @@ private:
                          const QString & attr ) const;
 
     /**
+     * Creates a list of "icon" elements based on:
+     * @param group The group in the KConfig object @p cfg
+     * @param object Specifier (similiar, but not identical to @p group)
+     * @param parent Parent element to append to
+     * @param cfg The KConfig object to work with
+     */
+    void createIconElems( const QString & group, const QString & object,
+                          QDomElement parent, KConfig * cfg );
+
+    /**
      * Creates a color DOM element @p name, with a specifier @p object,
      * appends it to @p parent; used when creating themes
      * @param cfg The KConfig object to work with
