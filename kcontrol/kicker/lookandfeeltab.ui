@@ -46,7 +46,7 @@
                         <cstring>m_showToolTips</cstring>
                     </property>
                     <property name="text">
-                        <string>Sh&amp;ow tooltips</string>
+                        <string>Show too&amp;ltips</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>

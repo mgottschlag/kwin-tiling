@@ -132,7 +132,7 @@
                         <cstring>m_manual</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Only hide when a panel-hiding button is clicked</string>
+                        <string>On&amp;ly hide when a panel-hiding button is clicked</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

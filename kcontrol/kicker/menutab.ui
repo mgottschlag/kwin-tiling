@@ -291,7 +291,7 @@
                         <cstring>m_hiddenFiles</cstring>
                     </property>
                     <property name="text">
-                        <string>Sh&amp;ow hidden files</string>
+                        <string>Show hidden fi&amp;les</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
