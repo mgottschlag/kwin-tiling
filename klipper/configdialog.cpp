@@ -48,7 +48,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     w = addVBoxPage( i18n("&Shortcuts") );
     keysWidget = new KKeyChooser( accel, w );
 
-    w = addVBoxPage( i18n("About") );
+    w = addVBoxPage( i18n("&About") );
     (void) new AboutWidget( w, "about widget" );
 }
 
