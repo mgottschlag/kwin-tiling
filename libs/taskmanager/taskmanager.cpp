@@ -27,6 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kiconloader.h>
 #include <kwinmodule.h>
 #include <netwm.h>
+#include <qtimer.h>
+#include <qimage.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -342,7 +344,8 @@ bool TaskManager::isOnTop(Task* task)
 Task::Task(WId win, QObject * parent, const char *name)
   : QObject(parent, name),
     _active(false), _win(win),
-    _lastWidth(0), _lastHeight(0), _lastResize(false)    
+    _lastWidth(0), _lastHeight(0), _lastResize(false), _lastIcon(),
+    _thumbSize(0.2), _thumb(), _grab()
 {
     _info = KWin::info(_win);
 
@@ -432,6 +435,14 @@ bool Task::isActive() const
     return _active;
 }
 
+bool Task::isModified() const
+{
+  static QString modStr = QString::fromUtf8("[") + i18n("modified") + QString::fromUtf8("]");
+  int modStrPos = _info.visibleName.find(modStr);
+
+  return ( modStrPos != -1 );
+}
+
 QString Task::iconName()
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconName);
@@ -515,13 +526,13 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
   case KIcon::SizeLarge:
     {
       // If there's a 48x48 icon in the hints then use it
-      pixmap = icon( 48, 48, false  );
+      pixmap = icon( size, size, false  );
       
       // If not, try to get one from the classname
-      if ( pixmap.isNull() || ( pixmap.width() != 48 ) || ( pixmap.height() != 48 ) ) {
+      if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
 	pixmap = KGlobal::iconLoader()->loadIcon( className(),
 						  KIcon::NoGroup,
-						  KIcon::SizeLarge,
+						  size,
 						  KIcon::DefaultState,
 						  0L,
 						  true );
@@ -529,8 +540,8 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       }
       
       // If we still don't have an icon then scale the one in the hints
-      if ( pixmap.isNull() || ( pixmap.width() != 48 ) || ( pixmap.height() != 48 ) ) {
-	pixmap = icon( 48, 48, true  );
+      if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
+	pixmap = icon( size, size, true  );
 	isStaticIcon = false;
       }
 
@@ -538,7 +549,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       if( pixmap.isNull() ) {
 	pixmap = KGlobal::iconLoader()->loadIcon( "go",
 						  KIcon::NoGroup,
-						  KIcon::SizeLarge );
+						  size );
 	isStaticIcon = true;
       }
     }
@@ -632,6 +643,45 @@ void Task::publishIconGeometry(QRect rect)
     r.size.width = rect.width();
     r.size.height = rect.height();
     ni.setIconGeometry(r);
+}
+
+void Task::updateThumbnail()
+{
+  if ( !isOnCurrentDesktop() )
+    return;
+  if ( !isActive() )
+    return;
+  if ( !_grab.isNull() ) // We're already processing one...
+    return;
+
+   //
+   // We do this as a two stage process to remove the delay caused
+   // by the thumbnail generation. This makes things much smoother
+   // on slower machines.
+   //
+   _grab = QPixmap::grabWindow( _win );
+
+   if ( !_grab.isNull() )
+     QTimer::singleShot( 200, this, SLOT( generateThumbnail() ) );
+}
+
+void Task::generateThumbnail()
+{
+   if ( _grab.isNull() )
+      return;
+
+   QImage img = _grab.convertToImage();
+
+   double width = img.width();
+   double height = img.height();
+   width = width * _thumbSize;
+   height = height * _thumbSize;
+
+   img = img.smoothScale( width, height );
+   _thumb = img;
+   _grab.resize( 0, 0 ); // Makes grab a null image.
+
+   emit thumbnailChanged();
 }
 
 Startup::Startup(const QString& text, const QString& icon, pid_t pid,

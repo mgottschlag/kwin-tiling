@@ -94,6 +94,7 @@ public:
     bool isOnCurrentDesktop() const;
     bool isOnAllDesktops() const;
     bool isAlwaysOnTop() const;
+    bool isModified() const ;
     int  desktop() const { return _info.desktop; }
 
     // actions
@@ -116,11 +117,25 @@ public:
     bool hasTransient( WId w ) const { return _transients.contains( w ); }
     void setActive(bool a);
 
+    // For thumbnails
+    double thumbnailSize() const { return _thumbSize; }
+    void setThumbnailSize( double size ) { _thumbSize = size; }
+
+    bool hasThumbnail() const { return !_thumb.isNull(); }
+    const QPixmap &thumbnail() const { return _thumb; }
+
+public slots:
+    void updateThumbnail();
+
 signals:
     void changed();
     void iconChanged();
     void activated();
     void deactivated();
+    void thumbnailChanged();
+
+protected slots:
+   void generateThumbnail();
 
 private:
     bool                _active;
@@ -133,6 +148,10 @@ private:
     int                 _lastHeight;
     bool                _lastResize;
     QPixmap             _lastIcon;
+
+    double _thumbSize;
+    QPixmap _thumb;
+    QPixmap _grab;
 };
 
 class Startup: public QObject
