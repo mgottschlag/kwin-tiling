@@ -224,6 +224,7 @@ ConfigModuleList::ConfigModuleList()
 
 const KAboutData *ConfigModule::aboutData() const
 {
+  if (!_module) return 0;
   return _module->aboutData();
 }
 
