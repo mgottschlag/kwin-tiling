@@ -42,9 +42,9 @@ class KAction;
 class KRadioAction;
 class KActionMenu;
 class KFileItem;
+class QLabel;
 #ifdef HAVE_FT_CACHE
 class KIntNumInput;
-class QLabel;
 class CFontPreview;
 class QSplitter;
 #endif
@@ -83,6 +83,8 @@ class CKCmFontInst : public KCModule
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
     void    openUrlInBrowser(const QString &url);
     void    showFace(int face);
+    void    infoMessage(const QString &msg);
+    void    updateInformation(int dirs, int fonts);
 
     private:
 
@@ -113,6 +115,7 @@ class CKCmFontInst : public KCModule
 #endif
     KConfig      itsConfig;
     bool         itsAutoSync;
+    QLabel       *itsStatusLabel;
 };
 
 #endif

@@ -74,6 +74,12 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
 
+    itsStatusLabel = new QLabel(i18n("0 Items - 0 Fonts (0 B Total) - 0 Folders"), this);
+    itsStatusLabel->setFrameShape(QFrame::Panel);
+    itsStatusLabel->setFrameShadow(QFrame::Sunken);
+    itsStatusLabel->setLineWidth(1);
+    itsStatusLabel->setAlignment(Qt::AlignHCenter);
+
 #ifdef HAVE_FT_CACHE
     itsSplitter=new QSplitter(this);
 
@@ -85,7 +91,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #endif
     QFrame            *urlFrame=new QFrame(this);
     QGridLayout       *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
-    QHBoxLayout       *urlLayout=new QHBoxLayout(urlFrame, 4);
+    QHBoxLayout       *urlLayout=new QHBoxLayout(urlFrame, 1);
     QVBoxLayout       *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
     KToolBar          *toolbar=new KToolBar(this);
 
@@ -98,8 +104,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     urlFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     itsLabel = new KURLLabel(urlFrame);
     itsLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+    urlLayout->addItem(new QSpacerItem(4, 4));
     urlLayout->addWidget(new QLabel(i18n("Location: "), urlFrame));
+    urlLayout->addItem(new QSpacerItem(4, 4));
     urlLayout->addWidget(itsLabel);
+    urlLayout->addItem(new QSpacerItem(4, 4));
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     toolbar->setMovingEnabled(false);
 #ifdef HAVE_FT_CACHE
@@ -169,6 +178,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #else
     layout->addWidget(fontsFrame);
 #endif
+   layout->addWidget(itsStatusLabel);
 
     setButtons(0);
     setUseRootOnlyMsg(false);
@@ -312,6 +322,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #ifdef HAVE_FT_CACHE
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
 #endif
+    connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
+    connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
 }
 
 CKCmFontInst::~CKCmFontInst()
@@ -550,7 +562,6 @@ void CKCmFontInst::fileSelected(const KFileItem *)
 
 void CKCmFontInst::loadingFinished()
 {
-printf("loadingFinished\n");
 }
 
 void CKCmFontInst::addFonts()
@@ -656,6 +667,23 @@ void CKCmFontInst::showFace(int)
 {
 }
 #endif
+
+void CKCmFontInst::infoMessage(const QString &msg)
+{
+    itsStatusLabel->setText(msg);
+}
+
+void CKCmFontInst::updateInformation(int dirs, int fonts)
+{
+    KFileItem       *item=NULL;
+    KIO::filesize_t size=0;
+
+    for (item=itsDirOp->view()->firstFileItem(); item; item=itsDirOp->view()->nextItem(item))
+        if(item->isFile())
+            size+=item->size();
+
+    itsStatusLabel->setText(i18n("%1 Items - %2 Fonts (%3 Total) - %4 Folders").arg(dirs+fonts).arg(fonts).arg(KIO::convertSize(size)).arg(dirs));
+}
 
 void CKCmFontInst::setUpAct()
 {
