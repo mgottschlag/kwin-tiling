@@ -23,6 +23,8 @@
 
 #include "themecreator.h"
 #include <kapp.h>
+#include <klocale.h>
+#include <kconfigbackend.h>
 #include <qstring.h>
 #include <qfile.h>
 #include <qfileinfo.h>
@@ -63,17 +65,16 @@ bool ThemeCreator::create(const QString aThemeName)
   mThemePath = workDir() + aThemeName + '/';
   if (mkdir(mThemePath, 0755))
   {
-    warning(i18n("Failed to create directory %s: %s"),
-	    (const char*)mThemePath, strerror(errno));
+    warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)));
     return false;
   }
 
   mThemercFile = aThemeName + ".themerc";
-  mPreviewFile = 0;
+  mPreviewFile = QString::null;
   mPreview.resize(0,0);
 
-  mFile.setName(mThemePath + mThemercFile);
-  parseOneConfigFile(mFile, NULL);
+  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  reparseConfiguration();
 
   setGroupGeneral();
 
@@ -101,7 +102,6 @@ bool ThemeCreator::extract(void)
 
   debug("Theme::extract() done");
 
-  writeConfigFile(mFile);
   saveSettings();
   save(themesDir() + mName);
 
@@ -115,9 +115,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
   QString value, cfgFile, cfgGroup, appDir, group, emptyValue, mapValue, str;
   QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
   bool absPath, doCopyFile;
-  KEntryIterator* it;
   KSimpleConfig* cfg = NULL;
-  KEntryDictEntry* entry;
   int len, i, extracted = 0;
   const char* missing = 0;
 
@@ -189,12 +187,13 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     cfg->setGroup(cfgGroup);
     debug("%s: [%s]", (const char*)cfgFile, (const char*)cfgGroup);
     // Process all mapping entries for the group
-    it = mMappings->entryIterator(group);
-    if (it) for (entry=it->toFirst(); entry; entry=it->operator++())
-    {
-      key = it->currentKey();
+
+    QMap<QString, QString> aMap = mMappings->entryMap(group);
+    QMap<QString, QString>::Iterator aIt(aMap.begin());
+    for (; aIt != aMap.end(); ++aIt) {
+      key = aIt.key();
       if (stricmp(key.left(6),"Config")==0) continue;
-      mapValue = QString(entry->aValue).stripWhiteSpace();
+      mapValue = (*aIt).stripWhiteSpace();
       len = mapValue.length();
       if (len>0 && mapValue[len-1]=='!')
       {
@@ -213,7 +212,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
       else 
       {
 	cfgKey = mapValue;
-	cfgValue = 0;
+	cfgValue = QString::null;
       }
       if (cfgKey.isEmpty()) cfgKey = key;
       value = cfg->readEntry(cfgKey);
@@ -320,9 +319,9 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
       ext = fname.mid(i, 255);
       fname = fname.left(i);
     }
-    else ext = 0;
+    else ext = QString::null;
     for (j=i-1, num=0; j>=0 && fname[j]>='0' && fname[j]<='9'; j--)
-      num = num*10 + (int)(fname[j] - '0');
+      num = num*10 + (int)(fname[j].latin1() - '0');
     j++;
     num++;
     fname[j] = '\0';

@@ -35,6 +35,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include <kconfigbackend.h>
 #include <kwm.h>
 #include <kmsgbox.h>
 #include <qwindowdefs.h>
@@ -200,7 +202,6 @@ void Theme::cleanupWorkDir(void)
 bool Theme::load(const QString aPath)
 {
   QString cmd, str;
-  QFile file;
   QFileInfo finfo(aPath);
   int rc, num, i;
 
@@ -274,10 +275,9 @@ bool Theme::load(const QString aPath)
   mPreviewFile = dir[0];
 
   // read theme config file
-  file.setName(mThemePath + mThemercFile);
-  file.open(IO_ReadOnly);
-  parseOneConfigFile(file, NULL);
-  file.close();
+  setReadOnly(TRUE);
+  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  reparseConfiguration();
 
   readConfig();
 
@@ -290,13 +290,13 @@ bool Theme::load(const QString aPath)
 bool Theme::save(const QString aPath)
 {
   QString cmd;
-  QFile file;
   int rc;
 
   emit apply();
   writeConfig();
-  file.setName(mThemePath + mThemercFile);
-  writeConfigFile(file);
+
+  backEnd->changeFileNames(mThemePath + mThemercFile, QString::null, false);
+  backEnd->sync(true); // true so that disk entries are merged.  Is this right?
 
   if (stricmp(aPath.right(4), ".tgz") == 0 ||
       stricmp(aPath.right(7), ".tar.gz") == 0)
@@ -420,9 +420,7 @@ int Theme::installGroup(const char* aGroupName)
   QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
   QString preInstCmd;
   bool absPath = false, doInstall;
-  KEntryIterator* it;
   KSimpleConfig* cfg = NULL;
-  KEntryDictEntry* entry;
   int len, i, installed = 0;
   const char* missing = 0;
 
@@ -504,12 +502,13 @@ int Theme::installGroup(const char* aGroupName)
     if (!preInstCmd.isEmpty()) preInstallCmd(cfg, preInstCmd);
 
     // Process all mapping entries for the group
-    it = mMappings->entryIterator(group);
-    if (it) for (entry=it->toFirst(); entry; entry=it->operator++())
-    {
-      key = it->currentKey();
+    QMap<QString, QString> aMap = mMappings->entryMap(group);
+    QMap<QString, QString>::Iterator aIt(aMap.begin());
+
+    for (; aIt != aMap.end(); ++aIt) {
+      key = aIt.key();
       if (stricmp(key.left(6),"Config")==0) continue;
-      value = QString(entry->aValue).stripWhiteSpace();
+      value = (*aIt).stripWhiteSpace();
       len = value.length();
       if (len>0 && value[len-1]=='!')
       {
@@ -528,7 +527,7 @@ int Theme::installGroup(const char* aGroupName)
       else 
       {
 	cfgKey = value;
-	cfgValue = 0;
+	cfgValue = QString::null;
       }
       if (cfgKey.isEmpty()) cfgKey = key;
 
@@ -536,9 +535,9 @@ int Theme::installGroup(const char* aGroupName)
       {
 	oldValue = cfg->readEntry(cfgKey);
 	if (!oldValue.isEmpty() && oldValue==emptyValue)
-	  oldValue = 0;
+	  oldValue = QString::null;
       }
-      else oldValue = 0;
+      else oldValue = QString::null;
 
       themeValue = readEntry(key);
       if (cfgValue.isEmpty()) cfgValue = themeValue;
@@ -629,7 +628,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
       value = "pixmap";
     else if (aCfg->readEntry("TitlebarLook") == "pixmap")
       value = "shadedHorizontal";
-    else value = 0;
+    else value = QString::null;
     if (!value.isEmpty()) aCfg->writeEntry("TitlebarLook", value);
   }
   else if (cmd == "winGimmickMode")
@@ -747,9 +746,7 @@ bool Theme::backupFile(const QString fname) const
 //-----------------------------------------------------------------------------
 int Theme::installIcons(void)
 {
-  KEntryIterator* it;
   KSimpleConfig* cfg = NULL;
-  KEntryDictEntry* entry;
   QString key, value, mapval, fname, fpath, destName, icon, miniIcon;
   QString iconDir, miniIconDir, cmd, destNameMini, localShareDir;
   QStrList pathList(true);
@@ -786,16 +783,17 @@ int Theme::installIcons(void)
   localShareDir = kapp->localkdedir() + "/share/";
 
   // Process all mapping entries for the group
-  it = entryIterator(groupName);
-  if (it) for (entry=it->toFirst(); entry; entry=it->operator++())
-  {
-    key = it->currentKey();
+  QMap<QString, QString> aMap = entryMap(groupName);
+  QMap<QString, QString>::Iterator aIt(aMap.begin());
+
+  for (; aIt != aMap.end(); ++aIt) {
+    key = aIt.key();
     if (stricmp(key.left(6),"Config")==0)
     {
       warning(i18n("Icon key name %s can not be used"), (const char*)key);
       continue;
     }
-    value = entry->aValue;
+    value = *aIt;
     i = value.find(':');
     if (i > 0)
     {
@@ -811,19 +809,19 @@ int Theme::installIcons(void)
 
     // test if there is a 1:1 mapping in the mappings file
     destName = mMappings->readEntry(key,QString::null);
-    destNameMini = 0;
+    destNameMini = QString::null;
 
     // if not we have to search for the proper kdelnk file
     // and extract the icon name from there.
     if (destName.isEmpty())
     {
       fname = "/" + key + ".kdelnk";
-      for (fpath=0, path=pathList.first(); path; path=pathList.next())
+      for (fpath=QString::null, path=pathList.first(); path; path=pathList.next())
       {
 	fpath = path + fname;
 	finfo.setFile(fpath);
 	if (finfo.exists()) break;
-	fpath = 0;
+	fpath = QString::null;
       }
       if (!fpath.isEmpty())
       {
@@ -891,11 +889,11 @@ int Theme::installIcons(void)
   // Handle extra icons
   setGroup(groupNameExtra);
   mMappings->setGroup(groupNameExtra);
-  it = entryIterator(groupNameExtra);
-  if (it) for (entry=it->toFirst(); entry; entry=it->operator++())
-  {
-    key = it->currentKey();
-    value = entry->aValue;
+
+  aMap = entryMap(groupNameExtra);
+  for (aIt = aMap.begin(); aIt != aMap.end(); ++aIt) {
+    key = aIt.key();
+    value = *aIt;
     i = value.find(':');
     if (i > 0)
     {
@@ -1164,16 +1162,10 @@ const QColor& Theme::readColorEntry(KConfigBase* cfg, const char* aKey,
 //-----------------------------------------------------------------------------
 void Theme::clear(void)
 {
-  KGroupIterator* it;
-  KEntryDict* grp;
-  QString groupName;
+  QStringList gList(groupList());
 
-  it = groupIterator();
-  for (grp = it->toFirst(); grp; )
-  {
-    groupName = it->currentKey();
-    grp = it->operator++();
-    deleteGroup(groupName);
+  for (QStringList::Iterator gIt(gList.begin()); gIt != gList.end(); ++gIt) {
+    deleteGroup(*gIt);
   }
 }
 
@@ -1183,7 +1175,6 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
 {
   QDir dir;
   QString dirStr = aDir;
-  dirStr.detach();
   const char* dirName;
   int oldMask = umask(077);
 
@@ -1221,21 +1212,15 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-  KGroupIterator* it = groupIterator();
-  KEntryDict* grp;
-  bool found = false;
+  bool found(hasGroup(aName));
 
-  for (grp=it->toFirst(); grp; grp=it->operator++())
-  {
-    if (stricmp(it->currentKey(),aName)==0)
-    {
-      found = true;
-      break;
-    }
-  }
-  if (found && aNotEmpty) found = !grp->isEmpty();
+  if (!aNotEmpty)
+    return found;
 
-  delete it;
+  QMap<QString, QString> aMap = entryMap(aName);
+  if (found && aNotEmpty) 
+    found = aMap.isEmpty();
+
   return found;
 }
 
