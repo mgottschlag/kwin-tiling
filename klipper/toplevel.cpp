@@ -405,6 +405,14 @@ void Klipper::saveSession()
   }
 }
 
+void Klipper::disableURLGrabber()
+{
+   KMessageBox:KMessageBox::information( 0L,
+                   i18n( "You can enable URL actions later by right-clicking on the \
+                         Klipper icon and selecting 'Enable Actions'" ) );
+
+   setURLGrabberEnabled( false );
+}
 
 void Klipper::slotConfigure()
 {
@@ -476,6 +484,8 @@ void Klipper::slotRepeatAction()
 	myURLGrabber = new URLGrabber( m_config );
 	connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
 		 SLOT( showPopupMenu( QPopupMenu * )) );
+	connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+			this, SLOT( disableURLGrabber() ) );
     }
 
     myURLGrabber->invokeAction( m_lastString );
@@ -502,6 +512,8 @@ void Klipper::setURLGrabberEnabled( bool enable )
             myURLGrabber = new URLGrabber( m_config );
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
                      SLOT( showPopupMenu( QPopupMenu * )) );
+	    connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+                     this, SLOT( disableURLGrabber() ) );
         }
     }
 }

@@ -82,6 +82,7 @@ protected slots:
     void slotRepeatAction();
     void setURLGrabberEnabled( bool );
     void toggleURLGrabber();
+    void disableURLGrabber();
 
 private slots:
     void newClipData();

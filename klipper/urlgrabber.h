@@ -87,6 +87,7 @@ private slots:
 
 signals:
     void sigPopup( QPopupMenu * );
+    void sigDisablePopup();
 
 };
 

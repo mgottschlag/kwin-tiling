@@ -4,18 +4,19 @@
 
    $Id$
 
-   (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
+   (C) 2000,2001,2002 by Carsten Pfeiffer <pfeiffer@kde.org>
 
    Licensed under the Artistic License
 
  ------------------------------------------------------------- */
 
+#include <qcursor.h>
 #include <qtimer.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
-#include <keditcl.h>
+#include <ktextedit.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kservice.h>
@@ -32,6 +33,7 @@
 
 #define URL_EDIT_ITEM 10
 #define DO_NOTHING_ITEM 11
+#define DISABLE_POPUP 12
 
 URLGrabber::URLGrabber( KConfig* config )
  : m_config( config )
@@ -77,6 +79,10 @@ URLGrabber::~URLGrabber()
     delete myActions;
 }
 
+//
+// Called from Klipper::slotRepeatAction, i.e. by pressing Ctrl-Alt-R
+// shortcut. I.e. never from clipboard monitoring
+//
 void URLGrabber::invokeAction( const QString& clip )
 {
     if ( !clip.isEmpty() )
@@ -164,14 +170,20 @@ void URLGrabber::actionMenu( bool wm_class_check )
             }
         }
 
+        // only insert this when invoked via clipboard monitoring, not from an
+        // explicit Ctrl-Alt-R
+        if ( wm_class_check )
+        {
+            myMenu->insertSeparator();
+            myMenu->insertItem( i18n( "Disable this popup" ), DISABLE_POPUP );
+        }
+        myMenu->insertSeparator();
         // add an edit-possibility
-        myMenu->insertSeparator();
-        myMenu->insertSeparator();
         myMenu->insertItem( SmallIcon("edit"), i18n("&Edit Contents..."),
                             URL_EDIT_ITEM );
         myMenu->insertItem( i18n("&Cancel"), DO_NOTHING_ITEM );
 
-        if ( myPopupKillTimer > 0 )
+        if ( myPopupKillTimeout > 0 )
             myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
 
         emit sigPopup( myMenu );
@@ -190,6 +202,9 @@ void URLGrabber::slotItemSelected( int id )
     case URL_EDIT_ITEM:
         editData();
         break;
+    case DISABLE_POPUP:
+	emit sigDisablePopup();
+	break;
     default:
         ClipCommand *command = myCommandMapper.find( id );
         if ( !command )
@@ -212,7 +227,7 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
         // replace "%s" with the clipboard contents
         // replace \%s to %s
         int pos = 0;
-        
+
         while ( (pos = cmdLine.find("%s", pos)) >= 0 ) {
             if ( pos > 0 && cmdLine.at( pos -1 ) == '\\' ) {
                 cmdLine.remove( pos -1, 1 ); // \%s -> %s
@@ -250,8 +265,9 @@ void URLGrabber::editData()
     KDialogBase *dlg = new KDialogBase( 0, 0, true,
                                         i18n("Edit Contents"),
                                         KDialogBase::Ok | KDialogBase::Cancel);
-    KEdit *edit = new KEdit( dlg );
+    KTextEdit *edit = new KTextEdit( dlg );
     edit->setText( myClipData );
+    edit->setFocus();
     edit->setMinimumSize( 300, 40 );
     dlg->setMainWidget( edit );
     dlg->adjustSize();
@@ -264,7 +280,8 @@ void URLGrabber::editData()
     else
     {
         delete dlg;
-        QTimer::singleShot( 0, this, SLOT( slotKillPopupMenu() ) );
+        myMenu->deleteLater();
+        myMenu = 0L;
     }
 }
 
@@ -354,6 +371,16 @@ bool URLGrabber::isAvoidedWindow() const
 
 void URLGrabber::slotKillPopupMenu()
 {
+    if ( myMenu && myMenu->isVisible() )
+    {
+        if ( myMenu->geometry().contains( QCursor::pos() ) &&
+             myPopupKillTimeout > 0 )
+        {
+            myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+            return;    
+        }
+    }
+    
     delete myMenu;
     myMenu = 0L;
 }
