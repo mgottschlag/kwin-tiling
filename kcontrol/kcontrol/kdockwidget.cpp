@@ -144,6 +144,7 @@ void KDockContainer::dragChild(KDockWidget *child)
 	  KWM::setDecoration(child->winId(), KWM::tinyDecoration);
 	  QApplication::syncX();
 	  child->undock();
+	  child->setAcceptDrops(true);
 	}
     }
 
