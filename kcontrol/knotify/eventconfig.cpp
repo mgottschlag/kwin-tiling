@@ -24,7 +24,7 @@
 #include <qlistview.h>
 #include <eventconfig.h>
 #include <kstddirs.h>
-#include "eventconfig.moc"
+// #include "eventconfig.moc"
 
 EventView *Programs::eventview=0;
 QListView *Programs::programs=0;
