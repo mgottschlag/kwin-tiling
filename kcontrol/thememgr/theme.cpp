@@ -905,10 +905,10 @@ void Theme::applyIcons()
 
   KIconTheme icontheme(theme);
 
-  const char *groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
+  const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 
   KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-  for (int i=0; i<KIcon::LastGroup; i++)
+  for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
   {
     if (groups[i] == 0L)
       break;

@@ -272,9 +272,9 @@ void IconThemesConfig::save()
 
   KIconTheme icontheme(m_themeNames[selected->text(0)]);
 
-  const char *groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
+  const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 
-  for (int i=0; i<KIcon::LastGroup; i++)
+  for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
   {
     if (groups[i] == 0L)
       break;

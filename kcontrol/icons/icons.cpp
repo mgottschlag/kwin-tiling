@@ -165,9 +165,9 @@ void KIconConfig::initDefaults()
     mDefaultEffect[1].color = QColor(169,156,255);
     mDefaultEffect[2].color = QColor(34,202,0);
 
-    int i;
+    KIcon::Group i;
     QStringList::ConstIterator it;
-    for(it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
+    for(it=mGroups.begin(), i=KIcon::FirstGroup; it!=mGroups.end(); it++, i++)
     {
 	mbDP[i] = false;
 	mbAlphaB[i] = false;
@@ -206,7 +206,7 @@ void KIconConfig::initDefaults()
 
 void KIconConfig::read()
 {
-    for (int i=0; i<KIcon::LastGroup; i++)
+    for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
 	mAvSizes[i] = mpTheme->querySizes(i);
 
     mTheme = mpTheme->current();
