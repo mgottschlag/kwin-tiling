@@ -156,7 +156,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Applications To Be Excluded From Sessions:</string>
+                        <string>Applications to be excluded from sessions:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>excludeLineedit</cstring>

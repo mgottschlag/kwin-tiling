@@ -13,8 +13,8 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>617</width>
-            <height>581</height>
+            <width>905</width>
+            <height>724</height>
         </rect>
     </property>
     <property name="caption">
@@ -43,7 +43,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>Network Privacy Level:</string>
+                <string>Network privacy level:</string>
             </property>
             <property name="buddy" stdset="0">
                 <cstring>_privacyLevel</cstring>
@@ -106,7 +106,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnFinancialMarketeer</cstring>
                     </property>
                     <property name="text">
-                        <string>For Marketing or Advertising Purposes</string>
+                        <string>For marketing or advertising purposes</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -114,7 +114,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnFinancialSpammer</cstring>
                     </property>
                     <property name="text">
-                        <string>To Share With Other Companies</string>
+                        <string>To share with other companies</string>
                     </property>
                 </widget>
             </vbox>
@@ -143,7 +143,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnHealthMarketeer</cstring>
                     </property>
                     <property name="text">
-                        <string>For Marketing or Advertising Purposes</string>
+                        <string>For marketing or advertising purposes</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -151,7 +151,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnHealthSpammer</cstring>
                     </property>
                     <property name="text">
-                        <string>To Shares With Other Companies</string>
+                        <string>To share with other companies</string>
                     </property>
                 </widget>
             </vbox>
@@ -180,7 +180,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnDemographicsBigBrother</cstring>
                     </property>
                     <property name="text">
-                        <string>To Determine My Interested, Habits, or General Behavior</string>
+                        <string>To determine my interests, habits or general behavior</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -188,7 +188,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnDemographicsSpammer</cstring>
                     </property>
                     <property name="text">
-                        <string>To Share With Other Companies</string>
+                        <string>To share with other companies</string>
                     </property>
                 </widget>
             </vbox>
@@ -198,7 +198,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                 <cstring>_warnSpammers</cstring>
             </property>
             <property name="text">
-                <string>Warn me when I visit a site that shares my personal information with other companies.</string>
+                <string>Warn me when I visit a site that shares my personal information with other companies</string>
             </property>
         </widget>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
@@ -206,7 +206,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                 <cstring>_warnShady</cstring>
             </property>
             <property name="text">
-                <string>Warn me when I visit a site that doesn't let me know what information they have about me.</string>
+                <string>Warn me when I visit a site that doesn't let me know what information they have about me</string>
             </property>
         </widget>
         <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="2">
@@ -241,7 +241,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                         <cstring>_warnPersonalHabits</cstring>
                     </property>
                     <property name="text">
-                        <string>Determine My Habits, Interests, or General Behavior</string>
+                        <string>Determine my habits, interests or general behavior</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget" row="1" column="0">
@@ -257,7 +257,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                                 <cstring>_warnPersonalTelephone</cstring>
                             </property>
                             <property name="text">
-                                <string>Via Telephone</string>
+                                <string>Via telephone</string>
                             </property>
                         </widget>
                         <widget class="QCheckBox">
@@ -265,7 +265,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                                 <cstring>_warnPersonalMail</cstring>
                             </property>
                             <property name="text">
-                                <string>Via Mail</string>
+                                <string>Via mail</string>
                             </property>
                         </widget>
                     </vbox>
@@ -283,7 +283,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                                 <cstring>_warnPersonalEmail</cstring>
                             </property>
                             <property name="text">
-                                <string>Via E-Mail</string>
+                                <string>Via email</string>
                             </property>
                         </widget>
                         <widget class="QCheckBox">
@@ -291,7 +291,7 @@ Derived from AT&amp;T's Privacy Bird settings panel screenshot originally.
                                 <cstring>_warnPersonalBigBrother</cstring>
                             </property>
                             <property name="text">
-                                <string>And Do Not Allow Me To Remove My Contact Information</string>
+                                <string>And do not allow me to remove my contact information</string>
                             </property>
                         </widget>
                     </vbox>
