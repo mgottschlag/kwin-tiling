@@ -88,8 +88,8 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     QLabel *pixmap = new QLabel(this);
     pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
     QLabel *text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
-                                   "<p>Click the &quot;Modify&quot; button to allow "
-                                   "modifications on this module.</p></qt>"), this);
+                                   "<p>Click the &quot;Administrator Mode&quot; button to "
+                                   "allow modifications on this module.</p></qt>"), this);
 
 	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
                               "for system-wide modifications. Therefore it is "
@@ -210,7 +210,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _default = new QPushButton(i18n("Use &Defaults"), this);
   _apply = new QPushButton(i18n("&Apply"), this);
   _reset = new QPushButton(i18n("&Reset"), this);
-  _root = new QPushButton(i18n("&Modify"), this);
+  _root = new QPushButton(i18n("&Administrator Mode"), this);
 
   // only enable the requested buttons
   int b = _client->buttons();

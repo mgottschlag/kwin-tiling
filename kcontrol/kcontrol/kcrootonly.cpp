@@ -29,7 +29,7 @@ KCRootOnly::KCRootOnly(QWidget *parent, const char *name)
 {
    QVBoxLayout *layout=new QVBoxLayout(this);
    QLabel *label = new QLabel(i18n("<big>You need super user privileges to run this control module.</big><br>"
-                                    "Click on the \"Modify\" button below."), this);
+                                    "Click on the \"Administrator Mode\" button below."), this);
    layout->addWidget(label);
    label->setAlignment(AlignCenter);
    label->setTextFormat(RichText);
