@@ -23,8 +23,8 @@
 
 // Per desktop defaults
 #define _defColorA  QColor("#4682B4")
-#define _defColorB  QColor("#000000")
-#define _defBackgroundMode Flat
+#define _defColorB  QColor("#0000A2")
+#define _defBackgroundMode VerticalGradient
 #define _defWallpaperMode NoWallpaper
 #define _defMultiMode NoMulti
 #define _defBlendMode NoBlending
