@@ -286,7 +286,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 
     int startline = height-2;
     int	percent, localheight;
-    t_memsize last_used;
+    t_memsize last_used = 0;
     
     while (count--) {
 	last_used = *used;

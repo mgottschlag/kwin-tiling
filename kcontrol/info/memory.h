@@ -53,12 +53,12 @@ class KMemoryWidget:public KCModule {
 
     void update();
 
-    bool KMemoryWidget::Display_Graph(int widgetindex,
-				      int count,
-				      t_memsize total,
-				      t_memsize *used, 
-				      QColor *color,
-				      QString *text);
+    bool Display_Graph(int widgetindex,
+		      int count,
+		      t_memsize total,
+		      t_memsize *used, 
+		      QColor *color,
+		      QString *text);
     public slots:
     void update_Values();
 };
