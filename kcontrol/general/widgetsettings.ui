@@ -300,15 +300,9 @@
     <tabstop>cbTooltipEffect</tabstop>
 </tabstops>
 <includes>
+    <include location="global" impldecl="in declaration">kcmodule.h</include>
     <include location="local" impldecl="in implementation">widgetsettings.ui.h</include>
 </includes>
-<forwards>
-    <forward></forward>
-    <forward></forward>
-</forwards>
-<variables>
-    <variable></variable>
-</variables>
 <slots>
     <slot>init()</slot>
     <slot specifier="non virtual">setDirty()</slot>
