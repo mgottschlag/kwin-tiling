@@ -20,8 +20,11 @@
 #include "componentconfig_ui.h"
 #include "emailclientconfig_ui.h"
 #include "terminalemulatorconfig_ui.h"
+#include "browserconfig_ui.h"
 #include <qdict.h>
 #include <qstring.h>
+
+#include <kservice.h>
 
 class QListBoxItem;
 class KEMailSettings;
@@ -49,7 +52,7 @@ public:
 	virtual ~CfgComponent();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
-    virtual void defaults();
+	virtual void defaults();
 
 protected:
 	QDict<QString>  m_lookupDict,m_revLookupDict;
@@ -69,8 +72,7 @@ public:
 	virtual ~CfgEmailClient();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
-    virtual void defaults();
-
+	virtual void defaults();
 
 private:
 	KEMailSettings *pSettings;
@@ -90,7 +92,7 @@ public:
 	virtual ~CfgTerminalEmulator();
 	virtual void load(KConfig *cfg);
 	virtual void save(KConfig *cfg);
-    virtual void defaults();
+	virtual void defaults();
 
 protected slots:
 	void selectTerminalApp();
@@ -98,6 +100,27 @@ protected slots:
 
 signals:
 	void changed(bool);
+};
+
+class CfgBrowser: public BrowserConfig_UI,public CfgPlugin
+{
+Q_OBJECT
+public:
+	CfgBrowser(QWidget *parent);
+	virtual ~CfgBrowser();
+	virtual void load(KConfig *cfg);
+	virtual void save(KConfig *cfg);
+	virtual void defaults();
+
+protected slots:
+	void selectBrowser();
+	void configChanged();
+
+signals:
+	void changed(bool);
+private:
+	QString m_browserExec;
+	KService::Ptr m_browserService;	
 };
 
 

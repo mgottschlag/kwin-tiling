@@ -16,23 +16,27 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <kapplication.h>
-#include <dcopclient.h>
 #include "componentchooser.h"
 #include "componentchooser.moc"
-#include <kemailsettings.h>
-#include <kstandarddirs.h>
-#include <ksimpleconfig.h>
-#include <klocale.h>
-#include <ktrader.h>
-#include <kmessagebox.h>
-#include <qlabel.h>
+
 #include <qcheckbox.h>
-#include <kurlrequester.h>
-#include <kopenwith.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qwidgetstack.h>
+
+#include <dcopclient.h>
+
+#include <kapplication.h>
+#include <kemailsettings.h>
+#include <kipc.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kopenwith.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
+#include <ktrader.h>
+#include <kurlrequester.h>
 
 class MyListBoxItem: public QListBoxText
 {
@@ -279,13 +283,99 @@ void CfgTerminalEmulator::selectTerminalApp()
 
 //END Terminal Emulator Configuration
 
+//BEGIN Browser Configuration
+
+CfgBrowser::CfgBrowser(QWidget *parent) : BrowserConfig_UI(parent),CfgPlugin(){
+        connect(lineExec,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+	connect(radioKIO,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+	connect(radioExec,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+}
+
+CfgBrowser::~CfgBrowser() {
+}
+
+void CfgBrowser::configChanged()
+{
+	emit changed(true);
+}
+
+void CfgBrowser::defaults()
+{
+	load(0L);
+}
 
 
+void CfgBrowser::load(KConfig *) {
+	KConfig *config = new KConfig("kdeglobals", true);
+	config->setGroup("General");
+	QString exec = config->readEntry("BrowserApplication");
+	if (exec.isEmpty())
+	{
+	   radioKIO->setChecked(true);
+	   m_browserExec = exec;
+	   m_browserService = 0;
+	}
+	else
+	{
+	   radioExec->setChecked(true);
+	   if (exec.startsWith("!"))
+	   {
+	      m_browserExec = exec.mid(1);
+	      m_browserService = 0;
+	   }
+	   else
+	   {
+	      m_browserService = KService::serviceByStorageId( exec );
+	      if (m_browserService)
+  	         m_browserExec = m_browserService->desktopEntryName();
+  	      else
+  	         m_browserExec = QString::null;
+	   }
+	}
+	
+	lineExec->setText(exec);
+	delete config;
 
+	emit changed(false);
+}
 
+void CfgBrowser::save(KConfig *) {
 
+	KConfig *config = new KConfig("kdeglobals");
+	config->setGroup("General");
+	QString exec;
+	if (radioExec->isChecked())
+	{
+	   exec = lineExec->text();
+	   if (m_browserService && (exec == m_browserExec))
+	      exec = m_browserService->storageId(); // Use service
+	   else
+	      exec = "!" + exec; // Litteral command
+	}
+	config->writePathEntry("BrowserApplication", exec, true, true);
+	config->sync();
+	delete config;
 
+	KIPC::sendMessageAll(KIPC::SettingsChanged);
 
+	emit changed(false);
+}
+
+void CfgBrowser::selectBrowser()
+{
+	KURL::List urlList;
+	KOpenWithDlg dlg(urlList, i18n("Select preferred web browser application:"), QString::null, this);
+	if (dlg.exec() != QDialog::Accepted) return;
+	m_browserService = dlg.service();
+	if (m_browserService)
+	   m_browserExec = m_browserService->desktopEntryName();
+	else
+	   m_browserExec = dlg.text();
+
+	lineExec->setText(m_browserExec);
+}
+
+//END Terminal Emulator Configuration
 
 ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	ComponentChooser_UI(parent,name), configWidget(0) {
@@ -346,6 +436,14 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 		if (!(configWidget && configWidget->qt_cast("CfgTerminalEmulator")))
 		{
 			newConfigWidget = new CfgTerminalEmulator(configContainer);
+		}
+
+	}
+	else if (cfgType=="internal_browser")
+	{
+		if (!(configWidget && configWidget->qt_cast("CfgBrowser")))
+		{
+			newConfigWidget = new CfgBrowser(configContainer);
 		}
 
 	}

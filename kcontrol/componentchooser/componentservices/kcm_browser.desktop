@@ -1,0 +1,3 @@
+Name=Web Browser
+Comment=Here you can configure your default web browser. All KDE applications in which you can select hyperlinks should honor this setting.
+configurationType=internal_browser
