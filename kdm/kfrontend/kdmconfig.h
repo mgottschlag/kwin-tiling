@@ -95,6 +95,8 @@ public:
     QStringList	_pluginsLogin;
     QStringList	_pluginsShutdown;
     QStringList	_pluginConfig;
+
+    bool	_isLocal, _hasConsole, _allowClose;
 };
 
 extern KDMConfig *kdmcfg;

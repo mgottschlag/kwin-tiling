@@ -224,19 +224,23 @@ KGreeter::KGreeter()
 	     SLOT(slotSessionSelected(int)) );
     insertSessions();
 
-    Inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
-
-    optMenu->insertSeparator();
+    if (sessMenu->count() > 1) {
+	inserten( i18n("Session &Type"), ALT+Key_T, sessMenu );
+	needSep = true;
+    }
 
     QPopupMenu *plugMenu = verify->getPlugMenu();
     if (plugMenu) {
-	Inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
-	optMenu->insertSeparator();
+	inserten( i18n("&Authentication Method"), ALT+Key_A, plugMenu );
+	needSep = true;
     }
 
     completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), ALT+Key_R );
 
-    menuButton->setPopup( optMenu );
+    if (optMenu)
+	menuButton->setPopup( optMenu );
+    else
+	menuButton->hide();
 
     pluginSetup();
 

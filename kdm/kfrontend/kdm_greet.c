@@ -80,8 +80,6 @@ GDebug (const char *fmt, ...)
 
 
 char *dname;
-int disLocal;
-int dhasConsole;
 
 int rfd;
 static int wfd;
@@ -693,11 +691,6 @@ main (int argc ATTR_UNUSED, char **argv)
     dgrabServer = GetCfgInt (C_grabServer);
     dgrabTimeout = GetCfgInt (C_grabTimeout);
     dpingTimeout = GetCfgInt (C_pingTimeout);
-    disLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
-    if ((ci = GetCfgStr (C_console))) {
-	dhasConsole = ci[0] != 0;
-	free (ci);
-    }
 
     kg_main (argv[0]);
 

@@ -129,10 +129,10 @@ KDMConfig::KDMConfig()
 		dsk->screenNumber( QPoint( 0, 0 ) );
     }
 
-    QString tmp = GetCfgStr (C_GUIStyle);
+    QString tmp = GetCfgQStr (C_GUIStyle);
     if (!tmp.isEmpty())
 	kapp->setStyle (tmp);
-    tmp = GetCfgStr (C_ColorScheme);
+    tmp = GetCfgQStr (C_ColorScheme);
     if (!tmp.isEmpty())
 	kapp->setPalette (Str2Palette (tmp));
 
@@ -212,10 +212,14 @@ KDMConfig::KDMConfig()
 
 #ifdef WITH_KDM_XCONSOLE
     _showLog = GetCfgInt (C_ShowLog);
-    _logSource = GetCfgStr (C_LogSource);
+    _logSource = GetCfgQStr (C_LogSource);
 #endif
 
     _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
     _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
     _pluginConfig = GetCfgQStrList(C_PluginConfig);
+
+    _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
+    _hasConsole = GetCfgInt (C_AllowConsole) && !GetCfgQStr (C_console).isEmpty();
+    _allowClose = GetCfgInt (C_AllowClose);
 }

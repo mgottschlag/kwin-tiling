@@ -48,26 +48,26 @@ KGDialog::KGDialog() : inherited( (QWidget *)0, (const char*)0, true )
 	consoleView = 0;
 #endif
 
-    optMenu = new QPopupMenu( winFrame );
-    optMenu->setCheckable( false );
+    optMenu = 0;
 }
 
 void
 KGDialog::completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel )
 {
-    Inserten( disLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
+    if (kdmcfg->_allowClose)
+	inserten( kdmcfg->_isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
 	      ALT+Key_E, SLOT(slotExit()) );
 
-    if (disLocal && kdmcfg->_loginMode != _switchIf) {
+    if (kdmcfg->_isLocal && kdmcfg->_loginMode != _switchIf) {
 	switchCode = _switchCode;
-	Inserten( _switchMsg, _switchAccel, SLOT(slotSwitch()) );
+	inserten( _switchMsg, _switchAccel, SLOT(slotSwitch()) );
     }
 
-    if (dhasConsole)
-	Inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
+    if (kdmcfg->_hasConsole)
+	inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
 
     if (kdmcfg->_allowShutdown != SHUT_NONE) {
-	Inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown()) );
+	inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown()) );
 	QAccel *accel = new QAccel( winFrame );
 	accel->insertItem( ALT+CTRL+Key_Delete );
 	connect( accel, SIGNAL(activated(int)), SLOT(slotShutdown()) );
@@ -75,14 +75,29 @@ KGDialog::completeMenu( int _switchIf, int _switchCode, const QString &_switchMs
 }
 
 void
-KGDialog::Inserten( const QString& txt, int accel, const char *member )
+KGDialog::ensureMenu()
 {
+    if (!optMenu) {
+	optMenu = new QPopupMenu( winFrame );
+	optMenu->setCheckable( false );
+	needSep = false;
+    } else if (needSep) {
+	optMenu->insertSeparator();
+	needSep = false;
+    }
+}
+
+void
+KGDialog::inserten( const QString& txt, int accel, const char *member )
+{
+    ensureMenu();
     optMenu->insertItem( txt, this, member, accel );
 }
 
 void
-KGDialog::Inserten( const QString& txt, int accel, QPopupMenu *cmnu )
+KGDialog::inserten( const QString& txt, int accel, QPopupMenu *cmnu )
 {
+    ensureMenu();
     int id = optMenu->insertItem( txt, cmnu );
     optMenu->setAccel( accel, id );
     optMenu->connectItem( id, this, SLOT(slotActivateMenu( int )) );

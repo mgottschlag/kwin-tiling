@@ -2216,6 +2216,12 @@ static Ent entsGreeter[] = {
 { "PluginConfig",	0, 0,
 "# A list of options of the form Key=Value. The conversation plugins can query\n"
 "# these settings; it's up to them what possible keys are.\n" },
+{ "AllowConsole",	0, 0,
+"# Show the \"Console Login\" action in the greeter (when the respective @tty\n"
+"# entry exists in Xservers). Default is true\n" },
+{ "AllowClose",		0, 0,
+"# Show the \"Restart X Server\"/\"Close Connection\" action in the greeter.\n"
+"# Default is false\n" },
 };
 
 static Sect
@@ -2382,6 +2388,8 @@ static DEnt dEntsAnyGreeter[] = {
 { "PluginsLogin",	"sign", 0 },
 { "PluginsShutdown",	"modern", 0 },
 { "PluginConfig",	"SomeKey=randomvalue,Foo=bar", 0 },
+{ "AllowConsole",	"false", 0 },
+{ "AllowClose",	        "true", 0 },
 };
 
 static DEnt dEntsLocalCore[] = {

@@ -85,17 +85,19 @@ ChooserDlg::ChooserDlg()
     acceptButton->setDefault(true);
     QPushButton *pingButton = new QPushButton(i18n("&Refresh"), winFrame);
 
-    QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
-    menuButton->setPopup( optMenu );
-
-//    QPushButton *helpButton = new QPushButton(i18n("&Help"), winFrame);
-
     QBoxLayout *hbox = new QHBoxLayout(vbox, 20);
     hbox->addWidget(acceptButton);
     hbox->addWidget(pingButton);
     hbox->addStretch( 1 );
-    hbox->addWidget(menuButton);
-    hbox->addStretch( 1 );
+
+    if (optMenu) {
+	QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
+	menuButton->setPopup( optMenu );
+	hbox->addWidget(menuButton);
+	hbox->addStretch( 1 );
+    }
+
+//    QPushButton *helpButton = new QPushButton(i18n("&Help"), winFrame);
 //    hbox->addWidget(helpButton);
 
     sn = new QSocketNotifier (rfd, QSocketNotifier::Read, this);

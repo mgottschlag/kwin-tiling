@@ -55,9 +55,10 @@ class KGDialog : public FDialog {
   protected:
     void completeMenu( int _switchIf, int _switchCode, const QString &_switchMsg, int _switchAccel );
     void adjustGeometry();
-    void Inserten( const QString& txt, int accel, const char *member );
-    void Inserten( const QString& txt, int accel, QPopupMenu *cmnu );
+    void inserten( const QString& txt, int accel, const char *member );
+    void inserten( const QString& txt, int accel, QPopupMenu *cmnu );
 
+    bool needSep;
     QPopupMenu *optMenu;
 #ifdef WITH_KDM_XCONSOLE
     KConsole *consoleView;
@@ -65,6 +66,7 @@ class KGDialog : public FDialog {
 #endif
 
   private:
+    void ensureMenu();
     int switchCode;
 };
 

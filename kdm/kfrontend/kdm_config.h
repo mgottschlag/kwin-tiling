@@ -85,6 +85,8 @@
 #define C_PluginsLogin		(C_TYPE_ARGV| 0x102f)
 #define C_PluginsShutdown	(C_TYPE_ARGV| 0x1030)
 #define C_PluginConfig		(C_TYPE_ARGV| 0x1031)
+#define C_AllowConsole		(C_TYPE_INT| 0x1032)
+#define C_AllowClose		(C_TYPE_INT| 0x1033)
 
 #ifdef WITH_KDM_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)
