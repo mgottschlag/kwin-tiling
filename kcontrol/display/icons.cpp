@@ -37,8 +37,8 @@
 #include <klocale.h>
 #include <kipc.h>
 #include <kcolordlg.h>
-#include <kcolorbtn.h>                                                         
-#include <kbuttonbox.h>                                                         
+#include <kcolorbtn.h>
+#include <kbuttonbox.h>
 
 #include <icons.h>
 
@@ -92,7 +92,7 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
 
     mpESetupBut = new QPushButton( i18n("&Setup ..."),gbox);
     connect(mpESetupBut, SIGNAL(clicked()), SLOT(slotEffectSetup()));
-    grid->addWidget(mpESetupBut, 1, 0);                                                                                           
+    grid->addWidget(mpESetupBut, 1, 0);
 
     mpSTCheck = new QCheckBox(i18n("SemiTransparent"), gbox);
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
@@ -133,7 +133,7 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     preview();
 }
 
-    
+
 void KIconConfig::init()
 {
     mpLoader = KGlobal::iconLoader();
@@ -234,20 +234,20 @@ void KIconConfig::apply()
     }
 
 
-    int delta = 1000, dw, index = -1, size, i;
+    int delta = 1000, index = -1, size, i;
     QValueList<int>::Iterator it;
     mpSizeBox->clear();
     for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); it++, i++)
     {
 	mpSizeBox->insertItem(QString().setNum(*it));
-	dw = abs(mSizes[mUsage] - *it);
+	int dw = abs(mSizes[mUsage] - *it);
 	if (dw < delta)
 	{
 	    delta = dw;
 	    index = i;
 	    size = *it;
 	}
-	    
+	
     }
     if (index != -1)
     {
@@ -261,7 +261,7 @@ void KIconConfig::apply()
 
 void KIconConfig::preview()
 {
-    // Apply effects ourselves because we don't want to sync 
+    // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
     QPixmap pm = mpLoader->loadIcon(mExample, KIcon::NoGroup, mSizes[mUsage]);
     QImage img = pm.convertToImage();
@@ -316,8 +316,8 @@ void KIconConfig::save()
 	    }
 	    mpConfig->writeEntry(*it2 + "Effect", tmp, true, true);
 	    mpConfig->writeEntry(*it2 + "Value", mEffectValues[i][j], true, true);
-            mpConfig->writeEntry(*it2 + "Color", mEffectColors[i][j], true, true);                                                   
-            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffectTrans[i][j], true, true);                                                   
+            mpConfig->writeEntry(*it2 + "Color", mEffectColors[i][j], true, true);
+            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffectTrans[i][j], true, true);
 	}
     }
     mpConfig->sync();
@@ -332,7 +332,7 @@ void KIconConfig::save()
 	if (mbChanged[i])
 	{
 	    KIPC::sendMessageAll(KIPC::IconChanged, i);
-	    mbChanged[i] = false;   
+	    mbChanged[i] = false;
 	}
     }
     KIPC::sendMessageAll(KIPC::IconChanged, KIcon::LastGroup);
@@ -371,23 +371,23 @@ void KIconConfig::slotUsage(int index)
 }
 
 void KIconConfig::slotEffectSetup()
-{   
-    QColor r; 
+{
+    QColor r;
     r = mEffectColors[mUsage][mState];
-    float s; 
+    float s;
     s = mEffectValues[mUsage][mState];
     int t;
     t = mEffects[mUsage][mState];
-    
-    KIconEffectSetupDialog dlg(r,s,t);                                                                 
+
+    KIconEffectSetupDialog dlg(r,s,t);
     if (dlg.exec() == QDialog::Accepted) {
         mEffectColors[mUsage][mState] = dlg.fxcolor();
         mEffectValues[mUsage][mState] = dlg.fxvalue();
         preview();
         emit changed(true);
-        mbChanged[mUsage] = true;                                                   
-        
-    }                                                                           
+        mbChanged[mUsage] = true;
+
+    }
 }
 
 void KIconConfig::slotState(int index)
@@ -456,7 +456,7 @@ void KIconConfig::slotDPCheck(bool check)
 
 
 KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, int m_pEfTyp,
-	QWidget *parent, char *name): QDialog(parent, name, true)  
+	QWidget *parent, char *name): QDialog(parent, name, true)
 {
     QPushButton *pbut;
     QLabel *lbl;
@@ -466,27 +466,27 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, 
 
     QVBoxLayout*top = new QVBoxLayout(this);
     top->setSpacing(10);
-    top->setMargin(10);                                                         
+    top->setMargin(10);
 
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);                                                      
+    top->addWidget(frame);
 
     QGridLayout *grid = new QGridLayout(frame, 2, 1, 10, 10);
     grid->setSpacing(10);
-    grid->setMargin(10);                                                        
+    grid->setMargin(10);
 
     if (m_pEfTyp == KIconEffect::Colorize)
     {
-    lbl = new QLabel(i18n("Color"), frame);                                                                                           
-    grid->addWidget(lbl, 0, 0);                                                                                                      
+    lbl = new QLabel(i18n("Color"), frame);
+    grid->addWidget(lbl, 0, 0);
     mpEColButton = new KColorButton(frame);
     connect(mpEColButton, SIGNAL(changed(const QColor &)), SLOT(slotEffectColor(const QColor &)));
-    grid->addWidget(mpEColButton, 0, 1);                                                                                           
-    mpEColButton->setColor(m_pEfColor);                                               
+    grid->addWidget(mpEColButton, 0, 1);
+    mpEColButton->setColor(m_pEfColor);
     }
 
-    lbl = new QLabel(i18n("Amount"), frame);                            
+    lbl = new QLabel(i18n("Amount"), frame);
     grid->addWidget(lbl, 1, 0);
     mpEffectSlider = new QSlider(0, 100, 5, 10, QSlider::Horizontal, frame);
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
@@ -494,14 +494,14 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(QColor ecolor, float m_pEfValue, 
     mpEffectSlider->setValue((int) (100.0 * m_pEfValue + 0.5));
 
     KButtonBox *bbox = new KButtonBox(this);
-    pbut = bbox->addButton(i18n("&Help"));                                                                            
+    pbut = bbox->addButton(i18n("&Help"));
     connect(pbut, SIGNAL(clicked()), SLOT(slotHelp()));
     bbox->addStretch();
     pbut = bbox->addButton(i18n("&OK"));
     connect(pbut, SIGNAL(clicked()), SLOT(slotOK()));
     pbut = bbox->addButton(i18n("&Cancel"));
     connect(pbut, SIGNAL(clicked()), SLOT(reject()));
-    top->addWidget(bbox,2,0);                                                       
+    top->addWidget(bbox,2,0);
 }
 
 void KIconEffectSetupDialog::slotEffectValue(int value)
