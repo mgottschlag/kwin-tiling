@@ -23,6 +23,7 @@
 
     */
 
+#include <strings.h>
 #include "kgreeter.h"
 #include "kdmconfig.h"
 #include "kdmclock.h" 

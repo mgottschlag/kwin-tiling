@@ -24,6 +24,7 @@
     */
  
 
+#include <strings.h>
 #include "kdmshutdown.h"
 #include "kdmconfig.h" // for shutdown-modes
 /*
