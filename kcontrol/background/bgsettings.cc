@@ -419,7 +419,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     defBlendMode = _defBlendMode;
     defBlendBalance = _defBlendBalance;
     defReverseBlending = _defReverseBlending;
-    
+
     m_MinOptimizationDepth = _defMinOptimizationDepth;
     m_bShm = _defShm;
 
@@ -801,9 +801,8 @@ void KBackgroundSettings::updateWallpaperFiles()
 	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
 	    QStringList::Iterator it;
 	    for (it=lst.begin(); it!=lst.end(); it++)
-		m_WallpaperFiles.append(dir.absFilePath(file));
+		m_WallpaperFiles.append(dir.absFilePath(*it));
 	}
-
     }
 }
 
