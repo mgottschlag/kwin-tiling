@@ -49,6 +49,7 @@ class LookAndFeelTab : public LookAndFeelTabBase
  protected slots:
   void browseTheme(const QString&);
   void launchAdvancedDialog();
+  void enableTransparency( bool );
 
  private:
   QString theme;

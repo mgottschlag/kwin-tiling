@@ -87,6 +87,15 @@ void LookAndFeelTab::launchAdvancedDialog()
     dialog->exec();
 }
 
+void LookAndFeelTab::enableTransparency( bool enable )
+{
+    bool b = m_backgroundImage->isChecked();
+
+    m_backgroundImage->setDisabled( enable );
+    m_backgroundInput->setDisabled( enable || !b );
+    m_backgroundLabel->setDisabled( enable || !b );
+}
+
 void LookAndFeelTab::load()
 {
   KConfig c(KickerConfig::configName(), false, false);

@@ -561,20 +561,8 @@
     <connection>
         <sender>m_transparent</sender>
         <signal>toggled(bool)</signal>
-        <receiver>m_backgroundImage</receiver>
-        <slot>setDisabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_transparent</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_backgroundInput</receiver>
-        <slot>setDisabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_transparent</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_backgroundLabel</receiver>
-        <slot>setDisabled(bool)</slot>
+        <receiver>LookAndFeelTabBase</receiver>
+        <slot>enableTransparency(bool)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -596,6 +584,7 @@
 <slots>
     <slot access="protected">launchAdvancedDialog()</slot>
     <slot access="protected">browseTheme(const QString&amp;)</slot>
+    <slot access="protected">enableTransparency(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
