@@ -37,6 +37,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
+#include <kfilemetainfo.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kimageio.h>
@@ -320,22 +321,36 @@ void BGDialog::initUI()
    QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      int slash = (*it).findRev('/') + 1;
-      int endDot = (*it).findRev('.');
+      // First try to see if we have a comment describing the image.  If we do
+      // just use the first line of said comment.
 
-      QString s;
-      // strip the extension if it exists
-      if (endDot != -1 && endDot > slash)
-         s = (*it).mid(slash, endDot - slash);
-      else
-         s = (*it).mid(slash);
+      KFileMetaInfo metaInfo(*it);
+      QString imageCaption = metaInfo.item("Comment").string().section('\n', 0, 0);
+
+      if (imageCaption == "---")
+         imageCaption = QString::null;
+
+      if (imageCaption.isEmpty())
+      {
+         int slash = (*it).findRev('/') + 1;
+         int endDot = (*it).findRev('.');
+
+         // strip the extension if it exists
+         if (endDot != -1 && endDot > slash)
+            imageCaption = (*it).mid(slash, endDot - slash);
+         else
+            imageCaption = (*it).mid(slash);
+
+         imageCaption.replace('_', ' ');
+         imageCaption = KStringHandler::capwords(imageCaption);
+      }
 
       // avoid name collisions
-      QString rs = s;
+      QString rs = imageCaption;
       QString lrs = rs.lower();
       for (int n = 1; papers.find(lrs) != papers.end(); ++n)
       {
-         rs = s + " (" + QString::number(n) + ')';
+         rs = imageCaption + " (" + QString::number(n) + ')';
          lrs = rs.lower();
       }
       papers[lrs] = qMakePair(rs, *it);
