@@ -362,7 +362,7 @@ KDMShutdown::pw_entered()
      } else {
 	  okButton->setEnabled( false);
      }
-     pswdEdit->setText("");
+     pswdEdit->clear();
 }
 
 void

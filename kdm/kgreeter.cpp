@@ -353,8 +353,8 @@ KGreeter::timerDone()
 void 
 KGreeter::cancel_button_clicked()
 {
-     loginEdit->setText("");
-     passwdEdit->setText("");
+     loginEdit->clear();
+     passwdEdit->clear();
      loginEdit->setFocus();
 }
 
