@@ -59,7 +59,7 @@ ConfigDialog::~ConfigDialog()
 void ConfigDialog::show()
 {
     if ( !isVisible() ) {
-	static KWinModule module;
+	KWinModule module(0, KWinModule::INFO_DESKTOP);
 	QSize s1 = sizeHint();
 	QSize s2 = module.workArea().size();
 	int w = s1.width();
