@@ -27,10 +27,10 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstddirs.h>
-#include <kcmodule.h>
 #include <kcmdlineargs.h>
 #include <kdesktopfile.h>
 
+#include "kcdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
 

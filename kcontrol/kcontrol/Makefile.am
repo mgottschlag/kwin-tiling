@@ -11,7 +11,7 @@ kcontrol_LDADD   = $(LIB_KDEUI)
 
 
 kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
-			utils.cpp proxymodule.cpp KCModuleIface.stub
+			utils.cpp proxymodule.cpp KCModuleIface.stub kcdialog.cpp
 
 
 kcmshell_LDADD   = $(LIB_KDEUI)
