@@ -69,11 +69,11 @@
 #include <X11/Xlib.h>
 #include <ctype.h>
 
-#define KFI_DBUG kdDebug()
+#define KFI_DBUG kdDebug() << "[" << (int)(getpid()) << "] "
 #undef KFI_DBUG
 #include <qtextstream.h>
 QTextOStream ostr(stderr);
-#define KFI_DBUG ostr
+#define KFI_DBUG ostr << "[" << (int)(getpid()) << "] "
 
 #define MAX_IPC_SIZE   (1024*32)
 #define TIMEOUT        2         // Time between last mod and writing files...
@@ -641,6 +641,7 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
             strcat(itsKfiParams, "xr");
         }
     }
+    reinitFc();
 }
 
 CKioFonts::~CKioFonts()
@@ -1397,6 +1398,7 @@ void CKioFonts::del(const KURL &url, bool)
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KFI_KIO_FONTS_SYS));
         }
         else
+        {
             for(it=entries->begin(); it!=end; ++it)
             {
                 QString file(getFcString(*it, FC_FILE));
@@ -1422,15 +1424,18 @@ void CKioFonts::del(const KURL &url, bool)
                         for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
                             unlink(QFile::encodeName((*uIt).path()).data());
                     }
-                    modified(itsRoot ? FOLDER_SYS : FOLDER_USER);
                 }
             }
+            modified(itsRoot ? FOLDER_SYS : FOLDER_USER);
+        }
         finished();
     }
 }
 
 void CKioFonts::modified(EFolder folder)
 {
+    KFI_DBUG << "modified(" << (int)folder << ")\n";
+
     if(FOLDER_SYS!=folder || itsCanStorePasswd || itsRoot)
     {
         itsFolders[folder].modified=true;
