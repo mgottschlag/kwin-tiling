@@ -48,6 +48,7 @@
 
 void KCMStyle::init()
 {
+ 	previewFrame->resize(previewFrame->sizeHint());
 	load();
 	initStyle();
 	initEffects();

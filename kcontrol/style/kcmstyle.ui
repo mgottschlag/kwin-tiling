@@ -844,16 +844,16 @@
     <slot>save()</slot>
     <slot>destroy()</slot>
     <slot>initStyle()</slot>
-    <slot>loadStyle(QSettings &amp; settings)</slot>
-    <slot>saveStyle(QSettings &amp; settings)</slot>
+    <slot>loadStyle( QSettings &amp; settings )</slot>
+    <slot>saveStyle( QSettings &amp; settings )</slot>
     <slot>styleChanged()</slot>
     <slot>defaultsStyle()</slot>
-    <slot>updateStyleTimer(const QString &amp; style)</slot>
-    <slot>switchStyle(const QString &amp; styleName)</slot>
-    <slot>setStyleRecursive(QWidget * w, QStyle * s)</slot>
+    <slot>updateStyleTimer( const QString &amp; style )</slot>
+    <slot>switchStyle( const QString &amp; styleName )</slot>
+    <slot>setStyleRecursive( QWidget * w, QStyle * s )</slot>
     <slot>initEffects()</slot>
-    <slot>loadEffects(QSettings &amp; settings)</slot>
-    <slot>saveEffects(QSettings &amp; settings)</slot>
+    <slot>loadEffects( QSettings &amp; settings )</slot>
+    <slot>saveEffects( QSettings &amp; settings )</slot>
     <slot>defaultsEffects()</slot>
     <slot returnType="const KAboutData *">aboutData() const</slot>
     <slot returnType="QString">quickHelp() const</slot>
