@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/sysmp.h>
@@ -14,20 +15,20 @@ void KMemoryWidget::update()
   struct rminfo rmi;
   if( sysmp(MP_SAGET, MPSA_RMINFO, &rmi, sizeof(rmi)) == -1 )
     return;
-  totalMem->setText(format(rmi.physmem*pagesize));
-  freeMem->setText(format(rmi.freemem*pagesize));
-  bufferMem->setText(format(rmi.bufmem*pagesize));
+  Memory_Info[TOTAL_MEM]    = MEMORY(rmi.physmem*pagesize); // total physical memory (without swaps)
+  Memory_Info[FREE_MEM]     = MEMORY(rmi.freemem*pagesize); // total free physical memory (without swaps)
+  Memory_Info[BUFFER_MEM]   = MEMORY(rmi.bufmem*pagesize);
 
   long val;
   swapctl(SC_GETSWAPTOT, &val);
-  swapMem->setText(format(val*UBSIZE));
+  Memory_Info[SWAP_MEM]     = MEMORY(val*UBSIZE); // total size of all swap-partitions
 
   swapctl(SC_GETFREESWAP, &val);
-  freeSwapMem->setText(format(val*UBSIZE));
+  Memory_Info[FREESWAP_MEM] = MEMORY(val*UBSIZE); // free memory in swap-partitions
 
   FILE *kmem = fopen("/dev/kmem", "r");
   if( kmem == 0 ) {
-    sharedMem->setText(i18n("Not Available"));
+    Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
     return;
   }
 
@@ -51,7 +52,7 @@ void KMemoryWidget::update()
       val += shmid.shm_segsz;
     }
   }
-  sharedMem->setText(format(val));
+  Memory_Info[SHARED_MEM]   = MEMORY(val);
 
   fclose(kmem);
 }

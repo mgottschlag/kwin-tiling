@@ -62,13 +62,10 @@
 
 /*	The following table is from an HP-UX 10.20 System
 	build out of the files
-
 	    "/usr/lib/sched.models" 
 		    or
 	    "/opt/langtools/lib/sched.models"
-	
-	If you have more entries, then please add them !!
-	(Helge Deller,  deller@gmx.de)
+	If you have more entries, then please add them or send them to me!
 */
 
 // entries for PA_REVISION[]
@@ -78,7 +75,7 @@ enum V_ENTRIES
 	V_2x0, 
 	V_LAST };
 
-static char PA_REVISION[V_LAST][8]
+static const char PA_REVISION[V_LAST][8]
     = { "1.0", 
         "1.1", "1.1a", "1.1b", "1.1c", "1.1d", "1.1e",
 	"2.0" };
@@ -90,7 +87,7 @@ enum PA_ENTRIES
 	PA8000, PA8200,   PA8500,
 	PARISC_PA_LAST };
 			
-static char PA_NAME[PARISC_PA_LAST][12]
+static const char PA_NAME[PARISC_PA_LAST][12]
     = { "PA7000",
 	"PA7100", "PA7100LC", "PA7200", "PA7300",
 	"PA8000", "PA8200",   "PA8500" };
@@ -102,7 +99,7 @@ struct _type_LOOKUPTABLE {
 };
 	 
 
-static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {	
+static const struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {	
 /* 			VERSION A.00.07    
     (there seems to exist several different files with same version-number !)*/
 { "600"		,V_1x0	,PA7000		},
@@ -316,11 +313,11 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
 {	char *Machine;
 	int  len;
-	struct _type_LOOKUPTABLE *Entry = PA_LOOKUPTABLE;
+	const struct _type_LOOKUPTABLE *Entry = PA_LOOKUPTABLE;
 	QString str;
         QString TAB(SEPERATOR);
 	
-	Machine = machine;
+	Machine = machine;	// machine is like: "9000/715/D"
 	while ((*Machine) && (*Machine!='/')) ++Machine; 
 	if (*Machine) ++Machine; else Machine=machine;
 	len = strlen(Machine);
@@ -703,7 +700,7 @@ bool GetInfo_Sound( KTabListBox *lBox )
 
 #include "Alib.h"
 
-static char *formatNames[] = {  
+static const char formatNames[6][16] = {  
     "ADFUnknown",	"ADFMuLaw",	"ADFALaw",
     "ADFLin16",  	"ADFLin8",  	"ADFLin8Offset" };
 

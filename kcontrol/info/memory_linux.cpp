@@ -6,13 +6,12 @@ void KMemoryWidget::update()
 {
   struct sysinfo info;
 
-  syscall(SYS_sysinfo, &info);
+  syscall(SYS_sysinfo, &info);	// get Information from system...
 
-  // Numerical values
-  totalMem->setText(format(info.totalram));
-  freeMem->setText(format(info.freeram));
-  sharedMem->setText(format(info.sharedram));
-  bufferMem->setText(format(info.bufferram));
-  swapMem->setText(format(info.totalswap));
-  freeSwapMem->setText(format(info.freeswap));
+  Memory_Info[TOTAL_MEM]    = MEMORY(info.totalram);  // total physical memory (without swaps)
+  Memory_Info[FREE_MEM]     = MEMORY(info.freeram);   // total free physical memory (without swaps)
+  Memory_Info[SHARED_MEM]   = MEMORY(info.sharedram); 
+  Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram); 
+  Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap); // total size of all swap-partitions
+  Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap);  // free memory in swap-partitions
 }

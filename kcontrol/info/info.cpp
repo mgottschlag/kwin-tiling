@@ -186,24 +186,6 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 #include <qwidget.h>
 #include <qwidcoll.h>
 
-void set_Status_for_all_Children( QWidget *start, bool wait )
-{	const QObjectList *list = start->children();
-	QObjectListIt it(*list);
-	QObject *obj;
-	while ( (obj=it.current()) != 0 )
-	{	++it;
-		if (obj->inherits("QWidget"))
-		{   // set_Status_for_all_Children( (QWidget*)obj, wait ); /*doesn't work ! why ?? */
-		    ((QWidget*)obj)->setCursor(wait ? WaitCursor:ArrowCursor);
-		}
-	}
-}
-
-void set_Status_for_all_Widgets( QWidget *start, bool wait )
-{   
-    set_Status_for_all_Children( start->topLevelWidget(), wait );
-}
-
 
 #define SCREEN_XY_OFFSET 20
 
@@ -230,10 +212,7 @@ void KInfoListWidget::defaultSettings()
 	GetInfo_ErrorString = "";
 	
         if (getlistbox)
-	{   set_Status_for_all_Widgets( lBox, TRUE );
 	    ok = (*getlistbox)(lBox);	// retrieve the information !
-	    set_Status_for_all_Widgets( lBox, FALSE );
-	}
 
 	if (lBox->numCols()<=1)  // if ONLY ONE COLUMN (!), then set title and calculate necessary column-width
 	{   QFontMetrics fm(lBox->tableFont());

@@ -21,24 +21,24 @@ void KMemoryWidget::update()
   
   snprintf(blah, 10, "%d", memory);
   // Numerical values
-  totalMem->setText(format(memory));
+  Memory_Info[TOTAL_MEM]    = MEMORY(memory); // total physical memory (without swaps)
   /*	To: questions@freebsd.org
 		Anyone have any ideas on how to calculate this */
-  sharedMem->setText(i18n("Not available"));
+  Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
 
   int buffers;
   len = sizeof (buffers);
   if ((sysctlbyname("vfs.bufspace", &buffers, &len, NULL, 0) == -1) || !len)
-    bufferMem->setText(i18n("Not available")); // Doesn't work under FreeBSD v2.2.x
+    Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO;  // Doesn't work under FreeBSD v2.2.x
   else
-    bufferMem->setText(format(buffers));
+    Memory_Info[BUFFER_MEM]   = MEMORY(buffers);
 
   int free;
   len = sizeof (buffers);
   if ((sysctlbyname("vm.stats.vm.v_free_count", &free, &len, NULL, 0) == -1) || !len)
-    freeMem->setText(i18n("Not available")); // Doesn't work under FreeBSD v2.2.x
+    Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;	// Doesn't work under FreeBSD v2.2.x
   else
-    freeMem->setText(format(free*getpagesize()));
+    Memory_Info[FREE_MEM]     = MEMORY(free*getpagesize());// total free physical memory (without swaps)
 
   /* Q&D hack for swap display. Borrowed from xsysinfo-1.4 */
   if ((pipe = popen("/usr/sbin/pstat -ks", "r")) == NULL) {
@@ -59,6 +59,6 @@ void KMemoryWidget::update()
   total = atoi(total_str); 
 
   _free=total-used;
-  swapMem->setText(format(1024*total));
-  freeSwapMem->setText(format(1024*_free));
+  Memory_Info[SWAP_MEM]     = MEMORY(1024*total); // total size of all swap-partitions
+  Memory_Info[FREESWAP_MEM] = MEMORY(1024*_free); // free memory in swap-partitions
 }
