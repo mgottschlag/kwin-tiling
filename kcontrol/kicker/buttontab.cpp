@@ -208,34 +208,34 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   vbox->addWidget(hbox);
   layout->addWidget(wl_group, 3, 0);
 
-  // drawer button tiles group
-  drawer_group = new QGroupBox(i18n("Drawer Tiles"), this);
+  // desktop button tiles group
+  desktop_group = new QGroupBox(i18n("Desktop Access Tiles"), this);
 
-  vbox = new QVBoxLayout(drawer_group,KDialog::marginHint(),
+  vbox = new QVBoxLayout(desktop_group,KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  hbox = new QHBox(drawer_group);
+  hbox = new QHBox(desktop_group);
   hbox->setSpacing(KDialog::spacingHint());
 
   vbox1 = new QVBox(hbox);
-  drawer_cb = new QCheckBox(i18n("Enabled"), vbox1);
-  connect(drawer_cb, SIGNAL(clicked()), SLOT(drawer_clicked()));
+  desktop_cb = new QCheckBox(i18n("Enabled"), vbox1);
+  connect(desktop_cb, SIGNAL(clicked()), SLOT(desktop_clicked()));
 
-  drawer_input = new KComboBox(vbox1);
-  drawer_input->setInsertionPolicy(QComboBox::NoInsertion);
-  connect(drawer_input, SIGNAL(activated(const QString&)), SLOT(drawer_changed(const QString&)));
-  QWhatsThis::add( drawer_cb, i18n("Enable or disable the usage of tile images for drawer buttons.") );
-  QWhatsThis::add( drawer_input, i18n("Choose a tile image for drawer buttons."));
+  desktop_input = new KComboBox(vbox1);
+  desktop_input->setInsertionPolicy(QComboBox::NoInsertion);
+  connect(desktop_input, SIGNAL(activated(const QString&)), SLOT(desktop_changed(const QString&)));
+  QWhatsThis::add( desktop_cb, i18n("Enable or disable the usage of tile images for desktop access buttons.") );
+  QWhatsThis::add( desktop_input, i18n("Choose a tile image for desktop access buttons."));
 
-  drawer_label = new QLabel(hbox);
-  drawer_label->setFixedSize(56,56);
-  drawer_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  drawer_label->setAlignment(AlignCenter);
-  QWhatsThis::add( drawer_label, i18n("This is a preview of the tile that will be used for drawer buttons.") );
+  desktop_label = new QLabel(hbox);
+  desktop_label->setFixedSize(56,56);
+  desktop_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  desktop_label->setAlignment(AlignCenter);
+  QWhatsThis::add( desktop_label, i18n("This is a preview of the tile that will be used for desktop access buttons.") );
 
   vbox->addWidget(hbox);
-  layout->addWidget(drawer_group, 3, 1);
+  layout->addWidget(desktop_group, 3, 1);
 
   layout->setRowStretch(0, 1);
   layout->setRowStretch(1, 3);
@@ -255,7 +255,7 @@ void ButtonTab::tiles_clicked()
   exe_group->setEnabled(enabled);
   browser_group->setEnabled(enabled);
   wl_group->setEnabled(enabled);
-  drawer_group->setEnabled(enabled);
+  desktop_group->setEnabled(enabled);
   emit changed();
 }
 
@@ -385,14 +385,14 @@ void ButtonTab::wl_changed(const QString& t)
   emit changed();
 }
 
-void ButtonTab::drawer_clicked()
+void ButtonTab::desktop_clicked()
 {
-  bool enabled = drawer_cb->isChecked();
-  drawer_input->setEnabled(enabled);
-  drawer_label->setEnabled(enabled);
+  bool enabled = desktop_cb->isChecked();
+  desktop_input->setEnabled(enabled);
+  desktop_label->setEnabled(enabled);
   emit changed();
 }
-void ButtonTab::drawer_changed(const QString& t)
+void ButtonTab::desktop_changed(const QString& t)
 {
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
@@ -401,12 +401,12 @@ void ButtonTab::drawer_changed(const QString& t)
     {
       QPixmap pix(tile);
       if (!pix.isNull())
-        drawer_label->setPixmap(pix);
+        desktop_label->setPixmap(pix);
       else
-        drawer_label->clear();
+        desktop_label->clear();
     }
   else
-    drawer_label->clear();
+    desktop_label->clear();
   emit changed();
 }
 
@@ -424,7 +424,7 @@ void ButtonTab::load()
   exe_group->setEnabled(tiles);
   browser_group->setEnabled(tiles);
   wl_group->setEnabled(tiles);
-  drawer_group->setEnabled(tiles);
+  desktop_group->setEnabled(tiles);
 
   c->setGroup("button_tiles");
 
@@ -453,10 +453,10 @@ void ButtonTab::load()
   wl_input->setEnabled(wl_tiles);
   wl_label->setEnabled(wl_tiles);
 
-  bool drawer_tiles = c->readBoolEntry("EnableDrawerTiles", true);
-  drawer_cb->setChecked(drawer_tiles);
-  drawer_input->setEnabled(drawer_tiles);
-  drawer_label->setEnabled(drawer_tiles);
+  bool desktop_tiles = c->readBoolEntry("EnableDesktopButtonTiles", true);
+  desktop_cb->setChecked(desktop_tiles);
+  desktop_input->setEnabled(desktop_tiles);
+  desktop_label->setEnabled(desktop_tiles);
 
   // set kmenu tile
   QString tile = c->readEntry("KMenuTile", "solid_blue");
@@ -523,18 +523,18 @@ void ButtonTab::load()
   wl_input->setCurrentItem(index);
   wl_changed(wl_input->text(index));
 
-  // set drawer tile
-  tile = c->readEntry("DrawerTile", "solid_orange");
+  // set desktop tile
+  tile = c->readEntry("DesktopButtonTile", "solid_orange");
   index = 0;
 
-  for (int i = 0; i < drawer_input->count(); i++) {
-    if (tile == drawer_input->text(i)) {
+  for (int i = 0; i < desktop_input->count(); i++) {
+    if (tile == desktop_input->text(i)) {
       index = i;
       break;
     }
   }
-  drawer_input->setCurrentItem(index);
-  drawer_changed(drawer_input->text(index));
+  desktop_input->setCurrentItem(index);
+  desktop_changed(desktop_input->text(index));
 
   delete c;
 }
@@ -553,14 +553,14 @@ void ButtonTab::save()
   c->writeEntry("EnableBrowserTiles", browser_cb->isChecked());
   c->writeEntry("EnableExeTiles", exe_cb->isChecked());
   c->writeEntry("EnableWindowListTiles", wl_cb->isChecked());
-  c->writeEntry("EnableDrawerTiles", drawer_cb->isChecked());
+  c->writeEntry("EnableDesktopButtonTiles", desktop_cb->isChecked());
 
   c->writeEntry("KMenuTile", kmenu_input->currentText());
   c->writeEntry("URLTile", url_input->currentText());
   c->writeEntry("BrowserTile", browser_input->currentText());
   c->writeEntry("ExeTile", exe_input->currentText());
   c->writeEntry("WindowListTile", wl_input->currentText());
-  c->writeEntry("DrawerTile", drawer_input->currentText());
+  c->writeEntry("DesktopButtonTile", desktop_input->currentText());
 
   c->sync();
 
@@ -576,14 +576,14 @@ void ButtonTab::defaults()
   exe_group->setEnabled(false);
   browser_group->setEnabled(false);
   wl_group->setEnabled(false);
-  drawer_group->setEnabled(false);
+  desktop_group->setEnabled(false);
 
   kmenu_cb->setChecked(true);
   url_cb->setChecked(true);
   browser_cb->setChecked(true);
   exe_cb->setChecked(true);
   wl_cb->setChecked(true);
-  drawer_cb->setChecked(true);
+  desktop_cb->setChecked(true);
 }
 
 void ButtonTab::fill_tile_input()
@@ -595,14 +595,14 @@ void ButtonTab::fill_tile_input()
   browser_input->clear();
   exe_input->clear();
   wl_input->clear();
-  drawer_input->clear();
+  desktop_input->clear();
 
   kmenu_input->insertStringList(tiles);
   url_input->insertStringList(tiles);
   browser_input->insertStringList(tiles);
   exe_input->insertStringList(tiles);
   wl_input->insertStringList(tiles);
-  drawer_input->insertStringList(tiles);
+  desktop_input->insertStringList(tiles);
 }
 
 QStringList ButtonTab::queryAvailableTiles()

@@ -60,8 +60,8 @@ class ButtonTab : public QWidget
   void browser_changed(const QString&);
   void exe_clicked();
   void exe_changed(const QString&);
-  void drawer_clicked();
-  void drawer_changed(const QString&);
+  void desktop_clicked();
+  void desktop_changed(const QString&);
   void wl_clicked();
   void wl_changed(const QString&);
 
@@ -104,11 +104,11 @@ class ButtonTab : public QWidget
   QLabel       *wl_label;
   KComboBox    *wl_input;
 
-  // drawer button-tiles group
-  QGroupBox    *drawer_group;
-  QCheckBox    *drawer_cb;
-  QLabel       *drawer_label;
-  KComboBox    *drawer_input;
+  // desktop button-tiles group
+  QGroupBox    *desktop_group;
+  QCheckBox    *desktop_cb;
+  QLabel       *desktop_label;
+  KComboBox    *desktop_input;
 };
 
 #endif
