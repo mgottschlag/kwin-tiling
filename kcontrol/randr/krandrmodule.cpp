@@ -38,17 +38,27 @@
 #include "krandrmodule.h"
 #include "krandrmodule.moc"
 
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrandr.h>
+
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
-
 extern "C"
+
 {
 	void init_randr()
 	{
 #ifndef XRANDR_STARTUP_HACK
 		KRandRModule::performApplyOnStartup();
 #endif
+	}
+
+	bool test_randr()
+	{
+		if( XRRQueryExtension(qt_xdisplay(), 0, 0 ) )
+			return true;
+		return false;
 	}
 }
 
