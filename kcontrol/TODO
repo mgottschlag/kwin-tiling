@@ -7,65 +7,86 @@ Of course, nothing in this file is set in stone, or is "correct" or "true" for t
 
                  ---These are only ideas.---
 
----------- Various reorganization/renaming stuff ---------------
-* Rename Appearance & Themes to Application Appearance
+                 ---These are only ideas!---
 
-* Move Background, Spalsh Screen, And Screen Saver to Desktop 
+---------- Renaming
 
-* Move Launch Feedback into Desktop/Behavior kcm as another tab.
-
-* Move Theme manger out of KControl as a standalone app (can still be a kcm of course).
-
-* Combine Desktop/Behavior and Desktop/Multiple
-
-* Rename "KDE Wallet" to "Wallet"(people can't differentiate nor care about what is KDE and what's not. It is also irrelevant for the context).
-
-* Rename "Vim Component Configuration" to "Vim Embedding"
-
-* Rename "k3bsetup2" to "CD & DVD Writing". Get it out of KControl!
-
-* Rename "Sony Vaio Laptop Hardware Configuration" to "Sony Vaio Laptop"
-
-* Rename "Display" to "Monitor", see the KCM guidelines
-
-* Rename "Peripherals" to "Hardware". The category X-KDE-settings-hardware is already added and KCMs needs to be converted to it.
-
-* Remove old categories, for example X-KDE-settings-peripherals.
-
-* As William points out, in a lot of cases there's an unnecessary use of 
-"Manager" and "Configuration". We should not state the obvious and remove those parts.
-
-* Move "Power Control/Laptop Battery" to "Hardware"(the only KCM left in that category).
-
-* Convert all options in "Internet & Network/Preferences" to KConfigXT and then remove the KCM.
-
-* Move the laptop KCMs to "Hardware", from "System Administration".
+* Rename "Appearance & Themes" to "Appearance"
 
 * Rename "System Administration" to "System".
 
-* Move "KDE Components/File Manager" out of KControl. It's Konqueror specific.
+* Rename "Display" to "Monitor", see the KCM guidelines
 
-* Remove "KDE Components" and put the KCMs elsewhere, most of them in "System". Wake up: a non KDE hacker can't differentiate between KDE and other parts of the system.
+* Rename "Peripherals" to "Hardware".
+ - remove settings-peripherals.directory
+ - Update kde-settings.menu and remove the Peripherals menu
+ - Convert any kcmmodules that haven't already to X-KDE-settings-hardware
 
-* Move "KDE Performance"(err.. that is Konqueror Performance) out of KControl.
+* Rename password & User Account - "User Account"
 
-* Move "Internet & Network/Web Browser" out of KControl. Those apps(such as Quanta) which needs the configuration functionality can load the specific KCMs into their own configuration dialogs.
+* Rename "Component Chooser" to "Default Applications"  Users want to set the default application handlers, not Choose a component (which they wouldn't have a clue what it was anyway)?
 
-* We must stop differentiating between KDE and System/whatever. People *can't* tell the difference and it only clutters up the interface. KDE is THE computer/system.
+---------- Reorganization/Moving
 
-* The following container: 
-KCMODULECONTAINER("kded, componentchooser, kresources, kcmvim", resources )
-The desktop file is called "kcm_software_components" with "Name=Software Components" and "Categories=X-KDE-settings-system"
+* Move Background, Splash Screen, And Screen Saver to Desktop 
+
+* Move Theme manger out of KControl as a standalone app (can still be a kcm modules code wise of course).
+
+* Move "Power Control/Laptop Battery" to "Hardware" (the only KCM left in that category).  Note this is in kdeutils. It will also remove the top level Power Control so remove that in the settings.menu file
+
+* Move the laptop KCMs to "Hardware", from "System Administration". Note these are in kdeutils.
+
+* Move "User Account¨ to System
+
+* Move Launch Feedback into Desktop/Behavior kcm as another tab.
+
+---------- Removing
+
+* "KDE Components/File Manager" - It's Konqueror specific.
+
+* "Internet & Network/Web Browser/" - It's Konqueror specific.  Those apps(such as Quanta) which needs the configuration functionality can load the specific KCMs into their own configuration dialogs.
+
+* Security & Privacy/Crypto - It's Konqueror specific.
+
+* "KDE Performance" - It's Konqueror Performance.
+
+* Spelling - It is application specific and if they need it they will include the kcm in their configure dialog most (all?) already do.
+
+* Security & Privacy/Privacy - It should be a seperate utility in kdeutils.  It does stuff, not configuring stuff 
+
+---------- Combining Modules
+
+* Combine Desktop/Behavior and Desktop/Multiple
+
+* Move ability to configure Bell to Accessibility then remove "Sound & Multimedia/Bell" since it is a duplicate of the accessibility KCM. How on earth does such a thing slip through? :)
+
+* Move Window-Specific Settings into Window Behavior as another tab or Advanced?
+
+* Make a new "User Account" group with
+ - Session Manager
+ - System Administration/Paths
+ - Component Chooser (after renamed to "Default Applications")
 
 * The following container:
 KCMODULECONTAINER("kcmfontinst, fonts", fonts )
 The desktop file is called "kcm_fonts" with "Name=Fonts" and "Categories=X-KDE-settings-appearance"
 
-* Remove "System Administration/Paths", convert the values to KConfEdit. Or make it part of an advanced tab in User Account (regedit is bad!)
 
-* Move Component Chooser to a tab in User Account.
+---------- Various other stuff
 
-* Remove "Sound & Multimedia/Bell" since it is a duplicate of the accessibility KCM. How on earth does such a thing slip through? :)  First move ability to configure Bell to Accessibility
+* In a lot of cases there's an unnecessary use of "Manager" and "Configuration". We should not state the obvious and remove those parts.
+
+* Rename "KDE Wallet" to "Wallet"(people can't differentiate nor care about what is KDE and what's not. It is also irrelevant for the context).
+
+* Remove old categories, for example X-KDE-settings-peripherals.
+
+* Convert all options in "Internet & Network/Preferences" to KConfigXT and then remove the KCM.
+
+* Remove "KDE Components" and put the KCMs elsewhere, most of them in "System". Wake up: a non KDE hacker can't differentiate between KDE and other parts of the system.
+
+* We must stop differentiating between KDE and System/whatever. People *can't* tell the difference and it only clutters up the interface. KDE is THE computer/system.
+
+// Not sure where these next three are is this OLD and from KDE2 and has already been done?
 
 * Remove "Internet & Network/Email". It is replaced by the new kcm_useraccount
 
@@ -73,31 +94,23 @@ The desktop file is called "kcm_fonts" with "Name=Fonts" and "Categories=X-KDE-s
 
 * Remove "Privacy & Crypto/Passwords". It is replaced by the new kcm_useraccount. Probably. (awaiting comment from Aaron)
 
-* With the above changes top level category "KDE Components" is gone, or nearly gone. Nuke it fully.
-
-* (top level category "Power Control" is gone)
-
 * Tell Konqi to go burn the 11 tabs of keyboard options(5 KCMs). Because it is.. bizarre. Two KCMs with two tabs each is absolute maximum. One KCM with three tabs is quite ok too.
 
-* Put some common sense into phrases used here and there, Comments fields for example. Don't use "...", "etc", paranteses, exlamation marks, smilies(haven't found any though). Don't phrase things like "Y configurates code part X"......
-
-* Why must "Spell Checking" be in KControl? Isn't it enough that it's available in all applications which have spell checking? When would the user turn to KControl and not the app which it is used? (That KSpell is highly integrated between applications is a developers view, not a user's..)
+* Put some common sense into phrases used here and there, Comments fields for example. Don't use "etc", paranteses, exlamation marks, smilies(haven't found any though). Don't phrase things like "Y configurates code part X"......
 
 * Split "Sound & Multimedia/Sound System" into two KCMs(it currently consists of two tabs) and combine those two with "System Notifications" with the KCMODULECONTAINER macro into one KCM called "Sound System". Lots of the options in Sound System can be turned into KConfEdit options, mesa thinks.
-
-
 
 
 ---------Various technical, broad design shifts: --------------------
 
 * Move the various KCMs in kdebase/kcontrol/* out to their respective app, as per the KCM Guidelines.
 
-* Convert KCMs to use Designer files
+* Convert KCMs to use ui Designer files
 
 * Namespace the KCMs desktop files to "kcm_*.desktop", as per KCM Guidelines.
 
 * A lot, perhaps even the majority, violate the HIG by not displaying 
-properly in 800x600. For a start, someone needs to iterate through all KCMs and file bug reports for each missbehaving. See the KDE UI Guidelines.
+properly in 800x600 (is it 800x600 or 1024x768?). For a start, someone needs to iterate through all KCMs and file bug reports for each missbehaving. See the KDE UI Guidelines.
 
 * KCMs needs to be converted to KConfigXT and use the global kdeglobals KConfigXT object.
 
@@ -106,13 +119,9 @@ If a binary is not in $PATH it is the distributors fault and not KDE. The reason
 
 * Rewrite kcmshell to the new KCModuleProxy and fix bugs. Move it to kdelibs.
 
-
-
 --------------------------------------------------------------------------
 
 Below is some old stuff, which was in this file.
-
-
 
 
 File Browsing -> Filemanager
@@ -124,7 +133,6 @@ Other: This tab should be removed: "Show network operations in a single window" 
 Help -> Index
 -------------
 This looks a bit crowdy. Adding a second Tab "Program Locations" which appears behind the "General tab" might be a good idea as the paths should be set automagically and user-interaction concerning this should only be necessary in case of failure.
-
 
 Look & Feel -> Desktop
 ----------------------
@@ -158,8 +166,3 @@ All the new "Add"-checkboxes are only there for finetuning. Most of the time the
 w/o the need to tune them this way. Better Solution: Remove the Customize-Group-box and simply add a Button "Customize ..." below the Text: "Current User Agent String: Mozilla/5.0 (comp.; Konq.orwhateveritis)".
 After pressing the "Customize"-Button a dialog should pop up which contains all the nice
 "Add"-checkboxes which have been added recently.
-
-Move Konsole/
------------------------------------------------
-Doesn't change anything system-wide aka require root permission.
-Perhaps it is out of place in KControl completely?
