@@ -52,6 +52,7 @@
 #include <qfileinfo.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
+#include <qdir.h>
 #undef Below
 #undef Above
 #include <qslider.h>
@@ -477,12 +478,10 @@ void MouseConfig::save()
 
   settings->apply();
   settings->save(config);
-  if (settings->largeCursor != wasLargeCursor) {
-    KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
-  }
-  if (settings->whiteCursor != wasWhiteCursor) {
-    KMessageBox::information(this, i18n("KDE must be restarted for the cursor color change to take effect"), QString::null, "DoNotRemindCursor");
-  }
+  fixCursorFile();
+
+  if (settings->largeCursor != wasLargeCursor || settings->whiteCursor != wasWhiteCursor)
+      KMessageBox::information(this, i18n("KDE must be restarted for the change in cursor size or color to take effect"), QString::null, "DoNotRemindCursor");
 
   KConfig ac("kaccessrc", false);
 
@@ -501,6 +500,46 @@ void MouseConfig::save()
 
   KCModule::changed(false);
 
+}
+
+void MouseConfig::fixCursorFile()
+{
+    // Make sure we have the 'font' resource dir registered and can find the
+    // override dir.
+    //
+    // Next, if the user wants large cursors, copy the font
+    // cursor_large.pcf.gz to (localkdedir)/share/fonts/override/cursor.pcf.gz.
+    // Else remove the font cursor.pcf.gz from (localkdedir)/share/fonts/override.
+    //
+    // Run mkfontdir to update fonts.dir in that dir.
+
+    KGlobal::dirs()->addResourceType("font", "share/fonts/");
+    KStandardDirs::makeDir(QDir::homeDirPath() + "/.fonts/kde-override");
+    QString overrideDir = QDir::homeDirPath() + "/.fonts/kde-override/";
+
+    KURL installedFont;
+    installedFont.setPath(overrideDir + "cursor.pcf.gz");
+
+    KURL source;
+
+    if (!settings->largeCursor && !settings->whiteCursor)
+        unlink(QFile::encodeName(installedFont.path()));
+    else if (settings->largeCursor && !settings->whiteCursor)
+        source.setPath( locate("data", "kcminput/cursor_large_black.pcf.gz") );
+    else if (settings->largeCursor && settings->whiteCursor)
+        source.setPath( locate("data", "kcminput/cursor_large_white.pcf.gz") );
+    else if (!settings->largeCursor && settings->whiteCursor)
+        source.setPath( locate("data", "kcminput/cursor_small_white.pcf.gz") );
+
+    KIO::NetAccess::file_copy(source, installedFont, -1, true);
+
+    QString cmd = KGlobal::dirs()->findExe("mkfontdir");
+    if (!cmd.isEmpty())
+    {
+        KProcess p;
+        p << cmd << overrideDir;
+        p.start(KProcess::Block);
+    }
 }
 
 void MouseConfig::defaults()
@@ -727,38 +766,6 @@ void MouseSettings::apply()
       m_handedNeedsApply = false;
   }
 
-  // Make sure we have the 'font' resource dir registered and can find the
-  // override dir.
-  //
-  // Next, if the user wants large cursors, copy the font
-  // cursor_large.pcf.gz to (localkdedir)/share/fonts/override/cursor.pcf.gz.
-  // Else remove the font cursor.pcf.gz from (localkdedir)/share/fonts/override.
-  //
-  // Run mkfontdir to update fonts.dir in that dir.
-
-  KGlobal::dirs()->addResourceType("font", "share/fonts/");
-  QString overrideDir = locateLocal("font", "override/");
-  QString font_large_black = locate("data", "kcminput/cursor_large_black.pcf.gz");
-  QString font_large_white = locate("data", "kcminput/cursor_large_white.pcf.gz");
-  QString font_small_white = locate("data", "kcminput/cursor_small_white.pcf.gz");
-  QString installedFont = overrideDir + "/cursor.pcf.gz";
-
-  if (!largeCursor && !whiteCursor)
-    unlink(QFile::encodeName(installedFont));
-  else if (largeCursor && !whiteCursor)
-    KIO::NetAccess::copy(font_large_black, installedFont);
-  else if (largeCursor && whiteCursor)
-    KIO::NetAccess::copy(font_large_white, installedFont);
-  else if (!largeCursor && whiteCursor)
-    KIO::NetAccess::copy(font_small_white, installedFont);
-
-  QString cmd = KGlobal::dirs()->findExe("mkfontdir");
-  if (!cmd.isEmpty())
-  {
-    KProcess p;
-    p << cmd << overrideDir;
-    p.start(KProcess::Block);
-  }
 }
 
 void MouseSettings::save(KConfig *config)

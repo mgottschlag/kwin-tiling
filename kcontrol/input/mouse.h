@@ -85,7 +85,7 @@ class MouseConfig : public KCModule
 public:
   MouseConfig(QWidget *parent=0, const char* name=0);
   ~MouseConfig();
-  
+
   void save();
   void load();
   void defaults();
@@ -110,6 +110,8 @@ private:
   void setThreshold(int);
   void setHandedness(int);
 
+  void fixCursorFile();
+
   KIntNumInput *accel;
   KIntNumInput *thresh;
   KIntNumInput *doubleClickInterval;
@@ -126,12 +128,12 @@ private:
 //  QCheckBox *cbVisualActivate;
 //  QCheckBox *cbCursor;
 //  QCheckBox *cbLargeCursor;
-    
+
   QTabWidget *tabwidget;
   QWidget *tab2;
   KMouseDlg* tab1;
   MouseSettings *settings;
-    
+
   KConfig *config;
 
  QCheckBox *mouseKeys;
