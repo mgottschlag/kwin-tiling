@@ -38,6 +38,8 @@
 #include <ksimpleconfig.h>
 #include <kcharsets.h>
 #include <kdialog.h>
+#include <dcopclient.h>
+#include <kapp.h>
 
 #include "klocaleadv.h"
 #include "klangcombo.h"
@@ -269,6 +271,9 @@ void KLocaleConfig::save()
   config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
+
+  DCOPClient *dcc = kapp->dcopClient();
+  dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
 }
 
 void KLocaleConfig::defaults()
