@@ -112,7 +112,7 @@ QString SMServerConfig::quickHelp() const
   return i18n("<h1>Session Manager</h1>"
     " You can configure the session manager here."
     " This includes options such as whether or not the session exit (logout)"
-    " should be confirmed, whether the session should be saved when exitting"
+    " should be confirmed, whether the session should be saved when exiting"
     " and whether the computer should be automatically shut down after session"
     " exit by default.");
 }
