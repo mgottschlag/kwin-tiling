@@ -75,15 +75,16 @@ signals:
 
 
 private:
-
+  
   bool         _changed;
   ProxyWidget *_module;
-  QVBox       *_embedFrame;
   QXEmbed     *_embedWidget;
   KProcess    *_rootProcess;
   QVBoxLayout *_embedLayout;
+  QVBox       *_embedFrame;
 
 };
+
 class ConfigModuleList : public QPtrList<ConfigModule>
 {
 public:
