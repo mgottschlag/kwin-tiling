@@ -273,7 +273,7 @@ short PMenuItem::parse( QFileInfo *fi, PMenu *menu )
       if( fi_config.isReadable() ) 
 	{
 	  KConfig kconfig(file_name);
-	  kconfig.setGroup("KDE Desktop Entry");
+          kconfig.setDesktopGroup();
 	  comment         = kconfig.readEntry("Comment");
 	  text_name       = kconfig.readEntry("Name", text_name);
 	  pixmap_name     = kconfig.readEntry("MiniIcon");
@@ -546,7 +546,7 @@ void PMenuItem::writeConfig( QDir dir )
     return;
   config.close();
   KConfig kconfig(file);
-  kconfig.setGroup("KDE Desktop Entry");
+  kconfig.setDesktopGroup();
   kconfig.writeEntry("Comment", comment, TRUE, FALSE, TRUE );
   kconfig.writeEntry("Icon", big_pixmap_name );
   kconfig.writeEntry("MiniIcon", pixmap_name );
@@ -805,7 +805,7 @@ short PMenu::parse( QDir d )
   if( dir_fi.isReadable() )
     {
       KConfig kconfig(file);
-      kconfig.setGroup("KDE Desktop Entry");
+      kconfig.setDesktopGroup();
       QString order = kconfig.readEntry("SortOrder");
       int len = order.length();
       int j,i;
@@ -1009,7 +1009,7 @@ void PMenu::writeConfig( QDir base_dir, PMenuItem *parent_item)
     return;
   config.close();
   KConfig kconfig(file);
-  kconfig.setGroup("KDE Desktop Entry");
+  kconfig.setDesktopGroup();
   kconfig.writeEntry("SortOrder", sort_order);
   if( parent_item )
     {

@@ -268,7 +268,7 @@ void KMenuEdit::loadMenus()
   if( fi.isReadable() )
     {
       KConfig kconfig(fi.absFilePath() );
-      kconfig.setGroup("KDE Desktop Entry");
+      kconfig.setDesktopGroup();
       pers_menu_name = kconfig.readEntry("Name");
     }
   // default menu
@@ -286,7 +286,7 @@ void KMenuEdit::loadMenus()
   if( fi.isReadable() )
     {
       KConfig kconfig(fi.absFilePath() );
-      kconfig.setGroup("KDE Desktop Entry");
+      kconfig.setDesktopGroup();
       glob_menu_name = kconfig.readEntry("Name");
     }
   if( fi.isWritable() )
@@ -314,7 +314,7 @@ void KMenuEdit::saveMenus()
   if( fi.isWritable() )
     {
       KConfig kconfig(fi.absFilePath() );
-      kconfig.setGroup("KDE Desktop Entry");
+      kconfig.setDesktopGroup();
       kconfig.writeEntry("Name", pers_menu_name, TRUE, FALSE, TRUE);
     }
   // default menu
@@ -329,7 +329,7 @@ void KMenuEdit::saveMenus()
   if( fi.isWritable() )
     {
       KConfig kconfig(fi.absFilePath() );
-      kconfig.setGroup("KDE Desktop Entry");
+      kconfig.setDesktopGroup();
       kconfig.writeEntry("Name", glob_menu_name, TRUE, FALSE, TRUE);
     }
   QApplication::restoreOverrideCursor();
@@ -401,7 +401,7 @@ void KMenuEdit::reloadFileTypes()
 	  config.close(); // kalle
 	  // kalle	  QTextStream st( (QIODevice *) &config);
 	  KConfig kconfig(fi->absFilePath());
-	  kconfig.setGroup("KDE Desktop Entry");
+          kconfig.setDesktopGroup();
 	  //kconfig.readEntry("WmCommand");
 	  //debug("type = %s", (const char *) kconfig.readEntry("MimeType") );
 	  global_file_types->inSort( kconfig.readEntry("MimeType") );

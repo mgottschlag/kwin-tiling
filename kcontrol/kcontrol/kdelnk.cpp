@@ -6,7 +6,7 @@ KKdelnk::KKdelnk( const char* pFile )
 {  
   parseConfigFiles();
 
-  setGroup("KDE Desktop Entry");
+  setDesktopGroup();
 }
 
 
