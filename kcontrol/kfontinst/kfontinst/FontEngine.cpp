@@ -853,7 +853,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
  
     bool status=false;
 
-    if(mask&PREVIEW || mask&XLFD)
+    if(TEST==mask || mask&PREVIEW || mask&XLFD)
     {
         if(FT_New_Face(itsFt.library, file.local8Bit(), 0, &itsFt.face))
             return false;
@@ -861,147 +861,151 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
             itsFt.open=true;
     }
 
-    gzFile f=gzopen(file.local8Bit(), "r");
- 
-    if(f)
+    if(TEST==mask)
+        status=true; // If we've reached this point, then the FT_New_Face worked!
+    else
     {
-        char          data[constHeaderMaxLen];
-        unsigned char *hdr=(unsigned char *)data;
-
-        int bytesRead=gzread(f, data, constHeaderMaxLen);
-        gzclose(f);
+        gzFile f=gzopen(file.local8Bit(), "r");
  
-        data[bytesRead-1]='\0';
-
-        bool binary=(hdr[0]==0x80 && hdr[1]==0x01) || (hdr[0]==0x01 && hdr[1]==0x80);
-
-        if(bytesRead>2 && ( binary || (strstr(data, "%!")==data) ) )
+        if(f)
         {
-            const char *header,
-                       *str,
-                       *dict;
-            char       *end;
-            bool       foundName=false,
-                       foundFamily=false,
-                       foundPs=false,
-                       foundNotice=false,
-                       foundEncoding=false,
-                       familyIsFull=false;
+            char          data[constHeaderMaxLen];
+            unsigned char *hdr=(unsigned char *)data;
 
-            header=binary ? &data[6] : data;
+            int bytesRead=gzread(f, data, constHeaderMaxLen);
+            gzclose(f);
+ 
+            data[bytesRead-1]='\0';
 
-            // Look for start of 'dict' section...
-            if((dict=strstr(header, "dict begin"))!=NULL)
+            bool binary=(hdr[0]==0x80 && hdr[1]==0x01) || (hdr[0]==0x01 && hdr[1]==0x80);
+
+            if(bytesRead>2 && ( binary || (strstr(data, "%!")==data) ) )
             {
-                // Now look for the end of the 'dict' section
-                if((end=strstr(dict, "currentdict end"))!=NULL)
-                    *end='\0';  // If found, then set to NULL - this should speed up the following strstr's
+                const char *header,
+                           *str,
+                           *dict;
+                char       *end;
+                bool       foundName=false,
+                           foundFamily=false,
+                           foundPs=false,
+                           foundNotice=false,
+                           foundEncoding=false,
+                           familyIsFull=false;
 
-                // Having found the 'dict' section, now try to read the data...
+                header=binary ? &data[6] : data;
 
-                if(NULL!=(str=getTokenT1(dict, "/Encoding")))
+                // Look for start of 'dict' section...
+                if((dict=strstr(header, "dict begin"))!=NULL)
                 {
-                    itsEncoding=str;
-                    foundEncoding=true;
-                }
+                    // Now look for the end of the 'dict' section
+                    if((end=strstr(dict, "currentdict end"))!=NULL)
+                        *end='\0';  // If found, then set to NULL - this should speed up the following strstr's
 
-                if((mask&NAME || mask&XLFD || mask&PROPERTIES) && !foundName && NULL!=(str=getReadOnlyTokenT1(dict, "/FullName")))
-                {
-                    itsFullName=str;
-                    foundName=true;
-                }
+                    // Having found the 'dict' section, now try to read the data...
 
-                if((mask&NAME || mask&XLFD || mask&PROPERTIES) && NULL!=(str=getTokenT1(dict, "/FontName")))
-                {
-                    itsPsName=str[0]=='/' ? &str[1] : str;
-                    foundPs=true;
+                    if(NULL!=(str=getTokenT1(dict, "/Encoding")))
+                    {
+                        itsEncoding=str;
+                        foundEncoding=true;
+                    }
+
+                    if((mask&NAME || mask&XLFD || mask&PROPERTIES) && !foundName && NULL!=(str=getReadOnlyTokenT1(dict, "/FullName")))
+                    {
+                        itsFullName=str;
+                        foundName=true;
+                    }
+
+                    if((mask&NAME || mask&XLFD || mask&PROPERTIES) && NULL!=(str=getTokenT1(dict, "/FontName")))
+                    {
+                        itsPsName=str[0]=='/' ? &str[1] : str;
+                        foundPs=true;
+                    }
+
+                    if(mask&NAME || mask&PROPERTIES || mask&XLFD)
+                    {
+                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/FamilyName")))
+                        {
+                            itsFamily=str;
+                            foundFamily=true;
+                        }
+                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/Weight")))
+                            itsWeight=strToWeight(str);
+                        if(NULL!=(str=getTokenT1(dict, "/ItalicAngle")))
+                        {
+                            itsItalicAngle=atof(str);
+                            itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
+                        }
+                    }
+
+                    if(mask&XLFD)
+                    {
+                        if(NULL!=(str=getTokenT1(dict, "/isFixedPitch")))
+                            itsSpacing=strstr(str, "false")==str ? SPACING_PROPORTIONAL : SPACING_MONOSPACED;
+                        if(NULL!=(str=getReadOnlyTokenT1(dict, "/Notice")))
+                        {
+                            const TT1AndSpdFoundryMap *map;
+
+                            itsFoundry=constDefaultFoundry;
+                            for(map=constT1AndSpdFoundries; NULL != map->foundry; map++)
+                                if(strstr(str, map->noticeStr)!=NULL)
+                                {
+                                    itsFoundry=map->foundry;
+                                    break;
+                                }
+
+                            foundNotice=true;
+                        }
+                    }
+
+                    if(mask&XLFD && !foundNotice)
+                    {
+                        foundNotice=true;
+                        itsFoundry=constDefaultFoundry;
+                    }
                 }
 
                 if(mask&NAME || mask&PROPERTIES || mask&XLFD)
-                {
-                    if(NULL!=(str=getReadOnlyTokenT1(dict, "/FamilyName")))
+                    if(!foundName && foundPs)  // The Hershey fonts don't have the FullName or FamilyName parameters!...
                     {
-                        itsFamily=str;
+                        itsFullName=itsPsName;
+                        itsFullName.replace(QRegExp("\\-"), " ");
+                        foundName=true;
+                    }
+
+                if(mask&PROPERTIES || mask&XLFD)
+                    if(!foundFamily && foundName)
+                    {
+                        itsFamily=itsFullName;
+                        familyIsFull=true;
                         foundFamily=true;
                     }
-                    if(NULL!=(str=getReadOnlyTokenT1(dict, "/Weight")))
-                        itsWeight=strToWeight(str);
-                    if(NULL!=(str=getTokenT1(dict, "/ItalicAngle")))
-                    {
-                        itsItalicAngle=atof(str);
-                        itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-                    }
-                }
 
-                if(mask&XLFD)
-                {
-                    if(NULL!=(str=getTokenT1(dict, "/isFixedPitch")))
-                        itsSpacing=strstr(str, "false")==str ? SPACING_PROPORTIONAL : SPACING_MONOSPACED;
-                    if(NULL!=(str=getReadOnlyTokenT1(dict, "/Notice")))
-                    {
-                        const TT1AndSpdFoundryMap *map;
-
-                        itsFoundry=constDefaultFoundry;
-                        for(map=constT1AndSpdFoundries; NULL != map->foundry; map++)
-                            if(strstr(str, map->noticeStr)!=NULL)
-                            {
-                                itsFoundry=map->foundry;
-                                break;
-                            }
-
-                        foundNotice=true;
-                    }
-                }
+                if((mask&XLFD || mask&NAME) && foundName)
+                    itsWidth=strToWidth(itsFullName);
 
                 if(mask&XLFD && !foundNotice)
                 {
                     foundNotice=true;
                     itsFoundry=constDefaultFoundry;
                 }
+
+                if(foundName && (mask&PROPERTIES || mask&XLFD || mask&NAME))
+                    if(ITALIC_ITALIC==itsItalic)
+                    {
+                        const char *constOblique="Oblique";
+
+                        int pos=itsFullName.find(constOblique);
+
+                        if(-1!=pos && pos==(int)(itsFullName.length()-strlen(constOblique)))
+                            itsItalic=ITALIC_OBLIQUE;
+                    }
+
+                if(foundName && foundFamily)
+                    itsFamily=createFamilyName(familyIsFull ? QString::null : itsFamily, itsFullName);
+
+                status= ( (mask&NAME && !foundName) || (mask&PROPERTIES && (!foundPs || !foundFamily)) ||
+                        (mask&XLFD && (!foundNotice || !foundName || !foundEncoding)) ) ? false : true;
             }
-
-            if(mask&NAME || mask&PROPERTIES || mask&XLFD)
-                if(!foundName && foundPs)  // The Hershey fonts don't have the FullName or FamilyName parameters!...
-                {
-                    itsFullName=itsPsName;
-                    itsFullName.replace(QRegExp("\\-"), " ");
-                    foundName=true;
-                }
-
-            if(mask&PROPERTIES || mask&XLFD)
-                if(!foundFamily && foundName)
-                {
-                    itsFamily=itsFullName;
-                    familyIsFull=true;
-                    foundFamily=true;
-                }
-
-            if((mask&XLFD || mask&NAME) && foundName)
-                itsWidth=strToWidth(itsFullName);
-
-            if(mask&XLFD && !foundNotice)
-            {
-                foundNotice=true;
-                itsFoundry=constDefaultFoundry;
-            }
-
-            if(foundName && (mask&PROPERTIES || mask&XLFD || mask&NAME))
-                if(ITALIC_ITALIC==itsItalic)
-                {
-                    const char *constOblique="Oblique";
-
-                    int pos=itsFullName.find(constOblique);
-
-                    if(-1!=pos && pos==(int)(itsFullName.length()-strlen(constOblique)))
-                        itsItalic=ITALIC_OBLIQUE;
-                }
-
-
-            if(foundName && foundFamily)
-                itsFamily=createFamilyName(familyIsFull ? QString::null : itsFamily, itsFullName);
-
-            status= ( (mask&NAME && !foundName) || (mask&PROPERTIES && (!foundPs || !foundFamily)) ||
-                    (mask&XLFD && (!foundNotice || !foundName || !foundEncoding)) ) ? false : true;
         }
     }
 
@@ -1049,128 +1053,132 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
     if(status)
         itsFt.open=true;
 
-    if(status)
+    if(TEST!=mask && status)
     {
-        void *table=NULL;
-
-        if(mask&NAME || mask&PROPERTIES)
-        {
+        if(NAME==mask)  // If we only want name, then ony read this...
             itsFullName=lookupNameTT(TT_NAME_ID_FULL_NAME);
-            itsFamily=lookupNameTT(TT_NAME_ID_FONT_FAMILY);
-
-            //
-            // Algorithm taken from ttf2pt1.c ...
-            //
-            QString psName=lookupNameTT(TT_NAME_ID_PS_NAME);
-
-            if(QString::null==psName)
-                psName=itsFullName;
-
-            itsPsName=psName;
-
-            // Must not start with a digit
-            if(QString::null!=itsPsName)
-            {
-                unsigned int ch,
-                             ch2;
-
-                if(itsPsName[0].isDigit())
-                    itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
-
-                for(ch=1; ch<itsPsName.length(); ++ch)
-                    if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
-                        for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
-                            itsPsName[ch2]=itsPsName[ch2+1];
-            }
-
-            bool gotItalic=false;
-
-            if(NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
-            {
-                itsItalic=ITALIC_NONE;
-                itsItalicAngle=0;
-            }
-            else
-            {
-                struct TFixed
-                {
-                    TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
-
-                     short upper,
-                           lower;
-
-                     float value() { return upper+(lower/65536.0); }
-                };
-
-                gotItalic=true;
-                itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
-                itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
-            }
-
-            if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-            {
-                itsWeight=WEIGHT_UNKNOWN;
-                if(!gotItalic)
-                {
-                    itsItalicAngle=0;
-                    itsItalic=ITALIC_NONE;
-                }
-            }
-            else
-            {
-                itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
-                if(!gotItalic)
-                {
-                    itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
-                    itsItalicAngle=ITALIC_ITALIC==itsItalic ? -12 : 0 ; // Hmm...
-                }
-            }
-
-            if(itsItalicAngle>45.0 || itsItalicAngle<-45.0)
-                itsItalicAngle=0.0;
-
- 
-            if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-                itsWidth=WIDTH_UNKNOWN;
-            else
-                itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
-        }
-
-        if(mask&XLFD)
+        else
         {
-            const TTtfFoundryMap *map;
-            char                 code[5];
+            void *table=NULL;
 
-            if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
-                code[0]=code[1]=code[2]=code[3]=code[4]='-';
-            else
+            if(mask&NAME || mask&PROPERTIES)
             {
-                code[0]=toupper(((TT_OS2*)table)->achVendID[0]);
-                code[1]=toupper(((TT_OS2*)table)->achVendID[1]);
-                code[2]=toupper(((TT_OS2*)table)->achVendID[2]);
-                code[3]=toupper(((TT_OS2*)table)->achVendID[3]);
-                code[4]='\0';
+                itsFullName=lookupNameTT(TT_NAME_ID_FULL_NAME);
+                itsFamily=lookupNameTT(TT_NAME_ID_FONT_FAMILY);
+
+                //
+                // Algorithm taken from ttf2pt1.c ...
+                //
+                QString psName=lookupNameTT(TT_NAME_ID_PS_NAME);
+
+                if(QString::null==psName)
+                    psName=itsFullName;
+
+                itsPsName=psName;
+
+                // Must not start with a digit
+                if(QString::null!=itsPsName)
+                {
+                    unsigned int ch,
+                                 ch2;
+
+                    if(itsPsName[0].isDigit())
+                        itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
+
+                    for(ch=1; ch<itsPsName.length(); ++ch)
+                        if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
+                            for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
+                                itsPsName[ch2]=itsPsName[ch2+1];
+                }
+
+                bool gotItalic=false;
+
+                if(NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
+                {
+                    itsItalic=ITALIC_NONE;
+                    itsItalicAngle=0;
+                }
+                else
+                {
+                    struct TFixed
+                    {
+                        TFixed(unsigned long v) : upper(v>>16), lower(v&0xFFFF) {}
+
+                         short upper,
+                               lower;
+
+                         float value() { return upper+(lower/65536.0); }
+                    };
+
+                    gotItalic=true;
+                    itsItalicAngle=((TFixed)((TT_Postscript*)table)->italicAngle).value();
+                    itsItalic=itsItalicAngle== 0.0f ? ITALIC_NONE : ITALIC_ITALIC;
+                }
+
+                if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
+                {
+                    itsWeight=WEIGHT_UNKNOWN;
+                    if(!gotItalic)
+                    {
+                        itsItalicAngle=0;
+                        itsItalic=ITALIC_NONE;
+                    }
+                }
+                else
+                {
+                    itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
+                    if(!gotItalic)
+                    {
+                        itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
+                        itsItalicAngle=ITALIC_ITALIC==itsItalic ? -12 : 0 ; // Hmm...
+                    }
+                }
+
+                if(itsItalicAngle>45.0 || itsItalicAngle<-45.0)
+                    itsItalicAngle=0.0;
+ 
+                if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
+                    itsWidth=WIDTH_UNKNOWN;
+                else
+                    itsWidth=mapWidthTT(((TT_OS2*)table)->usWidthClass);
             }
 
-            if(NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
-                itsSpacing=SPACING_PROPORTIONAL;
-            else
-                itsSpacing=((TT_Postscript*)table)->isFixedPitch ? SPACING_MONOSPACED : SPACING_PROPORTIONAL;
-            
-            unsigned int slen=strlen(code);
+            if(mask&XLFD)
+            {
+                const TTtfFoundryMap *map;
+                char                 code[5];
 
-            itsFoundry=constDefaultFoundry;
-
-            for(map=constTtfFoundries; NULL!=map->vendorId; map++)
-                if(memcmp(map->vendorId, code, slen)==0)
+                if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
+                    code[0]=code[1]=code[2]=code[3]=code[4]='-';
+                else
                 {
-                    itsFoundry=map->foundry;
-                    break;
+                    code[0]=toupper(((TT_OS2*)table)->achVendID[0]);
+                    code[1]=toupper(((TT_OS2*)table)->achVendID[1]);
+                    code[2]=toupper(((TT_OS2*)table)->achVendID[2]);
+                    code[3]=toupper(((TT_OS2*)table)->achVendID[3]);
+                    code[4]='\0';
                 }
-        }
 
-        if(mask&NAME || mask&PROPERTIES)
-            itsFamily=createFamilyName(itsFamily, itsFullName);
+                if(NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_post)))
+                    itsSpacing=SPACING_PROPORTIONAL;
+                else
+                    itsSpacing=((TT_Postscript*)table)->isFixedPitch ? SPACING_MONOSPACED : SPACING_PROPORTIONAL;
+            
+                unsigned int slen=strlen(code);
+
+                itsFoundry=constDefaultFoundry;
+
+                for(map=constTtfFoundries; NULL!=map->vendorId; map++)
+                    if(memcmp(map->vendorId, code, slen)==0)
+                    {
+                        itsFoundry=map->foundry;
+                        break;
+                    }
+            }
+
+            if(mask&NAME || mask&PROPERTIES)
+                itsFamily=createFamilyName(itsFamily, itsFullName);
+        }
     }
 
     return status;
@@ -1709,6 +1717,9 @@ QStringList CFontEngine::getEncodingsSpd()
 bool CFontEngine::openFontBmp(const QString &file, unsigned short mask)
 {
     itsFoundry=constDefaultFoundry;
+
+    if(TEST==mask)
+        mask=XLFD;
 
     if(isAPcf(file.local8Bit()))
         return openFontPcf(file, mask);
