@@ -143,11 +143,9 @@ void CfgEmailClient::load(KConfig *)
 {
 	QString emailClient = pSettings->getSetting(KEMailSettings::ClientProgram);
 	bool useKMail = (emailClient.isEmpty());
-	bool useKontact = (emailClient == "kontact");
 
 	kmailCB->setChecked(useKMail);
-	kontactCB->setChecked(useKontact);
-    otherCB->setChecked(!useKMail && !useKontact );
+	otherCB->setChecked(!useKMail);
 	txtEMailClient->setText(emailClient);
 	txtEMailClient->setFixedHeight(txtEMailClient->sizeHint().height());
 	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
@@ -191,11 +189,6 @@ void CfgEmailClient::save(KConfig *)
 	if (kmailCB->isChecked())
 	{
 		pSettings->setSetting(KEMailSettings::ClientProgram, QString::null);
-		pSettings->setSetting(KEMailSettings::ClientTerminal, "false");
-	}
-	else if (kontactCB->isChecked())
-	{
-		pSettings->setSetting(KEMailSettings::ClientProgram, "kontact");
 		pSettings->setSetting(KEMailSettings::ClientTerminal, "false");
 	}
 	else
