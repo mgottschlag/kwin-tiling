@@ -555,7 +555,7 @@ void KColorScheme::readScheme( int index )
 
       // Colours from the 40-colour palette.
       QColor c1(  0, 128, 128);
-      QColor c2(195, 195, 195);
+      QColor c2(220, 220, 220);
       QColor c3(  0,   0, 192);
       QColor c4(128,   0, 128);
 
@@ -573,8 +573,8 @@ void KColorScheme::readScheme( int index )
       cs->aBlend      = c1;
       cs->button      = c2;
       cs->buttonTxt   = cs->txt;
-      cs->aTitleBtn   = gray;
-      cs->iTitleBtn   = gray;
+      cs->aTitleBtn   = white;
+      cs->iTitleBtn   = white;
       cs->link        = c3;
       cs->visitedLink = c4;
 
