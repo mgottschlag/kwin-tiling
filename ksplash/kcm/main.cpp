@@ -61,7 +61,7 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *name, const QStri
   QHBoxLayout *box = new QHBoxLayout(this, 0, 0);
   box->addWidget(mInstaller);
 #endif
-  connect( mInstaller, SIGNAL(changed(bool)), SLOT(setChanged(bool)) );
+  connect( mInstaller, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 }
 
 KSplashThemeMgr::~KSplashThemeMgr()
