@@ -134,7 +134,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_comboBlend->insertItem(i18n("Pipecross"));
    m_comboBlend->insertItem(i18n("Elliptic"));
    m_comboBlend->insertItem(i18n("Intensity"));
-   m_comboBlend->insertItem(i18n("Saturatation"));
+   m_comboBlend->insertItem(i18n("Saturation"));
    m_comboBlend->insertItem(i18n("Contrast"));
    m_comboBlend->insertItem(i18n("Hue Shift"));
 
