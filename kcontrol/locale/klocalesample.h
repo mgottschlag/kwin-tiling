@@ -44,6 +44,7 @@ private:
   QLabel *moneySample;
   QLabel *timeSample;
   QLabel *dateSample;
+  QLabel *dateShortSample;
 };
 
 #endif

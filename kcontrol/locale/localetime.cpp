@@ -56,7 +56,7 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   gbox = new QGroupBox(this, i18n("Date && Time"));
   tl->addWidget(gbox);
 
-  QGridLayout *tl1 = new QGridLayout(gbox, 2, 4, 5);
+  QGridLayout *tl1 = new QGridLayout(gbox, 3, 4, 5);
   tl1->addRowSpacing(0, 15);
   tl1->addRowSpacing(4, 10);
   tl1->addColSpacing(0, 10);
@@ -74,6 +74,12 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edDateFmt, 2, 2);
+
+  label = new QLabel("1", gbox, i18n("Short date format"));
+  edDateFmtShort = new QLineEdit(gbox);
+  connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
+  tl1->addWidget(label, 3, 1);
+  tl1->addWidget(edDateFmtShort, 3, 2);
 
   tl1->activate();
 
@@ -98,6 +104,7 @@ void KLocaleConfigTime::loadSettings()
 
   edTimeFmt->setText(locale->_timefmt);
   edDateFmt->setText(locale->_datefmt);
+  edDateFmtShort->setText(locale->_datefmtshort);
 }
 
 void KLocaleConfigTime::applySettings()
@@ -119,6 +126,10 @@ void KLocaleConfigTime::applySettings()
   str = ent.readEntry("DateFormat", "%m/%d/%y");
   str = str==locale->_datefmt?QString::null:locale->_datefmt;
   config->writeEntry("DateFormat", str, true, true);
+
+  str = ent.readEntry("DateFormatShort", "%m/%d/%y");
+  str = str==locale->_datefmtshort?QString::null:locale->_datefmtshort;
+  config->writeEntry("DateFormatShort", str, true, true);
 
   config->sync();
 }
@@ -145,6 +156,12 @@ void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
   sample->update();
 }
 
+void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
+{
+  KGlobal::locale()->_datefmtshort = t;
+  sample->update();
+}
+
 void KLocaleConfigTime::reset()
 {
   KLocale *locale = KGlobal::locale();
@@ -154,6 +171,7 @@ void KLocaleConfigTime::reset()
 
   locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");
   locale->_datefmt = ent.readEntry("DateFormat", "%m/%d/%y");
+  locale->_datefmt = ent.readEntry("DateFormatShort", "%m/%d/%y");
 
   loadSettings();
 }

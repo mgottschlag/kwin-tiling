@@ -53,6 +53,7 @@ private slots:
   // Time & dates
   void slotTimeFmtChanged(const QString &t);
   void slotDateFmtChanged(const QString &t);
+  void slotDateFmtShortChanged(const QString &t);
 
 private:
   KLocaleSample *sample;
@@ -60,6 +61,7 @@ private:
   // Time & dates
   QLineEdit *edTimeFmt;
   QLineEdit *edDateFmt;
+  QLineEdit *edDateFmtShort;
 };
 
 #endif

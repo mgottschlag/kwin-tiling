@@ -61,11 +61,17 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     dateSample = new QLabel(parent);
     addWidget(dateSample, 3, 2);
 
-    label = new QLabel("1", parent, i18n("Time:"));
+    label = new QLabel("1", parent, i18n("Short date:"));
     addWidget(label, 4, 1);
 
+    dateShortSample = new QLabel(parent);
+    addWidget(dateShortSample, 4, 2);
+
+    label = new QLabel("1", parent, i18n("Time:"));
+    addWidget(label, 5, 1);
+
     timeSample = new QLabel(parent);
-    addWidget(timeSample, 4, 2);
+    addWidget(timeSample, 5, 2);
 }
 
 KLocaleSample::~KLocaleSample()
@@ -84,5 +90,6 @@ void KLocaleSample::update()
 		       " / " +
 		       locale->formatMoney(-123456789.00));
   dateSample->setText(locale->formatDate(QDate::currentDate()));
+  dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
   timeSample->setText(locale->formatTime(QTime::currentTime()));
 }
