@@ -15,5 +15,4 @@ servicetype_DATA = kurifilterplugin.desktop
 check_PROGRAMS = test
 test_SOURCES = test.cpp
 test_LDFLAGS  = $(all_libraries) -module -avoid-version
-test_LDADD = libkurifilter.la -lkded
-
+test_LDADD = libkurifilter.la
