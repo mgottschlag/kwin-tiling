@@ -134,7 +134,7 @@ void ThemePage::save()
 
 	KConfig c( "kdeglobals" );
 	c.setGroup( "KDE" );
-	c.writeEntry( "cursorTheme", selectedTheme != "none" ? selectedTheme : "" );
+	c.writeEntry( "cursorTheme", selectedTheme != "none" ? selectedTheme : QString::null );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
 				"changes to take effect."), i18n("Cursor Settings Changed"),
