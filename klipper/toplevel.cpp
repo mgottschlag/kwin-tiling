@@ -78,6 +78,7 @@ TopLevel::TopLevel()
 {
     clip = kapp->clipboard();
     pSelectedItem = -1;
+    QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
@@ -216,7 +217,7 @@ void TopLevel::clickedMenu(int id)
     case URLGRAB_ITEM: // handled with an extra slot
 	break;
     case EMPTY_ITEM:
-	if ( !bClipEmpty ) 
+	if ( !bClipEmpty )
 	{
 	    pQTcheck->stop();
 
@@ -224,8 +225,7 @@ void TopLevel::clickedMenu(int id)
 		pQPMmenu->removeItemAt(EMPTY);
 	    }
 	    pQIDclipData->clear();
-	    
-	    QSempty = i18n("<empty clipboard>");
+	
 	    bClipEmpty = true;
 	    clip->setText(QSempty);
 	    newClipData();
@@ -302,13 +302,14 @@ void TopLevel::readProperties(KConfig *kc)
       }
   }
 
-  QSempty = i18n("<empty clipboard>");
   bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
   pQPMmenu->insertSeparator();
   toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
-  pQPMmenu->insertItem( i18n("&Clear Clipboard"), EMPTY_ITEM );
-  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), CONFIG_ITEM);
+  pQPMmenu->insertItem( SmallIcon("fileclose"), 
+			i18n("&Clear Clipboard History"), EMPTY_ITEM );
+  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), 
+		       CONFIG_ITEM);
   // we can't specify the id in plug(), just the index. So we set the right
   // id aftwards for the given index.
   pQPMmenu->setId( URLGRAB_ITEM, URLGRAB_ITEM );

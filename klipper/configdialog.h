@@ -131,6 +131,8 @@ public:
 	generalWidget->editListBox->insertStringList( items );
     }
 
+    virtual void show();
+    
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;

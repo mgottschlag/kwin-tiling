@@ -20,9 +20,10 @@
 
 #include <kaboutdialog.h>
 #include <kiconloader.h>
+#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
-#include <klistview.h>
+#include <kwinmodule.h>
 
 #include "configdialog.h"
 
@@ -62,7 +63,23 @@ ConfigDialog::~ConfigDialog()
 {
 }
 
-
+// prevent huge size due to long regexps in the action-widget
+void ConfigDialog::show()
+{
+    static KWinModule module;
+    QSize s1 = sizeHint();
+    QSize s2 = module.workArea().size();
+    int w = width();
+    int h = height();
+    
+    if ( s1.width() >= s2.width() )
+	w = s2.width();
+    if ( s1.height() >= s2.height() )
+	h = s2.height();
+    
+    resize( w, h );
+    KDialogBase::show();
+}
 
 /////////////////////////////////////////
 ////
@@ -128,7 +145,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     ASSERT( list != 0L );
 
     setTitle( i18n("Action settings") );
-    
+
     QLabel *lblAction = new QLabel( "Action &list (right click to add/remove commands):",
 				    this );
     listView = new KListView( this, "list view" );
