@@ -3,14 +3,21 @@
 // KDE Display screen saver setup module
 //
 // Copyright (c)  Martin R. Jones 1996
+// Copyright (C) Chris Howells 2004
 //
 
 #ifndef __SCRNSAVE_H__
 #define __SCRNSAVE_H__
 
 #include <qwidget.h>
-#include <qxembed.h>
 #include <kcmodule.h>
+
+#include "kssmonitor.h"
+#include "saverconfig.h"
+#include "testwin.h"
+#include "advanceddialog.h"
+#include "kssmonitor.h"
+#include "saverlist.h"
 
 class QTimer;
 class QSpinBox;
@@ -22,90 +29,6 @@ class QListViewItem;
 class QPushButton;
 class KIntNumInput;
 class KProcess;
-
-//===========================================================================
-class KSSMonitor : public QXEmbed
-{
-    Q_OBJECT
-public:
-    KSSMonitor( QWidget *parent ) : QXEmbed( parent ) {}
-
-    // we don't want no steenking palette change
-    virtual void setPalette( const QPalette & ) {}
-};
-
-//===========================================================================
-class SaverConfig
-{
-public:
-    SaverConfig();
-
-    bool read(const QString &file);
-
-    QString exec() const { return mExec; }
-    QString setup() const { return mSetup; }
-    QString saver() const { return mSaver; }
-    QString name() const { return mName; }
-    QString file() const { return mFile; }
-    QString category() const { return mCategory; }
-
-protected:
-    QString mExec;
-    QString mSetup;
-    QString mSaver;
-    QString mName;
-    QString mFile;
-    QString mCategory;
-};
-
-//===========================================================================
-class SaverList : public QPtrList<SaverConfig>
-{
-protected:
-    virtual int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2);
-};
-
-//===========================================================================
-class TestWin : public QXEmbed
-{
-    Q_OBJECT
-public:
-    TestWin();
-};
-
-//===========================================================================
-class KScreenSaverAdvancedDialog : public KDialogBase
-{
-    Q_OBJECT
-public:
-    KScreenSaverAdvancedDialog(QWidget *parent, const char* name = 0);
-      
-public slots:
-    void slotOk();
-         
-protected slots:
-    void slotPriorityChanged( int val );
-    void slotChangeBottomRightCorner( bool );
-    void slotChangeBottomLeftCorner( bool );
-    void slotChangeTopRightCorner( bool );
-    void slotChangeTopLeftCorner( bool );
-                        
-private:
-    void readSettings();
-                     
-    QCheckBox *m_topLeftCorner;
-    QCheckBox *m_bottomLeftCorner;
-    QCheckBox *m_topRightCorner;
-    QCheckBox *m_bottomRightCorner;
-    QSlider   *mPrioritySlider;
-                                          
-    bool mTopLeftCorner;
-    bool mTopRightCorner;
-    bool mBottomLeftCorner;
-    bool mBottomRightCorner;
-    bool mChanged;
-    int  mPriority;
-};
 
 //===========================================================================
 class KScreenSaver : public KCModule
