@@ -65,6 +65,7 @@ public:
     virtual void defaults();
 
     virtual QString quickHelp() const;
+    const KAboutData* aboutData() const;
 
 signals:
     void changed(bool);

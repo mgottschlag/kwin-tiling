@@ -81,16 +81,16 @@ extern "C" {
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
         QByteArray properties;
         QDataStream d(properties, IO_WriteOnly);
-	d.setVersion( 3 );	// Qt2 apps need this.
+        d.setVersion( 3 );      // Qt2 apps need this.
         d << kapp->palette() << KGlobalSettings::generalFont();
         Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
 
-	// do it for all root windows - multihead support
-	int screen_count = ScreenCount(qt_xdisplay());
-	for (int i = 0; i < screen_count; i++)
-	    XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
-			    a, a, 8, PropModeReplace,
-			    (unsigned char*) properties.data(), properties.size());
+        // do it for all root windows - multihead support
+        int screen_count = ScreenCount(qt_xdisplay());
+        for (int i = 0; i < screen_count; i++)
+            XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
+                            a, a, 8, PropModeReplace,
+                            (unsigned char*) properties.data(), properties.size());
 #endif
     }
 }
@@ -238,7 +238,7 @@ void KThemeListBox::save()
 
     curItem = currentItem();
     curTheme = curItem->text(2);
-    
+
     KSimpleConfig config("kstylerc");
     config.setGroup("KDE");
     config.writeEntry("WidgetStyle", curTheme);
@@ -318,13 +318,13 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " to force your preferences regarding colors even to non-KDE"
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
-      
+
     cbIcons = new QCheckBox( i18n("&Show icons on buttons"), styles );
     connect( cbIcons, SIGNAL( clicked() ), SLOT( slotUseIcons() )  );
-    
+
     QWhatsThis::add( cbIcons, i18n("If this option is selected, KDE will try"
       " to show icons on most of the buttons.") );
-      
+
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
 
     topLayout->addWidget(tbStyle, 10);
@@ -374,7 +374,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     effectStyleMenu = new QButtonGroup( i18n( "Effect options" ), this);
     hlay->addWidget(effectStyleMenu, 10);
-//	effectStyle->setExclusive(false);
+//      effectStyle->setExclusive(false);
 
     vlay = new QVBoxLayout( effectStyleMenu, 10 );
     vlay->addSpacing( effectStyleMenu->fontMetrics().lineSpacing() );
@@ -432,12 +432,12 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     vlay1->addWidget( effPlainTooltip );
     vlay1->addWidget( effFadeTooltip );
     vlay1->addWidget( effAnimateTooltip );
-	vlay1->addStretch();
+        vlay1->addStretch();
 
     if(effectNoTooltip){
-    	effFadeTooltip->setEnabled(false);
-    	effPlainTooltip->setEnabled(false);
-    	effAnimateTooltip->setEnabled(false);
+        effFadeTooltip->setEnabled(false);
+        effPlainTooltip->setEnabled(false);
+        effAnimateTooltip->setEnabled(false);
     }
 */
     topLayout->addStretch( 100 );
@@ -494,14 +494,14 @@ void KGeneral::slotChangeEffectStyle()
     effectAnimateCombo = effAnimateCombo->isChecked();
 
     if(effectNoTooltip){
-    	effFadeTooltip->setEnabled(false);
-    	effPlainTooltip->setEnabled(false);
-    	effAnimateTooltip->setEnabled(false);
+        effFadeTooltip->setEnabled(false);
+        effPlainTooltip->setEnabled(false);
+        effAnimateTooltip->setEnabled(false);
     }
     else{
-    	effFadeTooltip->setEnabled(true);
-    	effPlainTooltip->setEnabled(true);
-    	effAnimateTooltip->setEnabled(true);
+        effFadeTooltip->setEnabled(true);
+        effPlainTooltip->setEnabled(true);
+        effAnimateTooltip->setEnabled(true);
     }
 
     m_bEffectsDirty = true;
@@ -612,14 +612,14 @@ void KGeneral::showSettings()
     effAnimateTooltip->setChecked( effectAnimateTooltip );
     effNoTooltip->setChecked( effectNoTooltip );
     if(effectNoTooltip){
-    	effFadeTooltip->setEnabled(false);
-    	effPlainTooltip->setEnabled(false);
-    	effAnimateTooltip->setEnabled(false);
+        effFadeTooltip->setEnabled(false);
+        effPlainTooltip->setEnabled(false);
+        effAnimateTooltip->setEnabled(false);
     }
     else{
-    	effFadeTooltip->setEnabled(true);
-    	effPlainTooltip->setEnabled(true);
-    	effAnimateTooltip->setEnabled(true);
+        effFadeTooltip->setEnabled(true);
+        effPlainTooltip->setEnabled(true);
+        effAnimateTooltip->setEnabled(true);
     }
 */
 }
@@ -637,7 +637,7 @@ void KGeneral::defaults()
     effectFadeMenu = false;
     effectAnimateCombo = false;
     effectFadeTooltip = false;
-	effectNoTooltip = false;
+        effectNoTooltip = false;
 
     themeList->defaults();
     showSettings();
@@ -657,6 +657,25 @@ QString KGeneral::quickHelp() const
       " a color gradient or a marble texture.<p>"
       " Apart from styles and themes you can configure here the behavior"
       " of menubars and toolbars.");
+}
+
+const KAboutData* KGeneral::aboutData() const
+{
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmkstyle"), I18N_NOOP("Style Options Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1997 - 2002 KStyle and KControl Authors"));
+
+    about->addAuthor("Martin Jones",0,"mjones@powerup.com.au");
+    about->addAuthor("Mark Donohoe",0,"donohoe@kde.org");
+    about->addAuthor("Geert Jansen",0,"g.t.jansen@stud.tue.nl");
+    about->addAuthor("Matthias Hoelzer-Kluepfel",0,"hoelzer@kde.org");
+    about->addAuthor("Daniel Duley",0,"mosfet@kde.org");
+    about->addAuthor("Waldo Bastian",0,"bastian@kde.org");
+    about->addAuthor("Ralf Nolden",0,"rnolden@kde.org");
+    about->addAuthor("Cristian Tibirna",I18N_NOOP("Maintainer"),"tibirna@kde.org");
+
+    return about;
 }
 
 
@@ -711,8 +730,8 @@ void KGeneral::save()
         KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 /* we could use later for finer granularity */);
     if ( m_bEffectsDirty ){
         KIPC::sendMessageAll(KIPC::SettingsChanged);
-		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
-	}
+                kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
+        }
     QApplication::syncX();
 
     m_bChanged = false;
