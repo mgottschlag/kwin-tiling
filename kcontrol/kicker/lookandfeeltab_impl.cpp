@@ -73,7 +73,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
     QWhatsThis::add(m_hideButtonSlider, i18n("Here you can change the size of the hide buttons."));
 
     QWhatsThis::add(m_backgroundImage, i18n("If this option is selected, you "
-                                            "can choose an background image that will be used to display the "
+                                            "can choose a background image that will be used to display the "
                                             "panel. If it is not selected, the default colors will be used, "
                                             "see the 'Colors' control module."));
 
@@ -94,7 +94,7 @@ void LookAndFeelTab::browse_theme()
 {
     QString newtheme = KFileDialog::getOpenFileName(QString::null
                                                     , KImageIO::pattern(KImageIO::Reading)
-                                                    , 0, i18n("Select a image file"));
+                                                    , 0, i18n("Select an image file"));
     if (theme == newtheme) return;
     if (newtheme.isEmpty()) return;
 
