@@ -156,9 +156,8 @@ main (int argc, char **argv)
 #ifdef linux
     {
 	int len;
-	char buf[16], fullpath[PATH_MAX];
-	sprintf (buf, "/proc/%ld/exe", (long)getpid());
-	if ((len = readlink (buf, fullpath, sizeof(fullpath))) < 0)
+	char fullpath[PATH_MAX];
+	if ((len = readlink ("/proc/self/exe", fullpath, sizeof(fullpath))) < 0)
 	    Panic ("Invoke with full path specification or mount /proc");
 	if (!StrNDup (&progpath, fullpath, len))
 	    Panic ("Out of memory");
