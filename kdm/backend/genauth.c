@@ -33,6 +33,7 @@ from the copyright holder.
  */
 
 #include "dm.h"
+#include "dm_auth.h"
 #include "dm_error.h"
 
 #ifdef NEED_ENTROPY
