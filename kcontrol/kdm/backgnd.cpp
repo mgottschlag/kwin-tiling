@@ -187,7 +187,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pArrangementBox, wtstr );
 
-    lbl = new QLabel(i18n("&Wallpaper"), m_pTab2);
+    lbl = new QLabel(i18n("&Wallpaper:"), m_pTab2);
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy( m_pWallpaperBox );

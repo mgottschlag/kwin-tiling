@@ -163,13 +163,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(helper, 1, 1, AlignHCenter | AlignTop);
   QGridLayout *glay = new QGridLayout( helper, 2, 2, KDialog::spacingHint() );
   QValidator *posValidator = new QIntValidator(0, 999, helper);
-  xLineLabel = new QLabel(i18n("&X"), helper);
+  xLineLabel = new QLabel(i18n("&X:"), helper);
   glay->addWidget(xLineLabel, 0, 0);
   xLineEdit = new QLineEdit (helper);
   glay->addWidget(xLineEdit, 0, 1);
   xLineLabel->setBuddy(xLineEdit);
   xLineEdit->setValidator(posValidator);
-  yLineLabel = new QLabel(i18n("&Y"), helper);
+  yLineLabel = new QLabel(i18n("&Y:"), helper);
   glay->addWidget(yLineLabel, 1, 0);
   yLineEdit = new QLineEdit (helper);
   glay->addWidget(yLineEdit, 1, 1);
@@ -202,7 +202,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   colcombo = new KComboBox(false, hlp);
   loadColorSchemes(colcombo);
-  label = new QLabel(colcombo, i18n("&Color Scheme:"), hlp);
+  label = new QLabel(colcombo, i18n("&Color scheme:"), hlp);
   connect(colcombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 1, 0);
   hglay->addWidget(colcombo, 1, 1);
