@@ -1,12 +1,10 @@
-AM_CPPFLAGS = -D_LARGEFILE64_SOURCE
-
 noinst_LTLIBRARIES = libkxftconfig.la
 
 libkxftconfig_la_SOURCES = kxftconfig.cpp
 libkxftconfig_la_LIBADD = $(LIBFONTCONFIG_LIBS)
 libkxftconfig_la_LDFLAGS = $(LIBFONTCONFIG_RPATH)
 
-AM_CPPFLAGS  = $(all_includes) $(LIBFONTCONFIG_CFLAGS)
+AM_CPPFLAGS  = $(all_includes) $(LIBFONTCONFIG_CFLAGS) -D_LARGEFILE64_SOURCE
 
 kde_module_LTLIBRARIES = kcm_fonts.la
 

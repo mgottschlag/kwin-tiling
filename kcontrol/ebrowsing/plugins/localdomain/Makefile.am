@@ -1,8 +1,6 @@
 ## Makefile.am of kdebase/kcontrol/ebrowsing/plugins/localdomain
 
-AM_CPPFLAGS = -DQT_NO_CAST_ASCII
-
-AM_CPPFLAGS   =  $(all_includes)
+AM_CPPFLAGS   =  $(all_includes) -DQT_NO_CAST_ASCII
 AM_LDFLAGS   = $(all_libraries)
 
 kde_module_LTLIBRARIES = liblocaldomainurifilter.la
