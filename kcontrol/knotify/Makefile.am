@@ -16,7 +16,7 @@ messages:
 	$(XGETTEXT) $(libkcm_knotify_la_SOURCES) -o $(podir)/kcmnotify.pot
 
 data_DATA = kcmnotify.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel
+datadir = $(kde_appsdir)/Settings/Sound
 
 pics_DATA = play.png
 picsdir = $(kde_datadir)/kcontrol/pics
@@ -24,4 +24,5 @@ picsdir = $(kde_datadir)/kcontrol/pics
 # the following should be gone at release time.
 install-data-local:
 	rm -f $(kde_appsdir)/Settings/LookNFeel/knotify.desktop
+	rm -f $(kde_appsdir)/Settings/LookNFeel/kcmnotify.desktop
 
