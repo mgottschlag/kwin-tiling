@@ -222,6 +222,10 @@ static struct pam_conv PAM_conversation = {
 pam_handle_t *pamh;
 #endif /* USE_PAM */
 
+#if defined(HAVE_CRYPT) || defined(GREET_LIB)
+#define USE_CRYPT
+#endif
+
 extern void printEnv( char **e );
 
 int Verify (d, greet, verify)
@@ -306,12 +310,16 @@ struct verify_info	*verify;
        /* closing } after local auth (next ifdef KRB4) */
 #endif
 
+#ifdef USE_CRYPT
 	if (strcmp (crypt (greet->password, p->pw_passwd), p->pw_passwd))
 	{
 		Debug ("password verify failed\n");
 		bzero(greet->password, strlen(greet->password));
 		return 0;
 	}
+#else
+	syslog(LOG_NOTICE, "lacking crypt() support, User can't be verified\n");
+#endif
 #ifdef KRB4
 	}
 #endif

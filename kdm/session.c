@@ -59,6 +59,11 @@ from the X Consortium.
 #endif
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
+#else
+#ifdef HAVE_UNISTD_H
+# define _XOPEN_SOURCE
+# include <unistd.h>
+#endif
 #endif
 #ifdef HAVE_RPC_RPC_H
 # include <rpc/rpc.h>
@@ -110,8 +115,11 @@ extern	int	printEnv();
 extern	char	**systemEnv();
 extern	int	LogOutOfMem(char *, ...);
 
-#ifdef __Lynx__
-char *crypt(char *key, char *salt);
+#ifndef HAVE_CRYPT
+static char *fake_crypt(const char *s1, const char *s2)
+{
+	return(s2);
+}
 #endif
 
 #ifdef HAVE_LOGIN_CAP_H
@@ -269,8 +277,10 @@ static	struct dlfuncs	dlfuncs = {
 	endspent,
 #endif
 	getpwnam,
-#ifdef HAVE_CRYPT_H
+#ifdef HAVE_CRYPT
 	crypt,
+#else
+	fake_crypt,
 #endif
 	};
 	
@@ -1108,10 +1118,3 @@ char	*user, *home;
 	    env = setEnv (env, "XAUTHORITY", d->authFile);
     return env;
 }
-
-#if defined(Lynx) || defined(SCO) && !defined(SCO_USA)
-char *crypt(const char *s1, const char *s2)
-{
-	return(s2);
-}
-#endif

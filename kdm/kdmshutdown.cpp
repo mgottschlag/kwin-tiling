@@ -29,6 +29,11 @@
 #include <pwd.h>
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
+#else
+#ifdef HAVE_UNISTD_H
+# define _XOPEN_SOURCE
+# include <unistd.h>
+#endif
 #endif
 #ifdef USE_PAM
 extern "C" {
@@ -142,11 +147,16 @@ verify_root_pw( const char* pw)
      }
      endspent();
 #endif /* USESHADOW */
+#ifdef HAVE_CRYPT
      if( strcmp( crypt( pw, pws->pw_passwd), pws->pw_passwd)) {
 	  printf("Root passwd verification failed\n");
 	  
 	  return false;
      }
+#else
+     printf("can't verify root passwd, lacking crypt() support\n");
+     return false;
+#endif
 #else /* USE_PAM */
      #define PAM_BAIL \
         if (pam_error != PAM_SUCCESS) { \
