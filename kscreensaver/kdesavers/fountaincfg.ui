@@ -1,0 +1,204 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>SetupUi</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>SetupUi</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>400</width>
+            <height>209</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>0</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>400</width>
+            <height>209</height>
+        </size>
+    </property>
+    <property name="baseSize">
+        <size>
+            <width>400</width>
+            <height>250</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>KFountain Setup</string>
+    </property>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>398</width>
+                <height>206</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Particle Size:</string>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="3" column="0">
+                <property name="name">
+                    <cstring>PushButton1</cstring>
+                </property>
+                <property name="text">
+                    <string>Okay</string>
+                </property>
+            </widget>
+            <widget class="QPushButton" row="3" column="1">
+                <property name="name">
+                    <cstring>PushButton2</cstring>
+                </property>
+                <property name="text">
+                    <string>Cancel</string>
+                </property>
+            </widget>
+            <widget class="QWidget" row="0" column="1" rowspan="3" colspan="2">
+                <property name="name">
+                    <cstring>preview</cstring>
+                </property>
+            </widget>
+            <widget class="QGroupBox" row="2" column="0">
+                <property name="name">
+                    <cstring>GroupBox1</cstring>
+                </property>
+                <property name="title">
+                    <string>Shapes</string>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout4</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>20</y>
+                            <width>130</width>
+                            <height>80</height>
+                        </rect>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>RadioButton1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Stars</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>RadioButton1_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Flares</string>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+            </widget>
+            <widget class="QPushButton" row="3" column="2">
+                <property name="name">
+                    <cstring>PushButton3</cstring>
+                </property>
+                <property name="text">
+                    <string>About</string>
+                </property>
+            </widget>
+            <widget class="QSpinBox" row="1" column="0">
+                <property name="name">
+                    <cstring>SpinBox1</cstring>
+                </property>
+                <property name="maxValue">
+                    <number>500</number>
+                </property>
+                <property name="minValue">
+                    <number>10</number>
+                </property>
+                <property name="lineStep">
+                    <number>10</number>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>QWidget</class>
+        <header location="global">qwidget.h</header>
+        <sizehint>
+            <width>240</width>
+            <height>170</height>
+        </sizehint>
+        <container>1</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <slot access="public" specifier="">resize( int w, int h)</slot>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="4366">789c75d7596fe3460c07f0f7fd14c1f26d51702d59b22d147dc81de776eea4e80375f84a9cd3499c14fdeea5877f0e9aa2dd54087e188a437166a4f4e78f95abe383951f3fbfbdcc653ea956aab13caffca85f67b38fdffff8edcf6fdfd37465f95f2b5b49bffff2edfb60be52ad1c3edc374bf05041699156492bb834b75b7015dd0b96a5db895bda7096164b9704f752bbff32b8508771eabbdb49881fc115c61fdc181f9ab396e5a3903f4b7c9c56a3c3fdbc61ce321be74db887fac98dfaeeddb8bf862bcc771a2c3e4eecce427ec9609fffc26de314f2e7699e9bf93c5ac2f335706df3951c6df37d068bc7730117f0ba3b0f8b4b3b708df95fa3433ccddd886f993b09f29db931de5bba937abc5c99e3f80c467db2e146fc218c7a65cb6de37c1a6df33fc0787e6edc58ef4d37faff1c6dfdaccddd04f75b7de2f96508239e7b6ed473e2ee58fdf7e66e82f99a68cb97c339ea2bdc884fe1c2d6579e96eeb6bbe80fbdc005f657e2c6fd5337fab90b7b3f0ea2edfc89b99760becf68cb7fe2c6f9aae01cf1dd68ebdf5a70d92dbaede055b88677ccbdc42ce7b0f7a31b1df2c9058ce7e5811bcf5bc0380ff4e1c6790ecfd3d3fabb65881738b7f5e23b37c6f7e002e31fd1b67e67b0f7f3cd5c24a8f71a463fe4c88df395c2bebea76ecb2797b03f8fd5abcfdb0bfda20cf67e8edc36ceb7e62241fc16ece77d6c16ac7759c2b9bdef68e8c6fca368db0f77b0e07d9ec04dcbdc73e37bf0b87491793d3c8d0efde6319cc30bd8fbdd31c77a26d1b61fbab0a09f8b68ebffb61beb730237a87f642e53ab9736a2edfd6ff757455164c12f708d7a9fdd189f445721df8559b0ffe810ceb1ffd7e106fba36d2e533c0f45dbf31ebbf13c2db883fa9fa3edf96e60c1faf4dd162f1c6de3076ecc3f80b1be148df9d09f0afde3f0be974c12eb0795706e96557399e27db909fbfa7cc09e7feac6795b987d3e7973e3fdd081bd1ffbd1b69ee13c88f65b6cbd9ea26dbdd6cc658a7a277083f7ffbb1bfb7366f6f909e33ebfecbbb11f6b37e2317f857ed34db4c51fc30dce5fe3c6fb2dbc5fcaac12bc0f5fdcf6fda25b18f773eac6fbe63ddae6db71e37bf5e8c6f7ae6daebddf991b7faf84f528eb4af03e7d801bbc4f73738c4fa26dbe5737be5f6b70077f8f9cbbf13ebb8eb6ef79d82f555e75aa3ce49fc382f57e851b9cdfbedbd69f0fcd9e4fe66eecd7b11be7f91846bff9c08de76d455bfd7b30f64f19f657556bbd75f0181633ef9beb06f39db9ad7e3a323729fa7de7c6fb3f7cff6b9ddf9e9f1ecd71bc8eb6fb4b37e2afe00efab5e7c6f90eeb59374d5ada79b9857d7c3ddafabbeb46bf6f60afef323a8c4bf87ba3e9b829ba0cfda10eeceb17f643a3ff6cfd07f3e50f130b975ce9f55fbf6b8bb2786e78c8231ef344af29dffee31ae9cf1dcff85eef7988f1253ff2133febd823bff09c5ff98ddf79c11ffcc9abbca6f1ebbcc195c5f3a6c66df136ef686c9f77798ff7f9800ff9888f79c0277cca677cce177cc914e245ab78d64c577ccd37dce284536e73c6b9feee70977b5c70414cc4b63e439e90504915d5d470878634a2314d684ab71adfa13b9ad13d5fd0035bbf2acd7fa5d18ff444cff442737a0dd78cdee89d16faf3419f9a7f35e69fd21aad734a1bb449739d7b796df140effad0e86dcdb2a3f17dc48bc6efd21eedd341cc7d4847741cee186a45033aa1d32ff9cfe85cb37bee0bbaa42bbaa61b6a51a2f9179486fc5eff946a4ea88ddc19e5d4d19e26d4a51e151a3d105d7e7dde989ff7e95868995b444ad14ef181d4d2a8873aef42465feb97b18e4fe855f44eb9953b5d859cdb32d36fc6fdb27eee7ead5f1e34fe519ee4595e642eaff226efba6289fed6fec8877c7ea9ff5656756c4dd66543336ef240b6645b76962bbcecbff465f74bfd23d9937d5dad27399043f4682e47721ca20772f2affedff19a9c6a9d0bee08cb999ccb05756511d676a0d58ce452ebefc7fc333e952bb90e6ba997deb98dc81bada52f2d49249536eaaf25d3fd7daebdd3ff09d4b55ce01a489fc6d2d5e89e14259764fb399c970ddd7fa7e16a4aa1bb72f9af62fd22eb26ae35ba29873c8ce74b776a39b2133a9897e37fff2e27cbcbcf6f39b591728a71f5ff5ddffffaf5dbdfc6c4ea45</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>RadioButton1_2</sender>
+        <signal>pressed()</signal>
+        <receiver>RadioButton1</receiver>
+        <slot>toggle()</slot>
+    </connection>
+    <connection>
+        <sender>RadioButton1</sender>
+        <signal>pressed()</signal>
+        <receiver>RadioButton1_2</receiver>
+        <slot>toggle()</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

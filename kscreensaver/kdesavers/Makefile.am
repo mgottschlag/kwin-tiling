@@ -23,7 +23,7 @@ kblob_kss_SOURCES = blob.cpp
 kvm_kss_SOURCES = kvm.cpp vm.c vm_random.c
 kmatrix_kss_SOURCES = matrix.cpp
 kscience_kss_SOURCES = science.cpp
-kfountain_kss_SOURCES = fountain.cpp
+kfountain_kss_SOURCES = fountain.cpp fountaincfg.ui
 
 METASOURCES = banner.moc blankscrn.moc polygon.moc slideshow.moc lines.moc \
               lorenz.moc blob.moc kvm.moc matrix.moc science.moc fountain.moc

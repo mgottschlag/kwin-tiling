@@ -21,6 +21,7 @@
 #include <kscreensaver.h>
 #include <qtimer.h>
 #include <qimage.h>
+#include "fountaincfg.h"
 
 #define	MAX_PARTICLES	1000
 
@@ -104,7 +105,7 @@ private:
 	QTimer  *timer;
 };
 
-class KFountainSetup : public QDialog
+class KFountainSetup : public SetupUi
 {
 	Q_OBJECT
 public:
@@ -117,7 +118,7 @@ private slots:
 	void slotOkPressed();
 
 private:
-	QWidget *preview;
+//	QWidget *preview;
 	KFountainSaver *saver;
 };
 

@@ -46,44 +46,44 @@ extern "C"
 // dialog to setup screen saver parameters
 //
 KFountainSetup::KFountainSetup( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+	: SetupUi( parent, name, TRUE )
 {
 	readSettings();
 
-	QLabel *label;
-	QPushButton *button;
+	//QLabel *label;
+	//QPushButton *button;
 
-	setCaption( i18n("Setup The Particle Fountain") );
+	//setCaption( i18n("Setup The Particle Fountain") );
 
-	QVBoxLayout *tl = new QVBoxLayout(this, 10);
-	QHBoxLayout *tl1 = new QHBoxLayout;
-	tl->addLayout(tl1);
+	//QVBoxLayout *tl = new QVBoxLayout(this, 10);
+	//QHBoxLayout *tl1 = new QHBoxLayout;
+	//tl->addLayout(tl1);
 
-	QVBoxLayout *tl11 = new QVBoxLayout(5);
-	tl1->addLayout(tl11);
+	//QVBoxLayout *tl11 = new QVBoxLayout(5);
+	//tl1->addLayout(tl11);
 
-	label = new QLabel( i18n("No options here yet...:"), this );
-	tl11->addWidget(label);;
+	//label = new QLabel( i18n("No options here yet...:"), this );
+	///tl11->addWidget(label);;
 
-	preview = new QWidget( this );
+	//preview = new QWidget( this );
 	preview->setFixedSize( 220, 170 );
 	preview->setBackgroundColor( black );
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KFountainSaver( preview->winId() );
-	tl1->addWidget(preview);
+	//tl1->addWidget(preview);
 
-	KButtonBox *bbox = new KButtonBox(this);
-	bbox->addStretch(1);
+	//KButtonBox *bbox = new KButtonBox(this);
+	//bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));
-	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
+	//button = bbox->addButton( i18n("OK"));
+	connect( PushButton1, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(i18n("Cancel"));
-	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
-	bbox->layout();
-	tl->addWidget(bbox);
+	//button = bbox->addButton(i18n("Cancel"));
+	connect( PushButton2, SIGNAL( clicked() ), SLOT( reject() ) );
+	//bbox->layout();
+	//tl->addWidget(bbox);
 
-	tl->freeze();
+	//tl->freeze();
 }
 
 // read settings from config file
