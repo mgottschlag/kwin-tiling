@@ -962,6 +962,7 @@ void KSMServer::shutdown()
     if ( dialogActive )
         return;
     dialogActive = true;
+    // don't use KGlobal::config here! config may have changed!
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
     bool old_saveSession = saveSession = 
