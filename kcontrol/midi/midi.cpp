@@ -28,7 +28,7 @@
 #include <libkmid/deviceman.h>
 #include <kurlrequester.h>
 #include <kgenericfactory.h>
-
+#include <klineedit.h>
 #include "midi.h"
 
 typedef KGenericFactory<KMidConfig, QWidget > KMidFactory;
@@ -46,7 +46,7 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
   devman=new DeviceManager();
   //int r=
 	  devman->initManager();
-  
+
   QString s;
   for (int i=0;i<devman->midiPorts()+devman->synthDevices();i++)
   {
@@ -57,12 +57,14 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
 
     mididevices->insertItem(s,i);
   };
-  
+
   usemap=new QCheckBox(i18n("Use Midi Mapper"),this,"usemidimapper");
-  
+
   connect(usemap,SIGNAL(toggled(bool)),SLOT(useMap(bool)));
 
   maprequester=new KURLRequester(this,"maprequester");
+
+  connect(maprequester->lineEdit(),SIGNAL(textChanged ( const QString & )),this,SLOT(configChanged()));
 
   topLayout->addWidget(label);
   topLayout->addWidget(mididevices);
@@ -70,11 +72,11 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
   topLayout->addWidget(maprequester);
 
   load();
-  
+
   mididevices->setFocus();
 }
 
-KMidConfig::~KMidConfig() 
+KMidConfig::~KMidConfig()
 {
 }
 
@@ -85,8 +87,8 @@ void KMidConfig::configChanged()
 
 void KMidConfig::useMap(bool i)
 {
-  maprequester->setEnabled(i); 
-  
+  maprequester->setEnabled(i);
+
   emit changed(true);
 }
 
@@ -98,7 +100,7 @@ void KMidConfig::deviceSelected(int)
 void KMidConfig::load()
 {
   KConfig *config = new KConfig("kcmmidirc", true);
-  
+
   config->setGroup("Configuration");
   mididevices->setCurrentItem(config->readNumEntry("midiDevice",0));
   QString mapurl(config->readEntry("mapFilename",""));
@@ -121,7 +123,7 @@ void KMidConfig::save()
   config->writeEntry("midiDevice", mididevices->currentItem());
   config->writeEntry("useMidiMapper", usemap->isChecked());
   config->writeEntry("mapFilename", maprequester->url());
-  
+
   config->sync();
   delete config;
 
@@ -131,7 +133,7 @@ void KMidConfig::save()
 void KMidConfig::defaults()
 {
   usemap->setChecked(false);
-  
+
   emit changed(true);
 }
 
