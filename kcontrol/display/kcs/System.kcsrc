@@ -68,3 +68,4 @@ selectBackground=90,36,0
 selectForeground=255,255,255
 windowBackground=255,255,255
 windowForeground=0,0,0
+alternateBackground=255,247,240

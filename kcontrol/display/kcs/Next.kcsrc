@@ -6,6 +6,7 @@ activeTitleBtnBg=0,0,0
 activeTitleBtnBlend=0,0,0
 activeTitleBtnFg=255,255,255
 background=168,168,168
+alternateBackground=233,233,233
 buttonBackground=168,168,168
 buttonForeground=0,0,0
 contrast=10

@@ -56,3 +56,4 @@ inactiveForeground=214,214,214
 windowForeground=0,0,0
 windowBackground=255,255,255
 selectForeground=255,255,255
+alternateBackground=255,246,230
