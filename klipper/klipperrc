@@ -9,7 +9,7 @@ Number of commands=1
 [Action_1]
 Action description=Web-URL
 Action regexp=^http:\\/\\/
-Command_0: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
+Command_0: commandline=netscape -no-about-splash -remote "openURL(%s,new-window)"
 Command_0: description=Open with &Netscape
 Command_0: enabled=true
 Command_1: commandline=kfmclient exec %s
