@@ -814,8 +814,6 @@ GreetUser(
  
      argv[2] = d->name;
      MyApp myapp( argc, argv );
-     /*printf("LANG=%s, Domain=%s, appName=%s\n", getenv("LANG"), 
-	    klocale->language().data(), kapp->appName().data());*/
      QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );
      
@@ -846,10 +844,8 @@ GreetUser(
       */
      if (source (verify->systemEnviron, d->startup) != 0)
      {
-          QString buf;
-          buf.sprintf("Startup program %s exited with non-zero status.\n"
-		  "Please contact your system administrator.\n",
-		 d->startup);
+          QString buf = QString("Startup program %1 exited with non-zero status.\n"
+		  "Please contact your system administrator.\n").arg(d->startup);
 	  qApp->restoreOverrideCursor();
 	  QMessageBox::critical(0, "Login aborted", buf, "Retry");
 	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);
