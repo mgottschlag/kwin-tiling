@@ -55,7 +55,7 @@ class SessionEditor : public SessionDialog
   private: 
     void show();
     void loadAllKeytab();
-    void loadAllSession();
+    void loadAllSession(QString currentFile="");
     QString readKeymapTitle(const QString& filename);
 
     bool sesMod;
@@ -63,7 +63,6 @@ class SessionEditor : public SessionDialog
     bool loaded;
     QPtrList<QString> keytabFilename;
     QPtrList<QString> schemaFilename;
-    QPtrList<QString> sessionFilename;
 };
 
 #endif

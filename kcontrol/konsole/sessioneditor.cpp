@@ -29,6 +29,21 @@
 #include <kicondialog.h>
 #include <kmessagebox.h>
 
+// SessionListBoxText is a list box text item with session filename
+class SessionListBoxText : public QListBoxText
+{
+  public:
+    SessionListBoxText(const QString &title, const QString &filename): QListBoxText(title)
+    {
+      m_filename = filename;
+    };
+
+    const QString filename() { return m_filename; };
+
+  private:
+    QString m_filename;
+};
+
 SessionEditor::SessionEditor(QWidget * parent, const char *name)
 :SessionDialog(parent, name)
 {
@@ -58,7 +73,6 @@ SessionEditor::~SessionEditor()
 {
     keytabFilename.setAutoDelete(true);
     schemaFilename.setAutoDelete(true);
-    sessionFilename.setAutoDelete(true);
 }
 
 void SessionEditor::show()
@@ -89,18 +103,14 @@ void SessionEditor::loadAllKeytab()
     QString name = (*it);
     QString title = readKeymapTitle(name);
 
-    int j = name.findRev('/');
-    if (j > -1)
-      name = name.mid(j+1);
-    j = name.findRev('.');
-    if (j > -1)
-      name = name.left(j);
+    name = name.section('/',-1);
+    name = name.section('.',1);
     keytabFilename.append(new QString(name));
 
     if (title.isNull() || title.isEmpty())
-      keytabCombo->insertItem(i18n("untitled"),i);
-    else
-      keytabCombo->insertItem(title,i);
+      title=i18n("untitled");
+
+    keytabCombo->insertItem(title,i);
 
     i++;
   }
@@ -140,29 +150,29 @@ QString SessionEditor::readKeymapTitle(const QString & file)
   return 0;
 }
 
-void SessionEditor::loadAllSession()
+void SessionEditor::loadAllSession(QString currentFile)
 {
   QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.desktop", false, true);
   sessionList->clear();
-  sessionFilename.clear();
 
-  int i = 0;
+  QListBoxItem* currentItem = 0;
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
 
     QString name = (*it);
-    sessionFilename.append(new QString(name));
 
     KSimpleConfig* co = new KSimpleConfig(name,TRUE);
     co->setDesktopGroup();
-    QString sesname = co->readEntry("Name");
-
-    if (sesname.isNull() || sesname.isEmpty())
-      sessionList->insertItem(i18n("Unnamed"),i);
-    else
-      sessionList->insertItem(sesname,i);
+    QString sesname = co->readEntry("Name",i18n("Unnamed"));
     delete co;
-    i++;
+
+    sessionList->insertItem(new SessionListBoxText(sesname, name));
+
+    if (currentFile==name.section('/',-1))
+      currentItem = sessionList->item( sessionList->count()-1 );
   }
+  sessionList->sort();
+  sessionList->setCurrentItem(0);  // select the first added item correctly too
+  sessionList->setCurrentItem(currentItem);
   emit getList();
 }
 
@@ -181,10 +191,10 @@ void SessionEditor::readSession(int num)
         connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
         sesMod=false;
     }
-    if(sessionFilename.at(num))
+    if( sessionList->item(num) )
     {
-        removeButton->setEnabled( QFileInfo (*sessionFilename.at(num)).isWritable () );
-        co = new KSimpleConfig(*sessionFilename.at(num),TRUE);
+        removeButton->setEnabled( QFileInfo ( ((SessionListBoxText *)sessionList->item(num))->filename() ).isWritable () );
+        co = new KSimpleConfig( ((SessionListBoxText *)sessionList->item(num))->filename(),TRUE);
 
         co->setDesktopGroup();
         str = co->readEntry("Name");
@@ -272,10 +282,7 @@ void SessionEditor::saveCurrent()
 {
   QString fullpath;
   if (sessionList->currentText() == nameLine->text()) {
-    fullpath = *sessionFilename.at(sessionList->currentItem());
-    int j = fullpath.findRev('/');
-    if (j > -1)
-      fullpath = fullpath.mid(j+1);
+    fullpath = ( ((SessionListBoxText *)sessionList->item( sessionList->currentItem() ))->filename() ).section('/',-1);
   }
   else {
     // Only ask for a name for changed nameLine, considered a "save as"
@@ -307,15 +314,13 @@ void SessionEditor::saveCurrent()
   co->sync();
   delete co;
   sesMod=false;
-  loadAllSession();
-  readSession(0);
-  sessionList->setCurrentItem(0);
+  loadAllSession(fullpath.section('/',-1));
   removeButton->setEnabled(sessionList->count()>1);
 }
 
 void SessionEditor::removeCurrent()
 {
-  QString base = *sessionFilename.at(sessionList->currentItem());
+  QString base = ((SessionListBoxText *)sessionList->item( sessionList->currentItem() ))->filename();
 
   // Query if system sessions should be removed
   if (locateLocal("data", "konsole/" + base.section('/', -1)) != base) {
