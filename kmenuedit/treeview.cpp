@@ -658,7 +658,7 @@ void TreeView::newsubmenu()
 
     QString dirname = _ndlg->text();
     if (dirname.isEmpty()) {
-    	KMessageBox::sorry(0, "Please provide a valid name.", "Invalid name");
+    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18n("Invalid Name"));
 	return;
     }
 
@@ -715,7 +715,7 @@ void TreeView::newsubmenu()
     
     QFile f(locateLocal("apps", dir));
     if (f.exists()) {
-    	KMessageBox::sorry(0, "This directory is forgiven. Please provide another name.", "File exists");
+    	KMessageBox::sorry(0, i18n("This directory is forgiven. Please provide another name."), i18n("File Exists"));
 	return;
     }
 
@@ -744,10 +744,10 @@ void TreeView::newitem()
     _ndlg->setText(i18n(""));
     _ndlg->setCaption(i18n("NewItem"));
     if (!_ndlg->exec()) return;
-    
+
     QString filename = _ndlg->text();
     if (filename.isEmpty()) {
-    	KMessageBox::sorry(0, "Please provide a valid name.", "Invalid name");
+    	KMessageBox::sorry(0, i18n("Please provide a valid name."), i18("Invalid Name"));
 	return;
     }
 
@@ -788,7 +788,7 @@ void TreeView::newitem()
 
     QFile f(locateLocal("apps", dir));
     if (f.exists()) {
-    	KMessageBox::sorry(0, "This filename is forgiven. Please provide another name.", "File exists");
+    	KMessageBox::sorry(0, i18n("This filename is forgiven. Please provide another name."), i18n("File Exists"));
 	return;
     }
 
@@ -954,14 +954,14 @@ void TreeView::del()
     if(file.find(".directory") > 0)
     {
         if (!(deleteDir(file.mid(0, file.find("/.directory")))))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission Denied"));
 	else
         	delete item;
     }
     else if (file.find(".desktop"))
     {
         if (!(deleteFile(file)))
-		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
+		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission Denied"));
 	else
 		delete item;
     }
