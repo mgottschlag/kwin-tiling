@@ -406,7 +406,7 @@ int activateVT( int vt );
 void openCtrl( struct display *d );
 void closeCtrl( struct display *d );
 int handleCtrl( FD_TYPE *reads, struct display *d );
-void chownCtrl( CtrlRec *cr, int uid, int gid );
+void chownCtrl( CtrlRec *cr, int uid );
 void updateCtrl( void );
 
 /* in dpylist.c */

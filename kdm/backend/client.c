@@ -1224,7 +1224,7 @@ StartClient()
 	ReInitErrorLog();
 #endif
 	removeAuth = 1;
-	chownCtrl( &td->ctrl, curuid, -1 );
+	chownCtrl( &td->ctrl, curuid );
 	endpwent();
 #if !defined(USE_PAM) && !defined(AIXV3)
 # ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */

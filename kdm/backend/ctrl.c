@@ -217,14 +217,14 @@ closeCtrl( struct display *d )
 }
 
 void
-chownCtrl( CtrlRec *cr, int uid, int gid )
+chownCtrl( CtrlRec *cr, int uid )
 {
 	if (cr->fpath)
-		chown( cr->fpath, uid, gid );
+		chown( cr->fpath, uid, -1 );
 	if (cr->path) {
 		char *ptr = strrchr( cr->path, '/' );
 		*ptr = 0;
-		chown( cr->path, uid, gid );
+		chown( cr->path, uid, -1 );
 		*ptr = '/';
 	}
 }
