@@ -365,6 +365,9 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     QWhatsThis::add( m_pCacheBox, wtstr );
 
     m_Desk = KWin::currentDesktop() - 1;
+    if (m_Desk < 0) //Don't crash when the WM is not cooperating.
+        m_Desk = 0;
+	
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
 	m_Renderer.insert(i, new KBackgroundRenderer(i));
