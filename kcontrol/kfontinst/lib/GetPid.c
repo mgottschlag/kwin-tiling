@@ -144,7 +144,8 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                             found|=FOUND_PPID;
                         }
                     }
-                    if(found==FOUND_ALL) {
+                    if(FOUND_ALL==found)
+                    {
                         if(pid)
                             error=true;
                         else
