@@ -466,6 +466,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     ADD_STRING(NoMulti)
     ADD_STRING(InOrder)
     ADD_STRING(Random)
+    ADD_STRING(NoMultiRandom)
     #undef ADD_STRING
 
     m_pDirs = KGlobal::dirs();
@@ -723,7 +724,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (m_MMMap.contains(s)) {
 	int mode = m_MMMap[s];
         // consistency check.
-	if ((mode == NoMulti) || m_WallpaperFiles.count())
+	if ((mode == NoMulti || mode == NoMultiRandom) || m_WallpaperFiles.count())
 	    m_MultiMode = mode;
     }
 
@@ -734,7 +735,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
         // consistency check.
-        if ((mode == NoWallpaper) || !m_Wallpaper.isEmpty() || (m_MultiMode!=NoMulti))
+        if ((mode == NoWallpaper) || !m_Wallpaper.isEmpty() || (m_MultiMode == InOrder || m_MultiMode == Random))
             m_WallpaperMode = mode;
     }
 
@@ -851,7 +852,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
 
 QString KBackgroundSettings::currentWallpaper()
 {
-    if (m_MultiMode == NoMulti)
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
 	return m_Wallpaper;
     if (m_CurrentWallpaper < (int) m_WallpaperFiles.count())
 	return m_WallpaperFiles[m_CurrentWallpaper];
@@ -861,7 +862,7 @@ QString KBackgroundSettings::currentWallpaper()
 
 bool KBackgroundSettings::needWallpaperChange()
 {
-    if (m_MultiMode == NoMulti)
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
 	return false;
 
     return ((m_LastChange + 60*m_Interval) <= time(0L));

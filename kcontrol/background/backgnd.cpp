@@ -478,7 +478,7 @@ void KBackground::apply()
     // Wallpaper mode
     if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper )
 	m_WallpaperType->setButton( 0 );
-    else if ( r->multiWallpaperMode() == KBackgroundSettings::NoMulti )
+    else if ( r->multiWallpaperMode() == KBackgroundSettings::NoMulti || r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom )
 	m_WallpaperType->setButton( 1 );
     else
 	m_WallpaperType->setButton( 2 );
@@ -517,7 +517,7 @@ void KBackground::apply()
             (r->blendMode() < KBackgroundSettings::IntensityBlending) ? false : true);
 
         // Multi mode
-        if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti)
+        if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti || r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom)
         {
             m_pWallpaperBox->setEnabled(true);
             m_pBrowseBut->setEnabled(true);
@@ -813,7 +813,8 @@ void KBackground::slotImageDropped(QString uri)
     KBackgroundRenderer *r = m_Renderer[desk];
 
     if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper ||
-	 r->multiWallpaperMode() != KBackgroundSettings::NoMulti ) {
+	 r->multiWallpaperMode() == KBackgroundSettings::InOrder ||
+	 r->multiWallpaperMode() == KBackgroundSettings::Random) {
 	m_WallpaperType->setButton( 1 );
 	slotWallpaperType( 1 );
     }
@@ -889,7 +890,11 @@ void KBackground::slotWallpaperType( int type )
 
     r->stop();
     r->setWallpaperMode(mode);
-    r->setMultiWallpaperMode(multi ? 1 : 0);
+	if ( r -> multiWallpaperMode() == KBackgroundSettings::Random || r -> multiWallpaperMode() == KBackgroundSettings::NoMultiRandom ) {
+        r->setMultiWallpaperMode(multi ? KBackgroundSettings::Random : KBackgroundSettings::NoMultiRandom);
+	} else {
+	    r->setMultiWallpaperMode(multi ? KBackgroundSettings::InOrder : KBackgroundSettings::NoMulti);
+	}
     r->start();
     emit changed(true);
 }
