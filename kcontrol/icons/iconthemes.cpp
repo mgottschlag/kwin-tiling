@@ -238,7 +238,7 @@ void IconThemesConfig::updateRemoveButton()
   if (selected)
   {
     QString dirName(m_themeNames[selected->text(0)]); 
-    enabled = ( dirName != "hicolor" && dirName != "locolor" );
+    enabled = ( dirName != "hicolor" );
   }
   m_removeButton->setEnabled(enabled);
 }
