@@ -22,26 +22,92 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <stdlib.h>
+#include <kglobalsettings.h>
 
 #include "lockprocess.h"
 
 static KCmdLineOptions options[] =
 {
-// TODO
-#undef I18N_NOOP
-#define I18N_NOOP(x) ""
    { "forcelock", I18N_NOOP("Force screen locking"), 0 },
    { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
    { 0, 0, 0 }
-#undef I18N_NOOP
 };
 
 // -----------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-// TODO i18n ?
-    KCmdLineArgs::init( argc, argv, "kdesktop_lock", "Helper for KDesktop", "1.0" );
+    int kdesktop_screen_number = 0;
+    int starting_screen = 0;
+
+    bool child = false;
+    int parent_connection = 0; // socket to the parent saver
+    QValueList<int> child_sockets;
+
+    if (KGlobalSettings::isMultiHead())
+    {
+        Display *dpy = XOpenDisplay(NULL);
+        if (! dpy) {
+            fprintf(stderr,
+                    "%s: FATAL ERROR: couldn't open display '%s'\n",
+                    argv[0], XDisplayName(NULL));
+            exit(1);
+        }
+
+        int number_of_screens = ScreenCount(dpy);
+        starting_screen = kdesktop_screen_number = DefaultScreen(dpy);
+        int pos;
+        QCString display_name = XDisplayString(dpy);
+        XCloseDisplay(dpy);
+        kdDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
+        dpy = 0;
+
+        if ((pos = display_name.findRev('.')) != -1)
+            display_name.remove(pos, 10);
+
+        QCString env;
+        if (number_of_screens != 1) {
+            for (int i = 0; i < number_of_screens; i++) {
+                if (i != starting_screen) {
+                    int fd[2];
+                    if (pipe(fd)) {
+                        perror("pipe");
+                        break;
+                    }
+                    if (fork() == 0) {
+                        child = true;
+                        kdesktop_screen_number = i;
+                        parent_connection = fd[0];
+                        // break here because we are the child process, we don't
+                        // want to fork() anymore
+                        break;
+                    } else {
+                        child_sockets.append(fd[1]);
+                    }
+                }
+            }
+
+            env.sprintf("DISPLAY=%s.%d", display_name.data(),
+                        kdesktop_screen_number);
+            kdDebug() << "env " << env << endl;
+
+            if (putenv(strdup(env.data()))) {
+                fprintf(stderr,
+                        "%s: WARNING: unable to set DISPLAY environment vairable\n",
+                        argv[0]);
+                perror("putenv()");
+            }
+        }
+    }
+
+    QCString appname;
+    if (kdesktop_screen_number == 0)
+	appname = "kdesktop_lock";
+    else
+	appname.sprintf("kdesktop_lock-screen-%d", kdesktop_screen_number);
+
+    // TODO i18n ?
+    KCmdLineArgs::init( argc, argv, appname.data(), I18N_NOOP("Screen Locker for KDesktop"), "1.0" );
     KCmdLineArgs::addCmdLineOptions( options );
 
     putenv(strdup("SESSION_MANAGER="));
@@ -50,14 +116,20 @@ int main( int argc, char **argv )
 
     KApplication::disableAutoDcopRegistration(); // not needed
     KApplication app;
+    kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    LockProcess process;
-    if( args->isSet("forcelock"))
+    LockProcess process(child);
+    if (!child)
+        process.setChildren(child_sockets);
+    else
+        process.setParent(parent_connection);
+
+    if( !child && args->isSet("forcelock"))
 	process.lock();
-    else if( args->isSet( "dontlock" ))
+    else if( child || args->isSet( "dontlock" ))
 	process.dontLock();
     else
 	process.defaultSave();

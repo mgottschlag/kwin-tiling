@@ -22,17 +22,20 @@ class LockProcess
 {
     Q_OBJECT
 public:
-    LockProcess();
+    LockProcess(bool child_saver = false);
     ~LockProcess();
 
     void lock();
 
     void defaultSave();
-    
+
     void dontLock();
 
     void quitSaver();
-    
+
+    void setChildren(QValueList<int> children) { child_sockets = children; }
+    void setParent(int fd) { parent = fd; }
+
 protected:
     virtual bool x11Event(XEvent *);
     virtual void timerEvent(QTimerEvent *);
@@ -87,6 +90,9 @@ protected:
     QString     mSaverExec;
     QString	mSaver;
     QString	mXdmFifoName;
+    bool        child_saver;
+    QValueList<int> child_sockets;
+    int         parent;
 };
 
 #endif

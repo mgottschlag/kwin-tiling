@@ -6,7 +6,7 @@
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
  *
  * Portions Copyright (C) 2000 TrollTech AS.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2 as published by the Free Software Foundation.
@@ -51,6 +51,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kipc.h>
 #include <kaboutdata.h>
@@ -89,15 +90,15 @@ void applyMultiHead(bool active)
 
 // Plugin Interface
 // Danimo: Why do we use the old interface?!
-extern "C" 
+extern "C"
 {
-	KCModule *create_style(QWidget *parent, const char*) 
+	KCModule *create_style(QWidget *parent, const char*)
 	{
 		KGlobal::locale()->insertCatalogue("kcmstyle");
 		return new KCMStyle(parent, "kcmstyle");
 	}
 
-    void init_style() 
+    void init_style()
 	{
 		uint flags = KRdbExportQtSettings | KRdbExportQtColors;
 		KConfig config("kcmdisplayrc", true, true);
@@ -107,11 +108,9 @@ extern "C"
 			flags |= KRdbExportColors;
 		runRdb( flags );
 
-		bool isActive = !config.readBoolEntry( "disableMultihead", false ) && 
-						(ScreenCount(qt_xdisplay()) > 1);
-		applyMultiHead( isActive );
+		applyMultiHead( KGlobalSettings::isMultiHead() );
 
-        config.setGroup("KDE");
+                config.setGroup("KDE");
 
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
@@ -151,14 +150,14 @@ class KStyleListView: public KListView
 			setResizeMode(LastColumn);
 		};
 
-		QSize minimumSizeHint() const 
+		QSize minimumSizeHint() const
 		{
 			QSize size = KListView::minimumSizeHint();
 			size.setHeight( size.height() / 2 );
 			return size;
 		}
 
-		QSize sizeHint() const 
+		QSize sizeHint() const
 		{
 			QSize size = KListView::sizeHint();
 			size.setHeight( size.height() / 2 );
@@ -169,11 +168,11 @@ class KStyleListView: public KListView
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
-	KGlobal::dirs()->addResourceType("themes", 
+	KGlobal::dirs()->addResourceType("themes",
 		KStandardDirs::kde_default("data") + "kstyle/themes");
-	
+
 	// Setup pages and mainLayout
-    mainLayout = new QVBoxLayout( this ); 
+    mainLayout = new QVBoxLayout( this );
     tabWidget  = new QTabWidget( this );
 	mainLayout->addWidget( tabWidget );
 
@@ -195,7 +194,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Connect all required stuff
 	connect(lvStyle, SIGNAL(currentChanged(QListViewItem*)), this, SLOT(updateStyleTimer(QListViewItem*)));
 	connect(&switchStyleTimer, SIGNAL(timeout()), this, SLOT(styleChanged()));
-	
+
 	// Add Page2 (Effects)
 	// -------------------
 	gbEffects = new QGroupBox( 1, Qt::Horizontal, i18n("GUI Effects"), page2 );
@@ -399,16 +398,16 @@ void KCMStyle::save()
 				allowMenuTransparency = true;
 		}
 	}
-	
+
 	// Warn the user if they're applying a style that doesn't support
 	// menu translucency and they enabled it.
     if ( (!allowMenuTransparency) &&
 		(cbEnableEffects->isChecked()) &&
 		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
     {
-		KMessageBox::information( this, 
+		KMessageBox::information( this,
 			i18n("This module has detected that the currently selected style (") +
-			lvStyle->currentItem()->text(2) + 
+			lvStyle->currentItem()->text(2) +
 			i18n(") does not support Menu Translucency, therefore "
 			"this Menu Effect has been disabled.") );
 			comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
@@ -431,7 +430,7 @@ void KCMStyle::save()
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
 	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
-		switch( comboMenuEffectType->currentItem())	
+		switch( comboMenuEffectType->currentItem())
 		{
 			case 1: engine = "SoftwareBlend"; break;
 			case 2: engine = "XRender"; break;
@@ -480,9 +479,9 @@ void KCMStyle::save()
 		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
 
 	if ( m_bToolbarsDirty || m_bMacDirty )
-		// ##### FIXME - Doesn't apply all settings correctly due to bugs in 
+		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
-		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 
+		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0
 			/* we could use later for finer granularity */);
 
 	if (m_bEffectsDirty) {
@@ -515,7 +514,7 @@ void KCMStyle::defaults()
 	else if ( (item = lvStyle->findItem("Motif", 2, ExactMatch)) )
 		lvStyle->setCurrentItem(item);
 	else
-		lvStyle->setCurrentItem(lvStyle->firstChild());	// Use any available style 
+		lvStyle->setCurrentItem(lvStyle->firstChild());	// Use any available style
 
 	// Effects..
 	cbEnableEffects->setChecked(false);
@@ -539,8 +538,8 @@ void KCMStyle::defaults()
 
 const KAboutData* KCMStyle::aboutData() const
 {
-	KAboutData *about = 
-		new KAboutData( I18N_NOOP("kcmstyle"), 
+	KAboutData *about =
+		new KAboutData( I18N_NOOP("kcmstyle"),
 						I18N_NOOP("KDE Style Module"),
 						0, 0, KAboutData::License_GPL,
 						I18N_NOOP("(C) 2002 Karol Szwed, Daniel Molkentin"));
@@ -631,7 +630,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
     for (QStringList::iterator it = styles.begin(); it != styles.end(); it++)
 	{
 		// Find a match for the key in the dictionary
-		if (entry = styleEntries.find(*it)) {
+		if ((entry = styleEntries.find(*it)) != 0) {
 			if (entry->name.isNull())
 				lvStyle->insertItem( new QListViewItem(lvStyle, *it,
 												   entry->desc, *it) );
@@ -665,7 +664,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	lvStyle->sort();
 	lvStyle->viewport()->setUpdatesEnabled(true);
 	lvStyle->viewport()->repaint(false);
-	
+
 	currentStyle = lvStyle->currentItem()->text(2);
 	m_bStyleDirty = false;
 }
@@ -692,7 +691,7 @@ void KCMStyle::switchStyle(const QString& styleName)
 		return;
 
 	// Prevent Qt from wrongly caching radio button images
-	QPixmapCache::clear(); 
+	QPixmapCache::clear();
 
 	setStyleRecursive( stylePreview, style );
 	delete appliedStyle;
@@ -721,7 +720,7 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 	// Apply the style to each child widget.
 	QPtrListIterator<QObject> childit(*children);
 	QObject *child;
-	while ((child = childit.current()) != 0) 
+	while ((child = childit.current()) != 0)
 	{
 		++childit;
 		if (child->isWidgetType())
@@ -743,7 +742,7 @@ void KCMStyle::loadEffects( KSimpleConfig& config )
 
 	if ( config.readBoolEntry( "EffectAnimateCombo", false) )
 		comboComboEffect->setCurrentItem( 1 );
-	else 
+	else
 		comboComboEffect->setCurrentItem( 0 );
 
 	if ( config.readBoolEntry( "EffectAnimateTooltip", false) )
@@ -926,7 +925,7 @@ void KCMStyle::addWhatsThis()
 							" won't have their menubar attached to their own window anymore."
 							" Instead, there is one menu bar at the top of the screen which shows"
 							" the menu of the currently active application. You might recognize"
-							" this behavior from MacOS.") ); 
+							" this behavior from MacOS.") );
 }
 
 #include "kcmstyle.moc"

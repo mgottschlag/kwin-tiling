@@ -59,13 +59,13 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // Screen saver handling process.  Handles screensaver window,
 // starting screensaver hacks, and password entry.
 //
-LockProcess::LockProcess()
-    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder)
+LockProcess::LockProcess(bool child)
+    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder), child_saver(child), parent(0)
 {
     KWin::setState( winId(), NET::StaysOnTop );
-    
+
     setupSignals();
-        
+
     kapp->installX11EventFilter(this);
 
     // Get root window size
@@ -492,9 +492,7 @@ void LockProcess::xdmFifoCmd(const char *cmd)
 //
 void LockProcess::startSaver()
 {
-    kdDebug(1204) << "LockProcess: starting saver" << endl;
-
-    if (!grabInput())
+    if (!child_saver && !grabInput())
     {
         kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
         return;
@@ -503,6 +501,12 @@ void LockProcess::startSaver()
 
     saveVRoot();
 
+    if (parent) {
+        QSocketNotifier *notifier = new QSocketNotifier(parent, QSocketNotifier::Read, this, "notifier");
+        connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
+        notifier = new QSocketNotifier(parent, QSocketNotifier::Exception, this, "notifier_ex");
+        connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
+    }
     createSaverWindow();
     move(0, 0);
     show();
@@ -510,7 +514,8 @@ void LockProcess::startSaver()
 
     raise();
     XSync(qt_xdisplay(), False);
-    xdmFifoCmd("lock\n");
+    if (!child_saver)
+        xdmFifoCmd("lock\n");
     slotStart();
 }
 
@@ -539,7 +544,12 @@ void LockProcess::stopSaver()
     xdmFifoCmd("unlock\n");
     hideSaverWindow();
     hidePassDlg();
-    ungrabInput();
+    if (!child_saver) {
+        ungrabInput();
+        const char *out = "GOAWAY!";
+        for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
+            write(*it, out, sizeof(out));
+    }
     mLockOnce = false;
 }
 
@@ -625,7 +635,10 @@ void LockProcess::showPassDlg()
     QDesktopWidget *desktop = KApplication::desktop();
 
     QRect rect = mPassDlg->geometry();
-    rect.moveCenter( desktop->screenGeometry(desktop->screenNumber(QCursor::pos())).center());
+    if (child_sockets.isEmpty()) {
+        rect.moveCenter( desktop->screenGeometry(desktop->screenNumber(QCursor::pos())).center());
+    } else
+        rect.moveCenter( desktop->screenGeometry(qt_xscreen()).center());
     mPassDlg->move(rect.topLeft() );
 
     mPassDlg->show();
