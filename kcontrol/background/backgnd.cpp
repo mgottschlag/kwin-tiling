@@ -159,7 +159,7 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     m_pDeskList = new QListBox(group);
     connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
     vbox->addWidget(m_pDeskList);
-    m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
+    m_pCBCommon = new QCheckBox(i18n("&Common background"), group);
     vbox->addWidget(m_pCBCommon);
     connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
     QWhatsThis::add( m_pDeskList, i18n("Choose the desktop whose background"
@@ -267,9 +267,9 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     connect( m_WallpaperType, SIGNAL(clicked(int)), SLOT(slotWallpaperType(int)) );
     grid->addMultiCellWidget( m_WallpaperType, 0, 0, 0, 2 );
 
-    QRadioButton *rb = new QRadioButton( i18n("&No Wallpaper"), m_WallpaperType );
-    rb = new QRadioButton( i18n("&Single Wallpaper"), m_WallpaperType );
-    rb = new QRadioButton( i18n("&Multiple Wallpapers"), m_WallpaperType );
+    QRadioButton *rb = new QRadioButton( i18n("&No wallpaper"), m_WallpaperType );
+    rb = new QRadioButton( i18n("&Single wallpaper"), m_WallpaperType );
+    rb = new QRadioButton( i18n("&Multiple wallpapers"), m_WallpaperType );
 
     lbl = new QLabel(i18n("M&ode:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
@@ -362,13 +362,13 @@ Backgnd::Backgnd(QWidget* parent, KConfig *_config, bool _multidesktop,  const c
     QWhatsThis::add( m_pReverseBlending, i18n("For some types of blending, you can"
 					      " reverse the background and wallpaper layers by checking this option.") );
 
-    m_pCBLimit = new QCheckBox(i18n("&Limit Pixmap Cache"), m_pTab3);
+    m_pCBLimit = new QCheckBox(i18n("&Limit pixmap cache"), m_pTab3);
     QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have a lot of memory." ) );
     grid->addMultiCellWidget(m_pCBLimit, 2, 2, 0, 1);
     connect(m_pCBLimit, SIGNAL(toggled(bool)), SLOT(slotLimitCache(bool)));
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 0);
-    lbl = new QLabel(i18n("Cache &Size"), m_pTab3);
+    lbl = new QLabel(i18n("Cache &size:"), m_pTab3);
     lbl->setFixedSize(lbl->sizeHint());
     hbox->addSpacing(20); hbox->addWidget(lbl); hbox->addStretch();
     m_pCacheBox = new QSpinBox(m_pTab3);

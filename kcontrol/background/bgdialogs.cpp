@@ -50,7 +50,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select Background Program:"), page);
+    QLabel *lbl = new QLabel(i18n("Select background program:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
@@ -171,7 +171,7 @@ void KProgramSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global "
 		"and can only be removed by the System Administrator."),
-		i18n("Cannot remove program"));
+		i18n("Cannot Remove Program"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,
@@ -353,7 +353,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select Pattern:"), page);
+    QLabel *lbl = new QLabel(i18n("Select pattern:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
@@ -481,7 +481,7 @@ void KPatternSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the pattern! The pattern is global "
 		"and can only be removed by the System Administrator."),
-		i18n("Cannot remove pattern"));
+		i18n("Cannot Remove Pattern"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,
