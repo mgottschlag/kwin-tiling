@@ -79,7 +79,10 @@ extern "C" {
 KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     : QListView(parent, name)
 {
-    kconfig = new KConfig("kstylerc");
+    KConfig kconfig("kstylerc");
+    kconfig.setGroup("KDE");
+    defName = QString::fromLatin1("KDE default");
+    curTheme = kconfig.readEntry("currentTheme");
 
     curItem = 0;
     defItem = 0;
@@ -88,9 +91,13 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     addColumn(i18n("Description:"));
     setAllColumnsShowFocus(true);
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kstyle/themes");
-    QStringList list = KGlobal::dirs()->resourceDirs("themes");
+
+    if (curTheme.isEmpty())
+       curTheme = locate("themes", "default.themerc");
+
+    QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-        readThemeDir(*it);
+        readTheme(*it);
 
     setFixedHeight(120);
 
@@ -103,43 +110,38 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
 
 KThemeListBox::~KThemeListBox()
 {
-    delete kconfig;
 }
 
 
-void KThemeListBox::readThemeDir(const QString &directory)
+void KThemeListBox::readTheme(const QString &file)
 {
-    kdDebug() << "Reading theme dir: " <<  directory << endl;
-    QString name, desc;
+    KSimpleConfig config(file, true);
+    if (!config.hasGroup("KDE")) return;
 
-    kconfig->setGroup("KDE");
-    QString defName = "KDE default";
-    QString curName = kconfig->readEntry("widgetStyle", defName);
-
-    QDir dir(directory, "*.themerc");
-    if (!dir.exists())
-    return;
-
-    const QFileInfoList *list = dir.entryInfoList();
-    QFileInfoListIterator it(*list);
-    QFileInfo *fi;
-    while ((fi = it.current())){
-    KSimpleConfig config(fi->absFilePath(), true);
     config.setGroup("Misc");
-    name = config.readEntry("Name", fi->baseName());
-    desc = config.readEntry("Comment", i18n("No description available."));
+    QString name = config.readEntry("Name");
+    if (name.isEmpty())
+    {
+       name = file;
+       int i = name.findRev('/');
+       if (i != -1)
+          name = name.mid(i+1);
+       i = name.find('.');
+       if (i > 0)
+          name.truncate(i);
+    }
+    QString desc = config.readEntry("Comment", i18n("No description available."));
     config.setGroup( "KDE" );
+
     QString style = config.readEntry( "widgetStyle" );
-    QListViewItem *item = new QListViewItem(this, name, desc, fi->absFilePath());
-    if (style == curName) {
+    QListViewItem *item = new QListViewItem(this, name, desc, file);
+    if (file == curTheme) {
         curItem = item;
         setSelected(item, true);
         ensureItemVisible(item);
     }
     if (name == defName)
         defItem = item;
-    ++it;
-    }
 }
 
 
@@ -161,7 +163,7 @@ void KThemeListBox::load()
 
 void KThemeListBox::save()
 {
-    if (currentItem()->text(0) == curName)
+    if (currentItem()->text(2) == curTheme)
         return;
     // check for legacy theme
     KSimpleConfig configTest(currentItem()->text(2));
@@ -187,9 +189,16 @@ void KThemeListBox::save()
         output.close();
     }
 
-    KThemeBase::applyConfigFile(currentItem()->text(2));
     curItem = currentItem();
-    curName = curItem->text(0);
+    curTheme = curItem->text(2);
+    KThemeBase::applyConfigFile(currentItem()->text(2));
+
+// This section can be removed when kdelibs 2.1 is released.
+    KConfig kconfig("kstylerc");
+    kconfig.setGroup("KDE");
+    kconfig.writeEntry("currentTheme", curTheme);
+    kconfig.sync();
+// End section
 }
 
 

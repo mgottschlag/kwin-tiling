@@ -39,11 +39,11 @@ public:
     void defaults();
 
 private:
-    void readThemeDir(const QString &directory);
+    void readTheme(const QString &file);
 
-    QString curName;
+    QString curTheme;
+    QString defName;
     QListViewItem *curItem, *defItem;
-    KConfig *kconfig;
 };
 
 
