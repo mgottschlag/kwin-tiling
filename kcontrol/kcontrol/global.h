@@ -33,6 +33,7 @@ public:
 
   static void init();
 
+  static bool isInfoCenter() { return _infocenter; }
   static bool root() { return _root; }
   static QStringList types() { return _types; }
   static QString userName() { return _uname; }
@@ -46,6 +47,7 @@ public:
   static IndexIconSize iconSize() { return _iconsize; }
   static QString baseGroup();
 
+  static void setIsInfoCenter(bool b) { _infocenter = b; }
   static void setRoot(bool r) { _root = r; }
   static void setType(const QCString& s);
   static void setUserName(const QString& n){ _uname = n; }
@@ -62,6 +64,7 @@ public:
 
 private:
   static bool _root;
+  static bool _infocenter;
   static QStringList _types;
   static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
   static IndexViewMode _viewmode;

@@ -34,6 +34,7 @@
 #include "global.h"
 
 bool KCGlobal::_root = false;
+bool KCGlobal::_infocenter = false;
 QStringList KCGlobal::_types;
 QString KCGlobal::_uname = "";
 QString KCGlobal::_hname = "";
@@ -81,7 +82,7 @@ QString KCGlobal::baseGroup()
 {
   if ( _baseGroup.isEmpty() )
   {
-    KServiceGroup::Ptr group = KServiceGroup::baseGroup( "settings" );
+    KServiceGroup::Ptr group = KServiceGroup::baseGroup( _infocenter ? "info" : "settings" );
     if (group)
     {
       _baseGroup = group->relPath();
@@ -91,8 +92,16 @@ QString KCGlobal::baseGroup()
     // Compatibility with old behaviour, in case of missing .directory files.
     if (_baseGroup.isEmpty())
     {
-      kdWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
-      _baseGroup = QString::fromLatin1("Settings");
+      if (_infocenter)
+      {
+        kdWarning() << "No K menu group with X-KDE-BaseGroup=info found ! Defaulting to Settings/Information/" << endl;
+        _baseGroup = QString::fromLatin1("Settings/Information/");
+      }
+      else
+      {
+        kdWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
+        _baseGroup = QString::fromLatin1("Settings/");
+      }
     }
   }
   return _baseGroup;

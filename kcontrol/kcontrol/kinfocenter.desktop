@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kinfocenter -caption "%c" %i %m
+Icon=hwinfo
+Type=Application
+DocPath=kinfocenter/index.html
+X-KDE-StartupNotify=true
+
+Name=Info Center
+
+X-DCOP-ServiceType=Unique

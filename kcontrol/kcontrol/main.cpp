@@ -88,16 +88,33 @@ KControlApp::~KControlApp()
 
 int main(int argc, char *argv[])
 {
-  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"),
+  KAboutData aboutKControl( "kcontrol", I18N_NOOP("KDE Control Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2002, The KDE Control Center Developers"));
 
-  aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
-  aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
-  aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-  aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+  KAboutData aboutKInfoCenter( "kinfocenter", I18N_NOOP("KDE Info Center"),
+    KCONTROL_VERSION, I18N_NOOP("The KDE Info Center"), KAboutData::License_GPL,
+    I18N_NOOP("(c) 1998-2002, The KDE Control Center Developers"));
 
-  KCmdLineArgs::init( argc, argv, &aboutData );
+  QCString argv_0 = argv[0];
+  KAboutData *aboutData;
+  if (argv_0.right(11) == "kinfocenter")
+  {
+     aboutData = &aboutKInfoCenter;
+     KCGlobal::setIsInfoCenter(true);
+  }
+  else
+  {
+     aboutData = &aboutKControl;
+     KCGlobal::setIsInfoCenter(false);
+  }
+
+  aboutData->addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+  aboutData->addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
+  aboutData->addAuthor("Matthias Elter",0, "elter@kde.org");
+  aboutData->addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
+
+  KCmdLineArgs::init( argc, argv, aboutData );
   KUniqueApplication::addCmdLineOptions();
 
   KCGlobal::init();
