@@ -888,10 +888,7 @@ initXDMCP()
     if ((socketFD = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	return 0;
 #if defined(IPv6) && defined(AF_INET6)
-    if ((socket6FD = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
-	close(socketFD);
-	return 0;
-    }
+    socket6FD = socket(AF_INET6, SOCK_DGRAM, 0);
 #endif
 # ifdef SO_BROADCAST
     soopts = 1;
@@ -1057,7 +1054,8 @@ DoChoose ()
 	FD_SET (grtproc.pipe.rfd, &rfds);
 	FD_SET (socketFD, &rfds);
 #if defined(IPv6) && defined(AF_INET6)
-	FD_SET (socket6FD, &rfds);
+	if (socket6FD >= 0)
+	    FD_SET (socket6FD, &rfds);
 #endif
 	n = grtproc.pipe.rfd;
 	if (socketFD > n)
@@ -1099,7 +1097,7 @@ DoChoose ()
 	    if (FD_ISSET (socketFD, &rfds))
 		receivePacket (socketFD);
 #if defined(IPv6) && defined(AF_INET6)
-	    if (FD_ISSET (socket6FD, &rfds))
+	    if (socket6FD >= 0 && FD_ISSET (socket6FD, &rfds))
 		receivePacket (socket6FD);
 #endif
 	}
