@@ -81,7 +81,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	layout->setMargin( KDialog::marginHint() );
 	layout->setSpacing( KDialog::spacingHint() );
 
-	new QLabel( i18n("Select the cursor theme you want to use:"), this );
+	new QLabel( i18n("Select the cursor theme you want to use (hover preview to test cursor):"), this );
 
 	// Create the preview widget
 	preview = new PreviewWidget( new QHBox( this ) );
