@@ -22,6 +22,7 @@
 #include <qlayout.h>
 #include <qcursor.h>
 #include <qbitmap.h>
+#include <qstringlist.h>
 
 #include "colorscm.h"  
 
@@ -31,6 +32,8 @@
 #include <kmsgbox.h>
 #include <ksimpleconfig.h>
 #include <kcursor.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -295,7 +298,7 @@ void KColorScheme::slotSave( )
 
 void KColorScheme::slotRemove()
 {
-	QString kcsPath = KApplication::localkdedir() + "/share/apps/kdisplay/color-schemes";
+	QString kcsPath = locateLocal("data", "kdisplay/color-schemes");
 	
 	QDir d( kcsPath );
 	if (!d.exists()) // what can we do?
@@ -306,7 +309,7 @@ void KColorScheme::slotRemove()
 	d.setNameFilter("*.kcsrc");
 	
 	uint ind = sList->currentItem();
-	
+
 	if ( !d.remove( sFileList->at( ind ) ) ) {
 		QMessageBox::critical( 0, i18n("Error removing"),
 		      i18n("This color scheme could not be removed.\n"
@@ -385,8 +388,8 @@ void KColorScheme::slotAdd()
 	sList->setFocus();
 	sList->setCurrentItem( sList->count()-1 );
 	
-	QString kcsPath = KApplication::localkdedir() + "/share/apps/kdisplay/";
-	
+	QString kcsPath = locateLocal("data", "kdisplay");
+
 	QDir d( kcsPath );
 	if ( !d.exists() )
 		if ( !d.mkdir( kcsPath ) ) {
@@ -394,7 +397,7 @@ void KColorScheme::slotAdd()
 			return;
 		}
 		
-	kcsPath += "color-schemes/";
+	kcsPath += "/color-schemes/";
 	
 	d.setPath( kcsPath );
 	if ( !d.exists() )
@@ -601,73 +604,64 @@ void KColorScheme::readScheme( int index )
 
 void KColorScheme::readSchemeNames( )
 {
-  QString kcsPath = kapp->kde_datadir() + "/kdisplay/color-schemes";
+  QStringList list = KGlobal::dirs()->findAllResources("data", "kdisplay/color-schemes/*");
+  QStringList dirList, localdirList;
+  int i=0;
+  QString local_prefix = locateLocal("data", "test");
+  local_prefix = local_prefix.left(local_prefix.findRev('/'));
+  for(QStringList::Iterator it = list.begin(); it != list.end(); it++) {
+    QString temp_s = *it;
+    temp_s = (*it).left(temp_s.findRev('/'));
+    if (temp_s.find(local_prefix) == -1) {
+      if (dirList.find(temp_s) == dirList.end())
+        dirList.append(temp_s);
+    } else {
+      if (localdirList.find(temp_s) == localdirList.end())
+        localdirList.append(temp_s);
+    }
+  }
+  dirList += localdirList;
   
+  nSysSchemes = 2;
   QDir d;
-  d.setPath( kcsPath );
+  i = 0;
+  for(QStringList::Iterator it = dirList.begin(); it != dirList.end(); it++) {
+    d.setPath( *it );
   
-  if( d.exists() ) {
-    d.setFilter( QDir::Files );
-    d.setSorting( QDir::Name );
-    d.setNameFilter("*.kcsrc");
+    if( d.exists() ) {
+      d.setFilter( QDir::Files );
+      d.setSorting( QDir::Name );
+      d.setNameFilter("*.kcsrc");
     
-    if ( const QFileInfoList *sysList = d.entryInfoList() ) {
-      QFileInfoListIterator sysIt( *sysList );
-      QFileInfo *fi;
+      if ( const QFileInfoList *sysList = d.entryInfoList() ) {
+	QFileInfoListIterator sysIt( *sysList );
+	QFileInfo *fi;
       
-      // Always a current and a default scheme
-      nSysSchemes = 2;
+	// Always a current and a default scheme
       
-      QString str;
+	QString str;
       
-      // This for system files
-      while ( ( fi = sysIt.current() ) ) {
-	
-	KSimpleConfig *config =
-	  new KSimpleConfig( fi->filePath(), true );
-	config->setGroup( "Color Scheme" );
-	str = config->readEntry( "name" );
-	
-	sList->insertItem( str );
-	sFileList->append( fi->filePath().ascii() );
-	
-	++sysIt;
-	nSysSchemes++;
-	
-	delete config;
+	// This for system files
+	while ( ( fi = sysIt.current() ) ) {
+
+	  KSimpleConfig *config =
+	    new KSimpleConfig( fi->filePath(), true );
+	  config->setGroup( "Color Scheme" );
+	  str = config->readEntry( "name" );
+
+	  sList->insertItem( str );
+	  sFileList->append( fi->filePath().ascii() );
+
+	  ++sysIt;
+	  if (i < dirList.count() - localdirList.count())
+	    nSysSchemes++;
+
+	  delete config;
+	}
       }
     }
+    i++;
   }
-  
-  kcsPath = KApplication::localkdedir();
-  kcsPath += "/share/apps/kdisplay/color-schemes";
-  
-  d.setPath( kcsPath );
-  if( d.exists() ) {
-    d.setFilter( QDir::Files );
-    d.setSorting( QDir::Name );
-    d.setNameFilter("*.kcsrc");
-    
-    if ( const QFileInfoList *userList = d.entryInfoList() ) {
-      QFileInfoListIterator userIt( *userList );
-      QFileInfo *fi;
-      QString str;
-      
-      // This for users files
-      while ( ( fi = userIt.current() ) ) {
-	
-	KSimpleConfig config( fi->filePath(), true );
-	config.setGroup( "Color Scheme" );
-	str = config.readEntry( "name" );
-	
-	sList->insertItem( str );
-	sFileList->append( fi->filePath().ascii() );
-	
-	++userIt;
-      }
-    }
-  }
-  
 }
 
 void KColorScheme::setDefaults()
