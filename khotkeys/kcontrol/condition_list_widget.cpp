@@ -236,10 +236,22 @@ void Condition_list_widget::current_changed( QListViewItem* item_P )
 //    if( item_P == selected_item )
 //        return;
     selected_item = static_cast< Condition_list_item* >( item_P );
-//    conditions_listview->setSelected( item_P, true );
-    copy_button->setEnabled( item_P != NULL );
-    modify_button->setEnabled( item_P != NULL );
-    delete_button->setEnabled( item_P != NULL );
+//    conditions_listview->setSelected( selected_item, true );
+    copy_button->setEnabled( selected_item != NULL );
+    delete_button->setEnabled( selected_item != NULL );
+    if( selected_item != NULL )
+        { // not,and,or can't be modified
+        if( dynamic_cast< Not_condition* >( selected_item->condition()) == NULL
+            && dynamic_cast< And_condition* >( selected_item->condition()) == NULL
+            && dynamic_cast< Or_condition* >( selected_item->condition()) == NULL )
+            {
+            modify_button->setEnabled( true );
+            }
+        else
+            modify_button->setEnabled( false );
+        }
+    else
+        modify_button->setEnabled( false );
     }
 
 Condition_list_item* Condition_list_widget::create_listview_item( Condition* condition_P,
@@ -286,6 +298,12 @@ void Condition_list_widget::edit_listview_item( Condition_list_item* item_P )
     else if( Existing_window_condition* condition
         = dynamic_cast< Existing_window_condition* >( item_P->condition()))
         dlg = new Existing_window_condition_dialog( condition );
+    else if( dynamic_cast< Not_condition* >( item_P->condition()) != NULL )
+        return;
+    else if( dynamic_cast< And_condition* >( item_P->condition()) != NULL )
+        return;
+    else if( dynamic_cast< Or_condition* >( item_P->condition()) != NULL )
+        return;
     else // CHECKME TODO pridat dalsi
         assert( false );
     Condition* new_condition = dlg->edit_condition();
