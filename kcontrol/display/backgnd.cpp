@@ -593,7 +593,7 @@ void KBackground::getDeskNameList()
   if ( KWM::isKWMInitialized() )
     {
       for ( i = 0; i < maxDesks; i++ )
-	deskListBox->insertItem( KWM::getDesktopName(i+1) );
+	deskListBox->insertItem( KWM::desktopName(i+1) );
     }
   else
     deskListBox->insertItem( i18n( "Default" ) );
@@ -1184,7 +1184,7 @@ void KBackground::slotSwitchDesk( int num )
 
 void KBackground::slotRenameDesk()
 {
-  KRenameDeskDlg dlg( KWM::getDesktopName( deskNum+1 ), this );
+  KRenameDeskDlg dlg( KWM::desktopName( deskNum+1 ), this );
 
   dlg.setCaption( i18n( "Desktop names" ) );
 

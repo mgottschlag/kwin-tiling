@@ -53,7 +53,7 @@ KDesktopsConfig::KDesktopsConfig( QWidget *parent, const char* name )
     QString tmp;
     for (int i = 0; i < 8; i++) {
 	fields[i] = new QLineEdit(this);
-	fields[i]->setText(KWM::getDesktopName(i+1));
+	fields[i]->setText(KWM::desktopName(i+1));
 	fields[i]->setEnabled(i<number_of_desktops);
 	fields[i]->setMaximumSize(300, fields[i]->sizeHint().height());
 	fields[i]->setMinimumSize(60, fields[i]->sizeHint().height());
@@ -110,7 +110,7 @@ void KDesktopsConfig::loadSettings() {
     int number_of_desktops = KWM::numberOfDesktops();
     
     for (int i = 0; i < 8; i++) {
-	fields[i]->setText(KWM::getDesktopName(i+1));
+	fields[i]->setText(KWM::desktopName(i+1));
 	fields[i]->setEnabled(i<number_of_desktops);
     }
     visible->setValue(number_of_desktops/2);
