@@ -293,7 +293,6 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->setGroup("General");
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
-    kc->writeEntry("URLGrabberEnabled", bURLGrabber);
 
     if ( myURLGrabber )
 	myURLGrabber->writeConfiguration( kc );
@@ -364,6 +363,10 @@ void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
     toggleURLGrabAction->setChecked( enable );
+    KConfig *kc = kapp->config();
+    kc->setGroup("General");
+    kc->writeEntry("URLGrabberEnabled", bURLGrabber);
+    kc->sync();
 
     if ( !bURLGrabber ) {
 	delete myURLGrabber;
