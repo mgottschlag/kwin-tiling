@@ -25,7 +25,7 @@
 
 class KBackground;
 class KIntNumInput;
-class PatternEntry;
+struct PatternEntry;
 
 class KItem : public QObject
 {
@@ -36,18 +36,7 @@ public:
 
   KItem ( const KItem &itm ): QObject() // deep copy
     {
-      color1 = itm.color1;
-      color2 = itm.color2;
-      wpMode = itm.wpMode;
-      ncMode = itm.ncMode;
-      stMode = itm.stMode;
-      orMode = itm.orMode;
-      bUseWallpaper = itm.bUseWallpaper;
-      wallpaper = itm.wallpaper.data();
-
-      for ( int i = 0; i < 8; i++ ){
-	pattern[i] = itm.pattern[i];
-      }
+	*this = itm;
     }
 
   KItem &operator=( const KItem &itm )	// deep copy
@@ -60,11 +49,7 @@ public:
       orMode = itm.orMode;
       bUseWallpaper = itm.bUseWallpaper;
       wallpaper = itm.wallpaper.data();
-      
-      for ( int i = 0; i < 8; i++ ){
-	pattern[i] = itm.pattern[i];
-      }
-
+      pattern = itm.pattern;
       return *this;
     }
 
@@ -74,7 +59,7 @@ public:
   int ncMode;
   int stMode; 
   int orMode;
-  uint pattern[8];
+  QString pattern;
 
   bool bUseWallpaper;
   QString wallpaper;
@@ -111,45 +96,17 @@ private:
   QLineEdit *edit;
 };
 
-class PatternEntry 
-{
-public: 
-  PatternEntry() {}
-  PatternEntry( QString n, uint p[]) { 
-    name = n;
-    for (uint i = 0; i < 8; i++)
-      pattern[i] = p[i];
-  }
-
-  QString name;
-  uint pattern[8];
-
-  bool operator==( uint p[] ) {
-    for (uint i = 0; i < 8; i++)
-      if (pattern[i] != p[i]) 
-	return false;
-    return true;
-  }
-
-  bool operator==( const char *item) {
-    return name == item;
-  }
-	
-};
-
 class KBPatternDlg : public QDialog
 {
   Q_OBJECT
 
 public:
-  KBPatternDlg( QColor color1, QColor color2, uint p[], int *orient,
+  KBPatternDlg( QColor color1, QColor color2, QString *name, int *orient,
 		int *type, QWidget *parent = 0, char *name = 0 );
+  ~KBPatternDlg();
     
-protected:
-  int savePatterns();
-   
 protected slots:
-  void selected(const QString& item);
+  void selected(int index);
   virtual void done ( int r );
   void slotMode( int );
     
@@ -158,19 +115,18 @@ private:
   QLabel *lPreview;
   QLabel *lName;
   QListBox *listBox;
-  QList<PatternEntry> list;
+  QList<PatternEntry> *list;
   QCheckBox *orientCB;
   QRadioButton *rbVert;
   QRadioButton *rbHoriz;
   QRadioButton *rbPattern;
   QButtonGroup *suGroup;
 	
-  enum { Portrait = 1, Landscape, Pattern };
+  enum { Portrait = 1, Landscape, GreyMap };
 	
-
   bool changed;
-  PatternEntry *current;
-  uint *pattern;
+  QString current;
+  QString *pattern;
   int *orMode;
   int *tpMode;
   int mode;
@@ -239,7 +195,7 @@ class KBackground : public KDisplayModule
 public:
 	
   enum { Portrait = 1, Landscape };
-  enum { Flat = 1, Gradient, Pattern };
+  enum { Flat = 1, Gradient, Pattern, GreyMap };
 
   KBackground(QWidget *parent, Mode mode);
 

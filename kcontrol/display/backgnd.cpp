@@ -46,6 +46,11 @@
 #include "backgnd.moc"
 #include "../../kdesktop/defaults.h"
 
+struct PatternEntry {
+    QString name;
+    QString pattern;
+};
+
 void KBGMonitor::dropEvent( QDropEvent *e)
 {
     /* We only accept Url objects and not Image object,
@@ -409,20 +414,13 @@ void KBackground::readSettings( int num )
   if ( str == "Gradient" ) {
      currentItem.ncMode = TwoColor;
      currentItem.stMode = Gradient;
-  } else if (str == "Pattern") {
-     currentItem.ncMode = TwoColor;
-     currentItem.stMode = Pattern;
+  } else if (str == "GreyMap") {
+      currentItem.ncMode = TwoColor;
+      currentItem.stMode = GreyMap;
   }
 	     
-  QStrList strl;
-  config.readListEntry("Pattern", strl);
-  uint size = strl.count();
-  if (size > 8) size = 8;
-  uint i = 0;
+  currentItem.pattern = config.readEntry("GreyMap", "night-rock.png");
 
-  for (i = 0; i < 8; i++)
-      currentItem.pattern[i] = (i < size) ? QString(strl.at(i)).toUInt() : 255;
-   
   str = config.readEntry( "OrientationMode", "unset" );
   if ( str == "Landscape" )
      currentItem.orMode = Landscape;
@@ -548,17 +546,11 @@ void KBackground::writeSettings( int num )
     config.writeEntry( "ColorMode", "Flat" );
   } else if ( currentItem.ncMode == TwoColor && currentItem.stMode == Gradient ) {
     config.writeEntry( "ColorMode", "Gradient" );		
-  } else if ( currentItem.ncMode == TwoColor && currentItem.stMode == Pattern ) {
-    config.writeEntry( "ColorMode", "Pattern" );
+  } else if ( currentItem.ncMode == TwoColor && currentItem.stMode == GreyMap ) {
+      config.writeEntry( "ColorMode", "GreyMap" );
   }
-	
-  QStrList strl( true ); // deep copies
-  for (uint i = 0; i < 8 ; i++) {
-    char buffer[10];
-    sprintf(buffer, "%d",currentItem.pattern[i]);
-    strl.append(buffer);
-  }
-  config.writeEntry( "Pattern", strl);
+  
+  config.writeEntry("GreyMap", currentItem.pattern);
 
   switch ( currentItem.orMode )
     {
@@ -578,7 +570,7 @@ void KBackground::writeSettings( int num )
   changed = false;
 
   KConfig *config2 = KGlobal::config();
-  config2->setGroup( "Desktop Common" );
+  KConfigGroupSaver(config2, "Desktop Common" );
   config2->writeEntry( "OneDesktopMode", oneDesktopMode );
   config2->writeEntry( "DeskNum", deskNum );
   config2->writeEntry( "Docking", dockButton->isChecked() );
@@ -724,7 +716,7 @@ void KBackground::setMonitor()
 				KPixmapEffect::HorizontalGradient);
 			
     } else
-      preview.patternFill(currentItem.color1,currentItem.color2, currentItem.pattern);
+      preview.mapFill(currentItem.color1,currentItem.color2, currentItem.pattern);
     
     if ( currentItem.wpMode == CentredBrick ) {
       int i, j, k;
@@ -1047,15 +1039,6 @@ void KBackground::slotBrowse()
 {
     
   QString filename = KFileDialog::getOpenFileName( 0 );
-  debug("filename:%s", filename.ascii());
-  if(!filename.isNull())
-      debug("Passed Null");
-  else
-      debug("Failed Null");
-  if(filename == currentItem.wallpaper)
-      debug("Passed strncmp");
-  else
-      debug("Failed strncmp");
   slotWallpaper( filename );
   
   if ( !filename.isNull() && filename == currentItem.wallpaper )
@@ -1128,7 +1111,9 @@ void KBackground::slotColorMode( int m )
 
 void KBackground::slotSetup2Color()
 {
-  KBPatternDlg dlg(currentItem.color1, currentItem.color2, currentItem.pattern, &currentItem.orMode, &currentItem.stMode, this);
+  KBPatternDlg dlg(currentItem.color1, currentItem.color2, 
+		   &currentItem.pattern, &currentItem.orMode,
+		   &currentItem.stMode, this);
   if (dlg.exec()) {
     setMonitor();
     changed = true;
@@ -1220,7 +1205,6 @@ void KBackground::applySettings()
 {
     if (changed)
     {
-        debug("KBackground::applySettings");
         if ( rnddlg )
             rnddlg->done( QDialog::Accepted );
         else
@@ -1264,17 +1248,16 @@ void KBackground::slotDropped( QDropEvent *e)
   // Only local files are supported
   if( QUriDrag::decodeLocalFiles( e, uris) && (uris.count() > 0)) {
     QString uri = *uris.begin();
-    debug( "KBackground drop, url=\"%s\"\n", uri.data());
     uri.prepend('/');
     setNew( uri, random );
   }
 }
 
-KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
-			    int *type, QWidget *parent, char *oname)
+KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, QString *p, 
+			    int *orient, int *type, 
+			    QWidget *parent, char *oname)
   : QDialog( parent, oname, true)
 {
-  int i;
   pattern = p;
   orMode = orient;
   tpMode = type;
@@ -1288,36 +1271,51 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
 	      *orMode == KBackground::Landscape ) {
     mode = Landscape;
   } else
-    mode = Pattern;
+    mode = GreyMap;
 	
   setCaption( i18n( "Two color backgrounds" ) );
 
-  KConfig *config = KGlobal::config();
-  QString group = config->group();
-  config->setGroup( "Defined Pattern" );
-  int count = config->readNumEntry( "Count" );
+  KGlobal::dirs()->addResourceType("greymaps", KStandardDirs::kde_default("data") + "kdisplay/maps/");
+  QStringList flist = KGlobal::dirs()->findAllResources("greymaps", 
+							QString::null, false, true);
 
-  if (!count)
-    count = savePatterns();
+  list = new QList<PatternEntry>();
 
   QString name;
-  for (i = 0; i < count; i++) {
-    PatternEntry *entry = new PatternEntry();
-    name = QString("Name%1").arg(i);
-    entry->name = config->readEntry( name );
-    if (entry->name.isNull()) {
-      delete entry;
-      continue;
-    }
-    QStrList strl;
-    name = QString("Pattern%1").arg(i);
-    config->readListEntry(name, strl);
-    uint size = strl.count();
-    if (size > 8) size = 8;
-    for (uint j = 0; j < 8; j++)
-      entry->pattern[j] = (j < size) ? 
-	QString(strl.at(j)).toUInt() : 255;
-    list.append(entry);
+  for (QStringList::ConstIterator it = flist.begin(); it != flist.end(); it++) {
+      PatternEntry *entry = new PatternEntry();
+      name = *it;
+      int rev = name.findRev('/');
+      if (rev != -1)
+	  name = name.mid(rev + 1);
+      
+      rev = name.findRev('.');
+      if (rev != -1)
+	  name = name.left(rev);
+
+#define ni18n(x) x
+
+      static const char* filename_map[] = {
+	  "night-rock", ni18n("Tigert's Night-Rock"),
+	  "fish", ni18n("Fish net"),
+	  "triangles", ni18n("Triangles"),
+	  "flowers", ni18n("Flowers"),
+	  "rattan", ni18n("Rattan"),
+	  "pavement", ni18n("Cobbled Pavement"),
+	  0 };
+
+      int index = 0;
+      while (filename_map[index]) {
+	  if (name == filename_map[index]) {
+	      entry->name = i18n(filename_map[index+1]);
+	      break;
+	  }
+	  index += 2;
+      }
+      if (!filename_map[index])
+	  entry->name = name; 
+      entry->pattern = *it;
+      list->append(entry);
   }
 
   QVBoxLayout *toplevelHL = new QVBoxLayout(this, 10, 5);
@@ -1341,14 +1339,14 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
 	
   rb = new QRadioButton( i18n("Use &pattern"), this );
   rb->setFixedHeight( rb->sizeHint().height() );
-  suGroup->insert( rb, Pattern ); 
+  suGroup->insert( rb, GreyMap ); 
 	
   toplevelHL->addWidget( rb );
 	
   connect( suGroup, SIGNAL( clicked( int ) ), SLOT( slotMode( int ) ) );
   ((QRadioButton *)suGroup->find( Portrait ))->setChecked( mode == Portrait );
   ((QRadioButton *)suGroup->find( Landscape ))->setChecked( mode ==Landscape );
-  ((QRadioButton *)suGroup->find( Pattern ))->setChecked( mode == Pattern );
+  ((QRadioButton *)suGroup->find( GreyMap ))->setChecked( mode == GreyMap );
 	
   QGridLayout *grid = new QGridLayout( 3, 4, 4);
     
@@ -1372,8 +1370,8 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
   grid->addWidget( lName, 0, 2 );
 	
   listBox = new QListBox( this );
-  connect(listBox, SIGNAL(highlighted(const QString&)), 
-	  SLOT(selected(const QString&)));
+  connect(listBox, SIGNAL(highlighted(int)), 
+	  SLOT(selected(int)));
     
   grid->addWidget( listBox, 1, 1);
 	
@@ -1416,40 +1414,26 @@ KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
   bbox->layout();
   toplevelHL->addWidget( bbox );
 
-  current = new PatternEntry( i18n("Current"), p);
-  bool predefined = false;
-  int index = 0;
-  for ( PatternEntry *item=list.first(); item != 0; item=list.next() ) {
-    if (*current == item->pattern ) {
-      delete current;
-      current = item;
-      predefined = true;
-      break;
-    }
-    index++;
-  }
-    
-  if (!predefined) {
-    listBox->insertItem( current->name );
-  }
-
-  for ( PatternEntry *item=list.first(); item != 0; item=list.next() )
-    listBox->insertItem(item->name);
-	
-  listBox->setCurrentItem( index );
-	
   // we do this here to let all items fit in
   listBox->adjustSize();
   listBox->setMinimumSize(listBox->size());
 	
+  for ( PatternEntry *item=list->first(); item != 0; item=list->next() )
+      listBox->insertItem(item->name);
+
   slotMode( mode );
-  selected( current->name.ascii() );
+  // selected( current );
 
   toplevelHL->activate();
 	
   resize(350,0);
 
     
+}
+
+KBPatternDlg::~KBPatternDlg()
+{
+    delete list;
 }
 
 void KBPatternDlg::slotMode( int m )
@@ -1470,53 +1454,25 @@ void KBPatternDlg::slotMode( int m )
     lPreview->setEnabled( true );
     break;
   }
-  selected( listBox->text( listBox->currentItem() ).ascii() );
+  selected( listBox->currentItem() );
 }
 
-int KBPatternDlg::savePatterns() {
-  KConfig *config = KGlobal::config();
-
-  config->writeEntry("Name0", i18n("Filled"), true, false, true);
-  config->writeEntry("Pattern0", "255,255,255,255,255,255,255,255,");
-    
-  config->writeEntry("Name1", i18n("Fish net"), true, false, true);
-  config->writeEntry("Pattern1", "135,206,236,120,062,103,115,225,");
-
-  config->writeEntry("Name2", i18n("Triangles"), true, false, true);
-  config->writeEntry("Pattern2", "120,248,249,251,255,8,24,56,");
-
-  config->writeEntry("Name3", i18n("Flowers"), true, false, true);
-  config->writeEntry("Pattern3", "225,115,39,2,64,228,206,135,");
-
-  config->writeEntry("Name4", i18n("Rattan"), true, false, true);
-  config->writeEntry("Pattern4", "7,139,221,184,112,232,221,142,");
-
-  config->writeEntry("Name5", i18n("Cobbled Pavement"), true, false, true);
-  config->writeEntry("Pattern5", "81,178,160,247,178,81,178,");
-
-  config->writeEntry("Count", 6);
-
-  config->sync();
-  return 6;
-}
-
-void KBPatternDlg::selected( const QString& selected )
+void KBPatternDlg::selected( int index )
 {
-  for ( PatternEntry *item=list.first(); item != 0; item=list.next() )
-    if (*item == selected) {
-		
-      KPixmap tmp;
-      tmp.resize(preview->width() + 2, preview->height() + 2);
-      if( listBox->isEnabled() )
-	tmp.patternFill( color1, color2, item->pattern);
-      else {
+    PatternEntry *item = list->at(index);
+    if (!item)
+	return;
+
+    KPixmap tmp;
+    tmp.resize(preview->width() + 2, preview->height() + 2);
+    if( listBox->isEnabled() )
+	tmp.mapFill( color1, color2, item->pattern);
+    else {
 	QColorGroup cg = colorGroup();
-	tmp.patternFill( cg.mid(), cg.background(), item->pattern);
-      }
-      preview->setPixmap(tmp);
-      current = item;
-      break;
+	tmp.mapFill( cg.mid(), cg.background(), item->pattern);
     }
+    preview->setBackgroundPixmap(tmp);
+    current = item->pattern;
 }
 
 void KBPatternDlg::done( int r ) 
@@ -1530,24 +1486,21 @@ void KBPatternDlg::done( int r )
     type = KBackground::Gradient;
     orient = KBackground::Landscape;
   } 
-  if( mode == Pattern ) {
+  if( mode == GreyMap ) {
     type = KBackground::Pattern;
   }
-	    
+  
   if ( r == Rejected || 
-       ( *current == pattern && *orMode == orient && *tpMode == type ) ) {
+       ( current == *pattern && *orMode == orient && *tpMode == type ) ) {
     setResult(Rejected);
     return;
   }
 	
   *orMode = orient;
   *tpMode = type;
-    
-  for (uint i = 0; i < 8; i++)
-    pattern[i] = current->pattern[i];
-
+  
+  *pattern = current;
   setResult(Accepted);
-    
 }
 
 
@@ -1709,7 +1662,6 @@ void KRandomDlg::dropEvent(QDropEvent *e)
   // Only local files are supported
   if( QUriDrag::decodeLocalFiles( e, uris) && (uris.count() > 0)) {
     QString uri = *uris.begin();
-    debug( "KRandomDlg drop, url=\"%s\"\n", uri.data());
     uri.prepend('/');
     addToPicList(uri);
   } else {

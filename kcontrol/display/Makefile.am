@@ -5,7 +5,7 @@ INCLUDES = $(all_includes)
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD =  $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB)
 
-SUBDIRS = kcs ad pics
+SUBDIRS = . kcs ad pics maps
 
 bin_PROGRAMS = kcmdisplay
 
@@ -24,4 +24,4 @@ noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h \
 EXTRA_DIST = README
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmdisplay_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -kni18n -x $(includedir)/kde.pot $(kcmdisplay_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
