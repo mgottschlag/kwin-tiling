@@ -63,7 +63,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   QHBoxLayout *hlayout = new QHBoxLayout(layout);
 
-  label = new QLabel(i18n("&Titlebar doubleclick:"), this);
+  label = new QLabel(i18n("&Titlebar double-click:"), this);
   hlayout->addWidget(label);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when double clicking on the"
     " titlebar of a window.") );
