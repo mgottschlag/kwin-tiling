@@ -221,8 +221,8 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   setVisible(_root, run_as_root);
 
   // disable initial buttons
-  _apply->setEnabled(false);
-  _reset->setEnabled(false);
+  _apply->setEnabled( client->changed() );
+  _reset->setEnabled( client->changed() );
 
   connect(_help, SIGNAL(clicked()), SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), SLOT(defaultClicked()));
