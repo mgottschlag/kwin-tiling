@@ -737,7 +737,7 @@ void TreeView::newsubmenu()
    df->writeEntry("Name", folderInfo->caption);
    df->writeEntry("Icon", folderInfo->icon);
    df->sync();
-   
+   delete df; 
    // Add file to menu
    // m_menuFile->addMenu(folder + folderInfo->id, file);
    m_menuFile->pushAction(MenuFile::ADD_MENU, folder + folderInfo->id, file);
