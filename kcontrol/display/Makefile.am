@@ -47,4 +47,7 @@ themedir = $(kde_appsdir)/Settings/LookNFeel/Themes
 desktop_DATA = desktop.desktop advanced.desktop background.desktop
 desktopdir = $(kde_appsdir)/Settings/LookNFeel/Desktop
 
-EXTRA_DIST = README $(lnf_DATA) $(theme_DATA) $(desktop_DATA)
+power_DATA = energy.desktop
+powerdir = $(kde_appsdir)/Settings/PowerControl
+
+EXTRA_DIST = README $(lnf_DATA) $(theme_DATA) $(desktop_DATA) $(power_DATA)

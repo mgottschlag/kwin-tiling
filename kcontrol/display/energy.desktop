@@ -1,0 +1,59 @@
+[Desktop Entry]
+Exec=kcmshell PowerControl/energy
+Icon=energy
+DocPath=kcontrol/kcmdisplay/kdisplay-8.html
+Type=Application
+Terminal=0
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=display
+X-KDE-FactoryName=energy
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Energy
+Name[ca]=Energia
+Name[cs]=Úspora energie
+Name[eo]=Energio
+Name[fi]=Virransäästö
+Name[fr]=Énergie
+Name[he]=היגרנא
+Name[hu]=Energia
+Name[it]=Energia
+Name[ja]=エネルギー
+Name[no]=Energi
+Name[no_NY]=Energi
+Name[pt]=Energia
+Name[ro]=Energie
+Name[sl]=Energija
+Name[sv]=Energi
+Name[ta]=ºì¾¢
+
+Comment=General energy settings
+Comment[ca]=Arranjaments generals d'energia
+Comment[cs]=Obecná nastavení úspory energie 
+Comment[de]=Allgemeine Energie-Einstellungen
+Comment[eo]=Ĝenerala energiagordaĵo
+Comment[fi]=Yleiset virransäästöasetukset
+Comment[fr]=Configuration de l'énergie
+Comment[he]=תויללכ היגרנא תורדגה
+Comment[hu]=Általános energia beállítások
+Comment[it]=Impostazioni generali energia
+Comment[ja]=エネルギーの設定
+Comment[no]=Generelle energi-innstillinger
+Comment[no_NY]=Generelle energiinnstillingar
+Comment[pt]=Configuração do consumo de energia
+Comment[ro]=Configurează consumul de energie
+Comment[sl]=Splo�ne energetske nastavitve
+Comment[sv]=Allmänna energiinställningar
+Comment[ta]=¦À¡ÐôÀ¨¼Â¡É ºì¾¢ «¨ÁôÒ¸û
+
+Keywords=energy,saver,apm,acpi,timeout,blanking
+Keywords[ca]=energia,salvapantalles,apm,acpi,expiració,en blanc
+Keywords[de]=energie,sparen,apm,acpi,zeitüberlauf,timeout, ausblenden
+Keywords[hu]=energia,kímélő,apm,acpi,timeout,törlés
+Keywords[no]=energi,sparer,apm,acpi,tidsgrense,blanking
+Keywords[no_NY]=energisparing,sparing,apm,acpi,tidsgrense
+Keywords[pt]=energia,poupança,apm,acpi,temporizador
+Keywords[ro]=energie,salvare,apm,acpi,temporizare,stinge
+Keywords[sl]=energija,ohranjevalnik,var�evalnik,apm,acpi,potek,zatemnitev
