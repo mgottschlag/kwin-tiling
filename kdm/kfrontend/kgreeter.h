@@ -83,6 +83,8 @@ protected:
 };
 
 
+class UserListView;
+
 class KGreeter : public FDialog {
     Q_OBJECT
     typedef FDialog inherited;
@@ -114,8 +116,8 @@ protected:
 
 private:
     void set_wm( const char * );
-    void insertUsers( KListView * );
-    void insertUser( KListView *, const QImage &, const QString &, struct passwd * );
+    void insertUsers( UserListView * );
+    void insertUser( UserListView *, const QImage &, const QString &, struct passwd * );
     void MsgBox( QMessageBox::Icon typ, QString msg ) { KFMsgBox::box( this, typ, msg ); }
     void Inserten( QPopupMenu *mnu, const QString& txt, const char *member );
     bool verifyUser( bool );
@@ -125,7 +127,7 @@ private:
     WmStat		wmstat;
     QString		enam, user_pic_dir;
     KSimpleConfig	*stsfile;
-    KListView		*user_view;
+    UserListView	*user_view;
     KdmClock		*clock;
     QLabel		*pixLabel;
     QLabel		*loginLabel, *passwdLabel, *sessargLabel;

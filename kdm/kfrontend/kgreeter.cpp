@@ -36,6 +36,7 @@
 #include <qaccel.h>
 #include <qcursor.h>
 #include <qheader.h>
+#include <qstyle.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -63,19 +64,47 @@
 #include <X11/Xlib.h>
 
 
-class GreeterListViewItem : public KListViewItem {
-public:
-    GreeterListViewItem( KListView* parent, const QString& text )
-	: KListViewItem( parent, text ) {};
-    QString login;
-};
-
 void
 KLoginLineEdit::focusOutEvent( QFocusEvent *e )
 {
     emit lost_focus();
     inherited::focusOutEvent( e );
 }
+
+
+class UserListView : public KListView {
+public:
+    UserListView( QWidget* parent = 0, const char *name = 0 )
+	: KListView( parent, name )
+	, cachedSizeHint( -1, 0 )
+    {
+	setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
+	header()->hide();
+	addColumn( QString::null );
+	setColumnAlignment( 0, AlignVCenter );
+	setResizeMode( QListView::LastColumn );
+    }
+
+    mutable QSize cachedSizeHint;
+
+protected:
+    virtual QSize sizeHint() const
+    {
+	if (!cachedSizeHint.isValid()) {
+	    constPolish();
+	    uint maxw = 0;
+	    for (QListViewItem *itm = firstChild(); itm; itm = itm->nextSibling()) {
+		uint thisw = itm->width( fontMetrics(), this, 0 );
+		if (thisw > maxw)
+		    maxw = thisw;
+	    }
+	    cachedSizeHint.setWidth(
+		style().pixelMetric( QStyle::PM_ScrollBarExtent ) +
+		frameWidth() * 2 + maxw );
+	}
+	return cachedSizeHint;
+    }
+};
 
 
 KGreeter::KGreeter()
@@ -102,11 +131,7 @@ KGreeter::KGreeter()
 	main_grid->addWidget( welcomeLabel, 0, 1 );
     }
     if (kdmcfg->_showUsers != SHOW_NONE) {
-	user_view = new KListView( winFrame );
-	user_view->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored ) );
-	user_view->addColumn(QString::null);
-	user_view->setResizeMode(QListView::LastColumn);
-	user_view->header()->hide();
+	user_view = new UserListView( winFrame );
 	insertUsers( user_view );
 	main_grid->addMultiCellWidget(user_view, 0, 3, 0, 0);
 	connect( user_view, SIGNAL(clicked( QListViewItem * )),
@@ -281,8 +306,24 @@ KGreeter::~KGreeter()
     delete stsfile;
 }
 
+class UserListViewItem : public KListViewItem {
+public:
+    UserListViewItem( UserListView *parent, const QString &text,
+			 const QPixmap &pixmap, const QString &username )
+	: KListViewItem( parent )
+	, login( username )
+    {
+	setPixmap( 0, pixmap );
+	setMultiLinesEnabled( true );
+	setText( 0, text );
+	parent->cachedSizeHint.setWidth( -1 );
+    }
+
+    QString login;
+};
+
 void
-KGreeter::insertUser( KListView *listview, const QImage &default_pix,
+KGreeter::insertUser( UserListView *listview, const QImage &default_pix,
 		      const QString &username, struct passwd *ps )
 {
     QImage p;
@@ -302,17 +343,17 @@ KGreeter::insertUser( KListView *listview, const QImage &default_pix,
     else
 	p = p.smoothScale( 48, 48, QImage::ScaleMin );
     QString realname = QFile::decodeName( ps->pw_gecos );
-    realname = realname.left(realname.find(","));
-    QString userlabel = realname.isEmpty() ?
-				username :
-				realname + "\n" + username;
-    GreeterListViewItem *item = new GreeterListViewItem( listview, userlabel );
-    item->setPixmap( 0, QPixmap( p ) );
-    item->login = username;
+    realname.truncate( realname.find( ',' ) );
+    if (realname.isEmpty())
+	new UserListViewItem( listview, username, QPixmap( p ), username );
+    else {
+	realname.append( "\n" ).append( username );
+	new UserListViewItem( listview, realname, QPixmap( p ), username );
+    }
 }
 
 void
-KGreeter::insertUsers( KListView *listview )
+KGreeter::insertUsers( UserListView *listview )
 {
     QImage default_pix( user_pic_dir + QString::fromLatin1("default.png") );
     if (default_pix.isNull())
@@ -377,7 +418,7 @@ KGreeter::sel_user()
 	QString login = loginEdit->text();
 	QListViewItem *item;
 	for (item = user_view->firstChild(); item; item = item->nextSibling())
-	    if (((GreeterListViewItem *)item)->login == login) {
+	    if (((UserListViewItem *)item)->login == login) {
 		user_view->setCurrentItem( item );
 		user_view->ensureItemVisible( item );
 		break;
@@ -390,7 +431,7 @@ void
 KGreeter::slot_user_name( QListViewItem *item )
 {
     if (item) {
-	loginEdit->setText( ((GreeterListViewItem *)item)->login );
+	loginEdit->setText( ((UserListViewItem *)item)->login );
 	passwdEdit->erase();
 	passwdEdit->setFocus();
 	load_wm();
