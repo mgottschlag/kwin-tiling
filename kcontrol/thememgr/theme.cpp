@@ -950,6 +950,10 @@ void Theme::doCmdList(void)
       runKrdb();
       colorSchemeApply();
     }
+    else if (cmd == "applyStyle")
+    {
+      styleApply();
+    }
     else if (cmd == "applyWallpaper")
     {
        // reconfigure kdesktop. kdesktop will notify all clients
@@ -1098,8 +1102,9 @@ void Theme::install(void)
   if (instSounds) installGroup("Sounds");
   if (instIcons) installGroup("Icons");
 
-  // Colors & WM are installed behind each other to get a smoother update.
+  // Colors, Style & WM are installed behind each other to get a smoother update.
   if (instColors) installGroup("Colors");
+  if (instStyle) installGroup("Style");
   if (instWM)
   {
      installGroup("Window Border");
@@ -1285,6 +1290,11 @@ void Theme::runKrdb(void) const
 void Theme::colorSchemeApply(void)
 {
   KIPC::sendMessageAll(KIPC::PaletteChanged);
+}
+
+void Theme::styleApply(void)
+{
+  KIPC::sendMessageAll(KIPC::StyleChanged);
 }
 
 

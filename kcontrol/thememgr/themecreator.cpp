@@ -94,6 +94,7 @@ bool ThemeCreator::extract(void)
 
   if (instWallpapers) extractGroup("Display");
   if (instColors) extractGroup("Colors");
+  if (instStyle) extractGroup("Style");
   if (instSounds) extractGroup("Sounds");
   if (instWM) extractGroup("Window Border");
   if (instPanel) extractGroup("Panel");

@@ -50,6 +50,7 @@ protected:
 
 protected:
   QCheckBox *mCbxColors;
+  QCheckBox *mCbxStyle;
   QCheckBox *mCbxWallpapers;
   QCheckBox *mCbxSounds;
   QCheckBox *mCbxIcons;
@@ -58,6 +59,7 @@ protected:
   QCheckBox *mCbxKmenu;
   QCheckBox *mCbxOverwrite;
   QLabel *mStatColors;
+  QLabel *mStatStyle;
   QLabel *mStatWallpapers;
   QLabel *mStatSounds;
   QLabel *mStatIcons;
