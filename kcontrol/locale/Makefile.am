@@ -1,6 +1,5 @@
 
 INCLUDES = $(all_includes) -I..
-LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 LDADD    = $(LIB_KDEUI) $(LIB_KDECORE) 
 
 SUBDIRS = pics default
@@ -11,7 +10,7 @@ libkcm_locale_la_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp 
 METASOURCES = main.moc locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
 noinst_HEADERS = main.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
 
-libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
+libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries)
 
 KDE_ICON = locale
 
