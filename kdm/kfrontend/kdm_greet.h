@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+void GSet (int master);
 void GSendInt (int val);
 void GSendStr (const char *buf);
 /*void GSendNStr (const char *buf, int len);*/

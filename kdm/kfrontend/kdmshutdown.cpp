@@ -238,11 +238,13 @@ KDMShutdown::bye_bye()
 	}
     }
 #endif
+    GSet( 1 );
     GSendInt( G_Shutdown );
     GSendInt( restart_rb->isChecked() ? SHUT_REBOOT : SHUT_HALT );
     GSendInt( _interactiveSd ? SHUT_INTERACT :
 	      force_rb->isChecked() ? SHUT_FORCENOW :
 	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE );
+    GSet( 0 );
     inherited::accept();
 }
 

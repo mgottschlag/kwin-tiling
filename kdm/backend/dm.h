@@ -228,6 +228,7 @@ struct display {
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
 	GPipe		pipe;		/* comm master <-> slave */
+	GPipe		gpipe;		/* comm master <-> greeter */
 #ifdef XDMCP
 	char		*remoteHost;	/* for X -query type remote login */
 	/* XDMCP state */
@@ -300,7 +301,6 @@ struct protoDisplay {
 /* command codes dpy process -> master process */
 #define D_User		1
 #define D_ReLogin	2
-#define D_Shutdown	3
 #define D_ChooseHost	4
 #define D_RemoteHost	5
 #define D_XConnOk	6
@@ -397,10 +397,13 @@ extern int runAndWait (char **args, char **env);
 extern void TerminateProcess (int pid, int sig);
 
 extern void GSet (GTalk *talk);	/* call before GOpen! */
-extern int GFork (GPipe *pajp, const char *pname, char *cname);
+extern int GFork (GPipe *pajp, const char *pname, char *cname,
+		  GPipe *ogp, char *cgname);
 extern void GClosen (GPipe *pajp);
-extern int GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname);
-extern int GClose (GProc *proc, int force);
+extern int GOpen (GProc *proc,
+		  char **argv, const char *what, char **env, char *cname,
+		  GPipe *gp);
+extern int GClose (GProc *proc, GPipe *gp, int force);
 
 extern void GSendInt (int val);
 extern int GRecvInt (void);

@@ -89,6 +89,12 @@ RegisterCloseOnFork (int fd)
 	max = fd;
 }
 
+static void
+ClearCloseOnFork (int fd)
+{
+    FD_CLR (fd, &CloseMask);
+}
+
 void
 CloseNClearCloseOnFork (int fd)
 {
@@ -279,32 +285,52 @@ GSet (GTalk *tlk)
 }
 
 int
-GFork (GPipe *pajp, const char *pname, char *cname)
+GFork (GPipe *pajp, const char *pname, char *cname,
+       GPipe *ogp, char *cgname)
 {
-    int opipe[2], ipipe[2], pid;
+    int opipe[2], ipipe[2], ogpipe[2], igpipe[2], pid;
 
-    if (pipe (opipe)) {
-	LogError ("Cannot start %s, pipe() failed", cname);
-	if (cname)
-	     free (cname);
-	return -1;
-    }
-    if (pipe (ipipe)) {
-	close (opipe[0]);
-	close (opipe[1]);
-	LogError ("Cannot start %s, pipe() failed", cname);
-	if (cname)
-	     free (cname);
-	return -1;
+    if (pipe (opipe))
+	goto badp1;
+    if (pipe (ipipe))
+	goto badp2;
+    if (ogp) {
+	if (pipe (ogpipe))
+	    goto badp3;
+	if (pipe (igpipe)) {
+	    close (ogpipe[0]);
+	    close (ogpipe[1]);
+	  badp3:
+	    close (ipipe[0]);
+	    close (ipipe[1]);
+	  badp2:
+	    close (opipe[0]);
+	    close (opipe[1]);
+	  badp1:
+	    LogError ("Cannot start %s, pipe() failed", cname);
+	    if (cname)
+		free (cname);
+	    return -1;
+	}
     }
     RegisterCloseOnFork (opipe[1]);
     RegisterCloseOnFork (ipipe[0]);
+    if (ogp) {
+	RegisterCloseOnFork (ogpipe[1]);
+	RegisterCloseOnFork (igpipe[0]);
+    }
     switch (pid = Fork()) {
     case -1:
 	close (opipe[0]);
 	close (ipipe[1]);
 	CloseNClearCloseOnFork (opipe[1]);
 	CloseNClearCloseOnFork (ipipe[0]);
+	if (ogp) {
+	    close (ogpipe[0]);
+	    close (igpipe[1]);
+	    CloseNClearCloseOnFork (ogpipe[1]);
+	    CloseNClearCloseOnFork (igpipe[0]);
+	}
 	LogError ("Cannot start %s, fork() failed\n", cname);
 	if (cname)
 	     free (cname);
@@ -315,6 +341,13 @@ GFork (GPipe *pajp, const char *pname, char *cname)
 	pajp->rfd = opipe[0];
 	RegisterCloseOnFork (opipe[0]);
 	pajp->who = (char *)pname;
+	if (ogp) {
+	    ogp->wfd = igpipe[1];
+	    RegisterCloseOnFork (igpipe[1]);
+	    ogp->rfd = ogpipe[0];
+	    RegisterCloseOnFork (ogpipe[0]);
+	    ogp->who = (char *)pname;
+	}
 	break;
     default:
 	close (opipe[0]);
@@ -322,13 +355,21 @@ GFork (GPipe *pajp, const char *pname, char *cname)
 	pajp->rfd = ipipe[0];
 	pajp->wfd = opipe[1];
 	pajp->who = cname;
+	if (ogp) {
+	    close (ogpipe[0]);
+	    close (igpipe[1]);
+	    ogp->rfd = igpipe[0];
+	    ogp->wfd = ogpipe[1];
+	    ogp->who = cgname;
+	}
 	break;
     }
     return pid;
 }
 
 int
-GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
+GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname,
+       GPipe *gp)
 {
     char **margv;
     int pip[2];
@@ -358,9 +399,20 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	     free (cname);
 	goto fail;
     }
-    switch (proc->pid = GFork (&proc->pipe, 0, cname)) {
-    case -1:
+    if (gp) {
+	ClearCloseOnFork (gp->rfd);
+	ClearCloseOnFork (gp->wfd);
+    }
+    proc->pid = GFork (&proc->pipe, 0, cname, 0, 0);
+    if (proc->pid) {
 	close (pip[1]);
+	if (gp) {
+	    RegisterCloseOnFork (gp->rfd);
+	    RegisterCloseOnFork (gp->wfd);
+	}
+    }
+    switch (proc->pid) {
+    case -1:
       fail1:
 	close (pip[0]);
       fail:
@@ -371,7 +423,11 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	(void) Signal (SIGPIPE, SIG_IGN);
 	close (pip[0]);
 	fcntl (pip[1], F_SETFD, FD_CLOEXEC);
-	sprintf (coninfo, "CONINFO=%d %d", proc->pipe.rfd, proc->pipe.wfd);
+	if (gp)
+	    sprintf (coninfo, "CONINFO=%d %d %d %d",
+			      proc->pipe.rfd, proc->pipe.wfd, gp->rfd, gp->wfd);
+	else
+	    sprintf (coninfo, "CONINFO=%d %d", proc->pipe.rfd, proc->pipe.wfd);
 	env = putEnv (coninfo, env);
 	if (debugLevel & DEBUG_VALGRIND) {
 	    char **nmargv = xCopyStrArr (3, margv);
@@ -389,7 +445,6 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	exit (1);
     default:
 	(void) Signal (SIGPIPE, SIG_IGN);
-	close (pip[1]);
 	if (Reader (pip[0], coninfo, 1)) {
 	    Wait4 (proc->pid);
 	    LogError ("Cannot execute %\"s (%s)\n", margv[0], cname);
@@ -423,7 +478,7 @@ GClosen (GPipe *pajp)
 }
 
 int
-GClose (GProc *proc, int force)
+GClose (GProc *proc, GPipe *gp, int force)
 {
     int	ret;
 
@@ -432,6 +487,8 @@ GClose (GProc *proc, int force)
 	return 0;
     }
     iGClosen (&proc->pipe);
+    if (gp)
+	GClosen (gp);
     if (force)
 	TerminateProcess (proc->pid, SIGTERM);
     ret = Wait4 (proc->pid);

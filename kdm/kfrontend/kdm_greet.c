@@ -93,7 +93,18 @@ GDebug (const char *fmt, ...)
 char *dname;
 
 int rfd;
-static int wfd;
+static int wfd, mrfd, mwfd, srfd, swfd;
+static const char *who;
+
+void
+GSet (int master)
+{
+    if (master)
+	rfd = mrfd, wfd = mwfd, who = "core (master)";
+    else
+	rfd = srfd, wfd = swfd, who = "core";
+
+}
 
 static int
 Reader (void *buf, int count)
@@ -121,14 +132,14 @@ static void
 GRead (void *buf, int count)
 {
     if (Reader (buf, count) != count)
-	LogPanic ("Can't read from core\n");
+	LogPanic ("Can't read from %s\n", who);
 }
 
 static void
 GWrite (const void *buf, int count)
 {
     if (write (wfd, buf, count) != count)
-	LogPanic ("Can't write to core\n");
+	LogPanic ("Can't write to %s\n", who);
 #ifdef _POSIX_PRIORITY_SCHEDULING
     if ((debugLevel & DEBUG_HLPCON))
 	sched_yield ();
@@ -138,7 +149,7 @@ GWrite (const void *buf, int count)
 void
 GSendInt (int val)
 {
-    GDebug ("Sending int %d (%#x) to core\n", val, val);
+    GDebug ("Sending int %d (%#x) to %s\n", val, val, who);
     GWrite (&val, sizeof(val));
 }
 
@@ -146,7 +157,7 @@ void
 GSendStr (const char *buf)
 {
     int len = buf ? strlen (buf) + 1 : 0;
-    GDebug ("Sending string %'s to core\n", buf);
+    GDebug ("Sending string %'s to %s\n", buf, who);
     GWrite (&len, sizeof(len));
     GWrite (buf, len);
 }
@@ -156,7 +167,7 @@ static void
 GSendNStr (const char *buf, int len)
 {
     int tlen = len + 1;
-    GDebug ("Sending string %'.*s to core\n", len, buf);
+    GDebug ("Sending string %'.*s to %s\n", len, buf, who);
     GWrite (&tlen, sizeof(tlen));
     GWrite (buf, len);
     GWrite ("", 1);
@@ -166,7 +177,7 @@ GSendNStr (const char *buf, int len)
 void
 GSendArr (int len, const char *buf)
 {
-    GDebug ("Sending array %02[:*hhx to core\n", len, buf);
+    GDebug ("Sending array %02[:*hhx to %s\n", len, buf, who);
     GWrite (&len, sizeof(len));
     GWrite (buf, len);
 }
@@ -176,7 +187,7 @@ GRecvInt ()
 {
     int val;
 
-    GDebug ("Receiving int from core ...\n");
+    GDebug ("Receiving int from %s ...\n", who);
     GRead (&val, sizeof(val));
     GDebug (" -> %d (%#x)\n", val, val);
     return val;
@@ -205,7 +216,7 @@ GRecvStr ()
     int len;
     char *buf;
 
-    GDebug ("Receiving string from core ...\n");
+    GDebug ("Receiving string from %s ...\n", who);
     buf = iGRecvArr (&len);
     GDebug (" -> %'.*s\n", len, buf);
     return buf;
@@ -217,7 +228,7 @@ GRecvStrArr (int *rnum)
     int num;
     char **argv, **cargv;
 
-    GDebug ("Receiving string array from core ...\n");
+    GDebug ("Receiving string array from %s ...\n", who);
     GRead (&num, sizeof(num));
     GDebug (" -> %d strings\n", num);
     if (rnum)
@@ -236,7 +247,7 @@ GRecvArr (int *num)
 {
     char *arr;
 
-    GDebug ("Receiving array from core ...\n");
+    GDebug ("Receiving array from %s ...\n", who);
     GRead (num, sizeof(*num));
     GDebug (" -> %d bytes\n", *num);
     if (!*num)
@@ -680,8 +691,9 @@ main (int argc ATTR_UNUSED, char **argv)
 	fprintf(stderr, "This program is part of kdm and should not be run manually.\n");
 	return 1;
     }
-    if (sscanf (ci, "%d %d", &rfd, &wfd) != 2)
+    if (sscanf (ci, "%d %d %d %d", &srfd, &swfd, &mrfd, &mwfd) != 4)
 	return 1;
+    GSet (0);
 
     InitLog();
 

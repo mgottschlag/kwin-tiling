@@ -737,7 +737,7 @@ static void
 processDPipe (struct display *d)
 {
     char *user, *pass, *args;
-    int cmd, how;
+    int cmd;
     GTalk dpytalk;
 #ifdef XDMCP
     int ct, len;
@@ -768,11 +768,6 @@ processDPipe (struct display *d)
 	free (pass);
 	free (user);
 	break;
-    case D_Shutdown:
-	how = GRecvInt ();
-	doShutdown (how, GRecvInt ());
-	/* XXX after this all displays could be gone */
-	break;
 #ifdef XDMCP
     case D_ChooseHost:
 	ca.data = (unsigned char *)GRecvArr (&len);
@@ -795,6 +790,35 @@ processDPipe (struct display *d)
 	break;
     default:
 	LogError ("Internal error: unknown D_* command %d\n", cmd);
+	StopDisplay (d);
+	break;
+    }
+}
+
+static void
+processGPipe (struct display *d)
+{
+    int cmd, how;
+    GTalk dpytalk;
+
+    dpytalk.pipe = &d->gpipe;
+    if (Setjmp (dpytalk.errjmp)) {
+	StopDisplay (d);
+	return;
+    }
+    GSet (&dpytalk);
+    if (!GRecvCmd (&cmd)) {
+	/* process already exited */
+	UnregisterInput (d->gpipe.rfd);
+	return;
+    }
+    switch (cmd) {
+    case G_Shutdown:
+	how = GRecvInt ();
+	doShutdown (how, GRecvInt ());
+	break;
+    default:
+	LogError ("Internal error: unknown G_* command %d\n", cmd);
 	StopDisplay (d);
 	break;
     }
@@ -1024,6 +1048,8 @@ ReapChildren (void)
 	    d->pid = -1;
 	    UnregisterInput (d->pipe.rfd);
 	    GClosen (&d->pipe);
+	    UnregisterInput (d->gpipe.rfd);
+	    GClosen (&d->gpipe);
 	    closeFifo (&d->fifofd, &d->fifoPath);
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
@@ -1324,6 +1350,11 @@ MainLoop (void)
 		    processDPipe (d);
 		    break;
 		}
+		if (d->gpipe.rfd >= 0 && FD_ISSET (d->gpipe.rfd, &reads))
+		{
+		    processGPipe (d);
+		    break;
+		}
 	    }
 	}
     }
@@ -1503,13 +1534,15 @@ StartDisplay (struct display *d)
 void
 StartDisplayP2 (struct display *d)
 {
-    char	*cname;
+    char	*cname, *cgname;
     int		pid;
 
     openFifo (&d->fifofd, &d->fifoPath, d->name);
     Debug ("forking session\n");
     ASPrintf (&cname, "sub-daemon for display %s", d->name);
-    pid = GFork (&d->pipe, "master daemon", cname);
+    ASPrintf (&cgname, "greeter for display %s", d->name);
+    pid = GFork (&d->pipe, "master daemon", cname,
+		 &d->gpipe, cgname);
     switch (pid)
     {
     case 0:
@@ -1534,7 +1567,9 @@ StartDisplayP2 (struct display *d)
 	Debug ("forked session, pid %d\n", pid);
 
 	/* (void) fcntl (d->pipe.rfd, F_SETFL, O_NONBLOCK); */
+	/* (void) fcntl (d->gpipe.rfd, F_SETFL, O_NONBLOCK); */
 	RegisterInput (d->pipe.rfd);
+	RegisterInput (d->gpipe.rfd);
 
 	d->pid = pid;
 	d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit = 

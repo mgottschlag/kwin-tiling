@@ -220,7 +220,7 @@ GTalk mstrtalk;	/* make static; see dm.c */
 int
 CtrlGreeterWait (int wreply)
 {
-    int		i, j, cmd, type, rootok;
+    int		i, cmd, type, rootok;
     char	*name, *pass, **avptr;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
@@ -363,15 +363,6 @@ CtrlGreeterWait (int wreply)
 	    } else
 		Debug (" -> failure returned\n");
 	    break;
-	case G_Shutdown:
-	    i = GRecvInt ();
-	    j = GRecvInt ();
-	    GSet (&mstrtalk);
-	    GSendInt (D_Shutdown);
-	    GSendInt (i);
-	    GSendInt (j);
-	    GSet (&grttalk);
-	    break;
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
 	    SetupDisplay ();
@@ -417,7 +408,7 @@ OpenGreeter ()
 
     grttalk.pipe = &grtproc.pipe;
     env = systemEnv ((char *) 0);
-    if (GOpen (&grtproc, (char **)0, "_greet", env, name))
+    if (GOpen (&grtproc, (char **)0, "_greet", env, name, &td->gpipe))
 	SessionExit (EX_UNMANAGE_DPY);
     freeStrArr (env);
     if ((cmd = CtrlGreeterWait (TRUE))) {
@@ -438,7 +429,7 @@ CloseGreeter (int force)
     if (!greeter)
 	return EX_NORMAL;
     greeter = 0;
-    ret = GClose (&grtproc, force);
+    ret = GClose (&grtproc, 0, force);
     Debug ("greeter for %s stopped\n", td->name);
     if (WaitCode(ret) > EX_NORMAL && WaitCode(ret) <= EX_MAX) {
 	Debug ("greeter-initiated session exit, code %d\n", WaitCode(ret));
