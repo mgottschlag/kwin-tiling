@@ -1,0 +1,767 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>AccessibilityConfigWidget</class>
+<widget class="KCModule">
+    <property name="name">
+        <cstring>AccessibilityConfigWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>528</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Accessibility</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QTabWidget">
+            <property name="name">
+                <cstring>tabWidget3</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Bell</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>audibleBellGroup</cstring>
+                        </property>
+                        <property name="title">
+                            <string>&amp;Audible Bell</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>This is the configuration of the Audible Bell.&lt;br&gt;</string>
+                        </property>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>sustomBell</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>11</x>
+                                    <y>57</y>
+                                    <width>460</width>
+                                    <height>25</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>Use &amp;customized bell</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Check this option if you want to use a customized bell, playing a sound file. If you do this, you will probably want to turn off the system bell.&lt;br&gt;
+Please note that on slow machines this may cause a "lag" between the event causing the bell and the sound being played.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>soundToPlayLabel</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>41</x>
+                                    <y>88</y>
+                                    <width>128</width>
+                                    <height>29</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>Sound &amp;to play:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>soundToPlay</cstring>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>If the option "Use customized bell" is enabled, you can choose a sound file here.</string>
+                            </property>
+                        </widget>
+                        <widget class="KURLRequester">
+                            <property name="name">
+                                <cstring>soundToPlay</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>175</x>
+                                    <y>88</y>
+                                    <width>296</width>
+                                    <height>29</height>
+                                </rect>
+                            </property>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>systemBell</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>11</x>
+                                    <y>26</y>
+                                    <width>460</width>
+                                    <height>25</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>Use &amp;system bell</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>If this option is checked, the default system bell will be used. See the "System Bell" control module for how to customize the system bell.&lt;br&gt;
+Normally, this is just a "beep".</string>
+                            </property>
+                        </widget>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>visibleBellGroup</cstring>
+                        </property>
+                        <property name="title">
+                            <string>&amp;Visible Bell</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Use visible bell</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton">
+                                <property name="name">
+                                    <cstring>radioButton1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>I&amp;nvert screen</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout10</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QRadioButton">
+                                        <property name="name">
+                                            <cstring>radioButton2</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>F&amp;lash screen</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KColorButton">
+                                        <property name="name">
+                                            <cstring>kColorButton1</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                        <property name="color">
+                                            <color>
+                                                <red>255</red>
+                                                <green>0</green>
+                                                <blue>0</blue>
+                                            </color>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>flashScreenSpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>0</width>
+                                                <height>15</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout11</cstring>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="KIntSpinBox" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>duration</cstring>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>durationSlider</cstring>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>durationLabel</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Duration:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>duration</cstring>
+                                        </property>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>80</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Keyboard</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox10</cstring>
+                        </property>
+                        <property name="title">
+                            <string>S&amp;ticky Keys</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox18</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use &amp;sticky keys</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox19</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Lock with sticky keys</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox11</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Slo&amp;w Keys</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox20</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Use slow keys</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>slowKeysDelayLayout</cstring>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="KIntSpinBox" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>slowKeysDelay</cstring>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>slowKeysDelaySlider</cstring>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>slowKeysDelayLabel</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Duration:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>slowKeysDelay</cstring>
+                                        </property>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox11_2</cstring>
+                        </property>
+                        <property name="title">
+                            <string>&amp;Bounce Keys</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox20_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use bou&amp;nce keys</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>bounceKeysDelayLayout</cstring>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="KIntSpinBox" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>bounceKeysDelay</cstring>
+                                        </property>
+                                        <property name="suffix">
+                                            <string> msec</string>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>bounceKeysDelaySlider</cstring>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="lineStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="pageStep">
+                                            <number>100</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>500</number>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="tickmarks">
+                                            <enum>Right</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>bounceKeysDelayLabel</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Du&amp;ration:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>bounceKeysDelay</cstring>
+                                        </property>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>61</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Mouse</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox13</cstring>
+                        </property>
+                        <property name="title">
+                            <string>M&amp;ouse Navigation</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>checkBox22</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Mo&amp;ve mouse with keyboard</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout18</cstring>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel4_4</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Aceleration delay:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="4" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel4_7</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Aceleration delay:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="2" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel4_5</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Aceleration delay:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="0" column="2">
+                                        <property name="name">
+                                            <cstring>slider4</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="4" column="1">
+                                        <property name="name">
+                                            <cstring>kIntSpinBox4_7</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="4" column="2">
+                                        <property name="name">
+                                            <cstring>slider4_7</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="3" column="2">
+                                        <property name="name">
+                                            <cstring>slider4_6</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>kIntSpinBox4_4</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="2" column="1">
+                                        <property name="name">
+                                            <cstring>kIntSpinBox4_5</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel4</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Aceleration delay:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="3" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel4_6</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Aceleration delay:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="1" column="2">
+                                        <property name="name">
+                                            <cstring>slider4_4</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>kIntSpinBox4</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="KIntSpinBox" row="3" column="1">
+                                        <property name="name">
+                                            <cstring>kIntSpinBox4_6</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSlider" row="2" column="2">
+                                        <property name="name">
+                                            <cstring>slider4_5</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer8</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>1</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>sustomBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>soundToPlay</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>sustomBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>soundToPlayLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>duration</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>durationSlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>durationSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>duration</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>slowKeysDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>slowKeysDelaySlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>slowKeysDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>slowKeysDelay</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeysDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>bounceKeysDelaySlider</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeysDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>bounceKeysDelay</receiver>
+        <slot>setValue(int)</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kcmodule.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+</includehints>
+</UI>

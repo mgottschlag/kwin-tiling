@@ -50,7 +50,12 @@
 #include <kdebug.h>
 
 #include "accessibility.moc"
+#include "accessibilityconfigwidget.h"
 
+/**
+ * This function checks if the kaccess daemon needs to be run
+ * This function will be depricated since the kaccess daemon will be part of kded
+ */
 static bool needToRunKAccessDaemon( KConfig *config )
 {
     KConfigGroup group( config, "Bell" );
