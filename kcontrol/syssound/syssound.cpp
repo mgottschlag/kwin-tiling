@@ -298,7 +298,12 @@ void KSoundWidget::eventSelected(int index){
     // CC: at first, get the name of the sound file we want to select
     sname = soundnames.at(index-1);
     CHECK_PTR(sname); // CC: should never happen anyways...
-      kDebugInfo("event %d wants sound %s", index, debugString(*sname));
+    // egcs 1.1.2 says:
+    //syssound.cpp:301: call of overloaded `kDebugInfo (const char *, int, const char *)' is ambiguous
+    // /opt/kde/include/kdebug.h:70: candidates are: kDebugInfo(const char * ...)
+    // /opt/kde/include/kdebug.h:72:                 kDebugInfo(bool, short unsigned int, const char * ...)
+    // ------
+    //      kDebugInfo("event %d wants sound %s", index, debugString(*sname));
 
     i = 1;
     listlen = soundlist->count();
