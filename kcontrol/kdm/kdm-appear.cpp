@@ -45,6 +45,47 @@
 #include "kdm-appear.h"
 
 
+class KBackedComboBox : public KComboBox {
+
+public:
+    KBackedComboBox( QWidget *parent ) : KComboBox( false, parent ) {}
+    void insertItem( const QString &id, const QString &name );
+    void itemsInserted();
+    void setCurrentId( const QString &id );
+    QString currentId();
+
+private:
+    QMap<QString,QString> id2name, name2id;
+
+};
+
+void KBackedComboBox::insertItem( const QString &id, const QString &name )
+{
+    id2name[id] = name;
+    name2id[name] = id;
+}
+
+void KBackedComboBox::itemsInserted()
+{
+    KComboBox::insertItem( i18n("<default>") );
+    KComboBox::insertStringList( name2id.keys() );
+    insertItem( "", i18n("<default>") );
+}
+
+void KBackedComboBox::setCurrentId( const QString &id )
+{
+    if (id2name.contains( id ))
+	setCurrentItem( id2name[id] );
+    else
+	setCurrentItem( 0 );
+}
+
+QString KBackedComboBox::currentId()
+{
+    return name2id[currentText()];
+}
+
+
 extern KSimpleConfig *config;
 
 
@@ -190,11 +231,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
   hglay->setColStretch(3, 1);
 
-  guicombo = new KComboBox(false, hlp);
-  QStringList list = QStyleFactory::keys();
-  list = KDMAppearanceWidget::sortStringList(list);
-  guicombo->insertStringList(list);
-
+  guicombo = new KBackedComboBox(hlp);
+  loadGuiStyles(guicombo);
   label = new QLabel(guicombo, i18n("GUI s&tyle:"), hlp);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 0, 0);
@@ -204,7 +242,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
 
-  colcombo = new KComboBox(false, hlp);
+  colcombo = new KBackedComboBox(hlp);
   loadColorSchemes(colcombo);
   label = new QLabel(colcombo, i18n("&Color scheme:"), hlp);
   connect(colcombo, SIGNAL(activated(int)), SLOT(changed()));
@@ -234,16 +272,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   vbox->addWidget(group);
 
   langcombo = new KLanguageButton(group);
-//  langcombo->setFixedHeight( langcombo->sizeHint().height() );
+  loadLanguageList(langcombo);
   connect(langcombo, SIGNAL(activated(int)), SLOT(changed()));
-
   label = new QLabel(langcombo, i18n("Languag&e:"), group);
-
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
   hbox->setColStretch(1, 1);
   hbox->addWidget(label, 1, 0);
   hbox->addWidget(langcombo, 1, 1);
-
   wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
     " a user's personal settings that will take effect after login.");
   QWhatsThis::add( label, wtstr );
@@ -251,8 +286,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
   vbox->addStretch(1);
-
-  loadLanguageList(langcombo);
 
 }
 
@@ -277,7 +310,6 @@ void KDMAppearanceWidget::makeReadOnly()
 
 void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
 {
-  combo->clear();
   QStringList langlist = KGlobal::dirs()->findAllResources("locale",
 			QString::fromLatin1("*/entry.desktop"));
   langlist.sort();
@@ -295,28 +327,53 @@ void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
   }
 }
 
-void KDMAppearanceWidget::loadColorSchemes(KComboBox *combo)
+void KDMAppearanceWidget::loadColorSchemes(KBackedComboBox *combo)
 {
-  combo->clear();
-
-  // Global + local schemes
-  QStringList list = KGlobal::dirs()->findAllResources("data",
-       "kdisplay/color-schemes/*.kcsrc", false, true);
-  QStringList tmp;
-  tmp.append( "Default");
-  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
-    KSimpleConfig *config = new KSimpleConfig(*it, true);
-    config->setGroup("Color Scheme");
+  // XXX: Global + local schemes
+  QStringList list = KGlobal::dirs()->
+      findAllResources("data", "kdisplay/color-schemes/*.kcsrc", false, true);
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
+  {
+    KSimpleConfig config(*it, true);
+    config.setGroup("Color Scheme");
 
     QString str;
-    if (!(str = config->readEntry("Name")).isEmpty() ||
-	!(str = config->readEntry("name")).isEmpty())
-        tmp.append( str );
-
-    delete config;
+    if (!(str = config.readEntry("Name")).isEmpty() ||
+	!(str = config.readEntry("name")).isEmpty())
+    {
+	QString str2 = (*it).mid( (*it).findRev( '/' ) + 1 ); // strip off path
+	str2.setLength( str2.length() - 6 ); // strip off ".kcsrc
+        combo->insertItem( str2, str );
+    }
   }
-  tmp = KDMAppearanceWidget::sortStringList(tmp);
-  combo->insertStringList(tmp);
+  combo->itemsInserted();
+}
+
+void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
+{
+  // XXX: Global + local schemes
+  QStringList list = KGlobal::dirs()->
+      findAllResources("data", "kstyle/themes/*.themerc", false, true);
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
+  {
+    KSimpleConfig config(*it, true);
+
+    if (!(config.hasGroup("KDE") && config.hasGroup("Misc")))
+	continue;
+
+    config.setGroup("Desktop Entry");
+    if (config.readBoolEntry("Hidden", false))
+	continue;
+
+    config.setGroup("KDE");
+    QString str2 = config.readEntry("WidgetStyle");
+    if (str2.isNull())
+	continue;
+
+    config.setGroup("Misc");
+    combo->insertItem( str2, config.readEntry("Name") );
+  }
+  combo->itemsInserted();
 }
 
 bool KDMAppearanceWidget::setLogo(QString logo)
@@ -432,9 +489,9 @@ void KDMAppearanceWidget::save()
 
   config->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
-  config->writeEntry("GUIStyle", guicombo->currentText());
+  config->writeEntry("GUIStyle", guicombo->currentId());
 
-  config->writeEntry("ColorScheme", colcombo->currentText());
+  config->writeEntry("ColorScheme", colcombo->currentId());
 
   config->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
 			    echocombo->currentItem() == 1 ? "OneStar" :
@@ -472,10 +529,10 @@ void KDMAppearanceWidget::load()
   setLogo( config->readEntry("LogoPixmap", ""));
 
   // Check the GUI type
-  guicombo->setCurrentItem (config->readEntry("GUIStyle", "Default"), true, 0);
+  guicombo->setCurrentId (config->readEntry("GUIStyle", ""));
 
   // Check the Color Scheme
-  colcombo->setCurrentItem (config->readEntry("ColorScheme", "Default"), true, 0);
+  colcombo->setCurrentId (config->readEntry("ColorScheme", ""));
 
   // Check the echo mode
   QString echostr = config->readEntry("EchoMode", "OneStar");
@@ -509,9 +566,8 @@ void KDMAppearanceWidget::defaults()
   posCenterRadio->setChecked( true );
   slotPosRadioClicked( 0 );
   setLogo( "" );
-  guicombo->setCurrentItem (QString::fromLatin1("Default"), true, 0);
-
-  colcombo->setCurrentItem( QString::fromLatin1("Default"), true, 0 );
+  guicombo->setCurrentId( "" );
+  colcombo->setCurrentId( "" );
   echocombo->setCurrentItem( 1 );
 
   xLineEdit->setText( "100");
@@ -532,23 +588,6 @@ QString KDMAppearanceWidget::quickHelp() const
 void KDMAppearanceWidget::changed()
 {
   emit changed(true);
-}
-
-QStringList KDMAppearanceWidget::sortStringList(QStringList list)
-{
-    QStringList lst;
-    QStringList tmp(list);
-    QMap<QString,  QString> map;
-    for ( QStringList::Iterator it = tmp.begin(); it != tmp.end(); ++it )
-    {
-        lst<<(*it).lower();
-        map.insert((*it).lower(), *it);
-    }
-    lst.sort();
-    tmp.clear();
-    for ( QStringList::Iterator it = lst.begin(); it != lst.end(); ++it )
-        tmp<<map.find(*it).data();
-    return tmp;
 }
 
 #include "kdm-appear.moc"

@@ -35,7 +35,7 @@
 #include "klanguagebutton.h"
 
 class QComboBox;
-class KComboBox;
+class KBackedComboBox;
 class QLabel;
 class QRadioButton;
 class QLineEdit;
@@ -55,7 +55,8 @@ public:
 	void makeReadOnly();
 	QString quickHelp() const;
 
-	void loadColorSchemes(KComboBox *combo);
+	void loadColorSchemes(KBackedComboBox *combo);
+	void loadGuiStyles(KBackedComboBox *combo);
 	void loadLanguageList(KLanguageButton *combo);
 
 	bool eventFilter(QObject *, QEvent *);
@@ -67,7 +68,7 @@ protected:
 	void iconLoaderDragEnterEvent(QDragEnterEvent *event);
 	void iconLoaderDropEvent(QDropEvent *event);
 	bool setLogo(QString logo);
-    static QStringList sortStringList(QStringList list);
+
 private slots:
 	void slotAreaRadioClicked(int id);
 	void slotPosRadioClicked(int id);
@@ -89,8 +90,8 @@ private:
 	QLineEdit    *xLineEdit;
 	QLabel	     *yLineLabel;
 	QLineEdit    *yLineEdit;
-	KComboBox    *guicombo;
-	KComboBox    *colcombo;
+	KBackedComboBox    *guicombo;
+	KBackedComboBox    *colcombo;
 	QComboBox    *echocombo;
 	KLanguageButton *langcombo;
 
