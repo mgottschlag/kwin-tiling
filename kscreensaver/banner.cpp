@@ -16,7 +16,7 @@
 #include <qmessagebox.h>
 #include <kapp.h>
 
-#include <kgroupbox.h>
+#include <qgroupbox.h>
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
@@ -91,14 +91,14 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
 	tl1->addLayout(tl11);	
 
-	KGroupBox *group = new KGroupBox( glocale->translate("Font"), this );
-	QGridLayout *gl = new QGridLayout(group->inner(), 4, 2, 5);
+	QGroupBox *group = new QGroupBox( glocale->translate("Font"), this );
+	QGridLayout *gl = new QGridLayout(group, 5, 2, 5);
+	gl->addRowSpacing(0, 10);
 
-	label = new QLabel( glocale->translate("Family:"), group->inner() );
-	min_size(label);
-	gl->addWidget(label, 0, 0);
+	label = new QLabel( glocale->translate("Family:"), group );
+	gl->addWidget(label, 1, 0);
 
-	combo = new QComboBox( FALSE, group->inner() );
+	combo = new QComboBox( FALSE, group);
 	int i = 0;
 	while ( fonts[i] )
 	{
@@ -107,17 +107,15 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 			combo->setCurrentItem( i );
 		i++;
 	}
-	min_width(combo);
 	fixed_height(combo);
-	gl->addWidget(combo, 0, 1);
-	connect( combo, SIGNAL( activated( const char * ) ),
-			SLOT( slotFamily( const char * ) ) );
+	gl->addWidget(combo, 1, 1);
+	connect( combo, SIGNAL( activated( const QString& ) ),
+			SLOT( slotFamily( const QString& ) ) );
 
-	label = new QLabel( glocale->translate("Size:"), group->inner() );
-	min_size(label);
-	gl->addWidget(label, 1, 0);	
+	label = new QLabel( glocale->translate("Size:"), group );
+	gl->addWidget(label, 2, 0);	
 
-	combo = new QComboBox( FALSE, group->inner() );
+	combo = new QComboBox( FALSE, group );
 	i = 0;
 	while ( sizes[i] )
 	{
@@ -128,35 +126,30 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 			combo->setCurrentItem( i );
 		i++;
 	}
-	min_width(combo);
 	fixed_height(combo);
-	gl->addWidget(combo, 1, 1);
+	gl->addWidget(combo, 2, 1);
 	connect( combo, SIGNAL( activated( int ) ), SLOT( slotSize( int ) ) );
 
-	label = new QLabel( glocale->translate("Color:"), group->inner() );
-	min_size(label);
-	gl->addWidget(label, 2, 0);
+	label = new QLabel( glocale->translate("Color:"), group );
+	gl->addWidget(label, 3, 0);
 
-	colorPush = new QPushButton( group->inner() );
-	min_width(colorPush);
+	colorPush = new QPushButton( group );
 	colorPush->setFixedHeight(20);
-	gl->addWidget(colorPush, 2, 1);
+	gl->addWidget(colorPush, 3, 1);
 	QColorGroup colgrp( black, fontColor, fontColor.light(),
 			fontColor.dark(), fontColor.dark(120), black, white );
 	colorPush->setPalette( QPalette( colgrp, colgrp, colgrp ) );
 	connect( colorPush, SIGNAL( clicked() ), SLOT( slotColor() ) );
 	
 	QCheckBox *cb = new QCheckBox( glocale->translate("Bold"), 
-				       group->inner() );
-	min_size(cb);
+				       group );
 	cb->setChecked( bold );
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotBold( bool ) ) );
-	gl->addWidget(cb, 3, 0);
+	gl->addWidget(cb, 4, 0);
 
-	cb = new QCheckBox( glocale->translate("Italic"), group->inner() );
-	min_size(cb);
+	cb = new QCheckBox( glocale->translate("Italic"), group );
 	cb->setChecked( italic );
-	gl->addWidget(cb, 3, 1);
+	gl->addWidget(cb, 4, 1);
 	connect( cb, SIGNAL( toggled( bool ) ), SLOT( slotItalic( bool ) ) );
 
 	preview = new QWidget( this );
@@ -166,12 +159,9 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	saver = new KBannerSaver( preview->winId() );
 	tl1->addWidget(preview);
 
-	gl->activate();
-	group->activate();
 	tl11->addWidget(group);
 
 	label = new QLabel( glocale->translate("Speed:"), this );
-	min_size(label);
 	tl11->addStretch(1);
 	tl11->addWidget(label);
 
@@ -188,16 +178,14 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	tl->addLayout(tl2);
 
 	label = new QLabel( glocale->translate("Message:"), this );
-	fixed_size(label);
 	tl2->addWidget(label);
 
 	QLineEdit *ed = new QLineEdit( this );
-	min_width(ed);
 	fixed_height(ed);
 	tl2->addWidget(ed);
 	ed->setText( message );
-	connect( ed, SIGNAL( textChanged( const char * ) ), 
-			SLOT( slotMessage( const char * ) ) );
+	connect( ed, SIGNAL( textChanged( const QString & ) ), 
+			SLOT( slotMessage( const QString &  ) ) );
 
 	KButtonBox *bbox = new KButtonBox(this);	
 	button = bbox->addButton( glocale->translate("About"));
@@ -268,7 +256,7 @@ void KBannerSetup::readSettings()
 		italic = FALSE;
 }
 
-void KBannerSetup::slotFamily( const char *fam )
+void KBannerSetup::slotFamily( const QString& fam )
 {
 	fontFamily = fam;
 	if ( saver )
@@ -316,7 +304,7 @@ void KBannerSetup::slotSpeed( int num )
 		saver->setSpeed( speed );
 }
 
-void KBannerSetup::slotMessage( const char *msg )
+void KBannerSetup::slotMessage( const QString &msg )
 {
 	message = msg;
 	if ( saver )
@@ -390,7 +378,7 @@ void KBannerSaver::setSpeed( int spd )
 	timer.start( speed );
 }
 
-void KBannerSaver::setFont( const char *family, int size, const QColor &color,
+void KBannerSaver::setFont( const QString& family, int size, const QColor &color,
 		bool b, bool i )
 {
 	fontFamily = family;
@@ -403,7 +391,7 @@ void KBannerSaver::setFont( const char *family, int size, const QColor &color,
 	initialise();
 }
 
-void KBannerSaver::setMessage( const char *msg )
+void KBannerSaver::setMessage( const QString &msg )
 {
 	XSetForeground( qt_xdisplay(), gc, black.pixel() );
 	XDrawString( qt_xdisplay(), d, gc, xpos, ypos, message, message.length() );
@@ -477,7 +465,7 @@ void KBannerSaver::initialise()
 
 	size = fontSize * height / QApplication::desktop()->height();
 
-	font.sprintf( "-*-%s-%s-%c-*-*-%d-*-*-*-*-*-*-*", fontFamily.data(),
+	font.sprintf( "-*-%s-%s-%c-*-*-%d-*-*-*-*-*-*-*", fontFamily.ascii(),
 			bold ? "bold" : "medium", italic ? ichar : 'r', size );
 	fontInfo = XLoadQueryFont( qt_xdisplay(), font );
 

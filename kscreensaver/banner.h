@@ -24,9 +24,9 @@ public:
 	virtual ~KBannerSaver();
 
 	void setSpeed( int spd );
-	void setFont( const char *family, int size, const QColor &color,
+	void setFont( const QString &family, int size, const QColor &color,
 			bool b, bool i );
-	void setMessage( const char *msg );
+	void setMessage( const QString &msg );
 
 private:
 	void readSettings();
@@ -62,13 +62,13 @@ protected:
 	void readSettings();
 
 private slots:
-	void slotFamily( const char * );
+	void slotFamily( const QString & );
 	void slotSize( int );
 	void slotColor();
 	void slotBold( bool );
 	void slotItalic( bool );
 	void slotSpeed( int );
-	void slotMessage( const char * );
+	void slotMessage( const QString & );
 	void slotOkPressed();
 	void slotAbout();
 
