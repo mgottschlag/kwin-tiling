@@ -417,7 +417,7 @@ CConfig::CConfig()
             }
 
     if(QString::null==(itsFontsDir=getDir(itsFontsDir, constFontsDirs)))
-        itsFontsDir=i18n(constNotFound);
+        itsFontsDir=i18n(constNotFound.utf8());
 
     //
     // Check for TrueType and Type1 sub-folders, and create if either doesn't exist
@@ -451,12 +451,12 @@ CConfig::CConfig()
     if(CMisc::root())
         if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXConfigFiles)))
             if(QString::null==(itsXConfigFile=getFile(itsXConfigFile, constXfsConfigFiles)))
-                itsXConfigFile=i18n(constNotFound);
+                itsXConfigFile=i18n(constNotFound.utf8());
 
 #ifdef HAVE_XFT
     if(CMisc::root())
         if(QString::null==(itsXftConfigFile=getFile(itsXftConfigFile, constXftConfigFiles)))
-            itsXftConfigFile=i18n(constNotFound);
+            itsXftConfigFile=i18n(constNotFound.utf8());
 #endif
 
     if(!CMisc::dExists(itsEncodingsDir))
@@ -482,13 +482,13 @@ CConfig::CConfig()
     {
         if(QString::null==(itsGhostscriptFile=getFile(itsGhostscriptFile, constGhostscriptDirs, constGhostscriptFiles)))
         {
-            itsGhostscriptFile=i18n(constNotFound);
+            itsGhostscriptFile=i18n(constNotFound.utf8());
             itsDoGhostscript=false;
         }
 
         if(QString::null==(itsCupsDir=getDir(itsCupsDir, constCupsDirs)))
         {
-            itsCupsDir=i18n(constNotFound);
+            itsCupsDir=i18n(constNotFound.utf8());
             itsDoCups=false;
         }
     }

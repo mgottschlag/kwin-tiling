@@ -75,7 +75,7 @@ CDirSettingsWidget::CDirSettingsWidget(QWidget *parent, const char *name)
 
 void CDirSettingsWidget::encodingsDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsEncodingsDirText->text() ? QString::null : itsEncodingsDirText->text(),
                                                   this, i18n("Select Encodings Folder"));
 
     if(QString::null!=dir && dir!=itsEncodingsDirText->text())
@@ -90,7 +90,7 @@ void CDirSettingsWidget::encodingsDirButtonPressed()
 
 void CDirSettingsWidget::gsFontmapButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound.utf8())==itsGhostscriptFileText->text() ? QString::null : itsGhostscriptFileText->text(),
                                               "Fontmap*", this, i18n("Select Ghostscript \"Fontmap\""));
 
     if(QString::null!=file && file!=itsGhostscriptFileText->text())
@@ -114,7 +114,7 @@ void CDirSettingsWidget::gsFontmapButtonPressed()
 
 void CDirSettingsWidget::cupsButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsCupsDirText->text() ? QString::null : itsCupsDirText->text(),
                                                   this, i18n("Select CUPS Folder"));
 
     if(QString::null!=dir && dir!=itsCupsDirText->text())
@@ -126,7 +126,7 @@ void CDirSettingsWidget::cupsButtonPressed()
 
 void CDirSettingsWidget::xDirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsFontsDirText->text() ? QString::null : itsFontsDirText->text(),
                                                   this, i18n("Select Fonts Folder"));
 
     if(QString::null!=dir && dir!=itsFontsDirText->text())
@@ -139,7 +139,7 @@ void CDirSettingsWidget::xDirButtonPressed()
 
 void CDirSettingsWidget::xConfigButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound.utf8())==itsXConfigFileText->text() ? QString::null : itsXConfigFileText->text(),
                                               NULL, this, i18n("Select X config file"));
 
     if(QString::null!=file && file!=itsXConfigFileText->text())

@@ -54,7 +54,7 @@ CSettingsWizard::CSettingsWizard(QWidget *parent, const char *name)
         QString fnfTxt=itsFnFText->text();
 
         itsFnFText->setText(fnfTxt+i18n("\n\nIf \"%1\" is listed as the CUPS folder, it is probable that you are not using the CUPS"
-                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(i18n(CConfig::constNotFound)));
+                                        " printing system - in which case just ensure that the checkbox is not selected.").arg(i18n(CConfig::constNotFound.utf8())));
         itsModifiedDirsText->hide();
     }
     else
@@ -76,7 +76,7 @@ void CSettingsWizard::checkAndModifyFontmapFile()
     //
     // Check if "Fontmap" has been selected by CConfig, and if so, have a look at its contents to see
     // whether it says '(Fontmap.GS) .runlibfile' - if so then use 'Fontmap.GS' instead...
-    if(i18n(CConfig::constNotFound)!=CKfiGlobal::cfg().getGhostscriptFile())
+    if(i18n(CConfig::constNotFound.utf8())!=CKfiGlobal::cfg().getGhostscriptFile())
     {
         int slashPos=CKfiGlobal::cfg().getGhostscriptFile().findRev('/');
 
@@ -124,7 +124,7 @@ void CSettingsWizard::checkAndModifyXConfigFile()
     //
     // Check if XF86Config has been selected by CConfig, and if so, have a look to see wether it has
     // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
-    if(i18n(CConfig::constNotFound)!=CKfiGlobal::cfg().getXConfigFile())
+    if(i18n(CConfig::constNotFound.utf8())!=CKfiGlobal::cfg().getXConfigFile())
     {
         int slashPos=CKfiGlobal::cfg().getXConfigFile().findRev('/');
 

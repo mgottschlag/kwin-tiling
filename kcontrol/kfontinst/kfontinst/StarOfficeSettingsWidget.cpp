@@ -67,7 +67,7 @@ CStarOfficeSettingsWidget::CStarOfficeSettingsWidget(QWidget *parent, const char
 
 void CStarOfficeSettingsWidget::dirButtonPressed()
 {
-    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound)==itsDirText->text() ? QString::null : itsDirText->text(),
+    QString dir=KFileDialog::getExistingDirectory(i18n(CConfig::constNotFound.utf8())==itsDirText->text() ? QString::null : itsDirText->text(),
                                                   this, i18n("Select StarOffice Folder"));
 
     if(QString::null!=dir && dir!=itsDirText->text())

@@ -69,7 +69,7 @@ CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *
 
 void CXftConfigSettingsWidget::fileButtonPressed()
 {
-    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound)==itsConfigFileText->text() ? QString::null : itsConfigFileText->text(),
+    QString file=KFileDialog::getSaveFileName(i18n(CConfig::constNotFound.utf8())==itsConfigFileText->text() ? QString::null : itsConfigFileText->text(),
                                               "XftConfig .xftconfig", this, i18n("Select Anti-Alias configuration file"));
 
     if(QString::null!=file && file!=itsConfigFileText->text())
