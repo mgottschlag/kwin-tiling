@@ -8,11 +8,11 @@ Number of commands=1
 
 [Action_1]
 Action description=Web-URL
-Action regexp=^https?:\\/\\/
-Command_0: commandline=netscape -no-about-splash -remote "openURL(%s,new-window)"
+Action regexp=^http:\\/\\/
+Command_0: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
 Command_0: description=Open with &Netscape
 Command_0: enabled=true
-Command_1: commandline=kfmclient exec "%s"
+Command_1: commandline=kfmclient exec '%s'
 Command_1: description=Open with &Konqueror
 Command_1: enabled=true
 Number of commands=2
@@ -20,10 +20,10 @@ Number of commands=2
 [Action_2]
 Action description=Mail-URL
 Action regexp=^mailto:
-Command_0: commandline=kmail --composer "%s"
+Command_0: commandline=kmail --composer %s
 Command_0: description=Launch &Kmail
 Command_0: enabled=true
-Command_1: commandline=konsole -e mutt `echo %s | sed 's/mailto://g'`
+Command_1: commandline=konsole -e mutt `echo "%s" | sed 's/mailto://g'`
 Command_1: description=Launch &mutt
 Command_1: enabled=true
 Number of commands=2
@@ -43,5 +43,5 @@ Number of commands=2
 KeepClipboardContents=true
 Number of Actions=4
 PopupAtMousePosition=false
-URLGrabberEnabled=false
-No Actions for WM_CLASS=Navigator,konqueror,mozilla-bin,Opera main window
+URLGrabberEnabled=true
+No Actions for WM_CLASS=Navigator,konqueror,mozilla-bin
