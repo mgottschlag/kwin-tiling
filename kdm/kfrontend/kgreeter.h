@@ -70,7 +70,9 @@ public slots:
     void slotUserClicked( QListViewItem * );
     void slotSessionSelected( int );
     void slotUserEntered();
+    void slotExit();
     void slotShutdown();
+    void slotConsole();
 
 private:
     void insertUser( UserListView *, const QImage &, const QString &, struct passwd * );

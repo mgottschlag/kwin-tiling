@@ -404,6 +404,20 @@ KGreeter::slotShutdown()
 }
 
 void
+KGreeter::slotConsole()
+{
+    verify->abort();
+    inherited::slotConsole();
+}
+
+void
+KGreeter::slotExit()
+{
+    verify->abort();
+    inherited::slotExit();
+}
+
+void
 KGreeter::slotUserEntered()
 {
     if (userView) {
