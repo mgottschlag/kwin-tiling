@@ -205,7 +205,7 @@ static int
 GreetUser (struct display *d)
 {
     int		i, cmd, type, pid, exitCode;
-    char	*ptr, *name, *pass, **avptr, **args;
+    char	*ptr, *name, *pass, **avptr, **args, **env;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
 #endif
@@ -226,10 +226,12 @@ GreetUser (struct display *d)
 
     if (Setjmp (GErrJmp))
 	SessionExit (d, EX_RESERVER_DPY);
-    if ((ptr = GOpen ((char **)0, "_greet", systemEnv (d, 0, 0)))) {
+    env = systemEnv (d, 0, 0);
+    if ((ptr = GOpen ((char **)0, "_greet", env))) {
 	LogError ("Cannot run greeter: %s\n", ptr);
 	goto bail;
     }
+    freeStrArr (env);
     exitCode = -1;
     while (GRecvCmd (&cmd)) {
 	switch (cmd)
