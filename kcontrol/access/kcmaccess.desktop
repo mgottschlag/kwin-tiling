@@ -1,0 +1,17 @@
+[Desktop Entry]
+Icon=access
+Type=Application
+Exec=kcmshell Personalization/access
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=access
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+X-KDE-Init=access
+
+Name=Accessibility
+Name[de]=Benutzbarkeit
+
+Comment=Improved accessibility for disabled persons
+
+Keywords=access,acessibility,deaf,impaired
