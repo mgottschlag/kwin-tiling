@@ -411,7 +411,9 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, false);
       
    QString result = newMenu;
-   int trunc = result.length()-1; // Strip trailing '/'
+   if (!result.endsWith("/"))
+       result += "/";
+   int trunc = result.length()-1; // Position of trailing '/'
    for(int n = 1; ++n; )
    {
       if (findMenu(elem, result, false).isNull() && !excludeList.contains(result))
