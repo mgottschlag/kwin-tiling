@@ -294,6 +294,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
 KFonts::~KFonts()
 {
+  fontUseList.setAutoDelete(true);
+  fontUseList.clear();
 }
 
 void KFonts::fontChanged()
