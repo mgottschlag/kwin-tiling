@@ -51,7 +51,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") );
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
                :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0),m_tfj(0)
 {
-   QVBoxLayout *layout=new QVBoxLayout(this,KDialog::marginHint(),KDialog::spacingHint());
+   QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
 
    QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
    QHBox *hbox=new QHBox(this);
