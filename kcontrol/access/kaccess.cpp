@@ -104,9 +104,12 @@ void KAccessApp::readSettings()
     }
   else
     xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
-  
-  // turn of two-keys-disable sticky keys option
+
+  // turn off two-keys-disable sticky keys option
   xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
+
+  // turn off timeout
+  xkb->ctrls->enabled_ctrls &= ~XkbAccessXTimeoutMask;
 
   // slow keys
   if (config->readBoolEntry("SlowKeys", false))
