@@ -30,3 +30,6 @@ noinst_HEADERS = global.h server.h shutdown.h
 ksmserver_METASOURCES = AUTO
 ksmserver_SOURCES = server.cpp shutdown.cpp main.cpp
 
+messages:
+	$(XGETTEXT) $(ksmserver_SOURCES) -o $(podir)/ksmserver.pot
+
