@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
   app.setGlobalKeys( toplevel->globalKeys );
 
   KWin::setSystemTrayWindowFor( toplevel->winId(), 0 );
+  toplevel->setGeometry(-100, -100, 42, 42 );
   toplevel->show();
 
   return app.exec();
