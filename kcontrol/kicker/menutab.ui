@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
+            <width>584</width>
             <height>434</height>
         </rect>
     </property>
@@ -365,7 +365,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Show side image</string>
+                                <string>Show &amp;side image</string>
                             </property>
                             <property stdset="1">
                                 <name>checked</name>
@@ -429,7 +429,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Merge &amp;different menu locations</string>
+                                <string>Merge d&amp;ifferent menu locations</string>
                             </property>
                             <property stdset="1">
                                 <name>checked</name>
