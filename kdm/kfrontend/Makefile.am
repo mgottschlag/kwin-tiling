@@ -5,7 +5,7 @@ INCLUDES = -I$(srcdir)/../backend $(all_includes)
 bin_PROGRAMS = kdm_config kdm_greet 
 
 kdm_config_SOURCES = kdm_config.c
-kdm_config_LDADD = $(LIBRESOLV)
+kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
 
 kdm_greet_SOURCES = \
     kdm_greet.c \
