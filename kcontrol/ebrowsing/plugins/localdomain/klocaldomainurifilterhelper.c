@@ -32,5 +32,5 @@ int main( int argc, char* argv[] )
     if( argc != 2 )
 	return 2;
     ent = gethostbyname( argv[ 1 ] );
-    return ent != NULL ? 0 : 1;
+    return (ent != NULL || h_errno == NO_ADDRESS) ? 0 : 1;
     }
