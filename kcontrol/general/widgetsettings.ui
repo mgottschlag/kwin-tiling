@@ -96,7 +96,7 @@
                     </item>
                     <item>
                         <property name="text">
-                            <string>Text aside icons</string>
+                            <string>Text alongside icons</string>
                         </property>
                     </item>
                     <item>
@@ -108,7 +108,7 @@
                         <cstring>cbToolbarIcons</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>&lt;p&gt;&lt;b&gt;Icons only:&lt;/b&gt; Shows only icons on toolbar buttons. Best option for low resolutions.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text only: &lt;/b&gt;Shows only text on toolbar buttons.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text aside icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned aside the icon.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text under icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned below the icon.&lt;/p&gt;</string>
+                        <string>&lt;p&gt;&lt;b&gt;Icons only:&lt;/b&gt; Shows only icons on toolbar buttons. Best option for low resolutions.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text only: &lt;/b&gt;Shows only text on toolbar buttons.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text alongside icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned alongside the icon.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Text under icons: &lt;/b&gt; Shows icons and text on toolbar buttons. Text is aligned below the icon.&lt;/p&gt;</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -319,7 +319,7 @@
                         <string></string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If you enable this option, KDE Applications will show small icons aside of some important buttons.</string>
+                        <string>If you enable this option, KDE Applications will show small icons alongside some important buttons.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">

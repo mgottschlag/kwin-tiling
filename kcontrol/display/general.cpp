@@ -343,7 +343,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     QWhatsThis::add( tbIcon, i18n("Shows only icons on toolbar buttons. Best option for low resolutions.") );
     QWhatsThis::add( tbText, i18n("Shows only text on toolbar buttons.") );
-    QWhatsThis::add( tbAside, i18n("Shows icons and text on toolbar buttons. Text is aligned aside the icon.") );
+    QWhatsThis::add( tbAside, i18n("Shows icons and text on toolbar buttons. Text is aligned alongside the icon.") );
     QWhatsThis::add( tbUnder, i18n("Shows icons and text on toolbar buttons. Text is aligned below the icon.") );
 
     tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ), tbStyle);

@@ -633,7 +633,7 @@
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>Text aside icons</string>
+                                                <string>Text alongside icons</string>
                                             </property>
                                         </item>
                                         <item>
@@ -719,7 +719,7 @@
                                     <string></string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>If you enable this option, KDE Applications will show small icons aside of some important buttons.</string>
+                                    <string>If you enable this option, KDE Applications will show small icons alongside some important buttons.</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
