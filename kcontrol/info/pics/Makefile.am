@@ -18,6 +18,6 @@ install-data-local:
 
 uninstall-local:
 	list='$(mini_ICONS)'; for p in $$list; do \
-	    file2=`echo $$p | sed -e "s#mini-##"`; \ 
-	    rm -f $(kde_minidir)/$$file2; \
+	    file2=`echo $$p | sed -e "s#mini-##"`; \
+	    rm -f $(DESTDIR)/$(kde_minidir)/$$file2; \
 	done
