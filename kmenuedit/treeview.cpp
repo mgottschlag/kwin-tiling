@@ -444,9 +444,9 @@ void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
 void TreeView::closeAllItems(QListViewItem *item)
 {
     if (!item) return;
-    item->setOpen(false);
     while(item)
     {
+       item->setOpen(false);
        closeAllItems(item->firstChild());
        item = item->nextSibling();
     }
@@ -454,15 +454,18 @@ void TreeView::closeAllItems(QListViewItem *item)
 
 void TreeView::selectMenu(const QString &menu)
 {
+   closeAllItems(firstChild());
+   
    if (menu.length() <= 1)
+   {
+      setCurrentItem(firstChild());
+      clearSelection();
       return; // Root menu
-
-   MenuFolderInfo *menuInfo = m_rootFolder;
+   }
+      
    QString restMenu = menu.mid(1);
    if (!restMenu.endsWith("/"))
       restMenu += "/";
-
-   closeAllItems(firstChild());
 
    TreeItem *item = 0;
    do
@@ -494,11 +497,16 @@ void TreeView::selectMenu(const QString &menu)
 
 void TreeView::selectMenuEntry(const QString &menuEntry)
 {
-   TreeItem *item = (TreeItem *) currentItem();
+   TreeItem *item = (TreeItem *) selectedItem();
    if (!item)
-      return;
-      
-   item = (TreeItem *) item->firstChild();
+   {
+      item = (TreeItem *) currentItem();
+      while (item && item->isDirectory())
+          item = (TreeItem*) item->nextSibling();
+   }
+   else
+       item = (TreeItem *) item->firstChild();
+
    while(item)
    {
       MenuEntryInfo *entry = item->entryInfo();
