@@ -44,4 +44,4 @@ KeepClipboardContents=true
 Number of Actions=4
 PopupAtMousePosition=false
 URLGrabberEnabled=true
-No Actions for WM_CLASS=Navigator,konqueror
+No Actions for WM_CLASS=Navigator,konqueror,mozilla-bin
