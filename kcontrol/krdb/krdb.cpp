@@ -505,7 +505,7 @@ void runRdb( uint flags )
     tmpFile.close();
 
     KProcess proc;
-    proc << "xrdb" << tmpFile.name();
+    proc << "xrdb" << "-merge" << tmpFile.name();
     proc.start( KProcess::Block, KProcess::Stdin );
 
     tmpFile.unlink();
