@@ -323,6 +323,8 @@ void KEnergy::slotChangeEnable(bool ena)
     m_pStandbySlider->setEnabled(ena);
     m_pSuspendSlider->setEnabled(ena);
     m_pOffSlider->setEnabled(ena);
+
+    emit changed(true);
 }
 
 
