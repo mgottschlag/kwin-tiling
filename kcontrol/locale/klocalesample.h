@@ -33,6 +33,7 @@ class QResizeEvent;
 
 class KLocaleSample : public QWidget
 {
+  Q_OBJECT
 public:
   KLocaleSample(QWidget *parent=0, const char*name=0);
   ~KLocaleSample();
@@ -40,9 +41,12 @@ public:
 public slots:
   void update();
 
+protected slots:
+  void slotUpdateTime();
+
 protected:
-    virtual void resizeEvent(QResizeEvent *);
-    void setBackground(const QPixmap&);
+  virtual void resizeEvent(QResizeEvent *);
+  void setBackground(const QPixmap&);
 
 private:
   QLabel *numberSample, *labNumber;

@@ -31,6 +31,7 @@
 #include <qlayout.h>
 #include <qobjectlist.h>
 #include <qpixmap.h>
+#include <qtimer.h>
 
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -38,6 +39,7 @@
 
 #include "klocaleadv.h"
 #include "klocalesample.h"
+#include "klocalesample.moc"
 
 extern KLocaleAdvanced *locale;
 
@@ -86,10 +88,23 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
 	  setBackground( bgPix );
       }
   }
+
+  QTimer *timer = new QTimer(this, "clock_timer");
+  connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdateTime()));
+  timer->start(1000);
 }
 
 KLocaleSample::~KLocaleSample()
 {
+}
+
+void KLocaleSample::slotUpdateTime()
+{
+  QDateTime dt = QDateTime::currentDateTime();
+
+  dateSample->setText(locale->formatDate(dt.date(), false));
+  dateShortSample->setText(locale->formatDate(dt.date(), true));
+  timeSample->setText(locale->formatTime(dt.time(), true));
 }
 
 void KLocaleSample::update()
@@ -101,9 +116,8 @@ void KLocaleSample::update()
   moneySample->setText(locale->formatMoney(123456789.00) +
 		       QString::fromLatin1(" / ") +
 		       locale->formatMoney(-123456789.00));
-  dateSample->setText(locale->formatDate(QDate::currentDate(), false));
-  dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
-  timeSample->setText(locale->formatTime(QTime::currentTime(), true));
+
+  slotUpdateTime();
 
   QString str;
 
