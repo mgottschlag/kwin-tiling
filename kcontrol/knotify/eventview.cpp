@@ -1,4 +1,4 @@
-/* 
+/*
 
     $Id$
 
@@ -19,48 +19,46 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 
-    $Log$
-    Revision 1.1  2000/03/19 01:32:22  charles
-    A rediculously early commit so that I can rm -rf all I want :)
-    and, btw, applnk/Settings/System/Makefile.am is unchanged :)
-
-    This is all for the sake of KNotify.
-
-    I'm gonna finish this a lot sooner than I thought I would!
-
-*/  
-
-
-#ifndef _KNOTIFY_H
-#define _KNOTIFY_H
-
-#include "kcmodule.h"
-
-#include <qstringlist.h>
-#include <qstring.h>
-#include <qlistview.h>
-#include <qcheckbox.h>
+*/
 
 #include "eventview.h"
+#include "eventview.moc"
 
-class KNotifyWidget : public KCModule
+#include <qlayout.h>
+#include <klocale.h>
+
+
+EventView::EventView(QWidget *parent, const char *name):
+	QWidget(parent, name)
 {
-Q_OBJECT
-
-public:
-	KNotifyWidget(QWidget *parent, const char *name);
-	virtual ~KNotifyWidget();
-
-	void defaults();
-
-private slots:
-	void changed();
-
-protected:
-	QListView *apps;
-	QListView *events;
-	EventView *eventview;
-
+	QGridLayout *layout=new QGridLayout(this,2,2);
+	eventslist=new QListBox(this);
+	layout->addMultiCellWidget(eventslist, 0,1, 0,0);
+	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
+	layout->addWidget(file=new KLineEdit(this), 1,1);
 };
 
-#endif
+EventView::~EventView()
+{
+}
+
+void EventView::defaults()
+{
+
+}
+
+void EventView::load(KConfig *config, const QString &section)
+{
+
+}
+
+void EventView::save()
+{
+
+}
+
+void EventView::unload()
+{
+
+}
+

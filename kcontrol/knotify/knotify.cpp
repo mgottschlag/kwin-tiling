@@ -2,7 +2,6 @@
 
     $Id$
 
-    Copyright (C) 2000 Charles Samuels <charles@altair.dhs.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -30,12 +29,14 @@
 #include <config.h>
 
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
-    KCModule(parent, name)
+	KCModule(parent, name)
 {
-	QHBoxLayout *l= new QHBoxLayout(this);
-	l->setAutoAdd(true);
-	(new QLabel("This is a preview to what will be here eventually....",this))->show();
+	QVBoxLayout *layout=new QVBoxLayout(this,0,5);
+	layout->setAutoAdd(true);
 	
+	apps=new QListView(this);
+	events=new QListView(this);
+	eventview=new EventView(this);
 };
 
 KNotifyWidget::~KNotifyWidget()

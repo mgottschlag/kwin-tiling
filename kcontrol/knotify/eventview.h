@@ -20,47 +20,38 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
-    Revision 1.1  2000/03/19 01:32:22  charles
-    A rediculously early commit so that I can rm -rf all I want :)
-    and, btw, applnk/Settings/System/Makefile.am is unchanged :)
-
-    This is all for the sake of KNotify.
-
-    I'm gonna finish this a lot sooner than I thought I would!
-
 */  
 
 
-#ifndef _KNOTIFY_H
-#define _KNOTIFY_H
+#ifndef _EVENTVIEW_H
+#define _EVENTVIEW_H
 
-#include "kcmodule.h"
-
-#include <qstringlist.h>
-#include <qstring.h>
-#include <qlistview.h>
+#include <qlistbox.h>
 #include <qcheckbox.h>
+#include <klined.h>
+#include <kconfig.h>
 
-#include "eventview.h"
-
-class KNotifyWidget : public KCModule
+class EventView : public QWidget
 {
 Q_OBJECT
 
 public:
-	KNotifyWidget(QWidget *parent, const char *name);
-	virtual ~KNotifyWidget();
+	EventView(QWidget *parent, const char *name=0);
+	virtual ~EventView();
 
+public slots:
 	void defaults();
+	void load(KConfig *config, const QString &section);
+	void save();
+	void unload();
 
-private slots:
+signals:
 	void changed();
 
 protected:
-	QListView *apps;
-	QListView *events;
-	EventView *eventview;
-
+	QListBox *eventslist;
+	QCheckBox *enabled;
+	KLineEdit *file;
 };
 
 #endif

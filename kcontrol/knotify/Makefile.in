@@ -213,7 +213,7 @@ xdmconfigsubdir = @xdmconfigsubdir@
 
 lib_LTLIBRARIES = libkcm_knotify.la
 
-libkcm_knotify_la_SOURCES = main.cpp knotify.cpp
+libkcm_knotify_la_SOURCES = main.cpp knotify.cpp eventview.cpp
 
 libkcm_knotify_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_knotify_la_LIBADD = -lkdeui -lmediatool
@@ -221,7 +221,7 @@ INCLUDES = $(all_includes)
 
 #>- libkcm_knotify_la_METASOURCES = AUTO
 
-noinst_HEADERS = knotify.h
+noinst_HEADERS = knotify.h eventview.h
 
 KDE_ICON = knotify
 
@@ -237,9 +237,9 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libkcm_knotify_la_DEPENDENCIES = 
-#>- libkcm_knotify_la_OBJECTS =  main.lo knotify.lo
+#>- libkcm_knotify_la_OBJECTS =  main.lo knotify.lo eventview.lo
 #>+ 3
-@KDE_USE_FINAL_FALSE@libkcm_knotify_la_OBJECTS = main.lo knotify.lo
+@KDE_USE_FINAL_FALSE@libkcm_knotify_la_OBJECTS = main.lo knotify.lo eventview.lo
 @KDE_USE_FINAL_TRUE@libkcm_knotify_la_OBJECTS = libkcm_knotify_la.all_cpp.lo 
 libkcm_knotify_la_final_OBJECTS = libkcm_knotify_la.all_cpp.lo 
 CXXFLAGS = @CXXFLAGS@
@@ -262,11 +262,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-#>- DEP_FILES =  .deps/knotify.P .deps/main.P
+#>- DEP_FILES =  .deps/eventview.P .deps/knotify.P .deps/main.P
 #>+ 4
 @KDE_USE_FINAL_TRUE@DEP_FILES =   $(DEPDIR)/libkcm_knotify_la.all_cpp.P \
-	  .deps/knotify.P .deps/main.P
-@KDE_USE_FINAL_FALSE@DEP_FILES =    .deps/knotify.P .deps/main.P
+	  .deps/eventview.P .deps/knotify.P .deps/main.P
+@KDE_USE_FINAL_FALSE@DEP_FILES =    .deps/eventview.P .deps/knotify.P .deps/main.P
 
 SOURCES = $(libkcm_knotify_la_SOURCES)
 OBJECTS = $(libkcm_knotify_la_OBJECTS)
@@ -560,9 +560,14 @@ $(srcdir)/knotify.cpp: knotify.moc
 knotify.moc: $(srcdir)/knotify.h
 	$(MOC) $(srcdir)/knotify.h -o knotify.moc
 
+#>+ 4
+$(srcdir)/eventview.cpp: eventview.moc
+eventview.moc: $(srcdir)/eventview.h
+	$(MOC) $(srcdir)/eventview.h -o eventview.moc
+
 #>+ 3
 clean-metasources:
-	-rm -f  knotify.moc
+	-rm -f  knotify.moc eventview.moc
 
 #>+ 8
 libkcm_knotify.la.closure: $(libkcm_knotify_la_OBJECTS) $(libkcm_knotify_la_DEPENDENCIES)
@@ -603,11 +608,11 @@ force-reedit:
 
 
 #>+ 11
-libkcm_knotify_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/main.cpp $(srcdir)/knotify.cpp   knotify.moc 
+libkcm_knotify_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/main.cpp $(srcdir)/knotify.cpp $(srcdir)/eventview.cpp   knotify.moc eventview.moc 
 	@echo 'creating libkcm_knotify_la.all_cpp.cpp ...'; \
 	rm -f libkcm_knotify_la.all_cpp.files libkcm_knotify_la.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> libkcm_knotify_la.all_cpp.final; \
-	for file in main.cpp knotify.cpp ; do \
+	for file in main.cpp knotify.cpp eventview.cpp ; do \
 	  echo "#include \"$$file\"" >> libkcm_knotify_la.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> libkcm_knotify_la.all_cpp.final; \
 	done; \
