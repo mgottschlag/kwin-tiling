@@ -1,11 +1,11 @@
 // $Id$
 
-#include <qlineedit.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 
+#include <klineedit.h>
 #include <klocale.h>
 
 #include "usernamedlg.h"
@@ -25,7 +25,7 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	lblUsername = new QLabel(top, "lblUsername");
 	lblUsername->setText(i18n("&Username:"));
 	lblUsername->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
-	txtUsername = new QLineEdit(top, "txtUsername");
+	txtUsername = new KLineEdit(top, "txtUsername");
 	txtUsername->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
 	lblUsername->setBuddy(txtUsername);
 	layUsername->addWidget(lblUsername);
@@ -41,8 +41,9 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	lblPass = new QLabel(top, "lblPass");
 	lblPass->setText(i18n("&Password:"));
 	lblPass->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
-	txtPass = new QLineEdit(top, "txtPass");
+	txtPass = new KLineEdit(top, "txtPass");
 	txtPass->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
+	txtPass->setEchoMode(QLineEdit::Password);
 	lblPass->setBuddy(txtPass);
 	layPass->addWidget(lblPass);
 	layPass->addWidget(txtPass);

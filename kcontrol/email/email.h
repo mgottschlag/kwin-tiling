@@ -10,7 +10,7 @@ class QButtonGroup;
 class QCheckBox;
 class QGroupBox;
 class QLabel;
-class QLineEdit;
+class KLineEdit;
 class QPushButton;
 class QRadioButton;
 
@@ -41,7 +41,7 @@ public slots:
 protected:
 	QGroupBox* grpClient;
 
-	QLineEdit* txtEMailClient;
+	KLineEdit* txtEMailClient;
 	QPushButton* btnBrowseClient;
 	QCheckBox* chkRunTerminal;
 
@@ -62,7 +62,7 @@ protected:
 
 	QGroupBox *grpUserInfo;
 	QLabel *lblFullName, *lblOrganization, *lblEMailAddr, *lblReplyTo;
-	QLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
+	KLineEdit *txtFullName, *txtOrganization, *txtEMailAddr, *txtReplyTo;
 
 protected slots:
 	void slotComboChanged(const QString &);

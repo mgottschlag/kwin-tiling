@@ -3,7 +3,7 @@
 
 #include <kdialogbase.h>
 
-class QLineEdit;
+class KLineEdit;
 class QLabel;
 class QCheckBox;
 
@@ -15,7 +15,7 @@ public:
 	~UserNameDlg ();
 
 	QCheckBox *chkTLS;
-	QLineEdit *txtUsername, *txtPass;
+	KLineEdit *txtUsername, *txtPass;
 	QLabel *lblUsername, *lblPass;
 };
 

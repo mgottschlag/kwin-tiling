@@ -11,7 +11,6 @@
 #include <qframe.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qlayout.h>
@@ -22,6 +21,7 @@
 #include <qfileinfo.h>
 
 #include <kdebug.h>
+#include <klineedit.h>
 #include <kcombobox.h>
 #include <kdialog.h>
 #include <kglobal.h>
@@ -75,7 +75,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblFullName->setGeometry( QRect( 7, 22, 107, 22 ) ); 
 	lblFullName->setText(i18n("&Full Name:"));
 	lblFullName->setTextFormat( QLabel::PlainText );
-	txtFullName = new QLineEdit( grpUserInfo, "txtFullName" );
+	txtFullName = new KLineEdit( grpUserInfo, "txtFullName" );
 	txtFullName->setGeometry( QRect( 122, 22, 406, 22 ) ); 
 	connect(txtFullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblFullName->setBuddy(txtFullName);
@@ -91,7 +91,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblOrganization->setGeometry( QRect( 7, 50, 107, 22 ) ); 
 	lblOrganization->setText(i18n( "Or&ganization:" ) );
 	lblOrganization->setTextFormat( QLabel::PlainText );
-	txtOrganization = new QLineEdit( grpUserInfo, "txtOrganization" );
+	txtOrganization = new KLineEdit( grpUserInfo, "txtOrganization" );
 	txtOrganization->setGeometry( QRect( 122, 50, 406, 22 ) ); 
 	connect(txtOrganization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblOrganization->setBuddy(txtOrganization);
@@ -105,7 +105,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblEMailAddr = new QLabel( grpUserInfo, "lblEMailAddr" );
 	lblEMailAddr->setGeometry( QRect( 7, 78, 107, 22 ) ); 
 	lblEMailAddr->setText( i18n( "&E-Mail Address:" ) );
-	txtEMailAddr = new QLineEdit( grpUserInfo, "txtEMailAddr" );
+	txtEMailAddr = new KLineEdit( grpUserInfo, "txtEMailAddr" );
 	txtEMailAddr->setGeometry( QRect( 122, 78, 406, 22 ) ); 
 	connect(txtEMailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblEMailAddr->setBuddy(txtEMailAddr);
@@ -120,7 +120,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	lblReplyTo = new QLabel( grpUserInfo, "lblReplyTo" );
 	lblReplyTo->setGeometry( QRect( 7, 106, 107, 22 ) ); 
 	lblReplyTo->setText( i18n( "Reply-&To Address:" ) );
-	txtReplyTo = new QLineEdit( grpUserInfo, "txtReplyTo" );
+	txtReplyTo = new KLineEdit( grpUserInfo, "txtReplyTo" );
 	txtReplyTo->setGeometry( QRect( 122, 106, 406, 22 ) ); 
 	connect(txtReplyTo, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 	lblReplyTo->setBuddy(txtReplyTo);
@@ -139,7 +139,7 @@ topKCMEmail::topKCMEmail (QWidget* parent,  const char* name)
 	grpClient->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	topLayout->addWidget(grpClient);
 
-	txtEMailClient = new QLineEdit( grpClient, "txtEMailClient" );
+	txtEMailClient = new KLineEdit( grpClient, "txtEMailClient" );
 	txtEMailClient->setGeometry( QRect( 5, 20, 410, 22 ) ); 
 	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
 
@@ -337,7 +337,7 @@ void topKCMEmail::slotNewProfile()
 	QLabel *lblName = new QLabel(dlgAskName);
 	lblName->setText(i18n("Name:"));
 	lblName->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
-	QLineEdit *txtName = new QLineEdit(dlgAskName);
+	KLineEdit *txtName = new KLineEdit(dlgAskName);
 	lblName->setBuddy(txtName);
 	layout->addWidget(lblName);
 	layout->addWidget(txtName);
