@@ -46,7 +46,7 @@ Name[xh]=KDE Engagqibekanga ye 4 Izitsixo Mofifier
 Name[zh_CN]=带四个控制键的 KDE 默认(Meta/Alt/Ctrl/Shift)
 Name[zh_TW]=KDE 預設使用 4 個輔助按鍵 (Meta/Alt/Ctrl/Shift)
 Name[zu]=Okwendalo kwe-KDE okusetshenziselwa okhiye bokulungisa abangu-4
-Uses Win Modifer=true
+Uses Win Modifier=true
 
 [Global Shortcuts]
 Desktop Screenshot=Win+Print

@@ -47,7 +47,7 @@ Name[xh]=Windows Ezingagqibekanga (Nge Win-key)
 Name[zh_CN]=Windows 主题 (带 Win 键)
 Name[zh_TW]=Windows 按鍵配置 (有 Win 鍵)
 Name[zu]=Iplani lama-Window (Kukhona ukhiye we-Win)
-Uses Win Modifer=true
+Uses Win Modifier=true
 
 [Global Shortcuts]
 Desktop Screenshot=Print
