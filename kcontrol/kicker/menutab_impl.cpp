@@ -43,7 +43,7 @@
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
 
-kSubMenuItem::kSubMenuItem(QListView* parent, 
+kSubMenuItem::kSubMenuItem(QListView* parent,
                            const QString& visibleName,
                            const QString& desktopFile,
                            const QPixmap& icon,
@@ -55,9 +55,9 @@ kSubMenuItem::kSubMenuItem(QListView* parent,
     setOn(checked);
 }
 
-QString kSubMenuItem::desktopFile() 
-{ 
-    return m_desktopFile; 
+QString kSubMenuItem::desktopFile()
+{
+    return m_desktopFile;
 }
 
 void kSubMenuItem::stateChange(bool state)
@@ -74,7 +74,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_formatSimple, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_formatNameDesc, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_formDescName, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));  
+    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_hiddenFiles, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_maxQuickBrowserItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
@@ -93,7 +93,7 @@ void MenuTab::load()
     m_showPixmap->setChecked(c.readBoolEntry("UseSidePixmap", true));
 
     c.setGroup("menus");
- 
+
     m_hiddenFiles->setChecked(c.readBoolEntry("ShowHiddenFiles", false));
     m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
 
@@ -116,13 +116,13 @@ void MenuTab::load()
     m_subMenus->clear();
 
     // show the bookmark menu?
-    m_bookmarkMenu = new kSubMenuItem(m_subMenus, 
+    m_bookmarkMenu = new kSubMenuItem(m_subMenus,
                                       i18n("Bookmarks"),
                                       QString::null,
                                       SmallIcon("bookmark"),
                                       c.readBoolEntry("UseBookmarks", true));
     connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
-    
+
     // show the quick menus menu?
     m_quickBrowserMenu = new kSubMenuItem(m_subMenus,
                                           i18n("Quick Browser"),
@@ -130,7 +130,7 @@ void MenuTab::load()
                                           SmallIcon("kdisknav"),
                                           c.readBoolEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
-    
+
     QStringList ext = c.readListEntry("Extensions");
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
     kSubMenuItem* menuItem(0);
@@ -141,7 +141,7 @@ void MenuTab::load()
         for (QStringList::ConstIterator it=av.begin(); it!=av.end(); ++it)
         {
             KDesktopFile df(d.absFilePath(*it), true);
-            menuItem = new kSubMenuItem(m_subMenus, 
+            menuItem = new kSubMenuItem(m_subMenus,
                                         df.readName(),
                                         *it,
                                         SmallIcon(df.readIcon()),
@@ -215,18 +215,18 @@ void MenuTab::defaults()
 
 void MenuTab::launchMenuEditor()
 {
-    if ( KApplication::startServiceByDesktopName( "kmenuedit", 
-                                                  QString::null /*url*/, 
-                                                  0 /*error*/, 
+    if ( KApplication::startServiceByDesktopName( "kmenuedit",
+                                                  QString::null /*url*/,
+                                                  0 /*error*/,
                                                   0 /*dcopservice*/,
                                                   0 /*pid*/,
                                                   "" /*startup_id*/,
                                                   true /*nowait*/ ) != 0 )
     {
         KMessageBox::error(this,
-                           "The KDE menu editor (kmenuedit) could not be launched.\n"
-                           "Perhaps it is not installed or not in your path.",
-                           "Application Missing");
+                           i18n("The KDE menu editor (kmenuedit) could not be launched.\n"
+                           "Perhaps it is not installed or not in your path."),
+                           i18n("Application Missing"));
     }
 }
 
