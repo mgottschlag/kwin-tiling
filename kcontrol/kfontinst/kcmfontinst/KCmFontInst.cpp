@@ -605,12 +605,12 @@ void CKCmFontInst::removeFonts()
             case 0:
                 break;
             case 1:
-                doIt = KMessageBox::Continue==KMessageBox::warningYesNo(this,
+                doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
                            i18n("Delete Item"), i18n("Delete"));
             break;
             default:
-                doIt = KMessageBox::Continue==KMessageBox::warningYesNoList(this,
+                doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
                                 files.count()),
                            files, i18n("Delete Items"), i18n("Delete"));
@@ -781,14 +781,14 @@ void CKCmFontInst::enableItems(bool enable)
         case 0:
             break;
         case 1:
-            doIt = KMessageBox::Continue==KMessageBox::warningYesNo(this,
+            doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                        enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
                               : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
                        enable ? i18n("Enable Item") : i18n("Disable Item"),
                        enable ? i18n("Enable") : i18n("Disable"));
             break;
         default:
-            doIt = KMessageBox::Continue==KMessageBox::warningYesNoList(this,
+            doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                        enable ? i18n("translators: not called for n == 1", "Do you really want to enable these %n items?",
                                      files.count())
                               : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?",
