@@ -8,7 +8,7 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <qbuttongroup.h>
+#include <qvbuttongroup.h>
 #include <qstring.h>
 #include <qspinbox.h>
 #include <qlabel.h>
@@ -50,7 +50,8 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
 
     // Echo mode
-    m_EMGroup = new QButtonGroup(i18n("Echo characters as"), this);
+    m_EMGroup = new QVButtonGroup(i18n("Echo characters as"), this);
+    m_EMGroup->layout()->setSpacing( KDialog::spacingHint() );
     QWhatsThis::add( m_EMGroup,  i18n("You can select the type of visual feedback given"
       " when you enter a password in kdesu. Choose one of the following options:<p>"
       " <ul><li><em>1 star:</em> each character you type is shown as an asterisk (*) symbol.</li>"
@@ -58,14 +59,9 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name, const QStrin
       " <li><em>no echo:</em> there is no visual feedback at all, so nothing on your screen"
       " shows how many characters are in your password.</li></ul>"));
     top->addWidget(m_EMGroup);
-    QVBoxLayout *vbox = new QVBoxLayout(m_EMGroup, 10, 10);
-    vbox->addSpacing(10);
-    QRadioButton *rb = new QRadioButton(i18n("1 star"), m_EMGroup);
-    vbox->addWidget(rb, 0, AlignLeft);
-    rb = new QRadioButton(i18n("3 stars"), m_EMGroup);
-    vbox->addWidget(rb, 0, AlignLeft);
-    rb = new QRadioButton(i18n("no echo"), m_EMGroup);
-    vbox->addWidget(rb, 0, AlignLeft);
+    new QRadioButton(i18n("1 star"), m_EMGroup);
+    new QRadioButton(i18n("3 stars"), m_EMGroup);
+    new QRadioButton(i18n("no echo"), m_EMGroup);
     connect(m_EMGroup, SIGNAL(clicked(int)), SLOT(slotEchoMode(int)));
 
     // Keep password
