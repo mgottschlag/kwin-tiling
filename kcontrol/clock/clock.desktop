@@ -9,7 +9,6 @@ X-KDE-ModuleType=Library
 X-KDE-Library=clock
 X-KDE-RootOnly=true
 X-KDE-SubstituteUID=true
-X-KDE-Username=root
 
 Name=Date & Time
 Name[af]=datum & tyd
