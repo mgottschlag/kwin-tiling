@@ -18,5 +18,5 @@ kcmkwm_METASOURCES = titlebar.moc windows.moc desktop.moc advanced.moc
 noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmkwm_SOURCES) && mv messages.po ../../po/kcmkwm.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmkwm_SOURCES) && mv messages.po $(podir)/kcmkwm.pot
 

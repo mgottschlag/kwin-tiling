@@ -39,5 +39,5 @@ noinst_HEADERS = 	classAbout.h \
 			classUserDSN.h
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(odbcconfig_SOURCES) && mv messages.po ../../po/odbcconfig.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(odbcconfig_SOURCES) && mv messages.po $(podir)/odbcconfig.pot
 

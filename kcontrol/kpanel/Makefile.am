@@ -14,7 +14,7 @@ noinst_HEADERS = panel.h desktops.h options.h disknav.h \
 	widgetcanvas.h paneltheme.h
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kcmkpanel_SOURCES) && mv messages.po ../../po/kcmkpanel.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kcmkpanel_SOURCES) && mv messages.po $(podir)/kcmkpanel.pot
 
 KDE_ICON = kcmkpanel
 

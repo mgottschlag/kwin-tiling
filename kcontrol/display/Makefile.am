@@ -28,4 +28,4 @@ libkcm_display_la_LIBADD = $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -kni18n -x $(includedir)/kde.pot \
-	$(libkcm_display_la_SOURCES) && mv messages.po ../../po/kcmdisplay.pot
+	$(libkcm_display_la_SOURCES) && mv messages.po $(podir)/kcmdisplay.pot

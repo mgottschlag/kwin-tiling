@@ -12,4 +12,4 @@ INCLUDES= $(all_includes) -I$(top_srcdir)/kdesktop
 libkcm_kdm_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kdm_la_SOURCES) -o ../../po/kdmconfig.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot

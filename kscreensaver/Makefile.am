@@ -93,7 +93,7 @@ noinst_HEADERS = saver.h demowin.h polygon.h banner.h\
 		slideshow.h vroot.h
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot *.cpp *.h && mv messages.po ../po/klock.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot *.cpp *.h && mv messages.po $(podir)/klock.pot
 
 ########## Meta objects ##########
 

@@ -12,4 +12,4 @@ INCLUDES= $(all_includes)
 libkcm_info_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_info_la_SOURCES) -o ../../po/kcminfo.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_info_la_SOURCES) -o $(podir)/kcminfo.pot

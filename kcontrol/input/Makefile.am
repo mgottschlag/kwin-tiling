@@ -10,4 +10,4 @@ INCLUDES= $(all_includes)
 libkcm_input_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_input_la_SOURCES) -o ../../po/kcminput.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot

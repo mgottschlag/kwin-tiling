@@ -14,4 +14,4 @@ KDE_ICON = bell
 DISTCLEANFILES = $(lib_bell_METASOURCES)
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_bell_la_SOURCES) -o ../../po/kcmbell.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot

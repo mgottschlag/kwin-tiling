@@ -33,5 +33,5 @@ KDE_ICON = kcontrol
 LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o ../../po/kcontrol.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o $(podir)/kcontrol.pot
 

@@ -12,5 +12,5 @@ noinst_HEADERS = ksmbstatus.h
 KDE_ICON = smbstatus
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsamba_SOURCES) && mv messages.po ../../po/kcmsamba.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsamba_SOURCES) && mv messages.po $(podir)/kcmsamba.pot
 
