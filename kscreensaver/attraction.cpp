@@ -73,6 +73,7 @@ extern "C" {
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include <qcombobox.h>
@@ -85,6 +86,7 @@ extern "C" {
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -715,11 +717,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Attraction");
-}
-
 //----------------------------------------------------------------------------
 
 kAttractionSaver::kAttractionSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -728,8 +725,8 @@ kAttractionSaver::kAttractionSaver( Drawable drawable ) : kScreenSaver( drawable
 
 	colorContext = QColor::enterAllocContext();
 
-	initXLock( gc );	// needed by all xlock ports
-        init_balls (dsp, d, this);
+	initXLock( mGc );	// needed by all xlock ports
+    init_balls (dsp, mDrawable, this);
 
 	timer.start( 10, TRUE );		// single shot timer makes smoother animation
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -747,26 +744,26 @@ void kAttractionSaver::setNumber( int num )
 {
 	attr_cleanup();
 	number = num;
-        init_balls (dsp, d, this);
+        init_balls (dsp, mDrawable, this);
 }
 
 void kAttractionSaver::setGlow( bool c )
 {
 	attr_cleanup();
 	glow = c;
-        init_balls (dsp, d, this);
+        init_balls (dsp, mDrawable, this);
 }
 
 void kAttractionSaver::setMode( const QString& m)
 {
 	attr_cleanup();
 	mode = m;
-        init_balls (dsp, d, this);
+        init_balls (dsp, mDrawable, this);
 }
 
 void kAttractionSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -792,7 +789,7 @@ void kAttractionSaver::readSettings()
 
 void kAttractionSaver::slotTimeout()
 {
-        run_balls (dsp, d);
+    run_balls (dsp, mDrawable);
 	timer.start( 10, TRUE );
 }
 

@@ -122,6 +122,7 @@ FIXME: this could be clearer done by a calculation on the position.
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
 extern KLocale *glocale;
+#include <kapp.h>
 #include <kconfig.h>
 
 #include "pipes.h"
@@ -266,6 +267,7 @@ void initGL(Window window)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -293,11 +295,6 @@ int setupScreenSaver()
   kPipesSetup dlg;
 
   return dlg.exec();
-}
-
-QString getScreenSaverName()
-{
-  return glocale->translate("Pipes (GL)");
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -648,7 +645,7 @@ GLuint kPipesSaver::makeSphere(float f)
 
 kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
-  initXLock( gc );
+  initXLock( mGc );
 
   xRot = 1.0*random();
   yRot = 1.0*random();
@@ -657,7 +654,7 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   steps = 0;
   initial = TRUE;
 
-  initGL( d );
+  initGL( mDrawable );
 
   static GLfloat pos[4] = {-5.0, -5.0, 10.0, 1.0 };
   glLightfv( GL_LIGHT0, GL_POSITION, pos );
@@ -705,7 +702,7 @@ void kPipesSaver::setPipes( int n )
 
 void kPipesSaver::readSettings()
 {
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = kapp->getConfig();
   config->setGroup( "Settings" );
 
   QString str;

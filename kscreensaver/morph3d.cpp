@@ -904,9 +904,11 @@ release_morph3d()
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
+#include <kapp.h>
 #include <kconfig.h>
 
 #include "morph3d.h"
@@ -936,11 +938,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Morph3D (GL)");
-}
-
 //-----------------------------------------------------------------------------
 
 kMorph3dSaver::kMorph3dSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -951,8 +948,8 @@ kMorph3dSaver::kMorph3dSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 
-	initXLock( gc );
-	initmorph3d( d );
+	initXLock( mGc );
+	initmorph3d( mDrawable );
 	
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -976,12 +973,12 @@ void kMorph3dSaver::setSpeed( int spd )
 void kMorph3dSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initmorph3d( d );
+	initmorph3d( mDrawable );
 }
 
 void kMorph3dSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1003,7 +1000,7 @@ void kMorph3dSaver::readSettings()
 
 void kMorph3dSaver::slotTimeout()
 {
-	drawmorph3d( d );
+	drawmorph3d( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

@@ -182,6 +182,7 @@ drawhop(Window win)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -193,6 +194,7 @@ drawhop(Window win)
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -223,11 +225,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Hop");
-}
-
 //-----------------------------------------------------------------------------
 
 kHopSaver::kHopSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -238,8 +235,8 @@ kHopSaver::kHopSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 	cycles = numPoints;
-	initXLock( gc );
-	inithop( d );
+	initXLock( mGc );
+	inithop( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -262,18 +259,18 @@ void kHopSaver::setSpeed( int spd )
 void kHopSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	inithop( d );
+	inithop( mDrawable );
 }
 
 void kHopSaver::setPoints( int p )
 {
 	cycles = numPoints = p;
-	inithop( d );
+	inithop( mDrawable );
 }
 
 void kHopSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -299,7 +296,7 @@ void kHopSaver::readSettings()
 
 void kHopSaver::slotTimeout()
 {
-	drawhop( d );
+	drawhop( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

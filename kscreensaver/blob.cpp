@@ -77,8 +77,8 @@ KBlobSaver::KBlobSaver
 	// needs colors to work this one
 	if (QPixmap::defaultDepth() < 8)
 	{
-		XSetForeground(qt_xdisplay(), gc, white.pixel());
-		XDrawString(qt_xdisplay(), d, gc, width/2, height/2, msg, strlen(msg));
+		XSetForeground(qt_xdisplay(), mGc, white.pixel());
+		XDrawString(qt_xdisplay(), mDrawable, mGc, mWidth/2, mHeight/2, msg, strlen(msg));
 		return;
 	}
 
@@ -102,7 +102,7 @@ KBlobSaver::KBlobSaver
 	else
 	{
 		// make special provision for preview mode
-		if (height < 400)
+		if (mHeight < 400)
 		{
 			if (QPixmap::defaultDepth() >= 24)
 				setColorInc(7);
@@ -119,7 +119,7 @@ KBlobSaver::KBlobSaver
 	}
 
 	// the dimensions of the blob painter
-	dim = height/70+1;
+	dim = mHeight/70+1;
 
 	// record starting time to know when to change frames
 	start = time(NULL);
@@ -128,8 +128,8 @@ KBlobSaver::KBlobSaver
 	srandom((unsigned long)time(NULL));
 
 	// init some parameters used by all algorithms
-	xhalf = width/2;
-	yhalf = height/2;
+	xhalf = mWidth/2;
+	yhalf = mHeight/2;
 
 	// means a new algorithm should be set at entrance of timer 
 	newalg = newalgp = 1;
@@ -181,8 +181,8 @@ void KBlobSaver::lnSetup()
 	ln_yinc = SMALLRAND(2);
 
 	// start position
-	tx = SMALLRAND(width-dim-ln_xinc*2);
-	ty = SMALLRAND(height-dim-ln_yinc*2);
+	tx = SMALLRAND(mWidth-dim-ln_xinc*2);
+	ty = SMALLRAND(mHeight-dim-ln_yinc*2);
 }
 
 void KBlobSaver::hsSetup()
@@ -198,8 +198,8 @@ void KBlobSaver::cbSetup()
 	cb_radians = 0.0;
 	cb_rinc = (2.0*M_PI)/360.0;
 	cb_sradians = 0.0;
-	cb_deviate = SMALLRAND(height/20)+(height/15);
-	cb_radius = height/2-cb_deviate*2-2*dim;
+	cb_deviate = SMALLRAND(mHeight/20)+(mHeight/15);
+	cb_radius = mHeight/2-cb_deviate*2-2*dim;
 	//cb_devradinc = (((float)random()/(float)RAND_MAX)*10.0*2.0*M_PI)/360.0;
         // Commented out by David. RAND_MAX might not be accurate...
         cb_devradinc = (((float)(random()%30000)/30000.0)*10.0*2.0*M_PI)/360.0;
@@ -245,7 +245,7 @@ void KBlobSaver::lnNextFrame()
 	// depending on the algorithm to use, move the blob painter to
 	// a new location
 	// check for wall hit to change direction
-	if (tx+dim+ln_xinc > (int)width-1 || tx+ln_xinc < 0)
+	if (tx+dim+ln_xinc > (int)mWidth-1 || tx+ln_xinc < 0)
 	{
 		if (ln_xinc > 0)
 			dir = -1;
@@ -253,7 +253,7 @@ void KBlobSaver::lnNextFrame()
 			dir = 1;
 		ln_xinc = SMALLRAND(3.0)*dir;
 	}
-	if (ty+dim+ln_yinc > (int)height-1 || ty+ln_yinc < 0)
+	if (ty+dim+ln_yinc > (int)mHeight-1 || ty+ln_yinc < 0)
 	{
 		if (ln_yinc > 0)
 			dir = -1;
@@ -272,8 +272,8 @@ void KBlobSaver::lnNextFrame()
 
 void KBlobSaver::hsNextFrame()
 {
-	static int xlen = width-(4*dim);
-	static int ylen = height-(4*dim);
+	static int xlen = mWidth-(4*dim);
+	static int ylen = mHeight-(4*dim);
 
 	// calc x as offset on angle line and y as vertical offset
 	// on interval -1..1 sine of angle
@@ -320,7 +320,7 @@ void KBlobSaver::cbNextFrame()
 
 void KBlobSaver::pcNextFrame()
 {
-	static float scale = (float)height/3.0 - 4.0*dim;
+	static float scale = (float)mHeight/3.0 - 4.0*dim;
 
 	// simple polar coordinate equation
 	if (pc_div < 1.0)
@@ -354,17 +354,17 @@ void KBlobSaver::box
 
 	// for bad behaving algorithms that wants to cause an X trap
 	// confine to the valid region before using potentially fatal XGetImage
-	if ((uint)(x+dim) >= width)
-		x = width-dim-1;
+	if ((uint)(x+dim) >= mWidth)
+		x = mWidth-dim-1;
 	else if (x < 0)
 		x = 0;
-	if ((uint)(y+dim) > height)
-		y = height-dim-1;
+	if ((uint)(y+dim) > mHeight)
+		y = mHeight-dim-1;
 	else if (y < 0)
 		y = 0;
 
 	// get the box region from the display to upgrade
-	if (!(img = XGetImage(qt_xdisplay(), d, x, y, dim, dim, ULONG_MAX, ZPixmap)))
+	if (!(img = XGetImage(qt_xdisplay(), mDrawable, x, y, dim, dim, ULONG_MAX, ZPixmap)))
 		return;
 
 	// depending on the depth of the display, use either lookup table for
@@ -395,7 +395,7 @@ void KBlobSaver::box
 	}
 
 	// put the image back onto the screen
-	XPutImage(qt_xdisplay(), d, gc, img, 0, 0, x, y, dim, dim);
+	XPutImage(qt_xdisplay(), mDrawable, mGc, img, 0, 0, x, y, dim, dim);
 
 	// get rid of memory used by grabbed image
 	XDestroyImage(img);
@@ -403,8 +403,8 @@ void KBlobSaver::box
 
 void KBlobSaver::blank()
 {
-	XSetWindowBackground(qt_xdisplay(), d, black.pixel());
-	XClearWindow(qt_xdisplay(), d);
+	XSetWindowBackground(qt_xdisplay(), mDrawable, black.pixel());
+	XClearWindow(qt_xdisplay(), mDrawable);
 }
 
 void KBlobSaver::readSettings()
@@ -600,10 +600,5 @@ int setupScreenSaver()
 	KBlobSetup dlg;
 
 	return dlg.exec();
-}
-
-QString getScreenSaverName()
-{
-	return glocale->translate("Blobs");
 }
 

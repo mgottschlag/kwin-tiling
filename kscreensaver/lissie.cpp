@@ -196,6 +196,7 @@ drawlissie(Window win, lissiestruct * lissie)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -207,6 +208,7 @@ drawlissie(Window win, lissiestruct * lissie)
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -238,11 +240,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Lissie");
-}
-
 //-----------------------------------------------------------------------------
 
 kLissieSaver::kLissieSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -254,8 +251,8 @@ kLissieSaver::kLissieSaver( Drawable drawable ) : kScreenSaver( drawable )
 	batchcount = maxLevels;
 	cycles = numPoints;
 	
-	initXLock( gc );
-	init_lissie( d );
+	initXLock( mGc );
+	init_lissie( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -278,18 +275,18 @@ void kLissieSaver::setSpeed( int spd )
 void kLissieSaver::setLevels( int l )
 {
   batchcount = maxLevels = l;
-  init_lissie( d );
+  init_lissie( mDrawable );
 }
 
 void kLissieSaver::setPoints( int p )
 {
 	cycles = numPoints = p;
-	init_lissie( d );
+	init_lissie( mDrawable );
 }
 
 void kLissieSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -315,7 +312,7 @@ void kLissieSaver::readSettings()
 
 void kLissieSaver::slotTimeout()
 {
-	draw_lissie( d );
+	draw_lissie( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

@@ -61,11 +61,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Polygons");
-}
-
 //-----------------------------------------------------------------------------
 // dialog to setup screen saver parameters
 //
@@ -156,6 +151,11 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	tl->addWidget(bbox);
 
 	tl->freeze();
+}
+
+kPolygonSetup::~kPolygonSetup()
+{
+    delete saver;
 }
 
 // read settings from config file
@@ -340,14 +340,14 @@ void kPolygonSaver::slotTimeout()
 {
 	if ( polygons.count() > numLines )
 	{
-		XSetForeground( qt_xdisplay(), gc, black.pixel() );
-		XDrawLines( qt_xdisplay(), d, gc, polygons.first()->vertices.data(),
+		XSetForeground( qt_xdisplay(), mGc, black.pixel() );
+		XDrawLines( qt_xdisplay(), mDrawable, mGc, polygons.first()->vertices.data(),
 			numVertices+1, CoordModeOrigin );
 	}
 
 	nextColor();
 
-	XDrawLines( qt_xdisplay(), d, gc, polygons.last()->vertices.data(),
+	XDrawLines( qt_xdisplay(), mDrawable, mGc, polygons.last()->vertices.data(),
 		numVertices+1, CoordModeOrigin );
 
 	if ( polygons.count() > numLines )
@@ -359,8 +359,8 @@ void kPolygonSaver::slotTimeout()
 
 void kPolygonSaver::blank()
 {
-	XSetWindowBackground( qt_xdisplay(), d, black.pixel() );
-	XClearWindow( qt_xdisplay(), d );
+	XSetWindowBackground( qt_xdisplay(), mDrawable, black.pixel() );
+	XClearWindow( qt_xdisplay(), mDrawable );
 }
 
 // initialise the polygon
@@ -374,8 +374,8 @@ void kPolygonSaver::initialisePolygons()
 
 	for ( i = 0; i < numVertices; i++ )
 	{
-		poly->vertices[i].x = random() % width;
-		poly->vertices[i].y = random() % height;
+		poly->vertices[i].x = random() % mWidth;
+		poly->vertices[i].y = random() % mHeight;
 		directions[i].x = 16 - (random() % 8) * 4;
 		if ( directions[i].x == 0 )
 			directions[i].x = 1;
@@ -397,10 +397,10 @@ void kPolygonSaver::moveVertices()
 	for ( i = 0; i < numVertices; i++ )
 	{
 		poly->vertices[i].x += directions[i].x;
-		if ( poly->vertices[i].x >= (int)width )
+		if ( poly->vertices[i].x >= (int)mWidth )
 		{
 			directions[i].x = -(random() % 4 + 1) * 4;
-			poly->vertices[i].x = (int)width;
+			poly->vertices[i].x = (int)mWidth;
 		}
 		else if ( poly->vertices[i].x < 0 )
 		{
@@ -409,10 +409,10 @@ void kPolygonSaver::moveVertices()
 		}
 
 		poly->vertices[i].y += directions[i].y;
-		if ( poly->vertices[i].y >= (int)height )
+		if ( poly->vertices[i].y >= (int)mHeight )
 		{
 			directions[i].y = -(random() % 4 + 1) * 4;
-			poly->vertices[i].y = height;
+			poly->vertices[i].y = mHeight;
 		}
 		else if ( poly->vertices[i].y < 0 )
 		{
@@ -442,7 +442,7 @@ void kPolygonSaver::nextColor()
 {
 	static int col = 0;
 
-	XSetForeground( qt_xdisplay(), gc, colors[col] );
+	XSetForeground( qt_xdisplay(), mGc, colors[col] );
 
 	col++;
 

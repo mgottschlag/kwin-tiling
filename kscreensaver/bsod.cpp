@@ -1157,7 +1157,7 @@ BSODSaver::BSODSaver (Drawable d)
 
 void BSODSaver::timeout ()
 {
-	draw_bsod(d);
+	draw_bsod(mDrawable);
 }
 
 BSODSaver::~BSODSaver ()
@@ -1184,11 +1184,6 @@ void stopScreenSaver ()
 int setupScreenSaver ()
 {
 	return 0;
-}
-
-QString getScreenSaverName ()
-{
-	return glocale->translate("Black Screen of Death");
 }
 
 #include "bsod.moc"

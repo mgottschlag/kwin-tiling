@@ -114,10 +114,6 @@ int setupScreenSaver(){
 	return dlg.exec();
 }
 
-QString getScreenSaverName(){
-	return glocale->translate("Lines");
-}
-
 //-----------------------------------------------------------------------------
 // dialog to setup screen saver parameters
 //
@@ -228,6 +224,11 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	tl->addWidget(bbox);
 
 	tl->freeze();
+}
+
+kLinesSetup::~kLinesSetup()
+{
+    delete saver;
 }
 
 // read settings from config file
@@ -411,20 +412,20 @@ void kLinesSaver::slotTimeout(){
 	int col=0;
 
 	lines->reset();
-	XSetForeground(qt_xdisplay(), gc, 0);
+	XSetForeground(qt_xdisplay(), mGc, 0);
 	for(i=0; i<numLines; i++){
 		lines->getKoord(x1,y1,x2,y2);
-                XDrawLine(qt_xdisplay(), d, gc, x1, y1, x2, y2);
-		XSetForeground(qt_xdisplay(), gc, colors[col]);
+                XDrawLine(qt_xdisplay(), mDrawable, mGc, x1, y1, x2, y2);
+		XSetForeground(qt_xdisplay(), mGc, colors[col]);
 		col=(int)(i*colscale);
 		if(col>63) col=0;
 	}
-	lines->turn(width, height);
+	lines->turn(mWidth, mHeight);
 }
 
 void kLinesSaver::blank(){
-	XSetWindowBackground(qt_xdisplay(), d, black.pixel());
-	XClearWindow(qt_xdisplay(), d);
+	XSetWindowBackground(qt_xdisplay(), mDrawable, black.pixel());
+	XClearWindow(qt_xdisplay(), mDrawable);
 }
 
 // initialise the lines
@@ -434,10 +435,10 @@ void kLinesSaver::initialiseLines(){
 	if(lines) delete lines;
 	lines=new Lines(numLines);
 	lines->reset();
-	x1=random()%width;
-	y1=random()%height;
-	x2=random()%width;
-	y2=random()%height;
+	x1=random()%mWidth;
+	y1=random()%mHeight;
+	x2=random()%mWidth;
+	y2=random()%mHeight;
 	for(i=0; i<numLines; i++){
 		lines->setKoord(x1,y1,x2,y2);
 		lines->next();

@@ -106,11 +106,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return i18n( "Science" );
-}
-
 //-----------------------------------------------------------------------------
 // Prepare Dialog
 // 
@@ -218,7 +213,7 @@ KScienceSaver::KScienceSaver( Drawable drawable, bool s, bool gP ) : kScreenSave
 	grabPixmap = gP;
 	setup = s;
 	showDialog = !setup && 	(RootWindow( qt_xdisplay(), qt_xscreen() ) != drawable) &&
-                     width >= 320 && height >= 200;
+                     mWidth >= 320 && mHeight >= 200;
 
 	if( showDialog )
 	{
@@ -233,7 +228,7 @@ KScienceSaver::KScienceSaver( Drawable drawable, bool s, bool gP ) : kScreenSave
 	{
 		grabRootWindow();
 		initialize();
-		do_refresh( QRect ( 0, 0, width, height ) );
+		do_refresh( QRect ( 0, 0, mWidth, mHeight ) );
 	}
 
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -262,8 +257,8 @@ void KScienceSaver::myAssert( bool term, char *eMsg )
 void KScienceSaver::initialize()
 {
 	initLens();
-	signed int ws = (signed int) (width -  diam);
-	signed int hs = (signed int) (height - diam);
+	signed int ws = (signed int) (mWidth -  diam);
+	signed int hs = (signed int) (mHeight - diam);
 
 	srandom( (int) time( (time_t *) NULL ) );
 	x = (double) ( (ws > 0) ? (random() % ws ) : 0 );
@@ -492,7 +487,7 @@ void KScienceSaver::initLens()
 		kapp->processEvents();		
 	}
 
-	int min = (width < height) ? width : height;
+	int min = (mWidth < mHeight) ? mWidth : mHeight;
 	border = 1 + SCI_MAX_MOVE;
 
 	radius = (size[mode] * min) / 100;
@@ -548,7 +543,7 @@ void KScienceSaver::setMode( int m )
 	int dm = diam;
 	initLens();
 	if( hideBG[old] ^ hideBG[m] )
-		do_refresh( QRect( 0, 0, width, height ) );
+		do_refresh( QRect( 0, 0, mWidth, mHeight ) );
 	else
 		if( diam < dm )
 		{
@@ -649,7 +644,7 @@ void KScienceSaver::setHideBG( bool b )
 	releaseLens();
 	hideBG[mode] = b;
 	initLens();	
-	do_refresh( QRect( 0, 0, width, height ) );
+	do_refresh( QRect( 0, 0, mWidth, mHeight ) );
 		
 	timer.start( SCI_MAX_SPEED - speed[mode]);	
 }
@@ -688,14 +683,14 @@ void KScienceSaver::do_refresh( const QRect & rect )
 
 	if( hideBG[mode] )
 	{
-		XSetWindowBackground( qt_xdisplay(), d, black.pixel() );
-		XClearArea( qt_xdisplay(), d, rect.left(), rect.top(), 
+		XSetWindowBackground( qt_xdisplay(), mDrawable, black.pixel() );
+		XClearArea( qt_xdisplay(), mDrawable, rect.left(), rect.top(), 
                             rect.width(), rect.height(), false );
 	}
 	else 
 	{
 		myAssert( xRootWin != 0, "root window not grabbed" );
-		XPutImage( qt_xdisplay(), d, gc, xRootWin, 
+		XPutImage( qt_xdisplay(), mDrawable, mGc, xRootWin, 
 		           rect.left(), rect.top(),
                            rect.left(), rect.top(), 
                            rect.width(), rect.height() );
@@ -706,19 +701,19 @@ void KScienceSaver::do_refresh( const QRect & rect )
 void KScienceSaver::slotTimeout()
 {
 	if( grabPixmap ) {
-		if( !QWidget::find(d)->isActiveWindow() )
+		if( !QWidget::find(mDrawable)->isActiveWindow() )
 			return;
 		grabPreviewWidget();
 		grabPixmap = false;
 		initialize();
 		if( hideBG[mode] )
-			do_refresh( QRect ( 0, 0, width, height ) );
+			do_refresh( QRect ( 0, 0, mWidth, mHeight ) );
 	}
 
 	signed int oldx = xcoord, oldy = ycoord;
 
 	if( gravity[mode] ) {
-		double h = double(y+1.0) / double(height-diam);
+		double h = double(y+1.0) / double(mHeight-diam);
 		if( h > 1.0 ) h = 1.0;
 		vy = sqrt( h ) * ( (vy > 0.0) ? moveY[mode] : -moveY[mode] );
 	}
@@ -734,19 +729,19 @@ void KScienceSaver::slotTimeout()
 		vx = -vx; 
 		x = 0.0; 
 	}
-	if( (unsigned int) x + diam >= width) { 
+	if( (unsigned int) x + diam >= mWidth) { 
 		vx = -vx; 
-		myAssert( width-diam > 0, "assertion violated: width-diam > 0" );
-		x = (double) (width - diam - 1); 
+		myAssert( mWidth-diam > 0, "assertion violated: width-diam > 0" );
+		x = (double) (mWidth - diam - 1); 
 	}
 	if( y <= 0.0 ) { 
 		vy = -vy; 
 		y = 0.0; 
 	}
-	if( (unsigned int) y + diam >= height ) { 
+	if( (unsigned int) y + diam >= mHeight ) { 
 		vy = -vy; 
-		myAssert( height - diam > 0, "assertion violated: height-diam > 0" );
-		y = (double) (height - diam - 1); 
+		myAssert( mHeight - diam > 0, "assertion violated: height-diam > 0" );
+		y = (double) (mHeight - diam - 1); 
 	}
 
 	xcoord = (int) x ;
@@ -785,19 +780,19 @@ void KScienceSaver::slotTimeout()
 		}
 	}
 
-	if( (unsigned int) xd + w >= width  ) w = width  - xd - 1;
-	if( (unsigned int) yd + h >= height ) h = height - yd - 1;
+	if( (unsigned int) xd + w >= mWidth  ) w = mWidth  - xd - 1;
+	if( (unsigned int) yd + h >= mHeight ) h = mHeight - yd - 1;
 
 //printf("%d: (dx: %3d, dy: %3d), diam: %3d, (xc: %3d, yc: %3d), (xs: %3d, ys: %3d), (xd: %3d, yd: %3d), (w: %3d, h: %3d)\n", mode, dx, dy, diam, xcoord, ycoord, xs, ys, xd, yd, w, h);	
 	myAssert( dx <= border && dy <=border, "assertion violated: dx or dy <= border");
 	myAssert( xcoord >= 0 && ycoord >= 0, "assertion violated: xcoord, ycoord >= 0 ");
-	myAssert( (unsigned int) xd+w < width, "assertion violated: xd+w < width" );
-	myAssert( (unsigned int) yd+h < height, "assertion violated: yd+h < height" );
+	myAssert( (unsigned int) xd+w < mWidth, "assertion violated: xd+w < width" );
+	myAssert( (unsigned int) yd+h < mHeight, "assertion violated: yd+h < height" );
 
 	if( hideBG[mode] )
 		blackPixel( xcoord, ycoord );
 	(this->*applyLens)(xs, ys, xd, yd, w, h);
-	XPutImage( qt_xdisplay(), d, gc, buffer, 0, 0, xd, yd, w, h );
+	XPutImage( qt_xdisplay(), mDrawable, mGc, buffer, 0, 0, xd, yd, w, h );
 	if( hideBG[mode] )
 		blackPixelUndo( xcoord, ycoord );
 }
@@ -818,14 +813,17 @@ void KScienceSaver::grabRootWindow()
 	if( xRootWin )
 		XDestroyImage( xRootWin );
 
-	xRootWin = XGetImage( dsp, rootwin, 0, 0, width,
-	                      height, AllPlanes, ZPixmap);
+	xRootWin = XGetImage( dsp, rootwin, 0, 0, mWidth,
+	                      mHeight, AllPlanes, ZPixmap);
 	myAssert( xRootWin, "unable to grab root window\n" );
 
 	imgnext = xRootWin->bytes_per_line;
 	bpp = ( xRootWin->bits_per_pixel ) >> 3;
 
 	// remove dialog
+	if( showDialog && dlg )
+		dlg->hide();
+/*
 	if( showDialog && dlg )
 	{
 		char *p = xRootWin->data + imgnext*dlg->y + bpp*dlg->x;
@@ -837,17 +835,18 @@ void KScienceSaver::grabRootWindow()
 			q += dlg->bpl;
 		}
 	}
+*/
 }
 
 void KScienceSaver::grabPreviewWidget()
 {
-	myAssert( QWidget::find(d)->isActiveWindow(), "can't grab preview widget: dialog not active()" );
+	myAssert( QWidget::find(mDrawable)->isActiveWindow(), "can't grab preview widget: dialog not active()" );
 
 	if( xRootWin )
 		XDestroyImage( xRootWin );
 
 	Display *dsp = qt_xdisplay();
-	xRootWin = XGetImage( dsp, d, 0, 0, width, height, AllPlanes, ZPixmap);
+	xRootWin = XGetImage( dsp, mDrawable, 0, 0, mWidth, mHeight, AllPlanes, ZPixmap);
 	myAssert( xRootWin, "unable to grab preview window\n" );
 
 	imgnext = xRootWin->bytes_per_line;

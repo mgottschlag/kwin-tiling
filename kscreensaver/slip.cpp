@@ -249,8 +249,10 @@ drawslip(Window win)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
+#include <kapp.h>
 #include "kslider.h"
 
 #include "slip.h"
@@ -290,11 +292,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Slip");
-}
-
 //-----------------------------------------------------------------------------
 
 kSlipSaver::kSlipSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -305,8 +302,8 @@ kSlipSaver::kSlipSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 
-	initXLock( gc );
-	initslip( d );
+	initXLock( mGc );
+	initslip( mDrawable );
 	
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -329,12 +326,12 @@ void kSlipSaver::setSpeed( int spd )
 void kSlipSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initslip( d );
+	initslip( mDrawable );
 }
 
 void kSlipSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -355,7 +352,7 @@ void kSlipSaver::readSettings()
 
 void kSlipSaver::slotTimeout()
 {
-	drawslip( d );
+	drawslip( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

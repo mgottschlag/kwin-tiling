@@ -67,6 +67,7 @@ class kLinesSetup:public QDialog{
 	Q_OBJECT
 	public:
 	kLinesSetup(QWidget *parent=NULL, const char *name=NULL);
+    ~kLinesSetup();
 
 	protected:
 	void readSettings();

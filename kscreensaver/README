@@ -1,28 +1,8 @@
 KDE Screen Saver
 ~~~~~~~~~~~~~~~~
-This is kscreensaver.. screen savers for KDE.  The timeout stuff is based
-on a very heavily modified xautolock.
-
-Features:
-
-* Each screen saver is a stand-alone executable.
-* Each screen saver has a setup dialog.
-* Interfaces with kdisplay, so no manual setup of screen saver is necessary.
-* Hotspots in corners of display to invoke saver/locker.
-* Copy kscreensaver.h/cpp to your app and call kForceLock() to lock the
-  screen any time.
-(or just run klock)
-
-Installation:
-
-You will require kdelibs from KDE Version 1.1 or newer
-
-Since this is now part of kdebase, please check the top level directory
-(e.g. ../) for more information.
-
 Adding (Coding.. Porting..) New Screensavers:
 
-To add your own screen savers you must provide four functions:
+To add your own screen savers you must provide three functions:
 
 void startScreenSaver( Drawable d );
 
@@ -37,18 +17,15 @@ int  setupScreenSaver();
 
   Display a dialog so the the user can change the screen saver settings.
 
-QString getScreenSaverName()
-
-  return the name/description of the screen saver
-
-
 All drawing must be done in Xlib.
 use blankscrn.*, polygon.* and banner.* as examples.
-Naming the screensavers *.kss allows kdisplay to locate the available
-screensavers.
 
 
 CHANGES:
+
+Version 0.5
+
+All savers stripped back to bare minimum for new KDE 2.0 screensaver engine
 
 Version 0.4
 
@@ -162,14 +139,6 @@ xscreensaver Copyright Notice:
  implied warranty
 
 blank, banner and polygons are my fault
-
-
-TODO:
-
-More screen savers - If you plan to write/port a screen saver, please let
-  me know what you are doing so that effort is not duplicated.
-Support multiple screens - I can't do this - I only have one.
-
 
 Martin Jones.
 mjones@kde.org

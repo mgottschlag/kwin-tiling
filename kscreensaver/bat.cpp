@@ -419,6 +419,7 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
@@ -427,6 +428,7 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include "helpers.h"
 
 #include "bat.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -459,11 +461,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Bat");
-}
-
 //-----------------------------------------------------------------------------
 
 kBatSaver::kBatSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -474,8 +471,8 @@ kBatSaver::kBatSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 
-	initXLock( gc );
-	initbat( d );
+	initXLock( mGc );
+	initbat( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -498,12 +495,12 @@ void kBatSaver::setSpeed( int spd )
 void kBatSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initbat( d );
+	initbat( mDrawable );
 }
 
 void kBatSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -524,7 +521,7 @@ void kBatSaver::readSettings()
 
 void kBatSaver::slotTimeout()
 {
-    drawbat( d );
+    drawbat( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

@@ -59,11 +59,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Banner");
-}
-
 //-----------------------------------------------------------------------------
 
 static const char *fonts[] = { "Courier", "Helvetica", "Times", NULL };
@@ -394,8 +389,9 @@ void KBannerSaver::setFont( const QString& family, int size, const QColor &color
 
 void KBannerSaver::setMessage( const QString &msg )
 {
-	XSetForeground( qt_xdisplay(), gc, black.pixel() );
-	XDrawString( qt_xdisplay(), d, gc, xpos, ypos, message, message.length() );
+	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
+	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message,
+                 message.length() );
 
 	message = msg;
 	fwidth = XTextWidth( fontInfo, message, message.length() );
@@ -464,19 +460,19 @@ void KBannerSaver::initialise()
 	else
 		ichar = 'i';
 
-	size = fontSize * height / QApplication::desktop()->height();
+	size = fontSize * mHeight / QApplication::desktop()->height();
 
 	font.sprintf( "-*-%s-%s-%c-*-*-%d-*-*-*-*-*-*-*", fontFamily.ascii(),
 			bold ? "bold" : "medium", italic ? ichar : 'r', size );
 	fontInfo = XLoadQueryFont( qt_xdisplay(), font );
 
-	XSetFont( qt_xdisplay(), gc, fontInfo->fid );
+	XSetFont( qt_xdisplay(), mGc, fontInfo->fid );
 
 	fwidth = XTextWidth( fontInfo, message, message.length() );
 
-	xpos = width;
-	ypos = height / 2;
-	step = 6 * width / QApplication::desktop()->width();
+	xpos = mWidth;
+	ypos = mHeight / 2;
+	step = 6 * mWidth / QApplication::desktop()->width();
 	if ( step == 0 )
 		step = 1;
 }
@@ -484,20 +480,20 @@ void KBannerSaver::initialise()
 // erase old text and draw in new position
 void KBannerSaver::slotTimeout()
 {
-	XSetForeground( qt_xdisplay(), gc, black.pixel() );
-	XDrawString( qt_xdisplay(), d, gc, xpos, ypos, message, message.length() );
+	XSetForeground( qt_xdisplay(), mGc, black.pixel() );
+	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
 
 	xpos -= step;
-	if ( xpos < -fwidth-(int)width/2 )
-		xpos = width;
+	if ( xpos < -fwidth-(int)mWidth/2 )
+		xpos = mWidth;
 
-	XSetForeground( qt_xdisplay(), gc, fontColor.pixel() );
-	XDrawString( qt_xdisplay(), d, gc, xpos, ypos, message, message.length() );
+	XSetForeground( qt_xdisplay(), mGc, fontColor.pixel() );
+	XDrawString( qt_xdisplay(), mDrawable, mGc, xpos, ypos, message, message.length() );
 }
 
 void KBannerSaver::blank()
 {
-	XSetWindowBackground( qt_xdisplay(), d, black.pixel() );
-	XClearWindow( qt_xdisplay(), d );
+	XSetWindowBackground( qt_xdisplay(), mDrawable, black.pixel() );
+	XClearWindow( qt_xdisplay(), mDrawable );
 }
 

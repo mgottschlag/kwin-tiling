@@ -814,6 +814,7 @@ release_bouboule()
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -825,6 +826,7 @@ release_bouboule()
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -860,11 +862,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Bouboule");
-}
-
 //-----------------------------------------------------------------------------
 
 kBoubouleSaver::kBoubouleSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -878,8 +875,8 @@ kBoubouleSaver::kBoubouleSaver( Drawable drawable ) : kScreenSaver( drawable )
 	colorchange=MAXCCSPEED-colorCycleDelay;
 	use3d=flag_3dmode;
 
-	initXLock( gc );
-	initbouboule( d );
+	initXLock( mGc );
+	initbouboule( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -900,7 +897,7 @@ void kBoubouleSaver::setSpeed( int spd )
         release_bouboule();
 	speed = MAXSPEED - spd;
 
-        initbouboule( d );
+        initbouboule( mDrawable );
 
 	timer.start( speed );
 
@@ -912,7 +909,7 @@ void kBoubouleSaver::setPoints( int p )
 	timer.stop();
         release_bouboule();
         batchcount=numPoints;
-	initbouboule( d );
+	initbouboule( mDrawable );
 	timer.start( speed );
 }
 
@@ -922,7 +919,7 @@ void kBoubouleSaver::setSize( int p )
 	timer.stop();
         release_bouboule();
 	maxsize=pointSize;
-	initbouboule( d );
+	initbouboule( mDrawable );
 	timer.start( speed );
 }
 
@@ -934,7 +931,7 @@ void kBoubouleSaver::setColorCycle( int spd )
 	colorCycleDelay = spd;
 	colorchange = MAXCCSPEED - colorCycleDelay;
 
-        initbouboule( d );
+        initbouboule( mDrawable );
 
 	timer.start( speed );
 
@@ -947,7 +944,7 @@ void kBoubouleSaver::set3DMode( bool mode3d )
         release_bouboule();
 	flag_3dmode = use3d = mode3d;
 	
-        initbouboule( d );
+        initbouboule( mDrawable );
 
 	timer.start( speed );
 
@@ -955,7 +952,7 @@ void kBoubouleSaver::set3DMode( bool mode3d )
 
 void kBoubouleSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -994,7 +991,7 @@ void kBoubouleSaver::readSettings()
 
 void kBoubouleSaver::slotTimeout()
 {
-	drawbouboule( d );
+	drawbouboule( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

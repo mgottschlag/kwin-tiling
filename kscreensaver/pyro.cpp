@@ -396,6 +396,7 @@ void pyro_setCloud( int c )
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -406,6 +407,7 @@ void pyro_setCloud( int c )
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -436,11 +438,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Pyro");
-}
-
 //----------------------------------------------------------------------------
 
 kPyroSaver::kPyroSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -452,8 +449,8 @@ kPyroSaver::kPyroSaver( Drawable drawable ) : kScreenSaver( drawable )
 	batchcount = number;
 	pyro_setCloud( cloud );
 
-	initXLock( gc );	// needed by all xlock ports
-	initpyro( d );
+	initXLock( mGc );	// needed by all xlock ports
+	initpyro( mDrawable );
 
 	timer.start( 2, TRUE );		// single shot timer makes smoother animation
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -472,7 +469,7 @@ void kPyroSaver::setNumber( int num )
 	pyro_cleanup();
 	number = num;
 	pyro_setNumber( number );
-	initpyro( d );
+	initpyro( mDrawable );
 }
 
 void kPyroSaver::setCloud( bool c )
@@ -503,7 +500,7 @@ void kPyroSaver::readSettings()
 
 void kPyroSaver::slotTimeout()
 {
-	drawpyro( d );
+	drawpyro( mDrawable );
 	timer.start( 2, TRUE );
 }
 
@@ -574,7 +571,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 void kPyroSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;

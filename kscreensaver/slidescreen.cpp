@@ -33,6 +33,7 @@ extern "C" {
 //#include <qcheckbox.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
+#include <qlabel.h>
 //#include <qcombobox.h>
 
 #include "kslider.h"
@@ -43,6 +44,7 @@ extern "C" {
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -416,11 +418,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("SlideScreen");
-}
-
 //----------------------------------------------------------------------------
 
 kSlideScreenSaver::kSlideScreenSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -429,8 +426,8 @@ kSlideScreenSaver::kSlideScreenSaver( Drawable drawable ) : kScreenSaver( drawab
 
 	colorContext = QColor::enterAllocContext();
 
-	initXLock( this->gc );	// needed by all xlock ports
-        init_slide (dsp, d, this);
+	initXLock( this->mGc );	// needed by all xlock ports
+    init_slide (dsp, mDrawable, this);
 
 	timer.start( 10, TRUE );		// single shot timer makes smoother animation
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -452,7 +449,7 @@ void kSlideScreenSaver::readSettings()
 
 void kSlideScreenSaver::slotTimeout()
 {
-        slide1 (dsp, d);
+    slide1 (dsp, mDrawable);
 	timer.start( ssdelay2/1000, TRUE );
 }
 

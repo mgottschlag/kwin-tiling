@@ -1,17 +1,15 @@
-#ifndef __SAVER_H__
-#define __SAVER_H__ "$Id"
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <kapp.h>
+#ifndef __SAVER_H__
+#define __SAVER_H__
+
+#include <qobject.h>
 #include <X11/Xlib.h>
 
-void startScreenSaver( Drawable d );
-void stopScreenSaver();
-int setupScreenSaver();
-QString getScreenSaverName();
+extern void startScreenSaver( Drawable d );
+extern void stopScreenSaver();
+extern int setupScreenSaver();
 
+//-----------------------------------------------------------------------------
 class kScreenSaver : public QObject
 {
 	Q_OBJECT
@@ -20,39 +18,10 @@ public:
 	virtual ~kScreenSaver();
 
 protected:
-	Drawable d;
-	GC gc;
-	unsigned width;
-	unsigned height;
-};
-
-//-----------------------------------------------------------------------------
-
-class KPasswordDlg : public QWidget
-{
-	Q_OBJECT
-public:
-	KPasswordDlg( QWidget *parent, bool s = true );
-
-	void showStars();
-	int tryPassword();
-	void keyPressed( QKeyEvent * );
-
-signals:
-	void passOk();
-	void passCancel();
-
-protected slots:
-	void timeout();
-	void blinkTimeout();
-	
-private:
-	QTimer timer, *blinkTimer;
-	QLabel *label, *entry;
-	QString password;
-	int timerMode;
-	bool stars;
-	bool blink;
+	Drawable mDrawable;
+	GC mGc;
+	unsigned mWidth;
+	unsigned mHeight;
 };
 
 #endif

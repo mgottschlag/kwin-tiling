@@ -213,6 +213,7 @@ drawswarm(Window win)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -223,6 +224,7 @@ drawswarm(Window win)
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -254,11 +256,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Swarm");
-}
-
 //-----------------------------------------------------------------------------
 
 kSwarmSaver::kSwarmSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -269,8 +266,8 @@ kSwarmSaver::kSwarmSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	batchcount = maxLevels;
 
-	initXLock( gc );
-	initswarm( d );
+	initXLock( mGc );
+	initswarm( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -293,12 +290,12 @@ void kSwarmSaver::setSpeed( int spd )
 void kSwarmSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initswarm( d );
+	initswarm( mDrawable );
 }
 
 void kSwarmSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -318,7 +315,7 @@ void kSwarmSaver::readSettings()
 
 void kSwarmSaver::slotTimeout()
 {
-	drawswarm( d );
+	drawswarm( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

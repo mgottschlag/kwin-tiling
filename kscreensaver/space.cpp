@@ -456,9 +456,11 @@ initSpace(Window window)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
+#include <kapp.h>
 #include <kconfig.h>
 
 #include "space.moc"
@@ -486,11 +488,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Space (GL)");
-}
-
 //-----------------------------------------------------------------------------
 
 kSpaceSaver::kSpaceSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -500,8 +497,8 @@ kSpaceSaver::kSpaceSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	colorContext = QColor::enterAllocContext();
 
-	initXLock( gc );
-	initSpace( d );
+	initXLock( mGc );
+	initSpace( mDrawable );
 	
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -528,12 +525,12 @@ void kSpaceSaver::setWarp( int  w )
 {
         warpinterval = w;
 	counter = (int)warpinterval;
-	initSpace( d );
+	initSpace( mDrawable );
 }
 
 void kSpaceSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -568,7 +565,7 @@ void kSpaceSaver::slotTimeout()
   else
     nitro = 0;
   
-  drawSpace( d );
+  drawSpace( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

@@ -398,6 +398,7 @@ void rock_setRotate( bool rotate )
 #include <qapplication.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -408,6 +409,7 @@ void rock_setRotate( bool rotate )
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -438,24 +440,19 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Rock");
-}
-
 kRockSaver::kRockSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
 
-	initXLock( gc );
+	initXLock( mGc );
 	initrock( drawable );
 
 	rock_setMove( move );
 	rock_setRotate( rotate );
 
-	maxDepSpeed = MAX_DEP_SPEED * height / QApplication::desktop()->height();
+	maxDepSpeed = MAX_DEP_SPEED * mHeight / QApplication::desktop()->height();
 	if ( maxDepSpeed < 1 )
 		maxDepSpeed = 1;
 
@@ -480,7 +477,7 @@ void kRockSaver::setNumber( int num )
 	rock_cleanup();
 	number = num;
 	rock_setNumber( number );
-	initrock( d );
+	initrock( mDrawable );
 	
 	rock_setMove( move );
 	rock_setRotate( rotate );
@@ -502,7 +499,7 @@ void kRockSaver::setRotate( bool r )
 
 void kRockSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -534,7 +531,7 @@ void kRockSaver::readSettings()
 
 void kRockSaver::slotTimeout()
 {
-	drawrock( d );
+	drawrock( mDrawable );
 	timer.start( speed, TRUE );
 }
 

@@ -161,6 +161,7 @@ drawforest(Window win)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
@@ -172,6 +173,7 @@ drawforest(Window win)
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -203,11 +205,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Forest");
-}
-
 //-----------------------------------------------------------------------------
 
 kForestSaver::kForestSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -218,8 +215,8 @@ kForestSaver::kForestSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	cycles = numPoints;
 
-	initXLock( gc );
-	initforest( d );
+	initXLock( mGc );
+	initforest( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -242,7 +239,7 @@ void kForestSaver::setSpeed( int spd )
 void kForestSaver::setPoints( int p )
 {
 	cycles = numPoints = p;
-	initforest( d );
+	initforest( mDrawable );
 }
 
 void kForestSaver::readSettings()
@@ -267,7 +264,7 @@ void kForestSaver::readSettings()
 
 void kForestSaver::slotTimeout()
 {
-	drawforest( d );
+	drawforest( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

@@ -270,11 +270,13 @@ drawflame(Window win)
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 #include <qcolor.h>
 #include <qmessagebox.h>
 #include "kslider.h"
 
 #include "flame.h"
+#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 
@@ -307,11 +309,6 @@ int setupScreenSaver()
 	return dlg.exec();
 }
 
-QString getScreenSaverName()
-{
-	return glocale->translate("Flame");
-}
-
 //-----------------------------------------------------------------------------
 
 kFlameSaver::kFlameSaver( Drawable drawable ) : kScreenSaver( drawable )
@@ -323,8 +320,8 @@ kFlameSaver::kFlameSaver( Drawable drawable ) : kScreenSaver( drawable )
 	batchcount = maxLevels;
 	cycles = numPoints;
 
-	initXLock( gc );
-	initflame( d );
+	initXLock( mGc );
+	initflame( mDrawable );
 
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
@@ -347,18 +344,18 @@ void kFlameSaver::setSpeed( int spd )
 void kFlameSaver::setLevels( int l )
 {
 	batchcount = maxLevels = l;
-	initflame( d );
+	initflame( mDrawable );
 }
 
 void kFlameSaver::setPoints( int p )
 {
 	cycles = numPoints = p;
-	initflame( d );
+	initflame( mDrawable );
 }
 
 void kFlameSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = kapp->getConfig();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -384,7 +381,7 @@ void kFlameSaver::readSettings()
 
 void kFlameSaver::slotTimeout()
 {
-	drawflame( d );
+	drawflame( mDrawable );
 }
 
 //-----------------------------------------------------------------------------

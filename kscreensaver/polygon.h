@@ -63,6 +63,7 @@ class kPolygonSetup : public QDialog
 	Q_OBJECT
 public:
 	kPolygonSetup( QWidget *parent = NULL, const char *name = NULL );
+    ~kPolygonSetup();
 
 protected:
 	void readSettings();
