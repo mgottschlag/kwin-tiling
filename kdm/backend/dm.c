@@ -1035,11 +1035,7 @@ MainLoop (void)
 	if (!Stopping)
 	    StartDisplays ();
 	reads = WellKnownSocketsMask;
-#ifdef hpux
-	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
-#else
 	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
-#endif
 	Debug ("select returns %d\n", nready);
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 	AddTimerEntropy ();

@@ -117,16 +117,8 @@ typedef union wait	waitType;
 #define WaitCore(w) (((w) >> 7) & 1)
 #define WaitSig(w) (((w) >> 8) & 0xff)
 
-#ifndef FD_ZERO
-typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
-# define FD_ZERO(fdp)	bzero ((fdp), sizeof (*(fdp)))
-# define FD_SET(f,fdp)	((fdp)->fds_bits[(f) / (sizeof (int) * 8)] |=  (1 << ((f) % (sizeof (int) * 8))))
-# define FD_CLR(f,fdp)	((fdp)->fds_bits[(f) / (sizeof (int) * 8)] &= ~(1 << ((f) % (sizeof (int) * 8))))
-# define FD_ISSET(f,fdp)	((fdp)->fds_bits[(f) / (sizeof (int) * 8)] & (1 << ((f) % (sizeof (int) * 8))))
-# define FD_TYPE	my_fd_set
-#else
-# define FD_TYPE	fd_set
-#endif
+#include <sys/time.h>
+#define FD_TYPE	fd_set
 
 #if defined(X_NOT_POSIX) || defined(__EMX__) || (defined(__NetBSD__) && defined(__sparc__))
 # define Setjmp(e)	setjmp(e)
