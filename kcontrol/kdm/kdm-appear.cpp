@@ -64,19 +64,22 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
   vbox->addWidget(group, 1);
 
-  QGridLayout *grid = new QGridLayout( group, 7, 8, KDialog::spacingHint(),
+  QGridLayout *grid = new QGridLayout( group, 3, 2, KDialog::spacingHint(),
                        KDialog::spacingHint(), "grid");
   grid->addRowSpacing(0, group->fontMetrics().height());
-  grid->setColStretch(3, 1);
-  grid->setColStretch(7, 1);
+  grid->setColStretch(0, 1);
+  grid->setColStretch(1, 1);
 
-  QLabel *label = new QLabel(i18n("&Greeting string:"), group);
-  greetstr_lined = new KLineEdit(group);
+  QWidget *hlp = new QWidget( group );
+  grid->addMultiCellWidget(hlp, 1,1, 0,1);
+  QHBoxLayout *hlay = new QHBoxLayout( hlp, KDialog::spacingHint() );
+  QLabel *label = new QLabel(i18n("&Greeting string:"), hlp);
+  hlay->addWidget(label);
+  greetstr_lined = new KLineEdit(hlp);
   label->setBuddy( greetstr_lined );
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
       this, SLOT(changed()));
-  grid->addWidget(label, 1,0 );
-  grid->addMultiCellWidget(greetstr_lined, 1,1, 1,7);
+  hlay->addWidget(greetstr_lined);
   wtstr = i18n("This is the string KDM will display in the login window. "
            "You may want to put here some nice greeting or information "
            "about the operating system.<p> KDM will replace the string "
@@ -87,10 +90,14 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( greetstr_lined, wtstr );
 
 
-  label = new QLabel(i18n("&Logo area:"), group);
-  grid->addWidget(label, 2, 0);
-  QWidget *helper = new QWidget( group );
-  grid->addMultiCellWidget(helper, 2,2, 1,2);
+  hlp = new QWidget( group );
+  grid->addWidget(hlp, 2, 0);
+  QGridLayout *hglay = new QGridLayout( hlp, 6, 3, KDialog::spacingHint() );
+
+  label = new QLabel(i18n("&Logo area:"), hlp);
+  hglay->addWidget(label, 0, 0);
+  QWidget *helper = new QWidget( hlp );
+  hglay->addMultiCellWidget(helper, 0,0, 1,2);
   QVBoxLayout *vlay = new QVBoxLayout( helper, KDialog::spacingHint() );
   clockRadio = new QRadioButton( i18n("Show clock"), helper );
   logoRadio = new QRadioButton( i18n("Show KDM logo"), helper );
@@ -105,14 +112,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   buttonGroup->insert(logoRadio, KdmLogo);
   vlay->addWidget(clockRadio);
   vlay->addWidget(logoRadio);
-//  grid->addMultiCellWidget(helper, 2,2, 1,2);
   wtstr = i18n("You can choose to display a custom logo (see below) or a clock.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( logoRadio, wtstr );
   QWhatsThis::add( clockRadio, wtstr );
 
-  logoLabel = new QLabel(i18n("&KDM logo:"), group);
-  logobutton = new KIconButton(group);
+  logoLabel = new QLabel(i18n("&KDM logo:"), hlp);
+  logobutton = new KIconButton(hlp);
   logoLabel->setBuddy( logobutton );
   logobutton->setAutoDefault(false);
   logobutton->setAcceptDrops(true);
@@ -123,21 +129,52 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
       this, SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(QString)),
       this, SLOT(changed()));
-  grid->addWidget(logoLabel, 3, 0);
-  grid->addMultiCellWidget(logobutton, 3,3, 1,2, AlignHCenter | AlignTop);
-//  grid->addRowSpacing(3, 80);	// for logo - doesn't work either
+  hglay->addWidget(logoLabel, 1, 0);
+  hglay->addWidget(logobutton, 1, 1, AlignHCenter | AlignTop);
+//  hglay->addRowSpacing(3, 80);	// for logo - doesn't work either
 //  glay->addMultiCellWidget(logobutton, 0,1, 1,1, AlignVCenter|AlignLeft);
   wtstr = i18n("Click here to choose an image that KDM will display. "
            "You can also drag and drop an image onto this button "
            "(e.g. from Konqueror).");
   QWhatsThis::add( logoLabel, wtstr );
   QWhatsThis::add( logobutton, wtstr );
-  grid->addRowSpacing( 4, KDialog::spacingHint());
+  hglay->addRowSpacing( 2, KDialog::spacingHint());
 
-  label = new QLabel(i18n("&Position:"), group);
-  grid->addWidget(label, 2, 4);
-  helper = new QWidget( group );
-  grid->addWidget(helper, 2, 5);
+  label = new QLabel(i18n("GUI S&tyle:"), hlp);
+  guicombo = new QComboBox(false, hlp);
+  label->setBuddy( guicombo );
+  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
+    guicombo->insertItem(QString::fromLatin1(styles[i]), i);
+  connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  hglay->addWidget(label, 3, 0);
+  hglay->addWidget(guicombo, 3, 1);
+  wtstr = i18n("You can choose a basic GUI style here that will be "
+        "used by KDM only.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( guicombo, wtstr );
+
+  label = new QLabel(i18n("&Echo mode:"), hlp);
+  echocombo = new QComboBox(false, hlp);
+  label->setBuddy( echocombo );
+  echocombo->insertItem(i18n("No echo"));
+  echocombo->insertItem(i18n("One Star"));
+  echocombo->insertItem(i18n("Three Stars"));
+  connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  hglay->addWidget(label, 4, 0);
+  hglay->addWidget(echocombo, 4, 1);
+  wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( echocombo, wtstr );
+
+
+  hlp = new QWidget( group );
+  grid->addWidget(hlp, 2, 1);
+  hglay = new QGridLayout( hlp, 6, 3, KDialog::spacingHint() );
+
+  label = new QLabel(i18n("&Position:"), hlp);
+  hglay->addWidget(label, 0, 0);
+  helper = new QWidget( hlp );
+  hglay->addWidget(helper, 0, 1);
   vlay = new QVBoxLayout( helper, KDialog::spacingHint() );
   posCenterRadio = new QRadioButton( i18n("Centered"), helper );
   label->setBuddy( posCenterRadio );
@@ -152,8 +189,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   buttonGroup->insert(posSpecifyRadio, 1);
   vlay->addWidget(posCenterRadio);
   vlay->addWidget(posSpecifyRadio);
-  helper = new QWidget( group );
-  grid->addWidget(helper, 3, 5, AlignHCenter | AlignTop);
+  helper = new QWidget( hlp );
+  hglay->addWidget(helper, 1, 1, AlignHCenter | AlignTop);
   QGridLayout *glay = new QGridLayout( helper, 2, 2, KDialog::spacingHint() );
   QValidator *posValidator = new QIntValidator(0, 999, helper);
   xLineLabel = new QLabel(i18n("&X"), helper);
@@ -168,32 +205,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   glay->addWidget(yLineEdit, 1, 1);
   yLineLabel->setBuddy(yLineEdit);
   yLineEdit->setValidator(posValidator);
-
-  label = new QLabel(i18n("GUI S&tyle:"), group);
-  guicombo = new QComboBox(false, group);
-  label->setBuddy( guicombo );
-  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
-    guicombo->insertItem(QString::fromLatin1(styles[i]), i);
-  connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
-  grid->addWidget(label, 5, 0);
-  grid->addWidget(guicombo, 5, 1);
-  wtstr = i18n("You can choose a basic GUI style here that will be "
-        "used by KDM only.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( guicombo, wtstr );
-
-  label = new QLabel(i18n("&Echo mode:"), group);
-  echocombo = new QComboBox(false, group);
-  label->setBuddy( echocombo );
-  echocombo->insertItem(i18n("No echo"));
-  echocombo->insertItem(i18n("One Star"));
-  echocombo->insertItem(i18n("Three Stars"));
-  connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
-  grid->addWidget(label, 6, 0);
-  grid->addWidget(echocombo, 6, 1);
-  wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( echocombo, wtstr );
 
   // The Language group box
   group = new QGroupBox(0, Vertical, i18n("Language"), this);
