@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -42,27 +42,6 @@ class KConfig;
 class KStandardDirs;
 class KAboutData;
 
-
-/**
- * This class handles drops on the preview monitor.
- */
-/*  Moved to backgnd.h
-class KBGMonitor : public QWidget
-{
-    Q_OBJECT
-public:
-
-    KBGMonitor(QWidget *parent, const char *name=0L);
-
-signals:
-    void imageDropped(QString);
-
-protected:backgndbase.h -o backgndbase.moc
-    virtual void dropEvent(QDropEvent *);
-    virtual void dragEnterEvent(QDragEnterEvent *);
-};
-*/
-
 /**
  * The Desktop/Background tab in kcontrol.
  */
@@ -73,7 +52,7 @@ class KBackground: public KCModule
 public:
     KBackground(QWidget *parent, const char *name, const QStringList &);
     ~KBackground();
-    
+
     virtual void load();
     virtual void save();
     virtual void defaults();
@@ -83,12 +62,8 @@ public:
 
 protected slots:
     void slotChildChanged(bool);
-    
+
 private:
-//    void apply();
-    
-//    KConfig *m_pConfig;
-//    KStandardDirs *m_pDirs;
     Backgnd       *m_base;
 };
 

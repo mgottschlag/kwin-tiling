@@ -82,7 +82,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
 
     connect(m_base, SIGNAL(changed(bool)), SLOT(slotChildChanged(bool)));
 
-    m_base->setWidgets();
+    //m_base->setWidgets();
 
 }
 
@@ -128,22 +128,7 @@ void KBackground::slotChildChanged(bool different)
 
 QString KBackground::quickHelp() const
 {
-    return i18n("<h1>Background</h1> This module allows you to control the"
-      " appearance of the virtual desktops. KDE offers a variety of options"
-      " for customization, including the ability to specify different settings"
-      " for each virtual desktop, or a common background for all of them.<p>"
-      " The appearance of the desktop results from the combination of its"
-      " background colors and patterns, and optionally, wallpaper, which is"
-      " based on the image from a graphic file.<p>"
-      " The background can be made up of a single color, or a pair of colors"
-      " which can be blended in a variety of patterns. Wallpaper is also"
-      " customizable, with options for tiling and stretching images. The"
-      " wallpaper can be overlaid opaquely, or blended in different ways with"
-      " the background colors and patterns.<p>"
-      " KDE allows you to have the wallpaper change automatically at specified"
-      " intervals of time. You can also replace the background with a program"
-      " that updates the desktop dynamically. For example, the \"kdeworld\""
-      " program shows a day/night map of the world which is updated periodically.");
+    return m_base->quickHelp();
 }
 
 const KAboutData* KBackground::aboutData() const

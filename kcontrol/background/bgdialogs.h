@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- *
+ * 
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -65,7 +65,7 @@ class KProgramEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L,
+    KProgramEditDialog(QString program=QString::null, QWidget *parent=0L, 
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -74,13 +74,11 @@ public:
 public slots:
     void slotOk();
 
-protected slots:
-    void slotExecFileNameChanged( const QString &);
 private:
     QString m_Program;
     QLineEdit *m_NameEdit, *m_CommentEdit;
     QLineEdit *m_ExecEdit, *m_CommandEdit;
-    QLineEdit *m_PreviewEdit;
+    QLineEdit *m_PreviewEdit; 
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;
 };
@@ -123,7 +121,7 @@ class KPatternEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KPatternEditDialog(QString pattern=QString::null, QWidget *parent=0L,
+    KPatternEditDialog(QString pattern=QString::null, QWidget *parent=0L, 
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -132,14 +130,13 @@ public:
 public slots:
     void slotOk();
     void slotBrowse();
-private slots:
-    void slotFileNameChanged( const QString & );
+
 private:
     QString m_Pattern;
     QLineEdit *m_NameEdit, *m_FileEdit;
     QLineEdit *m_CommentEdit;
 };
-
+    
 
 /**
  * QListBox with DND
@@ -155,6 +152,35 @@ protected:
     virtual void dropEvent(QDropEvent *);
 };
 
+
+/**
+ * Multiwallpaper settings.
+ */
+
+class KMultiWallpaperDialog: public KDialogBase
+{
+    Q_OBJECT
+
+public:
+    KMultiWallpaperDialog(KBackgroundSettings *settings, 
+	    QWidget *parent=0L, char *name=0L);
+
+public slots:
+    void slotAdd();
+    void slotRemove();
+    void slotOk();
+
+private:
+    int m_Interval, m_Mode;
+
+    QStringList m_Wallpapers;
+    QSpinBox *m_pIntervalEdit;
+    QComboBox *m_pModeEdit;
+    KMultiWallpaperList *m_pListBox;
+
+    KBackgroundSettings *m_pSettings;
+    QPushButton *pbutRemove;
+};
 
 
 #endif // __BGDialogs_h_Included__

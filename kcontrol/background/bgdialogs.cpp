@@ -50,7 +50,7 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select background program:"), page);
+    QLabel *lbl = new QLabel(i18n("Select Background Program:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
@@ -263,17 +263,13 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_ExecEdit = new QLineEdit(frame);
     lbl->setBuddy(m_ExecEdit);
     grid->addWidget(m_ExecEdit, 4, 1);
-    connect( m_ExecEdit, SIGNAL( textChanged ( const QString & )),
-             this, SLOT( slotExecFileNameChanged( const QString &)));
-
-
 
     lbl = new QLabel(i18n("&Refresh time:"), frame);
     grid->addWidget(lbl, 5, 0);
     m_RefreshEdit = new QSpinBox(frame);
     m_RefreshEdit->setRange(5, 60);
     m_RefreshEdit->setSteps(5, 10);
-    m_RefreshEdit->setSuffix(i18n(" min."));
+    m_RefreshEdit->setSuffix(i18n(" minutes"));
     m_RefreshEdit->setFixedSize(m_RefreshEdit->sizeHint());
     lbl->setBuddy(m_RefreshEdit);
     grid->addWidget(m_RefreshEdit, 5, 1, AlignLeft);
@@ -287,7 +283,6 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
 	m_NameEdit->setText(prog.name());
 	m_NameEdit->setSelection(0, 100);
 	m_RefreshEdit->setValue(15);
-        enableButtonOK( false );
 	return;
     }
 
@@ -299,13 +294,8 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_CommandEdit->setText(prog.command());
     m_PreviewEdit->setText(prog.previewCommand());
     m_RefreshEdit->setValue(prog.refresh());
-    slotExecFileNameChanged( prog.executable());
 }
 
-void KProgramEditDialog::slotExecFileNameChanged( const QString &text)
-{
-    enableButtonOK( !text.isEmpty() );
-}
 
 QString KProgramEditDialog::program()
 {
@@ -363,7 +353,7 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
     QFrame *page = makeMainWidget();
     QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("Select pattern:"), page);
+    QLabel *lbl = new QLabel(i18n("Select Pattern:"), page);
     layout->addWidget(lbl, 0, 0);
 
     // Create the listview
@@ -567,9 +557,6 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
     m_FileEdit = new QLineEdit(frame);
-    connect( m_FileEdit, SIGNAL( textChanged ( const QString & )),
-             this, SLOT( slotFileNameChanged( const QString &)));
-
     lbl->setBuddy(m_FileEdit);
     hbox->addWidget(m_FileEdit);
     QPushButton *but = new QPushButton(i18n("&Browse..."), frame);
@@ -584,7 +571,6 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
 	    pat.load(i18n("New Pattern <%1>").arg(i++));
 	m_NameEdit->setText(pat.name());
 	m_NameEdit->setSelection(0, 100);
-        enableButtonOK(false );
 	return;
     }
 
@@ -593,12 +579,6 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     KBackgroundPattern pat(m_Pattern);
     m_CommentEdit->setText(pat.comment());
     m_FileEdit->setText(pat.pattern());
-    slotFileNameChanged( pat.pattern() );
-}
-
-void KPatternEditDialog::slotFileNameChanged( const QString &text )
-{
-    enableButtonOK( !text.isEmpty() );
 }
 
 void KPatternEditDialog::slotBrowse()
@@ -672,6 +652,104 @@ void KMultiWallpaperList::dropEvent(QDropEvent *ev)
 }
 
 
+/**** KMultiWallpaperDialog ****/
+
+KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
+	QWidget *parent, char *name)
+	: KDialogBase(parent, name, true, i18n("Configure Wallpapers"),
+	Ok | Cancel, Ok, true)
+{
+    QVBox *page = makeVBoxMainWidget();
+
+    m_pSettings = setts;
+    m_Wallpapers = m_pSettings->wallpaperList();
+    m_Interval = m_pSettings->wallpaperChangeInterval();
+    m_Mode = m_pSettings->multiWallpaperMode();
+
+    QHBox *hbox = new QHBox(page);
+
+    QLabel *lbl = new QLabel(i18n("&Interval:"), hbox);
+    m_pIntervalEdit = new QSpinBox(hbox);
+    m_pIntervalEdit->setRange(1, 240);
+    m_pIntervalEdit->setSteps(1, 15);
+    m_pIntervalEdit->setValue(QMAX(1,m_Interval));
+    m_pIntervalEdit->setSuffix(i18n(" minutes"));
+    lbl->setBuddy(m_pIntervalEdit);
+    hbox->setStretchFactor(m_pIntervalEdit, 1);
+
+    lbl = new QLabel(i18n("&Mode:"), hbox);
+    m_pModeEdit = new QComboBox(hbox);
+    m_pModeEdit->insertItem(i18n("In Order"));
+    m_pModeEdit->insertItem(i18n("Random"));
+    m_pModeEdit->setCurrentItem(m_Mode-1);
+    lbl->setBuddy(m_pModeEdit);
+
+    hbox->setStretchFactor(m_pModeEdit, 1);
+
+    lbl = new QLabel(i18n("You can select files and directories below:"), page);
+
+    QFrame *frame = new QFrame(page);
+    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
+    QVBoxLayout *vbox = new QVBoxLayout(frame);
+    vbox->setSpacing(spacingHint());
+    vbox->setMargin(marginHint());
+    m_pListBox = new KMultiWallpaperList(frame);
+    m_pListBox->setMinimumSize(QSize(300,150));
+    vbox->addWidget(m_pListBox);
+    m_pListBox->insertStringList(m_Wallpapers);
+
+    hbox = new QHBox(frame);
+    vbox->addWidget(hbox);
+    QPushButton *pbut = new QPushButton(i18n("&Add..."), hbox);
+    connect(pbut, SIGNAL(clicked()), SLOT(slotAdd()));
+    pbutRemove = new QPushButton(i18n("&Remove"), hbox);
+    pbutRemove->setEnabled(m_pListBox->count()>0);
+    connect(pbutRemove, SIGNAL(clicked()), SLOT(slotRemove()));
+}
+
+
+void KMultiWallpaperDialog::slotAdd()
+{
+    KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
+			   KImageIO::pattern(), this,
+			   0L, true);
+
+    fileDialog.setCaption(i18n("Select"));
+    KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |
+                                                 KFile::Directory |
+                                                 KFile::ExistingOnly |
+                                                 KFile::LocalOnly);
+    fileDialog.setMode(mode);
+    fileDialog.exec();
+    QStringList files = fileDialog.selectedFiles();
+    if (files.isEmpty())
+	return;
+
+    m_pListBox->insertStringList(files);
+    pbutRemove->setEnabled(true);
+}
+
+
+void KMultiWallpaperDialog::slotRemove()
+{
+    int item = m_pListBox->currentItem();
+    if (item == -1)
+	return;
+    m_pListBox->removeItem(item);
+    pbutRemove->setEnabled(m_pListBox->count()>0);
+}
+
+
+void KMultiWallpaperDialog::slotOk()
+{
+    QStringList lst;
+    for (unsigned i=0; i<m_pListBox->count(); i++)
+	lst.append(m_pListBox->text(i));
+    m_pSettings->setWallpaperList(lst);
+    m_pSettings->setWallpaperChangeInterval(m_pIntervalEdit->value());
+    m_pSettings->setMultiWallpaperMode(m_pModeEdit->currentItem()+1);
+    accept();
+}
 
 
 #include "bgdialogs.moc"

@@ -143,7 +143,7 @@ void KBackgroundPattern::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-
+    
     m_pConfig->writeEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
@@ -165,7 +165,7 @@ bool KBackgroundPattern::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(QFile::encodeName(m_File));
+    return !unlink(m_File.latin1());
 }
 
 
@@ -330,7 +330,7 @@ void KBackgroundProgram::writeSettings()
 
     if ( !m_pConfig )
         return; // better safe than sorry
-
+    
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->writeEntry("Executable", m_Executable);
     m_pConfig->writeEntry("Command", m_Command);
@@ -351,7 +351,7 @@ bool KBackgroundProgram::remove()
 {
     if (m_bReadOnly)
         return false;
-    return !unlink(QFile::encodeName(m_File));
+    return !unlink(m_File.latin1());
 }
 
 
@@ -489,12 +489,8 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 	    configname.sprintf("kdesktop-screen-%drc", screen_number);
 
 	m_pConfig = new KConfig(configname, false, false);
-        m_bDeleteConfig = true;
     } else
-    {
 	m_pConfig = config;
-        m_bDeleteConfig = false;
-    }
 
     srand((unsigned int) time(0L));
 
@@ -507,8 +503,9 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 
 KBackgroundSettings::~KBackgroundSettings()
 {
-    if( m_bDeleteConfig )
-        delete m_pConfig;
+  if( m_bDeleteConfig )
+    delete m_pConfig;
+
 }
 
 
@@ -745,15 +742,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-
     m_Wallpaper = m_pConfig->readPathEntry("Wallpaper");
-    KGlobalBackgroundSettings * _global = new KGlobalBackgroundSettings();
-    if (!m_Wallpaper.isEmpty() && _global->commonBackground()) {
-        m_WallpaperList = m_Wallpaper;
-        updateWallpaperFiles();
-    }
-    delete _global;
-
     s = m_pConfig->readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
@@ -784,17 +773,14 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("Pattern", KBackgroundPattern::name());
     m_pConfig->writeEntry("Program", KBackgroundProgram::name());
     m_pConfig->writeEntry("BackgroundMode", m_BMRevMap[m_BackgroundMode]);
-    //remove old config, otherwise it's all the time prioritary
-    //=> when we add multi wallpaper, "Simple Wallpaper" replace
-    //config for multi wallpaper
-    m_pConfig->writeEntry("Wallpaper", "");
+    m_pConfig->writeEntry("Wallpaper", m_Wallpaper);
     m_pConfig->writeEntry("WallpaperMode", m_WMRevMap[m_WallpaperMode]);
     m_pConfig->writeEntry("MultiWallpaperMode", m_MMRevMap[m_MultiMode]);
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
     m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
     m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
-    m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth );
-    m_pConfig->writeEntry("UseSHM", m_bShm );
+    m_pConfig->writeEntry( "MinOptimizationDepth", m_MinOptimizationDepth );
+    m_pConfig->writeEntry( "UseSHM", m_bShm );
 
     m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
@@ -818,18 +804,18 @@ void KBackgroundSettings::updateWallpaperFiles()
         QString file = locate("wallpaper", *it);
         if (file.isEmpty())
             continue;
-        QFileInfo fi(file);
-        if (!fi.exists())
-            continue;
-        if (fi.isFile() && fi.isReadable())
-            m_WallpaperFiles.append(file);
-        if (fi.isDir()) {
-            QDir dir(file);
-            QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
-            QStringList::Iterator it;
-            for (it=lst.begin(); it!=lst.end(); it++)
-                m_WallpaperFiles.append(dir.absFilePath(*it));
-        }
+	QFileInfo fi(file);
+	if (!fi.exists())
+	    continue;
+	if (fi.isFile() && fi.isReadable())
+	    m_WallpaperFiles.append(file);
+	if (fi.isDir()) {
+	    QDir dir(file);
+	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
+	    QStringList::Iterator it;
+	    for (it=lst.begin(); it!=lst.end(); it++)
+		m_WallpaperFiles.append(dir.absFilePath(*it));
+	}
     }
 }
 
@@ -875,34 +861,6 @@ void KBackgroundSettings::changeWallpaper(bool init)
     hashdirty = true;
 }
 
-bool KBackgroundSettings::setCurrentWallpaper(int newSetting)
-{
-    if (newSetting >= (int) m_WallpaperFiles.count())
-	return false;
-
-    m_CurrentWallpaper = newSetting;
-    m_LastChange = (int) time(0L);
-
-    // sync random config to file without syncing the rest
-    int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
-    if (screen_number == 0)
-	configname = "kdesktoprc";
-    else
-	configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-    KConfig cfg(configname, false, false);
-    cfg.setGroup(QString("Desktop%1").arg(m_Desk));
-    cfg.writeEntry("CurrentWallpaper", m_CurrentWallpaper);
-    cfg.writeEntry("LastChange", m_LastChange);
-    cfg.sync();
-
-    hashdirty = true;
-
-    return true;
-}
 
 QString KBackgroundSettings::currentWallpaper()
 {

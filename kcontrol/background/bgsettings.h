@@ -161,31 +161,20 @@ public:
     void setPatternName(QString pattern);
 
     enum BackgroundMode {
-	Flat, HorizontalGradient, VerticalGradient, PyramidGradient,
-	PipeCrossGradient, EllipticGradient,
-	Pattern, Program, lastBackgroundMode
+	Flat, Pattern, Program,
+	HorizontalGradient, VerticalGradient, PyramidGradient,
+	PipeCrossGradient, EllipticGradient, lastBackgroundMode
     };
     void setBackgroundMode(int mode);
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
-        NoBlending,
-	HorizontalBlending,
-	VerticalBlending,
-	PyramidBlending,
-	PipeCrossBlending,
-	EllipticBlending,
-	IntensityBlending,
-	IntensityReversed,
-	SaturateBlending,
-	SaturateReversed,
-	ContrastBlending,
-	ContrastReversed,
-	HueShiftBlending,
-	HueShiftReversed,
-	lastBlendMode
+        NoBlending, 
+	HorizontalBlending, VerticalBlending, PyramidBlending,
+	PipeCrossBlending, EllipticBlending, 
+	IntensityBlending, SaturateBlending, ContrastBlending,
+	HueShiftBlending, lastBlendMode
     };
-
     void setBlendMode(int mode);
     int blendMode() const { return m_BlendMode; }
 
@@ -199,8 +188,8 @@ public:
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
-	Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
-	Scaled, CentredAutoFit, NoWallpaper, lastWallpaperMode
+	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
+	Scaled, CentredAutoFit, lastWallpaperMode
     };
     void setWallpaperMode(int mode);
     int wallpaperMode() const { return m_WallpaperMode; }
@@ -216,14 +205,14 @@ public:
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
-
+    
     enum MinOptDepth {
         AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt };
-
+        
     void setMinOptimizationDepth( int mode );
     int minOptimizationDepth() const { return m_MinOptimizationDepth; }
     bool optimize() const;
-
+    
     void setUseShm( bool use );
     bool useShm() const { return m_bShm; }
 
@@ -231,7 +220,6 @@ public:
     void updateWallpaperFiles();
 
     QString currentWallpaper();
-    bool setCurrentWallpaper(int);
     int lastWallpaperChange() const { return m_LastChange; }
     bool needWallpaperChange();
 

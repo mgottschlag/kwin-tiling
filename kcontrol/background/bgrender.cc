@@ -49,13 +49,13 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     : KBackgroundSettings(desk, config)
 {
     m_State = 0;
-
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
     m_pProc = 0L;
     m_Tempfile = 0L;
     m_bPreview = false;
+    m_bTile = false;
 
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
@@ -65,8 +65,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 KBackgroundRenderer::~KBackgroundRenderer()
 {
     cleanup();
-    delete m_Tempfile;
-    m_Tempfile = 0;
+    delete m_Tempfile; m_Tempfile = 0;
 }
 
 
@@ -157,7 +156,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     int retval = Done;
     QString file;
-
+    
     static unsigned int tileWidth = 0;
     static unsigned int tileHeight = 0;
     if( tileWidth == 0 )
@@ -200,7 +199,7 @@ int KBackgroundRenderer::doBackground(bool quit)
         if (m_State & BackgroundStarted)
             break;
         m_State |= BackgroundStarted;
-        createTempFile();
+        createTempFile();        
 
 	file = buildCommand();
 	if (file.isEmpty())
@@ -269,6 +268,10 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 
     int wpmode = wallpaperMode();
 
+    bool bTile = m_bTile;
+    if (wpmode != NoWallpaper)
+	bTile = false;
+
     QImage wp;
     if (wpmode != NoWallpaper) {
 	if (currentWallpaper().isEmpty()) {
@@ -328,9 +331,9 @@ wp_out:
 	    d.setRect(0, 0, w, h);
 	    break;
 	case CenterTiled:
-	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
+	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w, h);
 	    break;
-	case Scaled:
+	case Scaled: 
 	    wp = wp.smoothScale(ww = w, wh = h);
 	    d.setRect(0, 0, w, h);
 	    break;
@@ -373,7 +376,7 @@ wp_out:
     }
 
     wallpaperBlend( d, wp, ww, wh );
-
+    
     if (retval == Done)
         m_State |= WallpaperDone;
 
@@ -660,6 +663,12 @@ void KBackgroundRenderer::setPreview(QSize size)
 }
 
 
+void KBackgroundRenderer::setTile(bool tile)
+{
+    m_bTile = tile;
+}
+
+
 QPixmap *KBackgroundRenderer::pixmap()
 {
     if (m_State & AllDone) {
@@ -697,6 +706,7 @@ void KBackgroundRenderer::load(int desk, bool reparseConfig)
 
     cleanup();
     m_bPreview = false;
+    m_bTile = false;
     m_Size = m_rSize;
 
     KBackgroundSettings::load(desk, reparseConfig);
