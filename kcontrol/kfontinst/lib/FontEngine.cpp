@@ -510,8 +510,8 @@ static bool getCharMap(FT_Face &face, const QString &str)
         bool         found=true;
 
         FT_Set_Charmap(face, face->charmaps[cm]);
-
-        for(ch=0; ch<str.length() && found; ch++)
+		unsigned int strLenght( str.length());
+        for(ch=0; ch< strLenght && found; ch++)
             if(FT_Get_Char_Index(face, str[ch].unicode())==0)
                 found=false;
 
@@ -685,8 +685,8 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
             if(getCharMap(face, str))
             {
                 unsigned int ch;
-
-                for(ch=0; ch<str.length(); ++ch)
+				unsigned int strLength(str.length());
+                for(ch=0; ch<strLength; ++ch)
                     if(drawGlyph(pix, font, FT_Get_Char_Index(face, str[ch].unicode()),  x, y, width, height, startX,
                                  stepY))
                         break;
