@@ -227,7 +227,7 @@ void TopLevel::clickedMenu(int id)
         break;
     case QUIT_ITEM: {
         saveProperties();
-        int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically start Klipper?") );
+        int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?") );
 
         QString file = locateLocal( "data", "../autostart/klipper.desktop" );
         if ( autoStart == KMessageBox::Yes )
