@@ -48,7 +48,8 @@ void KAccessApp::readSettings()
 {
   KConfig *config = KGlobal::config();
 
-  // read in bell settings
+  // bell ---------------------------------------------------------------
+
   config->setGroup("Bell");
   _systemBell = config->readBoolEntry("SystemBell", true);
   _artsBell = config->readBoolEntry("ArtsBell", false);
@@ -73,6 +74,55 @@ void KAccessApp::readSettings()
   uint ctrls=XkbAudibleBellMask;
   uint values=XkbAudibleBellMask;
   XkbSetAutoResetControls(qt_xdisplay(), XkbAudibleBellMask, &ctrls, &values);
+
+  // keyboard -------------------------------------------------------------
+
+  config->setGroup("Keyboard");
+
+  // get keyboard state 
+  XkbDescPtr xkb = XkbGetMap(qt_xdisplay(), 0, XkbUseCoreKbd);
+  if (!xkb)
+    return;
+  if (XkbGetControls(qt_xdisplay(), XkbAllControlsMask, xkb) != Success)
+    return;
+
+  // sticky keys
+  if (config->readBoolEntry("StickyKeys", false))
+    {
+      if (config->readBoolEntry("StickyKeysLatch", true))
+	xkb->ctrls->ax_options |= XkbAX_LatchToLockMask;
+      else
+	xkb->ctrls->ax_options &= ~XkbAX_LatchToLockMask;
+      xkb->ctrls->enabled_ctrls |= XkbStickyKeysMask;
+    }
+  else
+    xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
+
+  // slow keys
+  if (config->readBoolEntry("SlowKeys", false))
+    {
+      xkb->ctrls->slow_keys_delay = config->readNumEntry("SlowKeysDelay", 500);
+      xkb->ctrls->enabled_ctrls |= XkbSlowKeysMask;
+    }
+  else
+      xkb->ctrls->enabled_ctrls &= ~XkbSlowKeysMask;
+
+  // bounce keys
+  if (config->readBoolEntry("BounceKeys", false))
+    {
+      xkb->ctrls->debounce_delay = config->readNumEntry("BounceKeysDelay", 500);
+      xkb->ctrls->enabled_ctrls |= XkbBounceKeysMask;
+    }
+  else
+      xkb->ctrls->enabled_ctrls &= ~XkbBounceKeysMask;
+
+  // set keyboard state
+  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask, xkb);
+
+  // reset them after program exit
+  ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask;
+  values = 0;
+  XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
 }
 
 
