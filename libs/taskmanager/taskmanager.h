@@ -172,12 +172,6 @@ public:
     void update( const KStartupInfoData& data ) { _data.update( data ); }
     const KStartupInfoId& id() const { return _id; }
 
-signals:
-    void killMe(Startup*);
-
-protected:
-    void timerEvent(QTimerEvent *);
-
 private:
     KStartupInfoId _id;
     KStartupInfoData _data;
@@ -197,7 +191,6 @@ public:
     int numberOfDesktops();
     int currentDesktop();
     bool isOnTop(Task*);
-
 signals:
     void taskAdded(Task*);
     void taskRemoved(Task*);
@@ -219,9 +212,10 @@ protected slots:
     void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
     void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
     void gotRemoveStartup( const KStartupInfoId& );
-
+    
 protected:
     Task* findTask(WId w);
+    void configure_startup();
 
 private:
     Task*               _active;

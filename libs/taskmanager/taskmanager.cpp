@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kconfig.h>
 #include <kiconloader.h>
 #include <kwinmodule.h>
 #include <netwm.h>
@@ -41,7 +42,7 @@ template class QList<Task>;
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)
-    : QObject(parent, name), _active(0)
+    : QObject(parent, name), _active(0), _startup_info( NULL )
 {
     // create and connect kwin module
     kwin_module = new KWinModule(this);
@@ -61,6 +62,19 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     WId win = kwin_module->activeWindow();
     activeWindowChanged(win);
     
+    configure_startup();
+}
+
+TaskManager::~TaskManager()
+{
+}
+
+void TaskManager::configure_startup()
+{
+    KConfig c("klaunchrc", true);
+    c.setGroup("FeedbackStyle");
+    if (!c.readBoolEntry("TaskbarButton", true))
+        return;
     _startup_info = new KStartupInfo( true, this );
     connect( _startup_info,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
@@ -71,10 +85,8 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     connect( _startup_info,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( gotRemoveStartup( const KStartupInfoId& )));
-}
-
-TaskManager::~TaskManager()
-{
+    c.setGroup( "TaskbarButtonSettings" );
+    _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
 }
 
 Task* TaskManager::findTask(WId w)
@@ -210,7 +222,6 @@ void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoDat
     Startup* s = new Startup( id, data, this );
     _startups.append(s);
 
-    connect(s, SIGNAL(killMe(Startup*)), SLOT(killStartup(Startup*)));
     emit startupAdded(s);
 }
 
@@ -659,19 +670,11 @@ Startup::Startup( const KStartupInfoId& id, const KStartupInfoData& data,
     QObject * parent, const char *name)
     : QObject(parent, name), _id( id ), _data( data )
 {
-    // go away after 20s if we weren't removed before.
-    startTimer(20000); // CHECKME this is explicitly given less then in KStartupInfo
 }
 
 Startup::~Startup()
 {
 
-}
-
-void Startup::timerEvent(QTimerEvent *)
-{
-    killTimers();
-    emit(killMe(this));
 }
 
 int TaskManager::currentDesktop()
