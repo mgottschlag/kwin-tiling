@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Google Image Search
+Name[de]=Google Bildersuche
 ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
