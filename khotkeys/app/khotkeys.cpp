@@ -37,12 +37,12 @@ KHotKeysApp::KHotKeysApp()
 
 KHotKeysApp::~KHotKeysApp()
     {
+    // CHECKME triggery a dalsi rusit uz tady pred cleanupem
+    delete actions_root;
 // Many global data should be destroyed while the QApplication object still
 // exists, and therefore 'this' cannot be the parent, as ~Object
 // for 'this' would be called after ~QApplication - use proxy object
     delete delete_helper;
-    // CHECKME triggery a dalsi rusit uz tady pred cleanupem
-    delete actions_root;
     }
 
 void KHotKeysApp::reread_configuration()
