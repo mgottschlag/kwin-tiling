@@ -40,6 +40,7 @@
 #include <kservicegroup.h>
 #include <kgenericfactory.h>
 #include <kdialog.h>
+#include <kaboutdata.h>
 
 #include <X11/Xlib.h>
 
@@ -296,6 +297,17 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mLoadTimer->start( 100 );
     mChanged = false;
     emit changed(false);
+
+    KAboutData *about =
+    new KAboutData(I18N_NOOP("kcmscreensaver"), I18N_NOOP("KDE Screen Saver Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1997-2002 Martin R. Jones\n"
+                  "(c) 2003-2004 Chris Howells"));
+    about->addAuthor("Chris Howells", 0, "howells@kde.org");
+    about->addAuthor("Martin R. Jones", 0, "jones@kde.org");
+
+    setAboutData( about );
+
 }
 
 //---------------------------------------------------------------------------
