@@ -16,6 +16,6 @@ libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
 KDE_ICON = locale
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmlocale_SOURCES) && mv messages.po ../../po/kcmlocale.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(libkcm_locale_la_SOURCES) && mv messages.po ../../po/kcmlocale.pot
 
 
