@@ -225,6 +225,7 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     if (!currentItem())
         setSelected(firstChild(), true);
 
+    ensureItemVisible(currentItem());
 }
 
 
