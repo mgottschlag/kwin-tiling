@@ -399,7 +399,7 @@ void ActionWidget::slotAdvanced()
 AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
     : QVBox( parent, name )
 {
-    editListBox = new KEditListBox( i18n("D&isable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
     QWhatsThis::add( editListBox,
           i18n("<qt>This lets you specify windows in which klipper should<br>"
