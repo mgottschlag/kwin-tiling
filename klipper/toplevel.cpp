@@ -631,6 +631,14 @@ void KlipperWidget::newClipData()
 
 void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
+    // Don't react on Klipper's own actions. This signal comes either
+    // from this process when it sets the clipboard (in which case ignoring
+    // it is ok) or when another process sets the clipboard, in which
+    // case this process should have got already SelectionClear from that
+    // another process and therefore it shouldn't think it owns the clipboard.
+    if( selectionMode ? clip->ownsClipboard() : clip->ownsSelection())
+        return;
+
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
     updateTimestamp();
