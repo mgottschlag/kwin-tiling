@@ -5,7 +5,6 @@ Exec=kcmshell xinerama
 DocPath=kcontrol/multiplemonitors.html
 X-KDE-ModuleType=Library
 X-KDE-Library=xinerama
-X-KDE-Init=xinerama
 Name=Multiple Monitors
 Name[bg]=Много монитори
 Name[ca]=Múltiples monitors
