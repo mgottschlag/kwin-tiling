@@ -45,7 +45,10 @@ int main(int _argc, char *_argv[])
 {
     KCmdLineArgs::init( _argc, _argv, "kcmshell", I18N_NOOP("A tool to start single kcontrol modules"), "2.0pre" );
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+    KLocale::setMainCatalogue("kcontrol");
     KApplication app;
+    // It has to be unset, if not it will break modules like kcmlocale
+    KLocale::setMainCatalogue(0);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
