@@ -435,7 +435,7 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="4" column="1">
+        <spacer row="5" column="0">
             <property name="name">
                 <cstring>Spacer9_2</cstring>
             </property>
@@ -445,14 +445,8 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>74</height>
-                </size>
-            </property>
         </spacer>
-        <spacer row="3" column="1">
+        <spacer row="4" column="1">
             <property name="name">
                 <cstring>Spacer4</cstring>
             </property>
@@ -469,7 +463,24 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="3" column="0">
+        <spacer row="3" column="0">
+            <property name="name" stdset="0">
+                <cstring>Spacer4_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>10</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="4" column="0">
             <property name="name">
                 <cstring>advancedOptionsButton</cstring>
             </property>
