@@ -77,23 +77,8 @@ bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
 {
     // make sure events get to the original window owner
     if ( d->owner && o == this ) {
-	switch ( e->type() ) {
-	    case QEvent::MouseButtonPress:
-	    case QEvent::MouseButtonRelease:
-	    case QEvent::MouseButtonDblClick:
-	    case QEvent::MouseMove:
-	    case QEvent::KeyPress:
-	    case QEvent::KeyRelease:
-	    case QEvent::Close:
-	    case QEvent::Resize:
-	    case QEvent::Move:
-		QApplication::sendEvent( d->owner, e );
-		return true;
-		break;
-
-	    default:
-		break;
-	}
+	QApplication::sendEvent( d->owner, e );
+	return false;
     }
 
     return QWidget::eventFilter( o, e );
