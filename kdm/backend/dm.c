@@ -313,9 +313,24 @@ main (int argc, char **argv)
     }
     if (action != A_NONE)
     {
-	char *cmd = action == A_HALT ? cmdHalt : cmdReboot;
-	execute (parseArgs ((char **)0, cmd), (char **)0);
-	LogError ("Failed to execute shutdown command '%s'\n", cmd);
+	if (Fork() <= 0)
+	{
+	    char *cmd = action == A_HALT ? cmdHalt : cmdReboot;
+	    execute (parseArgs ((char **)0, cmd), (char **)0);
+	    LogError ("Failed to execute shutdown command '%s'\n", cmd);
+	    exit (1);
+	} else {
+#ifndef X_NOT_POSIX
+	    sigset_t mask;
+	    sigemptyset(&mask);
+	    sigaddset(&mask, SIGCHLD);
+	    sigaddset(&mask, SIGHUP);
+	    sigaddset(&mask, SIGALRM);
+	    sigsuspend(&mask);
+#else
+	    sigpause (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
+#endif
+	}
     }
     Debug ("Nothing left to do, exiting\n");
     return 0;
