@@ -312,26 +312,13 @@ struct globEnts {
 };
  */
 
+/* no per-display variables exported currently
 struct dpyEnts {
 	int	id;
 	int	off;
 } dpyEnt[] = {
-{ C_name,		boffset(name) },
-{ C_class,		boffset(class2) },
-{ C_displayType,	boffset(displayType) },
-{ C_serverArgv,		boffset(serverArgv) },
-{ C_serverPid,		boffset(serverPid) },
-{ C_console,		boffset(console) },
-#ifdef XDMCP
-{ C_sessionID,		boffset(sessionID) },
-{ C_peer,		boffset(peer) },
-{ C_from,		boffset(from) },
-{ C_displayNumber,	boffset(displayNumber) },
-{ C_useChooser,		boffset(useChooser) },
-{ C_clientAddr,		boffset(clientAddr) },
-{ C_connectionType,	boffset(connectionType) },
-#endif
 };
+ */
 
 CfgArr cfg;
 
@@ -349,9 +336,11 @@ FindCfgEnt (struct display *d, int id)
 	if (cfg.idx[i] == id)
 	    return ((char **)cfg.data) + i;
     if (d) {
+/* no per-display variables exported currently
 	for (i = 0; i < as(dpyEnt); i++)
 	    if (dpyEnt[i].id == id)
 		return (char **)(((char *)d) + dpyEnt[i].off);
+ */
 	for (i = 0; i < d->cfg.numCfgEnt; i++)
 	    if (d->cfg.idx[i] == id)
 		return ((char **)d->cfg.data) + i;

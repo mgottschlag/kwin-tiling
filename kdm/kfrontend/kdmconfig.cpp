@@ -97,8 +97,8 @@ void init_config( void )
 {
     CONF_GREET_INIT
 
-    _isLocal = (GetCfgInt (C_displayType) & d_location) == dLocal;
-    _hasConsole = _hasConsole && !GetCfgQStr (C_console).isEmpty();
+    _isLocal = GetCfgInt (C_isLocal);
+    _hasConsole = _hasConsole && GetCfgInt (C_hasConsole);
 
     if (_greeterScreen < 0) {
 	QDesktopWidget *dsk = kapp->desktop();

@@ -206,21 +206,8 @@ from the copyright holder.
 #define C_PRIVATE	  0xf0000000	/* Private, don't make it visible to interfaces! */
 
 /* display variables */
-#define C_name			(C_TYPE_STR | 0x200)
-#define C_class			(C_TYPE_STR | 0x201)
-#define C_displayType		(C_TYPE_INT | 0x202)
-#define C_serverArgv		(C_TYPE_ARGV | 0x203)
-#define C_serverPid		(C_TYPE_INT | 0x204)
-#ifdef XDMCP
-#define C_sessionID		(C_TYPE_INT | 0x205)
-#define C_peer			(C_TYPE_ARR | 0x206)
-#define C_from			(C_TYPE_ARR | 0x207)
-#define C_displayNumber		(C_TYPE_INT | 0x208)
-#define C_useChooser		(C_TYPE_INT | 0x209)
-#define C_clientAddr		(C_TYPE_ARR | 0x20a)
-#define C_connectionType	(C_TYPE_INT | 0x20b)
-#endif
-#define C_console		(C_TYPE_STR | 0x20c)
+#define C_isLocal		(C_TYPE_INT | 0x200)
+#define C_hasConsole		(C_TYPE_INT | 0x201)
 
 /**
  ** for struct display

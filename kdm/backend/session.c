@@ -241,6 +241,17 @@ CtrlGreeterWait (int wreply)
 	    Debug ("G_GetCfg\n");
 	    type = GRecvInt ();
 	    Debug (" index %#x\n", type);
+	    if (type == C_isLocal)
+		i = (td->displayType & d_location) == dLocal;
+	    else if (type == C_hasConsole)
+		i = td->console != 0;
+	    else
+		goto normal;
+	    GSendInt (GE_Ok);
+	    Debug (" -> bool %d\n", i);
+	    GSendInt (i);
+	    break;
+	  normal:
 	    if (!(avptr = FindCfgEnt (td, type))) {
 		Debug (" -> not found\n");
 		GSendInt (GE_NoEnt);
