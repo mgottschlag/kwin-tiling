@@ -286,7 +286,7 @@
                             <string>Sound I/O &amp;method:</string>
                         </property>
                         <property name="buddy" stdset="0">
-                            <cstring>audioIO+</cstring>
+                            <cstring>audioIO</cstring>
                         </property>
                     </widget>
                     <widget class="QComboBox" row="0" column="1" rowspan="1" colspan="2">
