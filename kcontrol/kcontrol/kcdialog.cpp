@@ -27,6 +27,7 @@
 #include "kcdialog.h"
 #include "kcdialog.moc"
 #include "kcmodule.h"
+#include <kdebug.h>
 
 KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
   : KDialogBase(parent, name, modal, QString::null,
@@ -42,7 +43,13 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     client->reparent(this,0,QPoint(0,0),true);
     setMainWidget(client);
     connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-    clientChanged(client->changed());
+    if( client->changed() )
+    {
+        kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
+            "\" called setChanged( true ) in the constructor."
+            " Please fix the module." << endl;
+        clientChanged( true );
+    }
 
     KCGlobal::repairAccels( topLevelWidget() );
 }
