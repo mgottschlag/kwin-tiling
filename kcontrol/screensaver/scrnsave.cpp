@@ -65,6 +65,13 @@ extern "C" {
     }
 }
 
+static QString findExe(const QString &exe) {
+    QString result = locate("exe", exe);
+    if (result.isEmpty())
+        result = KStandardDirs::findExe(exe);
+    return result;
+}
+
 //===========================================================================
 //
 //
@@ -552,7 +559,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 
         QString word;
         ts >> word;
-        QString path = KStandardDirs::findExe(word);
+        QString path = findExe(word);
 
         if (!path.isEmpty())
         {
@@ -650,7 +657,7 @@ void KScreenSaver::slotSetup()
 
     QString word;
     ts >> word;
-    QString path = KStandardDirs::findExe(word);
+    QString path = findExe(word);
 
     if (!path.isEmpty())
     {
@@ -686,7 +693,7 @@ void KScreenSaver::slotTest()
 
     QString word;
     ts >> word;
-    QString path = KStandardDirs::findExe(word);
+    QString path = findExe(word);
 
     if (!path.isEmpty())
     {
