@@ -5,17 +5,19 @@
 // Copyright (c)  Martin R. Jones 1999
 //
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <qcolor.h>
+
 #include <klocale.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+#include <kdebug.h>
 #include <kapp.h>
+
 #include "demowin.h"
 #include "saver.h"
 #include "vroot.h"
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
                 usage(argv[0]);
                 break;
             default: // unknown
-                debug("Unknown parameter: %s", argv[i]);
+                kdDebug() << "Unknown parameter: " << argv[i] << endl;
                 usage(argv[0]);
                 break;
         }

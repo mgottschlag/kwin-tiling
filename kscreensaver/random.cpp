@@ -8,17 +8,22 @@
 //
 
 #include <config.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+
 #include <qtextstream.h>
+
 #include <kapp.h>
 #include <kstddirs.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdesktopfile.h>
 #include <krandomsequence.h>
+#include <kdebug.h>
+
 #include "vroot.h"
 
 #define MAX_ARGS    20
@@ -42,7 +47,7 @@ int main(int argc, char *argv[])
     {
         if (!strcmp(argv[i], "-setup"))
         {
-            debug("-setup not yet implemented");
+            kdDebug << "-setup not yet implemented" << endl;
             exit(1);
         }
         else if (!strcmp(argv[i], "-help"))
