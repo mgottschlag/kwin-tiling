@@ -237,7 +237,7 @@ void KKeyConfig::slotSave( )
 	kc->aIt->toFirst();
 	while ( kc->aIt->current() ) {
 		config->writeEntry( kc->aIt->currentKey(), 
-			QString(keyToString( kc->aIt->current()->aConfigKeyCode )) );
+			KAccel::keyToString( kc->aIt->current()->aConfigKeyCode ) );
 		++ ( *kc->aIt );
 	}
 	
@@ -272,7 +272,7 @@ void KKeyConfig::readScheme( int index )
  
 	for (; gIt != tmpMap.end(); ++gIt) {
 	  keyCode = new int;
-	  *keyCode = stringToKey( *gIt );
+	  *keyCode = KAccel::stringToKey( *gIt );
 	  globalDict->insert( gIt.key(), keyCode);
 	  //debug( " %s, %d", gIt->currentKey(), *keyCode );
 	}
