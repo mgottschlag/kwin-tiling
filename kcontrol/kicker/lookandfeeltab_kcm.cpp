@@ -26,17 +26,18 @@
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
+#include <kdialog.h>
 
 LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
     KickerConfig::initScreenNumber();
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
     lookandfeeltab = new LookAndFeelTab(this);
     layout->addWidget(lookandfeeltab);
 
-    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
+    connect(lookandfeeltab, SIGNAL(changed()), SLOT(configChanged()));
 
     load();
 }
