@@ -534,7 +534,7 @@ void KCMStyle::save()
 
 
 	// Save effects.
-	KConfig config( "kdeglobals" );
+	KSimpleConfig config( "kdeglobals" );
 	config.setGroup("KDE");
 
 	config.writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
