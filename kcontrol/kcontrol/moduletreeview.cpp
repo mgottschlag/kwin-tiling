@@ -263,7 +263,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   if (_module)
 	{
 	  setText(0, module->name());
-	  setPixmap(0, KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall));
+	  setPixmap(0, SmallIcon(module->icon()));
 	}
 }
 
@@ -275,7 +275,7 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
   if (_module)
 	{
 	  setText(0, module->name());
-	  setPixmap(0, KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall));
+	  setPixmap(0, SmallIcon(module->icon()));
 	}
 }
 
