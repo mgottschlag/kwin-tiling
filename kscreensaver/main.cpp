@@ -44,7 +44,6 @@ extern "C" {
   extern const char *getScreenSaverName();
 }
 
-extern void initPasswd();
 int mode = MODE_NONE, lock = FALSE, passOk = FALSE;
 bool canGetPasswd;
 static int lockOnce = FALSE;
@@ -415,18 +414,14 @@ int main( int argc, char *argv[] )
 #else
         setreuid(-1, 0)
 #endif // HAVE_SETEUID
-	initPasswd();
+//	initPasswd();
 	// ... and drop them again before doing anything important
 	setuid(getuid());
 
 	// now check, if I can verify passwords (might be a problem
 	// only with shadow passwords, due to missing SUID on
 	// kcheckpass program.
-#ifdef HAVE_SHADOW
         canGetPasswd = canReadPasswdDatabase();
-#else
-	canGetPasswd = true;
-#endif
 
 	catchSignals();
 	if ( mode == MODE_INSTALL )

@@ -22,9 +22,6 @@
 extern KLocale *glocale;
 extern ssApp *globalKapp;
 
-int checkPasswd(char *);
-
-
 kScreenSaver::kScreenSaver( Drawable drawable ) : QObject()
 {
 	Window root;
@@ -146,7 +143,6 @@ void KPasswordDlg::keyPressed( QKeyEvent *e )
 
 int KPasswordDlg::tryPassword()
 {
-#if defined HAVE_ETCPASSWD || defined HAVE_SHADOW || defined HAVE_PAM
 	if( stars )
 	  blinkTimer->stop();
 	KProcess chkpass;
@@ -179,10 +175,6 @@ int KPasswordDlg::tryPassword()
 	if( stars )
 	  blinkTimer->start( 300 ); 
 	return rc;
-#else
-	int e = checkPasswd(password.data());
-	return e;
-#endif
 }
 
 void KPasswordDlg::timeout()
