@@ -71,30 +71,30 @@ ModuleInfo::~ModuleInfo()
 }
 
 void
-ModuleInfo::loadAll() const
+ModuleInfo::loadAll() 
 {
-  ModuleInfo *non_const_this = const_cast<ModuleInfo *>(this);
-  non_const_this->_allLoaded = true;
+  _allLoaded = true;
 
   KDesktopFile desktop(_fileName);
 
   // library and factory
-  non_const_this->setHandle(desktop.readEntry("X-KDE-FactoryName"));
+  setHandle(desktop.readEntry("X-KDE-FactoryName"));
 
   // does the module need super user privileges?
-  non_const_this->setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-RootOnly", false));
+  setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-RootOnly", false));
 
   // does the module need to be shown to root only?
   // Depricated !
-  non_const_this->setIsHiddenByDefault(desktop.readBoolEntry("X-KDE-IsHiddenByDefault", false));
+  setIsHiddenByDefault(desktop.readBoolEntry("X-KDE-IsHiddenByDefault", false));
 
   // get the documentation path
-  non_const_this->setDocPath(desktop.readEntry("DocPath"));
+  setDocPath(desktop.readEntry("DocPath"));
 }
 
-QCString ModuleInfo::moduleId() const
+QCString 
+ModuleInfo::moduleId() const
 {
-  if (!_allLoaded) loadAll();
+  if (!_allLoaded) const_cast<ModuleInfo*>(this)->loadAll();
 
   QString res;
 
@@ -119,7 +119,8 @@ ModuleInfo::groups() const
 };
 
 
-KService::Ptr ModuleInfo::service() const
+KService::Ptr 
+ModuleInfo::service() const
 {
   return _service;
 }
@@ -152,7 +153,8 @@ ModuleInfo::icon() const
 QString
 ModuleInfo::docPath() const
 {
-  if (!_allLoaded) loadAll();
+  if (!_allLoaded) 
+    const_cast<ModuleInfo*>(this)->loadAll();
 
   return _doc;
 };
@@ -166,7 +168,8 @@ ModuleInfo::library() const
 QString
 ModuleInfo::handle() const
 {
-  if (!_allLoaded) loadAll();
+  if (!_allLoaded) 
+    const_cast<ModuleInfo*>(this)->loadAll();
 
   if (_handle.isEmpty())
      return _lib;
@@ -183,7 +186,8 @@ ModuleInfo::isDirectory() const
 bool
 ModuleInfo::needsRootPrivileges() const
 {
-  if (!_allLoaded) loadAll();
+  if (!_allLoaded) 
+    const_cast<ModuleInfo*>(this)->loadAll();
 
   return _needsRootPrivileges;
 };
@@ -191,8 +195,10 @@ ModuleInfo::needsRootPrivileges() const
 bool
 ModuleInfo::isHiddenByDefault() const
 {
-  if (!_allLoaded) loadAll();
+  if (!_allLoaded)
+    const_cast<ModuleInfo*>(this)->loadAll();
 
   return _isHiddenByDefault;
 };
 
+// vim: ts=2 sw=2 et
