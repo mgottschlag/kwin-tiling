@@ -52,7 +52,9 @@ extern KLocale *glocale;
 
 #include <math.h>
 #include <X11/Intrinsic.h>
+#ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
+#endif
 #include <GL/gl.h>
 #include <GL/glx.h>
 

@@ -131,8 +131,9 @@ extern KLocale *glocale;
 #include <X11/Intrinsic.h>
 
 #ifdef HAVE_GL
-
+#ifdef HAVE_GL_XMESA_H
 #include <GL/xmesa.h>
+#endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glx.h>
