@@ -42,6 +42,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <errno.h>
+#include <string.h>
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
@@ -777,8 +779,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     if (!IceListenForConnections (&numTransports, &listenObjs,
 				  256, errormsg))
     {
-	fprintf (stderr, "%s\n", errormsg);
-	exit (1);
+	qWarning("KSMServer: Error listening for connections: %s", errormsg);
+        qWarning("KSMServer: Aborting.");
+        exit(1);
     }
 
     {
@@ -788,6 +791,12 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fName += "-"+display;
 	FILE *f;
 	f = ::fopen(fName.data(), "w+");
+	if (!f)
+        {
+            qWarning("KSMServer: can't open %s: %s", fName.data(), strerror(errno));
+            qWarning("KSMServer: Aborting.");
+            exit(1);
+        }
 	char* session_manager = IceComposeNetworkIdList(numTransports, listenObjs);
 	fprintf(f, session_manager);
 	fprintf(f, "\n%i\n", getpid());
