@@ -299,32 +299,33 @@ mkdirp (const char *name, int mode, const char *what, int existok)
 {
     char *mfname = mstrdup (name);
     int i;
+    struct stat st;
 
     for (i = 1; mfname[i]; i++)
 	if (mfname[i] == '/') {
 	    mfname[i] = 0;
-	    if (mkdir (mfname, 0755)) {
-		if (errno != EEXIST) {
+	    if (stat (mfname, &st)) {
+		if (mkdir (mfname, 0755)) {
 		    fprintf (stderr, "Cannot create parent %s of %s directory %s: %s\n",
 			     mfname, what, name, strerror (errno));
 		    free (mfname);
 		    return 0;
 		}
-	    } else
 		chmod (mfname, 0755);
+	    }
 	    mfname[i] = '/';
 	}
     free (mfname);
-    if (mkdir (name, mode)) {
-	if (errno != EEXIST) {
+    if (stat (name, &st)) {
+	if (mkdir (name, mode)) {
 	    fprintf (stderr, "Cannot create %s directory %s: %s\n",
 		     what, name, strerror (errno));
 	    return 0;
 	}
-	return existok;
+	chmod (name, mode);
+	return 1;
     }
-    chmod (name, mode);
-    return 1;
+    return existok;
 }
 
 
