@@ -196,11 +196,11 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    hint = i18n("This graph gives you an overview of "
 			"the <b>usage of physical memory</b> in your system."
 			"<p>Most operating systems (including Linux) "
-			"will use as much as possible of the "
-			"available physical memory as disk cache "
+			"will use as much of the available physical "
+			"memory as possible as disk cache, "
 			"to speed up the system performance. "
-			"<p>This means, that if you have a small amount "
-			"of <b>Free Physical Memory</b> and a big amount of "
+			"<p>This means that if you have a small amount "
+			"of <b>Free Physical Memory</b> and a large amount of "
 			"<b>Disk Cache Memory</b>, your system is well "
 			"configured.");
 	    break;
