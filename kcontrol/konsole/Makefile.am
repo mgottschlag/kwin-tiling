@@ -16,7 +16,7 @@ noinst_HEADERS = kcmkonsole.h schemaeditor.h sessioneditor.h schemadialog.h sess
 KDE_ICON = konsole
 
 data_DATA = kcmkonsole.desktop
-datadir = $(kde_appsdir)/Settings/System
+datadir = $(kde_appsdir)/Settings/Personalization
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkonsole.pot
