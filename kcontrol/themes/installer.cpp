@@ -123,12 +123,11 @@ void Installer::readThemesList(void)
   // Read local themes
   QStringList entryList = KGlobal::dirs()->findAllResources("themes");
   QStringList::ConstIterator name;
-  for(name = entryList.begin(); 
-      name != entryList.end(); name++)
-  {
-    if ((*name)[0]=='.') continue;
-    if ((*name)=="CVS" || (*name).right(8)==".themerc") continue;
-    mThemesList->inSort(*name);
+  for(name = entryList.begin(); name != entryList.end(); name++) {
+    QString tmp = *name;
+    tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
+    if (tmp.right(8) == ".themerc") continue;
+    mThemesList->inSort(tmp);
   }
 
   // Stephan: the theme manager used to differ between global and local ones using spaces

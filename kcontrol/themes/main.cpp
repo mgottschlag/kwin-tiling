@@ -72,6 +72,7 @@ KThemesApplication::KThemesApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
   initMetaObject();
+  init();
 
   mInstaller = NULL;
   theme = new ThemeCreator;
@@ -109,6 +110,7 @@ void KThemesApplication::tweakUi()
 void KThemesApplication::init()
 {
   //debug(i18n("No init necessary"));
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
 }
 
 
@@ -170,7 +172,6 @@ void init(void)
 {
     oldMsgHandler = qInstallMsgHandler(msgHandler);
 
-    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
     if (!(Theme::mkdirhier(Theme::workDir().ascii()))) exit(1);
 }
 
@@ -189,7 +190,7 @@ int main(int argc, char **argv)
   app.setTitle(i18n("Kde Theme Manager"));
 
   kimgioRegister();
-  init();
+//  init();
 
   if (app.runGUI()) app.exec();
   else app.init();

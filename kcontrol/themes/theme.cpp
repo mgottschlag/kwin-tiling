@@ -1146,7 +1146,11 @@ bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-  bool found(hasGroup(aName));
+debug(QString("==> hasGroup: name = %1  aNotEmpty = %2").arg(aName).
+  arg(aNotEmpty ? "true" : "false"));
+// Endless recursion??
+//  bool found(hasGroup(aName));
+  bool found = false;
 
   if (!aNotEmpty)
     return found;
