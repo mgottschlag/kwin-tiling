@@ -125,6 +125,7 @@ QStringList CXftConfigIncludesWidget::getList()
 
     return list;
 }
-#include "XftConfigIncludesWidget.moc"
 
 #endif
+
+#include "XftConfigIncludesWidget.moc"

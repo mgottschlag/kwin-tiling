@@ -34,10 +34,9 @@
 #endif
 
 #include "XftConfigSettingsWidgetData.h"
-
-#ifdef HAVE_XFT
 #include <qpushbutton.h>
 
+#ifdef HAVE_XFT
 class CXftConfigRules;
 #endif
 
@@ -66,7 +65,7 @@ class CXftConfigSettingsWidget : public CXftConfigSettingsWidgetData
     void useSubPixelChecked(bool on);
     void advancedButtonPressed();
     void saveButtonPressed();
-
+#endif
     public slots:
 
     void disableSaveButton() { itsSaveButton->setEnabled(false); }
@@ -76,6 +75,7 @@ class CXftConfigSettingsWidget : public CXftConfigSettingsWidgetData
     void madeChanges();
     void savedChanges();
 
+#ifdef HAVE_XFT
     private:
 
     void setWidgets();

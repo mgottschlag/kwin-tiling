@@ -46,6 +46,7 @@ class CXftConfigIncludesWidget : public CXftConfigIncludesWidgetData
     CXftConfigIncludesWidget(QWidget *parent=NULL, const char *name=NULL) : CXftConfigIncludesWidgetData(parent, name) {}
     virtual ~CXftConfigIncludesWidget()                                                                                {}
 
+#ifdef HAVE_XFT
     void setName(const QString &name) { itsGroupBox->setTitle(name); itsWritable=false; }
 
     void setList(const QStringList &files);
@@ -55,15 +56,18 @@ class CXftConfigIncludesWidget : public CXftConfigIncludesWidgetData
     void itemSelected(QListBoxItem *item);
 
     QStringList getList();
+#endif
 
     signals:
 
     void changed();
 
+#ifdef HAVE_XFT
     private:
 
     QString getFile(const QString &current, bool checkDuplicates=false);
     bool    itsWritable;
+#endif
 };
 
 #endif

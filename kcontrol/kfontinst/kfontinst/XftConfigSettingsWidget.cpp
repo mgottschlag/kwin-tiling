@@ -250,6 +250,6 @@ void CXftConfigSettingsWidget::saveButtonPressed()
         KMessageBox::error(this, i18n("Could not save file"), i18n("Error"));
 }
 
-#include "XftConfigSettingsWidget.moc"
-
 #endif
+
+#include "XftConfigSettingsWidget.moc"
