@@ -147,7 +147,7 @@ osf1c2_getprpwent(char *p, char *n, int len)
       struct pr_passwd *pr = getprpwnam(n);
       if (pr)
        {
-         strncpy(p, pr->ufld.fd_encrypt, len);
+         strlcpy(p, pr->ufld.fd_encrypt, len);
          crypt_algo = pr->ufld.fd_oldcrypt;
 
          tnow = time(NULL);
@@ -180,7 +180,7 @@ osf1c2_getprpwent(char *p, char *n, int len)
     {
       struct passwd *pw = getpwnam(n);
       if (pw)
-       strncpy(p, pw->pw_passwd, len);
+       strlcpy(p, pw->pw_passwd, len);
     }
   return 0;
 }
