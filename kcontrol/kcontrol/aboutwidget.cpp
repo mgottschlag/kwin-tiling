@@ -47,6 +47,14 @@ const char * intro_text = I18N_NOOP("Welcome to the \"KDE Control Center\", "
                                 "Select an item from the index on the left "
                                 "to load a configuration module.");
 
+const char * kcc_infotext = I18N_NOOP("KDE Info Center");
+
+const char * title_infotext = I18N_NOOP("");
+
+const char * intro_infotext = I18N_NOOP("Welcome to the \"KDE Info Center\", "
+                                "a central place to find information about your "
+                                "computer system.");
+
 const char * use_text = I18N_NOOP("Click on the \"<b>Help</b>\" tab on the left to view help "
                         "for the active "
                         "control module. Use the \"<b>Search</b>\" tab if you are unsure "
@@ -71,11 +79,12 @@ QPixmap *AboutWidget::_part2 = 0L;
 QPixmap *AboutWidget::_part3 = 0L;
 KPixmap *AboutWidget::_part3Effect = 0L;
 
-AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category)
+AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category, const QString &caption)
    : QWidget(parent, name),
       _moduleList(false),
       _category(category),
-      _activeLink(0)
+      _activeLink(0),
+      _caption(caption)
 {
     if (_category)
       _moduleList = true;
@@ -106,8 +115,9 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
     QWhatsThis::add(this, i18n(intro_text));
 }
 
-void AboutWidget::setCategory( QListViewItem* category )
+void AboutWidget::setCategory( QListViewItem* category, const QString &caption )
 {
+  _caption = caption;
   _category = category;
   _activeLink = 0;
   if ( _category )
@@ -198,23 +208,38 @@ void AboutWidget::updatePixmap()
     QFont f2 = f1;
     QFont f3 = QFont(KGlobalSettings::generalFont().family(), 28, QFont::Bold, true);
 
+    QString title, intro, caption;
+    if (KCGlobal::isInfoCenter())
+    {
+       title = i18n(title_infotext);
+       intro = i18n(intro_infotext);
+       caption = i18n(kcc_infotext);
+    }
+    else
+    {
+       title = i18n(title_text);
+       intro = i18n(intro_text);
+       caption = i18n(kcc_text);
+    }
+
     //draw the caption text
     p.setFont(f3);
     p.setPen(gray);
-    p.drawText(220, 60, i18n(kcc_text));
+    p.drawText(220, 60, caption);
     p.setPen(black);
-    p.drawText(217, 57, i18n(kcc_text));
+    p.drawText(217, 57, caption);
     p.setFont(f1);
 
     int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
     
+    
     // draw title text
     p.setPen(white);
-    p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, i18n(title_text));
+    p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, title);
 
     // draw intro text
     p.setPen(black);
-    p.drawText(28, 128, width() - 38, 184 - 128, hAlign | AlignVCenter | WordBreak, i18n(intro_text));
+    p.drawText(28, 128, width() - 38, 184 - 128, hAlign | AlignVCenter | WordBreak, intro);
 
     // fill background
     p.fillRect(0, yoffset, width(), height() - yoffset, QBrush(QColor(49,121,172)));
@@ -348,9 +373,11 @@ void AboutWidget::updatePixmap()
 	int yoffset = 20;
        
         p.setFont(headingFont);
-        p.drawText(xoffset, yoffset, alxadd, fheight+10, hAlign, 
-	           static_cast<ModuleTreeItem*>(_category)->caption() );
-        yoffset += fheight + 15;
+        if (!_caption.isEmpty())
+        {
+           p.drawText(xoffset, yoffset, alxadd, fheight+10, hAlign, _caption );
+           yoffset += fheight + 15;
+        }
 
         // traverse the list
         _moduleLinks.clear();
@@ -363,7 +390,7 @@ void AboutWidget::updatePixmap()
         lp.drawPixmap( part3EffectX - boxX, part3EffectY - boxY, *_part3Effect );
         lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
         lp.setFont(lf);
-        QListViewItem* pEntry = _category->firstChild();
+        QListViewItem* pEntry = _category;
         while (pEntry != NULL)
         {
             QString szName;

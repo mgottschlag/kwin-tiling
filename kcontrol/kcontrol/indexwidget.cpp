@@ -58,6 +58,12 @@ void IndexWidget::reload()
   _icon->fill();
 }
 
+QListViewItem *IndexWidget::firstTreeViewItem()
+{
+  return _tree->firstChild();
+}
+
+
 void IndexWidget::resizeEvent(QResizeEvent *e)
 {
   QWidgetStack::resizeEvent( e );

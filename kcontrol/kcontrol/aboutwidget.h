@@ -32,7 +32,7 @@ class AboutWidget : public QWidget
   Q_OBJECT    
   
 public:   
-  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0);
+  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0, const QString &caption=QString::null);
 
     /**
      * initialize the pixmaps and preprocess the PixmapEffect
@@ -51,7 +51,7 @@ public:
      * Set a new category without creating a new AboutWidget if there is
      * one visible already (reduces flicker)
      */
-    void setCategory( QListViewItem* category = 0 );
+    void setCategory( QListViewItem* category, const QString& caption);
 
 signals:
     void moduleSelected(const QString &);
@@ -85,6 +85,7 @@ private:
     struct ModuleLink;
     QPtrList<ModuleLink> _moduleLinks;
     ModuleLink *_activeLink;
+    QString _caption;
 };
 
 #endif

@@ -37,6 +37,7 @@ public:
   IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);
   virtual ~IndexWidget();
 
+  QListViewItem *firstTreeViewItem();
 public slots:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);

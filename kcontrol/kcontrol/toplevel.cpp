@@ -47,6 +47,7 @@
 #include "modules.h"
 #include "proxywidget.h"
 #include "global.h"
+#include "moduletreeview.h"
 #include <stdio.h>
 
 #include "toplevel.h"
@@ -158,6 +159,13 @@ TopLevel::TopLevel(const char* name)
   else {
     activateIconView();
     icon_view->setChecked(true);
+  }
+  if (KCGlobal::isInfoCenter())
+  {
+      AboutWidget *aw = new AboutWidget( this, 0, _indextab->firstTreeViewItem());
+      connect( aw, SIGNAL( moduleSelected( const QString & ) ),
+               SLOT( activateModule( const QString & ) ) );
+      _dock->setBaseWidget( aw );
   }
 }
 
@@ -346,13 +354,16 @@ void TopLevel::categorySelected(QListViewItem *category)
   about_module->setIconSet( QIconSet() );
   about_module->setEnabled( false );
 								   
-  
   // insert the about widget
+  QListViewItem *firstItem = category->firstChild();
+  QString caption = static_cast<ModuleTreeItem*>(category)->caption();  
   if( _dock->baseWidget()->isA( "AboutWidget" ) )
-    static_cast<AboutWidget *>( _dock->baseWidget() )->setCategory( category );
+  {
+    static_cast<AboutWidget *>( _dock->baseWidget() )->setCategory( firstItem, caption);
+  }    
   else
   {
-    AboutWidget *aw = new AboutWidget( this, 0, category );
+    AboutWidget *aw = new AboutWidget( this, 0, firstItem, caption );
     connect( aw, SIGNAL( moduleSelected( const QString & ) ),
              SLOT( activateModule( const QString & ) ) );
     _dock->setBaseWidget( aw );
