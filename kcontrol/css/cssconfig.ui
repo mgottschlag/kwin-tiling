@@ -12,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>449</width>
+            <width>442</width>
             <height>446</height>
         </rect>
     </property>
@@ -130,58 +130,6 @@
                             <class>QRadioButton</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>useDefault</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>11</x>
-                                    <y>18</y>
-                                    <width>359</width>
-                                    <height>18</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;default stylesheet</string>
-                            </property>
-                            <property stdset="1">
-                                <name>checked</name>
-                                <bool>true</bool>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default styleshee.t&lt;/p&gt;</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>useAccess</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>geometry</name>
-                                <rect>
-                                    <x>11</x>
-                                    <y>94</y>
-                                    <width>359</width>
-                                    <height>18</height>
-                                </rect>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
-                            </property>
-                            <property>
-                                <name>whatsThis</name>
-                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
                                 <cstring>useUser</cstring>
                             </property>
                             <property stdset="1">
@@ -196,6 +144,10 @@
                             <property stdset="1">
                                 <name>text</name>
                                 <string>Use &amp;user-defined stylesheet</string>
+                            </property>
+                            <property>
+                                <name>toolTip</name>
+                                <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
                             </property>
                             <property>
                                 <name>whatsThis</name>
@@ -224,6 +176,66 @@
                             <property>
                                 <name>whatsThis</name>
                                 <string>&lt;b&gt;Use user-defined stylesheet&lt;/b&gt;&lt;p&gt;If this box is checked, konqueror will try to load a user defined style sheet as specified in the location below. The style sheet allows you to completely override the way web pages are rendered in your browser. The file specified should contain a valid style sheet (see http://www.w3.org/Style/CSS for further information on cascading style sheets).&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useAccess</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>11</x>
+                                    <y>94</y>
+                                    <width>359</width>
+                                    <height>18</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;accessiblity stylesheet defined in "Customize"-tab</string>
+                            </property>
+                            <property>
+                                <name>toolTip</name>
+                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use accessiblity stylesheet defined in &amp;quot;Customize&amp;quot;-tab&lt;/b&gt;&lt;p&gt;Selecting this option will allow you to define a default font, font size, and font color with a few simple clicks of the mouse.  Simply wander over to the Customize tab and pick out your desired options.&lt;/p&gt;</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QRadioButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>useDefault</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>geometry</name>
+                                <rect>
+                                    <x>11</x>
+                                    <y>18</y>
+                                    <width>359</width>
+                                    <height>18</height>
+                                </rect>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use &amp;default stylesheet</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
+                            </property>
+                            <property>
+                                <name>toolTip</name>
+                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
+                            </property>
+                            <property>
+                                <name>whatsThis</name>
+                                <string>&lt;b&gt;Use default stylesheet&lt;/b&gt;&lt;p&gt;Select this option to use the default stylesheet.&lt;/p&gt;</string>
                             </property>
                         </widget>
                     </widget>
@@ -283,6 +295,14 @@
                             <name>title</name>
                             <string>Font &amp;size</string>
                         </property>
+                        <property>
+                            <name>toolTip</name>
+                            <string>&lt;b&gt;Font size&lt;/b&gt;</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Font size&lt;/b&gt;</string>
+                        </property>
                         <grid>
                             <property stdset="1">
                                 <name>margin</name>
@@ -303,6 +323,10 @@
                                     <string>&amp;Use same size for all elements</string>
                                 </property>
                                 <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
+                                </property>
+                                <property>
                                     <name>whatsThis</name>
                                     <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size.  All fonts will be displayed in the same size.&lt;/p&gt;</string>
                                 </property>
@@ -311,7 +335,7 @@
                                 <class>QLabel</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>TextLabel1</cstring>
+                                    <cstring>txtFontsize</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
@@ -427,6 +451,14 @@
                             <name>title</name>
                             <string>Font &amp;family</string>
                         </property>
+                        <property>
+                            <name>toolTip</name>
+                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
+                        </property>
                         <grid>
                             <property stdset="1">
                                 <name>margin</name>
@@ -442,16 +474,20 @@
                                     <name>name</name>
                                     <cstring>fontFamily</cstring>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;p&gt;This is the currently selected font family&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="0"  column="0" >
                                 <class>QLabel</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>TextLabel1_3</cstring>
+                                    <cstring>txtBaseFontFamily</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Base &amp;family</string>
+                                    <string>Base &amp;family:</string>
                                 </property>
                                 <property>
                                     <name>buddy</name>
@@ -467,6 +503,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>Use same family for all text</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
@@ -489,6 +529,10 @@
                             <name>title</name>
                             <string>&amp;Images</string>
                         </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Images&lt;/b&gt;&lt;p&gt;&lt;/b&gt;</string>
+                        </property>
                         <grid>
                             <property stdset="1">
                                 <name>margin</name>
@@ -508,6 +552,14 @@
                                     <name>text</name>
                                     <string>&amp;Supress images</string>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="1"  column="0" >
                                 <class>QCheckBox</class>
@@ -522,6 +574,10 @@
                                 <property stdset="1">
                                     <name>checked</name>
                                     <bool>true</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
@@ -617,6 +673,14 @@
                                     <name>checked</name>
                                     <bool>true</bool>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;p&gt;Activating this will cause the cookie monster to appear in your dreams.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Black on White&lt;/b&gt;&lt;p&gt;This is what you normally see.&lt;/p</string>
+                                </property>
                             </widget>
                             <widget row="5"  column="0"  rowspan="1"  colspan="3" >
                                 <class>QCheckBox</class>
@@ -627,6 +691,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>Use same color for all text</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Use same color for all text&lt;/b&gt;&lt;p&gt;Select this option to apply your chosen color to the default font as well as any custom fonts as specified in a stylesheet.&lt;/p&gt;</string>
                                 </property>
                                 <property>
                                     <name>whatsThis</name>
@@ -644,6 +712,10 @@
                                     <string>&amp;Custom</string>
                                 </property>
                                 <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Custom&lt;/b&gt;&lt;p&gt;Select this option to define a custom color for the default font.&lt;/p&gt;</string>
+                                </property>
+                                <property>
                                     <name>whatsThis</name>
                                     <string>&lt;b&gt;Custom&lt;/b&gt;&lt;p&gt;Select this option to define a custom color for the default font.&lt;/p&gt;</string>
                                 </property>
@@ -658,12 +730,20 @@
                                     <name>enabled</name>
                                     <bool>false</bool>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Background&lt;/b&gt;&lt;p&gt;Behind this door lays the ability to choose a custom default background.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Background&lt;/b&gt;&lt;p&gt;Behind this door lays the ability to choose a custom default background.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="3"  column="1" >
                                 <class>QLabel</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>TextLabel1_2</cstring>
+                                    <cstring>txtBackground</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>enabled</name>
@@ -677,12 +757,20 @@
                                     <name>buddy</name>
                                     <cstring>backgroundColor</cstring>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Background&lt;/b&gt;&lt;p&gt;This background color is the one displayed behind the text by default. A background image will override this.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Background&lt;/b&gt;&lt;p&gt;This background color is the one displayed behind the text by default. A background image will override this.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="4"  column="1" >
                                 <class>QLabel</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>TextLabel2</cstring>
+                                    <cstring>txtForeground</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>enabled</name>
@@ -696,6 +784,14 @@
                                     <name>buddy</name>
                                     <cstring>foregroundColor</cstring>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Foreground color&lt;/b&gt;&lt;p&gt;The foreground color is the color that the text is drawn in.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Foreground color&lt;/b&gt;&lt;p&gt;The foreground color is the color that the text is drawn in.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="1"  column="0"  rowspan="1"  colspan="3" >
                                 <class>QRadioButton</class>
@@ -707,6 +803,14 @@
                                     <name>text</name>
                                     <string>&amp;White on Black</string>
                                 </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;p&gt;Factoid of the day: khtml is an amazing piece of work.  Compare it to what Netscape's Navigator uses.  Imagine implementing everything with JavaScript.  Bleh.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;White on Black&lt;/b&gt;&lt;p&gt;This is your classic inverse color scheme.&lt;/p&gt;</string>
+                                </property>
                             </widget>
                             <widget row="4"  column="2" >
                                 <class>KColorButton</class>
@@ -717,6 +821,14 @@
                                 <property stdset="1">
                                     <name>enabled</name>
                                     <bool>false</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Foreground color&lt;/b&gt;&lt;p&gt;The foreground color is the color that the text is drawn in.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Foreground color&lt;/b&gt;&lt;p&gt;The foreground color is the color that the text is drawn in.&lt;/p&gt;</string>
                                 </property>
                             </widget>
                         </grid>
@@ -734,6 +846,14 @@
                         <property stdset="1">
                             <name>text</name>
                             <string>&amp;Preview...</string>
+                        </property>
+                        <property>
+                            <name>toolTip</name>
+                            <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
                         </property>
                     </widget>
                     <spacer row="3"  column="1"  rowspan="1"  colspan="2" >
@@ -816,13 +936,13 @@
     <connection>
         <sender>customColor</sender>
         <signal>toggled(bool)</signal>
-        <receiver>TextLabel1_2</receiver>
+        <receiver>txtBackground</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
         <sender>customColor</sender>
         <signal>toggled(bool)</signal>
-        <receiver>TextLabel2</receiver>
+        <receiver>txtForeground</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
