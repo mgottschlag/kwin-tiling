@@ -11,6 +11,7 @@
 #include <qwidget.h>
 #include <kprocess.h>
 #include <qtimer.h>
+#include <qvaluestack.h>
 
 #include <X11/Xlib.h>
 
@@ -36,6 +37,9 @@ public:
     void setChildren(QValueList<int> children) { child_sockets = children; }
     void setParent(int fd) { mParent = fd; }
 
+    void registerDialog( QWidget* w );
+    void unregisterDialog( QWidget* w );
+    
 public slots:
     void quitSaver();
 
@@ -92,8 +96,8 @@ private:
     bool        mSuspended;
     QTimer      mSuspendTimer;
     bool        mVisibility;
-    QWidget*    mActiveDialog;
     QTimer      mCheckDPMS;
+    QValueStack< QWidget* > mDialogs;
 };
 
 #endif

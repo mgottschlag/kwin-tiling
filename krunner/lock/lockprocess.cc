@@ -75,8 +75,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mParent(0),
       mUseBlankOnly(useBlankOnly),
       mSuspended(false),
-      mVisibility(false),
-      mActiveDialog(NULL)
+      mVisibility(false)
 {
     setupSignals();
 
@@ -671,7 +670,7 @@ void LockProcess::suspend()
 
 void LockProcess::resume()
 {
-    if (mActiveDialog != NULL)
+    if (mDialogs.count() > 0)
         return; // no resuming with dialog visible
     if(!mVisibility)
         return; // no need to resume, not visible
@@ -687,7 +686,7 @@ void LockProcess::resume()
 bool LockProcess::checkPass()
 {
     suspend();
-    PasswordDlg passDlg( NULL, !mXdmFifoName.isNull());
+    PasswordDlg passDlg( this, !mXdmFifoName.isNull());
     connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
 
     QDesktopWidget *desktop = KApplication::desktop();
@@ -703,13 +702,46 @@ bool LockProcess::checkPass()
 
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
 	     arrowCursor.handle(), CurrentTime);
-    mActiveDialog = &passDlg;
+    registerDialog( &passDlg );
     bool rt = passDlg.exec();
-    mActiveDialog = NULL;
+    unregisterDialog( &passDlg );
     XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
 	     blankCursor.handle(), CurrentTime);
     resume();
     return rt;
+}
+
+static void fakeFocusIn( WId window )
+{
+    // We have keyboard grab, so this application will
+    // get keyboard events even without having focus.
+    // Fake FocusIn to make Qt realize it has the active
+    // window, so that it will correctly show cursor in the dialog.
+    XEvent ev;
+    memset(&ev, 0, sizeof(ev));
+    ev.xfocus.display = qt_xdisplay();
+    ev.xfocus.type = FocusIn;
+    ev.xfocus.window = window;
+    ev.xfocus.mode = NotifyNormal;
+    ev.xfocus.detail = NotifyAncestor;
+    XSendEvent( qt_xdisplay(), window, False, NoEventMask, &ev );
+}
+
+// Because of input grabs, and attempts to keep the screen
+// covered, showing dialogs in the usual way is not enough.
+// Calling registerDialog() before showing it ensures it will
+// be visible and get keyboard input.
+void LockProcess::registerDialog( QWidget* w )
+{
+    mDialogs.prepend( w );
+    fakeFocusIn( w->winId());
+}
+
+void LockProcess::unregisterDialog( QWidget* w )
+{
+    mDialogs.remove( w );
+    if( mDialogs.count() > 0 )
+        fakeFocusIn( mDialogs.first()->winId());
 }
 
 //---------------------------------------------------------------------------
@@ -766,11 +798,11 @@ bool LockProcess::x11Event(XEvent *event)
     // Qt seems to be quite hard to persuade to redirect the event,
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
-    if(mActiveDialog && ( event->type == KeyPress || event->type == KeyRelease)
-        && event->xkey.window != mActiveDialog->winId())
+    if(mDialogs.count() > 0 && ( event->type == KeyPress || event->type == KeyRelease)
+        && event->xkey.window != mDialogs.first()->winId())
     {
         XEvent ev2 = *event;
-        ev2.xkey.window = ev2.xkey.subwindow = mActiveDialog->winId();
+        ev2.xkey.window = ev2.xkey.subwindow = mDialogs.first()->winId();
         qApp->x11ProcessEvent( &ev2 );
         return true;
     }
@@ -780,18 +812,24 @@ bool LockProcess::x11Event(XEvent *event)
 
 void LockProcess::stayOnTop()
 {
-    if(mActiveDialog)
+    if(mDialogs.count() > 0)
     {
-        // if the topmost window is the dialog,
-        // and this->winId() is the window right below it,
-        // the two calls below won't have any real effect,
-        // and therefore there also won't be any ConfigureNotify
-        // that could lead to loop
-        XRaiseWindow( qt_xdisplay(), mActiveDialog->winId());
-        Window stack[2];
-        stack[0] = mActiveDialog->winId();;
-        stack[1] = winId();
-        XRestackWindows(x11Display(), stack, 2);
+        // this restacking is written in a way so that
+        // if the stacking positions actually don't change,
+        // all restacking operations will be no-op,
+        // and no ConfigureNotify will be generated,
+        // thus avoiding possible infinite loops
+        XRaiseWindow( qt_xdisplay(), mDialogs.first()->winId()); // raise topmost
+        // and stack others below it
+        Window* stack = new Window[ mDialogs.count() + 1 ];
+        int count = 0;
+        for( QValueList< QWidget* >::ConstIterator it = mDialogs.begin();
+             it != mDialogs.end();
+             ++it )
+            stack[ count++ ] = (*it)->winId();
+        stack[ count++ ] = winId();
+        XRestackWindows( x11Display(), stack, count );
+        delete[] stack;
     }
     else
         XRaiseWindow(qt_xdisplay(), winId());

@@ -13,6 +13,7 @@
 #include <X11/Xlib.h>
 #include "lockdlgimpl.h"
 
+class LockProcess;
 //===========================================================================
 //
 // Simple dialog for entering a password.
@@ -23,7 +24,7 @@ class PasswordDlg : public LockDlgImpl
     Q_OBJECT
 
 public:
-    PasswordDlg(QWidget *parent, bool msess);
+    PasswordDlg(LockProcess *parent, bool msess);
     virtual void show();
 
 signals:

@@ -27,6 +27,7 @@
 #include <kpassdlg.h>
 #include <kdebug.h>
 #include "lockdlg.h"
+#include "lockprocess.h"
 #include "lockdlg.moc"
 #include "lockdlgimpl.h"
 
@@ -39,7 +40,7 @@
 //
 // Simple dialog for entering a password.
 //
-PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
+PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
     : LockDlgImpl(parent, "password dialog", true, WX11BypassWM),
       mCapsLocked(-1),
       mUnlockingFailed(false)
@@ -272,25 +273,13 @@ void PasswordDlg::show()
 {
     QDialog::show();
     QApplication::flushX();
-    // We have keyboard grab, so this application will
-    // get keyboard events even without having focus.
-    // Fake FocusIn to make Qt realize it has the active
-    // window, so that it will correctly show cursor in the dialog.
-    XEvent ev;
-    memset(&ev, 0, sizeof(ev));
-    ev.xfocus.display = qt_xdisplay();
-    ev.xfocus.type = FocusIn;
-    ev.xfocus.window = winId();
-    ev.xfocus.mode = NotifyNormal;
-    ev.xfocus.detail = NotifyAncestor;
-    XSendEvent( qt_xdisplay(), winId(), False, NoEventMask, &ev );
 }
 
 void PasswordDlg::slotStartNewSession()
 {
     killTimer(mTimeoutTimerId);
 
-    QDialog *dialog = new QDialog( this, "warnbox", true, WStyle_Customize | WStyle_NoBorder );
+    QDialog *dialog = new QDialog( this, "warnbox", true, WX11BypassWM );
     QFrame *winFrame = new QFrame( dialog );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
@@ -367,22 +356,14 @@ void PasswordDlg::slotStartNewSession()
     label2->setFixedSize(QSize(pref_width+10, pref_height));
 
     dialog->show();
-    QApplication::flushX();
-    for(;;)
-    { // wait for the window to get mapped
-        XWindowAttributes attrs;
-        if( XGetWindowAttributes( qt_xdisplay(), dialog->winId(), &attrs )
-            && attrs.map_state != IsUnmapped )
-            break;
-    }
-    dialog->setActiveWindow();
     dialog->setFocus();
 
+    static_cast< LockProcess* >( parent())->registerDialog( dialog );
     int ret = dialog->exec();
+    static_cast< LockProcess* >( parent())->unregisterDialog( dialog );
 
     delete dialog;
 
-    setActiveWindow();
     mEntry->setFocus();
 
     if (ret == QDialog::Accepted)
