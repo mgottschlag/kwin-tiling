@@ -132,12 +132,12 @@ bool RandRScreen::confirm()
 											KApplication::kApplication()->mainWidget(),
 											"mainKTimerDialog",
 											true,
-											i18n("Confirm display setting change"),
+											i18n("Confirm Display Setting Change"),
 											KTimerDialog::Ok|KTimerDialog::Cancel,
 											KTimerDialog::Cancel);
 
-	acceptDialog->setButtonOKText(i18n("Accept configuration"));
-	acceptDialog->setButtonCancelText(i18n("Return to previous configuration"));
+	acceptDialog->setButtonOKText(i18n("Accept Configuration"));
+	acceptDialog->setButtonCancelText(i18n("Return to Previous Configuration"));
 	
 	KDialog::centerOnScreen(acceptDialog, screen);
 	
@@ -150,7 +150,7 @@ bool RandRScreen::confirm()
 
 QString RandRScreen::changedMessage()
 {
-	return i18n("New configuration:\nResolution: %1 x %1\nOrientation: %1\nRefresh Rate: %1").arg(currentWidth()).arg(currentHeight()).arg(currentRotationDescription()).arg(currentRefreshRateDescription());
+	return i18n("New configuration:\nResolution: %1 x %1\nOrientation: %1\nRefresh rate: %1").arg(currentWidth()).arg(currentHeight()).arg(currentRotationDescription()).arg(currentRefreshRateDescription());
 }
 
 bool RandRScreen::changedFromOriginal()
@@ -179,7 +179,7 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 		case RR_Rotate_90:
 			return i18n("Left (90 degrees)");
 		case RR_Rotate_180:
-			return i18n("Upside-down (180 degrees)");
+			return i18n("Upside-Down (180 degrees)");
 		case RR_Rotate_270:
 			return i18n("Right (270 degrees)");
 		case RR_Reflect_X:
@@ -187,7 +187,7 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 		case RR_Reflect_Y:
 			return i18n("Mirror Vertically");
 		default:
-			return i18n("unknown orientation");
+			return i18n("Unknown Orientation");
 	}
 	
 	switch (rotation) {

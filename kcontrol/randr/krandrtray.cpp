@@ -55,17 +55,17 @@ void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 {
 	int lastIndex = 0;
-	
+
 	menu->clear();
 	menu->setCheckable(true);
 	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Display Configuration"), 0, 0);
 
 	if (!isValid()) {
-		lastIndex = menu->insertItem("Required extension not avaliable");
+		lastIndex = menu->insertItem(i18n("Required extension not available"));
 		menu->setItemEnabled(lastIndex, false);
 		return;
 	}
-	
+
 	for (int s = 0; s < m_numScreens; s++) {
 		setScreen(s);
 		if (s == widgetScreen(this)) {
@@ -103,7 +103,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 {
 	menu->insertSeparator();
 	int lastIndex = 0;
-	
+
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 	
 	for (int i = 0; i < (int)m_currentScreen->sizes.count(); i++) {
@@ -139,7 +139,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	}
 		
 	menu->insertSeparator();
-	menu->insertTitle(SmallIcon("clock"), i18n("Refresh rate"));
+	menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 	
 	QStringList rr = m_currentScreen->refreshRates(m_currentScreen->proposedSize);
 	
@@ -155,7 +155,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
-	
+
 	if (rr.count() < 2)
 		menu->setItemEnabled(lastIndex, false);
 }

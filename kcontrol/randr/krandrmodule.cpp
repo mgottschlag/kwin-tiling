@@ -54,7 +54,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	topLayout->setAutoAdd(true);
 
 	QHBox* screenBox = new QHBox(this);
-	new QLabel(i18n("Settings for screen: "), screenBox);
+	new QLabel(i18n("Settings for screen:"), screenBox);
 	m_screenSelector = new KComboBox(screenBox);
 
 	for (int s = 0; s < m_numScreens; s++) {
@@ -69,12 +69,12 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		m_screenSelector->setEnabled(false);
 	
 	m_sizeGroup = new QVButtonGroup(i18n("Screen Size"), this);
-	
+
 	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees anticlockwise)"), this);
 	m_rotationGroup->setRadioButtonExclusive(true);
-	
+
 	QHBox* refreshBox = new QHBox(this);
-	new QLabel(i18n("Refresh rate"), refreshBox);
+	new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
 	connect(m_refreshRates, SIGNAL(activated(const QString&)), SLOT(slotRefreshChanged(const QString&)));
 	
@@ -119,7 +119,7 @@ void KRandRModule::slotScreenChanged(int screen)
 		m_sizeGroup->insert(thisButton);
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotSizeChanged()));
 	}
-	
+
 	// Clear rotations
 	for (int i = m_rotationGroup->count() - 1; i >= 0; i--) {
 		m_rotationGroup->remove(m_rotationGroup->find(i));
@@ -221,7 +221,7 @@ void KRandRModule::setChanged()
 			break;
 		}
 	}
-	
+
 	if (isChanged != m_changed) {
 		m_changed = isChanged;
 		emit changed(m_changed);
