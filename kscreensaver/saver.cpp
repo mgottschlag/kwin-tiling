@@ -1,3 +1,5 @@
+// $Id$
+
 #include <pwd.h>
 #include <unistd.h>
 #include <qapplication.h>
@@ -15,8 +17,6 @@
 #include "saver.h"
 #include <klocale.h>
 #include <kstddirs.h>
-
-#include "saver.moc"
 
 #define MAX_PASSWORD_LENGTH	20
 
@@ -197,4 +197,6 @@ void KPasswordDlg::blinkTimeout()
 	blink = !blink;
 	showStars();
 }
+
+#include "saver.moc"
 
