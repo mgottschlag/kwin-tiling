@@ -1,0 +1,15 @@
+[Desktop Entry]
+Exec=kcmshell kwintheme
+Icon=kcmkwm
+Type=Application
+DocPath=kcontrol/kwintheme.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kwintheme
+X-KDE-FactoryName=kwintheme
+
+Name=Window Borders
+
+Comment=Window border theme
+
+Keywords=kwin, window, manager, border, style, theme, look, feel, layout, button, handle, edge, kwm, decoration
