@@ -1,17 +1,21 @@
-lib_LTLIBRARIES = libkcm_sample.la
+lib_LTLIBRARIES = libkcm_drkonqi.la
 
-libkcm_sample_la_SOURCES = sample.cpp 
+libkcm_drkonqi_la_SOURCES = main.cpp general.cpp customize.cpp
 
-libkcm_sample_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_sample_la_LIBADD = -lkdeui  
-INCLUDES= $(all_includes) 
+libkcm_drkonqi_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
+libkcm_drkonqi_la_LIBADD = -lkdeui
 
-libkcm_sample_la_METASOURCES = AUTO
+INCLUDES= $(all_includes)
 
-noinst_HEADERS = sample.h
+SUBDIRS = 
 
-KDE_ICON = sample
+libkcm_drkonqi_la_METASOURCES = AUTO
+
+KDE_ICON = drkonqi
 
 messages:
-	$(XGETTEXT) $(libkcm_sample_la_SOURCES) -o $(podir)/kcmsample.pot
+	$(XGETTEXT) $(libkcm_drkonqi_la_SOURCES) -o $(podir)/kcmdrkonqi.pot
+
+data_DATA = drkonqi.desktop
+datadir = $(kde_appsdir)/Settings/Applications
 
