@@ -209,7 +209,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
            return 1; // error
 
         // load the module
-        KCModuleInfo info(path, KCGlobal::baseGroup());
+        KCModuleInfo info(path);
 
         KCModule *module = KCModuleLoader::loadModule(info, false);
 
