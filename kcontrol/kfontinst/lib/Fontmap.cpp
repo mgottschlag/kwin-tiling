@@ -54,7 +54,7 @@ static bool parseLine(const char *line, QString &ps, QString &fname, bool &isAli
 {
     static const int constMaxLen     = 127;
     static const int constFileMaxLen = 1023;
- 
+
     //
     // Format:
     // "/<psname>  (<filename>) ; "
@@ -206,12 +206,12 @@ void CFontmap::createLocal(const QString &dir)
     if(d.isReadable())
     {
         const QFileInfoList *files=d.entryInfoList();
- 
+
         if(files)
         {
             QFileInfoListIterator it(*files);
             QFileInfo             *fInfo;
- 
+
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() && CFontEngine::hasAfmInfo(QFile::encodeName(fInfo->fileName())))
                 {
@@ -231,7 +231,7 @@ void CFontmap::createLocal(const QString &dir)
                                 numFaces=CGlobal::fe().getNumFaces();  // Only really for TTC files...
 
                                 //
-                                // Add real 
+                                // Add real
                                 addEntry(entries, CGlobal::fe().getPsName(), fInfo->fileName());
 
                                 //
@@ -286,7 +286,7 @@ void CFontmap::createLocal(const QString &dir)
 
 void CFontmap::createTopLevel()
 {
-    //              
+    //
     // Cat each sub-folders top-level fontmap file to top-level one...
 
     QStringList xDirs;

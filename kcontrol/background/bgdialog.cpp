@@ -397,7 +397,7 @@ void BGDialog::setWallpaper(const QString &s)
    {
       comboWallpaper->setCurrentItem(m_Wallpaper[s]);
    }
-   m_urlWallpaper->fileDialog()->setURL(s);
+   m_urlWallpaper->fileDialog()->setURL(KURL( s ));
    comboWallpaper->blockSignals(false);
 }
 
@@ -618,7 +618,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
          }
       }
       r->setWallpaper(uri);
-      m_urlWallpaper->fileDialog()->setURL(uri);
+      m_urlWallpaper->fileDialog()->setURL(KURL( uri ));
    }
 
    r->start(true);

@@ -596,7 +596,7 @@ void CKioFonts::get(const KURL &url)
         {
             // Determine the mimetype of the file to be retrieved, and emit it.
             // This is mandatory in all slaves (for KRun/BrowserRun to work).
-            emit mimeType(KMimeType::findByURL(url.path(), buff.st_mode, true /* local URL */ )->name());
+            emit mimeType(KMimeType::findByURL(url, buff.st_mode, true /* local URL */ )->name());
 
             totalSize(buff.st_size);
             KIO::filesize_t processed=0;
@@ -1040,7 +1040,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
     CHECK_URL(src)
     CHECK_ALLOWED(src)
 
-    QCString srcPath(QFile::encodeName(convertUrl(src.path(), true)));
+    QCString srcPath(QFile::encodeName(convertUrl(src, true)));
     QString  sSub(CMisc::getSub(src.path())),
              dSub(CMisc::getSub(dest.path()));
 

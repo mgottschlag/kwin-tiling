@@ -301,7 +301,7 @@ void IconThemesConfig::removeSelectedTheme()
   // ignore that dir.
   unlink(QFile::encodeName(icontheme.dir()+"/index.theme").data());
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
-  KIO::del(icontheme.dir());
+  KIO::del(KURL( icontheme.dir() ));
 
   KGlobal::instance()->newIconLoader();
 

@@ -580,12 +580,12 @@ void KColorScheme::slotImport()
 {
 	QString location = locateLocal( "data", "kdisplay/color-schemes/" );
 
-	KURL file = KFileDialog::getOpenFileName(QString::null, "*.kcsrc", this);
+	KURL file ( KFileDialog::getOpenFileName(QString::null, "*.kcsrc", this) );
 	if ( file.isEmpty() )
 		return;
 
 	//kdDebug() << "Location: " << location << endl;
-	if (!KIO::NetAccess::file_copy(file, location+file.fileName( false )  ) )
+	if (!KIO::NetAccess::file_copy(file, KURL( location+file.fileName( false ) ) ) )
 	{
 		KMessageBox::error(this, KIO::NetAccess::lastErrorString(),i18n("Import failed!"));
 		return;

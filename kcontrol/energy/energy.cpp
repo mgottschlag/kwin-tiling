@@ -448,7 +448,7 @@ QString KEnergy::quickHelp() const
 
 void KEnergy::openURL(const QString &URL)
 {
-      new KRun(URL);
+      new KRun(KURL( URL ));
 }
 
 #include "energy.moc"

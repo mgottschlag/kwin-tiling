@@ -155,7 +155,7 @@ void CFontViewPart::install()
         if(KIO::NetAccess::stat(destUrl, uds, itsFrame->parentWidget()))
             KMessageBox::error(itsFrame, i18n("%1:%2 already installed!").arg(m_url.protocol()).arg(m_url.path()), i18n("Error"));
         else
-            if(KIO::NetAccess::copy(m_file, destUrl, itsFrame->parentWidget()))
+            if(KIO::NetAccess::copy(KURL( m_file ), destUrl, itsFrame->parentWidget()))
             {
                 if(CFontEngine::isAType1(QFile::encodeName(m_url.path())))
                 {
