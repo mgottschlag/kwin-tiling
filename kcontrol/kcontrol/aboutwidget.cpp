@@ -66,7 +66,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   intro_text->setText(i18n("Welcome to the \"KDE Control Center\", "
                            "a central place to configure your "
                            "desktop environment. "
-                           "Select a item from the index on the left "
+                           "Select an item from the index on the left "
                            "to load a configuration module."));
 
   QWhatsThis::add( this, intro_text->text() );
