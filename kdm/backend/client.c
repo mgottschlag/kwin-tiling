@@ -104,11 +104,11 @@ extern char *crypt(char *, char *);
 static char *PAM_password;
 static char *infostr, *errstr;
 
-#ifdef sun
+# ifdef sun
 typedef struct pam_message pam_message_type;
-#else
+# else
 typedef const struct pam_message pam_message_type;
-#endif
+# endif
 
 static int
 PAM_conv (int num_msg,
@@ -134,6 +134,10 @@ PAM_conv (int num_msg,
 	    break;
 	case PAM_PROMPT_ECHO_OFF:
 	    /* wants password */
+# ifndef HAVE_PAM_FAIL_DELAY
+	    if (!PAM_password[0])
+		goto conv_err;
+# endif
 	    if (!StrDup (&reply[count].resp, PAM_password))
 		goto conv_err;
 	    reply[count].resp_retcode = PAM_SUCCESS;
