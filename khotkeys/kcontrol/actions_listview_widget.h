@@ -102,6 +102,8 @@ inline
 void Actions_listview_widget::clear()
     {
     actions_listview->clear();
+    recent_item = 0;
+    saved_current_item = 0;
     }
 
 // Actions_listview

@@ -94,6 +94,8 @@ void Module::load()
     {
     actions_listview_widget->clear();
     delete _actions_root;
+    settings.actions = NULL;
+    _current_action_data = NULL;
     settings.read_settings( true );
     _actions_root = settings.actions;
     kdDebug( 1217 ) << "actions_root:" << _actions_root << endl;
