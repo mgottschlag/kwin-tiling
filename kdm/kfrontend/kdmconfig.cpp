@@ -123,7 +123,7 @@ QPalette KDMConfig::Str2Palette (const QString &aValue)
 KDMConfig::KDMConfig()
 {
     KGlobal::locale()->setLanguage (GetCfgQStr (C_Language));
-    qApp->setDefaultCodec(QTextCodec::codecForName(KGlobal::locale()->language().latin1()));
+    QTextCodec::setCodecForTr(QTextCodec::codecForName(KGlobal::locale()->language().latin1()));
 
     _allowShutdown = GetCfgInt (C_allowShutdown);
     _allowNuke = GetCfgInt (C_allowNuke);
