@@ -246,7 +246,7 @@
                         <enum>NoFocus</enum>
                     </property>
                     <property name="text">
-                        <string>&amp;Hide automatically</string>
+                        <string>Hide a&amp;utomatically</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops.</string>
@@ -316,7 +316,7 @@
                         <cstring>m_lHB</cstring>
                     </property>
                     <property name="text">
-                        <string>Show left panel-h&amp;iding button</string>
+                        <string>Show left panel-hiding bu&amp;tton</string>
                     </property>
                     <property name="checked">
                         <bool>false</bool>
