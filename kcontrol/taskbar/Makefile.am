@@ -15,6 +15,6 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot
 
 data_DATA = kcmtaskbar.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel/
+datadir = $(kde_appsdir)/Settings/Panel/
 
 EXTRA_DIST = $(data_DATA)

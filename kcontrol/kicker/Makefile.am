@@ -18,6 +18,6 @@ messages: rc.cpp
 	$(XGETTEXT) rc.cpp $(kcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
 data_DATA = panel.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel/
+datadir = $(kde_appsdir)/Settings/Panel/
 
 EXTRA_DIST = $(data_DATA)
