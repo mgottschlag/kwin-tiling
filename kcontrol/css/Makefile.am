@@ -14,4 +14,4 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmcss.pot
  
 data_DATA = kcmcss.desktop
-datadir = $(kde_appsdir)/Settings/WebBrowsing
+datadir = $(kde_appsdir)/Settings/Network/WebBrowsing

@@ -22,7 +22,7 @@ kcm_access_la_LIBADD = $(LIB_KIO)
 noinst_HEADERS = kcmaccess.h
 
 data_DATA = kcmaccess.desktop
-datadir = $(kde_appsdir)/Settings/Personalization
+datadir = $(kde_appsdir)/Settings/Accessibility
 
 services_DATA = kaccess.desktop
 servicesdir = $(kde_servicesdir)
