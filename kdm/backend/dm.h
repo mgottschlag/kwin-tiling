@@ -394,14 +394,12 @@ extern GTalk cnftalk;
 
 /* in session.c */
 extern struct display *td;
+extern const char *td_setup;
 char **baseEnv (const char *user);
 char **inheritEnv (char **env, const char **what);
 char **systemEnv (const char *user);
-int source (char **env, char *file);
-void DeleteXloginResources (void);
-void LoadXloginResources (void);
+int source (char **env, const char *file, const char *arg);
 void ManageSession (struct display *d);
-void SetupDisplay (void);
 
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;

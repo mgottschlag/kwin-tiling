@@ -46,6 +46,12 @@ from the copyright holder.
 #include <ctype.h>
 
 struct display *td;
+const char *td_setup = "auto";
+
+static void DeleteXloginResources (void);
+static void LoadXloginResources (void);
+static void SetupDisplay (const char *arg);
+
 
 static Jmp_buf	pingTime;
 
@@ -365,7 +371,8 @@ CtrlGreeterWait (int wreply)
 	    break;
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
-	    SetupDisplay ();
+	    SetupDisplay (0);
+	    td_setup = 0;
 	    GSendInt (0);
 	    break;
 	default:
@@ -580,6 +587,9 @@ ManageSession (struct display *d)
 
     DeleteXloginResources ();
 
+    if (td_setup)
+	SetupDisplay (td_setup);
+
     if (!(clientPid = StartClient ())) {
 	LogError ("Client start failed\n");
 	SessionExit (EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
@@ -625,7 +635,7 @@ void
 LoadXloginResources ()
 {
     char	**args;
-    char	**env = 0;
+    char	**env;
 
     if (!xResLoaded && td->resources[0] && access (td->resources, 4) == 0) {
 	env = systemEnv ((char *) 0);
@@ -641,16 +651,13 @@ LoadXloginResources ()
 }
 
 void
-SetupDisplay ()
+SetupDisplay (const char *arg)
 {
-    char	**env = 0;
+    char **env;
 
-    if (td->setup && td->setup[0])
-    {
-	env = systemEnv ((char *) 0);
-	(void) source (env, td->setup);
-	freeStrArr (env);
-    }
+    env = systemEnv ((char *) 0);
+    (void) source (env, td->setup, arg);
+    freeStrArr (env);
 }
 
 void
@@ -673,7 +680,7 @@ DeleteXloginResources ()
 
 
 int
-source (char **env, char *file)
+source (char **env, const char *file, const char *arg)
 {
     char	**args;
     int		ret;
@@ -681,6 +688,8 @@ source (char **env, char *file)
     if (file && file[0]) {
 	Debug ("source %s\n", file);
 	if (!(args = parseArgs ((char **) 0, file)))
+	    return waitCompose (0,0,3);
+	if (arg && !(args = addStrArr (args, arg, -1)))
 	    return waitCompose (0,0,3);
 	ret = runAndWait (args, env);
 	freeStrArr (args);

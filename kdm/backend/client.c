@@ -1157,6 +1157,8 @@ StartClient ()
     } else
         StrDup (&xma, "true");
     StrApp (&xma, ",method=", curtype, (char *)0);
+    if (td_setup)
+	StrApp (&xma, ",auto", (char *)0);
     if (xma)
     {
 	env = setEnv (env, "XDM_MANAGED", xma);
@@ -1221,7 +1223,7 @@ StartClient ()
      * Run system-wide initialization file
      */
     sourceReset = 1;
-    if (source (systemEnviron, td->startup) != 0) {
+    if (source (systemEnviron, td->startup, td_setup) != 0) {
 	LogError ("Cannot execute startup script %\"s\n", td->startup);
 	SessionExit (EX_NORMAL);
     }
@@ -1524,7 +1526,7 @@ SessionExit (int status)
 	 * run system-wide reset file
 	 */
 	Debug ("source reset program %s\n", td->reset);
-	source (systemEnviron, td->reset);
+	source (systemEnviron, td->reset, td_setup);
     }
     if (removeAuth)
     {
