@@ -58,9 +58,6 @@ void ModuleTreeView::fill()
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
-      if (module->library().isEmpty())
-		continue;
-
       ModuleTreeItem *parent = 0;
       parent = getGroupItem(parent, module->groups());
       new ModuleTreeItem(parent, module);

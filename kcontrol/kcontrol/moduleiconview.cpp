@@ -85,9 +85,6 @@ void ModuleIconView::fill()
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
   {
-    if (module->library().isEmpty())
-      continue;
-
     QString path = module->groups().join("/");
     // get the top level subdirs
     if (_path == QString::null)

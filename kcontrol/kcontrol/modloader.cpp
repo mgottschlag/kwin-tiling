@@ -36,25 +36,28 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
    *  We just have to load the library and get the module
    *  from the factory.
    */
-
-  // get the library loader instance
-  KLibLoader *loader = KLibLoader::self();
   
-  // try to load the library
-  QString libname("libkcm_%1");
-  KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
-  if (lib)
+  if (!mod.library().isEmpty())
     {
-      // get the create_ function
-      QString factory("create_%1");
-      void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
-
-      if (create)
-	{  
-	  // create the module
-	  KCModule* (*func)(QWidget *, const char *);
-	  func = (KCModule* (*)(QWidget *, const char *)) create;
-	  return  func(0,"");
+      // get the library loader instance
+      KLibLoader *loader = KLibLoader::self();
+      
+      // try to load the library
+      QString libname("libkcm_%1");
+      KLibrary *lib = loader->library(QFile::encodeName(libname.arg(mod.library())));
+      if (lib)
+	{
+	  // get the create_ function
+	  QString factory("create_%1");
+	  void *create = lib->symbol(QFile::encodeName(factory.arg(mod.handle())));
+	  
+	  if (create)
+	    {  
+	      // create the module
+	      KCModule* (*func)(QWidget *, const char *);
+	      func = (KCModule* (*)(QWidget *, const char *)) create;
+	      return  func(0,"");
+	    }
 	}
     }
 

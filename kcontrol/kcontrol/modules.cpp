@@ -135,8 +135,9 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
        it != list.end(); it++)
   {
      KSycocaEntry *p = (*it);
-     if (p->isType(KST_KService)) 
+     if (p->isType(KST_KService))
      {
+printf("Add: %s\n", (const char*)p->entryPath());
         ConfigModule *module = new ConfigModule(p->entryPath());
         append(module);
      }

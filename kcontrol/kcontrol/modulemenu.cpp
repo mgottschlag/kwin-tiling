@@ -46,9 +46,6 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
-      if (module->library().isEmpty())
-		continue;
- 
       KPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
       int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
