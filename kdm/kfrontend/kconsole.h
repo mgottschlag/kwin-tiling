@@ -28,6 +28,7 @@
 #include <qtextedit.h>
 
 class QSocketNotifier;
+class KPty;
 
 class KConsole : public QTextEdit {
     Q_OBJECT
@@ -44,9 +45,10 @@ private:
     int OpenConsole();
     void CloseConsole();
 
-    int master_fd, slave_fd;
+    KPty *pty;
     QSocketNotifier *notifier;
     QString source, leftover;
+    int fd;
 };
 
 #endif // KCONSOLE_H

@@ -24,31 +24,9 @@
 
 #include <config.h>
 
-#ifdef __sgi
-#define __svr4__
-#endif
-
-#if defined(HAVE_GRANTPT) && defined(HAVE_PTSNAME) && defined(HAVE_UNLOCKPT) && !defined(_XOPEN_SOURCE) && !defined(__svr4__)
-#define _XOPEN_SOURCE // make stdlib.h offer the above fcts
-#endif
-
-/* for NSIG */
-#ifndef _BSD_SOURCE
-#define _BSD_SOURCE
-#endif
-
-#ifdef __osf__
-#define _OSF_SOURCE
-//XXX #include <float.h>
-#endif
-
-#ifdef _AIX
-#define _ALL_SOURCE
-//XXX already in <config.h>  #include <sys/types.h>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/ioctl.h>
@@ -66,36 +44,34 @@ extern "C" {
 #include <termio.h>
 #endif
 #endif
-#include <unistd.h>
 
 #if defined (_HPUX_SOURCE)
 #define _TERMIOS_INCLUDED
 #include <bsdtty.h>
 #endif
 
-#if defined(HAVE_PTY_H)
-#include <pty.h>
-#endif
 
 #include "kconsole.h"
-
 #include "kdm_greet.h"
 
 #include <klocale.h>
+#include <kpty.h>
 
 #include <qsocketnotifier.h>
-#include <qregexp.h>
 
 KConsole::KConsole( QWidget *_parent, const QString &src )
     : inherited( _parent )
+    , pty( 0 )
+    , notifier( 0 )
     , source( src )
+    , fd( -1 )
 {
     setReadOnly( true );
     setWordWrap( NoWrap );
     setTextFormat( PlainText );
 
     if (!OpenConsole())
-	append(i18n("Cannot open console\n"));
+	append(i18n("Cannot open console"));
 }
 
 KConsole::~KConsole()
@@ -107,109 +83,48 @@ int
 KConsole::OpenConsole()
 {
     if (!source.isEmpty()) {
-	master_fd = open( source.latin1(), O_RDONLY | O_NONBLOCK );
-	if (master_fd < 0)
-	    LogError( "Cannot open log source %s, "
-		      "falling back to /dev/console.\n", source.latin1());
-	else {
-	    slave_fd = -1;
+	if ((fd = open( source.latin1(), O_RDONLY | O_NONBLOCK )) >= 0)
 	    goto gotcon;
-	}
+	LogError( "Cannot open log source %s, "
+		  "falling back to /dev/console.\n", source.latin1() );
     }
 
-#if defined(HAVE_OPENPTY)
-    if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL)) {
-	perror("openpty");
+    pty = new KPty;
+    if (!pty->open()) {
+	delete pty;
+	pty = 0;
 	return 0;
     }
-#else
-#if defined(__sgi__) || defined(__osf__) || defined(__svr4__)
-//#if defined(HAVE_GRANTPT) && defined(HAVE_PTSNAME)
-# ifdef _AIX
-    master_fd = open("/dev/ptc", O_RDWR);
-    if (master_fd < 0) {
-	perror("opening /dev/ptc");
-# else
-    master_fd = open("/dev/ptmx", O_RDWR);
-    if (master_fd < 0) {
-	perror("opening /dev/ptmx");
-# endif
-	return 0;
-    }
-    char *ptsn;
-    if (!(ptsn = ptsname(master_fd)) ||
-	(slave_fd = open(ptsn, O_RDWR) < 0)) {
-	perror("opening pseudo tty slave");
-	::close(master_fd);
-	return 0;
-    }
-    grantpt(master_fd);
-#else
-#if defined(_SCO_DS) || defined(__USLC__) // SCO OSr5 and UnixWare, might be obsolete
-    for (int idx = 0; idx < 256; idx++) {
-      char ptynam[32], ttynam[32];
-      sprintf(ptynam, "/dev/ptyp%d", idx);
-      sprintf(ttynam, "/dev/ttyp%d", idx);
-      if ((master_fd = open (ptynam, O_RDWR)) >= 0) {
-        if ((slave_fd = open (ttynam, O_RDWR)) >= 0)
-    	  goto gotpty;
-	else
-	  ::close(master_fd);
-      }
-    }
-    perror("opening pseudo tty");
-    return 0;
-  gotpty:
-#else
-    for (const char *s3 = "pqrstuvwxyzabcdefghijklmno"; *s3; s3++) {
-      for (const char *s4 = "0123456789abcdefghijklmnopqrstuvwxyz"; *s4; s4++) {
-        char ptynam[32], ttynam[32];
-        sprintf(ptynam, "/dev/pty%c%c", *s3, *s4);
-        sprintf(ttynam, "/dev/tty%c%c", *s3, *s4);
-        if ((master_fd = open (ptynam, O_RDWR)) >= 0) {
-          if ((slave_fd = open (ttynam, O_RDWR)) >= 0)
-      	    goto gotpty;
-	  else
-	    ::close(master_fd);
-        }
-      }
-    }
-    perror("opening pseudo tty");
-    return 0;
-  gotpty:
-#endif
-#endif
-#endif
 
 #ifdef TIOCCONS
-    char on;
-    on = 1;
-    if (ioctl(slave_fd, TIOCCONS, &on) < 0) {
-	perror("opening pseudo tty");
-	::close(slave_fd);
-	::close(master_fd);
+    static const char on = 1;
+    if (ioctl(pty->slaveFd(), TIOCCONS, &on) < 0) {
+	perror("ioctl TIOCCONS");
+	delete pty;
+	pty = 0;
 	return 0;
     }
 #else
     int consfd;
     if ((consfd = open("/dev/console", O_RDONLY)) < 0) {
 	perror("opening /dev/console");
-	::close(slave_fd);
-	::close(master_fd);
+	delete pty;
+	pty = 0;
 	return 0;
     }
     if (ioctl(consfd, SRIOCSREDIR, slave_fd) < 0) {
 	perror("ioctl SRIOCSREDIR");
 	::close(consfd);
-	::close(slave_fd);
-	::close(master_fd);
+	delete pty;
+	pty = 0;
 	return 0;
     }
-    close(consfd);
+    ::close(consfd);
 #endif
+    fd = pty->masterFd();
 
   gotcon:
-    notifier = new QSocketNotifier(master_fd, QSocketNotifier::Read, this);
+    notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
     connect(notifier, SIGNAL(activated(int)), SLOT(slotData()));
     return 1;
 }
@@ -218,8 +133,13 @@ void
 KConsole::CloseConsole()
 {
     delete notifier;
-    ::close(slave_fd);
-    ::close(master_fd);
+    notifier = 0;
+    if (pty) {
+	delete pty;
+	pty = 0;
+    } else
+	::close (fd);
+    fd = -1;
 }
 
 void
@@ -228,23 +148,26 @@ KConsole::slotData()
     int n;
     char buffer[1024];
 
-    if ((n = read(master_fd, buffer, sizeof(buffer))) <= 0) {
+    if ((n = read(fd, buffer, sizeof(buffer))) <= 0) {
 	CloseConsole();
 	if (!n)
 	    if (!OpenConsole())
-		append(i18n("\n*** Console log broken ***\n"));
+		append(i18n("\n*** Cannot open console log source ***"));
     } else {
 	bool as = !verticalScrollBar()->isVisible() ||
 		  (verticalScrollBar()->value() ==
 		   verticalScrollBar()->maxValue());
-	QString str( QString::fromLocal8Bit(buffer, n).replace(QRegExp("\r"), "") );
+	QString str( QString::fromLocal8Bit(buffer, n).remove('\r') );
 	int pos, opos;
-	for (opos = 0; (pos = str.find('\n', opos)) >= 0; opos = pos + 1)
+	for (opos = 0; (pos = str.find('\n', opos)) >= 0; opos = pos + 1) {
+	    if (paragraphs() == 100)
+		removeParagraph( 0 );
 	    if (!leftover.isEmpty()) {
 		append( leftover + str.mid( opos, pos - opos ) );
 		leftover = QString::null;
 	    } else
 		append( str.mid( opos, pos - opos ) );
+	}
 	leftover += str.mid( opos );
 	if (as)
 	    scrollToBottom();
