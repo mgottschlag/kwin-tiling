@@ -176,6 +176,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbWidgetStyleLayout->addLayout( hbLayout );
 
 	lblStyleDesc = new QLabel( gbWidgetStyle );
+  lblStyleDesc->setTextFormat(Qt::RichText);
 	gbWidgetStyleLayout->addWidget( lblStyleDesc );
 
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbWidgetStyle );
