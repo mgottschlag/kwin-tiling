@@ -15,16 +15,15 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 #ifndef __KDMFONT_H__
 #define __KDMFONT_H__
 
-#include <qcheckbox.h>
-
-#include <kfontdialog.h>
 #include <qwidget.h>
 
+class KFontRequester;
+class QCheckBox;
 
 class KDMFontWidget : public QWidget
 {
@@ -37,25 +36,19 @@ public:
         void save();
 	void defaults();
 	void makeReadOnly();
-	void set_def();
 
 signals:
 	void changed( bool state );
 
 protected slots:
     void configChanged();
-
-private slots:
-        void slotGetFont();
-        void slotSetFont(int);
-
+    void set_def();
 
 private:
-        QFont		stdfont, greetfont, failfont;
-        QLabel		*fontlabel;
-	QComboBox	*fontcombo;
 	QCheckBox	*aacb;
-	QPushButton	*fontbtn;
+        KFontRequester *greetingFontChooser;
+        KFontRequester *failFontChooser;
+        KFontRequester *stdFontChooser;
 };
 
 

@@ -21,16 +21,17 @@
 #include <sys/types.h>
 
 
-#include <qpushbutton.h>
 #include <qapplication.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-#include <qhgroupbox.h>
-#include <qvgroupbox.h>
 #include <qlabel.h>
+#include <qpushbutton.h>
 #include <qwhatsthis.h>
 
+#include <kdialog.h>
 #include <ksimpleconfig.h>
+#include <kfontrequester.h>
 #include <klocale.h>
 
 #include "kdm-font.h"
@@ -41,53 +42,42 @@ extern KSimpleConfig *config;
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
-  QGroupBox *tGroup = new QHGroupBox(i18n("Select Fonts"), this);
+  QGridLayout *ml = new QGridLayout(this, 5, 2, KDialog::marginHint(), KDialog::spacingHint());
+  QLabel *label = new QLabel(i18n("&General:"), this);
+  stdFontChooser = new KFontRequester(this);
+  label->setBuddy(stdFontChooser);
+  QWhatsThis::add( stdFontChooser, i18n("This changes the font which is used for all the text in the login manager execpt for the greeting and failure messages.") );
+  connect(stdFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
+  ml->addWidget(label, 1, 0);
+  ml->addWidget(stdFontChooser, 1, 1);
 
-  fontcombo = new QComboBox( FALSE, tGroup );
-  fontcombo->insertItem(i18n("Greeting"), 0);
-  fontcombo->insertItem(i18n("Fail"), 1);
-  fontcombo->insertItem(i18n("Standard"), 2);
-  fontcombo->setFixedSize(fontcombo->sizeHint());
-  connect(fontcombo, SIGNAL(highlighted(int)), SLOT(slotSetFont(int)));
+  label = new QLabel(i18n("&Failures:"), this);
+  failFontChooser = new KFontRequester(this);
+  label->setBuddy(failFontChooser);
+  QWhatsThis::add( failFontChooser, i18n("This changes the font which is used for failure messages in the login manager.") );
+  connect(failFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
+  ml->addWidget(label, 2, 0);
+  ml->addWidget(failFontChooser, 2, 1);
 
-  QWhatsThis::add( fontcombo, i18n("Here you can select the font you want to change."
-    " KDM knows three fonts: <ul><li><em>Greeting:</em> used to display KDM's greeting"
-    " string (see \"Appearance\" tab)</li><li><em>Fail:</em> used to display a message"
-    " when a person fails to login</li><li><em>Standard:</em> used for the rest of the text</li></ul>") );
+  label = new QLabel(i18n("Gree&ting:"), this);
+  greetingFontChooser = new KFontRequester(this);
+  label->setBuddy(greetingFontChooser);
+  QWhatsThis::add( greetingFontChooser, i18n("This changes the font which is used for the login manager's greeting.") );
+  connect(greetingFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
+  ml->addWidget(label, 3, 0);
+  ml->addWidget(greetingFontChooser, 3, 1);
 
-  fontbtn = new QPushButton(i18n("C&hange Font..."), tGroup);
-  fontbtn->setFixedSize(fontbtn->sizeHint());
-  connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
-
-  QWhatsThis::add( fontbtn, i18n("Click here to change the selected font.") );
-
-  tGroup->addSpace(0);
-
-  QGroupBox *bGroup = new QVGroupBox(i18n("Example"), this);
-  QWhatsThis::add( bGroup, i18n("Shows a preview of the selected font.") );
-  fontlabel = new QLabel( bGroup );
-  fontlabel->setFrameStyle(QFrame::WinPanel|QFrame::Sunken);
-  fontlabel->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-
-
-  QGroupBox *mGroup = new QVGroupBox(i18n("Miscellaneous"), this);
-  aacb = new QCheckBox (i18n("Use anti-aliasing for fonts"), mGroup);
+  aacb = new QCheckBox (i18n("Use anti-aliasing for fonts"), this);
   QWhatsThis::add( aacb, i18n("If you check this box and your X-Server has the Xft extension, "
 	"fonts will be antialiased (smoothed) in the login dialog.") );
   connect(aacb, SIGNAL(toggled ( bool )),this,SLOT(configChanged()));
-
-  QBoxLayout *ml = new QVBoxLayout(this, 10);
-  ml->addWidget(tGroup);
-  ml->addWidget(bGroup, 1);
-  ml->addWidget(mGroup);
-  ml->addStretch(1);
-
+  ml->addMultiCellWidget(aacb, 4, 4, 0, 1);
+  ml->setRowStretch(5, 10);
 }
 
 void KDMFontWidget::makeReadOnly()
 {
-    fontbtn->setEnabled(false);
-    aacb->setEnabled(false);
+    setEnabled(false);
 }
 
 void KDMFontWidget::configChanged()
@@ -95,24 +85,22 @@ void KDMFontWidget::configChanged()
     emit changed(true);
 }
 
+void KDMFontWidget::set_def()
+{
+  stdFontChooser->setFont(QFont("helvetica", 10));
+  failFontChooser->setFont(QFont("helvetica", 10, QFont::Bold));
+  greetingFontChooser->setFont(QFont("charter", 20));
+}
 
 void KDMFontWidget::save()
 {
   config->setGroup("X-*-Greeter");
 
   // write font
-  config->writeEntry("StdFont", stdfont);
-  config->writeEntry("GreetFont", greetfont);
-  config->writeEntry("FailFont", failfont);
+  config->writeEntry("StdFont", stdFontChooser->font());
+  config->writeEntry("GreetFont", greetingFontChooser->font());
+  config->writeEntry("FailFont", failFontChooser->font());
   config->writeEntry("AntiAliasing", aacb->isChecked());
-}
-
-
-void KDMFontWidget::set_def()
-{
-  stdfont = QFont("helvetica", 10);
-  failfont = QFont("helvetica", 10, QFont::Bold);
-  greetfont = QFont("charter", 20);
 }
 
 
@@ -123,11 +111,12 @@ void KDMFontWidget::load()
   config->setGroup("X-*-Greeter");
 
   // Read the fonts
-  stdfont = config->readFontEntry("StdFont", &stdfont);
-  failfont = config->readFontEntry("FailFont", &failfont);
-  greetfont = config->readFontEntry("GreetFont", &greetfont);
-
-  slotSetFont(fontcombo->currentItem());
+  QFont font = stdFontChooser->font();
+  stdFontChooser->setFont(config->readFontEntry("StdFont", &font));
+  font = failFontChooser->font();
+  failFontChooser->setFont(config->readFontEntry("FailFont", &font));
+  font = greetingFontChooser->font();
+  greetingFontChooser->setFont(config->readFontEntry("GreetFont",  &font));
 
   aacb->setChecked(config->readBoolEntry("AntiAliasing"));
 }
@@ -136,57 +125,7 @@ void KDMFontWidget::load()
 void KDMFontWidget::defaults()
 {
   set_def();
-  slotSetFont(fontcombo->currentItem());
   aacb->setChecked(false);
-}
-
-
-void KDMFontWidget::slotGetFont()
-{
-  QFont* tmpfont;
-  switch (fontcombo->currentItem())
-  {
-    case 0:
-      tmpfont = &greetfont;
-      break;
-    case 1:
-      tmpfont = &failfont;
-      break;
-    default:
-      tmpfont = &stdfont;
-      break;
-  }
-
-  KFontDialog::getFont(*tmpfont);
-  fontlabel->setFont(*tmpfont);
-  //fontlabel->setFixedSize(fontlabel->sizeHint());
-
-  emit changed(true);
-}
-
-
-void KDMFontWidget::slotSetFont(int id)
-{
-  QApplication::setOverrideCursor( waitCursor );
-  QFont *tmpfont;
-  switch (id)
-  {
-    case 0:
-      tmpfont = &greetfont;
-      fontlabel->setText(i18n("Greeting font"));
-      break;
-    case 1:
-      tmpfont = &failfont;
-      fontlabel->setText(i18n("Fail font"));
-      break;
-    default:
-      tmpfont = &stdfont;
-      fontlabel->setText(i18n("Standard font"));
-      break;
-  }
-  fontlabel->setFont(*tmpfont);
-  //fontlabel->adjustSize();
-  QApplication::restoreOverrideCursor( );
 }
 
 #include "kdm-font.moc"
