@@ -492,10 +492,12 @@ void CKFileFontView::slotAutoOpen()
 
 bool CKFileFontView::acceptDrag(QDropEvent *e) const
 {
+#if 0   // Following doesn't seem to work, why???
     bool       ok=false;
     KURL::List urls;
 
-    if(KURLDrag::canDecode(e) && (e->source()!=const_cast<CKFileFontView *>(this)) &&
+
+    if((e->source()!=const_cast<CKFileFontView *>(this)) &&
        (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
        KURLDrag::decode(e, urls) && !urls.isEmpty())
     {
@@ -512,6 +514,10 @@ bool CKFileFontView::acceptDrag(QDropEvent *e) const
     }
 
     return ok;
+#endif
+
+    return KURLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontView*>(this)) &&
+           (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
 
 void CKFileFontView::contentsDragEnterEvent(QDragEnterEvent *e)

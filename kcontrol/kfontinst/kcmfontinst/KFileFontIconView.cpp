@@ -60,6 +60,7 @@ void CKFileFontIconView::contentsDropEvent(QDropEvent *e)
 
 bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
 {
+#if 0 // Crashes - seems to be called to quick???
     bool       ok=false;
     KURL::List urls;
 
@@ -80,4 +81,7 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
     }
 
     return ok;
+#endif
+    return KURLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontIconView*>(this)) &&
+           (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
