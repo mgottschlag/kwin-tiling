@@ -55,14 +55,18 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name )
           this,          SLOT(slotPosChanged(int)));
 
   QRadioButton *rb;
-  rb = new QRadioButton(i18n("&Left"), positionGroup);
-  QWhatsThis::add(rb, i18n("Dock the taskbar on the left side of the screen"));
-  rb = new QRadioButton(i18n("&Right"), positionGroup);
-  QWhatsThis::add(rb, i18n("Dock the taskbar on the right side of the screen"));
+  QRadioButton *left = new QRadioButton(i18n("&Left"), positionGroup);
+  QWhatsThis::add(left, i18n("Dock the taskbar on the left side of the screen"));
+  QRadioButton *right = new QRadioButton(i18n("&Right"), positionGroup);
+  QWhatsThis::add(right, i18n("Dock the taskbar on the right side of the screen"));
   rb = new QRadioButton(i18n("&Top"), positionGroup);
   QWhatsThis::add(rb, i18n("Dock the taskbar on the top of the screen"));
   rb = new QRadioButton(i18n("&Bottom"), positionGroup);
   QWhatsThis::add(rb, i18n("Dock the taskbar on the bottom of the screen"));
+
+  // disable Left and Right until after KDE 2.0
+  left->setEnabled(false);
+  right->setEnabled(false);
 
   QVBoxLayout *top_layout = new QVBoxLayout(this, KDialog::marginHint(),
                                                   KDialog::spacingHint());
