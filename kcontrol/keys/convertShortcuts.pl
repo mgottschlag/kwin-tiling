@@ -3,6 +3,8 @@ $keys=0;
 foreach (<>) {
     if(/^\[.*\]/) { $keys=0; }
     if($keys==1) {
+        print "# DELETEGROUP [Global Keys]\n";
+        print "# DELETEGROUP [Global Shortcuts]\n";
         s/^Execute Command/Run Command/;
         s/^Execute command/Run Command/;
         s/^Lock screen/Lock Screen/;
@@ -46,6 +48,7 @@ foreach (<>) {
         s/^repeat-last-klipper-action/Show Klipper Popup-Menu/;
     }
     if(/\[Global Keys\]/) { $keys=1; }
+    if(/\[Global Shortcuts\]/) { $keys=1; }
 
     print $_;
 }
