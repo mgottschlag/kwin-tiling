@@ -38,9 +38,10 @@
 #include <kmessagebox.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
-#include <kgenericfactory.h>
 
 #if KDE_VERSION >= 292
+#include <kgenericfactory.h>
+
 typedef KGenericFactory<CKfiCmModule, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY( libkcm_fontinst, FontInstallFactory );
 #endif
