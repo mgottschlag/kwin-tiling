@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <errno.h>
 #include <math.h>
 
