@@ -263,15 +263,15 @@ void KThemeListBox::writeSettings()
 
 //------------------------------------------------------------------
 
-KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
-	: KDisplayModule( parent, mode, desktop )
+KGeneral::KGeneral(QWidget *parent, Mode m)
+	: KDisplayModule(parent, m)
 {
 	changed = false;
 	useRM = true;
 	macStyle = false;
     
 	// if we are just initialising we don't need to create setup widget
-	if ( mode == Init )
+	if (mode() == Init)
 		return;
 	
 	kde_display = x11Display();
@@ -376,6 +376,7 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	vlay->addWidget(tbTransp, 10);
     
 	topLayout->addStretch( 100 );
+	changed = false;
 }
 
 void KGeneral::slotChangeStylePlugin(QListViewItem*)
@@ -395,6 +396,8 @@ void KGeneral::slotChangeTbStyle()
       tbUseText = 3;
   else
       tbUseText = 0 ;
+
+  changed = true;
 }
 
 void KGeneral::slotUseResourceManager()
@@ -458,6 +461,8 @@ void KGeneral::setDefaults()
 	tbIcon->setChecked( true );
 	tbHilite->setChecked( true );
 	tbTransp->setChecked( true );
+
+    changed = true;
 }
 
 void KGeneral::defaultSettings()
@@ -514,12 +519,6 @@ void KGeneral::writeSettings()
 	QApplication::syncX();
 }
 
-void KGeneral::slotApply()
-{
-	writeSettings();
-	apply();
-}
-
 int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p)
 {
     Atom real_type;
@@ -548,7 +547,7 @@ bool getSimpleProperty(Window w, Atom a, long &result)
     return true;
 }
 
-void KGeneral::apply( bool  )
+void KGeneral::apply()
 {
     iconStyle->apply(); 
     themeList->apply(); 
@@ -583,18 +582,15 @@ void KGeneral::apply( bool  )
 	XSetErrorHandler(defaultHandler);
 	
 	XFree((char *) rootwins);
-	
-	changed=false;
-}
-
-
-void KGeneral::slotHelp()
-{
-	kapp->invokeHTMLHelp( "kcmdisplay/index-7.html", "" );
 }
 
 void KGeneral::applySettings()
 {
-    writeSettings();
-    apply( true );
+    if (changed)
+    {
+        debug("KGeneral::applySettings");
+        writeSettings();
+        apply();
+        changed=false;
+    }
 }

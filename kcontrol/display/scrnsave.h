@@ -97,18 +97,16 @@ class KScreenSaver : public KDisplayModule
 {
     Q_OBJECT
 public:
-    KScreenSaver( QWidget *parent, int mode, int desktop = 0 );
+    KScreenSaver(QWidget *parent, Mode mode);
     ~KScreenSaver();
 
     virtual void readSettings( int deskNum = 0 );
-    virtual void apply( bool force = FALSE );
-    virtual void loadSettings();
+    virtual void loadSettings() {}
     virtual void applySettings();
     virtual void defaultSettings();
     virtual void updateValues();
 
 protected slots:
-    void slotApply();
     void slotScreenSaver( int );
     void slotSetup();
     void slotTest();
@@ -118,7 +116,6 @@ protected slots:
     void slotStars( bool );
     void slotPriorityChanged( int val );
     void slotSetupDone(KProcess*);
-    void slotHelp();
     void slotCornerAction( int, char );
     // when selecting a new screensaver, the old preview will
     // be killed. -- This callback is responsible for restarting the

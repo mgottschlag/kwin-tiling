@@ -75,11 +75,10 @@ class KGeneral : public KDisplayModule
 	Q_OBJECT
 	
 public:
-	KGeneral( QWidget *parent, int mode, int desktop = 0 );
+	KGeneral(QWidget *parent, Mode mode);
 	~KGeneral();
 
 	virtual void readSettings( int deskNum = 0 );
-	virtual void apply( bool Force = FALSE);
 	virtual void loadSettings() {};
 	virtual void applySettings();
 	virtual void defaultSettings();
@@ -94,10 +93,9 @@ protected slots:
     void slotChangeTbStyle();
 	void slotUseResourceManager();
 	void slotMacStyle();
-	void slotApply();
-	void slotHelp();
 
 protected:
+	void apply();
 	void writeSettings();
 	void setDefaults();
 	

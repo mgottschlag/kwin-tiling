@@ -129,6 +129,7 @@ void KDisplayApplication::init()
 
 void KDisplayApplication::apply()
 {
+    debug("Applying settings");
   if (colors)
     colors->applySettings();
   if (background)

@@ -150,10 +150,10 @@ void TestWin::keyPressEvent(QKeyEvent *)
 
 //===========================================================================
 //
-KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
-	: KDisplayModule( parent, mode, desktop )
+KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
+	: KDisplayModule( parent, m )
 {
-	if (mode == Init) 
+	if (mode() == Init) 
         return;
 
     mTestWin = 0;
@@ -382,6 +382,8 @@ void KScreenSaver::readSettings( int )
 	if (mPriority > 19) mPriority = 19;
     if (mTimeout < 60) mTimeout = 60;
 
+    mChanged = false;
+
 	delete config;
 }
 
@@ -399,7 +401,7 @@ void KScreenSaver::updateValues()
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::setDefaults()
+void KScreenSaver::defaultSettings()
 {
 	slotScreenSaver( 0 );
 	mSaverListBox->setCurrentItem( 0 );
@@ -413,13 +415,6 @@ void KScreenSaver::setDefaults()
 	slotCornerAction( 2, 'i' );
 	slotCornerAction( 3, 'i' );
 	updateValues();
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::defaultSettings()
-{
-	setDefaults();
 }
 
 //---------------------------------------------------------------------------
@@ -440,8 +435,7 @@ void KScreenSaver::writeSettings()
 	config->writeEntry("PasswordAsStars", mPasswordStars);
     config->writeEntry("Saver", mSaver);
 	config->sync();
-
-	mChanged = false;
+    delete config;
 }
 
 //---------------------------------------------------------------------------
@@ -460,24 +454,6 @@ void KScreenSaver::findSavers()
         else 
             delete saver;
 	}
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotApply()
-{
-	apply();
-	writeSettings();
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::apply( bool force )
-{
-	if ( !mChanged && !force )
-		return;
-
-    KWM::sendKWMCommand("kss_reconfigure");
 }
 
 //---------------------------------------------------------------------------
@@ -699,12 +675,6 @@ void KScreenSaver::slotSetupDone(KProcess *)
 	mSetupBt->setEnabled( true );
 }
 
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::slotHelp()
-{
-	kapp->invokeHTMLHelp( "kcmdisplay/index-4.html", "" );
-}
 
 //---------------------------------------------------------------------------
 //
@@ -716,15 +686,13 @@ void KScreenSaver::slotCornerAction( int num, char action )
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::loadSettings()
-{
-}
-
-//---------------------------------------------------------------------------
-//
 void KScreenSaver::applySettings()
 {
-  writeSettings();
-  apply(true);
+    if (mChanged)
+    {
+        writeSettings();
+        KWM::sendKWMCommand("kss_reconfigure");
+        mChanged = false;
+    }
 }
 

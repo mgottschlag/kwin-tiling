@@ -3,9 +3,9 @@
 
 #include "display.moc"
 
-KDisplayModule::KDisplayModule( QWidget *parent, int mode, int )
+KDisplayModule::KDisplayModule(QWidget *parent, Mode mode)
 	: KConfigWidget( parent )
 {
-	_runMode = mode;
+    mMode = mode;
 }
 

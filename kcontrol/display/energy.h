@@ -27,7 +27,7 @@ class KEnergy : public KDisplayModule
 	Q_OBJECT
 	
 public:
-	KEnergy( QWidget *parent, int mode, int desktop = 0 );
+	KEnergy(QWidget *parent, Mode m);
 	~KEnergy();
 
 	virtual void readSettings( int deskNum = 0 );
@@ -43,8 +43,6 @@ protected slots:
 	void slotChangeStandby();
 	void slotChangeSuspend();
 	void slotChangeOff();
-	void slotApply();
-	void slotHelp();
 
 protected:
 	void writeSettings();

@@ -50,11 +50,10 @@ class KFonts : public KDisplayModule
 	Q_OBJECT
 	
 public:
-	KFonts( QWidget *parent, int mode, int desktop = 0 );
+	KFonts(QWidget *parent, Mode mode);
 	~KFonts();
 
 	virtual void readSettings( int deskNum = 0 );
-	virtual void apply( bool Force = FALSE);
 	virtual void loadSettings() {};
 	virtual void applySettings();
 	virtual void defaultSettings();
@@ -63,12 +62,11 @@ public:
 	Atom 	KDEChangeGeneral;
 
 protected slots:
-	void slotApply();
 	void slotSetFont(const QFont &fnt);
 	void slotPreviewFont( int index );
-	void slotHelp();
 
 protected:
+	void apply();
 	void writeSettings();
 	void setDefaults();
 	

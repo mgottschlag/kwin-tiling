@@ -16,19 +16,13 @@ class KDisplayModule : public KConfigWidget
 {
 	Q_OBJECT
 public:
-	KDisplayModule( QWidget *parent, int mode, int desktop = 0 );
+	enum Mode { Init, Setup };
+	KDisplayModule(QWidget *parent, Mode mode);
 
-	virtual void readSettings( int deskNum = 0 ) = 0;
-	virtual void apply( bool ) = 0;
-
-	int runMode()
-		{ return _runMode; }
-
-public:
-	enum { Init, Setup };
+    Mode mode() const { return mMode; }
 
 private:
-	int _runMode;
+    Mode mMode;
 };
 
 #endif

@@ -243,7 +243,7 @@ public:
   enum { Portrait = 1, Landscape };
   enum { Flat = 1, Gradient, Pattern };
 
-  KBackground( QWidget *parent, int mode, int desktop = 0 );
+  KBackground(QWidget *parent, Mode mode);
 
   virtual void readSettings( int deskNum = 0 );
   virtual void apply( bool force = FALSE );
@@ -256,7 +256,6 @@ public:
 
 protected slots:
 
-  void slotApply();
   void slotSelectColor1( const QColor &col );
   void slotSelectColor2( const QColor &col );
   void slotBrowse();
@@ -266,7 +265,6 @@ protected slots:
   void slotStyleMode( int );
   void slotSwitchDesk( int );
   void slotRenameDesk();
-  void slotHelp();
   void slotSetup2Color();
   void slotSetupRandom();
   void slotToggleRandom();

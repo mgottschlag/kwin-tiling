@@ -63,8 +63,8 @@ static const int DFLT_OFF	= 60;
 
 //------------------------------------------------------------------
 
-KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
-	: KDisplayModule( parent, mode, desktop )
+KEnergy::KEnergy(QWidget *parent, Mode m)
+	: KDisplayModule(parent, m)
 {
 	changed= false;
 	enabled= false;
@@ -86,10 +86,9 @@ KEnergy::KEnergy( QWidget *parent, int mode, int desktop )
 	apply(true);
 
 	// if we are just initialising we don't need to create setup widget
-	if ( mode == Init )
+	if (mode() == Init)
 		return;
 
-	
 	setName( i18n("Energy").ascii() );
 	
 	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
@@ -322,14 +321,6 @@ void KEnergy::writeSettings()
 }
 
 
-void KEnergy::slotApply()
-{
-	writeSettings();
-	apply();
-}
-
-
-
 void KEnergy::apply( bool force )
 {
 	if ( !changed && !force)
@@ -367,12 +358,6 @@ void KEnergy::apply( bool force )
 #endif
 	
 	changed=false;
-}
-
-
-void KEnergy::slotHelp()
-{
-	kapp->invokeHTMLHelp( "kcmdisplay/index-8.html", "" );
 }
 
 

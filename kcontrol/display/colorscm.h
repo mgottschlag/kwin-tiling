@@ -24,11 +24,11 @@ class KColorScheme : public KDisplayModule
 {
 	Q_OBJECT
 public:
-	KColorScheme( QWidget *parent, int mode, int desktop = 0 );
+	KColorScheme( QWidget *parent, Mode mode);
 	~KColorScheme();
 	
 	virtual void readSettings( int ) {};
-	virtual void apply( bool Force = FALSE);
+	virtual void apply();
 	virtual void applySettings();
 	virtual void loadSettings();
 	virtual void defaultSettings();
@@ -38,12 +38,10 @@ public:
 	Display *kde_display;
 	Atom KDEChangePalette;
 
-                QPalette createPalette();
+    QPalette createPalette();
 	
 protected slots:
-	void slotApply();
 	void slotPreviewScheme( int );
-	void slotHelp();
 	void slotWidgetColor( int );
 	void slotSelectColor( const QColor &col );
 	void slotColorForWidget( int, const QColor &);

@@ -110,9 +110,13 @@ KRenameDeskDlg::KRenameDeskDlg( const QString& t, QWidget *parent )
 
 //----------------------------------------------------------------------------
 
-KBackground::KBackground( QWidget *parent, int mode, int desktop )
-  : KDisplayModule( parent, mode, desktop )
+KBackground::KBackground(QWidget *parent, Mode m)
+  : KDisplayModule(parent, m)
 {
+    // if we are just initialising we don't need to create setup widget
+    if (mode() == Init)
+        return;
+
     interactive = true;
     changed = false;
     maxDesks = 8;
@@ -124,10 +128,6 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     kimgioRegister();
     
     setName( i18n("Desktop").ascii() );
-    
-    // if we are just initialising we don't need to create setup widget
-    if ( mode == Init )
-        return;
     
     if ( KWM::isKWMInitialized() ) {
         maxDesks = KWM::numberOfDesktops();
@@ -377,6 +377,8 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
     connect( cacheSlider, SIGNAL(valueChanged(int)), cacheLCD, SLOT(display(int)) );
 
     showSettings();
+
+    changed = false;
 }
 
 
@@ -693,13 +695,6 @@ void KBackground::showSettings()
   }
 
   setMonitor();
-}
-
-void KBackground::slotApply()
-{
-  writeSettings( deskNum );
-  KGlobal::config()->sync();
-  apply( true );
 }
 
 void KBackground::apply( bool force )
@@ -1236,11 +1231,6 @@ void KBackground::slotRenameDesk()
     }
 }
 
-void KBackground::slotHelp()
-{
-  kapp->invokeHTMLHelp( "kcmdisplay/index-3.html", "" );
-}
-
 void KBackground::loadSettings()
 {
   readSettings(deskNum);
@@ -1249,12 +1239,16 @@ void KBackground::loadSettings()
 
 void KBackground::applySettings()
 {
-  if ( rnddlg )
-    rnddlg->done( QDialog::Accepted );
-  else
-    writeSettings(deskNum);
+    if (changed)
+    {
+        debug("KBackground::applySettings");
+        if ( rnddlg )
+            rnddlg->done( QDialog::Accepted );
+        else
+            writeSettings(deskNum);
 
-  apply(true);
+        apply(true);
+    }
 }
 
 

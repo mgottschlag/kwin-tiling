@@ -92,8 +92,8 @@ void FontUseItem::writeFont()
 
 //------------------------------------------------------------------
 
-KFonts::KFonts( QWidget *parent, int mode, int desktop )
-	: KDisplayModule( parent, mode, desktop )
+KFonts::KFonts(QWidget *parent, Mode m)
+	: KDisplayModule(parent, m)
 {
 	int i;
 	changed = false;
@@ -101,7 +101,7 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	//debug("KFonts::KFonts");
 	
 	// if we are just initialising we don't need to create setup widget
-	if ( mode == Init )
+	if (mode() == Init)
 		return;
 	
 	kde_display = x11Display();
@@ -171,14 +171,14 @@ KFonts::KFonts( QWidget *parent, int mode, int desktop )
 	lbFonts->setCurrentItem( 0 );
 
 	topLayout->activate();
-}
 
+	changed = false;
+}
 
 
 KFonts::~KFonts()
 {
 }
-
 
 
 void KFonts::readSettings( int )
@@ -193,7 +193,7 @@ void KFonts::setDefaults()
 		fontUseList.at( i )->setDefault();
 	fontUseList.at( ci );
 	slotPreviewFont( ci );
-	
+	changed = true;
 }
 
 void KFonts::defaultSettings()
@@ -227,17 +227,9 @@ void KFonts::writeSettings()
 	}
 	
 	fontUseList.at( lbFonts->currentItem() );
-	
 }
 
-void KFonts::slotApply()
-{
-	writeSettings();
-	apply();
-}
-
-
-void KFonts::apply( bool  )
+void KFonts::apply()
 {
 	if ( !changed )
 		return;
@@ -272,8 +264,6 @@ void KFonts::apply( bool  )
 	XSetErrorHandler(defaultHandler);
 	
 	XFree((char *) rootwins);
-	
-	changed=false;
 }
 
 void KFonts::slotSetFont(const QFont &fnt)
@@ -288,13 +278,14 @@ void KFonts::slotPreviewFont( int index )
 			fontUseList.at( index )->spacing() );
 }
 
-void KFonts::slotHelp()
-{
-	kapp->invokeHTMLHelp( "kcmdisplay/index-6.html", "" );
-}
-
 void KFonts::applySettings()
 {
-  writeSettings();
-  apply( true );
+    if (changed)
+    {
+        debug("KFonts::applySettings");
+        writeSettings();
+        apply();
+        changed = false;
+    }
 }
+

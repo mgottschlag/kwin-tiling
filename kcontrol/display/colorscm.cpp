@@ -68,15 +68,15 @@ int dropError(Display *, XErrorEvent *)
 	return 0;
 }
 
-KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
-	: KDisplayModule( parent, mode, desktop )
+KColorScheme::KColorScheme(QWidget *parent, Mode m)
+	: KDisplayModule(parent, m)
 {	
-	changed = FALSE;
+	changed = false;
 	nSysSchemes = 2;
 	useRM = true;
 
 	// if we are just initialising we don't need to create setup widget
-	if ( mode == Init ) {
+	if (mode() == Init) {
 	    return;
 	}
 	
@@ -230,6 +230,8 @@ KColorScheme::KColorScheme( QWidget *parent, int mode, int desktop )
 	topLayout->activate();
 	
 	loadSettings();
+
+	changed = false;
 }
 
 void KColorScheme::loadSettings()
@@ -247,7 +249,7 @@ void KColorScheme::sliderValueChanged( int val )
 {
 	cs->contrast = val;
 	cs->drawSampleWidgets();
-	changed = TRUE;
+	changed = true;
 }
 
 void KColorScheme::slotSave( )
@@ -445,7 +447,7 @@ void KColorScheme::slotSelectColor( const QColor &col )
 		saveBt->setEnabled( FALSE );
 		
 
-	changed=TRUE;
+	changed=true;
 }
 
 void KColorScheme::slotWidgetColor( int indx )
@@ -486,11 +488,13 @@ void KColorScheme::slotWidgetColor( int indx )
 
 	colorButton->setColor( col );
 	colorPushColor = col;	
+    changed = true;
 }
 
 void KColorScheme::slotColorForWidget( int indx, const QColor& col)
 {
-  slotWidgetColor( indx); slotSelectColor( col);
+  slotWidgetColor( indx);
+  slotSelectColor( col);
 }
 
 void KColorScheme::writeNamedColor( KConfigBase *config,
@@ -701,17 +705,8 @@ void KColorScheme::writeSettings()
   }
 }
 
-void KColorScheme::slotApply()
+void KColorScheme::apply()
 {
-  writeSettings();
-  apply();
-}
-
-void KColorScheme::apply( bool  )
-{
-  if ( !changed )
-    return;
-  
   XEvent ev;
   unsigned int i, nrootwins;
   Window dw1, dw2, *rootwins;
@@ -741,8 +736,6 @@ void KColorScheme::apply( bool  )
   XSetErrorHandler(defaultHandler);
   
   XFree((char *) rootwins);
-  
-  changed=FALSE;
 }
 
 void KColorScheme::slotPreviewScheme( int indx )
@@ -759,18 +752,18 @@ void KColorScheme::slotPreviewScheme( int indx )
     saveBt->setEnabled( FALSE );
   } else
     removeBt->setEnabled( TRUE );
-  changed = TRUE;
-}
-
-void KColorScheme::slotHelp()
-{
-  kapp->invokeHTMLHelp( "kcmdisplay/index-5.html", "" );
+  changed = true;
 }
 
 void KColorScheme::applySettings()
 {
-  writeSettings();
-  apply();
+    if (changed)
+    {
+        debug("KColorScheme::applySettings");
+        writeSettings();
+        apply();
+        changed = false;
+    }
 }
 
 
