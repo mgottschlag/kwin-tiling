@@ -56,8 +56,8 @@ KClassicGreeter::KClassicGreeter(
     fixedUser( _fixedEntity ),
     func( _func ),
     ctx( _ctx ),
-    running( false ),
-    suspended( false )
+    exp( -1 ),
+    running( false )
 {
     QGridLayout *grid = new QGridLayout( 0, 0, 10 );
     layoutItem = grid;
@@ -126,8 +126,7 @@ KClassicGreeter::KClassicGreeter(
 // virtual
 KClassicGreeter::~KClassicGreeter()
 {
-    if (running)
-	abort();
+    abort();
     QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
     for (QLayoutItem *itm = it.current(); itm; itm = ++it)
 	 delete itm->widget();
@@ -251,14 +250,11 @@ KClassicGreeter::suspend()
 {
     // assert( running && !cont );
     abort();
-    suspended = true;
 }
 
 void // virtual
 KClassicGreeter::resume()
 {
-    // assert( suspended );
-    suspended = false;
 }
 
 void // virtual
@@ -290,7 +286,6 @@ KClassicGreeter::next()
 void
 KClassicGreeter::abort()
 {
-    // assert( running );
     if (exp >= 0) {
 	exp = -1;
 	handler->gplugReturnText( 0, 0 );
@@ -346,7 +341,7 @@ KClassicGreeter::clear()
     if (loginEdit)
 	loginEdit->clear();
     passwdEdit->erase();
-    if (running && !suspended) {
+    if (running) {
 	if (loginEdit)
 	    loginEdit->setFocus();
 	else

@@ -78,7 +78,7 @@ private:
     Function		func;
     Context		ctx;
     int			exp, has;
-    bool		running, suspended, authTok;
+    bool		running, authTok;
 };
 
 #endif /* KGREET_CLASSIC_H */
