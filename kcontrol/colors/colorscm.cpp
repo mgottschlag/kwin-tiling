@@ -565,26 +565,26 @@ void KColorScheme::readScheme( int index )
 {
     KConfigBase* config;
 
+    // define some KDE2 default colors
+    QColor kde2Blue;
+    if (QPixmap::defaultDepth() > 8)
+      kde2Blue.setRgb(84, 112, 152);
+    else
+      kde2Blue.setRgb(0, 0, 192);
+
+    QColor widget(220, 220, 220);
+
+    QColor button;
+    if (QPixmap::defaultDepth() > 8)
+      button.setRgb(228, 228, 228);
+    else
+      button.setRgb(220, 220, 220);
+
+    QColor link(0, 0, 192);
+    QColor visitedLink(128, 0,128);
+
+    // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
-
-      QColor kde2Blue;
-
-      if (QPixmap::defaultDepth() > 8)
-        kde2Blue.setRgb(84, 112, 152);
-      else
-        kde2Blue.setRgb(0, 0, 192);
-
-      QColor widget(220, 220, 220);
-
-      QColor button;
-      if (QPixmap::defaultDepth() > 8)
-        button.setRgb(228, 228, 228);
-      else
-        button.setRgb(220, 220, 220);
-
-      QColor link(0, 0, 192);
-      QColor visitedLink(128, 0,128);
-
       cs->back        = widget;
       cs->txt         = black;
       cs->select      = kde2Blue;
@@ -598,9 +598,9 @@ void KColorScheme::readScheme( int index )
       cs->aTxt        = white;
       cs->aBlend      = kde2Blue;
       cs->button      = button;
-      cs->buttonTxt   = cs->txt;
-      cs->aTitleBtn   = white;
-      cs->iTitleBtn   = white;
+      cs->buttonTxt   = black;
+      cs->aTitleBtn   = cs->back;
+      cs->iTitleBtn   = cs->back;
       cs->link        = link;
       cs->visitedLink = visitedLink;
 
@@ -619,26 +619,27 @@ void KColorScheme::readScheme( int index )
     config->setGroup("Color Scheme");
     }
 
+    // note: defaults should be the same as the KDE default
     cs->txt = config->readColorEntry( "foreground", &black );
-    cs->back = config->readColorEntry( "background", &lightGray );
-    cs->select = config->readColorEntry( "selectBackground", &darkBlue);
+    cs->back = config->readColorEntry( "background", &widget );
+    cs->select = config->readColorEntry( "selectBackground", &kde2Blue );
     cs->selectTxt = config->readColorEntry( "selectForeground", &white );
     cs->window = config->readColorEntry( "windowBackground", &white );
     cs->windowTxt = config->readColorEntry( "windowForeground", &black );
-    cs->button = config->readColorEntry( "buttonBackground", &cs->back );
-    cs->buttonTxt = config->readColorEntry( "buttonForeground", &cs->txt );
-    cs->link = config->readColorEntry( "linkColor", &blue);
-    cs->visitedLink = config->readColorEntry( "visitedLinkColor", &magenta );
+    cs->button = config->readColorEntry( "buttonBackground", &button );
+    cs->buttonTxt = config->readColorEntry( "buttonForeground", &black );
+    cs->link = config->readColorEntry( "linkColor", &link );
+    cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
 
     if (index == 0)
     config->setGroup( "WM" );
 
-    cs->iaTitle = config->readColorEntry("inactiveBackground", &darkGray);
-    cs->iaTxt = config->readColorEntry("inactiveForeground", &lightGray);
-    cs->iaBlend = config->readColorEntry("inactiveBlend", &lightGray);
-    cs->aTitle = config->readColorEntry("activeBackground", &darkBlue);
+    cs->iaTitle = config->readColorEntry("inactiveBackground", &widget);
+    cs->iaTxt = config->readColorEntry("inactiveForeground", &black);
+    cs->iaBlend = config->readColorEntry("inactiveBlend", &widget);
+    cs->aTitle = config->readColorEntry("activeBackground", &kde2Blue);
     cs->aTxt = config->readColorEntry("activeForeground", &white);
-    cs->aBlend = config->readColorEntry("activeBlend", &black);
+    cs->aBlend = config->readColorEntry("activeBlend", &kde2Blue);
     // hack - this is all going away. For now just set all to button bg
     cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
     cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
