@@ -86,10 +86,8 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		Task* t = (*it);
 
-		// make sure it starts with an upper case char (looks nicer)
-		QString text = t->visibleNameWithState();
-		text = text.left( 1 ).upper() + text.mid( 1, text.length() - 1 );
-		id = insertItem( QIconSet( t->pixmap() ), text,
+		id = insertItem( QIconSet( t->pixmap() ),
+				 t->visibleNameWithState(),
 		                 new TaskRMBMenu( t, manager, this ) );
 		setItemChecked( id, t->isActive() );
 		connectItem( id, t, SLOT( activateRaiseOrIconify() ) );
