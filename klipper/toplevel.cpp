@@ -42,6 +42,7 @@
 #include "version.h"
 
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
@@ -58,6 +59,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 {
     setBackgroundMode( X11ParentRelative );
     clip = kapp->clipboard();
+    updateXTime();
     m_selectedItem = -1;
 
     QSempty = i18n("<empty clipboard>");
@@ -121,19 +123,24 @@ void KlipperWidget::adjustSize()
     resize( m_pixmap.size() );
 }
 
+// DCOP
 QString KlipperWidget::getClipboardContents()
 {
     return clipboardContents();
 }
 
+// DCOP
 void KlipperWidget::setClipboardContents(QString s)
 {
+    updateXTime();
     setClipboard( s, Clipboard | Selection);
     newClipData();
 }
 
+// DCOP
 void KlipperWidget::clearClipboardContents()
 {
+    updateXTime();
     slotClearClipboard();
 }
 
@@ -612,6 +619,7 @@ void KlipperWidget::slotMoveSelectedToTop()
 // clipboard polling for legacy apps
 void KlipperWidget::newClipData()
 {
+    updateXTime();
     bool selectionMode;
     QString clipContents = clipboardContents( &selectionMode );
 //     qDebug("**** newClipData polled: %s", clipContents.latin1());
@@ -620,6 +628,7 @@ void KlipperWidget::newClipData()
 
 void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 {
+    updateXTime();
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
     clip->setSelectionMode( selectionMode );
@@ -785,6 +794,25 @@ bool KlipperWidget::ignoreClipboardChanges() const
     return false;
 }
 
+extern Time qt_x_time;
+
+// QClipboard uses qt_x_time as the timestamp for selection operations.
+// It is updated mainly from user actions, but Klipper polls the clipboard
+// without any user action triggering it, so qt_x_time may be old,
+// which could possibly lead to QClipboard reporting empty clipboard.
+// Therefore, qt_x_time needs to be updated to current X server timestamp.
+void KlipperWidget::updateXTime()
+{
+    static QWidget* w = 0;
+    if ( !w )
+	w = new QWidget;
+    long data = 1;
+    XChangeProperty(qt_xdisplay(), w->winId(), XA_ATOM, XA_ATOM, 32,
+		    PropModeAppend, (unsigned char*) &data, 1);
+    XEvent ev;
+    XWindowEvent( qt_xdisplay(), w->winId(), PropertyChangeMask, &ev );
+    qt_x_time = ev.xproperty.time;
+}
 
 
 Klipper::Klipper( QWidget* parent )
@@ -793,10 +821,6 @@ Klipper::Klipper( QWidget* parent )
 }
 
 #if QT_VERSION < 0x030200
-#ifndef Q_WS_QWS
-extern Time qt_x_time;
-#endif
-
 void Klipper::enterEvent( QEvent* )
 {
 #ifndef Q_WS_QWS

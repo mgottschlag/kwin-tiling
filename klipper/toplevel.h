@@ -73,6 +73,7 @@ protected:
     
     KConfig* config() const { return m_config; }
     bool isApplet() const { return m_config != kapp->config(); }
+    void updateXTime();
 
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
