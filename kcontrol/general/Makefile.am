@@ -14,7 +14,7 @@ libkcm_widgetsettings_la_METASOURCES = AUTO
 noinst_HEADERS = widgetsettings.h
 
 messages: rc.cpp
-	$(XGETTEXT) -kni18n $(libkcm_widgetsettings_la_SOURCES) -o $(podir)/kcmwidgetsettings.pot
+	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmwidgetsettings.pot
 
 widgetsettings_DATA = widgetsettings.desktop
 widgetsettingsdir = $(kde_appsdir)/Settings/LookNFeel

@@ -40,7 +40,7 @@ testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 testsh_LDADD = $(LIB_KDECORE)
 
 messages:
-	$(XGETTEXT) $(ksmserver_SOURCES) -o $(podir)/ksmserver.pot
+	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot
 
 dummy.cpp:
 	echo > dummy.cpp

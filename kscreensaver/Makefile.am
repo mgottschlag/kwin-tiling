@@ -17,9 +17,9 @@ kblankscrn_kss_LDADD = $(LIB_KDEUI) -lkscreensaver -lm
 
 METASOURCES = blankscrn.moc
 
-messages:
-	$(EXTRACTRC) */*.ui > rc.cpp
-	$(XGETTEXT) rc.cpp random.cpp */*.cpp */*.h -o $(podir)/klock.pot
+#messages:
+#	$(EXTRACTRC) */*.ui > rc.cpp
+#	$(XGETTEXT) rc.cpp random.cpp */*.cpp */*.h -o $(podir)/klock.pot
 
 ########## Meta objects ##########
 
