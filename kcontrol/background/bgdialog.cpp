@@ -75,18 +75,21 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
       m_radioSlideShow->hide();
    }
 
+   // preview monitor
    m_monitorImage->setPixmap( UserIcon( "monitor" ));
    m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
    m_pMonitor = new BGMonitor(m_monitorImage, "preview monitor");
    m_pMonitor->setGeometry(23, 14, 151, 115);
    connect(m_pMonitor, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
 
-   m_urlWallpaper->comboBox()->setSizePolicy(
-     QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-
+   // desktop
    connect(m_comboDesktop, SIGNAL(activated(int)),
            SLOT(slotSelectDesk(int)));
 
+   // background image settings
+   m_urlWallpaper->setFilter(KImageIO::pattern());
+   m_urlWallpaper->comboBox()->setSizePolicy(
+      QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
    connect(m_buttonGroupBackground, SIGNAL(clicked(int)),
            SLOT(slotWallpaperTypeChanged(int)));
    connect(m_urlWallpaper->comboBox(), SIGNAL(activated(int)),
@@ -107,13 +110,20 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_comboPattern, SIGNAL(activated(int)),
            SLOT(slotPattern(int)));
 
+   // blend
+   connect(m_comboBlend, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
+   connect(m_sliderBlend, SIGNAL(valueChanged(int)),
+           SLOT(slotBlendBalance(int)));
+   connect(m_cbBlendReverse, SIGNAL(toggled(bool)),
+           SLOT(slotBlendReverse(bool)));
+
+   // advanced options
    connect(m_buttonAdvanced, SIGNAL(clicked()),
            SLOT(slotAdvanced()));
 
+   // renderers
    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max + 1 );
    m_Renderer.setAutoDelete(true);
-
-   m_urlWallpaper->setFilter(KImageIO::pattern());
 
    // set up the common desktop renderer
    m_Renderer.insert(0, new KBackgroundRenderer(0, _config));
@@ -126,27 +136,17 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
       connect(m_Renderer[i + 1], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
    }
 
+   // Random or InOrder
    m_slideShowRandom = m_Renderer[m_eDesk]->multiWallpaperMode();
+   if (m_slideShowRandom == KBackgroundSettings::NoMultiRandom)
+      m_slideShowRandom = KBackgroundSettings::Random;
+   if (m_slideShowRandom == KBackgroundSettings::NoMulti)
+      m_slideShowRandom = KBackgroundSettings::InOrder;
+
+   // Wallpaper Position
    m_wallpaperPos = m_Renderer[m_eDesk]->wallpaperMode();
    if (m_wallpaperPos == KBackgroundSettings::NoWallpaper)
       m_wallpaperPos = KBackgroundSettings::Centred; // Default
-
-   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
-   m_comboBlend->insertItem(i18n("No Blending"));
-   m_comboBlend->insertItem(i18n("Horizontal"));
-   m_comboBlend->insertItem(i18n("Vertical"));
-   m_comboBlend->insertItem(i18n("Pyramid"));
-   m_comboBlend->insertItem(i18n("Pipecross"));
-   m_comboBlend->insertItem(i18n("Elliptic"));
-   m_comboBlend->insertItem(i18n("Intensity"));
-   m_comboBlend->insertItem(i18n("Saturation"));
-   m_comboBlend->insertItem(i18n("Contrast"));
-   m_comboBlend->insertItem(i18n("Hue Shift"));
-
-   connect( m_comboBlend, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
-   // connect( m_comboBlend->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
-   connect( m_sliderBlend, SIGNAL(valueChanged(int)), SLOT(slotBlendBalance(int)));
-   connect( m_cbBlendReverse, SIGNAL(toggled(bool)), SLOT(slotBlendReverse(bool)));
 
    initUI();
    updateUI();
@@ -164,7 +164,6 @@ BGDialog::~BGDialog()
 void BGDialog::makeReadOnly()
 {
     m_pMonitor->setEnabled( false );
-
     m_comboDesktop->setEnabled( false );
     m_colorPrimary->setEnabled( false );
     m_colorSecondary->setEnabled( false );
@@ -184,21 +183,33 @@ void BGDialog::load()
 {
    m_pGlobals->readSettings();
    m_eDesk = m_pGlobals->commonBackground() ? 0 : m_Desk;
-   m_Renderer[m_eDesk]->load(m_eDesk);
 
+   // load the common desktop renderer
+   m_Renderer[0]->load(0);
+
+   // load all the other desktop renderers
+   for (int i = 0; i < m_Max; ++i)
+      m_Renderer[i + 1]->load(i);
+   m_copyAllDesktops = true;
+
+   // Random or InOrder
    m_slideShowRandom = m_Renderer[m_eDesk]->multiWallpaperMode();
+   if (m_slideShowRandom == KBackgroundSettings::NoMultiRandom)
+      m_slideShowRandom = KBackgroundSettings::Random;
+   if (m_slideShowRandom == KBackgroundSettings::NoMulti)
+      m_slideShowRandom = KBackgroundSettings::InOrder;
+
+   // Wallpaper Position
    m_wallpaperPos = m_Renderer[m_eDesk]->wallpaperMode();
    if (m_wallpaperPos == KBackgroundSettings::NoWallpaper)
       m_wallpaperPos = KBackgroundSettings::Centred; // Default
 
    updateUI();
-   m_copyAllDesktops = true;
    emit changed(false);
 }
 
 void BGDialog::save()
 {
-//   kdDebug() << "Saving stuff..." << endl;
    m_pGlobals->writeSettings();
 
    // write out the common desktop or the "Desktop 1" settings
@@ -237,7 +248,13 @@ void BGDialog::defaults()
    r->setColorB(_defColorB);
    r->setWallpaperMode(_defWallpaperMode);
    r->setMultiWallpaperMode(_defMultiMode);
+
    m_slideShowRandom = _defMultiMode;
+   if (m_slideShowRandom == KBackgroundSettings::NoMultiRandom)
+      m_slideShowRandom = KBackgroundSettings::Random;
+   if (m_slideShowRandom == KBackgroundSettings::NoMulti)
+      m_slideShowRandom = KBackgroundSettings::InOrder;
+
    r->setBlendMode(_defBlendMode);
    r->setBlendBalance(_defBlendBalance);
    r->setReverseBlending(_defReverseBlending);
@@ -338,13 +355,24 @@ void BGDialog::initUI()
    m_comboWallpaperPos->insertItem(i18n("Tiled Maxpect"));
    m_comboWallpaperPos->insertItem(i18n("Scaled"));
    m_comboWallpaperPos->insertItem(i18n("Centered Auto Fit"));
+
+   // Blend modes: make sure these match with kdesktop/bgrender.cc !!
+   m_comboBlend->insertItem(i18n("No Blending"));
+   m_comboBlend->insertItem(i18n("Horizontal"));
+   m_comboBlend->insertItem(i18n("Vertical"));
+   m_comboBlend->insertItem(i18n("Pyramid"));
+   m_comboBlend->insertItem(i18n("Pipecross"));
+   m_comboBlend->insertItem(i18n("Elliptic"));
+   m_comboBlend->insertItem(i18n("Intensity"));
+   m_comboBlend->insertItem(i18n("Saturation"));
+   m_comboBlend->insertItem(i18n("Contrast"));
+   m_comboBlend->insertItem(i18n("Hue Shift"));
 }
 
 void BGDialog::setWallpaper(const QString &s)
 {
    KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
    comboWallpaper->blockSignals(true);
-   setBlendingEnabled(true);
 
    if (m_Wallpaper.find(s) == m_Wallpaper.end())
    {
@@ -451,15 +479,7 @@ void BGDialog::updateUI()
     m_sliderBlend->blockSignals(true);
 
     m_comboBlend->setCurrentItem(mode);
-    bool b = !(mode == KBackgroundSettings::NoBlending);
-    m_sliderBlend->setEnabled( b );
-    m_lblBlendBalance->setEnabled( b );
-
-    b = !(mode < KBackgroundSettings::IntensityBlending);
-    m_cbBlendReverse->setEnabled(b);
-
     m_cbBlendReverse->setChecked(r->reverseBlending());
-
     m_sliderBlend->setValue( r->blendBalance() / 10 );
 
     m_comboBlend->blockSignals(false);
@@ -475,8 +495,6 @@ void BGDialog::updateUI()
 
 void BGDialog::slotPreviewDone(int desk_done)
 {
-//   kdDebug() << "Preview for desktop " << desk_done << " done" << endl;
-
    if (!m_pGlobals->commonBackground() &&
        m_eDesk != desk_done + 1)
       return;
@@ -501,7 +519,10 @@ void BGDialog::slotImageDropped(const QString &uri)
 
    m_comboWallpaperPos->setEnabled(true);
    m_lblWallpaperPos->setEnabled(true);
-   r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+   if (m_slideShowRandom == KBackgroundSettings::InOrder)
+      r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+   else
+      r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
    r->setWallpaperMode(m_wallpaperPos);
 
    setWallpaper(uri);
@@ -517,8 +538,9 @@ void BGDialog::slotImageDropped(const QString &uri)
 void BGDialog::slotWallpaperTypeChanged(int i)
 {
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
-
    r->stop();
+
+   // No picture
    if (i == m_buttonGroupBackground->id(m_radioNoPicture))  //None
    {
       m_urlWallpaper->setEnabled(false);
@@ -526,9 +548,16 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       m_comboWallpaperPos->setEnabled(false);
       m_lblWallpaperPos->setEnabled(false);
       r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
-      r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+
+      if (m_slideShowRandom == KBackgroundSettings::InOrder)
+         r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+      else
+         r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
+
       setBlendingEnabled(false);
    }
+
+   // Slide show
    else if (i == m_buttonGroupBackground->id(m_radioSlideShow))
    {
       m_urlWallpaper->setEnabled(false);
@@ -540,22 +569,34 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       m_comboWallpaperPos->blockSignals(false);
 
       if (r->wallpaperList().count() == 0)
-          r->setWallpaperMode( KBackgroundSettings::NoWallpaper );
+         r->setWallpaperMode( KBackgroundSettings::NoWallpaper );
       else
-          r->setWallpaperMode(m_wallpaperPos);
-      r->setMultiWallpaperMode(m_slideShowRandom); 
+         r->setWallpaperMode(m_wallpaperPos);
+
+      r->setMultiWallpaperMode(m_slideShowRandom);
       setWallpaper(r->wallpaper());
       setBlendingEnabled(true);
    }
+
+   // 1 Picture
    else if (i == m_buttonGroupBackground->id(m_radioPicture))
    {
       m_urlWallpaper->setEnabled(true);
       m_buttonSetupWallpapers->setEnabled(false);
-      m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
+      m_comboWallpaperPos->setEnabled(true);
+      setBlendingEnabled(true);
+
+      if (m_slideShowRandom == KBackgroundSettings::InOrder)
+         r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+      else
+         r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
+
+      r->setWallpaperMode(m_wallpaperPos);
       m_comboWallpaperPos->blockSignals(true);
       m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
-      m_comboWallpaperPos->blockSignals(false);
+      m_comboWallpaperPos->blockSignals(true);
+
       int j = m_urlWallpaper->comboBox()->currentItem();
       QString uri;
       for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
@@ -568,13 +609,9 @@ void BGDialog::slotWallpaperTypeChanged(int i)
             break;
          }
       }
-      r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
-      r->setWallpaperMode(m_wallpaperPos);
       r->setWallpaper(uri);
       m_urlWallpaper->fileDialog()->setURL(uri);
-      setBlendingEnabled(true);
    }
-   m_buttonGroupBackground->setButton(i);
 
    r->start(true);
    m_copyAllDesktops = true;
@@ -621,7 +658,6 @@ void BGDialog::slotWallpaperPos(int mode)
 void BGDialog::slotSetupMulti()
 {
     KBackgroundRenderer *r = m_Renderer[m_eDesk];
-    r->setMultiWallpaperMode(m_slideShowRandom);
 
     BGMultiWallpaperDialog dlg(r, topLevelWidget());
     if (dlg.exec() == QDialog::Accepted) {
@@ -633,7 +669,6 @@ void BGDialog::slotSetupMulti()
         emit changed(true);
     }
 }
-
 
 void BGDialog::slotPrimaryColor(const QColor &color)
 {
