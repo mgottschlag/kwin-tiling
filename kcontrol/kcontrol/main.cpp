@@ -88,6 +88,7 @@ KControlApp::~KControlApp()
 
 int main(int argc, char *argv[])
 {
+  KLocale::setMainCatalogue("kcontrol");
   KAboutData aboutKControl( "kcontrol", I18N_NOOP("KDE Control Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2002, The KDE Control Center Developers"));
