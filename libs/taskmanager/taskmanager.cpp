@@ -383,7 +383,7 @@ bool Task::isOnTop() const
     for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
          it != kwin_module->stackingOrder().end(); --it ) {
 
-        if ( (*it) == _win )
+        if ( (*it) == _win || hasTransient( *it ))
             return true;
 
         Task t(*it, 0);
