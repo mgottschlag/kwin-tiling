@@ -272,7 +272,7 @@ void KLocaleConfigMoney::slotTranslate()
   QComboBox *wc;
   for(QObjectListIt li(list) ; (wc = (QComboBox *)li.current()) != 0; ++li)
   {
-    wc->changeItem(m_locale->translate("Parens around"), 0);
+    wc->changeItem(m_locale->translate("Parentheses around"), 0);
     wc->changeItem(m_locale->translate("Before quantity money"), 1);
     wc->changeItem(m_locale->translate("After quantity money"), 2);
     wc->changeItem(m_locale->translate("Before money"), 3);
@@ -284,7 +284,7 @@ void KLocaleConfigMoney::slotTranslate()
   str = m_locale->translate( "Here you can enter your usual currency "
 			     "symbol, e.g. $ or DM."
 			     "<p>Please note that the Euro symbol may not be "
-			     "avaim_lable on your system, depending on the "
+			     "available on your system, depending on the "
 			     "distribution you use." );
   QWhatsThis::add( m_labMonCurSym, str );
   QWhatsThis::add( m_edMonCurSym, str );
