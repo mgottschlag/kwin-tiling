@@ -54,6 +54,9 @@ signals:
   void translate();
   void resample();
   void countryChanged();
+  void moneyChanged();
+  void numberChanged();
+  void timeChanged();
   void chsetChanged();
 
 private:

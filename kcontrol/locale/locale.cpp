@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
  * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
- * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -155,7 +155,7 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
         if ((*it).isNull())
         {
 	  combo->insertSeparator();
-	  combo->insertOther();
+	  combo->insertSubmenu(locale->translate("Other"), QString::fromLatin1("other"));
           continue;
         }
 	KSimpleConfig entry(*it);
@@ -324,9 +324,10 @@ void KLocaleConfig::changedNumber(int i)
 {
   changedFlag = TRUE;
 
-  locale->setCountry(comboMoney->tag(i),
+  locale->setCountry(comboNumber->tag(i),
                      QString::null,
                      QString::null);
+  emit numberChanged();
   emit resample();
 }
 
@@ -335,8 +336,9 @@ void KLocaleConfig::changedMoney(int i)
   changedFlag = TRUE;
 
   locale->setCountry(QString::null,
-                     comboDate->tag(i),
+                     comboMoney->tag(i),
                      QString::null);
+  emit moneyChanged();
   emit resample();
 }
 
@@ -347,6 +349,7 @@ void KLocaleConfig::changedTime(int i)
   locale->setCountry(QString::null,
                       QString::null,
                       comboDate->tag(i));
+  emit timeChanged();
   emit resample();
 }
 

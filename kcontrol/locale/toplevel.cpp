@@ -61,12 +61,15 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   localetime = new KLocaleConfigTime(this);
   tab->addTab( localetime, QString::null);
 
-  connect(localemain, SIGNAL(resample()),       SLOT(update()));
-  connect(localenum,  SIGNAL(resample()),       SLOT(update()));
-  connect(localemon,  SIGNAL(resample()),       SLOT(update()));
-  connect(localetime, SIGNAL(resample()),       SLOT(update()));
-  connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
-  connect(localemain, SIGNAL(chsetChanged()),   SLOT(newChset()) );
+  connect(localemain, SIGNAL(resample()),                   SLOT(update()));
+  connect(localenum,  SIGNAL(resample()),                   SLOT(update()));
+  connect(localemon,  SIGNAL(resample()),                   SLOT(update()));
+  connect(localetime, SIGNAL(resample()),                   SLOT(update()));
+  connect(localemain, SIGNAL(countryChanged()),             SLOT(reset()) );
+  connect(localemain, SIGNAL(moneyChanged()),   localemon,  SLOT(reset()) );
+  connect(localemain, SIGNAL(numberChanged()),  localenum,  SLOT(reset()) );
+  connect(localemain, SIGNAL(timeChanged()),    localetime, SLOT(reset()) );
+  connect(localemain, SIGNAL(chsetChanged()),               SLOT(newChset()) );
 
   // Examples
   gbox = new QGroupBox(this);

@@ -1,7 +1,7 @@
 /*
  * klangcombo.cpp - A combobox to select a language
  *
- * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -29,17 +29,11 @@
 #include <qpopupmenu.h>
 #include <qmenudata.h>
 
-#include <kiconloader.h>
-#include <kapp.h>
-#include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "klocaleadv.h"
 #include "klangcombo.h"
 #include "klangcombo.moc"
-
-extern KLocaleAdvanced *locale;
 
 KLanguageCombo::~KLanguageCombo ()
 {
@@ -202,11 +196,11 @@ void KLanguageCombo::insertSeparator(int index)
   tags->insert(tags->at(index), QString::null);
 }
 
-void KLanguageCombo::insertOther()
+void KLanguageCombo::insertSubmenu(const QString &text, const QString &tag)
 {
   QPopupMenu *p = new QPopupMenu;
-  popup->insertItem(locale->translate("Other"), p, count());
-  tags->append(QString::fromLatin1("other"));
+  popup->insertItem(text, p, count());
+  tags->append(tag);
   connect( p, SIGNAL(activated(int)),
                         SLOT(internalActivate(int)) );
   connect( p, SIGNAL(highlighted(int)),
@@ -234,7 +228,11 @@ QString KLanguageCombo::currentTag() const
 
 QString KLanguageCombo::tag(int i) const
 {
-  if (i < 0 || i >= count()) return QString::null;
+  if (i < 0 || i >= count())
+  {
+    debug("KLanguageCombo::tag(), unknown tag %d", i);
+    return QString::null;
+  }
   return *tags->at(i);
 }
 
