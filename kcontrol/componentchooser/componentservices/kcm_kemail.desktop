@@ -1,3 +1,3 @@
 Name=Email Client
-Comment=This service allows you the configuration of your default email client. All KDE applications, which need access to an email client application should honour this setting
+Comment=This service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.
 configurationType=internal_email
