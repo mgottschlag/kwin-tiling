@@ -343,3 +343,4 @@ extern "C"
     return new KEmailConfig(parent, name);
   };
 }
+#include "email.moc"

@@ -55,3 +55,4 @@ void KODBCConfig::defaults()
 }
 
 #endif
+#include "KODBCConfig.moc"

@@ -101,3 +101,4 @@ void KDrKonqiGeneral::changed()
   emit KCModule::changed(true);
 }
 
+#include "general.moc"

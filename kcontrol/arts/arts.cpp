@@ -274,3 +274,4 @@ extern "C"
 	}
 }
 
+#include "arts.moc"

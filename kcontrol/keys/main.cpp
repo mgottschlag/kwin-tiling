@@ -104,3 +104,4 @@ extern "C"
 }
 
 
+#include "main.moc"

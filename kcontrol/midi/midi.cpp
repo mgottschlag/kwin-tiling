@@ -143,3 +143,4 @@ extern "C"
     return new KMidConfig(parent, name);
   };
 }
+#include "midi.moc"

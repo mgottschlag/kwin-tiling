@@ -224,3 +224,4 @@ void KDrKonqiCustomize::changed()
   emit KCModule::changed(true);
 }
 
+#include "customize.moc"

@@ -100,3 +100,4 @@ extern "C"
     return new KSampleConfig(parent, name);
   };
 }
+#include "sample.moc"

@@ -332,3 +332,4 @@ void KMemoryWidget::update()
 }
 
 #endif
+#include "memory.moc"

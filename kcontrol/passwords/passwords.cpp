@@ -215,3 +215,4 @@ QString KPasswordConfig::quickHelp()
        " configured here.");
 }
 
+#include "passwords.moc"

@@ -97,3 +97,4 @@ extern "C"
     return new KDrKonqiMain(parent, name);
   }
 }
+#include "main.moc"

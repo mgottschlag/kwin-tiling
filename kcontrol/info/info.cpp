@@ -438,3 +438,4 @@ void KInfoListWidget::resizeEvent( QResizeEvent *re )
 **  End of: Include system-specific code				 **
 ***************************************************************************
 */
+#include "info.moc"

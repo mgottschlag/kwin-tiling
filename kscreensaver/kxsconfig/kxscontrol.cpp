@@ -102,3 +102,4 @@ void KXSDropListControl::slotActivated(int indx)
   emit changed();
 }
 
+#include "kxscontrol.moc"

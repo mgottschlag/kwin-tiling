@@ -399,3 +399,4 @@ QListViewItem *InternetKeywordsOptions::displaySearchProvider(const KURISearchFi
     return item;
 }
 
+#include "ikwsopts.moc"

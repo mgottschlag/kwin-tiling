@@ -70,3 +70,4 @@ void FilterOptions::moduleChanged(bool state) {
     emit changed(state);
 }
 
+#include "filteropts.moc"
