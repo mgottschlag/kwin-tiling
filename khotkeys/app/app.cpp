@@ -90,7 +90,7 @@ using namespace KHotKeys;
 static int khotkeys_screen_number = 0;
 
 extern "C"
-int kdemain( int argc, char** argv )
+int KDE_EXPORT kdemain( int argc, char** argv )
     {
         {
 	// multiheaded hotkeys
