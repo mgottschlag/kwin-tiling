@@ -262,4 +262,10 @@ ReverseBlending7=ReverseBlending!
 ConfigFile=kdesktoprc
 ConfigGroup=Background Common
 ConfigInstallCmd=oneDesktopMode
-
+#
+[Icons]
+ConfigAppDir=icons
+ConfigGroup=Icons
+ConfigAbsolutePaths=true
+ConfigFile=kdeglobals
+Icons=Theme

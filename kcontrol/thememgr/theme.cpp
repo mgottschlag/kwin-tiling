@@ -99,18 +99,12 @@ void Theme::loadSettings(void)
   cfg->setGroup("Install");
   mRestartCmd = cfg->readEntry("restart-cmd",
 			       "kill `pidof %s`; %s >/dev/null 2>&1 &");
-  mInstIcons = cfg->readNumEntry("icons");
 }
 
 
 //-----------------------------------------------------------------------------
 void Theme::saveSettings(void)
 {
-  KConfig* cfg = kapp->config();
-
-  cfg->setGroup("Install");
-  cfg->writeEntry("icons", mInstIcons);
-  cfg->sync();
 }
 
 
@@ -179,7 +173,7 @@ void Theme::cleanupWorkDir(void)
 
 
 //-----------------------------------------------------------------------------
-bool Theme::load(const QString aPath)
+bool Theme::load(const QString aPath, QString &error)
 {
   QString cmd, str;
   QFileInfo finfo(aPath);
@@ -200,28 +194,27 @@ bool Theme::load(const QString aPath)
     if (i >= 0) str = workDir() + aPath.mid(i, 1024);
     else str = workDir();
 
-    cmd.sprintf("cp -r \"%s\" \"%s\"", aPath.ascii(),
-		str.ascii());
+    cmd = QString("cp -r \"%1\" \"%2\"").arg(aPath).arg(str);
     kdDebug() << cmd << endl;
-    rc = system(cmd.ascii());
+    rc = system(QFile::encodeName(cmd).data());
     if (rc)
     {
-      kdDebug() << "Failed to copy theme contents from " << aPath << " into " << str << endl;
+      error = i18n("Theme contents could not be copied from\n%1\ninto\n%2")
+		.arg(aPath).arg(str);      
       return false;
     }
   }
   else
   {
     // The theme given is a tar package. Unpack theme package.
-    cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -", 
-		workDir().ascii(), aPath.ascii());
+    cmd = QString("cd \"%1\"; gzip -c -d \"%2\" | tar xf -")
+             .arg(workDir()).arg(aPath);
     kdDebug() << cmd << endl;
-    rc = system(cmd.ascii());
+    rc = system(QFile::encodeName(cmd).data());
     if (rc)
     {
-      warning(i18n("Failed to unpack %s with\n%s").ascii(),
-	      aPath.ascii(),
-	      cmd.ascii());
+      error = i18n("Theme contents could not be extracted from\n%1\ninto\n%1")
+                .arg(aPath).arg(workDir());
       return false;
     }
   }
@@ -245,7 +238,7 @@ bool Theme::load(const QString aPath)
   mThemercFile = dir[0];
   if (mThemercFile.isEmpty())
   {
-    warning(i18n("Theme contains no .themerc file").ascii());
+    error = i18n("Theme does not contain a .themerc file.");
     return false;
   }
   mThemercFile = mThemePath+mThemercFile;
@@ -709,172 +702,6 @@ bool Theme::backupFile(const QString fname) const
   return (rc==0);
 }
 
-
-//-----------------------------------------------------------------------------
-int Theme::installIcons(void)
-{
-#if 0
-  QString key, value, mapval, fname, fpath, destName, icon, miniIcon;
-  QString iconDir, miniIconDir, cmd, destNameMini, localShareDir;
-  QStrList extraIcons;
-  QFileInfo finfo;
-  int i, installed = 0;
-  const char* groupName = "Icons";
-  const char* groupNameExtra = "Extra Icons";
-  bool wantRestart = false;
-
-  kdDebug() << "*** beginning with " << groupName << endl;
-
-  if (!instOverwrite)
-  {
-    uninstallFiles(groupName);
-    if (mInstIcons > 0) wantRestart = true;
-    mInstIcons = 0;
-  }
-  else readInstFileList(groupName);
-
-  setGroup(groupName);
-  mMappings->setGroup(groupName);
-
-  iconDir = kapp->localkdedir() + "/share/icons/";
-  miniIconDir = kapp->localkdedir() + "/share/icons/mini/";
-  localShareDir = kapp->localkdedir() + "/share/";
-
-  // Process all mapping entries for the group
-  QMap<QString, QString> aMap = entryMap(groupName);
-  QMap<QString, QString>::Iterator aIt(aMap.begin());
-
-  for (; aIt != aMap.end(); ++aIt) {
-    key = aIt.key();
-    if (stricmp(key.left(6).ascii(),"Config")==0)
-    {
-      warning(i18n("Icon key name %s can not be used").ascii(), key.ascii());
-      continue;
-    }
-    value = *aIt;
-    i = value.find(':');
-    if (i > 0)
-    {
-      icon = value.left(i);
-      miniIcon = value.mid(i+1, 1024);
-    }
-    else
-    {
-      icon = value;
-      miniIcon = "mini-" + icon;
-      iconToMiniIcon(mThemePath + icon, mThemePath + miniIcon);
-    }
-
-    // test if there is a 1:1 mapping in the mappings file
-    destName = mMappings->readEntry(key,QString::null);
-    destNameMini = QString::null;
-
-    // if not we have to search for the proper kdelnk file
-    // and extract the icon name from there.
-    if (destName.isEmpty())
-    {
-      fname = "/" + key + ".kdelnk";
-      fpath = locate("apps", fname);
-      if (fpath.isNull())
-	fpath = locate("mime", fname);
-      
-      if (!fpath.isEmpty()) {
-	KDesktopFile cfg(fpath, true);
-	destName = cfg.readIcon();
-      }
-    }
-    else
-    {
-      // test if the 1:1 mapping contains different names for icon
-      // and mini icon
-      i = destName.find(':');
-      if (i >= 0)
-      {
-	kdDebug() << "mapping " << destName << " to..." << endl;
-	destNameMini = destName.mid(i+1, 1024);
-	destName.truncate(i);
-	kdDebug() << destName << " " << destNameMini << endl;
-      }
-    }
-
-    if (destNameMini.isEmpty()) destNameMini = destName;
-
-    // If we have still not found a destination icon name we will install
-    // the icons with their current name
-    if (destName.isEmpty())
-    {
-      if (icon.isEmpty()) continue;
-      warning(i18n("No proper kdelnk file found for %s.\n"
-		   "Installing icon(s) as %s").ascii(),
-	      key.ascii(), icon.ascii());
-      destName = icon;
-    }
-
-    // install icons
-    if (destName.find('/')>=0) 
-    {
-      value = localShareDir + destName;
-    }
-    else value = iconDir + destName;
-    if (installFile(icon, value)) installed++;
-
-    if (destNameMini != "-")
-    {
-      if (destNameMini.find('/')>=0) 
-      {
-	value = localShareDir + destNameMini;
-      }
-      else value = miniIconDir + destNameMini;
-      if (installFile(miniIcon, value)) installed++;
-    }
-  }
-
-  // Look if there is anything to do after installation
-  value = mMappings->readEntry("ConfigActivateCmd");
-  if (!value.isEmpty() && (installed>0 || wantRestart) && 
-      mCmdList.find(value.ascii()) < 0) mCmdList.append(value.ascii());
-
-  writeInstFileList(groupName);
-
-  // Handle extra icons
-  setGroup(groupNameExtra);
-  mMappings->setGroup(groupNameExtra);
-
-  aMap = entryMap(groupNameExtra);
-  for (aIt = aMap.begin(); aIt != aMap.end(); ++aIt) {
-    key = aIt.key();
-    value = *aIt;
-    i = value.find(':');
-    if (i > 0)
-    {
-      icon = value.left(i);
-      miniIcon = value.mid(i+1, 1024);
-    }
-    else
-    {
-      icon = value;
-      miniIcon = "mini-" + icon;
-      iconToMiniIcon(mThemePath + icon, mThemePath + miniIcon);
-    }
-
-    // Install icons
-    value = iconDir + icon;
-    if (installFile(icon, value)) installed++;
-
-    value = miniIconDir + icon;
-    if (installFile(miniIcon, value)) installed++;
-  }
-
-  writeInstFileList(groupName);
-  kdDebug() << "*** done with " << groupName << " (" << installed << " icons installed)" << endl;
-
-  mInstIcons += installed;
-  return installed;
-#endif
-  return 0;
-}
-
-
 //-----------------------------------------------------------------------------
 void Theme::addInstFile(const char* aFileName)
 {
@@ -955,6 +782,7 @@ void Theme::install(void)
 
   if (instWallpapers) installGroup("Display");
   if (instColors) installGroup("Colors");
+  if (instIcons) installGroup("Icons");
 
   kdDebug() << "*** executing command list" << endl;
 
@@ -1080,17 +908,14 @@ void Theme::clear(void)
 //-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
-  kdDebug() << "hasGroup: name = " << aName << " aNotEmpty = " << aNotEmpty << endl;
-// Endless recursion??
-//  bool found(hasGroup(aName));
-  bool found = false;
+  bool found = KSimpleConfig::hasGroup(aName);
 
   if (!aNotEmpty)
     return found;
 
   QMap<QString, QString> aMap = entryMap(aName);
   if (found && aNotEmpty) 
-    found = aMap.isEmpty();
+    found = !aMap.isEmpty();
 
   return found;
 }

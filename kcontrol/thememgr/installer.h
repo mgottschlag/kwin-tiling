@@ -46,9 +46,9 @@ public:
   virtual int findItem(const QString text) const;
 
 protected slots:
-  virtual void slotImport();
-  virtual void slotExport();
-  virtual void slotNew();
+  virtual void slotAdd();
+  virtual void slotSaveAs();
+  virtual void slotCreate();
   virtual void slotRemove();
   virtual void slotThemeChanged();
   virtual void slotSetTheme(int);
@@ -56,12 +56,14 @@ protected slots:
 protected:
   /** Scan Themes directory for available theme packages */
   virtual void readThemesList(void);
+  /** add a theme to the list, returns the list index */
+  int addTheme(const QString &path);
 
 private:
   bool mGui;
   QGridLayout *mGrid;
   QListBox *mThemesList;
-  QPushButton *mBtnNew, *mBtnExport, *mBtnImport, *mBtnRemove;
+  QPushButton *mBtnCreate, *mBtnSaveAs, *mBtnAdd, *mBtnRemove;
   QMultiLineEdit *mText;
   QLabel *mPreview;
   bool mEditing;

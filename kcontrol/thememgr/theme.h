@@ -41,7 +41,7 @@ public:
 
   /** Load theme and prepare it for installation or modification. Returns
    true on success. */
-  virtual bool load(const QString path);
+  virtual bool load(const QString path, QString &error);
 
   /** Apply current theme to the users Kde configuration. This updates several
       config files and executes the initialization programs. */
@@ -83,9 +83,9 @@ public:
   int contrast;
 
   /** Theme packet installation options */
-  bool instPanel, instIcons, instColors, instWindowBorder;
-  bool instWindowTitlebar, instWallpapers, instSounds;
-  bool instWindowButtonLayout, instWindowGimmick, instKfm;
+  bool instColors;
+  bool instWallpapers;  
+  bool instIcons;
   bool instOverwrite;
 
   /** Clear config contents */
@@ -142,9 +142,6 @@ protected:
 
   /** Install theme group. Returns number of installed files. */
   virtual int installGroup(const char* groupName);
-
-  /** Install icons from Icon group. Returns number of installed icons. */
-  virtual int installIcons(void);
 
   /** Apply color scheme change to all open windows. Taken from
       kdisplay / colorscm.cpp */

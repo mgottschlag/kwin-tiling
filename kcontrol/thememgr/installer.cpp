@@ -22,14 +22,13 @@
  */
 #include <qdir.h>
 #include <qstrlist.h>
-#include <qbttngrp.h>
+#include <qbuttongroup.h>
 #include <qframe.h>
-#include <qgrpbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbt.h>
-#include <qradiobt.h>
-#include <qchkbox.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qfileinfo.h>
 #include <qlistbox.h>
 #include <qmultilinedit.h>
@@ -48,9 +47,23 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kstddirs.h>
+#include <kmessagebox.h>
+#include <kio/netaccess.h>
 
 static bool sSettingTheme = false;
 
+static QString findThemePath(const QString &name)
+{
+    if (name.isEmpty()) 
+       return name;
+
+    QString path = locate("themes", name);
+    if (path.isEmpty())
+    {
+       path = locate("themes", name+".tar.gz");
+    }
+    return path;
+}
 
 //-----------------------------------------------------------------------------
 Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
@@ -68,7 +81,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
 
   connect(theme, SIGNAL(changed()), SLOT(slotThemeChanged()));
 
-  mGrid = new QGridLayout(this, 3, 2, 6, 6);
+  mGrid = new QGridLayout(this, 2, 3, 6, 6);
   mThemesList = new QListBox(this);
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
   mGrid->addMultiCellWidget(mThemesList, 0, 1, 0, 0);
@@ -78,20 +91,23 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   mPreview->setMinimumSize(QSize(100,100));
   mGrid->addWidget(mPreview, 0, 1);
 
-  bbox = new KButtonBox(this, KButtonBox::Horizontal, 0, 6);
-  mGrid->addMultiCellWidget(bbox, 2, 2, 0, 1);
+  bbox = new KButtonBox(this, KButtonBox::Vertical, 0, 6);
+  mGrid->addMultiCellWidget(bbox, 0, 1, 2, 2);
 
-  mBtnNew = bbox->addButton(i18n("New..."));
-  connect(mBtnNew, SIGNAL(clicked()), SLOT(slotNew()));
+  mBtnAdd = bbox->addButton(i18n("Add..."));
+  connect(mBtnAdd, SIGNAL(clicked()), SLOT(slotAdd()));
+
+  mBtnSaveAs = bbox->addButton(i18n("Save as..."));
+  connect(mBtnSaveAs, SIGNAL(clicked()), SLOT(slotSaveAs()));
+
+  mBtnCreate = bbox->addButton(i18n("Create..."));
+  connect(mBtnCreate, SIGNAL(clicked()), SLOT(slotCreate()));
 
   mBtnRemove = bbox->addButton(i18n("Remove"));
   connect(mBtnRemove, SIGNAL(clicked()), SLOT(slotRemove()));
 
-  mBtnImport = bbox->addButton(i18n("Import"));
-  connect(mBtnImport, SIGNAL(clicked()), SLOT(slotImport()));
 
-  mBtnExport = bbox->addButton(i18n("Export"));
-  connect(mBtnExport, SIGNAL(clicked()), SLOT(slotExport()));
+  bbox->layout();
 
   mText = new QMultiLineEdit(this);
   mText->setMinimumSize(mText->sizeHint());
@@ -101,9 +117,6 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   mGrid->setColStretch(1, 3);
   mGrid->setRowStretch(0, 3);
   mGrid->setRowStretch(1, 1);
-  mGrid->setRowStretch(2, 0);
-  mGrid->activate();
-  bbox->layout();
 
   readThemesList();
   slotSetTheme(-1);
@@ -115,6 +128,22 @@ Installer::~Installer()
 {
 }
 
+int Installer::addTheme(const QString &path)
+{
+    QString tmp = path;
+    int i = tmp.findRev('/');
+    if (i >= 0)
+       tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
+    if (tmp.right(7) == ".tar.gz")
+       tmp.truncate(tmp.length()-7);
+    i = mThemesList->count();
+    while((i > 0) && (mThemesList->text(i-1) > tmp))
+	i--;   
+    if ((i > 0) && (mThemesList->text(i-1) == tmp))
+       return i;
+    mThemesList->insertItem(tmp, i);
+    return i;
+}
 
 //-----------------------------------------------------------------------------
 void Installer::readThemesList(void)
@@ -126,9 +155,8 @@ void Installer::readThemesList(void)
   QStringList::ConstIterator name;
   for(name = entryList.begin(); name != entryList.end(); name++) {
     QString tmp = *name;
-    tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
     if (tmp.right(8) == ".themerc") continue;
-    mThemesList->inSort(tmp);
+    addTheme(tmp);
   }
 
   // Stephan: the theme manager used to differ between global and local ones using spaces
@@ -151,7 +179,7 @@ void Installer::save()
 
 
 //-----------------------------------------------------------------------------
-void Installer::slotNew()
+void Installer::slotCreate()
 {
   QString name;
   NewThemeDlg dlg;
@@ -165,8 +193,7 @@ void Installer::slotNew()
   mEditing = true;
 
   sSettingTheme = true;
-  if (findItem(name) < 0) mThemesList->inSort(name);
-  mThemesList->setCurrentItem(findItem(name));
+  mThemesList->setCurrentItem(addTheme(name));
   sSettingTheme = false;
 
   mPreview->setText("");
@@ -178,18 +205,20 @@ void Installer::slotNew()
 void Installer::slotRemove()
 {
   int cur = mThemesList->currentItem();
-  QString cmd, themeFile;
-  int rc;
-  QFileInfo finfo;
-
   if (cur < 0) return;
-  themeFile = mThemesList->text(cur);
-  cmd.sprintf("rm -rf \"%s\"", themeFile.ascii());
-  finfo.setFile(themeFile);
-  rc = system(cmd.ascii());
-  if (rc || finfo.exists())
+
+  bool rc = false;
+  QString themeName = mThemesList->text(cur);
+  QString themeFile = findThemePath(themeName);
+  if (!themeFile.isEmpty())
   {
-    warning(i18n("Failed to remove theme %1").arg(themeFile).ascii());
+     KURL url;
+     url.setPath(themeFile);
+     rc = KIO::NetAccess::del(url);
+  }
+  if (!rc)
+  {
+    KMessageBox::sorry(this, i18n("Failed to remove theme '%1'").arg(themeName));
     return;
   }
   mThemesList->removeItem(cur);
@@ -214,57 +243,57 @@ void Installer::slotSetTheme(int id)
   }
   else
   {
-    name = mThemesList->text(id);
-    if (name.isEmpty()) return;
-
-    name = locate("themes", name);
-    enabled = theme->load(name);
+    QString error;
+    name = findThemePath(mThemesList->text(id));
+    enabled = false;
+    if (!name.isEmpty())
+    {
+      enabled = theme->load(name, error);
+    }
     if (!enabled)
     {
-      mPreview->setText(i18n("(no theme chosen)"));
+      mPreview->setText(i18n("(Could not load theme)"));
       mText->setText("");
+      KMessageBox::sorry(this, error);
     }
   }
 
-  mBtnExport->setEnabled(enabled);
-  mBtnRemove->setEnabled(enabled && !isGlobal);
+  mBtnSaveAs->setEnabled(enabled);
+  mBtnRemove->setEnabled(!isGlobal);
 }
 
 
 //-----------------------------------------------------------------------------
-void Installer::slotImport()
+void Installer::slotAdd()
 {
-  QString fname, fpath, cmd, theme;
-  int i, rc;
   static QString path;
   if (path.isEmpty()) path = QDir::homeDirPath();
 
   KFileDialog dlg(path, "*.tar.gz", 0, 0, true);
-  dlg.setCaption(i18n("Import Theme"));
+  dlg.setCaption(i18n("Add Theme"));
   if (!dlg.exec()) return;
 
   path = dlg.baseURL().path();
-  fpath = dlg.selectedFile();
-  i = fpath.findRev('/');
-  if (i >= 0) theme = fpath.mid(i+1, 1024);
-  else theme = fpath;
-
+  QString fpath = dlg.selectedFile();
   QString dir = KGlobal::dirs()->saveLocation("themes");
+
   // Copy theme package into themes directory
-  cmd.sprintf("cp \"%s\" \"%s\"", fpath.ascii(), dir.ascii());
-  rc = system(cmd.ascii());
-  if (rc)
+  KURL url;
+  url.setPath(fpath);
+  url.setPath(dir+url.fileName());
+  bool rc = KIO::NetAccess::upload(fpath, url);
+  if (!rc)
   {
     warning(i18n("Failed to copy theme %1\ninto themes directory %2").arg(fpath).arg(dir).ascii());
     return;
   }
 
-  mThemesList->inSort(theme);
+  mThemesList->setCurrentItem(addTheme(url.path()));
 }
 
 
 //-----------------------------------------------------------------------------
-void Installer::slotExport()
+void Installer::slotSaveAs()
 {
   QString fname, fpath, cmd, themeFile, ext;
   static QString path;
@@ -279,28 +308,23 @@ void Installer::slotExport()
   themeFile = mThemesList->text(cur);
   if (themeFile.isEmpty()) return;
 
-  fpath = locate("themes", themeFile);
+  fpath = findThemePath(themeFile);
   
-  finfo.setFile(fpath);
-  if (finfo.isDir())
-  {
-    themeFile += ".tar.gz";
-    ext = "*.tar.gz";
-  }
-  else
-  {
-    i = themeFile.findRev('.');
-    ext = '*' + themeFile.mid(i, 256);
-  }
+  KURL url;
+  url.setPath(fpath);
+  themeFile = url.fileName();
+  ext = "*.tar.gz";
 
   KFileDialog dlg(path, ext, 0, 0, true);
-  dlg.setCaption(i18n("Export Theme"));
+  dlg.setCaption(i18n("Save Theme As"));
   dlg.setSelection(themeFile);
   if (!dlg.exec()) return;
 
   if (dlg.baseURL().isLocalFile())
      path = dlg.baseURL().path();
   fpath = dlg.selectedFile();
+  if (fpath.right(7) != ".tar.gz")
+     fpath += ".tar.gz";
 
   theme->save(fpath);
 }
@@ -311,12 +335,13 @@ void Installer::slotThemeChanged()
 {
   mText->setText(theme->description()); 
 
-  mBtnExport->setEnabled(TRUE);
+  mBtnSaveAs->setEnabled(true);
 
   if (theme->preview().isNull())
     mPreview->setText(i18n("(no preview pixmap)"));
   else mPreview->setPixmap(theme->preview());
   //mPreview->setFixedSize(theme->preview().size());
+  emit changed(true);
 }
 
 

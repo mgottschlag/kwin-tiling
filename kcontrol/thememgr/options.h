@@ -48,9 +48,11 @@ protected:
 protected:
   QCheckBox *mCbxColors;
   QCheckBox *mCbxWallpapers;
+  QCheckBox *mCbxIcons;
   QCheckBox *mCbxOverwrite;
   QLabel *mStatColors;
   QLabel *mStatWallpapers;
+  QLabel *mStatIcons;
   QGridLayout *mGrid;
   bool mGui;
   int mGridRow;

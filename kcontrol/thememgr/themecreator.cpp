@@ -68,7 +68,7 @@ bool ThemeCreator::create(const QString aThemeName)
 
   setName(aThemeName.ascii());
   mThemePath = workDir() + aThemeName + '/';
-  if (mkdir(mThemePath.ascii(), 0755))
+  if (!KStandardDirs::makeDir(mThemePath))
   {
     warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)).ascii());
     return false;
@@ -312,6 +312,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
   while (1) // find a unique filename in the work directory
   {
     finfo.setFile(mThemePath + fname);
+    kdDebug() << "Checking for " << mThemePath+fname << endl;
     if (!finfo.exists()) break;
     i = fname.findRev('.');
     if (i >= 0) 
@@ -320,13 +321,21 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
       fname.truncate(i);
     }
     else ext = QString::null;
-    for (j=i-1, num=0; j>=0 && fname[j]>='0' && fname[j]<='9'; j--)
-      num = num*10 + (int)(fname[j].latin1() - '0');
+    int j;
+    for (j=i-1; j>=0 && fname[j]>='0' && fname[j]<='9'; j--);
+
+    int num = 0;
     j++;
+    int h = j;
+    while(j < i)
+    {
+       num = 10*num + (fname[j].latin1() - '0');
+       j++;
+    }
+    
     num++;
-    fname[j] = '\0';
-    str.sprintf("%s%d%s", fname.ascii(), num, ext.ascii());
-    fname = str;
+    fname.truncate(h);
+    fname = QString("%1%2%3").arg(fname).arg(num).arg(ext);
   }
 
   kdDebug() << "Extracting " << aFileName << " to " << mThemePath + fname << endl;

@@ -57,6 +57,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   // details dialog.
   mCbxColors = newLine("Colors", i18n("Colors"), &mStatColors);
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
+  mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -131,6 +132,7 @@ void Options::save()
 {
   theme->instColors = mCbxColors->isChecked();
   theme->instWallpapers = mCbxWallpapers->isChecked();
+  theme->instIcons = mCbxIcons->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
 
@@ -140,6 +142,7 @@ void Options::slotInvert()
 {
   mCbxColors->setChecked(!mCbxColors->isChecked());
   mCbxWallpapers->setChecked(!mCbxWallpapers->isChecked());
+  mCbxIcons->setChecked(!mCbxIcons->isChecked());
   save();
 }
 
@@ -149,6 +152,7 @@ void Options::slotClear()
 {
   mCbxColors->setChecked(false);
   mCbxWallpapers->setChecked(false);
+  mCbxIcons->setChecked(false);
   save();
 }
 
@@ -202,7 +206,8 @@ void Options::updateStatus(const char* aGroupName, QLabel* aLblStatus)
 
   if (theme->hasGroup(aGroupName, true))
     statusStr = i18n("available");
-  else statusStr = i18n("empty");
+  else 
+    statusStr = i18n("empty");
 
   aLblStatus->setText(statusStr);
   aLblStatus->setMinimumSize(aLblStatus->sizeHint());
@@ -214,6 +219,7 @@ void Options::updateStatus(void)
 {
   updateStatus("Colors", mStatColors);
   updateStatus("Display", mStatWallpapers);
+  updateStatus("Icons", mStatIcons);
 }
 
 
@@ -226,6 +232,7 @@ void Options::writeConfig()
   cfg->writeEntry("overwrite", !mCbxOverwrite->isChecked());
   cfg->writeEntry("colors", mCbxColors->isChecked());
   cfg->writeEntry("wallpapers", mCbxWallpapers->isChecked());
+  cfg->writeEntry("icons", mCbxIcons->isChecked());
 }
 
 
@@ -238,6 +245,7 @@ void Options::readConfig()
   mCbxOverwrite->setChecked(!cfg->readBoolEntry("overwrite", false));
   mCbxColors->setChecked(cfg->readBoolEntry("colors", true));
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
+  mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
   save();
 }
 
