@@ -29,7 +29,7 @@ Name[xx]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
 
 Comment=Configure Hotkey settings
-Comment[de]=Configure Hotkey settings
+Comment[de]=Tastenkürzel einrichten
 
 Keywords=Keys,Global key bindings,Key bindings,Gestures,Mouse gestures
 Keywords[bg]=бърз, клавиш, бързи, достъп, клавишна, комбинация, жестове, мишка, жест, операция, Keys, Global key bindings, Key bindings, Gestures, Mouse gestures
