@@ -63,6 +63,8 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
+    else
+        trig = NULL;
     gesture1 = trig ? trig->gesturecode() : QString::null;
     gesture_lineedit1->setText( gesture1 );
     gesture_drawer1->setData( gesture1 );
@@ -72,6 +74,8 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
+    else
+        trig = NULL;
     gesture2 = trig ? trig->gesturecode() : QString::null;
     gesture_lineedit2->setText( gesture2 );
     gesture_drawer2->setData( gesture2 );
@@ -81,6 +85,8 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
+    else
+        trig = NULL;
     gesture3 = trig ? trig->gesturecode() : QString::null;
     gesture_lineedit3->setText( gesture3 );
     gesture_drawer3->setData( gesture3 );
