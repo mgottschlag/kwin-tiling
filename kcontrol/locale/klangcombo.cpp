@@ -81,7 +81,7 @@ void KLanguageCombo::keyPressEvent( QKeyEvent *e )
     emit activated( c );
 }
 
-void KLanguageCombo::mousePressEvent( QMouseEvent *e )
+void KLanguageCombo::mousePressEvent( QMouseEvent * /*e*/ )
 {
   popupMenu();
 }
