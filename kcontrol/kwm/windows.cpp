@@ -41,7 +41,7 @@
 
 
 // kwin config keywords
-#define KWM_FOCUS     "FocusPolicy"
+#define KWM_FOCUS     "focusPolicy"
 #define KWM_PLACEMENT "WindowsPlacement"
 #define KWM_MOVE      "WindowMoveType"
 #define KWM_MAXIMIZE  "MaximizeOnlyVertically"
