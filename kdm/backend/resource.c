@@ -476,9 +476,11 @@ ScanServers (int force)
 	d->console = console;
 	d->serverArgv = argv;
 #ifdef HAVE_VTS
-	for (; argv[0]; argv++)
-	    if (argv[0][0] == 'v' && argv[0][1] == 't')
-		d->reqSrvVT = atoi (argv[0] + 2);
+	d->reqSrvVT = 0;
+	if (argv)
+	    for (; argv[0]; argv++)
+		if (argv[0][0] == 'v' && argv[0][1] == 't')
+		    d->reqSrvVT = atoi (argv[0] + 2);
 #endif
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
