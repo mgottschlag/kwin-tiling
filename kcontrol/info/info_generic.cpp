@@ -1,5 +1,5 @@
 /* 	info_generic.cpp
-	1998 by Helge Deller (helge.deller@ruhr-uni-bochum.de)
+	1998 by Helge Deller (deller@gmx.de)
 	free source under GPL
 	
 	!!!!! this file will be included by info.cpp !!!!!

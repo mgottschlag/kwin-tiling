@@ -39,10 +39,29 @@
 #include <kapp.h>
 #include <kcharsets.h>
 #include <klocale.h>
-#include "info.h"
+#include "info.h"		/* include the forward declares... */
 #include "info.moc"
 
 #include <X11/Xlib.h>
+
+
+// All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special 
+// error-message should be shown to the user....
+// If GetInfo_ErrorString is not modified in the function, the default string
+// DEFAULT_ERRORSTRING will be used...
+
+QString	GetInfo_ErrorString;
+
+#define DEFAULT_ERRORSTRING \
+  i18n("No Information available\n or\nthis System is not yet supported :-(")
+
+
+
+/*
+***************************************************************************
+**  End of: Include system-specific code				 **
+***************************************************************************
+*/
 
 
 /* easier to read with such a define ! */
@@ -51,6 +70,8 @@
     
 #define SEPERATOR 	"\t"
 #define SEPERATOR_CHAR	'\t'
+
+
 
 static QString Value( int val, int numbers=1 )
 {	char txt[20];
@@ -169,26 +190,6 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 }
 
 
-/*
-***************************************************************************
-**  Include system-specific code					 **
-***************************************************************************
-*/
-
-#ifdef linux
-#include "info_linux.cpp"
-#elif sgi || sun
-#include "info_sgi.cpp"
-#elif __FreeBSD__
-#include "info_fbsd.cpp"
-#elif hpux
-#include "info_hpux.cpp"
-#elif __svr4__
-#include "info_svr4.cpp"
-#else
-#include "info_generic.cpp"	/* Default for unsupportet systems.... */
-#endif
-
 
 /*
 ***************************************************************************
@@ -238,6 +239,11 @@ void KInfoListWidget::defaultSettings()
 	lBox->enableKey();
 	lBox->setAutoUpdate(TRUE);
 
+	/*  Delete the user-visible ErrorString, before calling the 
+	    retrieve-function. If the function wants the widget to show
+	    another string, then it should modify GetInfo_ErrorString ! */
+	GetInfo_ErrorString = "";
+	
         if (getlistbox)
 	{   set_Status_for_all_Widgets( lBox, TRUE );
 	    ok = (*getlistbox)(lBox);	// retrieve the information !
@@ -265,11 +271,15 @@ void KInfoListWidget::defaultSettings()
 
     if (!ok)
     {	if (lBox) { delete lBox; lBox = 0; }	    
-	if (!NoInfoText)
-	    NoInfoText = new QLabel(i18n("No Information available\n or\nthis System is not yet supported :-("),this);
+	if (GetInfo_ErrorString==0 || GetInfo_ErrorString.length()==0)
+	    GetInfo_ErrorString = DEFAULT_ERRORSTRING;
+	if (NoInfoText)
+	    NoInfoText->setText(GetInfo_ErrorString);
+	else
+	    NoInfoText = new QLabel(GetInfo_ErrorString,this);
 	NoInfoText->setAutoResize(TRUE);
 	NoInfoText->setAlignment(AlignCenter | WordBreak);
-	NoInfoText->move( width()/2-120,height()/2-30 );
+	NoInfoText->move( width()/2,height()/2 ); // -120 -30
     }
 }
 
@@ -295,6 +305,36 @@ void KInfoListWidget::resizeEvent( QResizeEvent *re )
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
                     size.width() -2*SCREEN_XY_OFFSET,
 		    size.height()-2*SCREEN_XY_OFFSET);
-    if (NoInfoText)
-	NoInfoText->move( size.width()/2-120,size.height()/2-30 );
+    if (NoInfoText) {
+	QSize s = NoInfoText->sizeHint();
+    	NoInfoText->move(   (size.width()-s.width())/2,
+			    (size.height()-s.height())/2 );
+    }
 }
+
+
+/*
+***************************************************************************
+**  Include system-specific code					 **
+***************************************************************************
+*/
+
+#ifdef linux
+#include "info_linux.cpp"
+#elif sgi || sun
+#include "info_sgi.cpp"
+#elif __FreeBSD__
+#include "info_fbsd.cpp"
+#elif hpux
+#include "info_hpux.cpp"
+#elif __svr4__
+#include "info_svr4.cpp"
+#else
+#include "info_generic.cpp"	/* Default for unsupportet systems.... */
+#endif
+
+/*
+***************************************************************************
+**  End of: Include system-specific code				 **
+***************************************************************************
+*/

@@ -16,6 +16,10 @@
 #include <kcontrol.h>
 #include <ktablistbox.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 
 /* function call-back-prototypes... */
 

@@ -1,7 +1,7 @@
 
 INCLUDES = $(all_includes) 
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD = $(LIB_KDEUI)
+LDADD = $(LIB_KDEUI) $(LIBALIB)
 
 bin_PROGRAMS = kcminfo
 

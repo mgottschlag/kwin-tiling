@@ -3,6 +3,7 @@
 	!!!!! this file will be included by info.cpp !!!!!
 
 	Last modified:	by:
+	04.05.1999	added audio(alib)-support (deller)
 	27.04.1999	Helge Deller (deller@gmx.de)
 			[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
 			added support for nearly all categories (means: not finished!)
@@ -23,6 +24,9 @@
 #include <qfile.h>
 #include <qfontmetrics.h>
 #include <qtextstream.h>
+
+// #include <signal.h>
+
 
 
 #define INFO_CPU_AVAILABLE
@@ -259,12 +263,12 @@ static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
 	while (strlen(Entry->Name))
 	{	if (strncmp(Entry->Name,Machine,len)==0)
 		{
+		    str = QString(i18n("PA-RISC Processor")) + TAB 
+			+ QString(PA_NAME[Entry->parisc_name]);
+		    lBox->insertItem( str );
 		    str = QString(i18n("PA-RISC Revision")) + TAB 
 			+ QString("PA-RISC ") 
 			+ QString(PA_REVISION[Entry->parisc_rev]);
-		    lBox->insertItem( str );
-		    str = QString(i18n("PA-RISC Processor")) + TAB 
-			+ QString(PA_NAME[Entry->parisc_name]);
 		    lBox->insertItem( str );
 		    return TRUE;
 		}
@@ -293,25 +297,19 @@ bool GetInfo_CPU( KTabListBox *lBox )
   struct pst_static	pst;
   struct pst_processor	pro;
   struct utsname	info;
+  QString TAB(SEPERATOR);
   QString str,str2;
   QFontMetrics fm(lBox->tableFont());
   int	maxwidth,m;
   int	i;
-  QString TAB(SEPERATOR);
-  
-  if( pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1 )
-    return FALSE;
-
-  if( pstat_getdynamic(&psd, sizeof(psd), (size_t)1, 0) == -1 )
-    return FALSE;
-  
+			
   lBox->setNumCols(2);		// Table-Headers....
   maxwidth = 0;
   I18N_MAX(str,i18n("Information"),fm,maxwidth);
   lBox->setColumn(0,str,maxwidth );
   lBox->setColumn(1,i18n("Value") );
   lBox->setSeparator(SEPERATOR_CHAR);
-			
+  
   uname(&info);
   I18N_MAX(str,i18n("Machine"),fm,maxwidth);
   str += TAB + QString(info.machine);
@@ -381,7 +379,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
   lBox->insertItem( "" );
   I18N_MAX(str,i18n("Total Physical Memory"),fm,maxwidth);
   str += TAB 
-      + Value((unsigned)(pst.physical_memory*(int)pst.page_size/1024/1024)) 
+      + Value(((pst.physical_memory*pst.page_size)/1024/1024)) 
       + QString(" ")
       + QString(i18n("MB"));	// Mega-Byte
   lBox->insertItem(str);
@@ -474,10 +472,6 @@ bool GetInfo_IO_Ports( KTabListBox *lBox )
 	    return GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_2 );
 }
 
-bool GetInfo_Sound( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
-}
 
 bool GetInfo_Devices( KTabListBox *lBox )
 {
@@ -615,3 +609,192 @@ bool GetInfo_XServer_and_Video( KTabListBox *lBox )
 {	lBox = lBox;
 	return GetInfo_XServer_Generic( lBox );
 }
+
+
+
+
+
+#ifndef HAVE_ALIB_H
+
+bool GetInfo_Sound( KTabListBox *lBox )
+{	lBox = lBox;
+	GetInfo_ErrorString = i18n("Sorry, Audio-Support (Alib) was disabled during configuration and compile-time !");
+	return FALSE;
+}
+
+#else // defined(HAVE_ALIB_H)
+
+#include "Alib.h"
+
+static char *formatNames[] = {  
+    "ADFUnknown",	"ADFMuLaw",	"ADFALaw",
+    "ADFLin16",  	"ADFLin8",  	"ADFLin8Offset" };
+
+/* handle typo in 1st release of Alib.h */
+#ifndef ARightOutputChMask
+#define ARightOutputChMask ARighOutputChMask
+#endif
+
+
+bool GetInfo_Sound( KTabListBox *lBox )
+{	
+    Audio	*audio;
+    long	status;
+    char	server[80];
+    int		i;
+
+    QString 	TAB(QString(" ")+QString(SEPERATOR));
+    QString 	str,str2;
+    QFontMetrics fm(lBox->tableFont());
+    int		maxwidth;
+
+    // server = Hostname....
+    server[0] = 0;    
+    audio = AOpenAudio( server, &status );
+    if( status ) {
+	GetInfo_ErrorString = i18n("Unable to open Audio-Server (Alib) !");
+	return FALSE;
+    }
+    
+    lBox->setNumCols(2);		// Table-Headers....
+    maxwidth = 0;
+    I18N_MAX(str,i18n("Information"),fm,maxwidth);
+    lBox->setColumn(0,str,maxwidth );
+    lBox->setColumn(1,i18n("Value") );
+    lBox->setSeparator(SEPERATOR_CHAR);
+    
+    I18N_MAX(str,i18n("Audio Name"),fm,maxwidth);
+    lBox->insertItem(str + TAB + QString(audio->audio_name));
+
+    I18N_MAX(str,i18n("Vendor"),fm,maxwidth);
+    lBox->insertItem(str + TAB + QString(audio->vendor));
+    
+    I18N_MAX(str,i18n("Alib Version"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->alib_major_version) + QString(".") + Value(audio->alib_minor_version));
+    
+    I18N_MAX(str,i18n("Protocol Revision"),fm,maxwidth);
+    str += TAB + Value(audio->proto_major_version) 
+	+ QString(".") + Value(audio->proto_minor_version);
+    lBox->insertItem(str);
+
+    /* printf( "fd %d\n", audio->fd ); */
+    
+    I18N_MAX(str,i18n("Vendor Number"),fm,maxwidth);
+    lBox->insertItem(str + TAB + Value(audio->vnumber));
+
+    I18N_MAX(str,i18n("Release"),fm,maxwidth);
+    lBox->insertItem(str + TAB + Value(audio->release));
+    
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Byte Order"),fm,maxwidth);
+    str += TAB + QString(  
+	    (audio->byte_order==ALSBFirst)? i18n("ALSBFirst (LSB)"):(
+	    (audio->byte_order==AMSBFirst)? i18n("AMSBFirst (MSB)"):
+					    i18n("Invalid Byteorder !")) );
+    lBox->insertItem(str);
+
+    I18N_MAX(str,i18n("Bit Order"),fm,maxwidth);
+    str += TAB + QString(  
+	    (audio->sound_bit_order==ALeastSignificant)? i18n("ALeastSignificant (LSB)"):(
+	    (audio->sound_bit_order==AMostSignificant) ? i18n("AMostSignificant (MSB)"):
+					    i18n("Invalid Bitorder !")) );
+    lBox->insertItem(str);
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Data Formats"),fm,maxwidth);
+    for ( i = 0;  i < audio->n_data_format; i++ ) {
+	if (audio->data_format_list[i] <= ADFLin8Offset)
+	    lBox->insertItem(str + TAB + QString(formatNames[audio->data_format_list[i]]));
+	str = "";
+    }
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Sampling Rates"),fm,maxwidth);    
+    for ( i = 0;  i < audio->n_sampling_rate; i++ ) {
+	lBox->insertItem( str + TAB + Value(audio->sampling_rate_list[i]));
+	str = "";
+    }
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Input Sources"),fm,maxwidth);    
+    str += TAB;
+    if ( audio->input_sources & AMonoMicrophoneMask ) 
+    { lBox->insertItem(str+i18n("Mono-Microphone")); str = TAB; }
+    if ( audio->input_sources & AMonoAuxiliaryMask )
+    { lBox->insertItem(str+i18n("Mono-Auxiliary"));  str = TAB; }
+    if ( audio->input_sources & ALeftMicrophoneMask )
+    { lBox->insertItem(str+i18n("Left-Microphone")); str = TAB; }
+    if ( audio->input_sources & ARightMicrophoneMask )
+    { lBox->insertItem(str+i18n("Right-Microphone"));str = TAB; }
+    if ( audio->input_sources & ALeftAuxiliaryMask )
+    { lBox->insertItem(str+i18n("Left-Auxiliary"));  str = TAB; }
+    if ( audio->input_sources & ARightAuxiliaryMask )
+    { lBox->insertItem(str+i18n("Right-Auxiliary")); str = TAB; }
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Input Channels"),fm,maxwidth);    
+    str += TAB;
+    if ( audio->input_channels & AMonoInputChMask )
+    { lBox->insertItem(str+i18n("Mono-Channel"));  str = TAB; }
+    if ( audio->input_channels & ALeftInputChMask )
+    { lBox->insertItem(str+i18n("Left-Channel"));  str = TAB; }
+    if ( audio->input_channels & ARightInputChMask )
+    { lBox->insertItem(str+i18n("Right-Channel")); str = TAB; }
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Output Destinations"),fm,maxwidth);    
+    str += TAB;
+    if ( audio->output_destinations & AMonoIntSpeakerMask )
+    { lBox->insertItem(str+i18n("Mono-InternalSpeaker")); str = TAB; }
+    if ( audio->output_destinations & AMonoJackMask )
+    { lBox->insertItem(str+i18n("Mono-Jack")); 	str = TAB; }
+    if ( audio->output_destinations & ALeftIntSpeakerMask )
+    { lBox->insertItem(str+i18n("Left-InternalSpeaker")); str = TAB; }
+    if ( audio->output_destinations & ARightIntSpeakerMask )
+    { lBox->insertItem(str+i18n("Right-InternalSpeaker")); str = TAB; }
+    if ( audio->output_destinations & ALeftJackMask )
+    { lBox->insertItem(str+i18n("Left-Jack")); str = TAB; }
+    if ( audio->output_destinations & ARightJackMask )
+    { lBox->insertItem(str+i18n("Right-Jack")); str = TAB; }
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Output Channels"),fm,maxwidth);    
+    str += TAB;
+    if ( audio->output_channels & AMonoOutputChMask )
+    { lBox->insertItem(str+i18n("Mono-Channel")); str = TAB; }
+    if ( audio->output_channels & ALeftOutputChMask )
+    { lBox->insertItem(str+i18n("Left-Channel")); str = TAB; }
+    if ( audio->output_channels & ARightOutputChMask )
+    { lBox->insertItem(str+i18n("Right-Channel")); str = TAB; }
+
+
+    lBox->insertItem("");
+    I18N_MAX(str,i18n("Input Gain Limits"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->min_input_gain) + QString(" ") + Value(audio->max_input_gain));
+    I18N_MAX(str,i18n("Output Gain Limits"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->min_output_gain) + QString(" ") + Value(audio->max_output_gain));
+    I18N_MAX(str,i18n("Monitor Gain Limits"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->min_monitor_gain) + QString(" ") + Value(audio->max_monitor_gain));
+    I18N_MAX(str,i18n("Gain Restricted"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->gm_gain_restricted));
+    /* printf( "sample rate tolerance  %f %f\n", audio->sample_rate_lo_tolerance,audio->sample_rate_hi_tolerance ); */
+    I18N_MAX(str,i18n("Lock"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->lock));
+    I18N_MAX(str,i18n("Queue Length"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->qlen));
+    I18N_MAX(str,i18n("Block Size"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->block_size));
+    I18N_MAX(str,i18n("Stream Port (decimal)"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->stream_port));
+    I18N_MAX(str,i18n("Ev Buffer Size"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->ev_buf_size));
+    I18N_MAX(str,i18n("Ext Number"),fm,maxwidth);    
+    lBox->insertItem(str+TAB+Value(audio->ext_number));
+
+    ACloseAudio( audio, &status );
+   
+    lBox->setColumnWidth(0, maxwidth + PIXEL_ADD);
+    return TRUE;
+}
+
+#endif // defined(HAVE_ALIB_H)
