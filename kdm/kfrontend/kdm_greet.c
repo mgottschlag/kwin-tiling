@@ -207,12 +207,16 @@ GetCfgStrArr (int id, int *len)
     return GRecvStrArr (len);
 }
 
+static char *savhome;
+
 static void ATTR_NORETURN
 exitGreeter (void)
 {
     char buf[128];
 
-    sprintf (buf, "rm -rf %s", getenv ("HOME"));
+    if (strcmp (savhome, getenv ("HOME")) || memcmp (savhome, "/tmp/", 5))
+	LogPanic ("Internal error: memory corruption detected\n");
+    sprintf (buf, "rm -rf %s", savhome);
     system (buf);
     exit (0);
 }
@@ -590,6 +594,8 @@ main (int argc, char **argv)
   okay:
     if (setenv( "HOME", qtrc, 1 ))
 	LogPanic( "Cannot set $HOME\n" );
+    if (!(savhome = strdup (qtrc)))
+	LogPanic( "Cannot save $HOME\n" );
     strcat( qtrc, "/.qt" );
     mkdir( qtrc, 0700 );
     strcat( qtrc, "/qtrc" );
