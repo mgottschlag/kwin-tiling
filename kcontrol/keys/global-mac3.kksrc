@@ -43,7 +43,6 @@ Walk through windows=Alt+Tab
 Window close=Alt+F4
 Window close all=none
 Window iconify=none
-Window iconify all=none
 Window lower=none
 Window maximize=none
 Window maximize horizontal=none
@@ -73,4 +72,6 @@ Window to previous desktop=none
 repeat-last-klipper-action=Alt+Ctrl+R
 show-klipper-popupmenu=Alt+Ctrl+V
 toggle-clipboard-actions=Alt+Ctrl+X
-
+Screenshot of active window=Print
+Screenshot of desktop=Ctrl+Print
+Toggle Show Desktop=Alt+Ctrl+D
