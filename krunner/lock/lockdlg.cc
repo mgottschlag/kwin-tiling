@@ -9,11 +9,12 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <qlayout.h>
-#include <qframe.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 #include <qsimplerichtext.h>
+#include <qlabel.h>
 #include <klocale.h>
+#include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kglobalsettings.h>
 #include <kconfig.h>
@@ -23,62 +24,36 @@
 #include <kdebug.h>
 #include "lockdlg.h"
 #include "lockdlg.moc"
+#include "lockdlgimpl.h"
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 
-#define PASSDLG_HIDE_TIMEOUT        10000
+#define PASSDLG_HIDE_TIMEOUT 10000
 
 //===========================================================================
 //
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
-    : QDialog(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder)
+    : LockDlgImpl(parent, "password dialog", true, WStyle_Customize | WStyle_NoBorder)
 {
-    QFrame *winFrame = new QFrame( this );
-    winFrame->setFrameStyle( QFrame::Panel | QFrame::Raised );
-    winFrame->setLineWidth( 2 );
 
-//    setFocusPolicy(StrongFocus);
+    pixlabel->setPixmap(DesktopIcon("kmenu"));
 
-    QGridLayout *layout = new QGridLayout(winFrame, 2, 3, 20, 10);
-    layout->setResizeMode(QLayout::Minimum);
-    layout->addColSpacing(1, 20);
+    mLabel->setText(passwordQueryMsg());
 
-    QLabel *pixlabel= new QLabel(winFrame);
-    pixlabel->setPixmap(QPixmap(locate("data", "kdesktop/pics/ksslogo.png")));
-    layout->addMultiCellWidget(pixlabel, 0, 1, 0, 0, QLayout::AlignTop);
-
-    QFont font = KGlobalSettings::generalFont();
-
-    mLabel = new QLabel(passwordQueryMsg(), winFrame);
-    mLabel->setAlignment(AlignCenter);
-    font.setPointSize(18);
-    mLabel->setFont(font);
-    mLabel->setFixedSize(mLabel->sizeHint());
-
-    layout->addWidget(mLabel, 0, 2);
-
-    mEntry = new KPasswordEdit( winFrame, "password edit" );
-    font.setPointSize(16);
-    mEntry->setFont(font);
     mEntry->installEventFilter(this);
 
-    layout->addWidget(mEntry, 1, 2);
+    connect(cancel, SIGNAL(clicked()), SLOT(slotCancel()));
+    connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
 
     if (nsess) {
-	mButton = new QPushButton(i18n("\nStart\n&New\nSession\n"), winFrame, "button");
-	layout->addMultiCellWidget(mButton, 0,1, 3,3, AlignCenter);
-	connect(mButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
-	mButton->installEventFilter(this);
-    } else
-	mButton = 0;
+        connect(mButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
+        mButton->installEventFilter(this);
+     } else
+     mButton->hide();
 
-    layout->activate();
-
-    resize(layout->sizeHint());
-    winFrame->resize(layout->sizeHint());
     installEventFilter(this);
 
     mFailedTimerId = 0;
@@ -116,7 +91,7 @@ QString PasswordDlg::currentUser(void)
 //
 QString PasswordDlg::passwordQueryMsg()
 {
-    return i18n("Enter Password") + "\n" + currentUser();
+    return i18n("Enter password for user ") + currentUser();
 }
 
 //---------------------------------------------------------------------------
@@ -137,6 +112,9 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         mLabel->setText(passwordQueryMsg());
         mEntry->erase();
         mEntry->setEnabled(true);
+        ok->setEnabled(true);
+        cancel->setEnabled(true);
+        password->setEnabled(true);
         mEntry->setFocus();
         if( mButton )
             mButton->setEnabled(true);
@@ -180,9 +158,11 @@ void PasswordDlg::startCheckPassword()
     const char *passwd = mEntry->password();
     if (passwd && *passwd)
     {
-        if( mButton )
-            mButton->setEnabled(false);
+        mButton->setEnabled(false);
         mEntry->setEnabled(false);
+        ok->setEnabled(false);
+        cancel->setEnabled(false);
+        password->setEnabled(false);
 
         QString kcp_binName = KStandardDirs::findExe("kcheckpass");
 
@@ -383,4 +363,14 @@ void PasswordDlg::slotStartNewSession()
 	emit startNewSession();
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
+}
+
+void PasswordDlg::slotCancel()
+{
+    reject();
+}
+
+void PasswordDlg::slotOK()
+{
+   startCheckPassword();
 }

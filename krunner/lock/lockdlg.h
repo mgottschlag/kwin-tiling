@@ -8,20 +8,17 @@
 #ifndef __LOCKDLG_H__
 #define __LOCKDLG_H__
 
-#include <qlabel.h>
 #include <qdialog.h>
 #include <kprocess.h>
 #include <X11/Xlib.h>
-
-class KPasswordEdit;
-class QPushButton;
+#include "lockdlgimpl.h"
 
 //===========================================================================
 //
 // Simple dialog for entering a password.
 // It does not handle password validation.
 //
-class PasswordDlg : public QDialog
+class PasswordDlg : public LockDlgImpl
 {
     Q_OBJECT
 
@@ -39,6 +36,8 @@ protected:
 protected slots:
     void passwordChecked(KProcess *);
     void slotStartNewSession();
+    void slotCancel();
+    void slotOK();
 
 private:
     void startCheckPassword();
@@ -47,9 +46,6 @@ private:
 
     int         mFailedTimerId;
     int         mTimeoutTimerId;
-    QLabel      *mLabel;
-    KPasswordEdit      *mEntry;
-    QPushButton	*mButton;
     KProcess    mPassProc;
 };
 

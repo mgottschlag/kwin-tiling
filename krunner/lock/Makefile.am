@@ -8,7 +8,7 @@ kdesktop_lock_LDADD    = $(LIB_KIO)
 
 bin_PROGRAMS = kdesktop_lock
 
-kdesktop_lock_SOURCES = lockprocess.cc lockdlg.cc main.cc
+kdesktop_lock_SOURCES = lockprocess.cc lockdlg.cc lockdlgimpl.ui main.cc
 
 noinst_HEADERS = lockprocess.h lockdlg.h
 
