@@ -40,7 +40,7 @@ from The Open Group.
 #include "dm.h"
 #include "dm_error.h"
 
-static struct display	*displays;
+struct display	*displays;
 static struct disphist	*disphist;
 
 int
@@ -242,6 +242,7 @@ Debug ("Removing display %s\n", d->name);
 	    IfFree (d->cfg.data);
 	    delStr (d->cfg.dep.name);
 	    freeStrArr (d->serverArgv);
+	    IfFree (d->remoteHost);
 	    if (d->authorizations)
 	    {
 		for (i = 0; i < d->authNum; i++)
@@ -312,8 +313,8 @@ NewDisplay (const char *name, const char *class2)
     d->pid = -1;
     d->serverPid = -1;
     d->fifofd = -1;
-    d->pipefd[0] = -1;
-    d->pipefd[1] = -1;
+    d->pipe.rfd = -1;
+    d->pipe.wfd = -1;
     d->userSess = -1;
     displays = d;
 Debug ("Created new display %s\n", d->name);

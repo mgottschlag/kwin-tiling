@@ -48,17 +48,9 @@
 #include "kgreeter.h"
 #include "kdmconfig.h"
 #include "kdmclock.h"
-#include "kfdialog.h"
+#include "kchooser.h"
 #include "kdm_greet.h"
-
-extern "C" {
-#ifdef HAVE_XKB
-// note: some XKBlib.h versions contain a global variable definition
-// called "explicit". This keyword is not allowed on some C++ compilers so ->
-# define explicit __explicit_dummy
-# include <X11/XKBlib.h>
-#endif
-};
+#include "kdm_config.h"
 
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -67,6 +59,8 @@ extern "C" {
 #include <stdlib.h>
 #include <unistd.h>
 #include <strings.h>
+
+#include <X11/Xlib.h>
 
 
 class GreeterListViewItem : public KListViewItem {
@@ -92,6 +86,9 @@ KGreeter::KGreeter()
   , capslocked( -1 )
   , loginfailed( false )
 {
+    user_pic_dir = KGlobal::dirs()->resourceDirs( "data" ).last() +
+				      QString::fromLatin1("kdm/pics/users/");	/* XXX standardize */
+
     QGridLayout* main_grid = new QGridLayout( winFrame, 4, 2, 10 );
     QBoxLayout* hbox1 = new QHBoxLayout( 10 );
     QBoxLayout* hbox2 = new QHBoxLayout( 10 );
@@ -210,17 +207,22 @@ KGreeter::KGreeter()
     optMenu = new QPopupMenu( winFrame );
     optMenu->setCheckable( false );
 
-    if (dhasConsole)
-	Inserten( optMenu, i18n("Co&nsole Login"),
-		  SLOT( console_button_clicked() ) );
-
-//    Inserten( optMenu, i18n("&Remote Login"),
-//	      SLOT( chooser_button_clicked() ) );
-
     Inserten( optMenu, disLocal ?
 		       i18n("R&estart X Server") :
 		       i18n("Clos&e Connection"),
 	      SLOT(quit_button_clicked()) );
+
+    if (disLocal && kdmcfg->_loginMode != LOGIN_LOCAL_ONLY)
+	Inserten( optMenu, i18n("&Remote Login"),
+		  SLOT( chooser_button_clicked() ) );
+
+    if (dhasConsole)
+	Inserten( optMenu, i18n("Co&nsole Login"),
+		  SLOT( console_button_clicked() ) );
+
+    if (kdmcfg->_allowShutdown != SHUT_NONE)
+	Inserten( optMenu, i18n("&Shutdown..."),
+		  SLOT(shutdown_button_clicked()) );
 
     menuButton = new QPushButton( i18n("&Menu"), winFrame );
     menuButton->setPopup( optMenu );
@@ -228,12 +230,14 @@ KGreeter::KGreeter()
 
     hbox2->addStretch( 1 );
 
-    if (kdmcfg->_allowShutdown != SHUT_NONE) {
-	shutdownButton = new QPushButton( i18n("&Shutdown..."), winFrame );
-	connect( shutdownButton, SIGNAL(clicked()),
-		 SLOT(shutdown_button_clicked()) );
-	hbox2->addWidget( shutdownButton );
+//helpButton
+
+#ifdef BUILTIN_XCONSOLE
+    if (kdmcfg->_showLog) {
+	consoleView = new KConsole( this, kdmcfg->_logSource );
+	main_grid->addMultiCellWidget( consoleView, 4,4, 0,1 );
     }
+#endif
 
     timer = new QTimer( this );
     // clear fields
@@ -286,7 +290,7 @@ KGreeter::insertUser( KListView *listview, const QImage &default_pix,
     QImage p;
     if (kdmcfg->_faceSource != FACE_USER_ONLY &&
 	kdmcfg->_faceSource != FACE_PREFER_USER)
-	p = QPixmap( locate( "user_pic", username + ".png" ) );
+	p = QPixmap( user_pic_dir + username + ".png" );
     if (p.isNull() && kdmcfg->_faceSource != FACE_ADMIN_ONLY) {
 	// XXX remove seteuid-voodoo when we run as nobody
 	seteuid( ps->pw_uid );
@@ -294,7 +298,7 @@ KGreeter::insertUser( KListView *listview, const QImage &default_pix,
 	seteuid( 0 );
     }
     if (p.isNull() && kdmcfg->_faceSource != FACE_USER_ONLY)
-	p = QPixmap( locate( "user_pic", username + ".png" ) );
+	p = QPixmap( user_pic_dir + username + ".png" );
     if (p.isNull())
 	p = default_pix;
     else
@@ -312,10 +316,9 @@ KGreeter::insertUser( KListView *listview, const QImage &default_pix,
 void
 KGreeter::insertUsers( KListView *listview )
 {
-    QImage default_pix(
-	locate( "user_pic", QString::fromLatin1("default.png") ) );
+    QImage default_pix( user_pic_dir + QString::fromLatin1("default.png") );
     if (default_pix.isNull())
-	LogError("Can't open default pixmap \"default.png\"\n");
+	LogError("Can't open default pixmap\n");
     default_pix = default_pix.smoothScale( 48, 48, QImage::ScaleMin );
     struct passwd *ps;
     if (kdmcfg->_showUsers == SHOW_ALL) {
@@ -486,7 +489,7 @@ KGreeter::quit_button_clicked()
 void
 KGreeter::chooser_button_clicked()
 {
-//    kapp->exit( ex_choose );
+    done( ex_choose );
 }
 
 void
@@ -684,7 +687,7 @@ KGreeter::verifyUser(bool haveto)
 	    GSendInt (0);
 	    if (kdmcfg->_preselUser == PRESEL_PREV)
 		stsfile->writeEntry (enam, loginEdit->text());
-	    kapp->quit();
+	    done( ex_exit );
 	    return true;
     }
     reject();
@@ -788,22 +791,6 @@ kg_main( int argc, char **argv )
 
     app.setFont( kdmcfg->_normalFont );
 
-    KGlobal::dirs()->addResourceType( "user_pic",
-				      KStandardDirs::kde_default("data") +
-				      QString::fromLatin1("kdm/pics/users/") );
-
-
-#ifdef HAVE_XKBSETPERCLIENTCONTROLS
-    //
-    //  Activate the correct mapping for modifiers in XKB extension as
-    //  grabbed keyboard has its own mapping by default
-    //
-    int opcode, evbase, errbase, majret, minret;
-    unsigned int value = XkbPCF_GrabsUseXKBStateMask;
-    if (XkbQueryExtension( dpy, &opcode, &evbase,
-                           &errbase, &majret, &minret ))
-        XkbSetPerClientControls( dpy, value, &value );
-#endif
     setup_modifiers( dpy, kdmcfg->_numLockStatus );
     SecureDisplay( dpy );
     if (!dgrabServer) {
@@ -818,6 +805,14 @@ kg_main( int argc, char **argv )
 	GSendInt( G_SetupDpy );
 	GRecvInt();
     }
+
+    GSendInt( G_Ready );
+    XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
+
+  redo:
+    app.setOverrideCursor( Qt::WaitCursor );
+    bool greet = GRecvInt() == G_Greet;	// alt: G_Choose
+
     QDesktopWidget *dsk = kapp->desktop();
     QRect scr = dsk->screenGeometry(
 	kdmcfg->_greeterScreen == -1 ?
@@ -825,25 +820,45 @@ kg_main( int argc, char **argv )
 	    kdmcfg->_greeterScreen == -2 ?
 		dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
 		kdmcfg->_greeterScreen );
-    KGreeter *kgreeter = new KGreeter;
-    kgreeter->setMaximumSize( scr.size() );
-    kgreeter->move( -10000, -10000 );
-    kgreeter->show();
-    QRect grt( QPoint( 0, 0 ), kgreeter->sizeHint() );
+    FDialog *dialog;
+    if (greet)
+	dialog = new KGreeter;
+    else
+	dialog = new ChooserDlg;
+    dialog->setMaximumSize( scr.size() );
+    dialog->move( -10000, -10000 );
+    dialog->show();
+    QRect grt( QPoint( 0, 0 ), dialog->sizeHint() );
     if (kdmcfg->_greeterPosX >= 0) {
 	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
 	moveInto( grt, scr );
     } else {
 	grt.moveCenter( scr.center() );
     }
-    kgreeter->setGeometry( grt );
+    dialog->setGeometry( grt );
     if (dsk->screenNumber( QCursor::pos() ) !=
 	dsk->screenNumber( grt.center() ))
 	QCursor::setPos( grt.center() );
-    XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
+    if (!greet) {
+	GSendInt (G_Ready);	/* tell chooser to go into async mode */
+	GRecvInt ();		/* ack */
+    }
+    app.restoreOverrideCursor();
     Debug ("entering event loop\n");
-    kgreeter->exec();
-    delete kgreeter;
+    int rslt = dialog->exec();
+    Debug ("left event loop\n");
+    delete dialog;
+    switch (rslt) {
+    case ex_greet:
+	GSendInt (G_DGreet);
+	goto redo;
+    case ex_choose:
+	GSendInt (G_DChoose);
+	goto redo;
+    default:
+	break;
+    }
+
     delete proc;
     UnsecureDisplay( dpy );
     restore_modifiers();

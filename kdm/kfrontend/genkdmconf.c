@@ -621,8 +621,6 @@ static const char def_startup[] =
 "# causing serious grief; still, it can cause havoc, so xconsole is started\n"
 "# by Xsetup usually.\n"
 "# This is not required if you use PAM with the pam_console module.\n"
-"# Note, that this still can cause havoc, so usually xconsole is started\n"
-"# by Xsetup.\n"
 "#\n"
 "#chown $USER /dev/console\n"
 "\n"
@@ -696,8 +694,22 @@ static const char def_session[] =
 "	fi\n"
 "done\n"
 "\n"
+"DM_PATH=$PATH\n"
 "test -f /etc/profile && . /etc/profile\n"
 "test -f $HOME/.profile && . $HOME/.profile\n"
+"IFS_SAVE=$IFS\n"
+"IFS=:\n"
+"for i in $PATH; do\n"
+"    case :$DM_PATH: in\n"
+"      *:$i:*) ;;\n"
+"      ::) DM_PATH=$i;;\n"
+"      *) DM_PATH=$DM_PATH:$i;;\n"
+"    esac\n"
+"done\n"
+"IFS=$IFS_SAVE\n"
+"PATH=$DM_PATH\n"
+"export PATH\n"
+"\n"
 "test -f /etc/xprofile && . /etc/xprofile\n"
 "test -f $HOME/.xprofile && . $HOME/.xprofile\n"
 "\n"
@@ -1512,7 +1524,10 @@ addKdePath (Entry *ce, const char *defpath)
     if (!(p = strstr (path, KDE_BINDIR)) ||
         (p != path && *(p-1) != ':') ||
         (p[sizeof(KDE_BINDIR)-1] && p[sizeof(KDE_BINDIR)-1] != ':'))
+    {
 	ASPrintf ((char **)&ce->value, KDE_BINDIR ":%s", path);
+	ce->written = ce->active = 1;
+    }
 }
 
 static void
@@ -1645,10 +1660,6 @@ static Ent entsGeneral[] = {
 { "ConfigVersion",	0, 0, 
 "# This option exists solely for the purpose of a clean automatic upgrade.\n"
 "# Don't even think about changing it!\n" },
-{ "DaemonMode",		0, 0, 
-"# If \"false\", KDM won't daemonize after startup. Note, that you needn't to\n"
-"# use this if you start KDM from inittab, as KDM won't daemonize in this case\n"
-"# automatically. Default is true.\n" },
 { "Xservers",		0, mk_xservers,
 "# If the value starts with a slash (/), it specifies the file, where X-servers\n"
 "# to be used by KDM are listed; the file is in the usual XDM-Xservers format.\n"
@@ -1806,10 +1817,6 @@ static Ent entsCore[] = {
 { "UserAuthDir",	0, 0, 
 "# Where to put the user's X-server authorization file if ~/.Xauthority\n"
 "# cannot be created. Default is /tmp\n" },
-{ "Chooser",		0, 0, 
-"# The host chooser program to use.\n"
-"# Default is " KDE_BINDIR "/chooser\n"
-"# XXX this is going to be integrated into the greeter (probably).\n" },
 { "AutoReLogin",	0, 0, 
 "# If \"true\", KDM will automatically restart a session after an X-server\n"
 "# crash (or if it is killed by Alt-Ctrl-BackSpace). Note, that enabling\n"
@@ -1865,10 +1872,6 @@ static Ent entsCore[] = {
 { "AutoLoginSession",	0, 0, 
 "# The session for the user to log in automatically. This becomes useless after\n"
 "# the user's first login, as the last used session will take precedence.\n" },
-{ "AutoLogin1st",	0, 0, 
-"# If \"true\", the auto-login is truly automatic, i.e., the user is logged in\n"
-"# when KDM comes up. If \"false\", the auto-login must be initiated by crashing\n"
-"# the X-server with Alt-Ctrl-BackSpace. Default is true\n" },
 };
 
 static Ent entsGreeter[] = {
@@ -1984,6 +1987,25 @@ static Ent entsGreeter[] = {
 { "AuthComplain",	0, 0, 
 "# Warn, if local X-authorization cannot be created. Default is true\n"
 "# XXX this is a dummy currently\n" },
+{ "LoginMode",	0, 0, 
+"# Specify whether the greeter of local displays should start up in host chooser\n"
+"# (remote) or login (local) mode and whether it is allowed to switch to the\n"
+"# other mode.\n"
+"# \"LocalOnly\" - only local login possible (Default)\n"
+"# \"RemoteOnly\" - only choice of remote host possible\n"
+"# \"DefaultLocal\" - start up in local mode, but allow switch to remote mode\n"
+"# \"DefaultRemote\" - ... and the other way round\n" },
+{ "ChooserHosts",	0, 0, 
+"# A list of hosts to be automatically added to the remote login menu. The\n"
+"# special name \"*\" means broadcast. Default is \"*\"\n" },
+#ifdef BUILTIN_XCONSOLE
+{ "ShowLog",		0, 0, 
+"# Enable KDM's built-in xconsole. Note, that this can be enabled for only\n"
+"# one display at a time. Default is false\n" },
+{ "LogSource",		0, 0, 
+"# The data source for KDM's built-in xconsole. The default \"\" means that\n"
+"# a console log redirection should be requested from /dev/console.\n" },
+#endif
 };
 
 static Sect
@@ -2037,7 +2059,6 @@ typedef struct DEnt {
 
 static DEnt dEntsGeneral[] = {
 { "ConfigVersion",	"", 0 },	/* will be overridden on writeout */
-{ "DaemonMode",		"false", 0 },
 { "Xservers",		"", 0 },
 { "PidFile",		"/var/run/kdm.pid", 1 },
 { "LockPidFile",	"false", 0 },
@@ -2104,7 +2125,6 @@ static DEnt dEntsAnyCore[] = {
 { "SystemPath",		"", 0 },
 { "SystemShell",	"/bin/bash", 0 },
 { "UserAuthDir",	"", 0 },
-{ "Chooser",		"", 0 },	/* XXX kill */
 { "AutoReLogin",	"true", 0 },
 { "AllowRootLogin",	"false", 1 },
 { "AllowNullPasswd",	"false", 1 },
@@ -2161,6 +2181,8 @@ static DEnt dEntsLocalCore[] = {
 static DEnt dEntsLocalGreeter[] = {
 { "AuthComplain",	"false", 0 },
 { "GreeterScreen",	"-1", 0 },
+{ "LoginMode",		"DefaultLocal", 1 },
+{ "ChooserHosts",	"*,ugly,sky,dino,kiste.local,login.crap.com", 0 },
 };
 
 static DEnt dEnts0Core[] = {
@@ -2168,12 +2190,13 @@ static DEnt dEnts0Core[] = {
 { "AutoLoginUser",	"fred", 0 },
 { "AutoLoginPass",	"secret!", 0 },
 { "AutoLoginSession",	"kde", 0 },
-{ "AutoLogin1st",	"false", 0 },
 };
 
 static DEnt dEnts0Greeter[] = {
 { "PreselectUser",	"Default", 0 },
 { "DefaultUser",	"johndoe", 0 },
+{ "ShowLog",		"true", 1 },
+{ "LogSource",		"/dev/xconsole", 1 },
 };
 
 typedef struct DSect {
@@ -2186,9 +2209,7 @@ typedef struct DSect {
 
 static DSect dAllSects[] = { 
 { "General",		dEntsGeneral, as(dEntsGeneral), 1,
-"# KDM configuration example.\n"
-"# Note, that all comments will be lost if you change this file with\n"
-"# the kcontrol frontend.\n"
+"# KDM master configuration file\n"
 "#\n"
 "# Definition: the greeter is the login dialog, i.e., the part of KDM\n"
 "# which the user sees.\n"
@@ -2221,7 +2242,8 @@ static DSect dAllSects[] = {
 "# [X-hishost], [X-myhost:0_dec], [X-*:1], [X-:*]\n"
 "# If a setting is not found in any matching section, the default is used.\n"
 "#\n"
-"# Every comment applies to the following section or key.\n"
+"# Every comment applies to the following section or key. Note, that all\n"
+"# comments will be lost if you change this file with the kcontrol frontend.\n"
 "# The defaults refer to KDM's built-in values, not anything set in this file.\n"
 "#\n"
 "\n" },
@@ -2596,7 +2618,6 @@ mergeKdmRcOld (const char *path)
 	setsect ("X-:0-Core");
 	cpyval ("AutoLoginEnable", 0);
 	cpyval ("AutoLoginUser", 0);
-	cpyval ("AutoLogin1st", 0);
     }
 
 #if defined(__linux__) && defined(__i386__)
@@ -2737,6 +2758,9 @@ mergeKdmRcNewer (const char *path)
 		free (p2);
 		cpyval ("HiddenUsers", "NoUsers");
 		cpyval ("SelectedUsers", "Users");
+		if ((p = cfgEnt ("EnableChooser")))	/* from make_it_cool branch and SuSE 8.1 */
+		    putval ("LoginMode",
+			    isTrue (p) ? "DefaultLocal" : "LocalOnly");
 	    }
 	}
 
@@ -2882,7 +2906,6 @@ P_autoPass (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **va
 XResEnt globents[] = {
 { "servers", "General", "Xservers", 0 },
 { "requestPort", "Xdmcp", "Port", P_requestPort },
-{ "daemonMode", "General", 0, 0 },
 { "pidFile", "General", 0, 0 },
 { "lockPidFile", "General", 0, 0 },
 { "authDir", "General", 0, P_authDir },
@@ -2897,7 +2920,6 @@ XResEnt globents[] = {
 { "choiceTimeout", "Xdmcp", 0, 0 },
 { "sourceAddress", "Xdmcp", 0, 0 },
 { "willing", "Xdmcp", 0, 0 },
-{ "autoLogin", "General", 0, 0 },
 }, dpyents[] = {
 { "serverAttempts", "X-%s-Core", 0, 0 },
 { "openDelay", "X-%s-Core", 0, P_openDelay },
@@ -2928,12 +2950,10 @@ XResEnt globents[] = {
 { "systemShell", "X-%s-Core", 0, 0 },
 { "failsafeClient", "X-%s-Core", 0, 0 },
 { "userAuthDir", "X-%s-Core", 0, 0 },
-{ "chooser", "X-%s-Core", 0, 0 },	/* XXX to kill */
 { "noPassUsers", "X-%s-Core", 0, P_noPassUsers },
 { "autoUser", "X-%s-Core", "AutoLoginUser", P_autoUser },
 { "autoPass", "X-%s-Core", "AutoLoginPass", P_autoPass },
 { "autoString", "X-%s-Core", "AutoLoginSession", 0 },
-{ "autoLogin1st", "X-%s-Core", 0, 0 },
 { "autoReLogin", "X-%s-Core", 0, 0 },
 { "allowNullPasswd", "X-%s-Core", 0, 0 },
 { "allowRootLogin", "X-%s-Core", 0, 0 },

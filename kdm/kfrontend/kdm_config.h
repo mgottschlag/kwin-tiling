@@ -82,4 +82,9 @@
 # define FACE_USER_ONLY		3
 #define C_ColorScheme		(C_TYPE_STR | 0x102c)
 
+#ifdef BUILTIN_XCONSOLE
+# define C_ShowLog		(C_TYPE_INT | 0x2000)
+# define C_LogSource		(C_TYPE_STR | 0x2001)
+#endif
+
 #endif /* _KDM_CONFIG_H_ */

@@ -27,11 +27,7 @@
 #ifndef _KDM_GREET_H_
 #define _KDM_GREET_H_
 
-#include "kdm_config.h"
-
-#include <X11/Xlib.h>
-
-#include <sys/types.h>
+#include <greet.h>	/* for the ATTR_ defines */
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,6 +38,8 @@ void GSendStr (const char *buf);
 int GRecvInt (void);
 char *GRecvStr (void);
 char **GRecvStrArr (int *len);
+char *GRecvArr (int *len);
+
 int GetCfgInt (int id);
 char *GetCfgStr (int id);
 char **GetCfgStrArr (int id, int *len);
@@ -55,12 +53,16 @@ void LogError (const char *fmt, ...) ATTR_PRINTFLIKE(1,2);
 void LogPanic (const char *fmt, ...) ATTR_PRINTFLIKE(1,2) ATTR_NORETURN;
 void LogOutOfMem (const char *fkt);
 
-void SecureDisplay (Display *dpy);
-void UnsecureDisplay (Display *dpy);
-int PingServer (Display *dpy);
+struct _XDisplay;
 
-void setup_modifiers (Display *mdpy, int numlock);
+void SecureDisplay (struct _XDisplay *dpy);
+void UnsecureDisplay (struct _XDisplay *dpy);
+int PingServer (struct _XDisplay *dpy);
+
+void setup_modifiers (struct _XDisplay *mdpy, int numlock);
 void restore_modifiers (void);
+
+extern int rfd;			/* for select() loops */
 
 extern char *dname;		/* d->name */
 extern int disLocal;		/* d->displayType.location == Local */

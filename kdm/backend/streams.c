@@ -47,10 +47,6 @@ from The Open Group.
 #include <netdir.h>
 
 extern int	xdmcpFd;
-extern int	chooserFd;
-
-extern FD_TYPE	WellKnownSocketsMask;
-extern int	WellKnownSocketsMax;
 
 void
 CreateWellKnownSockets ()
@@ -81,7 +77,6 @@ CreateWellKnownSockets ()
     }
     name = localHostname ();
     registerHostname (name, strlen (name));
-    RegisterCloseOnFork (xdmcpFd);
 
     service.h_host = HOST_SELF;
     sprintf(bindbuf, "%d", request_port);
@@ -103,47 +98,8 @@ CreateWellKnownSockets ()
 	xdmcpFd = -1;
 	return;
     }
-    WellKnownSocketsMax = xdmcpFd;
-    FD_SET (xdmcpFd, &WellKnownSocketsMask);
-
-    chooserFd = t_open ("/dev/tcp", O_RDWR, NULL);
-    Debug ("Created chooser fd %d\n", chooserFd);
-    if (chooserFd == -1)
-    {
-	LogError ("chooser stream creation failed\n");
-	t_error("CreateWellKnownSockets(chooserFd): t_open failed");
-	return;
-    }
-    bind_addr.qlen = 5;
-    bind_addr.addr.len = 0;
-    bind_addr.addr.maxlen = 0;
-    if( t_bind( chooserFd, &bind_addr, NULL ) < 0 )
-    {
-        t_error("CreateWellKnowSockets(chooserFd): t_bind failed");
-    }
-
-    if (chooserFd > WellKnownSocketsMax)
-	WellKnownSocketsMax = chooserFd;
-    FD_SET (chooserFd, &WellKnownSocketsMask);
-}
-
-GetChooserAddr (addr, lenp)
-    char	*addr;		/* return */
-    int		*lenp;		/* size of addr, returned as amt used */
-{
-    struct netbuf nbuf;
-    int retval;
-
-    nbuf.buf = addr;
-    nbuf.len = *lenp;
-    nbuf.maxlen = *lenp;
-    retval = t_getname (chooserFd, &nbuf, LOCALNAME);
-    if (retval < 0) {
-	if (debugLevel & DEBUG_CORE)
-	    t_error("t_getname on chooser fd");
-    }
-    *lenp = nbuf.len;
-    return retval;
+    RegisterCloseOnFork (xdmcpFd);
+    RegisterInput (xdmcpFd);
 }
 
 #endif /* STREAMSCONN && XDMCP */

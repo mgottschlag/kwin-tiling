@@ -74,24 +74,48 @@ from The Open Group.
 #define EX_OPENFAILED_DPY	5	/* XOpenDisplay failed, retry */
 #define EX_TEXTLOGIN		6	/* start console login */
 #define EX_RESERVE		7	/* put in reserve mode */
+#define EX_REMOTE		8	/* start -query-ing X-server */
 
 /*
- * Command codes greeter -> core
+ * Command codes core -> greeter
  */
-#define G_Shutdown	1	/* int how; int when; async */
+#define G_Greet		1	/* get login; bidi */
+#define G_GreetErr	2	/* print failed auto-login */
+#define G_Choose	3	/* run chooser; bidi */
+# define G_Ch_AddHost		301
+# define G_Ch_ChangeHost	302
+# define G_Ch_RemoveHost	303
+# define G_Ch_BadHost		304
+# define G_Ch_Exit		305
+#define G_SessMan	4	/* start "session manager" */
+
+#define G_Ch_Refresh	10	/* XXX change */
+#define G_Ch_RegisterHost	11	/* str name  XXX change */
+#define G_Ch_DirectChoice	12	/* str name  XXX change */
+
+/*
+ * Status/command codes greeter -> core
+ */
+#define G_Ready		0	/* nop */
+#define G_Cancel	1	/* abort login, etc. */
+
+#define G_DGreet	2	/* get login */
+#define G_DChoose	3	/* run chooser */
+
+#define G_Shutdown	101	/* int how; int when; async */
 # define SHUT_REBOOT	1	/* how */
 # define SHUT_HALT	2
 # define SHUT_SCHEDULE	0	/* when */
 # define SHUT_TRYNOW	1
 # define SHUT_FORCENOW	2
 # define SHUT_INTERACT	10
-#define G_SessionExit	2	/* int code; async */
-#define G_Verify	3	/* str name, str pass; int V_ret */
-#define G_Restrict	4	/* str name; <variable> */
-#define G_Login		5	/* str name, str pass, argv sessargs; async */
-#define G_GetCfg	6	/* int what; int sts, <variable>  */
-#define G_GetSessArg	7	/* str user; argv sessargs */
-#define G_SetupDpy	8	/* ; async */
+#define G_SessionExit	102	/* int code; async */
+#define G_Verify	103	/* str name, str pass; int V_ret */
+#define G_Restrict	104	/* str name; <variable> */
+#define G_Login		105	/* str name, str pass, argv sessargs; async */
+#define G_GetCfg	106	/* int what; int sts, <variable>  */
+#define G_GetSessArg	107	/* str user; argv sessargs */
+#define G_SetupDpy	108	/* ; async */
 
 /*
  * Command codes core -> config reader
@@ -150,10 +174,6 @@ from The Open Group.
 #define C_PRIVATE	  0xf0000000	/* Private, don't make it visible to interfaces! */
 
 /* global config */
-
-#define C_daemonMode		(C_TYPE_INT | 0x000)
-
-#define C_autoLogin		(C_TYPE_INT | 0x003)
 
 #define C_autoRescan		(C_TYPE_INT | 0x004)
 
@@ -216,12 +236,10 @@ from The Open Group.
 #define C_systemShell		(C_TYPE_STR | 0x11e)
 #define C_failsafeClient	(C_TYPE_STR | 0x11f)
 #define C_userAuthDir		(C_TYPE_STR | 0x120)
-#define C_chooser		(C_TYPE_STR | 0x122)	/* XXX vaporize */
 #define C_noPassUsers		(C_TYPE_ARGV | 0x123)
 #define C_autoUser		(C_TYPE_STR | 0x124)
 #define C_autoPass		(C_TYPE_STR | 0x125)
 #define C_autoString		(C_TYPE_STR | 0x126)
-#define C_autoLogin1st		(C_TYPE_INT | 0x127)
 #define C_autoReLogin		(C_TYPE_INT | 0x128)
 #define C_allowNullPasswd	(C_TYPE_INT | 0x129)
 #define C_allowRootLogin	(C_TYPE_INT | 0x12a)
@@ -233,6 +251,12 @@ from The Open Group.
 #define C_allowNuke		(C_TYPE_INT | 0x12d)	/* see previous */
 #define C_defSdMode		(C_TYPE_INT | 0x12e)	/* see G_Shutdown, but no SHUT_INTERACT */
 #define C_interactiveSd		(C_TYPE_INT | 0x12f)
+#define C_chooserHosts		(C_TYPE_ARGV | 0x130)
+#define C_loginMode		(C_TYPE_INT | 0x131)
+# define LOGIN_LOCAL_ONLY	0
+# define LOGIN_DEFAULT_LOCAL	1
+# define LOGIN_DEFAULT_REMOTE	2
+# define LOGIN_REMOTE_ONLY	3
 
 /* display variables */
 #define C_name			(C_TYPE_STR | 0x200)

@@ -1,35 +1,67 @@
-$Id$
-
 Must:
+
+- implement a "console mode" that is more adequate for linux
+
+- export LC_* by default
 
 - Make nis & kerberos5 work (done, but untested ...)
 
-- Integrate chooser into kdm_greet
-- Integrate kdmdesktop into kdm_greet
 - Move clock from greeter dialog to desktop
-- Add XDMCP _client_ to core (for remote login like in dtlogin)
+- Add XDMCP _client_ to core (for remote login like in dtlogin).
+  Currently this is simply done by restarting the x-server with -query.
 - Add language selection
 - Messages after switching to text mode
+- document config files
+- update greeting message escape sequences docu in kcmkdm tooltip
+
+- bidirectional command sockets for better integration with kde session
 
 Should:
+
+- check if pam works before trying to authenticate
+
+- a double click on a user picture should log him in at once if he has
+  no password
 
 - sync BSD_AUTH from xdm, sync osfc2 from kcheckpass
 
 - kill warning on AIX - see bug #13628 (really present?)
 
-- dpi/bpp/resolution selection. will require x-server restart.
+- dpi/bpp/resolution selection. will require x-server restart
+
+- make config position independent
 
 Could:
 
+- pass FamilyBroadcast instead of hostname BROADCAST to chooser
+
 - add a minimalistic window manager to the greeter (see gdm)
 - make kdm kcontrol module invokable from greeter
-- session name aliasing
+- session name aliasing (even better: use .desktop files. already agreed
+  upon with the gdm maintainer)
 - password change dialog for aged passwords
 - starting kdm while a kdm is running in the background in "console mode"
-  would reactivate the greeter. this would require lots of magic.
+  would reactivate the greeter. this would require lots of magic (suid root
+  (disable -config option or make audit!) and make it write the fifo).
 
-- Make remembering user's last session more portable (standard??)
+- Make remembering user's last session more portable (standard??
+  already agreed upon .dmrc with gdm maintainer)
 - Animated logo
 - Different logos for each session type
 - User pictures in logo field
+
+- check if pam works before trying to authenticate
+- a double click on a user picture should log him in at once if he has 
+  no password
+
+- remote-accessible command sockets for remote shutdown, etc.
+  or maybe implement it as an xdmcp extension?
+- LoginMode=DirectQuery
+
+ralf says:
+- put the kmenu sidebar image on the left of the greeter
+- enable the clock by default
+- make PreselectUser=Previous & FocusPasswd=true the default
+- rename the label "Login:" to "Username:"
+- alternate userview: make the "login" field a combobox
 

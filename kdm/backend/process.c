@@ -44,9 +44,6 @@ from The Open Group.
 #include <stdio.h>
 #include <stdarg.h>
 
-static int opipe[2], ipipe[2], gpid;
-Jmp_buf GErrJmp;
-
 
 SIGVAL (*Signal (int sig, SIGFUNC handler))(int)
 {
@@ -131,7 +128,6 @@ Fork ()
 	sigsetmask (0);
 #endif
 	CloseOnFork ();
-	gpid = 0;
 	return 0;
     }
 
@@ -150,7 +146,7 @@ Wait4 (int pid)
     waitType	result;
 
 #ifndef X_NOT_POSIX
-    if (waitpid (pid, &result, 0) < 0)
+    while (waitpid (pid, &result, 0) < 0)
 #else
     while (wait4 (pid, &result, 0, (struct rusage *)0) < 0)
 #endif
@@ -225,103 +221,167 @@ runAndWait (char **args, char **env)
 }
 
 
-static void
-GClosen ()
-{
-    CloseNClearCloseOnFork (opipe[1]);
-    CloseNClearCloseOnFork (ipipe[0]);
-}
+static GTalk *curtalk;
 
-static void
-GCloseAll ()
+void
+GSet (GTalk *tlk)
 {
-    GClosen ();
-    close (opipe[0]);
-    close (ipipe[1]);
-}
-
-const char *
-GOpen (char **argv, const char *what, char **env)
-{
-    char **margv, coninfo[20];
-
-    if (gpid)
-	return "another helper program is already running";
-    if (pipe (opipe))
-	return "pipe() failed";
-    if (pipe (ipipe)) {
-	close (opipe[0]);
-	close (opipe[1]);
-	return "pipe() failed";
-    }
-    RegisterCloseOnFork (opipe[1]);
-    RegisterCloseOnFork (ipipe[0]);
-    if (!(margv = xCopyStrArr (1, argv))) {
-	GCloseAll ();
-	return "out of memory";
-    }
-    if (!StrApp (margv, progpath, what, (char *)0)) {
-	free (margv);
-	GCloseAll ();
-	return "out of memory";
-    }
-    switch (gpid = Fork()) {
-    case -1:
-	free (margv[0]);
-	free (margv);
-	GCloseAll ();
-	return "fork() failed";
-    case 0:
-	(void) Signal (SIGPIPE, SIG_IGN);
-	sprintf (coninfo, "CONINFO=%d %d", opipe[0], ipipe[1]);
-	env = putEnv (coninfo, env);
-	execute (margv, env);
-	LogPanic ("Cannot execute '%s'\n", margv[0]);
-    default:
-	Debug ("Forked helper %s, pid %d\n", margv[0], gpid);
-	free (margv[0]);
-	free (margv);
-	close (opipe[0]);
-	close (ipipe[1]);
-	(void) Signal (SIGPIPE, SIG_IGN);
-	GSendInt (debugLevel);
-	return (char *)0;
-    }
+    curtalk = tlk;
 }
 
 int
-GClose (int force)
+GFork (GPipe *pajp, char *pname, char *cname)
+{
+    int opipe[2], ipipe[2], pid;
+
+    if (pipe (opipe)) {
+	LogError ("Cannot start %s, pipe() failed", cname);
+	return -1;
+    }
+    if (pipe (ipipe)) {
+	close (opipe[0]);
+	close (opipe[1]);
+	LogError ("Cannot start %s, pipe() failed", cname);
+	return -1;
+    }
+    RegisterCloseOnFork (opipe[1]);
+    RegisterCloseOnFork (ipipe[0]);
+    switch (pid = Fork()) {
+    case -1:
+	close (opipe[0]);
+	close (ipipe[1]);
+	CloseNClearCloseOnFork (opipe[1]);
+	CloseNClearCloseOnFork (ipipe[0]);
+	LogError ("Cannot start %s, fork() failed\n", cname);
+	return -1;
+    case 0:
+	pajp->wfd = ipipe[1];
+	RegisterCloseOnFork (ipipe[1]);
+	pajp->rfd = opipe[0];
+	RegisterCloseOnFork (opipe[0]);
+	pajp->who = pname;
+	break;
+    default:
+	close (opipe[0]);
+	close (ipipe[1]);
+	pajp->rfd = ipipe[0];
+	pajp->wfd = opipe[1];
+	pajp->who = cname;
+	break;
+    }
+    return pid;
+}
+
+int
+GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
+{
+    char **margv;
+    int pip[2];
+    char coninfo[20];
+
+/* ###   GSet (proc->pipe); */
+    if (proc->pid) {
+	LogError ("%s already running\n", cname);
+	return -1;
+    }
+    if (!(margv = xCopyStrArr (1, argv))) {
+	LogOutOfMem ("GOpen");
+	return -1;
+    }
+    if (!StrApp (margv, progpath, what, (char *)0)) {
+	free (margv);
+	LogOutOfMem ("GOpen");
+	return -1;
+    }
+    if (pipe (pip)) {
+	LogError ("Cannot start %s, pipe() failed\n", cname);
+	goto fail;
+    }
+    switch (proc->pid = GFork (&proc->pipe, 0, cname)) {
+    case -1:
+        close (pip[1]);
+      fail1:
+        close (pip[0]);
+      fail:
+	free (margv[0]);
+	free (margv);
+	return -1;
+    case 0:
+	(void) Signal (SIGPIPE, SIG_IGN);
+        close (pip[0]);
+	fcntl (pip[1], F_SETFD, FD_CLOEXEC);
+	sprintf (coninfo, "CONINFO=%d %d", proc->pipe.rfd, proc->pipe.wfd);
+	env = putEnv (coninfo, env);
+	execute (margv, env);
+	write (pip[1], "", 1);
+	exit (1);
+    default:
+	(void) Signal (SIGPIPE, SIG_IGN);
+	close (pip[1]);
+	if (Reader (pip[0], coninfo, 1)) {
+	    Wait4 (proc->pid);
+	    LogError ("Cannot execute '%s' (%s)\n", margv[0], cname);
+	    goto fail1;
+	}
+	close (pip[0]);
+	Debug ("Started %s (%s), pid %d\n", cname, margv[0], proc->pid);
+	free (margv[0]);
+	free (margv);
+	GSendInt (debugLevel);
+	return 0;
+    }
+}
+
+static void
+iGClosen (GPipe *pajp)
+{
+    CloseNClearCloseOnFork (pajp->rfd);
+    CloseNClearCloseOnFork (pajp->wfd);
+    pajp->rfd = pajp->wfd = -1;
+}
+
+void
+GClosen (GPipe *pajp)
+{
+    iGClosen (pajp);
+    free (pajp->who);
+    pajp->who = 0;
+}
+
+int
+GClose (GProc *proc, int force)
 {
     int	ret;
 
-    if (!gpid) {
-	Debug ("Whoops, GClose while no helper is running\n");
+    if (!proc->pid) {
+	Debug ("Whoops, GClose while helper not running\n");
 	return 0;
     }
-    GClosen ();
+    iGClosen (&proc->pipe);
     if (force)
-	TerminateProcess (gpid, SIGTERM);
-    ret = Wait4 (gpid);
-    gpid = 0;
+	TerminateProcess (proc->pid, SIGTERM);
+    ret = Wait4 (proc->pid);
+    proc->pid = 0;
     if (ret && WaitSig(ret) != SIGTERM)
-	LogError ("Abnormal helper termination, code %d, signal %d\n", 
-		  WaitCode(ret), WaitSig(ret));
+	LogError ("Abnormal termination of %s, code %d, signal %d\n", 
+		  curtalk->pipe->who, WaitCode(ret), WaitSig(ret));
+    free (curtalk->pipe->who);
+    curtalk->pipe->who = 0;
     return ret;
 }
 
 static void ATTR_NORETURN
-GError (void)
+GErr (void)
 {
-    (void) GClose (1);
-    Longjmp (GErrJmp, 1);
+    Longjmp (curtalk->errjmp, 1);
 }
 
 static void
 GRead (void *buf, int len)
 {
-    if (Reader (ipipe[0], buf, len) != len) {
-	LogError ("Cannot read from helper\n");
-	GError ();
+    if (Reader (curtalk->pipe->rfd, buf, len) != len) {
+	LogError ("Cannot read from %s\n", curtalk->pipe->who);
+	GErr ();
     }
 }
 
@@ -331,21 +391,21 @@ GWrite (const void *buf, int len)
 #if 0
     int ret;
     do {
-	ret = write (opipe[1], buf, len);
+	ret = write (curtalk->pipe->wfd, buf, len);
     } while (ret < 0 && errno == EINTR);
     if (ret != len) {
 #else
-    if (write (opipe[1], buf, len) != len) {
+    if (write (curtalk->pipe->wfd, buf, len) != len) {
 #endif
-	LogError ("Cannot write to helper\n");
-	GError ();
+	LogError ("Cannot write to %s\n", curtalk->pipe->who);
+	GErr ();
     }
 }
 
 void
 GSendInt (int val)
 {
-    GDebug ("Sending int %d (0x%x) to helper\n", val, val);
+    GDebug ("Sending int %d (%#x) to %s\n", val, val, curtalk->pipe->who);
     GWrite (&val, sizeof(val));
 }
 
@@ -354,17 +414,17 @@ GRecvInt ()
 {
     int val;
 
-    GDebug ("Receiving int from helper ...\n");
+    GDebug ("Receiving int from %s ...\n", curtalk->pipe->who);
     GRead (&val, sizeof(val));
-    GDebug (" -> %d (0x%x)\n", val, val);
+    GDebug (" -> %d (%#x)\n", val, val);
     return val;
 }
 
 int
 GRecvCmd (int *cmd)
 {
-    GDebug ("Receiving command from helper ...\n");
-    if (Reader (ipipe[0], cmd, sizeof(*cmd)) == sizeof(*cmd)) {
+    GDebug ("Receiving command from %s ...\n", curtalk->pipe->who);
+    if (Reader (curtalk->pipe->rfd, cmd, sizeof(*cmd)) == sizeof(*cmd)) {
 	GDebug (" -> %d\n", *cmd);
 	return 1;
     }
@@ -376,7 +436,7 @@ GRecvCmd (int *cmd)
 void
 GSendArr (int len, const char *data)
 {
-    GDebug ("Sending array[%d] %02[*{hhx to helper\n", len, len, data);
+    GDebug ("Sending array[%d] %02[*{hhx to %s\n", len, len, data, curtalk->pipe->who);
     GWrite (&len, sizeof(len));
     GWrite (data, len);
 }
@@ -396,24 +456,22 @@ iGRecvArr (int *rlen)
     if (!(buf = malloc (len)))
     {
 	LogOutOfMem ("GRecvArr");
-	GError ();
+	GErr ();
     }
     GRead (buf, len);
     return buf;
 }
 
-/*
 char *
 GRecvArr (int *rlen)
 {
     char *buf;
 
-    GDebug ("Receiving array from helper ...\n");
+    GDebug ("Receiving array from %s ...\n", curtalk->pipe->who);
     buf = iGRecvArr (rlen);
     GDebug (" -> %02[*{hhx\n", *rlen, buf);
     return buf;
 }
-*/
 
 static int
 iGRecvArrBuf (char *buf)
@@ -432,7 +490,7 @@ GRecvArrBuf (char *buf)
 {
     int len;
 
-    GDebug ("Receiving already allocated array from helper ...\n");
+    GDebug ("Receiving already allocated array from %s ...\n", curtalk->pipe->who);
     len = iGRecvArrBuf (buf);
     GDebug (" -> %02[*{hhx\n", len, buf);
     return len;
@@ -443,7 +501,7 @@ GRecvStrBuf (char *buf)
 {
     int len;
 
-    GDebug ("Receiving already allocated string from helper ...\n");
+    GDebug ("Receiving already allocated string from %s ...\n", curtalk->pipe->who);
     len = iGRecvArrBuf (buf);
     GDebug (" -> %'.*s\n", len, buf);
     return len;
@@ -454,7 +512,7 @@ GSendStr (const char *buf)
 {
     int len;
 
-    GDebug ("Sending string %'s to helper\n", buf);
+    GDebug ("Sending string %'s to %s\n", buf, curtalk->pipe->who);
     if (buf) {
 	len = strlen (buf) + 1;
 	GWrite (&len, sizeof(len));
@@ -463,13 +521,23 @@ GSendStr (const char *buf)
 	GWrite (&buf, sizeof(int));
 }
 
+void
+GSendNStr (const char *buf, int len)
+{
+    int tlen = len + 1;
+    GDebug ("Sending string %'.*s to %s\n", len, buf, curtalk->pipe->who);
+    GWrite (&tlen, sizeof(tlen));
+    GWrite (buf, len);
+    GWrite ("", 1);
+}
+
 char *
 GRecvStr ()
 {
     int len;
     char *buf;
 
-    GDebug ("Receiving string from helper ...\n");
+    GDebug ("Receiving string from %s ...\n", curtalk->pipe->who);
     buf = iGRecvArr (&len);
     GDebug (" -> %'.*s\n", len, buf);
     return buf;
@@ -489,7 +557,7 @@ iGSendStrArr (int num, char **data)
 void
 GSendStrArr (int num, char **data)
 {
-    GDebug ("Sending string array[%d] to helper\n", num);
+    GDebug ("Sending string array[%d] to %s\n", num, curtalk->pipe->who);
     iGSendStrArr (num, data);
 }
 */
@@ -500,7 +568,7 @@ GRecvStrArr (int *rnum)
     int num;
     char **argv, **cargv;
 
-    GDebug ("Receiving string array from helper ...\n");
+    GDebug ("Receiving string array from %s ...\n", curtalk->pipe->who);
     GRead (&num, sizeof(num));
     GDebug (" -> %d strings\n", num);
     *rnum = num;
@@ -509,7 +577,7 @@ GRecvStrArr (int *rnum)
     if (!(argv = malloc (num * sizeof(char *))))
     {
 	LogOutOfMem ("GRecvStrArr");
-	GError ();
+	GErr ();
     }
     for (cargv = argv; --num >= 0; cargv++)
 	*cargv = GRecvStr ();
@@ -523,10 +591,10 @@ GSendArgv (char **argv)
 
     if (argv) {
 	for (num = 0; argv[num]; num++);
-	GDebug ("Sending argv[%d] to helper ...\n", num);
+	GDebug ("Sending argv[%d] to %s ...\n", num, curtalk->pipe->who);
 	iGSendStrArr (num + 1, argv);
     } else {
-	GDebug ("Sending NULL argv to helper\n");
+	GDebug ("Sending NULL argv to %s\n", curtalk->pipe->who);
 	GWrite (&argv, sizeof(int));
     }
 }

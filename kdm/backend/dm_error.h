@@ -55,6 +55,7 @@ extern void ReInitErrorLog(void);
 #else
 # define ReInitErrorLog() while(0)
 #endif
-extern int FdPrintf (int fd, const char *fmt, ...);
+extern int ASPrintf (char **strp, const char *fmt, ...);
+extern int VASPrintf (char **strp, const char *fmt, va_list args);
 
 #endif /* _DM_ERROR_H_ */

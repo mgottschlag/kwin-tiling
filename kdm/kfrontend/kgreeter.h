@@ -44,12 +44,14 @@ class QComboBox;
 
 #include "kfdialog.h"
 #include "kdmshutdown.h"
+#ifdef BUILTIN_XCONSOLE
+# include "kconsole.h"
+#endif
 
 class KdmClock;
 
 
 class GreeterApp : public KApplication {
-    Q_OBJECT
     typedef KApplication inherited;
 
 public:
@@ -120,7 +122,7 @@ private:
 
     enum WmStat { WmNone, WmPrev, WmSel };
     WmStat		wmstat;
-    QString		enam;
+    QString		enam, user_pic_dir;
     KSimpleConfig	*stsfile;
     KListView		*user_view;
     KdmClock		*clock;
@@ -141,6 +143,9 @@ private:
     QPushButton		*shutdownButton;
     int			capslocked;
     bool		loginfailed;
+#ifdef BUILTIN_XCONSOLE
+    KConsole		*consoleView;
+#endif
 };
 
 

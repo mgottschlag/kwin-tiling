@@ -84,6 +84,13 @@ public:
     QString	_liloCmd;
     QString	_liloMap;
 #endif
+
+    int		_loginMode;
+
+#ifdef BUILTIN_XCONSOLE
+    bool	_showLog;
+    QString	_logSource;
+#endif
 };
 
 extern KDMConfig *kdmcfg;

@@ -51,7 +51,7 @@ from The Open Group.
 #define PRINT_ARRAYS
 #define LOG_DEBUG_MASK DEBUG_CORE
 #define LOG_PANIC_EXIT 1
-#define NEED_FDPRINTF
+#define NEED_ASPRINTF
 #define STATIC
 #include "printf.c"
 
@@ -71,13 +71,13 @@ GDebug (const char *fmt, ...)
 void
 Panic (const char *mesg)
 {
+    int fd = open ("/dev/console", O_WRONLY);
+    write (fd, "xdm panic: ", 11);
+    write (fd, mesg, strlen (mesg));
+    write (fd, "\n", 1);
 #ifdef USE_SYSLOG
+    InitLog ();
     syslog(LOG_ALERT, "%s", mesg);
-#else
-    int i = creat ("/dev/console", 0666);
-    write (i, prog, strlen(prog));
-    write (i, " panic: ", 8);
-    write (i, mesg, strlen (mesg));
 #endif
     exit (1);
 }

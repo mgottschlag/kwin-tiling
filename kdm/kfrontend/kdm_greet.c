@@ -27,6 +27,7 @@
 #include <config.h>
 
 #include "kdm_greet.h"
+#include "kdm_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,27 +51,40 @@
 #endif
 
 #ifdef HAVE_XKB
-# define explicit myexplicit
 # include <X11/XKBlib.h>
-# undef explicit
 #endif
 
 #ifdef HAVE_VSYSLOG
 # define USE_SYSLOG
 #endif
 
+#define PRINT_QUOTES
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
 #define LOG_PANIC_EXIT EX_UNMANAGE_DPY
 #define STATIC
 #include <printf.c>
 
+static void
+GDebug (const char *fmt, ...)
+{
+    va_list args;
+
+    if (debugLevel & DEBUG_HLPCON)
+    {
+	va_start(args, fmt);
+	Logger (DM_DEBUG, fmt, args);
+	va_end(args);
+    }
+}
+
 
 char *dname;
 int disLocal;
 int dhasConsole;
 
-static int rfd, wfd;
+int rfd;
+static int wfd;
 
 static int
 Reader (void *buf, int count)
@@ -111,6 +125,7 @@ GWrite (const void *buf, int count)
 void
 GSendInt (int val)
 {
+    GDebug ("Sending int %d (%#x) to core\n", val, val);
     GWrite (&val, sizeof(val));
 }
 
@@ -118,6 +133,7 @@ void
 GSendStr (const char *buf)
 {
     int len = buf ? strlen (buf) + 1 : 0;
+    GDebug ("Sending string %'s to core\n", buf);
     GWrite (&len, sizeof(len));
     GWrite (buf, len);
 }
@@ -127,6 +143,7 @@ static void
 GSendNStr (const char *buf, int len)
 {
     int tlen = len + 1;
+    GDebug ("Sending string %'.*s to core\n", len, buf);
     GWrite (&tlen, sizeof(tlen));
     GWrite (buf, len);
     GWrite ("", 1);
@@ -138,8 +155,27 @@ GRecvInt ()
 {
     int val;
 
+    GDebug ("Receiving int from core ...\n");
     GRead (&val, sizeof(val));
+    GDebug (" -> %d (%#x)\n", val, val);
     return val;
+}
+
+static char *
+iGRecvArr (int *rlen)
+{
+    int len;
+    char *buf;
+
+    GRead (&len, sizeof (len));
+    *rlen = len;
+    GDebug (" -> %d bytes\n", len);
+    if (!len)
+        return (char *)0;
+    if (!(buf = malloc (len)))
+	LogPanic ("No memory for read buffer\n");
+    GRead (buf, len);
+    return buf;
 }
 
 char *
@@ -148,12 +184,9 @@ GRecvStr ()
     int len;
     char *buf;
 
-    len = GRecvInt ();
-    if (!len)
-	return NULL;
-    if (!(buf = malloc (len)))
-	LogPanic ("No memory for read buffer\n");
-    GRead (buf, len);
+    GDebug ("Receiving string from core ...\n");
+    buf = iGRecvArr (&len);
+    GDebug (" -> %'.*s\n", len, buf);
     return buf;
 }
 
@@ -163,7 +196,10 @@ GRecvStrArr (int *rnum)
     int num;
     char **argv, **cargv;
 
-    *rnum = num = GRecvInt ();
+    GDebug ("Receiving string array from core ...\n");
+    GRead (&num, sizeof(num));
+    GDebug (" -> %d strings\n", num);
+    *rnum = num;
     if (!num)
 	return (char **)0;
     if (!(argv = malloc (num * sizeof(char *))))
@@ -173,6 +209,22 @@ GRecvStrArr (int *rnum)
     return argv;
 }
 
+/*
+char *
+GRecvArr (int *num)
+{
+    char *arr;
+
+    GRead (num, sizeof(*num));
+    if (!*num)
+	return 0;
+    if (!(arr = malloc (*num)))
+	LogPanic ("No memory for read buffer\n");
+    GRead (arr, *num);
+    return arr;
+}
+*/
+
 static void
 ReqCfg (int id)
 {
@@ -180,9 +232,9 @@ ReqCfg (int id)
     GSendInt (id);
     switch (GRecvInt ()) {
     case GE_NoEnt:
-	LogPanic ("Config value 0x%x not available\n", id);
+	LogPanic ("Config value %#x not available\n", id);
     case GE_BadType:
-	LogPanic ("Core does not know type of config value 0x%x\n", id);
+	LogPanic ("Core does not know type of config value %#x\n", id);
     }
 }
 
@@ -338,6 +390,19 @@ SecureDisplay (Display *dpy)
 	XSync (dpy, 0);
     }
     Debug ("done secure %s\n", dname);
+#ifdef HAVE_XKBSETPERCLIENTCONTROLS
+    /*
+     * Activate the correct mapping for modifiers in XKB extension as
+     * grabbed keyboard has its own mapping by default
+     */
+    {
+	int opcode, evbase, errbase, majret, minret;
+	unsigned int value = XkbPCF_GrabsUseXKBStateMask;
+	if (XkbQueryExtension( dpy, &opcode, &evbase,
+			       &errbase, &majret, &minret ))
+	    XkbSetPerClientControls( dpy, value, &value );
+    }
+#endif
 }
 
 void
@@ -601,7 +666,7 @@ main (int argc, char **argv)
 	LogPanic( "Cannot create qt config\n" );
     fprintf( f, "[General]\nuseXft=%s\n",
 		GetCfgInt (C_AntiAliasing) ? "true" : "false" );
-    /* XXX add plugin path, etc. */
+    /* XXX add plugin path, etc.? does kapp handle this? */
     fclose( f );
 
     dname = GetCfgStr (C_name);

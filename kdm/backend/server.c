@@ -78,10 +78,6 @@ StartServerOnce (struct display *d)
     (void) Signal (SIGUSR1, CatchUsr1);
     switch (pid = Fork ()) {
     case 0:
-#ifdef XDMCP
-	/* The chooser socket is not closed by CleanUpChild() */
-	DestroyWellKnownSockets();
-#endif
 	argv = d->serverArgv;
 	if (d->authFile) {
 	    argv = addStrArr (argv, "-auth", 5);
@@ -102,7 +98,7 @@ StartServerOnce (struct display *d)
 	(void) execv (argv[0], argv);
 	LogError ("server %s cannot be executed\n", argv[0]);
 	sleep ((unsigned) d->openDelay);
-	exit (EX_REMANAGE_DPY);
+	exit (0);
     case -1:
 	LogError ("fork failed, sleeping\n");
 	return 0;

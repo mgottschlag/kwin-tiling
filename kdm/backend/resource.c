@@ -44,19 +44,19 @@ from The Open Group.
 
 static char **originalArgv;
 
-static int runs;
+static GProc getter;
+GTalk cnftalk;
 
 static void
 OpenGetter ()
 {
-    const char *ret;
     char **env;
 
-    if (!runs) {
-	runs = 1;
+    GSet (&cnftalk);
+    if (!getter.pid) {
 	env = defaultEnv((char *)0);
-	if ((ret = GOpen (originalArgv, "_config", env)))
-	    LogPanic ("Cannot run config reader: %s\n", ret);
+	if (GOpen (&getter, originalArgv, "_config", env, strdup("config reader")))
+	    LogPanic ("Cannot run config reader\n");
 	freeStrArr (env);
     }
     Debug ("Getter ready\n");
@@ -65,9 +65,9 @@ OpenGetter ()
 void
 CloseGetter ()
 {
-    if (runs) {
-	runs = 0;
-	(void) GClose (0);
+    if (getter.pid) {
+	GSet (&cnftalk);
+	(void) GClose (&getter, 0);
     }
     Debug ("Getter closed\n");
 }
@@ -176,7 +176,7 @@ GetDeps ()
     for (i = 0; i < as(cfgMapT); i++) {
 	GSendInt (cfgMapT[i]);
 	if ((cfgMap[i] = GRecvInt ()) < 0) {
-	    LogError ("Config reader does not support config cathegory 0x%x\n", 
+	    LogError ("Config reader does not support config cathegory %#x\n", 
 		      cfgMapT[i]);
 	    ret = 0;
 	}
@@ -283,7 +283,7 @@ LoadResources (CfgArr *conf)
 	    *pptr++ = (char *)0;
 	    break;
 	default:
-	    LogError ("Config reader supplied unknown data type in id 0x%x\n", 
+	    LogError ("Config reader supplied unknown data type in id %#x\n", 
 		      id);
 	    break;
 	}
@@ -359,13 +359,12 @@ FindCfgEnt (struct display *d, int id)
 	    if (d->cfg.idx[i] == id)
 		return ((char **)d->cfg.data) + i;
     }
-    Debug ("Unknown config entry 0x%x requested\n", id);
+    Debug ("Unknown config entry %#x requested\n", id);
     return (char **)0;
 }	    
 
 
 int	request_port;
-int	daemonMode;
 char	*pidFile;
 int	lockPidFile;
 int	sourceAddress;
@@ -379,7 +378,6 @@ char	*randomFile;
 #endif
 char	*willing;
 int	choiceTimeout;
-int	autoLogin;
 char	*cmdHalt;
 char	*cmdReboot;
 #ifdef USE_PAM
@@ -395,7 +393,6 @@ struct globVals {
 	char	**off;
 } globVal[] = {
 { C_requestPort,	(char **) &request_port },
-{ C_daemonMode,		(char **) &daemonMode },
 { C_pidFile,		&pidFile },
 { C_lockPidFile,	(char **) &lockPidFile },
 { C_authDir,		&authDir },
@@ -409,7 +406,6 @@ struct globVals {
 { C_choiceTimeout,	(char **) &choiceTimeout },
 { C_sourceAddress,	(char **) &sourceAddress },
 { C_willing,		&willing },
-{ C_autoLogin,		(char **) &autoLogin },
 { C_cmdHalt,		&cmdHalt },
 { C_cmdReboot,		&cmdReboot },
 #ifdef USE_PAM
@@ -427,8 +423,8 @@ LoadDMResources (int force)
     int		i, ret;
     char	**ent;
 
-    if (Setjmp (GErrJmp))
-	return 0;
+    if (Setjmp (&cnftalk.errjmp))
+	return 0;	/* may memleak, but we probably have to abort anyway */
     if (!startConfig (GC_gGlobal, &cfg.dep, force))
 	return 1;
     LoadResources (&cfg);
@@ -479,12 +475,10 @@ struct dpyVals {
 { C_systemShell,	boffset(systemShell) },
 { C_failsafeClient,	boffset(failsafeClient) },
 { C_userAuthDir,	boffset(userAuthDir) },
-{ C_chooser,		boffset(chooser) },	/* XXX kill! */
 { C_noPassUsers,	boffset(noPassUsers) },
 { C_autoUser,		boffset(autoUser) },
 { C_autoPass,		boffset(autoPass) },
 { C_autoString,		boffset(autoString) },
-{ C_autoLogin1st,	boffset(autoLogin1st) },
 { C_autoReLogin,	boffset(autoReLogin) },
 { C_allowNullPasswd,	boffset(allowNullPasswd) },
 { C_allowRootLogin,	boffset(allowRootLogin) },
@@ -492,6 +486,8 @@ struct dpyVals {
 { C_allowNuke,		boffset(allowNuke) },
 { C_defSdMode,		boffset(defSdMode) },
 { C_sessSaveFile,	boffset(sessSaveFile) },
+{ C_chooserHosts,	boffset(chooserHosts) },
+{ C_loginMode,		boffset(loginMode) },
 };
 
 int
@@ -500,8 +496,8 @@ LoadDisplayResources (struct display *d)
     int		i, ret;
     char	**ent;
 
-    if (Setjmp (GErrJmp))
-	return 0;
+    if (Setjmp (&cnftalk.errjmp))
+	return 0;	/* may memleak */
     if (!startConfig (GC_gDisplay, &d->cfg.dep, FALSE))
 	return 1;
     GSendStr (d->name);
@@ -526,8 +522,63 @@ int
 InitResources (char **argv)
 {
     originalArgv = argv;
-    if (Setjmp (GErrJmp))
-	return 0;
+    cnftalk.pipe = &getter.pipe;
+    if (Setjmp (&cnftalk.errjmp))
+	return 0;	/* may memleak */
     return GetDeps ();
+}
+
+void
+ScanServers (int force)
+{
+    char		*name, *class2, *console, **argv;
+    const char		*dtx;
+    struct display	*d;
+    int			nserv, type;
+    static CfgDep	xsDep;
+
+    Debug("ScanServers\n");
+    if (Setjmp (&cnftalk.errjmp))
+	return;	/* may memleak */
+    if (!startConfig (GC_gXservers, &xsDep, force))
+        return;
+    nserv = GRecvInt ();
+    while (nserv--) {
+	name = GRecvStr ();
+	class2 = GRecvStr ();
+	console = GRecvStr ();
+	type = GRecvInt ();
+	argv = GRecvArgv ();
+	if ((d = FindDisplayByName (name)))
+	{
+	    ReStr (&d->class2, class2);
+	    ReStr (&d->console, console);
+	    freeStrArr (d->serverArgv);
+	    dtx = "existing";
+	}
+	else
+	{
+	    d = NewDisplay (name, class2);
+	    StrDup (&d->console, console);
+	    dtx = "new";
+	}
+	d->stillThere = 1;
+	Debug ("Found %s display: %s %s %s%s %[s\n",
+	       dtx, d->name, d->class2, 
+	       ((type & d_location) == dLocal) ? "local" : "foreign",
+	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);
+	d->serverArgv = argv;
+	d->hstent->startTries = 0;
+	d->displayType = type;
+	if ((type & d_lifetime) == dReserve && d->status == notRunning)
+	    d->status = reserve;
+	else if ((type & d_lifetime) != dReserve && d->status == reserve)
+	    d->status = notRunning;
+	free (name);
+	if (class2)
+	    free (class2);
+	if (console)
+	    free (console);
+    }
 }
 

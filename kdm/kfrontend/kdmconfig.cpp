@@ -47,6 +47,7 @@
 
 #include "kdmconfig.h"
 #include "kdm_greet.h"
+#include "kdm_config.h"
 
 KDMConfig *kdmcfg = 0;
 
@@ -213,5 +214,12 @@ KDMConfig::KDMConfig()
 	_liloCmd = GetCfgQStr (C_liloCmd);
 	_liloMap = GetCfgQStr (C_liloMap);
     }
+#endif
+
+    _loginMode = GetCfgInt (C_loginMode);
+
+#ifdef BUILTIN_XCONSOLE
+    _showLog = GetCfgInt (C_ShowLog);
+    _logSource = GetCfgStr (C_LogSource);
 #endif
 }

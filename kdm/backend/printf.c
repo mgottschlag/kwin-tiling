@@ -50,16 +50,18 @@ from The Open Group.
  *   trailing spaces (only available, if PRINT_QUOTES is defined)
  * - arrays (only available, if PRINT_ARRAYS is defined)
  *   - the array modifier [ comes after the maximal field width specifier
- *   - these modifiers expect an argument:
- *     - * -> number of elements
- *	 otherwise the array terminates at a -1 for ints and 0 for strings
+ *   - the array length can be specified literally, with the '*' modifier
+ *     (in which case an argument is expected) or will be automatically 
+ *     determined (stop values are -1 for ints and 0 for strings)
+ *   - these modifiers expect their argument to be an in-line string quoted
+ *     with an arbitrary character:
  *     - (, ) -> array pre-/suf-fix; default ""
  *     - <, > -> element pre-/suf-fix; default ""
  *     - | -> element separator; default " "
  *   - these modifiers expect no argument:
  *     - : -> print '<number of elements>: ' before an array
- *     - , -> short for | ","
- *     - { -> short for ( "{" ) " }" < " " | ""
+ *     - , -> short for |','
+ *     - { -> short for ('{')' }'<' '|''
  *   - the pointer to the array is the last argument to the format
  *
  */
@@ -180,6 +182,28 @@ fmtint (OutCh dopr_outch, void *bp,
     }
 }
 
+typedef struct {
+    const char *str;
+    size_t len;
+} str_t;
+
+static void
+putstr (OutCh dopr_outch, void *bp, str_t *st)
+{
+    size_t pt;
+
+    for (pt = 0; pt < st->len; pt++)
+	dopr_outch (bp, st->str[pt]);
+}
+
+static str_t _null_parents = { "(null)", 6 };
+#ifdef PRINT_ARRAYS
+static str_t _null_dparents = { "((null))", 8 };
+#endif
+#if defined(PRINT_QUOTES) || defined(PRINT_ARRAYS)
+static str_t _null_caps = { "NULL", 4 };
+#endif
+
 static void
 fmtstr (OutCh dopr_outch, void *bp,
 	const char *value, int flags, int min, int max)
@@ -192,12 +216,12 @@ fmtstr (OutCh dopr_outch, void *bp,
 
     if (!value) {
 #ifdef PRINT_QUOTES
-	if (flags & (DP_F_SQUOTE | DP_F_DQUOTE)) {
-	    flags &= ~(DP_F_SQUOTE | DP_F_DQUOTE);
-	    value = "NULL";
-	} else
+	if (flags & (DP_F_SQUOTE | DP_F_DQUOTE))
+	    putstr (dopr_outch, bp, &_null_caps);
+	else
 #endif
-	    value = "(null)";
+	    putstr (dopr_outch, bp, &_null_parents);
+	return;
     }
 
     for (strln = 0; (unsigned) strln < (unsigned) max && value[strln]; strln++);
@@ -210,6 +234,9 @@ fmtstr (OutCh dopr_outch, void *bp,
     for (; padlen > 0; padlen--)
 	dopr_outch (bp, ' ');
 #ifdef PRINT_QUOTES
+# if 0	/* gcc's flow analyzer is not the smartest ... */
+    lastcol = 0;
+# endif
     if (flags & DP_F_SQUOTE)
 	dopr_outch (bp, '\'');
     else if (flags & DP_F_DQUOTE)
@@ -267,7 +294,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 {
     const char *strvalue;
 #ifdef PRINT_ARRAYS
-    const char *arpr, *arsf, *arepr, *aresf, *aresp;
+    str_t arpr, arsf, arepr, aresf, aresp, *arp;
     void *arptr;
 #endif
     unsigned long value;
@@ -275,13 +302,16 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 #ifdef PRINT_ARRAYS
     int arlen;
     unsigned aridx;
+    char sch;
 #endif
     char ch;
 #define NCHR if (!(ch = *format++)) return
 
 #if 0	/* gcc's flow analyzer is not the smartest ... */
-    arpr = arsf = arepr = aresf = aresp = 0;
+# ifdef PRINT_ARRAYS
     arlen = 0;
+# endif
+    radix = 0;
 #endif
     for (;;) {
 	for (;;) {
@@ -337,30 +367,44 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 	if (ch == '[') {
 	    flags |= DP_F_ARRAY;
 	    arlen = -1;
-	    arpr = arsf = arepr = aresf = "", aresp = " ";
+	    arpr.len = arsf.len = arepr.len = aresf.len = 0;
+	    aresp.len = 1, aresp.str = " ";
 	    for (;;) {
 		NCHR;
-#if 0
 		if (isdigit ((unsigned char) ch)) {
-		    arlen = ch - '0';
+		    arlen = 0;
 		    for (;;) {
+			arlen += (ch - '0');
 			NCHR;
-			if (!isdigit ((unsigned char) ch)))
+			if (!isdigit ((unsigned char) ch))
 			    break;
-			arlen = 10 * arlen + (ch - '0');
+			arlen *= 10;
 		    }
 		}
-#endif
 		switch (ch) {
 		case ':': flags |= DP_F_COLON; continue;
 		case '*': arlen = va_arg (args, int); continue;
-		case '(': arpr = va_arg (args, char *); continue;
-		case ')': arsf = va_arg (args, char *); continue;
-		case '<': arepr = va_arg (args, char *); continue;
-		case '>': aresf = va_arg (args, char *); continue;
-		case '|': aresp = va_arg (args, char *); continue;
-		case ',': aresp = ","; continue;
-		case '{': arpr = "{"; arsf = " }"; arepr = " "; aresp = ""; continue;
+		case '(': arp = &arpr; goto rar;
+		case ')': arp = &arsf; goto rar;
+		case '<': arp = &arepr; goto rar;
+		case '>': arp = &aresf; goto rar;
+		case '|': arp = &aresp;
+		  rar:
+		    NCHR;
+		    sch = ch;
+		    arp->str = format;
+		    do {
+			NCHR;
+		    } while (ch != sch);
+		    arp->len = format - arp->str - 1;
+		    continue;
+		case ',':
+		    aresp.len = 1, aresp.str = ",";
+		    continue;
+		case '{':
+		    aresp.len = 0, arpr.len = arepr.len = 1, arsf.len = 2;
+		    arpr.str = "{", arepr.str = " ", arsf.str = " }";
+		    continue;
 		}
 		break;
 	    }
@@ -414,8 +458,8 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 #ifdef PRINT_ARRAYS
 	    if (flags & DP_F_ARRAY) {
 		if (!(arptr = va_arg (args, void *)))
-		    fmtstr (dopr_outch, bp, 
-			    arpr ? "NULL" : "((null))", 0, 0, -1);
+		    putstr (dopr_outch, bp, 
+			    arpr.len ? &_null_caps : &_null_dparents);
 		else {
 		    if (arlen == -1) {
 			arlen = 0;
@@ -432,11 +476,11 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 			dopr_outch (bp, ':');
 			dopr_outch (bp, ' ');
 		    }
-		    fmtstr (dopr_outch, bp, arpr, 0, 0, -1);
+		    putstr (dopr_outch, bp, &arpr);
 		    for (aridx = 0; aridx < (unsigned)arlen; aridx++) {
 			if (aridx)
-			    fmtstr (dopr_outch, bp, aresp, 0, 0, -1);
-			fmtstr (dopr_outch, bp, arepr, 0, 0, -1);
+			    putstr (dopr_outch, bp, &aresp);
+			putstr (dopr_outch, bp, &arepr);
 			if (cflags == DP_C_STR) {
 			    strvalue = ((char **)arptr)[aridx];
 			    fmtstr (dopr_outch, bp, strvalue, flags, min, max);
@@ -458,9 +502,9 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 			    }
 			    fmtint (dopr_outch, bp, value, radix, min, max, flags);
 			}
-			fmtstr (dopr_outch, bp, aresf, 0, 0, -1);
+			putstr (dopr_outch, bp, &aresf);
 		    }
-		    fmtstr (dopr_outch, bp, arsf, 0, 0, -1);
+		    putstr (dopr_outch, bp, &arsf);
 		}
 	    } else {
 		if (cflags == DP_C_STR) {
@@ -722,7 +766,7 @@ OutCh_OCF (void *bp, char c)
     ocfbp->buf[ocfbp->clen++] = c;
 }
 
-int 
+STATIC int 
 FdPrintf (int fd, const char *fmt, ...)
 {
     va_list args;
@@ -740,3 +784,64 @@ FdPrintf (int fd, const char *fmt, ...)
 }
 
 #endif /* NEED_FDPRINTF */
+
+#ifdef NEED_ASPRINTF
+
+typedef struct {
+    char *buf;
+    int clen, blen, tlen;
+} OCABuf;
+
+static void
+OutCh_OCA (void *bp, char c)
+{
+    OCABuf *ocabp = (OCABuf *)bp;
+    char *nbuf;
+    int nlen;
+
+    ocabp->tlen++;
+    if (ocabp->clen >= ocabp->blen) {
+	if (ocabp->blen < 0)	
+	    return;
+	nlen = ocabp->blen * 3 / 2 + 100;
+	nbuf = realloc (ocabp->buf, nlen);
+	if (!nbuf) {
+	    free (ocabp->buf);
+	    ocabp->blen = -1;
+	    ocabp->buf = 0;
+	    ocabp->clen = 0;
+	    LogOutOfMem ("VASPrintf");
+	    return;
+	}
+	ocabp->blen = nlen;
+	ocabp->buf = nbuf;
+    }
+    ocabp->buf[ocabp->clen++] = c;
+}
+
+STATIC int 
+VASPrintf (char **strp, const char *fmt, va_list args)
+{
+    OCABuf ocab = { 0, 0, 0, -1 };
+
+    DoPr(OutCh_OCA, &ocab, fmt, args);
+    OutCh_OCA(&ocab, 0);
+    *strp = realloc (ocab.buf, ocab.clen);
+    if (!*strp)
+	*strp = ocab.buf;
+    return ocab.tlen;
+}
+
+STATIC int 
+ASPrintf (char **strp, const char *fmt, ...)
+{
+    va_list args;
+    int len;
+
+    va_start(args, fmt);
+    len = VASPrintf (strp, fmt, args);
+    va_end(args);
+    return len;
+}
+
+#endif /* NEED_ASPRINTF */

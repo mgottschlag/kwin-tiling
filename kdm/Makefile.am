@@ -1,9 +1,5 @@
-if include_kdm_chooser
-chooser_SUBDIR=chooser
-endif
-
-# backend needs to be conditional; chooser will go away.
-SUBDIRS = backend kfrontend $(chooser_SUBDIR)
+# backend needs to be conditional (in case the xdm core is adopted by x)
+SUBDIRS = backend kfrontend
 
 EXTRA_DIST = misc
 

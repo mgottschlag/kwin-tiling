@@ -918,11 +918,11 @@ StartClient (struct display *d,
     shell = p->pw_shell;
     verify->userEnviron = userEnv (d, p->pw_uid == 0, name, home, shell);
     verify->systemEnviron = systemEnv (d, name, home);
-    Debug ("user environment:\n%[|>s"
-	   "system environment:\n%[|>s"
+    Debug ("user environment:\n%[|''>'\n's"
+	   "system environment:\n%[|''>'\n's"
 	   "end of environments\n", 
-	   "", "\n", verify->userEnviron,
-	   "", "\n", verify->systemEnviron);
+	   verify->userEnviron,
+	   verify->systemEnviron);
 
     /*
      * for user-based authorization schemes,
@@ -984,11 +984,6 @@ StartClient (struct display *d,
 	chown (d->fifoPath, verify->uid, -1);
     switch (pid = Fork ()) {
     case 0:
-#ifdef XDMCP
-	/* The chooser socket is not closed by CleanUpChild() */
-	DestroyWellKnownSockets();
-#endif
-
 	/* Do system-dependent login setup here */
 #ifdef CSRG_BASED
 	setsid();
@@ -1237,9 +1232,21 @@ Debug ("session args: %'[s\n", sessargs);
 	return 0;
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);
-	FdPrintf (d->pipefd[1], "u\t%d\n", verify->uid);
-	if (d->autoReLogin)
-	    FdPrintf (d->pipefd[1], "r\t%s\t%s\t%[s\n", name, pass, sessargs);
+/* ### right after forking dpy	mstrtalk.pipe = &d->pipe; */
+#ifdef nofork_session
+	if (!nofork_session)
+#endif
+	if (!Setjmp (&mstrtalk.errjmp)) {
+	    GSet (&mstrtalk);
+	    GSendInt (D_User);
+	    GSendInt (verify->uid);
+	    if (d->autoReLogin) {
+		GSendInt (D_ReLogin);
+		GSendStr (name);
+		GSendStr (pass);
+		GSendArgv (sessargs);
+	    }
+	}
 	return pid;
     }
 }

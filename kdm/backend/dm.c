@@ -104,20 +104,20 @@ static SIGVAL	ChildNotify (int n);
 #endif
 static SIGVAL	TermNotify (int n), UtmpNotify (int n), RescanNotify (int n);
 static void	RescanConfigs (void);
-static void	ScanServers (int force);
 static void	StartDisplays (void);
 static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
+static void	rStopDisplay (struct display *d, int endState);
 static int	CheckUtmp (void);
 static void	SwitchToTty (struct display *d);
 static void	openFifo (int *fifofd, char **fifoPath, const char *dname);
 static void	closeFifo (int *fifofd, const char *fifoPath);
 static void	stoppen (int force);
+static void	WaitForChild (void);
+static void	WaitForSomething (void);
 
 int	Rescan;
 int	StopAll;
 int	ChkUtmp;
-
-#define nofork_session (debugLevel & DEBUG_NOFORK)
 
 #ifndef NOXDMTITLE
 static char *Title;
@@ -136,8 +136,8 @@ char *prog, *progpath;
 int
 main (int argc, char **argv)
 {
-    int	oldpid, oldumask, fd;
-    char *pt, *errorLogFile;
+    int	oldpid, oldumask, fd, noDaemonMode;
+    char *pt, *errorLogFile, **opts;
 
     /* make sure at least world write access is disabled */
     if (((oldumask = umask(022)) & 002) == 002)
@@ -151,7 +151,7 @@ main (int argc, char **argv)
 
     if (argv[0][0] == '/') {
 	if (!StrDup (&progpath, argv[0]))
-	    Panic ("Out of memory\n");
+	    Panic ("Out of memory");
     } else
 #ifdef linux
     {
@@ -159,22 +159,22 @@ main (int argc, char **argv)
 	char buf[16], fullpath[PATH_MAX];
 	sprintf (buf, "/proc/%ld/exe", (long)getpid());
 	if ((len = readlink (buf, fullpath, sizeof(fullpath))) < 0)
-	    Panic ("Invoke with full path specification or mount /proc\n");
+	    Panic ("Invoke with full path specification or mount /proc");
 	if (!StrNDup (&progpath, fullpath, len))
-	    Panic ("Out of memory\n");
+	    Panic ("Out of memory");
     }
 #else
 # if 0
-	Panic ("Must be invoked with full path specification\n");
+	Panic ("Must be invoked with full path specification");
 # else
     {
 	char directory[PATH_MAX+1];
 #  if !defined(X_NOT_POSIX) || defined(SYSV) || defined(WIN32)
         if (!getcwd(directory, sizeof(directory)))
-	    Panic ("Can't find myself (getcwd failed)\n");
+	    Panic ("Can't find myself (getcwd failed)");
 #  else
         if (!getwd(directory))
-	    Panic ("Can't find myself (getwd failed)\n");
+	    Panic ("Can't find myself (getwd failed)");
 #  endif
 	if (strchr(argv[0], '/'))
 	    StrApp (&progpath, directory, "/", argv[0], (char *)0);
@@ -184,7 +184,7 @@ main (int argc, char **argv)
 	    char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
 
 	    if (!(path = getenv ("PATH")))
-		Panic ("Can't find myself (no PATH)\n");
+		Panic ("Can't find myself (no PATH)");
 	    len = strlen (argv[0]);
 	    name = nambuf + PATH_MAX - len;
 	    memcpy (name, argv[0], len + 1);
@@ -207,10 +207,10 @@ main (int argc, char **argv)
 		}
 		path = pathe;
 	    } while (*path++ != '\0');
-	    Panic ("Can't find myself (not in PATH)\n");
+	    Panic ("Can't find myself (not in PATH)");
 	  found:
 	    if (!StrDup (&progpath, thenam))
-		Panic ("Out of memory\n");
+		Panic ("Out of memory");
 	}
     }
 # endif
@@ -223,20 +223,42 @@ main (int argc, char **argv)
 #endif
 
     /*
-     * Parse basic command line options
+     * Parse command line options
      */
-    for (argv++, errorLogFile = 0; argv[0] && argv[1]; argv += 2) {
-	if (*argv[0] != '-')
+    noDaemonMode = getppid();
+    errorLogFile = 0;
+    opts = 0; *extStrArr (&opts) = (char *)"";
+    while (*++argv) {
+	if (**argv != '-')
 	    break;
-	pt = argv[0] + 1;
+	pt = *argv + 1;
 	if (*pt == '-')
 	    pt++;
-	if (!strcmp (pt, "debug"))
-	    sscanf (argv[1], "%i", &debugLevel);
-	else if (!strcmp (pt, "error") || !strcmp (pt, "logfile"))
-	    errorLogFile = argv[1];
-	else
-	    break;
+	if (!strcmp (pt, "help") || !strcmp (pt, "h")) {
+	    printf ("Usage: %s [options] [tty]\n"
+"  -daemon        - daemonize even when stared by init\n"
+"  -nodaemon      - don't daemonize even when stared from command line\n"
+"  -config <file> - use alternative master configuration file\n"
+"  -xrm <res>     - override frontend-specific resource\n"
+"  -debug <num>   - debug option bitfield\n"
+"  -error <file>  - use alternative log file\n", prog);
+	    exit (0);
+	} else if (!strcmp (pt, "daemon"))
+	    noDaemonMode = 0;
+	else if (!strcmp (pt, "nodaemon"))
+	    noDaemonMode = 1;
+	else if (argv[1] && !strcmp (pt, "config"))
+	    StrDup (opts, *++argv);
+	else if (argv[1] && !strcmp (pt, "xrm"))
+	    StrDup (extStrArr (&opts), *++argv);
+	else if (argv[1] && !strcmp (pt, "debug"))
+	    sscanf (*++argv, "%i", &debugLevel);
+	else if (argv[1] && (!strcmp (pt, "error") || !strcmp (pt, "logfile")))
+	    errorLogFile = *++argv;
+	else {
+	    fprintf (stderr, "Unknown option or missing parameter: '%s'\n", *argv);
+	    exit (1);
+	}
     }
 
     /*
@@ -250,14 +272,14 @@ main (int argc, char **argv)
 
     InitErrorLog (errorLogFile);
 
+    if (noDaemonMode != 1)
+	BecomeDaemon ();
+
     /*
      * Step 1 - load configuration parameters
      */
-    if (!InitResources (argv) || !LoadDMResources (TRUE))
+    if (!InitResources (opts) || !LoadDMResources (TRUE))
 	LogPanic ("Config reader failed. Aborting ...\n");
-
-    if (daemonMode && getppid() != 1)
-	BecomeDaemon ();
 
     /* SUPPRESS 560 */
     if ((oldpid = StorePid ()))
@@ -559,6 +581,47 @@ SwitchToTty (struct display *d)
     d->status = textMode;
 }
 
+static void
+StartRemoteLogin (struct display *d)
+{
+    char	**argv;
+    int		pid;
+
+    Debug ("StartRemoteLogin for %s\n", d->name);
+    /* HACK: omitting LoadDisplayResources (d) here! */
+    if (d->authorize)
+	SetLocalAuthorization (d);
+    switch (pid = Fork ()) {
+    case 0:
+	argv = d->serverArgv;
+	if (d->authFile) {
+	    argv = addStrArr (argv, "-auth", 5);
+	    argv = addStrArr (argv, d->authFile, -1);
+	}
+	argv = addStrArr (argv, "-once", 5);
+	argv = addStrArr (argv, "-query", 6);
+	argv = addStrArr (argv, d->remoteHost, -1);
+	if (!argv) {
+	    LogError ("StartRemoteLogin: no arguments\n");
+	    exit (EX_RESERVER_DPY);
+	}
+	Debug ("Exec %'[s\n", argv);
+	(void) execv (argv[0], argv);
+	LogError ("server %s cannot be executed\n", argv[0]);
+	exit (0);
+    case -1:
+	LogError ("fork failed, sleeping\n");
+	d->status = notRunning;
+	return;
+    default:
+	break;
+    }
+    Debug ("Server forked, pid %d\n", pid);
+    d->serverPid = pid;
+
+    d->status = remoteLogin;
+}
+
 
 static void
 StopInactiveDisplay (struct display *d)
@@ -601,10 +664,6 @@ doShutdown (int how, int when)
 }
 
 
-extern FD_TYPE	WellKnownSocketsMask;
-extern int	WellKnownSocketsMax;
-extern int	NumOfFifos;
-
 static void
 openFifo (int *fifofd, char **fifopath, const char *dname)
 {
@@ -627,10 +686,7 @@ openFifo (int *fifofd, char **fifopath, const char *dname)
 		chmod (*fifopath, 0620);
 		if ((*fifofd = open (*fifopath, O_RDWR | O_NONBLOCK)) >= 0) {
 		    RegisterCloseOnFork (*fifofd);
-		    FD_SET (*fifofd, &WellKnownSocketsMask);
-		    if (*fifofd > WellKnownSocketsMax)
-			WellKnownSocketsMax = *fifofd;
-		    NumOfFifos++;
+		    RegisterInput (*fifofd);
 		    return;
 		}
 		unlink (*fifopath);
@@ -646,8 +702,7 @@ static void
 closeFifo (int *fifofd, const char *fifopath)
 {
     if (*fifofd >= 0) {
-	FD_CLR (*fifofd, &WellKnownSocketsMask);
-	NumOfFifos--;
+	UnregisterInput (*fifofd);
 	CloseNClearCloseOnFork (*fifofd);
 	*fifofd = -1;
 	unlink (fifopath);
@@ -683,30 +738,61 @@ setNLogin (struct display *d,
     Debug ("Set next login for %s, level %d\n", nuser, rl);
 }
 
-static int sd_how, sd_when;
-
 static void
-processDPipe (const char *buf, int len, void *ptr)
+processDPipe (struct display *d)
 {
-    struct display *d = (struct display *)ptr;
-    char **ar = splitCmd (buf, len);
+    char *user, *pass;
+    int cmd, how, ct, len;
+    GTalk dpytalk;
+    ARRAY8 ca, ha;
 
-    switch (ar[0][0]) {
-    case 'u':
-	d->userSess = atoi (ar[1]);
+    dpytalk.pipe = &d->pipe;
+    if (Setjmp (&dpytalk.errjmp)) {
+	StopDisplay (d);
+	return;
+    }
+    GSet (&dpytalk);
+    if (!GRecvCmd (&cmd)) {
+	/* process already exited */
+	UnregisterInput (d->pipe.rfd);
+	return;
+    }
+    switch (cmd) {
+    case D_User:
+	d->userSess = GRecvInt ();
 	break;
-    case 'r':
-	setNLogin (d, ar[1], ar[2], parseArgs((char **)0, ar[3]), 1);
+    case D_ReLogin:
+	user = GRecvStr ();
+	pass = GRecvStr ();
+	setNLogin (d, user, pass, GRecvArgv (), 1);
+	free (pass);
+	free (user);
 	break;
-    case 's':
-	sd_how = atoi (ar[1]);
-	sd_when = atoi (ar[2]);
+    case D_Shutdown:
+	how = GRecvInt ();
+	doShutdown (how, GRecvInt ());
+	/* XXX after this all displays could be gone */
+	break;
+    case D_ChooseHost:
+	ca.data = (unsigned char *)GRecvArr (&len);
+	ca.length = (CARD16) len;
+	ct = GRecvInt ();
+	ha.data = (unsigned char *)GRecvArr (&len);
+	ha.length = (CARD16) len;
+	RegisterIndirectChoice (&ca, ct, &ha);
+	XdmcpDisposeARRAY8 (&ha);
+	XdmcpDisposeARRAY8 (&ca);
+	break;
+    case D_RemoteHost:
+	if (d->remoteHost)
+	    free (d->remoteHost);
+	d->remoteHost = GRecvStr ();
 	break;
     default:
-	Debug ("Unknown feedback pipe command %s\n", ar[0]);
+	LogError ("Internal error: unknown D_* command %d\n", cmd);
+	StopDisplay (d);
 	break;
     }
-    freeStrArr (ar);
 }
 
 static int
@@ -841,25 +927,6 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
     freeStrArr (ar);
 }
 
-static void
-checkDFifos (struct display *d)
-{
-    FdGetsCall (d->pipefd[0], processDPipe, d);
-    FdGetsCall (d->fifofd, processDFifo, d);
-}
-
-void
-CheckFifos ()
-{
-    FdGetsCall (fifoFd, processFifo, 0);
-    ForEachDisplay (checkDFifos);
-    if (sd_how)
-    {
-	doShutdown (sd_how, sd_when);
-	sd_how = 0;
-    }
-}
-
 
 /* ARGSUSED */
 static SIGVAL
@@ -870,59 +937,6 @@ RescanNotify (int n ATTR_UNUSED)
 #ifdef SIGNALS_RESET_WHEN_CAUGHT
     (void) Signal (SIGHUP, RescanNotify);
 #endif
-}
-
-static CfgDep xsDep;
-
-static void
-ScanServers (int force)
-{
-    char		*name, *class2, *console, **argv;
-    const char		*dtx;
-    struct display	*d;
-    int			nserv, type;
-
-    Debug("ScanServers\n");
-    if (!startConfig (GC_gXservers, &xsDep, force))
-        return;
-    nserv = GRecvInt ();
-    while (nserv--) {
-	name = GRecvStr ();
-	class2 = GRecvStr ();
-	console = GRecvStr ();
-	type = GRecvInt ();
-	argv = GRecvArgv ();
-	if ((d = FindDisplayByName (name)))
-	{
-	    ReStr (&d->class2, class2);
-	    ReStr (&d->console, console);
-	    freeStrArr (d->serverArgv);
-	    dtx = "existing";
-	}
-	else
-	{
-	    d = NewDisplay (name, class2);
-	    StrDup (&d->console, console);
-	    dtx = "new";
-	}
-	d->stillThere = 1;
-	Debug ("Found %s display: %s %s %s%s %[s\n",
-	       dtx, d->name, d->class2, 
-	       ((type & d_location) == dLocal) ? "local" : "foreign",
-	       ((type & d_lifetime) == dReserve) ? " reserve" : "", argv);
-	d->serverArgv = argv;
-	d->hstent->startTries = 0;
-	d->displayType = type;
-	if ((type & d_lifetime) == dReserve && d->status == notRunning)
-	    d->status = reserve;
-	else if ((type & d_lifetime) != dReserve && d->status == reserve)
-	    d->status = notRunning;
-	free (name);
-	if (class2)
-	    free (class2);
-	if (console)
-	    free (console);
-    }
 }
 
 static void
@@ -984,13 +998,13 @@ static SIGVAL
 ChildNotify (int n ATTR_UNUSED)
 {
     ChildReady = 1;
-#ifdef ISC
+# ifdef ISC
     (void) Signal (SIGCHLD, ChildNotify);
-#endif
+# endif
 }
 #endif
 
-void
+static void
 WaitForChild (void)
 {
     int		pid;
@@ -1007,7 +1021,7 @@ WaitForChild (void)
     if ((pid = wait (&status)) != -1)
 #else
 # ifndef X_NOT_POSIX
-    sigemptyset(&mask);
+    sigemptyset(&mask);	/* XXX TERM & INT? */
     sigaddset(&mask, SIGCHLD);
     sigaddset(&mask, SIGHUP);
     sigaddset(&mask, SIGALRM);
@@ -1015,7 +1029,7 @@ WaitForChild (void)
     Debug ("signals blocked\n");
 # else
     omask = sigblock (sigmask (SIGCHLD) | sigmask (SIGHUP) | sigmask (SIGALRM));
-    Debug ("signals blocked, mask was 0x%x\n", omask);
+    Debug ("signals blocked, mask was %#x\n", omask);
 # endif
     if (!ChildReady && !Rescan && !StopAll && !ChkUtmp)
 # ifndef X_NOT_POSIX
@@ -1040,6 +1054,9 @@ WaitForChild (void)
 	/* SUPPRESS 560 */
 	if ((d = FindDisplayByPid (pid))) {
 	    d->pid = -1;
+	    UnregisterInput (d->pipe.rfd);
+	    GClosen (&d->pipe);
+	    closeFifo (&d->fifofd, d->fifoPath);
 	    switch (waitVal (status)) {
 	    case EX_TEXTLOGIN:
 		Debug ("Display exited with EX_TEXTLOGIN\n");
@@ -1065,8 +1082,13 @@ WaitForChild (void)
 		else
 		    ExitDisplay (d, DS_RESTART, FALSE, TRUE);
 		break;
+	    case EX_REMOTE:
+		Debug ("Display exited with EX_REMOTE\n");
+		ExitDisplay (d, DS_REMOTE, FALSE, FALSE);
+		break;
 	    default:
-		LogError ("Unknown session exit code from manager process\n");
+		LogError ("Unknown session exit code %d (sig %d) from manager process\n",
+			  waitCode (status), waitSig (status));
 		ExitDisplay (d, DS_REMOVE, FALSE, TRUE);
 		break;
 	    case EX_OPENFAILED_DPY:
@@ -1109,23 +1131,17 @@ WaitForChild (void)
 	    d->serverPid = -1;
 	    switch (d->status)
 	    {
-	    case tzombie:
-		Debug ("Zombie server reaped, starting text login for display "
-		       "%s\n", d->name);
-		SwitchToTty (d);
-		break;
-	    case rzombie:
-		Debug ("Zombie server reaped, putting display %s on reserve\n",
-		       d->name);
-		d->status = reserve;
-		break;
 	    case zombie:
-		Debug ("Zombie server reaped, attempting removing display %s\n",
-		       d->name);
-		StopDisplay (d);	/* d->pid could still be != -1 */
+		Debug ("Zombie server for display %s reaped\n", d->name);
+		rStopDisplay (d, d->zstatus);
 		break;
 	    case phoenix:
 		Debug ("Phoenix server arises, restarting display %s\n",
+		       d->name);
+		d->status = notRunning;
+		break;
+	    case remoteLogin:
+		Debug ("Remote login server for display %s exited, restarting display\n",
 		       d->name);
 		d->status = notRunning;
 		break;
@@ -1157,6 +1173,97 @@ WaitForChild (void)
     StartDisplays ();
 }
 
+FD_TYPE	WellKnownSocketsMask;
+int	WellKnownSocketsMax;
+int	WellKnownSocketsCount;
+
+void
+RegisterInput (int fd)
+{
+/*
+    if (!FD_ISSET (fd, &WellKnownSocketsMask))
+*/
+    {
+	FD_SET (fd, &WellKnownSocketsMask);
+	if (fd > WellKnownSocketsMax)
+	    WellKnownSocketsMax = fd;
+	WellKnownSocketsCount++;
+    }
+}
+
+void
+UnregisterInput (int fd)
+{
+    if (FD_ISSET (fd, &WellKnownSocketsMask))
+    {
+	FD_CLR (fd, &WellKnownSocketsMask);
+	WellKnownSocketsCount--;
+    }
+}
+
+static void
+WaitForSomething (void)
+{
+    struct display *d;
+    struct timeval tv, *tvp;
+    int nready;
+    FD_TYPE reads;
+
+    Debug ("WaitForSomething\n");
+    if (WellKnownSocketsCount)
+    {
+	tvp = 0;
+	if (ChildReady) {
+	    tv.tv_sec = tv.tv_usec = 0;
+	    tvp = &tv;
+	}
+	reads = WellKnownSocketsMask;
+#ifdef hpux
+	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, tvp);
+#else
+	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, tvp);
+#endif
+	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d\n",
+		nready, Rescan, ChildReady, ChkUtmp);
+	if (nready > 0)
+	{
+	    /*
+	     * we return after the first handled fd, as
+	     * a) it makes things simpler
+	     * b) the probability that multiple fds trigger at once is
+	     *    ridiculously small. we handle it in the next iteration.
+	     */
+	    /* XXX a cleaner solution would be a callback mechanism */
+#ifdef XDMCP
+	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
+	    {
+		ProcessRequestSocket ();
+		return;
+	    }
+#endif	/* XDMCP */
+	    if (fifoFd >= 0 && FD_ISSET (fifoFd, &reads))
+	    {
+		FdGetsCall (fifoFd, processFifo, 0);
+		return;
+	    }
+	    for (d = displays; d; d = d->next)
+	    {
+		if (d->fifofd >= 0 && FD_ISSET (d->fifofd, &reads))
+		{
+		    FdGetsCall (d->fifofd, processDFifo, d);
+		    return;
+		}
+		if (d->pipe.rfd >= 0 && FD_ISSET (d->pipe.rfd, &reads))
+		{
+		    processDPipe (d);
+		    return;
+		}
+	    }
+	}
+    }
+    WaitForChild ();
+}
+
 static void
 CheckDisplayStatus (struct display *d)
 {
@@ -1180,6 +1287,7 @@ StartDisplays (void)
 void
 StartDisplay (struct display *d)
 {
+    char	*cname;
     Time_t	curtime;
     int		pid;
 
@@ -1226,8 +1334,6 @@ StartDisplay (struct display *d)
 	d->pingInterval = 0;
 	if (d->authorize)
 	{
-	    Debug ("SetLocalAuthorization %s, auth %s\n",
-		    d->name, d->authNames[0]);
 	    SetLocalAuthorization (d);
 	    /*
 	     * reset the server after writing the authorization information
@@ -1251,55 +1357,47 @@ StartDisplay (struct display *d)
 	if (d->authorizations)
 	    SaveServerAuthorizations (d, d->authorizations, d->authNum);
     }
-    if (d->pipefd[0] < 0) {
-	if (pipe (d->pipefd)) {
-	    LogError ("Cannot open subprocess pipe for display %s\n", d->name);
-	    StopDisplay (d);
-	    return;
-	} else {
-	    (void) fcntl (d->pipefd[0], F_SETFL, O_NONBLOCK);
-	    FD_SET (d->pipefd[0], &WellKnownSocketsMask);
-	    if (d->pipefd[0] > WellKnownSocketsMax)
-		WellKnownSocketsMax = d->pipefd[0];
-	    NumOfFifos++;
-	    RegisterCloseOnFork (d->pipefd[0]);
-	}
-    }
     openFifo (&d->fifofd, &d->fifoPath, d->name);
+#ifdef nofork_session
     if (!nofork_session) {
+#endif
 	Debug ("forking session\n");
-	pid = Fork ();
+	ASPrintf (&cname, "sub-daemon for display %s", d->name);
+	pid = GFork (&d->pipe, (char *)"master daemon", cname);
+#ifdef nofork_session
     } else {
 	Debug ("not forking session\n");
 	CloseGetter ();
 	pid = -2;
     }
+#endif
     switch (pid)
     {
     case 0:
 	if (debugLevel & DEBUG_WSESS)
 	    sleep (100);
+	mstrtalk.pipe = &d->pipe;
+#ifdef nofork_session
     case -2:
+#endif
 	(void) Signal (SIGPIPE, SIG_IGN);
-	RegisterCloseOnFork (d->pipefd[1]);
 	SetAuthorization (d);
 	if (!WaitForServer (d))
 	    exit (EX_OPENFAILED_DPY);
-#ifdef XDMCP
-	if (d->useChooser)
-	    RunChooser (d);
-	else
-#endif
-	    ManageSession (d);
+	ManageSession (d);
 	exit (EX_REMANAGE_DPY);
     case -1:
 	break;
     default:
 	Debug ("forked session, pid %d\n", pid);
+
+	/* (void) fcntl (d->pipe.rfd, F_SETFL, O_NONBLOCK); */
+	RegisterInput (d->pipe.rfd);
+
 	d->pid = pid;
 	d->status = running;
 	d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit = 
-	d->hstent->sd_how = d->hstent->sd_when = 0;
+	    d->hstent->sd_how = d->hstent->sd_when = 0;
 	break;
     }
 }
@@ -1308,32 +1406,26 @@ StartDisplay (struct display *d)
  * transition from running to [r,t]zombie, textmode, reserve or deleted
  */
 
-void
+static void
 rStopDisplay (struct display *d, int endState)
 {
     Debug ("Stopping display %s to state %d\n", d->name, endState);
-    closeFifo (&d->fifofd, d->fifoPath);
-    if (d->pipefd[0] >= 0) {
-	FD_CLR (d->pipefd[0], &WellKnownSocketsMask);
-	NumOfFifos--;
-	CloseNClearCloseOnFork (d->pipefd[0]); 
-	close (d->pipefd[1]); 
-	d->pipefd[0] = d->pipefd[1] = -1;
-    }
     if (d->serverPid != -1 || d->pid != -1)
     {
 	if (d->pid != -1)
 	    TerminateProcess (d->pid, SIGTERM);
 	if (d->serverPid != -1)
 	    TerminateProcess (d->serverPid, d->termSignal);
-	d->status = (endState == DS_TEXTMODE) ? tzombie : 
-		    (endState == DS_RESERVE) ? rzombie : zombie;
+	d->status = zombie;
+	d->zstatus = endState;
 	Debug (" zombiefied\n");
     }
     else if (endState == DS_TEXTMODE)
 	SwitchToTty (d);
     else if (endState == DS_RESERVE)
 	d->status = reserve;
+    else if (endState == DS_REMOTE)
+	StartRemoteLogin (d);
     else
 	RemoveDisplay (d);
 }
@@ -1367,11 +1459,9 @@ ExitDisplay (
     he = d->hstent;
     time (&he->lastExit);
     he->goodExit = goodExit;
-    switch (d->status) {
-    case zombie: rStopDisplay (d, DS_REMOVE); break;
-    case tzombie: rStopDisplay (d, DS_TEXTMODE); break;
-    case rzombie: rStopDisplay (d, DS_RESERVE); break;
-    default:
+    if (d->status == zombie)
+	rStopDisplay (d, d->zstatus);
+    else {
 	if (endState != DS_RESTART ||
 	    (d->displayType & d_origin) != dFromFile)
 	{
@@ -1390,7 +1480,6 @@ ExitDisplay (
 		d->status = notRunning;
 	    }
 	}
-	break;
     }
     if (he->sd_how)
     {

@@ -66,8 +66,6 @@ from The Open Group.
 #endif
 #include <netdb.h>
 
-#define getString(name,len)	((name = malloc (len + 1)) ? 1 : 0)
-
 /*
  * misc externs
  */
@@ -91,31 +89,22 @@ static void send_willing (struct sockaddr *from, int fromlen, ARRAY8Ptr authenti
 
 
 int	xdmcpFd = -1;
-int	chooserFd = -1;
-
-extern FD_TYPE	WellKnownSocketsMask;
 
 void
 DestroyWellKnownSockets (void)
 {
     if (xdmcpFd != -1)
     {
-	FD_CLR (xdmcpFd, &WellKnownSocketsMask);
-	close (xdmcpFd);
+	CloseNClearCloseOnFork (xdmcpFd);
+	UnregisterInput (xdmcpFd);
 	xdmcpFd = -1;
-    }
-    if (chooserFd != -1)
-    {
-	FD_CLR (chooserFd, &WellKnownSocketsMask);
-	close (chooserFd);
-	chooserFd = -1;
     }
 }
 
 int
 AnyWellKnownSockets (void)
 {
-    return xdmcpFd != -1 || chooserFd != -1;
+    return xdmcpFd != -1;
 }
 
 
@@ -277,7 +266,7 @@ indirect_respond (
     XdmcpDisposeARRAYofARRAY8 (&queryAuthenticationNames);
 }
 
-static void
+void
 ProcessRequestSocket (void)
 {
     XdmcpHeader		header;
@@ -421,11 +410,7 @@ NetworkAddressToName(
 			&& !multiHomed)
 	    {
 		if (!strcmp (localhost, hostent->h_name))
-		{
-		    if (!getString (name, 10))
-			return 0;
-		    sprintf (name, ":%d", displayNumber);
-		}
+		    ASPrintf (&name, ":%d", displayNumber);
 		else
 		{
 		    if (removeDomainname)
@@ -449,20 +434,15 @@ NetworkAddressToName(
 			}
 		    }
 
-		    if (!getString (name, strlen (hostent->h_name) + 10))
-			return 0;
-		    sprintf (name, "%s:%d", hostent->h_name, displayNumber);
+		    ASPrintf (&name, "%s:%d", hostent->h_name, displayNumber);
 		}
 	    }
 	    else
 	    {
-		if (!getString (name, 25))
-		    return 0;
 		if (multiHomed)
 		    data = (CARD8 *) &((struct sockaddr_in *)originalAddress)->
 				sin_addr.s_addr;
-		sprintf(name, "%d.%d.%d.%d:%d",
-			data[0], data[1], data[2], data[3], displayNumber);
+		ASPrintf (&name, "%[4|'.'hhu:%d", data, displayNumber);
 	    }
 	    return name;
 	}
@@ -1093,34 +1073,42 @@ NetworkAddressToHostname (
     CARD16	connectionType,
     ARRAY8Ptr   connectionAddress)
 {
-    char    *name = 0;
-
     switch (connectionType)
     {
     case FamilyInternet:
 	{
-	    struct hostent	*hostent;
-	    char dotted[20];
-	    char *local_name;
+	    struct hostent *he;
+	    char *myDot, *name, *lname;
 
-	    hostent = gethostbyaddr ((char *)connectionAddress->data,
-				     connectionAddress->length, AF_INET);
+	    he = gethostbyaddr ((char *)connectionAddress->data, 4, AF_INET);
 
-	    if (hostent)
-		local_name = hostent->h_name;
-	    else {
+	    if (he) {
+		if (StrDup (&name, he->h_name) &&
+		    !strchr (name, '.') &&
+		    (myDot = strchr (localHostname(), '.')))
+		{
+		    if (ASPrintf (&lname, "%s%s", name, myDot))
+		    {
+			if (!(he = gethostbyname (lname)) ||
+			    he->h_addrtype != AF_INET ||
+			    memcmp (he->h_addr, connectionAddress->data, 4))
+			{
+			    free (lname);
+			}
+			else
+			{
+			    free (name);
+			    return lname;
+			}
+		    }
+		}
+	    } else {
 		/* can't get name, so use emergency fallback */
-		sprintf(dotted, "%d.%d.%d.%d",
-			connectionAddress->data[0],
-			connectionAddress->data[1],
-			connectionAddress->data[2],
-			connectionAddress->data[3]);
-		local_name = dotted;
+		ASPrintf (&name, "%[4|'.'hhu", connectionAddress);
 		LogError ("Cannot convert Internet address %s to host name\n",
-			  dotted);
+			  name);
 	    }
-	    StrDup (&name, local_name);
-	    break;
+	    return name;
 	}
 #ifdef DNET
     case FamilyDECnet:
@@ -1129,7 +1117,7 @@ NetworkAddressToHostname (
     default:
 	break;
     }
-    return name;
+    return 0;
 }
 
 #if 0
@@ -1225,66 +1213,4 @@ NameToNetworkAddress(
 #endif
 
 #endif /* XDMCP */
-
-extern int Rescan, ChildReady, ChkUtmp;
-
-FD_TYPE	WellKnownSocketsMask;
-int	WellKnownSocketsMax;
-int	NumOfFifos;
-
-void
-WaitForSomething (void)
-{
-    FD_TYPE	reads;
-    int	nready;
-
-    Debug ("WaitForSomething\n");
-    if (!ChildReady
-#if defined(XDMCP)
-	&& (NumOfFifos || AnyWellKnownSockets ())
-#else
-	&& NumOfFifos
-#endif
-	) 
-    {
-	reads = WellKnownSocketsMask;
-#ifdef hpux
-	nready = select (WellKnownSocketsMax + 1, (int*)reads.fds_bits, 0, 0, 0);
-#else
-	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, 0);
-#endif
-	Debug ("select returns %d.  Rescan: %d  ChildReady: %d  ChkUtmp: %d\n",
-		nready, Rescan, ChildReady, ChkUtmp);
-	if (nready > 0)
-	{
-#ifdef XDMCP
-	    if (xdmcpFd >= 0 && FD_ISSET (xdmcpFd, &reads))
-	    {
-		ProcessRequestSocket ();
-		nready--;
-	    }
-	    if (chooserFd >= 0 && FD_ISSET (chooserFd, &reads))
-	    {
-# ifdef ISC
-	        if (!ChildReady) {
-		    /* XXX wouldn't that recurse us infinitely? */
-	           WaitForSomething ();
-                } else
-# endif
-		ProcessChooserSocket (chooserFd);
-		nready--;
-	    }
-	    if (nready)
-		CheckFifos ();
-#else /* XDMCP */
-	    CheckFifos ();
-#endif
-	}
-	if (ChildReady)
-	{
-	    WaitForChild ();
-	}
-    } else
-	WaitForChild ();
-}
 

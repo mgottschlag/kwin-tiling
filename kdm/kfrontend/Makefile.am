@@ -1,3 +1,7 @@
+#XCONSOLE_SRC = kconsole.cpp
+#XCONSOLE_CPPFLAGS = -DBUILTIN_XCONSOLE
+#XCONSOLE_LDADD = $(LIBUTIL)
+
 SUBDIRS = pics
 
 INCLUDES = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background $(all_includes)
@@ -7,6 +11,9 @@ bin_PROGRAMS = kdm_config kdm_greet krootimage
 kdm_config_SOURCES = kdm_config.c
 kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
 
+AM_CPPFLAGS = $(XCONSOLE_CPPFLAGS)
+EXTRA_DIST = kconsole.cpp
+
 kdm_greet_SOURCES = \
     kdm_greet.c \
     liloinfo.cpp \
@@ -14,9 +21,11 @@ kdm_greet_SOURCES = \
     kdmshutdown.cpp \
     kfdialog.cpp \
     kdmclock.cpp \
+    $(XCONSOLE_SRC) \
+    kchooser.cpp \
     kgreeter.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(XTESTLIB) $(LIBXINERAMA) $(LIB_KDEUI)
+kdm_greet_LDADD = $(LIB_QT) $(LIB_KDECORE) $(XTESTLIB) $(LIBXINERAMA) $(LIB_KDEUI) $(XCONSOLE_LDADD)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(KDE_RPATH) $(all_libraries)
@@ -36,5 +45,5 @@ install-data-local: genkdmconf
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
 
-noinst_HEADERS = kdm_greet.h kdm_config.h kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h krootimage.h
+noinst_HEADERS = kdm_greet.h kdm_config.h kdmshutdown.h kdmclock.h kgreeter.h liloinfo.h kfdialog.h kdmconfig.h krootimage.h kconsole.h kchooser.h
 

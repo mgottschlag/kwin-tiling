@@ -167,8 +167,23 @@ typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
 # endif
 #endif
 
+typedef struct GPipe {
+    int wfd, rfd;
+    char *who;
+} GPipe;
+
+typedef struct GTalk {
+    GPipe *pipe;
+    Jmp_buf errjmp;
+} GTalk;
+
+typedef struct GProc {
+    GPipe pipe;
+    int pid;
+} GProc;
+
 typedef enum displayStatus { running, notRunning, zombie, phoenix, raiser,
-			     tzombie, textMode, rzombie, reserve } DisplayStatus;
+			     textMode, reserve, remoteLogin } DisplayStatus;
 
 typedef struct RcStr {
     struct RcStr	*next;
@@ -200,13 +215,15 @@ struct display {
 
 	/* display state */
 	DisplayStatus	status;		/* current status */
+	int		zstatus;	/*  substatus while zombie */
 	int		pid;		/* process id of child */
 	int		serverPid;	/* process id of server (-1 if none) */
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
-	int		pipefd[2];	/* feedback pipe */
+	GPipe		pipe;		/* comm master <-> slave */
 	Display		*dpy;		/* connection to X server; for session process */
+	char		*remoteHost;	/* for X -query type remote login */
 	struct verify_info *verify;	/* info about logged in user; for session process */
 #ifdef XDMCP
 	/* XDMCP state */
@@ -248,14 +265,14 @@ struct display {
 	char		*systemPath;	/* path set for startup/reset */
 	char		*systemShell;	/* interpreter for startup/reset */
 	char		*failsafeClient;/* a client to start when the session fails */
-	char		*chooser;	/* chooser program XXX kill! */
 	char		*autoUser;	/* user to log in automatically. */
 	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
 	char		*autoString;	/* xsession arguments. */
 	char		**noPassUsers;	/* users allowed in without a password */
 	char		*sessSaveFile;	/* rel. file name where previous session args are saved */
+	char		**chooserHosts;	/* hosts to auto-add in "remote login" */
+	int		loginMode;	/* whether to start chooser or login */
 	int		autoReLogin;	/* auto-re-login after crash */
-	int		autoLogin1st;	/* auto-login at startup? */
 	int		allowNullPasswd;/* allow null password on login */
 	int		allowRootLogin;	/* allow direct root login */
 	int		allowShutdown;	/* who is allowed to shutdown */
@@ -327,11 +344,18 @@ struct protoDisplay {
 #define DS_RESTART	0
 #define DS_TEXTMODE	1
 #define DS_RESERVE	2
-#define DS_REMOVE	3
+#define DS_REMOTE	3
+#define DS_REMOVE	4
+
+/* command codes dpy process -> master process */
+#define D_User		1
+#define D_ReLogin	2
+#define D_Shutdown	3
+#define D_ChooseHost	4
+#define D_RemoteHost	5
 
 extern int	request_port;
 extern int	debugLevel;
-extern int	daemonMode;
 extern char	*pidFile;
 extern int	lockPidFile;
 extern char	*authDir;
@@ -342,7 +366,6 @@ extern char	**exportList;
 extern char	*randomFile;
 extern char	*willing;
 extern int	choiceTimeout;	/* chooser choice timeout */
-extern int	autoLogin;
 extern char	*cmdHalt;
 extern char	*cmdReboot;
 extern char	*PAMService;
@@ -356,13 +379,14 @@ extern void BecomeDaemon (void);
 
 /* in dm.c */
 extern char *prog, *progpath;
-extern void CheckFifos (void);
 extern void StartDisplay (struct display *d);
+extern void StopDisplay (struct display *d);
 #ifndef HAS_SETPROCTITLE
 extern void SetTitle (const char *name, ...);
 #endif
 
 /* in dpylist.c */
+extern struct display *displays;	/* that's ugly ... */
 extern int AnyDisplaysLeft (void);
 extern void ForEachDisplay (void (*f)(struct display *));
 extern void RemoveDisplay (struct display *old);
@@ -390,10 +414,12 @@ extern char **FindCfgEnt (struct display *d, int id);
 extern int InitResources (char **argv);
 extern int LoadDMResources (int force);
 extern int LoadDisplayResources (struct display *d);
+extern void ScanServers (int force);
 extern void CloseGetter (void);
 extern int startConfig (int what, CfgDep *dep, int force);
 extern RcStr *newStr (char *str);
 extern void delStr (RcStr *str);
+extern GTalk cnftalk;
 
 /* in session.c */
 extern char **defaultEnv (const char *user);
@@ -404,9 +430,13 @@ extern void DeleteXloginResources (struct display *d);
 extern void LoadXloginResources (struct display *d);
 extern void ManageSession (struct display *d);
 extern void SetupDisplay (struct display *d);
-extern void rStopDisplay (struct display *d, int endState);
-extern void StopDisplay (struct display *d);
-extern void WaitForChild (void);
+
+extern GTalk mstrtalk, grttalk;
+extern GProc grtproc;
+extern void OpenGreeter (struct display *d);
+extern void CloseGreeter (struct display *d, int force);
+extern int CtrlGreeterWait (struct display *d, int wreply);
+
 
 /* process.c */
 #include <stdlib.h>
@@ -415,6 +445,8 @@ typedef SIGVAL (*SIGFUNC)(int);
 
 SIGVAL (*Signal(int, SIGFUNC Handler))(int);
 
+extern void RegisterInput (int fd);
+extern void UnregisterInput (int fd);
 extern void RegisterCloseOnFork (int fd);
 extern void CloseNClearCloseOnFork (int fd);
 extern int Fork (void);
@@ -422,9 +454,13 @@ extern int Wait4 (int pid);
 extern void execute (char **argv, char **env);
 extern int runAndWait (char **args, char **env);
 extern void TerminateProcess (int pid, int sig);
-extern Jmp_buf GErrJmp;
-extern const char *GOpen (char **argv, const char *what, char **env);
-extern int GClose (int force);
+
+extern void GSet (GTalk *talk);	/* call before GOpen! */
+extern int GFork (GPipe *pajp, char *pname, char *cname);
+extern void GClosen (GPipe *pajp);
+extern int GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname);
+extern int GClose (GProc *proc, int force);
+
 extern void GSendInt (int val);
 extern int GRecvInt (void);
 extern int GRecvCmd (int *cmd);
@@ -433,6 +469,7 @@ extern char *GRecvArr (int *len);
 extern int GRecvStrBuf (char *buf);
 extern int GRecvArrBuf (char *buf);
 extern void GSendStr (const char *buf);
+extern void GSendNStr (const char *buf, int len);
 extern char *GRecvStr (void);
 extern void GSendArgv (char **argv);
 extern void GSendStrArr (int len, char **data);
@@ -454,7 +491,6 @@ extern void ResetServer (struct display *d);
 extern int PingServer(struct display *d);
 
 /* socket.c */
-extern int GetChooserAddr (char *addr, int *lenp);
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
@@ -479,9 +515,6 @@ extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 
-/* in xdmcp.c */
-extern void WaitForSomething (void);
-
 #ifdef XDMCP
 
 /* in xdmcp.c */
@@ -491,6 +524,7 @@ extern void DestroyWellKnownSockets (void);
 extern void SendFailed (struct display *d, const char *reason);
 extern void init_session_id(void);
 extern void registerHostname(const char *name, int namelen);
+extern int xdmcpFd;
 
 /* in netaddr.c */
 extern char *NetaddrAddress(XdmcpNetaddr netaddrp, int *lenp);
@@ -539,10 +573,16 @@ extern ARRAY8Ptr IndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType)
 extern int IsIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern int RememberIndirectClient (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern void ForgetIndirectClient ( ARRAY8Ptr clientAddress, CARD16 connectionType);
-extern void ProcessChooserSocket (int fd);
-extern void RunChooser (struct display *d);
+extern int RegisterIndirectChoice (ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice);
+extern int DoChoose (struct display *d);
+
+/* in xdmcp.c */
+extern void ProcessRequestSocket (void);
 
 #endif /* XDMCP */
+
+/* support -debug 0x200 */
+#define nofork_session (debugLevel & DEBUG_NOFORK)
 
 /* automatically fork off reserve display if all displays are locked */
 /*#define AUTO_RESERVE 1*/

@@ -57,53 +57,48 @@ in this Software without prior written authorization from The Open Group.
 # include <tiuser.h>
 #endif
 
-/* XXX use SNPrintf for this? */
-static int
-FormatBytes (
-    const unsigned char *data,
-    int	    length,
-    char    *buf,
-    int	    buflen)
-{
-    int	    i;
-    static char	    HexChars[] = "0123456789abcdef";
+#if defined(SVR4) && !defined(SCO325)
+# include    <sys/sockio.h>
+#endif
+#if defined(SVR4) && defined(PowerMAX_OS)
+# include    <sys/stropts.h>
+#endif
+#if defined(SYSV) && defined(i386)
+# include    <sys/stream.h>
+# ifdef ISC
+#  include    <sys/sioctl.h>
+#  include    <sys/stropts.h>
+# endif
+#endif
+#include    <arpa/inet.h>
 
-    if (buflen < length * 2 + 1)
-	return 0;
-    for (i = 0; i < length; i++)
-    {
-	*buf++ = HexChars[(data[i] >> 4) & 0xf];
-	*buf++ = HexChars[(data[i]) & 0xf];
-    }
-    *buf++ = '\0';
-    return 1;
-}
+#include    <sys/ioctl.h>
+#ifdef STREAMSCONN
+# ifdef WINTCP /* NCR with Wollongong TCP */
+#  include    <netinet/ip.h>
+# endif
+# include    <stropts.h>
+# include    <tiuser.h>
+# include    <netconfig.h>
+# include    <netdir.h>
+#endif
 
-static int
-FormatARRAY8 (
-    ARRAY8Ptr	a,
-    char	*buf,
-    int		buflen)
-{
-    return FormatBytes (a->data, a->length, buf, buflen);
-}
+#ifdef hpux
+# include <sys/utsname.h>
+# ifdef HAS_IFREQ
+#  include <net/if.h>
+# endif
+#else
+#ifdef __convex__
+# include <sync/queue.h>
+# include <sync/sema.h>
+#endif
+#ifndef __GNU__
+# include <net/if.h>
+#endif /* __GNU__ */
+#endif /* hpux */
 
-/* Converts an Internet address in ARRAY8 format to a string in
-   familiar dotted address notation, e.g., "18.24.0.11"
-   Returns 1 if successful, 0 if not.
-   */
-static int
-ARRAY8ToDottedDecimal (
-    ARRAY8Ptr	a,
-    char	*buf,
-    int		buflen)
-{
-    if (a->length != 4  ||  buflen < 20)
-	return 0;
-    sprintf(buf, "%d.%d.%d.%d",
-	    a->data[0], a->data[1], a->data[2], a->data[3]);
-    return 1;
-}
+#include <netdb.h>
 
 typedef struct _IndirectUsers {
     struct _IndirectUsers   *next;
@@ -141,23 +136,19 @@ ForgetIndirectClient (
     ARRAY8Ptr	clientAddress,
     CARD16	connectionType)
 {
-    IndirectUsersPtr	i, prev;
+    IndirectUsersPtr	*i, ni;
 
-    prev = 0;
-    for (i = indirectUsers; i; i = i->next)
+    for (i = &indirectUsers; *i; i = &(*i)->next)
     {
-	if (XdmcpARRAY8Equal (clientAddress, &i->client) &&
-	    connectionType == i->connectionType)
+	if (XdmcpARRAY8Equal (clientAddress, &(*i)->client) &&
+	    connectionType == (*i)->connectionType)
 	{
-	    if (prev)
-		prev->next = i->next;
-	    else
-		indirectUsers = i->next;
-	    XdmcpDisposeARRAY8 (&i->client);
-	    free ((char *) i);
+	    ni = (*i)->next;
+	    XdmcpDisposeARRAY8 (&(*i)->client);
+	    free ((char *) (*i));
+	    (*i) = ni;
 	    break;
 	}
-	prev = i;
     }
 }
 
@@ -173,51 +164,6 @@ IsIndirectClient (
 	    connectionType == i->connectionType)
 	    return 1;
     return 0;
-}
-
-static int
-FormatChooserArgument (char *buf, int len)
-{
-    int		    addr_len, result_len;
-    int		    netfamily;
-    unsigned char   addr_buf[1024], result_buf[1024];
-
-    addr_len = sizeof (addr_buf);
-    result_len = 0;
-    if (GetChooserAddr ((char *)addr_buf, &addr_len) == -1)
-    {
-	LogError ("Cannot get return address for chooser socket\n");
-	Debug ("Cannot get chooser socket address\n");
-	return 0;
-    }
-    netfamily = NetaddrFamily((XdmcpNetaddr)addr_buf);
-    switch (netfamily) {
-    case AF_INET:
-	{
-	    char *port;
-	    int portlen;
-	    ARRAY8Ptr localAddress;
-
-	    port = NetaddrPort((XdmcpNetaddr)addr_buf, &portlen);
-	    result_buf[0] = netfamily >> 8;
-	    result_buf[1] = netfamily & 0xFF;
-	    result_buf[2] = port[0];
-	    result_buf[3] = port[1];
-	    localAddress = getLocalAddress ();
-	    memmove( (char *)result_buf+4, (char *)localAddress->data, 4);
-	    result_len = 8;
-	}
-	break;
-#ifdef AF_DECnet
-    case AF_DECnet:
-	break;
-#endif
-    default:
-	Debug ("Chooser family %d isn't known\n", netfamily);
-	return 0;
-    }
-
-    return FormatBytes (result_buf, result_len, buf, len);
 }
 
 typedef struct _Choices {
@@ -268,7 +214,7 @@ IndirectChoice (
     return 0;
 }
 
-static int
+int
 RegisterIndirectChoice (
     ARRAY8Ptr	clientAddress,
     CARD16      connectionType,
@@ -324,8 +270,8 @@ RegisterIndirectChoice (
     return 1;
 }
 
-#ifdef notdef
-static
+#if 0
+static void
 RemoveIndirectChoice (
     ARRAY8Ptr	clientAddress,
     CARD16	connectionType)
@@ -352,176 +298,699 @@ RemoveIndirectChoice (
 }
 #endif
 
+
+/* ####################### */
+
+
+typedef struct _hostAddr {
+    struct _hostAddr *next;
+    struct sockaddr *addr;
+    int addrlen;
+    xdmOpCode type;
+} HostAddr;
+
+static HostAddr *hostAddrdb;
+
+typedef struct _hostName {
+    struct _hostName *next;
+    unsigned willing:1, alive:1;
+    ARRAY8 hostname, status;
+    CARD16 connectionType;
+    ARRAY8 hostaddr;
+} HostName;
+
+static HostName *hostNamedb;
+
+static XdmcpBuffer directBuffer, broadcastBuffer;
+static XdmcpBuffer buffer;
+
+static int socketFD;
+
+
+static void
+doPingHosts()
+{
+    HostAddr *hosts;
+
+Debug ("pinging hosts\n");
+    for (hosts = hostAddrdb; hosts; hosts = hosts->next)
+	XdmcpFlush (socketFD,
+		    hosts->type == QUERY ? &directBuffer : &broadcastBuffer,
+		    (XdmcpNetaddr) hosts->addr, hosts->addrlen);
+}
+
+static int
+addHostname(ARRAY8Ptr hostname, ARRAY8Ptr status,
+	    struct sockaddr *addr, int will)
+{
+    HostName **names, *name;
+    ARRAY8 hostAddr;
+    CARD16 connectionType;
+
+    switch (addr->sa_family) {
+	case AF_INET:
+	    hostAddr.data =
+		(CARD8 *) & ((struct sockaddr_in *) addr)->sin_addr;
+	    hostAddr.length = 4;
+	    connectionType = FamilyInternet;
+	    break;
+	default:
+	    hostAddr.data = (CARD8 *) "";
+	    hostAddr.length = 0;
+	    connectionType = FamilyLocal;
+	    break;
+    }
+    for (names = &hostNamedb; *names; names = &(*names)->next) {
+	name = *names;
+	if (connectionType == name->connectionType &&
+	    XdmcpARRAY8Equal(&hostAddr, &name->hostaddr))
+	{
+	    if (XdmcpARRAY8Equal(status, &name->status))
+		return 0;
+	    XdmcpDisposeARRAY8(&name->status);
+	    XdmcpDisposeARRAY8(hostname);
+
+	    GSendInt (G_Ch_ChangeHost);
+	    goto gotold;
+	}
+    }
+    if (!(name = (HostName *) malloc(sizeof(*name))))
+	return 0;
+    if (hostname->length) {
+	switch (addr->sa_family) {
+	case AF_INET:
+	    {
+		struct hostent *hostent;
+		char *host;
+
+		hostent = gethostbyaddr((char *) hostAddr.data,
+					hostAddr.length, AF_INET);
+		if (hostent) {
+		    XdmcpDisposeARRAY8(hostname);
+		    host = hostent->h_name;
+		    XdmcpAllocARRAY8(hostname, strlen(host));
+		    memmove(hostname->data, host, hostname->length);
+		}
+	    }
+	}
+    }
+    if (!XdmcpAllocARRAY8(&name->hostaddr, hostAddr.length)) {
+	free((char *) name);
+	return 0;
+    }
+    memmove(name->hostaddr.data, hostAddr.data, hostAddr.length);
+    name->connectionType = connectionType;
+    name->hostname = *hostname;
+
+    *names = name;
+    name->next = 0;
+
+    GSendInt (G_Ch_AddHost);
+  gotold:
+    name->alive = 1;
+    name->willing = will;
+    name->status = *status;
+
+    GSendInt ((int)name);	/* just an id */
+    GSendNStr ((char *)name->hostname.data, name->hostname.length);
+    GSendNStr ((char *)name->status.data, name->status.length);
+    GSendInt (will);
+
+    return 1;
+}
+
+static void
+disposeHostname(HostName * host)
+{
+    XdmcpDisposeARRAY8(&host->hostname);
+    XdmcpDisposeARRAY8(&host->hostaddr);
+    XdmcpDisposeARRAY8(&host->status);
+    free((char *) host);
+}
+
+static void
+emptyHostnames(void)
+{
+    HostName *host, *nhost;
+
+    for (host = hostNamedb; host; host = nhost) {
+	nhost = host->next;
+	disposeHostname(host);
+    }
+    hostNamedb = 0;
+}
+
+static void
+receivePacket()
+{
+    XdmcpHeader header;
+    ARRAY8 authenticationName;
+    ARRAY8 hostname;
+    ARRAY8 status;
+    int saveHostname = 0;
+    struct sockaddr addr;
+    int addrlen;
+
+Debug ("receiving packet\n");
+    addrlen = sizeof(addr);
+    if (!XdmcpFill(socketFD, &buffer, (XdmcpNetaddr) &addr, &addrlen))
+	return;
+    if (!XdmcpReadHeader(&buffer, &header))
+	return;
+    if (header.version != XDM_PROTOCOL_VERSION)
+	return;
+    hostname.data = 0;
+    status.data = 0;
+    authenticationName.data = 0;
+    switch (header.opcode) {
+	case WILLING:
+	    if (XdmcpReadARRAY8(&buffer, &authenticationName) &&
+		XdmcpReadARRAY8(&buffer, &hostname) &&
+		XdmcpReadARRAY8(&buffer, &status)) {
+		if (header.length == 6 + authenticationName.length +
+		    hostname.length + status.length) {
+		    if (addHostname(&hostname, &status, &addr, 1))
+			saveHostname = 1;
+		}
+	    }
+	    XdmcpDisposeARRAY8(&authenticationName);
+	    break;
+	case UNWILLING:
+	    if (XdmcpReadARRAY8(&buffer, &hostname) &&
+		XdmcpReadARRAY8(&buffer, &status)) {
+		if (header.length == 4 + hostname.length + status.length) {
+		    if (addHostname(&hostname, &status, &addr, 0))
+			saveHostname = 1;
+		}
+	    }
+	    break;
+	default:
+	    break;
+    }
+    if (!saveHostname) {
+	XdmcpDisposeARRAY8(&hostname);
+	XdmcpDisposeARRAY8(&status);
+    }
+}
+
+static void
+registerHostaddr(struct sockaddr *addr, int len, xdmOpCode type)
+{
+    HostAddr *host;
+
+Debug("registering host %[*hhu, type %d\n", len, addr, type);
+    for (host = hostAddrdb; host; host = host->next)
+	if (host->type == type && host->addr->sa_family == addr->sa_family)
+	    switch (addr->sa_family) {
+	    case AF_INET:
+		{
+		struct sockaddr_in *na = (struct sockaddr_in *)addr;
+		struct sockaddr_in *oa = (struct sockaddr_in *)host->addr;
+		if (na->sin_port == oa->sin_port &&
+		    na->sin_addr.s_addr == oa->sin_addr.s_addr)
+		    return;
+		break;
+		}
+	    default:	/* ... */
+		break;
+	    }
+Debug(" not dupe\n");
+    if (!(host = (HostAddr *) malloc(sizeof(*host))))
+	return;
+    if (!(host->addr = (struct sockaddr *) malloc(len))) {
+	free((char *) host);
+	return;
+    }
+    memmove((char *) host->addr, (char *) addr, len);
+    host->addrlen = len;
+    host->type = type;
+    host->next = hostAddrdb;
+    hostAddrdb = host;
+}
+
+static void
+emptyPingHosts (void)
+{
+    HostAddr *host, *nhost;
+
+    for (host = hostAddrdb; host; host = nhost) {
+	nhost = host->next;
+	free (host->addr);
+	free (host);
+    }
+    hostAddrdb = 0;
+}
+
+static void
+registerBroadcastForPing (void)
+{
+    struct sockaddr_in in_addr;
+
+#ifdef __GNU__
+    in_addr.sin_addr.s_addr = htonl(0xFFFFFFFF);
+    in_addr.sin_port = htons(XDM_UDP_PORT);
+    registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
+		     BROADCAST_QUERY);
+#else /* __GNU__ */
+    struct ifconf ifc;
+    register struct ifreq *ifr;
+    struct sockaddr broad_addr;
+    char buf[2048], *cp, *cplim;
+# ifdef WINTCP			/* NCR with Wollongong TCP */
+	int ipfd;
+	struct ifconf *ifcp;
+	struct strioctl ioc;
+	int n;
+
+	ifcp = (struct ifconf *) buf;
+	ifcp->ifc_buf = buf + 4;
+	ifcp->ifc_len = sizeof(buf) - 4;
+
+	if ((ipfd = open("/dev/ip", O_RDONLY)) < 0) {
+	    t_error("RegisterBroadcastForPing() t_open(/dev/ip) failed");
+	    return;
+	}
+
+	ioc.ic_cmd = IPIOC_GETIFCONF;
+	ioc.ic_timout = 60;
+	ioc.ic_len = sizeof(buf);
+	ioc.ic_dp = (char *) ifcp;
+
+	if (ioctl(ipfd, (int) I_STR, (char *) &ioc) < 0) {
+	    perror
+		("RegisterBroadcastForPing() ioctl(I_STR(IPIOC_GETIFCONF)) failed");
+	    close(ipfd);
+	    return;
+	}
+
+	for (ifr = ifcp->ifc_req, n = ifcp->ifc_len / sizeof(struct ifreq);
+	     --n >= 0; ifr++)
+# else				/* WINTCP */
+Debug("registering broadcast\n");
+	ifc.ifc_len = sizeof(buf);
+	ifc.ifc_buf = buf;
+	if (ifioctl(socketFD, (int) SIOCGIFCONF, (char *) &ifc) < 0)
+	    return;
+
+	cplim = (char *) IFC_IFC_REQ (ifc) + ifc.ifc_len;
+
+	for (cp = (char *) IFC_IFC_REQ (ifc); cp < cplim; cp += ifr_size(ifr))
+# endif				/* WINTCP */
+	{
+# ifndef WINTCP
+	    ifr = (struct ifreq *) cp;
+# endif
+	    if (ifr->ifr_addr.sa_family != AF_INET)
+		continue;
+
+	    broad_addr = ifr->ifr_addr;
+	    ((struct sockaddr_in *) &broad_addr)->sin_addr.s_addr =
+		htonl(INADDR_BROADCAST);
+# ifdef SIOCGIFBRDADDR
+	    {
+		struct ifreq broad_req;
+
+		broad_req = *ifr;
+#  ifdef WINTCP			/* NCR with Wollongong TCP */
+		ioc.ic_cmd = IPIOC_GETIFFLAGS;
+		ioc.ic_timout = 0;
+		ioc.ic_len = sizeof(broad_req);
+		ioc.ic_dp = (char *) &broad_req;
+
+		if (ioctl(ipfd, I_STR, (char *) &ioc) != -1 &&
+#  else				/* WINTCP */
+		if (ifioctl(socketFD, SIOCGIFFLAGS, (char *) &broad_req) !=
+		    -1 &&
+#  endif			/* WINTCP */
+		    (broad_req.ifr_flags & IFF_BROADCAST) &&
+		    (broad_req.ifr_flags & IFF_UP)
+		    ) {
+		    broad_req = *ifr;
+#  ifdef WINTCP			/* NCR with Wollongong TCP */
+		    ioc.ic_cmd = IPIOC_GETIFBRDADDR;
+		    ioc.ic_timout = 0;
+		    ioc.ic_len = sizeof(broad_req);
+		    ioc.ic_dp = (char *) &broad_req;
+
+		    if (ioctl(ipfd, I_STR, (char *) &ioc) != -1)
+#  else				/* WINTCP */
+		    if (ifioctl(socketFD, SIOCGIFBRDADDR, (char *) &broad_req) 
+			!= -1)
+#  endif			/* WINTCP */
+			broad_addr = broad_req.ifr_addr;
+		    else
+			continue;
+		} else
+		    continue;
+	    }
+# endif
+	    in_addr = *((struct sockaddr_in *) &broad_addr);
+	    in_addr.sin_port = htons(XDM_UDP_PORT);
+# ifdef BSD44SOCKETS
+	    in_addr.sin_len = sizeof(in_addr);
+# endif
+	    registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
+			     BROADCAST_QUERY);
+	}
+#endif
+}
+
+static int
+makeSockAddr (const char *name, struct sockaddr_in *in_addr)
+{
+    /* Per RFC 1123, check first for IP address in dotted-decimal form */
+    if ((in_addr->sin_addr.s_addr = inet_addr(name)) != (unsigned) -1)
+	in_addr->sin_family = AF_INET;
+    else {
+	struct hostent *hostent;
+	if (!(hostent = gethostbyname(name)))
+	    return 0;
+	if (hostent->h_addrtype != AF_INET || hostent->h_length != 4)
+	    return 0;
+	in_addr->sin_family = hostent->h_addrtype;
+	memmove(&in_addr->sin_addr, hostent->h_addr, 4);
+    }
+    in_addr->sin_port = htons(XDM_UDP_PORT);
+#ifdef BSD44SOCKETS
+    in_addr->sin_len = sizeof(*in_addr);
+#endif
+    return 1;
+}
+
+/*
+ * Register the address for this host.
+ * Called for interactively specified hosts.
+ * The special name "BROADCAST" looks up all the broadcast
+ *  addresses on the local host.
+ */
+
+static int
+registerForPing(const char *name)
+{
+    struct sockaddr_in in_addr;
+
+    Debug ("manual host registration: %s\n", name);
+    if (!strcmp(name, "BROADCAST") || !strcmp(name, "*"))
+	registerBroadcastForPing();
+    else {
+	if (!makeSockAddr(name, &in_addr))
+	    return 0;
+	registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
+			 QUERY);
+    }
+    return 1;
+}
+
 /*ARGSUSED*/
 static void
 AddChooserHost (
-    CARD16	connectionType ATTR_UNUSED,
+    CARD16	connectionType,
     ARRAY8Ptr	addr,
-    char	*closure)
+    char	*closure ATTR_UNUSED)
 {
-    char	***argp;
-    char	hostbuf[1024];
-
-    argp = (char ***) closure;
-    if (addr->length == 9 &&
-	!memcmp ((char *)addr->data, "BROADCAST", 9))
-    {
-	*argp = addStrArr (*argp, "BROADCAST", 9);
-    }
-    else if (ARRAY8ToDottedDecimal (addr, hostbuf, sizeof (hostbuf)))
-    {
-	*argp = addStrArr (*argp, hostbuf, -1);
+Debug ("internal host registration: %[*hhu\n", addr->length, addr->data);
+    if ((addr->length == 9 && !memcmp ((char *)addr->data, "BROADCAST", 9)) ||
+	(addr->length == 1 && !*(char *)addr->data == '*'))
+	registerBroadcastForPing();
+    else if (connectionType == FamilyInternet) {
+	struct sockaddr_in in_addr;
+	in_addr.sin_family = AF_INET;
+	memmove(&in_addr.sin_addr, addr->data, 4);
+	in_addr.sin_port = htons(XDM_UDP_PORT);
+#ifdef BSD44SOCKETS
+	in_addr.sin_len = sizeof(in_addr);
+#endif
+	registerHostaddr((struct sockaddr *) &in_addr, sizeof(in_addr),
+			 QUERY);
     }
 }
 
-void
-ProcessChooserSocket (int fd)
-{
-    int		client_fd;
-    int		len;
-    XdmcpBuffer	buffer;
-    ARRAY8	clientAddress;
-    CARD16	connectionType;
-    ARRAY8	choice;
-#if defined(STREAMSCONN)
-    struct t_call *call;
-    int		flags = 0;
-#endif
-    char	buf[1024];
+static ARRAYofARRAY8    AuthenticationNames;
 
-    Debug ("Process chooser socket\n");
-    len = sizeof (buf);
+#if 0
+static void RegisterAuthenticationName(char *name, int namelen)
+{
+    ARRAY8Ptr authName;
+    if (!XdmcpReallocARRAYofARRAY8(&AuthenticationNames,
+				    AuthenticationNames.length + 1))
+	return;
+    authName = &AuthenticationNames.data[AuthenticationNames.length - 1];
+    if (!XdmcpAllocARRAY8(authName, namelen))
+	return;
+    memmove(authName->data, name, namelen);
+}
+#endif
+
+static int
+initXDMCP()
+{
+    XdmcpHeader header;
+    int i;
+#ifndef STREAMSCONN
+#ifdef SO_BROADCAST
+    int soopts;
+#endif
+#endif
+
+    memset(&header, 0, sizeof(header));
+    header.version = XDM_PROTOCOL_VERSION;
+    header.opcode = (CARD16) BROADCAST_QUERY;
+    header.length = 1;
+    for (i = 0; i < (int) AuthenticationNames.length; i++)
+	header.length += 2 + AuthenticationNames.data[i].length;
+    XdmcpWriteHeader(&broadcastBuffer, &header);
+    XdmcpWriteARRAYofARRAY8(&broadcastBuffer, &AuthenticationNames);
+
+    header.version = XDM_PROTOCOL_VERSION;
+    header.opcode = (CARD16) QUERY;
+    header.length = 1;
+    for (i = 0; i < (int) AuthenticationNames.length; i++)
+	header.length += 2 + AuthenticationNames.data[i].length;
+    XdmcpWriteHeader(&directBuffer, &header);
+    XdmcpWriteARRAYofARRAY8(&directBuffer, &AuthenticationNames);
 #if defined(STREAMSCONN)
-    call = (struct t_call *)t_alloc( fd, T_CALL, T_ALL );
-    if( call == NULL )
-    {
-	t_error( "ProcessChooserSocket: t_alloc failed" );
-	LogError ("Cannot setup to listen on chooser connection\n");
-	return;
+    if ((socketFD = t_open("/dev/udp", O_RDWR, 0)) < 0)
+	return 0;
+
+    if (t_bind(socketFD, NULL, NULL) < 0) {
+	t_close(socketFD);
+	return 0;
     }
-    if( t_listen( fd, call ) < 0 )
+
+    /*
+     * This part of the code looks contrived. It will actually fit in nicely
+     * when the CLTS part of Xtrans is implemented.
+     */
     {
-	t_error( "ProcessChooserSocket: t_listen failed" );
-	t_free( (char *)call, T_CALL );
-	LogError ("Cannot listen on chooser connection\n");
-	return;
-    }
-    client_fd = t_open ("/dev/tcp", O_RDWR, NULL);
-    if (client_fd == -1)
-    {
-	t_error( "ProcessChooserSocket: t_open failed" );
-	t_free( (char *)call, T_CALL );
-	LogError ("Cannot open new chooser connection\n");
-	return;
-    }
-    if( t_bind( client_fd, NULL, NULL ) < 0 )
-    {
-	t_error( "ProcessChooserSocket: t_bind failed" );
-	t_free( (char *)call, T_CALL );
-	LogError ("Cannot bind new chooser connection\n");
-        t_close (client_fd);
-	return;
-    }
-    if( t_accept (fd, client_fd, call) < 0 )
-    {
-	t_error( "ProcessChooserSocket: t_accept failed" );
-	LogError ("Cannot accept chooser connection\n");
-	t_free( (char *)call, T_CALL );
-        t_unbind (client_fd);
-        t_close (client_fd);
-	return;
+	struct netconfig *nconf;
+
+	if ((nconf = getnetconfigent("udp")) == NULL) {
+	    t_unbind(socketFD);
+	    t_close(socketFD);
+	    return 0;
+	}
+
+	if (netdir_options(nconf, ND_SET_BROADCAST, socketFD, NULL)) {
+	    freenetconfigent(nconf);
+	    t_unbind(socketFD);
+	    t_close(socketFD);
+	    return 0;
+	}
+
+	freenetconfigent(nconf);
     }
 #else
-    client_fd = accept (fd, (struct sockaddr *)buf, (void *)&len);
-    if (client_fd == -1)
-    {
-	LogError ("Cannot accept chooser connection\n");
-	return;
-    }
+    if ((socketFD = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+	return 0;
+# ifdef SO_BROADCAST
+    soopts = 1;
+    if (setsockopt
+	(socketFD, SOL_SOCKET, SO_BROADCAST, (char *) &soopts,
+	 sizeof(soopts)) < 0)
+	perror("setsockopt");
+# endif
 #endif
-    Debug ("Accepted %d\n", client_fd);
-    
-#if defined(STREAMSCONN)
-    len = t_rcv (client_fd, buf, sizeof (buf), &flags);
-#else
-    len = read (client_fd, buf, sizeof (buf));
-#endif
-    Debug ("Read returns %d\n", len);
-    if (len > 0)
-    {
-    	buffer.data = (BYTE *) buf;
-    	buffer.size = sizeof (buf);
-    	buffer.count = len;
-    	buffer.pointer = 0;
-	clientAddress.data = 0;
-	clientAddress.length = 0;
-	choice.data = 0;
-	choice.length = 0;
-	if (XdmcpReadARRAY8 (&buffer, &clientAddress)) {
-	    if (XdmcpReadCARD16 (&buffer, &connectionType)) {
-		if (XdmcpReadARRAY8 (&buffer, &choice)) {
-		    Debug ("Read from chooser succesfully\n");
-		    RegisterIndirectChoice (&clientAddress, connectionType, &choice);
-		    XdmcpDisposeARRAY8 (&choice);
-		} else {
-		    LogError ("Invalid choice response length %d\n", len);
-		}
+
+    return 1;
+}
+
+static void ATTR_NORETURN
+chooseHost(struct display *d, int hid)
+{
+    HostName *h;
+    char addr[32];
+
+    for (h = hostNamedb; h; h = h->next)
+	if ((int)h == hid) {
+	    /* XXX error handling */
+	    GSet (&mstrtalk);
+	    if ((d->displayType & d_location) == dLocal) {
+		sprintf (addr, "%d.%d.%d.%d",
+			 h->hostaddr.data[0], h->hostaddr.data[1],
+			 h->hostaddr.data[2], h->hostaddr.data[3]);
+		GSendInt (D_RemoteHost);
+		GSendStr (addr);
+		/* CloseGreeter (d, 0); not really necessary, init will reap it */
+		SessionExit (d, EX_REMOTE);
 	    } else {
-		LogError ("Invalid choice response length %d\n", len);
+		GSendInt (D_ChooseHost);
+		GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
+		GSendInt (d->connectionType);	/* maybe h->connectionType? */
+		GSendArr (h->hostaddr.length, (char *)h->hostaddr.data);
+		/* CloseGreeter (d, 0); not really necessary, init will reap it */
+		SessionExit (d, EX_REMANAGE_DPY);
 	    }
-	    XdmcpDisposeARRAY8 (&clientAddress);
-	} else {
-	    LogError ("Invalid choice response length %d\n", len);
+	    break;
+	}
+/*    LogError ("Internal error: choosed unexisting host\n"); */
+    SessionExit (d, EX_REMANAGE_DPY);
+}
+
+static void
+directChooseHost(struct display *d, const char *name)
+{
+    struct sockaddr_in in_addr;
+
+    if (!makeSockAddr(name, &in_addr))
+	return;
+    GSendInt (G_Ch_Exit);
+    /* XXX error handling */
+    GSet (&mstrtalk);
+    if ((d->displayType & d_location) == dLocal) {
+	GSendInt (D_RemoteHost);
+	GSendStr (name);
+	/* CloseGreeter (d, 0); not really necessary, init will reap it */
+	SessionExit (d, EX_REMOTE);
+    } else {
+	GSendInt (D_ChooseHost);
+	GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
+	GSendInt (d->connectionType);	/* maybe h->connectionType? */
+	GSendArr (4, (char *)&in_addr.sin_addr);	/* XXX AF_INET-specific */
+	/* CloseGreeter (d, 0); not really necessary, init will reap it */
+	SessionExit (d, EX_REMANAGE_DPY);
+    }
+}
+
+#define PING_TRIES	3
+
+int
+DoChoose (struct display *d)
+{
+    HostName **hp, *h;
+    char *host, **hostp;
+    struct timeval *to, now, nextPing;
+    int pingTry, n, cmd;
+    FD_TYPE rfds;
+    static int xdmcpInited;
+
+    OpenGreeter (d);
+    GSendInt (G_Choose);
+    switch (cmd = CtrlGreeterWait (d, 1)) {
+    case G_Ready:
+	break;
+    default:	/* error */
+	return cmd;
+    }
+
+    if (!xdmcpInited) {
+	if (!initXDMCP ())
+	    SessionExit (d, EX_RESERVER_DPY);	/* UNMANAGE? */
+	xdmcpInited = 1;
+    }
+    if ((d->displayType & d_location) == dLocal) {
+	/* XXX the config reader should do the lookup already */
+	for (hostp = d->chooserHosts; *hostp; hostp++)
+	    if (!registerForPing (*hostp))
+		LogError ("Unkown host '%s' specified for local chooser preload of display %s\n", *hostp, d->name);
+    } else
+	ForEachChooserHost (&d->clientAddr, d->connectionType,
+			    AddChooserHost, 0);
+
+    GSendInt (0);	/* entering async mode signal */
+
+  reping:
+    for (h = hostNamedb; h; h = h->next)
+	h->alive = 0;
+    pingTry = 0;
+    goto pingen;
+
+    for (;;) {
+	to = 0;
+	if (pingTry <= PING_TRIES) {
+	    gettimeofday (&now, 0);
+	    if (nextPing.tv_sec < now.tv_sec ||
+		(nextPing.tv_sec == now.tv_sec &&
+		 nextPing.tv_usec < now.tv_usec)) {
+		if (pingTry < PING_TRIES) {
+		  pingen:
+		    pingTry++;
+		    doPingHosts();
+		    gettimeofday (&now, 0);
+		    nextPing = now;
+		    nextPing.tv_sec++;
+		} else {
+		    for (hp = &hostNamedb; *hp; )
+			if (!(*hp)->alive) {
+			    h = (*hp)->next;
+			    disposeHostname(*hp);
+			    GSendInt (G_Ch_RemoveHost);
+			    GSendInt ((int)*hp);	/* just an id */
+			    *hp = h;
+			} else
+			    hp = &(*hp)->next;
+		    goto noto;
+		}
+	    }
+	    to = &now;
+	    now.tv_sec = nextPing.tv_sec - now.tv_sec;
+	    now.tv_usec = nextPing.tv_usec - now.tv_usec;
+	    if (now.tv_usec < 0) {
+		now.tv_usec += 1000000;
+		now.tv_sec--;
+	    }
+	}
+      noto:
+	FD_ZERO (&rfds);
+	FD_SET (grtproc.pipe.rfd, &rfds);
+	FD_SET (socketFD, &rfds);
+	n = select (
+	    (socketFD > grtproc.pipe.rfd ? socketFD : grtproc.pipe.rfd) + 1,
+	    &rfds, 0, 0, to);
+	if (n > 0) {
+	    if (FD_ISSET (grtproc.pipe.rfd, &rfds))
+		switch (cmd = CtrlGreeterWait (d, 0)) {
+		case -1:
+		    break;
+		case G_Ch_Refresh:
+		    goto reping;
+		case G_Ch_RegisterHost:
+		    host = GRecvStr ();
+		    if (!registerForPing (host)) {
+			GSendInt (G_Ch_BadHost);
+			GSendStr (host);
+		    }
+		    free (host);
+		    goto reping;
+		case G_Ch_DirectChoice:
+		    host = GRecvStr ();
+		    directChooseHost (d, host);
+		    GSendInt (G_Ch_BadHost);
+		    GSendStr (host);
+		    free (host);
+		    break;
+		case G_Ready:
+		    chooseHost (d, GRecvInt ());
+		    /* NOTREACHED */
+		default:
+		    emptyHostnames ();
+		    emptyPingHosts ();
+		    return cmd;
+		}
+	    if (FD_ISSET (socketFD, &rfds))
+		receivePacket ();
 	}
     }
-    else
-    {
-	LogError ("Choice response read error: %s\n", strerror(errno));
-    }
 
-#if defined(STREAMSCONN)
-    t_unbind (client_fd);
-    t_free( (char *)call, T_CALL );
-    t_close (client_fd);
-#else
-    close (client_fd);
-#endif
-}
-
-void
-RunChooser (struct display *d)
-{
-    char **args, **env;
-    char buf[1024];
-
-    Debug ("RunChooser %s\n", d->name);
-#ifndef HAS_SETPROCTITLE
-    SetTitle (d->name, "chooser", (char *) 0);
-#else
-    setproctitle("chooser %s", d->name);
-#endif
-    LoadXloginResources (d);
-    args = parseArgs ((char **) 0, d->chooser);
-    strcpy (buf, "-xdmaddress ");
-    if (FormatChooserArgument (buf + strlen (buf), sizeof (buf) - strlen (buf)))
-	args = parseArgs (args, buf);
-    if (d->useChooser)
-    {
-	strcpy (buf, "-clientaddress ");
-	if (FormatARRAY8 (&d->clientAddr, buf + strlen (buf), sizeof (buf) - strlen (buf)))
-	    args = parseArgs (args, buf);
-	sprintf (buf, "-connectionType %d", d->connectionType);
-	args = parseArgs (args, buf);
-	ForEachChooserHost (&d->clientAddr, d->connectionType, AddChooserHost,
-			    (char *) &args);
-    }
-    else
-	args = addStrArr (args, "BROADCAST", 9);
-    env = systemEnv (d, (char *) 0, (char *) 0);
-    Debug ("Running %s\n", args[0]);
-    execute (args, env);
-    LogError ("Cannot execute %s\n", args[0]);
-    exit (EX_REMANAGE_DPY);
 }
 
 #endif /* XDMCP */

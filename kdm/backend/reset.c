@@ -69,7 +69,7 @@ killWindows (Display *dpy, Window window)
 	       && nchildren > 0)
 	{
 		for (child = 0; child < nchildren; child++) {
-			Debug ("XKillClient 0x%lx\n", (unsigned long)children[child]);
+			Debug ("XKillClient %p\n", children[child]);
 			XKillClient (dpy, children[child]);
 		}
 		XFree ((char *)children);

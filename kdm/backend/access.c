@@ -97,9 +97,11 @@ getLocalAddress (void)
     {
 	struct hostent	*hostent;
 
-	hostent = gethostbyname (localHostname());
-	XdmcpAllocARRAY8 (&localAddress, hostent->h_length);
-	memmove( localAddress.data, hostent->h_addr, hostent->h_length);
+	if ((hostent = gethostbyname (localHostname()))) {
+	    XdmcpAllocARRAY8 (&localAddress, hostent->h_length);
+	    memmove( localAddress.data, hostent->h_addr, hostent->h_length);
+	    haveLocalAddress = 1;
+	}
     }
     return &localAddress;
 }
@@ -112,7 +114,9 @@ ScanAccessDatabase (int force)
     char *cptr;
     int nChars, i;
 
-Debug("ScanAccessDatabase\n");
+    Debug("ScanAccessDatabase\n");
+    if (Setjmp (&cnftalk.errjmp))
+        return; /* may memleak */
     if (!startConfig (GC_gXaccess, &accData->dep, force))
         return;
     if (accData->hostList)

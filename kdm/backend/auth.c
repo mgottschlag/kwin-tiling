@@ -59,8 +59,8 @@ from The Open Group.
 #endif
 
 #if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(hpux) || defined(USG) || defined(SVR4) || (defined(SYSV) && defined(i386))
-#define NEED_UTSNAME
-#include <sys/utsname.h>
+# define NEED_UTSNAME
+# include <sys/utsname.h>
 #endif
 
 #if defined(SYSV) && defined(i386)
@@ -88,17 +88,6 @@ from The Open Group.
 #else /* __GNU__ */
 # include <net/if.h>
 #endif /* __GNU__ */
-
-#if ((defined(SVR4) && !defined(sun)) || defined(ISC)) && defined(SIOCGIFCONF)
-# define SYSV_SIOCGIFCONF
-#endif
-
-#ifdef CSRG_BASED
-# include <sys/param.h>
-# if (BSD >= 199103)
-#  define VARIABLE_IFREQ
-# endif
-#endif
 
 #ifdef __EMX__
 # define link rename
@@ -671,12 +660,12 @@ DefineLocal (FILE *file, Xauth *auth)
  * hack.
  */
  
-static int ConvertAuthAddr
-(XdmcpNetaddr saddr, int *len, char **addr)
+static int
+ConvertAuthAddr (XdmcpNetaddr saddr, int *len, char **addr)
 {
-    int ret;
-    ret = ConvertAddr(saddr, len, addr);
-    if (ret == FamilyInternet && ((struct in_addr *)*addr)->s_addr == htonl(0x7F000001L))
+    int ret = ConvertAddr(saddr, len, addr);
+    if (ret == FamilyInternet &&
+	((struct in_addr *)*addr)->s_addr == htonl(0x7F000001L))
 	ret = FamilyLocal;
     return ret;
 }
@@ -685,7 +674,7 @@ static int ConvertAuthAddr
 
 /* Deal with different SIOCGIFCONF ioctl semantics on SYSV, SVR4 */
 
-static int
+int
 ifioctl (int fd, int cmd, char *arg)
 {
     struct strioctl ioc;
@@ -730,8 +719,6 @@ ifioctl (int fd, int cmd, char *arg)
 #endif
     return(ret);
 }
-#else /* SYSV_SIOCGIFCONF */
-# define ifioctl ioctl
 #endif /* SYSV_SIOCGIFCONF */
 
 #if defined(STREAMSCONN) && !defined(SYSV_SIOCGIFCONF) && !defined(NCR)
@@ -838,15 +825,6 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 
 #ifdef SIOCGIFCONF
 
-/* Handle variable length ifreq in BNR2 and later */
-#ifdef VARIABLE_IFREQ
-# define ifr_size(p) (sizeof (struct ifreq) + \
-		      (p->ifr_addr.sa_len > sizeof (p->ifr_addr) ? \
-		       p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
-#else
-# define ifr_size(p) (sizeof (struct ifreq))
-#endif
-
 /* Define this host for access control.  Find all the hosts the OS knows about 
  * for this fd and add them to the selfhosts list.
  */
@@ -867,15 +845,9 @@ DefineSelf (int fd, FILE *file, Xauth *auth)
 	return;
     }
 
-#ifdef ISC
-# define IFC_IFC_REQ (struct ifreq *) ifc.ifc_buf
-#else
-# define IFC_IFC_REQ ifc.ifc_req
-#endif
+    cplim = (char *) IFC_IFC_REQ (ifc) + ifc.ifc_len;
 
-    cplim = (char *) IFC_IFC_REQ + ifc.ifc_len;
-
-    for (cp = (char *) IFC_IFC_REQ; cp < cplim; cp += ifr_size (ifr))
+    for (cp = (char *) IFC_IFC_REQ (ifc); cp < cplim; cp += ifr_size (ifr))
     {
 	ifr = (struct ifreq *) cp;
 #ifdef DNETCONN
@@ -947,13 +919,11 @@ DefineSelf (int fd, int file, int auth)
      * see), whereas gethostname() kindly truncates it for me.
      */
     uname(&name);
-    hp = gethostbyname (name.nodename);
-    if (hp != NULL) {
+    if ((hp = gethostbyname (name.nodename))) {
 	saddr.sa.sa_family = hp->h_addrtype;
 	inetaddr = (struct sockaddr_in *) (&(saddr.sa));
 	memmove( (char *) &(inetaddr->sin_addr), (char *) hp->h_addr, (int) hp->h_length);
-	family = ConvertAddr ( &(saddr.sa), &len, &addr);
-	if ( family >= 0) {
+	if ( (family = ConvertAddr ( &(saddr.sa), &len, &addr)) >= 0) {
 	    writeAddr (FamilyInternet, sizeof (inetaddr->sin_addr),
 			(char *) (&inetaddr->sin_addr), file, auth);
 	}
@@ -1100,9 +1070,9 @@ endUserAuth (FILE *old, FILE *new, const char *nname)
 static char *
 moveUserAuth (const char *name, char *new_name, char *envname)
 {
-    if (unlink (name) == -1)
+    if (unlink (name))
 	Debug ("unlink %s failed\n", name);
-    if (link (new_name, name) == -1) {
+    if (link (new_name, name)) {
 	Debug ("link failed %s %s\n", new_name, name);
 	LogError ("Can't move authorization into place\n");
 	envname = new_name;

@@ -55,10 +55,11 @@ other distributions/systems.
 
    Replace it with:
 
-       x:5:respawn:/opt/kde/bin/kdm -nodaemon
+       x:5:respawn:/opt/kde/bin/kdm
 
    This tells init(8) to respawn KDM, the KDE display manager, when
    the system is in run level 5. 
+   Note that KDM does not need the -nodaemon option.
 
    To start KDM, either run (as root) /sbin/telinit 5 (to switch to
    run level 5), or (this is risky! don't do it until you _know_ you
@@ -125,37 +126,12 @@ Per-display Fifo commands:
    attempted, but a scheduled "login" command will be executed.
 
 
-Random rambings and license information
----------------------------------------
-
-Version 0.1 of kdm is copyright
-	Matthias Ettrich <ettrich@trolltech.com>
-All later versions copyright:
-	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
-Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
-
-The files in the backend directory are licensed under the X licence 
-(see www.xfree86.org for more info). 
-The files in the chooser and kfrontend directories are licensed under 
-the GNU GPL.
-
-Thanks to (in no particular order):
-Michael Bach Jensen and Torsten Rahn for drawing icons.
-Duncan Haldane for investigation of PAM issues.
-Stephan Kulow for helping me with the autoconf stuff.
-Martin Baehr for intensive testing and writing the sample Xsession scripts.
-Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
-... and _many_ others ...
-
-
 "It doesn't work!!"
 -------------------
 
 More input! ;-)
 
-KDM accepts two command line options related to logging. These options
-_must_ come first on the command line, if they are used:
+KDM accepts two command line options related to logging:
 
   -debug <n>
     <n> is a decimal or hexadecimal (prefix 0x) number.
@@ -191,6 +167,30 @@ _must_ come first on the command line, if they are used:
 Send me the logs together with a detailed description what you did and
 what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your kdm config directory.
+
+
+Random rambings and license information
+---------------------------------------
+
+Version 0.1 of kdm is copyright
+	Matthias Ettrich <ettrich@trolltech.com>
+All later versions copyright:
+	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
+Since version 0.90 (KDE 2.1) copyright:
+	(C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
+
+The files in the backend directory are licensed under the X licence 
+(see www.xfree86.org for more info). 
+The files in the chooser and kfrontend directories are licensed under 
+the GNU GPL.
+
+Thanks to (in no particular order):
+Michael Bach Jensen and Torsten Rahn for drawing icons.
+Duncan Haldane for investigation of PAM issues.
+Stephan Kulow for helping me with the autoconf stuff.
+Martin Baehr for intensive testing and writing the sample Xsession scripts.
+Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
+... and _many_ others ...
 
 
 -- 

@@ -1,3 +1,18 @@
+2002-12-01  Oswald Buddenhagen <ossi@kde.org>
+
+	* Integrated chooser into greeter; external 'chooser' executable
+	  and the Chooser option are gone.
+	* The chooser can be started locally (without an XDMCP query);
+	  options LoginMode and ChooserHosts.
+	* Added built-in xconsole to greeter; options ShowLog and LogSource.
+	  This code is not built by default; uncomment the first three lines
+	  in kfrontend/Makefile.am to enable it.
+	* The DaemonMode option is gone. The command line switches -daemon and
+	  -nodaemon still exist, but are mostly unnecessary, as KDM can decide
+	  what to do based on the parent process.
+	* The AutoLogin option and the -autolog/-noautolog switches are gone.
+	* The AutoLogin1st option is gone.
+
 2001-06-10  Oswald Buddenhagen <ossi@kde.org>
 
 	* The source directory structure changed entirely

@@ -316,7 +316,6 @@ freeBuf (File *file)
 }
 #endif
 
-static int daemonize = -1, autolog = 1;
 static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
 	VXaccess, VXservers, Vdummy;
 
@@ -333,23 +332,6 @@ static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
 #define C_xdmcpEnable		( C_TYPE_INT | C_INTERNAL | 0x2002 )
 #define C_accessFile		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2003 )
 #define C_servers		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2004 )
-
-static int
-PdaemonMode (Value *retval)
-{
-    if (daemonize >= 0) {
-	retval->ptr = (char *)daemonize;
-	return 1;
-    }
-    return 0;
-}
-
-static int
-PautoLogin (Value *retval)
-{
-    retval->ptr = (char *)autolog;
-    return 1;
-}
 
 static int
 PrequestPort (Value *retval)
@@ -433,6 +415,7 @@ PautoLoginX (Value *retval)
 #endif
 
 static const char
+    *loginmode[] = { "LocalOnly", "DefaultLocal", "DefaultRemote", "RemoteOnly", 0 },
     *logoarea[] = { "None", "Logo", "Clock", 0 },
     *showusers[] = { "NotHidden", "Selected", "None", 0 },
     *facesource[] = { "AdminOnly", "PreferAdmin", "PreferUser", "UserOnly", 0 },
@@ -444,7 +427,6 @@ static const char
 
 Ent entsGeneral[] = {
 { "ConfigVersion",	C_INTERNAL | C_TYPE_STR,&Vdummy,	"" },
-{ "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
 { "Xservers",		C_servers,		&VXservers,	DEF_SERVER_LINE },
 { "PidFile",		C_pidFile,		0,	"" },
 { "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
@@ -454,7 +436,6 @@ Ent entsGeneral[] = {
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		C_randomFile,		0,	"/dev/mem" },
 #endif
-{ "AutoLogin",		C_autoLogin | C_BOOL,	(void *)PautoLogin,	"true" },
 { "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
 { "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
 };
@@ -510,14 +491,12 @@ Ent entsCore[] = {
 { "SystemShell",	C_systemShell,		0,	"/bin/sh" },
 { "FailsafeClient",	C_failsafeClient,	0,	XBINDIR "/xterm" },
 { "UserAuthDir",	C_userAuthDir | C_PATH,	0,	"/tmp" },
-{ "Chooser",		C_chooser,		0,	KDE_BINDIR "/chooser" },
 { "NoPassEnable",	C_noPassEnable | C_BOOL, &VnoPassEnable, "false" },
 { "NoPassUsers",	C_noPassUsers,	(void *)PnoPassUsers,	"" },
 { "AutoLoginEnable",	C_autoLoginEnable | C_BOOL, &VautoLoginEnable, "false" },
 { "AutoLoginUser",	C_autoUser,	(void *)PautoLoginX,	"" },
 { "AutoLoginPass",	C_autoPass,	(void *)PautoLoginX,	"" },
 { "AutoLoginSession",	C_autoString,	(void *)PautoLoginX,	"" },
-{ "AutoLogin1st",	C_autoLogin1st | C_BOOL, 0,	"true" },
 { "AutoReLogin",	C_autoReLogin | C_BOOL,	0,	"false" },
 { "AllowNullPasswd",	C_allowNullPasswd | C_BOOL, 0,	"true" },
 { "AllowRootLogin",	C_allowRootLogin | C_BOOL, 0,	"true" },
@@ -561,6 +540,12 @@ Ent entsGreeter[] = {
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
 { "UseBackground",	C_UseBackground | C_BOOL, 0,	"true" },
 { "BackgroundCfg",	C_BackgroundCfg,	0,	KDMCONF "/backgroundrc" },
+{ "LoginMode",		C_loginMode | C_ENUM,	loginmode,	"LocalOnly" },
+{ "ChooserHosts",	C_chooserHosts,		0,	"*" },
+#ifdef BUILTIN_XCONSOLE
+{ "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
+{ "LogSource",		C_LogSource,		0,	"" },
+#endif
 };
 
 Sect
@@ -954,7 +939,7 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 	    retval->len = tlen;
 	    return 0;
 	default:
-	    LogError ("Internal error: unknown value type in id 0x%x\n", et->id);
+	    LogError ("Internal error: unknown value type in id %#x\n", et->id);
 	    return 0;
     }
 }
@@ -965,7 +950,7 @@ GetValue (Ent *et, DSpec *dspec, Value *retval, char **eopts)
     Entry *ent;
     const char *errs;
 
-/*    Debug ("Getting value 0x%x\n", et->id);*/
+/*    Debug ("Getting value %#x\n", et->id);*/
     if (dspec)
 	ent = FindDEnt (et->id, dspec);
     else
@@ -986,7 +971,7 @@ AddValue (ValArr *va, int id, Value *val)
 {
     int nu;
 
-/*    Debug ("Addig value 0x%x\n", id);*/
+/*    Debug ("Addig value %#x\n", id);*/
     if (va->nents == va->esiz) {
 	va->ents = realloc (va->ents, sizeof(Val) * (va->esiz += 50));
 	if (!va->ents) {
@@ -1020,7 +1005,7 @@ CopyValues (ValArr *va, Sect *sec, DSpec *dspec, int isconfig)
 
 /*Debug ("copying values from section [%s]\n", sec->name);*/
     for (i = 0; i < sec->numents; i++) {
-/*Debug ("value 0x%x\n", sec->ents[i].id);*/
+/*Debug ("value %#x\n", sec->ents[i].id);*/
 	if ((sec->ents[i].id & (int)C_CONFIG) != isconfig)
 	    ;
 	else if (sec->ents[i].id & C_INTERNAL) {
@@ -1507,34 +1492,16 @@ Debug ("read server arg %s\n", word);
 }
 
 
-#define T_S 0
-#define T_N 1
-#define T_Y 2
-/*#define T_I 3*/
-
-static struct {
-	const char *name;
-	int type;
-	const char **dest;
-} opts[] = {
-	{ "-config", T_S, &kdmrc },
-	{ "-daemon", T_Y, (const char **)&daemonize }, 
-	{ "-nodaemon", T_N, (const char **)&daemonize },
-	{ "-autolog", T_Y, (const char **)&autolog }, 
-	{ "-noautolog", T_N, (const char **)&autolog },
-};
-
-
 #ifdef HAVE_PAM
 Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
 #endif
 
-int main(int argc, char **argv)
+int main(int argc ATTR_UNUSED, char **argv)
 {
     DSpec dspec;
     ValArr va;
     char *ci, *disp, *dcls, *cfgfile;
-    int ap, what, i;
+    int what;
 
     if (!(ci = getenv("CONINFO"))) {
 	fprintf(stderr, "This program is part of kdm and should not be run manually.\n");
@@ -1549,37 +1516,12 @@ int main(int argc, char **argv)
 	sleep (100);
 
 /*Debug ("parsing command line\n");*/
-    for (ap = 1; ap < argc; ap++) {
-	if (!memcmp (argv[ap], "tty", 3))	/* started from init */
-	    continue;
-	for (i = 0; i < as(opts); i++)
-	    if (!strcmp (argv[ap], opts[i].name)) {
-		switch (opts[i].type) {
-		case T_S:
-		    if (ap + 1 == argc)
-			goto misarg;
-		    *opts[i].dest = argv[++ap];
-		    break;
-		case T_Y:
-		    *(int *)opts[i].dest = 1;
-		    break;
-		case T_N:
-		    *(int *)opts[i].dest = 0;
-		    break;
-/*		case T_I:
-		    if (ap + 1 == argc || argv[ap + 1][0] == '-')
-			goto misarg;
-		    *(int *)opts[i].dest = atoi(argv[++ap]);
-		    break;*/
-		}
-		goto oke;
-	      misarg:
-		LogError ("Missing argument to option %s\n", argv[ap]);
-		goto oke;
-	    }
-	LogError ("Unknown command line option '%s'\n", argv[ap]);
-      oke: ;
+    if (**++argv)
+	kdmrc = *argv;
+/*
+    while (*++argv) {
     }
+*/
 
     for (;;) {
 /*	Debug ("Awaiting command ...\n");*/
@@ -1656,12 +1598,12 @@ int main(int argc, char **argv)
 		ReadAccessFile (cfgfile);
 		break;
 	    default:
-		Debug ("Unsupported config cathegory 0x%x\n", what);
+		Debug ("Unsupported config cathegory %#x\n", what);
 	    }
 	    free (cfgfile);
 	    break;
 	default:
-	    Debug ("Unknown config command 0x%x\n", what);
+	    Debug ("Unknown config command %#x\n", what);
 	}
     }
 

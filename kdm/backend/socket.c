@@ -42,20 +42,9 @@ from The Open Group.
 #include "dm_error.h"
 #include "dm_socket.h"
 
-#ifndef X_NO_SYS_UN
-# ifndef Lynx
-#  include <sys/un.h>
-# else
-#  include <un.h>
-# endif
-#endif
 #include <netdb.h>
 
 extern int	xdmcpFd;
-extern int	chooserFd;
-
-extern FD_TYPE	WellKnownSocketsMask;
-extern int	WellKnownSocketsMax;
 
 void
 CreateWellKnownSockets (void)
@@ -73,7 +62,6 @@ CreateWellKnownSockets (void)
     }
     name = localHostname ();
     registerHostname (name, strlen (name));
-    RegisterCloseOnFork (xdmcpFd);
     /* zero out the entire structure; this avoids 4.4 incompatibilities */
     bzero ((char *) &sock_addr, sizeof (sock_addr));
 #ifdef BSD44SOCKETS
@@ -89,38 +77,8 @@ CreateWellKnownSockets (void)
 	xdmcpFd = -1;
 	return;
     }
-    WellKnownSocketsMax = xdmcpFd;
-    FD_SET (xdmcpFd, &WellKnownSocketsMask);
-
-    chooserFd = socket (AF_INET, SOCK_STREAM, 0);
-    Debug ("Created chooser socket %d\n", chooserFd);
-    if (chooserFd == -1)
-    {
-	LogError ("chooser socket creation failed, errno %d\n", errno);
-	return;
-    }
-    listen (chooserFd, 5);
-    if (chooserFd > WellKnownSocketsMax)
-	WellKnownSocketsMax = chooserFd;
-    FD_SET (chooserFd, &WellKnownSocketsMask);
-}
-
-int
-GetChooserAddr (
-    char	*addr,
-    int		*lenp)
-{
-    struct sockaddr_in	in_addr;
-    int			len;
-
-    len = sizeof in_addr;
-    if (getsockname (chooserFd, (struct sockaddr *)&in_addr, (void *)&len) < 0)
-	return -1;
-    Debug ("Chooser socket port: %d\n", ntohs(in_addr.sin_port));
-    memmove( addr, (char *) &in_addr, len);
-    *lenp = len;
-
-    return 0;
+    RegisterCloseOnFork (xdmcpFd);
+    RegisterInput (xdmcpFd);
 }
 
 #endif /* !STREAMSCONN && XDMCP */
