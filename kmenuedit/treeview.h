@@ -162,6 +162,7 @@ private:
     int                m_drag;
     MenuFolderInfo    *m_dragInfo;
     TreeItem          *m_dragItem;
+    QString            m_dragPath;
     bool               m_showHidden;
     bool               m_controlCenter;
     MenuFile          *m_menuFile;

@@ -46,6 +46,8 @@
 #include <kapplication.h>
 #include <kservice.h>
 #include <kservicegroup.h>
+#include <kmultipledrag.h>
+#include <kurldrag.h>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -664,7 +666,7 @@ QStringList TreeView::dirList(const QString& rPath)
 
 bool TreeView::acceptDrag(QDropEvent* e) const
 {
-    return QString(e->format()).contains("application/x-kmenuedit-internal") &&
+    return e->provides("application/x-kmenuedit-internal") &&
            (e->source() == const_cast<TreeView *>(this));
 }
 
@@ -884,8 +886,11 @@ void TreeView::startDrag()
 
 QDragObject *TreeView::dragObject()
 {
+    m_dragPath = QString::null;
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return 0;
+
+    KMultipleDrag *drag = new KMultipleDrag( this );
 
     if (item->isDirectory())
     {
@@ -898,6 +903,16 @@ QDragObject *TreeView::dragObject()
        m_drag = MOVE_FILE;
        m_dragInfo = 0;
        m_dragItem = item;
+       QString menuId = item->menuId();
+       m_dragPath = item->entryInfo()->service->desktopEntryPath();
+       if (!m_dragPath.isEmpty())
+          m_dragPath = locate("apps", m_dragPath);
+       if (!m_dragPath.isEmpty())
+       {
+          KURL url;
+          url.setPath(m_dragPath);
+          drag->addDragObject( new KURLDrag(url, 0));
+       }
     }
     else
     {
@@ -906,10 +921,10 @@ QDragObject *TreeView::dragObject()
        m_dragItem = item;
     }
 
-    QStoredDrag *d = new QStoredDrag("application/x-kmenuedit-internal", this);
+    drag->addDragObject( new QStoredDrag("application/x-kmenuedit-internal", 0));
     if ( item->pixmap(0) )
-        d->setPixmap(*item->pixmap(0));
-    return d;
+        drag->setPixmap(*item->pixmap(0));
+    return drag;
 }
 
 void TreeView::slotRMBPressed(QListViewItem*, const QPoint& p)

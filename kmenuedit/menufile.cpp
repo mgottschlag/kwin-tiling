@@ -394,6 +394,7 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
    purgeDeleted(elem);
    elem.appendChild(m_doc.createElement(MF_NOTDELETED));
 
+// TODO: GET RID OF COMMON PART, IT BREAKS STUFF
    // Find common part
    QStringList oldMenuParts = QStringList::split('/', oldMenu);
    QStringList newMenuParts = QStringList::split('/', newMenu);
