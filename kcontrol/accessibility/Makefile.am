@@ -12,5 +12,6 @@ noinst_HEADERS = accessibility.h
 data_DATA = accessibility.desktop
 datadir = $(kde_appsdir)/Settings/Accessibility
 
-messages:
-	$(XGETTEXT) $(kcm_accessibility_la_SOURCES) -o $(podir)/kcmaccessibility.pot
+messages: rc.cpp
+	$(EXTRACTRC) *.ui *.rc >> rc.cpp
+	$(XGETTEXT) $(kcm_accessibility_la_SOURCES) rc.cpp -o $(podir)/kcmaccessibility.pot
