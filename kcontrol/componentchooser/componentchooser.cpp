@@ -350,7 +350,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	{
 		configContainer->addWidget(newConfigWidget);
 		configContainer->raiseWidget(newConfigWidget);
-		configContainer->removeWidget(newConfigWidget);
+		configContainer->removeWidget(configWidget);
 		delete configWidget;
 		configWidget=newConfigWidget;
 		connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
