@@ -134,6 +134,15 @@ private:
     void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
 
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+    void storeLegacySession( KConfig* config );
+    void restoreLegacySession( KConfig* config );
+    void restoreLegacySessionInternal( KConfig* config );
+    QCString windowWmCommand(WId w);
+    QCString windowWmClientMachine(WId w);
+    WId windowWmClientLeader(WId w);
+    QCString windowSessionId(WId w, WId leader);
+#endif
 
     // public dcop interface
     void logout( int, int, int );

@@ -72,6 +72,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kprocess.h>
 #include <dcopclient.h>
 #include <dcopref.h>
+#include <kwinmodule.h>
 
 #include "server.h"
 #include "global.h"
@@ -81,6 +82,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kdebug.h>
 #include <qregexp.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 extern "C" {
     /* int umask(...); */
@@ -1288,6 +1292,9 @@ void KSMServer::storeSession()
     config->setGroup("General");
     config->writeEntry( "screenCount", ScreenCount(qt_xdisplay()));
 
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+    storeLegacySession( config );
+#endif
     config->sync();
 }
 
@@ -1441,6 +1448,9 @@ void KSMServer::restoreSessionDoneInternal()
 {
     disconnectDCOPSignal( launcher, launcher, "autoStart2Done()",
                           "restoreSessionDoneInternal()");
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+    restoreLegacySession( KGlobal::config());
+#endif
     upAndRunning( "session ready" );
     
     // From now on handle X errors as normal shutdown.
@@ -1475,21 +1485,26 @@ QStringList KSMServer::sessionList()
  */
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
-#define WM_SAVE_YOURSELF_TIMEOUT 4000
+const int WM_SAVE_YOURSELF_TIMEOUT = 4000;
 
-typedef QMap<WId,int> WindowMap;
-#define HAS_ERROR          0
-#define HAS_WMCOMMAND      1
-#define HAS_WMSAVEYOURSELF 2
+enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
+
+typedef QMap<WId,SMType> WindowMap;
 
 static WindowMap *windowMapPtr = 0;
+
+static Atom wm_save_yourself = None;
+static Atom wm_protocols = None;
+static Atom wm_client_leader = None;
+
+extern Time qt_x_time;
 
 static int winsErrorHandler(Display *, XErrorEvent *ev)
 {
     if (windowMapPtr) {
         WindowMap::Iterator it = windowMapPtr->find(ev->resourceid);
         if (it != windowMapPtr->end())
-            it.data() = HAS_ERROR;
+            it.data() = SM_ERROR;
     }
     return 0;
 }
@@ -1497,25 +1512,39 @@ static int winsErrorHandler(Display *, XErrorEvent *ev)
 /*!
   Stores legacy session management data
 */
-void storeLegacySession( KConfig* config )
+void KSMServer::storeLegacySession( KConfig* config )
 {
+    config->deleteGroup( sessionGroup + "-LegacySession" );
+    KConfigGroupSaver saver( config, sessionGroup + "-LegacySession" );
+    config->writeEntry( "count", 0 ); // in case of an error
     // Setup error handler
     WindowMap wins;
     windowMapPtr = &wins;
     XErrorHandler oldHandler = XSetErrorHandler(winsErrorHandler);
     // Compute set of leader windows that need legacy session management
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
-    for (ClientList::Iterator it = clients.begin(); it != clients.end(); ++it) {
-        Client* c = (*it);
-        WId leader = c->wmClientLeader();
-        if (!wins.contains(leader) && c->sessionId().isEmpty()) {
-            int wtype = HAS_WMCOMMAND;
+    KWinModule module;
+    if( wm_save_yourself == None ) {
+	Atom atoms[ 3 ];
+	const char* const names[]
+	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER" };
+	XInternAtoms( qt_xdisplay(), const_cast< char** >( names ), 3,
+	    False, atoms );
+	wm_save_yourself = atoms[ 0 ];
+	wm_protocols = atoms[ 1 ];
+	wm_client_leader = atoms[ 2 ];
+    }
+    for ( QValueList<WId>::ConstIterator it = module.windows().begin();
+	  it != module.windows().end(); ++it) {
+        WId leader = windowWmClientLeader( *it );
+        if (!wins.contains(leader) && windowSessionId( *it, leader ).isEmpty()) {
+            SMType wtype = SM_WMCOMMAND;
             int nprotocols = 0;
             Atom *protocols = 0;
             XGetWMProtocols(qt_xdisplay(), leader, &protocols, &nprotocols);
             for (int i=0; i<nprotocols; i++)
-                if (protocols[i] == atoms->wm_save_yourself) {
-                    wtype = HAS_WMSAVEYOURSELF;
+                if (protocols[i] == wm_save_yourself) {
+                    wtype = SM_WMSAVEYOURSELF;
                     break;
                 }
             XFree((void*) protocols);
@@ -1525,7 +1554,11 @@ void storeLegacySession( KConfig* config )
     // Open fresh display for sending WM_SAVE_YOURSELF
     XSync(qt_xdisplay(), False);
     Display *newdisplay = XOpenDisplay(DisplayString(qt_xdisplay()));
-    if (!newdisplay) return;
+    if (!newdisplay) {
+	windowMapPtr = NULL;
+	XSetErrorHandler(oldHandler);
+	return;
+    }
     WId root = DefaultRootWindow(newdisplay);
     XGrabKeyboard(newdisplay, root, False,
                   GrabModeAsync, GrabModeAsync, CurrentTime);
@@ -1535,15 +1568,15 @@ void storeLegacySession( KConfig* config )
     XEvent ev;
     int awaiting_replies = 0;
     for (WindowMap::Iterator it = wins.begin(); it != wins.end(); ++it) {
-        if ( it.data() == HAS_WMSAVEYOURSELF ) {
+        if ( it.data() == SM_WMSAVEYOURSELF ) {
             WId w = it.key();
             awaiting_replies += 1;
             memset(&ev, 0, sizeof(ev));
             ev.xclient.type = ClientMessage;
             ev.xclient.window = w;
-            ev.xclient.message_type = atoms->wm_protocols;
+            ev.xclient.message_type = wm_protocols;
             ev.xclient.format = 32;
-            ev.xclient.data.l[0] = atoms->wm_save_yourself;
+            ev.xclient.data.l[0] = wm_save_yourself;
             ev.xclient.data.l[1] = qt_x_time;
             XSelectInput(newdisplay, w, PropertyChangeMask|StructureNotifyMask);
             XSendEvent(newdisplay, w, False, 0, &ev);
@@ -1559,10 +1592,10 @@ void storeLegacySession( KConfig* config )
             if ( ( ev.xany.type == UnmapNotify ) ||
                  ( ev.xany.type == PropertyNotify && ev.xproperty.atom == XA_WM_COMMAND ) ) {
                 WindowMap::Iterator it = wins.find( ev.xany.window );
-                if ( it != wins.end() && it.data() != HAS_WMCOMMAND ) {
+                if ( it != wins.end() && it.data() != SM_WMCOMMAND ) {
                     awaiting_replies -= 1;
-                    if ( it.data() != HAS_ERROR )
-                        it.data() = HAS_WMCOMMAND;
+                    if ( it.data() != SM_ERROR )
+                        it.data() = SM_WMCOMMAND;
                 }
             }
         } else {
@@ -1587,13 +1620,12 @@ void storeLegacySession( KConfig* config )
     XSync(newdisplay, False);
     XCloseDisplay(newdisplay);
     // Write LegacySession data
-    config->setGroup("LegacySession" );
     int count = 0;
-    for (WindowMap::Iterator it = wins.begin(); it != wins.end(); ++it) {
-        if (it.data() != HAS_ERROR) {
+    for (WindowMap::ConstIterator it = wins.begin(); it != wins.end(); ++it) {
+        if (it.data() != SM_ERROR) {
             WId w = it.key();
-            QCString wmCommand = Client::staticWmCommand(w);
-            QCString wmClientMachine = Client::staticWmClientMachine(w);
+            QCString wmCommand = windowWmCommand(w);
+            QCString wmClientMachine = windowWmClientMachine(w);
             if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
                 count++;
                 QString n = QString::number(count);
@@ -1606,32 +1638,137 @@ void storeLegacySession( KConfig* config )
     // Restore old error handler
     XSync(qt_xdisplay(), False);
     XSetErrorHandler(oldHandler);
-    // Process a few events to update the client list.
-    // All events should be there because of the XSync above.
-    kapp->processEvents(10);
 }
 #endif
 
 /*!
   Restores legacy session management data (i.e. restart applications)
 */
-void restoreLegacySession( KConfig* config )
+void KSMServer::restoreLegacySession( KConfig* config )
 {
-    if (config) {
-        config->setGroup("LegacySession" );
-        int count =  config->readNumEntry( "count" );
-        for ( int i = 1; i <= count; i++ ) {
-            QString n = QString::number(i);
-            QCString wmCommand = config->readEntry( QString("command")+n ).latin1();
-            QCString wmClientMachine = config->readEntry( QString("clientMachine")+n ).latin1();
-            if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
-                KProcess proc;
-                if ( wmClientMachine != "localhost" )
-                    proc << "xon" << wmClientMachine;
-                proc << QString::fromLatin1( wmCommand );
-                proc.start(KProcess::DontCare);
-            }
-        }
+    if( config->hasGroup( sessionGroup + "-LegacySession" )) {
+        KConfigGroupSaver saver( config, sessionGroup + "-LegacySession" );
+        restoreLegacySessionInternal( config );
+    } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
+	KConfigGroupSaver saver( config, sessionGroup );
+	int count =  config->readNumEntry( "count", 0 );
+	for ( int i = 1; i <= count; i++ ) {
+    	    QString n = QString::number(i);
+    	    if ( config->readEntry( QString("program")+n ) != wm )
+        	continue;
+    	    QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
+	    for( QStringList::ConstIterator it = restartCommand.begin();
+		 it != restartCommand.end();
+		 ++it ) {
+		if( (*it) == "-session" ) {
+		    ++it;
+		    if( it != restartCommand.end()) {
+			KConfig cfg( "session/" + wm + "_" + (*it), true );
+			cfg.setGroup( "LegacySession" );
+			restoreLegacySessionInternal( &cfg );
+		    }
+		}
+	    }
+	}
     }
 }
 
+void KSMServer::restoreLegacySessionInternal( KConfig* config )
+{
+    int count = config->readNumEntry( "count" );
+    for ( int i = 1; i <= count; i++ ) {
+        QString n = QString::number(i);
+        QCString wmCommand = config->readEntry( QString("command")+n ).latin1();
+        QCString wmClientMachine = config->readEntry( QString("clientMachine")+n ).latin1();
+        if ( !wmCommand.isEmpty() && !wmClientMachine.isEmpty() ) {
+            QStringList command = QStringList::split(' ', wmCommand);
+            if ( wmClientMachine != "localhost" ) {
+		command.prepend( wmClientMachine );
+		command.prepend( "xon" );
+	    }
+	startApplication( command );
+        }
+    }
+}
+    
+static QCString getStringProperty(WId w, Atom prop, char separator = 0)
+{
+    Atom type;
+    int format, status;
+    unsigned long nitems = 0;
+    unsigned long extra = 0;
+    unsigned char *data = 0;
+    QCString result = "";
+    status = XGetWindowProperty( qt_xdisplay(), w, prop, 0, 10000,
+                                 FALSE, XA_STRING, &type, &format,
+                                 &nitems, &extra, &data );
+    if ( status == Success) {
+        if (data && separator) {
+            for (int i=0; i<(int)nitems; i++)
+                if (!data[i] && i+1<(int)nitems)
+                    data[i] = separator;
+        }
+        if (data)
+            result = (const char*) data;
+        XFree(data);
+    }
+    return result;
+}
+
+QCString KSMServer::windowWmCommand(WId w)
+{
+    return getStringProperty(w, XA_WM_COMMAND, ' ');
+}
+
+QCString KSMServer::windowWmClientMachine(WId w)
+{
+    QCString result = getStringProperty(w, XA_WM_CLIENT_MACHINE);
+    if (result.isEmpty()) {
+        result = "localhost";
+    } else {
+        // special name for the local machine (localhost)
+        char hostnamebuf[80];
+        if (gethostname (hostnamebuf, sizeof hostnamebuf) >= 0) {
+            hostnamebuf[sizeof(hostnamebuf)-1] = 0;
+            if (result == hostnamebuf)
+                result = "localhost";
+            char *dot = strchr(hostnamebuf, '.');
+            if (dot && !(*dot = 0) && result == hostnamebuf)
+                result = "localhost";
+        }
+    }
+    return result;
+}
+
+WId KSMServer::windowWmClientLeader(WId w)
+{
+    Atom type;
+    int format, status;
+    unsigned long nitems = 0;
+    unsigned long extra = 0;
+    unsigned char *data = 0;
+    Window result = w;
+    status = XGetWindowProperty( qt_xdisplay(), w, wm_client_leader, 0, 10000,
+                                 FALSE, XA_WINDOW, &type, &format,
+                                 &nitems, &extra, &data );
+    if (status  == Success ) {
+        if (data && nitems > 0)
+            result = *((Window*) data);
+        XFree(data);
+    }
+    return result;
+}
+
+
+/*
+  Returns sessionId for this client,
+  taken either from its window or from the leader window.
+ */
+extern Atom qt_sm_client_id;
+QCString KSMServer::windowSessionId(WId w, WId leader)
+{
+    QCString result = getStringProperty(w, qt_sm_client_id);
+    if (result.isEmpty() && leader != None && leader != w)
+	result = getStringProperty(leader, qt_sm_client_id);
+    return result;
+}
