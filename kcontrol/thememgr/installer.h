@@ -24,7 +24,6 @@
 #define INSTALLER_H
 
 #include <qpoint.h>
-#include <kcmodule.h>
 #include <klistbox.h>
 #include <kurl.h>
 #include <qmap.h>
@@ -35,7 +34,7 @@ class QLabel;
 class QMultiLineEdit;
 class ThemeListBox;
 
-class Installer : public KCModule
+class Installer : public QWidget
 {
   Q_OBJECT
 public:
@@ -48,6 +47,9 @@ public:
 
   /** Find item in listbox. Returns item index or -1 if not found */
   virtual int findItem(const QString text) const;
+
+signals:
+  void changed( bool state );
 
 protected slots:
   virtual void slotAdd();

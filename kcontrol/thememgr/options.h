@@ -4,7 +4,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 class QLabel;
 class QCheckBox;
@@ -13,8 +13,8 @@ class QPushButton;
 class QBoxLayout;
 class QGridLayout;
 
-#define OptionsInherited KCModule
-class Options : public KCModule
+#define OptionsInherited QWidget
+class Options : public QWidget
 {
   Q_OBJECT
 public:
@@ -26,6 +26,9 @@ public:
 
   /** Update status information on available groups of current theme. */
   virtual void updateStatus(void);
+
+signals:
+  void changed( bool state );
 
 protected slots:
   virtual void slotThemeChanged();

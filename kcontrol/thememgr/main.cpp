@@ -39,6 +39,7 @@
 #include <kapplication.h>
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
+#include <kcmodule.h>
 
 ThemeCreator* theme = NULL;
 
@@ -66,7 +67,7 @@ K_EXPORT_COMPONENT_FACTORY (libkcm_themes, ThemeTimeFactory("kcmthemes") );
 
 //-----------------------------------------------------------------------------
 KThemeMgr::KThemeMgr(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(ThemeTimeFactory::instance(), parent, name)
 {
   init();
 

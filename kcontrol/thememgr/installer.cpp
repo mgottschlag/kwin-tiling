@@ -120,7 +120,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
 
 //-----------------------------------------------------------------------------
 Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
-  : KCModule(aParent, aName)
+  : QWidget(aParent, aName)
 {
   KButtonBox* bbox;
 
