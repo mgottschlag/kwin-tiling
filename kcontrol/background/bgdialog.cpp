@@ -170,7 +170,8 @@ void BGDialog::makeReadOnly()
     m_colorPrimary->setEnabled( false );
     m_colorSecondary->setEnabled( false );
     m_comboPattern->setEnabled( false );
-
+    m_radioNoPicture->setEnabled( false );
+    m_radioPicture->setEnabled( false );
     m_urlWallpaper->setEnabled( false );
     m_comboWallpaperPos->setEnabled( false );
     m_buttonSetupWallpapers->setEnabled( false );
