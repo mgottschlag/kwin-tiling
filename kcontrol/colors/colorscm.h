@@ -29,6 +29,7 @@ class KListBox;
 class KColorButton;
 class KConfig;
 class KStdDirs;
+class KColorSchemeList;
 
 /**
  * The Desktop/Colors tab in kcontrol.
@@ -77,7 +78,7 @@ private:
     QComboBox *wcCombo;
     QPushButton *addBt, *removeBt;
     KListBox *sList;
-    QStringList sFileList;
+    KColorSchemeList *mSchemeList;
     QString sCurrentScheme;
 
     KColorButton *colorButton;

@@ -56,6 +56,31 @@ extern "C" {
     }
 }
 
+class KColorSchemeEntry {
+public:
+    KColorSchemeEntry(const QString &_path, const QString &_name, bool _local)
+    	: path(_path), name(_name), local(_local) { }
+
+    QString path;
+    QString name;
+    bool local;
+};
+
+class KColorSchemeList : public QPtrList<KColorSchemeEntry> {
+public:
+    KColorSchemeList() 
+        { setAutoDelete(true); }
+    
+    int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
+        {
+           KColorSchemeEntry *i1 = (KColorSchemeEntry*)item1;
+           KColorSchemeEntry *i2 = (KColorSchemeEntry*)item2;
+           if (i1->local != i2->local)
+              return i1->local ? -1 : 1;
+           return i1->name.compare(i2->name);
+        }
+};
+
 /**** KColorScheme ****/
 
 KColorScheme::KColorScheme(QWidget *parent, const char *name)
@@ -101,6 +126,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     groupLayout->addSpacing(10);
 
     sList = new KListBox( group );
+    mSchemeList = new KColorSchemeList();
     readSchemeNames();
     sList->setCurrentItem( 0 );
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
@@ -219,6 +245,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
 KColorScheme::~KColorScheme()
 {
+    delete mSchemeList;
 }
 
 void KColorScheme::slotChanged()
@@ -375,7 +402,9 @@ void KColorScheme::sliderValueChanged( int val )
 
 void KColorScheme::slotSave( )
 {
-    sCurrentScheme = sFileList[ sList->currentItem() ];
+    KColorSchemeEntry *entry = mSchemeList->at(sList->currentItem()-nSysSchemes);
+    if (!entry) return;
+    sCurrentScheme = entry->path;
     KSimpleConfig *config = new KSimpleConfig(sCurrentScheme );
     int i = sCurrentScheme.findRev('/');
     if (i >= 0)
@@ -410,16 +439,19 @@ void KColorScheme::slotSave( )
 void KColorScheme::slotRemove()
 {
     uint ind = sList->currentItem();
-    if (unlink(QFile::encodeName(sFileList[ind]).data())) {
-    KMessageBox::error( 0,
+    KColorSchemeEntry *entry = mSchemeList->at(ind-nSysSchemes);
+    if (!entry) return;
+
+    if (unlink(QFile::encodeName(entry->path).data())) {
+        KMessageBox::error( 0,
           i18n("This color scheme could not be removed.\n"
            "Perhaps you do not have permission to alter the file\n"
             "system where the color scheme is stored." ));
-    return;
+        return;
     }
 
     sList->removeItem(ind);
-    sFileList.remove(sFileList.at(ind));
+    mSchemeList->remove(entry);
 }
 
 
@@ -493,16 +525,15 @@ void KColorScheme::slotAdd()
     }
     else
     {
-       sList->insertItem(sName);
-       sList->setFocus();
-       sList->setCurrentItem(sList->count() - 1);
        sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/") + sFile + ".kcsrc";
-       sFileList.append(sFile);
-
        KSimpleConfig *config = new KSimpleConfig(sFile);
        config->setGroup( "Color Scheme");
        config->writeEntry("Name", sName);
        delete config;
+       
+       readSchemeNames();
+       
+       sList->setCurrentItem(findSchemeByName(sFile));
     }
     slotSave();
 
@@ -666,7 +697,9 @@ void KColorScheme::readScheme( int index )
       config->setGroup("General");
     } else {
       // Open scheme file
-      sCurrentScheme = sFileList[ index ];
+      KColorSchemeEntry *entry = mSchemeList->at(sList->currentItem()-nSysSchemes);
+      if (!entry) return;
+      sCurrentScheme = entry->path;
       config = new KSimpleConfig(sCurrentScheme, true);
       config->setGroup("Color Scheme");
       int i = sCurrentScheme.findRev('/');
@@ -715,58 +748,36 @@ void KColorScheme::readScheme( int index )
  */
 void KColorScheme::readSchemeNames()
 {
+    mSchemeList->clear();
+    sList->clear();
     // Always a current and a default scheme
     sList->insertItem( i18n("Current scheme"), 0 );
-    sFileList.append( "Not a  kcsrc file" );
     sList->insertItem( i18n("KDE default"), 1 );
-    sFileList.append( "Not a kcsrc file" );
     nSysSchemes = 2;
 
     // Global + local schemes
     QStringList list = KGlobal::dirs()->findAllResources("data",
             "kdisplay/color-schemes/*.kcsrc", false, true);
 
-    // Put local schemes into localList
-    QStringList localList;
-    QStringList::Iterator it;
-    for (it = list.begin(); it != list.end(); it++) {
-    QFileInfo fi(*it);
-    if (fi.isWritable()) {
-        localList.append(*it);
-        it = list.remove(it);
-        it--;
-    }
-    }
-
     // And add them
-    for (it = list.begin(); it != list.end(); it++) {
-    KSimpleConfig *config = new KSimpleConfig(*it, true);
-    config->setGroup("Color Scheme");
-    QString str = config->readEntry("Name");
-    if (str.isEmpty()) {
-       str =  config->readEntry("name");
-       if (str.isEmpty())
-          continue;
-    }
-    sList->insertItem(str);
-    sFileList.append(*it);
-    nSysSchemes++;
-    delete config;
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
+       KSimpleConfig *config = new KSimpleConfig(*it, true);
+       config->setGroup("Color Scheme");
+       QString str = config->readEntry("Name");
+       if (str.isEmpty()) {
+          str =  config->readEntry("name");
+          if (str.isEmpty())
+             continue;
+       }
+       mSchemeList->append(new KColorSchemeEntry(*it, str, !config->isImmutable()));
+       delete config;
     }
 
-    // Now repeat for local files
-    for (it = localList.begin(); it != localList.end(); it++) {
-    KSimpleConfig *config = new KSimpleConfig((*it), true);
-    config->setGroup("Color Scheme");
-    QString str = config->readEntry("Name");
-    if (str.isEmpty()) {
-       str =  config->readEntry("name");
-       if (str.isEmpty())
-          continue;
-    }
-    sList->insertItem(str);
-    sFileList.append(*it);
-    delete config;
+    mSchemeList->sort();
+
+    for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
+    {
+       sList->insertItem(entry->name);
     }
 }
 
@@ -783,13 +794,14 @@ int KColorScheme::findSchemeByName(const QString &scheme)
    QString search = scheme;
    int i = search.findRev('/');
    if (i >= 0)
-     search = search.mid(i+1);
+      search = search.mid(i+1);
 
-   i = nSysSchemes;
-   while (i < (int) sFileList.count())
+   i = 0;
+   
+   for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
    {
-      if (sFileList[i].contains(search))
-         return i;
+      if (entry->path.endsWith(search))
+         return i+nSysSchemes;
       i++;
    }
 
@@ -811,7 +823,10 @@ void KColorScheme::slotPreviewScheme(int indx)
     if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
-       removeBt->setEnabled(true);
+    {
+       KColorSchemeEntry *entry = mSchemeList->at(indx-nSysSchemes);
+       removeBt->setEnabled(entry ? entry->local : false);
+    }
 
     m_bChanged = (indx != 0);
     emit changed(m_bChanged);
@@ -871,7 +886,7 @@ SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
 
 void SaveScm::slotTextChanged(const QString & _text)
 {
-  enableButtonOK( !_text.isEmpty() );
+   enableButtonOK( !_text.isEmpty() );
 }
 
 #include "colorscm.moc"
