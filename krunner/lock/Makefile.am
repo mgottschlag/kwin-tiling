@@ -14,6 +14,8 @@ noinst_HEADERS = lockprocess.h lockdlg.h autologout.h main.h
 
 METASOURCES = AUTO
 
+lockprocess.o: ../kdesktopsettings.h
+
 ####### Build rules
 
 PAM = @KSCREENSAVER_PAM_SERVICE@
