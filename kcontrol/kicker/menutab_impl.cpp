@@ -23,10 +23,17 @@
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qvalidator.h>
+#include <qtoolbutton.h>
+#include <qdir.h>
+#include <qlistview.h>
+#include <qtooltip.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kdesktopfile.h>
+#include <kstandarddirs.h>
+#include <kiconloader.h>
 
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
@@ -54,6 +61,9 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
     m_pRecentOrderGroup->setRadioButtonExclusive(true);
     connect(m_pRecentOrderGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+
+    connect(m_addMenuBtn, SIGNAL(clicked()), SLOT(slotAddMenuClicked()));
+    connect(m_removeMenuBtn, SIGNAL(clicked()), SLOT(slotRemoveMenuClicked()));\
 
 
     // whats this help
@@ -101,6 +111,14 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                              "You can also add a Quick Browser "
                                              "as a panel button, using the panel context menu."));
 
+    QToolTip::add(m_addMenuBtn, i18n("Add selected item"));
+    QToolTip::add(m_removeMenuBtn, i18n("Remove selected item"));
+    QWhatsThis::add(m_availableMenus, i18n("The list of available dynamic menus that can be "
+                                           "plugged into the KDE menu. Use the buttons to add "
+                                           "or remove items."));
+    QWhatsThis::add(m_selectedMenus, i18n("The list of selected dynamic menus that will be added "
+                                          "to the KDE menu. Use the buttons to add or remove items. "));
+
     load();
 }
 
@@ -143,6 +161,29 @@ void MenuTab::load()
         m_pRecent->setChecked(true);
     else
         m_pOften->setChecked(true);
+
+    m_availableMenus->clear();
+    m_selectedMenus->clear();
+    QStringList ext = c->readListEntry("Extensions");
+    QListView *lv(0);
+    QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
+    for (QStringList::ConstIterator dit=dirs.begin(); dit!=dirs.end(); ++dit)
+    {
+        QDir d(*dit, "*.desktop");
+        QStringList av = d.entryList();
+        QListViewItem *item(0);
+        for (QStringList::ConstIterator it=av.begin(); it!=av.end(); ++it)
+        {
+            KDesktopFile df(d.absFilePath(*it), true);
+            if (qFind(ext.begin(), ext.end(), *it) == ext.end())
+                lv = m_availableMenus;
+            else
+                lv = m_selectedMenus;
+            item = new QListViewItem(lv, item, df.readName(), *it);
+            item->setPixmap(0, SmallIcon(df.readIcon()));
+        }
+    }
+
     delete c;
 }
 
@@ -175,6 +216,15 @@ void MenuTab::save()
     bool bRecentVsOften = m_pRecent->isChecked();
     c->writeEntry("RecentVsOften", bRecentVsOften);
 
+    QStringList ext;
+    QListViewItem *item = m_selectedMenus->firstChild();
+    while (item)
+    {
+        ext << item->text(1);
+        item = item->nextSibling();
+    }
+    c->writeEntry("Extensions", ext);
+
     c->sync();
 
     delete c;
@@ -198,4 +248,32 @@ void MenuTab::defaults()
 
   m_pOften->setChecked(true);
   m_num2ShowSpinBox->setValue(5);
+}
+
+void MenuTab::slotAddMenuClicked()
+{
+    QListViewItem *item = m_availableMenus->currentItem();
+    if (item)
+    {
+        QListViewItem *newItem = new QListViewItem(m_selectedMenus, m_selectedMenus->lastItem(), item->text(0), item->text(1));
+        if (item->pixmap(0))
+            newItem->setPixmap(0, *(item->pixmap(0)));
+        delete item;
+
+        emit changed();
+    }
+}
+
+void MenuTab::slotRemoveMenuClicked()
+{
+    QListViewItem *item = m_selectedMenus->currentItem();
+    if (item)
+    {
+        QListViewItem *newItem = new QListViewItem(m_availableMenus, m_availableMenus->lastItem(), item->text(0), item->text(1));
+        if (item->pixmap(0))
+            newItem->setPixmap(0, *(item->pixmap(0)));
+        delete item;
+
+        emit changed();
+    }
 }

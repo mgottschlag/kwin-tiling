@@ -33,6 +33,10 @@ public:
 
 signals:
     void changed();
+
+protected slots:
+    void slotAddMenuClicked();
+    void slotRemoveMenuClicked();
 };
 
 #endif
