@@ -37,7 +37,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Smartcard support</string>
+                    <string>Smartcard Support</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -258,7 +258,7 @@
                                     </sizepolicy>
                                 </property>
                                 <property name="title">
-                                    <string>PCSCLite configuration</string>
+                                    <string>PCSCLite Configuration</string>
                                 </property>
                                 <widget class="QLabel">
                                     <property name="name">
