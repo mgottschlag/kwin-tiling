@@ -80,9 +80,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(emailAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(emailAddr);
 
-  wtstr = i18n("Enter your plain email address here, e.g. \"john@doe.com\" (without"
+  wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without"
      "the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
-     "Do <em>not</em> enter something like \"John Doe <john@doe.com>\", just a plain email address.");
+     "Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( emailAddr, wtstr );
 
@@ -136,7 +136,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(inServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(inServer);
 
-  wtstr = i18n("The server you get incoming mail from (this <em>may</em> be identical to your Outgoing host)."
+  wtstr = i18n("The server you get incoming mail from (this <em>may</em> be identical to your outgoing host)."
      " Your mail provider should have supplied this information. It may have been called 'POP3 server/host' or"
      " 'IMAP server/host' as well.");
   QWhatsThis::add( label, wtstr );
@@ -149,7 +149,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 
   label->setBuddy(outServer);
 
-  wtstr = i18n("The server you use for sending mail (this <em>may</em> be identical to your Incoming host)."
+  wtstr = i18n("The server you use for sending mail (this <em>may</em> be identical to your incoming host)."
      " Your mail provider should have supplied this information. It may have been called 'SMTP server' or"
      " 'SMTP host' as well.");
   QWhatsThis::add( label, wtstr );
