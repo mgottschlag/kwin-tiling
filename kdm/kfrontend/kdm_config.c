@@ -546,6 +546,7 @@ Ent entsGreeter[] = {
 #endif
 { "PluginsLogin",	C_PluginsLogin,		0,	"classic" },
 { "PluginsShutdown",	C_PluginsShutdown,	0,	"classic" },
+{ "PluginConfig",	C_PluginConfig,		0,	"" },
 };
 
 Sect

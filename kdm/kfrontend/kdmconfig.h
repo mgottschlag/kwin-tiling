@@ -94,6 +94,7 @@ public:
 
     QStringList	_pluginsLogin;
     QStringList	_pluginsShutdown;
+    QStringList	_pluginConfig;
 };
 
 extern KDMConfig *kdmcfg;

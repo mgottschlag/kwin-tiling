@@ -788,8 +788,14 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 {
     if (!qstrcmp( key, "EchoMode" ))
 	return QVariant( kdmcfg->_echoMode );
-    else
+    else {
+	QString fkey = QString::fromLatin1( key ) + '=';
+	for (QStringList::ConstIterator it = kdmcfg->_pluginConfig.begin();
+	     it != kdmcfg->_pluginConfig.end(); ++it)
+	    if ((*it).startsWith( fkey ))
+		return (*it).mid( fkey.length() );
 	return dflt;
+    }
 }
 
 QValueVector<GreeterPluginHandle> KGVerify::greetPlugins;

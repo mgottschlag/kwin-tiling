@@ -217,4 +217,5 @@ KDMConfig::KDMConfig()
 
     _pluginsLogin = GetCfgQStrList(C_PluginsLogin);
     _pluginsShutdown = GetCfgQStrList(C_PluginsShutdown);
+    _pluginConfig = GetCfgQStrList(C_PluginConfig);
 }
