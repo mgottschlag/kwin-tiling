@@ -146,6 +146,7 @@ void KLocaleConfigTime::save()
   delete c;
 
   KConfig *config = KGlobal::config();
+  config->reparseConfiguration();
   KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
   KSimpleConfig ent(locate("locale",
@@ -176,6 +177,8 @@ void KLocaleConfigTime::save()
   if (b != locale->weekStartsMonday())
     config->writeEntry(QString::fromLatin1("WeekStartsMonday"),
 		       locale->weekStartsMonday(), true, true);
+
+  config->sync();
 
   // restore the old global locale
   KGlobal::_locale = lsave;
