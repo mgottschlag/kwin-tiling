@@ -135,9 +135,6 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   QWhatsThis::add( resizeAnimNoneLabel, wtstr );
   QWhatsThis::add( resizeAnimFastLabel, wtstr );
 
-#ifdef __GNUC__
-#warning CT: disabling is needed as long as functionality misses in kwin
-#endif
   resizeAnimTitleLabel->setEnabled(false);
   resizeAnimSlider->setEnabled(false);
   resizeAnimNoneLabel->setEnabled(false);
@@ -269,13 +266,6 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   QWhatsThis::add( clickRaiseOn, i18n("Disable this option if you don't want windows to be brought to"
     " front automatically when you click somewhere into the window contents.") );
 
-  // CT: disabling is needed as long as functionality misses in kwin
-  autoRaiseOn->setEnabled(false);
-  clickRaiseOn->setEnabled(false);
-  alabel->setEnabled(false);
-  s->setEnabled(false);
-  autoRaise->setEnabled(false);
-
   lay->addWidget(fcsBox);
 
   // Any changes goes to slotChanged()
@@ -406,10 +396,10 @@ void KWindowConfig::setAutoRaiseEnabled()
   // the auto raise related widgets are: autoRaise, alabel, s, sec
   if ( focusCombo->currentItem() != CLICK_TO_FOCUS )
     {
-      autoRaiseOn->setEnabled(true);
-      autoRaiseOnTog(autoRaiseOn->isChecked());
       clickRaiseOn->setEnabled(true);
       clickRaiseOnTog(clickRaiseOn->isChecked());
+      autoRaiseOn->setEnabled(true);
+      autoRaiseOnTog(autoRaiseOn->isChecked());
     }
   else
     {
@@ -419,6 +409,7 @@ void KWindowConfig::setAutoRaiseEnabled()
       clickRaiseOnTog(false);
     }
 }
+
 
 // CT 13mar98 interactiveTrigger configured by this slot
 void KWindowConfig::ifPlacementIsInteractive( )
@@ -439,6 +430,10 @@ void KWindowConfig::autoRaiseOnTog(bool a) {
   autoRaise->setEnabled(a);
   s->setEnabled(a);
   alabel->setEnabled(a);
+  clickRaiseOn->setEnabled( !a );
+  if ( a )
+      clickRaiseOn->setChecked( TRUE );
+
 }
 //CT
 
