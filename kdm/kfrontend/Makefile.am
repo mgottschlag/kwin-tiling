@@ -83,6 +83,6 @@ kdm_config_COMPILE_FIRST = config.ci
 genkdmconf_COMPILE_FIRST = config.ci
 
 config.ci: $(srcdir)/config.def $(srcdir)/confproc.pl
-	$(PERL) -w $(srcdir)/confproc.pl $< $@
+	$(PERL) -w $(srcdir)/confproc.pl $(srcdir)/config.def $@
 
 CLEANFILES = config.ci
