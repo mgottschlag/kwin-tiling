@@ -25,7 +25,15 @@
  
 
 #include "kfdialog.h"
+
 #include <qapplication.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qhbox.h>
+
+#include <kapp.h>
+#include <kdialogbase.h>
+#include <klocale.h>
 
 int
 FDialog::exec()
@@ -51,6 +59,72 @@ FDialog::exec()
     }
 
     return result();
+}
+
+void
+KFMsgBox::box(QWidget *parent, QMessageBox::Icon type, const QString &text)
+{
+    QFrame winFrame( 0);
+    winFrame.setFrameStyle( QFrame::Panel | QFrame::Raised);
+    winFrame.setLineWidth( 2);
+
+    KDialogBase dialog(QString::fromLatin1(""),
+		       KDialogBase::Yes,
+		       KDialogBase::Yes, KDialogBase::Yes,
+		       &winFrame, 0, true, true,
+		       i18n("&OK"));
+
+    QWidget *contents = new QWidget(&dialog);
+    QHBoxLayout *lay = new QHBoxLayout(contents);
+    lay->setSpacing(KDialog::spacingHint()*2);
+    lay->setMargin(KDialog::marginHint()*2);
+
+    lay->addStretch(1);
+    QLabel *label1 = new QLabel( contents);
+    label1->setPixmap(QMessageBox::standardIcon(type, kapp->style().guiStyle()));
+    lay->add( label1 );
+    lay->add( new QLabel(text, contents) );
+    lay->addStretch(1);
+
+    dialog.setMainWidget(contents);
+    dialog.enableButtonSeparator(false);
+
+    dialog.resize(dialog.sizeHint());
+    int ft = winFrame.frameWidth() * 2;
+    winFrame.resize( dialog.width() + ft, dialog.height() + ft);
+    int fw = winFrame.width(), fh = winFrame.height();
+
+    QWidget *desk = QApplication::desktop();
+
+    QPoint p;
+    if ( parent ) {
+	parent = parent->topLevelWidget();
+	QPoint pp = parent->mapToGlobal( QPoint(0,0) );
+	p = QPoint( pp.x() + parent->width()/2,
+		    pp.y() + parent->height()/ 2 );
+    } else {
+	p = QPoint( desk->width()/2, desk->height()/2 );
+    }
+
+    p = QPoint( p.x()-fw/2, p.y()-fh/2);
+
+    if ( p.x() + fw > desk->width() )
+	p.setX( desk->width() - fw);
+    if ( p.x() < 0 )
+	p.setX( 0 );
+
+    if ( p.y() + fh > desk->height() )
+	p.setY( desk->height() - fh);
+    if ( p.y() < 0 )
+	p.setY( 0 );
+
+    winFrame.move( p);
+    winFrame.show();
+
+    dialog.exec();
+
+    if( parent != 0)
+	parent->setActiveWindow();
 }
 
 #include "kfdialog.moc"

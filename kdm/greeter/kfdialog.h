@@ -30,6 +30,8 @@
 # include "kdm-config.h"
 
 #include <qdialog.h>
+#include <qmessagebox.h>
+#include <kmessagebox.h>
 
 class FDialog : public QDialog {
      Q_OBJECT
@@ -40,6 +42,13 @@ public:
        : QDialog( parent, name, modal, f) {}
      virtual int exec();
 
+};
+
+class KFMsgBox : public KMessageBox {
+
+public:
+    static void box(QWidget *parent, QMessageBox::Icon type, 
+		    const QString &text);
 };
 
 #endif /* FDIALOG_H */

@@ -98,11 +98,9 @@ KDMConfig::KDMConfig() :
     else
 	_logoArea = KdmNone;
 
-    QString logo_string = readEntry( "LogoPixmap" );
-    if( logo_string.isEmpty())
+    _logo = readEntry( "LogoPixmap" );
+    if( _logo.isEmpty())
 	_logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") );
-    else
-	_logo = logo_string;
 
     QString uv = readEntry( "ShowUsers");
     if( uv == QString::fromLatin1("All") )
@@ -146,7 +144,7 @@ KDMConfig::KDMConfig() :
             _normalFont->setRawMode( true);
 	}
     } else
-	_normalFont = new QFont;
+	_normalFont = new QFont(QString::fromLatin1("helvetica"), 12);
 
     QString fail_font = readEntry( "FailFont" );
     if( !fail_font.isEmpty()) {
@@ -157,8 +155,8 @@ KDMConfig::KDMConfig() :
 	    _failFont->setRawMode( true);
 	}
     } else {
-	_failFont = new QFont( *_normalFont);
-	_failFont->setBold( true);
+	_failFont = new QFont(*_normalFont);
+	_failFont->setBold(true);
     }
 
     QString greet_font = readEntry( "GreetFont" );
@@ -170,7 +168,7 @@ KDMConfig::KDMConfig() :
 	    _greetFont->setRawMode( true);
 	}
     } else
-	_greetFont = new QFont( QString::fromLatin1("times"), 24, QFont::Black);
+	_greetFont = new QFont(QString::fromLatin1("charter"), 24, QFont::Bold);
 
     // Greet String
     char buf[256];

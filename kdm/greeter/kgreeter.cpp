@@ -27,6 +27,7 @@
 #include "kgreeter.h"
 #include "kdmconfig.h"
 #include "kdmclock.h" 
+#include "kfdialog.h" 
 
 #include <sys/types.h>
 #include <sys/param.h>
@@ -116,8 +117,7 @@ pam_handle_t	**(*__xdm_thepamh)(void) = NULL;
 #define ex_login 0
 #define ex_choose 1
 
-static const char *description = 
-	I18N_NOOP("KDE Display Manager");
+static const char *description = I18N_NOOP("KDE Display Manager");	//XXX
 
 static const char *version = "v0.90";
 
@@ -167,15 +167,16 @@ TempUngrab_Run(void (*func)(void *), void *ptr)
 {
     XUngrabKeyboard(qt_xdisplay(), CurrentTime);
     func(ptr);
+
     // Secure the keyboard again
     if (XGrabKeyboard (qt_xdisplay(), 
-		       kgreeter ? kgreeter->winId() : DefaultRootWindow (qt_xdisplay()), 
+		       /* kgreeter ? kgreeter->winId() :*/ DefaultRootWindow (qt_xdisplay()), 
 		       True, GrabModeAsync, GrabModeAsync, CurrentTime) 
 	!= GrabSuccess
     ) {
 	LogError ("WARNING: keyboard on display %s could not be secured\n",
 		  ::d->name);
-	SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
+	SessionExit (::d, RESERVER_DISPLAY, FALSE);
     }
 }
 
@@ -295,13 +296,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    break;
     }
 
-    // The line-edit look _very_ bad if you don't give them 
-    // a resonal height that observes a proportional aspect.
-    // -- Bernd
-     
-    // I still think a line-edit show decide it's own height
-    // -- Steffen
-
     loginLabel = new QLabel( i18n("Login:"), this);
     loginEdit = new KLoginLineEdit( this);
     loginLabel->setBuddy(loginEdit);
@@ -350,19 +344,16 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     clearButton = new QPushButton( i18n("&Clear"), this);
     connect( clearButton, SIGNAL(clicked()), SLOT(clear_button_clicked()));
-    //set_fixed( clearButton);
     hbox2->addWidget( clearButton, AlignBottom);
 
     if (kdmcfg->_allowChooser) {
 	chooserButton = new QPushButton( i18n("C&hooser"), this);
 	connect( chooserButton, SIGNAL(clicked()), SLOT(chooser_button_clicked()));
-	//set_fixed( chooserButton);
 	hbox2->addWidget( chooserButton, AlignBottom);
     }
 
     quitButton = new QPushButton( ::d->displayType.location == Local ? i18n("R&estart X Server") : i18n("Clos&e Connection"), this);
     connect( quitButton, SIGNAL(clicked()), SLOT(quit_button_clicked()));
-    //set_fixed( quitButton);
     hbox2->addWidget( quitButton, AlignBottom);
 
     int sbw;
@@ -375,7 +366,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
 	connect( shutdownButton, SIGNAL(clicked()), 
 		 SLOT(shutdown_button_clicked()));
-	//set_fixed( shutdownButton);
 	hbox2->addWidget( shutdownButton, AlignBottom);
 	sbw = shutdownButton->width();
     } else {
@@ -545,19 +535,19 @@ QString errm;
 static void
 errorbox(void *)
 {
-    KMessageBox::error(0, errm);
+    KFMsgBox::box(kgreeter, QMessageBox::Critical, errm);
 }
 
 static void
 sorrybox(void *)
 {
-    KMessageBox::sorry(0, errm);
+    KFMsgBox::box(kgreeter, QMessageBox::Warning, errm);
 }
 
 static void
 infobox(void *)
 {
-    KMessageBox::information(0, errm);
+    KFMsgBox::box(kgreeter, QMessageBox::Information, errm);
 }
 
 void 
@@ -646,7 +636,7 @@ KGreeter::go_button_clicked()
 	    loginEdit->setEnabled( false);
 	    passwdEdit->setEnabled( false);
 	    clear_button_clicked();
-	    timer->start( 1500 + kapp->random()*1000/RAND_MAX, true );	// XXX make configurable
+	    timer->start( 1500 + kapp->random()/(RAND_MAX/1000), true );// XXX make configurable
 	    return;
     }
     setActiveWindow();
@@ -926,7 +916,7 @@ GreetUser(
     if (source (verify->systemEnviron, ::d->startup) != 0)
     {
 	qApp->restoreOverrideCursor();
-	KMessageBox::error(0, 
+	KFMsgBox::box(0, QMessageBox::Critical, 
 			i18n("Startup program %1 exited with non-zero status."
 			     "\nPlease contact your system administrator.\n"
 			     "Please press OK to retry.")

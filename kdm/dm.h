@@ -387,12 +387,6 @@ extern struct protoDisplay	*NewProtoDisplay (
 					CARD16	     connectionType,
 					ARRAY8Ptr    connectionAddress,
 					CARD32	     sessionID);
-#endif /* XDMCP */
-
-/* in Login.c */
-extern void DrawFail (Widget ctx);
-
-#ifdef XDMCP
 
 typedef void (*ChooserFunc)(CARD16 connectionType, ARRAY8Ptr addr, char *closure);
 

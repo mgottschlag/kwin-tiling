@@ -63,18 +63,16 @@ extern int errno;
 /* Some systems define an des_encrypt() in their crypt.h (where it
    doesn't belong!), which conflicts with the one from KTH Kerberos.  As we
    are not using it anyway, we temporarily redefine it.  */
-#define des_encrypt des_encrypt_faked_XXX
+# define des_encrypt des_encrypt_faked_XXX
 /* # include <kerberosIV/krb.h> */
 # include <krb.h>
 # ifdef AFS
 #  include <kafs.h>
 /* #  include <kerberosIV/kafs.h> */
 # endif
-#undef des_encrypt
+# undef des_encrypt
 static char krbtkfile[MAXPATHLEN];
 #endif
-
-# include	"greet.h"
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 # define USE_LOGIN_CAP 1
@@ -104,6 +102,8 @@ char *getenv();
 #ifdef QNX4
 extern char *crypt(const char *, const char *);
 #endif
+
+# include	"greet.h"
 
 static char *envvars[] = {
     "TZ",			/* SYSV and SVR4, but never hurts */
@@ -153,7 +153,6 @@ userEnv (struct display *d, int useSystemPath, char *user, char *home, char *she
 
 #ifdef USE_PAM
 static char *PAM_password;
-static int pam_error;
 
 #ifdef PAM_MESSAGE_NONCONST
 typedef struct pam_message pam_message_type;
@@ -164,37 +163,60 @@ typedef const struct pam_message pam_message_type;
 static int PAM_conv (int num_msg,
 		     pam_message_type **msg,
 		     struct pam_response **resp,
-		     void *appdata_ptr) {
-	int replies = 0;
+		     void *appdata_ptr)
+{
+	int count = 0;
 	struct pam_response *reply = NULL;
 
-	reply = malloc(sizeof(struct pam_response));
-	if (!reply) return PAM_CONV_ERR;
-#define COPY_STRING(s) (s) ? strdup(s) : NULL
+	if (!(reply = calloc(num_msg, sizeof(struct pam_response))))
+		return PAM_CONV_ERR;
 
-	for (replies = 0; replies < num_msg; replies++) {
-		switch (msg[replies]->msg_style) {
+#define COPY_STRING(s) (s) ? strdup(s) : NULL
+	for (count = 0; count < num_msg; count++) {
+		switch (msg[count]->msg_style) {
+		case PAM_TEXT_INFO:
+		case PAM_ERROR_MSG:
+			Debug("PAM: %s\n", msg[count]->msg);
+			/* ignore the mesage */
+			break;
 		case PAM_PROMPT_ECHO_OFF:
 			/* wants password */
-			reply[replies].resp_retcode = PAM_SUCCESS;
-			reply[replies].resp = COPY_STRING(PAM_password);
-			break;
-		case PAM_TEXT_INFO:
-			/* ignore the informational mesage */
+			reply[count].resp_retcode = PAM_SUCCESS;
+			reply[count].resp = COPY_STRING(PAM_password);
 			break;
 		case PAM_PROMPT_ECHO_ON:
 			/* user name given to PAM already */
 			/* fall through */
 		default:
-			/* unknown or PAM_ERROR_MSG */
-			free (reply);
-			return PAM_CONV_ERR;
+			/* unknown */
+			goto conv_fail;
 		}
 	}
-
 #undef COPY_STRING
+
 	*resp = reply;
 	return PAM_SUCCESS;
+
+    conv_fail:
+	for (count = 0; count < num_msg; ++count) {
+	    if (reply[count].resp == NULL)
+		continue;
+	    switch (msg[count]->msg_style) {
+	    case PAM_PROMPT_ECHO_ON:
+	    case PAM_PROMPT_ECHO_OFF:
+		bzero(reply[count].resp, strlen(reply[count].resp));
+		free(reply[count].resp);
+		break;
+	    case PAM_ERROR_MSG:
+	    case PAM_TEXT_INFO:
+		/* should not actually be able to get here... */
+		free(reply[count].resp);
+	    }                                            
+	    reply[count].resp = NULL;
+	}
+	/* forget reply too */
+	free (reply);
+	return PAM_CONV_ERR;
 }
 
 static struct pam_conv PAM_conversation = {
@@ -219,6 +241,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
     struct passwd	*p;
 #ifdef USE_PAM
     pam_handle_t **pamh = thepamh();
+    int			pretc;
 #else
 # ifdef USESHADOW
     struct spwd		*sp;
@@ -254,29 +277,25 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 
 #ifdef USE_PAM
 
-# define PAM_BAIL	\
-    if (pam_error != PAM_SUCCESS) { \
-	pam_end(*pamh, 0); \
+# define PAM_DO(todo)	\
+    if ((pretc = todo) != PAM_SUCCESS) { \
+	pam_end(*pamh, pretc); \
 	FAILV; \
     }
     PAM_password = greet->password;
-    pam_error = pam_start(KDE_PAM, greet->name, &PAM_conversation, pamh);
-    PAM_BAIL;
-    pam_error = pam_set_item(*pamh, PAM_TTY, d->name);
-    PAM_BAIL;
+    if (pam_start(KDE_PAM, greet->name, &PAM_conversation, pamh) != PAM_SUCCESS)
+	FAILV;
+    PAM_DO(pam_set_item(*pamh, PAM_TTY, d->name));
     if (greet->password) {
 # ifdef HAVE_PAM_FAIL_DELAY
-	pam_error = pam_set_item(*pamh, PAM_FAIL_DELAY, fail_delay);
-	PAM_BAIL;
+	PAM_DO(pam_set_item(*pamh, PAM_FAIL_DELAY, fail_delay));
 # endif
-	pam_error = pam_authenticate(*pamh, d->allowNullPasswd ? 
-				     0 : PAM_DISALLOW_NULL_AUTHTOK);
-	PAM_BAIL;
+	PAM_DO(pam_authenticate(*pamh, d->allowNullPasswd ? 
+				0 : PAM_DISALLOW_NULL_AUTHTOK));
     }
-    pam_error = pam_acct_mgmt(*pamh, 0);
+    PAM_DO(pam_acct_mgmt(*pamh, 0));
     /* really should do password changing, but it doesn't fit well */
-    PAM_BAIL;
-# undef PAM_BAIL
+# undef PAM_DO
 
 /*
 #elif defined(_AIX) / * USE_PAM * /
@@ -420,6 +439,8 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
 done:
 #endif /* USE_PAM && _AIX */
     bzero(user_pass, strlen(user_pass)); /* in case shadow password */
+
+    Debug("Restrict ...\n");
 
     if (!p->pw_uid) {
 	if (!d->allowRootLogin)
@@ -619,11 +640,10 @@ norestr:
 VerifyRet
 VerifyRoot( const char *pw)
 {
-#define superuser "root"
 #ifndef USE_PAM
-    struct passwd *pws = getpwnam( superuser);
+    struct passwd *pws = getpwnam( "root");
     if (!pws) {
-	printf("can't verify " superuser " passwd, getpwnam() failed\n");
+	printf("can't verify root password, getpwnam() failed\n");
 	return V_FAIL;
     }
     endpwent();
@@ -632,7 +652,7 @@ VerifyRoot( const char *pw)
      * shadow systems
      */
     {
-	struct spwd *spws = getspnam( superuser);
+	struct spwd *spws = getspnam( "root");
 	if( spws != NULL)
 	    pws->pw_passwd = spws->sp_pwdp;
 	endspent();
@@ -644,25 +664,21 @@ VerifyRoot( const char *pw)
 	return V_FAIL;
     }
 #else
-    printf("can't verify " superuser " passwd, lacking crypt() support\n");
+    printf("can't verify root password, lacking crypt() support\n");
     return V_FAIL;
 #endif
 #else /* USE_PAM */
-    {
-	pam_handle_t *pamh;
-#   	define PAM_BAIL \
-	    if (pam_error != PAM_SUCCESS) { \
-		pam_end(pamh, 0); \
-		return V_FAIL; \
-	    }
-	PAM_password = (char *)pw;
-	pam_error = pam_start(KDE_PAM, superuser, &PAM_conversation, &pamh);
-	PAM_BAIL;
-	pam_error = pam_authenticate( pamh, 0);
-	PAM_BAIL;
-	/* OK, if we get here, the user _should_ be root */
-	pam_end( pamh, PAM_SUCCESS);
+    pam_handle_t *pamh;
+    int pretc;
+    PAM_password = (char *)pw;
+    if (pam_start(KDE_PAM, "root", &PAM_conversation, &pamh) != PAM_SUCCESS)
+	return V_FAIL;
+    if ((pretc = pam_authenticate( pamh, 0)) != PAM_SUCCESS) {
+	pam_end(pamh, pretc);
+	return V_FAIL;
     }
+    /* OK, if we get here, the user _should_ be root */
+    pam_end( pamh, PAM_SUCCESS);
 #endif /* USE_PAM */
     return V_OK;
 }

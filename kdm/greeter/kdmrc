@@ -50,6 +50,9 @@ ConsoleMode=/sbin/init 2
 #NoPassUsers=fred,ethel
 #AutoReLogin=false
 #ShowPrevious=false
+[Locale]
+Country=C
+Language=C
 [Lilo]
 #LiloCommand=/sbin/lilo
 #LiloMap=/boot/map
