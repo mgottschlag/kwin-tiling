@@ -11,7 +11,9 @@ libkcm_kdm_la_LIBADD = -lkdeui -lkio -lkfile $(top_builddir)/kcontrol/background
 
 INCLUDES= $(all_includes) -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop
 
-libkcm_kdm_la_METASOURCES = AUTO
+libkcm_kdm_la_METASOURCES = backgnd.moc kdm-conv.moc kdm-users.moc \
+	ktagcombobox.moc bgdialogs.moc kdm-font.moc kdropsite.moc main.moc \
+	kdm-appear.moc kdm-sess.moc klangcombo.moc
 
 messages:
 	$(XGETTEXT) $(libkcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot

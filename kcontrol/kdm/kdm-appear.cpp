@@ -1,4 +1,3 @@
-#include <stdio.h>
 /*
   $id: $
   This file is part of the KDE Display Manager Configuration package
@@ -100,10 +99,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( logoRadio, wtstr );
   QWhatsThis::add( clockRadio, wtstr );
-
-//  QFileInfo fi(locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ));
-//  KGlobal::dirs()->addResourceDir("icon", fi.dirPath(true));
-//printf("dirsadd=%s\n", fi.dirPath(true).latin1());
 
   logoLabel = new QLabel(i18n("&KDM logo:"), group);
 //  logopath = "kdelogo.png";
