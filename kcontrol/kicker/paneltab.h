@@ -1,5 +1,5 @@
 /*
- *  panel.h
+ *  paneltab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __panel_h__
-#define __panel_h__
+#ifndef __paneltab_h__
+#define __paneltab_h__
 
 #include <qwidget.h>
 

@@ -1,5 +1,5 @@
 /*
- *  panel.cpp
+ *  paneltab.cpp
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
@@ -40,7 +40,8 @@
 #include <kmessagebox.h>
 #include <kimageio.h>
 
-#include "panel.h"
+#include "paneltab.h"
+#include "paneltab.moc"
 
 PanelTab::PanelTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
@@ -181,18 +182,6 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   vbox->addWidget(hbox2);
   layout->addWidget(theme_group, 1, 1);
 
-  mergeCB = new QCheckBox(i18n("Merge different menu locations"),
-			  this);
-  QWhatsThis::add(mergeCB, i18n("KDE can support several different locations "
-				"on the system for storing program "
-				"information, including (but not limited to) "
-				"a system-wide and a personal directory. "
-				"Enabling this option makes the KDE panel "
-				"merge these different locations into a "
-				"single logical tree of programs."));
-
-  layout->addMultiCellWidget(mergeCB, 2, 2, 0, 1);
-
   load();
 }
 
@@ -317,9 +306,6 @@ void PanelTab::load()
       theme_input->setText(i18n("Error loading theme image file."));
   }
 
-  c->setGroup("menus");
-  mergeCB->setChecked(c->readBoolEntry("MergeKDEDirs", true));
-
   delete c;
 }
 
@@ -336,9 +322,6 @@ void PanelTab::save()
   c->writeEntry("HideButtonSize", HBwidth);
   c->writeEntry("UseBackgroundTheme", use_theme);
   c->writeEntry("BackgroundTheme", theme);
-
-  c->setGroup("menus");
-  c->writeEntry("MergeKDEDirs", mergeCB->isChecked());
 
   c->sync();
 
@@ -371,9 +354,6 @@ void PanelTab::defaults()
   theme_label->setEnabled(use_theme);
   theme_input->setEnabled(use_theme);
   browse_button->setEnabled(use_theme);
-
-  mergeCB->setChecked(true);
-
 }
 
 QString PanelTab::quickHelp()
@@ -386,5 +366,3 @@ QString PanelTab::quickHelp()
     " context menu on right button click. This context menu also offers you"
     " manipulation of the panel's buttons and applets.");
 }
-
-#include "panel.moc"
