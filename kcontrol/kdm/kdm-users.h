@@ -35,10 +35,10 @@
 
 #include <pwd.h>
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 
-class KDMUsersWidget : public KCModule
+class KDMUsersWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -50,6 +50,9 @@ public:
 	void defaults();
 
 	bool eventFilter(QObject *o, QEvent *e);
+
+signals:
+	void changed( bool state );
 
 protected:
 	void userButtonDragEnterEvent(QDragEnterEvent *e);

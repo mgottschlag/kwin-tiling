@@ -25,8 +25,6 @@
 #include <qstring.h>
 #include <qlistbox.h>
 
-#include <kcmodule.h>
-
 class KArrowButton;
 class QLineEdit;
 class KURLRequester;
@@ -41,7 +39,7 @@ public:
 	bool isItemVisible(int id) { return itemVisible(id); }
 };
 
-class KDMSessionsWidget : public KCModule
+class KDMSessionsWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -53,6 +51,9 @@ public:
 	void defaults();
 
 	enum SdModes { SdAll, SdRoot, SdNone };
+
+signals:
+	void changed( bool state );
 	
 protected:
 	void moveSession(int);

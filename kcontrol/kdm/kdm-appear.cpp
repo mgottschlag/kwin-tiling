@@ -49,7 +49,7 @@ extern KSimpleConfig *c;
 
 
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : QWidget(parent, name)
 {
   QString wtstr;
 
@@ -480,7 +480,7 @@ QString KDMAppearanceWidget::quickHelp() const
 
 void KDMAppearanceWidget::changed()
 {
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 #include "kdm-appear.moc"

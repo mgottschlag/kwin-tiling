@@ -76,7 +76,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 KSimpleConfig *c;
 
 KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(parent, name)
+  : KCModule(KDMFactory::instance(), parent, name)
 {
   QStringList show_users;
 

@@ -40,7 +40,7 @@
 extern KSimpleConfig *c;
 
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
-    : KCModule(parent, name)
+    : QWidget(parent, name)
 {
     // We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
     // and create them if necessary.
@@ -483,7 +483,7 @@ void KDMUsersWidget::defaults()
 
 void KDMUsersWidget::slotChanged()
 {
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 #include "kdm-users.moc"

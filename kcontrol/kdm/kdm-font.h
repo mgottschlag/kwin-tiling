@@ -23,10 +23,10 @@
 #include <qcheckbox.h>
 
 #include <kfontdialog.h>
-#include <kcmodule.h>
+#include <qwidget.h>
 
 
-class KDMFontWidget : public KCModule
+class KDMFontWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -37,6 +37,9 @@ public:
         void save();
 	void defaults();
 	void set_def();
+
+signals:
+	void changed( bool state );
 
 protected slots:
     void configChanged();

@@ -50,14 +50,6 @@
 
 extern KSimpleConfig *c;
 
-/**** DLL Interface ****/
-
-extern "C" {
-    KCModule *create_background(QWidget *parent, const char *name) {
-    return new KBackground(parent, name);
-    }
-}
-
 
 /**** KBGMonitor ****/
 
@@ -84,7 +76,7 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 /**** KBackground ****/
 
 KBackground::KBackground(QWidget *parent, const char *name)
-    : KCModule(parent, name)
+    : QWidget(parent, name)
 {
     QString wtstr;
     m_pDirs = KGlobal::dirs();

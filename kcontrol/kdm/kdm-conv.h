@@ -37,10 +37,8 @@
 
 #include <pwd.h>
 
-#include <kcmodule.h>
 
-
-class KDMConvenienceWidget : public KCModule
+class KDMConvenienceWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -50,6 +48,9 @@ public:
         void load(QStringList *show_users=0);
         void save();
 	void defaults();
+
+signals:
+	void changed( bool state );
 
 private slots:
         void addShowUser(const QString &user);

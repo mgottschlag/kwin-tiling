@@ -19,7 +19,6 @@
 #include <qevent.h>
 #include <qwidget.h>
 
-#include <kcmodule.h>
 #include <bgdefaults.h>
 
 class QCheckBox;
@@ -62,7 +61,7 @@ protected:
 /**
  * The Desktop/Background tab in kcontrol.
  */
-class KBackground: public KCModule
+class KBackground: public QWidget
 {
     Q_OBJECT
 

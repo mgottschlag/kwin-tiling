@@ -42,7 +42,7 @@
 extern KSimpleConfig *c;
 
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : QWidget(parent, name)
 {
       QString wtstr;
 
@@ -419,7 +419,7 @@ void KDMSessionsWidget::defaults()
 
 void KDMSessionsWidget::changed()
 {
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 #include "kdm-sess.moc"

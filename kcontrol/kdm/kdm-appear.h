@@ -30,7 +30,6 @@
 #include <kcolorbtn.h>
 #include <kurl.h>
 #include <kfiledialog.h>
-#include <kcmodule.h>
 
 
 #include "klanguagebutton.h"
@@ -41,7 +40,7 @@ class QLineEdit;
 class KLineEdit;
 
 
-class KDMAppearanceWidget : public KCModule
+class KDMAppearanceWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -56,6 +55,9 @@ public:
 	void loadLanguageList(KLanguageButton *combo);
 
 	bool eventFilter(QObject *, QEvent *);
+
+signals:
+	void changed( bool state );
 
 protected:
 	void iconLoaderDragEnterEvent(QDragEnterEvent *event);

@@ -39,7 +39,7 @@
 extern KSimpleConfig *c;
 
 KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QStringList *show_users)
-    : KCModule(parent, name)
+    : QWidget(parent, name)
 {
     QString wtstr;
 
@@ -375,7 +375,7 @@ void KDMConvenienceWidget::defaults()
 
 void KDMConvenienceWidget::slotChanged()
 {
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 #include "kdm-conv.moc"

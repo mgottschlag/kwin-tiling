@@ -41,7 +41,7 @@
 extern KSimpleConfig *c;
 
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : QWidget(parent, name)
 {
   QGroupBox *tGroup = new QHGroupBox(i18n("Select fonts"), this);
 
@@ -97,7 +97,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
 void KDMFontWidget::configChanged()
 {
-    emit KCModule::changed(true);
+    emit changed(true);
 }
 
 
@@ -170,7 +170,7 @@ void KDMFontWidget::slotGetFont()
   //fontlabel->setFixedSize(fontlabel->sizeHint());
   delete fontdlg;
 
-  emit KCModule::changed(true);
+  emit changed(true);
 }
 
 
