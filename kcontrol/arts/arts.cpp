@@ -394,7 +394,7 @@ const KAboutData* KArtsModule::aboutData() const
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1999 - 2001 Stefan Westerfeld"));
  
-   about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stefan@kde.org");
+   about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stw@kde.org");
  
    return about;
 }
