@@ -475,7 +475,7 @@ static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
 # ifndef Time_t
 #  define Time_t time_t
 # endif
-# define InitLog while(0)
+# define InitLog() while(0)
 static char *lognams[] = { "debug", "info", "error", "panic" };
 
 static void
