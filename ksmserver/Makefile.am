@@ -34,7 +34,8 @@ ksmserver_la_LIBADD = $(LIB_KDEUI)
 picsdir = $(kde_datadir)/ksmserver/pics
 pics_DATA = shutdownkonq.png
 
-update_DATA = ksmserver.upd move_session_config.sh
+update_DATA = ksmserver.upd
+update_SCRIPTS = move_session_config.sh
 updatedir = $(kde_datadir)/kconf_update
 
 
