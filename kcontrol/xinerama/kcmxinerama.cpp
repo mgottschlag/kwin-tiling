@@ -20,14 +20,15 @@
 
 
 #include "kcmxinerama.h"
-#include <klocale.h>
-#include <kglobal.h>
 #include <kaboutdata.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
-#include <kapplication.h>
-#include <kwin.h>
+#include <kglobal.h>
+#include <kglobalsettings.h>
+#include <klocale.h>
 #include <kmessagebox.h>
+#include <kwin.h>
 
 #include <dcopclient.h>
 
@@ -210,35 +211,27 @@ void KCMXinerama::windowIndicator(int dpy) {
 }
 
 QWidget *KCMXinerama::indicator(int dpy) {
-	QRect r = QApplication::desktop()->screenGeometry(dpy);
+	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", WStyle_StaysOnTop | WStyle_Customize | WStyle_NoBorder);
 
-	r.setLeft(r.left() + 5*r.width()/12);
-	r.setRight(r.left() + 1*r.width()/6);
-	r.setTop(r.top() + 5*r.height()/12);
-	r.setBottom(r.top() + 1*r.height()/6);
+	QFont fnt = KGlobalSettings::generalFont();
+	fnt.setPixelSize(100);
+	si->setFont(fnt);
+	si->setFrameStyle(QFrame::Panel);
+	si->setFrameShadow(QFrame::Plain);
+	si->setAlignment(Qt::AlignCenter);
 
-	QWidget *_screenIndicator = new QWidget(0, "Screen Indicator", WStyle_StaysOnTop | WStyle_Customize | WStyle_NoBorder);
-	_screenIndicator->setGeometry(r);
+	QPoint screenCenter(QApplication::desktop()->screenGeometry(dpy).center());
+	QRect targetGeometry(QPoint(0,0), si->sizeHint());
+        targetGeometry.moveCenter(screenCenter);
+	si->setGeometry(targetGeometry);
 
-	QLabel *l = new QLabel(QString::number(dpy+1), _screenIndicator);
-	QFont fnt;
-	fnt.setPixelSize(48);
-	fnt.setBold(true);
-	l->setFont(fnt);
-	l->setPaletteForegroundColor(QColor(0,0xff,0));
-	l->setBackgroundColor(QColor(0,0,0));
-	l->resize(l->minimumSizeHint());
-	l->move(QPoint((_screenIndicator->width() - l->width())/2, (_screenIndicator->height() - l->height())/2));
+	KWin::setOnAllDesktops(si->winId(), true);
+	KWin::setState(si->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
+        KWin::setType(si->winId(), NET::Override);
 
-	_screenIndicator->setGeometry(r);
-	_screenIndicator->setBackgroundColor(QColor(0,0,0));
-	KWin::setOnAllDesktops(_screenIndicator->winId(), true);
-	KWin::setState(_screenIndicator->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
-        KWin::setType(_screenIndicator->winId(), NET::Override);
+	si->show();
 
-	_screenIndicator->show();
-
-	return _screenIndicator;
+	return si;
 }
 
 void KCMXinerama::clearIndicator() {
