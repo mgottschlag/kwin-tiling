@@ -843,11 +843,11 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 	    inDestDir (ce->value) &&
 	    !memcmp (newdir, KDMCONF, sizeof(KDMCONF)))
 	    unlink (ce->value);
+	linkedFile (nname);
 	rt = 1;
     }
   doret:
     ce->value = nname;
-    linkedFile (nname);
     return rt;
 }
 
@@ -857,19 +857,21 @@ dlinkfile (const char *name)
     FILE *f;
     File file;
 
-    linkedFile (name);
-    if (inDestDir (name) && memcmp (newdir, KDMCONF, sizeof(KDMCONF))) {
-	struct stat st;
-	if (!readFile (&file, name)) {
-	    fprintf (stderr, "Warning: cannot copy file %s\n", name);
-	    return;
+    if (inDestDir (name)) {
+	if (memcmp (newdir, KDMCONF, sizeof(KDMCONF))) {
+	    struct stat st;
+	    if (!readFile (&file, name)) {
+		fprintf (stderr, "Warning: cannot copy file %s\n", name);
+		return;
+	    }
+	    stat (name, &st);
+	    f = Create (name, st.st_mode);
+	    fwrite (file.buf, file.eof - file.buf, 1, f);
+	    fclose (f);
 	}
-	stat (name, &st);
 	copiedFile (name);
-	f = Create (name, st.st_mode);
-	fwrite (file.buf, file.eof - file.buf, 1, f);
-	fclose (f);
     }
+    linkedFile (name);
 }
 
 static void
@@ -1260,13 +1262,15 @@ static void
 mk_xservers(Entry *ce, Section *cs ATTR_UNUSED)
 {
     if (!ce->active) {	/* there is only the Global one */
+      mkdef:
 	ce->value = KDMCONF "/Xservers";
 	ce->active = ce->written = 1;
 	writefile (ce->value, 0644, def_xservers);
     } else if (old_confs)
 	linkfile (ce);
     else
-	copyfile (ce, "Xservers", 0644, edit_xservers);
+	if (!copyfile (ce, "Xservers", 0644, edit_xservers))
+	    goto mkdef;
 }
 
 static void
