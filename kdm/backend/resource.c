@@ -473,6 +473,9 @@ ScanServers (int force)
 	d->class2 = class2;
 	d->console = console;
 	d->serverArgv = argv;
+	for (; argv[0]; argv++)
+	    if (argv[0][0] == 'v' && argv[0][1] == 't')
+		d->reqSrvVT = atoi (argv[0] + 2);
 	d->displayType = type;
 	if ((type & d_lifetime) == dReserve && d->status == notRunning)
 	    d->status = reserve;

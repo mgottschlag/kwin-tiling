@@ -216,6 +216,11 @@ struct display {
 	int		zstatus;	/*  substatus while zombie */
 	int		pid;		/* process id of child */
 	int		serverPid;	/* process id of server (-1 if none) */
+#ifdef HAVE_VTS
+	int		reqSrvVT;	/* requested server VT (0 = none) */
+	int		serverVT;	/* server VT (0 = none, -1 = pending) */
+	struct display	*follower;	/* on exit, hand VT to this display */
+#endif
 	ServerStatus	serverStatus;	/* X server startup state */
 	Time_t		lastStart;	/* time of last display start */
 	int		startTries;	/* current start try */
@@ -318,6 +323,9 @@ extern void SetTitle (const char *name);
 extern struct display *displays;	/* that's ugly ... */
 extern int AnyDisplaysLeft (void);
 extern void ForEachDisplay (void (*f)(struct display *));
+#ifdef HAVE_VTS
+extern void ForEachDisplayRev (void (*f)(struct display *));
+#endif
 extern void RemoveDisplay (struct display *old);
 extern struct display
 	*FindDisplayByName (const char *name),

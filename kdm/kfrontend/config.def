@@ -35,19 +35,20 @@
 #endif
 
 #ifdef __linux__
-# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp vt7"
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X -nolisten tcp"
 /* ###
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
-			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
+			 ":1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1\n" \
+			 ":2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4\n"
 */
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
-			 "#:1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1 vt8\n" \
-			 "#:2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2 vt9\n" \
-			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3 vt10\n" \
-			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4 vt11\n"
+			 "#:1 local@tty2 reserve " XBINDIR "/X -nolisten tcp :1\n" \
+			 "#:2 local@tty3 reserve " XBINDIR "/X -nolisten tcp :2\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X -nolisten tcp :3\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X -nolisten tcp :4\n"
+# define HAVE_VTS
 #elif defined(__sun__)
 # define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X -nolisten tcp"
 #elif defined(_AIX)
@@ -750,6 +751,24 @@ Description:
  </para><para>
  The default is an &X-Server; definition that is usually reasonable
  for the system &kdm; was built on.
+
+Key: ServerVTs
+If: defined(HAVE_VTS)
+Type: list
+Default: ""
+User: core
+Instance: #"7,8,-9,-10"
+Update: upd_servervts
+Comment:
+ VTs to allocate to X-servers. A negative number means that the VT will be
+ used only if it is free. If all VTs in this list are used up, the next free
+ one greater than the last one in this list will be allocated.
+Description:
+ List of Virtual Terminals to allocate to &X-Server;s. For negative numbers the
+ absolute value is used, and the <acronym>VT</acronym> will be allocated only
+ if the kernel says it is free. If &kdm; exhausts this list, it will allocate
+ free <acronym>VT</acronym>s greater than the absolute value of the last entry
+ in this list.
 
 Key: PidFile
 Type: string

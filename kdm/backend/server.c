@@ -65,6 +65,14 @@ StartServerOnce ()
 		!(argv = addStrArr (argv, d->authFile, -1)))
 		exit (47);
 	}
+#ifdef HAVE_VTS
+	if (d->serverVT && !d->reqSrvVT) {
+	    char vtstr[8];
+	    if (!(argv = addStrArr (argv, vtstr, sprintf (vtstr, "vt%d",
+							  d->serverVT))))
+		exit (47);
+	}
+#endif
 	Debug ("exec %\"[s\n", argv);
 	/*
 	 * give the server SIGUSR1 ignored,

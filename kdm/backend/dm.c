@@ -89,9 +89,9 @@ from the copyright holder.
 # endif
 # define LOGSTAT_FILE UTMPX_FILE
 #endif
-#ifdef linux
+#ifdef HAVE_VTS
 # include <sys/ioctl.h>
-# include <linux/vt.h>
+# include <sys/vt.h>
 #endif
 
 #if defined(SVR4) && !defined(SCO) && !defined(sun)
@@ -532,7 +532,7 @@ SwitchToTty (struct display *d)
     utp->hadSess = 0;
     utp->next = utmpList;
     utmpList = utp;
-#ifdef linux	/* chvt */
+#ifdef HAVE_VTS	/* chvt */
     if (!memcmp(d->console, "tty", 3))
     {
 	int con = open ("/dev/console", O_RDONLY);
@@ -1119,6 +1119,26 @@ ReapChildren (void)
 	    {
 	    case zombie:
 		Debug ("zombie X server for display %s reaped\n", d->name);
+#ifdef HAVE_VTS
+		if (d->serverVT)
+		{
+		    if (d->follower)
+		    {
+			d->follower->serverVT = d->serverVT;
+			d->follower = 0;
+		    }
+		    else
+		    {
+			int con = open ("/dev/console", O_RDONLY);
+			if (con >= 0)
+			{
+			    ioctl (con, VT_DISALLOCATE, d->serverVT);
+			    close (con);
+			}
+		    }
+		    d->serverVT = 0;
+		}
+#endif
 		rStopDisplay (d, d->zstatus);
 		break;
 	    case phoenix:
@@ -1312,22 +1332,108 @@ MainLoop (void)
 static void
 CheckDisplayStatus (struct display *d)
 {
-    if ((d->displayType & d_origin) == dFromFile)
+    if ((d->displayType & d_origin) == dFromFile && !d->stillThere)
+	StopDisplay (d);
+}
+
+static void
+KickDisplay (struct display *d)
+{
+    if (d->status == notRunning)
+	StartDisplay (d);
+    if (d->serverStatus == awaiting && !startingServer)
+	StartServer (d);
+}
+
+#ifdef HAVE_VTS
+static int active_vts;
+
+static void
+GetBusyVTs (void)
+{
+    struct vt_stat vtstat;
+    int con;
+
+    vtstat.v_active = 0;
+    if ((con = open ("/dev/console", O_RDONLY)) >= 0)
     {
-	if (d->stillThere) {
-	    if (d->status == notRunning)
-		StartDisplay (d);
-	    if (d->serverStatus == awaiting && !startingServer)
-		StartServer (d);
-	} else
-	    StopDisplay (d);
+	ioctl (con, VT_GETSTATE, &vtstat);
+	close (con);
+    }
+    active_vts = vtstat.v_active;
+}
+
+static void
+AllocateVT (struct display *d)
+{
+    struct display *cd;
+    int i, tvt, volun;
+
+    if ((d->displayType & d_location) == dLocal &&
+	d->status == notRunning && !d->serverVT)
+    {
+	if (d->reqSrvVT && d->reqSrvVT < 16)
+	    d->serverVT = d->reqSrvVT;
+	else
+	{
+	    for (i = tvt = 0;;)
+	    {
+                if (serverVTs[i])
+                {
+		    tvt = atoi (serverVTs[i++]);
+		    volun = 0;
+		    if (tvt < 0)
+		    {
+			tvt = -tvt;
+			volun = 1;
+		    }
+		    if (!tvt || tvt >= 16)
+			continue;
+		}
+		else
+		{
+		    if (++tvt >= 16)
+			break;
+		    volun = 1;
+		}
+		for (cd = displays; cd; cd = cd->next)
+		{
+		    if (cd->reqSrvVT == tvt && /* protect from lusers */
+			(cd->status != zombie || cd->zstatus != DS_REMOVE))
+			goto next;
+		    if (cd->serverVT == tvt)
+		    {
+			if (cd->status != zombie)
+			    goto next;
+			if (!cd->follower)
+			{
+			    d->serverVT = -1;
+			    cd->follower = d;
+			    return;
+			}
+		    }
+		}
+		if (!volun || !((1 << tvt) & active_vts))
+		{
+		    d->serverVT = tvt;
+		    return;
+		}
+	  next: ;
+	    }
+	}
     }
 }
+#endif
 
 static void
 StartDisplays (void)
 {
     ForEachDisplay (CheckDisplayStatus);
+#ifdef HAVE_VTS
+    GetBusyVTs ();
+    ForEachDisplayRev (AllocateVT);
+#endif
+    ForEachDisplay (KickDisplay);
     CloseGetter ();
 }
 
@@ -1340,6 +1446,11 @@ StartDisplay (struct display *d)
 	StopDisplay (d);
 	return;
     }
+
+#ifdef HAVE_VTS
+    if (d->serverVT < 0)
+	return;
+#endif
 
     if (!LoadDisplayResources (d))
     {

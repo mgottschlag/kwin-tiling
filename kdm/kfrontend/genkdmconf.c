@@ -954,7 +954,7 @@ handBgCfg (Entry *ce, Section *cs ATTR_UNUSED)
 
 /* TODO: handle solaris' local_uid specs */
 
-#ifdef __linux__
+#ifdef HAVE_VTS
 # define RDPYS
 #endif
 
@@ -1017,9 +1017,9 @@ edit_xservers(File *file, char **nbuf, int *nlen)
     const char *word, *dname, *dclass, *dclassp, *atPos;
     Line *lin, *lines = 0, **lptr = &lines;
     StrList *wrd, **wptr, *xswords = 0, **xswordp;
-    int ndpys = 0, nldpys = 0, nrdpys = 0, dpymask = 0, vtmask = 63;
+    int ndpys = 0, nldpys = 0, nrdpys = 0, dpymask = 0;
     int ttymask = 0;
-    int type, tty, vt, dn, maj, min;
+    int type, tty, dn, maj, min;
     int quoted, i;
     char c;
 
@@ -1156,18 +1156,14 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 	    xswordp = &xswords;
 	while (wrd) {
 	    word = wrd->str;
-	    if (word[0] == 'v' && word[1] == 't') {
-		vt = strtol (word + 2, &rp, 10);
-		if (!*rp)
-		    vtmask |= 1 << (vt - 1);
-	    } else if (xswordp) {
-		/* this will break on -display :<n>, but in such a situation
-		   (Xnest) we have already lost anyway */
-		if (word[0] != ':') {
-		    *xswordp = mcalloc (sizeof(*xswordp));
-		    (*xswordp)->str = word;
-		    xswordp = &(*xswordp)->next;
-		}
+	    /* this will break on -display :<n>, but in such a situation
+	       (Xnest) we have already lost anyway */
+	    if (xswordp && word[0] != ':' &&
+		(word[0] != 'v' || word[1] != 't' || !isdigit(word[2])))
+	    {
+		*xswordp = mcalloc (sizeof(*xswordp));
+		(*xswordp)->str = word;
+		xswordp = &(*xswordp)->next;
 	    }
 	    wrd = wrd->next;
 	}
@@ -1229,24 +1225,10 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 #else
 	    StrCat (&buf, "%s%s%s local", dname, dclassp, dclass);
 #endif
-#ifdef RDPYS
-	    vt = 0;
-#endif
 	    while ((wrd = wrd->next)) {
 		word = wrd->str;
-#ifdef RDPYS
-		if (word[0] == 'v' && word[1] == 't')
-		    vt = 1;
-#endif
 		StrCat (&buf, " %s", word);
 	    }
-#ifdef RDPYS
-	    if (!vt) {
-		for (vt = 6; vtmask & (1 << vt); vt++);
-		vtmask |= (1 << vt);
-		StrCat (&buf, " vt%d", vt + 1);
-	    }
-#endif
 	}
       elin:
 	if (lin->comment)
@@ -1262,8 +1244,6 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 	for (; nldpys < 3; nldpys++) {
 	    for (dn = 0; dpymask & (1 << dn); dn++);
 	    dpymask |= (1 << dn);
-	    for (vt = 6; vtmask & (1 << vt); vt++);
-	    vtmask |= (1 << vt);
 # ifdef CONS
 #  ifdef __linux__
 	    for (tty = 0; ttymask & (1 << tty); tty++);
@@ -1281,7 +1261,7 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 # endif
 	    for (wrd = xswords; wrd; wrd = wrd->next)
 		StrCat (&buf, " %s", wrd->str);
-	    StrCat (&buf, " :%d vt%d\n", dn, vt + 1);
+	    StrCat (&buf, " :%d\n", dn);
 	}
     }
 */
@@ -1310,6 +1290,58 @@ mk_xservers(Entry *ce, Section *cs ATTR_UNUSED)
     else
 	if (!copyfile (ce, "Xservers", 0644, edit_xservers))
 	    goto mkdef;
+}
+
+#ifdef HAVE_VTS
+static char *
+memmem(char *mem, int lmem, const char *smem, int lsmem)
+{
+    for (; lmem >= lsmem; mem++, lmem--)
+	if (!memcmp (mem, smem, lsmem))
+	    return mem + lsmem;
+    return 0;
+}
+#endif
+
+static void
+upd_servervts(Entry *ce, Section *cs ATTR_UNUSED)
+{
+#ifdef HAVE_VTS
+    File it;
+    char *p, *eol, *ep;
+    int tty, maxtty;
+
+    if (!ce->active) {	/* there is only the Global one */
+#ifdef __linux__	/* XXX actually, sysvinit */
+	if (readFile (&it, "/etc/inittab")) {
+	    maxtty = 0;
+	    for (p = it.buf; p < it.eof; p = eol + 1) {
+		for (eol = p; eol < it.eof && *eol != '\n'; eol++);
+		if (*p != '#') {
+		    if ((ep = memmem(p, eol - p, " tty", 4)) &&
+			ep < eol && isdigit(*ep))
+		    {
+			if (ep + 1 == eol || isspace(*(ep + 1)))
+			    tty = *ep - '0';
+			else if (isdigit(*(ep + 1)) &&
+				 (ep + 2 == eol || isspace(*(ep + 2))))
+			    tty = (*ep - '0') * 10 + (*(ep + 1) - '0');
+			else
+			    continue;
+			if (tty > maxtty)
+			    maxtty = tty;
+		    }
+		}
+	    }
+	    freeBuf (&it);
+	    if (!maxtty)
+		maxtty = 6;
+	    ASPrintf((char **)&ce->value, "-%d", maxtty + 1);
+	    ce->active = ce->written = 1;
+	}
+#endif
+    }
+#endif
 }
 
 #ifdef XDMCP

@@ -162,6 +162,24 @@ ForEachDisplay (void (*f)(struct display *))
     }
 }
 
+#ifdef HAVE_VTS
+static void
+_forEachDisplayRev (struct display *d, void (*f)(struct display *))
+{
+    if (d) {
+	if (d->next)
+	    _forEachDisplayRev(d->next, f);
+	(*f) (d);
+    }	
+}
+
+void
+ForEachDisplayRev (void (*f)(struct display *))
+{
+    _forEachDisplayRev(displays, f);
+}
+#endif
+
 struct display *
 FindDisplayByName (const char *name)
 {
