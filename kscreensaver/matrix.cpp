@@ -111,12 +111,6 @@ QString getScreenSaverName() {
   return i18n("Kmatrix \"The Matrix\" movie style screen saver");
 }
 
-void exposeScreenSaver( int x, int y, int width, int height ) {
-  if ( saver ) {
-  //  saver->expose( x, y, width, height );
-  }
-}
-
 //--------------------------------------------------------------------
 // KMatrixSaver code
 
