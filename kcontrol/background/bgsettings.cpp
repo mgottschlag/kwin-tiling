@@ -880,7 +880,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
 	m_CurrentWallpaper = kapp->random() % m_WallpaperFiles.count();
 	break;
     default:
-	return;
+	break;
     }
 
     m_LastChange = (int) time(0L);
@@ -938,7 +938,11 @@ QString KBackgroundSettings::fingerprint()
 
     s += QString("wm:%1;").arg(m_WallpaperMode);
     if (m_WallpaperMode != NoWallpaper)
-        s += QString("wp:%1;").arg(currentWallpaper());
+    {
+        Q_UINT32 rh = KGlobal::dirs()->calcResourceHash("wallpaper", currentWallpaper(), false);
+        s += QString("wp:%2:%1;").arg(rh).arg(currentWallpaper());
+        
+    }
     s += QString("blm:%1;").arg(m_BlendMode);
     if (m_BlendMode != NoBlending) {
       s += QString("blb:%1;").arg(m_BlendBalance);
