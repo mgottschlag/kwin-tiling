@@ -1,0 +1,25 @@
+[Desktop Entry]
+Exec=kcmshell general 
+Icon=style
+Type=Application
+DocPath=kcontrol/widgetstyle.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=general
+X-KDE-FactoryName=general
+X-KDE-Init=general
+
+Name=Widget Settings 
+
+Comment=Allows to manipulate the behavior of some widgets.
+Comment[az]=Bəzi pəncərəciklərin davranışını idarə edər.
+Comment[da]=Tillader manipulering af visse dimsers opførsel.
+Comment[es]=Permite manipular el comportamiento de algunos widgets (objetos visuales)
+Comment[tr]=KDE parçacıklarının görünümünü düzenler
+
+Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
+Keywords[az]=tərz,tərzlər,görünüş,dekorlar,örtük,örtüklər,parçacıq,menyu,MacOS,menyu çubuğu,timsal,timsallar,vasitə çubuğu,mətn,düymə,siçan,şəffaf,hərəkət,ekran,proqram,proqramlar,KDE proqramları
+Keywords[da]=stil,udseende,dims,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
+Keywords[es]=estilo,estilos,temas,aspecto,objeto visual,widget,texto,resaltado,botones, aplicaciones, aplicaciones KDE
+Keywords[sv]=stil,stilar,utseende,komponent,ikoner,verktygrader,text,färgläggning, pogram,KDE-program
+Keywords[tr]=simgeler,stil,stiller,dekor,dekorlar,tema,temalar,görünüm,parçacık,menü,KDE uygulamaları,araç çubukları,uygulamalar
