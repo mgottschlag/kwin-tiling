@@ -54,12 +54,16 @@ class CMisc
     static bool         fWritable(const QString &f);
     static bool         dWritable(const QString &d);
     static bool         dHasSubDirs(const QString &d);
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     static bool         dContainsTTorT1Fonts(const QString &d);
+#endif
     static QString      dirSyntax(const QString &d);
     static QString      getDir(const QString &f);
     static QString      getFile(const QString &f);
     static unsigned int getNumItems(const QString &d);
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     static unsigned int countFonts(const QString &d);
+#endif
     static bool         createDir(const QString &dir);
     static bool         removeDir(const QString &dir)                        { return doCmd("rmdir", dir); }
     static bool         removeFile(const QString &file)                      { return doCmd("rm", "-f", file); }

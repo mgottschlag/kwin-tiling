@@ -95,6 +95,7 @@ bool CMisc::dHasSubDirs(const QString &d)
     return false;
 }
 
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 bool CMisc::dContainsTTorT1Fonts(const QString &d)
 {
     QDir dir(d);
@@ -117,6 +118,7 @@ bool CMisc::dContainsTTorT1Fonts(const QString &d)
  
     return false;
 }
+#endif
 
 QString CMisc::dirSyntax(const QString &d)
 {
@@ -171,6 +173,7 @@ unsigned int CMisc::getNumItems(const QString &d)
     return 0;
 }
 
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 unsigned int CMisc::countFonts(const QString &d)
 {
     QDir         dir(d);
@@ -194,6 +197,7 @@ unsigned int CMisc::countFonts(const QString &d)
 
     return num;
 }
+#endif
 
 bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)
 {
