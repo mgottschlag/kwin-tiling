@@ -275,12 +275,12 @@ KDMView::insertItemList( KVItemList* itlist)
 void 
 KDMView::calcDimen()
 {
-     setNumCols( viewWidth()/(cellWidth()?cellWidth():1));
+     setNumCols( (viewWidth()-2*frameWidth())/(cellWidth()?cellWidth():1));
      /*if( numCols() * cellWidth() < viewWidth() - cellWidth()*0.75) 
 	  setNumCols( numCols()+1);*/
      if( numCols() == 0)
 	  setNumCols( 1);
-     setNumRows( itemList->count()/numCols());
+     setNumRows( itemList->count()/numCols());     
      if( numRows() == 0 || itemList->count()%numCols() != 0)
 	  setNumRows( numRows() + 1);
 }
@@ -288,8 +288,8 @@ KDMView::calcDimen()
 QSize
 KDMView::sizeHint() const
 {
-     return QSize( (int)sqrt( itemList->count())*cellWidth()+2*frameWidth(), 
-		   (int)sqrt( itemList->count())*cellHeight()+2*frameWidth());
+  return QSize( (int)sqrt( itemList->count())*cellWidth()+2*frameWidth(), 
+  		(int)sqrt( itemList->count())*cellHeight()+2*frameWidth());
 }
 
 int
