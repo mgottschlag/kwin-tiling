@@ -185,7 +185,7 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
      qSwap(strAll1, strAll3);
   }
 
-  label = new QLabel("Modifier Key", this );
+  label = new QLabel(i18n("Modifier Key"), this );
   layout->addWidget(label, 13, 1);
   strAllKey = i18n("Here you select whether holding the Meta key or Alt key "
     "will allow you to perform the following actions.");
