@@ -28,8 +28,10 @@
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <qtooltip.h>
+#include <qwhatsthis.h>
 
 #include <kglobal.h>
+#include <kdialog.h>
 
 #include <kconfig.h>
 #include <ksimpleconfig.h>
@@ -48,22 +50,24 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   QLabel *label;
 
   // Time
-  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
-  tl1->setColStretch(2, 1); 
+  QGridLayout *tl1 = new QGridLayout(this, 1, 1, 
+				     KDialog::marginHint(),
+				     KDialog::spacingHint());
+  tl1->setColStretch(2, 1);
 
-  label = new QLabel(this, I18N_NOOP("Time format"));
+  label = new QLabel(this, I18N_NOOP("Time format:"));
   edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edTimeFmt, 0, 2);
 
-  label = new QLabel(this, I18N_NOOP("Date format"));
+  label = new QLabel(this, I18N_NOOP("Date format:"));
   edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edDateFmt, 1, 2);
 
-  label = new QLabel(this, I18N_NOOP("Short date format"));
+  label = new QLabel(this, I18N_NOOP("Short date format:"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
@@ -190,20 +194,18 @@ void KLocaleConfigTime::reset()
 
 void KLocaleConfigTime::reTranslate()
 {
-  QToolTip::add(edTimeFmt, locale->translate(
-   "The text in this textbox will be used to format\n"  
+  QWhatsThis::add(edTimeFmt, locale->translate(
+   "The text in this textbox will be used to format "
    "time strings. The sequences below will be replaced:\n"
    "\n"
-   "%H The hour as a decimal number using a 24-hour clock\n"
-   "   (00-23).\n"
+   "%H The hour as a decimal number using a 24-hour clock (00-23).\n"
    "%k The hour (24-hour clock) as a decimal number (0-23).\n"
-   "%I The  hour as a decimal number using a 12-hour clock\n"
-   "   (01-12).\n"
+   "%I The  hour as a decimal number using a 12-hour clock (01-12).\n"
    "%l The hour (12-hour clock) as a decimal number (1-12).\n"
    "%M The minute as a decimal number (00-59).\n"
    "%S The second as a decimal number (00-59).\n"
-   "%p Either AM or PM according to the given time\n"
-   "   value. Noon is treated as Pm and midnight as Am."));
+   "%p Either AM or PM according to the given time "
+   "value. Noon is treated as PM and midnight as AM."));
 
   QString datecodes = locale->translate(
     "\n"
@@ -218,12 +220,12 @@ void KLocaleConfigTime::reTranslate()
     "%a\tThe first three characters of the weekday name.\n"
     "%A\tThe full weekday name.");
 
-  QToolTip::add(edDateFmt, locale->translate(
-    "The text in this textbox will be used to format long\n"
+  QWhatsThis::add(edDateFmt, locale->translate(
+    "The text in this textbox will be used to format long "
     "dates. The sequences below will be replaced:\n") + datecodes);
 
-  QToolTip::add(edDateFmtShort, locale->translate(
-    "The text in this textbox will be used to format short\n"
-    "dates. This is for instance used when listing files.\n"
+  QWhatsThis::add(edDateFmtShort, locale->translate(
+    "The text in this textbox will be used to format short "
+    "dates. For instance, this is used when listing files. "
     "The sequences below will be replaced:\n") + datecodes);
 }
