@@ -47,29 +47,23 @@ KURISearchFilterEngine::KURISearchFilterEngine()
 
 QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
 {
-    if( m_bSearchKeywordsEnabled )
-	{
-	    QString key;
+    if ( m_bSearchKeywordsEnabled )
+    {
+        QString key, search = url.url();
+        int pos = search.find(':');
+        if ( pos > -1 )
+         key = search.left(pos);
 
-	    // NOTE: We simply do not use KURL::protocol() here
-	    // because it would mean that the search engine short-
-	    // cuts would have to be restricted to a sub-set of
-	    // latin1 character sets, namely alpha-numeric characters
-	    // a '+' and a '-', when they really do not have to be.
-	    QString _url = url.url();
-	    int pos = _url.find(':');
-	    if (pos >= 0)
-		key = _url.left(pos);
+        if ( key.isEmpty() || KProtocolInfo::isKnownProtocol( key ) )
+            return QString::null;
 
-	    // Do not touch known protocols or search for empty keys ;)
-	    if( KProtocolInfo::isKnownProtocol( key ) || key.isEmpty() )
-		return QString::null;
+        SearchProvider *provider = SearchProvider::findByKey(key);
 
-            SearchProvider *provider = SearchProvider::findByKey(key);
-            if (provider)
-                return formatResult(provider->query(), provider->charset(),
-                                    QString::null, _url.mid(pos + 1), url.isMalformed());
-	}
+        if ( provider )
+            return formatResult( provider->query(), provider->charset(),
+                                 QString::null, search.mid(pos+1),
+                                 url.isMalformed() );
+    }
     return QString::null;
 }
 
@@ -165,7 +159,11 @@ KURISearchFilterEngine* KURISearchFilterEngine::self()
     return s_pSelf;
 }
 
-QString KURISearchFilterEngine::formatResult( const QString& query, const QString& cset1, const QString& cset2, const QString& url, bool isMalformed ) const
+QString KURISearchFilterEngine::formatResult( const QString& query,
+                                              const QString& cset1,
+                                              const QString& cset2,
+                                              const QString& url,
+                                              bool isMalformed ) const
 {
     // Substitute the variable part we find in the query.
     if (!query.isEmpty())
@@ -199,23 +197,25 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
 		newurl = newurl.replace(pct, 2, csetb);
 	    }
 
-	    QString userquery = csetacodec->fromUnicode(url);
-	    int space_pos;
-	    while( (space_pos=userquery.find(' ')) != -1 )
-		userquery=userquery.replace( space_pos, 1, "+" );
+        QString userquery = csetacodec->fromUnicode(url);
+        int space_pos;
+        while( (space_pos=userquery.find('+')) != -1 )
+        userquery=userquery.replace( space_pos, 1, "%2B" );
 
-	    if( isMalformed )
-		userquery = KURL::encode_string(userquery);
+        while( (space_pos=userquery.find(' ')) != -1 )
+        userquery=userquery.replace( space_pos, 1, "+" );
 
-	    if ((pct = newurl.find("\\1")) >= 0)
-		newurl = newurl.replace(pct, 2, userquery);
+        if ( isMalformed )
+        userquery = KURL::encode_string(userquery);
 
-	    if ( m_bVerbose )
-		kdDebug(7023) << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
+        if ((pct = newurl.find("\\1")) >= 0)
+        newurl = newurl.replace(pct, 2, userquery);
 
-	    return newurl;
-	}
+        if ( m_bVerbose )
+        kdDebug(7023) << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
 
+        return newurl;
+    }
     return QString::null;
 }
 
@@ -285,7 +285,7 @@ void KURISearchFilterEngine::loadConfig()
             kdDebug(7023) << "...completed" << endl;
         }
     }
-    
+
     kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
     // First empty any current config we have.
     m_lstInternetKeywordsEngine.clear();
