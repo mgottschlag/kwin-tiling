@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libkcm_knotify.la
 libkcm_knotify_la_SOURCES = main.cpp knotify.cpp eventview.cpp eventconfig.cpp
 
 libkcm_knotify_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_knotify_la_LIBADD = -lkdeui
+libkcm_knotify_la_LIBADD = -lkdeui -lkfile
 INCLUDES= $(all_includes)
  
 libkcm_knotify_la_METASOURCES = AUTO

@@ -20,6 +20,16 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.13  2000/04/13 01:55:36  charles
+    Milestone 6.  All that's left now is being able to save.  That's also
+    the most important part :)
+
+    Question: if you open a full path in KConfig:
+    	/opt/kde2/share/config/bleh   (I look for this file with KStdDir)
+
+    How do I get this file's local version (~/.kde/share/config/bleh) that is,
+    and safely.
+
     Revision 1.12  2000/04/11 05:33:12  charles
     Milestone 5.  Can't even remember how it's better, but it is (trust me).
 
@@ -83,7 +93,7 @@
 #include <knotifyclient.h>
 #include <qlistbox.h>
 #include <qcheckbox.h>
-#include <klineedit.h>
+#include <kurlrequester.h>
 #include <kconfig.h>
 #include <qpushbutton.h>
 
@@ -97,7 +107,6 @@ public:
 	EventView(QWidget *parent, const char *name=0);
 	virtual ~EventView();
 
-	static int listNum(int enumNum);
 	static int enumNum(int listNum);
 	
 public slots:
@@ -119,7 +128,7 @@ private:
 
 	QListBox *eventslist;
 	QCheckBox *enabled;
-	QLineEdit *file;
+	KURLRequester *file;
 	QPushButton *todefault;
 	
 	EventConfig *event;
