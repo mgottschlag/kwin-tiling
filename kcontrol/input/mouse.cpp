@@ -12,6 +12,9 @@
  * Double click interval, drag time & dist
  * Copyright (c) 2000 Bernd Gehrmann
  *
+ * Large cursor support
+ * Copyright (c) 2000 Rik Hemsley <rik@kde.org>
+ *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
  *
@@ -53,6 +56,9 @@
 #include <kconfig.h>
 #include <kipc.h>
 #include <kapp.h>
+#include <kstddirs.h>
+#include <kio/netaccess.h>
+#include <kmessagebox.h>
 
 #include "mouse.h"
 
@@ -492,14 +498,51 @@ void MouseConfig::save()
   config->writeEntry( "AutoSelectDelay", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
   config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
 
-  config->writeEntry( "LargeCursor", cbLargeCursor->isChecked(), true, true );
+  bool largeCursor = cbLargeCursor->isChecked();
+
+  // Check if the user has asked us not to remind them that KDE needs
+  // restarting after a cursor size change.
+
+  if (!config->readBoolEntry("DoNotRemindCursor", false)) {
+
+    bool wasLargeCursor =
+      config->readBoolEntry(
+        QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR
+                           );
+
+    if (largeCursor != wasLargeCursor) {
+      KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
+    }
+  }
+
+  config->writeEntry( "LargeCursor", largeCursor, true, true );
+
+  // Make sure we have the 'font' resource dir registered and can find the
+  // override dir.
+  //
+  // Next, if the user wants large cursors, copy the font
+  // cursor_large.pcf.gz to (localkdedir)/share/fonts/override/cursor.pcf.gz.
+  // Else remove the font cursor.pcf.gz from (localkdedir)/share/fonts/override.
+  //
+  // Run mkfontdir to update fonts.dir in that dir.
+
+  KGlobal::dirs()->addResourceType("font", "share/fonts/");
+  QString overrideDir = locateLocal("font", "override/");
+  QString font = locate("data", "kcminput/cursor_large.pcf.gz");
+  QString installedFont = overrideDir + "/cursor.pcf.gz";
+
+  if (!largeCursor)
+    KIO::NetAccess::del(installedFont);
+  else if (!!font)
+    KIO::NetAccess::copy(font, installedFont);
+
+  system(QString("mkfontdir " + overrideDir).ascii());
+
   config->sync();
 
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
-
   delete config;
 }
-
 
 void MouseConfig::defaults()
 {

@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libkcm_input.la
 libkcm_input_la_SOURCES = main.cpp keyboard.cpp mouse.cpp
 
 libkcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_input_la_LIBADD = -lkdeui
+libkcm_input_la_LIBADD = $(LIB_KIO) $(LIB_KDEUI)
 
 INCLUDES= $(all_includes)
 
@@ -16,7 +16,7 @@ data_DATA = keyboard.desktop mouse.desktop
 datadir = $(kde_appsdir)/Settings/Peripherals
 
 fontdir = $(kde_datadir)/kcminput
-font_DATA = cursor_large.pcf.gz cursor.pcf.gz
+font_DATA = cursor_large.pcf.gz
 EXTRA_DIST = $(font_DATA)
 
 install-data-hook:
