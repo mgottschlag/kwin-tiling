@@ -44,6 +44,7 @@
 #include "localeother.h"
 #include "klocalesample.h"
 #include "toplevel.h"
+#include "kcmlocale.h"
 #include <kaboutdata.h>
 #include "toplevel.moc"
 
