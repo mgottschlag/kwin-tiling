@@ -140,7 +140,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     : QVGroupBox( parent, name ),
       advancedWidget( 0L )
 {
-    ASSERT( list != 0L );
+    Q_ASSERT( list != 0L );
 
     setTitle( i18n("Action settings") );
 

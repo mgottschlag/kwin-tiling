@@ -277,7 +277,7 @@ void TopLevel::clickedMenu(int id)
 
 void TopLevel::showPopupMenu( QPopupMenu *menu )
 {
-    ASSERT( menu != 0L );
+    Q_ASSERT( menu != 0L );
 
     menu->move(-1000,-1000);
     menu->show();
