@@ -1,0 +1,17 @@
+dnl -----------------------------------------------------
+dnl X Resize and Rotate extension library check
+dnl -----------------------------------------------------
+
+dnl The header check doesn't work because Xrandr.h doesn't include all of its requirements(!)
+dnl KDE_CHECK_HEADERS(X11/extensions/Xrandr.h, [xrandr_h=yes], [xrandr_h=no])
+dnl if test "$xrandr_h" = yes; then
+  KDE_CHECK_LIB(Xrandr, XRRSetScreenConfigAndRate, [
+    LIB_XRANDR=-lXrandr
+    AC_DEFINE_UNQUOTED(HAVE_XRANDR, 1, [Defined if your system has XRandR support])
+  ], [
+    DO_NOT_COMPILE="$DO_NOT_COMPILE kcmrandr"
+  ], -lXrender $X_EXTRA_LIBS)
+dnl else
+dnl   LIB_XRANDR=
+dnl fi
+AC_SUBST(LIB_XRANDR)

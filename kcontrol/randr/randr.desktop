@@ -1,0 +1,16 @@
+[Desktop Entry]
+Icon=kscreensaver
+Type=Application
+Exec=kcmshell randr
+X-KDE-ModuleType=Library
+X-KDE-Library=randr
+
+Name=Screen Size and Orientation
+Name[xx]=xx
+
+Comment=Resize and Rotate your display
+Comment[xx]=xx
+
+Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
+Keywords[xx]=xx
+
