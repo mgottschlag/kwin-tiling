@@ -1,4 +1,5 @@
 # Makefile.am for kdebase/ksplashml/kcmksplash
+SUBDIRS=pics
 
 INCLUDES = $(all_includes)
 METASOURCES = AUTO
