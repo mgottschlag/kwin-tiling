@@ -24,15 +24,14 @@
     */
  
 
-#include <kglobal.h>
-#include <kstddirs.h>
-
 #include "kdmconfig.h"
 #include "kdmview.h"
 #include <qpixmap.h>
+#include <kapp.h>
 #include <pwd.h>
 #include <sys/types.h>
 #include <iostream.h>
+#include <kglobal.h>
 
 // Func. for splitting ';' sep. lists.
 static void semsplit( const QString& str, QStrList& result)
@@ -57,7 +56,7 @@ KDMConfig::KDMConfig( )
 KVItemList*
 KDMConfig::getUsers( QString s, bool sorted)
 {
-     QString user_pix_dir(locate("data", "/kdm/pics/users/"));
+     QString user_pix_dir( KApplication::kde_datadir() +"/kdm/pics/users/");
      KVItemList* result = new KVItemList;
      QPixmap default_pix( user_pix_dir + "default.xpm");
      if( default_pix.isNull())
@@ -111,7 +110,7 @@ p));
 void
 KDMConfig::getConfig()
 {
-  QString aFileName(locate("config", "/kdmrc"));
+  QString aFileName = KApplication::kde_configdir() + "/kdmrc"; 
   kc = new KConfig( aFileName ); // kalle
      kc->setGroup( "KDM");
 
@@ -141,6 +140,10 @@ KDMConfig::getConfig()
                *_restart = "/sbin/reboot";
      } else
           _shutdownButton   = KNone;
+
+     _consoleMode = new QString(kc->readEntry("ConsoleMode"));
+     if (_consoleMode->isNull())
+       *_consoleMode = "/sbin/init 3";
      
      /* TODO: to be ported to QStyle
      if( kc->hasKey( "GUIStyle")) {
@@ -155,7 +158,7 @@ KDMConfig::getConfig()
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?
-          _logo = new QString(locate("data", "/kdm/pics/kdelogo.xpm" ));
+          _logo = new QString( KApplication::kde_datadir() + "/kdm/pics/kdelogo.xpm" );
      else
           _logo = new QString( logo_string);
 
@@ -244,6 +247,12 @@ KDMConfig::getConfig()
           greet_string.replace( rx, hostname);
           _greetString = new QString( greet_string);
      }
+
+     // Lilo options
+     kc->setGroup("Lilo");
+     _liloCmd = kc->readEntry("LiloCommand", "/sbin/lilo");
+     _liloMap = kc->readEntry("LiloMap", "/boot/map");
+     _useLilo = kc->readBoolEntry("Lilo", FALSE);
 }
 
 KDMConfig::~KDMConfig()

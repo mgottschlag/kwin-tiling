@@ -48,11 +48,16 @@ class KDMShutdown : public FDialog {
 public:
      KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
 		  const char* _shutdown = "/sbin/halt", 
-		  const char* _restart  = "/sbin/reboot");
+		  const char* _restart  = "/sbin/reboot",
+		  const char *_console = "/sbin/init 3",
+		  bool _lilo = FALSE,
+		  const char* _lilocmd = 0,
+                  const char* _lilomap = 0);
 private slots:
      void rb_clicked(int);
      void pw_entered();
      void bye_bye();
+     void target_changed(int);
 private:
      QLabel*       label;
      QButtonGroup* btGroup;
@@ -62,6 +67,11 @@ private:
      const char*   cur_action;
      const char*   shutdown;
      const char*   restart;
+     const char*   console;
+     QRadioButton  *restart_rb;
+     bool          lilo;
+     int           liloTarget;
+     QString       liloCmd, liloMap;
 };
 
 #endif /* KDMSHUTDOWN_H */

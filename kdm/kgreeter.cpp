@@ -39,7 +39,7 @@
 #include <qbitmap.h>
 #include <qmessagebox.h>
 #include <qtextstream.h>
-
+#include <qpopupmenu.h>
 #include <kimgio.h>
 #include <klocale.h>
 
@@ -258,8 +258,9 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      if( kdmcfg->shutdownButton() != KDMConfig::KNone 
 	 && ( kdmcfg->shutdownButton() != KDMConfig::ConsoleOnly 
 	 || d->displayType.location == Local)) {
-	  shutdownButton = new QPushButton( i18n("Shutdown..."),
-					    winFrame);
+	  
+	  shutdownButton = new QPushButton(i18n("Shutdown..."), winFrame);
+
 	  connect( shutdownButton, SIGNAL(clicked()), 
 		   SLOT(shutdown_button_clicked()));
 	  set_fixed( shutdownButton);
@@ -322,13 +323,19 @@ KGreeter::cancel_button_clicked()
 void 
 KGreeter::shutdown_button_clicked()
 {
-     timer->stop();
-     KDMShutdown k( kdmcfg->shutdownButton(),
-		    this, "Shutdown",
-		    kdmcfg->shutdown()->ascii(), 
-		    kdmcfg->restart()->ascii());
-     k.exec();
-     SetTimer();
+  timer->stop();
+  
+  KDMShutdown k( kdmcfg->shutdownButton(),
+		 this, "Shutdown",
+		 kdmcfg->shutdown()->ascii(), 
+		 kdmcfg->restart()->ascii(),
+		 kdmcfg->consoleMode()->ascii(),
+		 kdmcfg->useLilo(),
+		 kdmcfg->liloCmd().ascii(),
+		 kdmcfg->liloMap().ascii());
+  k.exec();
+
+  SetTimer();
 }
 
 // Switch uid/gids to user described by pwd. Return old gid set

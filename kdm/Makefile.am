@@ -13,7 +13,7 @@ bin_PROGRAMS = kdm kdmdesktop
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD  = $(LIB_KIMGIO) $(LIB_KDECORE) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
+LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
 	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) 
 
 # For kdmdesktop
@@ -50,14 +50,15 @@ kdm_SOURCES = kdmconfig.cpp \
 	kdmview.cpp \
 	kfdialog.cpp \
 	kgreeter.cpp \
+	liloinfo.cpp \
 	$(kdmlib_source)
 
 kdmdesktop_SOURCES = \
 	kdmdesktop.cpp
 
-noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h
+noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h liloinfo.h
 
-METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc
+METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc liloinfo.moc
 
 messages:
 	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kdm_SOURCES) $(kdmdesktop_SOURCES) && mv messages.po ../po/kdm.pot

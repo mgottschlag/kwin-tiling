@@ -27,7 +27,7 @@
 #ifndef KDMCONFIG_H
 #define KDMCONFIG_H
 
-# include "kdm-config.h"
+#include "kdm-config.h"
 
 #include <unistd.h>
 
@@ -44,7 +44,7 @@
 
 class KDMConfig {
 public:
-     KDMConfig( );
+     KDMConfig();
      ~KDMConfig();
      
      QFont*          normalFont()      { return _normalFont;}
@@ -60,6 +60,12 @@ public:
      // GUIStyle        style()           { return _style;}
 	// None is defined as a macro somewhere in an X header. GRRRR.
      enum { KNone, All, RootOnly, ConsoleOnly };
+
+     QString         liloCmd() { return _liloCmd; };
+     QString         liloMap() { return _liloMap; };
+     bool            useLilo() { return _useLilo; };
+     QString         *consoleMode() { return _consoleMode; };
+
 private:
      void           getConfig();
      KVItemList*    getUsers( QString s = 0, bool = false);
@@ -76,6 +82,12 @@ private:
      QString*       _logo;
      KVItemList*    _users;
      // GUIStyle       _style;
+     
+     QString        _liloCmd;
+     QString        _liloMap;
+     bool           _useLilo;
+     QString        *_consoleMode;
+
 };
 
 #endif /* KDMCONFIG_H */

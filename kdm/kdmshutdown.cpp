@@ -49,6 +49,8 @@ extern "C" {
 
 #include "dm.h"
 #include <klocale.h>
+#include <qcombobox.h>
+#include "liloinfo.moc"
 
 #ifdef USE_PAM
 static const char *PAM_password;
@@ -151,21 +153,30 @@ verify_root_pw( const char* pw)
 
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  const char* _shutdown, 
-			  const char* _restart)
+			  const char* _restart,
+			  const char *_console,
+			  bool _lilo,
+			  const char *_lilocmd, const char *_lilomap)
+
      : FDialog( _parent, _name, true)
 {
      shutdown = _shutdown;
      restart  = _restart;
+     console = _console;
      int h = 10, w = 0;
+     lilo = _lilo;
+     liloCmd = _lilocmd;
+     liloMap = _lilomap;
      QFrame* winFrame = new QFrame( this);
      winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
      QBoxLayout* box = new QBoxLayout( winFrame, QBoxLayout::TopToBottom, 
 				       10, 10);
-     QString shutdownmsg =  i18n( "Shutdown or restart?");
+     QString shutdownmsg =  i18n( "Shutdown and restart?");
      if( mode == KDMConfig::RootOnly) {
 	  shutdownmsg += '\n';
 	  shutdownmsg += i18n( "(Enter Root Password)");
      }
+     
      label = new QLabel( shutdownmsg, winFrame);
      label->adjustSize();
      label->setFixedSize( label->size());
@@ -196,14 +207,37 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
      box->addWidget( rb);
      btGroup->insert( rb);
-     rb = new QRadioButton( winFrame /*btGroup*/);
-     rb->setText( i18n("Shutdown and restart"));
-     rb->setFocusPolicy( StrongFocus);
-     h += rb->height() + 10;
-     w = QMAX( rb->width(), w);
 
-     box->addWidget( rb);
-     btGroup->insert( rb);
+     QHBoxLayout *hbox = new QHBoxLayout(box);
+
+     restart_rb = new QRadioButton( winFrame /*btGroup*/);
+     restart_rb->setText( i18n("Restart"));
+     set_min( restart_rb);
+     restart_rb->setFocusPolicy( StrongFocus);
+     h += restart_rb->height() + 10;
+     w = QMAX( restart_rb->width(), w);
+
+     hbox->addWidget(restart_rb);
+
+     if ( _lilo ) 
+     {
+       QComboBox *targets = new QComboBox(winFrame);
+       hbox->addWidget(targets);
+
+       // fill combo box with contents of lilo config
+       LiloInfo info(_lilocmd, _lilomap);
+
+       QStrList list;
+       if (info.getBootOptions(&list) == 0)
+       {
+	 targets->insertStrList(list);
+         liloTarget = info.getDefaultBootOptionIndex();
+	 targets->setCurrentItem(liloTarget);
+	 connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
+       }
+     }
+
+     btGroup->insert( restart_rb);
      rb = new QRadioButton( winFrame /*btGroup*/);
      rb->setText( i18n("Restart X Server"));//better description
      rb->setFocusPolicy( StrongFocus);
@@ -212,6 +246,15 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 
      box->addWidget( rb);
      btGroup->insert( rb);
+
+     rb = new QRadioButton(winFrame);
+     rb->setText(i18n("Console Mode"));
+     set_min(rb);
+     rb->setFocusPolicy(StrongFocus);
+     h += rb->height() + 10;
+     w = QMAX(rb->width(),w);
+     box->addWidget(rb);
+     btGroup->insert(rb);
 
      // Passwd line edit
      if( mode == KDMConfig::RootOnly) {
@@ -275,7 +318,18 @@ KDMShutdown::rb_clicked( int id)
      case 2:
 	  cur_action = 0L;
 	  break;
+     case 3:
+	  cur_action = console;
+	  break;
      }
+}
+
+void
+KDMShutdown::target_changed(int id)
+{
+     cur_action = restart;
+     restart_rb->setChecked(TRUE);
+     liloTarget = id;
 }
 
 void
@@ -294,6 +348,15 @@ KDMShutdown::bye_bye()
 {
      if( cur_action) {
 	  if( fork() == 0) {
+
+	       // if lilo, set the reboot option
+	       if (lilo && restart_rb->isChecked())
+	       {
+		    LiloInfo info(liloCmd, liloMap);
+
+		    info.setNextBootOption(liloTarget);
+	       }
+
 	       sleep(1);
 	       system( cur_action);
 	       exit( UNMANAGE_DISPLAY);
@@ -314,7 +377,7 @@ int main(int argc, char **argv)
 {
      QApplication app( argc, argv);
      app.setFont( QFont( "helvetica", 18));
-     KDMShutdown sd( 0, 0,"Hej", "echo shutdown", "echo restart");
+     KDMShutdown sd( 0, 0,"Hej", "echo shutdown", "echo restart", "echo lilo", "");
      app.setMainWidget( &sd);
      return sd.exec();
 }

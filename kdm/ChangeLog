@@ -1,3 +1,15 @@
+1999-06-07  Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+
+	* kdmshutdown.cpp:
+
+	  added Lilo reboot handling from 
+          Stefan van den Oord <oord@cs.utwente.nl> 
+	
+	  added button to switch to console mode
+
+	  TODO: Update kcmkdm to actually use these options
+
+
 1999-02-01  Steffen Hansen  <stefh@mip.ou.dk>
 
 	* kdmshutdown.cpp :
