@@ -388,7 +388,13 @@ void AboutWidget::updatePixmap()
             {
               szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
               p.setFont(f2);
-              p.drawText(xoffset, yoffset, szName);
+              QRect bounds;
+              p.drawText(xoffset, yoffset, xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szName, -1, &bounds);
+              lp.drawText(xoffset, yoffset,
+                xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szName);
+              yoffset += bounds.height() + 5;
             }
 
 //          yoffset += fheight + 5;
