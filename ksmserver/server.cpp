@@ -49,6 +49,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <errno.h>
 #include <string.h>
+#include <assert.h>
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
@@ -1549,6 +1550,15 @@ void KSMServer::publishProgress( int progress, bool max  )
 void KSMServer::upAndRunning( const QString& msg )
 {
     DCOPRef( "ksplash" ).send( "upAndRunning", msg );
+    XEvent e;
+    e.xclient.type = ClientMessage;
+    e.xclient.message_type = XInternAtom( qt_xdisplay(), "_KDE_SPLASH_PROGRESS", False );
+    e.xclient.display = qt_xdisplay();
+    e.xclient.window = qt_xrootwin();
+    e.xclient.format = 8;
+    assert( strlen( msg.latin1()) < 20 );
+    strcpy( e.xclient.data.b, msg.latin1());
+    XSendEvent( qt_xdisplay(), qt_xrootwin(), False, SubstructureNotifyMask, &e );
 }
 
 

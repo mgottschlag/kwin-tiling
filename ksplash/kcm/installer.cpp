@@ -330,10 +330,10 @@ void SplashInstaller::slotSetTheme(int id)
         path = mThemesList->text2path[path];
     enabled = false;
     KURL url;
+    QString themeName;
     if (!path.isEmpty())
     {
       // Make sure the correct plugin is installed.
-      QString themeName;
       int i = path.findRev('/');
       if (i >= 0)
         themeName = path.mid(i+1);
@@ -381,7 +381,7 @@ void SplashInstaller::slotSetTheme(int id)
         error = i18n("Could not load theme configuration file.");
       }
     }
-    mBtnTest->setEnabled(enabled);
+    mBtnTest->setEnabled(enabled && themeName != "None" );
     mText->setText(infoTxt);
     if (!enabled)
     {
@@ -458,6 +458,17 @@ void SplashInstaller::slotTest()
   if (r >= 0)
     themeName = themeName.mid(r+1);
 
+  // special handling for none and simple splashscreens
+  if( themeName == "None" )
+    return;
+  if( themeName == "Simple" )
+  {
+    KProcess proc;
+    proc << "ksplashsimple" << "--test";
+    if (!proc.start(KProcess::Block))
+      KMessageBox::error(this,i18n("Unable to start ksplashsimple."));
+    return;
+  }
   KProcess proc;
   proc << "ksplash" << "--test" << "--theme" << themeName;
   if (!proc.start(KProcess::Block))
