@@ -57,15 +57,12 @@ void ModuleTreeView::fill()
     {
       if (module->library().isEmpty())
 		continue;
-      
-      if (KCGlobal::system()) {
-		if (!module->onlyRoot())
-		  continue;
-	  }
-      else {
-		if (module->onlyRoot() && !KCGlobal::root())
-		  continue;
-	  }
+
+      if (!KCGlobal::types().contains(module->type()))
+		continue;
+
+	  if (module->onlyRoot() && !KCGlobal::root())
+		continue;
       
       ModuleTreeItem *parent = 0;
       parent = getGroupItem(parent, module->groups());

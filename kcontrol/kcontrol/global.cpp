@@ -23,10 +23,11 @@
 #include <sys/utsname.h>
 
 #include "config.h"
+#include "utils.h"
 #include "global.h"
 
 bool KCGlobal::_root = false;
-bool KCGlobal::_system = false;
+QStringList KCGlobal::_types;
 QString KCGlobal::_uname = "";
 QString KCGlobal::_hname = "";
 QString KCGlobal::_kdeversion = "";
@@ -61,4 +62,10 @@ void KCGlobal::init()
   setSystemRelease(info.release);
   setSystemVersion(info.version);
   setSystemMachine(info.machine);
+}
+
+void KCGlobal::setType(const QCString& s)
+{
+  QString string = s;
+  splitString(string, '|', _types);
 }

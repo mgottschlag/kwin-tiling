@@ -50,16 +50,14 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
       if (module->library().isEmpty())
-	continue;      
-      if (KCGlobal::system()) {
-	if (!module->onlyRoot())
-	  continue;
-      }
-      else {
-	if (module->onlyRoot() && !KCGlobal::root())
-	  continue;
-      }
-      
+		continue;
+
+      if (!KCGlobal::types().contains(module->type()))
+		continue;
+
+	  if (module->onlyRoot() && !KCGlobal::root())
+		continue;
+         
       QPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
       int realid = parent->insertItem(module->smallIcon(), module->name(), id);

@@ -39,6 +39,7 @@ public:
   const QStringList &keywords() const { return _keywords; };
   QString name() const { return _name; };
   QString comment() const { return _comment; };
+  QString type() const { return _type; };
   QPixmap smallIcon();
   QPixmap mediumIcon();
   QPixmap largeIcon();
@@ -54,6 +55,7 @@ protected:
   void setGroups(QStringList &groups) { _groups = groups; };
   void setKeywords(QStringList &k) { _keywords = k; };
   void setName(QString name) { _name = name; };
+  void setType(QString type) { _type = type; };
   void setComment(QString comment) { _comment = comment; };
   void setIcon(QString icon) { _icon = icon; };
   void setDirectory(bool dir) { _directory = dir; };
@@ -65,7 +67,7 @@ protected:
 private:
   
   QStringList _groups, _keywords;
-  QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
+  QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment, _type;
   bool        _directory, _root;
 };
 

@@ -21,6 +21,8 @@
 #define __global_h__
 
 #include <qstring.h>
+#include <qstringlist.h>
+#include <qcstring.h>
 
 enum IndexViewMode {Icon, Tree};
 enum IndexIconSize {Small, Medium, Large};
@@ -32,7 +34,7 @@ public:
   static void init();
 
   static bool root() { return _root; }
-  static bool system() { return _system; }
+  static QStringList types() { return _types; }
   static QString userName() { return _uname; }
   static QString hostName() { return _hname; }
   static QString kdeVersion() { return _kdeversion; }
@@ -44,7 +46,7 @@ public:
   static IndexIconSize iconSize() { return _iconsize; }
 
   static void setRoot(bool r) { _root = r; }
-  static void setSystem(bool s) { _system = s; }
+  static void setType(const QCString& s);
   static void setUserName(const QString& n){ _uname = n; }
   static void setHostName(const QString& n){ _hname = n; }
   static void setKDEVersion(const QString& n){ _kdeversion = n; }
@@ -56,7 +58,8 @@ public:
   static void setIconSize(IndexIconSize s) { _iconsize = s; }
 
 private:
-  static bool _root, _system;
+  static bool _root;
+  static QStringList _types;
   static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
   static IndexViewMode _viewmode;
   static IndexIconSize _iconsize;

@@ -48,7 +48,8 @@
 static KCmdLineOptions options[] =
 {
    { "+module", I18N_NOOP("Configuration module to open."), 0 },
-   { "system", I18N_NOOP("Configure system global settings."), 0 },
+   { "t", 0, 0 },
+   { "type <t>", I18N_NOOP("Sow control modules of type \"t\"."), "User" },
    { 0,0,0 }
 };
 
@@ -109,14 +110,14 @@ int main(int argc, char *argv[])
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
   KCGlobal::init();
-  KCGlobal::setSystem(args->isSet("system"));
+  KCGlobal::setType(args->getOption("type"));
 
   if (!MyApplication::start())
     exit(0); // Don't do anything if we are already running
   
   MyApplication app; 
 
-  if (KCGlobal::system() && !KCGlobal::root())
+  if (KCGlobal::types().contains("System") && !KCGlobal::root())
 	{
 	  KMessageBox::error(0, I18N_NOOP("Only the root user can edit system global settings!")
 						 , I18N_NOOP("Error!"));

@@ -102,15 +102,12 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
       if (module->library().isEmpty())
         continue;
       
-      if (KCGlobal::system()) {
-        if (!module->onlyRoot())
-          continue;
-      }
-      else {
-        if (module->onlyRoot() && !KCGlobal::root())
-          continue;
-      }
-      
+      if (!KCGlobal::types().contains(module->type()))
+		continue;
+
+	  if (module->onlyRoot() && !KCGlobal::root())
+		continue;
+	  
       // get the modules keyword list
       QStringList kw = module->keywords();
 

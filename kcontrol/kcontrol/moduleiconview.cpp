@@ -87,16 +87,13 @@ void ModuleIconView::fill()
     {
       if (module->library().isEmpty())
 		continue;
-      
-      if (KCGlobal::system()) {
-		if (!module->onlyRoot())
-		  continue;
-	  }
-      else {
-		if (module->onlyRoot() && !KCGlobal::root())
-		  continue;
-	  }
 
+      if (!KCGlobal::types().contains(module->type()))
+		continue;
+
+	  if (module->onlyRoot() && !KCGlobal::root())
+		continue;
+      
 	  QString path = module->groups().join(QString::null);
 
 	  if(!subdirs.contains(path))
@@ -174,16 +171,13 @@ void ModuleIconView::fill()
 		{
 		  if (module->library().isEmpty())
 			continue;
+
+		  if (!KCGlobal::types().contains(module->type()))
+			continue;
 		  
-		  if (KCGlobal::system()) {
-			if (!module->onlyRoot())
-			  continue;
-		  }
-		  else {
-		if (module->onlyRoot() && !KCGlobal::root())
-		  continue;
-		  }
-		  
+		  if (module->onlyRoot() && !KCGlobal::root())
+			continue;
+				  
 		  QString path = module->groups().join(QString::null);
 		  if(path != _path)
             continue;
