@@ -374,6 +374,13 @@ QString KThemeListBox::currentFile()
            QString::null);
 }
 
+void KThemeListBox::apply()
+{
+    writeSettings();
+}
+
+// Read in a themerc file to .kderc... Now here is a *big* config file ;-)
+// (mosfet)
 void KThemeListBox::writeSettings()
 {
 #define WIDGETS 19
@@ -881,7 +888,8 @@ static bool getSimpleProperty(Window w, Atom a, long &result){
 
 void KGeneral::apply( bool  )
 {
-	iconStyle->apply(); // DF
+        iconStyle->apply(); // DF
+        themeList->apply(); // MF ;-)
 	if ( !changed )
 		return;
 	

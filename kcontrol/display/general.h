@@ -117,6 +117,7 @@ public:
     // This is the currently set name, not selected name.
     QString currentName();
     void writeSettings();
+    void apply();
 protected:
     void readThemeDir(const QString &directory);
     QStrList fileList;
