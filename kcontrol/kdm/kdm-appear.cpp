@@ -230,10 +230,10 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
     QString filename = url.filename();
     QString msg;
-    QStringList dirs = KGlobal::dirs()->getResourceDirs("data", "kdm/pics/");
+    QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
     QString local = KGlobal::dirs()->getSaveLocation("data", "kdm/pics/", false);
     QStringList::ConstIterator it = dirs.begin();
-    if (*it.left(local.length()) == local)
+    if ((*it).left(local.length()) == local)
       it++;
     QString pixurl("file:"+ *it); 
     int last_dot_idx = filename.findRev('.');

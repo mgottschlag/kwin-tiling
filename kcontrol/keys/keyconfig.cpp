@@ -424,12 +424,12 @@ void KKeyConfig::readSchemeNames( )
    // This for system files
    for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) { 
      
-     KSimpleConfig config( fi->filePath(), true );
+     KSimpleConfig config( *it, true );
      config.setGroup( KeyScheme );
-     str = config.readEntry( "SchemeName" );
+     QString str = config.readEntry( "SchemeName" );
      
      sList->insertItem( str );
-     sFileList->append( fi->filePath() );
+     sFileList->append( *it );
      
      nSysSchemes++;
      

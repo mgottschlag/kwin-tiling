@@ -235,10 +235,10 @@ void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 
     QString filename = url.filename();
     QString msg, userpixname;
-    QStringList dirs = KGlobal::dirs()->getResourceDirs("data", "kdm/pics/");
+    QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
     QString local = KGlobal::dirs()->getSaveLocation("data", "kdm/pics/", false);
     QStringList::ConstIterator it = dirs.begin();
-    if (*it.left(local.length()) == local)
+    if ((*it).left(local.length()) == local)
       it++;
     QString pixurl("file:"+ *it); 
     QString user(userlabel->text()); 
@@ -367,6 +367,8 @@ void KDMUsersWidget::slotUserShowMode( int m )
 void KDMUsersWidget::slotUserSelected(int)
 {
   QString default_pix(locate("data", "kdm/pics/users/default.xpm")); 
+  QString user_pix_dir = default_pix.left(default_pix.findRev('/')-1);
+
   QString name;
   QListBox *lb;
 
@@ -388,7 +390,7 @@ void KDMUsersWidget::slotUserSelected(int)
     name = user_pix_dir + lb->text(lb->currentItem()) + ".xpm";
     QPixmap p( name );
     if(p.isNull())
-      p = default_pix;
+      p = QPixmap(default_pix);
     userbutton->setPixmap(p);
     userbutton->adjustSize();
     userlabel->setText(lb->text(lb->currentItem()));
