@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=xfce
-TryExec=xfce
+Exec=xfwm
+TryExec=xfwm
 Name=XFce
 Name[hi]=एक्सएफसीई
 Name[sv]=Xfce
@@ -33,6 +33,7 @@ Comment[sk]=The Cholesterol Free Desktop Environment. Pracovné prostredie pripo
 Comment[sl]=Cholesterol Free Desktop Environment. Namizno okolje, podobno okolju CDE
 Comment[sr]=„The Cholesterol Free Desktop Environment“. Радно окружење које подсећа на CDE
 Comment[sv]=Den kolesterolfria skrivbordsmiljön. En skrivbordsmiljö som påminner om CDE
+Comment[ta]=கொலஸ்ட்ரால் இல்லாத மேல்மேசை சூழல். CDE பொருள்பொதிந்த மேல்மேசை சூழல்
 Comment[tr]=Cholesterol Masaüstü Ortamı
 Comment[uk]=The Cholesterol Free Desktop Environment. Графічне середовище, що нагадує CDE
 Comment[vi]=Môi trường desktop không Cholesterol. Môi trường desktop gợi nhớ lại CDE
