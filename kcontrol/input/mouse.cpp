@@ -13,6 +13,7 @@
  * Copyright (c) 2000 Bernd Gehrmann
  *
  * Large cursor support
+ * Visual activation TODO: speed
  * Copyright (c) 2000 Rik Hemsley <rik@kde.org>
  *
  * General/Advanced tabs
@@ -171,6 +172,12 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     wtstr = i18n("When this option is checked, the shape of the mouse pointer"
          " changes whenever it is over an icon.");
     QWhatsThis::add( cbCursor, wtstr );
+
+    cbVisualActivate = new QCheckBox(i18n("&Visual feedback on activation"), tab1);
+    lay->addWidget(cbVisualActivate,Qt::AlignLeft);
+    connect(cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
+    wtstr = i18n("Show feedback when clicking an icon");
+    QWhatsThis::add( cbVisualActivate, wtstr );
 
     cbLargeCursor = new QCheckBox(i18n("&Large cursor"), tab1);
     lay->addWidget(cbLargeCursor,Qt::AlignLeft);
@@ -416,6 +423,7 @@ void MouseConfig::load()
   bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
   singleClick->setChecked(b);
   int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
+  bool visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
   bool changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 
   bool largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
@@ -423,6 +431,7 @@ void MouseConfig::load()
   cbAutoSelect->setChecked( autoSelect >= 0 );
   if ( autoSelect < 0 ) autoSelect = 0;
   slAutoSelect->setValue( autoSelect );
+  cbVisualActivate->setChecked(visualActivate);
   cbCursor->setChecked( changeCursor );
   cbLargeCursor->setChecked(largeCursor);
   slotClick();
@@ -519,6 +528,7 @@ void MouseConfig::save()
   config->writeEntry("StartDragDist", dragStartDist->value(), true, true);
   config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
   config->writeEntry( "AutoSelectDelay", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
+  config->writeEntry("VisualActivate", cbVisualActivate->isChecked(), true, true);
   config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
 
   bool largeCursor = cbLargeCursor->isChecked();

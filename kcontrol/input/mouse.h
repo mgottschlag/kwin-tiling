@@ -96,6 +96,7 @@ private:
   QCheckBox *cbAutoSelect;
   QLabel *lDelay;
   QSlider *slAutoSelect;
+  QCheckBox *cbVisualActivate;
   QCheckBox *cbCursor;
   QCheckBox *cbLargeCursor;
     
