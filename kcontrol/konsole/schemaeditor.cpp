@@ -114,6 +114,7 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
     connect(transparentCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(boldCheck, SIGNAL(toggled(bool)), this, SLOT(schemaModified()));
     connect(colorButton, SIGNAL(changed(const QColor&)), this, SLOT(schemaModified()));
+    connect(backgndLine, SIGNAL(textChanged(const QString&)), this, SLOT(schemaModified()));
 
     connect(defaultSchemaCB, SIGNAL(toggled(bool)), this, SIGNAL(changed()));
     removeButton->setEnabled( schemaList->currentItem() );
