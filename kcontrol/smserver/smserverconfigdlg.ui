@@ -115,10 +115,10 @@
                         <cstring>emptySessionRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>Start with an &amp;empty session</string>
+                        <string>Start with an empty &amp;session</string>
                     </property>
                     <property name="accel">
-                        <string>Alt+E</string>
+                        <string>Alt+S</string>
                     </property>
                 </widget>
             </vbox>
@@ -142,10 +142,10 @@
                         <cstring>logoutRadio</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Logout only</string>
+                        <string>&amp;End current session</string>
                     </property>
                     <property name="accel">
-                        <string>Alt+L</string>
+                        <string>Alt+E</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
