@@ -65,6 +65,45 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
 
+  // background pixmap stuff
+  QString path = locate("data",
+			QString::fromLatin1("kcmlocale/pics/background.png"));
+  QPixmap bgPix( path );
+
+  if ( !bgPix.isNull() ) {
+      bgImage = bgPix.convertToImage();
+
+      const QObjectList *list = children();
+      if ( list ) {
+	  QObject *o;
+	  QObjectListIt it( *list );
+	  while ( (o = it.current()) ) {
+	      if ( o->isWidgetType() )
+		  static_cast<QWidget*>(o)->setBackgroundOrigin(ParentOrigin);
+	      ++it;
+	  }
+
+	  setBackground( bgPix );
+      }
+  }
+}
+
+KLocaleSample::~KLocaleSample()
+{
+}
+
+void KLocaleSample::update()
+{
+  numberSample->setText(locale->formatNumber(1234567.89) +
+			QString::fromLatin1(" / ") +
+			locale->formatNumber(-1234567.89));
+
+  moneySample->setText(locale->formatMoney(123456789.00) +
+		       QString::fromLatin1(" / ") +
+		       locale->formatMoney(-123456789.00));
+  dateSample->setText(locale->formatDate(QDate::currentDate(), false));
+  dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
+  timeSample->setText(locale->formatTime(QTime::currentTime()));
 
   QString str;
 
@@ -88,54 +127,12 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   str = locale->translate("This is how the time will be displayed.");
   QWhatsThis::add( labTime,    str );
   QWhatsThis::add( timeSample, str );
-
-
-  // background pixmap stuff
-  QString path = locate("data",
-			QString::fromLatin1("kcmlocale/pics/background.png"));
-  QPixmap bgPix( path );
-
-  if ( !bgPix.isNull() ) {
-      bgImage = bgPix.convertToImage();
-
-      const QObjectList *list = children();
-      if ( list ) {
-	  QObject *o;
-	  QObjectListIt it( *list );
-	  while ( (o = it.current()) ) {
-	      if ( o->isWidgetType() )
-		  static_cast<QWidget*>(o)->setBackgroundOrigin(ParentOrigin);
-	      ++it;
-	  }
-      
-	  setBackground( bgPix );
-      }
-  }
 }
-
-KLocaleSample::~KLocaleSample()
-{
-}
-
-void KLocaleSample::update()
-{
-  numberSample->setText(locale->formatNumber(1234567.89) +
-			QString::fromLatin1(" / ") +
-			locale->formatNumber(-1234567.89));
-
-  moneySample->setText(locale->formatMoney(123456789.00) +
-		       QString::fromLatin1(" / ") +
-		       locale->formatMoney(-123456789.00));
-  dateSample->setText(locale->formatDate(QDate::currentDate(), false));
-  dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));
-  timeSample->setText(locale->formatTime(QTime::currentTime()));
-}
-
 
 void KLocaleSample::resizeEvent( QResizeEvent *e )
 {
     QWidget::resizeEvent( e );
-    
+
     static QPixmap pix;
     if ( !bgImage.isNull() ) {
 	pix = bgImage.smoothScale( width(), height() );
@@ -156,7 +153,7 @@ void KLocaleSample::setBackground( const QPixmap& pix )
 		static_cast<QWidget*>( o )->setBackgroundPixmap( pix );
 	    ++it;
 	}
-      
+
 	setBackgroundPixmap( pix );
     }
 }
