@@ -49,6 +49,7 @@
 #include <kfiledialog.h>
 #include <kpixmap.h>
 #include <dcopclient.h>
+#include <kimageio.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -823,18 +824,24 @@ void KBackground::slotWallpaper(const QString &wallpaper)
 
 void KBackground::slotBrowseWallpaper()
 {
+    static KURL startUrl;
+
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
 	desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    KURL url = KFileDialog::getOpenURL();
+    KURL url = KFileDialog::getOpenURL(startUrl.url(), 
+                                       KImageIO::pattern(KImageIO::Reading), 
+                                       0, 
+                                       i18n("Select Wallpaper"));
     if (url.isEmpty())
       return;
     if (!url.isLocalFile()) {
       KMessageBox::sorry(this, i18n("Currently only local wallpapers are allowed."));
       return;
     }
+    startUrl = url;
     QString file = url.path();
     if (file == r->wallpaper())
 	return;
