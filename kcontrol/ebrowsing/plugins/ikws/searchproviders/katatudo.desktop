@@ -2,11 +2,14 @@
 Encoding=UTF-8
 Type=Service
 Name=KataTudo
+Name[bn]=কাটা-টুডো
+Name[eo]=Katatudo
+Name[eu]=Kata Tudo
+Name[nds]=Kate Tudo
 Name[pa]=ਕਾਟਾ ਕਰਨ ਲਈ
 Name[ta]=காட்டா ட்யூடோ
 Name[xx]=xxKataTudoxx
 ServiceTypes=SearchProvider
 Keys=kt,katatudo
 Query=http://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=&b=Buscar
-Query[pt_BR]=http://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=lr%3Dlang_pt&b=Buscar
 Charset=utf8
