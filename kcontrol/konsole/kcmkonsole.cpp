@@ -64,6 +64,7 @@ void KCMKonsole::load()
 
     dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
+    dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
     dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
     dialog->word_connectorLE->setText(config->readEntry("wordseps",":@-./_~"));
