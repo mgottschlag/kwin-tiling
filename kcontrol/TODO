@@ -72,27 +72,9 @@ Peripherals -> Mouse
 --------------------
 Two Groupboxes "Pointer" (with "Accelaration"/Treshhold" inside) and "Drag and Drop" (with "Start Time"/'Start Distance" inside) would be nice here.
 
-
-Personalization -> E-Mail
--------------------------
-This dialog is too long and looks too detailed on the first glimpse. Solution:
-"Incoming Mail" and "Outgoing Mail" should be two tabs of a tabwidget at the bottom of this dialog.
-Also the buttons are too long and therefore look ugly. "settings ..." is redundant as "Settings" is, what kcontrol is about.
-There is no default set for the radiobuttons (which looks broken).
-
-Personalization -> Newsticker
------------------------------
-Putting "Scrolling" into a seperate tab might be a good idea.
-
-
 Sound -> Sound Server
 ---------------------
 As soon as more stuff is being added, a tab "Quality" might be a good idea.
-
-
-Web Browsing -> Enhanced Browsing
----------------------------------
-Possible Bug: Adding another shortcut (sdb:) didn't work for me. Does it for anyone else?
 
 
 Web Browsing -> Proxies & Cache Settings
