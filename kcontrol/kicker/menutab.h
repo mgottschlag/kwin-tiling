@@ -1,7 +1,8 @@
 /*
- *  main.h
+ *  menutab.h
  *
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+ *  Copyright (c) 2000 Preston Brown <pbrown@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,34 +18,52 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
 
-#include <kcmodule.h>
+#ifndef __menutab_h__
+#define __menutab_h__
 
-class QTabWidget;
-class PanelTab;
-class MenuTab;
+#include <qwidget.h>
 
-class KickerConfig : public KCModule
+class QGridLayout;
+class QGroupBox;
+class QCheckBox;
+class KIntNumInput;
+
+class MenuTab : public QWidget
 {
   Q_OBJECT
 
  public:
-  KickerConfig(QWidget *parent = 0L, const char *name = 0L);
-  virtual ~KickerConfig();
-  
+  MenuTab( QWidget *parent=0, const char* name=0 );
+  ~MenuTab( );
+
   void load();
   void save();
   void defaults();
-  
- public slots:
-  void configChanged();
- 
+
+  QString quickHelp();
+
+ signals:
+  void changed();
+
+ protected slots:
+  void cache_time_changed(int);
+  void max_entries_changed(int);
+  void clear_cache_clicked();
+
  private:
-  QTabWidget   *tab;
-  PanelTab     *paneltab;
-  MenuTab      *menutab;
+  QGridLayout *layout;
+
+  // general group
+  QGroupBox    *general_group;
+  QCheckBox    *clear_cache_cb;
+  KIntNumInput *cache_time_input;
+  KIntNumInput *max_entries_input;
+
+  // kmenu group
+  QGroupBox    *kmenu_group;
+  QCheckBox    *merge_cb, *show_recent_cb, *show_qb_cb;
 };
 
-#endif // __main_h__
+#endif
+

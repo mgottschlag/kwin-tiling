@@ -30,7 +30,8 @@
 #include <dcopclient.h>
 
 #include "main.h"
-#include "panel.h"
+#include "paneltab.h"
+#include "menutab.h"
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name)
@@ -39,9 +40,13 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
   tab = new QTabWidget(this);
   layout->addWidget(tab);
 
-  panel = new PanelTab(this);
-  tab->addTab(panel, i18n("&Panel"));
-  connect(panel, SIGNAL(changed()), this, SLOT(configChanged()));
+  paneltab = new PanelTab(this);
+  tab->addTab(paneltab, i18n("&Panel"));
+  connect(paneltab, SIGNAL(changed()), this, SLOT(configChanged()));
+
+  menutab = new MenuTab(this);
+  tab->addTab(menutab, i18n("&Menus"));
+  connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
   load();
 }
@@ -56,13 +61,15 @@ void KickerConfig::configChanged()
 
 void KickerConfig::load()
 {
-  panel->load();
+  paneltab->load();
+  menutab->load();
   emit changed(false);
 }
 
 void KickerConfig::save()
 {
-  panel->save();
+  paneltab->save();
+  menutab->save();
   emit changed(false);
 
   // Tell kicker about the new config file.
@@ -74,7 +81,8 @@ void KickerConfig::save()
 
 void KickerConfig::defaults()
 {
-  panel->defaults();
+  paneltab->defaults();
+  menutab->defaults();
   emit changed(true);
 }
 
