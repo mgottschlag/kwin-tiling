@@ -16,6 +16,6 @@ messages:
 	$(XGETTEXT) $(libkcm_kicker_la_SOURCES) -o $(podir)/kcmkicker.pot
 
 data_DATA = panel.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel/Panel
+datadir = $(kde_appsdir)/Settings/LookNFeel/
 
 EXTRA_DIST = $(data_DATA)
