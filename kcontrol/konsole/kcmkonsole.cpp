@@ -135,7 +135,7 @@ void KCMKonsole::save()
     delete config;
 
     emit changed(false);
-    
+
     DCOPClient *dcc = kapp->dcopClient();
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());
 }
@@ -148,12 +148,12 @@ void KCMKonsole::defaults()
     dialog->frameCB->setChecked(true);
     dialog->terminalCB->setChecked(true);
     dialog->line_spacingSB->setValue(0);
-    
+
     dialog->word_connectorLE->setText(":@-./_~");
-    
+
     // Check if -e is needed, I do not think so
     dialog->terminalLE->setText("xterm");  //No need for i18n
-
+    dialog->startKwritedCB->setChecked(true);
     configChanged();
 
 }
