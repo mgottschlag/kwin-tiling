@@ -127,8 +127,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         mgrp = new QVButtonGroup( i18n("Shutdown Mode"), frame );
         rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
         if (maynuke)
-            rForce = new QRadioButton( i18n("&Force Now"), mgrp );
-        rTry = new QRadioButton( i18n("&Try Now"), mgrp );
+            rForce = new QRadioButton( i18n("&Force now"), mgrp );
+        rTry = new QRadioButton( i18n("&Try now"), mgrp );
         hbox->addWidget( mgrp, AlignTop );
  #endif
     }
