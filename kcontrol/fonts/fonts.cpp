@@ -125,16 +125,13 @@ void FontUseItem::choose()
 
   if (KDialog::Accepted == result) {
     updateLabel();
-    emit(changed());
+    emit changed();
   }
 }
 
 void FontUseItem::updateLabel()
 {
-  QString fontDescToTranslate(i18n("%1 %2"));
-
-  QString fontDesc =
-    fontDescToTranslate.arg(_font.family()).arg(_font.pointSize());
+  QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize()) + ' ' + QFont::encodingName(_font.charSet());
 
   preview->setText(fontDesc);
   preview->setFont(_font);
@@ -272,7 +269,7 @@ KFonts::~KFonts()
 void KFonts::fontChanged()
 {
   _changed = true;
-  emit(changed(true));
+  emit changed(true);
 }
 
 void KFonts::defaults()
