@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(srcdir)/../../backend -I$(srcdir)/.. \
+AM_CPPFLAGS = -I$(srcdir)/../../backend -I$(srcdir)/.. -I.. \
     $(all_includes) $(XDM_DEFINES)
 
 noinst_LIBRARIES = libkdmthemer.a
