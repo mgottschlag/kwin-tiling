@@ -137,7 +137,7 @@ NICList* findNICs()
    NICList* nl=new NICList;
    nl->setAutoDelete(true);
 
-#if !defined(HAVE_GETIFADDRS) && !defined(HAVE_GETNAMEINFO)
+#if !defined(HAVE_GETIFADDRS) || !defined(HAVE_GETNAMEINFO)
 
    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
