@@ -864,7 +864,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     signal(SIGCHLD, the_reaper);
     signal(SIGPIPE, SIG_IGN);
 
-    connect( &protection, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
+    connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
+    connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( restoreNextInternal() ) );
     connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
 
     KNotifyClient::event( "startkde" ); // this is the time KDE is up
@@ -1208,7 +1209,6 @@ void KSMServer::cancelShutdown()
  */
 void KSMServer::protectionTimeout()
 {
-    endProtection();
     if ( ( state != Shutdown && state != Checkpoint ) || clientInteracting )
         return;
 
@@ -1219,17 +1219,6 @@ void KSMServer::protectionTimeout()
     completeShutdownOrCheckpoint();
     startProtection();
 }
-
-void KSMServer::startProtection()
-{
-    protection.start( 8000 );
-}
-
-void KSMServer::endProtection()
-{
-    protection.stop();
-}
-
 
 void KSMServer::completeShutdownOrCheckpoint()
 {
@@ -1494,6 +1483,7 @@ void KSMServer::restoreSessionInternal()
 
 void KSMServer::restoreNextInternal()
 {
+    restoreTimer.stop();
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
 
@@ -1510,8 +1500,10 @@ void KSMServer::restoreNextInternal()
             continue;
         startApplication( restartCommand );
         lastIdStarted = config->readEntry( QString("clientId")+n );
-        if ( !lastIdStarted.isEmpty() )
+        if ( !lastIdStarted.isEmpty() ) {
+            restoreTimer.start( 2000, TRUE );
             return; // we get called again from the clientRegistered handler
+        }
     }
 
     appsToStart = 0;

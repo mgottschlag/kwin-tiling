@@ -117,6 +117,7 @@ private slots:
 
     void autoStart();
     void autoStart2();
+    void restoreNextInternal();
 
 private:
     void handlePendingInteractions();
@@ -127,13 +128,12 @@ private:
     void discardSession();
     void storeSession();
 
-    void startProtection();
-    void endProtection();
+    void startProtection() { protectionTimer.start( 8000, TRUE ); }
+    void endProtection() { protectionTimer.stop(); }
 
     void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
 
-    void restoreNextInternal();
 
     // public dcop interface
     void logout( int, int, int );
@@ -157,7 +157,8 @@ private:
     QString sessionGroup;
     QString sessionName;
     QCString launcher;
-    QTimer protection;
+    QTimer protectionTimer;
+    QTimer restoreTimer;
 
     // ksplash interface
     void upAndRunning( const QString& msg );
