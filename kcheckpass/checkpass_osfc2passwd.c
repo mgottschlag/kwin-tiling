@@ -100,8 +100,8 @@ initialize_osf_security(int ac, char **av)
   if (access(SIAIGOODFILE, F_OK) == -1)
     {
       /* Broken OSF/1 system, better don't run on it. */
-      fprintf(stderr, "%s does not exist. Your OSF/1 system is probably broken\n",
-             SIAIGOODFILE);
+      fprintf(stderr, SIAIGOODFILE);
+      fprintf(stderr, " does not exist. Your OSF/1 system is probably broken\n");
       exit(1);
     }
   if ((f = fopen(MATRIX_CONF, "r")) == NULL)
