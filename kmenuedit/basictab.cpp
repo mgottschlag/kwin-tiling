@@ -286,7 +286,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
         return;
     }
 
-    _execEdit->lineEdit()->setText(df.readEntry("Exec"));
+    _execEdit->lineEdit()->setText(df.readPathEntry("Exec"));
 	_typeEdit->setCurrentText(i18n(df.readType().utf8()));
     _pathEdit->lineEdit()->setText(df.readPath());
     _termOptEdit->setText(df.readEntry("TerminalOptions"));
@@ -339,9 +339,9 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 
     if(_isDesktopFile)
     {
-        df->writeEntry("Exec", _execEdit->lineEdit()->text());
+        df->writePathEntry("Exec", _execEdit->lineEdit()->text());
         df->writeEntry("Type", desktopTypeToString((DesktopType)_typeEdit->currentItem()));
-        df->writeEntry("Path", _pathEdit->lineEdit()->text());
+        df->writePathEntry("Path", _pathEdit->lineEdit()->text());
 
         if (_terminalCB->isChecked())
             df->writeEntry("Terminal", 1);
