@@ -616,6 +616,11 @@ KGreeter::restrict_nologin()
 
        while ( !t.eof() )
          s += t.readLine() + '\n';
+
+       if (s.isEmpty())
+         s = i18n("You're not allowed to login at the moment.\n"
+                  "try again later.");
+
        f.close();
        KMessageBox::sorry(this, s);
 
