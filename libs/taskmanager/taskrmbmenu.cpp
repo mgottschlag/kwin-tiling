@@ -69,7 +69,7 @@ void TaskRMBMenu::fillMenu( Task* t, TaskManager* manager )
 
 	insertSeparator();
 
-	id = insertItem( SmallIcon( "remove" ), i18n( "&Close" ), t, SLOT( close() ) );
+	id = insertItem( SmallIcon( "fileclose" ), i18n( "&Close" ), t, SLOT( close() ) );
 
 	insertSeparator();
 
