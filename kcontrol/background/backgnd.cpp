@@ -494,14 +494,19 @@ void Backgnd::slotWPDelete()
 
 void Backgnd::adjustMultiWP()
 {
-    int count = m_pWallpaperBox->count();
-
     KBackgroundRenderer *r = m_Renderer[m_Desk];
 
     // Adjust the rendering settings
     QStringList lst;
-    for (unsigned i=0; i<m_pWallpaperBox->count(); i++)
-	lst.append(m_pWallpaperBox->text(i));
+    size_t count = 0;
+    for (unsigned i=0; i<m_pWallpaperBox->count(); i++) {
+	count++;
+	QString item = m_pWallpaperBox->text(i);
+	lst.append(item);
+	if (item.at(item.length() - 1) == '/' && KStandardDirs::exists(item)) {
+	    count++; // if it's a directory we see it as at least two files
+	}
+    }
 
     r->setWallpaperList(lst);
 
