@@ -490,6 +490,7 @@ DeleteXloginResources (struct display *d)
 	for (i = ScreenCount(d->dpy); --i >= 0; )
 	    XDeleteProperty(d->dpy, RootWindow (d->dpy, i), prop);
     }
+    XSync(d->dpy, 0);
 }
 
 
