@@ -229,7 +229,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       // but not for "/tmp/a#b", if "a#b" is an existing file,
       // or for "/tmp/a?b" (#58990)
       if ( ( url.hasRef() || !url.query().isEmpty() ) // avoid the calling exists() when not needed
-           && QFile::exists(url.path()) )
+           && QFile::exists(url.path())
+           && !url.path().endsWith(QFL1("/")) ) // /tmp/?foo is a namefilter, not a query
       {
         path = url.path();
         ref = url.ref();
@@ -344,13 +345,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       // Support for name filter (/foo/*.txt), see also KonqMainWindow::detectNameFilter
       // If the app using this filter doesn't support it, well, it'll simply error out itself
       int lastSlash = path.findRev( '/' );
-      if ( lastSlash > -1 )
+      if ( lastSlash > -1 && path.find( ' ', lastSlash ) == -1 ) // no space after last slash, otherwise it's more likely command-line arguments
       {
         QString fileName = path.mid( lastSlash + 1 );
         QString testPath = path.left( lastSlash + 1 );
-        if ( fileName.find( '*' ) != -1 && stat( QFile::encodeName(testPath).data(), &buff ) == 0 )
+        if ( ( fileName.find( '*' ) != -1 || fileName.find( '[' ) != -1 || fileName.find( '?' ) != -1 )
+           && stat( QFile::encodeName(testPath).data(), &buff ) == 0 )
         {
           nameFilter = fileName;
+          kdDebug() << "Setting nameFilter to " << nameFilter << endl;
           path = testPath;
           exists = true;
         }
