@@ -6,7 +6,6 @@
 # in later versions of the theme manager.
 # Name of the theme
 Name=MGBreizh
-Name[af]=MGBREIZH
 Name[fr]=MG Breizh
 Name[sv]=Mgbreizh
 # Name of the author
@@ -17,9 +16,8 @@ email=admin@mgbreizh.com
 info=http://www.mgbreizh.com/
 # Short description
 Comment=Mikael GEORGES <admin@mgbreizh.com>
-Comment[af]=MIKAEL GEORGES <admin@mgbreizh.com>
 Comment[de]=Mikael Georges <admin@mgbreizh.com>
-Comment[he]=<admin@mgbreizh.com> ס'גרו'ג לאכימ
+Comment[he]=מיכאל ג'ורג'ס >admin@mgbreizh.com<
 Comment[hu]=Mikael Georges <admin@mgbreizh.com>
 Comment[sl]=Mikael Georges <admin@mgbreizh.com>
 # Version of the theme
