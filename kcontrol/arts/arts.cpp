@@ -594,7 +594,7 @@ void init_arts()
 	config->setGroup("Arts");
 	bool startServer = config->readBoolEntry("StartServer",true);
 	bool startRealtime = config->readBoolEntry("StartRealtime",true);
-	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -l 3 -f");
+	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -c drkonqi -l 3 -f");
 
 	delete config;
 
@@ -644,7 +644,10 @@ QString KArtsModule::createArgs(bool netTrans,
 	if (!addOptions.isEmpty())
 		args += QChar(' ') + addOptions;
 
-		args += QString::fromLatin1(" -f");
+	args += QString::fromLatin1(" -m artsmessage");
+	args += QString::fromLatin1(" -c drkonqi");
+	args += QString::fromLatin1(" -l 3");
+	args += QString::fromLatin1(" -f");
 
 	return args;
 }
