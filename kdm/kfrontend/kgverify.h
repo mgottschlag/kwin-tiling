@@ -35,7 +35,6 @@
 
 #include <sys/time.h>
 #include <time.h>
-class KPushButton;
 
 // helper class, nuke when qt supports suspend()/resume()
 class QXTimer : public QObject {
@@ -74,6 +73,7 @@ class QWidget;
 class QLabel;
 class QPopupMenu;
 class QTimer;
+class KPushButton;
 class KLibrary;
 
 struct GreeterPluginHandle {

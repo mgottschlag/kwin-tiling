@@ -33,9 +33,9 @@
 #include <klibloader.h>
 #include <kseparator.h>
 #include <kstdguiitem.h>
+#include <kpushbutton.h>
 
 #include <qpopupmenu.h>
-#include <kpushbutton.h>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qlabel.h>
