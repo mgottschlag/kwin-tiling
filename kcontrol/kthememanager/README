@@ -97,9 +97,3 @@ The notion of "url" here:
   (e.g. theme:/wallpapers/desktop/image.png)
 - other URLs are not allowed, the file must be contained
   either in the theme or in the target system
-
-
-TODO:
-=====
-- support bundling the cursor theme
-- background: support for slideshow and "active" background program
