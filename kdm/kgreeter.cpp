@@ -93,6 +93,13 @@ Display                 ** dpy;
 struct verify_info      *verify;
 struct greet_info       *greet;
 
+void
+KLoginLineEdit::focusOutEvent( QFocusEvent *e)
+{
+     emit lost_focus();
+     QLineEdit::focusOutEvent( e);
+}
+
 class MyApp:public KApplication {
 public:
      MyApp( int &argc, char **argv );
@@ -193,7 +200,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      loginLabel = new QLabel( i18n("Login:"), winFrame);
      set_min( loginLabel);
-     loginEdit = new QLineEdit( winFrame);
+     loginEdit = new KLoginLineEdit( winFrame);
 
      // The line-edit look _very_ bad if you don't give them 
      // a resonal height that observes a proportional aspect.
@@ -274,9 +281,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 	  sbw = 0;
      vbox->activate();
      timer = new QTimer( this );
-     // Signals/Slots
+     //// Signals/Slots
+     // Timer for failed login
      connect( timer, SIGNAL(timeout()),
            this , SLOT(timerDone()) );
+     // Signal to update session type
+     connect( loginEdit, SIGNAL(lost_focus()),
+	      this, SLOT( load_wm()));
      if( user_view)
 	  connect( user_view, SIGNAL(selected(int)), 
 		   this, SLOT(slot_user_name( int)));

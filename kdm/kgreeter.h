@@ -55,7 +55,16 @@
 #include "kdmshutdown.h"
 #include "kdmconfig.h"
 
-//class KGreeter : public QDialog {
+class KLoginLineEdit : public QLineEdit {
+     Q_OBJECT
+public:
+     KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent) {}
+signals:
+     void lost_focus();
+protected:
+     void focusOutEvent( QFocusEvent *e);
+};
+
 class KGreeter : public QWidget {
      Q_OBJECT
 public:
@@ -84,7 +93,7 @@ private:
      QLabel*        loginLabel;
      QLabel*        passwdLabel;
      QLabel*        failedLabel;
-     QLineEdit*     loginEdit;
+     KLoginLineEdit*     loginEdit;
      QLineEdit*     passwdEdit; 
      QFrame*        separator;
      QPushButton*   goButton;

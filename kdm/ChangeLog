@@ -1,3 +1,12 @@
+1999-07-02  Steffen Hansen  <hansen@kde.org>
+
+	* Fixes from KDE_1_1_BRANCH:
+        1) The "session type" wasn't updated when the user left the login line
+        edit with Tab (Pressing return worked fine). This is fixed now.
+        2) Kdm accepts NOBROADCAST in the Xaccess file now.
+        3) PAM modules now have the ability to set environment variables
+        for the user. Without this patch, changes to the env. are lost.
+
 1999-06-07  Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
 
 	* kdmshutdown.cpp:

@@ -89,7 +89,7 @@ class LiloInfo : QObject
 		LiloInfo ( QString lilolocation,
 		           QString bootmaplocation,
 		           bool enableHack = true,
-		           bool enableDebug = false );
+		           bool enableDebug = true );
 		/**
 		 * The destructor.
 		 */

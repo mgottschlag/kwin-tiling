@@ -703,6 +703,21 @@ StartClient (verify, d, pidp, name, passwd)
 
 	/* Do system-dependent login setup here */
 
+#ifdef HAVE_PAM_MISC
+	/* if we have a pam_misc library on this system, pass in environment
+	   variables set by libpam and modules it called */
+	if(pamh != NULL)
+	{
+	    long i;
+	    #warning "This should be replaced with pam_getenvlist(). Do all PAM implementation have that?"
+	    char **pam_env = pam_misc_copy_env(pamh);
+	    for(i = 0; pam_env && pam_env[i]; i++)
+	    {
+		verify->userEnviron = putEnv(pam_env[i], verify->userEnviron);
+	    }
+	}
+#endif /* HAVE_PAM_MISC */
+
 #ifdef HAVE_SETUSERCONTEXT
         /*
          * Destroy environment unless user has requested its preservation.
