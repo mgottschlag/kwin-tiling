@@ -830,10 +830,6 @@ release_bouboule()
 
 #undef Below
 
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
-
 static kBoubouleSaver *saver = NULL;
 
 void startScreenSaver( Drawable d )

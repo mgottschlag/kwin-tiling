@@ -33,10 +33,6 @@
 #define MAXLENGTH	65
 #define MAXVERTICES	19
 
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
-
 static kPolygonSaver *saver = NULL;
 
 template class QList<Polygon>;

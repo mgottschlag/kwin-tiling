@@ -31,6 +31,7 @@
 #include "slidescreen.h"
 #include "helpers.h"
 
+#include <config.h>
 
 //=============================================================
 
@@ -385,10 +386,6 @@ void slide_cleanup()
 }
 
 //----------------------------------------------------------------------------
-
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
 
 static kSlideScreenSaver *saver = NULL;
 

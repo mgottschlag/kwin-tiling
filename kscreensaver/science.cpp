@@ -52,7 +52,6 @@
 #undef Below
 
 static KScienceSaver *saver = 0;
-extern KLocale *glocale;
 
 struct {
 	char name[32];

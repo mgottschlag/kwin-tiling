@@ -30,10 +30,6 @@
 
 #undef Below
 
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
-
 #define MAXLENGTH	256
 
 static kLinesSaver *saver = NULL;

@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-#ifndef __FreeBSD__
+#ifdef HAVE_TIME_H
 #include <time.h>
 #endif
 
@@ -53,14 +53,14 @@
 #include "atari.xbm"
 #include "mac.xbm"
 
+#include <config.h>
+
 #ifndef isupper
 # define isupper(c)  ((c) >= 'A' && (c) <= 'Z')
 #endif
 #ifndef _tolower
 # define _tolower(c)  ((c) - 'A' + 'a')
 #endif
-
-extern KLocale *glocale;
 
 #define progname "bsod"
 #define MAXDELAY 50

@@ -47,9 +47,6 @@
 #ifdef HAVE_GL
 
 #include <klocale.h>
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
 
 #include <math.h>
 #include <X11/Intrinsic.h>

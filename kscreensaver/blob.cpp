@@ -45,10 +45,6 @@
 
 #include "helpers.h"
 
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-//extern KLocale *glocale;
-
 #define SMALLRAND(a)	(int)(random()%(int)(a)+1)
 
 static KBlobSaver *saver = NULL;

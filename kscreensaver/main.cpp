@@ -20,8 +20,6 @@
 #include "saver.h"
 #include "vroot.h"
 
-//KLocale *glocale = 0;
-
 void usage( char *name );
 
 //----------------------------------------------------------------------------

@@ -233,10 +233,6 @@ draw_pool (m_state *state)
     }
 }
 
-// this refers to klock.po. If you want an extra dictionary, 
-// create an extra KLocale instance here.
-extern KLocale *glocale;
-
 static kVmSaver *saver = NULL;
 
 void startScreenSaver( Drawable d )
