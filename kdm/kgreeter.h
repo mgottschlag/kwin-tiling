@@ -35,20 +35,15 @@
 
 #define WMRC ".wmrc"
 
-#include <qwidgetlist.h>
-#include <qregexp.h>
-#include <qstrlist.h>
-#include <qtimer.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include <qimage.h>
-#include <qpainter.h>
-#include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <kapp.h>
-#include <kconfig.h>
+#include <qframe.h>
+
+class QTimer;
+class QIconView;
+class QLabel;
+class QPushButton;
+class QComboBox;
+
 
 #include "kfdialog.h"
 #include "kdmshutdown.h"

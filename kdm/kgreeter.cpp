@@ -39,6 +39,8 @@
 #include <qbitmap.h>
 #include <qtextstream.h>
 #include <qpopupmenu.h>
+#include <qtimer.h>
+#include <qcombobox.h>
 
 #include "kdmclock.h" 
 
@@ -47,6 +49,7 @@
 #include <kstddirs.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
+#include <kapp.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
