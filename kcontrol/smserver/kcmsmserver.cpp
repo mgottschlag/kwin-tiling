@@ -68,30 +68,21 @@ void SMServerConfig::configChanged()
 void SMServerConfig::load()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
-  { // group for the benefit of the group saver
-  KConfigGroupSaver saver(c, "General");
-
+  c->setGroup("General");
   confirmLogoutCheck->setChecked(c->readBoolEntry("confirmLogout", true));
   saveSessionCheck->setChecked(c->readBoolEntry("saveSession", true));
-
-  }
-
   delete c;
+
   emit changed(false);
 }
 
 void SMServerConfig::save()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
-  { // group for the benefit of the group saver
-  KConfigGroupSaver saver(c, "General");
-
+  c->setGroup("General");
   c->writeEntry( "saveSession", saveSessionCheck->isChecked());
   c->writeEntry( "confirmLogout", confirmLogoutCheck->isChecked());
-
   c->sync();
-  }
-
   delete c;
 
   emit changed(false);
