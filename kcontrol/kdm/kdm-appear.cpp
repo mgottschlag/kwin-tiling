@@ -31,6 +31,7 @@
 #include <qwhatsthis.h>
 #include <qvalidator.h>
 #include <qstylefactory.h>
+#include <qstyle.h>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -165,8 +166,6 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->setAutoDefault(false);
   logobutton->setAcceptDrops(true);
   logobutton->installEventFilter(this); // for drag and drop
-  logobutton->setMinimumSize(24, 24);
-  logobutton->setMaximumSize(108, 108);
   connect(logobutton, SIGNAL(clicked()), SLOT(slotLogoButtonClicked()));
   hglay->addWidget(logoLabel, 1, 0);
   hglay->addWidget(logobutton, 1, 1, AlignCenter);
@@ -387,12 +386,14 @@ bool KDMAppearanceWidget::setLogo(QString logo)
     QString flogo = logo.isEmpty() ?
                     locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
                     logo;
-    QPixmap p(flogo);
+    QImage p(flogo);
     if (p.isNull())
         return false;
+    if (p.width() > 100 || p.height() > 100)
+        p = p.smoothScale(100, 100, QImage::ScaleMin);
     logobutton->setPixmap(p);
-    logobutton->adjustSize();
-//    resize(width(), height());
+    uint bd = style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
+    logobutton->setFixedSize(p.width() + bd, p.height() + bd);
     logopath = logo;
     return true;
 }
