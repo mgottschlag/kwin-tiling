@@ -20,17 +20,12 @@
 
 #include <stdlib.h>
 
-#include <qfile.h>
 
 #include <dcopclient.h>
 
-#include <kapplication.h>
-#include <kglobal.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <kstandarddirs.h>
 #include <kcmdlineargs.h>
-#include <kservice.h>
 #include <kdesktopfile.h>
 #include <qxembed.h>
 #include <kiconloader.h>

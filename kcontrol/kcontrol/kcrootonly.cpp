@@ -19,7 +19,6 @@
 #include <qlayout.h>
 #include <qlabel.h>
 
-#include <kglobal.h>
 #include <klocale.h>
 
 #include "kcrootonly.h"

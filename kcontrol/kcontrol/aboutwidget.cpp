@@ -21,10 +21,8 @@
 #include <qwhatsthis.h>
 #include <qregexp.h>
 
-#include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kiconloader.h>
 #include <kdebug.h>
 #include <kpixmap.h>
 #include <kpixmapeffect.h>

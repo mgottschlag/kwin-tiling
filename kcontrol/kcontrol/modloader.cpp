@@ -18,16 +18,12 @@
 
 */
 
-#include <qstringlist.h>
 #include <qfile.h>
 
 #include <kapplication.h>
-#include <kdebug.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <klibloader.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kdebug.h>
 #include <kparts/componentfactory.h>
 
 #include "config.h"

@@ -17,18 +17,13 @@
  
 */                                                                            
 
-#include <qlayout.h>
 #include <qlistview.h>
 
-#include <kglobal.h>
-#include <klocale.h>
-#include <kconfig.h>
 
 #include "indexwidget.h"
 #include "indexwidget.moc"
 #include "moduletreeview.h"
 #include "moduleiconview.h"
-#include "modules.h"
 
 IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *name)
   : QWidgetStack(parent, name)

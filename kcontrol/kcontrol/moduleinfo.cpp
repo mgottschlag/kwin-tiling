@@ -19,11 +19,8 @@
 
 */
 
-#include <qimage.h>
 
-#include <kiconloader.h>
 #include <kdesktopfile.h>
-#include <kservice.h>
 #include <kdebug.h>
 
 #include "moduleinfo.h"

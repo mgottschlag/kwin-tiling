@@ -20,16 +20,13 @@
 #include <qfile.h>
 
 #include <kapplication.h>
-#include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include <kcmodule.h>
 #include <kservice.h>
 #include <klibloader.h>
 #include <kdebug.h>
 #include <dcopclient.h>
 
-#include <qstrlist.h>
 
 #include "global.h"
 

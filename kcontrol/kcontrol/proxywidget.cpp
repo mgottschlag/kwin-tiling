@@ -19,26 +19,17 @@
 
 #include <unistd.h> // for getuid()
 
-#include <qpalette.h>
-#include <qwidget.h>
-#include <qstring.h>
 #include <kpushbutton.h>
 #include <qlayout.h>
-#include <qframe.h>
-#include <qscrollview.h>
 #include <klocale.h>
 #include <kapplication.h>
 #include <kcmodule.h>
 #include <kseparator.h>
-#include <kglobal.h>
-#include <kiconloader.h>
 #include <kdialog.h>
-#include <kguiitem.h>
 #include <kstdguiitem.h>
 #include <dcopclient.h>
 
 #include <qwhatsthis.h>
-#include <qvbox.h>
 #include <qlabel.h>
 
 #include "global.h"

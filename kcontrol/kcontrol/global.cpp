@@ -22,15 +22,12 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <kservicegroup.h>
-#include <ksycoca.h>
 #include <kdebug.h>
 #include <kapplication.h>
 
 #include <qobjectlist.h>
 #include <qaccel.h>
-#include <qwidget.h>
 
-#include "config.h"
 #include "global.h"
 
 bool KCGlobal::_root = false;

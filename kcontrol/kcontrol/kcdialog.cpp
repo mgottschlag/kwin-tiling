@@ -19,10 +19,8 @@
 
 */
 
-#include <klocale.h>
-#include <kapplication.h>
 #include <kwin.h>
-#include <global.h>
+#include "global.h"
 #include <kprocess.h>
 #include <krun.h>
 

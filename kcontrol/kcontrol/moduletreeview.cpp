@@ -19,15 +19,9 @@
 */
 
 #include <qheader.h>
-#include <qstring.h>
-#include <qptrlist.h>
-#include <qpoint.h>
-#include <qcursor.h>
 
 
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kservicegroup.h>
 #include <kdebug.h>

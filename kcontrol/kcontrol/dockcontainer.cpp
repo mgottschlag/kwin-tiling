@@ -17,13 +17,10 @@
 
 */
 
-#include <qapplication.h>
 #include <qlabel.h>
 
 #include <kmessagebox.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kcmodule.h>
 #include <kdebug.h>
 
 #include "dockcontainer.h"
@@ -32,8 +29,6 @@
 #include "global.h"
 #include "modules.h"
 #include "proxywidget.h"
-#include <qobjectlist.h>
-#include <qaccel.h>
 
 DockContainer::DockContainer(QWidget *parent)
   : QWidget(parent, "DockContainer")

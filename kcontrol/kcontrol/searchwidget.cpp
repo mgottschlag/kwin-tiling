@@ -19,21 +19,16 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qstringlist.h>
 #include <qsortedlist.h>
 #include <qregexp.h>
-#include <qdict.h>
-#include <qpixmap.h>
 
 #include <klineedit.h>
 #include <kiconloader.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <klistbox.h>
 
 #include "searchwidget.h"
 #include "searchwidget.moc"
-#include "global.h"
 
 /**
  * Helper class for sorting icon modules by name without losing the fileName ID

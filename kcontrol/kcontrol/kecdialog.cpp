@@ -23,21 +23,16 @@
 #include <qcursor.h>
 
 #include <klocale.h>
-#include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <klibloader.h>
 #include <krun.h>
 #include <kprocess.h>
-#include <kurl.h>
-#include <global.h>
+#include "global.h"
 
 #include "kecdialog.h"
 #include "kecdialog.moc"
-#include "kcmodule.h"
-#include "moduleinfo.h"
 #include "modloader.h"
 
 KCMultiDialog::KCMultiDialog(QWidget *parent, const QString& baseGroup, const char *name, bool modal)

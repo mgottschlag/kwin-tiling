@@ -18,35 +18,23 @@
 
 */
 
-#include <kapplication.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kbugreport.h>
-#include <kaboutdata.h>
 #include <kaboutapplication.h>
 #include <kmessagebox.h>
 
-#include <qhbox.h>
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
 
 #include <kaction.h>
-#include <kstdaction.h>
-#include <klocale.h>
-#include <kmenubar.h>
-#include <kseparator.h>
-#include <qstyle.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
 #include "helpwidget.h"
-#include "dockcontainer.h"
 #include "aboutwidget.h"
-#include "modules.h"
 #include "proxywidget.h"
-#include "global.h"
 #include "moduletreeview.h"
 #include <stdio.h>
 

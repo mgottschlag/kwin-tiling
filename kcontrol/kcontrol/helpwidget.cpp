@@ -19,14 +19,11 @@
 
 #include <qlayout.h>
 
-#include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kurl.h>
 #include <kprocess.h>
 #include <kapplication.h>
 #include <krun.h>
-#include <qpushbutton.h>
 
 #include "global.h"
 #include "quickhelp.h"

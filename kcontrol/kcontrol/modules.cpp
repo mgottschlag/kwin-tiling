@@ -21,16 +21,12 @@
 #include <sys/types.h>
 
 
-#include <qwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qvbox.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kservicegroup.h>
-#include <kcmodule.h>
-#include <krun.h>
 #include <kprocess.h>
 #include <qxembed.h>
 #include <klocale.h>

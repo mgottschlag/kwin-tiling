@@ -34,9 +34,7 @@
 
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
-#include <klocale.h>
 #include <kaboutdata.h>
-#include <kmessagebox.h>
 #include <kconfig.h>
 #include <kdebug.h>
 
