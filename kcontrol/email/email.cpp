@@ -66,6 +66,7 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 	m_email = new KCMEmailBase(this);
 	topLayout->add(m_email);
+	topLayout->addStretch();
 
  	connect(m_email->cmbCurProfile, SIGNAL(activated(const QString &)), this, SLOT(slotComboChanged(const QString &)) );
 	connect(m_email->btnNewProfile, SIGNAL(clicked()), SLOT(slotNewProfile()) );
