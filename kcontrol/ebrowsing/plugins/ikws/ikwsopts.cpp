@@ -302,6 +302,7 @@ void InternetKeywordsOptions::save()
     QByteArray data;
     kapp->dcopClient()->send("*", "KURIIKWSFilterIface", "configure()", data);
     kapp->dcopClient()->send("*", "KURISearchFilterIface", "configure()", data);
+    kapp->dcopClient()->send( "kded", "kbuildsycoca", "recreate()", data);
 }
 
 void InternetKeywordsOptions::defaults()
