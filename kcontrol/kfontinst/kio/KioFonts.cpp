@@ -1087,8 +1087,8 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         if(srcFile!=QChar('.')+destFile && destFile!=QChar('.')+srcFile)
         {
             error(KIO::ERR_SLAVE_DEFINED,
-                  i18n("You can only rename fonts, or folders, in order to disable (i.e. add a periond '.'), or enable (remove period).\n"
-                       "Also, please note the inline renaming from Konqueror will not work."));
+                  i18n("You can only rename fonts or folders by adding or removing a period, in order to disable or enable them respectively.\n"
+                       "Also, please note the inline renaming within Konqueror will not work."));
             return;
         }
     }
