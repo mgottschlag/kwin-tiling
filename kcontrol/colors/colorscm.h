@@ -87,21 +87,4 @@ private:
     QCheckBox *cbExportColors;
 };
 
-
-/**
- * A little dialog which prompts for a name for a color scheme.
- */
-class SaveScm: public KDialogBase
-{
-    Q_OBJECT
-
-public:
-    SaveScm(QWidget *parent, const char *name, const QString &def);
-	
-    KLineEdit* nameLine;
-
-private slots:
-    void slotTextChanged(const QString & _text);
-};
-
 #endif

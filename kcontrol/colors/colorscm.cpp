@@ -33,6 +33,7 @@
 #include <kcursor.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
+#include <klineeditdlg.h>
 #include <kstandarddirs.h>
 #include <kipc.h>
 #include <kcolordialog.h>
@@ -473,7 +474,9 @@ void KColorScheme::slotAdd()
     QString sName;
     if (sList->currentItem() >= nSysSchemes)
        sName = sList->currentText();
-    SaveScm *ss = new SaveScm( 0,  "save scheme", sName );
+
+    KLineEditDlg dlg(i18n("Enter a name for the color scheme:"), sName, this);
+    dlg.setCaption(i18n("Save Color Scheme"));
 
     QString sFile;
 
@@ -482,10 +485,10 @@ void KColorScheme::slotAdd()
 
     while (!valid)
     {
-        if (ss->exec() != QDialog::Accepted)
+        if (!dlg.exec())
             return;
 
-        sName = ss->nameLine->text();
+        sName = dlg.text();
         sName = sName.simplifyWhiteSpace();
         if (sName.isEmpty())
             return;
@@ -866,43 +869,6 @@ QPalette KColorScheme::createPalette()
     colgrp.setColor(QColorGroup::Button, cs->button);
     colgrp.setColor(QColorGroup::ButtonText, cs->buttonTxt);
     return QPalette( colgrp, disabledgrp, colgrp);
-}
-
-
-/**** SaveScm ****/
-
-SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
-    : KDialogBase( parent, name, true, i18n("Save Color Scheme"), Ok|Cancel, Ok, true )
-{
-    QWidget *page = new QWidget(this);
-    setMainWidget(page);
-    QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
-
-    nameLine = new KLineEdit( page );
-    connect(nameLine, SIGNAL(textChanged ( const QString & )),this,SLOT( slotTextChanged(const QString &)));
-    nameLine->setFocus();
-    nameLine->setMaxLength(18);
-    nameLine->setFixedHeight( nameLine->sizeHint().height() );
-    nameLine->setText(def);
-    nameLine->selectAll();
-
-    QLabel* tmpQLabel;
-    tmpQLabel = new QLabel( nameLine,
-     i18n( "Enter a name for the color scheme:\n"), page);
-
-    tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
-    tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );
-    tmpQLabel->setMinimumWidth( tmpQLabel->sizeHint().width() );
-
-    topLayout->addWidget( tmpQLabel );
-    topLayout->addWidget( nameLine );
-    topLayout->addStretch( 10 );
-    enableButtonOK( !nameLine->text().isEmpty() );
-}
-
-void SaveScm::slotTextChanged(const QString & _text)
-{
-   enableButtonOK( !_text.isEmpty() );
 }
 
 #include "colorscm.moc"
