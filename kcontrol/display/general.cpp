@@ -57,14 +57,16 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
 
     setTitle(i18n("Icon style"));
 
-    QGridLayout *grid = new QGridLayout(this, 7, 3, KDialog::marginHint(),
+    QGridLayout *grid = new QGridLayout(this, 7, 4, KDialog::marginHint(),
 					KDialog::spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
-    QLabel *lbl = new QLabel(i18n("Normal"), this);
 
+    QLabel *lbl = new QLabel(i18n("Large"), this);
     grid->addWidget(lbl, 1, 1);
-    lbl = new QLabel(i18n("Large"), this);
+    lbl = new QLabel(i18n("Normal"), this);
     grid->addWidget(lbl, 1, 2);
+    lbl = new QLabel(i18n("Small"), this);
+    grid->addWidget(lbl, 1, 3);
 
     // Panel
     lbl = new QLabel(i18n("Panel"), this);
@@ -77,6 +79,9 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     rb = new QRadioButton(this);
     panelGroup->insert(rb);
     grid->addWidget(rb, 2, 2);
+    rb = new QRadioButton(this);
+    panelGroup->insert(rb);
+    grid->addWidget(rb, 2, 3);
 
     // Konq
     lbl = new QLabel(i18n("Konqueror"), this);
@@ -89,6 +94,9 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     rb = new QRadioButton(this);
     konqGroup->insert(rb);
     grid->addWidget(rb, 3, 2);
+    rb = new QRadioButton(this);
+    panelGroup->insert(rb);
+    grid->addWidget(rb, 3, 3);
 
     // KDE
     lbl = new QLabel(i18n("Other"), this);
@@ -101,15 +109,18 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     rb = new QRadioButton(this);
     kdeGroup->insert(rb);
     grid->addWidget(rb, 4, 2);
+    rb = new QRadioButton(this);
+    kdeGroup->insert(rb);
+    grid->addWidget(rb, 4, 3);
 
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-    grid->addMultiCellWidget(frame, 5, 5, 0, 2);
+    grid->addMultiCellWidget(frame, 5, 5, 0, 3);
       
     singleClick = new QCheckBox(i18n("Single &click to activate"), this);
     connect(singleClick, SIGNAL(clicked()), SLOT(slotSingleClick()));
 
-    grid->addMultiCellWidget(singleClick, 6, 6, 0, 2);
+    grid->addMultiCellWidget(singleClick, 6, 6, 0, 3);
 
     config = new KConfig("kcmdisplayrc");
     load();
@@ -127,18 +138,21 @@ void KIconStyle::load()
     config->setGroup("KDE");
     
     QString s = config->readEntry("kpanelIconStyle", "Normal");
-    m_PanelStyle = 0;
-    if (s == "Large") m_PanelStyle = 1;
+    m_PanelStyle = 1;
+    if (s == "Large") m_PanelStyle = 0;
+    if (s == "Small") m_PanelStyle = 2;
     panelGroup->setButton(m_PanelStyle);
 
     s = config->readEntry("kfmIconStyle", "Normal");
-    m_KonqStyle = 0;
-    if (s == "Large") m_KonqStyle = 1;
+    m_KonqStyle = 1;
+    if (s == "Large") m_KonqStyle = 0;
+    if (s == "Small") m_KonqStyle = 2;
     konqGroup->setButton(m_KonqStyle);
 
-    s = config->readEntry("kfmIconStyle", "Normal");
-    m_KDEStyle = 0;
-    if (s == "Large") m_KDEStyle = 1;
+    s = config->readEntry("KDEIconStyle", "Normal");
+    m_KDEStyle = 1;
+    if (s == "Large") m_KDEStyle = 0;
+    if (s == "Small") m_KDEStyle = 2;
     kdeGroup->setButton(m_KDEStyle);
 
     bool b = config->readBoolEntry("SingleClick", true);
@@ -155,11 +169,53 @@ void KIconStyle::save()
 
     config->setGroup("KDE");
 
-    config->writeEntry("kpanelIconStyle", m_PanelStyle ? "Large" : "Normal");
     // TODO: notify kicker
-    config->writeEntry("konqIconStyle", m_KonqStyle ? "Large" : "Normal");
+    QString entry;
+    switch (m_PanelStyle)
+    {
+    case 0:
+        entry = "Large";
+        break;
+    case 2:
+        entry = "Small";
+        break;
+    case 1:
+    default:
+        entry = "Normal";
+        break;
+    }
+    config->writeEntry("kpanelIconStyle", entry);
+
     // TODO: notify konqy
-    config->writeEntry("KDEIconStyle", m_KDEStyle ? "Large" : "Normal");
+    switch (m_KonqStyle)
+    {
+    case 0:
+        entry = "Large";
+        break;
+    case 2:
+        entry = "Small";
+        break;
+    case 1:
+    default:
+        entry = "Normal";
+        break;
+    }
+    config->writeEntry("konqIconStyle", entry);
+
+    switch (m_KDEStyle)
+    {
+    case 0:
+        entry = "Large";
+        break;
+    case 2:
+        entry = "Small";
+        break;
+    case 1:
+    default:
+        entry = "Normal";
+        break;
+    }
+    config->writeEntry("KDEIconStyle", entry);
 
     config->writeEntry("SingleClick", singleClick->isChecked(), true, true);
 
@@ -171,9 +227,9 @@ void KIconStyle::save()
 
 void KIconStyle::defaults()
 {
-    m_PanelStyle = 0; panelGroup->setButton(0);
-    m_KonqStyle = 0; konqGroup->setButton(0);
-    m_KDEStyle = 0; kdeGroup->setButton(0);
+    m_PanelStyle = 1; panelGroup->setButton(1);
+    m_KonqStyle = 1; konqGroup->setButton(1);
+    m_KDEStyle = 1; kdeGroup->setButton(1);
     singleClick->setChecked(true);
     bChanged = true; emit changed(bChanged);
 }
