@@ -32,6 +32,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kglobal.h>
 #include <kprocess.h>
 #include <kmessagebox.h>
 
@@ -164,18 +165,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // End Dialog
   // *************************************************************
 
-  month->insertItem( i18n("January") );
-  month->insertItem( i18n("February") );
-  month->insertItem( i18n("March") );
-  month->insertItem( i18n("April") );
-  month->insertItem( i18n("May") );
-  month->insertItem( i18n("June") );
-  month->insertItem( i18n("July") );
-  month->insertItem( i18n("August") );
-  month->insertItem( i18n("September") );
-  month->insertItem( i18n("October") );
-  month->insertItem( i18n("November") );
-  month->insertItem( i18n("December") );
+  for (int i=1; i<13; i++)
+      month->insertItem(KGlobal::locale()->monthName(i, false /*short*/));
 
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
@@ -263,7 +254,7 @@ void Dtime::save()
   c_proc << BufS;
   c_proc.start( KProcess::Block );
 
-  if ( c_proc.exitStatus() != 0 ) 
+  if ( c_proc.exitStatus() != 0 )
 	{
     KMessageBox::error( this, i18n("Can not set date."));
     return;
