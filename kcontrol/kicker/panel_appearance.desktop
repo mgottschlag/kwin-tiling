@@ -8,6 +8,7 @@ Exec=kcmshell panel_behaviour
 X-KDE-ModuleType=Library
 X-KDE-Library=kicker
 X-KDE-FactoryName=kicker_behaviour
+X-KDE-ParentApp=kcontrol
 
 Name=Appearance
 Name[af]=voorkoms

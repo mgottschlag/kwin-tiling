@@ -8,6 +8,7 @@ DocPath=kcontrol/bell/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=bell
 X-KDE-Init=bell
+X-KDE-ParentApp=kcontrol
 
 Name=System Bell
 Name[af]=stelsel klok

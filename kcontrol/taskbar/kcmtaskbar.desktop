@@ -8,6 +8,7 @@ Exec=kcmshell kcmtaskbar
 X-KDE-ModuleType=Library
 X-KDE-Library=taskbar
 X-KDE-FactoryName=taskbar
+X-KDE-ParentApp=kcontrol
 
 Name=Taskbar
 Name[af]=kasbar

@@ -8,14 +8,23 @@ DocPath=kcontrol/screensaver/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=screensaver
 X-KDE-FactoryName=screensaver
+X-KDE-ParentApp=kcontrol
 
 Name=Screen Saver
+Name[bs]=Zaštita ekrana (screen saver)
+Name[cs]=Šetřič obrazovky
+Name[da]=Pauseskærm
+Name[he]=שומר מסך
 Name[hu]=Képernyővédők
 Name[ja]=スクリーンセーバー
 Name[pt_BR]=Protetor de tela
 Name[sv]=Skärmsläckare
 
 Comment=Screen saver settings
+Comment[bs]=Postavke screen savera
+Comment[cs]=Nastavení šetřiče obrazovky
+Comment[da]=Opsætning af pauseskærm
+Comment[he]=שינוי הגדרות שומר המסך
 Comment[hu]=a képernyővédő beállításai
 Comment[ja]=スクリーンセーバーの設定
 Comment[pt_BR]=Preferências do protetor de tela

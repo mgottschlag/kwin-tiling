@@ -8,6 +8,7 @@ DocPath=kcontrol/kcmaccess/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=access
 X-KDE-Init=access
+X-KDE-ParentApp=kcontrol
 
 Name=Accessibility
 Name[af]=toeganklikheid

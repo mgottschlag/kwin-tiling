@@ -10,6 +10,7 @@ X-KDE-Library=fontinst
 X-KDE-FactoryName=fontinst
 X-KDE-RootOnly=true
 X-KDE-HasReadOnlyMode=true
+X-KDE-ParentApp=kcontrol
 
 Name=Font Installer
 Name[af]=skrif tipe installeerder

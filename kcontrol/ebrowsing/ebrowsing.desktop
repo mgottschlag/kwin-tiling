@@ -8,6 +8,7 @@ Exec=kcmshell ebrowsing
 X-KDE-ModuleType=Library
 X-KDE-Library=kurifilt
 X-KDE-FactoryName=kurifilt
+X-KDE-ParentApp=kcontrol
 
 Name=Enhanced Browsing
 Name[af]=verbeterde blaaiïng

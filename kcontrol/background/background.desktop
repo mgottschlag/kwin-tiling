@@ -8,6 +8,7 @@ DocPath=kcontrol/background/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=background
 X-KDE-FactoryName=background
+X-KDE-ParentApp=kcontrol
 
 Name=Background
 Name[af]=agtergrond

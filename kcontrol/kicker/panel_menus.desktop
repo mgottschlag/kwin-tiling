@@ -8,8 +8,14 @@ Exec=kcmshell panel_menus
 X-KDE-ModuleType=Library
 X-KDE-Library=kicker
 X-KDE-FactoryName=kicker_menus
+X-KDE-ParentApp=kcontrol
 
 Name=Menus
+Name[be]=Мэню
+Name[bs]=Meniji
+Name[cs]=Nabídky
+Name[da]=Menuer
+Name[he]=תפריטים
 Name[hu]=Menük
 Name[sv]=Menyer
 Name[tr]=Menüler

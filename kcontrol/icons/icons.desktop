@@ -8,6 +8,7 @@ Exec=kcmshell icons
 X-KDE-ModuleType=Library
 X-KDE-Library=icons
 X-KDE-FactoryName=icons
+X-KDE-ParentApp=kcontrol
 
 Name=Icons
 Name[af]=ikoone
@@ -27,7 +28,6 @@ Name[es]=Iconos
 Name[et]=Ikoonid
 Name[eu]=Ikonoak
 Name[fi]=Kuvakkeet
-Name[fo]=Teknmyndir
 Name[fr]=Icônes
 Name[gl]=Iconas
 Name[he]=סמלים

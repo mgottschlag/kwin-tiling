@@ -8,6 +8,7 @@ Exec=kcmshell kcmsmserver
 X-KDE-ModuleType=Library
 X-KDE-Library=smserver
 X-KDE-FactoryName=smserver
+X-KDE-ParentApp=kcontrol
 
 Name=Session Manager
 Name[af]=sessie bestuurder

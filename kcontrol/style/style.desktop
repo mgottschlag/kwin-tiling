@@ -9,6 +9,7 @@ X-KDE-ModuleType=Library
 X-KDE-Library=style
 X-KDE-FactoryName=style
 X-KDE-Init=style
+X-KDE-ParentApp=kcontrol
 
 Name=Style
 Name[af]=styl
@@ -39,7 +40,6 @@ Name[ja]=スタイル
 Name[ko]=꼴
 Name[lt]=Stilius
 Name[lv]=Stils
-Name[mi]=Ähua
 Name[mk]=Стил
 Name[mt]=Stil
 Name[nb]=Stil

@@ -4,6 +4,7 @@ Exec=kcmshell midi
 Icon=kcmmidi
 Type=Application
 DocPath=kcontrol/midi/index.html
+X-KDE-ParentApp=kcontrol
 
 X-KDE-ModuleType=Library
 X-KDE-Library=midi

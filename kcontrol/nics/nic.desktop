@@ -9,6 +9,7 @@ Icon=network
 X-KDE-ModuleType=Library
 X-KDE-Library=nic
 X-KDE-FactoryName=nic
+X-KDE-ParentApp=kcontrol
 
 Name=Network interfaces
 Name[af]=netwerk koppelvlakke

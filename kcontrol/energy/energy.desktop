@@ -10,6 +10,7 @@ X-KDE-ModuleType=Library
 X-KDE-Library=energy
 X-KDE-FactoryName=energy
 X-KDE-Init=energy
+X-KDE-ParentApp=kcontrol
 
 Name=Display Power Control
 Name[af]=vertoon elektrisiteit kontrole

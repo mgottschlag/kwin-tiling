@@ -5,6 +5,7 @@ Exec=kcmshell email
 DocPath=kcontrol/email/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=email
+X-KDE-ParentApp=kcontrol
 
 Name=Email
 Name[af]=e-pos
@@ -114,7 +115,6 @@ Keywords[eo]=retpoŝto,poŝto,adreso,servilo,IMAP,POP,poŝtkesto,uzanto, respond
 Keywords[es]=Correo electrónico,Correo,E-Mail,Dirección,Servidor de correo,IMAP,POP3,Buzón local,buzón,Información del usuario,Dirección de respuesta,Información del servidor,Nombre de usuario,Contraseñas,Máquina,Perfil actual,Perfil,Organización,Máquina entrante,Máquina saliente,Cliente de correo
 Keywords[et]=e-mail,e-post,meil,mail,aadress,meiliserver,IMAP,POP3,kohalik postkast,,postkast,kasutajainfo,vastamise aadress,serveri info,kasutajanimi,paroolid,host,aktiivne profiil,profiil,organisatsioon,sissetulev post,väljaminev post,meiliklient
 Keywords[fi]=Sähköposti,E-Mail,Osoite,Sähköpostipalvelin,IMAP,POP3,Postilaatikko,Käyttäjätiedot,Vastausosoite,Osoite,Palvelimn tiedot,Käyttäjänimi,Salasanat,Palvelin,Nykyinen profiili,Profiili,Organisaatio,Lähtevä palvelin,Tuleva palvelin,Sähköpostiohjelma
-Keywords[fo]=adressa,teldupostur,upplýsingar,navn,vertur
 Keywords[fr]=courrier électronique,email,e-mail,adresse,serveur de courrier,serveur de mail,IMAP,POP3,boîte aux lettres locale,boîte aux lettres,pop3,imap,mail,messagerie,message,message électronique,adresse électronique,utilisateur,profil,organisation,serveur entrant,serveur sortant,serveur de réception,serveur d'envoi,réception,envoi,informations sur l'utilisateur,adresse de réponse,reply,mot de passe,serveur,hôte,client de mail,client de messagerie
 Keywords[he]=תיבת דואר מקומית,תיבת דואר,פרטי משתמש,כתובת תשובה,פרטי שרת,שם משתמש,סיסמאות,שרת,פרופיל נוכחי,פרופיל,אירגון,מארח דואר נכנס,מארח דואר יוצא,תוכנית דוא"ל,POP3,IMAP,דוא"ל,דואר,דואר אלקטרוני,כתובת,שרת דוא"ל
 Keywords[hr]=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,mailbox,elektronska pošta,adresa,sandučic,poštanski sandučić

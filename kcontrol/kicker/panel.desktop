@@ -8,8 +8,14 @@ Exec=kcmshell panel
 X-KDE-ModuleType=Library
 X-KDE-Library=kicker
 X-KDE-FactoryName=kicker
+X-KDE-ParentApp=kcontrol
 
 Name=Panels
+Name[be]=Панэлі
+Name[bs]=Paneli
+Name[cs]=Panely
+Name[da]=Paneler
+Name[he]=לוחות
 Name[hu]=Panelek
 Name[ja]=パネル
 Name[pt_BR]=Painéis
