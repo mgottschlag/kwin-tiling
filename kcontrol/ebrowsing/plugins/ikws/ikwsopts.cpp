@@ -120,8 +120,7 @@ void FilterOptions::load()
 {
     // Clear state first.
     m_dlg->lvSearchProviders->clear();
-    m_dlg->cmbDefaultEngine->clear();
-
+    
     KConfig config( KURISearchFilterEngine::self()->name() + "rc", false, false );
     config.setGroup("General");
 
