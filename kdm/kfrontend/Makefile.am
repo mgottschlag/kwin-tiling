@@ -9,7 +9,7 @@ AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf
 
 kdm_config_SOURCES = kdm_config.c
-kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
+kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET) $(LIBPOSIX4)
 
 kdm_greet_SOURCES = \
     kdm_greet.c \
@@ -25,7 +25,7 @@ kdm_greet_SOURCES = \
     kgreeter.cpp \
     kgapp.cpp
 kdm_greet_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB)
+kdm_greet_LDADD = $(LIB_KDEUI) $(XTESTLIB) $(LIBPOSIX4)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)
