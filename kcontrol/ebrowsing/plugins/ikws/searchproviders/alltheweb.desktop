@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=AllTheWeb fast
+ServiceTypes=SearchProvider
+Keys=atw,alltheweb
+Query=http://www.alltheweb.com/cgi-bin/search?exec=FAST+Search&type=all&query=\\1&exec=FAST+Search
