@@ -48,6 +48,7 @@ protected slots:
 private:
   KCModule    *_client;
   QString     _docPath;
+  bool        _clientChanged;
 };
 
 #endif

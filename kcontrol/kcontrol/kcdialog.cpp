@@ -42,7 +42,7 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
     client->reparent(this,0,QPoint(0,0),true);
     setMainWidget(client);
     connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-    enableButton(Apply, false);
+    clientChanged(false);
 
     KCGlobal::repairAccels( topLevelWidget() );
 }
@@ -55,13 +55,15 @@ void KCDialog::slotDefault()
 
 void KCDialog::slotOk()
 {
-    _client->save();
+    if( _clientChanged )
+        _client->save();
     accept();
 }
 
 void KCDialog::clientChanged(bool state)
 {
     enableButton(Apply, state);
+    _clientChanged = state;
 }
 
 void KCDialog::slotApply()
