@@ -309,7 +309,7 @@ struct kgreeterplugin_info {
      */
     bool (*init)( const QString &method,
 		  QVariant (*getConf)( void *ctx, const char *key, const QVariant &dflt ),
-		  void *ctx = 0 );
+		  void *ctx );
     /**
      * Call before unloading the plugin.
      * This pointer can be null.
