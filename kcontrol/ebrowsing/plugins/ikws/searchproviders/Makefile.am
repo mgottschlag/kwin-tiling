@@ -15,6 +15,7 @@ services_DATA =	acronym.desktop \
 		excite.desktop \
 		foldoc.desktop \
 		freshmeat.desktop \
+		froogle.desktop \
 		google.desktop \
 		google_advanced.desktop \
 		google_groups.desktop \

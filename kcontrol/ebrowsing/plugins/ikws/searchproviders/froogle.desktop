@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Froogle
+ServiceTypes=SearchProvider
+Keys=froogle
+Query=http://froogle.google.com/froogle?q=\\{@}
