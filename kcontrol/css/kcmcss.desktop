@@ -3,6 +3,7 @@ Encoding=UTF-8
 Icon=stylesheet
 Type=Application
 Exec=kcmshell WebBrowsing/kcmcss
+DocPath=kcontrol/stylesheets.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=css
