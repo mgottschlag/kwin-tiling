@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.10  2000/04/10 04:56:07  charles
+    Thought I'de commit before I break out for the day^H^H^Hnight.
+
     Revision 1.9  2000/04/09 22:33:57  charles
     Milestone 3 :)
 
@@ -105,6 +108,7 @@ signals:
 	void changed();
 
 private:
+
 	QListBox *eventslist;
 	QCheckBox *enabled;
 	QLineEdit *file;
@@ -112,7 +116,7 @@ private:
 	
 	EventConfig *event;
 	EventConfig *localEvent;
-
+	int oldListItem;
 };
 
 #endif

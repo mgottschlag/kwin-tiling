@@ -24,7 +24,7 @@
 #include "eventview.h"
 #include "eventview.moc"
 
-
+#include <qlabel.h>
 #include <qlayout.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -34,9 +34,9 @@
 
 #include <iostream.h>
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name), event(0), localEvent(0)
+	QWidget(parent, name), event(0), localEvent(0), oldListItem(-1)
 {
-	QGridLayout *layout=new QGridLayout(this,2,3);
+	QGridLayout *layout=new QGridLayout(this,2,4);
 	
 	static QStringList presentation;
 	presentation << i18n("Sound")
@@ -47,12 +47,13 @@ EventView::EventView(QWidget *parent, const char *name):
 	eventslist=new QListBox(this);
 	eventslist->insertStringList(presentation);
 	
-	layout->addMultiCellWidget(eventslist, 0,2, 0,0);
+	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
-	layout->addWidget(file=new KLineEdit(this), 1,1);
-	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 2,1);
+	layout->addWidget(file=new KLineEdit(this), 2,1);
+	layout->addWidget(new QLabel(file, i18n("&File:"), this), 1,1);
+	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 3,1);
 	
-	file->hide();
+	file->setEnabled(false);
 	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
 	connect(enabled, SIGNAL(toggled(bool)), SLOT(itemToggled(bool)));
 	connect(file, SIGNAL(textChanged(QString)), SLOT(changed(textChanged(QString))));
@@ -64,32 +65,37 @@ EventView::~EventView()
 
 void EventView::defaults()
 {
-	emit changed();
+//	emit changed();
+	unload();
 }
 
 void EventView::textChanged(const QString &str)
 {
 	(void)str;
 }
+
 void EventView::itemSelected(int item)
 {
-// außer dem alten Einzelteil
-//	TODO
-
-// charger le nouvelle chose
-	if (localEvent->present & enumNum(item))
-		enabled->setChecked(true);
+	file->setEnabled(false);
+	// charger la nouvelle chose
 	
-	if (enumNum(item) & KNotifyClient::Sound)
-		file->show(), file->setText(localEvent->soundfile);
+	enabled->setChecked((localEvent->present & enumNum(item)) ? true : false);
+	if (enumNum(item) == KNotifyClient::Sound)
+		file->setEnabled(true), file->setText(localEvent->soundfile);
 	
-	if (enumNum(item) & KNotifyClient::Logfile)
-		file->show(), file->setText(localEvent->logfile);		
+	if (enumNum(item) == KNotifyClient::Logfile)
+		file->setEnabled(true), file->setText(localEvent->logfile);
+	oldListItem=item;
 }
 
 void EventView::itemToggled(bool on)
 {
-	(void)on;
+	if (!localEvent) return;
+	if (on)
+		localEvent->present|=enumNum(eventslist->currentItem());
+	else
+		localEvent->present&= ~enumNum(eventslist->currentItem());
+	setPixmaps();
 }
 
 void EventView::load(EventConfig *_event)
@@ -102,10 +108,13 @@ void EventView::load(EventConfig *_event)
 	eventslist->setSelected(0, true);
 	kapp->processEvents();
 	eventslist->setContentsPos(0,0); // go to the top
+	itemSelected(0);
 }
 
 void EventView::setPixmaps()
 { // Handle all of 'dem at once
+	int current=eventslist->currentItem();
+	eventslist->blockSignals(true);
 	if (!localEvent) return;
 	int i=0;
 	for (int c=1; c <=8; c*=2)
@@ -116,6 +125,8 @@ void EventView::setPixmaps()
 			eventslist->changeItem(eventslist->text(i), i);
 		i++;
 	}
+	eventslist->setCurrentItem(current);
+	eventslist->blockSignals(false);
 }
 
 void EventView::unload(bool save)
@@ -131,6 +142,7 @@ void EventView::unload(bool save)
 	enabled->setChecked(false);
 	setPixmaps();
 	file->setText("");
+	file->setEnabled(false);
 }
 
 int EventView::listNum(int enumNum)
