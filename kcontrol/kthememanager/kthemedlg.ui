@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>687</width>
-            <height>382</height>
+            <width>704</width>
+            <height>379</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -25,148 +25,10 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
-            <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Plain</enum>
-                    </property>
-                    <property name="text">
-                        <string>Choose your visual KDE theme:</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>MinimumExpanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>170</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="KURLLabel">
-                    <property name="name">
-                        <cstring>lbGet</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Get new themes...</string>
-                    </property>
-                    <property name="url" stdset="0">
-                        <string>http://themes.kde.org</string>
-                    </property>
-                    <property name="tipText">
-                        <string>Go to the KDE themes website</string>
-                    </property>
-                    <property name="useTips">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLayoutWidget" row="1" column="0">
-            <property name="name">
-                <cstring>layout1</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="0" column="1" rowspan="4" colspan="1">
-                    <property name="name">
-                        <cstring>lbPreview</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="frameShape">
-                        <enum>Box</enum>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignCenter</set>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="0">
-                    <property name="name">
-                        <cstring>btnRemove</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Remove Theme</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="3" column="0">
-                    <property name="name">
-                        <cstring>btnCreate</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Create &amp;New Theme...</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="1" column="0">
-                    <property name="name">
-                        <cstring>btnInstall</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Install New Theme...</string>
-                    </property>
-                </widget>
-                <widget class="QListView" row="0" column="0">
-                    <column>
-                        <property name="text">
-                            <string>Theme</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>false</bool>
-                        </property>
-                    </column>
-                    <property name="name">
-                        <cstring>lvThemes</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>7</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="showSortIndicator">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizeMode">
-                        <enum>AllColumns</enum>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="Line" row="2" column="0">
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="Line" row="5" column="0" rowspan="1" colspan="9">
             <property name="name">
                 <cstring>line1</cstring>
             </property>
@@ -180,7 +42,7 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-        <widget class="QLabel" row="3" column="0">
+        <widget class="QLabel" row="6" column="0" rowspan="1" colspan="9">
             <property name="name">
                 <cstring>textLabel1_2</cstring>
             </property>
@@ -188,260 +50,369 @@
                 <string>Customize your theme:</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="4" column="0">
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>layout4</cstring>
+                <cstring>textLabel1</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="text">
+                <string>Choose your visual KDE theme:</string>
+            </property>
+        </widget>
+        <spacer row="0" column="3" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>325</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="KURLLabel" row="0" column="7" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lbGet</cstring>
+            </property>
+            <property name="text">
+                <string>Get new themes...</string>
+            </property>
+            <property name="url" stdset="0">
+                <string>http://themes.kde.org</string>
+            </property>
+            <property name="tipText">
+                <string>Go to the KDE themes website</string>
+            </property>
+            <property name="useTips">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="2" rowspan="4" colspan="7">
+            <property name="name">
+                <cstring>lbPreview</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="frameShape">
+                <enum>Box</enum>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnRemove</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Remove Theme</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnCreate</cstring>
+            </property>
+            <property name="text">
+                <string>Create &amp;New Theme...</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnInstall</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Install New Theme...</string>
+            </property>
+        </widget>
+        <widget class="QListView" row="1" column="0" rowspan="1" colspan="2">
+            <column>
+                <property name="text">
+                    <string>Theme</string>
                 </property>
-                <widget class="QToolButton">
-                    <property name="name">
-                        <cstring>btnBackground</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                        <string>Background</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Customize the desktop background</string>
-                    </property>
-                </widget>
-                <widget class="QToolButton">
-                    <property name="name">
-                        <cstring>btnColors</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                        <string>Colors</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Customize colors</string>
-                    </property>
-                </widget>
-                <widget class="QToolButton">
-                    <property name="name">
-                        <cstring>btnStyle</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                        <string>Style</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Customize the widget style</string>
-                    </property>
-                </widget>
-                <widget class="QToolButton">
-                    <property name="name">
-                        <cstring>btnIcons</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                        <string>Icons</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Customize the icon theme</string>
-                    </property>
-                 </widget>
-                 <widget class="QToolButton">
-                    <property name="name">
-                       <cstring>btnFonts</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                       <sizepolicy>
-                          <hsizetype>5</hsizetype>
-                          <vsizetype>0</vsizetype>
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                       </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                       <size>
-                          <width>80</width>
-                          <height>60</height>
-                       </size>
-                    </property>
-                    <property name="maximumSize">
-                       <size>
-                          <width>32767</width>
-                          <height>60</height>
-                       </size>
-                    </property>
-                    <property name="focusPolicy">
-                       <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                       <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                       <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                       <string>Fonts</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                       <string>Customize the font theme</string>
-                    </property>
-                </widget>
-                <widget class="QToolButton">
-                    <property name="name">
-                        <cstring>btnSaver</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>60</height>
-                        </size>
-                    </property>
-                    <property name="focusPolicy">
-                        <enum>TabFocus</enum>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="usesTextLabel">
-                        <bool>true</bool>
-                    </property>
-                    <property name="textLabel">
-                        <string>Screensaver</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Customize the screensaver</string>
-                    </property>
-                </widget>
-            </hbox>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>false</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>lvThemes</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="showSortIndicator">
+                <bool>true</bool>
+            </property>
+            <property name="resizeMode">
+                <enum>AllColumns</enum>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="0">
+            <property name="name">
+                <cstring>btnBackground</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Background</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize the desktop background</string>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>btnColors</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Colors</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize colors</string>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="4">
+            <property name="name">
+                <cstring>btnStyle</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Style</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize the widget style</string>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="5">
+            <property name="name">
+                <cstring>btnIcons</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Icons</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize the icon theme</string>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="6" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>btnFonts</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Fonts</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize the font theme</string>
+            </property>
+        </widget>
+        <widget class="QToolButton" row="7" column="8">
+            <property name="name">
+                <cstring>btnSaver</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32767</width>
+                    <height>60</height>
+                </size>
+            </property>
+            <property name="focusPolicy">
+                <enum>TabFocus</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="usesTextLabel">
+                <bool>true</bool>
+            </property>
+            <property name="textLabel">
+                <string>Screensaver</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Customize the screensaver</string>
+            </property>
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>lbGet</sender>
@@ -472,8 +443,8 @@
         <signal>clicked()</signal>
         <receiver>KThemeDlg</receiver>
         <slot>startIcons()</slot>
-     </connection>
-     <connection>
+    </connection>
+    <connection>
         <sender>btnFonts</sender>
         <signal>clicked()</signal>
         <receiver>KThemeDlg</receiver>
@@ -511,7 +482,4 @@
     <slot specifier="non virtual">startSaver()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kurllabel.h</includehint>
-</includehints>
 </UI>
