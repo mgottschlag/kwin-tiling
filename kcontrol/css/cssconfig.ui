@@ -12,8 +12,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>442</width>
-            <height>446</height>
+            <width>455</width>
+            <height>537</height>
         </rect>
     </property>
     <property stdset="1">
@@ -272,7 +272,7 @@
                     <name>title</name>
                     <string>&amp;Customize</string>
                 </attribute>
-                <grid>
+                <vbox>
                     <property stdset="1">
                         <name>margin</name>
                         <number>11</number>
@@ -281,7 +281,7 @@
                         <name>spacing</name>
                         <number>6</number>
                     </property>
-                    <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <widget>
                         <class>QGroupBox</class>
                         <property stdset="1">
                             <name>name</name>
@@ -437,156 +437,7 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                        <class>QGroupBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>GroupBox7</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>enabled</name>
-                            <bool>false</bool>
-                        </property>
-                        <property stdset="1">
-                            <name>title</name>
-                            <string>Font &amp;family</string>
-                        </property>
-                        <property>
-                            <name>toolTip</name>
-                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
-                        </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
-                        </property>
-                        <grid>
-                            <property stdset="1">
-                                <name>margin</name>
-                                <number>11</number>
-                            </property>
-                            <property stdset="1">
-                                <name>spacing</name>
-                                <number>6</number>
-                            </property>
-                            <widget row="0"  column="1" >
-                                <class>QComboBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>fontFamily</cstring>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>&lt;p&gt;This is the currently selected font family&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <widget row="0"  column="0" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>txtBaseFontFamily</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Base &amp;family:</string>
-                                </property>
-                                <property>
-                                    <name>buddy</name>
-                                    <cstring>fontFamily</cstring>
-                                </property>
-                            </widget>
-                            <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>sameFamily</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Use same family for all text</string>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                        <class>QGroupBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>GroupBox3_2</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>enabled</name>
-                            <bool>false</bool>
-                        </property>
-                        <property stdset="1">
-                            <name>title</name>
-                            <string>&amp;Images</string>
-                        </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>&lt;b&gt;Images&lt;/b&gt;&lt;p&gt;&lt;/b&gt;</string>
-                        </property>
-                        <grid>
-                            <property stdset="1">
-                                <name>margin</name>
-                                <number>11</number>
-                            </property>
-                            <property stdset="1">
-                                <name>spacing</name>
-                                <number>6</number>
-                            </property>
-                            <widget row="0"  column="0" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>hideImages</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>&amp;Supress images</string>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                            <widget row="1"  column="0" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>hideBackground</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Supress background images</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
-                                </property>
-                                <property>
-                                    <name>whatsThis</name>
-                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget row="0"  column="2"  rowspan="3"  colspan="1" >
+                    <widget>
                         <class>QButtonGroup</class>
                         <property stdset="1">
                             <name>name</name>
@@ -833,37 +684,224 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget row="3"  column="0" >
-                        <class>QPushButton</class>
+                    <widget>
+                        <class>QGroupBox</class>
                         <property stdset="1">
                             <name>name</name>
-                            <cstring>preview</cstring>
+                            <cstring>GroupBox7</cstring>
                         </property>
                         <property stdset="1">
                             <name>enabled</name>
                             <bool>false</bool>
                         </property>
                         <property stdset="1">
-                            <name>text</name>
-                            <string>&amp;Preview...</string>
+                            <name>title</name>
+                            <string>Font &amp;family</string>
                         </property>
                         <property>
                             <name>toolTip</name>
-                            <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
+                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
                         </property>
                         <property>
                             <name>whatsThis</name>
-                            <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
+                            <string>&lt;b&gt;Font family&lt;/b&gt;&lt;p&gt;A font family is a group of fonts that resemble one another, with family members that are e.g. bold, italic, or any number of the above.&lt;/p&gt;</string>
                         </property>
+                        <grid>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget row="0"  column="1" >
+                                <class>QComboBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>fontFamily</cstring>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;p&gt;This is the currently selected font family&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                            <widget row="0"  column="0" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>txtBaseFontFamily</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Base &amp;family:</string>
+                                </property>
+                                <property>
+                                    <name>buddy</name>
+                                    <cstring>fontFamily</cstring>
+                                </property>
+                            </widget>
+                            <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>sameFamily</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Use same family for all text</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Use same family for all text&lt;/b&gt;&lt;p&gt;Select this option to override custom fonts everywhere in favor of the base font.&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
-                    <spacer row="3"  column="1"  rowspan="1"  colspan="2" >
+                    <widget>
+                        <class>QGroupBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>GroupBox3_2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>enabled</name>
+                            <bool>false</bool>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>&amp;Images</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>&lt;b&gt;Images&lt;/b&gt;&lt;p&gt;&lt;/b&gt;</string>
+                        </property>
+                        <grid>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget row="0"  column="0" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>hideImages</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Supress images</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Supress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                            <widget row="1"  column="0" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>hideBackground</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Supress background images</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Supress background images&lt;/b&gt;&lt;p&gt;Selecting this option will prevent Konqueror from loading background images.&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget>
+                        <class>QLayoutWidget</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Layout1</cstring>
+                        </property>
+                        <hbox>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>0</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget>
+                                <class>QPushButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>preview</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Preview...</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
+                                </property>
+                                <property>
+                                    <name>whatsThis</name>
+                                    <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
+                                </property>
+                            </widget>
+                            <spacer>
+                                <property>
+                                    <name>name</name>
+                                    <cstring>Spacer1_4</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>orientation</name>
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizeType</name>
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property>
+                                    <name>sizeHint</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </hbox>
+                    </widget>
+                    <spacer>
                         <property>
                             <name>name</name>
-                            <cstring>Spacer1_4</cstring>
+                            <cstring>Spacer5_2</cstring>
                         </property>
                         <property stdset="1">
                             <name>orientation</name>
-                            <enum>Horizontal</enum>
+                            <enum>Vertical</enum>
                         </property>
                         <property stdset="1">
                             <name>sizeType</name>
@@ -877,7 +915,7 @@
                             </size>
                         </property>
                     </spacer>
-                </grid>
+                </vbox>
             </widget>
         </widget>
     </vbox>
