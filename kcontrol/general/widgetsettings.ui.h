@@ -133,10 +133,11 @@ void  KWidgetSettingsModule::save()
 
 	// KDE's Part via KConfig
 
-	KConfig config;
-	config.setGroup("Toolbar style");
-	config.writeEntry("Highlighting", cboxHoverButtons->isChecked());
-	config.writeEntry("TransparentMoving", cboxToolbarsHighlight->isChecked());
+	KConfig *config = kapp->config();
+
+	config->setGroup("Toolbar style");
+	config->writeEntry("Highlighting", cboxHoverButtons->isChecked(), true, true);
+	config->writeEntry("TransparentMoving", cboxToolbarsHighlight->isChecked(), true, true);
 
 	QString tbIcon;
 
@@ -157,14 +158,14 @@ void  KWidgetSettingsModule::save()
 		tbIcon = QString::fromLatin1("IconOnly");
 	}
 
-	config.writeEntry("IconText", tbIcon, true, true);
+	config->writeEntry("IconText", tbIcon, true, true);
 
-	config.setGroup("KDE");
-	config.writeEntry("ShowIconsOnPushButtons", cboxIconSupport->isChecked());
-	config.writeEntry("EffectNoTooltip", cboxDisableTooltips->isChecked());
+	config->setGroup("KDE");
+	config->writeEntry("ShowIconsOnPushButtons", cboxIconSupport->isChecked(), true, true);
+	config->writeEntry("EffectNoTooltip", cboxDisableTooltips->isChecked(), true, true);
 
 
-	config.sync();
+	config->sync();
 
 	// Notify all KApplications && KWin about the updated style stuff
 	KIPC::sendMessageAll(KIPC::StyleChanged);
