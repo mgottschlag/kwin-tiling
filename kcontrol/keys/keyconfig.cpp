@@ -67,10 +67,11 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   }
   
   if ( KeyType == "standard" ) {
-#include "./stdbindings.cpp"
-    KeyScheme = "Standard Key Scheme " ;
-    KeySet    = "Keys" ;
-    check_against_std_keys  = false ;
+	  for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++)
+		  keys->insertStdItem((KStdAccel::StdAccel)i);
+	  KeyScheme = "Standard Key Scheme " ;
+	  KeySet    = "Keys" ;
+	  check_against_std_keys  = false ;
   }
   
   keys->setConfigGlobal( true );

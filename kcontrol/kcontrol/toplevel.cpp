@@ -81,16 +81,14 @@ TopLevel::TopLevel(const char* name)
 
 
 TopLevel::~TopLevel()
-{
-}
-
+{}
 
 void TopLevel::initMenuBar()
 {
   QPopupMenu *file_menu = new QPopupMenu();
 
   file_menu->insertItem(BarIcon("exit"), i18n("E&xit"), kapp, SLOT(quit()),
-                        KStdAccel::quit());
+                        KStdAccel::key(KStdAccel::Quit));
 
   KMenuBar* menu_bar = new KMenuBar(this);
   menu_bar->insertItem(i18n("&File"), file_menu);
