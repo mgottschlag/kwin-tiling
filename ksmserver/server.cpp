@@ -699,12 +699,11 @@ extern "C" int _IceTransNoListen(const char * protocol);
 #endif
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
-  : DCOPObject("ksmserver")
+  : DCOPObject("ksmserver"), sessionGroup( "" )
 {
     the_server = this;
     clean = false;
     wm = windowManager;
-    sessionGroup = QString( "Session: " ) + SESSION_PREVIOUS_LOGOUT;
 
     state = Idle;
     dialogActive = false;
@@ -1358,6 +1357,7 @@ void KSMServer::restoreSession( QString sessionName )
  */
 void KSMServer::startDefaultSession()
 {
+    sessionGroup = "";
     publishProgress( 0, true );
     upAndRunning( "ksmserver" );
     connectDCOPSignal( launcher, launcher, "autoStartDone()",
