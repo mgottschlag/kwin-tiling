@@ -80,14 +80,16 @@ bool KShortURIFilter::expandEnvVar( QString& cmd ) const
     env_loc = QRegExp( QFL1(ENV_VAR_PATTERN) ).match( cmd, env_loc, &env_len );
     if( env_loc == -1 ) break;
     const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).local8Bit().data() );
-    cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
+    if(exp)
+      cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
+    else
+      env_loc++; // skip past the '$' or end up in endless loop!!
   }
   return ( env_len ) ? true : false;
 }
 
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
-
  /*
   * Here is a description of how the shortURI deals with the supplied
   * data.  First it expands any environment variable settings and then
