@@ -83,7 +83,7 @@ protected:
     void copyFile(const QString& src, const QString& dest, bool moving );
     void copyDir(const QString& src, const QString& dest, bool moving );
 
-    bool deleteFile(const QString& deskfile, const bool move = false);
+    int deleteFile(const QString& deskfile, const bool move = false);
     bool deleteDir(const QString& dir, const bool move = false);
     void hideFile(const QString& deskfile, bool hide);
     void hideDir(const QString& d, const QString name, bool hide, QString icon);

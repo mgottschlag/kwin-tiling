@@ -282,7 +282,7 @@ void TreeView::currentChanged()
 }
 
 // moving = src will be removed later
-void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
+void TreeView::copyFile(const QString& src, const QString& dest, bool moving)
 {
     // We can't simply copy a .desktop file as several prefixes might
     // contain a version of that file. To make sure to copy all groups
@@ -296,6 +296,7 @@ void TreeView::copyFile(const QString& src, const QString& dest, bool moving )
 
     // read-only + don't merge in kdeglobals
     KConfig s(locate("apps", src), true, false);
+
     KSimpleConfig d(locateLocal("apps", dest));
 
     // don't copy hidden files
@@ -377,13 +378,17 @@ void TreeView::copyDir(const QString& s, const QString& d, bool moving )
     c.sync();
 }
 
-bool TreeView::deleteFile(const QString& deskfile, const bool move)
+// Return value: 0 - removed everything
+//               1 - removed only local
+//               2 - removed none
+int TreeView::deleteFile(const QString& deskfile, const bool move)
 {
     // We search for the file in all prefixes and remove all writeable
     // ones. If we were not able to remove all (because of lack of permissons)
     // we set the "Hidden" flag in a writeable local file in a path returned
     // by localeLocal().
-    bool allremoved = true;
+    bool removedlocal = false;
+    bool failedglobal = false;
 
     // search the selected item in all resource dirs
     QStringList resdirs = KGlobal::dirs()->resourceDirs("apps");
@@ -394,8 +399,7 @@ bool TreeView::deleteFile(const QString& deskfile, const bool move)
         if(!f.exists()) continue;
 
         // remove all writeable files
-        if(!f.remove())
-            allremoved = false;
+        if(!f.remove()) failedglobal = true; else removedlocal=true;
     }
 
     if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
@@ -408,7 +412,10 @@ bool TreeView::deleteFile(const QString& deskfile, const bool move)
         c.writeEntry("Hidden", true);
         c.sync();
     }
-	return allremoved;
+
+    if (failedglobal) {
+        if (removedlocal) return 1; else return 2;
+    } else return(0);
 }
 
 bool TreeView::deleteDir(const QString& d, const bool move)
@@ -736,7 +743,7 @@ void TreeView::newsubmenu()
 void TreeView::newitem()
 {
     _ndlg->setText(i18n(""));
-    _ndlg->setCaption(i18n("NewItem"));
+    _ndlg->setCaption(i18n("New Item"));
     if (!_ndlg->exec()) return;
 
     QString filename = _ndlg->text();
@@ -780,7 +787,7 @@ void TreeView::newitem()
 	dir += '/';
     dir += filename + ".desktop";
 
-    QFile f(locateLocal("apps", dir));
+    QFile f(locate("apps", dir));
     if (f.exists()) {
     	KMessageBox::sorry(0, i18n("A file already exists with that name. Please provide another name."), i18n("File Exists"));
 	return;
@@ -890,13 +897,23 @@ void TreeView::paste()
         dest.truncate(pos);
     }
 
+    QString newname = _clipboard;
+    QFile f(locate("apps", dest + '/' + newname));
+
+    while (f.exists()) {
+        pos = newname.findRev(".desktop");
+        newname.insert(pos, " (Copy)");
+
+        f.setName(locate("apps", dest + '/' + newname));
+    }
+
     kdDebug() << "### clip: " << _clipboard.local8Bit() << " dest: " << dest.local8Bit() << " ###" << endl;
 
     // is _clipboard a .directory or a .desktop file
     if(_clipboard.find(".directory") > 0)// if cut&paste is done, assume it's moving too
-        copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard, true );
+        copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + newname, true );
     else if (_clipboard.find(".desktop"))
-        copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard, true );
+        copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + newname, true );
 
     // create the TreeItems:
 
@@ -920,13 +937,13 @@ void TreeView::paste()
     else
 	newitem = new TreeItem(parent, item, "");
 
-    KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
+    KDesktopFile df(locateLocal("apps", dest + '/' + newname));
 
     newitem->setText(0, df.readName());
     if(!dest.isEmpty())
-	newitem->setFile(dest + '/' + _clipboard);
+        newitem->setFile(dest + '/' + newname);
     else
-	newitem->setFile(_clipboard);
+        newitem->setFile(newname);
     newitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
 
 
@@ -954,7 +971,10 @@ void TreeView::del()
     }
     else if (file.find(".desktop"))
     {
-        if (!(deleteFile(file)))
+        int v=deleteFile(file);
+        if (v==1)
+                KMessageBox::sorry(0, i18n("This is a root item. Only your modifications have been deleted. If you want to completely remove this item hide it instead."), i18n("Permission denied"));
+        else if (v==2)
 		KMessageBox::sorry(0, i18n("This is a root item. You don't have permission to delete it. Hide it instead."), i18n("Permission denied"));
 	else
 		delete item;
