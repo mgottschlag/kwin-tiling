@@ -1347,7 +1347,7 @@ mk_willing(Entry *ce, Section *cs ATTR_UNUSED)
 }
 
 static int
-edit_resources(File *file, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
+edit_resources(File *file ATTR_UNUSED, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
 {
     /* XXX remove any login*, chooser*, ... resources */
     return 0;
@@ -1626,14 +1626,14 @@ upd_hiddenusers(Entry *ce, Section *cs ATTR_UNUSED)
 	return;
 
     msu = getfqval (cs->name, "MinShowUID", "0");
-    sscanf (msu, "%d", &minuid);
+    sscanf (msu, "%u", &minuid);
     msu = getfqval (cs->name, "MaxShowUID", "65535");
-    sscanf (msu, "%d", &maxuid);
+    sscanf (msu, "%u", &maxuid);
 
     nv = 0;
     pt = ce->value;
     for (;;) {
-	et = strchr (pt, ',');
+	et = strpbrk (pt, ";,");
 	if (et) {
 	    memcpy (nbuf, pt, et - pt);
 	    nbuf[et - pt] = 0;
@@ -2720,8 +2720,6 @@ is22conf (const char *path)
 static int
 mergeKdmRcNewer (const char *path)
 {
-    Section *cs;
-    Entry *ce;
     char *p, *p2;
 
     ASPrintf (&p, "%s/kdm/kdmrc", path);
