@@ -308,8 +308,8 @@ void KLocaleConfig::changedCountry(int i)
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);
 
-  emit resample();
   emit countryChanged();
+  emit resample();
 }
 
 void KLocaleConfig::changedLanguage(int i)
