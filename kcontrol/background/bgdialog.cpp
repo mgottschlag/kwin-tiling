@@ -283,15 +283,36 @@ void BGDialog::initUI()
 
    // Wallpapers
    QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
-   lst.sort();
-   KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
-   comboWallpaper->insertItem(i18n("<None>"));
+   QMap<QString, QPair<QString, QString> > papers;
    for (int i = 0; i < (int)lst.count(); ++i)
    {
+      QString paper = lst[i];
       int n = lst[i].findRev('/');
-      QString s = lst[i].mid(n+1);
-      comboWallpaper->insertItem(s);
-      m_Wallpaper[s] = i+1;
+      QString s = paper.mid(n+1);
+      n = 0;
+      while (papers.find(s) != papers.end())
+      {
+        // avoid name collisions
+        ++n;
+      }
+
+      if (n > 0)
+      {
+        s += " (" + QString::number(n) + ")";
+      }
+
+      papers[s.lower()] = qMakePair(s, paper);
+   }
+
+   KComboBox *comboWallpaper = m_urlWallpaper->comboBox();
+   comboWallpaper->insertItem(i18n("<None>"));
+   int i = 0;
+   for (QMap<QString, QPair<QString, QString> >::Iterator it = papers.begin();
+        it != papers.end();
+        ++it)
+   {
+      comboWallpaper->insertItem(it.data().first);
+      m_Wallpaper[it.data().second] = ++i;
    }
 
    // Wallpaper tilings: again they must match the ones from bgrender.cc
