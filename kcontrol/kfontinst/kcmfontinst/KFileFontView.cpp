@@ -46,6 +46,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdebug.h>
+#include <kurldrag.h>
 #include "KFileFontView.h"
 #include "Global.h"
 #include "FontEngine.h"
@@ -55,9 +56,20 @@
 #define COL_FONT    1
 #define COL_ENABLED 2
 
+class CKFileFontView::CKFileFontViewPrivate
+{
+    public:
+
+    CKFileFontViewPrivate() : itsDropItem(0) {}
+
+    CFontListViewItem *itsDropItem;
+    QTimer            itsAutoOpenTimer;
+};
+
 CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
               : KListView(parent, name),
-                KFileView()
+                KFileView(),
+                d(new CKFileFontViewPrivate())
 {
     itsSortingCol = COL_NAME;
     itsBlockSortingSignal = false;
@@ -68,6 +80,7 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     addColumn(i18n("Enabled"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
+    setDragEnabled(true);
 
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(slotSortingChanged(int)));
     connect(this, SIGNAL(returnPressed(QListViewItem *)), SLOT(slotActivate(QListViewItem *)));
@@ -75,6 +88,9 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int)), SLOT(slotActivate(QListViewItem *)));
     connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint &, int)),
 	    this, SLOT(slotActivateMenu(QListViewItem *, const QPoint &)));
+
+    // DND
+    connect(&(d->itsAutoOpenTimer), SIGNAL(timeout()), this, SLOT(slotAutoOpen()));
 
     setSelectionMode(KFileView::selectionMode());
 
@@ -84,6 +100,7 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
 CKFileFontView::~CKFileFontView()
 {
     delete itsResolver;
+    delete d;
 }
 
 void CKFileFontView::setSelected(const KFileItem *info, bool enable)
@@ -198,8 +215,8 @@ void CKFileFontView::highlighted( QListViewItem *item )
 
 void CKFileFontView::setSelectionMode(KFile::SelectionMode sm)
 {
-    disconnect(this, SIGNAL(selectionChanged()));
-    disconnect(this, SIGNAL(selectionChanged(QListViewItem *)));
+    disconnect(SIGNAL(selectionChanged()), this);
+    disconnect(SIGNAL(selectionChanged(QListViewItem *)), this);
 
     switch (sm)
     {
@@ -434,6 +451,152 @@ void CKFileFontView::determineIcon(CFontListViewItem *item)
 void CKFileFontView::listingCompleted()
 {
     itsResolver->start();
+}
+
+QDragObject *CKFileFontView::dragObject()
+{
+    // create a list of the URL:s that we want to drag
+    KURL::List            urls;
+    KFileItemListIterator it(* KFileView::selectedItems());
+    QPixmap               pixmap;
+    QPoint                hotspot;
+
+    for ( ; it.current(); ++it )
+        urls.append( (*it)->url() );
+
+    if(urls.count()> 1)
+        pixmap = DesktopIcon("kmultiple", KIcon::SizeSmall);
+    if(pixmap.isNull())
+        pixmap = currentFileItem()->pixmap(KIcon::SizeSmall);
+
+    hotspot.setX(pixmap.width() / 2);
+    hotspot.setY(pixmap.height() / 2);
+
+    QDragObject* dragObject=KURLDrag::newDrag(urls, widget());
+
+    dragObject->setPixmap(pixmap, hotspot);
+
+    return dragObject;
+}
+
+void CKFileFontView::slotAutoOpen()
+{
+    d->itsAutoOpenTimer.stop();
+
+    if(d->itsDropItem)
+    {
+        KFileItem *fileItem = d->itsDropItem->fileInfo();
+
+        if (fileItem && !fileItem->isFile() && (fileItem->isDir() || fileItem->isLink()))
+            sig->activate(fileItem);
+    }
+}
+
+bool CKFileFontView::acceptDrag(QDropEvent *e) const
+{
+    bool       ok=false;
+    KURL::List urls;
+
+    if(KURLDrag::canDecode(e) && (e->source()!=this) && (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) && KURLDrag::decode(e, urls) && !urls.isEmpty())
+    {
+        KURL::List::Iterator it;
+
+        ok=true;
+        for(it=urls.begin(); ok && it!=urls.end(); ++it)
+        {
+            QCString path(QFile::encodeName((*it).path()));
+
+            if(!CFontEngine::isAFont(path) && !CFontEngine::isAAfm(path))
+                ok=false;
+        }
+    }
+
+    return ok;
+}
+
+void CKFileFontView::contentsDragEnterEvent(QDragEnterEvent *e)
+{
+    if (!acceptDrag(e)) // can we decode this ?
+        e->ignore();            // No
+    else
+    {
+        e->acceptAction();     // Yes
+
+        if((dropOptions() & AutoOpenDirs))
+        {
+            CFontListViewItem *item = dynamic_cast<CFontListViewItem*>(itemAt(contentsToViewport(e->pos())));
+            if (item)  // are we over an item ?
+            {
+                d->itsDropItem = item;
+                d->itsAutoOpenTimer.start(autoOpenDelay()); // restart timer
+            }
+            else
+            {
+                d->itsDropItem = 0;
+                d->itsAutoOpenTimer.stop();
+            }
+        }
+    }
+}
+
+void CKFileFontView::contentsDragMoveEvent(QDragMoveEvent *e)
+{
+    if (!acceptDrag(e)) // can we decode this ?
+        e->ignore();            // No
+    else
+    {
+        e->acceptAction();     // Yes
+
+        if ((dropOptions() & AutoOpenDirs))
+        {
+            CFontListViewItem *item = dynamic_cast<CFontListViewItem*>(itemAt(contentsToViewport(e->pos())));
+
+            if (item)  // are we over an item ?
+            {
+                if (d->itsDropItem != item)
+                {
+                    d->itsDropItem = item;
+                    d->itsAutoOpenTimer.start(autoOpenDelay()); // restart timer
+                }
+            }
+            else
+            {
+                d->itsDropItem = 0;
+                d->itsAutoOpenTimer.stop();
+            }
+        }
+    }
+}
+
+void CKFileFontView::contentsDragLeaveEvent(QDragLeaveEvent *)
+{
+    d->itsDropItem = 0;
+    d->itsAutoOpenTimer.stop();
+}
+
+void CKFileFontView::contentsDropEvent(QDropEvent *e)
+{
+    d->itsDropItem = 0;
+    d->itsAutoOpenTimer.stop();
+
+    if (!acceptDrag(e)) // can we decode this ?
+        e->ignore();            // No
+    else
+    {
+        e->acceptAction();     // Yes
+
+        CFontListViewItem *item = dynamic_cast<CFontListViewItem*>(itemAt(contentsToViewport(e->pos())));
+        KFileItem         *fileItem = item ? item->fileInfo() : 0;
+        KURL::List        urls;
+
+        emit dropped(e, fileItem);
+
+        if(KURLDrag::decode(e, urls) && !urls.isEmpty())
+        {
+            emit dropped(e, urls, fileItem ? fileItem->url() : KURL());
+            sig->dropURLs(fileItem, e, urls);
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////

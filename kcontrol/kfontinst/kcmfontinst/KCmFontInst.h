@@ -29,6 +29,9 @@
 // (C) Craig Drummond, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <kcmodule.h>
 #include <qstringlist.h>
 #include <kurl.h>
@@ -39,9 +42,14 @@ class KAction;
 class KRadioAction;
 class KActionMenu;
 class KFileItem;
-class CFontPreview;
+#ifdef HAVE_FT_CACHE
+class KIntNumInput;
 class QLabel;
+class CFontPreview;
 class QSplitter;
+#endif
+class KURLLabel;
+class QDropEvent;
 
 class CKCmFontInst : public KCModule
 {
@@ -72,11 +80,15 @@ class CKCmFontInst : public KCModule
     void    removeFonts();
     void    enable();
     void    disable();
+    void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
+    void    openUrlInBrowser(const QString &url);
+    void    showFace(int face);
 
     private:
 
     void    setUpAct();
     void    enableItems(bool enable);
+    void    addFonts(const KURL::List &src, const KURL &dest);
 
     private:
 
@@ -92,9 +104,13 @@ class CKCmFontInst : public KCModule
     KRadioAction *itsListAct,
                  *itsIconAct;
     KActionMenu  *itsViewMenuAct;
+    KURLLabel    *itsLabel;
+#ifdef HAVE_FT_CACHE
     CFontPreview *itsPreview;
-    QLabel       *itsLabel;
     QSplitter    *itsSplitter;
+    QLabel       *itsFaceLabel;
+    KIntNumInput *itsFaceSelector;
+#endif
     KConfig      itsConfig;
     bool         itsAutoSync;
 };

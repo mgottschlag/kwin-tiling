@@ -152,9 +152,26 @@ class CKFileFontView : public KListView, public KFileView
     void                determineIcon(CFontListViewItem *item);
     QScrollView *       scrollWidget() const { return (QScrollView*) this; }
 
+    signals:
+    // The user dropped something.
+    // fileItem points to the item dropped on or can be 0 if the
+    // user dropped on empty space.
+    void                dropped(QDropEvent *event, KFileItem *fileItem);
+    // The user dropped the URLs urls.
+    // url points to the item dropped on or can be empty if the
+    // user dropped on empty space.
+    void                dropped(QDropEvent *event, const KURL::List &urls, const KURL &url);
+
     protected:
 
     virtual void        keyPressEvent(QKeyEvent *e);
+    // DND support
+    QDragObject *       dragObject();
+    void                contentsDragEnterEvent(QDragEnterEvent *e);
+    void                contentsDragMoveEvent(QDragMoveEvent *e);
+    void                contentsDragLeaveEvent(QDragLeaveEvent *e);
+    void                contentsDropEvent(QDropEvent *e);
+    bool                acceptDrag(QDropEvent *e) const;
 
     int itsSortingCol;
 
@@ -169,6 +186,7 @@ class CKFileFontView : public KListView, public KFileView
     void                slotActivate(QListViewItem *item);
     void                highlighted(QListViewItem *item);
     void                slotActivateMenu(QListViewItem *item, const QPoint& pos);
+    void                slotAutoOpen();
 
     private:
 
@@ -193,7 +211,6 @@ class CKFileFontView : public KListView, public KFileView
     private:
 
     class CKFileFontViewPrivate;
-
     CKFileFontViewPrivate *d;
 };
 

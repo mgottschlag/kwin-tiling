@@ -34,23 +34,26 @@
 #include "Misc.h"
 #include "FontEngine.h"
 #include "KioFonts.h"
+#include "KFileFontIconView.h"
 #include "KFileFontView.h"
 #include "RenameJob.h"
-#include "kfileiconview.h"
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
-#include <qsplitter.h>
+#include <ktoolbarbutton.h>
 #include <kstdaccel.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
 #include <qgroupbox.h>
-#include <qlabel.h>
+#include <kurllabel.h>
+#include <kapplication.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
-
-// HACK - Can't sym-link in CVS?
-#include "../viewpart/FontPreview.cpp"
+#ifdef HAVE_FT_CACHE
+#include <qsplitter.h>
+#include <knuminput.h>
+#include "FontPreview.cpp"
+#endif
 
 #define CFG_GROUP       "Main Settings"
 #define CFG_LISTVIEW    "ListView"
@@ -72,28 +75,35 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
 
+#ifdef HAVE_FT_CACHE
     itsSplitter=new QSplitter(this);
 
     QFrame            *fontsFrame=new QGroupBox(itsSplitter),
-                      *previewFrame=new QGroupBox(itsSplitter),
-                      *urlFrame=new QGroupBox(this);
-    QGridLayout       *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1),
-                      *previewLayout=new QGridLayout(previewFrame, 1, 1, 1, 1);
+                      *previewFrame=new QGroupBox(itsSplitter);
+    QGridLayout       *previewLayout=new QGridLayout(previewFrame, 2, 2, 1, 1);
+#else
+    QFrame            *fontsFrame=new QGroupBox(this);
+#endif
+    QFrame            *urlFrame=new QGroupBox(this);
+    QGridLayout       *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
     QHBoxLayout       *urlLayout=new QHBoxLayout(urlFrame, 4);
     QVBoxLayout       *layout=new QVBoxLayout(this, 4);
     KToolBar          *toolbar=new KToolBar(this);
 
     fontsFrame->setLineWidth(0);
+#ifdef HAVE_FT_CACHE
     previewFrame->setFrameStyle(QFrame::StyledPanel|QFrame::Sunken);
+#endif
     urlFrame->setFrameShadow(QFrame::Sunken);
     urlFrame->setFrameShape(QFrame::StyledPanel);
     urlFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    itsLabel = new QLabel(urlFrame);
+    itsLabel = new KURLLabel(urlFrame);
     itsLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     urlLayout->addWidget(new QLabel(i18n("Location: "), urlFrame));
     urlLayout->addWidget(itsLabel);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     toolbar->setMovingEnabled(false);
+#ifdef HAVE_FT_CACHE
     itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     QValueList<int> sizes;
@@ -101,6 +111,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     sizes.append(itsConfig.readNumEntry(CFG_DIRSIZE, 3));
     sizes.append(itsConfig.readNumEntry(CFG_PREVIEWSIZE, 2));
     itsSplitter->setSizes(sizes);
+#endif
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
     KURL    url(itsTop);
@@ -134,15 +145,31 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     itsDirOp->setMimeFilter(mimeTypes);
     fontsLayout->addWidget(itsDirOp, 0, 0);
 
+#ifdef HAVE_FT_CACHE
     itsPreview = new CFontPreview(previewFrame);
-//    itsPreview->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
-//                              itsPreview->sizePolicy().hasHeightForWidth()));
+    itsPreview->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
+                              itsPreview->sizePolicy().hasHeightForWidth()));
     itsPreview->setMinimumSize(QSize(96, 64));
-    previewLayout->addWidget(itsPreview, 0, 0);
+    itsFaceLabel=new QLabel(i18n(" Face:"), previewFrame);
+    itsFaceSelector=new KIntNumInput(1, previewFrame);
+    itsFaceLabel->hide();
+    itsFaceSelector->hide();
+    previewLayout->addMultiCellWidget(itsPreview, 0, 0, 0, 1);
+    previewLayout->addWidget(itsFaceLabel, 1, 0);
+    previewLayout->addWidget(itsFaceSelector, 1, 1);
+#else
+    fontsFrame->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
+                              fontsFrame->sizePolicy().hasHeightForWidth()));
+    urlFrame->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
+#endif
 
     layout->addWidget(toolbar);
     layout->addWidget(urlFrame);
+#ifdef HAVE_FT_CACHE
     layout->addWidget(itsSplitter);
+#else
+    layout->addWidget(fontsFrame);
+#endif
 
     setButtons(0);
     setUseRootOnlyMsg(false);
@@ -276,12 +303,21 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     connect(itsDirOp, SIGNAL(urlEntered(const KURL &)), SLOT(urlEntered(const KURL &)));
     connect(itsDirOp, SIGNAL(fileHighlighted(const KFileItem *)), SLOT(fileHighlighted(const KFileItem *)));
+#ifdef HAVE_FT_CACHE
     connect(itsDirOp, SIGNAL(fileSelected(const KFileItem *)), SLOT(fileSelected(const KFileItem *)));
+#endif
     connect(itsDirOp, SIGNAL(finishedLoading()), SLOT(loadingFinished()));
+    connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
+                      SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
+    connect(itsLabel, SIGNAL(leftClickedURL(const QString &)), SLOT(openUrlInBrowser(const QString &)));
+#ifdef HAVE_FT_CACHE
+    connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
+#endif
 }
 
 CKCmFontInst::~CKCmFontInst()
 {
+#ifdef HAVE_FT_CACHE
     KConfigGroupSaver         cfgSaver(&itsConfig, CFG_GROUP);
     QValueList<int>           list=itsSplitter->sizes();
     QValueList<int>::Iterator it;
@@ -289,7 +325,7 @@ CKCmFontInst::~CKCmFontInst()
 
     for(it=list.begin(), num=0; it!=list.end() && num<2; ++it, num++)
         itsConfig.writeEntry(0==num ? CFG_DIRSIZE : CFG_PREVIEWSIZE, *it);
-
+#endif
     if(itsAboutData)
         delete itsAboutData;
     delete itsDirOp;
@@ -365,11 +401,12 @@ void CKCmFontInst::listView()
     itsConfig.writeEntry(CFG_LISTVIEW, true);
     if(itsAutoSync)
         itsConfig.sync();
+    itsDirOp->setAcceptDrops(true);
 }
 
 void CKCmFontInst::iconView()
 {
-    KFileIconView *newView=new KFileIconView(itsDirOp, "simple view");
+    CKFileFontIconView *newView=new CKFileFontIconView(itsDirOp, "simple view");
 
     itsDirOp->setView(newView);
     itsIconAct->setChecked(true);
@@ -377,6 +414,7 @@ void CKCmFontInst::iconView()
     itsConfig.writeEntry(CFG_LISTVIEW, false);
     if(itsAutoSync)
         itsConfig.sync();
+    itsDirOp->setAcceptDrops(true);
 }
 
 void CKCmFontInst::setupViewMenu()
@@ -417,6 +455,7 @@ void CKCmFontInst::urlEntered(const KURL &url)
     itsEnableAct->setEnabled(false);
     itsDisableAct->setEnabled(false); 
     itsLabel->setText(createLocationLabel(url));
+    itsLabel->setURL(url.url());
     if(itsAutoSync)
         itsConfig.sync();
 }
@@ -461,6 +500,7 @@ void CKCmFontInst::fileHighlighted(const KFileItem *)
     }
 }
 
+#ifdef HAVE_FT_CACHE
 void CKCmFontInst::fileSelected(const KFileItem *item)
 {
     if(item)  // OK, check its been selected - not deselected!!!
@@ -475,8 +515,27 @@ void CKCmFontInst::fileSelected(const KFileItem *item)
             {
                 if((*it)==item)
                 {
-                    if(CFontEngine::isAFont(QFile::encodeName(item->url().path())))
+                    QCString fName(QFile::encodeName(item->url().path()));
+
+                    if(CFontEngine::isAFont(fName))
+                    {
+                        bool showFs=false;
+
+                        if(CFontEngine::isATtc(fName) && CGlobal::fe().openKioFont(fName, CFontEngine::TEST, true))
+                        {
+                            if(CGlobal::fe().getNumFaces()>1)
+                            {
+                                itsFaceSelector->setRange(1, CGlobal::fe().getNumFaces(), 1, false);
+                                showFs=true;
+                            }
+
+                            CGlobal::fe().closeFont();
+                        }
+
+                        itsFaceLabel->setShown(showFs);
+                        itsFaceSelector->setShown(showFs);
                         itsPreview->showFont(item->url());
+                    }
                     break;
                 }
                 ++it;
@@ -484,6 +543,11 @@ void CKCmFontInst::fileSelected(const KFileItem *item)
         }
     }
 }
+#else
+void CKCmFontInst::fileSelected(const KFileItem *)
+{
+}
+#endif
 
 void CKCmFontInst::loadingFinished()
 {
@@ -498,28 +562,7 @@ void CKCmFontInst::addFonts()
                                              this, i18n("Install Fonts"));
 
     if(list.count())
-    {
-        KURL::List           copy(list);
-        KURL::List::Iterator it;
-
-        //
-        // Check if installing a Type1 font, if so look for corresponding .afm file to also install
-        for(it=list.begin(); it!=list.end(); ++it)
-            if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
-            {
-                QString       afm(CMisc::changeExt((*it).path(), "afm"));
-                KURL          afmUrl(*it),
-                              destUrl(QString("fonts:/")+itsDirOp->url().path()+CMisc::getFile(afm));
-                KIO::UDSEntry uds;
-
-                afmUrl.setPath(afm);
-                if(KIO::NetAccess::stat(afmUrl, uds) && !KIO::NetAccess::stat(destUrl, uds))
-                    copy+=afmUrl;
-            }
-
-        KIO::CopyJob *job=KIO::copy(copy, itsDirOp->url(), true);
-        job->setAutoErrorHandlingEnabled(true, this);
-    }
+        addFonts(list, itsDirOp->url());
 }
 
 void CKCmFontInst::removeFonts()
@@ -591,6 +634,29 @@ void CKCmFontInst::disable()
 {
     enableItems(false);
 }
+
+void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &urls)
+{
+    if(urls.count())
+        addFonts(urls, i && i->isDir() ?  i->url() : itsDirOp->url());
+}
+
+void CKCmFontInst::openUrlInBrowser(const QString &url)
+{
+  if (kapp)
+      kapp->invokeBrowser(url);
+}
+
+#ifdef HAVE_FT_CACHE
+void CKCmFontInst::showFace(int face)
+{
+    itsPreview->showFace(face);
+}
+#else
+void CKCmFontInst::showFace(int)
+{
+}
+#endif
 
 void CKCmFontInst::setUpAct()
 {
@@ -678,6 +744,33 @@ void CKCmFontInst::enableItems(bool enable)
         }
 
         CRenameJob *job = new CRenameJob(renameList, true);
+        job->setAutoErrorHandlingEnabled(true, this);
+    }
+}
+
+void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
+{
+    if(src.count())
+    {
+        KURL::List                copy(src);
+        KURL::List::ConstIterator it;
+
+        //
+        // Check if installing a Type1 font, if so look for corresponding .afm file to also install
+        for(it=src.begin(); it!=src.end(); ++it)
+            if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
+            {
+                QString       afm(CMisc::changeExt((*it).path(), "afm"));
+                KURL          afmUrl(*it),
+                              destUrl(QString("fonts:/")+dest.path()+CMisc::getFile(afm));
+                KIO::UDSEntry uds;
+
+                afmUrl.setPath(afm);
+                if(KIO::NetAccess::stat(afmUrl, uds) && !KIO::NetAccess::stat(destUrl, uds) && -1==copy.findIndex(afmUrl))
+                    copy+=afmUrl;
+            }
+
+        KIO::CopyJob *job=KIO::copy(copy, dest, true);
         job->setAutoErrorHandlingEnabled(true, this);
     }
 }
