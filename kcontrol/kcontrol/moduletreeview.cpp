@@ -201,7 +201,6 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 
   KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
   QString defName = path.left(path.length()-1);
-  kdDebug() << path << " " << defName << endl;
   int pos = defName.findRev('/');
   if (pos >= 0)
     defName = defName.mid(pos+1);
