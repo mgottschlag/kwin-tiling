@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <klineedit.h>
+#include <kiconloader.h>
 
 // SessionListBoxText is a list box text item with session filename
 class SessionListBoxText : public QListBoxText
@@ -54,6 +55,8 @@ SessionEditor::SessionEditor(QWidget * parent, const char *name)
   loaded=false;
 
   KGlobal::locale()->insertCatalogue("konsole"); // For schema and keytab translations
+  KGlobal::iconLoader()->addAppDir( "konsole" );
+
   directoryLine->setMode(KFile::Directory);
   connect(sessionList, SIGNAL(highlighted(int)), this, SLOT(readSession(int)));
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCurrent()));
