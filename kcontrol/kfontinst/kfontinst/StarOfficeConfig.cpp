@@ -87,7 +87,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
                     for(; NULL!=(fInfo=it.current()); ++it)
                         if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() &&
                            SUCCESS==status &&
-                           (CFontEngine::isAType1(fInfo->fileName()) || CFontEngine::isATtf(fInfo->fileName())))
+                           (CFontEngine::isAType1(fInfo->fileName().local8Bit()) || CFontEngine::isATtf(fInfo->fileName().local8Bit())))
                         {
                             QString afmName=CMisc::afmName(fInfo->fileName());
 
@@ -108,7 +108,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
                                      QCString ppdEntry("*Font ");
 
                                      soAfm.remove(soAfm.length()-4, 4);
-                                     ppdEntry+=soAfm.latin1();
+                                     ppdEntry+=soAfm.local8Bit();
                                      ppdEntry+=": Standard \"(001.002)\" Standard ROM";
                                      ppdFile.write(ppdEntry);
                                      status=outputToPsStdFonts(path, psStdFontsFile, fInfo->fileName(), soAfm);
@@ -169,7 +169,7 @@ void CStarOfficeConfig::removeAfm(const QString &fname)
 
 CStarOfficeConfig::EStatus CStarOfficeConfig::outputToPsStdFonts(const QString &xDir, CBufferedFile &out, const QString &fileName, const QString &afm)
 {
-    ifstream in(xDir+"fonts.dir");
+    ifstream in(QString(xDir+"fonts.dir").local8Bit());
     EStatus  status=SUCCESS;
 
     if(in)
@@ -185,14 +185,14 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::outputToPsStdFonts(const QString &
         {
             in.getline(line, constMaxLine);
 
-            if(!in.eof() && strstr(line, fileName.latin1())==line && (pos=strstr(line, searchStr)))
+            if(!in.eof() && strstr(line, fileName.local8Bit())==line && (pos=strstr(line, searchStr)))
             { 
                 *pos='\0';
                 pos+=strlen(searchStr);
-                QCString entry(afm.latin1());
+                QCString entry(afm.local8Bit());
 
                 entry+=", ";
-                entry+=&(line[strlen(fileName)+1]);
+                entry+=&(line[fileName.length()+1]);
                 entry+="--%d-%d-%d-%d-";
                 entry+=pos;
 
@@ -211,7 +211,7 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::outputToPsStdFonts(const QString &
 
 QString CStarOfficeConfig::getAfmName(const QString &file)
 {
-    QCString afm(CMisc::shortName(file));
+    QCString afm(CMisc::shortName(file).local8Bit());
 
     afm.replace(QRegExp("/"), "");
 

@@ -192,7 +192,7 @@ QCString CBufferedFile::createGuard(const QCString &normGuard, const QCString &p
 
     if(small) 
     {
-        guard+=CMisc::shortName(path);
+        guard+=CMisc::shortName(path).local8Bit();
         guard.replace(QRegExp("/"), "");
     }
     else

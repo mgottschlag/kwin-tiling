@@ -66,8 +66,8 @@ CAfmCreator::EStatus CAfmCreator::go(const QString &dir)
  
             for(; NULL!=(fInfo=it.current()) && SUCCESS==status; ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName() &&
-                   ((CFontEngine::isAType1(fInfo->fileName()) && CKfiGlobal::cfg().getDoT1Afms()) ||
-                    (CFontEngine::isATtf(fInfo->fileName()) && CKfiGlobal::cfg().getDoTtAfms()) ))
+                   ((CFontEngine::isAType1(fInfo->fileName().local8Bit()) && CKfiGlobal::cfg().getDoT1Afms()) ||
+                    (CFontEngine::isATtf(fInfo->fileName().local8Bit()) && CKfiGlobal::cfg().getDoTtAfms()) ))
                 {
                     emit step(i18n("Creating AFM: ")+CMisc::afmName(fInfo->filePath())); 
                     if((st=create(fInfo->filePath()))!=SUCCESS && KMessageBox::questionYesNo(NULL,
@@ -89,7 +89,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
     if(CKfiGlobal::fe().openFont(fName, CFontEngine::AFM))
     {
         if(CKfiGlobal::fe().setCharmapSymbolFt() || CKfiGlobal::fe().getIsArrayEncodingT1() || !CKfiGlobal::fe().setCharmapUnicodeFt()) // Then its a (/use) symbol encoding...
-            status=create(fName, CFontEngine::isAType1(fName) ? CEncodings::constT1Symbol : CEncodings::constTTSymbol, true);
+            status=create(fName, CFontEngine::isAType1(fName.local8Bit()) ? CEncodings::constT1Symbol : CEncodings::constTTSymbol, true);
         else
         {
 #if QT_VERSION >= 300
@@ -199,7 +199,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
             }
         }
         else
-            if(!CKfiGlobal::fe().setCharmapSymbolFt() && !CFontEngine::isAType1(fName))
+            if(!CKfiGlobal::fe().setCharmapSymbolFt() && !CFontEngine::isAType1(fName.local8Bit()))
             {
                 status=COULD_NOT_FIND_ENCODING;
                 return status;
@@ -212,7 +212,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
         //
         readKerningAndComposite(fName, kerning, composite, enc);  // Must do this before we overwrite the file below...
 
-        ofstream afm(afmName);
+        ofstream afm(afmName.local8Bit());
 
         if(afm)
         {
@@ -227,9 +227,9 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
                 << constKfiComment << encoding.latin1() << endl
                 << "FontName " << CKfiGlobal::fe().getPsName().latin1() << endl
                 << "FullName " << CKfiGlobal::fe().getFullName().latin1() << endl
-                << "FamilyName " << CKfiGlobal::fe().getFamilyName() << endl
+                << "FamilyName " << CKfiGlobal::fe().getFamilyName().latin1() << endl
                 << "Weight " << CFontEngine::weightStr(CKfiGlobal::fe().getWeight()).latin1() << endl
-                << "Notice Created with kfontinst v" << CKfi::constVersion.latin1() << endl
+                << "Notice Created with kfontinst v" << CKfi::constVersion << endl
                 << "ItalicAngle " << CKfiGlobal::fe().getItalicAngle() << endl
                 << "IsFixedPitch " << (CFontEngine::SPACING_MONOSPACED==CKfiGlobal::fe().getSpacing() ? "true" : "false") << endl
                 << "UnderlinePosition " << CKfiGlobal::fe().getUnderlinePosition() << endl
@@ -314,7 +314,7 @@ QString CAfmCreator::getEncoding(const QString &afm)
     // Return the 'kfontinst' encoding of the AFM file...
     //
     QString  enc;
-    ifstream f(afm);
+    ifstream f(afm.local8Bit());
  
     if(f)
     {
@@ -359,9 +359,9 @@ void CAfmCreator::readKerningAndComposite(const QString &font, QPtrList<TKerning
 void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc)
 #endif
 {
-    if(CFontEngine::isAType1(font))
+    if(CFontEngine::isAType1(font.local8Bit()))
     {
-        ifstream f(CMisc::afmName(font).latin1());
+        ifstream f(CMisc::afmName(font).local8Bit());
  
         if(f)
         {
@@ -393,7 +393,7 @@ void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &
         }
     }
     else
-        if(NULL!=enc && CFontEngine::isATtf(font))
+        if(NULL!=enc && CFontEngine::isATtf(font.local8Bit()))
         {
 #if QT_VERSION >= 300
             QPtrList<CTtf::TKerning> *ttfList=CTtf::getKerningData(font);

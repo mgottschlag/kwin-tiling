@@ -45,6 +45,7 @@
 #include <qregexp.h>
 #include <qvalidator.h>
 #include <qdir.h>
+#include <klineedit.h>
 #include <klineeditdlg.h>
 #include "XftConfig.h"
 
@@ -257,7 +258,7 @@ CInstalledFontListWidget::EStatus CInstalledFontListWidget::uninstallDir(const Q
                         for(; NULL!=(fInfo=it.current()) && SUCCESS==status; ++it)
                             if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                                 if(!fInfo->isDir())
-                                    if(CFontEngine::isAFont(fInfo->fileName()))
+                                    if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                                         status=uninstall(top, sub+"/", fInfo->fileName(), true, uninstIsDel);
                                     else
                                         if(uninstIsDel)
@@ -393,7 +394,7 @@ void CInstalledFontListWidget::fixTtfPsNames()
 
         while(NULL!=item)
         {
-            if(item->isSelected() && item->getType()==CListViewItem::FONT && CFontEngine::isATtf(item->text(0)))
+            if(item->isSelected() && item->getType()==CListViewItem::FONT && CFontEngine::isATtf(item->text(0).local8Bit()))
             {
                 CTtf::EStatus status;
 

@@ -337,7 +337,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask)
 {
     closeFont();
 
-    itsType=getType(file);
+    itsType=getType(file.local8Bit());
     itsWeight=WEIGHT_MEDIUM;
     itsWidth=WIDTH_NORMAL;
     itsSpacing=SPACING_PROPORTIONAL;
@@ -1075,10 +1075,10 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                              ch2;
 
                 if(itsPsName[0].isDigit())
-                    itsPsName[0]=itsPsName.latin1()[0]+('A'-'0');
+                    itsPsName[0]=itsPsName.local8Bit()[0]+('A'-'0');
 
                 for(ch=1; ch<itsPsName.length(); ++ch)
-                    if('_'==itsPsName.latin1()[ch] || ' '==itsPsName.latin1()[ch])
+                    if('_'==itsPsName.local8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
                         for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
                             itsPsName[ch2]=itsPsName[ch2+1];
             }
@@ -1710,11 +1710,11 @@ bool CFontEngine::openFontBmp(const QString &file, unsigned short mask)
 {
     itsFoundry=constDefaultFoundry;
 
-    if(isAPcf(file))
+    if(isAPcf(file.local8Bit()))
         return openFontPcf(file, mask);
-    if(isABdf(file))
+    if(isABdf(file.local8Bit()))
         return openFontBdf(file, mask);
-    if(isASnf(file))
+    if(isASnf(file.local8Bit()))
         return openFontSnf(file, mask);
     return false;
 }
@@ -1788,7 +1788,7 @@ void CFontEngine::createNameFromXlfdBmp()
                 itsFamily=itsXlfd.mid(oldPos, pos-oldPos);
                 break;
             case XLFD_WEIGHT:
-                itsWeight=strToWeight(itsXlfd.mid(oldPos, pos-oldPos));
+                itsWeight=strToWeight(itsXlfd.mid(oldPos, pos-oldPos).local8Bit());
                 break;
             case XLFD_SLANT:
                 if(pos>0)
@@ -1963,7 +1963,7 @@ bool CFontEngine::openFontBdf(const QString &file, unsigned short mask)
                 }
             }
             else if(!foundCsEnc && !foundCsReg && foundXlfd)
-                foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(itsXlfd.latin1());
+                foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(itsXlfd.local8Bit());
 
             if(!foundEncoding && foundCsReg && foundCsEnc)
             {
@@ -2158,7 +2158,7 @@ bool CFontEngine::openFontSnf(const QString &file, unsigned short mask)
                                             }
                                         }
                                         else if(!foundCsEnc && !foundCsReg && foundXlfd)
-                                            foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(itsXlfd.latin1());
+                                            foundCsEnc=foundCsReg=foundEncoding=getFileEncodingBmp(itsXlfd.local8Bit());
                                     }
 
                                     if(!foundXlfd && CMisc::stricmp(name, "FONT")==0)

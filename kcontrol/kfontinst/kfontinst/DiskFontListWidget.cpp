@@ -92,7 +92,7 @@ void CDiskFontListWidget::selectionChanged()
                 if(cur->isSelected())
                 {
                     if(CListViewItem::FONT==cur->getType())
-                        if(CFontEngine::isATtf(cur->fullName()))
+                        if(CFontEngine::isATtf(cur->fullName().local8Bit()))
                         {
                             if(!CMisc::dWritable(CKfiGlobal::cfg().getFontsDir()+CKfiGlobal::cfg().getTTSubDir()))
                                 enable=false;
@@ -223,10 +223,10 @@ void CDiskFontListWidget::install()
                     else
                     {
                         destDir=CKfiGlobal::cfg().getFontsDir();
-                        if(CFontEngine::isATtf(item->text(0)))
+                        if(CFontEngine::isATtf(item->text(0).local8Bit()))
                             destDir+=CKfiGlobal::cfg().getTTSubDir();
                         else
-                            if(CFontEngine::isAType1(item->text(0)))
+                            if(CFontEngine::isAType1(item->text(0).local8Bit()))
                                 destDir+=CKfiGlobal::cfg().getT1SubDir();
                     }
 
@@ -279,7 +279,7 @@ CDiskFontListWidget::EStatus CDiskFontListWidget::install(const QString &sourceD
             if(CMisc::fExists(sourceDir+afm))
                 CMisc::copyFile(sourceDir, afm, destDir);
  
-            if(CFontEngine::isATtf(fname) && CKfiGlobal::cfg().getFixTtfPsNamesUponInstall())
+            if(CFontEngine::isATtf(fname.local8Bit()) && CKfiGlobal::cfg().getFixTtfPsNamesUponInstall())
                 CKfiGlobal::ttf().fixPsNames(destDir+fname);
         }
     }
@@ -319,7 +319,7 @@ CDiskFontListWidget::EStatus CDiskFontListWidget::installDir(const QString &sour
  
                         for(; NULL!=(fInfo=it.current()) && SUCCESS==status; ++it)
                             if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                                if(!fInfo->isDir() && CFontEngine::isAFont(fInfo->fileName()))
+                                if(!fInfo->isDir() && CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                                     status=install(sourceDir, destDir+sub+"/", fInfo->fileName());
                     }
                 }

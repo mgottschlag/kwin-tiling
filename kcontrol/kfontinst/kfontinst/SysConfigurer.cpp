@@ -117,11 +117,11 @@ void CSysConfigurer::go()
                     for(; NULL!=(fInfo=it.current()); ++it)
                         if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
                         {
-                            if(CFontEngine::isATtf(fInfo->fileName()))
+                            if(CFontEngine::isATtf(fInfo->fileName().local8Bit()))
                                 totalTtFonts++;
-                            if(CFontEngine::isAType1(fInfo->fileName()))
+                            if(CFontEngine::isAType1(fInfo->fileName().local8Bit()))
                                 totalT1Fonts++;
-                            if(CFontEngine::isAFont(fInfo->fileName()))
+                            if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                                 totalfonts++;
                         }
                 }

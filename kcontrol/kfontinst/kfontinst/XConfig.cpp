@@ -230,7 +230,7 @@ bool CXConfig::readFontpaths()
     // <paths...>
 
     bool     status=false;
-    ifstream cfg(CKfiGlobal::cfg().getXConfigFile());
+    ifstream cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit());
 
     if(cfg)
     {
@@ -288,7 +288,7 @@ bool CXConfig::readFontpaths()
 bool CXConfig::writeFontpaths()
 {
     bool     status=false;
-    ofstream cfg(CKfiGlobal::cfg().getXConfigFile());
+    ofstream cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit());
  
     if(cfg)
     {
@@ -309,7 +309,7 @@ bool CXConfig::writeFontpaths()
 bool CXConfig::readXF86Config()
 {
     bool     status=false;
-    ifstream cfg(CKfiGlobal::cfg().getXConfigFile());
+    ifstream cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit());
 
     if(cfg)
     {
@@ -376,7 +376,7 @@ bool CXConfig::writeXF86Config()
 
     if(changed)
     {
-        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos, false);
+        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos.latin1(), false);
        
         if(cfg)
         {
@@ -391,7 +391,7 @@ bool CXConfig::writeXF86Config()
                     QString  dir(path->dir); 
 
                     dir.remove(dir.length()-1, 1); // Remove trailing /
-                    str+=dir;
+                    str+=dir.local8Bit();
                     if(path->unscaled)
                         str+=":unscaled";
                     str+="\"";
@@ -665,7 +665,7 @@ bool CXConfig::createFontsDotDir(const QString &dir)
  
     if(d.isReadable())
     {
-        ofstream fontsDotDir(dir+"fonts.dir");
+        ofstream fontsDotDir(QString(dir+"fonts.dir").local8Bit());
 
         if(fontsDotDir)
         {
@@ -679,9 +679,9 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                 QFileInfo             *fInfo;
  
                 for(; NULL!=(fInfo=it.current()); ++it)
-                    if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && CFontEngine::isAFont(fInfo->fileName()))
+                    if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                     {
-                       bool bitmap=CFontEngine::isABitmap(fInfo->fileName());
+                       bool bitmap=CFontEngine::isABitmap(fInfo->fileName().local8Bit());
 
                        emit step(i18n("Adding %1 to X").arg(fInfo->filePath()));
 
@@ -693,18 +693,18 @@ bool CXConfig::createFontsDotDir(const QString &dir)
 
                                 if(encodings.count())
                                 {
-                                    QCString xlfd(fInfo->fileName());
+                                    QCString xlfd(fInfo->fileName().local8Bit());
 
                                     xlfd+=" -";
                                     xlfd+=CKfiGlobal::fe().getFoundry();
                                     xlfd+="-";
-                                    xlfd+=CKfiGlobal::fe().getFamilyName();
+                                    xlfd+=CKfiGlobal::fe().getFamilyName().latin1();
                                     xlfd+="-";
-                                    xlfd+=CFontEngine::weightStr(CKfiGlobal::fe().getWeight());
+                                    xlfd+=CFontEngine::weightStr(CKfiGlobal::fe().getWeight()).latin1();
                                     xlfd+="-";
-                                    xlfd+=CFontEngine::italicStr(CKfiGlobal::fe().getItalic());
+                                    xlfd+=CFontEngine::italicStr(CKfiGlobal::fe().getItalic()).latin1();
                                     xlfd+="-";
-                                    xlfd+=CFontEngine::widthStr(CKfiGlobal::fe().getWidth());
+                                    xlfd+=CFontEngine::widthStr(CKfiGlobal::fe().getWidth()).latin1();
                                     xlfd+="--";
                                     xlfd+="0";
                                     xlfd+="-";
@@ -725,7 +725,7 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                         if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 || (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
                                             entry+='c';
                                         else
-                                            entry+=CFontEngine::spacingStr(CKfiGlobal::fe().getSpacing());
+                                            entry+=CFontEngine::spacingStr(CKfiGlobal::fe().getSpacing()).latin1();
 
                                         entry+="-";
                                         entry+="0";
@@ -733,7 +733,7 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                         if(*it==CEncodings::constUnicodeStr)
                                             entry+="iso10646-1";
                                         else
-                                            entry+=*it;
+                                            entry+=(*it).latin1();
                                         scalableFonts.append(entry);
                                     }
                                 }
@@ -743,10 +743,10 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                         else
                             if(CKfiGlobal::fe().openFont(fInfo->filePath(), CFontEngine::XLFD)) // Bitmap fonts contain Xlfd embedded within...
                             {
-                                QCString entry(fInfo->fileName());
+                                QCString entry(fInfo->fileName().local8Bit());
 
                                 entry+=" ";
-                                entry+=CKfiGlobal::fe().getXlfdBmp();
+                                entry+=CKfiGlobal::fe().getXlfdBmp().latin1();
                                 bitmapFonts.append(entry);
                                 CKfiGlobal::fe().closeFont();
                             }
@@ -756,7 +756,7 @@ bool CXConfig::createFontsDotDir(const QString &dir)
             ofstream fontsDotScale;
 
             if(scalableFonts.count())
-                fontsDotScale.open(dir+"fonts.scale");
+                fontsDotScale.open(QString(dir+"fonts.scale").local8Bit());
 
             fontsDotDir << bitmapFonts.count()+scalableFonts.count() << endl;
 

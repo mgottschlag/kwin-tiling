@@ -109,7 +109,7 @@ CFontmapCreator::TListEntry * CFontmapCreator::locateFamily(TListEntry *entry, c
     if(NULL==entry)
         return NULL;
     else
-        if(strcmp(entry->family.name.latin1(), familyname.latin1())==0 && entry->family.width==width)
+        if(entry->family.name==familyname && entry->family.width==width)
             return entry;
         else
             return locateFamily(entry->next, familyname, width);
@@ -155,7 +155,7 @@ void CFontmapCreator::scanFiles(TListEntry **list, const QString &path)
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && !fInfo->isDir() &&
-                  (CFontEngine::isAType1(fInfo->fileName()) || CFontEngine::isATtf(fInfo->fileName())))
+                  (CFontEngine::isAType1(fInfo->fileName().local8Bit()) || CFontEngine::isATtf(fInfo->fileName().local8Bit())))
                 {
                     emit step(i18n("Adding %1 to Fontmap").arg(fInfo->filePath()));
 
@@ -261,8 +261,8 @@ void CFontmapCreator::outputAlias(CBufferedFile &file, const QString &family, co
 {
     QCString name;
 
-    name+=family;
-    name+=style;
+    name+=family.latin1();
+    name+=style.latin1();
 
     if(strcmp(name, alias.latin1()))
     {
@@ -286,7 +286,7 @@ void CFontmapCreator::outputPsEntry(CBufferedFile &file, const TSlant &slant)
  
         starOfficeName.replace(QRegExp(" "), QChar('_'));
  
-        if(strcmp(slant.psname.latin1(), starOfficeName.latin1()))
+        if(slant.psname!=starOfficeName)
             outputAlias(file, starOfficeName, "", slant.psname);
     }
 }
@@ -529,7 +529,7 @@ void CFontmapCreator::outputResults(CBufferedFile &file, const TListEntry *entry
         QString familyname=getQtName(entry->family.name);
 
         outputPsEntry(file, *entry);
-        if(strcmp(familyname.latin1(), constUnknown.latin1()))
+        if(familyname!=constUnknown)
             outputAliasEntry(file, *entry, familyname);
 
         outputResults(file, entry->next);

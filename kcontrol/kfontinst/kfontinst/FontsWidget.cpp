@@ -36,10 +36,10 @@
 #include <qbitmap.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
-#include <klocale.h>
 #include <qsplitter.h>
 #include <kprogress.h>
 #include <kapp.h>
+#include <klocale.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : CFontsWidgetData(parent),
@@ -123,7 +123,7 @@ void CFontsWidget::initProgress(const QString &title, int numSteps)
         topLevelWidget()->setEnabled(false);
     itsProgress->setRange(0, numSteps);
     setPreviewMode(false);
-    itsBox->setTitle(i18n(title));
+    itsBox->setTitle(title);
     if(numSteps>0)
         itsProgress->setValue(0);
     itsLabel->setText("");
@@ -216,7 +216,7 @@ void CFontsWidget::preview(const QString &dir, const QString &file)
         itsBox->setTitle(constPreviewTitle);
     
     if(!createdBitmap)
-        itsLabel->setText(i18n(constNoPreviewStr));
+        itsLabel->setText(constNoPreviewStr);
 }
 
 void CFontsWidget::rescan()

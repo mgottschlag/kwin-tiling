@@ -102,7 +102,7 @@ class CAdvancedFontItem : CFontListWidget::CListViewItem
         : CFontListWidget::CListViewItem(parent, fileName, CFontListWidget::CListViewItem::FONT),
           itsParentDir(parent)
     {
-        switch(CFontEngine::getType(fileName))
+        switch(CFontEngine::getType(fileName.local8Bit()))
         {
             case CFontEngine::TRUE_TYPE:
                 setPixmap(0, KGlobal::iconLoader()->loadIcon("font_truetype", KIcon::Small));
@@ -161,7 +161,7 @@ class CBasicFontItem : CFontListWidget::CListViewItem
           itsFileName(fileName),
           itsPath(path)
     {
-        switch(CFontEngine::getType(fileName))
+        switch(CFontEngine::getType(fileName.local8Bit()))
         {
             case CFontEngine::TRUE_TYPE:
                 setPixmap(0, KGlobal::iconLoader()->loadIcon("font_truetype", KIcon::Small));
@@ -265,7 +265,7 @@ void CDirectoryItem::setOpen(bool open)
                         if(fInfo->isDir())
                             new CDirectoryItem(itsListWidget, this, fInfo->fileName());
                         else
-                            if(CFontEngine::isAFont(fInfo->fileName()))
+                            if(CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                                 new CAdvancedFontItem(this, fInfo->fileName());
                     }
                 }
@@ -359,10 +359,10 @@ void CFontListWidget::getNumSelected(int &numTT, int &numT1)
     {
         if(item->isSelected())
             if(CListViewItem::FONT==item->getType())
-                if(CFontEngine::isATtf(item->text(0)))
+                if(CFontEngine::isATtf(item->text(0).local8Bit()))
                     numTT++;
                 else
-                    if(CFontEngine::isAType1(item->text(0)))
+                    if(CFontEngine::isAType1(item->text(0).local8Bit()))
                         numT1++;
         item=(CListViewItem *)(item->itemBelow());
     }
@@ -493,7 +493,7 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
                             scanDir(dir+fInfo->fileName()+"/", sub+1);
                     }
                     else
-                        if(CFontEngine::isAType1(fInfo->fileName()) || CFontEngine::isATtf(fInfo->fileName()))
+                        if(CFontEngine::isAType1(fInfo->fileName().local8Bit()) || CFontEngine::isATtf(fInfo->fileName().local8Bit()))
                         {
                             progressShow(fInfo->fileName());
                             new CBasicFontItem(itsList, fInfo->fileName(), dir);

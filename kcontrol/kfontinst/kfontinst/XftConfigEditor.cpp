@@ -520,18 +520,18 @@ void CXftConfigEditor::addMatch()
         KMessageBox::error(this, i18n("String is empty!"), i18n("Format error"));
     else
     {
-        QCString entry(itsMatchQualCombo->currentText());
+        QCString entry(itsMatchQualCombo->currentText().latin1());
 
         entry+=' ';
-        entry+=itsMatchFieldNameCombo->currentText();
+        entry+=itsMatchFieldNameCombo->currentText().latin1();
         entry+=' ';
-        entry+=itsMatchCompareCombo->currentText();
+        entry+=itsMatchCompareCombo->currentText().latin1();
         entry+=' ';
 
         if(LINEEDIT==itsMatchMode)                         // Get from "match" string...
         {
             entry+='\"';
-            entry+=itsMatchString->text();
+            entry+=itsMatchString->text().latin1();
             entry+='\"';
         }
         else
@@ -542,9 +542,9 @@ void CXftConfigEditor::addMatch()
                 entry+='\"';
 
             if(constOther==itsMatchCombo->currentText())   // Get from "other" text field...
-                entry+=itsMatchOther->text();
+                entry+=itsMatchOther->text().latin1();
             else                                           // Get from combo box...
-                entry+=itsMatchCombo->currentText();
+                entry+=itsMatchCombo->currentText().latin1();
 
             if(enc)
                 entry+='\"';

@@ -104,7 +104,7 @@ bool CMisc::dContainsTTorT1Fonts(const QString &d)
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                    if(CFontEngine::isATtf(fInfo->fileName())||CFontEngine::isAType1(fInfo->fileName()))
+                    if(CFontEngine::isATtf(fInfo->fileName().local8Bit())||CFontEngine::isAType1(fInfo->fileName().local8Bit()))
                         return true;
         }
     }
@@ -150,7 +150,7 @@ unsigned int CMisc::countFonts(const QString &d)
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                    if(!fInfo->isDir() && CFontEngine::isAFont(fInfo->fileName()))
+                    if(!fInfo->isDir() && CFontEngine::isAFont(fInfo->fileName().local8Bit()))
                         num++;
         }
     }
@@ -243,7 +243,7 @@ QString CMisc::removeSymbols(const QString &str)
     QString      modified; 
     unsigned int i,
                  offset=0,
-                 slen=strlen(str);
+                 slen=str.length();
  
     for(i=0; i<str.length()+1; ++i)
         if(str[i].isLetterOrNumber() || constOk.contains(str[i]) || str[i].isNull())

@@ -41,7 +41,7 @@ class CKfi
     static CKfiMainWidget * create(QWidget *parent);
     static void             destroy();
 
-    static const QString constVersion;
+    static const char * constVersion;
 };
 
 #endif

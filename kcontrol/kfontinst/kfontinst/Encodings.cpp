@@ -621,7 +621,7 @@ CEncodings::CEncodings(const QString &path)
 bool CEncodings::createEncodingsDotDir(const QString &dir)
 {
     bool     status=false;
-    ofstream of(dir+"encodings.dir");
+    ofstream of(QString(dir+"encodings.dir").local8Bit());
 
     if(of)
     {
@@ -631,11 +631,11 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
         of << (its8BitList.count() - itsNumBuiltin)+its16BitList.count() << std::endl;
 
         for(data8=first8Bit(); data8; data8=next8Bit())
-            if(strcmp(data8->file.latin1(), constBuiltin.latin1()))
-                of << data8->name.latin1() << " " << data8->file.latin1() << std::endl;
+            if(data8->file!=constBuiltin)
+                of << data8->name.local8Bit() << " " << data8->file.local8Bit() << std::endl;
 
         for(data16=first16Bit(); data16; data16=next16Bit())
-            of << data16->name.latin1() << " " << data16->file.latin1() << std::endl; 
+            of << data16->name.local8Bit() << " " << data16->file.local8Bit() << std::endl; 
 
         of.close();
         status=true;
@@ -686,9 +686,9 @@ void CEncodings::addDir(const QString &path, int sub)
                         if(fInfo->isDir())
                             addDir(fInfo->filePath(), sub+1);
                         else
-                            if(isAEncFile(fInfo->fileName()))
+                            if(isAEncFile(fInfo->fileName().local8Bit()))
                             {
-                                gzFile ef=gzopen(fInfo->filePath(), "r");
+                                gzFile ef=gzopen(fInfo->filePath().local8Bit(), "r");
 
                                 if(ef)
                                 {
@@ -749,7 +749,7 @@ CEncodings::T8Bit * CEncodings::get8Bit(const QString &enc)
     T8Bit *data=NULL;
 
     for(data=first8Bit(); data; data=next8Bit())
-        if(strcmp(enc.latin1(), data->name.latin1())==0)
+        if(enc==data->name)
             break;
 
     return data;
@@ -767,7 +767,7 @@ QString CEncodings::getFile8Bit(const QString &enc)
 
 bool CEncodings::isBuiltin(const T8Bit &enc)
 {
-    return strcmp(enc.file.latin1(), constBuiltin.latin1())==0 ? true : false;
+    return enc.file==constBuiltin;
 }
 
 bool CEncodings::isAEncFile(const char *file)
@@ -797,7 +797,7 @@ bool CEncodings::T8Bit::load()
     if(!CEncodings::isBuiltin(*this) && NULL==map)
     {
         bool   status=false;
-        gzFile ef=gzopen(file.latin1(), "r");
+        gzFile ef=gzopen(file.local8Bit(), "r");
  
         if(ef)
         {

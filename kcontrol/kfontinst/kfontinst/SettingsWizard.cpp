@@ -81,7 +81,7 @@ void CSettingsWizard::checkAndModifyFontmapFile()
  
             if("Fontmap"==file)
             {
-                ifstream f(CKfiGlobal::cfg().getGhostscriptFile());
+                ifstream f(CKfiGlobal::cfg().getGhostscriptFile().local8Bit());
  
                 if(f)
                 {
@@ -129,7 +129,7 @@ void CSettingsWizard::checkAndModifyXConfigFile()
  
             if(file.find("XF86Config")!=-1)
             {
-                ifstream f(CKfiGlobal::cfg().getXConfigFile());
+                ifstream f(CKfiGlobal::cfg().getXConfigFile().local8Bit());
  
                 if(f)
                 {

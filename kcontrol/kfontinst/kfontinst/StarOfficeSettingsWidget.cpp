@@ -194,7 +194,7 @@ void CStarOfficeSettingsWidget::setupPpdCombo()
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                    if(!fInfo->isDir() && isAPpd(fInfo->fileName()))
+                    if(!fInfo->isDir() && isAPpd(fInfo->fileName().local8Bit()))
                     {
                         QString entry(getName(fInfo->filePath()));
 

@@ -43,22 +43,22 @@
 #include "xftint.h"
 #endif
 
-static const QString constDefaultFontsDir              ("/usr/X11R6/lib/X11/fonts/");
-static const QString constDefaultTTSubDir              ("TrueType/");
-static const QString constDefaultT1SubDir              ("Type1/");
-static const QString constDefaultXConfigFile           ("/etc/X11/XF86Config");
-static const QString constDefaultEncodingsDir          ("/usr/X11R6/lib/X11/fonts/encodings/");
-static const QString constDefaultGhostscriptDir        ("/usr/share/ghostscript/");
-static const QString constDefaultGhostscriptFile       ("Fontmap"); 
-static const QString constDefaultUninstallDir          ("/tmp/");
-static const QString constDefaultSODir                 ("/opt/office52/");
-static const QString constDefaultSOPpd                 ("SGENPRT.PS");
-static const QString constNonRootDefaultFontsDir       ("share/fonts/");   // $KDEHOME+...
-static const QString constNonRootDefaultXConfigFile    ("share/fonts/fontpaths"); // $KDEHOME+...
-static const QString constNonRootDefaultGhostscriptDir ("share/fonts/");   // $KDEHOME+...
+static const QCString constDefaultFontsDir              ("/usr/X11R6/lib/X11/fonts/");
+static const QCString constDefaultTTSubDir              ("TrueType/");
+static const QCString constDefaultT1SubDir              ("Type1/");
+static const QCString constDefaultXConfigFile           ("/etc/X11/XF86Config");
+static const QCString constDefaultEncodingsDir          ("/usr/X11R6/lib/X11/fonts/encodings/");
+static const QCString constDefaultGhostscriptDir        ("/usr/share/ghostscript/");
+static const QCString constDefaultGhostscriptFile       ("Fontmap"); 
+static const QCString constDefaultUninstallDir          ("/tmp/");
+static const QCString constDefaultSODir                 ("/opt/office52/");
+static const QCString constDefaultSOPpd                 ("SGENPRT.PS");
+static const QCString constNonRootDefaultFontsDir       ("share/fonts/");   // $KDEHOME+...
+static const QCString constNonRootDefaultXConfigFile    ("share/fonts/fontpaths"); // $KDEHOME+...
+static const QCString constNonRootDefaultGhostscriptDir ("share/fonts/");   // $KDEHOME+...
 #ifdef HAVE_XFT
-static const QString constDefaultXftConfigFile         (XFT_DEFAULT_PATH);
-static const QString constNonRootDefaultXftConfigFile  ("/.xftconfig"); // $HOME+...
+static const QCString constDefaultXftConfigFile         (XFT_DEFAULT_PATH);
+static const QCString constNonRootDefaultXftConfigFile  ("/.xftconfig"); // $HOME+...
 #endif
 
 static QString getDir(const QString &entry, const QString *posibilities, const QString &base=QString::null)
@@ -292,15 +292,15 @@ CConfig::CConfig()
             home="";
 #endif
 
-        defaultFontsDir=kapp->dirs()->localkdedir();
+        defaultFontsDir=kapp->dirs()->localkdedir().local8Bit();
         defaultFontsDir+=constNonRootDefaultFontsDir;
-        defaultXConfigFile=kapp->dirs()->localkdedir();
+        defaultXConfigFile=kapp->dirs()->localkdedir().local8Bit();
         defaultXConfigFile+=constNonRootDefaultXConfigFile;
 #ifdef HAVE_XFT
         defaultXftConfigFile=home;
         defaultXftConfigFile+=constNonRootDefaultXftConfigFile;
 #endif
-        defaultGhostscriptFile=kapp->dirs()->localkdedir();
+        defaultGhostscriptFile=kapp->dirs()->localkdedir().local8Bit();
         defaultGhostscriptFile+=constNonRootDefaultGhostscriptDir;
         defaultGhostscriptFile+=constDefaultGhostscriptFile;
     }
@@ -394,11 +394,11 @@ CConfig::CConfig()
     // Check for TrueType and Type1 sub-folders, and create if either doesn't exist
     if(!CMisc::root() && !itsConfigured && QString(defaultFontsDir)==itsFontsDir)
     {
-        if(!CMisc::dExists(QString(defaultFontsDir)+constDefaultTTSubDir))
-            CMisc::createDir(QString(defaultFontsDir)+constDefaultTTSubDir);
+        if(!CMisc::dExists(QString(defaultFontsDir)+QString(constDefaultTTSubDir)))
+            CMisc::createDir(QString(defaultFontsDir)+QString(constDefaultTTSubDir));
 
-        if(!CMisc::dExists(QString(defaultFontsDir)+constDefaultT1SubDir))
-            CMisc::createDir(QString(defaultFontsDir)+constDefaultT1SubDir);
+        if(!CMisc::dExists(QString(defaultFontsDir)+QString(constDefaultT1SubDir)))
+            CMisc::createDir(QString(defaultFontsDir)+QString(constDefaultT1SubDir));
     }
 
     itsTTSubDir=getDir(itsTTSubDir, constTTSubDirs, itsFontsDir);

@@ -34,7 +34,7 @@
 #include <qapplication.h>
 #include <qnamespace.h>
 
-const QString CKfi::constVersion("0.10/CVS");
+const char * CKfi::constVersion = "0.10";
  
 CKfiMainWidget * CKfi::create(QWidget *parent)
 {
