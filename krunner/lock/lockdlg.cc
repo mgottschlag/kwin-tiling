@@ -47,6 +47,10 @@
 #include <X11/keysym.h>
 #include <fixx11h.h>
 
+#ifndef AF_LOCAL
+# define AF_LOCAL	AF_UNIX
+#endif
+
 #define PASSDLG_HIDE_TIMEOUT 10000
 
 //===========================================================================
