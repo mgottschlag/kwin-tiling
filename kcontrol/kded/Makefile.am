@@ -7,7 +7,7 @@ kcm_kded_la_LIBADD =  $(LIB_KDEUI)
 
 INCLUDES= $(all_includes)
 
-kcm_kded_la_METASOURCES = kded.moc
+kcm_kded_la_METASOURCES = AUTO
 
 KDE_ICON = kded
 
