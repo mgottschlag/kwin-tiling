@@ -1,9 +1,7 @@
 # $Id$
 # kdebase/kcontrol/display/pics/mini
 
-icons_DATA = background.xpm colors.xpm screensaver.xpm style.xpm fonts.xpm \
+kde_mini_DATA = background.xpm colors.xpm screensaver.xpm style.xpm fonts.xpm \
                 energy.xpm
 
-iconsdir = $(kde_minidir)
-
-EXTRA_DIST = $(icons_DATA)
+EXTRA_DIST = $(kde_mini_DATA)

@@ -14,7 +14,9 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss klissie.kss kbanner.kss \
 
 EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss
 
-EXTRA_DIST = kscreensaver.xpm mini-kscreensaver.xpm kscience.gif kscience-small.gif kscreensave-0.3.3.lsm
+KDE_ICON = kscreensaver
+
+EXTRA_DIST = kscience.gif kscience-small.gif kscreensave-0.3.3.lsm
 
 BASE_SRCS = main.cpp demowin.cpp saver.cpp helpers.cpp
 
@@ -90,15 +92,7 @@ messages:
 
 ########## Meta objects ##########
 
-kde_icon_DATA = kscreensaver.xpm 
-
 data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
-install-data-local: 
-	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) $(srcdir)/mini-kscreensaver.xpm $(kde_minidir)/kscreensaver.xpm
-
-uninstall-local:
-	rm -f $(kde_minidir)/kscreensaver.xpm
 

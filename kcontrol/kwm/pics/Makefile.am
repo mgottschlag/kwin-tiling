@@ -3,8 +3,6 @@
 
 SUBDIRS = mini
 
-icons_DATA = buttons.xpm kcmkwm.xpm properties.xpm titlebar.xpm
+kde_icon_DATA = buttons.xpm kcmkwm.xpm properties.xpm titlebar.xpm
 
-iconsdir = $(kde_icondir)
-
-EXTRA_DIST = $(icons_DATA)
+EXTRA_DIST = $(kde_icon_DATA)

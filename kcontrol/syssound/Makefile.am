@@ -20,19 +20,10 @@ noinst_HEADERS = syssound.h
 # just to make sure, automake makes them 
 METASOURCES =	syssound.moc
 
-EXTRA_DIST = kcmsyssound.xpm mini-kcmsyssound.xpm CHANGES
+KDE_ICON = kcmsyssound
+EXTRA_DIST = CHANGES
 
 # make messages.po. Move this one to ../po/ and "make merge" in po
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsyssound_SOURCES) && mv messages.po ../../po/kcmsyssound.pot
-
-kde_icon_DATA = kcmsyssound.xpm
-
-install-data-local: 
-	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) $(srcdir)/mini-kcmsyssound.xpm $(kde_minidir)/kcmsyssound.xpm
-
-# remove ALL you have installed in install-data-local or install-exec-local
-uninstall-local:
-	-rm -f $(kde_minidir)/kcmsyssound.xpm
 

@@ -7,14 +7,7 @@ noinst_PROGRAMS = kcmsample
 
 kcmsample_SOURCES = main.cpp
 
-EXTRA_DIST = mini-sample.xpm
-
-install-data-local: 
-	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) $(srcdir)/mini-sample.xpm $(kde_minidir)/sample.xpm
-
-uninstall-local:
-	rm -f $(kde_minidir)/sample.xpm
+KDE_ICON = sample
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmsample_SOURCES) && mv messages.po ../../po/kcmsample.pot

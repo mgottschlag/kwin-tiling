@@ -1,6 +1,4 @@
-APPSDIR = $(kde_appsdir)/Settings/Desktop
 INCLUDES= $(all_includes)
-THEMESDIR= $(kde_datadir)/kthememgr/Themes
 
 ####### Files
 
@@ -18,29 +16,22 @@ kthememgr_LDFLAGS = $(all_libraries) $(LDFLAGS) $(KDE_RPATH)
 METASOURCES = theme.moc installer.moc colors.moc widgetcanvas.moc \
 	options.moc about.moc groupdetails.moc 
 
-kde_icon_DATA = kthememgr.xpm
+KDE_ICON = kthememgr
 
-install-data-local: install-themes
-	$(mkinstalldirs) $(APPSDIR)
-	$(INSTALL_DATA) $(srcdir)/kthememgr.kdelnk $(APPSDIR)
-	$(mkinstalldirs) $(kde_minidir)
-	$(INSTALL_DATA) $(srcdir)/mini-kthememgr.xpm $(kde_minidir)/kthememgr.xpm
-	$(mkinstalldirs) $(kde_datadir)/kthememgr
-	$(INSTALL_DATA) $(srcdir)/theme.mappings $(kde_datadir)/kthememgr
+apps_DATA = kthememgr.kdelnk 
+appsdir = $(kde_appsdir)/Settings/Desktop 
 
-uninstall-local:
-	rm -f $(APPSDIR)/kthememgr.kdelnk
-	rm -f $(kde_minidir)/kthememgr.xpm
-	rm -f $(kde_datadir)/kthememgr/theme.mappings
-	rm -f $(THEMESDIR)/Template.themerc
+mappingdir = $(kde_datadir)/kthememgr
+mapping_DATA = theme.mappings
+
+themesdir =  $(kde_datadir)/kthememgr/Themes
+themes_DATA = Template.themerc
 
 install-themes:
-	$(mkinstalldirs) $(DESTDIR)$(THEMESDIR)
-	$(INSTALL_DATA) $(srcdir)/Themes/Template.themerc $(DESTDIR)$(THEMESDIR)
 	cd $(srcdir)/Themes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
-	    tar --exclude CVS -c -f - $$f | gzip -c > $(DESTDIR)$(THEMESDIR)/$$f.tar.gz; \
+	    tar --exclude CVS -c -f - $$f | gzip -c > $(DESTDIR)$(themesdir)/$$f.tar.gz; \
 	  fi; \
 	done
 
