@@ -26,7 +26,6 @@
 #include <config.h>
 
 #include <qlabel.h>
-#include <qmsgbox.h>
 #include <qcombo.h>
 #include <qpixmap.h>
 #include <qlayout.h>
@@ -38,6 +37,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmodule.h>
+#include <kmessagebox.h>
 
 #include "xpm/world.xpm"
 #include "tzone.h"
@@ -194,7 +194,8 @@ void Tzone::save()
     // This is extremely ugly. Who knows the better way?
     unlink( "/etc/localtime" );
     if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
-        QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
+        KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
+                            i18n("Timezone Error"));
 
     QString val = ":" + tz;
     setenv("TZ", val.ascii(), 1);
