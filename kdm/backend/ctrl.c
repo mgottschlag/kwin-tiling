@@ -299,13 +299,23 @@ unQuote (const char *str)
 }
 
 static void
+str_cat (char **bp, const char *str, int max)
+{
+    int dnl = strlen (str);
+    if (dnl > max)
+	dnl = max;
+    memcpy (*bp, str, dnl);
+    *bp += dnl;
+}
+
+static void
 processCtrl (const char *string, int len, int fd, struct display *d)
 {
     struct display *di;
     const char *word;
-    char **ar, *args;
+    char **ar, *args, *bp;
     int how, when;
-    char cbuf[32];
+    char cbuf[1024];
 
     if (!(ar = initStrArr (0)))
 	return;
@@ -353,6 +363,26 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    goto bust;
 	} else if (fd >= 0 && !strcmp (ar[0], "list")) {
+	    Writer (fd, "ok", 2);
+	    for (di = displays; di; di = di->next) {
+		if (di->status != running || (!ar[1] && di->userSess < 0))
+		    continue;
+		bp = cbuf;
+		*bp++ = '\t';
+		str_cat (&bp, di->name, sizeof(cbuf)/2);
+		*bp++ = ',';
+#ifdef HAVE_VTS
+		if (di->serverVT)
+		    bp += sprintf (bp, "vt%d", di->serverVT);
+#endif
+		*bp++ = ',';
+		if (di->userName)
+		    str_cat (&bp, di->userName, sizeof(cbuf)/5);
+		*bp++ = ',';
+		Writer (fd, cbuf, bp - cbuf);
+	    }
+	    Writer (fd, "\n", 1);
+	    goto bust;
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1] || (!ar[2] && !d)) {
 		fLog (d, fd, "bad", "missing argument(s)");

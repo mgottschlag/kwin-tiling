@@ -684,6 +684,7 @@ processDPipe (struct display *d)
     switch (cmd) {
     case D_User:
 	d->userSess = GRecvInt ();
+	d->userName = GRecvStr ();
 	break;
     case D_ReLogin:
 	user = GRecvStr ();
@@ -1389,6 +1390,9 @@ ExitDisplay (
 	   d->name, endState, serverCmd, goodExit);
 
     d->userSess = -1;
+    if (d->userName)
+	free (d->userName);
+    d->userName = 0;
     he = d->hstent;
     time (&he->lastExit);
     he->goodExit = goodExit;

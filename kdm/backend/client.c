@@ -1501,6 +1501,7 @@ StartClient ()
 	    GSet (&mstrtalk);
 	    GSendInt (D_User);
 	    GSendInt (curuid);
+	    GSendStr (curuser);
 	    if (td->autoReLogin) {
 		GSendInt (D_ReLogin);
 		GSendStr (curuser);

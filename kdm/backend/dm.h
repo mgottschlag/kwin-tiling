@@ -248,6 +248,7 @@ struct display {
 	int		startTries;	/* current start try */
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
+	char		*userName;
 	CtrlRec		ctrl;		/* command socket & fifo */
 	GPipe		pipe;		/* comm master <-> slave */
 	GPipe		gpipe;		/* comm master <-> greeter */
