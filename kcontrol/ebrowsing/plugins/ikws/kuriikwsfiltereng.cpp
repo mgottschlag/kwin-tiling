@@ -329,7 +329,8 @@ void KURISearchFilterEngine::loadConfig()
     IKWSEntry rn = ikwsEntryByName(IKW_REALNAMES);
     if (rn.m_strName.isEmpty())	{
 	rn.m_strName = IKW_REALNAMES;
-	rn.m_strQuery = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=180");
+	rn.m_strQuery = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&responsecharset=\\3&providerid=180");
+	rn.m_strCharset = "utf-8";
 	rn.m_strQueryWithSearch = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?"
 						      "action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|");
 	if (rn.m_strName == selIKWSEngine)

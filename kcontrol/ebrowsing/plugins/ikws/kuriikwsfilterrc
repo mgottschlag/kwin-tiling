@@ -2,8 +2,3 @@
 InternetKeywordsEnabled=true
 InternetKeywordsSearchFallback=google
 
-[RealNames Internet Keywords]
-Query=http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&responsecharset=\\3&providerid=180
-Charset=utf-8
-QueryWithSearch=http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|
-
