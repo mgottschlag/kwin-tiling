@@ -1,6 +1,6 @@
 
 picsdir = $(kde_datadir)/kdm/pics
-pics_DATA = kdelogo.png kdeflower.png session_kde.png
+pics_DATA = kdelogo.png kdeflower.png 
 
 usersdir = $(picsdir)/users
 users_DATA = default.png default2.png root.png root2.png
