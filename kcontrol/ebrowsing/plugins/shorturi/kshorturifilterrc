@@ -1,5 +1,5 @@
 [Pattern]
-kdemailto=^(\w+)@(\w+)\.(\w+)[^0-9]$
+kdemailto=^(\w+)@(\w+)\.(\w+)$
 kdeftp=^ftp(?:\.\w+)?\.\D{2,}(?:[0-9]{1,5})?
 
 [Protocol]

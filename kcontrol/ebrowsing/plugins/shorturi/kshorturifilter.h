@@ -95,9 +95,12 @@ private:
     struct URLHint
     {
         URLHint() {}
-        URLHint( QString r, QString p ) : regexp(r), prepend(p) {}
+        URLHint( QString r, QString p, 
+                 KURIFilterData::URITypes t = KURIFilterData::NET_PROTOCOL )
+               : regexp(r), prepend(p), type(t) {}
         QString regexp; // if this matches, then...
         QString prepend; // ...prepend this to the url
+        KURIFilterData::URITypes type;
     };
 
     QValueList<URLHint> m_urlHints;

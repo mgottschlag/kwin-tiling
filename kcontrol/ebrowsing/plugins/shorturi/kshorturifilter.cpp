@@ -36,9 +36,9 @@
 
 #include "kshorturifilter.h"
 
-#define FQDN_PATTERN    "([a-zA-Z][a-zA-Z0-9-+]*\\.[a-zA-Z]+)+(?:\\:[0-9]{1,5})?"
-#define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{0,3})?(?:\\.[0-9]{0,3})?(?:\\:[0-9]{1,5})?"
-#define IPv6_PATTERN    "^\\[.*\\]$"
+#define FQDN_PATTERN    "(?:[a-zA-Z0-9][a-zA-Z0-9\-+]*\\.[a-zA-Z]+)"
+#define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{0,3})?(?:\\.[0-9]{0,3})?"
+#define IPv6_PATTERN    "^\\[.*\\]"
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
@@ -165,17 +165,18 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // is no need to make comparisons if the supplied data is a local
   // executable and only the argument part, if any, changed! (Dawit)
   // You mean caching the last filtering, to try and reuse it, to save stat()s? (David)
-
-  // Handle MAN & INFO pages shortcuts...
-  QString man_proto = QFL1("man:");
-  QString info_proto = QFL1("info:");
-  QString starthere_proto = QFL1("start-here:");
-  if (cmd.find(starthere_proto,0,true) == 0 ) {
-	setFilteredURI(data,KURL("system:/"));
-	setURIType(data,KURIFilterData::LOCAL_DIR);
-	return true;
-
+  
+  const QString starthere_proto = QFL1("start-here:");
+  if (cmd.find(starthere_proto, 0, true) == 0 )
+  {
+    setFilteredURI( data, KURL("system:/") );
+    setURIType( data, KURIFilterData::LOCAL_DIR );
+    return true;
   }
+  
+  // Handle MAN & INFO pages shortcuts...  
+  const QString man_proto = QFL1("man:");
+  const QString info_proto = QFL1("info:");  
   if( cmd[0] == '#' ||
       cmd.find( man_proto, 0, true ) == 0 ||
       cmd.find( info_proto, 0, true ) == 0 )
@@ -410,7 +411,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         //kdDebug() << "match - prepending " << (*it).prepend << endl;
         cmd.prepend( (*it).prepend );
         setFilteredURI( data, KURL( cmd ) );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        setURIType( data, (*it).type );
         return true;
       }
     }
@@ -472,23 +473,25 @@ void KShortURIFilter::configure()
   KConfig config( name() + QFL1("rc"), false, false );
   m_strDefaultProtocol = config.readEntry( "DefaultProtocol", QFL1("http://") );
   m_bVerbose = config.readBoolEntry( "Verbose", false );
-  QChar sep = config.readNumEntry( "PatternSeparator", ' ' );
   EntryMap patterns = config.entryMap( QFL1("Pattern") );
-  const EntryMap protocols = config.entryMap( QFL1("Protocol") );
-  
+  const EntryMap protocols = config.entryMap( QFL1("Protocol") );  
+  config.setGroup("Type");
+
   for( EntryMap::Iterator it = patterns.begin(); it != patterns.end(); ++it )
   {
-    QStringList regexps = QStringList::split (sep, it.data());
-    for (QStringList::Iterator exp = regexps.begin(); exp != regexps.end(); ++exp)
+    QString protocol = protocols[it.key()];
+    if (!protocol.isEmpty())
     {
-      QString protocol = protocols[it.key()];
-      if (!protocol.isEmpty())
-        m_urlHints.append( URLHint(*exp, protocol) );
+      int type = config.readNumEntry(it.key(), -1);
+      if (type > -1 && type <= KURIFilterData::UNKNOWN)
+        m_urlHints.append( URLHint(it.data(), protocol, static_cast<KURIFilterData::URITypes>(type) ) );
+      else
+        m_urlHints.append( URLHint(it.data(), protocol) );
     }
   }
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkshorturifilter,
-	                    KGenericFactory<KShortURIFilter>( "kcmkurifilt" ) )
+                            KGenericFactory<KShortURIFilter>( "kcmkurifilt" ) )
 
 #include "kshorturifilter.moc"
