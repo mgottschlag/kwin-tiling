@@ -125,15 +125,20 @@ extern "C" int kdemain(int argc, char *argv[])
       it != list.end();
       ++it) {
       KService::Ptr service = (*it);
-      if (service->library().isEmpty() || service->init().isEmpty())
+      
+      QString library = service->property("X-KDE-Init-Library", QVariant::String).toString();
+      if (library.isEmpty())
+        library = service->library();
+      
+      if (library.isEmpty() || service->init().isEmpty())
 	continue; // Skip
 
-      QString libName = QString("kcm_%1").arg(service->library());
+      QString libName = QString("kcm_%1").arg(library);
 
       // try to load the library
       if (! alreadyInitialized.contains( libName.ascii() )) {
 	  if (!runModule(libName, loader, service)) {
-	      libName = QString("libkcm_%1").arg(service->library());
+	      libName = QString("libkcm_%1").arg(library);
 	      if (! alreadyInitialized.contains( libName.ascii() )) {
 		  runModule(libName, loader, service);
 		  alreadyInitialized.append( libName.ascii() );
