@@ -237,7 +237,6 @@ KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name,
             title.remove(pos,1);	// delete this char !
     } while (pos>=0);
     GetInfo_ErrorString = "";
-//    setMinimumSize( 200,600 );
     defaultSettings();
 }
 
