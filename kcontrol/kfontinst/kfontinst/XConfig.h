@@ -29,6 +29,10 @@
 // (C) Craig Drummond, 2001
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <qobject.h>
 #include <qglobal.h>
 #if QT_VERSION >= 300
@@ -68,7 +72,11 @@ class CXConfig : public QObject
 
     CXConfig();
 
+#ifdef HAVE_XFT
+    bool go(const QString &dir, QStringList &symbolFamilies);
+#else
     bool go(const QString &dir);
+#endif
     bool ok()                           { return NONE!=itsType; }
     bool custom()                       { return KFONTINST==itsType; }
     bool writable()                     { return itsWritable; }
@@ -99,7 +107,12 @@ class CXConfig : public QObject
     bool writeXfsConfig();
 
     TPath * findPath(const QString &dir);
+
+#ifdef HAVE_XFT
+    bool createFontsDotDir(const QString &dir, QStringList &symbolFamilies);
+#else
     bool createFontsDotDir(const QString &dir);
+#endif
 
     private:
 

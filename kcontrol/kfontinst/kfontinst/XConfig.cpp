@@ -50,9 +50,17 @@ CXConfig::CXConfig()
     readConfig();
 }
 
+#ifdef HAVE_XFT
+bool CXConfig::go(const QString &dir, QStringList &symbolFamilies)
+#else
 bool CXConfig::go(const QString &dir)
+#endif
 {
+#ifdef HAVE_XFT
+    bool status=createFontsDotDir(dir, symbolFamilies);
+#else
     bool status=createFontsDotDir(dir);
+#endif
 
     if(status)
     {
@@ -658,7 +666,11 @@ bool CXConfig::writeXfsConfig()
     return processXfs(CKfiGlobal::cfg().getXConfigFile(), false);
 }
 
+#ifdef HAVE_XFT
+bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies)
+#else
 bool CXConfig::createFontsDotDir(const QString &dir)
+#endif
 {
     bool status=false;
     QDir d(dir);
@@ -694,11 +706,12 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                 if(encodings.count())
                                 {
                                     QCString xlfd(fInfo->fileName().local8Bit());
+                                    QString  family=CKfiGlobal::fe().getFamilyName();
 
                                     xlfd+=" -";
                                     xlfd+=CKfiGlobal::fe().getFoundry();
                                     xlfd+="-";
-                                    xlfd+=CKfiGlobal::fe().getFamilyName().latin1();
+                                    xlfd+=family.latin1();
                                     xlfd+="-";
                                     xlfd+=CFontEngine::weightStr(CKfiGlobal::fe().getWeight()).latin1();
                                     xlfd+="-";
@@ -730,11 +743,16 @@ bool CXConfig::createFontsDotDir(const QString &dir)
                                         entry+="-";
                                         entry+="0";
                                         entry+="-";
-                                        if(*it==CEncodings::constUnicodeStr)
+                                        if(CEncodings::constUnicodeStr==*it)
                                             entry+="iso10646-1";
                                         else
                                             entry+=(*it).latin1();
                                         scalableFonts.append(entry);
+
+#ifdef HAVE_XFT
+                                        if((CEncodings::constTTSymbol==*it || CEncodings::constT1Symbol==*it) && !CMisc::find(symbolFamilies, family))
+                                            symbolFamilies.append(family);
+#endif
                                     }
                                 }
                                 CKfiGlobal::fe().closeFont();

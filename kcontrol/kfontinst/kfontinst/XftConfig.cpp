@@ -430,6 +430,8 @@ static void printEdit(QCString &str, XftEdit *edit)
 
 // Class based functions...
 
+const QString CXftConfig::constSymbolEncoding("glyphs-fontspecific");
+
 CXftConfig::~CXftConfig()
 {
     CXftConfig::TEntry *entry;
@@ -539,6 +541,55 @@ bool CXftConfig::save(const QString &f, const QStringList &dirs)
     }
     else
         return false;
+}
+
+bool CXftConfig::save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies)
+{
+    QStringList::Iterator sIt;
+
+    for(sIt=((QStringList &)symbolFamilies).begin(); sIt!=((QStringList &)symbolFamilies).end(); ++sIt)
+    {
+        TEntry *entry=findFamilyEntry(*sIt);  // See if there is already a rule for this family...
+        bool   newEntry=false;
+
+        if(NULL==entry)  // If no rule was found, then create a new one...
+        {
+            XftValue value;
+
+            entry=new TEntry;
+            value.u.s=(char *)((*sIt).latin1());
+            value.type=XftTypeString;
+            entry->test=XftTestCreate(XftQualAny, "family", XftOpEqual, value);
+            newEntry=true;
+        }
+
+        // Now look for "edit encoding=constSymbolEncoding" ...
+        XftEdit **edit=&(entry->edit);
+
+        while(*edit)
+        {
+            if(0==CMisc::stricmp((*edit)->field, "encoding") && XftOpAssign==(*edit)->op && (*edit)->expr &&
+               XftOpString==(*edit)->expr->op)
+            {
+                if(CMisc::stricmp((*edit)->expr->u.sval, constSymbolEncoding.latin1()))
+                {
+                    free((*edit)->expr->u.sval);
+                    (*edit)->expr->u.sval=_XftSaveString(constSymbolEncoding.latin1());
+                }
+                break;
+            }
+            else
+                edit=&((*edit)->next);
+        }
+
+        if(NULL==*edit)
+            *edit=XftEditCreate("encoding", XftOpAssign, XftExprCreateString(constSymbolEncoding.latin1()));
+
+        if(newEntry)
+            itsList.append(entry);
+    }
+
+    return save(f, dirs);
 }
 
 void CXftConfig::addEntry(XftTest *test, XftEdit *edit)
@@ -699,6 +750,18 @@ CXftConfig::TEntry * CXftConfig::getUseSubPixelHintingEntry()
            CMisc::stricmp(entry->edit->field, "rgba")==0)
             break;
  
+    return entry;
+}
+
+CXftConfig::TEntry * CXftConfig::findFamilyEntry(const QString &family)
+{
+    TEntry *entry=NULL;
+
+    for(entry=itsList.first(); entry; entry=itsList.next())
+        if(entry->test && 0==CMisc::stricmp(entry->test->field, "family") && XftTypeString==entry->test->value.type &&
+           0==CMisc::stricmp(entry->test->value.u.s, family.latin1()))
+            break;
+
     return entry;
 }
 

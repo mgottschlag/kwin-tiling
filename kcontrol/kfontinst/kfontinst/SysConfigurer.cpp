@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <qdir.h>
+#include <qstringlist.h>
 #include "XftConfig.h"
 
 static const QString constFinishedStr("Finished");
@@ -97,6 +98,9 @@ void CSysConfigurer::go()
                  totalTtFonts=0,
                  totalT1Fonts=0,
                  d;
+#ifdef HAVE_XFT
+    QStringList  symbolFamilies;
+#endif
 
     if(CKfiGlobal::cfg().getModifiedDirs().count())
     {
@@ -163,7 +167,11 @@ void CSysConfigurer::go()
     for(d=0; d<CKfiGlobal::cfg().getModifiedDirs().count(); d++)
     {
         status(i18n("Configuring X (%1)...").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])));
+#ifdef HAVE_XFT
+        if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d], symbolFamilies))
+#else
         if(!CKfiGlobal::xcfg().go(CKfiGlobal::cfg().getModifiedDirs()[d]))
+#endif
         {
             status(i18n("Could not configure X (%1)").arg(CMisc::shortName(CKfiGlobal::cfg().getModifiedDirs()[d])), QString::null, true);
             return;
@@ -190,7 +198,7 @@ void CSysConfigurer::go()
 
         status(i18n("Saving XRender configuration file..."));
 
-        if(!CKfiGlobal::xft().save(CKfiGlobal::cfg().getXftConfigFile(), dirs))
+        if(!CKfiGlobal::xft().save(CKfiGlobal::cfg().getXftConfigFile(), dirs, symbolFamilies))
         {
             status(i18n("Could not save XRender configuration file"), i18n("File permissions?"), true);
             return;

@@ -171,6 +171,8 @@ CXftConfig::TEntry * CXftConfigEditor::display(CXftConfig::TEntry *entry)
     for(enc16=CKfiGlobal::enc().first16Bit(); NULL!=enc16; enc16=CKfiGlobal::enc().next16Bit())
         itsEncodings.append(enc16->name);
 
+    itsEncodings.append(CXftConfig::constSymbolEncoding);
+    itsEncodings.sort();
     itsEncodings.append(constOther);
 
     itsMatchList->clear();

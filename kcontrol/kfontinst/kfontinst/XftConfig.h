@@ -75,6 +75,7 @@ class CXftConfig
 
     bool read(const QString &f);
     bool save(const QString &f, const QStringList &dirs);
+    bool save(const QString &f, const QStringList &dirs, const QStringList &symbolFamilies);
 
     void newFile()                                         { init(); itsMadeChanges=true; }
 
@@ -108,6 +109,11 @@ class CXftConfig
 
     TEntry * getExcludeRangeEntry();
     TEntry * getUseSubPixelHintingEntry();
+    TEntry * findFamilyEntry(const QString &family);
+
+    public:
+
+    static const QString constSymbolEncoding;
 
     private:
 
