@@ -326,7 +326,9 @@ main (int argc, char **argv)
     /*
      * Step 2 - run a sub-daemon for each entry
      */
+#ifdef XDMCP
     UpdateListenSockets ();
+#endif
     openFifo (&fifoFd, &fifoPath, 0);
     MainLoop ();
     closeFifo (&fifoFd, &fifoPath);
@@ -991,7 +993,9 @@ static void
 RescanConfigs (int force)
 {
     if (ScanConfigs (force)) {
+#ifdef XDMCP
 	UpdateListenSockets ();
+#endif
 	UpdateFifo ();
     }
 }
