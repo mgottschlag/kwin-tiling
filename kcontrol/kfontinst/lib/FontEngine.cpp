@@ -646,7 +646,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
         }
 
         if(!itsFoundry.isEmpty() && constDefaultFoundry!=itsFoundry)
-            name=i18n("%2,  Foundry: %1").arg(itsFoundry).arg(name);
+            name=i18n("%2 [%1]").arg(itsFoundry).arg(name);
 
         if(!isBitmap && !waterfall && fSize>0)
             name=i18n("%3,  %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD)).arg(name);
