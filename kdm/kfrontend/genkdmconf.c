@@ -957,8 +957,8 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 #if defined(RDPYS) || defined(CONS)
     char *cur, *nword, *wordp, *lstrt, *buf, *p, *rp;
     const char *word, *dname, *dclass, *dclassp, *atPos;
-    Line *lin, *lines, **lptr;
-    StrList *wrd, **wptr, *xswords, **xswordp;
+    Line *lin, *lines = 0, **lptr = &lines;
+    StrList *wrd, **wptr, *xswords = 0, **xswordp;
     int ndpys = 0, nldpys = 0, nrdpys = 0, dpymask = 0, vtmask = 63;
     int ttymask = 0;
     int type, tty, vt, dn, maj, min;
@@ -967,8 +967,6 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 
     /* parse it */
     *file->eof = 0;
-    lines = 0;
-    lptr = &lines;
     cur = file->buf;
   nline:
     if (cur >= file->eof)
