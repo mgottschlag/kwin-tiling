@@ -42,8 +42,8 @@
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
 #define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:[[0-9][0-9]?[0-9]?]?/?"
-
 #define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
+
 #define QFL1(x) QString::fromLatin1(x)
 
 typedef QMap<QString,QString> EntryMap;
@@ -93,12 +93,12 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * data.  First it expands any environment variable settings and then
   * deals with special shortURI cases. These special cases are the "smb:"
   * URL scheme which is very specific to KDE, "#" and "##" which are
-  * shortcuts for man:/ and info:/ protocols respectively abd local files.
-  * Then it checks to see if URL is valid and one that is supported by KDE's
-  * IO system.  If all the above check fails, it simply lookups the URL in
-  * the user-defined list and returns without filtering if it is not found.
-  * In the future versions, we might want to make it so that everything
-  * with the exception of ENV expansion is configurable by the user.
+  * shortcuts for man:/ and info:/ protocols respectively. It then handles
+  * local files.  Then it checks to see if the URL is valid and one that is
+  * supported by KDE's IO system.  If all the above checks fails, it simply
+  * lookups the URL in the user-defined list and returns without filtering
+  * if it is not found. TODO: the user-defined table is currently only manually
+  * hackable and is missing a config dialog.  Simply copying the file
   */
 
   // Environment variable expansion.
@@ -107,6 +107,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     setFilteredURI( data, cmd );
 
   KURL url = data.uri();
+
+  // TODO: Make this a bit more intelligent for Minicli! There
+  // is no need to make comparisons if the supplied data is a local
+  // executable and only the argument part, if any, changed!
 
   // Handle SMB Protocol shortcuts ...
   int loc = cmd.lower().find( QFL1("smb:") );
@@ -196,33 +200,55 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
   // Checking for local resource match...
-  struct stat buff;
-  // Determine if "uri" is an absolute path to a local resource
-  if( (cmd[0] == '/') && ( stat( cmd.local8Bit().data() , &buff ) == 0 ) )
+  // Determine if "uri" is an absolute path to a local resource  OR
+  // A local resource with a supplied absolute path in KURIFilterData
+  QString abs_path = cmd;
+  if( abs_path[0] == '/' || data.hasAbsolutePath() )
   {
-    bool isDir = S_ISDIR( buff.st_mode );
-    if( !isDir && access (cmd.local8Bit().data(), X_OK) == 0 )
+    if (abs_path[0] != '/')
+      abs_path = data.absolutePath()+'/'+cmd;
+
+    struct stat buff;
+    int status = stat( abs_path.local8Bit().data() , &buff );
+    if( status == 0 )
     {
-      setFilteredURI( data, cmd );
-      setURIType( data, KURIFilterData::EXECUTABLE );
-      return true;
-    }
-    // Open "uri" as file:/xxx if it is a non-executable local resource.
-    if( isDir || S_ISREG( buff.st_mode ) )
-    {
-      cmd.insert( 0, QFL1("file:") );
-      setFilteredURI( data, cmd );
-      setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
-      return true;
+      bool isDir = S_ISDIR( buff.st_mode );
+      if( !isDir && access (abs_path.local8Bit().data(), X_OK) == 0 )
+      {
+        setFilteredURI( data, abs_path );
+        setURIType( data, KURIFilterData::EXECUTABLE );
+        return true;
+      }
+      // Open "uri" as file:/xxx if it is a non-executable local resource.
+      if( isDir || S_ISREG( buff.st_mode ) )
+      {
+        // cmd.insert( 0, QFL1("file:") );  KURL will automatically take care of this.
+        setFilteredURI( data, abs_path );
+        setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
+        return true;
+      }
     }
   }
 
-  // If "uri" is not the absolute path to a file or
-  // a directory, see if it is executable under the
-  // user's $PATH variable.
-  if( !KStandardDirs::findExe( cmd ).isNull() )
+  // Let us deal with possible relative URLs to see
+  // if it is executable under the user's $PATH variable.
+  // We try hard to avoid parsing any possible command
+  // line arguments or options that might have been supplied.
+  abs_path = cmd;
+  int space_pos = abs_path.find( ' ' );
+  if( space_pos > 0 )
   {
-    setFilteredURI( data, cmd );
+    QChar ch = abs_path[0];
+    if( ch != '\'' && ch != '"' && cmd[space_pos - 1] != '\\' )
+        abs_path = abs_path.left( space_pos );
+  }
+
+  if( !KStandardDirs::findExe( abs_path ).isNull() )
+  {
+    setFilteredURI( data, abs_path );
+    // check if we have command line arguments
+    if( abs_path != cmd )
+        setArguments(data, cmd.right(cmd.length() - space_pos));
     setURIType( data, KURIFilterData::EXECUTABLE );
     return true;
   }
@@ -298,7 +324,7 @@ QString KShortURIFilter::configName() const
 
 void KShortURIFilter::configure()
 {
-    KConfig config( name() + QFL1("rc") );
+    KConfig config( name() + QFL1("rc"), false, false );
     EntryMap map = config.entryMap( QFL1("Pattern Matching") );
     if( !map.isEmpty() )
     {
@@ -308,10 +334,8 @@ void KShortURIFilter::configure()
     }
 
     // Include some basic defaults.  Note these will always be
-    // overridden by the users enteries.
-    // TODO: Make this configurable from the dialog box.  Should
-    // go into control module.  NOTE: the order is important
-    // (FQDN_PATTERN should be last)
+    // overridden by a users entries. TODO: Make this configurable
+    // from the control panel.
     m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
     m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
 }
