@@ -43,10 +43,10 @@ class CEncodings
             INDEX_OFFSET=32,
             NUM_MAP_ENTRIES = 256-INDEX_OFFSET
         };
-
+ 
         T8Bit(const QString &f, const QString &n, int *m=NULL) : file(f), name(n), map(m) {}
         virtual ~T8Bit();
-
+ 
         bool load();  // Load data in from file (if applicable...)
         QString file,
                 name;

@@ -35,6 +35,9 @@
 #include <zlib.h>
 #include <fstream.h>
 
+// Use the strict maps - needed for creating AFMs...
+#define STRICT_ENCODING_MAPS
+
 // These arrays have been copied from ttmkfdir.c
 
 static int iso8859_1[CEncodings::T8Bit::NUM_MAP_ENTRIES]=
@@ -427,7 +430,7 @@ static int koi8r[CEncodings::T8Bit::NUM_MAP_ENTRIES]=
 
 #endif
 
-#ifndef STRICT_ENCODING_MAPS
+#ifdef STRICT_ENCODING_MAPS
 
 static int koi8ru[CEncodings::T8Bit::NUM_MAP_ENTRIES]=
 {
