@@ -233,9 +233,8 @@ static IceListenObj *listenObjs = 0;
 int numTransports = 0;
 static bool only_local = 0;
 
-static Bool HostBasedAuthProc ( char* hostname)
+static Bool HostBasedAuthProc ( char* /*hostname*/)
 {
-    qDebug("KSMServer: HBAP: hostname=%s", hostname);
     if (only_local)
 	return TRUE;
     else
