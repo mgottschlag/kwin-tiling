@@ -619,16 +619,24 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
 
 void CKioFonts::stat(const KURL &url)
 {
-    KFI_DBUG << "stat " << url.path() << endl;
+    KFI_DBUG << "stat " << url.prettyURL() << endl;
 
     CHECK_URL_ROOT_OK(url)
 
-    QStringList   path(QStringList::split('/', url.path(-1), false));
+    QString path(url.path(-1));
+
+    if(path.isEmpty())
+    {
+        error(KIO::ERR_COULD_NOT_STAT, url.prettyURL());
+        return;
+    }
+
+    QStringList   pathList(QStringList::split('/', path, false));
     KIO::UDSEntry entry;
     bool          err=false;
 
-    KFI_DBUG << "count:" << path.count() << endl;
-    switch(path.count())
+    KFI_DBUG << "count:" << pathList.count() << endl;
+    switch(pathList.count())
     {
         case 0:
             err=!createDirEntry(entry, i18n("Fonts"), CGlobal::cfg().getUserFontsDirs().first(),
@@ -638,10 +646,10 @@ void CKioFonts::stat(const KURL &url)
             if(CMisc::root())
                 err=!createStatEntry(entry, url);
             else
-                if(i18n(KIO_FONTS_USER)==path[0])
+                if(i18n(KIO_FONTS_USER)==pathList[0])
                     err=!createDirEntry(entry, i18n(KIO_FONTS_USER), CGlobal::cfg().getUserFontsDirs().first(),
                                         QString(KIO_FONTS_PROTOCOL)+QString(":/")+i18n(KIO_FONTS_USER), false);
-                else if(path[0]==i18n(KIO_FONTS_SYS))
+                else if(i18n(KIO_FONTS_SYS)==pathList[0])
                     err=!createDirEntry(entry, i18n(KIO_FONTS_SYS), CGlobal::cfg().getSysFontsDirs().first(),
                                         QString(KIO_FONTS_PROTOCOL)+QString(":/")+i18n(KIO_FONTS_SYS), true);
                 else
@@ -1225,10 +1233,26 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         }
     }
 
-    QCString srcPath(QFile::encodeName(convertUrl(src, true)));
-    QString  sSub(CMisc::getSub(src.path())),
-             dSub(CMisc::getSub(dest.path()));
+    //
+    // When a dir is renamed, kio does:
+    //    mkdir <new>
+    //    for each file in <old>
+    //        rename <old>/file <new>/file
+    //
+    // This fails for kio_fonts if <old> is in /usr/X11R6/lib/X11/fonts, because <new> will be created in
+    // /usr/local/share/fonts
+    //
+    // ...therefore, don't support renaming of folders -> forces kio to do a copy + del
+    //
+    if(CMisc::getFile(src.path())==CMisc::getFile(dest.path()))
+    {
+        error(KIO::ERR_UNSUPPORTED_ACTION, "");
+        return;
+    }
 
+    QCString        srcPath(QFile::encodeName(convertUrl(src, true)));
+    QString         sSub(CMisc::getSub(src.path())),
+                    dSub(CMisc::getSub(dest.path()));
     KDE_struct_stat buffSrc;
 
     if(-1==KDE_stat(srcPath.data(), &buffSrc))
