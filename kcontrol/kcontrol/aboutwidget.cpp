@@ -28,12 +28,15 @@
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
 #include <kcursor.h>
+#include <kglobalsettings.h>
 
 #include "global.h"
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
 #include "modules.h"
 #include "moduletreeview.h"
+
+const char * kcc_text = I18N_NOOP("KDE Control Center");
 
 const char * title_text = I18N_NOOP("Configure your desktop environment.");
 
@@ -132,6 +135,18 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     if(width() > xpos)
         p.drawTiledPixmap(xpos, 0, width() - xpos, _part2.height(), _part2);
 
+    QFont f1 = font();
+    QFont f2 = f1;
+    QFont f3 = QFont(KGlobalSettings::generalFont().family(), 28, QFont::Bold, true);
+
+    //draw the caption text
+    p.setFont(f3);
+    p.setPen(gray);
+    p.drawText(220, 60, i18n(kcc_text));
+    p.setPen(black);
+    p.drawText(217, 57, i18n(kcc_text));
+    p.setFont(f1);
+
     // draw title text
     p.setPen(white);
     p.drawText(150, 84, width() - 150, 108 - 84, AlignLeft | AlignVCenter, i18n(title_text));
@@ -189,8 +204,6 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     int fheight = fontMetrics().height();
     int xadd = 120;
 
-    QFont f1 = font();
-    QFont f2 = f1;
     f2.setBold(true);
 
     
