@@ -19,7 +19,7 @@ libkcm_kwinoptions_la_METASOURCES = AUTO
 bin_PROGRAMS = kcmkwm
 kcmkwm_SOURCES = main.cpp titlebar.cpp desktop.cpp advanced.cpp
 noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
-kwmkwm_LDFLAGS = $(KDE_RPATH)  $(all_libraries)
+kcmkwm_LDFLAGS = $(KDE_RPATH)  $(all_libraries)
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmkwm_SOURCES) && mv messages.po $(podir)/kcmkwm.pot
