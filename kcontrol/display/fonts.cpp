@@ -29,6 +29,7 @@
 
 extern "C" {
     KCModule *create_fonts(QWidget *parent, const char *name) {
+	KGlobal::locale()->insertCatalogue("kcmdisplay");
 	return new KFonts(parent, name);
     }
 }

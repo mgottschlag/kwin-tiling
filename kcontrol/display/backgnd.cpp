@@ -56,6 +56,7 @@
 
 extern "C" {
     KCModule *create_background(QWidget *parent, const char *name) {
+	KGlobal::locale()->insertCatalogue("kcmdisplay");
 	return new KBackground(parent, name);
     }
 }

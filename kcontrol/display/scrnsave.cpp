@@ -57,6 +57,7 @@
 
 extern "C" {
     KCModule *create_screensaver(QWidget *parent, const char *name) {
+	KGlobal::locale()->insertCatalogue("kcmdisplay");
 	return new KScreenSaver(parent, name);
     }
 }

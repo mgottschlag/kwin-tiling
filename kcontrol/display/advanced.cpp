@@ -34,6 +34,7 @@
 
 extern "C" {
     KCModule *create_advanced(QWidget *parent, const char *name) {
+	KGlobal::locale()->insertCatalogue("kcmdisplay");
 	return new KAdvanced(parent, name);
     }
 }

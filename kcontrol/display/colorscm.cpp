@@ -44,6 +44,7 @@
 
 extern "C" {
     KCModule *create_colors(QWidget *parent, const char *name) {
+	KGlobal::locale()->insertCatalogue("kcmdisplay");
 	return new KColorScheme(parent, name);
     }
 }
