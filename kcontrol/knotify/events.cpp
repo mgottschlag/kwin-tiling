@@ -78,6 +78,7 @@ KNApplication::KNApplication( const QString& file )
 KNApplication::~KNApplication()
 {
     delete kc;
+    delete m_events;
 }
 
 
