@@ -151,6 +151,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pMonitor = new KBGMonitor(lbl, "preview monitor");
     m_pMonitor->setGeometry(20, 10, 157, 111);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
+    QWhatsThis::add( m_pMonitor, "In this monitor, you can preview how your settings will look like on a \"real\" desktop." );
 
     // Tabwidget at (1,0) - (1,1)
     m_pTabWidget = new QTabWidget(this);
@@ -311,6 +312,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
       " reverse the background and wallpaper layers by checking this option.") );
 
     m_pCBLimit = new QCheckBox(i18n("&Limit Pixmap Cache"), m_pTab3);
+    QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have lots of memory." ) );
     grid->addMultiCellWidget(m_pCBLimit, 2, 2, 0, 1);
     connect(m_pCBLimit, SIGNAL(toggled(bool)), SLOT(slotLimitCache(bool)));
     hbox = new QHBoxLayout();
@@ -325,6 +327,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(m_pCacheBox, 3, 1, Qt::AlignLeft);
     lbl->setBuddy(m_pCacheBox);
     connect(m_pCacheBox, SIGNAL(valueChanged(int)), SLOT(slotCacheSize(int)));
+    QString wtstr = i18n( "In this box you can enter how much memory KDE should use for caching pixmaps for faster access." );
+    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( m_pCacheBox, wtstr );
 
     m_Desk = KWin::currentDesktop() - 1;
     m_Max = KWin::numberOfDesktops();
