@@ -206,13 +206,15 @@ void AboutWidget::updatePixmap()
     p.drawText(217, 57, i18n(kcc_text));
     p.setFont(f1);
 
+    int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
+    
     // draw title text
     p.setPen(white);
-    p.drawText(150, 84, width() - 150, 108 - 84, AlignLeft | AlignVCenter, i18n(title_text));
+    p.drawText(150, 84, width() - 160, 108 - 84, hAlign | AlignVCenter, i18n(title_text));
 
     // draw intro text
     p.setPen(black);
-    p.drawText(28, 128, width() - 28, 184 - 128, AlignLeft | AlignVCenter | WordBreak, i18n(intro_text));
+    p.drawText(28, 128, width() - 38, 184 - 128, hAlign | AlignVCenter | WordBreak, i18n(intro_text));
 
     // fill background
     p.fillRect(0, yoffset, width(), height() - yoffset, QBrush(QColor(49,121,172)));
@@ -262,7 +264,10 @@ void AboutWidget::updatePixmap()
 
     if (!_moduleList)
     {
-      // kde version
+	int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-120;
+	int xadd = (hAlign == AlignLeft) ? 120 : -xoffset+10;
+      
+	// kde version
       p.setFont(f1);
       p.drawText(xoffset, yoffset, i18n(version_text));
       p.setFont(f2);
@@ -314,6 +319,7 @@ void AboutWidget::updatePixmap()
       if(width() < 450 || height() < 450) return;
 
       // draw use text
+      xoffset = 10;
       bheight = bheight - yoffset - 10;
       bwidth = bwidth - xoffset - 10;
 
@@ -324,7 +330,7 @@ void AboutWidget::updatePixmap()
       ut.replace(QRegExp("<b>"), "");
       ut.replace(QRegExp("</b>"), "");
 
-      p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
+      p.drawText(xoffset, yoffset, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
     }
     else
     {
