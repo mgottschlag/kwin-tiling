@@ -14,7 +14,7 @@ libkcm_kwinmouse_la_METASOURCES = AUTO
 
 bin_PROGRAMS = kcmkwm
 kcmkwm_SOURCES = main.cpp titlebar.cpp windows.cpp desktop.cpp advanced.cpp
-kcmkwm_METASOURCES = titlebar.moc windows.moc desktop.moc advanced.moc
+METASOURCES = titlebar.moc windows.moc desktop.moc advanced.moc
 noinst_HEADERS = windows.h desktop.h titlebar.h geom.h mouse.h advanced.h
 
 messages:
