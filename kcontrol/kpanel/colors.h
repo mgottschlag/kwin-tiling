@@ -33,7 +33,7 @@ class KColorConfig : public KConfigWidget
   Q_OBJECT
 public:
     enum ItemID{ Panel_ID=0, DeskFg_ID, DeskBg_ID, AppIcon_ID,
-        Taskbar_ID, TaskBtnFg_ID, TaskBtnBg_ID};
+        Taskbar_ID, TaskBtnFg_ID, TaskBtnBg_ID, BlinkHigh_ID, BlinkLow_ID};
     
     KColorConfig( QWidget *parent=0, const char* name=0 );
     ~KColorConfig( );
@@ -44,7 +44,7 @@ protected slots:
     void colorSlot(const QColor &color);
     void itemSlot(int index);
 protected:
-    QColor colors[7];
+    QColor colors[9];
     KColorButton *currentColor;
     QComboBox *itemCombo;
 };
