@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>341</width>
-            <height>323</height>
+            <height>325</height>
         </rect>
     </property>
     <property name="caption">
@@ -28,6 +28,11 @@
             </property>
             <property name="accel">
                 <string>Alt+E</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>&lt;qt&gt;
+Enable shortcuts that allow you to quickly search for information on the web. For example, entering the shortcut &lt;b&gt;gg:KDE&lt;/b&gt; will result in a search of the word &lt;b&gt;KDE&lt;/b&gt; on the Google(TM) search engine.
+&lt;/qt&gt;</string>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -56,6 +61,9 @@
                     <property name="buddy" stdset="0">
                         <cstring>cmbDelimiter</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose the delimiter that separates the keyword from the phrase or word to be searched.</string>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="4" column="0">
                     <property name="name">
@@ -78,8 +86,18 @@
                     <property name="buddy" stdset="0">
                         <cstring>cmbDefaultEngine</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;
+Select the search engine to use for input boxes that provide automatic lookup services when you type in normal words and phrases instead of a URL. To disable this feature select &lt;b&gt;None&lt;/b&gt; from the list.
+&lt;/qt&gt;</string>
+                    </property>
                 </widget>
                 <widget class="KComboBox" row="4" column="1">
+                    <item>
+                        <property name="text">
+                            <string>None</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>cmbDefaultEngine</cstring>
                     </property>
@@ -91,10 +109,18 @@
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;
+Select the search engine to use for input boxes that provide automatic lookup services when you type in normal words and phrases instead of a URL. To disable this feature select &lt;b&gt;None&lt;/b&gt; from the list.
+&lt;/qt&gt;</string>
+                    </property>
                 </widget>
                 <widget class="QPushButton" row="1" column="2">
                     <property name="name">
                         <cstring>pbChange</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>Chan&amp;ge...</string>
@@ -102,16 +128,25 @@
                     <property name="accel">
                         <string>Alt+G</string>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Modify a search provider.</string>
+                    </property>
                 </widget>
                 <widget class="QPushButton" row="2" column="2">
                     <property name="name">
                         <cstring>pbDelete</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>De&amp;lete</string>
                     </property>
                     <property name="accel">
                         <string>Alt+L</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Delete the selected search provider.</string>
                     </property>
                 </widget>
                 <widget class="QPushButton" row="0" column="2">
@@ -123,6 +158,9 @@
                     </property>
                     <property name="accel">
                         <string>Alt+N</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Add a search provider.</string>
                     </property>
                 </widget>
                 <spacer row="3" column="2" rowspan="3" colspan="1">
@@ -143,6 +181,28 @@
                     </property>
                 </spacer>
                 <widget class="KListView" row="0" column="0" rowspan="4" colspan="2">
+                    <column>
+                        <property name="text">
+                            <string>Name</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Shortcuts</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
                     <property name="name">
                         <cstring>lvSearchProviders</cstring>
                     </property>
@@ -152,8 +212,21 @@
                     <property name="treeStepSize">
                         <number>0</number>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>List of search providers and their associated shortcuts.</string>
+                    </property>
                 </widget>
                 <widget class="KComboBox" row="5" column="1">
+                    <item>
+                        <property name="text">
+                            <string>Colon</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>Space</string>
+                        </property>
+                    </item>
                     <property name="name">
                         <cstring>cmbDelimiter</cstring>
                     </property>
@@ -164,6 +237,9 @@
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose the delimiter that separates the keyword from the phrase or word to be searched.</string>
                     </property>
                 </widget>
             </grid>

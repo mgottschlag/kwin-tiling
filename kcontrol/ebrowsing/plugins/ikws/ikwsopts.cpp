@@ -79,38 +79,7 @@ FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *n
     m_dlg = new FilterOptionsUI (this);
     mainLayout->addWidget(m_dlg);
 
-    QString wtstr = i18n("Enable shortcuts that allow you to quickly search for "
-                         "information on the web. For example, entering the "
-                         "shortcut <em>gg:KDE</em> will result in a search of "
-                         "the word <em>KDE</em> on the Google(TM) search engine.");
-    QWhatsThis::add(m_dlg->cbEnableShortcuts, wtstr);
-
-
-    wtstr = i18n("List of search providers and their associated shortcuts.");
-    QWhatsThis::add(m_dlg->lvSearchProviders, wtstr);
-    m_dlg->lvSearchProviders->setMultiSelection(false);
-    m_dlg->lvSearchProviders->addColumn(i18n("Name"));
-    m_dlg->lvSearchProviders->addColumn(i18n("Shortcuts"));
     m_dlg->lvSearchProviders->setSorting(0);
-
-    QWhatsThis::add(m_dlg->pbNew, i18n("Add a search provider"));
-    QWhatsThis::add(m_dlg->pbChange, i18n("Modify a search provider"));
-    QWhatsThis::add(m_dlg->pbDelete, i18n("Delete the selected search provider"));
-
-    wtstr = i18n("Select the search engine to use for input boxes that provide "
-                 "automatic lookup services when you type in normal words and "
-                 "phrases instead of a URL. To disable this feature select "
-                 "<em>None</em> from the list.");
-    QWhatsThis::add(m_dlg->lbDefaultEngine, wtstr);
-    QWhatsThis::add(m_dlg->cmbDefaultEngine, wtstr);
-
-    wtstr = i18n("Choose the delimiter that separates the word or phrase "
-                 "to be looked up from the keyword.");
-    QWhatsThis::add(m_dlg->lbDelimiter, wtstr);
-    QWhatsThis::add(m_dlg->cmbDelimiter, wtstr);
-
-    m_dlg->pbChange->setEnabled(false);
-    m_dlg->pbDelete->setEnabled(false);
 
     connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider()));
@@ -153,13 +122,6 @@ void FilterOptions::load()
     m_dlg->lvSearchProviders->clear();
     m_dlg->cmbDefaultEngine->clear();
 
-    // Populate the delimiter combobox.
-    m_dlg->cmbDelimiter->insertItem (i18n("Colon"), 0);
-    m_dlg->cmbDelimiter->insertItem (i18n("Space"), 1);
-
-    // Populate the default search engine combobox.
-    m_dlg->cmbDefaultEngine->insertItem (i18n("None"), 0);
-
     KConfig config( KURISearchFilterEngine::self()->name() + "rc", false, false );
     config.setGroup("General");
 
@@ -180,6 +142,7 @@ void FilterOptions::load()
     setDelimiter (config.readNumEntry ("KeywordDelimiter", ':'));
 
     setWebShortcutState();
+
     if (m_dlg->lvSearchProviders->childCount())
       m_dlg->lvSearchProviders->setSelected(m_dlg->lvSearchProviders->firstChild(), true);
 }

@@ -43,38 +43,7 @@ SearchProviderDialog::SearchProviderDialog(SearchProvider *provider,
 
     enableButtonSeparator(true);
 
-    QString whatsThis = i18n("Enter the human readable name of the search provider here.");
-    QWhatsThis::add(m_dlg->lbName, whatsThis);
-    QWhatsThis::add(m_dlg->leName, whatsThis);
-
-    whatsThis = i18n("Enter the URI that is used to do a search on the search "
-                     "engine here.\nThe whole text to be searched for can be "
-                     "specified as \\{@} or \\{0}.\nRecommended is \\{@}, since "
-                     "it removes all query variables (name=value) from the "
-                     "resulting string whereas \\{0} will be substituted with the "
-                     "unmodified query string.\nYou can use \\{1} ... \\{n} to "
-                     "specify certain words from the query and \\{name} to "
-                     "specify a value given by 'name=value' in the user query.\n"
-                     "In addition it is possible to specify multiple references "
-                     "(names, numbers and strings) at once (\\{name1,name2,...,\""
-                     "string\"}).\nThe first matching value (from the left) will "
-                     "be used as substitution value for the resulting URI.\n"
-                     "A quoted string can be used as default value if nothing "
-                     "matches from the left of the reference list.");
-    QWhatsThis::add(m_dlg->lbQuery, whatsThis);
-    QWhatsThis::add(m_dlg->leQuery, whatsThis);
     m_dlg->leQuery->setMinimumWidth(kapp->fontMetrics().width('x') * 40);
-
-    whatsThis = i18n("The shortcuts entered here can be used as a pseudo-URI "
-                     "scheme in KDE. For example, the shortcut <em>av</em> can "
-                     "be used as in <em>av</em>:<em>my search</em>.");
-    QWhatsThis::add(m_dlg->lbShortcut, whatsThis);
-    QWhatsThis::add(m_dlg->leShortcut, whatsThis);
-
-    whatsThis = i18n("Select the character set that will be used to encode "
-                     "your search query.");
-    QWhatsThis::add(m_dlg->lbCharset, whatsThis);
-    QWhatsThis::add(m_dlg->cbCharset, whatsThis);
 
     connect(m_dlg->leName, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     connect(m_dlg->leQuery, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
