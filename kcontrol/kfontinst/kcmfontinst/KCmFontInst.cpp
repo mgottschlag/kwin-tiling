@@ -23,7 +23,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2003
+// (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "KCmFontInst.h"
@@ -310,6 +310,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
                 act->plug(toolbar);
             if((act=previewCol->action("changeText")))
                 act->plug(toolbar);
+            if((act=previewCol->action("toggleWaterfall")))
+                act->plug(toolbar);
 
             // For some reason the following always put zoomOut, zoomIn, changeText hmmm :-(
             //for(unsigned int i=0; i<previewCol->count(); ++i)
@@ -376,7 +378,7 @@ const KAboutData * CKCmFontInst::aboutData() const
                                           0, 0,
                                           KAboutData::License_GPL,
                                           I18N_NOOP("GUI front end to the fonts:/ ioslave.\n"
-                                                    "(c) Craig Drummond, 2000 - 2003"));
+                                                    "(c) Craig Drummond, 2000 - 2004"));
         that->itsAboutData->addAuthor("Craig Drummond", I18N_NOOP("Developer and maintainer"), "craig@kde.org");
     }
 
@@ -603,20 +605,15 @@ void CKCmFontInst::removeFonts()
             case 0:
                 break;
             case 1:
-                doIt = KMessageBox::Continue==KMessageBox::warningContinueCancel(this,
+                doIt = KMessageBox::Continue==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
-                           i18n("Delete Item"),
-                           i18n("Delete"),
-                           QString::null, KMessageBox::Dangerous);
+                           i18n("Delete Item"), i18n("Delete"));
             break;
             default:
-                doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
+                doIt = KMessageBox::Continue==KMessageBox::warningYesNoList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n items?",
                                 files.count()),
-                           files,
-                           i18n("Delete Items"),
-                           i18n("Delete"),
-                           QString::null, KMessageBox::Dangerous);
+                           files, i18n("Delete Items"), i18n("Delete"));
         }
 
         if(doIt)
@@ -625,16 +622,24 @@ void CKCmFontInst::removeFonts()
             KURL::List::Iterator it;
 
             //
-            // Check if installign a Type1 font, if so look for corresponding .afm file to also delete
+            // Check if deleting a Type1 font, if so look for corresponding .afm file to also delete
             for(it=urls.begin(); it!=urls.end(); ++it)
                 if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
                 {
-                    KURL          afmUrl(*it);
-                    KIO::UDSEntry uds;
+                    const char *others[]={ "afm", "AFM", NULL };
 
-                    afmUrl.setPath(CMisc::changeExt((*it).path(), "afm"));
-                    if(KIO::NetAccess::stat(afmUrl, uds, this))
-                        copy+=afmUrl;
+                    for(int i=0; others[i]; ++i)
+                    {
+                        KURL          afmUrl(*it);
+                        KIO::UDSEntry uds;
+
+                        afmUrl.setPath(CMisc::changeExt((*it).path(), others[i]));
+                        if(KIO::NetAccess::stat(afmUrl, uds, this))
+                        {
+                            copy+=afmUrl;
+                            break;
+                        }
+                    }
                 }
 
             KIO::DeleteJob *job = KIO::del(copy, false, true);
@@ -776,23 +781,21 @@ void CKCmFontInst::enableItems(bool enable)
         case 0:
             break;
         case 1:
-            doIt = KMessageBox::Continue==KMessageBox::warningContinueCancel(this,
+            doIt = KMessageBox::Continue==KMessageBox::warningYesNo(this,
                        enable ? i18n("<qt>Do you really want to enable\n <b>'%1'</b>?</qt>").arg(files.first())
                               : i18n("<qt>Do you really want to disable\n <b>'%1'</b>?</qt>").arg(files.first()),
                        enable ? i18n("Enable Item") : i18n("Disable Item"),
-                       enable ? i18n("Enable") : i18n("Disable"),
-                       QString::null, KMessageBox::Dangerous);
+                       enable ? i18n("Enable") : i18n("Disable"));
             break;
         default:
-            doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
+            doIt = KMessageBox::Continue==KMessageBox::warningYesNoList(this,
                        enable ? i18n("translators: not called for n == 1", "Do you really want to enable these %n items?",
                                      files.count())
                               : i18n("translators: not called for n == 1", "Do you really want to disable these %n items?",
                                      files.count()),
                        files,
                        enable ? i18n("Enable Items") : i18n("Disable Items"),
-                       enable ? i18n("Enable") : i18n("Disable"),
-                       QString::null, KMessageBox::Dangerous);
+                       enable ? i18n("Enable") : i18n("Disable"));
     }
 
     if(doIt)
@@ -802,7 +805,7 @@ void CKCmFontInst::enableItems(bool enable)
         CRenameJob::Entry::List renameList;
 
         //
-        // Check if installign a Type1 font, if so look for corresponding .afm file to also enable/disable
+        // Check if enabling/disabling a Type1 font, if so look for corresponding .afm file to also enable/disable
         for(it=urls.begin(); it!=urls.end(); ++it)
             if(CFontEngine::isAType1(QFile::encodeName((*it).path())))
             {
