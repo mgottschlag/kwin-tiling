@@ -16,6 +16,7 @@
 #include <qradiobutton.h>
 #include <qlayout.h>
 #include <qdir.h>
+#include <qstylefactory.h>
 #include <qwhatsthis.h>
 
 #include <dcopclient.h>
@@ -104,22 +105,22 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     KConfig kconfig("kstylerc");
     kconfig.setGroup("KDE");
     defName = QString::fromLatin1("KDE default");
-    QString file = kconfig.readEntry("currentTheme");
 
     addColumn(i18n("Name"));
     addColumn(i18n("Description"));
     setAllColumnsShowFocus(true);
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kstyle/themes");
 
-    if (file.isEmpty())
-        file = locate("themes", "default.themerc");
-    
-    if ( !file.isEmpty() ) {
-        KConfig config( file );
-        config.setGroup("KDE");
-        curTheme = config.readEntry("WidgetStyle");
+    curTheme = kconfig.readEntry("WidgetStyle");
+    if (curTheme.isEmpty()) {
+        QString file = locate("themes", "default.themerc");
+        if ( !file.isEmpty() ) {
+            KConfig config( file );
+            config.setGroup("KDE");
+            curTheme = config.readEntry("WidgetStyle");
+        }
     }
-    else
+    if ( curTheme.isEmpty() )
         curTheme = "HighColor"; //### or maybe try one of QStyleFactory::keys()
 
     connect(KDirWatch::self(), SIGNAL(dirty(const QString&)),
@@ -159,6 +160,10 @@ void KThemeListBox::readTheme(const QString &file)
     config.setGroup( "KDE" );
 
     QString style = config.readEntry( "WidgetStyle" );
+    QStringList styles = QStyleFactory::keys();
+    if ( styles.find( style ) == styles.end() )
+        return;
+
     QListViewItem *item = new QListViewItem(this, name, desc, style);
     if (style == curTheme) {
         curItem = item;
