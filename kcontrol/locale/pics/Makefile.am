@@ -1,11 +1,11 @@
-data_DATA = flag_de.gif flag_en.gif flag_fr.gif flag_C.gif flag_cs.gif \
-            flag_sv.gif flag_es.gif flag_ru.gif flag_nl.gif flag_hu.gif \
-            flag_da.gif flag_fi.gif flag_is.gif flag_it.gif flag_pt.gif flag_pl.gif \
-            flag_no.gif flag_el.gif flag_hr.gif flag_ro.gif flag_sk.gif \
-	    flag_zh_TW.Big5.gif flag_zh_CN.GB2312.gif flag_en_UK.gif \
-	    flag_ca.gif flag_pt_BR.gif flag_eo.gif flag_mk.gif flag_br.gif \
-	    flag_he.gif flag_tr.gif flag_et.gif flag_se.gif \
-	    flag_fr_CA.gif flag_us_eu.gif flag_fr_CH.gif flag_de_CH.gif
+data_DATA = flag_de.png flag_en.png flag_fr.png flag_C.png flag_cs.png \
+            flag_sv.png flag_es.png flag_ru.png flag_nl.png flag_hu.png \
+            flag_da.png flag_fi.png flag_is.png flag_it.png flag_pt.png flag_pl.png \
+            flag_no.png flag_el.png flag_hr.png flag_ro.png flag_sk.png \
+	    flag_zh_TW.Big5.png flag_zh_CN.GB2312.png flag_en_UK.png \
+	    flag_ca.png flag_pt_BR.png flag_eo.png flag_mk.png flag_br.png \
+	    flag_he.png flag_tr.png flag_et.png flag_se.png \
+	    flag_fr_CA.png flag_us_eu.png flag_fr_CH.png flag_de_CH.png
 
 datadir = $(kde_datadir)/kcmlocale/pics
 
