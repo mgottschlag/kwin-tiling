@@ -61,15 +61,14 @@ PAM_conv (int num_msg, pam_message_type **msg,
     switch (msg[count]->msg_style) {
     case PAM_TEXT_INFO:
       pd->conv(ConvPutInfo, msg[count]->msg);
-      continue;
+      break;
     case PAM_ERROR_MSG:
       pd->conv(ConvPutError, msg[count]->msg);
-      continue;
+      break;
     default:
       switch (msg[count]->msg_style) {
       case PAM_PROMPT_ECHO_ON:
-        repl[count].resp =
-            pd->conv(ConvGetNormal, pd->classic ? 0 : msg[count]->msg);
+        repl[count].resp = pd->conv(ConvGetNormal, msg[count]->msg);
         break;
       case PAM_PROMPT_ECHO_OFF:
         repl[count].resp =

@@ -426,5 +426,5 @@ dispose(char *str)
 
 /*****************************************************************
   The real authentication methods are in separate source files.
-  Look in checkpass_*.cpp
+  Look in checkpass_*.c
 *****************************************************************/
