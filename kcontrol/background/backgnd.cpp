@@ -195,6 +195,8 @@ void Backgnd::setWidgets()
        m_pColorBlendBox->setCurrentItem(0);
 
     m_pPatternEditBut->setEnabled(r->backgroundMode() == KBackgroundSettings::Pattern);
+    m_pColor2But->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
+    m_pColor2Label->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
     
     // set all the widgets in the wall paper groups box 
     
@@ -280,16 +282,20 @@ void Backgnd::slotBGMode(int ipRadioState)
     {
        mode = m_pColorBlendBox->currentItem();
        m_pColor1But->setEnabled(true);
-       m_pColor2But->setEnabled(true);
+       m_pColor1Label->setEnabled(true);
        m_pColorBlendBox->setEnabled(true);
        m_pProgramSetupBut->setEnabled(false);
        m_pPatternEditBut->setEnabled(mode == KBackgroundSettings::Pattern);
+       m_pColor2But->setEnabled(mode != KBackgroundSettings::Flat);
+       m_pColor2Label->setEnabled(mode != KBackgroundSettings::Flat);
     }
     else // Must be External Program
     {
        mode = KBackgroundSettings::Program;
        m_pColor1But->setEnabled(false);
+       m_pColor1Label->setEnabled(false);
        m_pColor2But->setEnabled(false);
+       m_pColor2Label->setEnabled(false);
        m_pColorBlendBox->setEnabled(false);
        m_pPatternEditBut->setEnabled(false);
        m_pProgramSetupBut->setEnabled(true);
@@ -581,6 +587,9 @@ void Backgnd::slotColorBlendMode(int ipMode)
         return;
 
     m_pPatternEditBut->setEnabled(ipMode == KBackgroundSettings::Pattern);
+
+    m_pColor2But->setEnabled(ipMode != KBackgroundSettings::Flat);
+    m_pColor2Label->setEnabled(ipMode != KBackgroundSettings::Flat);
     
     r->stop();
     r->setBackgroundMode(ipMode);

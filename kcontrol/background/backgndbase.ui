@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>631</width>
+            <width>640</width>
             <height>554</height>
         </rect>
     </property>
@@ -220,7 +220,7 @@ this list will be disabled.</string>
                             </property>
                             <property name="minimumSize">
                                 <size>
-                                    <width>170</width>
+                                    <width>150</width>
                                     <height>0</height>
                                 </size>
                             </property>
@@ -606,7 +606,7 @@ effects in the preview image above.</string>
                         </property>
                         <widget class="QLabel" row="2" column="1">
                             <property name="name">
-                                <cstring>TextLabel8</cstring>
+                                <cstring>m_pColor2Label</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -692,7 +692,7 @@ Blending" this button is disabled.</string>
                         </widget>
                         <widget class="QLabel" row="1" column="1">
                             <property name="name">
-                                <cstring>TextLabel1</cstring>
+                                <cstring>m_pColor1Label</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -770,7 +770,7 @@ Blending" this button is disabled.</string>
                             <property name="sizeHint">
                                 <size>
                                     <width>60</width>
-                                    <height>180</height>
+                                    <height>20</height>
                                 </size>
                             </property>
                         </spacer>
@@ -963,6 +963,9 @@ Blending" this button is disabled.</string>
         <slot>slotAdvanced()</slot>
     </connection>
 </connections>
+<includes>
+    <include location="local" impldecl="in implementation">backgndbase.ui.h</include>
+</includes>
 <slots>
     <slot access="protected">slotWPDelete()</slot>
     <slot access="protected">slotBGMode( int )</slot>
