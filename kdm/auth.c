@@ -41,6 +41,7 @@ from The Open Group.
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
+#include "dm_socket.h"
 
 #include <errno.h>
 #ifdef X_NOT_STDC_ENV
@@ -51,9 +52,6 @@ extern int errno;
 # include <sys/ioctl.h>
 #endif /* !ESIX */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
-# include "dm_socket.h"
-#endif
 #ifdef DNETCONN
 # include <netdnet/dn.h>
 # include <netdnet/dnetdb.h>
