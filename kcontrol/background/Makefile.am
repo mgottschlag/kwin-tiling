@@ -22,6 +22,6 @@ messages: rc.cpp
 	$(XGETTEXT) *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
-desktopdir = $(kde_appsdir)/Settings/Desktop
+desktopdir = $(kde_appsdir)/Settings/LookNFeel
 
 EXTRA_DIST = $(desktop_DATA)
