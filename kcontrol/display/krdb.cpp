@@ -52,9 +52,11 @@ static QString fontString( QFont rFont, FontStyle style, bool force8Bit = false 
   case Normal:
     break;
   }
-  
+
+#if QT_VERSION < 300
   if (force8Bit && (rFont.charSet() == QFont::Unicode))
     rFont.setCharSet(QFont::Latin1);
+#endif
 
   return rFont.rawName();
 }
