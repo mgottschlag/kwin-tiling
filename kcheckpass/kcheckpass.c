@@ -258,7 +258,8 @@ case 'c':
     /* Cannot read password database (e.g. not SUID on shadow systems) */
     exit(2);
   }
-  exit(0);
+
+  return 0;
 }
 
 /*****************************************************************
