@@ -818,6 +818,13 @@ void KBackground::slotImageDropped(QString uri)
     if (m_pGlobals->commonBackground())
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
+
+    if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper ||
+	 r->multiWallpaperMode() != KBackgroundSettings::NoMulti ) {
+	m_WallpaperType->setButton( 1 );
+	slotWallpaperType( 1 );
+    }
+
     if (uri == r->wallpaper())
         return;
 
