@@ -697,7 +697,7 @@ Verify (GConvFunc gconv, int rootok)
 #endif
     if (!p->pw_uid) {
 	if (!rootok && !td->allowRootLogin)
-	    V_RET_FAIL ("Root logins are not allowed.");
+	    V_RET_FAIL ("Root logins are not allowed");
 	return 1;	/* don't deny root to log in */
     }
 
