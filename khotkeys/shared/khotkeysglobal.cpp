@@ -18,7 +18,7 @@
 
 #include <assert.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "input.h"
 #include "windows.h"

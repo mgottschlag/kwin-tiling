@@ -19,7 +19,7 @@
 
 #include <netwm_def.h>
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 class KConfig;
 class KWinModule;

@@ -19,7 +19,7 @@
 
 class KConfig;
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 #include "windows.h"
 #include "conditions.h"

@@ -21,12 +21,12 @@
 
 #include <kglobalaccel.h>
 #include <kdebug.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdeversion.h>
 #include <qtimer.h>
 #include <kkeynative.h>
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>

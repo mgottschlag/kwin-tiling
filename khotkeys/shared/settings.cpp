@@ -18,7 +18,6 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kconfig.h>
 #include <klocale.h>
 #include <kaccel.h>
 #include <kglobal.h>

@@ -28,7 +28,7 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
-#include <action_data.h>
+#include "action_data.h"
 
 namespace KHotKeys
 {

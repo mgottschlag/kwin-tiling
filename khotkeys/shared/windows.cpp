@@ -25,7 +25,7 @@
 #include <kwin.h>
 #include <klocale.h>
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

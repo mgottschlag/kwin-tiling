@@ -21,8 +21,8 @@
 #include <kdebug.h>
 #include <kurifilter.h>
 #include <kglobal.h>
-#include <kstddirs.h>
-#include <kapp.h>
+#include <kstandarddirs.h>
+#include <kapplication.h>
 #include <dcopclient.h>
 #include <kdesktopfile.h>
 #include <klocale.h>

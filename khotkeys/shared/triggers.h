@@ -15,7 +15,7 @@
 #include <qtimer.h>
 #include <qmap.h>
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 #include "input.h"
 

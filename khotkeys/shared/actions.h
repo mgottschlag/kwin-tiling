@@ -20,7 +20,7 @@
 
 class KConfig;
 
-#include <khotkeysglobal.h>
+#include "khotkeysglobal.h"
 
 namespace KHotKeys
 {
