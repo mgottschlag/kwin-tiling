@@ -18,7 +18,7 @@ WallpaperMode=Tiled
 [KDM]
 SortUsers=true
 #Users=root,johndoe
-NoUsers=adm,apache,bin,bind,daemon,falken,ftp,games,gdm,gopher,halt,httpd,ingres,kmem,lp,mail,mailnull,man,mta,news,nobody,nscd,operator,pop,reboot,rpc,rpcuser,shutdown,sync,tty,uucp,xfs,xten
+NoUsers=adm,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ingres,kmem,lp,mail,mailnull,man,mta,news,nobody,nscd,operator,pop,postfix,reboot,rpc,rpcuser,sendmail,shutdown,sync,tty,uucp,xfs,xten
 GreetString=K Desktop Environment [HOSTNAME]
 #ShowUsers=Selected
 ShowUsers=All
