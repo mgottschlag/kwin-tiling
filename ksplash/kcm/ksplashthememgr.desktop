@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=ksplash
+Exec=kcmshell ksplashthemes
+DocPath=kcontrol/ksplashthemes/index.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=ksplashthemes
+X-KDE-FactoryName=ksplashthemes
+X-KDE-ParentApp=kcontrol
+
+Name=Splash Screen
+Type=Application
+Comment=Manager for Splash Screen Themes

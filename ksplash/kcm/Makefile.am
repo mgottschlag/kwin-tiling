@@ -1,0 +1,15 @@
+# Makefile.am for kdebase/ksplashml/kcmksplash
+
+INCLUDES = $(all_includes)
+METASOURCES = AUTO
+
+kde_module_LTLIBRARIES = kcm_ksplashthemes.la
+
+kcm_ksplashthemes_la_SOURCES = installer.cpp main.cpp
+noinst_HEADERS = installer.h
+
+kcm_ksplashthemes_la_LIBADD = $(LIB_KIO) 
+kcm_ksplashthemes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
+
+apps_DATA = ksplashthememgr.desktop
+appsdir = $(kde_appsdir)/Settings/LookNFeel
