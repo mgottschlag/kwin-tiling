@@ -19,6 +19,8 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qspinbox.h>
+#include <qlabel.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -64,6 +66,17 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
     new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
 
   layout->addWidget(groupBox);
+
+  gb_cursor = new QGroupBox( 1, Vertical, i18n( "Busy cursor settings" ), this );
+  ( void ) new QLabel( i18n( "Startup indication timeout ( seconds ) : " ), gb_cursor );
+  sb_cursorTimeout = new QSpinBox( 0, 60, 1, gb_cursor );
+  layout->addWidget(gb_cursor);
+
+  gb_taskbar = new QGroupBox( 1, Vertical, i18n( "Taskbar settings" ), this );
+  ( void )  new QLabel( i18n( "Startup indication timeout ( seconds ) : " ), gb_taskbar );
+  sb_taskbarTimeout = new QSpinBox( 0, 60, 1, gb_taskbar );
+  layout->addWidget(gb_taskbar);
+
   layout->addStretch(100);
 
   load();
@@ -72,14 +85,42 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
     (
      cb_busyCursor_,
      SIGNAL(toggled(bool)),
-     SLOT(slotBusyCursorToggled(bool))
+     SLOT( checkChanged())
+    );
+  connect
+    (
+     cb_busyCursor_,
+     SIGNAL(toggled(bool)),
+     gb_cursor,
+     SLOT( setEnabled(bool))
     );
 
   connect
     (
      cb_taskbarButton_,
      SIGNAL(toggled(bool)),
-     SLOT(slotTaskbarButtonToggled(bool))
+     SLOT( checkChanged())
+    );
+  connect
+    (
+     cb_taskbarButton_,
+     SIGNAL(toggled(bool)),
+     gb_taskbar,
+     SLOT( setEnabled(bool))
+    );
+
+  connect
+    (
+     sb_cursorTimeout,
+     SIGNAL(valueChanged(int)),
+     SLOT( checkChanged())
+    );
+
+  connect
+    (
+     sb_taskbarTimeout,
+     SIGNAL(valueChanged(int)),
+     SLOT( checkChanged())
     );
 }
 
@@ -102,6 +143,15 @@ LaunchConfig::load()
 
   cb_busyCursor_     ->setChecked(busyCursor);
   cb_taskbarButton_  ->setChecked(taskbarButton);
+  
+  gb_cursor->setEnabled( busyCursor );
+  gb_taskbar->setEnabled( taskbarButton );
+
+  c.setGroup( "BusyCursorSettings" );
+  sb_cursorTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
+
+  c.setGroup( "TaskbarButtonSettings" );
+  sb_taskbarTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
 
   emit(changed(false));
 }
@@ -116,10 +166,11 @@ LaunchConfig::save()
   c.writeEntry("BusyCursor",    cb_busyCursor_     ->isChecked());
   c.writeEntry("TaskbarButton", cb_taskbarButton_  ->isChecked());
   
-  // c.setGroup( "BusyCursorSettings" );
-  // c.writeEntry( "Timeout", xx );
-  // c.setGroup( "TaskbarButtonSettings" );
-  // c.writeEntry( "Timeout", xx );
+  c.setGroup( "BusyCursorSettings" );
+  c.writeEntry( "Timeout", sb_cursorTimeout->value());
+ 
+  c.setGroup( "TaskbarButtonSettings" );
+  c.writeEntry( "Timeout", sb_taskbarTimeout->value());
 
   c.sync();
 
@@ -138,18 +189,9 @@ LaunchConfig::defaults()
   cb_busyCursor_     ->setChecked(Default & BusyCursor);
   cb_taskbarButton_  ->setChecked(Default & TaskbarButton);
 
-  checkChanged();
-}
-
-  void
-LaunchConfig::slotBusyCursorToggled(bool)
-{
-  checkChanged();
-}
-
-  void
-LaunchConfig::slotTaskbarButtonToggled(bool)
-{
+  sb_cursorTimeout->setValue( 30 );
+  sb_taskbarTimeout->setValue( 30 );
+  
   checkChanged();
 }
 
@@ -166,12 +208,22 @@ LaunchConfig::checkChanged()
   bool savedTaskbarButton =
     c.readBoolEntry("TaskbarButton", Default & TaskbarButton);
 
+  c.setGroup( "BusyCursorSettings" );
+  unsigned int savedCursorTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
+
+  c.setGroup( "TaskbarButtonSettings" );
+  unsigned int savedTaskbarTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
+
   bool newBusyCursor =
     cb_busyCursor_->isChecked();
 
   bool newTaskbarButton =
     cb_taskbarButton_->isChecked();
 
+  unsigned int newCursorTimeout = sb_cursorTimeout->value();
+  
+  unsigned int newTaskbarTimeout = sb_taskbarTimeout->value();
+  
   emit
     (
      changed
@@ -179,6 +231,10 @@ LaunchConfig::checkChanged()
       savedBusyCursor     != newBusyCursor
       ||
       savedTaskbarButton  != newTaskbarButton
+      ||
+      savedCursorTimeout  != newCursorTimeout
+      ||
+      savedTaskbarTimeout != newTaskbarTimeout
      )
     );
 }

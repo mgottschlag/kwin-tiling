@@ -21,6 +21,8 @@
 #include <kcmodule.h>
 
 class QCheckBox;
+class QSpinBox;
+class QGroupBox;
 
 class LaunchConfig : public KCModule
 {
@@ -40,8 +42,7 @@ class LaunchConfig : public KCModule
 
   protected slots:
 
-    void slotBusyCursorToggled(bool);
-    void slotTaskbarButtonToggled(bool);
+    void checkChanged();
 
   protected:
 
@@ -53,12 +54,15 @@ class LaunchConfig : public KCModule
       Default = BusyCursor | TaskbarButton
     };
 
-    void checkChanged();
 
   private:
 
     QCheckBox * cb_busyCursor_;
     QCheckBox * cb_taskbarButton_;
+    QSpinBox  * sb_cursorTimeout;
+    QSpinBox  * sb_taskbarTimeout;
+    QGroupBox * gb_cursor;
+    QGroupBox * gb_taskbar;
 };
 
 #endif
