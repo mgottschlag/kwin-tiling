@@ -431,9 +431,9 @@ void Pipe::choosePos()
 
 void kPipesSaver::reinit()
 { int i;
-  xRot = rnd->getDouble();
-  yRot = rnd->getDouble();
-  zRot = rnd->getDouble(); // default object rotation
+  xRot = rnd->getDouble()*360.0;
+  yRot = rnd->getDouble()*360.0;
+  zRot = rnd->getDouble()*360.0; // default object rotation
   steps = 0;
   running = pipes;
   initial = TRUE;
@@ -538,6 +538,7 @@ void kPipesSaver::paintStep()
 
     glLoadIdentity();
     glTranslatef( 0.0, 0.0, -10.0 );
+
 
     glScalef( scale, scale, scale );
     glRotatef( xRot, 1.0, 0.0, 0.0 ); 
@@ -665,9 +666,9 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   rnd = new KRandomSequence();
   initXLock( mGc );
 
-  xRot = rnd->getDouble();
-  yRot = rnd->getDouble();
-  zRot = rnd->getDouble();            // default object rotation
+  xRot = rnd->getDouble()*360.0;
+  yRot = rnd->getDouble()*360.0;
+  zRot = rnd->getDouble()*360.0;      // default object rotation
   scale = 1.0;                        // default object scale
   steps = 0;
   initial = TRUE;
