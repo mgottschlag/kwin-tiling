@@ -71,6 +71,17 @@ private:
     SmsConn smsConn;
 };
 
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
+struct SMData
+    {
+    SMType type;
+    QCString wmCommand;
+    QCString wmClientMachine;
+    };
+typedef QMap<WId,SMData> WindowMap;
+#endif
+
 class KSMServer : public QObject, public KSMServerInterface
 {
 Q_OBJECT
@@ -135,6 +146,7 @@ private:
     void executeCommand( const QStringList& command );
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
+    void performLegacySessionSave();
     void storeLegacySession( KConfig* config );
     void restoreLegacySession( KConfig* config );
     void restoreLegacySessionInternal( KConfig* config );
@@ -177,6 +189,10 @@ private:
     int appsToStart;
     int lastAppStarted;
     QString lastIdStarted;
+
+#ifndef NO_LEGACY_SESSION_MANAGEMENT
+    WindowMap legacyWindows;
+#endif
 };
 
 #endif
