@@ -571,12 +571,18 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 void KScreenSaver::slotEnable(bool e)
 {
     if ( !e ) {
-    mSetupBt->setEnabled( false );
-    mEnabled = false;
+      mSetupBt->setEnabled( false );
+      mEnabled = false;
     } else {
-    if (!mSetupProc->isRunning() && mSelected >= 0)
-        mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
-    mEnabled = true;
+      if (!mSetupProc->isRunning() && mSelected >= 0)
+      {
+         SaverConfig * saverConfig = mSaverList.at(mSelected);
+         if ( saverConfig )
+           mSetupBt->setEnabled(!saverConfig->setup().isEmpty());
+         else
+           kdWarning() << "Nothing in mSaverList at position " << mSelected << "... This is not supposed to happen!" << endl;
+      }
+      mEnabled = true;
     }
 
     mSaverListBox->setEnabled( e );
