@@ -43,7 +43,7 @@ class FilterOptions;
 KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     : KCModule(parent, name) {
 
-    filter = KURIFilter::filter();
+    filter = KURIFilter::self();
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     tab = new QTabWidget(this);
@@ -59,7 +59,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
 
     QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
     for (; it.current(); ++it) {
-	KCModule *module = it.current()->configModule(this);
+	KCModule *module = it.current()->configModule(this, 0);
 	if (module) {
 	    modules.append(module);
 
