@@ -55,7 +55,7 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
 
   if ( nfsExec.isEmpty() && smbExec.isEmpty())
   {
-      info->setText(i18n("SMB and NFS servers not installed!"));
+      info->setText(i18n("SMB and NFS servers are not installed on this machine, to enable this module the servers must be installed."));
       info->show();
       noSharing->setEnabled( false );
       sharing->setEnabled( false );
