@@ -32,6 +32,8 @@
 #include "global.h"
 #include "modules.h"
 #include "proxywidget.h"
+#include <qobjcoll.h>
+#include <qaccel.h>
 
 DockContainer::DockContainer(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -56,6 +58,7 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
   _basew = widget;
   _basew->reparent(this, 0 , QPoint(0,0), true);
+
   // "inherit" the minimum size
   setMinimumSize( _basew->minimumSize() );
   resize(_basew->sizeHint());
@@ -67,7 +70,7 @@ void DockContainer::dockModule(ConfigModule *module)
   if (!module) return;
 
   if (_module && _module->isChanged())
-    {	  	
+    {
       int res = KMessageBox::warningYesNo(this,i18n("There are unsaved changes in the "
                                                  "active module.\n"
                                                  "Do you want to apply the changes "
@@ -115,6 +118,16 @@ void DockContainer::dockModule(ConfigModule *module)
       QApplication::sendPostedEvents( widget, QEvent::ShowWindowRequest ); // show NOW
   }
   _busy->hide();
+
+  QObjectList * l = topLevelWidget()->queryList( "QAccel" );
+  QObjectListIt it( *l );             // iterate over the buttons
+  QObject * obj;
+  while ( (obj=it.current()) != 0 ) { // for each found object...
+      ++it;
+      ((QAccel*)obj)->repairEventFilter();
+  }
+  delete l;                           // delete the list, not the objects
+
 }
 
 void DockContainer::removeModule()
@@ -159,3 +172,4 @@ void DockContainer::quickHelpChanged()
   if (_module && _module->module())
 	emit newModule(_module->module()->caption(),  _module->docPath(), _module->module()->quickHelp());
 }
+
