@@ -36,7 +36,7 @@
 
 #include "kshorturifilter.h"
 
-#define FQDN_PATTERN    "(?:[a-zA-Z0-9][a-zA-Z0-9\-+]*\\.[a-zA-Z]+)"
+#define FQDN_PATTERN    "(?:[a-zA-Z0-9][a-zA-Z0-9+-]*\\.[a-zA-Z]+)"
 #define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{0,3})?(?:\\.[0-9]{0,3})?"
 #define IPv6_PATTERN    "^\\[.*\\]"
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
