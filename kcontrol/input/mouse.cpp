@@ -263,13 +263,88 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     wtstr = i18n("If you use the wheel of a mouse, this value determines the number of lines to scroll for each wheel movement. Note that if this number exceeds the number of visible lines, it will be ignored and the wheel movement will be handled as a page up/down movement.");
     QWhatsThis::add( wheelScrollLines, wtstr);
+    lay->addStretch();
 
-    lay->addStretch(1);
+{
+  QWidget *mouse = new QWidget(this, "Mouse Navigation");
+  tabwidget->addTab(mouse, i18n("Mouse Navigation"));
+
+
+  QBoxLayout *vbox = new QVBoxLayout(mouse, 6,6);
+
+  QGroupBox *grp = new QGroupBox(i18n("Mouse Navigation"), mouse);
+  vbox->addWidget(grp);
+
+  QVBoxLayout *vvbox = new QVBoxLayout(grp, 6,6);
+  vvbox->addSpacing(grp->fontMetrics().height());
+
+  mouseKeys = new QCheckBox(i18n("&Move mouse with keyboard (using the Num pad)"), grp);
+  vvbox->addWidget(mouseKeys);
+
+  QBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  mk_delay = new KIntNumInput(grp);
+  mk_delay->setLabel(i18n("&Acceleration delay:"), AlignVCenter);
+  mk_delay->setSuffix(i18n(" msec"));
+  mk_delay->setRange(1, 1000, 50);
+  hbox->addWidget(mk_delay);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  mk_interval = new KIntNumInput(mk_delay, 0, grp);
+  mk_interval->setLabel(i18n("&Repeat interval:"), AlignVCenter);
+  mk_interval->setSuffix(i18n(" msec"));
+  mk_interval->setRange(1, 1000, 10);
+  hbox->addWidget(mk_interval);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  mk_time_to_max = new KIntNumInput(mk_interval, 0, grp);
+  mk_time_to_max->setLabel(i18n("Acceleration &time:"), AlignVCenter);
+  mk_time_to_max->setRange(1, 5000, 250);
+  hbox->addWidget(mk_time_to_max);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  mk_max_speed = new KIntNumInput(mk_time_to_max, 0, grp);
+  mk_max_speed->setLabel(i18n("&Maximum speed:"), AlignVCenter);
+  mk_max_speed->setRange(1, 1000, 10);
+  hbox->addWidget(mk_max_speed);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  mk_curve = new KIntNumInput(mk_max_speed, 0, grp);
+  mk_curve->setLabel(i18n("Acceleration &profile:"), AlignVCenter);
+  mk_curve->setRange(-1000, 1000, 100);
+  hbox->addWidget(mk_curve);
+
+  connect(mouseKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(mouseKeys, SIGNAL(clicked()), this, SLOT(changed()));
+  connect(mk_delay, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  connect(mk_interval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  connect(mk_time_to_max, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  connect(mk_max_speed, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+  connect(mk_curve, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+
+  vbox->addStretch();
+}
+
 
     config = new KConfig("kcminputrc");
     settings = new MouseSettings;
     load();
 }
+
+
+void MouseConfig::checkAccess()
+{
+  mk_delay->setEnabled(mouseKeys->isChecked());
+  mk_interval->setEnabled(mouseKeys->isChecked());
+  mk_time_to_max->setEnabled(mouseKeys->isChecked());
+  mk_max_speed->setEnabled(mouseKeys->isChecked());
+  mk_curve->setEnabled(mouseKeys->isChecked());
+}
+
 
 MouseConfig::~MouseConfig()
 {
@@ -347,6 +422,20 @@ void MouseConfig::load()
   tab1->cbVisualActivate->setChecked( settings->visualActivate );
   tab1->cbLargeCursor->setChecked( settings->largeCursor );
   slotClick();
+
+  
+  KConfig ac("kaccessrc", true);
+  
+  ac.setGroup("Mouse");
+  mouseKeys->setChecked(ac.readBoolEntry("MouseKeys", false));
+  mk_delay->setValue(ac.readNumEntry("MKDelay", 160));
+  mk_interval->setValue(ac.readNumEntry("MKInterval", 5));
+  mk_time_to_max->setValue(ac.readNumEntry("MKTimeToMax", 1000));
+  mk_max_speed->setValue(ac.readNumEntry("MKMaxSpeed", 500));
+  mk_curve->setValue(ac.readNumEntry("MKCurve", 0));
+
+  checkAccess();
+  changed();
 }
 
 void MouseConfig::save()
@@ -376,6 +465,24 @@ void MouseConfig::save()
   if (settings->largeCursor != wasLargeCursor) {
     KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
   }
+
+  KConfig ac("kaccessrc", false);
+
+  ac.setGroup("Mouse");
+
+  ac.writeEntry("MouseKeys", mouseKeys->isChecked());
+  ac.writeEntry("MKDelay", mk_delay->value());
+  ac.writeEntry("MKInterval", mk_interval->value());
+  ac.writeEntry("MKTimeToMax", mk_time_to_max->value());
+  ac.writeEntry("MKMaxSpeed", mk_max_speed->value());
+  ac.writeEntry("MKCurve", mk_curve->value());
+
+  config->sync();
+  // restart kaccess
+  kapp->startServiceByDesktopName("kaccess");
+
+  KCModule::changed(false);
+
 }
 
 void MouseConfig::defaults()
@@ -393,6 +500,17 @@ void MouseConfig::defaults()
     tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
     tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
     slotClick();
+
+  mouseKeys->setChecked(false);
+  mk_delay->setValue(160);
+  mk_interval->setValue(5);
+  mk_time_to_max->setValue(1000);
+  mk_max_speed->setValue(500);
+  mk_curve->setValue(0);
+
+  checkAccess();
+
+  changed();
 }
 
 

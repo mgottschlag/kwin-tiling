@@ -97,6 +97,7 @@ private slots:
   void changed();
   /** No descriptions */
   void slotHandedChanged(int val);
+  void checkAccess();
 
 private:
 
@@ -131,6 +132,12 @@ private:
   MouseSettings *settings;
     
   KConfig *config;
+
+ QCheckBox *mouseKeys;
+  KIntNumInput *mk_delay, *mk_interval, *mk_time_to_max, *mk_max_speed,
+    *mk_curve;
+
+
 };
 
 #endif
