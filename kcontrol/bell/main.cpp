@@ -39,7 +39,7 @@ extern "C"
 {
 
   KCModule *create_syssound(QWidget *parent, const char *name)
-  { 
+  {
     KGlobal::locale()->insertCatalogue("kcmsyssound");
     return new KSoundWidget(parent, name);
   }
@@ -50,16 +50,16 @@ extern "C"
     XKeyboardControl kbdc;
 
     XGetKeyboardControl(kapp->getDisplay(), &kbd);
-  
-    KSimpleConfig config("kwmsoundrc");
+
+    KSimpleConfig config("kwmsoundrc", true);
     config.setGroup("Bell");
-  
+
     kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
     kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
     kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
     XChangeKeyboardControl(kapp->getDisplay(),
-			   KBBellPercent | KBBellPitch | KBBellDuration,
-			   &kbdc);    
+                           KBBellPercent | KBBellPitch | KBBellDuration,
+                           &kbdc);
   }
 
 }
