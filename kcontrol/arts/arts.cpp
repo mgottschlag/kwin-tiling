@@ -46,6 +46,7 @@
 #include <libkmid/deviceman.h>
 #include <kdebug.h>
 #include <kcmoduleloader.h>
+#include <klineedit.h>
 
 //#include <kparts/componentfactory.h>
 //#include "midi.h"
@@ -432,6 +433,7 @@ void KArtsModule::defaults()
 	hardware->audioIO->setCurrentItem(0);
 	hardware->soundQuality->setCurrentItem(0);
 	hardware->midiUseMapper->setChecked(false);
+	hardware->midiMapper->lineEdit()->clear();
 
 	slotChanged();
 }
