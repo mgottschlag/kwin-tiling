@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -121,7 +121,7 @@ void KProgramSelectDialog::setCurrent(QString name)
 	m_Current = name;
     }
 }
-    
+
 
 /*
  * Add/update an item in the listview.
@@ -179,15 +179,15 @@ void KProgramSelectDialog::slotRemove()
 
     KBackgroundProgram prog(m_Current);
     if (prog.isGlobal()) {
-	KMessageBox::sorry(this, 
+	KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global\n"
 		"and can only be removed by the System Administrator.\n"),
 		i18n("Cannot remove Program"));
 	return;
     }
-    if (KMessageBox::warningYesNo(this, 
+    if (KMessageBox::warningYesNo(this,
 	    i18n("Are you sure you want to remove the program `%1'?")
-	    .arg(prog.name())) == KMessageBox::No) 
+	    .arg(prog.name())) == KMessageBox::No)
 	return;
 
     prog.remove();
@@ -326,7 +326,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
 
     // Fill in the fields
     m_NameEdit->setText(m_Program);
-    KBackgroundProgram prog(m_Program); 
+    KBackgroundProgram prog(m_Program);
     m_CommentEdit->setText(prog.comment());
     m_ExecEdit->setText(prog.executable());
     m_CommandEdit->setText(prog.command());
@@ -357,7 +357,7 @@ void KProgramEditDialog::slotOK()
 
     KBackgroundProgram prog(s);
     if ((s != m_Program) && !prog.command().isEmpty()) {
-	int ret = KMessageBox::warningYesNo(this, 
+	int ret = KMessageBox::warningYesNo(this,
 	    i18n("There is already a program with the name `%1'.\n"
 	    "Do you want to overwrite it?").arg(s));
 	if (ret != KMessageBox::Yes)
@@ -470,7 +470,7 @@ void KPatternSelectDialog::setCurrent(QString name)
 	m_Current = name;
     }
 }
-    
+
 
 /*
  * Add/update an item in the listview.
@@ -527,15 +527,15 @@ void KPatternSelectDialog::slotRemove()
 
     KBackgroundPattern pat(m_Current);
     if (pat.isGlobal()) {
-	KMessageBox::sorry(this, 
+	KMessageBox::sorry(this,
 		i18n("Unable to remove the pattern! The pattern is global\n"
 		"and can only be removed by the System Administrator.\n"),
 		i18n("Cannot remove Pattern"));
 	return;
     }
-    if (KMessageBox::warningYesNo(this, 
+    if (KMessageBox::warningYesNo(this,
 	    i18n("Are you sure you want to remove the pattern `%1'?")
-	    .arg(pat.name())) == KMessageBox::No) 
+	    .arg(pat.name())) == KMessageBox::No)
 	return;
 
     pat.remove();
@@ -656,7 +656,7 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
 
     // Fill in the fields
     m_NameEdit->setText(m_Pattern);
-    KBackgroundPattern pat(m_Pattern); 
+    KBackgroundPattern pat(m_Pattern);
     m_CommentEdit->setText(pat.comment());
     m_FileEdit->setText(pat.pattern());
 }
@@ -669,11 +669,11 @@ void KPatternEditDialog::slotHelp()
 
 void KPatternEditDialog::slotBrowse()
 {
-    QString file = KFileDialog::getOpenFileName();
-    if (file.isEmpty())
+    KURL url = KFileDialog::getOpenURL();
+    if (url.isEmpty())
 	return;
 
-    m_FileEdit->setText(file);
+    m_FileEdit->setText(url.url());
 }
 
 
@@ -694,7 +694,7 @@ void KPatternEditDialog::slotOK()
 
     KBackgroundPattern pat(s);
     if ((s != m_Pattern) && !pat.pattern().isEmpty()) {
-	int ret = KMessageBox::warningYesNo(this, 
+	int ret = KMessageBox::warningYesNo(this,
 	    i18n("There is already a pattern with the name `%1'.\n"
 	    "Do you want to overwrite it?").arg(s));
 	if (ret != KMessageBox::Yes)
@@ -816,11 +816,11 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 
 void KMultiWallpaperDialog::slotAdd()
 {
-    QString file = KFileDialog::getOpenFileName();
-    if (file.isEmpty())
+    KURL url = KFileDialog::getOpenURL();
+    if (url.isEmpty())
 	return;
 
-    m_pListBox->insertItem(file);
+    m_pListBox->insertItem(url.url());
 }
 
 

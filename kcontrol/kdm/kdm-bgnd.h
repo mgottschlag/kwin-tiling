@@ -15,7 +15,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 #ifndef __KDMBGND_H__
 #define __KDMBGND_H__
@@ -69,7 +69,7 @@ protected slots:
 protected:
         void setMonitor();
         void showSettings();
-        int  loadWallpaper( const QString& name, bool useContext = true);
+        int  loadWallpaper( const KURL& url, bool useContext = true);
 
         KIconLoader *iconloader;
 	KBGMonitor  *monitor;

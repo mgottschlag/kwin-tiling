@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * Based on old backgnd.cpp:
  *
  * Copyright (c)  Martin R. Jones 1996
@@ -12,7 +12,7 @@
  * Gradient backgrounds by Mark Donohoe 1997
  * Pattern backgrounds by Stephan Kulow 1998
  * Randomizing & dnd & new display modes by Matej Koss 1998
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -41,6 +41,7 @@
 #include <kiconloader.h>
 #include <kcolorbtn.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
 #include <dcopclient.h>
@@ -69,7 +70,7 @@ KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
 {
     setAcceptDrops(true);
 }
-    
+
 
 void KBGMonitor::dropEvent(QDropEvent *e)
 {
@@ -82,15 +83,15 @@ void KBGMonitor::dropEvent(QDropEvent *e)
 	emit imageDropped(uri);
     }
 }
-				        
-					 
+				
+					
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
     if (QUriDrag::canDecode(e))
 	e->accept(rect());
     else
 	e->ignore(rect());
-}                                                                                                             
+}
 
 
 /**** KBackground ****/
@@ -116,7 +117,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
     top->addWidget(group, 0, 0);
     QVBoxLayout *vbox = new QVBoxLayout(group);
-    vbox->setMargin(10); 
+    vbox->setMargin(10);
     vbox->setSpacing(10);
     vbox->addSpacing(10);
     m_pDeskList = new QListBox(group);
@@ -130,7 +131,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     group = new QGroupBox(i18n("Background"), this);
     top->addWidget(group, 1, 0);
     QGridLayout *grid = new QGridLayout(group, 5, 2);
-    grid->setMargin(10); 
+    grid->setMargin(10);
     grid->setSpacing(10);
     grid->addRowSpacing(0, 10);
     grid->setColStretch(0, 0);
@@ -202,7 +203,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
     m_pWallpaperBox = new QComboBox(group);
     lbl->setBuddy(m_pWallpaperBox);
-    connect(m_pWallpaperBox, SIGNAL(activated(const QString &)), 
+    connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
 	    SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 2, 1);
 
@@ -254,7 +255,7 @@ void KBackground::init()
     // Desktop names
     for (i=0; i<KWin::numberOfDesktops(); i++)
 	m_pDeskList->insertItem(m_pGlobals->deskName(i));
-    
+
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
     m_pBackgroundBox->insertItem(i18n("Flat"));
     m_pBackgroundBox->insertItem(i18n("Pattern"));
@@ -517,7 +518,7 @@ void KBackground::slotColor1(const QColor &color)
     r->start();
     emit changed(true);
 }
-    
+
 
 void KBackground::slotColor2(const QColor &color)
 {
@@ -534,7 +535,7 @@ void KBackground::slotColor2(const QColor &color)
     r->start();
     emit changed(true);
 }
-    
+
 
 void KBackground::slotImageDropped(QString uri)
 {
@@ -609,9 +610,14 @@ void KBackground::slotBrowseWallpaper()
 	desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    QString file = KFileDialog::getOpenFileName();
-    if (file.isEmpty())
-	return;
+    KURL url = KFileDialog::getOpenURL();
+    if (url.isEmpty())
+      return;
+    if (!url.isLocalFile()) {
+      KMessageBox::sorry(this, i18n("Currently are only local wallpapers allowed."));
+      return;
+    }
+    QString file = url.path();
     if (file == r->wallpaper())
 	return;
 
@@ -647,7 +653,7 @@ void KBackground::slotWPMode(int mode)
     r->start();
     emit changed(true);
 }
-    
+
 
 void KBackground::slotSetupMulti()
 {
@@ -684,6 +690,6 @@ void KBackground::slotPreviewDone(int desk_done)
 
     m_pMonitor->setBackgroundPixmap(pm);
 }
-    
+
 
 #include "backgnd.moc"

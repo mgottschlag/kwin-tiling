@@ -44,6 +44,7 @@
 #include <kpixmap.h>
 #include <dcopclient.h>
 #include <ksimpleconfig.h>
+#include <kmessagebox.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -571,9 +572,14 @@ void KBackground::slotBrowseWallpaper()
 	desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    QString file = KFileDialog::getOpenFileName();
-    if (file.isEmpty())
+    KURL url = KFileDialog::getOpenURL();
+    if (url.isEmpty())
 	return;
+    if (!url.isLocalFile()) {
+      KMessageBox::sorry(this, i18n("Currently are only local wallpapers allowed."));
+      return;
+    }
+    QString file = url.path();
     if (file == r->wallpaper())
 	return;
 

@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU Library General
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
@@ -61,12 +61,12 @@ private:
     bool dirty, hashdirty;
     bool m_bReadOnly;
     int m_Hash;
-    QString m_Name, m_Comment; 
+    QString m_Name, m_Comment;
     QString m_Pattern, m_File;
     KStandardDirs *m_pDirs;
     KSimpleConfig *m_pConfig;
 };
-    
+
 
 /**
  * A class to manipulate/read/write/list KDE desktop programs (a la xearth).
@@ -80,7 +80,7 @@ private:
  *   %x    Horizontal resolution in pixels.
  *   %y    Vertical resulution in pixels.
  *   %f    Filename to dump to.
- *   
+ *
  * An entry for each program is stored as a .desktop file in
  * $(datadir)/kdesktop/programs.
  */
@@ -138,7 +138,7 @@ private:
 
 
 /**
- * KBackgroundSettings: A class to read/write/manipulate 
+ * KBackgroundSettings: A class to read/write/manipulate
  * KDE desktop settings.
  */
 class KBackgroundSettings
@@ -161,7 +161,7 @@ public:
     void setPattern(QString pattern);
 
     enum BackgroundMode {
-	Flat, Pattern, Program, 
+	Flat, Pattern, Program,
 	HorizontalGradient, VerticalGradient, PyramidGradient,
 	PipeCrossGradient, EllipticGradient, lastBackgroundMode
     };
@@ -172,7 +172,7 @@ public:
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
-	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, 
+	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect,
 	Scaled, lastWallpaperMode
     };
     void setWallpaperMode(int mode);
