@@ -220,7 +220,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      passwdEdit->setEchoMode( QLineEdit::NoEcho);
      vbox->addLayout( hbox1);
      vbox->addLayout( hbox2);
-     hbox1->addWidget( pixLabel ? pixLabel : clock, 0, AlignTop);
+     hbox1->addWidget( pixLabel ? (QWidget*)pixLabel : (QWidget*)clock, 0, AlignTop);
      hbox1->addLayout( grid, 3);
      
      QFrame* sepFrame = new QFrame( this);
