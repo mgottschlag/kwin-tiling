@@ -553,7 +553,7 @@
                         <cstring>transparencyCheck</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;aTransparent</string>
+                        <string>Tr&amp;ansparent</string>
                     </property>
                 </widget>
             </grid>
