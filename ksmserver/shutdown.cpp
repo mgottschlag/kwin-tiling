@@ -123,7 +123,7 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
     QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
     l->move(rect.x() + (rect.width() - sh.width())/2,
     	    rect.y() + (rect.height() - sh.height())/2);
-    l->show();
+    l->exec();
     saveSession = l->checkbox->isChecked();
     bool result = l->result();
     l->hide();
