@@ -30,8 +30,6 @@
 #include <klibloader.h>
 #include <kurifilter.h>
 
-typedef QMap<QString,QString> URLHintsMap;
-
 class KInstance;
 
 /**
@@ -87,9 +85,9 @@ public:
     /**
      * Returns an instance of the module used to configure
      * this object.
-	 *
-	 * @return the config module
-	 */
+         *
+         * @return the config module
+         */
     virtual KCModule* configModule( QWidget*, const char* ) const;
 
 public:
@@ -121,7 +119,16 @@ protected:
     bool expandEnvVar( QString& ) const;
 
 private:
-    URLHintsMap m_urlHints;
+
+    struct URLHint
+    {
+        URLHint() {}
+        URLHint( QString r, QString p ) : regexp(r), prepend(p) {}
+        QString regexp; // if this matches, then...
+        QString prepend; // ...prepend this to the url
+    };
+
+    QValueList<URLHint> m_urlHints;
     QString m_strDefaultProtocol;
 };
 

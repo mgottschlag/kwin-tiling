@@ -52,11 +52,12 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
                  DCOPObject("KShortURIFilterIface")
 {
     // TODO: Make this configurable.  Should go into control module...
-    m_urlHints.insert(QFL1("www"), QFL1("http://"));
-    m_urlHints.insert(QFL1("ftp"), QFL1("ftp://"));
-    m_urlHints.insert(QFL1("news"), QFL1("news://"));
-    m_urlHints.insert(QFL1(IPv4_PATTERN), QFL1("http://"));
-    m_urlHints.insert(QFL1(FQDN_PATTERN), QFL1("http://"));
+    // Note: the order is important (FQDN_PATTERN should be last)
+    m_urlHints.append(URLHint(QFL1("www"), QFL1("http://")));
+    m_urlHints.append(URLHint(QFL1("ftp"), QFL1("ftp://")));
+    m_urlHints.append(URLHint(QFL1("news"), QFL1("news://")));
+    m_urlHints.append(URLHint(QFL1(IPv4_PATTERN), QFL1("http://")));
+    m_urlHints.append(URLHint(QFL1(FQDN_PATTERN), QFL1("http://")));
     m_strDefaultProtocol = QFL1("http://");
 }
 
@@ -249,14 +250,16 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // stuff.  This is perhaps one of those unecessary but somewhat
   // useful features that usually makes people go WHOO and WHAAA.
   QRegExp match;
-  URLHintsMap::ConstIterator it;
+  QValueList<URLHint>::ConstIterator it;
   for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
   {
     int len = 0;      // Future use for allowing replacement
-    match = it.key(); // Pattern is stored as key...
+    match = (*it).regexp;
+    //kdDebug() << "KShortURIFilter::filterURI match=" << (*it).regexp << endl;
+    //kdDebug() << "KShortURIFilter::filterURI match returned " << match.match( cmd, 0, &len ) << endl;
     if( match.match( cmd, 0, &len ) == 0 )
     {
-      cmd.prepend( it.data() );
+      cmd.prepend( (*it).prepend );
       setFilteredURI( data, cmd );
       setURIType( data, KURIFilterData::NET_PROTOCOL );
       return data.hasBeenFiltered();
@@ -283,7 +286,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
 KCModule* KShortURIFilter::configModule( QWidget*, const char* ) const
 {
-	return 0; //new KShortURIOptions( parent, name );
+        return 0; //new KShortURIOptions( parent, name );
 }
 
 QString KShortURIFilter::configName() const
