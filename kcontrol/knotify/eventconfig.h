@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.9  2000/04/14 08:04:59  charles
+    Need to do an rm -rf so have to save this :)
+
+    but yeah, it compiles
+
     Revision 1.8  2000/04/13 01:55:36  charles
     Milestone 6.  All that's left now is being able to save.  That's also
     the most important part :)
@@ -179,10 +184,10 @@ public:
 	void show();
 	
 	/**
-	 * Turns $KDEDIR/share/apps/appname/bleh into
-	 * $KDEHOME/share/apps/appname/bleh
+	 * Turns /some/random/path/appname/bleh into
+	 * appname/bleh
 	 */
-	static localVersion(const QString &path);
+	static QString getFileWithOnlyOneSlash(const QString &path);
 
 public slots:
 	/**

@@ -110,7 +110,7 @@ Programs::Programs(EventView *_eventview, QListView *_programs,
 	if (_events)
 		events=_events;
 	
-	QStringList dirs(locate("config", "eventsrc")); // load system-wide eventsrc
+	QStringList dirs("eventsrc"); // load system-wide eventsrc
 	dirs+=KGlobal::dirs()->findAllResources("data", "*/eventsrc");
 	
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
@@ -201,8 +201,10 @@ ProgramConfig::ProgramConfig()
 	connect(Programs::events, SIGNAL(selectionChanged(QListViewItem*)), SLOT(selected(QListViewItem*)));
 }
 
-static Programs::localVersion(const QString &path)
+QString Programs::getFileWithOnlyOneSlash(const QString &path)
 {
-
+	int pos=path.findRev('/');
+	pos=path.findRev('/', pos-1);
+	return path.right(path.length()-pos);
 }
 
