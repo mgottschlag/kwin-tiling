@@ -24,7 +24,6 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qbuttongroup.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <kapp.h>
@@ -219,7 +218,7 @@ KIconStyle::KIconStyle( QWidget *parent, QBoxLayout * topLayout )
     topLayout->addWidget( gb );
 
     // The layout containing the checkboxes
-    QGridLayout * gLayout = new QGridLayout( gb, 1+nApp, 4, 15 /*autoborder*/);
+    QGridLayout * gLayout = new QGridLayout( gb, 1+nApp, 4, 10 /*autoborder*/);
     gLayout->setColStretch(3, 20); // avoid cb moving when resizing
 
     // The two labels on row 0
@@ -346,27 +345,50 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
 	//CT	QBoxLayout *top2Layout = new QHBoxLayout();
 	//CT	topLayout->addLayout(top2Layout);
-	
-	cbStyle = new QCheckBox( i18n( "&Draw widgets in the style of Windows 95" ),
-				 this );
-	cbStyle->adjustSize();
-	cbStyle->setMinimumSize(cbStyle->size());
+
+	//CT 04Apr1999 - new styles and other options
+	styles = new QButtonGroup ( i18n( "Style for widgets &drawing:" ),
+				    this );
+	topLayout->addWidget(styles, 10);
+
+	QBoxLayout *vlay = new QVBoxLayout (styles, 10);
+	vlay->addSpacing(10);
+
+	QBoxLayout *lay = new QHBoxLayout(20);
+	vlay->addLayout(lay);
+
+	MStyle = new QRadioButton( i18n( "Motif" )     , styles);
+	WStyle = new QRadioButton( i18n( "Windows 95" ), styles);
+	PStyle = new QRadioButton( i18n( "Platinum" ),   styles);
 
 	if( applicationStyle == WindowsStyle )
-	        cbStyle->setChecked( true );
-	else
-		cbStyle->setChecked( false);
+	  WStyle->setChecked( true );
+	/*CT not yet implemented
+	else if ( applicationStyle == PlatinumStyle )
+	  PStyle->setChecked( true );
+	*/
+	else 
+	  MStyle->setChecked( true );
+
+	slotChangeStyle();
+
+	connect( MStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
+	connect( WStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
+	connect( PStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
 	
-	connect( cbStyle, SIGNAL( clicked() ), SLOT( slotChangeStyle()  )  );
-	
-	topLayout->addWidget( cbStyle, 10 );//CT
+	lay->addWidget(MStyle);
+	lay->addWidget(WStyle);
+	lay->addWidget(PStyle);
+
+
+	//CT 04Apr1999
 
 
 	//CT 30Nov1998
-	cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in the style of MacOS" ),
-				 this );
-	cbMac->adjustSize();
-	cbMac->setMinimumSize(cbMac->size());
+	cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
+				     "the style of MacOS" ), styles);
+	//CT	cbMac->adjustSize();
+	//CT	cbMac->setMinimumSize(cbMac->size());
 
 	if( macStyle )
 	    cbMac->setChecked( true );
@@ -375,11 +397,11 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	
 	connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
 	
-	topLayout->addWidget( cbMac, 10 );
+	vlay->addWidget( cbMac, 10 );
 
-	cbRes = new QCheckBox( i18n( "&Apply fonts and colors to non-KDE apps" ),
-				 this );
-	cbRes->setMinimumSize(cbRes->sizeHint());
+	cbRes = new QCheckBox( i18n( "&Apply fonts and colors to non-KDE "
+				     "apps" ), styles);
+	//CT	cbRes->setMinimumSize(cbRes->sizeHint());
 
 	if( useRM )
 	        cbRes->setChecked( true );
@@ -388,25 +410,64 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	
 	connect( cbRes, SIGNAL( clicked() ), SLOT( slotUseResourceManager()  )  );
 	
-	topLayout->addWidget( cbRes, 10 );//CT
+	vlay->addWidget( cbRes, 10 );//CT
 
 	iconStyle = new KIconStyle( this, topLayout ); // DF
 
-	topLayout->addStretch( 100 );
-	topLayout->activate();
 
 	iconStyle->readSettings(); // DF
+
+	//CT 04Apr1999 - toolbars styles
+	tbStyle = new QButtonGroup( i18n( "Style options for toolbars:" ),
+				    this);
+	topLayout->addWidget(tbStyle, 10);
+
+	lay = new QVBoxLayout( tbStyle, 10 );
+
+	lay->addSpacing(10);
+
+	tbText   = new QCheckBox( i18n( "Use text aisde icons" ), tbStyle);
+	tbHilite = new QCheckBox( i18n( "Highlight buttons under mouse" ), 
+				tbStyle);
+	tbTransp = new QCheckBox( i18n( "Toolbars are transparent when"
+					" moving" ), tbStyle);
+	
+	if (tbUseText) 
+	  tbText->setChecked( true );
+	else
+	  tbText->setChecked( false );
+
+	if (tbUseHilite)
+	  tbHilite->setChecked( true );
+	else
+	  tbHilite->setChecked( false );
+
+	if (tbMoveTransparent)
+	  tbTransp->setChecked( true );
+	else
+	  tbTransp->setChecked( false );
+
+	
+	lay->addWidget(tbText, 10);
+	lay->addWidget(tbHilite, 10);
+	lay->addWidget(tbTransp, 10);
+
+	topLayout->addStretch( 100 );
+	//CT topLayout->activate(); //CT not needed for Qt-2.0
+
 }
 
 
 void KGeneral::slotChangeStyle()
 {
-	if( cbStyle->isChecked() )
-		applicationStyle = WindowsStyle;
-	else
-		applicationStyle = MotifStyle;
+  if (PStyle->isChecked() )
+    applicationStyle = WindowsStyle; //CT not yet available
+  else if( WStyle->isChecked() )
+    applicationStyle = WindowsStyle;
+  else
+    applicationStyle = MotifStyle;
 				
-	changed=true;
+  changed=true;
 }
 
 void KGeneral::slotUseResourceManager()
@@ -439,11 +500,16 @@ void KGeneral::readSettings( int )
 	KConfig config;
 	config.setGroup( "KDE" );
 
-	str = config.readEntry( "widgetStyle", "Windows 95" );
-	if ( str == "Windows 95" )
-		applicationStyle = WindowsStyle;
+	//CT 04Apr1999
+	str = config.readEntry( "widgetStyle", "Platinum" );
+	if ( str == "Platinum" )
+	  //CT 04Apr1999 - for the moment Qt doesn't have a PlatinumStyle 
+	  //CT    identifier and however kapp is "frozen" on Platinum style
+	  applicationStyle = WindowsStyle;
+	else if ( str == "Windows 95" )
+	  applicationStyle = WindowsStyle;
 	else
-		applicationStyle = MotifStyle;
+	  applicationStyle = MotifStyle;
 
 	//CT 30Nov1998 - mac style set
 
@@ -454,6 +520,15 @@ void KGeneral::readSettings( int )
 	  macStyle = false;
 	//CT
 
+	//CT 04Apr1999 - read toolbar style
+	config.setGroup( "Toolbar style" );
+
+	int val = config.readNumEntry( "IconText", 0);
+	tbUseText = val? true : false;
+	val = config.readNumEntry( "Highlighting", 1);
+	tbUseHilite = val? true : false;
+	tbMoveTransparent = config.readBoolEntry( "TransparentMoving", true);
+	
 		
 	KConfigGroupSaver saver(kapp->getConfig(), "X11");
 	useRM = kapp->getConfig()->readBoolEntry( "useResourceManager", true );
@@ -461,7 +536,7 @@ void KGeneral::readSettings( int )
 
 void KGeneral::setDefaults()
 {
-	cbStyle->setChecked( true );
+  //CT        cbStyle->setChecked( true );
 	cbRes->setChecked( true );
 	cbMac->setChecked( false );//CT
 	useRM = true;
@@ -469,6 +544,15 @@ void KGeneral::setDefaults()
 	slotChangeStyle();
 	slotMacStyle();//CT
 	iconStyle->setDefaults(); // DF
+
+	//CT 04Apr1999
+	tbUseText = false;
+	tbUseHilite = true;
+	tbMoveTransparent = true;
+	tbText->setChecked( false );
+	tbHilite->setChecked( true );
+	tbTransp->setChecked( true );
+	//CT
 }
 
 void KGeneral::defaultSettings()

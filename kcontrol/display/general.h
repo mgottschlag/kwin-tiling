@@ -20,6 +20,8 @@
 #include <qradiobutton.h>
 #include <kspinbox.h>
 #include <kcontrol.h>
+#include <qbuttongroup.h>
+#include <qgroupbox.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -133,7 +135,13 @@ protected:
 	void setDefaults();
 	
 protected:
-	QCheckBox *cbStyle, *cbRes;
+	//CT 04Apr1999
+	QGroupBox *styles, *tbStyle;
+	QRadioButton *MStyle, *WStyle, *PStyle;
+	QCheckBox *tbText, *tbHilite, *tbTransp;
+      	QCheckBox *cbRes;
+	//CT
+
 	QCheckBox *cbMac;//CT
 	Bool changed;
 	
@@ -142,6 +150,8 @@ protected:
 	Window root;
 	int screen;
 
+	bool tbUseText, tbUseHilite, tbMoveTransparent;//CT 04Apr1999
+       
 	KIconStyle * iconStyle;
 };
 
