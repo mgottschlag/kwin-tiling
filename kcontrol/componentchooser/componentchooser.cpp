@@ -11,10 +11,10 @@
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <qstringlist.h>
-#include <qlistbox.h>
+#include <klistbox.h>
 #include <ktrader.h>
 #include <kservice.h>
-#include <qcombobox.h>
+#include <kcombobox.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -240,7 +240,7 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 
 	}
 	ServiceChooser->sort();
-	connect(ServiceChooser,SIGNAL(selected(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
+	connect(ServiceChooser,SIGNAL(executed(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
 	ServiceChooser->setSelected(0,true);
 	slotServiceSelected(ServiceChooser->item(0));
 

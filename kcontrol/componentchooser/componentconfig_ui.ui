@@ -1,4 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<include>kcombobox.h</include>
 <class>ComponentConfig_UI</class>
 <widget class="QWidget">
     <property name="name">
@@ -36,7 +37,7 @@
                 <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <widget class="QComboBox">
+        <widget class="KComboBox">
             <property name="name">
                 <cstring>ComponentSelector</cstring>
             </property>

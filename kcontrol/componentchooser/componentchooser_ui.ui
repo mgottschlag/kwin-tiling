@@ -1,4 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<include>klistbox.h</include>
 <class>ComponentChooser_UI</class>
 <widget class="QWidget">
     <property name="name">
@@ -32,7 +33,7 @@
             <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <widget class="QListBox">
+            <widget class="KListBox">
                 <property name="name">
                     <cstring>ServiceChooser</cstring>
                 </property>
