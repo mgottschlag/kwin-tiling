@@ -759,7 +759,14 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
               tmpItem = static_cast<TreeItem*>(tmpItem->parent() );
           }
 
-         del(m_dragItem, false);
+         // Remove MenuFolderInfo
+         TreeItem *oldParentItem = static_cast<TreeItem*>(m_dragItem->parent());
+         MenuFolderInfo *oldParentFolderInfo = oldParentItem ? oldParentItem->folderInfo() : m_rootFolder;
+         oldParentFolderInfo->take(folderInfo);
+
+         // Delete old menu
+         m_menuFile->pushAction(MenuFile::REMOVE_MENU, m_dragItem->directory(), QString::null);
+
          // Move menu
          QString oldFolder = folderInfo->fullId;
          QString folderName = folderInfo->id;
@@ -786,10 +793,22 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
          folderInfo->setInUse(true);
          parentFolderInfo->add(folderInfo);
 
-         TreeItem *newItem = createTreeItem(parentItem, after, folderInfo);
-
-         setSelected ( newItem, true);
-         itemSelected( newItem);
+         if ((parentItem != oldParentItem) || !after)
+         {
+            if (oldParentItem)
+               oldParentItem->takeItem(m_dragItem);
+            else
+               takeItem(m_dragItem);
+            if (parentItem)
+               parentItem->insertItem(m_dragItem);
+            else
+               insertItem(m_dragItem);
+         }
+         m_dragItem->moveItem(after);
+         m_dragItem->setName(folderInfo->caption);
+         m_dragItem->setDirectoryPath(folderInfo->fullId);
+         setSelected(m_dragItem, true);
+         itemSelected(m_dragItem);
       }
    }
    else if (command == MOVE_FILE)
