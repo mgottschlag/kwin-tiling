@@ -46,12 +46,12 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
 
     // Echo mode
     m_EMGroup = new QButtonGroup(i18n("Echo characters as"), this);
-    QWhatsThis::add( m_EMGroup,  i18n("Here you can configure the visual feedback given"
-      " when you have to enter a password in kdesu. It does not affect other programs.<p>"
-      " You can chose between: <ul><li><em>1 star:</em> for each character entered, an asterisk (*)"
-      " appears.</li><li><em>3 stars:</em> for each character entered, three asterisks appear.</li>"
-      " <li><em>no echo:</em> you don't get any visual feed back (so people watching can't even"
-      " tell how many characters your password has).</li></ul>"));
+    QWhatsThis::add( m_EMGroup,  i18n("You can select the type of visual feedback given"
+      " when you enter a password in kdesu. Choose one of the following options:<p>"
+      " <ul><li><em>1 star:</em> each character you type is shown as an asterisk (*) symbol.</li>"
+      " <li><em>3 stars:</em> three asterisks are shown for each character you type.</li>"
+      " <li><em>no echo:</em> there is no visual feedback at all, so nothing on your screen"
+      " shows how many characters are in your password.</li></ul>"));
     top->addWidget(m_EMGroup);
     QVBoxLayout *vbox = new QVBoxLayout(m_EMGroup, 10, 10);
     vbox->addSpacing(10);
@@ -66,13 +66,13 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
     // Keep password
 
     m_KeepBut = new QCheckBox(i18n("&Remember passwords"), this);
-    QWhatsThis::add( m_KeepBut, i18n("If this option is selected, kdesu will remember your passwords"
-       " for a given time. This way you don't have to enter your password again everytime you do"
-       " something that requires a password. Keep in mind that this option is insecure and may enable"
-       " others to do harm to your information and your system.<p>"
-       " Please <em>do not</em> use this option if you are working in an insecure environment (e.g. in an open-plan office).<p>"
-       " This option does not affect passwords explicitely set in applications, e.g. your mail password"
-       " in KMail.") );
+    QWhatsThis::add( m_KeepBut, i18n("If this option is checked, kdesu will remember your passwords"
+       " for the specified amount of time. Until then, you won't have to enter your password again."
+       " Keep in mind that this option is insecure and may enable others to damage your system.<p>"
+       " Please <em>do not</em> use this option if you are working in an insecure environment,"
+       " for example, on a workstation that is located in a publicly accessible area.<p>"
+       " This option does not affect passwords explicitly set in other applications, for example,"
+       " your e-mail account password in KMail.") );
     connect(m_KeepBut, SIGNAL(toggled(bool)), SLOT(slotKeep(bool)));
     top->addWidget(m_KeepBut);
     QHBoxLayout *hbox = new QHBoxLayout();
@@ -82,7 +82,7 @@ KPasswordConfig::KPasswordConfig(QWidget *parent, const char *name)
     hbox->addSpacing(20);
     hbox->addWidget(lbl);
     m_TimeoutEdit = new QSpinBox(this);
-    QString wtstr = i18n("Here you can specify for how long kdesu will remember your"
+    QString wtstr = i18n("You can specify how long kdesu will remember your"
        " passwords. A short timeout is more secure than a long timeout.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_TimeoutEdit, wtstr );
@@ -202,13 +202,16 @@ int KPasswordConfig::buttons()
 
 QString KPasswordConfig::quickHelp()
 {
-    return i18n("<h1>Passwords</h1> For some actions, like changing the date/time"
-       " of your system clock or creating users on your system, you need special"
-       " privileges. In these cases a KDE program called 'kdesu' will ask you for"
-       " a password. Here you can configure the behavior of kdesu, i.e. what visual"
-       " feedback is given when you enter a password and whether kdesu should remember"
-       " your passwords for a certain time.<p>"
-       " These settings affect kdesu <em>only</em>. This means that e.g. the behavior of"
-       " KMail and other programs asking you for passwords can not be configured here.");
+    return i18n("<h1>Passwords</h1> This module gives you options for"
+       " configuring the way in which the \"kdesu\" program treats passwords."
+       " Kdesu will ask you for a password when you try to carry out some"
+       " privileged actions, such as changing the date/time stored in your"
+       " system clock, or adding new users on your computer.<p>"
+       " You can configure the type of visual feedback given when you type"
+       " a password, and whether kdesu should remember passwords for some"
+       " time after you have given them.<p>"
+       " Note that these settings affect <em>only</em> kdesu. This means that"
+       " the behavior of passwords in KMail and other programs cannot be"
+       " configured here.");
 }
 

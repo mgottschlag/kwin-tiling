@@ -56,8 +56,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(fullName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(fullName);
 
-  wtstr = i18n("Enter your full name here, e.g. \"John Doe\" (but without the quotation"
-     " marks).  Some people like to provide a nick name only.<br> You can leave this field"
+  wtstr = i18n("Enter your full name here, e.g. \"John Doe\" (without the quotation"
+     " marks).  Some people like to provide a nick name only. You can leave this field"
      " blank and still use email. However, providing your full name is <em>recommended</em> as"
      " this makes it much easier for your recipient to browse his or her email.");
   QWhatsThis::add( label, wtstr );
@@ -69,8 +69,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(organization, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(organization);
 
-  wtstr = i18n("Here you can enter the name of your organization, i.e. your company"
-     " or your university.<br>This field is <em>optional</em>.  However, especially if"
+  wtstr = i18n("Here you can enter the name of your organization, company"
+     " or university. This field is <em>optional</em>. However, if"
      " you are using a business account and communicate with persons working for other"
      " companies, providing the name of your organization is recommended.");
   QWhatsThis::add( label, wtstr );
@@ -83,7 +83,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   label->setBuddy(emailAddr);
 
   wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without "
-     "the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
+     "the quotation marks). This information is mandatory if you want to use email.<p>"
      "Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address. "
      "Your email address may not contain any blank spaces.");
   QWhatsThis::add( label, wtstr );
@@ -95,12 +95,12 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(replyAddr, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(replyAddr);
 
-  wtstr = i18n("You can set a reply address if you want people to reply to your mails"
-     " using an address different from the one you entered above. If you don't specify"
-     " anything here (recommended), replies will automatically be sent to your normal"
-     " email address.<br> <em>Please note:</em> <ul><li>You do not need to enter the same email"
-     " address as above.</li><li>You should not use a reply address if you're frequently"
-     " using discussion mailing lists.</li></ul> Most people don't need this.");
+  wtstr = i18n("You can set a reply address if you want replies to your e-mail messages"
+     " to go to a different address than the e-mail address above. Most likely, you should"
+     " leave the reply address blank, so replies go to the e-mail address you entered above.<p>"
+     " <em>Please note:</em> <ul><li>You do not need to enter the same email"
+     " address as above.</li><li>You should not use a reply address if you frequently"
+     " use discussion mailing lists.</li></ul>");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( replyAddr, wtstr );
 
@@ -114,8 +114,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(userName, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(userName);
 
-  wtstr = i18n("The user name you use to login to your mail server (sometimes just called \"login\")."
-     " Your mail provider should have supplied this information. Your login name is often (but"
+  wtstr = i18n("The user name you use to login to your e-mail server (sometimes just called \"login\")."
+     " Your e-mail provider should have supplied this information. Your login name is often (but"
      " not always) identical to the part of your email address that comes before the \"@\".");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( userName, wtstr );
@@ -127,9 +127,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(password, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(password);
 
-  wtstr = i18n("Your password for the mail server. Your mail provider should have supplied"
-     " this information together with your user name. <br>Your password will not"
-     " appear on screen and will not be readable by other users on the system.");
+  wtstr = i18n("Your password for the e-mail server. Your e-mail provider should have supplied"
+     " this information along with your user name. <br>Your password will not"
+     " appear on screen and will not be readable by other normal users on the system.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( password, wtstr );
 
@@ -139,9 +139,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   connect(inServer, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   label->setBuddy(inServer);
 
-  wtstr = i18n("The server you get incoming mail from (this <em>may</em> be identical to your outgoing host)."
-     " Your mail provider should have supplied this information. It may have been called \"POP3 server/host\" or"
-     " \"IMAP server/host\" as well.  If you are using a local mailbox, you may leave this blank.");
+  wtstr = i18n("The server you get incoming e-mail from (this <em>may</em> be identical to your outgoing host)."
+     " Your e-mail provider should have supplied this information. It may have been labeled \"POP3 server/host\" or"
+     " \"IMAP server/host\". If you are using a local mailbox, you may leave this blank.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( inServer, wtstr );
 
@@ -152,9 +152,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 
   label->setBuddy(outServer);
 
-  wtstr = i18n("The server you use for sending mail (this <em>may</em> be identical to your incoming host)."
-     " Your mail provider should have supplied this information. It may have been called \"SMTP server\" or"
-     " \"SMTP host\" as well.  If you are using a local mailbox, you may leave this blank.");
+  wtstr = i18n("The server you use for sending e-mail (this <em>may</em> be identical to your incoming host)."
+     " Your e-mail provider should have supplied this information. It may have been labeled \"SMTP server\" or"
+     " \"SMTP host\". If you are using a local mailbox, you may leave this blank.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( outServer, wtstr );
 
@@ -168,9 +168,8 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   pop3Button = new QRadioButton(i18n("P&OP3"), bGrp);
   localButton = new QRadioButton(i18n("&Local mailbox"), bGrp);
 
-  wtstr = i18n("The type of your Incoming mail server. Your mail provider should have supplied"
-     " this information. If you only use dialup networking (i.e. you log in from home), you are most likely"
-     " using a POP3 server.");
+  wtstr = i18n("This is the protocol used by your incoming e-mail server. Your e-mail provider should have"
+     " supplied this information. If you use dial-up networking, you are probably using a POP3 server.");
   QWhatsThis::add( bGrp, wtstr );
   QWhatsThis::add( imapButton, wtstr );
   QWhatsThis::add( pop3Button, wtstr );
@@ -275,10 +274,12 @@ void KEmailConfig::defaults()
 
 QString KEmailConfig::quickHelp()
 {
-  return i18n("<h1>e-mail</h1> Here you can enter basic e-mail information. Note that"
-     " mail programs like KMail and Empath offer much more features which can not be"
-     " configured from here, but the information you enter here is sufficient for most"
-     " users. It's also used e.g. for sending bug reports using the bug report dialog.");
+  return i18n("<h1>e-mail</h1> This module allows you to enter basic e-mail"
+     " information for the current user. The information here is used,"
+     " among other things, for sending bug reports to the KDE developers"
+     " when you use the bug report dialog.<p>"
+     " Note that e-mail programs like KMail and Empath offer many more"
+     " features, but they provide their own configuration facilities.");
 }
 
 

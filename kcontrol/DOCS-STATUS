@@ -1,7 +1,4 @@
-File to keep track of the progress of the control modules docs.
-Maybe not all modules added yet or doublets.
 Please help keeping this file up-to-date. Thanks.
-
 [ ] not started
 [s] started
 [x] done
@@ -15,18 +12,10 @@ arts             [ ]         [ ]         [ ]
 bell             [ ]         [ ]         [ ]
 clock            [ ]         [ ]         [ ]
 display          [s]         [ ]         [ ]
-- advanced       [ ]         [ ]         [ ]
-- backgnd        [ ]         [ ]         [ ]
-- borders        [ ]         [ ]         [ ]
-- colors         [x]         [ ]         [ ]
-- desktop        [ ]         [ ]         [ ]
-- fonts          [s]         [ ]         [ ]
-- icons          [ ]         [ ]         [ ]
-- energy         [ ]         [ ]         [ ]
 drkonqi          [ ]         [ ]         [ ]
 ebrowsing        [ ]         [ ]         [ ]
-email            [x]         [ ]         [ ]
-filetypes        [x]         [ ]         [ ]
+email            [x]         [x]         [ ]
+filetypes        [x]         [x]         [ ]
 info             [ ]         [ ]         [ ]
 input            [x]         [x]         [ ]
 kdm              [ ]         [ ]         [ ]
@@ -34,16 +23,15 @@ keys             [ ]         [ ]         [ ]
 kicker           [s]         [ ]         [ ]
 kio              [s]         [ ]         [ ]
 knotify          [ ]         [ ]         [ ]
-konq             [s]         [ ]         [ ]
+konq             [x]         [x]         [ ]
 konqhtml         [s]         [ ]         [ ]
 kwm              [ ]         [ ]         [ ]
 locale           [s]         [ ]         [ ]
 midi             [ ]         [ ]         [ ]
 odbc             [ ]         [ ]         [ ]
-passwords        [x]         [ ]         [ ]
+passwords        [x]         [x]         [ ]
 root             [ ]         [ ]         [ ]
 samba            [ ]         [ ]         [ ]
 syssound         [ ]         [ ]         [ ]
 themes           [ ]         [ ]         [ ]
-
 
