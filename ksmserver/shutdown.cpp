@@ -16,6 +16,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qvbox.h>
 #include <qpainter.h>
 #include <qtimer.h>
+#include <qstyle.h>
+#include <qcursor.h>
 
 #include <klocale.h>
 #include <kapp.h>
@@ -68,7 +70,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent )
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
+#if QT_VERSION < 300
     frame->setLineWidth( style().defaultFrameWidth() );
+#else
+    frame->setLineWidth( style().pixelMetric( QStyle::PM_DefaultFrameWidth, frame ) );
+#endif
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 5 );
 
@@ -109,7 +115,11 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
 
     // Show dialog (will save the background in showEvent)
     QSize sh = l->sizeHint();
+#if QT_VERSION < 300
     KDesktopWidget *desktop = KApplication::desktop();
+#else
+    QDesktopWidget *desktop = KApplication::desktop();
+#endif
     QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
     l->move(rect.x() + (rect.width() - sh.width())/2,
     	    rect.y() + (rect.height() - sh.height())/2);

@@ -80,6 +80,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "server.moc"
 
 #include <kdebug.h>
+#include <qregexp.h>
 
 extern "C" {
     /* int umask(...); */
