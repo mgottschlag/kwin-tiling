@@ -15,7 +15,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>572</width>
+            <width>568</width>
             <height>564</height>
         </rect>
     </property>
@@ -243,7 +243,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                 <name>whatsThis</name>
                 <string>Enter the path to your preferred email client (KMail, Mutt, etc.) here or choose it with the &lt;em&gt;Browse...&lt;/em&gt; button. If no client is specified here, KMail will be used (if available) instead.&lt;p/&gt; You can also use several placeholders which will be replaced with the following values:&lt;p/&gt;&lt;ul&gt;&lt;li&gt;%s: Subject&lt;/li&gt;&lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt;&lt;li&gt;%b: Blind Carbon Copy&lt;/li&gt;&lt;li&gt;%B: Body template&lt;/li&gt;&lt;li&gt;%t: Recipient's address&lt;/li&gt;&lt;/ul&gt;</string>
             </property>
-            <vbox>
+            <grid>
                 <property stdset="1">
                     <name>margin</name>
                     <number>11</number>
@@ -252,32 +252,33 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>KURLRequester</class>
+                <widget row="0"  column="0" >
+                    <class>QLineEdit</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>txtEMailClient</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>5</vsizetype>
-                        </sizepolicy>
-                    </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
+                    <property>
+                        <name>toolTip</name>
+                        <string>&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
                     </property>
                     <property>
                         <name>whatsThis</name>
                         <string>Press this button to select your favorite email client. Please note that the file you select has to have the executable attribute set in order to be accepted.&lt;br&gt; You can also use several placeholders which will be replaced with the actual values when the email client is called:&lt;ul&gt; &lt;li&gt;%t: Recipient's address&lt;/li&gt; &lt;li&gt;%s: Subject&lt;/li&gt; &lt;li&gt;%c: Carbon Copy (CC)&lt;/li&gt; &lt;li&gt;%b: Blind Carbon Copy (BCC)&lt;/li&gt; &lt;li&gt;%B: Template body text&lt;/li&gt; &lt;li&gt;%A: Attachment &lt;/li&gt; &lt;/ul&gt;</string>
                     </property>
                 </widget>
-                <widget>
+                <widget row="0"  column="1" >
+                    <class>QToolButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>btnSelectEmail</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>...</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -292,7 +293,7 @@ marks).  Some people like to provide a nick name only. You can leave this field 
                         <string>Activate this option if you want the selected email client to be executed in a terminal (e.g. &lt;em&gt;Konsole&lt;/em&gt;).</string>
                     </property>
                 </widget>
-            </vbox>
+            </grid>
         </widget>
         <spacer>
             <property>
@@ -317,34 +318,6 @@ marks).  Some people like to provide a nick name only. You can leave this field 
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>KURLRequester</class>
-        <header location="global">kurlrequester.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-        <signal>textChanged(const QString &amp;)</signal>
-        <signal>returnPressed()</signal>
-        <signal>returnPressed(const QString &amp;)</signal>
-        <signal>openFileDialog(KURLRequester *)</signal>
-        <signal>urlSelected(const QString &amp;)</signal>
-        <slot access="public">slotEnabled(bool)</slot>
-    </customwidget>
-</customwidgets>
-<images>
-    <image>
-        <name>image0</name>
-        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
-    </image>
-</images>
 <tabstops>
     <tabstop>cmbCurProfile</tabstop>
     <tabstop>btnNewProfile</tabstop>
