@@ -35,6 +35,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qfont.h>
+#include <kdemacros.h>
 
 extern QString	_stsFile;
 extern bool	_isLocal;
@@ -43,6 +44,7 @@ extern bool	_authorized;
 CONF_GREET_CPP_DECLS
 
 extern "C"
+KDE_EXPORT
 #endif
 void init_config( void );
 
