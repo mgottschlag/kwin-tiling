@@ -209,7 +209,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
       KDialog::spacingHint()
     );
 
-  fontUseLayout->setColStretch(0, 1);
+  fontUseLayout->setColStretch(0, 0);
   fontUseLayout->setColStretch(1, 1);
   fontUseLayout->setColStretch(2, 0);
 
@@ -224,7 +224,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
     QLabel * preview = new QLabel(this);
     preview->setFrameStyle(QFrame::Box | QFrame::Plain);
-    preview->setMaximumWidth(200);
+    // preview->setMaximumWidth(200);
 
     FontUseItem * i =
       new FontUseItem(
