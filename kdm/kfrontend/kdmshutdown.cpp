@@ -595,6 +595,8 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 	lv->setAllColumnsShowFocus( true );
 	lv->addColumn( i18n("Session") );
 	lv->addColumn( i18n("Location") );
+	lv->setColumnWidthMode( 0, QListView::Maximum );
+	lv->setColumnWidthMode( 1, QListView::Maximum );
 	QListViewItem *itm;
 	int ns = 0;
 	for (; sess; sess = sess->next, ns++ )
@@ -609,13 +611,13 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 			.arg( sess->display ).arg( sess->vt ) :
 #endif
 		    QString::fromLatin1( sess->display ) );
-	lv->header()->adjustHeaderSize();
 	int fw = lv->frameWidth() * 2;
 	QSize hds( lv->header()->sizeHint() );
 	lv->setMinimumWidth( fw + hds.width() +
 	    (ns > 10 ? style().pixelMetric(QStyle::PM_ScrollBarExtent) : 0 ) );
 	lv->setFixedHeight( fw + hds.height() +
 	    itm->height() * (ns < 3 ? 3 : ns > 10 ? 10 : ns) );
+	lv->header()->adjustHeaderSize();
 	box->addWidget( lv );
 	complete( lv );
     } else
