@@ -95,7 +95,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     globalKeys = new KGlobalAccel(this);
     KGlobalAccel* keys = globalKeys;
 #include "klipperbindings.cpp"
-    globalKeys->readSettings(m_config);
+    // the keys need to be read from kdeglobals, not kickerrc --ellis, 22/9/02
+    globalKeys->readSettings();
     globalKeys->updateConnections();
     toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
@@ -415,7 +416,8 @@ void KlipperWidget::slotConfigure()
         bIgnoreSelection = dlg->ignoreSelection();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
-        globalKeys->writeSettings(m_config);
+        // the keys need to be written to kdeglobals, not kickerrc --ellis, 22/9/02
+        globalKeys->writeSettings(0, true);
         globalKeys->updateConnections();
         toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
 
