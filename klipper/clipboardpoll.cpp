@@ -136,9 +136,11 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
          timeout -= delay )
     {
         XEvent ev;
-        if( XCheckTypedWindowEvent( qt_xdisplay(), winId(), SelectionNotify, &ev )
-            && ev.xselection.requestor == winId() && ev.xselection.selection == data.atom )
+        while( XCheckTypedWindowEvent( qt_xdisplay(), winId(), SelectionNotify, &ev ))
         {
+            if( ev.xselection.requestor != winId() || ev.xselection.selection != data.atom
+                || ev.xselection.time != qt_x_time )
+                continue;
             if( ev.xselection.property == None )
             {
 //                kdDebug() << "REFUSED:" << ( data.atom == XA_PRIMARY ) << endl;
