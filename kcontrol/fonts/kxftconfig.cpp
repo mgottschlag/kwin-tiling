@@ -534,7 +534,7 @@ bool KXftConfig::apply()
 
                     //
                     // Write to file...
-                    fprintf(f, str.utf8());
+                    fputs(str.utf8(), f);
                     fclose(f);
 
                     if(FcAtomicReplaceOrig(atomic))
