@@ -23,13 +23,12 @@
 #include <qwidget.h>
 #include <qlist.h>
 #include <qstring.h>
-#include <qlistbox.h>
-
 
 #include "modules.h"
 
-class QListBox;
+class KListBox;
 class QLineEdit;
+class QListBoxItem;
 
 class KeywordListEntry
 {
@@ -70,7 +69,7 @@ protected slots:
   void slotModuleClicked(QListBoxItem *item);
 
 private:
-  QListBox  *_keyList, *_resultList;
+  KListBox  *_keyList, *_resultList;
   QLineEdit *_input; 
   QList<KeywordListEntry> _keywords;
 };

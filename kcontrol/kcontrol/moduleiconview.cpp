@@ -20,7 +20,7 @@
 
 #include <qevent.h>
 
-
+#include <kapp.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
@@ -34,7 +34,7 @@
 
 
 ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const char * name)
-  : QIconView(parent, name)
+  : KIconView(parent, name)
   , _path(QString::null)
   , _modules(list)
 {
@@ -48,6 +48,12 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
 
   connect(this, SIGNAL(clicked(QIconViewItem*)), 
 		  this, SLOT(slotItemSelected(QIconViewItem*)));
+
+  connect(this, SIGNAL(onItem(QIconViewItem*)), 
+		  this, SLOT(slotOnItem(QIconViewItem*)));
+
+  connect(this, SIGNAL(onViewport()), 
+		  this, SLOT(slotOnViewport()));
 }
   
 void ModuleIconView::makeSelected(ConfigModule *m)
@@ -161,6 +167,7 @@ void ModuleIconView::fill()
 
 void ModuleIconView::slotItemSelected(QIconViewItem* item)
 {
+  QApplication::restoreOverrideCursor();
   if (!item) return;
 
   if (static_cast<ModuleIconItem*>(item)->module())
@@ -171,7 +178,6 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
 	  fill();
 	}
 }
-
 
 QDragObject *ModuleIconView::dragObject()
 {
@@ -213,5 +219,3 @@ QDragObject *ModuleIconView::dragObject()
 
   return drag;
 }
-
-

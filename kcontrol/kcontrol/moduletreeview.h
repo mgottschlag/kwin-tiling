@@ -21,6 +21,7 @@
 #define __moduletreeview_h__
 
 #include <qlistview.h>
+#include <klistview.h>
 
 class ConfigModule;
 class ConfigModuleList;
@@ -46,7 +47,7 @@ private:
 
 };
 
-class ModuleTreeView : public QListView
+class ModuleTreeView : public KListView
 {
   Q_OBJECT;
 

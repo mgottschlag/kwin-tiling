@@ -17,17 +17,17 @@
  
 */                                                                            
 
-#include <qlistbox.h>
-#include <qlineedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qstringlist.h>
 #include <qregexp.h>
 #include <qdict.h>
 #include <qpixmap.h>
+#include <qlineedit.h>
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <klistbox.h>
 
 #include "searchwidget.h"
 #include "searchwidget.moc"
@@ -62,14 +62,14 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   l->addWidget(_input);
 
   // keyword list
-  _keyList = new QListBox(this);
+  _keyList = new KListBox(this);
   QLabel *keyl = new QLabel(_keyList, i18n("&Keywords:"), this);  
 
   l->addWidget(keyl);
   l->addWidget(_keyList);
 
   // result list
-  _resultList = new QListBox(this);
+  _resultList = new KListBox(this);
   QLabel *resultl = new QLabel(_keyList, i18n("&Results:"), this);  
 
   l->addWidget(resultl);

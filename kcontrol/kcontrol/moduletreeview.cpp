@@ -32,7 +32,7 @@
 #include "global.h"
 
 ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const char * name)
-  : QListView(parent, name)
+  : KListView(parent, name)
   , _modules(list)
 {
   setFrameStyle(QFrame::WinPanel | QFrame::Sunken);   

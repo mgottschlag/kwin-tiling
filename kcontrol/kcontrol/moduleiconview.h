@@ -21,6 +21,7 @@
 #define __moduleiconview_h__
 
 #include <qiconview.h>
+#include <kiconview.h>
 
 class ConfigModule;
 class ConfigModuleList;
@@ -46,7 +47,7 @@ private:
   ConfigModule *_module;
 };
 
-class ModuleIconView : public QIconView
+class ModuleIconView : public KIconView
 {
   Q_OBJECT;
 
@@ -64,9 +65,7 @@ protected slots:
   void slotItemSelected(QIconViewItem*);
 
 protected:
-
  QDragObject *dragObject(); 
-
   
 private:
   QString           _path; 
