@@ -16,17 +16,16 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtextedit.h>
-#include <qpushbutton.h>
 
 #include "installer.h"
 
-#include <kbuttonbox.h>
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <ktrader.h>
@@ -90,46 +89,52 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   : QWidget(aParent, aName), mGui(!aInit)
 {
   KGlobal::dirs()->addResourceType("ksplashthemes", KStandardDirs::kde_default("data") + "ksplash/Themes");
-  KButtonBox* bbox;
 
   if (!mGui)
     return;
 
-  QGridLayout *grid = new QGridLayout(this, 2, 3, 0, KDialog::spacingHint());
+  QHBoxLayout* hbox = new QHBoxLayout( this, 0, KDialog::spacingHint() );
+
+  QVBoxLayout* leftbox = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+  hbox->addLayout( leftbox );
+  hbox->setStretchFactor( leftbox, 1 );
+
   mThemesList = new ThemeListBox(this);
+  mThemesList->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
   connect(mThemesList, SIGNAL(filesDropped(const KURL::List&)), SLOT(slotFilesDropped(const KURL::List&)));
-  grid->addMultiCellWidget(mThemesList, 0, 1, 0, 0);
+  leftbox->addWidget(mThemesList);
+
+  mBtnAdd = new KPushButton( i18n("Add..."), this );
+  leftbox->addWidget( mBtnAdd );
+  connect(mBtnAdd, SIGNAL(clicked()), SLOT(slotAdd()));
+
+  mBtnRemove = new KPushButton( i18n("Remove"), this );
+  leftbox->addWidget( mBtnRemove );
+  connect(mBtnRemove, SIGNAL(clicked()), SLOT(slotRemove()));
+
+  mBtnTest = new KPushButton( i18n("Test"), this );
+  leftbox->addWidget( mBtnTest );
+  connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
+
+  QVBoxLayout* rightbox = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+  hbox->addLayout( rightbox );
+  hbox->setStretchFactor( rightbox, 3 );
 
   mPreview = new QLabel(this);
+  mPreview->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-  grid->addWidget(mPreview, 0, 1);
-
-  bbox = new KButtonBox(this, KButtonBox::Vertical, 0, 6);
-  grid->addMultiCellWidget(bbox, 0, 1, 2, 2);
-
-  mBtnAdd = bbox->addButton(i18n("Add..."));
-  connect(mBtnAdd, SIGNAL(clicked()), SLOT(slotAdd()));
-
-  mBtnRemove = bbox->addButton(i18n("Remove"));
-  connect(mBtnRemove, SIGNAL(clicked()), SLOT(slotRemove()));
-
-  mBtnTest = bbox->addButton(i18n("Test"));
-  connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
-
-  bbox->layout();
+  rightbox->addWidget(mPreview);
+  rightbox->setStretchFactor( mPreview, 3 );
 
   mText = new QTextEdit(this);
+  mText->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
   mText->setMinimumSize(mText->sizeHint());
   mText->setReadOnly(true);
-  grid->addWidget(mText, 1, 1);
-
-  grid->setColStretch(0, 1);
-  grid->setColStretch(1, 3);
-  grid->setRowStretch(0, 3);
-  grid->setRowStretch(1, 1);
+  rightbox->addWidget(mText);
+  rightbox->setStretchFactor( mText, 1 );
 
   readThemesList();
   load();
@@ -167,7 +172,7 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
      filename = filename.left(i)+filename.mid(i).lower();
   url.setPath(locateLocal("tmp",filename));
 
-  bool rc = KIO::NetAccess::copy(srcURL, url);
+  bool rc = KIO::NetAccess::copy(srcURL, url, 0);
   if (!rc)
   {
     kdWarning() << "Failed to copy theme " << srcURL.fileName()
@@ -308,17 +313,17 @@ void SplashInstaller::slotSetTheme(int id)
       if (i >= 0)
         themeName = path.mid(i+1);
       url.setPath( path + "/Theme.rc" );
-      if (!KIO::NetAccess::exists(url))
+      if (!KIO::NetAccess::exists(url, true, 0))
       {
         url.setPath( path + "/Theme.RC" );
-        if (!KIO::NetAccess::exists(url))
+        if (!KIO::NetAccess::exists(url, true, 0))
         {
           url.setPath( path + "/theme.rc" );
-          if (!KIO::NetAccess::exists(url))
+          if (!KIO::NetAccess::exists(url, true, 0))
             url.setPath( path + "/" + themeName + ".rc" );
         }
       }
-      if (KIO::NetAccess::exists(url))
+      if (KIO::NetAccess::exists(url, true, 0))
       {
         KConfig cnf(url.path());
         cnf.setGroup( QString("KSplash Theme: %1").arg(themeName) );
@@ -356,7 +361,7 @@ void SplashInstaller::slotSetTheme(int id)
     if (!enabled)
     {
       url.setPath( path + "/" + "Preview.png" );
-      if (KIO::NetAccess::exists(url))
+      if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("(Could not load theme)"));
@@ -365,7 +370,7 @@ void SplashInstaller::slotSetTheme(int id)
     else
     {
       url.setPath( path + "/" + "Preview.png" );
-      if (KIO::NetAccess::exists(url))
+      if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
         mPreview->setText(i18n("No preview available."));
