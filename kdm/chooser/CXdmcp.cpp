@@ -844,13 +844,13 @@ void CXdmcp::chooseHost(const char *r)
 	if ((fd = t_open("/dev/tcp", O_RDWR, NULL)) == -1) {
 	    fprintf(stderr, "Cannot create response endpoint\n");
 	    fflush(stderr);
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	if (t_bind(fd, NULL, NULL) == -1) {
 	    fprintf(stderr, "Cannot bind response endpoint\n");
 	    fflush(stderr);
 	    t_close(fd);
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	call.addr.buf = (char *) addr;
 	call.addr.len = len;
@@ -864,7 +864,7 @@ void CXdmcp::chooseHost(const char *r)
 	    fflush(stderr);
 	    t_unbind(fd);
 	    t_close(fd);
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 #else
 #ifdef MINIX
@@ -874,7 +874,7 @@ void CXdmcp::chooseHost(const char *r)
 	if ((fd = open(tcp_device, O_RDWR)) == -1) {
 	    fprintf(stderr, "Cannot open '%s': %s\n", tcp_device,
 		    strerror(errno));
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	tcpconf.nwtc_flags =
 	    NWTC_EXCL | NWTC_LP_SEL | NWTC_SET_RA | NWTC_SET_RP;
@@ -882,21 +882,21 @@ void CXdmcp::chooseHost(const char *r)
 	tcpconf.nwtc_remaddr = in_addr.sin_addr.s_addr;
 	if (ioctl(fd, NWIOSTCPCONF, &tcpconf) == -1) {
 	    fprintf(stderr, "NWIOSTCPCONF failed: %s\n", strerror(errno));
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	tcpcl.nwtcl_flags = 0;
 	if (ioctl(fd, NWIOTCPCONN, &tcpcl) == -1) {
 	    fprintf(stderr, "NWIOTCPCONN failed: %s\n", strerror(errno));
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 #else				/* !MINIX */
 	if ((fd = socket(family, SOCK_STREAM, 0)) == -1) {
 	    fprintf(stderr, "Cannot create response socket\n");
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	if (::connect(fd, addr, len) == -1) {
 	    fprintf(stderr, "Cannot connect to xdm\n");
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 #endif				/* MINIX */
 #endif
@@ -913,7 +913,7 @@ void CXdmcp::chooseHost(const char *r)
 	    fflush(stderr);
 	    t_unbind(fd);
 	    t_close(fd);
-	    exit(REMANAGE_DISPLAY);
+	    exit(EX_REMANAGE_DPY);
 	}
 	sleep(5);		/* Hack because sometimes the connection gets
 				   closed before the data arrives on the other end. */

@@ -37,12 +37,11 @@ extern "C" {
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #include <X11/Xatom.h>
-}
 // this macro is only defined in XFree < 4.0
+#define XDMCP
 #ifdef XIMStringConversionRetrival
 # include "dm.h"
 #endif
-extern "C" {
 #ifndef XIMStringConversionRetrival
 # include "dm.h"
 #endif

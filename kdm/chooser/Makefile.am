@@ -2,7 +2,7 @@
 
 AM_CXXFLAGS = $(STD_DEFINES) $(CONN_FLAGS)
 
-INCLUDES = -I$(srcdir)/.. $(all_includes)
+INCLUDES = -I$(srcdir)/../backend $(all_includes)
 
 bin_PROGRAMS = chooser
 

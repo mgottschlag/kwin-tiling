@@ -18,6 +18,7 @@
 #ifndef CXDMCP_C_H
 #define CXDMCP_C_H
 
+#define XDMCP
 #include <dm.h>
 
 extern int _XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);

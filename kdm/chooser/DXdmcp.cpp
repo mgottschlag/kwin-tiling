@@ -124,7 +124,7 @@ void HostView::accept()
     if (item != 0) {
 	comXdmcp->chooseHost(item->text(namecol).latin1());
 	delete comXdmcp;
-	exit(OBEYSESS_DISPLAY);
+	exit(EX_NORMAL);
     }
 }
 
@@ -136,7 +136,7 @@ void HostView::willing()
 
 void HostView::cancel()
 {
-    exit(OBEYSESS_DISPLAY);
+    exit(EX_NORMAL);
 }
 
 void HostView::slotRegisterHostname(const QString & name)

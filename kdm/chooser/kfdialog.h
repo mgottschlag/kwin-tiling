@@ -26,8 +26,6 @@
 #ifndef FDIALOG_H
 #define FDIALOG_H
 
-# include "kdm-config.h"
-
 #include <qdialog.h>
 
 class FDialog : public QDialog {
