@@ -12,14 +12,13 @@ void KMemoryWidget::update()
 {
     char blah[10], buf[80], *used_str, *total_str;
     /* Stuff for sysctl */
-    int mib[2],memory;size_t len;
+    int memory;size_t len;
     /* Stuff for swap display */
     int used, total, _free;
     FILE *pipe;
 
-    mib[0]=CTL_HW;mib[1]=HW_PHYSMEM;
     len=sizeof(memory);
-    sysctl(mib, 2, &memory, &len, NULL, 0);
+    sysctlbyname("hw.physmem", &memory, &len, NULL, 0);
   
     snprintf(blah, 10, "%d", memory);
     // Numerical values
@@ -29,17 +28,15 @@ void KMemoryWidget::update()
     
     // added by Brad Hughes bhughes@trolltech.com
     struct vmtotal vmem;
-    mib[0] = CTL_VM;
-    mib[1] = VM_METER;
     
 #warning "FIXME: Memory_Info[CACHED_MEM]"
     Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
     
     len = sizeof(vmem);
     
-    if (sysctl(mib, 2, &vmem, &len, NULL, 0) == 0) 
+    if (sysctlbyname("vm.vmmeter", &vmem, &len, NULL, 0) == 0) 
 	Memory_Info[SHARED_MEM]   = MEMORY((vmem.t_armshr * PAGE_SIZE));
-      else 
+    else 
         Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO;
 
     int buffers;
