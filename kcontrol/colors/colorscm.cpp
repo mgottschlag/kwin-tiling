@@ -726,9 +726,14 @@ void KColorScheme::readScheme( int index )
     KConfigBase* config;
 
     QColor widget(239, 239, 239);
-    QColor kde31Beige(103,141,178);
-    QColor emerald1(143,159,180);
-    QColor emerald2(62,145,235);
+    QColor kde34Blue(103,141,178);
+    QColor inactiveBackground(157,170,186);
+    QColor activeBackground(65,142,220);
+    QColor inactiveForeground(221,221,221);
+    QColor activeBlend(107,145,184);
+    QColor activeTitleBtnBg(127,158,200);
+    QColor inactiveTitleBtnBg(167,181,199);
+    QColor alternateBackground(237,244,249);
 
     QColor button;
     if (QPixmap::defaultDepth() > 8)
@@ -736,35 +741,35 @@ void KColorScheme::readScheme( int index )
     else
       button.setRgb(220, 220, 220);
 
-    QColor link(0, 0, 192);
-    QColor visitedLink(128, 0,128);
+    QColor link(0, 0, 238);
+    QColor visitedLink(82, 24,139);
 
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
       sCurrentScheme  = "<default>";
       cs->txt         = black;
       cs->back        = widget;
-      cs->select      = kde31Beige;
-      cs->selectTxt   = black;
+      cs->select      = kde34Blue;
+      cs->selectTxt   = white;
       cs->window      = white;
       cs->windowTxt   = black;
-      cs->iaTitle     = emerald1;
-      cs->iaTxt       = white;
-      cs->iaBlend     = emerald1;
-      cs->aTitle      = emerald2;
+      cs->iaTitle     = inactiveTitleBtnBg;
+      cs->iaTxt       = inactiveForeground;
+      cs->iaBlend     = inactiveBackground;
+      cs->aTitle      = activeTitleBtnBg;
       cs->aTxt        = white;
-      cs->aBlend      = emerald2;
+      cs->aBlend      = activeBlend;
       cs->button      = button;
       cs->buttonTxt   = black;
-      cs->aTitleBtn   = cs->back;
-      cs->iTitleBtn   = cs->back;
+      cs->aTitleBtn   = activeTitleBtnBg;
+      cs->iTitleBtn   = inactiveTitleBtnBg;
       cs->aFrame      = cs->back;
       cs->aHandle     = cs->back;
       cs->iaFrame     = cs->back;
       cs->iaHandle    = cs->back;
       cs->link        = link;
       cs->visitedLink = visitedLink;
-      cs->alternateBackground = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
+      cs->alternateBackground = alternateBackground;
 
       cs->contrast    = 7;
       cs->shadeSortColumn = KDE_DEFAULT_SHADE_SORT_COLUMN;
@@ -793,8 +798,8 @@ void KColorScheme::readScheme( int index )
     // note: defaults should be the same as the KDE default
     cs->txt = config->readColorEntry( "foreground", &black );
     cs->back = config->readColorEntry( "background", &widget );
-    cs->select = config->readColorEntry( "selectBackground", &kde31Beige );
-    cs->selectTxt = config->readColorEntry( "selectForeground", &black );
+    cs->select = config->readColorEntry( "selectBackground", &kde34Blue );
+    cs->selectTxt = config->readColorEntry( "selectForeground", &white );
     cs->window = config->readColorEntry( "windowBackground", &white );
     cs->windowTxt = config->readColorEntry( "windowForeground", &black );
     cs->button = config->readColorEntry( "buttonBackground", &button );
@@ -807,19 +812,19 @@ void KColorScheme::readScheme( int index )
     if (index == 0)
       config->setGroup( "WM" );
 
-    cs->iaTitle = config->readColorEntry("inactiveBackground", &emerald1);
-    cs->iaTxt = config->readColorEntry("inactiveForeground", &white);
-    cs->iaBlend = config->readColorEntry("inactiveBlend", &emerald1);
+    cs->iaTitle = config->readColorEntry("inactiveBackground", &inactiveBackground);
+    cs->iaTxt = config->readColorEntry("inactiveForeground", &inactiveForeground);
+    cs->iaBlend = config->readColorEntry("inactiveBlend", &inactiveBackground);
     cs->iaFrame = config->readColorEntry("inactiveFrame", &cs->back);
     cs->iaHandle = config->readColorEntry("inactiveHandle", &cs->back);
-    cs->aTitle = config->readColorEntry("activeBackground", &emerald2);
+    cs->aTitle = config->readColorEntry("activeBackground", &activeBackground);
     cs->aTxt = config->readColorEntry("activeForeground", &white);
-    cs->aBlend = config->readColorEntry("activeBlend", &emerald2);
+    cs->aBlend = config->readColorEntry("activeBlend", &activeBlend);
     cs->aFrame = config->readColorEntry("frame", &cs->back);
     cs->aHandle = config->readColorEntry("handle", &cs->back);
     // hack - this is all going away. For now just set all to button bg
-    cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &cs->back);
-    cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &cs->back);
+    cs->aTitleBtn = config->readColorEntry("activeTitleBtnBg", &activeTitleBtnBg);
+    cs->iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &inactiveTitleBtnBg);
 
     if (index == 0)
       config->setGroup( "KDE" );
