@@ -418,7 +418,7 @@ void MouseConfig::load()
   dragStartDist->setValue(settings->dragStartDist);
   wheelScrollLines->setValue(settings->wheelScrollLines);
 
-  tab1->singleClick->setChecked( settings->changeCursor );
+  tab1->singleClick->setChecked( settings->singleClick );
   tab1->doubleClick->setChecked(!settings->singleClick);
   tab1->cb_pointershape->setChecked(settings->changeCursor);
   tab1->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
