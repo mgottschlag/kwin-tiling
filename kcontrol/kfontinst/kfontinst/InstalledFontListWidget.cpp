@@ -167,7 +167,7 @@ void CInstalledFontListWidget::uninstall()
                     }
                     else
                         CKfiGlobal::cfg().addModifiedDir(item->dir());
-                    delete item;
+                    removeFont(item);
                     item=tmp;
                     successes++;
                 }

@@ -436,6 +436,16 @@ static bool contains(QListViewItem *first, const QString &file)
     return false;
 }
 
+void CFontListWidget::removeFont(CListViewItem *item)
+{
+    delete item;
+    if(!itsList->childCount())
+    {
+        new QListViewItem(itsList, i18n("No Fonts!"));
+        itsList->setEnabled(false);
+    }
+}
+
 void CFontListWidget::addFont(const QString &path, const QString &file)
 {
     if(itsAdvancedMode) // Need to find branch, and whether it's open...
@@ -455,8 +465,14 @@ void CFontListWidget::addFont(const QString &path, const QString &file)
         }
     }
     else
+    {
+        if(itsList->firstChild() && 
+           itsList->firstChild()->text(0) == i18n("No Fonts!"))
+            delete itsList->firstChild();
         if(!contains(itsList->firstChild(), file))
             new CBasicFontItem(itsList, file, path);
+        itsList->setEnabled(true);
+    }
 }
 
 void CFontListWidget::addSubDir(const QString &top, const QString &sub)

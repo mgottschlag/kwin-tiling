@@ -120,6 +120,7 @@ class CFontListWidget : public CFontListWidgetData
 
     public slots:
 
+    virtual void removeFont(CListViewItem *item);
     virtual void addFont(const QString &path, const QString &file);
     virtual void addSubDir(const QString &top, const QString &sub);
 
