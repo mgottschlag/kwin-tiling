@@ -67,7 +67,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
         " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       QGroupBox *group4 = new QGroupBox( i18n("LILO"), this );
 
       lilo_check = new QCheckBox(i18n("Show boot opt&ions"), group4);
@@ -79,12 +79,12 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
       QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
 #endif
 
       main->addWidget(group0);
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       main->addWidget(group4);
 #endif
       main->addStretch();
@@ -98,7 +98,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup0->addWidget(sdrlabel, 1, 3);
       lgroup0->addWidget(sdrcombo, 1, 4);
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
       lgroup4->addWidget(lilo_check, 1, 0);
 #endif
@@ -111,7 +111,7 @@ void KDMSessionsWidget::makeReadOnly()
 {
     sdlcombo->setEnabled(false);
     sdrcombo->setEnabled(false);
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     lilo_check->setEnabled(false);
 #endif
 }
@@ -135,7 +135,7 @@ void KDMSessionsWidget::save()
     config->setGroup("X-*-Core");
     writeSD(sdrcombo);
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
     config->setGroup("Shutdown");
     config->writeEntry("UseLilo", lilo_check->isChecked());
 #endif
@@ -162,7 +162,7 @@ void KDMSessionsWidget::load()
   config->setGroup("X-*-Core");
   readSD(sdrcombo, "Root");
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
   config->setGroup("Shutdown");
   lilo_check->setChecked(config->readBoolEntry("UseLilo", false));
 #endif
@@ -175,7 +175,7 @@ void KDMSessionsWidget::defaults()
   sdlcombo->setCurrentItem(SdAll);
   sdrcombo->setCurrentItem(SdRoot);
 
-#if defined(__linux__) && defined(__i386__)
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
   lilo_check->setChecked(false);
 #endif
 }
