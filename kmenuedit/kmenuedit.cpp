@@ -64,8 +64,8 @@ void KMenuEdit::setupActions()
     (void)new KAction(i18n("&New Submenu"), "filenew", 0, actionCollection(), "newsubmenu");
     (void)new KAction(i18n("New &Item"), "filenew", 0, actionCollection(), "newitem");
     (void)new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
-    
-    KStdAction::quit(0, 0, actionCollection());
+
+    KStdAction::quit(this, SLOT( close() ), actionCollection());
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
