@@ -63,6 +63,7 @@ if test $FOUND_FREETYPE -eq 1; then
     *-*-irix*) UNAME='Irix' ;;
     *-*-aix*) UNAME='AIX' ;;
     *-*-hpux*) UNAME='HPUX' ;;
+    *-*-darwin*) UNAME='Darwin' ;;
     *) UNAME='Unknown' ;;
   esac
   AC_MSG_RESULT($UNAME)

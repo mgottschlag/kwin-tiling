@@ -153,7 +153,7 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
     return error ? 0 : pid;
 }
 
-#elif defined OS_FreeBSD || defined OS_NetBSD || defined __FreeBSD__ || defined __NetBSD__ || defined __APPLE__
+#elif defined OS_FreeBSD || defined OS_NetBSD || defined __FreeBSD__ || defined __NetBSD__ || defined OS_Darwin
 
 #include <ctype.h>
 #include <dirent.h>
