@@ -60,9 +60,6 @@ public:
 	virtual void applySettings();
 	virtual void defaultSettings();
 	
-	Display *kde_display;
-	Atom 	KDEChangeGeneral;
-
 protected slots:
 	void slotSetFont(const QFont &fnt);
 	void slotPreviewFont( int index );
@@ -82,8 +79,6 @@ protected:
 	QList <FontUseItem> fontUseList;
 	
 	bool defaultCharset;
-	Window root;
-	int screen;
 };
 
 #endif

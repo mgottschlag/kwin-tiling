@@ -87,9 +87,6 @@ public:
 	
 	GUIStyle applicationStyle;
 	
-	Display *kde_display;
-	Atom 	KDEChangeGeneral;
-
 protected slots:
     void slotChangeStylePlugin(QListViewItem*);
     void slotChangeTbStyle();
@@ -112,8 +109,6 @@ protected:
 	
 	bool useRM;
 	bool macStyle;
-	Window root;
-	int screen;
 
 	int tbUseText;
 	bool tbUseHilite, tbMoveTransparent;

@@ -33,6 +33,7 @@
 #include <kcursor.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kipc.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,13 +60,6 @@
 #include <config.h>
 #endif
 
-extern int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p);
-extern bool getSimpleProperty(Window w, Atom a, long &result);
-
-int dropError(Display *, XErrorEvent *)
-{
-	return 0;
-}
 
 KColorScheme::KColorScheme(QWidget *parent, Mode m)
 	: KDisplayModule(parent, m)
@@ -80,11 +74,6 @@ KColorScheme::KColorScheme(QWidget *parent, Mode m)
 	}
 	
 	//("KColorScheme::KColorScheme");
-	
-	kde_display = x11Display();
-	KDEChangePalette = XInternAtom( kde_display, "KDEChangePalette", False);
-	screen = DefaultScreen(kde_display);
-	root = RootWindow(kde_display, screen);
 	
 	setName( i18n("Colors").ascii() );
 	
@@ -697,35 +686,7 @@ void KColorScheme::writeSettings()
 
 void KColorScheme::apply()
 {
-  XEvent ev;
-  unsigned int i, nrootwins;
-  Window dw1, dw2, *rootwins;
-  int (*defaultHandler)(Display *, XErrorEvent *);
-
-  defaultHandler=XSetErrorHandler(dropError);
-
-  XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-
-  // Matthias
-  Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
-  for (i = 0; i < nrootwins; i++) {
-    long result = 0;
-    getSimpleProperty(rootwins[i],a, result);
-    if (result){
-      ev.xclient.type = ClientMessage;
-      ev.xclient.display = kde_display;
-      ev.xclient.window = rootwins[i];
-      ev.xclient.message_type = KDEChangePalette;
-      ev.xclient.format = 32;
-
-      XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
-    }
-  }
-
-  XFlush(kde_display);
-  XSetErrorHandler(defaultHandler);
-
-  XFree((char *) rootwins);
+  KIPC::sendMessage("KDEChangePalette");
 }
 
 void KColorScheme::slotPreviewScheme( int indx )

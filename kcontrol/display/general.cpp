@@ -39,6 +39,7 @@
 #include <kwm.h>
 #include <kcolordlg.h>
 #include <kmessagebox.h>
+#include <kipc.h>
 
 #include "fonts.h"
 
@@ -52,10 +53,6 @@
 #include <X11/Xos.h>
 
 #include "general.moc"
-
-extern int dropError(Display *, XErrorEvent *);
-int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p);
-bool getSimpleProperty(Window w, Atom a, long &result);
 
 const char * KIconStyle::appName [] = {"kpanel", "kfm", "KDE"};
 const int KIconStyle::nApp = 3;
@@ -276,11 +273,6 @@ KGeneral::KGeneral(QWidget *parent, Mode m)
 	if (mode() == Init)
 		return;
 	
-	kde_display = x11Display();
-	KDEChangeGeneral = XInternAtom( kde_display, "KDEChangeGeneral", False);
-	screen = DefaultScreen(kde_display);
-	root = RootWindow(kde_display, screen);
-
     setName( i18n("Style") );
 
 	readSettings();
@@ -504,70 +496,16 @@ void KGeneral::writeSettings()
 	QApplication::syncX();
 }
 
-int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p)
-{
-    Atom real_type;
-    int format;
-    unsigned long n, extra;
-    int status;
-
-    status = XGetWindowProperty(qt_xdisplay(), w, a, 0L, len, False, type, &real_type, &format, &n, &extra, p);
-    if (status != Success || *p == 0)
-        return -1;
-    if (n == 0)
-        XFree((char*) *p);
-    return n;
-}
-
-bool getSimpleProperty(Window w, Atom a, long &result)
-{
-    long *p = 0;
-
-    if (_getprop(w, a, a, 1L, (unsigned char**)&p) <= 0){
-        return false;
-    }
-
-    result = p[0];
-    XFree((char *) p);
-    return true;
-}
 
 void KGeneral::apply()
 {
     iconStyle->apply();
     themeList->apply();
-	if ( !changed )
-		return;
-	
-	debug("KDEChangeGeneral in general.cpp");
-	XEvent ev;
-	unsigned int i, nrootwins;
-	Window dw1, dw2, *rootwins;
-	int (*defaultHandler)(Display *, XErrorEvent *);
+    if ( !changed )
+	return;
 
-	defaultHandler=XSetErrorHandler(dropError);
-	
-	XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-	
-	Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
-	for (i = 0; i < nrootwins; i++) {
-        long result = 0;
-        getSimpleProperty(rootwins[i],a, result);
-        if (result) {
-            ev.xclient.type = ClientMessage;
-            ev.xclient.display = kde_display;
-            ev.xclient.window = rootwins[i];
-            ev.xclient.message_type = KDEChangeGeneral;
-            ev.xclient.format = 32;
-
-            XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
-        }
-	}
-
-	XFlush(kde_display);
-	XSetErrorHandler(defaultHandler);
-	
-	XFree((char *) rootwins);
+    debug("KDEChangeGeneral in general.cpp");
+    KIPC::sendMessage("KDEChangeGeneral");
 }
 
 void KGeneral::applySettings()

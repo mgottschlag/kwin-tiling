@@ -37,11 +37,14 @@ extern "C" void DPMSDisable(Display *);
 extern "C" void DPMSSetTimeouts(Display *, int, int, int);
 #endif
 
-extern int dropError(Display *, XErrorEvent *);
-
 static const int DFLT_STANDBY	= 0;
 static const int DFLT_SUSPEND	= 30;
 static const int DFLT_OFF	= 60;
+
+int dropError(Display *, XErrorEvent *)
+{
+    return 0;
+}
 
 //------------------------------------------------------------------
 

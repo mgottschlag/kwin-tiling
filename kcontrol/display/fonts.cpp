@@ -10,6 +10,7 @@
 #include <ksimpleconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kipc.h>
 #include <qlayout.h>
 #include <qlistbox.h>
 #include <qlabel.h>
@@ -21,9 +22,6 @@
 
 #include "fonts.moc"
 
-extern int dropError(Display *, XErrorEvent *);
-extern int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p);
-extern bool getSimpleProperty(Window w, Atom a, long &result);
 
 FontUseItem::FontUseItem( const QString& n, QFont default_fnt, bool f )
 	: selected(0)
@@ -96,11 +94,6 @@ KFonts::KFonts(QWidget *parent, Mode m)
 	if (mode() == Init)
 		return;
 	
-	kde_display = x11Display();
-	KDEChangeGeneral = XInternAtom( kde_display, "KDEChangeGeneral", false);
-	screen = DefaultScreen(kde_display);
-	root = RootWindow(kde_display, screen);
-
 	setName( i18n("Fonts").ascii() );
 
 	readSettings();
@@ -209,36 +202,7 @@ void KFonts::apply()
 	if ( !changed )
 		return;
 	
-	XEvent ev;
-	unsigned int i, nrootwins;
-	Window dw1, dw2, *rootwins;
-	int (*defaultHandler)(Display *, XErrorEvent *);
-
-
-	defaultHandler=XSetErrorHandler(dropError);
-	
-	XQueryTree(kde_display, root, &dw1, &dw2, &rootwins, &nrootwins);
-	
-	// Matthias
-	Atom a = XInternAtom(qt_xdisplay(), "KDE_DESKTOP_WINDOW", False);
-	for (i = 0; i < nrootwins; i++) {
-	  long result = 0;
-	  getSimpleProperty(rootwins[i],a, result);
-	  if (result){
-	    ev.xclient.type = ClientMessage;
-	    ev.xclient.display = kde_display;
-	    ev.xclient.window = rootwins[i];
-	    ev.xclient.message_type = KDEChangeGeneral;
-	    ev.xclient.format = 32;
-	
-	    XSendEvent(kde_display, rootwins[i] , False, 0L, &ev);
-	  }
-	}
-
-	XFlush(kde_display);
-	XSetErrorHandler(defaultHandler);
-	
-	XFree((char *) rootwins);
+	KIPC::sendMessage("KDEChangeGeneral");
 	
 	if ( useRM )
 	    runResourceManager = TRUE;

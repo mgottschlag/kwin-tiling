@@ -37,9 +37,6 @@ public:
 	
 	QColor colorPushColor;
 	
-	Display *kde_display;
-	Atom KDEChangePalette;
-
     QPalette createPalette();
 	
 protected slots:
@@ -79,10 +76,6 @@ protected:
 	
 	bool changed;
 	bool useRM;
-	
-	Window          root;
-	int screen;
-
 };
 
 #endif
