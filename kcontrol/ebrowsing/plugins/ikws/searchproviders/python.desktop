@@ -19,7 +19,7 @@ Name[eo]=Pitono-manlibro
 Name[es]=Manual de referencia de Python
 Name[eu]=Python-en erreferentzia eskuliburua
 Name[fa]=مرجع دستی پایتون
-Name[fi]=Python referenssimanuaali
+Name[fi]=Pythonin referenssimanuaali
 Name[fr]=Manuel de référence de Python
 Name[gl]=Manual de Referencia de Python
 Name[hi]=पायथन रेफरेंस मेनुअल
@@ -63,7 +63,9 @@ Name[zu]=Incwadi yokuqondiwe ye-Python
 Query=http://www.google.com/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[en_GB]=http://www.google.co.uk/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[fr]=http://www.google.fr/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[fy]=http://www.google.nl/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[nl]=http://www.google.nl/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 Query[pt]=http://www.google.pt/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[ru]=http://www.google.ru/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 ServiceTypes=SearchProvider
 Type=Service

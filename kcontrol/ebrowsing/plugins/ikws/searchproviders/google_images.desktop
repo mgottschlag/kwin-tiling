@@ -19,10 +19,12 @@ Name[es]=Búsqueda de imágenes de Google
 Name[et]=Google piltide otsing
 Name[eu]=Google irudi bilaketa
 Name[fa]=جستجوی عکس گوگل
-Name[fi]=Google kuvahaku
+Name[fi]=Googlen kuvahaku
 Name[fo]=Google (myndaleiting)
 Name[fr]=Recherche d'images avec Google
+Name[fy]=Google ôfbyldings sykje
 Name[gl]=Procura de Imaxes de Google
+Name[he]=חיפוש תמונות של גוגל
 Name[hi]=गूगल छवि खोज
 Name[hr]=Google pretraživač slika
 Name[hu]=Google képkereső
@@ -70,7 +72,9 @@ ServiceTypes=SearchProvider
 Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
 Query[en_GB]=http://images.google.co.uk/images?q=\\{@}
-Query[fi]=http://images.google.fi/images?q=\\{@}
 Query[fr]=http://images.google.fr/images?q=\\{@}
+Query[fy]=http://images.google.nl/images?q=\\{@}
+Query[he]=http://images.google.co.il/images?q=\\{@}
 Query[nl]=http://images.google.nl/images?q=\\{@}
 Query[pt]=http://images.google.pt/images?q=\\{@}
+Query[ru]=http://images.google.ru/images?q=\\{@}

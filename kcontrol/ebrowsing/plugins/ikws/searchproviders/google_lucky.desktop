@@ -21,8 +21,10 @@ Name[fa]=گوگل - با بخت و با اقبال
 Name[fi]=Google (Kokeile onneasi)
 Name[fo]=Google (ein heppin dagur)
 Name[fr]=Google (J'ai de la chance)
+Name[fy]=Google (Ik doch in gok)
 Name[ga]=Google (Tá an t-ádh orm inniu)
 Name[gl]=Google(Síntome Afortunado)
+Name[he]=גוגל (יותר מזל משכל)
 Name[hi]=गूगल (आज मेरी क़िस्मत चमक़ी है)
 Name[hr]=Google (osjećam se sretnim)
 Name[is]=Google (Ég er heppin(n) í dag)
@@ -65,6 +67,9 @@ Keys=ggl,gglucky
 Query=http://www.google.com/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[en_GB]=http://www.google.co.uk/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[fr]=http://www.google.fr/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Query[fy]=http://www.google.nl/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Query[he]=http://www.google.co.il/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[nl]=http://www.google.nl/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Query[pt]=http://www.google.pt/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
+Query[ru]=http://www.google.ru/search?q=\\{@}&btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8
 Charset=utf8
