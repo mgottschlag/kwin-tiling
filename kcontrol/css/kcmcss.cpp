@@ -37,7 +37,16 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name)
   QStringList fonts;
   KFontChooser::getFontList(fonts, false);
   dialog->fontFamily->insertStringList(fonts);
-  
+ 
+  connect(dialog->useDefault, SIGNAL(clicked()),
+	  this, SLOT(configChanged()));
+  connect(dialog->useAccess, SIGNAL(clicked()), 
+	  this, SLOT(configChanged()));
+  connect(dialog->useUser, SIGNAL(clicked()), 
+	  this, SLOT(configChanged()));
+  connect(dialog->urlRequester, SIGNAL(textChanged(const QString&)),
+	  this, SLOT(configChanged()));
+ 
   connect(dialog->basefontsize, SIGNAL(highlighted(int)),
           this, SLOT(configChanged()));
   connect(dialog->basefontsize, SIGNAL(textChanged(const QString&)),
