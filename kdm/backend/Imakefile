@@ -66,6 +66,9 @@ KRB5SRCS = krb5auth.c
 #if HasPam
 PAM_LIBRARIES = PamLibraries
 PAM_DEFINES = -DUSE_PAM
+#ifdef PamIncludes
+PAM_INCLUDES = PamIncludes
+#endif
 #endif
 
 #ifdef USESHADOW
@@ -133,7 +136,7 @@ SYS_LIBRARIES1 = -lutil
 
   SYS_LIBRARIES = $(SYS_LIBRARIES1) $(SYS_LIBRARIES2) $(SYS_LIBRARIES3)
 
-INCLUDES = $(KRB5_INCLUDE)
+INCLUDES = $(PAM_INCLUDES) $(KRBIV_INCLUDES) $(KRB5_INCLUDE)
 DEPLIBS = $(DEPXLIB) $(DEPXAUTHLIB) $(DEPXDMCPLIB) $(XINDEPLIBS)
 LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
 	$(XDMCPLIB) $(RPCLIB) $(PAM_LIBRARIES) \
@@ -163,7 +166,11 @@ LOCAL_LIBRARIES = $(XLIB) $(XAUTHLIB) \
   $(FRAGILE_DEFINES) $(RANDOM_DEFINES) $(XDMCP_DEFINES) \
   -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION)
 
+#ifdef ComplexProgramTargetNoMan
 ComplexProgramTargetNoMan(xdm)
+#else
+ComplexProgramTarget(xdm)
+#endif
 
 #if defined(FreeBSDArchitecture) && (OSMajorVersion < 2)
 XCOMM only for daemon.c? it's used in some other places, too.
