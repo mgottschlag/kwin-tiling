@@ -609,6 +609,8 @@ static const char def_session[] =
 "#! /bin/sh\n"
 "# Xsession - run as user\n"
 "\n"
+"session=$1\n"
+"\n"
 "# Note that the respective logout scripts are not sourced.\n"
 "case $SHELL in\n"
 "  */bash)\n"
@@ -648,7 +650,7 @@ static const char def_session[] =
 "[ -f /etc/xprofile ] && . /etc/xprofile\n"
 "[ -f $HOME/.xprofile ] && . $HOME/.xprofile\n"
 "\n"
-"case $1 in\n"
+"case $session in\n"
 "  \"\")\n"
 "    exec xmessage -center -buttons OK:0 -default OK \"Sorry, $DESKTOP_SESSION is no valid session.\"\n"
 "    ;;\n"
@@ -662,10 +664,10 @@ static const char def_session[] =
 "    exec " KDE_BINDIR "/startkde\n"
 "    ;;\n"
 "  *)\n"
-"    eval exec \"$1\"\n"
+"    eval exec \"$session\"\n"
 "    ;;\n"
 "esac\n"
-"exec xmessage -center -buttons OK:0 -default OK \"Sorry, cannot execute $1. Check $DESKTOP_SESSION.desktop.\"\n";
+"exec xmessage -center -buttons OK:0 -default OK \"Sorry, cannot execute $session. Check $DESKTOP_SESSION.desktop.\"\n";
 
 static const char def_background[] =
 "[Desktop0]\n"
