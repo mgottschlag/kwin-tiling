@@ -1012,12 +1012,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         // clean regardless of what was on "our" desktop.
         kapp->desktop()->setBackgroundColor( Qt::black );
         KNotifyClient::event( "exitkde" ); // KDE says good bye
-        if (sdtype != old_sdtype || sdmode != old_sdmode) {
-            KConfig* config = KGlobal::config();
-            config->setGroup("General" );
-            config->writeEntry( "shutdownType", (int)sdtype);
-            config->writeEntry( "shutdownMode", (int)sdmode);
-        }
         state = Shutdown;
         wmPhase1WaitingCount = 0;
         saveType = saveSession?SmSaveBoth:SmSaveGlobal;
