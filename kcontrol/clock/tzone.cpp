@@ -31,6 +31,7 @@
 #include <qpixmap.h>
 #include <qlayout.h>
 #include <qfile.h>
+#include <qregexp.h>
 #include <qtextstream.h>
 
 #include <kdebug.h>
@@ -81,73 +82,60 @@ Tzone::Tzone(QWidget * parent, const char *name)
 
 void Tzone::fillTimeZones()
 {
-    FILE	*f;
-    char	tempstring[101] = "Unknown";
-    QStrList	list;
+    QStringList	list;
 
-    getCurrentZone(tempstring);
-    currentzone->setText(tempstring);
+    currentzone->setText(getCurrentZone());
 
     tzonelist->insertItem(i18n("[No selection]"));
 
-    // Read all system time zones
-    f = popen("grep -e  ^[^#] /usr/share/zoneinfo/zone.tab | cut -f 3 ","r");
-    if (!f)
-	    return;
-    while(fgets(tempstring, 100, f) != NULL)
-        list.inSort(tempstring);
-    pclose(f);
+    QFile f("/usr/share/zoneinfo/zone.tab");
+    if (f.open(IO_ReadOnly))
+    {
+        QTextStream ts(&f);
+        for (QString line = ts.readLine(); !line.isNull(); line = ts.readLine())
+        {
+            if (line.isEmpty() || line[0] == '#')
+                continue;
+            static QRegExp spaces("[ \t]");
+            QStringList fields = QStringList::split(spaces, line);
+            if (fields.count() >= 3)
+                list << fields[2];
+        }
+    }
+    list.sort();
 
-    tzonelist->insertStrList(&list);
+    tzonelist->insertStringList(list);
 }
 
-void Tzone::getCurrentZone(char* szZone)
+QString Tzone::getCurrentZone() const
 {
-    FILE	*f;
-
-    // Read the current time zone
-    f = popen("date +%Z","r");
-    if (!f) return;
-    fscanf(f, "%s", szZone);
-    pclose(f);
+    QCString result(100);
+    time_t now = time(0);
+    strftime(result.data(), result.size(), "%Z", localtime(&now));
+    return QString::fromLatin1(result);
 }
 
 void Tzone::load()
 {
     KConfig *config = KGlobal::config();
     config->setGroup("tzone");
-    FILE *f;
-    char tempstring[101] = "Unknown";
-    char szCurrentlySet[101] = "Unknown";
-    QStrList list;
     int nCurrentlySet = 0;
+    QString sCurrentlySet(i18n("Unknown"));
 
-    getCurrentZone(tempstring);
-    currentzone->setText(tempstring);
+    currentzone->setText(getCurrentZone());
 
     // read the currently set time zone
-    if((f = fopen("/etc/timezone", "r")) != NULL)
+    QFile f("/etc/timezone");
+    if(f.open(IO_ReadOnly))
     {
-        // get the currently set timezone
-        fgets(szCurrentlySet, 100, f);
-        fclose(f);
+        QTextStream ts(&f);
+        ts >> sCurrentlySet;
     }
-
-    tzonelist->insertItem(i18n("[No selection]"));
-
-    // Read all system time zones
-    f = popen("grep -e  ^[^#] /usr/share/zoneinfo/zone.tab | cut -f 3","r");
-    if (!f) return;
-    while(fgets(tempstring, 100, f) != NULL)
-	list.inSort(tempstring);
-    pclose(f);
-
-    tzonelist->insertStrList(&list);
 
     // find the currently set time zone and select it
     for (int i = 0; i < tzonelist->count(); i++)
     {
-        if (tzonelist->text(i) == QString::fromLatin1(szCurrentlySet))
+        if (tzonelist->text(i) == sCurrentlySet)
         {
             nCurrentlySet = i;
             break;
@@ -176,7 +164,6 @@ void Tzone::save()
         }
 
         tz = "/usr/share/zoneinfo/" + tzonelist->currentText();
-        tz.truncate(tz.length()-1);
 
         kdDebug() << "Set time zone " << tz << endl;
 

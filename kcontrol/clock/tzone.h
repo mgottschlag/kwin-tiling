@@ -42,7 +42,7 @@ protected slots:
 
 private:
   void  fillTimeZones();
-	void	getCurrentZone(char* szString);
+  QString getCurrentZone() const;
 
   QComboBox       *tzonelist;
 	QLabel					*currentzonetitle;
