@@ -53,13 +53,13 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
 
 
   // hide animation group
-  hide_group = new QGroupBox(i18n("&Hide Animation"), this);
+  hide_group = new QGroupBox(i18n("&Manual Hide"), this);
 
   QVBoxLayout *vbox = new QVBoxLayout(hide_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  hide_cb = new QCheckBox(i18n("Enabled"), hide_group);
+  hide_cb = new QCheckBox(i18n("Enable Animation"), hide_group);
   connect(hide_cb, SIGNAL(clicked()), SLOT(hide_clicked()));
   vbox->addWidget(hide_cb);
   QWhatsThis::add( hide_cb, i18n("If hide buttons are enabled, check this option to make the"
@@ -76,13 +76,13 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   layout->addWidget(hide_group, 0, 0);
 
   // auto-hide animation group
-  autohide_group = new QGroupBox(i18n("&Auto Hide Animation"), this);
+  autohide_group = new QGroupBox(i18n("&Auto Hide"), this);
 
   vbox = new QVBoxLayout(autohide_group, KDialog::marginHint(),
                                       KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
 
-  autohide_cb = new QCheckBox(i18n("Enabled"), autohide_group);
+  autohide_cb = new QCheckBox(i18n("Enable Animation"), autohide_group);
   connect(autohide_cb, SIGNAL(clicked()), SLOT(autohide_clicked()));
   vbox->addWidget(autohide_cb);
   QWhatsThis::add( autohide_cb, i18n("If auto-hide panel is enabled, check this option to make"
