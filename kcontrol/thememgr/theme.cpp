@@ -245,10 +245,12 @@ bool Theme::load(const QString aPath)
     warning(i18n("Theme contains no .themerc file").ascii());
     return false;
   }
+  mThemercFile = mThemePath+mThemercFile;
 
   // Search for the preview image
   dir.setNameFilter("*.preview.*");
   mPreviewFile = dir[0];
+  mPreviewFile = mThemePath+mPreviewFile;
 
   // read theme config file
   setReadOnly(TRUE);
@@ -1016,10 +1018,9 @@ void Theme::readConfig(void)
 
   if (!mPreviewFile.isEmpty())
   {
-    fname = mThemePath + mPreviewFile;
-    if (!mPreview.load(fname))
+    if (!mPreview.load(mPreviewFile))
     {
-      warning(i18n("Failed to load preview image %s").ascii(), fname.ascii());
+      warning(i18n("Failed to load preview image %s").ascii(), mPreviewFile.ascii());
       mPreview.resize(0,0);
     }
   }
