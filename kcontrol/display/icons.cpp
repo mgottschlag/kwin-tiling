@@ -148,7 +148,7 @@ void KIconConfig::init()
     // For reading the configuration
     mGroups += "Desktop";
     mGroups += "Toolbar";
-    mGroups += "MailToolbar";
+    mGroups += "MainToolbar";
     mGroups += "Small";
 
     mStates += "Default";
