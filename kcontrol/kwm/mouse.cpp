@@ -65,96 +65,108 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
 
   QLabel* label;
 
+  label = new QLabel(i18n("Titlebar doubleclick:"), this);
+  layout->addMultiCellWidget(label, 0,0,0,0);
+  label = new QLabel(this);
+  label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+  layout->addMultiCellWidget(label, 1, 1, 0, 3);
+  QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when double clicking on the"
+    " titlebar of a window.") );
+
+  QComboBox* combo = new QComboBox(this);
+  combo->insertItem(i18n("Maximize"));
+  combo->insertItem(i18n("Shade"));
+  connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
+  layout->addMultiCellWidget(combo, 0, 0, 2, 32);
+  coTiDbl = combo;
+  QWhatsThis::add(combo, "Behavior on <em>double</em> click into the titlebar.");
+
   label = new QLabel(i18n("Active"), this);
-  label->setFixedSize(label->sizeHint());
-  layout->addWidget(label, 0,2, AlignHCenter);
+  layout->addWidget(label, 2,2, AlignHCenter);
   QWhatsThis::add( label, i18n("In this column you can customize mouse clicks into the titlebar"
     " or the frame of an active window.") );
 
   label = new QLabel(i18n("Inactive"), this);
-  label->setFixedSize(label->sizeHint());
-  layout->addWidget(label, 0,3, AlignHCenter);
+  layout->addWidget(label, 2,3, AlignHCenter);
   QWhatsThis::add( label, i18n("In this column you can customize mouse clicks into the titlebar"
     " or the frame of an inactive window.") );
 
   label = new QLabel(i18n("Titlebar and frame:"), this);
-  layout->addMultiCellWidget(label, 0,0,0,1);
-  layout->setRowStretch(0, 1);
+  layout->addMultiCellWidget(label, 2,2,0,1);
+  layout->setRowStretch(2, 1);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on the"
     " titlebar or the frame of a window.") );
 
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  layout->addMultiCellWidget(label, 4, 4, 0, 3);
+  layout->addMultiCellWidget(label, 6, 6, 0, 3);
 
   label = new QLabel(i18n("Inactive inner window:"), this);
-  layout->addMultiCellWidget(label, 5,5,0,3);
-  layout->setRowStretch(5, 1);
+  layout->addMultiCellWidget(label, 7,7,0,3);
+  layout->setRowStretch(7, 1);
   QWhatsThis::add( label, i18n("Here you can customize mouse click behavior when clicking on an inactive"
     " inner window ('inner' means: not titlebar, not frame).") );
 
   label = new QLabel(this);
   label->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  layout->addMultiCellWidget(label, 9, 9, 0, 3);
+  layout->addMultiCellWidget(label, 11, 11, 0, 3);
 
   label = new QLabel(i18n("Inner window, titlebar and frame:"), this);
-  layout->addMultiCellWidget(label, 10,10,0,3);
-  layout->setRowStretch(10, 1);
+  layout->addMultiCellWidget(label, 12,12,0,3);
+  layout->setRowStretch(12, 1);
   QWhatsThis::add( label, i18n("Here you can customize KDE's behaviour when clicking somewhere into"
     " a window while pressing a modifier key."));
 
   label = new QLabel(i18n("Left Button"), this);
-  layout->addWidget(label, 1,1);
+  layout->addWidget(label, 3,1);
   QWhatsThis::add( label, i18n("In this row you can customize left click behavior when clicking into"
     " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Middle Button"), this);
-  layout->addWidget(label, 2,1);
+  layout->addWidget(label, 5,1);
   QWhatsThis::add( label, i18n("In this row you can customize middle click behavior when clicking into"
     " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Right Button"), this);
-  layout->addWidget(label, 3,1);
+  layout->addWidget(label, 5,1);
   QWhatsThis::add( label, i18n("In this row you can customize right click behavior when clicking into"
     " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Left Button"), this);
-  layout->addWidget(label, 6,1);
+  layout->addWidget(label, 8,1);
   strWin1 = i18n("In this row you can customize left click behavior when clicking into"
     " an inactive inner window ('inner' means: not titlebar, not frame).");
   QWhatsThis::add( label, strWin1 );
 
   label = new QLabel(i18n("Middle Button"), this);
-  layout->addWidget(label, 7,1);
+  layout->addWidget(label, 9,1);
   strWin2 = i18n("In this row you can customize middle click behavior when clicking into"
     " an inactive inner window ('inner' means: not titlebar, not frame).");
   QWhatsThis::add( label, strWin2 );
 
   label = new QLabel(i18n("Right Button"), this);
-  layout->addWidget(label, 8,1);
+  layout->addWidget(label, 10,1);
   strWin3 = i18n("In this row you can customize right click behavior when clicking into"
     " an inactive inner window ('inner' means: not titlebar, not frame).");
   QWhatsThis::add( label, strWin3 );
 
   label = new QLabel(i18n("ALT + Left Button"), this);
-  layout->addWidget(label, 11,1);
+  layout->addWidget(label, 13,1);
   strAll1 = i18n("Here you can customize KDE's behavior when left clicking into a window"
     " while pressing the ALT key.");
   QWhatsThis::add( label, strAll1 );
 
   label = new QLabel(i18n("ALT + Middle Button"), this);
-  layout->addWidget(label, 12,1);
+  layout->addWidget(label, 14,1);
   strAll2 = i18n("Here you can customize KDE's behavior when middle clicking into a window"
     " while pressing the ALT key.");
   QWhatsThis::add( label, strAll2 );
 
   label = new QLabel(i18n("ALT + Right Button"), this);
-  layout->addWidget(label, 13,1);
+  layout->addWidget(label, 15,1);
   strAll3 = i18n("Here you can customize KDE's behavior when right clicking into a window"
     " while pressing the ALT key.");
   QWhatsThis::add( label, strAll3 );
-
-  QComboBox* combo;
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
@@ -162,7 +174,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Operations menu"));
   combo->insertItem(i18n("Toggle raise and lower"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 1,2);
+  layout->addWidget(combo, 3,2);
   coTiAct1 = combo;
   QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window.");
 
@@ -173,7 +185,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 2,2);
+  layout->addWidget(combo, 4,2);
   coTiAct2 = combo;
   QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window.");
 
@@ -184,7 +196,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Toggle raise and lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 3,2);
+  layout->addWidget(combo, 5,2);
   coTiAct3 =  combo;
   QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window.");
 
@@ -193,7 +205,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 1,3);
+  layout->addWidget(combo, 3,3);
   coTiInAct1 = combo;
   QWhatsThis::add(combo, "Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
@@ -202,7 +214,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 2,3);
+  layout->addWidget(combo, 4,3);
   coTiInAct2 = combo;
   QWhatsThis::add(combo, "Behavior on <em>middle</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
@@ -211,7 +223,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate and lower"));
   combo->insertItem(i18n("Activate"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addWidget(combo, 3,3);
+  layout->addWidget(combo, 5,3);
   coTiInAct3 = combo;
   QWhatsThis::add(combo, "Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window.");
 
@@ -221,7 +233,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 6,6, 2, 3);
+  layout->addMultiCellWidget(combo, 8,8, 2, 3);
   coWin1 = combo;
   QWhatsThis::add( combo, strWin1 );
 
@@ -231,7 +243,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 7,7, 2, 3);
+  layout->addMultiCellWidget(combo, 9,9, 2, 3);
   coWin2 = combo;
   QWhatsThis::add( combo, strWin2 );
 
@@ -241,7 +253,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Activate"));
   combo->insertItem(i18n("Activate and raise"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 8,8, 2, 3);
+  layout->addMultiCellWidget(combo, 10,10, 2, 3);
   coWin3 = combo;
   QWhatsThis::add( combo, strWin3 );
 
@@ -253,7 +265,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 11,11, 2, 3);
+  layout->addMultiCellWidget(combo, 13,13, 2, 3);
   coAll1 = combo;
   QWhatsThis::add( combo, strAll1 );
 
@@ -265,7 +277,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 12,12, 2, 3);
+  layout->addMultiCellWidget(combo, 14,14, 2, 3);
   coAll2 = combo;
   QWhatsThis::add( combo, strAll2 );
 
@@ -277,11 +289,11 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   combo->insertItem(i18n("Lower"));
   combo->insertItem(i18n("Nothing"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
-  layout->addMultiCellWidget(combo, 13,13, 2, 3);
+  layout->addMultiCellWidget(combo, 15,15, 2, 3);
   coAll3 =  combo;
   QWhatsThis::add( combo, strAll3 );
 
-  layout->setRowStretch(14, 1);
+  layout->setRowStretch(16, 1);
 
   load();
 }
@@ -295,6 +307,15 @@ void KMouseConfig::setComboText(QComboBox* combo, const char* text){
       return;
     }
   }
+}
+
+const char*  KMouseConfig::functionTiDbl(int i)
+{
+  switch (i){
+  case 0: return "Maximize"; break;
+  case 1: return "Shade"; break;
+  }
+  return "";
 }
 
 const char*  KMouseConfig::functionTiAc(int i)
@@ -350,7 +371,9 @@ const char*  KMouseConfig::functionAll(int i)
 void KMouseConfig::load()
 {
   KConfig *config = new KConfig("kwinrc", false, false);
-
+  config->setGroup("Windows");
+  setComboText(coTiDbl, config->readEntry("TitlebarDoubleClickCommand","Shade").ascii());
+  
   config->setGroup( "MouseBindings");
   setComboText(coTiAct1,config->readEntry("CommandActiveTitlebar1","Raise").ascii());
   setComboText(coTiAct2,config->readEntry("CommandActiveTitlebar2","Lower").ascii());
@@ -375,7 +398,9 @@ void KMouseConfig::slotChanged()
 void KMouseConfig::save()
 {
   KConfig *config = new KConfig("kwinrc", false, false);
-
+  config->setGroup("Windows");
+  config->writeEntry("TitlebarDoubleClickCommand", functionTiDbl( coTiDbl->currentItem() ) );
+  
   config->setGroup("MouseBindings");
   config->writeEntry("CommandActiveTitlebar1", functionTiAc(coTiAct1->currentItem()));
   config->writeEntry("CommandActiveTitlebar2", functionTiAc(coTiAct2->currentItem()));

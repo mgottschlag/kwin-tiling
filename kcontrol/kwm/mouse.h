@@ -45,6 +45,7 @@ private  slots:
     void slotChanged();
 
 private:
+  QComboBox* coTiDbl;
 
   QComboBox* coTiAct1;
   QComboBox* coTiAct2;
@@ -61,6 +62,7 @@ private:
   QComboBox* coAll2;
   QComboBox* coAll3;
 
+  const char* functionTiDbl(int);
   const char* functionTiAc(int);
   const char* functionTiInAc(int);
   const char* functionWin(int);
