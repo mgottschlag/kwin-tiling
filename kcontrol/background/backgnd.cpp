@@ -240,10 +240,10 @@ void Backgnd::setWidgets()
     }
     else
     {
-       QString bgStr(i18n("Coloring For '%1'").arg(m_pGlobals->deskName(m_Desk)));
+       QString bgStr(i18n("Coloring for '%1'").arg(m_pGlobals->deskName(m_Desk)));
        m_pBackgroundGrp->setTitle(bgStr);
 
-       QString wpStr(i18n("Images For '%1'").arg(m_pGlobals->deskName(m_Desk)));
+       QString wpStr(i18n("Images for '%1'").arg(m_pGlobals->deskName(m_Desk)));
        m_pWallpaperGrp->setTitle(wpStr);
     }
 
