@@ -59,16 +59,16 @@ protected:
 
   void setGroups(const QStringList &groups) { _groups = groups; };
   void setKeywords(const QStringList &k) { _keywords = k; };
-  void setName(QString name) { _name = name; };
-  void setComment(QString comment) { _comment = comment; };
-  void setIcon(QString icon) { _icon = icon; };
+  void setName(const QString &name) { _name = name; };
+  void setComment(const QString &comment) { _comment = comment; };
+  void setIcon(const QString &icon) { _icon = icon; };
   void setDirectory(bool dir) { _directory = dir; };
-  void setLibrary(QString lib) { _lib = lib; };
-  void setHandle(QString handle) { _handle = handle; };
+  void setLibrary(const QString &lib) { _lib = lib; };
+  void setHandle(const QString &handle) { _handle = handle; };
   void setNeedsRootPrivileges(bool needsRootPrivileges) { _needsRootPrivileges = needsRootPrivileges; };
   void setIsHiddenByDefault(bool isHiddenByDefault) { _isHiddenByDefault = isHiddenByDefault; };
-  void setDocPath(QString p) { _doc = p; };
-  void loadAll() const;
+  void setDocPath(const QString &p) { _doc = p; };
+  void loadAll();
 
 private:
 

@@ -71,7 +71,7 @@ ModuleInfo::~ModuleInfo()
 }
 
 void
-ModuleInfo::loadAll() 
+ModuleInfo::loadAll()
 {
   _allLoaded = true;
 
@@ -91,7 +91,7 @@ ModuleInfo::loadAll()
   setDocPath(desktop.readEntry("DocPath"));
 }
 
-QCString 
+QCString
 ModuleInfo::moduleId() const
 {
   if (!_allLoaded) const_cast<ModuleInfo*>(this)->loadAll();
@@ -119,7 +119,7 @@ ModuleInfo::groups() const
 };
 
 
-KService::Ptr 
+KService::Ptr
 ModuleInfo::service() const
 {
   return _service;
@@ -153,7 +153,7 @@ ModuleInfo::icon() const
 QString
 ModuleInfo::docPath() const
 {
-  if (!_allLoaded) 
+  if (!_allLoaded)
     const_cast<ModuleInfo*>(this)->loadAll();
 
   return _doc;
@@ -168,7 +168,7 @@ ModuleInfo::library() const
 QString
 ModuleInfo::handle() const
 {
-  if (!_allLoaded) 
+  if (!_allLoaded)
     const_cast<ModuleInfo*>(this)->loadAll();
 
   if (_handle.isEmpty())
@@ -186,7 +186,7 @@ ModuleInfo::isDirectory() const
 bool
 ModuleInfo::needsRootPrivileges() const
 {
-  if (!_allLoaded) 
+  if (!_allLoaded)
     const_cast<ModuleInfo*>(this)->loadAll();
 
   return _needsRootPrivileges;
