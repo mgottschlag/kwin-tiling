@@ -121,7 +121,7 @@ CFontsWidget::CFontsWidget(QWidget *parent, const char *)
     itsModeCombo->insertItem(i18n("Advanced Mode (With Embedded Font Selector)"));
 
     itsLabel=new QLabel(itsProgressBox, "itsLabel");
-    itsLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0,
+    itsLabel->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, (QSizePolicy::SizeType)1, 0, 0,
                             itsLabel->sizePolicy().hasHeightForWidth()));
     itsLabel->setText("Label...");
     itsProgress=new KProgress(itsProgressBox, "itsProgress");
