@@ -30,7 +30,7 @@
                 <cstring>ButtonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Select port for XML RPC service</string>
+                <string>Select Port for XML RPC Service</string>
             </property>
             <grid>
                 <property name="name">
