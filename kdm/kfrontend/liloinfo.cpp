@@ -218,7 +218,8 @@ bool LiloInfo::getNextOptionFromLilo()
 {
 	if ( debug ) cerr << "[LiloInfo] Get next option from Lilo..." << endl;
 
-	KShellProcess liloproc;
+	KProcess liloproc;
+	liloproc.setUseShell(true);
 
 	// Reset the optionsAreRead variable
 	nextOptionIsRead = false;

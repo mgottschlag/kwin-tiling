@@ -235,7 +235,8 @@ void URLGrabber::startProcess( const QString& cmdLine ) const
     if ( cmdLine.isEmpty() )
         return;
 
-    KShellProcess proc;
+    KProcess proc;
+    proc.setUseShell(true);
     proc << cmdLine.simplifyWhiteSpace().stripWhiteSpace();
 
     if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
