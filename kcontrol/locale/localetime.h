@@ -1,7 +1,7 @@
 /*
  * localetime.h
  *
- * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -20,7 +20,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 
 #ifndef __KLOCALECONFIGTIME_H__
 #define __KLOCALECONFIGTIME_H__
@@ -46,7 +45,7 @@ public:
   virtual ~KLocaleConfigTime( );
 
   void save();
-  
+
 protected:
   void showEvent( QShowEvent *e );
 
@@ -70,6 +69,7 @@ private slots:
   void slotDateFmtShortChanged(const QString &t);
   void slotWeekStartDayChanged(int firstDay);
   void slotDateMonthNamePossChanged();
+  void slotCalendarSystemChanged(int calendarSystem);
 
 private:
   QValueList<StringPair> timeMap() const;
@@ -80,7 +80,6 @@ private:
   QString userToStore(const QValueList<StringPair> & map,
 		      const QString & userFormat) const;
   StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
-
 
   KLocale *m_locale;
 
@@ -94,6 +93,8 @@ private:
   QLabel * m_labWeekStartDay;
   QComboBox * m_comboWeekStartDay;
   QCheckBox *m_chDateMonthNamePossessive;
+  QLabel * m_labCalendarSystem;
+  QComboBox * m_comboCalendarSystem;
 };
 
 #endif

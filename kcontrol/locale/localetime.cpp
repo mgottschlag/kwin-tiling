@@ -1,7 +1,7 @@
 /*
  * localetime.cpp
  *
- * Copyright (c) 1999-2001 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -28,6 +28,7 @@
 #include <qwhatsthis.h>
 #include <qcombobox.h>
 #include <qtl.h>
+#include <qvaluevector.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -82,7 +83,6 @@ bool operator>= (const StringPair &p1, const StringPair &p2)
 {
   return ! (p1.userName>=p2.userName);
 }
-
 
 StringPair KLocaleConfigTime::buildStringPair(const QChar &c, const QString &s) const
 {
@@ -193,17 +193,24 @@ QString KLocaleConfigTime::storeToUser(const QValueList<StringPair> & list,
   return result;
 }
 
-
 KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
 				     QWidget *parent, const char*name)
  : QWidget(parent, name),
    m_locale(_locale)
 {
   // Time
-  QGridLayout *lay = new QGridLayout(this, 6, 2,
+  QGridLayout *lay = new QGridLayout(this, 7, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
+
+  m_labCalendarSystem = new QLabel(this, I18N_NOOP("Calendar System:"));
+  m_comboCalendarSystem = new QComboBox(false, this);
+  connect(m_comboCalendarSystem, SIGNAL(activated(int)),
+	  this, SLOT(slotCalendarSystemChanged(int)));
+  QStringList tmpCalendars;
+  tmpCalendars << QString::null << QString::null;
+  m_comboCalendarSystem->insertStringList(tmpCalendars);
 
   m_labTimeFmt = new QLabel(this, I18N_NOOP("Time format:"));
   m_comboTimeFmt = new QComboBox(true, this);
@@ -232,11 +239,11 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
           << I18N_NOOP("Thursday") << I18N_NOOP("Friday") << I18N_NOOP("Saturday")
           << I18N_NOOP("Sunday");
   m_comboWeekStartDay->insertStringList(tmpDays);
-  
+
   m_chDateMonthNamePossessive = new QCheckBox(this, I18N_NOOP("Use declined form of month name"));
   connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
 	     SLOT( slotDateMonthNamePossChanged() ) );
-  
+
   lay->setColStretch(1, 1);
 }
 
@@ -259,6 +266,11 @@ void KLocaleConfigTime::save()
   ent.setGroup("KCM Locale");
 
   QString str;
+
+  str = ent.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
+  config->deleteEntry("CalendarSystem", false, true);
+  if (str != m_locale->calendarType())
+    config->writeEntry("CalendarSystem", m_locale->calendarType(), true, true);
 
   str = ent.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
   config->deleteEntry("TimeFormat", false, true);
@@ -284,14 +296,14 @@ void KLocaleConfigTime::save()
 
   if ( m_locale->nounDeclension() )
   {
-    bool b;    
+    bool b;
     b = ent.readNumEntry("DateMonthNamePossessive", false);
     config->deleteEntry("DateMonthNamePossessive", false, true);
     if (b != m_locale->dateMonthNamePossessive())
       config->writeEntry("DateMonthNamePossessive",
-		         m_locale->dateMonthNamePossessive(), true, true);    
+		         m_locale->dateMonthNamePossessive(), true, true);
   }
-      
+
   config->sync();
 
   // restore the old global locale
@@ -302,12 +314,46 @@ void KLocaleConfigTime::showEvent( QShowEvent *e )
 {
   // This option makes sense only for languages where nouns are declined
    if ( !m_locale->nounDeclension() )
-    m_chDateMonthNamePossessive->hide();  
+    m_chDateMonthNamePossessive->hide();
    QWidget::showEvent( e );
+}
+
+void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
+{
+  kdDebug() << "CalendarSystem: " << calendarSystem << endl;
+
+  typedef QValueVector<QString> CalendarVector;
+  CalendarVector calendars(2);
+  calendars[0] = "gregorian";
+  calendars[1] = "hijri";
+
+  QString calendarType;
+  bool ok;
+  calendarType = calendars.at(calendarSystem, &ok);
+  if ( !ok )
+    calendarType = calendars.first();
+
+  m_locale->setCalendar(calendarType);
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
 {
+  typedef QValueVector<QString> CalendarVector;
+  CalendarVector calendars(2);
+  calendars[0] = "gregorian";
+  calendars[1] = "hijri";
+
+  QString calendarType = m_locale->calendarType();
+  int calendarSystem = 0;
+
+  CalendarVector::iterator it = qFind(calendars.begin(), calendars.end(),
+calendarType);
+  if ( it != calendars.end() )
+    calendarSystem = it - calendars.begin();
+
+  kdDebug() << "calSys: " << calendarSystem << ": " << calendarType << endl;
+  m_comboCalendarSystem->setCurrentItem( calendarSystem );
+
   //  m_edTimeFmt->setText( m_locale->timeFormat() );
   m_comboTimeFmt->setEditText( storeToUser( timeMap(),
 					    m_locale->timeFormat() ) );
@@ -321,7 +367,7 @@ void KLocaleConfigTime::slotLocaleChanged()
 
   if ( m_locale->nounDeclension() )
     m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );
-  
+
   kdDebug(173) << "converting: " << m_locale->timeFormat() << endl;
   kdDebug(173) << storeToUser(timeMap(),
 			   m_locale->timeFormat()) << endl;
@@ -365,7 +411,7 @@ void KLocaleConfigTime::slotDateMonthNamePossChanged()
     m_locale->setDateMonthNamePossessive(m_chDateMonthNamePossessive->isChecked());
     emit localeChanged();
   }
-} 
+}
 
 void KLocaleConfigTime::slotTranslate()
 {
@@ -409,6 +455,13 @@ void KLocaleConfigTime::slotTranslate()
   m_comboWeekStartDay->changeItem(m_locale->translate("Friday"),    4);
   m_comboWeekStartDay->changeItem(m_locale->translate("Saturday"),  5);
   m_comboWeekStartDay->changeItem(m_locale->translate("Sunday"),    6);
+
+  while ( m_comboCalendarSystem->count() < 2 )
+    m_comboCalendarSystem->insertItem(QString::null);
+  m_comboCalendarSystem->changeItem
+    (m_locale->translate("Calendar System Gregorian", "Gregorian"), 0);
+  m_comboCalendarSystem->changeItem
+    (m_locale->translate("Calendar System Hijri", "Hijri"), 1);
 
   str = m_locale->translate
     ("<p>The text in this textbox will be used to format "
@@ -471,7 +524,7 @@ void KLocaleConfigTime::slotTranslate()
     ("<p>This option determines which day will be considered as "
      "the first one of the week.</p>");
   QWhatsThis::add( m_comboWeekStartDay,  str );
-  
+
   if ( m_locale->nounDeclension() )
   {
     str = m_locale->translate
@@ -480,4 +533,3 @@ void KLocaleConfigTime::slotTranslate()
     QWhatsThis::add( m_chDateMonthNamePossessive,  str );
   }
 }
-
