@@ -77,8 +77,6 @@ signals:
 protected slots:
     void itemSelected(QListViewItem *);
 
-    void newitem();
-
 protected:
     void fillBranch(const QString& relPath, AppTreeItem* parent);
 

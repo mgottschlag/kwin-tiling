@@ -32,7 +32,7 @@
 
 #include <kglobal.h>
 #include <kstandarddirs.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kservicegroup.h>
 #include <ksimpleconfig.h>
@@ -306,77 +306,4 @@ QStringList AppTreeView::dirList(const QString& rPath)
         }
     }
     return dirlist;
-}
-
-void AppTreeView::newitem()
-{
-    KLineEditDlg dlg(i18n("Item name:"), QString::null, this);
-    dlg.setCaption(i18n("New Item"));
-
-    if (!dlg.exec()) return;
-    QString filename = dlg.text();
-    if ( filename.contains('/'))
-    {
-        KMessageBox::error( this,  i18n("Item name cannot contain '/'"));
-        return;
-    }
-    AppTreeItem *item = (AppTreeItem*)selectedItem();
-
-    QListViewItem* parent = 0;
-    QListViewItem* after = 0;
-
-    QString sfile;
-
-    if(item){
-	if(item->isExpandable())
-	    parent = item;
-        else {
-            parent = item->parent();
-            after = item;
-        }
-	sfile = item->file();
-    }
-
-    if(parent)
-        parent->setOpen(true);
-
-    QString dir = sfile;
-
-    // truncate ".directory" or "blah.desktop"
-
-    int pos = dir.findRev('/');
-
-    if (pos > 0)
-	dir.truncate(pos);
-    else
-	dir = QString::null;
-
-    if(!dir.isEmpty())
-	dir += '/';
-    dir += filename + ".desktop";
-
-    QFile f(locate("apps", dir));
-    if (f.exists()) {
-    	KMessageBox::sorry(0, i18n("A file already exists with that name. Please provide another name."), i18n("File Exists"));
-	return;
-    }
-
-    AppTreeItem* newitem;
-
-    if (!parent)
-	newitem = new AppTreeItem(this, after, dir);
-    else
-	newitem = new AppTreeItem(parent, after, dir);
-
-    newitem->setName(filename);
-    newitem->setPixmap(0, appIcon("unknown"));
-
-    KConfig c(locateLocal("apps", dir));
-    c.setDesktopGroup();
-    c.writeEntry("Name", filename);
-    c.writeEntry("Icon", filename);
-    c.writeEntry("Type", "Application");
-    c.sync();
-    setSelected ( newitem, true);
-    itemSelected( newitem);
 }
