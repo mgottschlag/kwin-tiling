@@ -248,6 +248,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
+    QWhatsThis::add(cbExportColors, i18n("Check this box to apply the"
+       " current color scheme to GTK applications."));
+
     load();
 }
 
