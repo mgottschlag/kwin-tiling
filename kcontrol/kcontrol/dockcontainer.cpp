@@ -88,7 +88,6 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
   m_name->setText( config->moduleName() );
 
   show();
-  kapp->processEvents();
 }
 
 void ModuleTitle::clear()
