@@ -97,7 +97,7 @@ extern "C" {
  *   1		if the password was accepted
  *   0		otherwise
  *****************************************************************/
-int authenticate(const char *login, const char *pass);
+int Authenticate(const char *login, const char *pass);
 
 /*****************************************************************
  * Output a message to syslog (and to stderr as well, if available)

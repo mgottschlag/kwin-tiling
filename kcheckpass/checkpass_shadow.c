@@ -38,7 +38,7 @@
 #include <shadow.h>
 #endif
 
-int authenticate(const char *login, const char *typed_in_password)
+int Authenticate(const char *login, const char *typed_in_password)
 {
   char          *crpt_passwd;
   char          *password;

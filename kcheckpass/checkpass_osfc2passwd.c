@@ -34,7 +34,7 @@ char *osf1c2crypt(const char *pw, char *salt);
 
 #include <string.h>
 
-int authenticate(const char *login, const char *passwd)
+int Authenticate(const char *login, const char *passwd)
 {
   struct passwd *pw;
   char c2passwd[256];

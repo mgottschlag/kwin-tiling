@@ -232,7 +232,7 @@ case 'c':
   }
 
   /* Now do the fandango */
-  status = authenticate(login, passwd);
+  status = Authenticate(login, passwd);
 
   /* Clear password buffer */
   memset(passbuffer, 0, sizeof(passbuffer));

@@ -100,7 +100,7 @@ static struct pam_conv PAM_conversation = {
 };
 
 
-int authenticate(const char *login, const char *passwd)
+int Authenticate(const char *login, const char *passwd)
 {
   pam_handle_t	*pamh;
   int		pam_error;

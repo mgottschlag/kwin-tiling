@@ -24,7 +24,7 @@
 
 #include "kcheckpass.h"
 
-#ifdef HAVE_ETCPASSWD
+#if defined(HAVE_ETCPASSWD) && !defined(_AIX)
 
 /*******************************************************************
  * This is the authentication code for /etc/passwd passwords
@@ -32,7 +32,7 @@
 
 #include <string.h>
 
-int authenticate(const char *login, const char *passwd)
+int Authenticate(const char *login, const char *passwd)
 {
   struct passwd *pw;
   char *crpt_passwd;
