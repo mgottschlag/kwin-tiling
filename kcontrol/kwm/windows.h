@@ -34,7 +34,7 @@
 #include <qpushbutton.h>
 
 #include <qcombobox.h>   //CT 31jan98
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 #include <kwm.h>
 
@@ -60,10 +60,10 @@ class KIntNumInput;
 #define MAXIMIZE_VERT 1
 
 #define SMART_PLACEMENT       0
-#define CASCADE_PLACEMENT     1 
-#define INTERACTIVE_PLACEMENT 2 
-#define RANDOM_PLACEMENT      3
-#define MANUAL_PLACEMENT      4 
+#define CASCADE_PLACEMENT     1
+#define RANDOM_PLACEMENT      2
+#define INTERACTIVE_PLACEMENT 3
+#define MANUAL_PLACEMENT      4
 
 #define  CLICK_TO_FOCUS                0
 #define  FOCUS_FOLLOWS_MOUSE           1
@@ -72,14 +72,16 @@ class KIntNumInput;
 
 class QSpinBox;
 
-class KWindowConfig : public KConfigWidget
+class KWindowConfig : public KCModule
 {
   Q_OBJECT
 public:
   KWindowConfig( QWidget *parent=0, const char* name=0 );
-  ~KWindowConfig( );
-  //  void  resizeEvent(QResizeEvent *e);
-  void SaveSettings( void );
+  ~KWindowConfig();
+
+  void load();
+  void save();
+  void defaults();
 
   void loadSettings();
   void applySettings();
@@ -91,8 +93,6 @@ private slots:
   void clickRaiseOnTog(bool);
 
 private:
-
-  void GetSettings( void );
 
   int getMove( void );
   int getResizeAnim( void );

@@ -30,6 +30,8 @@
 #include <kconfig.h>
 #include <knuminput.h>
 
+#include <kglobal.h>
+
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -38,9 +40,10 @@
 #include "geom.h"
 
 
-// kwm config keywords
-#define KWM_MOVE      "WindowMoveType"
+// kwin config keywords
 #define KWM_FOCUS     "FocusPolicy"
+#define KWM_PLACEMENT "WindowsPlacement"
+#define KWM_MOVE      "WindowMoveType"
 #define KWM_MAXIMIZE  "MaximizeOnlyVertically"
 #define KWM_RESIZE_ANIM    "ResizeAnimation"
 #define KWM_RESIZE_OPAQUE    "WindowResizeType"
@@ -48,23 +51,27 @@
 #define KWM_AUTORAISE "AutoRaise"
 #define KWM_CLICKRAISE "ClickRaise"
 
-// CT 19jan98
-#define KWM_PLACEMENT "WindowsPlacement"
+
+extern "C" {
+    KCModule *create_kwinoptions ( QWidget *parent, const char *name )
+    {
+	//CT there's need for decision: kwm or kwin?
+	KGlobal::locale()->insertCatalogue("kcmkwm");
+	return new KWindowConfig( parent, name );
+    }
+}
 
 KWindowConfig::~KWindowConfig ()
 {
 }
 
-extern KConfig *config;
-
-//CT 19Oct1998 - rewritten
 KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
-  : KConfigWidget (parent, name)
+  : KCModule (parent, name)
 {
 
   QBoxLayout *lay = new QVBoxLayout (this, 5);
 
-  windowsBox = new QButtonGroup(i18n("Windows"), this);
+  windowsBox = new QButtonGroup(i18n("Windows"), this);	
 
   QBoxLayout *wLay = new QVBoxLayout (windowsBox,10,5);
   wLay->addSpacing(10);
@@ -79,8 +86,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   //CT checkboxes: maximize, move, resize behaviour
   vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
-  vertOnly->adjustSize();
-  vertOnly->setMinimumSize(vertOnly->size());
+#warning CT: disabling is needed as long as functionality misses in kwin  
+  vertOnly->setEnabled(false);
   bLay->addWidget(vertOnly);
 
   opaque = new QCheckBox(i18n("Display content in moving windows"), windowsBox);
@@ -106,6 +113,12 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
   rLay->addWidget(resizeAnimFastLabel,1,2);
 
+#warning CT: disabling is needed as long as functionality misses in kwin  
+  resizeAnimTitleLabel->setEnabled(false);
+  resizeAnimSlider->setEnabled(false);
+  resizeAnimNoneLabel->setEnabled(false);
+  resizeAnimFastLabel->setEnabled(false);
+  
   lay->addWidget(windowsBox);
 
   // placement policy --- CT 19jan98, 13mar98 ---
@@ -117,9 +130,10 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   placementCombo = new QComboBox(false, plcBox);
   placementCombo->insertItem(i18n("Smart"), SMART_PLACEMENT);
   placementCombo->insertItem(i18n("Cascade"), CASCADE_PLACEMENT);
-  placementCombo->insertItem(i18n("Interactive"), INTERACTIVE_PLACEMENT);
   placementCombo->insertItem(i18n("Random"), RANDOM_PLACEMENT);
-  placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
+#warning CT: disabling is needed as long as functionality misses in kwin  
+  //placementCombo->insertItem(i18n("Interactive"), INTERACTIVE_PLACEMENT);
+  //placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
   pLay->addWidget(placementCombo,1,0);
 
@@ -152,8 +166,9 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   focusCombo =  new QComboBox(false, fcsBox);
   focusCombo->insertItem(i18n("Click to focus"), CLICK_TO_FOCUS);
   focusCombo->insertItem(i18n("Focus follows mouse"), FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
+#warning CT: disabling is needed as long as functionality misses in kwin  
+  //  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
+  //  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
 
   connect(focusCombo, SIGNAL(activated(int)),this,
@@ -187,9 +202,16 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   fLay->addMultiCellWidget(autoRaise,3,3,1,2);
   connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
 
+#warning CT: disabling is needed as long as functionality misses in kwin  
+  autoRaiseOn->setEnabled(false);
+  clickRaiseOn->setEnabled(false);
+  alabel->setEnabled(false);
+  s->setEnabled(false);
+  autoRaise->setEnabled(false);
+  
   lay->addWidget(fcsBox);
 
-  GetSettings();
+  load();
 }
 
 int KWindowConfig::getMove()
@@ -336,11 +358,12 @@ void KWindowConfig::autoRaiseOnTog(bool a) {
 void KWindowConfig::clickRaiseOnTog(bool ) {
 }
 
-void KWindowConfig::GetSettings( void )
+void KWindowConfig::load( void )
 {
   QString key;
 
-  config->setGroup( "General" );
+  KConfig *config = new KConfig("kwinrc", false, false);
+  config->setGroup( "Windows" );
 
   key = config->readEntry(KWM_MOVE, "Opaque");
   if( key == "Transparent")
@@ -349,17 +372,18 @@ void KWindowConfig::GetSettings( void )
     setMove(OPAQUE);
 
   //CT 17Jun1998 - variable animation speed from 0 (none!!) to 10 (max)
-  int anim = 1;
-  if (config->hasKey(KWM_RESIZE_ANIM)) {
-    anim = config->readNumEntry(KWM_RESIZE_ANIM);
-    if( anim < 1 ) anim = 0;
-    if( anim > 10 ) anim = 10;
-    setResizeAnim(anim);
-  }
-  else{
-    setResizeAnim(1);
-    config->writeEntry(KWM_RESIZE_ANIM, 1);
-  }
+#warning CT: disabling is needed as long as functionality misses in kwin  
+//   int anim = 1;
+//   if (config->hasKey(KWM_RESIZE_ANIM)) {
+//     anim = config->readNumEntry(KWM_RESIZE_ANIM);
+//     if( anim < 1 ) anim = 0;
+//     if( anim > 10 ) anim = 10;
+//     setResizeAnim(anim);
+//   }
+//   else{
+//     setResizeAnim(1);
+//     config->writeEntry(KWM_RESIZE_ANIM, 1);
+//   }
 
   key = config->readEntry(KWM_RESIZE_OPAQUE, "Opaque");
   if( key == "Opaque")
@@ -385,9 +409,9 @@ void KWindowConfig::GetSettings( void )
     interactiveTrigger->setValue(0);
     iTLabel->setEnabled(false);
     interactiveTrigger->hide();
-    if( key == "random")
+    if( key == "Random")
       setPlacement(RANDOM_PLACEMENT);
-    else if( key == "cascade")
+    else if( key == "Cascade")
       setPlacement(CASCADE_PLACEMENT); //CT 31jan98
     //CT 31mar98 manual placement
     else if( key == "manual")
@@ -423,9 +447,11 @@ void KWindowConfig::GetSettings( void )
   setAutoRaiseEnabled();      // this will disable/hide the auto raise delay widget if focus==click
 }
 
-void KWindowConfig::SaveSettings( void )
+void KWindowConfig::save( void )
 {
   int v;
+
+  KConfig *config = new KConfig("kwinrc", false, false);
   config->setGroup( "General" );
 
   v = getMove();
@@ -438,18 +464,18 @@ void KWindowConfig::SaveSettings( void )
   // placement policy --- CT 31jan98 ---
   v =getPlacement();
   if (v == RANDOM_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "random");
+    config->writeEntry(KWM_PLACEMENT, "Random");
   else if (v == CASCADE_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "cascade");
+    config->writeEntry(KWM_PLACEMENT, "Cascade");
   //CT 13mar98 manual and interactive placement
   else if (v == MANUAL_PLACEMENT)
-    config->writeEntry(KWM_PLACEMENT, "manual");
+    config->writeEntry(KWM_PLACEMENT, "Manual");
   else if (v == INTERACTIVE_PLACEMENT) {
-      QString tmpstr = QString("interactive,%1").arg(interactiveTrigger->value());
+      QString tmpstr = QString("Interactive,%1").arg(interactiveTrigger->value());
       config->writeEntry(KWM_PLACEMENT, tmpstr);
   }
   else
-    config->writeEntry(KWM_PLACEMENT, "smart");
+    config->writeEntry(KWM_PLACEMENT, "Smart");
 
 
   v = getFocus();
@@ -463,7 +489,7 @@ void KWindowConfig::SaveSettings( void )
     config->writeEntry(KWM_FOCUS,"FocusFollowMouse");
 
   //CT - 17Jun1998
-  config->writeEntry(KWM_RESIZE_ANIM, getResizeAnim());
+  //  config->writeEntry(KWM_RESIZE_ANIM, getResizeAnim());
 
 
   v = getResizeOpaque();
@@ -472,38 +498,47 @@ void KWindowConfig::SaveSettings( void )
   else
     config->writeEntry(KWM_RESIZE_OPAQUE, "Transparent");
 
-  v = getMaximize();
-  if (v == MAXIMIZE_VERT)
-    config->writeEntry(KWM_MAXIMIZE, "on");
-  else
-    config->writeEntry(KWM_MAXIMIZE, "off");
+#warning CT: disabling is needed as long as functionality misses in kwin  
+//   v = getMaximize();
+//   if (v == MAXIMIZE_VERT)
+//     config->writeEntry(KWM_MAXIMIZE, "on");
+//   else
+//     config->writeEntry(KWM_MAXIMIZE, "off");
 
-  v = getAutoRaiseInterval();
-  if (v <0) v = 0;
-  config->writeEntry(KWM_AUTORAISE_INTERVAL,v);
+//   v = getAutoRaiseInterval();
+//   if (v <0) v = 0;
+//   config->writeEntry(KWM_AUTORAISE_INTERVAL,v);
 
-  if (autoRaiseOn->isChecked())
-    config->writeEntry(KWM_AUTORAISE, "on");
-  else
-    config->writeEntry(KWM_AUTORAISE, "off");
+//   if (autoRaiseOn->isChecked())
+//     config->writeEntry(KWM_AUTORAISE, "on");
+//   else
+//     config->writeEntry(KWM_AUTORAISE, "off");
 
-  if (clickRaiseOn->isChecked())
-    config->writeEntry(KWM_CLICKRAISE, "on");
-  else
-    config->writeEntry(KWM_CLICKRAISE, "off");
+//   if (clickRaiseOn->isChecked())
+//     config->writeEntry(KWM_CLICKRAISE, "on");
+//   else
+//     config->writeEntry(KWM_CLICKRAISE, "off");
 
   config->sync();
 
 }
 
+void KWindowConfig::defaults()
+{
+    setMove(OPAQUE);
+    setResizeOpaque(RESIZE_OPAQUE);
+    setPlacement(SMART_PLACEMENT);
+    setFocus(CLICK_TO_FOCUS);
+}
+
 void KWindowConfig::loadSettings()
 {
-  GetSettings();
+  load();
 }
 
 void KWindowConfig::applySettings()
 {
-  SaveSettings();
+  save();
 }
 
 #include "windows.moc"
