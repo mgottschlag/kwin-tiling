@@ -333,7 +333,7 @@ void KColorScheme::save()
     cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
     cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
 
-    cfg->writeEntry("shadeSortColumn", cbShadeList->isChecked());
+    cfg->writeEntry("shadeSortColumn", cbShadeList->isChecked(), true, true);
 
     cfg->setGroup( "WM" );
     cfg->writeEntry("activeForeground", cs->aTxt, true, true);
