@@ -5,7 +5,7 @@
 // Converted to a kcc module by Matthias Hoelzer 1997
 // Ported to Qt-2.0 by Matthias Ettrich 1999
 // Ported to kcontrol2 by Geert Jansen 1999
-// Made maintable by Waldo Bastian 2000
+// Made maintainable by Waldo Bastian 2000
 
 #include <assert.h>
 #include <config.h>
