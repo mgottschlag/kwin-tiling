@@ -104,6 +104,9 @@ void KAccessApp::readSettings()
     }
   else
     xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
+  
+  // turn of two-keys-disable sticky keys option
+  xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
 
   // slow keys
   if (config->readBoolEntry("SlowKeys", false))
@@ -143,7 +146,7 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbMouseKeysMask;
 
   // set state
-  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask, xkb);
+  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask, xkb);
 
   // reset them after program exit
   uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask;
