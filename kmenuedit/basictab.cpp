@@ -98,7 +98,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     // setup icon button
     _iconButton = new KIconButton(general_group);
     _iconButton->setFixedSize(52,52);
-    connect(_iconButton, SIGNAL(clicked()), SLOT(slotChanged()));
+    connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
     grid->addMultiCellWidget(_iconButton, 0, 1, 2, 2);
 
     // add the general group to the main layout
