@@ -79,7 +79,7 @@ SaverConfig::SaverConfig()
 {
 }
 
-bool SaverConfig::read(QString file)
+bool SaverConfig::read(const QString &file)
 {
     KDesktopFile config(file, true);
     mExec = config.readPathEntry("Exec");

@@ -40,7 +40,7 @@ class SaverConfig
 public:
     SaverConfig();
 
-    bool read(QString file);
+    bool read(const QString &file);
 
     QString exec() const { return mExec; }
     QString setup() const { return mSetup; }
