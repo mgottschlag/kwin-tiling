@@ -35,7 +35,7 @@ KMenuEdit::KMenuEdit (QWidget *, const char *name)
   : KMainWindow (0, name)
 {
     setCaption(i18n("Edit K Menu"));
-
+    m_view = 0;
     // restore size
     KConfig *config = KGlobal::config();
     config->setGroup("General");
