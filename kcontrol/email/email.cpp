@@ -298,7 +298,7 @@ QString topKCMEmail::quickHelp() const
 	            " information for the current user. The information here is used,"
 	            " among other things, for sending bug reports to the KDE developers"
 	            " when you use the bug report dialog.<p>"
-	            " Note that email programs like KMail and Empath offer many more"
+	            " Note that email programs like KMail offer many more"
 	            " features, but they provide their own configuration facilities.");
 }
 
