@@ -1,3 +1,4 @@
+INCLUDES = -I$(top_srcdir)/kicker/core
 kde_module_LTLIBRARIES = kcm_kicker.la
 
 kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui \

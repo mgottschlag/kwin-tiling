@@ -20,6 +20,8 @@
 #include <kdesktopfile.h>
 #include <klocale.h>
 #include <kdebug.h>
+
+#include "kicker.h"
 #include "extensionInfo.h"
 
 
@@ -42,9 +44,9 @@ void extensionInfo::load()
         _name = i18n("Main Panel");
         _resizeable = true;
         _useStdSizes = true;
-        _customSizeMin = 24;
-        _customSizeMax = 128;
-        _customSize = 58;
+        _customSizeMin = Kicker::MIN_DIMENSION;
+        _customSizeMax = Kicker::MAX_DIMENSION;
+        _customSize = Kicker::DEFAULT_CUSTOM_DIMENSION;
         _showLeftHB     = false;
         _showRightHB    = true;
 	for (int i=0;i<4;i++) _allowedPosition[i]=true;
