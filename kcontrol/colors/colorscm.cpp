@@ -421,7 +421,7 @@ QString KColorScheme::quickHelp() const
        " predefined color schemes on which you can base your own.<p>"
        " All KDE applications will obey the selected color scheme."
        " Non-KDE applications may also obey some or all of the color"
-       " settings. See the \"Style\" control module for more details.");
+       " settings, if this behaviour is activated in this dialog.");
 }
 
 
