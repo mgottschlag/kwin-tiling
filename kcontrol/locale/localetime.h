@@ -31,7 +31,6 @@
 
 class QCheckBox;
 class QComboBox;
-//class QLineEdit;
 
 class KLocale;
 class KLanguageCombo;
@@ -66,7 +65,7 @@ private slots:
   void slotTimeFmtChanged(const QString &t);
   void slotDateFmtChanged(const QString &t);
   void slotDateFmtShortChanged(const QString &t);
-  void slotWeekStartsMondayChanged();
+  void slotWeekStartDayChanged(int firstDay);
 
 private:
   QValueList<StringPair> timeMap() const;
@@ -77,21 +76,19 @@ private:
   QString userToStore(const QValueList<StringPair> & map,
 		      const QString & userFormat) const;
   StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
-		      
+
 
   KLocale *m_locale;
 
   // Time & dates
   QLabel *m_labTimeFmt;
-  //QLineEdit *m_edTimeFmt;
   QComboBox *m_comboTimeFmt;
   QLabel *m_labDateFmt;
-  //QLineEdit *m_edDateFmt;
   QComboBox * m_comboDateFmt;
   QLabel *m_labDateFmtShort;
-  //QLineEdit *m_edDateFmtShort;
   QComboBox * m_comboDateFmtShort;
-  QCheckBox *m_chWeekStartsMonday;
+  QLabel * m_labWeekStartDay;
+  QComboBox * m_comboWeekStartDay;
 };
 
 #endif

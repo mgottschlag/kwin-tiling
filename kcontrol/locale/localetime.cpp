@@ -170,7 +170,7 @@ QString KLocaleConfigTime::storeToUser(const QValueList<StringPair> & list,
 {
   QString result;
 
-  bool escaped = false;  
+  bool escaped = false;
   for ( uint pos = 0; pos < storeFormat.length(); ++pos )
     {
       QChar c = storeFormat.at(pos);
@@ -200,7 +200,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
    m_locale(_locale)
 {
   // Time
-  QGridLayout *lay = new QGridLayout(this, 5, 2, 
+  QGridLayout *lay = new QGridLayout(this, 5, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
@@ -222,10 +222,17 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
-  m_chWeekStartsMonday = new QCheckBox(this, I18N_NOOP("Week starts on Monday"));
-  connect( m_chWeekStartsMonday, SIGNAL( clicked() ),
-	   this, SLOT( slotWeekStartsMondayChanged() ) );
-  
+  m_labWeekStartDay = new QLabel(this, I18N_NOOP("First day of the week:"));
+  m_comboWeekStartDay = new QComboBox(false, this);
+  connect (m_comboWeekStartDay, SIGNAL(activated(int)),
+           this, SLOT(slotWeekStartDayChanged(int)));
+
+  QStringList tmpDays;
+  tmpDays << I18N_NOOP("Monday") << I18N_NOOP("Tuesday") << I18N_NOOP("Wednesday")
+          << I18N_NOOP("Thursday") << I18N_NOOP("Friday") << I18N_NOOP("Saturday")
+          << I18N_NOOP("Sunday");
+  m_comboWeekStartDay->insertStringList(tmpDays);
+
   lay->setColStretch(1, 1);
 }
 
@@ -265,12 +272,11 @@ void KLocaleConfigTime::save()
     config->writeEntry("DateFormatShort",
 		       m_locale->dateFormatShort(), true, true);
 
-  bool b;
-  b = ent.readBoolEntry("WeekStartsMonday", true);
-  config->deleteEntry("WeekStartsMonday", false, true);
-  if (b != m_locale->weekStartsMonday())
-    config->writeEntry("WeekStartsMonday",
-		       m_locale->weekStartsMonday(), true, true);
+  int firstDay;
+  firstDay = ent.readNumEntry("WeekStartDay", 1);
+  config->deleteEntry("WeekStartDay", false, true);
+  if (firstDay != m_locale->weekStartDay())
+      config->writeEntry("WeekStartDay", m_locale->weekStartDay(), true, true);
 
   config->sync();
 
@@ -289,12 +295,12 @@ void KLocaleConfigTime::slotLocaleChanged()
   //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
   m_comboDateFmtShort->setEditText( storeToUser( dateMap(),
 					  m_locale->dateFormatShort() ) );
-  m_chWeekStartsMonday->setChecked( m_locale->weekStartsMonday() );
+  m_comboWeekStartDay->setCurrentItem( m_locale->weekStartDay() - 1 );
 
-  kdDebug() << "converting: " << m_locale->timeFormat() << endl;
-  kdDebug() << storeToUser(timeMap(),
+  kdDebug(173) << "converting: " << m_locale->timeFormat() << endl;
+  kdDebug(173) << storeToUser(timeMap(),
 			   m_locale->timeFormat()) << endl;
-  kdDebug() << userToStore(timeMap(),
+  kdDebug(173) << userToStore(timeMap(),
 			   QString::fromLatin1("HH:MM:SS AMPM test")) << endl;
 
 }
@@ -321,10 +327,10 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
   emit localeChanged();
 }
 
-void KLocaleConfigTime::slotWeekStartsMondayChanged()
-{
-  m_locale->setWeekStartsMonday(m_chWeekStartsMonday->isChecked());
-  emit localeChanged();
+void KLocaleConfigTime::slotWeekStartDayChanged(int firstDay) {
+    kdDebug(173) << k_funcinfo << "first day is now: " << firstDay << endl;
+    m_locale->setWeekStartDay(m_comboWeekStartDay->currentItem() + 1);
+    emit localeChanged();
 }
 
 void KLocaleConfigTime::slotTranslate()
@@ -352,7 +358,7 @@ void KLocaleConfigTime::slotTranslate()
 	     "SHORTWEEKDAY MONTH dD YYYY");
   m_comboDateFmt->insertStringList(QStringList::split(sep, str));
   m_comboDateFmt->setEditText(old);
-  
+
   old = m_comboDateFmtShort->currentText();
   m_comboDateFmtShort->clear();
   str = i18n("some resasonable short date formats for the language",
@@ -411,7 +417,7 @@ void KLocaleConfigTime::slotTranslate()
       "dates. The sequences below will be replaced:</p>") + datecodes;
   QWhatsThis::add( m_labDateFmt, str );
   QWhatsThis::add( m_comboDateFmt,  str );
-  
+
   str = m_locale->translate
     ( "<p>The text in this textbox will be used to format short "
       "dates. For instance, this is used when listing files. "
@@ -420,9 +426,8 @@ void KLocaleConfigTime::slotTranslate()
   QWhatsThis::add( m_comboDateFmtShort,  str );
 
   str = m_locale->translate
-    ("If this option is checked, calendars will be printed "
-     "with Monday as the first day in the week. If not, "
-     "Sunday will be used instead.");
-  QWhatsThis::add( m_chWeekStartsMonday,  str );
+    ("<p>This option determines which day will be considered as "
+     "the first one of the week.</p>");
+  QWhatsThis::add( m_comboWeekStartDay,  str );
 }
 
