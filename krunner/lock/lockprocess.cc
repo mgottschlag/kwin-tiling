@@ -124,8 +124,14 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
 #ifdef HAVE_DPMS
-    connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
-    mCheckDPMS.start(60000);
+    BOOL on;
+    CARD16 state;
+    DPMSInfo(qt_xdisplay(), &state, &on);
+    if (on)
+    {
+        connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
+        mCheckDPMS.start(60000);
+    }
 #endif
 
     QStringList dmopt =
