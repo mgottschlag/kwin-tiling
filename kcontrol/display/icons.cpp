@@ -143,7 +143,7 @@ void KIconConfig::init()
     mpEffectBox->insertItem(i18n("No Effect"));
     mpEffectBox->insertItem(i18n("To Gray"));
     mpEffectBox->insertItem(i18n("Desaturate"));
-    mpEffectBox->insertItem(i18n("Emboss"));
+    mpEffectBox->insertItem(i18n("SemiTransparent"));
 
     // For reading the configuration
     mGroups += "Desktop";
@@ -171,8 +171,11 @@ void KIconConfig::read()
     for (it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
     {
 	mpConfig->setGroup(*it + "Icons");
-	mSizes[i] = mpConfig->readNumEntry("Size");
+	mSizes[i] = mpConfig->readNumEntry("Size", mpTheme->defaultSize(i));
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels");
+	mEffects[i][0] = KIconEffect::NoEffect;
+	mEffects[i][1] = KIconEffect::NoEffect;
+	mEffects[i][2] = KIconEffect::SemiTransparent;
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
 	    QString tmp = mpConfig->readEntry(*it2 + "Effect");
@@ -180,15 +183,16 @@ void KIconConfig::read()
 		effect = KIconEffect::ToGray;
 	    else if (tmp == "desaturate")
 		effect = KIconEffect::DeSaturate;
-	    else if (tmp == "emboss")
-		effect = KIconEffect::Emboss;
-	    else
+	    else if (tmp == "semitransparent")
+		effect = KIconEffect::SemiTransparent;
+	    else if (tmp == "none")
 		effect = KIconEffect::NoEffect;
+	    else
+		continue;
 	    mEffects[i][j] = effect;
 	    mEffectValues[i][j] = mpConfig->readDoubleNumEntry(*it2 + "Value");
 	}
     }
-
 }
 
 void KIconConfig::apply()
@@ -274,8 +278,8 @@ void KIconConfig::save()
 	    case KIconEffect::DeSaturate:
 		tmp = "desaturate";
 		break;
-	    case KIconEffect::Emboss:
-		tmp = "emboss";
+	    case KIconEffect::SemiTransparent:
+		tmp = "semitransparent";
 		break;
 	    default:
 		tmp = "none";
@@ -296,11 +300,9 @@ void KIconConfig::defaults()
     {
 	mSizes[i] = mpTheme->defaultSize(i);
 	mbDP[i] = false;
-	for (int j=0; j<KIcon::LastState; j++)
-	{
-	    mEffects[i][j] = KIconEffect::NoEffect;
-	    mEffectValues[i][j] = 0.0;
-	}
+	mEffects[i][0] = KIconEffect::NoEffect;
+	mEffects[i][1] = KIconEffect::NoEffect;
+	mEffects[i][2] = KIconEffect::SemiTransparent;
     }
     apply();
     preview();

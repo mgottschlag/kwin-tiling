@@ -23,41 +23,6 @@ class QBoxLayout;
 class KConfig;
 
 
-// DF 13-Mar-99
-// This class is a part of the "style" tab.
-// It's separated from the KGeneral class, in case it has to be moved
-// somewhere else later.
-
-
-class KIconStyle: public QGroupBox
-{
-    Q_OBJECT
-
-public:
-    KIconStyle(QWidget *parent=0L, const char *name=0L);
-    ~KIconStyle();
-
-    void load();
-    void save();
-    void defaults();
-
-signals:
-    void changed(bool);
-
-private slots:
-    void slotPanel(int);
-    void slotKonq(int);
-    void slotKDE(int);
-
-private:
-    bool bChanged;
-    int m_PanelStyle, m_KonqStyle, m_KDEStyle;
-
-    QButtonGroup *panelGroup, *konqGroup, *kdeGroup;
-    KConfig *config;
-};
-
-
 /**
  * Mosfet's themelist box.
  */
@@ -124,7 +89,6 @@ private:
 
     GUIStyle applicationStyle;
 
-    KIconStyle * iconStyle;
     KThemeListBox *themeList;
     KConfig *config;
 };
