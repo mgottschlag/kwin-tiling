@@ -2,15 +2,15 @@
 
 INCLUDES = -I$(top_srcdir)/kcheckpass -I$(top_srcdir)/kdm/kfrontend $(all_includes)
 kdesktop_lock_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-kdesktop_lock_LDADD    = $(LIB_KIO) $(LIB_XF86MISC) -lXxf86vm
+kdesktop_lock_LDADD    = $(LIB_KIO) $(LIB_XF86MISC)
 
 ####### Files
 
 bin_PROGRAMS = kdesktop_lock
 
-kdesktop_lock_SOURCES = lockprocess.cc lockdlg.cc main.cc fade.cc
+kdesktop_lock_SOURCES = lockprocess.cc lockdlg.cc main.cc
 
-noinst_HEADERS = lockprocess.h lockdlg.h main.h fade.h
+noinst_HEADERS = lockprocess.h lockdlg.h main.h
 
 METASOURCES = AUTO
 

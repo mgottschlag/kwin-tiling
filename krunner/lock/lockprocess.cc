@@ -32,7 +32,6 @@
 
 #include "lockprocess.h"
 #include "lockdlg.h"
-#include "fade.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -744,6 +743,7 @@ bool LockProcess::startLock()
 //
 bool LockProcess::startHack()
 {
+//     fade = new Fade(qt_xdisplay());
     if (mSaverExec.isEmpty())
     {
         return false;
@@ -781,13 +781,13 @@ bool LockProcess::startHack()
 	{
 		if (mHackProc.start() == true)
 		{
-//    			fadeToBlack();
+// 		fade->fadeOut(2, 30);
 #ifdef HAVE_SETPRIORITY
 			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
  			return true;
 		}
-//  		originalGamma();
+//  		fade->restoreOriginal();
 	}
 	else // we aren't allowed to start the specified screensaver according to the kiosk restrictions
 	{
