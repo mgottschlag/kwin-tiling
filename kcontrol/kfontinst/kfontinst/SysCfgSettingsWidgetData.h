@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Wed Nov 21 00:35:21 2001
+** Created: Wed Nov 28 22:24:44 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!

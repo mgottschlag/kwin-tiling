@@ -299,9 +299,6 @@ NOTE: StarOffice v6 (onwards), and OpenOffice, no longer require AFMs for TrueTy
                     <property name="text">
                         <string>&amp;Overwrite existing AFMs</string>
                     </property>
-                    <property name="toolTip" stdset="0">
-                        <string></string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Select this option to force AFMs to be recreated - otherwise an AFM will not be generated if one already exists for the font. In general you will &lt;b&gt;not&lt;/b&gt; want to overwrite any supplied AFMs.</string>
                     </property>

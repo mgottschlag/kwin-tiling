@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Wed Nov 21 00:35:21 2001
+** Created: Wed Nov 28 22:24:44 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -147,7 +147,6 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     itsOverwriteAfmsCheck = new QCheckBox( GroupBox4_2, "itsOverwriteAfmsCheck" );
     itsOverwriteAfmsCheck->setEnabled( FALSE );
     itsOverwriteAfmsCheck->setText( tr2i18n( "&Overwrite existing AFMs" ) );
-    QToolTip::add( itsOverwriteAfmsCheck, tr2i18n( "" ) );
     QWhatsThis::add( itsOverwriteAfmsCheck, tr2i18n( "Select this option to force AFMs to be recreated - otherwise an AFM will not be generated if one already exists for the font. In general you will <b>not</b> want to overwrite any supplied AFMs." ) );
 
     GroupBox4_2Layout->addMultiCellWidget( itsOverwriteAfmsCheck, 4, 4, 1, 2 );
