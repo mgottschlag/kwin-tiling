@@ -53,6 +53,58 @@ other distributions/systems.
    presenting you the exceedingly cute KDE login screen. 
 
 
+The command FiFos
+-----------------
+
+This is a feature you can use to remote-control KDM. It's mostly intended
+for use by ksmserver and kdesktop from a running session, but there are 
+many other features.
+There are two types of FiFos: the global one (xdmctl) and the per-display 
+ones (xdmctl-<display>).
+The global one is owned by root, the per-display ones are owned by the user 
+currently owning the session (root or the logged in user). Group ownership 
+of the FiFos can be set via FifoGroup=, otherwise it's root. The file 
+permissions of the FiFos are rw--w---- (0620). The FiFos are created in the 
+directory specified by FifoDir=.
+The fields of a command are separated tabs (\t), the fields of a list
+are separated by spaces. The command is terminated by a newline (\n).
+
+Global FiFo commands:
+
+"shutdown" ("reboot"|"halt") ("forcenow"|"trynow"|"schedule")
+ - same functionality as the shutdown dialog
+
+"login" display ("now"|"schedule") user password session_arguments
+ - login user at specified display. if "now" is specified, a possibly
+   running session is killed, otherwise the login is done after the session
+   exits.
+
+Per-display Fifo commands:
+
+"shutdown" ("reboot"|"halt") ["forcenow"|"trynow"|"schedule"]
+ - Same functionality as the shutdown dialog. It takes effect when the
+   session at this display exits.
+
+"lock"
+ - The display is marked as locked. If the x-server crashes in this state,
+   no auto-relogin will be performed even if the option is on. If all local 
+   displays are locked and reserve displays are specified in Xservers, a 
+   new login screen is started.
+
+"unlock"
+ - Reverse the effects of "lock". Re-enable auto-relogin and remove the 
+   reserve login screen, if it's not used.
+
+"reserve"
+ - Start a reserve login screen. If nobody logs in within one minute, the 
+   display is removed again. When the session on the display exits and there 
+   are other non-locked local displays, the display is removed.
+
+"suicide"
+ - The currently running session is forcibly terminated. No auto-relogin is
+   attempted, but a scheduled "login" command will be executed.
+
+
 Random rambings and license information
 ---------------------------------------
 
