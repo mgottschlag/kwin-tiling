@@ -4,7 +4,7 @@ PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 INCLUDES = -I$(srcdir)/.. $(all_includes) $(KERBEROS_INCS)
 
 DBGFLAGS = -g
-AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) $(DBGFLAGS) -DGREETER
+AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) $(DBGFLAGS) -DGREETER -DQT_CLEAN_NAMESPACE
 AM_CPPFLAGS = $(AM_CFLAGS) -DQT_NO_CAST_ASCII
 
 # static
@@ -29,7 +29,7 @@ EXTRA_LTLIBRARIES = libKdmGreet.la
 libKdmGreet_la_SOURCES = $(libKdmGreet_a_SOURCES)
 
 libKdmGreet_la_LDFLAGS = -rpath $(libdir) $(all_libraries) $(KDE_RPATH) $(KRB_RPATH) -module -avoid-version -no-undefined
-libKdmGreet_la_LIBADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
+libKdmGreet_la_LIBADD  = $(LIB_KDEUI) -lXau $(PASSLIB) \
     $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
     $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)
 

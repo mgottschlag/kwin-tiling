@@ -40,7 +40,6 @@ from The Open Group.
 #include <X11/Xlib.h>
 #include <signal.h>
 #include <X11/Xatom.h>
-/* #include <X11/Xmu/Error.h> */
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -127,127 +126,6 @@ pam_handle_t **thepamh(void)
 }
 #endif
 
-/* XmuPrintDefaultErrorMessage is taken from DefErrMsg.c from X11R6 */
-/* /stefh */
-#include <stdio.h>
-#define NEED_EVENTS
-#include <X11/Xlibint.h>
-#include <X11/Xproto.h>
-
-/*
- * XmuPrintDefaultErrorMessage - print a nice error that looks like the usual
- * message.  Returns 1 if the caller should consider exitting else 0.
- */
-int XmuPrintDefaultErrorMessage (dpy, event, fp)
-    Display *dpy;
-    XErrorEvent *event;
-    FILE *fp;
-{
-     char buffer[BUFSIZ];
-     char mesg[BUFSIZ];
-     char number[32];
-     char *mtype = "XlibMessage";
-     register _XExtension *ext = (_XExtension *)NULL;
-     _XExtension *bext = (_XExtension *)NULL;
-     XGetErrorText(dpy, event->error_code, buffer, BUFSIZ);
-     XGetErrorDatabaseText(dpy, mtype, "XError", "X Error", mesg, BUFSIZ);
-     (void) fprintf(fp, "%s:  %s\n  ", mesg, buffer);
-     XGetErrorDatabaseText(dpy, mtype, "MajorCode", "Request Major code %d",
-			   mesg, BUFSIZ);
-     (void) fprintf(fp, mesg, event->request_code);
-     if (event->request_code < 128) {
-	  sprintf(number, "%d", event->request_code);
-	  XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
-     } else {
-	  /* XXX this is non-portable */
-	  for (ext = dpy->ext_procs;
-	       ext && (ext->codes.major_opcode != event->request_code);
-	       ext = ext->next)
-	       ;
-	  if (ext)
-	       strcpy(buffer, ext->name);
-	  else
-	       buffer[0] = '\0';
-     }
-     (void) fprintf(fp, " (%s)", buffer);
-     fputs("\n  ", fp);
-     if (event->request_code >= 128) {
-	  XGetErrorDatabaseText(dpy, mtype, "MinorCode", "Request Minor code %d",
-				mesg, BUFSIZ);
-	  (void) fprintf(fp, mesg, event->minor_code);
-	  if (ext) {
-	       sprintf(mesg, "%s.%d", ext->name, event->minor_code);
-	       XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
-            (void) fprintf(fp, " (%s)", buffer);
-	  }
-	  fputs("\n  ", fp);
-     }
-     if (event->error_code >= 128) {
-	  /* kludge, try to find the extension that caused it */
-	  buffer[0] = '\0';
-	  for (ext = dpy->ext_procs; ext; ext = ext->next) {
-	       if (ext->error_string)
-		    (*ext->error_string)(dpy, event->error_code, &ext->codes,
-					 buffer, BUFSIZ);
-	       if (buffer[0]) {
-		    bext = ext;
-		    break;
-	       }
-	       if (ext->codes.first_error &&
-		   ext->codes.first_error < event->error_code &&
-		   (!bext || ext->codes.first_error > bext->codes.first_error))
-		    bext = ext;
-	  }
-	  if (bext)
-	       sprintf(buffer, "%s.%d", bext->name,
-		       event->error_code - bext->codes.first_error);
-	  else
-	       strcpy(buffer, "Value");
-	  XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
-	  if (mesg[0]) {
-	       fputs("  ", fp);
-	       (void) fprintf(fp, mesg, event->resourceid);
-	       fputs("\n", fp);
-	  }
-	  /* let extensions try to print the values */
-	  for (ext = dpy->ext_procs; ext; ext = ext->next) {
-	       if (ext->error_values)
-		    (*ext->error_values)(dpy, event, fp);
-	  } 
-     } else if ((event->error_code == BadWindow) ||
-		(event->error_code == BadPixmap) ||
-		(event->error_code == BadCursor) ||
-		(event->error_code == BadFont) ||
-		(event->error_code == BadDrawable) ||
-		(event->error_code == BadColor) ||
-		(event->error_code == BadGC) ||
-		(event->error_code == BadIDChoice) ||
-		(event->error_code == BadValue) ||
-		(event->error_code == BadAtom)) {
-	  if (event->error_code == BadValue)
-	       XGetErrorDatabaseText(dpy, mtype, "Value", "Value 0x%x",
-				     mesg, BUFSIZ);
-	  else if (event->error_code == BadAtom)
-	       XGetErrorDatabaseText(dpy, mtype, "AtomID", "AtomID 0x%x",
-				     mesg, BUFSIZ);
-	  else
-	       XGetErrorDatabaseText(dpy, mtype, "ResourceID", "ResourceID 0x%x",
-				     mesg, BUFSIZ);
-	  (void) fprintf(fp, mesg, event->resourceid);
-	  fputs("\n  ", fp);
-     }
-     XGetErrorDatabaseText(dpy, mtype, "ErrorSerial", "Error Serial #%d",
-			   mesg, BUFSIZ);
-     (void) fprintf(fp, mesg, event->serial);
-     fputs("\n  ", fp);
-     XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
-			   mesg, BUFSIZ);
-     (void) fprintf(fp, mesg, NextRequest(dpy)-1);
-     fputs("\n", fp);
-     if (event->error_code == BadImplementation) return 0;
-     return 1;
-}
-
 static	struct dlfuncs	dlfuncs = {
 	PingServer,
 	SessionPingFailed,
@@ -326,7 +204,7 @@ static Jmp_buf	tenaciousClient;
 static SIGVAL
 waitAbort (int n)
 {
-	Longjmp (tenaciousClient, 1);
+    Longjmp (tenaciousClient, 1);
 }
 
 #if defined(_POSIX_SOURCE) || defined(SYSV) || defined(SVR4)
@@ -401,9 +279,9 @@ static int
 ErrorHandler(Display *dpy, XErrorEvent *event)
 {
     LogError("X error\n");
-    if (XmuPrintDefaultErrorMessage (dpy, event, stderr) == 0) return 0;
-    exit(UNMANAGE_DISPLAY);
-    /*NOTREACHED*/
+    if (event->error_code == BadImplementation)
+	exit(UNMANAGE_DISPLAY);
+    return 0;
 }
 
 void
@@ -504,12 +382,12 @@ ManageSession (struct display *d)
 		 * server crash is noticed - so we sleep a bit and wait for
 		 * being killed.
 		 */
-		dpy = XOpenDisplay (d->name);
-		if (dpy)
-		    XCloseDisplay (dpy);
-		else {
-		    LogError("It happened! Please report to ossi@kde.org if today is before 2001 Feb 20. No further information required. Note, that this message has nothing to do with the crash you possibly just experienced.\n");
-		    sleep (10);
+		if (!PingServer (d, (Display *) NULL)) {
+		    LogError("It happened!\n");
+		    if (d->displayType.origin == FromXDMCP)
+			SessionPingFailed (d);
+		    else
+			sleep (10);
 		}
 	    } else {
 		LogError ("session start failed\n");
@@ -635,6 +513,9 @@ static int removeAuth = 0;
 void
 SessionExit (struct display *d, int status, int dummy /* we know better */)
 {
+#ifdef USE_PAM
+    pam_handle_t **pamh = thepamh();
+#endif
     /* make sure the server gets reset after the session is over */
     if (d->serverPid >= 2 && d->resetSignal)
 	kill (d->serverPid, d->resetSignal);
@@ -643,8 +524,7 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
     if (removeAuth)
     {
 #ifdef USE_PAM
-	pam_handle_t **pamh = thepamh();
-	if (pamh && *pamh) {
+	if (*pamh) {
 	    /* shutdown PAM session */
 	    pam_setcred(*pamh, PAM_DELETE_CRED);
 	    pam_close_session(*pamh, 0);
@@ -679,12 +559,22 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
 	    }
 	}
 #endif /* K5AUTH */
-#ifdef KRB4
-	(void) dest_tkt();
-# ifdef AFS
-        if (k_hasafs())
-	    (void) k_unlog();
+#ifndef USE_PAM
+# ifdef KRB4
+	if (krbtkfile[0]) {
+	    (void) dest_tkt();
+#  ifdef AFS
+	    if (k_hasafs())
+		(void) k_unlog();
+#  endif
+	}
 # endif
+#else /* !USE_PAM */
+    } else {
+	if (*pamh) {
+	    pam_end(*pamh, PAM_SUCCESS);
+	    *pamh = NULL;
+	}
 #endif
     }
     Debug ("Display %s exiting with status %d\n", d->name, status);
@@ -707,7 +597,7 @@ StartClient (
     char **e, **envinit;
     extern char **environ;
 #endif
-#ifdef USE_PAM 
+#ifdef USE_PAM
     pam_handle_t **pamh = thepamh();
 #endif
 
@@ -738,7 +628,7 @@ StartClient (
 	    free (buf);
     }
 #ifdef USE_PAM
-    if (pamh && *pamh)
+    if (*pamh)
 	pam_open_session(*pamh, 0);
 #endif    
     removeAuth = 1;
@@ -754,7 +644,7 @@ StartClient (
 
 #ifdef USE_PAM
 	/* pass in environment variables set by libpam and modules it called */
-	if (pamh && *pamh) {
+	if (*pamh) {
 	    long i;
 	    char **pam_env = pam_getenvlist(*pamh);
 	    for(i = 0; pam_env && pam_env[i]; i++)
@@ -786,7 +676,7 @@ StartClient (
 	}
 #  endif   /* QNX4 doesn't support multi-groups, no initgroups() */
 #  ifdef USE_PAM
-	if (pamh && *pamh)
+	if (*pamh)
 	    pam_setcred(*pamh, 0);
 #  endif
 	if (setuid(verify->uid) < 0)

@@ -37,8 +37,6 @@ from The Open Group.
 # include   "dm.h"
 # include   "dm_error.h"
 
-#include <X11/Xmu/SysUtil.h>	/* for XmuGetHostname */
-
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
 #include <signal.h>

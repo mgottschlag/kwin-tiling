@@ -95,50 +95,66 @@ Running KDM from init
    like the welcome message, background wallpaper, and users to allow
    login via KDM.
 
-Debugging
----------
+"It doesn't work!!"
+-------------------
 
-a) Only the greeter (the login dialog):
+In this case you should provide me some information, so I can analyze 
+the problem. Obtaining debugging output:
 
-- run "make greeter" (from this directory)
+a) Create some useful logs from a "real" session
+
+- run "kdm -debug 1"
+- let it crash (or whatever your problem is)
+- send me the generated syslog messages (often found in /var/log/debug.log
+  and /var/log/daemon.log; make sure, that your system logs the daemon.*
+  facility (look at /etc/syslog.conf)).
+
+b) Only the greeter (the login dialog):
+
+- run "make greetest" (from this directory)
 - run the greeter:
   * assuming that you have Xnest and want to use it:
     - start an X session
     - start "Xnest :1"
     - open a root shell
       - run "gdb ./greetest"
-        - type "run '' :1"
+        - type "run greeter/.libs/libKdmGreet.so :1"
+	  (on a.out systems this would be libKdmGreet.a, i think).
   * without Xnest (note, that you have to run the root shell
     from another virtual terminal, as the greeter grabs the keyboard
     and thus makes the whole x session unusable):
     - open a root shell (in another vt or a remote session)
       - run "gdb ./greetest"
-        - type "run"
+        - type "run greeter/.libs/libKdmGreet.so"
   * now the steps are common:
           - perform the steps that make kdm crash - note, that the greeter
 	    behaves a bit different, when run in Xnest.
-        - type "where full" - send me the output
+        - type "where full" - send me the output.
+	  if this doesn't work ("full not found"), send me the "bt" output.
         - type "bt" (the same as above, but shorter - only for you)
-        - type "l <function>", where <function> is the topmost function 
-	  listed by "bt" (e.g., GreetUser or KGreeter::KGreeter). if gdb 
+        - type "l <function>,<line>", where <function> is the topmost function 
+	  listed by "bt" (e.g., GreetUser or KGreeter::KGreeter) and <line> is
+	  the number behind the colon behind the function name. if gdb 
 	  gives an error message instead of listing some code, try the 
 	  functions from the following lines until you get a source listing. 
 	  send me this listing.
 	- type "q"
 
-b) The whole manager
+c) The greeter inside a "real" session process
+
+- run kdm
+- run "gdb kdm `pidof -- -:0`"
+  * perform the above common steps to generate some useful output
+  clean exit from gdb, if kdm did not crash for some reason:
+  - press ctrl-c
+  - type "detach"
+  - type "q"
+
+d) The manager's startup (if the X-server doesn't even start)
 
 - run "gdb kdm"
   - type "run -debug 15"
-  * perform the above steps to generate some useful output
-
-c) Create some useful logs from a "real" session
-
-- run "kdm -debug 1"
-- let it crash
-- send me the generated syslog messages (often found in /var/log/debug.log
-  and /var/log/daemon.log; make sure, that your system logs the daemon.*
-  facility (look at /etc/syslog.conf)).
+  * perform the above common steps to generate some useful output
 
 
 Differences from xdm

@@ -25,18 +25,7 @@
 #ifndef KDM_CONFIG_H_
 #define KDM_CONFIG_H_
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-/* to avoid INT32 conflict between <qglobal.h> and <X/Xmd.h>. */ 
-#ifndef QT_CLEAN_NAMESPACE
-# define QT_CLEAN_NAMESPACE
-#endif
-
-#if defined(GREETER) && !defined(GREET_USER_STATIC)
-# define GREET_LIB
-#endif
+#include <config.h>
 
 #ifdef XDMBINDIR
 # define BINDIR XDMBINDIR
@@ -55,18 +44,6 @@
 
 #ifdef HAVE_PATHS_H
 # include <paths.h>
-#endif
-
-#ifdef HAVE_PAM
-# define USE_PAM
-#else
-# ifdef HAVE_SHADOW
-#  define USESHADOW
-# endif
-#endif
-
-#ifdef HAVE_SYSLOG_H
-# define USE_SYSLOG
 #endif
 
 #ifndef _PATH_VARRUN
@@ -100,6 +77,18 @@
 
 #ifdef HAVE_SETUSERCONTEXT
 # define HAS_SETUSERCONTEXT
+#endif
+
+#ifdef HAVE_PAM
+# define USE_PAM
+#else
+# ifdef HAVE_SHADOW
+#  define USESHADOW
+# endif
+#endif
+
+#ifdef HAVE_SYSLOG_H
+# define USE_SYSLOG
 #endif
 
 #endif /* KDM_CONFIG_H */

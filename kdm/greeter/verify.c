@@ -257,8 +257,7 @@ Verify (struct display *d, struct greet_info *greet, struct verify_info *verify,
     int			quietlog;
 #endif
 #ifdef USE_LOGIN_CAP
-# ifdef __bsdi__
-    /* This only works / is needed on BSDi */
+# ifdef HAVE_LOGIN_GETCLASS
     login_cap_t		*lc;
 # else
     struct login_cap	*lc;
@@ -467,8 +466,7 @@ done:
 #endif
 
 #ifdef USE_LOGIN_CAP
-# ifdef __bsdi__
-    /* This only works / is needed on BSDi */
+# ifdef HAVE_LOGIN_GETCLASS
     lc = login_getclass(p->pw_class);
 # else
     lc = login_getpwclass(p);
@@ -530,6 +528,11 @@ nolog_succ:
 /* restrict_expired */
 #if defined(HAVE_PW_EXPIRE) || defined(USESHADOW) /* && !defined(USE_PAM) ? */
 
+# if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW)
+    if (!sp)
+	goto spbad;
+# endif
+
 # define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
 
     tim = time(NULL);
@@ -584,6 +587,10 @@ nolog_succ:
 	    retv = V_PWEXPIRE;
 	}
     }
+
+# if !defined(HAVE_PW_EXPIRE) || (!defined(USE_LOGIN_CAP) && defined(USESHADOW))
+spbad:
+# endif
 
 #endif /* HAVE_PW_EXPIRE || USESHADOW */
 

@@ -710,3 +710,5 @@ int LiloInfo::setNextBootOption ( int nextBootOptionIndex, bool clearNextOption 
 	// Return the error code
 	return error;
 }
+
+#include "liloinfo.moc"

@@ -501,11 +501,6 @@ extern void freeArgs (char **argv);
 extern void freeEnv (char **env);
 extern void printEnv (char **e);
 
-/* in verify.c */
-typedef enum verifyRet { V_ERROR, V_FAIL, V_NOHOME, V_NOLOGIN, V_NOROOT, V_BADSHELL, V_BADTIME, V_AEXPIRED, V_PEXPIRED, V_OK, V_AWEXPIRE, V_PWEXPIRE } VerifyRet;
-extern VerifyRet Verify (struct display *d, struct greet_info *greet, struct verify_info *verify, time_t *expire, char **nologin);
-extern VerifyRet VerifyRoot (const char* pw);
-
 #ifdef XDMCP
 
 /* in xdmcp.c */

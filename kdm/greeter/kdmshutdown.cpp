@@ -37,7 +37,7 @@
 #include <kapp.h>
 #include <klocale.h>
 
-#include "liloinfo.moc"
+#include "liloinfo.h"
 
 static inline void
 set_min( QWidget* w)
