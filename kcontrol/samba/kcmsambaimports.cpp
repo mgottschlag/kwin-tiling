@@ -32,7 +32,7 @@
 #include <iostream.h>
 #include <fstream.h>
 
-#define SCREEN_XY_OFFSET 20
+#define IMP_SCREEN_XY_OFFSET 20
 
 ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
    : QWidget (parent, name)
@@ -41,7 +41,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
 {
     QBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setAutoAdd(true);
-    topLayout->setMargin(SCREEN_XY_OFFSET);
+    topLayout->setMargin(IMP_SCREEN_XY_OFFSET);
     topLayout->setSpacing(10);
     
     list.setAllColumnsShowFocus(true);

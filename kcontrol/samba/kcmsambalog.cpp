@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <stdio.h>
 
-#define SCREEN_XY_OFFSET 20
+#define LOG_SCREEN_XY_OFFSET 10
 
 LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 : QWidget (parent, name)
@@ -91,11 +91,11 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
      " on this page. The log file (shown above) will be read to obtain the"
      " events logged by samba.") );
 
-   mainLayout->setMargin(SCREEN_XY_OFFSET);
+   mainLayout->setMargin(LOG_SCREEN_XY_OFFSET);
    mainLayout->setSpacing(10);
-   leLayout->setMargin(SCREEN_XY_OFFSET);
+   leLayout->setMargin(0);
    leLayout->setSpacing(10);
-   subLayout->setMargin(SCREEN_XY_OFFSET);
+   subLayout->setMargin(0);
    subLayout->setSpacing(10);
 
    logFileName.setURL("/var/log/samba.log");

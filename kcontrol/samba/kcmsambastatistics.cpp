@@ -38,7 +38,7 @@
 
 #include <iostream.h>
 
-#define SCREEN_XY_OFFSET 20
+#define STAT_SCREEN_XY_OFFSET 15
 
 StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name)
    :QWidget (parent, name)
@@ -66,11 +66,11 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    viewStatistics->setFocusPolicy(QWidget::ClickFocus);
    viewStatistics->setShowSortIndicator(true);
    
-   viewStatistics->addColumn(i18n("Nr"),50);
-   viewStatistics->addColumn(i18n("Event"),150);
-   viewStatistics->addColumn(i18n("Service/File"),210);
-   viewStatistics->addColumn(i18n("Host/User"),100);
-   viewStatistics->addColumn(i18n("Hits"),70);
+   viewStatistics->addColumn(i18n("Nr"),30);
+   viewStatistics->addColumn(i18n("Event"),130);
+   viewStatistics->addColumn(i18n("Service/File"),200);
+   viewStatistics->addColumn(i18n("Host/User"),90);
+   viewStatistics->addColumn(i18n("Hits"),50);
    //viewStatistics->addColumn(i18n("Percentage"),100);
 
    eventCb->insertItem(i18n("Connection"));
@@ -82,23 +82,23 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    serviceLe->setText("*");
    hostLe->setText("*");
    
-   viewStatistics->setMinimumSize(425,200);
+   viewStatistics->setMinimumSize(375,200);
    connectionsL->setMinimumSize(connectionsL->sizeHint());
    filesL->setMinimumSize(filesL->sizeHint());
    eventL->setMinimumSize(eventL->sizeHint());
    eventCb->setMinimumSize(eventCb->sizeHint());
    hostL->setMinimumSize(hostL->sizeHint());
-   hostLe->setMinimumSize(150,hostLe->sizeHint().height());
+   hostLe->setMinimumSize(120,hostLe->sizeHint().height());
    serviceL->setMinimumSize(serviceL->sizeHint());
-   serviceLe->setMinimumSize(150,serviceLe->sizeHint().height());
+   serviceLe->setMinimumSize(120,serviceLe->sizeHint().height());
    calcButton->setMinimumSize(calcButton->sizeHint());
    clearButton->setMinimumSize(clearButton->sizeHint());
    expandedInfoCb->setMinimumSize(expandedInfoCb->sizeHint());
    expandedUserCb->setMinimumSize(expandedUserCb->sizeHint());
    
    QVBoxLayout *topLayout=new QVBoxLayout(this);
-   topLayout->setMargin(SCREEN_XY_OFFSET);
-   topLayout->setSpacing(10);
+   topLayout->setMargin(8);
+   topLayout->setSpacing(7);
    topLayout->addWidget(viewStatistics,1);
    QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
    subLayout->setColStretch(1,1);
