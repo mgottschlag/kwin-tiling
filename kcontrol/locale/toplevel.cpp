@@ -132,7 +132,7 @@ void KLocaleApplication::moduleChanged(bool state)
 
 QString KLocaleApplication::quickHelp()
 {
-  return i18n("<h1>Locale</h1>\n"
+  return locale->translate("<h1>Locale</h1>\n"
 	      "<p>From here you can configure language, numberic, and time \n"
 	      "settings for your particular region. In most cases it will be \n"
 	      "suffient to choose the country you live in. For instance KDE \n"
@@ -170,7 +170,7 @@ void KLocaleApplication::reTranslate()
   delete list;
 
   // Here we have the pointer
-  gbox->setCaption(i18n("Examples"));
+  gbox->setCaption(locale->translate("Examples"));
   tab->changeTab(localemain, locale->translate("&Locale"));
   tab->changeTab(localenum, locale->translate("&Numbers"));
   tab->changeTab(localemon, locale->translate("&Money"));

@@ -62,7 +62,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedCountry(int)) );
     tl1->addWidget(label, 1, 1);
     tl1->addWidget(comboCountry, 1, 2);
-    wtstr = i18n("Here you can choose your country. The settings"
+    wtstr = locale->translate("Here you can choose your country. The settings"
       " for language, numbers etc. will automatically switch to the"
       " corresponding values.");
     QWhatsThis::add( label, wtstr );
@@ -76,7 +76,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedLanguage(int)) );
     tl1->addWidget(label, 2, 1);
     tl1->addWidget(comboLang, 2, 2);
-    wtstr = i18n("Here you can choose the language that will be used"
+    wtstr = locale->translate("Here you can choose the language that will be used"
       " by KDE. If only US English is available, no translations have been"
       " installed. You can get translations packages for many languages from"
       " the place you got KDE from. <p> Note that some applications may not be translated to"
@@ -93,7 +93,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedNumber(int)) );
     tl1->addWidget(label, 3, 1);
     tl1->addWidget(comboNumber, 3, 2);
-    wtstr = i18n( "Here you can choose a national setting to display"
+    wtstr = locale->translate( "Here you can choose a national setting to display"
       " numbers. You can also customize this using the 'Numbers' tab." );
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( comboNumber, wtstr );
@@ -106,7 +106,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedMoney(int)) );
     tl1->addWidget(label, 4, 1);
     tl1->addWidget(comboMoney, 4, 2);
-    wtstr = i18n( "Here you can choose a national setting to display"
+    wtstr = locale->translate( "Here you can choose a national setting to display"
       " monetary values. You can also customize this using the 'Money' tab." );
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( comboMoney, wtstr );
@@ -119,7 +119,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedTime(int)) );
     tl1->addWidget(label, 5, 1);
     tl1->addWidget(comboDate, 5, 2);
-    wtstr = i18n( "Here you can choose a national setting to display"
+    wtstr = locale->translate( "Here you can choose a national setting to display"
       " date and time. You can also customize this using the 'Time & dates' tab." );
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( comboDate, wtstr );
@@ -132,7 +132,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 	     this, SLOT(changedCharset(int)) );
     tl1->addWidget(label, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
-    wtstr = i18n( "Here you can choose the charset KDE uses to display"
+    wtstr = locale->translate( "Here you can choose the charset KDE uses to display"
       " text. ISO 8859-1 is default and should work for you if you use some"
       " Western European language. If not, you may have to choose a different"
       " charset." );
@@ -298,7 +298,7 @@ void KLocaleConfig::defaults()
 
 QString KLocaleConfig::quickHelp()
 {
-  return i18n("<h1>Locale</h1> Here you can select from several predefined"
+  return locale->translate("<h1>Locale</h1> Here you can select from several predefined"
     " national settings, i.e. your country, the language that will be used by the"
     " KDE desktop, the way numbers and dates are displayed etc. In most cases it will be"
     " sufficient to choose the country you live in. For instance KDE"

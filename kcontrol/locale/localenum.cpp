@@ -54,7 +54,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edDecSym, 0, 2);
-  wtstr = i18n( "Here you can define the decimal separator used to display numbers (i.e. a dot or a comma in most countries).<p>"
+  wtstr = locale->translate( "Here you can define the decimal separator used to display numbers (i.e. a dot or a comma in most countries).<p>"
     " Note that the decimal separator used to display monetary values has to be set"
     " separately (see the 'Money' tab)." );
   QWhatsThis::add( label, wtstr );
@@ -65,7 +65,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edThoSep, 1, 2);
-  wtstr = i18n( "Here you can define the thousands separator used to display numbers.<p>"
+  wtstr = locale->translate( "Here you can define the thousands separator used to display numbers.<p>"
     " Note that the thousands separator used to display monetary values has to be set"
     " separately (see the 'Money' tab)." );
   QWhatsThis::add( label, wtstr );
@@ -76,7 +76,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(edMonPosSign, 2, 2);
-  wtstr = i18n( "Here you can specify text used to prefix positive numbers."
+  wtstr = locale->translate( "Here you can specify text used to prefix positive numbers."
     " Most people leave this blank." );
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( edMonPosSign, wtstr );
@@ -86,7 +86,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
   tl1->addWidget(label, 3, 1);
   tl1->addWidget(edMonNegSign, 3, 2);
-  wtstr = i18n( "Here you can specify text used to prefix negative numbers."
+  wtstr = locale->translate( "Here you can specify text used to prefix negative numbers."
     " This shouldn't be empty, so you can distinguis positive and negative numbers."
     " It's normally set to minus (-)." );
   QWhatsThis::add( label, wtstr );

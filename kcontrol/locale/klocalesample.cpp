@@ -53,7 +53,7 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     numberSample = new QLabel(parent);
     addWidget(numberSample, 1, 2);
 
-    wtstr = i18n("This is how numbers will be displayed.");
+    wtstr = locale->translate("This is how numbers will be displayed.");
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( numberSample, wtstr );
 
@@ -63,7 +63,7 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     moneySample = new QLabel(parent);
     addWidget(moneySample, 2, 2);
 
-    wtstr = i18n("This is how monetary values will be displayed.");
+    wtstr = locale->translate("This is how monetary values will be displayed.");
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( moneySample, wtstr );
 
@@ -73,7 +73,7 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     dateSample = new QLabel(parent);
     addWidget(dateSample, 3, 2);
 
-    wtstr = i18n("This is how date values will be displayed.");
+    wtstr = locale->translate("This is how date values will be displayed.");
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( dateSample, wtstr );
 
@@ -83,7 +83,7 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     dateShortSample = new QLabel(parent);
     addWidget(dateShortSample, 4, 2);
 
-    wtstr = i18n("This is how date values will be displayed using a short notation.");
+    wtstr = locale->translate("This is how date values will be displayed using a short notation.");
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( dateShortSample, wtstr );
 
@@ -93,7 +93,7 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     timeSample = new QLabel(parent);
     addWidget(timeSample, 5, 2);
 
-    wtstr = i18n("This is how the time will be displayed.");
+    wtstr = locale->translate("This is how the time will be displayed.");
     QWhatsThis::add( label, wtstr );
     QWhatsThis::add( timeSample, wtstr );
 }
