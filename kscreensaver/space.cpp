@@ -71,6 +71,11 @@
 #endif
 #include <GL/gl.h>
 #include <GL/glx.h>
+#ifdef HAVE_GL_GLUT_H
+// We don't need GLUT, but some BROKEN GLU implemenations, such as the one
+// used in SuSE Linux 6.3, do. :(
+#include <GL/glut.h>
+#endif
 #include <GL/glu.h>
 
 #ifndef PI

@@ -1,5 +1,5 @@
 AC_HAVE_GL(GL_SAVERS="kmorph3d.kss kspace.kss kpipes.kss",GL_SAVERS="")
-AC_CHECK_HEADERS(GL/xmesa.h)
+AC_CHECK_HEADERS(GL/xmesa.h GL/glut.h)
 AC_SUBST(GL_SAVERS)
 AC_HAVE_XPM(XPM_SAVERS="kbat.kss",XPM_SAVERS="")
 AC_SUBST(XPM_SAVERS)
