@@ -41,14 +41,15 @@ namespace KHotKeys
 
 Gesture* gesture_handler;
 
-Gesture::Gesture( bool enabled_P, QObject* parent_P )
+Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
     : _enabled( false ), recording( false )
     {
     (void) new DeleteObject( this, parent_P );
     assert( gesture_handler == NULL );
     gesture_handler = this;
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
-    enable( enabled_P );
+// HACK needs to be enabled explicitly, otherwise the grab is done before reading settings
+//    enable( enabled_P );
     }
       
 Gesture::~Gesture()
