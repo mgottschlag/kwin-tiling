@@ -132,6 +132,16 @@ KFonts::KFonts(QWidget *parent, const char *name)
     item->setRC( "General", "fixedFont" );
     fontUseList.append( item );
 
+    item = new FontUseItem( i18n("Desktop icon font"),
+			    QFont( "helvetica", 12 )  );
+    item->setRC( "FMSettings", "StandardFont", "kdesktoprc" );
+    fontUseList.append( item );
+
+    item = new FontUseItem( i18n("File Manager font"),
+			    QFont( "helvetica", 12 )  );
+    item->setRC( "FMSettings", "StandardFont", "konquerorrc" );
+    fontUseList.append( item );
+
     item = new FontUseItem( i18n("Toolbar font"),
 			    QFont( "helvetica", 10 ) );
     item->setRC( "General", "toolBarFont" );
