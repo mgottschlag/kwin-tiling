@@ -31,6 +31,9 @@
 #include <klineedit.h>
 #include <kicondialog.h>
 #include <kdesktopfile.h>
+#include <kurlrequester.h>
+#include <kfiledialog.h>
+
 
 #include "basictab.h"
 #include "basictab.moc"
@@ -57,7 +60,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
     _commentEdit = new KLineEdit(general_group);
-    _execEdit = new KLineEdit(general_group);
+    _execEdit = new KURLRequester(general_group);
     _typeEdit = new KLineEdit(general_group);
 
     // connect line inputs
@@ -88,7 +91,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     (void) new QLabel(i18n("Work Path"), hbox);
     hbox->setSpacing(KDialog::spacingHint());
 
-    _pathEdit = new KLineEdit(hbox);
+    _pathEdit = new KURLRequester(hbox);
+    _pathEdit->fileDialog()->setMode(KFile::Directory | KFile::LocalOnly);
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged(const QString&)));
     vbox->addWidget(hbox);
@@ -141,7 +145,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _uidEdit->setEnabled(false);
 
     layout->setRowStretch(0, 2);
-    
+
     connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
@@ -164,13 +168,13 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _path_group->setEnabled(isDF);
     _term_group->setEnabled(isDF);
     _uid_group->setEnabled(isDF);
-    
+
     // clean all disabled fields and return if it is not a .desktop file
     if (!isDF) {
 
-          _execEdit->setText("");
+          _execEdit->lineEdit()->setText("");
 	  _typeEdit->setText("");
-	  _pathEdit->setText("");
+	  _pathEdit->lineEdit()->setText("");
 	  _termOptEdit->setText("");
 	  _uidEdit->setText("");
 	  _terminalCB->setChecked(false);
@@ -179,9 +183,9 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
 	  return;
     }
 
-    _execEdit->setText(df.readEntry("Exec"));
+    _execEdit->lineEdit()->setText(df.readEntry("Exec"));
     _typeEdit->setText(df.readType());
-    _pathEdit->setText(df.readPath());
+    _pathEdit->lineEdit()->setText(df.readPath());
     _termOptEdit->setText(df.readEntry("TerminalOptions"));
     _uidEdit->setText(df.readEntry("X-KDE-Username"));
 
@@ -213,9 +217,9 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 	    return;
 	}
 
-    df.writeEntry("Exec", _execEdit->text());
+    df.writeEntry("Exec", _execEdit->lineEdit()->text());
     df.writeEntry("Type", _typeEdit->text());
-    df.writeEntry("Path", _pathEdit->text());
+    df.writeEntry("Path", _pathEdit->lineEdit()->text());
 
     if (_terminalCB->isChecked())
 	df.writeEntry("Terminal", 1);

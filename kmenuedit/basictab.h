@@ -26,6 +26,7 @@ class KLineEdit;
 class KIconButton;
 class QCheckBox;
 class QGroupBox;
+class KURLRequester;
 
 class BasicTab : public QWidget
 {
@@ -51,8 +52,9 @@ protected slots:
     void uidcb_clicked();
 
 protected:
-    KLineEdit    *_nameEdit, *_commentEdit, *_execEdit, *_typeEdit;
-    KLineEdit    *_termOptEdit, *_uidEdit, *_pathEdit;
+    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit;
+    KURLRequester *_execEdit, *_pathEdit;
+    KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB;
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group;
