@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #include <qcolor.h>
 
@@ -18,6 +19,7 @@
 #include <kdebug.h>
 #include <kapp.h>
 #include <kcmdlineargs.h>
+#include <kcrash.h>
 
 #include "demowin.h"
 #include "saver.h"
@@ -38,6 +40,12 @@ static const KCmdLineOptions options[] =
   { 0,0,0 }
 };
 
+static void crashHandler( int sig )
+{
+    signal( sig, SIG_DFL );
+    abort();
+}
+
 //----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
@@ -47,6 +55,8 @@ int main(int argc, char *argv[])
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
+
+    KCrash::setCrashHandler( crashHandler );
 
     DemoWindow *demoWidget = 0;
     Window saveWin = 0;
