@@ -26,13 +26,11 @@ classFileSelector::~classFileSelector()
 
 void classFileSelector::pButton_Clicked()
 {
-/*
-	QString qsFile( QFileDialog::getOpenFileName() );
+	QString qsFile( KFileDialog::getOpenFileName( "/usr/local/lib" ) );
 	if ( qsFile.isNull() )
 		return;
 
 	pLineEdit->setText( qsFile );
-*/
 }
 
 

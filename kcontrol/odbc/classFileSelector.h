@@ -4,9 +4,7 @@
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
-// QDir has errors in it???
-// #include <qfiledialog.h>
+#include <kfiledialog.h>
 
 class classFileSelector : public QWidget
 {

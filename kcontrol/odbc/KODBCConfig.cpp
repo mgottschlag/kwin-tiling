@@ -1,3 +1,6 @@
+#ifndef KODBCCONFIG_H
+#define KODBCCONFIG_H
+
 #include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -31,7 +34,6 @@ KODBCConfig::KODBCConfig( QWidget *pParent, const char *pszName )
 	pTabs->resize( 400, 325 );
 
 	setButtons( 0 );
-//	setButtons( KCModule::Ok | KCModule::Apply );
 }
 
 void KODBCConfig::load()
@@ -50,4 +52,4 @@ void KODBCConfig::defaults()
 	emit changed( true );
 }
 
-
+#endif
