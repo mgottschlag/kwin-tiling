@@ -21,12 +21,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>    
+#include <unistd.h>
 
 #include <qlabel.h>
 #include <qmsgbox.h>
 #include <qcombo.h>
-#include <qpixmap.h> 
+#include <qpixmap.h>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qtextstream.h>
@@ -53,19 +53,19 @@ Tzone::Tzone(QWidget * parent, const char *name)
 
   QVBoxLayout *v1 = new QVBoxLayout( frame1, 10 );
 
-	currentzonetitle = new QLabel(this);
-	currentzonetitle->setAutoResize(true);
-	currentzonetitle->setText(i18n("Current time zone: "));
-	currentzonetitle->move(10, 10);
+        currentzonetitle = new QLabel(this);
+        currentzonetitle->setAutoResize(true);
+        currentzonetitle->setText(i18n("Current time zone: "));
+        currentzonetitle->move(10, 10);
 
-	currentzone = new QLabel(this);
-	currentzone->setAutoResize(true);
-	currentzone->move(currentzonetitle->width() + 20, 10);
+        currentzone = new QLabel(this);
+        currentzone->setAutoResize(true);
+        currentzone->move(currentzonetitle->width() + 20, 10);
 
-	QLabel* instructions = new QLabel(this);
-	instructions->setAutoResize(true);
-	instructions->setText(i18n("To change the timezone, select your area from the list below:"));
-	instructions->move(10, 50);
+        QLabel* instructions = new QLabel(this);
+        instructions->setAutoResize(true);
+        instructions->setText(i18n("To change the timezone, select your area from the list below:"));
+        instructions->move(10, 50);
 
   tzonelist = new QComboBox( FALSE, frame1, "ComboBox_1" );
   connect( tzonelist, SIGNAL(activated(int)), SLOT(zone_changed()) );
@@ -86,121 +86,121 @@ Tzone::Tzone(QWidget * parent, const char *name)
 
 void Tzone::fillTimeZones()
 {
-	FILE *f;
-	char tempstring[101] = "Unknown";
-	QStrList list;
+        FILE *f;
+        char tempstring[101] = "Unknown";
+        QStrList list;
 
-	getCurrentZone(tempstring);
-	currentzone->setText(tempstring);
+        getCurrentZone(tempstring);
+        currentzone->setText(tempstring);
 
-	tzonelist->insertItem(i18n("[No selection]"));
-	// Read all system time zones
-	system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
-	if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-	{
-		while(fgets(tempstring, 100, f) != NULL)
-		{
-			list.inSort(QString(tempstring));
-		}
-		fclose(f);
-	}
-	remove("/tmp/_tzone_.txt");
-	tzonelist->insertStrList(&list);
+        tzonelist->insertItem(i18n("[No selection]"));
+        // Read all system time zones
+        system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
+        if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
+        {
+                while(fgets(tempstring, 100, f) != NULL)
+                {
+                        list.inSort(tempstring);
+                }
+                fclose(f);
+        }
+        remove("/tmp/_tzone_.txt");
+        tzonelist->insertStrList(&list);
 }
 
 void Tzone::getCurrentZone(char* szZone)
 {
-	FILE *f;
+        FILE *f;
 
-	// Read the current time zone
-	system("date +%Z > /tmp/_tzone_.txt");
-	if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-	{
-		fscanf(f, "%s", szZone);
-		fclose(f);
-	}
-	remove("/tmp/_tzone_.txt");
+        // Read the current time zone
+        system("date +%Z > /tmp/_tzone_.txt");
+        if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
+        {
+                fscanf(f, "%s", szZone);
+                fclose(f);
+        }
+        remove("/tmp/_tzone_.txt");
 }
 
-void Tzone::load() 
+void Tzone::load()
 {
   KConfig *config = KGlobal::config();
   config->setGroup("tzone");
-	FILE *f;
-	char tempstring[101] = "Unknown";
-	char szCurrentlySet[101] = "Unknown";
-	QStrList list;
-	int nCurrentlySet = 0;
+        FILE *f;
+        char tempstring[101] = "Unknown";
+        char szCurrentlySet[101] = "Unknown";
+        QStrList list;
+        int nCurrentlySet = 0;
 
-	getCurrentZone(tempstring);
-	currentzone->setText(tempstring);
+        getCurrentZone(tempstring);
+        currentzone->setText(tempstring);
 
-	// read the currently set time zone
-	if((f = fopen("/etc/timezone", "r")) != NULL)
-	{
-		// get the currently set timezone
-		fgets(szCurrentlySet, 100, f);
-		fclose(f);
-	}
+        // read the currently set time zone
+        if((f = fopen("/etc/timezone", "r")) != NULL)
+        {
+                // get the currently set timezone
+                fgets(szCurrentlySet, 100, f);
+                fclose(f);
+        }
 
-	tzonelist->insertItem(i18n("[No selection]"));
-	// Read all system time zones
-	system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
-	if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
-	{
-		while(fgets(tempstring, 100, f) != NULL)
-		{
-			list.inSort(QString(tempstring));
-		}
-		fclose(f);
-	}
-	remove("/tmp/_tzone_.txt");
-	tzonelist->insertStrList(&list);
+        tzonelist->insertItem(i18n("[No selection]"));
+        // Read all system time zones
+        system("cat /usr/share/zoneinfo/zone.tab | grep -e  ^[^#] | cut -f 3 > /tmp/_tzone_.txt");
+        if((f = fopen("/tmp/_tzone_.txt", "r")) != NULL)
+        {
+                while(fgets(tempstring, 100, f) != NULL)
+                {
+                        list.inSort(tempstring);
+                }
+                fclose(f);
+        }
+        remove("/tmp/_tzone_.txt");
+        tzonelist->insertStrList(&list);
 
-	// find the currently set time zone and select it
-	for (int i = 0; i < tzonelist->count(); i++)
-	{
-		if (stricmp (tzonelist->text(i), szCurrentlySet) == 0)
-		{
-			nCurrentlySet = i;
-			break;
-		}
-	}
+        // find the currently set time zone and select it
+        for (int i = 0; i < tzonelist->count(); i++)
+        {
+                if (tzonelist->text(i) == QString::fromLatin1(szCurrentlySet))
+                {
+                        nCurrentlySet = i;
+                        break;
+                }
+        }
 
-	tzonelist->setCurrentItem(nCurrentlySet);
+        tzonelist->setCurrentItem(nCurrentlySet);
 }
 
 void Tzone::save()
 {
-	QString tz;
-	QString selectedzone(tzonelist->currentText());
-	QString currentlySetZone;
+        QString tz;
+        QString selectedzone(tzonelist->currentText());
+        QString currentlySetZone;
 
-	if( selectedzone != i18n("[No selection]"))
-	{
-		QFile fTimezoneFile("/etc/timezone");
+        if( selectedzone != i18n("[No selection]"))
+        {
+                QFile fTimezoneFile("/etc/timezone");
 
-		if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
-		{
-			QTextStream t(&fTimezoneFile);
-			t << selectedzone;
-			fTimezoneFile.close();
-		}
-	}
+                if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
+                {
+                        QTextStream t(&fTimezoneFile);
+                        t << selectedzone;
+                        fTimezoneFile.close();
+                }
+        }
 
   tz.sprintf("/usr/share/zoneinfo/%s", (tzonelist->currentText()).data());
-	tz.truncate(tz.length()-1);
+  tz.truncate(tz.length()-1);
 
   kdDebug() << "Set time zone " << tz << endl;
-  
+
   // This is extremely ugly. Who knows the better way?
   unlink( "/etc/localtime" );
-  if (symlink( tz, "/etc/localtime" ) != 0)
-	{
-		QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
-	}
+  if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
+        {
+                QMessageBox::warning( 0, i18n("Timezone Error"), i18n("Error setting new Time Zone!"));
+        }
 
-  // write some stuff 
+  // write some stuff
   KConfig *config = KGlobal::config();
   config->setGroup("tzone");
   config->writeEntry("TZ", tzonelist->currentItem() );
