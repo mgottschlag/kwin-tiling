@@ -95,6 +95,7 @@ void KLocaleConfigNumber::loadSettings()
 
 void KLocaleConfigNumber::applySettings()
 {
+  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
@@ -104,12 +105,12 @@ void KLocaleConfigNumber::applySettings()
   QString str;
 
   str = ent.readEntry("DecimalSymbol");
-  if (str != edDecSym->text())
-    config->writeEntry("DecimalSymbol", edDecSym->text());
+  if (str != locale->_decimalSymbol)
+    config->writeEntry("DecimalSymbol", locale->_decimalSymbol, true, true);
 
   str = ent.readEntry("ThousandsSeparator");
-  if (str != edThoSep->text())
-    config->writeEntry("ThousandsSeparator", edThoSep->text());
+  if (str != locale->_thousandsSeparator)
+    config->writeEntry("ThousandsSeparator", locale->_thousandsSeparator, true, true);
 }
 
 void KLocaleConfigNumber::defaultSettings()

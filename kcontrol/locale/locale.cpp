@@ -211,15 +211,16 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
 
 void KLocaleConfig::applySettings()
 {
+  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
 
-  config->writeEntry("Country", comboCountry->currentTag());
-  config->writeEntry("Language", comboLang->currentTag());
-  config->writeEntry("Numeric", comboNumber->currentTag());
-  config->writeEntry("Monetary", comboMoney->currentTag());
-  config->writeEntry("Time", comboDate->currentTag());
+  config->writeEntry("Country", comboCountry->currentTag(), true, true);
+  config->writeEntry("Language", comboLang->currentTag(), true, true);
+  config->writeEntry("Numeric", comboNumber->currentTag(), true, true);
+  config->writeEntry("Monetary", comboMoney->currentTag(), true, true);
+  config->writeEntry("Time", comboDate->currentTag(), true, true);
 
   config->sync();
 

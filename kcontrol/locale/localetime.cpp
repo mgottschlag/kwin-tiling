@@ -95,6 +95,7 @@ void KLocaleConfigTime::loadSettings()
 
 void KLocaleConfigTime::applySettings()
 {
+  KLocale *locale = KGlobal::locale();
   KConfigBase *config = KGlobal::config();
 
   config->setGroup("Locale");
@@ -104,12 +105,12 @@ void KLocaleConfigTime::applySettings()
   QString str;
 
   str = ent.readEntry("TimeFormat");
-  if (str != edTimeFmt->text())
-    config->writeEntry("TimeFormat", edTimeFmt->text());
+  if (str != locale->_timefmt)
+    config->writeEntry("TimeFormat", locale->_timefmt, true, true);
 
   str = ent.readEntry("DateFormat");
-  if (str != edDateFmt->text())
-    config->writeEntry("DateFormat", edDateFmt->text());
+  if (str != locale->_datefmt)
+    config->writeEntry("DateFormat", locale->_datefmt, true, true);
 }
 
 void KLocaleConfigTime::defaultSettings()
