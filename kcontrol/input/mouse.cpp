@@ -399,9 +399,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   config = new KConfig("kcminputrc");
   load();
 
-  KAboutData* about = new KAboutData("kcmmouse", I18N_NOOP("Mouse"), 0,
-        I18N_NOOP("Mouse Control Panel Module"),
-        KAboutData::License_GPL, 0, 0, 0); 
+  KAboutData* about = new KAboutData("kcmmouse", I18N_NOOP("Mouse"), 0, 0,
+        KAboutData::License_GPL, I18N_NOOP("(c) 1997 - 2005 Mouse developers")); 
   about->addAuthor("Patrick Dowler", 0, 0);
   about->addAuthor("Dirk A. Mueller", 0, 0);
   about->addAuthor("David Faure", 0, 0);
