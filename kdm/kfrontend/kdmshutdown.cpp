@@ -22,7 +22,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     */
- 
+
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qvbuttongroup.h>
@@ -130,7 +130,8 @@ KDMShutdown::KDMShutdown( QWidget *_parent )
 	QHBoxLayout *qhb = new QHBoxLayout( box, 10 );
 	qhb->addWidget( plb );
 	qhb->addWidget( pswdEdit );
-
+        set_fixed( pswdEdit );
+        set_min( plb);
 	timer = new QTimer( this );
 	connect( timer, SIGNAL(timeout()), SLOT(timerDone()) );
     } else
@@ -228,9 +229,9 @@ KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
 
 #include "kdmshutdown.moc"
 
-/*  
- * Local variables:  
- * mode: c++  
- * c-file-style: "k&r"  
- * End:  
+/*
+ * Local variables:
+ * mode: c++
+ * c-file-style: "k&r"
+ * End:
 */
