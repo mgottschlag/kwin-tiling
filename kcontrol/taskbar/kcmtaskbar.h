@@ -53,10 +53,19 @@ private:
         Raise,
         Lower,
         Iconify };
+    enum GroupMode {
+        GroupNever = 0,
+        GroupWhenFull,
+        GroupAlways };
+
     static Action buttonAction( ButtonState button, const QString& actionName = QString::null );
     static QString buttonAction( int action );
     static const QStringList& actionList();
     static QStringList i18nActionList();
+    static GroupMode groupMode( const QString& groupModeName = QString::null );
+    static QString groupMode( int groupModeNum );
+    static const QStringList& groupModeList();
+    static QStringList i18nGroupModeList();
     TaskbarConfigUI *ui;
 };
 
