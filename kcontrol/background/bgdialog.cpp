@@ -718,7 +718,10 @@ void BGDialog::slotAdvanced()
        dlg.setCacheSize( 0 );
 
     if( !dlg.exec())
+    {
+        m_previewUpdates = true;
         return;
+    }
 
     int cacheSize = dlg.cacheSize();
     if (cacheSize)
