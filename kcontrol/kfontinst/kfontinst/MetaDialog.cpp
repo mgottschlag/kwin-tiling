@@ -59,17 +59,16 @@ void CMetaDialog::showFiles(const QStringList &files)
     int        c;
 
     for(c=0; c<itsList->columns(); ++c)
-        itsList->setColumnWidth(c, 10);
+        itsList->setColumnWidth(c, 32);
 
     QStringList::ConstIterator it;
 
     for(it=files.begin(); it!=files.end(); ++it)
     {
         KURL    url;
-        QString fName(CMisc::getFile(*it));
 
         url.setPath(CMisc::getDir(*it));
-        url.setFileName(fName);
+        url.setFileName(CMisc::getFile(*it));
         urls.append(url);
     }
 

@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CErrorDialogDialog
+// Class Name    : CErrorDialog
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
 // Creation Date : 02/05/2001
@@ -29,12 +29,14 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "ErrorDialogData.h"
+#include <kdialog.h>
 #include <klistview.h>
 
 class QString;
+class QListView;
+class QGroupBox;
 
-class CErrorDialog : public CErrorDialogData
+class CErrorDialog : public KDialog
 {
     Q_OBJECT
 
@@ -47,6 +49,11 @@ class CErrorDialog : public CErrorDialogData
     void clear() { itsListView->clear(); }
     void add(const QString &file, const QString &reason);
     void open(const QString &str);
+
+    private:
+
+    QListView *itsListView;
+    QGroupBox *itsGroupBox;
 };
 
-#endif // __ERRORDIALOG_H__
+#endif

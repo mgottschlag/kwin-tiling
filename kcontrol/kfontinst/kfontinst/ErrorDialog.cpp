@@ -28,10 +28,45 @@
 
 #include "ErrorDialog.h"
 #include <qgroupbox.h>
+#include <qpushbutton.h>
+#include <qlistview.h>
+#include <qlayout.h>
+#include <klocale.h>
 
 CErrorDialog::CErrorDialog(QWidget *parent, const char *name)
-             : CErrorDialogData(parent, name, true)
+             : KDialog(parent, name, true)
 {
+    resize(312, 239);
+    setCaption(i18n("Errors"));
+
+    QGridLayout *dialogLayout = new QGridLayout(this, 1, 1, 11, 6);
+    QHBoxLayout *layout = new QHBoxLayout(0, 0, 6);
+    QSpacerItem *spacer = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QPushButton *buttonOk = new QPushButton(i18n("&OK"), this);
+
+    layout->addItem(spacer);
+    layout->addWidget(buttonOk);
+
+    dialogLayout->addLayout(layout, 1, 0);
+
+    itsGroupBox = new QGroupBox(this);
+    itsGroupBox->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, itsGroupBox->sizePolicy().hasHeightForWidth()));
+    itsGroupBox->setTitle("12345678901234567890123456789012345678901234567890");
+    itsGroupBox->setColumnLayout(0, Qt::Vertical);
+    itsGroupBox->layout()->setSpacing(6);
+    itsGroupBox->layout()->setMargin(11);
+    QGridLayout *groupBoxLayout = new QGridLayout(itsGroupBox->layout());
+    groupBoxLayout->setAlignment(Qt::AlignTop);
+
+    itsListView = new QListView(itsGroupBox);
+    itsListView->addColumn(i18n("Item"));
+    itsListView->addColumn(i18n("Reason"));
+    itsListView->setSelectionMode(QListView::NoSelection);
+
+    groupBoxLayout->addWidget(itsListView, 0, 0);
+    dialogLayout->addWidget(itsGroupBox, 0, 0);
+
+    connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
 CErrorDialog::~CErrorDialog()
@@ -48,4 +83,5 @@ void CErrorDialog::open(const QString &str)
     itsGroupBox->setTitle(str);
     exec();
 }
+
 #include "ErrorDialog.moc"

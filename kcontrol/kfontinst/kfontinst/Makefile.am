@@ -15,7 +15,6 @@ kcm_fontinst_la_SOURCES = \
         Kfi.cpp KfiCmModule.cpp KfiGlobal.cpp KfiMainWidget.cpp \
         MetaDialog.cpp Misc.cpp SettingsWidget.cpp SettingsWizard.cpp StarOfficeConfig.cpp \
         SysConfigurer.cpp Ttf.cpp UiConfig.cpp XConfig.cpp \
-        ErrorDialogData.ui \
         KfiMainWidgetData.ui \
         SettingsWidgetData.ui SettingsWizardData.ui
 

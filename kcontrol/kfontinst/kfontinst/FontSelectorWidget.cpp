@@ -48,7 +48,7 @@ CFontSelectorWidget::CListViewItem::CListViewItem(CFontSelectorWidget *listWidge
     setText(0, name);
     initIcon(icon);
     setOpen(0==CKfiGlobal::uicfg().getOpenFsDirs().count() ||
-            -1!=CKfiGlobal::uicfg().getOpenFsDirs().findIndex(fullName()) ? true : false);
+            -1!=CKfiGlobal::uicfg().getOpenFsDirs().findIndex(CMisc::dirSyntax(fullName())) ? true : false);
 }
 
 CFontSelectorWidget::CListViewItem::CListViewItem(CFontSelectorWidget *listWidget, QListViewItem *parent, const QString &name)
@@ -115,7 +115,7 @@ QString CFontSelectorWidget::CListViewItem::fullName() const
 void CFontSelectorWidget::CListViewItem::open()
 {
     if(!CFontEngine::isAFont(QFile::encodeName(text(0))) && QDir(fullName()).isReadable()
-       && -1!=CKfiGlobal::uicfg().getOpenFsDirs().findIndex(fullName()))
+       && -1!=CKfiGlobal::uicfg().getOpenFsDirs().findIndex(CMisc::dirSyntax(fullName())))
         setOpen(true);
 }
 
