@@ -609,7 +609,7 @@ void KScreenSaver::slotEnable(bool e)
 //
 void KScreenSaver::slotScreenSaver(int indx)
 {
-    if (!mEnabled || mSelected < 0)
+    if (!mEnabled)
         return;
 
     if (!mSetupProc->isRunning())
@@ -665,6 +665,9 @@ void KScreenSaver::slotSetup()
 //
 void KScreenSaver::slotTest()
 {
+    if ( mSelected == -1 )
+        return;
+
     if (!mTestProc) {
         mTestProc = new KProcess;
     }
