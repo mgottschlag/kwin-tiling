@@ -98,6 +98,8 @@ private slots:
     void slotReverseBlending(bool value);
     void slotLimitCache(bool);
     void slotCacheSize(int);
+    void slotShm(bool);
+    void slotMinOptDepth(int);
 
 private:
     void init();
@@ -119,6 +121,8 @@ private:
     QWidget *m_pTab1, *m_pTab2, *m_pTab3, *m_pTab4;
     QSpinBox *m_pCacheBox;
     QMap<QString,int> m_Wallpaper;
+    QCheckBox* m_pCBShm;
+    QComboBox* m_pMinOptDepth;
 
     QPtrVector<KBackgroundRenderer> m_Renderer;
     KGlobalBackgroundSettings *m_pGlobals;

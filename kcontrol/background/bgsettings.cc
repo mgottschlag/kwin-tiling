@@ -419,6 +419,9 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     defBlendMode = _defBlendMode;
     defBlendBalance = _defBlendBalance;
     defReverseBlending = _defReverseBlending;
+    
+    m_MinOptimizationDepth = _defMinOptimizationDepth;
+    m_bShm = _defShm;
 
     // Background modes
     #define ADD_STRING(ID) m_BMMap[#ID] = ID; m_BMRevMap[ID] = (char *) #ID;
@@ -630,6 +633,39 @@ void KBackgroundSettings::setMultiWallpaperMode(int mode)
 }
 
 
+void KBackgroundSettings::setMinOptimizationDepth(int mode)
+{
+    if (m_MinOptimizationDepth == mode)
+	return;
+    dirty = hashdirty = true;
+    m_MinOptimizationDepth = mode;
+}
+
+bool KBackgroundSettings::optimize() const
+{
+    switch( m_MinOptimizationDepth )
+        {
+        case AlwaysOpt :
+            return true;
+        case Opt16bpp :
+            return QPixmap::defaultDepth() >= 16;
+        case Opt15bpp :
+            return QPixmap::defaultDepth() >= 15;
+        case NeverOpt :
+        default :
+            return false;
+        }
+}
+
+void KBackgroundSettings::setUseShm(bool use)
+{
+    if (m_bShm == use)
+	return;
+    dirty = hashdirty = true;
+    m_bShm = use;
+}
+
+
 void KBackgroundSettings::readSettings(bool reparse)
 {
     if (reparse)
@@ -702,6 +738,10 @@ void KBackgroundSettings::readSettings(bool reparse)
             m_WallpaperMode = mode;
     }
 
+    m_MinOptimizationDepth = m_pConfig->readNumEntry( "MinOptimizationDepth",
+        _defMinOptimizationDepth );
+    m_bShm = m_pConfig->readBoolEntry( "UseSHM", _defShm );
+
     dirty = false; hashdirty = true;
 }
 
@@ -726,6 +766,8 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
     m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
     m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
+    m_pConfig->writeEntry( "MinOptimizationDepth", m_MinOptimizationDepth );
+    m_pConfig->writeEntry( "UseSHM", m_bShm );
 
     m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
@@ -859,6 +901,9 @@ QString KBackgroundSettings::fingerprint()
       s += QString("blb:%1;").arg(m_BlendBalance);
       s += QString("rbl:%1;").arg(int(m_ReverseBlending));
     }
+    s += QString::number( m_bShm );
+    s += QString::number( m_MinOptimizationDepth );
+
     return s;
 }
 

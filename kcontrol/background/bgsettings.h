@@ -205,6 +205,16 @@ public:
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
+    
+    enum MinOptDepth {
+        AlwaysOpt, Opt16bpp, Opt15bpp, NeverOpt };
+        
+    void setMinOptimizationDepth( int mode );
+    int minOptimizationDepth() const { return m_MinOptimizationDepth; }
+    bool optimize() const;
+    
+    void setUseShm( bool use );
+    bool useShm() const { return m_bShm; }
 
     void changeWallpaper(bool init=false);
     void updateWallpaperFiles();
@@ -236,6 +246,8 @@ private:
     int m_BlendMode, defBlendMode;
     int m_BlendBalance, defBlendBalance;
     bool m_ReverseBlending, defReverseBlending;
+    int m_MinOptimizationDepth;
+    bool m_bShm;
 
     int m_MultiMode, defMultiMode;
     int m_Interval, m_LastChange;

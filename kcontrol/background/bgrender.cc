@@ -32,6 +32,7 @@
 #include <kimageeffect.h>
 #include <kprocess.h>
 #include <kimageio.h>
+#include <kpixmapio.h>
 #include <ktempfile.h>
 
 #include <bgdefaults.h>
@@ -179,13 +180,16 @@ int KBackgroundRenderer::doBackground(bool quit)
     static unsigned int tileWidth = 0;
     static unsigned int tileHeight = 0;
     if( tileWidth == 0 )
-        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), 8, 8,
+    // some dithering may be needed even with bpb==16, so don't use tileWidth==1
+    // with tileWidth>2, repainting the desktop causes nasty effect (XFree86 4.1.0 )
+        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), 2, 2,
             &tileWidth, &tileHeight ) != Success )
-            tileWidth = tileHeight = 8; // some defaults
+            tileWidth = tileHeight = 2; // some defaults
 
     switch (bgmode) {
 
     case Flat:
+        // this can be tiled correctly without problems
 	m_pBackground->create( tileWidth, tileHeight, 32);
         m_pBackground->fill(colorA().rgb());
         break;
@@ -232,7 +236,9 @@ int KBackgroundRenderer::doBackground(bool quit)
     case HorizontalGradient:
     {
 	QSize size = m_Size;
-	size.setHeight( tileHeight );
+        // on <16bpp displays the gradient sucks when tiled because of dithering
+        if( optimize())
+	    size.setHeight( tileHeight );
 	*m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::HorizontalGradient, 0);
         break;
@@ -240,7 +246,9 @@ int KBackgroundRenderer::doBackground(bool quit)
     case VerticalGradient:
     {
 	QSize size = m_Size;
-	size.setWidth( tileWidth );
+        // on <16bpp displays the gradient sucks when tiled because of dithering
+        if( optimize())
+	    size.setWidth( tileWidth );
         *m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::VerticalGradient, 0);
         break;
@@ -419,14 +427,25 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
 {
     *m_pImage = QImage();
     // copy background to m_pPixmap
-    if( wallpaperMode() == NoWallpaper ) {
+    if( wallpaperMode() == NoWallpaper && optimize()) {
         // if there's no wallpaper, no need to tile the pixmap to the size of desktop, as X does
         // that automatically and using a smaller pixmap should save some memory
         m_pPixmap->convertFromImage( *m_pBackground );
+        return;
     }
-    else if (m_pBackground->size() == m_Size) {
+    else if( wallpaperMode() == Tiled && !wp.hasAlphaBuffer() && optimize()) {
+    // tiles will be tiled by X automatically
+        if( useShm()) {
+            KPixmapIO io;
+            *m_pPixmap = io.convertToPixmap( *m_pBackground );
+        }
+        else
+            m_pPixmap->convertFromImage( *m_pBackground );
+        return;
+    }
+    else if (m_pBackground->size() == m_Size)
         m_pPixmap->convertFromImage( *m_pBackground );
-    } else {
+    else {
         *m_pPixmap = QPixmap( m_Size );
         QPainter p( m_pPixmap );
         QPixmap pm;
@@ -437,7 +456,12 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
     // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
     if (d.isValid()) {
         QPixmap wp_pixmap;
-        wp_pixmap.convertFromImage( wp );
+        if( useShm()) {
+            KPixmapIO io;
+            wp_pixmap = io.convertToPixmap( wp );
+        }
+        else
+            wp_pixmap.convertFromImage( wp );
         for (int y = d.top(); y < d.bottom(); y += wh) {
 	    for (int x = d.left(); x < d.right(); x += ww) {
 		bitBlt( m_pPixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
@@ -674,9 +698,8 @@ void KBackgroundRenderer::setTile(bool tile)
 QPixmap *KBackgroundRenderer::pixmap()
 {
     if (m_State & AllDone) {
-        if( m_pPixmap->isNull()) {
+        if( m_pPixmap->isNull())
             m_pPixmap->convertFromImage( *m_pImage );
-        }
         return m_pPixmap;
     }
     return 0L;

@@ -19,6 +19,10 @@
 #define _defLimitCache true
 #define _defCacheSize 2048
 
+#define _defShm true
+// there are usually poor results with bpp<16 when tiling
+#define _defMinOptimizationDepth 1
+
 // Per desktop defaults
 // Before you change this get in touch with me (torsten@kde.org)
 // Thanks!!
