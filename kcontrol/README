@@ -176,24 +176,8 @@ X-KDE-FactoryName
 X-KDE-RootOnly
 
 	If this is set to "true", the module must be executed
-	with root permissions. The control center will then call
-	kdesu to get this privileges, and then execute the modules.
-
-	NOTE that it is not possible to have a library run as root
-	in a user process. What the control center does is creating
-	a proxy in the client and run a server process that loads
-	the module as root. The proxy then communicates with the
-	modules via DCOP. Quite tricky, but this makes work with
-	root modules as easy as with normal ones.
-
-
-X-KDE-LocalUser
-
-	This entry, by default, is true and indicates that the modules
-	deals with user specific settings. In contrast, if this
-	entry is set to false, the modules contains machine specific
-	settings, or machine specific informations. The only difference
-	is where the module is displayed.
+	with root permissions. The control center will then show
+    the module only if run in system mode. (kcontrol --system)
 
 
 X-KDE-Group
@@ -220,7 +204,7 @@ Don't forget the usual entries :
 
 Type=Application
 Icon=...
-Exec=kcontrol dir/file
+Exec=kcmshell dir/file
 
 
 What else do I need?
@@ -236,11 +220,6 @@ now. Instead, call "kcmroot module". For example, to get the
 font and the desktop color settings, use
 
   kcmshell Desktop/fonts Desktop/colors
-
-- kcmroot
-
-This module does a similar job, but is used internally for root only
-modules. Do not use it manually!
 
 - multiple instances of kcontrol
 
@@ -276,4 +255,5 @@ to it anyway.
 More questions?
 ---------------
 
-Ask me: Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+Ask: Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+or : Matthias Elter <elter@kde.org>
