@@ -39,7 +39,7 @@ from the copyright holder.
 #include "dm_error.h"
 
 #include <string.h>
-
+#include <signal.h>
 
 static void
 acceptSock (CtrlRec *cr)
