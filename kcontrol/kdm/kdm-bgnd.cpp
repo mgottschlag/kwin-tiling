@@ -131,7 +131,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       QString path = kapp->kde_wallpaperdir().copy();
       QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
-      QStrList list = *d.entryList();
+      QStringList list = *d.entryList();
       if(!wallpaper.isEmpty())
         list.append( wallpaper.data() );
 
@@ -139,8 +139,8 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       for ( uint i = 0; i < list.count(); i++ )
       {
-	wpCombo->insertItem( list.at(i) );
-	if ( wallpaper == list.at(i) )
+	wpCombo->insertItem( *list.at(i) );
+	if ( wallpaper == *list.at(i) )
 		wpCombo->setCurrentItem( i );
       }
 
