@@ -36,8 +36,8 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     QLabel *pixLabel = new QLabel( frame, "pixlabel" );
     pixLabel->setPixmap(DesktopIcon("exit"));
 
-    QLabel *greetLabel = new QLabel(i18n("<nobr><qt><b>An automatic logout has been configured</b></qt><nobr>"), frame);
-    QLabel *infoLabel = new QLabel(i18n("<qt>If you do not want to be logged out, resume using this session before the timeout expires</qt>"), frame);
+    QLabel *greetLabel = new QLabel(i18n("<nobr><qt><b>Automatic Logout</b></qt><nobr>"), frame);
+    QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), frame);
 
     mStatusLabel = new QLabel("<b> </b>", frame);
     mStatusLabel->setAlignment(QLabel::AlignCenter);
@@ -46,10 +46,10 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     unlockDialogLayout->addWidget( frame );
 
     frameLayout = new QGridLayout(frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint());
-    frameLayout->addWidget(pixLabel, 0, 0);
+    frameLayout->addMultiCellWidget(pixLabel, 0, 2, 0, 0, Qt::AlignCenter | Qt::AlignTop);
     frameLayout->addWidget(greetLabel, 0, 1);
-    frameLayout->addMultiCellWidget(mStatusLabel, 1, 1, 0, 1, AlignTop);
-    frameLayout->addMultiCellWidget(infoLabel, 2, 2, 0, 1, AlignTop);
+    frameLayout->addWidget(mStatusLabel, 1, 1);
+    frameLayout->addWidget(infoLabel, 2, 1);
 
     // get the time remaining in seconds for the status label
     mRemaining = COUNTDOWN/1000;
