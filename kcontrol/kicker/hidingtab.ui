@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>HidingTabBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>685</width>
-            <height>437</height>
+            <height>439</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>HidingTabBase</string>
     </property>
     <grid>
         <property name="name">
@@ -737,14 +740,8 @@
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
 <slots>
-    <slot access="protected">hideButtonsSet( int )</slot>
-    <slot access="protected">switchPanel(QListViewItem*)</slot>
+    <slot access="protected" specifier="pure virtual">switchPanel(QListViewItem*)</slot>
 </slots>
-<layoutdefaults spacing="3" margin="6"/>
+<layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>klistview.h</includehint>
-</includehints>
 </UI>

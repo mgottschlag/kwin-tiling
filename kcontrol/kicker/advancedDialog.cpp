@@ -38,7 +38,7 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
                   Cancel,
                   parent,
                   name,
-                  true, true)
+                  true, false)
 {
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(save()));
@@ -49,7 +49,6 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
     QVBoxLayout* layout = new QVBoxLayout(page);
     m_advancedWidget = new advancedKickerOptions(page);
     layout->addWidget(m_advancedWidget);
-    layout->addSpacing(20);
     layout->addStretch();
 
     setMinimumSize( sizeHint() );

@@ -107,6 +107,7 @@ void KickerConfig::load()
     positiontab->load();
     hidingtab->load();
     menutab->load();
+
     setChanged(false);
 }
 

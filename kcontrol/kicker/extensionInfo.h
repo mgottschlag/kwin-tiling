@@ -69,7 +69,7 @@ class extensionInfo
         int      _orig_alignment;
         int      _orig_size;
         int      _orig_customSize;
-        
+
         // Size info
         bool    _resizeable;
         bool    _useStdSizes;
@@ -83,7 +83,7 @@ class extensionInfoItem : public QListViewItem
         extensionInfoItem(extensionInfo* info, QListView* parent, QListViewItem* after);
         ~extensionInfoItem() {}
         extensionInfo* info();
-        
+
     protected:
         extensionInfo* m_info;
 };

@@ -145,7 +145,7 @@ void extensionInfo::setDefaults()
     // defaults
     _position       = 3;
     _alignment      = QApplication::reverseLayout() ? 2 : 0;
-		_xineramaScreen = QApplication::desktop()->primaryScreen();
+    _xineramaScreen = QApplication::desktop()->primaryScreen();
     _size           = 2;
     _showLeftHB     = true;
     _showRightHB    = false;

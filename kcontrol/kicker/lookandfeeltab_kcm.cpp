@@ -36,6 +36,7 @@ LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
 
     lookandfeeltab = new LookAndFeelTab(this);
     layout->addWidget(lookandfeeltab);
+    layout->addStretch();
 
     connect(lookandfeeltab, SIGNAL(changed()), SLOT(configChanged()));
 
