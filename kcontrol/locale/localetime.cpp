@@ -1,4 +1,3 @@
-#undef NDEBUG
 /*
  * localetime.cpp
  *
