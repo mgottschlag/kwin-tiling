@@ -169,6 +169,7 @@ RemoveDisplay (struct display *old)
 	    IfFree (d->from);
 	    XdmcpDisposeARRAY8 (&d->clientAddr);
 #endif
+	    IfFree (d->noPassUsers);
 	    IfFree (d->autoUser);
 	    IfFree (d->autoPass);
 	    IfFree (d->autoString);
@@ -283,6 +284,7 @@ NewDisplay (char *name, char *class2)
     d->connectionType = 0;
 #endif
     d->startInterval = 0;
+    d->noPassUsers = NULL;
     d->autoLogin = autoLogin;
     d->autoReLogin = 0;
     d->autoLogin1st = 1;

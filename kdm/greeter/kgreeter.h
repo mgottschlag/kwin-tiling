@@ -109,11 +109,11 @@ private:
      QPushButton*   shutdownButton;
      QComboBox*     sessionargBox;
 
-     struct passwd *pwd;
+//     struct passwd *pwd;
 
-#ifdef USESHADOW
-     struct spwd *swd;
-#endif
+//#ifdef USESHADOW
+//     struct spwd *swd;
+//#endif
 
     void	insertUsers( QIconView *);
 

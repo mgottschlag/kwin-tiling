@@ -398,7 +398,6 @@ IOErrorHandler (Display *dpy)
     LogError("fatal IO error %d (%s)\n", errno, _SysErrorMsg(errno));
     exit(RESERVER_DISPLAY);
     /*NOTREACHED*/
-    return 0;
 }
 
 static int
@@ -415,6 +414,7 @@ ManageSession (struct display *d)
 {
     static int		pid = 0;
     Display		*dpy;
+    greet_user_rtn	greet_stat;
     static GreetUserProc greet_user_proc = NULL;
 #ifndef GREET_USER_STATIC
     void		*greet_lib_handle;
@@ -448,8 +448,15 @@ ManageSession (struct display *d)
      * These version numbers are registered with The Open Group. */
     verify.version = 1;
     greet.version = 1;
+    greet_stat =(*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
 
-    if ((*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs) == Greet_Success)
+#ifndef GREET_USER_STATIC
+/*    Debug("ManageSession: unloading greeter library ...\n");
+    dlclose (greet_lib_handle);
+*/
+#endif
+
+    if (greet_stat == Greet_Success)
     {
 	clientPid = 0;
 	if (!Setjmp (abortSession)) {
@@ -504,6 +511,23 @@ ManageSession (struct display *d)
      */
     Debug ("Source reset program %s\n", d->reset);
     source (verify.systemEnviron, d->reset);
+
+    /* 
+     * This code must be damned ... every time i put it here, i 
+     * simply cannot reproduce the scenario which led me to putting it 
+     * here: sometimes an xsession seems to exit before the server
+     * crash is registered (i know, this is theoretically impossible).
+     * As the pure presence of this code (without being executed)
+     * solves the problem, i leave it herein. :)
+     */
+    dpy = XOpenDisplay (d->name);
+    if (dpy)
+	XCloseDisplay (dpy);
+    else {
+	LogError ("Sleeping one second after server crash. It happened! Report to ossi@kde.org!\n");
+	sleep (1);
+    }
+
     SessionExit (d, OBEYSESS_DISPLAY, TRUE);
 }
 
@@ -890,7 +914,7 @@ StartClient (
 	 */
 #ifdef SECURE_RPC
 	/* do like "keylogin" program */
-	if(!passwd)
+	if (!passwd)
 	    LogError("Warning: no password for NIS provided.\n");
 	else
 	{
@@ -904,7 +928,7 @@ StartClient (
 	    len = strlen (passwd);
 	    if (len > 8)
 		bzero (passwd + 8, len - 8);
-	    keyret = getsecretkey(netname,secretkey,passwd);
+	    keyret = getsecretkey(netname, secretkey, passwd);
 	    Debug ("getsecretkey returns %d, key length %d\n",
 		    keyret, strlen (secretkey));
 	    /* is there a key, and do we have the right password? */
@@ -947,7 +971,7 @@ StartClient (
 #endif
 #ifdef K5AUTH
 	/* do like "kinit" program */
-	if(!passwd)
+	if (!passwd)
 	    LogError("Warning: no password for Kerberos5 provided.\n");
 	else
 	{

@@ -256,6 +256,7 @@ struct display {
 	char		*autoUser;	/* user to log in automatically. */
 	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
 	char		*autoString;	/* xsession arguments. */
+	char		*noPassUsers;	/* users allowed in without a password */
 
 	/* belongs to server management resources */
 	int		fifoCreate;	/* do we want a login data fifo? */

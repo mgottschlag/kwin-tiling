@@ -1,4 +1,3 @@
-/* $Id$ */
 /*
 
 Copyright 1994, 1998  The Open Group
@@ -116,16 +115,16 @@ extern  void	endpwent(void);
 extern	char	*crypt(CRYPT_ARGS);
 #endif
 
+Jmp_buf jb;
+
 int     PingServer(struct display *d, Display *alternateDpy) {return 1;}
 void    SessionPingFailed(struct display *d) {exit (3);}
-void    Debug(char *fmt, ...);
 void    RegisterCloseOnFork(int fd) {}
 void    SecureDisplay(struct display *d, Display *dpy) {}
 void    UnsecureDisplay(struct display *d, Display *dpy) {}
 void    ClearCloseOnFork(int fd) {}
 void    SetupDisplay(struct display *d) {}
-void    LogError(char * fmt, ...);
-void    SessionExit(struct display *d, int status, int removeAuth) { exit(status);}
+void    SessionExit(struct display *d, int status, int removeAuth) { Longjmp(jb, status);} 
 void    DeleteXloginResources(struct display *d, Display *dpy) {}
 int     source(char **environ, char *file) {return 0;}
 char    **defaultEnv(void) {return 0;}
@@ -134,7 +133,6 @@ char    **putEnv(const char *string, char **env) {return 0;}
 char    **parseArgs(char **argv, char *string) {return 0;}
 void    printEnv(char **e) {}
 char    **systemEnv(struct display *d, char *user, char *home) {return 0;}
-void    LogOutOfMem(char *fmt, ...);
 #ifdef USE_PAM
 pam_handle_t    **thepamh(void) {static pam_handle_t *pamh = 0; return &pamh;}
 #endif
@@ -189,7 +187,7 @@ static	struct dlfuncs	dlfuncs = {
 #endif
 	};
 
-#define AgreeterLib	(argc > 1 ? argv[1] : "libKdmGreet.so")
+#define AgreeterLib	(argc > 1 && argv[1][0] != '\0' ? argv[1] : "libKdmGreet.so")
 #define Aname		(argc > 2 ? argv[2] : ":0")
 
 static struct greet_info	greet;
@@ -201,6 +199,7 @@ int main(int argc, char **argv) {
     Display	*dpy;
     static GreetUserProc greet_user_proc = NULL;
     void	*greet_lib_handle;
+    int rt;
 
     if (!(d = NewDisplay (Aname, 0)))
 	return 1;
@@ -217,7 +216,16 @@ int main(int argc, char **argv) {
     verify.version = 1;
     greet.version = 1;
 
-    (*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
+    if ((rt = Setjmp(jb)) != 0)
+	Debug("Greeter aborted: %d\n", rt);
+    else {
+	int rslt = (*greet_user_proc)(d, &dpy, &verify, &greet, &dlfuncs);
+	Debug("Greeter exited: %d\n", rslt);
+    }
+
+    dlclose(greet_lib_handle);
+
+    Debug("Greeter unloaded\n");
 
     return 0;
 }

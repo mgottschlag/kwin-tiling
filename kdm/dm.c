@@ -691,7 +691,6 @@ ClrnLog (struct display *d)
     if (d->hstent->nLogPipe) {
 	free (d->hstent->nLogPipe);
 	d->hstent->nLogPipe = NULL;
-Debug ("cleared nLogPipe\n");
     }
 }
 
@@ -701,8 +700,8 @@ ReadnLog (struct display *d, int fd)
     char	buf[100], *p;
     int		bpos, bend, ll, rt, ign;
 
-    for(bpos = 0, bend = 0, ign = 0;;) {
-	for(;;) {
+    for (bpos = 0, bend = 0, ign = 0;;) {
+	for (;;) {
 	    if ((p = memchr(buf + bpos, 10, bend - bpos)) != 0) {
 		ll = (p - buf) - bpos + 1;
 		break;
@@ -734,7 +733,6 @@ ReadnLog (struct display *d, int fd)
 	    if ((d->hstent->nLogPipe = malloc (ll + 1)) != NULL) {
 		memcpy (d->hstent->nLogPipe, buf + bpos, ll);
 		d->hstent->nLogPipe[ll] = '\0';
-Debug ("Saved data to nLogPipe: %s\n", d->hstent->nLogPipe);
 	    }
 	}
 	bpos += ll;

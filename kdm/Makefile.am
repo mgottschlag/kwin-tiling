@@ -9,8 +9,8 @@ INCLUDES = $(all_includes) $(KERBEROS_INCS)
 
 bin_PROGRAMS = kdm
 
-#noinst_PROGRAMS = greetest
-#greetest_SOURCES = greetest.c
+noinst_PROGRAMS = greetest
+greetest_SOURCES = greetest.c
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
@@ -46,4 +46,4 @@ kdm_SOURCES = access.c \
 
 noinst_HEADERS = kdm-config.h dm.h dm_socket.h dm_error.h dm_auth.h greet.h
 
-EXTRA_DIST = misc	xdmconfig
+EXTRA_DIST = misc xdmconfig

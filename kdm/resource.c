@@ -345,6 +345,8 @@ struct displayResource sessionResources[] = {
 				DEF_USER_AUTH_DIR },
 { "chooser",	"Chooser",	DM_STRING,	boffset(chooser),
 				DEF_CHOOSER },
+{ "noPassUsers", "NoPassUsers",	DM_STRING,	boffset(noPassUsers),
+				"" },
 { "autoUser",	"AutoUser",	DM_STRING,	boffset(autoUser),
                         	"" },
 { "autoPass",	"AutoPass",	DM_STRING,	boffset(autoPass),

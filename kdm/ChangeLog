@@ -1,4 +1,4 @@
-2000-12-07  Oswald Buddenhagen <ob6@inf.tu-dresden.de>
+2000-12-07  Oswald Buddenhagen <ossi@kde.org>
 
 	* New XDM port from xfree86 4.0.1
 	* Made the greeter dynamically loadable

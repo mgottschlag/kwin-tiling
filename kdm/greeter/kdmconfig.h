@@ -40,16 +40,16 @@
 //#include <qfile.h>
 //#include <qiconview.h>
 
-#include <kconfig.h>
+#include <ksimpleconfig.h>
 
 #include <qnamespace.h>
 
-class KDMConfig {
+class KDMConfig : public KSimpleConfig {
 
 public:
     KDMConfig();
     ~KDMConfig();
-     
+
     QFont*	_normalFont;
     QFont*	_failFont;
     QFont*	_greetFont;
