@@ -11,5 +11,4 @@ noinst_HEADERS = installer.h
 kcm_ksplashthemes_la_LIBADD = $(LIB_KIO) 
 kcm_ksplashthemes_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
-apps_DATA = ksplashthememgr.desktop
-appsdir = $(kde_appsdir)/Settings/LookNFeel
+xdg_apps_DATA = ksplashthememgr.desktop

@@ -15,8 +15,7 @@ noinst_HEADERS = kmenuedit.h menueditview.h treeview.h desktopfileeditor.h basic
 
 METASOURCES = AUTO
 
-apps_DATA = kmenuedit.desktop
-appsdir = $(kde_appsdir)/Settingsmenu
+xdg_apps_DATA = kmenuedit.desktop
 
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/System

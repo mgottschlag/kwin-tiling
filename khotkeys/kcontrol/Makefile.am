@@ -29,9 +29,6 @@ METASOURCES = AUTO
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/khotkeys.pot
 
-khotkeys_DATA = khotkeys.desktop
-khotkeysdir = $(kde_appsdir)/Settings/System
+xdg_apps_DATA = khotkeys.desktop
 
 KDE_ICON = khotkeys
-
-EXTRA_DIST = $(khotkeys_DATA)
