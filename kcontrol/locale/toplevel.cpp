@@ -32,6 +32,7 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
+#include <kdialog.h>
 
 #include "localenum.h"
 #include "localemon.h"
@@ -43,7 +44,7 @@
 #include <kaboutdata.h>
 #include "toplevel.moc"
 
-KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name, 
+KLocaleApplication::KLocaleApplication(QWidget *parent, const char */*name*/, 
                                        const QStringList &args)
   : KCModule( KLocaleFactory::instance(), parent, args),
     m_aboutData(0)
@@ -52,7 +53,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name,
   m_globalConfig = new KConfig(QString::null, false, true);
 
   m_locale = new KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
-  QVBoxLayout *l = new QVBoxLayout(this, 5);
+  QVBoxLayout *l = new QVBoxLayout(this, 0, KDialog::spacingHint());
   l->setAutoAdd(TRUE);
 
   m_tab = new QTabWidget(this);
