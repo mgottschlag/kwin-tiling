@@ -201,7 +201,7 @@ public:
     int wallpaperChangeInterval() const { return m_Interval; }
 
     enum MultiMode {
-	NoMulti, InOrder, Random
+	NoMulti, InOrder, Random, NoMultiRandom
     };
     void setMultiWallpaperMode(int mode);
     int multiWallpaperMode() const { return m_MultiMode; }
