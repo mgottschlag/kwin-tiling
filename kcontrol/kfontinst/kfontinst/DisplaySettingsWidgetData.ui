@@ -31,14 +31,6 @@
     <property name="name">
         <cstring>CDisplaySettingsWidgetData</cstring>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>444</width>
-            <height>234</height>
-        </rect>
-    </property>
     <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>3</hsizetype>

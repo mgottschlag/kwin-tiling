@@ -31,14 +31,6 @@
     <property name="name">
         <cstring>CDirSettingsWidgetData</cstring>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>497</width>
-            <height>403</height>
-        </rect>
-    </property>
     <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>3</hsizetype>
