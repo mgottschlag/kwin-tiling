@@ -32,9 +32,7 @@
 
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
-#define POPUP_ITEM   70
-#define KEEP_ITEM    80
-#define URLGRAB_ITEM 90
+#define URLGRAB_ITEM 70
 
 // the <clipboard empty> item
 #define EMPTY 6
@@ -75,6 +73,7 @@ TopLevel::TopLevel()
   : KMainWindow(0)
 {
     clip = kapp->clipboard();
+    pSelectedItem = -1;
 
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
@@ -118,8 +117,6 @@ TopLevel::TopLevel()
     connect( toggleURLGrabAction, SIGNAL( toggled( bool ) ), this,
              SLOT( setURLGrabberEnabled( bool )));
     setBackgroundMode(X11ParentRelative);
-
-    pSelectedItem = -1;
 }
 
 TopLevel::~TopLevel()
@@ -207,6 +204,8 @@ void TopLevel::clickedMenu(int id)
         saveProperties();
         kapp->quit();
         break;
+    case URLGRAB_ITEM: // handled with an extra slot
+	break;
     default:
         pQTcheck->stop();
         //CT mark up the currently put into clipboard - so that user can see later
@@ -265,7 +264,10 @@ void TopLevel::readProperties(KConfig *kc)
   pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
   pQPMmenu->insertSeparator();
   pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), CONFIG_ITEM);
-  toggleURLGrabAction->plug( pQPMmenu );
+  // we can't specify the id in plug(), just the index. So we set the right
+  // id aftwards for the given index.
+  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
+  pQPMmenu->setId( URLGRAB_ITEM, URLGRAB_ITEM );
   pQPMmenu->insertSeparator();
   long int id;
 
