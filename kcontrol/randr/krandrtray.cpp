@@ -38,7 +38,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	, m_popupUp(false)
 	, m_help(new KHelpMenu(this, KGlobal::instance()->aboutData(), false, actionCollection()))
 {
-	setPixmap(KSystemTray::loadIcon("kscreensaver"));
+	setPixmap(KSystemTray::loadIcon("randr"));
 	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
