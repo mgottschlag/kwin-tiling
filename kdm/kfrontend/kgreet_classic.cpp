@@ -117,6 +117,8 @@ KClassicGreeter::KClassicGreeter(
 	grid->addWidget( passwd1Edit, line++, 1 );
 	grid->addWidget( passwd2Label, line, 0 );
 	grid->addWidget( passwd2Edit, line, 1 );
+	if (!passwdEdit)
+	    passwd1Edit->setFocus();
     }
 
     QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
