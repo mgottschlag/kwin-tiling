@@ -76,6 +76,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   int row = 0;
   QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
   layout->addWidget(box);
+  layout->addStretch();
   QGridLayout *grid = new QGridLayout(box, 8, 2);
   grid->setSpacing(KDialog::spacingHint());
   grid->setMargin(KDialog::marginHint());
@@ -94,7 +95,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   grid->addMultiCellWidget(m_useBell, row, row, 0, 1);
 
   m_volume = new KIntNumInput(50, box);
-  m_volume->setLabel(i18n("Volume:"));
+  m_volume->setLabel(i18n("&Volume:"));
   m_volume->setRange(0, 100, 5);
   m_volume->setSuffix("%");
   m_volume->setSteps(5,25);
@@ -103,7 +104,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_pitch = new KIntNumInput(m_volume, 800, box);
-  m_pitch->setLabel(i18n("Pitch:"));
+  m_pitch->setLabel(i18n("&Pitch:"));
   m_pitch->setRange(20, 2000, 20);
   m_pitch->setSuffix(i18n("Hz"));
   m_pitch->setSteps(40,200);
@@ -112,7 +113,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_duration = new KIntNumInput(m_pitch, 100, box);
-  m_duration->setLabel(i18n("Duration:"));
+  m_duration->setLabel(i18n("&Duration:"));
   m_duration->setRange(1, 1000, 50);
   m_duration->setSuffix(i18n("ms"));
   m_duration->setSteps(20,100);
@@ -120,18 +121,12 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
-  QFrame *hLine = new KSeparator(KSeparator::HLine, box);
-  row++;
-  grid->addMultiCellWidget(hLine, row, row, 0, 1);
-
   QBoxLayout *boxLayout = new QHBoxLayout();
   QPushButton *test = new QPushButton(i18n("&Test"), box, "test");
   boxLayout->addWidget(test, 0, AlignRight);
   grid->addLayout( boxLayout, ++row, 1 );
   connect( test, SIGNAL(clicked()), SLOT(ringBell()));
   QWhatsThis::add( test, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
-
-  grid->setRowStretch(++row, 10);
 
   // watch for changes
   connect(m_volume, SIGNAL(valueChanged(int)), SLOT(configChanged()));
