@@ -1,4 +1,6 @@
 INCLUDES = $(X_INCLUDES) $(USER_INCLUDES) $(KERBEROS_INCS)
+# forcibly remove thread-related defines & flags
+CPPFLAGS =
 AM_CFLAGS = $(XDM_CFLAGS)
 LDFLAGS = $(X_LDFLAGS) $(USER_LDFLAGS) $(KDE_RPATH) $(KRB_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSWDLIBS) \
