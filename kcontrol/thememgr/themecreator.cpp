@@ -364,6 +364,7 @@ void ThemeCreator::saveGroupGeneral(void)
 {
   mConfig->setGroup("General");
   mConfig->writeEntry("name", mName);
+  mConfig->writeEntry("description", mDescription);
   mConfig->writeEntry("author", mAuthor);
   mConfig->writeEntry("email", mEmail);
   mConfig->writeEntry("homepage", mHomePage);

@@ -258,7 +258,7 @@ void Installer::slotCreate()
 
   name = dlg.fileName();
   if (!theme->create(name)) return;
-  theme->setName(dlg.themeName().local8Bit());
+  theme->setDescription(dlg.themeName());
   theme->setAuthor(dlg.author());
   theme->setEmail(dlg.email());
   theme->setHomepage(dlg.homepage());
