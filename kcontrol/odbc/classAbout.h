@@ -4,10 +4,7 @@
 #include <qwidget.h>
 #include <qmessagebox.h>
 
-#include <kconfig.h>
-#include <kcontrol.h>
-
-class classAbout : public KConfigWidget
+class classAbout : public QWidget
 {
     Q_OBJECT
 
@@ -15,9 +12,6 @@ public:
 
     classAbout( QWidget* parent = NULL, const char* name = NULL );
     virtual ~classAbout();
-
-	virtual void applySettings();
-	virtual void loadSettings();
 
 protected slots:
     void pbODBCConfig_Clicked();

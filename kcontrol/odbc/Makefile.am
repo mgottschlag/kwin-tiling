@@ -1,43 +1,44 @@
 
 INCLUDES	= $(all_includes)
 LDFLAGS		= $(all_libraries) $(KDE_RPATH)
-LDADD		= $(LIB_KIMGIO) $(LIB_KFILE) $(LIB_KIO)
+LDADD		= $(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(LIB_KIO)
 SUBDIRS		= pics drvcfg1 drvcfg2
 
-bin_PROGRAMS = odbcconfig
+noinst_HEADERS = 		KODBCConfig.h \
+				classAbout.h \
+				classDSNList.h \
+				classDLL.cpp \
+				classDriverPrompt.h \
+				classDrivers.h \
+				classTracing.h \
+		       		classFileSelector.h \
+				classProperties.h \
+				classSystemDSN.h \
+				classUserDSN.h
 
-odbcconfig_SOURCES =	main.cpp \
-			classAbout.cpp \
-			classDLL.cpp \
-			classDSNList.cpp \
-			classDriverPrompt.cpp \
-			classDrivers.cpp \
-			classFileSelector.cpp \
-			classProperties.cpp \
-			classSystemDSN.cpp \
-			classUserDSN.cpp
+lib_LTLIBRARIES =		libkcm_odbc.la
 
-odbcconfig_LDADD = $(LDADD) -lodbcinst -luodbcini
+libkcm_odbc_la_SOURCES = 	KODBCConfig.cpp \
+				classAbout.cpp \
+				classDLL.cpp \
+		       		classDSNList.cpp \
+				classDriverPrompt.cpp \
+				classDrivers.cpp \
+				classTracing.cpp \
+				classFileSelector.cpp \
+				classProperties.cpp \
+				classSystemDSN.cpp \
+				classUserDSN.cpp
 
-METASOURCES =		classAbout.moc \
-			classDSNList.moc \
-			classDriverPrompt.moc \
-			classDrivers.moc \
-			classFileSelector.moc \
-			classProperties.moc \
-			classSystemDSN.moc \
-			classUserDSN.moc
+libkcm_odbc_la_LDFLAGS = 	-module -avoid-version $(all_libraries) 
 
-noinst_HEADERS = 	classAbout.h \
-			classDSNList.h \
-			classDLL.cpp \
-			classDriverPrompt.h \
-			classDrivers.h \
-			classFileSelector.h \
-			classProperties.h \
-			classSystemDSN.h \
-			classUserDSN.h
+
+libkcm_odbc_la_LIBADD = 	$(LIB_KDEUI) $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) \
+				$(LDADD) -lodbcinst -luodbcini
+
+METASOURCES =			AUTO
 
 messages:
-	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(odbcconfig_SOURCES) && mv messages.po $(podir)/odbcconfig.pot
+	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot \
+	$(libkcm_odbc_la_SOURCES) && mv messages.po $(podir)/kcmodbc.pot
 

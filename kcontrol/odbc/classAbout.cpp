@@ -11,7 +11,7 @@
 #include "classAbout.moc"
 
 classAbout::classAbout( QWidget* parent, const char* name )
-	: KConfigWidget( parent, name )
+	: QWidget( parent, name )
 {
 	QFrame* qtarch_Frame_12;
 	qtarch_Frame_12 = new QFrame( this, "Frame_12" );
@@ -359,15 +359,6 @@ void classAbout::pbApplication_Clicked()
     qsMsg += "System using the ODBCConfig tool.\n";
 
     KMessageBox::information( this, qsMsg );
-}
-
-
-void classAbout::applySettings()
-{
-}
-
-void classAbout::loadSettings()
-{
 }
 
 

@@ -130,6 +130,8 @@ entry. This has to be placed under
 
 $KDEDIR/applnk/Settings/...
 
+so put it in kdebase/applnk/Settings... to have it installed.
+
 just as the old control center modules. There are a number of special
 entries in the .desktop file for the modules:
 

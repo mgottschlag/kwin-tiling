@@ -10,7 +10,7 @@
 #include "classDrivers.moc"
 
 classDrivers::classDrivers( QWidget* parent, const char* name )
-	: KConfigWidget( parent, name )
+	: QWidget( parent, name )
 {
 	pbAdd = new QPushButton( this, "pbAdd" );
 	pbAdd->setGeometry( 290, 10, 100, 30 );
@@ -236,7 +236,119 @@ void classDrivers::Add()
 
 void classDrivers::Edit()
 {
-	KMessageBox::information(	this, "ODBC Config",  "Not implemented yet. Try the odbcinst command line tool" );
+	QString				qsName					= "";
+	QString				qsError					= "";
+
+	classProperties		*pProperties;
+	HODBCINSTPROPERTY	hFirstProperty	= NULL;
+	HODBCINSTPROPERTY	hCurProperty	= NULL;
+	HODBCINSTPROPERTY	hLastProperty;
+	char				szINI[FILENAME_MAX+1];
+	QListViewItem		*pListViewItem;
+
+#ifdef SYSTEM_FILE_PATH
+    sprintf( szINI, "%s/odbcinst.ini", SYSTEM_FILE_PATH );
+#else
+    strcpy( szINI, "/etc/odbcinst.ini" );
+#endif
+
+	// HAS THE USER SELECTED SOMETHING
+    pListViewItem = lvwDrivers->currentItem();
+	if ( pListViewItem )
+		qsName		= pListViewItem->text( 0 );
+	else
+	{
+		KMessageBox::information( this, "ODBC Config",  "Please select a Driver from the list first." );
+		return;
+	}
+
+
+	// SET UP PROPERTIES LIST
+	hFirstProperty 						= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
+	memset( hFirstProperty, 0, sizeof(ODBCINSTPROPERTY) );
+	hFirstProperty->nPromptType			= ODBCINST_PROMPTTYPE_TEXTEDIT;
+	hFirstProperty->pNext				= NULL;
+    hFirstProperty->bRefresh			= 0;
+    hFirstProperty->hDLL				= NULL;
+    hFirstProperty->pWidget				= NULL;
+    hFirstProperty->pszHelp				= NULL;
+	hFirstProperty->aPromptData			= NULL;
+	strncpy( hFirstProperty->szName, "Name", INI_MAX_PROPERTY_NAME );
+	strcpy( hFirstProperty->szValue, qsName.data() );
+	hLastProperty = hFirstProperty;
+
+	hLastProperty->pNext 				= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
+	hLastProperty 						= hLastProperty->pNext;
+	memset( hLastProperty, 0, sizeof(ODBCINSTPROPERTY) );
+	hLastProperty->nPromptType				= ODBCINST_PROMPTTYPE_TEXTEDIT;
+	hLastProperty->pNext					= NULL;
+    hLastProperty->bRefresh					= 0;
+    hLastProperty->hDLL						= NULL;
+    hLastProperty->pWidget					= NULL;
+    hFirstProperty->pszHelp					= NULL;
+	hFirstProperty->aPromptData				= NULL;
+	strncpy( hLastProperty->szName, "Description", INI_MAX_PROPERTY_NAME );
+	strcpy( hLastProperty->szValue, "" );
+	SQLGetPrivateProfileString( qsName.data(), hLastProperty->szName, "", hLastProperty->szValue, sizeof(hLastProperty->szValue)-1, szINI );
+
+	hLastProperty->pNext 				= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
+	hLastProperty 						= hLastProperty->pNext;
+	memset( hLastProperty, 0, sizeof(ODBCINSTPROPERTY) );
+	hLastProperty->nPromptType			= ODBCINST_PROMPTTYPE_FILENAME;
+	strncpy( hLastProperty->szName, "Driver", INI_MAX_PROPERTY_NAME );
+	strncpy( hLastProperty->szValue, "", INI_MAX_PROPERTY_VALUE );
+	SQLGetPrivateProfileString( qsName.data(), hLastProperty->szName, "", hLastProperty->szValue, sizeof(hLastProperty->szValue)-1, szINI );
+
+	hLastProperty->pNext 				= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
+	hLastProperty 						= hLastProperty->pNext;
+	memset( hLastProperty, 0, sizeof(ODBCINSTPROPERTY) );
+	hLastProperty->nPromptType			= ODBCINST_PROMPTTYPE_FILENAME;
+	strncpy( hLastProperty->szName, "Setup", INI_MAX_PROPERTY_NAME );
+	strncpy( hLastProperty->szValue, "", INI_MAX_PROPERTY_VALUE );
+	SQLGetPrivateProfileString( qsName.data(), hLastProperty->szName, "", hLastProperty->szValue, sizeof(hLastProperty->szValue)-1, szINI );
+
+	hLastProperty->pNext 				= (HODBCINSTPROPERTY)malloc( sizeof(ODBCINSTPROPERTY) );
+	hLastProperty 						= hLastProperty->pNext;
+	memset( hLastProperty, 0, sizeof(ODBCINSTPROPERTY) );
+	hLastProperty->nPromptType				= ODBCINST_PROMPTTYPE_TEXTEDIT;
+	hLastProperty->pNext					= NULL;
+    hLastProperty->bRefresh					= 0;
+    hLastProperty->hDLL						= NULL;
+    hLastProperty->pWidget					= NULL;
+    hFirstProperty->pszHelp					= NULL;
+	hFirstProperty->aPromptData				= NULL;
+	strncpy( hLastProperty->szName, "FileUsage", INI_MAX_PROPERTY_NAME );
+	strcpy( hLastProperty->szValue, "1" );
+	SQLGetPrivateProfileString( qsName.data(), hLastProperty->szName, "", hLastProperty->szValue, sizeof(hLastProperty->szValue)-1, szINI );
+
+
+	// ALLOW USER TO EDIT
+	pProperties = new classProperties( this, "Properties", hFirstProperty );
+	pProperties->setCaption( "New Driver" );
+	pProperties->resize( 200, 400 );
+	if ( pProperties->exec() )
+	{
+		/* DELETE ENTIRE SECTION IF IT EXISTS (no entry given) */
+		if ( SQLWritePrivateProfileString( qsName.ascii(), NULL, NULL, szINI ) == FALSE )
+		{
+			delete pProperties;
+			FreeProperties( &hFirstProperty );
+			qsError.sprintf( "Could not write to (%s)", szINI );
+			KMessageBox::information( this, "ODBC Config",  qsError );
+			return;
+		}
+
+		/* ADD ENTRIES; SECTION CREATED ON FIRST CALL */
+		for ( hCurProperty = hFirstProperty->pNext; hCurProperty != NULL; hCurProperty = hCurProperty->pNext )
+		{
+			SQLWritePrivateProfileString( hFirstProperty->szValue, hCurProperty->szName, hCurProperty->szValue, szINI );
+		}
+	}
+	delete pProperties;
+	FreeProperties( &hFirstProperty );
+
+	// RELOAD (slow but safe)
+	Load();
 }
 
 void classDrivers::Delete()
@@ -410,12 +522,5 @@ void classDrivers::FreeProperties( HODBCINSTPROPERTY *hFirstProperty )
     (*hFirstProperty) = NULL;
 }
 
-void classDrivers::applySettings()
-{
-}
-
-void classDrivers::loadSettings()
-{
-}
 
 

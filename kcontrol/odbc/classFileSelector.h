@@ -5,7 +5,8 @@
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
-#include <qfiledialog.h>
+// QDir has errors in it???
+// #include <qfiledialog.h>
 
 class classFileSelector : public QWidget
 {

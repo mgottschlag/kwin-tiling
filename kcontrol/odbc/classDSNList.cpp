@@ -79,8 +79,8 @@ void classDSNList::Load( int nSource )
 		qsError.sprintf( "Could not load (%s) This is most likely because of a lack of privs.\nTry running as root user the first time you run this program,\nwhen you are working with System DSN's\nor when you are adding/removing Drivers.", szINI );
 		KMessageBox::information(this, qsError );
 
-		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
-			KMessageBox::information( this, szErrorMsg );
+		//while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
+		//	KMessageBox::information( this, szErrorMsg );
 	}
 }
 
@@ -140,8 +140,8 @@ void classDSNList::Add()
 
 				qsError.sprintf( "Could not write to (%s), try running this program as root.", szINI );
 				KMessageBox::information( this, qsError );
-				while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
-					KMessageBox::information( this, szErrorMsg );
+				//while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
+				//	KMessageBox::information( this, szErrorMsg );
 
 				return;
 			}
@@ -243,8 +243,8 @@ void classDSNList::Edit()
 
 			qsError.sprintf( "Could not write to (%s), you may want to try running this program as root ( ie when dealing with System DSN's.", szINI );
 			KMessageBox::information( this, qsError );
-			while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
-				KMessageBox::information( this, szErrorMsg );
+			//while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, 100, NULL ) == SQL_SUCCESS )
+			//	KMessageBox::information( this, szErrorMsg );
 
 			return;
 		}
@@ -293,8 +293,8 @@ void classDSNList::Delete()
 	{
 		qsError.sprintf( "Could not write property list for (%s). Try running this program as root.", pDataSourceName );
 		KMessageBox::sorry( this, qsError );
-		while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
-			KMessageBox::information( this, szErrorMsg );
+		//while ( SQLInstallerError( 1, &nErrorCode, szErrorMsg, FILENAME_MAX, NULL ) == SQL_SUCCESS )
+		//	KMessageBox::information( this, szErrorMsg );
 	}
 	SQLSetConfigMode( ODBC_BOTH_DSN );
 	

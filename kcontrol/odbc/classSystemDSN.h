@@ -4,12 +4,9 @@
 #include <qwidget.h>
 #include <qpushbt.h>
 
-#include <kconfig.h>
-#include <kcontrol.h>
-
 #include "classDSNList.h"
 
-class classSystemDSN : public KConfigWidget
+class classSystemDSN : public QWidget
 {
     Q_OBJECT
 
@@ -17,9 +14,6 @@ public:
 
     classSystemDSN( QWidget* parent = NULL, const char* name = NULL );
     ~classSystemDSN();
-
-	virtual void applySettings();
-	virtual void loadSettings();
 
 protected:
     QPushButton* pbAdd;

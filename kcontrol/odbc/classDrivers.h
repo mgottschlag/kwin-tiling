@@ -11,12 +11,9 @@
 #include <qlistview.h>
 #include <qpushbt.h>
 
-#include <kconfig.h>
-#include <kcontrol.h>
-
 #include "classProperties.h"
 
-class classDrivers : public KConfigWidget
+class classDrivers : public QWidget
 {
     Q_OBJECT
 
@@ -24,9 +21,6 @@ public:
 
     classDrivers( QWidget* parent = NULL, const char* name = NULL );
     ~classDrivers();
-
-	virtual void applySettings();
-	virtual void loadSettings();
 
 	QListView *getListView() { return lvwDrivers; };
 

@@ -9,7 +9,7 @@
 #include "classUserDSN.moc"
 
 classUserDSN::classUserDSN( QWidget* parent, const char* name )
-	: KConfigWidget( parent, name )
+	: QWidget( parent, name )
 {
 	pbAdd = new QPushButton( this, "pbAdd" );
 	pbAdd->setGeometry( 290, 10, 100, 30 );
@@ -109,13 +109,4 @@ classUserDSN::classUserDSN( QWidget* parent, const char* name )
 classUserDSN::~classUserDSN()
 {
 }
-
-void classUserDSN::applySettings()
-{
-}
-
-void classUserDSN::loadSettings()
-{
-}
-
 

@@ -8,14 +8,14 @@ classFileSelector::classFileSelector( QWidget* parent, const char* name )
 
 	pLineEdit 	= new QLineEdit( this );
 	pButton		= new QPushButton( ">", this );
-    pButton->resize( pButton->sizeHint() );
+	pButton->resize( pButton->sizeHint() );
 	pButton->setFixedWidth( pButton->sizeHint().width() );
 
 
-    pTopLayout->addWidget( pLineEdit, 2 );
-    pTopLayout->addWidget( pButton, 1 );
+	pTopLayout->addWidget( pLineEdit, 2 );
+	pTopLayout->addWidget( pButton, 1 );
 
-    pTopLayout->activate();
+	pTopLayout->activate();
 
 	connect( pButton, SIGNAL(clicked()), this, SLOT(pButton_Clicked()) );
 }
@@ -26,11 +26,13 @@ classFileSelector::~classFileSelector()
 
 void classFileSelector::pButton_Clicked()
 {
+/*
 	QString qsFile( QFileDialog::getOpenFileName() );
-    if ( qsFile.isNull() )
-	    return;
+	if ( qsFile.isNull() )
+		return;
 
 	pLineEdit->setText( qsFile );
+*/
 }
 
 
