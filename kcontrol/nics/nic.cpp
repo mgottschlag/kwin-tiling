@@ -80,8 +80,8 @@ KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    m_list=new QListView(this);
    box->addWidget(m_list);
    m_list->addColumn(i18n("Name"));
-   m_list->addColumn(i18n("IP address"));
-   m_list->addColumn(i18n("Network mask"));
+   m_list->addColumn(i18n("IP Address"));
+   m_list->addColumn(i18n("Network Mask"));
    m_list->addColumn(i18n("Type"));
    m_list->addColumn(i18n("State"));
    QHBoxLayout *hbox=new QHBoxLayout(this);

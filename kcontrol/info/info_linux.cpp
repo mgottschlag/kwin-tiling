@@ -14,6 +14,10 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.22  2002/01/27 04:36:22  mueller
+    ugly hack to make it compile - linux/raw.h requites __u64 which is only
+    defined if not STRICT_ANSI is used.
+
     Revision 1.21  2002/01/26 19:22:12  deller
     display raw device information correctly, closes #29258
 
@@ -186,7 +190,7 @@ bool GetInfo_IRQ(QListView * lBox)
 bool GetInfo_DMA(QListView * lBox)
 {
     lBox->addColumn(i18n("DMA-Channel"));
-    lBox->addColumn(i18n("used by"));
+    lBox->addColumn(i18n("Used by"));
     return GetInfo_ReadfromFile(lBox, INFO_DMA, ':');
 }
 
@@ -209,7 +213,7 @@ bool GetInfo_PCI(QListView * lBox)
 bool GetInfo_IO_Ports(QListView * lBox)
 {
     lBox->addColumn(i18n("I/O-Range"));
-    lBox->addColumn(i18n("used by"));
+    lBox->addColumn(i18n("Used by"));
     return GetInfo_ReadfromFile(lBox, INFO_IOPORTS, ':');
 }
 
