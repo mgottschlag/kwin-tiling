@@ -110,7 +110,8 @@ void TaskManager::windowAdded(WId w )
     // ignore NET::Tool and other special window types
     if (info.windowType() != NET::Normal
         && info.windowType() != NET::Override
-        && info.windowType() != NET::Unknown)
+        && info.windowType() != NET::Unknown
+        && info.windowType() != NET::Dialog)
 	return;
 
     // ignore windows that want to be ignored by the taskbar
