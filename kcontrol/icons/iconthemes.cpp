@@ -274,17 +274,19 @@ QStringList IconThemesConfig::findThemeDirs(QString archiveName)
   archive.open(IO_ReadOnly);
   const KArchiveDirectory* themeDir = archive.directory();
 
-  // iterate all the dirs looking for an index.desktop file
   KArchiveEntry* possibleDir = 0L;
+  KArchiveDirectory* subDir = 0L;
+
+  // iterate all the dirs looking for an index.desktop file
   QStringList entries = themeDir->entries();
   for (QStringList::Iterator it = entries.begin();
        it != entries.end();
        ++it) {
-    kdDebug() << "ispecting dir " << *it << endl;
     possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
     if (possibleDir->isDirectory()) {
-      kdDebug() << "found index.desktop! in " << possibleDir->name() << endl;
-      foundThemes.append(possibleDir->name());
+      subDir = dynamic_cast<KArchiveDirectory*>( possibleDir );
+      if (subDir->entry("index.desktop") != NULL)
+        foundThemes.append(subDir->name());
     }
   }
 
