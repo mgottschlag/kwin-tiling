@@ -134,10 +134,8 @@ extern KLocale *glocale;
 
 #include <GL/xmesa.h>
 #include <GL/gl.h>
+#include <GL/glut.h>
 #include <GL/glx.h>
-
-#include "GL/gl.h"
-#include "GL/glu.h"
 
 // GL related helper routines /////////////////////////////////////////////////
 
