@@ -24,6 +24,7 @@
 #include <qvgroupbox.h>
 #include <qpushbutton.h>
 #include <qhbox.h>
+#include <qheader.h>
 
 #include <kapplication.h>
 #include <kaboutdata.h>
@@ -88,9 +89,11 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	QWidget* w = new QWidget(buttonBox); // spacer
 	w->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred));
 
-	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
-	connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
-	connect( _lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
+	if (getuid()!=0) {
+		connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
+		connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
+		connect(_lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
+	}
 
 	load();
 }
@@ -112,7 +115,12 @@ void KDEDConfig::load() {
 			KDesktopFile file( *it, true, "services" );
 			
 			if ( file.readBoolEntry("X-KDE-Kded-autoload") ) {
-				item = new QCheckListItem(_lvStartup, QString::null , QCheckListItem::CheckBox );
+				if (getuid()==0) // only allow check if user has permissions
+					item = new QCheckListItem(_lvStartup, QString::null , QCheckListItem::CheckBox );
+				else {
+				   item = new QListViewItem(_lvStartup, QString::null);
+					_lvStartup->header()->setLabel(0, QString::null, 0);
+				}
 				item->setText(1, file.readName());
 				item->setText(2, file.readComment());
 				item->setText(3, i18n("Not running"));
@@ -123,27 +131,65 @@ void KDEDConfig::load() {
 				item->setText(1, file.readComment());
 				item->setText(2, i18n("Not running"));
 				item->setText(4, file.readEntry("X-KDE-Library"));
+				item->setText(5, file.readEntry("X-KDE-Kded-nostart"));
 			}
 		}
 	}
 	getServiceStatus();
 }
 
-void KDEDConfig::save() {};
+void KDEDConfig::save() {
+	if (getuid()==0) {
+
+		QStringList files;
+		KGlobal::dirs()->findAllResources( "services",
+				QString::fromLatin1( "kded/*.desktop" ),
+				true, true, files );
+
+
+		QCheckListItem* item = 0L;
+		for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
+
+			if ( KDesktopFile::isDesktopFile( *it ) ) {
+				
+				KConfig file(locate( "services", *it ));
+				file.setGroup("Desktop Entry");
+				
+				if (file.readBoolEntry("X-KDE-Kded-autoload")){
+
+					item = static_cast<QCheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
+					if (item) {
+						// we found a match, now compare and see what changed
+						if (item->isOn())
+							file.writeEntry("X-KDE-Kded-nostart", false);
+						else 
+							file.writeEntry("X-KDE-Kded-nostart", true);
+					
+					}	
+				}
+			}
+		}
+
+	}
+
+};
 
 
 void KDEDConfig::defaults() 
 {
 	QListViewItemIterator it( _lvStartup);
 	while ( it.current() != 0 ){
-		QCheckListItem *item = static_cast<QCheckListItem *>(it.current());
-		item->setOn(false);
+		if (it.current()->rtti()==1) {
+			QCheckListItem *item = static_cast<QCheckListItem *>(it.current());
+			item->setOn(false);
+		}
 		++it;
 	}
 	
 	getServiceStatus();
 
-};
+}
+
 
 void KDEDConfig::getServiceStatus()
 {
@@ -182,9 +228,11 @@ void KDEDConfig::getServiceStatus()
 		if ( item )
 		{
 			item->setText(3, i18n("Running"));
-			QCheckListItem *ci = static_cast<QCheckListItem *>(item);
-			if (ci)
+			if (item->rtti()==1) {
+				item->setText(5, "true");
+				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
 				ci->setOn(true);
+			}
 		}
 
 		item = 0;
@@ -255,7 +303,8 @@ QString KDEDConfig::quickHelp() const
 	return i18n("<h1>KDE Services</h1><p>This module allows you to have an overview of all plugins of the "
 			"KDE Daemon, also referred to as KDE Services. Generally, there are two types of service:</p>"
 			"<ul><li>Services invoked at startup</li><li>Services called on demand</li></ul>"
-			"<p>The latter are only listed for convenience. The startup services can be started and stopped, and "
-			"you can also define whether they should be loaded at startup.</p><p><b> Use this with care. Some "
-			"services are vital for KDE. Don't deactivate services if you don't know what you are doing!</b></p>");
+			"<p>The latter are only listed for convenience. The startup services can be started and stopped."
+			"In Administrator mode, you can also define whether services should be loaded at startup.</p>"
+			"<p><b> Use this with care. Some services are vital for KDE. Don't deactivate services if you"
+			" don't know what you are doing!</b></p>");
 }
