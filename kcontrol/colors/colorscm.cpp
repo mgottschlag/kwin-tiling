@@ -509,7 +509,7 @@ void KColorScheme::slotAdd()
                 int result = KMessageBox::warningContinueCancel( 0,
                    i18n("A color scheme with the name '%1' already exists.\n"
                         "Do you want to overwrite it?\n").arg(sName),
-		   i18n("Save color scheme"),
+		   i18n("Save Color Scheme"),
                    i18n("Overwrite"));
                 if (result == KMessageBox::Cancel)
                     break;
@@ -860,7 +860,7 @@ QPalette KColorScheme::createPalette()
 /**** SaveScm ****/
 
 SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
-    : KDialogBase( parent, name, true, i18n("Save color scheme"), Ok|Cancel, Ok, true )
+    : KDialogBase( parent, name, true, i18n("Save Color Scheme"), Ok|Cancel, Ok, true )
 {
     QWidget *page = new QWidget(this);
     setMainWidget(page);
