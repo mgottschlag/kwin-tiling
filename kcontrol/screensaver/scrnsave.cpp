@@ -246,7 +246,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mWaitEdit->setRange(1, 120);
     mWaitEdit->setSuffix(i18n(" min"));
     mWaitEdit->setValue(mTimeout/60);
-    mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
     lbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
@@ -257,7 +256,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
     mLockCheckBox = new QCheckBox( i18n("&Require password"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
-    mLockCheckBox->setEnabled( mEnabled );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
          this, SLOT( slotLock( bool ) ) );
     groupLayout->addWidget(mLockCheckBox);
@@ -276,7 +274,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mPrioritySlider->setSteps(1, 5);
     mPrioritySlider->setTickmarks(QSlider::Below);
     mPrioritySlider->setValue(19 - mPriority);
-    mPrioritySlider->setEnabled( mEnabled );
     connect(mPrioritySlider, SIGNAL( valueChanged(int)),
         SLOT(slotPriorityChanged(int)));
     lbl->setBuddy(mPrioritySlider);
@@ -309,6 +306,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     //groupLayout->addStretch(1);
 
     vLayout->addStretch();
+
+    mSettingsGroup->setEnabled( mEnabled );
 
     // finding the savers can take some time, so defer loading until
     // we've started up.
