@@ -38,7 +38,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 #include "taskmanager.moc"
 
+#if QT_VERSION < 300
 template class QList<Task>;
+#else
+template class QPtrList<Task>;
+#endif
 KWinModule* kwin_module = 0;
 
 TaskManager::TaskManager(QObject *parent, const char *name)

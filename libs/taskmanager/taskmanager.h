@@ -30,7 +30,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpoint.h>
 #include <qobject.h>
 #include <qvaluelist.h>
+#if QT_VERSION < 300
 #include <qlist.h>
+#else
+#include <qptrlist.h>
+#endif
 #include <qpixmap.h>
 
 #include <dcopobject.h>
@@ -371,6 +375,14 @@ private:
     class StartupPrivate *d;
 };
 
+#if QT_VERSION < 300
+typedef QList<Task> TaskList;
+typedef QList<Startup> StartupList;
+#else
+typedef QPtrList<Task> TaskList;
+typedef QPtrList<Startup> StartupList;
+#endif
+
 /**
  * A generic API for task managers. This class provides an easy way to
  * build NET compliant task managers. It provides support for startup
@@ -392,14 +404,16 @@ public:
     virtual ~TaskManager();
 
     /**
-     * Returns a list of all current tasks.
+     * Returns a list of all current tasks. Return type changed to
+     * QPtrList in KDE 3.
      */
-    QList<Task> tasks() const { return _tasks; }
+    TaskList tasks() const { return _tasks; }
 
     /**
-     * Returns a list of all current startups.
+     * Returns a list of all current startups. Return type changed to
+     * QPtrList in KDE 3.
      */
-    QList<Startup> startups() const { return _startups; }
+    StartupList startups() const { return _startups; }
 
     /**
      * Returns the name of the nth desktop.
@@ -486,8 +500,8 @@ protected:
 
 private:
     Task*               _active;
-    QList<Task>         _tasks;
-    QList<Startup>      _startups;
+    TaskList           _tasks;
+    StartupList         _startups;
     KStartupInfo*       _startup_info;
 
     class TaskManagerPrivate *d;
