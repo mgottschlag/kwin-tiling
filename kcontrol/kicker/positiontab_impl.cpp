@@ -26,6 +26,8 @@
 #include <qwhatsthis.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <qcombobox.h>
+#include <qtimer.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -34,6 +36,7 @@
 #include <knuminput.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>
+#include <kwin.h>
 
 #include "../background/bgrender.h"
 #include "extensionInfo.h"
@@ -74,6 +77,16 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
 
     // connections
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+    connect(m_xineramaScreenComboBox, SIGNAL(highlighted(int)), SIGNAL(changed()));
+    
+    connect(m_identifyButton,SIGNAL(pressed()),SLOT(showIdentify()));
+    connect(m_identifyButton,SIGNAL(released()),SIGNAL(hideIdentify()));
+
+    for(int s=0; s < QApplication::desktop()->numScreens(); s++)
+    {   /* populate the combobox for the available screens */
+        m_xineramaScreenComboBox->insertItem(QString::number(s));
+    }
+
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
@@ -120,6 +133,7 @@ void PositionTab::defaults()
     m_percentSlider->setValue( 100 ); // use all space available
     m_percentSpinBox->setValue( 100 ); // use all space available
     m_expandCheckBox->setChecked( true ); // expand as required
+    m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
     
     if (QApplication::reverseLayout())
     {
@@ -422,6 +436,10 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     
     m_panelPos = m_panelInfo->_position;
     m_panelAlign = m_panelInfo->_alignment;
+    if(m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
+        m_xineramaScreenComboBox->setCurrentItem(m_panelInfo->_xineramaScreen);
+    else
+        m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
 
     if (m_panelPos == PosTop)
     {
@@ -479,7 +497,7 @@ void PositionTab::storeInfo()
     if (!m_panelInfo)
     {
         return;
-    }
+            }
    
     // Magic numbers stolen from kdebase/kicker/core/global.cpp
     // PGlobal::sizeValue()
@@ -507,9 +525,39 @@ void PositionTab::storeInfo()
 
     m_panelInfo->_position = m_panelPos;
     m_panelInfo->_alignment = m_panelAlign;
+    m_panelInfo->_xineramaScreen = m_xineramaScreenComboBox->currentItem();
 
     m_panelInfo->_sizePercentage = m_percentSlider->value();
     m_panelInfo->_expandSize = m_expandCheckBox->isChecked();
 }
 
+void PositionTab::showIdentify()
+{
+    for(int s=0; s < QApplication::desktop()->numScreens();s++)
+    {
 
+        QLabel *screenLabel = new QLabel(0,"Screen Identify", WStyle_StaysOnTop | WDestructiveClose | WStyle_Customize | WStyle_NoBorder);
+
+        KWin::setState( screenLabel->winId(), NET::Modal | NET::Sticky | NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
+        KWin::setType( screenLabel->winId(), NET::Override );
+    
+        QFont identifyFont(KGlobalSettings::generalFont());
+        identifyFont.setPixelSize(100);
+        screenLabel->setFont(identifyFont);
+
+        screenLabel->setFrameStyle(QFrame::Panel);
+        screenLabel->setFrameShadow(QFrame::Plain);
+
+        screenLabel->setAlignment(Qt::AlignCenter);
+        screenLabel->setNum(s);
+        connect(this,SIGNAL(hideIdentify()),screenLabel,SLOT(close()));
+
+        QPoint screenCenter(QApplication::desktop()->screenGeometry(s).center());
+        QRect targetGeometry(QPoint(0,0),screenLabel->sizeHint());
+        targetGeometry.moveCenter(screenCenter);
+
+        screenLabel->setGeometry(targetGeometry);
+  
+        screenLabel->show();
+    }
+}

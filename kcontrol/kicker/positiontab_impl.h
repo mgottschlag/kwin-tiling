@@ -41,6 +41,7 @@ public:
 
 signals:
     void changed();
+    void hideIdentify();
 
 protected slots:
     void movePanel(int);
@@ -50,6 +51,7 @@ protected slots:
     void switchPanel(QListViewItem*);
     void infoUpdated();
     void storeInfo();
+    void showIdentify();
     
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };

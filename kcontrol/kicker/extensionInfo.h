@@ -43,6 +43,7 @@ class extensionInfo
         QString  _name;
         int      _position;
         int      _alignment;
+        int      _xineramaScreen;
         int      _size;
         int      _customSize;
         bool     _showLeftHB;

@@ -71,6 +71,7 @@ void extensionInfo::load()
 
     _position       = c.readNumEntry ("Position",            _position);
     _alignment      = c.readNumEntry ("Alignment",           _alignment);
+    _xineramaScreen = c.readNumEntry ("XineramaScreen",      _xineramaScreen);
     _showLeftHB     = c.readBoolEntry("ShowLeftHideButton",  _showLeftHB);
     _showRightHB    = c.readBoolEntry("ShowRightHideButton", _showRightHB);
     _autohidePanel  = c.readBoolEntry("AutoHidePanel",       _autohidePanel);
@@ -99,6 +100,7 @@ void extensionInfo::setDefaults()
     // defaults
     _position       = 3;
     _alignment      = QApplication::reverseLayout() ? 2 : 0;
+		_xineramaScreen = QApplication::desktop()->primaryScreen();
     _size           = 2;
     _showLeftHB     = true;
     _showRightHB    = false;
@@ -125,6 +127,7 @@ void extensionInfo::save()
 
     c.writeEntry("Position",            _position);
     c.writeEntry("Alignment",           _alignment);
+    c.writeEntry("XineramaScreen",      _xineramaScreen);
     c.writeEntry("ShowLeftHideButton",  _showLeftHB);
     c.writeEntry("ShowRightHideButton", _showRightHB);
     c.writeEntry("AutoHidePanel",       _autohidePanel);

@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>534</width>
-            <height>475</height>
+            <width>658</width>
+            <height>482</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,7 +19,7 @@
     <property name="whatsThis" stdset="0">
         <string>This is a list of all the panels currently active on your desktop. Select one to configure.</string>
     </property>
-    <grid>
+    <hbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -29,70 +29,25 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer row="2" column="1">
+        <widget class="QListView">
+            <column>
+                <property name="text">
+                    <string>Panels</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizeable">
+                    <bool>true</bool>
+                </property>
+            </column>
             <property name="name">
-                <cstring>Spacer13</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="0" column="2">
-            <property name="name">
-                <cstring>m_monitorImage</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>151</width>
-                    <height>115</height>
-                </size>
-            </property>
-            <property name="scaledContents">
-                <bool>true</bool>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
+                <cstring>m_panelList</cstring>
             </property>
         </widget>
-        <spacer row="1" column="2">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>Spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <spacer row="0" column="3">
-            <property name="name">
-                <cstring>Spacer13_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-        </spacer>
-        <widget class="QLayoutWidget" row="0" column="1" rowspan="2" colspan="1">
-            <property name="name">
-                <cstring>Layout8</cstring>
+                <cstring>Layout16</cstring>
             </property>
             <vbox>
                 <property name="name">
@@ -988,25 +943,202 @@ how it is positioned on the screen and how much of the screen it should use.</st
                         </widget>
                     </grid>
                 </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer13</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
             </vbox>
         </widget>
-        <widget class="QListView" row="0" column="0" rowspan="2" colspan="1">
-            <column>
-                <property name="text">
-                    <string>Panels</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizeable">
-                    <bool>true</bool>
-                </property>
-            </column>
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>m_panelList</cstring>
+                <cstring>Layout14</cstring>
             </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QGroupBox">
+                    <property name="name">
+                        <cstring>XineramaGroup</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Screen</string>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>11</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout13</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>Spacer9</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                </spacer>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>m_monitorImage</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>1</hsizetype>
+                                            <vsizetype>1</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>151</width>
+                                            <height>115</height>
+                                        </size>
+                                    </property>
+                                    <property name="scaledContents">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="alignment">
+                                        <set>AlignCenter</set>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This preview image shows how the panel will appear on your screen with the settings you have chosen. Clicking the buttons around the image will move the positon of the panel, while moving the length slider and choosing different sizes will change the dimensions of the panel.</string>
+                                    </property>
+                                </widget>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>Spacer13_2</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                </spacer>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout12</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>Spacer8</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Horizontal</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                </spacer>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>m_identifyButton</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Identify</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This button displays each monitor's identifying number</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout9</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel1</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Xinerama Screen</string>
+                                    </property>
+                                </widget>
+                                <widget class="QComboBox">
+                                    <property name="name">
+                                        <cstring>m_xineramaScreenComboBox</cstring>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This menu selects which screen the Panel will be displayed on in a multiple-monitor system</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                    </vbox>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+            </vbox>
         </widget>
-    </grid>
+    </hbox>
 </widget>
 <connections>
     <connection>
@@ -1083,6 +1215,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
     </connection>
 </connections>
 <tabstops>
+    <tabstop>m_panelList</tabstop>
     <tabstop>locationTopLeft</tabstop>
     <tabstop>locationTop</tabstop>
     <tabstop>locationTopRight</tabstop>
@@ -1105,6 +1238,8 @@ how it is positioned on the screen and how much of the screen it should use.</st
     <tabstop>m_sizeCustom</tabstop>
     <tabstop>m_customSlider</tabstop>
     <tabstop>m_customSpinbox</tabstop>
+    <tabstop>m_identifyButton</tabstop>
+    <tabstop>m_xineramaScreenComboBox</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">klineedit.h</include>
