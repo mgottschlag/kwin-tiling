@@ -16,3 +16,4 @@
  	keys->insertItem(i18n("Insert"), "Insert", "CTRL+Insert");
  	keys->insertItem(i18n("Home"), "Home", "CTRL+Home");
  	keys->insertItem(i18n("End"),"End" , "CTRL+End");
+ 	keys->insertItem(i18n("Popup context menu"),"PopupContextMenu" , "Menu");
