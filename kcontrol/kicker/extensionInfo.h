@@ -23,17 +23,17 @@
 #include <qlistview.h>
 #include <kpanelextension.h>
 
-class extensionInfo;
+class ExtensionInfo;
 
-typedef QValueList<extensionInfo*> extensionInfoList;
+typedef QValueList<ExtensionInfo*> ExtensionInfoList;
 
-class extensionInfo
+class ExtensionInfo
 {
     public:
-        extensionInfo(const QString& destopFile,
+        ExtensionInfo(const QString& destopFile,
                       const QString& configFile,
                       const QString& configPath);
-        ~extensionInfo() {};
+        ~ExtensionInfo() {};
 
         void setDefaults();
         void save();

@@ -16,7 +16,10 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup">
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>m_kmenuGroup</cstring>
             </property>
@@ -35,47 +38,37 @@
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLayoutWidget">
+                        <widget class="QButtonGroup">
                             <property name="name">
-                                <cstring>layout5</cstring>
+                                <cstring>kcfg_MenuEntryFormat</cstring>
+                            </property>
+                            <property name="lineWidth">
+                                <number>0</number>
+                            </property>
+                            <property name="title">
+                                <string>Menu item format:</string>
+                            </property>
+                            <property name="flat">
+                                <bool>true</bool>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Here you can choose how menu entries are shown.</string>
                             </property>
                             <grid>
                                 <property name="name">
                                     <cstring>unnamed</cstring>
                                 </property>
-                                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                                <widget class="QRadioButton" row="1" column="1">
                                     <property name="name">
-                                        <cstring>m_showPixmap</cstring>
+                                        <cstring>m_formatSimple</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Show side ima&amp;ge</string>
-                                    </property>
-                                    <property name="checked">
-                                        <bool>true</bool>
+                                        <string>&amp;Name only</string>
                                     </property>
                                     <property name="whatsThis" stdset="0">
-                                        <string>&lt;qt&gt;When this option is selected an image will appear down the left-hand side of the K Menu. The image will be tinted according to your color settings.
-
-&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_tile.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
+                                        <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
                                     </property>
                                 </widget>
-                                <spacer row="2" column="0">
-                                    <property name="name">
-                                        <cstring>Spacer3</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Fixed</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>16</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
                                 <widget class="QRadioButton" row="2" column="1">
                                     <property name="name">
                                         <cstring>m_formatNameDesc</cstring>
@@ -88,48 +81,6 @@
                                     </property>
                                     <property name="whatsThis" stdset="0">
                                         <string>When this option is selected, items in the K Menu will appear with the application's name and a brief description in brackets next to the icon.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
-                                    <property name="name">
-                                        <cstring>TextLabel1_2</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>5</hsizetype>
-                                            <vsizetype>5</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="minimumSize">
-                                        <size>
-                                            <width>0</width>
-                                            <height>0</height>
-                                        </size>
-                                    </property>
-                                    <property name="frameShape">
-                                        <enum>MShape</enum>
-                                    </property>
-                                    <property name="frameShadow">
-                                        <enum>MShadow</enum>
-                                    </property>
-                                    <property name="text">
-                                        <string>Menu item format:</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>Here you can choose how menu entries are shown.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QRadioButton" row="1" column="1">
-                                    <property name="name">
-                                        <cstring>m_formatSimple</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Name only</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
                                     </property>
                                 </widget>
                                 <widget class="QRadioButton" row="3" column="1">
@@ -147,6 +98,22 @@
                                     </property>
                                 </widget>
                             </grid>
+                        </widget>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>kcfg_UseSidePixmap</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Show side ima&amp;ge</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>&lt;qt&gt;When this option is selected an image will appear down the left-hand side of the K Menu. The image will be tinted according to your color settings.
+                                    
+                                    &lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_tile.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
+                            </property>
                         </widget>
                         <spacer>
                             <property name="name">
@@ -167,7 +134,7 @@
                         </spacer>
                         <widget class="QPushButton">
                             <property name="name">
-                                <cstring>PushButton1</cstring>
+                                <cstring>m_editKMenuButton</cstring>
                             </property>
                             <property name="text">
                                 <string>Edit &amp;K Menu</string>
@@ -243,7 +210,7 @@
                                 <string>Ma&amp;ximum number of entries:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>m_maxQuickBrowserItems</cstring>
+                                <cstring>kcfg_MaxEntries2</cstring>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>When browsing directories that contain a lot of files, the QuickBrowser can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser. This is particularly useful for low screen resolutions.</string>
@@ -251,7 +218,7 @@
                         </widget>
                         <widget class="KIntNumInput">
                             <property name="name">
-                                <cstring>m_maxQuickBrowserItems</cstring>
+                                <cstring>kcfg_MaxEntries2</cstring>
                             </property>
                             <property name="value">
                                 <number>30</number>
@@ -270,7 +237,7 @@
                 </widget>
                 <widget class="QCheckBox" row="0" column="0">
                     <property name="name">
-                        <cstring>m_hiddenFiles</cstring>
+                        <cstring>kcfg_ShowHiddenFiles</cstring>
                     </property>
                     <property name="text">
                         <string>Show hidden fi&amp;les</string>
@@ -328,7 +295,7 @@
                                 <string>Maxim&amp;um number of entries:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>m_maxQuickStartItems</cstring>
+                                <cstring>kcfg_NumVisibleEntries</cstring>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>This option allows you to define the maximum number of applications that should be displayed in the QuickStart menu area.</string>
@@ -336,7 +303,7 @@
                         </widget>
                         <widget class="KIntNumInput">
                             <property name="name">
-                                <cstring>m_maxQuickStartItems</cstring>
+                                <cstring>kcfg_NumVisibleEntries</cstring>
                             </property>
                             <property name="value">
                                 <number>5</number>
@@ -355,7 +322,7 @@
                 </widget>
                 <widget class="QRadioButton" row="0" column="0">
                     <property name="name">
-                        <cstring>m_showRecent</cstring>
+                        <cstring>kcfg_RecentVsOften</cstring>
                     </property>
                     <property name="text">
                         <string>Show the &amp;applications most recently used</string>
@@ -399,38 +366,25 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
-<connections>
-    <connection>
-        <sender>PushButton1</sender>
-        <signal>clicked()</signal>
-        <receiver>MenuTabBase</receiver>
-        <slot>launchMenuEditor()</slot>
-    </connection>
-</connections>
 <tabstops>
     <tabstop>m_formatSimple</tabstop>
     <tabstop>m_formatNameDesc</tabstop>
     <tabstop>m_formDescName</tabstop>
-    <tabstop>m_showPixmap</tabstop>
-    <tabstop>PushButton1</tabstop>
+    <tabstop>kcfg_UseSidePixmap</tabstop>
+    <tabstop>m_editKMenuButton</tabstop>
     <tabstop>m_subMenus</tabstop>
-    <tabstop>m_hiddenFiles</tabstop>
-    <tabstop>m_maxQuickBrowserItems</tabstop>
-    <tabstop>m_showRecent</tabstop>
+    <tabstop>kcfg_ShowHiddenFiles</tabstop>
+    <tabstop>kcfg_MaxEntries2</tabstop>
+    <tabstop>kcfg_RecentVsOften</tabstop>
     <tabstop>m_showFrequent</tabstop>
-    <tabstop>m_maxQuickStartItems</tabstop>
+    <tabstop>kcfg_NumVisibleEntries</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">klistview.h</include>
     <include location="global" impldecl="in implementation">knuminput.h</include>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
-<slots>
-    <slot>launchMenuEditor()</slot>
-</slots>
-<layoutdefaults spacing="3" margin="6"/>
+<layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>klistview.h</includehint>

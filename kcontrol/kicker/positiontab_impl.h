@@ -20,19 +20,19 @@
 #ifndef __positiontab_impl_h__
 #define __positiontab_impl_h__
 
-#include "main.h"
 #include "positiontab.h"
 
 class QFrame;
 class KBackgroundRenderer;
 class KickerConfig;
+class ExtensionInfo;
 
 class PositionTab : public PositionTabBase
 {
     Q_OBJECT
 
 public:
-    PositionTab(KickerConfig *kcmModule, const char* name=0);
+    PositionTab(QWidget *parent, const char* name = 0);
     ~PositionTab();
 
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
@@ -41,14 +41,10 @@ public:
     void load();
     void save();
     void defaults();
-    void removeExtension(extensionInfo* info);
 
 signals:
     void changed();
     void panelPositionChanged(int);
-
-public slots:
-    void switchPanel(int);
 
 protected slots:
     void movePanel(int);
@@ -58,17 +54,19 @@ protected slots:
     void infoUpdated();
     void storeInfo();
     void showIdentify();
-    void extensionAdded(extensionInfo*);
+    void extensionAdded(ExtensionInfo*);
+    void extensionRemoved(ExtensionInfo* info);
     void extensionChanged(const QString&);
     void extensionAboutToChange(const QString&);
     void sizeChanged(int);
+    void switchPanel(int);
+    void jumpToPanel(int);
 
 private:
     QFrame* m_pretendPanel;
     QWidget* m_pretendDesktop;
     KBackgroundRenderer* m_desktopPreview;
-    KickerConfig* m_kcm;
-    extensionInfo* m_panelInfo;
+    ExtensionInfo* m_panelInfo;
 
     unsigned int m_panelPos;
     unsigned int m_panelAlign;

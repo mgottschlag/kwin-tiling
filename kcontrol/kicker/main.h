@@ -19,69 +19,66 @@
 #define __main_h__
 
 #include <dcopobject.h>
-
-#include <kcmodule.h>
 #include <kconfig.h>
 
 #include "extensionInfo.h"
 
 class QComboBox;
-class QTabWidget;
+class KAboutData;
 class KDirWatch;
-class PositionTab;
-class HidingTab;
-class MenuTab;
-class LookAndFeelTab;
-//class AppletTab;
-class ExtensionsTab;
 
-class KickerConfig : public KCModule, public DCOPObject
+class KickerConfig : public QObject, public DCOPObject
 {
     Q_OBJECT
     K_DCOP
 
 public:
-    KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+    static KickerConfig *the();
     ~KickerConfig();
-    void load();
-    void save();
-    void defaults();
 
     void populateExtensionInfoList(QComboBox* list);
     void reloadExtensionInfo();
     void saveExtentionInfo();
-    const extensionInfoList& extensionsInfo();
+    const ExtensionInfoList& extensionsInfo();
 
-    // now that it's all split up, bring the code dupe under control
-    static void initScreenNumber();
-    static QString configName();
-    static void notifyKicker();
+    QString configName();
+    void notifyKicker();
+
+    QString quickHelp() const;
+    KAboutData *aboutData();
+
+    int currentPanelIndex() const { return m_currentPanelIndex; }
 
 k_dcop:
     void jumpToPanel(const QString& panelConfig);
 
 signals:
-    void extensionInfoChanged();
-    void extensionAdded(extensionInfo*);
-    void extensionChanged(const QString&);
-    void extensionAboutToChange(const QString&);
-
-protected slots:
     void positionPanelChanged(int);
     void hidingPanelChanged(int);
-    void configChanged(const QString&);
+    void extensionInfoChanged();
+    void extensionAdded(ExtensionInfo*);
+    void extensionRemoved(ExtensionInfo*);
+    void extensionChanged(const QString&);
+    void extensionAboutToChange(const QString&);
+    void aboutToNotifyKicker();
 
-private:
+protected:
+    void init();
     void setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists = false);
 
-    KDirWatch      *configFileWatch;
-    PositionTab    *positiontab;
-    HidingTab      *hidingtab;
-    LookAndFeelTab *lookandfeeltab;
-    MenuTab        *menutab;
-//    AppletTab      *applettab;
-    extensionInfoList m_extensionInfo;
-    static int kickerconfig_screen_number;
+protected slots:
+    void configChanged(const QString&);
+    void setCurrentPanelIndex(int);
+
+private:
+    KickerConfig(QWidget *parent = 0, const char *name = 0);
+
+    static KickerConfig *m_self;
+
+    KDirWatch *configFileWatch;
+    ExtensionInfoList m_extensionInfo;
+    int m_screenNumber;
+    uint m_currentPanelIndex;
 };
 
 #endif // __main_h__

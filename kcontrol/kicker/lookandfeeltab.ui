@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>448</width>
-            <height>635</height>
+            <width>416</width>
+            <height>443</height>
         </rect>
     </property>
     <property name="whatsThis" stdset="0">
@@ -18,6 +18,9 @@
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
         </property>
         <widget class="QGroupBox">
             <property name="name">
@@ -32,7 +35,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_zoom_cb</cstring>
+                        <cstring>kcfg_ShowMouseOverEffects</cstring>
                     </property>
                     <property name="text">
                         <string>Enable icon &amp;mouseover effects</string>
@@ -43,7 +46,7 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_showToolTips</cstring>
+                        <cstring>kcfg_ShowToolTips</cstring>
                     </property>
                     <property name="text">
                         <string>Show too&amp;ltips</string>
@@ -153,7 +156,7 @@
                 </widget>
                 <widget class="KColorButton" row="3" column="2">
                     <property name="name">
-                        <cstring>m_browserColor</cstring>
+                        <cstring>kcfg_BrowserTileColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -164,7 +167,7 @@
                 </widget>
                 <widget class="KColorButton" row="0" column="2">
                     <property name="name">
-                        <cstring>m_kmenuColor</cstring>
+                        <cstring>kcfg_KMenuTileColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -185,7 +188,7 @@
                         </property>
                     </item>
                     <property name="name">
-                        <cstring>m_wlTile</cstring>
+                        <cstring>m_windowListTile</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -204,7 +207,7 @@
                 </widget>
                 <widget class="KColorButton" row="4" column="2">
                     <property name="name">
-                        <cstring>m_wlColor</cstring>
+                        <cstring>kcfg_WindowListTileColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -221,7 +224,7 @@
                         <string>&amp;Window list:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>m_wlTile</cstring>
+                        <cstring>m_windowListTile</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Choose a tile image for window list buttons.</string>
@@ -258,7 +261,7 @@
                 </widget>
                 <widget class="KColorButton" row="2" column="2">
                     <property name="name">
-                        <cstring>m_desktopColor</cstring>
+                        <cstring>kcfg_DesktopButtonTileColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -283,7 +286,7 @@
                 </widget>
                 <widget class="KColorButton" row="1" column="2">
                     <property name="name">
-                        <cstring>m_urlColor</cstring>
+                        <cstring>kcfg_URLTileColor</cstring>
                     </property>
                     <property name="text">
                         <string></string>
@@ -384,7 +387,7 @@
                 </spacer>
                 <widget class="QCheckBox" row="3" column="1">
                     <property name="name">
-                        <cstring>m_colorizeImage</cstring>
+                        <cstring>kcfg_ColorizeBackground</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
@@ -448,7 +451,7 @@
                 </widget>
                 <widget class="KURLRequester" row="2" column="1" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_backgroundInput</cstring>
+                        <cstring>kcfg_BackgroundTheme</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
@@ -468,7 +471,7 @@ This option is only active if 'Enable background image' is selected.</string>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_backgroundImage</cstring>
+                        <cstring>kcfg_UseBackgroundTheme</cstring>
                     </property>
                     <property name="text">
                         <string>Enable &amp;background image</string>
@@ -476,7 +479,7 @@ This option is only active if 'Enable background image' is selected.</string>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_transparent</cstring>
+                        <cstring>kcfg_Transparent</cstring>
                     </property>
                     <property name="text">
                         <string>Enable &amp;transparency</string>
@@ -543,7 +546,7 @@ This option is only active if 'Enable background image' is selected.</string>
 </widget>
 <connections>
     <connection>
-        <sender>m_backgroundInput</sender>
+        <sender>kcfg_BackgroundTheme</sender>
         <signal>urlSelected(const QString&amp;)</signal>
         <receiver>LookAndFeelTabBase</receiver>
         <slot>browseTheme(const QString&amp;)</slot>
@@ -555,51 +558,51 @@ This option is only active if 'Enable background image' is selected.</string>
         <slot>launchAdvancedDialog()</slot>
     </connection>
     <connection>
-        <sender>m_backgroundInput</sender>
+        <sender>kcfg_BackgroundTheme</sender>
         <signal>returnPressed(const QString&amp;)</signal>
         <receiver>LookAndFeelTabBase</receiver>
         <slot>browseTheme(const QString&amp;)</slot>
     </connection>
     <connection>
-        <sender>m_transparent</sender>
+        <sender>kcfg_Transparent</sender>
         <signal>toggled(bool)</signal>
         <receiver>LookAndFeelTabBase</receiver>
         <slot>enableTransparency(bool)</slot>
     </connection>
     <connection>
-        <sender>m_backgroundImage</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_backgroundInput</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_backgroundImage</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_colorizeImage</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_backgroundImage</sender>
+        <sender>kcfg_UseBackgroundTheme</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_backgroundLabel</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>kcfg_UseBackgroundTheme</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_ColorizeBackground</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>kcfg_UseBackgroundTheme</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>kcfg_BackgroundTheme</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
-    <tabstop>m_zoom_cb</tabstop>
-    <tabstop>m_showToolTips</tabstop>
+    <tabstop>kcfg_ShowMouseOverEffects</tabstop>
+    <tabstop>kcfg_ShowToolTips</tabstop>
     <tabstop>m_kmenuTile</tabstop>
-    <tabstop>m_kmenuColor</tabstop>
+    <tabstop>kcfg_KMenuTileColor</tabstop>
     <tabstop>m_urlTile</tabstop>
-    <tabstop>m_urlColor</tabstop>
+    <tabstop>kcfg_URLTileColor</tabstop>
     <tabstop>m_desktopTile</tabstop>
-    <tabstop>m_desktopColor</tabstop>
+    <tabstop>kcfg_DesktopButtonTileColor</tabstop>
     <tabstop>m_browserTile</tabstop>
-    <tabstop>m_browserColor</tabstop>
-    <tabstop>m_wlTile</tabstop>
-    <tabstop>m_wlColor</tabstop>
-    <tabstop>m_backgroundInput</tabstop>
-    <tabstop>m_colorizeImage</tabstop>
+    <tabstop>kcfg_BrowserTileColor</tabstop>
+    <tabstop>m_windowListTile</tabstop>
+    <tabstop>kcfg_WindowListTileColor</tabstop>
+    <tabstop>kcfg_BackgroundTheme</tabstop>
+    <tabstop>kcfg_ColorizeBackground</tabstop>
     <tabstop>advancedOptionsButton</tabstop>
 </tabstops>
 <includes>
@@ -612,7 +615,7 @@ This option is only active if 'Enable background image' is selected.</string>
     <slot access="protected" specifier="pure virtual">browseTheme(const QString&amp;)</slot>
     <slot access="protected" specifier="pure virtual">enableTransparency(bool)</slot>
 </slots>
-<layoutdefaults spacing="3" margin="6"/>
+<layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>kcombobox.h</includehint>

@@ -33,7 +33,7 @@ class kSubMenuItem : public QObject, public QCheckListItem
                      const QPixmap& icon,
                      bool checked);
         ~kSubMenuItem() {}
-   
+
         QString desktopFile();
 
     signals:

@@ -3,10 +3,11 @@ kde_module_LTLIBRARIES = kcm_kicker.la
 kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui \
 			positiontab_impl.cpp hidingtab_impl.cpp lookandfeeltab_impl.cpp \
 			menutab_impl.cpp extensionInfo.cpp main.cpp main.skel \
-                        advancedOptions.ui advancedDialog.cpp
+                        advancedOptions.ui advancedDialog.cpp \
+                        positionconfig.cpp hidingconfig.cpp menuconfig.cpp lookandfeelconfig.cpp
 
 kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_kicker_la_LIBADD =  ../background/libbgnd.la $(LIB_KIO)
+kcm_kicker_la_LIBADD = $(top_builddir)/kicker/share/libkickermain.la ../background/libbgnd.la $(LIB_KIO) $(LIB_KUTILS)
 AM_CPPFLAGS = -I$(top_srcdir)/kicker/core -I$(top_builddir)/kicker/share -I$(srcdir)/../background $(all_includes)
 
 METASOURCES = AUTO
@@ -24,7 +25,9 @@ messages: rc.cpp
 xdg_apps_DATA = panel.desktop
 EXTRA_DIST = $(xdg_apps_DATA)
 
-kcmkicker_data3_DATA = kicker_config.desktop kicker_config_appearance.desktop
+kcmkicker_data3_DATA = kicker_config.desktop \
+                kicker_config_arrangement.desktop kicker_config_hiding.desktop \
+                kicker_config_menus.desktop kicker_config_appearance.desktop
 kcmkicker_data3dir = $(kde_appsdir)/.hidden
 
 install-data-local: uninstall.desktop

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=kcmkicker
+Type=Application
+DocPath=kcontrol/panel/index.html#panel-hiding
+Exec=kcmshell kicker_hiding
+
+X-KDE-Library=kicker
+X-KDE-FactoryName=kicker_hiding
+X-KDE-ParentApp=kicker
+
+Name=Hiding
+Comment=You can configure the hiding of the panel here
+Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons

@@ -17,14 +17,15 @@
  */
 
 #include <qapplication.h>
+
+#include <kdebug.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
-#include <kdebug.h>
 
 #include "extensionInfo.h"
 
 
-extensionInfo::extensionInfo(const QString& desktopFile,
+ExtensionInfo::ExtensionInfo(const QString& desktopFile,
                              const QString& configFile,
                              const QString& configPath)
     : _configFile(configFile),
@@ -34,7 +35,7 @@ extensionInfo::extensionInfo(const QString& desktopFile,
     load();
 }
 
-void extensionInfo::load()
+void ExtensionInfo::load()
 {
     setDefaults();
 
@@ -117,7 +118,7 @@ void extensionInfo::load()
     if (_sizePercentage > 100) _sizePercentage = 100;
 }
 
-void extensionInfo::configChanged()
+void ExtensionInfo::configChanged()
 {
     KConfig c(_configFile);
     c.setGroup("General");
@@ -154,7 +155,7 @@ void extensionInfo::configChanged()
     }
 }
 
-void extensionInfo::setDefaults()
+void ExtensionInfo::setDefaults()
 {
     // defaults
     _position       = 3;
@@ -180,7 +181,7 @@ void extensionInfo::setDefaults()
     _customSizeMax  = 0;
 }
 
-void extensionInfo::save()
+void ExtensionInfo::save()
 {
     KConfig c(_configFile);
     c.setGroup("General");

@@ -18,23 +18,23 @@
 
 #include <qcheckbox.h>
 #include <qgroupbox.h>
-#include <qheader.h>
-#include <qslider.h>
 #include <qradiobutton.h>
+#include <qslider.h>
 
 #include <kcombobox.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <knuminput.h>
 
 #include "main.h"
-#include "hidingtab_impl.h"
-#include "hidingtab_impl.moc"
 #include "positiontab_impl.h"
 
+#include "hidingtab_impl.h"
+#include "hidingtab_impl.moc"
 
-HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
-  : HidingTabBase (kcmKicker, name),
-    m_kcm(kcmKicker),
+
+HidingTab::HidingTab(QWidget *parent, const char* name)
+  : HidingTabBase(parent, name),
     m_panelInfo(0)
 {
     // connections
@@ -53,33 +53,42 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     connect(m_lHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
-    connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
-    connect(m_kcm, SIGNAL(extensionAdded(extensionInfo*)), SLOT(extensionAdded(extensionInfo*)));
+    connect(KickerConfig::the(), SIGNAL(extensionInfoChanged()),
+            SLOT(infoUpdated()));
+    connect(KickerConfig::the(), SIGNAL(extensionAdded(ExtensionInfo*)),
+            SLOT(extensionAdded(ExtensionInfo*)));
+    connect(KickerConfig::the(), SIGNAL(extensionRemoved(ExtensionInfo*)),
+            SLOT(extensionRemoved(ExtensionInfo*)));
+    // position tab tells hiding tab about extension selections and vice versa
+    connect(KickerConfig::the(), SIGNAL(positionPanelChanged(int)),
+            SLOT(switchPanel(int)));
+    connect(m_panelList, SIGNAL(activated(int)),
+            KickerConfig::the(), SIGNAL(hidingPanelChanged(int)));
 }
 
 void HidingTab::load()
 {
     m_panelInfo = 0;
-    m_kcm->populateExtensionInfoList(m_panelList);
+    KickerConfig::the()->populateExtensionInfoList(m_panelList);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
-    switchPanel(0);
+    switchPanel(KickerConfig::the()->currentPanelIndex());
 }
 
-void HidingTab::extensionAdded(extensionInfo* info)
+void HidingTab::extensionAdded(ExtensionInfo* info)
 {
     m_panelList->insertItem(info->_name);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 }
 
-void HidingTab::removeExtension(extensionInfo* info)
+void HidingTab::extensionRemoved(ExtensionInfo* info)
 {
     int count = m_panelList->count();
-    int extensionCount = m_kcm->extensionsInfo().count();
+    int extensionCount = KickerConfig::the()->extensionsInfo().count();
     int index = 0;
     for (; index < count && index < extensionCount; ++index)
     {
-        if (m_kcm->extensionsInfo()[index] == info)
+        if (KickerConfig::the()->extensionsInfo()[index] == info)
         {
             break;
         }
@@ -98,12 +107,12 @@ void HidingTab::removeExtension(extensionInfo* info)
 void HidingTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    extensionInfo* panelInfo = (m_kcm->extensionsInfo())[panelItem];
+    ExtensionInfo* panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
     if (!panelInfo)
     {
         m_panelList->setCurrentItem(0);
-        panelInfo = (m_kcm->extensionsInfo())[panelItem];
+        panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
         if (!panelInfo)
         {
@@ -115,6 +124,8 @@ void HidingTab::switchPanel(int panelItem)
     {
         storeInfo();
     }
+
+    m_panelList->setCurrentItem(panelItem);
 
     m_panelInfo = panelInfo;
 
@@ -159,7 +170,7 @@ void HidingTab::switchPanel(int panelItem)
 void HidingTab::save()
 {
     storeInfo();
-    m_kcm->saveExtentionInfo();
+    KickerConfig::the()->saveExtentionInfo();
 }
 
 void HidingTab::storeInfo()
@@ -268,4 +279,3 @@ void HidingTab::infoUpdated()
 {
     switchPanel(0);
 }
-

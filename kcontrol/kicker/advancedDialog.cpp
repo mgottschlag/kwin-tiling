@@ -70,7 +70,7 @@ advancedDialog::~advancedDialog()
 
 void advancedDialog::load()
 {
-    KConfig c(KickerConfig::configName(), false, false);
+    KConfig c(KickerConfig::the()->configName(), false, false);
     c.setGroup("General");
 
     bool fadedOut = c.readBoolEntry("FadeOutAppletHandles", false);
@@ -94,7 +94,7 @@ void advancedDialog::load()
 
 void advancedDialog::save()
 {
-    KConfig c(KickerConfig::configName(), false, false);
+    KConfig c(KickerConfig::the()->configName(), false, false);
 
     c.setGroup("General");
     c.writeEntry("FadeOutAppletHandles",
@@ -141,7 +141,7 @@ void advancedDialog::save()
    
     c.sync();
 
-    KickerConfig::notifyKicker();
+    KickerConfig::the()->notifyKicker();
     enableButtonApply(false);
 }
 

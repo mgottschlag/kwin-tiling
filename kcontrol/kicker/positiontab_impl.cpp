@@ -15,20 +15,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
+
 #include <stdlib.h>
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qheader.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
 #include <qslider.h>
 #include <qtooltip.h>
 #include <qtimer.h>
 
 #include <kapplication.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <knuminput.h>
 #include <kpanelextension.h>
@@ -36,7 +36,9 @@
 #include <kstandarddirs.h>
 #include <kwin.h>
 
+#include "main.h"
 #include "../background/bgrender.h"
+
 #include "positiontab_impl.h"
 #include "positiontab_impl.moc"
 
@@ -48,11 +50,10 @@ extern const int maxX = 150;
 extern const int maxY = 114;
 extern const int margin = 1;
 
-PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
-  : PositionTabBase(kcmKicker, name),
+PositionTab::PositionTab(QWidget *parent, const char* name)
+  : PositionTabBase(parent, name),
     m_pretendPanel(0),
     m_desktopPreview(0),
-    m_kcm(kcmKicker),
     m_panelInfo(0),
     m_panelPos(PosBottom),
     m_panelAlign(AlignLeft)
@@ -131,14 +132,29 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
     m_desktopPreview = new KBackgroundRenderer(0);
-    connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
+    connect(m_desktopPreview, SIGNAL(imageDone(int)),
+            SLOT(slotBGPreviewReady(int)));
 
-    connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
-    connect(m_kcm, SIGNAL(extensionAdded(extensionInfo*)), SLOT(extensionAdded(extensionInfo*)));
-    connect(m_kcm, SIGNAL(extensionChanged(const QString&)), SLOT(extensionChanged(const QString&)));
-    connect(m_kcm, SIGNAL(extensionAboutToChange(const QString&)), SLOT(extensionAboutToChange(const QString&)));
-    connect(m_panelSize, SIGNAL(activated(int)), SLOT(sizeChanged(int)));
-    connect(m_panelSize, SIGNAL(activated(int)), SIGNAL(changed()));
+    connect(KickerConfig::the(), SIGNAL(extensionInfoChanged()),
+            SLOT(infoUpdated()));
+    connect(KickerConfig::the(), SIGNAL(extensionAdded(ExtensionInfo*)),
+            SLOT(extensionAdded(ExtensionInfo*)));
+    connect(KickerConfig::the(), SIGNAL(extensionRemoved(ExtensionInfo*)),
+            SLOT(extensionRemoved(ExtensionInfo*)));
+    connect(KickerConfig::the(), SIGNAL(extensionChanged(const QString&)),
+            SLOT(extensionChanged(const QString&)));
+    connect(KickerConfig::the(), SIGNAL(extensionAboutToChange(const QString&)),
+            SLOT(extensionAboutToChange(const QString&)));
+    // position tab tells hiding tab about extension selections and vice versa
+    connect(KickerConfig::the(), SIGNAL(hidingPanelChanged(int)),
+            SLOT(jumpToPanel(int)));
+    connect(m_panelList, SIGNAL(activated(int)),
+            KickerConfig::the(), SIGNAL(positionPanelChanged(int)));
+
+    connect(m_panelSize, SIGNAL(activated(int)),
+            SLOT(sizeChanged(int)));
+    connect(m_panelSize, SIGNAL(activated(int)),
+            SIGNAL(changed()));
 }
 
 PositionTab::~PositionTab()
@@ -149,15 +165,15 @@ PositionTab::~PositionTab()
 void PositionTab::load()
 {
     m_panelInfo = 0;
-    m_kcm->populateExtensionInfoList(m_panelList);
+    KickerConfig::the()->populateExtensionInfoList(m_panelList);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
-    switchPanel(0);
+    switchPanel(KickerConfig::the()->currentPanelIndex());
     m_desktopPreview->setPreview(m_pretendDesktop->size());
     m_desktopPreview->start();
 }
 
-void PositionTab::extensionAdded(extensionInfo* info)
+void PositionTab::extensionAdded(ExtensionInfo* info)
 {
     m_panelList->insertItem(info->_name);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
@@ -166,7 +182,7 @@ void PositionTab::extensionAdded(extensionInfo* info)
 void PositionTab::save()
 {
     storeInfo();
-    m_kcm->saveExtentionInfo();
+    KickerConfig::the()->saveExtentionInfo();
 }
 
 void PositionTab::defaults()
@@ -192,7 +208,7 @@ void PositionTab::defaults()
 
     // update the magic drawing
     lengthenPanel(-1);
-    switchPanel(0);
+    switchPanel(KickerConfig::the()->currentPanelIndex());
 }
 
 void PositionTab::sizeChanged(int which)
@@ -487,12 +503,12 @@ void PositionTab::slotBGPreviewReady(int)
 void PositionTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    extensionInfo* panelInfo = (m_kcm->extensionsInfo())[panelItem];
+    ExtensionInfo* panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
     if (!panelInfo)
     {
         m_panelList->setCurrentItem(0);
-        panelInfo = (m_kcm->extensionsInfo())[panelItem];
+        panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
 
         if (!panelInfo)
         {
@@ -616,7 +632,7 @@ void PositionTab::infoUpdated()
 
 void PositionTab::extensionAboutToChange(const QString& configPath)
 {
-    extensionInfo* extension = (m_kcm->extensionsInfo())[m_panelList->currentItem()];
+    ExtensionInfo* extension = (KickerConfig::the()->extensionsInfo())[m_panelList->currentItem()];
     if (extension && extension->_configPath == configPath)
     {
         storeInfo();
@@ -625,7 +641,7 @@ void PositionTab::extensionAboutToChange(const QString& configPath)
 
 void PositionTab::extensionChanged(const QString& configPath)
 {
-    extensionInfo* extension = (m_kcm->extensionsInfo())[m_panelList->currentItem()];
+    ExtensionInfo* extension = (KickerConfig::the()->extensionsInfo())[m_panelList->currentItem()];
     if (extension && extension->_configPath == configPath)
     {
         m_panelInfo = 0;
@@ -696,14 +712,14 @@ void PositionTab::showIdentify()
     }
 }
 
-void PositionTab::removeExtension(extensionInfo* info)
+void PositionTab::extensionRemoved(ExtensionInfo* info)
 {
     int count = m_panelList->count();
-    int extensionCount = m_kcm->extensionsInfo().count();
+    int extensionCount = KickerConfig::the()->extensionsInfo().count();
     int index = 0;
     for (; index < count && index < extensionCount; ++index)
     {
-        if (m_kcm->extensionsInfo()[index] == info)
+        if (KickerConfig::the()->extensionsInfo()[index] == info)
         {
             break;
         }
@@ -719,3 +735,8 @@ void PositionTab::removeExtension(extensionInfo* info)
     }
 }
 
+void PositionTab::jumpToPanel(int index)
+{
+    m_panelList->setCurrentItem(index);
+    switchPanel(index);
+}

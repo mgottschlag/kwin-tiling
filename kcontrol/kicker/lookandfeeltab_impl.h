@@ -24,48 +24,46 @@
 
 #include "lookandfeeltab.h"
 
-class QLabel;
-class QStringList;
 class advancedDialog;
 
 class LookAndFeelTab : public LookAndFeelTabBase
 {
-  Q_OBJECT
+    Q_OBJECT
 
- public:
-  LookAndFeelTab( QWidget *parent=0, const char* name=0 );
+public:
+    LookAndFeelTab(QWidget *parent = 0, const char* name = 0);
 
-  void load();
-  void save();
-  void defaults();
+    void load();
+    void save();
+    void defaults();
 
-  QString quickHelp() const;
+    QString quickHelp() const;
 
- signals:
-  void changed();
+signals:
+    void changed();
 
- protected:
-  void fillTileCombos();
-  void previewBackground(const QString& themepath, bool isNew);
-  void colorize(QImage& image);
+protected:
+    void fillTileCombos();
+    void previewBackground(const QString& themepath, bool isNew);
 
- protected slots:
-  void browseTheme();
-  void browseTheme(const QString&);
-  void launchAdvancedDialog();
-  void finishAdvancedDialog();
-  void enableTransparency( bool );
-  void kmenuTileChanged(int i);
-  void desktopTileChanged(int i);
-  void browserTileChanged(int i);
-  void urlTileChanged(int i);
-  void wlTileChanged(int i);
+protected slots:
+    void browseTheme();
+    void browseTheme(const QString&);
+    void enableTransparency( bool );
 
- private:
-  QPixmap theme_preview;
-  QStringList m_tilename;
-  advancedDialog *m_advDialog;
+    void launchAdvancedDialog();
+    void finishAdvancedDialog();
+
+    void kmenuTileChanged(int i);
+    void desktopTileChanged(int i);
+    void browserTileChanged(int i);
+    void urlTileChanged(int i);
+    void wlTileChanged(int i);
+
+private:
+    QPixmap theme_preview;
+    QStringList m_tilename;
+    advancedDialog *m_advDialog;
 };
 
 #endif
-

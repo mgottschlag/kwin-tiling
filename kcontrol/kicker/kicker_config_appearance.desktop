@@ -3,11 +3,11 @@ Encoding=UTF-8
 Icon=kcmkicker
 Type=Application
 DocPath=kcontrol/panel/index.html#panel-looknfeel
-Exec=kcmshell panel
+Exec=kcmshell kicker_appearance
 
 
 X-KDE-Library=kicker
-X-KDE-FactoryName=kicker
+X-KDE-FactoryName=kicker_appearance
 X-KDE-ParentApp=kicker
 
 Name=Appearance
@@ -44,6 +44,7 @@ Name[it]=Aspetto
 Name[ja]=外観
 Name[lo]=ການປະກົດ
 Name[lt]=Išvaizda
+Name[lv]=Izskats
 Name[mk]=Изглед
 Name[mn]=Харагдалт
 Name[mt]=Apparenza
@@ -173,6 +174,7 @@ Keywords[is]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto h
 Keywords[it]=kicker,pannello,kpanel,barra delle applicazioni,taskbar,startbar,launchbar,barra di avvio,posizione,dimensione,scomparsa automatica,pulsanti,animazione,sfondo,temi,cache dei menu,nascosto,Menu K,segnalibri,documenti recenti,browser veloce,menu,icone,piastrelle,applet,avvio,evidenziazione,maniglie,ingrandimento icone
 Keywords[ja]=kicker,パネル,kpanel,タスクバー,スタートバー,ラウンチバー,場所,サイズ,自動的に隠す,隠す,ボタン,アニメーション,背景,テーマ,メニューキャッシュ,キャッシュ,隠れた,Kメニュー,ブックマーク,最近のドキュメント,クイックブラウザ,ブラウザメニュー,メニュー,アイコン,タイル,アプレット,スタートアップ,ハイライト,ハンドル,アイコンのズーム
 Keywords[lt]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons,skydelis,kskydelis,užduočių juosta,paleidimo juosta,slėpti,mygtukai,animacija,fonas,temos,meniu atmintinė,atmintinė,paslėptas,žymelės,neseniai naudoti dokumentai,peržiūra,meniu,ženkliukai,perdengti,įskiepiai,paleistis,pažymėti,rankenėlės,išdidinti ženkliukus
+Keywords[lv]=kicker,panelis,kpanel,uzdevumjosla,startbar,launchbar,location,size,izmērs,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,grāmatzīmes,recent documents,quickbrowser,browser menu,izvēlne,icons,tiles,applets,startup,highlight,handles,zooming icons
 Keywords[mk]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons,панел,задачна лента,локација,големина,авто криење,криење,копчиња,анимација, позадина,теми,кеш на менито,кеш,скриен,K-Мени,обележувачи, последни документи,брз прелистувач,мени за прелистувачи,мени,икони, плочки,аплети,рачки,зумирање на икони,
 Keywords[mt]=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons,favoriti,pannell,post,daqs,lokazzjoni,ħabi,animazzjoni,buttuni
 Keywords[nb]=kicker,panel,kpanel,oppgavelinje,startlinje,plassering,størrelse,autoskjul,skjul,knapper,animasjon,bakgrunn,temaer,mellomlager for temaer,mellomlager,skjult,K-meny,bokmerker, nylig brukte dokumenter,hurtigviser,katalogmeny,meny,ikoner,fliser,miniprogrammer,panelprogrammer,oppstart,uthev,håndtak,forstørring av ikoner

@@ -16,21 +16,24 @@
  */
 
 #include <qcheckbox.h>
-#include <qradiobutton.h>
 #include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
 
-#include <knuminput.h>
-#include <klocale.h>
-#include <klistview.h>
-#include <kmessagebox.h>
-#include <kdesktopfile.h>
-#include <kstandarddirs.h>
-#include <kiconloader.h>
 #include <kapplication.h>
+#include <kdebug.h>
+#include <kdesktopfile.h>
+#include <kiconloader.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <knuminput.h>
+#include <kstandarddirs.h>
 
 #include "main.h"
+
 #include "menutab_impl.h"
 #include "menutab_impl.moc"
 
@@ -62,15 +65,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     m_quickBrowserMenu(0)
 {
     // connections
-    connect(m_formatSimple, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_formatNameDesc, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_formDescName, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_showPixmap, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_hiddenFiles, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_maxQuickBrowserItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_showFrequent, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_maxQuickStartItems, SIGNAL(valueChanged(int)), SIGNAL(changed()));
+    connect(m_editKMenuButton, SIGNAL(clicked()), SLOT(launchMenuEditor()));
 
     m_browserGroupLayout->setColStretch( 1, 1 );
     m_pRecentOrderGroupLayout->setColStretch( 1, 1 );
@@ -78,32 +73,9 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::configName());
-    c->setGroup("KMenu");
-
-    m_showPixmap->setChecked(c->readBoolEntry("UseSidePixmap", true));
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
 
     c->setGroup("menus");
-
-    bool showHiddenFiles = c->readBoolEntry("ShowHiddenFiles", false);
-    m_hiddenFiles->setChecked(showHiddenFiles);
-    m_maxQuickBrowserItems->setValue(c->readNumEntry("MaxEntries2", 30));
-
-    if (c->readBoolEntry("DetailedMenuEntries", true))
-    {
-        if (c->readBoolEntry("DetailedEntriesNamesFirst", false))
-        {
-            m_formatNameDesc->setChecked(true);
-        }
-        else
-        {
-            m_formDescName->setChecked(true);
-        }
-    }
-    else
-    {
-        m_formatSimple->setChecked(true);
-    }
 
     m_subMenus->clear();
 
@@ -142,28 +114,14 @@ void MenuTab::load()
         }
     }
 
-    if (c->readBoolEntry("RecentVsOften", false))
-        m_showRecent->setChecked(true);
-    else
-        m_showFrequent->setChecked(true);
-
-    m_maxQuickStartItems->setValue(c->readNumEntry("NumVisibleEntries", 5));
+    m_showFrequent->setChecked(true);
 }
 
 void MenuTab::save()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::configName());
-
-    c->setGroup("KMenu");
-    c->writeEntry("UseSidePixmap", m_showPixmap->isChecked());
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
 
     c->setGroup("menus");
-    c->writeEntry("MaxEntries2", m_maxQuickBrowserItems->value());
-    c->writeEntry("DetailedMenuEntries", !m_formatSimple->isChecked());
-    c->writeEntry("DetailedEntriesNamesFirst", m_formatNameDesc->isChecked());
-    c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
-    c->writeEntry("NumVisibleEntries", m_maxQuickStartItems->value());
-    c->writeEntry("RecentVsOften", m_showRecent->isChecked());
 
     QStringList ext;
     QListViewItem *item(0);
@@ -196,16 +154,10 @@ void MenuTab::defaults()
     {
          static_cast<kSubMenuItem*>( item )->setOn( false );
     }
-  m_showPixmap->setChecked(true);
-  m_maxQuickBrowserItems->setValue(30);
-  m_formDescName->setChecked(true);
-  m_showRecent->setChecked(true);
-  m_hiddenFiles->setChecked(false);
-  m_bookmarkMenu->setOn(true);
-  m_quickBrowserMenu->setOn(true);
+    m_bookmarkMenu->setOn(true);
+    m_quickBrowserMenu->setOn(true);
 
-  m_showFrequent->setChecked(true);
-  m_maxQuickStartItems->setValue(5);
+    m_showFrequent->setChecked(true);
 }
 
 void MenuTab::launchMenuEditor()
@@ -224,4 +176,3 @@ void MenuTab::launchMenuEditor()
                            i18n("Application Missing"));
     }
 }
-

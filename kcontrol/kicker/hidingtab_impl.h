@@ -22,32 +22,32 @@
 #include "hidingtab.h"
 
 class KickerConfig;
-class extensionInfo;
+class ExtensionInfo;
 
 class HidingTab : public HidingTabBase
 {
     Q_OBJECT
 
 public:
-    HidingTab( KickerConfig *kcmKicker, const char* name=0 );
+    HidingTab(QWidget *parent = 0, const char* name = 0);
 
     void load();
     void save();
     void defaults();
-    void removeExtension(extensionInfo* info);
 
 signals:
     void changed();
 
 public slots:
-    void switchPanel(int);
     void panelPositionChanged(int);
 
 protected slots:
     void backgroundModeClicked();
     void infoUpdated();
     void storeInfo();
-    void extensionAdded(extensionInfo*);
+    void extensionAdded(ExtensionInfo*);
+    void extensionRemoved(ExtensionInfo*);
+    void switchPanel(int);
 
 private:
     enum Trigger { None = 0, Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft };
@@ -58,7 +58,7 @@ private:
     int triggerConfigToCombo(int trigger);
 
     KickerConfig* m_kcm;
-    extensionInfo* m_panelInfo;
+    ExtensionInfo* m_panelInfo;
 };
 
 #endif
