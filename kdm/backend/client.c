@@ -134,8 +134,10 @@ static char krbtkfile[MAXPATHLEN];
 
 # ifdef sun
 typedef struct pam_message pam_message_type;
+typedef void ** pam_gi_type;
 # else
 typedef const struct pam_message pam_message_type;
+typedef const void ** pam_gi_type;
 # endif
 
 struct pam_data {
@@ -293,7 +295,7 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
     pconv.appdata_ptr = (void *)pdata;
     Debug (" PAM service %s\n", psrv);
     if (pamh) {
-	pam_get_item (pamh, PAM_SERVICE, (const void **)&pitem);
+	pam_get_item (pamh, PAM_SERVICE, (pam_gi_type)&pitem);
 	ReInitErrorLog ();
 	if (strcmp (pitem, psrv)) {
 	    Debug ("closing old PAM handle\n");
@@ -340,7 +342,7 @@ doPAMAuth (const char *psrv, struct pam_data *pdata)
 	return 0;
     if (!curuser) {
 	Debug (" asking PAM for user ...\n");
-	pam_get_item (pamh, PAM_USER, (const void **)&pitem);
+	pam_get_item (pamh, PAM_USER, (pam_gi_type)&pitem);
 	ReInitErrorLog ();
 	StrDup (&curuser, pitem);
 	GSendInt (V_PUT_USER);
