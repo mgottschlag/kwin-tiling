@@ -1241,7 +1241,6 @@ void KSMServer::restoreSession()
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
-	appsToStart++;
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
