@@ -213,7 +213,7 @@ desktop_shortcut_dialog::desktop_shortcut_dialog(
     line->setText( item_P->run );
 //    line->setMinimumWidth( 500 );
     line->setReadOnly( true );
-    keychooser = new KKeyChooser( &map, page, true );
+    keychooser = new KKeyChooser( &map, page, true, false, true );
     connect( keychooser, SIGNAL( keyChange()), this, SLOT( key_changed()));
     QBoxLayout* main_layout = new QVBoxLayout( page, KDialog::marginHint(),
         KDialog::spacingHint());
