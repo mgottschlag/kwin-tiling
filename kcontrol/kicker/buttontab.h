@@ -29,6 +29,7 @@ class QGroupBox;
 class KComboBox;
 class QLabel;
 class QCheckBox;
+class TileLabel;
 
 class ButtonTab : public QWidget
 {
@@ -47,6 +48,7 @@ class ButtonTab : public QWidget
   void changed();
 
  protected:
+  void setLabel( TileLabel *label, const QString &t );
   void fill_tile_input();
   QStringList queryAvailableTiles();
 
@@ -78,37 +80,37 @@ class ButtonTab : public QWidget
   // kmenu button-tiles group
   QGroupBox    *kmenu_group;
   QCheckBox    *kmenu_cb;
-  QLabel       *kmenu_label;
+  TileLabel    *kmenu_label;
   KComboBox    *kmenu_input;
 
   // url button-tiles group
   QGroupBox    *url_group;
   QCheckBox    *url_cb;
-  QLabel       *url_label;
+  TileLabel    *url_label;
   KComboBox    *url_input;
 
   // browser button-tiles group
   QGroupBox    *browser_group;
   QCheckBox    *browser_cb;
-  QLabel       *browser_label;
+  TileLabel    *browser_label;
   KComboBox    *browser_input;
 
   // exe button-tiles group
   QGroupBox    *exe_group;
   QCheckBox    *exe_cb;
-  QLabel       *exe_label;
+  TileLabel    *exe_label;
   KComboBox    *exe_input;
 
   // window list button-tiles group
   QGroupBox    *wl_group;
   QCheckBox    *wl_cb;
-  QLabel       *wl_label;
+  TileLabel    *wl_label;
   KComboBox    *wl_input;
 
   // desktop button-tiles group
   QGroupBox    *desktop_group;
   QCheckBox    *desktop_cb;
-  QLabel       *desktop_label;
+  TileLabel    *desktop_label;
   KComboBox    *desktop_input;
 };
 

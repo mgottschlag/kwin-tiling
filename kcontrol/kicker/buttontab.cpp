@@ -21,10 +21,11 @@
 #include <qgroupbox.h>
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
-#include <qlabel.h>
+#include <qframe.h>
 #include <qvbox.h>
 #include <qhbox.h>
 #include <qpixmap.h>
+#include <qpainter.h>
 #include <qfileinfo.h>
 
 #include <kconfig.h>
@@ -34,9 +35,33 @@
 #include <klocale.h>
 #include <kcombobox.h>
 #include <kimageio.h>
+#include <kiconeffect.h>
 
 #include "buttontab.h"
 #include "buttontab.moc"
+
+class TileLabel : public QFrame
+{
+public:
+    TileLabel( QWidget *parent ) : QFrame( parent )
+    {
+        setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    }
+
+    void setPixmap( const QPixmap &pm ) { pixmap = pm; update(); }
+    void clear() { pixmap = QPixmap(); }
+
+protected:
+    virtual void drawContents( QPainter *p )
+    {
+	QPixmap pm = pixmap;
+        if ( !isEnabled() )
+            KIconEffect::semiTransparent(pm);
+        p->drawPixmap( contentsRect().x(), contentsRect().y(), pm );
+    }
+
+    QPixmap pixmap;
+};
 
 
 ButtonTab::ButtonTab( QWidget *parent, const char* name )
@@ -89,10 +114,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( kmenu_cb, i18n("Enable or disable the usage of a tile image for the K menu.") );
   QWhatsThis::add( kmenu_input, i18n("Choose a tile image for the K menu."));
 
-  kmenu_label = new QLabel(hbox);
+  kmenu_label = new TileLabel(hbox);
   kmenu_label->setFixedSize(56,56);
-  kmenu_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  kmenu_label->setAlignment(AlignCenter);
   QWhatsThis::add( kmenu_label, i18n("This is a preview of the tile that will be used for the K menu.") );
 
   vbox->addWidget(hbox);
@@ -118,10 +141,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( browser_cb, i18n("Enable or disable the usage of tile images for Quick Browser buttons.") );
   QWhatsThis::add( browser_input, i18n("Choose a tile image for Quick Browser buttons."));
 
-  browser_label = new QLabel(hbox);
+  browser_label = new TileLabel(hbox);
   browser_label->setFixedSize(56,56);
-  browser_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  browser_label->setAlignment(AlignCenter);
   QWhatsThis::add( browser_label, i18n("This is a preview of the tile that will be used for Quick Browser buttons.") );
 
   vbox->addWidget(hbox);
@@ -147,10 +168,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( url_cb, i18n("Enable or disable the usage of a tile image for buttons that launch applications.") );
   QWhatsThis::add( url_input, i18n("Choose a tile image for buttons that launch applications."));
 
-  url_label = new QLabel(hbox);
+  url_label = new TileLabel(hbox);
   url_label->setFixedSize(56,56);
-  url_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  url_label->setAlignment(AlignCenter);
   QWhatsThis::add( url_label, i18n("This is a preview of the tile that will be used for buttons that launch applications.") );
 
   vbox->addWidget(hbox);
@@ -176,10 +195,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( exe_cb, i18n("Enable or disable the usage of tile images for legacy application buttons.") );
   QWhatsThis::add( exe_input, i18n("Choose a tile image for legacy application buttons."));
 
-  exe_label = new QLabel(hbox);
+  exe_label = new TileLabel(hbox);
   exe_label->setFixedSize(56,56);
-  exe_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  exe_label->setAlignment(AlignCenter);
   QWhatsThis::add( exe_label, i18n("This is a preview of the tile that will be used for legacy application buttons.") );
 
   vbox->addWidget(hbox);
@@ -205,10 +222,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( wl_cb, i18n("Enable or disable the usage of tile images for window list buttons.") );
   QWhatsThis::add( wl_input, i18n("Choose a tile image for window list buttons."));
 
-  wl_label = new QLabel(hbox);
+  wl_label = new TileLabel(hbox);
   wl_label->setFixedSize(56,56);
-  wl_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  wl_label->setAlignment(AlignCenter);
   QWhatsThis::add( wl_label, i18n("This is a preview of the tile that will be used for window list buttons.") );
 
   vbox->addWidget(hbox);
@@ -234,10 +249,8 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   QWhatsThis::add( desktop_cb, i18n("Enable or disable the usage of tile images for desktop access buttons.") );
   QWhatsThis::add( desktop_input, i18n("Choose a tile image for desktop access buttons."));
 
-  desktop_label = new QLabel(hbox);
+  desktop_label = new TileLabel(hbox);
   desktop_label->setFixedSize(56,56);
-  desktop_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  desktop_label->setAlignment(AlignCenter);
   QWhatsThis::add( desktop_label, i18n("This is a preview of the tile that will be used for desktop access buttons.") );
 
   vbox->addWidget(hbox);
@@ -268,26 +281,14 @@ void ButtonTab::tiles_clicked()
 void ButtonTab::kmenu_clicked()
 {
   bool enabled = kmenu_cb->isChecked();
-  kmenu_input->setEnabled(enabled);
   kmenu_label->setEnabled(enabled);
+  kmenu_input->setEnabled(enabled);
   emit changed();
 }
 
 void ButtonTab::kmenu_changed(const QString& t)
 {
-  QString tile = t + "_large_up.png";
-  tile = KGlobal::dirs()->findResource("tiles", tile);
-
-  if(!tile.isNull())
-    {
-      QPixmap pix(tile);
-      if (!pix.isNull())
-        kmenu_label->setPixmap(pix);
-      else
-        kmenu_label->clear();
-    }
-  else
-    kmenu_label->clear();
+  setLabel( kmenu_label, t );
   emit changed();
 }
 
@@ -300,19 +301,7 @@ void ButtonTab::url_clicked()
 }
 void ButtonTab::url_changed(const QString& t)
 {
-  QString tile = t + "_large_up.png";
-  tile = KGlobal::dirs()->findResource("tiles", tile);
-
-  if(!tile.isNull())
-    {
-      QPixmap pix(tile);
-      if (!pix.isNull())
-        url_label->setPixmap(pix);
-      else
-        url_label->clear();
-    }
-  else
-    url_label->clear();
+  setLabel( url_label, t );
   emit changed();
 }
 
@@ -325,19 +314,7 @@ void ButtonTab::browser_clicked()
 }
 void ButtonTab::browser_changed(const QString& t)
 {
-  QString tile = t + "_large_up.png";
-  tile = KGlobal::dirs()->findResource("tiles", tile);
-
-  if(!tile.isNull())
-    {
-      QPixmap pix(tile);
-      if (!pix.isNull())
-        browser_label->setPixmap(pix);
-      else
-        browser_label->clear();
-    }
-  else
-    browser_label->clear();
+  setLabel( browser_label, t );
   emit changed();
 }
 
@@ -350,19 +327,7 @@ void ButtonTab::exe_clicked()
 }
 void ButtonTab::exe_changed(const QString& t)
 {
-  QString tile = t + "_large_up.png";
-  tile = KGlobal::dirs()->findResource("tiles", tile);
-
-  if(!tile.isNull())
-    {
-      QPixmap pix(tile);
-      if (!pix.isNull())
-        exe_label->setPixmap(pix);
-      else
-        exe_label->clear();
-    }
-  else
-    exe_label->clear();
+  setLabel( exe_label, t );
   emit changed();
 }
 
@@ -375,19 +340,7 @@ void ButtonTab::wl_clicked()
 }
 void ButtonTab::wl_changed(const QString& t)
 {
-  QString tile = t + "_large_up.png";
-  tile = KGlobal::dirs()->findResource("tiles", tile);
-
-  if(!tile.isNull())
-    {
-      QPixmap pix(tile);
-      if (!pix.isNull())
-        wl_label->setPixmap(pix);
-      else
-        wl_label->clear();
-    }
-  else
-    wl_label->clear();
+  setLabel( wl_label, t );
   emit changed();
 }
 
@@ -400,6 +353,12 @@ void ButtonTab::desktop_clicked()
 }
 void ButtonTab::desktop_changed(const QString& t)
 {
+  setLabel( desktop_label, t );
+  emit changed();
+}
+
+void ButtonTab::setLabel( TileLabel *label, const QString &t )
+{
   QString tile = t + "_large_up.png";
   tile = KGlobal::dirs()->findResource("tiles", tile);
 
@@ -407,13 +366,12 @@ void ButtonTab::desktop_changed(const QString& t)
     {
       QPixmap pix(tile);
       if (!pix.isNull())
-        desktop_label->setPixmap(pix);
+        label->setPixmap(pix);
       else
-        desktop_label->clear();
+        label->clear();
     }
   else
-    desktop_label->clear();
-  emit changed();
+    label->clear();
 }
 
 void ButtonTab::load()
