@@ -171,6 +171,8 @@ void KTagComboBox::paintEvent( QPaintEvent * ev)
 
   // Text
   QRect clip(2, 2, width() - 4, height() - 4);
+  if ( hasFocus() && style().guiStyle() != MotifStyle )
+    p.setPen( colorGroup().highlightedText() );
   p.drawText(clip, AlignCenter | SingleLine, popup->text( current ));
 
   // Icon
