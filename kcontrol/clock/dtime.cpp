@@ -34,6 +34,7 @@
 #include <klocale.h>
 #include <kprocess.h>
 #include <kmessagebox.h>
+#include <kdialog.h>
 
 #include "dtime.h"
 #include "dtime.moc"
@@ -61,8 +62,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   // Date box
   QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
+  dateBox->setColumnLayout( 0, Qt::Horizontal );
 
-  QVBoxLayout *l1 = new QVBoxLayout( dateBox, 10 );
+  QVBoxLayout *l1 = new QVBoxLayout( dateBox->layout(), KDialog::spacingHint() );
 
   cal = new KDatePicker( dateBox );
   l1->addWidget( cal );
@@ -70,8 +72,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   // Time frame
   QGroupBox* timeBox = new QGroupBox( this, "timeBox" );
+  timeBox->setColumnLayout( 0, Qt::Horizontal );
 
-  QVBoxLayout *v2 = new QVBoxLayout( timeBox, 10 );
+  QVBoxLayout *v2 = new QVBoxLayout( timeBox->layout(), KDialog::spacingHint() );
 
   kclock = new Kclock( timeBox, "kclock" );
   kclock->setMinimumHeight(150);
@@ -135,7 +138,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   v2->addItem( v3 );
 
-  QHBoxLayout *top = new QHBoxLayout( this, 5 );
+  QHBoxLayout *top = new QHBoxLayout( this, 0, KDialog::spacingHint() );
   top->addWidget(dateBox, 1);
   top->addWidget(timeBox, 1);
 

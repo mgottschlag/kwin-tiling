@@ -35,6 +35,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kdialog.h>
 
 //#include "xpm/world.xpm"
 #include "tzone.h"
@@ -55,8 +56,9 @@ Tzone::Tzone(QWidget * parent, const char *name)
   : QWidget (parent, name)
 {
     QGroupBox* gBox = new QGroupBox ( this );
+    gBox->setColumnLayout( 0, Qt::Horizontal );
 
-    QBoxLayout *top_lay = new QVBoxLayout( gBox, 10 );
+    QBoxLayout *top_lay = new QVBoxLayout( gBox->layout(), KDialog::spacingHint() );
     QBoxLayout *lay = new QHBoxLayout(top_lay);
 
     currentzonetitle = new QLabel(i18n("Current time zone: "), gBox);
@@ -74,15 +76,14 @@ Tzone::Tzone(QWidget * parent, const char *name)
     connect( tzonelist, SIGNAL(activated(int)), SLOT(handleZoneChange()) );
     top_lay->addWidget( tzonelist );
 
-    QBoxLayout *top = new QVBoxLayout( this, 5 );
+    QBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
     top->addWidget(gBox);
 
     fillTimeZones();
 
     load();
 
-    if (getuid() != 0)
-        tzonelist->setEnabled(false);
+    tzonelist->setEnabled(getuid() == 0);
 
 }
 
