@@ -24,6 +24,7 @@ void  KWidgetSettingsModule::init()
 	connect(cboxHoverButtons, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cboxToolbarsHighlight, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cboxEnableGUIEffects, SIGNAL(toggled(bool)), SLOT(setDirty()));
+	connect(cboxDisableTooltips, SIGNAL(toggled(bool)), SLOT(setDirty()));
 	connect(cbMenuEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbComboEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
@@ -41,6 +42,7 @@ void  KWidgetSettingsModule::defaults()
 	cboxHoverButtons->setChecked(false);
 	cboxToolbarsHighlight->setChecked(false);
 	cboxEnableGUIEffects->setChecked(false);
+	cboxDisableTooltips->setChecked(false);
 	cbMenuEffect->setCurrentItem(0);
 	cbComboEffect->setCurrentItem(0);
 	cbTooltipEffect->setCurrentItem(0);
@@ -75,11 +77,11 @@ void  KWidgetSettingsModule::load()
 	// KDE's Part via KConfig
 
 	KConfig config;
-	config.setGroup(QString::fromLatin1("Toolbar style"));
-	cboxHoverButtons->setChecked(config.readBoolEntry(QString::fromLatin1("Highlighting"), true));
-	cboxToolbarsHighlight->setChecked(config.readBoolEntry(QString::fromLatin1("TransparentMoving"), false));
+	config.setGroup("Toolbar style");
+	cboxHoverButtons->setChecked(config.readBoolEntry("Highlighting", true));
+	cboxToolbarsHighlight->setChecked(config.readBoolEntry("TransparentMoving", false));
 
-	QString tbIcon = config.readEntry(QString::fromLatin1("IconText"), "IconOnly");
+	QString tbIcon = config.readEntry("IconText", "IconOnly");
 	if (tbIcon == "IconOnly")
 		cbToolbarIcons->setCurrentItem(0);
 	else if (tbIcon == "TextOnly")
@@ -89,8 +91,11 @@ void  KWidgetSettingsModule::load()
 	else if (tbIcon == "IconTextBottom")
 		cbToolbarIcons->setCurrentItem(3);
 
-	config.setGroup(QString::fromLatin1("KDE"));
-        cboxIconSupport->setChecked( config.readBoolEntry(QString::fromLatin1("ShowIconsOnPushButtons"), true ));
+
+	config.setGroup("KDE");
+	cboxIconSupport->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", true));
+	cboxDisableTooltips->setChecked(config.readBoolEntry("EffectNoTooltip", false));
+
 
 }
 
@@ -129,9 +134,9 @@ void  KWidgetSettingsModule::save()
 	// KDE's Part via KConfig
 
 	KConfig config;
-	config.setGroup(QString::fromLatin1("Toolbar style"));
-	config.writeEntry(QString::fromLatin1("Highlighting"),cboxHoverButtons->isChecked());
-	config.writeEntry(QString::fromLatin1("TransparentMoving"),cboxToolbarsHighlight->isChecked());
+	config.setGroup("Toolbar style");
+	config.writeEntry("Highlighting", cboxHoverButtons->isChecked());
+	config.writeEntry("TransparentMoving", cboxToolbarsHighlight->isChecked());
 
 	QString tbIcon;
 
@@ -152,9 +157,14 @@ void  KWidgetSettingsModule::save()
 		tbIcon = QString::fromLatin1("IconOnly");
 	}
 
-	config.writeEntry(QString::fromLatin1("IconText"), tbIcon, true, true);
-        config.setGroup(QString::fromLatin1("KDE"));
-        config.writeEntry(QString::fromLatin1("ShowIconsOnPushButtons"), cboxIconSupport->isChecked() );
+	config.writeEntry("IconText", tbIcon, true, true);
+
+	config.setGroup("KDE");
+	config.writeEntry("ShowIconsOnPushButtons", cboxIconSupport->isChecked());
+	config.writeEntry("EffectNoTooltip", cboxDisableTooltips->isChecked());
+
+
+	config.sync();
 
 	// Notify all KApplications && KWin about the updated style stuff
 	KIPC::sendMessageAll(KIPC::StyleChanged);
