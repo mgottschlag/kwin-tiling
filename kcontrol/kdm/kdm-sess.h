@@ -24,11 +24,10 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
-#include <kdbtn.h>
 
 #include <kcmodule.h>
 
-
+class KArrowButton;
 class QLineEdit;
 class KURLRequester;
 class QComboBox;
@@ -75,10 +74,10 @@ private:
 	KIconLoader	*iconloader;
 	QComboBox	*sdlcombo, *sdrcombo;
 	QLabel		*sdllabel, *sdrlabel;
-	KURLRequester   *restart_lined, *shutdown_lined;
+	KURLRequester	*restart_lined, *shutdown_lined;
 	QLineEdit	*session_lined;
 	MyListBox	*sessionslb;
-	KDirectionButton	*btnup, *btndown;
+	KArrowButton	*btnup, *btndown;
 	QButton		*btnrm, *btnadd;
 #ifdef __linux__
 	QCheckBox	*lilo_check;

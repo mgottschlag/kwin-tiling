@@ -31,7 +31,7 @@
 #include <qwhatsthis.h>
 
 #include <ksimpleconfig.h>
-#include <kdbtn.h>
+#include <karrowbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kstddirs.h>
@@ -153,11 +153,12 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       connect( btnrm, SIGNAL( clicked() ), SLOT( changed() ) );
       QWhatsThis::add( btnrm, i18n( "Click here to remove the currently selected session type" ) );
 
-      btnup = new KDirectionButton(UpArrow, group2);
+      btnup = new KArrowButton(group2, UpArrow);
       btnup->setEnabled(false);
+      btnup->setFixedSize(20, 20);
       connect(btnup, SIGNAL( clicked() ), SLOT( slotSessionUp() ));
       connect(btnup, SIGNAL( clicked() ), SLOT( changed() ));
-      btndown = new KDirectionButton(DownArrow, group2);
+      btndown = new KArrowButton(group2, DownArrow);
       btndown->setEnabled(false);
       btndown->setFixedSize(20, 20);
       connect(btndown,SIGNAL( clicked() ), SLOT( slotSessionDown() ));
