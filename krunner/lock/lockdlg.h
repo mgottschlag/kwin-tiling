@@ -11,6 +11,7 @@
 #include <qdialog.h>
 #include <kprocess.h>
 #include <X11/Xlib.h>
+#include <qstringlist.h>
 #include "lockdlgimpl.h"
 
 class LockProcess;
@@ -40,6 +41,7 @@ protected slots:
     void slotStartNewSession();
     void slotCancel();
     void slotOK();
+    void layoutClicked();
 
 private:
     void startCheckPassword();
@@ -51,6 +53,7 @@ private:
     int         mCapsLocked;
     bool        mUnlockingFailed;
     KProcess    mPassProc;
+    QStringList layoutsList;
 };
 
 #endif

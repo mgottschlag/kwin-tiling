@@ -17,6 +17,7 @@
 #include <qmessagebox.h>
 #include <qsimplerichtext.h>
 #include <qlabel.h>
+#include <qstringlist.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
@@ -72,6 +73,39 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
 
     connect(&mPassProc, SIGNAL(processExited(KProcess *)),
                         SLOT(passwordChecked(KProcess *)));
+
+    DCOPRef kxkb("kxkb", "kxkb");
+    if( !kxkb.isNull() ) {
+	layoutsList = kxkb.call("getLayoutsList");
+	QString currentLayout = kxkb.call("getCurrentLayout");
+	if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
+	    connect(mLayout, SIGNAL(clicked()), this, SLOT(layoutClicked()));
+	    mLayout->setText(currentLayout);
+	    mLayout->show();
+	    return;
+	}
+    }
+    // no kxkb running :(
+    mLayout->hide();
+}
+
+void PasswordDlg::layoutClicked()
+{
+    QStringList::iterator it = layoutsList.find(mLayout->text());
+    if( it==layoutsList.end() ) {  // huh?
+	mLayout->setText("err");
+	return;
+    }
+
+    if( ++it==layoutsList.end() )
+	it = layoutsList.begin();
+
+    DCOPRef kxkb("kxkb", "kxkb");
+    bool res = kxkb.call("setLayout", *it);
+    if( res )
+	mLayout->setText(*it);
+    else
+	mLayout->setText("err");
 }
 
 QString PasswordDlg::checkForUtf8(QString txt)
