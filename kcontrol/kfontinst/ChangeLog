@@ -1,3 +1,9 @@
+KDE3.2 -> KDE3.3
+================
+1. List fonts as "Full Name" -> i.e. "Times New Roman".
+2. Preview of bitmap fonts.
+3. No fontname-title in thumbnails - as fonts:/ lists the fontnames!
+
 KDE3.1 -> KDE3.2
 ================
 1.  Re-designed (yet again...) to be a kio slave. As a user, starting fonts:/ will display
