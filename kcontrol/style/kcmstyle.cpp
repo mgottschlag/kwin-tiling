@@ -671,12 +671,12 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	// Find out which style is currently being used
 	config.setGroup("General");
 	QString defaultStyle = (QPixmap::defaultDepth() > 8) ? "HighColor" : "Default";
-	QString currentStyle = config.readEntry("widgetStyle", defaultStyle);
+	QString cfgStyle = config.readEntry("widgetStyle", defaultStyle);
 
 	// Find the current style in the list
-	QListViewItem* current = lvStyle->findItem( currentStyle, 2, Qt::ExactMatch);
+	QListViewItem* current = lvStyle->findItem( cfgStyle, 2, Qt::ExactMatch);
 	if (!current)
-		current = lvStyle->findItem( currentStyle, 2, Qt::Contains);
+		current = lvStyle->findItem( cfgStyle, 2, Qt::Contains);
 	if (!current)
 		current = lvStyle->findItem( QApplication::style().className(), 2, Qt::Contains);
 	if (!current)
