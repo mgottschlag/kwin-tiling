@@ -36,6 +36,7 @@ public:
     {
 	  QString m_strName;
 	  QString m_strQuery;
+	  QString m_strCharset;
 	  QStringList m_lstKeys;
     };
 
@@ -44,6 +45,7 @@ public:
 	  QString m_strName;
 	  QString m_strQuery;
 	  QString m_strQueryWithSearch;
+	  QString m_strCharset;
     };
 
     KURISearchFilterEngine();
@@ -80,7 +82,7 @@ public:
     static KURISearchFilterEngine *self();
 
 protected:
-    QString formatResult( const QString&, const QString&, bool ) const;
+    QString formatResult( const QString& query, const QString& cset1, const QString& cset2, const QString& url, bool ) const;
 
 private:
     bool m_bSearchKeywordsEnabled;

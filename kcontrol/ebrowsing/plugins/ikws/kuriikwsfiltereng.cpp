@@ -20,6 +20,8 @@
 
 #include <unistd.h>
 
+#include <qtextcodec.h>
+
 #include <kurl.h>
 #include <kdebug.h>
 #include <ksimpleconfig.h>
@@ -106,7 +108,7 @@ QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
 	    for (; it != end; ++it)
 		{
 		    if ((*it).m_lstKeys.contains(key))
-			return formatResult((*it).m_strQuery, _url.mid(pos+1), url.isMalformed() );
+			return formatResult((*it).m_strQuery, (*it).m_strCharset, QString::null, _url.mid(pos + 1), url.isMalformed() );
 		}
 	}
     return QString::null;
@@ -143,19 +145,19 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 		    QRegExp question("^[ \t]*\\?[ \t]*");
 		    if (url.isMalformed() && _url.find(question) == 0) {
 			_url = _url.replace(question, "");
-			return formatResult(search, _url, true);
+			return formatResult(search, m_currSearchKeywordsEngine.m_strCharset, QString::null, _url, true);
 		    } else {
 			int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
 			if (pct >= 0)
 			    {
 				search = KURL::encode_string( search );
 				QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
-				return formatResult( res.replace(pct, 2, search), _url, url.isMalformed() );
+				return formatResult( res.replace(pct, 2, search), m_currSearchKeywordsEngine.m_strCharset, QString::null, _url, url.isMalformed() );
 			    }
 		    }
 		}
 
-	    return formatResult( m_currInternetKeywordsEngine.m_strQuery, _url, url.isMalformed() );
+	    return formatResult( m_currInternetKeywordsEngine.m_strQuery, m_currInternetKeywordsEngine.m_strCharset, QString::null, _url, url.isMalformed() );
 	}
     return QString::null;
 }
@@ -233,19 +235,41 @@ KURISearchFilterEngine* KURISearchFilterEngine::self()
     return s_pSelf;
 }
 
-QString KURISearchFilterEngine::formatResult( const QString& query, const QString& url, bool isMalformed ) const
+QString KURISearchFilterEngine::formatResult( const QString& query, const QString& cset1, const QString& cset2, const QString& url, bool isMalformed ) const
 {
     // Substitute the variable part we find in the query.
     if (!query.isEmpty())
 	{
 	    QString newurl = query;
 	    int pct;
-	    // Always use utf-8, since it is guaranteed that this
-	    // will be understood.
-	    if ((pct = newurl.find("\\2")) >= 0)
-		newurl = newurl.replace(pct, 2, "utf-8");
 
-	    QString userquery = url;
+	    // Create a codec for the desired encoding so that we can
+	    // transcode the user's "url".
+	    QString cseta = cset1;
+	    if (cseta.isEmpty()) {
+		cseta = "iso-8859-1";
+	    }
+	    QTextCodec *csetacodec = QTextCodec::codecForName(cseta.latin1());
+	    if (!csetacodec) {
+		cseta = "iso-8859-1";
+		csetacodec = QTextCodec::codecForName(cseta.latin1());
+	    }
+
+	    // Substitute the charset indicator for the query.
+	    if ((pct = newurl.find("\\2")) >= 0) {
+		newurl = newurl.replace(pct, 2, cseta);
+	    }
+
+	    // Substitute the charset indicator for the fallback query.
+	    if ((pct = newurl.find("\\3")) >= 0) {
+		QString csetb = cset2;
+		if (csetb.isEmpty()) {
+		    csetb = "iso-8859-1";
+		}
+		newurl = newurl.replace(pct, 2, csetb);
+	    }
+
+	    QString userquery = csetacodec->fromUnicode(url);
 	    int space_pos;
 	    while( (space_pos=userquery.find(' ')) != -1 )
 		userquery=userquery.replace( space_pos, 1, "+" );
@@ -310,6 +334,7 @@ void KURISearchFilterEngine::loadConfig()
 	    e.m_strName = *gIt;
 	    e.m_strQuery = config.readEntry("Query");
 	    e.m_strQueryWithSearch = config.readEntry("QueryWithSearch");
+	    e.m_strCharset = config.readEntry("Charset");
 	    m_lstInternetKeywordsEngine.append(e);
 	    if (selIKWSEngine == (oldConfigFormat ? grpName : e.m_strName)) {
 		m_currInternetKeywordsEngine = e;
@@ -351,6 +376,7 @@ void KURISearchFilterEngine::loadConfig()
 	e.m_strName = *gIt;
 	e.m_lstKeys = config.readListEntry("Keys");
 	e.m_strQuery = config.readEntry("Query");
+	e.m_strCharset = config.readEntry("Charset");
 	m_lstSearchEngine.append(e);
 	if (selIKWSFallback == (oldConfigFormat ? grpName : e.m_strName)) {
 	    m_currSearchKeywordsEngine = e;
@@ -378,6 +404,7 @@ void KURISearchFilterEngine::saveConfig() const
 	    config.setGroup((*it).m_strName + SEARCH_SUFFIX);
 	    config.writeEntry("Keys", (*it).m_lstKeys);
 	    config.writeEntry("Query", (*it).m_strQuery);
+	    config.writeEntry("Charset", (*it).m_strCharset);
 	}
 
     // DUMP OUT THE INTERNET KEYWORD INFO
@@ -388,6 +415,7 @@ void KURISearchFilterEngine::saveConfig() const
 	    ikws_engines.append((*nit).m_strName);
 	    config.setGroup((*nit).m_strName + IKW_SUFFIX);
 	    config.writeEntry("Query", (*nit).m_strQuery);
+	    config.writeEntry("Charset", (*nit).m_strCharset);
 	    if (!(*nit).m_strQueryWithSearch.isEmpty())
 		config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
 	}
