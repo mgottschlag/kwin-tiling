@@ -18,10 +18,12 @@
 
 #include <config.h>
 
+#define QT_CLEAN_NAMESPACE
+#include <qglobal.h>
+#undef QT_CLEAN_NAMESPACE
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qglobal.h>
 #include <qgroupbox.h>
 
 #include <kglobal.h>
@@ -42,14 +44,19 @@
 
 
 #if HAVE_DPMS
+#include <X11/Xmd.h>
 #include <X11/extensions/dpms.h>
 
+#ifdef XIMStringConversionRetrival
 extern "C" {
+#endif
     int DPMSQueryExtension(Display *, int *, int *);
-    void DPMSEnable(Display *);
-    void DPMSDisable(Display *);
+    int DPMSEnable(Display *);
+    int DPMSDisable(Display *);
     void DPMSSetTimeouts(Display *, int, int, int);
+#ifdef XIMStringConversionRetrival 
 }
+#endif
 #endif
 
 
@@ -259,7 +266,7 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
         } else 
             DPMSDisable(dpy);
     } else
-	warning("Server has no DPMS extension");
+	qWarning("Server has no DPMS extension");
 	
     XFlush(dpy);
     XSetErrorHandler(defaultHandler);
