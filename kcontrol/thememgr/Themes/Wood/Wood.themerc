@@ -36,6 +36,7 @@ Name[xh]=Inkuni
 Name[xx]=xx
 Name[zh_CN.GB2312]=木头
 Name[zh_TW.Big5]=木頭
+Name[zu]=Ukhuni
 author=Georg Russell
 email=russell@kde.org
 info=
@@ -79,6 +80,7 @@ Comment[xh]=Ujongeko njengekhuni lwedesktopyakho!\nNgu Georg Russell <russell@kd
 Comment[xx]=xx
 Comment[zh_CN.GB2312]=桌面上的木头外观！\n作者 Georg Russell <russell@kde.org>
 Comment[zh_TW.Big5]=桌面上的木頭外觀！\n作者 Georg Russell <russell@kde.org>
+Comment[zu]=Ubukeko olunjengokhuni lwedesktopyakho!\nNgu Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]
