@@ -50,6 +50,11 @@ static bool needToRunKAccessDaemon( KConfig *config )
   if (keyboard.readBoolEntry("BounceKeys", false))
         return true;
 
+  KConfigGroup mouse( config, "Mouse" );
+  
+  if (mouse.readBoolEntry("MouseKeys", false))
+        return true;
+
     return false; // don't need it
 }
 
