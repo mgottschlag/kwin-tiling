@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=cite,cs
+Name=CiteSeer: Scientific Literature Digital Library
+Query=http://citeseer.nj.nec.com/cs?q=\\{@}&submit=Search+Documents&cs=1
+ServiceTypes=SearchProvider
+Type=Service
