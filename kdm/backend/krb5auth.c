@@ -37,9 +37,6 @@ from The Open Group.
  */
 
 #include "dm.h"
-
-#ifdef K5AUTH
-
 #include "dm_error.h"
 
 #include <sys/types.h>
@@ -258,5 +255,3 @@ Krb5Init(
     krb5_cc_close(ccache);
     return 0;
 }
-
-#endif	/* K5AUTH */
