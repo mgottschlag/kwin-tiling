@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=W3C CSS2 Specification
+ServiceTypes=SearchProvider
+Keys=css,css2
+Query=http://www.w3.org/TR/REC-CSS2/text.html#propdef-\\{@}
+Charset=utf8
