@@ -28,6 +28,7 @@
 #include <qmessagebox.h>
 #include <qdir.h>
 #include <qstrlist.h>
+#include <qtextstream.h>
 
 #include <kapp.h>
 #include <kmsgbox.h>
