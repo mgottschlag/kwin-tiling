@@ -17,7 +17,8 @@ class QSpinBox;
 class QSlider;
 class QCheckBox;
 class QLabel;
-class QListBox;
+class QListView;
+class QListViewItem;
 class QPushButton;
 class KIntNumInput;
 class KProcess;
@@ -46,6 +47,7 @@ public:
     QString saver() const { return mSaver; }
     QString name() const { return mName; }
     QString file() const { return mFile; }
+    QString category() const { return mCategory; }
 
 protected:
     QString mExec;
@@ -53,6 +55,7 @@ protected:
     QString mSaver;
     QString mName;
     QString mFile;
+    QString mCategory;
 };
 
 //===========================================================================
@@ -90,7 +93,7 @@ public:
 
 protected slots:
     void slotEnable( bool );
-    void slotScreenSaver( int );
+    void slotScreenSaver( QListViewItem * );
     void slotSetup();
     void slotTest();
     void slotStopTest();
@@ -121,7 +124,7 @@ protected:
     KSSMonitor  *mMonitor;
     QPushButton *mSetupBt;
     QPushButton *mTestBt;
-    QListBox    *mSaverListBox;
+    QListView   *mSaverListView;
     QSpinBox	*mWaitEdit;
     QSlider     *mPrioritySlider;
     QCheckBox   *mLockCheckBox;

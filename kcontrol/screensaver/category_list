@@ -1,0 +1,16 @@
+// This list contains all screen saver categories.
+// The categories are extracted for translation (see Makefile.am).
+
+// To show a screen saver in the list under a category, add the
+// category in the screen saver desktop file using the syntax below.
+
+X-KDE-Category=Banners & Pictures
+X-KDE-Category=Desktop Distortions
+X-KDE-Category=Flying Things
+X-KDE-Category=Fractals
+X-KDE-Category=Gadgets & Simulations
+X-KDE-Category=Illusions of Depth
+X-KDE-Category=Miscellaneous
+X-KDE-Category=OpenGL Screen Savers
+X-KDE-Category=Rapid Motion
+X-KDE-Category=Visit To Flatland

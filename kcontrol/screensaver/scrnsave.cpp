@@ -29,8 +29,9 @@
 #include <qwhatsthis.h>
 #include <qtimer.h>
 #include <qlabel.h>
-#include <qlistbox.h>
+#include <qlistview.h>
 #include <qspinbox.h>
+#include <qheader.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -92,6 +93,8 @@ bool SaverConfig::read(QString file)
     KDesktopFile config(file, true);
     mExec = config.readEntry("Exec");
     mName = config.readEntry("Name");
+    mCategory = i18n("Screen saver category", // Must be same in Makefile.am
+                     config.readEntry("X-KDE-Category").utf8());
 
     if (config.hasActionGroup("Setup"))
     {
@@ -187,10 +190,12 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup, 10 );
     groupLayout->addSpacing(10);
 
-    mSaverListBox = new QListBox( mSaverGroup );
+    mSaverListView = new QListView( mSaverGroup );
+    mSaverListView->addColumn("");
+    mSaverListView->header()->hide();
     mSelected = -1;
-    groupLayout->addWidget( mSaverListBox, 10 );
-    QWhatsThis::add( mSaverListBox, i18n("This is a list of the available"
+    groupLayout->addWidget( mSaverListView, 10 );
+    QWhatsThis::add( mSaverListView, i18n("This is a list of the available"
       " screen savers. Select the one you want to use.") );
 
     QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
@@ -384,18 +389,23 @@ void KScreenSaver::load()
 //if no saver was selected, the "Reset" and the "Enable screensaver", it is only called when starting and when pressing reset, aleXXX
 //    mSelected = -1;
     int i = 0;
+    QListViewItem *selectedItem = 0;
     for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
         if (saver->file() == mSaver)
         {
-            mSelected = i;
-            break;
-        };
+            selectedItem = mSaverListView->findItem ( saver->name(), 0 );
+            if (selectedItem) {
+                mSelected = i;
+                break;
+            }
+        }
         i++;
     }
-    if ( mSelected > -1 )
+    if ( selectedItem )
     {
-      mSaverListBox->setCurrentItem(mSelected);
-      slotScreenSaver(mSelected);
+      mSaverListView->setSelected( selectedItem, true );
+      mSaverListView->setCurrentItem( selectedItem );
+      slotScreenSaver( selectedItem );
     }
 
     updateValues();
@@ -446,9 +456,13 @@ void KScreenSaver::updateValues()
 void KScreenSaver::defaults()
 {
     slotScreenSaver( 0 );
-    mEnabledCheckBox->setChecked( false );
-    mSaverListBox->setCurrentItem( 0 );
-    mSaverListBox->centerCurrentItem();
+
+    QListViewItem *item = mSaverListView->firstChild();
+    if (item) {
+        mSaverListView->setSelected( item, true );
+        mSaverListView->setCurrentItem( item );
+        mSaverListView->ensureItemVisible( item );
+    }
     slotTimeoutChanged( 5 );
     slotPriorityChanged( 0 );
     slotLock( false );
@@ -494,6 +508,7 @@ void KScreenSaver::findSavers()
     if ( !mNumLoaded ) {
         mSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
                             "*.desktop", false, true);
+        new QListViewItem ( mSaverListView, i18n("Loading...") );
         if ( mSaverFileList.isEmpty() )
             mLoadTimer->stop();
         else
@@ -512,38 +527,65 @@ void KScreenSaver::findSavers()
     }
 
     if ( (unsigned)mNumLoaded == mSaverFileList.count() ) {
+        QListViewItem *selectedItem = 0;
+        int categoryCount = 0;
+        int indx = 0;
+
         mLoadTimer->stop();
         delete mLoadTimer;
         mSaverList.sort();
 
         mSelected = -1;
-        mSaverListBox->clear();
+        mSaverListView->clear();
         for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
         {
-            mSaverListBox->insertItem(s->name());
-            if (s->file() == mSaver)
-                mSelected = mSaverListBox->count()-1;
+            QListViewItem *item;
+            if (s->category().isEmpty())
+                item = new QListViewItem ( mSaverListView, s->name(), "2" + s->name() );
+            else
+            {
+                QListViewItem *categoryItem = mSaverListView->findItem( s->category(), 0 );
+                if ( !categoryItem ) {
+                    categoryItem = new QListViewItem ( mSaverListView, s->category(), "1" + s->category() );
+                    categoryItem->setPixmap ( 0, SmallIcon ( "kscreensaver" ) );
+                }
+                item = new QListViewItem ( categoryItem, s->name(), s->name() );
+                categoryCount++;
+            }
+            if (s->file() == mSaver) {
+                mSelected = indx;
+                selectedItem = item;
+            }
+            indx++;
         }
+
+        // Delete categories with only one item
+        QListViewItemIterator it ( mSaverListView );
+        for ( ; it.current(); it++ )
+            if ( it.current()->childCount() == 1 ) {
+               QListViewItem *item = it.current()->firstChild();
+               it.current()->takeItem( item );
+               mSaverListView->insertItem ( item );
+               delete it.current();
+               categoryCount--;
+            }
+
+        mSaverListView->setRootIsDecorated ( categoryCount > 0 );
+        mSaverListView->setSorting ( 1 );
 
         if ( mSelected > -1 )
         {
-            mSaverListBox->setCurrentItem(mSelected);
-            mSaverListBox->ensureCurrentVisible();
+            mSaverListView->setSelected(selectedItem, true);
+            mSaverListView->setCurrentItem(selectedItem);
+            mSaverListView->ensureItemVisible(selectedItem);
             mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
             mTestBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
         }
 
-        connect( mSaverListBox, SIGNAL( highlighted( int ) ),
-                 this, SLOT( slotScreenSaver( int ) ) );
+        connect( mSaverListView, SIGNAL( clicked( QListViewItem * ) ),
+                 this, SLOT( slotScreenSaver( QListViewItem * ) ) );
 
         setMonitor();
-    } else {
-        mSaverList.sort();
-        mSaverListBox->clear();
-        for (SaverConfig *s= mSaverList.first(); s!= 0; s= mSaverList.next())
-        {
-            mSaverListBox->insertItem(s->name());
-        }
     }
 }
 
@@ -628,8 +670,25 @@ void KScreenSaver::slotEnable(bool e)
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotScreenSaver(int indx)
+void KScreenSaver::slotScreenSaver(QListViewItem *item)
 {
+    if (!item)
+      return;
+
+    int i = 0, indx = -1;
+    for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+        if (saver->name() == item->text (0))
+        {
+            indx = i;
+            break;
+        }
+        i++;
+    }
+    if (indx == -1) {
+        mSelected = -1;
+        return;
+    }
+
     bool bChanged = (indx != mSelected);
 
     if (!mSetupProc->isRunning())
