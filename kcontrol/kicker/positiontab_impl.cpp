@@ -68,7 +68,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     m_pretendDesktop = new QWidget(m_monitorImage, "pretendBG");
     m_pretendDesktop->setGeometry(offsetX, offsetY, maxX, maxY);
     m_pretendPanel = new QFrame(m_monitorImage, "pretendPanel");
-    m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10, 
+    m_pretendPanel->setGeometry(offsetX + margin, maxY + offsetY - 10,
                                 maxX - margin, 10 - margin);
     m_pretendPanel->setFrameShape(QFrame::MenuBarPanel);
     m_panelList->setSorting(-1);
@@ -107,11 +107,11 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
         QToolTip::add(locationRight,        i18n("Right center"));
         QToolTip::add(locationRightBottom,  i18n("Right bottom"));
     }
-    
+
     // connections
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_xineramaScreenComboBox, SIGNAL(highlighted(int)), SIGNAL(changed()));
-    
+
     connect(m_identifyButton,SIGNAL(pressed()),SLOT(showIdentify()));
     connect(m_identifyButton,SIGNAL(released()),SIGNAL(hideIdentify()));
 
@@ -119,7 +119,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     {   /* populate the combobox for the available screens */
         m_xineramaScreenComboBox->insertItem(QString::number(s));
     }
-    
+
     // hide the xinerama chooser widgets if there is no need for them
     if (QApplication::desktop()->numScreens() < 2)
     {
@@ -127,18 +127,18 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
         m_xineramaScreenComboBox->hide();
         m_xineramaScreenLabel->hide();
     }
-    
+
     connect(m_percentSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_percentSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_expandCheckBox, SIGNAL(clicked()), SIGNAL(changed()));
-    
+
     connect(m_sizeGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_customSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
     m_desktopPreview = new KBackgroundRenderer(0);
     connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
-    
+
     connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
 }
 
@@ -175,7 +175,7 @@ void PositionTab::defaults()
     m_percentSpinBox->setValue( 100 ); // use all space available
     m_expandCheckBox->setChecked( true ); // expand as required
     m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
-    
+
     if (QApplication::reverseLayout())
     {
         // RTL lang aligns right
@@ -191,6 +191,7 @@ void PositionTab::defaults()
 
     // update the magic drawing
     lengthenPanel(-1);
+    switchPanel(0);
 }
 
 void PositionTab::movePanel(int whichButton)
@@ -271,7 +272,7 @@ void PositionTab::lengthenPanel(int sizePercent)
     unsigned int x(0), y(0), x2(0), y2(0);
     unsigned int diff = 0;
     unsigned int panelSize = 4;
-    
+
     if (m_sizeSmall->isChecked())
     {
         panelSize = panelSize * 3 / 2;
@@ -296,7 +297,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             x2 = maxX - margin;
             y  = offsetY + margin;
             y2 = panelSize;
-            
+
             diff =  x2 - ((x2 * sizePercent) / 100);
             if (m_panelAlign == AlignLeft)
             {
@@ -318,7 +319,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             x2 = panelSize;
             y  = offsetY + margin;
             y2 = maxY - margin;
-            
+
             diff =  y2 - ((y2 * sizePercent) / 100);
             if (m_panelAlign == AlignLeft)
             {
@@ -340,7 +341,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             x2 = maxX - margin;
             y  = offsetY + maxY - panelSize;
             y2 = panelSize;
-            
+
             diff =  x2 - ((x2 * sizePercent) / 100);
             if (m_panelAlign == AlignLeft)
             {
@@ -362,7 +363,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             x2 = panelSize;
             y  = offsetY + margin;
             y2 = maxY - margin;
-            
+
             diff =  y2 - ((y2 * sizePercent) / 100);
             if (m_panelAlign == AlignLeft)
             {
@@ -380,7 +381,7 @@ void PositionTab::lengthenPanel(int sizePercent)
             }
             break;
     }
-    
+
     if (x2 < 3)
     {
         x2 = 3;
@@ -424,27 +425,27 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
         m_panelList->setSelected(m_panelList->firstChild(), true);
         listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
     }
-    
+
     if (m_panelInfo)
     {
         storeInfo();
     }
 
     m_panelInfo = listItem->info();
-    
-    switch(m_panelInfo->_size) 
+
+    switch(m_panelInfo->_size)
     {
-        case 0: 
-            m_sizeTiny->setChecked(true); 
+        case 0:
+            m_sizeTiny->setChecked(true);
             break;
-        case 1: 
-            m_sizeSmall->setChecked(true); 
+        case 1:
+            m_sizeSmall->setChecked(true);
             break;
-        case 2: 
-            m_sizeNormal->setChecked(true); 
+        case 2:
+            m_sizeNormal->setChecked(true);
             break;
-        case 3: 
-            m_sizeLarge->setChecked(true); 
+        case 3:
+            m_sizeLarge->setChecked(true);
             break;
         default:
             m_sizeCustom->setChecked(true);
@@ -456,7 +457,7 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     {
         m_sizeCustom->setChecked(true);
     }
-    
+
     m_customSlider->setMinValue(m_panelInfo->_customSizeMin);
     m_customSlider->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSlider->setTickInterval(m_panelInfo->_customSizeMax / 6);
@@ -465,14 +466,14 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_customSpinbox->setMaxValue(m_panelInfo->_customSizeMax);
     m_customSpinbox->setValue(m_panelInfo->_customSize);
 
-    m_sizeTiny->setEnabled(m_panelInfo->_useStdSizes);         
+    m_sizeTiny->setEnabled(m_panelInfo->_useStdSizes);
     m_sizeSmall->setEnabled(m_panelInfo->_useStdSizes);
     m_sizeNormal->setEnabled(m_panelInfo->_useStdSizes);
     m_sizeLarge->setEnabled(m_panelInfo->_useStdSizes);
     m_sizeCustom->setEnabled(m_panelInfo->_customSizeMin != m_panelInfo->_customSizeMax);
     m_sizeGroup->setEnabled(m_panelInfo->_resizeable);
 
-    
+
     m_panelPos = m_panelInfo->_position;
     m_panelAlign = m_panelInfo->_alignment;
     if(m_panelInfo->_xineramaScreen >= 0 && m_panelInfo->_xineramaScreen < QApplication::desktop()->numScreens())
@@ -483,18 +484,18 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     if (m_panelPos == PosTop)
     {
         if (m_panelAlign == AlignLeft)
-            kapp->reverseLayout() ? locationTopRight->setOn(true) : 
+            kapp->reverseLayout() ? locationTopRight->setOn(true) :
                                     locationTopLeft->setOn(true);
         else if (m_panelAlign == AlignCenter)
             locationTop->setOn(true);
         else // if (m_panelAlign == AlignRight
-            kapp->reverseLayout() ? locationTopLeft->setOn(true) : 
+            kapp->reverseLayout() ? locationTopLeft->setOn(true) :
                                     locationTopRight->setOn(true);
     }
     else if (m_panelPos == PosRight)
     {
         if (m_panelAlign == AlignLeft)
-            kapp->reverseLayout() ? locationLeftTop->setOn(true) : 
+            kapp->reverseLayout() ? locationLeftTop->setOn(true) :
                                     locationRightTop->setOn(true);
         else if (m_panelAlign == AlignCenter)
             kapp->reverseLayout() ? locationLeft->setOn(true) :
@@ -520,10 +521,10 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
             kapp->reverseLayout() ? locationRightTop->setOn(true) :
                                     locationLeftTop->setOn(true);
         else if (m_panelAlign == AlignCenter)
-            kapp->reverseLayout() ? locationRight->setOn(true) : 
+            kapp->reverseLayout() ? locationRight->setOn(true) :
                                     locationLeft->setOn(true);
         else // if (m_panelAlign == AlignRight
-            kapp->reverseLayout() ? locationRightBottom->setOn(true) : 
+            kapp->reverseLayout() ? locationRightBottom->setOn(true) :
                                     locationLeftBottom->setOn(true);
     }
 
@@ -531,7 +532,7 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     m_percentSpinBox->setValue(m_panelInfo->_sizePercentage);
 
     m_expandCheckBox->setChecked(m_panelInfo->_expandSize);
-    
+
     lengthenPanel(m_panelInfo->_sizePercentage);
     blockSignals(false);
 }
@@ -547,7 +548,7 @@ void PositionTab::storeInfo()
     {
         return;
             }
-   
+
     // Magic numbers stolen from kdebase/kicker/core/global.cpp
     // PGlobal::sizeValue()
     if (m_sizeTiny->isChecked())
@@ -589,7 +590,7 @@ void PositionTab::showIdentify()
 
         KWin::setState( screenLabel->winId(), NET::Modal | NET::Sticky | NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
         KWin::setType( screenLabel->winId(), NET::Override );
-    
+
         QFont identifyFont(KGlobalSettings::generalFont());
         identifyFont.setPixelSize(100);
         screenLabel->setFont(identifyFont);
@@ -606,7 +607,7 @@ void PositionTab::showIdentify()
         targetGeometry.moveCenter(screenCenter);
 
         screenLabel->setGeometry(targetGeometry);
-  
+
         screenLabel->show();
     }
 }
