@@ -38,9 +38,11 @@ public:
     bool clearAllCookies();
     bool clearSavedClipboardContents();
     bool clearRunCommandHistory();
-    bool clearStoredPasswords();
+    bool clearFormCompletion();
     bool clearWebHistory();
     bool clearWebCache();
+    bool clearQuickStartMenu();
+    bool clearRecentDocuments();
 
 private:
     bool isApplicationRegistered(QString appName);

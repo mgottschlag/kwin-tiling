@@ -75,8 +75,12 @@ Privacy::Privacy(QWidget *parent, const char *name)
       i18n("Clear web history"),QCheckListItem::CheckBox);
   clearWebCache = new QCheckListItem(webbrowsingCLI,
       i18n("Clear web cache"),QCheckListItem::CheckBox);
-  clearStoredPasswords = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear stored passwords"),QCheckListItem::CheckBox);
+  clearFormCompletion = new QCheckListItem(webbrowsingCLI,
+      i18n("Clear form completion entries"),QCheckListItem::CheckBox);
+  clearRecentDocuments = new QCheckListItem(generalCLI,
+      i18n("Clear Recent Documents"),QCheckListItem::CheckBox);
+  clearQuickStartMenu = new QCheckListItem(generalCLI,
+      i18n("Clear Quick Start Menu"),QCheckListItem::CheckBox);
 
   clearRunCommandHistory->setEnabled(true);
 
@@ -108,7 +112,9 @@ void Privacy::load()
     clearSavedClipboardContents->setOn(c->readBoolEntry("ClearSavedClipboardContents", true));
     clearWebHistory->setOn(c->readBoolEntry("ClearWebHistory", true));
     clearWebCache->setOn(c->readBoolEntry("ClearWebCache", true));
-    clearStoredPasswords->setOn(c->readBoolEntry("ClearStoredPasswords", true));
+    clearFormCompletion->setOn(c->readBoolEntry("ClearFormCompletion", true));
+    clearRecentDocuments->setOn(c->readBoolEntry("ClearRecentDocuments", true));
+    clearQuickStartMenu->setOn(c->readBoolEntry("ClearQuickStartMenu", true));
   }
 
   { 
@@ -119,7 +125,6 @@ void Privacy::load()
 
   delete c;
   emit changed(false);
-  m_moduleChanged = false;
 
 }
 
@@ -129,19 +134,18 @@ void Privacy::defaults()
   clearRunCommandHistory->setOn(false);
   clearAllCookies->setOn(false);
   clearSavedClipboardContents->setOn(false);
-  clearStoredPasswords->setOn(false);
+  clearFormCompletion->setOn(false);
   clearWebCache->setOn(false);
   clearWebHistory->setOn(false);
+  clearRecentDocuments->setOn(false);
+  clearQuickStartMenu->setOn(false);
 
-  m_moduleChanged = true;
   emit changed(true);
 }
 
 
 void Privacy::save()
 {
-  if ( !m_moduleChanged )
-    return;
   KConfig *c = new KConfig("kprivacyrc", false, false);
   {
     KConfigGroupSaver saver(c, "Cleaning");
@@ -151,7 +155,9 @@ void Privacy::save()
     c->writeEntry("ClearSavedClipboardContents", clearSavedClipboardContents->isOn());
     c->writeEntry("ClearWebCache", clearWebCache->isOn());
     c->writeEntry("ClearWebHistory", clearWebHistory->isOn());
-    c->writeEntry("ClearStoredPasswords", clearStoredPasswords->isOn());
+    c->writeEntry("ClearFormCompletion", clearFormCompletion->isOn());
+    c->writeEntry("ClearRecentDocuments", clearRecentDocuments->isOn());
+    c->writeEntry("ClearQuickStartMenu", clearQuickStartMenu->isOn());
   }
 
   {
@@ -163,7 +169,6 @@ void Privacy::save()
   c->sync();
 
   delete c;
-  m_moduleChanged = false;
   emit changed(false);
 
 }
@@ -177,7 +182,6 @@ int Privacy::buttons()
 
 void Privacy::configChanged()
 {
-  m_moduleChanged = true;
   emit changed(true);
 }
 
@@ -199,10 +203,10 @@ void Privacy::cleanup()
       cleaningDialog->statusTextEdit->append(i18n("Clearing of saved clipboard content failed."));
   }
 
-  if(clearStoredPasswords->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing stored passwords.."));
-    if(!m_privacymanager->clearStoredPasswords())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of stored passwords failed."));
+  if(clearFormCompletion->isOn()) {
+    cleaningDialog->statusTextEdit->append(i18n("Clearing form completion entries.."));
+    if(!m_privacymanager->clearFormCompletion())
+      cleaningDialog->statusTextEdit->append(i18n("Clearing of form completion entries failed."));
   }
   if(clearAllCookies->isOn()) {
     cleaningDialog->statusTextEdit->append(i18n("Clearing cookies.."));
@@ -219,6 +223,18 @@ void Privacy::cleanup()
     cleaningDialog->statusTextEdit->append(i18n("Clearing web history.."));
     if(!m_privacymanager->clearWebHistory())
       cleaningDialog->statusTextEdit->append(i18n("Clearing of web history failed."));
+  }
+
+  if(clearRecentDocuments->isOn()) {
+    cleaningDialog->statusTextEdit->append(i18n("Clearing Recent Documents.."));
+    if(!m_privacymanager->clearRecentDocuments())
+      cleaningDialog->statusTextEdit->append(i18n("Clearing of Recent Documents failed."));
+  }
+
+  if(clearQuickStartMenu->isOn()) {
+    cleaningDialog->statusTextEdit->append(i18n("Clearing Quick Start menu.."));
+    if(!m_privacymanager->clearQuickStartMenu())
+      cleaningDialog->statusTextEdit->append(i18n("Clearing of Quick Start menu failed."));
   }
 
 

@@ -52,7 +52,6 @@ private:
       KAboutData *myAboutData;
       KCMPrivacyDialog  *cleaningDialog;
       KPrivacySettings  *p3pSettings;
-      bool m_moduleChanged;
       KPrivacyManager *m_privacymanager;
 
       KListViewItem *generalCLI;
@@ -63,7 +62,11 @@ private:
       QCheckListItem *clearSavedClipboardContents;
       QCheckListItem *clearWebHistory;
       QCheckListItem *clearWebCache;
-      QCheckListItem *clearStoredPasswords;
+      QCheckListItem *clearFormCompletion;
+      QCheckListItem *clearRecentDocuments;
+      QCheckListItem *clearQuickStartMenu;
+      //QCheckListItem *clearFileDialogHistory;
+      //QCheckListItem *clearFavIcons;
 
 
 };

@@ -22,11 +22,16 @@
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <kconfig.h>
+#include <ksimpleconfig.h>
 #include <kprocess.h>
 #include <kglobal.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <krecentdocument.h>
+#include <kstandarddirs.h>
+
 #include <qstringlist.h>
+#include <qfile.h>
 
 KPrivacyManager::KPrivacyManager()
 {
@@ -66,10 +71,11 @@ bool KPrivacyManager::clearSavedClipboardContents()
   return kapp->dcopClient()->send( "klipper", "klipper", "clearClipboardHistory()", "" );
 }
 
-bool KPrivacyManager::clearStoredPasswords()
+bool KPrivacyManager::clearFormCompletion()
 {
-  // TODO
-  return true;
+  QFile *completionFile = new QFile(locateLocal("data", "khtml/formcompletions"));
+
+  return completionFile->remove();
 }
 
 bool KPrivacyManager::clearWebCache()
@@ -77,6 +83,17 @@ bool KPrivacyManager::clearWebCache()
     KProcess process;
     process << "kio_http_cache_cleaner" << "--clear-all";
     return process.start(KProcess::DontCare);
+}
+
+bool KPrivacyManager::clearRecentDocuments()
+{
+  KRecentDocument::clear();
+  return KRecentDocument::recentDocuments().isEmpty();
+}
+
+bool KPrivacyManager::clearQuickStartMenu()
+{
+  return kapp->dcopClient()->send( "kicker", "kicker", "clearQuickStartMenu()", "" );
 }
 
 bool KPrivacyManager::clearWebHistory()
