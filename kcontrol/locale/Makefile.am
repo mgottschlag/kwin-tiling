@@ -13,6 +13,6 @@ kcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_locale_la_LIBADD = $(LIB_KDEUI)
 
 messages:
-	$(XGETTEXT) $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
+	$(XGETTEXT) -ktranslate $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 
 xdg_apps_DATA = language.desktop
