@@ -325,7 +325,7 @@ void KURISearchFilterEngine::loadConfig()
 						      "action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|");
 	if (rn.m_strName == selIKWSEngine)
 	    m_currInternetKeywordsEngine = rn;
-	
+
 	m_lstInternetKeywordsEngine.append(rn);
     }
 
@@ -335,9 +335,6 @@ void KURISearchFilterEngine::loadConfig()
     m_bVerbose = config.readBoolEntry("Verbose");
     engines = config.readListEntry("SearchEngines");
     m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
-
-    kdDebug(7023) << "(" << getpid() << ") Search Engine Keywords Enabled: " << m_bSearchKeywordsEnabled << endl;
-    kdDebug(7023) << "(" << getpid() << ") Number of search engine keywords found: " << engines.count() << endl;
 
     gIt = engines.begin();
     gEnd = engines.end();
@@ -349,8 +346,6 @@ void KURISearchFilterEngine::loadConfig()
 	    grpName = *gIt + SEARCH_SUFFIX;
 	}
 
-	kdDebug(7023) << "(" << getpid() << ") Search Engine Group name: " << grpName << " (for engine: " << *gIt << ")" << endl;
-	
 	config.setGroup( grpName );
 	SearchEntry e;
 	e.m_strName = *gIt;
@@ -365,8 +360,6 @@ void KURISearchFilterEngine::loadConfig()
 
 void KURISearchFilterEngine::saveConfig() const
 {
-    kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Saving config..." << endl;
-
     KSimpleConfig config(name() + "rc");
     QStringList search_engines, ikws_engines;
 
@@ -376,7 +369,7 @@ void KURISearchFilterEngine::saveConfig() const
     if( config.hasGroup(IKW_KEY) )
 	config.deleteGroup( IKW_KEY );
 
-    // DUMP OUT THE SEARCH ENGINE INFO	
+    // DUMP OUT THE SEARCH ENGINE INFO
     QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
     QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
     for (; it != end; ++it)
@@ -386,7 +379,7 @@ void KURISearchFilterEngine::saveConfig() const
 	    config.writeEntry("Keys", (*it).m_lstKeys);
 	    config.writeEntry("Query", (*it).m_strQuery);
 	}
-	
+
     // DUMP OUT THE INTERNET KEYWORD INFO
     QValueList<IKWSEntry>::ConstIterator nit = m_lstInternetKeywordsEngine.begin();
     QValueList<IKWSEntry>::ConstIterator nend = m_lstInternetKeywordsEngine.end();
