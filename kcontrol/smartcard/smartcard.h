@@ -34,6 +34,7 @@
 class KConfig;
 class KCardDB;
 class KPopupMenu;
+class KListViewItem;
 
 class KSmartcardConfig : public KCModule, public DCOPObject
 {
@@ -54,24 +55,29 @@ public:
   int buttons();
   QString quickHelp() const;
   const KAboutData* aboutData() const;
-  
+
 
  k_dcop:
-  
-  void loadReadersTab (QStringList lr);
+
+
+ void updateReadersState (QString readerName,
+                          bool isCardPresent,
+                          QString atr);
+ void loadReadersTab (QStringList lr);
+
 
 
   public slots:
-    
+
     void configChanged();
-  
-  
+
+
   private slots:
-    
-  void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i); 
+
+  void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i);
   void slotLaunchChooser();
-  
-  
+
+
 
 private:
 
@@ -81,7 +87,10 @@ private:
   KPopupMenu * _popUpKardChooser;
 
   void loadSmartCardSupportTab();
-  
+  void getSupportingModule( KListViewItem * ant,
+                            QString & cardATR) const ;
+
+
 };
 
 #endif
