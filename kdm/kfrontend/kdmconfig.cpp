@@ -31,8 +31,6 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 
-#include <qtextcodec.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -108,9 +106,6 @@ QPalette KDMConfig::Str2Palette (const QString &aValue)
 
 KDMConfig::KDMConfig()
 {
-    KGlobal::locale()->setLanguage (GetCfgQStr (C_Language));
-    QTextCodec::setCodecForTr(QTextCodec::codecForName(KGlobal::locale()->language().latin1()));
-
     _allowShutdown = GetCfgInt (C_allowShutdown);
     _allowNuke = GetCfgInt (C_allowNuke);
     _defSdMode = GetCfgInt (C_defSdMode);

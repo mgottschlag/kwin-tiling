@@ -692,6 +692,10 @@ main (int argc ATTR_UNUSED, char **argv)
     dgrabTimeout = GetCfgInt (C_grabTimeout);
     dpingTimeout = GetCfgInt (C_pingTimeout);
 
+    ci = GetCfgStr( C_Language );
+    setenv( "LC_ALL", ci, 1 );
+    free( ci );
+
     kg_main (argv[0]);
 
     ExitGreeter (0);
