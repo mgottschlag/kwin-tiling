@@ -105,17 +105,17 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     connect( view, SIGNAL( currentChanged( QListViewItem * )),
 	     SLOT( slotItemActivated( QListViewItem * )));
 
-    
+
     hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
     cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
     reqExternal = new KURLRequester( hbox );
     reqExternal->completionObject()->setMode( KURLCompletion::ExeCompletion );
-    connect( cbExternal, SIGNAL( toggled( bool )), 
+    connect( cbExternal, SIGNAL( toggled( bool )),
 	     SLOT( externalClicked( bool )));
     connect( reqExternal, SIGNAL( textChanged( const QString& )),
 	     SLOT( changed() ));
-    
+
     m_events = new Events();
     qApp->processEvents(); // let's show up
 
@@ -183,6 +183,8 @@ void KNotifyWidget::changed()
  */
 void KNotifyWidget::slotFileChanged( const QString& text )
 {
+    playButton->setEnabled( !text.isEmpty() );
+    
     if ( !currentItem )
 	return;
 
@@ -239,7 +241,7 @@ void KNotifyWidget::save()
     if ( !kapp->dcopClient()->isAttached() )
 	kapp->dcopClient()->attach();
     kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
-    
+
     emit KCModule::changed( false );
 }
 
@@ -255,6 +257,7 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
 	    requester->setURL( event->soundfile );
 	    enableButton = true;
 	    playButton->show();
+	    playButton->setEnabled( !event->soundfile.isEmpty() );
 	}
 	else if ( item->eventType() == KNotifyClient::Logfile ) {
 	    requester->setURL( event->logfile );
