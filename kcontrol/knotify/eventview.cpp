@@ -30,12 +30,11 @@
 #include <kiconloader.h>
 #include <kinstance.h>
 
-#include <iostream.h>
 
 
 
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name), conf(0)
+	QWidget(parent, name)
 {
 	QGridLayout *layout=new QGridLayout(this,2,3);
 	
@@ -70,160 +69,31 @@ void EventView::defaults()
 
 void EventView::textChanged(const QString &str)
 {
-	// the filename lineedit has changed
-	int i=eventslist->currentItem();
-	switch (i)
-	{
-	case (0):
-		soundfile=str;
-		break;
-	case (1):
-		logfile=str;
-		break;
-	}
-
-	emit changed();
 }
-
 void EventView::itemSelected(int item)
 {
-	enabled->setChecked(false);
-	file->setEnabled(false);
-	enabled->blockSignals(true);
-	file->blockSignals(true);
-	switch (item)
-	{
-	case (0):
-		file->show();
-		file->setText(soundfile);
-		if (present & KNotifyClient::Sound)
-		{
-			enabled->setChecked(true);
-			file->setEnabled(true);
-		}
-		break;
-	case (1):
-		if (present & KNotifyClient::Messagebox)
-			enabled->setChecked(true);
-		break;
-	case (2):
-		file->show();
-		file->setText(logfile);
-		if (present & KNotifyClient::Logfile)
-		{
-			enabled->setChecked(true);
-			file->setEnabled(true);
-		}
-		break;
-	case (3):
-		if (present & KNotifyClient::Stderr)
-			enabled->setChecked(true);
-	}
-	enabled->blockSignals(false);
-	file->blockSignals(false);
 }
 
 void EventView::itemToggled(bool on)
 {
-	enabled->blockSignals(true);
-	file->blockSignals(true);
-	eventslist->blockSignals(true);
-	
-	int p=0;
-	switch(eventslist->currentItem())
-	{
-	case (0):
-		p=KNotifyClient::Sound;
-		break;
-	case (1):
-		p=KNotifyClient::Messagebox;
-		break;
-	case (2):
-		p=KNotifyClient::Logfile;
-		break;
-	case (3):
-		p=KNotifyClient::Stderr;
-		break;
-	}
 
-	if (on)
-		present|=p;
-	else
-		present=present & (~p);
-
-	setPixmap(eventslist->currentItem(), on);
-	itemSelected(eventslist->currentItem());
-	emit changed();
-	enabled->blockSignals(false);
-	file->blockSignals(false);
-	eventslist->blockSignals(false);
 }
 
 void EventView::load(KConfig *config, const QString &section)
 {
-	unload();
-	config->setGroup(section);
-	conf=config;
-	this->section=section;
-	setEnabled(true);
-	
-	{ // Load the presentation
-		present=conf->readNumEntry("presentation", -1);
-		if (present==-1)
-			present=conf->readNumEntry("default_presentation", 0);
-	}
 
-	{ // Load the files
-		soundfile=conf->readEntry("soundfile");
-		if (soundfile.isNull())
-			soundfile=conf->readEntry("default_soundfile");
-	}
-	
-	{ // Load the files
-		logfile=conf->readEntry("logfile");
-		if (logfile.isNull())
-			logfile=conf->readEntry("default_logfile");
-	}	
-	
-	// Stick the flags on the list for that which is present
-	if (present & KNotifyClient::Sound)
-		setPixmap(0, true);
-	if (present & KNotifyClient::Messagebox)
-		setPixmap(1, true);
-	if (present & KNotifyClient::Logfile)
-		setPixmap(3, true);
-	if (present & KNotifyClient::Stderr)
-		setPixmap(4, true);
 }
 
 void EventView::setPixmap(int item, bool on)
 {
-	if (on)
-		eventslist->changeItem(BarIcon("flag"), eventslist->text(item), item);
-	else
-		eventslist->changeItem(eventslist->text(item), item);
 
 }
 
 void EventView::save()
 {
-	if (!conf) return;
-	conf->writeEntry("presentation", present);
-	if (!soundfile.isEmpty())
-		conf->writeEntry("soundfile", soundfile);
-	if (!soundfile.isEmpty())
-		conf->writeEntry("logfile", logfile);
-	conf->sync();
 }
 
 void EventView::unload()
 {
-	save();
-	delete conf;
-	for (uint c=eventslist->count()-1; ((int)c)>=0; c--) // wraparound
-		setPixmap(c, false); // Unenable all the list items
-	
-	enabled->setChecked(false);
-	file->setText("");
-	setEnabled(false);
+
 }

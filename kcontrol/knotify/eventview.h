@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.7  2000/04/01 00:08:03  faure
+    first half of the fix
+
     Revision 1.6  2000/03/25 17:27:14  charles
     It's going.  It's also very messy :|
     At least it works...
@@ -84,18 +87,12 @@ protected slots:
 signals:
 	void changed();
 
-protected:
-	KConfig *conf;
-	QString section;
+private:
 	QListBox *eventslist;
 	QCheckBox *enabled;
-	KLineEdit *file;
+	QLineEdit *file;
 	QPushButton *todefault;
-	
-	int present;
-	
-	QString soundfile;
-	QString logfile;
+
 };
 
 #endif

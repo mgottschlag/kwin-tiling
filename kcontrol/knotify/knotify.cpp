@@ -90,74 +90,20 @@ void KNotifyWidget::loadAll()
 	
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
 	{
-		if (!QFileInfo(*it).isReadable()) continue;
-		KConfig conf(*it);
-		conf.setGroup("!Global!");
-		QString appname(conf.readEntry("appname", "Unknown Title"));
-		QString desc(conf.readEntry("description"));
-		(new ListViewItem(apps, *it, appname, desc))->setPixmap
-			(0, SmallIcon("library"));
-		kapp->processEvents();
+	
 	}
-	if (!apps->firstChild()) apps->setEnabled(false);
-	apps->setSelected(apps->firstChild(), true);
-	appSelected(apps->firstChild());
+
 }
 
 void KNotifyWidget::appSelected(QListViewItem *_i)
 {
-	if (!_i)
-	{
-		events->setEnabled(false);
-		return;
-	}
-	events->clear();
-	// Set the rest of the dialog to show the proper info
-	printf("appSelected : %s\n\n", (const char*)((ListViewItem*)_i)->file) ;
-	KConfig conf(((ListViewItem*)_i)->file,false,false);
-	QStringList eventlist=conf.groupList();
-	eventlist.remove(QString("!Global!"));
-	eventlist.remove(QString("<default>"));
-	
-	for (QStringList::Iterator it=eventlist.begin(); it!=eventlist.end(); ++it)
-	{
-		conf.setGroup(*it);
-		QString friendly(conf.readEntry("friendly", *it));
-		QString desc(conf.readEntry("description"));
-		
-		(new EventListViewItem(events, *it, (const char*)((ListViewItem*)_i)->file, friendly,
-			desc))->setPixmap(0, SmallIcon("knotify"));
-		kapp->processEvents();
-	}
 
 }
 
 void KNotifyWidget::eventSelected(QListViewItem *_i)
 {
-	if (!_i)
-	{
-		eventview->setEnabled(false);
-		return;
-	}
-	
-	QString file=((EventListViewItem*)_i)->file;
-	QString event=((EventListViewItem*)_i)->event;
-	
-	KConfig *conf = new KConfig(file,false,false);
-	KMessageBox::error(this, file, "");
-	eventview->load(conf,event);
+
 }
 
-
-
-ListViewItem::ListViewItem(QListView *parent, const QString &configfile,
-	const QString &r1, const QString &r2)
-	: QListViewItem(parent, r1,r2), file(configfile)
-{}
-
-EventListViewItem::EventListViewItem(QListView *parent, const QString &eventname,
-	const QString &configfile, const QString &r1, const QString &r2)
-	: QListViewItem(parent, r1,r2), file(configfile), event(eventname)
-{}
 
 

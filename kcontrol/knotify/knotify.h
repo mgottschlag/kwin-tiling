@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.4  2000/03/23 02:51:51  charles
+    Progressivly getting to the level of "usable" :)
+
     Revision 1.3  2000/03/21 23:42:51  charles
     Can anyone try to get the Layout to work properly? Is this a QT bug?
     Is this my own fault?
@@ -87,21 +90,6 @@ protected:
 	QListView *events;
 	EventView *eventview;
 
-};
-
-class ListViewItem : public QListViewItem
-{
-public:
-	ListViewItem(QListView *parent, const QString &configfile, const QString &r1, const QString &r2=0);
-	QString file;
-};
-
-class EventListViewItem : public QListViewItem
-{
-public:
-	EventListViewItem(QListView *parent, const QString &eventname, const QString &configfile, const QString &r1, const QString &r2=0);
-	QString file;
-	QString event;
 };
 
 #endif
