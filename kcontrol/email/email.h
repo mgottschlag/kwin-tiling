@@ -4,6 +4,7 @@
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999-2001 by Alex Zepeda and Daniel Molkentin
+ *               2001-2002 Michael Haeckel <haeckel@kde.org>
  *
  * You can freely distribute this program under the following terms:
  *
@@ -60,6 +61,7 @@ class topKCMEmail
 public:
 	topKCMEmail (QWidget *parent = 0, const char *name = 0, const QStringList &list =QStringList() );
 	~topKCMEmail ();
+	virtual const KAboutData * aboutData () const;
 
 	KCMEmailBase *m_email;
 
@@ -84,6 +86,7 @@ protected slots:
 
 protected:
 	void clearData();
+	KAboutData *mAboutData;
 	KEMailSettings *pSettings;
 	QString m_sICMPassword, m_sICMUsername, m_sICMPath, m_sICMHost;
 	QString m_sOGMPassword, m_sOGMUsername, m_sOGMCommand, m_sOGMHost;

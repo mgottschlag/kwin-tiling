@@ -4,6 +4,7 @@
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999-2001 by Alex Zepeda and Daniel Molkentin
+ *               2001-2002 Michael Haeckel <haeckel@kde.org>
  *
  * You can freely distribute this program under the following terms:
  *
@@ -52,6 +53,7 @@
 #include <kmessagebox.h>
 #include <kemailsettings.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 
 #include "email.h"
 
@@ -82,12 +84,47 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name, const QStringList 
 	m_email->cmbCurProfile->hide();
 	m_email->btnNewProfile->hide();
 	load();
+
+	mAboutData = new KAboutData("kcmemail", I18N_NOOP("KDE Email Control Module"), "1.0",
+	I18N_NOOP("Configure your identity, email addresses, mail servers, etc."),
+		KAboutData::License_Custom);
+	mAboutData->addAuthor("Michael H\303\244ckel", I18N_NOOP("Current maintainer"), "haeckel@kde.org" );
+	mAboutData->addAuthor("Daniel Molkentin");
+	mAboutData->addAuthor("Alex Zepeda");
+	mAboutData->setLicenseText(
+	"You can freely distribute this program under the following terms:\n"
+	"\n"
+	"1.) If you use this program in a product outside of KDE, you must\n"
+	"credit the authors, and must mention \"kcmemail\".\n"
+	"\n"
+	"2.) If this program is used in a product other than KDE, this license\n"
+	"must be reproduced in its entirety in the documentation and/or some\n"
+	"other highly visible location (e.g. startup splash screen)\n"
+	"\n"
+	"3.) Use of this product implies the following terms:\n"
+	"\n"
+	"THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND\n"
+	"ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n"
+	"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n"
+	"ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE\n"
+	"FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\n"
+	"DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS\n"
+	"OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)\n"
+	"HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT\n"
+	"LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY\n"
+	"OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF\n"
+	"SUCH DAMAGE.");
 }
 
 topKCMEmail::~topKCMEmail()
 {
+	delete mAboutData;
 }
 
+const KAboutData * topKCMEmail::aboutData() const
+{
+	return mAboutData;
+}
 
 void topKCMEmail::load()
 {
