@@ -30,50 +30,22 @@
                 <property name="text">
                     <string>X Coordinate</string>
                 </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
-                </property>
             </column>
             <column>
                 <property name="text">
                     <string>Y Coordinate</string>
-                </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
                 </property>
             </column>
             <column>
                 <property name="text">
                     <string>Width</string>
                 </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
-                </property>
             </column>
             <column>
                 <property name="text">
                     <string>Height</string>
                 </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
-                </property>
             </column>
-            <row>
-                <property name="text">
-                    <string>1</string>
-                </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
-                </property>
-            </row>
-            <row>
-                <property name="text">
-                    <string>2</string>
-                </property>
-                <property name="pixmap">
-                    <pixmap></pixmap>
-                </property>
-            </row>
             <property name="name">
                 <cstring>headTable</cstring>
             </property>
@@ -86,10 +58,10 @@
                 </sizepolicy>
             </property>
             <property name="vScrollBarMode">
-                <enum>AlwaysOff</enum>
+                <enum>Auto</enum>
             </property>
             <property name="hScrollBarMode">
-                <enum>AlwaysOff</enum>
+                <enum>Auto</enum>
             </property>
             <property name="numRows">
                 <number>2</number>
@@ -189,7 +161,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Show KDM on display:</string>
+                        <string>Show KDM on:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>_kdmDisplay</cstring>
@@ -203,7 +175,7 @@
                         <bool>false</bool>
                     </property>
                     <property name="text">
-                        <string>Show unmanaged windows on display:</string>
+                        <string>Show unmanaged windows on:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>_unmanagedDisplay</cstring>
@@ -297,9 +269,51 @@
         <receiver>_unmanagedDisplay</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>_enableXinerama</sender>
+        <signal>clicked()</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_enableResistance</sender>
+        <signal>clicked()</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_enablePlacement</sender>
+        <signal>clicked()</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_enableMaximize</sender>
+        <signal>clicked()</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_kdmDisplay</sender>
+        <signal>activated(int)</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
+    <connection>
+        <sender>_unmanagedDisplay</sender>
+        <signal>activated(int)</signal>
+        <receiver>XineramaWidget</receiver>
+        <slot>emitConfigChanged()</slot>
+    </connection>
 </connections>
+<includes>
+    <include location="local" impldecl="in implementation">xineramawidget.ui.h</include>
+</includes>
+<signals>
+    <signal>configChanged()</signal>
+</signals>
 <slots>
-    <slot>_enableXinerama_toggled( bool )</slot>
+    <slot access="private">emitConfigChanged()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

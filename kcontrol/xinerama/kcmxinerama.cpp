@@ -22,6 +22,7 @@
 #include "kcmxinerama.h"
 #include <klocale.h>
 #include <kglobal.h>
+#include <dcopclient.h>
 #include <kaboutdata.h>
 #include <qcheckbox.h>
 #include <kconfig.h>
@@ -40,7 +41,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
   : KCModule(parent, name) {
 	_indicators.setAutoDelete(true);
 
-	config = new KConfig("xinerama", false, false);
+	config = KGlobal::config();
 
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));
 
@@ -50,7 +51,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 	// Setup the panel
 	_displays = QApplication::desktop()->numScreens();
 
-	if (_displays > 1) {
+	if (QApplication::desktop()->isVirtualDesktop()) {
 		QStringList dpyList;
 		xw = new XineramaWidget(this);
 		grid->addWidget(xw, 0, 0);
@@ -78,6 +79,8 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 			this, SLOT(windowIndicator(int)));
 		connect(xw->_identify, SIGNAL(clicked()),
 			this, SLOT(indicateWindows()));
+
+		connect(xw, SIGNAL(configChanged()), this, SLOT(configChanged()));
 	} else { // no Xinerama
 		QLabel *ql = new QLabel(i18n("<qt><p>This module is only for configuring systems with a single desktop spread across multiple monitors. You do not appear to have this configuration.</p></qt>"), this);
 		grid->addWidget(ql, 0, 0);
@@ -90,7 +93,8 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 
 KCMXinerama::~KCMXinerama() {
 	_timer.stop();
-	delete config;
+	//Don't delete KGlobal::config()
+	//delete config;
 	config = 0;
 	clearIndicator();
 }
@@ -100,22 +104,56 @@ void KCMXinerama::configChanged() {
 }
 
 
+#define KWIN_XINERAMA              "XineramaEnabled"
+#define KWIN_XINERAMA_MOVEMENT     "XineramaMovementEnabled"
+#define KWIN_XINERAMA_PLACEMENT    "XineramaPlacementEnabled"
+#define KWIN_XINERAMA_MAXIMIZE     "XineramaMaximizeEnabled"
+
 void KCMXinerama::load() {
-	if (_displays > 1) {
+	if (QApplication::desktop()->isVirtualDesktop()) {
+		config->setGroup("Windows");
+		xw->_enableXinerama->setChecked(config->readBoolEntry(KWIN_XINERAMA, true));
+		xw->_enableResistance->setChecked(config->readBoolEntry(KWIN_XINERAMA_MOVEMENT, true));
+		xw->_enablePlacement->setChecked(config->readBoolEntry(KWIN_XINERAMA_PLACEMENT, true));
+		xw->_enableMaximize->setChecked(config->readBoolEntry(KWIN_XINERAMA_MAXIMIZE, true));
 	}
 	emit changed(false);
 }
 
 
 void KCMXinerama::save() {
-	if (_displays > 1) {
+	if (QApplication::desktop()->isVirtualDesktop()) {
+		config->setGroup("Windows");
+		config->writeEntry(KWIN_XINERAMA,
+					xw->_enableXinerama->isChecked());
+		config->writeEntry(KWIN_XINERAMA_MOVEMENT,
+					xw->_enableResistance->isChecked());
+		config->writeEntry(KWIN_XINERAMA_PLACEMENT,
+					xw->_enablePlacement->isChecked());
+		config->writeEntry(KWIN_XINERAMA_MAXIMIZE,
+					xw->_enableMaximize->isChecked());
 		config->sync();
+		if (!kapp->dcopClient()->isAttached())
+			kapp->dcopClient()->attach();
+		kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
 	}
 	emit changed(false);
 }
 
 void KCMXinerama::defaults() {
-	emit changed(true);
+	if (QApplication::desktop()->isVirtualDesktop()) {
+		xw->_enableXinerama->setChecked(true);
+		xw->_enableResistance->setChecked(true);
+		xw->_enablePlacement->setChecked(true);
+		xw->_enableMaximize->setChecked(true);
+		xw->_kdmDisplay->setCurrentItem(
+				QApplication::desktop()->primaryScreen());
+		xw->_unmanagedDisplay->setCurrentItem(
+				QApplication::desktop()->primaryScreen());
+		emit changed(true);
+	} else {
+		emit changed(false);
+	}
 }
 
 void KCMXinerama::indicateWindows() {

@@ -17,5 +17,5 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmxinerama.pot
 
 data_DATA = xinerama.desktop
-datadir = $(kde_appsdir)/Settings/LookNFeel
+datadir = $(kde_appsdir)/Settings/Desktop
 
