@@ -2,7 +2,9 @@
 
 kde_module_LTLIBRARIES = libkcm_konsole.la
 
-libkcm_konsole_la_SOURCES = schemadialog.cpp kcmkonsoledialog.cpp schemaeditor.cpp kcmkonsole.cpp
+libkcm_konsole_la_SOURCES =  schemaeditor.cpp \
+	schemadialog.ui kcmkonsoledialog.ui
+
 libkcm_konsole_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_konsole_la_LIBADD = -lkdeui -lkfile 
 INCLUDES= $(all_includes) 
