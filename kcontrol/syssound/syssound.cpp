@@ -512,11 +512,11 @@ void KSoundWidget::playCurrentSound()
   QString hlp, sname;
   int soundno;
 
-  audio.stop();
+//  audio.stop();
   soundno = soundlist->currentItem();
   if (soundno > 0) {
       sname = locate("sound", soundlist->text(soundno));
-      audio.play(sname);
+//      audio.play(sname);
   }
 }
 

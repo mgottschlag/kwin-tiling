@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.8  2000/03/14 05:18:18  pbrown
+    merged bell settings into here. Other cleanups.
+
     Revision 1.7  2000/01/08 18:59:26  kulow
     some sparcCC fixes
 
@@ -57,7 +60,7 @@
 #include <qcheckbox.h>
 
 #include <mediatool.h>
-#include <kaudio.h>
+//#include <kaudio.h>
 #include <knuminput.h>
 
 class KSoundWidget : public KCModule{
@@ -101,7 +104,7 @@ private:
 	
     int selected_event;
     QStringList soundnames;
-    KAudio audio;
+//    KAudio audio;
     QCheckBox *sounds_enabled;
     QListBox *eventlist, *soundlist;
     QPushButton *btn_test;
