@@ -348,8 +348,10 @@ void Kclock::paintEvent( QPaintEvent * )
   QPointArray pts;
   QPoint cp = rect().center();
   int d = QMIN(width(),height());
-  paint.setPen( gray );
-  paint.setBrush( gray );
+  QColor hands =  colorGroup().dark();
+  QColor shadow =  colorGroup().text();
+  paint.setPen( shadow );
+  paint.setBrush( shadow );
   paint.setViewport(4,4,width(),height());
 
   for ( int c=0 ; c < 2 ; c++ )
@@ -392,8 +394,8 @@ void Kclock::paintEvent( QPaintEvent * )
           matrix.rotate( 6 );
         }
 
-      paint.setPen( black );
-      paint.setBrush( black );
+      paint.setPen( hands );
+      paint.setBrush( hands );
       paint.setViewport(0,0,width(),height());
     }
   paint.end();
