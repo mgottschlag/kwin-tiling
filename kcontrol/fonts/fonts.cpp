@@ -119,7 +119,7 @@ void FontUseItem::readFont()
 void FontUseItem::writeFont()
 {
   KConfigBase *config;
-  QString charset = ( _charset == i18n("default") ) ? "default" : _charset;
+  QString charset = ( _charset == i18n("default") ) ? QString::fromLatin1("default") : _charset;
 
   if (_rcfile.isEmpty()) {
     config = KGlobal::config();

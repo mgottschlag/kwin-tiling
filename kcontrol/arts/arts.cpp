@@ -227,7 +227,7 @@ void KArtsModule::saveParams( void )
 	if(item >= 0)
 		audioIO=Arts::AudioIO::queryAudioIOParamStr(item, Arts::AudioIO::name);
 
-	QString dev = customDevice->isChecked()?deviceName->text():"";
+	QString dev = customDevice->isChecked()?deviceName->text():QString::fromLatin1("");
 	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
 	QString addOptions;
 	if(artsConfig->customOptions->isChecked())
