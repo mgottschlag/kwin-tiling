@@ -104,7 +104,8 @@ int main(int argc, char *argv[])
 	KConfig type("krandom.kssrc");
 	type.setGroup("Settings");
 	bool opengl = type.readBoolEntry("OpenGL");
-	bool manipulatescreen = type.readBoolEntry("ManipulateScreen"); 
+	bool manipulatescreen = type.readBoolEntry("ManipulateScreen");
+        bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
 
 	for (uint i = 0; i < tempSaverFileList.count(); i++)
 	{
@@ -121,10 +122,10 @@ int main(int argc, char *argv[])
 			else
 			{
 				QStringList saverTypes = QStringList::split(";", saverType);
-				for (uint i = 0; i < saverTypes.count(); i++)
+				for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
 				{
-					kdDebug() << "saverTypes is "<< saverTypes[i] << endl;
-					if (saverTypes[i] == "ManipulateScreen")
+					kdDebug() << "saverTypes is "<< *it << endl;
+					if (*it == "ManipulateScreen")
 					{
 						if (manipulatescreen)
 						{
@@ -132,13 +133,21 @@ int main(int argc, char *argv[])
 						}
 					}
 					else
-					if (saverTypes[i] == "OpenGL")
+					if (*it == "OpenGL")
 					{
 						if (opengl)
 						{
 							saverFileList.append(tempSaverFileList[i]);
 						}
 					}
+					if (*it == "Fortune")
+					{
+						if (fortune)
+						{
+							saverFileList.append(tempSaverFileList[i]);
+						}
+					}
+
 				}
 			}
 
