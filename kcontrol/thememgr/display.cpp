@@ -4,7 +4,7 @@
 #include "display.moc"
 
 KDisplayModule::KDisplayModule( QWidget *parent, int mode, int )
-	: KConfigWidget( parent )
+	: KCModule( parent , "displaymodule" )
 {
 	_runMode = mode;
 }

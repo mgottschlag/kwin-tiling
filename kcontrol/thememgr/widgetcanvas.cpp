@@ -33,6 +33,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 
+#undef index
 #include <kcolordlg.h>
 
 #include "kwmcom.h"

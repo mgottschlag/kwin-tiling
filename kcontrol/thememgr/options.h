@@ -4,7 +4,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QLabel;
 class QCheckBox;
@@ -13,16 +13,16 @@ class QPushButton;
 class QBoxLayout;
 class QGridLayout;
 
-#define OptionsInherited KConfigWidget
-class Options : public KConfigWidget
+#define OptionsInherited KCModule
+class Options : public KCModule
 {
   Q_OBJECT
 public:
   Options(QWidget *parent=0, const char* name=0, bool init=FALSE);
   ~Options();
 
-  virtual void loadSettings();
-  virtual void applySettings();
+  virtual void load();
+  virtual void save();
 
   /** Update status information on available groups of current theme. */
   virtual void updateStatus(void);

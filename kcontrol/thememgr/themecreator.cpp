@@ -24,7 +24,12 @@
 #include "themecreator.h"
 #include <kapp.h>
 #include <klocale.h>
+#include <kdebug.h>
 #include <kconfigbackend.h>
+#include <kglobal.h>
+#include <kstddirs.h>
+#include <kconfig.h>
+
 #include <qstring.h>
 #include <qfile.h>
 #include <qfileinfo.h>
@@ -37,9 +42,6 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kconfig.h>
 
 
 //-----------------------------------------------------------------------------
@@ -106,7 +108,7 @@ bool ThemeCreator::extract(void)
   kdDebug() << "Theme::extract() done" << endl;
 
   saveSettings();
-  save(KGlobal::dirs()->getSaveLocation("theme") + name());
+  save(KGlobal::dirs()->saveLocation("themes") + name());
 
   return true;
 }
@@ -145,8 +147,10 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     if (!value.isEmpty())
     {
       appDir = value.copy();
+#if 0
       if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
       else baseDir = QString::null;
+#endif
       appDir = baseDir + appDir;
       len = appDir.length();
       if (len > 0 && appDir[len-1]!='/') appDir += '/';
@@ -181,7 +185,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
 	cfg->sync();
 	delete cfg;
       }
-      kdDebug("opening config file " << cfgFile << endl;
+      kdDebug() << "opening config file " << cfgFile << endl;
       cfg = new KSimpleConfig(cfgFile);
       oldCfgFile = cfgFile;
     }
@@ -287,7 +291,7 @@ void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
     if (stricmp(value.ascii(),"right")==0 || stricmp(value.ascii(),"left")==0)
     {
       value = readEntry("background");
-      kdDebug("rotating " << value << endl;
+      kdDebug() << "rotating " << value << endl;
       rotateImage(mThemePath + value, 90);
     }
   }
@@ -307,7 +311,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 
   if (!finfo.exists() || !finfo.isFile())
   {
-    kdDebug("File " << aFilename << " does not exist or is no file." << endl;
+    kdDebug() << "File " << aFileName << " does not exist or is no file." << endl;
     return 0;
   }
 
@@ -332,7 +336,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     fname = str;
   }
 
-  kdDebug("Extracting " << aFileName << " to " << mThemePath + fname << endl;
+  kdDebug() << "Extracting " << aFileName << " to " << mThemePath + fname << endl;
 
   srcFile.setName(aFileName);
   if (!srcFile.open(IO_ReadOnly))
@@ -371,7 +375,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 //-----------------------------------------------------------------------------
 void ThemeCreator::setGroupGeneral(void)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   cfg->setGroup("General");
   setGroup("General");

@@ -22,41 +22,36 @@
  */
 
 #include <kmessagebox.h>
-#include <kimgio.h>
-
-#define private public
-#include <kcontrol.h>
-#undef private
 
 #include "themecreator.h"
 #include "installer.h"
 #include "global.h"
 #include "options.h"
 #include "about.h"
+
+#include <qlayout.h>
+#include <qtabwidget.h>
+
 #include <klocale.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-
+#include <kapp.h>
 
 ThemeCreator* theme = NULL;
-static msg_handler oldMsgHandler = NULL;
-
 
 //-----------------------------------------------------------------------------
-class KThemesApplication : public KControlApplication
+class KThemeMgr : public KCModule
 {
 public:
 
-  KThemesApplication(int &argc, char **arg, const char *name);
-  ~KThemesApplication();
+  KThemeMgr(QWidget *parent, const char *name);
+  ~KThemeMgr();
 
   virtual void init();
-  virtual void apply();
+  virtual void save();
+  virtual void load();
   virtual void defaultValues();
-
-protected:
-  virtual void tweakUi(void);
 
 private:
   Installer* mInstaller;
@@ -67,131 +62,78 @@ private:
 
 
 //-----------------------------------------------------------------------------
-KThemesApplication::KThemesApplication(int &argc, char **argv, const char *name)
-  : KControlApplication(argc, argv, name)
+KThemeMgr::KThemeMgr(QWidget *parent, const char *name)
+  : KCModule(parent, name)
 {
-  initMetaObject();
   init();
 
   mInstaller = NULL;
   theme = new ThemeCreator;
 
-  if (runGUI())
-  {
-    tweakUi();
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  QTabWidget *tab = new QTabWidget(this);
+  layout->addWidget(tab);
 
-    addPage(mInstaller = new Installer(dialog), i18n("Installer"), "index-1.html" );
-    addPage(mOptions = new Options(dialog), i18n("Contents"), "index-2.html" );
-    addPage(mAbout = new About(dialog), i18n("About"), "index-3.html" );
+  mInstaller = new Installer(this);
+  tab->addTab(mInstaller, i18n("&Installer"));
+  connect(mInstaller, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 
-    dialog->show();
-  }
+  mOptions = new Options(this);
+  tab->addTab(mOptions, i18n("&Contents"));
+  connect(mOptions, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+
+  mAbout = new About(this);
+  tab->addTab(mAbout, i18n("&About"));
+  defaultValues();
 }
 
 
 //-----------------------------------------------------------------------------
-KThemesApplication::~KThemesApplication()
+KThemeMgr::~KThemeMgr()
 {
-  if (theme) delete theme;
+  delete theme;
 }
 
-
 //-----------------------------------------------------------------------------
-void KThemesApplication::tweakUi()
-{
-  KControlDialog* dlg = (KControlDialog*)getDialog();
-
-  dlg->defaultBtn->setText(i18n("Extract"));
-}
-
-
-//-----------------------------------------------------------------------------
-void KThemesApplication::init()
+void KThemeMgr::init()
 {
   //kdDebug() << "No init necessary" << endl;
-    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + kapp->name() + "/Themes/");
+    KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kthememgr/Themes/");
 }
 
 
 //-----------------------------------------------------------------------------
-void KThemesApplication::defaultValues()
+void KThemeMgr::defaultValues()
 {
   theme->extract();
 }
 
 
 //-----------------------------------------------------------------------------
-void KThemesApplication::apply()
+void KThemeMgr::save()
 {
-  mAbout->applySettings();
-  mOptions->applySettings();
-  mInstaller->applySettings();
+  mAbout->save();
+  mOptions->save();
+  mInstaller->save();
   theme->install();
 }
 
-
-//=============================================================================
-// Message handler
-static void msgHandler(QtMsgType aType, const char* aMsg)
+//-----------------------------------------------------------------------------
+void KThemeMgr::load()
 {
-  QString appName = kapp->name();
-  QString msg = aMsg;
+  mInstaller->load();
+  mOptions->load();
+  mAbout->load();
+}
 
-  switch (aType)
+extern "C"
+{
+  KCModule *create_themes(QWidget *parent, const char *name)
   {
-  case QtDebugMsg:
-    kdDebug(0) << msg.ascii() << endl;
-    break;
-
-  case QtWarningMsg:
-    fprintf(stderr, "%s: %s\n", appName.ascii(), msg.data());
-    if (strncmp(aMsg,"KCharset:",9) != 0 &&
-	strncmp(aMsg,"QGManager:",10) != 0 &&
-	strncmp(aMsg,"QPainter:",9) != 0 &&
-	strncmp(aMsg,"QPixmap:",8) != 0 &&
-	strncmp(aMsg,"QFile:", 6) != 0)
-    {
-      KMessageBox::sorry(0, msg);
-    }
-    else kdDebug(0) << msg.ascii() << endl;
-    break;
-
-  case QtFatalMsg:
-    fprintf(stderr, (appName+" "+i18n("fatal error")+": %s\n").ascii(), msg.ascii());
-    KMessageBox::error(0, aMsg);
-    abort();
+    KGlobal::locale()->insertCatalogue("kcmthemes");
+    return new KThemeMgr(parent, name);
   }
+
 }
 
 
-//-----------------------------------------------------------------------------
-void init(void)
-{
-    oldMsgHandler = qInstallMsgHandler(msgHandler);
-
-    if (!(Theme::mkdirhier(Theme::workDir().ascii()))) exit(1);
-}
-
-
-//-----------------------------------------------------------------------------
-void cleanup(void)
-{
-    qInstallMsgHandler(oldMsgHandler);
-}
-
-
-//-----------------------------------------------------------------------------
-int main(int argc, char **argv)
-{
-  KThemesApplication app(argc, argv, "kthememgr");
-  app.setTitle(i18n("Kde Theme Manager"));
-
-  kimgioRegister();
-//  init();
-
-  if (app.runGUI()) app.exec();
-  else app.init();
-
-  cleanup();
-  return 0;
-}

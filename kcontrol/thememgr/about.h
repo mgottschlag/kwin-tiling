@@ -4,7 +4,7 @@
 #ifndef ABOUT_H
 #define ABOUT_H
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QLabel;
 class QCheckBox;
@@ -13,16 +13,13 @@ class QPushButton;
 class QBoxLayout;
 class Theme;
 
-#define AboutInherited KConfigWidget
-class About : public KConfigWidget
+#define AboutInherited KCModule
+class About : public KCModule
 {
   Q_OBJECT
 public:
   About(QWidget *parent=0, const char* name=0, bool init=FALSE);
   ~About();
-
-  virtual void loadSettings();
-  virtual void applySettings();
 
 protected slots:
   virtual void slotThemeChanged();

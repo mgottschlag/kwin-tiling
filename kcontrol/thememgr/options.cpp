@@ -18,6 +18,8 @@
 #include "global.h"
 #include "groupdetails.h"
 
+#include "assert.h"
+
 //-----------------------------------------------------------------------------
 Options::Options (QWidget * aParent, const char *aName, bool aInit)
   : OptionsInherited(aParent, aName)
@@ -130,14 +132,14 @@ QCheckBox* Options::newLine(const char* aGroupName, const QString& aText,
 
 
 //-----------------------------------------------------------------------------
-void Options::loadSettings()
+void Options::load()
 {
   kdDebug() << "Options::loadSettings() called" << endl;
 }
 
 
 //-----------------------------------------------------------------------------
-void Options::applySettings()
+void Options::save()
 {
   theme->instColors = mCbxColors->isChecked();
   theme->instWindowBorder = mCbxWindowBorder->isChecked();
@@ -166,7 +168,7 @@ void Options::slotInvert()
   mCbxIcons->setChecked(!mCbxIcons->isChecked());
   mCbxGimmick->setChecked(!mCbxGimmick->isChecked());
   mCbxKfm->setChecked(!mCbxKfm->isChecked());
-  applySettings();
+  save();
 }
 
 
@@ -183,7 +185,7 @@ void Options::slotClear()
   mCbxIcons->setChecked(false);
   mCbxGimmick->setChecked(false);
   mCbxKfm->setChecked(false);
-  applySettings();
+  save();
 }
 
 
@@ -207,14 +209,14 @@ void Options::slotDetails()
 //-----------------------------------------------------------------------------
 void Options::slotCbxClicked()
 {
-  applySettings();
+  save();
 }
 
 
 //-----------------------------------------------------------------------------
 void Options::slotThemeApply()
 {
-  applySettings();
+  save();
 }
 
 
@@ -262,7 +264,7 @@ void Options::updateStatus(void)
 //-----------------------------------------------------------------------------
 void Options::writeConfig()
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   cfg->setGroup("Options");
   cfg->writeEntry("overwrite", !mCbxOverwrite->isChecked());
@@ -282,7 +284,7 @@ void Options::writeConfig()
 //-----------------------------------------------------------------------------
 void Options::readConfig()
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   cfg->setGroup("Options");
   mCbxOverwrite->setChecked(!cfg->readBoolEntry("overwrite", false));
@@ -296,7 +298,7 @@ void Options::readConfig()
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
   mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
   mCbxKfm->setChecked(cfg->readBoolEntry("file-manager", true));
-  applySettings();
+  save();
 }
 
 //-----------------------------------------------------------------------------

@@ -20,11 +20,8 @@
 #ifndef WIDGETCANVAS_H
 #define WIDGETCANVAS_H
 
-#undef index
-
 #include <qlistbox.h>
-#include <kslider.h>
-#include <kcontrol.h>
+#include <kcmodule.h>
 #include <X11/X.h>
 #include "kcolorbtn.h"
 #include "savescm.h"

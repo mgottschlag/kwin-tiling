@@ -31,13 +31,9 @@
 #include <qradiobt.h>
 #include <qchkbox.h>
 #include <qfileinfo.h>
-#ifdef index
-#undef index
-#endif
 #include <qlistbox.h>
 #include <qmultilinedit.h>
-#include <kbuttonbox.h>
-#include <kfiledialog.h>
+
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -45,8 +41,12 @@
 #include "themecreator.h"
 #include "global.h"
 #include "newthemedlg.h"
+
+#include <kbuttonbox.h>
+#include <kfiledialog.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kdebug.h>
 #include <kstddirs.h>
 
 static bool sSettingTheme = false;
@@ -77,7 +77,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mGrid->addWidget(mPreview, 0, 1);
 
-  bbox = new KButtonBox(this, KButtonBox::HORIZONTAL, 0, 6);
+  bbox = new KButtonBox(this, KButtonBox::Horizontal, 0, 6);
   mGrid->addMultiCellWidget(bbox, 2, 2, 0, 1);
 
   mBtnNew = bbox->addButton(i18n("New..."));
@@ -136,16 +136,16 @@ void Installer::readThemesList(void)
 
 
 //-----------------------------------------------------------------------------
-void Installer::loadSettings()
+void Installer::load()
 {
-  kdDebug() << "Installer::loadSettings() called" << endl;
+  kdDebug() << "Installer::load() called" << endl;
 }
 
 
 //-----------------------------------------------------------------------------
-void Installer::applySettings()
+void Installer::save()
 {
-  kdDebug() << "Installer::applySettings() called" << endl;
+  kdDebug() << "Installer::save() called" << endl;
 }
 
 
@@ -238,17 +238,17 @@ void Installer::slotImport()
   static QString path;
   if (path.isEmpty()) path = QDir::homeDirPath();
 
-  KFileDialog dlg(path, "*.tar.gz", 0, 0, true, false);
+  KFileDialog dlg(path, "*.tar.gz", 0, 0, true);
   dlg.setCaption(i18n("Import Theme"));
   if (!dlg.exec()) return;
 
-  path = dlg.dirPath();
+  path = dlg.baseURL().path();
   fpath = dlg.selectedFile();
   i = fpath.findRev('/');
   if (i >= 0) theme = fpath.mid(i+1, 1024);
   else theme = fpath;
 
-  QString dir = KGlobal::dirs()->getSaveLocation("themes");
+  QString dir = KGlobal::dirs()->saveLocation("themes");
   // Copy theme package into themes directory
   cmd.sprintf("cp \"%s\" \"%s\"", fpath.ascii(), dir.ascii());
   rc = system(cmd.ascii());
@@ -292,12 +292,13 @@ void Installer::slotExport()
     ext = '*' + themeFile.mid(i, 256);
   }
 
-  KFileDialog dlg(path, ext, 0, 0, true, false);
+  KFileDialog dlg(path, ext, 0, 0, true);
   dlg.setCaption(i18n("Export Theme"));
   dlg.setSelection(themeFile);
   if (!dlg.exec()) return;
 
-  path = dlg.dirPath();
+  if (dlg.baseURL().isLocalFile())
+     path = dlg.baseURL().path();
   fpath = dlg.selectedFile();
 
   theme->save(fpath);

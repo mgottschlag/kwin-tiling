@@ -23,7 +23,7 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 class QGridLayout;
 class QListBox;
@@ -31,16 +31,16 @@ class QPushButton;
 class QLabel;
 class QMultiLineEdit;
 
-#define InstallerInherited KConfigWidget
-class Installer : public KConfigWidget
+#define InstallerInherited KCModule
+class Installer : public KCModule
 {
   Q_OBJECT
 public:
   Installer(QWidget *parent=0, const char *aName=0, bool aInit=FALSE);
   ~Installer();
 
-  virtual void loadSettings();
-  virtual void applySettings();
+  virtual void load();
+  virtual void save();
 
   /** Find item in listbox. Returns item index or -1 if not found */
   virtual int findItem(const QString text) const;

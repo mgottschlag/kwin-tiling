@@ -10,9 +10,9 @@
 
 #include <qwidget.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
-class KDisplayModule : public KConfigWidget
+class KDisplayModule : public KCModule
 {
 	Q_OBJECT
 public:

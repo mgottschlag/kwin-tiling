@@ -82,7 +82,7 @@ NewThemeDlg::~NewThemeDlg()
 //-----------------------------------------------------------------------------
 void NewThemeDlg::setValues(void)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
   cfg->setGroup("General");
 
   mEdtFilename->setText(i18n("NewTheme"));

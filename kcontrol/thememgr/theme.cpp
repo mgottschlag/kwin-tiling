@@ -42,7 +42,6 @@
 
 #include <kconfigbackend.h>
 #include <kmessagebox.h>
-#include <kwm.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -70,15 +69,12 @@ Theme::Theme(): ThemeInherited(QString::null), mInstFiles(true)
 
   instOverwrite = false;
 
-  mConfigDir = KGlobal::dirs()->getSaveLocation("config");
+  mConfigDir = KGlobal::dirs()->saveLocation("config");
   len = mConfigDir.length();
   if (len > 0 && mConfigDir[len-1] != '/') mConfigDir += '/';
 
   mMappings = NULL;
   loadMappings();
-
-  // ensure that work directory exists
-  mkdirhier(workDir().ascii());
 
   loadSettings();
 }
@@ -95,7 +91,7 @@ Theme::~Theme()
 //-----------------------------------------------------------------------------
 void Theme::loadSettings(void)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   cfg->setGroup("Install");
   mRestartCmd = cfg->readEntry("restart-cmd",
@@ -107,7 +103,7 @@ void Theme::loadSettings(void)
 //-----------------------------------------------------------------------------
 void Theme::saveSettings(void)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   cfg->setGroup("Install");
   cfg->writeEntry("icons", mInstIcons);
@@ -154,16 +150,10 @@ void Theme::loadMappings()
 {
   QFile file;
 
-  file.setName(locateLocal("appdata", "theme.mappings"));
+  file.setName(locate("data", "kthememgr/theme.mappings"));
   if (!file.exists())
   {
-    file.setName("theme.mappings");
-    if (!file.exists())
-    {
-      file.setName(locate("appdata", "theme.mappings"));
-      if (!file.exists())
-	fatal(i18n("Mappings file theme.mappings not found.").ascii());
-    }
+     fatal(i18n("Mappings file theme.mappings not found.").ascii());
   }
 
   if (mMappings) delete mMappings;
@@ -213,7 +203,7 @@ bool Theme::load(const QString aPath)
     rc = system(cmd.ascii());
     if (rc)
     {
-      kdDebug << "Failed to copy theme contents from " << aPath << " into " << str << endl;
+      kdDebug() << "Failed to copy theme contents from " << aPath << " into " << str << endl;
       return false;
     }
   }
@@ -338,7 +328,7 @@ bool Theme::installFile(const QString& aSrc, const QString& aDest)
   finfo.setFile(src);
   if (!finfo.exists())
   {
-    kdDebug("File " << aStc << " is not in theme package." << endl;
+    kdDebug() << "File " << aSrc << " is not in theme package." << endl;
     return false;
   }
 
@@ -406,6 +396,10 @@ int Theme::installGroup(const char* aGroupName)
   int len, i, installed = 0;
   const char* missing = 0;
 
+  baseDir = KGlobal::dirs()->saveLocation("config");
+  baseDir.truncate(baseDir.length()-7);
+kdDebug() << ":: baseDir = " << baseDir << endl;
+
   kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
   setGroup(group);
@@ -429,13 +423,9 @@ int Theme::installGroup(const char* aGroupName)
     value = mMappings->readEntry("ConfigGroup");
     if (!value.isEmpty()) cfgGroup = value.copy();
     value = mMappings->readEntry("ConfigAppDir");
-    if (!value.isEmpty())
+    if (!value.isEmpty() && (value[0] != '/'))
     {
       appDir = value.copy();
-      if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
-      else baseDir = QString::null;
-
-      mkdirhier(appDir.ascii(), baseDir.ascii());
       appDir = baseDir + appDir;
 
       len = appDir.length();
@@ -665,7 +655,7 @@ void Theme::doCmdList(void)
   QString cmd, str, appName;
   bool kwmRestart = false;
   //  int rc;
-
+#if 0
   for (cmd=mCmdList.first(); !cmd.isNull(); cmd=mCmdList.next())
   {
     kdDebug() << "do command: " << cmd << endl;
@@ -699,6 +689,7 @@ void Theme::doCmdList(void)
 
   if (kwmRestart) KWM::sendKWMCommand("restart");
   mCmdList.clear();
+#endif
 }
 
 
@@ -724,6 +715,7 @@ bool Theme::backupFile(const QString fname) const
 //-----------------------------------------------------------------------------
 int Theme::installIcons(void)
 {
+#if 0
   QString key, value, mapval, fname, fpath, destName, icon, miniIcon;
   QString iconDir, miniIconDir, cmd, destNameMini, localShareDir;
   QStrList extraIcons;
@@ -746,7 +738,6 @@ int Theme::installIcons(void)
   setGroup(groupName);
   mMappings->setGroup(groupName);
 
-  mkdirhier("share/icons/mini");
   iconDir = kapp->localkdedir() + "/share/icons/";
   miniIconDir = kapp->localkdedir() + "/share/icons/mini/";
   localShareDir = kapp->localkdedir() + "/share/";
@@ -824,7 +815,6 @@ int Theme::installIcons(void)
     // install icons
     if (destName.find('/')>=0) 
     {
-      mkdirhier(pathOf(destName).ascii(),localShareDir.ascii());
       value = localShareDir + destName;
     }
     else value = iconDir + destName;
@@ -834,7 +824,6 @@ int Theme::installIcons(void)
     {
       if (destNameMini.find('/')>=0) 
       {
-	mkdirhier(pathOf(destNameMini).ascii(),localShareDir.ascii());
 	value = localShareDir + destNameMini;
       }
       else value = miniIconDir + destNameMini;
@@ -883,6 +872,8 @@ int Theme::installIcons(void)
 
   mInstIcons += installed;
   return installed;
+#endif
+  return 0;
 }
 
 
@@ -897,7 +888,7 @@ void Theme::addInstFile(const char* aFileName)
 //-----------------------------------------------------------------------------
 void Theme::readInstFileList(const char* aGroupName)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   assert(aGroupName!=0);
   cfg->setGroup("Installed Files");
@@ -909,7 +900,7 @@ void Theme::readInstFileList(const char* aGroupName)
 //-----------------------------------------------------------------------------
 void Theme::writeInstFileList(const char* aGroupName)
 {
-  KConfig* cfg = kapp->getConfig();
+  KConfig* cfg = kapp->config();
 
   assert(aGroupName!=0);
   cfg->setGroup("Installed Files");
@@ -945,7 +936,7 @@ void Theme::uninstallFiles(const char* aGroupName)
 
     if (reverted) 
     {
-      kdDebug() "uninstalled " << fname << endl;
+      kdDebug() << "uninstalled " << fname << endl;
       processed++;
     }
   }
@@ -1098,47 +1089,6 @@ void Theme::clear(void)
 
 
 //-----------------------------------------------------------------------------
-bool Theme::mkdirhier(const char* aDir, const char* aBaseDir)
-{
-  QDir dir;
-  const char* dirName;
-  int oldMask = umask(077);
-
-  if (aBaseDir) dir.cd(aBaseDir,true);
-  else if (aDir[0]!='/') dir.cd(kapp->localkdedir());
-  else dir.cd("/");
-
-  char *buffer = qstrdup(aDir);
-
-  for (dirName=strtok(buffer,"/"); dirName; dirName=strtok(0, "/"))
-  {
-    if (dirName[0]=='\0') continue;
-    if (!dir.exists(dirName))
-    {
-      if (!dir.mkdir(dirName))
-      {
-	warning(i18n("Cannot create directory %s").ascii(),
-		(dir.dirName() + dirName).ascii());
-	umask(oldMask);
-	return false;
-      }
-    }
-    if (!dir.cd(dirName))
-    {
-      warning(i18n("Cannot enter directory %s").ascii(),
-	      (dir.dirName() + dirName).ascii());
-      umask(oldMask);
-      return false;
-    }
-  }
-
-  delete [] buffer;
-  umask(oldMask);
-  return true;
-}
-
-
-//-----------------------------------------------------------------------------
 bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 {
   kdDebug() << "hasGroup: name = " << aName << " aNotEmpty = " << aNotEmpty << endl;
@@ -1155,36 +1105,6 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 
   return found;
 }
-
-
-//-----------------------------------------------------------------------------
-static int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p){
-  Atom real_type;
-  int format;
-  unsigned long n, extra;
-  int status;
-
-  status = XGetWindowProperty(qt_xdisplay(), w, a, 0L, len, False, type, 
-			      &real_type, &format, &n, &extra, p);
-  if (status != Success || *p == 0) return -1;
-  if (n == 0) XFree((char*) *p);
-  return n;
-}
-
-
-//-----------------------------------------------------------------------------
-static bool getSimpleProperty(Window w, Atom a, long &result){
-  long *p = 0;
-
-  if (_getprop(w, a, a, 1L, (unsigned char**)&p) <= 0){
-    return FALSE;
-  }
-
-  result = p[0];
-  XFree((char *) p);
-  return TRUE;
-}
-
 
 //-----------------------------------------------------------------------------
 void Theme::stretchPixmap(const QString aFname, bool aStretchVert)
@@ -1282,7 +1202,7 @@ void Theme::runKrdb(void) const
 //-----------------------------------------------------------------------------
 void Theme::colorSchemeApply(void)
 {
-  KIPC::sendMessageAll("KDEChangePalette");
+  KIPC::sendMessageAll(KIPC::PaletteChanged);
 }
 
 

@@ -4,7 +4,7 @@
 #define GROUPDETAILS_H
 
 #include <qdialog.h>
-#include <ktablistbox.h>
+#include <klistview.h>
 #include <qpushbt.h>
 
 class Theme;
@@ -21,7 +21,7 @@ public:
 protected:
   QString mGroupName;
   QPushButton *btnOk, *btnCancel, *btnAdd, *btnRemove, *btnEdit;
-  KTabListBox *tlBox;
+  KListView *tlBox;
 
 protected slots:
   virtual void slotAdd();

@@ -17,10 +17,9 @@ GroupDetails::GroupDetails(const char* aGroupName):
   QBoxLayout *buttonLayout = new QHBoxLayout();
 
   mGroupName = aGroupName;
-  tlBox = new KTabListBox(this, "tlBox",2);
-  tlBox->setColumn(0,"key", 150);
-  tlBox->setColumn(1,"value", 140);
-  //tlBox->setFixedSize(310,300);
+  tlBox = new KListView(this, "tlBox");
+  tlBox->addColumn(i18n("Key"));
+  tlBox->addColumn(i18n("Value"));
   topLayout->addWidget(tlBox,10);
 
   topLayout->addLayout(buttonLayout);
