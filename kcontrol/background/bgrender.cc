@@ -433,14 +433,14 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
         m_pPixmap->convertFromImage( *m_pBackground );
         return;
     }
-    else if( wallpaperMode() == Tiled && !wp.hasAlphaBuffer() && optimize()) {
+    else if( wallpaperMode() == Tiled && !wp.hasAlphaBuffer() && optimize() && !m_bPreview ) {
     // tiles will be tiled by X automatically
         if( useShm()) {
             KPixmapIO io;
-            *m_pPixmap = io.convertToPixmap( *m_pBackground );
+            *m_pPixmap = io.convertToPixmap( wp );
         }
         else
-            m_pPixmap->convertFromImage( *m_pBackground );
+            m_pPixmap->convertFromImage( wp );
         return;
     }
     else if (m_pBackground->size() == m_Size)
