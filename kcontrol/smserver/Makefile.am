@@ -15,6 +15,6 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmsmserver.pot
 
 data_DATA = kcmsmserver.desktop
-datadir = $(kde_appsdir)/Settings/System/
+datadir = $(kde_appsdir)/Settings/Personalization/
 
 EXTRA_DIST = $(data_DATA)

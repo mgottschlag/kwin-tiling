@@ -42,6 +42,7 @@ w/o the need to tune them this way. Better Solution: Remove the Customize-Group-
 After pressing the "Customize"-Button a dialog should pop up which contains all the nice
 "Add"-checkboxes which have been added recently.
 
-Move Konsole and Session manager out of System/
+Move Konsole/
 -----------------------------------------------
-Both doesn't change anything system-wide aka require root permission.
+Doesn't change anything system-wide aka require root permission.
+Perhaps it is out of place in KControl completely?
