@@ -38,9 +38,10 @@
 #include <kdebug.h>
 #include <kfiledialog.h>
 #include <kglobal.h>
+#include <kiconloader.h>
+#include <kimageio.h>
 #include <klocale.h>
 #include <kpixmap.h>
-#include <kimageio.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
 #include <kurlrequester.h>
@@ -74,8 +75,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
       m_radioSlideShow->hide();
    }
 
-   m_monitorImage->setText(QString::null);
-   m_monitorImage->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
+   m_monitorImage->setPixmap( UserIcon( "monitor" ));
    m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
    m_pMonitor = new BGMonitor(m_monitorImage, "preview monitor");
    m_pMonitor->setGeometry(23, 14, 151, 115);

@@ -56,8 +56,8 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_base = new BGDialog(this, m_pConfig);
-    m_base->show();
     layout->add(m_base);
+    layout->addStretch();
 
     kdDebug() << "KBackground\n";
     KImageIO::registerFormats();

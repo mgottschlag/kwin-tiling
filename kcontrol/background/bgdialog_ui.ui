@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>650</width>
-            <height>441</height>
+            <width>603</width>
+            <height>346</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>BGDialog_UI</string>
     </property>
     <grid>
         <property name="name">
@@ -79,23 +82,6 @@
                 <size>
                     <width>270</width>
                     <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="3" column="2">
-            <property name="name">
-                <cstring>spacer68</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>6</height>
                 </size>
             </property>
         </spacer>
@@ -588,6 +574,5 @@
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>kurlrequester.h</includehint>
-    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
