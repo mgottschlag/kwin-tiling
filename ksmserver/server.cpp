@@ -50,7 +50,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <vfork.h>
 #endif
 
-#define QT_CLEAN_NAMESPACE 1
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatastream.h>
