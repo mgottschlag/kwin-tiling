@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <iostream.h>
 
 
 #include <qtimer.h>
@@ -26,7 +25,7 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   int minor = XkbMinorVersion;
   if (!XkbLibraryVersion(&major, &minor))
     {
-      cerr << "Xlib XKB extension does not match" << endl;
+      kdError() << "Xlib XKB extension does not match" << endl;
       exit(-1);
     }
   kdDebug() << "Xlib XKB extension major=" << major << " minor=" << minor << endl;
@@ -38,7 +37,7 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   if (!XkbQueryExtension(qt_xdisplay(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
 			 &major, &minor))
     {
-      cerr << "X server has not matching XKB extension" << endl;
+      kdError() << "X server has not matching XKB extension" << endl;
       exit(-1);
     }
   kdDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
@@ -78,12 +77,12 @@ void KAccessApp::readSettings()
     XkbChangeEnabledControls(qt_xdisplay(), XkbUseCoreKbd, XkbAudibleBellMask, 0);
   else
     XkbChangeEnabledControls(qt_xdisplay(), XkbUseCoreKbd, XkbAudibleBellMask, XkbAudibleBellMask);
-  
+
   // keyboard -------------------------------------------------------------
 
   config->setGroup("Keyboard");
 
-  // get keyboard state 
+  // get keyboard state
   XkbDescPtr xkb = XkbGetMap(qt_xdisplay(), 0, XkbUseCoreKbd);
   if (!xkb)
     return;
@@ -124,7 +123,7 @@ void KAccessApp::readSettings()
   // mouse-by-keyboard ----------------------------------------------
 
   config->setGroup("Mouse");
-  
+
   if (config->readBoolEntry("MouseKeys", false))
     {
       xkb->ctrls->mk_delay = config->readNumEntry("MKDelay", 160);
@@ -134,7 +133,7 @@ void KAccessApp::readSettings()
       xkb->ctrls->mk_curve = config->readNumEntry("MKCurve", 0);
       xkb->ctrls->mk_dflt_btn = config->readNumEntry("MKDefaultButton", 0);
 
-      xkb->ctrls->enabled_ctrls |= XkbMouseKeysMask; 
+      xkb->ctrls->enabled_ctrls |= XkbMouseKeysMask;
     }
   else
     xkb->ctrls->enabled_ctrls &= ~XkbMouseKeysMask;
@@ -197,7 +196,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 
       NETRect frame, window;
       NETWinInfo net(qt_xdisplay(), id, desktop()->winId(), 0);
-      
+
       net.kdeGeometry(frame, window);
 
       overlay->setGeometry(window.pos.x, window.pos.y, window.size.width, window.size.height);
@@ -213,11 +212,11 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 	}
       else
 	overlay->setBackgroundColor(_visibleBellColor);
-      
+
       // flash the overlay widget
       overlay->show();
       flushX();
-    }      
+    }
 
   // ask artsd to ring a nice bell
   if (_artsBell && !_artsBellBlocked ) {

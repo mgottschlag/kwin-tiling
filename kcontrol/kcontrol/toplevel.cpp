@@ -18,8 +18,6 @@
 
 */
 
-#include <iostream.h>
-
 #include <kapp.h>
 #include <kglobal.h>
 #include <kstddirs.h>

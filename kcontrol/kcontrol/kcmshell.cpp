@@ -18,7 +18,6 @@
 
 */
 
-#include <iostream.h>
 #include <stdlib.h>
 
 #include <qfile.h>
@@ -74,7 +73,7 @@ static QString locateModule(const QCString module)
             path = serv->entryPath();
         else
         {
-            cerr << i18n("Module %1 not found!").arg(module).local8Bit() << endl;
+            kdError(1208) << i18n("Module %1 not found!").arg(module) << endl;
             return QString::null;
         }
     }
@@ -129,11 +128,11 @@ int main(int _argc, char *_argv[])
         QString verylong = vl;
 
         for (uint i = 0; i < modules.count(); i++) {
-            cout << (*modules.at(i)).local8Bit();
-            cout << verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit();
-            cout << " - ";
-            cout << (*descriptions.at(i)).local8Bit();
-            cout << endl;
+	    fprintf(stdout, "%s%s - %s\n",
+		    (*modules.at(i)).local8Bit().data(),
+		    verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit().data(),
+
+		    (*descriptions.at(i)).local8Bit().data());
         }
 
         return 0;
@@ -147,7 +146,7 @@ int main(int _argc, char *_argv[])
     if (args->count() == 1) {
 
         QString path = locateModule(args->arg(0));
-        if (path.isEmpty()) 
+        if (path.isEmpty())
            return 0;
 
         // load the module

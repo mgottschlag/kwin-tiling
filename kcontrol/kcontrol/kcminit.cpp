@@ -29,7 +29,6 @@
 #include <kdebug.h>
 #include <dcopclient.h>
 #include "global.h"
-#include <iostream.h>
 
 static KCmdLineOptions options[] =
 {
@@ -74,9 +73,9 @@ int main(int argc, char *argv[])
         serv = KService::serviceByDesktopName( arg );
     }
 
-    if ( !serv || serv->library().isEmpty() || 
+    if ( !serv || serv->library().isEmpty() ||
 	 serv->init().isEmpty()) {
-      cerr << i18n("Module %1 not found!").arg(arg).local8Bit() << endl;
+      kdError(1208) << i18n("Module %1 not found!").arg(arg) << endl;
       return -1;
     } else
       list.append(serv);
@@ -108,14 +107,14 @@ int main(int argc, char *argv[])
 	    {
 	      // initialize the module
 	      kdDebug() << "Initializing " << libName << ": " << factory << endl;
-	      
+
 	      void (*func)() = (void(*)())init;
 	      func();
 	    }
 	  loader->unloadLibrary(QFile::encodeName(libName));
 	}
     }
-  
+
   if ( !kapp->dcopClient()->isAttached() )
     kapp->dcopClient()->attach();
   kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)",  QString("kcminit"));
