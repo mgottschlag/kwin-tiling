@@ -19,7 +19,11 @@ noinst_HEADERS = kmenuedit.h menueditview.h treeview.h desktopfileeditor.h basic
 METASOURCES = AUTO
 
 apps_DATA = kmenuedit.desktop
-appsdir = $(kde_appsdir)/System
+appsdir = $(kde_appsdir)/Settingsmenu
+
+install-data-local: uninstall.desktop
+	$(mkinstalldirs) $(kde_appsdir)/System
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/System/kmenuedit.desktop
 
 KDE_ICON = kmenuedit
 

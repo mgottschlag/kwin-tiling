@@ -63,7 +63,11 @@ rcdir = $(kde_datadir)/kcontrol
 rc_DATA = kcontrolui.rc
 
 data_DATA = KControl.desktop
-datadir = $(kde_appsdir)
+datadir = $(kde_appsdir)/Settingsmenu
+
+install-data-local: uninstall.desktop
+	$(mkinstalldirs) $(kde_appsdir)
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/KControl.desktop
 
 KDE_ICON=AUTO
 

@@ -84,7 +84,6 @@ private:
   QVBoxLayout *_embedLayout;
 
 };
-
 class ConfigModuleList : public QPtrList<ConfigModule>
 {
 public:

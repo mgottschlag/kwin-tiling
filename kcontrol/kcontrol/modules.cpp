@@ -243,6 +243,7 @@ const KAboutData *ConfigModule::aboutData() const
 void ConfigModuleList::readDesktopEntries()
 {
   readDesktopEntriesRecursive( KCGlobal::baseGroup() );
+
 }
 
 void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
@@ -251,7 +252,7 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 
   if (!group || !group->isValid()) return;
 
-  KServiceGroup::List list = group->entries(true);
+  KServiceGroup::List list = group->entries(true, false);
 
   for( KServiceGroup::List::ConstIterator it = list.begin();
        it != list.end(); it++)
