@@ -82,6 +82,8 @@ public:
      * @return the name of the config module.
      */
     virtual QString configName() const { return i18n("ShortURIFilter"); }
+	
+    virtual KCModule *configModule( QWidget*, const char* ) const;
 
 public:
 k_dcop:
@@ -93,10 +95,10 @@ protected:
      * Validates whether the string contians a possible
      * "short URI" signature.
      *
-     * @param string url to be c
+     * @param str url to be test for validity
      * @return true if the string is a possible short uri
      */
-    bool isValidShortURL( const QString& ) const;
+    bool isValidShortURL( const QString& /*str*/ ) const;
 
     /**
      * Expands any environment variables
