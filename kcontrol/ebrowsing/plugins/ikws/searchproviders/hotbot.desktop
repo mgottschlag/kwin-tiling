@@ -2,9 +2,11 @@
 Encoding=UTF-8
 Type=Service
 Name=Hotbot
+Name[bn]=হটবট
 Name[fa]=هات‌بات
 Name[hi]=हॉटबॉट
 Name[ko]=핫봇
+Name[pa]=ਹੋਟਬੋਟ
 Name[pl]=Hotbot - wyszukiwarka stron WWW
 Name[ta]=ஹாட்பாட்
 Name[ven]=Bot yau fhisa

@@ -2,10 +2,13 @@
 Encoding=UTF-8
 Type=Service
 Name=Lycos
+Name[bn]=লাইকস
 Name[fa]=لایکوس
 Name[hi]=लायकोस
 Name[ko]=라이코스
+Name[pa]=ਲੁਕੋਸ
 Name[pl]=Lycos - wyszukiwarka stron WWW
+Name[ta]=லைகோஸ்
 Name[xx]=xxLycosxx
 ServiceTypes=SearchProvider
 Keys=lycos,ly
