@@ -249,7 +249,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	lblMenuHandle->setBuddy( comboMenuHandle );
 	containerLayout->addWidget( lblMenuHandle, 3, 0 );
 	containerLayout->addWidget( comboMenuHandle, 3, 1 );
-	
+
 	cbMenuShadow = new QCheckBox( i18n("Menu &drop shadow"), containerFrame );
 	containerLayout->addWidget( cbMenuShadow, 4, 0 );
 
@@ -551,6 +551,10 @@ void KCMStyle::save()
 		KIPC::sendMessageAll(KIPC::SettingsChanged);
 		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
 	}
+        //update kicker to re-used tooltips kicker parameter otherwise, it overwritted
+        //by style tooltips parameters.
+        QByteArray data;
+        kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
 
 	// Clean up
 	m_bMacDirty      = false;
