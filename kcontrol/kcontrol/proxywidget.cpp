@@ -37,6 +37,7 @@
 #include "proxywidget.moc"
 
 #include <kdebug.h>
+#include <qtimer.h>
 
 class WhatsThis : public QWhatsThis
 {
@@ -220,9 +221,19 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   setVisible(_reset, mayModify && (b & KCModule::Apply));
   setVisible(_root, run_as_root);
 
-  // disable initial buttons
-  _apply->setEnabled( client->changed() );
-  _reset->setEnabled( client->changed() );
+  if( client->changed() )
+  {
+    kdWarning( 1208 ) << "The KCModule \"" << client->className() <<
+      "\" called setChanged( true ) in the constructor."
+      " Please fix the module." << endl;
+    QTimer::singleShot( 0, this, SLOT( clientChanged() ) );
+  }
+  else
+  {
+    // disable initial buttons
+    _apply->setEnabled( false );
+    _reset->setEnabled( false );
+  }
 
   connect(_help, SIGNAL(clicked()), SLOT(helpClicked()));
   connect(_default, SIGNAL(clicked()), SLOT(defaultClicked()));
@@ -299,6 +310,11 @@ void ProxyWidget::rootClicked()
   emit runAsRoot();
 }
 
+
+void ProxyWidget::clientChanged()
+{
+  clientChanged( true );
+}
 
 void ProxyWidget::clientChanged(bool state)
 {

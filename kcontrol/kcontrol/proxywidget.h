@@ -56,6 +56,7 @@ public slots:
   void resetClicked();
   void rootClicked();
 
+  void clientChanged();
   void clientChanged(bool state);
 
 
