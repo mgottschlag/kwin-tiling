@@ -34,6 +34,8 @@
 #include <kstandarddirs.h>
 
 #include "localeother.h"
+#include "localeother.moc"
+
 
 KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
 				       QWidget *parent, const char*name)
@@ -51,7 +53,7 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   lay->addWidget(m_combPageSize, 0, 1);
   connect( m_combPageSize, SIGNAL( activated(int) ),
 	   SLOT( slotPageSizeChanged(int) ) );
-  
+
   m_labMeasureSystem = new QLabel(this, I18N_NOOP("Measure System:"));
   lay->addWidget(m_labMeasureSystem, 1, 0);
   m_combMeasureSystem = new QComboBox(this);
@@ -106,7 +108,7 @@ void KLocaleConfigOther::slotLocaleChanged()
   m_combMeasureSystem->setCurrentItem(m_locale->measureSystem());
 
   int pageSize = m_locale->pageSize();
-  
+
   int i = 0; // default to A4
   if ( pageSize == (int)QPrinter::Letter )
     i = 1;
