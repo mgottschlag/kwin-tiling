@@ -108,6 +108,11 @@ bool KSMShutdownDlg::confirmShutdown( bool& saveSession )
     l->checkbox->setChecked( saveSession );
 
     // Show dialog (will save the background in showEvent)
+    QSize sh = l->sizeHint();
+    KDesktopWidget *desktop = KApplication::desktop();
+    QRect rect = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+    l->move(rect.x() + (rect.width() - sh.width())/2,
+    	    rect.y() + (rect.height() - sh.height())/2);
     l->show();
     saveSession = l->checkbox->isChecked();
     bool result = l->result();
