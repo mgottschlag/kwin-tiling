@@ -31,6 +31,7 @@ class KIconButton;
 class QCheckBox;
 class QGroupBox;
 class KURLRequester;
+class KComboBox;
 
 class BasicTab : public QWidget
 {
@@ -58,7 +59,8 @@ protected slots:
     void slotCapturedShortcut(const KShortcut&);
 
 protected:
-    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit;
+    KLineEdit    *_nameEdit, *_commentEdit;
+	KComboBox *_typeEdit;
     KKeyButton   *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;

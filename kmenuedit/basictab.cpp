@@ -35,6 +35,7 @@
 #include <kdesktopfile.h>
 #include <kurlrequester.h>
 #include <kfiledialog.h>
+#include <kcombobox.h>
 #include "khotkeys.h"
 
 
@@ -64,7 +65,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _nameEdit = new KLineEdit(general_group);
     _commentEdit = new KLineEdit(general_group);
     _execEdit = new KURLRequester(general_group);
-    _typeEdit = new KLineEdit(general_group);
+    _typeEdit = new KComboBox(true, general_group);
 
     // connect line inputs
     connect(_nameEdit, SIGNAL(textChanged(const QString&)),
@@ -81,6 +82,10 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     grid->addWidget(_commentEdit, 1, 1);
     grid->addWidget(_execEdit, 2, 1);
     grid->addWidget(_typeEdit, 3, 1);
+
+	// add values to the Type Combobox
+	_typeEdit->insertItem("Application");
+	_typeEdit->insertItem("Link");
 
     // add the general group to the main layout
     layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
@@ -231,7 +236,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
    // clean all disabled fields and return if it is not a .desktop file
     if (!isDF) {
           _execEdit->lineEdit()->setText("");
-	  _typeEdit->setText("");
+	  _typeEdit->setCurrentText("");
 	  _pathEdit->lineEdit()->setText("");
 	  _termOptEdit->setText("");
 	  _uidEdit->setText("");
@@ -241,7 +246,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     }
 
     _execEdit->lineEdit()->setText(df.readEntry("Exec"));
-    _typeEdit->setText(df.readType());
+	_typeEdit->setCurrentText(df.readType());
     _pathEdit->lineEdit()->setText(df.readPath());
     _termOptEdit->setText(df.readEntry("TerminalOptions"));
     _uidEdit->setText(df.readEntry("X-KDE-Username"));
@@ -282,7 +287,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 	}
 
     df.writeEntry("Exec", _execEdit->lineEdit()->text());
-    df.writeEntry("Type", _typeEdit->text());
+	df.writeEntry("Type", _typeEdit->currentText());
     df.writeEntry("Path", _pathEdit->lineEdit()->text());
 
     if (_terminalCB->isChecked())
