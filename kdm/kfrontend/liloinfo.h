@@ -39,8 +39,6 @@
 #include <kapp.h>
 #include <kprocess.h>
 
-#include <iostream.h>
-
 /*
  * Errors:
  *      0 = No error

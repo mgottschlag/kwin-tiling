@@ -24,9 +24,13 @@
 
 #if defined(__linux__) && defined(__i386__)
 
+#include <iostream>
+
 #include <klocale.h>
 
 #include "liloinfo.h"
+
+using std::cerr;
 
 /*
  * The constructor. Initialize the internal variables and copy the parameter strings.
