@@ -72,7 +72,7 @@ void HidingTab::load()
     {
         m_panelList->hide();
     }
-    
+
     switchPanel(0);
 }
 
@@ -113,7 +113,7 @@ void HidingTab::switchPanel(QListViewItem* panelItem)
         m_panelList->setSelected(m_panelList->firstChild(), true);
         listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
     }
-    
+
     if (m_panelInfo)
     {
         storeInfo();
@@ -121,15 +121,15 @@ void HidingTab::switchPanel(QListViewItem* panelItem)
 
     m_panelInfo = listItem->info();
 
-    if(m_panelInfo->_autohidePanel) 
+    if(m_panelInfo->_autohidePanel)
     {
        m_automatic->setChecked(true);
-    } 
-    else if(m_panelInfo->_backgroundHide) 
+    }
+    else if(m_panelInfo->_backgroundHide)
     {
        m_background->setChecked(true);
-    } 
-    else 
+    }
+    else
     {
        m_manual->setChecked(true);
     }
@@ -196,6 +196,7 @@ void HidingTab::defaults()
     m_hideSlider->setValue(10);
     m_delaySpinBox->setValue(3);
     m_backgroundPos->setCurrentItem(triggerConfigToCombo(BottomLeft));
+    m_backgroundRaise->setChecked( false );
 }
 
 int HidingTab::triggerComboToConfig(int trigger)
@@ -216,7 +217,7 @@ int HidingTab::triggerComboToConfig(int trigger)
         return BottomLeft;
     else if (Left == 7)
         return Left;
-    
+
     return 0;
 }
 
@@ -238,7 +239,7 @@ int HidingTab::triggerConfigToCombo(int trigger)
         return 6;
     else if (Left == Left)
         return 7;
-    
+
     return 0;
 }
 
