@@ -302,7 +302,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     << i18n("Used for desktop icons.");
 
   QVBoxLayout * layout =
-    new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+    new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   QGridLayout * fontUseLayout =
     new QGridLayout(layout, nameGroupKeyRc.count() / 4, 3);
