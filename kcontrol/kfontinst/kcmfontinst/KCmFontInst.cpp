@@ -60,6 +60,7 @@
 #define CFG_PATH        "Path"
 #define CFG_DIRSIZE     "DirSize"
 #define CFG_PREVIEWSIZE "PreviewSize"
+#define CFG_SIZE        "Size"
 
 //
 // Remove any fonts:/ status information added to name
@@ -67,7 +68,7 @@ static QString formatName(const QString &name)
 {
     QString n(name);
 
-    return n.remove(KIO_FONTS_DISABLED);
+    return n.remove(i18n(KIO_FONTS_DISABLED));
 }
 
 typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
@@ -82,10 +83,10 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     KGlobal::locale()->insertCatalogue("kfontinst");
 
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
-    const char *appName=KCmdLineArgs::appName();
+    const char        *appName=KCmdLineArgs::appName();
 
-    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName)
-                                       && KCmdLineArgs::parsedArgs()->isSet("embed"));
+    itsEmbeddedAdmin=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName) && KCmdLineArgs::parsedArgs()->isSet("embed"));
+    itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) && !KCmdLineArgs::parsedArgs()->isSet("embed");
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
@@ -336,6 +337,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #endif
     connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
     connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
+
+    if(itsKCmshell)
+    {
+        QSize defSize(450, 380);
+
+        itsSizeHint=itsConfig.readSizeEntry(CFG_SIZE, &defSize);
+    }
 }
 
 CKCmFontInst::~CKCmFontInst()
@@ -348,6 +356,9 @@ CKCmFontInst::~CKCmFontInst()
 
     for(it=list.begin(), num=0; it!=list.end() && num<2; ++it, num++)
         itsConfig.writeEntry(0==num ? CFG_DIRSIZE : CFG_PREVIEWSIZE, *it);
+
+    if(itsKCmshell)
+        itsConfig.writeEntry(CFG_SIZE, size());
 #endif
     if(itsAboutData)
         delete itsAboutData;
@@ -372,6 +383,11 @@ const KAboutData * CKCmFontInst::aboutData() const
     }
 
     return itsAboutData;
+}
+
+QSize CKCmFontInst::sizeHint() const
+{
+    return itsKCmshell ? itsSizeHint : KCModule::sizeHint();
 }
 
 QString CKCmFontInst::quickHelp() const
@@ -743,7 +759,11 @@ void CKCmFontInst::jobResult(KIO::Job *job)
     // Force an update of the view. For some reason the view is not automatically updated when
     // run in embedded mode - e.g. from the "Admin" mode button on KControl.
     if(job && 0==job->error())
+    {
         itsDirOp->dirLister()->updateDirectory(itsDirOp->url());
+        KMessageBox::information(this, i18n("Please note that any open applications will need to be restarted in order for any changes to be noticed."),
+                                 i18n("Success"), "KFontinst_WarnAboutFontChangesAndOpenApps");
+    }
 }
 
 void CKCmFontInst::setUpAct()

@@ -34,6 +34,7 @@
 #endif
 #include <kcmodule.h>
 #include <qstringlist.h>
+#include <qsize.h>
 #include <kurl.h>
 #include <kconfig.h>
 #include <kio/job.h>
@@ -63,6 +64,8 @@ class CKCmFontInst : public KCModule
     virtual ~CKCmFontInst();
 
     const KAboutData * aboutData() const;
+
+    QSize sizeHint() const;
 
     public slots:
 
@@ -117,8 +120,11 @@ class CKCmFontInst : public KCModule
     KIntNumInput *itsFaceSelector;
 #endif
     KConfig      itsConfig;
-    bool         itsEmbeddedAdmin;
+    bool         itsEmbeddedAdmin,
+                 itsKCmshell;
     QLabel       *itsStatusLabel;
+    QSize        itsSizeHint;
+
 };
 
 #endif
