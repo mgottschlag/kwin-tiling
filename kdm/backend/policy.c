@@ -231,7 +231,7 @@ Willing (
 		pclose(fd);
 	    }
 	    if (!ok)
-		sprintf (statusBuf, "Willing, but %s failed", willing);
+		sprintf (statusBuf, "Willing, but %.*s failed", sizeof(statusBuf) - 21, willing);
 	}
 	else
 #ifdef WILLING_INTERNAL
