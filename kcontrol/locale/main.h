@@ -51,6 +51,7 @@ public:
 public slots:
   void reTranslate();
   void reset();
+  void newChset();
   void moduleChanged(bool state);
   void updateSample();
   void update() { reTranslate(); updateSample(); };

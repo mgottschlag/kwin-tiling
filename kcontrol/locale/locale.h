@@ -54,6 +54,7 @@ signals:
   void translate();
   void resample();
   void countryChanged();
+  void chsetChanged();
 
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate, *comboChset;

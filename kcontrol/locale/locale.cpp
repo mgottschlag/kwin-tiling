@@ -360,11 +360,13 @@ void KLocaleConfig::changedTime(int i)
   emit resample();
 }
 
-void KLocaleConfig::changedCharset(int i)
+void KLocaleConfig::changedCharset(int)
 {
   changedFlag = TRUE;
 
-//  locale->chset = comboChset->currentTag();
+  locale->chset = comboChset->currentTag();
+
+  emit chsetChanged();
 }
 
 void KLocaleConfig::reTranslateLists()

@@ -27,9 +27,11 @@
 #include <qobjectlist.h>
 #include <qlayout.h>
 
+#include <kconfig.h>
 #include <kcmodule.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kcharsets.h>
 
 #include "locale.h"
 #include "localenum.h"
@@ -69,6 +71,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemon,  SIGNAL(resample()),       SLOT(update()));
   connect(localetime, SIGNAL(resample()),       SLOT(update()));
   connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
+  connect(localemain, SIGNAL(chsetChanged()),   SLOT(newChset()) );
 
   // Examples
   gbox = new QGroupBox(LAT, this, I18N_NOOP("Examples"));
@@ -178,9 +181,17 @@ void KLocaleApplication::reset()
   localetime->reset();
 }
 
+void KLocaleApplication::newChset()
+{
+  QFont *font = new QFont(QString::fromLatin1("helvetica"), 12, QFont::Normal);
+  KGlobal::charsets()->setQFont(*font, locale->charset());
+  KConfig *c = KGlobal::config();
+  c->setGroup( QString::fromLatin1("General") );
+  setFont(c->readFontEntry(QString::fromLatin1("font"), font));
+}
+
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {
-//    KGlobal::locale()->insertCatalogue("kcmlocale");
     return new KLocaleApplication(parent, name);
   }
 }
