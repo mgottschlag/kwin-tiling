@@ -139,7 +139,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(KInstance *instance, QWidget *p
            this, SLOT(updateSearchProvider()));
     connect(lv_searchProviders, SIGNAL(doubleClicked(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
-
+    connect(lv_searchProviders, SIGNAL(returnPressed(QListViewItem *)),
+           this, SLOT(changeSearchProvider()));
     w_grid->addMultiCellWidget(lv_searchProviders, 1, 2, 0, 0);
 
     QVBox* vbox = new QVBox( gb_search );
