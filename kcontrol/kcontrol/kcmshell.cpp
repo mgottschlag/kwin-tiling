@@ -108,7 +108,7 @@ int main(int _argc, char *_argv[])
     if (files.count() > 1)
 	cerr << i18n("Module name not unique. Taking the first match.") << endl;
     if (files.count() <= 0) {
-	cerr << i18n("Module not found!") << endl;
+	cerr << i18n("Module %1 not found!").arg(args->arg(0)) << endl;
 	return -1;
     }
 
