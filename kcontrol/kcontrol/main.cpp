@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
   MyApplication app;
 
-  if (KCGlobal::types().contains("System") && !KCGlobal::root())
+  if (KCGlobal::types().contains("system") && !KCGlobal::root())
 	{
 	  KMessageBox::error(0, I18N_NOOP("Only the root user can edit system global settings!")
 						 , I18N_NOOP("Error!"));
