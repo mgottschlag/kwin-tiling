@@ -22,8 +22,8 @@
 #define _defCacheSize 2048
 
 // Per desktop defaults
-#define _defColorA  QColor("#4682B4")
-#define _defColorB  QColor("#0000A2")
+#define _defColorA  QColor("#004040")
+#define _defColorB  QColor("#008080")
 #define _defBackgroundMode VerticalGradient
 #define _defWallpaperMode NoWallpaper
 #define _defMultiMode NoMulti
