@@ -23,7 +23,7 @@
 
 #include "demowin.h"
 #include "saver.h"
-//#include <kscreensaver_vroot.h>
+#include <kscreensaver_vroot.h>
 
 static const char *appName = "klock";
 
