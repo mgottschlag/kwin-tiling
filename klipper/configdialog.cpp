@@ -187,7 +187,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
                                   action->regExp(), action->description() );
         item->setPixmap( 0, doc );
 
-        QListIterator<ClipCommand> it2( action->commands() );
+        QPtrListIterator<ClipCommand> it2( action->commands() );
         for ( command = it2.current(); command; command = ++it2 ) {
             child = new QListViewItem( item, after,
                                        command->command, command->description);
