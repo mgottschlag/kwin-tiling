@@ -47,7 +47,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     if ( !name )
         setName( "LogitechMouse" );
 
-    cordlessNameLabel->setText( QString("Mouse type: %1").arg( this->name() ) );
+    cordlessNameLabel->setText( i18n("Mouse type: %1").arg( this->name() ) );
 
     m_mouseCapabilityFlags = mouseCapabilityFlags;
 
@@ -89,7 +89,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
         initCordlessStatusReporting();
 
         // Do a name
-        cordlessNameLabel->setText( QString( i18n("Mouse type: %1").arg( cordlessName() ) ) );
+        cordlessNameLabel->setText( i18n("Mouse type: %1").arg( cordlessName() ) );
         cordlessNameLabel->setEnabled( TRUE );
 
         // Display the battery power level - the level gets updated in updateGUI()
@@ -233,7 +233,7 @@ void LogitechMouse::applyChanges()
     }
 }
 
-void LogitechMouse::save(KConfig *config)
+void LogitechMouse::save(KConfig * /*config*/)
 {
     kdDebug() << "Logitech mouse settings not saved - not implemented yet" << endl;
 }
@@ -353,61 +353,61 @@ QString LogitechMouse::cordlessName()
 {
     switch ( m_cordlessNameIndex ) {
     case 0x00:
-        return QString( i18n( "none" ) );
+        return i18n( "none" );
         break;
     case 0x04:
-        return QString( i18n( "Cordless Mouse" ) );
+        return i18n( "Cordless Mouse" );
         break;
     case 0x05:
-        return QString( i18n( "Cordless Wheel Mouse" ) );
+        return i18n( "Cordless Wheel Mouse" );
         break;
     case 0x06:
-        return QString( i18n( "Cordless MouseMan Wheel" ) );
+        return i18n( "Cordless MouseMan Wheel" );
         break;
     case 0x07:
-        return QString( i18n( "Cordless Wheel Mouse" ) );
+        return i18n( "Cordless Wheel Mouse" );
         break;
     case 0x08:
-        return QString ( i18n( "Cordless Wheel Mouse" ) );
+        return i18n( "Cordless Wheel Mouse" );
         break;
     case 0x09:
-        return QString ( i18n( "Cordless TrackMan Wheel" ) );
+        return i18n( "Cordless TrackMan Wheel" );
         break;
     case 0x0A:
-        return QString ( i18n( "TrackMan Live" ) );
+        return i18n( "TrackMan Live" );
         break;
     case 0x0C:
-        return QString ( i18n( "Cordless TrackMan FX" ) );
+        return i18n( "Cordless TrackMan FX" );
         break;
     case 0x0D:
-        return QString ( i18n( "Cordless MouseMan Optical" ) );
+        return i18n( "Cordless MouseMan Optical" );
         break;
     case 0x0E:
-        return QString ( i18n( "Cordless Optical Mouse" ) );
+        return i18n( "Cordless Optical Mouse" );
         break;
     case 0x0F:
-        return QString ( i18n( "Cordless Mouse" ) );
+        return i18n( "Cordless Mouse" );
         break;
     case 0x12:
-        return QString ( i18n( "Cordless MouseMan Optical (2ch)" ) );
+        return i18n( "Cordless MouseMan Optical (2ch)" );
         break;
     case 0x13:
-        return QString ( i18n( "Cordless Optical Mouse (2ch)" ) );
+        return i18n( "Cordless Optical Mouse (2ch)" );
         break;
     case 0x14:
-        return QString ( i18n( "Cordless Mouse (2ch)" ) );
+        return i18n( "Cordless Mouse (2ch)" );
         break;
     case 0x82:
-        return QString ( i18n( "Cordless Optical TrackMan" ) );
+        return i18n( "Cordless Optical TrackMan" );
         break;
     case 0x8A:
-        return QString ( i18n( "MX700 Cordless Optical Mouse" ) );
+        return i18n( "MX700 Cordless Optical Mouse" );
         break;
     case 0x8B:
-        return QString ( i18n( "MX700 Cordless Optical Mouse (2ch)" ) );
+        return i18n( "MX700 Cordless Optical Mouse (2ch)" );
         break;
     default:
-        return QString( i18n( "Unknown mouse") );
+        return i18n( "Unknown mouse");
     }
 }
 
