@@ -199,7 +199,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 
     what=0;
 
-    if(!fontsProt && !fileProt && KIO::NetAccess::download(url, fName))
+    if(!fontsProt && !fileProt && KIO::NetAccess::download(url, fName, NULL))
         downloaded=true;
     else
         fName=url.path();

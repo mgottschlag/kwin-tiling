@@ -121,7 +121,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         KIO::UDSEntry uds;
 
         url.setPath(previousPath);
-        if(!KIO::NetAccess::stat(url, uds))
+        if(!KIO::NetAccess::stat(url, uds, this))
             url=itsTop;
     }
 
@@ -615,7 +615,7 @@ void CKCmFontInst::removeFonts()
                     KIO::UDSEntry uds;
 
                     afmUrl.setPath(CMisc::changeExt((*it).path(), "afm"));
-                    if(KIO::NetAccess::stat(afmUrl, uds))
+                    if(KIO::NetAccess::stat(afmUrl, uds, this))
                         copy+=afmUrl;
                 }
 
@@ -729,7 +729,7 @@ void CKCmFontInst::enableItems(bool enable)
                 KIO::UDSEntry uds;
 
                 afmUrl.setPath(CMisc::changeExt((*it).path(), "afm"));
-                if(KIO::NetAccess::stat(afmUrl, uds))
+                if(KIO::NetAccess::stat(afmUrl, uds, this))
                     copy+=afmUrl;
             }
 
@@ -766,7 +766,7 @@ void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
                 KIO::UDSEntry uds;
 
                 afmUrl.setPath(afm);
-                if(KIO::NetAccess::stat(afmUrl, uds) && !KIO::NetAccess::stat(destUrl, uds) && -1==copy.findIndex(afmUrl))
+                if(KIO::NetAccess::stat(afmUrl, uds, this) && !KIO::NetAccess::stat(destUrl, uds, this) && -1==copy.findIndex(afmUrl))
                     copy+=afmUrl;
             }
 
