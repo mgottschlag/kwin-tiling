@@ -24,7 +24,6 @@
 #include <kstringhandler.h>
 
 #include "configdialog.h"
-#include "mykapp.h"
 #include "toplevel.h"
 #include "urlgrabber.h"
 
