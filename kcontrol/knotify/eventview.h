@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.2  2000/03/23 02:51:51  charles
+    Progressivly getting to the level of "usable" :)
+
     Revision 1.1  2000/03/19 07:23:28  charles
     the module actually "exists" now :D
     Just wait until I start to DO something with it!
@@ -38,6 +41,7 @@
 #include <qcheckbox.h>
 #include <klined.h>
 #include <kconfig.h>
+#include <qpushbutton.h>
 
 class EventView : public QWidget
 {
@@ -58,9 +62,11 @@ signals:
 
 protected:
 	KConfig *conf;
+	QString section;
 	QListBox *eventslist;
 	QCheckBox *enabled;
 	KLineEdit *file;
+	QPushButton *todefault;
 };
 
 #endif

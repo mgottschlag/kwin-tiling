@@ -41,7 +41,8 @@ static QString presentation[5] = {
 EventView::EventView(QWidget *parent, const char *name):
 	QWidget(parent, name), conf(0)
 {
-	QGridLayout *layout=new QGridLayout(this,2,2);
+	QGridLayout *layout=new QGridLayout(this,2,3);
+	
 	eventslist=new QListBox(this);
 	{	eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small), presentation[0]);
 		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[1]);
@@ -50,9 +51,10 @@ EventView::EventView(QWidget *parent, const char *name):
 		eventslist->insertItem(KGlobal::instance()->iconLoader()->loadIcon("toolbars/flag", KIconLoader::Small),presentation[4]);
 	}
 	
-	layout->addMultiCellWidget(eventslist, 0,1, 0,0);
+	layout->addMultiCellWidget(eventslist, 0,2, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
 	layout->addWidget(file=new KLineEdit(this), 1,1);
+	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 2,1);
 };
 
 EventView::~EventView()
@@ -67,8 +69,10 @@ void EventView::defaults()
 void EventView::load(KConfig *config, const QString &section)
 {
 	unload();
-
+	conf=config;
+	this->section=section;
 	setEnabled(true);
+	
 }
 
 void EventView::save()
@@ -84,4 +88,3 @@ void EventView::unload()
 	file->setText("");
 	setEnabled(false);
 }
-
