@@ -70,7 +70,7 @@ void KCMKonsole::load()
 
     dialog->terminalSizeHintCB->setChecked(config->readBoolEntry("TerminalSizeHint",true));
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
-    dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",true));
+    dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
     dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
     dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
