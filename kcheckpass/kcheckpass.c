@@ -55,6 +55,7 @@
 #include <syslog.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <time.h>
 
 /* Compatibility: accept some options from environment variables */
 #define ACCEPT_ENV
@@ -307,7 +308,9 @@ main(int argc, char **argv)
 #ifdef ACCEPT_ENV
   char		*p;
 #endif
-  int		c, nfd;
+  int		c, nfd, lfd, numtries;
+  uid_t		uid;
+  long          lasttime;
 
   openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
@@ -363,14 +366,39 @@ main(int argc, char **argv)
 
   /* Now do the fandango */
   AuthReturn ret = Authenticate(method, sfd < 0 ? conv_legacy : conv_server);
-  if (ret == AuthBad) {
-    /* Security: Don't undermine the shadow system.
-     * Note that this does not help too much, as an attacker can simply
-     * timeout kcheckpass and start multiple instances simultaneously.
-     * FIXME: Do invocation throttling instead.
-     */
-    sleep (2);
-    message("Authentication failure (invoked by uid %d)\n", getuid());
+  if (ret == AuthOk || ret == AuthBad) {
+    /* Security: Don't undermine the shadow system. */
+    uid = getuid();
+    if (uid != geteuid()) {
+      char fname[32], fcont[32];
+      sprintf(fname, "/var/lock/kcheckpass.%d", uid);
+      if ((lfd = open(fname, O_RDWR | O_CREAT)) >= 0) {
+        struct flock lk;
+        lk.l_type = F_WRLCK;
+        lk.l_whence = SEEK_SET;
+        lk.l_start = lk.l_len = 0;
+	if (fcntl(lfd, F_SETLKW, &lk))
+          return AuthError;
+        if ((c = read(lfd, fcont, sizeof(fcont))) > 0 &&
+            (fcont[c] = 0, sscanf(fcont, "%ld %d\n", &lasttime, &numtries) == 2))
+        {
+          time_t left = lasttime - time(0);
+          if (numtries < 20)
+            numtries++;
+          left += 2 << (numtries > 10 ? numtries - 10 : 0);
+          if (left > 0)
+            sleep(left);
+        } else
+          numtries = 0;
+        if (ret == AuthBad) {
+          lseek(lfd, 0, SEEK_SET);
+          write(lfd, fcont, sprintf(fcont, "%ld %d\n", time(0), numtries));
+        } else
+          unlink(fname);
+      }
+    }
+    if (ret == AuthBad)
+      message("Authentication failure (invoked by uid %d)\n", uid);
   }
   return ret;
 }
