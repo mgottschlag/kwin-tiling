@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>672</width>
+            <width>585</width>
             <height>480</height>
         </rect>
     </property>
@@ -150,100 +150,13 @@ Please note that on slow machines this may cause a "lag" between the event causi
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>visibleBellLayout</cstring>
+                                    <cstring>layout9</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer row="0" column="0">
-                                        <property name="name">
-                                            <cstring>visibleBellOptionsSpacer</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLayoutWidget" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>flashScreenLayout</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QRadioButton">
-                                                <property name="name">
-                                                    <cstring>flashScreen</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>F&amp;lash screen</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="KColorButton">
-                                                <property name="name">
-                                                    <cstring>flashScreenColor</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>false</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string></string>
-                                                </property>
-                                                <property name="color">
-                                                    <color>
-                                                        <red>255</red>
-                                                        <green>0</green>
-                                                        <blue>0</blue>
-                                                    </color>
-                                                </property>
-                                            </widget>
-                                            <spacer>
-                                                <property name="name">
-                                                    <cstring>flashScreenSpacer</cstring>
-                                                </property>
-                                                <property name="orientation">
-                                                    <enum>Horizontal</enum>
-                                                </property>
-                                                <property name="sizeType">
-                                                    <enum>Expanding</enum>
-                                                </property>
-                                                <property name="sizeHint">
-                                                    <size>
-                                                        <width>0</width>
-                                                        <height>15</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QRadioButton" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>invertScreen</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="text">
-                                            <string>I&amp;nvert screen</string>
-                                        </property>
-                                        <property name="checked">
-                                            <bool>true</bool>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLayoutWidget" row="2" column="1">
                                         <property name="name">
                                             <cstring>visibleBellDurationLayout</cstring>
                                         </property>
@@ -319,6 +232,121 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                             </widget>
                                         </grid>
                                     </widget>
+                                    <spacer row="0" column="0">
+                                        <property name="name">
+                                            <cstring>visibleBellOptionsSpacer</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QButtonGroup" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>inverFlashScreenButtonGroup</cstring>
+                                        </property>
+                                        <property name="frameShape">
+                                            <enum>NoFrame</enum>
+                                        </property>
+                                        <property name="frameShadow">
+                                            <enum>Plain</enum>
+                                        </property>
+                                        <property name="lineWidth">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="title">
+                                            <string></string>
+                                        </property>
+                                        <property name="flat">
+                                            <bool>true</bool>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="margin">
+                                                <number>0</number>
+                                            </property>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>invertScreen</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>I&amp;nvert screen</string>
+                                                </property>
+                                                <property name="checked">
+                                                    <bool>true</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>flashScreenLayout</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QRadioButton">
+                                                        <property name="name">
+                                                            <cstring>flashScreen</cstring>
+                                                        </property>
+                                                        <property name="enabled">
+                                                            <bool>false</bool>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>F&amp;lash screen</string>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="KColorButton">
+                                                        <property name="name">
+                                                            <cstring>flashScreenColor</cstring>
+                                                        </property>
+                                                        <property name="enabled">
+                                                            <bool>false</bool>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string></string>
+                                                        </property>
+                                                        <property name="color">
+                                                            <color>
+                                                                <red>255</red>
+                                                                <green>0</green>
+                                                                <blue>0</blue>
+                                                            </color>
+                                                        </property>
+                                                    </widget>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>flashScreenSpacer</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>0</width>
+                                                                <height>15</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                </hbox>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
                                 </grid>
                             </widget>
                         </vbox>
@@ -336,7 +364,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>80</height>
+                                <height>30</height>
                             </size>
                         </property>
                     </spacer>
@@ -446,6 +474,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="name">
                                             <cstring>slowKeysDelay</cstring>
                                         </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
@@ -465,6 +496,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                     <widget class="QSlider" row="1" column="2">
                                         <property name="name">
                                             <cstring>slowKeysDelaySlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="minValue">
                                             <number>100</number>
@@ -509,6 +543,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="name">
                                             <cstring>slowKeysDelayLabel</cstring>
                                         </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
                                         <property name="text">
                                             <string>&amp;Duration:</string>
                                         </property>
@@ -550,6 +587,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                     <widget class="QSlider" row="1" column="2">
                                         <property name="name">
                                             <cstring>bounceKeysDelaySlider</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="minValue">
                                             <number>100</number>
@@ -594,6 +634,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="name">
                                             <cstring>bounceKeysDelay</cstring>
                                         </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
@@ -613,6 +656,9 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                     <widget class="QLabel" row="0" column="1">
                                         <property name="name">
                                             <cstring>bounceKeysDelayLabel</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
                                             <string>Du&amp;ration:</string>
@@ -1136,8 +1182,8 @@ Please note that on slow machines this may cause a "lag" between the event causi
     <connection>
         <sender>visibleBell</sender>
         <signal>toggled(bool)</signal>
-        <receiver>flashScreenColor</receiver>
-        <slot>setEnabled(bool)</slot>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>updateFlashScreenColor()</slot>
     </connection>
     <connection>
         <sender>visibleBell</sender>
@@ -1158,9 +1204,51 @@ Please note that on slow machines this may cause a "lag" between the event causi
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
+        <sender>flashScreen</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>flashScreenColor</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>    
+    <connection>
         <sender>stickyKeys</sender>
         <signal>toggled(bool)</signal>
         <receiver>lockWithStickyKeys</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>slowKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>slowKeysDelayLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>slowKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>slowKeysDelay</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>slowKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>slowKeysDelaySlider</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>bounceKeysDelayLabel</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>bounceKeysDelay</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>bounceKeysDelaySlider</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
@@ -1363,8 +1451,12 @@ Please note that on slow machines this may cause a "lag" between the event causi
     <tabstop>accelerationProfile</tabstop>
     <tabstop>accelerationProfileSlider</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">accessibilityconfigwidget.ui.h</include>
+</includes>
 <slots>
     <slot access="private">configChaged()</slot>
+    <slot access="private" specifier="non virtual">updateFlashScreenColor()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
@@ -1372,8 +1464,8 @@ Please note that on slow machines this may cause a "lag" between the event causi
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>

@@ -86,12 +86,6 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
       const KAboutData* aboutData() const;
 
    protected slots:
-      /**
-       * This slot is used to emit the signal changed when any widget changes the configuration
-       * Why protected instead of private ?
-       */   
-      void configChanged();
-      
       void checkAccess();
       void invertClicked();
       void flashClicked();
@@ -111,6 +105,15 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
 
       QCheckBox *slowKeys, *bounceKeys;    
       KIntNumInput *slowKeysDelay, *bounceKeysDelay;
+
+   private slots:
+      /**
+       * This slot is used to emit the signal changed when any widget changes the configuration 
+       */
+      void configChanged(){
+         kdDebug() << "Running: AccessibilityConfig::configChanged()"<< endl;
+         emit changed(true);
+      };
 };
 
 #endif // _ACCESSIBILITY_H_

@@ -77,7 +77,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 // }
 
 AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)
-  : AccessibilityConfigWidget(AccessibilityFactory::instance(), parent, name){
+  : AccessibilityConfigWidget( parent, name){
+// Can't be used with the Designer hack
+//  : AccessibilityConfigWidget(AccessibilityFactory::instance(), parent, name){
+
+
 //    QVBoxLayout *main = new QVBoxLayout(this, 0,0);
 //    QTabWidget *tab = new QTabWidget(this);
 //    main->addWidget(tab);
@@ -283,9 +287,9 @@ void AccessibilityConfig::selectSound(){
 }
 
 
-void AccessibilityConfig::configChanged(){
-   emit changed(true);
-}
+// void AccessibilityConfig::configChanged(){
+//    emit changed(true);
+// }
 
 
 void AccessibilityConfig::load(){
