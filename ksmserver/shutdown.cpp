@@ -38,7 +38,7 @@ KSMShutdown::KSMShutdown()
     vbox = new QVBoxLayout( frame, 15, 5 );
 
     QLabel* label = new QLabel(i18n(
-         "<center><b><big><big>Shutdown KDE Session?</big></big></b></center>"),
+         "<center><b><big><big>End KDE Session?</big></big></b></center>"),
 	 frame );
     vbox->addWidget( label );
     vbox->addStretch();
@@ -49,7 +49,7 @@ KSMShutdown::KSMShutdown()
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    QPushButton* yes = new QPushButton(i18n("&Shutdown"), frame );
+    QPushButton* yes = new QPushButton(i18n("&Logout"), frame );
     connect( yes, SIGNAL( clicked() ), this, SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
