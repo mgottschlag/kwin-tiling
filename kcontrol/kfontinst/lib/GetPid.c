@@ -51,7 +51,7 @@
         FreeBSD       Tested on FreeBSD 5.1 by Brian Ledbetter <brian@shadowcom.net>
         NetBSD
         Irix
-        Solaris
+        Solaris       Tested on Solaris 8 x86 by Torsten Kasch <tk@Genetik.Uni-Bielefeld.DE>
         HP-UX         Tested on HP-UX B.11.11 U 9000/800
         AIX
         ...else parse output of "ps -eaf"
@@ -230,18 +230,19 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #include <dirent.h>
 #include <pwd.h>
 #include <sys/resource.h>
-#include <sys/procfs.h>
-#include <sys/sysmp.h>
-#include <sys/sysinfo.h>
-
 #ifdef OS_Solaris
 #include <procfs.h>
-#endif
+#else
+#include <sys/procfs.h>
+#include <sys/sysmp.h>
+#endif 
+#include <sys/sysinfo.h>
 
-static unsigned int getPid(const char *proc, unsigned int ppid)
+static unsigned int getPid(const char *proc, pid_t ppid)
 {
+    DIR	         *procdir;
     bool         error=false;
-    unsigned int pid=0;
+    pid_t	 pid=(pid_t)0;
 
     if(NULL!=(procdir=opendir(PROCDIR)))
     {
@@ -258,7 +259,7 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
 #ifdef OS_Solaris
                 psinfo_t   psinfo;
 
-                snprintf(buf, BUFSIZE - 1, PROCDIR"/%ld/psinfo", PROCDIR, pid);
+                snprintf(buf, BUFSIZE - 1, "%s/%s/psinfo", PROCDIR, de->d_name);
 #else
                 prpsinfo_t psinfo;
 
@@ -283,8 +284,8 @@ static unsigned int getPid(const char *proc, unsigned int ppid)
                     if(pid)
                         error=true;
                     else
-                        pid=psinfo.pr_fname);
-            }   
+                        pid=psinfo.pr_pid;
+	    }
         closedir(procdir);
     }
 
