@@ -82,6 +82,10 @@ extern int errno;
 #endif
 
 #ifdef XDMCP
+#if defined(__osf__)
+/* someone somewhere defines QUERY under Tru64 which confuses Xdmcp.h */
+#undef QUERY
+#endif
 # include <X11/Xdmcp.h>
 #endif
 
