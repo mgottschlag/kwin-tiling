@@ -214,6 +214,11 @@ void KPanelConfig::saveSettings() {
     config->writeEntry("Position", locations[location]);
     config->writeEntry("TaskbarPosition", taskbar_locations[taskbar]);
 
+    // DF : open ~/.kderc and write icon style depending on panel style
+    // so that icons become large or normal
+    KConfig * cfg = new KConfig();
+    cfg->setGroup( "KDE" );
+
     switch (style){
     case 0: // tiny style
 	config->writeEntry("Style", "tiny");
@@ -234,6 +239,10 @@ void KPanelConfig::saveSettings() {
 	//config->writeEntry("DesktopButtonFont","*-helvetica-medium-r-normal--12-*");
 	config->writeEntry("DesktopButtonRows",2);
 	//config->writeEntry("DateFont","*-times-medium-i-normal--12-*");
+
+        // DF : write icon style
+        cfg->writeEntry("kpanelIconStyle", "Normal", true, true /* global setting (.kderc) */);
+
 	break;
     case 2: // large style
 	config->writeEntry("Style", "large");
@@ -244,7 +253,13 @@ void KPanelConfig::saveSettings() {
 	//config->writeEntry("DesktopButtonFont","*-helvetica-medium-r-normal--14-*");
 	config->writeEntry("DesktopButtonRows",2);
 	//config->writeEntry("DateFont","*-times-bold-i-normal--12-*");
+
+        // DF : write icon style
+        cfg->writeEntry("kpanelIconStyle", "Large", true, true /* global setting (.kderc) */);
+
 	break;
     }
+    cfg->sync();
+    delete cfg;
     config->sync();
 }
