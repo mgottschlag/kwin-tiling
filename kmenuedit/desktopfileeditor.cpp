@@ -41,8 +41,8 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     _advancedTab = new AdvancedTab(this);
     _tabs->addTab(_basicTab, i18n("General"));
     _tabs->addTab(_advancedTab, i18n("Advanced"));
-    connect(_basicTab, SIGNAL(changed()), SLOT(slotChanged()));
-    connect(_advancedTab, SIGNAL(changed()), SLOT(slotChanged()));
+    connect(_basicTab, SIGNAL(changed(bool)), SLOT(slotChanged(bool)));
+    connect(_advancedTab, SIGNAL(changed(bool)), SLOT(slotChanged(bool)));
     layout->addMultiCellWidget(_tabs, 0, 0, 0, 2);
 
     // setup separator
@@ -57,6 +57,7 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     _reset->setEnabled(false);
     connect(_apply, SIGNAL(clicked()), SLOT(slotApply()));
     connect(_reset, SIGNAL(clicked()), SLOT(slotReset()));
+    _desktopFileNeedsSave = false;
     layout->addWidget(_reset, 2, 1);
     layout->addWidget(_apply, 2, 2);
     layout->setColStretch(0, 9);
@@ -70,20 +71,24 @@ void DesktopFileEditor::setDesktopFile(const QString& desktopFile)
     _advancedTab->setDesktopFile(desktopFile);
     _apply->setEnabled(false);
     _reset->setEnabled(false);
+    _desktopFileNeedsSave = false;
 }
 
-void DesktopFileEditor::slotChanged()
+void DesktopFileEditor::slotChanged( bool desktopFileNeedsSave )
 {
+    if( desktopFileNeedsSave )
+        _desktopFileNeedsSave = true;
     _apply->setEnabled(true);
     _reset->setEnabled(true);
 }
 
 void DesktopFileEditor::slotApply()
 {
-    _basicTab->apply();
-    _advancedTab->apply();
+    _basicTab->apply( _desktopFileNeedsSave );
+    _advancedTab->apply( _desktopFileNeedsSave );
     _apply->setEnabled(false);
     _reset->setEnabled(false);
+    _desktopFileNeedsSave = false;
     emit changed();
 }
 
@@ -93,4 +98,5 @@ void DesktopFileEditor::slotReset()
     _advancedTab->reset();
     _apply->setEnabled(false);
     _reset->setEnabled(false);
+    _desktopFileNeedsSave = false;
 }

@@ -21,6 +21,9 @@
 #define __advancedtab_h__
 
 #include <qwidget.h>
+#include <qstring.h>
+
+#include <klineedit.h>
 
 class AdvancedTab : public QWidget
 {
@@ -29,17 +32,22 @@ class AdvancedTab : public QWidget
 public:
     AdvancedTab( QWidget *parent=0, const char *name=0 );
 
-    void apply();
+    void apply( bool desktopFileNeedsSave );
     void reset();
 
 signals:
-    void changed();
+    void changed( bool desktopFileNeedsSave );
 
 public slots:
     void setDesktopFile(const QString& desktopFile);
 
+protected slots:
+    void keyButtonPressed();
+    
 protected:
     QString _desktopFile;
+    KLineEdit* _keyEdit;
+    bool _khotkeysNeedsSave;
 };
 
 #endif

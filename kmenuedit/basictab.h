@@ -34,17 +34,19 @@ class BasicTab : public QWidget
 public:
     BasicTab( QWidget *parent=0, const char *name=0 );
 
-    void apply();
+    void apply( bool desktopFileNeedsSave );
     void reset();
 
 signals:
     void changed();
+    void changed( bool desktopFileNeedsSave );
 
 public slots:
     void setDesktopFile(const QString& desktopFile);
 
 protected slots:
     void slotChanged(const QString&);
+    void slotChanged();
     void termcb_clicked();
     void uidcb_clicked();
 

@@ -42,6 +42,7 @@
 #include "namedlg.h"
 #include "treeview.h"
 #include "treeview.moc"
+#include "khotkeys.h"
 
 const char* clipboard_prefix = ".kmenuedit_clipboard/";
 
@@ -289,6 +290,9 @@ void TreeView::copyFile(const QString& src, const QString& dest)
     d.writeEntry("Hidden", false);
 
     d.sync();
+    
+    if( KHotKeys::present()) // tell khotkeys this menu entry has moved
+        KHotKeys::menuEntryMoved( dest, src );
 }
 
 void TreeView::copyDir(const QString& s, const QString& d)
@@ -321,14 +325,16 @@ void TreeView::copyDir(const QString& s, const QString& d)
     for (QStringList::ConstIterator it = filelist.begin(); it != filelist.end(); ++it)
 	{
 	    QString file = (*it).mid((*it).findRev('/'), (*it).length());
-	    copyFile(src + "/" + file, dest + "/" + file);
+//	    copyFile(src + "/" + file, dest + "/" + file); CHECKME
+	    copyFile(src + file, dest + file);
 	}
 
     // process subdirs
     for (QStringList::ConstIterator it = dirlist.begin(); it != dirlist.end(); ++it)
 	{
 	    QString file = (*it).mid((*it).findRev('/'), (*it).length());
-	    copyDir(src + "/" + file, dest + "/" + file);
+//	    copyDir(src + "/" + file, dest + "/" + file); CHECKME
+	    copyDir(src + file, dest + file);
 	}
 
     // unset hidden flag
@@ -370,6 +376,9 @@ void TreeView::deleteFile(const QString& deskfile)
 	    c.writeEntry("Hidden", true);
 	    c.sync();
 	}
+
+    if( KHotKeys::present()) // tell khotkeys this menu entry has been removed
+        KHotKeys::menuEntryDeleted( deskfile );
 }
 
 void TreeView::deleteDir(const QString& d)

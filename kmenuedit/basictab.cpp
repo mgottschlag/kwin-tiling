@@ -141,6 +141,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _uidEdit->setEnabled(false);
 
     layout->setRowStretch(0, 2);
+    
+    connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
 void BasicTab::setDesktopFile(const QString& desktopFile)
@@ -182,8 +184,10 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _uidEdit->setEnabled(_uidCB->isChecked());
 }
 
-void BasicTab::apply()
+void BasicTab::apply( bool desktopFileNeedsSave )
 {
+    if( !desktopFileNeedsSave )
+        return;
     QString local = locateLocal("apps", _desktopFile);
 
     KDesktopFile df(local);
@@ -222,6 +226,11 @@ void BasicTab::reset()
 void BasicTab::slotChanged(const QString&)
 {
     emit changed();
+}
+
+void BasicTab::slotChanged()
+{
+    emit changed( true );
 }
 
 void BasicTab::termcb_clicked()

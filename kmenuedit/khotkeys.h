@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
+ *                      Lubos Lunak    <l.lunak@email.cz>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,42 +18,26 @@
  *
  */
 
-#ifndef __desktopfileeditor_h__
-#define __desktopfileeditor_h__
+#ifndef __khotkeys_public_h__
+#define __khotkeys_public_h__
 
-#include <qwidget.h>
+#include <qstring.h>
 
-class BasicTab;
-class AdvancedTab;
-class QPushButton;
-class QTabWidget;
-class QFrame;
 
-class DesktopFileEditor : public QWidget
-{
-    Q_OBJECT;
+// see kdebase/khotkeys/kcontrol for info on these
 
-public:
-    DesktopFileEditor( QWidget *parent=0, const char *name=0 );
-
-signals:
-    void changed();
-
-public slots:
-    void setDesktopFile(const QString& desktopFile);
-
-protected slots:
-    void slotChanged( bool desktopFileNeedsSave );
-    void slotApply();
-    void slotReset();
-
-protected:
-    BasicTab      *_basicTab;
-    AdvancedTab   *_advancedTab;
-    QFrame        *_separator;
-    QPushButton   *_apply, *_reset;
-    QTabWidget    *_tabs;
-    bool          _desktopFileNeedsSave;
-};
+class KHotKeys
+    {
+    public:
+        static bool init();
+        static bool present();
+        static QString getMenuEntryShortcut( const QString& entry_P );
+        static QString changeMenuEntryShortcut( const QString& entry_P,
+            const QString shortcut_P );
+        static QString editMenuEntryShortcut( const QString& entry_P,
+            const QString shortcut_P, bool save_if_edited_P );
+        static bool menuEntryMoved( const QString& new_P, const QString& old_P );
+        static void menuEntryDeleted( const QString& entry_P );    
+    };
 
 #endif
