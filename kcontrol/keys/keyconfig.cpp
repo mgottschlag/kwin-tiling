@@ -49,7 +49,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   if ( KeyType == "global" ) {
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kickerbindings.cpp"
+#include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
