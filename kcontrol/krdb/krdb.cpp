@@ -28,6 +28,7 @@
 #include <dcopclient.h>
 
 #include <kapplication.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
@@ -35,7 +36,6 @@
 #include <ksavefile.h>
 #include <ktempfile.h>
 #include <klocale.h>
-#include <ksimpleconfig.h>
 #include <kstyle.h>
 
 #include "krdb.h"
@@ -84,7 +84,7 @@ static void applyGtkStyles(bool active, int version)
 
 // -----------------------------------------------------------------------------
 
-static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings, QPalette& newPal )
+static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& newPal )
 {
   QStringList actcg, inactcg, discg;
 
@@ -147,7 +147,7 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings, QPalett
 
 // -----------------------------------------------------------------------------
 
-static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
+static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 {
   /* export kde's plugin library path to qtrc */
 
@@ -402,7 +402,7 @@ void runRdb( uint flags )
   bool exportQtColors   = flags & KRdbExportQtColors;
   bool exportQtSettings = flags & KRdbExportQtSettings;
 
-  KSimpleConfig kglobals("kdeglobals", true);
+  KConfig kglobals("kdeglobals", true, false);
   kglobals.setGroup("KDE");
 
   KTempFile tmpFile;
