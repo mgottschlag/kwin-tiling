@@ -366,26 +366,26 @@ extern "C"
         return container;
     }
 
-    KCModule *create_kicker_arrangement(QWidget *parent, const char * /*name*/)
+    KDE_EXPORT KCModule *create_kicker_arrangement(QWidget *parent, const char * /*name*/)
     {
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
                                          "kicker/extensions");
         return new PositionConfig(parent, "kcmkickerarrangement");
     }
 
-    KCModule *create_kicker_hiding(QWidget *parent, const char * /*name*/)
+    KDE_EXPORT KCModule *create_kicker_hiding(QWidget *parent, const char * /*name*/)
     {
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
                                          "kicker/extensions");
         return new HidingConfig(parent, "kcmkickerhiding");
     }
 
-    KCModule *create_kicker_menus(QWidget *parent, const char * /*name*/)
+    KDE_EXPORT KCModule *create_kicker_menus(QWidget *parent, const char * /*name*/)
     {
         return new MenuConfig(parent, "kcmkickermenus");
     }
 
-    KCModule *create_kicker_appearance(QWidget *parent, const char * /*name*/)
+    KDE_EXPORT KCModule *create_kicker_appearance(QWidget *parent, const char * /*name*/)
     {
         KImageIO::registerFormats();
         KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
