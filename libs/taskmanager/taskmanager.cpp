@@ -375,6 +375,7 @@ Task::Task(WId win, TaskManager * parent, const char *name)
   : QObject(parent, name),
     _active(false),
     _win(win),
+    _info(KWin::windowInfo(_win)),
     _lastWidth(0),
     _lastHeight(0),
     _lastResize(false),
@@ -383,8 +384,6 @@ Task::Task(WId win, TaskManager * parent, const char *name)
     _thumb(),
     _grab()
 {
-    _info = KWin::windowInfo(_win);
-
     // try to load icon via net_wm
     _pixmap = KWin::icon(_win, 16, 16, true);
 
