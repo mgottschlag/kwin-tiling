@@ -34,7 +34,7 @@
 #include "hidingtab_impl.h"
 #include "menutab_impl.h"
 #include "lookandfeeltab_impl.h"
-#include "applettab_impl.h"
+//#include "applettab_impl.h"
 #include "extensionstab_impl.h"
 
 #include <X11/Xlib.h>
@@ -71,9 +71,9 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
 
-    applettab = new AppletTab(this);
-    tab->addTab(applettab, i18n("&Applets"));
-    connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
+    //applettab = new AppletTab(this);
+    //tab->addTab(applettab, i18n("&Applets"));
+    //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     extensionstab = new ExtensionsTab(this);
     tab->addTab(extensionstab, i18n("&Extensions"));
@@ -93,7 +93,7 @@ void KickerConfig::load()
     hidingtab->load();
     menutab->load();
     lookandfeeltab->load();
-    applettab->load();
+    //applettab->load();
     extensionstab->load();
     emit changed(false);
 }
@@ -104,7 +104,7 @@ void KickerConfig::save()
     hidingtab->save();
     menutab->save();
     lookandfeeltab->save();
-    applettab->save();
+    //applettab->save();
     extensionstab->save();
 
     emit changed(false);
@@ -128,7 +128,7 @@ void KickerConfig::defaults()
     hidingtab->defaults();
     menutab->defaults();
     lookandfeeltab->defaults();
-    applettab->defaults();
+    //applettab->defaults();
     extensionstab->defaults();
 
     emit changed(true);
