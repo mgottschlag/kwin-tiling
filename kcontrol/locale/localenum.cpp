@@ -88,12 +88,12 @@ void KLocaleConfigNumber::save()
   KGlobal::_locale = m_locale;
 
   KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
-  c->setGroup(QString::fromLatin1("Locale"));
+  c->setGroup("Locale");
   // Write something to the file to make it dirty
-  c->writeEntry(QString::fromLatin1("DecimalSymbol"), QString::null);
+  c->writeEntry("DecimalSymbol", QString::null);
 
-  c->deleteEntry(QString::fromLatin1("DecimalSymbol"), false);
-  c->deleteEntry(QString::fromLatin1("ThousandsSeparator"), false);
+  c->deleteEntry("DecimalSymbol", false);
+  c->deleteEntry("ThousandsSeparator", false);
   delete c;
 
   KConfig *config = KGlobal::config();
@@ -102,23 +102,23 @@ void KLocaleConfigNumber::save()
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(m_locale->country())), true);
-  ent.setGroup(QString::fromLatin1("KCM Locale"));
+  ent.setGroup("KCM Locale");
 
   QString str;
 
-  str = ent.readEntry(QString::fromLatin1("DecimalSymbol"),
+  str = ent.readEntry("DecimalSymbol",
 		      QString::fromLatin1("."));
-  str = config->readEntry(QString::fromLatin1("DecimalSymbol"), str);
+  str = config->readEntry("DecimalSymbol", str);
   if (str != m_locale->decimalSymbol())
-    config->writeEntry(QString::fromLatin1("DecimalSymbol"),
+    config->writeEntry("DecimalSymbol",
 		       m_locale->decimalSymbol(), true, true);
 
-  str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"),
+  str = ent.readEntry("ThousandsSeparator",
 		      QString::fromLatin1(","));
-  str = config->readEntry(QString::fromLatin1("ThousandsSeparator"), str);
+  str = config->readEntry("ThousandsSeparator", str);
   str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
   if (str != m_locale->thousandsSeparator())
-    config->writeEntry(QString::fromLatin1("ThousandsSeparator"),
+    config->writeEntry("ThousandsSeparator",
 		       QString::fromLatin1("$0%1$0")
 		       .arg(m_locale->thousandsSeparator()), true, true);
 

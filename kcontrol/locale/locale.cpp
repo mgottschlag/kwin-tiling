@@ -193,8 +193,8 @@ void KLocaleConfig::loadLanguageList()
           continue;
         }
       KSimpleConfig entry(*it);
-      entry.setGroup(QString::fromLatin1("KCM Locale"));
-      QString name = entry.readEntry(QString::fromLatin1("Name"),
+      entry.setGroup("KCM Locale");
+      QString name = entry.readEntry("Name",
 				     m_locale->translate("without name"));
       
       QString tag = *it;
@@ -237,8 +237,8 @@ void KLocaleConfig::loadCountryList()
     if (index != -1) tag.truncate(index);
 
     KSimpleConfig entry(*it);
-    entry.setGroup(QString::fromLatin1("KCM Locale"));
-    QString name = entry.readEntry(QString::fromLatin1("Name"),
+    entry.setGroup("KCM Locale");
+    QString name = entry.readEntry("Name",
 				   m_locale->translate("without name"));
 
     m_comboCountry->insertSubmenu( name, tag, sub, -2 );
@@ -252,10 +252,10 @@ void KLocaleConfig::loadCountryList()
 	it != countrylist.end(); ++it )
     {
       KSimpleConfig entry(*it);
-      entry.setGroup(QString::fromLatin1("KCM Locale"));
-      QString name = entry.readEntry(QString::fromLatin1("Name"),
+      entry.setGroup("KCM Locale");
+      QString name = entry.readEntry("Name",
 				     m_locale->translate("without name"));
-      QString submenu = entry.readEntry(QString::fromLatin1("Region"));
+      QString submenu = entry.readEntry("Region");
       
       QString tag = *it;
       int index = tag.findRev('/');
@@ -288,8 +288,8 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
     .arg(path);
 
   KSimpleConfig entry(locate("locale", filepath));
-  entry.setGroup(QString::fromLatin1("KCM Locale"));
-  name = entry.readEntry(QString::fromLatin1("Name"));
+  entry.setGroup("KCM Locale");
+  name = entry.readEntry("Name");
 
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -299,10 +299,10 @@ void KLocaleConfig::save()
 {
   KConfigBase *config = KGlobal::config();
 
-  config->setGroup(QString::fromLatin1("Locale"));
+  config->setGroup("Locale");
 
-  config->writeEntry(QString::fromLatin1("Country"), m_locale->country());
-  config->writeEntry(QString::fromLatin1("Language"),
+  config->writeEntry("Country", m_locale->country());
+  config->writeEntry("Language",
 		     m_locale->languageList(), ':');
 
   config->sync();
@@ -375,9 +375,9 @@ QStringList KLocaleConfig::languageList() const
 			    .arg(m_locale->country()));
 
   KSimpleConfig entry(fileName);
-  entry.setGroup(QString::fromLatin1("KCM Locale"));
+  entry.setGroup("KCM Locale");
 
-  return entry.readListEntry(QString::fromLatin1("Languages"));
+  return entry.readListEntry("Languages");
 }
 
 void KLocaleConfig::changedCountry(int i)

@@ -80,14 +80,14 @@ void KLocaleConfigTime::save()
   KGlobal::_locale = m_locale;
 
   KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
-  c->setGroup(QString::fromLatin1("Locale"));
+  c->setGroup("Locale");
   // Write something to the file to make it dirty
-  c->writeEntry(QString::fromLatin1("TimeFormat"), QString::null);
+  c->writeEntry("TimeFormat", QString::null);
 
-  c->deleteEntry(QString::fromLatin1("TimeFormat"), false);
-  c->deleteEntry(QString::fromLatin1("DateFormat"), false);
-  c->deleteEntry(QString::fromLatin1("DateFormatShort"), false);
-  c->deleteEntry(QString::fromLatin1("WeekStartsMonday"), false);
+  c->deleteEntry("TimeFormat", false);
+  c->deleteEntry("DateFormat", false);
+  c->deleteEntry("DateFormatShort", false);
+  c->deleteEntry("WeekStartsMonday", false);
   delete c;
 
   KConfig *config = KGlobal::config();
@@ -97,30 +97,30 @@ void KLocaleConfigTime::save()
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(m_locale->country())), true);
-  ent.setGroup(QString::fromLatin1("KCM Locale"));
+  ent.setGroup("KCM Locale");
 
   QString str;
 
-  str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%H:%M:%S"));
-  str = config->readEntry(QString::fromLatin1("TimeFormat"), str);
+  str = ent.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
+  str = config->readEntry("TimeFormat", str);
   if (str != m_locale->timeFormat())
-    config->writeEntry(QString::fromLatin1("TimeFormat"), m_locale->timeFormat(), true, true);
+    config->writeEntry("TimeFormat", m_locale->timeFormat(), true, true);
 
-  str = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
-  str = config->readEntry(QString::fromLatin1("DateFormat"), str);
+  str = ent.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
+  str = config->readEntry("DateFormat", str);
   if (str != m_locale->dateFormat())
-    config->writeEntry(QString::fromLatin1("DateFormat"), m_locale->dateFormat(), true, true);
+    config->writeEntry("DateFormat", m_locale->dateFormat(), true, true);
 
-  str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%Y-%m-%d"));
-  str = config->readEntry(QString::fromLatin1("DateFormatShort"), str);
+  str = ent.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
+  str = config->readEntry("DateFormatShort", str);
   if (str != m_locale->dateFormatShort())
-    config->writeEntry(QString::fromLatin1("DateFormatShort"), m_locale->dateFormatShort(), true, true);
+    config->writeEntry("DateFormatShort", m_locale->dateFormatShort(), true, true);
 
   bool b;
-  b = ent.readBoolEntry(QString::fromLatin1("WeekStartsMonday"), true);
-  b = config->readBoolEntry(QString::fromLatin1("WeekStartsMonday"), b);
+  b = ent.readBoolEntry("WeekStartsMonday", true);
+  b = config->readBoolEntry("WeekStartsMonday", b);
   if (b != m_locale->weekStartsMonday())
-    config->writeEntry(QString::fromLatin1("WeekStartsMonday"),
+    config->writeEntry("WeekStartsMonday",
 		       m_locale->weekStartsMonday(), true, true);
 
   config->sync();
