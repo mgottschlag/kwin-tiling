@@ -1,3 +1,5 @@
+#include <iostream>
+using namespace std;
 /*****************************************************************
 
 Copyright (c) 2000 Matthias Elter <elter@kde.org>
@@ -127,15 +129,18 @@ void TaskManager::windowAdded(WId w )
         wType != NET::Dialog &&
         wType != NET::Utility)
     {
+    cout << "TaskManager::windowAdded >> skippable" << endl;
         return;
     }
 
     // ignore windows that want to be ignored by the taskbar
     if ((info.state() & NET::SkipTaskbar) != 0)
     {
+    cout << "TaskManager::windowAdded >> skip tha task bar" << endl;
         _skiptaskbar_windows.push_front( w ); // remember them though
         return;
     }
+    cout << "TaskManager::windowAdded" << endl;
 
     Window transient_for_tmp;
     if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp ))
@@ -178,36 +183,55 @@ void TaskManager::windowRemoved(WId w )
     _skiptaskbar_windows.remove( w );
     // find task
     Task* t = findTask(w);
-    if (!t) return;
+    if (!t)
+    {
+        cout << "TaskManager::windowRemoved >> couldn't find associated task" << endl;
+        return;
+    }
 
-    if (t->window() == w) {
+    if (t->window() == w)
+    {
         _tasks.removeRef(t);
-
         emit taskRemoved(t);
 
-        if(t == _active) _active = 0;
+        if (t == _active)
+        {
+            _active = 0;
+        }
+
         delete t;
+        cout << "TM: Task for WId " << w << " removed." << endl;
         //kdDebug() << "TM: Task for WId " << w << " removed." << endl;
     }
-    else {
+    else
+    {
         t->removeTransient( w );
+        cout << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
         //kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
     }
 }
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
-    if( dirty & NET::WMState ) {
-        NETWinInfo info ( qt_xdisplay(),  w, qt_xrootwin(), NET::WMState );
-        if ( (info.state() & NET::SkipTaskbar) != 0 ) {
-            windowRemoved( w );
-            _skiptaskbar_windows.push_front( w );
+    if (dirty & NET::WMState)
+    {
+        NETWinInfo info (qt_xdisplay(),  w, qt_xrootwin(),
+                         NET::WMState | NET::XAWMState);
+        if (info.state() & NET::SkipTaskbar)
+        {
+            windowRemoved(w);
+            _skiptaskbar_windows.push_front(w);
             return;
         }
-        else {
-            _skiptaskbar_windows.remove( w );
-            if( !findTask( w ))
-                windowAdded( w ); // skipTaskBar state was removed, so add this window
+        else
+        {
+            _skiptaskbar_windows.remove(w);
+            if (info.mappingState() != NET::Withdrawn && !findTask(w))
+            {
+                // skipTaskBar state was removed and the window is still
+                // mapped, so add this window
+                windowAdded( w );
+            }
         }
     }
 
