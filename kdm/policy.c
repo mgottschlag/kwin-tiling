@@ -39,6 +39,14 @@ from the X Consortium.
  */
 
 # include "dm.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <config.h>
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
 
 #ifdef XDMCP
 
@@ -150,6 +158,11 @@ static void Willing_msg( char* mbuf)
 	  sprintf(mbuf, "Available (load: %s)", buf);
 	  close( fd);
      }
+#elif BSD4_3
+#warning This code is untested...
+     double load[3];
+     getloadavg(load, 3);
+     sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0], load[1], load[2]);     
 #else /* !__linux__ */
      sprintf( mbuf, "Willing to manage");     
 #endif
