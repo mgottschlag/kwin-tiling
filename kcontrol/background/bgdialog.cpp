@@ -174,19 +174,9 @@ void BGDialog::makeReadOnly()
 {
     m_pMonitor->setEnabled( false );
     m_comboDesktop->setEnabled( false );
-    m_colorPrimary->setEnabled( false );
-    m_colorSecondary->setEnabled( false );
-    m_comboPattern->setEnabled( false );
-    m_radioNoPicture->setEnabled( false );
-    m_radioPicture->setEnabled( false );
-    m_urlWallpaperBox->setEnabled( false );
-    m_urlWallpaperButton->setEnabled( false );
-    m_comboWallpaperPos->setEnabled( false );
-    m_buttonSetupWallpapers->setEnabled( false );
     m_buttonAdvanced->setEnabled( false );
-    m_comboBlend->setEnabled( false );
-    m_sliderBlend->setEnabled( false );
-    m_cbBlendReverse->setEnabled( false );
+    m_buttonGroupBackground->setEnabled( false );
+    groupBox3->setEnabled( false );
 }
 
 void BGDialog::load()
@@ -487,7 +477,7 @@ void BGDialog::updateUI()
          m_buttonGroupBackground->setButton(
             m_buttonGroupBackground->id(m_radioNoPicture) );
       }
-      
+
       // 1 Picture
       else
       {
@@ -501,7 +491,7 @@ void BGDialog::updateUI()
             m_buttonGroupBackground->id(m_radioPicture) );
       }
    }
-   
+
    // Slide show
    else
    {
