@@ -14,6 +14,7 @@ services_DATA = \
 		cpan.desktop \
 		ctan_cat.desktop \
 		ctan.desktop \
+		dbug.desktop \
 		de2en.desktop \
 		dmoz.desktop \
 		docbook.desktop \
