@@ -168,16 +168,15 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotPreviewExited(KProcess *)));
 
-    QBoxLayout *topLayout = new QHBoxLayout(this, 0, KDialog::spacingHint());
+    QGridLayout *topLayout = new QGridLayout(this, 2, 2, 0, KDialog::spacingHint());
 
     // left column
-    QBoxLayout *vLayout = new QVBoxLayout(topLayout, KDialog::spacingHint());
 
     mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
     mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
-    vLayout->addWidget(mSaverGroup);
     QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(),
         KDialog::spacingHint() );
+    topLayout->addMultiCellWidget(mSaverGroup,0,1,0,0);
 
     mSaverListView = new QListView( mSaverGroup );
     mSaverListView->addColumn("");
@@ -205,18 +204,17 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " will look like.)") );
 
     // right column
-    vLayout = new QVBoxLayout(topLayout, KDialog::spacingHint());
 
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
     mMonitorLabel->setPixmap( QPixmap(locate("data",
                          "kcontrol/pics/monitor.png")));
-    vLayout->addWidget(mMonitorLabel, 0);
+    topLayout->addWidget(mMonitorLabel, 0, 1);
     QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
 
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
-    vLayout->addWidget( mSettingsGroup );
+    topLayout->addWidget( mSettingsGroup, 1, 1 );
     groupLayout = new QVBoxLayout( mSettingsGroup->layout(),
         KDialog::spacingHint() );
 
@@ -308,6 +306,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     lbl->setEnabled(false);
 #endif
 
+#if 0
     QGroupBox *mAutoLockGroup = new QGroupBox( i18n("Autolock"), this );
     mAutoLockGroup->setColumnLayout( 0, Qt::Vertical );
     vLayout->addWidget( mAutoLockGroup );
@@ -341,11 +340,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect( m_bottomRightCorner, SIGNAL( toggled( bool ) ),
          this, SLOT( slotChangeBottomRightCorner( bool ) ) );
 
+#endif
 
 
-    //groupLayout->addStretch(1);
-
-    vLayout->addStretch();
+    topLayout->setRowStretch(2,1);
 
     if (mImmutable)
     {
@@ -474,10 +472,12 @@ void KScreenSaver::readSettings()
     if (mPriority > 19) mPriority = 19;
     if (mTimeout < 60) mTimeout = 60;
 
+#if 0
     mTopLeftCorner = config->readBoolEntry("LockCornerTopLeft", false);
     mTopRightCorner = config->readBoolEntry("LockCornerTopRight", false) ;
     mBottomLeftCorner = config->readBoolEntry("LockCornerBottomLeft", false);
     mBottomRightCorner = config->readBoolEntry("LockCornerBottomRight", false);
+#endif
 
 
     mChanged = false;
@@ -501,10 +501,12 @@ void KScreenSaver::updateValues()
     mDPMSDependentCheckBox->setChecked(mDPMS);
     mPrioritySlider->setValue(19-mPriority);
 
+#if 0
     m_topLeftCorner->setChecked(mTopLeftCorner);
     m_topRightCorner->setChecked(mTopRightCorner);
     m_bottomLeftCorner->setChecked(mBottomLeftCorner);
     m_bottomRightCorner->setChecked(mBottomRightCorner);
+#endif
 
 }
 
@@ -526,10 +528,12 @@ void KScreenSaver::defaults()
     slotPriorityChanged( 0 );
     slotDPMS( false );
     slotLock( false );
+#if 0
     slotChangeBottomRightCorner( false );
     slotChangeBottomLeftCorner( false );
     slotChangeTopRightCorner( false );
     slotChangeTopLeftCorner( false );
+#endif
 
     updateValues();
 
@@ -551,10 +555,12 @@ void KScreenSaver::save()
     config->writeEntry("DPMS-dependent", mDPMS);
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
+#if 0
     config->writeEntry("LockCornerTopLeft", m_topLeftCorner->isChecked());
     config->writeEntry("LockCornerBottomLeft", m_bottomLeftCorner->isChecked());
     config->writeEntry("LockCornerTopRight", m_topRightCorner->isChecked());
     config->writeEntry("LockCornerBottomRight", m_bottomRightCorner->isChecked());
+#endif
 
 
     if ( !mSaver.isEmpty() )
@@ -961,6 +967,7 @@ void KScreenSaver::slotSetupDone(KProcess *)
     emit changed(true);
 }
 
+#if 0
 void KScreenSaver::slotChangeBottomRightCorner( bool b)
 {
     mBottomRightCorner = b;
@@ -988,6 +995,7 @@ void KScreenSaver::slotChangeTopLeftCorner( bool b)
     mChanged = true;
     emit changed(true);
 }
+#endif
 
 
 //---------------------------------------------------------------------------
