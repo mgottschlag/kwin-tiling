@@ -68,8 +68,8 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // Screen saver handling process.  Handles screensaver window,
 // starting screensaver hacks, and password entry.
 //
-LockProcess::LockProcess(bool child)
-    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder), child_saver(child), parent(0)
+LockProcess::LockProcess(bool child, bool useBlankOnly)
+    : QWidget(0L, "saver window", WStyle_Customize | WStyle_NoBorder), child_saver(child), parent(0), mUseBlankOnly(useBlankOnly)
 {
     KWin::setState( winId(), NET::StaysOnTop );
     KWin::setOnAllDesktops( winId(), true );
@@ -243,7 +243,7 @@ void LockProcess::configure()
     if (mPriority > 19) mPriority = 19;
     mSaver = config.readEntry("Saver");
 
-    if (mSaver.isEmpty() && mLockOnce) 
+    if ((mSaver.isEmpty() && mLockOnce) || mUseBlankOnly) 
     {
         mSaver = "KBlankscreen.desktop";
     }
@@ -261,7 +261,7 @@ void LockProcess::readSaver()
     {
         QString file = locate("scrsav", mSaver);
 
-//        kdDebug(1204) << "Reading saver: " << saver << endl;
+        //kdDebug(1204) << "Reading saver: " << mSaver << endl;
 
         KDesktopFile config(file, true);
 
@@ -271,7 +271,7 @@ void LockProcess::readSaver()
             mSaverExec = config.readEntry("Exec");
         }
 
-//        kdDebug(1204) << "Saver-exec: " << mSaverExec << endl;
+        //kdDebug(1204) << "Saver-exec: " << mSaverExec << endl;
     }
 }
 

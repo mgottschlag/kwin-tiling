@@ -23,7 +23,7 @@ class LockProcess
 {
     Q_OBJECT
 public:
-    LockProcess(bool child_saver = false);
+    LockProcess(bool child_saver = false, bool useBlankOnly = false);
     ~LockProcess();
 
     void lock();
@@ -83,6 +83,7 @@ private:
     bool        child_saver;
     QValueList<int> child_sockets;
     int         parent;
+    bool	mUseBlankOnly;
 };
 
 #endif

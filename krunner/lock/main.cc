@@ -30,6 +30,7 @@ static KCmdLineOptions options[] =
 {
    { "forcelock", I18N_NOOP("Force screen locking"), 0 },
    { "dontlock", I18N_NOOP("Only start screensaver"), 0 },
+   { "blank", I18N_NOOP("Only use the blank screensaver"), 0 },
    { 0, 0, 0 }
 };
 
@@ -121,7 +122,7 @@ int main( int argc, char **argv )
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    LockProcess process(child);
+    LockProcess process(child, args->isSet("blank"));
     if (!child)
         process.setChildren(child_sockets);
     else
@@ -133,5 +134,6 @@ int main( int argc, char **argv )
 	process.dontLock();
     else
 	process.defaultSave();
+
     return app.exec();
 }
