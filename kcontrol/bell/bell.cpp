@@ -122,11 +122,11 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   QBoxLayout *boxLayout = new QHBoxLayout();
-  QPushButton *test = new QPushButton(i18n("&Test"), box, "test");
-  boxLayout->addWidget(test, 0, AlignRight);
+  m_testButton = new QPushButton(i18n("&Test"), box, "test");
+  boxLayout->addWidget(m_testButton, 0, AlignRight);
   grid->addLayout( boxLayout, ++row, 1 );
-  connect( test, SIGNAL(clicked()), SLOT(ringBell()));
-  QWhatsThis::add( test, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
+  connect( m_testButton, SIGNAL(clicked()), SLOT(ringBell()));
+  QWhatsThis::add( m_testButton, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
 
   // watch for changes
   connect(m_volume, SIGNAL(valueChanged(int)), SLOT(configChanged()));
@@ -252,6 +252,7 @@ void KBellConfig::useBell( bool on )
   m_volume->setEnabled( on );
   m_pitch->setEnabled( on );
   m_duration->setEnabled( on );
+  m_testButton->setEnabled( on );
   KConfig *kc = KGlobal::config();
   KConfigGroupSaver cgs( kc, "General" );
   kc->writeEntry( "UseSystemBell", on );
