@@ -421,3 +421,4 @@ void KWinDecorationModule::resetKWin()
 		kdDebug() << "kcmkwindecoration: Could not reconfigure kwin" << endl;
 }
 
+#include "kwindecoration.moc"
