@@ -410,7 +410,6 @@ main (int argc, char **argv)
     dpingTimeout = GetCfgInt (C_pingTimeout);
     disLocal = (GetCfgInt (C_displayType) & location) == Local;
 
-    Debug ("Invoking kg_main ...\n");
     kg_main(argc, argv);
     return 0;
 }

@@ -192,7 +192,6 @@ inserten (QPopupMenu *mnu, const QString& txt,
 KGreeter::KGreeter(QWidget *parent, const char *t)
   : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
 {
-    Debug ("entered KGreeter::KGreeter\n");
     setFrameStyle (QFrame::WinPanel | QFrame::Raised);
     QBoxLayout* vbox = new QBoxLayout(  this,
 					QBoxLayout::TopToBottom,
@@ -342,10 +341,8 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	connect( user_view, SIGNAL(clicked(QIconViewItem*)),
 		 this, SLOT(slot_user_name( QIconViewItem*)));
     }
-    Debug("kgreeter constructed\n");
 
     clear_button_clicked();
-    Debug("cleared input fields\n");
 
     stsfile = new KSimpleConfig (QString::fromLatin1 (KDE_CONFDIR "/kdm/kdmsts"));
     stsfile->setGroup ("PrevUser");
@@ -363,7 +360,6 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	    loginEdit->selectAll();
 	load_wm();
     }
-    Debug("preset user; leaving constructor\n");
 }
 
 void
@@ -668,12 +664,9 @@ extern "C" void
 kg_main(int argc, char **argv)
 {
     kde_have_kipc = false;
-    Debug ("creating myapp ...\n");
     MyApp myapp(argc, argv);
 
-    Debug ("created myapp\n");
     kdmcfg = new KDMConfig();
-    Debug ("read config\n");
 
     KGlobal::dirs()->addResourceType("user_pic",
 				     KStandardDirs::kde_default("data") +
@@ -697,9 +690,7 @@ kg_main(int argc, char **argv)
     SecureDisplay (qt_xdisplay());
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
-    Debug ("creating kgreeter\n");
     kgreeter = new KGreeter;
-    Debug ("setting geometry\n");
     kgreeter->updateGeometry();
     kapp->processEvents(0);
     kgreeter->resize(kgreeter->sizeHint());
@@ -722,12 +713,10 @@ kg_main(int argc, char **argv)
     if (y + gh > dh)
 	y = dh - gh;
     kgreeter->move( x < 0 ? 0 : x, y < 0 ? 0 : y );
-    Debug ("showing ...\n");
     kgreeter->show();
     QApplication::restoreOverrideCursor();
     Debug ("entering event loop\n");
     kapp->exec();
-    Debug ("event loop exited\n");
     // Give focus to root window:
 //    QApplication::desktop()->setActiveWindow();
     delete kgreeter;
