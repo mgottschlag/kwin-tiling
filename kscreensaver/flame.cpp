@@ -276,6 +276,7 @@ drawflame(Window win)
 
 #include "flame.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "flame.moc"
 

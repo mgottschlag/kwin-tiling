@@ -30,6 +30,7 @@
 #include "pixmaps.h"
 #include <ksimpleconfig.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 KConfigBase *config;
 

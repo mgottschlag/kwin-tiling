@@ -34,6 +34,7 @@
 #include "geom.h"
 #include <qlayout.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 
 KMouseConfig::~KMouseConfig ()

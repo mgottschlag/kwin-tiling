@@ -39,6 +39,7 @@
 
 #include "geom.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 extern KConfig *config;
 

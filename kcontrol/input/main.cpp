@@ -24,6 +24,7 @@
 #include "mouse.h"
 #include "keyboard.h"
 #include <klocale.h>
+#include <stdio.h>
 
 
 class KInputApplication : public KControlApplication

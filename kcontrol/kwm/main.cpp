@@ -29,6 +29,8 @@
 #include "mouse.h"
 #include "advanced.h"
 #include <klocale.h>
+#include <stdio.h>
+#include <kconfig.h>
 
 KConfig *config;
 

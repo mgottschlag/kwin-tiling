@@ -18,6 +18,7 @@
 #include "display.h"
 #include <X11/X.h>
 #include <kcontrol.h>
+#include <kconfig.h>
 
 class KColorScheme : public KDisplayModule
 {

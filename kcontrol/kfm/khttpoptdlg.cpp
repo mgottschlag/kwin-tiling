@@ -6,6 +6,7 @@
 #include <klocale.h>
 #include <kapp.h>
 #include "khttpoptdlg.h"
+#include <kconfig.h>
 
 KHTTPOptions::KHTTPOptions(QWidget *parent, const char *name)
   : KConfigWidget(parent, name)

@@ -46,6 +46,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "general.moc"
 

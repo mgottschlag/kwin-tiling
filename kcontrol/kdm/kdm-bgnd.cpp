@@ -456,7 +456,7 @@ int KDMBackgroundWidget::loadWallpaper( const char *name, bool useContext )
 	  float sy = (float)h / tmp.height();
 	  QWMatrix matrix;
 	  matrix.scale( sx, sy );
-	  wpPixmap = (const KPixmap&)tmp.xForm( matrix );
+	  wpPixmap = tmp.xForm( matrix );
 	}
 	break;
 

@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.10  1999/04/16 11:19:24  kulow
+    fixes
+
     Revision 1.9  1999/03/12 18:40:56  dfaure
     Squashed more ksprintf and did some more Qt2.0 porting
 
@@ -61,6 +64,7 @@
 #include <drag.h>
 
 #include "syssound.h"
+#include <kconfig.h>
 #include "syssound.moc"
 
 #ifdef HAVE_CONFIG_H

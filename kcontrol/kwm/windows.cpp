@@ -39,6 +39,7 @@
 #include "geom.h"
 #include <ksimpleconfig.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 // kwm config keywords
 #define KWM_MOVE      "WindowMoveType"

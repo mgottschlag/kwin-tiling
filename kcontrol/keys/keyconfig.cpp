@@ -38,6 +38,7 @@
 #include <klocale.h>
 
 #include "keyconfig.h"
+#include <kconfig.h>
 #include "keyconfig.moc"
 
 

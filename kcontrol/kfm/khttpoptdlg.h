@@ -8,6 +8,7 @@
 #include <qcheckbox.h>
  
 #include <kcontrol.h>
+class KConfigBase;
  
 extern KConfigBase *g_pConfig;
 

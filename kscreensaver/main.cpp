@@ -33,6 +33,7 @@
 #include "main.moc"
 #include <kmsgbox.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 KLocale *glocale;
 

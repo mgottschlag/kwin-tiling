@@ -18,6 +18,7 @@
 #include <qlistbox.h>
 
 #include <kcontrol.h>
+#include <kconfig.h>
 
 extern KConfigBase *g_pConfig;
 

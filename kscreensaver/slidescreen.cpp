@@ -44,6 +44,7 @@ extern "C" {
 #include <kbuttonbox.h>
 #include "helpers.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 
 //================================================================

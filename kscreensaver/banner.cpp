@@ -25,6 +25,7 @@
 #include "kcolordlg.h"
 #include "banner.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "banner.moc"
 

@@ -12,6 +12,7 @@
 #include <kapp.h>
 
 #include "kscreensave.h"
+#include <kconfig.h>
 
 int sendSignal()
 {

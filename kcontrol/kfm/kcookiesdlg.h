@@ -17,7 +17,8 @@
 
 #include <kkeydialog.h> // for ksplitlist
 #include <kcontrol.h>
- 
+#include <kconfig.h>
+
 extern KConfigBase *g_pConfig;
 
 class KCookiesOptions : public KConfigWidget

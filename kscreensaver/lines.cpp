@@ -26,6 +26,7 @@
 #include <kbuttonbox.h>
 #include "helpers.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.

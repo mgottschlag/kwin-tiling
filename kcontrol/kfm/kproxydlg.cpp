@@ -9,6 +9,7 @@
 #include <kurl.h>
 #include <string.h>
 #include "kproxydlg.h"
+#include <kconfig.h>
 
 #define ROW_USEPROXY 1
 #define ROW_HTTP 2

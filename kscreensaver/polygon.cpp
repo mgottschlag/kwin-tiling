@@ -25,6 +25,7 @@
 #include <kbuttonbox.h>
 #include "helpers.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 
 #define MAXLENGTH	65

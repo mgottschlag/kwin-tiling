@@ -20,6 +20,7 @@
 
 #include "advanced.h"
 #include <klocale.h>
+#include <kconfig.h>
 
 
 

@@ -33,6 +33,7 @@
 
 #include <X11/Xutil.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 #define SCI_DEFAULT_MODE          0
 #define SCI_DEFAULT_MOVEX         6

@@ -32,6 +32,7 @@
 #include "general.h"
 #include "backgnd.h"
 #include <qfont.h>
+#include <kconfig.h>
 
 class KDisplayApplication : public KControlApplication
 {
