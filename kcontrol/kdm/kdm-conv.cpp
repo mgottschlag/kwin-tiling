@@ -119,7 +119,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     npuserlv->addColumn(QString::null);
     npuserlv->header()->hide();
     npuserlv->setResizeMode(QListView::LastColumn);
-    QWhatsThis::add(npuserlv, i18n("Check all users you want to allow a password-less login for."));
+    QWhatsThis::add(npuserlv, i18n("Check all users you want to allow a password-less login for."
+	" Entries denoted with '@' are user groups. Checking a group is like checking all users in that group."));
     connect( npuserlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotChanged()) );
 
@@ -304,15 +305,15 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
 {
     QMapConstIterator<QString,int> it;
     for (it = users.begin(); it != users.end(); ++it) {
-        if (it.data() != 0) {
-            const QString *name = &it.key();
-            if (*name != autoUser)
-                userlb->insertItem(*name);
-            if (*name != preselUser)
-                puserlb->insertItem(*name);
-            (new QCheckListItem(npuserlv, *name, QCheckListItem::CheckBox))->
-            setOn(noPassUsers.find(*name) != noPassUsers.end());
+        if (it.data() > 0) {
+            if (it.key() != autoUser)
+                userlb->insertItem(it.key());
+            if (it.key() != preselUser)
+                puserlb->insertItem(it.key());
         }
+        if (it.data() != 0)
+            (new QCheckListItem(npuserlv, it.key(), QCheckListItem::CheckBox))->
+    	        setOn(noPassUsers.find(it.key()) != noPassUsers.end());
     }
 
     if (userlb->listBox())
@@ -330,16 +331,16 @@ void KDMConvenienceWidget::slotDelUsers(const QMap<QString,int> &users)
 {
     QMapConstIterator<QString,int> it;
     for (it = users.begin(); it != users.end(); ++it) {
-	if (it.data() != 0) {
-	    const QString *name = &it.key();
-	    if (*name != autoUser && userlb->listBox())
+	if (it.data() > 0) {
+	    if (it.key() != autoUser && userlb->listBox())
 	        delete userlb->listBox()->
-		  findItem( *name, ExactMatch | CaseSensitive );
-	    if (*name != preselUser && puserlb->listBox())
+		  findItem( it.key(), ExactMatch | CaseSensitive );
+	    if (it.key() != preselUser && puserlb->listBox())
 	        delete puserlb->listBox()->
-		  findItem( *name, ExactMatch | CaseSensitive );
-	    delete npuserlv->findItem( *name, 0 );
+		  findItem( it.key(), ExactMatch | CaseSensitive );
 	}
+	if (it.data() != 0)
+	    delete npuserlv->findItem( it.key(), 0 );
     }
 }
 

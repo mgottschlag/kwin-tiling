@@ -43,6 +43,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pwd.h>
+#include <grp.h>
 
 typedef KGenericFactory<KDModule, QWidget> KDMFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory("kdmconfig") )
@@ -84,10 +86,48 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 
   KGlobal::locale()->insertCatalogue("kcmbackground");
 
+  QStringList sl;
+  QMap<gid_t,QStringList> tgmap;
+  QMap<gid_t,QStringList>::Iterator tgmapi;
+  QMap<gid_t,QStringList>::ConstIterator tgmapci;
+  QMap<QString, QPair<int,QStringList> >::Iterator umapi;
+
   struct passwd *ps;
-  for (setpwent(); (ps = getpwent()); )
-    usermap.insert( QString::fromLocal8Bit( ps->pw_name ), ps->pw_uid );
+  for (setpwent(); (ps = getpwent()); ) {
+    QString un( QFile::decodeName( ps->pw_name ) );
+    if (usermap.find( un ) == usermap.end()) {
+      usermap.insert( un, QPair<int,QStringList>( ps->pw_uid, sl ) );
+      if ((tgmapi = tgmap.find( ps->pw_gid )) != tgmap.end())
+        (*tgmapi).append( un );
+      else
+	tgmap[ps->pw_gid] = un;
+    }
+  }
   endpwent();
+
+  struct group *grp;
+  for (setgrent(); (grp = getgrent()); ) {
+    QString gn( QFile::decodeName( grp->gr_name ) );
+    if ((tgmapi = tgmap.find( grp->gr_gid )) != tgmap.end()) {
+      for (QStringList::ConstIterator it = (*tgmapi).begin();
+	   it != (*tgmapi).end(); ++it)
+	usermap[*it].second.append( gn );
+      tgmap.remove( tgmapi );
+    }
+    for (; *grp->gr_mem; grp->gr_mem++) {
+      QString un( QFile::decodeName( *grp->gr_mem ) );
+      if ((umapi = usermap.find( un )) != usermap.end()) {
+        if ((*umapi).second.find( gn ) == (*umapi).second.end())
+	  (*umapi).second.append( gn );
+      } else
+        kdWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;
+    }
+  }
+  endgrent();
+
+  for (tgmapci = tgmap.begin(); tgmapci != tgmap.end(); ++tgmapci)
+    kdWarning() << "user(s) '" << tgmapci.data().join(",")
+	<< "' have unknown GID " << tgmapci.key() << endl;
 
   config = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ));
 
@@ -229,13 +269,23 @@ void KDModule::moduleChanged(bool state)
 
 void KDModule::propagateUsers()
 {
+  groupmap.clear();
   emit clearUsers();
   QMap<QString,int> lusers;
-  QMapConstIterator<QString,int> it;
+  QMapConstIterator<QString, QPair<int,QStringList> > it;
+  QStringList::ConstIterator jt;
+  QMap<QString,int>::Iterator gmapi;
   for (it = usermap.begin(); it != usermap.end(); ++it) {
-    int uid = it.data();
-    if (!uid || (uid >= minshowuid && uid <= maxshowuid))
+    int uid = it.data().first;
+    if (!uid || (uid >= minshowuid && uid <= maxshowuid)) {
       lusers[it.key()] = uid;
+      for (jt = it.data().second.begin(); jt != it.data().second.end(); ++jt)
+	if ((gmapi = groupmap.find( *jt )) == groupmap.end()) {
+	  groupmap[*jt] = 1;
+	  lusers['@' + *jt] = -uid;
+	} else
+	  (*gmapi)++;
+    }
   }
   emit addUsers(lusers);
   updateOK = true;
@@ -245,17 +295,35 @@ void KDModule::slotMinMaxUID(int min, int max)
 {
   if (updateOK) {
     QMap<QString,int> alusers, dlusers;
-    QMapConstIterator<QString,int> it;
+    QMapConstIterator<QString, QPair<int,QStringList> > it;
+    QStringList::ConstIterator jt;
+    QMap<QString,int>::Iterator gmapi;
     for (it = usermap.begin(); it != usermap.end(); ++it) {
-      int uid = it.data();
+      int uid = it.data().first;
       if (!uid) continue;
       if ((uid >= minshowuid && uid <= maxshowuid) &&
-	  !(uid >= min && uid <= max))
-          dlusers[it.key()] = uid;
-      else
+	  !(uid >= min && uid <= max)) {
+        dlusers[it.key()] = uid;
+	for (jt = it.data().second.begin();
+	     jt != it.data().second.end(); ++jt) {
+	  gmapi = groupmap.find( *jt );
+	  if (!--(*gmapi)) {
+	    groupmap.remove( gmapi );
+	    dlusers['@' + *jt] = -uid;
+	  }
+	}
+      } else
       if ((uid >= min && uid <= max) &&
-	  !(uid >= minshowuid && uid <= maxshowuid))
-          alusers[it.key()] = uid;
+	  !(uid >= minshowuid && uid <= maxshowuid)) {
+        alusers[it.key()] = uid;
+	for (jt = it.data().second.begin();
+	     jt != it.data().second.end(); ++jt)
+	  if ((gmapi = groupmap.find( *jt )) == groupmap.end()) {
+	    groupmap[*jt] = 1;
+	    alusers['@' + *jt] = -uid;
+	  } else
+	    (*gmapi)++;
+      }
     }
     emit delUsers(dlusers);
     emit addUsers(alusers);

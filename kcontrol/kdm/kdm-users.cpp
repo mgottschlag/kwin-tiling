@@ -116,11 +116,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
       " Otherwise users are listed in the order they appear in the password file.") );
 
     wstack = new QWidgetStack( this );
-    s_label = new QLabel( wstack, i18n("S&elect users:"), this );
+    s_label = new QLabel( wstack, i18n("S&elect users and groups:"), this );
     optinlv = new KListView( this );
     optinlv->addColumn( i18n("Selected Users") );
     optinlv->setResizeMode( QListView::LastColumn );
-    QWhatsThis::add( optinlv, i18n("KDM will show all checked users.") );
+    QWhatsThis::add( optinlv, i18n("KDM will show all checked users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
     wstack->addWidget( optinlv );
     connect( optinlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptIn( QListViewItem * )) );
@@ -129,7 +129,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     optoutlv = new KListView( this );
     optoutlv->addColumn( i18n("Hidden Users") );
     optoutlv->setResizeMode( QListView::LastColumn );
-    QWhatsThis::add( optoutlv, i18n("KDM will show all non-checked non-system users.") );
+    QWhatsThis::add( optoutlv, i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
     wstack->addWidget( optoutlv );
     connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
 	     SLOT(slotUpdateOptOut( QListViewItem * )) );

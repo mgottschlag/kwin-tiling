@@ -77,7 +77,8 @@ private:
   KDMUsersWidget	*users;
   KDMConvenienceWidget	*convenience;
 
-  QMap<QString,int>	usermap;
+  QMap<QString, QPair<int,QStringList> >	usermap;
+  QMap<QString,int>	groupmap;
   int			minshowuid, maxshowuid;
   bool			updateOK;
 
