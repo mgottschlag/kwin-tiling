@@ -256,7 +256,7 @@ void KIconConfig::apply()
 {
     mpUsageList->setCurrentItem(mUsage);
 
-    int delta = 1000, dw, index = -1, size, i;
+    int delta = 1000, dw, index = -1, size = 0, i;
     QValueList<int>::Iterator it;
     mpSizeBox->clear();
     for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); it++, i++)
