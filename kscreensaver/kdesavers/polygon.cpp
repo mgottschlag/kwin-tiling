@@ -24,6 +24,7 @@
 #include <kmessagebox.h>
 
 #include "polygon.h"
+#include <qpainter.h>
 
 #include "polygon.moc"
 

@@ -29,6 +29,7 @@
 #include <kbuttonbox.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <qpainter.h>
 
 #define MAXLENGTH	256
 

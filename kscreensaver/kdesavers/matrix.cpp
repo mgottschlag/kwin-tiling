@@ -39,6 +39,7 @@
 #endif
 
 #include "matrix.h"
+#include <qpainter.h>
 
 
 // libkscreensaver interface

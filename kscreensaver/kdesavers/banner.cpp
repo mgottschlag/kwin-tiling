@@ -21,6 +21,7 @@
 #include <qdatetime.h>
 #include <qpushbutton.h>
 #include <qfontdatabase.h>
+#include <qpainter.h>
 
 #include <kapp.h>
 #include <kglobal.h>
