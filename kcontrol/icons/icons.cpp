@@ -163,6 +163,9 @@ void KIconConfig::initDefaults()
     mDefaultEffect[0].color = QColor(144,128,248);
     mDefaultEffect[1].color = QColor(169,156,255);
     mDefaultEffect[2].color = QColor(34,202,0);
+    mDefaultEffect[0].color2 = QColor(0,0,0);
+    mDefaultEffect[1].color2 = QColor(0,0,0);
+    mDefaultEffect[2].color2 = QColor(0,0,0);
 
     const int defDefSizes[] = { 32, 22, 22, 16, 32 };
 
@@ -250,12 +253,15 @@ void KIconConfig::read()
 		effect = KIconEffect::ToGamma;
 	    else if (tmp == "desaturate")
 		effect = KIconEffect::DeSaturate;
+	    else if (tmp == "tomonochrome")
+		effect = KIconEffect::ToMonochrome;
 	    else if (tmp == "none")
 		effect = KIconEffect::NoEffect;
 	    else continue;
 	    mEffects[i][j].type = effect;
 	    mEffects[i][j].value = mpConfig->readDoubleNumEntry(*it2 + "Value");
 	    mEffects[i][j].color = mpConfig->readColorEntry(*it2 + "Color");
+	    mEffects[i][j].color2 = mpConfig->readColorEntry(*it2 + "Color2");
 	    mEffects[i][j].transparant = mpConfig->readBoolEntry(*it2 + "SemiTransparent");
 	}
     }
@@ -309,7 +315,7 @@ void KIconConfig::preview(int i)
     Effect &effect = mEffects[viewedGroup][i];
 
     img = mpEffect->apply(img, effect.type,
-	    effect.value, effect.color, effect.transparant);
+	    effect.value, effect.color, effect.color2, effect.transparant);
     pm.convertFromImage(img);
     mpPreview[i]->setPixmap(pm);
 }
@@ -359,6 +365,9 @@ void KIconConfig::save()
 	    case KIconEffect::DeSaturate:
 		tmp = "desaturate";
 		break;
+	    case KIconEffect::ToMonochrome:
+		tmp = "tomonochrome";
+		break;
 	    default:
 		tmp = "none";
 		break;
@@ -366,6 +375,7 @@ void KIconConfig::save()
 	    mpConfig->writeEntry(*it2 + "Effect", tmp, true, true);
 	    mpConfig->writeEntry(*it2 + "Value", mEffects[i][j].value, true, true);
             mpConfig->writeEntry(*it2 + "Color", mEffects[i][j].color, true, true);
+            mpConfig->writeEntry(*it2 + "Color2", mEffects[i][j].color2, true, true);
             mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparant, true, true);
 	}
     }
@@ -526,6 +536,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->insertItem(i18n("Colorize"));
     mpEffectBox->insertItem(i18n("Gamma"));
     mpEffectBox->insertItem(i18n("Desaturate"));
+    mpEffectBox->insertItem(i18n("To Monochrome"));
     mpEffectBox->setMinimumWidth( 100 );
     connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
     top->addMultiCellWidget(mpEffectBox, 1, 2, 0, 0, Qt::AlignLeft);
@@ -566,6 +577,14 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 		SLOT(slotEffectColor(const QColor &)));
     grid->addWidget(mpEColButton, 2, 1);
 
+    mpEffectColor2 = new QLabel(i18n("&Second color:"), mpEffectGroup);
+    grid->addWidget(mpEffectColor2, 3, 0);
+    mpECol2Button = new KColorButton(mpEffectGroup);
+    mpEffectColor->setBuddy( mpECol2Button );
+    connect(mpECol2Button, SIGNAL(changed(const QColor &)),
+		SLOT(slotEffectColor2(const QColor &)));
+    grid->addWidget(mpECol2Button, 3, 1);
+
     init();
     preview();
 }
@@ -579,9 +598,11 @@ void KIconEffectSetupDialog::init()
 {
     mpEffectBox->setCurrentItem(mEffect.type);
     mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
-    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
+    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize || mEffect.type == KIconEffect::ToMonochrome);
+    mpECol2Button->setEnabled(mEffect.type == KIconEffect::ToMonochrome);
     mpEffectSlider->setValue((int) (100.0 * mEffect.value + 0.5));
     mpEColButton->setColor(mEffect.color);
+    mpECol2Button->setColor(mEffect.color2);
     mpSTCheck->setChecked(mEffect.transparant);
 }
 
@@ -597,13 +618,21 @@ void KIconEffectSetupDialog::slotEffectColor(const QColor &col)
      preview();
 }
 
+void KIconEffectSetupDialog::slotEffectColor2(const QColor &col)
+{
+     mEffect.color2 = col;
+     preview();
+}
+
 void KIconEffectSetupDialog::slotEffectType(int type)
 {
     mEffect.type = type;
     mpEffectGroup->setEnabled(mEffect.type != KIconEffect::NoEffect);
     mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
-    mpEffectColor->setEnabled(mEffect.type == KIconEffect::Colorize);
-    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
+    mpEffectColor->setEnabled(mEffect.type == KIconEffect::Colorize || mEffect.type == KIconEffect::ToMonochrome);
+    mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize || mEffect.type == KIconEffect::ToMonochrome);
+    mpEffectColor2->setEnabled(mEffect.type == KIconEffect::ToMonochrome);
+    mpECol2Button->setEnabled(mEffect.type == KIconEffect::ToMonochrome);
     preview();
 }
 
@@ -625,7 +654,7 @@ void KIconEffectSetupDialog::preview()
     QPixmap pm;
     QImage img = mExample.copy();
     img = mpEffect->apply(img, mEffect.type,
-          mEffect.value, mEffect.color, mEffect.transparant);
+          mEffect.value, mEffect.color, mEffect.color2, mEffect.transparant);
     pm.convertFromImage(img);
     mpPreview->setPixmap(pm);
 }

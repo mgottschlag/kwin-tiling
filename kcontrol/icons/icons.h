@@ -44,6 +44,7 @@ struct Effect
     int type;
     float value;
     QColor color;
+    QColor color2;
     bool transparant;
 };
 
@@ -128,6 +129,7 @@ protected:
 protected slots:
     void slotEffectValue(int value);
     void slotEffectColor(const QColor &col);
+    void slotEffectColor2(const QColor &col);
     void slotEffectType(int type);
     void slotSTCheck(bool b);
     void slotDefault();
@@ -138,11 +140,12 @@ private:
     QCheckBox *mpSTCheck;
     QSlider *mpEffectSlider;
     KColorButton *mpEColButton;
+    KColorButton *mpECol2Button;
     Effect mEffect;
     Effect mDefaultEffect;
     QImage mExample;
     QGroupBox *mpEffectGroup;
-    QLabel *mpPreview, *mpEffectLabel, *mpEffectColor;
+    QLabel *mpPreview, *mpEffectLabel, *mpEffectColor, *mpEffectColor2;
 };                      
                       
 #endif
