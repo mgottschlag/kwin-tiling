@@ -1,0 +1,32 @@
+[Action_0]
+Action description=Jpeg-Image
+Action regexp=^\\/.+\\.jpg$
+Command_0: commandline=kview %s
+Command_0: description=Launch KView
+Command_0: enabled=true
+Number of commands=1
+[Action_1]
+Action description=Web-URL
+Action regexp=^http:\\/\\/
+Command_0: commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
+Command_0: description=Open with Netscape
+Command_0: enabled=true
+Command_1: commandline=kfmclient exec %s
+Command_1: description=Open with Konqi
+Command_1: enabled=true
+Number of commands=2
+[Action_2]
+Action description=Mail-URL
+Action regexp=^mailto:
+Command_0: commandline=kmail --composer %s
+Command_0: description=Launch kmail
+Command_0: enabled=true
+Command_1: commandline=konsole -e mutt %s
+Command_1: description=Launch mutt
+Command_1: enabled=true
+Number of commands=2
+[General]
+KeepClipboardContents=true
+Number of Actions=3
+PopupAtMousePosition=false
+URLGrabberEnabled=true
