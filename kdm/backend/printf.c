@@ -231,7 +231,7 @@ fmtstr (OutCh dopr_outch, void *bp,
 		    ((unsigned char) ch >= 0x7f && (unsigned char) ch < 0xa0)) 
 		{
 		    dopr_outch (bp, '\\');
-		    fmtint (dopr_outch, bp, ch, 8, 3, 3, DP_F_ZERO);
+		    fmtint (dopr_outch, bp, (unsigned char)ch, 8, 3, 3, DP_F_ZERO);
 		    continue;
 		} else {
 		    if ((ch == '\'' && (flags & DP_F_SQUOTE)) ||
