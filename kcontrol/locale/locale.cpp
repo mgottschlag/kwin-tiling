@@ -30,7 +30,11 @@
 
 #include <kconfig.h>
 #include <kglobal.h>
+
+#define KLocaleConfigAdvanced KLocaleConfig
 #include <klocale.h>
+#undef KLocaleConfigAdvanced
+
 #include <kmessagebox.h>
 #include <kstddirs.h>
 #include <ksimpleconfig.h>
