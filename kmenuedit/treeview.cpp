@@ -567,7 +567,6 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
       else
       {
           TreeItem *tmpItem = static_cast<TreeItem*>(parentItem);
-
           while (  tmpItem )
           {
               if (  tmpItem == m_dragItem )
@@ -595,6 +594,10 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
          {
             folderInfo->setCaption(newCaption);
          }
+
+	 // create the TreeItem
+	 if(parentItem)
+	   parentItem->setOpen(true);
 
          folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
          parentFolderInfo->add(folderInfo);
