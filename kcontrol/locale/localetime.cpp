@@ -222,8 +222,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
-  m_labWeekStartsMonday = new QLabel(this, I18N_NOOP("Start week on Monday:"));
-  m_chWeekStartsMonday = new QCheckBox(this);
+  m_chWeekStartsMonday = new QCheckBox(I18N_NOOP("Week starts on Monday"), this);
   connect( m_chWeekStartsMonday, SIGNAL( clicked() ),
 	   this, SLOT( slotWeekStartsMondayChanged() ) );
   
@@ -424,7 +423,6 @@ void KLocaleConfigTime::slotTranslate()
     ("If this option is checked, calendars will be printed "
      "with Monday as the first day in the week. If not, "
      "Sunday will be used instead.");
-  QWhatsThis::add( m_labWeekStartsMonday, str );
   QWhatsThis::add( m_chWeekStartsMonday,  str );
 }
 

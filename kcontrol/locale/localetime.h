@@ -31,7 +31,7 @@
 
 class QCheckBox;
 class QComboBox;
-class QLineEdit;
+//class QLineEdit;
 
 class KLocale;
 class KLanguageCombo;
@@ -91,7 +91,6 @@ private:
   QLabel *m_labDateFmtShort;
   //QLineEdit *m_edDateFmtShort;
   QComboBox * m_comboDateFmtShort;
-  QLabel *m_labWeekStartsMonday;
   QCheckBox *m_chWeekStartsMonday;
 };
 
