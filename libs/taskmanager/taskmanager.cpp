@@ -409,7 +409,7 @@ QString Task::className()
 {
     XClassHint hint;
     if(XGetClassHint(qt_xdisplay(), _win, &hint))
-        return QString(hint.res_class);
+        return QString(hint.res_name);
     return QString::null;
 }
 
