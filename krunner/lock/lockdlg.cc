@@ -136,13 +136,12 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
     if( !kxkb.isNull() ) {
         layoutsList = kxkb.call("getLayoutsList");
         QString currentLayout = kxkb.call("getCurrentLayout");
-        if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
+        if( !currentLayout.isEmpty() && layoutsList.count() > 1 )
             setLayoutText(currentLayout);
-            return;
-        }
+    } else {
+        // no kxkb running or not working :(
+        mLayoutButton->hide();
     }
-    // no kxkb running or not working :(
-    mLayoutButton->hide();
     capsLocked();
 }
 
