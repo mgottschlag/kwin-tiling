@@ -34,7 +34,7 @@
 #include <kcmodule.h>
 
 class KIntNumInput;
-class QButtonGroup;
+class QVButtonGroup;
 class QSlider;
 
 class KDesktopConfig : public KCModule
@@ -54,8 +54,7 @@ public:
 public  slots:
 
   void setEBorders();
-  void slotBrdrChanged(int);
-  void slotWndwChanged(int);
+  void slotChanged();
 
   
 private:
@@ -74,13 +73,14 @@ private:
   int getWindowSnapZone();
   void setWindowSnapZone( int );
 
-  QButtonGroup *ElectricBox;
+  QVButtonGroup *ElectricBox;
   QCheckBox *enable, *movepointer;
   KIntNumInput *delays;
   QLabel *sec;
 
-  QButtonGroup *MagicBox;
+  QVButtonGroup *MagicBox;
   KIntNumInput *BrdrSnap, *WndwSnap;
+  QCheckBox *OverlapSnap;
 };
 
 #endif
