@@ -21,8 +21,11 @@
 #ifndef __THEMEPAGE_H
 #define __THEMEPAGE_H
 
+class KListView;
+class QListViewItem;
+
 class ThemePage : public QWidget
-{ 
+{
 	Q_OBJECT
 
 	public:
@@ -30,13 +33,22 @@ class ThemePage : public QWidget
 		~ThemePage();
 
 		// Called by the KCM
-		void save() {}
-		void load() {}
-		void defaults() {}
+		void save();
+		void load();
+		void defaults();
 
 	signals:
 		void changed( bool );
 
+	private slots:
+		void selectionChanged( QListViewItem * );
+
+	private:
+		void insertThemes();
+		void fixCursorFile();
+
+		KListView *listview;
+		QString currentTheme, selectedTheme;
 };
 
 #endif // __THEMEPAGE_H

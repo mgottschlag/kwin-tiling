@@ -44,16 +44,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <math.h>
-
-#include <qfileinfo.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <qdir.h>
 #undef Below
 #undef Above
 #include <qslider.h>
@@ -63,10 +55,7 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
-#include <kprocess.h>
 #include <kstandarddirs.h>
-#include <kio/netaccess.h>
-#include <kmessagebox.h>
 
 #include "mouse.h"
 
@@ -142,18 +131,6 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     wtstr = i18n("Show feedback when clicking an icon");
     QWhatsThis::add( tab1->cbVisualActivate, wtstr );
-
-    connect(tab1->cbLargeCursor, SIGNAL(clicked()), this, SLOT(changed()));
-
-    wtstr = i18n("Use high-visibility large cursor");
-    QWhatsThis::add( tab1->cbLargeCursor, wtstr );
-
-    connect(tab1->cbWhiteCursor, SIGNAL(clicked()), this, SLOT(changed()));
-
-    wtstr = i18n("Change color of the mouse cursor\n"
-        "X11 Standard: black cursor\n"
-        "Windows(tm) Standard: white cursor");
-    QWhatsThis::add( tab1->cbWhiteCursor, wtstr);
 
     connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
@@ -431,8 +408,6 @@ void MouseConfig::load()
   else
      tab1->slAutoSelect->setValue( settings->autoSelectDelay );
   tab1->cbVisualActivate->setChecked( settings->visualActivate );
-  tab1->cbLargeCursor->setChecked( settings->largeCursor );
-  tab1->cbWhiteCursor->setChecked( settings->whiteCursor );
   slotClick();
 
 
@@ -467,22 +442,9 @@ void MouseConfig::save()
   settings->visualActivate = tab1->cbVisualActivate->isChecked();
 //  settings->changeCursor = tab1->singleClick->isChecked();
   settings->changeCursor = tab1->cb_pointershape->isChecked();
-  settings->largeCursor = tab1->cbLargeCursor->isChecked();
-  settings->whiteCursor = tab1->cbWhiteCursor->isChecked();
-
-  // Check if the user has asked us not to remind them that KDE needs
-  // restarting after a cursor size change.
-  bool wasLargeCursor =
-      config->readBoolEntry("LargeCursor", KDE_DEFAULT_LARGE_CURSOR);
-  bool wasWhiteCursor =
-      config->readBoolEntry("WhiteCursor", false);
 
   settings->apply();
   settings->save(config);
-  fixCursorFile();
-
-  if (settings->largeCursor != wasLargeCursor || settings->whiteCursor != wasWhiteCursor)
-      KMessageBox::information(this, i18n("KDE must be restarted for the change in cursor size or color to take effect"), QString::null, "DoNotRemindCursor");
 
   KConfig ac("kaccessrc", false);
 
@@ -506,46 +468,6 @@ void MouseConfig::save()
 
 }
 
-void MouseConfig::fixCursorFile()
-{
-    // Make sure we have the 'font' resource dir registered and can find the
-    // override dir.
-    //
-    // Next, if the user wants large cursors, copy the font
-    // cursor_large.pcf.gz to (localkdedir)/share/fonts/override/cursor.pcf.gz.
-    // Else remove the font cursor.pcf.gz from (localkdedir)/share/fonts/override.
-    //
-    // Run mkfontdir to update fonts.dir in that dir.
-
-    KGlobal::dirs()->addResourceType("font", "share/fonts/");
-    KStandardDirs::makeDir(QDir::homeDirPath() + "/.fonts/kde-override");
-    QString overrideDir = QDir::homeDirPath() + "/.fonts/kde-override/";
-
-    KURL installedFont;
-    installedFont.setPath(overrideDir + "cursor.pcf.gz");
-
-    KURL source;
-
-    if (!settings->largeCursor && !settings->whiteCursor)
-        unlink(QFile::encodeName(installedFont.path()));
-    else if (settings->largeCursor && !settings->whiteCursor)
-        source.setPath( locate("data", "kcminput/cursor_large_black.pcf.gz") );
-    else if (settings->largeCursor && settings->whiteCursor)
-        source.setPath( locate("data", "kcminput/cursor_large_white.pcf.gz") );
-    else if (!settings->largeCursor && settings->whiteCursor)
-        source.setPath( locate("data", "kcminput/cursor_small_white.pcf.gz") );
-
-    KIO::NetAccess::file_copy(source, installedFont, -1, true);
-
-    QString cmd = KGlobal::dirs()->findExe("mkfontdir");
-    if (!cmd.isEmpty())
-    {
-        KProcess p;
-        p << cmd << overrideDir;
-        p.start(KProcess::Block);
-    }
-}
-
 void MouseConfig::defaults()
 {
     setThreshold(2);
@@ -559,8 +481,6 @@ void MouseConfig::defaults()
     tab1->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
     tab1->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
-    tab1->cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
-    tab1->cbWhiteCursor->setChecked( false );
     tab1->cbVisualActivate->setChecked( KDE_DEFAULT_VISUAL_ACTIVATE );
     tab1->cb_pointershape->setChecked(KDE_DEFAULT_CHANGECURSOR);
     slotClick();
@@ -697,8 +617,6 @@ void MouseSettings::load(KConfig *config)
   autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
   changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
-  largeCursor = config->readBoolEntry("LargeCursor", KDE_DEFAULT_LARGE_CURSOR);
-  whiteCursor = config->readBoolEntry("WhiteCursor", false);
 }
 
 void MouseSettings::apply()
@@ -794,8 +712,6 @@ void MouseSettings::save(KConfig *config)
   // the following need to be in the local config file so they are read
   // by kcminit (which only reads local config for speed up)
   config->writeEntry("ChangeCursor", changeCursor );
-  config->writeEntry("LargeCursor", largeCursor );
-  config->writeEntry("WhiteCursor", whiteCursor );
   config->sync();
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
 }

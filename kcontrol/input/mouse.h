@@ -75,8 +75,6 @@ public:
  int autoSelectDelay;
  int visualActivate;
  bool changeCursor;
- bool largeCursor;
- bool whiteCursor;
  int wheelScrollLines;
 };
 
@@ -110,8 +108,6 @@ private:
   void setAccel(double);
   void setThreshold(int);
   void setHandedness(int);
-
-  void fixCursorFile();
 
   KDoubleNumInput *accel;
   KIntNumInput *thresh;
