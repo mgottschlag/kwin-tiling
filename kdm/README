@@ -77,6 +77,27 @@ other distributions/systems.
    presenting you the exceedingly cute KDE login screen.
 
 
+KDM's file system layout
+------------------------
+${kde_confdir} is usually ${prefix}/share/config
+${kde_datadir} is usually ${prefix}/share/apps
+The indented locations are envisioned for a configuration shared with GDM.
+
+${kde_confdir}/kdm/{kdmrc,Xservers,Xaccess,Xwilling,...}
+${kde_datadir}/kdm/sessions/*.desktop
+  /etc/X11/sessions/,/usr/share/xsessions/
+${kde_datadir}/kdm/pics/users/
+${kde_datadir}/kdm/pics/
+${kde_datadir}/kdm/faces/*.face{,.icon}
+  /usr/share/faces/
+/var/run/xauth/A*
+/var/run/xdmctl/xdmctl*
+/var/run/kdm.pid
+/var/lib/kdm/kdmsts
+<site-specific>/*.dmrc
+$HOME/.face{,.icon}
+$HOME/.dmrc
+
 The command FiFos
 -----------------
 
@@ -98,10 +119,12 @@ Global FiFo commands:
 "shutdown" ("reboot"|"halt") ("forcenow"|"trynow"|"schedule")
  - same functionality as the shutdown dialog
 
-"login" display ("now"|"schedule") user password session_arguments
+"login" display ("now"|"schedule") user password [session_arguments]
  - login user at specified display. if "now" is specified, a possibly
-   running session is killed, otherwise the login is done after the session
-   exits.
+   running session is killed, otherwise the login is done after the
+   session exits.
+   session_arguments are printf-like escaped contents for .dmrc. Unlisted
+   keys will default to previously saved values.
 
 Per-display Fifo commands:
 

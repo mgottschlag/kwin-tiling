@@ -50,6 +50,8 @@ static int receivedUsr1;
 
 static int serverPause (unsigned t, int serverPid);
 
+Display *dpy;
+
 /* ARGSUSED */
 static SIGVAL
 CatchUsr1 (int n ATTR_UNUSED)
@@ -252,7 +254,7 @@ GetRemoteAddress (struct display *d, int fd)
 #endif /* XDMCP */
 
 static int
-openErrorHandler (Display *dpy ATTR_UNUSED)
+openErrorHandler (Display *dspl ATTR_UNUSED)
 {
     LogError ("IO Error in XOpenDisplay\n");
     exit (EX_OPENFAILED_DPY);
@@ -274,7 +276,7 @@ WaitForServer (struct display *d)
 	    Debug ("before XOpenDisplay(%s)\n", d->name);
 	    errno = 0;
 	    (void) XSetIOErrorHandler (openErrorHandler);
-	    d->dpy = XOpenDisplay (d->name);
+	    dpy = XOpenDisplay (d->name);
 #ifdef STREAMSCONN
 	    {
 		/* For some reason, the next XOpenDisplay we do is
@@ -290,13 +292,13 @@ WaitForServer (struct display *d)
 	    (void) Signal (SIGALRM, SIG_DFL);
 	    (void) XSetIOErrorHandler ((int (*)(Display *)) 0);
 	    Debug ("after XOpenDisplay(%s)\n", d->name);
-	    if (d->dpy) {
+	    if (dpy) {
 #ifdef XDMCP
 	    	if ((d->displayType & d_location) == dForeign)
-		    GetRemoteAddress (d, ConnectionNumber (d->dpy));
+		    GetRemoteAddress (d, ConnectionNumber (dpy));
 #endif
-	    	RegisterCloseOnFork (ConnectionNumber (d->dpy));
-		(void) fcntl (ConnectionNumber (d->dpy), F_SETFD, 0);
+	    	RegisterCloseOnFork (ConnectionNumber (dpy));
+		(void) fcntl (ConnectionNumber (dpy), F_SETFD, 0);
 	    	return 1;
 	    }
 	    Debug ("OpenDisplay(%s) attempt %d failed: %s\n",
@@ -315,8 +317,8 @@ WaitForServer (struct display *d)
 void
 ResetServer (struct display *d)
 {
-    if (d->dpy && (d->displayType & d_origin) != dFromXDMCP)
-	pseudoReset (d->dpy);
+    if (dpy && (d->displayType & d_origin) != dFromXDMCP)
+	pseudoReset ();
 }
 
 static Jmp_buf	pingTime;
@@ -329,7 +331,7 @@ PingLost (void)
 
 /* ARGSUSED */
 static int
-PingLostIOErr (Display *dpy ATTR_UNUSED)
+PingLostIOErr (Display *dspl ATTR_UNUSED)
 {
     PingLost();
     return 0;
@@ -356,7 +358,7 @@ PingServer (struct display *d)
     if (!Setjmp (pingTime))
     {
 	Debug ("ping X server\n");
-	XSync (d->dpy, 0);
+	XSync (dpy, 0);
     }
     else
     {

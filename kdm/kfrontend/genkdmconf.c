@@ -43,6 +43,8 @@
 #include <errno.h>
 #include <pwd.h>
 #include <time.h>
+#include <errno.h>
+#include <sys/stat.h>
 #include <sys/param.h>
 #ifdef BSD
 # include <utmp.h>
@@ -60,15 +62,22 @@
 
 #define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
 
+#define __stringify(x) #x
+#define stringify(x) __stringify(x)
+
 #define KDMCONF KDE_CONFDIR "/kdm"
+#define KDMDATA KDE_DATADIR "/kdm"
 
 #define RCVERMAJOR 2
-#define RCVERMINOR 0
-#define RCVERSTR "2.0"
+#define RCVERMINOR 1
+#define RCVERSTR stringify(RCVERMAJOR) "." stringify(RCVERMINOR)
 
 static int old_scripts, no_old_scripts, old_confs, no_old,
     no_backup, no_in_notice, use_destdir, mixed_scripts;
-static const char *newdir = KDMCONF, *oldxdm, *oldkde;
+static const char *newdir = KDMCONF, *facesrc = KDMDATA "/pics/users",
+    *oldxdm, *oldkde;
+
+static int oldver;
 
 
 typedef struct StrList {
@@ -227,7 +236,7 @@ sed (const char *text, const char *alt, const char *neu)
 */
 
 
-/* #define WANT_CLOSE 1 */
+#define WANT_CLOSE 1
 
 typedef struct File {
 	char *buf, *eof;
@@ -286,6 +295,36 @@ freeBuf (File *file)
 	free (file->buf);
 }
 #endif
+
+static int
+mkdirp (const char *name, int mode, const char *what, int existok)
+{
+    char *mfname = mstrdup (name);
+    int i;
+
+    for (i = 1; mfname[i]; i++)
+	if (mfname[i] == '/') {
+	    mfname[i] = 0;
+	    if (mkdir (mfname, 0755) && errno != EEXIST) {
+		fprintf (stderr, "Cannot create parent %s of %s directory %s: %s\n",
+			 mfname, what, name, strerror (errno));
+		free (mfname);
+		return 0;
+	    }
+	    mfname[i] = '/';
+	}
+    free (mfname);
+    if (mkdir (name, mode)) {
+	if (errno != EEXIST) {
+	    fprintf (stderr, "Cannot create %s directory %s: %s\n",
+		     what, name, strerror (errno));
+	    return 0;
+	}
+	if (!existok)
+	    return 0;
+    }
+    return 1;
+}
 
 
 static void
@@ -590,9 +629,6 @@ static const char def_xaccess[] =
 #define XSERVERS_MAJOR 1
 #define XSERVERS_MINOR 99
 
-#define stringify(s)    tostring(s)
-#define tostring(s)     #s
-
 #define VERSION_WARNING "### Don't change these two lines; they are hints for genkdmconf. ###\n"
 #define XSERVERS_VERSION VERSION_WARNING "### Version " stringify(XSERVERS_MAJOR) "." stringify(XSERVERS_MINOR) " ###\n"
 
@@ -730,33 +766,24 @@ static const char def_session[] =
 "test -f /etc/xprofile && . /etc/xprofile\n"
 "test -f $HOME/.xprofile && . $HOME/.xprofile\n"
 "\n"
-"sess=$1\n"
-"shift\n"
-"\n"
-"case $sess in\n"
-"    failsafe)\n"
-"	exec xterm -geometry 80x24-0-0 $*\n"
+"case $1 in\n"
+"    \"\")\n"
+"	exec xmessage -center -buttons OK:0 -default OK \"Sorry, $DESKTOP_SESSION is no valid session.\"\n"
 "	;;\n"
-"    \"\"|default)\n"
-"	if test -x $HOME/.xsession; then\n"
-"	    exec $HOME/.xsession $*\n"
-"	else\n"
-"	    sess=kde\n"
-"	fi\n"
+"    failsafe)\n"
+"	exec xterm -geometry 80x24-0-0\n"
+"	;;\n"
+"    custom)\n"
+"	exec $HOME/.xsession\n"
+"	;;\n"
+"    default)\n"
+"	exec startkde\n"
+"	;;\n"
+"    *)\n"
+"	eval exec \"$1\"\n"
 "	;;\n"
 "esac\n"
-"\n"
-"# start windowmanager\n"
-"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
-"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
-"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
-"sess=`echo \"$sess\" | tr A-Z a-z`\n"
-"type \"$sess\" >/dev/null 2>&1 && exec \"$sess\" $*\n"
-"type \"start$sess\" >/dev/null 2>&1 && exec \"start$sess\" $*\n"
-"type \"$sess-session\" >/dev/null 2>&1 && exec \"$sess-session\" $*\n"
-"\n"
-"# windowmanager not found, tell user\n"
-"exec xmessage -center -buttons OK:0 -default OK \"Sorry, $sess not found.\"\n";
+"exec xmessage -center -buttons OK:0 -default OK \"Sorry, cannot execute $1. Check $DESKTOP_SESSION.desktop.\"\n";
 
 static const char def_background[] =
 "[Desktop0]\n"
@@ -1585,7 +1612,8 @@ mk_reset(Entry *ce, Section *cs ATTR_UNUSED)
 static void
 mk_session(Entry *ce, Section *cs ATTR_UNUSED)
 {
-    if (old_scripts || (ce->active && inNewDir (ce->value)))
+    if ((old_scripts || (ce->active && inNewDir (ce->value))) &&
+	oldver >= 0x201)
 	linkfile (ce);
     else {
 	ce->value = KDMCONF "/Xsession";
@@ -1745,6 +1773,80 @@ upd_forgingseed(Entry *ce, Section *cs ATTR_UNUSED)
     }
 }
 
+static void
+upd_datadir(Entry *ce, Section *cs ATTR_UNUSED)
+{
+    char *oldsts, *newsts;
+    const char *dir;
+
+    if (use_destdir)
+	return;
+    dir = ce->active ? ce->value : "/var/lib/kdm";
+    if (mkdirp (dir, 0755, "data", 0) && oldkde) {
+	ASPrintf (&oldsts, "%s/kdm/kdmsts", oldkde);
+	ASPrintf (&newsts, "%s/kdmsts", dir);
+	rename (oldsts, newsts);
+    }
+}
+
+static void
+CopyFile (const char *from, const char *to)
+{
+    File file;
+    int fd;
+
+    if (readFile (&file, from)) {
+	if ((fd = creat (to, 0644)) >= 0) {
+	    write (fd, file.buf, file.eof - file.buf);
+	    close (fd);
+	}
+	freeBuf (&file);
+    }
+}
+
+static void
+upd_facedir(Entry *ce, Section *cs ATTR_UNUSED)
+{
+    char *oldpic, *newpic, *defpic, *rootpic;
+    const char *dir;
+    struct passwd *pw;
+
+    if (use_destdir)
+	return;
+    dir = ce->active ? ce->value : KDMDATA "/faces";
+    if (mkdirp (dir, 0755, "user face", 0)) {
+	ASPrintf (&defpic, "%s/.default.face.icon", dir);
+	ASPrintf (&rootpic, "%s/root.face.icon", dir);
+	if (oldkde) {
+	    setpwent ();
+	    while ((pw = getpwent()))
+		if (strcmp (pw->pw_name, "root")) {
+		    ASPrintf (&oldpic, "%s/../apps/kdm/pics/users/%s.png",
+					oldkde, pw->pw_name);
+		    ASPrintf (&newpic, "%s/%s.face.icon", dir, pw->pw_name);
+		    rename (oldpic, newpic);
+		    free (newpic);
+		    free (oldpic);
+		}
+	    endpwent ();
+	    ASPrintf (&oldpic, "%s/../apps/kdm/pics/users/default.png", oldkde);
+	    if (!rename (oldpic, defpic))
+		defpic = 0;
+	    ASPrintf (&oldpic, "%s/../apps/kdm/pics/users/root.png", oldkde);
+	    if (!rename (oldpic, rootpic))
+		rootpic = 0;
+	}
+	if (defpic) {
+	    ASPrintf (&oldpic, "%s/default1.png", facesrc);
+	    CopyFile (oldpic, defpic);
+	}
+	if (rootpic) {
+	    ASPrintf (&oldpic, "%s/root1.png", facesrc);
+	    CopyFile (oldpic, rootpic);
+	}
+    }
+}
+
 static Ent entsGeneral[] = {
 { "ConfigVersion",	0, 0, 
 "# This option exists solely for the purpose of a clean automatic upgrade.\n"
@@ -1781,6 +1883,13 @@ static Ent entsGeneral[] = {
 { "FifoGroup",		0, 0, 
 "# To which group the command FiFos should belong.\n"
 "# Default is -1 (effectively root)\n" },
+{ "DataDir",		0, upd_datadir,
+"# The directory kdm should store persistent working data in.\n"
+"# Default is /var/lib/kdm\n" },
+{ "DmrcDir",		0, 0,
+"# The directory kdm should store users' .dmrc files in. This is only needed\n"
+"# if the home directories are not readable before actually logging in (like\n"
+"# with AFS). Default is \"\"\n" },
 };
 
 static Ent entsXdmcp[] = {
@@ -1889,7 +1998,7 @@ static Ent entsCore[] = {
 "# Default is \"\"\n" },
 { "Session",		0, mk_session, 
 "# The program which is run as the user which logs in. It is supposed to\n"
-"# interpret the session argument (see SessionTypes) and start an appropriate\n"
+"# interpret the session argument (see SessionsDirs) and start an appropriate\n"
 "# session according to it.\n"
 "# Default is " XBINDIR "/xterm -ls -T\n" },
 { "FailsafeClient",	0, 0, 
@@ -1936,9 +2045,6 @@ static Ent entsCore[] = {
 "# NOTE: the interaction is currently not implemented. If this is set to true,\n"
 "# a normal forced shutdown will happen (without caring for the AllowSdForceNow\n"
 "# option!), i.e., KDM will behave exactly as before KDE 3.0.\n" }, 
-{ "SessSaveFile",	0, 0, 
-"# Where (relatively to the user's home directory) to store the last\n"
-"# selected session. Default is .wmrc\n" },
 { "ServerAttempts",	0, 0, 
 "# How often to try to run the X-server. Running includes executing it and\n"
 "# waiting for it to come up. Default is 1\n" },
@@ -1948,26 +2054,23 @@ static Ent entsCore[] = {
 "# Enable password-less logins on this display. USE WITH EXTREME CARE!\n"
 "# Default is false\n" },
 { "NoPassUsers",	0, 0, 
-"# The users that don't need to provide a password to log in. NEVER list root!\n" },
+"# The users that don't need to provide a password to log in. NEVER list root!\n"
+"# Default is \"\"\n" },
 { "AutoLoginEnable",	0, 0, 
 "# Enable automatic login on this display. USE WITH EXTREME CARE!\n"
 "# Default is false\n" },
 { "AutoLoginUser",	0, 0, 
-"# The user to log in automatically. NEVER specify root!\n" },
+"# The user to log in automatically. NEVER specify root! Default is \"\"\n" },
 { "AutoLoginPass",	0, 0, 
 "# The password for the user to log in automatically. This is NOT required\n"
 "# unless the user is to be logged into a NIS or Kerberos domain. If you use\n"
-"# it, you should \"chmod 600 kdmrc\" for obvious reasons.\n" },
-{ "AutoLoginSession",	0, 0, 
-"# The session for the user to log in automatically. This becomes useless after\n"
-"# the user's first login, as the last used session will take precedence.\n" },
+"# it, you should \"chmod 600 kdmrc\" for obvious reasons. Default is \"\"\n" },
+{ "SessionsDirs",	0, 0, 
+"# The directories containing session type definitions in .desktop format.\n"
+"# Default is " KDMDATA "/sessions\n" },
 };
 
 static Ent entsGreeter[] = {
-{ "SessionTypes",	0, 0, 
-"# Session types the users can select. It is advisable to have \"default\" and\n"
-"# \"failsafe\" listed herein, which is also the default.\n"
-"# Note, that the meaning of this value is entirely up to your Session program.\n" },
 { "GUIStyle",		0, upd_guistyle, 
 "# Widget style of the greeter. \"\" means the built-in default which currently\n"
 "# is \"Keramik\". Default is \"\"\n" },
@@ -2038,10 +2141,13 @@ static Ent entsGreeter[] = {
 "# If true, they are sorted alphabetically. Default is true\n" },
 { "FaceSource",		0, 0, 
 "# Specify, where the users' pictures should be taken from.\n"
-"# \"AdminOnly\" - from $KDEDIR/share/apps/kdm/pics/users/$USER.png (Default)\n"
-"# \"UserOnly\" - from the user's $HOME/.face\n"
-"# \"PreferAdmin\" - prefer $USER.png; fallback on $HOME/.face\n"
+"# \"AdminOnly\" - from <FaceDir>/$USER.face[.icon] (Default)\n"
+"# \"UserOnly\" - from the user's $HOME/.face[.icon]\n"
+"# \"PreferAdmin\" - prefer <FaceDir>, fallback on $HOME\n"
 "# \"PreferUser\" - ... and the other way round\n" },
+{ "FaceDir",		0, upd_facedir, 
+"# The directory containing the user images if FaceSource is not UserOnly.\n"
+"# Default is " KDE_DATADIR "/kdm/faces\n" },
 { "PreselectUser",	0, 0, 
 "# Specify, if/which user should be preselected for log in.\n"
 "# Note, that enabling this feature can be considered a security hole,\n"
@@ -2167,6 +2273,8 @@ static DEnt dEntsGeneral[] = {
 #endif
 { "FifoDir",		"/tmp", 0 },
 { "FifoGroup",		"xdmctl", 0 },
+{ "DataDir",		"/var/lib/kdm", 0 },
+{ "DmrcDir",		"/nfs-shared/var/dmrcs", 0 },
 };
 
 DEnt dEntsXdmcp[] = {
@@ -2225,11 +2333,10 @@ static DEnt dEntsAnyCore[] = {
 { "AllowSdForceNow",	"Root", 0 },
 { "DefaultSdMode",	"ForceNow", 0}, 
 { "InteractiveSd",	"false", 0}, 
-{ "SessSaveFile",	"", 0 },	/* XXX .dmrc */
+{ "SessionsDirs",	"/etc/X11/sessions,/usr/share/xsessions", 0 },
 };
 
 static DEnt dEntsAnyGreeter[] = {
-{ "SessionTypes",	"default,kde,failsafe", 1 },
 { "GUIStyle",		"Windows", 0 },
 { "ColorScheme",	"Pumpkin", 0 },
 { "LogoArea",		"None", 0 },
@@ -2251,6 +2358,7 @@ static DEnt dEntsAnyGreeter[] = {
 { "MaxShowUID",		"", 0 },
 { "SortUsers",		"false", 0 },
 { "FaceSource",		"PreferUser", 0 },
+{ "FaceDir",		"/usr/share/faces", 0 },
 { "PreselectUser",	"Previous", 0 },
 { "DefaultUser",	"ethel", 0 },
 { "FocusPasswd",	"true", 0 },
@@ -2283,7 +2391,6 @@ static DEnt dEnts0Core[] = {
 { "AutoLoginEnable",	"true", 0 },
 { "AutoLoginUser",	"fred", 0 },
 { "AutoLoginPass",	"secret!", 0 },
-{ "AutoLoginSession",	"kde", 0 },
 };
 
 static DEnt dEnts0Greeter[] = {
@@ -2653,7 +2760,6 @@ mergeKdmRcOld (const char *path)
 	cpyval ("StdFont", 0);
 	cpyval ("GreetFont", 0);
 	cpyval ("FailFont", 0);
-	cpyval ("SessionTypes", 0);
 	cpyval ("MinShowUID", "UserIDLow");
 	cpyval ("MinShowUID", 0);
 	cpyval ("SortUsers", 0);
@@ -2815,6 +2921,7 @@ static int
 mergeKdmRcNewer (const char *path)
 {
     char *p, *p2;
+    const char *cp;
 
     ASPrintf (&p, "%s/kdm/kdmrc", path);
     if (!cfgRead(p)) {
@@ -2859,7 +2966,7 @@ mergeKdmRcNewer (const char *path)
 	}
 
     applydefs (kdmdefs_all, as(kdmdefs_all), path);
-    if (!*getfqval ("General", "ConfigVersion", "")) {	/* < 3.1 */
+    if (!*(cp = getfqval ("General", "ConfigVersion", ""))) {	/* < 3.1 */
 	mod_usebg = 1;
 	if (is22conf (path)) {
 	    /* work around 2.2.x defaults borkedness */
@@ -2872,7 +2979,10 @@ mergeKdmRcNewer (const char *path)
 	/* work around minor <= 3.0.x defaults borkedness */
 	applydefs (kdmdefs_le_30, as(kdmdefs_le_30), path);
     } else {
-	printf ("Information: old kdmrc is from kde >= 3.1\n");
+	int ma, mi;
+	sscanf (cp, "%d.%d", &ma, &mi);
+	oldver = (ma << 8) | mi;
+	printf ("Information: old kdmrc is from kde >= 3.1 (config version %d.%d)\n", ma, mi);
 	applydefs (kdmdefs_ge_30, as(kdmdefs_ge_30), path);
 	applydefs (kdmdefs_ge_31, as(kdmdefs_ge_31), path);
     }
@@ -3047,7 +3157,6 @@ XResEnt globents[] = {
 { "noPassUsers", "X-%s-Core", 0, P_noPassUsers },
 { "autoUser", "X-%s-Core", "AutoLoginUser", P_autoUser },
 { "autoPass", "X-%s-Core", "AutoLoginPass", P_autoPass },
-{ "autoString", "X-%s-Core", "AutoLoginSession", 0 },
 { "autoReLogin", "X-%s-Core", 0, 0 },
 { "allowNullPasswd", "X-%s-Core", 0, 0 },
 { "allowRootLogin", "X-%s-Core", 0, 0 },
@@ -3222,9 +3331,7 @@ int main(int argc, char **argv)
     Entry *ce, **cep;
     int i, ap, newer, locals, foreigns;
     int no_old_xdm = 0, no_old_kde = 0;
-#ifdef __linux__
     struct stat st;
-#endif
     char nname[80];
 
     for (ap = 1; ap < argc; ap++) {
@@ -3312,6 +3419,8 @@ int main(int argc, char **argv)
 	    where = &oldxdm;
 	else if (!strcmp(argv[ap], "--old-kde"))
 	    where = &oldkde;
+	else if (!strcmp(argv[ap], "--face-src"))
+	    where = &facesrc;
 	else {
 	    fprintf (stderr, "Unknown command line option '%s', try --help\n", argv[ap]);
 	    exit (1);
@@ -3336,7 +3445,6 @@ int main(int argc, char **argv)
 	    readdir (dir); /* .. */
 	    while ((ent = readdir (dir))) {
 		int l = sprintf (bn, "%s/%s", newdir, ent->d_name); /* cannot overflow (kernel would not allow the creation of a longer path) */
-		struct stat st;
 		if (!stat (bn, &st) && !S_ISREG (st.st_mode))
 		    continue;
 		if (no_backup || !memcmp (bn + l - 4, ".bak", 5))

@@ -222,9 +222,7 @@ struct display {
 	int		userSess;	/* -1=nobody, otherwise uid */
 	int		fifofd;		/* command fifo */
 	GPipe		pipe;		/* comm master <-> slave */
-	Display		*dpy;		/* connection to X server; for session process */
 	char		*remoteHost;	/* for X -query type remote login */
-	struct verify_info *verify;	/* info about logged in user; for session process */
 #ifdef XDMCP
 	/* XDMCP state */
 	unsigned	sessionID;	/* ID of active session */
@@ -267,9 +265,8 @@ struct display {
 	char		*failsafeClient;/* a client to start when the session fails */
 	char		*autoUser;	/* user to log in automatically. */
 	char		*autoPass;	/* his password. only for krb5 & sec_rpc */
-	char		*autoString;	/* xsession arguments. */
 	char		**noPassUsers;	/* users allowed in without a password */
-	char		*sessSaveFile;	/* rel. file name where previous session args are saved */
+	char		**sessionsDirs;	/* where session .desktop files are located */
 	char		**chooserHosts;	/* hosts to auto-add in "remote login" */
 	int		loginMode;	/* whether to start chooser or login */
 	int		autoReLogin;	/* auto-re-login after crash */
@@ -305,18 +302,7 @@ struct disphist {
 			sd_when:2,	/* 0=maylater 1=trynow 2=forcenow (SHUT_*) */
 			lock:1,		/* screen locker running */
 			goodExit:1;	/* was the last exit "peaceful"? */
-	char		*nuser, *npass, **nargs;
-};
-
-/*
- * This info is created, when a user is being logged in.
- */
-struct verify_info {
-	int		uid;		/* user id */
-	int		gid;		/* group id */
-	char		*user;		/* name of the user */
-	char		**userEnviron;	/* environment for session */
-	char		**systemEnviron;/* environment for startup/reset */
+	char		*nuser, *npass, *nargs;
 };
 
 #ifdef XDMCP
@@ -374,6 +360,7 @@ extern char	*fifoDir;
 extern int	fifoGroup;
 extern int	fifoAllowShutdown;
 extern int	fifoAllowNuke;
+extern char	*dmrcDir;
 
 /* in daemon.c */
 extern void BecomeDaemon (void);
@@ -408,7 +395,7 @@ extern void StartReserveDisplay (int lt);
 extern void ReapReserveDisplays (void);
 
 /* in reset.c */
-extern void pseudoReset (Display *dpy);
+extern void pseudoReset (void);
 
 /* in resource.c */
 extern char **FindCfgEnt (struct display *d, int id);
@@ -427,7 +414,7 @@ extern char **defaultEnv (const char *user);
 extern char **inheritEnv (char **env, const char **what);
 extern char **systemEnv (struct display *d, const char *user, const char *home);
 extern int source (char **env, char *file);
-extern void DeleteXloginResources (struct display *d);
+extern void DeleteXloginResources (void);
 extern void LoadXloginResources (struct display *d);
 extern void ManageSession (struct display *d);
 extern void SetupDisplay (struct display *d);
@@ -435,7 +422,7 @@ extern void SetupDisplay (struct display *d);
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;
 extern void OpenGreeter (struct display *d);
-extern void CloseGreeter (struct display *d, int force);
+extern void CloseGreeter (int force);
 extern int CtrlGreeterWait (struct display *d, int wreply);
 
 
@@ -480,20 +467,24 @@ extern char **GRecvArgv (void);
 /* client.c */
 extern int Verify (struct display *d, const char *name, const char *pass);
 extern void Restrict (struct display *d);
-extern int StartClient(struct display *d, const char *name, char *pass, char **sessargs);
+extern int StartClient (struct display *d);
 extern void SessionExit (struct display *d, int status) ATTR_NORETURN;
-extern void RdUsrData (struct display *d, const char *usr, char ***args);
+extern int ReadDmrc (void);
+extern char **userEnviron, **systemEnviron;
+extern char *curuser, *curpass, *curdmrc, *newdmrc;
 
 /* server.c */
 extern int StartServer (struct display *d);
 extern int WaitForServer (struct display *d);
 extern void ResetServer (struct display *d);
 extern int PingServer(struct display *d);
+extern Display *dpy;
 
 /* socket.c */
 extern void CreateWellKnownSockets (void);
 
 /* in util.c */
+extern int StrCmp (const char *s1, const char *s2);
 extern int ReStrN (char **dst, const char *src, int len);
 extern int ReStr (char **dst, const char *src);
 extern int StrNDup (char **dst, const char *src, int len);
@@ -515,6 +506,12 @@ extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
 extern const char *SysErrorMsg (void);
+
+/* in inifile.c */
+extern char *iniLoad (const char *fname);
+extern int iniSave (const char *data, const char *fname);
+extern char *iniEntry (char *data, const char *section, const char *key, const char *value);
+extern char *iniMerge (char *data, const char *newdata);
 
 #ifdef XDMCP
 

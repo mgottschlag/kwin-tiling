@@ -31,6 +31,7 @@
 
 #include <kapplication.h>
 
+#include <qvaluevector.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 
@@ -82,6 +83,22 @@ protected:
 };
 
 
+struct SessType {
+    QString name, type;
+    bool hid;
+    int prio;
+
+    SessType() {}
+    SessType( const QString &n, const QString &t, bool h, int p ) :
+	name( n ), type( t ), hid( h ), prio( p ) {}
+    bool operator<( const SessType &st ) {
+	return hid != st.hid ? hid < st.hid :
+		prio != st.prio ? prio < st.prio :
+		 name < st.name;
+    }
+};
+
+
 class KGreeter : public FDialog {
     Q_OBJECT
     typedef FDialog inherited;
@@ -100,11 +117,12 @@ public slots:
     void shutdown_button_clicked();
     void slot_user_name( QListViewItem * );
     void slot_user_doubleclicked();
-    void slot_session_selected();
+    void slot_session_selected( int );
     void SetTimer();
     void timerDone();
     void sel_user();
     void load_wm();
+    void slotActivateMenu( int id );
 
 protected:
     void timerEvent( QTimerEvent * ) {};
@@ -112,35 +130,40 @@ protected:
     void keyReleaseEvent( QKeyEvent * );
 
 private:
-    void set_wm( const char * );
+    void set_wm( int );
     void insertUsers( UserListView * );
     void insertUser( UserListView *, const QImage &, const QString &, struct passwd * );
+    void putSession(const QString &, const QString &, bool, const char *);
+    void insertSessions();
+#define errorbox QMessageBox::Critical
+#define sorrybox QMessageBox::Warning
+#define infobox QMessageBox::Information
     void MsgBox( QMessageBox::Icon typ, QString msg ) { KFMsgBox::box( this, typ, msg ); }
-    void Inserten( QPopupMenu *mnu, const QString& txt, const char *member );
+    void Inserten( const QString& txt, const char *member );
+    void Inserten( const QString& txt, QPopupMenu *cmnu );
     bool verifyUser( bool );
     void updateStatus();
 
-    enum WmStat { WmNone, WmPrev, WmSel };
-    WmStat		wmstat;
     QString		enam, user_pic_dir;
     KSimpleConfig	*stsfile;
     UserListView	*user_view;
     KdmClock		*clock;
     QLabel		*pixLabel;
-    QLabel		*loginLabel, *passwdLabel, *sessargLabel;
+    QLabel		*loginLabel, *passwdLabel;
     KLoginLineEdit	*loginEdit;
     KPasswordEdit	*passwdEdit; 
-    QComboBox		*sessargBox;
-    QWidget		*sessargStat;
-    QLabel		*sasPrev, *sasSel;
     QFrame		*separator;
     QTimer		*timer;
     QLabel		*failedLabel;
     QPushButton		*goButton, *clearButton;
     QPushButton		*menuButton;
-    QPopupMenu		*optMenu;
+    QPopupMenu		*optMenu, *sessMenu;
     QPushButton		*quitButton;
     QPushButton		*shutdownButton;
+    QValueVector<SessType> sessionTypes;
+    int			nnormals, nspecials;
+    int			curprev, cursel;
+    bool		prevvalid;
     int			capslocked;
     bool		loginfailed;
 #ifdef BUILTIN_XCONSOLE

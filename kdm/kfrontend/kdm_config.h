@@ -36,7 +36,6 @@
 #define C_liloCmd		(C_TYPE_STR | 0x1009)
 #define C_liloMap		(C_TYPE_STR | 0x100a)
 
-#define C_SessionTypes		(C_TYPE_ARGV | 0x1010)
 #define C_GUIStyle		(C_TYPE_STR | 0x1011)
 #define C_LogoArea		(C_TYPE_INT | 0x1012)	/* XXX to change */
 # define LOGO_NONE	0
@@ -80,8 +79,9 @@
 # define FACE_PREFER_ADMIN	1
 # define FACE_PREFER_USER	2
 # define FACE_USER_ONLY		3
-#define C_ColorScheme		(C_TYPE_STR | 0x102c)
-#define C_ForgingSeed		(C_TYPE_INT | 0x102d)
+#define C_FaceDir		(C_TYPE_STR | 0x102c)
+#define C_ColorScheme		(C_TYPE_STR | 0x102d)
+#define C_ForgingSeed		(C_TYPE_INT | 0x102e)
 
 #ifdef BUILTIN_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)

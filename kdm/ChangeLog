@@ -1,3 +1,22 @@
+2003-09-22  Oswald Buddenhagen <ossi@kde.org>
+	* Session types are now defined with .desktop files; consequently the
+	  SessionTypes option is gone and we got SessionsDirs instead.
+	* The previous session type choice is now saved in a different file
+	  (~/.dmrc) in a different format (ini-file); the SessSaveFile option
+	  is gone. Optionally KDM can be configured to store all .dmrc files
+	  in a common directory (option DmrcDir); this can be useful for AFS
+	  based installations.
+	* The location of the administratively set user faces is now specified
+	  by the FaceDir option and the pictures have a .face.icon extension
+	  (or .face for "natural" images, possibly photos).
+
+	The spec for the above changes is shared with GDM, so packagers should
+	choose common directories.
+
+	* The kdmsts file moved to /var/lib/kdm by default; option DataDir.
+	* Nuked the AutoLoginSession option; i don't think it was useful at all
+	  and it can be emulated anyway.
+
 2002-12-01  Oswald Buddenhagen <ossi@kde.org>
 
 	* Integrated chooser into greeter; external 'chooser' executable

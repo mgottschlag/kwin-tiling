@@ -2,7 +2,7 @@
 #XCONSOLE_CPPFLAGS = -DBUILTIN_XCONSOLE
 #XCONSOLE_LDADD = $(LIBUTIL)
 
-SUBDIRS = pics
+SUBDIRS = pics sessions
 
 INCLUDES = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background $(all_includes)
 
@@ -40,7 +40,7 @@ genkdmconf_LDADD = $(LIB_X11)
 
 install-data-local: genkdmconf
 	@$(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm
-	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm
+	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(SRCDIR)/pics
 
 messages:
 	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot

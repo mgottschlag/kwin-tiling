@@ -86,10 +86,10 @@ SetProtoDisplayAuthorization (
 
 extern int SaveServerAuthorizations (struct display *d, Xauth **auths, int count);
 extern void CleanUpFileName (const char *src, char *dst, int len);
-extern void RemoveUserAuthorization (struct display *d, struct verify_info *verify);
+extern void RemoveUserAuthorization (struct display *d);
 extern void SetAuthorization (struct display *d);
 extern void SetLocalAuthorization (struct display *d);
-extern void SetUserAuthorization (struct display *d, struct verify_info *verify);
+extern void SetUserAuthorization (struct display *d);
 
 /* genauth.c */
 extern int GenerateAuthData (char *auth, int len);

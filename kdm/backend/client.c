@@ -96,10 +96,34 @@ extern int loginsuccess (const char *User, const char *Host, const char *Tty, ch
 extern char *crypt(const char *, const char *);
 #endif
 
+/*
+ * Session data, mostly what struct verify_info was for
+ */
+char *curuser;
+char *curpass;
+char *curdmrc;
+char *newdmrc;
+char **userEnviron;
+char **systemEnviron;
+static int curuid;
+static int curgid;
+
+static struct passwd *p;
+#ifdef USE_PAM
+static pam_handle_t *pamh;
+#elif defined(AIXV3)
+static char tty[16], hostname[100];
+#else
+# ifdef USESHADOW
+static struct spwd *sp;
+# endif
+# ifdef KERBEROS
+static char krbtkfile[MAXPATHLEN];
+# endif
+#endif
 
 #ifdef USE_PAM
 
-static char *PAM_password;
 static char *infostr, *errstr;
 
 # ifdef sun
@@ -133,10 +157,10 @@ PAM_conv (int num_msg,
 	case PAM_PROMPT_ECHO_OFF:
 	    /* wants password */
 # ifndef PAM_FAIL_DELAY
-	    if (!PAM_password[0])
+	    if (!curpass[0])
 		goto conv_err;
 # endif
-	    if (!StrDup (&reply[count].resp, PAM_password))
+	    if (!StrDup (&reply[count].resp, curpass))
 		goto conv_err;
 	    reply[count].resp_retcode = PAM_SUCCESS;
 	    break;
@@ -183,150 +207,50 @@ fail_delay(int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 {}
 # endif
 
-static pam_handle_t *pamh;
-
-#elif !defined(AIXV3) /* USE_PAM */
-
-# ifdef KERBEROS
-static char krbtkfile[MAXPATHLEN];
-static int krb4_authed;
-
-static int
-krb4_auth(struct passwd *p, const char *password)
-{
-    int ret;
-    char realm[REALM_SZ];
-
-    if (krb4_authed)
-	return 1;
-    krb4_authed = 1;
-
-    if (!p->pw_uid)
-	return 0;
-
-    if (krb_get_lrealm(realm, 1)) {
-	Debug ("can't get Kerberos realm.\n");
-	return 0;
-    }
-
-    sprintf(krbtkfile, "%s.%s", TKT_ROOT, d->name);
-    krb_set_tkt_string(krbtkfile);
-    unlink(krbtkfile);
-
-    ret = krb_verify_user(p->pw_name, "", realm, password, 1, "rcmd");
-    if (ret == KSUCCESS) {
-	chown(krbtkfile, p->pw_uid, p->pw_gid);
-	Debug("kerberos verify succeeded\n");
-	return 1;
-    } else if(ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
-	/* failure */
-	Debug("kerberos verify failure %d\n", ret);
-	LogError("KERBEROS verification failure %\"s for %s\n",
-		 krb_get_err_text(ret), p->pw_name);
-	krbtkfile[0] = '\0';
-    }
-    return 0;
-}
-# endif /* KERBEROS */
-
 #endif /* USE_PAM */
 
-static int		pwinited;
-static struct passwd	*p;
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
-static struct spwd	*sp;
-static const char	*user_pass;
-# define arg_shadow , int shadow
-# define NSHADOW , 0
-# define YSHADOW , 1
-#else
-# define arg_shadow
-# define NSHADOW
-# define YSHADOW
-# define user_pass p->pw_passwd
-#endif
-
 static int
-init_pwd(const char *name arg_shadow)
+AccNoPass (struct display *d, const char *un)
 {
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
-    if (pwinited == 2) {
-	Debug("p & sp for %s already read\n", name);
+    char **fp;
+
+    if (!strcmp (un, d->autoUser))
 	return 1;
-    }
-#endif
 
-    if (!pwinited) {
-	Debug("reading p for %s\n", name);
-	p = getpwnam (name);
-	endpwent();
-	if (!p) {
-	    Debug ("getpwnam() failed.\n");
-	    return 0;
-	}
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
-	user_pass = p->pw_passwd;
-#endif
-	pwinited = 1;
-    }
+    for (fp = d->noPassUsers; *fp; fp++)
+	if (!strcmp (un, *fp))
+	    return 1;
 
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(USESHADOW)
-    if (shadow) {
-	Debug("reading sp for %s\n", name);
-	errno = 0;
-	sp = getspnam(name);
-# ifndef QNX4
-	endspent();
-# endif  /* QNX4 doesn't need endspent() to end shadow passwd ops */
-	if (sp) {
-	    user_pass = sp->sp_pwdp;
-	    pwinited = 2;
-	} else
-	    Debug ("getspnam() failed: %s.  Are you root?\n", SysErrorMsg());
-    }
-#endif
-
-    return 1;
+    return 0;
 }
 
-
-#if !defined(USE_PAM) && defined(AIXV3)
-static char tty[16], hostname[100];
-#endif
-
-static int
-init_vrf(struct display *d, const char *name, const char *password)
+int
+Verify (struct display *d, const char *name, const char *pass)
 {
-#ifdef USE_PAM
-    int		pretc;
-#elif defined(AIXV3)
-    int		i;
-    char	*tmpch;
+#if !defined(USE_PAM) && defined(AIXV3)
+    int		i, reenter;
+    char	*msg;
 #endif
-    static char	*pname;
+
+    Debug ("Verify %s ...\n", name);
 
     if (!strlen (name)) {
 	Debug ("empty user name provided.\n");
 	return V_AUTH;
     }
 
-    if (pname && strcmp(pname, name)) {
-	Debug("re-initializing for new user %s\n", name);
-#if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
-	krb4_authed = 0;
-	krbtkfile[0] = '\0';
-#endif
-	pwinited = 0;
+    if (ReStr (&curuser, name) == 2 && curdmrc) {
+	free (curdmrc);
+	curdmrc = 0;
     }
-    ReStr (&pname, name);
+    ReStr (&curpass, pass);
 
 #ifdef USE_PAM
 
-    PAM_password = (char *)password;
-
     if (!pamh) {
+	int pretc;
 	Debug("opening new PAM handle\n");
-	if (pam_start(PAMService, name, &PAM_conversation, &pamh) != PAM_SUCCESS) {
+	if (pam_start(PAMService, curuser, &PAM_conversation, &pamh) != PAM_SUCCESS) {
 	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
@@ -346,7 +270,7 @@ init_vrf(struct display *d, const char *name, const char *password)
 	pam_set_item(pamh, PAM_FAIL_DELAY, (void *)fail_delay);
 # endif
     } else
-	if (pam_set_item(pamh, PAM_USER, name) != PAM_SUCCESS) {
+	if (pam_set_item(pamh, PAM_USER, curuser) != PAM_SUCCESS) {
 	    ReInitErrorLog ();
 	    return V_ERROR;
 	}
@@ -366,6 +290,7 @@ init_vrf(struct display *d, const char *name, const char *password)
 #elif defined(AIXV3)
 
     if ((d->displayType & d_location) == dForeign) {
+	char *tmpch;
 	strncpy(hostname, d->name, sizeof(hostname) - 1);
 	hostname[sizeof(hostname)-1] = '\0';
 	if ((tmpch = strchr(hostname, ':')))
@@ -395,43 +320,81 @@ init_vrf(struct display *d, const char *name, const char *password)
 
 #endif
 
-	Debug("init_vrf ok\n");
-    return V_OK;
-}
+#if !defined(USE_PAM) && !defined(AIXV3)
 
-static int
-AccNoPass (struct display *d, const char *un)
-{
-    char **fp;
+    if (!(p = getpwnam (name))) {
+	Debug ("getpwnam() failed.\n");
+	return V_AUTH;
+    }
+# ifdef linux	/* only Linux? */
+    if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
+	Debug ("account is locked\n");
+	return V_AUTH;
+    }
+# endif
 
-    if (!strcmp (un, d->autoUser))
-	return 1;
+# ifdef USESHADOW
+    if ((sp = getspnam(name)))
+	p->pw_passwd = sp->sp_pwdp;
+    else
+	Debug ("getspnam() failed: %s.  Are you root?\n", SysErrorMsg());
+# endif
 
-    for (fp = d->noPassUsers; *fp; fp++)
-	if (!strcmp (un, *fp))
-	    return 1;
+#endif /* !defined(USE_PAM) && !defined(AIXV3) */
 
-    return 0;
-}
-
-int
-Verify (struct display *d, const char *name, const char *pass)
-{
-    int		pretc;
-#if !defined(USE_PAM) && defined(AIXV3)
-    int		reenter;
-    char	*msg;
-#endif
-
-    Debug ("Verify %s ...\n", name);
-
-    if (!pass[0] && AccNoPass (d, name)) {
+    if (!curpass[0] && AccNoPass (d, curuser)) {
 	Debug ("accepting despite empty password\n");
 	return V_OK;
     }
 
-    if ((pretc = init_vrf(d, name, pass)) != V_OK)
-	return pretc;
+#if !defined(USE_PAM) && !defined(AIXV3)
+
+# ifdef KERBEROS
+    if (p->pw_uid)
+    {
+	int ret;
+	char realm[REALM_SZ];
+
+	if (krb_get_lrealm(realm, 1)) {
+	    LogError("Can't get KerberosIV realm.\n");
+	    return V_ERROR;
+	}
+
+	sprintf(krbtkfile, "%s.%.*s", TKT_ROOT, MAXPATHLEN - strlen(TKT_ROOT) - 2, d->name);
+	krb_set_tkt_string(krbtkfile);
+	unlink(krbtkfile);
+
+	ret = krb_verify_user(curuser, "", realm, curpass, 1, "rcmd");
+	if (ret == KSUCCESS) {
+	    chown(krbtkfile, p->pw_uid, p->pw_gid);
+	    Debug("KerberosIV verify succeeded\n");
+	    goto done;
+	} else if (ret != KDC_PR_UNKNOWN && ret != SKDC_CANT) {
+	    LogError("KerberosIV verification failure %\"s for %s\n",
+		     krb_get_err_text(ret), curuser);
+	    krbtkfile[0] = '\0';
+	    return V_ERROR;
+	}
+	Debug("KerberosIV verify failed: %s\n", krb_get_err_text(ret));
+    }
+    krbtkfile[0] = '\0';
+# endif  /* KERBEROS */
+
+# if defined(ultrix) || defined(__ultrix__)
+    if (authenticate_user(p, curpass, NULL) < 0)
+# else
+    if (strcmp (crypt (curpass, p->pw_passwd), p->pw_passwd))
+# endif
+	if (!d->allowNullPasswd || p->pw_passwd[0]) {
+	    Debug ("password verify failed\n");
+	    return V_AUTH;
+	} /* else: null passwd okay */
+
+# ifdef KERBEROS
+  done:
+# endif
+
+#endif /* !defined(USE_PAM) && !defined(AIXV3) */
 
 #ifdef USE_PAM
 
@@ -446,41 +409,15 @@ Verify (struct display *d, const char *name, const char *pass)
 
     enduserdb();
     msg = NULL;
-    if (authenticate(name, pass, &reenter, &msg) || reenter) {
+    if (authenticate(curuser, curpass, &reenter, &msg) || reenter) {
 	Debug("authenticate() - %s\n", msg ? msg : "error");
 	if (msg)
 	    free((void *)msg);
-	loginfailed(name, hostname, tty);
+	loginfailed(curuser, hostname, tty);
 	return V_AUTH;
     }
     if (msg)
 	free((void *)msg);
-
-#else	/* USE_PAM && AIXV3 */
-
-    if (!init_pwd(name YSHADOW))
-	return V_AUTH;
-
-# ifdef KERBEROS
-    if (!krb4_auth(p, pass))
-# endif  /* KERBEROS */
-# ifdef linux	/* only Linux? */
-	if (p->pw_passwd[0] == '!' || p->pw_passwd[0] == '*') {
-	    Debug ("account is locked\n");
-	    return V_AUTH;
-	}
-# endif
-# if defined(ultrix) || defined(__ultrix__)
-	if (authenticate_user(p, pass, NULL) < 0)
-# else
-	if (strcmp (crypt (pass, user_pass), user_pass))
-# endif
-	{
-	    if(!d->allowNullPasswd || user_pass[0]) {
-		Debug ("password verify failed\n");
-		return V_AUTH;
-	    } /* else: null passwd okay */
-	}
 
 #endif /* USE_PAM && AIXV3 */
 
@@ -492,20 +429,21 @@ Verify (struct display *d, const char *name, const char *pass)
 void
 Restrict (struct display *d)
 {
+#ifdef USE_PAM
     int			pretc;
-    char		*name;
-#ifndef USE_PAM
+#else
 # ifdef AIXV3
     char		*msg;
 # else /* AIXV3 */
     struct stat		st;
-    char		*nolg;
+    const char		*nolg;
 #  ifdef HAVE_GETUSERSHELL
     char		*s;
 #  endif
 #  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
-    int			tim, exp, warntime;
+    int			tim, expir, warntime;
     int			quietlog;
+    int			expire, retv;
 #  endif
 #  ifdef USE_LOGIN_CAP
 #   ifdef HAVE_LOGIN_GETCLASS
@@ -514,29 +452,23 @@ Restrict (struct display *d)
     struct login_cap	*lc;
 #   endif
 #  endif
-#  if defined(HAVE_PW_EXPIRE) || defined(USESHADOW)
-    int			expire;
-    int			retv;
-#  endif
 # endif /* AIXV3 */
 #endif
 
-    name = GRecvStr ();
+    Debug("Restrict %s ...\n", curuser);
 
-    Debug("Restrict %s ...\n", name);
-
-    if (!strcmp (name, "root")) {
+#if defined(USE_PAM) || defined(AIXV3)
+    if (!(p = getpwnam (curuser))) {
+	LogError ("getpwnam(%s) failed.\n", curuser);
+	GSendInt (V_ERROR);
+	return;
+    }
+#endif
+    if (!p->pw_uid) {
 	if (!d->allowRootLogin)
 	    GSendInt (V_NOROOT);
 	else
 	    GSendInt (V_OK);	/* don't deny root to log in */
-	free (name);
-	return;
-    }
-
-    if ((pretc = init_vrf(d, name, "")) != V_OK) {
-	GSendInt (pretc);
-	free (name);
 	return;
     }
 
@@ -556,17 +488,15 @@ Restrict (struct display *d)
 	GSendInt (V_OK);
     /* really should do password changing, but it doesn't fit well */
 
-    free (name);
-
 #elif defined(AIXV3)	/* USE_PAM */
 
     msg = NULL;
-    if (loginrestrictions(name,
+    if (loginrestrictions(curuser,
 	((d->displayType & d_location) == dForeign) ? S_RLOGIN : S_LOGIN,
 	tty, &msg) == -1)
     {
 	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
-	loginfailed(name, hostname, tty);
+	loginfailed(curuser, hostname, tty);
 	if (msg) {
 	    GSendInt (V_MSGERR);
 	    GSendStr (msg);
@@ -577,17 +507,7 @@ Restrict (struct display *d)
     if (msg)
 	free((void *)msg);
 
-    free (name);
-
 #else	/* USE_PAM || AIXV3 */
-
-    if (!init_pwd(name YSHADOW)) {
-	GSendInt (V_AUTH);
-	free (name);
-	return;
-    }
-
-    free (name);
 
 # ifdef HAVE_GETUSERSHELL
     for (;;) {
@@ -692,40 +612,40 @@ Restrict (struct display *d)
 	retv = V_OK;
 
 #  ifdef HAVE_PW_EXPIRE
-	exp = p->pw_expire / 86400L;
-	if (exp) {
+	expir = p->pw_expire / 86400L;
+	if (expir) {
 #  else
 	if (sp->sp_expire != -1) {
-	    exp = sp->sp_expire;
+	    expir = sp->sp_expire;
 #  endif
-	    if (tim > exp) {
+	    if (tim > expir) {
 		GSendInt (V_AEXPIRED);
 #  ifdef USE_LOGIN_CAP
 		login_close(lc);
 #  endif
 		return;
-	    } else if (tim > (exp - warntime) && !quietlog) {
-		expire = exp - tim;
+	    } else if (tim > (expir - warntime) && !quietlog) {
+		expire = expir - tim;
 		retv = V_AWEXPIRE;
 	    }
 	}
 
 #  ifdef HAVE_PW_EXPIRE
-	exp = p->pw_change / 86400L;
-	if (exp) {
+	expir = p->pw_change / 86400L;
+	if (expir) {
 #  else
 	if (sp->sp_max != -1) {
-	    exp = sp->sp_lstchg + sp->sp_max;
+	    expir = sp->sp_lstchg + sp->sp_max;
 #  endif
-	    if (tim > exp) {
+	    if (tim > expir) {
 		GSendInt (V_PEXPIRED);
 #  ifdef USE_LOGIN_CAP
 		login_close(lc);
 #  endif
 		return;
-	    } else if (tim > (exp - warntime) && !quietlog) {
-		if (retv == V_OK || expire > exp) {
-		    expire = exp - tim;
+	    } else if (tim > (expir - warntime) && !quietlog) {
+		if (retv == V_OK || expire > expir) {
+		    expire = expir - tim;
 		    retv = V_PWEXPIRE;
 		}
 	    }
@@ -855,16 +775,52 @@ SetUser (const char *name, int uid, int gid)
     return SetGid (name, gid) && SetUid (name, uid);
 }
 
+static void
+mergeSessionArgs (int cansave)
+{
+    char *mfname;
+    const char *fname;
+    int i, needsave;
 
-static int removeAuth = 0;
-static int sourceReset = 0;
+    mfname = 0;
+    fname = ".dmrc";
+    if ((!curdmrc || newdmrc) && *dmrcDir)
+	if (StrApp (&mfname, dmrcDir, "/", curuser, fname, 0))
+	    fname = mfname;
+    needsave = 0;
+    if (!curdmrc) {
+	curdmrc = iniLoad (fname);
+	if (!curdmrc) {
+	    StrDup (&curdmrc, "[Desktop]\nSession=default\n");
+	    needsave = 1;
+	}
+    }
+    if (newdmrc) {
+	curdmrc = iniMerge (curdmrc, newdmrc);
+	needsave = 1;
+    }
+    if (needsave && cansave)
+	if (!iniSave (curdmrc, fname) && errno == ENOENT && mfname) {
+	    for (i = 0; mfname[i]; i++)
+		if (mfname[i] == '/') {
+		    mfname[i] = 0;
+		    mkdir (mfname, 0755);
+		    mfname[i] = '/';
+		}
+	    iniSave (curdmrc, mfname);
+	}
+    if (mfname)
+	free (mfname);
+}
+
+static int removeAuth;
+static int sourceReset;
 
 int
-StartClient (struct display *d,
-	     const char *name, char *pass, char **sessargs)
+StartClient (struct display *d)
 {
-    const char	*shell, *home;
-    char	**argv;
+    const char	*shell, *home, *sessargs, *desksess;
+    char	**argv, *fname, *str;
 #ifdef USE_PAM
     char	**pam_env;
 #else
@@ -878,30 +834,29 @@ StartClient (struct display *d,
     extern char	**environ;
 #endif
     char	*failsafeArgv[2];
-    struct verify_info	*verify;
     int		i, pid;
 
-    if (init_vrf(d, name, pass) != V_OK)
-	return 0;
-
-    if (!init_pwd(name NSHADOW))
-	return 0;
+#if defined(USE_PAM) || defined(AIXV3)
+    if (!(p = getpwnam (curuser))) {
+	LogError ("getpwnam(%s) failed.\n", curuser);
+	return V_ERROR;
+    }
+#endif
 
 #ifndef USE_PAM
 # ifdef AIXV3
     msg = NULL;
-    loginsuccess(name, hostname, tty, &msg);
+    loginsuccess(curuser, hostname, tty, &msg);
     if (msg) {
 	Debug("loginsuccess() - %s\n", msg);
 	free((void *)msg);
     }
 # else /* AIXV3 */
 #  if defined(KERBEROS) && !defined(NO_AFS)
-    if (pass[0] && krb4_auth(p, pass)) {
+    if (krbtkfile[0] != '\0') {
 	if (k_hasafs()) {
 	    if (k_setpag() == -1)
-		LogError ("setpag() for %s failed\n", name);
-	    /*  XXX maybe, use k_afsklog_uid(NULL, NULL, p->pw_uid)? */
+		LogError ("setpag() for %s failed\n", curuser);
 	    if ((ret = k_afsklog(NULL, NULL)) != KSUCCESS)
 		LogError("AFS Warning: %s\n", krb_get_err_text(ret));
 	}
@@ -910,23 +865,17 @@ StartClient (struct display *d,
 # endif /* AIXV3 */
 #endif	/* !PAM */
 
-    if (!(verify = malloc (sizeof (*verify)))) {
-	LogOutOfMem("StartClient");
-	return 0;
-    }
-    d->verify = verify;
-    StrDup (&verify->user, name);
-    verify->uid = p->pw_uid;
-    verify->gid = p->pw_gid;
+    curuid = p->pw_uid;
+    curgid = p->pw_gid;
     home = p->pw_dir;
     shell = p->pw_shell;
-    verify->userEnviron = userEnv (d, p->pw_uid == 0, name, home, shell);
-    verify->systemEnviron = systemEnv (d, name, home);
+    userEnviron = userEnv (d, !curuid, curuser, home, shell);
+    systemEnviron = systemEnv (d, curuser, home);
     Debug ("user environment:\n%[|''>'\n's"
 	   "system environment:\n%[|''>'\n's"
 	   "end of environments\n", 
-	   verify->userEnviron,
-	   verify->systemEnviron);
+	   userEnviron,
+	   systemEnviron);
 
     /*
      * for user-based authorization schemes,
@@ -943,11 +892,11 @@ StartClient (struct display *d,
 	    char		domainname[MAXNETNAMELEN+1];
     
 	    getdomainname(domainname, sizeof domainname);
-	    user2netname (netname, verify->uid, domainname);
+	    user2netname (netname, curuid, domainname);
 	    addr.family = FamilyNetname;
 	    addr.length = strlen (netname);
 	    addr.address = netname;
-	    XAddHost (d->dpy, &addr);
+	    XAddHost (dpy, &addr);
 	}
 #endif
 #ifdef K5AUTH
@@ -973,10 +922,13 @@ StartClient (struct display *d,
      * Run system-wide initialization file
      */
     sourceReset = 1;
-    if (source (verify->systemEnviron, d->startup) != 0) {
+    if (source (systemEnviron, d->startup) != 0) {
 	LogError("Cannot execute startup script %\"s\n", d->startup);
 	SessionExit (d, EX_NORMAL);
     }
+
+    if (*dmrcDir)
+	mergeSessionArgs (TRUE);
 
     Debug ("now starting the session\n");
 #ifdef USE_PAM
@@ -985,7 +937,13 @@ StartClient (struct display *d,
 #endif    
     removeAuth = 1;
     if (d->fifoPath)
-	chown (d->fifoPath, verify->uid, -1);
+	chown (d->fifoPath, curuid, -1);
+    endpwent();
+#if !defined(USE_PAM) && !defined(AIXV3)
+# ifndef QNX4  /* QNX4 doesn't need endspent() to end shadow passwd ops */
+    endspent();
+# endif
+#endif
     switch (pid = Fork ()) {
     case 0:
 	/* Do system-dependent login setup here */
@@ -1001,16 +959,16 @@ StartClient (struct display *d,
 # endif
 #endif
 
-#ifndef AIXV3
+#if defined(USE_PAM) || !defined(AIXV3)
 
 # ifndef HAS_SETUSERCONTEXT
-	if (!SetGid (name, verify->gid))
+	if (!SetGid (curuser, curgid))
 	    exit (1);
 # endif
 # ifdef USE_PAM
 	if (pam_setcred(pamh, 0) != PAM_SUCCESS) {
 	    LogError("pam_setcred for %s failed: %s\n",
-		     name, SysErrorMsg());
+		     curuser, SysErrorMsg());
 	    exit (1);
 	}
 	/* pass in environment variables set by libpam and modules it called */
@@ -1018,17 +976,17 @@ StartClient (struct display *d,
 	ReInitErrorLog ();
 	if (pam_env)
 	    for(; *pam_env; pam_env++)
-		verify->userEnviron = putEnv(*pam_env, verify->userEnviron);
+		userEnviron = putEnv(*pam_env, userEnviron);
 # endif
 # ifndef HAS_SETUSERCONTEXT
 #  if defined(BSD) && (BSD >= 199103)
-	if (setlogin(name) < 0)
+	if (setlogin(curuser) < 0)
 	{
-	    LogError("setlogin for %s failed: %s\n", name, SysErrorMsg());
+	    LogError("setlogin for %s failed: %s\n", curuser, SysErrorMsg());
 	    exit (1);
 	}
 #  endif
-	if (!SetUid (name, verify->uid))
+	if (!SetUid (curuser, curuid))
 	    exit (1);
 # else /* HAS_SETUSERCONTEXT */
 
@@ -1049,12 +1007,12 @@ StartClient (struct display *d,
 	if (setusercontext(NULL, p, p->pw_uid, LOGIN_SETALL) < 0)
 	{
 	    LogError("setusercontext for %s failed: %s\n",
-		     name, SysErrorMsg());
+		     curuser, SysErrorMsg());
 	    exit (1);
 	}
 
 	for (i = 0; environ[i]; i++)
-	    verify->userEnviron = putEnv(environ[i], verify->userEnviron);
+	    userEnviron = putEnv(environ[i], userEnviron);
 
 # endif /* HAS_SETUSERCONTEXT */
 #else /* AIXV3 */
@@ -1062,16 +1020,16 @@ StartClient (struct display *d,
 	 * Set the user's credentials: uid, gid, groups,
 	 * audit classes, user limits, and umask.
 	 */
-	if (setpcred(name, NULL) == -1)
+	if (setpcred(curuser, NULL) == -1)
 	{
-	    LogError("setpcred for %s failed: %s\n", name, SysErrorMsg());
+	    LogError("setpcred for %s failed: %s\n", curuser, SysErrorMsg());
 	    exit (1);
 	}
 
 	/*
 	 * Make a copy of the environment, because setpenv will trash it.
 	 */
-	if (!(theenv = xCopyStrArr (0, verify->userEnviron)))
+	if (!(theenv = xCopyStrArr (0, userEnviron)))
 	{
 	    LogOutOfMem("StartSession");
 	    exit (1);
@@ -1082,10 +1040,10 @@ StartClient (struct display *d,
 	 * obtain updated user environment list. This call will initialize
 	 * global 'newenv'. 
 	 */
-	if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
+	if (setpenv(curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 		    theenv, NULL) != 0)
 	{
-	    LogError("Can't set %s's process environment\n", name);
+	    LogError("Can't set %s's process environment\n", curuser);
 	    exit (1);
 	}
 
@@ -1093,8 +1051,8 @@ StartClient (struct display *d,
 	 * Free old userEnviron and replace with newenv from setpenv().
 	 */
 	free(theenv);
-	freeStrArr(verify->userEnviron);
-	verify->userEnviron = newenv;
+	freeStrArr(userEnviron);
+	userEnviron = newenv;
 
 #endif /* AIXV3 */
 
@@ -1104,7 +1062,7 @@ StartClient (struct display *d,
 	 */
 #ifdef SECURE_RPC
 	/* do like "keylogin" program */
-	if (!pass[0])
+	if (!curpass[0])
 	    LogInfo("No password for NIS provided.\n");
 	else
 	{
@@ -1115,10 +1073,10 @@ StartClient (struct display *d,
 
 	    nameret = getnetname (netname);
 	    Debug ("user netname: %s\n", netname);
-	    len = strlen (pass);
+	    len = strlen (curpass);
 	    if (len > 8)
-		bzero (pass + 8, len - 8);
-	    keyret = getsecretkey(netname, secretkey, pass);
+		bzero (curpass + 8, len - 8);
+	    keyret = getsecretkey(netname, secretkey, curpass);
 	    Debug ("getsecretkey returns %d, key length %d\n",
 		   keyret, strlen (secretkey));
 	    /* is there a key, and do we have the right password? */
@@ -1137,7 +1095,7 @@ StartClient (struct display *d,
 		{
 		    /* found a key, but couldn't interpret it */
 		    LogError ("Password incorrect for NIS principal %s\n",
-			      nameret ? netname : name);
+			      nameret ? netname : curuser);
 		}
 	    }
 	    if (!key_set_ok)
@@ -1161,7 +1119,7 @@ StartClient (struct display *d,
 #endif
 #ifdef K5AUTH
 	/* do like "kinit" program */
-	if (!pass[0])
+	if (!curpass[0])
 	    LogInfo("No password for Kerberos5 provided.\n");
 	else
 	{
@@ -1169,12 +1127,11 @@ StartClient (struct display *d,
 	    int result;
 	    extern char *Krb5CCacheName();
 
-	    result = Krb5Init(name, pass, d);
+	    result = Krb5Init(curuser, curpass, d);
 	    if (result == 0) {
 		/* point session clients at the Kerberos credentials cache */
-		verify->userEnviron =
-		    setEnv(verify->userEnviron,
-			   "KRB5CCNAME", Krb5CCacheName(d->name));
+		userEnviron = setEnv(userEnviron,
+				     "KRB5CCNAME", Krb5CCacheName(d->name));
 	    } else {
 		for (i = 0; i < d->authNum; i++)
 		{
@@ -1191,40 +1148,51 @@ StartClient (struct display *d,
 	    }
 	}
 #endif /* K5AUTH */
-	if (pass)
-	    bzero(pass, strlen(pass));
-	SetUserAuthorization (d, verify);
-	home = getEnv (verify->userEnviron, "HOME");
+	if (curpass)
+	    bzero(curpass, strlen(curpass));
+	SetUserAuthorization (d);
+	home = getEnv (userEnviron, "HOME");
 	if (home) {
 	    if (chdir (home) < 0) {
 		LogError ("Cannot chdir to %s's home %s: %s, using /\n",
-			  getEnv (verify->userEnviron, "USER"), home, SysErrorMsg());
+			  curuser, home, SysErrorMsg());
+		home = 0;
+		userEnviron = setEnv(userEnviron, "HOME", "/");
 		chdir ("/");
-		verify->userEnviron = setEnv(verify->userEnviron, "HOME", "/");
-	    } else {
-		FILE *file;
-		for (i = 0; d->sessSaveFile[i]; i++)
-		    if (d->sessSaveFile[i] == '/') {
-			d->sessSaveFile[i] = 0;
-			mkdir (d->sessSaveFile, 0700);
-			d->sessSaveFile[i] = '/';
-		    }
-		if ( (file = fopen(d->sessSaveFile, "w")) != NULL ) {
-		    for (i = 0; sessargs[i]; i++)
-			fprintf (file, "%s\n", sessargs[i]);
-		    /* XXX write here: relogin, dpi, bbp, res */
-		    fclose (file);
+	    }
+	} else
+	    chdir ("/");
+	if (!*dmrcDir)
+	    mergeSessionArgs (home != 0);
+	if (!(desksess = iniEntry (curdmrc, "Desktop", "Session", 0)))
+	    desksess = "failsafe"; /* only due to OOM */
+	userEnviron = setEnv (userEnviron, "DESKTOP_SESSION", desksess);
+	for (i = 0; d->sessionsDirs[i]; i++) {
+	    fname = 0;
+	    if (StrApp (&fname, d->sessionsDirs[i], "/", desksess, ".desktop", 0)) {
+		if ((str = iniLoad (fname))) {
+		    if (!StrCmp (iniEntry (str, "Desktop Entry", "Hidden", 0), "true") ||
+			!(sessargs = iniEntry (str, "Desktop Entry", "Exec", 0)))
+			sessargs = "";
+		    free (str);
+		    free (fname);
+		    goto gotit;
 		}
+		free (fname);
 	    }
 	}
+	if (!strcmp (desksess, "failsafe") ||
+	    !strcmp (desksess, "default") ||
+	    !strcmp (desksess, "custom"))
+	    sessargs = desksess;
+	else
+	    sessargs = "";
+      gotit:
 	argv = parseArgs ((char **)0, d->session);
-Debug ("session args: %\"[s\n", sessargs);
-	mergeStrArrs (&argv, sessargs);
-	if (!argv || !argv[0])
-	    argv = addStrArr (argv, "xsession", 8);
-	if (argv) {
-		Debug ("executing session %s\n", argv[0]);
-		execute (argv, verify->userEnviron);
+	if (argv && argv[0] && *argv[0]) {
+		argv = addStrArr (argv, sessargs, -1);
+		Debug ("executing session %\"[s\n", argv);
+		execute (argv, userEnviron);
 		LogError ("Session %\"s execution failed: %s\n",
 			  argv[0], SysErrorMsg());
 	} else {
@@ -1232,7 +1200,9 @@ Debug ("session args: %\"[s\n", sessargs);
 	}
 	failsafeArgv[0] = d->failsafeClient;
 	failsafeArgv[1] = 0;
-	execute (failsafeArgv, verify->userEnviron);
+	execute (failsafeArgv, userEnviron);
+	LogError ("Failsafe client %\"s execution failed: %s\n",
+		  failsafeArgv[0], SysErrorMsg());
 	exit (1);
     case -1:
 	LogError ("Forking session on %s failed: %s\n",
@@ -1247,12 +1217,12 @@ Debug ("session args: %\"[s\n", sessargs);
 	if (!Setjmp (mstrtalk.errjmp)) {
 	    GSet (&mstrtalk);
 	    GSendInt (D_User);
-	    GSendInt (verify->uid);
+	    GSendInt (curuid);
 	    if (d->autoReLogin) {
 		GSendInt (D_ReLogin);
-		GSendStr (name);
-		GSendStr (pass);
-		GSendArgv (sessargs);
+		GSendStr (curuser);
+		GSendStr (curpass);
+		GSendStr (newdmrc);
 	    }
 	}
 	return pid;
@@ -1273,7 +1243,7 @@ SessionExit (struct display *d, int status)
 	 * run system-wide reset file
 	 */
 	Debug ("source reset program %s\n", d->reset);
-	source (d->verify->systemEnviron, d->reset);
+	source (systemEnviron, d->reset);
     }
     if (removeAuth)
     {
@@ -1284,15 +1254,15 @@ SessionExit (struct display *d, int status)
 	    /* shutdown PAM session */
 	    if (pam_setcred(pamh, PAM_DELETE_CRED) != PAM_SUCCESS)
 		LogError("pam_setcred(DELETE_CRED) for %s failed: %s\n",
-			 d->verify->user, SysErrorMsg());
+			 curuser, SysErrorMsg());
 	    pam_close_session(pamh, 0);
 	    pam_end(pamh, PAM_SUCCESS);
 	    pamh = NULL;
 	    ReInitErrorLog ();
 	}
 #endif
-	SetUser (d->verify->user, d->verify->uid, d->verify->gid);
-	RemoveUserAuthorization (d, d->verify);
+	SetUser (curuser, curuid, curgid);
+	RemoveUserAuthorization (d);
 #ifdef K5AUTH
 	/* do like "kdestroy" program */
         {
@@ -1341,53 +1311,80 @@ SessionExit (struct display *d, int status)
     exit (status);
 }
 
-
-static void
-addData (const char *buf, int len, void *ptr)
-{
-    char ***sp = (char ***)ptr;
-    *sp = addStrArr (*sp, buf, len);
-}
-
-void
-RdUsrData (struct display *d, const char *usr, char ***args)
+int
+ReadDmrc ()
 {
     struct passwd *pw;
-    int len, pid, fd, pfd[2];
+    char *data, *fname = 0;
+    int len, pid, pfd[2], err;
 
-    *args = 0;
+    if (!curuser || !curuser[0] || !(pw = getpwnam (curuser)))
+	return GE_NoUser;
 
-    if (!usr || !usr[0] || !(pw = getpwnam (usr)))
-	return;
+    if (*dmrcDir) {
+	if (!StrApp (&fname, dmrcDir, "/", curuser, ".dmrc", 0))
+	    return GE_Error;
+	if (!(curdmrc = iniLoad (fname))) {
+	    free (fname);
+	    return GE_Ok;
+	}
+	free (fname);
+	return GE_NoFile;
+    }
+
+    if (!StrApp (&fname, pw->pw_dir, "/.dmrc", 0))
+	return GE_Error;
+    if ((curdmrc = iniLoad (fname))) {
+	free (fname);
+	return GE_Ok;
+    }
+    if (errno != EPERM) {
+	free (fname);
+	return GE_NoFile;
+    }
 
     if (pipe (pfd))
-	return;
+	return GE_Error;
     if ((pid = Fork()) < 0) {
 	close (pfd[0]);
 	close (pfd[1]);
-	return;
+	return GE_Error;
     }
     if (!pid) {
-	char buf[1024];
 	if (!SetUser (pw->pw_name, pw->pw_uid, pw->pw_gid))
 	    exit (0);
-	if (chdir (pw->pw_dir) < 0)
+	if (!(data = iniLoad (fname))) {
+	    static const int m1 = -1;
+	    write (pfd[1], &m1, sizeof(int));
 	    exit (0);
-	if ((fd = open (d->sessSaveFile, O_RDONLY)) < 0)
-	    exit (0);
-	if ((len = read (fd, buf, sizeof(buf))) > 0)
-	    write (pfd[1], buf, len);
-	exit (1);
+	}
+	len = strlen (data);
+	write (pfd[1], &len, sizeof(int));
+	write (pfd[1], data, len + 1);
+	exit (0);
     }
     close (pfd[1]);
-    *args = initStrArr (0);
-    FdGetsCall (pfd[0], addData, args);
+    free (fname);
+    err = GE_Error;
+    if (Reader (pfd[0], &len, sizeof(int)) == sizeof(int)) {
+	if (len == -1)
+	    err = GE_Denied;
+	else if ((curdmrc = malloc(len + 1))) {
+	    if (Reader (pfd[0], curdmrc, len + 1) == len + 1)
+		err = GE_Ok;
+	    else {
+		free (curdmrc);
+		curdmrc = 0;
+	    }
+	}
+    }
     close (pfd[0]);
     (void) Wait4 (pid);
+    return err;
 }
 
 
-#if (defined(Lynx) && !defined(HAS_CRYPT)) || defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS)
+#if (defined(Lynx) && !defined(HAS_CRYPT)) || (defined(SCO) && !defined(SCO_USA) && !defined(_SCO_DS))
 char *crypt(const char *s1, const char *s2)
 {
     return(s2);

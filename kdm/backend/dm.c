@@ -394,9 +394,6 @@ enum utState { UtWait, UtActive };
 #define UT_LINESIZE 32
 #endif
 
-#define __stringify(x) #x
-#define stringify(x) __stringify(x)
-
 #define UT_LINESIZE_S stringify(UT_LINESIZE)
 
 struct utmps {
@@ -736,13 +733,12 @@ splitCmd (const char *string, int len)
 
 static void
 setNLogin (struct display *d, 
-	   const char *nuser, const char *npass, char **nargs, int rl)
+	   const char *nuser, const char *npass, char *nargs, int rl)
 {
     struct disphist *he = d->hstent;
     ReStr (&he->nuser, nuser);
     ReStr (&he->npass, npass);
-    freeStrArr (he->nargs);
-    he->nargs = nargs;
+    ReStr (&he->nargs, nargs);
     he->rLogin = rl;
     Debug ("set next login for %s, level %d\n", nuser, rl);
 }
@@ -750,7 +746,7 @@ setNLogin (struct display *d,
 static void
 processDPipe (struct display *d)
 {
-    char *user, *pass;
+    char *user, *pass, *args;
     int cmd, how, ct, len;
     GTalk dpytalk;
     ARRAY8 ca, ha;
@@ -773,7 +769,9 @@ processDPipe (struct display *d)
     case D_ReLogin:
 	user = GRecvStr ();
 	pass = GRecvStr ();
-	setNLogin (d, user, pass, GRecvArgv (), 1);
+	args = GRecvStr ();
+	setNLogin (d, user, pass, args, 1);
+	free (args);
 	free (pass);
 	free (user);
 	break;
@@ -898,7 +896,7 @@ static void
 processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 {
     struct display *d;
-    char **ar = splitCmd (buf, len);
+    char **ar = splitCmd (buf, len), *args, *asp, *adp;
     int how, when;
 
     if (!ar[0])
@@ -926,8 +924,23 @@ processFifo (const char *buf, int len, void *ptr ATTR_UNUSED)
 	    LogInfo ("Display %s in FiFo command %\"s not found\n", ar[1], ar[0]);
 	    return;
 	}
-	setNLogin (d, 
-		   ar[3], ar[4], ar[5] ? parseArgs ((char **)0, ar[5]) : 0, 2);
+	if (ar[5] && StrDup (&args, ar[5])) {
+	    for (asp = adp = args; *asp; asp++, adp++)
+		if (*asp == '\\')
+		    switch (*++asp) {
+		    case 0: asp--; /* fallthrough */
+		    case '\\': *adp = '\\'; break;
+		    case 'n': *adp = '\n'; break;
+		    case 't': *adp = '\t'; break;
+		    default: *adp++ = '\\'; *adp = *asp; break;
+		    }
+		else
+		    *adp = *asp;
+	    *adp = 0;
+	    setNLogin (d, ar[3], ar[4], args, 2);
+	    free (args);
+	} else
+	    setNLogin (d, ar[3], ar[4], 0, 2);
 	if (d->pid != -1) {
 	    if (d->userSess < 0 || !strcmp (ar[2], "now"))
 		TerminateProcess (d->pid, SIGTERM);

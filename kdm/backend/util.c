@@ -55,6 +55,17 @@ from The Open Group.
 # include <sys/utsname.h>
 #endif
 
+int
+StrCmp (const char *s1, const char *s2)
+{
+    if (s1 == s2)
+	return 0;
+    if (!s1)
+	return -1;
+    if (!s2)
+	return 1;
+    return strcmp (s1, s2);
+}
 
 void
 WipeStr (char *str)
@@ -83,7 +94,7 @@ ReStrN (char **dst, const char *src, int len)
     }
     WipeStr (*dst);	/* make an option, if we should become heavily used */
     *dst = ndst;
-    return 1;
+    return 2;
 }
 
 int

@@ -65,9 +65,11 @@ public:
     int		_lowUserId, _highUserId;
     int		_showRoot;
     int		_faceSource;
+    QString	_faceDir;
     int		_echoMode;
      
-    QStringList	_sessionTypes;
+    QStringList	_sessionsDirs;
+    QString	_stsFile;
 
     int		_allowShutdown, _allowNuke, _defSdMode;
     bool	_interactiveSd;

@@ -831,14 +831,14 @@ chooseHost(struct display *d, int hid)
 			 h->hostaddr.data[2], h->hostaddr.data[3]);
 		GSendInt (D_RemoteHost);
 		GSendStr (addr);
-		/* CloseGreeter (d, 0); not really necessary, init will reap it */
+		/* CloseGreeter (FALSE); not really necessary, init will reap it */
 		SessionExit (d, EX_REMOTE);
 	    } else {
 		GSendInt (D_ChooseHost);
 		GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
 		GSendInt (d->connectionType);	/* maybe h->connectionType? */
 		GSendArr (h->hostaddr.length, (char *)h->hostaddr.data);
-		/* CloseGreeter (d, 0); not really necessary, init will reap it */
+		/* CloseGreeter (FALSE); not really necessary, init will reap it */
 		goto bout;
 	    }
 	    break;
@@ -861,14 +861,14 @@ directChooseHost(struct display *d, const char *name)
     if ((d->displayType & d_location) == dLocal) {
 	GSendInt (D_RemoteHost);
 	GSendStr (name);
-	/* CloseGreeter (d, 0); not really necessary, init will reap it */
+	/* CloseGreeter (FALSE); not really necessary, init will reap it */
 	SessionExit (d, EX_REMOTE);
     } else {
 	GSendInt (D_ChooseHost);
 	GSendArr (d->clientAddr.length, (char *)d->clientAddr.data);
 	GSendInt (d->connectionType);	/* maybe h->connectionType? */
 	GSendArr (4, (char *)&in_addr.sin_addr);	/* XXX AF_INET-specific */
-	/* CloseGreeter (d, 0); not really necessary, init will reap it */
+	/* CloseGreeter (FALSE); not really necessary, init will reap it */
 	SessionExit (d, EX_NORMAL);
     }
 }

@@ -39,6 +39,7 @@
 #include <grp.h>
 
 #define KDMCONF KDE_CONFDIR "/kdm"
+#define KDMDATA KDE_DATADIR "/kdm"
 
 
 /*
@@ -437,6 +438,8 @@ Ent entsGeneral[] = {
 { "RandomDevice",	C_randomDevice,		0,	"" },
 { "FifoDir",		C_fifoDir | C_PATH,	0,	"/var/run/xdmctl" },
 { "FifoGroup",		C_fifoGroup | C_GRP,	0,	"0" },
+{ "DataDir",		C_dataDir | C_PATH,	0,	"/var/lib/kdm" },
+{ "DmrcDir",		C_dmrcDir | C_PATH,	0,	"" },
 };
 
 Ent entsXdmcp[] = {
@@ -495,19 +498,17 @@ Ent entsCore[] = {
 { "AutoLoginEnable",	C_autoLoginEnable | C_BOOL, &VautoLoginEnable, "false" },
 { "AutoLoginUser",	C_autoUser,	(void *)PautoLoginX,	"" },
 { "AutoLoginPass",	C_autoPass,	(void *)PautoLoginX,	"" },
-{ "AutoLoginSession",	C_autoString,	(void *)PautoLoginX,	"" },
 { "AutoReLogin",	C_autoReLogin | C_BOOL,	0,	"false" },
 { "AllowNullPasswd",	C_allowNullPasswd | C_BOOL, 0,	"true" },
 { "AllowRootLogin",	C_allowRootLogin | C_BOOL, 0,	"true" },
-{ "SessSaveFile",	C_sessSaveFile,		0,	".wmrc" },
 { "AllowShutdown",	C_allowShutdown | C_ENUM, sd_who, "All" },
 { "AllowSdForceNow",	C_allowNuke | C_ENUM, sd_who,	"All" },
 { "DefaultSdMode",	C_defSdMode | C_ENUM, sd_mode,	"Schedule" },
 { "InteractiveSd",	C_interactiveSd | C_BOOL, 0,	"true" },
+{ "SessionsDirs",	C_sessionsDirs,		0,	KDMDATA "/sessions" },
 };
 
 Ent entsGreeter[] = {
-{ "SessionTypes",	C_SessionTypes,		0,	"default,failsafe" },
 { "GUIStyle",		C_GUIStyle, 		0,	"" },
 { "ColorScheme",	C_ColorScheme,		0,	"" },
 { "LogoArea",		C_LogoArea | C_ENUM, logoarea,	"Logo" },
@@ -530,6 +531,7 @@ Ent entsGreeter[] = {
 { "MaxShowUID",		C_MaxShowUID,		0,	"65535" },
 { "SortUsers",		C_SortUsers | C_BOOL,	0,	"true" },
 { "FaceSource",		C_FaceSource | C_ENUM, facesource, "AdminOnly" },
+{ "FaceDir",		C_FaceDir,		0,	KDMDATA "/faces" },
 { "PreselectUser",	C_PreselectUser | C_ENUM, preseluser, "None" },
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },

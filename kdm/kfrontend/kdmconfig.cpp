@@ -145,8 +145,10 @@ KDMConfig::KDMConfig()
     _sortUsers = GetCfgInt (C_SortUsers);
     _showRoot = GetCfgInt (C_allowRootLogin);
     _faceSource = GetCfgInt (C_FaceSource);
+    _faceDir = GetCfgQStr (C_FaceDir);
 
-    _sessionTypes = GetCfgQStrList (C_SessionTypes);
+    _sessionsDirs = GetCfgQStrList (C_sessionsDirs);
+    _stsFile = GetCfgQStr (C_dataDir) += "/kdmsts";
 
     _echoMode = GetCfgInt (C_EchoMode);
 

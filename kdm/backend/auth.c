@@ -1022,7 +1022,7 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
 #endif /* XDMCP */
 
 static void
-startUserAuth (struct verify_info *verify, char *buf, char *nbuf, 
+startUserAuth (char *buf, char *nbuf, 
 	       FILE **old, FILE **new)
 {
     const char	*home;
@@ -1030,7 +1030,7 @@ startUserAuth (struct verify_info *verify, char *buf, char *nbuf,
 
     initAddrs ();
     *new = 0;
-    if ((home = getEnv (verify->userEnviron, "HOME"))) {
+    if ((home = getEnv (userEnviron, "HOME"))) {
 	strcpy (buf, home);
 	if (home[strlen(home) - 1] != '/')
 	    strcat (buf, "/");
@@ -1088,7 +1088,7 @@ moveUserAuth (const char *name, char *new_name, char *envname)
 }
 
 void
-SetUserAuthorization (struct display *d, struct verify_info *verify)
+SetUserAuthorization (struct display *d)
 {
     FILE	*old, *new;
     char	*name;
@@ -1102,7 +1102,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
     Debug ("SetUserAuthorization\n");
     auths = d->authorizations;
     if (auths) {
-	startUserAuth (verify, name_buf, new_name, &old, &new);
+	startUserAuth (name_buf, new_name, &old, &new);
 	if (new) {
 	    envname = 0;
 	    name = name_buf;
@@ -1184,10 +1184,8 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	if (name)
 	    envname = moveUserAuth (name, new_name, envname);
 	if (envname) {
-	    verify->userEnviron = setEnv (verify->userEnviron,
-					  "XAUTHORITY", envname);
-	    verify->systemEnviron = setEnv (verify->systemEnviron,
-					    "XAUTHORITY", envname);
+	    userEnviron = setEnv (userEnviron, "XAUTHORITY", envname);
+	    systemEnviron = setEnv (systemEnviron, "XAUTHORITY", envname);
 	}
 	/* a chown() used to be here, but this code runs as user anyway */
     }
@@ -1195,7 +1193,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 }
 
 void
-RemoveUserAuthorization (struct display *d, struct verify_info *verify)
+RemoveUserAuthorization (struct display *d)
 {
     Xauth   **auths;
     FILE    *old, *new;
@@ -1205,7 +1203,7 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
     if (!(auths = d->authorizations))
 	return;
     Debug ("RemoveUserAuthorization\n");
-    startUserAuth (verify, name, new_name, &old, &new);
+    startUserAuth (name, new_name, &old, &new);
     if (new)
     {
 	doWrite = 0;

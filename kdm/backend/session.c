@@ -101,18 +101,32 @@ AbortClient (int pid)
 }
 
 
+static void
+ResetUser(void)
+{
+    if (curuser) {
+	free (curuser);
+	curuser = 0;
+    }
+    if (curdmrc) {
+	free (curdmrc);
+	curdmrc = 0;
+    }
+    if (newdmrc) {
+	free (newdmrc);
+	newdmrc = 0;
+    }
+}
+
 static int clientPid;
 
 static int
 AutoLogon (struct display *d)
 {
-    const char	*str;
-    char	*name, *pass, **args;
+    const char	*name, *pass;
     Time_t	tdiff;
-    int		fargs;
 
-    str = "default";
-    fargs = 0;
+    ResetUser();
     tdiff = time (0) - d->hstent->lastExit - d->openDelay;
 Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n", 
 	tdiff, d->hstent->rLogin, d->hstent->goodExit, d->hstent->nuser);
@@ -123,29 +137,18 @@ Debug ("autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, user = %s\n",
 	    return 0;
 	name = d->hstent->nuser;
 	pass = d->hstent->npass;
-	args = d->hstent->nargs;
+	StrDup (&newdmrc, d->hstent->nargs);
     } else if (d->autoUser[0] != '\0') {
 	if (tdiff <= 0 && d->hstent->goodExit)
 	    return 0;
 	name = d->autoUser;
 	pass = d->autoPass;
-	args = 0;
-	if (d->autoString[0])
-	    str = d->autoString;
     } else
 	return 0;
 
     if (Verify (d, name, pass) != V_OK)
 	return 0;
-    if (!args || !args[0]) {
-	RdUsrData (d, d->autoUser, &args);
-	if (!args || !args[0])
-	    args = parseArgs (args, str);
-	fargs = 1;
-    }
-    clientPid = StartClient (d, name, pass, args);
-    if (fargs)
-	freeStrArr (args);
+    clientPid = StartClient (d);
     if (!clientPid)
 	LogError ("Session start failed\n");
     return clientPid;
@@ -160,13 +163,13 @@ int
 CtrlGreeterWait (struct display *d, int wreply)
 {
     int		i, j, cmd, type, exitCode;
-    char	*name, *pass, **avptr, **args;
+    char	*name, *pass, **avptr;
 #ifdef XDMCP
     ARRAY8Ptr	aptr;
 #endif
 
     if (Setjmp (mstrtalk.errjmp) || Setjmp (grttalk.errjmp)) {
-	CloseGreeter (d, 1);
+	CloseGreeter (TRUE);
 	SessionExit (d, EX_RESERVER_DPY);
     }
     while (GRecvCmd (&cmd)) {
@@ -226,21 +229,50 @@ CtrlGreeterWait (struct display *d, int wreply)
 		break;
 	    }
 	    break;
-	case G_GetSessArg:
-	    Debug ("G_GetSessArg\n");
+	case G_ReadDmrc:
+	    Debug ("G_ReadDmrc\n");
 	    name = GRecvStr ();
 	    Debug (" user %\"s\n", name);
-	    RdUsrData (d, name, &args);
-	    Debug (" -> %\"[{s\n", args);
-	    GSendArgv (args);
-	    freeStrArr (args);
+	    if (StrCmp (curuser, name)) {
+		ResetUser();
+		curuser = name;
+		i = ReadDmrc ();
+		Debug (" -> status %d\n", i);
+		GSendInt (i);
+		Debug (" => %\"s\n", curdmrc);
+	    } else {
+		free (name);
+		Debug (" -> status " stringify(GE_Ok) "\n");
+		GSendInt (GE_Ok);
+		Debug (" => keeping old\n");
+	    }
+	    break;
+	case G_GetDmrc:
+	    Debug ("G_GetDmrc\n");
+	    name = GRecvStr ();
+	    Debug (" key %\"s\n", name);
+	    pass = iniEntry (curdmrc, "Desktop", name, 0);
+	    Debug (" -> %\"s\n", pass);
+	    GSendStr (pass);
+	    if (pass)
+		free (pass);
+	    free (name);
+	    break;
+	case G_PutDmrc:
+	    Debug ("G_PutDmrc\n");
+	    name = GRecvStr ();
+	    Debug (" key %\"s\n", name);
+	    pass = GRecvStr ();
+	    Debug (" value %\"s\n", pass);
+	    newdmrc = iniEntry (newdmrc, "Desktop", name, pass);
+	    free (pass);
 	    free (name);
 	    break;
 	case G_SessionExit:
 	    Debug ("G_SessionExit\n");
 	    exitCode = GRecvInt ();
 	    Debug (" code %d\n", exitCode);
-	    /* CloseGreeter (d, 0); not really necessary, init will reap it */
+	    /* CloseGreeter (FALSE); not really necessary, init will reap it */
 	    SessionExit (d, exitCode);
 	    break;
 	case G_Verify:
@@ -283,7 +315,7 @@ CtrlGreeterWait (struct display *d, int wreply)
 	    return -1;
     }
     LogError ("Greeter exited unexpectedly\n");
-    CloseGreeter (d, 0);
+    CloseGreeter (FALSE);
     SessionExit (d, EX_RESERVER_DPY);
 }
 
@@ -299,12 +331,12 @@ OpenGreeter (struct display *d)
     greeter = 1;
 
     /* Hourglass cursor */
-    if ((xcursor = XCreateFontCursor (d->dpy, XC_watch)))
+    if ((xcursor = XCreateFontCursor (dpy, XC_watch)))
     {
-	XDefineCursor (d->dpy, DefaultRootWindow (d->dpy), xcursor);
-	XFreeCursor (d->dpy, xcursor);
+	XDefineCursor (dpy, DefaultRootWindow (dpy), xcursor);
+	XFreeCursor (dpy, xcursor);
     }
-    XFlush (d->dpy);
+    XFlush (dpy);
 
     /* Load system default Resources (if any) */
     LoadXloginResources (d);
@@ -319,12 +351,12 @@ OpenGreeter (struct display *d)
 }
 
 void
-CloseGreeter (struct display *d, int force)
+CloseGreeter (int force)
 {
     if (!greeter)
 	return;
     (void) GClose (&grtproc, force);
-    DeleteXloginResources (d);
+    DeleteXloginResources ();
     greeter = 0;
 }
 
@@ -342,11 +374,10 @@ IdleTOJmp (int n ATTR_UNUSED)
 static int
 DoGreet (struct display *d)
 {
-    char	*name, *pass, **args;
     int		cmd;
 
     if (Setjmp (idleTOJmp)) {
-	CloseGreeter (d, 1);
+	CloseGreeter (TRUE);
 	SessionExit (d, EX_RESERVE);
     }
     Signal (SIGALRM, IdleTOJmp);
@@ -359,17 +390,8 @@ DoGreet (struct display *d)
     alarm (0);
 
     if (cmd == G_Ready) {
-	name = GRecvStr ();
-	Debug (" user %\"s\n", name);
-	pass = GRecvStr ();
-	Debug (pass[0] ? " password\n" : " no password\n");
-	args = GRecvArgv ();
-	Debug (" arguments: %\"[{s\n", args);
-	CloseGreeter (d, 0);
-	clientPid = StartClient (d, name, pass, args);
-	freeStrArr (args);
-	WipeStr (pass);
-	free (name);
+	CloseGreeter (FALSE);
+	clientPid = StartClient (d);
 	if (!clientPid)
 	    LogError ("Session start failed\n");
     }
@@ -397,7 +419,7 @@ catchTerm (int n ATTR_UNUSED)
 
 /*ARGSUSED*/
 static int
-IOErrorHandler (Display *dpy ATTR_UNUSED)
+IOErrorHandler (Display *dspl ATTR_UNUSED)
 {
     LogError("Fatal X server IO error: %s\n", SysErrorMsg());
     Longjmp (abortSession, EX_AL_RESERVER_DPY);	/* XXX EX_RESERVER_DPY */
@@ -407,7 +429,7 @@ IOErrorHandler (Display *dpy ATTR_UNUSED)
 
 /*ARGSUSED*/
 static int
-ErrorHandler(Display *dpy ATTR_UNUSED, XErrorEvent *event)
+ErrorHandler(Display *dspl ATTR_UNUSED, XErrorEvent *event)
 {
     LogError("X error\n");
     if (event->error_code == BadImplementation)
@@ -422,7 +444,7 @@ ManageSession (struct display *d)
 
     Debug ("ManageSession %s\n", d->name);
     if ((ex = Setjmp (abortSession))) {
-	CloseGreeter (d, 1);
+	CloseGreeter (TRUE);
 	if (clientPid)
 	    AbortClient (clientPid);
 	SessionExit (d, ex);
@@ -463,7 +485,7 @@ ManageSession (struct display *d)
 	    if (cmd == G_Ready)
 		break;
 	    LogError ("Received unknown command %d from greeter\n", cmd);
-	    CloseGreeter (d, 1);
+	    CloseGreeter (TRUE);
 	    SessionExit (d, EX_RESERVER_DPY);	/* XXX hmpf ... EX_DELAYED_RETRY_ONCE */
 	}
 
@@ -534,17 +556,17 @@ SetupDisplay (struct display *d)
 }
 
 void
-DeleteXloginResources (struct display *d)
+DeleteXloginResources ()
 {
     int i;
-    Atom prop = XInternAtom(d->dpy, "SCREEN_RESOURCES", True);
+    Atom prop = XInternAtom(dpy, "SCREEN_RESOURCES", True);
 
-    XDeleteProperty(d->dpy, RootWindow (d->dpy, 0), XA_RESOURCE_MANAGER);
+    XDeleteProperty(dpy, RootWindow (dpy, 0), XA_RESOURCE_MANAGER);
     if (prop) {
-	for (i = ScreenCount(d->dpy); --i >= 0; )
-	    XDeleteProperty(d->dpy, RootWindow (d->dpy, i), prop);
+	for (i = ScreenCount(dpy); --i >= 0; )
+	    XDeleteProperty(dpy, RootWindow (dpy, i), prop);
     }
-    XSync(d->dpy, 0);
+    XSync(dpy, 0);
 }
 
 

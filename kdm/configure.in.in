@@ -11,6 +11,8 @@ savex=$exec_prefix
 test "x$exec_prefix" = xNONE && exec_prefix=$prefix
 KDE_EXPAND_MAKEVAR(KDE_CONFDIR, kde_confdir)
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
+KDE_EXPAND_MAKEVAR(KDE_DATADIR, kde_datadir)
+AC_DEFINE_UNQUOTED(KDE_DATADIR, "$KDE_DATADIR", [KDE's static data directory])
 KDE_EXPAND_MAKEVAR(KDE_BINDIR, kde_bindir)
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 exec_prefix=$savex

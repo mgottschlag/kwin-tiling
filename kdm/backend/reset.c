@@ -47,7 +47,7 @@ from The Open Group.
 
 /*ARGSUSED*/
 static int
-ignoreErrors (Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
+ignoreErrors (Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
 {
 	Debug ("ignoring error\n");
 	return 0;
@@ -60,7 +60,7 @@ ignoreErrors (Display *dpy ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED)
  */
 
 static void
-killWindows (Display *dpy, Window window)
+killWindows (Window window)
 {
 	Window	root, parent, *children;
 	unsigned int child, nchildren = 0;
@@ -90,9 +90,8 @@ abortReset (int n ATTR_UNUSED)
  */
  
 void
-pseudoReset (Display *dpy)
+pseudoReset ()
 {
-	Window	root;
 	int	screen;
 
 	if (Setjmp (resetJmp)) {
@@ -103,8 +102,7 @@ pseudoReset (Display *dpy)
 		XSetErrorHandler (ignoreErrors);
 		for (screen = 0; screen < ScreenCount (dpy); screen++) {
 			Debug ("pseudoReset screen %d\n", screen);
-			root = RootWindow (dpy, screen);
-			killWindows (dpy, root);
+			killWindows (RootWindow (dpy, screen));
 		}
 		Debug ("before XSync\n");
 		XSync (dpy, False);

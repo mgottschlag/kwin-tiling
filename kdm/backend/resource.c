@@ -390,6 +390,7 @@ char	*fifoDir;
 int	fifoGroup;
 int	fifoAllowShutdown;
 int	fifoAllowNuke;
+char	*dmrcDir;
 
 struct globVals {
 	int	id;
@@ -421,6 +422,7 @@ struct globVals {
 { C_fifoGroup,		(char **) &fifoGroup },
 { C_fifoAllowShutdown,	(char **) &fifoAllowShutdown },
 { C_fifoAllowNuke,	(char **) &fifoAllowNuke },
+{ C_dmrcDir,		&dmrcDir },
 };
 
 int
@@ -484,14 +486,13 @@ struct dpyVals {
 { C_noPassUsers,	boffset(noPassUsers) },
 { C_autoUser,		boffset(autoUser) },
 { C_autoPass,		boffset(autoPass) },
-{ C_autoString,		boffset(autoString) },
 { C_autoReLogin,	boffset(autoReLogin) },
 { C_allowNullPasswd,	boffset(allowNullPasswd) },
 { C_allowRootLogin,	boffset(allowRootLogin) },
 { C_allowShutdown,	boffset(allowShutdown) },
 { C_allowNuke,		boffset(allowNuke) },
 { C_defSdMode,		boffset(defSdMode) },
-{ C_sessSaveFile,	boffset(sessSaveFile) },
+{ C_sessionsDirs,	boffset(sessionsDirs) },
 { C_chooserHosts,	boffset(chooserHosts) },
 { C_loginMode,		boffset(loginMode) },
 };

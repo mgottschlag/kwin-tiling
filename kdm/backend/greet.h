@@ -63,6 +63,9 @@ from The Open Group.
 
 #define as(ar) ((int)(sizeof(ar)/sizeof(ar[0])))
 
+#define __stringify(x) #x
+#define stringify(x) __stringify(x)
+
 /*
  * Exit codes for fork()ed session process and greeter
  */
@@ -111,11 +114,13 @@ from The Open Group.
 # define SHUT_INTERACT	10
 #define G_SessionExit	102	/* int code; async */
 #define G_Verify	103	/* str name, str pass; int V_ret */
-#define G_Restrict	104	/* str name; <variable> */
-#define G_Login		105	/* str name, str pass, argv sessargs; async */
+#define G_Restrict	104	/* str name; int V_ret, <variable> */
+#define G_Login		105	/* ; async */
 #define G_GetCfg	106	/* int what; int sts, <variable>  */
-#define G_GetSessArg	107	/* str user; argv sessargs */
-#define G_SetupDpy	108	/* ; async */
+#define G_SetupDpy	108	/* ; int <syncer> */
+#define G_ReadDmrc	110	/* str user; int sts */
+#define G_GetDmrc	111	/* str key; str value */
+#define G_PutDmrc	112	/* str key, str value */
 
 /*
  * Command codes core -> config reader
@@ -132,8 +137,14 @@ from The Open Group.
  */
 #define GE_Ok		0
 #define GE_NoFkt	1	/* no such function (only for extensions!) */
-#define GE_NoEnt	2	/* no such config entry */
-#define GE_BadType	3	/* unknown config entry type */
+#define GE_Error	2	/* internal error, like OOM */
+/* for config reading */
+#define GE_NoEnt	10	/* no such config entry */
+#define GE_BadType	11	/* unknown config entry type */
+/* for dmrc reading */
+#define GE_NoUser	20	/* no such user */
+#define GE_NoFile	21	/* no such file */
+#define GE_Denied	22	/* permission denied */
 
 /*
  * Log levels.
@@ -175,39 +186,39 @@ from The Open Group.
 
 /* global config */
 
-#define C_autoRescan		(C_TYPE_INT | 0x004)
+#define C_autoRescan		(C_TYPE_INT | 0x001)
+
+#define C_PAMService		(C_TYPE_STR | 0x002)
+
+#define C_dmrcDir		(C_TYPE_STR | 0x003)
+
+#define C_dataDir		(C_TYPE_STR | 0x004)
 
 #define C_randomFile		(C_TYPE_STR | 0x005)
+#define C_randomDevice		(C_TYPE_STR | 0x006)
 
-#define C_exportList		(C_TYPE_ARGV | 0x006)
+#define C_exportList		(C_TYPE_ARGV | 0x009)
 
-#define C_cmdHalt		(C_TYPE_STR | 0x007)
-#define C_cmdReboot		(C_TYPE_STR | 0x008)
+#define C_cmdHalt		(C_TYPE_STR | 0x00a)
+#define C_cmdReboot		(C_TYPE_STR | 0x00b)
 
-#define C_pidFile		(C_TYPE_STR | 0x009)
-#define C_lockPidFile		(C_TYPE_INT | 0x00a)
+#define C_pidFile		(C_TYPE_STR | 0x018)
+#define C_lockPidFile		(C_TYPE_INT | 0x019)
 
-#define C_authDir		(C_TYPE_STR | 0x00b)
+#define C_authDir		(C_TYPE_STR | 0x01a)
 
-#define C_requestPort		(C_TYPE_INT | 0x00c)
+#define C_requestPort		(C_TYPE_INT | 0x01b)
+#define C_sourceAddress		(C_TYPE_INT | 0x01c)
+#define C_removeDomainname	(C_TYPE_INT | 0x01d)
+#define C_choiceTimeout		(C_TYPE_INT | 0x01e)
+#define C_keyFile		(C_TYPE_STR | 0x01f)
+#define C_willing		(C_TYPE_STR | 0x020)
 
-#define C_sourceAddress		(C_TYPE_INT | 0x00d)
-#define C_removeDomainname	(C_TYPE_INT | 0x00e)
+#define C_fifoDir		(C_TYPE_STR | 0x028)
+#define C_fifoGroup		(C_TYPE_INT | 0x029)	
+#define C_fifoAllowShutdown	(C_TYPE_INT | 0x02a)
+#define C_fifoAllowNuke		(C_TYPE_INT | 0x02b)
 
-#define C_choiceTimeout		(C_TYPE_INT | 0x00f)
-
-#define C_keyFile		(C_TYPE_STR | 0x010)
-
-#define C_willing		(C_TYPE_STR | 0x011)
-
-#define C_PAMService		(C_TYPE_STR | 0x012)
-
-#define C_fifoDir		(C_TYPE_STR | 0x013)
-#define C_fifoGroup		(C_TYPE_INT | 0x014)	
-#define C_fifoAllowShutdown	(C_TYPE_INT | 0x015)
-#define C_fifoAllowNuke		(C_TYPE_INT | 0x016)
-
-#define C_randomDevice		(C_TYPE_STR | 0x017)
 
 /* per-display config */
 
@@ -241,7 +252,6 @@ from The Open Group.
 #define C_noPassUsers		(C_TYPE_ARGV | 0x123)
 #define C_autoUser		(C_TYPE_STR | 0x124)
 #define C_autoPass		(C_TYPE_STR | 0x125)
-#define C_autoString		(C_TYPE_STR | 0x126)
 #define C_autoReLogin		(C_TYPE_INT | 0x128)
 #define C_allowNullPasswd	(C_TYPE_INT | 0x129)
 #define C_allowRootLogin	(C_TYPE_INT | 0x12a)
@@ -259,6 +269,7 @@ from The Open Group.
 # define LOGIN_DEFAULT_LOCAL	1
 # define LOGIN_DEFAULT_REMOTE	2
 # define LOGIN_REMOTE_ONLY	3
+#define C_sessionsDirs		(C_TYPE_ARGV | 0x132)
 
 /* display variables */
 #define C_name			(C_TYPE_STR | 0x200)
