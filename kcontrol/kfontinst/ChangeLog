@@ -1,11 +1,16 @@
 KDE3.2 -> KDE3.3
 ================
-1. List fonts as "Full Name" -> i.e. "Times New Roman".
-2. Preview of bitmap fonts.
-3. No fontname-title in thumbnails - as fonts:/ lists the fontnames!
-4. When copying to fonts:/ (as non-root) only ask for destination if more than 5 seconds
-   since previously asked.
-5. Add a konqueror service menu "Install"
+1.  List fonts as "Full Name" -> i.e. "Times New Roman".
+2.  Preview of bitmap fonts.
+3.  No fontname-title in thumbnails - as fonts:/ lists the fontnames!
+4.  When copying to fonts:/ (as non-root) only ask for destination if more than 5 seconds
+    since previously asked.
+5.  Add a konqueror service menu "Install"
+6.  Use FreeType2 for reading Type1 - instead of parsing the pfa/pfb header.
+7.  FamilyName is now the fonts *real* family name - no adding of style information.
+8.  Add extra style information (which was previously added to FamilyName) into the XLFD.
+9.  Consider regular weight to be medium (same as mkfontscale).
+10. Default to width=normal, weight=medium if not set.
 
 KDE3.1 -> KDE3.2
 ================
