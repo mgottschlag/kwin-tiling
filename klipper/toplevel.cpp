@@ -48,40 +48,8 @@
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
 
-/* XPM */
-static const char* const mouse[]={
-"20 20 8 1",
-"d c #ffa858",
-"e c #c05800",
-"# c #000000",
-"c c #ff8000",
-". c None",
-"b c #a0a0a4",
-"a c #dcdcdc",
-"f c #ffffff",
-".....###########....",
-"..####aaaaaaab####..",
-".#cccc#a....b#cccc#.",
-".#cd####abbb####de#.",
-".#cd#fff####ff.#de#.",
-".#cd#fffffffff.#de#.",
-".#cd#f.######f.#de#.",
-".#cd#fffffffff.#de#.",
-".#cd#f.#####ff.#de#.",
-".#cd#fffffffff.#de#.",
-".#cd#ff#ff#fff.#de#.",
-".#cd#ff#f#ffff.#de#.",
-".#cd#ff##fffff.#de#.",
-".#cd#ff#f#ffff.#de#.",
-".#cd#ff#ff#fff.#de#.",
-".#cd#fffffffff.#de#.",
-".#cd#..........#de#.",
-".#cd############de#.",
-".#ccccccccccccccde#.",
-"..################.."};
-
-TopLevel::TopLevel( bool applet )
-  : KMainWindow(0), DCOPObject( "klipper" ), m_dcop( 0 )
+TopLevel::TopLevel( QWidget *parent, bool applet )
+    : QWidget( parent ), DCOPObject( "klipper" ), m_dcop( 0 )
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
@@ -103,7 +71,9 @@ TopLevel::TopLevel( bool applet )
 
     QSempty = i18n("<empty clipboard>");
 
-    toggleURLGrabAction = new KToggleAction( this );
+    // we need that collection, otherwise KToggleAction is not happy :}
+    KActionCollection *collection = new KActionCollection( this, "my collection" );
+    toggleURLGrabAction = new KToggleAction( collection, "toggleUrlGrabAction" );
     toggleURLGrabAction->setEnabled( true );
 
     myURLGrabber = 0L;
@@ -116,17 +86,17 @@ TopLevel::TopLevel( bool applet )
     connect(m_popup, SIGNAL(activated(int)),
             this, SLOT(clickedMenu(int)));
 
-    m_clipDict = new QIntDict<QString>();
-    m_clipDict->setAutoDelete(TRUE);
-
     readProperties(m_config);
-    connect(kapp, SIGNAL(saveYourself()), SLOT(saveProperties()));
+    connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
 
     m_checkTimer = new QTimer(this, "timer");
     m_checkTimer->start(1000, FALSE);
-    connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
-    m_pixmap = new QPixmap( const_cast<const char**>(mouse));
-    resize( m_pixmap->size() );
+//     connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(newClipData()));
+    connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
+    connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
+
+    m_pixmap = new QPixmap( locate("data", "klipper/pics/klipper_dock.png" ));
+    adjustSize();
 
     globalKeys = new KGlobalAccel(this);
     KGlobalAccel* keys = globalKeys;
@@ -146,7 +116,6 @@ TopLevel::~TopLevel()
 {
     delete m_checkTimer;
     delete m_popup;
-    delete m_clipDict;
     delete m_pixmap;
     delete myURLGrabber;
     if( isApplet()) {
@@ -157,11 +126,8 @@ TopLevel::~TopLevel()
 
 void TopLevel::adjustSize()
 {
-    // don't ask me why, but otherwise the applet won't show the entire pixmap :-/
-    resize( m_pixmap->width() +2, m_pixmap->height() +2 );
-//    resize( m_pixmap->size() );
+    resize( m_pixmap->size() );
 }
-
 
 // this is used for quiting klipper process, if klipper is being started as an applet
 void TopLevel::quitProcess()
@@ -195,75 +161,6 @@ void TopLevel::paintEvent(QPaintEvent *)
     p.end();
 }
 
-void TopLevel::newClipData()
-{
-    QString clipData;
-
-    clip->setSelectionMode( false );
-    
-    bool clipEmpty = (clip->data()->format() == 0L);
-    QString clipContents = clip->text().stripWhiteSpace();
-    clip->setSelectionMode( true );
-    QString selectContents = clip->text().stripWhiteSpace();
-
-    if ( clipContents != m_lastClipboard ) {
-        // keep old clipboard after someone set it to null
-        if ( clipEmpty && bNoNullClipboard ) {
-            clipContents = m_lastClipboard;
-            clip->setSelectionMode( false );
-            clip->setText( clipContents );
-        }
-
-        clipData        = clipContents;
-        m_lastClipboard = clipContents;
-        // sync clipboard and selection?
-        if( bSynchronize && clipContents != selectContents ) {
-            m_lastSelection = clipContents;
-            clip->setSelectionMode( true );
-            clip->setText(clipContents);
-        }
-    }
-    
-    else {
-        if ( selectContents != m_lastSelection ) {
-            // keep old selection after someone set it to null
-            if ( selectContents.isEmpty() && bNoNullClipboard ) {
-                selectContents = m_lastSelection;
-                clip->setSelectionMode( true );
-                clip->setText( selectContents );
-            }
-
-            clipData        = selectContents;
-            m_lastSelection = selectContents;
-            // sync clipboard and selection?
-            if( bSynchronize && selectContents != clipContents ) {
-                m_lastClipboard = selectContents;
-                clip->setSelectionMode( false );
-                clip->setText(selectContents);
-            }
-        }
-        else
-            clipData = m_lastString;
-    }
-
-    // If the string is null bug out
-    if (clipData.isEmpty()) {
-	if (m_selectedItem != -1) {
-            m_popup->setItemChecked(m_selectedItem, false);
-	    m_selectedItem = -1;
-	}
-
-        if ( m_clipDict->isEmpty() ) {
-            setEmptyClipboard();
-        }
-        return;
-    }
-
-    if (clipData != m_lastString) {
-        slotClipboardChanged( clipData );
-    }
-}
-
 void TopLevel::clickedMenu(int id)
 {
     switch ( id ) {
@@ -273,7 +170,7 @@ void TopLevel::clickedMenu(int id)
         slotConfigure();
         break;
     case QUIT_ITEM: {
-        saveProperties();
+        saveSession();
         int autoStart = KMessageBox::questionYesNoCancel( 0L, i18n("Should Klipper start automatically\nwhen you login?"), i18n("Automatically Start Klipper?") );
 
         QString file = locateLocal( "data", "../autostart/klipper.desktop" );
@@ -318,18 +215,17 @@ void TopLevel::clickedMenu(int id)
 
 	    m_selectedItem = id;
 	    m_popup->setItemChecked(m_selectedItem, true);
-	    QString *data = m_clipDict->find(id);
-	    if (data != 0x0 && *data != QSempty)
+            QMapIterator<long,QString> it = m_clipDict.find( id );
+
+            if ( it != m_clipDict.end() && it.data() != QSempty )
             {
-                clip->setSelectionMode( true );
-		clip->setText( *data );
-                clip->setSelectionMode( false );
-                clip->setText( *data );
+                QString data = it.data();
+                setClipboard( data, Clipboard | Selection );
 
 		if (bURLGrabber && bReplayActionInHistory)
-		    myURLGrabber->checkNewData(*data);
+		    myURLGrabber->checkNewData( data );
 
-                m_lastString = *data;
+                m_lastString = data;
 
                 // We want to move the just selected item to the top of the popup
                 // menu. But when we do this right here, we get a crash a little
@@ -389,7 +285,7 @@ void TopLevel::readProperties(KConfig *kc)
            it != dataList.end(); ++it)
       {
           long id = m_popup->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1);
-          m_clipDict->insert( id, new QString( *it ));
+          m_clipDict.insert( id, *it );
       }
   }
 
@@ -445,25 +341,28 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->sync();
 }
 
-
-// session management
-void TopLevel::saveProperties()
+// save session on shutdown. Don't simply use the c'tor, as that may not be called.
+void TopLevel::saveSession()
 {
-  if (bKeepContents) { // save the clipboard eventually
-      QString  *data;
+  if ( bKeepContents ) { // save the clipboard eventually
       QStringList dataList;
-      KConfig  *kc = m_config;
-      KConfigGroupSaver groupSaver(kc, "General");
-      QIntDictIterator<QString> it( *m_clipDict );
       if ( !bClipEmpty )
       {
-	  while ( (data = it.current()) ) {
-	      dataList.prepend( *it );
-	      ++it;
-	  }
+          // don't iterate over the map, but over the popup (due to sorting!)
+          long id = 0L;
+          for ( uint i = 0; i < m_popup->count(); i++ ) {
+              id = m_popup->idAt( i );
+              if ( id != -1 ) {
+                  QMapIterator<long,QString> it = m_clipDict.find( id );
+                  if ( it != m_clipDict.end() )
+                      dataList.append( it.data() );
+              }
+          }
       }
-      kc->writeEntry("ClipboardData", dataList);
-      kc->sync();
+
+      KConfigGroupSaver groupSaver(m_config, "General");
+      m_config->writeEntry("ClipboardData", dataList);
+      m_config->sync();
   }
 }
 
@@ -566,22 +465,21 @@ void TopLevel::trimClipHistory( int new_size )
         if ( id == -1 )
             return;
 
-        m_clipDict->remove(id);
+        m_clipDict.remove(id);
         m_popup->removeItemAt(EMPTY);
     }
 }
 
 void TopLevel::removeFromHistory( const QString& text )
 {
-    QIntDictIterator<QString> it( *m_clipDict );
-    while ( it.current() ) {
-        if ( *(it.current()) == text ) {
-            long id = it.currentKey();
+    QMapIterator<long,QString> it = m_clipDict.begin();
+    for ( ; it != m_clipDict.end(); ++it ) {
+        if ( it.data() == text ) {
+            long id = it.key();
             m_popup->removeItem( id );
-            m_clipDict->remove( id );
+            m_clipDict.remove( id );
+            return; // there can be only one (I hope :)
         }
-
-        ++it;
     }
 }
 
@@ -607,11 +505,9 @@ QString TopLevel::clipboardContents()
     return clipContents;
 }
 
-void TopLevel::slotClipboardChanged( const QString& clipData )
+void TopLevel::applyClipChanges( const QString& clipData )
 {
     m_lastString = clipData;
-
-    QString *data = new QString(clipData);
 
     if ( bURLGrabber && myURLGrabber ) {
         if ( myURLGrabber->checkNewData( clipData ))
@@ -619,10 +515,10 @@ void TopLevel::slotClipboardChanged( const QString& clipData )
     }
 
     if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
-        if (*data != QSempty) {
+        if (clipData != QSempty) {
             bClipEmpty = false;
             m_popup->removeItemAt(EMPTY);
-            m_clipDict->clear();
+            m_clipDict.clear();
         }
     }
 
@@ -633,7 +529,7 @@ void TopLevel::slotClipboardChanged( const QString& clipData )
     trimClipHistory(maxClipItems - 1);
 
     m_selectedItem = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
-    m_clipDict->insert(m_selectedItem, data);
+    m_clipDict.insert(m_selectedItem, clipData);
     if ( bClipEmpty )
         m_popup->setItemEnabled( m_selectedItem, false );
     else
@@ -643,17 +539,159 @@ void TopLevel::slotClipboardChanged( const QString& clipData )
 void TopLevel::setEmptyClipboard()
 {
     bClipEmpty = true;
-    slotClipboardChanged( QSempty );
+    applyClipChanges( QSempty );
 }
 
 void TopLevel::slotMoveSelectedToTop()
 {
     m_popup->removeItem( m_selectedItem );
-    m_clipDict->remove( m_selectedItem );
+    m_clipDict.remove( m_selectedItem );
 
     m_selectedItem = m_popup->insertItem( KStringHandler::csqueeze(m_lastString.simplifyWhiteSpace(), 45), -2, 1 );
     m_popup->setItemChecked( m_selectedItem, true );
-    m_clipDict->insert( m_selectedItem, new QString( m_lastString ) );
+    m_clipDict.insert( m_selectedItem, m_lastString );
+}
+
+void TopLevel::newClipData()
+{
+    qDebug("****** newClipData!");
+    return;
+
+    QString clipData;
+
+    clip->setSelectionMode( false );
+
+    bool clipEmpty = (clip->data()->format() == 0L);
+    QString clipContents = clip->text().stripWhiteSpace();
+    clip->setSelectionMode( true );
+    QString selectContents = clip->text().stripWhiteSpace();
+
+    if ( clipContents != m_lastClipboard ) {
+        // keep old clipboard after someone set it to null
+        if ( clipEmpty && bNoNullClipboard ) {
+            clipContents = m_lastClipboard;
+            setClipboard( clipContents, Clipboard );
+        }
+
+        clipData        = clipContents;
+        m_lastClipboard = clipContents;
+        // sync clipboard and selection?
+        if( bSynchronize && clipContents != selectContents ) {
+            m_lastSelection = clipContents;
+            setClipboard( clipContents, Selection );
+        }
+    }
+
+    else {
+        if ( selectContents != m_lastSelection ) {
+            // keep old selection after someone set it to null
+            if ( selectContents.isEmpty() && bNoNullClipboard ) {
+                selectContents = m_lastSelection;
+                setClipboard( selectContents, Selection );
+            }
+
+            clipData        = selectContents;
+            m_lastSelection = selectContents;
+            // sync clipboard and selection?
+            if( bSynchronize && selectContents != clipContents ) {
+                m_lastClipboard = selectContents;
+                setClipboard( selectContents, Clipboard );
+            }
+        }
+        else
+            clipData = m_lastString;
+    }
+
+    // If the string is null bug out
+    if (clipData.isEmpty()) {
+	if (m_selectedItem != -1) {
+            m_popup->setItemChecked(m_selectedItem, false);
+	    m_selectedItem = -1;
+	}
+
+        if ( m_clipDict.isEmpty() ) {
+            setEmptyClipboard();
+        }
+        return;
+    }
+
+    if (clipData != m_lastString) {
+        applyClipChanges( clipData );
+    }
+}
+
+void TopLevel::clipboardSignalArrived( bool selectionMode )
+{ 
+    clip->setSelectionMode( selectionMode );
+    QString text = clip->text();
+
+    checkClipData( text, selectionMode );
+    m_checkTimer->start(1000);
+}
+
+void TopLevel::checkClipData( const QString& text, bool selectionMode )
+{
+    clip->setSelectionMode( selectionMode );
+
+    bool clipEmpty = (clip->data()->format() == 0L);
+    QString& lastClipRef = selectionMode ? m_lastSelection : m_lastClipboard;
+
+    if ( text != lastClipRef ) {
+        // keep old clipboard after someone set it to null
+        if ( clipEmpty && bNoNullClipboard )
+            setClipboard( lastClipRef, selectionMode );
+        else
+            lastClipRef = text;
+
+        // sync clipboard and selection?
+        if ( bSynchronize ) {
+            clip->setSelectionMode( true );
+            QString selectContents = clip->text();
+            clip->setSelectionMode( false );
+            QString clipContents = clip->text();
+
+            if ( clipContents != selectContents ) {
+                m_lastSelection = text;
+                m_lastClipboard = text;
+                qDebug("**** SYNCHRONIZING ****");
+                setClipboard( text, !selectionMode );
+            }
+        }
+    }
+
+    // lastClipRef has the new value now, if any
+
+    // If the string is null bug out
+    if (lastClipRef.isEmpty()) {
+	if (m_selectedItem != -1) {
+            m_popup->setItemChecked(m_selectedItem, false);
+	    m_selectedItem = -1;
+	}
+
+        if ( m_clipDict.isEmpty() ) {
+            setEmptyClipboard();
+        }
+        return;
+    }
+
+    if (lastClipRef != m_lastString) {
+        applyClipChanges( lastClipRef );
+    }
+}
+
+void TopLevel::setClipboard( const QString& text, int mode )
+{
+    clip->blockSignals( true ); // ### this might break other kicker applets
+    
+    if ( mode & Selection ) {
+        clip->setSelectionMode( true );
+        clip->setText( text );
+    }
+    if ( mode & Clipboard ) {
+        clip->setSelectionMode( false );
+        clip->setText( text );
+    }
+    clip->blockSignals( false );
 }
 
 #include "toplevel.moc"

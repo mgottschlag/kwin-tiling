@@ -29,28 +29,31 @@ KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
                          QWidget *parent, const char *name)
     : KPanelApplet(configFile, t, actions, parent, name)
 {
+    move( 0, 0 );
     setBackgroundMode(QWidget::X11ParentRelative);
-    toplevel = new TopLevel( true );
-    // no longer toplevel >;)
-    toplevel->reparent( this, QPoint( 0, 0 ));
+    toplevel = new TopLevel( this, true );
     centerWidget();
     toplevel->show();
 }
 
-// the klipper icon has harcoded size 20x20
+KlipperApplet::~KlipperApplet()
+{
+    toplevel->saveSession();
+    delete toplevel;
+}
+
 int KlipperApplet::widthForHeight(int) const
 {
-    return 20;
+    return toplevel->width();
 }
 
 int KlipperApplet::heightForWidth(int) const
 {
-    return 20;
+    return toplevel->height();
 }
 
 void KlipperApplet::resizeEvent( QResizeEvent* ev )
 {
-    move( 0, 0 );
     toplevel->adjustSize();
     KPanelApplet::resizeEvent( ev );
     centerWidget();

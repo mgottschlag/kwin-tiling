@@ -22,6 +22,7 @@ class KlipperApplet : public KPanelApplet
 public:
 	KlipperApplet(const QString& configFile, Type t = Normal, int actions = 0,
 	            QWidget *parent = 0, const char *name = 0);
+	~KlipperApplet();
 
 	int widthForHeight(int h) const;
 	int heightForWidth(int w) const;
