@@ -38,6 +38,10 @@ from The Open Group.
  * user verification and session initiation.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -59,7 +63,11 @@ from The Open Group.
 # endif
 #endif
 #ifdef USE_PAM
-# include <security/pam_appl.h>
+#ifdef HAVE_PAM_PAM_APPL_H
+#include <pam/pam_appl.h>
+#else
+#include <security/pam_appl.h>
+#endif
 #elif defined(AIXV3) /* USE_PAM */
 # include <login.h>
 # include <usersec.h>
