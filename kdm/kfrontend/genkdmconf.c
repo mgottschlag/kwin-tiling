@@ -475,9 +475,16 @@ wrconf (FILE *f)
 
 #ifdef __linux__
 # define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+/* ###
 # define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
 			 ":1 local@tty2 reserve " XBINDIR "/X :1 vt8\n" \
 			 ":2 local@tty3 reserve " XBINDIR "/X :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X :4 vt11\n"
+*/
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
+			 "#:1 local@tty2 reserve " XBINDIR "/X :1 vt8\n" \
+			 "#:2 local@tty3 reserve " XBINDIR "/X :2 vt9\n" \
 			 "#:3 local@tty4 reserve " XBINDIR "/X :3 vt10\n" \
 			 "#:4 local@tty5 reserve " XBINDIR "/X :4 vt11\n"
 #elif defined(__sun__)
@@ -559,8 +566,12 @@ static const char def_xaccess[] =
 "\n"
 "#*		CHOOSER %hostlist	#\n";
 
+/* XXX
 #define XSERVERS_MAJOR 2
 #define XSERVERS_MINOR 0
+*/
+#define XSERVERS_MAJOR 1
+#define XSERVERS_MINOR 99
 
 #define stringify(s)    tostring(s)
 #define tostring(s)     #s
@@ -1220,6 +1231,7 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 
 #ifdef RDPYS
     /* add reserve dpys */
+/* ###
     if (nldpys < 3 && nldpys && !nrdpys) {
 	for (; nldpys < 3; nldpys++) {
 	    for (dn = 0; dpymask & (1 << dn); dn++);
@@ -1246,6 +1258,7 @@ edit_xservers(File *file, char **nbuf, int *nlen)
 	    StrCat (&buf, " :%d vt%d\n", dn, vt + 1);
 	}
     }
+*/
 #endif
 
     StrCat (&buf, "\n" XSERVERS_VERSION, 0);
