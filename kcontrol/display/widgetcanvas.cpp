@@ -229,8 +229,7 @@ void WidgetCanvas::drawSampleWidgets()
     hotspots[ spot++ ] =
         HotSpot( QRect(120, 156, textLen+32, 28), 12 );
     brush.setColor( button );
-    qDrawWinButton(&paint, 120, 156, textLen+32, 28, colorGroup(), false,
-                   &brush);
+    qDrawWinButton(&paint, 120, 156, textLen+32, 28, cg, false, &brush);
     paint.setPen(buttonTxt);
     paint.drawText(120, 156, textLen+32, 28, AlignCenter,
                    i18n("Push Button"));
