@@ -121,7 +121,7 @@ void
 kcmApplication::slotAppExit(const QCString &appId)
 {
     if (appId == m_dcopName)
-        quit();
+        deref();
 }
 
 
