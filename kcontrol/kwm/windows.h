@@ -80,7 +80,7 @@ public:
 
 private slots:
   void setAutoRaiseEnabled();
-  void ifPlacementIsInteractive();
+  //  void ifPlacementIsInteractive();
   void autoRaiseOnTog(bool);//CT 23Oct1998
   void clickRaiseOnTog(bool);
   void slotChanged();
@@ -103,6 +103,8 @@ private:
   void setAutoRaiseInterval(int);
   void setAutoRaise(bool);
   void setClickRaise(bool);
+  void setAltTabMode(bool);
+  void setCtrlTab(bool);
 
   QButtonGroup *windowsBox;
   QCheckBox *opaque;
@@ -111,12 +113,13 @@ private:
   QCheckBox* minimizeAnimOn;
   QSlider *minimizeAnimSlider;
   QLabel *minimizeAnimSlowLabel, *minimizeAnimFastLabel;
+  QCheckBox *animateShade;
 
   //CT 19jan98; 21Oct1998
-  QButtonGroup *plcBox;
+  //QButtonGroup *plcBox;
   QComboBox *placementCombo;
-  QSpinBox *interactiveTrigger;
-  QLabel *iTLabel;
+  //QSpinBox *interactiveTrigger;
+  //QLabel *iTLabel;
 
   QButtonGroup *fcsBox;
   QComboBox *focusCombo;
@@ -127,6 +130,10 @@ private:
   QLCDNumber *s;
   //CT  QLabel *sec;
 
+  QButtonGroup *kbdBox;
+  QRadioButton *kdeMode;
+  QRadioButton *cdeMode;
+  QCheckBox    *ctrlTab;
 };
 
 #endif
