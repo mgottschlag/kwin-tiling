@@ -32,7 +32,7 @@
 
 static void write_conf( KHotData_dict& data_P );
 static bool edit_shortcut( const QString& action_name_P, KHotData* data_P,
-    KHotData_dict& data_P, const QString& shortcut_P );
+    KHotData_dict& data_P1, const QString& shortcut_P );
 static QString change_shortcut_internal( const QString& file_P,
     const QString& shortcut_P, bool save_P, bool edit_P );
 
