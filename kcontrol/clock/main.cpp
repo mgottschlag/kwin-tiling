@@ -26,6 +26,7 @@
 #include <dcopclient.h>
 
 #include <kaboutdata.h>
+#include <kapplication.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 
@@ -82,16 +83,8 @@ void KclockModule::save()
   dtime->save();
   tzone->save();
 
-// it syncs up nicely without restarting
-//    // restart kicker to sync up the time
-//    if (!kapp->dcopClient()->isAttached())
-//    {
-//        kapp->dcopClient()->attach();
-//    }
-
-//    QByteArray data;
-//    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
-
+  // Tell the clock applet about the change so that it can update its timezone
+  kapp->dcopClient()->send( "kicker", "ClockApplet", "reconfigure()", QByteArray() );
 }
 
 void KclockModule::load()
