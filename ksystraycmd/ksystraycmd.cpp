@@ -129,7 +129,10 @@ void KSysTrayCmd::refresh()
 
   QToolTip::remove( this );
   if ( win ) {
-    setPixmap( KWin::icon( win, 20, 20, true ) );
+    KConfig *appCfg = kapp->config();
+    KConfigGroupSaver configSaver(appCfg, "System Tray");
+    int iconWidth = appCfg->readNumEntry("systrayIconWidth", 22);
+    setPixmap( KWin::icon( win, iconWidth, iconWidth, true ) );
     QToolTip::add( this, KWin::info( win ).name );
   }
   else {
@@ -140,12 +143,7 @@ void KSysTrayCmd::refresh()
     else
       QToolTip::add( this, window );
 
-    QImage img;
-    img = kapp->icon();
-    img = img.smoothScale( 20, 20 );
-    QPixmap pix;
-    pix = img;
-    setPixmap( pix );
+    setPixmap( KSystemTray::loadIcon( kapp->iconName() ) );
   }
 }
 

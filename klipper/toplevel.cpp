@@ -29,6 +29,7 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
+#include <ksystemtray.h>
 #include <kwin.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
@@ -95,9 +96,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
-    // do NOT use UserIcon or appdata or something like that -- this breaks in
-    // the kicker applet case!
-    m_pixmap = MainBarIcon( "klipper", 22 );
+    m_pixmap = KSystemTray::loadIcon( "klipper" );
     adjustSize();
 
     globalKeys = new KGlobalAccel(this);
