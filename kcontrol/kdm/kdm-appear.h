@@ -68,13 +68,14 @@ private slots:
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  
 private:
-	enum { KdmLogo=0, KdmClock=1 };
+	enum { KdmNone, KdmClock, KdmLogo };
 	QLabel      *logoLabel;
         KIconButton *logobutton;
         KLineEdit    *greetstr_lined;
 	QString      logopath;
-	QRadioButton *logoRadio;
+	QRadioButton *noneRadio;
 	QRadioButton *clockRadio;
+	QRadioButton *logoRadio;
 	QRadioButton *posCenterRadio;
 	QRadioButton *posSpecifyRadio;
 	QLabel	     *xLineLabel;

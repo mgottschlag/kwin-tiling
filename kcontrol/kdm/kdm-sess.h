@@ -24,6 +24,7 @@
 #include <qlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
+#include <qcheckbox.h>
 #include <kdbtn.h>
 
 #include <kcmodule.h>
@@ -33,6 +34,7 @@ class QLineEdit;
 
 class MyListBox : public QListBox
 {
+
 public:
 	MyListBox(QWidget *parent) : QListBox(parent) {}
 	bool isItemVisible(int id) { return itemVisible(id); }
@@ -45,33 +47,42 @@ class KDMSessionsWidget : public KCModule
 public:
 	KDMSessionsWidget(QWidget *parent=0, const char *name=0);
 
-        void load();
-        void save();
+	void load();
+	void save();
 	void defaults();
 
-	enum { Non, All, RootOnly, ConsoleOnly };
+	enum SdModes { SdAll, SdConsoleOnly, SdRootOnly, SdNone };
 	
 protected:
 	void moveSession(int);
 
 protected slots:
-        void slotSetAllowShutdown(int);
-        void slotAddSessionType();
-        void slotRemoveSessionType();
-        void slotSessionHighlighted(int);
-        void slotCheckNewSession(const QString&);
-        void slotSessionUp();
-        void slotSessionDown();
+	void slotConsoleCheckToggled(bool);
+#ifdef __linux__
+	void slotLiloCheckToggled(bool);
+#endif
+	void slotAddSessionType();
+	void slotRemoveSessionType();
+	void slotSessionHighlighted(int);
+	void slotCheckNewSession(const QString&);
+	void slotSessionUp();
+	void slotSessionDown();
 	void changed();
 
 private:
-        KIconLoader  *iconloader;
-	QComboBox    *sdcombo;
-        QLineEdit    *restart_lined, *shutdown_lined, *session_lined, *console_lined;
-	MyListBox     *sessionslb;
-	int          sdMode;
-        KDirectionButton *btnup, *btndown;
-        QButton      *btnrm, *btnadd;
+	KIconLoader	*iconloader;
+	QComboBox	*sdcombo;
+	QCheckBox	*console_check;
+	QLabel		*console_label;
+	QLineEdit	*restart_lined, *shutdown_lined, *session_lined, *console_lined;
+	MyListBox	*sessionslb;
+	KDirectionButton	*btnup, *btndown;
+	QButton		*btnrm, *btnadd;
+#ifdef __linux__
+	QCheckBox	*lilo_check;
+	QLabel		*lilocmd_label, *lilomap_label;
+	QLineEdit	*lilocmd_lined, *lilomap_lined;
+#endif
 };
 
 

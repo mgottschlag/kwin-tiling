@@ -43,7 +43,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
 
   QWhatsThis::add( bGroup, i18n("Shows a preview of the selected font.") );
 
-  QPushButton *fontbtn = new QPushButton(i18n("&Change font..."), tGroup);
+  QPushButton *fontbtn = new QPushButton(i18n("C&hange font..."), tGroup);
   connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
   fontbtn->setFixedSize(fontbtn->sizeHint());
 

@@ -54,7 +54,7 @@ KDModule::KDModule(QWidget *parent, const char *name)
   tab = new QTabWidget(this);
 
   appearance = new KDMAppearanceWidget(this);
-  tab->addTab(appearance, i18n("&Appearance"));
+  tab->addTab(appearance, i18n("A&ppearance"));
   connect(appearance, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   font = new KDMFontWidget(this);

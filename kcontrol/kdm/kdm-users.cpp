@@ -25,7 +25,9 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include <qvalidator.h>
 #include <qwhatsthis.h>
+#include <qvgroupbox.h>
 
 #include <kapp.h>
 #include <ksimpleconfig.h>
@@ -53,13 +55,13 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QHBoxLayout *main = new QHBoxLayout(this, 10);
     QGridLayout *rLayout = new QGridLayout(main, 4, 3, 10);
 
-    QLabel *a_label = new QLabel(i18n("Remaining users"), this);
+    QLabel *a_label = new QLabel(i18n("&Remaining users"), this);
     rLayout->addWidget(a_label, 0, 0);
 
-    QLabel *s_label = new QLabel(i18n("Selected users"), this);
+    QLabel *s_label = new QLabel(i18n("S&elected users"), this);
     rLayout->addWidget(s_label, 0, 2);
 
-    QLabel *n_label = new QLabel(i18n("No-show users"), this);
+    QLabel *n_label = new QLabel(i18n("No-sho&w users"), this);
     rLayout->addWidget(n_label, 4, 2);
 
     QPushButton *all_to_no, *all_to_usr, *no_to_all, *usr_to_all;
@@ -103,6 +105,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     rLayout->setRowStretch(7, 1);
 
     remuserlb = new KListBox(this);
+    a_label->setBuddy(remuserlb);
     rLayout->addMultiCellWidget(remuserlb, 1, 7, 0, 0);
     wtstr = i18n("This is the list of users for which no explicit show policy has been set,"
       " i.e. they will only be shown by KDM if \"Show users\" is \"all but no-show\".");
@@ -110,14 +113,17 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QWhatsThis::add( a_label, wtstr );
 
     userlb = new KListBox(this);
+    s_label->setBuddy(userlb);
     rLayout->addMultiCellWidget(userlb, 1, 3, 2, 2);
     wtstr = i18n("This is the list of users KDM will show in its login dialog in any case.");
     QWhatsThis::add( userlb, wtstr );
     QWhatsThis::add( s_label, wtstr );
 
     nouserlb = new KListBox(this);
+    n_label->setBuddy(nouserlb);
     rLayout->addMultiCellWidget(nouserlb, 5, 7, 2, 2);
-    wtstr = i18n("This is the list of users KDM will not show in its login dialog.");
+    wtstr = i18n("This is the list of users KDM will not show in its login dialog."
+      " Users (except for root) with a user ID less than the one specified in the \"Hide UIDs below\" field will not be shown, too.");
     QWhatsThis::add( nouserlb, wtstr );
     QWhatsThis::add( n_label, wtstr );
 
@@ -150,48 +156,41 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QWhatsThis::add( userlabel, wtstr );
     QWhatsThis::add( userbutton, wtstr );
 
-    usrGroup = new QButtonGroup(i18n("Show users"),  this );
-//    usrGroup->setExclusive( TRUE );
-    QVBoxLayout *usrGLayout = new QVBoxLayout( usrGroup, 10, 10 );
-    usrGLayout->addSpacing(10);
-
+    usrGroup = new QButtonGroup(3, Qt::Vertical, i18n("Show users"),  this );
+    connect(usrGroup, SIGNAL(clicked(int)), this, SLOT(slotShowUsers(int)));
+    connect(usrGroup, SIGNAL(clicked(int)), this, SLOT(slotChanged()));
     rbnoneusr = new QRadioButton(i18n("&None"), usrGroup );
-//    usrGroup->insert( rbnoneusr );
-    usrGLayout->addWidget( rbnoneusr );
-    connect(rbnoneusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
     QWhatsThis::add(rbnoneusr, i18n("If this option is selected, KDM will not show any users."
       " If one of the alternative radio buttons is selected, KDM will show a list of users in its"
       " login dialog, so users can click on their name and image rather than typing"
       " in their login."));
-
-    rbselusr = new QRadioButton(i18n("Select&ed only"), usrGroup );
-//    usrGroup->insert( rbselusr );
-    usrGLayout->addWidget( rbselusr );
-    connect(rbselusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    rbselusr = new QRadioButton(i18n("Selected onl&y"), usrGroup );
     QWhatsThis::add(rbselusr, i18n("If this option is selected, KDM will only show the users listed"
       " in the \"selected users\" listbox in its login dialog."));
-
     rballusr = new QRadioButton( i18n("A&ll but no-show"), usrGroup );
-//    rballusr->setGeometry( 10, 50, 140, 25 );
-//    usrGroup->insert( rballusr );
-    usrGLayout->addWidget( rballusr );
-    connect(rballusr, SIGNAL(clicked()), this, SLOT(slotChanged()));
     QWhatsThis::add( rballusr, i18n("If this option is selected, KDM will show all users but those"
-      " who are listed in the \"no-show users\" listbox."));
-
+      " who are listed in the \"no-show users\" listbox or have user ID less then the one specified"
+      " in the \"Hide UIDs below\" field (except root)."));
     lLayout->addWidget( usrGroup );
 
-    shwGroup = new QButtonGroup( this );
-    QVBoxLayout *shwGLayout = new QVBoxLayout( shwGroup, 10 );
+    minGroup = new QVGroupBox( i18n("Hide U&IDs below"), this );
+    QWhatsThis::add( minGroup, i18n("In \"All but no-show\"-mode all users with a user ID less than"
+      " this number are hidden. Note, that the root user is not affected by this and must be"
+      " explicitly listed in \"No-show users\" to be hidden."));
+    leminuid = new QLineEdit(minGroup);
+    leminuid->setSizePolicy(
+	QSizePolicy (QSizePolicy::Minimum, QSizePolicy::Preferred));
+    QValidator *valid = new QIntValidator(0, 999999, minGroup);
+    leminuid->setValidator(valid);
+    lLayout->addWidget( minGroup );
 
+    shwGroup = new QButtonGroup( 1, Qt::Vertical, this );
     cbusrsrt = new QCheckBox(i18n("Sor&t users"), shwGroup);
-//    shwGroup->insert( cbusrsrt );
-    shwGLayout->addWidget( cbusrsrt );
     connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     QWhatsThis::add(cbusrsrt, i18n("This option tells KDM to alphabetically sort the users"
       " shown in its login dialog.") );
-
     lLayout->addWidget( shwGroup );
+
     lLayout->addStretch( 1 );
 
     load(show_users);
@@ -201,6 +200,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
       {
 	usrGroup->setEnabled(false);
 	shwGroup->setEnabled(false);
+	minGroup->setEnabled(false);
 	userbutton->setEnabled(false);
 	remuserlb->setEnabled(false);
 	nouserlb->setEnabled(false);
@@ -212,6 +212,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
       }
 }
 
+void KDMUsersWidget::slotShowUsers(int bt)
+{
+    shwGroup->setEnabled(bt != 0);
+    minGroup->setEnabled(bt == 2);
+}
 
 void KDMUsersWidget::slotUserPixChanged(QString)
 {
@@ -404,6 +409,8 @@ void KDMUsersWidget::save()
         usrstr.append(",");
     }
     c->writeEntry( "Users", usrstr );
+
+    c->writeEntry( "MinShowUID", leminuid->text());
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -414,14 +421,6 @@ void KDMUsersWidget::load(QStringList *show_users)
     QString str;
 
     c->setGroup("KDM");
-
-    QString su = c->readEntry( "ShowUsers");
-    if (su == QString::fromLatin1("None"))
-	rbnoneusr->setChecked(true);
-    else if (su == QString::fromLatin1("Selected"))
-	rbselusr->setChecked(true);
-    else
-	rballusr->setChecked(true);
 
     // Read users from kdmrc and /etc/passwd
     QStringList users = c->readListEntry( "Users");
@@ -460,6 +459,20 @@ void KDMUsersWidget::load(QStringList *show_users)
 
     cbusrsrt->setChecked(c->readBoolEntry("SortUsers", true));
 
+    leminuid->setText(c->readEntry("MinShowUID", "0"));
+
+    QString su = c->readEntry( "ShowUsers");
+    if (su == QString::fromLatin1("None")) {
+	rbnoneusr->setChecked(true);
+	slotShowUsers(0);
+    } else if (su == QString::fromLatin1("Selected")) {
+	rbselusr->setChecked(true);
+	slotShowUsers(1);
+    } else {
+	rballusr->setChecked(true);
+	slotShowUsers(2);
+    }
+
     remuserlb->setCurrentItem(0);
     slotUserSelected(remuserlb->currentText());
 }
@@ -470,6 +483,8 @@ void KDMUsersWidget::defaults()
 {
     cbusrsrt->setChecked(true);
     rballusr->setChecked(true);
+    slotShowUsers(2);
+    leminuid->setText("0");
 }
 
 

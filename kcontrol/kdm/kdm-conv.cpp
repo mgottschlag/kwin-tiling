@@ -52,7 +52,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QVBoxLayout *alGLayout = new QVBoxLayout( alGroup, 10, 10 );
     alGLayout->addSpacing(10);
 
-    cbalen = new QCheckBox(i18n("Enable auto-login"), alGroup);
+    cbalen = new QCheckBox(i18n("&Enable auto-login"), alGroup);
     QWhatsThis::add( cbalen, i18n("Turn on the auto-login feature."
 	" This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
@@ -60,7 +60,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     connect(cbalen, SIGNAL(toggled(bool)), this, SLOT(slotEnALChanged()));
     connect(cbalen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
-    cbal1st = new QCheckBox(i18n("Truly automatic login"), alGroup);
+    cbal1st = new QCheckBox(i18n("&Truly automatic login"), alGroup);
     QWhatsThis::add( cbal1st, i18n("When this option is on, the auto-login"
 	" will be carried out immediately when KDM starts (i.e., when your computer"
 	" comes up). When this is off, you will need to initiate the auto-login"
@@ -69,10 +69,11 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     connect(cbal1st, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
     wtstr = i18n("Select the user to be logged in automatically from this list.");
-    u_label = new QLabel(i18n("User to log in"), alGroup);
+    u_label = new QLabel(i18n("Use&r to log in"), alGroup);
     QWhatsThis::add( u_label, wtstr );
     alGLayout->addWidget(u_label);
     userlb = new KListBox(alGroup);
+    u_label->setBuddy(userlb);
     QWhatsThis::add( userlb, wtstr );
     alGLayout->addWidget(userlb);
     connect(userlb, SIGNAL(highlighted(QListBoxItem *)), this, SLOT(slotChanged()));
@@ -85,7 +86,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QGridLayout *rLayout = new QGridLayout(npGroup, 6, 3, 10);
     rLayout->addRowSpacing(0, 10);
 
-    cbplen = new QCheckBox(i18n("Enable password-less logins"), npGroup);
+    cbplen = new QCheckBox(i18n("Enable password-&less logins"), npGroup);
     QWhatsThis::add( cbplen, i18n("When this option is checked, the users from"
 	" the right list will be allowed to log in without entering their"
 	" password. This applies only to KDM's graphical login."
@@ -95,24 +96,26 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     connect(cbplen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
     wtstr = i18n("This is the list of users which need to type their password to log in.");
-    w_label = new QLabel(i18n("Password required"), npGroup);
+    w_label = new QLabel(i18n("Password requ&ired"), npGroup);
     QWhatsThis::add( w_label, wtstr );
     rLayout->addWidget(w_label, 2, 0);
     wpuserlb = new KListBox(npGroup);
+    w_label->setBuddy(wpuserlb);
     QWhatsThis::add( wpuserlb, wtstr );
     rLayout->addMultiCellWidget(wpuserlb, 3, 5, 0, 0);
 
     wtstr = i18n("This is the list of users which are allowed in without typing their password.");
-    n_label = new QLabel(i18n("No password required"), npGroup);
+    n_label = new QLabel(i18n("&No password required"), npGroup);
     QWhatsThis::add( n_label, wtstr );
     rLayout->addWidget(n_label, 2, 2);
     npuserlb = new KListBox(npGroup);
+    n_label->setBuddy(npuserlb);
     QWhatsThis::add( npuserlb, wtstr );
     rLayout->addMultiCellWidget(npuserlb, 3, 5, 2, 2);
 
     QSize sz(40, 20);
 
-    wp_to_np = new QPushButton( ">>", npGroup );
+    wp_to_np = new QPushButton( "&>>", npGroup );
     wp_to_np->setFixedSize( sz );
     rLayout->addWidget(wp_to_np, 3, 1);
     connect( wp_to_np, SIGNAL( clicked() ), SLOT( slotWpToNp() ) );
@@ -120,7 +123,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
 	" on the left to the list of selected users on the right, i.e. users"
 	" that are allowed in without entering their password.") );
 
-    np_to_wp = new QPushButton( "<<", npGroup );
+    np_to_wp = new QPushButton( "&<<", npGroup );
     np_to_wp->setFixedSize( sz );
     rLayout->addWidget(np_to_wp, 4, 1);
     connect( np_to_wp, SIGNAL( clicked() ), SLOT( slotNpToWp() ) );
@@ -137,14 +140,14 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QS
     QVBoxLayout *llay = new QVBoxLayout(btGroup, 10);
     llay->addSpacing(10);
 
-    cbarlen = new QCheckBox(i18n("Automatically log in again after X server crash"), btGroup);
+    cbarlen = new QCheckBox(i18n("Automatically log in a&gain after X server crash"), btGroup);
     QWhatsThis::add( cbarlen, i18n("When this option is on, a user will be"
 	" logged in again automatically, when his session is interrupted by an"
 	" X server crash.") );
     llay->addWidget(cbarlen);
     connect(cbarlen, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
-    cbshwen = new QCheckBox(i18n("Show previous user"), btGroup);
+    cbshwen = new QCheckBox(i18n("Sho&w previous user"), btGroup);
     QWhatsThis::add( cbshwen, i18n("When this option is on, KDM will display"
 	" and preselect the user that logged in previously.") );
     llay->addWidget(cbshwen);

@@ -21,6 +21,7 @@
 #define __KDMUSERS_H__
 
 #include <qlist.h>
+#include <qlineedit.h>
 #include <qstring.h>
 #include <qimage.h>
 #include <qbuttongroup.h>
@@ -43,8 +44,8 @@ class KDMUsersWidget : public KCModule
 public:
 	KDMUsersWidget(QWidget *parent=0, const char *name=0, QStringList *show_users=0);
 
-        void load(QStringList *show_users=0);
-        void save();
+	void load(QStringList *show_users=0);
+	void save();
 	void defaults();
 
 	bool eventFilter(QObject *o, QEvent *e);
@@ -54,12 +55,13 @@ protected:
 	void userButtonDropEvent(QDropEvent *e);
 
 private slots:
-        void slotUserSelected(const QString &user);
-        void slotAllToNo();
-        void slotAllToUsr();
-        void slotUsrToAll();
-        void slotNoToAll();
-        void slotUserPixChanged(QString);
+	void slotUserSelected(const QString &user);
+	void slotAllToNo();
+	void slotAllToUsr();
+	void slotUsrToAll();
+	void slotNoToAll();
+	void slotUserPixChanged(QString);
+	void slotShowUsers(int);
 	void slotChanged();
 
 signals:
@@ -68,15 +70,17 @@ signals:
 
 private:
 
-        KIconLoader *iconloader;
-	QButtonGroup *usrGroup, *shwGroup;
-        QRadioButton *rbnoneusr, *rbselusr, *rballusr;
-        QCheckBox    *cbusrsrt;
-        KIconButton *userbutton;
-        QLabel       *userlabel;
-	KListBox     *remuserlb, *nouserlb, *userlb;
-	QString      m_userPixDir;
-	QString      m_defaultText;
+	KIconLoader	*iconloader;
+	QButtonGroup	*usrGroup, *shwGroup;
+	QGroupBox	*minGroup;
+	QLineEdit	*leminuid;
+	QRadioButton	*rbnoneusr, *rbselusr, *rballusr;
+	QCheckBox	*cbusrsrt;
+	KIconButton	*userbutton;
+	QLabel		*userlabel;
+	KListBox	*remuserlb, *nouserlb, *userlb;
+	QString		m_userPixDir;
+	QString		m_defaultText;
 };
 
 #endif

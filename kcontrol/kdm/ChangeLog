@@ -1,3 +1,6 @@
+2001-01-15 Oswald Buddenhagen <ossi@kde.org>
+	* Several new fields in different tabs for some new features
+
 2000-12-06 Oswald Buddenhagen <ossi@kde.org>
 	* New "Convenience" tab supporting the new automation features
 	* Some changes to the "Users" tab

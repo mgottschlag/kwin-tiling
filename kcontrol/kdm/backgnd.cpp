@@ -188,7 +188,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
-    m_pBGSetupBut = new QPushButton(i18n("&Setup"), m_pTab1);
+    m_pBGSetupBut = new QPushButton(i18n("S&etup"), m_pTab1);
     m_pBGSetupBut->setFixedSize(bsize);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
@@ -199,7 +199,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     // Wallpaper at Tab2
     m_pTab2 = new QWidget(0, "Wallpaper Tab");
-    m_pTabWidget->addTab(m_pTab2, i18n("&Wallpaper"));
+    m_pTabWidget->addTab(m_pTab2, i18n("Wa&llpaper"));
 
     // group = new QGroupBox(i18n("Wallpaper"), this);
     // top->addWidget(group, 1, 1);
@@ -208,7 +208,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
 
-    lbl = new QLabel(i18n("M&ode:"), m_pTab2);
+    lbl = new QLabel(i18n("&Mode:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pArrangementBox = new QComboBox(m_pTab2);
@@ -241,7 +241,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
-    m_pBrowseBut = new QPushButton(i18n("&Browse"), m_pTab2);
+    m_pBrowseBut = new QPushButton(i18n("B&rowse"), m_pTab2);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     hbox->addWidget(m_pBrowseBut);
@@ -249,7 +249,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     QWhatsThis::add( m_pBrowseBut, i18n("Click here to choose a wallpaper using a file dialog.") );
 
-    m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), m_pTab2);
+    m_pCBMulti = new QCheckBox(i18n("Mul&tiple:"), m_pTab2);
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
     connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
     grid->addWidget(m_pCBMulti, 3, 0);
