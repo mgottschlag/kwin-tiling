@@ -141,7 +141,7 @@ typedef union wait	waitType;
 typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
 #ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>		// Defines fd_set on some systems
+#include <sys/select.h>		/* Defines fd_set on some systems */
 #endif
 
 #ifndef FD_ZERO
@@ -290,7 +290,7 @@ struct greet_info {
 
 /* setgroups is not covered by POSIX, arg type varies */
 /* Well, then assume it follows getgroups and let autoconf do it: /stefh */
-//#define GID_T GETGROUPS_T
+/* #define GID_T GETGROUPS_T */
 
 #if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
 #define GID_T gid_t
@@ -415,4 +415,4 @@ void udp_read_cb(nbio_ref_t ref, int res, int err);
 void tcp_listen_cb(nbio_ref_t ref, int res, int err);
 #endif
 
-#endif // _DM_H_
+#endif /* _DM_H_ */
