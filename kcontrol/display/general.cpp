@@ -725,9 +725,9 @@ void KGeneral::save()
     runRdb(m_bExportColors);
     QApplication::restoreOverrideCursor();
 
-    if ( m_bStyleDirty )
+    if ( m_bStyleDirty || m_bMacStyleDirty )
         KIPC::sendMessageAll(KIPC::StyleChanged);
-    else if ( m_bMacStyleDirty )
+    if ( m_bMacStyleDirty )
         kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
     if ( m_bToolbarsDirty )
         KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0 /* we could use later for finer granularity */);
