@@ -52,7 +52,7 @@ static KCmdLineOptions options[] =
 {
     { "list", I18N_NOOP("List all possible modules"), 0},
     { "+module", I18N_NOOP("Configuration module to open."), 0 },
-    { "lang <language>", I18N_NOOP("Specify a certain language."), 0 },
+    { "lang <language>", I18N_NOOP("Specify a particular language."), 0 },
     { "embed <id>", I18N_NOOP("Window ID to embed into."), 0 },
     { "silent", I18N_NOOP("Do not display main window."), 0 },
     KCmdLineLastOption
