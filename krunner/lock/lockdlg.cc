@@ -43,7 +43,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
 
     pixlabel->setPixmap(DesktopIcon("kmenu"));
 
-    mLabel->setText(passwordQueryMsg());
+    mLabel->setText(labelText());
 
     mEntry->installEventFilter(this);
 
@@ -69,7 +69,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
 //
 // Fetch current user id, and return "Firstname Lastname (username)"
 //
-QString PasswordDlg::currentUser(void)
+QString PasswordDlg::labelText(void)
 {
     struct passwd *current = getpwuid(getuid());
     if ( !current )
@@ -84,17 +84,9 @@ QString PasswordDlg::currentUser(void)
 
     QString username = QString::fromLocal8Bit(current->pw_name);
 
-    return fullname + " (" + username + ")";
+    return i18n("Enter password for user %1 (%2)").arg(fullname).arg(username);
 }
 
-//---------------------------------------------------------------------------
-//
-// This returns the string to use to ask the user for their password.
-//
-QString PasswordDlg::passwordQueryMsg()
-{
-    return i18n("Enter password for user ") + currentUser();
-}
 
 //---------------------------------------------------------------------------
 //
@@ -111,7 +103,7 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         killTimer(mFailedTimerId);
         mFailedTimerId = 0;
         // Show the normal password prompt.
-        mLabel->setText(passwordQueryMsg());
+        mLabel->setText(labelText());
         mEntry->erase();
         mEntry->setEnabled(true);
         ok->setEnabled(true);

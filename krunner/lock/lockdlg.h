@@ -41,8 +41,7 @@ protected slots:
 
 private:
     void startCheckPassword();
-    QString currentUser();
-    QString passwordQueryMsg();
+    QString labelText();
 
     int         mFailedTimerId;
     int         mTimeoutTimerId;
