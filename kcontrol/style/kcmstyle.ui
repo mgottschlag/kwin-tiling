@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>500</width>
-            <height>396</height>
+            <width>480</width>
+            <height>376</height>
         </rect>
     </property>
     <property name="caption">
@@ -309,7 +309,7 @@
                                             <cstring>cbMenuEffect</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="Line" row="3" column="0" rowspan="1" colspan="3">
+                                    <widget class="Line" row="3" column="0" rowspan="1" colspan="4">
                                         <property name="name">
                                             <cstring>Line1</cstring>
                                         </property>
@@ -326,7 +326,38 @@
                                             <enum>Horizontal</enum>
                                         </property>
                                     </widget>
-                                    <widget class="QFrame" row="4" column="2" rowspan="2" colspan="1">
+                                    <spacer row="1" column="2" rowspan="1" colspan="2">
+                                        <property name="name" stdset="0">
+                                            <cstring>Spacer5</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>TextLabel3</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>ComboBo&amp;x Effect:</string>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>cbComboEffect</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QFrame" row="4" column="3" rowspan="2" colspan="1">
                                         <property name="name">
                                             <cstring>Frame4</cstring>
                                         </property>
@@ -358,57 +389,7 @@
                                             <enum>Sunken</enum>
                                         </property>
                                     </widget>
-                                    <widget class="QButtonGroup" row="4" column="0">
-                                        <property name="name">
-                                            <cstring>gbRenderMethod</cstring>
-                                        </property>
-                                        <property name="frameShape">
-                                            <enum>NoFrame</enum>
-                                        </property>
-                                        <property name="frameShadow">
-                                            <enum>Plain</enum>
-                                        </property>
-                                        <property name="title">
-                                            <string></string>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <property name="margin">
-                                                <number>11</number>
-                                            </property>
-                                            <property name="spacing">
-                                                <number>6</number>
-                                            </property>
-                                            <widget class="QRadioButton">
-                                                <property name="name">
-                                                    <cstring>rbXRender</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&amp;XRender</string>
-                                                </property>
-                                                <property name="checked">
-                                                    <bool>true</bool>
-                                                </property>
-                                            </widget>
-                                            <widget class="QRadioButton">
-                                                <property name="name">
-                                                    <cstring>rbSoftware</cstring>
-                                                </property>
-                                                <property name="enabled">
-                                                    <bool>true</bool>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&amp;Software</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
+                                    <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="3">
                                         <property name="name">
                                             <cstring>Layout6</cstring>
                                         </property>
@@ -488,36 +469,55 @@
                                             </widget>
                                         </grid>
                                     </widget>
-                                    <spacer row="1" column="2">
-                                        <property name="name" stdset="0">
-                                            <cstring>Spacer5</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QLabel" row="0" column="0">
+                                    <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="3">
                                         <property name="name">
-                                            <cstring>TextLabel3</cstring>
+                                            <cstring>gbRenderMethod</cstring>
                                         </property>
-                                        <property name="enabled">
-                                            <bool>true</bool>
+                                        <property name="frameShape">
+                                            <enum>NoFrame</enum>
                                         </property>
-                                        <property name="text">
-                                            <string>ComboBo&amp;x Effect:</string>
+                                        <property name="frameShadow">
+                                            <enum>Plain</enum>
                                         </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>cbComboEffect</cstring>
+                                        <property name="title">
+                                            <string></string>
                                         </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <property name="margin">
+                                                <number>11</number>
+                                            </property>
+                                            <property name="spacing">
+                                                <number>6</number>
+                                            </property>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>rbXRender</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;XRender</string>
+                                                </property>
+                                                <property name="checked">
+                                                    <bool>true</bool>
+                                                </property>
+                                            </widget>
+                                            <widget class="QRadioButton">
+                                                <property name="name">
+                                                    <cstring>rbSoftware</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;Software</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
                                     </widget>
                                 </grid>
                             </widget>
