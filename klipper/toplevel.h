@@ -15,6 +15,7 @@
 #include <kapplication.h>
 #include <kglobalaccel.h>
 #include <kpopupmenu.h>
+#include <ksystemtray.h>
 #include <qmap.h>
 #include <qtimer.h>
 #include <qpixmap.h>
@@ -24,7 +25,7 @@ class QClipboard;
 class KToggleAction;
 class URLGrabber;
 
-class TopLevel : public QWidget, public DCOPObject
+class TopLevel : public KSystemTray, public DCOPObject
 {
   Q_OBJECT
   K_DCOP
@@ -51,6 +52,10 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    // we don't use any of KSystemTray's features, beside the X11 focus/event
+    // handling (without, our tooltip will never show), so we just skip
+    // KSystemTray's mouseReleaseEvent handler.
+    void mouseReleaseEvent(QMouseEvent *e) { QWidget::mouseReleaseEvent( e ); }
     void readProperties(KConfig *);
     void readConfiguration(KConfig *);
     void writeConfiguration(KConfig *);

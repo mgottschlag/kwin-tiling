@@ -51,7 +51,7 @@
 
 
 TopLevel::TopLevel( QWidget *parent, bool applet )
-    : QWidget( parent ), DCOPObject( "klipper" ), m_dcop( 0 )
+    : KSystemTray( parent ), DCOPObject( "klipper" ), m_dcop( 0 )
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
@@ -112,7 +112,6 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool )), 
              this, SLOT( setURLGrabberEnabled( bool )));
-    setBackgroundMode(X11ParentRelative);
 
     QToolTip::add( this, i18n("Klipper - Clipboard Tool") );
 }
