@@ -39,6 +39,7 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);
   layout->addWidget(tab);
+  connect(tab, SIGNAL(currentChanged(QWidget*)), SLOT(tabChanged(QWidget*)));
 
   global = new KKeyModule(this, true, false, true);
   tab->addTab(global, i18n("&Global Shortcuts"));
@@ -88,6 +89,12 @@ void KeyModule::moduleChanged(bool state)
   emit changed(state);
 }
 
+// Keep the global and sequence shortcut scheme lists in sync
+void KeyModule::tabChanged(QWidget*)
+{
+  global->readSchemeNames();
+  series->readSchemeNames();
+}
 
 void KeyModule::resizeEvent(QResizeEvent *)
 {

@@ -55,6 +55,7 @@ protected:
 protected slots:
 
   void moduleChanged(bool state);
+  void tabChanged(QWidget *);
 
 
 private:

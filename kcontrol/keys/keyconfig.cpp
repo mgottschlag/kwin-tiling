@@ -112,15 +112,6 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   sFileList = new QStringList();
   sList = new QListBox( this );
 
-  sList->clear();
-  sFileList->clear();
-  sList->insertItem( i18n("Current Scheme"), 0 );
-  sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 1 );
-  sFileList->append( "Not a kcsrc file" );
-  //sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
-  //sFileList->append( "Not a kcsrc file" );
-  nSysSchemes = 2;
   readSchemeNames();
   sList->setCurrentItem( 0 );
   connect( sList, SIGNAL( highlighted( int ) ),
@@ -147,7 +138,8 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   // Hack to get this setting only displayed once.  It belongs in main.cpp instead.
   // That move will take a lot of UI redesigning, though, so i'll do it once CVS
   //  opens up for feature commits again. -- ellis
-  // If this is the "Global Keys" section of the KDE Control Center:
+  /* Needed to remove because this depended upon non-BC changes in KeyEntry.
+  / If this is the "Global Keys" section of the KDE Control Center:
   if( isGlobal && !bSeriesOnly ) {
 	preferMetaBt = new QCheckBox( i18n("Prefer 4-Modifier Defaults"), this );
 	if( !KAccel::keyboardHasMetaKey() )
@@ -157,7 +149,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 	QWhatsThis::add( preferMetaBt, i18n("If your keyboard has a Meta key, but you would "
 		"like KDE to prefer the 3-modifier configuration defaults, then this option "
 		"should be unchecked.") );
-  } else
+  } else*/
 	preferMetaBt = 0;
 
   KSeparator* line = new KSeparator( KSeparator::HLine, this );
@@ -262,12 +254,10 @@ void KKeyModule::slotChanged( )
 void KKeyModule::slotSave( )
 {
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
-    // If this is a series only scheme, then let 'global=true' in
-    //  the writeKeyMap().  This is necessary in order to
+    //  global=true is necessary in order to
     //  let both 'Global Shortcuts' and 'Shortcut Sequences' be
-    //  written to the same scheme file, because 'Global Shortcuts' in
-    //  written first.
-    KAccel::writeKeyMap( dict, KeyScheme, &config, bSeriesOnly );
+    //  written to the same scheme file.
+    KAccel::writeKeyMap( dict, KeyScheme, &config, KeyType == "global" );
 }
 
 void KKeyModule::slotPreferMeta()
@@ -288,9 +278,9 @@ void KKeyModule::readScheme( int index )
     else		config = new KSimpleConfig( *sFileList->at( index ), true );
 
     KAccel::readKeyMap( dict, index == 0 ? KeySet : KeyScheme, config );
-    kc->listSync();
     delete config;
   }
+  kc->listSync();
 }
 
 void KKeyModule::slotAdd()
@@ -433,6 +423,16 @@ void KKeyModule::readSchemeNames( )
   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
   //QRegExp r( "-kde[34].kksrc$" );
   QRegExp r( "-kde3.kksrc$" );
+
+  sList->clear();
+  sFileList->clear();
+  sList->insertItem( i18n("Current Scheme"), 0 );
+  sFileList->append( "Not a kcsrc file" );
+  sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 1 );
+  sFileList->append( "Not a kcsrc file" );
+  //sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
+  //sFileList->append( "Not a kcsrc file" );
+  nSysSchemes = 2;
 
   // This for system files
   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) {

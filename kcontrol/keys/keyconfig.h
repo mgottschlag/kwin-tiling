@@ -51,6 +51,7 @@ public slots:
 	void slotChanged();
 	void slotPreferMeta();
         void updateKeys( const KKeyEntryMap* map_P );
+	void readSchemeNames();
 
 signals:
         void keysChanged( const KKeyEntryMap* map_P );
@@ -64,7 +65,6 @@ protected:
 	int nSysSchemes;
 	bool bSeriesOnly;
 
-	void readSchemeNames();
 	void readScheme( int index=0 );
 
         QString KeyType ;
