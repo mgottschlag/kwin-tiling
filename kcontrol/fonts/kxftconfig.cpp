@@ -485,7 +485,7 @@ bool KXftConfig::apply()
         //
         // Check if file has been written since we last read it. If it has, then re-read and add any
         // of our changes...
-        if(getTimeStamp(m_file)!=m_time)
+        if(fExists(m_file) && getTimeStamp(m_file)!=m_time)
         {
             KXftConfig            newConfig(m_required, m_system);
             QStringList           list;
