@@ -380,7 +380,7 @@ void KScreenSaver::readSettings()
     mEnabled = config->readBoolEntry("Enabled", false);
     mLock = config->readBoolEntry("Lock", false);
     mTimeout = config->readNumEntry("Timeout", 300);
-    mPriority = config->readNumEntry("Priority", 0);
+    mPriority = config->readNumEntry("Priority", 19);
     mPasswordStars = config->readBoolEntry("PasswordAsStars", true);
     mSaver = config->readEntry("Saver");
 
