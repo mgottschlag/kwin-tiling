@@ -706,7 +706,9 @@ or unmounting directories from file servers.</para>
 #     If "-" is given to Comment, no comment is generated at all.
 #     If "&" is given, the comment is derived from the Description below by
 #     applying some simple docbook interpretation to it. Note that the
-#     Description must be preformatted in this case.
+#     Description must be preformatted in this case. Use
+#        sed -ne 's/^\(.\{79,\}\)$/\1/p' < kdmrc
+#     after running "make install" to see whether all lines still fit.
 #     If Type is enum, a list of the previously defined element/description
 #     pairs is appended; the descriptions undergo docbook interpretation.
 #     Finally, a sentence with the Default (or CDefault, if given) is appended.
@@ -716,11 +718,14 @@ or unmounting directories from file servers.</para>
 #     If "-" is given to Description, no comment is generated at all.
 #     If "!" is given, enums are not treated specially; otherwise, the macro
 #     %ENUM% is replaced with a list of the defined element/description pairs,
-#     or - if the macro is not present - the list is appended to the description.
+#     or - if the macro is not present - the list is appended to the
+#     description.
 #     Finally, a sentence with the Default (or CDefault, if given) is appended,
 #     unless "DDefault: -" was specified.
 #     Each option entry generates an anchor named option-<lowercase(Key)>;
 #     it can be referenced in the main documentation.
+#     Do not forget to run "make ref" in kdebase/doc/kdm after changing
+#     Descriptions.
 
 Section: General
 Description:
@@ -957,8 +962,8 @@ Update: upd_datadir
 Comment:
  The directory in which kdm should store persistent working data.
 Description:
- The directory in which &kdm; should store persistent working data; such data is,
- for example, the previous user that logged in on a particular display.
+ The directory in which &kdm; should store persistent working data; such data
+ is, for example, the previous user that logged in on a particular display.
 
 Key: DmrcDir
 Type: path
@@ -967,9 +972,9 @@ User: core
 Instance: #"/nfs-shared/var/dmrcs"
 Comment: &
 Description:
- The directory in which &kdm; should store users' <filename>.dmrc</filename> files. This is only needed
- if the home directories are not readable before actually logging in (like
- with AFS).
+ The directory in which &kdm; should store users' <filename>.dmrc</filename> files. This is only
+ needed if the home directories are not readable before actually logging in
+ (like with AFS).
 
 
 Section: Xdmcp
@@ -1458,7 +1463,7 @@ Update: mk_setup
 Merge: xdm
 Comment:
  A program to run before the greeter is shown. Can be used to start an
- <command>xconsole</command> or an alternative background generator.
+ xconsole or an alternative background generator.
 Description:
  This specifies a program which is run (as
  <systemitem class="username">root</systemitem>) before offering the
@@ -2006,12 +2011,12 @@ Description: !
  This option controls which users will be shown in the user view
  (<option>UserList</option>) and/or offered for autocompletion
  (<option>UserCompletion</option>).
- If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains the
- final list of users.
- If it is <literal>NotHidden</literal>, the initial user list are all users found
- on the system. Users contained in <option>HiddenUsers</option> are removed
- from the list, just like all users with a UID greater than specified in
- <option>MaxShowUID</option> and users with a non-zero UID less than
+ If it is <literal>Selected</literal>, <option>SelectedUsers</option> contains
+ the final list of users.
+ If it is <literal>NotHidden</literal>, the initial user list are all users
+ found on the system. Users contained in <option>HiddenUsers</option> are
+ removed from the list, just like all users with a UID greater than specified
+ in <option>MaxShowUID</option> and users with a non-zero UID less than
  specified in <option>MinShowUID</option>.
  Items in <option>SelectedUsers</option> and <option>HiddenUsers</option>
  which are prefixed with <literal>@</literal> represent all users in the
