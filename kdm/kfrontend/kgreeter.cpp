@@ -760,7 +760,7 @@ KThemedGreeter::KThemedGreeter()
     xauth_warning = themer->findNode( "xauth-warning" ); // kdm ext
     pam_error = themer->findNode( "pam-error" );
     if (pam_error->isA("KdmLabel"))
-	static_cast<KdmLabel*>(pam_error)->setText( i18n("Login Failed!") );
+	static_cast<KdmLabel*>(pam_error)->setText( i18n("Login Failed.") );
 
     KdmItem *itm;
     if ((itm = themer->findNode( "pam-message" ))) // done via msgboxes
