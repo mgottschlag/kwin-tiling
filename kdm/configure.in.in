@@ -1,8 +1,10 @@
 
 dnl this is for kdm:
 
-AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$kde_confdir", [KDE's configuration directory])
-AC_DEFINE_UNQUOTED(KDE_BINDIR, "$kde_bindir", [KDE's binaries directory])
+KDE_CONFDIR=`eval echo $kde_confdir`
+AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
+KDE_BINDIR=`eval echo $kde_bindir`
+AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
 
 dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
