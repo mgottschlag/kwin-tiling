@@ -561,11 +561,6 @@ signals:
     void windowChanged(WId);
     void windowChangedGeometry(WId);
 
-    /**
-     * Emitted when a task changes name.
-     */
-    void taskNameChanged();
-
 protected slots:
     //* @internal
     void windowAdded(WId);

@@ -257,10 +257,6 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         {
             t->refreshIcon();
         }
-        else if (dirty == NET::WMName)
-        {
-            emit taskNameChanged();
-        }
     }
 
     if (dirty & (NET::WMDesktop| NET::WMState | NET::XAWMState))
