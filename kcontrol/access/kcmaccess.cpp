@@ -32,15 +32,24 @@
 
 static bool needToRunKAccessDaemon( KConfig *config )
 {
-    KConfigGroup group( config, "Bell" );
+    KConfigGroup bell( config, "Bell" );
     
-    if (!group.readBoolEntry("SystemBell", true))
+    if (!bell.readBoolEntry("SystemBell", true))
         return true;
-    if (group.readBoolEntry("ArtsBell", false))
+    if (bell.readBoolEntry("ArtsBell", false))
         return true;
-    if (group.readBoolEntry("VisibleBell", false))
+    if (bell.readBoolEntry("VisibleBell", false))
         return true;
     
+  KConfigGroup keyboard( config, "Keyboard" );
+
+  if (keyboard.readBoolEntry("StickyKeys", false))
+        return true;
+  if (keyboard.readBoolEntry("SlowKeys", false))
+        return true;
+  if (keyboard.readBoolEntry("BounceKeys", false))
+        return true;
+
     return false; // don't need it
 }
 
