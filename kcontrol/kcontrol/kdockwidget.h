@@ -69,7 +69,6 @@ public slots:
 
 private:
 
-  QList<KDockWidget> _children;
   KToolBoxManager    *_tbManager;
   bool               _dockSpot;
 

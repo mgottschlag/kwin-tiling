@@ -82,10 +82,8 @@ void KDockContainer::showWidget(QWidget *widget)
 
 void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
 {
-  _children.append(widget);
-
   addTab(widget, QIconSet(icon), widget->caption());
-  showWidget(widget);  
+  showPage(widget);  
   updateGeometry();
   emit newModule(widget->caption());
 }
@@ -93,7 +91,7 @@ void KDockContainer::addDockWidget(KDockWidget *widget, QPixmap icon)
 
 void KDockContainer::removeDockWidget(KDockWidget *widget)
 {
-  _children.remove(widget);
+  removePage(widget);
   updateGeometry();
   if (currentPage())
     emit newModule(currentPage()->caption());
