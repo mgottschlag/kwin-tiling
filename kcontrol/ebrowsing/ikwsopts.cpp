@@ -199,6 +199,7 @@ void InternetKeywordsOptions::load() {
     }
 
     cb_enableInternetKeywords->setChecked(searcher->navEnabled());
+    cmb_searchFallback->setEnabled(searcher->navEnabled());
 
     if (lv_searchProviders->childCount()) {
 	lv_searchProviders->setSelected(lv_searchProviders->firstChild(), true);
