@@ -711,7 +711,7 @@ KGreeter::verifyUser(bool haveto)
 			"or contact your system administrator."));
 	    break;
 	case V_NOHOME:
-	    MsgBox (sorrybox, i18n("Home directory not available."));
+	    MsgBox (sorrybox, i18n("Home folder not available."));
 	    break;
 	case V_NOROOT:
 	    MsgBox (sorrybox, i18n("Root logins are not allowed."));
