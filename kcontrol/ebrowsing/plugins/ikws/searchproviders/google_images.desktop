@@ -3,4 +3,4 @@ Type=Service
 Name=Google Image Search
 ServiceTypes=SearchProvider
 Keys=ggi,images
-Query=http://images.google.com/images?q=\\1
+Query=http://images.google.com/images?q=\\{@}
