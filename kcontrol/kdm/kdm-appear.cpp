@@ -18,6 +18,7 @@
 */  
 
 #include "utils.h"
+#include <kio_job.h>
 #include "kdm-appear.moc"
 
 
@@ -229,9 +230,9 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
     if(strcmp(url.protocol(), "file") != 0)
     {
       pixurl += url.filename();
-      KFM *kfm = new KFM();
-      kfm->copy(url.url().data(), pixurl.data());
-      delete kfm;
+      KIOJob *iojob = new KIOJob(); // will autodelete itself
+      iojob->setGUImode( KIOJob::NONE );
+      iojob->copy(url.url().data(), pixurl.data());
       url = pixurl;
       istmp = true;
     }

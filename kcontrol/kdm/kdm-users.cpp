@@ -18,6 +18,7 @@
 */  
 
 #include "utils.h"
+#include <kio_job.h>
 #include "kdm-users.moc"
 
 
@@ -234,12 +235,12 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
   else
   {
     // we gotta check if it is a non-local file and make a tmp copy at the hd.
-    if(strcmp(url.protocol(), "file") != 0)
+    if( !url.isLocalFile() )
     {
       pixurl += url.filename();
-      KFM *kfm = new KFM();
-      kfm->copy(url.url().data(), pixurl.data());
-      delete kfm;
+      KIOJob *iojob = new KIOJob(); // will autodelete itself
+      iojob->setGUImode( KIOJob::NONE );
+      iojob->copy(url.url().data(), pixurl.data());
       url = pixurl;
       istmp = true;
     }
@@ -263,13 +264,13 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
         userpixurl += user;
         userpixurl += filename.right( filename.length()-(last_dot_idx) );
         //debug("destination: %s", userpixurl.data());
-        // Let KFM copy the file. NB: network transparent
-        KFM *kfm = new KFM();
+        // Copy the file. NB: network transparent
+        KIOJob *iojob = new KIOJob(); // will autodelete itself
+        iojob->setGUImode( KIOJob::NONE );
         if(istmp)
-          kfm->move(url.url(), userpixurl.data());
+          iojob->move(url.url(), userpixurl.data());
         else
-          kfm->copy(url.url(), userpixurl.data());
-        delete kfm;
+          iojob->copy(url.url(), userpixurl.data());
       }
       else
       {

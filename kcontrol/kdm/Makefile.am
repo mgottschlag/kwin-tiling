@@ -1,7 +1,7 @@
 
 INCLUDES = $(all_includes) 
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD =      $(LIB_KIMGIO)    $(LIB_KFILE) 
+LDADD = $(LIB_KIMGIO) $(LIB_KFILE) $(LIB_KIO)
 SUBDIRS = pics 
 
 bin_PROGRAMS = kdmconfig
