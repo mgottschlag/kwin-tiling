@@ -46,6 +46,8 @@ class Module
         int gesture_button() const;
         void set_gesture_timeout( int time );
         int gesture_timeout() const;
+        void set_gestures_exclude( Windowdef_list* windows );
+        const Windowdef_list* gestures_exclude() const;
         void set_daemon_disabled( bool disable );
         bool daemon_disabled() const;
         void import();
@@ -123,6 +125,12 @@ inline
 int Module::gesture_timeout() const
     {
     return settings.gesture_timeout;
+    }
+
+inline
+const Windowdef_list* Module::gestures_exclude() const
+    {
+    return settings.gestures_exclude;
     }
 
 inline

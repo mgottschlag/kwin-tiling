@@ -34,7 +34,7 @@ namespace KHotKeys
 // Settings
 
 Settings::Settings()
-    : actions( NULL )
+    : actions( NULL ), gestures_exclude( NULL )
     {
     }
     
@@ -111,6 +111,9 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     gesture_mouse_button = cfg_P.readNumEntry( "MouseButton", 2 );
     gesture_mouse_button = KCLAMP( gesture_mouse_button, 2, 9 );
     gesture_timeout = cfg_P.readNumEntry( "Timeout", 300 );
+    cfg_P.setGroup( "GesturesExclude" );
+    delete gestures_exclude;
+    gestures_exclude = new Windowdef_list( cfg_P );
     return true;
     }
 
@@ -135,6 +138,13 @@ void Settings::write_settings()
     cfg.writeEntry( "Disabled", gestures_disabled_globally );
     cfg.writeEntry( "MouseButton", gesture_mouse_button );
     cfg.writeEntry( "Timeout", gesture_timeout );
+    if( gestures_exclude != NULL )
+        {
+        cfg.setGroup( "GesturesExclude" );
+        gestures_exclude->cfg_write( cfg );
+        }
+    else
+        cfg.deleteGroup( "GesturesExclude" );
     }
 
 // return value means the number of enabled actions written in the cfg file

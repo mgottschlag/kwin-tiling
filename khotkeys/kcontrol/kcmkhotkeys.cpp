@@ -251,6 +251,12 @@ void Module::global_settings()
     set_new_current_action( true );
     }
 
+void Module::set_gestures_exclude( Windowdef_list* windows )
+    {
+    delete settings.gestures_exclude;
+    settings.gestures_exclude = windows;
+    }
+
 void Module::import()
     {
     QString file = KFileDialog::getOpenFileName( QString::null, "*.khotkeys", topLevelWidget(),

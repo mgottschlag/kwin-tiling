@@ -37,6 +37,7 @@ class Settings
         int gesture_mouse_button;
         int gesture_timeout;
         bool daemon_disabled;
+        Windowdef_list* gestures_exclude;
     protected:
         bool read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P );
         void read_settings_v1( KConfig& cfg_P );

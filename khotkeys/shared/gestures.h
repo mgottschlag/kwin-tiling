@@ -17,6 +17,8 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+#include "windows.h"
+
 namespace KHotKeys
 {
 
@@ -70,12 +72,14 @@ class Gesture
         void enable( bool enable_P );
         void set_mouse_button( unsigned int button_P );
         void set_timeout( int time_P );
+        void set_exclude( Windowdef_list* windows_P );
         void register_handler( QObject* receiver_P, const char* slot_P );
         void unregister_handler( QObject* receiver_P, const char* slot_P );
     protected:
 	virtual bool x11Event( XEvent* ev_P );
     private slots:
         void stroke_timeout();
+        void active_window_changed( WId window_P );
     signals:
         void handle_gesture( const QString &gesture, WId window );
     private:
@@ -90,6 +94,7 @@ class Gesture
         unsigned int button;
         int timeout;
         WId gesture_window;
+        Windowdef_list* exclude;
         QMap< QObject*, bool > handlers; // bool is just a dummy
     };
 

@@ -42,12 +42,14 @@ namespace KHotKeys
 Gesture* gesture_handler;
 
 Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
-    : _enabled( false ), recording( false ), button( 0 )
+    : _enabled( false ), recording( false ), button( 0 ), exclude( NULL )
     {
     (void) new DeleteObject( this, parent_P );
     assert( gesture_handler == NULL );
     gesture_handler = this;
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
+    connect( windows_handler, SIGNAL( active_window_changed( WId )),
+        SLOT( active_window_changed( WId )));
     }
       
 Gesture::~Gesture()
@@ -64,14 +66,25 @@ void Gesture::enable( bool enabled_P )
     assert( button != 0 );
     update_grab();
     }
-    
+
+void Gesture::set_exclude( Windowdef_list* windows_P )
+    {
+    delete exclude;
+    if( windows_P != NULL )
+        exclude = windows_P->copy();
+    else
+        exclude = NULL;
+    update_grab();
+    }
+
 void Gesture::update_grab()
     {
-    if( _enabled && handlers.count() > 0 )
+    if( _enabled && handlers.count() > 0
+        && ( exclude == NULL || !exclude->match( Window_data( windows_handler->active_window()))))
         {
+        kapp->removeX11EventFilter( this ); // avoid being installed twice
         kapp->installX11EventFilter( this );
         // CHECKME at se grabuje jen kdyz je alespon jedno gesto?
-        // + seznam oken, pro ktere nedelat grab?
         grab_mouse( true );
         }
     else
@@ -79,6 +92,11 @@ void Gesture::update_grab()
         grab_mouse( false );
         kapp->removeX11EventFilter( this );
         }
+    }
+
+void Gesture::active_window_changed( WId )
+    {
+    update_grab();
     }
 
 void Gesture::register_handler( QObject* receiver_P, const char* slot_P )

@@ -22,6 +22,7 @@
 #include <qcheckbox.h>
 
 #include "kcmkhotkeys.h"
+#include "windowdef_list_widget.h"
 
 namespace KHotKeys
 {
@@ -51,6 +52,10 @@ void Gestures_settings_tab::read_data()
     mouse_gestures_globally->setChecked( module->gestures_disabled());
     mouse_button_combo->setCurrentItem( module->gesture_button() - 2 );
     timeout_input->setValue( module->gesture_timeout());
+    if( module->gestures_exclude() != NULL )
+        windowdef_list_widget->set_data( module->gestures_exclude());
+    else
+        windowdef_list_widget->clear_data();
     }
 
 void Gestures_settings_tab::write_data() const
@@ -58,6 +63,7 @@ void Gestures_settings_tab::write_data() const
     module->set_gestures_disabled( mouse_gestures_globally->isChecked());
     module->set_gesture_button( mouse_button_combo->currentItem() + 2 );
     module->set_gesture_timeout( timeout_input->value());
+    module->set_gestures_exclude( windowdef_list_widget->get_data());
     }
 
 void Gestures_settings_tab::clear_data()

@@ -56,6 +56,7 @@ void KHotKeysApp::reread_configuration()
     gesture_handler->set_mouse_button( settings.gesture_mouse_button );
     gesture_handler->set_timeout( settings.gesture_timeout );
     gesture_handler->enable( !settings.gestures_disabled_globally );
+    gesture_handler->set_exclude( settings.gestures_exclude );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif
