@@ -56,7 +56,7 @@ private slots:
         void slotUsrToAll();
         void slotNoToAll();
 	void slotPixDropped(KDNDDropZone *zone);
-        void slotUserPixChanged(const char*);
+        void slotUserPixChanged(const QString&);
 
 private:
 

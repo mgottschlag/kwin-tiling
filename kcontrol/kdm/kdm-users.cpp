@@ -136,8 +136,8 @@ void KDMUsersWidget::setupPage(QWidget *)
       userbutton = new KIconLoaderButton(iconloader, this);
       userbutton->setIcon("default.xpm");
       userbutton->setFixedSize(80, 80);
-      connect(userbutton, SIGNAL(iconChanged(const char*)),
-              SLOT(slotUserPixChanged(const char*)));
+      connect(userbutton, SIGNAL(iconChanged(const QString&)),
+              SLOT(slotUserPixChanged(const QString&)));
       QToolTip::add(userbutton, i18n("Click or drop an image here"));
       userpixdrop = new KDNDDropZone(userbutton, DndURL);
       connect(userpixdrop, SIGNAL(dropAction(KDNDDropZone*)),
@@ -179,7 +179,7 @@ void KDMUsersWidget::setupPage(QWidget *)
       main->activate();
 }
 
-void KDMUsersWidget::slotUserPixChanged(const char*)
+void KDMUsersWidget::slotUserPixChanged(const QString& )
 {
   debug("KDMUsersWidget::slotUserPixChanged()");
   QString msg, user(userlabel->text());

@@ -91,8 +91,8 @@ void KDMSessionsWidget::setupPage(QWidget *)
 
       session_lined = new KLineEdit(group2);
       session_lined->setFixedHeight(session_lined->sizeHint().height());
-      connect(session_lined, SIGNAL(textChanged(const char*)),
-              SLOT(slotCheckNewSession(const char*)));
+      connect(session_lined, SIGNAL(textChanged(const QString&)),
+              SLOT(slotCheckNewSession(const QString&)));
       connect(session_lined, SIGNAL(returnPressed()),
               SLOT(slotAddSessionType()));
 
@@ -184,10 +184,9 @@ void KDMSessionsWidget::slotSessionHighlighted(int s)
     sessionslb->centerCurrentItem();
 }
 
-void KDMSessionsWidget::slotCheckNewSession(const char *s)
+void KDMSessionsWidget::slotCheckNewSession(const QString& str)
 {
-  QString str = s;
-  btnadd->setEnabled(str.length() > 0);
+  btnadd->setEnabled(!str.isEmpty());
 }
 
 void KDMSessionsWidget::slotSessionUp()

@@ -116,7 +116,8 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       cGroup->insert( crb3, Vertical );
       cl->addWidget(crb3, 0, AlignLeft);
 
-      connect( cGroup, SIGNAL( clicked( int ) ), SLOT( slotColorMode( int ) ) );
+      connect( cGroup, SIGNAL( clicked( int ) ), 
+	       SLOT( slotColorMode( int ) ) );
 
       cl->activate();
 
@@ -150,8 +151,8 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 	wpCombo->insertItem( wallpaper );
 	wpCombo->setCurrentItem( wpCombo->count()-1 );
       }
-      connect( wpCombo, SIGNAL( activated( const char * ) ),
-		SLOT( slotWallpaper( const char * )  )  );
+      connect( wpCombo, SIGNAL( activated( const QString& ) ),
+		SLOT( slotWallpaper( const QString& )  )  );
       wpCombo->setFixedHeight(wpCombo->sizeHint().height());
 
       button = new QPushButton( i18n("Browse..."), rGroup );
@@ -216,7 +217,8 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 
       wpl->activate();
 
-      connect( wpGroup, SIGNAL( clicked( int ) ), SLOT( slotWallpaperMode( int ) ) );
+      connect( wpGroup, SIGNAL( clicked( int ) ), 
+	       SLOT( slotWallpaperMode( int ) ) );
 
       // Layouts
 
@@ -334,13 +336,11 @@ void KDMBackgroundWidget::setMonitor()
   QApplication::restoreOverrideCursor();
 }
 
-void KDMBackgroundWidget::slotWallpaper( const char *filename )
+void KDMBackgroundWidget::slotWallpaper( const QString& filename )
 {
-  if ( filename )
-  {
-    if ( loadWallpaper( filename ) == TRUE )
-	setMonitor();
-  }
+  if ( !filename.isEmpty() )
+      if ( loadWallpaper( filename ) == TRUE )
+	  setMonitor();
 }
 
 void KDMBackgroundWidget::slotWallpaperMode( int m )
@@ -625,22 +625,24 @@ void KDMBackgroundWidget::loadSettings()
   color1  = c->readColorEntry( "BackGroundColor1", &darkCyan);
   color2  = c->readColorEntry( "BackGroundColor2", &darkBlue);
 
+  wallpaper = "";
   str = c->readEntry( "BackGroundPicture" );
   if ( !str.isEmpty() )
   {
-    QFileInfo fi(str.data());
-    if(fi.exists())
-    {
-      KGlobal::dirs()->addResourceDir("icon", fi.dirPath(true));
-      wallpaper = str;
-    }
-    else wallpaper = "";
+      str = locate("wallpaper", str);
+      if(!str.isEmpty())
+	  {
+	      KGlobal::dirs()->
+		  addResourceDir("wallpaper", 
+				 KGlobal::dirs()->
+				 findResourceDir("wallpaper", str));
+	      wallpaper = str;
+	  }
   }
-  else wallpaper = "";
 
   QString strmode = c->readEntry( "BackGroundColorMode", "Plain");
   if(strmode == "Plain")
-    colorMode = Plain;
+    colorMode = Plain; 
   else if(strmode == "Horizontal")
     colorMode = Horizontal;
   else if(strmode == "Vertical")

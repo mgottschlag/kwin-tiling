@@ -59,7 +59,7 @@ protected slots:
 	void slotSelectColor1( const QColor &col );
 	void slotSelectColor2( const QColor &col );
 	void slotBrowse();
-	void slotWallpaper( const char * );
+	void slotWallpaper( const QString& );
 	void slotWallpaperMode( int );
 	void slotColorMode( int );
 	void slotQDrop( QDropEvent* );
