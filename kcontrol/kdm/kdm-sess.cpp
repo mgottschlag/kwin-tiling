@@ -242,7 +242,6 @@ void KDMSessionsWidget::save()
 void KDMSessionsWidget::load()
 {
   QString str;
-  QStrList sessions;
   
   // Get config object
   KSimpleConfig *c = new KSimpleConfig(locate("config", "kdmrc"));
@@ -264,11 +263,9 @@ void KDMSessionsWidget::load()
     sdMode = ConsoleOnly;
   sdcombo->setCurrentItem(sdMode);
 
-  str = c->readEntry( "SessionTypes");
-  if(!str.isEmpty())
-    semsplit( str, sessions);	  
+  QStringList sessions = c->readListEntry( "SessionTypes", ';');
   sessionslb->clear();
-  sessionslb->insertStrList(&sessions);
+  sessionslb->insertStringList(sessions);
 
   delete c;
 }

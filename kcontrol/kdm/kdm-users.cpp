@@ -386,21 +386,15 @@ void KDMUsersWidget::load()
     c->setGroup("KDM");
 
     // Read users from kdmrc and /etc/passwd
-    QStrList users, no_users;
-    str = c->readEntry( "Users");
-    if(!str.isEmpty()) {
-        semsplit( str, users);
-        showallusers = false;
-    }
-    else
-        showallusers = true;
-    str = c->readEntry( "NoUsers");
-    if(!str.isEmpty())
-        semsplit( str, no_users);	
+    QStringList users, no_users;
+    users = c->readListEntry( "Users", ';');
+    showallusers = users.isEmpty();
+    no_users = c->readListEntry( "NoUsers", ';');
+
     userlb->clear();
-    userlb->insertStrList(&users);
+    userlb->insertStringList(users);
     nouserlb->clear();
-    nouserlb->insertStrList(&no_users);
+    nouserlb->insertStringList(no_users);
 
     QStrList allusers;
     struct passwd *ps;
