@@ -38,9 +38,9 @@ Keys=ya,yahoo
 Query=http://search.yahoo.com/bin/search?p=\1
 
 [Merriam-Webster Dictionary Search]
-keys=dict,webster
+Keys=dict,webster
 Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\1
 
 [Merriam-Webster Thesaurus Search]
-keys=ths,thesaurus
+Keys=ths,thesaurus
 Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\1
