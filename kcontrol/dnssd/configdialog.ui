@@ -54,7 +54,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Additional domains</string>
+                <string>Additional Domains</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -86,7 +86,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Publishing mode</string>
+                <string>Publishing Mode</string>
             </property>
             <vbox>
                 <property name="name">
@@ -127,7 +127,7 @@
                                 <bool>false</bool>
                             </property>
                             <property name="text">
-                                <string>Default domain</string>
+                                <string>Default domain:</string>
                             </property>
                         </widget>
                         <spacer>
