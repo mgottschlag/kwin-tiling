@@ -2,13 +2,17 @@
 Name=Windows Default (Without Meta/Win-Key)
 Name[de]=Windows-Voreinstellung (ohne Meta-/Windows-Taste)
 Name[es]=Predeterminado Windows (sin la tecla Meta/Win)
+Name[fi]=Windows oletus (ilman Meta/Win-näppäintä)
 Name[fr]=Windows par défaut (sans touche Méta/Windows)
 Name[he]=(Meta/Win שקמ אלל) Windows לש לדחמ תרירב
 Name[hu]=Windows alapértelmezés (a Windows billentyű nélkül)
 Name[ja]=Windows標準 (Metaなし/Windowsキー)
+Name[lt]=Windows nutylima (be Meta/Win-klavišo)
+Name[lv]=Windows Noklusētais (Bez Meta/Win-Taustiņa)
 Name[pt_BR]=Windows por Omissão (Sem a tecla Meta/Windows)
 Name[pt]=Windows por Omissão (Sem a tecla Meta/Windows)
 Name[sv]=Windows-förinställt (utan Meta/Windows-tangent)
+Name[uk]=Типовий для Windows (без клавіши Meta/Win)
 Execute command=none
 Kill Window=none
 Lock screen=none
