@@ -1465,10 +1465,13 @@ bool CFontEngine::has8BitEncodingFt(CEncodings::T8Bit *data)
 
                 int ch,
                     missing=0;
+
                 setCharmapFt(itsFt.face->charmaps[cm]);
-                for(ch=0; ch<CEncodings::T8Bit::NUM_MAP_ENTRIES; ch++)
+
+                for(ch=0; ch<CEncodings::T8Bit::NUM_MAP_ENTRIES && missing<=constMaxMissing; ch++)
                     if(data->map[ch]>-1 && FT_Get_Char_Index(itsFt.face, data->map[ch])==0)
                         missing++;
+
                 if(missing<=constMaxMissing)
                     return true;
             }
@@ -1499,9 +1502,9 @@ QStringList CFontEngine::getEncodingsFt()
 
     // Check if font has the 'exclusive' encoding, if so just use this...
     if(CKfiGlobal::cfg().getExclusiveEncoding())
-        if(CKfiGlobal::cfg().getEncoding()==CEncodings::constUnicodeStr ||
+        if((CKfiGlobal::cfg().getEncoding()==CEncodings::constUnicodeStr && setCharmapUnicodeFt()) ||
            has8BitEncodingFt(CKfiGlobal::enc().get8Bit(CKfiGlobal::cfg().getEncoding())) ||
-           has16BitEncodingFt(CKfiGlobal::cfg().getEncoding()))
+           (TRUE_TYPE==itsType && has16BitEncodingFt(CKfiGlobal::cfg().getEncoding())))
         {
             enc.append(CKfiGlobal::cfg().getEncoding());
             exclusive=true;
@@ -1521,12 +1524,15 @@ QStringList CFontEngine::getEncodingsFt()
             // Do 8-bit encodings...
             enc+=get8BitEncodingsFt();
 
-            // Do 16-bit encodings...
-            CEncodings::T16Bit *enc16;
+            if(TRUE_TYPE==itsType)
+            {
+                // Do 16-bit encodings...
+                CEncodings::T16Bit *enc16;
 
-            for(enc16=CKfiGlobal::enc().first16Bit(); enc16; enc16=CKfiGlobal::enc().next16Bit())
-                if(has16BitEncodingFt(enc16->name))
-                    enc.append(enc16->name);
+                for(enc16=CKfiGlobal::enc().first16Bit(); enc16; enc16=CKfiGlobal::enc().next16Bit())
+                    if(has16BitEncodingFt(enc16->name))
+                        enc.append(enc16->name);
+            }
         }
     }
 
@@ -1569,7 +1575,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
             for(ch=0; ch<str.length(); ++ch)
             {
                 code=symbol | t1array ?
-                                ( CKfiGlobal::fe().getType()==CFontEngine::TRUE_TYPE ?
+                                ( CKfiGlobal::fe().getType()==TRUE_TYPE ?
                                       CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode()+CEncodings::MS_SYMBOL_MODIFIER) :
                                       ch
                                 ) :
@@ -1597,7 +1603,7 @@ QPixmap CFontEngine::createPixmapFt(const QString &str, int width, int height, i
             for(ch=0; ch<str.length(); ++ch)
             {
                 code=symbol | t1array ?
-                                ( CKfiGlobal::fe().getType()==CFontEngine::TRUE_TYPE ?
+                                ( CKfiGlobal::fe().getType()==TRUE_TYPE ?
                                       CKfiGlobal::fe().getGlyphIndexFt(str[ch].unicode()+CEncodings::MS_SYMBOL_MODIFIER) :
                                       ch
                                 ) :
