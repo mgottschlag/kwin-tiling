@@ -469,7 +469,7 @@ void topKCMEmail::save()
 	// insure proper permissions -- contains sensitive data
 	QString cfgName(KGlobal::dirs()->findResource("config", "emaildefaults"));
 	if (!cfgName.isEmpty())
-		::chmod(cfgName.utf8(), 0600);
+		::chmod(QFile::encodeName(cfgName), 0600);
 
 	configChanged(false);
 }
@@ -482,9 +482,9 @@ void topKCMEmail::defaults()
 	p = getpwuid(getuid());
 	gethostname(hostname, 80);
 
-	txtFullName->setText(p->pw_gecos);
+	txtFullName->setText(QString::fromLocal8Bit(p->pw_gecos));
 
-	QString tmp = p->pw_name;
+	QString tmp = QString::fromLocal8Bit(p->pw_name);
 	tmp += "@"; tmp += hostname;
 
 	txtEMailAddr->setText(tmp);
