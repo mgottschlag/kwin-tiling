@@ -1,5 +1,5 @@
-# 'colors' and 'fonts' should come after 'display'
-SUBDIRS = bell background filetypes samba display input info ioslaveinfo kdm\
+# 'colors' and 'fonts' should come after 'krdb'
+SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	kicker locale launch keys kio konq thememgr style \
 	konqhtml email ebrowsing arts kcontrol passwords knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \

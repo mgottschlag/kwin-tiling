@@ -62,6 +62,8 @@
 #include <kstyle.h>
 #include <kstandarddirs.h>
 
+#include "../display/krdb.h"
+
 #include "kcmstyle.h"
 #include "stylepreview.h"
 
@@ -73,7 +75,7 @@
 
 /**** DLL Interface for kcontrol ****/
 
-/*void applyMultiHead(bool active)
+void applyMultiHead(bool active)
 {
 	// Pass env. var to kdeinit.
 	QCString name = "KDE_MULTIHEAD";
@@ -82,7 +84,7 @@
 	QDataStream stream(params, IO_WriteOnly);
 	stream << name << value;
 	kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-} */
+}
 
 // Plugin Interface
 // Danimo: Why do we use the old interface?!
@@ -94,7 +96,7 @@ extern "C"
 		return new KCMStyle(parent, "kcmstyle");
 	}
 
-/*    void init_style() 
+    void init_style() 
 	{
 		KConfig config("kcmdisplayrc", true, true);
 		config.setGroup("X11");
@@ -122,7 +124,7 @@ extern "C"
                             a, a, 8, PropModeReplace,
                             (unsigned char*) properties.data(), properties.size());
 #endif
-    } */
+    }
 }
 
 /*
