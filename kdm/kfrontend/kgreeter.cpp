@@ -585,6 +585,7 @@ KGreeter::slotLoadPrevWM()
 	sess = GRecvStr();
 	if (!sess) {		/* no such user */
 	    if (!userView && !userList) { // don't fake if user list shown
+		prevValid = false;
 		/* simple crc32 */
 		for (crc = _forgingSeed, i = 0; i < len; i++) {
 		    by = (crc & 255) ^ name[i];
