@@ -119,6 +119,8 @@ void KDockContainer::dragChild(KDockWidget *child)
   connect(_tbManager, SIGNAL(onHotSpot(int)), this, SLOT(onHotSpot(int)));
   _dockSpot = false;
 
+  QPoint orig_pos = child->pos();
+
   // do the magic
   _tbManager->doMove(true);
 
@@ -129,6 +131,10 @@ void KDockContainer::dragChild(KDockWidget *child)
 	  // dock the window
 	  child->recreate(this, 0, QPoint(0,0), false);
 	  child->dock();	  
+	}
+      else
+	{
+	  child->move(orig_pos);
 	}
     }
   else 
