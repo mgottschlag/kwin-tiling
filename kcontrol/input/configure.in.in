@@ -6,10 +6,12 @@ if test $LIBUSBCONFIG = "no"  ; then
     USB_LIBS=""
     USB_CFLAGS=""
 else  
-AC_CHECK_LIB(usb,main,
     USB_LIBS="$($LIBUSBCONFIG --libs)"
     USB_CFLAGS="$($LIBUSBCONFIG --cflags)"
-    AC_DEFINE(HAVE_LIBUSB, 1, [Defined if you have libusb])
+AC_CHECK_LIB(usb,main,
+    AC_DEFINE(HAVE_LIBUSB, 1, [Defined if you have libusb]),
+    [],
+    $USB_LIBS
 )
 fi
 AC_SUBST(USB_LIBS)
