@@ -30,6 +30,7 @@
  * This is the authentication code for Shadow-Passwords
  *******************************************************************/
 
+#ifdef HAVE_SHADOW
 #include <string.h>
 #include <pwd.h>
 
@@ -76,4 +77,4 @@ int authenticate(const char *login, const char *typed_in_password)
      everything else you need to support shadow passwords is in
      the standard (ELF) libc.
  */
-
+#endif
