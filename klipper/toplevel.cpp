@@ -250,21 +250,11 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
-    // OK, so apparently Qt has a hard time figuring out how to size menus
-    // unless they are actually shown first! blarg!
-    // that's what this code does. and now there's a comment here saying
-    // as much, so you don't have to figure it out on your own, as much
-    // fun as that can be. AJS
-    menu->blockSignals(true);
-    menu->move(-1000, -1000);
-    menu->show();
-    menu->hide();
-    menu->blockSignals(false);
-
+    QSize size = menu->sizeHint(); // geometry is not valid until it's shown
     if (bPopupAtMouse) {
         QPoint g = QCursor::pos();
-        if ( menu->height() < g.y() )
-            menu->popup(QPoint( g.x(), g.y() - menu->height()));
+        if ( size.height() < g.y() )
+            menu->popup(QPoint( g.x(), g.y() - size.height()));
         else
             menu->popup(QPoint(g.x(), g.y()));
     } else {
@@ -273,8 +263,8 @@ void KlipperWidget::showPopupMenu( QPopupMenu *menu )
 	QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
         if ( g.x()-screen.x() > screen.width()/2 &&
-             g.y()-screen.y() + menu->height() > screen.height() )
-            menu->popup(QPoint( g.x(), g.y() - menu->height()));
+             g.y()-screen.y() + size.height() > screen.height() )
+            menu->popup(QPoint( g.x(), g.y() - size.height()));
         else
             menu->popup(QPoint( g.x() + width(), g.y() + height()));
 
