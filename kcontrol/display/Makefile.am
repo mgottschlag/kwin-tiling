@@ -2,8 +2,8 @@
 # kdebase/kcontrol/display
 
 INCLUDES = $(all_includes) -I$(top_srcdir)/kdesktop
-LDFLAGS = -g $(all_libraries) $(KDE_RPATH)  -L$(top_srcdir)/kdesktop
-LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB) -lbgnd
+LDFLAGS = $(all_libraries) $(KDE_RPATH)
+LDADD =  $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KIMGIO) $(DPMSLIB) $(top_builddir)/kdesktop/libbgnd.la
 
 CXXFLAGS=-g
 SUBDIRS = . kcs ad pics maps
