@@ -863,18 +863,22 @@ copyfile (Entry *ce, const char *tname, int mode, int (*proc)(File *, char **, i
 }
 
 static void
-dlinkfile (const char *name)
+dlinkfile (const char *name/*, int (*proc)(File *, char **, int *)*/)
 {
     FILE *f;
     File file;
+/*    char *nbuf;
+    int nlen;*/
 
+    if (!readFile (&file, name)) {
+	fprintf (stderr, "Warning: cannot read file %s\n", name);
+	return;
+    }
+/*    if (proc)
+	proc (&file, &nbuf, &nlen);*/
     if (inDestDir (name)) {
 	if (memcmp (newdir, KDMCONF, sizeof(KDMCONF))) {
 	    struct stat st;
-	    if (!readFile (&file, name)) {
-		fprintf (stderr, "Warning: cannot copy file %s\n", name);
-		return;
-	    }
 	    stat (name, &st);
 	    f = Create (name, st.st_mode);
 	    fwrite (file.buf, file.eof - file.buf, 1, f);
@@ -1396,38 +1400,44 @@ delstr (File *fil, const char *pat)
     return 0;
 }
 
+static int mod_usebg;
+
 static int
 edit_setup(File *file, char **nbuf ATTR_UNUSED, int *nlen ATTR_UNUSED)
 {
-    if (delstr (file, "\n"
-		"(\n"
-		"  PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
-		"  */kdmdesktop\t&\n"
-		"  echo $! >$PIDFILE\n"
-		"  wait $!\n"
-		"  rm $PIDFILE\n"
-		")\t&\n") ||
-	delstr (file, "\n"
-		"*/kdmdesktop\t&\n") ||
-	delstr (file, "\n"
-		"kdmdesktop\t&\n") ||
-	delstr (file, "\n"
-		"kdmdesktop\n"))
-	    putval ("UseBackground", "true");
+    putval ("UseBackground", 
+		(delstr (file, "\n"
+			"(\n"
+			"  PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
+			"  */kdmdesktop\t&\n"
+			"  echo $! >$PIDFILE\n"
+			"  wait $!\n"
+			"  rm $PIDFILE\n"
+			")\t&\n") ||
+		 delstr (file, "\n"
+			"*/kdmdesktop\t&\n") ||
+		 delstr (file, "\n"
+			"kdmdesktop\t&\n") ||
+		 delstr (file, "\n"
+			"kdmdesktop\n")) ? "true" : "false");
     return 0;
 }
 
 static void
 mk_setup(Entry *ce, Section *cs)
 {
-    if (old_scripts || mixed_scripts)
+    setsect (resect (cs->name, "Greeter"));
+    if (old_scripts || mixed_scripts) {
+	if (mod_usebg && *ce->value)
+	    putval ("UseBackground", "false");
 	linkfile (ce);
-    else {
-	setsect (resect (cs->name, "Greeter"));
-	if (ce->active && inDestDir (ce->value))
-	    copyfile (ce, ce->value, 0755, edit_setup);
-	else {
-	    putval ("UseBackground", "true");
+    } else {
+	if (ce->active && inDestDir (ce->value)) {
+	    if (mod_usebg)
+		copyfile (ce, ce->value, 0755, edit_setup);
+	    else
+		linkfile (ce);
+	} else {
 	    ce->value = KDMCONF "/Xsetup";
 	    ce->active = ce->written = 1;
 	    writefile (ce->value, 0755, def_setup);
@@ -1455,9 +1465,12 @@ mk_startup(Entry *ce, Section *cs ATTR_UNUSED)
     if (old_scripts || mixed_scripts)
 	linkfile (ce);
     else {
-	if (ce->active && inDestDir (ce->value))
-	    copyfile (ce, ce->value, 0755, edit_startup);
-	else {
+	if (ce->active && inDestDir (ce->value)) {
+	    if (mod_usebg)
+		copyfile (ce, ce->value, 0755, edit_startup);
+	    else
+		linkfile (ce);
+	} else {
 	    ce->value = KDMCONF "/Xstartup";
 	    ce->active = ce->written = 1;
 	    writefile (ce->value, 0755, def_startup);
@@ -2729,6 +2742,7 @@ mergeKdmRcNewer (const char *path)
 
     applydefs (kdmdefs_all, as(kdmdefs_all), path);
     if (!*getfqval ("General", "ConfigVersion", "")) {	/* < 3.1 */
+	mod_usebg = 1;
 	if (is22conf (path)) {
 	    /* work around 2.2.x defaults borkedness */
 	    applydefs (kdmdefs_eq_22, as(kdmdefs_eq_22), path);
@@ -2739,14 +2753,6 @@ mergeKdmRcNewer (const char *path)
 	}
 	/* work around minor <= 3.0.x defaults borkedness */
 	applydefs (kdmdefs_le_30, as(kdmdefs_le_30), path);
-	/* disable built-in background if we have a setup script */
-	for (cs = config; cs; cs = cs->next)
-	    if (!strcmp (cs->spec->name, "-Core"))
-		for (ce = cs->ents; ce; ce = ce->next)
-		    if (!strcmp (ce->spec->key, "Setup"))
-			putfqval (resect (cs->name, "Greeter"),
-				  "UseBackground", "false");
-
     } else {
 	printf ("Information: old kdmrc is from kde >= 3.1\n");
 	applydefs (kdmdefs_ge_30, as(kdmdefs_ge_30), path);
@@ -2873,12 +2879,6 @@ P_autoPass (const char *sect ATTR_UNUSED, const char *key ATTR_UNUSED, char **va
     kdmrcmode = 0600;
 }
 
-static void 
-P_setup (const char *sect, const char *key ATTR_UNUSED, char **value ATTR_UNUSED)
-{
-    putfqval (resect (sect, "Greeter"), "UseBackground", "false");
-}
-
 XResEnt globents[] = {
 { "servers", "General", "Xservers", 0 },
 { "requestPort", "Xdmcp", "Port", P_requestPort },
@@ -2919,7 +2919,7 @@ XResEnt globents[] = {
 { "startInterval", "X-%s-Core", 0, 0 },
 { "resources", "X-%s-Core", 0, 0 },
 { "xrdb", "X-%s-Core", 0, 0 },
-{ "setup", "X-%s-Core", 0, P_setup },
+{ "setup", "X-%s-Core", 0, 0 },
 { "startup", "X-%s-Core", 0, 0 },
 { "reset", "X-%s-Core", 0, 0 },
 { "session", "X-%s-Core", 0, 0 },
@@ -3025,6 +3025,7 @@ mergeXdmCfg (const char *path)
 	    XrmEnumerateDatabase(db, &empty, &empty, XrmEnumAllLevels,
 				 DumpEntry, (XPointer) 0);
 	    applydefs (xdmdefs, as(xdmdefs), path);
+	    mod_usebg = 1;
 	    return 1;
 	}
 	free (p);
@@ -3064,6 +3065,7 @@ int main(int argc, char **argv)
     Section *cs;
     Entry *ce, **cep;
     int i, ap, newer, locals, foreigns;
+    int no_old_xdm = 0, no_old_kde = 0;
 #ifdef __linux__
     struct stat st;
 #endif
@@ -3089,12 +3091,17 @@ int main(int argc, char **argv)
 "    Where to look for the config files of an xdm/older kdm.\n"
 "    Default is to scan /etc/X11/kdm, $XLIBDIR/kdm, /etc/X11/xdm,\n"
 "    $XLIBDIR/xdm; there in turn look for kdm-config and xdm-config.\n"
+"    Note that you possibly need to use --no-old-kde to make this take effect.\n"
 "  --old-kde /path/to/old/kde-config-dir\n"
 "    Where to look for the kdmrc of an older kdm.\n"
 "    Default is to scan " KDE_CONFDIR " and\n"
 "    {/usr,/usr/local,{/opt,/usr/local}/{kde3,kde,kde2,kde1}}/share/config.\n"
 "  --no-old\n"
 "    Don't look at older xdm/kdm configurations, just create default config.\n"
+"  --no-old-xdm\n"
+"    Don't look at older xdm configurations.\n"
+"  --no-old-kde\n"
+"    Don't look at older kdm configurations.\n"
 "  --old-scripts\n"
 "    Directly use all scripts from the older xdm/kdm configuration.\n"
 "  --no-old-scripts\n"
@@ -3120,6 +3127,14 @@ int main(int argc, char **argv)
 	}
 	if (!strcmp(argv[ap], "--old-confs")) {
 	    old_confs = 1;
+	    continue;
+	}
+	if (!strcmp(argv[ap], "--no-old-xdm")) {
+	    no_old_xdm = 1;
+	    continue;
+	}
+	if (!strcmp(argv[ap], "--no-old-kde")) {
+	    no_old_kde = 1;
 	    continue;
 	}
 	where = 0;
@@ -3155,7 +3170,7 @@ int main(int argc, char **argv)
 	    if (!(newer = mergeKdmRcNewer (oldkde)) && !mergeKdmRcOld (oldkde))
 		fprintf (stderr, 
 			 "Cannot read old kdmrc at specified position\n");
-	} else {
+	} else if (!no_old_kde) {
 	    for (i = 0; i < as(oldkdes); i++) {
 		if ((newer = mergeKdmRcNewer (oldkdes[i])) ||
 		    mergeKdmRcOld (oldkdes[i])) {
@@ -3164,7 +3179,7 @@ int main(int argc, char **argv)
 		}
 	    }
 	}
-	if (!newer) {
+	if (!newer && !no_old_xdm) {
 	    XrmInitialize ();
 	    XrmQString = XrmPermStringToQuark("String");
 	    if (oldxdm) {
