@@ -23,6 +23,7 @@
 #include <kdesktopfile.h>
 #include <krandomsequence.h>
 #include <kdebug.h>
+#include <kcmdlineargs.h>
 
 #include "vroot.h"
 
@@ -35,34 +36,51 @@ void usage(char *name)
     printf(i18n("Any arguments (except -setup) are passed on to the screensaver.\n").local8Bit());
 }
 
+static const char *appName = "random";
+
+static const char *description = i18n("Start a random KDE screen saver");
+
+static const char *version = "2.0.0";
+
+static const KCmdLineOptions options[] =
+{
+//  { "setup", I18N_NOOP("Setup screen saver."), 0 },
+  { "window-id wid", I18N_NOOP("Run in the specified XWindow."), 0 },
+  { "root", I18N_NOOP("Run in the root XWindow."), 0 },
+//  { "+-- [options]", I18N_NOOP("Options to pass to the screen saver."), 0 }
+  { 0,0,0 }
+};
+
+//----------------------------------------------------------------------------
+
 int main(int argc, char *argv[])
 {
-    KApplication app(argc, argv, "random");
-    long windowId = 0;
-    bool root = false;
-    int i;
-    char *sargs[MAX_ARGS];
+    KCmdLineArgs::init(argc, argv, appName, description, version);
 
-    for (i = 1; i < argc; i++)
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KApplication app;
+
+    Window windowId = 0;
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	
+#if 0
+    // To be implemented
+    if (args->isSet("setup"))
     {
-        if (!strcmp(argv[i], "-setup"))
-        {
-            kdDebug() << "-setup not yet implemented" << endl;
-            exit(1);
-        }
-        else if (!strcmp(argv[i], "-help"))
-        {
-            usage(argv[0]);
-            exit(1);
-        }
-        else if (!strcmp(argv[i], "-window-id"))
-        {
-            windowId = atol(argv[++i]);
-        }
-        else if (!strcmp(argv[i], "-root"))
-        {
-            root = true;
-        }
+       exit(0);
+    }
+#endif
+
+    if (args->isSet("window-id"))
+    {
+        windowId = atol(args->getOption("window-id"));
+    }
+
+    if (args->isSet("root"))
+    {
+        windowId = RootWindow(qt_xdisplay(), qt_xscreen());
     }
 
     KGlobal::dirs()->addResourceType("scrsav",
@@ -85,7 +103,7 @@ int main(int argc, char *argv[])
     {
         config.setActionGroup("InWindow");
     }
-    else if (root && config.hasActionGroup("Root"))
+    else if ((windowId == 0) && config.hasActionGroup("Root"))
     {
         config.setActionGroup("Root");
     }
@@ -98,10 +116,11 @@ int main(int argc, char *argv[])
 
     if (!exeFile.isEmpty())
     {
+        char *sargs[MAX_ARGS];
         sargs[0] = new char [strlen(word.ascii())+1];
         strcpy(sargs[0], word.ascii());
 
-        i = 1;
+        int i = 1;
         while (!ts.atEnd() && i < MAX_ARGS-1)
         {
             ts >> word;
@@ -122,12 +141,9 @@ int main(int argc, char *argv[])
 
     // If we end up here then we couldn't start a saver.
     // If we have been supplied a window id or root window then blank it.
-    if (windowId || root)
-    {
-      Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
-      XSetWindowBackground(qt_xdisplay(), win,
-                          BlackPixel(qt_xdisplay(), qt_xscreen()));
-      XClearWindow(qt_xdisplay(), win);
-    }
+    Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
+    XSetWindowBackground(qt_xdisplay(), win,
+                        BlackPixel(qt_xdisplay(), qt_xscreen()));
+    XClearWindow(qt_xdisplay(), win);
 }
 

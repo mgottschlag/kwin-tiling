@@ -17,66 +17,62 @@
 #include <kstddirs.h>
 #include <kdebug.h>
 #include <kapp.h>
+#include <kcmdlineargs.h>
 
 #include "demowin.h"
 #include "saver.h"
 #include "vroot.h"
 
-void usage( char *name );
+static const char *appName = "klock";
+
+static const char *description = i18n("KDE Screen Lock / Saver");
+
+static const char *version = "2.0.0";
+
+static const KCmdLineOptions options[] =
+{
+  { "setup", I18N_NOOP("Setup screen saver."), 0 },
+  { "window-id wid", I18N_NOOP("Run in the specified XWindow."), 0 },
+  { "root", I18N_NOOP("Run in the root XWindow."), 0 },
+  { "demo", I18N_NOOP("Start screen saver in demo mode."), "default"},
+  { 0,0,0 }
+};
 
 //----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-    KApplication app(argc, argv, "klock");
+    KCmdLineArgs::init(argc, argv, appName, description, version);
+
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KApplication app;
 
     DemoWindow *demoWidget = 0;
-	Window saveWin = 0;
+    Window saveWin = 0;
 
-	enum parameter_code { 
-	    Setup, Window_id, Root, Descr, Help, Unknown
-	} parameter;
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 	
-	const char *strings[] = { 
-	    "-setup", "-window-id", "-root", "-help", 0
-	};
-
-	int i = 1;
-	while (i < argc)
+    if (args->isSet("setup"))
     {
-	    parameter = Unknown;
+       setupScreenSaver();
+       exit(0);
+    }
 
-	    for ( int p = 0 ; strings[p]; p++)
-        {
-            if (!strcmp(argv[i], strings[p]))
-            {
-                parameter = static_cast<parameter_code>(p);
-                break;
-            }
-        }
+    if (args->isSet("window-id"))
+    {
+        saveWin = atol(args->getOption("window-id"));
+    }
 
-	    switch (parameter) 
-        {
-            case Setup:
-                setupScreenSaver();
-                exit(0);
-                break;
-            case Window_id:
-                saveWin = atol(argv[++i]);
-                break;
-            case Root:
-                saveWin = RootWindow(qt_xdisplay(), qt_xscreen());
-                break;
-            case Help:
-                usage(argv[0]);
-                break;
-            default: // unknown
-                kdDebug() << "Unknown parameter: " << argv[i] << endl;
-                usage(argv[0]);
-                break;
-        }
-	    i++;
-	}
+    if (args->isSet("root"))
+    {
+        saveWin = RootWindow(qt_xdisplay(), qt_xscreen());
+    }
+
+    if (args->isSet("demo"))
+    {
+        saveWin = 0;
+    }
 
     if (saveWin == 0)
     {
@@ -98,20 +94,6 @@ int main(int argc, char *argv[])
         delete demoWidget;
     }
 
-	return 0;
-}
-
-//----------------------------------------------------------------------------
-void usage(char *name)
-{
-	printf(i18n(
-	   "Usage: %1 [-setup|-window-id wid|-root|-help]\n").arg(name).local8Bit()); 
-	printf(i18n(
-    "Without any parameters, a demo of the screensaver is displayed\n"\
-	"  -setup            Setup screen saver\n"\
-	"  -window-id wid    Run in the specified XWindow\n"\
-	"  -root             Run in the root window\n"\
-    "  -help             This help\n").local8Bit());
-	exit(1);
+    return 0;
 }
 
