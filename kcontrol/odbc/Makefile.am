@@ -2,7 +2,7 @@
 INCLUDES	= $(all_includes)
 LDFLAGS		= $(all_libraries) $(KDE_RPATH)
 LDADD		= $(LIB_KIMGIO) $(LIB_KFILE) $(LIB_KIO)
-SUBDIRS		= pics
+SUBDIRS		= pics drvcfg1 drvcfg2
 
 bin_PROGRAMS = odbcconfig
 
