@@ -23,7 +23,7 @@ that is intentional :-]
 
 #include <qheader.h>
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpoint.h>
 #include <qcursor.h>
 

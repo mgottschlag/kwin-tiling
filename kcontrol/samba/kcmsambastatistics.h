@@ -24,7 +24,7 @@
 #define kcmsambastatistics_h_included
  
 #include <qwidget.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 class QListView;
 class QLabel;

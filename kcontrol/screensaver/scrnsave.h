@@ -59,10 +59,10 @@ protected:
 };
 
 //===========================================================================
-class SaverList : public QList<SaverConfig>
+class SaverList : public QPtrList<SaverConfig>
 {
 protected:
-    virtual int compareItems(QCollection::Item item1, QCollection::Item item2);
+    virtual int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2);
 };
 
 //===========================================================================

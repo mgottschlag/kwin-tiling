@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 
 #include <qdir.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qregexp.h>
 
 #include <kurl.h>
@@ -75,17 +75,17 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 bool KShortURIFilter::expandEnvVar( QString& cmd ) const
 {
   // ENVIRONMENT variable expansion
-  int env_len = 0, env_loc = 0;
+  int env_loc = 0;
   bool matchFound = false;
   QRegExp r (QFL1(ENV_VAR_PATTERN));
   while( 1 )
   {
-    env_loc = r.match( cmd, env_loc, &env_len );
+    env_loc = r.search( cmd, env_loc );
     if( env_loc == -1 ) break;
-    const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).local8Bit().data() );
+    const char* exp = getenv( cmd.mid( env_loc + 1, r.matchedLength() - 1 ).local8Bit().data() );
     if(exp)
     {
-      cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
+      cmd.replace( env_loc, r.matchedLength(), QString::fromLocal8Bit(exp) );
       matchFound = true;
     }
     else
@@ -309,7 +309,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
     {
         match = (*it).regexp;
-        if ( match.match( cmd, 0 ) == 0 )
+        if ( match.search( cmd, 0 ) == 0 )
         {
             cmd.prepend( (*it).prepend );
             setFilteredURI( data, cmd );

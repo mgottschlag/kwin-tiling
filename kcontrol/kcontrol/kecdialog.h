@@ -21,7 +21,7 @@
 #ifndef __kecdialog_h__
 #define __kecdialog_h__
 
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include <kdialogbase.h>
 #include <kcmodule.h>
@@ -43,7 +43,7 @@ protected slots:
     void clientChanged(bool state);
 
 private:
-    QList<KCModule> modules;
+    QPtrList<KCModule> modules;
 };
 
 #endif

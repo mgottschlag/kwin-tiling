@@ -24,7 +24,7 @@ that is intentional :-]
 #define __modulemenu_h__
 
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstringlist.h>
 #include <qintdict.h>
 #include <qstring.h>

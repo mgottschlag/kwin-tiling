@@ -36,7 +36,7 @@
 #include <qdict.h>
 #include <qfile.h>
 #include <qfontmetrics.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <qtextstream.h>
 

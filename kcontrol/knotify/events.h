@@ -23,17 +23,17 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 
 class KConfig;
 class KNEvent;
 class KNApplication;
 
-typedef QList<KNEvent> EventList;
-typedef QList<KNApplication> ApplicationList;
-typedef QListIterator<KNEvent> KNEventListIterator;
-typedef QListIterator<KNApplication> KNApplicationListIterator;
+typedef QPtrList<KNEvent> EventList;
+typedef QPtrList<KNApplication> ApplicationList;
+typedef QPtrListIterator<KNEvent> KNEventListIterator;
+typedef QPtrListIterator<KNApplication> KNApplicationListIterator;
 
 class Events
 {

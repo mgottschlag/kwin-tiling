@@ -53,7 +53,7 @@
 
 #include "scrnsave.h"
 
-template class QList<SaverConfig>;
+template class QPtrList<SaverConfig>;
 
 //===========================================================================
 // DLL Interface for kcontrol
@@ -107,7 +107,7 @@ bool SaverConfig::read(QString file)
 
 //===========================================================================
 //
-int SaverList::compareItems(QCollection::Item item1, QCollection::Item item2)
+int SaverList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
 {
     SaverConfig *s1 = (SaverConfig *)item1;
     SaverConfig *s2 = (SaverConfig *)item2;
