@@ -143,7 +143,7 @@ class CFontListWidget : public KListView
     void          progressStop();
     void          scan();
     void          addFont(const QString &from, const QString &path, const QString &file, bool checkOpen=true);
-    void          addSubDir(const QString &top, const QString &sub);
+    void          addSubDir(const QString &top, const QString &sub, bool checkOpen=true);
     void          changeStatus(bool status);
     void          installFonts(const KURL::List &list);
 

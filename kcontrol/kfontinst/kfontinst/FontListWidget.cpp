@@ -163,7 +163,7 @@ CFontListWidget::CListViewItem::CListViewItem(QListViewItem *parent, const QStri
 void CFontListWidget::CListViewItem::reset()
 {
     itsAvailable=itsAvailableOrig;
-    itsEnabled=itsEnabledOrig;;
+    itsEnabled=itsEnabledOrig;
     setupDisplay();
 }
 
@@ -251,13 +251,13 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
 
     void open()
     {
-        if(QDir(fullName()).isReadable() && -1!=CKfiGlobal::uicfg().getOpenInstDirs().findIndex(fullName()))
+        if((!itsAvailableOrig || QDir(fullName()).isReadable()) && -1!=CKfiGlobal::uicfg().getOpenInstDirs().findIndex(fullName()))
             setOpen(true);
     }
 
     void setup()
     {
-        setExpandable(QDir(fullName()).isReadable() ? true : false);
+        setExpandable(!itsAvailableOrig || QDir(fullName()).isReadable() ? true : false);
         QListViewItem::setup();
     }
 
@@ -411,7 +411,7 @@ void CDirectoryItem::setOpen(bool open)
 
         CKfiGlobal::uicfg().addOpenInstDir(fullName());
 
-        if(dir.isReadable())
+        if(!itsAvailableOrig || dir.isReadable())
         {
             readable = true;
             const QFileInfoList *files=dir.entryInfoList();
@@ -701,7 +701,7 @@ void CFontListWidget::restore(QListViewItem *item, bool checkOpen)
             if(QString::null!=addItem->file)
                 addFont(addItem->source, addItem->dest, addItem->file, checkOpen);
             else
-                addSubDir(addItem->source, addItem->dest);
+                addSubDir(addItem->source, addItem->dest, checkOpen);
         }
         else
             if(QString::null!=addItem->file &&
@@ -819,7 +819,7 @@ void CFontListWidget::addFont(const QString &from, const QString &path, const QS
     }
 }
 
-void CFontListWidget::addSubDir(const QString &top, const QString &sub)
+void CFontListWidget::addSubDir(const QString &top, const QString &sub, bool checkOpen)
 {
     if(itsAdvancedMode) // Need to find branch, and whether it's open...
     {
@@ -830,7 +830,7 @@ void CFontListWidget::addSubDir(const QString &top, const QString &sub)
             if(item->getType()==CListViewItem::DIR)
                 if(item->fullName()==top)
                 {
-                    if(item->isOpen() && !contains(item->firstChild(), sub))
+                    if((!checkOpen || item->isOpen()) && !contains(item->firstChild(), sub))
                         (void) new CDirectoryItem(this, (CDirectoryItem *)item, sub, true);
                     break;
                 }
