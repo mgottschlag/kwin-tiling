@@ -40,16 +40,15 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
-  tab = new QTabWidget(this);
-  layout->addWidget(tab, 1);
 
   dtime = new Dtime(this);
-  tab->addTab(dtime, i18n("Date && Time"));
-  connect(dtime, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  layout->addWidget(dtime, 1);
+
+  connect(dtime, SIGNAL(timeChanged(bool)), this, SLOT(moduleChanged(bool)));
 
   tzone = new Tzone(this);
-  tab->addTab(tzone, i18n("Time Zone"));
-  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  layout->addWidget(tzone, 1);
+  connect(tzone, SIGNAL(zoneChanged(bool)), this, SLOT(moduleChanged(bool)));
 
   if(getuid() == 0)
     setButtons(Help|Apply);
@@ -95,13 +94,11 @@ void KclockModule::moduleChanged(bool state)
 
 extern "C"
 {
-
   KCModule *create_clock(QWidget *parent, const char *name)
   {
     KGlobal::locale()->insertCatalogue("kcmkclock");
     return new KclockModule(parent, name);
   }
-
 }
 
 

@@ -24,7 +24,7 @@
 
 class QComboBox;
 
-class Tzone : public KCModule
+class Tzone : public QWidget
 {
   Q_OBJECT
 
@@ -34,8 +34,11 @@ public:
   void	save();
   void  load();
   
+signals:
+	void zoneChanged(bool);
+
 protected slots:
-  void zone_changed() { emit changed( TRUE ); }
+  void handleZoneChange() {emit zoneChanged( TRUE );}
   
 private:
   void  fillTimeZones();

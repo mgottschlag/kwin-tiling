@@ -43,7 +43,7 @@
 #include "dtime.moc"
 
 Dtime::Dtime(QWidget * parent, const char *name)
-  : KCModule(parent, name)
+  : QWidget(parent, name)
 {
   // *************************************************************
   // Start Dialog
@@ -198,7 +198,7 @@ void Dtime::set_year(int y)
   if ( !date.setYMD(y, date.month(), date.day()) )
     date.setYMD(1970,date.month(),date.day());
   cal->setDate(date);
-  emit changed(TRUE);
+  emit timeChanged(TRUE);
 }
 
 void Dtime::set_time()
@@ -211,13 +211,13 @@ void Dtime::set_time()
   time.setHMS( hour->text().toInt(), minute->text().toInt(), second->text().toInt() );
   kclock->setTime( time );
 
-  emit changed( TRUE );
+  emit timeChanged( TRUE );
 }
 
 void Dtime::changeDate(QDate d)
 {
   date = d;
-  emit changed( TRUE );
+  emit timeChanged( TRUE );
 }
 
 void Dtime::set_month(int m)
@@ -225,7 +225,7 @@ void Dtime::set_month(int m)
   if ( !date.setYMD(date.year(),m+1,date.day()) )
     date.setYMD(date.year(),m+1,1);
   cal->setDate(date);
-  emit changed(TRUE);
+  emit timeChanged(TRUE);
 }
 
 void Dtime::load()

@@ -44,7 +44,7 @@
 #include "tzone.moc"
 
 Tzone::Tzone(QWidget * parent, const char *name)
-  : KCModule (parent, name)
+  : QWidget (parent, name)
 {
     QFrame* frame1 = new QFrame( this );
     frame1->setFrameStyle( QFrame::Sunken | QFrame::Box );
@@ -53,20 +53,19 @@ Tzone::Tzone(QWidget * parent, const char *name)
     QBoxLayout *lay = new QHBoxLayout(top_lay);
 
     top_lay->addSpacing(20);
-    currentzonetitle = new QLabel(i18n("Current time zone: "), this);
+    currentzonetitle = new QLabel(i18n("Current time zone: "), frame1);
     currentzonetitle->setAutoResize(true);
     lay->addWidget(currentzonetitle);
 
-    currentzone = new QLabel(this);
+    currentzone = new QLabel(frame1);
     lay->addWidget(currentzone, 3);
     currentzone->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
-    QLabel* instructions = new QLabel(i18n("To change the timezone, select your area from the list below:"), this);
-    top_lay->addSpacing(50);
+    QLabel* instructions = new QLabel(i18n("To change the timezone, select your area from the list below:"), frame1);
     top_lay->addWidget(instructions);
 
     tzonelist = new QComboBox( FALSE, frame1, "ComboBox_1" );
-    connect( tzonelist, SIGNAL(activated(int)), SLOT(zone_changed()) );
+    connect( tzonelist, SIGNAL(activated(int)), SLOT(handleZoneChange()) );
     top_lay->addWidget( tzonelist );
     top_lay->addStretch(2);
 

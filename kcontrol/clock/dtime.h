@@ -33,7 +33,7 @@
 
 class Kclock;
 
-class Dtime : public KCModule
+class Dtime : public QWidget
 {
   Q_OBJECT
  public:
@@ -43,6 +43,9 @@ class Dtime : public KCModule
   void	load();
 
   QString quickHelp() const;
+
+signals:
+	void timeChanged(bool);
 
  private slots:
   void	timeout();
