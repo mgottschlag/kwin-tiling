@@ -1231,10 +1231,10 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                     }
                 }
 
-                if(WEIGHT_UNKNOWN==itsWeight && NULL!=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head))
+                if(WEIGHT_UNKNOWN==itsWeight && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
                     itsWeight=((TT_Header *)table)->Mac_Style & 1 ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
 
-                if(!gotItalic && NULL!=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head))
+                if(!gotItalic && NULL!=(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_head)))
                 {
                     gotItalic=true;
                     itsItalic=((TT_Header *)table)->Mac_Style & 2 ? ITALIC_ITALIC: ITALIC_NONE; 
