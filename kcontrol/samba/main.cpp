@@ -39,6 +39,7 @@ class SambaContainer:public KCModule
       virtual void load();
       virtual void save();
       virtual void defaults() {};
+      QString quickHelp();
 
    private:
       QVBoxLayout layout;
@@ -90,6 +91,24 @@ void SambaContainer::save()
    statisticsView.save();
    config.sync();
 }
+
+
+QString quickHelp()
+{
+   return i18n("The Samba and NFS Status Monitor is a front end to the programs"
+     " <em>smbstatus</em> and <em>showmount</em>. Smbstatus reports on current"
+     " Samba connections, and is part of the suite of Samba tools, which"
+     " implements the SMB (Session Message Block) protocol, also called the"
+     " NetBIOS or LanManager protocol. This protocol can be used to provide"
+     " printer sharing or drive sharing services on a network including"
+     " machines running the various flavors of Microsoft Windows.<p>"
+     " Showmount is part of the NFS software package. NFS stands for Network"
+     " File System and is the traditional UNIX way to share directories over"
+     " the network. In this case the output of <em>showmount -a localhost</em>"
+     " is parsed. On some systems showmount is in /usr/sbin, check if you have"
+     " showmount in your PATH.");
+}
+
 
 extern "C"
 {
