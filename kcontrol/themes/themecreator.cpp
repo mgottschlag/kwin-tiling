@@ -201,7 +201,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
       if (len>0 && mapValue[len-1]=='!')
       {
 	doCopyFile = false;
-	mapValue = mapValue.left(len-1);
+	mapValue.truncate(len-1);
       }
       else doCopyFile = true;
 
@@ -320,7 +320,7 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
     if (i >= 0) 
     {
       ext = fname.mid(i, 255);
-      fname = fname.left(i);
+      fname.truncate(i);
     }
     else ext = QString::null;
     for (j=i-1, num=0; j>=0 && fname[j]>='0' && fname[j]<='9'; j--)

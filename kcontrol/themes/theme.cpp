@@ -500,7 +500,7 @@ int Theme::installGroup(const char* aGroupName)
       if (len>0 && value[len-1]=='!')
       {
 	doInstall = false;
-	value = value.left(len-1);
+	value.truncate(len - 1);
       }
       else doInstall = true;
 
@@ -825,7 +825,7 @@ int Theme::installIcons(void)
       {
 	debug("mapping %s to...", destName.ascii());
 	destNameMini = destName.mid(i+1, 1024);
-	destName = destName.left(i);
+	destName.truncate(i);
 	debug("   %s  %s", destName.ascii(), destNameMini.ascii());
       }
     }

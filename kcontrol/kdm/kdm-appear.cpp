@@ -148,7 +148,7 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       QString lang = simple.readEntry("Language", "C");
       int index = lang.find(':');
       if (index>0)
-        lang = lang.left(index);
+        lang.truncate(index);
       langcombo->setLanguage(lang);
 
       group2->adjustSize();

@@ -501,8 +501,8 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 		// The current line (without '\n'):
 		line = outString.mid ( curPos, nextPos - 1 - curPos );
 
-		// If the current line ends with "*", it is the default option
-		if ( line.right ( 1 ) == "*" )
+		// If the current line ends with '*', it is the default option
+		if ( line.at ( line.length() - 1 ) == '*' )
 		{
 			// We found the default option
 			curIsDefault = true;
@@ -593,7 +593,7 @@ void LiloInfo::processStderr ( KProcess *, char *buffer, int  )
 
 	// If the string starts with "Ignoring entry ...", remove the first line
 	if ( errString.left ( 8 ) == "Ignoring" )
-		errString = errString.right ( errString.length() - errString.find ( '\n' ) - 1 );
+		errString.remove(0, errString.find ( '\n' ) - 1 );
 
 	if ( !errString.isEmpty() )
 	{
