@@ -1,0 +1,23 @@
+[Color Scheme]
+activeBackground=65,101,148
+activeBlend=0,40,74
+activeForeground=255,255,255
+activeTitleBtnBg=66,103,148
+activeTitleBtnBlend=
+activeTitleBtnFg=66,103,148
+background=66,103,148
+buttonBackground=66,103,148
+buttonForeground=255,255,255
+contrast=8
+foreground=255,255,255
+inactiveBackground=66,103,148
+inactiveBlend=74,113,164
+inactiveForeground=0,42,78
+inactiveTitleBtnBg=66,103,148
+inactiveTitleBtnBlend=0,112,182
+inactiveTitleBtnFg=66,103,148
+name=Dark Blue
+selectBackground=92,179,255
+selectForeground=0,0,0
+windowBackground=0,42,78
+windowForeground=220,220,220
