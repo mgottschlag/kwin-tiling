@@ -7,13 +7,13 @@
  *
  * You can freely distribute this program under the following terms:
  *
- * 1.) If you use this program in a product outside of KDE, you must 
+ * 1.) If you use this program in a product outside of KDE, you must
  * credit the authors, and must mention "kcmemail".
  *
- * 2.) If this program is used in a product other than KDE, this license 
- * must be reproduced in its entirety in the documentation and/or some 
+ * 2.) If this program is used in a product other than KDE, this license
+ * must be reproduced in its entirety in the documentation and/or some
  * other highly visible location (e.g. startup splash screen)
- * 
+ *
  * 3.) Use of this product implies the following terms:
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
@@ -234,6 +234,7 @@ void topKCMEmail::slotNewProfile()
 	layout->addWidget(btnCancel);
 	connect(btnOK, SIGNAL(clicked()), dlgAskName, SLOT(accept()));
 	connect(btnCancel, SIGNAL(clicked()), dlgAskName, SLOT(reject()));
+        connect(txtName, SIGNAL(returnPressed ()),dlgAskName, SLOT(accept()));
 	txtName->setFocus();
 
 	if (dlgAskName->exec() == QDialog::Accepted) {
@@ -246,6 +247,8 @@ void topKCMEmail::slotNewProfile()
 			m_email->cmbCurProfile->insertItem(txtName->text());
 			// should probbaly load defaults instead
 			clearData();
+                        //you add new profile so you change config
+                        configChanged();
 			m_email->cmbCurProfile->setCurrentItem(m_email->cmbCurProfile->count()-1);
 		}
 	} else { // rejected
