@@ -2,7 +2,7 @@
     kshorturifilter.h
 
     This file is part of the KDE project
-    Copyright (C) 2000 Dawit Alemayehu <adawit@earthlink.net>
+    Copyright (C) 2000 Dawit Alemayehu <adawit@kde.org>
     Copyright (C) 2000 Malte Starostik <starosti@zedat.fu-berlin.de>
 
     This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@
 #include "kshorturifilter.moc"
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
-#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:[[0-9][0-9]?[0-9]?]?/?"
+#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[[0-9][0-9]?[0-9]?]?/?"
 #define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
@@ -108,7 +108,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * if it is not found. TODO: the user-defined table is currently only manually
   * hackable and is missing a config dialog.  Simply copying the file
   */
-  int temp_int;
   KURL url = data.uri();
   QString cmd = url.url();
 
@@ -121,7 +120,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // executable and only the argument part, if any, changed!
 
   // Handle SMB Protocol shortcuts ...
-  temp_int = cmd.find( QFL1("smb:"), 0, false );
+  int temp_int = cmd.find( QFL1("smb:"), 0, false );
   if ( temp_int == 0 || cmd.find( QFL1("\\\\") ) == 0 )
   {
     if( temp_int == 0 )
@@ -211,9 +210,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   bool fileNotFound = false;
   bool canBeAbsolute = (url.isMalformed() && !abs_path.isEmpty());
   bool canBeLocalAbsolute = (canBeAbsolute && abs_path[0] =='/');
-  kdDebug() << "Typed command: " << cmd << endl;
-  kdDebug() << "URL: " << url.url() << endl;
-  kdDebug() << "Is malformed: " << url.isMalformed() << endl;
   if( cmd[0] == '/' || canBeLocalAbsolute )
   {
     struct stat buff;
@@ -227,7 +223,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       temp_int = cmd.length();
       if( (temp_int==1 && cmd[0]=='.') || (temp_int==2 && cmd[0]=='.' && cmd[1]=='.') )
         cmd += '/';
-      abs_path = QDir::cleanDirPath( abs_path + '/' + cmd );
+      abs_path = QDir::cleanDirPath(abs_path + '/' + cmd);
       temp_int = stat( abs_path.local8Bit().data() , &buff );
       if( temp_int == 0 )
         cmd = abs_path;
@@ -321,30 +317,32 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // moved to the config dialog so that people can configure this
   // stuff.  This is perhaps one of those unecessary but somewhat
   // useful features that usually makes people go WHOO and WHAAA.
-  QRegExp match;
-  QValueList<URLHint>::ConstIterator it;
-  for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
+  if ( cmd.find( ' ' ) != -1 )
   {
-    temp_int = 0;      // Future use for allowing replacement
-    match = (*it).regexp;
-    if( match.match( cmd, 0, &temp_int ) == 0 )
+    QRegExp match;
+    QValueList<URLHint>::ConstIterator it;
+    bool isValidURL = isValidShortURL(cmd );
+    for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
     {
-      cmd.prepend( (*it).prepend );
-      setFilteredURI( data, cmd );
-      setURIType( data, KURIFilterData::NET_PROTOCOL );
-      return true;
+        match = (*it).regexp;
+        if ( match.match( cmd, 0 ) == 0 && isValidURL )
+        {
+            cmd.prepend( (*it).prepend );
+            setFilteredURI( data, cmd );
+            setURIType( data, KURIFilterData::NET_PROTOCOL );
+            return true;
+        }
     }
-  }
-
-  // If cmd is NOT a local resource, check if it
-  // is a valid "shortURL" candidate and append
-  // the default protocol the user supplied. (DA)
-  if( url.isMalformed() && isValidShortURL( cmd ) )
-  {
-    cmd.insert( 0, m_strDefaultProtocol );
-    setFilteredURI( data, cmd );
-    setURIType( data, KURIFilterData::NET_PROTOCOL );
-    return true;
+    // If cmd is NOT a local resource, check if it
+    // is a valid "shortURL" candidate and append
+    // the default protocol the user supplied. (DA)
+    if ( url.isMalformed() && isValidURL )
+    {
+        cmd.insert( 0, m_strDefaultProtocol );
+        setFilteredURI( data, cmd );
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        return true;
+    }
   }
 
   // If we previously determined that we want
