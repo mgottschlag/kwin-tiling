@@ -31,7 +31,7 @@
 #include "Misc.h"
 #include "CompressedFile.h"
 #include "Global.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include <kgenericfactory.h>
 #include <kdeversion.h>
 #include <qfile.h>

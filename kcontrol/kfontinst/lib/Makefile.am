@@ -2,22 +2,22 @@ noinst_LTLIBRARIES = libkfontinst.la
 
 libkfontinst_la_SOURCES = \
 CompressedFile.cpp \
-Config.cpp \
 Encodings.cpp \
 FontEngine.cpp \
 Fontmap.cpp \
 GetPid.c \
 Global.cpp \
+KfiConfig.cpp \
 Misc.cpp \
 XConfig.cpp
 
 noinst_HEADERS = \
 CompressedFile.h \
-Config.h \
 Encodings.h \
 FontEngine.h \
 Fontmap.h \
 Global.h \
+KfiConfig.h \
 Misc.h \
 XConfig.h
 

@@ -28,7 +28,7 @@
 
 #include "Global.h"
 #include "Misc.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Fontmap.h"
 #include "XConfig.h"
 #include "kxftconfig.h"

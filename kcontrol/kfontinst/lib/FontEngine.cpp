@@ -56,7 +56,7 @@
 
 #include "FontEngine.h"
 #include "Global.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Misc.h"
 #include "CompressedFile.h"
 #include <ctype.h>

@@ -1,9 +1,9 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef __KFI_CONFIG_H__
+#define __KFI_CONFIG_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CConfig
+// Class Name    : CKfiConfig
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 05/03/2003
@@ -38,12 +38,12 @@
 #include <qstringlist.h>
 #include <kconfig.h>
 
-class CConfig : public KConfig
+class CKfiConfig : public KConfig
 {
     public:
 
-    CConfig(bool all=false, bool checkDirs=true, bool checkX=false);
-    virtual ~CConfig()                    { }
+    CKfiConfig(bool all=false, bool checkDirs=true, bool checkX=false);
+    virtual ~CKfiConfig()                    { }
 
     const QStringList & getRealTopDirs(const QString &f=QString::null);
 

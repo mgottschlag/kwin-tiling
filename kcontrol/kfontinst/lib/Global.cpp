@@ -28,14 +28,14 @@
 
 #include "Global.h"
 #include "FontEngine.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Encodings.h"
 #include "XConfig.h"
 #include "kxftconfig.h"   // CPD: This should really be a symlik!
 #include <stdio.h>
 
 CFontEngine * CGlobal::theirFontEngine=NULL;
-CConfig     * CGlobal::theirConfig=NULL;
+CKfiConfig  * CGlobal::theirConfig=NULL;
 CEncodings  * CGlobal::theirEncodings=NULL;
 CXConfig    * CGlobal::theirSysXcfg=NULL;
 CXConfig    * CGlobal::theirUserXcfg=NULL;
@@ -44,7 +44,7 @@ KXftConfig  * CGlobal::theirUserXft=NULL;
 
 void CGlobal::create(bool checkDirs, bool checkX)
 {
-    theirConfig=new CConfig(true, checkDirs, checkX);
+    theirConfig=new CKfiConfig(true, checkDirs, checkX);
 }
 
 void CGlobal::destroy()
@@ -86,10 +86,10 @@ CFontEngine & CGlobal::fe()
     return *theirFontEngine;
 }
 
-CConfig & CGlobal::cfg()
+CKfiConfig & CGlobal::cfg()
 {
     if(NULL==theirConfig)
-        theirConfig=new CConfig;
+        theirConfig=new CKfiConfig;
  
     return *theirConfig;
 }

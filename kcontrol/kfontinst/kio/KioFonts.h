@@ -37,7 +37,7 @@
 #include <qfile.h>
 #include <qstringlist.h>
 #include "Misc.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Global.h"
 
 class CKioFonts : public KIO::SlaveBase

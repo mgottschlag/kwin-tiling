@@ -32,7 +32,7 @@
 #include "Misc.h"
 
 class CFontEngine;
-class CConfig;
+class CKfiConfig;
 class CEncodings;
 class CXConfig;
 class KXftConfig;
@@ -49,7 +49,7 @@ class CGlobal
     static void destroy();
 
     static CFontEngine & fe();
-    static CConfig &     cfg();
+    static CKfiConfig &  cfg();
     static CEncodings &  enc();
     static CXConfig &    sysXcfg();
     static CXConfig &    userXcfg();
@@ -61,7 +61,7 @@ class CGlobal
     private:
 
     static CFontEngine *theirFontEngine;
-    static CConfig     *theirConfig;
+    static CKfiConfig  *theirConfig;
     static CEncodings  *theirEncodings;
     static CXConfig    *theirSysXcfg;
     static CXConfig    *theirUserXcfg;

@@ -31,7 +31,7 @@
 #include "Misc.h"
 #include "CompressedFile.h"
 #include "Global.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include <qimage.h>
 #include <qbitmap.h>
 #include <qpainter.h>

@@ -26,7 +26,7 @@
 // (C) Craig Drummond, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Fontmap.h"
 #include "Global.h"
 #include "FontEngine.h"

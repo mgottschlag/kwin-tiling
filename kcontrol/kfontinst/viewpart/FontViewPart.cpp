@@ -30,7 +30,7 @@
 #include "FontPreview.h"
 #include "FontEngine.h"
 #include "Global.h"
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Misc.h"
 #include <klocale.h>
 #include <qlayout.h>

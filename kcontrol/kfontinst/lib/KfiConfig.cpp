@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CConfig
+// Class Name    : CKfiConfig
 // Author        : Craig Drummond
 // Project       : K Font Installer
 // Creation Date : 05/03/2003
@@ -26,7 +26,7 @@
 // (C) Craig Drummond, 2003
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Config.h"
+#include "KfiConfig.h"
 #include "Global.h"
 #include "Misc.h"
 #include <qdir.h>
@@ -209,8 +209,8 @@ static const QString constGhostscriptDirs[]=
     QString::null
 };
 
-CConfig::CConfig(bool all, bool checkDirs, bool checkX)
-       : KConfig("kfontinstrc")
+CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
+          : KConfig("kfontinstrc")
 {
     QString sysX11FontsDir,
             defaultSysXConfigFile,
@@ -432,10 +432,10 @@ CConfig::CConfig(bool all, bool checkDirs, bool checkX)
     sync();
 }
 
-void CConfig::checkAndModifyXConfigFile()
+void CKfiConfig::checkAndModifyXConfigFile()
 {
     //
-    // Check if XF86Config has been selected by CConfig, and if so, have a look to see wether it has
+    // Check if XF86Config has been selected by CKfiConfig, and if so, have a look to see wether it has
     // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
     if(!itsSysXfs)
     {
@@ -506,14 +506,14 @@ void CConfig::checkAndModifyXConfigFile()
     }
 }
 
-const QStringList & CConfig::getRealTopDirs(const QString &f)
+const QStringList & CKfiConfig::getRealTopDirs(const QString &f)
 {
     return CMisc::root() || CMisc::getSect(f)==i18n(KIO_FONTS_SYS)
                ? itsSysFontsDirs
                : itsUserFontsDirs;
 }
 
-void CConfig::storeSysXConfigFileTs()
+void CKfiConfig::storeSysXConfigFileTs()
 {
     int ts=CMisc::getTimeStamp(itsSysXConfigFile);
 
