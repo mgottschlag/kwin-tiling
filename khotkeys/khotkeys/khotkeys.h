@@ -14,6 +14,7 @@
 #include <kuniqueapp.h>
 #include <qtimer.h>
 #include <dcopobject.h>
+#include <kurifilter.h>
 
 #include "khkglobalaccel.h"
 #include "khotkeysglobal.h"
@@ -27,18 +28,20 @@ class KHotKeysApp
         KHotKeysApp();
         virtual ~KHotKeysApp();
     protected:
-    	virtual bool x11EventFilter(XEvent *);
+        virtual bool x11EventFilter(XEvent *);
         KHKGlobalAccel* accel;
         KHotData_dict data;
+        void start_general( const QString& action_P );
+        void start_menuentry( const QString& action_P );
     protected slots:
-        void accel_activated( const QString& action, const QString&, int );
+        void accel_activated( const QString& action_P, const QString&, int );
     public:
     k_dcop:
         virtual ASYNC reread_configuration();
     };
 
-//*****************************************************************************
+//****************************************************************************
 // Inline
-//*****************************************************************************
+//****************************************************************************
 
 #endif

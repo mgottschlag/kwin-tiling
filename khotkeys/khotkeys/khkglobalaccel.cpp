@@ -36,14 +36,14 @@ KHKGlobalAccel::KHKGlobalAccel()
     do_not_grab = false; // HACK but we want grabbing
     }
 
-// CHECKME from 20000711 snapshot
+// from 20000711 snapshot
 bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
 
-	if ( aKeyMap.isEmpty() ) return false;
-	if ( event_->type != KeyPress ) return false;
+        if ( aKeyMap.isEmpty() ) return false;
+        if ( event_->type != KeyPress ) return false;
 	
-	uint mod=event_->xkey.state & (ControlMask | ShiftMask | Mod1Mask);
-	uint keysym= XKeycodeToKeysym(qt_xdisplay(), event_->xkey.keycode, 0);
+        uint mod=event_->xkey.state & (ControlMask | ShiftMask | Mod1Mask);
+        uint keysym= XKeycodeToKeysym(qt_xdisplay(), event_->xkey.keycode, 0);
 	
         KKeyEntry entry;
 #if 1
@@ -51,7 +51,7 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
 #endif
 
         for (KKeyEntryMap::ConstIterator it = aKeyMap.begin();
-             it != aKeyMap.end(); ++it) {
+            it != aKeyMap.end(); ++it) {
             int kc = (*it).aCurrentKeyCode;
             if ( mod == keyToXMod( kc ) && keysym == keyToXSym( kc ) ) {
                 entry = *it;
@@ -59,9 +59,9 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
                 action = it.key();
 #endif
             }
-	}
+        }
 	
-	if ( !entry.receiver )
+        if ( !entry.receiver )
             return false;
 	
 
@@ -76,8 +76,8 @@ bool KHKGlobalAccel::x11EventFilter( const XEvent *event_ ) {
 	    disconnect( this, SIGNAL( activated() ), entry.receiver,
                         entry.member );
 #else
-// this is actually the only important change                                                      	    connect( this, SIGNAL( activated( const QString&, const QString&,
-	    connect( this, SIGNAL( activated( const QString&, const QString&, 
+// this is actually the only important change
+	    connect( this, SIGNAL( activated( const QString&, const QString&,
 	        int) ), entry.receiver, entry.member);
 	    emit activated( action, entry.descr, entry.aCurrentKeyCode );
 	    disconnect( this, SIGNAL( activated( const QString&,

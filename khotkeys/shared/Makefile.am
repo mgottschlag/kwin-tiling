@@ -1,3 +1,5 @@
+# $Id$
+
 noinst_LTLIBRARIES = libshared.la
 
 libshared_la_SOURCES = khotkeysglobal.cpp

@@ -19,11 +19,12 @@
 #include "khotkeys.h"
 
 int main( int argc, char** argv )
-    {                             // CHECKME no need to i18n these
-    KCmdLineArgs::init( argc, argv, "KHotKeys", "KHotKeys", "1.5" );
+    {                             // no need to i18n these, no GUI
+    KCmdLineArgs::init( argc, argv, "khotkeys", "KHotKeys", "1.5" );
     KUniqueApplication::addCmdLineOptions();
     if( !KHotKeysApp::start()) // already running
         return 0;
     KHotKeysApp app;
+    app.disableSessionManagement(); // started from startkde now
     return app.exec();
     }

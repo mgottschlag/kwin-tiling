@@ -30,40 +30,47 @@
 
 #include "kcmkhotkeys.h"
 
+static void write_conf( KHotData_dict& data_P );
+static bool edit_shortcut( const QString& action_name_P, KHotData* data_P,
+    KHotData_dict& data_P, const QString& shortcut_P );
+static QString change_shortcut_internal( const QString& file_P,
+    const QString& shortcut_P, bool save_P, bool edit_P );
+
 void khotkeys_init()
     {
+    // I hope this works
     KGlobal::locale()->insertCatalogue("khotkeys");
     }
 
-QString khotkeys_get_desktop_file_shortcut( const QString& file_P )
+QString khotkeys_get_menu_entry_shortcut( const QString& file_P )
     {
     KHotData_dict data;
-    KSimpleConfig cfg( "khotkeysrc", true );
+    KSimpleConfig cfg( CONFIG_FILE, true );
     data.read_config( cfg );
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->run == file_P )
+        if( it.current()->menuentry && it.current()->run == file_P )
             return it.current()->shortcut;
     return "";
     }
 
-bool khotkeys_desktop_file_moved( const QString& new_P, const QString& old_P )
+bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P )
     {
     KHotData_dict data;
         {
-        KSimpleConfig cfg( "khotkeysrc", true );
+        KSimpleConfig cfg( CONFIG_FILE, true );
         data.read_config( cfg );
         }
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->run == new_P )
+        if( it.current()->menuentry && it.current()->run == new_P )
             return false;
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->run == old_P )
+        if( it.current()->menuentry && it.current()->run == old_P )
             {
             it.current()->run = new_P;
             write_conf( data );
@@ -72,17 +79,17 @@ bool khotkeys_desktop_file_moved( const QString& new_P, const QString& old_P )
     return false;
     }
 
-void khotkeys_desktop_file_deleted( const QString& file_P )
+void khotkeys_menu_entry_deleted( const QString& entry_P )
     {
     KHotData_dict data;
         {
-        KSimpleConfig cfg( "khotkeysrc", true );
+        KSimpleConfig cfg( CONFIG_FILE, true );
         data.read_config( cfg );
         }
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->run == file_P )
+        if( it.current()->menuentry && it.current()->run == entry_P )
             {
             data.remove( it.currentKey());
             write_conf( data );
@@ -90,11 +97,25 @@ void khotkeys_desktop_file_deleted( const QString& file_P )
             }
     }
 
-QString khotkeys_change_desktop_file_shortcut( const QString& file_P )
+QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
+    const QString& shortcut_P )
+    {
+    return change_shortcut_internal( entry_P, shortcut_P, true, false );
+    }
+    
+QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
+    const QString& shortcut_P, bool save_if_edited_P )
+    {
+    return change_shortcut_internal( entry_P, shortcut_P, save_if_edited_P,
+        true );
+    }
+    
+QString change_shortcut_internal( const QString& entry_P,
+    const QString& shortcut_P, bool save_if_edited_P, bool edit_P )
     {
     KHotData_dict data;
         {
-        KSimpleConfig cfg( "khotkeysrc", true );
+        KSimpleConfig cfg( CONFIG_FILE, true );
         data.read_config( cfg );
         }
     KHotData* pos = NULL;
@@ -103,79 +124,95 @@ QString khotkeys_change_desktop_file_shortcut( const QString& file_P )
     for( KHotData_dict::Iterator it( data );
          it.current();
          ++it )
-        if( it.current()->run == file_P )
+        if( it.current()->menuentry && it.current()->run == entry_P )
             {
             name = it.currentKey();
             pos = data.take( name );
             break;
             }
-    if( pos == NULL )
+    if( pos == NULL ) // new action
         {
-        int slash = file_P.findRev( '/' );
-        name = kapp->name();
+        name = "K Menu"; // CHECKME i18n
         name += " - ";
-        if( slash > -1 )
-            name += file_P.mid( slash );
-        else
-            name += file_P;
-        pos = new KHotData( "", file_P );
+        name += entry_P;
+        pos = new KHotData( "", entry_P, true );
         new_data = true;
         }
-    if( edit_shortcut( name, pos, data ))
-        {            
-        data.insert( name, pos );
-        write_conf( data );
-        return pos->shortcut;
-        }
-    else
+    if( edit_P )
         {
-        delete pos;
-        if( !new_data )
-            write_conf( data );
+        if( !edit_shortcut( name, pos, data, shortcut_P ))
+            return shortcut_P;
         }
-    return "";
+    else    
+        pos->shortcut = KAccel::keyToString(    // make sure the shortcut
+            KAccel::stringToKey( shortcut_P )); // is valid
+    if( !save_if_edited_P )
+        return pos->shortcut;
+    if( pos->shortcut.isEmpty())
+        {            
+        delete pos;
+        if( !new_data ) // remove from config file
+            write_conf( data );
+        return "";
+        }
+    data.insert( name, pos );
+    write_conf( data );
+    return pos->shortcut;
     }
 
 void write_conf( KHotData_dict& data_P )
     {
         {
-        KSimpleConfig cfg( "khotkeysrc", false );
+        KSimpleConfig cfg( CONFIG_FILE, false );
         data_P.write_config( cfg );
         }
     DCOPClient* client = kapp->dcopClient();
     QByteArray data;
-    client->send( "KHotKeys", "KHotKeys", "reread_configuration()", data );
+    client->send( "khotkeys", "khotkeys", "reread_configuration()", data );
+      // tell daemon to reread cfg file
     }
     
 bool edit_shortcut( const QString& action_name_P, KHotData* item_P,
-    KHotData_dict& data_P )
+    KHotData_dict& data_P, const QString& shortcut_P )
     {
     desktop_shortcut_dialog* dlg =
-        new desktop_shortcut_dialog( action_name_P, item_P, data_P );
+        new desktop_shortcut_dialog( action_name_P, item_P, data_P,
+        shortcut_P );
     bool ret = dlg->dlg_exec();
     delete dlg;
     return ret;
     }
     
-desktop_shortcut_dialog::desktop_shortcut_dialog( const QString& action_name_P,
-    KHotData* item_P, KHotData_dict& data_P )
+desktop_shortcut_dialog::desktop_shortcut_dialog(
+    const QString& action_name_P, KHotData* item_P, KHotData_dict& data_P,
+    QString shortcut_P )
     : KDialogBase( NULL, NULL, true, i18n( "Select shortcut" ), Ok | Cancel ),
         data( data_P ), item( item_P ), action_name( action_name_P )
     {
+    for( KHotData_dict::Iterator it( data );
+         it.current();
+         ++it )
+        {
+        if( it.current() == item )
+            continue;
+        if( it.current()->shortcut == shortcut_P )
+            shortcut_P = ""; // this shortcut is taken up by some other action
+        }
     KKeyEntry entry;
     entry.aCurrentKeyCode = entry.aConfigKeyCode
-        = KAccel::stringToKey( item_P->shortcut );
+        = KAccel::stringToKey( shortcut_P );
     entry.bConfigurable = true;
     entry.descr = action_name_P;
     entry.bEnabled = true;
     map.insert( action_name_P, entry );
     QWidget* page = new QWidget( this );
-    setMainWidget( page );
+    setMainWidget( page );         // CHECKME i18n
     QLabel* label = new QLabel( i18n( "Desktop file to run" ), page );
+//    QLabel* label = new QLabel( "K Menu entry to run", page ); 
     QLineEdit* line = new QLineEdit( page );
     line->setText( item_P->run );
-    line->setMinimumWidth( 500 ); // CHECKME
-    line->setEnabled( false );
+//    line->setMinimumWidth( 500 );
+    line->setReadOnly( true );
     keychooser = new KKeyChooser( &map, page, true );
     connect( keychooser, SIGNAL( keyChange()), this, SLOT( key_changed()));
     QBoxLayout* main_layout = new QVBoxLayout( page, KDialog::marginHint(),
@@ -187,10 +224,13 @@ desktop_shortcut_dialog::desktop_shortcut_dialog( const QString& action_name_P,
     
 bool desktop_shortcut_dialog::dlg_exec()
     {
-    if( exec() == KDialogBase::Accepted )
+    if( exec() == Accepted )
+        {
         item->shortcut
             = KAccel::keyToString( map[ action_name ].aConfigKeyCode );
-    return !item->shortcut.isEmpty();
+        return true;
+        }
+    return false;    
     }
 
 void desktop_shortcut_dialog::key_changed()
@@ -213,10 +253,12 @@ void desktop_shortcut_dialog::key_changed()
                     ).arg( it.current()->shortcut ).arg( it.currentKey());
             KMessageBox::sorry( this, str, i18n( "Key conflict" ));
             map[ action_name ].aConfigKeyCode = 0;
-            keychooser->listSync();
+            keychooser->listSync(); // cancel the selected shortcut
+            keychooser->update();   // in KKeyChooser
             return;
             }
         }
     }
 
 #include "kcmkhotkeys.moc"
+
