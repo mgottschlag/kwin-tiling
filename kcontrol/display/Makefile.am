@@ -13,7 +13,7 @@ lib_LTLIBRARIES = libkcm_display.la
 libkcm_display_la_SOURCES = advanced.cpp fonts.cpp scrnsave.cpp backgnd.cpp \
 	bgdialogs.cpp energy.cpp colorscm.cpp widgetcanvas.cpp general.cpp
 libkcm_display_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_display_la_LIBADD = $(LIB_KFILE) $(DPMSLIB) libbgnd.la
+libkcm_display_la_LIBADD = $(LIB_KIMGIO) $(LIB_KFILE) $(DPMSLIB) libbgnd.la
 
 noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgsettings.cc bgrender.cc
