@@ -24,6 +24,7 @@
 #include <qfileinfo.h>
 #include <qgroupbox.h>
 #include <qhbox.h>
+#include <qwhatsthis.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -73,6 +74,19 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
     _execEdit->lineEdit()->setAcceptDrops(false);
+    QWhatsThis::add(_execEdit,i18n(
+    "Following the command, you can have several place holders which will be replaced "
+    "with the actual values when the actual program is run:\n"
+    "%f - a single file name\n"
+    "%F - a list of files; use for applications that can open several local files at once\n"
+    "%u - a single URL\n"
+    "%U - a list of URLs\n"
+    "%d - the folder of the file to open\n"
+    "%D - a list of folders\n"
+    "%i - the icon\n"
+    "%m - the mini-icon\n"
+    "%c - the caption"));
+
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
     _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
 
@@ -110,7 +124,8 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
-    _iconButton->setFixedSize(52,52);
+    _iconButton->setFixedSize(56,56);
+    _iconButton->setIconSize(48);
     connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
     grid->addMultiCellWidget(_iconButton, 0, 1, 2, 2);
 
