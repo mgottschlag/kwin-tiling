@@ -19,6 +19,7 @@
 #ifndef __RANDR_H__
 #define __RANDR_H__
 
+#include <qobject.h>
 #include <qstringlist.h>
 #include <qptrlist.h>
 
@@ -32,8 +33,10 @@
 #undef INT32
 #include <X11/extensions/Xrandr.h>
 
-class RandRScreen
+class RandRScreen : public QObject
 {
+	Q_OBJECT
+
 public:
 	RandRScreen(int screenIndex, bool requestScreenChangeEvents = false);
 	~RandRScreen();
@@ -45,8 +48,11 @@ public:
 	
 	// A return value of -1 means the user did not confirm in time, or cancelled.
 	Status		applyProposedAndConfirm();
-	bool		confirm();
 	
+public slots:
+	bool		confirm();
+
+public:
 	QString		changedMessage();
 
 	bool		changedFromOriginal();
@@ -55,8 +61,8 @@ public:
 	bool		proposedChanged();
 	
 	static QString	rotationName(int rotation, bool pastTense = false, bool capitalised = true);
-	static QPixmap	rotationIcon(int rotation);
-	QString		currentRotationDescription();
+	QPixmap	        rotationIcon(int rotation);
+	QString			currentRotationDescription();
 	
 	QStringList refreshRates(SizeID size);
 	QString		refreshRateDirectDescription(int rate);

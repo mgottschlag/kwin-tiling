@@ -18,6 +18,8 @@
 
 #include <kactivelabel.h>
 
+#include <qtimer.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kglobal.h>
@@ -119,7 +121,7 @@ bool RandRScreen::confirm()
 	// uncomment the line below and edit out the KTimerDialog stuff to get
 	// a version which works on today's kdelibs (no accept dialog is presented)
 
-	// REMEMBER to put the dialog on the right screen
+	// FIXME remember to put the dialog on the right screen
 
 	KTimerDialog *acceptDialog = new KTimerDialog(
 											15000,
@@ -134,13 +136,13 @@ bool RandRScreen::confirm()
 	acceptDialog->setButtonOKText(i18n("Accept Configuration"));
 	acceptDialog->setButtonCancelText(i18n("Return to Previous Configuration"));
 	
-	KDialog::centerOnScreen(acceptDialog, screen);
-	
 	KActiveLabel *label = new KActiveLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds your configuration will revert to normal."), acceptDialog, "userSpecifiedLabel");
 
 	acceptDialog->setMainWidget(label);
 
-	return acceptDialog->exec();
+	KDialog::centerOnScreen(acceptDialog, screen);
+    
+    return acceptDialog->exec();
 }
 
 QString RandRScreen::changedMessage()
@@ -218,6 +220,28 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 
 QPixmap RandRScreen::rotationIcon(int rotation)
 {
+	// Adjust icons for current screen orientation
+	// FIXME untested, this might even be working the wrong way
+	if (!(currentRotation & RR_Rotate_0) && rotation & (RR_Rotate_0 | RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270)) {
+		int currentAngle = currentRotation & (RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270);
+		switch (currentAngle) {
+			case RR_Rotate_90:
+				rotation <<= 1;
+				break;
+			case RR_Rotate_180:
+				rotation <<= 2;
+				break;
+			case RR_Rotate_270:
+				rotation <<= 3;
+				break;
+		}
+		
+		// Fix overflow
+		if (rotation > RR_Rotate_270) {
+			rotation >>= 4;
+		}
+	}
+	
 	switch (rotation) {
 		case RR_Rotate_0:
 			return SmallIcon("up");

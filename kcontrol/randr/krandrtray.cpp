@@ -117,7 +117,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 	for (int i = 0; i < 6; i++) {
 		if ((1 << i) & m_currentScreen->rotations) {
-			lastIndex = menu->insertItem(RandRScreen::rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
+			lastIndex = menu->insertItem(m_currentScreen->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
 			
 			if (m_currentScreen->proposedRotation & (1 << i)) {
 				menu->setItemChecked(lastIndex, true);
