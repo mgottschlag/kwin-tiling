@@ -1,8 +1,70 @@
-This is the KDE Display Manager (kdm) v0.95 for KDE 3.2,
-the KDE replacement for the X Display Manager (xdm).
+This is the KDE Display Manager (KDM) v0.95 for KDE 3.2,
+the KDE replacement for the X Display Manager (XDM).
 
 
-How to setup kdm
+configure options that affect KDM
+---------------------------------
+
+--with-pam[=service]
+  Compile KDM (and other parts of kdebase) with PAM support. The default
+  service is "kde". PAM is automatically used if found.
+
+--with-kdm-pam=service
+  Override the PAM service used specifically by KDM. Depends on --with-pam.
+
+--with-shadow
+  Compile KDM (and other parts of kdebase) with shadow password support.
+  Shadow passwords are automatically used if found. This affects KDM only
+  if PAM is not used.
+
+--with-krb4[=path]
+  Compile KDM (and the LDAP KIO slave) with KTH Kerberos 4 support. Note
+  that this does not work with the Kerberos 4 compatibility layer found in
+  MIT Kerberos 5. This affects KDM only if PAM is not used.
+
+--with-afs
+  Compile KDM with AFS support. Depends on --with-krb4.
+
+--with-krb5auth[=path]
+--with-rpcauth
+  Compile KDM with Kerberos 5 resp. secure RPC support for X authorization
+  cookies. It's pretty pointless to enable this if you don't use an X server
+  that supports it.
+  
+  If you want user authentication against a Kerberos realm, compile KDM with
+  PAM support and use the appropriate module.
+
+--without-xdmcp
+  Compile KDM without XDMCP support.
+
+--with-kdm-xconsole
+  Compile KDM with a builtin "xconsole" replacement in the greeter. I don't
+  consider this too useful, but SuSE wanted it, so it's there. ;)
+
+
+KDM's file system layout
+------------------------
+${kde_confdir} is usually ${prefix}/share/config
+${kde_datadir} is usually ${prefix}/share/apps
+The indented locations are envisioned for a configuration shared with GDM.
+
+${kde_confdir}/kdm/{kdmrc,Xservers,Xaccess,Xwilling,...}
+${kde_datadir}/kdm/sessions/*.desktop
+  /etc/X11/sessions/,/usr/share/xsessions/
+${kde_datadir}/kdm/pics/users/
+${kde_datadir}/kdm/pics/
+${kde_datadir}/kdm/faces/*.face{,.icon}
+  /usr/share/faces/
+/var/run/xauth/A*
+/var/run/xdmctl/xdmctl*
+/var/run/kdm.pid
+/var/lib/kdm/kdmsts
+<site-specific>/*.dmrc
+$HOME/.face{,.icon}
+$HOME/.dmrc
+
+
+How to setup KDM
 ----------------
 
 KDM's config files are all located in ${kde_confdir}/kdm.
@@ -10,8 +72,8 @@ KDM's config files are all located in ${kde_confdir}/kdm.
 deriving it from an already present KDM/XDM installation or by using
 defaults if no previous installation is found.
 
-You can change the configuration from the KDE Control Center.
-You will find the Login Manager module in "System" -> "Login Manager".
+You can change the configuration from the KDE Control Center. You will
+find the "Login Manager" module in the "System Administration" group.
 
 Have a look at README.pam in the kdebase top level directory if your
 system uses PAM.
@@ -20,7 +82,7 @@ system uses PAM.
 The Xservers file
 -----------------
 
-This file tells kdm which/when/how X-Servers ("desktop sessions",
+This file tells KDM which/when/how X-Servers ("desktop sessions",
 "login screens") should be started. The file is backwards compatible with
 XDM's Xservers file, but it contains some extensions:
 * @tty. The idea for this is stolen from Solaris (TM). You can specifiy here,
@@ -39,11 +101,50 @@ Example:
 :1 local reserve /usr/bin/X11/X :1 vt8
 
 
+Configuring session types
+-------------------------
+
+The way session types are configured changed drastically in KDE 3.2.
+Session types are now represented by .desktop files in appropriate locations.
+The format of the .desktop files is (not yet) defined in the FreeDesktop.org
+desktop entry spec. Differences to "standard" .desktop files are:
+- the Type is fixed to XSession and can be omitted
+- the Encoding is fixed to UTF-8 and can be omitted
+- the Exec field will be passed to "eval exec" in a bourne shell; no macro
+  expansion is performed on it. "default", "custom" and "failsafe" are magic
+  constants that cause special actions.
+- Name, Comment, TryExec and Hidden are supported
+- the remaining keys have no meaning currently
+Session types are internally identified by filename (without extension);
+that's what will be saved to ~/.dmrc and what DESKTOP_SESSION will be set to.
+For every magic Exec constant a session type of the same name exists.
+
+Unless your system is configured differently already, you should create a
+directory ${kde_confdir}/kdm/sessions and add this to kdmrc:
+
+[X-*-Core]
+SessionsDirs=${kde_confdir}/kdm/sessions,${kde_datadir}/kdm/sessions
+
+(Note that you must use actual paths instead of variables, see the section
+about KDM's file system layout.)
+Do any changes only in the config directory - any changes in the data
+directory will be lost after the next KDE update.
+
+To override a session type, copy the .desktop file from the data dir to the
+config dir and edit it at will. Removing the shipped session types can be
+accomplished by "shadowing" them with .desktop files containing Hidden=true.
+For the magic session types no .desktop files exist by default, but KDM
+pretends they would, so you can override them like any other type.
+I guess you already know how to add a new session type by now. ;-)
+
+
 Running KDM from init
 ---------------------
 
 NOTE, that this description applies to RedHat 5.x and must be adapted for
-other distributions/systems.
+other distributions/systems. Generally I'd advise _against_ starting KDM
+directly from init - better use a proper init script, possibly by slightly
+modifying the XDM init script shipped by your distribution.
 
    Edit (as root) /etc/inittab.
 
@@ -74,27 +175,6 @@ other distributions/systems.
    successfully it will go into run level 5 and run KDM,
    presenting you the exceedingly cute KDE login screen.
 
-
-KDM's file system layout
-------------------------
-${kde_confdir} is usually ${prefix}/share/config
-${kde_datadir} is usually ${prefix}/share/apps
-The indented locations are envisioned for a configuration shared with GDM.
-
-${kde_confdir}/kdm/{kdmrc,Xservers,Xaccess,Xwilling,...}
-${kde_datadir}/kdm/sessions/*.desktop
-  /etc/X11/sessions/,/usr/share/xsessions/
-${kde_datadir}/kdm/pics/users/
-${kde_datadir}/kdm/pics/
-${kde_datadir}/kdm/faces/*.face{,.icon}
-  /usr/share/faces/
-/var/run/xauth/A*
-/var/run/xdmctl/xdmctl*
-/var/run/kdm.pid
-/var/lib/kdm/kdmsts
-<site-specific>/*.dmrc
-$HOME/.face{,.icon}
-$HOME/.dmrc
 
 The command FiFos
 -----------------
@@ -185,7 +265,7 @@ KDM accepts two command line options related to logging:
     If KDM is configured to use syslog (and it _very_ probably is on any
     modern system), all internally generated messages are logged to the
     "daemon" facility. The log usually can be found in /var/log/debug.log
-    and /var/log/daemon.log; make sure, that daemon.* is logged (look at
+    and /var/log/daemon.log; make sure that daemon.* is logged (look at
     /etc/syslog.conf).
     If you have problems logging in and your system uses PAM (also quite
     probable on modern systems), the "auth" and "authpriv" syslog facilities
@@ -193,9 +273,9 @@ KDM accepts two command line options related to logging:
 
 Send me all the logs together with a detailed description of what you did
 and what happened. If your problem is related to a specific configuration,
-you should also attach a tar.gz archive of your kdm config directory.
+you should also attach a tar.gz archive of your KDM config directory.
 
-If i request a backtrace from you and kdm didn't create one yet via the
+If I request a backtrace from you and KDM didn't create one yet via the
 usual drkonqi procedure, you'll have to do that yourself. The keyphrase
 is "attaching gdb". How exactly this is done depends on the part that
 crashes:
@@ -209,12 +289,12 @@ crashes:
   # gdb kdm <the PID you found>
   (gdb) cont
   If the subdaemon crashes before you can attach, add 16 to the debug flags
-  when you start kdm.
+  when you start KDM.
 - config reader. You will have to add 32 to the debug flags almost certainly.
   The PPID will be the master daemon as well.
   # gdb kdm_config $(pidof kdm_config)
   (gdb) cont
-- greeter. If it's to fast, add 64 to -debug. The PPID wil be the subdaemon.
+- greeter. If it's to fast, add 64 to -debug. The PPID will be the subdaemon.
   # gdb kdm_greet $(pidof kdm_greet)
   (gdb) cont
   The simplification with "pidof" works only if you have only one display,
@@ -242,7 +322,7 @@ configure flag if at all possible.
 Random rambings and license information
 ---------------------------------------
 
-Version 0.1 of kdm is copyright
+Version 0.1 of KDM is copyright
 	Matthias Ettrich <ettrich@trolltech.com>
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
