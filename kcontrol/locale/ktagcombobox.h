@@ -25,7 +25,7 @@
 #ifndef __KTAGCOMBOBOX_H__
 #define __KTAGCOMBOBOX_H__
 
-#include <qwidget.h>
+#include <qcombobox.h>
 
 /*
  * This class should be just like qcombobox, but it should be possible
@@ -33,7 +33,7 @@
  *
  * It has also support for sub menues.
  */
-class KTagComboBox : public QWidget
+class KTagComboBox : public QComboBox
 {
   Q_OBJECT
 
@@ -64,7 +64,6 @@ public:
   void setCurrentItem(const QString &code);
 
   // widget stuff
-  QSize sizeHint() const;
   virtual void setFont( const QFont & );
 
 signals:
@@ -86,7 +85,6 @@ private:
   QStringList *tags;  
   QPopupMenu *popup;
   int current;
-  bool getMetrics(int *dist, int *buttonW, int *buttonH) const;
 };
 
 #endif

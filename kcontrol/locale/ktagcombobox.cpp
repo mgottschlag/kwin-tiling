@@ -39,15 +39,14 @@ KTagComboBox::~KTagComboBox ()
 }
 
 KTagComboBox::KTagComboBox (QWidget * parent, const char *name)
-  : QWidget(parent, name)
+  : QComboBox(parent, name)
 {
-  popup = new QPopupMenu;
+  popup = new QPopupMenu(this);
   tags = new QStringList;
   connect( popup, SIGNAL(activated(int)),
                         SLOT(internalActivate(int)) );
   connect( popup, SIGNAL(highlighted(int)),
                         SLOT(internalHighlight(int)) );
-  setFocusPolicy( TabFocus );
 }
 
 void KTagComboBox::popupMenu()
@@ -77,33 +76,9 @@ void KTagComboBox::keyPressEvent( QKeyEvent *e )
     emit activated( c );
 }
 
-void KTagComboBox::mousePressEvent( QMouseEvent * /*e*/ )
+void KTagComboBox::mousePressEvent( QMouseEvent * )
 {
   popupMenu();
-}
-
-QSize KTagComboBox::sizeHint() const
-{
-  QString tmp;
-  int i;
-  QFontMetrics fm = fontMetrics();
-  int maxH = QMAX(12, fm.height());
-  int maxW = count() ? 18 : 7 * fm.width(QChar('x')) + 18;
-
-  for(i = 0; i < count(); i++)
-  {
-    tmp = popup->text(i);
-    int h = fm.width( tmp );
-    if (h > maxW)
-      maxW = h;
-    h = fm.width( tmp );
-    if (h > maxH)
-      maxH = h;
-  }
-
-  maxW += 2*4 + 20;
-  maxH += 2*5;
-  return QSize (maxW, maxH);
 }
 
 void KTagComboBox::internalActivate( int index )
@@ -172,7 +147,7 @@ void KTagComboBox::insertSeparator(const QString &submenu, int index)
 void KTagComboBox::insertSubmenu(const QString &text, const QString &tag, const QString &submenu, int index)
 {
   QPopupMenu *pi = checkInsertIndex(popup, tags, submenu, &index);
-  QPopupMenu *p = new QPopupMenu;
+  QPopupMenu *p = new QPopupMenu(pi);
   pi->insertItem(text, p, count(), index);
   tags->append(tag);
   connect( p, SIGNAL(activated(int)),
@@ -188,23 +163,15 @@ void KTagComboBox::changeItem( const QString &text, int index )
     repaint();
 }
 
-void KTagComboBox::paintEvent( QPaintEvent * )
+void KTagComboBox::paintEvent( QPaintEvent * ev)
 {
+  QComboBox::paintEvent(ev);
+
   QPainter p (this);
-  const QColorGroup & colorgr = colorGroup();
-  QRect clip(2, 2, width() - 4, height() - 4);
-  int dist, buttonH, buttonW;
-  getMetrics( &dist, &buttonW, &buttonH );
-  int posx = width() - (dist + buttonW + 1);
 
-  // the largest box
-  qDrawShadePanel( &p, rect(), colorgr, FALSE, style().defaultFrameWidth(),
-                         &colorgr.brush( QColorGroup::Button ) );
-
-  qDrawShadePanel( &p, posx, (height() - buttonH)/2,
-                         buttonW, buttonH, colorgr, FALSE, style().defaultFrameWidth());
   // Text
-  p.drawText(clip, AlignCenter | SingleLine, popup->text( current) );
+  QRect clip(2, 2, width() - 4, height() - 4);
+  p.drawText(clip, AlignCenter | SingleLine, popup->text( current ));
 
   // Icon
   QIconSet *icon = popup->iconSet( this->current );
@@ -212,9 +179,6 @@ void KTagComboBox::paintEvent( QPaintEvent * )
     QPixmap pm = icon->pixmap();
     p.drawPixmap( 4, (height()-pm.height())/2, pm );
   }
-
-  if ( hasFocus() )
-    p.drawRect( posx - 5, 4, width() - posx + 1 , height() - 8 );
 }
 
 QString KTagComboBox::currentTag() const
@@ -226,7 +190,7 @@ QString KTagComboBox::tag(int i) const
 {
   if (i < 0 || i >= count())
   {
-    debug("KTagComboBox::tag(), unknown tag %d", i);
+    qDebug("KTagComboBox::tag(), unknown tag %d", i);
     return QString::null;
   }
   return *tags->at(i);
@@ -253,17 +217,8 @@ void KTagComboBox::setCurrentItem(const QString &code)
     setCurrentItem(i);
 }
 
-bool KTagComboBox::getMetrics( int *dist, int *buttonW, int *buttonH ) const
-{
-  *dist = 8;
-  *buttonW = 11;
-  *buttonH = 7;
-
-  return TRUE;
-}
-
 void KTagComboBox::setFont( const QFont &font )
 {
-  QWidget::setFont( font );
+  QComboBox::setFont( font );
   popup->setFont( font );
 }
