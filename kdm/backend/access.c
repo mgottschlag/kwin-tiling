@@ -135,19 +135,22 @@ Debug("ScanAccessDatabase\n");
     accData->acList = (AclEntry *)(accData->aliasList + accData->nAliases);
     cptr = (char *)(accData->acList + accData->nAcls);
     for (i = 0; i < accData->nHosts; i++) {
+Debug ("Host entry %d at %p:\n", i, &accData->hostList[i]);
 	switch ((accData->hostList[i].type = GRecvInt ())) {
 	case HOST_ALIAS:
 	    accData->hostList[i].entry.aliasPattern = cptr;
 	    cptr += GRecvStrBuf (cptr);
+Debug ("Alias pattern %s\n", accData->hostList[i].entry.aliasPattern);
 	    break;
 	case HOST_PATTERN:
 	    accData->hostList[i].entry.hostPattern = cptr;
 	    cptr += GRecvStrBuf (cptr);
+Debug ("Host pattern %s\n", accData->hostList[i].entry.hostPattern);
 	    break;
 	case HOST_ADDRESS:
 	    da = &accData->hostList[i].entry.displayAddress;
 	    da->hostAddress.data = cptr;
-	    cptr += (da->hostAddress.length = GRecvStrBuf (cptr));
+	    cptr += (da->hostAddress.length = GRecvArrBuf (cptr));
 	    switch (GRecvInt ())
 	    {
 #ifdef AF_INET
@@ -167,6 +170,14 @@ Debug("ScanAccessDatabase\n");
 		da->connectionType = FamilyLocal;
 		break;
 	    }
+Debug ("Address %02[:*hhx, type %d\n",
+	    da->hostAddress.length,
+	    da->hostAddress.data,
+	    da->connectionType);
+	    break;
+	default:
+Debug ("Other host type %d\n", accData->hostList[i].type);
+	    break;
 	}
     }
     for (i = 0; i < accData->nAliases; i++) {
@@ -174,6 +185,8 @@ Debug("ScanAccessDatabase\n");
 	cptr += GRecvStrBuf (cptr);
 	accData->aliasList[i].hosts = GRecvInt ();
 	accData->aliasList[i].nhosts = GRecvInt ();
+Debug ("Alias %s, %d hosts at %d\n", accData->aliasList[i].name,
+	accData->aliasList[i].nhosts, accData->aliasList[i].hosts);
     }
     for (i = 0; i < accData->nAcls; i++) {
 	accData->acList[i].entries = GRecvInt ();
@@ -181,9 +194,15 @@ Debug("ScanAccessDatabase\n");
 	accData->acList[i].hosts = GRecvInt ();
 	accData->acList[i].nhosts = GRecvInt ();
 	accData->acList[i].flags = GRecvInt ();
+Debug ("Entry at %p: %d entries at %d, %d hosts at %d, flags %d\n", 
+	&accData->acList[i],
+	accData->acList[i].nentries,
+	accData->acList[i].entries,
+	accData->acList[i].nhosts,
+	accData->acList[i].hosts,
+	accData->acList[i].flags);
     }
 }
-
 
 
 /* Returns non-0 if string is matched by pattern.  Does case folding.
@@ -251,7 +270,7 @@ scanHostlist (
     {
 	switch (h->type) {
 	case HOST_ALIAS:
-Debug ("scanHostist: alias pattern %s\n", h->entry.aliasPattern);
+Debug ("scanHostlist: alias pattern %s\n", h->entry.aliasPattern);
 	    if (depth == MAX_DEPTH) {
 		LogError ("Alias recursion in XDMCP access control list\n");
 		break;
@@ -282,6 +301,9 @@ Debug ("scanHostlist: broadcast\n");
 		(*function) (connectionType, &temp, closure);
 	    }
 	    break;
+	default:
+Debug ("scanHostlist: whatever\n");
+	    break;
 	}
     }
 }
@@ -301,6 +323,7 @@ scanEntrylist(
 
     for (h = accData->hostList + fh; nh; nh--, h++)
     {
+Debug ("hostentry %p\n", h);
 	switch (h->type) {
 	case HOST_ALIAS:
 Debug ("scanEntrylist: alias pattern %s\n", h->entry.aliasPattern);
@@ -332,6 +355,9 @@ Debug ("scanEntrylist: host address %02[*hhx\n", h->entry.displayAddress.hostAdd
 				  clientAddress))
 		return 1;
 	    break;
+	default:
+Debug ("scanEntrylist: whatever\n");
+	    break;
 	}
     }
     return 0;
@@ -343,19 +369,24 @@ matchAclEntry (
     CARD16	connectionType,
     int		direct)
 {
-    AclEntry	*e;
+    AclEntry	*e, *re;
     char	*clientName = 0;
     int		ne;
 
-    for (e = accData->acList, ne = accData->nAcls; ne; ne--, e++)
+    for (e = accData->acList, ne = accData->nAcls, re = 0; ne; ne--, e++)
+{Debug ("potential aclentry %p (nhosts is %d)\n", e, e->nhosts);
 	if (!e->nhosts == direct)
+{Debug ("aclentry %p\n", e);
 	    if (scanEntrylist (e->entries, e->nentries, 
 			       clientAddress, connectionType, 
 			       &clientName, 0))
+	    {
+		re = e;
 		break;
-    if (clientName)
+	    }
+}}    if (clientName)
 	free (clientName);
-    return e;
+    return re;
 }
 
 int ForEachMatchingIndirectHost (
@@ -368,7 +399,8 @@ int ForEachMatchingIndirectHost (
     int		haveLocalhost = 0;
 
     e = matchAclEntry (clientAddress, connectionType, 0);
-    if (e && !(e->flags & a_notAllowed)) {
+    if (e && !(e->flags & a_notAllowed))
+    {
 	if (e->flags & a_useChooser)
 	{
 	    ARRAY8Ptr	choice;
@@ -431,6 +463,7 @@ AcceptableDisplayAddress (
 	return 1;
 
     e = matchAclEntry (clientAddress, connectionType, 1);
+Debug ("matched %p\n", e);
     return e && !(e->flags & a_notAllowed) && 
 	(type != BROADCAST_QUERY || !(e->flags & a_notBroadcast));
 }
