@@ -623,10 +623,11 @@ void KColorScheme::slotWidgetColor(int indx)
 }
 
 
-
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 {
-    slotWidgetColor(indx);
+    if (wcCombo->currentItem() != indx)
+    wcCombo->setCurrentItem( indx );
+
     slotSelectColor(col);
 }
 
