@@ -1003,6 +1003,9 @@ void KSMServer::shutdown()
     bool confirmLogout = cfg->readBoolEntry( "confirmLogout", TRUE );
     delete cfg;
     if ( !confirmLogout || KSMShutdownDlg::confirmShutdown( saveSession ) ) {
+	// Set the real desktop background to black so that exit looks
+	// clean regardless of what was on "our" desktop.
+	kapp->desktop()->setBackgroundColor( Qt::black );
 	KNotifyClient::event( "exitkde" ); // KDE says good bye
 	if (saveSession != old_saveSession) {
 	    KConfig* config = KGlobal::config();
