@@ -18,14 +18,16 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "localdomainurifilter.h"
+#include <config.h>
 
-#include <qregexp.h>
+#include "localdomainurifilter.h"
 
 #include <kprocess.h>
 #include <kstandarddirs.h>
-#include <config.h>
 #include <kdebug.h>
+
+#include <qregexp.h>
+#include <qfile.h>
 
 #define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
 
@@ -45,18 +47,18 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
     QString cmd = url.url();
 
     if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
-        && !cmd.contains( ' ' ) && !cmd.contains( '.' )
-        && !cmd.contains( '$' ) // env. vars could resolve to anything
+        && cmd.find( ' ' ) < 0 && cmd.find( '.' ) < 0 
+        && cmd.find( '$' ) < 0  // env. vars could resolve to anything
         // most of these are taken from KShortURIFilter
         && cmd[ cmd.length() - 1 ] != '&'
-        && !cmd.contains( QString::fromLatin1("||"))
-        && !cmd.contains( QString::fromLatin1("&&")) // must not look like shell
-        && !cmd.contains( QRegExp( QString::fromLatin1( "[ ;<>]" )))
+        && cmd.find( QString::fromLatin1("||") ) < 0
+        && cmd.find( QString::fromLatin1("&&") ) < 0 // must not look like shell
+        && cmd.find( QRegExp( QString::fromLatin1("[ ;<>]") )) < 0
         && KStandardDirs::findExe( cmd ).isNull()
         && ( url.isMalformed() || m_hostPortPattern.exactMatch( cmd ) )
         && isLocalDomainHost( cmd ))
     {
-        cmd.insert( 0, QString::fromLatin1( "http://" ));
+        cmd.prepend( QString::fromLatin1("http://") );
         setFilteredURI( data, cmd );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return true;
@@ -66,31 +68,42 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
 }
 
 // if it's e.g. just 'www', try if it's a hostname in the local search domain
-bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
+bool LocalDomainURIFilter::isLocalDomainHost( QString& cmd ) const
 {
     // find() returns -1 when no match -> left()/truncate() are noops then
     QString host( cmd.left( cmd.find( '/' ) ) );
     host.truncate( host.find( ':' ) ); // Remove port number
 
-    if( host == last_host && last_time > time( NULL ) - 5 )
-        return last_result;
+    if( !(host == last_host && last_time > time( NULL ) - 5 ) ) {
 
-    QString helper = KStandardDirs::findExe(QString::fromLatin1( "klocaldomainurifilterhelper" ));
-    if( helper.isEmpty())
-        return last_result = false;
+        QString helper = KStandardDirs::findExe(QString::fromLatin1( "klocaldomainurifilterhelper" ));
+        if( helper.isEmpty())
+            return last_result = false;
 
-    KProcess proc;
-    proc << helper << host;
-    if( !proc.start( KProcess::NotifyOnExit ))
-        return last_result = false;
+        m_fullname = QString::null;
 
-    last_host = host;
-    last_time = time( (time_t *)0 );
+        KProcess proc;
+        proc << helper << host;
+        connect( &proc, SIGNAL(receivedStdout(KProcess *, char *, int)),
+                 SLOT(receiveOutput(KProcess *, char *, int)) );
+        if( !proc.start( KProcess::NotifyOnExit, KProcess::Stdout ))
+            return last_result = false;
 
-    if( proc.wait( 1 ) && proc.normalExit() && proc.exitStatus() == 0)
-        return last_result = true;
+        last_host = host;
+        last_time = time( (time_t *)0 );
 
-    return last_result = false;
+        last_result = proc.wait( 1 ) && proc.normalExit() && !proc.exitStatus();
+
+        if( !m_fullname.isEmpty() )
+            cmd.replace( 0, host.length(), m_fullname );
+    }
+
+    return last_result;
+}
+
+void LocalDomainURIFilter::receiveOutput( KProcess *, char *buf, int )
+{
+    m_fullname = QFile::decodeName( buf );
 }
 
 void LocalDomainURIFilter::configure()

@@ -29,6 +29,7 @@
 #include <qregexp.h>
 
 class KInstance;
+class KProcess;
 
 /*
  This filter takes care of hostnames in the local search domain.
@@ -50,11 +51,15 @@ class LocalDomainURIFilter : public KURIFilterPlugin, public DCOPObject
     virtual void configure();
 
   private:
-    bool isLocalDomainHost( const QString& cmd ) const;
+    bool isLocalDomainHost( QString& cmd ) const;
     mutable QString last_host;
     mutable bool last_result;
     mutable time_t last_time;
+    mutable QString m_fullname;
     QRegExp m_hostPortPattern;
+
+  private slots:
+    void receiveOutput( KProcess *, char *, int );
 };
 
 #endif
