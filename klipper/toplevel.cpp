@@ -40,7 +40,7 @@
 #define URLGRAB_ITEM 90
 
 // the <clipboard empty> item
-#define EMPTY 7
+#define EMPTY 6
 
 /* XPM */
 static const char*mouse[]={
@@ -79,7 +79,7 @@ TopLevel::TopLevel()
 {
     clip = new QClipboard( this, "hacked Qt QClipboard" );
     //    clip = kapp->clipboard();
-    
+
     toggleURLGrabAction = new KToggleAction( this );
     toggleURLGrabAction->setEnabled( true );
 

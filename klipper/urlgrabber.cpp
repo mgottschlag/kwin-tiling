@@ -26,6 +26,7 @@
 // - Bug in KPopupMenu::clear() (insertTitle() doesn't go away sometimes)
 
 #define URL_EDIT_ITEM 10
+#define DO_NOTHING_ITEM 11
 
 URLGrabber::URLGrabber()
 {
@@ -137,7 +138,7 @@ void URLGrabber::slotActionMenu()
         menu->insertSeparator();
         menu->insertSeparator();
         menu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
-        menu->insertItem(i18n("Do &Nothing"), menu, SLOT(close()));
+        menu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
 
         emit sigPopup( menu );
         delete menu;
@@ -149,6 +150,7 @@ void URLGrabber::slotItemSelected( int id )
 {
     switch ( id ) {
     case -1:
+    case DO_NOTHING_ITEM:
         break;
     case URL_EDIT_ITEM:
         editData();
@@ -182,42 +184,24 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
             }
 
             if ( doReplace )
-            {
-                QString local_clip(myClipData);
-                // take from KRun::shellQuote so we don't have to link
-                // to kio just for these few lines of code
-                QString res = "'";
-                res += local_clip.replace(QRegExp("'"), "'\"'\"'");
-                res += "'";
-                cmdLine.replace( pos, 2, res );
-            }
+                cmdLine.replace( pos, 2, myClipData );
         }
 
-        startProcess( cmdLine );
+	// escape $ to avoid it being expanded by the shell
+	cmdLine.replace( QRegExp( "\\$" ), "\\$" );
+	startProcess( cmdLine );
     }
 }
 
 
 void URLGrabber::startProcess( const QString& cmdLine ) const
 {
-    kdDebug() << "Klipper: now starting " << cmdLine << endl;
+    kdDebug() << "now starting " << cmdLine << endl;
     if ( cmdLine.isEmpty() )
         return;
 
-    int argIdx;
     KShellProcess proc;
-    QString cl = cmdLine.simplifyWhiteSpace().stripWhiteSpace();
-
-    while( !cl.isEmpty() ) {
-        argIdx = cl.find(" ");
-
-        proc << cl.left( argIdx );
-
-        if (argIdx == -1)
-            argIdx = cl.length();
-
-        cl = cl.remove( 0, argIdx + 1 );
-    }
+    proc << cmdLine.simplifyWhiteSpace().stripWhiteSpace();
 
     if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
         qWarning("Klipper: Couldn't start process!");
