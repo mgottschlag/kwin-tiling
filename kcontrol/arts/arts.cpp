@@ -135,7 +135,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
     responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
     responseButton[3] = new QRadioButton( i18n("&Don't care (large!)"), responseGroup);
-    //connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
+    connect(responseGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
 
     layout->addWidget(responseGroup);
 
@@ -166,11 +166,9 @@ void KArtsModule::GetSettings( void )
     networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
     x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
-    for(int i=0;i<4;i++)
-    {
-        if(config->readNumEntry("ResponseTime",2) == i)
-            responseButton[i]->setChecked(true);
-    }
+    int responseTime=config->readNumEntry("ResponseTime",2);
+    responseButton[ (responseTime<4) ? responseTime : 2 ]->setChecked(true);
+
     updateWidgets();
 }
 
