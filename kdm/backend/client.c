@@ -1244,7 +1244,7 @@ Debug ("session args: %\"[s\n", sessargs);
 #ifdef nofork_session
 	if (!nofork_session)
 #endif
-	if (!Setjmp (&mstrtalk.errjmp)) {
+	if (!Setjmp (mstrtalk.errjmp)) {
 	    GSet (&mstrtalk);
 	    GSendInt (D_User);
 	    GSendInt (verify->uid);

@@ -429,7 +429,7 @@ LoadDMResources (int force)
     int		i, ret;
     char	**ent;
 
-    if (Setjmp (&cnftalk.errjmp))
+    if (Setjmp (cnftalk.errjmp))
 	return 0;	/* may memleak, but we probably have to abort anyway */
     if (!startConfig (GC_gGlobal, &cfg.dep, force))
 	return 1;
@@ -502,7 +502,7 @@ LoadDisplayResources (struct display *d)
     int		i, ret;
     char	**ent;
 
-    if (Setjmp (&cnftalk.errjmp))
+    if (Setjmp (cnftalk.errjmp))
 	return 0;	/* may memleak */
     if (!startConfig (GC_gDisplay, &d->cfg.dep, FALSE))
 	return 1;
@@ -529,7 +529,7 @@ InitResources (char **argv)
 {
     originalArgv = argv;
     cnftalk.pipe = &getter.pipe;
-    if (Setjmp (&cnftalk.errjmp))
+    if (Setjmp (cnftalk.errjmp))
 	return 0;	/* may memleak */
     return GetDeps ();
 }
@@ -544,7 +544,7 @@ ScanServers (int force)
     static CfgDep	xsDep;
 
     Debug("ScanServers\n");
-    if (Setjmp (&cnftalk.errjmp))
+    if (Setjmp (cnftalk.errjmp))
 	return;	/* may memleak */
     if (!startConfig (GC_gXservers, &xsDep, force))
         return;

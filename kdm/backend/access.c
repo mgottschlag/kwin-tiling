@@ -115,7 +115,7 @@ ScanAccessDatabase (int force)
     int nChars, i;
 
     Debug("ScanAccessDatabase\n");
-    if (Setjmp (&cnftalk.errjmp))
+    if (Setjmp (cnftalk.errjmp))
         return; /* may memleak */
     if (!startConfig (GC_gXaccess, &accData->dep, force))
         return;

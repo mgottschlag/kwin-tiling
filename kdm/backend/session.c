@@ -165,7 +165,7 @@ CtrlGreeterWait (struct display *d, int wreply)
     ARRAY8Ptr	aptr;
 #endif
 
-    if (Setjmp (&mstrtalk.errjmp) || Setjmp (&grttalk.errjmp)) {
+    if (Setjmp (mstrtalk.errjmp) || Setjmp (grttalk.errjmp)) {
 	CloseGreeter (d, 1);
 	SessionExit (d, EX_RESERVER_DPY);
     }
@@ -437,7 +437,7 @@ ManageSession (struct display *d)
     setproctitle("-%s", d->name);
 #endif
 
-    if (Setjmp (&grttalk.errjmp))
+    if (Setjmp (grttalk.errjmp))
 	Longjmp (abortSession, EX_RESERVER_DPY);	/* EX_RETRY_ONCE */
 
 #ifdef XDMCP

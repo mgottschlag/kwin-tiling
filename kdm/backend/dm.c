@@ -756,7 +756,7 @@ processDPipe (struct display *d)
     ARRAY8 ca, ha;
 
     dpytalk.pipe = &d->pipe;
-    if (Setjmp (&dpytalk.errjmp)) {
+    if (Setjmp (dpytalk.errjmp)) {
 	StopDisplay (d);
 	return;
     }
