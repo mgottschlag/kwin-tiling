@@ -20,6 +20,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qmessagebox.h>
 #include <qbuttongroup.h>
 #include <qiconset.h>
+#include <qpopupmenu.h>
 
 #include <klocale.h>
 #include <kapplication.h>
@@ -130,26 +131,32 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             btnHalt->setFocus();
 
         // Reboot
-        KPushButton* btnReboot = new KPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), frame );
+        KSMDelayedPushButton* btnReboot = new KSMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), frame );
         btnReboot->setFont( btnFont );
         buttonlay->addWidget( btnReboot );
+	
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
         if ( sdtype == KApplication::ShutdownTypeReboot )
             btnReboot->setFocus();
 
         int def, cur;
-        QStringList opts;
-        if ( DM().bootOptions( opts, def, cur ) ) {
-            targets = new QComboBox( frame );
-            targets->insertStringList( opts );
-            if ( cur == -1 )
-                cur = def;
-            targets->setCurrentItem( cur );
-            QHBoxLayout *hb = new QHBoxLayout( buttonlay );
-            hb->addSpacing( targets->height() );
-            hb->addWidget( targets );
-            connect( targets, SIGNAL(activated(int)), btnReboot, SLOT(setFocus()) );
-        }
+        if ( DM().bootOptions( rebootOptions, def, cur ) ) {
+	  targets = new QPopupMenu( frame );
+	  if ( cur == -1 )
+	    cur = def;
+
+	  int index = 0;
+	  for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
+	    {
+	      if (index == cur)
+		targets->insertItem( *it + i18n("current option in boot loader", " (current)"), index);
+	      else
+		targets->insertItem( *it, index );
+	    }
+	  
+	  btnReboot->setPopup(targets);
+	  connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
+	}
     }
 
     buttonlay->addStretch( 1 );
@@ -174,9 +181,16 @@ void KSMShutdownDlg::slotLogout()
 
 void KSMShutdownDlg::slotReboot()
 {
-    if (targets)
-        DM().setBootOption( targets->currentText() );
+    // no boot option selected -> current/default
+    m_shutdownType = KApplication::ShutdownTypeReboot;
+    accept();
+}
 
+void KSMShutdownDlg::slotReboot(int opt)
+{
+    if (int(rebootOptions.size()) > opt)
+      DM().setBootOption( rebootOptions[opt] );
+  
     m_shutdownType = KApplication::ShutdownTypeReboot;
     accept();
 }
@@ -209,4 +223,45 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sd
 
     kapp->disableStyles();
     return result;
+}
+
+KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item, 
+					    QWidget *parent, 
+					    const char *name)
+  : KPushButton( item, parent, name), pop(0), popt(0)
+{
+  connect(this, SIGNAL(pressed()), SLOT(slotPressed()));
+  connect(this, SIGNAL(released()), SLOT(slotReleased()));
+  popt = new QTimer(this);
+  connect(popt, SIGNAL(timeout()), SLOT(slotTimeout()));
+}
+
+void KSMDelayedPushButton::setPopup(QPopupMenu *p)
+{
+  pop = p;
+  setIsMenuButton(p != 0);
+}
+
+void KSMDelayedPushButton::slotPressed()
+{
+  if (pop)
+    popt->start(QApplication::startDragTime());
+}
+
+void KSMDelayedPushButton::slotReleased()
+{
+  popt->stop();
+}
+
+void KSMDelayedPushButton::slotTimeout()
+{
+  QPoint bl = mapToGlobal(rect().bottomLeft());
+  QWidget *par = (QWidget*)parent();
+  QPoint br = par->mapToGlobal(par->rect().bottomRight());
+  // we must avoid painting over the dialog's limits 
+  // as the feedback area isn't repainted when the popup disappears
+  bl.setX( QMIN( bl.x(), br.x() - pop->sizeHint().width()));
+  pop->popup( bl );
+  popt->stop();
+  setDown(false);
 }

@@ -9,9 +9,11 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <qpixmap.h>
 #include <qdialog.h>
+#include <kpushbutton.h>
 class QPushButton;
 class QVButtonGroup;
-class QComboBox;
+class QPopupMenu;
+class QTimer;
 
 #include <kapplication.h>
 
@@ -37,6 +39,7 @@ private:
     int m_currentY;
 };
 
+
 // The confirmation dialog
 class KSMShutdownDlg : public QDialog
 {
@@ -49,6 +52,7 @@ public slots:
     void slotLogout();
     void slotHalt();
     void slotReboot();
+    void slotReboot(int);
 
 protected:
     ~KSMShutdownDlg() {};
@@ -56,7 +60,27 @@ protected:
 private:
     KSMShutdownDlg( QWidget* parent, bool maysd, KApplication::ShutdownType sdtype );
     KApplication::ShutdownType m_shutdownType;
-    QComboBox *targets;
+    QPopupMenu *targets;
+    QStringList rebootOptions;
+};
+
+class KSMDelayedPushButton : public KPushButton
+{
+  Q_OBJECT
+
+public:
+
+  KSMDelayedPushButton( const KGuiItem &item, QWidget *parent, const char *name = 0 );
+  void setPopup( QPopupMenu *pop);
+
+private slots:
+  void slotTimeout();
+  void slotPressed();
+  void slotReleased();
+
+private:
+  QPopupMenu *pop;
+  QTimer *popt;
 };
 
 #endif
