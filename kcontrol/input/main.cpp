@@ -31,46 +31,19 @@
 #include <X11/Xlib.h>
 
 
-#include "keyboard.h"
 #include "mouse.h"
-
-// in keyboard.cpp
-extern void numlockx_change_numlock_state( bool set_P );
 
 extern "C"
 {
-
-  KCModule *create_keyboard(QWidget *parent, const char *name) 
-  { 
-    KGlobal::locale()->insertCatalogue("kcminput");
-    return new KeyboardConfig(parent, name);
-  }
-
   KCModule *create_mouse(QWidget *parent, const char *name) 
   { 
     KGlobal::locale()->insertCatalogue("kcminput");
     return new MouseConfig(parent, name);
   }
 
-  void init_keyboard()
+  void init_mouse()
   {
     KConfig *config = new KConfig("kcminputrc", true); // Read-only, no globals
-    config->setGroup("Keyboard");
-
-    XKeyboardState   kbd;
-    XKeyboardControl kbdc;
-
-    XGetKeyboardControl(kapp->getDisplay(), &kbd);
-    bool key = config->readBoolEntry("KeyboardRepeating", true);
-    kbdc.key_click_percent = config->readNumEntry("ClickVolume", kbd.key_click_percent);
-    kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
-    XChangeKeyboardControl(kapp->getDisplay(),
-                           KBKeyClickPercent | KBAutoRepeatMode,
-                           &kbdc);
-    int numlockState = config->readNumEntry( "NumLock", 2 );
-    if( numlockState != 2 )
-        numlockx_change_numlock_state( numlockState == 0 );
-
     MouseSettings settings;
     settings.load(config);
     settings.apply();

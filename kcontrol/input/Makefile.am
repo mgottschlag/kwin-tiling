@@ -1,6 +1,6 @@
 kde_module_LTLIBRARIES = libkcm_input.la
 
-libkcm_input_la_SOURCES = main.cpp keyboard.cpp mouse.cpp
+libkcm_input_la_SOURCES = main.cpp mouse.cpp
 
 libkcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_input_la_LIBADD = @XTESTLIB@ $(LIB_KIO) $(LIB_KDEUI)
@@ -12,7 +12,7 @@ libkcm_input_la_METASOURCES = AUTO
 messages:
 	$(XGETTEXT) $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
 
-data_DATA = keyboard.desktop mouse.desktop
+data_DATA = mouse.desktop
 datadir = $(kde_appsdir)/Settings/Peripherals
 
 fontdir = $(kde_datadir)/kcminput
