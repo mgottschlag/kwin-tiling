@@ -674,14 +674,6 @@ or unmounting directories from file servers.</para>
 </docu>
 
 
-<legacy>
-Proc: absorb_xservers
-# note: this can miss Xservers from kdm for kde 2.2 because of stupid default.
-Source: kdm:General/Xservers
-Source: xdm:servers
-</legacy>
-
-
 # The rest of this file are section and key definitions for the options.
 # The order of the keywords is fixed and everything is case sensitive.
 # A keyword may expect supplementary data in the form of space-indented
@@ -805,6 +797,13 @@ User: core
 Instance: -
 Comment: -
 Description: -
+
+<legacy>
+Proc: absorb_xservers
+# note: this can miss Xservers from kdm for kde 2.2 because of stupid default.
+Source: kdm:General/Xservers
+Source: xdm:servers
+</legacy>
 
 Key: StaticServers
 Type: list
