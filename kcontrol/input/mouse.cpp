@@ -694,14 +694,8 @@ void MouseSettings::load(KConfig *config)
 
 void MouseSettings::apply()
 {
-#ifdef Q_OS_FREEBSD
-#define KDE_ROUND rint
-#else
-#define KDE_ROUND	round
-#endif
   XChangePointerControl( kapp->getDisplay(),
-                         true, true, int(KDE_ROUND(accelRate*10)), 10, thresholdMove);
-#undef KDE_ROUND
+                         true, true, int(qRound(accelRate*10)), 10, thresholdMove);
 
   unsigned char map[5];
   int remap=1;
