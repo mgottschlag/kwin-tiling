@@ -222,11 +222,11 @@ void LogitechMouse::applyChanges()
         if ( ( channel() == 2 ) && ( channel1->isChecked() ) ) {
            // we are on channel 2, but want channel 1
            setChannel1();
-           KMessageBox::information(this, i18n("RF channel 1 has been set. Please press Connect button on mouse to re-establish link"), i18n("Press Connect button") );
+           KMessageBox::information(this, i18n("RF channel 1 has been set. Please press Connect button on mouse to re-establish link"), i18n("Press Connect Button") );
         } else if ( ( channel() == 1 ) && ( channel2->isChecked() ) ) {
             // we are on channel 1, but want channel 2
             setChannel2();
-            KMessageBox::information(this, i18n("RF channel 2 has been set. Please press Connect button on mouse to re-establish link"), i18n("Press Connect button") );
+            KMessageBox::information(this, i18n("RF channel 2 has been set. Please press Connect button on mouse to re-establish link"), i18n("Press Connect Button") );
         }
 
         initCordlessStatusReporting();

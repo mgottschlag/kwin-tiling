@@ -281,8 +281,8 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("FS Type"));
 	lbox->addColumn(i18n("Total Size"));
 	lbox->addColumn(i18n("Free Size"));
-	lbox->addColumn(i18n("Total nodes"));
-	lbox->addColumn(i18n("Free nodes"));
+	lbox->addColumn(i18n("Total Nodes"));
+	lbox->addColumn(i18n("Free Nodes"));
 	lbox->addColumn(i18n("Flags"));
 
 	// mnt points into a static array (no need to free it)

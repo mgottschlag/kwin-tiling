@@ -365,7 +365,7 @@ void CfgBrowser::save(KConfig *) {
 void CfgBrowser::selectBrowser()
 {
 	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred web browser application:"), QString::null, this);
+	KOpenWithDlg dlg(urlList, i18n("Select preferred Web browser application:"), QString::null, this);
 	if (dlg.exec() != QDialog::Accepted) return;
 	m_browserService = dlg.service();
 	if (m_browserService)
