@@ -98,11 +98,11 @@ void RandRScreen::setOriginal()
 
 bool RandRScreen::applyProposed()
 {
-	//kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
+	kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
 
 	Status status;
 
-	if (!refreshRates(proposedSize()).count())
+	if (proposedRefreshRate() < 0)
 		status = XRRSetScreenConfig(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
 	else
 		status = XRRSetScreenConfigAndRate(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
@@ -185,11 +185,17 @@ void RandRScreen::desktopResized()
 
 QString RandRScreen::changedMessage() const
 {
-	return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4")
-	    .arg(currentPixelWidth())
-	    .arg(currentPixelHeight())
-	    .arg(currentRotationDescription())
-	    .arg(currentRefreshRateDescription());
+	if (currentRefreshRate() == -1)
+		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3")
+			.arg(currentPixelWidth())
+			.arg(currentPixelHeight())
+			.arg(currentRotationDescription());
+	else
+		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4")
+			.arg(currentPixelWidth())
+			.arg(currentPixelHeight())
+			.arg(currentRotationDescription())
+			.arg(currentRefreshRateDescription());
 }
 
 bool RandRScreen::changedFromOriginal() const
@@ -212,22 +218,22 @@ bool RandRScreen::proposedChanged() const
 QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised)
 {
 	if (!pastTense)
-	switch (rotation) {
-		case RR_Rotate_0:
-			return i18n("Normal");
-		case RR_Rotate_90:
-			return i18n("Left (90 degrees)");
-		case RR_Rotate_180:
-			return i18n("Upside-down (180 degrees)");
-		case RR_Rotate_270:
-			return i18n("Right (270 degrees)");
-		case RR_Reflect_X:
-			return i18n("Mirror horizontally");
-		case RR_Reflect_Y:
-			return i18n("Mirror vertically");
-		default:
-			return i18n("Unknown orientation");
-	}
+		switch (rotation) {
+			case RR_Rotate_0:
+				return i18n("Normal");
+			case RR_Rotate_90:
+				return i18n("Left (90 degrees)");
+			case RR_Rotate_180:
+				return i18n("Upside-down (180 degrees)");
+			case RR_Rotate_270:
+				return i18n("Right (270 degrees)");
+			case RR_Reflect_X:
+				return i18n("Mirror horizontally");
+			case RR_Reflect_Y:
+				return i18n("Mirror vertically");
+			default:
+				return i18n("Unknown orientation");
+		}
 
 	switch (rotation) {
 		case RR_Rotate_0:
@@ -249,14 +255,17 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 					if (capitalised)
 						return i18n("Mirrored horizontally");
 					else
-						return i18n("Mirrored horizontally");
+						return i18n("mirrored horizontally");
 			else if (rotation & RR_Reflect_Y)
 				if (capitalised)
 					return i18n("Mirrored vertically");
 				else
 					return i18n("mirrored vertically");
 			else
-				return i18n("unknown orientation");
+				if (capitalised)
+					return i18n("Unknown orientation");
+				else
+					return i18n("unknown orientation");
 	}
 }
 
@@ -428,15 +437,20 @@ int RandRScreen::refreshRateHzToIndex(int size, int hz) const
 		if (hz == rates[i])
 			return i;
 
-	// Wrong input Hz!
-	Q_ASSERT(false);
-	return 0;
+	if (nrates != 0)
+		// Wrong input Hz!
+		Q_ASSERT(false);
+
+	return -1;
 }
 
 int RandRScreen::refreshRateIndexToHz(int size, int index) const
 {
 	int nrates;
 	short* rates = XRRRates(qt_xdisplay(), m_screen, (SizeID)size, &nrates);
+
+	if (nrates == 0 || index < 0)
+		return 0;
 
 	// Wrong input Hz!
 	Q_ASSERT(index < nrates);

@@ -121,15 +121,11 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	for (int i = 0; i < (int)currentScreen()->numSizes(); i++) {
 		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
 
-		if (currentScreen()->proposedSize() == i) {
+		if (currentScreen()->proposedSize() == i)
 			menu->setItemChecked(lastIndex, true);
-			//menu->setItemEnabled(lastIndex, false);
-		}
 
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
-
-		//if (currentScreen()->numSizes() == 1) menu->setItemEnabled(lastIndex, false);
 	}
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
@@ -141,14 +137,11 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 			if ((1 << i) & currentScreen()->rotations()) {
 				lastIndex = menu->insertItem(currentScreen()->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
 
-				if (currentScreen()->proposedRotation() & (1 << i)) {
+				if (currentScreen()->proposedRotation() & (1 << i))
 					menu->setItemChecked(lastIndex, true);
-					/*if (i < 4)
-						menu->setItemEnabled(lastIndex, false);*/
-				}
 
 				menu->setItemParameter(lastIndex, 1 << i);
-				//menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
+				menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
 			}
 		}
 	}
@@ -162,17 +155,12 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++, i++) {
 		lastIndex = menu->insertItem(*it);
 
-		if (currentScreen()->proposedRefreshRate() == i) {
+		if (currentScreen()->proposedRefreshRate() == i)
 			menu->setItemChecked(lastIndex, true);
-			//menu->setItemEnabled(lastIndex, false);
-		}
 
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
-
-	/*if (rr.count() < 2)
-		menu->setItemEnabled(lastIndex, false);*/
 }
 
 void KRandRSystemTray::slotSwitchScreen()
@@ -197,7 +185,7 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 
 	currentScreen()->proposeSize(parameter);
 
-	currentScreen()->proposeRefreshRate(0);
+	currentScreen()->proposeRefreshRate(-1);
 
 	if (currentScreen()->applyProposedAndConfirm()) {
 		KConfig config("kcmrandrrc");
@@ -208,10 +196,17 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 
 void KRandRSystemTray::slotOrientationChanged(int parameter)
 {
-	if (currentScreen()->currentRotation() == parameter)
+	int propose = currentScreen()->currentRotation();
+
+	if (parameter & RandRScreen::RotateMask)
+		propose &= RandRScreen::ReflectMask;
+
+	propose ^= parameter;
+
+	if (currentScreen()->currentRotation() == propose)
 		return;
 
-	currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ parameter);
+	currentScreen()->proposeRotation(propose);
 
 	if (currentScreen()->applyProposedAndConfirm()) {
 		KConfig config("kcmrandrrc");
@@ -236,8 +231,7 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 
 void KRandRSystemTray::slotPrefs()
 {
-	KCMultiDialog *kcm = new KCMultiDialog( KDialogBase::Plain,
-		i18n( "Configure" ), this );
+	KCMultiDialog *kcm = new KCMultiDialog( KDialogBase::Plain, i18n( "Configure" ), this );
 
 	kcm->addModule( "display" );
 	kcm->setPlainCaption( i18n( "Configure Display" ) );

@@ -37,12 +37,12 @@ public:
 	enum orientations {
 		Rotate0			= 0x1,
 		Rotate90		= 0x2,
-		Rotate180		= 0x3,
-		Rotate270		= 0x4,
+		Rotate180		= 0x4,
+		Rotate270		= 0x8,
 		RotateMask		= 15,
 		RotationCount	= 4,
-		ReflectX		= 0x5,
-		ReflectY		= 0x6,
+		ReflectX		= 0x10,
+		ReflectY		= 0x20,
 		ReflectMask		= 48,
 		OrientationMask	= 63,
 		OrientationCount = 6

@@ -194,10 +194,10 @@ void KRandRModule::slotRotationChanged()
 	}
 
 	if (m_rotationGroup->find(4)->isOn())
-		currentScreen()->proposeRotation(RandRScreen::ReflectX);
+		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectX);
 
 	if (m_rotationGroup->find(5)->isOn())
-		currentScreen()->proposeRotation(RandRScreen::ReflectY);
+		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectY);
 
 	setChanged();
 }
@@ -231,6 +231,8 @@ void KRandRModule::populateRefreshRates()
 	m_refreshRates->clear();
 
 	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
+
+	m_refreshRates->setEnabled(rr.count());
 
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++)
 		m_refreshRates->insertItem(*it);
@@ -292,7 +294,7 @@ void KRandRModule::setChanged()
 
 	if (isChanged != m_changed) {
 		m_changed = isChanged;
-		emit changed(m_changed);
+		KCModule::setChanged(m_changed);
 	}
 }
 
