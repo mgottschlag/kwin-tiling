@@ -12,6 +12,12 @@ SUBDIRS = $(THEMEPAGE_SUBDIR) pics
 
 AM_CPPFLAGS  = $(THEMEPAGE_INCLUDES) $(all_includes)
 
+bin_PROGRAMS = kapplymousetheme
+
+kapplymousetheme_SOURCES = kapplymousetheme.cpp
+kapplymousetheme_LDFLAGS = $(all_libraries)
+kapplymousetheme_LDADD = $(LIB_XCURSOR) $(LIB_X11)
+
 kde_module_LTLIBRARIES = kcm_input.la
 
 kcm_input_la_SOURCES = mouse.cpp kmousedlg.ui main.cpp logitechmouse.cpp logitechmouse_base.ui
@@ -28,6 +34,10 @@ xdg_apps_DATA = mouse.desktop
 fontdir = $(kde_datadir)/kcminput
 font_DATA = cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz
 EXTRA_DIST = $(font_DATA)
+
+update_DATA = mouse_cursor_theme.upd
+
+updatedir = $(kde_datadir)/kconf_update
 
 install-data-hook:
 	$(mkinstalldirs) $(DESTDIR)$(datadir)/fonts/override

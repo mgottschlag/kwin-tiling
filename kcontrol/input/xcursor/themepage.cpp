@@ -132,8 +132,8 @@ void ThemePage::save()
 	if ( currentTheme == selectedTheme )
 		return;
 
-	KConfig c( "kdeglobals" );
-	c.setGroup( "KDE" );
+	KConfig c( "kcminputrc" );
+	c.setGroup( "Mouse" );
 	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString::null );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
@@ -151,9 +151,9 @@ void ThemePage::load()
 	currentTheme = theme;
 
 	// Get the name of the theme KDE is configured to use
-	KConfig *c = KGlobal::config();
-	c->setGroup( "KDE" );
-	currentTheme = c->readEntry( "cursorTheme", currentTheme );
+	KConfig c( "kcminputrc" );
+	c.setGroup( "Mouse" );
+	currentTheme = c.readEntry( "cursorTheme", currentTheme );
         if( currentTheme.isEmpty())
             currentTheme = "system";
 
@@ -170,7 +170,7 @@ void ThemePage::load()
 		preview->setTheme( selectedTheme );
 
 	// Disable the listview if we're in kiosk mode
-	if ( c->entryIsImmutable( "cursorTheme" ) )
+	if ( c.entryIsImmutable( "cursorTheme" ) )
 		listview->setEnabled( false );
 }
 

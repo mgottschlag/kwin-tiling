@@ -244,10 +244,12 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( colorsElem );
 
     // 6. Cursors
-    globalConf->setGroup( "KDE" );
+    KConfig* mouseConf = new KConfig( "kcminputrc", true );
+    mouseConf->setGroup( "Mouse" );
     QDomElement cursorsElem = m_dom.createElement( "cursors" );
-    cursorsElem.setAttribute( "name", globalConf->readEntry( "cursorTheme" ) );
+    cursorsElem.setAttribute( "name", mouseConf->readEntry( "cursorTheme" ) );
     m_root.appendChild( cursorsElem );
+    delete mouseConf;
     // TODO copy the cursor theme?
 
     // 7. KWin
@@ -541,10 +543,9 @@ void KTheme::apply()
 
     if ( !cursorsElem.isNull() )
     {
-        KConfig * cursorConf = KGlobal::config();
-        cursorConf->setGroup( "KDE" );
-        cursorConf->writeEntry( "cursorTheme", cursorsElem.attribute( "name" ), true, true );
-        cursorConf->sync();
+        KConfig mouseConf( "kcminputrc" );
+        mouseConf.setGroup( "Mouse" );
+        mouseConf.writeEntry( "cursorTheme", cursorsElem.attribute( "name" ));
         // FIXME is there a way to notify KDE of cursor changes?
     }
 

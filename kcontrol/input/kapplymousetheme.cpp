@@ -2,6 +2,7 @@
  * main.cpp
  *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+ * Copyright (c) 2005 Lubos Lunak <l.lunak@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -25,72 +26,67 @@
 #  include <config.h>
 #endif
 
-#include <klocale.h>
-#include <kglobal.h>
-#include <kconfig.h>
-#include <dcopref.h>
-#include <qfile.h>
-
+#include <stdlib.h>
+#include <ctype.h>
 #include <X11/Xlib.h>
 
 #ifdef HAVE_XCURSOR
 #  include <X11/Xcursor/Xcursor.h>
 #endif
 
-#include "mouse.h"
+static Display* dpy;
+static Display* qt_xdisplay() { return dpy; }\
+static Window qt_xrootwin() { return DefaultRootWindow( dpy ); }
 
-extern "C"
-{
-  KDE_EXPORT KCModule *create_mouse(QWidget *parent, const char *)
-  {
-    return new MouseConfig(parent, "kcminput");
-  }
+bool isEmpty( const char* str )
+    {
+    if( str == NULL )
+        return true;
+    while( isspace( *str ))
+        ++str;
+    return *str == '\0';
+    }
 
-  KDE_EXPORT void init_mouse()
-  {
-    KConfig *config = new KConfig("kcminputrc", true, false); // Read-only, no globals
-    MouseSettings settings;
-    settings.load(config);
-    settings.apply(true); // force
-
+int main( int argc, char* argv[] )
+    {
+    if( argc != 3 )
+        return 1;
+    dpy = XOpenDisplay( NULL );
+    if( dpy == NULL )
+        return 2;
+    int ret = 0;
 #ifdef HAVE_XCURSOR
-    config->setGroup("Mouse");
-    QCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
-    QCString size = config->readEntry("cursorSize", QString()).local8Bit();
+    const char* theme = argv[ 1 ];
+    const char* size = argv[ 2 ];
 
     // Note: If you update this code, update kapplymousetheme as well.
 
     // use a default value for theme only if it's not configured at all, not even in X resources
-    if( theme.isEmpty()
-        && QCString( XGetDefault( qt_xdisplay(), "Xcursor", "theme" )).isEmpty()
-        && QCString( XcursorGetTheme( qt_xdisplay())).isEmpty())
+    if( isEmpty( theme )
+        && isEmpty( XGetDefault( qt_xdisplay(), "Xcursor", "theme" ))
+        && isEmpty( XcursorGetTheme( qt_xdisplay())))
     {
         theme = "default";
+        ret = 10; // means to switch to default
     }
 
      // Apply the KDE cursor theme to ourselves
-    if( !theme.isEmpty())
-        XcursorSetTheme(qt_xdisplay(), theme.data());
+    if( !isEmpty( theme ))
+        XcursorSetTheme(qt_xdisplay(), theme );
 
-    if (!size.isEmpty())
-    	XcursorSetDefaultSize(qt_xdisplay(), size.toUInt());
+    if (!isEmpty( size ))
+    	XcursorSetDefaultSize(qt_xdisplay(), atoi( size ));
 
     // Load the default cursor from the theme and apply it to the root window.
     Cursor handle = XcursorLibraryLoadCursor(qt_xdisplay(), "left_ptr");
     XDefineCursor(qt_xdisplay(), qt_xrootwin(), handle);
     XFreeCursor(qt_xdisplay(), handle); // Don't leak the cursor
 
-    // Tell klauncher to set the XCURSOR_THEME and XCURSOR_SIZE environment
-    // variables when launching applications.
-    DCOPRef klauncher("klauncher");
-    if( !theme.isEmpty())
-        klauncher.send("setLaunchEnv", QCString("XCURSOR_THEME"), theme);
-    if( !size.isEmpty())
-        klauncher.send("setLaunchEnv", QCString("XCURSOR_SIZE"), size);
+#else
+    ( void ) qt_xdisplay();
+    ( void ) qt_xrootwin();
+    ( void ) argv;
 #endif
-
-    delete config;
-  }
-}
-
-
+    XCloseDisplay( dpy );
+    return ret;
+    }

@@ -396,7 +396,6 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
 #endif
 
-  config = new KConfig("kcminputrc");
   load();
 
   KAboutData* about = new KAboutData("kcmmouse", I18N_NOOP("Mouse"), 0, 0,
@@ -424,7 +423,6 @@ void MouseConfig::checkAccess()
 
 MouseConfig::~MouseConfig()
 {
-    delete config;
     delete settings;
 }
 
@@ -473,7 +471,8 @@ void MouseConfig::setHandedness(int val)
 
 void MouseConfig::load()
 {
-  settings->load(config);
+  KConfig config( "kcminputrc", true );
+  settings->load(&config);
 
   tab1->rightHanded->setEnabled(settings->handedEnabled);
   tab1->leftHanded->setEnabled(settings->handedEnabled);
@@ -536,7 +535,8 @@ void MouseConfig::save()
   settings->reverseScrollPolarity = tab1->cbScrollPolarity->isChecked();
 
   settings->apply();
-  settings->save(config);
+  KConfig config( "kcminputrc" );
+  settings->save(&config);
 
   KConfig ac("kaccessrc", false);
 
@@ -548,8 +548,6 @@ void MouseConfig::save()
   ac.writeEntry("MKTimeToMax", mk_time_to_max->value());
   ac.writeEntry("MKMaxSpeed", mk_max_speed->value());
   ac.writeEntry("MKCurve", mk_curve->value());
-
-  config->sync();
 
   themetab->save();
 

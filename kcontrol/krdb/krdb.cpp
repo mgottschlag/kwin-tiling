@@ -471,8 +471,10 @@ void runRdb( uint flags )
     copyFile(tmp, homeDir + "/.Xdefaults", true);
 
   // Export the Xcursor theme & size settings
-  QString theme = kglobals.readEntry("cursorTheme", QString());
-  QString size  = kglobals.readEntry("cursorSize", QString());
+  KConfig mousecfg( "kcminputrc" );
+  mousecfg.setGroup( "Mouse" );
+  QString theme = mousecfg.readEntry("cursorTheme", QString());
+  QString size  = mousecfg.readEntry("cursorSize", QString());
   QString contents;
 
   if (!theme.isNull())
