@@ -74,7 +74,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsAutoSync=CMisc::root() && (NULL==appName || strcmp("kcontrol", appName));
 
-    itsStatusLabel = new QLabel(i18n("0 Items - 0 Fonts (0 B Total) - 0 Folders"), this);
+    itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
     itsStatusLabel->setFrameShadow(QFrame::Sunken);
     itsStatusLabel->setLineWidth(1);
@@ -469,6 +469,8 @@ void CKCmFontInst::urlEntered(const KURL &url)
     itsLabel->setURL(url.url());
     if(itsAutoSync)
         itsConfig.sync();
+
+    updateInformation(0, 0);
 }
 
 void CKCmFontInst::fileHighlighted(const KFileItem *)
@@ -675,14 +677,28 @@ void CKCmFontInst::infoMessage(const QString &msg)
 
 void CKCmFontInst::updateInformation(int dirs, int fonts)
 {
-    KFileItem       *item=NULL;
     KIO::filesize_t size=0;
+    QString         text(i18n("One Item", "%n Items", dirs+fonts));
 
-    for (item=itsDirOp->view()->firstFileItem(); item; item=itsDirOp->view()->nextItem(item))
-        if(item->isFile())
-            size+=item->size();
+    if(fonts>0)
+    {
+        KFileItem *item=NULL;
 
-    itsStatusLabel->setText(i18n("%1 Items - %2 Fonts (%3 Total) - %4 Folders").arg(dirs+fonts).arg(fonts).arg(KIO::convertSize(size)).arg(dirs));
+        for (item=itsDirOp->view()->firstFileItem(); item; item=itsDirOp->view()->nextItem(item))
+            if(item->isFile())
+                size+=item->size();
+    }
+
+    text+=" - ";
+    text+=i18n("One Font", "%n Fonts", fonts);
+    if(fonts>0)
+    {
+        text+=" ";
+        text+=i18n("(%1 Total)").arg(KIO::convertSize(size));
+    }
+    text+=" - ";
+    text+=i18n("One Folder", "%n Folders", dirs);
+    itsStatusLabel->setText(text);
 }
 
 void CKCmFontInst::setUpAct()

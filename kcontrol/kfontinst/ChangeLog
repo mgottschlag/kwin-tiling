@@ -53,6 +53,7 @@ KDE3.1 -> KDE3.2
 
     TimesNewRomanPSMT (wibble/times.ttf);
 
+25. Add meta-data for AFM files to KFile plugin.
 
 0.11-> KDE3.1
 =============

@@ -204,7 +204,7 @@ static bool createFileEntry(KIO::UDSEntry &entry, const QString &fName, const QS
             break;
         default:
             if(CFontEngine::isAAfm(fn))
-                mime="application/x-font-afm";
+                mime="application/x-afm";
             else
                 err=true;
             break;
