@@ -214,7 +214,7 @@ void KlipperWidget::adjustSize()
 // DCOP
 QString KlipperWidget::getClipboardContents()
 {
-    return clipboardContents();
+    return getClipboardHistoryItem(0);
 }
 
 // DCOP - don't call from Klipper itself
