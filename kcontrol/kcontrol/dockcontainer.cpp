@@ -52,6 +52,15 @@ DockContainer::~DockContainer()
   deleteModule();
 }
 
+bool DockContainer::event( QEvent * e )
+{
+    if ( e->type() == QEvent::LayoutHint ) {
+	qDebug("dock container layout hint");
+	updateGeometryEx();
+    }
+    return QWidget::event( e );
+}
+
 void DockContainer::setBaseWidget(QWidget *widget)
 {
   delete _basew;
@@ -61,10 +70,18 @@ void DockContainer::setBaseWidget(QWidget *widget)
   _basew = widget;
   _basew->reparent(this, 0, QPoint(0,0), true);
 
-  // "inherit" the minimum size
-  setMinimumSize( _basew->minimumSize() );
   _basew->resize( size() );
   emit newModule(widget->caption(), "", "");
+  updateGeometryEx();
+}
+
+QSize DockContainer::minimumSizeHint() const
+{
+    if (_module)
+	return _module->module()->minimumSizeHint();
+    if ( _basew )
+	return _basew->minimumSizeHint().expandedTo( _basew->minimumSize() );
+    return QWidget::minimumSizeHint();
 }
 
 bool DockContainer::dockModule(ConfigModule *module)
@@ -114,8 +131,6 @@ i18n("There are unsaved changes in the active module.\n"
 
       widget->reparent(this, 0 , QPoint(0,0), false);
       widget->resize(size());
-      // "inherit" the minimum size
-      setMinimumSize( widget->minimumSize() );
 
       emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
       QApplication::restoreOverrideCursor();
@@ -130,7 +145,16 @@ i18n("There are unsaved changes in the active module.\n"
   _busy->hide();
 
   KCGlobal::repairAccels( topLevelWidget() );
+  updateGeometryEx();
   return true;
+}
+
+void DockContainer::updateGeometryEx()
+{
+    // workaround a QSplitter bug in Qt 3.0.3
+    updateGeometry();
+//     if ( parentWidget() && parentWidget()->inherits("QSplitter") )
+// 	parentWidget()->updateGeometry();
 }
 
 void DockContainer::removeModule()
@@ -140,12 +164,11 @@ void DockContainer::removeModule()
   resizeEvent(0L);
 
   if (_basew)
-  {
-    setMinimumSize( _basew->minimumSize() );
-	emit newModule(_basew->caption(), "", "");
-  }
+      emit newModule(_basew->caption(), "", "");
   else
-	emit newModule("", "", "");
+      emit newModule("", "", "");
+
+  updateGeometryEx();
 }
 
 void DockContainer::deleteModule()

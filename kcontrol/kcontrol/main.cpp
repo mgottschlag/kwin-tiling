@@ -65,8 +65,10 @@ KControlApp::KControlApp()
   KConfig *config = KGlobal::config();
   config->setGroup("General");
   QWidget *desk = QApplication::desktop();
-  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), 740);
-  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), 540);
+  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), 
+			       QMIN( desk->width() * 3/4 , 800 ) );
+  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), 
+			       QMIN( desk->height() * 3/4 , 600 ) );
   toplevel->resize(x,y);
 }
 
@@ -88,10 +90,11 @@ int main(int argc, char *argv[])
 {
   KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
-    I18N_NOOP("(c) 1998-2000, The KDE Control Center Developers"));
+    I18N_NOOP("(c) 1998-2002, The KDE Control Center Developers"));
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
   aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
+  aboutData.addAuthor("Matthias Ettrich",0, "ettrich@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();

@@ -38,6 +38,12 @@ public:
   
   bool dockModule(ConfigModule *module);
 
+  QSize minimumSizeHint() const;
+
+  QSize sizeHint() const { return minimumSizeHint(); }
+
+  bool event( QEvent * );
+
 public slots:
   void removeModule();
 
@@ -53,6 +59,7 @@ signals:
   void changedModule(ConfigModule *module);
 
 private:
+  void updateGeometryEx();
   QWidget      *_basew;
   QLabel       *_busy;
   ConfigModule *_module;

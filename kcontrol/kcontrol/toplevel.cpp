@@ -37,6 +37,7 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kseparator.h>
+#include <qstyle.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -50,6 +51,7 @@
 
 #include "toplevel.h"
 #include "toplevel.moc"
+
 
 
 TopLevel::TopLevel(const char* name)
@@ -90,6 +92,7 @@ TopLevel::TopLevel(const char* name)
 
   // create the layout box
   QSplitter *_splitter = new QSplitter( QSplitter::Horizontal, this );
+  //QWidget* _splitter = new QHBox( this );
 
   // create the left hand side (the tab view)
 //  _tab = new QTabWidget(hbox);
@@ -121,11 +124,11 @@ TopLevel::TopLevel(const char* name)
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
 
   // That one does the trick ...
-  _splitter->setResizeMode( _tab, QSplitter::FollowSizeHint );
+  _splitter->setResizeMode( _tab, QSplitter::KeepSize );
 
   // set up the right hand side (the docking area)
   _dock = new DockContainer( _splitter );
-  _dock->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Preferred ) );
+  _dock->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
                   this, SLOT(newModule(const QString&, const QString&, const QString&)));

@@ -114,9 +114,19 @@ public:
 private:
     virtual void resizeEvent(QResizeEvent *);
 
-    QVBox *contentWidget;
+    QWidget *contentWidget;
     KCModule    *client;
     bool scroll;
+};
+
+class ProxyContentWidget : public QWidget
+{
+public:
+    ProxyContentWidget( QWidget* parent ) : QWidget( parent ) {}
+    ~ProxyContentWidget(){}
+
+    // this should be really done by qscrollview in AutoOneFit mode!
+    QSize sizeHint() const { return minimumSizeHint(); }
 };
 
 
@@ -124,72 +134,28 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
     : QScrollView(parent, name), client(_client)
 {
   setResizePolicy(QScrollView::AutoOneFit);
-  /*
-  setVScrollBarMode(AlwaysOff);
-  setHScrollBarMode(AlwaysOff);
-  */
-  contentWidget = new QVBox(viewport());
+
+  contentWidget = new ProxyContentWidget( viewport() );
+
+  QVBoxLayout* vbox = new QVBoxLayout( contentWidget );
+
   if (run_as_root && _client->useRootOnlyMsg()) // notify the user
   {
       RootInfoWidget *infoBox = new RootInfoWidget(contentWidget);
+      vbox->addWidget( infoBox );
       QString msg = _client->rootOnlyMsg();
       if (!msg.isEmpty())
 	      infoBox->setRootMsg(msg);
-      contentWidget->setSpacing(KDialog::spacingHint());
+      vbox->setSpacing(KDialog::spacingHint());
   }
   client->reparent(contentWidget,0,QPoint(0,0),true);
-  client->adjustSize();
+  vbox->addWidget( client );
+  vbox->activate(); // make sure we have a proper minimumSizeHint
   addChild(contentWidget);
-  scroll = (kapp->desktop()->width() < 800 || kapp->desktop()->height() < 640 || contentWidget->minimumSizeHint().width() > 700 || contentWidget->minimumSizeHint().height() > 510);
-  if (!scroll) {
-    QSize min = contentWidget->minimumSizeHint();
-    if (!min.isValid())
-      min = QSize(700, 510);
-    setMinimumSize(min);
-    setFrameStyle(NoFrame);
-  }
 }
 
 void ProxyView::resizeEvent(QResizeEvent *e)
 {
-    /*
-    int x = width();
-    int y = height();
-    int hs = horizontalScrollBar()->sizeHint().height();
-    int vs = verticalScrollBar()->sizeHint().width();
-
-    int mx = contentWidget->minimumSizeHint().width();
-    int my = contentWidget->minimumSizeHint().height();
-
-    int dx = x;
-    int dy = y;
-    bool showh = false;
-    bool showv = false;
-
-    if (scroll) {
-      if (mx > x) {
-        dx = mx;
-        if (my + vs < y)
-	  dy -= vs;
-        else {
-	  showv = true;
-        }
-        showh = true;
-      } else if (my > y) {
-        dy = my;
-        if (mx + hs < x)
-	  dx -= hs;
-        else
-	  showh = true;
-        showv = true;
-      }
-    }
-    client->resize(dx, dy);
-    resizeContents(dx, dy);
-    setVScrollBarMode(showv ? AlwaysOn : AlwaysOff);
-    setHScrollBarMode(showh ? AlwaysOn : AlwaysOff);
-    */
-
     QScrollView::resizeEvent(e);
 }
 
@@ -252,9 +218,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   }
 
   top->activate();
-
-  // Restrict minimum size to the optimal one
-  //setMinimumSize(sizeHint());
 }
 
 ProxyWidget::~ProxyWidget()
