@@ -62,10 +62,8 @@ datadir = $(kde_appsdir)
 
 EXTRA_DIST = $(data_DATA)
 
-messages:
-	$(XGETTEXT) $(kcontrol_SOURCES) -o $(podir)/kcontrol.pot
-	$(XGETTEXT) $(kcmshell_SOURCES) -o $(podir)/kcmshell.pot
-	$(XGETTEXT) $(kcminit_SOURCES) -o $(podir)/kcminit.pot
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/kcontrol.pot
 
 dummy.C:
 	echo > dummy.C
