@@ -310,7 +310,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     connect(themeList, SIGNAL(currentChanged(QListViewItem*)),
             SLOT(slotChangeStylePlugin(QListViewItem*)));
     QWhatsThis::add( themeBox, i18n("Here you can choose from a list of"
-      " predefined widget styles (the way e.g. buttons are drawn) which"
+      " predefined widget styles (e.g. the way buttons are drawn) which"
       " may or may not be combined with a theme (additional information"
       " like a marble texture or a gradient).") );
 
@@ -587,7 +587,7 @@ QString KGeneral::quickHelp() const
       " for KDE and of themes as a way to fine-tune those styles. E.g."
       " you might use the \"System\" style but use a theme that provides"
       " a color gradient or a marble texture.<p>"
-      " Apart from styles and themes you can here configure the behavior"
+      " Apart from styles and themes you can configure here the behavior"
       " of menubars and toolbars.");
 }
 
