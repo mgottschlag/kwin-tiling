@@ -1,10 +1,10 @@
 INCLUDES = $(all_includes)
 
+lib_LTLIBRARIES = 
 kde_module_LTLIBRARIES = kcm_randr.la
+kdeinit_LTLIBRARIES = krandrinithack.la
 
 noinst_LTLIBRARIES = librandrinternal.la
-
-lib_LTLIBRARIES = krandrinithack.la
 
 librandrinternal_la_SOURCES = ktimerdialog.cpp randr.cpp
 librandrinternal_la_METASOURCES = AUTO
