@@ -1,15 +1,30 @@
 $Id$
 
-Things to be done:
+Must:
 
-- Animated logo?
-- Different logos for each session type
-- Make remembering user's last session more portable?
+- Make nis & kerberos5 work (done, but untested ...)
 
-- Integrate chooser in greeter
+- Integrate chooser into kdm_greet
+- Integrate kdmdesktop into kdm_greet
+- Move clock from greeter dialog to desktop
 - Add XDMCP _client_ to core (for remote login like in dtlogin)
+- Add language selection
 
-- Make nis & kerberos5 work
+Should:
 
-- Possibly kill warning on AIX - see bug #13628
+- kill warning on AIX - see bug #13628 (really present?)
+
+- dpi/bpp/resolution selection. will require x-server restart.
+
+Could:
+
+- add a minimalistic window manager to the greeter (see gdm)
+- make kdm kcontrol module invokable from greeter
+- enable font AA support in greeter
+- session name aliasing
+
+- Make remembering user's last session more portable (standard??)
+- Animated logo
+- Different logos for each session type
+- User pictures in logo field
 
