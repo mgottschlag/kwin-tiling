@@ -29,6 +29,7 @@
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include "desktops.h"
+#include <kwm.h>
 
 extern KConfigBase *config;
 

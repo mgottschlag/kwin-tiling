@@ -6,7 +6,7 @@ LDADD =       $(LIB_KDEUI)
 
 bin_PROGRAMS = kcmkpanel
 
-kcmkpanel_SOURCES = main.cpp panel.cpp desktops.cpp options.cpp disknav.cpp \
+kcmkpanel_SOURCES = main.cpp desktops.cpp panel.cpp options.cpp disknav.cpp \
 	widgetcanvas.cpp paneltheme.cpp
 METASOURCES = panel.moc desktops.moc options.moc disknav.moc  \
 	widgetcanvas.moc paneltheme.moc

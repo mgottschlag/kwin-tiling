@@ -20,6 +20,7 @@
   */
 
 #include <qdir.h>
+#include <qslider.h> // to prevent X11 name space polution later
 #include <stdio.h>
 
 #include <kcontrol.h>

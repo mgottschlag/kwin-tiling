@@ -25,8 +25,6 @@
 #define __KCONTROL_DESKTOPS_H__
 
 #include <kcontrol.h>
-#include <kwm.h>
-
 #include <qbutton.h>
 #include <qlabel.h>
 #include <qbuttongroup.h>
