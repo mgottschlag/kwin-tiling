@@ -299,7 +299,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     mPrioritySlider->setEnabled(false);
 #endif
     
-    lbl = new QLabel(i18n("High"), group);
+    lbl = new QLabel(i18n("High Priority", "High"), group);
     hbox->addWidget(lbl);
     
 #ifndef HAVE_SETPRIORITY
