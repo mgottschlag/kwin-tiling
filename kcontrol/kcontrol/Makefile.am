@@ -12,7 +12,7 @@ bin_PROGRAMS = kcontrol
 kcontrol_SOURCES = configlist.cpp main.cpp toplevel.cpp kdelnk.cpp mainwidget.cpp \
 		   qxembed.cpp kswallow.cpp
 METASOURCES =	toplevel.moc kdelnk.moc mainwidget.moc configlist.moc \
-		qxembed.moc kswallowl.moc
+		qxembed.moc kswallow.moc
 noinst_HEADERS = kswallow.h qxembed.h toplevel.h configlist.h mainwidget.h kdelnk.h
 
 EXTRA_DIST = mini-kcontrol.xpm
