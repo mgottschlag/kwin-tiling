@@ -41,10 +41,9 @@ updatedir = $(kde_datadir)/kconf_update
 
 
 EXTRA_PROGRAMS = testsh
-testsh_SOURCES = test.cpp shutdown.cpp
-
+testsh_SOURCES = test.cpp
 testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-testsh_LDADD = $(LIB_KDEUI)
+testsh_LDADD = $(LIB_KDEUI) shutdown.lo
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot
