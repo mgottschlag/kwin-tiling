@@ -278,6 +278,20 @@ void KColorScheme::save()
     cfg->writeEntry("contrast", cs->contrast, true, true);
     cfg->sync();
 
+    // KDE-1.x support
+    KSimpleConfig *config =
+    new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
+    config->setGroup( "General" );
+    config->writeEntry("background", cs->back );
+    config->writeEntry("selectBackground", cs->select );
+    config->writeEntry("foreground", cs->txt, true, true);
+    config->writeEntry("windowForeground", cs->windowTxt );
+    config->writeEntry("windowBackground", cs->window );
+    config->writeEntry("selectForeground", cs->selectTxt );
+    config->sync();
+    delete config;
+
+    
     // Notify all KDE applications
 
     KIPC::sendMessageAll(KIPC::PaletteChanged);

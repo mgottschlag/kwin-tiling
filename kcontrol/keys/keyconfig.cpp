@@ -27,6 +27,8 @@
 #include <kaccel.h>
 #include <kwin.h>
 #include <kdialog.h>
+#include <dcopclient.h>
+#include <kapp.h>
 
 #include "keyconfig.h"
 #include "keyconfig.moc"
@@ -154,8 +156,11 @@ void KKeyModule::save()
 {
   keys->setKeyDict( dict );
   keys->writeSettings();
-#warning used KWM::configureWM() (which uses sendKWMCommand)
-  //KWin::configureWm();
+  if ( !kapp->dcopClient()->isAttached() )
+      kapp->dcopClient()->attach();
+  kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
+  kapp->dcopClient()->send("kdesktop", "", "configure()", "");
+  kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
 }
 
 void KKeyModule::defaults()
@@ -196,6 +201,7 @@ void KKeyModule::slotChanged( )
     saveBt->setEnabled( TRUE );
   else
     saveBt->setEnabled( FALSE );
+  emit changed(true);
 }
 
 void KKeyModule::slotSave( )
@@ -367,7 +373,6 @@ void KKeyModule::slotPreviewScheme( int indx )
     removeBt->setEnabled( TRUE );
     saveBt->setEnabled( FALSE );
   }
-  changed = TRUE;
 }
 
 void KKeyModule::readSchemeNames( )

@@ -53,8 +53,6 @@ protected:
 	void readSchemeNames();
 	void readScheme( int index=0 );
 
-	bool changed;
-
         QString KeyType ;
         QString KeyScheme ;
         QString KeySet ;

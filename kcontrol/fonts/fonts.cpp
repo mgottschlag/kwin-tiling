@@ -28,6 +28,7 @@
 #include <kipc.h>
 #include <kstddirs.h>
 #include <kprocess.h>
+#include <stdlib.h>
 
 #include "fonts.h"
 #include "fonts.moc"
@@ -311,8 +312,18 @@ void KFonts::save()
   if ( !_changed )
     return;
 
-  for ( int i = 0; i < (int) fontUseList.count(); i++ )
-    fontUseList.at( i )->writeFont();
+  for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
+      i->writeFont();
+
+  // KDE-1.x support
+  KSimpleConfig* config = new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
+  config->setGroup( "General" );
+  for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
+      qDebug("write entry %s", i->rcKey().latin1() );
+      config->writeEntry( i->rcKey(), i->font() );
+  }
+  config->sync();
+  delete config;
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 
