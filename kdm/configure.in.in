@@ -105,7 +105,7 @@ AC_CHECK_LIB(Xau, main, [:],
 	  $X_LDFLAGS -lX11 $LIBSOCKET)
 
 AC_ARG_WITH(xdmcp,
-	[  --without-xdmcp         build kdm without xdmcp support [default=with xdmcp]], ,
+        AC_HELP_STRING([--without-xdmcp],[build kdm without xdmcp support [default=with xdmcp]]), ,
 	[with_xdmcp=yes])
 if test "x$with_xdmcp" = xyes; then
   AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET)
@@ -131,7 +131,7 @@ KRB4_RPATH=
 
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,
-[  --with-krb4[=PATH]      Compile in Kerberos v4 support.],
+AC_HELP_STRING([--with-krb4=PATH],[Compile in Kerberos v4 support]),
 [ test "x$with_krb4" = xyes && with_krb4=/usr/kerberos ],
 [ with_krb4=no ]
 )
@@ -153,7 +153,7 @@ esac
 
 AC_MSG_CHECKING(whether to use AFS)
 AC_ARG_WITH(afs,
-  [  --with-afs              Compile in AFS support (requires KTH krb4).], , 
+  AC_HELP_STRING([--with-afs],[Compile in AFS support (requires KTH krb4)]), , 
   [ with_afs=no ])
 if test "$with_afs" = no; then
   AC_MSG_RESULT(no)
@@ -185,7 +185,7 @@ KRB5_RPATH=
 
 AC_MSG_CHECKING([whether to use Kerberos5 for Xauth cookies in kdm])
 AC_ARG_WITH(krb5auth,
-  [  --with-krb5auth[=PATH]  Use Kerberos5 for Xauth cookies in kdm.], ,
+  AC_HELP_STRING([--with-krb5auth=PATH],[Use Kerberos5 for Xauth cookies in kdm]), ,
   [ with_krb5auth=no ])
 if test "x$with_krb5auth" = xno; then
   AC_MSG_RESULT(no)
@@ -215,7 +215,7 @@ AC_SUBST(KRB5_RPATH)
 
 AC_MSG_CHECKING([whether to use Sun's secure RPC for Xauth cookies in kdm])
 AC_ARG_WITH(rpcauth,
-  [  --with-rpcauth          Use Sun's secure RPC for Xauth cookies in kdm.], , 
+  AC_HELP_STRING([--with-rpcauth],[Use Sun's secure RPC for Xauth cookies in kdm.]), , 
   [ with_rpcauth=no ])
 if test "x$with_rpcauth" = xno; then
   AC_MSG_RESULT(no)
@@ -259,7 +259,7 @@ AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
 
 AC_ARG_WITH(kdm-xconsole,
-	[  --with-kdm-xconsole     build kdm with built-in xconsole [default=no]], ,
+	AC_HELP_STRING([--with-kdm-xconsole],[build kdm with built-in xconsole [default=no]]), ,
 	[with_kdm_xconsole=no])
 if test "x$with_kdm_xconsole" = xyes; then
     AC_DEFINE(WITH_KDM_XCONSOLE, 1, [Build kdm with built-in xconsole])
