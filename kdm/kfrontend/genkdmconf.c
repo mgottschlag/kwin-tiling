@@ -44,6 +44,7 @@
 #include <pwd.h>
 #include <time.h>
 #include <errno.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/param.h>
 #ifdef BSD
