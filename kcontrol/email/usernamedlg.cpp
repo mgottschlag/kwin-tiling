@@ -1,5 +1,15 @@
-// $Id$
-
+/* vi: ts=8 sts=4 sw=4
+ *
+ * $Id$
+ *
+ * This file is part of the KDE project, module kcontrol.
+ * Copyright (C) 1999-2001 by Alex Zepeda
+ *
+ * You can freely distribute this program under the GNU General Public
+ * License. See the file "COPYING" for the exact licensing terms.
+ *
+ */
+ 
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
