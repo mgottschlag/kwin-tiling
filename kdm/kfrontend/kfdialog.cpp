@@ -35,9 +35,13 @@
 
 #include "kfdialog.h"
 
+#include <X11/Xlib.h>
+
 int
 FDialog::exec()
 {
+    QDialog::show();
+    XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime);
     QDialog::exec();
     // Give focus back to parent:
     if( parentWidget() != 0)

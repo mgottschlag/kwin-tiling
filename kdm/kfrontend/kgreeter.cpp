@@ -83,20 +83,9 @@ public:
 bool
 MyApp::x11EventFilter( XEvent * ev)
 {
-    QWidget *target;
-    if( ev->type == ConfigureNotify) {
-	// Hack to tell dialogs to take focus
-	target = QWidget::find( ev->xconfigure.window);
-	if (target) {
-	    target = target->topLevelWidget();
-	    if( target->isVisible() && !target->isPopup())
-		XSetInputFocus( qt_xdisplay(), target->winId(),
-				RevertToParent, CurrentTime);
-	}
-    } else if (ev->type == FocusIn || ev->type == FocusOut) {
+    if (ev->type == FocusIn || ev->type == FocusOut) {
 	// Hack to tell dialogs to take focus when the keyboard is grabbed
-	if (ev->xfocus.mode == NotifyWhileGrabbed)
-	    ev->xfocus.mode = NotifyNormal;
+	ev->xfocus.mode = NotifyNormal;
     } else if (ev->type == ButtonPress || ev->type == ButtonRelease) {
 	// Hack to let the RMB work (nearly) as LMB
 	if (ev->xbutton.button == 3)
@@ -421,7 +410,7 @@ KGreeter::quit_button_clicked()
 void
 KGreeter::chooser_button_clicked()
 {
-//    qApp->exit( ex_choose );
+//    kapp->exit( ex_choose );
 }
 
 void
@@ -613,8 +602,7 @@ KGreeter::verifyUser(bool haveto)
 	    case V_OK:
 		break;
 	    }
-	    //qApp->desktop()->setCursor( waitCursor);
-	    qApp->setOverrideCursor( waitCursor);
+	    kapp->desktop()->setCursor( waitCursor);
 	    hide();
 	    GSendInt (G_Login);
 	    GSendStr (loginEdit->text().local8Bit());
@@ -625,7 +613,7 @@ KGreeter::verifyUser(bool haveto)
 	    GSendInt (0);
 	    if (kdmcfg->_preselUser == PRESEL_PREV)
 		stsfile->writeEntry (enam, loginEdit->text());
-	    qApp->quit();
+	    kapp->quit();
 	    return true;
     }
     clear_button_clicked();
@@ -679,13 +667,14 @@ kg_main(int argc, char **argv)
 #endif
     MyApp myapp(argc, argv);
 
+    kapp->setOverrideCursor( Qt::waitCursor );
+
     kdmcfg = new KDMConfig();
 
     KGlobal::dirs()->addResourceType("user_pic",
 				     KStandardDirs::kde_default("data") +
 				     QString::fromLatin1("kdm/pics/users/"));
 
-    qApp->setOverrideCursor( Qt::waitCursor );
 
     myapp.setFont( kdmcfg->_normalFont);
 
@@ -703,7 +692,7 @@ kg_main(int argc, char **argv)
     SecureDisplay (qt_xdisplay());
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
-    QRect scr = QApplication::desktop()->screenGeometry(kdmcfg->_greeterScreen);
+    QRect scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
     kgreeter = new KGreeter;
     kgreeter->setMaximumSize(scr.size());
     kgreeter->move(-1000, -1000);
@@ -715,12 +704,12 @@ kg_main(int argc, char **argv)
     } else
 	grt.moveCenter( scr.center());
     kgreeter->setGeometry (grt);
-    QApplication::restoreOverrideCursor();
+    XSetInputFocus( qt_xdisplay(), kgreeter->winId(),
+		    RevertToParent, CurrentTime);
+    kapp->restoreOverrideCursor();
     Debug ("entering event loop\n");
     kapp->exec();
     delete kgreeter;
-    qApp->restoreOverrideCursor();
-    //qApp->desktop()->setActiveWindow();
     delete kdmcfg;
     UnsecureDisplay (qt_xdisplay());
 }
