@@ -4,7 +4,7 @@ kde_module_LTLIBRARIES = libkcm_smartcard.la
 libkcm_smartcard_la_SOURCES = smartcard.cpp smartcardbase.ui nosmartcardbase.ui
 
 libkcm_smartcard_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_smartcard_la_LIBADD = -lkdeui $(LIB_KFILE)
+libkcm_smartcard_la_LIBADD = -lkdeui -lksmartcard $(LIB_KFILE)
 
 libkcm_smartcard_la_METASOURCES = AUTO
 
