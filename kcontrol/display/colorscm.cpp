@@ -91,7 +91,7 @@ KColorScheme::KColorScheme(QWidget *parent, Mode m)
 	topLayout->setColStretch(1,1);
 	
 	//cs->drawSampleWidgets();
-	cs->setFixedHeight( 150 );
+	cs->setFixedHeight( 190 );
 	connect( cs, SIGNAL( widgetSelected( int ) ),
 		 SLOT( slotWidgetColor( int ) ) );
 	connect( cs, SIGNAL( colorDropped( int, const QColor&)),
@@ -446,9 +446,9 @@ void KColorScheme::slotSelectColor( const QColor &col )
 
 void KColorScheme::slotWidgetColor( int indx )
 {
+
 	int selection;
 	QColor col;
-	
 	if ( wcCombo->currentItem() != indx )
 		wcCombo->setCurrentItem( indx );
 
@@ -560,10 +560,10 @@ void KColorScheme::readScheme( int index )
     config->readColorEntry( "windowForeground", &black );
 
   cs->button =
-    config->readColorEntry( "buttonBackground", &lightGray );
+    config->readColorEntry( "buttonBackground", &cs->back );
 
   cs->buttonTxt =
-    config->readColorEntry( "buttonForeground", &black );
+    config->readColorEntry( "buttonForeground", &cs->txt );
 
   if ( index == 0 ) config->setGroup( "WM" );
 
