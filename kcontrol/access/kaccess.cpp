@@ -435,8 +435,10 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
      enabled  = requestedFeatures & ~features;
      disabled = features & ~requestedFeatures;
 
-     if (!_gestureConfirmation)
+     if (!_gestureConfirmation) {
         applyChanges();
+        readSettings();
+     }
      else {
         QStringList enabledFeatures;
         QStringList disabledFeatures;
