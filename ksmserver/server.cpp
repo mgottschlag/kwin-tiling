@@ -1291,9 +1291,9 @@ void KSMServer::restoreSession()
  */
 void KSMServer::startDefaultSession()
 {
-    upAndRunning( "start session" );
-    progress = 1;
-    publishProgress( progress, true );
+    progress = 0;
+    upAndRunning( "session ready" );
+    publishProgress( progress );
     startApplication( wm );
     QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
 }
