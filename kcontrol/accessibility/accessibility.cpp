@@ -92,6 +92,27 @@ AccessibilityConfig::~AccessibilityConfig(){
 
 void AccessibilityConfig::load(){
    kdDebug() << "Running: AccessibilityConfig::load()" << endl;
+   
+   KConfig *bell = new KConfig("bellrc", true);
+   
+   bell->setGroup("General");
+   systemBell->setChecked(bell->readBoolEntry("SystemBell", false));
+   customBell->setChecked(bell->readBoolEntry("CustomBell", false));
+   visibleBell->setChecked(bell->readBoolEntry("VisibleBell", false));
+   
+   bell->setGroup("CustomBell");
+   soundToPlay->setURL(bell->readPathEntry("Sound", ""));
+
+   bell->setGroup("Visible");
+   invertScreen->setChecked(bell->readBoolEntry("Invert", true));
+   flashScreen->setChecked(bell->readBoolEntry("Flash", false));
+   // TODO: There has to be a cleaner way.
+   QColor *redColor = new QColor(Qt::red);
+   flashScreenColor->setColor(bell->readColorEntry("FlashColor", redColor));
+   delete redColor;
+   visibleBellDuration->setValue(bell->readNumEntry("Duration", 500));
+  
+   delete bell;   
 //    KConfig *config = new KConfig("kaccessrc", true);
 //
 //    config->setGroup("Bell");
@@ -129,21 +150,27 @@ void AccessibilityConfig::load(){
 
 void AccessibilityConfig::save(){
    kdDebug() << "Running: AccessibilityConfig::save()" << endl;
-   KConfig *config= new KConfig("accessibilityrc", false);
+   
+   KConfig *bell = new KConfig("bellrc");
+   
+   bell->setGroup("General");
+   bell->writeEntry("SystemBell", systemBell->isChecked());
+   bell->writeEntry("CustomBell", customBell->isChecked());
+   bell->writeEntry("VisibleBell", visibleBell->isChecked());
+   
+   bell->setGroup("CustomBell");
+   bell->writePathEntry("Sound", soundToPlay->url());
 
-//    config->setGroup("Bell");
-//
-//    config->writeEntry("SystemBell", systemBell->isChecked());
-//    config->writeEntry("ArtsBell", customBell->isChecked());
-//    config->writeEntry("ArtsBellFile", soundEdit->text());
-//
-//    config->writeEntry("VisibleBell", visibleBell->isChecked());
-//    config->writeEntry("VisibleBellInvert", invertScreen->isChecked());
-//    config->writeEntry("VisibleBellColor", colorButton->color());
-//
-//    config->writeEntry("VisibleBellPause", durationSlider->value());
-//
-//
+   bell->setGroup("Visible");
+   bell->writeEntry("Invert", invertScreen->isChecked());
+   bell->writeEntry("Flash", flashScreen->isChecked());
+   bell->writeEntry("FlashColor", flashScreenColor->color());
+   bell->writeEntry("Duration", visibleBellDuration->value());
+   
+   bell->sync();
+   delete bell;
+// 
+// 
 //    config->setGroup("Keyboard");
 //
 //    config->writeEntry("StickyKeys", stickyKeys->isChecked());
@@ -185,7 +212,7 @@ void AccessibilityConfig::defaults(){
 
    // Bell
    // Audibe Bell
-//    systemBell->setChecked(true);
+   systemBell->setChecked(false);
    customBell->setChecked(false);
    soundToPlay->clear();
 
@@ -231,8 +258,9 @@ QString AccessibilityConfig::quickHelp() const{
       case 2:
          return i18n("<h1>Mouse</h1>"); // ### fixme
          break;
+      default:
+         return QString::null;   // This should never happen
    }
-   return QString::null;
 }
 
 const KAboutData* AccessibilityConfig::aboutData() const{
