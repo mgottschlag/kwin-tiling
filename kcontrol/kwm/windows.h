@@ -35,7 +35,6 @@
 
 #include <kslider.h>
 #include <qcombobox.h>   //CT 31jan98
-#include <kspinbox.h> //CT 13mar98
 #include <kcontrol.h>
 
 #include <kwm.h>
@@ -67,6 +66,7 @@
 #define  CLASSIC_FOCUS_FOLLOWS_MOUSE   2
 #define  CLASSIC_SLOPPY_FOCUS          3
 
+class QSpinBox;
 
 class KWindowConfig : public KConfigWidget
 {
@@ -118,7 +118,7 @@ private:
   //CT 19jan98; 21Oct1998
   QButtonGroup *plcBox;
   QComboBox *placementCombo;
-  KNumericSpinBox *interactiveTrigger;
+  QSpinBox *interactiveTrigger;
   QLabel *iTLabel;
 
   QButtonGroup *fcsBox;

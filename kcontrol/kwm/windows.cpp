@@ -28,7 +28,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <qlayout.h> //CT 21Oct1998
+#include <qlayout.h>
+#include <qspinbox.h>
 #include <kapp.h>
 
 #include <X11/X.h>
@@ -161,10 +162,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   iTLabel->setAlignment(AlignTop|AlignHCenter);
   pLay->addWidget(iTLabel,1,1);
 
-  interactiveTrigger = new KNumericSpinBox(plcBox);
-  interactiveTrigger->setRange(0,500);
-  interactiveTrigger->adjustSize();
-  interactiveTrigger->setMinimumSize(interactiveTrigger->size());
+  interactiveTrigger = new QSpinBox(0, 500, 1, plcBox);
   pLay->addWidget(interactiveTrigger,1,2);
 
   pLay->addRowSpacing(2,10);
@@ -499,7 +497,7 @@ void KWindowConfig::SaveSettings( void )
   else if (v == MANUAL_PLACEMENT)
     config->writeEntry(KWM_PLACEMENT, "manual");
   else if (v == INTERACTIVE_PLACEMENT) {
-      QString tmpstr = QString("interactive,%1").arg(interactiveTrigger->getValue());
+      QString tmpstr = QString("interactive,%1").arg(interactiveTrigger->value());
       config->writeEntry(KWM_PLACEMENT, tmpstr);
   }
   else

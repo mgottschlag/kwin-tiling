@@ -110,7 +110,7 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
 {
   int i;
 
-  //CT 08Apr1999 - layout - finaly
+  //CT 08Apr1999 - layout - finally
   QGridLayout *lay = new QGridLayout( this, 11, 15, 10);
   lay->addRowSpacing( 0, 20);
   lay->addRowSpacing( 2, 20);
@@ -188,34 +188,31 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
 
   lay->addWidget( menuB, 13, 1, 10);
 
+  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "/kwm/pics/");
+
   // pixmap labels to show which button is which
   minP = new QLabel("", this);
-  minP->setPixmap( ICON("iconify.xpm") );
-  minP->adjustSize();
+  minP->setPixmap( Icon(locate("kwm_pics", "iconify.xpm")));
 
   lay->addWidget( minP, 5, 3, 10);
 
   maxP = new QLabel("", this);
-  maxP->setPixmap( ICON("maximize.xpm") );
-  maxP->adjustSize();
+  maxP->setPixmap( Icon(locate("kwm_pics", "maximize.xpm")));
 
   lay->addWidget( maxP, 7, 3, 10);
 
   stickyP = new QLabel("", this);
-  stickyP->setPixmap( ICON("pinup.xpm"));
-  stickyP->adjustSize();
+  stickyP->setPixmap( Icon(locate("kwm_pics", "pinup.xpm")));
 
   lay->addWidget( stickyP, 9, 3, 10);
 
   closeP = new QLabel("", this);
-  closeP->setPixmap( ICON("close.xpm") );
-  closeP->adjustSize();
+  closeP->setPixmap( Icon(locate("kwm_pics", "close.xpm")));
 
   lay->addWidget( closeP, 11, 3, 10);
 
   menuP = new QLabel("", this);
-  menuP->setPixmap( ICON("menu.xpm") );
-  menuP->adjustSize();
+  menuP->setPixmap( Icon(locate("kwm_pics", "menu.xpm")));
 
   lay->addWidget( menuP, 13, 3, 10);
 
@@ -1032,34 +1029,24 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   pbPixmapActive = new QPushButton(pixmapBox);
   pbPixmapActive->resize(96,32);
-  pbPixmapActive->setMinimumSize(pbPixmapActive->size());
   pixLay->addWidget(pbPixmapActive,2,1);
 
   connect(pbPixmapActive, SIGNAL(clicked()), this, SLOT(activePressed()));
   
   pbPixmapInactive = new QPushButton(pixmapBox);
   pbPixmapInactive->resize(96,32);
-  pbPixmapInactive->setMinimumSize(pbPixmapInactive->size());
   pixLay->addWidget(pbPixmapInactive,5,1);
 
   connect(pbPixmapInactive, SIGNAL(clicked()), this, SLOT(inactivePressed()));
 
   lPixmapActive = new QLabel(pbPixmapActive, i18n("Active pixmap:"), pixmapBox);
-  lPixmapActive->adjustSize(); 
-  lPixmapActive->setMinimumSize(lPixmapActive->size());
   pixLay->addMultiCellWidget(lPixmapActive,1,1,0,1);
 
   lPixmapInactive = new QLabel(pbPixmapInactive, i18n("Inactive pixmap:"), pixmapBox);
-  lPixmapInactive->adjustSize();
-  lPixmapInactive->setMinimumSize(lPixmapInactive->size());
   pixLay->addMultiCellWidget(lPixmapInactive,4,4,0,1);
 
-  //CT 02Dec1998 - macStyle soup options
   cbPixedText = new QCheckBox(i18n("No pixmap under text"),pixmapBox);
-  cbPixedText->adjustSize();
-  cbPixedText->setMinimumSize(cbPixedText->size());
   pixLay->addMultiCellWidget(cbPixedText,6,6,0,1);
-  //CT
 
   pixLay->activate();
 
@@ -1142,11 +1129,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   connect( titleAnim,   SIGNAL(valueChanged(int)), t, SLOT(display(int)) );
 
-  //the icon loader for the buttons
-  iconLoader = new KIconLoader();
-  iconLoader->setIconType("kwm_pics");
-  KGlobal::dirs()->addResourceType("kwm_pics", KStandardDirs::kde_default("data") + "/kwm/pics");
-  
   GetSettings();
 }
 
