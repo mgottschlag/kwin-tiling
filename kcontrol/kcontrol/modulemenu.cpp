@@ -17,7 +17,6 @@
 */                                                                            
 
 
-#define INCLUDE_MENUITEM_DEF 1
 #include <qpopupmenu.h>
 
 #include <qheader.h>
@@ -70,54 +69,51 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
 }
 
 
-QPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
+QString menuPath(const QStringList& groups)
 {
   QString path;  
-  QPopupMenu *parent, *iitem, *item=this;
 
   QStringList::ConstIterator it;
-  for (it=groups.begin(); it != groups.end(); it++)
-    {      
-      path += *it + "/";
-      parent = item;
-      item = 0;
+  for (it=groups.begin(); it != groups.end(); ++it)
+    path += *it + "/";
+  
+  return path;
+}
 
-      // look if there is already a menu
-      for (unsigned int i=0; i<parent->count(); i++)
-	{
-	  iitem = 0;
-	  QMenuItem *mitem = parent->findItem(idAt(i));
-	  if (mitem)
-	    iitem = mitem->popup();
-	  if (!iitem)
-	    continue;
 
-	  if (iitem->isA("ModuleMenuItem") && static_cast<ModuleMenuItem*>(iitem)->tag() == *it)
-	    {
-	      item = iitem;
-	      break;
-	    }
-	}
+QPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
+{
+  // break recursion if path is empty
+  if (groups.count() == 0)
+    return this;
 
-      if (!item)
-	{
-	  // create new branch
-          ModuleMenuItem *menu = new ModuleMenuItem(parent);
-	  connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
-	  menu->setTag(*it);
+  // calculate path
+  QString path = menuPath(groups);
+  kdDebug() << "Path " << path << endl;
 
-	  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
+  // look if menu already exists
+  if (_menuDict[path])
+    return _menuDict[path];
+  
+  // find parent menu
+  QStringList parGroup;
+  for (unsigned int i=0; i<groups.count()-1; i++)
+    parGroup.append(groups[i]);
+  QPopupMenu *parent = getGroupMenu(parGroup);
 
-	  static_cast<QPopupMenu*>(parent)->insertItem(SmallIcon(directory.readEntry("Icon")), directory.readEntry("Name", *it), menu);
-	  item = menu;
-	}
-    }
+  // create new menu
+  QPopupMenu *menu = new QPopupMenu(parent);
+  connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
+  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
+  QString defName = path.left(path.length()-1);
+  int pos = defName.findRev('/');
+  if (pos >= 0)
+    defName = defName.mid(pos+1);
+  parent->insertItem(SmallIcon(directory.readEntry("Icon")), directory.readEntry("Name", defName), menu);
 
-  // just in case...
-  if (!item)
-    item = this;
+  _menuDict.insert(path, menu);
 
-  return item;
+  return menu;
 }
   
 

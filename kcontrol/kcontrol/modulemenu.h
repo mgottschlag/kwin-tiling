@@ -26,29 +26,11 @@
 #include <qintdict.h>
 #include <qstring.h>
 #include <qwidget.h>
+#include <qdict.h>
 
 
 class ConfigModule;
 class ConfigModuleList;
-
-
-class ModuleMenuItem : public QPopupMenu
-{
-  Q_OBJECT
-
-public:
-
-  ModuleMenuItem(QWidget *parent=0, const char *name=0)
-    : QPopupMenu(parent, name) {};
-  
-  void setTag(QString tag) { _tag = tag; };
-  QString tag() { return _tag; };
-
-private:
-
-  QString _tag;
-
-};
 
 
 class ModuleMenu : public QPopupMenu
@@ -81,6 +63,7 @@ private:
 
   ConfigModuleList       *_modules;
   QIntDict<ConfigModule> _moduleDict;
+  QDict<QPopupMenu>      _menuDict;
 
 };
 
