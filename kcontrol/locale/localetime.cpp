@@ -99,7 +99,7 @@ QValueList<StringPair> KLocaleConfigTime::timeMap() const
   list+=buildStringPair('k',m_locale->translate("hH"));
   list+=buildStringPair('I',m_locale->translate("PH"));
   list+=buildStringPair('l',m_locale->translate("pH"));
-  list+=buildStringPair('M',m_locale->translate("MM"));
+  list+=buildStringPair('M',m_locale->translate("Minute", "MM"));
   list+=buildStringPair('S',m_locale->translate("SS"));
   list+=buildStringPair('p',m_locale->translate("AMPM"));
 
@@ -114,7 +114,7 @@ QValueList <StringPair> KLocaleConfigTime::dateMap() const
   list+=buildStringPair('Y',m_locale->translate("YYYY"));
   list+=buildStringPair('y',m_locale->translate("YY"));
   list+=buildStringPair('n',m_locale->translate("mM"));
-  list+=buildStringPair('m',m_locale->translate("MM"));
+  list+=buildStringPair('m',m_locale->translate("Month", "MM"));
   list+=buildStringPair('b',m_locale->translate("SHORTMONTH"));
   list+=buildStringPair('B',m_locale->translate("MONTH"));
   list+=buildStringPair('e',m_locale->translate("dD"));
