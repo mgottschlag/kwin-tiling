@@ -5,14 +5,25 @@
 // Copyright (c)  Mark Donohoe 1998
 //
 
+#include <qpixmap.h>
+#include <qdrawutil.h>
+#include <qcolor.h>
+#include <qpainter.h>
+#include <qscrollbar.h>
+#include <qevent.h>
+#include <qbitmap.h>
+#include <qtooltip.h>
+#include <qstyle.h>
+#include <qpopupmenu.h>
+
 #include <kcolordrag.h>
 #include <kpixmapeffect.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kconfig.h>
-#include <qbitmap.h>
-#include <qtooltip.h>
-#include <qstyle.h>
+#include <klocale.h>
+#include <kcharsets.h>
+#include <kpixmap.h>
 
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
@@ -529,31 +540,41 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawPixmap(width()-55+27-16-2,80+5-2,pm);
 
     // Menu
-
+	
     brush.setColor( back );
-    //qDrawShadePanel ( &paint, 30, 80, 84, 73, cg, FALSE, 2, &brush);
-	kapp->style().drawPrimitive(QStyle::PE_PanelPopup, &paint, 
-			QRect(30, 80, 84, 73), cg ) ;
+	
+	int textLenNew, textLenOpen, textLenSave;
+	
 
-    paint.setFont( menuFont );
-    paint.setPen( txt );
-    paint.drawText( 56, 97, i18n("New") );
-    textLen = paint.fontMetrics().width( i18n("New") );
+    textLenNew = paint.fontMetrics().width( i18n("New") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 38, 83, textLen, 14 ), CSM_Text );
+        HotSpot( QRect( 56, 83, textLenNew, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    paint.drawText( 56, 119, i18n("Open") );
-    textLen = paint.fontMetrics().width( i18n("Open") );
+    textLenOpen = paint.fontMetrics().width( i18n("Open") );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect( 38, 105, textLen, 14 ), CSM_Text );
+        HotSpot( QRect( 56, 105, textLenOpen, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    paint.setPen( lightGray.dark() );
-    paint.drawText( 56, 141, i18n("Save") );
-    textLen = paint.fontMetrics().width( i18n("Save") );
+    textLenSave = paint.fontMetrics().width( i18n("Save") );
+
+	QPopupMenu *popup = new QPopupMenu( this );
+	popup->setFont( menuFont );
+	popup->setPalette( QPalette(cg,cg,cg));
+	popup->insertItem(i18n("New"));
+	popup->insertItem(i18n("Open"));
+	int id = popup->insertItem(i18n("Save"));
+	popup->setItemEnabled( id, false );
+
+	// HACK: Force Layouting
+	popup->popup(QPoint() );
+	popup->hide();
+
+	pm = QPixmap::grabWidget( popup );
+	delete popup;
+	bitBlt(&smplw, 30, 80, &pm, 0, 0, pm.width(), pm.height());
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 28, 78, 88, 77 ), CSM_Background );

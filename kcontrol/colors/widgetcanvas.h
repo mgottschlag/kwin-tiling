@@ -8,18 +8,8 @@
 #ifndef __WIDGETCANVAS_H__
 #define __WIDGETCANVAS_H__
 
-#include <qpixmap.h>
-#include <qdrawutil.h>
-#include <qcolor.h>
-#include <qpainter.h>
-#include <qscrollbar.h>
-#include <qevent.h>
 #include <qmap.h>
-
 #include <kapplication.h>
-#include <klocale.h>
-#include <kcharsets.h>
-#include <kpixmap.h>
 
 #define MAX_HOTSPOTS   28
 #define SCROLLBAR_SIZE 16
@@ -46,6 +36,12 @@
 #define CSM_Alternate_background    18
 #define CSM_LAST			19
 
+class QPixmap;
+class QColor;
+class QPainter;
+class QEvent;
+
+class KPixmap;
 
 class HotSpot
 {
@@ -97,6 +93,8 @@ signals:
     void colorDropped( int, const QColor&);
 	
 protected:
+	void redrawPopup(const QColorGroup &cg);
+	
     virtual void paintEvent( QPaintEvent * );
     virtual void mousePressEvent( QMouseEvent * );
     virtual void mouseMoveEvent( QMouseEvent * );
