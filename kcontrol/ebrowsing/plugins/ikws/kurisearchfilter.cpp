@@ -23,43 +23,42 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kurl.h>
 #include <kinstance.h>
 #include <kglobal.h>
 
 #include "ikwsopts.h"
 #include "kuriikwsfiltereng.h"
-#include "kuriikwsfilter.h"
+#include "kurisearchfilter.h"
 
 #define searcher KURISearchFilterEngine::self()
 
-KInstance *KURIIKWSFilterFactory::s_instance = 0L;
+KInstance *KURISearchFilterFactory::s_instance = 0L;
 
-KURIIKWSFilter::KURIIKWSFilter(QObject *parent, const char *name)
-                 :KURIFilterPlugin(parent, name ? name : "ikws", 1.0),
-                  DCOPObject("KURIIKWSFilterIface")
+KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
+                 :KURIFilterPlugin(parent, name ? name : "search", 1.0),
+                  DCOPObject("KURISearchFilterIface")
 {
   KURISearchFilterEngine::incRef();
 }
 
-KURIIKWSFilter::~KURIIKWSFilter()
+KURISearchFilter::~KURISearchFilter()
 {
   KURISearchFilterEngine::decRef();
 }
 
-void KURIIKWSFilter::configure()
+void KURISearchFilter::configure()
 {
-    kdDebug() << "(" << getpid() << ") " << "Internet Keywords: Sending a config reload request..." << endl;
+    kdDebug() << "(" << getpid() << ") " << "Search Engine Keywords: Sending a config reload request..." << endl;
     searcher->loadConfig();
 }
 
-bool KURIIKWSFilter::filterURI( KURIFilterData &data ) const
+bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 {
-    if (searcher->verbose())
-        kdDebug() << "KURIIKWSFilter: filtering " <<  data.uri().url() << endl;
+    if ( searcher->verbose() )
+        kdDebug() << "KURISearchFilter: filtering " << data.uri().url() << endl;
 
-    QString result = searcher->ikwsQuery( data.uri() );
-    if( !result.isEmpty() )
+    QString result = searcher->searchQuery( data.uri() );
+    if ( !result.isEmpty() )
     {
         setFilteredURI( data, result );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
@@ -68,37 +67,47 @@ bool KURIIKWSFilter::filterURI( KURIFilterData &data ) const
     return false;
 }
 
-KURIIKWSFilterFactory::KURIIKWSFilterFactory(QObject *parent, const char *name)
-                      :KLibFactory(parent, name)
+KCModule *KURISearchFilter::configModule(QWidget *parent, const char *name) const
+{
+    return new InternetKeywordsOptions(parent, name);
+}
+
+QString KURISearchFilter::configName() const
+{
+    return i18n("&Keywords");
+}
+
+
+KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name)
 {
     KURISearchFilterEngine::incRef();
     s_instance = new KInstance(searcher->name());
 }
 
-KURIIKWSFilterFactory::~KURIIKWSFilterFactory() {
+KURISearchFilterFactory::~KURISearchFilterFactory()
+{
     KURISearchFilterEngine::decRef();
     delete s_instance;
 }
 
-QObject *KURIIKWSFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
+QObject *KURISearchFilterFactory::create( QObject *parent, const char *name, const char*, const QStringList & )
 {
-    QObject *obj = new KURIIKWSFilter( parent, name );
+    QObject *obj = new KURISearchFilter( parent, name );
     emit objectCreated( obj );
     return obj;
 }
 
-KInstance *KURIIKWSFilterFactory::instance() {
+KInstance *KURISearchFilterFactory::instance()
+{
     return s_instance;
 }
 
-extern "C" {
-
-void *init_libkuriikwsfilter() {
-    return new KURIIKWSFilterFactory;
+extern "C"
+{
+  void *init_libkurisearchfilter()
+  {
+    return new KURISearchFilterFactory;
+  }
 }
 
-}
-
-#include "kuriikwsfilter.moc"
-
-
+#include "kurisearchfilter.moc"

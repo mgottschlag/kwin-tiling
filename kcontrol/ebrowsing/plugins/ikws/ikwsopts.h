@@ -32,6 +32,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QGroupBox;
 class QPushButton;
 class QLabel;
 class QLineEdit;
@@ -57,6 +58,7 @@ protected slots:
     void moduleChanged(bool state);
 
     void changeInternetKeywordsEnabled();
+    void changeSearchKeywordsEnabled();
     void changeSearchFallback(const QString &name);
 
     void textChanged(const QString &);
@@ -68,15 +70,14 @@ protected slots:
 private:
     QListViewItem *displaySearchProvider(const KURISearchFilterEngine::SearchEntry &e, bool fallback = false);
 
-    // Internet Keywords enabled.
-
+    // Internet Keywords.
     QCheckBox *cb_enableInternetKeywords;
-
-    // Search interface.
-
-    QCheckBox *cb_allowSearch; 
     QComboBox *cmb_searchFallback;
+    QLabel *lb_searchFallback;
 
+    //Search Engine keywords.
+    QCheckBox *cb_enableSearchKeywords;
+    QGroupBox *gb_search;
     QListView *lv_searchProviders;
 
     QLabel *lb_searchProviderName;

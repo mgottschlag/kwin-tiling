@@ -23,63 +23,74 @@
 #define __kurisearchfilterengine_h__ $Id$
 
 #include <qvaluelist.h>
-#include <qstring.h>
 #include <qstringlist.h>
 
-class KURISearchFilterEngine {
+class KURL;
+
+class KURISearchFilterEngine
+{
+
 public:
+
+    struct SearchEntry
+    {
+	  QString m_strName;
+	  QString m_strQuery;
+	  QStringList m_lstKeys;
+    };
+
+    struct IKWSEntry
+    {
+	  QString m_strName;
+	  QString m_strQuery;
+	  QString m_strQueryWithSearch;
+    };
+
     KURISearchFilterEngine();
+    ~KURISearchFilterEngine() {};
 
-    static void incRef();
-    static void decRef();
-    static KURISearchFilterEngine *self();
     QCString name() const;
-
-    struct SearchEntry {
-	QString m_strName;
-	QString m_strQuery;
-	QStringList m_lstKeys;
-    };
-
-    struct NavEntry {
-	QString m_strName;
-	QString m_strQuery;
-	QString m_strQueryWithSearch;
-    };
-
     void insertSearchEngine(SearchEntry e);
     void removeSearchEngine(const QString & name);
 
-    QValueList < SearchEntry > searchEngines() const {
-	return m_lstSearchEngines;
-    }
-    QString searchQuery(const QString & key) const;
-    QString navQuery() const;
+    QValueList<SearchEntry> searchEngines() const { return m_lstSearchEngine; }
+    QValueList<IKWSEntry> ikwsEngines() const { return m_lstInternetKeywordsEngine; }
 
-    void setNavEnabled(bool);
-    bool navEnabled() const;
+    QString searchQuery( const KURL& ) const;
+    QString ikwsQuery( const KURL& ) const;
+
+    void setInternetKeywordsEnabled(bool);
+    void setSearchKeywordsEnabled(bool);
+    bool isInternetKeywordsEnabled() const;
+    bool isSearchKeywordsEnabled() const;
 
     QString searchFallback() const;
     void setSearchFallback(const QString &name);
 
     SearchEntry searchEntryByName(const QString & name) const;
-    NavEntry navEntryByName(const QString & name) const;
+    IKWSEntry ikwsEntryByName(const QString & name) const;
 
-    bool verbose() const {
-	return m_bVerbose;
-    }
+    bool verbose() const { return m_bVerbose; }
 
     void loadConfig();
     void saveConfig() const;
 
+    static void incRef();
+    static void decRef();
+    static KURISearchFilterEngine *self();
+
+protected:
+    QString formatResult( const QString&, const QString&, bool ) const;
+
 private:
-    QValueList < SearchEntry > m_lstSearchEngines;
+    bool m_bSearchKeywordsEnabled;
+    QValueList<SearchEntry> m_lstSearchEngine;
 
     bool m_bInternetKeywordsEnabled;
-    QValueList < NavEntry > m_lstInternetKeywordsEngines;
+    QValueList<IKWSEntry> m_lstInternetKeywordsEngine;
 
-    NavEntry m_currInternetKeywordsNavEngine;
-    SearchEntry m_currInternetKeywordsSearchEngine;
+    IKWSEntry m_currInternetKeywordsEngine;
+    SearchEntry m_currSearchKeywordsEngine;
 
     bool m_bVerbose;
 

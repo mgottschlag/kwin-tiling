@@ -28,25 +28,27 @@
 
 class KInstance;
 
-class KURIIKWSFilter : public KURIFilterPlugin, public DCOPObject
+class KURISearchFilter : public KURIFilterPlugin, public DCOPObject
 {
     K_DCOP
 public:
-    KURIIKWSFilter(QObject *parent = 0, const char *name = 0);
-    ~KURIIKWSFilter();
+    KURISearchFilter(QObject *parent = 0, const char *name = 0);
+    ~KURISearchFilter();
 
     virtual bool filterURI( KURIFilterData& ) const;
+    virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const;
+    virtual QString configName() const;
 
 k_dcop:
     virtual void configure();
 };
 
-class KURIIKWSFilterFactory : public KLibFactory
+class KURISearchFilterFactory : public KLibFactory
 {
     Q_OBJECT
 public:
-    KURIIKWSFilterFactory( QObject *parent = 0, const char *name = 0 );
-    ~KURIIKWSFilterFactory();
+    KURISearchFilterFactory( QObject *parent = 0, const char *name = 0 );
+    ~KURISearchFilterFactory();
 
     virtual QObject *create( QObject *parent = 0, const char *name = 0, const char* classname = "QObject", const QStringList &args = QStringList() );
     static KInstance *instance();

@@ -18,124 +18,166 @@
 
 */
 
-#include "kuriikwsfiltereng.h"
+#include <unistd.h>
 
-#include <kconfig.h>
+#include <qregexp.h>
+
 #include <kurl.h>
+#include <kdebug.h>
+#include <ksimpleconfig.h>
+#include <kprotocolinfo.h>
+
+#include "kuriikwsfiltereng.h"
 
 unsigned long KURISearchFilterEngine::s_refCnt = 0;
 KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0L;
 
 #define SEARCH_SUFFIX	" " "Search"
-
-#define IKW_KEY		"Internet Keywords"
-#define IKW_SUFFIX	" " IKW_KEY
+#define IKW_KEY         "Internet Keywords"
+#define IKW_SUFFIX      " " IKW_KEY
 #define IKW_REALNAMES	"RealNames"
 
-KURISearchFilterEngine::KURISearchFilterEngine() {
+KURISearchFilterEngine::KURISearchFilterEngine()
+{
     loadConfig();
 }
 
-void KURISearchFilterEngine::insertSearchEngine(SearchEntry e) {
-    QValueList<SearchEntry>::Iterator it = m_lstSearchEngines.begin();
-    QValueList<SearchEntry>::Iterator end = m_lstSearchEngines.end();
-
-    for (; it != end; ++it) {
-	if ((*it).m_strName == e.m_strName) {
-	    m_lstSearchEngines.remove(it);
+void KURISearchFilterEngine::insertSearchEngine(SearchEntry e)
+{
+    QValueList<SearchEntry>::Iterator it = m_lstSearchEngine.begin();
+    QValueList<SearchEntry>::Iterator end = m_lstSearchEngine.end();
+    for (; it != end; ++it)
+    {
+	  if ((*it).m_strName == e.m_strName)
+	  {
+	    m_lstSearchEngine.remove(it);
 	    break;
-	}
+	  }
     }
-
-    m_lstSearchEngines.append(e);
+    m_lstSearchEngine.append(e);
 }
 
-void KURISearchFilterEngine::removeSearchEngine(const QString &name) {
-  QValueList<SearchEntry>::Iterator it = m_lstSearchEngines.begin();
-  QValueList<SearchEntry>::Iterator end = m_lstSearchEngines.end();
-
-  for (; it != end; ++it) {
-      if ((*it).m_strName == name) {
-	  m_lstSearchEngines.remove(it);
+void KURISearchFilterEngine::removeSearchEngine(const QString &name)
+{
+  QValueList<SearchEntry>::Iterator it = m_lstSearchEngine.begin();
+  QValueList<SearchEntry>::Iterator end = m_lstSearchEngine.end();
+  for (; it != end; ++it)
+  {
+    if ((*it).m_strName == name)
+    {
+	  m_lstSearchEngine.remove(it);
 	  break;
-      }
+    }
   }
 }
 
-QString KURISearchFilterEngine::searchQuery(const QString &key) const {
-  QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngines.begin();
-  QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngines.end();
-
-  for (; it != end; ++it) {
-      if ((*it).m_lstKeys.contains(key)) {
-	  return (*it).m_strQuery;
-      }
+KURISearchFilterEngine::SearchEntry KURISearchFilterEngine::searchEntryByName(const QString &name) const
+{
+  QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
+  QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
+  for (; it != end; ++it)
+  {
+	if ((*it).m_strName == name)
+      return *it;
   }
+  return SearchEntry();
+}
 
+QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
+{
+  if( m_bSearchKeywordsEnabled )
+  {
+    QString key;
+
+    // NOTE: We simply do not use KURL::protocol() here
+    // because it would mean that the search engine short-
+    // cuts would have to be restricted to a sub-set of
+    // latin1 character sets, namely alpha-numeric characters
+    // a '+' and a '-', when they really do not have to be.
+    QString _url = url.url();
+    int pos = _url.find(':');
+    if (pos >= 0)
+        key = _url.left(pos);
+
+    if( KProtocolInfo::isKnownProtocol( key ) )
+        return QString::null;  // Do not touch known protocols
+
+    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
+    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
+    for (; it != end; ++it)
+    {
+      if ((*it).m_lstKeys.contains(key))
+        return formatResult((*it).m_strQuery, _url.mid(pos+1), url.isMalformed() );
+    }
+  }
   return QString::null;
 }
 
-KURISearchFilterEngine::SearchEntry KURISearchFilterEngine::searchEntryByName(const QString &name) const {
-    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngines.begin();
-    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngines.end();
 
-    for (; it != end; ++it) {
-	if ((*it).m_strName == name) {
-	    return *it;
+QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
+{
+  if (m_bInternetKeywordsEnabled)
+  {
+    QString search = m_currSearchKeywordsEngine.m_strQuery;
+	if (!search.isEmpty())
+	{
+      int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
+      if (pct >= 0)
+      {
+		search = KURL::encode_string( search );
+		QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
+		return formatResult( res.replace(pct, 2, search), url.url(), url.isMalformed() );
+      }
 	}
-    }
-
-    return SearchEntry();
+	return formatResult( m_currInternetKeywordsEngine.m_strQuery, url.url(), url.isMalformed() );
+  }
+  return QString::null;
 }
 
-QString KURISearchFilterEngine::navQuery() const {
-    if (m_bInternetKeywordsEnabled) {
-	QString search = m_currInternetKeywordsSearchEngine.m_strQuery;
-	if (!search.isEmpty()) {
-	    int pct = m_currInternetKeywordsNavEngine.m_strQueryWithSearch.find("\\|");
-	    if (pct >= 0) {
-		search = KURL::encode_string(search);
-		QString res = m_currInternetKeywordsNavEngine.m_strQueryWithSearch;
-		return res.replace(pct, 2, search);
-	    }
-	}
-
-	return m_currInternetKeywordsNavEngine.m_strQuery;
+KURISearchFilterEngine::IKWSEntry KURISearchFilterEngine::ikwsEntryByName(const QString &name) const
+{
+    QValueList<IKWSEntry>::ConstIterator it = m_lstInternetKeywordsEngine.begin();
+    QValueList<IKWSEntry>::ConstIterator end = m_lstInternetKeywordsEngine.end();
+    for (; it != end; ++it)
+    {
+	  if ((*it).m_strName == name)
+        return *it;
     }
-
-    return QString::null;
+    return IKWSEntry();
 }
 
-KURISearchFilterEngine::NavEntry KURISearchFilterEngine::navEntryByName(const QString &name) const {
-    QValueList<NavEntry>::ConstIterator it = m_lstInternetKeywordsEngines.begin();
-    QValueList<NavEntry>::ConstIterator end = m_lstInternetKeywordsEngines.end();
-
-    for (; it != end; ++it) {
-	if ((*it).m_strName == name) {
-	    return *it;
-	}
-    }
-
-    return NavEntry();
-}
-
-void KURISearchFilterEngine::setNavEnabled(bool flag) {
+void KURISearchFilterEngine::setInternetKeywordsEnabled(bool flag)
+{
     m_bInternetKeywordsEnabled = flag;
 }
 
-bool KURISearchFilterEngine::navEnabled() const {
+void KURISearchFilterEngine::setSearchKeywordsEnabled(bool flag)
+{
+    m_bSearchKeywordsEnabled = flag;
+}
+
+bool KURISearchFilterEngine::isInternetKeywordsEnabled() const
+{
     return m_bInternetKeywordsEnabled;
 }
 
-QString KURISearchFilterEngine::searchFallback() const {
-    return m_currInternetKeywordsSearchEngine.m_strName;
+bool KURISearchFilterEngine::isSearchKeywordsEnabled() const
+{
+    return m_bSearchKeywordsEnabled;
 }
 
-void KURISearchFilterEngine::setSearchFallback(const QString &name) {
-    m_currInternetKeywordsSearchEngine = searchEntryByName(name);
+QString KURISearchFilterEngine::searchFallback() const
+{
+    return m_currSearchKeywordsEngine.m_strName;
 }
 
-QCString KURISearchFilterEngine::name() const {
+void KURISearchFilterEngine::setSearchFallback(const QString &name)
+{
+    m_currSearchKeywordsEngine = searchEntryByName( name );
+}
+
+QCString KURISearchFilterEngine::name() const
+{
     return "kuriikwsfilter";
 }
 
@@ -154,139 +196,185 @@ void KURISearchFilterEngine::decRef()
   }
 }
 
-KURISearchFilterEngine* KURISearchFilterEngine::self() {
-    if (!s_pSelf) {
+KURISearchFilterEngine* KURISearchFilterEngine::self()
+{
+    if (!s_pSelf)
+    {
         if ( s_refCnt == 0 )
-  	  s_refCnt++; //someone forgot to call incRef
-	s_pSelf = new KURISearchFilterEngine;
+  	        s_refCnt++; //someone forgot to call incRef
+    	s_pSelf = new KURISearchFilterEngine;
     }
-
     return s_pSelf;
 }
 
-void KURISearchFilterEngine::loadConfig() {
+QString KURISearchFilterEngine::formatResult( const QString& query, const QString& url, bool isMalformed ) const
+{
+    // Substitute the variable part we find in the query.
+    if (!query.isEmpty())
+    {
+        QString newurl = query;
+        int pct;
+        // Always use utf-8, since it is guaranteed that this
+        // will be understood.
+        if ((pct = newurl.find("\\2")) >= 0)
+          newurl = newurl.replace(pct, 2, "utf-8");
+
+        QString userquery = url;
+        userquery = userquery.replace( QRegExp(" "), "+" ).utf8();
+
+        if( isMalformed )
+            userquery = KURL::encode_string(userquery);
+
+        if ((pct = newurl.find("\\1")) >= 0)
+            newurl = newurl.replace(pct, 2, userquery);
+
+        if ( m_bVerbose )
+            kdDebug() << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
+
+        return newurl;
+    }
+
+    return QString::null;
+}
+
+void KURISearchFilterEngine::loadConfig()
+{
+    kdDebug() << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
     // First empty any current config we have.
+    m_lstSearchEngine.clear();
+    m_lstInternetKeywordsEngine.clear();
 
-    m_lstSearchEngines.clear();
-    m_lstInternetKeywordsEngines.clear();
+    // Load the config.
+    KSimpleConfig config( name() + "rc");
+    QStringList engines;
+    QString selIKWSEngine, selIKWSFallback;
 
-    // Then load the config.
+    if( config.hasGroup(IKW_KEY) )
+    {
+        // Read the old settings
+        kdDebug() << "(" << getpid() << ") Config file has the OLD format..." << endl;
+        config.setGroup(IKW_KEY);
+        m_bInternetKeywordsEnabled = config.readBoolEntry("NavEnabled", true);
+        selIKWSEngine = config.readEntry("NavSelectedEngine", IKW_REALNAMES);
+        selIKWSFallback = config.readEntry("NavSearchFallback");
+        engines = config.readListEntry("NavEngines");
+    }
+    else
+    {
+        kdDebug() << "(" << getpid() << ") Config file has the NEW format..." << endl;
+        config.setGroup("General");
+        m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
+        selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
+        selIKWSFallback = config.readEntry("InternetKeywordsSearchFallback");
+        engines = config.readListEntry("InternetKeywordsEngines");
+    }
 
-    KConfig config(name() + "rc");
-
-    config.setGroup(IKW_KEY);
-
-    m_bInternetKeywordsEnabled = config.readBoolEntry("NavEnabled", true);
-
-    QString selNavEngine = config.readEntry("NavSelectedEngine", IKW_REALNAMES);
-    QString selNavSearch = config.readEntry("NavSearchFallback");
-
-    QStringList engines = config.readListEntry("NavEngines");
+    kdDebug() << "(" << getpid() << ") Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
+    kdDebug() << "(" << getpid() << ") Selected IKWS Engine(s): " << selIKWSEngine << endl;
+    kdDebug() << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << selIKWSFallback << endl;
 
     QStringList::ConstIterator gIt = engines.begin();
     QStringList::ConstIterator gEnd = engines.end();
-    for (; gIt != gEnd; ++gIt) {
-	QString grpName = *gIt + IKW_SUFFIX;
-	if (config.hasGroup(grpName)) {
-	    config.setGroup(grpName);
-
-	    NavEntry e;
+    for (; gIt != gEnd; ++gIt)
+    {
+	  QString grpName = *gIt + IKW_SUFFIX;
+	  if (config.hasGroup(grpName))
+	  {
+        config.setGroup( grpName );
+	    IKWSEntry e;
 	    e.m_strName = *gIt;
 	    e.m_strQuery = config.readEntry("Query");
 	    e.m_strQueryWithSearch = config.readEntry("QueryWithSearch");
-
-	    m_lstInternetKeywordsEngines.append(e);
-
-	    if (e.m_strName == selNavEngine) {
-		m_currInternetKeywordsNavEngine = e;
-	    }
-	}
+	    m_lstInternetKeywordsEngine.append(e);
+	    if (e.m_strName == selIKWSEngine)
+            m_currInternetKeywordsEngine = e;
+	  }
     }
 
-    NavEntry rn = navEntryByName(IKW_REALNAMES);
-    if (rn.m_strName.isEmpty()) {
-	rn.m_strName = IKW_REALNAMES;
-	rn.m_strQuery = "http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=180";
-	rn.m_strQueryWithSearch = "http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|";
+    IKWSEntry rn = ikwsEntryByName(IKW_REALNAMES);
+    if (rn.m_strName.isEmpty())
+    {
+	  rn.m_strName = IKW_REALNAMES;
+	  rn.m_strQuery = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=180");
+	  rn.m_strQueryWithSearch = QString::fromLatin1("http://navigation.realnames.com/resolver.dll?"
+	                                                "action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|");
+	  if (rn.m_strName == selIKWSEngine)
+	    m_currInternetKeywordsEngine = rn;
 
-	if (rn.m_strName == selNavEngine) {
-	    m_currInternetKeywordsNavEngine = rn;
-	}
-	m_lstInternetKeywordsEngines.append(rn);
+	  m_lstInternetKeywordsEngine.append(rn);
     }
 
+    // Load the Search engine
     config.setGroup("General");
-
     m_bVerbose = config.readBoolEntry("Verbose");
-
     engines = config.readListEntry("SearchEngines");
-
+    m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
+    kdDebug() << "(" << getpid() << ") Search Engine Keywords Enabled: " << m_bSearchKeywordsEnabled << endl;
+    kdDebug() << "(" << getpid() << ") Number of search engine keywords found: " << engines.count() << endl;
     gIt = engines.begin();
     gEnd = engines.end();
-    for (; gIt != gEnd; ++gIt) {
-	QString grpName = *gIt + SEARCH_SUFFIX;
-	if (config.hasGroup(grpName)) {
-	    config.setGroup(grpName);
-	} else {
-	    config.setGroup(*gIt);
-	}
-
-	SearchEntry e;
-	e.m_strName = *gIt;
-	e.m_lstKeys = config.readListEntry("Keys");
-	e.m_strQuery = config.readEntry("Query");
-
-	m_lstSearchEngines.append(e);
-
-	if (e.m_strName == selNavSearch) {
-	    m_currInternetKeywordsSearchEngine = e;
-	}
+    for (; gIt != gEnd; ++gIt)
+    {
+	  QString grpName = *gIt + SEARCH_SUFFIX;
+	  if( !config.hasGroup( grpName ) )
+	    grpName = *gIt;
+	  else
+	    grpName = *gIt + SEARCH_SUFFIX;
+	  kdDebug() << "(" << getpid() << ") Search Engine Group name: " << grpName << endl;
+	  config.setGroup( grpName );
+	  SearchEntry e;
+	  e.m_strName = *gIt;
+	  e.m_lstKeys = config.readListEntry("Keys");
+	  e.m_strQuery = config.readEntry("Query");
+	  m_lstSearchEngine.append(e);
+      if (e.m_strName == selIKWSFallback)
+	    m_currSearchKeywordsEngine = e;
     }
+    // Remove the OLD group [Internet Keywords].
+    // Instead all generic info that has to do with
+    // shortcuts will be saved under [General].
+    config.deleteGroup( IKW_KEY );
 }
 
-void KURISearchFilterEngine::saveConfig() const {
+void KURISearchFilterEngine::saveConfig() const
+{
+    kdDebug() << "(" << getpid() << ") Keywords Engine: Saving config..." << endl;
+
     KConfig config(name() + "rc");
+    QStringList search_engines, ikws_engines;
 
-    QStringList engines;
-
-    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngines.begin();
-    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngines.end();
-
-    for (; it != end; ++it) {
-	engines.append((*it).m_strName);
-	config.setGroup((*it).m_strName + SEARCH_SUFFIX);
-	config.writeEntry("Keys", (*it).m_lstKeys);
-	config.writeEntry("Query", (*it).m_strQuery);
+    // DUMP OUT THE SEARCH ENGINE INFO	
+    QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
+    QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
+    for (; it != end; ++it)
+    {
+	  search_engines.append((*it).m_strName);
+	  config.setGroup((*it).m_strName + SEARCH_SUFFIX);
+	  config.writeEntry("Keys", (*it).m_lstKeys);
+	  config.writeEntry("Query", (*it).m_strQuery);
+    }
+	
+    // DUMP OUT THE INTERNET KEYWORD INFO
+    QValueList<IKWSEntry>::ConstIterator nit = m_lstInternetKeywordsEngine.begin();
+    QValueList<IKWSEntry>::ConstIterator nend = m_lstInternetKeywordsEngine.end();
+    for (; nit != nend; ++nit)
+    {
+	  ikws_engines.append((*nit).m_strName);
+	  config.setGroup((*nit).m_strName + IKW_SUFFIX);
+	  config.writeEntry("Query", (*nit).m_strQuery);
+	  if (!(*nit).m_strQueryWithSearch.isEmpty())
+	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
     }
 
     config.setGroup("General");
-
-    config.writeEntry("SearchEngines", engines);
-    if (m_bVerbose) {
-	config.writeEntry("Verbose", m_bVerbose);
-    }
-
-    engines.clear();
-
-    QValueList<NavEntry>::ConstIterator nit = m_lstInternetKeywordsEngines.begin();
-    QValueList<NavEntry>::ConstIterator nend = m_lstInternetKeywordsEngines.end();
-
-    for (; nit != nend; ++nit) {
-	engines.append((*nit).m_strName);
-	config.setGroup((*nit).m_strName + IKW_SUFFIX);
-	config.writeEntry("Query", (*nit).m_strQuery);
-	if (!(*nit).m_strQueryWithSearch.isEmpty()) {
-	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
-	}
-    }
-
-    config.setGroup(IKW_KEY);
-
-    config.writeEntry("NavEngines", engines);
-    config.writeEntry("NavEnabled", m_bInternetKeywordsEnabled);
-    config.writeEntry("NavSelectedEngine", m_currInternetKeywordsNavEngine.m_strName);
-    config.writeEntry("NavSearchFallback", m_currInternetKeywordsSearchEngine.m_strName);
+    config.writeEntry("InternetKeywordsEnabled", m_bInternetKeywordsEnabled);
+    config.writeEntry("InternetKeywordsEngines", ikws_engines);
+    config.writeEntry("InternetKeywordsSelectedEngine", m_currInternetKeywordsEngine.m_strName);
+    config.writeEntry("InternetKeywordsSearchFallback", m_currSearchKeywordsEngine.m_strName);
+    config.writeEntry("SearchEngineShortcutsEnabled",m_bSearchKeywordsEnabled );
+    config.writeEntry("SearchEngines", search_engines);
+    if (m_bVerbose)
+	  config.writeEntry("Verbose", m_bVerbose);
 
     config.sync();
 }
-
