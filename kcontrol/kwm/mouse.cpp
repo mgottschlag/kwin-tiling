@@ -123,7 +123,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
     " the titlebar or the frame.") );
 
   label = new QLabel(i18n("Middle Button"), this);
-  layout->addWidget(label, 5,1);
+  layout->addWidget(label, 4,1);
   QWhatsThis::add( label, i18n("In this row you can customize middle click behavior when clicking into"
     " the titlebar or the frame.") );
 
