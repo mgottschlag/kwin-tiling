@@ -35,8 +35,10 @@
 
 #include <kio/netaccess.h>
 
+#if defined Q_WS_X11 && !defined K_WS_QTONLY
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#endif
 
 #include "../krdb/krdb.h"
 
@@ -366,9 +368,11 @@ void KColorScheme::save()
         flags |= KRdbExportColors;
     else
     {
+#if defined Q_WS_X11 && !defined K_WS_QTONLY
         // Undo the property xrdb has placed on the root window (if any),
         // i.e. remove all entries, including ours
         XDeleteProperty( qt_xdisplay(), qt_xrootwin(), XA_RESOURCE_MANAGER );
+#endif
     }
     runRdb( flags );	// Save the palette to qtrc for KStyles
 
