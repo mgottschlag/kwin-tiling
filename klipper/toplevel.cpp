@@ -41,6 +41,7 @@
 #include "toplevel.h"
 #include "urlgrabber.h"
 #include "version.h"
+#include "clipboardpoll.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -90,9 +91,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
     connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
-    m_checkTimer = new QTimer(this, "timer");
-    m_checkTimer->start(1000, FALSE);
-    connect(m_checkTimer, SIGNAL(timeout()), this, SLOT(pollClipboard()));
+    poll = new ClipboardPoll( this );
+    connect( poll, SIGNAL( clipboardChanged()), this, SLOT(newClipData()));
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
@@ -115,7 +115,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
 KlipperWidget::~KlipperWidget()
 {
-    delete m_checkTimer;
     delete m_popup;
     delete myURLGrabber;
     if( m_config != kapp->config())
@@ -224,13 +223,9 @@ void KlipperWidget::clickedMenu(int id)
     case EMPTY_ITEM:
 	if ( !bClipEmpty )
 	{
-	    m_checkTimer->stop();
-
         trimClipHistory(0);
         slotClearClipboard();
         setEmptyClipboard();
-
-	    m_checkTimer->start(1000);
 	}
 	break;
     default:
@@ -240,7 +235,6 @@ void KlipperWidget::clickedMenu(int id)
 	}
 	else if ( !bClipEmpty )
 	{
-	    m_checkTimer->stop();
 	    //CT mark up the currently put into clipboard -
             // so that user can see later
             if ( m_selectedItem != -1 )
@@ -265,8 +259,6 @@ void KlipperWidget::clickedMenu(int id)
                 // bit later. So instead, we fire a timer to perform the moving.
                 QTimer::singleShot( 0, this, SLOT( slotMoveSelectedToTop() ));
             }
-
-	    m_checkTimer->start(1000);
 	}
     }
 }
@@ -661,14 +653,6 @@ void KlipperWidget::slotMoveSelectedToTop()
     m_clipDict.insert( m_selectedItem, m_lastString );
 }
 
-// clipboard polling for legacy apps
-// Call only from the QTimer timeout() signal
-void KlipperWidget::pollClipboard()
-{
-    updateXTime();
-    newClipData();
-}
-
 void KlipperWidget::newClipData()
 {
     bool selectionMode;
@@ -683,7 +667,6 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
 
     QString text = clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     checkClipData( text, selectionMode );
-    m_checkTimer->start(1000);
 }
 
 void KlipperWidget::checkClipData( const QString& text, bool selectionMode )

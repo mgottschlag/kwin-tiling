@@ -16,13 +16,13 @@
 #include <kglobalaccel.h>
 #include <kpopupmenu.h>
 #include <qmap.h>
-#include <qtimer.h>
 #include <qpixmap.h>
 #include <dcopobject.h>
 
 class QClipboard;
 class KToggleAction;
 class URLGrabber;
+class ClipboardPoll;
 
 class KlipperWidget : public QWidget, public DCOPObject
 {
@@ -44,6 +44,8 @@ public:
     virtual void adjustSize();
     QPopupMenu* popup() { return m_popup; }
     KGlobalAccel *globalKeys;
+
+    static void updateXTime();
 
 public slots:
     void saveSession();
@@ -75,7 +77,6 @@ protected:
 
     KConfig* config() const { return m_config; }
     bool isApplet() const { return m_config != kapp->config(); }
-    void updateXTime();
 
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
@@ -88,7 +89,6 @@ protected slots:
 
 private slots:
     void newClipData();
-    void pollClipboard();
     void clickedMenu(int);
     void slotClearClipboard();
 
@@ -112,7 +112,6 @@ private:
     KPopupMenu *m_popup;
     KToggleAction *toggleURLGrabAction;
     QMap<long,QString> m_clipDict;
-    QTimer *m_checkTimer;
     QPixmap m_pixmap;
     bool bPopupAtMouse :1;
     bool bClipEmpty    :1;
@@ -129,6 +128,7 @@ private:
     int maxClipItems;
     int URLGrabItem;
     KConfig* m_config;
+    ClipboardPoll* poll;
 
     void trimClipHistory(int);
 };
