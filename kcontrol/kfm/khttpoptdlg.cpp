@@ -4,6 +4,7 @@
 #include <qlayout.h> //CT
 
 #include <klocale.h>
+#include <kglobal.h>
 #include <kapp.h>
 #include "khttpoptdlg.h"
 #include <kconfig.h>
@@ -72,7 +73,8 @@ KHTTPOptions::KHTTPOptions(QWidget *parent, const char *name)
   lay->activate();
   //CT
 
-  defaultCharsets = QString("utf-8 ")+klocale->charset()+" iso-8859-1";
+  // defaultCharsets = QString("utf-8 ")+klocale->charset()+" iso-8859-1";
+  defaultCharsets = QString("utf-8 ")+" iso-8859-1"; // TODO
 
   setMinimumSize(480,300);
 
@@ -95,7 +97,7 @@ void KHTTPOptions::loadSettings()
 {
   QString tmp;
   g_pConfig->setGroup( "Browser Settings/HTTP" );	
-  tmp = g_pConfig->readEntry( "AcceptLanguages",klocale->languages());
+  tmp = g_pConfig->readEntry( "AcceptLanguages",KGlobal::locale()->languages());
   le_languages->setText( tmp );
   tmp = g_pConfig->readEntry( "AcceptCharsets",defaultCharsets);
   le_charsets->setText( tmp );
@@ -119,7 +121,7 @@ void KHTTPOptions::applySettings()
 
 void KHTTPOptions::defaultSettings()
 {
-  le_languages->setText( klocale->languages() );
+  le_languages->setText( KGlobal::locale()->languages() );
   le_charsets->setText( defaultCharsets );
   cb_assumeHTML->setChecked( false );
 }
