@@ -24,7 +24,7 @@
 #define _KSHORTURIFILTER_H_
 
 #include <dcopobject.h>
-#include <klibloader.h>
+#include <kgenericfactory.h>
 #include <kurifilter.h>
 
 class KInstance;
@@ -43,6 +43,7 @@ class KInstance;
 class KShortURIFilter : public KURIFilterPlugin , public DCOPObject
 {
     K_DCOP
+    Q_OBJECT
 public:
 
     /**
@@ -51,7 +52,8 @@ public:
      * @param parent the parent of this class.
      * @param name the internal name for this object.
      */
-    KShortURIFilter( QObject *parent = 0, const char *name = 0 );
+    KShortURIFilter( QObject *parent = 0, const char *name = 0,
+	             const QStringList &args = QStringList() );
 
     /**
      * Destructor
@@ -130,16 +132,11 @@ private:
 };
 
 
-class KShortURIFilterFactory : public KLibFactory
+class KShortURIFilterFactory : public KGenericFactory<KShortURIFilter>
 {
-    Q_OBJECT
 public:
     KShortURIFilterFactory( QObject *parent = 0, const char *name = 0 );
     ~KShortURIFilterFactory();
-
-    virtual QObject *createObject( QObject *parent = 0, const char *name = 0,
-                             const char* classname = "QObject",
-                             const QStringList &args = QStringList() );
 
     static KInstance *instance();
 

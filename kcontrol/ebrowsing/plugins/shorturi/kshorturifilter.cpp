@@ -53,7 +53,8 @@ typedef QMap<QString,QString> EntryMap;
 
 KInstance *KShortURIFilterFactory::s_instance = 0;
 
-KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
+KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
+	                          const QStringList & /*args*/ )
                 :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
                  DCOPObject("KShortURIFilterIface")
 {
@@ -381,7 +382,6 @@ void KShortURIFilter::configure()
 /***************************************** KShortURIFilterFactory *******************************************/
 
 KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *name )
-                       :KLibFactory( parent, name )
 {
     s_instance = new KInstance( "kshorturifilter" );
 }
@@ -389,12 +389,7 @@ KShortURIFilterFactory::KShortURIFilterFactory( QObject *parent, const char *nam
 KShortURIFilterFactory::~KShortURIFilterFactory()
 {
     delete s_instance;
-}
-
-QObject *KShortURIFilterFactory::createObject( QObject *parent, const char *name, const char*, const QStringList & )
-{
-    QObject *obj = new KShortURIFilter( parent, name );
-    return obj;
+    s_instance = 0;
 }
 
 KInstance *KShortURIFilterFactory::instance()
@@ -402,12 +397,6 @@ KInstance *KShortURIFilterFactory::instance()
     return s_instance;
 }
 
-extern "C"
-{
-    void *init_libkshorturifilter()
-    {
-        return new KShortURIFilterFactory;
-    }
-}
+K_EXPORT_COMPONENT_FACTORY( libkshorturifilter, KShortURIFilterFactory );
 
 #include "kshorturifilter.moc"

@@ -34,7 +34,8 @@
 
 KInstance *KURIIKWSFilterFactory::s_instance = 0L;
 
-KURIIKWSFilter::KURIIKWSFilter(QObject *parent, const char *name)
+KURIIKWSFilter::KURIIKWSFilter(QObject *parent, const char *name,
+	                       const QStringList & /*args*/ )
                  :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
                   DCOPObject("KURIIKWSFilterIface")
 {
@@ -72,7 +73,6 @@ bool KURIIKWSFilter::filterURI( KURIFilterData &data ) const
 }
 
 KURIIKWSFilterFactory::KURIIKWSFilterFactory(QObject *parent, const char *name)
-                      :KLibFactory(parent, name)
 {
     KURISearchFilterEngine::incRef();
     s_instance = new KInstance(searcher->name());
@@ -83,23 +83,11 @@ KURIIKWSFilterFactory::~KURIIKWSFilterFactory() {
     delete s_instance;
 }
 
-QObject *KURIIKWSFilterFactory::createObject( QObject* parent, const char* name,
-                                              const char*, const QStringList& )
-{
-    return new KURIIKWSFilter( parent, name );
-}
-
 KInstance *KURIIKWSFilterFactory::instance() {
     return s_instance;
 }
 
-extern "C" {
-
-void *init_libkuriikwsfilter() {
-    return new KURIIKWSFilterFactory;
-}
-
-}
+K_EXPORT_COMPONENT_FACTORY( libkuriikwsfilter, KURIIKWSFilterFactory );
 
 #include "kuriikwsfilter.moc"
 

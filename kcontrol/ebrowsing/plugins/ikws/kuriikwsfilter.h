@@ -24,7 +24,7 @@
 #define __KURIIKWSFILTER_H__
 
 #include <dcopobject.h>
-#include <klibloader.h>
+#include <kgenericfactory.h>
 
 #include <kurifilter.h>
 
@@ -33,8 +33,10 @@ class KInstance;
 class KURIIKWSFilter : public KURIFilterPlugin, public DCOPObject
 {
     K_DCOP
+    Q_OBJECT
 public:
-    KURIIKWSFilter(QObject *parent = 0, const char *name = 0);
+    KURIIKWSFilter(QObject *parent = 0, const char *name = 0,
+	           const QStringList &args = QStringList() );
     ~KURIIKWSFilter();
 
     virtual bool filterURI( KURIFilterData& ) const;
@@ -43,16 +45,12 @@ k_dcop:
     virtual void configure();
 };
 
-class KURIIKWSFilterFactory : public KLibFactory
+class KURIIKWSFilterFactory : public KGenericFactory<KURIIKWSFilter>
 {
-    Q_OBJECT
 public:
     KURIIKWSFilterFactory( QObject *parent = 0, const char *name = 0 );
     ~KURIIKWSFilterFactory();
 
-    virtual QObject *createObject( QObject *parent = 0, const char *name = 0,
-                                   const char* classname = "QObject",
-                                   const QStringList &args = QStringList() );
     static KInstance *instance();
 
 private:

@@ -33,7 +33,8 @@
 
 KInstance *KURISearchFilterFactory::s_instance = 0L;
 
-KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
+KURISearchFilter::KURISearchFilter(QObject *parent, const char *name,
+	                           const QStringList & /*args*/)
                  :KURIFilterPlugin(parent, name ? name : "kurisearchfilter", 1.0),
                   DCOPObject("KURISearchFilterIface")
 {
@@ -77,7 +78,7 @@ QString KURISearchFilter::configName() const
 }
 
 
-KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name)
+KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) 
 {
     KURISearchFilterEngine::incRef();
     s_instance = new KInstance(searcher->name());
@@ -87,12 +88,7 @@ KURISearchFilterFactory::~KURISearchFilterFactory()
 {
     KURISearchFilterEngine::decRef();
     delete s_instance;
-}
-
-QObject *KURISearchFilterFactory::createObject( QObject *parent, const char *name, const char*, const QStringList & )
-{
-    QObject *obj = new KURISearchFilter( parent, name );
-    return obj;
+    s_instance = 0;
 }
 
 KInstance *KURISearchFilterFactory::instance()
@@ -100,12 +96,6 @@ KInstance *KURISearchFilterFactory::instance()
     return s_instance;
 }
 
-extern "C"
-{
-  void *init_libkurisearchfilter()
-  {
-    return new KURISearchFilterFactory;
-  }
-}
+K_EXPORT_COMPONENT_FACTORY( libkurisearchfilter, KURISearchFilterFactory );
 
 #include "kurisearchfilter.moc"
