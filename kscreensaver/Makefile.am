@@ -13,7 +13,7 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss klissie.kss kbanner.kss \
 	kattraction.kss kslidescreen.kss kbsod.kss krandom.kss \
 	kslideshow.kss
 
-EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss
+EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss
 
 KDE_ICON = kscreensaver
 
