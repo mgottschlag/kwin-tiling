@@ -112,36 +112,30 @@ void Theme::saveSettings(void)
 
 
 //-----------------------------------------------------------------------------
-void Theme::setDescription(const QString aDescription)
+void Theme::setDescription(const QString &aDescription)
 {
   mDescription = aDescription;
-}
-
-
-//-----------------------------------------------------------------------------
-void Theme::setName(const char *_name)
-{
-    QString aName = _name;
-    QString mName;
-    int i = aName.findRev('/');
-    if (i>0) 
-	QObject::setName(aName.mid(i+1, 1024).ascii());
-    else 
-	QObject::setName((mName = aName).ascii());
-    
-    if (aName[0]=='/') 
-	mFileName = aName;
-    else 
-	mFileName = workDir() + aName;
 }
 
 //-----------------------------------------------------------------------------
 const QString Theme::workDir(void)
 {
-  static QString str;
-  if (str.isEmpty())
-    str = locateLocal("data", "kthememgr/Work/");
-  return str;
+  static QString *str = 0;
+  if (!str)
+    str = new QString(locateLocal("data", "kthememgr/Work/"));
+  return *str;
+}
+
+const QString Theme::baseDir()
+{
+  static QString *str = 0;
+  if (!str)
+  {
+     str = new QString(KGlobal::dirs()->saveLocation("config"));
+     str->truncate(str->length()-7);
+kdDebug() << ":: baseDir = " << (*str) << endl;
+  }
+  return *str;
 }
 
 
@@ -176,7 +170,7 @@ void Theme::cleanupWorkDir(void)
 
 
 //-----------------------------------------------------------------------------
-bool Theme::load(const QString aPath, QString &error)
+bool Theme::load(const QString &aPath, QString &error)
 {
   QString cmd, str;
   QFileInfo finfo(aPath);
@@ -187,14 +181,18 @@ bool Theme::load(const QString aPath, QString &error)
 
   clear();
   cleanupWorkDir();
-  setName(aPath.ascii());
+
+  mFileName = aPath;
+  i = mFileName.findRev('/');
+  if (i >= 0)
+     mFileName = mFileName.mid(i+1);
 
   if (finfo.isDir())
   {
     // The theme given is a directory. Copy files over into work dir.
 
     i = aPath.findRev('/');
-    if (i >= 0) str = workDir() + aPath.mid(i, 1024);
+    if (i >= 0) str = workDir() + aPath.mid(i);
     else str = workDir();
 
     cmd = QString("cp -r \"%1\" \"%2\"").arg(aPath).arg(str);
@@ -264,32 +262,26 @@ bool Theme::load(const QString aPath, QString &error)
 
 
 //-----------------------------------------------------------------------------
-bool Theme::save(const QString aPath)
+bool Theme::save(const QString &aPath)
 {
-  QString cmd;
-  int rc;
-
   emit apply();
   writeConfig();
 
-  backEnd->changeFileName(mThemercFile, "", false);
-  backEnd->sync(true); // true so that disk entries are merged.  Is this right?
+  kdDebug() << "Saving " << backEnd->filename() << " dirty = " << isDirty() << endl;
+  sync();
+//  backEnd->sync(true); // true so that disk entries are merged.  Is this right?
 
-  if (stricmp(aPath.right(4).ascii(), ".tgz") == 0 ||
-      stricmp(aPath.right(7).ascii(), ".tar.gz") == 0)
+  QString path = aPath;
+  if ((path.right(4) != ".tgz") && 
+      (path.right(7) != ".tar.gz"))
   {
-    cmd.sprintf("cd \"%s\";tar cf - *|gzip -c >\"%s\"",
-		workDir().ascii(), aPath.ascii());
+    path += ".tar.gz";
   }
-  else
-  {
-    cmd.sprintf("cd \"%s\"; rm -rf \"%s\"; cp -r * \"%s\"",
-		workDir().ascii(), aPath.ascii(),
-		aPath.ascii());
-  }
+  QString cmd = QString("cd \"%1\";tar cf - *|gzip -c >\"%2\"").
+		arg(workDir()).arg(path);
 
   kdDebug() << cmd << endl;
-  rc = system(cmd.ascii());
+  int rc = system(QFile::encodeName(cmd).data());
   if (rc) kdDebug() << "Failed to save theme to " << aPath << " with command " << cmd << endl;
 
   return (rc==0);
@@ -297,7 +289,7 @@ bool Theme::save(const QString aPath)
 
 
 //-----------------------------------------------------------------------------
-void Theme::removeFile(const QString& aName, const QString aDirName)
+void Theme::removeFile(const QString& aName, const QString &aDirName)
 {
   if (aName.isEmpty()) return;
 
@@ -451,16 +443,12 @@ bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
 int Theme::installGroup(const char* aGroupName)
 {
   QString value, oldValue, cfgFile, cfgGroup, appDir, group;
-  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
+  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
   QString preInstCmd;
   bool absPath = false;
   KSimpleConfig* cfg = NULL;
   int len, i, installed = 0;
   const char* missing = 0;
-
-  baseDir = KGlobal::dirs()->saveLocation("config");
-  baseDir.truncate(baseDir.length()-7);
-kdDebug() << ":: baseDir = " << baseDir << endl;
 
   kdDebug() << "*** beginning with " << aGroupName << endl;
   group = aGroupName;
@@ -488,7 +476,7 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
     if (!value.isEmpty() && (value[0] != '/'))
     {
       appDir = value;
-      appDir = baseDir + appDir;
+      appDir = baseDir() + appDir;
 
       len = appDir.length();
       if (len > 0 && appDir[len-1]!='/') appDir += '/';
@@ -686,37 +674,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 
   cmd = aCmd.stripWhiteSpace();
 
-  if (cmd == "winShapeMode")
-  {
-    aCfg->writeEntry("ShapeMode", aInstalled ? "on" : "off");
-  }
-  else if (cmd == "winTitlebar")
-  {
-    if (hasKey("TitlebarPixmapActive") || hasKey("TitlebarPixmapInactive"))
-      value = "pixmap";
-    else if (aCfg->readEntry("TitlebarLook") == "pixmap")
-      value = "shadedHorizontal";
-    else value = QString::null;
-    if (!value.isEmpty()) aCfg->writeEntry("TitlebarLook", value);
-  }
-  else if (cmd == "winGimmickMode")
-  {
-    if (hasKey("Pixmap")) value = "on";
-    else value = "off";
-    aCfg->writeEntry("GimmickMode", value);
-  }
-  /*CT 17Jan1999 no more needed - handled by the kpanel now 
-  else if (cmd == "panelBack")
-  {
-    value = aCfg->readEntry("Position");
-    if (stricmp(value,"right")==0 || stricmp(value,"left")==0)
-    {
-      value = aCfg->readEntry("BackgroundTexture");
-      rotateImage(kapp->localkdedir()+"/share/apps/kpanel/pics/"+value, -90);
-    }
-  }
-  */
-  else if (cmd == "setWallpaperMode")
+  if (cmd == "setWallpaperMode")
   {
     value = aCfg->readEntry("wallpaper",QString::null);
     aCfg->writeEntry("UseWallpaper", !value.isEmpty());
@@ -813,7 +771,7 @@ void Theme::doCmdList(void)
 
 
 //-----------------------------------------------------------------------------
-bool Theme::backupFile(const QString fname) const
+bool Theme::backupFile(const QString &fname) const
 {
   QFileInfo fi(fname);
   QString cmd;
@@ -931,7 +889,7 @@ void Theme::readCurrent(void)
 
 
 //-----------------------------------------------------------------------------
-KConfig* Theme::openConfig(const QString aAppName) const
+KConfig* Theme::openConfig(const QString &aAppName) const
 {
   return new KConfig(aAppName + "rc");
 }
@@ -946,6 +904,10 @@ void Theme::readConfig(void)
 
   setGroup("General");
   mDescription = readEntry("description", QString(name()) + " Theme");
+  mAuthor = readEntry("author");
+  mEmail = readEntry("email");
+  mHomePage = readEntry("homepage");
+  mVersion = readEntry("version");
 
   setGroup("Colors");
   foregroundColor = readColorEntry(this, "foreground", &col);
@@ -1051,7 +1013,7 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
 }
 
 //-----------------------------------------------------------------------------
-void Theme::stretchPixmap(const QString aFname, bool aStretchVert)
+void Theme::stretchPixmap(const QString &aFname, bool aStretchVert)
 {
   QPixmap src, dest;
   QBitmap *srcMask, *destMask;
@@ -1098,39 +1060,6 @@ void Theme::stretchPixmap(const QString aFname, bool aStretchVert)
 
   dest.save(aFname, QPixmap::imageFormat(aFname));
 }
-
-
-//-----------------------------------------------------------------------------
-void Theme::rotateImage(const QString aFname, int aAngle)
-{
-  QPixmap src, dest;
-  QWMatrix mx;
-
-  src.load(aFname);
-  if (src.isNull()) return;
-
-  mx.rotate(aAngle);
-  dest = src.xForm(mx);
-
-  dest.save(aFname, QPixmap::imageFormat(aFname));
-}
-
-
-//-----------------------------------------------------------------------------
-void Theme::iconToMiniIcon(const QString aIcon, const QString aMiniIcon)
-{
-  QPixmap src, dest;
-  QWMatrix mx;
-
-  src.load(aIcon);
-  if (src.isNull()) return;
-
-  mx.scale(.5, .5);
-  dest = src.xForm(mx);
-
-  dest.save(aMiniIcon, QPixmap::imageFormat(aIcon));
-}
-
 
 //-----------------------------------------------------------------------------
 void Theme::runKrdb(void) const

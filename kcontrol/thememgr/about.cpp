@@ -86,30 +86,25 @@ void About::slotThemeChanged()
 {
   QString str, value;
 
-  theme->setGroup("General");
-
   // Theme name
-  value = theme->readEntry("name");
-  if (value.isEmpty())
-  {
-    value = theme->name();
-    if (value.isEmpty()) value = i18n("Unknown");
-  }
+  value = theme->name();
   str = i18n("%1 Theme").arg(value);
   lblTheme->setText(str);
 
   // Version
-  value = theme->readEntry("version");
-  if (value.isEmpty()) str = "";
-  else str = i18n("Version %1").arg(value);
+  value = theme->version();
+  if (value.isEmpty()) 
+     str = "";
+  else
+     str = i18n("Version %1").arg(value);
   lblVersion->setText(str);
 
   // Author and email address
-  value = theme->readEntry("author");
+  value = theme->author();
   if (value.isEmpty()) value = i18n("Unknown");
   str = i18n("by %2").arg(value);
 
-  value = theme->readEntry("email");
+  value = theme->email();
   if (!value.isEmpty())
   {
     if (value.find('<') >= 0 && value.find('>') >= 0)
@@ -119,7 +114,7 @@ void About::slotThemeChanged()
   lblAuthor->setText(str);
 
   // Homepage
-  value = theme->readEntry("homepage");
+  value = theme->homepage();
   lblHomepage->setText(value);
 }
 

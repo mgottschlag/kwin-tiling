@@ -23,17 +23,19 @@
 #ifndef NEW_THEME_DLG_H
 #define NEW_THEME_DLG_H
 
-#include <qdialog.h>
+#include <kdialogbase.h>
 #include <qlineedit.h>
+#include <qtimer.h>
+#include <qimage.h>
 
 class QLabel;
 class QGridLayout;
 
-#define NewThemeDlgInherited QDialog
-class NewThemeDlg: public QDialog
+class NewThemeDlg: public KDialogBase
 {
+  Q_OBJECT
 public:
-  NewThemeDlg();
+  NewThemeDlg(QWidget *parent);
   virtual ~NewThemeDlg();
 
   QString fileName(void) const { return mEdtFilename->text(); }
@@ -41,16 +43,40 @@ public:
   QString author(void) const { return mEdtAuthor->text(); }
   QString email(void) const { return mEdtEmail->text(); }
   QString homepage(void) const { return mEdtHomepage->text(); }
+  QImage preview() const { return mPreview; }
 
 protected:
-  virtual QLineEdit* newLine(const QString& lbl);
+  virtual QLineEdit* newLine(const QString& lbl, int cols);
   virtual void setValues(void);
+
+protected slots:
+  void slotSnapshot();
 
 protected:
   int mGridRow;
-  QLineEdit *mEdtFilename, *mEdtName, *mEdtAuthor, *mEdtEmail;
+  QLineEdit *mEdtFilename;
+  QLineEdit *mEdtName;
+  QLineEdit *mEdtAuthor;
+  QLineEdit *mEdtEmail;
   QLineEdit *mEdtHomepage;
+  QLabel *mPreviewLabel;
+  QImage mPreview;
   QGridLayout* mGrid;
 };
+
+class SnapshotDlg: public KDialogBase
+{
+  Q_OBJECT
+public:
+  SnapshotDlg(QWidget *parent);
+protected slots:
+  void slotCountdown();
+
+protected:
+  QTimer mTimer;
+  QLabel *mLabel;
+  int mSeconds;
+};
+
 
 #endif /*NEW_THEME_DLG_H*/

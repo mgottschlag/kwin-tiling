@@ -76,16 +76,8 @@
 #   These commands handle special settings for the config files. 
 #   The commands depend very much on the proper settings in this file.
 #   Known commands are:
-#   - winShapeMode: activates shape mode if shape pixmaps were installed
-#     and deactivates it otherwise.
-#   - winTitleBar: sets titlebar mode, depending whether titlebar
-#     pixmaps got installed.
-#   - enableSounds: en-/disables system sound events.
 #   - oneDesktopMode: activates oneDesktopMode if exactly one wallpaper
-#     got installed.
-#   - panelBack: rotate panel background -90 degree if panel is left or
-#     right.
-#   - winGimmickMode: activates or deactivates gimmick mode
+#   - setWallPaperMode: corrects wallpaper settings.
 #
 #-----------------------------------------------------------------------------
 [Colors]

@@ -41,7 +41,7 @@ public:
 
   /** Load theme and prepare it for installation or modification. Returns
    true on success. */
-  virtual bool load(const QString path, QString &error);
+  virtual bool load(const QString &path, QString &error);
 
   /** Apply current theme to the users Kde configuration. This updates several
       config files and executes the initialization programs. */
@@ -49,23 +49,20 @@ public:
 
   /** Write theme file. If no path is given the theme is stored in the default
       kde location with the given theme name. Returns true on success. */
-  virtual bool save(const QString path=0);
+  virtual bool save(const QString &path);
 
   /** Read current Kde configuration from several config files. */
   virtual void readCurrent(void);
 
-  /** set theme name. */
-  virtual void setName(const char *newName);
-
-  /** Returns path + name where theme is stored. */
+  /** Returns the filename of the theme. */
   const QString fileName(void) { return mFileName; }
 
   /** Get preview pixmap. */
   const QPixmap& preview(void) const { return mPreview; }
 
   /** Description */
-  const QString description(void) const { return mDescription; }
-  virtual void setDescription(const QString);
+  const QString description(void) const { return mDescription; } virtual
+  void setDescription(const QString&);
 
   /** Color scheme colors. */
   QColor foregroundColor;
@@ -95,16 +92,23 @@ public:
       method also tests if the group is not empty. */
   virtual bool hasGroup(const QString& name, bool notEmpty=false);
 
-
   /** Working directory. */
   static const QString workDir(void);
 
-  /** Create directory hierarchy, relative to given base directory
-      or ~/.kde if none given. Returns true on success. */
-  static bool mkdirhier(const char* dirHier, const char* baseDir=NULL);
+  /** Base directory. */
+  static const QString baseDir(void);
 
   /** Uninstall files of last theme installation for given group */
   virtual void uninstallFiles(const char* groupName);
+
+  QString author() const { return mAuthor; }
+  void setAuthor(const QString &author) { mAuthor = author; }
+  QString email() const { return mEmail; }
+  void setEmail(const QString &email) { mEmail = email; }
+  QString homepage() const { return mHomePage; }
+  void setHomepage(const QString &homepage) { mHomePage = homepage; }
+  QString version() const { return mVersion; }
+  void setVersion(const QString &version) { mVersion = version; }
 
 signals:
   /** This signal is emitted after import() or load() */
@@ -128,7 +132,7 @@ protected:
   virtual void writeConfig(void);
 
   /** Create KConfig object and load fitting data. */
-  virtual KConfig* openConfig(const QString appName) const;
+  virtual KConfig* openConfig(const QString &appName) const;
 
   /** Installs file by calling cp. The source name is prepended
       with the theme work directory, the dest name is prepended
@@ -143,7 +147,7 @@ protected:
   /** Removes given file. If dirName is given and name is
       no absolute path, then dirName+"/"+name is removed. Does
       nothing if name is empty or null. */
-  virtual void removeFile(const QString& name, const QString dirName=0);
+  virtual void removeFile(const QString& name, const QString &dirName);
 
   /** Install theme group. Returns number of installed files. */
   virtual int installGroup(const char* groupName);
@@ -173,21 +177,15 @@ protected:
 
   /** Rename file by adding a tilde (~) to the filename. Returns
       true if file exists. */
-  virtual bool backupFile(const QString filename) const;
+  virtual bool backupFile(const QString &filename) const;
 
   /** Load/save config settings */
   virtual void loadSettings(void);
   virtual void saveSettings(void);
 
-  /** Rotate image file by given angle. */
-  virtual void rotateImage(const QString filename, int angle);
-
-  /** Convert icon to mini icon */
-  void iconToMiniIcon(const QString icon, const QString miniIcon);
-
   /** Stretch pixmap. Drops "None" color when there is no pixel
     using it. This crashes kwm. */
-  void stretchPixmap(const QString filename, bool verticalStretch);
+  void stretchPixmap(const QString &filename, bool verticalStretch);
 
   /** Add file to list of installed files. */
   virtual void addInstFile(const QString &filename);
@@ -210,6 +208,7 @@ protected:
   /** Returns path of given file+path (up to the last slash) */
   virtual const QString pathOf(const QString&) const;
 
+
 protected:
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
@@ -219,6 +218,11 @@ protected:
   QString mRestartCmd;     // Shell command that restarts an app
   QPixmap mPreview;
   QString mConfigDir;
+  QString mAuthor;
+  QString mEmail;
+  QString mHomePage;
+  QString mVersion;
+  
   KSimpleConfig* mMappings;
   QStringList mCmdList;
   QStringList mInstFiles;     // List of installed files

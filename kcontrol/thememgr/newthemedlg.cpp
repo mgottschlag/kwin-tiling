@@ -21,55 +21,65 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "config.h"
+
+#include <unistd.h>
+
 #include <qlabel.h>
+#include <qimage.h>
 #include <qlineedit.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qvbox.h>
+
 #include <kapp.h>
+#include <klocale.h>
+#include <kwin.h>
 
 #include "newthemedlg.h"
 #include "themecreator.h"
 #include "global.h"
-#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------
-NewThemeDlg::NewThemeDlg(): 
-  NewThemeDlgInherited(0, i18n("Create New Theme").ascii(), true)
+NewThemeDlg::NewThemeDlg(QWidget *parent): 
+  KDialogBase(parent, "newthemedlg", true,
+	i18n("Create New Theme"), Ok|Cancel, Ok, true)
 {
-  QPushButton* btn;
-  QHBoxLayout* bbox = new QHBoxLayout;
+  QWidget *page = new QWidget(this);
+  setMainWidget(page);
 
-  mGrid = new QGridLayout(this, 8, 3, 20, 4);
+  mGrid = new QGridLayout(page, 8, 4, 0, spacingHint());
   mGridRow = 0;
 
-  mEdtFilename = newLine(i18n("File name"));
-  mEdtName = newLine(i18n("Detailed name"));
-  mEdtAuthor = newLine(i18n("Author"));
-  mEdtEmail = newLine(i18n("Email"));
-  mEdtHomepage = newLine(i18n("Webpage"));
+  mEdtFilename = newLine(i18n("File Name:"),1);
+  mEdtName = newLine(i18n("Detailed Name:"),1);
+  mEdtAuthor = newLine(i18n("Author:"),1);
+  mEdtEmail = newLine(i18n("Email:"),1);
+  mEdtHomepage = newLine(i18n("Webpage:"),1);
+
+  
+//  QLabel *previewL = new QLabel(i18n("Preview:"), page);
+//  mGrid->addWidget(previewL, 0, 2);
+  mPreviewLabel = new QLabel(page);
+  mPreviewLabel->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+  mPreviewLabel->setMinimumSize(QSize(160,120));
+  mGrid->addMultiCellWidget(mPreviewLabel, 0, 3, 2, 3);
+
+  QPushButton *browseBut = new QPushButton(i18n("&Browse..."), page);
+  mGrid->addWidget(browseBut, 4, 2);
+
+  QPushButton *snapshotBut = new QPushButton(i18n("&Snapshot"), page);
+  mGrid->addWidget(snapshotBut, 4, 3);
+  connect(snapshotBut, SIGNAL(clicked()), this, SLOT(slotSnapshot()));
 
   mGrid->setRowStretch(mGridRow++, 10);
 
-  mGrid->addLayout(bbox, mGridRow++, 2);
-  btn = new QPushButton(i18n("OK"), this);
-  btn->setFixedSize(100, btn->sizeHint().height());
-  bbox->addWidget(btn);
-  connect(btn, SIGNAL(clicked()), SLOT(accept()));
-
-  btn = new QPushButton(i18n("Cancel"), this);
-  btn->setFixedSize(100, btn->sizeHint().height());
-  bbox->addWidget(btn);
-  connect(btn, SIGNAL(clicked()), SLOT(reject()));
-
   setValues();
 
-  mGrid->setColStretch(0, 1);
+  mGrid->setColStretch(0, 0);
   mGrid->setColStretch(1, 1);
-  mGrid->setColStretch(2, 100);
-  mGrid->activate();
-
-  resize(sizeHint());
+  mGrid->setColStretch(2, 0);
 }
 
 
@@ -94,22 +104,65 @@ void NewThemeDlg::setValues(void)
 
 
 //-----------------------------------------------------------------------------
-QLineEdit* NewThemeDlg::newLine(const QString& aLabelText)
+QLineEdit* NewThemeDlg::newLine(const QString& aLabelText, int cols)
 {
-  QLabel* lbl;
-  QLineEdit* edt;
-
-  edt = new QLineEdit(this);
+  QLineEdit *edt = new QLineEdit(getMainWidget());
   edt->setMinimumSize(edt->sizeHint());
-  edt->setMaximumSize(32767, edt->sizeHint().height());
-  mGrid->addMultiCellWidget(edt, mGridRow, mGridRow, 1, 2);
+  mGrid->addMultiCellWidget(edt, mGridRow, mGridRow, 1, 0+cols);
 
-  lbl = new QLabel(aLabelText, this);
+  QLabel *lbl = new QLabel(aLabelText, getMainWidget());
   lbl->setMinimumSize(lbl->sizeHint());
-  lbl->setMaximumSize(512, edt->sizeHint().height());
-  //lbl->setBuddy(edt);
+  lbl->setBuddy(edt);
   mGrid->addWidget(lbl, mGridRow, 0);
 
   mGridRow++;
   return edt;
 }
+
+void NewThemeDlg::slotSnapshot()
+{
+  int desktop = KWin::currentDesktop();
+  SnapshotDlg *dlg = new SnapshotDlg(this);
+  int result = dlg->exec();
+  delete dlg;
+  if (result == SnapshotDlg::Rejected) 
+     return;
+
+  kapp->processEvents();
+#ifdef HAVE_USLEEP
+  usleep(100000);
+  kapp->processEvents();
+#endif  
+
+  mPreview = QPixmap::grabWindow( qt_xrootwin()).convertToImage().smoothScale(320,240);
+  QPixmap snapshot;
+  snapshot.convertFromImage(mPreview.smoothScale(160,120));
+  mPreviewLabel->setPixmap(snapshot);
+  KWin::setCurrentDesktop(desktop);
+  KWin::deIconifyWindow(winId(), false);  
+}
+
+SnapshotDlg::SnapshotDlg(QWidget *parent)
+   : KDialogBase(parent, "snapshot", true, 
+         i18n("Make Snapshot"), Cancel, Cancel, true)
+{
+  QVBox *page = makeVBoxMainWidget();
+  mLabel = new QLabel(page);
+  mSeconds = 5;
+  connect(&mTimer, SIGNAL(timeout()), this, SLOT(slotCountdown()));
+  slotCountdown();
+}
+
+void SnapshotDlg::slotCountdown()
+{
+  if (mSeconds == 0)
+  {
+     accept();
+     return;
+  }
+  kapp->beep();
+  mLabel->setText(i18n("Taking snapshot in %1 seconds!").arg(mSeconds--));
+  mTimer.start(1000, true);
+}
+
+#include "newthemedlg.moc"

@@ -138,7 +138,7 @@ int Installer::addTheme(const QString &path)
     while((i > 0) && (mThemesList->text(i-1) > tmp))
 	i--;   
     if ((i > 0) && (mThemesList->text(i-1) == tmp))
-       return i;
+       return i-1;
     mThemesList->insertItem(tmp, i);
     return i;
 }
@@ -180,13 +180,19 @@ void Installer::save()
 void Installer::slotCreate()
 {
   QString name;
-  NewThemeDlg dlg;
+  NewThemeDlg dlg(this);
 
   if (!dlg.exec()) return;
   dlg.hide();
 
   name = dlg.fileName();
   if (!theme->create(name)) return;
+  theme->setName(dlg.themeName());
+  theme->setAuthor(dlg.author());
+  theme->setEmail(dlg.email());
+  theme->setHomepage(dlg.homepage());  
+  theme->setVersion("0.1");
+  theme->savePreview(dlg.preview());
   theme->extract();
 
   sSettingTheme = true;

@@ -44,6 +44,9 @@ public:
   /** Extract theme groups from current Kde settings. */
   virtual bool extract(void);
 
+  /** Save preview image */
+  void savePreview(const QImage &image);
+
 protected:
   /** Extract items for given group. Returns number of extracted files. */
   virtual int extractGroup(const char* groupName);

@@ -34,6 +34,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qdir.h>
+#include <qimage.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -66,8 +67,8 @@ bool ThemeCreator::create(const QString aThemeName)
   clear();
   cleanupWorkDir();
 
-  setName(aThemeName);
   mThemePath = workDir() + aThemeName + '/';
+  mFileName = aThemeName;
   if (!KStandardDirs::makeDir(mThemePath))
   {
     warning(i18n("Failed to create directory %1: %2").arg(mThemePath).arg(strerror(errno)).ascii());
@@ -80,11 +81,13 @@ bool ThemeCreator::create(const QString aThemeName)
 
   backEnd->changeFileName(mThemercFile, "", false);
   reparseConfiguration();
-
-  setGroupGeneral();
-
-  emit changed();
   return true;
+}
+
+//-----------------------------------------------------------------------------
+void ThemeCreator::savePreview(const QImage &image)
+{
+  image.save(mThemePath+fileName()+".preview.png", "PNG");
 }
 
 
@@ -92,6 +95,8 @@ bool ThemeCreator::create(const QString aThemeName)
 bool ThemeCreator::extract(void)
 {
   kdDebug() << "Theme::extract() started" << endl;
+
+  setGroupGeneral();
 
   loadMappings();
 
@@ -101,8 +106,9 @@ bool ThemeCreator::extract(void)
   kdDebug() << "Theme::extract() done" << endl;
 
   saveSettings();
-  save(KGlobal::dirs()->saveLocation("themes") + name());
+  save(KGlobal::dirs()->saveLocation("themes") + fileName());
 
+  emit changed();
   return true;
 }
 
@@ -111,9 +117,9 @@ bool ThemeCreator::extract(void)
 int ThemeCreator::extractGroup(const char* aGroupName)
 {
   QString value, cfgFile, cfgGroup, appDir, group, emptyValue, mapValue, str;
-  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
+  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
   bool absPath, doCopyFile;
-  KSimpleConfig* cfg = NULL;
+  KSimpleConfig* cfg = 0;
   int len, i, extracted = 0;
   const char* missing = 0;
 
@@ -139,12 +145,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     value = mMappings->readEntry("ConfigAppDir");
     if (!value.isEmpty())
     {
-      appDir = value;
-#if 0
-      if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
-      else baseDir = QString::null;
-#endif
-      appDir = baseDir + appDir;
+      appDir = baseDir() + value;
       len = appDir.length();
       if (len > 0 && appDir[len-1]!='/') appDir += '/';
     }
@@ -250,7 +251,7 @@ int ThemeCreator::extractGroup(const char* aGroupName)
     delete cfg;
   }
 
-  kdDebug() << "*** done with " << aGroupName;
+  kdDebug() << "*** done with " << aGroupName << endl;
   return extracted;
 }
 
@@ -269,25 +270,6 @@ void ThemeCreator::extractCmd(KSimpleConfig* aCfg, const QString& aCmd,
   QString value, cmd;
 
   cmd = aCmd.stripWhiteSpace();
-
-  if (cmd == "winTitlebar")
-  {
-    if (aCfg->readEntry("TitlebarLook") != "pixmap")
-    {
-      deleteEntry("TitlebarPixmapActive", false);
-      deleteEntry("TitlebarPixmapInactive", false);
-    }
-  }
-  else if (cmd == "panelBack")
-  {
-    value = aCfg->readEntry("Position");
-    if ((value.lower() == "right") || (value.lower() == "left"))
-    {
-      value = readEntry("background");
-      kdDebug() << "rotating " << value << endl;
-      rotateImage(mThemePath + value, 90);
-    }
-  }
 
   aCfg->setGroup(grp);
 }
@@ -377,15 +359,12 @@ const QString ThemeCreator::extractFile(const QString& aFileName)
 //-----------------------------------------------------------------------------
 void ThemeCreator::setGroupGeneral(void)
 {
-  KConfig* cfg = kapp->config();
-
-  cfg->setGroup("General");
   setGroup("General");
   writeEntry("name", name());
-  writeEntry("author", cfg->readEntry("author"));
-  writeEntry("email", cfg->readEntry("email"));
-  writeEntry("homepage", cfg->readEntry("homepage"));
-  writeEntry("version", "0.1");
+  writeEntry("author", mAuthor);
+  writeEntry("email", mEmail);
+  writeEntry("homepage", mHomePage);
+  writeEntry("version", mVersion);
 }
 
 
