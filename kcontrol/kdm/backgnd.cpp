@@ -284,13 +284,13 @@ void KBackground::init()
 
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
     m_pBackgroundBox->insertItem(i18n("Flat"));
-    m_pBackgroundBox->insertItem(i18n("Pattern"));
-    m_pBackgroundBox->insertItem(i18n("Background Program"));
     m_pBackgroundBox->insertItem(i18n("Horizontal Gradient"));
     m_pBackgroundBox->insertItem(i18n("Vertical Gradient"));
     m_pBackgroundBox->insertItem(i18n("Pyramid Gradient"));
     m_pBackgroundBox->insertItem(i18n("Pipecross Gradient"));
     m_pBackgroundBox->insertItem(i18n("Elliptic Gradient"));
+    m_pBackgroundBox->insertItem(i18n("Pattern"));
+    m_pBackgroundBox->insertItem(i18n("Background Program"));
 
     // Wallpapers
     QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
@@ -434,7 +434,7 @@ void KBackground::defaults()
 void KBackground::slotBGMode(int mode)
 {
     KBackgroundRenderer *r = m_Renderer;
-
+    kdDebug()<<" mode !:"<<mode<<endl;
     if (mode == r->backgroundMode())
     return;
 
