@@ -550,6 +550,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
  */
 #ifndef NO_LOGGER
 
+#include <stdio.h>
 #include <time.h>	/* XXX this will break on stone-age systems */
 #ifndef Time_t
 # define Time_t time_t
@@ -564,8 +565,9 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 # endif
 static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
 #else
-# include <stdio.h>
 # define InitLog() while(0)
+#endif
+
 static const char *lognams[] = { "debug", "info", "error", "panic" };
 
 static void
@@ -575,6 +577,9 @@ logTime (char *dbuf)
     (void) time (&tim);
     strftime (dbuf, 20, "%b %e %H:%M:%S", localtime (&tim));
 }
+
+#if defined(LOG_DEBUG_MASK) || defined(USE_SYSLOG)
+STATIC int debugLevel;
 #endif
 
 #define OOMSTR "Out of memory. Expect problems.\n"
@@ -592,20 +597,23 @@ LogOutOfMem (void)
     }
     last = now;
 #ifdef USE_SYSLOG
-    syslog (LOG_CRIT, OOMSTR);
-#else
-    int el;
-    char dbuf[24], sbuf[128];
-    logTime (dbuf);
-    el = sprintf (sbuf, "%s "
-# ifdef LOG_NAME
-	LOG_NAME "[%ld]: " OOMSTR, dbuf, 
-# else
-	"%s[%ld]: " OOMSTR, dbuf, prog, 
-# endif
-	(long)getpid());
-    write (2, sbuf, el);
+    if (!(debugLevel & DEBUG_NOSYSLOG))
+	syslog (LOG_CRIT, OOMSTR);
+    else
 #endif
+    {
+	int el;
+	char dbuf[24], sbuf[128];
+	logTime (dbuf);
+	el = sprintf (sbuf, "%s "
+#ifdef LOG_NAME
+	    LOG_NAME "[%ld]: " OOMSTR, dbuf, 
+#else
+	    "%s[%ld]: " OOMSTR, dbuf, prog, 
+#endif
+	    (long)getpid());
+	write (2, sbuf, el);
+    }
 }
 
 typedef struct {
@@ -619,11 +627,14 @@ OutChLFlush (OCLBuf *oclbp)
 {
     if (oclbp->clen) {
 #ifdef USE_SYSLOG
-	syslog (lognums[oclbp->type], "%.*s", oclbp->clen, oclbp->buf);
-#else
-	oclbp->buf[oclbp->clen] = '\n';
-	write (2, oclbp->buf, oclbp->clen + 1);
+	if (!(debugLevel & DEBUG_NOSYSLOG))
+	    syslog (lognums[oclbp->type], "%.*s", oclbp->clen, oclbp->buf);
+	else
 #endif
+	{
+	    oclbp->buf[oclbp->clen] = '\n';
+	    write (2, oclbp->buf, oclbp->clen + 1);
+	}
 	oclbp->clen = 0;
     }
 }
@@ -638,11 +649,7 @@ OutChL (void *bp, char c)
     if (c == '\n')
 	OutChLFlush (oclbp);
     else {
-#ifndef USE_SYSLOG
 	if (oclbp->clen >= oclbp->blen - 1) {
-#else
-	if (oclbp->clen >= oclbp->blen) {
-#endif
 	    if (oclbp->buf == oclbp->lmbuf) {
 		OutChLFlush (oclbp);
 		oclbp->buf = 0;
@@ -659,19 +666,21 @@ OutChL (void *bp, char c)
 		oclbp->blen = sizeof(oclbp->lmbuf);
 	    }
 	}
-#ifndef USE_SYSLOG
+#ifdef USE_SYSLOG
+	if (!oclbp->clen && (debugLevel & DEBUG_NOSYSLOG)) {
+#else
 	if (!oclbp->clen) {
+#endif
 	    char dbuf[24];
 	    logTime (dbuf);
 	    oclbp->clen = sprintf (oclbp->buf, "%s "
-# ifdef LOG_NAME
+#ifdef LOG_NAME
 		LOG_NAME "[%ld] %s: ", dbuf, 
-# else
+#else
 		"%s[%ld] %s: ", dbuf, prog, 
-# endif
+#endif
 	    (long)getpid(), lognams[oclbp->type]);
 	}
-#endif
 	oclbp->buf[oclbp->clen++] = c;
     }
 }
@@ -691,8 +700,6 @@ Logger (int type, const char *fmt, va_list args)
 }
 
 #ifdef LOG_DEBUG_MASK
-STATIC int debugLevel;
-
 STATIC void
 Debug (const char *fmt, ...)
 {

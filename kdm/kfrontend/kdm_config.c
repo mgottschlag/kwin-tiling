@@ -33,6 +33,9 @@
 #include <errno.h>
 #include <netdb.h>
 #include <grp.h>
+#ifdef _POSIX_PRIORITY_SCHEDULING
+# include <sched.h>
+#endif
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 #define KDMDATA KDE_DATADIR "/kdm"
@@ -188,6 +191,10 @@ GWrite (const void *buf, int count)
 {
     if (write (wfd, buf, count) != count)
 	LogPanic ("Can't write to core\n");
+#ifdef _POSIX_PRIORITY_SCHEDULING
+    if ((debugLevel & DEBUG_HLPCON))
+	sched_yield ();
+#endif
 }
 
 static void

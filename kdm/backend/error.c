@@ -85,7 +85,8 @@ Panic (const char *mesg)
 void
 ReInitErrorLog ()
 {
-    InitLog ();
+    if (!(debugLevel & DEBUG_NOSYSLOG))
+	InitLog ();
 }
 #endif
 

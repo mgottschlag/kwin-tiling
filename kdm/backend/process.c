@@ -42,6 +42,12 @@ from The Open Group.
 #include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
+#ifndef X_NOT_POSIX
+# include <unistd.h>
+# ifdef _POSIX_PRIORITY_SCHEDULING
+#  include <sched.h>
+# endif
+#endif
 
 
 SIGVAL (*Signal (int sig, SIGFUNC handler))(int)
@@ -230,6 +236,40 @@ runAndWait (char **args, char **env)
     return waitVal (ret);
 }
 
+static char *
+locate (const char *exe)
+{
+    int len;
+    char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
+
+    if (!(path = getenv ("PATH"))) {
+	LogError ("Can't execute %'s: $PATH not set.\n", exe);
+	return 0;
+    }
+    len = strlen (exe);
+    name = nambuf + PATH_MAX - len;
+    memcpy (name, exe, len + 1);
+    *--name = '/';
+    do {
+	if (!(pathe = strchr (path, ':')))
+	    pathe = path + strlen (path);
+	len = pathe - path;
+	if (len && !(len == 1 && *path == '.')) {
+	    thenam = name - len;
+	    if (thenam >= nambuf) {
+		memcpy (thenam, path, len);
+		if (!access (thenam, X_OK)) {
+		    StrDup (&name, thenam);
+		    return name;
+		}
+	    }
+	}
+	path = pathe;
+    } while (*path++ != '\0');
+    LogError ("Can't execute %'s: not in $PATH.\n", exe);
+    return 0;
+}
+
 
 static GTalk *curtalk;
 
@@ -334,7 +374,18 @@ GOpen (GProc *proc, char **argv, const char *what, char **env, char *cname)
 	fcntl (pip[1], F_SETFD, FD_CLOEXEC);
 	sprintf (coninfo, "CONINFO=%d %d", proc->pipe.rfd, proc->pipe.wfd);
 	env = putEnv (coninfo, env);
-	execute (margv, env);
+	if (debugLevel & DEBUG_VALGRIND) {
+	    char **nmargv = xCopyStrArr (3, margv);
+	    nmargv[0] = locate ("valgrind");
+	    nmargv[1] = (char *)"--tool=memcheck";
+	    nmargv[2] = (char *)"--num-callers=8";
+	    execute (nmargv, env);
+	} else if (debugLevel & DEBUG_STRACE) {
+	    char **nmargv = xCopyStrArr (1, margv);
+	    nmargv[0] = locate ("strace");
+	    execute (nmargv, env);
+	} else
+	    execute (margv, env);
 	write (pip[1], "", 1);
 	exit (1);
     default:
@@ -412,6 +463,8 @@ GRead (void *buf, int len)
     }
 }
 
+#include <sched.h>
+
 static void
 GWrite (const void *buf, int len)
 {
@@ -427,6 +480,10 @@ GWrite (const void *buf, int len)
 	LogError ("Cannot write to %s\n", curtalk->pipe->who);
 	GErr ();
     }
+#ifdef _POSIX_PRIORITY_SCHEDULING
+    if ((debugLevel & DEBUG_HLPCON))
+	sched_yield ();
+#endif
 }
 
 void

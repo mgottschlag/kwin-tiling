@@ -42,8 +42,11 @@ from The Open Group.
 #define DEBUG_WSESS	0x10
 #define DEBUG_WCONFIG	0x20
 #define DEBUG_WGREET	0x40
+#define DEBUG_NOSYSLOG	0x80
 #define DEBUG_AUTH	0x100
 #define DEBUG_NOFORK	0x200
+#define DEBUG_VALGRIND	0x400
+#define DEBUG_STRACE	0x800
 
 #ifndef TRUE
 # define TRUE	1
