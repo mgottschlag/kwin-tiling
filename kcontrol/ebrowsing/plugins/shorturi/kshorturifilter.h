@@ -2,8 +2,7 @@
     kshorturifilter.h
 
     This file is part of the KDE project
-    Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
-    Copyright (C) 2000 Dawit Alemayehu <adawit@earthlink.net>
+    Copyright (C) 2000 Dawit Alemayehu <adawit@kde.org>
     Copyright (C) 2000 Malte Starostik <starosti@zedat.fu-berlin.de>
 
     This program is free software; you can redistribute it and/or modify
@@ -34,10 +33,28 @@
 
 class KInstance;
 
+/**
+* This is short URL filter class.
+*
+*
+*
+*
+* @short A filter that converts short URLs into fully qualified ones.
+*
+* @author Dawit Alemayehu <adawit@kde.org>
+* @author Malte Starostik <starosti@zedat.fu-berlin.de>
+*/
 class KShortURIFilter : public KURIFilterPlugin , public DCOPObject
 {
     K_DCOP
 public:
+
+    /**
+     * Creates a Short URI filter object
+     *
+     * @param parent the parent of this class.
+     * @param name the internal name for this object.
+     */
     KShortURIFilter( QObject *parent = 0, const char *name = 0 );
 
     /**
@@ -57,6 +74,13 @@ public:
      * @return true if the url has been filtered
      */
     virtual bool filterURI( KURIFilterData &data ) const;
+
+    /**
+     * Returns the name of the config module for
+     * this plugin.
+     *
+     * @return the name of the config module.
+     */
     virtual QString configName() const { return i18n("ShortURIFilter"); }
 
 public:
@@ -66,16 +90,26 @@ k_dcop:
 protected:
 
     /**
-     * Determines the validity of the URI from
+     * Validates whether the string contians a possible
+     * "short URI" signature.
      *
-     * Parses any given invalid URI to determine whether its
-     * signature is a possible match for a short URI.
-     *
-     * @param
-     * @param
-     * @return
+     * @param string url to be c
+     * @return true if the string is a possible short uri
      */
-    bool isValidShortURL ( const QString& ) const;
+    bool isValidShortURL( const QString& ) const;
+
+    /**
+     * Expands any environment variables
+     *
+     * This functions expands any environment variables
+     * it can find.  The results are the same as what
+     * you would get when enviroment variables are expanded
+     * in a *nix shell.
+     *
+     * @param string the url that contains variable to be expanded
+     * @return true if an environment variable was sucessfully expanded
+     */
+    bool expandEnivVar( QString& ) const;
 
 private:
     QMap<QString, QString> m_urlHints;
@@ -85,13 +119,11 @@ private:
 class KShortURIFilterFactory : public KLibFactory
 {
     Q_OBJECT
-
 public:
     KShortURIFilterFactory( QObject *parent = 0, const char *name = 0 );
     ~KShortURIFilterFactory();
 
     virtual QObject *create( QObject *parent = 0, const char *name = 0, const char* classname = "QObject", const QStringList &args = QStringList() );
-
     static KInstance *instance();
 
 private:

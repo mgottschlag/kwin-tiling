@@ -61,26 +61,60 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
   return true;
 }
 
+bool KShortURIFilter::expandEnivVar( QString& cmd ) const
+{
+    // ENVIRONMENT variable expansion
+    int env_len = 0;
+    while( 1 )
+    {
+        int env_loc = QRegExp( "$[a-zA-Z_][a-zA-Z0-9_]*" ).match( cmd, 0, &env_len );
+        if( env_loc == -1 ) break;
+        const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).latin1() );
+        debug( "Expand Variable : %s\nVariable expanded to : %s", cmd.mid( env_loc + 1, env_len - 1 ).latin1(), exp );
+        if( exp != 0  ) cmd.replace( env_loc, env_len, exp );
+    }
+    return ( env_len ) ? true : false;
+}
+
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
     QString cmd = data.uri().url();
 
-    // First look if we've got a known protocol prefix
-    // and it is a valid URL.  If so return immediately.
+    // We process SMB first because it can be
+    // represented with a special format.
+    int match = cmd.lower().find( "smb:" );
+    if (  match == 0 || cmd.find( "\\\\" ) == 0 )
+    {
+        if( match == 0 )
+            cmd = QDir::cleanDirPath( cmd.mid( 4 ) );
+        else
+        {
+            match = 0;
+            while( cmd[match] == '\\' ) match++;
+            cmd = cmd.mid( match );
+        }
+        cmd[0] == '/' ? cmd.prepend( "smb:" ) : cmd.prepend( "smb:/" );
+        setFilteredURI( data, cmd );
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
+        return data.hasBeenFiltered();
+    }
+
+    // Process the url for known and supported protocols. If it is
+    // a match and a valid url, we return immediately w/o filtering
+    // except if the protocol is "file".  The reason for this is that
+    // more filtering such as environment expansion might be required.
     QStringList protocols = KProtocolManager::self().protocols();
     for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
     {
-        if( (cmd.left((*it).length()).lower() == *it) && !data.uri().isMalformed() )
+        if( (cmd.left((*it).length()).lower() == *it) &&
+            !data.uri().isMalformed() && !data.uri().isLocalFile() )
         {
             setURIType( data, KURIFilterData::NET_PROTOCOL );
             return data.hasBeenFiltered();
         }
     }
 
-    // See if the beginning of cmd looks like a valid FQDN
-    // QRegExp is buggy, the caseSenstive flag does not work!!
-    // Worked around it by adding the signature for CAP letters
-    // into QRegExp. (DA)
+    // See if the beginning of cmd looks like a valid FQDN.
     QString host;
     if( QRegExp("[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]").match(cmd) == 0 )
     {
@@ -105,7 +139,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         setURIType( data, KURIFilterData::NET_PROTOCOL );
         return data.hasBeenFiltered();
     }
+
 /*
+    // TODO: once the issue with khelpcenter is finialized enable this filtering.
     // Is it to be invoked with kdehelp? btw: how to invoke the man/info browser in KDE 2?
     if( cmd.left(5) == "info:" || cmd.left(4) == "man:" || cmd[0] == '#' )
     {
@@ -119,26 +155,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
 */
 
-    cmd = QDir::cleanDirPath( cmd );
-
-    // Translate "smb:", "smb://" or anything that
-    // starts with "\\" into "smb:/".
-    bool smbURI = ( cmd.lower() == "smb:" || cmd.lower() == "smb:/" );
-    if( smbURI || cmd.find( "\\\\" ) == 0 )
-    {
-        if( smbURI )
-            if( cmd.left(1) != '/' ) cmd += '/';
-        else
-            cmd.replace( 0, 2, "smb:/" );
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return data.hasBeenFiltered();
-    }
-
     // Local file and directory processing.
-
     // Strip off "file:/" in order to expand local
     // URLs if necessary.
+    cmd = QDir::cleanDirPath( cmd );
     if( cmd.lower().find("file:/") == 0 )
         cmd.remove ( 0, cmd[6] == '/' ? 6 : 5 );
 
@@ -165,6 +185,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             }
         }
     }
+
+    // Expand any environment variables
+    expandEnivVar( cmd );
 
     // Now for any local resource
     struct stat buff;
