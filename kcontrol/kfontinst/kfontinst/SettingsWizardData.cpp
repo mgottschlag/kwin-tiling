@@ -141,3 +141,4 @@ CSettingsWizardData::~CSettingsWizardData()
     // no need to delete child widgets, Qt does it all for us
 }
 
+#include "SettingsWizardData.moc"

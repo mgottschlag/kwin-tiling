@@ -224,3 +224,4 @@ void CSysCfgSettingsWidgetData::xsetFpRehashSelected(bool)
     qWarning( "CSysCfgSettingsWidgetData::xsetFpRehashSelected(bool): Not implemented yet!" );
 }
 
+#include "SysCfgSettingsWidgetData.moc"

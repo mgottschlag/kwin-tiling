@@ -37,6 +37,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
 
+using namespace std;
+
 static CXftConfig *xft;  // Needed so C functions can access class instance...
 
 extern "C"

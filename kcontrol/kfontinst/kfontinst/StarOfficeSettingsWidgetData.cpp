@@ -126,3 +126,4 @@ void CStarOfficeSettingsWidgetData::ppdSelected(const QString &)
     qWarning( "CStarOfficeSettingsWidgetData::ppdSelected(const QString &): Not implemented yet!" );
 }
 
+#include "StarOfficeSettingsWidgetData.moc"

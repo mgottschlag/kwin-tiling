@@ -141,3 +141,4 @@ void CFontsWidgetData::preview(const QString &)
     qWarning( "CFontsWidgetData::preview(const QString &): Not implemented yet!" );
 }
 
+#include "FontsWidgetData.moc"

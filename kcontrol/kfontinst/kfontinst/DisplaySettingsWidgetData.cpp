@@ -142,3 +142,4 @@ void CDisplaySettingsWidgetData::topAndBottomSelected(bool)
     qWarning( "CDisplaySettingsWidgetData::topAndBottomSelected(bool): Not implemented yet!" );
 }
 
+#include "DisplaySettingsWidgetData.moc"

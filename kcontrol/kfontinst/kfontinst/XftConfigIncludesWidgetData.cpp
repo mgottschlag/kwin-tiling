@@ -108,3 +108,4 @@ void CXftConfigIncludesWidgetData::removePressed()
     qWarning( "CXftConfigIncludesWidgetData::removePressed(): Not implemented yet!" );
 }
 
+#include "XftConfigIncludesWidgetData.moc"

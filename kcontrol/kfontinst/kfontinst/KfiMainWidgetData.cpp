@@ -97,3 +97,4 @@ void CKfiMainWidgetData::tabChanged(QWidget *)
     qWarning( "CKfiMainWidgetData::tabChanged(QWidget *): Not implemented yet!" );
 }
 
+#include "KfiMainWidgetData.moc"

@@ -48,3 +48,4 @@ void CErrorDialog::open(const QString &str)
     itsGroupBox->setTitle(str);
     exec();
 }
+#include "ErrorDialog.moc"

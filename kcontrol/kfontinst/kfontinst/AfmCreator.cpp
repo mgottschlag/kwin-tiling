@@ -51,6 +51,8 @@
 static const char * constNotDef     = ".notdef";
 static const char * constKfiComment = "Comment kfontinst ";
 
+using namespace std;
+
 CAfmCreator::EStatus CAfmCreator::go(const QString &dir)
 {
     EStatus status=SUCCESS;
@@ -422,3 +424,4 @@ QString CAfmCreator::statusToStr(EStatus val)
             return i18n("Uknown");
     }
 }
+#include "AfmCreator.moc"

@@ -30,7 +30,6 @@
 #include "FontEngine.h"
 #include "KfiGlobal.h"
 #include "Misc.h"
-#include <fstream.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <klocale.h>
@@ -39,6 +38,8 @@
 #include "config.h"
 #endif
  
+using namespace std;
+
 CTtf::CTtf()
     : itsBuffer(NULL),
       itsBufferSize(0)
@@ -139,7 +140,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
             bool           error=false;
             unsigned short subTable;
 
-            ttf.read(&kern, sizeof(TKern));
+            ttf.read((char *)&kern, sizeof(TKern));
 
             if(0==ntohs(kern.version))
                 for(subTable=0; subTable<ntohs(kern.numSubTables) && !error; ++subTable)
@@ -148,7 +149,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
                         TKernSubTable sub;
                         int           pos=ttf.tellg();
 
-                        ttf.read(&sub, sizeof(TKernSubTable));
+                        ttf.read((char *)&sub, sizeof(TKernSubTable));
 
                         if(ttf.good())
                         {
@@ -156,7 +157,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
                             {
                                 TKernFmt0Header hdr;
 
-                                ttf.read(&hdr, sizeof(hdr));
+                                ttf.read((char *)&hdr, sizeof(hdr));
 
                                 if(ttf.good())
                                 {
@@ -166,7 +167,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
                                     {
                                         TKernFmt0 data;
 
-                                        ttf.read(&data, sizeof(TKernFmt0));
+                                        ttf.read((char *)&data, sizeof(TKernFmt0));
 
                                         if(ttf.good())
                                         {
@@ -210,12 +211,12 @@ bool CTtf::locateTable(ifstream &ttf, const char *table)
         int        e;
 
         ttf.seekg(0, ios::beg);
-        ttf.read(&dir, sizeof(TDirectory));
+        ttf.read((char *)&dir, sizeof(TDirectory));
 
         if(ttf.good())
             for(e=0; e<ntohs(dir.numTables); ++e)
             {
-                ttf.read(&entry, sizeof(TDirEntry));
+                ttf.read((char *)&entry, sizeof(TDirEntry));
                 if(ttf.good())
                 {
                     if(memcmp(entry.tag, table, 4)==0)

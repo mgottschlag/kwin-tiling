@@ -312,3 +312,4 @@ QString CDiskFontListWidget::statusToStr(EStatus status)
             return i18n("Unknown");
     }
 }
+#include "DiskFontListWidget.moc"

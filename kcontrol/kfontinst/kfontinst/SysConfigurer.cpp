@@ -286,3 +286,4 @@ void CSysConfigurer::status(const QString &str, const QString &errorMsg, bool er
             emit stopProgress();
         }
 }
+#include "SysConfigurer.moc"

@@ -40,6 +40,8 @@
 
 static const QCString constFontpaths ("# KFontinst fontpaths file -- DO NOT EDIT");
 
+using namespace std;
+
 CXConfig::CXConfig()
         : QObject(NULL, NULL),
           itsType(NONE)
@@ -783,3 +785,4 @@ bool CXConfig::createFontsDotDir(const QString &dir)
  
     return status;
 }
+#include "XConfig.moc"

@@ -174,3 +174,4 @@ void CXftConfigSettingsWidgetData::useSubPixelChecked(bool)
     qWarning( "CXftConfigSettingsWidgetData::useSubPixelChecked(bool): Not implemented yet!" );
 }
 
+#include "XftConfigSettingsWidgetData.moc"

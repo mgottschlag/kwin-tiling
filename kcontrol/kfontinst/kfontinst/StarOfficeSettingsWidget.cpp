@@ -221,3 +221,4 @@ void CStarOfficeSettingsWidget::setupPpdCombo()
         CKfiGlobal::cfg().setSOPpd(removeInfo(itsPpdCombo->currentText())); // Just in case the above didn't match the cfg entry
     }
 }
+#include "StarOfficeSettingsWidget.moc"

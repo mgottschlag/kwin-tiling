@@ -253,3 +253,4 @@ void CDirSettingsWidgetData::xDirButtonPressed()
     qWarning( "CDirSettingsWidgetData::xDirButtonPressed(): Not implemented yet!" );
 }
 
+#include "DirSettingsWidgetData.moc"

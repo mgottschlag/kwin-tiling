@@ -583,3 +583,4 @@ void CFontListWidget::progressStop()
         itsShowingProgress=false;
     }
 }
+#include "FontListWidget.moc"

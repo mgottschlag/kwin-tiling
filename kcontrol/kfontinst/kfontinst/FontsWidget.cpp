@@ -226,3 +226,4 @@ void CFontsWidget::scanDirs()
     itsDisk->scan();
     itsInstalled->scan();
 }
+#include "FontsWidget.moc"

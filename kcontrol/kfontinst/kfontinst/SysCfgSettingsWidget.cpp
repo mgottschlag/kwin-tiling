@@ -174,3 +174,4 @@ void CSysCfgSettingsWidget::enableAfmGeneration()
 {
     generateAfmsSelected(true);
 }
+#include "SysCfgSettingsWidget.moc"

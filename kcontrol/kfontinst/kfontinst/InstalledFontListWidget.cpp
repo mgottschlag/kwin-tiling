@@ -668,3 +668,4 @@ QString CInstalledFontListWidget::statusToStr(EStatus status)
             return i18n("Unknown");
     }
 }
+#include "InstalledFontListWidget.moc"

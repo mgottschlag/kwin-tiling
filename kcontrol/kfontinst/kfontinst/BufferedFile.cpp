@@ -31,6 +31,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+using namespace std;
+
 CBufferedFile::CBufferedFile(const QCString &file, const QCString &guard, const char *insertPos, bool insertBefore, bool section)
              : itsData(NULL),
                itsSize(0),

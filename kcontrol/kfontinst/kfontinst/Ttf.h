@@ -33,7 +33,7 @@
 #include <qlist.h>
 #include <qstring.h>
 
-class ifstream;
+#include <fstream>
 
 class CTtf
 {
@@ -194,7 +194,7 @@ class CTtf
 
     private:
 
-    static bool   locateTable(ifstream &ttf, const char *table);
+    static bool   locateTable(std::ifstream &ttf, const char *table);
     EStatus       readFile(const QString &nameAndPath);
     EStatus       writeFile(const QString &nameAndPath);
     EStatus       fixGlyphName(int index, const char *newName);

@@ -160,3 +160,4 @@ void CXftConfigRulesData::removeButtonPressed()
     qWarning( "CXftConfigRulesData::removeButtonPressed(): Not implemented yet!" );
 }
 
+#include "XftConfigRulesData.moc"

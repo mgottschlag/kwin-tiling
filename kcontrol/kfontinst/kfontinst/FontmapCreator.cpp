@@ -606,3 +606,4 @@ CFontmapCreator::TFontFamily::~TFontFamily()
     if(black)
         delete black;
 }
+#include "FontmapCreator.moc"

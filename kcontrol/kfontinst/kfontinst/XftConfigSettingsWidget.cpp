@@ -220,3 +220,4 @@ CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *
 {
 }
 #endif
+#include "XftConfigSettingsWidget.moc"

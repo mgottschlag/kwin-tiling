@@ -93,3 +93,4 @@ void CFontListWidgetData::selectionChanged()
     qWarning( "CFontListWidgetData::selectionChanged(): Not implemented yet!" );
 }
 
+#include "FontListWidgetData.moc"

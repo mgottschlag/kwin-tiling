@@ -86,3 +86,4 @@ CErrorDialogData::~CErrorDialogData()
     // no need to delete child widgets, Qt does it all for us
 }
 
+#include "ErrorDialogData.moc"

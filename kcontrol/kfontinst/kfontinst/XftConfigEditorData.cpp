@@ -292,3 +292,4 @@ void CXftConfigEditorData::removeMatch()
     qWarning( "CXftConfigEditorData::removeMatch(): Not implemented yet!" );
 }
 
+#include "XftConfigEditorData.moc"

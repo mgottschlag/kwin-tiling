@@ -1,0 +1,43 @@
+
+dnl -- FreeType v2 --------------------------------------------------------------
+FREETYPE_INC=NO
+AC_MSG_CHECKING([for FreeType2 freetype/t1tables.h])
+FREETYPE_INC_DIRS="/usr/include /usr/include/freetype2 /usr/local/include /usr/local/include/freetype2 /usr/X11R6/include/freetype2 $kde_extra_includes"
+AC_FIND_FILE(freetype/t1tables.h,$FREETYPE_INC_DIRS,FREETYPE_INC)
+if test "$FREETYPE_INC" = NO; then
+    AC_MSG_ERROR([FreeType2 headers not found!])
+else
+    AC_MSG_RESULT([yes, $FREETYPE_INC])
+    FREETYPE_INC="-I$FREETYPE_INC"
+fi
+
+if test "$FREETYPE_INC" != NO; then
+    dnl FreeType 2.0.1 has a ftnames.h, whereas 2.0.2 calls it ftsnames.h
+    AC_MSG_CHECKING([for FreeType2 freetype/ftsnames.h])
+    AC_FIND_FILE(freetype/ftsnames.h,$FREETYPE_INC_DIRS,FT2_FTSNAMES)
+    if test "$FT2_FTSNAMES" = NO; then
+        AC_MSG_RESULT([no])
+    else
+        AC_MSG_RESULT([yes])
+        AC_DEFINE_UNQUOTED(HAVE_FT2_FTSNAMES, 1, [Define if your system has ftsnames.h])
+    fi
+
+    AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
+    if test "$FREETYPE_LIB" = NO; then
+        AC_MSG_ERROR([FreeType2 library not found!])
+    else
+        AC_DEFINE_UNQUOTED(HAVE_FT2, 1, [Define if your system has the freetype2 library])
+        AC_SUBST(FREETYPE_LIB)
+        AC_SUBST(FREETYPE_INC)
+    fi
+fi
+
+dnl -- Xft/XRender --------------------------------------------------------------
+AC_MSG_CHECKING([for Xft/XRender X11/Xft/Xft.h])
+FOUND_XFT=NO
+AC_CHECK_HEADERS(X11/Xft/Xft.h,FOUND_XFT="YES",FOUND_XFT="NO")
+if test "$FOUND_XFT" = YES; then
+    AC_DEFINE_UNQUOTED(HAVE_XFT, 1, [Define if your system has Xft support])
+fi
+
+

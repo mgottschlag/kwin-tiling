@@ -113,3 +113,4 @@ extern "C"
         return mod;
     };
 }
+#include "KfiCmModule.moc"

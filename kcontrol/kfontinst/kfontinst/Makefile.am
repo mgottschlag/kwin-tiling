@@ -1,9 +1,9 @@
 SUBDIRS = docs
 
 lib_LTLIBRARIES = libkcm_kfontinst.la
-libkcm_kfontinst_la_LIBADD  = $(FREETYPE_LIB) -lkfile -lkdeui -lkdecore -lqt
+libkcm_kfontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
 libkcm_kfontinst_la_METASOURCES = AUTO
-libkcm_kfontinst_la_LDFLAGS = -module -avoid-version -no-undefined $(all_libraries) $(KDE_RPATH)
+libkcm_kfontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH)
  
 desktop_DATA = kfontinst.desktop
 desktopdir = $(kde_appsdir)/Settings/System/

@@ -103,3 +103,4 @@ CSettingsWidget::CSettingsWidget(QWidget *parent, const char *name)
     connect(sys, SIGNAL(afmGenerationDeselected()), so, SLOT(disable()));
     connect(dirs, SIGNAL(encodingsDirChanged()), sys, SLOT(scanEncodings()));
 }
+#include "SettingsWidget.moc"

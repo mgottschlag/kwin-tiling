@@ -1563,9 +1563,9 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
 
     if(spd)
     {
-        unsigned char hdr[constHeaderSize];
+        char hdr[constHeaderSize];
 
-        spd.read(hdr, sizeof(unsigned char)*constHeaderSize);
+        spd.read(hdr, sizeof(char)*constHeaderSize);
         if(spd.good())
         {
             static const char *constNumbers="0123456789";

@@ -39,7 +39,7 @@
 #include <qcstring.h>
 #include <qlist.h>
 #include <qstringlist.h>
-#include <fstream.h>
+#include <fstream>
 #include "xftint.h"
 
 class CXftConfig
@@ -52,7 +52,7 @@ class CXftConfig
         ~TEntry()                                                   { clear(); }
 
         void clear();
-        void output(ofstream &of);
+        void output(std::ofstream &of);
 
         QCString testStr();
         QCString editStr();

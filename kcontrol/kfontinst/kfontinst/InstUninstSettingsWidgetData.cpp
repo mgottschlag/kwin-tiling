@@ -140,3 +140,4 @@ void CInstUninstSettingsWidgetData::uninstallDirButtonPressed()
     qWarning( "CInstUninstSettingsWidgetData::uninstallDirButtonPressed(): Not implemented yet!" );
 }
 
+#include "InstUninstSettingsWidgetData.moc"

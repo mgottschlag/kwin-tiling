@@ -259,3 +259,4 @@ QString CStarOfficeConfig::statusToStr(EStatus st)
             return "Unknown";
     }
 }
+#include "StarOfficeConfig.moc"

@@ -625,14 +625,14 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
         const T8Bit  *data8=NULL;
         const T16Bit *data16=NULL;
 
-        of << (its8BitList.count() - itsNumBuiltin)+its16BitList.count() << endl;
+        of << (its8BitList.count() - itsNumBuiltin)+its16BitList.count() << std::endl;
 
         for(data8=first8Bit(); data8; data8=next8Bit())
             if(strcmp(data8->file.latin1(), constBuiltin.latin1()))
-                of << data8->name.latin1() << " " << data8->file.latin1() << endl;
+                of << data8->name.latin1() << " " << data8->file.latin1() << std::endl;
 
         for(data16=first16Bit(); data16; data16=next16Bit())
-            of << data16->name.latin1() << " " << data16->file.latin1() << endl; 
+            of << data16->name.latin1() << " " << data16->file.latin1() << std::endl; 
 
         of.close();
         status=true;

@@ -195,3 +195,4 @@ void CDirSettingsWidget::ghostscriptChecked(bool on)
 {
     CKfiGlobal::cfg().setDoGhostscript(on);
 }
+#include "DirSettingsWidget.moc"

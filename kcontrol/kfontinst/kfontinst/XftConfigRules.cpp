@@ -182,3 +182,4 @@ void CXftConfigRules::display(CXftConfig::TEntry *rule)
 }
 
 #endif
+#include "XftConfigRules.moc"
