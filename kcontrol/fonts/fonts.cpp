@@ -280,8 +280,13 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
 
-   QGroupBox   *aaBox=new QGroupBox(i18n("Anti-Alias"), this);
-   QGridLayout *aaLayout=new QGridLayout(aaBox, 3, 6, 11, 6);
+   QGroupBox *aaBox=new QGroupBox(i18n("Anti-Alias"), this);
+
+   aaBox->setColumnLayout(0, Qt::Vertical);
+   aaBox->layout()->setSpacing(6);
+   aaBox->layout()->setMargin(11);
+
+   QGridLayout *aaLayout=new QGridLayout(aaBox->layout(), 3, 6);
 
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
 
