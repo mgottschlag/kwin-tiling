@@ -51,3 +51,5 @@ Name[zh_TW]=Internet 電影資料庫
 ServiceTypes=SearchProvider
 Keys=imdb
 Query=http://imdb.com/Find?\\{@}
+Query[en_GB]=http://imdb.co.uk/Find?\\{@}
+
