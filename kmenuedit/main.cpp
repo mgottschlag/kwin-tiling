@@ -102,8 +102,8 @@ int main( int argc, char **argv )
   global_pix_sel2 = new KIconLoaderDialog;
   QStringList icon_list = KGlobal::dirs()->getResourceDirs("icon");
   QStringList icon_list2 = KGlobal::dirs()->getResourceDirs("mini");
-  global_pix_sel->setDirs(icon_list);
-  global_pix_sel2->setDirs(icon_list2);
+  global_pix_sel->changeDirs(icon_list);
+  global_pix_sel2->changeDirs(icon_list2);
 
   KMenuEdit edit;
   if( a.isRestored() )
