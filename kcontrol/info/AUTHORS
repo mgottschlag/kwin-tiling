@@ -12,6 +12,8 @@ Info Module:
   Aubert Pierre (paubert@laninsa.insa-lyon.fr) [HP-UX]
   Vladimir Kushnir (kushn@olinet.isf.kiev.ua) [FreeBSD]
   Alex Zepeda (garbanzo@hooked.net) [FreeBSD]
+  Jaromir Dolecek (dolecek@ics.muni.cz) [NetBSD]
+  David Brownlee (abs@NetBSD.org) [NetBSD]
 
 
 Conversion to kcontrol applet:
