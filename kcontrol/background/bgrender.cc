@@ -44,7 +44,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     : KBackgroundSettings(desk, config)
 {
     m_State = 0;
- 
+
     if (config)
 	m_pConfig = config;
     else
@@ -80,7 +80,7 @@ void KBackgroundRenderer::tile(QImage *dest, QRect rect, QImage *src)
 	for (x=offx; x<offx+w; x++)
 	    dest->setPixel(x, y, src->pixel(x%sw, y%sh));
 }
-	
+
 
 /*
  * Build a command line to run the program.
@@ -135,7 +135,7 @@ QString KBackgroundRenderer::buildCommand()
 
 
 /*
- * Create a background tile. If the background mode is `Program', 
+ * Create a background tile. If the background mode is `Program',
  * this is asynchronous.
  */
 int KBackgroundRenderer::doBackground(bool quit)
@@ -146,7 +146,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     int wpmode = wallpaperMode();
     int blmode = blendMode();
     int bgmode = backgroundMode();
-    
+
     if ( (blmode == NoBlending) &&
 	 ((wpmode == Tiled) ||
 	  (wpmode == Scaled) ||
@@ -207,12 +207,12 @@ int KBackgroundRenderer::doBackground(bool quit)
         m_pProc->start(KShellProcess::NotifyOnExit);
         retval = Wait;
         break;
-		
+
     case HorizontalGradient:
     {
 	QSize size = m_Size;
 	size.setHeight(30);
-	*m_pBackground = KImageEffect::gradient(size, colorA(), colorB(), 
+	*m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::HorizontalGradient, 0);
         break;
     }
@@ -281,7 +281,7 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 	    wpmode = NoWallpaper;
 	    goto wp_out;
 	}
-	wp = wp.convertDepth(32);
+	wp = wp.convertDepth(32, DiffuseAlphaDither);
 
 	// If we're previewing, scale the wallpaper down to make the preview
 	// look more like the real desktop.
@@ -301,7 +301,10 @@ wp_out:
       m_pBackground->create(10, 10, 32);
       m_pBackground->fill(colorA().rgb());
     }
-	
+
+    if (wpmode != Centred) // only implemented transparency for that mode
+        wp.setAlphaBuffer(false);
+
     int ww = wp.width();
     int wh = wp.height();
     int retval = Done;
@@ -342,7 +345,7 @@ wp_out:
     {
 	QSize size = m_Size;
 	if (bTile)
-	    size = QSize(QMIN(m_Size.width(), wp.width()), 
+	    size = QSize(QMIN(m_Size.width(), wp.width()),
 		    QMIN(m_Size.height(), wp.height()));
 	m_pImage->create(size, 32);
 
@@ -384,7 +387,7 @@ wp_out:
             offy = -ya; wh = h; ya = 0;
         } else
             offy = 0;
-	
+
 	// Background is no tile?
 	if (m_pBackground->size() == m_Size) {
 
@@ -394,7 +397,7 @@ wp_out:
 	  else
 	    *m_pImage = *m_pBackground;
 	  if (m_pImage->depth()<32)
-	    *m_pImage = m_pImage->convertDepth(32);
+	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
 	}
 	else {
 	    int tw = w, th = h;
@@ -405,23 +408,23 @@ wp_out:
 	    }
 	    m_pImage->create(tw, th, 32);
 
-	    // Fill the rectangles not covered by the centred image.
-	    if (ya) {
-		tile(m_pImage, QRect(0, 0, tw, ya), m_pBackground);
-		tile(m_pImage, QRect(0, ya+wh, tw, th-ya-wh), m_pBackground);
-	    }
-	    if (xa) {
-		tile(m_pImage, QRect(0, ya, xa, wh), m_pBackground);
-		tile(m_pImage, QRect(xa+ww, ya, tw-xa-ww, wh), m_pBackground);
-	    }
+            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
 	}
 
-	// And copy the centred image		
+	// And copy the centred image
         for (y=0; y<wh; y++) {
-	    if (m_pImage->scanLine(ya+y) && wp.scanLine(y+offy))
-            memcpy(m_pImage->scanLine(ya+y) + xa * sizeof(QRgb),
-                   wp.scanLine(y+offy) + offx * sizeof(QRgb),
-                   ww * sizeof(QRgb));
+	    if (m_pImage->scanLine(ya+y) && wp.scanLine(y+offy)) {
+                QRgb *b, *d;
+                int a;
+                for (int x = 0; x < ww; x++) {
+                    b = reinterpret_cast<QRgb*>(m_pImage->scanLine(ya+y) + (xa + x) * sizeof(QRgb));
+                    d = reinterpret_cast<QRgb*>(wp.scanLine(y+offy) + (offx + x) * sizeof(QRgb));
+                    a = qAlpha(*d);
+                    *b = qRgb(qRed(*b) - (((qRed(*b) - qRed(*d)) * a) >> 8),
+                              qGreen(*b) - (((qGreen(*b) - qGreen(*d)) * a) >> 8),
+                              qBlue(*b) - (((qBlue(*b) - qBlue(*d)) * a) >> 8));
+                }
+            }
 	}
         break;
     }
@@ -453,7 +456,7 @@ wp_out:
 	    *m_pImage = m_pBackground->copy();
 	  else
 	    *m_pImage = *m_pBackground;
-	    
+
 	  if (m_pImage->depth()<32)
 	    *m_pImage = m_pImage->convertDepth(32);
 
@@ -496,13 +499,13 @@ wp_out:
 
       case VerticalBlending:
 	KImageEffect::blend( *m_pImage, *m_pBackground,
-			     KImageEffect::VerticalGradient, 
+			     KImageEffect::VerticalGradient,
 			     100, bal );
 	break;
 
       case PyramidBlending:
 	KImageEffect::blend( *m_pImage, *m_pBackground,
-			     KImageEffect::PyramidGradient, 
+			     KImageEffect::PyramidGradient,
 			     bal, bal );
 	break;
 
@@ -514,7 +517,7 @@ wp_out:
 
       case EllipticBlending:
 	KImageEffect::blend( *m_pImage, *m_pBackground,
-			     KImageEffect::EllipticGradient, 
+			     KImageEffect::EllipticGradient,
 			     bal, bal );
 	break;
 
@@ -647,7 +650,7 @@ void KBackgroundRenderer::setPreview(QSize size)
         m_Size = size;
     }
 }
-	
+
 
 void KBackgroundRenderer::setTile(bool tile)
 {
