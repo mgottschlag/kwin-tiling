@@ -97,7 +97,7 @@ void ConfigModule::clientChanged(bool state)
 
 void ConfigModule::helpRequest()
 {
-  kapp->invokeHTMLHelp(docPath(), "");
+  kapp->invokeHelp(docPath(), "");
 }
 
 
