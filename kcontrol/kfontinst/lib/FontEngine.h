@@ -351,12 +351,10 @@ class CFontEngine
 
 #if KFI_FT_IS_GE(2, 1, 8)
     bool       drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
-                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0,
-                         bool multiLine=true);
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, bool multiLine=true);
 #else
     bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
-                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0,
-                         bool multiLine=true);
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, bool multiLine=true);
 #endif
 
 #endif

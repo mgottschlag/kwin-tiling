@@ -93,12 +93,13 @@ extern "C"
 #include <klocale.h>
 #endif
 
-static const char *constNoPsName  ="NO_PS_NAME";
-static const char *constBmpRoman  ="";
-static const char *constBmpItalic =" Italic";
-static const char *constBmpOblique=" Oblique";
-static const char *constOblique   ="Oblique";
-static const char *constSlanted   ="Slanted";
+static const char *constNoPsName             = "NO_PS_NAME";
+static const char *constBmpRoman             = "";
+static const char *constBmpItalic            = " Italic";
+static const char *constBmpOblique           = " Oblique";
+static const char *constOblique              = "Oblique";
+static const char *constSlanted              = "Slanted";
+static const char *const constDefaultFoundry = "Misc";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -567,6 +568,12 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
 {
     static const int constWaterFallSizes[]={ 12, 18, 24, 36, 48, 60, 72, 84, 96, 108, 120, 0 };
 
+    if(!isScaleable())
+    {
+        waterfall=false;
+        fSize=-1;
+    }
+
     FT_Size          size;
     FT_Face          face;
 #if KFI_FT_IS_GE(2, 1, 8)
@@ -578,7 +585,6 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
     bool             isBitmap=isABitmap(itsType);
     int              fontSize=waterfall ? constWaterFallSizes[0] : fSize<0 || thumb ? 28 : fSize,
                      offset=4,
-                     space=8,
                      fontHeight;
 
     if(thumb && (width!=height || width>128))
@@ -589,13 +595,11 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
         if(height<=32)
         {
             offset=2;
-            space=0;
             fontSize=(height-(offset*2))-2;
         }
         else
         {
             offset=3;
-            space=3;
             fontSize=((height-(offset*3))-6)/2;
         }
     }
@@ -640,8 +644,12 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
             info=name.mid(pos);
             name=name.left(pos);
         }
-        else if(!waterfall && fSize>0)
-            name=i18n("%3, %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD)).arg(name);
+
+        if(!itsFoundry.isEmpty() && constDefaultFoundry!=itsFoundry)
+            name=i18n("%2,  Foundry: %1").arg(itsFoundry).arg(name);
+
+        if(!isBitmap && !waterfall && fSize>0)
+            name=i18n("%3,  %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD)).arg(name);
 
         // title.setPixelSize(12);
         painter.setFont(title);
@@ -731,7 +739,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
                         {
                             for(ch=0; ch<quote.length(); ++ch)
                                 if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height,
-                                             startX, stepY, space, false))
+                                             startX, stepY, false))
                                     break;
                             if(y>=height)
                                 break;
@@ -743,7 +751,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
                 else
                     for(ch=0; ch<quote.length(); ++ch)
                         if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX,
-                                     stepY, space))
+                                     stepY))
                             break;
             }
 
@@ -900,8 +908,6 @@ static QCString getName(FT_Face face, int nid)
 
     return str;
 }
-
-static const char * const constDefaultFoundry = "Misc";
 
 static const char * getFoundry(const char *notice, bool retNull=false)
 {
@@ -2703,11 +2709,11 @@ void CFontEngine::align32(Bitmap &bmp)
 #if KFI_FT_IS_GE(2, 1, 8)
 bool CFontEngine::drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum,
                             FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
-                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space, bool multiLine)
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, bool multiLine)
 #else
 bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
                             FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
-                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space, bool multiLine)
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, bool multiLine)
 #endif
 {
     int        left,
@@ -2755,8 +2761,11 @@ bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
         x+=xAdvance+1;
     }
     else if(x!=startX)
-        x+=space;
-
+#if KFI_FT_IS_GE(2, 1, 8)
+        x+=(font.width/3);
+#else
+        x+=(font.font.pix_width/3);
+#endif
     return false;
 }
 #endif
