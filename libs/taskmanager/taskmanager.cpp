@@ -1,5 +1,3 @@
-#include <iostream>
-using namespace std;
 /*****************************************************************
 
 Copyright (c) 2000 Matthias Elter <elter@kde.org>
@@ -129,18 +127,15 @@ void TaskManager::windowAdded(WId w )
         wType != NET::Dialog &&
         wType != NET::Utility)
     {
-    cout << "TaskManager::windowAdded >> skippable" << endl;
         return;
     }
 
     // ignore windows that want to be ignored by the taskbar
     if ((info.state() & NET::SkipTaskbar) != 0)
     {
-    cout << "TaskManager::windowAdded >> skip tha task bar" << endl;
         _skiptaskbar_windows.push_front( w ); // remember them though
         return;
     }
-    cout << "TaskManager::windowAdded" << endl;
 
     Window transient_for_tmp;
     if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp ))
@@ -185,7 +180,6 @@ void TaskManager::windowRemoved(WId w )
     Task* t = findTask(w);
     if (!t)
     {
-        cout << "TaskManager::windowRemoved >> couldn't find associated task" << endl;
         return;
     }
 
@@ -200,13 +194,11 @@ void TaskManager::windowRemoved(WId w )
         }
 
         delete t;
-        cout << "TM: Task for WId " << w << " removed." << endl;
         //kdDebug() << "TM: Task for WId " << w << " removed." << endl;
     }
     else
     {
         t->removeTransient( w );
-        cout << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
         //kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
     }
 }
