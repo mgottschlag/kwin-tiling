@@ -277,14 +277,27 @@ int TaskManager::numberOfDesktops() const
     return kwin_module->numberOfDesktops();
 }
 
-bool TaskManager::isOnTop(Task* task)
+bool TaskManager::isOnTop(const Task* task)
 {
     if(!task) return false;
-    return task->isOnTop();
+
+    for (QValueList<WId>::ConstIterator it = kwin_module->stackingOrder().fromLast();
+         it != kwin_module->stackingOrder().end(); --it ) {
+	for (Task* t = _tasks.first(); t != 0; t = _tasks.next() ) {
+	    if ( (*it) == t->window() ) {
+		if ( t == task )
+		    return true;
+		if ( !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
+		    return false;
+		break;
+	    }
+	}
+    }
+    return false;
 }
 
 
-Task::Task(WId win, QObject * parent, const char *name)
+Task::Task(WId win, TaskManager * parent, const char *name)
   : QObject(parent, name),
     _active(false), _win(win),
     _lastWidth(0), _lastHeight(0), _lastResize(false), _lastIcon(),

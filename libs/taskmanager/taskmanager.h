@@ -37,6 +37,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwin.h>
 #include <kstartupinfo.h>
 
+class TaskManager;
+
 /**
  * A dynamic interface to a task (main window).
  *
@@ -66,8 +68,10 @@ class Task: public QObject
     Q_PROPERTY( QPixmap thumbnail READ thumbnail )
 
 public:
-    Task( WId win, QObject * parent, const char *name = 0 );
+    Task( WId win, TaskManager * parent, const char *name = 0 );
     virtual ~Task();
+
+    TaskManager* taskManager() const { return (TaskManager*) parent(); }
 
     WId window() const { return _win; }
     QString name() const { return _info.name; }
@@ -450,7 +454,7 @@ public:
     /**
      * Returns true if the specified task is on top.
      */
-    bool isOnTop(Task*);
+    bool isOnTop( const Task*);
 signals:
     /**
      * Emitted when a new task has started.
