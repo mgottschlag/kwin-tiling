@@ -284,10 +284,7 @@ GreetUser(
     Display		**dpy2,
     struct verify_info	*verify2,
     struct greet_info	*greet2,
-    struct dlfuncs	*
-#ifdef GREET_LIB
-			 dlfuncs
-#endif
+    struct dlfuncs	*dlfuncs
 	 )
 {
     int retval;
@@ -330,6 +327,9 @@ GreetUser(
 #ifdef USE_PAM
     __xdm_thepamh = dlfuncs->_thepamh;
 #endif
+#else
+    /* avoid warning */ 
+    if(dlfuncs);
 #endif
 
     d = d2;
