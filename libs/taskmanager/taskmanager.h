@@ -522,6 +522,7 @@ protected:
 private:
     Task*               _active;
     TaskList           _tasks;
+    QValueList< WId >   _skiptaskbar_windows;
     StartupList         _startups;
     KStartupInfo*       _startup_info;
 

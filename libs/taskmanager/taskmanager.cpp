@@ -115,22 +115,31 @@ void TaskManager::windowAdded(WId w )
 	return;
 
     // ignore windows that want to be ignored by the taskbar
-    if ((info.state() & NET::SkipTaskbar) != 0)
+    if ((info.state() & NET::SkipTaskbar) != 0) {
+        _skiptaskbar_windows.push_front( w ); // remember them though
 	return;
+    }
 
-    // lets see if this is a transient for an existing task
-    Window transient_for;
-    if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for )
-        && (WId) transient_for != qt_xrootwin()
-        && transient_for != 0 ) {
+    Window transient_for_tmp;
+    if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp )) {
+        WId transient_for = (WId) transient_for_tmp;
 
-        Task* t = findTask((WId) transient_for);
-	if (t) {
-	    if (t->window() != w) {
-		t->addTransient(w);
-                // kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
+        // check if it's transient for a skiptaskbar window
+        if( _skiptaskbar_windows.contains( transient_for ))
+            return;
+    
+        // lets see if this is a transient for an existing task
+        if( transient_for != qt_xrootwin()
+            && transient_for != 0 ) {
+
+            Task* t = findTask(transient_for);
+            if (t) {
+	        if (t->window() != w) {
+		    t->addTransient(w);
+                    // kdDebug() << "TM: Transient " << w << " added for Task: " << t->window() << endl;
+                }
+	        return;
             }
-	    return;
 	}
     }
 
@@ -144,6 +153,7 @@ void TaskManager::windowAdded(WId w )
 
 void TaskManager::windowRemoved(WId w )
 {
+    _skiptaskbar_windows.remove( w );
     // find task
     Task* t = findTask(w);
     if (!t) return;
@@ -165,17 +175,19 @@ void TaskManager::windowRemoved(WId w )
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
-    if( dirty & NET::WMState )
-        {
+    if( dirty & NET::WMState ) {
         NETWinInfo info ( qt_xdisplay(),  w, qt_xrootwin(), NET::WMState );
-        if ( (info.state() & NET::SkipTaskbar) != 0 )
-            {
+        if ( (info.state() & NET::SkipTaskbar) != 0 ) {
             windowRemoved( w );
+            _skiptaskbar_windows.push_front( w );
             return;
-            }
-        else if( !findTask( w ))
-            windowAdded( w ); // skipTaskBar state was removed, so add this window
         }
+        else {
+            _skiptaskbar_windows.remove( w );
+            if( !findTask( w ))
+                windowAdded( w ); // skipTaskBar state was removed, so add this window
+        }
+    }
 
     // check if any state we are interested in is marked dirty
     if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMState|NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
