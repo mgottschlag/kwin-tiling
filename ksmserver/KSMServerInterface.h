@@ -17,6 +17,8 @@ k_dcop:
   virtual QString currentSession() = 0;
   virtual void saveCurrentSession() = 0;
   virtual void saveCurrentSessionAs( QString ) = 0;
+
+  virtual void autoStart2() = 0;
 };
 
 #endif
