@@ -282,16 +282,48 @@ void KIconStyle::readSettings()
 
 void KIconStyle::writeSettings()
 {
-    KConfig *config = kapp->getConfig();
+    KConfig *cfg = kapp->getConfig();
 
-    KConfigGroupSaver saver(config, "KDE");
+    KConfigGroupSaver saver(cfg, "KDE");
     for (int i = 0 ; i < nApp ; i++)
     {
         QString s = m_dictCBNormal[ appName[i] ] -> isChecked() ? "Normal" : "Large";
-        config->writeEntry( QString(appName[i])+"IconStyle", s, 
+        cfg->writeEntry( QString(appName[i])+"IconStyle", s, 
                             true, true /* global setting (.kderc) */ );
+        if (!strcmp(appName[i], "kpanel"))
+        {
+          KConfig * config = new KConfig(KApplication::kde_configdir() + "/kpanelrc",
+                                         KApplication::localconfigdir() + "/kpanelrc");
+          config->setGroup("kpanel");
+          // Special case for kpanel, as asked by Torsten :
+          // Sync kpanel's size with icon size
+          // Awful duplicated code from kcontrol/panel/panel.cpp
+          // I will get killed by others developers...
+          if (s == "Normal")
+          {
+            config->writeEntry("Style", "normal");
+            config->writeEntry("BoxWidth",45);
+            config->writeEntry("BoxHeight",45);
+            config->writeEntry("Margin",0);
+            config->writeEntry("TaskbarButtonHorizontalSize",4);
+            //config->writeEntry("DesktopButtonFont","*-helvetica-medium-r-normal--12-*");
+            config->writeEntry("DesktopButtonRows",2);
+            //config->writeEntry("DateFont","*-times-medium-i-normal--12-*");
+          } else {
+            config->writeEntry("Style", "large");
+            config->writeEntry("BoxWidth",52);
+            config->writeEntry("BoxHeight",52);
+            config->writeEntry("Margin",2);
+            config->writeEntry("TaskbarButtonHorizontalSize",4);
+            //config->writeEntry("DesktopButtonFont","*-helvetica-medium-r-normal--14-*");
+            config->writeEntry("DesktopButtonRows",2);
+            //config->writeEntry("DateFont","*-times-bold-i-normal--12-*");
+          }
+          config->sync();
+          delete config;
+        }
     }
-    config->sync();
+    cfg->sync();
 }
 
 void KIconStyle::setDefaults()
