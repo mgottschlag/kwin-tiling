@@ -156,7 +156,11 @@ topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
 
 	wtstr = i18n(	"Enter the path to your preferred email client (KMail, Mutt, etc.) here or"
 			" choose it with the <em>Browse...</em> button. If no client is specified here,"
-			" KMail will be used (if available) instead.");
+			" KMail will be used (if available) instead.<p/>"
+			"You can also use several placeholders which will be replaced with the following"
+			" values:<p/>"
+			"<ul><li>%s: Subject</li><li>%c: Carbon Copy (CC)</li><li>%b: Blind Carbon Copy</li>"
+			"<li>%B: Body template</li><li>%t: Recipient's address</li></ul>");
 	QWhatsThis::add(txtEMailClient, wtstr);
 	QWhatsThis::add(btnBrowseClient, i18n(	"Press this button to select your favorite email client. Please"
 						" note that the file you select has to have the executable attribute set in order to be"
