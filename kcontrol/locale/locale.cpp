@@ -219,7 +219,7 @@ void KLocaleConfig::load()
   locale->setCountry(country);
 
   QString charset = config->readEntry(QString::fromLatin1("Charset"),
-                      QString::fromLatin1("iso-8859-1"));
+                      QString::fromLatin1("iso8859-1"));
   emit chsetChanged();
 
   KSimpleConfig ent(locate("locale",
