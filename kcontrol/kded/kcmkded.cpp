@@ -356,6 +356,9 @@ void KDEDConfig::slotReload()
 
 void KDEDConfig::slotEvalItem(QListViewItem * item)
 {
+	if (!item)
+		return;
+
 	// Special case: kxmlrpcd
 	bool options = false;
 	if ( item->text(4) == QString::fromLatin1(KXMLRPCD) )
@@ -379,6 +382,12 @@ void KDEDConfig::slotEvalItem(QListViewItem * item)
 	getServiceStatus();
 }
 
+void KDEDConfig::slotServiceRunningToggled()
+{
+	getServiceStatus();
+	slotEvalItem(_lvStartup->currentItem());
+}
+
 void KDEDConfig::slotStartService()
 {
 	QCString service = _lvStartup->currentItem()->text(4).latin1();
@@ -387,7 +396,7 @@ void KDEDConfig::slotStartService()
 	if (service == KXMLRPCD)
 	{
 		KApplication::startServiceByDesktopName(KXMLRPCD);
-		slotReload();
+		slotServiceRunningToggled();
 		return;
 	}
 
@@ -395,7 +404,7 @@ void KDEDConfig::slotStartService()
 	if (service == KALARMD)
 	{
 		KApplication::startServiceByDesktopName(KALARMD);
-		slotReload();
+		slotServiceRunningToggled();
 		return;
 	}
 
@@ -403,7 +412,7 @@ void KDEDConfig::slotStartService()
 	if (service == KWRITED)
 	{
 		KApplication::startServiceByDesktopName(KWRITED);
-		slotReload();
+		slotServiceRunningToggled();
 		return;
 	}
 
@@ -411,7 +420,7 @@ void KDEDConfig::slotStartService()
 	QDataStream arg( data, IO_WriteOnly );
 	arg << service;
 	if (kapp->dcopClient()->send( "kded", "kded", "loadModule(QCString)", data ) ) {
-		slotReload();
+		slotServiceRunningToggled();
 	}
 	else {
 		KMessageBox::error(this, i18n("Unable to start service!"));
@@ -429,7 +438,7 @@ void KDEDConfig::slotStopService()
 	if (service == KXMLRPCD)
 	{
 		kapp->dcopClient()->send(KXMLRPCD, "qt/"+KXMLRPCD, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotReload()));
+		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
 		return;
 	}
 
@@ -437,7 +446,7 @@ void KDEDConfig::slotStopService()
 	if (service == KALARMD)
 	{
 		kapp->dcopClient()->send(KALARMD, "qt/"+KALARMD, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotReload()));
+		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
 		return;
 	}
 
@@ -445,13 +454,13 @@ void KDEDConfig::slotStopService()
 	if (service == KWRITED)
 	{
 		kapp->dcopClient()->send(KWRITED, "qt/"+KWRITED, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotReload()));
+		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
 		return;
 	}
 
 	arg << service;
 	if (kapp->dcopClient()->send( "kded", "kded", "unloadModule(QCString)", data ) ) {
-		load();
+		slotServiceRunningToggled();
 	}
 	else {
 		KMessageBox::error(this, i18n("Unable to stop service!"));

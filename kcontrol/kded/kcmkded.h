@@ -40,18 +40,17 @@ public:
 	QString quickHelp() const;
 	const KAboutData* aboutData() const;
 
-protected:
-
-	void getServiceStatus();
 
 protected slots:
 
 	void slotReload();
 	void slotStartService();
 	void slotStopService();
+	void slotServiceRunningToggled();
 	void configureService();
 	void slotEvalItem(QListViewItem *item);
 	void slotItemChecked(QCheckListItem *item);
+	void getServiceStatus();
 
 private:
 
