@@ -69,10 +69,10 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   soundEdit = new QLineEdit(grp);
-  soundLabel = new QLabel(soundEdit, i18n("Sound to play:"), grp);
+  soundLabel = new QLabel(soundEdit, i18n("Sound &to play:"), grp);
   hbox->addWidget(soundLabel);
   hbox->addWidget(soundEdit);
-  soundButton = new QPushButton(i18n("&Browse..."), grp);
+  soundButton = new QPushButton(i18n("Browse..."), grp);
   hbox->addWidget(soundButton);
   QString wtstr = i18n("If the option \"Use customized bell\" is enabled, you can choose a sound file here."
     " Click \"Browse...\" to choose a sound file using the file dialog.");
@@ -105,12 +105,12 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
-  invertScreen = new QRadioButton(i18n("&Invert screen"), grp);
+  invertScreen = new QRadioButton(i18n("I&nvert screen"), grp);
   hbox->addWidget(invertScreen);
   hbox = new QHBoxLayout(vvbox, 6);
   QWhatsThis::add( invertScreen, i18n("All screen colors will be inverted for the amount of time specified below.") );
   hbox->addSpacing(24);
-  flashScreen = new QRadioButton(i18n("&Flash screen"), grp);
+  flashScreen = new QRadioButton(i18n("F&lash screen"), grp);
   hbox->addWidget(flashScreen);
   QWhatsThis::add( flashScreen, i18n("The screen will turn to a custom color for the amount of time specified below.") );
   hbox->addSpacing(12);
@@ -125,7 +125,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   durationSlider = new KIntNumInput(grp);
   durationSlider->setRange(100, 2000, 100);
-  durationSlider->setLabel(i18n("&Duration:"));
+  durationSlider->setLabel(i18n("Duration:"));
   durationSlider->setSuffix(i18n(" msec"));
   hbox->addWidget(durationSlider);
   QWhatsThis::add( durationSlider, i18n("Here you can customize the duration of the \"visible bell\" effect being shown.") );
@@ -153,7 +153,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   vbox = new QVBoxLayout(keys, 6,6);
 
-  grp = new QGroupBox(i18n("Sticky Keys"), keys);
+  grp = new QGroupBox(i18n("S&ticky Keys"), keys);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout(grp, 6,6);
@@ -167,13 +167,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   stickyKeysLock = new QCheckBox(i18n("&Lock sticky keys"), grp);
   hbox->addWidget(stickyKeysLock);
 
-  grp = new QGroupBox(i18n("Slow Keys"), keys);
+  grp = new QGroupBox(i18n("Slo&w Keys"), keys);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
 
-  slowKeys = new QCheckBox(i18n("Use s&low keys"), grp);
+  slowKeys = new QCheckBox(i18n("&Use slow keys"), grp);
   vvbox->addWidget(slowKeys);
 
   hbox = new QHBoxLayout(vvbox, 6);
@@ -181,7 +181,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   slowKeysDelay = new KIntNumInput(grp);
   slowKeysDelay->setSuffix(i18n(" msec"));
   slowKeysDelay->setRange(100, 2000, 100);
-  slowKeysDelay->setLabel(i18n("Delay:"));
+  slowKeysDelay->setLabel(i18n("Dela&y:"));
   hbox->addWidget(slowKeysDelay);
 
 
@@ -191,7 +191,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
 
-  bounceKeys = new QCheckBox(i18n("Use &bounce keys"), grp);
+  bounceKeys = new QCheckBox(i18n("Use bou&nce keys"), grp);
   vvbox->addWidget(bounceKeys);
 
   hbox = new QHBoxLayout(vvbox, 6);
