@@ -118,7 +118,7 @@ KGreeter::KGreeter()
 #endif
 
     grid = new QGridLayout( 1, 1, 5 );
-    main_grid->addItem( grid, 2, 1 );
+    main_grid->addLayout( grid, 2, 1 );
 
     if (!kdmcfg->_greetString.isEmpty()) {
 	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, winFrame );
