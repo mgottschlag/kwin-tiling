@@ -12,3 +12,6 @@ noinst_HEADERS = passwords.h
 
 messages:
 	$(XGETTEXT) $(libkcm_passwords_la_SOURCES) -o $(podir)/passwords.pot
+
+data_DATA = passwords.desktop
+datadir = $(kde_appsdir)/Settings/Personalization
