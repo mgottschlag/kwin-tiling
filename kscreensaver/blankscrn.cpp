@@ -78,10 +78,10 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	KButtonBox *bbox = new KButtonBox(this);	
 	bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("&OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
-	button = bbox->addButton(i18n("Cancel"));
+	button = bbox->addButton(i18n("&Cancel"));
 	connect( button, SIGNAL( clicked() ), SLOT( reject() ) );
 	bbox->layout();
 	tl->addWidget(bbox);
