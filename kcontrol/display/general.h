@@ -125,6 +125,7 @@ public:
 
 protected slots:
 	void slotChangeStyle();
+        void slotChangeTbStyle();//CT 05Apr1999
 	void slotUseResourceManager();
 	void slotMacStyle();//CT
 	void slotApply();
@@ -138,7 +139,8 @@ protected:
 	//CT 04Apr1999
 	QGroupBox *styles, *tbStyle;
 	QRadioButton *MStyle, *WStyle, *PStyle;
-	QCheckBox *tbText, *tbHilite, *tbTransp;
+	QRadioButton *tbIcon, *tbText, *tbAside, *tbUnder;
+	QCheckBox *tbHilite, *tbTransp;
       	QCheckBox *cbRes;
 	//CT
 
@@ -150,7 +152,8 @@ protected:
 	Window root;
 	int screen;
 
-	bool tbUseText, tbUseHilite, tbMoveTransparent;//CT 04Apr1999
+	int tbUseText;//CT 05Apr1999
+	bool tbUseHilite, tbMoveTransparent;//CT 04Apr1999
        
 	KIconStyle * iconStyle;
 };

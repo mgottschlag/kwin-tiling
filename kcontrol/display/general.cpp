@@ -347,7 +347,7 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	//CT	topLayout->addLayout(top2Layout);
 
 	//CT 04Apr1999 - new styles and other options
-	styles = new QButtonGroup ( i18n( "Style for widgets &drawing:" ),
+	styles = new QButtonGroup ( i18n( "Style for widgets drawing:" ),
 				    this );
 	topLayout->addWidget(styles, 10);
 
@@ -357,9 +357,9 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	QBoxLayout *lay = new QHBoxLayout(20);
 	vlay->addLayout(lay);
 
-	MStyle = new QRadioButton( i18n( "Motif" )     , styles);
-	WStyle = new QRadioButton( i18n( "Windows 95" ), styles);
-	PStyle = new QRadioButton( i18n( "Platinum" ),   styles);
+	MStyle = new QRadioButton( i18n( "Mo&tif" )     , styles);
+	WStyle = new QRadioButton( i18n( "&Windows 95" ), styles);
+	PStyle = new QRadioButton( i18n( "&Platinum" ),   styles);
 
 	if( applicationStyle == WindowsStyle )
 	  WStyle->setChecked( true );
@@ -422,20 +422,41 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 				    this);
 	topLayout->addWidget(tbStyle, 10);
 
-	lay = new QVBoxLayout( tbStyle, 10 );
+	//CT 05Apr1999
+	vlay = new QVBoxLayout( tbStyle, 10 );
 
-	lay->addSpacing(10);
+	vlay->addSpacing( 10 );
+	
+	lay = new QHBoxLayout( 10 );
+	vlay->addLayout( lay );
 
-	tbText   = new QCheckBox( i18n( "Use text aisde icons" ), tbStyle);
-	tbHilite = new QCheckBox( i18n( "Highlight buttons under mouse" ), 
+	tbIcon   = new QRadioButton( i18n( "&Icons only" ), tbStyle);
+	tbText   = new QRadioButton( i18n( "&Text only" ), tbStyle);
+	tbAside  = new QRadioButton( i18n( "Text a&side icons" ), tbStyle);
+	tbUnder  = new QRadioButton( i18n( "Text &under icons" ), tbStyle);
+
+	tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ), 
 				tbStyle);
-	tbTransp = new QCheckBox( i18n( "Toolbars are transparent when"
+	tbTransp = new QCheckBox( i18n( "Tool&bars are transparent when"
 					" moving" ), tbStyle);
 	
-	if (tbUseText) 
+	if (tbUseText == 0) 
+	  tbIcon->setChecked( true );
+	else if (tbUseText == 1)
+	  tbAside->setChecked( true );
+	else if (tbUseText == 2)
 	  tbText->setChecked( true );
+	else if (tbUseText == 3)
+	  tbUnder->setChecked( true );
 	else
-	  tbText->setChecked( false );
+	  tbIcon->setChecked( true );
+
+	connect( tbIcon , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+	connect( tbText , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+	connect( tbAside, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+	connect( tbUnder, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
+
+	//CT
 
 	if (tbUseHilite)
 	  tbHilite->setChecked( true );
@@ -447,10 +468,13 @@ KGeneral::KGeneral( QWidget *parent, int mode, int desktop )
 	else
 	  tbTransp->setChecked( false );
 
-	
+	lay->addWidget(tbIcon, 10);
 	lay->addWidget(tbText, 10);
-	lay->addWidget(tbHilite, 10);
-	lay->addWidget(tbTransp, 10);
+	lay->addWidget(tbAside, 10);
+	lay->addWidget(tbUnder, 10);
+
+	vlay->addWidget(tbHilite, 10);
+	vlay->addWidget(tbTransp, 10);
 
 	topLayout->addStretch( 100 );
 	//CT topLayout->activate(); //CT not needed for Qt-2.0
@@ -468,6 +492,22 @@ void KGeneral::slotChangeStyle()
     applicationStyle = MotifStyle;
 				
   changed=true;
+}
+
+
+//CT 05Apr 1999
+void KGeneral::slotChangeTbStyle()
+{
+  if (tbIcon->isChecked() )
+    tbUseText = 0;
+  else if (tbText->isChecked() )
+    tbUseText = 2;
+  else if (tbAside->isChecked() )
+    tbUseText = 1;
+  else if (tbUnder->isChecked() )
+    tbUseText = 3;
+  else
+    tbUseText = 0 ;
 }
 
 void KGeneral::slotUseResourceManager()
@@ -523,9 +563,8 @@ void KGeneral::readSettings( int )
 	//CT 04Apr1999 - read toolbar style
 	config.setGroup( "Toolbar style" );
 
-	int val = config.readNumEntry( "IconText", 0);
-	tbUseText = val? true : false;
-	val = config.readNumEntry( "Highlighting", 1);
+	tbUseText = config.readNumEntry( "IconText", 0);
+	int val = config.readNumEntry( "Highlighting", 1);
 	tbUseHilite = val? true : false;
 	tbMoveTransparent = config.readBoolEntry( "TransparentMoving", true);
 	
@@ -546,10 +585,10 @@ void KGeneral::setDefaults()
 	iconStyle->setDefaults(); // DF
 
 	//CT 04Apr1999
-	tbUseText = false;
+	tbUseText = 0;
 	tbUseHilite = true;
 	tbMoveTransparent = true;
-	tbText->setChecked( false );
+	tbIcon->setChecked( true );
 	tbHilite->setChecked( true );
 	tbTransp->setChecked( true );
 	//CT
@@ -570,6 +609,8 @@ void KGeneral::writeSettings()
 	config->setGroup( "KDE" );
 
 	QString str;
+	//CT 05Apr1999 - attention, this has to be fixed ASA Qt supports 
+	//  Platinum fully
 	if( applicationStyle == WindowsStyle )
 		str.sprintf("Windows 95" );
 	else
@@ -578,6 +619,12 @@ void KGeneral::writeSettings()
 
 	//CT 30Nov1998 - mac style set
 	config->writeEntry( "macStyle", macStyle?"on":"off", true, true);
+	//CT
+
+	//CT 05Apr 1999
+	config->writeEntry( "IconText", tbUseText);
+	config->writeEntry( "Highlighting", tbUseHilite?1:0);
+	config->writeEntry( "TransparentMoving", tbMoveTransparent?1:0);
 	//CT
 
 	KConfigGroupSaver saver(kapp->getConfig(), "X11");
