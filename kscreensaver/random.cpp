@@ -56,9 +56,12 @@ int main(int argc, char *argv[])
 
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
+                                     "apps/ScreenSavers/");
+    KGlobal::dirs()->addResourceType("scrsav",
+                                     KGlobal::dirs()->kde_default("apps") +
                                      "ScreenSavers/");
     QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                                                                  "*.desktop");
+                                                   "*.desktop", false, true);
 
     int indx = random()%saverFileList.count();
     QString filename = *(saverFileList.at(indx));
@@ -79,29 +82,29 @@ int main(int argc, char *argv[])
     QTextStream ts(&cmd, IO_ReadOnly);
     QString word;
     ts >> word;
-    QString exeFile = locate("exe", word);
-
-    sargs[0] = new char [strlen(word.ascii())+1];
-    strcpy(sargs[0], word.ascii());
-
-    i = 1;
-    while (!ts.atEnd() && i < MAX_ARGS-1)
-    {
-        ts >> word;
-        if (word == "%w")
-        {
-            word = word.setNum(windowId);
-        }
-
-        sargs[i] = new char [strlen(word.ascii())+1];
-        strcpy(sargs[i], word.ascii());
-        i++;
-    }
-
-    sargs[i] = 0;
+    QString exeFile = KStandardDirs::findExe(word);
 
     if (!exeFile.isEmpty())
     {
+        sargs[0] = new char [strlen(word.ascii())+1];
+        strcpy(sargs[0], word.ascii());
+
+        i = 1;
+        while (!ts.atEnd() && i < MAX_ARGS-1)
+        {
+            ts >> word;
+            if (word == "%w")
+            {
+                word = word.setNum(windowId);
+            }
+
+            sargs[i] = new char [strlen(word.ascii())+1];
+            strcpy(sargs[i], word.ascii());
+            i++;
+        }
+
+        sargs[i] = 0;
+
         execv(exeFile.ascii(), sargs);
     }
 }
