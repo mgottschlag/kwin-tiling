@@ -59,7 +59,6 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
 	QLabel *label;
 
 	QHBoxLayout *l = new QHBoxLayout(topLayout);
-	topLayout->addLayout(l);
 	cProfiles = new KComboBox(true, this);
 	cProfiles->setTrapReturnKey(true);
 	connect(cProfiles, SIGNAL(returnPressed()), this, SLOT(newProfile()));
