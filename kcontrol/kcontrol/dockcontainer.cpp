@@ -86,13 +86,13 @@ bool DockContainer::dockModule(ConfigModule *module)
 module ?
 i18n("There are unsaved changes in the active module.\n"
      "Do you want to apply the changes before running "
-     "the new module or forget the changes?") :
+     "the new module or discard the changes?") :
 i18n("There are unsaved changes in the active module.\n"
      "Do you want to apply the changes before exiting "
-     "the Control Center or forget the changes?"),
+     "the Control Center or discard the changes?"),
                                           i18n("Unsaved Changes"),
                                           i18n("&Apply"),
-                                          i18n("&Forget"));
+                                          i18n("&Discard"));
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
       if (res == KMessageBox::Cancel)
