@@ -119,7 +119,7 @@ LogInfo(const char *fmt, ...)
     va_list args;
 
     va_start(args, fmt);
-    logger (LOG_INFO, fmt, args);
+    logger (DM_INFO, fmt, args);
     va_end(args);
 }
 
