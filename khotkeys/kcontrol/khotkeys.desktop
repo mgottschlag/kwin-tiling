@@ -1,0 +1,13 @@
+[Desktop Entry]
+Exec=kcmshell khotkeys
+Icon=khotkeys
+Type=Application
+
+X-KDE-ModuleType=Library
+X-KDE-Library=khotkeys
+
+Name=KHotKeys
+
+Comment=
+
+Keywords=Keys,Global key bindings,Key sheme,Key bindings

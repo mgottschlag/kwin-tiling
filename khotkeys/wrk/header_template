@@ -1,0 +1,23 @@
+/****************************************************************************
+
+ KHotKeys
+ 
+ Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
+
+ Distributed under the terms of the GNU General Public License version 2.
+ 
+****************************************************************************/
+
+#ifndef _|FILENAME|_
+#define _|FILENAME|_
+
+namespace KHotKeys
+{
+
+//***************************************************************************
+// Inline
+//***************************************************************************
+
+} // namespace KHotKeys
+
+#endif

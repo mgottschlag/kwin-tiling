@@ -1,0 +1,14 @@
+#! /bin/sh
+
+if test $# -lt 2; then
+    exit
+fi
+
+template=$1
+shift
+while test $# -ge 1; do
+    dest=$1
+    dest_writable=`echo $dest | tr .[:lower:] _[:upper:] `
+    cat $template | sed "s/|FILENAME|/$dest_writable/" > "$dest"
+    shift
+done

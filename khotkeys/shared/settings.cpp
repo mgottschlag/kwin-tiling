@@ -1,0 +1,192 @@
+/****************************************************************************
+
+ KHotKeys
+ 
+ Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+
+ Distributed under the terms of the GNU General Public License version 2.
+ 
+****************************************************************************/
+
+#define _SETTINGS_CPP_
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "settings.h"
+
+#include <kconfig.h>
+#include <kdebug.h>
+#include <ksimpleconfig.h>
+#include <klocale.h>
+#include <kaccel.h>
+
+#include "triggers.h"
+#include "conditions.h"
+#include "action_data.h"
+
+namespace KHotKeys
+{
+
+// Settings
+
+Settings::Settings()
+    : actions( NULL )
+    {
+    }
+    
+void Settings::read_settings( bool include_disabled_P )
+    {
+    if( actions == NULL )
+        actions = new Action_data_group( NULL, "should never see", "should never see",
+            NULL, Action_data_group::SYSTEM_ROOT, true );
+    KConfig cfg( KHOTKEYS_CONFIG_FILE, true );
+    if( cfg.groupList().count() == 0 ) // empty
+        return;
+    cfg.setGroup( "Main" ); // main group
+    int version = cfg.readNumEntry( "Version", -1234576 );
+    switch( version )
+        {
+        case 1:
+            read_settings_v1( cfg );
+          break;
+        case 2:
+            read_settings_v2( cfg, include_disabled_P );
+          break;
+        default:
+            kdWarning( 1217 ) << "Unknown cfg. file version\n";
+          break;
+        case -1234576: // no config file
+          break;
+        }
+    }
+
+void Settings::write_settings()
+    {
+    KSimpleConfig cfg( KHOTKEYS_CONFIG_FILE, false );
+// CHECKME    smazat stare sekce ?
+    QStringList groups = cfg.groupList();
+    for( QStringList::ConstIterator it = groups.begin();
+         it != groups.end();
+         ++it )
+        cfg.deleteGroup( *it );
+    cfg.setGroup( "Main" ); // main group
+    cfg.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
+    cfg.setGroup( "Data" );
+    int cnt = write_actions_recursively_v2( cfg, actions, true );
+    cfg.setGroup( "Main" );
+    cfg.writeEntry( "Autostart", cnt != 0 );
+    }
+
+// return value means the number of enabled actions written in the cfg file
+// i.e. 'Autostart' for value > 0 should be on
+int Settings::write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P, bool enabled_P )
+    {
+    int enabled_cnt = 0;
+    QString save_cfg_group = cfg_P.group();
+    int cnt = 0;
+    for( Action_data_group::Iterator it = parent_P->first_child();
+         it;
+         ++it )
+        {
+        ++cnt;
+        if( enabled_P && (*it)->enabled( true ))
+            ++enabled_cnt;
+        cfg_P.setGroup( save_cfg_group + "_" + QString::number( cnt ));
+        ( *it )->cfg_write( cfg_P );
+        Action_data_group* grp = dynamic_cast< Action_data_group* >( *it );
+        if( grp != NULL )
+            enabled_cnt += write_actions_recursively_v2( cfg_P, grp, enabled_P && (*it)->enabled( true ));
+        }
+    cfg_P.setGroup( save_cfg_group );
+    cfg_P.writeEntry( "DataCount", cnt );
+    return enabled_cnt;
+    }
+
+void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
+    {
+    cfg_P.setGroup( "Data" );
+    read_actions_recursively_v2( cfg_P, actions, include_disabled_P );    
+    }
+    
+void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P,
+    bool include_disabled_P )
+    {
+    QString save_cfg_group = cfg_P.group();
+    int cnt = cfg_P.readNumEntry( "DataCount" );
+    for( int i = 1;
+         i <= cnt;
+         ++i )
+        {
+        cfg_P.setGroup( save_cfg_group + "_" + QString::number( i ));
+        if( include_disabled_P || Action_data_base::cfg_is_enabled( cfg_P ))
+            {
+            Action_data_base* new_action = Action_data_base::create_cfg_read( cfg_P, parent_P );
+            Action_data_group* grp = dynamic_cast< Action_data_group* >( new_action );
+            if( grp != NULL )
+                read_actions_recursively_v2( cfg_P, grp, include_disabled_P );
+            }
+        }
+    cfg_P.setGroup( save_cfg_group );
+    }
+
+// backward compatibility
+void Settings::read_settings_v1( KConfig& cfg_P )
+    {    
+    int sections = cfg_P.readNumEntry( "Num_Sections", 0 );
+    Action_data_group* menuentries = NULL;
+    for( Action_data_group::Iterator it( actions->first_child());
+         *it;
+         ++it )
+        {
+        Action_data_group* tmp = dynamic_cast< Action_data_group* >( *it );
+        if( tmp == NULL )
+            continue;
+        if( tmp->system_group() == Action_data_group::SYSTEM_MENUENTRIES )
+            {
+            menuentries = tmp;
+            break;
+            }
+        }
+    for( int sect = 1;
+         sect <= sections;
+         ++sect )
+        {
+        QString group = QString( "Section%1" ).arg( sect );
+        if( !cfg_P.hasGroup( group ))
+            continue;
+        cfg_P.setGroup( group );
+        QString name = cfg_P.readEntry( "Name" );
+        if( name == QString::null )
+            continue;
+        QString shortcut = cfg_P.readEntry( "Shortcut" );
+        if( shortcut == QString::null )
+            continue;
+        QString run = cfg_P.readEntry( "Run" );
+        if( run == QString::null )
+            continue;
+        bool menuentry = cfg_P.readBoolEntry( "MenuEntry", false );
+        // CHECKME tohle pridavani az pak je trosku HACK
+        if( menuentry )
+            {
+            if( menuentries == NULL )
+                {
+                menuentries = new Action_data_group( actions,
+                    i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
+                    i18n( "These entries were created using Menu Editor" ), NULL,
+                    Action_data_group::SYSTEM_MENUENTRIES, true );
+                menuentries->set_conditions( new Condition_list( "", menuentries ));
+                }
+            ( void ) new Menuentry_shortcut_action_data( menuentries, name, "",
+                KKey( shortcut ).keyCodeQt(), run );
+            }
+        else
+            {
+            ( void ) Command_url_shortcut_action_data( actions, name, "",
+                KKey( shortcut ).keyCodeQt(), run );
+            }
+        }
+    }
+
+} // namespace KHotKeys

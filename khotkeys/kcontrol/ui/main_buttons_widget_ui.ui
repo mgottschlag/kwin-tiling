@@ -1,0 +1,85 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KHotKeys::Main_buttons_widget_ui</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Main_buttons_widget_ui</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>828</width>
+            <height>66</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>1</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <hbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>new_action_button</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;New action</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>new_action_group_button</cstring>
+            </property>
+            <property name="text">
+                <string>New &amp;group</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>delete_action_button</cstring>
+            </property>
+            <property name="text">
+                <string>Delete action</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>Line3</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>VLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>global_settings_button</cstring>
+            </property>
+            <property name="text">
+                <string>Global &amp;settings</string>
+            </property>
+        </widget>
+    </hbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

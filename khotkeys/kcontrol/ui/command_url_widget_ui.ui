@@ -1,0 +1,99 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KHotKeys::Command_url_widget_ui</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Command_url_widget_ui</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>580</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form2</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>command_url_label</cstring>
+            </property>
+            <property name="text">
+                <string>Command/URL to execute</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>command_url_lineedit</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout7</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>command_url_lineedit</cstring>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>browse_button</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Browse...</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>browse_button</sender>
+        <signal>clicked()</signal>
+        <receiver>Command_url_widget_ui</receiver>
+        <slot>browse_pressed()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot access="protected" specifier="pure virtual">browse_pressed()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

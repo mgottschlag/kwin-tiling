@@ -1,0 +1,110 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KHotKeys::Action_group_tab_ui</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Action_group_tab_ui</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>596</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>action_group_name_label</cstring>
+            </property>
+            <property name="text">
+                <string>Action group &amp;name</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>action_name_lineedit</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit">
+            <property name="name">
+                <cstring>action_name_lineedit</cstring>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>disable_checkbox</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Disable</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>comment_label</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Comment</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>comment_multilineedit</cstring>
+            </property>
+        </widget>
+        <widget class="KTextEdit">
+            <property name="name">
+                <cstring>comment_multilineedit</cstring>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+</connections>
+<slots>
+    <slot access="protected" specifier="pure virtual">action_group_name_changed( const QString&amp; )</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=khotkeys
+Name=KHotKeys
+Type=Service
+X-KDE-StartupNotify=false
+X-KDE-autostart-condition=khotkeysrc:Main:Autostart:false

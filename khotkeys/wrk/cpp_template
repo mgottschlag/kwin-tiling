@@ -1,0 +1,20 @@
+/****************************************************************************
+
+ KHotKeys
+ 
+ Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
+
+ Distributed under the terms of the GNU General Public License version 2.
+ 
+****************************************************************************/
+
+#define _|FILENAME|_
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+namespace KHotKeys
+{
+
+} // namespace KHotKeys

@@ -1,0 +1,86 @@
+/****************************************************************************
+
+ KHotKeys
+ 
+ Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+
+ Distributed under the terms of the GNU General Public License version 2.
+ 
+****************************************************************************/
+
+#ifndef _INPUT_H_
+#define _INPUT_H_
+
+#include <qobject.h>
+#include <qwindowdefs.h>
+#include <qmap.h>
+#include <qwidget.h>
+#include <qvaluelist.h>
+
+#include <X11/X.h>
+#include <fixx11h.h>
+
+class KGlobalAccel;
+
+namespace KHotKeys
+{
+
+class Kbd_receiver
+    {
+    public:
+        virtual bool handle_key( unsigned int keycode_P ) = 0;
+    };
+    
+class Kbd
+    : public QObject
+    {
+    Q_OBJECT
+    public:
+	Kbd( bool grabbing_enabled_P, QObject* parent_P );
+        virtual ~Kbd();
+	void insert_item( unsigned int keycode_P, Kbd_receiver* receiver_P );
+        void remove_item( unsigned int keycode_P, Kbd_receiver* receiver_P );
+        void activate_receiver( Kbd_receiver* receiver_P );
+        void deactivate_receiver( Kbd_receiver* receiver_P );
+        static bool send_macro_key( unsigned int keycode, Window window_P = InputFocus );
+    protected:
+        bool x11EventFilter( const XEvent* );                                                              
+        void grab_key( unsigned int keycode_P );
+        void ungrab_key( unsigned int keycode_P );
+    private slots:
+        void key_slot( int keycode_P );
+        void update_connections();
+    private:
+        struct Receiver_data
+            {
+            Receiver_data();
+            QValueList< unsigned int > keycodes;
+            bool active;
+            };
+        QMap< Kbd_receiver*, Receiver_data > receivers;
+        QMap< unsigned int, int > grabs;
+        KGlobalAccel* kga;
+    };
+
+class Mouse
+    {
+    public:
+        static bool send_mouse_button( int button_P, bool release_P );
+    };
+
+
+//***************************************************************************
+// Inline
+//***************************************************************************
+
+// Kbd::Receiver_data
+
+inline
+Kbd::Receiver_data::Receiver_data()
+    : active( false )
+    {
+    }
+
+} // namespace KHotKeys
+
+#endif

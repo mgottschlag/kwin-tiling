@@ -1,0 +1,83 @@
+$Id$
+----------------------------------------------------------------------
+
+very soon :
+-------------------------------
+-------------------------------
+
+------------
+
+SOON :
+
+pri modify gestures vymazat stav
+nektere simple akce by mely mit i conditions (nebo alespon jedno okno)
+QPtrList -> QValueList
+pouzit Q/KApp( nogui ? ) v daemonu ?
+class Condition + tab 'Windows' -> 'Conditions'
+  - asi rozdelit Command/URL na Command/URL a SwitchToWindow
+  - nebo udelat, ze Command_url_action_data ( atd. ) maji jen jednu shortcut a tak, tj. dalsi zjednoduseni UI ?
+hlaska o uz prirazene kl.kombinaci pro makro se opakuje i vicekrat ( pro kazde uz existujici )
+rucni smazani radku nemaze makro pro editaci v dialogu
+ted uz ten timeout u spusteni funguje ok, ale zase kdyz chci pustit neco 2x naraz, tak se musi cekat ???
+taky to pri jeho rucni editaci neni obcas videt ( je to moc vpravo )
+grrr, to setSelected()/setCurrent() me stve, vsechny ty listboxy a listview obcas spatne detekuji vybrany :(
+  - asi si zkratka udelat vlastni tridy, ktere budou nutit selected==current
+ve windowdef widgetu mit moznost autodetekce, tj. defaultni, kdyz neni nastaven spousteci prikaz
+
+2.x :
+
+XBell() potvrzeni, ze se neco provedlo?
+  - nebo spis neco jako XOSD?
+asi varovani, kdyz neco nema prirazeno hotkey
+pres script at se aktivuje
+at se pri autodetect properties da clicknutim aktivovat dane okno
+neco s tim e->ignore() v KKeyChooser
+ + vypisuje anglicky nazev akce pri konfliktu
+at si okno pamatuje svoji velikost ? - bohuzel nejde :(
+co kdyz se bude editovat spatne ( asfa:afasdf:aff ) macro ?
+  a co to udela v daemonu ?
+udelat v makru i pohyby mysi ?
+co ten napad, ze kdelnk obsahuje taky command/title/class a chova se pri spousteni jako khotkeys ?
+pokec o Win klavese a o tech, co nejdou ( SysReq? atd. )
+asi poznamku, ze to <2> pridavane kwm pri vice stejnych title se ignoruje
+mozna u tech keystrokes zkusit polling na XQueryPointer() ?
+poradne updatovat dokumentaci
+pri pridavani nove polozky v editaci makra na nej nastavit pozici v listboxu ( muze byt mimo obrazovku )
+/usr/X11R6/lib/X11/xkb/compat/mousekeys ???
+drag&drop .kdelnk souboru ?
+mozna by slo pro rozliseni ruznych instanci stejnych app, aby KHotKeys nahodily pri jejich startovani nejakou X property, podle ktere by slo identifikovat
+asi by mela jit akce i pri vice ruznych oknech
+funguje pusteni jen jednou i pri vicenasobnem stisku ?
+asi padne autodetekce okna, kdyz se prepne na prazdny desktop
+mozna ignorovat mac menubary ( jejich wm_name konci "[menu]" )
+nejde F1 -> Help v konfiguraci ( je to chyba obecne ? )
+udelat spusteni kdyz aktivni okno nesouhlasi se zadanym ( napr. chci dalsi browser )
+pouzit XTest extension pro strokes
+pouzit XTest i pro keyboard macros kdyz je ext. pritomna ?
+udelat seznam oken ( + jejich class, command, atd ) a potom u akci z nich jen vybirat
+udelat spusteni jen kdyz na aktivni plose uz takove okno ( prikaz ) jeste neni
+  + mozna spusteni kdyz aktivni okno neni takove
+at jde u spousteni spustit na prave aktivni plose, na plose c.X, nebo na "volne" plose ( o jedno vic nez je uz takove okno )
+pridelat prepinani na definovana okna ? ( z WindowMakeru )
+udelat i nejaky recorder, ktery bude umet presne opakovat klavesy a i mys ?
+ovladani mysi klavesnici ?
+udelat system jako treba v mc, tj. napr. "Ctrl+Alt+X, P" - tech klaves je porad malo :)
+v Tips, ze tak jde zmenit kl.zkratky i u programu, ktere na to nemaji dialog
+nejak poradne ty okna(tridy+title+atd), at jde delat 'jen kdyz je okno aktivni', 'jen kdyz neni okno aktivni', atd
+pri vypusteni verze 2.0 ( 1.9.x ) poslat <willey@etla.net> mail ( LibStroke )
+mit i delay v macrech
+akce : posledne aktivni okno na jine plose dat na aktivni plochu ( tj. misto mysi davat u vybraneho okna 'na soucasnou plochu' )
+electric borders u KWin zere jen okraje, ale ne primo rohy - pujde to udelat jako trigger akce
+    - pujdou i okraje, kdyz to bude vypnute u WM ( nebo se budou fackovat ? )
+akce : transformace klavesy ( def. Key_Menu ) na RMB do keyboard focusu ( pro kontext menu )
+akce : kdyz se objevi okno, aplikovat na nej veci, ktere dela kstart ( sticky, atd. )
+strokes : kdyz X bere mys pres gpmdata, gpm pekne zasekava u vstupu pri prostrednim tlacitku dole => strokes pak za moc nestoji
+paste pri MMB volitelne jen kdyz MMB neni stisknuto napr. pres 500ms ( kvuli strokes )
+akce : kdyz se stiskne nejaka shortcut a nejaka aplikace nebezi, tak se spusti a pak se ji ta shortcut preda ( napr. pro klipper ? )
+odstranit tu KAccel zmenu, kterou v CVS udelal Coolo - stejne netusim, jestli to ma nebo nema byt i18n, tak at je aspon default
+skupine akci 'KMenuedit entries' by asi nemelo jit zmenit jmeno
+kdyz se v KMenuEdit udela polozka a pak se ten menuentry smaze, asi by se ta shortcut mela aspon disablovat ?!
+at dokaze zvetsovat vsechna 'File Open Dialog' okna
+pamatovat si menuentries i s polohou v K-Menu ? .desktop files by mely byt unique ( ale kmenuedit tohle asi moc nezvlada )
+neudelat to prirazeni klavesy k menuentry nejak jednodussi ? nebo zkratka doporucovat kmenuedit ?
+i18n("","") pro veci jako "New"
