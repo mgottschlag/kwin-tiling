@@ -369,7 +369,12 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    continue;
 		bp = cbuf;
 		*bp++ = '\t';
-		str_cat (&bp, di->name, sizeof(cbuf)/2);
+		if (di == d)
+		    *bp++ = '*';
+		args = di->name;
+		if (!memcmp (args, "localhost:", 10))
+		    args += 9;
+		str_cat (&bp, args, sizeof(cbuf)/2);
 		*bp++ = ',';
 #ifdef HAVE_VTS
 		if (di->serverVT)
