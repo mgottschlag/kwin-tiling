@@ -95,23 +95,27 @@ bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
     }
     QTextStream stream(&file);
     QString line;
-    while (stream.atEnd()) {
+
+    while (!stream.atEnd()) {
+	QString s1, s2;
 	line = stream.readLine();
 	if (!line.isEmpty()) {
 	    if (!splitChar.isNull()) {
-		    int pos = line.find(line.find(splitChar));
-		    QString s1 = line.left(pos).stripWhiteSpace();
-		    QString s2 = line.mid(pos+1).stripWhiteSpace();
-		    if (!(s1.isEmpty() || s2.isEmpty()))
-			lastitem = new QListViewItem(lbox, lastitem, s1, s2);
-		    added = true;
+		int pos = line.find(splitChar);
+		s1 = line.left(pos-1).stripWhiteSpace();
+		s2 = line.mid(pos+1).stripWhiteSpace();
 	    }
+	    else
+	        s1 = line;
 	}
-   }
+	lastitem = new QListViewItem(lbox, lastitem, s1, s2);
+	added = true;
+    }
 
     file.close();
     if (newlastitem)
 	*newlastitem = lastitem;
+
     return added;
 }
 
