@@ -598,7 +598,7 @@ KGreeter::restrict_nologin()
 }
 #endif /* !USE_PAM */
 
-#ifdef BSD
+#ifdef HAVE_PW_EXPIRE
 bool
 KGreeter::restrict_expired(){
 #define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
