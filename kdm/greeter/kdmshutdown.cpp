@@ -237,7 +237,7 @@ KDMShutdown::bye_bye()
 	    system( QFile::encodeName( cur_action ).data() );
 	    QApplication::exit( 0);	// init will inherit us
 	} else {
-	    SessionExit (::d, UNMANAGE_DISPLAY, TRUE);
+	    SessionExit (::d, UNMANAGE_DISPLAY, FALSE);
 	}
     } else {
 	pswdEdit->erase();

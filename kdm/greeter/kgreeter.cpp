@@ -439,7 +439,7 @@ void
 KGreeter::quit_button_clicked()
 {
     QApplication::flushX();
-    SessionExit(::d, RESERVER_DISPLAY, TRUE);	// true right?
+    SessionExit(::d, RESERVER_DISPLAY, FALSE);
 }
 
 void
