@@ -1546,7 +1546,7 @@ static const char * readStrSnf(CCompressedFile &f)
 
     static char buffer[constMaxChars];
     int         pos=0;
-    char        ch;
+    signed char        ch;
 
     buffer[0]='\0';
 
