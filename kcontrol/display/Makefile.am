@@ -12,14 +12,14 @@ bin_PROGRAMS = kcmdisplay
 kcmdisplay_SOURCES = backgnd.cpp display.cpp \
 		colorscm.cpp savescm.cpp scrnsave.cpp \
 		general.cpp main.cpp widgetcanvas.cpp \
-		kresourceman.cpp energy.cpp
+		kresourceman.cpp fonts.cpp energy.cpp
 
 METASOURCES = backgnd.moc display.moc colorscm.moc savescm.moc \
 		scrnsave.moc general.moc widgetcanvas.moc \
-		kresourceman.moc energy.moc
+		kresourceman.moc fonts.moc energy.moc
 
 noinst_HEADERS = backgnd.h display.h colorscm.h savescm.h scrnsave.h \
-		general.h widgetcanvas.h kresourceman.h energy.h
+		general.h widgetcanvas.h kresourceman.h fonts.h energy.h
 
 EXTRA_DIST = README
 

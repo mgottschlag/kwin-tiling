@@ -62,7 +62,7 @@ private:
   QString charsetName;
   QStrList standardFonts;
   QStrList fixedFonts;
-  QStrList charsets;
+  QStringList charsets;
 };
 
 //-----------------------------------------------------------------------------

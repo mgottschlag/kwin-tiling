@@ -34,36 +34,6 @@
 
 #include "display.h"
 
-class FontUseItem
-{
-public:
-    FontUseItem( const QString& n, QFont default_fnt, bool fixed = false );
-	QString fontString( QFont rFont );
-	void setRC( const QString& group, const QString& key, const QString& rc = QString::null );
-	void readFont();
-	void writeFont();
-	void setDefault();
-	void setFont(const QFont &fnt ) { _font = fnt; }
-	QFont font() { return _font; }
-	const QString& rcFile() { return _rcfile; }
-	const QString& rcGroup() { return _rcgroup; }
-	const QString& rcKey() { return _rckey; }
-	const QString& text()		{ return _text; }
-	bool spacing() { return fixed; }
-	void	setSelect( bool flag )	{ selected = flag; }
-	bool	select()		{ return selected; }
-
-private:
-	QString _text;
-	QString _rcfile;
-	QString _rcgroup;
-	QString _rckey;
-	QFont _font;
-	QFont _default;
-	bool fixed;
-	bool selected;
-};
-
 // DF 13-Mar-99
 // This class is a part of the "style" tab.
 // It's separated from the KGeneral class, in case it has to be moved
@@ -162,47 +132,6 @@ protected:
        
         KIconStyle * iconStyle;
         KThemeListBox *themeList;
-};
-
-class KFonts : public KDisplayModule
-{
-	Q_OBJECT
-	
-public:
-	KFonts( QWidget *parent, int mode, int desktop = 0 );
-	~KFonts();
-
-	virtual void readSettings( int deskNum = 0 );
-	virtual void apply( bool Force = FALSE);
-	virtual void loadSettings() {};
-	virtual void applySettings();
-	virtual void defaultSettings();
-	
-	Display *kde_display;
-	Atom 	KDEChangeGeneral;
-
-protected slots:
-	void slotApply();
-	void slotSetFont(const QFont &fnt);
-	void slotPreviewFont( int index );
-	void slotHelp();
-
-protected:
-	void writeSettings();
-	void setDefaults();
-	
-protected:
-	KFontChooser *fntChooser;
-	QListBox *lbFonts;
-	bool useRM;
-	
-	Bool changed;
-	
-	QList <FontUseItem> fontUseList;
-	
-	Bool defaultCharset;
-	Window root;
-	int screen;
 };
 
 #endif

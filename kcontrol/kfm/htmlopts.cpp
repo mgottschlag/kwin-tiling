@@ -119,9 +119,9 @@ KFontOptions::KFontOptions( QWidget *parent, const char *name )
     lay->activate();
 
     m_pCharset = new QComboBox( false, this );
-    charsets = kapp->getCharsets()->available();
+    charsets = kapp->getCharsets()->availableCharsetNames();
     charsets.insert(0, i18n("Use language charset"));
-    m_pCharset->insertStrList( &charsets );
+    m_pCharset->insertStringList( charsets );
 
     m_pCharset->adjustSize();
     m_pCharset->setMinimumSize(m_pCharset->size());
@@ -254,11 +254,10 @@ void KFontOptions::updateGUI()
         if ( !strcmp( fixedName, fit.current() ) )
             m_pFixed->setCurrentItem( i );
     }
-
-    QStrListIterator cit( charsets );
-    for ( i = 0; cit.current(); ++cit, i++ )
+    
+    for ( QStringList::Iterator cit = charsets.begin(); cit != charsets.end(); ++cit ) 
     {
-        if ( !strcmp( charsetName, cit.current() ) )
+        if ( charsetName == *cit )
             m_pCharset->setCurrentItem( i );
     }
 

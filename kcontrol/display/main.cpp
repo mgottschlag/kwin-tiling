@@ -31,6 +31,7 @@
 #include "scrnsave.h"
 #include "general.h"
 #include "backgnd.h"
+#include "fonts.h"
 #include "energy.h"
 #include <qfont.h>
 #include <kconfig.h>
