@@ -193,9 +193,19 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
   int pos = defName.findRev('/');
   if (pos >= 0)
     defName = defName.mid(pos+1);
-  menu->setPixmap(0, SmallIcon(group->icon()));
-  menu->setText(0, group->caption());
-  menu->setTag(defName);
+  if (group && group->isValid())
+  {
+     menu->setPixmap(0, SmallIcon(group->icon()));
+     menu->setText(0, group->caption());
+     menu->setTag(defName);
+  }
+  else
+  {
+     // Should not happen: Installation problem
+     // Let's try to fail softly.
+     menu->setText(0, defName);
+     menu->setTag(defName);
+  }
 
   _menuDict.insert(path, menu);
 
