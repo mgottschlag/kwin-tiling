@@ -142,3 +142,5 @@ void KCDialog::clientChanged(bool state)
   _apply->setEnabled(state);
   _ok->setEnabled(state);
 }
+
+#include "kcdialog.moc"
