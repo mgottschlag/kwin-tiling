@@ -1,5 +1,5 @@
 [Global Key Scheme ]
-SchemeName=KDE Default for 3 Modifiers (Alt/Ctrl/Shift)
+Name=KDE Default for 3 Modifiers (Alt/Ctrl/Shift)
 Execute command=Alt+F2
 Kill Window=Alt+Ctrl+Escape
 Lock screen=Alt+Ctrl+L

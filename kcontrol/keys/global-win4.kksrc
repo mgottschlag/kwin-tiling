@@ -1,5 +1,5 @@
 [Global Key Scheme ]
-SchemeName=Windows Default (With Meta/Win-Key)
+Name=Windows Default (With Meta/Win-Key)
 Execute command=Meta+R
 Kill Window=none
 Lock screen=none

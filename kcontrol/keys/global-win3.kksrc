@@ -1,5 +1,5 @@
 [Global Key Scheme ]
-SchemeName=Windows Default (Without Meta/Win-Key)
+Name=Windows Default (Without Meta/Win-Key)
 Execute command=none
 Kill Window=none
 Lock screen=none

@@ -402,7 +402,7 @@ void KKeyModule::slotAdd()
     new KSimpleConfig( sFile );
 
   config->setGroup( KeyScheme );
-  config->writeEntry( "SchemeName", sName );
+  config->writeEntry( "Name", sName );
   delete config;
 
   slotSave();
@@ -444,7 +444,7 @@ void KKeyModule::readSchemeNames( )
 
     KSimpleConfig config( *it, true );
     config.setGroup( KeyScheme );
-    QString str = config.readEntry( "SchemeName" );
+    QString str = config.readEntry( "Name" );
 
     sList->insertItem( str );
     sFileList->append( *it );

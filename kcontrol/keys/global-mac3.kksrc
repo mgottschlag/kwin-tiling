@@ -1,5 +1,5 @@
 [Global Key Scheme ]
-SchemeName=Mac Default
+Name=Mac Default
 Execute command=Alt+F2
 Kill Window=Alt+Ctrl+Escape
 Lock screen=Alt+Ctrl+L

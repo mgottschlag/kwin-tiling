@@ -1,5 +1,6 @@
 [Standard Key Scheme ]
-SchemeName=Unix Default
+Name=Unix Default
+Name[de]=Unix Standard
 AddBookmark=Ctrl+B
 Back=Alt+Left
 Close=Ctrl+W

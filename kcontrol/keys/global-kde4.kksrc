@@ -1,5 +1,5 @@
 [Global Key Scheme ]
-SchemeName=KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)
+Name=KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)
 Execute command=Meta+Return
 Kill Window=Meta+Ctrl+Delete
 Lock screen=Meta+ScrollLock
