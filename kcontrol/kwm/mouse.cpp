@@ -64,7 +64,10 @@ KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *
 
   QComboBox* combo = new QComboBox(this);
   combo->insertItem(i18n("Maximize"));
+  combo->insertItem(i18n("Maximize (vertical only)"));
+  combo->insertItem(i18n("Maximize (horizontal only)"));
   combo->insertItem(i18n("Shade"));
+  combo->insertItem(i18n("Lower"));
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addMultiCellWidget(combo, 0, 0, 2, 3);
   coTiDbl = combo;
@@ -362,7 +365,10 @@ const char*  KActionsConfig::functionTiDbl(int i)
 {
   switch (i){
   case 0: return "Maximize"; break;
-  case 1: return "Shade"; break;
+  case 1: return "Maximize (vertical only)"; break;
+  case 2: return "Maximize (horizontal only)"; break;
+  case 3: return "Shade"; break;
+  case 4: return "Lower"; break;
   }
   return "";
 }
