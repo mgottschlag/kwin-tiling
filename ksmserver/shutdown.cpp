@@ -55,7 +55,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
   bool saveSession,
   bool maysd, bool maynuke,
   KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
-    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WType_Popup )
+    : QDialog( parent, 0, TRUE, WStyle_Customize | WStyle_NoBorder | WStyle_StaysOnTop )
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
