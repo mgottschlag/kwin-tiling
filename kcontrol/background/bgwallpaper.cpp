@@ -175,7 +175,7 @@ void BGMultiWallpaperDialog::slotRemove()
         else
             i++;
     }
-    if ((current != -1) && (current < dlg->m_listImages->count()))
+    if ((current != -1) && (current < (signed)dlg->m_listImages->count()))
        dlg->m_listImages->setSelected(current, true);
 
     dlg->m_buttonRemove->setEnabled(dlg->m_listImages->hasSelection());

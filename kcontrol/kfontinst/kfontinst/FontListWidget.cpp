@@ -585,8 +585,8 @@ void CFontItem::setEnabled(bool enabled)
 // CPD - disable for now...
 //#define ENABLE_DRAG
 CFontListWidget::CFontListWidget(QWidget *parent)
-               : KListView(parent),
-                 DCOPObject("font_installer"),
+               : DCOPObject("font_installer"),
+	         KListView(parent),
                  itsAdvancedMode(CKfiGlobal::uicfg().isAdvancedMode()),
                  itsShowingProgress(false),
                  itsReady(false)

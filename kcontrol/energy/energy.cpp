@@ -76,7 +76,7 @@ static const int DFLT_OFF   = 60;
 
 extern "C" {
 
-    KCModule *create_energy(QWidget *parent, char *name) {
+    KCModule *create_energy(QWidget *parent, char *) {
 	return new KEnergy(parent, "kcmenergy");
     }
 

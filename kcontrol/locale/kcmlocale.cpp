@@ -369,7 +369,7 @@ void KLocaleConfig::slotCheckButtons()
   m_removeLanguage->setEnabled( m_languages->currentItem() != -1 );
   m_upButton->setEnabled( m_languages->currentItem() > 0 );
   m_downButton->setEnabled( m_languages->currentItem() != -1 &&
-                            m_languages->currentItem() < m_languages->count() - 1 );
+                            m_languages->currentItem() < (signed)(m_languages->count() - 1) );
 }
 
 void KLocaleConfig::slotLocaleChanged()

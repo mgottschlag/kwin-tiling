@@ -98,7 +98,7 @@ void TaskLMBMenu::dragSwitch()
 	Task* t = m_tasks.at( indexOf( m_lastDragId ) );
 	if( t ) {
 		t->activate();
-		for( int i = 0; i < count(); ++i )
+		for( unsigned int i = 0; i < count(); ++i )
 			setItemChecked( idAt( i ), false );
 		setItemChecked( m_lastDragId, true );
 	}

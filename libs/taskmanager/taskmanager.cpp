@@ -732,7 +732,7 @@ void Task::generateThumbnail()
    width = width * _thumbSize;
    height = height * _thumbSize;
 
-   img = img.smoothScale( width, height );
+   img = img.smoothScale( qRound(width), qRound(height) );
    _thumb = img;
    _grab.resize( 0, 0 ); // Makes grab a null image.
 
