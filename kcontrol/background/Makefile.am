@@ -17,7 +17,6 @@ noinst_HEADERS = backgnd.h bgdialogs.h bgsettings.h bgrender.h
 noinst_LTLIBRARIES = libbgnd.la
 libbgnd_la_SOURCES = bgrender.cc bgsettings.cc
 libbgnd_la_LIBADD = $(LIB_KSYCOCA)
-libbgnd_la_LDFLAGS = -no-undefined $(all_libraries)
 
 messages:
 	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
