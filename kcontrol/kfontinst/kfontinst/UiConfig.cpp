@@ -40,6 +40,19 @@ static void checkSize(QStringList &list, bool space=false)
         list.remove(list.begin());
 }
 
+static void checkDirs(QStringList &list)
+{
+    QStringList           ok;
+    QStringList::Iterator it;
+
+    for(it=list.begin(); it!=list.end(); ++it)
+        if(CMisc::dExists(*it))
+            ok.append(*it);
+
+    if(ok.count()!=list.count())
+        list=ok;
+}
+
 CUiConfig::CUiConfig()
          : KConfig("kcmfontinstuirc")
 {
@@ -60,6 +73,8 @@ CUiConfig::CUiConfig()
     itsFsTopItem=readEntry("FsTopItem");
     intVal=readNumEntry("Mode", BASIC);
     itsMode=intVal>=BASIC && intVal <=ADVANCED_PLUS_FS ? (EMode)intVal : BASIC;
+    checkDirs(itsOpenInstDirs);
+    checkDirs(itsOpenFsDirs);
 
     // Restore KConfig group...
     setGroup(origGroup);
@@ -68,6 +83,9 @@ CUiConfig::CUiConfig()
 CUiConfig::~CUiConfig()
 {
     QString origGroup=group();
+
+    checkDirs(itsOpenInstDirs);
+    checkDirs(itsOpenFsDirs);
 
     setGroup("KcmFontinst");
     checkSize(itsOpenInstDirs);
