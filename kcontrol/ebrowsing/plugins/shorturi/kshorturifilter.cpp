@@ -307,11 +307,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
   }
 
+#if 0
   // Provided as a filter for remote URLs.  Example,
   // if the current path is ftp://ftp.kde.org/pub/
   // and user typed ../ in the location bar they would
   // correctly get ftp://ftp.kde.org/. Is that cool or what ??
   // David: yes but it's against the documentation for KURIFilterData::setAbsolutePath() :)
+  // Plus, it breaks if you type something like "www.kde.org" after going to an FTP site.
+  // It'll append www.kde.org, without checking that the resulting FTP url exists.
+  // A stat() over FTP can be slow... too slow for a shorturifilter IMHO -> disabled.
   if( canBeAbsolute && !canBeLocalAbsolute )
   {
     KURL u( KURL( data.absolutePath() ), cmd );
@@ -322,6 +326,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       return true;
     }
   }
+#endif
 
   // Okay this is the code that allows users to supply custom matches for
   // specific URLs using Qt's regexp class. This is hard-coded for now in
