@@ -72,6 +72,11 @@
 #define XFT_CACHE_CMD "xftcache"
 #endif
 
+#undef KFI_DBUG
+#include <qtextstream.h>
+QTextOStream dbg(stderr);
+#define KFI_DBUG dbg
+
 extern "C"
 {
     int kdemain(int argc, char **argv);
@@ -376,6 +381,10 @@ switch(checkUrl(U))\
     case URL_OK:\
         ; \
 }
+
+#define CHECK_URL_AND_PROTOCOL(U) \
+if(KIO_FONTS_PROTOCOL==U.protocol()) \
+    CHECK_URL(U)
 
 #define CHECK_URL_ROOT_OK(U) \
 if("/"!=U.path()) \
@@ -825,15 +834,15 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
                 if(CMisc::dExists(CMisc::getDir(destOrig)))
                 {
                     cmd+=("cp -f "); // "kfontinst install ");
-                    cmd+=tmpFileC;
+                    cmd+=QFile::encodeName(KProcess::quote(tmpFileC));
                     cmd+=" ";
-                    cmd+=destOrigC;
+                    cmd+=QFile::encodeName(KProcess::quote(destOrigC));
                     cmd+="; chmod 0644 ";
                 }
                 else
                 {
                     cmd+=("kfontinst install ");
-                    cmd+=tmpFileC;
+                    cmd+=QFile::encodeName(KProcess::quote(tmpFileC));
                     cmd+=" ";
                 }
 
@@ -945,6 +954,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QCString &destOrigC, bool
         dataReq(); // Request for data
         result = readData(buffer);
         if(result > 0 && !writeAll(fd, buffer.data(), buffer.size()))
+        {
             if(ENOSPC==errno) // disk full
             {
                 error(KIO::ERR_DISK_FULL, destOrig);
@@ -955,6 +965,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QCString &destOrigC, bool
                 error(KIO::ERR_COULD_NOT_WRITE, destOrig);
                 result = -1;
             }
+        }
     }
     while(result>0);
 
@@ -993,8 +1004,8 @@ bool CKioFonts::putReal(const QString &destOrig, const QCString &destOrigC, bool
 
 void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 {
-    KFI_DBUG << "copy " << src.path() << " - " << d.path() << endl;
-    CHECK_URL(src)
+    KFI_DBUG << "copy " << src.protocol() << ':' << src.path() << " - " << d.protocol() << ':' << d.path() << endl;
+    CHECK_URL_AND_PROTOCOL(src)
     //CHECK_URL(d) // CPD as per comment in ::put()
 
     QCString        realSrc=QFile::encodeName(convertUrl(src, true));
@@ -1016,12 +1027,20 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
         return;
     }
 
-    KURL       dest(d);
-    bool       changed=confirmUrl(dest);
-    QCString   realDest=QFile::encodeName(CMisc::formatFileName(convertUrl(dest, false)));
-    ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), CMisc::getSub(dest.path()));
+    KURL            dest(d);
+    bool            destIsFonts=KIO_FONTS_PROTOCOL==dest.protocol(),
+                    changed=destIsFonts && confirmUrl(dest);
+    QCString        realDest=QFile::encodeName(CMisc::formatFileName(convertUrl(dest, false)));
+    KDE_struct_stat buffDest;
+    ExistsType      destExists=destIsFonts
+                              ? checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), CMisc::getSub(dest.path()))
+                              : -1!=KDE_lstat(realDest.data(), &buffDest)
+                                    ? S_ISDIR(buffDest.st_mode)
+                                          ? EXISTS_DIR
+                                          : EXISTS_FILE
+                                    : EXISTS_NO;
 
-    KFI_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
+    KFI_DBUG << "REAL: " << realSrc << " TO REAL: " << realDest << endl;
 
     if (EXISTS_NO!=destExists)
     {
@@ -1037,16 +1056,31 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
         }
     }
 
-    if(nonRootSys(dest))
+    if(-1==KDE_stat(realSrc.data(), &buffSrc))
     {
+        error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.path());
+        return;
+    }
+
+    if(destIsFonts && nonRootSys(dest))
+    {
+
         QCString cmd(CMisc::dExists(CMisc::getDir(realDest)) ? "cp -f " : "kfontinst install ");
 
-        cmd+=realSrc;
+        cmd+=QFile::encodeName(KProcess::quote(realSrc));
         cmd+=" ";
-        cmd+=realDest;
+        cmd+=QFile::encodeName(KProcess::quote(realDest));
+
+        totalSize(buffSrc.st_size);
 
         if(doRootCmd(cmd))
+        {
+            KDE_struct_stat buff;
+
             modifiedDir(CMisc::getDir(realDest), true);
+            if(-1!=KDE_lstat(QFile::encodeName(realDest).data(), &buff))
+                processedSize(buff.st_size);
+        }
         else
         {
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
@@ -1055,12 +1089,6 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     }
     else
     {
-        if(-1==KDE_stat(realSrc.data(), &buffSrc))
-        {
-            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.path());
-            return;
-        }
-
         int srcFd=KDE_open(realSrc.data(), O_RDONLY);
 
         if (srcFd<0)
@@ -1069,10 +1097,13 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             return;
         }
 
-        QString destDir(CMisc::getDir(realDest));
+        if(destIsFonts)
+        {
+            QString destDir(CMisc::getDir(realDest));
 
-        if(!CMisc::dExists(destDir))
-            CMisc::createDir(destDir);
+            if(!CMisc::dExists(destDir))
+                CMisc::createDir(destDir);
+        }
 
         // WABA: Make sure that we keep writing permissions ourselves,
         // otherwise we can be in for a surprise on NFS.
@@ -1131,7 +1162,8 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             return;
         }
 
-        ::chmod(realDest.data(), CMisc::FILE_PERMS);
+        if(destIsFonts)
+            ::chmod(realDest.data(), CMisc::FILE_PERMS);
 
         // copy access and modification time
         struct utimbuf ut;
@@ -1141,10 +1173,11 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
         ::utime(realDest.data(), &ut);
 
         processedSize(buffSrc.st_size);
-        modifiedDir(CMisc::getDir(realDest));
+        if(destIsFonts)
+            modifiedDir(CMisc::getDir(realDest));
     }
 
-    if(++itsNewFonts>MAX_NEW_FONTS)
+    if(destIsFonts && ++itsNewFonts>MAX_NEW_FONTS)
     {
         setTimeoutSpecialCommand(0); // Cancel timer
         doModifiedDirs();
@@ -1335,7 +1368,7 @@ void CKioFonts::mkdir(const KURL &url, int)
             if(sys)
             {
                 QCString cmd(EXISTS_NO!=exists ? "kfontinst adddir " : "kfontinst mkdir ");
-                cmd+=realPath;
+                cmd+=QFile::encodeName(KProcess::quote(realPath));
 
                 if(doRootCmd(cmd))
                 {
@@ -1372,7 +1405,7 @@ void CKioFonts::chmod(const KURL &url, int permissions)
         p.setNum(permissions);
         cmd+=p;
         cmd+=" ";
-        cmd+=realPath;
+        cmd+=QFile::encodeName(KProcess::quote(realPath));
 
         if(!doRootCmd(cmd))
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(KIO_FONTS_SYS));
@@ -1801,7 +1834,7 @@ void CKioFonts::modifiedDir(const QString &d, bool sys)
         {
             QCString cmd(CMisc::dExists(ds) ? "kfontinst adddir " : "kfontinst mkdir ");
 
-            cmd+=QFile::encodeName(ds);
+            cmd+=QFile::encodeName(KProcess::quote(ds));
 
             if(doRootCmd(cmd))
             {
@@ -1850,7 +1883,7 @@ void CKioFonts::doModifiedDirs()
         {
             QCString cmd("kfontinst cfgdir ");
 
-            cmd+=QFile::encodeName(*it);
+            cmd+=QFile::encodeName(KProcess::quote(*it));
             doRootCmd(cmd, false);
         }
 
@@ -2025,6 +2058,9 @@ bool CKioFonts::confirmUrl(KURL &url)
 
 QString CKioFonts::convertUrl(const KURL &url, bool checkExists)
 {
+    if(KIO_FONTS_PROTOCOL!=url.protocol())
+        return url.path();
+
     if(CMisc::root())
     {
         if(!checkExists)
