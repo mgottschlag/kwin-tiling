@@ -150,5 +150,5 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
   }
   while ( !button && (result() != QDialog::Rejected) );
 }
-
+#include "caldialog.moc"
 //--------------------------------------------------------------
