@@ -96,7 +96,7 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 
   // result list
   _resultList = new KListBox(this);
-  QLabel *resultl = new QLabel(_keyList, i18n("&Results:"), this);
+  QLabel *resultl = new QLabel(_resultList, i18n("&Results:"), this);
 
   l->addWidget(resultl);
   l->addWidget(_resultList);
