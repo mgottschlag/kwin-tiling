@@ -58,7 +58,7 @@ void KMatrixSaverCfg::readSettings() {
   if ( !str.isNull() )
     background.setNamedColor( str );
   else
-    foreground = Qt::black;
+    background = Qt::black;
   str = config->readEntry("ForegroundColor");
   if ( !str.isNull() )
     foreground.setNamedColor( str );
