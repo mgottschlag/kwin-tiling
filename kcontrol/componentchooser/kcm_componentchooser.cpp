@@ -16,6 +16,9 @@
 #include <kcm_componentchooser.h>
 #include <kcm_componentchooser.moc>
 #include <qlayout.h>
+#include <kglobal.h>
+#include <klocale.h>
+
 KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 	KCModule(parent,name) {
 
@@ -23,7 +26,7 @@ KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
 	m_chooser=new ComponentChooser(this,"ComponentChooser");
 	connect(m_chooser,SIGNAL(changed(bool)),this,SIGNAL(changed(bool)));
 }
- 
+
 void KCMComponentChooser::load(){
 	m_chooser->load();
 }
@@ -40,6 +43,7 @@ extern "C"
 {
     KCModule *create_componentchooser( QWidget *parent, const char * )
     {
+        KGlobal::locale()->insertCatalogue("kcmcomponentchooser");
         return new KCMComponentChooser( parent, "kcmcomponentchooser" );
     }
 }

@@ -13,3 +13,5 @@ kcm_componentchooser_la_LIBADD =  $(LIB_KIO)
 kcm_componentchooser_DATA = componentchooser.desktop
 kcm_componentchooserdir = $(kde_appsdir)/Settings/Personalization
 
+messages: rc.cpp
+	$(XGETTEXT) *.cc *.cpp -o $(podir)/kcmcomponentchooser.pot
