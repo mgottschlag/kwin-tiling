@@ -71,13 +71,14 @@ protected slots:
   void slotHelpRequest();
 
   void changedModule(ConfigModule *changed);
-  
+
   bool queryClose();
+    void slotConfigureKeys();
 
 private:
 
   QString handleAmpersand( QString ) const;
-  
+
   QSplitter      *_splitter;
   QTabWidget     *_tab;
   DockContainer  *_dock;

@@ -29,6 +29,7 @@
 #include <qwhatsthis.h>
 
 #include <kaction.h>
+#include <kkeydialog.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -128,7 +129,7 @@ TopLevel::TopLevel(const char* name)
   // insert the about widget
   // First preload about pixmaps for speedup
   AboutWidget::initPixmaps();
-  
+
   AboutWidget *aw = new AboutWidget(this);
   connect( aw, SIGNAL( moduleSelected( const QString & ) ),
            SLOT( activateModule( const QString & ) ) );
@@ -184,8 +185,8 @@ TopLevel::~TopLevel()
     }
 
   config->setGroup("General");
-  config->writeEntry("SplitterSizes", _splitter->sizes()); 
-  
+  config->writeEntry("SplitterSizes", _splitter->sizes());
+
   config->sync();
 
   delete _modules;
@@ -202,7 +203,7 @@ bool TopLevel::queryClose()
 void TopLevel::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
-
+  KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
   icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
      actionCollection(), "activate_iconview");
@@ -235,13 +236,18 @@ void TopLevel::setupActions()
   // and not just KControl
   if (KCGlobal::isInfoCenter())
     createGUI("kinfocenterui.rc");
-  else 
+  else
     createGUI("kcontrolui.rc");
 
   report_bug = actionCollection()->action("help_report_bug");
   report_bug->setText(i18n("&Report Bug..."));
   report_bug->disconnect();
   connect(report_bug, SIGNAL(activated()), SLOT(reportBug()));
+}
+
+void TopLevel::slotConfigureKeys()
+{
+  KKeyDialog::configure( actionCollection(), this );
 }
 
 void TopLevel::activateIconView()
@@ -348,14 +354,14 @@ void TopLevel::categorySelected(QListViewItem *category)
   about_module->setText( i18n( "About Current Module" ) );
   about_module->setIconSet( QIconSet() );
   about_module->setEnabled( false );
-								   
+
   // insert the about widget
   QListViewItem *firstItem = category->firstChild();
-  QString caption = static_cast<ModuleTreeItem*>(category)->caption();  
+  QString caption = static_cast<ModuleTreeItem*>(category)->caption();
   if( _dock->baseWidget()->isA( "AboutWidget" ) )
   {
     static_cast<AboutWidget *>( _dock->baseWidget() )->setCategory( firstItem, caption);
-  }    
+  }
   else
   {
     AboutWidget *aw = new AboutWidget( this, 0, firstItem, caption );
@@ -427,7 +433,7 @@ void TopLevel::activateModule(const QString& name)
            _indextab->makeSelected(_active);
            break;
         }
-        
+
         _active=mod;
 
         if (mod->aboutData())
