@@ -119,25 +119,42 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 	{
 	    QString key;
 	    QString _url = url.url();
-	    if( url.isMalformed() && _url[0] == '/' )
+	    if( url.isMalformed() && _url[0] == '/' ) {
 		key = QString::fromLatin1( "file" );
-	    else
+	    } else {
 		key = url.protocol();
+	    }
 
-	    if( KProtocolInfo::isKnownProtocol(key) )
+	    if( KProtocolInfo::isKnownProtocol(key) ) {
 		return QString::null;
-
+	    }
+	    
 	    QString search = m_currSearchKeywordsEngine.m_strQuery;
 	    if (!search.isEmpty())
 		{
-		    int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
-		    if (pct >= 0)
-			{
-			    search = KURL::encode_string( search );
-			    QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
-			    return formatResult( res.replace(pct, 2, search), _url, url.isMalformed() );
-			}
+		    /*
+		     * As a special case, if there is a question mark
+		     * at the beginning of the query, we'll force the
+		     * use of the search fallback without going through
+		     * the Internet Keywords engine.
+		     *
+		     */
+
+		    QRegExp question("^[ \t]*\\?[ \t]*");
+		    if (url.isMalformed() && _url.find(question) == 0) {
+			_url = _url.replace(question, "");
+			return formatResult(search, _url, true);
+		    } else {
+			int pct = m_currInternetKeywordsEngine.m_strQueryWithSearch.find("\\|");
+			if (pct >= 0)
+			    {
+				search = KURL::encode_string( search );
+				QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
+				return formatResult( res.replace(pct, 2, search), _url, url.isMalformed() );
+			    }
+		    }
 		}
+
 	    return formatResult( m_currInternetKeywordsEngine.m_strQuery, _url, url.isMalformed() );
 	}
     return QString::null;

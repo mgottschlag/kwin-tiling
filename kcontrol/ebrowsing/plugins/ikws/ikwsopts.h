@@ -50,7 +50,7 @@ public:
     void save();
     void defaults();
 
-	QString quickHelp() const;
+    QString quickHelp() const;
 
 protected:
 
