@@ -166,9 +166,9 @@ public:
         const char *name = 0);
     virtual ~Startup();
 
-    QString text() const { return !_data.name().isEmpty() ? _data.name() : _data.bin(); }
+    QString text() const { return _data.findName(); }
     QString bin() const { return _data.bin(); }
-    QString icon() const { return !_data.icon().isEmpty() ? _data.icon() : _data.bin(); }
+    QString icon() const { return _data.findIcon(); }
     void update( const KStartupInfoData& data ) { _data.update( data ); }
     const KStartupInfoId& id() const { return _id; }
 
