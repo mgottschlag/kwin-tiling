@@ -181,6 +181,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBackgroundBox = new QComboBox(m_pTab1);
     connect(m_pBackgroundBox, SIGNAL(activated(int)), SLOT(slotBGMode(int)));
+    connect(m_pBackgroundBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBGMode(int)));
     lbl->setBuddy(m_pBackgroundBox);
     grid->addWidget(m_pBackgroundBox, 0, 1);
     QWhatsThis::add( m_pBackgroundBox, i18n("You can select the manner in which"
@@ -275,6 +276,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
 	    SLOT(slotWallpaper(const QString &)));
+    connect(m_pWallpaperBox->listBox(),SIGNAL(highlighted ( const QString &  )), SLOT(slotWallpaper(const QString &)));
     grid->addWidget(m_pWallpaperBox, 2, 1);
     QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
 					   " to use as wallpaper.") );
@@ -304,6 +306,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBlendBox = new QComboBox(m_pTab3);
     connect(m_pBlendBox, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
+    connect(m_pBlendBox->listBox(),SIGNAL(highlighted ( int  )), SLOT(slotBlendMode(int)));
     lbl->setBuddy(m_pBlendBox);
     grid->addWidget(m_pBlendBox, 0, 1);
     QWhatsThis::add( m_pBlendBox, i18n("If you have selected to use wallpaper, you"
