@@ -334,6 +334,14 @@ void KIconConfig::save()
             mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparant, true, true);
 	}
     }
+    // This is the new default in KDE 2.2, in sync with the kiconeffect of kdelibs Nolden 2001/06/11
+    mpConfig->setGroup("DesktopIcons");
+    mpConfig->writeEntry("ActiveEffect", "togamma", true, true);
+    mpConfig->writeEntry("ActiveValue", "0.7", true, true);
+    mpConfig->setGroup("PanelIcons");
+    mpConfig->writeEntry("ActiveEffect", "togamma", true, true);
+    mpConfig->writeEntry("ActiveValue", "0.7", true, true);
+
     mpConfig->sync();
 
     emit changed(false);
