@@ -69,6 +69,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localenum,  SIGNAL(resample()),                    SLOT(update()  ));
   connect(localemon,  SIGNAL(resample()),                    SLOT(update()  ));
   connect(localetime, SIGNAL(resample()),                    SLOT(update()  ));
+  connect(localemain, SIGNAL(languageChanged()), localenum, SLOT(reset()   ));
+  connect(localemain, SIGNAL(languageChanged()), localemon, SLOT(reset()   ));
   connect(localemain, SIGNAL(languageChanged()), localetime, SLOT(reset()   ));
   connect(localemain, SIGNAL(countryChanged()),              SLOT(reset   ()));
   connect(localemain, SIGNAL(chsetChanged()),                SLOT(newChset()));
