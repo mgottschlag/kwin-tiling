@@ -142,7 +142,7 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;
-&lt;p&gt;Select this option to allways show the Applet Handles.&lt;/p&gt;
+&lt;p&gt;Select this option to always show the Applet Handles.&lt;/p&gt;
 &lt;p&gt;Applet Handles let you move, remove and configure applets in the panel.&lt;/p&gt;
 &lt;/qt&gt;</string>
                     </property>
@@ -176,7 +176,7 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;
-&lt;p&gt;&lt;p&gt;Select this option to allways hide the Applet Handles. Beware that this option can disable removing, moving or configuring some applets.&lt;/p&gt;
+&lt;p&gt;&lt;p&gt;Select this option to always hide the Applet Handles. Beware that this option can disable removing, moving or configuring some applets.&lt;/p&gt;
 &lt;/qt&gt;</string>
                     </property>
                 </widget>
