@@ -56,7 +56,7 @@ bool isKdelnkFile(const char* name){
     if(r > -1){
       s[r] = '\0';
       file.close();
-      return (QString(s).left(17) == "# KDE Config File");
+      return (strncmp(s, "# KDE Config File", 17) == 0);
     }
     file.close();
   }
@@ -296,7 +296,7 @@ short PMenuItem::parse( QFileInfo *fi, PMenu *menu )
 	  if(r > -1)
 	    {
 	      s[r] = '\0';
-	      if(QString(s).left(17) != "# KDE Config File") 
+	      if(strncmp(s, "# KDE Config File", 17) == 0) 
 		{
 		  file.close();
 		  return -1;
@@ -512,7 +512,7 @@ short PMenuItem::parse( QFileInfo *fi, PMenu *menu )
     QString tmp = real_name.copy();
     int pos = tmp.find(".kdelnk");
     if( pos >= 0 )
-      tmp = tmp.left(pos);
+      tmp.truncate(pos);
     tmp.append(".xpm");
     pixmap = global_pix_loader->loadApplicationMiniIcon(tmp, 16, 16);
   }
@@ -526,7 +526,7 @@ short PMenuItem::parse( QFileInfo *fi, PMenu *menu )
     QString tmp = real_name.copy();
     int pos = tmp.find(".kdelnk");
     if( pos >= 0 )
-      tmp = tmp.left(pos);
+      tmp.truncate(pos);
     tmp.append(".xpm");
     big_pixmap_name = tmp.copy();
   }
@@ -541,7 +541,7 @@ void PMenuItem::writeConfig( QDir dir )
     return;
   QString file = dir.absPath();
   dir_path = file.copy();
-  file += ( (QString) "/" + real_name ); //+ ".kdelnk" );
+  file += '/' + real_name; //+ ".kdelnk" );
   QFile config(file);
   if( !config.open(IO_ReadWrite) ) 
     return;
