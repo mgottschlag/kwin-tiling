@@ -2,7 +2,7 @@
 # Makefile.am for kscreensave.   
 #
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) -I/usr/X11R6/include
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
 LDADD = $(LIB_KDEUI) -lm 
 
