@@ -96,7 +96,7 @@ fmtint (OutCh dopr_outch, void *bp,
 {
     unsigned long uvalue;
     char convert[20];
-    CONST char *ctab;
+    const char *ctab;
     int signvalue = 0;
     int place = 0;
     int spadlen = 0;		/* amount to space pad */
@@ -175,7 +175,7 @@ fmtint (OutCh dopr_outch, void *bp,
 
 static void
 fmtstr (OutCh dopr_outch, void *bp,
-	CONST char *value, int flags, int min, int max)
+	const char *value, int flags, int min, int max)
 {
     int padlen, strln, curcol;
 #ifdef PRINT_QUOTES
@@ -256,11 +256,11 @@ fmtstr (OutCh dopr_outch, void *bp,
 }
 
 static void
-DoPr (OutCh dopr_outch, void *bp, CONST char *format, va_list args)
+DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 {
-    CONST char *strvalue;
+    const char *strvalue;
 #ifdef PRINT_ARRAYS
-    CONST char *arpr, *arsf, *arepr, *aresf, *aresp;
+    const char *arpr, *arsf, *arepr, *aresf, *aresp;
     void *arptr;
 #endif
     unsigned long value;
@@ -495,7 +495,7 @@ logTime (char *dbuf)
 #endif
 
 STATIC void
-LogOutOfMem (CONST char *fkt)
+LogOutOfMem (const char *fkt)
 {
 #ifdef USE_SYSLOG
     syslog (LOG_CRIT, "Out of memory in %s()", fkt);
@@ -577,7 +577,7 @@ OutChL (void *bp, char c)
 }
 
 static void
-Logger (int type, CONST char *fmt, va_list args)
+Logger (int type, const char *fmt, va_list args)
 {
     static OCLBuf oclb;
 
@@ -592,7 +592,7 @@ Logger (int type, CONST char *fmt, va_list args)
 STATIC int debugLevel;
 
 STATIC void
-Debug (CONST char *fmt, ...)
+Debug (const char *fmt, ...)
 {
     va_list args;
 
@@ -607,7 +607,7 @@ Debug (CONST char *fmt, ...)
 
 #ifndef LOG_NO_INFO
 STATIC void 
-LogInfo(CONST char *fmt, ...)
+LogInfo(const char *fmt, ...)
 {
     va_list args;
 
@@ -619,7 +619,7 @@ LogInfo(CONST char *fmt, ...)
 
 #ifndef LOG_NO_ERROR
 STATIC void
-LogError (CONST char *fmt, ...)
+LogError (const char *fmt, ...)
 {
     va_list args;
 
@@ -631,7 +631,7 @@ LogError (CONST char *fmt, ...)
 
 #ifdef LOG_PANIC_EXIT
 STATIC void
-LogPanic (CONST char *fmt, ...)
+LogPanic (const char *fmt, ...)
 {
     va_list args;
 
@@ -679,7 +679,7 @@ OutCh_OCF (void *bp, char c)
 }
 
 int 
-FdPrintf (int fd, CONST char *fmt, ...)
+FdPrintf (int fd, const char *fmt, ...)
 {
     va_list args;
     OCFBuf ocfb = { 0, 0, 0, -1 };

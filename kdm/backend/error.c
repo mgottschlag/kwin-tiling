@@ -47,11 +47,10 @@ from The Open Group.
 #define LOG_PANIC_EXIT 1
 #define NEED_FDPRINTF
 #define STATIC
-#define CONST
 #include "printf.c"
 
 void
-GDebug (char *fmt, ...)
+GDebug (const char *fmt, ...)
 {
     va_list args;
 
@@ -64,7 +63,7 @@ GDebug (char *fmt, ...)
 }
 
 void
-Panic (char *mesg)
+Panic (const char *mesg)
 {
 #ifdef USE_SYSLOG
     syslog(LOG_ALERT, mesg);
@@ -86,7 +85,7 @@ ReInitErrorLog ()
 #endif
 
 void
-InitErrorLog (char *errorLogFile)
+InitErrorLog (const char *errorLogFile)
 {
 #ifdef USE_SYSLOG
 # ifdef USE_PAM
