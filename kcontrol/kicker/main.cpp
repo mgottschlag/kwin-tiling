@@ -1,4 +1,4 @@
-/*
+    /*
  *  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@
 #include "hidingtab_impl.h"
 #include "menutab_impl.h"
 #include "lookandfeeltab_impl.h"
-
+#include "lookandfeeltab_kcm.h"
 
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
@@ -460,4 +460,36 @@ extern "C"
                                          "kcmkicker/pics");
         return new KickerConfig(parent, "kcmkicker");
     }
+
+/*  TODO: add a kcm loader for each of the tabs so they can be loaded independantly,
+          primarily for Configure Panel in kicker
+    KCModule *create_kicker_behaviour(QWidget *parent, const char *)
+    {
+        KImageIO::registerFormats();
+        KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
+                "kicker/tiles");
+        KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
+                "kcmkicker/pics");
+        return new LookAndFeelConfig(parent, "kcmkicker");
+    }
+
+    KCModule *create_kicker_position(QWidget *parent, const char *)
+    {
+        KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
+                                         "kicker/extensions");
+        return new PositionConfig(parent, "kcmkickerposition");
+    }
+
+    KCModule *create_kicker_hiding(QWidget *parent, const char *)
+    {
+        KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
+                                         "kicker/extensions");
+        return new HidingConfig(parent, "kcmkickerhiding");
+    }
+
+    KCModule *create_kicker_menus(QWidget *parent, const char *)
+    {
+        return new MenusConfig(parent, "kcmkickermenus");
+    }
+*/
 }
