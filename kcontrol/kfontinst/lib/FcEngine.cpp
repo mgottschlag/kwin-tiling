@@ -899,7 +899,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
         if(file.size()<2048 && file.open(IO_ReadOnly)) // Urls should be less than 2k, and fonts usually above!
         {
             QString     thumbUrl;
-            QDataStream stream(&file);
+            QTextStream stream(&file);
 
             stream >> thumbUrl;
             isThumbnailUrl=0==thumbUrl.find(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KURL(thumbUrl), faceNo, all);

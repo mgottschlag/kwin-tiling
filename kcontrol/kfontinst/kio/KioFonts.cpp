@@ -810,8 +810,8 @@ void CKioFonts::get(const KURL &url)
         // read this and just ask Xft/fontconfig for the font data.
         if(hasMetaData("thumbnail") && "1"==metaData("thumbnail"))
         {
-            QByteArray  array;
-            QDataStream stream(array, IO_WriteOnly);
+            QByteArray   array;
+            QTextOStream stream(array);
 
             emit mimeType("text/pain");
 
