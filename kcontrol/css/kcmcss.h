@@ -19,8 +19,7 @@
 #define __KCMCSS_H__
 
 
-#include <qasciidict.h>
-
+#include <qmap.h>
 
 #include <kcmodule.h>
 
@@ -51,7 +50,7 @@ public slots:
 
 private:
 
-  QAsciiDict<char> cssDict();
+  QMap<QString,QString> cssDict();
 
   CSSConfigDialog *dialog;
 

@@ -203,18 +203,18 @@ void CSSConfig::configChanged()
 }
 
 
-char *px(int i, double scale)
+QString px(int i, double scale)
 {
-  static QCString px;
+  QString px;
   px.setNum(static_cast<int>(i * scale));
   px += "px";
-  return strdup(px.data());
+  return px;
 }
 
 
-QAsciiDict<char> CSSConfig::cssDict()
+QMap<QString,QString> CSSConfig::cssDict()
 {
-  QAsciiDict<char> dict;
+  QMap<QString,QString> dict;
 
   // Fontsizes ------------------------------------------------------
   
@@ -255,32 +255,32 @@ QAsciiDict<char> CSSConfig::cssDict()
     }
   else
     {
-      dict.insert("background-color", strdup(dialog->backgroundColor->color().name().latin1()));
-      dict.insert("foreground-color", strdup(dialog->foregroundColor->color().name().latin1()));
+      dict.insert("background-color", dialog->backgroundColor->color().name());
+      dict.insert("foreground-color", dialog->foregroundColor->color().name());
     }
   
   if (dialog->sameColor->isChecked())
-    dict.insert("force-color", strdup("! important"));
+    dict.insert("force-color", "! important");
   else
-    dict.insert("force-color", strdup(""));
+    dict.insert("force-color", "");
 
   // Fonts -------------------------------------------------------------
-  dict.insert("font-family", strdup(dialog->fontFamily->currentText().latin1()));
+  dict.insert("font-family", dialog->fontFamily->currentText());
   if (dialog->sameFamily->isChecked())
-    dict.insert("force-font", strdup("! important"));
+    dict.insert("force-font", "! important");
   else
-    dict.insert("force-font", strdup(""));
+    dict.insert("force-font", "");
 
   // Images
 
   if (dialog->hideImages->isChecked())
-    dict.insert("display-images", strdup("display : none ! important"));
+    dict.insert("display-images", "display : none ! important");
   else
-    dict.insert("display-images", strdup(""));
+    dict.insert("display-images", "");
   if (dialog->hideBackground->isChecked())
-    dict.insert("display-background", strdup("background-image : none ! important"));
+    dict.insert("display-background", "background-image : none ! important");
   else
-    dict.insert("display-background", strdup(""));
+    dict.insert("display-background", "");
 
   return dict;
 }

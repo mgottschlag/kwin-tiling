@@ -8,7 +8,7 @@
 #include "template.h"
 
 
-bool CSSTemplate::expand(QString destname, const QAsciiDict<char> &dict)
+bool CSSTemplate::expand(QString destname, const QMap<QString,QString> &dict)
 {
   QFile inf(_filename);
   if (!inf.open(IO_ReadOnly))
@@ -32,7 +32,7 @@ bool CSSTemplate::expand(QString destname, const QAsciiDict<char> &dict)
 	  if (end >= 0)
             {
 	      QString expr = line.mid(start+1, end-start-1);
-	      QString res = eval(expr, dict);
+	      QString res = dict[expr];
 
 	      line.replace(start, end-start+1, res);
 	    }
@@ -44,10 +44,4 @@ bool CSSTemplate::expand(QString destname, const QAsciiDict<char> &dict)
   outf.close();
 
   return true;
-}
-
-
-QString CSSTemplate::eval(QString expr, const QAsciiDict<char> &dict)
-{
-  return dict[expr.latin1()];
 }

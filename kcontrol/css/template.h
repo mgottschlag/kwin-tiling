@@ -3,25 +3,16 @@
 
 
 #include <qstring.h>
-#include <qasciidict.h>
-
+#include <qmap.h>
 
 class CSSTemplate
 {
 public:
 
   CSSTemplate(QString fname) : _filename(fname) {};
-
-  bool expand(QString destname, const QAsciiDict<char> &dict);
-
+  bool expand(QString destname, const QMap<QString,QString> &dict);
 
 protected:
-
-  QString eval(QString expr, const QAsciiDict<char> &dict);
-
-
-private:
-
   QString _filename;
 
 };
