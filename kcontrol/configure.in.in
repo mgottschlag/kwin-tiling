@@ -1,5 +1,0 @@
-
-KDE_CHECK_HEADER(odbcinstext.h,
-	[ODBC_DIR=odbc])
-AC_SUBST(ODBC_DIR)
-
