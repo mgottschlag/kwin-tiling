@@ -27,12 +27,18 @@
 #include "qxembed.h"
 #include <X11/Xlib.h>
 
+#include <qcursor.h>
+
 QXEmbed::QXEmbed(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
     window = 0;
     setFocusPolicy(StrongFocus);
-    //setSizeGrip( FALSE ); //trick to create extraData();
+
+    //trick to create extraData();
+    QCursor old = cursor();
+    setCursor(Qt::blankCursor);
+    setCursor(old);
 }
 
 QXEmbed::~QXEmbed()
@@ -151,7 +157,7 @@ void QXEmbed::embed(WId w)
     QApplication::syncX();
     XResizeWindow(qt_xdisplay(), w, width(), height());
     XMapWindow(qt_xdisplay(),w);
-    //extraData()->xDndProxy = w;
+    extraData()->xDndProxy = w;
 
     if (this == qApp->focusWidget() )
 	sendFocusIn();
