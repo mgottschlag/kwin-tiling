@@ -72,8 +72,7 @@ extern "C" {
     int umask(...);
 
 }
-static KSMServer* the_server = 0;
-
+KSMServer* the_server = 0;
 
 KSMClient::KSMClient( SmsConn conn)
 {
@@ -271,6 +270,7 @@ void KSMCloseConnectionProc (
 	SmFreeReasons( count, reasonMsgs );
     IceConn iceConn = SmsGetIceConnection( smsConn );
     SmsCleanUp( smsConn );
+    IceSetShutdownNegotiation (iceConn, False);
     IceCloseConnection( iceConn );
 }
 
@@ -345,11 +345,9 @@ class KSMConnection : public QSocketNotifier
 		       QSocketNotifier::Read, 0, 0 )
     {
 	iceConn = conn;
-	status = IceConnectPending;
     }
 
     IceConn iceConn;
-    IceConnectStatus status;
 };
 
 
@@ -713,28 +711,31 @@ void* KSMServer::watchConnection( IceConn iceConn )
 
 void KSMServer::removeConnection( KSMConnection* conn )
 {
-
-    // safety, check wether there's  still a client exisiting that waits for that connection
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	if ( SmsGetIceConnection( c->connection() ) == conn->iceConn ) {
-	    deleteClient( c );
-	    break;
-	}
-    }
     delete conn;
+}
+
+
+/*! 
+  Called from our IceIoErrorHandler
+ */
+void KSMServer::ioError( IceConn iceConn )
+{
+    QListIterator<KSMClient> it ( clients );
+    while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
+	++it;
+
+    if ( it.current() ) {
+	SmsConn smsConn = it.current()->connection();
+	deleteClient( it.current() );
+	SmsCleanUp( smsConn );
+    }
+    IceSetShutdownNegotiation (iceConn, False);
+    IceCloseConnection( iceConn );
 }
 
 void KSMServer::processData( int /*socket*/ )
 {
-    QGuardedPtr<KSMConnection> conn = (KSMConnection*)sender();
-    IceProcessMessagesStatus s =  IceProcessMessages( conn->iceConn, 0, 0 );
-    if ( conn.isNull() )
-	return;
-    if (s == IceProcessMessagesIOError ) {
-	IceCloseConnection( conn->iceConn );
-	return;
-    }
-    conn->status = IceConnectionStatus(  conn->iceConn );
+    (void) IceProcessMessages( ((KSMConnection*)sender())->iceConn, 0, 0 );
 }
 
 
@@ -747,7 +748,7 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 
 void KSMServer::deleteClient( KSMClient* client )
 {
-    if ( clients.findRef( client ) == -1 )
+    if ( clients.findRef( client ) == -1 ) // paranoia
 	return;
     clients.removeRef( client );
     if ( client == clientInteracting ) {
@@ -915,7 +916,7 @@ void KSMServer::completeShutdown()
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	// do not kill the wm yet, we do that in completeKilling()
 	// below.
-	if ( !wm.isEmpty() && c->program() == wm ) 
+	if ( !wm.isEmpty() && c->program() == wm )
 	    continue;
 	SmsDie( c->connection() );
     }
@@ -934,7 +935,7 @@ void KSMServer::completeKilling()
 	SmsDie( clients.first()->connection() );
 	return;
     }
-	
+
     if ( clients.isEmpty() )
 	qApp->quit();
 }

@@ -81,7 +81,11 @@ public:
     void interactRequest( KSMClient* client, int dialogType );
     void interactDone( KSMClient* client, bool cancelShutdown );
     void phase2Request( KSMClient* client );
+    
+    // error handling
+    void ioError( IceConn iceConn );
 
+    // public API
     void restoreSession();
     void startDefaultSession();
 

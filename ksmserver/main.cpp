@@ -25,6 +25,26 @@ static const KCmdLineOptions options[] =
    { 0, 0, 0 }
 };
 
+extern KSMServer* the_server;
+#if defined(X_POSIX_C_SOURCE)
+#define _POSIX_C_SOURCE X_POSIX_C_SOURCE
+#include <setjmp.h>
+#undef _POSIX_C_SOURCE
+#elif defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
+#include <setjmp.h>
+#else
+#define _POSIX_SOURCE
+#include <setjmp.h>
+#undef _POSIX_SOURCE
+#endif
+jmp_buf JumpHere;
+
+void IoErrorHandler ( IceConn iceConn)
+{
+    the_server->ioError( iceConn );
+    longjmp (JumpHere, 1);
+}
+
 int main( int argc, char* argv[] )
 {
     KAboutData aboutData( "ksmserver", I18N_NOOP("The KDE Session Manager"),
@@ -39,18 +59,20 @@ int main( int argc, char* argv[] )
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    
+
     QCString wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
 	wm = "kwin";
 
     KSMServer server ( QString::fromLatin1(wm) );
+    IceSetIOErrorHandler (IoErrorHandler );
 
     if ( args->isSet("restore") )
 	server.restoreSession();
     else
 	server.startDefaultSession();
 
+    setjmp (JumpHere);
     return a.exec();
 }
 
