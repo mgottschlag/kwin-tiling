@@ -546,8 +546,8 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
             itsPreview->showFont(previewItem->url());
         }
     }
-}
 #endif
+}
 
 void CKCmFontInst::loadingFinished()
 {
