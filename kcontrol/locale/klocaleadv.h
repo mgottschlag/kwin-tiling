@@ -31,6 +31,11 @@ public:
   ~KLocaleAdvanced();
 
   void setChset(const QString &chrset);
+  QString money() const;
+  QString number() const;
+  QString time() const;
+  void setCountry(const QString &number, const QString &money, const QString &time);
+  void setCountry(const QString &country);
 
   // dates
   void setDateFormat(const QString &fmt);
@@ -55,6 +60,10 @@ public:
   void setMonetaryThousandsSeparator(const QString &sep);
   void setMonetaryDecimalSymbol(const QString &symbol);
   void setCurrencySymbol(const QString &symbol);
+private:
+  QString _time;
+  QString _number;
+  QString _money;
 };
 
 #endif
