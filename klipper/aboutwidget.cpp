@@ -39,7 +39,7 @@ AboutWidget::AboutWidget( QWidget *parent, const char *name ) : QVBox( parent, n
     for ( ; it2 != translators.end(); ++it2 ) {
         KAboutTranslator trans = *it2;
         about->addPerson( trans.name(), trans.emailAddress(),
-                          QString::null, QString::null );
+                          QString::null, i18n("Translation") );
     }
     
     QWidget *widget = new QWidget( this );

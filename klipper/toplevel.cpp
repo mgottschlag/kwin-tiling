@@ -148,18 +148,18 @@ int TopLevel::newInstance()
 
 QString TopLevel::getClipboardContents()
 {
-	return clipboardContents();
+    return clipboardContents();
 }
 
 void TopLevel::setClipboardContents(QString s)
 {
-	setClipboard( s, Clipboard | Selection);
-	newClipData();
+    setClipboard( s, Clipboard | Selection);
+    newClipData();
 }
 
 void TopLevel::clearClipboardContents()
 {
-	slotClearClipboard();	
+    slotClearClipboard();	
 }
 
 void TopLevel::mousePressEvent(QMouseEvent *e)
