@@ -141,7 +141,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
               SLOT(slotAddSessionType()));
       connect(session_lined, SIGNAL(returnPressed()),
           this, SLOT(changed()));
-      wtstr = i18n( "To create a new session type, enter its name here and click on <em>Add</em>" );
+      wtstr = i18n( "To create a new session type, enter its name here and click on <em>Add new</em>" );
       QWhatsThis::add( type_label, wtstr );
       QWhatsThis::add( session_lined, wtstr );
 
@@ -156,7 +156,9 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       types_label->setBuddy( sessionslb );
       connect(sessionslb, SIGNAL(highlighted(int)),
               SLOT(slotSessionHighlighted(int)));
-      wtstr = i18n( "This listbox lists the available session types that will be presented to the user." );
+      wtstr = i18n( "This box lists the available session types that will be presented to the user."
+		    " Names other than \"default\" and \"failsafe\" are usually treated as program names,"
+		    " but it depends on your Xsession script what the session type means." );
       QWhatsThis::add( types_label, wtstr );
       QWhatsThis::add( sessionslb, wtstr );
 
