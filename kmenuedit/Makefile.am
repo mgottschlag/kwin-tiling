@@ -23,6 +23,8 @@ METASOURCES = kmenuedit.moc menueditview.moc treeview.moc desktopfileeditor.moc 
 apps_DATA = kmenuedit.desktop
 appsdir = $(kde_appsdir)/System
 
+KDE_ICON = kmenuedit
+
 EXTRA_DIST = $(apps_DATA)
 
 rcdir = $(kde_datadir)/kmenuedit
