@@ -214,13 +214,16 @@ void KDModule::save()
 
 void KDModule::defaults()
 {
-  appearance->defaults();
-  font->defaults();
-  background->defaults();
-  users->defaults();
-  sessions->defaults();
-  convenience->defaults();
-  propagateUsers();
+    if ( getuid() == 0 )
+    {
+        appearance->defaults();
+        font->defaults();
+        background->defaults();
+        users->defaults();
+        sessions->defaults();
+        convenience->defaults();
+        propagateUsers();
+    }
 }
 
 
