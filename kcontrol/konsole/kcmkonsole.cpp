@@ -32,11 +32,11 @@ void KCMKonsole::load()
     KConfig *config = new KConfig("konsolerc", false, true);
     config->setGroup("options");
 
-    dialog->fullScreenCB->setChecked(config->readBoolEntry("Fullscreen"));
-    dialog->showMenuBarCB->setChecked(config->readEntry("MenuBar") == "Enabled");
-    dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit"));
-    dialog->showFrameCB->setChecked(config->readBoolEntry("has frame"));
-    dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar"));
+    dialog->fullScreenCB->setChecked(config->readBoolEntry("Fullscreen",false));
+    dialog->showMenuBarCB->setChecked(config->readEntry("MenuBar","Enabled") == "Enabled");
+    dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
+    dialog->showFrameCB->setChecked(config->readBoolEntry("has frame",true));
+    dialog->scrollBarCO->setCurrentItem(config->readNumEntry("scrollbar",1));
     dialog->fontCO->setCurrentItem(config->readNumEntry("font"));
     currentFont = config->readFontEntry("defaultfont");
 
@@ -89,7 +89,13 @@ void KCMKonsole::save()
 
 void KCMKonsole::defaults()
 {
-
+    dialog->fullScreenCB->setChecked(false);
+    dialog->showMenuBarCB->setChecked(true);
+    dialog->warnCB->setChecked(true);
+    dialog->showFrameCB->setChecked(true);
+    dialog->scrollBarCO->setCurrentItem(true);
+    dialog->terminalCB->setChecked(false);
+    dialog->terminalLE->setText(i18n( "xterm -e " ) );
     configChanged();
 }
 
