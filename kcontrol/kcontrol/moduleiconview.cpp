@@ -170,8 +170,8 @@ void ModuleIconView::fill()
   }
 
   // we don't ever have any modules on the top level
-  if (_path == QString::null)
-    return;
+  //if (_path == QString::null)
+  //  return;
 
   for (module=_modules->first(); module != 0; module=_modules->next())
   {
