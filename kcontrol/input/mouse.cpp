@@ -359,7 +359,7 @@ void MouseConfig::save()
 
   config->sync();
 
-  KIPC::sendMessageAll("KDEChangeSettings");
+  KIPC::sendMessageAll(KIPC::IconviewChanged);
 
   delete config;
 }

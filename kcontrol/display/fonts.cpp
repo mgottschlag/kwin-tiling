@@ -214,7 +214,7 @@ void KFonts::save()
 
     fontUseList.at( lbFonts->currentItem() );
 
-    KIPC::sendMessageAll("KDEChangeGeneral");
+    KIPC::sendMessageAll(KIPC::FontChanged);
     if (useRM) {
 	QApplication::setOverrideCursor( waitCursor );
 	KProcess proc;

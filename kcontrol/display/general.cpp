@@ -600,7 +600,7 @@ void KGeneral::save()
 	QApplication::restoreOverrideCursor();
     }
 
-    KIPC::sendMessageAll("KDEChangeGeneral");
+    KIPC::sendMessageAll(KIPC::StyleChanged);
     KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
     QApplication::syncX();
 

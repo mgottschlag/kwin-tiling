@@ -242,13 +242,9 @@ void KColorScheme::save()
     cfg->writeEntry("contrast", cs->contrast, true, true);
     cfg->sync();
 
-    // Notify applications
+    // Notify all KDE applications
 
-    // TODO: GJ 15/11/99: Must we do this with KIPC, DCOP or the
-    // Qt desktop properties ???
-    // For now: do KIPC and Qt prop.
-
-    KIPC::sendMessageAll("KDEChangePalette");
+    KIPC::sendMessageAll(KIPC::PaletteChanged);
 
     // Write some Qt root property.
     QByteArray properties;
