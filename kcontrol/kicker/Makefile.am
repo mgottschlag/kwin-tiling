@@ -14,7 +14,7 @@ kcm_kicker_la_METASOURCES = AUTO
 noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menutab_impl.h \
 		extensionInfo.h main.h lookandfeeltab_kcm.h advancedDialog.h
 
-KDE_ICON = go
+KDE_ICON = kmenu
 
 # Translation of tiles is used by lookandfeeltab_impl.cpp
 # Tile names are transformed to words with title case
