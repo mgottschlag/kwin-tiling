@@ -609,7 +609,8 @@ static void sighandler(int sig)
        delete the_server;
        the_server = 0;
     }
-    ::exit(0);
+    kapp->quit();
+    //::exit(0);
 }
 
 
