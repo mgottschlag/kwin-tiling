@@ -68,7 +68,9 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     startServer->setText(i18n("&Start aRts soundserver on KDE startup"));
     layout->addWidget(startServer);
     connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
-    
+
+    QWhatsThis::add(startServer, i18n("If this option is enabled, the arts soundserver will be started on KDE startup. Recommended if you want sound."));
+
     // dependant options: only useful when soundserver will be started
     QFrame *hLine = new QFrame(this);
     hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);

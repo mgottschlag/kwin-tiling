@@ -13,15 +13,15 @@ as proof-read. Thanks.
 
                         Ready   WhatsThis   proof-read    Manual
 arts:
-  arts.cpp               [ ]        [ ]         [ ]         [ ]
+  arts.cpp               [ ]        [s]         [ ]         [ ]
 
 clock:
-  dtime.cpp              [ ]        [s]         [ ]         [ ]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
-  tzone.cpp              [ ]        [ ]         [ ]         [ ]
+  dtime.cpp              [ ]        [x]         [ ]         [ ]
+  main.cpp               [ ]        [x]         [ ]         [ ]
+  tzone.cpp              [ ]        [ ]         [ ]         [ ]   where is this one used?
 
 display:
-  advanced.cpp           [ ]        [ ]         [ ]         [ ]
+  advanced.cpp           [ ]        [ ]         [ ]         [ ]   help! what do those things mean?
   backgnd.cpp            [ ]        [x]         [ ]         [ ]
   bgdialogs.cpp          [ ]        [ ]         [ ]         [ ]
   bgrender.cc            [ ]        [ ]         [ ]         [ ]

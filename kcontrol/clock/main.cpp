@@ -53,8 +53,8 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
 
   if(getuid() != 0) {
     layout->addSpacing(5);
-    layout->addWidget(new QLabel(i18n("You do not have authority to change system time"), this));
-    layout->addWidget(new QLabel(i18n("To change time run Control Center as a root"), this));
+    layout->addWidget(new QLabel(i18n("You do not have authority to change system time."), this));
+    layout->addWidget(new QLabel(i18n("To change the time run the Control Center as root"), this));
     setButtons(Help|Cancel);
   }
   else
@@ -75,7 +75,11 @@ void KclockModule::load()
 
 QString KclockModule::quickHelp()
 {
-  return i18n("FIXME: add some help");
+  return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
+    " time. As these settings do not only affect you as a user, but rather the whole system, you"
+    " can only change these settings when you started the Control Center as root. If you don't have"
+    " the root password, but feel the system time should be corrected, please contact your system"
+    " administrator.");
 }
 
 void KclockModule::moduleChanged(bool state)

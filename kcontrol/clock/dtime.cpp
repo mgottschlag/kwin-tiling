@@ -309,6 +309,15 @@ void Dtime::timeout()
   kclock->setTime( time );
 }
 
+QString Dtime::quickHelp()
+{
+  return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
+    " time. As these settings do not only affect you as a user, but rather the whole system, you"
+    " can only change these settings when you started the Control Center as root. If you don't have"
+    " the root password, but feel the system time should be corrected, please contact your system"
+    " administrator.");
+}
+
 void Kclock::setTime(const QTime &time) 
 {
   this->time = time;

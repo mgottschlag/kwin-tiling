@@ -41,11 +41,13 @@ class Dtime : public KCModule
 
   void	save();
   void	load();
-  
+
+  QString quickHelp();
+
  private slots:
   void	timeout();
   void	inc_time();
-  void	dec_time(); 
+  void	dec_time();
   void	joke(QLineEdit* edit,int incr,int Max,int Min,bool refr);
   void	set_month(int);
   void	set_year(int);
