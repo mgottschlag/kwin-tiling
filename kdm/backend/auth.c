@@ -41,6 +41,8 @@ from The Open Group.
 #include <X11/X.h>
 
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 #include <errno.h>
 #ifdef X_NOT_STDC_ENV
@@ -272,7 +274,20 @@ CleanUpFileName (char *src, char *dst, int len)
     *dst = '\0';
 }
 
-static char authdir[] = "authfiles";
+
+static FILE *
+fdOpenW (int fd)
+{
+    FILE *f;
+
+    if (fd >= 0) {
+	if ((f = fdopen (fd, "w")))
+	    return f;
+	close (fd);
+    }
+    return 0;
+}
+
 
 #ifdef SYSV
 # define NAMELEN	14
@@ -280,46 +295,40 @@ static char authdir[] = "authfiles";
 # define NAMELEN	255
 #endif
 
-static int
+static FILE *
 MakeServerAuthFile (struct display *d)
 {
+    FILE	*f;
     int		r;
-    struct stat	statb;
-    char	*af, cleanname[NAMELEN];
+    char	cleanname[NAMELEN], nambuf[NAMELEN+128];
 
-    if (d->clientAuthFile && *d->clientAuthFile)
-	return ReStr (&d->authFile, d->clientAuthFile);
-
-    if (d->authFile) {
-	free (d->authFile);
-	d->authFile = 0;
-    }
-    r = stat(authDir, &statb);
-    if (r == 0) {
-	if (statb.st_uid != 0)
-	    (void) chown(authDir, 0, statb.st_gid);
-	if ((statb.st_mode & 0077) != 0)
-	    (void) chmod(authDir, statb.st_mode & 0700);
-    } else {
-	if (errno == ENOENT)
-	    r = mkdir(authDir, 0700);
-	if (r < 0)
-	    return FALSE;
-    }
+    /*
+     * Some paranoid, but still not sufficient (DoS was still possible)
+     * checks used to be here. I removed all this stuff because
+     * a) authDir is supposed to be /var/run/xauth (=safe) or similar and
+     * b) even if it's not (say, /tmp), we create files safely (hopefully).
+     */
+    r = mkdir(authDir, 0755);
+    if (r < 0  &&  errno != EEXIST)
+	return 0;
     CleanUpFileName (d->name, cleanname, NAMELEN - 8);
-    if (!(af = malloc ((unsigned) strlen (authDir) + 
-			sizeof (authdir) + strlen (cleanname) + 10)))
-	return FALSE;
-    sprintf (af, "%s/%s", authDir, authdir);
-    r = mkdir(af, 0700);
-    if (r < 0  &&  errno != EEXIST) {
-	free (af);
-	return FALSE;
+#ifdef HAS_MKSTEMP
+    sprintf (nambuf, "%s/A%s-XXXXXX", authDir, cleanname);
+    if ((f = fdOpenW (mkstemp (nambuf)))) {
+	StrDup (&d->authFile, nambuf);
+	return f;
     }
-    sprintf (af, "%s/%s/A%s-XXXXXX", authDir, authdir, cleanname);
-    (void) mktemp (af);
-    d->authFile = af;
-    return TRUE;
+#else
+    for (r = 0; r < 100; r++) {
+	sprintf (nambuf, "%s/A%s-XXXXXX", authDir, cleanname);
+	(void) mktemp (nambuf);
+	if ((f = fdOpenW (open (nambuf, O_WRONLY | O_CREAT | O_EXCL, 0600)))) {
+	    StrDup (&d->authFile, nambuf);
+	    return f;
+	}
+    }
+#endif	
+    return 0;
 }
 
 int
@@ -329,46 +338,44 @@ SaveServerAuthorizations (
     int		    count)
 {
     FILE	*auth_file;
-    int		mask;
-    int		ret;
-    int		i;
+    int		i, ret;
 
-    mask = umask (0077);
-    if (!d->authFile && !MakeServerAuthFile (d))
-	return FALSE;
-    (void) unlink (d->authFile);
-    auth_file = fopen (d->authFile, "w");
-    umask (mask);
-    if (!auth_file) {
-	LogError ("Cannot open server authorization file %s\n", d->authFile);
-	free (d->authFile);
-	d->authFile = NULL;
-	ret = FALSE;
+    if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
+	StrDup (&d->authFile, d->clientAuthFile);
+    if (d->authFile) {
+	if (!(auth_file = fopen (d->authFile, "w"))) {
+	    LogError ("Cannot open server authorization file %s\n", d->authFile);
+	    free (d->authFile);
+	    d->authFile = NULL;
+	    return FALSE;
+	}
+    } else {
+	if (!(auth_file = MakeServerAuthFile (d))) {
+	    LogError ("Cannot create server authorization file\n");
+	    return FALSE;
+	}
     }
-    else
+    Debug ("File: %s auth: %p\n", d->authFile, auths);
+    ret = TRUE;
+    for (i = 0; i < count; i++)
     {
-    	Debug ("File: %s auth: %p\n", d->authFile, auths);
-	ret = TRUE;
-	for (i = 0; i < count; i++)
-	{
-	    /*
-	     * User-based auths may not have data until
-	     * a user logs in.  In which case don't write
-	     * to the auth file so xrdb and setup programs don't fail.
-	     */
-	    if (auths[i]->data_length > 0)
-		if (!XauWriteAuth (auth_file, auths[i]) ||
-		    fflush (auth_file) == EOF)
-		{
-		    LogError ("Cannot write server authorization file %s\n",
-			      d->authFile);
-		    ret = FALSE;
-		    free (d->authFile);
-		    d->authFile = NULL;
-		}
-    	}
-	fclose (auth_file);
+	/*
+	 * User-based auths may not have data until
+	 * a user logs in.  In which case don't write
+	 * to the auth file so xrdb and setup programs don't fail.
+	 */
+	if (auths[i]->data_length > 0)
+	    if (!XauWriteAuth (auth_file, auths[i]) ||
+		fflush (auth_file) == EOF)
+	    {
+		LogError ("Cannot write server authorization file %s\n",
+			  d->authFile);
+		ret = FALSE;
+		free (d->authFile);
+		d->authFile = NULL;
+	    }
     }
+    fclose (auth_file);
     return ret;
 }
 
@@ -452,14 +459,9 @@ SetAuthorization (struct display *d)
 static int
 openFiles (char *name, char *new_name, FILE **oldp, FILE **newp)
 {
-	int	mask;
-
 	strcat (strcpy (new_name, name), "-n");
-	mask = umask (0077);
-	(void) unlink (new_name);
-	*newp = fopen (new_name, "w");
-	(void) umask (mask);
-	if (!*newp) {
+	if (!(*newp = 
+	      fdOpenW (open (new_name, O_WRONLY | O_CREAT | O_TRUNC, 0600)))) {
 		Debug ("can't open new file %s\n", new_name);
 		return 0;
 	}
@@ -1064,67 +1066,119 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, char *
 
 #endif /* XDMCP */
 
+static void
+startUserAuth (struct verify_info *verify, char *buf, char *nbuf, 
+	       FILE **old, FILE **new)
+{
+    char	*home;
+    int		lockStatus;
+
+    initAddrs ();
+    *new = 0;
+    if ((home = getEnv (verify->userEnviron, "HOME"))) {
+	strcpy (buf, home);
+	if (home[strlen(home) - 1] != '/')
+	    strcat (buf, "/");
+	strcat (buf, ".Xauthority");
+	Debug ("XauLockAuth %s\n", buf);
+	lockStatus = XauLockAuth (buf, 1, 2, 10);
+	Debug ("Lock is %d\n", lockStatus);
+	if (lockStatus == LOCK_SUCCESS)
+	    if (!openFiles (buf, nbuf, old, new))
+		XauUnlockAuth (buf);
+    }
+    if (!*new)
+	LogInfo ("can't update authorization file in home dir %s\n", home);
+}
+
+static void
+endUserAuth (FILE *old, FILE *new, char *nname)
+{
+    Xauth	*entry;
+    struct stat	statb;
+
+    if (old) {
+	if (fstat (fileno (old), &statb) != -1)
+	    chmod (nname, (int) (statb.st_mode & 0777));
+	/*SUPPRESS 560*/
+	while ((entry = XauReadAuth (old))) {
+	    if (!checkEntry (entry))
+	    {
+		Debug ("Writing an entry\n");
+		writeAuth (new, entry);
+	    }
+	    XauDisposeAuth (entry);
+	}
+	fclose (old);
+    }
+    fclose (new);
+    doneAddrs ();
+}
+
+static char *
+moveUserAuth (char *name, char *new_name, char *envname)
+{
+    if (unlink (name) == -1)
+	Debug ("unlink %s failed\n", name);
+    if (link (new_name, name) == -1) {
+	Debug ("link failed %s %s\n", new_name, name);
+	LogError ("Can't move authorization into place\n");
+	envname = new_name;
+    } else {
+	Debug ("new authorization moved into place\n");
+	unlink (new_name);
+    }
+    XauUnlockAuth (name);
+    return envname;
+}
+
 void
 SetUserAuthorization (struct display *d, struct verify_info *verify)
 {
     FILE	*old, *new;
-    char	home_name[1024], backup_name[1024], new_name[1024];
-    char	*name = 0;
-    char	*home;
-    char	*envname = 0;
-    int	lockStatus;
-    Xauth	*entry, **auths;
-    int		set_env = 0;
-    struct stat	statb;
+    char	*name;
+    char	*envname;
+    Xauth	**auths;
     int		i;
     int		magicCookie;
     int		data_len;
+    char	name_buf[1024], new_name[1024];
 
     Debug ("SetUserAuthorization\n");
     auths = d->authorizations;
     if (auths) {
-	home = getEnv (verify->userEnviron, "HOME");
-	lockStatus = LOCK_ERROR;
-	if (home) {
-	    strcpy (home_name, home);
-	    if (home[strlen(home) - 1] != '/')
-		strcat (home_name, "/");
-	    strcat (home_name, ".Xauthority");
-	    Debug ("XauLockAuth %s\n", home_name);
-	    lockStatus = XauLockAuth (home_name, 1, 2, 10);
-	    Debug ("Lock is %d\n", lockStatus);
-	    if (lockStatus == LOCK_SUCCESS) {
-		if (openFiles (home_name, new_name, &old, &new)) {
-		    name = home_name;
-		    set_env = 0;
-		} else {
-		    Debug ("openFiles failed\n");
-		    XauUnlockAuth (home_name);
-		    lockStatus = LOCK_ERROR;
-		}	
+	startUserAuth (verify, name_buf, new_name, &old, &new);
+	if (new) {
+	    envname = 0;
+	    name = name_buf;
+	} else {
+	    /*
+	     * Note, that we don't lock the auth file here, as it's
+	     * temporary - we can assume, that we are the only ones
+	     * knowing about this file anyway.
+	     */
+#ifdef HAS_MKSTEMP
+	    sprintf (name_buf, "%s/.XauthXXXXXX", d->userAuthDir);
+	    new = fdOpenW (mkstemp (name_buf));
+#else
+	    for (i = 0; i < 100; i++) {
+		sprintf (name_buf, "%s/.XauthXXXXXX", d->userAuthDir);
+		(void) mktemp (name_buf);
+		if ((new = 
+		     fdOpenW (open (name_buf, O_WRONLY | O_CREAT | O_EXCL, 
+				    0600))))
+		    break;
 	    }
-	}
-	if (lockStatus != LOCK_SUCCESS) {
-	    sprintf (backup_name, "%s/.XauthXXXXXX", d->userAuthDir);
-	    (void) mktemp (backup_name);	/* XXX insecure */
-	    lockStatus = XauLockAuth (backup_name, 1, 2, 10);
-	    Debug ("backup lock is %d\n", lockStatus);
-	    if (lockStatus == LOCK_SUCCESS) {
-		if (openFiles (backup_name, new_name, &old, &new)) {
-		    name = backup_name;
-		    set_env = 1;
-		} else {
-		    XauUnlockAuth (backup_name);
-		    lockStatus = LOCK_ERROR;
-		}	
+#endif
+	    if (!new) {
+		LogError ("can't create authorization file in %s\n", 
+			  d->userAuthDir);
+		return;
 	    }
+	    name = 0;
+	    envname = name_buf;
+	    old = 0;
 	}
-	if (lockStatus != LOCK_SUCCESS) {
-	    LogError ("can't lock authorization file %s or backup %s\n",
-			    home_name, backup_name);
-	    return;
-	}
-	initAddrs ();
 	doWrite = 1;
 	Debug ("%d authorization protocols for %s\n", d->authNum, d->name);
 	/*
@@ -1171,43 +1225,16 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 		auths[i]->data_length = data_len;
 	    }
 	}
-	if (old) {
-	    if (fstat (fileno (old), &statb) != -1)
-		chmod (new_name, (int) (statb.st_mode & 0777));
-	    /*SUPPRESS 560*/
-	    while ((entry = XauReadAuth (old))) {
-		if (!checkEntry (entry))
-		{
-		    Debug ("Writing an entry\n");
-		    writeAuth (new, entry);
-		}
-		XauDisposeAuth (entry);
-	    }
-	    fclose (old);
-	}
-	doneAddrs ();
-	fclose (new);
-	if (unlink (name) == -1)
-	    Debug ("unlink %s failed\n", name);
-	envname = name;
-	if (link (new_name, name) == -1) {
-	    Debug ("link failed %s %s\n", new_name, name);
-	    LogError ("Can't move authorization into place\n");
-	    set_env = 1;
-	    envname = new_name;
-	} else {
-	    Debug ("new authorization moved into place\n");
-	    unlink (new_name);
-	}
-	if (set_env) {
+	endUserAuth (old, new, new_name);
+	if (name)
+	    envname = moveUserAuth (name, new_name, envname);
+	if (envname) {
 	    verify->userEnviron = setEnv (verify->userEnviron,
-				    "XAUTHORITY", envname);
+					  "XAUTHORITY", envname);
 	    verify->systemEnviron = setEnv (verify->systemEnviron,
-				    "XAUTHORITY", envname);
+					    "XAUTHORITY", envname);
 	}
-	XauUnlockAuth (name);
-	if (envname)
-	    chown (envname, verify->uid, verify->gid);
+	/* a chown() used to be here, but this code runs as user anyway */
     }
     Debug ("done SetUserAuthorization\n");
 }
@@ -1215,32 +1242,17 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 void
 RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 {
-    char    *home;
-    Xauth   **auths, *entry;
-    char    name[1024], new_name[1024];
-    int	    lockStatus;
+    Xauth   **auths;
     FILE    *old, *new;
-    struct stat	statb;
     int	    i;
+    char    name[1024], new_name[1024];
 
     if (!(auths = d->authorizations))
 	return;
-    home = getEnv (verify->userEnviron, "HOME");
-    if (!home)
-	return;
     Debug ("RemoveUserAuthorization\n");
-    strcpy (name, home);
-    if (home[strlen(home) - 1] != '/')
-	strcat (name, "/");
-    strcat (name, ".Xauthority");
-    Debug ("XauLockAuth %s\n", name);
-    lockStatus = XauLockAuth (name, 1, 2, 10);
-    Debug ("Lock is %d\n", lockStatus);
-    if (lockStatus != LOCK_SUCCESS)
-	return;
-    if (openFiles (name, new_name, &old, &new))
+    startUserAuth (verify, name, new_name, &old, &new);
+    if (new)
     {
-	initAddrs ();
 	doWrite = 0;
 	for (i = 0; i < d->authNum; i++)
 	{
@@ -1253,32 +1265,8 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 #endif
 	}
 	doWrite = 1;
-	if (old) {
-	    if (fstat (fileno (old), &statb) != -1)
-		chmod (new_name, (int) (statb.st_mode & 0777));
-	    /*SUPPRESS 560*/
-	    while ((entry = XauReadAuth (old))) {
-		if (!checkEntry (entry))
-		{
-		    Debug ("Writing an entry\n");
-		    writeAuth (new, entry);
-		}
-		XauDisposeAuth (entry);
-	    }
-	    fclose (old);
-	}
-	doneAddrs ();
-	fclose (new);
-	if (unlink (name) == -1)
-	    Debug ("unlink %s failed\n", name);
-	if (link (new_name, name) == -1) {
-	    Debug ("link failed %s %s\n", new_name, name);
-	    LogError ("Can't move authorization into place\n");
-	} else {
-	    Debug ("new authorization moved into place\n");
-	    unlink (new_name);
-	}
+	endUserAuth (old, new, new_name);
+	(void) moveUserAuth (name, new_name, 0);
     }
-    XauUnlockAuth (name);
     Debug ("done RemoveUserAuthorization\n");
 }
