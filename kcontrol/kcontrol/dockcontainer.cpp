@@ -108,6 +108,7 @@ ModuleWidget::ModuleWidget( QWidget *parent, const char *name )
 {
   m_title = new ModuleTitle( this, "m_title" );
   m_body = new QVBox( this, "m_body" );
+  setStretchFactor( m_body, 10 );
 }
 
 ProxyWidget *ModuleWidget::load( ConfigModule *module )
@@ -118,7 +119,6 @@ ProxyWidget *ModuleWidget::load( ConfigModule *module )
   if ( proxy )
   {
     proxy->reparent(m_body, 0, QPoint(0,0), false);
-    setStretchFactor( proxy, 10 );
     proxy->show();
     m_title->showTitleFor( module );
   }
@@ -227,6 +227,7 @@ i18n("There are unsaved changes in the active module.\n"
 
 void DockContainer::removeModule()
 {
+  raiseWidget( _basew );
   deleteModule();
 
   if (_basew)
