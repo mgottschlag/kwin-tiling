@@ -10,6 +10,7 @@
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <qbitmap.h>
+#include <qtooltip.h>
 
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
@@ -35,9 +36,16 @@ static QPixmap* dis_menu_pix = 0;
 WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
 	: QWidget( parent, name  )
 {
+    setMouseTracking( true );
     setBackgroundMode( NoBackground );
     setAcceptDrops( true);
     setMinimumSize(200, 100);
+    currentHotspot = -1;
+}
+
+void WidgetCanvas::addToolTip( int area, const QString &tip )
+{
+    tips.insert(area, tip);
 }
 
 void WidgetCanvas::paintEvent(QPaintEvent *)
@@ -52,6 +60,22 @@ void WidgetCanvas::mousePressEvent( QMouseEvent *me )
 	    emit widgetSelected( hotspots[i].number );
 	    return;
 	}
+}
+
+void WidgetCanvas::mouseMoveEvent( QMouseEvent *me )
+{
+    for ( int i = 0; i < MAX_HOTSPOTS; i++ )
+	if ( hotspots[i].rect.contains( me->pos() ) ) {
+	    if ( i != currentHotspot ) {
+		QString tip = tips[hotspots[i].number];
+		QToolTip::remove( this );
+		QToolTip::add( this, tip );
+		currentHotspot = i;
+	    }
+	    return;
+	}
+
+    QToolTip::remove( this );
 }
 
 void WidgetCanvas::dropEvent( QDropEvent *e)
@@ -503,7 +527,7 @@ void WidgetCanvas::drawSampleWidgets()
         HotSpot( QRect( 28, 78, 88, 77 ), CSM_Background );
 
     hotspots[ spot++ ] =
-        HotSpot( QRect(25, 80+5-4, width()-7-45-2, height()), CSM_Standard_background );
+        HotSpot( QRect(25, 80+5-4, width()-7-45-2-16, height()), CSM_Standard_background );
 
 
     // Valance

@@ -14,6 +14,7 @@
 #include <qpainter.h>
 #include <qscrollbar.h>
 #include <qevent.h>
+#include <qmap.h>
 
 #include <kapp.h>
 #include <klocale.h>
@@ -50,7 +51,7 @@ class HotSpot
 public:
     HotSpot() {}
     HotSpot( const QRect &r, int num )
-	    {	rect = r; number = num; }
+	: rect(r), number(num) {}
 
     QRect rect;
     int number;
@@ -65,6 +66,7 @@ public:
     void drawSampleWidgets();
     void resetTitlebarPixmaps(const QColor &active,
 			      const QColor &inactive);
+    void addToolTip( int area, const QString & );
     QPixmap smplw;
     
     QColor iaTitle;
@@ -95,13 +97,16 @@ signals:
 protected:
     virtual void paintEvent( QPaintEvent * );
     virtual void mousePressEvent( QMouseEvent * );
+    virtual void mouseMoveEvent( QMouseEvent * );
     virtual void resizeEvent( QResizeEvent * );
     virtual void showEvent( QShowEvent * );
     virtual void dropEvent( QDropEvent *);
     virtual void dragEnterEvent( QDragEnterEvent *);
     void paletteChange( const QPalette & );
 
+    QMap<int,QString> tips;
     HotSpot hotspots[MAX_HOTSPOTS];
+    int currentHotspot;
 };
 
 #endif

@@ -59,6 +59,7 @@ private slots:
     void slotPreviewScheme(int);
 
 private:
+    void setColorName( const QString &name, int id );
     void readScheme(int index=0);
     void readSchemeNames();
     QPalette createPalette();

@@ -156,24 +156,25 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
     {
        wcCombo->insertItem(QString::null);
     }
-    wcCombo->changeItem(i18n("Inactive title bar") , CSM_Inactive_title_bar);
-    wcCombo->changeItem(i18n("Inactive title text"), CSM_Inactive_title_text);
-    wcCombo->changeItem(i18n("Inactive title blend"), CSM_Inactive_title_blend);
-    wcCombo->changeItem(i18n("Active title bar"), CSM_Active_title_bar);
-    wcCombo->changeItem(i18n("Active title text"), CSM_Active_title_text);
-    wcCombo->changeItem(i18n("Active title blend"), CSM_Active_title_blend);
-    wcCombo->changeItem(i18n("Window background"), CSM_Background);
-    wcCombo->changeItem(i18n("Window text"), CSM_Text);
-    wcCombo->changeItem(i18n("Select background"), CSM_Select_background);
-    wcCombo->changeItem(i18n("Select text"), CSM_Select_text);
-    wcCombo->changeItem(i18n("Standard Background"), CSM_Standard_background);
-    wcCombo->changeItem(i18n("Standard Text"), CSM_Standard_text);
-    wcCombo->changeItem(i18n("Button background"), CSM_Button_background);
-    wcCombo->changeItem(i18n("Button text"), CSM_Button_text);
-    wcCombo->changeItem(i18n("Active title button"), CSM_Active_title_button);
-    wcCombo->changeItem(i18n("Inactive title button"), CSM_Inactive_title_button);
-    wcCombo->changeItem(i18n("Link"), CSM_Link);
-    wcCombo->changeItem(i18n("Followed Link"), CSM_Followed_Link);
+
+    setColorName(i18n("Inactive title bar") , CSM_Inactive_title_bar);
+    setColorName(i18n("Inactive title text"), CSM_Inactive_title_text);
+    setColorName(i18n("Inactive title blend"), CSM_Inactive_title_blend);
+    setColorName(i18n("Active title bar"), CSM_Active_title_bar);
+    setColorName(i18n("Active title text"), CSM_Active_title_text);
+    setColorName(i18n("Active title blend"), CSM_Active_title_blend);
+    setColorName(i18n("Window background"), CSM_Background);
+    setColorName(i18n("Window text"), CSM_Text);
+    setColorName(i18n("Select background"), CSM_Select_background);
+    setColorName(i18n("Select text"), CSM_Select_text);
+    setColorName(i18n("Standard Background"), CSM_Standard_background);
+    setColorName(i18n("Standard Text"), CSM_Standard_text);
+    setColorName(i18n("Button background"), CSM_Button_background);
+    setColorName(i18n("Button text"), CSM_Button_text);
+    setColorName(i18n("Active title button"), CSM_Active_title_button);
+    setColorName(i18n("Inactive title button"), CSM_Inactive_title_button);
+    setColorName(i18n("Link"), CSM_Link);
+    setColorName(i18n("Followed Link"), CSM_Followed_Link);
 
     wcCombo->adjustSize();
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
@@ -226,6 +227,11 @@ KColorScheme::~KColorScheme()
 {
 }
 
+void KColorScheme::setColorName( const QString &name, int id )
+{
+    wcCombo->changeItem(name, id);
+    cs->addToolTip( id, name );
+}
 
 void KColorScheme::load()
 {
