@@ -581,7 +581,9 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     connect(resizeOpaqueOn, SIGNAL(clicked()), this, SLOT(slotChanged()));
     connect(minimizeAnimOn, SIGNAL(clicked() ), SLOT(slotChanged()));
     connect(minimizeAnimSlider, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
+    connect(moveResizeMaximized, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     connect(placementCombo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
+    connect(animateShade, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     connect(shadeHoverOn, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
     connect(shadeHover, SIGNAL(valueChanged(int)), this, SLOT(slotChanged()));
 
