@@ -61,6 +61,7 @@
 #include <ktempfile.h>
 #include <kdesu/su.h>
 #include <kprocess.h>
+#include <kdebug.h>
 #include <kxftconfig.h>
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"
@@ -69,11 +70,19 @@
 #include <X11/Xlib.h>
 #include <ctype.h>
 
-#define KFI_DBUG kdDebug() << "[" << (int)(getpid()) << "] "
-#undef KFI_DBUG
+//#define KFI_FORCE_DEBUG_TO_STDERR
+
+#ifdef KFI_FORCE_DEBUG_TO_STDERR
+
 #include <qtextstream.h>
 QTextOStream ostr(stderr);
 #define KFI_DBUG ostr << "[" << (int)(getpid()) << "] "
+
+#else
+
+#define KFI_DBUG kdDebug() << "[" << (int)(getpid()) << "] "
+
+#endif
 
 #define MAX_IPC_SIZE   (1024*32)
 #define TIMEOUT        2         // Time between last mod and writing files...
@@ -179,6 +188,20 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
 
         return true;
     }
+    else if (folder && sys && !KFI::Misc::root())   // Default system fonts folder does not actually exist yet!
+    {
+        KFI_DBUG << "Default system folder (" << path << ") does not yet exist, so create dummy entry" << endl;
+        addAtom(entry, KIO::UDS_NAME, 0, name);
+        addAtom(entry, KIO::UDS_FILE_TYPE, S_IFDIR);
+        addAtom(entry, KIO::UDS_ACCESS, 0744);
+        addAtom(entry, KIO::UDS_USER, 0, "root");
+        addAtom(entry, KIO::UDS_GROUP, 0, "root");
+        addAtom(entry, KIO::UDS_MIME_TYPE, 0, KFI_KIO_FONTS_PROTOCOL"/system-folder");
+        addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
+
+        return true;
+    }
+
 
     return false;
 }
@@ -1124,10 +1147,20 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             {
                 if(nonRootSys(dest))
                 {
-                    QCString              cmd("cp -f ");
+                    QCString              cmd;
                     QStringList::Iterator it,
                                           end=srcFiles.end();
                     int                   size=0;
+
+                    if(!Misc::dExists(itsFolders[destFolder].location))
+                    {
+                        cmd+="mkdir ";
+                        cmd+=QFile::encodeName(KProcess::quote(itsFolders[destFolder].location));
+                        cmd+=" && chmod 0755 ";
+                        cmd+=QFile::encodeName(KProcess::quote(itsFolders[destFolder].location));
+                        cmd+=" && ";
+                    }
+                    cmd+="cp -f ";
 
                     for(it=srcFiles.begin(); it!=end; ++it) 
                     {
