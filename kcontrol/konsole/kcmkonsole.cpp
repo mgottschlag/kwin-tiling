@@ -41,7 +41,6 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
     topLayout->add(dialog);
     load();
 
-
     connect(dialog->fontPB, SIGNAL(clicked()), this, SLOT(setupFont()));
     connect(dialog->fullScreenCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->showToolBarCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -53,7 +52,8 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
     connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
     connect(dialog->terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->historyCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-
+    connect(dialog->SpinBox1, SIGNAL(valueChanged ( int  )), this, SLOT(configChanged()));
+    connect(dialog->fontCO, SIGNAL(highlighted ( int )),this,SLOT(configChanged()));
 }
 
 void KCMKonsole::load()
@@ -140,7 +140,7 @@ void KCMKonsole::save()
     // that one into kdeglobals
     config->setGroup("General");
     config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?dialog->terminalLE->text():"konsole", true, true);
-    
+
     delete config;
 
     emit changed(false);
@@ -160,7 +160,7 @@ void KCMKonsole::defaults()
     dialog->showFrameCB->setChecked(true);
     dialog->scrollBarCO->setCurrentItem(2);
     dialog->terminalCB->setChecked(false);
-    
+
     // Check if -e is needed, I do not think so
     dialog->terminalLE->setText("xterm");  //No need for i18n
     dialog->fontCO->setCurrentItem(4);
@@ -180,14 +180,14 @@ QString KCMKonsole::quickHelp() const
 
 const KAboutData * KCMKonsole::aboutData() const
 {
- 
+
  KAboutData *ab=new KAboutData( "kcmkonsole", I18N_NOOP("KCM Konsole"),
     "0.2",I18N_NOOP("KControl module for konsole configuration"), KAboutData::License_GPL,
     "(c) 2001, Andrea Rizzi", 0, 0, "rizzi@kde.org");
- 
+
   ab->addAuthor("Andrea Rizzi",0, "rizzi@kde.org");
  return ab;
-      
+
 }
 
 extern "C" {
