@@ -60,7 +60,7 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   : QWidget (parent, name),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this, 7, 2,
+  QGridLayout *lay = new QGridLayout(this, 3, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
@@ -82,11 +82,11 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(hb);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add..."));
+  m_addLanguage = new KMenuButton(vb, I18N_NOOP("Add language..."));
   boxlay->add(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(int)),
 	  SLOT(slotAddLanguage(int)));
-  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove"));
+  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove language"));
   boxlay->add(m_removeLanguage);
   connect(m_removeLanguage, SIGNAL(clicked()),
 	  SLOT(slotRemoveLanguage()));
@@ -96,6 +96,8 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   //  new QLabel(this, I18N_NOOP("Encoding:"));
   //QComboBox * cb = new QComboBox( this );
   //cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
+
+  lay->setRowStretch(2, 5);
 
   lay->setColStretch(1, 1);
 }
@@ -346,29 +348,39 @@ void KLocaleConfig::slotTranslate()
   QToolTip::add(m_comboCountry, m_locale->translate
         ( "This is were you live. KDE will use the defaults for "
           "this country.") );
+  QToolTip::add(m_addLanguage, m_locale->translate
+	( "This will a language to the list. If the language is already "
+	  "in the list, the old one will be moved instead." ) );
+
+  QToolTip::add(m_removeLanguage, m_locale->translate
+	( "This will remove the highlighted language from the list." ) );
+
   QToolTip::add(m_languages, m_locale->translate
-        ( "All KDE programs will be displayed in this language (if "
-          "available).") );
+        ( "KDE program will be displayed in the first available language in "
+	  "this list. If non of the languages were available, English US "
+	  "will be used.") );
 
   QString str;
 
   str = m_locale->translate
     ( "Here you can choose your country. The settings "
-      "for language, numbers etc. will automatically switch to the "
+      "for languages, numbers etc. will automatically switch to the "
       "corresponding values." );
   QWhatsThis::add( m_labCountry, str );
   QWhatsThis::add( m_comboCountry, str );
 
   str = m_locale->translate
-    ( "Here you can choose the language that will be used "
-      "by KDE. If only US English is available, no translations have been "
-      "installed. You can get translations packages for many languages from "
-      "the place you got KDE from. <p> Note that some applications may not "
-      "be translated to your language; in this case, they will automatically "
-      "fall back to the default language, i.e. US English." );
+    ( "Here you can choose the languages that will be used by KDE. If the "
+      "first language in the list is not available, the second will be used "
+      "etc. If only US English is available, no translations "
+      "have been installed. You can get translations packages for many "
+      "languages from the place you got KDE from.<p>"
+      "Note that some applications may not be translated to your languages; "
+      "in this case, they will automatically fall back to English US." );
   QWhatsThis::add( m_labLang, str );
   QWhatsThis::add( m_languages, str );
   QWhatsThis::add( m_addLanguage, str );
+  QWhatsThis::add( m_removeLanguage, str );
 }
 
 QStringList KLocaleConfig::languageList() const

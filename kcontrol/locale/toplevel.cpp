@@ -49,7 +49,8 @@
 #include "toplevel.moc"
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(parent, name),
+    m_aboutData(0)
 {
   m_nullConfig = new KConfig(QString::null, false, false);
   m_globalConfig = new KConfig(QString::null, false, true);
@@ -132,6 +133,7 @@ KLocaleApplication::~KLocaleApplication()
   delete m_locale;
   delete m_globalConfig;
   delete m_nullConfig;
+  delete m_aboutData;
 }
 
 void KLocaleApplication::load()
@@ -241,4 +243,25 @@ void KLocaleApplication::slotTranslate()
 void KLocaleApplication::slotChanged()
 {
   emit changed(true);
+}
+
+const KAboutData * KLocaleApplication::aboutData() const
+{
+  if ( ! m_aboutData )
+    {
+      KLocaleApplication * that = const_cast<KLocaleApplication *>(this);
+
+      that->m_aboutData = new KAboutData("kcmlocale",
+					 I18N_NOOP("KCMLocale"),
+					 "3.0",
+					 I18N_NOOP("Regional settings"),
+					 KAboutData::License_GPL,
+					 "(C) 1998 Matthias Hoelzer, "
+					 "(C) 1999-2001 Hans Petter Bieker",
+					 0,
+					 0,
+					 "bieker@kde.org");
+    }
+
+  return m_aboutData;
 }
