@@ -25,6 +25,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <kglobalsettings.h>
 #include <qcombobox.h>
 
 #include <X11/X.h>
@@ -35,6 +36,7 @@
 #include "geom.h"
 #include <qlayout.h>
 #include <qwhatsthis.h>
+#include <qtl.h>
 
 
 extern "C" {
@@ -58,8 +60,10 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
   QGridLayout *layout = new QGridLayout( this, 15, 4,
                      KDialog::marginHint(), 1);
-
   QLabel* label;
+  QString strMouseButton1, strMouseButton3;
+  QString txtButton1, txtButton3;
+  bool leftHandedMouse;
 
   label = new QLabel(i18n("Titlebar doubleclick:"), this);
   layout->addMultiCellWidget(label, 0,0,0,1);
@@ -113,44 +117,84 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   QWhatsThis::add( label, i18n("Here you can customize KDE's behaviour when clicking somewhere into"
     " a window while pressing a modifier key."));
 
-  label = new QLabel(i18n("Left Button"), this);
+  /*
+   * The text on this form depends on the mouse setting, which can be right
+   * or left handed.  The outer button functionality is actually swapped
+   *
+   */
+  leftHandedMouse = ( KGlobalSettings::mouseSettings().handed == KGlobalSettings::KMouseSettings::LeftHanded);
+
+  strMouseButton1 = i18n("Left Button");
+  txtButton1 = i18n("In this row you can customize left click behavior when clicking into"
+     "  the titlebar or the frame.");
+
+  strMouseButton3 = i18n("Right Button");
+  txtButton3 = i18n("In this row you can customize right click behavior when clicking into"
+     " the titlebar or the frame." );
+
+  if ( leftHandedMouse )
+  {
+     qSwap(strMouseButton1, strMouseButton3);
+     qSwap(txtButton1, txtButton3);
+  }
+
+  label = new QLabel(strMouseButton1, this);
   layout->addWidget(label, 3,1);
-  QWhatsThis::add( label, i18n("In this row you can customize left click behavior when clicking into"
-    " the titlebar or the frame.") );
+  QWhatsThis::add( label, txtButton1);
 
   label = new QLabel(i18n("Middle Button"), this);
   layout->addWidget(label, 4,1);
   QWhatsThis::add( label, i18n("In this row you can customize middle click behavior when clicking into"
     " the titlebar or the frame.") );
 
-  label = new QLabel(i18n("Right Button"), this);
+  label = new QLabel(strMouseButton3, this);
   layout->addWidget(label, 5,1);
-  QWhatsThis::add( label, i18n("In this row you can customize right click behavior when clicking into"
-    " the titlebar or the frame.") );
+  QWhatsThis::add( label, txtButton3);
 
-  label = new QLabel(i18n("Left Button"), this);
-  layout->addWidget(label, 8,1);
+  // Inactive inner window
+
   strWin1 = i18n("In this row you can customize left click behavior when clicking into"
-    " an inactive inner window ('inner' means: not titlebar, not frame).");
+     " an inactive inner window ('inner' means: not titlebar, not frame).");
+
+  strWin3 = i18n("In this row you can customize right click behavior when clicking into"
+     " an inactive inner window ('inner' means: not titlebar, not frame).");
+
+  // Be nice to lefties
+  if ( leftHandedMouse ) qSwap(strWin1, strWin3);
+
+  label = new QLabel(strMouseButton1, this);
+  layout->addWidget(label, 8,1);
   QWhatsThis::add( label, strWin1 );
 
   label = new QLabel(i18n("Middle Button"), this);
   layout->addWidget(label, 9,1);
   strWin2 = i18n("In this row you can customize middle click behavior when clicking into"
-    " an inactive inner window ('inner' means: not titlebar, not frame).");
+     " an inactive inner window ('inner' means: not titlebar, not frame).");
   QWhatsThis::add( label, strWin2 );
 
-  label = new QLabel(i18n("Right Button"), this);
+  label = new QLabel(strMouseButton3, this);
   layout->addWidget(label, 10,1);
-  strWin3 = i18n("In this row you can customize right click behavior when clicking into"
-    " an inactive inner window ('inner' means: not titlebar, not frame).");
   QWhatsThis::add( label, strWin3 );
 
-  label = new QLabel(i18n("ALT + Left Button"), this);
+  // Inner window, titlebar and frame
+
+  strMouseButton1 = i18n("ALT + Left Button");
+  strAll1 = i18n("In this row you can customize left click behavior when clicking into"
+     "  the titlebar or the frame.");
+
+  strMouseButton3 = i18n("ALT + Right Button");
+  strAll3 = i18n("In this row you can customize right click behavior when clicking into"
+     " the titlebar or the frame." );
+
+  if ( leftHandedMouse )
+  {
+     qSwap(strMouseButton1, strMouseButton3);
+     qSwap(strAll1, strAll3);
+  }
+
+  label = new QLabel(strMouseButton1, this);
   layout->addWidget(label, 13,1);
-  strAll1 = i18n("Here you can customize KDE's behavior when left clicking into a window"
-    " while pressing the ALT key.");
-  QWhatsThis::add( label, strAll1 );
+  QWhatsThis::add( label, strAll1);
 
   label = new QLabel(i18n("ALT + Middle Button"), this);
   layout->addWidget(label, 14,1);
@@ -158,12 +202,11 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
     " while pressing the ALT key.");
   QWhatsThis::add( label, strAll2 );
 
-  label = new QLabel(i18n("ALT + Right Button"), this);
+  label = new QLabel(strMouseButton3, this);
   layout->addWidget(label, 15,1);
-  strAll3 = i18n("Here you can customize KDE's behavior when right clicking into a window"
-    " while pressing the ALT key.");
-  QWhatsThis::add( label, strAll3 );
+  QWhatsThis::add( label, strAll3);
 
+  // Titlebar and frame, active, mouse button 1
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
@@ -172,8 +215,19 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,2);
   coTiAct1 = combo;
-  QWhatsThis::add(combo, i18n("Behavior on <em>left</em> click into the titlebar or frame of an <em>active</em> window."));
 
+  txtButton1 = i18n("Behavior on <em>left</em> click into the titlebar or frame of an "
+     "<em>active</em> window.");
+
+  txtButton3 = i18n("Behavior on <em>right</em> click into the titlebar or frame of an "
+     "<em>active</em> window.");
+
+  // Be nice to left handed users
+  if ( leftHandedMouse ) qSwap(txtButton1, txtButton3);
+
+  QWhatsThis::add(combo, txtButton1);
+
+  // Titlebar and frame, active, mouse button 2
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
@@ -185,6 +239,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   coTiAct2 = combo;
   QWhatsThis::add(combo, i18n("Behavior on <em>middle</em> click into the titlebar or frame of an <em>active</em> window."));
 
+  // Titlebar and frame, active, mouse button 3
   combo = new QComboBox(this);
   combo->insertItem(i18n("Raise"));
   combo->insertItem(i18n("Lower"));
@@ -194,7 +249,16 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,2);
   coTiAct3 =  combo;
-  QWhatsThis::add(combo, i18n("Behavior on <em>right</em> click into the titlebar or frame of an <em>active</em> window."));
+  QWhatsThis::add(combo, txtButton3 );
+
+  txtButton1 = i18n("Behavior on <em>left</em> click into the titlebar or frame of an "
+     "<em>inactive</em> window.");
+
+  txtButton3 = i18n("Behavior on <em>right</em> click into the titlebar or frame of an "
+     "<em>inactive</em> window.");
+
+  // Be nice to left handed users
+  if ( leftHandedMouse ) qSwap(txtButton1, txtButton3);
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -203,7 +267,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 3,3);
   coTiInAct1 = combo;
-  QWhatsThis::add(combo, i18n("Behavior on <em>left</em> click into the titlebar or frame of an <em>inactive</em> window."));
+  QWhatsThis::add(combo, txtButton1);
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate and raise"));
@@ -221,7 +285,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   connect(combo, SIGNAL(activated(int)), this, SLOT(slotChanged()));
   layout->addWidget(combo, 5,3);
   coTiInAct3 = combo;
-  QWhatsThis::add(combo, i18n("Behavior on <em>right</em> click into the titlebar or frame of an <em>inactive</em> window."));
+  QWhatsThis::add(combo, txtButton3);
 
   combo = new QComboBox(this);
   combo->insertItem(i18n("Activate, raise and pass click"));
