@@ -43,7 +43,7 @@
 
 //----------------------------------------------------------------------------
 
-       extern bool global_switch  ; 
+       extern bool global_switch  ;
 
 KKeyConfig::KKeyConfig( QWidget *parent, const char *name )
 	: KConfigWidget( parent, name )
@@ -51,10 +51,10 @@ KKeyConfig::KKeyConfig( QWidget *parent, const char *name )
 
        bool check_against_std_keys  = false ;
 
-// global_switch allows this module to configure both 
-// standard and global keys  
+// global_switch allows this module to configure both
+// standard and global keys
 // (Duncan Haldane, 1998-12-19)
-       
+
 
        if ( global_switch ) KeyType = "global" ;
        else KeyType = "standard" ;
@@ -70,14 +70,14 @@ KKeyConfig::KKeyConfig( QWidget *parent, const char *name )
 	    KeyScheme = "Global Key Scheme " ;
 	    KeySet    = "Global Keys" ;
             check_against_std_keys  = true ;
-	 }      
+	 }
 
         if ( KeyType == "standard" ) {
             #include "./stdbindings.cpp"
 	    KeyScheme = "Standard Key Scheme " ;
-	    KeySet    = "Standard Keys" ;
+	    KeySet    = "Keys" ;
             check_against_std_keys  = false ;
-	 }      
+	 }
 
 
 	//debug("inserted keys");
@@ -98,7 +98,7 @@ KKeyConfig::KKeyConfig( QWidget *parent, const char *name )
 	
 	pushLayout->addLayout( stackLayout, 20 );
 	
-	sFileList = new QStringList(); 
+	sFileList = new QStringList();
 	sList = new QListBox( this );
 	
 	sList->clear();
@@ -208,7 +208,7 @@ void KKeyConfig::slotRemove()
 	uint ind = sList->currentItem();
 	
 	if ( !d.remove( *sFileList->at( ind ) ) ) {
-		KMessageBox::sorry( 0, 
+		KMessageBox::sorry( 0,
                             i18n("This key scheme could not be removed.\n"
                                  "Perhaps you do not have permission to alter the file\n"
                                  "system where the key scheme is stored." ));
@@ -229,14 +229,14 @@ void KKeyConfig::slotChanged( )
 
 void KKeyConfig::slotSave( )
 {
-	KSimpleConfig *config = 
+	KSimpleConfig *config =
 			new KSimpleConfig( *sFileList->at( sList->currentItem() ) );
 				
 	config->setGroup( KeyScheme );
 	
 	kc->aIt->toFirst();
 	while ( kc->aIt->current() ) {
-		config->writeEntry( kc->aIt->currentKey(), 
+		config->writeEntry( kc->aIt->currentKey(),
 			KAccel::keyToString( kc->aIt->current()->aConfigKeyCode ) );
 		++ ( *kc->aIt );
 	}
@@ -257,7 +257,7 @@ void KKeyConfig::readScheme( int index )
 	} if ( index == 0 ) {
 		config  = kapp->config();
 	} else {
-		config = 
+		config =
 			new KSimpleConfig( *sFileList->at( index ), true );
 	}
 
@@ -269,7 +269,7 @@ void KKeyConfig::readScheme( int index )
 	QMap<QString, QString>::Iterator gIt(tmpMap.begin());
 		
 	int *keyCode;
- 
+
 	for (; gIt != tmpMap.end(); ++gIt) {
 	  keyCode = new int;
 	  *keyCode = KAccel::stringToKey( *gIt );
@@ -296,7 +296,7 @@ void KKeyConfig::slotAdd()
 	
 	bool nameValid;
 	QString sName;
-	QString sFile; 
+	QString sFile;
 	
 	do {
 	
@@ -325,7 +325,7 @@ void KKeyConfig::slotAdd()
 		
 			sFile.remove( ind, 1);
 			
-			// Make the next letter upper case 
+			// Make the next letter upper case
 			
 			QString s = sFile.mid( ind, 1 );
 			s = s.upper();
@@ -336,7 +336,7 @@ void KKeyConfig::slotAdd()
 		for ( int i = 0; i < (int) sList->count(); i++ ) {
 			if ( sName == sList->text( i ) ) {
 				nameValid = FALSE;
-				KMessageBox::error( 0, 
+				KMessageBox::error( 0,
                                     i18n( "Please choose a unique name for the new key\n"\
                                           "scheme. The one you entered already appears\n"\
                                           "in the key scheme list." ));
@@ -378,7 +378,7 @@ void KKeyConfig::slotAdd()
 	sFile += ".kksrc";
 	sFileList->append( sFile );
 	
-	KSimpleConfig *config = 
+	KSimpleConfig *config =
 			new KSimpleConfig( sFile );
 			
 	config->setGroup( KeyScheme );
@@ -411,23 +411,23 @@ void KKeyConfig::slotPreviewScheme( int indx )
 
 void KKeyConfig::readSchemeNames( )
  {
-   // Always a current and a default scheme 
+   // Always a current and a default scheme
    nSysSchemes = 2;
 
    QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
-   
+
    // This for system files
-   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) { 
-     
+   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) {
+
      KSimpleConfig config( *it, true );
      config.setGroup( KeyScheme );
      QString str = config.readEntry( "SchemeName" );
-     
+
      sList->insertItem( str );
      sFileList->append( *it );
-     
+
      nSysSchemes++;
-     
+
    }
 		
 }
@@ -435,7 +435,7 @@ void KKeyConfig::readSchemeNames( )
 
 void KKeyConfig::loadSettings()
 {
-   
+
 }
 
 void KKeyConfig::applySettings()
