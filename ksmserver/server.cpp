@@ -310,23 +310,27 @@ void KSMInteractDoneProc (
 }
 
 void KSMSaveYourselfRequestProc (
-    SmsConn		/* smsConn */,
+    SmsConn		smsConn ,
     SmPointer		/* managerData */,
-    int  		/* saveType */,
+    int  		saveType,
     Bool		shutdown,
-    int			/* interactStyle */,
+    int			interactStyle,
     Bool		fast,
     Bool		global
 )
 {
-    if ( shutdown && global  )
+    if ( shutdown ) {
 	the_server->shutdown( fast ?
 			      KApplication::ShutdownConfirmNo :
 			      KApplication::ShutdownConfirmDefault,
 			      KApplication::ShutdownTypeDefault,
 			      KApplication::ShutdownModeDefault );
-    // else one app only or checkpoint only, ksmserver does not yet
-    // support those modes
+    } else if ( !global ) {
+	SmsSaveYourself( smsConn, saveType, FALSE, interactStyle, fast );
+	SmsSaveComplete( smsConn );
+    } 
+    // else checkpoint only, ksmserver does not yet support this
+    // mode. Will come for KDE 3.1
 }
 
 void KSMSaveYourselfPhase2RequestProc (
