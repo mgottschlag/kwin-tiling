@@ -354,17 +354,21 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
-bool TaskManager::isOnScreen( int screen, const WId wid )
+bool TaskManager::isOnScreen(int screen, const WId wid)
 {
     if (screen == -1)
     {
         return true;
     }
 
-    KWin::WindowInfo wi = KWin::windowInfo( wid, NET::WMKDEFrameStrut );
-    QRect rect = wi.frameGeometry();
+    KWin::WindowInfo wi = KWin::windowInfo(wid, NET::WMKDEFrameStrut);
 
-    return QApplication::desktop()->screenGeometry(screen).intersects( wi.frameGeometry() );
+    // for window decos that fudge a bit and claim to extend beyond the
+    // edge of the screen, we just contract a bit.
+    QRect window = wi.frameGeometry();
+    QRect desktop = QApplication::desktop()->screenGeometry(screen);
+    desktop.addCoords(5, 5, -5, -5);
+    return window.intersects(desktop);
 }
 
 Task::Task(WId win, TaskManager * parent, const char *name)

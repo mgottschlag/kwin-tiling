@@ -62,7 +62,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
 		m_lastDragId = -1;
 	} else if( id != m_lastDragId ) {
 		m_lastDragId = id;
-		dragSwitchTimer.start( 1000, TRUE );
+		dragSwitchTimer.start( 1000, true );
 	}
 	
 	QPopupMenu::dragEnterEvent( e );
@@ -87,7 +87,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 		m_lastDragId = -1;
 	} else if( id != m_lastDragId ) {
 		m_lastDragId = id;
-		dragSwitchTimer.start( 1000, TRUE );
+		dragSwitchTimer.start( 1000, true );
 	}
 	
 	QPopupMenu::dragMoveEvent( e );
