@@ -184,8 +184,13 @@ QListViewItem *IndexWidget::getGroupItem(QListViewItem *parent, const QStringLis
 		  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
 		  
 		  iitem->setText(0, directory.readEntry("Name", *it));
-		  iitem->setPixmap(0, KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"),
-															  KIconLoader::Small));
+
+		  QPixmap icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"),
+														 KIconLoader::Small, 0, true);
+		  if(icon.isNull())
+			icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Small);
+
+		  iitem->setPixmap(0, icon);
 		  
 		  return iitem;
 		}
