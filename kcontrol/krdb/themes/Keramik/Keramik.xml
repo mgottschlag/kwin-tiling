@@ -13,7 +13,7 @@
     <color2 rgb="#c0c0c0" />
     <blending mode="NoBlending" balance="100" reverse="0" />
     <pattern name="" />
-    <wallpaper mode="Scaled" url="theme:/wallpapers/desktop/default_gears.jpg" />
+    <wallpaper mode="Scaled" url="KDE34.png" />
   </desktop>
   <screensaver name="" />
   <icons name="crystalsvg" >
@@ -90,7 +90,6 @@
     <buttonForeground rgb="#000000" object="global" />
     <linkColor rgb="#0000c0" object="global" />
     <visitedLinkColor rgb="#800080" object="global" />
-    <alternateBackground rgb="#eef6ff" object="global" />
     <activeForeground rgb="#ffffff" object="kwin" />
     <inactiveBackground rgb="#afd6ff" object="kwin" />
     <inactiveBlend rgb="#afd6ff" object="kwin" />
@@ -99,21 +98,17 @@
     <inactiveForeground rgb="#ffffff" object="kwin" />
     <activeTitleBtnBg rgb="#dcdcdc" object="kwin" />
     <inactiveTitleBtnBg rgb="#dcdcdc" object="kwin" />
-    <frame rgb="#eeeee6" object="kwin" />
-    <inactiveFrame rgb="#eeeee6" object="kwin" />
-    <handle rgb="#eeeee6" object="kwin" />
-    <inactiveHandle rgb="#eeeee6" object="kwin" />
   </colors>
   <cursors name="" />
   <wm type="builtin" name="kwin3_keramik" >
     <border size="1" />
   </wm>
   <konqueror>
-    <wallpaper url="theme:/wallpapers/konqueror/kde4ever.png" />
+    <wallpaper url="kde4ever.png" />
     <bgcolor rgb="#000000" />
   </konqueror>
   <panel>
-    <background colorize="0" url="theme:/wallpapers/panel/default.png" />
+    <background colorize="0" url="" />
     <transparent value="0" />
   </panel>
   <widgets name="Keramik" />

@@ -1,5 +1,5 @@
 
-kthememanager_theme_data_DATA = Sunshine.xml
+kthememanager_theme_data_DATA = Sunshine.xml Sunshine.preview.png
 
 kthememanager_theme_datadir = $(kde_datadir)/kthememanager/themes/Sunshine
 

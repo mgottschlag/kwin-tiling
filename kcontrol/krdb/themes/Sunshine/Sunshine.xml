@@ -13,7 +13,7 @@
     <color2 rgb="#c0c0c0" />
     <blending mode="NoBlending" balance="100" reverse="0" />
     <pattern name="" />
-    <wallpaper mode="Scaled" url="theme:/wallpapers/desktop/default_gears.jpg" />
+    <wallpaper mode="NoWallpaper" url="" />
   </desktop>
   <screensaver name="" />
   <icons name="kdeclassic" >
@@ -90,7 +90,6 @@
     <buttonForeground rgb="#000000" object="global" />
     <linkColor rgb="#0000ff" object="global" />
     <visitedLinkColor rgb="#c0ffff" object="global" />
-    <alternateBackground rgb="#edf4f9" object="global" />
     <activeForeground rgb="#ffffff" object="kwin" />
     <inactiveBackground rgb="#aeb2c3" object="kwin" />
     <inactiveBlend rgb="#aeb2c3" object="kwin" />
@@ -99,21 +98,17 @@
     <inactiveForeground rgb="#000000" object="kwin" />
     <activeTitleBtnBg rgb="#aeb2c3" object="kwin" />
     <inactiveTitleBtnBg rgb="#aeb2c3" object="kwin" />
-    <frame rgb="#efefef" object="kwin" />
-    <inactiveFrame rgb="#efefef" object="kwin" />
-    <handle rgb="#efefef" object="kwin" />
-    <inactiveHandle rgb="#efefef" object="kwin" />
   </colors>
   <cursors name="" />
   <wm type="builtin" name="kwin3_cde" >
     <border size="1" />
   </wm>
   <konqueror>
-    <wallpaper url="theme:/wallpapers/konqueror/kde4ever.png" />
+    <wallpaper url="kde4ever.png" />
     <bgcolor rgb="#000000" />
   </konqueror>
   <panel>
-    <background colorize="0" url="theme:/wallpapers/panel/default.png" />
+    <background colorize="0" url="" />
     <transparent value="0" />
   </panel>
   <widgets name="Motif" />

@@ -8,18 +8,18 @@
     <version value="" />
   </general>
   <desktop number="0" common="1" >
-    <mode id="VerticalGradient" />
-    <color1 rgb="#2a569d" />
+    <mode id="Flat" />
+    <color1 rgb="#003082" />
     <color2 rgb="#6c8bb9" />
     <blending mode="NoBlending" balance="100" reverse="0" />
     <pattern name="" />
-    <wallpaper mode="Scaled" url="theme:/wallpapers/desktop/default_gears.jpg" />
+    <wallpaper mode="Scaled" url="KDE34.png" />
   </desktop>
   <screensaver name="" />
   <icons name="crystalsvg" >
     <Animated value="1" object="desktop" />
     <DoublePixels value="0" object="desktop" />
-    <Size value="48" object="desktop" />
+    <Size value="32" object="desktop" />
     <ActiveEffect name="togamma" object="desktop" />
     <ActiveSemiTransparent value="0" object="desktop" />
     <ActiveValue value="1" object="desktop" />
@@ -90,7 +90,6 @@
     <buttonForeground rgb="#000000" object="global" />
     <linkColor rgb="#0000ee" object="global" />
     <visitedLinkColor rgb="#52188b" object="global" />
-    <alternateBackground rgb="#edf4f9" object="global" />
     <activeForeground rgb="#ffffff" object="kwin" />
     <inactiveBackground rgb="#9daaba" object="kwin" />
     <inactiveBlend rgb="#9daaba" object="kwin" />
@@ -99,21 +98,17 @@
     <inactiveForeground rgb="#dddddd" object="kwin" />
     <activeTitleBtnBg rgb="#7f9ec8" object="kwin" />
     <inactiveTitleBtnBg rgb="#a7b5c7" object="kwin" />
-    <frame rgb="#efefef" object="kwin" />
-    <inactiveFrame rgb="#efefef" object="kwin" />
-    <handle rgb="#efefef" object="kwin" />
-    <inactiveHandle rgb="#efefef" object="kwin" />
   </colors>
   <cursors name="" />
   <wm type="builtin" name="kwin3_plastik" >
     <border size="1" />
   </wm>
   <konqueror>
-    <wallpaper url="theme:/wallpapers/konqueror/kde4ever.png" />
+    <wallpaper url="kde4ever.png" />
     <bgcolor rgb="#000000" />
   </konqueror>
   <panel>
-    <background colorize="0" url="theme:/wallpapers/panel/default.png" />
+    <background colorize="0" url="" />
     <transparent value="0" />
   </panel>
   <widgets name="Plastik" />
