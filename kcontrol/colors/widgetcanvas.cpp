@@ -434,9 +434,12 @@ void WidgetCanvas::drawSampleWidgets()
 
     paint.setFont( menuFont );
     paint.setPen(txt );
-    textLen = paint.fontMetrics().width( i18n("File") );
-    qDrawShadePanel ( &paint, 30, 59, textLen + 10, 21, cg, FALSE, 2, &brush);
-    paint.drawText( 35, 74, i18n("File") );
+	QString file = i18n("File");
+    textLen = paint.fontMetrics().width( file );
+    //qDrawShadePanel ( &paint, 30, 59, textLen + 10, 21, cg, FALSE, 2, &brush);
+	kapp->style().drawPrimitive(QStyle::PE_Panel, &paint,
+			QRect(30, 59, textLen + 10, 21), cg);
+    paint.drawText( 35, 74, file );
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 35, 62, textLen, 14 ), CSM_Text );
@@ -526,18 +529,20 @@ void WidgetCanvas::drawSampleWidgets()
     // Menu
 
     brush.setColor( back );
-    qDrawShadePanel ( &paint, 30, 80, 84, 73, cg, FALSE, 2, &brush);
+    //qDrawShadePanel ( &paint, 30, 80, 84, 73, cg, FALSE, 2, &brush);
+	kapp->style().drawPrimitive(QStyle::PE_PanelPopup, &paint, 
+			QRect(30, 80, 84, 73), cg ) ;
 
     paint.setFont( menuFont );
     paint.setPen( txt );
-    paint.drawText( 38, 97, i18n("New") );
+    paint.drawText( 56, 97, i18n("New") );
     textLen = paint.fontMetrics().width( i18n("New") );
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 38, 83, textLen, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    paint.drawText( 38, 119, i18n("Open") );
+    paint.drawText( 56, 119, i18n("Open") );
     textLen = paint.fontMetrics().width( i18n("Open") );
 
     hotspots[ spot++ ] =
@@ -545,7 +550,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     paint.setFont( menuFont );
     paint.setPen( lightGray.dark() );
-    paint.drawText( 38, 141, i18n("Save") );
+    paint.drawText( 56, 141, i18n("Save") );
     textLen = paint.fontMetrics().width( i18n("Save") );
 
     hotspots[ spot++ ] =
