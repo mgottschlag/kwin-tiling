@@ -4,7 +4,6 @@
 #include "savescm.h"
 #include "savescm.moc"
 
-#include <kapp.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <klocale.h>

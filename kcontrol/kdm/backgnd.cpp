@@ -24,35 +24,21 @@
 #include <sys/types.h>
 
 
-#include <qobject.h>
 #include <qlayout.h>
-#include <qstring.h>
-#include <qstringlist.h>
 #include <qlabel.h>
-#include <qlistbox.h>
-#include <qgroupbox.h>
 #include <qcombobox.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <qpushbutton.h>
 #include <qdragobject.h>
-#include <qhbox.h>
-#include <qevent.h>
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
 
-#include <kapp.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kiconloader.h>
-#include <kcolorbtn.h>
+#include <kstandarddirs.h>
+#include <kcolorbutton.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpixmap.h>
 #include <dcopclient.h>
-#include <ksimpleconfig.h>
 #include <kmessagebox.h>
 
 #include <bgdefaults.h>

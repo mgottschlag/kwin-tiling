@@ -32,7 +32,6 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 
-#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>

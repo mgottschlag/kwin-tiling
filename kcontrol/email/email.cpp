@@ -36,30 +36,19 @@
 #include <pwd.h>
 #include <unistd.h>
 
-#include <qbuttongroup.h>
 #include <qcheckbox.h>
-#include <qframe.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
 #include <qlayout.h>
-#include <qvbox.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qtoolbutton.h>
 
 #include <kdebug.h>
 #include <klineedit.h>
 #include <kcombobox.h>
 #include <kdialog.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kopenwith.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kemailsettings.h>
 

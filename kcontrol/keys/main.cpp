@@ -25,7 +25,6 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-#include <kdialog.h>
 
 #include "keyconfig.h"
 

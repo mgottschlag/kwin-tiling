@@ -28,17 +28,14 @@
 #include <qlabel.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qpixmap.h>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qregexp.h>
-#include <qtextstream.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kcmodule.h>
 #include <kmessagebox.h>
 
 #include "xpm/world.xpm"

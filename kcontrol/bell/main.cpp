@@ -22,7 +22,7 @@
  */
 
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmodule.h>

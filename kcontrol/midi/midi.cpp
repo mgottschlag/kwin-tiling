@@ -19,15 +19,11 @@
  */
 
 #include <qlayout.h>
-#include <qvbox.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlistbox.h>
 #include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <libkmid/deviceman.h>
 #include <kurlrequester.h>

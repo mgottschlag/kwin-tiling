@@ -1,11 +1,5 @@
 
 #include "kdropsite.moc"
-#include <kapp.h>
-#include <kiconloader.h>
-#include <qevent.h>
-#include <qpixmap.h>
-#include <qdragobject.h>
-#include <qimage.h>
 
 
 KDropSite::KDropSite( QWidget * parent ) : QObject( parent ), QDropSite( parent )

@@ -46,9 +46,6 @@
 #include <stdlib.h>
 
 #include <qfileinfo.h>
-#include <qstring.h>
-#include <qbuttongroup.h>
-#include <qmessagebox.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
 #undef Below
@@ -56,13 +53,11 @@
 #include <qslider.h>
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
-#include <qpainter.h>
 
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
-#include <kapp.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
 

@@ -1,7 +1,6 @@
 #include <iostream.h>
 
 
-#include <qtextstream.h>
 #include <qfile.h>
 
 

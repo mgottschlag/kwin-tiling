@@ -9,12 +9,9 @@
 /* $Id$ */
 
 #include <qlayout.h>
-#include <qlistbox.h>
 #include <qlabel.h>
-#include <qapplication.h>
 #include <qwhatsthis.h>
 #include <qtooltip.h>
-#include <qframe.h>
 #include <qcheckbox.h>
 #include <qsettings.h>
 
@@ -22,18 +19,11 @@
 #undef Bool
 #undef Unsorted
 
-#include <kapp.h>
-#include <qbuttongroup.h>
 #include <dcopclient.h>
-#include <kglobalsettings.h>
-#include <kfontdialog.h>
-#include <kconfig.h>
 #include <ksimpleconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kipc.h>
-#include <kstddirs.h>
-#include <kprocess.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <stdlib.h>
 

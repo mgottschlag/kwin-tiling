@@ -1,6 +1,6 @@
 /* Test programme for icons setup module. */
 
-#include <kapp.h>
+#include <kapplication.h>
 #include "icons.h"
 
 int main(int argc, char **argv)

@@ -22,9 +22,6 @@
  */
 
 
-#include <kcmodule.h>
-#include <kglobal.h>
-#include <klocale.h>
 
 #include "memory.h"
 

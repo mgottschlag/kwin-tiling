@@ -27,7 +27,7 @@
 #include <kfiledialog.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"

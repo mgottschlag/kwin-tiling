@@ -25,7 +25,6 @@
 
 #include <sys/param.h>		/* for BSD */
 
-#include <qtabbar.h>
 #include <qlayout.h>
 #include <qpainter.h>
 

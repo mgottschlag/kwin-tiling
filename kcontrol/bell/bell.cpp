@@ -28,11 +28,10 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdialog.h>
 #include <knotifyclient.h>
 #include <knuminput.h>
-#include <kseparator.h>
 
 #include "bell.h"
 #include "bell.moc"

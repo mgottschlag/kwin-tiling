@@ -24,7 +24,6 @@
 #include <qtabwidget.h>
 #include <kglobal.h>
 #include <qlayout.h>
-#include <kconfig.h>
 
 #include <kcmodule.h>
 

@@ -14,24 +14,18 @@
 #include <qlabel.h>
 #include <qdir.h>
 #include <qlayout.h>
-#include <qtabwidget.h>
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
 #include <qregexp.h>
 
 #include <kdebug.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kmessagebox.h>
-#include <kaccel.h>
-#include <kwin.h>
-#include <kdialog.h>
 #include <kseparator.h>
 #include <dcopclient.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kkey_x11.h>	// Used in KKeyModule::init()
 
 #include "keyconfig.h"

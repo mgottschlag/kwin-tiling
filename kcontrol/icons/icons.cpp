@@ -12,34 +12,21 @@
  */
 
 #include <stdlib.h>
-#include <qwidget.h>
 #include <qlayout.h>
-#include <qstring.h>
-#include <qstringlist.h>
 #include <qlabel.h>
-#include <qlistbox.h>
 #include <qlistview.h>                                                                     
 #include <qgroupbox.h>
 #include <qcombobox.h>
-#include <qpushbutton.h>
 #include <qslider.h>
 #include <qcheckbox.h>
-#include <qtabwidget.h>
-#include <qiconview.h>
 
-#include <kapp.h>
 #include <kdebug.h>
 #include <kconfig.h>
-#include <kwin.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include <kiconeffect.h>
-#include <kicontheme.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kipc.h>
-#include <kcolordlg.h>
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <kseparator.h>
 
 #include <icons.h>

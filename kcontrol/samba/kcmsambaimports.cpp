@@ -24,7 +24,6 @@
 #include "kcmsambaimports.moc"
 
 #include <qlayout.h>
-#include <qcstring.h>
 #include <klocale.h>
 #include <qwhatsthis.h>
 

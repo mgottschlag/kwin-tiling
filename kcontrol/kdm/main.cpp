@@ -24,13 +24,10 @@
 #include <config.h>
 
 #include <qlayout.h>
-#include <qstringlist.h>
 
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kimageio.h>
-#include <ksimpleconfig.h>
 #include <kmessagebox.h>
 
 #include "kdm-appear.h"

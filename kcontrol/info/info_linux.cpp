@@ -14,6 +14,10 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.19  2001/06/21 10:20:04  deller
+    - use lspci (if available) for "PCI Information" instead of directly
+      reading from /proc/pci (closes bug #12906)
+
     Revision 1.18  2001/03/05 15:02:21  faure
     Many fixes like
     -      new QListViewItem(lBox, QString(buf));
@@ -55,7 +59,7 @@
 #endif
 
 
-#include <kapp.h>
+#include <kapplication.h>
 
 #define INFO_CPU_AVAILABLE
 #define INFO_CPU "/proc/cpuinfo"

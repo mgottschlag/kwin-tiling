@@ -21,12 +21,10 @@
 #include <sys/types.h>
 
 
-#include <qdir.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 
@@ -34,7 +32,7 @@
 #include <karrowbutton.h>
 #include <klineedit.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdialog.h>
 #include <kurlrequester.h>
 

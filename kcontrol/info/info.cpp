@@ -32,12 +32,8 @@
 #include <qheader.h>
 #include <qwhatsthis.h>
 #include <qlayout.h>
-#include <qtextstream.h>
 
-#include <kapp.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
-#include <kcharsets.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include "info.h"		/* include the forward declares... */
@@ -331,9 +327,6 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 ***************************************************************************
 */
 
-#include <qcollection.h>
-#include <qwidget.h>
-#include <qwidgetlist.h>
 
 
 void KInfoListWidget::load()

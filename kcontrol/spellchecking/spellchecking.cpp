@@ -21,10 +21,8 @@
 #include <qgroupbox.h>
 
 #include <klocale.h>
-#include <kconfig.h>
 #include <kglobal.h>
 #include <kspell.h>
-#include <ksconfig.h>
 
 #include "spellchecking.h"
 

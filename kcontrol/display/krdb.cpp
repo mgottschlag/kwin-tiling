@@ -19,20 +19,13 @@
 
 #undef Unsorted
 #include <qdir.h>
-#include <qdatastream.h>
-#include <qstring.h>
-#include <qtextstream.h>
 
 #include <dcopclient.h>
 
-#include <kapp.h>
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
+#include <kapplication.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kprocess.h>
 #include <ktempfile.h>
 

@@ -16,10 +16,8 @@
  ***************************************************************************/
 
 #include "kcmkonsole.h"
-#include "kcmkonsoledialog.h"
 
 #include <kfontdialog.h>
-#include <kdialog.h>
 #include <qlayout.h>
 #include <kglobal.h>
 #include <klocale.h>

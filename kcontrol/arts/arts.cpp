@@ -31,25 +31,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qfileinfo.h>
-#include <qstring.h>
 #include <qlayout.h>
-#include <qwidget.h>
-#include <qvbuttongroup.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
-#include <qhbox.h>
-#include <qlineedit.h>
 #include <qslider.h>
 #include <qdir.h>
 #include <qwhatsthis.h>
 
-#include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
-#include <kglobal.h>
 #include <kmessagebox.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "arts.h"
 #include <kaboutdata.h>

@@ -27,23 +27,17 @@
 #include <qbuttongroup.h>
 #include <qcombobox.h>
 #include <qdragobject.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qtooltip.h>
 #include <qwhatsthis.h>
-#include <qlineedit.h>
 #include <qvalidator.h>
 
-#include <kdialog.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <klineedit.h>
 #include <kimageio.h>
 #include <kmessagebox.h>
-#include <ksimpleconfig.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kiconloader.h>
 

@@ -2,21 +2,16 @@
 
 
 #include <qlayout.h>
-#include <qspinbox.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <qlineedit.h>
-#include <qstylesheet.h>
 #include <qtextbrowser.h>
-#include <qcolor.h>
 #include <qcombobox.h>
 
 
-#include <kglobal.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kconfig.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kcolorbutton.h>
 #include <kfontdialog.h>
 #include <kurlrequester.h>

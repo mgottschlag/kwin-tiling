@@ -25,16 +25,8 @@
 #include <time.h>
 #include <iostream.h>
 
-#include <qstring.h>
-#include <qregexp.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
-#include <qpoint.h>
-#include <qfont.h>
-#include <qtimer.h>
 
-#include <kprocess.h>
-#include <kapp.h>
 #include <klocale.h>
 
 #include "ksmbstatus.h"

@@ -25,18 +25,13 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qtooltip.h>
 #include <qvgroupbox.h>
 #include <qvbuttongroup.h>
 #include <qwhatsthis.h>
 
-#include <kapp.h>
 #include <kdialog.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kmessagebox.h>
 #include "kdm-conv.moc"
 
 

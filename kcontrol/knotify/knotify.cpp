@@ -20,30 +20,24 @@
 
 */
 
-#include <qdir.h>
-#include <qglobal.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
 #include <qslider.h>
-#include <qsplitter.h>
 #include <qtimer.h>
 #include <qvgroupbox.h>
 
 #include <kaboutdata.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kaudioplayer.h>
 #include <kcursor.h>
 #include <kdebug.h>
-#include <kdialog.h>
 #include <kfiledialog.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
 

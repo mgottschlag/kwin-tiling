@@ -21,7 +21,7 @@
 
 #include <dcopclient.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>

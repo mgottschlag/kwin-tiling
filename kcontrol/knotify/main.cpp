@@ -24,7 +24,6 @@
 
 #include <kglobal.h>
 #include <klocale.h>
-#include <kcmodule.h>
 
 #include "knotify.h"
 

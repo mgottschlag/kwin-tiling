@@ -20,26 +20,14 @@
  */
 
 
-#include <qframe.h>
-#include <qfile.h>
 #include <qlayout.h>
-#include <qvbox.h>
 #include <qlabel.h>
-#include <qbuttongroup.h>
 #include <qvbuttongroup.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qfileinfo.h>
 #include <qcheckbox.h>
 
 #include <kfiledialog.h>
-#include <klineedit.h>
 #include <klistview.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include <klocale.h>
-#include <kdialog.h>
 #include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <ksocks.h>

@@ -19,28 +19,14 @@
  */
 
 #include <qlayout.h>
-#include <qvbox.h>
-#include <qbuttongroup.h>
-#include <qradiobutton.h>
-#include <qcheckbox.h>
 #include <qlabel.h>
-#include <qdict.h>
-#include <qstring.h>
-#include <qcstring.h>
 #include <klistview.h>
-#include <qfile.h>
-#include <qpushbutton.h>
-#include <qgroupbox.h>
-#include <ksimpleconfig.h>
-#include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kurlrequester.h>
-#include <kicontheme.h>
 #include <kipc.h>
 #undef Unsorted
 #include <kfiledialog.h>
-#include <kapp.h>
 #include <kdebug.h>
 #include <stdlib.h>
 #include <unistd.h>

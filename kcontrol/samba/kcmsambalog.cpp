@@ -20,14 +20,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#include <kapp.h>
 #include <string.h>
 #include <iostream.h>
 #include <fstream.h>
 #include <kmessagebox.h>
 
 #include <qlayout.h>
-#include <qfile.h>
 #include <qwhatsthis.h>
 
 #include "kcmsambalog.h"

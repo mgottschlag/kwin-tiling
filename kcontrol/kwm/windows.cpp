@@ -20,26 +20,20 @@
  */
 
 #include <qlayout.h>
-#include <qspinbox.h>
 #include <qslider.h>
 #include <qwhatsthis.h>
-#include <qbuttongroup.h>
 #include <qvbuttongroup.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qlcdnumber.h>
 
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
 #include <kdialog.h>
 #include <dcopclient.h>
-#include <qdesktopwidget.h>
 
-#include <kglobal.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>

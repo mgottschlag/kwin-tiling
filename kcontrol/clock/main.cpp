@@ -20,15 +20,13 @@
  */
 #include <unistd.h>
 
-#include <qtabwidget.h>
 #include <qlabel.h>
 #include <qlayout.h>
 
 #include <dcopclient.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kcmodule.h>
 
 #include "main.h"
 #include "main.moc"

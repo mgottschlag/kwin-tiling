@@ -22,10 +22,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qmessagebox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qtimer.h>
 #include <qpushbutton.h>
 #include <qpainter.h>
 #include <qlayout.h>
@@ -33,10 +31,7 @@
 #include <qwhatsthis.h>
 
 #include <kdebug.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kcmodule.h>
 #include <kprocess.h>
 #include <kmessagebox.h>
 

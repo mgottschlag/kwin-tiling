@@ -25,29 +25,20 @@
 
 #include <qlabel.h>
 #include <qwmatrix.h>
-#include <kcolorbutton.h>
 #include <qcombobox.h>
 #include <kdebug.h>
 #include <qcheckbox.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <qfile.h>
-#include <qlistbox.h>
+#include <kstandarddirs.h>
 #include <qinputdialog.h>
 
 //#include <errno.h>
 
-#include <qtextstream.h>
 #include <qslider.h>
-#include <qlineedit.h>
 #include <klocale.h>
 #include <kfiledialog.h>
-#include <kurl.h>
 #include <qtoolbutton.h>
 #include <kmessagebox.h>
-#include <qlist.h>
 #include <ksharedpixmap.h>
-#include <kpixmap.h>
 #include <kimageeffect.h>
 #include <qimage.h>
 

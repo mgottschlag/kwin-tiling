@@ -21,23 +21,17 @@
 #include <sys/types.h>
 
 
-#include <qdragobject.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
 #include <qvalidator.h>
 #include <qwhatsthis.h>
 #include <qvgroupbox.h>
-#include <qstringlist.h>
 
-#include <kapp.h>
 #include <ksimpleconfig.h>
-#include <kicondialog.h>
 #include <kio/netaccess.h>
 #include <klocale.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <kimageio.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include "kdm-users.moc"
 

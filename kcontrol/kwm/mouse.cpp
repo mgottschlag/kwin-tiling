@@ -19,11 +19,9 @@
 
 #include <qlabel.h>
 
-#include <kapp.h>
 #include <dcopclient.h>
 #include <kkey.h>	// For KKey::keyboardHasMetaKey()
 #include <klocale.h>
-#include <kglobal.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobalsettings.h>
@@ -37,7 +35,6 @@
 #include "mouse.h"
 #include <qlayout.h>
 #include <qwhatsthis.h>
-#include <qtl.h>
 
 KActionsConfig::~KActionsConfig ()
 {

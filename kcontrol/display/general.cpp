@@ -10,39 +10,25 @@
 
 #include <stdlib.h>
 
-#include <qgroupbox.h>
 #include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qpixmap.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qlayout.h>
 #include <qdir.h>
-#include <qfileinfo.h>
-#include <qlistview.h>
-#include <qframe.h>
-#include <qsizepolicy.h>
 #include <qwhatsthis.h>
-#include <qtextstream.h>
 
 #include <dcopclient.h>
 
-#include <kapp.h>
-#include <kglobal.h>
+#include <kapplication.h>
 #include <klocale.h>
-#include <kstddirs.h>
-#include <kconfig.h>
+#include <kstandarddirs.h>
 #include <ksimpleconfig.h>
-#include <kwin.h>
 #include <kdialog.h>
 #include <kipc.h>
 #include <kprocess.h>
-#include <kcmodule.h>
-#include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <kdirwatch.h>
-#include <kmessagebox.h>
 
 #include "general.h"
 #include "krdb.h"
