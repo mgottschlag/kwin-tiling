@@ -17,24 +17,6 @@ Appearance (Rik was right here): Getting rid of "Standard Font" and "Normal Text
 
 Groupboxes named "Behaviour", "Clicks on the desktop" and "Paths" would look much more tidy here ("path" could be removed from each item then and would make the dialog look more tidy).
 
-
-Look & Feel -> Panel
---------------------
-General: terminal application should be set globally for the whole desktop.
-(Same as in File Browsing -> File Manager -> Other).
-
-
-Look & Feel -> Style
---------------------
-This dialog is too long and incoherent in the topic it is dealing with.
-I would propose to rename it to "Widgets" and to  create two Tabs within Widgets (like in "Icons"):
-"Theme" and "Advanced".
-The following items aren't really widget-Properties to the user, so:
-
-- Move "Menubar on top of the screen" to "Desktop" (Makes sense as there are many people who search for Mac-menubar/Desktop-menubar find one of them and think the other solution (which they might have been searching for) isn't implemented.
-
-Except for the Widget-themes everything else should be moved to the Advanced-tab.
-
 Look & Feel -> System-Notifications
 -----------------------------------
 The current dialog resembles a very good "advanced"-tab. It would be nice for the newbie if there was a
@@ -47,10 +29,6 @@ Answering Machine: A groupbox around "Adress:, Subject:, First Line:" would be n
 That way one would have a much cleaner layout and it would be much easier to see at once what the dialog is about.
 Forward: Way too much text here. I see the point of having a direct explanation in the dialog. But this could look much friendlier using the following solution:
 There should be a Textbox below the "Forward method"-Combobox. This Textbox only contains the information for the Forward-method which is currently selected (So the text changes each time a different Forward-method is selected).
-
-Peripherals -> Mouse
---------------------
-Two Groupboxes "Pointer" (with "Accelaration"/Treshhold" inside) and "Drag and Drop" (with "Start Time"/'Start Distance" inside) would be nice here.
 
 Sound -> Sound Server
 ---------------------
