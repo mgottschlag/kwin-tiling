@@ -9,4 +9,4 @@
 #
 #chown $USER /dev/console
 
-#exec sessreg -a -l $DISPLAY -u /var/run/utmp -x @kde_confdir@/kdm/Xservers $USER
+#exec sessreg -a -l $DISPLAY -u /var/run/utmp -x @KDE_CONFDIR@/kdm/Xservers $USER

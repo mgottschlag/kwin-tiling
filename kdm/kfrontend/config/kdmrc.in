@@ -60,7 +60,8 @@ WallpaperMode=Tiled
 # KDM from inittab with the respawn instruction. Default is true.
 #DaemonMode=false
 # The file, where X-servers to be used by kdm are listed. The file is in
-# the usual xdm-Xservers format. Default is @KDE_CONFDIR@/kdm/Xservers
+# the usual xdm-Xservers format.
+# Default is @KDE_CONFDIR@/kdm/Xservers
 # XXX i'm planning to absorb this file into kdmrc, but i'm not sure how to
 # do this best. 
 #Xservers=
@@ -83,7 +84,8 @@ WallpaperMode=Tiled
 # supports /dev/urandom, otherwise it defaults to /dev/mem.
 #RandomFile=/dev/mem
 # Path to the xrdb program. This only has a meaning, if you use the Recources
-# option below (what you probably won't do). Default is @XBINDIR@/xrdb
+# option below (what you probably won't do).
+# Default is @XBINDIR@/xrdb
 #Xrdb=
 
 [Xdmcp]
@@ -186,7 +188,8 @@ LiloMap=/boot/map
 # to it. See SessionTypes.
 # Default is @KDE_CONFDIR@/kdm/Xsession
 #Session=
-# The program to run if Session fails. Default is @XBINDIR@/xterm
+# The program to run if Session fails.
+# Default is @XBINDIR@/xterm
 #FailsafeClient=
 # The PATH for the Session program. The default is system-specific.
 #UserPath=
@@ -197,7 +200,8 @@ LiloMap=/boot/map
 # Where to put the user's X-server authorization file if ~/.Xauthority 
 # cannot be created. Default is /tmp
 #UserAuthDir=
-# The host chooser program to use. Default is @KDE_BINDIR@/chooser
+# The host chooser program to use.
+# Default is @KDE_BINDIR@/chooser
 # XXX this is going to be integrated into the greeter (probably).
 #Chooser=
 # If "true", KDM will automatically restart a session after an X-server
