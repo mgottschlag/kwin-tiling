@@ -14,9 +14,6 @@ install-data-local:
 		echo $(INSTALL_SCRIPT) $$j $(DESTDIR)$(kde_confdir)/kdm/$$i; \
 		$(INSTALL_SCRIPT) $$j $(DESTDIR)$(kde_confdir)/kdm/$$i; \
 	    done; \
-	    if test ! -d /var/lib/kdm; then \
-		echo mkdir -p /var/lib/kdm; \
-		mkdir -p /var/lib/kdm; \
-	    fi \
+	    $(mkinstalldirs) $(DESTDIR)/var/lib/kdm; \
 	fi
 
