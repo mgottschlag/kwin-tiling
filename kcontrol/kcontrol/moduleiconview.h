@@ -20,24 +20,26 @@
 #ifndef __moduleiconview_h__
 #define __moduleiconview_h__
 
-#include <qiconview.h>
-#include <kiconview.h>
+#include <klistview.h>
 
 class ConfigModule;
 class ConfigModuleList;
 
-class ModuleIconItem : public QIconViewItem
+class ModuleIconItem : public KListViewItem
 {
 
 public:
-  ModuleIconItem(QIconView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
-	: QIconViewItem(parent, text, pm)
+  ModuleIconItem(QListView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
+	: KListViewItem(parent, text)
 	, _tag(QString::null)
 	, _module(m)
-	{}
+	{
+	  setPixmap(0, pm);
+	}
 
   void setConfigModule(ConfigModule* m) { _module = m; }
   void setTag(const QString& t) { _tag = t; }
+  void setOrderNo(int order) {  setText(1, QString::number(order)); };
   ConfigModule* module() { return _module; }
   QString tag() { return _tag; }
 
@@ -47,7 +49,7 @@ private:
   ConfigModule *_module;
 };
 
-class ModuleIconView : public KIconView
+class ModuleIconView : public KListView
 {
   Q_OBJECT
 
@@ -62,7 +64,7 @@ signals:
   void moduleSelected(ConfigModule*);
 
 protected slots:
-  void slotItemSelected(QIconViewItem*);
+  void slotItemSelected(QListViewItem*);
 
 protected:
  QDragObject *dragObject(); 

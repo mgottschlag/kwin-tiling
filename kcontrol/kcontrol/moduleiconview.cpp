@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2003 Daniel Molkentin <molkentin@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,14 +18,16 @@
 
 */
 
-
+#include <qheader.h>
+#include <qdragobject.h>
+#include <qcursor.h>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kdebug.h>
-
 #include <kservicegroup.h>
 #include <kiconloader.h>
+
+#include <kdebug.h>
 
 #include "moduleiconview.h"
 #include "moduleiconview.moc"
@@ -33,34 +36,32 @@
 
 
 ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const char * name)
-  : KIconView(parent, name)
+  : KListView(parent, name)
   , _path(QString::null)
   , _modules(list)
 {
-  setArrangement(TopToBottom);
-  setSelectionMode(Single);
-  setItemsMovable(false);
-  setSorting(false);
-  setWordWrapIconText(true);
-  setItemTextPos(Right);
-  setResizeMode(Adjust);
-  setWordWrapIconText(false);
-  setShowToolTips(true);
-  setMaxItemWidth(200);
 
-  
+  setSorting(1, true);
+  addColumn(QString::null);
+
+  // Needed to enforce a cut of the items label rather than
+  // showing a horizontal scrollbar
+  setResizeMode(LastColumn);
+
+  header()->hide();
+
   // This is intentionally _not_ connected with executed(), since
   // honoring doubleclick doesn't make any sense here (changed by
   // large user demand)
-  connect(this, SIGNAL(clicked(QIconViewItem*)),
-                  this, SLOT(slotItemSelected(QIconViewItem*)));
+  connect(this, SIGNAL(clicked(QListViewItem*)),
+                  this, SLOT(slotItemSelected(QListViewItem*)));
 }
 
 void ModuleIconView::makeSelected(ConfigModule *m)
 {
   if (!m) return;
 
-  for (QIconViewItem *i = firstItem(); i; i = i->nextItem())
+  for (QListViewItem *i = firstChild(); i; i = i->nextSibling())
         {
       if(static_cast<ModuleIconItem*>(i)->module() == m)
                 {
@@ -132,8 +133,9 @@ void ModuleIconView::fill()
         icon = LoadMedium("folder");
     }
 
-    // go-up node
+    // go-back node
     ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
+	i->setOrderNo(0);
 	i->setDragEnabled(false);
     int last_slash = _path.findRev('/');
     if (last_slash == -1)
@@ -177,7 +179,7 @@ void ModuleIconView::fill()
   // we don't ever have any modules on the top level
   //if (_path.isNull())
   //  return;
-
+  int c = 0;
   for (module=_modules->first(); module != 0; module=_modules->next())
   {
     if (module->library().isEmpty())
@@ -195,11 +197,12 @@ void ModuleIconView::fill()
       icon = LoadMedium(module->icon());
 
     ModuleIconItem *i = new ModuleIconItem(this, module->moduleName(), icon, module);
-	i->setDragEnabled(false);
+    i->setDragEnabled(false);
+    i->setOrderNo(++c);
   }
 }
 
-void ModuleIconView::slotItemSelected(QIconViewItem* item)
+void ModuleIconView::slotItemSelected(QListViewItem* item)
 {
   QApplication::restoreOverrideCursor();
   if (!item) return;
@@ -213,13 +216,13 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
     {
         _path = static_cast<ModuleIconItem*>(item)->tag();
         fill();
-        setCurrentItem(firstItem());
+        setCurrentItem(firstChild());
     }
 }
 
 QDragObject *ModuleIconView::dragObject()
 {
-  QDragObject *icondrag = QIconView::dragObject();
+  QDragObject *icondrag = QListView::dragObject();
   QUriDrag *drag = new QUriDrag(this);
 
   QPixmap pm = icondrag->pixmap();
@@ -229,7 +232,7 @@ QDragObject *ModuleIconView::dragObject()
   QPoint orig = viewportToContents(viewport()->mapFromGlobal(QCursor::pos()));
 
   QStringList l;
-  ModuleIconItem *item = (ModuleIconItem*) findItem(orig);
+  ModuleIconItem *item = static_cast<ModuleIconItem*>(itemAt(orig));
   if (item)
     {
       if (item->module())
@@ -267,20 +270,6 @@ void ModuleIconView::keyPressEvent(QKeyEvent *e)
       if (currentItem())
         slotItemSelected(currentItem());
     }
-  // Workaround for strange QIconView behaviour.
-  else if(e->key() == Key_Up)
-    {
-      QKeyEvent ev(e->type(), Key_Left, e->ascii(), e->state(), e->text(),
-                   e->isAutoRepeat(), e->count());
-      KIconView::keyPressEvent(&ev);
-    }
-  // Workaround for strange QIconView behaviour.
-  else if(e->key() == Key_Down)
-    {
-      QKeyEvent ev(e->type(), Key_Right, e->ascii(), e->state(), e->text(),
-                   e->isAutoRepeat(), e->count());
-      KIconView::keyPressEvent(&ev);
-    }
   else
-    KIconView::keyPressEvent(e);
+    KListView::keyPressEvent(e);
 }

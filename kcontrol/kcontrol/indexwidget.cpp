@@ -56,11 +56,6 @@ QListViewItem *IndexWidget::firstTreeViewItem()
 void IndexWidget::resizeEvent(QResizeEvent *e)
 {
   QWidgetStack::resizeEvent( e );
-  if (_icon)
-  {
-    _icon->setGridX(width()-26);
-    _icon->fill();
-  }
 }
 
 void IndexWidget::moduleSelected(ConfigModule *m)
