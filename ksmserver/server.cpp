@@ -142,7 +142,7 @@ char * safeSmsGenerateClientID( SmsConn c )
     if (!ret) {
         static QString *my_addr = 0;
        if (!my_addr) {
-           qDebug("Can't get own host name. Your system is severely misconfigured\n");
+           qWarning("Can't get own host name. Your system is severely misconfigured\n");
            my_addr = smy_addr.setObject(new QString);
 
            /* Faking our IP address, the 0 below is "unknown" address format
@@ -914,14 +914,6 @@ void KSMServer::removeConnection( KSMConnection* conn )
  */
 void KSMServer::ioError( IceConn iceConn  )
 {
-    QPtrListIterator<KSMClient> it ( clients );
-    while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
-	++it;
-
-    if ( it.current() ) {
-	const char *name = it.current()->program().latin1();
-	printf("IO error for client %s\n", name ? name : "<unknown>" );
-    }
 }
 
 void KSMServer::processData( int /*socket*/ )
@@ -935,6 +927,8 @@ void KSMServer::processData( int /*socket*/ )
 	    ++it;
 
 	if ( it.current() ) {
+	    const char *name = it.current()->program().latin1();
+	    kdDebug() << "IO error for client " << QString( name ? name : "<unknown>" ) << endl;
 	    SmsConn smsConn = it.current()->connection();
 	    deleteClient( it.current() );
 	    SmsCleanUp( smsConn );
@@ -984,9 +978,9 @@ void KSMServer::newConnection( int /*socket*/ )
 
     if (cstatus != IceConnectAccepted) {
 	if (cstatus == IceConnectIOError)
-	    qWarning ("IO error opening ICE Connection!\n");
+	    kdDebug() << "IO error opening ICE Connection!" << endl;
 	else
-	    qWarning ("ICE Connection rejected!\n");
+	    kdDebug() << "ICE Connection rejected!" << endl;
 	(void )IceCloseConnection (iceConn);
     }
 }
@@ -1254,7 +1248,7 @@ void KSMServer::completeShutdown()
 
 void KSMServer::completeKilling()
 {
-    kdDebug(0) << "KSMServer::completeKilling clients.count()=" <<
+    kdDebug() << "KSMServer::completeKilling clients.count()=" <<
 	clients.count() << endl;
     if ( state != Killing ) {
 // 	kdWarning() << "Not Killing !!! state=" << state << endl;
@@ -1262,7 +1256,7 @@ void KSMServer::completeKilling()
     }
 
     if ( clients.isEmpty() ) {
-	kdDebug(0) << "Calling qApp->quit()" << endl;
+	kdDebug() << "Calling qApp->quit()" << endl;
 	qApp->quit();
     } else {
 	for (KSMClient *c = clients.first(); c; c = clients.next()) {
@@ -1339,7 +1333,7 @@ void KSMServer::storeSession()
  */
 void KSMServer::restoreSession()
 {
-    kdDebug(0) << "KSMServer::restoreSession" << endl;
+    kdDebug() << "KSMServer::restoreSession" << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
