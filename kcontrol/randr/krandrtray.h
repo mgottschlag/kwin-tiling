@@ -32,7 +32,6 @@ class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 public:
 	KRandRSystemTray(QWidget* parent = 0, const char *name = 0);
 
-	virtual void mouseReleaseEvent(QMouseEvent* e);
 	virtual void contextMenuAboutToShow(KPopupMenu* menu);
 
 	void configChanged();
@@ -42,6 +41,9 @@ protected slots:
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);
 	void slotRefreshRateChanged(int parameter);
+
+protected:
+	void mousePressEvent( QMouseEvent *e );
 
 private:
 	void populateMenu(KPopupMenu* menu);

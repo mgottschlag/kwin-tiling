@@ -41,7 +41,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 }
 
-void KRandRSystemTray::mouseReleaseEvent(QMouseEvent* e)
+void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 {
 	// Popup the context menu with left-click
 	if (e->button() == LeftButton) {
@@ -66,7 +66,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 		menu->setItemEnabled(lastIndex, false);
 
 	} else {
-		for (int s = 0; s < numScreens(); s++) {
+		for (int s = 0; s < numScreens() && numScreens() > 1; s++) {
 			setCurrentScreen(s);
 			if (s == screenIndexOfWidget(this)) {
 				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
@@ -85,8 +85,6 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 
 	menu->insertSeparator();
 	menu->insertItem(i18n("&Help"), m_help->menu());
-	//actionCollection()->action(KStdAction::name(KStdAction::Help))->plug(menu);
-	menu->insertSeparator();
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	quitAction->plug(menu);
 }
@@ -108,7 +106,6 @@ void KRandRSystemTray::configChanged()
 
 void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 {
-	menu->insertSeparator();
 	int lastIndex = 0;
 
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
@@ -130,7 +127,6 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
 	if (currentScreen()->rotations() != RandRScreen::Rotate0) {
-		menu->insertSeparator();
 		menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
 
 		for (int i = 0; i < 6; i++) {
@@ -149,7 +145,6 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		}
 	}
 
-	menu->insertSeparator();
 	menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 
 	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
