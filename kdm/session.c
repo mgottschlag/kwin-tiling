@@ -513,20 +513,14 @@ ManageSession (struct display *d)
     source (verify.systemEnviron, d->reset);
 
     /* 
-     * This code must be damned ... every time i put it here, i 
-     * simply cannot reproduce the scenario which led me to putting it 
-     * here: sometimes an xsession seems to exit before the server
-     * crash is registered (i know, this is theoretically impossible).
-     * As the pure presence of this code (without being executed)
-     * solves the problem, i leave it herein. :)
+     * Sometimes the Xsession somehow manages to exit before a server crash
+     * is noticed - so we sleep a bit and wait for being killed.
      */
     dpy = XOpenDisplay (d->name);
     if (dpy)
 	XCloseDisplay (dpy);
-    else {
-	LogError ("Sleeping one second after server crash. It happened! Report to ossi@kde.org!\n");
+    else
 	sleep (1);
-    }
 
     SessionExit (d, OBEYSESS_DISPLAY, TRUE);
 }
