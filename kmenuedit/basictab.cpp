@@ -223,9 +223,10 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
-void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted)
+void BasicTab::setDesktopFile(const QString& desktopFile, const QString &menuId, const QString &name, bool isDeleted)
 {
     _desktopFile = desktopFile;
+    _menuId = menuId;
     _name = name;
     _isDeleted = isDeleted;
     // key binding part
@@ -319,7 +320,11 @@ void BasicTab::apply( bool desktopFileNeedsSave )
         return;
 
     //
-    QString local = KDesktopFile::locateLocal(_desktopFile);
+    QString local;
+    if (_menuId.isEmpty())
+       local = KDesktopFile::locateLocal(_desktopFile);
+    else
+       local = locateLocal("xdgdata-apps", _menuId);
 
     KConfig *df = 0;
     if (_desktopFile != local)
@@ -362,7 +367,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
 void BasicTab::reset()
 {
     if(!_desktopFile.isEmpty())
-        setDesktopFile(_desktopFile, _name, _isDeleted);
+        setDesktopFile(_desktopFile, _menuId, _name, _isDeleted);
 
     // key binding part
     _khotkeysNeedsSave = false;

@@ -201,27 +201,6 @@ qWarning("Found menu %s, checking with %s", name.latin1(), menuNodeName.latin1()
       return findMenu(newElem, subMenuName, create);
 }
    
-
-static QString entryToAppId(const QString &path)
-{
-   // See also KDesktopFile::locateLocal
-   QString local;
-   if (path.startsWith("/"))
-   {
-      // XDG Desktop menu items come with absolute paths, we need to
-      // extract their relative path and then build a local path.
-      local = KGlobal::dirs()->relativeLocation("xdgdata-apps", path);
-   }
-   
-   if (local.isEmpty() || local.startsWith("/"))
-   {
-      // What now? Use filename only and hope for the best.
-      local = path.mid(path.findRev('/')+1);
-   }
-qWarning("entryToAppId: %s --> %s", path.latin1(), local.latin1());   
-   return local;                                                                                           
-}
-
 static QString entryToDirId(const QString &path)
 {
    // See also KDesktopFile::locateLocal
@@ -294,10 +273,8 @@ static void purgeDeleted(QDomElement elem)
    }
 }
 
-void MenuFile::addEntry(const QString &menuName, const QString &entry)
+void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 {
-   QString appId = entryToAppId(entry);
-
    m_bDirty = true;   
 
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
@@ -305,7 +282,7 @@ void MenuFile::addEntry(const QString &menuName, const QString &entry)
    QDomElement excludeNode;
    QDomElement includeNode;
 
-   purgeIncludesExcludes(elem, appId, excludeNode, includeNode);
+   purgeIncludesExcludes(elem, menuId, excludeNode, includeNode);
 
    if (includeNode.isNull())
    {
@@ -314,17 +291,15 @@ void MenuFile::addEntry(const QString &menuName, const QString &entry)
    }
    
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
-   fileNode.appendChild(m_doc.createTextNode(appId));
+   fileNode.appendChild(m_doc.createTextNode(menuId));
    includeNode.appendChild(fileNode);
    
    save();
 }
 
 
-void MenuFile::removeEntry(const QString &menuName, const QString &entry)
+void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
 {
-   QString appId = entryToAppId(entry);
-
    m_bDirty = true;
    
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
@@ -332,7 +307,7 @@ void MenuFile::removeEntry(const QString &menuName, const QString &entry)
    QDomElement excludeNode;
    QDomElement includeNode;
 
-   purgeIncludesExcludes(elem, appId, excludeNode, includeNode);
+   purgeIncludesExcludes(elem, menuId, excludeNode, includeNode);
 
    if (excludeNode.isNull())
    {
@@ -341,7 +316,7 @@ void MenuFile::removeEntry(const QString &menuName, const QString &entry)
    }
    
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
-   fileNode.appendChild(m_doc.createTextNode(appId));
+   fileNode.appendChild(m_doc.createTextNode(menuId));
    excludeNode.appendChild(fileNode);
    
    save();

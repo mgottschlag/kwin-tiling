@@ -56,9 +56,9 @@ DesktopFileEditor::DesktopFileEditor( QWidget *parent, const char *name )
     layout->setColStretch(2, 3);
 }
 
-void DesktopFileEditor::setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted)
+void DesktopFileEditor::setDesktopFile(const QString& desktopFile, const QString &menuId, const QString &name, bool isDeleted)
 {
-    _basicTab->setDesktopFile(desktopFile, name, isDeleted);
+    _basicTab->setDesktopFile(desktopFile, menuId, name, isDeleted);
     _apply->setEnabled(false);
     _reset->setEnabled(false);
     _desktopFileNeedsSave = false;

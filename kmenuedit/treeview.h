@@ -77,13 +77,14 @@ public:
 class TreeItem : public QListViewItem
 {
 public:
-    TreeItem(QListViewItem *parent, const QString& file);
-    TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file);
-    TreeItem(QListView *parent, const QString& file);
-    TreeItem(QListView *parent, QListViewItem* after, const QString& file);
+    TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file, const QString &menuId);
+    TreeItem(QListView *parent, QListViewItem* after, const QString& file, const QString &menuId);
 
     QString file() const { return _file; }
     void setFile(const QString& file) { _file = file; }
+
+    QString menuId() const { return _menuId; }
+
     QString directory() const { return _directoryPath; }
     void setDirectoryPath(const QString& path) { _directoryPath = path; }
 
@@ -107,6 +108,7 @@ private:
     bool _hidden : 1;
     bool _init : 1;
     QString _file;
+    QString _menuId;
     QString _name;
     QString _directoryPath;
     FolderInfo *m_folderInfo;
@@ -127,7 +129,7 @@ public slots:
     void currentChanged(const QString& desktopFile);
 
 signals:
-    void entrySelected(const QString&, const QString &, bool);
+    void entrySelected(const QString&, const QString &, const QString &, bool);
 
 protected slots:
     void itemSelected(QListViewItem *);
@@ -170,6 +172,7 @@ private:
     QPopupMenu        *m_rmb;
     QString            m_clipboard;
     FolderInfo        *m_clipboardInfo;
+    QString            m_clipboardMenuId;
     QString            m_drag;
     FolderInfo        *m_dragInfo;
     TreeItem          *m_dragItem;

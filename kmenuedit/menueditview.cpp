@@ -36,8 +36,8 @@ MenuEditView::MenuEditView( KActionCollection* ac, QWidget *parent, const char *
     _tree = new TreeView(_ac, _splitter);
     _editor = new DesktopFileEditor(_splitter);
 
-    connect(_tree, SIGNAL(entrySelected(const QString&, const QString &, bool)),
-	    _editor, SLOT(setDesktopFile(const QString&, const QString &, bool)));
+    connect(_tree, SIGNAL(entrySelected(const QString&, const QString &, const QString &, bool)),
+	    _editor, SLOT(setDesktopFile(const QString&, const QString &, const QString &, bool)));
     connect(_editor, SIGNAL(changed(const QString &)), _tree, SLOT(currentChanged(const QString &)));
 
     // restore splitter sizes

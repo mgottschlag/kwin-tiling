@@ -45,13 +45,14 @@ public:
     void reset();
 
     QString desktopFile() { return _desktopFile; }
+    QString menuId() { return _menuId; }
 
 signals:
     void changed();
     void changed( bool desktopFileNeedsSave );
 
 public slots:
-    void setDesktopFile(const QString& desktopFile, const QString &name, bool isDeleted);
+    void setDesktopFile(const QString& desktopFile, const QString &menuId, const QString &name, bool isDeleted);
 
 protected slots:
     void slotChanged(const QString&);
@@ -75,6 +76,7 @@ protected:
 
     QString       _desktopFile;
     QString       _name;
+    QString       _menuId;
     bool _khotkeysNeedsSave;
     bool _isDeleted;
     bool _isDesktopFile;

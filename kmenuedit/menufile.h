@@ -32,8 +32,8 @@ public:
    bool save();
    void create();
    
-   void addEntry(const QString &menuName, const QString &entry);
-   void removeEntry(const QString &menuName, const QString &entry);
+   void addEntry(const QString &menuName, const QString &menuId);
+   void removeEntry(const QString &menuName, const QString &menuId);
    
    void addMenu(const QString &menuName, const QString &menuFile);
    void moveMenu(const QString &oldMenu, const QString &newMenu);
