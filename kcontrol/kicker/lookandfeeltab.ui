@@ -468,7 +468,7 @@
                 <cstring>advancedOptionsButton</cstring>
             </property>
             <property name="text">
-                <string>Advan&amp;ced Options</string>
+                <string>Advan&amp;ced Options...</string>
             </property>
         </widget>
     </grid>
