@@ -32,7 +32,7 @@
 
 
 KHKGlobalAccel::KHKGlobalAccel()
-    : KGlobalAccel( true ) // HACK this avoids creating a QWidget
+    : KGlobalAccel( NULL, true ) // HACK this avoids creating a QWidget
                            // in KGlobalAccel, because
                            // KGlobalAccel::x11EventFilter() is not virtual
     {
