@@ -61,6 +61,7 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
+#include <kprocess.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
@@ -750,7 +751,13 @@ void MouseSettings::apply()
   else if (!largeCursor && whiteCursor)
     KIO::NetAccess::copy(font_small_white, installedFont);
 
-  system(QFile::encodeName("mkfontdir " + overrideDir));
+  QString cmd = KGlobal::dirs()->findExe("mkfontdir");
+  if (!cmd.isEmpty())
+  {
+    KProcess p;
+    p << cmd << overrideDir;
+    p.start(KProcess::Block);
+  }
 }
 
 void MouseSettings::save(KConfig *config)
