@@ -22,6 +22,7 @@
 
 #include <kcmodule.h>
 #include <kprocess.h>
+#include <kalphalabel.h>
 
 class KIntNumInput;
 
@@ -138,7 +139,7 @@ protected:
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnableCheckBox;
-    QLabel      *mMonitorLabel;
+    KAlphaLabel *mMonitorLabel;
     QStringList mSaverFileList;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;

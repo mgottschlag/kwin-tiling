@@ -226,7 +226,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     // right column
     vLayout = new QVBoxLayout(helperLayout, 10);
 
-    mMonitorLabel = new QLabel( this );
+    mMonitorLabel = new KAlphaLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
     mMonitorLabel->setPixmap( QPixmap(locate("data",
                          "kcontrol/pics/monitor.png")));

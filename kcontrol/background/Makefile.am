@@ -2,13 +2,13 @@
 
 SUBDIRS = . pics
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) -I$(top_srcdir)/kcontrol/lib
 
 kde_module_LTLIBRARIES = libkcm_background.la
 
 libkcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp 
 libkcm_background_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la
+libkcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la -L$(top_builddir)/kcontrol/lib -lkcontroltools
 
 METASOURCES = AUTO
 
