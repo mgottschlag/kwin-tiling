@@ -153,7 +153,7 @@ void CXConfig::addPath(const QString &dir, bool unscaled)
         if(NULL==path)
             itsPaths.append(new TPath(dir, unscaled, false, false));
         else
-            if(path->disabled=true)
+            if(path->disabled==true)
                 path->disabled=false;
     }
 }
