@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=usb
+Type=Application
+DocPath=kinfocenter/view1394/index.html
+Exec=kcmshell kcmview1394
+X-KDE-ModuleType=Library
+X-KDE-Library=view1394
+X-KDE-ParentApp=kinfocenter
+
+Name=IEEE 1394 Devices
+
+Comment=View the IEEE 1394 devices attached to this computer
+
+Keywords=1394,Firewire,devices,viewer,control
+
