@@ -1,6 +1,6 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,99 +18,114 @@
  
 */                                                                            
 
+#include <qcolor.h>
 
-
-/* This is the default widget for kcc
-   Author: Markus Wuebben
-	   <markus.wuebben@kde.org>
-   Date:   September '97         */
-
-
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <stdlib.h>
-
-#include <qlayout.h>
-#include <qpixmap.h>
-#include <qlabel.h>
-
+#include <ktextbrowser.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
 
-#include "config.h"
+#include "global.h"
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
 
-
 AboutWidget::AboutWidget(QWidget *parent , const char *name)
-  : QWidget(parent, name)
+  : QVBox(parent, name)
 {
-  char buf[128];
-  struct utsname info;
-  QString str;
-  QHBoxLayout *hbox1;
-  QVBoxLayout *vbox1,*vbox2, *vbox3;
-
-  setCaption(i18n("About"));
-
-  QVBoxLayout *top = new QVBoxLayout(this,10,10);
-
-  vbox3 = new QVBoxLayout(top);
-
-  QLabel *label = new QLabel(i18n("KDE Control Center"), this);
-  label->setFont(QFont("times", 24, QFont::Bold));
-  label->setAlignment(AlignLeft);
-  label->setMaximumHeight(40);
-  vbox3->addWidget(label);
-
-  label = new QLabel(i18n("The control center is a central place to configure your desktop environment. "
-						  "Select a item from the index list on the right to load a configuration module. "
-						  "Click on Desktop->Background for example to configure the desktop background.\n\n"
-						  "If you are unsure about where to look for a configuration option you can "
-						  "search a keyword list. "
-						  "Enter a search string in the \"search\" tab on the right to start a query.\n\n"
-						  "The \"help\" tab displays a short help text for the active control module."), this);
-  label->setAlignment(AlignLeft | WordBreak);
-  vbox3->addWidget(label);
-
-  hbox1 = new QHBoxLayout(top);
-
-  label = new QLabel(this);
-  QPixmap pm(locate( "data", QString::fromLatin1("kdeui/pics/aboutkde.png")));
-  label->setPixmap(pm);
-  label->setFixedSize(pm.size());
-  label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  label->setAlignment(AlignCenter);
-  hbox1->addWidget( label );
-
-  vbox1 = new QVBoxLayout(hbox1);
-  hbox1->addSpacing(20);
-  vbox2 = new QVBoxLayout(hbox1);
-
-  vbox1->addWidget( new QLabel(i18n("KDE Version:"), this) );
-  vbox2->addWidget( new QLabel(VERSION, this) );
-
-  char *user = getlogin();
-  if (!user) user = getenv("LOGNAME");
-  if (!user) str = i18n("Unknown");  else str = user;
-  vbox1->addWidget( new QLabel(i18n("User:"), this) );
-  vbox2->addWidget( new QLabel(user, this) );
-
-  gethostname(buf, 128);
-  vbox1->addWidget( new QLabel(i18n("Hostname:"), this) );
-  vbox2->addWidget( new QLabel(buf, this) );
+  KTextBrowser *browser = new KTextBrowser(this);
   
-  uname(&info);
-  vbox1->addWidget( new QLabel(i18n("System:"), this) );
-  vbox2->addWidget( new QLabel(info.sysname, this) );
-  
-  vbox1->addWidget( new QLabel(i18n("Release:"), this) );
-  vbox2->addWidget( new QLabel(info.release, this) );
-  
-  vbox1->addWidget( new QLabel(i18n("Version:"), this) );
-  vbox2->addWidget( new QLabel(info.version, this) );
-  
-  vbox1->addWidget( new QLabel(i18n("Machine:"), this) );
-  vbox2->addWidget( new QLabel(info.machine, this) );
+  QColorGroup clgrp = colorGroup();
+  clgrp.setColor( QColorGroup::Base, QColor( 255, 255, 255 ) );
+  browser->setPaperColorGroup( clgrp );
+  browser->setFrameStyle(QFrame::Box | QFrame::Raised);
+  browser->setFocusPolicy(NoFocus);
+  browser->setHScrollBarMode( QScrollView::AlwaysOff );
+  browser->setNotifyClick(true);
+
+  QString wizard = locate("data", "kcontrol/pics/wizard.png");
+  QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
+
+  QString text = i18n("<p>"
+                      "<table cellpadding=2 cellspacing=1 border=0  width=95% bgcolor=#EEEEFF>"
+                      "<tr>"
+                      "<td width=1%>"
+                      "<img src=\""
+                      + kcontrol +
+                      "\" border=\"0\">"
+                      "</td>"
+                      "<td width=90%>"
+                      "<b><big><big>KDE Control Center</big></big></b>"
+                      "<br>"
+                      "Configure your desktop environment."
+                      "</td></tr>"
+                      "</table>"
+                      "</p>"
+                      "<br>"
+                      "<p>"
+                      "Welcome to the \"KDE Control Center\", a central place to configure your "
+                      "desktop environment. "
+                      "Select a item from the index on the left to load a configuration module. "
+                      "Click on \"Desktop\" -> \"Background\" to configure the desktop background "
+                      "for example."
+                      "</p>"
+                      "<br>"
+                      "<p>"
+                      "<table cellpadding=2 cellspacing=1 border=0  width=100% bgcolor=#EEEEFF>"
+                      "<tr>"
+                      "<td>KDE version:</td>"
+                      "<td><b>"
+                      + KCGlobal::kdeVersion() +
+                      "</b></td>"
+                      "<td rowspan = 6 bgcolor=#FFFFFF>"
+                      "<img src=\""
+                      + wizard +
+                      "\" align=\"left\" border=\"0\">"
+                      "</td>"
+                      "</tr>"
+                      "<tr>"
+                      "<td>User:</td>"
+                      "<td><b>"
+                      + KCGlobal::userName() +
+                      "</td></b>"
+                      "</tr>"
+                      "<tr>"
+                      "<td>Hostname:</td>"
+                      "<td><b>"
+                      + KCGlobal::hostName() +
+                      "</td></b>"
+                      "</tr>"
+                      "<tr>"
+                      "<td>System:</td>"
+                      "<td><b>"
+                      + KCGlobal::systemName() +
+                      "</td></b>"
+                      "</tr>"
+                      "<tr>"
+                      "<td>Release:</td>"
+                      "<td><b>"
+                      + KCGlobal::systemRelease() +
+                      "</td></b>"
+                      "</tr>"
+                      "<tr>"
+                      "<td>Machine:</td>"
+                      "<td><b>"
+                      + KCGlobal::systemMachine() +
+                      "</td></b>"
+                      "</tr>"
+                      "<tr>"
+                      "<td colspan=2  bgcolor=#FFFFFF>"
+                      "<br>"
+                      "</td>"
+                      "</tr>"
+                      "<tr>"
+                      "<td colspan=2  bgcolor=#FFFFFF>"
+                      "Click on the \"Help\" tab on the left to browse a help text on the active "
+                      "control module. Use the \"Search\" tab if you are unsure where to look for "
+                      "a particular configuration option. "
+                      "</td>"
+                      "</tr>"
+                      "</table>"
+                      "</p>");
+
+  browser->setText(text);
 }

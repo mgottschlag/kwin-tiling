@@ -1,7 +1,7 @@
 # $Id$
 # kdebase/kcontrol/kcontrol/pics
 
-logo_DATA = kdekcc.png
+logo_DATA = wizard.png
 logodir = $(kde_datadir)/kcontrol/pics
 
 KDE_ICON = kcontrol_system kcontrol_user \

@@ -20,19 +20,27 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 
+#include "config.h"
 #include "global.h"
 
 bool KCGlobal::_root = false;
 bool KCGlobal::_system = false;
 QString KCGlobal::_uname = "";
 QString KCGlobal::_hname = "";
+QString KCGlobal::_kdeversion = "";
+QString KCGlobal::_isystem = "";
+QString KCGlobal::_irelease = "";
+QString KCGlobal::_iversion = "";
+QString KCGlobal::_imachine = "";
 
 void KCGlobal::init()
 {
   QString hostname, username;
   char buf[128];
   char *user = getlogin();
+  struct utsname info;
   
   gethostname(buf, 128);
   if (strlen(buf)) hostname = QString("%1").arg(buf); else hostname = "";
@@ -42,4 +50,13 @@ void KCGlobal::init()
   setHostName(hostname);
   setUserName(username);
   setRoot(getuid() == 0);
+
+  setKDEVersion(VERSION);
+
+  uname(&info);
+  
+  setSystemName(info.sysname);
+  setSystemRelease(info.release);
+  setSystemVersion(info.version);
+  setSystemMachine(info.machine);
 }

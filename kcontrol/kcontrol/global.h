@@ -32,16 +32,25 @@ public:
   static bool system() { return _system; }
   static QString userName() { return _uname; }
   static QString hostName() { return _hname; }
-
+  static QString kdeVersion() { return _kdeversion; }
+  static QString systemName() { return _isystem; }
+  static QString systemRelease() { return _irelease; }
+  static QString systemVersion() { return _iversion; }
+  static QString systemMachine() { return _imachine; }
 
   static void setRoot(bool r) { _root = r; }
   static void setSystem(bool s) { _system = s; }
   static void setUserName(const QString& n){ _uname = n; }
   static void setHostName(const QString& n){ _hname = n; }
+  static void setKDEVersion(const QString& n){ _kdeversion = n; }
+  static void setSystemName(const QString& n){ _isystem = n; }
+  static void setSystemRelease(const QString& n){ _irelease = n; }
+  static void setSystemVersion(const QString& n){ _iversion = n; }
+  static void setSystemMachine(const QString& n){ _imachine = n; }
 
 private:
   static bool _root, _system;
-  static QString _uname, _hname;
+  static QString _uname, _hname, _isystem, _irelease, _iversion, _imachine, _kdeversion;
 };
 
 

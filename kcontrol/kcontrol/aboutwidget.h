@@ -1,6 +1,6 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,25 +18,18 @@
  
 */                                                                            
 
+#ifndef __aboutwidget_h__
+#define __aboutwidget_h__
 
+#include <qvbox.h>
 
-#ifndef _ABOUTWIDGET_H
-#define _ABOUTWIDGET_H
-
-
-#include <qwidget.h>
-
-
-class AboutWidget : public QWidget
+class AboutWidget : public QVBox
 {  
   Q_OBJECT    
   
 public:   
-  
   AboutWidget(QWidget *parent, const char *name=0);	
   
-
 };
-
 
 #endif
