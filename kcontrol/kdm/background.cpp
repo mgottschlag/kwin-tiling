@@ -62,6 +62,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QVBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint() );
     top->addWidget(m_pCBEnable);
     top->addWidget(m_background);
+    top->addStretch();
     connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
 }
 

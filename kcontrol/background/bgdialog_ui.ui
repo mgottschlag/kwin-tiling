@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>603</width>
-            <height>346</height>
+            <height>370</height>
         </rect>
     </property>
     <grid>
@@ -77,8 +77,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>270</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                 </size>
             </property>
         </spacer>
@@ -519,8 +519,6 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_buttonGroupBackground</sender>
@@ -552,6 +550,11 @@
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
+    <includehint>kcombobox.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
+    <includehint>kcombobox.h</includehint>
+    <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>
