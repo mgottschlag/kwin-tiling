@@ -285,8 +285,12 @@ void SchemaEditor::saveCurrent()
     slotColorChanged(0);
 
     QString base;
-    if (schemaList->currentText() == titleLine->text())
-	base = *filename.at(schemaList->currentItem());
+    if (schemaList->currentText() == titleLine->text()) {
+      base = *filename.at(schemaList->currentItem());
+      int j = base.findRev('/');
+      if (j > -1)
+        base = base.mid(j+1);
+    }
     else
 	base = titleLine->text().stripWhiteSpace().simplifyWhiteSpace() + ".schema";
 #if QT_VERSION < 300
