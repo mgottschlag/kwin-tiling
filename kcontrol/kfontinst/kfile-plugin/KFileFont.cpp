@@ -34,6 +34,7 @@
 #include "Config.h"
 #include "KioFonts.h"
 #include <kgenericfactory.h>
+#include <kdeversion.h>
 #include <qfile.h>
 #include <kio/netaccess.h>
 
@@ -177,8 +178,6 @@ static void addEntry(int face, QString &existing, const QString &add)
     existing.append(add);
 }
 
-#define KFILEITEM_SUPPORTS_URLS
-
 bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 {
     QString full,
@@ -190,7 +189,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             spacing,
             slant;
 
-#ifdef KFILEITEM_SUPPORTS_URLS
+#if KDE_IS_VERSION(3,1,90)
     KURL    url(info.url());
     QString fName;
     bool    fontsProt  = KIO_FONTS_PROTOCOL == url.protocol(),
@@ -262,7 +261,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
             appendItem(group, "Slant", slant);
         }
 
-#ifdef KFILEITEM_SUPPORTS_URLS
+#if KDE_IS_VERSION(3,1,90)
         if(downloaded)
             KIO::NetAccess::removeTempFile(fName);
     }
