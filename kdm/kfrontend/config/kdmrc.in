@@ -198,7 +198,7 @@ UseLilo=false
 # The PATH for the Session program. The default is system-specific.
 UserPath=/usr/local/bin:/usr/bin:/bin:@KDE_BINDIR@:@XBINDIR@
 # The PATH for Setup, Startup and Reset, etc. The default is system-specific.
-#SystemPath=
+SystemPath=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:@KDE_BINDIR@:@XBINDIR@
 # The default system shell. Default is /bin/sh
 #SystemShell=
 # Where to put the user's X-server authorization file if ~/.Xauthority 
