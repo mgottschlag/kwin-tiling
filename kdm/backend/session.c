@@ -494,7 +494,7 @@ DeleteXloginResources (struct display *d)
 
 
 int
-source (char **environ, char *file)
+source (char **env, char *file)
 {
     char	**args, *args_safe[2];
     int		ret;
@@ -507,9 +507,9 @@ source (char **environ, char *file)
 	    args = args_safe;
 	    args[0] = file;
 	    args[1] = NULL;
-	    return runAndWait (args, environ);
+	    return runAndWait (args, env);
 	}
-	ret = runAndWait (args, environ);
+	ret = runAndWait (args, env);
 	freeStrArr (args);
 	return ret;
     }

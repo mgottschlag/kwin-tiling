@@ -164,10 +164,10 @@ Wait4 (int pid)
 
 
 void
-execute (char **argv, char **environ)
+execute (char **argv, char **env)
 {
-    Debug ("execute: %[s ; %[s\n", argv, environ);
-    execve (argv[0], argv, environ);
+    Debug ("execute: %[s ; %[s\n", argv, env);
+    execve (argv[0], argv, env);
     /*
      * In case this is a shell script which hasn't been
      * made executable (or this is a SYSV box), do
@@ -202,18 +202,18 @@ execute (char **argv, char **environ)
 	    newargv = addStrArr (0, "/bin/sh", 7);
 	mergeStrArrs (&newargv, argv);
 	Debug ("Shell script execution: %[s\n", newargv);
-	execve (newargv[0], newargv, environ);
+	execve (newargv[0], newargv, env);
     }
 }
 
 int
-runAndWait (char **args, char **environ)
+runAndWait (char **args, char **env)
 {
     int	pid, ret;
 
     switch (pid = Fork ()) {
     case 0:
-	execute (args, environ);
+	execute (args, env);
 	LogError ("can't execute \"%s\" (err %d)\n", args[0], errno);
 	exit (1);
     case -1:
@@ -310,7 +310,7 @@ GClose (int force)
 }
 
 static void ATTR_NORETURN
-GError ()
+GError (void)
 {
     (void) GClose (1);
     Longjmp (GErrJmp, 1);
