@@ -172,7 +172,7 @@ void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
     QString name = entry.readEntry(QString::fromLatin1("Name"),
 				   locale->translate("without name"));
 
-    combo->insertSubmenu( name, tag, sub );
+    combo->insertSubmenu( name, '-' + tag, sub );
   }
 
   // add all languages to the list
@@ -187,7 +187,7 @@ void KLocaleConfig::loadCountryList(KLanguageCombo *combo)
 	entry.setGroup(QString::fromLatin1("KCM Locale"));
 	QString name = entry.readEntry(QString::fromLatin1("Name"),
 				       locale->translate("without name"));
-	QString submenu = entry.readEntry(QString::fromLatin1("Region"));
+	QString submenu = '-' + entry.readEntry(QString::fromLatin1("Region"));
 	
 	QString tag = *it;
 	int index = tag.findRev('/');
@@ -240,7 +240,13 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
   KGlobal::_locale = locale;
 
   // read the name
-  KSimpleConfig entry(locate("locale", sub + path + QString::fromLatin1("/entry.desktop")));
+  QString filepath = sub;
+  if (path.at(0) == '-')
+    filepath += path.mid(1) + QString::fromLatin1(".desktop");
+  else
+    filepath += path + QString::fromLatin1("/entry.desktop");
+
+  KSimpleConfig entry(locate("locale", filepath));
   entry.setGroup(QString::fromLatin1("KCM Locale"));
   name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
 
@@ -345,8 +351,12 @@ void KLocaleConfig::reTranslateLists()
   QString name;
   for (j = 0; j < comboCountry->count(); j++)
   {
-    readLocale(comboCountry->tag(j), name, QString::fromLatin1("l10n/"));
-    comboCountry->changeLanguage(name, j);
+    QString tag = comboCountry->tag(j);    
+    readLocale(tag, name, QString::fromLatin1("l10n/"));
+    if (tag.at(0) == '-')
+      comboCountry->changeItem(name, j);
+    else 
+      comboCountry->changeLanguage(name, j);
   }
 
   for (j = 0; j < comboLang->count(); j++)
