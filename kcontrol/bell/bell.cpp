@@ -82,7 +82,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   grid->setColStretch(0, 0);
   grid->setColStretch(1, 1);
   grid->addColSpacing(0, 30);
-  
+
   m_useBell = new QCheckBox( i18n("&Use System Bell instead of System Notification" ), box );
   QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC-speaker) or a "
 				  "more sophisticated System notification, see the "
@@ -91,7 +91,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   connect(m_useBell, SIGNAL( toggled( bool )), SLOT( useBell( bool )));
   row++;
   grid->addMultiCellWidget(m_useBell, row, row, 0, 1);
-  
+
   m_volume = new KIntNumInput(50, box);
   m_volume->setLabel(i18n("Volume:"));
   m_volume->setRange(0, 100, 5);
@@ -149,7 +149,7 @@ void KBellConfig::load()
   m_volume->setValue(kbd.bell_percent);
   m_pitch->setValue(kbd.bell_pitch);
   m_duration->setValue(kbd.bell_duration);
-  
+
   KConfig cfg("kdeglobals", false, false);
   cfg.setGroup("General");
   m_useBell->setChecked(cfg.readBoolEntry("UseSystemBell", false));
@@ -191,7 +191,7 @@ void KBellConfig::ringBell()
     KNotifyClient::beep();
     return;
   }
-    
+
   // store the old state
   XKeyboardState old_state;
   XGetKeyboardControl(kapp->getDisplay(), &old_state);
@@ -241,5 +241,8 @@ void KBellConfig::useBell( bool on )
   m_volume->setEnabled( on );
   m_pitch->setEnabled( on );
   m_duration->setEnabled( on );
+  KConfig *kc = KGlobal::config();
+  KConfigGroupSaver cgs( kc, "General" );
+  kc->writeEntry( "UseSystemBell", on );
   configChanged();
 }
