@@ -77,7 +77,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
     ActionListIterator it( *myActions );
     for ( action = it.current(); action; action = ++it ) {
         if ( action->matches( clipData ) )
-	    myMatches.append( action );
+            myMatches.append( action );
     }
 
     return myMatches;
@@ -89,58 +89,58 @@ bool URLGrabber::checkNewData( const QString& clipData )
     // kdDebug() << "** checking new data: " << clipData << endl;
     myClipData = clipData;
     if ( myActions->isEmpty() )
-	return false;
+        return false;
 
     slotActionMenu(); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
-	     (!kapp->config()->readBoolEntry("Put Matching URLs in history", true)));
+             (!kapp->config()->readBoolEntry("Put Matching URLs in history", true)));
 }
 
 
 void URLGrabber::slotActionMenu()
 {
     if ( myClipData.isEmpty() )
-	return;
+        return;
 
     ActionListIterator it( matchingActions( myClipData ) );
     ClipAction *action = 0L;
     ClipCommand *command = 0L;
 
     if ( it.count() > 0 ) {
-	if ( isAvoidedWindow() ) // don't react on konqi's/netscape's urls
-	    return;
-	
-	QString item;
-	myCommandMapper.clear();
+        if ( isAvoidedWindow() ) // don't react on konqi's/netscape's urls
+            return;
 
-	KPopupMenu *menu = new KPopupMenu;
-	connect( menu, SIGNAL( activated( int )),
-		 SLOT( slotItemSelected( int )));
+        QString item;
+        myCommandMapper.clear();
 
-	for ( action = it.current(); action; action = ++it ) {
-	    QListIterator<ClipCommand> it2( action->commands() );
-	    if ( it2.count() > 0 )
-		menu->insertTitle( action->description() +
-				   i18n(" -  Actions for: ") + myClipData );
-	    for ( command = it2.current(); command; command = ++it2 ) {
-		item = command->description;
-		if ( item.isEmpty() )
-		    item = command->command;
-	
-		int id = menu->insertItem( item );
-		myCommandMapper.insert( id, command );
-	    }
-	}
+        KPopupMenu *menu = new KPopupMenu;
+        connect( menu, SIGNAL( activated( int )),
+                 SLOT( slotItemSelected( int )));
 
-	// add an edit-possibility
-	menu->insertSeparator();
-	menu->insertSeparator();
-	menu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
-	menu->insertItem(i18n("Do &Nothing"), menu, SLOT(close()));
+        for ( action = it.current(); action; action = ++it ) {
+            QListIterator<ClipCommand> it2( action->commands() );
+            if ( it2.count() > 0 )
+                menu->insertTitle( action->description() +
+                                   i18n(" -  Actions for: ") + myClipData );
+            for ( command = it2.current(); command; command = ++it2 ) {
+                item = command->description;
+                if ( item.isEmpty() )
+                    item = command->command;
 
-	emit sigPopup( menu );
-	delete menu;
+                int id = menu->insertItem( item );
+                myCommandMapper.insert( id, command );
+            }
+        }
+
+        // add an edit-possibility
+        menu->insertSeparator();
+        menu->insertSeparator();
+        menu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
+        menu->insertItem(i18n("Do &Nothing"), menu, SLOT(close()));
+
+        emit sigPopup( menu );
+        delete menu;
     }
 }
 
@@ -149,16 +149,16 @@ void URLGrabber::slotItemSelected( int id )
 {
     switch ( id ) {
     case -1:
-	break;
+        break;
     case URL_EDIT_ITEM:
-	editData();
-	break;
+        editData();
+        break;
     default:
-	ClipCommand *command = myCommandMapper.find( id );
-	if ( !command )
-	    warning("Klipper: can't find associated action");
-	else
-	    execute( command );
+        ClipCommand *command = myCommandMapper.find( id );
+        if ( !command )
+            qWarning("Klipper: can't find associated action");
+        else
+            execute( command );
     }
 }
 
@@ -168,24 +168,24 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
     QString cmdLine;
 
     if ( command->isEnabled ) {
-	cmdLine = command->command;
+        cmdLine = command->command;
 
-	// replace "%s" with the clipboard contents
-	// replace \%s to %s
-	// currently, only the first %s will be replaced... fix this?
-	int pos = cmdLine.find("%s");
-	if ( pos >= 0 ) {
-	    bool doReplace = true;
-	    if ( pos > 0 && cmdLine.at( pos -1 ) == '\\' ) {
-		cmdLine.remove( pos -1, 1 ); // \%s -> %s
-		doReplace = false;
-	    }
-	
-	    if ( doReplace )
-		cmdLine.replace( pos, 2, myClipData );
-	}
-	
-	startProcess( cmdLine );
+        // replace "%s" with the clipboard contents
+        // replace \%s to %s
+        // currently, only the first %s will be replaced... fix this?
+        int pos = cmdLine.find("%s");
+        if ( pos >= 0 ) {
+            bool doReplace = true;
+            if ( pos > 0 && cmdLine.at( pos -1 ) == '\\' ) {
+                cmdLine.remove( pos -1, 1 ); // \%s -> %s
+                doReplace = false;
+            }
+
+            if ( doReplace )
+                cmdLine.replace( pos, 2, myClipData );
+        }
+
+        startProcess( cmdLine );
     }
 }
 
@@ -194,33 +194,33 @@ void URLGrabber::startProcess( const QString& cmdLine ) const
 {
     kdDebug() << "Klipper: now starting " << cmdLine << endl;
     if ( cmdLine.isEmpty() )
-	return;
+        return;
 
     int argIdx;
     KShellProcess proc;
     QString cl = cmdLine.simplifyWhiteSpace().stripWhiteSpace();
 
     while( !cl.isEmpty() ) {
-	argIdx = cl.find(" ");
+        argIdx = cl.find(" ");
 
-	proc << cl.left( argIdx );
+        proc << cl.left( argIdx );
 
-	if (argIdx == -1)
-	    argIdx = cl.length();
+        if (argIdx == -1)
+            argIdx = cl.length();
 
-	cl = cl.remove( 0, argIdx + 1 );
+        cl = cl.remove( 0, argIdx + 1 );
     }
 
     if ( !proc.start(KProcess::DontCare, KProcess::NoCommunication ))
-	warning("Klipper: Couldn't start process!");
+        qWarning("Klipper: Couldn't start process!");
 }
 
 
 void URLGrabber::editData()
 {
     KDialogBase *dlg = new KDialogBase( 0, 0, true,
-					i18n("Edit text before processing"),
-					KDialogBase::Ok | KDialogBase::Cancel);
+                                        i18n("Edit text before processing"),
+                                        KDialogBase::Ok | KDialogBase::Cancel);
     KEdit *edit = new KEdit( dlg );
     edit->setText( myClipData );
     edit->setMinimumSize( 300, 40 );
@@ -228,12 +228,12 @@ void URLGrabber::editData()
     dlg->adjustSize();
 
     if ( dlg->exec() == QDialog::Accepted ) {
-	myClipData = edit->text();
-	delete dlg;
-	slotActionMenu();
+        myClipData = edit->text();
+        delete dlg;
+        slotActionMenu();
     }
     else
-	delete dlg;
+        delete dlg;
 }
 
 
@@ -246,9 +246,9 @@ void URLGrabber::readConfiguration( KConfig *kc )
 
     QString group;
     for ( int i = 0; i < num; i++ ) {
-	group = QString("Action_%1").arg( i );
-	kc->setGroup( group );
-	myActions->append( new ClipAction( kc ) );
+        group = QString("Action_%1").arg( i );
+        kc->setGroup( group );
+        myActions->append( new ClipAction( kc ) );
     }
 }
 
@@ -264,11 +264,11 @@ void URLGrabber::writeConfiguration( KConfig *kc )
     int i = 0;
     QString group;
     while ( (action = it.current()) ) {
-	group = QString("Action_%1").arg( i );
-	kc->setGroup( group );
-	action->save( kc );
-	++i;
-	++it;
+        group = QString("Action_%1").arg( i );
+        kc->setGroup( group );
+        action->save( kc );
+        ++i;
+        ++it;
     }
 }
 
@@ -290,29 +290,29 @@ bool URLGrabber::isAvoidedWindow() const
 
     // get the active window
     if (XGetWindowProperty(d, DefaultRootWindow( d ), active_window, 0l, 1l,
-			   False, XA_WINDOW, &type_ret, &format_ret,
-			   &nitems_ret, &unused, &data_ret)
-	== Success) {
-	if (type_ret == XA_WINDOW && format_ret == 32 && nitems_ret == 1) {
-	    active = *((Window *) data_ret);
-	}
-	XFree(data_ret);
+                           False, XA_WINDOW, &type_ret, &format_ret,
+                           &nitems_ret, &unused, &data_ret)
+        == Success) {
+        if (type_ret == XA_WINDOW && format_ret == 32 && nitems_ret == 1) {
+            active = *((Window *) data_ret);
+        }
+        XFree(data_ret);
     }
     if ( !active )
-	return false;
-    
+        return false;
+
     // get the class of the active window
     if ( XGetWindowProperty(d, active, wm_class, 0L, BUFSIZE, False, XA_STRING,
-			    &type_ret, &format_ret, &nitems_ret,
-			    &unused, &data_ret ) == Success) {
-	if ( type_ret == XA_STRING && format_ret == 8 && nitems_ret > 0 ) {
-	    wmClass = QString::fromUtf8( (const char *) data_ret );
-	    ret = (myAvoidWindows.find( wmClass ) != myAvoidWindows.end());
-	}
-	
-	XFree( data_ret );
+                            &type_ret, &format_ret, &nitems_ret,
+                            &unused, &data_ret ) == Success) {
+        if ( type_ret == XA_STRING && format_ret == 8 && nitems_ret > 0 ) {
+            wmClass = QString::fromUtf8( (const char *) data_ret );
+            ret = (myAvoidWindows.find( wmClass ) != myAvoidWindows.end());
+        }
+
+        XFree( data_ret );
     }
-    
+
     return ret;
 }
 
@@ -339,8 +339,8 @@ ClipAction::ClipAction( const ClipAction& action )
     ClipCommand *command = 0L;
     QListIterator<ClipCommand> it( myCommands );
     for ( ; it.current(); ++it ) {
-	command = it.current();
-	addCommand(command->command, command->description, command->isEnabled);
+        command = it.current();
+        addCommand(command->command, command->description, command->isEnabled);
     }
 }
 
@@ -355,11 +355,11 @@ ClipAction::ClipAction( KConfig *kc )
     // read the commands
     QString prefix;
     for ( int i = 0; i < num; i++ ) {
-	prefix = QString("Command_%1: ").arg( i );
+        prefix = QString("Command_%1: ").arg( i );
 
-	addCommand( kc->readEntry( prefix + "commandline" ),
-		    kc->readEntry( prefix + "description" ),
-		    kc->readBoolEntry( prefix + "enabled" ) );
+        addCommand( kc->readEntry( prefix + "commandline" ),
+                    kc->readEntry( prefix + "description" ),
+                    kc->readBoolEntry( prefix + "enabled" ) );
     }
 }
 
@@ -370,10 +370,10 @@ ClipAction::~ClipAction()
 
 
 void ClipAction::addCommand( const QString& command,
-			     const QString& description, bool enabled )
+                             const QString& description, bool enabled )
 {
     if ( command.isEmpty() )
-	return;
+        return;
 
     struct ClipCommand *cmd = new ClipCommand;
     cmd->command = command;
@@ -398,14 +398,14 @@ void ClipAction::save( KConfig *kc ) const
     // now iterate over all commands of this action
     int i = 0;
     while ( (cmd = it.current()) ) {
-	prefix = QString("Command_%1: ").arg( i );
-	
-	kc->writeEntry( prefix + "commandline", cmd->command );
-	kc->writeEntry( prefix + "description", cmd->description );
-	kc->writeEntry( prefix + "enabled", cmd->isEnabled );
-	
-	++i;
-	++it;
+        prefix = QString("Command_%1: ").arg( i );
+
+        kc->writeEntry( prefix + "commandline", cmd->command );
+        kc->writeEntry( prefix + "description", cmd->description );
+        kc->writeEntry( prefix + "enabled", cmd->isEnabled );
+
+        ++i;
+        ++it;
     }
 }
 

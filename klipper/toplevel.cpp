@@ -21,6 +21,7 @@
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kwin.h>
+#include <kstringhandler.h>
 
 #include "configdialog.h"
 #include "mykapp.h"
@@ -100,23 +101,23 @@ TopLevel::TopLevel()
 
     globalKeys = new KGlobalAccel();
     globalKeys->insertItem(i18n("Show klipper popupmenu"),
-				"show-klipper-popupmenu", "CTRL+ALT+V");
+                                "show-klipper-popupmenu", "CTRL+ALT+V");
     globalKeys->insertItem(i18n("Repeat last action"),
-				"repeat-last-klipper-action", "CTRL+ALT+R");
+                                "repeat-last-klipper-action", "CTRL+ALT+R");
     globalKeys->insertItem(i18n("Enable/disable clipboard actions"),
-			   "toggle-clipboard-actions", "CTRL+ALT+X" );
+                           "toggle-clipboard-actions", "CTRL+ALT+X" );
     globalKeys->connectItem("show-klipper-popupmenu", this,
-			    SLOT(slotPopupMenu()));
+                            SLOT(slotPopupMenu()));
     globalKeys->connectItem("repeat-last-klipper-action", this,
-			    SLOT(slotRepeatAction()));
+                            SLOT(slotRepeatAction()));
     globalKeys->connectItem("toggle-clipboard-actions", this,
-			    SLOT( toggleURLGrabber()));
+                            SLOT( toggleURLGrabber()));
     globalKeys->readSettings();
     toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
 
     connect( toggleURLGrabAction, SIGNAL( toggled( bool ) ), this,
-	     SLOT( setURLGrabberEnabled( bool )));
+             SLOT( setURLGrabberEnabled( bool )));
 }
 
 TopLevel::~TopLevel()
@@ -132,7 +133,7 @@ TopLevel::~TopLevel()
 void TopLevel::mousePressEvent(QMouseEvent *e)
 {
     if ( e->button() == LeftButton || e->button() == RightButton )
-	showPopupMenu( pQPMmenu );
+        showPopupMenu( pQPMmenu );
 }
 
 void TopLevel::paintEvent(QPaintEvent *)
@@ -151,26 +152,26 @@ void TopLevel::newClipData()
     QString clipData = kapp->clipboard()->text().stripWhiteSpace();
     // If the string is null bug out
     if(clipData.isEmpty())
-	return;
+        return;
 
     if(clipData != QSlast) {
         QSlast = clipData.copy();
-	
+
         QString *data = new QString(clipData);
 
-	if ( myURLGrabber ) {
-	    if ( myURLGrabber->checkNewData( clipData ))
-	        return; // don't add into the history
-	}
-	
-	
-	if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
-	    if (*data != QSempty) {
-	        bClipEmpty = false;
-		pQPMmenu->removeItemAt(EMPTY);
-		pQIDclipData->clear();
-	    }
-	}
+        if ( myURLGrabber ) {
+            if ( myURLGrabber->checkNewData( clipData ))
+                return; // don't add into the history
+        }
+
+
+        if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
+            if (*data != QSempty) {
+                bClipEmpty = false;
+                pQPMmenu->removeItemAt(EMPTY);
+                pQIDclipData->clear();
+            }
+        }
 
         while(pQPMmenu->count() > 12){
             int id = pQPMmenu->idAt(EMPTY);
@@ -191,23 +192,23 @@ void TopLevel::clickedMenu(int id)
 {
     switch ( id ) {
     case -1:
-	break;
+        break;
     case CONFIG_ITEM:
-	slotConfigure();
-	break;
+        slotConfigure();
+        break;
     case QUIT_ITEM:
-	saveProperties();
-	kapp->quit();
-	break;
+        saveProperties();
+        kapp->quit();
+        break;
     default:
-	pQTcheck->stop();
-	QString *data = pQIDclipData->find(id);
-	if(data != 0x0 && *data != QSempty){
-	    kapp->clipboard()->setText(*data);
-	    QSlast = data->copy();
-	}
+        pQTcheck->stop();
+        QString *data = pQIDclipData->find(id);
+        if(data != 0x0 && *data != QSempty){
+            kapp->clipboard()->setText(*data);
+            QSlast = data->copy();
+        }
 
-	pQTcheck->start(1000);
+        pQTcheck->start(1000);
     }
 }
 
@@ -221,24 +222,24 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
     menu->hide();
 
     if (bPopupAtMouse) {
-	QPoint g = QCursor::pos();
-	if ( menu->height() < g.y() )
-	    menu->exec(QPoint( g.x(), g.y() - menu->height()));
-	else
-	    menu->exec(QPoint(g.x(), g.y()));
+        QPoint g = QCursor::pos();
+        if ( menu->height() < g.y() )
+            menu->exec(QPoint( g.x(), g.y() - menu->height()));
+        else
+            menu->exec(QPoint(g.x(), g.y()));
     }
 
     else {
-	KWin::Info i = KWin::info( winId() );
-	QRect g = i.geometry;
-	
-	if ( g.x() > QApplication::desktop()->width()/2 &&
-	     g.y() + menu->height() > QApplication::desktop()->height() )
-	    menu->exec(QPoint( g.x(), g.y() - menu->height()));
-	else
-	    menu->exec(QPoint( g.x() + width(), g.y() + height()));
+        KWin::Info i = KWin::info( winId() );
+        QRect g = i.geometry;
 
-	//	menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
+        if ( g.x() > QApplication::desktop()->width()/2 &&
+             g.y() + menu->height() > QApplication::desktop()->height() )
+            menu->exec(QPoint( g.x(), g.y() - menu->height()));
+        else
+            menu->exec(QPoint( g.x() + width(), g.y() + height()));
+
+        //      menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
     }
 }
 
@@ -254,20 +255,14 @@ void TopLevel::readProperties(KConfig *kc)
   pQPMmenu->insertItem(i18n("&Configuration..."), CONFIG_ITEM);
   toggleURLGrabAction->plug( pQPMmenu );
   pQPMmenu->insertSeparator();
-  pQPMmenu->insertSeparator();
   long int id;
 
   if (bKeepContents) { // load old clipboard if configured
       kc->readListEntry("ClipboardData", dataList);
 
       for (data = dataList.first(); !data.isEmpty(); data = dataList.next()) {
-	  if (data.length() > 50) {
-	      data.truncate(47);
-	      data.append("...");
-	  }
-
-	  id = pQPMmenu->insertItem( data, -2, -1 );
-	  pQIDclipData->insert( id, new QString( dataList.current() ));
+          id = pQPMmenu->insertItem( KStringHandler::csqueeze(data, 40), -2, -1 );
+          pQIDclipData->insert( id, new QString( dataList.current() ));
       }
   }
 
@@ -295,7 +290,7 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("KeepClipboardContents", bKeepContents);
 
     if ( myURLGrabber )
-	myURLGrabber->writeConfiguration( kc );
+        myURLGrabber->writeConfiguration( kc );
 
     kc->sync();
 }
@@ -311,8 +306,8 @@ void TopLevel::saveProperties()
       QIntDictIterator<QString> it( *pQIDclipData );
 
       while ( (data = it.current()) ) {
-	  dataList.insert( 0, (*data).local8Bit() );
-	  ++it;
+          dataList.insert( 0, (*data).local8Bit() );
+          ++it;
       }
 
       kc->writeEntry("ClipboardData", dataList);
@@ -324,30 +319,30 @@ void TopLevel::saveProperties()
 void TopLevel::slotConfigure()
 {
     if ( !myURLGrabber ) { // temporary, for the config-dialog
-	setURLGrabberEnabled( true );
-	readConfiguration( kapp->config() );
+        setURLGrabberEnabled( true );
+        readConfiguration( kapp->config() );
     }
 
     KKeyEntryMap map = globalKeys->keyDict();
     ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
-					  &map );
+                                          &map );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
 
     if ( dlg->exec() == QDialog::Accepted ) {
-	bKeepContents = dlg->keepContents();
-	bPopupAtMouse = dlg->popupAtMousePos();
-	globalKeys->setKeyDict( map );
-	globalKeys->writeSettings();
-	toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
+        bKeepContents = dlg->keepContents();
+        bPopupAtMouse = dlg->popupAtMousePos();
+        globalKeys->setKeyDict( map );
+        globalKeys->writeSettings();
+        toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
-	myURLGrabber->setActionList( dlg->actionList() );
-	writeConfiguration( kapp->config() );
-	setURLGrabberEnabled( bURLGrabber );
+        myURLGrabber->setActionList( dlg->actionList() );
+        writeConfiguration( kapp->config() );
+        setURLGrabberEnabled( bURLGrabber );
     }
 
     else // eventually delete the temporary urlgrabber, when cancel was pressed
-	setURLGrabberEnabled( bURLGrabber );
+        setURLGrabberEnabled( bURLGrabber );
 
     delete dlg;
 }
@@ -356,7 +351,7 @@ void TopLevel::slotConfigure()
 void TopLevel::slotRepeatAction()
 {
     if ( myURLGrabber && bURLGrabber )
-	myURLGrabber->repeatLastAction();
+        myURLGrabber->repeatLastAction();
 }
 
 void TopLevel::setURLGrabberEnabled( bool enable )
@@ -369,18 +364,18 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     kc->sync();
 
     if ( !bURLGrabber ) {
-	delete myURLGrabber;
-	myURLGrabber = 0L;
-	toggleURLGrabAction->setText(i18n("Enable &actions"));
+        delete myURLGrabber;
+        myURLGrabber = 0L;
+        toggleURLGrabAction->setText(i18n("Enable &actions"));
     }
 
     else {
-	toggleURLGrabAction->setText(i18n("&Actions enabled"));
-	if ( !myURLGrabber ) {
-	    myURLGrabber = new URLGrabber();
-	    connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
-		     SLOT( showPopupMenu( QPopupMenu * )) );
-	}
+        toggleURLGrabAction->setText(i18n("&Actions enabled"));
+        if ( !myURLGrabber ) {
+            myURLGrabber = new URLGrabber();
+            connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
+                     SLOT( showPopupMenu( QPopupMenu * )) );
+        }
     }
 }
 
