@@ -85,6 +85,6 @@ Window to previous desktop=none
 repeat-last-klipper-action=Alt+Ctrl+R
 show-klipper-popupmenu=Alt+Ctrl+V
 toggle-clipboard-actions=Alt+Ctrl+X
-Screenshot of active window=Print
+Screenshot of active window=Alt+Print
 Screenshot of desktop=Ctrl+Print
 Toggle Show Desktop=Alt+Ctrl+D

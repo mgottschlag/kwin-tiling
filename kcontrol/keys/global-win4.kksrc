@@ -86,5 +86,5 @@ repeat-last-klipper-action=none
 show-klipper-popupmenu=none
 toggle-clipboard-actions=none
 Screenshot of active window=Alt+Print
-Screenshot of desktop=Meta+Print
+Screenshot of desktop=Print
 Toggle Show Desktop=Meta+D
