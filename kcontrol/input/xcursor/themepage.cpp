@@ -65,8 +65,8 @@ namespace {
 }
 
 struct ThemeInfo {
-    QString path;           // Path to the cursor theme
-    bool writable;          // Theme directory is writable
+	QString path;           // Path to the cursor theme
+	bool writable;          // Theme directory is writable
 };
 
 
@@ -105,8 +105,10 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	connect( removeButton, SIGNAL( clicked() ), SLOT( removeClicked() ) );
 
 	// Disable the install button if ~/.icons isn't writable
-	if ( !QFileInfo( QDir::homeDirPath() + "/.icons" ).isWritable() )
+	QString path = QDir::homeDirPath() + "/.icons";
+	if ( !themeDirs.contains( path ) || !QFileInfo( path ).isWritable() )
 		installButton->setEnabled( false );
+
         selectionChanged( listview->currentItem() );
 }
 
@@ -169,11 +171,12 @@ void ThemePage::defaults()
 
 void ThemePage::selectionChanged( QListViewItem *item )
 {
-    if (  !item )
-    {
-        removeButton->setEnabled( false );
-        return;
-    }
+	if ( !item )
+	{
+		removeButton->setEnabled( false );
+		return;
+	}
+
 	selectedTheme = item->text( DirColumn );
 
 	// Update the preview widget
@@ -351,6 +354,7 @@ void ThemePage::insertTheme( const QString &path )
 
 const QStringList ThemePage::getThemeBaseDirs() const
 {
+#if XCURSOR_LIB_MAJOR == 1 && XCURSOR_LIB_MINOR < 1
 	// These are the default paths Xcursor will scan for cursor themes
 	QString path( "~/.icons:/usr/share/icons:/usr/share/pixmaps:/usr/X11R6/lib/X11/icons" );
 
@@ -358,7 +362,10 @@ const QStringList ThemePage::getThemeBaseDirs() const
 	char *xcursorPath = std::getenv( "XCURSOR_PATH" );
 	if ( xcursorPath )
 		path = xcursorPath;
-
+#else
+	// Get the search patch from Xcursor
+	QString path = XcursorLibraryPath();
+#endif
 	// Expand all occurences of ~ to the home dir
 	path.replace( "~/", QDir::homeDirPath() + '/' );
 	return QStringList::split( ':', path );
