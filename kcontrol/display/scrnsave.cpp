@@ -125,12 +125,12 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
-                                     "apps/ScreenSavers/");
+                                     "Programs/apps/ScreenSavers/");
     
     // Add KDE specific screensaver path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
-                                     "ScreenSavers/");
+                                     "Programs/ScreenSavers/");
     
     readSettings();
 	
