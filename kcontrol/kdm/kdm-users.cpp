@@ -21,6 +21,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <ksimpleconfig.h>
@@ -36,6 +37,7 @@
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+    QString wtstr;
     QHBoxLayout *main = new QHBoxLayout(this, 10);
     QGridLayout *rLayout = new QGridLayout(main, 4, 3, 10);
 
@@ -57,12 +59,16 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     rLayout->addWidget(all_to_usr, 1, 1);
     connect( all_to_usr, SIGNAL( clicked() ), SLOT( slotAllToUsr() ) );
     connect( all_to_usr, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( all_to_usr, i18n("Click here to add the highlighted user on the left to"
+      " the list of selected users on the right, i.e. users that should in any case be shown in KDM's user list.") );
 
     usr_to_all = new QPushButton( "<<", this );
     rLayout->addWidget(usr_to_all, 2, 1);
     usr_to_all->setFixedSize( sz );
     connect( usr_to_all, SIGNAL( clicked() ), SLOT( slotUsrToAll() ) );
     connect( usr_to_all, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( usr_to_all, i18n("Click here to remove the highlighted user from the list"
+      " of selected users."));
 
     rLayout->setRowStretch(3, 1);
 
@@ -71,23 +77,38 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     all_to_no->setFixedSize( sz );
     connect( all_to_no, SIGNAL( clicked() ), SLOT( slotAllToNo() ) );
     connect( all_to_no, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( all_to_no, i18n("Click here to add the highlighted user on the left to the list"
+      " of users explicitly not shown by KDM.") );
 
     no_to_all = new QPushButton( "<<", this );
     rLayout->addWidget(no_to_all, 6, 1);
     no_to_all->setFixedSize( sz );
     connect( no_to_all, SIGNAL( clicked() ), SLOT( slotNoToAll() ) );
     connect( no_to_all, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( no_to_all, i18n("Click here to remove the highlighted user from the list"
+      " of users explicitly not shown by KDM.") );
 
     rLayout->setRowStretch(7, 1);
 
     alluserlb = new QListBox(this);
     rLayout->addMultiCellWidget(alluserlb, 1, 7, 0, 0);
+    wtstr = i18n("This is the list of users for which no explicit show policy has been set,"
+      " i.e. they will only be shown by KDM if the option \"Show all users but no-show users\""
+      " has been set.");
+    QWhatsThis::add( alluserlb, wtstr );
+    QWhatsThis::add( a_label, wtstr );
 
     userlb = new QListBox(this);
     rLayout->addMultiCellWidget(userlb, 1, 3, 2, 2);
+    wtstr = i18n("This is the list of users KDM will show in its login dialog in any case.");
+    QWhatsThis::add( userlb, wtstr );
+    QWhatsThis::add( s_label, wtstr );
 
     nouserlb = new QListBox(this);
     rLayout->addMultiCellWidget(nouserlb, 5, 7, 2, 2);
+    wtstr = i18n("This is the list of users KDM will not show in its login dialog.");
+    QWhatsThis::add( nouserlb, wtstr );
+    QWhatsThis::add( n_label, wtstr );
 
     connect( userlb, SIGNAL( highlighted( int ) ),
              SLOT( slotUserSelected( int ) ) );
@@ -113,6 +134,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect(userbutton, SIGNAL(iconChanged(QString)), this, SLOT(slotChanged()));
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
     lLayout->addWidget(userbutton);
+    wtstr = i18n("Here you can see the username of the currently selected user and the"
+      " image assigned to this user. Click on the image button to select from a list"
+      " of images or drag and drop your own image onto the button (e.g. from Konqueror).");
+    QWhatsThis::add( userlabel, wtstr );
+    QWhatsThis::add( userbutton, wtstr );
 
     usrGroup = new QButtonGroup( this );
     usrGroup->setExclusive( TRUE );
@@ -122,12 +148,16 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     usrGroup->insert( rb );
     usrGLayout->addWidget( rb );
     connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add(rb, i18n("If this option is selected, KDM will only show the users listed"
+      " in the \"selected users\" listbox in its login dialog."));
 
     rb = new QRadioButton( i18n("Show all users\nbut no-show users"), usrGroup );
     rb->setGeometry( 10, 50, 140, 25 );
     usrGroup->insert( rb );
     usrGLayout->addWidget( rb );
     connect(rb, SIGNAL(clicked()), this, SLOT(slotChanged()));
+    QWhatsThis::add( rb, i18n("If this option is selected, KDM will show all users but those"
+      " who are listed in the \"no-show users\" listbox."));
 
     lLayout->addWidget( usrGroup );
 
@@ -138,11 +168,16 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     shwGroup->insert( cbusrshw );
     shwGLayout->addWidget( cbusrshw );
     connect(cbusrshw, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    QWhatsThis::add(cbusrshw, i18n("If this option is selected, KDM will show a list of users in its"
+      " login dialog, so users can click on their name and image rather than typing"
+      " in their login."));
 
     cbusrsrt = new QCheckBox(i18n("Sort users"), shwGroup);
     shwGroup->insert( cbusrsrt );
     shwGLayout->addWidget( cbusrsrt );
     connect(cbusrsrt, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
+    QWhatsThis::add(cbusrsrt, i18n("This option tells KDM to alphabetically sort the users"
+      " shown in its login dialog.") );
 
     lLayout->addWidget( shwGroup );
     lLayout->addStretch( 1 );

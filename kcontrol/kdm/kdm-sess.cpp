@@ -23,6 +23,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
 #include <ksimpleconfig.h>
 #include <kdbtn.h>
@@ -36,6 +37,7 @@
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
+      QString wtstr;
       QGroupBox *group0 = new QGroupBox( i18n("Allow to shutdown"), this );
 
       sdcombo = new QComboBox( FALSE, group0 );
@@ -45,6 +47,12 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       sdcombo->insertItem(i18n("Root Only"), 2);
       sdcombo->insertItem(i18n("Console Only"), 3);
       connect(sdcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+      QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
+        " the computer using KDM. Possible values are:<ul>"
+        " <li><em>All:</em> everybody can shutdown the computer using KDM</li>"
+        " <li><em>None:</em> nobody can shutdown the computer using KDM</li>"
+        " <li><em>Root Only:</em> KDM will only allow shutdown after the user has entered the root password</li>"
+        " <li><em>Console Only:</em> only users sitting in front of this computer can shut it down using KDM</li></ul>") );
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
@@ -52,19 +60,28 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       shutdown_lined = new KLineEdit(group1);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      this, SLOT(changed()));
+      wtstr = i18n("Command to initiate the shutdown sequence. Typical value: /sbin/halt");
+      QWhatsThis::add( shutdown_label, wtstr );
+      QWhatsThis::add( shutdown_lined, wtstr );
 
       QLabel *restart_label = new QLabel(i18n("Restart"), group1);
       restart_lined = new KLineEdit(group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      this, SLOT(changed()));
+      wtstr = i18n("Command to initiate the restart sequence. Typical value: /sbin/reboot");
+      QWhatsThis::add( restart_label, wtstr );
+      QWhatsThis::add( restart_lined, wtstr );
 
       QLabel *console_label = new QLabel(i18n("Console mode"), group1);
       console_lined = new QLineEdit(group1);
       connect(console_lined, SIGNAL(textChanged(const QString&)),
 	      this, SLOT(changed()));
+      wtstr = i18n("Command to enter console mode. Typical value: /sbin/init 3");
+      QWhatsThis::add( console_label, wtstr );
+      QWhatsThis::add( console_lined, wtstr );
 
       QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
-      
+
       QLabel *type_label = new QLabel(i18n("New type"), group2);
       session_lined = new QLineEdit(group2);
       connect(session_lined, SIGNAL(textChanged(const QString&)),
