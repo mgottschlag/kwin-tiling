@@ -410,7 +410,7 @@ void KDMAppearanceWidget::load()
   c->setGroup("X-*-Greeter");
 
   // Read the greeting string
-  greetstr_lined->setText(c->readEntry("GreetString", "Welcome to %s at %n"));
+  greetstr_lined->setText(c->readEntry("GreetString", i18n("Welcome to %s at %n")));
 
   // Regular logo or clock
   QString logoArea = c->readEntry("LogoArea", "Logo" );
@@ -457,7 +457,7 @@ void KDMAppearanceWidget::load()
 
 void KDMAppearanceWidget::defaults()
 {
-  greetstr_lined->setText("Welcome to %s at %n");
+  greetstr_lined->setText(i18n("Welcome to %s at %n"));
   logoRadio->setChecked( true );
   slotAreaRadioClicked( KdmLogo );
   posCenterRadio->setChecked( true );

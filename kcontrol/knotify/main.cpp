@@ -30,7 +30,7 @@
 
 
 typedef KGenericFactory<KNotifyWidget, QWidget> NotifyFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_knotify, NotifyFactory );
+K_EXPORT_COMPONENT_FACTORY( libkcm_knotify, NotifyFactory("kcmnotify") );
 /*
 extern "C"
 {

@@ -204,7 +204,7 @@ const KAboutData * KCMKonsole::aboutData() const
 }
 
 typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_konsole, ModuleFactory );
+K_EXPORT_COMPONENT_FACTORY( libkcm_konsole, ModuleFactory("kcmkonsole") );
 
 
 /*

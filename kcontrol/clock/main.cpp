@@ -37,7 +37,7 @@
 #include <kaboutdata.h>
 
 typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_clock, KlockModuleFactory);
+K_EXPORT_COMPONENT_FACTORY( libkcm_clock, KlockModuleFactory("kcmkclock"));
 
 KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(parent, name)

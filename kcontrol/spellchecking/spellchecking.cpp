@@ -28,7 +28,7 @@
 #include "spellchecking.h"
 
 typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory );
+K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory("kcmspellchecking") );
 /*
 extern "C"
 {

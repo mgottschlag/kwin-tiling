@@ -31,7 +31,7 @@
 class SambaContainer; // damn forward declaration :( but I want the factory first zecke
 
 typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_samba, SambaFactory );
+K_EXPORT_COMPONENT_FACTORY (libkcm_samba, SambaFactory("kcmsamba") );
 
 class SambaContainer:public KCModule
 {

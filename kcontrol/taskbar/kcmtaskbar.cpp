@@ -36,7 +36,7 @@
 #include "kcmtaskbar.moc"
 
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_taskbar, TaskBarFactory );
+K_EXPORT_COMPONENT_FACTORY (libkcm_taskbar, TaskBarFactory("kcmtaskbar") );
 /*
 extern "C"
 {

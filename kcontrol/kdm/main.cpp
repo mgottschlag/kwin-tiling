@@ -45,7 +45,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<KDModule, QWidget> KDMFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_kdm, KDMFactory );
+K_EXPORT_COMPONENT_FACTORY( libkcm_kdm, KDMFactory("kdmconfig") );
 
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
@@ -62,7 +62,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 	qs.remove(qs.begin());
 
 	QString msg = i18n( "Sorry, but %1\n"
-			    "does not seem to be an image file\n"
+			    "does not seem to be an image file.\n"
 			    "Please use files with these extensions:\n"
 			    "%2")
 			    .arg(url->fileName())

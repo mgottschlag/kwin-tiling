@@ -33,7 +33,7 @@
 #include "main.h"
 
 typedef KGenericFactory<KWinOptions, QWidget> KWinOptFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_kwinoptions, KWinOptFactory );
+K_EXPORT_COMPONENT_FACTORY( libkcm_kwinoptions, KWinOptFactory("kcmkwm") );
 /*
 extern "C" {
   KCModule *create_kwinoptions ( QWidget *parent, const char* name)

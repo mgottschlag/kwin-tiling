@@ -33,7 +33,7 @@
 #include "kcmlaunch.h"
 
 typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_launch, LaunchFactory );
+K_EXPORT_COMPONENT_FACTORY( libkcm_launch, LaunchFactory("kcmlaunch") );
 /*
 extern "C"
 {

@@ -61,7 +61,7 @@ private:
 };
 
 typedef KGenericFactory<KThemeMgr, QWidget > ThemeTimeFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_themes, ThemeTimeFactory );
+K_EXPORT_COMPONENT_FACTORY (libkcm_themes, ThemeTimeFactory("kcmthemes") );
 
 //-----------------------------------------------------------------------------
 KThemeMgr::KThemeMgr(QWidget *parent, const char *name, const QStringList &)
