@@ -219,8 +219,7 @@ void LookAndFeelTab::load()
 
   c.setGroup("buttons");
 
-  bool zoom = c.readBoolEntry("EnableIconZoom", false);
-  m_zoom_cb->setChecked(zoom);
+  m_zoom_cb->setChecked(c.readBoolEntry("EnableIconZoom", true));
 
   QString tile;
   c.setGroup("buttons");
