@@ -25,8 +25,11 @@
 #include "extensionInfo.h"
 
 
-extensionInfo::extensionInfo(const QString& desktopFile, const QString& configFile)
+extensionInfo::extensionInfo(const QString& desktopFile, 
+                             const QString& configFile,
+                             const QString& configPath)
     : _configFile(configFile),
+      _configPath(configPath),
       _desktopFile(desktopFile)
 {
     load();
@@ -91,9 +94,50 @@ void extensionInfo::load()
         _customSize     = c.readNumEntry ("CustomSize", _customSize);
     }
 
+    _orig_position = _position;
+    _orig_alignment = _alignment;
+    _orig_size = _size;
+    _orig_customSize = _customSize;
+
     // sanitize
     if (_sizePercentage < 1) _sizePercentage = 1;
     if (_sizePercentage > 100) _sizePercentage = 100;
+}
+
+void extensionInfo::configChanged()
+{
+    KConfig c(_configFile);
+    c.setGroup("General");
+
+    // check to see if the new value is different from both 
+    // the original value and the currently set value, then it
+    // must be a newly set value, external to the panel!
+    int position  = c.readNumEntry ("Position",  _position);
+    if (position != _position && position != _orig_position)
+    {
+        _orig_position = _position = position;
+    }
+
+    int alignment = c.readNumEntry ("Alignment", _alignment);
+    if (alignment != _alignment && alignment != _orig_alignment)
+    {
+        _orig_alignment = _alignment = alignment;
+    }
+
+    if (_resizeable)
+    {
+        int size = c.readNumEntry ("Size", _size);
+        if (size != _size && size != _orig_size)
+        {
+            _orig_size = _size = size;
+        }
+
+        int customSize = c.readNumEntry ("CustomSize", _customSize);
+        if (customSize != _customSize && customSize != _orig_customSize)
+        {
+            _orig_customSize = _customSize = customSize;
+        }
+    }
 }
 
 void extensionInfo::setDefaults()
@@ -152,6 +196,11 @@ void extensionInfo::save()
         c.writeEntry("Size",       _size);
         c.writeEntry("CustomSize", _customSize);
     }
+
+    _orig_position = _position;
+    _orig_alignment = _alignment;
+    _orig_size = _size;
+    _orig_customSize = _customSize;
 
     c.sync();
 }

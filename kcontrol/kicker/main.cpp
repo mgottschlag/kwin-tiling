@@ -21,6 +21,7 @@
 
 #include <kapplication.h>
 #include <kconfig.h>
+#include <kdirwatch.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -41,48 +42,28 @@
 #include <X11/Xlib.h>
 #include <kaboutdata.h>
 
-
 // for multihead
 int KickerConfig::kickerconfig_screen_number = 0;
 
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(parent, name),
+    configFileWatch(new KDirWatch(this))
 {
     m_extensionInfo.setAutoDelete(true);
 
     initScreenNumber();
 
     QString configname = configName();
-    KConfig *c = new KConfig(configname, false, false);
-
-    c->setGroup("General");
-    m_extensionInfo.append(new extensionInfo(QString::null, configname));
-    QStringList elist = c->readListEntry("Extensions2");
-    for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
-    {
-        // extension id
-        QString extensionId(*it);
-        QString group = extensionId;
-
-        // is there a config group for this extension?
-        if(!c->hasGroup(group))
-            continue;
-
-        // create a matching applet container
-        if (!extensionId.contains("Extension") > 0)
-            continue;
-
-        // set config group
-        c->setGroup(group);
-
-        QString df = KGlobal::dirs()->findResource("extensions", c->readEntry("DesktopFile"));
-        QString cf = c->readEntry("ConfigFile");
-        m_extensionInfo.append(new extensionInfo(df, cf));
-    }
+    QString configpath = KGlobal::dirs()->findResource("config", configname);
+    configFileWatch->addFile(configpath);
+    m_extensionInfo.append(new extensionInfo(QString::null, configname, configpath));
+    KConfig c(configname, false, false);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-    tab = new QTabWidget(this);
+    QTabWidget *tab = new QTabWidget(this);
     layout->addWidget(tab);
+
+    setupExtensionInfo(c, false);
 
     positiontab = new PositionTab(this);
     tab->addTab(positiontab, i18n("Arran&gement"));
@@ -95,7 +76,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     menutab = new MenuTab(this);
     tab->addTab(menutab, i18n("&Menus"));
     connect(menutab, SIGNAL(changed()), this, SLOT(configChanged()));
-
+    
 //    lookandfeeltab = new LookAndFeelTab(this);
 //    tab->addTab(lookandfeeltab, i18n("A&ppearance"));
 //    connect(lookandfeeltab, SIGNAL(changed()), this, SLOT(configChanged()));
@@ -114,7 +95,9 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     //applettab = new AppletTab(this);
     //tab->addTab(applettab, i18n("&Applets"));
     //connect(applettab, SIGNAL(changed()), this, SLOT(configChanged()));
-    delete c;
+    connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
+    connect(configFileWatch, SIGNAL(deleted(const QString&)), this, SLOT(configRemoved(const QString&)));
+    configFileWatch->startScan();
 }
 
 void KickerConfig::initScreenNumber()
@@ -160,9 +143,9 @@ void KickerConfig::notifyKicker()
 
     QCString appname;
     if (kickerconfig_screen_number == 0)
-	appname = "kicker";
+        appname = "kicker";
     else
-	appname.sprintf("kicker-screen-%d", kickerconfig_screen_number);
+        appname.sprintf("kicker-screen-%d", kickerconfig_screen_number);
     kapp->dcopClient()->send( appname, "kicker", "configure()", data );
 }
 
@@ -196,10 +179,111 @@ const KAboutData* KickerConfig::aboutData() const
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
 
-    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
     about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
+    about->addAuthor("Matthias Elter", 0, "elter@kde.org");
 
     return about;
+}
+
+void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
+{
+    c.setGroup("General");
+    QStringList elist = c.readListEntry("Extensions2");
+    for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
+    {
+        // extension id
+        QString group(*it);
+
+        // is there a config group for this extension?
+        if(!c.hasGroup(group) ||
+           group.contains("Extension") < 1)
+        {
+            continue;
+        }
+        
+        // set config group
+        c.setGroup(group);
+
+        QString df = KGlobal::dirs()->findResource("extensions", c.readEntry("DesktopFile"));
+        QString configname = c.readEntry("ConfigFile");
+        QString configpath = KGlobal::dirs()->findResource("config", configname);
+
+        if (checkExists)
+        {
+            QPtrListIterator<extensionInfo> extIt(m_extensionInfo);
+            for (; extIt; ++extIt)
+            {
+                if (configpath == (*extIt)->_configPath)
+                {
+                    break;
+                }
+            }
+            
+            if (extIt)
+            {
+                continue;
+            }
+        }
+        
+        configFileWatch->addFile(configpath);
+        extensionInfo* info = new extensionInfo(df, configname, configpath);
+        m_extensionInfo.append(info);
+        emit extensionAdded(info);
+    }
+}
+
+void KickerConfig::configChanged(const QString& config)
+{
+    if (config.right(8) == "kickerrc")
+    {
+        KConfig c(configName(), false, false);
+        setupExtensionInfo(c, true);
+    }
+        
+    // find the extension and delete it
+    for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+    {
+        if (config == (*it)->_configPath)
+        {
+            emit extensionAboutToChange(config);
+            (*it)->configChanged();
+            break;
+        }
+    }
+
+    emit extensionChanged(config);
+}
+
+void KickerConfig::configRemoved(const QString& config)
+{
+    if (config.right(8) == "kickerrc")
+    {
+        // the main panel config has been removed???
+        // ditch the extensions, i suppose - AJS
+        for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+        {
+            if ((*it)->_configFile != config)
+            {
+                hidingtab->removeExtension(*it);         
+                positiontab->removeExtension(*it);
+                m_extensionInfo.remove(*it);
+            }
+        }
+    }
+    else
+    {
+        // find the extension and delete it
+        for (QPtrListIterator<extensionInfo> it(m_extensionInfo); it; ++it)
+        {
+            if (config == (*it)->_configPath)
+            {
+                hidingtab->removeExtension(*it);               
+                positiontab->removeExtension(*it);               
+                m_extensionInfo.remove(*it);
+                break;
+            }
+        }
+    }
 }
 
 void KickerConfig::populateExtensionInfoList(QListView* list)
@@ -234,6 +318,8 @@ void KickerConfig::saveExtentionInfo()
     }
 }
 
+// when someone clicks on a panel in the position panel, make it
+// switch the selected panel on the hiding panel too
 void KickerConfig::positionPanelChanged(QListViewItem* item)
 {
     if (!item)
@@ -258,6 +344,8 @@ void KickerConfig::positionPanelChanged(QListViewItem* item)
 }
 
 
+// when someone clicks on a panel in the hiding panel, make it
+// switch the selected panel on the position panel too
 void KickerConfig::hidingPanelChanged(QListViewItem* item)
 {
     if (!item)

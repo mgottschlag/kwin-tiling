@@ -61,6 +61,7 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
+    connect(m_kcm, SIGNAL(extensionAdded(extensionInfo*)), SLOT(extensionAdded(extensionInfo*)));
 }
 
 void HidingTab::load()
@@ -73,8 +74,35 @@ void HidingTab::load()
     }
     
     switchPanel(0);
- }
- 
+}
+
+void HidingTab::extensionAdded(extensionInfo* info)
+{
+    new extensionInfoItem(info, m_panelList, m_panelList->lastItem());
+}
+
+void HidingTab::removeExtension(extensionInfo* info)
+{
+    // remove it from the hidingtab
+    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->firstChild());
+
+    while (extItem)
+    {
+        if (extItem->info() == info)
+        {
+            bool current = extItem->isSelected();
+            delete extItem;
+            if (current)
+            {
+                m_panelList->setSelected(m_panelList->firstChild(), true);
+            }
+            break;
+        }
+
+        extItem = static_cast<extensionInfoItem*>(extItem->nextSibling());
+    }
+}
+
 void HidingTab::switchPanel(QListViewItem* panelItem)
 {
     blockSignals(true);

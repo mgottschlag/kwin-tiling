@@ -140,6 +140,9 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_desktopPreview, SIGNAL(imageDone(int)), SLOT(slotBGPreviewReady(int)));
 
     connect(m_kcm, SIGNAL(extensionInfoChanged()), SLOT(infoUpdated()));
+    connect(m_kcm, SIGNAL(extensionAdded(extensionInfo*)), SLOT(extensionAdded(extensionInfo*)));
+    connect(m_kcm, SIGNAL(extensionChanged(const QString&)), SLOT(extensionChanged(const QString&)));
+    connect(m_kcm, SIGNAL(extensionAboutToChange(const QString&)), SLOT(extensionAboutToChange(const QString&)));
 }
 
 PositionTab::~PositionTab()
@@ -160,6 +163,11 @@ void PositionTab::load()
     switchPanel(0);
     m_desktopPreview->setPreview(m_pretendDesktop->size());
     m_desktopPreview->start();
+}
+
+void PositionTab::extensionAdded(extensionInfo* info)
+{
+    new extensionInfoItem(info, m_panelList, m_panelList->lastItem());
 }
 
 void PositionTab::save()
@@ -542,12 +550,31 @@ void PositionTab::infoUpdated()
     switchPanel(0);
 }
 
+void PositionTab::extensionAboutToChange(const QString& configPath)
+{
+    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->currentItem());
+    if (extItem->info()->_configPath == configPath)
+    {
+        storeInfo();
+    }
+}
+
+void PositionTab::extensionChanged(const QString& configPath)
+{
+    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->currentItem());
+    if (extItem->info()->_configPath == configPath)
+    {
+        m_panelInfo = 0;
+        switchPanel(extItem);
+    }
+}
+
 void PositionTab::storeInfo()
 {
     if (!m_panelInfo)
     {
         return;
-            }
+    }
 
     // Magic numbers stolen from kdebase/kicker/core/global.cpp
     // PGlobal::sizeValue()
@@ -609,5 +636,27 @@ void PositionTab::showIdentify()
         screenLabel->setGeometry(targetGeometry);
 
         screenLabel->show();
+    }
+}
+
+void PositionTab::removeExtension(extensionInfo* info)
+{
+    // remove it from the hidingtab
+    extensionInfoItem* extItem = static_cast<extensionInfoItem*>(m_panelList->firstChild());
+
+    while (extItem)
+    {
+        if (extItem->info() == info)
+        {
+            bool current = extItem->isSelected();
+            delete extItem;
+            if (current)
+            {
+                m_panelList->setSelected(m_panelList->firstChild(), true);
+            }
+            break;
+        }
+
+        extItem = static_cast<extensionInfoItem*>(extItem->nextSibling());
     }
 }

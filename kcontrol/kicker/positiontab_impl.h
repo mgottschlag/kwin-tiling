@@ -38,6 +38,7 @@ public:
     void load();
     void save();
     void defaults();
+    void removeExtension(extensionInfo* info);
 
 signals:
     void changed();
@@ -52,7 +53,10 @@ protected slots:
     void infoUpdated();
     void storeInfo();
     void showIdentify();
-    
+    void extensionAdded(extensionInfo*);
+    void extensionChanged(const QString&);
+    void extensionAboutToChange(const QString&);
+
 private:
     enum positions { PosLeft = 0, PosRight, PosTop, PosBottom };
     enum allignments { AlignLeft = 0, AlignCenter, AlignRight };

@@ -22,6 +22,7 @@
 #include "hidingtab.h"
 
 class KickerConfig;
+class extensionInfo;
 
 class HidingTab : public HidingTabBase
 {
@@ -33,7 +34,8 @@ public:
     void load();
     void save();
     void defaults();
-
+    void removeExtension(extensionInfo* info);
+    
 signals:
     void changed();
 
@@ -42,6 +44,7 @@ protected slots:
     void switchPanel(QListViewItem*);
     void infoUpdated();
     void storeInfo();
+    void extensionAdded(extensionInfo*);
 
 private:
     enum Trigger { None = 0, Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft };

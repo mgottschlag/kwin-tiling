@@ -19,17 +19,18 @@
 #define __main_h__
 
 #include <kcmodule.h>
+#include <kconfig.h>
 
 #include "extensionInfo.h"
 
 class QTabWidget;
+class KDirWatch;
 class PositionTab;
 class HidingTab;
 class MenuTab;
 //class LookAndFeelTab;
 //class AppletTab;
 class ExtensionsTab;
-
 
 class KickerConfig : public KCModule
 {
@@ -55,6 +56,9 @@ public:
 
 signals:
     void extensionInfoChanged();
+    void extensionAdded(extensionInfo*);
+    void extensionChanged(const QString&);
+    void extensionAboutToChange(const QString&);
 
 public slots:
     void configChanged();
@@ -62,9 +66,13 @@ public slots:
 protected slots:
     void positionPanelChanged(QListViewItem*);
     void hidingPanelChanged(QListViewItem*);
+    void configChanged(const QString&);
+    void configRemoved(const QString&);
 
 private:
-    QTabWidget     *tab;
+    void setupExtensionInfo(KConfig& c, bool checkExists);
+
+    KDirWatch      *configFileWatch; 
     PositionTab    *positiontab;
     HidingTab      *hidingtab;
 //    LookAndFeelTab *lookandfeeltab;

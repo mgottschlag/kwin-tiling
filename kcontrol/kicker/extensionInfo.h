@@ -29,14 +29,18 @@ typedef QPtrList<extensionInfo> extensionInfoList;
 class extensionInfo
 {
     public:
-        extensionInfo(const QString& destopFile, const QString& configFile);
+        extensionInfo(const QString& destopFile, 
+                      const QString& configFile,
+                      const QString& configPath);
         ~extensionInfo() {};
 
         void setDefaults();
         void save();
         void load();
-        
+        void configChanged();
+
         QString _configFile;
+        QString _configPath;
         QString _desktopFile;
 
         // Configuration settings
@@ -59,6 +63,13 @@ class extensionInfo
         int      _sizePercentage;
         bool     _expandSize;
 
+        // Original settings to ensure that we can figure out
+        // what has changed externally to the panel vs within the panel
+        int      _orig_position;
+        int      _orig_alignment;
+        int      _orig_size;
+        int      _orig_customSize;
+        
         // Size info
         bool    _resizeable;
         bool    _useStdSizes;
