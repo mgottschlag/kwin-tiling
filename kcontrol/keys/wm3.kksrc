@@ -1,6 +1,8 @@
 [Settings]
 Name=A WindowMaker-like Alternative (for 3 Modifier Keys)
+Name[da]=Et WindowMaker-lignende alternativ (for 3 ændringstaster)
 Name[pt_BR]=WindowMaker como Alternativa (para 3 Teclas Modificadoras)
+Name[sv]=Ett WindowMaker-liknande alternativ (för 3 väljartangenter)
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
