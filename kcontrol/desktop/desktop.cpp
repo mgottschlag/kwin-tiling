@@ -110,40 +110,29 @@ KDesktopConfig::KDesktopConfig(QWidget *parent, const char *name)
 
 void KDesktopConfig::load()
 {
-  KConfig c("kdeglobals");
-  c.setGroup("KDE");
-  int n = c.readNumEntry("NumberOfDesktops", 4);
+  // get number of desktops
+  NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
+  int n = info.numberOfDesktops();
 
   _numSlider->setValue(n);
 
-  for(int i = 0; i < 16; i++)
-    _nameInput[i]->setText(c.readEntry(QString("DesktopName_%1").arg(i),
-				       i18n("Desktop %1").arg(i+1)));
+  for(int i = 1; i <= 16; i++)
+    _nameInput[i-1]->setText(info.desktopName(i));
 
-  for(int i = 0; i < 16; i++)
-    _nameInput[i]->setEnabled(i < n);
+  for(int i = 1; i <= 16; i++)
+    _nameInput[i-1]->setEnabled(i <= n);
   emit changed(false);
 }
 
 void KDesktopConfig::save()
 {
-  KConfig c("kdeglobals");
-  c.setGroup("KDE");
-  c.writeEntry("NumberOfDesktops", _numSlider->value());
-
-  for(int i = 0; i < 16; i++)
-    c.writeEntry(QString("DesktopName_%1").arg(i),_nameInput[i]->text());
-
-  c.sync();
-
   // set number of desktops
-  NETRootInfo info1( qt_xdisplay(), NET::NumberOfDesktops );
-  info1.setNumberOfDesktops(_numSlider->value());
+  NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
+  info.setNumberOfDesktops(_numSlider->value());
 
   // set desktop names
-  NETRootInfo info2( qt_xdisplay(), NET::DesktopNames );
-  for(int i = 0; i < 16; i++)
-    info2.setDesktopName(i, (_nameInput[i]->text()).utf8());
+  for(int i = 1; i <= 16; i++)
+    info.setDesktopName(i, (_nameInput[i-1]->text()).utf8());
 
   emit changed(false);
 }
