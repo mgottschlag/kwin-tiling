@@ -37,7 +37,6 @@ from The Open Group.
 # include	"dm.h"
 # include	"dm_error.h"
 
-#include        <config.h>
 #include	<pwd.h>
 #ifdef NGROUPS_MAX
 # include	<grp.h>

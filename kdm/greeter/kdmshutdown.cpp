@@ -27,32 +27,9 @@
 #include <strings.h>
 #include "kdmshutdown.h"
 #include "kdmconfig.h" // for shutdown-modes
-/*
-#include <pwd.h>
-#ifdef HAVE_CRYPT_H
-# include <crypt.h>
-#else
-# define _XOPEN_SOURCE
-# include <unistd.h>
-#endif
-#ifdef USE_PAM
-extern "C" {
-# include <security/pam_appl.h>
-}
-# ifdef KDE_PAM_SERVICE
-#  define KDE_PAM KDE_PAM_SERVICE
-# else  
-#  define KDE_PAM "xdm"  / * default PAM service called by kdm * /
-# endif 
-#else / * ! USE_PAM * /
-# ifdef USESHADOW
-#  include <shadow.h>
-# endif
-#endif / * USE_PAM * /
-#include <sys/types.h>
-*/
 
 #include "dm.h"
+#include "greet.h"
 
 #include <qfile.h>
 #include <qcombobox.h>
@@ -76,6 +53,7 @@ set_fixed( QWidget* w)
 }
 
 extern KDMConfig *kdmcfg;
+extern struct display *d;
 
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  const QString &_shutdown, 
@@ -259,7 +237,7 @@ KDMShutdown::bye_bye()
 	    system( QFile::encodeName( cur_action ).data() );
 	    QApplication::exit( 0);	// init will inherit us
 	} else {
-	    QApplication::exit( UNMANAGE_DISPLAY);
+	    SessionExit (::d, UNMANAGE_DISPLAY, TRUE);
 	}
     } else {
 	pswdEdit->erase();

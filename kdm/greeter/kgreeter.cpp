@@ -28,10 +28,6 @@
 #include "kdmconfig.h"
 #include "kdmclock.h" 
 
-#ifdef USESHADOW
-# include <shadow.h>
-#endif
-
 #include <sys/types.h>
 #include <sys/param.h>
 
@@ -149,9 +145,12 @@ public:
     virtual bool x11EventFilter( XEvent * );
 };
 
+bool enterhack = false;
+
 bool 
-MyApp::x11EventFilter( XEvent * ev) {
-    if( ev->type == KeyPress && kgreeter) {
+MyApp::x11EventFilter( XEvent * ev)
+{
+    if( ev->type == KeyPress && enterhack) {
 	// This should go away
 	KeySym ks = XLookupKeysym(&(ev->xkey), 0);
 	if (ks == XK_Return || ks == XK_KP_Enter)
@@ -173,6 +172,8 @@ MyApp::x11EventFilter( XEvent * ev) {
 static void
 TempUngrab_Run(void (*func)(void *), void *ptr)
 {
+    bool prevhack = enterhack;
+    enterhack = false;
     XUngrabKeyboard(qt_xdisplay(), CurrentTime);
     func(ptr);
     // Secure the keyboard again
@@ -185,6 +186,7 @@ TempUngrab_Run(void (*func)(void *), void *ptr)
 		  ::d->name);
 	SessionExit (::d, RESERVER_DISPLAY, FALSE);	 
     }
+    enterhack = prevhack;
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -870,6 +872,7 @@ GreetUser(
 	// Hack! Kdm looses keyboard focus unless
 	// the keyboard is ungrabbed during setup
 	TempUngrab_Run(creat_greet, 0);
+	enterhack = true;
 	retval = qApp->exec();
 	// Give focus to root window:
 	QApplication::desktop()->setActiveWindow();
