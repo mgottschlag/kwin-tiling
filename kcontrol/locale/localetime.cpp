@@ -368,6 +368,14 @@ void KLocaleConfigTime::slotTranslate()
   m_comboDateFmtShort->insertStringList(QStringList::split(sep, str));
   m_comboDateFmtShort->setEditText(old);
 
+  m_comboWeekStartDay->changeItem(m_locale->translate("Monday"),    0);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Tuesday"),   1);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Wednesday"), 2);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Thursday"),  3);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Friday"),    4);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Saturday"),  5);
+  m_comboWeekStartDay->changeItem(m_locale->translate("Sunday"),    6);
+
   str = m_locale->translate
     ("<p>The text in this textbox will be used to format "
      "time strings. The sequences below will be replaced:</p>"
