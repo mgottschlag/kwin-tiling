@@ -48,7 +48,8 @@
 #include "bgdialog.h"
 
 #define NR_PREDEF_PATTERNS 6
-#define SLIDE_SHOW	i18n("<Slide Show>")
+
+static const char *slide_show = I18N_NOOP("<Slide Show>");
 
 BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
   : BGDialog_UI(parent, "BGDialog")
@@ -386,7 +387,7 @@ void BGDialog::updateUI()
    {
       m_comboWallpaperPos->setEnabled(true);
       m_lblWallpaperPos->setEnabled(true);
-      setWallpaper(SLIDE_SHOW);
+      setWallpaper(i18n(slide_show));
    }
 
    m_comboWallpaperPos->setCurrentItem(r->wallpaperMode()-1);
@@ -505,7 +506,7 @@ void BGDialog::slotWallpaper(int i)
    }
    else if (i == m_comboWallpaperSpecial)
    {
-      if (m_urlWallpaper->comboBox()->currentText() == SLIDE_SHOW)
+      if (m_urlWallpaper->comboBox()->currentText() == i18n(slide_show))
       {
          m_comboWallpaperPos->setEnabled(true);
          m_lblWallpaperPos->setEnabled(true);

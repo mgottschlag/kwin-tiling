@@ -22,7 +22,8 @@ libkcmbgnd_la_SOURCES = bgdialog.cpp bgdialog_ui.ui bgwallpaper_ui.ui \
 $(srcdir)/main.cpp: bgdialog_ui.h
 
 
-messages:
+messages: rc.cpp
+	$(EXTRACTRC) *.ui *.rc >> rc.cpp
 	$(XGETTEXT) -kni18n *.cc *.cpp -o $(podir)/kcmbackground.pot
 
 desktop_DATA =  background.desktop
