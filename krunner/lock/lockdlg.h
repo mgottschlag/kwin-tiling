@@ -20,6 +20,7 @@ class QFrame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
+class QListView;
 
 //===========================================================================
 //
@@ -31,7 +32,7 @@ class PasswordDlg : public QDialog, public KGreeterPluginHandler
     Q_OBJECT
 
 public:
-    PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool msess);
+    PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin);
     ~PasswordDlg();
     virtual void show();
 
@@ -43,14 +44,13 @@ public:
     virtual void gplugActivity();
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
 
-signals:
-    void startNewSession();
-
 protected:
     virtual void timerEvent(QTimerEvent *);
     virtual bool eventFilter(QObject *, QEvent *);
 
 private slots:
+    void slotSwitchUser();
+    void slotSessionActivated();
     void slotStartNewSession();
     void slotOK();
     void layoutClicked();
@@ -84,6 +84,7 @@ private:
     bool        mUnlockingFailed;
     QStringList layoutsList;
     int         sPid, sFd;
+    QListView   *lv;
 };
 
 #endif

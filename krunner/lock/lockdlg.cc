@@ -35,6 +35,8 @@
 #include <qfontmetrics.h>
 #include <qstyle.h>
 #include <qapplication.h>
+#include <qlistview.h>
+#include <qheader.h>
 
 #include <ctype.h>
 #include <unistd.h>
@@ -58,7 +60,7 @@
 //
 // Simple dialog for entering a password.
 //
-PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool nsess)
+PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     : QDialog(parent, "password dialog", true, WX11BypassWM),
       mPlugin( plugin ),
       mCapsLocked(-1),
@@ -84,7 +86,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
 
     KSeparator *sep = new KSeparator( KSeparator::HLine, frame );
 
-    mNewSessButton = new KPushButton( KGuiItem(i18n("&Start New Session..."), "fork"), frame );
+    mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
     ok = new KPushButton( i18n("Unl&ock"), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
 
@@ -120,9 +122,10 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool 
     connect(mLayoutButton, SIGNAL(clicked()), this, SLOT(layoutClicked()));
     connect(cancel, SIGNAL(clicked()), SLOT(reject()));
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
-    connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
+    connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
 
-    if (!nsess || !kapp->authorize("start_new_session"))
+    QCString re;
+    if (!KApplication::kdmExec( "caps\n", &re ) || re.find( "\tlocal" ) < 0)
         mNewSessButton->hide();
 
     installEventFilter(this);
@@ -523,7 +526,9 @@ void PasswordDlg::slotStartNewSession()
                "F%1 is usually assigned to the first session, "
                "F%2 to the second session and so on. "
                "You can switch between sessions by pressing "
-               "CTRL, ALT and the appropriate F-key at the same time.")
+               "Ctrl, Alt and the appropriate F-key at the same time. "
+               "Additionally, the KDE Panel and Desktop menus have "
+               "actions for switching between sessions.")
             .arg(7).arg(8);
     QLabel *label2 = new QLabel( qt_text, winFrame );
     KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), winFrame );
@@ -586,9 +591,117 @@ void PasswordDlg::slotStartNewSession()
     delete dialog;
 
     if (ret == QDialog::Accepted)
-        emit startNewSession();
+        KApplication::kdmExec("reserve\n");
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
+}
+
+class LockListViewItem : public QListViewItem {
+public:
+    LockListViewItem( QListView *parent,
+		      const QString &sess, const QString &loc, int _vt )
+	: QListViewItem( parent )
+	, vt( _vt )
+    {
+	setText( 0, sess );
+	setText( 1, loc );
+    }
+
+    int vt;
+};
+
+void PasswordDlg::slotSwitchUser()
+{
+    int p, fd = -1;
+    QCString re;
+
+    QDialog dialog( this, "sessbox", true, WX11BypassWM );
+    QFrame *winFrame = new QFrame( &dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+    QBoxLayout *vbox = new QVBoxLayout( &dialog );
+    vbox->addWidget( winFrame );
+
+    QBoxLayout *hbox = new QHBoxLayout( winFrame, KDialog::marginHint(), KDialog::spacingHint() );
+
+    QBoxLayout *vbox1 = new QVBoxLayout( hbox, KDialog::spacingHint() );
+    QBoxLayout *vbox2 = new QVBoxLayout( hbox, KDialog::spacingHint() );
+
+    KPushButton *btn;
+
+    if (KApplication::kdmExec( "list\talllocal\n", &re, &fd )) {
+
+        lv = new QListView( winFrame );
+        connect( lv, SIGNAL(doubleClicked(QListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
+        connect( lv, SIGNAL(doubleClicked(QListViewItem *, const QPoint&, int)), &dialog, SLOT(reject()) );
+        lv->setAllColumnsShowFocus( true );
+        lv->addColumn( i18n("Session") );
+        lv->addColumn( i18n("Location") );
+        lv->setColumnWidthMode( 0, QListView::Maximum );
+        lv->setColumnWidthMode( 1, QListView::Maximum );
+        QListViewItem *itm;
+        int ns = 0;
+        QStringList sess = QStringList::split( QChar('\t'), re.data() + 3 );
+        for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
+            QStringList ts = QStringList::split( QChar(','), *it, true );
+            int vt = ts[1].mid( 2 ).toInt();
+            itm = new LockListViewItem( lv,
+                ts[3].isEmpty() ? i18n("Unused") :
+                  ts[3] == "<remote>" ? i18n("Remote Login") :
+                  i18n("user: session type", "%1: %2").arg(ts[2]).arg(ts[3]),
+                !vt ? ts[0] :
+                  i18n("display, virtual terminal", "%1, vt%2").arg(ts[0]).arg(vt),
+                vt );
+            if (!vt)
+                itm->setEnabled( false );
+            if (ts[4].find( '*' ) >= 0) {
+                lv->setCurrentItem( itm );
+                itm->setSelected( true );
+            }
+            ns++;
+        }
+        int fw = lv->frameWidth() * 2;
+        QSize hds( lv->header()->sizeHint() );
+        lv->setMinimumWidth( fw + hds.width() +
+            (ns > 10 ? style().pixelMetric(QStyle::PM_ScrollBarExtent) : 0 ) );
+        lv->setFixedHeight( fw + hds.height() +
+            itm->height() * (ns < 6 ? 6 : ns > 10 ? 10 : ns) );
+        lv->header()->adjustHeaderSize();
+        vbox1->addWidget( lv );
+
+        btn = new KPushButton( KGuiItem(i18n("session", "&Activate"), "fork"), winFrame );
+        connect( btn, SIGNAL(clicked()), SLOT(slotSessionActivated()) );
+        connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
+        vbox2->addWidget( btn );
+        vbox2->addStretch( 2 );
+    }
+
+    if (kapp->authorize("start_new_session") &&
+        KApplication::kdmExec( "caps\n", &re, &fd ) && (p = re.find( "\treserve " )) >= 0)
+    {
+        btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), winFrame );
+        connect( btn, SIGNAL(clicked()), SLOT(slotStartNewSession()) );
+        connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
+        if (re[p + 9] == '0')
+            btn->setEnabled( false );
+        vbox2->addWidget( btn );
+        vbox2->addStretch( 1 );
+    }
+
+    btn = new KPushButton( KStdGuiItem::cancel(), winFrame );
+    connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
+    vbox2->addWidget( btn );
+
+    ::close( fd );
+
+    static_cast< LockProcess* >(parent())->execDialog( &dialog );
+}
+
+void PasswordDlg::slotSessionActivated()
+{
+    LockListViewItem *itm = (LockListViewItem *)lv->currentItem();
+    if (itm && itm->vt > 0)
+        KApplication::kdmExec( QString("activate\tvt%1\n").arg(itm->vt).latin1() );
 }
 
 void PasswordDlg::capsLocked()

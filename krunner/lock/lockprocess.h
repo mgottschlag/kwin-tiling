@@ -55,6 +55,8 @@ public:
     
 public slots:
     void quitSaver();
+    void preparePopup();
+    void cleanupPopup();
 
 protected:
     virtual bool x11Event(XEvent *);
@@ -62,7 +64,6 @@ protected:
 private slots:
     void hackExited(KProcess *);
     void sigtermPipeSignal();
-    void startNewSession();
     bool startLock();
     void suspend();
     void resume();
@@ -80,8 +81,6 @@ private:
     bool grabMouse();
     bool grabInput();
     void ungrabInput();
-    void xdmFifoCmd(const char *cmd);
-    void xdmFifoLockCmd(const char *cmd);
     void cantLock(const QString &reason);
     bool startSaver();
     void stopSaver();
@@ -104,7 +103,6 @@ private:
     int         mRootHeight;
     QString     mSaverExec;
     QString     mSaver;
-    QString     mXdmFifoName;
     bool        child_saver;
     QValueList<int> child_sockets;
     int         mParent;

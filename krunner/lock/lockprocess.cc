@@ -140,8 +140,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     QStringList dmopt =
         QStringList::split(QChar(','),
                             QString::fromLatin1( ::getenv( "XDM_MANAGED" )));
-    if (dmopt.findIndex( "rsvd" ) >= 0)
-        mXdmFifoName = dmopt.first();
     for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
         if ((*it).startsWith("method="))
             mMethod = (*it).mid(7);
@@ -572,25 +570,6 @@ void LockProcess::ungrabInput()
 
 //---------------------------------------------------------------------------
 //
-// Send KDM (or XDM, if it gets adapted) a command
-//
-void LockProcess::xdmFifoCmd(const char *cmd)
-{
-    QFile fifo(mXdmFifoName);
-    if (fifo.open(IO_WriteOnly | IO_Raw)) {
-        fifo.writeBlock( cmd, ::strlen(cmd) );
-        fifo.close();
-    }
-}
-
-void LockProcess::xdmFifoLockCmd(const char *cmd)
-{
-    if (!mXdmFifoName.isNull() && mLocked)
-        xdmFifoCmd(cmd);
-}
-
-//---------------------------------------------------------------------------
-//
 // Start the screen saver.
 //
 bool LockProcess::startSaver()
@@ -634,7 +613,8 @@ void LockProcess::stopSaver()
     hideSaverWindow();
     mVisibility = false;
     if (!child_saver) {
-        xdmFifoLockCmd("unlock\n");
+        if (mLocked)
+            KApplication::kdmExec( "unlock\n" );
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
@@ -702,7 +682,7 @@ bool LockProcess::startLock()
         greetPlugin = plugin;
 	KGlobal::locale()->insertCatalogue( "kdmgreet" );
 	mLocked = true;
-	xdmFifoLockCmd("lock\n");
+	KApplication::kdmExec( "lock\n" );
 	return true;
     }
     cantLock( i18n("No appropriate greeter plugin configured.") );
@@ -817,8 +797,7 @@ void LockProcess::resume()
 //
 bool LockProcess::checkPass()
 {
-    PasswordDlg passDlg( this, &greetPlugin, !mXdmFifoName.isNull());
-    connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
+    PasswordDlg passDlg( this, &greetPlugin);
 
     return execDialog( &passDlg ) == QDialog::Accepted;
 }
@@ -866,6 +845,19 @@ int LockProcess::execDialog( QDialog *dlg )
     return rt;
 }
 
+void LockProcess::preparePopup()
+{
+    QWidget *dlg = (QWidget *)sender();
+    mDialogs.prepend( dlg );
+    fakeFocusIn( dlg->winId() );
+}
+
+void LockProcess::cleanupPopup()
+{
+    QWidget *dlg = (QWidget *)sender();
+    mDialogs.remove( dlg );
+    fakeFocusIn( mDialogs.first()->winId() );
+}
 
 //---------------------------------------------------------------------------
 //
@@ -959,11 +951,6 @@ void LockProcess::stayOnTop()
     }
     else
         XRaiseWindow(qt_xdisplay(), winId());
-}
-
-void LockProcess::startNewSession()
-{
-    xdmFifoCmd("reserve\n");
 }
 
 void LockProcess::checkDPMSActive()
