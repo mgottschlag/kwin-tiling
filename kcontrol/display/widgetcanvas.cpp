@@ -115,7 +115,7 @@ void WidgetCanvas::drawSampleWidgets()
 	
 	KPixmap pmTitle;
 	pmTitle.resize( width()-60, 20 );
-	pmTitle.gradientFill( iaTitle, iaBlend, FALSE );
+        pmTitle.gradientFill( iaTitle, iaBlend, KPixmap::Horizontal );
 	paint.drawPixmap( 20, 10, pmTitle ); 
    
 	QFont fnt = KGlobal::generalFont();
@@ -144,7 +144,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawRect( 25, 30+5, width()-52, 20 );
 	
 	pmTitle.resize( width()-52, 20 );
-	pmTitle.gradientFill( aTitle, aBlend, FALSE );
+        pmTitle.gradientFill( aTitle, aBlend, KPixmap::Vertical );
 	paint.drawPixmap( 25, 35, pmTitle ); 
     
     paint.setFont( fnt );

@@ -861,9 +861,11 @@ void KBackground::setMonitor()
     } else if ( currentItem.stMode == Gradient ) {
 		
       if( currentItem.orMode == Portrait ) 
-	preview.gradientFill( currentItem.color2, currentItem.color1, true );
+          preview.gradientFill( currentItem.color2, currentItem.color1,
+                                KPixmap::Vertical);
       else
-	preview.gradientFill( currentItem.color2, currentItem.color1, false );
+          preview.gradientFill( currentItem.color2, currentItem.color1,
+                                KPixmap::Horizontal);
 			
     } else
       preview.patternFill(currentItem.color1,currentItem.color2, currentItem.pattern);
