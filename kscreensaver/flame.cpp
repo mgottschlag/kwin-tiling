@@ -362,7 +362,7 @@ void kFlameSaver::setPoints( int p )
 
 void kFlameSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -478,7 +478,7 @@ kFlameSetup::kFlameSetup( QWidget *parent, const char *name )
 
 void kFlameSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -531,7 +531,7 @@ void kFlameSetup::slotPoints( int num )
 
 void kFlameSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

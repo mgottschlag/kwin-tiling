@@ -233,7 +233,7 @@ kLinesSetup::~kLinesSetup()
 
 // read settings from config file
 void kLinesSetup::readSettings(){
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -302,7 +302,7 @@ void kLinesSetup::slotAbout(){
 
 // Ok pressed - save settings and exit
 void kLinesSetup::slotOkPressed(){
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup("Settings");
 
 	QString slength;
@@ -380,7 +380,7 @@ void kLinesSaver::setColor(const QColor& cs, const QColor& cm, const QColor& ce)
 void kLinesSaver::readSettings(){
 	QString str;
 
-	KConfig *config=KApplication::getKApplication()->getConfig();
+	KConfig *config=KApplication::kApplication()->config();
 	config->setGroup("Settings");
 
 	str=config->readEntry("Length");

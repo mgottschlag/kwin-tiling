@@ -710,7 +710,7 @@ void kPipesSaver::setPipes( int n )
 
 void kPipesSaver::readSettings()
 {
-  KConfig *config = kapp->getConfig();
+  KConfig *config = kapp->config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -765,7 +765,7 @@ kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
 
 void kPipesSetup::readSettings()
 {
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
   config->setGroup( "Settings" );
 
   QString str;
@@ -786,7 +786,7 @@ void kPipesSetup::slotPipes( int num )
 
 void kPipesSetup::slotOkPressed()
 {
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
   config->setGroup( "Settings" );
 
   QString spipes;

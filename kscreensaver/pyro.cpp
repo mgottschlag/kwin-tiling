@@ -488,7 +488,7 @@ void kPyroSaver::setCloud( bool c )
 
 void kPyroSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -578,7 +578,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 void kPyroSetup::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -616,7 +616,7 @@ void kPyroSetup::slotCloud( bool c )
 
 void kPyroSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString snumber;

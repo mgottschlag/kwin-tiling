@@ -133,7 +133,7 @@ void KIconStyle::apply()
 
 void KIconStyle::readSettings()
 {
-    KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 
     KConfigGroupSaver saver(config, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
@@ -148,7 +148,7 @@ void KIconStyle::readSettings()
 
 void KIconStyle::writeSettings()
 {
-    KConfig *cfg = kapp->getConfig();
+    KConfig *cfg = kapp->config();
 
     KConfigGroupSaver saver(cfg, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
@@ -201,7 +201,7 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     addColumn(i18n("Description:"));
     setAllColumnsShowFocus(true);
     KGlobal::dirs()->addResourceType("themes", KStandardDirs::kde_default("data") + "kstyle/themes");
-    QStringList list = KGlobal::dirs()->getResourceDirs("themes");
+    QStringList list = KGlobal::dirs()->resourceDirs("themes");
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
         readThemeDir(*it);
 
@@ -479,7 +479,7 @@ void KGeneral::writeSettings()
     if ( !changed )
 		return;
 		
-	KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 	KConfigGroupSaver saver(config, "KDE");
 
 	QString str;

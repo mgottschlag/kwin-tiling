@@ -278,7 +278,7 @@ void kHopSaver::setPoints( int p )
 
 void kHopSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -394,7 +394,7 @@ kHopSetup::kHopSetup( QWidget *parent, const char *name )
 
 void kHopSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -447,7 +447,7 @@ void kHopSetup::slotPoints( int num )
 
 void kHopSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

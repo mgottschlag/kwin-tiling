@@ -250,7 +250,7 @@ void kForestSaver::setPoints( int p )
 
 void kForestSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -344,7 +344,7 @@ kForestSetup::kForestSetup( QWidget *parent, const char *name )
 
 void kForestSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -383,7 +383,7 @@ void kForestSetup::slotPoints( int num )
 
 void kForestSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

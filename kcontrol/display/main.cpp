@@ -146,7 +146,7 @@ void KDisplayApplication::apply()
   if (general)
     general->applySettings();
 
-  kapp->getConfig()->sync();
+  kapp->config()->sync();
   
   if (colors || fonts) {
       QPalette pal = colors?colors->createPalette():qApp->palette();

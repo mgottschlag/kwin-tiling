@@ -73,7 +73,7 @@ extern "C" {
 const char *
 get_string_resource (const char *res_name, const char *res_class)
 {
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
   config->setGroup("Default");
   return config->readEntry(res_name,config->readEntry(res_class)).ascii();
 }
@@ -304,7 +304,7 @@ windows (Window window, int delay, Bool w95p)
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   const char *w95 =
     ("@Windows\n"
@@ -428,7 +428,7 @@ sco (Window window, int delay)
   GC gc;
   int lines = 1;
   const char *s;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   const char *sco_panic =
     ("Unexpected trap in kernel mode:\n"
@@ -505,7 +505,7 @@ sparc_linux (Window window, int delay)
   GC gc;
   int lines = 1;
   const char *s;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   const char *linux_panic =
     ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
@@ -582,7 +582,7 @@ amiga (Window window, int delay)
   unsigned long fg, bg, bg2;
   Pixmap pixmap = 0;
   int pix_w, pix_h;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   const char *string =
     ("_Software failure.  Press left mouse button to continue.\n"
@@ -727,7 +727,7 @@ atari (Window window, int delay)
   int pix_h = atari_height;
   int offset;
   int i, x, y;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   if (!config->readBoolEntry("doAtari", true))
     return False;
@@ -797,7 +797,7 @@ mac (Window window, int delay)
   int pix_h = mac_height;
   int offset = mac_height * 4;
   int i;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   const char *string = ("0 0 0 0 0 0 0 F\n"
 			"0 0 0 0 0 0 0 3");
@@ -866,7 +866,7 @@ macsbug (Window window, int delay)
   const char *def_font = "fixed";
   XFontStruct *font;
   GC gc, gc2;
-  KConfig *config = KApplication::getKApplication()->getConfig();
+  KConfig *config = KApplication::kApplication()->config();
 
   int char_width, line_height;
   int col_right, row_top, row_bottom, page_right, page_bottom, body_top;
@@ -1097,7 +1097,7 @@ static BSODSaver *saver=NULL;
 void BSODSaver::readSettings ()
 {
 QString str;
-KConfig *config = KApplication::getKApplication()->getConfig();
+KConfig *config = KApplication::kApplication()->config();
 config->setGroup("Default");
 config->writeEntry("Windows95.font", config->readEntry("Windows.font", "-*-courier-bold-r-*-*-*-120-*-*-m-*-*-*"));
 config->writeEntry("Windows95.font2", config->readEntry("Windows.font2","-*-courier-bold-r-*-*-*-180-*-*-m-*-*-*"));

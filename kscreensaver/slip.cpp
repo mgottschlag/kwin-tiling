@@ -337,7 +337,7 @@ void kSlipSaver::setLevels( int l )
 
 void kSlipSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -433,7 +433,7 @@ kSlipSetup::kSlipSetup( QWidget *parent, const char *name )
 
 void kSlipSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -473,7 +473,7 @@ void kSlipSetup::slotLevels( int num )
 
 void kSlipSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

@@ -92,7 +92,7 @@ KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
     layout->activate();
   }
   
-  config = kapp->getConfig();
+  config = kapp->config();
   
   GetSettings();
   

@@ -205,7 +205,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 // read settings from config file
 void KBannerSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -313,7 +313,7 @@ void KBannerSetup::slotMessage( const QString &msg )
 // Ok pressed - save settings and exit
 void KBannerSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
@@ -402,9 +402,9 @@ void KBannerSaver::setMessage( const QString &msg )
 // read settings from config file
 void KBannerSaver::readSettings()
 {
-	QString str;
-
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    QString str;
+    
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	str = config->readEntry( "Speed" );

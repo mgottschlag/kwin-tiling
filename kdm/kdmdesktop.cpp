@@ -62,7 +62,7 @@ protected:
 
 DesktopConfig::DesktopConfig()
 {
-     kc = kapp->getConfig();
+     kc = kapp->config();
      QString strmode;
      have_bg_pic = false;
      kc->setGroup( "KDMDESKTOP");

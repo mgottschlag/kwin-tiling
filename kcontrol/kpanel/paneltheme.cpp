@@ -176,7 +176,7 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     colorBtn->setMinimumSize(QSize(64,64));
     pixBtn = new KIconLoaderButton(ldr, optionBox);
     pixBtn->setMinimumSize(colorBtn->size());
-    pixBtn->iconLoaderDialog()->changeDirs(KGlobal::dirs()->getResourceDirs("kpanel_pics"));
+    pixBtn->iconLoaderDialog()->changeDirs(KGlobal::dirs()->resourceDirs("kpanel_pics"));
     wCombo = new QComboBox(optionBox);
     wCombo->insertItem(i18n("Panel"), WidgetCanvas::C_Panel);
     wCombo->insertItem(i18n("Icon Background"), WidgetCanvas::C_Icon);

@@ -983,7 +983,7 @@ void kMorph3dSaver::setLevels( int l )
 
 void kMorph3dSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1062,7 +1062,7 @@ kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
 
 void kMorph3dSetup::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1103,7 +1103,7 @@ void kMorph3dSetup::slotLevels( int num )
 
 void kMorph3dSetup::slotOkPressed()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

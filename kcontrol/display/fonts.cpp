@@ -57,7 +57,7 @@ void FontUseItem::readFont()
 	KConfigBase *config=NULL;
 
 	if ( _rcfile.isEmpty() ) {
-	  config  = kapp->getConfig();
+	  config  = kapp->config();
 	} else {
 	  config = new KSimpleConfig( locate("config", _rcfile), true );
 	}
@@ -72,7 +72,7 @@ void FontUseItem::writeFont()
 {
 	KConfigBase *config;
 	if ( _rcfile.isEmpty() ) {
- 	    config = kapp->getConfig();
+ 	    config = kapp->config();
 	    config->setGroup( _rcgroup );
 	    config->writeEntry( _rckey, _font, true, true );
 	} else {
@@ -174,7 +174,7 @@ KFonts::~KFonts()
 
 void KFonts::readSettings( int )
 {		
-    useRM = kapp->getConfig()->readBoolEntry( "useResourceManager", true );
+    useRM = kapp->config()->readBoolEntry( "useResourceManager", true );
 }
 
 void KFonts::setDefaults()

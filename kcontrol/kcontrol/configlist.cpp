@@ -145,7 +145,7 @@ QPixmap KModuleListEntry::getIcon()
     result = KGlobal::iconLoader()->loadApplicationMiniIcon(icon,16,16);
 
   if (result.isNull())
-    result = kapp->getMiniIcon();
+    result = kapp->miniIcon();
 
   return result;
 }

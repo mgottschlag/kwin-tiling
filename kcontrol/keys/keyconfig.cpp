@@ -255,7 +255,7 @@ void KKeyConfig::readScheme( int index )
 		kc->allDefault();
 		return;
 	} if ( index == 0 ) {
-		config  = kapp->getConfig();
+		config  = kapp->config();
 	} else {
 		config = 
 			new KSimpleConfig( *sFileList->at( index ), true );

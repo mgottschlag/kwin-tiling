@@ -438,7 +438,7 @@ kSlideScreenSaver::~kSlideScreenSaver()
 
 void kSlideScreenSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 }
 
@@ -538,7 +538,7 @@ kSlideScreenSetup::kSlideScreenSetup( QWidget *parent, const char *name )
 
 void kSlideScreenSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	config->sync();

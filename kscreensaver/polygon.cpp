@@ -159,34 +159,34 @@ kPolygonSetup::~kPolygonSetup()
 // read settings from config file
 void kPolygonSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
-	config->setGroup( "Settings" );
-
-	QString str;
-
-	str = config->readEntry( "Length" );
-	if ( !str.isNull() )
-		length = atoi( str );
-	if ( length > MAXLENGTH )
-		length = MAXLENGTH;
-	else if ( length < 1 )
-		length = 1;
-
-	str = config->readEntry( "Vertices" );
-	if ( !str.isNull() )
-		vertices = atoi( str );
-	if ( vertices > MAXVERTICES )
-		vertices = MAXVERTICES;
-	else if ( vertices < 3 )
-		vertices = 3;
-
-	str = config->readEntry( "Speed" );
-	if ( !str.isNull() )
-		speed = atoi( str );
-	if ( speed > 100 )
-		speed = 100;
-	else if ( speed < 50 )
-		speed = 50;
+    KConfig *config = KApplication::kApplication()->config();
+    config->setGroup( "Settings" );
+    
+    QString str;
+    
+    str = config->readEntry( "Length" );
+    if ( !str.isNull() )
+        length = atoi( str );
+    if ( length > MAXLENGTH )
+        length = MAXLENGTH;
+    else if ( length < 1 )
+        length = 1;
+    
+    str = config->readEntry( "Vertices" );
+    if ( !str.isNull() )
+        vertices = atoi( str );
+    if ( vertices > MAXVERTICES )
+        vertices = MAXVERTICES;
+    else if ( vertices < 3 )
+        vertices = 3;
+    
+    str = config->readEntry( "Speed" );
+    if ( !str.isNull() )
+        speed = atoi( str );
+    if ( speed > 100 )
+        speed = 100;
+    else if ( speed < 50 )
+        speed = 50;
 }
 
 void kPolygonSetup::slotLength( int len )
@@ -213,24 +213,24 @@ void kPolygonSetup::slotSpeed( int num )
 // Ok pressed - save settings and exit
 void kPolygonSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
-	config->setGroup( "Settings" );
-
-	QString slength;
-	slength.setNum( length );
-	config->writeEntry( "Length", slength );
-
-	QString svertices;
-	svertices.setNum( vertices );
-	config->writeEntry( "Vertices", svertices );
-
-	QString sspeed;
-	sspeed.setNum( speed );
-	config->writeEntry( "Speed", sspeed );
-
-	config->sync();
-
-	accept();
+    KConfig *config = KApplication::kApplication()->config();
+    config->setGroup( "Settings" );
+    
+    QString slength;
+    slength.setNum( length );
+    config->writeEntry( "Length", slength );
+    
+    QString svertices;
+    svertices.setNum( vertices );
+    config->writeEntry( "Vertices", svertices );
+    
+    QString sspeed;
+    sspeed.setNum( speed );
+    config->writeEntry( "Speed", sspeed );
+    
+    config->sync();
+    
+    accept();
 }
 
 void kPolygonSetup::slotAbout()
@@ -297,9 +297,9 @@ void kPolygonSaver::setSpeed( int spd )
 // read configuration settings from config file
 void kPolygonSaver::readSettings()
 {
-	QString str;
-
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    QString str;
+    
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	str = config->readEntry( "Length" );

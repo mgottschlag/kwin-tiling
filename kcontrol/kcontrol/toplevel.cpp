@@ -74,7 +74,7 @@ TopLevel::TopLevel (ConfigList *cl)
   show();
   resizeEvent(NULL);
 
-  KConfig *config = kapp->getConfig();
+  KConfig *config = kapp->config();
   config->setGroup("Options");
   KModuleListEntry::swallowingEnabled = config->readNumEntry("SwallowEnabled", TRUE);
   options->setItemChecked(swallowID, KModuleListEntry::swallowingEnabled);
@@ -87,18 +87,18 @@ void TopLevel::setupMenuBar()
     options = new QPopupMenu();
 
     file->insertItem(i18n("E&xit"),
-		     KApplication::getKApplication(), SLOT(quit()));
+                     KApplication::kApplication(), SLOT(quit()));
 
     options->setCheckable(TRUE);
     swallowID = options->insertItem(i18n("&Swallow modules"),
                         this, SLOT(swallowChanged()));
 
-    QPopupMenu *helpMenu = kapp->getHelpMenu(true, i18n("KDE Control Center - "
-					"Version 1.0\n\n"
-					"Written by Matthias Hölzer\n"
-					"(hoelzer@physik.uni-wuerzburg.de)\n\n"
-					"Thanks to:\n"
-					"S. Kulow, P. Dowler, M. Wuebben & M. Jones."));
+    QPopupMenu *helpMenu = kapp->helpMenu(true, i18n("KDE Control Center - "
+	     "Version 1.0\n\n"
+	     "Written by Matthias Hölzer\n"
+	     "(hoelzer@physik.uni-wuerzburg.de)\n\n"
+	     "Thanks to:\n"
+	     "S. Kulow, P. Dowler, M. Wuebben & M. Jones."));
 
     menubar = new KMenuBar(this);
     menubar->insertItem(i18n("&File"), file);
@@ -149,7 +149,7 @@ void TopLevel::swallowChanged()
 {
   KModuleListEntry::swallowingEnabled = !KModuleListEntry::swallowingEnabled;
 
-  KConfig *config = kapp->getConfig();
+  KConfig *config = kapp->config();
 	
   config->setGroup("Options");
   config->writeEntry("SwallowEnabled", KModuleListEntry::swallowingEnabled);
@@ -171,7 +171,7 @@ void TopLevel::ensureSize(int w, int h)
   width += treelist->width() + 6; // 6 ~= width of QSplitter slider
   // Markus W. : If we are in macStyle we dont need to add the height of
   // the menubar
-  KConfig* config = kapp->getConfig();
+  KConfig* config = kapp->config();
   config->setGroup("KDE");
   if (config->readEntry("macStyle") == "on")
      height += statusbar->height();

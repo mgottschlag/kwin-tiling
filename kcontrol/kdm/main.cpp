@@ -142,7 +142,7 @@ int main(int argc, char **argv)
   if (app.runGUI()) {
       
       QString file = locate("config", "kdmrc");
-      if (file == KGlobal::dirs()->getSaveLocation("config") + "kdmrc") {
+      if (file == KGlobal::dirs()->saveLocation("config") + "kdmrc") {
           QString msg = i18n("You have a local config file %1  - \n"
                              "I will save your changes into this file.\n"
                              "If this isn't your intention, remove it please!").arg(file);

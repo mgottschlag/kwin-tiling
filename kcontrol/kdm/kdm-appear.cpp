@@ -230,7 +230,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
     QString filename = url.filename();
     QString msg;
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
-    QString local = KGlobal::dirs()->getSaveLocation("data", "kdm/pics/", false);
+    QString local = KGlobal::dirs()->saveLocation("data", "kdm/pics/", false);
     QStringList::ConstIterator it = dirs.begin();
     if ((*it).left(local.length()) == local)
       it++;

@@ -652,7 +652,7 @@ void KScienceSaver::setHideBG( bool b )
 
 void KScienceSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -1159,7 +1159,7 @@ void KScienceSetup::updateSettings()
 // read settings from config file
 void KScienceSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
         QString sMode;
   
 	config->setGroup( "Settings" );
@@ -1270,7 +1270,7 @@ void KScienceSetup::slotSliderReleased()
 // Ok pressed - save settings and exit
 void KScienceSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	QString sSize, sSpeed, sIntensity, sMode;
 
 	config->setGroup( "Settings" );

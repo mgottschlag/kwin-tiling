@@ -768,7 +768,7 @@ void kAttractionSaver::setMode( const QString& m)
 
 void kAttractionSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -883,7 +883,7 @@ kAttractionSetup::kAttractionSetup( QWidget *parent, const char *name )
 
 void kAttractionSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -934,7 +934,7 @@ void kAttractionSetup::slotMode( const QString& m)
 
 void kAttractionSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString snumber;

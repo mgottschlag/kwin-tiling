@@ -235,8 +235,8 @@ KColorScheme::KColorScheme(QWidget *parent, Mode m)
 
 void KColorScheme::loadSettings()
 {
-    KConfigGroupSaver saver(kapp->getConfig(), "X11");
-    useRM = kapp->getConfig()->readBoolEntry( "useResourceManager", true );
+    KConfigGroupSaver saver(kapp->config(), "X11");
+    useRM = kapp->config()->readBoolEntry( "useResourceManager", true );
 }
 
 void KColorScheme::resizeEvent( QResizeEvent * )
@@ -527,7 +527,7 @@ void KColorScheme::readScheme( int index )
 
     return;
   } if ( index == 0 ) {
-    config  = kapp->getConfig();
+    config  = kapp->config();
   } else {
     config =
       new KSimpleConfig( sFileList->at( index ), true );
@@ -646,7 +646,7 @@ void KColorScheme::writeSettings()
   if ( !changed )
     return;
 
-  KConfig* sys = kapp->getConfig();
+  KConfig* sys = kapp->config();
 
   sys->setGroup( "General" );
   sys->writeEntry("background", cs->back, true, true);
@@ -743,7 +743,7 @@ QPalette KColorScheme::createPalette()
 {
 
   KConfigBase* config;
-  config  = kapp->getConfig();
+  config  = kapp->config();
   config->setGroup( "General" );
   QColor buttonText =
     config->readColorEntry( "foreground", &black );

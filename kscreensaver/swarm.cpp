@@ -301,8 +301,8 @@ void kSwarmSaver::setLevels( int l )
 
 void kSwarmSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
-	config->setGroup( "Settings" );
+    KConfig *config = kapp->config();
+    config->setGroup( "Settings" );
 
 	QString str;
 
@@ -396,7 +396,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 
 void kSwarmSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -435,7 +435,7 @@ void kSwarmSetup::slotLevels( int num )
 
 void kSwarmSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

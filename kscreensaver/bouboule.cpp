@@ -955,7 +955,7 @@ void kBoubouleSaver::set3DMode( bool mode3d )
 
 void kBoubouleSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+    KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1107,7 +1107,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 
 void kBoubouleSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -1194,7 +1194,7 @@ void kBoubouleSetup::slot3DMode( bool mode )
 
 void kBoubouleSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

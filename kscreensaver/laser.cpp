@@ -370,7 +370,7 @@ void kLaserSaver::setSpeed( int spd )
 
 void kLaserSaver::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -446,7 +446,7 @@ kLaserSetup::kLaserSetup( QWidget *parent, const char *name )
 
 void kLaserSetup::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -471,7 +471,7 @@ void kLaserSetup::slotSpeed( int num )
 
 void kLaserSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

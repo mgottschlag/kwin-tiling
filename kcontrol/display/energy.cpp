@@ -189,7 +189,7 @@ void KEnergy::readSettings( int )
 {		
 	QString str;
 
-	KConfig *config= kapp->getConfig();
+	KConfig *config= kapp->config();
 	config->setGroup( "DisplayEnergy" );
 
 	str = config->readEntry( "displayEnergySaving", "off" );
@@ -231,7 +231,7 @@ void KEnergy::writeSettings()
 	if ( !changed )
 		return;
 		
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "DisplayEnergy" );
 
 	QString str;

@@ -508,7 +508,7 @@ void kBatSaver::setLevels( int l )
 
 void kBatSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -608,7 +608,7 @@ kBatSetup::kBatSetup( QWidget *parent, const char *name )
 
 void kBatSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -648,7 +648,7 @@ void kBatSetup::slotLevels( int num )
 
 void kBatSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;

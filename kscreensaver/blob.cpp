@@ -416,8 +416,8 @@ void KBlobSaver::blank()
 
 void KBlobSaver::readSettings()
 {
-	QString str;
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    QString str;
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup("Settings");
 
 	// number of seconds to spend on a frame
@@ -534,8 +534,8 @@ KBlobSetup::KBlobSetup
 
 void KBlobSetup::readSettings()
 {
-	QString str;
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    QString str;
+    KConfig *config = KApplication::kApplication()->config();
 	config->setGroup("Settings");
 
 	// number of seconds to spend on a frame
@@ -556,7 +556,7 @@ void KBlobSetup::readSettings()
 // Ok pressed - save settings and exit
 void KBlobSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+    KConfig *config = KApplication::kApplication()->config();
 	QString str;
 
 	config->setGroup("Settings");

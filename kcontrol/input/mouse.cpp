@@ -85,7 +85,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
   }
 
   handedEnabled = true;
-  config = kapp->getConfig();
+  config = kapp->config();
 
   GetSettings();
 }

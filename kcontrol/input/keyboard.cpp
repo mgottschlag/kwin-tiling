@@ -66,7 +66,7 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name, bool init)
         click->setSteps(5,25);
         lay->addWidget(click);
     }
-    config = kapp->getConfig();
+    config = kapp->config();
     
     GetSettings();
 }

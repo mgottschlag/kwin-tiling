@@ -291,7 +291,7 @@ void kLissieSaver::setPoints( int p )
 
 void kLissieSaver::readSettings()
 {
-	KConfig *config = kapp->getConfig();
+	KConfig *config = kapp->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -407,7 +407,7 @@ kLissieSetup::kLissieSetup( QWidget *parent, const char *name )
 
 void kLissieSetup::readSettings()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString str;
@@ -460,7 +460,7 @@ void kLissieSetup::slotPoints( int num )
 
 void kLissieSetup::slotOkPressed()
 {
-	KConfig *config = KApplication::getKApplication()->getConfig();
+	KConfig *config = KApplication::kApplication()->config();
 	config->setGroup( "Settings" );
 
 	QString sspeed;
