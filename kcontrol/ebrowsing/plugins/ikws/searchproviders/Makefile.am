@@ -74,6 +74,7 @@ services_DATA = \
 		seek.desktop \
 		sourceforge.desktop \
 		thesaurus.desktop \
+		tvtome.desktop \
 		uspto.desktop \
 		vivisimo.desktop \
 		voila.desktop \

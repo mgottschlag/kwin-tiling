@@ -1,0 +1,7 @@
+[Desktop Entry]
+Charset=utf8
+Keys=tvtome
+Name=TV Tome
+Query=http://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}
+ServiceTypes=SearchProvider
+Type=Service
