@@ -16,7 +16,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qvbuttongroup.h>
 #include <qlabel.h>
 #include <qvbox.h>
-#include <qpainter.h>
 #include <qtimer.h>
 #include <qstyle.h>
 #include <qcursor.h>
@@ -32,6 +31,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kglobalsettings.h>
 #include <kwin.h>
 #include <kuser.h>
+#include <kpixmap.h>
+#include <kpixmapeffect.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -45,20 +46,27 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
- : QWidget( 0L, "feedbackwidget", WType_Popup )
+ : QWidget( 0L, "feedbackwidget", WType_Popup ),
+   m_currentY( 0 )
 {
     setBackgroundMode( QWidget::NoBackground );
     setGeometry( QApplication::desktop()->geometry() );
+    QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
 }
 
 
-void KSMShutdownFeedback::paintEvent( QPaintEvent* )
+void KSMShutdownFeedback::slotPaintEffect()
 {
-    QPainter p;
-    QBrush b( Qt::Dense4Pattern );
-    p.begin( this );
-    p.fillRect( rect(), b);
-    p.end();
+    if ( m_currentY >= height() )
+        return;
+
+    KPixmap pixmap;
+    pixmap = QPixmap::grabWindow( qt_xrootwin(), 0, m_currentY, width(), 10 );
+    pixmap = KPixmapEffect::fade( pixmap, 0.4, Qt::black );
+    pixmap = KPixmapEffect::toGray( pixmap, true );
+    bitBlt( this, 0, m_currentY, &pixmap );
+    m_currentY += 10;
+    QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
 }
 
 //////

@@ -25,14 +25,16 @@ public:
     static void stop() { delete s_pSelf; s_pSelf = 0L; }
     static KSMShutdownFeedback * self() { return s_pSelf; }
 
-
 protected:
     ~KSMShutdownFeedback() {}
 
+private slots:
+    void slotPaintEffect();
+
 private:
-    void paintEvent( QPaintEvent* );
     static KSMShutdownFeedback * s_pSelf;
     KSMShutdownFeedback();
+    int m_currentY;
 };
 
 // A radiobutton with a dblclk signal
