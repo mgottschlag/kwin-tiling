@@ -28,13 +28,15 @@
 #include <qlabel.h>
 #include <qcombobox.h>
 
-#include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
 #include <kdialog.h>
 #include <dcopclient.h>
 
+#ifdef HAVE_XINERAMA
+#include <kapplication.h>
+#endif
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
