@@ -2,4 +2,4 @@
 *foreground: FOREGROUND
 !*Font: FONT
 !*font: FONT
-*fontList: FONTLIST
+*fontList: FONTLIST_8BIT
