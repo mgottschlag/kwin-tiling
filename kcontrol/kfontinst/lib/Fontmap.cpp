@@ -197,7 +197,7 @@ static void addAliasEntry(QStringList &list, const QString &x11Name, const QStri
 
 //
 // Create local may in fact be creating top level Fontmap - if dir==fontmap dir!
-void CFontmap::createLocal(const QString &dir)
+bool CFontmap::createLocal(const QString &dir)
 {
     KFI_DBUG << "CFontmap::createLocal(" << dir << ')' << endl;
 
@@ -290,8 +290,11 @@ void CFontmap::createLocal(const QString &dir)
 
             for(it=entries.begin(); it!=entries.end(); ++it)
                 out << (*it).latin1() << endl;
+            return true;
         }
     }
+
+    return false;
 }
 
 void CFontmap::createTopLevel()

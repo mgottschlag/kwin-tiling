@@ -71,7 +71,7 @@ class CFontmap
 
     //
     // Create per-folder fontmap file
-    static void createLocal(const QString &dir);
+    static bool createLocal(const QString &dir);
     //
     // Create top-level fontmap file
     static void createTopLevel();

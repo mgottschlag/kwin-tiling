@@ -1066,7 +1066,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
         }
 
         //
-        // Only output if we have added something, or th enumber of Xlfds is different (would mean a font was
+        // Only output if we have added something, or the enumber of Xlfds is different (would mean a font was
         // removed)
         if(added || fdir.count()!=fd.xlfdCount())
         {
@@ -1084,6 +1084,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
 
                 fontsDotDir.close();
             }
+            status=true;
         }
 
         if(added || fscale.count()!=fs.xlfdCount())
@@ -1103,8 +1104,6 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                 fontsDotScale.close();
             }
         }
-
-        status=true;
     }
 
     return status;
