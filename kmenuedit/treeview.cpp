@@ -112,8 +112,7 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
     do{
       --it;
 
-      QString dirFile = KGlobal::dirs()->findResource(QString("apps")
-						      , *it + "/.directory");
+      QString dirFile = KGlobal::dirs()->findResource("apps", *it + "/.directory");
       TreeItem* item;
     
       if (dirFile.isNull())
@@ -150,8 +149,6 @@ void TreeView::fillBranch(const QString& rPath, TreeItem *parent)
 void TreeView::itemSelected(QListViewItem *item)
 {
   if(!item) return;
-  cout << ((TreeItem*)item)->file() << endl;
-
   emit entrySelected(((TreeItem*)item)->file());
 }
 
