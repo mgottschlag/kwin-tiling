@@ -201,6 +201,18 @@ void TaskManager::windowRemoved(WId w )
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
+    if( dirty & NET::WMState )
+        {
+        NETWinInfo info ( qt_xdisplay(),  w, qt_xrootwin(), NET::WMState );
+        if ( (info.state() & NET::SkipTaskbar) != 0 )
+            {
+            windowRemoved( w );
+            return;
+            }
+        else if( !findTask( w )) 
+            windowAdded( w ); // skipTaskBar state was removed, so add this window
+        }
+        
     // check if any state we are interested in is marked dirty
     if(!(dirty & (NET::WMVisibleName|NET::WMName|NET::WMState|NET::WMIcon|NET::XAWMState|NET::WMDesktop)) )
         return;
