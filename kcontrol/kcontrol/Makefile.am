@@ -40,7 +40,7 @@ kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
-kcminit_la_SOURCES = kcminit.cpp
+kcminit_la_SOURCES = kcminit.cpp global.cpp utils.cpp
 kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
