@@ -43,6 +43,7 @@
 #include <kstddirs.h>
 #include <kglobal.h>
 
+#include <kpixmapeffect.h> //CT for the previews
 extern KConfig *config;
 
 // config file keywords used by kwm
@@ -957,18 +958,10 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   QBoxLayout *pushLay = new QVBoxLayout (titlebarBox,10,5);
   //CT
 
-  vShaded = new QRadioButton(i18n("Shaded Vertically"), titlebarBox);
-  pushLay->addWidget(vShaded);
+  bShaded = new QRadioButton(i18n("Gradient"), titlebarBox);
+  pushLay->addWidget(bShaded);
 
-  hShaded = new QRadioButton(i18n("Shaded Horizontally"), titlebarBox);
-  pushLay->addWidget(hShaded);
-
-  dShaded = new QRadioButton(i18n("Shaded on Diagonal"), titlebarBox);
-  pushLay->addWidget(dShaded);
-
-  connect(vShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
-  connect(hShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
-  connect(dShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
+  connect(bShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
   plain = new QRadioButton(i18n("Plain"), 
 			   titlebarBox);
@@ -981,8 +974,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   connect(pixmap, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
-  //CT 02Dec1998 - macStyle soup options
-  pushLay->activate();
 
   appearLay->addWidget(titlebarBox);
 
@@ -992,13 +983,15 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   cbFrame->setMinimumSize(cbFrame->size());
   appearLay->addWidget(cbFrame);
 
-  appearLay->activate();
-
-  //CT
 
   lay->addWidget(appearBox,1,0);
 
-  pixmapBox    = new QGroupBox(i18n("Pixmap"), this); 
+  optOpts =  new QWidgetStack( this, "optOpts");
+
+  lay->addWidget(optOpts, 1, 1);
+
+  // the first page - options for pixmap titlebars  
+  pixmapBox    = new QGroupBox(i18n("Pixmap"), optOpts); 
  
   pixLay = new QGridLayout(pixmapBox,7,2,10,5);
   pixLay->addRowSpacing(0,10);
@@ -1034,10 +1027,43 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   cbPixedText = new QCheckBox(i18n("No pixmap under text"),pixmapBox);
   pixLay->addMultiCellWidget(cbPixedText,6,6,0,1);
 
-  pixLay->activate();
+  // second page - options for gradients
 
-  lay->addWidget(pixmapBox,1,1);
+  gradBox = new QGroupBox(i18n("Gradient"), optOpts);
+  
+  QBoxLayout *gradLay = new QVBoxLayout(optOpts, 10);
+  gradLay->addSpacing(10);
 
+  gradientTypes = new QListBox(gradBox);
+
+  gradientTypes->insertItem(i18n("Vertical"));
+  gradientTypes->insertItem(i18n("Horizontal"));
+  gradientTypes->insertItem(i18n("Diagonal"));
+  gradientTypes->insertItem(i18n("CrossDiagonal"));
+  gradientTypes->insertItem(i18n("Pyramid"));
+  gradientTypes->insertItem(i18n("Rectangle"));
+  gradientTypes->insertItem(i18n("PipeCross"));
+  gradientTypes->insertItem(i18n("Elliptic"));
+  
+  gradientTypes->setMultiSelection(false);
+
+  connect(gradientTypes, SIGNAL(highlighted(const QString &)), 
+	  this, SLOT(setGradient(const QString &)));
+
+  gradLay->addWidget(gradientTypes);
+
+  gradLay->addSpacing(10);
+
+  gradPreview = new QLabel ("", gradBox);
+  gradPreview->setFrameStyle(QFrame::Panel | QFrame::Raised);
+  gradPix.resize(gradPreview->width(), gradPreview->height());
+
+  setGradient(i18n("Horizontal")); // build the gradient
+
+  gradPreview->setPixmap(gradPix);
+
+  gradLay->addWidget(gradPreview);
+				     
   //CT 11feb98 - Title double click
   titlebarDblClickBox = new QGroupBox(i18n("Mouse action"),
 				       this);
@@ -1116,6 +1142,9 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   connect( titleAnim,   SIGNAL(valueChanged(int)), t, SLOT(display(int)) );
 
   GetSettings();
+
+  gradientTypes->setCurrentItem((int) gradient);
+
 }
 
 //CT 02Dec1998
@@ -1155,12 +1184,9 @@ void KTitlebarAppearance::setAlign(int a) {
 
 int KTitlebarAppearance::getTitlebar()
 {
-  if (vShaded->isChecked())
-    return TITLEBAR_SHADED_VERT;
-  else if (hShaded->isChecked())
-    return TITLEBAR_SHADED_HORIZ;
-  else if (dShaded->isChecked())
-    return TITLEBAR_SHADED_DIAG;
+  if (bShaded->isChecked()) {
+    return TITLEBAR_SHADED;
+  }
   else if (pixmap->isChecked())
       return TITLEBAR_PIXMAP;
   else
@@ -1171,10 +1197,10 @@ void KTitlebarAppearance::setTitlebar(int tb)
 {
   if (tb == TITLEBAR_PIXMAP)
     {
-      vShaded->setChecked(FALSE);
-      hShaded->setChecked(FALSE);
+      bShaded->setChecked(FALSE);
       plain->setChecked(FALSE);
       pixmap->setChecked(TRUE);
+      optOpts->raiseWidget(pixmapBox);
       pixmapBox->setEnabled(TRUE);
       lPixmapActive->setEnabled(TRUE);
       pbPixmapActive->setEnabled(TRUE);
@@ -1183,43 +1209,12 @@ void KTitlebarAppearance::setTitlebar(int tb)
       cbPixedText->setEnabled(TRUE);
       return;
     }
-  if (tb == TITLEBAR_SHADED_VERT)
+  if (tb == TITLEBAR_SHADED)
     {
-      vShaded->setChecked(TRUE);
-      hShaded->setChecked(FALSE);
-      dShaded->setChecked(FALSE);
+      bShaded->setChecked(TRUE);
       plain->setChecked(FALSE);
       pixmap->setChecked(FALSE);
-      pixmapBox->setEnabled(FALSE);
-      lPixmapActive->setEnabled(FALSE);
-      pbPixmapActive->setEnabled(FALSE);
-      lPixmapInactive->setEnabled(FALSE);
-      pbPixmapInactive->setEnabled(FALSE);
-      cbPixedText->setEnabled(FALSE);
-      return;
-    }
-  if (tb == TITLEBAR_SHADED_HORIZ)
-    {
-      vShaded->setChecked(FALSE);
-      hShaded->setChecked(TRUE);
-      dShaded->setChecked(FALSE);
-      plain->setChecked(FALSE);
-      pixmap->setChecked(FALSE);
-      pixmapBox->setEnabled(FALSE);
-      lPixmapActive->setEnabled(FALSE);
-      pbPixmapActive->setEnabled(FALSE);
-      lPixmapInactive->setEnabled(FALSE);
-      pbPixmapInactive->setEnabled(FALSE);
-      cbPixedText->setEnabled(FALSE);
-      return;
-    }
-  if (tb == TITLEBAR_SHADED_DIAG)
-    {
-      vShaded->setChecked(FALSE);
-      hShaded->setChecked(FALSE);
-      dShaded->setChecked(TRUE);
-      plain->setChecked(FALSE);
-      pixmap->setChecked(FALSE);
+      optOpts->raiseWidget(gradBox);
       pixmapBox->setEnabled(FALSE);
       lPixmapActive->setEnabled(FALSE);
       pbPixmapActive->setEnabled(FALSE);
@@ -1230,11 +1225,10 @@ void KTitlebarAppearance::setTitlebar(int tb)
     }
   if (tb == TITLEBAR_PLAIN)
     {
-      vShaded->setChecked(FALSE);
-      hShaded->setChecked(FALSE);
-      dShaded->setChecked(FALSE);
+      bShaded->setChecked(FALSE);
       plain->setChecked(TRUE);
       pixmap->setChecked(FALSE);
+      optOpts->raiseWidget(pixmapBox);
       pixmapBox->setEnabled(FALSE);
       lPixmapActive->setEnabled(FALSE);
       pbPixmapActive->setEnabled(FALSE);
@@ -1287,16 +1281,29 @@ void KTitlebarAppearance::SaveSettings( void )
   //CT
 
   t = getTitlebar();
-  if (t == TITLEBAR_SHADED_VERT)
-    config->writeEntry(KWM_TITLEBARLOOK, "shadedVertical");
-  else if (t == TITLEBAR_SHADED_HORIZ)
-    config->writeEntry(KWM_TITLEBARLOOK, "shadedHorizontal");
-  else if (t == TITLEBAR_SHADED_DIAG)
-    config->writeEntry(KWM_TITLEBARLOOK, "shadedDiagonal");
+  if (t == TITLEBAR_SHADED)
+    {
+      if (gradient == VERT)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedVertical");
+      else if (gradient == HORIZ)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedHorizontal");
+      else if (gradient == DIAG)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedDiagonal");
+      else if (gradient == CROSSDIAG)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedCrossDiagonal");
+      else if (gradient == PYRAM)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedPyramid");
+      else if (gradient == RECT)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedRectangle");
+      else if (gradient == PIPE)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedPipeCross");
+      else if (gradient == ELLIP)
+	config->writeEntry(KWM_TITLEBARLOOK, "shadedElliptic");
+    }
   else if (t == TITLEBAR_PIXMAP)
-      config->writeEntry(KWM_TITLEBARLOOK, "pixmap");
+    config->writeEntry(KWM_TITLEBARLOOK, "pixmap");
   else
-      config->writeEntry(KWM_TITLEBARLOOK, "plain");
+    config->writeEntry(KWM_TITLEBARLOOK, "plain");
 
   /*CT 18Oct1998 - these are no more needed
   config->writeEntry("TitlebarPixmapActive", sPixmapActive);
@@ -1393,6 +1400,60 @@ void KTitlebarAppearance::SaveSettings( void )
 
 }
 
+void KTitlebarAppearance::setGradient(const QString & grad_name)
+{
+  if (grad_name == i18n("Vertical"))
+  {
+    gradient = VERT;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::VerticalGradient);
+  }
+  else if (grad_name == i18n("Horizontal"))
+  {
+    gradient = HORIZ;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::HorizontalGradient);
+  }
+  else if (grad_name == i18n("Diagonal"))
+  {
+    gradient = DIAG;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::DiagonalGradient);
+  }
+  else if (grad_name == i18n("CrossDiagonal"))
+  {
+    gradient = CROSSDIAG;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::CrossDiagonalGradient);
+  }
+  else if (grad_name == i18n("Pyramid"))
+  {
+    gradient = PYRAM;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::PyramidGradient);
+  }
+  else if (grad_name == i18n("Rectangle"))
+  {
+    gradient = RECT;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::RectangleGradient);
+  }
+  else if (grad_name == i18n("PipeCross"))
+  {
+    gradient = PIPE;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::PipeCrossGradient);
+  }
+  else if (grad_name == i18n("Elliptic"))
+  {
+    gradient = ELLIP;
+    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+			    KPixmapEffect::EllipticGradient);
+  }
+
+  gradPreview->setPixmap(gradPix);
+}
+
 void KTitlebarAppearance::GetSettings( void )
 {
   QString key;
@@ -1419,12 +1480,26 @@ void KTitlebarAppearance::GetSettings( void )
   //CT
 
   key = config->readEntry(KWM_TITLEBARLOOK);
-  if( key == "shadedVertical")
-    setTitlebar(TITLEBAR_SHADED_VERT);
-  else if( key == "shadedHorizontal")
-    setTitlebar(TITLEBAR_SHADED_HORIZ);
-  else if( key == "shadedDiagonal")
-    setTitlebar(TITLEBAR_SHADED_DIAG);
+  if( key.find("shaded") != -1)
+    {
+      setTitlebar(TITLEBAR_SHADED);
+      if (key== "shadedVertical")
+	setGradient(i18n("Vertical"));
+      else if (key== "shadedHorizontal")
+	setGradient(i18n("Horizontal"));
+      else if (key== "shadedDiagonal")
+	setGradient(i18n("Diagonal"));
+      else if (key== "shadedCrossDiagonal")
+	setGradient(i18n("CrossDiagonal"));
+      else if (key== "shadedPyramid")
+	setGradient(i18n("Pyramid"));
+      else if (key== "shadedRectangle")
+	setGradient(i18n("Rectangle"));
+      else if (key== "shadedPipeCross")
+	setGradient(i18n("PipeCross"));
+      else if (key== "shadedElliptic")
+	setGradient(i18n("Elliptic"));
+    }
   else if( key == "pixmap")
     setTitlebar(TITLEBAR_PIXMAP);
   else

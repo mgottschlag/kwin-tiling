@@ -37,11 +37,15 @@
 #include <qlcdnumber.h>
 #include <qcombobox.h> //CT 11feb98
 #include <qcheckbox.h> //CT 02Dec1998
+#include <qwidgetstack.h> //CT 15Jul 1999 - use a nifty switchable opts set
+                          // for pixmap of gradient titlebar types
+#include <qlistbox.h>
 
 #include <kslider.h>
 
 #include <kcontrol.h>
 #include <kiconloader.h>
+#include <kpixmap.h>
 
 #include <kwm.h>
 
@@ -60,10 +64,8 @@
 #define AT_RIGHT                2
 
 #define TITLEBAR_PLAIN                0
-#define TITLEBAR_SHADED_VERT          1
-#define TITLEBAR_SHADED_HORIZ         2
-#define TITLEBAR_SHADED_DIAG          3
-#define TITLEBAR_PIXMAP               4
+#define TITLEBAR_SHADED               1
+#define TITLEBAR_PIXMAP               2
 
 //CT 11feb98; 23Oct1998
 #define DCTB_MAXIMIZE      0
@@ -154,12 +156,15 @@ public:
   void loadSettings();
   void applySettings();
 
+  enum GradientTypes {VERT, HORIZ, DIAG, CROSSDIAG, 
+		      PYRAM, RECT, PIPE, ELLIP} gradient;
 
 private slots:
 
   void titlebarChanged();
   void activePressed();
   void inactivePressed();
+  void setGradient (const QString &);
 
 private:
  void GetSettings( void );
@@ -190,7 +195,14 @@ private:
  QRadioButton *leftAlign, *midAlign, *rightAlign;
  //CT
  QButtonGroup *titlebarBox;
- QRadioButton *vShaded, *hShaded, *dShaded, *plain, *pixmap;
+ QRadioButton *bShaded, *plain, *pixmap;
+
+ QWidgetStack *optOpts;
+ QListBox *gradientTypes;
+ QGroupBox *pixmapBox, *gradBox;
+ KPixmap gradPix; // used to preview the gradients
+ QLabel *gradPreview;
+
 
  //CT 11feb98
  int getDCTBAction();
@@ -207,7 +219,6 @@ private:
  QLCDNumber *t;
  QLabel *sec;
 
- QGroupBox *pixmapBox;
  QLabel *lPixmapActive, *lPixmapInactive;
  QPushButton *pbPixmapActive, *pbPixmapInactive;
  QPixmap pixmapActive, pixmapInactive, pixmapActiveOld, pixmapInactiveOld;
@@ -215,6 +226,7 @@ private:
  QString sPixmapActive, sPixmapInactive;
 
  KIconLoader *iconLoader;
+
 };
 
 
