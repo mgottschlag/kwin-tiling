@@ -35,7 +35,10 @@ install-data-local:
 	( cd BuildThemes; \
 	for f in *; do \
 	  if [ -d $$f -a $$f != "CVS" ]; then \
-	    tar -b 16 -c -f - $$f| gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
+           tar=$(TAR); \
+           if test -z "$$tar"; then tar=$(AMTAR); fi; \
+           if test -z "$$tar"; then tar=tar; fi; \
+           $$tar -b 16 -c -f - $$f| gzip -c > $(DESTDIR)$(themesdir)/$$f.ktheme; \
 	  fi; \
 	done ); \
 	rm -rf BuildThemes;
