@@ -405,16 +405,17 @@ void IconThemesConfig::save()
      return;
 
   KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-
   config->setGroup("Icons");
 
   config->writeEntry("Theme", m_themeNames[selected->text(0)]);
+  KIconTheme::reconfigure();
   emit changed(false);
 
   delete config;
 
   for (int i=0; i<KIcon::LastGroup; i++)
   {
+    // TODO BUG  KAPP::KIPC::IconChanged is _NEVER_ getting called WHY?
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
 
