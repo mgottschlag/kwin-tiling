@@ -226,7 +226,7 @@ FontAASettings::FontAASettings(QWidget *parent)
                 changesMade(false)
 {
   QWidget     *mw=new QWidget(this);
-  QGridLayout *layout=new QGridLayout(mw, 1, 1, KDialog::marginHint(), KDialog::spacingHint());
+  QGridLayout *layout=new QGridLayout(mw, 1, 1, 0, KDialog::spacingHint());
 
   excludeRange=new QCheckBox(i18n("E&xclude range:"), mw),
   layout->addWidget(excludeRange, 0, 0);
