@@ -15,4 +15,5 @@ else
   LIB_XRANDR=
 fi
 AC_SUBST(LIB_XRANDR)
-AC_SUBST(RANDR_SUBDIR)
+AM_CONDITIONAL(include_kcontrol_randr, test -n "$RANDR_SUBDIR")
+

@@ -20,6 +20,10 @@ if include_kcontrol_view1394
 VIEW1394_SUBDIR=view1394
 endif
 
+if include_kcontrol_randr
+RANDR_SUBDIR=randr
+endif
+
 # 'colors' and 'fonts' should come after 'krdb'
 SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	kicker locale launch keys kio konq thememgr style kded \
