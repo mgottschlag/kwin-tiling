@@ -119,7 +119,7 @@ void KMidConfig::save()
 
   config->writeEntry("midiDevice", mididevices->currentItem());
   config->writeEntry("useMidiMapper", usemap->isChecked());
-  config->writeEntry("mapFilename", maprequester->url().decodedURL());
+  config->writeEntry("mapFilename", maprequester->url().url());
   
   config->sync();
   delete config;
