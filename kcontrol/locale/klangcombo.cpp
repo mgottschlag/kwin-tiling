@@ -55,7 +55,7 @@ void KLanguageCombo::insertLanguage(const char *lang)
   QPixmap pm(w, 16);
 
   KIconLoader iconLoader;
-  QPixmap flag(iconLoader.loadIcon(QString("flag_")+tag(lang)+".gif"));
+  QPixmap flag(iconLoader.loadIcon(QString("flag_")+tag(lang)+".png"));
   
   pm.fill(colorGroup().background());
   p.begin(&pm);
