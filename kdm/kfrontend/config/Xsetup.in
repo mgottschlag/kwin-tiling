@@ -1,4 +1,4 @@
 #!/bin/sh
 # Xsetup - run as root before the login dialog appears
 
-kdmdesktop &
+@KDE_BINDIR@/kdmdesktop &
