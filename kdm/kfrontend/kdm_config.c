@@ -102,7 +102,7 @@ typedef struct Val {
 
 typedef struct ValArr {
     Val *ents;
-    int nents, esiz, totlen;
+    int nents, esiz, nchars, nptrs;
 } ValArr;
 
 
@@ -306,7 +306,6 @@ PdaemonMode (Value *retval)
 {
     if (daemonize >= 0) {
 	retval->ptr = (char *)daemonize;
-	retval->len = 0;
 	return 1;
     }
     return 0;
@@ -316,7 +315,6 @@ static int
 PautoLogin (Value *retval)
 {
     retval->ptr = (char *)autolog;
-    retval->len = 0;
     return 1;
 }
 
@@ -325,16 +323,15 @@ PrequestPort (Value *retval)
 {
     if (!VxdmcpEnable.ptr) {
 	retval->ptr = (char *)0;
-	retval->len = 0;
 	return 1;
     }
     return 0;
 }
 
-static Value emptyStr = { "", 1 };
 static Value
-    nullStr = { 0, 0 }, 
-    emptyArgv = { (char *)&nullStr, sizeof(char *) };
+    emptyStr = { "", 1 },
+    nullValue = { 0, 0 }, 
+    emptyArgv = { (char *)&nullValue, 0 };
 
 static int
 PnoPassUsers (Value *retval)
@@ -825,7 +822,6 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 
     switch (et->id & C_TYPE_MASK) {
 	case C_TYPE_INT:
-	    retval->len = 0;
 	    for (i = 0; i < vallen && i < sizeof(buf) - 1; i++)
 		buf[i] = tolower (val[i]);
 	    buf[i] = 0;
@@ -860,8 +856,7 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 	    retval->len = vallen + 1;
 	    return 0;
 	case C_TYPE_ARGV:
-	    ents = malloc (sizeof(Value) * (esiz = 10));
-	    if (!ents) {
+	    if (!(ents = malloc (sizeof(Value) * (esiz = 10)))) {
 		LogOutOfMem ("CvtValue");
 		return 0;
 	    }
@@ -883,11 +878,11 @@ CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 		ents[nents].ptr = val + b;
 		ents[nents].len = e - b;
 		nents++;
-		tlen += e - b + 1 + sizeof(char *);
+		tlen += e - b + 1;
 	    }
 	    ents[nents].ptr = 0;
 	    retval->ptr = (char *)ents;
-	    retval->len = tlen + sizeof(char *);
+	    retval->len = tlen;
 	    return 0;
 	default:
 	    LogError ("Internal error: unknown value type in id 0x%x\n", et->id);
@@ -920,6 +915,8 @@ GetValue (Ent *et, DSpec *dspec, Value *retval, char **eopts)
 static int
 AddValue (ValArr *va, int id, Value *val)
 {
+    int nu;
+
 /*    Debug ("Addig value 0x%x\n", id);*/
     if (va->nents == va->esiz) {
 	va->ents = realloc (va->ents, sizeof(Val) * (va->esiz += 50));
@@ -931,7 +928,18 @@ AddValue (ValArr *va, int id, Value *val)
     va->ents[va->nents].id = id;
     va->ents[va->nents].val = *val;
     va->nents++;
-    va->totlen += val->len;
+    switch (id & C_TYPE_MASK) {
+	case C_TYPE_INT:
+	    break;
+	case C_TYPE_STR:
+	    va->nchars += val->len;
+	    break;
+	case C_TYPE_ARGV:
+	    va->nchars += val->len;
+	    for (nu = 0; ((Value *)val->ptr)[nu++].ptr; );
+	    va->nptrs += nu;
+	    break;
+    }
     return 1;
 }
 
@@ -967,7 +975,9 @@ SendValues (ValArr *va)
 
 Debug ("sending values\n");
     GSendInt (va->nents);
-    GSendInt (va->totlen + va->nents * (sizeof(int) + sizeof(char *)));
+    GSendInt (va->nptrs);
+    GSendInt (0/*va->nints*/);
+    GSendInt (va->nchars);
     for (i = 0; i < va->nents; i++) {
 	GSendInt (va->ents[i].id & ~C_PRIVATE);
 	switch (va->ents[i].id & C_TYPE_MASK) {
