@@ -204,7 +204,7 @@ void KArtsModule::GetSettings( void )
 	artsConfig->latencySlider->setValue(config->readNumEntry("Latency",250));
 	messageApplication->setText(config->readEntry("MessageApplication","artsmessage"));
 	displayMessage->setChecked(!messageApplication->text().isEmpty());
-	artsConfig->loggingLevel->setCurrentItem(3 - config->readNumEntry("LoggingLevel",0));
+	artsConfig->loggingLevel->setCurrentItem(3 - config->readNumEntry("LoggingLevel",3));
 
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
@@ -444,6 +444,7 @@ void KArtsModule::updateWidgets()
 	artsConfig->soundIO->setEnabled(startServer->isChecked());
 	artsConfig->testSound->setEnabled(startServer->isChecked());
 	autoSuspend->setEnabled(startServer->isChecked());
+	suspendTime->setEnabled(startServer->isChecked() && autoSuspend->isChecked());
 	displayMessage->setEnabled(startServer->isChecked());
 	messageApplication->setEnabled(startServer->isChecked() && displayMessage->isChecked());
 	calculateLatency();
@@ -471,7 +472,7 @@ void init_arts()
 	bool startServer = config->readBoolEntry("StartServer",true);
 	bool startRealtime = config->readBoolEntry("StartRealtime",true);
 	bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
-	QString args = config->readEntry("Arguments","-F 10 -S 4096");
+	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -l 3");
 
 	delete config;
 
