@@ -4,7 +4,7 @@ GENKDMCONF_FLAGS =
 SUBDIRS = themer themes pics sessions
 
 AM_CPPFLAGS = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/kcontrol/background \
-    $(all_includes) $(XDM_DEFINES)
+    -I$(top_srcdir)/kdmlib $(all_includes) $(XDM_DEFINES)
 
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf kdmctl
 
@@ -30,16 +30,6 @@ kdm_greet_LDADD = themer/libkdmthemer.a $(LIB_KDEUI) $(XTESTLIB) $(LIBPOSIX4)
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
-
-kde_module_LTLIBRARIES = kgreet_classic.la kgreet_winbind.la
-
-kgreet_classic_la_SOURCES = kgreet_classic.cpp
-kgreet_classic_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kgreet_classic_la_LIBADD = $(LIB_KDEUI)
-
-kgreet_winbind_la_SOURCES = kgreet_winbind.cpp
-kgreet_winbind_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kgreet_winbind_la_LIBADD = $(LIB_KDEUI)
 
 METASOURCES = AUTO
 
@@ -71,12 +61,7 @@ noinst_HEADERS = \
     kgreeter.h \
     kgapp.h \
     \
-    kgreet_classic.h \
-    kgreet_winbind.h \
-    \
     krootimage.h 
-
-include_HEADERS = kgreeterplugin.h
 
 kdm_greet_COMPILE_FIRST = ../config.ci
 kdm_config_COMPILE_FIRST = ../config.ci
