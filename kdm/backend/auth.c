@@ -584,25 +584,6 @@ DefineLocal( FILE *file, Xauth *auth )
 #endif
 }
 
-/* Argh! this is evil. But ConvertAddr works only with Xdmcp.h */
-#ifdef XDMCP
-
-/*
- * Call ConvertAddr(), and if it returns an IPv4 localhost, convert it
- * to a local display name.  Meets the _XTransConvertAddress's localhost
- * hack.
- */
-
-static int
-ConvertAuthAddr( XdmcpNetaddr saddr, int *len, char **addr )
-{
-	int ret = ConvertAddr( saddr, len, addr );
-	if (ret == FamilyInternet &&
-	    ((struct in_addr *)*addr)->s_addr == htonl( 0x7F000001L ))
-		ret = FamilyLocal;
-	return ret;
-}
-
 #ifdef SYSV_SIOCGIFCONF
 
 /* Deal with different SIOCGIFCONF ioctl semantics on SYSV, SVR4 */
@@ -644,7 +625,7 @@ DefineSelf( FILE *file, Xauth *auth )
 	if (getifaddrs( &ifap ) < 0)
 		return;
 	for (ifr = ifap; ifr; ifr = ifr->ifa_next) {
-		family = ConvertAddr( (XdmcpNetaddr)(ifr->ifa_addr), &len, &addr );
+		family = ConvertAddr( (char *)(ifr->ifa_addr), &len, &addr );
 		if (family == -1 || family == FamilyLocal)
 			continue;
 		/*
@@ -894,7 +875,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 		} else
 #endif
 		{
-			family = ConvertAddr( (XdmcpNetaddr)&IFR_ADDR( ifr ), &len, &addr );
+			family = ConvertAddr( (char *)&IFR_ADDR( ifr ), &len, &addr );
 			if (family < 0)
 				continue;
 
@@ -985,8 +966,6 @@ DefineSelf( int fd, int file, int auth )
 #endif /* STREAMSCONN && !SYSV_SIOCGIFCONF else */
 #endif /* HAVE_GETIFADDRS */
 
-#endif /* XDMCP */
-
 static void
 setAuthNumber( Xauth *auth, const char *name )
 {
@@ -1011,13 +990,12 @@ setAuthNumber( Xauth *auth, const char *name )
 static void
 writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 {
-#if defined(XDMCP) && (defined(STREAMSCONN) || !defined(HAVE_GETIFADDRS))
+#if defined(STREAMSCONN) || !defined(HAVE_GETIFADDRS)
 	int fd;
 #endif
 
 	Debug( "writeLocalAuth: %s %.*s\n", name, auth->name_length, auth->name );
 	setAuthNumber( auth, name );
-#ifdef XDMCP
 # ifdef STREAMSCONN
 	fd = t_open( "/dev/tcp", O_RDWR, 0 );
 	t_bind( fd, NULL, NULL );
@@ -1042,11 +1020,26 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 	close( fd );
 #  endif
 # endif /* HAVE_GETIFADDRS */
-#endif /* XDMCP */
 	DefineLocal( file, auth );
 }
 
 #ifdef XDMCP
+
+/*
+ * Call ConvertAddr(), and if it returns an IPv4 localhost, convert it
+ * to a local display name.  Meets the _XTransConvertAddress's localhost
+ * hack.
+ */
+
+static int
+ConvertAuthAddr( char *saddr, int *len, char **addr )
+{
+	int ret = ConvertAddr( saddr, len, addr );
+	if (ret == FamilyInternet &&
+	    ((struct in_addr *)*addr)->s_addr == htonl( 0x7F000001L ))
+		ret = FamilyLocal;
+	return ret;
+}
 
 static void
 writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const char *name )

@@ -871,6 +871,7 @@ SendValues( ValArr *va )
 }
 
 
+#ifdef XDMCP
 static char *
 ReadWord( File *file, int *len, int EOFatEOL )
 {
@@ -929,8 +930,6 @@ ReadWord( File *file, int *len, int EOFatEOL )
 	goto mloop;
 }
 
-
-#ifdef XDMCP
 #define ALIAS_CHARACTER     '%'
 #define NEGATE_CHARACTER    '!'
 #define CHOOSER_STRING      "CHOOSER"

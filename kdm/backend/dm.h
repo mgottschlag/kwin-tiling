@@ -534,19 +534,19 @@ int getBootOptions( char ***opts, int *def, int *cur );
 int setBootOption( const char *opt, SdRec *sdr );
 void commitBootOption( void );
 
+/* in netaddr.c */
+char *NetaddrAddress( char *netaddrp, int *lenp );
+char *NetaddrPort( char *netaddrp, int *lenp );
+int ConvertAddr( char *saddr, int *len, char **addr );
+int NetaddrFamily( char *netaddrp );
+int addressEqual( char *a1, int len1, char *a2, int len2 );
+
 #ifdef XDMCP
 
 /* in xdmcp.c */
 char *NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress );
 void SendFailed( struct display *d, const char *reason );
 void init_session_id( void );
-
-/* in netaddr.c */
-char *NetaddrAddress( XdmcpNetaddr netaddrp, int *lenp );
-char *NetaddrPort( XdmcpNetaddr netaddrp, int *lenp );
-int ConvertAddr( XdmcpNetaddr saddr, int *len, char **addr );
-int NetaddrFamily( XdmcpNetaddr netaddrp );
-int addressEqual( XdmcpNetaddr a1, int len1, XdmcpNetaddr a2, int len2 );
 
 /* in policy.c */
 struct sockaddr;
@@ -597,9 +597,9 @@ int ProcessListenSockets( FD_TYPE *reads );
 /* in xdmcp.c */
 void ProcessRequestSocket( int fd );
 
+#endif /* XDMCP */
+
 /* in sessreg.c */
 void sessreg( struct display *d, int pid, const char *user, int uid );
-
-#endif /* XDMCP */
 
 #endif /* _DM_H_ */
