@@ -858,7 +858,12 @@ void KBackgroundSettings::updateWallpaperFiles()
 	    QStringList lst = dir.entryList(QDir::Files | QDir::Readable);
 	    QStringList::Iterator it;
 	    for (it=lst.begin(); it!=lst.end(); it++)
-		m_WallpaperFiles.append(dir.absFilePath(*it));
+	    {
+		file = dir.absFilePath(*it);
+		QFileInfo fi(file);
+		if (fi.isFile() && fi.isReadable())
+		    m_WallpaperFiles.append(file);
+	    }
 	}
     }
 }
@@ -900,6 +905,19 @@ QString KBackgroundSettings::currentWallpaper()
     if (m_CurrentWallpaper < (int) m_WallpaperFiles.count())
 	return m_WallpaperFiles[m_CurrentWallpaper];
     return QString();
+}
+
+bool KBackgroundSettings::discardCurrentWallpaper()
+{
+    if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
+    {
+       return false;
+    }
+    m_WallpaperFiles.remove(m_WallpaperFiles.at(m_CurrentWallpaper));
+    if (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())
+	m_CurrentWallpaper = 0;
+
+    return true;
 }
 
 

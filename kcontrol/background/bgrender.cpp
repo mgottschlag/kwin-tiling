@@ -276,6 +276,7 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 
     QImage wp;
     if (wpmode != NoWallpaper) {
+wp_load:
 	if (currentWallpaper().isEmpty()) {
 	    wpmode = NoWallpaper;
 	    goto wp_out;
@@ -288,6 +289,8 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 
 	wp.load(file);
 	if (wp.isNull()) {
+            if (discardCurrentWallpaper())
+               goto wp_load;
 	    wpmode = NoWallpaper;
 	    goto wp_out;
 	}
