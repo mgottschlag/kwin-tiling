@@ -68,9 +68,9 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
 // if it's e.g. just 'www', try if it's a hostname in the local search domain
 bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 {
-    QString host( cmd.contains( '/' ) ? cmd.left( cmd.find( '/' )) : cmd );
-    if ( host.contains( ':' ) )
-        host.truncate( host.find( ':' ) ); // Remove port number
+    // find() returns -1 when no match -> left()/truncate() are noops then
+    QString host( cmd.left( cmd.find( '/' ) ) );
+    host.truncate( host.find( ':' ) ); // Remove port number
 
     if( host == last_host && last_time > time( NULL ) - 5 )
         return last_result;
