@@ -470,6 +470,83 @@ QPixmap Task::icon( int width, int height, bool allowResize )
   return newIcon;
 }
 
+QPixmap Task::bestIcon( int size, bool &isStaticIcon )
+{
+  QPixmap pixmap;
+  isStaticIcon = false;
+
+  switch( size ) {
+  case KIcon::SizeSmall:
+    {
+      pixmap = icon( 16, 16, true  );
+      
+      // Icon of last resort
+      if( pixmap.isNull() ) {
+	pixmap = KGlobal::iconLoader()->loadIcon( "go",
+						  KIcon::NoGroup,
+						  KIcon::SizeSmall );
+	isStaticIcon = true;
+      }
+    }
+    break;
+  case KIcon::SizeMedium:
+    {
+      //
+      // Try 34x34 first for KDE 2.1 icons with shadows, if we don't
+      // get one then try 32x32.
+      //
+      pixmap = icon( 34, 34, false  );
+
+      if ( ( pixmap.width() != 34 ) || ( pixmap.height() != 34 ) ) {
+	if ( ( pixmap.width() != 32 ) || ( pixmap.height() != 32 ) ) {
+	  pixmap = icon( 32, 32, true  );
+	}
+      }
+
+      // Icon of last resort
+      if( pixmap.isNull() ) {
+	pixmap = KGlobal::iconLoader()->loadIcon( "go",
+						  KIcon::NoGroup,
+						  KIcon::SizeMedium );
+	isStaticIcon = true;
+      }
+    }
+    break;
+  case KIcon::SizeLarge:
+    {
+      // If there's a 48x48 icon in the hints then use it
+      pixmap = icon( 48, 48, false  );
+      
+      // If not, try to get one from the classname
+      if ( pixmap.isNull() || ( pixmap.width() != 48 ) || ( pixmap.height() != 48 ) ) {
+	pixmap = KGlobal::iconLoader()->loadIcon( className(),
+						  KIcon::NoGroup,
+						  KIcon::SizeLarge,
+						  KIcon::DefaultState,
+						  0L,
+						  true );
+	isStaticIcon = true;
+      }
+      
+      // If we still don't have an icon then scale the one in the hints
+      if ( pixmap.isNull() || ( pixmap.width() != 48 ) || ( pixmap.height() != 48 ) ) {
+	pixmap = icon( 48, 48, true  );
+	isStaticIcon = false;
+      }
+
+      // Icon of last resort
+      if( pixmap.isNull() ) {
+	pixmap = KGlobal::iconLoader()->loadIcon( "go",
+						  KIcon::NoGroup,
+						  KIcon::SizeLarge );
+	isStaticIcon = true;
+      }
+    }
+  }
+
+  return pixmap;
+}
+
 void Task::maximize()
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);

@@ -54,9 +54,26 @@ public:
     QValueList<WId> transients() { return _transients; }
 
     /**
-     * Returns a 16x16 (KIcon::Small) icon for the task.
+     * Returns a 16x16 (KIcon::Small) icon for the task. This method will
+     * only fall back to a static icon if there is no icon of any size in
+     * the WM hints.
      */
     QPixmap pixmap() { return _pixmap; }
+
+    /**
+     * Returns the best icon for any of the KIcon::StdSizes. If there is no
+     * icon of the specified size specified in the WM hints, it will try to
+     * get one using KIconLoader.
+     *
+     * <pre>
+     *   bool gotStaticIcon;
+     *   QPixmap icon = myTask->icon( KIcon::SizeMedium, gotStaticIcon );
+     * </pre>
+     *
+     * @param size Any of the constants in KIcon::StdSizes.
+     * @param isStaticIcon Set to true if KIconLoader was used, false otherwise.
+     */
+    QPixmap bestIcon( int size, bool &isStaticIcon );
 
     /**
      * Tries to find an icon for the task with the specified size. If there
