@@ -39,14 +39,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.moc"
 
 template class QPtrList<Task>;
-KWinModule* kwin_module = 0;
+
+// Hack: create a global KWinModule without a parent. We
+// can't make it a child of TaskManager because more than one
+// TaskManager might be created. We can't make it a class
+// variable without changing Task, which also uses it.
+// So, we'll leak a little memory, but it's better than crashing.
+// The real problem is that KWinModule should be a singleton.
+KWinModule* kwin_module = new KWinModule();
 
 TaskManager::TaskManager(QObject *parent, const char *name)
     : QObject(parent, name), _active(0), _startup_info( NULL )
 {
-    // create and connect kwin module
-    kwin_module = new KWinModule(this);
-
     connect(kwin_module, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
     connect(kwin_module, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
     connect(kwin_module, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
