@@ -47,6 +47,16 @@
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
 
+#ifdef HAVE_DPMS
+extern "C" {
+#include <X11/Xmd.h>
+#ifndef Bool
+#define Bool BOOL
+#endif
+#include <X11/extensions/dpms.h>
+}
+#endif
+
 #define LOCK_GRACE_DEFAULT          5000
 
 static Window gVRoot = 0;
@@ -111,7 +121,12 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
 
-    connect(&suspendTimer, SIGNAL( timeout()), SLOT( suspend()));
+    connect(&suspendTimer, SIGNAL(timeout()), SLOT(suspend()));
+
+#ifdef HAVE_DPMS
+    connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
+    mCheckDPMS.start(60000);
+#endif
 
     QStringList dmopt =
         QStringList::split( QChar( ',' ),
@@ -784,5 +799,18 @@ void LockProcess::stayOnTop()
 void LockProcess::startNewSession()
 {
     xdmFifoCmd("reserve\n");
+}
+
+void LockProcess::checkDPMSActive()
+{
+#ifdef HAVE_DPMS
+    BOOL on;
+    CARD16 state;
+    DPMSInfo( qt_xdisplay(), &state, &on);
+    if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
+    {
+       suspend();
+    }
+#endif
 }
 

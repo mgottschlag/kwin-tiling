@@ -50,6 +50,7 @@ private slots:
     void actuallySetLock();
     void suspend();
     void resume();
+    void checkDPMSActive();
 
 private:
     void configure();
@@ -92,6 +93,7 @@ private:
     QTimer      suspendTimer;
     bool        mVisibility;
     QWidget*    mActiveDialog;
+    QTimer      mCheckDPMS;
 };
 
 #endif
