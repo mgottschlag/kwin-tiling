@@ -171,6 +171,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     if ( !maysd ) {
         QHBoxLayout* hbox = new QHBoxLayout( vbox );
+        hbox->addStretch();
 
         // logout
         KPushButton* btnLogout = new KPushButton( i18n("&Logout"), frame );
