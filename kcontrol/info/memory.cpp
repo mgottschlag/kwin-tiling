@@ -327,7 +327,7 @@ void KMemoryWidget::update()
 {
     Memory_Info[TOTAL_MEM]    = NO_MEMORY_INFO; // total physical memory (without swaps)
     Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;	// total free physical memory (without swaps)
-#if !define(__svr4__) || !defined(sun)
+#if !defined(__svr4__) || !defined(sun)
 #ifndef __NetBSD__
     Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 
     Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO; 
