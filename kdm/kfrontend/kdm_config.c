@@ -618,12 +618,13 @@ Debug ("parsing config ...\n");
 		    goto secfnd;
 		}
 	    if (nstr[0] == 'X' && nstr[1] == '-') {
-		for (dstr = nstr + 2, dlen = 0; ; dlen++) {
-		    if (dlen + 2 >= nlen)
-			goto illsec;
-		    if (dstr[dlen] == '-')
-			break;
-		}
+		cstr = nstr + nlen;
+		clen = 0;
+		while (++clen, *--cstr != '-');
+		if (cstr == nstr + 1)
+		    goto illsec;
+		dstr = nstr + 2;
+		dlen = nlen - clen - 2;
 		dhost = dstr;
 		dhostl = 0;
 		for (restl = dlen; restl; restl--) {
@@ -647,9 +648,7 @@ Debug ("parsing config ...\n");
 	      gotnum:
 		dclass = "*";
 		dclassl = 1;
-	      gotall:
-		cstr = dstr + dlen;
-		clen = nlen - dlen - 2;
+	      gotall: ;
 	    } else {
 		if (nstr[0] == '-')
 		    goto illsec;
