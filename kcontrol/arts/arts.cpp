@@ -76,11 +76,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_arts, KArtsModuleFactory( "kcmarts" ) );
  *
  * # artsd -A
  * possible choices for the audio i/o method:
- * 
+ *
  *   null      No audio input/output
  *   alsa      Advanced Linux Sound Architecture
  *   oss       Open Sound System
- * 
+ *
  */
 void KArtsModule::initAudioIOList()
 {
@@ -235,7 +235,7 @@ void KArtsModule::GetSettings( void )
 			artsConfig->audioIO->setCurrentItem(audioIOList.at() + 1);
 			break;
 		  }
-		
+
 	}
 
 	updateWidgets();
@@ -243,6 +243,8 @@ void KArtsModule::GetSettings( void )
 
 KArtsModule::~KArtsModule() {
         delete config;
+        audioIOList.setAutoDelete(true);
+        audioIOList.clear();
 }
 
 void KArtsModule::saveParams( void )
@@ -343,7 +345,7 @@ void KArtsModule::save()
     } else {
         dialogText = i18n("Shut down sound-server now?\nThis might confuse or even crash applications\nusing the sound server.");
     }
-        
+
 	if(KMessageBox::warningYesNo(this,
                      dialogText,
 				     i18n("Restart sound server now?")) == KMessageBox::Yes)
@@ -401,13 +403,13 @@ QString KArtsModule::quickHelp() const
 
 const KAboutData* KArtsModule::aboutData() const
 {
-   KAboutData *about =  
+   KAboutData *about =
    new KAboutData(I18N_NOOP("kcmarts"), I18N_NOOP("The Sound Server Control Module"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1999 - 2001 Stefan Westerfeld"));
- 
+
    about->addAuthor("Stefan Westerfeld",I18N_NOOP("aRts Author") , "stw@kde.org");
- 
+
    return about;
 }
 
