@@ -584,25 +584,35 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
 
 void Task::maximize()
 {
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    KWin::WindowInfo info = KWin::windowInfo( _win, NET::WMState | NET::XAWMState | NET::WMDesktop );
+    bool on_current = info.isOnCurrentDesktop();
+    if( !on_current )
+        KWin::setCurrentDesktop( info.desktop());
+    if( info.isMinimized())
+        KWin::deIconifyWindow( _win );
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
     ni.setState( NET::Max, NET::Max );
-
-    if (isIconified())
-        activate();
+    if( !on_current )
+        KWin::setActiveWindow( _win );
 }
 
 void Task::restore()
 {
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    KWin::WindowInfo info = KWin::windowInfo( _win, NET::WMState | NET::XAWMState | NET::WMDesktop );
+    bool on_current = info.isOnCurrentDesktop();
+    if( !on_current )
+        KWin::setCurrentDesktop( info.desktop());
+    if( info.isMinimized())
+        KWin::deIconifyWindow( _win );
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
     ni.setState( 0, NET::Max );
-
-    if (isIconified())
-        activate();
+    if( !on_current )
+        KWin::setActiveWindow( _win );
 }
 
 void Task::iconify()
 {
-    XIconifyWindow( qt_xdisplay(), _win, qt_xscreen() );
+    KWin::iconifyWindow( _win );
 }
 
 void Task::close()
