@@ -119,6 +119,8 @@ Action_listview_item::Action_listview_item( QListView* parent_P, QListViewItem* 
     Action_data_base* data_P )
     : QListViewItem( parent_P, after_P ), _data( data_P )
     {
+    if( dynamic_cast< Action_data_group* >( data_P ))
+        setExpandable( true );
     }
 
 inline
@@ -126,6 +128,8 @@ Action_listview_item::Action_listview_item( QListViewItem* parent_P, QListViewIt
     Action_data_base* data_P )
     : QListViewItem( parent_P, after_P ), _data( data_P )
     {
+    if( dynamic_cast< Action_data_group* >( data_P ))
+        setExpandable( true );
     }
 
 inline
