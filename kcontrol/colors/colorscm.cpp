@@ -900,7 +900,9 @@ int KColorScheme::findSchemeByName(const QString &scheme)
 
    for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
    {
-      if (entry->path.endsWith(search))
+      KURL url;
+      url.setPath(entry->path);
+      if (url.fileName() == search)
          return i+nSysSchemes;
       i++;
    }
