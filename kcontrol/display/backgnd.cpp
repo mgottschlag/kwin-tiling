@@ -41,6 +41,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
+#include <kdebug.h>
 #include <kcolorbtn.h>
 #include <klocale.h>
 #include <kmessagebox.h>
