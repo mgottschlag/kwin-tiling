@@ -83,7 +83,6 @@ ParseDisplay (char *source)
 	return;
     if (!args[0])
     {
-	LogError ("Missing display name in servers file\n");
 	freeStrArr (args);
 	return;
     }
