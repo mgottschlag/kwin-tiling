@@ -75,7 +75,6 @@ static QListViewItem* XServer_fill_screen_info( QListView *lBox, QListViewItem* 
     int i;
     double xres, yres;
     int ndepths = 0, *depths = 0;
-    QString txt,txt2;
     
     xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr) * 25.4) / DisplayHeightMM(dpy,scr));
@@ -83,22 +82,21 @@ static QListViewItem* XServer_fill_screen_info( QListView *lBox, QListViewItem* 
     QListViewItem* item;
     item = new QListViewItem(lBox, last, i18n("Screen # %1").arg((int)scr,-1) );
     
-    txt2 = i18n("%1 x %2 Pixel (%3 x %4 mm)")
+    last = new QListViewItem(item, i18n("Dimensions"),
+		i18n("%1 x %2 Pixel (%3 x %4 mm)")
 		.arg( (int)DisplayWidth(dpy,scr) )
 		.arg( (int)DisplayHeight(dpy,scr) )
 		.arg( (int)DisplayWidthMM(dpy,scr) )
-		.arg( (int)DisplayHeightMM (dpy,scr) );
+		.arg( (int)DisplayHeightMM (dpy,scr) ));
     
-    last = new QListViewItem(item, i18n("Dimensions"), txt2);
-    
-    txt2 = i18n("%1 x %2 dpi")
+    last = new QListViewItem(item, last, i18n("Resolution"), 
+		i18n("%1 x %2 dpi")
 		.arg( (int)(xres+0.5) )
-		.arg( (int)(yres+0.5) );
-    last = new QListViewItem(item, last, i18n("Resolution"), txt2 );
+		.arg( (int)(yres+0.5) ));
     
     depths = XListDepths (dpy, scr, &ndepths);
     if (depths) {
-        txt =  "";
+	QString txt;
     
         for (i = 0; i < ndepths; i++) {	
             txt = txt + Value(depths[i]);
@@ -177,8 +175,8 @@ void KInfoListWidget::defaultSettings()
     lBox  = new QListView(this);
 
     if (lBox) {
+	lBox->setFont(KGlobal::generalFont()); // default font
         lBox->setAllColumnsShowFocus(true);
-        
         setMinimumSize( 200,6*SCREEN_XY_OFFSET );
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
                           width() -2*SCREEN_XY_OFFSET,
