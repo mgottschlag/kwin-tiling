@@ -117,7 +117,9 @@ int main(int argc, char *argv[])
   }
 
   // find the xscreensaver executable
-  QString exeFile = KStandardDirs::findExe(filename);
+  QString exeFile = filename;
+  if (filename.left(1) != "/")
+    exeFile = KStandardDirs::findExe(filename);
 
   if (!exeFile.isEmpty())
   {
