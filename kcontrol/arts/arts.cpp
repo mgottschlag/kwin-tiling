@@ -41,6 +41,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>
+#include <kdialog.h>
 
 #include <kparts/componentfactory.h>
 #include "midi.h"
@@ -182,15 +183,20 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	initAudioIOList();
 
-	QVBoxLayout *layout = new QVBoxLayout(this);
+	QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 	QTabWidget *tab = new QTabWidget(this);
 	layout->addWidget(tab);
-	layout->setMargin(0);
 
 	general = new ArtsGeneral(tab);
 	soundIO = new ArtsSoundIO(tab);
 	mixer = loadModule(tab, "kmixcfg");
 	midi = new KMidConfig(tab, "kmidconfig");
+
+	general->layout()->setMargin( KDialog::marginHint() );
+	soundIO->layout()->setMargin( KDialog::marginHint() );
+    if ( mixer )
+		mixer->layout()->setMargin( KDialog::marginHint() );
+	midi->layout()->setMargin( KDialog::marginHint() );
 
 	tab->addTab(general, i18n("&aRTs"));
 	tab->addTab(soundIO, i18n("&Sound I/O"));
@@ -232,7 +238,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	config = new KConfig("kcmartsrc");
 	GetSettings();
 
-	suspendTime->setRange( 0, 999, 1, true );
+    suspendTime->setRange( 0, 999, 1, true );
 
 	connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
 	connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
@@ -399,7 +405,7 @@ void KArtsModule::save() {
 		configChanged = false;
 		saveParams();
 		restartServer();
-                updateWidgets();
+		updateWidgets();
 	}
 	if (mixer)
 		mixer->save();
@@ -550,7 +556,8 @@ QString KArtsModule::quickHelp() const
 const KAboutData* KArtsModule::aboutData() const
 {
    KAboutData *about =
-   new KAboutData(I18N_NOOP("kcmarts"), I18N_NOOP("The Sound Server Control Module"),
+   new KAboutData(I18N_NOOP("kcmarts"), 
+                  I18N_NOOP("The Sound Server Control Module"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1999 - 2001, Stefan Westerfeld"));
 
@@ -761,7 +768,7 @@ QString KArtsModule::createArgs(bool netTrans,
 	if (bits)
 		args += QString::fromLatin1(" -b %1").arg(bits);
 
-	if (autoSuspend)
+	if (autoSuspend && suspendTime)
 		args += QString::fromLatin1(" -s %1").arg(suspendTime);
 
 	if (!messageApplication.isEmpty())

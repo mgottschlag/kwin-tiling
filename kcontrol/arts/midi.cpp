@@ -26,6 +26,7 @@
 #include <kurlrequester.h>
 #include <kgenericfactory.h>
 #include <klineedit.h>
+#include <kdialog.h>
 #include "midi.h"
 
 extern "C"
@@ -45,7 +46,7 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name)
 
 void KMidConfig::init()
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this,5);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   label=new QLabel(i18n("Select the MIDI device you want to use:"),this);
 //  label->adjustSize();
@@ -72,7 +73,7 @@ void KMidConfig::init()
 
   maprequester=new KURLRequester(this,"maprequester");
 
-  connect(maprequester->lineEdit(),SIGNAL(textChanged ( const QString & )),this,SLOT(configChanged()));
+  connect(maprequester,SIGNAL(textChanged( const QString & )),SLOT(configChanged()));
 
   topLayout->addWidget(label);
   topLayout->addWidget(mididevices);

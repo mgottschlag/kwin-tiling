@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ArtsSoundIO</class>
 <widget class="QWidget">
     <property name="name">
@@ -12,6 +12,9 @@
             <height>433</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>ArtsSoundIO</string>
+    </property>
     <property name="layoutMargin" stdset="0">
     </property>
     <property name="layoutSpacing" stdset="0">
@@ -21,7 +24,7 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>11</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
@@ -229,7 +232,7 @@
             </property>
         </widget>
         <spacer row="8" column="2">
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer6</cstring>
             </property>
             <property name="orientation">
@@ -261,6 +264,8 @@
 </tabstops>
 <includes>
     <include location="global" impldecl="in declaration">knuminput.h</include>
+    <include location="global" impldecl="in implementation">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
+<layoutfunctions spacing="KDialog::spacingHint"/>
 </UI>
