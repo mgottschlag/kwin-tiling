@@ -28,7 +28,7 @@ extern "C" {
 #ifdef index
 #undef index
 #undef rindex
-#endif   
+#endif
 #include <X11/Xfuncs.h>
 #include <X11/Xmd.h>
 #include <X11/Xauth.h>
@@ -37,8 +37,15 @@ extern "C" {
 #include <X11/Xatom.h>
 }
 
-extern "C" {
+// this macro is only defined in XFree < 4.0
+#ifdef XIMStringConversionRetrival
 #include "dm.h"
+#endif
+
+extern "C" {
+#ifndef XIMStringConversionRetrival
+#include "dm.h"
+#endif
 #include    <X11/Xdmcp.h>
 }
 
@@ -80,8 +87,9 @@ extern int XdmcpReadARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpReadHeader(XdmcpBuffer *, XdmcpHeader *);
 extern int XdmcpWriteARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpWriteARRAYofARRAY8(XdmcpBuffer *, ARRAYofARRAY8 *);
-  /*extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);*/
-  extern int XdmcpWriteCARD16(/*XdmcpBuffer *, CARD16*/);
+#ifdef XIMStringConversionRetrival
+extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
+#endif
 extern int XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
 }
 
@@ -156,7 +164,7 @@ private:
 
   int ifioctl (int fd, int cmd, char *arg);
   void rebuildTable (int size);
-  int addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status, 
+  int addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
 		   struct sockaddr *addr, int willing);
 
   void disposeHostname (HostName *host);
@@ -170,23 +178,23 @@ private:
    int read_size;
    void read_cb(nbio_ref_t ref, int res, int err);
 #endif
-  
+
    int fromHex (char *s, char *d, int len);
-  
-  
+
+
   struct _app_resources app_resources;
-      
-  
+
+
   typedef struct _hostAddr {
     struct _hostAddr	*next;
     struct sockaddr	*addr;
     int			addrlen;
     xdmOpCode		type;
   } HostAddr;
-  
-   HostAddr    *hostAddrdb;    
+
+   HostAddr    *hostAddrdb;
    HostName    *hostNamedb;
-      
+
    XdmcpBuffer	directBuffer, broadcastBuffer;
    XdmcpBuffer	buffer;
 };
