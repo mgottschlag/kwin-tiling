@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _TRIGGERS_TAB_CPP_
@@ -50,10 +50,13 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     popup->insertItem( i18n( "Gesture Trigger..." ), TYPE_GESTURE_TRIGGER );
     popup->insertItem( i18n( "Window Trigger..." ), TYPE_WINDOW_TRIGGER );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
+    connect( triggers_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+             this, SLOT( modify_pressed() ) );
+
     new_button->setPopup( popup );
-    copy_button->setEnabled( false );    
-    modify_button->setEnabled( false );    
-    delete_button->setEnabled( false );    
+    copy_button->setEnabled( false );
+    modify_button->setEnabled( false );
+    delete_button->setEnabled( false );
     triggers_listview->header()->hide();
     triggers_listview->addColumn( "" );
     triggers_listview->setSorting( -1 );
@@ -76,13 +79,13 @@ Triggers_tab::~Triggers_tab()
     {
     delete new_button->popup(); // CHECKME
     }
-        
+
 void Triggers_tab::clear_data()
     {
     comment_lineedit->setText( "" );
     triggers_listview->clear();
     }
-    
+
 void Triggers_tab::set_data( const Trigger_list* data_P )
     {
     comment_lineedit->setText( data_P->comment());
@@ -93,7 +96,7 @@ void Triggers_tab::set_data( const Trigger_list* data_P )
          ++it )
         after = create_listview_item( *it, triggers_listview, after, true );
     }
-    
+
 Trigger_list* Triggers_tab::get_data( Action_data* data_P ) const
     {
     Trigger_list* list = new Trigger_list( comment_lineedit->text());
@@ -131,18 +134,18 @@ void Triggers_tab::new_selected( int type_P )
         delete dlg;
         }
     }
-    
+
 void Triggers_tab::copy_pressed()
     {
     triggers_listview->setSelected( create_listview_item( selected_item->trigger(),
         triggers_listview, selected_item, true ), true );
     }
-    
+
 void Triggers_tab::delete_pressed()
     {
     delete selected_item; // CHECKME snad vyvola signaly pro enable()
     }
-    
+
 void Triggers_tab::modify_pressed()
     {
     edit_listview_item( selected_item );
@@ -186,14 +189,14 @@ void Triggers_tab::edit_listview_item( Trigger_list_item* item_P )
         item_P->set_trigger( new_trigger );
     delete dlg;
     }
-    
+
 // Trigger_list_item
 
 QString Trigger_list_item::text( int column_P ) const
     {
     return column_P == 0 ? trigger()->description() : QString::null;
     }
-    
+
 // Shortcut_trigger_widget
 
 Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char* )
@@ -216,14 +219,14 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
 void Shortcut_trigger_widget::clear_data()
     {
     bt->setShortcut( 0, false );
-    }    
-    
+    }
+
 void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
     {
     // CHECKME some checks?
     bt->setShortcut( s_P, false );
-    }    
-    
+    }
+
 void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
     {
     bt->setShortcut( data_P->keycode(), false );
@@ -251,13 +254,13 @@ Trigger* Shortcut_trigger_dialog::edit_trigger()
     exec();
     return trigger;
     }
-    
+
 void Shortcut_trigger_dialog::accept()
     {
     KDialogBase::accept();
     trigger = widget->get_data( NULL ); // CHECKME NULL ?
     }
-    
+
 // Window_trigger_dialog
 
 Window_trigger_dialog::Window_trigger_dialog( Window_trigger* trigger_P )
@@ -274,7 +277,7 @@ Trigger* Window_trigger_dialog::edit_trigger()
     exec();
     return trigger;
     }
-    
+
 void Window_trigger_dialog::accept()
     {
     KDialogBase::accept();
@@ -289,10 +292,10 @@ Gesture_trigger_dialog::Gesture_trigger_dialog( Gesture_trigger* trigger_P )
     {
     _page = new GestureRecordPage( _trigger->gesturecode(),
                                   this, "GestureRecordPage");
-   
+
     connect(_page, SIGNAL(readyForNext(bool)),
             this, SLOT(enableButtonOK(bool)));
-   
+
     setMainWidget( _page );
     }
 
@@ -303,7 +306,7 @@ Trigger* Gesture_trigger_dialog::edit_trigger()
     else
         return NULL;
     }
-    
+
 
 } // namespace KHotKeys
 

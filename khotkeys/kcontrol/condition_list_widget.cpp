@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _CONDITIONS_LIST_WIDGET_CPP_
@@ -49,6 +49,9 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     popup->insertItem( i18n( "Not_condition", "Not" ), TYPE_NOT );
     popup->insertItem( i18n( "And_condition", "And" ), TYPE_AND );
     popup->insertItem( i18n( "Or_condition", "Or" ), TYPE_OR );
+    connect( conditions_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+             this, SLOT( modify_pressed() ) );
+
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
     new_button->setPopup( popup );
     conditions_listview->header()->hide();
@@ -56,9 +59,9 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     conditions_listview->setSorting( -1 );
     conditions_listview->setRootIsDecorated( true ); // CHECKME
     conditions_listview->setForceSelect( true );
-    copy_button->setEnabled( false );    
-    modify_button->setEnabled( false );    
-    delete_button->setEnabled( false );    
+    copy_button->setEnabled( false );
+    modify_button->setEnabled( false );
+    delete_button->setEnabled( false );
     clear_data();
     // KHotKeys::Module::changed()
     connect( new_button, SIGNAL( clicked()),
@@ -72,7 +75,7 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     connect( comment_lineedit, SIGNAL( textChanged( const QString& )),
         module, SLOT( changed()));
     }
-    
+
 Condition_list_widget::~Condition_list_widget()
     {
     delete new_button->popup();
@@ -84,7 +87,7 @@ void Condition_list_widget::clear_data()
     conditions_listview->clear();
     conditions.clear();
     }
-    
+
 void Condition_list_widget::set_data( const Condition_list* data_P )
     {
     comment_lineedit->setText( data_P->comment());
@@ -96,7 +99,7 @@ void Condition_list_widget::set_data( const Condition_list* data_P )
     Condition::debug_list( conditions );
 #endif
     }
-    
+
 void Condition_list_widget::insert_listview_items( const Condition_list_base* parent_P,
     QListView* parent1_P, Condition_list_item* parent2_P )
     {
@@ -110,7 +113,7 @@ void Condition_list_widget::insert_listview_items( const Condition_list_base* pa
             insert_listview_items( group, NULL, prev );
         }
     }
-    
+
 Condition_list* Condition_list_widget::get_data( Action_data_base* data_P ) const
     {
 #ifdef KHOTKEYS_DEBUG
@@ -202,7 +205,7 @@ void Condition_list_widget::new_selected( int type_P )
                 conditions_listview, NULL, selected_item, false ), true );
         }
     }
-    
+
 void Condition_list_widget::copy_pressed()
     {
     conditions_listview->setSelected( create_listview_item(
@@ -211,18 +214,18 @@ void Condition_list_widget::copy_pressed()
         static_cast< Condition_list_item* >( selected_item->parent()),
         selected_item, true ), true );
     }
-    
+
 void Condition_list_widget::delete_pressed()
     {
     conditions.remove( selected_item->condition()); // we own it
     delete selected_item; // CHECKME snad vyvola signaly pro enable()
     }
-    
+
 void Condition_list_widget::modify_pressed()
     {
     edit_listview_item( selected_item );
     }
-    
+
 void Condition_list_widget::current_changed( QListViewItem* item_P )
     {
 //    if( item_P == selected_item )
@@ -305,10 +308,10 @@ QString Condition_list_item::text( int column_P ) const
     {
     return column_P == 0 ? condition()->description() : QString::null;
     }
-    
+
 // Active_window_condition_dialog
 
-Active_window_condition_dialog::Active_window_condition_dialog( 
+Active_window_condition_dialog::Active_window_condition_dialog(
     Active_window_condition* condition_P )
     : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
     {
@@ -316,22 +319,22 @@ Active_window_condition_dialog::Active_window_condition_dialog(
     widget->set_data( condition_P->window());
     setMainWidget( widget );
     }
-    
+
 Condition* Active_window_condition_dialog::edit_condition()
     {
     exec();
     return condition;
     }
-    
+
 void Active_window_condition_dialog::accept()
     {
     KDialogBase::accept();
     condition = new Active_window_condition( widget->get_data(), NULL ); // CHECKME NULL ?
     }
-    
+
 // Existing_window_condition_dialog
 
-Existing_window_condition_dialog::Existing_window_condition_dialog( 
+Existing_window_condition_dialog::Existing_window_condition_dialog(
     Existing_window_condition* condition_P )
     : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
     {
@@ -339,19 +342,19 @@ Existing_window_condition_dialog::Existing_window_condition_dialog(
     widget->set_data( condition_P->window());
     setMainWidget( widget );
     }
-    
+
 Condition* Existing_window_condition_dialog::edit_condition()
     {
     exec();
     return condition;
     }
-    
+
 void Existing_window_condition_dialog::accept()
     {
     KDialogBase::accept();
     condition = new Existing_window_condition( widget->get_data(), NULL ); // CHECKME NULL ?
     }
-    
+
 } // namespace KHotKeys
 
 #include "condition_list_widget.moc"

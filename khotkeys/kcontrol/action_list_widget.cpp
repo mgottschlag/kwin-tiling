@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _ACTION_LIST_WIDGET_CPP_
@@ -54,10 +54,13 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     actions_listview->addColumn( "" );
     actions_listview->setSorting( -1 );
     actions_listview->setForceSelect( true );
-    copy_button->setEnabled( false );    
-    modify_button->setEnabled( false );    
-    delete_button->setEnabled( false );    
+    copy_button->setEnabled( false );
+    modify_button->setEnabled( false );
+    delete_button->setEnabled( false );
     clear_data();
+    connect( actions_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+             this, SLOT( modify_pressed() ) );
+
     // KHotKeys::Module::changed()
     connect( new_button, SIGNAL( clicked()),
         module, SLOT( changed()));
@@ -70,7 +73,7 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     connect( comment_lineedit, SIGNAL( textChanged( const QString& )),
         module, SLOT( changed()));
     }
-    
+
 Action_list_widget::~Action_list_widget()
     {
     delete new_button->popup();
@@ -81,7 +84,7 @@ void Action_list_widget::clear_data()
     comment_lineedit->setText( "" );
     actions_listview->clear();
     }
-    
+
 void Action_list_widget::set_data( const Action_list* data_P )
     {
     comment_lineedit->setText( data_P->comment());
@@ -92,7 +95,7 @@ void Action_list_widget::set_data( const Action_list* data_P )
          ++it )
         after = create_listview_item( *it, actions_listview, NULL, after, true );
     }
-    
+
 Action_list* Action_list_widget::get_data( Action_data* data_P ) const
     {
 // CHECKME TODO hmm, tady to bude chtit asi i children :(
@@ -142,24 +145,24 @@ void Action_list_widget::new_selected( int type_P )
         delete dlg;
         }
     }
-    
+
 void Action_list_widget::copy_pressed()
     {
     actions_listview->setSelected( create_listview_item( selected_item->action(),
         selected_item->parent() ? NULL : actions_listview, selected_item->parent(),
         selected_item, true ), true );
     }
-    
+
 void Action_list_widget::delete_pressed()
     {
     delete selected_item; // CHECKME snad vyvola signaly pro enable()
     }
-    
+
 void Action_list_widget::modify_pressed()
     {
     edit_listview_item( selected_item );
     }
-    
+
 void Action_list_widget::current_changed( QListViewItem* item_P )
     {
 //    if( item_P == selected_item )
@@ -225,7 +228,7 @@ QString Action_list_item::text( int column_P ) const
     {
     return column_P == 0 ? action()->description() : QString::null;
     }
-    
+
 Action_list_item::~Action_list_item()
     {
     delete _action;
@@ -240,19 +243,19 @@ Command_url_action_dialog::Command_url_action_dialog( Command_url_action* action
     widget->set_data( action_P );
     setMainWidget( widget );
     }
-    
+
 Action* Command_url_action_dialog::edit_action()
     {
     exec();
     return action;
     }
-    
+
 void Command_url_action_dialog::accept()
     {
     KDialogBase::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
-    
+
 // Menuentry_action_dialog
 
 Menuentry_action_dialog::Menuentry_action_dialog( Menuentry_action* action_P )
@@ -262,19 +265,19 @@ Menuentry_action_dialog::Menuentry_action_dialog( Menuentry_action* action_P )
     widget->set_data( action_P );
     setMainWidget( widget );
     }
-    
+
 Action* Menuentry_action_dialog::edit_action()
     {
     exec();
     return action;
     }
-    
+
 void Menuentry_action_dialog::accept()
     {
     KDialogBase::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
-    
+
 // Dcop_action_dialog
 
 Dcop_action_dialog::Dcop_action_dialog( Dcop_action* action_P )
@@ -284,19 +287,19 @@ Dcop_action_dialog::Dcop_action_dialog( Dcop_action* action_P )
     widget->set_data( action_P );
     setMainWidget( widget );
     }
-    
+
 Action* Dcop_action_dialog::edit_action()
     {
     exec();
     return action;
     }
-    
+
 void Dcop_action_dialog::accept()
     {
     KDialogBase::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
-    
+
 // Keyboard_input_action_dialog
 
 Keyboard_input_action_dialog::Keyboard_input_action_dialog( Keyboard_input_action* action_P )
@@ -306,19 +309,19 @@ Keyboard_input_action_dialog::Keyboard_input_action_dialog( Keyboard_input_actio
     widget->set_data( action_P );
     setMainWidget( widget );
     }
-    
+
 Action* Keyboard_input_action_dialog::edit_action()
     {
     exec();
     return action;
     }
-    
+
 void Keyboard_input_action_dialog::accept()
     {
     KDialogBase::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
-    
+
 // Activate_window_action_dialog
 
 Activate_window_action_dialog::Activate_window_action_dialog( Activate_window_action* action_P )
@@ -328,19 +331,19 @@ Activate_window_action_dialog::Activate_window_action_dialog( Activate_window_ac
     widget->set_data( action_P->window());
     setMainWidget( widget );
     }
-    
+
 Action* Activate_window_action_dialog::edit_action()
     {
     exec();
     return action;
     }
-    
+
 void Activate_window_action_dialog::accept()
     {
     KDialogBase::accept();
     action = new Activate_window_action( NULL, widget->get_data()); // CHECKME NULL ?
     }
-    
+
 } // namespace KHotKeys
 
 #include "action_list_widget.moc"
