@@ -12,14 +12,13 @@ main(int argc, char *argv[])
    KApplication a;
    KSMShutdownFeedback::start();
 
-   bool saveSession;
    KApplication::ShutdownType sdtype = KApplication::ShutdownTypeNone;
    KApplication::ShutdownMode sdmode = KApplication::ShutdownModeSchedule;
-   (void)KSMShutdownDlg::confirmShutdown( saveSession, false, false,
+   (void)KSMShutdownDlg::confirmShutdown( false, false,
                                           sdtype, sdmode );
-   (void)KSMShutdownDlg::confirmShutdown( saveSession, true, false,
+   (void)KSMShutdownDlg::confirmShutdown( true, false,
                                           sdtype, sdmode );
-   (void)KSMShutdownDlg::confirmShutdown( saveSession, true, true,
+   (void)KSMShutdownDlg::confirmShutdown( true, true,
                                           sdtype, sdmode );
 
    KSMShutdownFeedback::stop();
