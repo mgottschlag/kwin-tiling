@@ -99,7 +99,7 @@ this signal to keep track about unsaved changes in certain modules.
 How to make a module available?
 -------------------------------
 
-Ok, not that you have implemented your class with the module, you
+Ok, now that you have implemented your class with the module, you
 must make sure it can be accessed from the control center. For
 this purpose, you have to use a function that is exported from
 the library:
@@ -215,7 +215,7 @@ There are a number of additional things for convenience.
 
 Consider you want to run a module standalone, without the control
 center. You can no longer call the module, as it is a library
-now. Instead, call "kcmroot module". For example, to get the
+now. Instead, call "kcmshell module". For example, to get the
 font and the desktop color settings, use
 
   kcmshell Desktop/fonts Desktop/colors
