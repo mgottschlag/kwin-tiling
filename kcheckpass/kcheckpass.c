@@ -181,7 +181,7 @@ GSendArr (int len, const char *buf)
 }
 
 static int
-GRecvInt ()
+GRecvInt (void)
 {
     int val;
 
@@ -190,7 +190,7 @@ GRecvInt ()
 }
 
 static char *
-GRecvStr ()
+GRecvStr (void)
 {
     int len;
     char *buf;
@@ -207,7 +207,7 @@ GRecvStr ()
 }
 
 static char *
-GRecvArr ()
+GRecvArr (void)
 {
     int len;
     char *arr;
@@ -233,7 +233,7 @@ conv_server (ConvRequest what, const char *prompt)
 	unsigned const char *up = (unsigned const char *)prompt;
 	int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
 	GSendArr (len, prompt);
-	return GRecvArr (&len);
+	return GRecvArr ();
       }
     case ConvGetNormal:
     case ConvGetHidden:
