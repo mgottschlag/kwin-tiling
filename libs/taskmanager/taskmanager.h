@@ -78,9 +78,15 @@ public:
     TaskManager* taskManager() const { return (TaskManager*) parent(); }
 
     WId window() const { return _win; }
+#if 0 // this would use (_NET_)WM_ICON_NAME, which is shorter, but can be different from window name
     QString visibleIconicName() const { return _info.visibleIconName(); }
     QString visibleIconicNameWithState() const { return _info.visibleIconNameWithState(); }
     QString iconicName() const { return _info.iconName(); }
+#else
+    QString visibleIconicName() const { return _info.visibleName(); }
+    QString visibleIconicNameWithState() const { return _info.visibleNameWithState(); }
+    QString iconicName() const { return _info.name(); }
+#endif
     QString visibleName() const { return _info.visibleName(); }
     QString visibleNameWithState() const { return _info.visibleNameWithState(); }
     QString name() const { return _info.name(); }
