@@ -1,0 +1,22 @@
+[Color Scheme]
+Name=Plastik
+activeBackground=107,145,184
+activeBlend=107,145,184
+activeForeground=255,255,255
+activeTitleBtnBg=127,158,200
+alternateBackground=255,255,255
+background=239,239,239
+buttonBackground=225,227,232
+buttonForeground=0,0,0
+contrast=7
+foreground=0,0,0
+inactiveBackground=157,170,186
+inactiveBlend=157,170,186
+inactiveForeground=221,221,221
+inactiveTitleBtnBg=167,181,199
+linkColor=10,95,137
+selectBackground=249,224,137
+selectForeground=0,0,0
+visitedLinkColor=137,10,137
+windowBackground=255,255,255
+windowForeground=0,0,0
