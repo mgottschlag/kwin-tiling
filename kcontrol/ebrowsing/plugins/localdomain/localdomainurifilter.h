@@ -21,6 +21,8 @@
 #ifndef _LOCALDOMAINURIFILTER_H_
 #define _LOCALDOMAINURIFILTER_H_
 
+#include <time.h>
+
 #include <dcopobject.h>
 #include <kgenericfactory.h>
 #include <kurifilter.h>

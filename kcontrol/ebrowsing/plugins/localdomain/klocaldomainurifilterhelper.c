@@ -20,6 +20,10 @@
 
 /* Helper for localdomainurifilter for finding out if a host exist */
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 #include <netdb.h>
 
 int main( int argc, char* argv[] )
