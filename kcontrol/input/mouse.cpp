@@ -45,6 +45,7 @@
 #include <klocale.h>
 #include <kdialog.h>
 #include <kconfig.h>
+#include <kipc.h>
 
 #include "mouse.h"
 
@@ -358,6 +359,7 @@ void MouseConfig::save()
 
   config->sync();
 
+  KIPC::sendMessageAll("KDEChangeSettings");
 
   delete config;
 }
