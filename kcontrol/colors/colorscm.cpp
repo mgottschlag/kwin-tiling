@@ -591,7 +591,7 @@ void KColorScheme::slotImport()
 	//kdDebug() << "Location: " << location << endl;
 	if (!KIO::NetAccess::file_copy(file, KURL( location+file.fileName( false ) ) ) )
 	{
-		KMessageBox::error(this, KIO::NetAccess::lastErrorString(),i18n("Import failed!"));
+		KMessageBox::error(this, KIO::NetAccess::lastErrorString(),i18n("Import failed."));
 		return;
 	}
 	else
