@@ -28,7 +28,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpopupmenu.h>
 #include "taskmanager.h"
 
-class TaskRMBMenu : public QPopupMenu
+#include <kdemacros.h>
+
+class KDE_EXPORT TaskRMBMenu : public QPopupMenu
 {
 	Q_OBJECT
 

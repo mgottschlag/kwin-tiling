@@ -37,6 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopobject.h>
 #include <kwin.h>
 #include <kstartupinfo.h>
+#include <kdemacros.h>
 
 class TaskManager;
 
@@ -46,7 +47,7 @@ class TaskManager;
  * @see TaskManager
  * @see KWinModule
  */
-class Task: public QObject
+class KDE_EXPORT Task: public QObject
 {
     Q_OBJECT
     Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
@@ -391,7 +392,7 @@ private:
  *
  * @see TaskManager
  */
-class Startup: public QObject
+class KDE_EXPORT Startup: public QObject
 {
     Q_OBJECT
     Q_PROPERTY( QString text READ text )
@@ -444,7 +445,7 @@ typedef QPtrList<Startup> StartupList;
  * @see Startup
  * @see KWinModule
  */
-class TaskManager : public QObject
+class KDE_EXPORT TaskManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY( int currentDesktop READ currentDesktop )
