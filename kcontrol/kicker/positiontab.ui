@@ -54,7 +54,7 @@
             </property>
             <property name="whatsThis" stdset="0">
                 <string>This group of settings determines how the panel is aligned, including
-how it's positioned on the screen and how much of the screen it should use.</string>
+how it is positioned on the screen and how much of the screen it should use.</string>
             </property>
             <vbox>
                 <property name="name">
@@ -147,7 +147,7 @@ how it's positioned on the screen and how much of the screen it should use.</str
                         <string>E&amp;xpand as required to fit contents</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>When this option is selected the panel will grow as necessary to accomodate the buttons and applets in it.</string>
+                        <string>When this option is selected, the panel will grow as necessary to accommodate the buttons and applets on it.</string>
                     </property>
                 </widget>
             </vbox>

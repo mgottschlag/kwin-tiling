@@ -106,7 +106,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>after the &amp;cursor leaves the panel</string>
+                        <string>After the &amp;cursor leaves the panel</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_delaySpinBox</cstring>
@@ -238,7 +238,7 @@
                         <string>&amp;Hide automatically</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>If this option is selected, the panel will automatically hide after some time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops."</string>
+                        <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops."</string>
                     </property>
                 </widget>
                 <widget class="KIntNumInput" row="2" column="1">
@@ -288,7 +288,7 @@
                 <string>Panel-Hiding Buttons</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>This option controls the panel-hiding buttons, which are little triangles found at the end of the panel.  You can place a button at either end of the panel, or both.  Clicking on one these buttons will hide the panel.</string>
+                <string>This option controls the panel-hiding buttons, which are buttons with a small triangle found at the ends of the panel. You can place a button at either end of the panel, or both. Clicking on one of these buttons will hide the panel.</string>
             </property>
             <grid>
                 <property name="name">

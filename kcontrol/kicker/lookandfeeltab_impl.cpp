@@ -158,7 +158,7 @@ void LookAndFeelTab::load()
     }
     else
     {
-        m_backgroundInput->lineEdit()->setText(i18n("pError loading theme image file. '%1' '%2'")
+        m_backgroundInput->lineEdit()->setText(i18n("Error loading theme image file. '%1' '%2'")
                                                                             .arg(theme).arg(themepath));
     }
   }
