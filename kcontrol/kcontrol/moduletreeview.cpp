@@ -179,7 +179,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 		  QPixmap icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"),
 														 KIconLoader::Small, 0, true);
 		  if(icon.isNull())
-			icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Small);
+			icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Small);
 
 		  iitem->setPixmap(0, icon);
 		  

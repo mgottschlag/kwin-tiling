@@ -150,7 +150,7 @@ void ProxyWidget::clientChanged(bool state)
     // int b = _client->buttons();
   _reset->setEnabled(state);
   _apply->setEnabled(state);
-  _ok->setEnabled(state);
+  //_ok->setEnabled(state);
 
   // forward the signal
   emit changed(state);
