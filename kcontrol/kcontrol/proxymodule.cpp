@@ -78,17 +78,14 @@ ProcessProxy::ProcessProxy(QString exec, bool onlyRoot)
 
 ProcessProxy::~ProcessProxy()
 {
-   delete _process;
+  delete _process;
 }
 
 
 void ProcessProxy::processTerminated(KProcess *proc)
 {
   if (proc == _process)
-    {
       emit terminated();
-      _process = 0;
-    }
 }
 
 
@@ -125,7 +122,7 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
     {
       QTextStream t(&f);
       server = t.readLine().latin1();
-      f.close();                                                                
+      f.close();
     }
 
   // set the name of the ICE authority file
@@ -138,28 +135,27 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
 
   // run the remote process
   _process = new KProcess;
-  connect(_process, SIGNAL(processExited(KProcess*)), 
-	  this, SLOT(processTerminated(KProcess*)));
   *_process << locate("exe", "kdesu") << "root" << "-c" << locate("exe", "kcmroot") << mod.fileName();
   if (!server.isEmpty())
     *_process << "-dcopserver" << server;
   if (!_process->start())
-    {
-      _process = 0;
       return;
-    }
    
   // wait for the remote process to register
   // after 30 seconds, assume it failed
   int cnt=0;
   while (!kapp->dcopClient()->isApplicationRegistered(mod.moduleId()))
     {
+      // We need to process events manually to make repaint happen
+      kapp->processEvents();
+      if(!_process->isRunning())
+        return;
+      
       sleep(1);
       cnt++;
       if (cnt >= 30)
 	{
 	  _process->kill();
-	  delete _process;
 	  return;
 	}
     }
@@ -183,8 +179,8 @@ DCOPProxy::DCOPProxy(QWidget *parent, const ModuleInfo &mod)
 
 DCOPProxy::~DCOPProxy()
 {
-  delete _proxy;
   delete _process;
+  delete _proxy;
   delete _notify;
 }
 
@@ -194,16 +190,6 @@ void DCOPProxy::resizeEvent(QResizeEvent *)
   if (_embed)
     _embed->resize(width(), height());
 }
-
-
-void DCOPProxy::processTerminated(KProcess *proc)
-{
-  if (proc == _process)
-    {
-      _process = 0;
-    }
-}
-
 
 void DCOPProxy::remoteChanged(bool state)
 {

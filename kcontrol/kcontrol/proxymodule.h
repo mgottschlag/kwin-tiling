@@ -111,7 +111,6 @@ protected:
 
 private slots:
 
-  void processTerminated(KProcess *proc);
   void remoteChanged(bool state);
  
 

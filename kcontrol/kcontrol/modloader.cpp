@@ -83,8 +83,9 @@ KCModule *ModuleLoader::module(const ModuleInfo &mod, QWidget *parent)
       DCOPProxy *p = new DCOPProxy(parent, mod);
       if (p->running())
 	return p;
-      else
-	return 0;
+
+      delete p;
+      return 0;
     }
 
   /*
