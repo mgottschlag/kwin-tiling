@@ -54,6 +54,7 @@
 
 #define COL_NAME 0
 #define COL_FILE 1
+#define COL_SIZE 2
 
 class CKFileFontView::CKFileFontViewPrivate
 {
@@ -76,6 +77,7 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
 
     addColumn(i18n("Name"));
     addColumn(i18n("File"));
+    addColumn(i18n("Size"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
     setDragEnabled(true);
@@ -319,6 +321,9 @@ void CKFileFontView::slotSortingChanged(int col)
             // grmbl, QDir::Unsorted == SortByMask.
             sortSpec = (sort & ~QDir::SortByMask);// | QDir::Unsorted;
             break;
+        case COL_SIZE:
+            sortSpec = (sort & ~QDir::SortByMask | QDir::Size);
+            break;
         default:
             break;
     }
@@ -356,18 +361,22 @@ void CKFileFontView::slotSortingChanged(int col)
 
 void CKFileFontView::setSorting(QDir::SortSpec spec)
 {
+    if (spec & QDir::Size)
+        itsSortingCol=COL_SIZE;
+    else
+        itsSortingCol=COL_NAME;
+
     // inversed, because slotSortingChanged will reverse it
     if (spec & QDir::Reversed)
         spec = (QDir::SortSpec) (spec & ~QDir::Reversed);
     else
         spec = (QDir::SortSpec) (spec | QDir::Reversed);
 
-    itsSortingCol = COL_NAME;
     KFileView::setSorting((QDir::SortSpec) spec);
 
     // don't emit sortingChanged() when called via setSorting()
     itsBlockSortingSignal = true; // can't use blockSignals()
-    slotSortingChanged(COL_NAME);
+    slotSortingChanged(itsSortingCol);
     itsBlockSortingSignal = false;
 }
 
@@ -617,6 +626,7 @@ void CFontListViewItem::init()
 
     setText(COL_NAME, itsInf->text());
     setText(COL_FILE, itsInf->isDir() ? "" : itsInf->url().filename());
+    setText(COL_SIZE, itsInf->isDir() ? "" : KGlobal::locale()->formatNumber(itsInf->size(), 0));
 }
 
 void CKFileFontView::virtual_hook(int id, void *data)
