@@ -391,6 +391,11 @@ enum utState { UtWait, UtActive };
 #define UT_LINESIZE 32
 #endif
 
+#define __stringify(x) #x
+#define stringify(x) __stringify(x)
+
+#define UT_LINESIZE_S stringify(UT_LINESIZE)
+
 struct utmps {
     struct utmps *next;
     struct display *d;
@@ -464,7 +469,7 @@ CheckUtmp (void)
 #else
 		    if (ut->ut_type == LOGIN_PROCESS)
 		    {
-			Debug ("utmp entry for %s marked waiting\n", utp->line);
+			Debug ("utmp entry for %." UT_LINESIZE_S "s marked waiting\n", utp->line);
 			utp->state = UtWait;
 		    }
 		    else if (ut->ut_type != USER_PROCESS)
@@ -473,7 +478,7 @@ CheckUtmp (void)
 #endif
 		    {
 			utp->hadSess = 1;
-			Debug ("utmp entry for %s marked active\n", utp->line);
+			Debug ("utmp entry for %." UT_LINESIZE_S "s marked active\n", utp->line);
 			utp->state = UtActive;
 		    }
 		    if (utp->time < ut->ut_time)
@@ -488,7 +493,7 @@ CheckUtmp (void)
 	    {
 		utp->state = UtWait;
 		utp->time = now;
-		Debug ("utmp entry for %s marked waiting\n", utp->line);
+		Debug ("utmp entry for %." UT_LINESIZE_S "s marked waiting\n", utp->line);
 	    }
 #elif defined(sun)
 	endutxent();
@@ -507,7 +512,7 @@ CheckUtmp (void)
 	    if (remains <= 0)
 	    {
 		struct display *d = utp->d;
-		Debug ("console login for %s at %s timed out\n", 
+		Debug ("console login for %s at %." UT_LINESIZE_S "s timed out\n", 
 		       d->name, utp->line);
 		*utpp = utp->next;
 		free (utp);
@@ -555,7 +560,6 @@ SwitchToTty (struct display *d)
 	return;
     }
     strncpy (utp->line, d->console, UT_LINESIZE);
-    utp->line[ UT_LINESIZE - 1 ] = '\0';
     utp->d = d;
     utp->time = time(0);
     utp->hadSess = 0;
