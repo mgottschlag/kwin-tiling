@@ -356,6 +356,25 @@ static int kfi_rename(const char *from, const char *to)
     return rv;
 }
 
+static void kfi_refresh()
+{
+    KInstance kinst("kfontinst");
+
+    CGlobal::create(true, true);
+    CGlobal::sysXcfg().refreshPaths();
+    CFontmap::createTopLevel();
+    CGlobal::destroy();
+}
+
+static void kfi_create_top_level_fmap()
+{
+    KInstance kinst("kfontinst");
+
+    CGlobal::create();
+    CFontmap::createTopLevel();
+    CGlobal::destroy();
+}
+
 int main(int argc, char *argv[])
 {
     int rv=0;
@@ -364,12 +383,9 @@ int main(int argc, char *argv[])
     {
         case 2:
             if(0==CMisc::stricmp(argv[1], "refresh"))
-            {
-                CGlobal::sysXcfg().refreshPaths();
-                CFontmap::createTopLevel();
-            }
+                kfi_refresh();
             else if(0==CMisc::stricmp(argv[1], "createfontmap"))
-                CFontmap::createTopLevel();
+                kfi_create_top_level_fmap();
             else
                 rv=-1;
             break;
