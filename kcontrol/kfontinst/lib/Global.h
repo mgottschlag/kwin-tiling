@@ -56,10 +56,11 @@ class CGlobal
     static CEncodings &  enc();
     static CXConfig &    sysXcfg();
     static CXConfig &    userXcfg();
-    static CXConfig &    xcfg()     { return CMisc::root() ? sysXcfg() : userXcfg(); }
+    static CXConfig &    xcfg()      { return CMisc::root() ? sysXcfg() : userXcfg(); }
     static KXftConfig &  userXft();
     static KXftConfig &  sysXft();
-    static KXftConfig &  xft()      { return CMisc::root() ? sysXft() : userXft(); }
+    static KXftConfig &  xft()       { return CMisc::root() ? sysXft() : userXft(); }
+    static const char *  uiCfgFile() { return theirUiCfgFile; }
 
     private:
 
@@ -70,6 +71,7 @@ class CGlobal
     static CXConfig    *theirUserXcfg;
     static KXftConfig  *theirSysXft;
     static KXftConfig  *theirUserXft;
+    static const char  *theirUiCfgFile;
 };
 
 #endif

@@ -41,6 +41,7 @@ CXConfig    * CGlobal::theirSysXcfg=NULL;
 CXConfig    * CGlobal::theirUserXcfg=NULL;
 KXftConfig  * CGlobal::theirSysXft=NULL;
 KXftConfig  * CGlobal::theirUserXft=NULL;
+const char  * CGlobal::theirUiCfgFile="kfontinstuirc";
 
 void CGlobal::create(bool checkDirs, bool checkX)
 {
