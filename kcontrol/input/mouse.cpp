@@ -684,7 +684,7 @@ void MouseSettings::load(KConfig *config)
   changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 }
 
-void MouseSettings::apply()
+void MouseSettings::apply(bool force)
 {
   XChangePointerControl( kapp->getDisplay(),
                          true, true, int(qRound(accelRate*10)), 10, thresholdMove);
@@ -692,7 +692,7 @@ void MouseSettings::apply()
   unsigned char map[20];
   num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 20);
   int remap=(num_buttons>=1);
-  if (handedEnabled && m_handedNeedsApply) {
+  if (handedEnabled && (m_handedNeedsApply || force)) {
       if( num_buttons == 1 )
       {
           map[0] = (unsigned char) 1;

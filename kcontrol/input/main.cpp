@@ -51,7 +51,7 @@ extern "C"
     KConfig *config = new KConfig("kcminputrc", true, false); // Read-only, no globals
     MouseSettings settings;
     settings.load(config);
-    settings.apply();
+    settings.apply(true); // force
     delete config;
 
 #ifdef HAVE_XCURSOR

@@ -64,7 +64,7 @@ class MouseSettings
 public:
   void save(KConfig *);
   void load(KConfig *);
-  void apply();
+  void apply(bool force=false);
 public:
  int num_buttons;
  int middle_button;
