@@ -14,8 +14,9 @@ sub getl()
     next if (/^#/);
     chop;
 #    print "read: ".$_."\n";
-    last;
+    return;
   }
+  $_ = "";
 }
 
 sub mkvname($)
