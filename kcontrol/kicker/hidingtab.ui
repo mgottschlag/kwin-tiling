@@ -370,7 +370,7 @@
                                             </property>
                                         </widget>
                                         <spacer>
-                                            <property name="name" stdset="0">
+                                            <property name="name">
                                                 <cstring>Spacer3_3</cstring>
                                             </property>
                                             <property name="orientation">
@@ -378,12 +378,6 @@
                                             </property>
                                             <property name="sizeType">
                                                 <enum>Expanding</enum>
-                                            </property>
-                                            <property name="sizeHint">
-                                                <size>
-                                                    <width>20</width>
-                                                    <height>20</height>
-                                                </size>
                                             </property>
                                         </spacer>
                                         <widget class="QLabel">
@@ -408,7 +402,7 @@
                                             </property>
                                         </widget>
                                         <spacer>
-                                            <property name="name" stdset="0">
+                                            <property name="name">
                                                 <cstring>Spacer3_2_2</cstring>
                                             </property>
                                             <property name="orientation">
@@ -416,12 +410,6 @@
                                             </property>
                                             <property name="sizeType">
                                                 <enum>Expanding</enum>
-                                            </property>
-                                            <property name="sizeHint">
-                                                <size>
-                                                    <width>20</width>
-                                                    <height>20</height>
-                                                </size>
                                             </property>
                                         </spacer>
                                         <widget class="QLabel">
@@ -497,7 +485,7 @@
                                 <cstring>DelayLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>Delay in seconds:</string>
+                                <string>Delay:</string>
                             </property>
                             <property name="buddy" stdset="0">
                                 <cstring>m_delaySlider</cstring>
@@ -506,6 +494,12 @@
                         <widget class="QSpinBox">
                             <property name="name">
                                 <cstring>m_delaySpinBox</cstring>
+                            </property>
+                            <property name="suffix">
+                                <string> sec</string>
+                            </property>
+                            <property name="specialValueText">
+                                <string>None</string>
                             </property>
                             <property name="maxValue">
                                 <number>10</number>
@@ -518,7 +512,7 @@
                             </property>
                         </widget>
                         <spacer>
-                            <property name="name" stdset="0">
+                            <property name="name">
                                 <cstring>Spacer7</cstring>
                             </property>
                             <property name="orientation">
@@ -526,12 +520,6 @@
                             </property>
                             <property name="sizeType">
                                 <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
                             </property>
                         </spacer>
                         <widget class="QCheckBox">
@@ -650,7 +638,7 @@
                                             </property>
                                         </widget>
                                         <spacer>
-                                            <property name="name" stdset="0">
+                                            <property name="name">
                                                 <cstring>Spacer3</cstring>
                                             </property>
                                             <property name="orientation">
@@ -658,12 +646,6 @@
                                             </property>
                                             <property name="sizeType">
                                                 <enum>Expanding</enum>
-                                            </property>
-                                            <property name="sizeHint">
-                                                <size>
-                                                    <width>20</width>
-                                                    <height>20</height>
-                                                </size>
                                             </property>
                                         </spacer>
                                         <widget class="QLabel">
@@ -688,7 +670,7 @@
                                             </property>
                                         </widget>
                                         <spacer>
-                                            <property name="name" stdset="0">
+                                            <property name="name">
                                                 <cstring>Spacer3_2</cstring>
                                             </property>
                                             <property name="orientation">
@@ -696,12 +678,6 @@
                                             </property>
                                             <property name="sizeType">
                                                 <enum>Expanding</enum>
-                                            </property>
-                                            <property name="sizeHint">
-                                                <size>
-                                                    <width>20</width>
-                                                    <height>20</height>
-                                                </size>
                                             </property>
                                         </spacer>
                                         <widget class="QLabel">
@@ -863,7 +839,7 @@
             </grid>
         </widget>
         <spacer>
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer</cstring>
             </property>
             <property name="orientation">
@@ -872,33 +848,9 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-    <customwidget>
-        <class>QWidget</class>
-        <header location="global">qwidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>1</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-    </customwidget>
-</customwidgets>
 <connections>
     <connection>
         <sender>m_automatic</sender>
@@ -934,11 +886,10 @@
     <tabstop>m_topLeft</tabstop>
 </tabstops>
 <includes>
-    <include location="global" impldecl="in declaration">klineedit.h</include>
     <include location="local" impldecl="in implementation">hidingtab.ui.h</include>
 </includes>
 <slots>
-    <slot access="protected">hideButtonsSet(int)</slot>
+    <slot access="protected">hideButtonsSet( int )</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
