@@ -461,9 +461,9 @@ void KMemoryWidget::update_Values()
 #include "memory_sgi.cpp"
 #elif defined(__svr4__) && defined(sun)
 #include "memory_solaris.cpp"
-#elif __FreeBSD__
+#elif defined(__FreeBSD__)
 #include "memory_fbsd.cpp"
-#elif hpux
+#elif defined(hpux)
 #include "memory_hpux.cpp"
 #elif defined(__NetBSD__) || defined(__OpenBSD__)
 #include "memory_netbsd.cpp"
