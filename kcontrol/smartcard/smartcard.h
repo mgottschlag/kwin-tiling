@@ -58,8 +58,7 @@ public:
   
   
   private slots:
-
-    void slotTestReader();  
+    
   void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i); 
   void slotLaunchChooser();
   

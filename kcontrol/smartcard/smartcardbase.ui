@@ -222,47 +222,6 @@
                                     </property>
                                 </widget>
                             </widget>
-                            <widget class="QLayoutWidget" row="0" column="1">
-                                <property name="name">
-                                    <cstring>Layout3</cstring>
-                                </property>
-                                <vbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <property name="margin">
-                                        <number>0</number>
-                                    </property>
-                                    <property name="spacing">
-                                        <number>6</number>
-                                    </property>
-                                    <widget class="QPushButton">
-                                        <property name="name">
-                                            <cstring>testReaderBtn</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Test Reader</string>
-                                        </property>
-                                    </widget>
-                                    <spacer>
-                                        <property name="name" stdset="0">
-                                            <cstring>Spacer4_2</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Vertical</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Expanding</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </vbox>
-                            </widget>
                             <widget class="Line" row="1" column="0" rowspan="1" colspan="2">
                                 <property name="name">
                                     <cstring>Line1</cstring>

@@ -19,6 +19,9 @@
  */
 
 
+#include <kcardfactory.h>
+#include <kcardgsm_impl.h>
+
 #include "smartcard.h"
 #include <klocale.h>
 #include <kglobal.h>
@@ -60,7 +63,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
 				   this, 
 				   SLOT(slotLaunchChooser()));
      // The config backend
-     connect(base->testReaderBtn, SIGNAL(clicked()), SLOT(slotTestReader()));
+
      connect(base->launchManager, SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->beepOnInsert,  SIGNAL(clicked()), this, SLOT(configChanged()));
      connect(base->enableSupport, SIGNAL(clicked()), this, SLOT(configChanged()));
@@ -91,12 +94,13 @@ void KSmartcardConfig::configChanged()
 
 void KSmartcardConfig::slotLaunchChooser(){
 
-
+  
   if ( KCardDB::launchSelector(base->_readerHostsListView->currentItem()->parent()->text(0))){
-
+    
     KMessageBox::sorry(this,i18n("Unable to launch KCardChooser"));
   }
-
+  
+  
 }
 
 void KSmartcardConfig::slotShowPopup(QListViewItem * item ,const QPoint & _point,int i)
@@ -108,13 +112,7 @@ void KSmartcardConfig::slotShowPopup(QListViewItem * item ,const QPoint & _point
 
 }
 
-void KSmartcardConfig::slotTestReader(){
 
-  KListViewItem * selReader =(KListViewItem *) base->_readerHostsListView->selectedItem();
-  
-
-
-}
 
 
 void KSmartcardConfig::load()
