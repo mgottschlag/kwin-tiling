@@ -725,8 +725,8 @@ void KColorScheme::readScheme( int index )
 {
     KConfigBase* config;
 
-    QColor widget(238, 238, 230);
-    QColor kde31Beige(255,221,118);
+    QColor widget(239, 239, 239);
+    QColor kde31Beige(103,141,178);
     QColor emerald1(143,159,180);
     QColor emerald2(62,145,235);
 
