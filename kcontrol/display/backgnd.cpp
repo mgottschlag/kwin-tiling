@@ -17,6 +17,7 @@
 
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qdragobject.h>
 #include <qpixmap.h>
 #include <qdir.h>
 #include <qradiobutton.h>
@@ -43,6 +44,23 @@
 #include "../../kwmmodules/kbgndwm/config-kbgndwm.h"
 #include <klocale.h>
 #include <kconfig.h>
+
+void KBGMonitor::dropEvent( QDropEvent *e)
+{
+  /* We only accept Url objects and not Image object,
+   * because we need a filename to be able to load
+   * the picture later.
+   * (maybe we should accept image drags, and then ask for a filename?)
+   */
+  if( QUrlDrag::canDecode( e)) {
+    emit imageDropped( e);
+  }
+}
+
+void KBGMonitor::dragEnterEvent( QDragEnterEvent *e)
+{
+  e->accept( QImageDrag::canDecode( e)|| QUrlDrag::canDecode( e));  
+}
 
 KRenameDeskDlg::KRenameDeskDlg( const char *t, QWidget *parent )
   : QDialog( parent, 0, true )
@@ -222,6 +240,8 @@ KBackground::KBackground( QWidget *parent, int mode, int desktop )
   monitor = new KBGMonitor( monitorLabel );
   monitor->resize( 157, 111 );
   monitor->setBackgroundColor( currentItem.color1 );
+  connect( monitor, SIGNAL( imageDropped( QDropEvent*)), 
+	   SLOT(slotDropped( QDropEvent*)));
 	
   group = new QGroupBox( i18n( "Colors" ), this );
   topLayout->addWidget( group, 2, 1 );
@@ -1433,7 +1453,17 @@ void KBackground::slotDropped (KDNDDropZone *zone)
   }
 }
 
-
+void KBackground::slotDropped( QDropEvent *e)
+{
+  QStringList urls;
+  // Only local files are supported
+  if( QUrlDrag::decodeLocalFiles( e, urls) && (urls.count() > 0)) {
+    QString url = *urls.begin();
+    printf( "Url=\"%s\"\n", url.data());
+    url.prepend('/');
+    setNew( url.data(), random );
+  }
+}
 
 KBPatternDlg::KBPatternDlg( QColor col1, QColor col2, uint *p, int *orient,
 			    int *type, QWidget *parent, char *oname)

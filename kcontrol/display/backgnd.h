@@ -83,15 +83,21 @@ public:
   QString wallpaper;
 };
 
-
 class KBGMonitor : public QWidget
 {
   Q_OBJECT
 public:
-  KBGMonitor( QWidget *parent ) : QWidget( parent ) {};
+  KBGMonitor( QWidget *parent ) : QWidget( parent ) {
+    setAcceptDrops( true);
+  };
 
   // we don't want no steenking palette change
   virtual void setPalette( const QPalette & ) {};
+signals:
+  void imageDropped( QDropEvent *);
+protected:
+  virtual void dropEvent( QDropEvent *);
+  virtual void dragEnterEvent( QDragEnterEvent *);
 };
 
 class KRenameDeskDlg : public QDialog
@@ -269,6 +275,7 @@ protected slots:
   void slotToggleOneDesktop();
   void slotToggleDock();
   void slotDropped(KDNDDropZone *zone);
+  void slotDropped( QDropEvent *e);
 
   void resizeEvent( QResizeEvent * );
 
