@@ -164,17 +164,17 @@ void IconThemesConfig::installNewTheme()
   if (!KIO::NetAccess::download(themeURL, themeTmpFile)) {
     QString sorryText;
     if (themeURL.isLocalFile())
-       sorryText = i18n("Unable to find the icon theme archive %1!");
+       sorryText = i18n("Unable to find the icon theme archive %1.");
     else
-       sorryText = i18n("Unable to download the icon theme archive!\n"
-                        "Please check that address %1 is correct.");
+       sorryText = i18n("Unable to download the icon theme archive;\n"
+                        "please check that address %1 is correct.");
     KMessageBox::sorry(this, sorryText.arg(themeURL.prettyURL()));
     return;
   }
 
   QStringList themesNames = findThemeDirs(themeTmpFile);
   if (themesNames.isEmpty()) {
-    QString invalidArch(i18n("The file is not a valid icon theme archive!"));
+    QString invalidArch(i18n("The file is not a valid icon theme archive."));
     KMessageBox::error(this, invalidArch);
 
     KIO::NetAccess::removeTempFile(themeTmpFile);
@@ -185,8 +185,8 @@ void IconThemesConfig::installNewTheme()
     //FIXME: make me able to know what is wrong....
     // QStringList instead of bool?
     QString somethingWrong =
-        i18n("A problem occurred during the installation process. "
-             "However, most of the themes in the archive have been installed");
+        i18n("A problem occurred during the installation process; "
+             "however, most of the themes in the archive have been installed");
     KMessageBox::error(this, somethingWrong);
   }
 

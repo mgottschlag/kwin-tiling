@@ -83,7 +83,7 @@ QString IconModule::quickHelp() const
 {
   return i18n("<h1>Icons</h1>"
     "This module allows you to choose the icons for your desktop.<p>"
-    "To choose an icon theme, click on its name and apply your choice by pressing the \"Apply\" button below. If you don't want to apply your choice you can press the \"Reset\" button to discard your changes.</p>"
+    "To choose an icon theme, click on its name and apply your choice by pressing the \"Apply\" button below. If you do not want to apply your choice you can press the \"Reset\" button to discard your changes.</p>"
     "<p>By pressing the \"Install New Theme\" button you can install your new icon theme by writing its location in the box or browsing to the location."
     " Press the \"OK\" button to finish the installation.</p>"
     "<p>The \"Remove Theme\" button will only be activated if you select a theme that you installed using this module."

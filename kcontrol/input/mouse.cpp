@@ -185,7 +185,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " movements of the mouse pointer on the screen even when"
          " you only make a small movement with the physical device."
          " Selecting very high values may result in the mouse pointer"
-         " flying across the screen, making it hard to control!");
+         " flying across the screen, making it hard to control.");
     QWhatsThis::add( accel, wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
@@ -199,8 +199,8 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     wtstr = i18n("The threshold is the smallest distance that the"
          " mouse pointer must move on the screen before acceleration"
          " has any effect. If the movement is smaller than the threshold,"
-         " the mouse pointer moves as if the acceleration was set to 1X.<p>"
-         " Thus, when you make small movements with the physical device,"
+         " the mouse pointer moves as if the acceleration was set to 1X;<p>"
+         " thus, when you make small movements with the physical device,"
          " there is no acceleration at all, giving you a greater degree"
          " of control over the mouse pointer. With larger movements of"
          " the physical device, you can move the mouse pointer"

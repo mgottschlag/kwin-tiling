@@ -283,7 +283,7 @@ void Tzone::save()
 	}
 	else
 		if (!KIO::NetAccess::file_copy(KURL(tz),KURL("/etc/localtime")))
-			KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
+			KMessageBox::error( 0,  i18n("Error setting new Time Zone."),
                         		    i18n("Timezone Error"));
 
         QString val = ":" + tz;

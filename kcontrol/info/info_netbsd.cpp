@@ -274,7 +274,7 @@ bool GetInfo_Partitions (QListView *lbox)
 	int ok;
 
 	if (!pipe) {
-		kdError(0) << i18n("Ahh couldn't run /sbin/mount!") << endl;
+		kdError(0) << i18n("Unable to run /sbin/mount.") << endl;
 		return false;
 	}
 	t = new QTextStream(pipe, IO_ReadOnly);
