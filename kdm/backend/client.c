@@ -1247,8 +1247,13 @@ StartClient ()
     endspent ();
 # endif
 #endif
+    ClearCloseOnFork (mstrtalk.pipe->wfd);
     switch (pid = Fork ()) {
     case 0:
+	if (Setjmp (mstrtalk.errjmp))
+	    exit (1);
+	GSet (&mstrtalk);
+
 	/* Do system-dependent login setup here */
 #ifdef CSRG_BASED
 	setsid();
@@ -1415,6 +1420,12 @@ StartClient ()
 	    else
 		NukeAuth (14, "MIT-KERBEROS-5");
 #endif /* K5AUTH */
+	if (td->autoReLogin) {
+	    GSendInt (D_ReLogin);
+	    GSendStr (curuser);
+	    GSendStr (curpass);
+	    GSendStr (newdmrc);
+	}
 	if (curpass)
 	    bzero (curpass, strlen (curpass));
 	SetUserAuthorization (td);
@@ -1454,6 +1465,11 @@ StartClient ()
 	    mergeSessionArgs (home != 0);
 	if (!(desksess = iniEntry (curdmrc, "Desktop", "Session", 0)))
 	    desksess = "failsafe"; /* only due to OOM */
+	GSendInt (D_User);
+	GSendInt (curuid);
+	GSendStr (curuser);
+	GSendStr (desksess);
+	close (mstrtalk.pipe->wfd);
 	userEnviron = setEnv (userEnviron, "DESKTOP_SESSION", desksess);
 	for (i = 0; td->sessionsDirs[i]; i++) {
 	    fname = 0;
@@ -1492,23 +1508,12 @@ StartClient ()
 		  failsafeArgv[0]);
 	exit (1);
     case -1:
+	RegisterCloseOnFork (mstrtalk.pipe->wfd);
 	LogError ("Forking session on %s failed: %m\n", td->name);
 	return 0;
     default:
+	RegisterCloseOnFork (mstrtalk.pipe->wfd);
 	Debug ("StartSession, fork succeeded %d\n", pid);
-/* ### right after forking dpy	mstrtalk.pipe = &td->pipe; */
-	if (!Setjmp (mstrtalk.errjmp)) {
-	    GSet (&mstrtalk);
-	    GSendInt (D_User);
-	    GSendInt (curuid);
-	    GSendStr (curuser);
-	    if (td->autoReLogin) {
-		GSendInt (D_ReLogin);
-		GSendStr (curuser);
-		GSendStr (curpass);
-		GSendStr (newdmrc);
-	    }
-	}
 	return pid;
     }
 }

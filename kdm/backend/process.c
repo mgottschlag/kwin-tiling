@@ -89,7 +89,7 @@ RegisterCloseOnFork (int fd)
 	max = fd;
 }
 
-static void
+void
 ClearCloseOnFork (int fd)
 {
     FD_CLR (fd, &CloseMask);

@@ -422,6 +422,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		*bp++ = ',';
 		if (di->status == remoteLogin)
 		    str_cat (&bp, "<remote>", 8);
+		else if (di->sessName)
+		    str_cat (&bp, di->sessName, sizeof(cbuf)/5);
 		*bp++ = ',';
 		if (di == d)
 		    *bp++ = '*';

@@ -670,6 +670,7 @@ processDPipe (struct display *d)
     case D_User:
 	d->userSess = GRecvInt ();
 	d->userName = GRecvStr ();
+	d->sessName = GRecvStr ();
 	break;
     case D_ReLogin:
 	user = GRecvStr ();
@@ -1459,6 +1460,9 @@ ExitDisplay (
     if (d->userName)
 	free (d->userName);
     d->userName = 0;
+    if (d->sessName)
+	free (d->sessName);
+    d->sessName = 0;
     he = d->hstent;
     he->lastExit = now;
     he->goodExit = goodExit;

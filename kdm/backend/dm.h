@@ -242,6 +242,7 @@ struct display {
 	int		stillThere;	/* state during HUP processing */
 	int		userSess;	/* -1=nobody, otherwise uid */
 	char		*userName;
+	char		*sessName;
 	CtrlRec		ctrl;		/* command socket & fifo */
 	GPipe		pipe;		/* comm master <-> slave */
 	GPipe		gpipe;		/* comm master <-> greeter */
@@ -424,6 +425,7 @@ SIGVAL (*Signal(int, SIGFUNC Handler))(int);
 void RegisterInput (int fd);
 void UnregisterInput (int fd);
 void RegisterCloseOnFork (int fd);
+void ClearCloseOnFork (int fd);
 void CloseNClearCloseOnFork (int fd);
 int Fork (void);
 int Wait4 (int pid);
