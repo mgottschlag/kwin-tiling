@@ -2,8 +2,10 @@
 #include <linux/kernel.h>
 #include <asm/page.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <qfile.h>
 
-/* $Id: $ */
+/* $Id$ */
 
 void KMemoryWidget::update()
 {
@@ -25,4 +27,19 @@ void KMemoryWidget::update()
   Memory_Info[BUFFER_MEM]   = MEMORY(info.bufferram << shift_val); 
   Memory_Info[SWAP_MEM]     = MEMORY(info.totalswap << shift_val); // total size of all swap-partitions
   Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap  << shift_val); // free memory in swap-partitions
+
+  
+  QFile file("/proc/meminfo");
+  if (file.open(IO_ReadOnly)) {
+	char buf[512];
+	while (file.readLine(buf, sizeof(buf) - 1) > 0) {
+		if (strncmp(buf,"Cached:",7)==0) {
+			unsigned long v;
+			v = strtoul(&buf[7],NULL,10);			
+			Memory_Info[CACHED_MEM] = MEMORY(v)*1024; // Cached memory in RAM
+		}
+	}
+	file.close();
+  }
 }
+

@@ -27,6 +27,9 @@ void KMemoryWidget::update()
   Memory_Info[FREE_MEM]     = MEMORY(rmi.freemem*pagesize); // total free physical memory (without swaps)
   Memory_Info[BUFFER_MEM]   = MEMORY(rmi.bufmem*pagesize);
 
+#warning "FIXME: Memory_Info[CACHED_MEM]"
+  Memory_Info[CACHED_MEM] = NO_MEMORY_INFO; // cached memory in ram
+  
   long val;
   swapctl(SC_GETSWAPTOT, &val);
   Memory_Info[SWAP_MEM]     = MEMORY(val*UBSIZE); // total size of all swap-partitions

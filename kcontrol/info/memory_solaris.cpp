@@ -52,6 +52,9 @@ void KMemoryWidget::update() {
 	if( kdata != NULL )
 		Memory_Info[FREE_MEM] = PAGETOK(kdata->value.ui32);
 
+#warning "FIXME: Memory_Info[CACHED_MEM]"
+	Memory_Info[CACHED_MEM] = NO_MEMORY_INFO; // cached memory in ram
+	  
 	kstat_close( kctl );
 
 	/*

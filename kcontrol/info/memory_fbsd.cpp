@@ -32,6 +32,9 @@ void KMemoryWidget::update()
     mib[0] = CTL_VM;
     mib[1] = VM_METER;
     
+#warning "FIXME: Memory_Info[CACHED_MEM]"
+    Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
+    
     len = sizeof(vmem);
     
     if (sysctl(mib, 2, &vmem, &len, NULL, 0) == 0) 

@@ -35,6 +35,9 @@ void KMemoryWidget::update()
   else
     Memory_Info[TOTAL_MEM]    = memory;
 
+#warning "FIXME: Memory_Info[CACHED_MEM]"
+    Memory_Info[CACHED_MEM] = NO_MEMORY_INFO; // cached memory in ram
+    
 #ifdef UVM
   mib[0] = CTL_VM;
   mib[1] = VM_UVMEXP;

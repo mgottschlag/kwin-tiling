@@ -22,7 +22,7 @@ extern "C" {
 }
 #include <mach/vm_statistics.h>
 
-/* $Id:  $ */
+/* $Id$ */
 
 #define pagetob(size) (1024L * ((long) (size) << (long) pageshift))
 #define LOG1024       10
@@ -76,6 +76,8 @@ void KMemoryWidget::update()
   Memory_Info[FREE_MEM]     = pagetob(vmstats.free_count);
   Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 		    /* FIXME ?? */
   Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO; 		    /* FIXME ?? */
+#warning "FIXME: Memory_Info[CACHED_MEM]"
+  Memory_Info[CACHED_MEM]   = NO_MEMORY_INFO; /* cached memory in ram */
   Memory_Info[SWAP_MEM]     = pagetob(swap_pages);
   Memory_Info[FREESWAP_MEM] = pagetob(swap_free);
 }
