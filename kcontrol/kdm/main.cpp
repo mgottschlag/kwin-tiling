@@ -40,6 +40,9 @@
 
 #include "main.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
     QStringList uris;
@@ -112,6 +115,8 @@ KDModule::KDModule(QWidget *parent, const char *name)
 KDModule::~KDModule()
 {
   delete c;
+  chmod(QFile::encodeName(KGlobal::dirs()->resourceDirs("config").last() + 
+			  "kdmrc").data(), 0644);
 }
 
 QString KDModule::quickHelp() const
