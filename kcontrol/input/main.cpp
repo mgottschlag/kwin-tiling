@@ -41,7 +41,7 @@ extern "C"
 
   void init_mouse()
   {
-    KConfig *config = new KConfig("kcminputrc", true); // Read-only, no globals
+    KConfig *config = new KConfig("kcminputrc", true, false); // Read-only, no globals
     MouseSettings settings;
     settings.load(config);
     settings.apply();
