@@ -1,7 +1,7 @@
 # forcibly remove thread-related defines & flags
 AUTOMAKE_OPTIONS = foreign
 CPPFLAGS = $(USER_INCLUDES) $(X_INCLUDES) $(KRB4_INCS) $(KRB5_INCS) \
-    $(XDMCP_DEFINE)
+    $(XDM_DEFINES)
 CFLAGS = $(XDM_CFLAGS)
 LDFLAGS = $(USER_LDFLAGS) $(X_LDFLAGS) $(X_RPATH) $(KRB4_RPATH) $(KRB5_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSWDLIBS) \

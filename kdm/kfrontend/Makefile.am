@@ -4,7 +4,7 @@ GENKDMCONF_FLAGS =
 SUBDIRS = pics sessions
 
 AM_CPPFLAGS = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background \
-    $(all_includes) $(XDMCP_DEFINE)
+    $(all_includes) $(XDM_DEFINES)
 
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf
 

@@ -24,8 +24,6 @@
 #ifndef _KDM_CONFIG_H_
 #define _KDM_CONFIG_H_
 
-#include <config.h>
-
 #include <greet.h>
 
 #define C_grabServer		(C_TYPE_INT | 0x1000)
@@ -89,9 +87,7 @@
 #define C_UserCompletion	(C_TYPE_INT | 0x1034)
 #define C_UserList		(C_TYPE_INT | 0x1035)
 
-#ifdef WITH_KDM_XCONSOLE
-# define C_ShowLog		(C_TYPE_INT | 0x2000)
-# define C_LogSource		(C_TYPE_STR | 0x2001)
-#endif
+#define C_ShowLog		(C_TYPE_INT | 0x2000)
+#define C_LogSource		(C_TYPE_STR | 0x2001)
 
 #endif /* _KDM_CONFIG_H_ */

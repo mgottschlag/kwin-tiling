@@ -23,6 +23,8 @@
 
 #include "kdm_config.h"
 
+#include <config.h>
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -111,10 +113,6 @@ typedef struct ValArr {
 
 static void *Malloc (size_t size);
 static void *Realloc (void *ptr, size_t size);
-
-#ifdef HAVE_VSYSLOG
-# define USE_SYSLOG
-#endif
 
 #define LOG_NAME "kdm_config"
 #define LOG_DEBUG_MASK DEBUG_CONFIG
@@ -1608,7 +1606,7 @@ Debug ("read server arg %s\n", word);
 }
 
 
-#ifdef HAVE_PAM
+#ifdef USE_PAM
 Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
 #endif
 
@@ -1687,7 +1685,7 @@ int main(int argc ATTR_UNUSED, char **argv)
 		CopyValues (&va, &secGeneral, 0, 0);
 		CopyValues (&va, &secXdmcp, 0, 0);
 		CopyValues (&va, &secShutdown, 0, 0);
-#ifdef HAVE_PAM
+#ifdef USE_PAM
 		AddValue (&va, C_PAMService, &pamservice);
 #endif
 		SendValues (&va);

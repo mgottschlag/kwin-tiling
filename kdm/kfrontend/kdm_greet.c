@@ -68,10 +68,6 @@ Realloc (void *ptr, size_t size)
     return ret;
 }
 
-#ifdef HAVE_VSYSLOG
-# define USE_SYSLOG
-#endif
-
 #define PRINT_QUOTES
 #define PRINT_ARRAYS
 #define LOG_NAME "kdm_greet"

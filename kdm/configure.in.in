@@ -13,7 +13,7 @@ KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please mak
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
-imkv=3
+imkv=4
 test "$kde_cv_defines_imake_version" = $imkv || unset kde_cv_defines_imake
 AC_CACHE_VAL(kde_cv_defines_imake, [
   rm -fr conftestdir
@@ -28,6 +28,12 @@ XDMAUTH_DEFINES = -DHASXDMAUTH
 
 #if HasBSD44Sockets
 SOCK_DEFINES = -DBSD44SOCKETS
+#endif
+
+#ifdef IPv6Flags
+#if IPv6SocketsAlsoIPv4 || PreferXdmcpIPv6
+IPV6_DEFINES = IPv6Flags
+#endif
 #endif
 
 #if defined(i386Architecture) || defined(AmigaArchitecture)
@@ -60,24 +66,14 @@ IFADDRS_DEFINES = -DHAS_GETIFADDRS
 
 VERSION_DEFINES = -DOSMAJORVERSION=OSMajorVersion -DOSMINORVERSION=OSMinorVersion
 
-XDM_CFLAGS = $(BASIC_FLAGS) $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES) $(IFADDRS_DEFINES)
+PATH_DEFINES = -DXBINDIR=\"$(BINDIR)\" -DXLIBDIR=\"$(LIBDIR)\"
+
+XDM_CFLAGS = $(BASIC_FLAGS)
+XDM_DEFINES = $(VERSION_DEFINES) $(SIGNAL_DEFINES) $(XDMAUTH_DEFINES) $(FRAGILE_DEFINES) $(SOCK_DEFINES) $(IPV6_DEFINES) $(IFADDRS_DEFINES) $(RANDOM_DEFINES) $(CRYPT_DEFINES) $(MKTMP_DEFINES) $(PATH_DEFINES)
 
 acimake:
 	@set crap $(XDM_CFLAGS); shift; se="s,\\([ 	\`\"'\\\\]\\),\\\\\\1,g"; for i in "$$@"; do echo "$$i" | sed "$$se"; done | tr '\n' ' ' | sed "s, \$$,,;$$se;s,^,XDM_CFLAGS=,"; echo
-#if HasXdmAuth
-	@echo HASXDMAUTH=1
-#endif
-	@echo XBINDIR=$(BINDIR)
-	@echo XLIBDIR=$(LIBDIR)
-#ifndef IPv6Flags
-	@echo IPV6DEF=
-#else
-#if !IPv6SocketsAlsoIPv4 && !PreferXdmcpIPv6
-	@echo IPV6DEF=
-#else
-	@echo IPV6DEF=IPv6Flags
-#endif
-#endif
+	@set crap $(XDM_DEFINES); shift; se="s,\\([ 	\`\"'\\\\]\\),\\\\\\1,g"; for i in "$$@"; do echo "$$i" | sed "$$se"; done | tr '\n' ' ' | sed "s, \$$,,;$$se;s,^,XDM_DEFINES=,"; echo
 
 ]EOF
     if $XMKMF >&5 2>&1 && test -f Makefile; then
@@ -98,19 +94,6 @@ On some systems a missing /lib/cpp symlink is at fault.])
 ])
 AC_MSG_RESULT([done])
 eval "$kde_cv_defines_imake"
-
-AC_MSG_CHECKING([whether to use xdm authorization])
-if test -n "$HASXDMAUTH"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE(HASXDMAUTH, 1, [Use encrypted XDM authorization])
-else
-    AC_MSG_RESULT([no])
-fi
-
-AC_MSG_RESULT([checking for X binary directory... $XBINDIR])
-AC_DEFINE_UNQUOTED(XBINDIR, "$XBINDIR", [Define where to find the X binaries])
-AC_MSG_RESULT([checking for X library directory... $XLIBDIR])
-AC_DEFINE_UNQUOTED(XLIBDIR, "$XLIBDIR", [Define where to find the X libraries])
 
 AC_CHECK_LIB(Xau, main, [:], 
 	[
@@ -135,10 +118,9 @@ if test "x$with_xdmcp" = xyes; then
 are installed or use --without-xdmcp to disable XDMCP support!])
     DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
-  XDMCP_DEFINE="-DXDMCP $IPV6DEF"
+  XDM_DEFINES="$XDM_DEFINES -DXDMCP"
 fi
 AC_SUBST(LIBXDMCP)
-AC_SUBST(XDMCP_DEFINE)
 
 KRB4_INCS=
 KRB4_LIBS=
@@ -217,7 +199,7 @@ else
   keepcflags=$CFLAGS
   CFLAGS="$KRB5_INCS $CFLAGS"
   AC_CHECK_HEADER(krb5/krb5.h, 
-    [ XDM_CFLAGS="$XDM_CFLAGS -DK5AUTH" ],
+    [ XDM_DEFINES="$XDM_DEFINES -DK5AUTH" ],
     [ AC_MSG_ERROR([--with-krb5auth requires Kerberos5 header files.
 Due to a problem with X includes you probably have to run "ln -s . krb5"
 in the directory where the krb5.h include resides to make things actually work.])])
@@ -237,41 +219,41 @@ if test "x$with_rpcauth" = xno; then
 else
   AC_MSG_RESULT(yes)
   AC_CHECK_HEADER(rpc/rpc.h, 
-    [ XDM_CFLAGS="$XDM_CFLAGS -DSECURE_RPC" ],
+    [ XDM_DEFINES="$XDM_DEFINES -DSECURE_RPC" ],
     [ AC_MSG_ERROR([--with-rpcauth requires Sun RPC header files.])])
 fi
 
-AC_CHECK_MEMBER([struct passwd.pw_expire], [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
+AC_CHECK_MEMBER([struct passwd.pw_expire], [ XDM_DEFINES="$XDM_DEFINES -DHAVE_PW_EXPIRE" ], , [#include <pwd.h>])
 
 ac_save_libs=$LIBS
 LIBS="$LIBS $LIBUTIL"
-AC_CHECK_FUNC(setusercontext, [ XDM_CFLAGS="$XDM_CFLAGS -DHAS_SETUSERCONTEXT" ])
+AC_CHECK_FUNC(setusercontext, [ XDM_DEFINES="$XDM_DEFINES -DHAS_SETUSERCONTEXT" ])
 KDE_CHECK_FUNC_EXT(getusershell, [
 #include <unistd.h>
 ], 
 		[getusershell();],
 	        [char *getusershell()],
 		[GETUSERSHELL],
-	[ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_GETUSERSHELL" ])
-AC_CHECK_FUNC(login_getclass, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_LOGIN_GETCLASS" ])
-AC_CHECK_FUNC(auth_timeok, [ XDM_CFLAGS="$XDM_CFLAGS -DHAVE_AUTH_TIMEOK" ])
+	[ XDM_DEFINES="$XDM_DEFINES -DHAVE_GETUSERSHELL" ])
+AC_CHECK_FUNC(login_getclass, [ XDM_DEFINES="$XDM_DEFINES -DHAVE_LOGIN_GETCLASS" ])
+AC_CHECK_FUNC(auth_timeok, [ XDM_DEFINES="$XDM_DEFINES -DHAVE_AUTH_TIMEOK" ])
 LIBS=$ac_save_libs
 
-AC_CHECK_FUNC(vsyslog, [ XDM_CFLAGS="$XDM_CFLAGS -DUSE_SYSLOG" ])
+AC_CHECK_FUNC(vsyslog, [ XDM_DEFINES="$XDM_DEFINES -DUSE_SYSLOG" ])
 if test "x$use_pam" = xyes; then
-    XDM_CFLAGS="$XDM_CFLAGS -DUSE_PAM"
+    XDM_DEFINES="$XDM_DEFINES -DUSE_PAM"
 elif test "x$use_shadow" = xyes; then
-    XDM_CFLAGS="$XDM_CFLAGS -DUSESHADOW"
+    XDM_DEFINES="$XDM_DEFINES -DUSESHADOW"
 fi
 if test "x$with_krb4" != xno; then
-    XDM_CFLAGS="$XDM_CFLAGS -DKERBEROS"
+    XDM_DEFINES="$XDM_DEFINES -DKERBEROS"
     if test "x$with_afs" = xno; then
-	XDM_CFLAGS="$XDM_CFLAGS -DNO_AFS"
+	XDM_DEFINES="$XDM_DEFINES -DNO_AFS"
     fi
 fi
 XDM_CFLAGS="$XDM_CFLAGS $(echo "$CFLAGS" | sed 's/ -D_XOPEN_SOURCE=[[0-9]]*//;s/ -D_BSD_SOURCE//;s/ -D_GNU_SOURCE//')"
-AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
+AC_SUBST(XDM_DEFINES)
 
 AC_ARG_WITH(kdm-xconsole,
 	AC_HELP_STRING([--with-kdm-xconsole],[build kdm with built-in xconsole [default=no]]), ,
