@@ -392,7 +392,13 @@ static bool init(
 	void *ctx )
 {
     echoMode = getConf( ctx, "EchoMode", QVariant() ).toInt();
+    KGlobal::locale()->insertCatalogue("kgreet_classic");
     return true;
+}
+
+static void done( void )
+{
+    KGlobal::locale()->removeCatalogue("kgreet_classic");
 }
 
 static KGreeterPlugin *
@@ -406,7 +412,7 @@ create(
 }
 
 kgreeterplugin_info kgreeterplugin_info = {
-    I18N_NOOP("Username + password (classic)"), "classic", kgreeterplugin_info::Local, init, 0, create
+    I18N_NOOP("Username + password (classic)"), "classic", kgreeterplugin_info::Local, init, done, create
 };
 
 #include "kgreet_classic.moc"
