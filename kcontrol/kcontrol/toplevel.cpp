@@ -329,7 +329,7 @@ void TopLevel::categorySelected(QListViewItem *category)
              i18n("There are unsaved changes in the active module.\n"
                   "Do you want to apply the changes before exiting "
                   "the Control Center or forget the changes?"),
-                            i18n("Unsaved changes"),
+                            i18n("Unsaved Changes"),
                             i18n("&Apply"),
                             i18n("&Forget"));
         if (res == KMessageBox::Yes)
