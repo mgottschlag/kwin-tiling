@@ -113,7 +113,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
 
     for(int s=0; s < QApplication::desktop()->numScreens(); s++)
     {   /* populate the combobox for the available screens */
-        m_xineramaScreenComboBox->insertItem(QString::number(s));
+        m_xineramaScreenComboBox->insertItem(QString::number(s+1));
     }
     m_xineramaScreenComboBox->insertItem(i18n("All Screens"));
 
@@ -623,7 +623,7 @@ void PositionTab::showIdentify()
         screenLabel->setFrameShadow(QFrame::Plain);
 
         screenLabel->setAlignment(Qt::AlignCenter);
-        screenLabel->setNum(s);
+        screenLabel->setNum(s + 1);
         connect(this,SIGNAL(hideIdentify()),screenLabel,SLOT(close()));
 
         QPoint screenCenter(QApplication::desktop()->screenGeometry(s).center());
