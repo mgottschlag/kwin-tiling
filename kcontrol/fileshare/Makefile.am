@@ -17,8 +17,8 @@ messages:
 data_DATA = fileshare.desktop
 datadir = $(kde_appsdir)/Settings/Network
 
-sbin_SCRIPTS = fileshareset
+bin_SCRIPTS = fileshareset
 install-exec-hook:
-	@-rm $(DESTDIR)/$(sbindir)/filesharelist
-	@$(LN_S) fileshareset $(DESTDIR)/$(sbindir)/filesharelist
-	@(chown root $(DESTDIR)/$(sbindir)/fileshareset && chmod 4755 $(DESTDIR)/$(sbindir)/fileshareset) || echo "Was not able to make fileshareset setuid root"
+	@-rm $(DESTDIR)/$(bindir)/filesharelist
+	@$(LN_S) fileshareset $(DESTDIR)/$(bindir)/filesharelist
+	@(chown root $(DESTDIR)/$(bindir)/fileshareset && chmod 4755 $(DESTDIR)/$(bindir)/fileshareset) || echo "Was not able to make fileshareset setuid root"
