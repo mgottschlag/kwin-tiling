@@ -433,11 +433,13 @@ void SplashInstaller::slotFilesDropped(const KURL::List &urls)
 //-----------------------------------------------------------------------------
 int SplashInstaller::findTheme( const QString &theme )
 {
+  // theme is untranslated, but the listbox contains translated items
+  QString tmp(i18n( theme.utf8() ));
   int id = mThemesList->count()-1;
 
   while (id >= 0)
   {
-    if (mThemesList->text(id) == theme)
+    if (mThemesList->text(id) == tmp)
       return id;
     id--;
   }
