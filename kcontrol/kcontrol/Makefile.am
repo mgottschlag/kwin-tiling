@@ -34,8 +34,9 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 
 kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
-kcmshell_la_SOURCES = kcmshell.cpp proxywidget.cpp \
-	                  kcdialog.cpp global.cpp kcdialog.skel
+kcmshell_la_SOURCES = kcmshell.cpp proxywidget.cpp modules.cpp \
+                      kcrootonly.cpp kcdialog.cpp global.cpp \
+                      kcdialog.skel
 kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
