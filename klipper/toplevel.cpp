@@ -17,7 +17,6 @@
 #include <qtooltip.h>
 
 #include <kaboutdata.h>
-#include <kaccelaction.h>
 #include <kaction.h>
 #include <kapplication.h>
 #include <kconfig.h>
@@ -469,9 +468,8 @@ void TopLevel::slotConfigure()
         readConfiguration( m_config );
     }
 
-    KAccelActions map = globalKeys->actions();
     ConfigDialog *dlg = new ConfigDialog( myURLGrabber->actionList(),
-                                          map );
+                                          globalKeys );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory );
@@ -490,7 +488,7 @@ void TopLevel::slotConfigure()
         bSynchronize = dlg->synchronize();
         bNoNullClipboard = dlg->noNullClipboard();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
-        globalKeys->actions().updateShortcuts( map );
+        dlg->commitShortcuts();
         globalKeys->writeSettings(m_config);
         globalKeys->updateConnections();
         toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
