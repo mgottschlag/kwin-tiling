@@ -1,12 +1,12 @@
 
-bin_PROGRAMS = kcontrol2 kcmshell kcmroot
+bin_PROGRAMS = kcontrol kcmshell kcmroot
 
-kcontrol2_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
+kcontrol_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
 			aboutwidget.cpp kdockwidget.cpp \
 			proxywidget.cpp moduleinfo.cpp modloader.cpp \
 			closedlg.cpp proxymodule.cpp KCModuleIface.stub
 
-kcontrol2_LDADD   = $(LIB_KDEUI) $(LIB_KDECORE)
+kcontrol_LDADD   = $(LIB_KDEUI) $(LIB_KDECORE)
 
 
 kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
@@ -21,7 +21,7 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 kcmroot_LDADD   = $(LIB_KDEUI)
 
 icons_DATA = close.png
-iconsdir = $(kde_datadir)/kcontrol2/pics
+iconsdir = $(kde_datadir)/kcontrol/pics
 
 INCLUDES= $(all_includes)
 
@@ -30,5 +30,5 @@ METASOURCES = AUTO
 LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o ../../po/kcontrol2.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot *.cpp -o ../../po/kcontrol.pot
 

@@ -30,7 +30,7 @@
 
 
 MyApplication::MyApplication(int argc, char *argv[])
-  : KUniqueApplication(argc, argv, "kcontrol2"), toplevel(0)
+  : KUniqueApplication(argc, argv, "kcontrol"), toplevel(0)
 {
   if (isRestored())
     RESTORE(TopLevel)
