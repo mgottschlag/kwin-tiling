@@ -13,6 +13,9 @@
 
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.15  2000/07/16 21:01:58  hoelzer
+    Show partition information on linux.
+
     Revision 1.14  2000/06/22 19:01:28  bieker
     Removing some spaces.
 
@@ -179,7 +182,7 @@ bool GetInfo_ReadfromFile( QListView *lbox, const char *FileName,
 
 bool GetInfo_CPU( QListView *lBox )
 {
-  lBox->addColumn(i18n("Information"),150 );
+  lBox->addColumn(i18n("Information") );
   lBox->addColumn(i18n("Value") );
   return GetInfo_ReadfromFile( lBox, INFO_CPU, ':' );
 }
@@ -193,7 +196,7 @@ bool GetInfo_IRQ( QListView *lBox )
 
 bool GetInfo_DMA( QListView *lBox )
 {
-  lBox->addColumn(i18n("DMA-Channel"),100 );
+  lBox->addColumn(i18n("DMA-Channel"));
   lBox->addColumn(i18n("used by") );
   return GetInfo_ReadfromFile( lBox, INFO_DMA, ':' );
 }
@@ -206,7 +209,7 @@ bool GetInfo_PCI( QListView *lBox )
 
 bool GetInfo_IO_Ports( QListView *lBox )
 {
-  lBox->addColumn(i18n("I/O-Range"),100 );
+  lBox->addColumn(i18n("I/O-Range") );
   lBox->addColumn(i18n("used by") );
   return GetInfo_ReadfromFile( lBox, INFO_IOPORTS, ':' );
 }
