@@ -34,7 +34,7 @@
 #include <dcopclient.h>
 #include <kstddirs.h>
 
-
+#include "KCModuleIface_stub.h"
 #include "proxymodule.h"
 #include "proxymodule.moc"
 #include "utils.h"
@@ -184,6 +184,25 @@ DCOPProxy::~DCOPProxy()
   delete _notify;
 }
 
+void DCOPProxy::load() 
+{ 
+    _proxy->load(); 
+}
+
+void DCOPProxy::save() 
+{ 
+    _proxy->save(); 
+}
+
+void DCOPProxy::defaults() 
+{ 
+    _proxy->defaults(); 
+}
+
+int DCOPProxy::buttons() 
+{ 
+    return _proxy->buttons(); 
+}
 
 void DCOPProxy::resizeEvent(QResizeEvent *)
 {

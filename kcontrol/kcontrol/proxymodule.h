@@ -34,8 +34,7 @@ class KProcess;
 
 
 #include "moduleinfo.h"
-#include "KCModuleIface_stub.h"
-
+class KCModuleIface_stub;
 
 class ProcessProxy : public QObject
 {
@@ -46,7 +45,7 @@ public:
   ProcessProxy(QString exec, bool onlyRoot=false);
   ~ProcessProxy();
 
-  bool running() { return _running; };
+  bool running() { return _running; }
 
 
 signals:
@@ -95,13 +94,13 @@ public:
   DCOPProxy(QWidget *parent, const ModuleInfo &mod);
   ~DCOPProxy();
 
-  void load() { _proxy->load(); };
-  void save() { _proxy->save(); };
-  void defaults() { _proxy->defaults(); };
+  void load();
+  void save();
+  void defaults();
  
-  int buttons() { return _proxy->buttons(); };
+  int buttons();
 
-  bool running() { return _running; };
+  bool running() { return _running; }
 
 
 protected:  

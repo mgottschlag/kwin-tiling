@@ -1,4 +1,4 @@
-SUBDIRS = pics
+SUBDIRS = . pics
 
 bin_PROGRAMS = kcontrol kcmshell kcmroot
 
@@ -7,7 +7,7 @@ kcontrol_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
 			proxywidget.cpp moduleinfo.cpp modloader.cpp \
 			closedlg.cpp proxymodule.cpp KCModuleIface.stub
 
-kcontrol_LDADD   = $(LIB_KDEUI) $(LIB_KDECORE)
+kcontrol_LDADD   = $(LIB_KDEUI)
 
 
 kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
@@ -19,10 +19,7 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 			utils.cpp KCModuleIface.stub \
 			proxymodule.cpp
 
-modloader.cpp: proxymodule.h
-main.cpp: KCModuleIface_stub.h 
-toplevel.cpp: proxymodule.h
-proxymodule.h: KCModuleIface_stub.h
+proxymodule.cpp: KCModuleIface_stub.h
 
 kcmroot_LDADD   = $(LIB_KDEUI)
 
