@@ -34,6 +34,10 @@
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -193,7 +197,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
 	mSetupBt = new QPushButton(  i18n("&Setup ..."), group );
 	connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
-    mSetupBt->setEnabled(mEnabled);
+    mSetupBt->setEnabled(mEnabled &&
+                         !mSaverList.at(mSelected-1)->setup().isEmpty());
 
 	hlay->addWidget( mSetupBt );
     
@@ -238,19 +243,27 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	groupLayout = new QHBoxLayout;
 	groupLayout2->addLayout(groupLayout);
 
-	mPrioritySlider = new QSlider( QSlider::Horizontal, group );
-	mPrioritySlider->setRange( 0, 20 );
-	mPrioritySlider->setSteps( 5, 10 );
-	mPrioritySlider->setValue( mPriority );
-	connect( mPrioritySlider, SIGNAL( valueChanged(int) ),
-             SLOT( slotPriorityChanged(int) ) );
+	mPrioritySlider = new QSlider(QSlider::Horizontal, group);
+	mPrioritySlider->setRange(0, 19);
+	mPrioritySlider->setSteps(1, 5);
+	mPrioritySlider->setValue(mPriority);
+	connect(mPrioritySlider, SIGNAL( valueChanged(int)),
+             SLOT(slotPriorityChanged(int)));
     
 	QLabel* label = new QLabel( mPrioritySlider, i18n("&High"), group );
 	
 	groupLayout->addWidget( label );
 	groupLayout->addWidget( mPrioritySlider, 10 );
+
+#ifndef HAVE_SETPRIORITY
+    label->setEnabled(false);
+    mPrioritySlider->setEnabled(false);
+#endif
     
 	label = new QLabel(  i18n("Low"), group );
+#ifndef HAVE_SETPRIORITY
+    label->setEnabled(false);
+#endif
 	
 	groupLayout->addWidget( label );
 
@@ -261,6 +274,8 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
 	setMonitor();
 }
 
+//---------------------------------------------------------------------------
+//
 void KScreenSaver::resizeEvent( QResizeEvent * )
 {
     if (mMonitor)
@@ -270,6 +285,8 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
     }
 }
 
+//---------------------------------------------------------------------------
+//
 KScreenSaver::~KScreenSaver()
 {
     if (mPreviewProc)
