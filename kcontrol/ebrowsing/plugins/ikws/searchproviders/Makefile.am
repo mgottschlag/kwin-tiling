@@ -12,6 +12,7 @@ services_DATA = \
 		bugft.desktop \
 		bugno.desktop \
 		call.desktop \
+		cia.desktop \
 		citeseer.desktop \
 		cpan.desktop \
 		ctan_cat.desktop \
