@@ -20,6 +20,7 @@
 #undef Bool
 #undef Unsorted
 
+#include <kglobalsettings.h>
 #include <kfontdialog.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
@@ -153,24 +154,24 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << "";
-// Disabled these two for beta release, as they don't do anything.
 //    << i18n("Taskbar button") << "General"    << "taskbarFont"  << "kickerrc"
 //    << i18n("Panel clock")    << "General"    << "dateFont"     << "kickerrc";
 
   QValueList<QFont> defaultFontList;
 
-  QFont defaultFont("helvetica", 12);
+  // Keep in sync with kglobalsettings.
 
-  defaultFontList
-    <<  defaultFont
-    <<  defaultFont
-    <<  defaultFont
-    <<  defaultFont
-    <<  QFont("helvetica", 10)
-    <<  defaultFont
-    <<  QFont("helvetica", 12, QFont::Bold)
-    <<  defaultFont
-    <<  QFont("helvetica", 10);
+  QFont f0("helvetica", 12, QFont::SansSerif);
+  QFont f1("courier", 12, QFont::TypeWriter);
+  QFont f2("helvetica", 10, QFont::SansSerif);
+  QFont f3("helvetica", 12, QFont::SansSerif, true);
+
+  f0.setPixelSize(12);
+  f1.setPixelSize(10);
+  f2.setPixelSize(12);
+  f3.setPixelSize(12);
+
+  defaultFontList << f0 << f1 << f2 << f2 << f2 << f0 << f3 << f1 << f1;
 
   QValueList<bool> fixedList;
 
