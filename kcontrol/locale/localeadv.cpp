@@ -230,7 +230,7 @@ void KLocaleConfigAdvanced::syncWithKLocale()
   edMonThoSep->setText(KGlobal::locale()->_monetaryThousandsSeparator);
   edMonPosSign->setText(KGlobal::locale()->_positiveSign);
   edMonNegSign->setText(KGlobal::locale()->_negativeSign);
-  edMonFraDig->setText(KGlobal::locale()->formatNumber(KGlobal::locale()->_fracDigits));
+  edMonFraDig->setText(KGlobal::locale()->formatNumber(KGlobal::locale()->_fracDigits, 0));
 
   chMonPosPreCurSym->setChecked(KGlobal::locale()->_positivePrefixCurrencySymbol);
   chMonNegPreCurSym->setChecked(KGlobal::locale()->_negativePrefixCurrencySymbol);
