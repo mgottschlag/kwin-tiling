@@ -74,7 +74,7 @@ protected slots:
     void configChanged(const QString&);
 
 private:
-    void setupExtensionInfo(KConfig& c, bool checkExists);
+    void setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists = false);
 
     KDirWatch      *configFileWatch; 
     PositionTab    *positiontab;

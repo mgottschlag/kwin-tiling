@@ -40,8 +40,6 @@
 // for multihead
 int KickerConfig::kickerconfig_screen_number = 0;
 
-#include <iostream>
-using namespace std;
 KickerConfig::KickerConfig(QWidget *parent, const char *name)
   : KCModule(parent, name),
     DCOPObject("KickerConfig"),
@@ -51,17 +49,9 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 
     initScreenNumber();
 
-    QString configname = configName();
-    QString configpath = KGlobal::dirs()->findResource("config", configname);
-    configFileWatch->addFile(configpath);
-    m_extensionInfo.append(new extensionInfo(QString::null, configname, configpath));
-    KConfig c(configname, false, false);
-
     QVBoxLayout *layout = new QVBoxLayout(this);
     QTabWidget *tab = new QTabWidget(this);
     layout->addWidget(tab);
-
-    setupExtensionInfo(c, false);
 
     positiontab = new PositionTab(this);
     tab->addTab(positiontab, i18n("Arran&gement"));
@@ -84,8 +74,6 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(positiontab, SIGNAL(panelPositionChanged(int)),
             hidingtab, SLOT(panelPositionChanged(int)));
 
-    connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
-    configFileWatch->startScan();
     kapp->dcopClient()->setNotifications(true);
     connectDCOPSignal("kicker", "kicker", "configSwitchToPanel(QString)", "jumpToPanel(QString)", false);
     kapp->dcopClient()->send("kicker", "kicker", "configLaunched()", QByteArray());
@@ -102,13 +90,52 @@ void KickerConfig::configChanged()
     setChanged(true);
 }
 
+// this method may get called multiple times during the life of the control panel!
 void KickerConfig::load()
 {
+    disconnect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
+    configFileWatch->stopScan();
+    for (extensionInfoList::iterator it = m_extensionInfo.begin();
+         it != m_extensionInfo.end();
+         ++it)
+    {
+        configFileWatch->removeFile((*it)->_configPath);
+    }
+
+    QString configname = configName();
+    QString configpath = KGlobal::dirs()->findResource("config", configname);
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(configname);
+
+    if (m_extensionInfo.isEmpty())
+    {
+        // our list is empty, so add the main kicker config
+        m_extensionInfo.append(new extensionInfo(QString::null, configname, configpath));
+        configFileWatch->addFile(configpath);
+    }
+    else
+    {
+        // this isn't our first trip through here, which means we are reloading
+        // so reload the kicker config (first we have to find it ;)
+        extensionInfoList::iterator it = m_extensionInfo.begin();
+        for (; it != m_extensionInfo.end(); ++it)
+        {
+            if (configpath == (*it)->_configPath)
+            {
+                (*it)->load();
+                break;
+            }
+        }
+    }
+
+    setupExtensionInfo(*c, true, true);
+
     positiontab->load();
     hidingtab->load();
     menutab->load();
 
     setChanged(false);
+    connect(configFileWatch, SIGNAL(dirty(const QString&)), this, SLOT(configChanged(const QString&)));
+    configFileWatch->startScan();
 }
 
 void KickerConfig::save()
@@ -163,23 +190,24 @@ const KAboutData* KickerConfig::aboutData() const
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmkicker"), I18N_NOOP("KDE Panel Control Module"),
                   0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 Aaron J. Seigo"));
+                  I18N_NOOP("(c) 1999 - 2001 Matthias Elter\n(c) 2002 - 2003 Aaron J. Seigo"));
 
-    about->addAuthor("Aaron J. Seigo", 0, "aseigo@olympusproject.org");
+    about->addAuthor("Aaron J. Seigo", 0, "aseigo@kde.org");
     about->addAuthor("Matthias Elter", 0, "elter@kde.org");
 
     return about;
 }
 
-void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
+void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists)
 {
     c.setGroup("General");
     QStringList elist = c.readListEntry("Extensions2");
 
     // all of our existing extensions
-    // we'll remove ones we find still there, and delete
-    // all the extensions that remain (e.g. are no longer active
-    QPtrList<extensionInfo> oldExtensions(m_extensionInfo);
+    // we'll remove ones we find which are still there the oldExtensions, and delete
+    // all the extensions that remain (e.g. are no longer active)
+    extensionInfoList oldExtensions(m_extensionInfo);
+
     for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
     {
         // extension id
@@ -201,19 +229,23 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
 
         if (checkExists)
         {
-            QPtrListIterator<extensionInfo> extIt(m_extensionInfo);
-            for (; extIt; ++extIt)
+            extensionInfoList::iterator extIt = m_extensionInfo.begin();
+            for (; extIt != m_extensionInfo.end(); ++extIt)
             {
                 if (configpath == (*extIt)->_configPath)
                 {
                     // we have found it in the config file and it exists
                     // so remove it from our list of existing extensions
                     oldExtensions.remove(*extIt);
+                    if (reloadIfExists)
+                    {
+                        (*extIt)->load();
+                    }
                     break;
                 }
             }
 
-            if (extIt)
+            if (extIt != m_extensionInfo.end())
             {
                 continue;
             }
@@ -228,8 +260,8 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists)
     if (checkExists)
     {
         // now remove all the left overs that weren't in the file
-        QPtrListIterator<extensionInfo> extIt(oldExtensions);
-        for (; extIt; ++extIt)
+        extensionInfoList::iterator extIt = oldExtensions.begin();
+        for (; extIt != oldExtensions.end(); ++extIt)
         {
             // don't remove the kickerrc!
             if ((*extIt)->_configPath.right(8) != "kickerrc")
@@ -246,8 +278,8 @@ void KickerConfig::configChanged(const QString& config)
 {
     if (config.right(8) == "kickerrc")
     {
-        KConfig c(configName(), false, false);
-        setupExtensionInfo(c, true);
+        KSharedConfig::Ptr c = KSharedConfig::openConfig(configName());
+        setupExtensionInfo(*c, true);
     }
 
     // find the extension and change it

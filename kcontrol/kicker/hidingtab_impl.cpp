@@ -60,6 +60,7 @@ HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
 
 void HidingTab::load()
 {
+    m_panelInfo = 0;
     m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
     if (m_kcm->extensionsInfo().count() == 1)

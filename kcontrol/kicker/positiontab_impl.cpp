@@ -151,6 +151,7 @@ PositionTab::~PositionTab()
 
 void PositionTab::load()
 {
+    m_panelInfo = 0;
     m_panelList->clear();
     m_kcm->populateExtensionInfoList(m_panelList);
 
@@ -595,11 +596,10 @@ void PositionTab::storeInfo()
 
     m_panelInfo->_position = m_panelPos;
     m_panelInfo->_alignment = m_panelAlign;
-		if(m_xineramaScreenComboBox->currentItem() == m_xineramaScreenComboBox->count()-1)
+    if(m_xineramaScreenComboBox->currentItem() == m_xineramaScreenComboBox->count()-1)
         m_panelInfo->_xineramaScreen = -2; /* all screens */
-		else
+    else
         m_panelInfo->_xineramaScreen = m_xineramaScreenComboBox->currentItem();
-		
 
     m_panelInfo->_sizePercentage = m_percentSlider->value();
     m_panelInfo->_expandSize = m_expandCheckBox->isChecked();

@@ -78,22 +78,22 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-    KConfig c(KickerConfig::configName(), false, false);
-    c.setGroup("KMenu");
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::configName());
+    c->setGroup("KMenu");
 
-    m_showPixmap->setChecked(c.readBoolEntry("UseSidePixmap", true));
+    m_showPixmap->setChecked(c->readBoolEntry("UseSidePixmap", true));
 
-    c.setGroup("menus");
+    c->setGroup("menus");
 
-    bool showHiddenFiles = c.readBoolEntry("ShowHiddenFiles", false);
+    bool showHiddenFiles = c->readBoolEntry("ShowHiddenFiles", false);
     m_hiddenFiles->setChecked(showHiddenFiles);
-    m_maxQuickBrowserItems->setValue(c.readNumEntry("MaxEntries2", 30));
+    m_maxQuickBrowserItems->setValue(c->readNumEntry("MaxEntries2", 30));
     m_maxQuickBrowserItems->setEnabled(showHiddenFiles);
     m_maxQuickBrowserItemsLabel->setEnabled(showHiddenFiles);
 
-    if (c.readBoolEntry("DetailedMenuEntries", true))
+    if (c->readBoolEntry("DetailedMenuEntries", true))
     {
-        if (c.readBoolEntry("DetailedEntriesNamesFirst", true))
+        if (c->readBoolEntry("DetailedEntriesNamesFirst", true))
         {
             m_formatNameDesc->setChecked(true);
         }
@@ -114,7 +114,7 @@ void MenuTab::load()
                                       i18n("Bookmarks"),
                                       QString::null,
                                       SmallIcon("bookmark"),
-                                      c.readBoolEntry("UseBookmarks", true));
+                                      c->readBoolEntry("UseBookmarks", true));
     connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // show the quick menus menu?
@@ -122,10 +122,10 @@ void MenuTab::load()
                                           i18n("Quick Browser"),
                                           QString::null,
                                           SmallIcon("kdisknav"),
-                                          c.readBoolEntry("UseBrowser", true));
+                                          c->readBoolEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
-    QStringList ext = c.readListEntry("Extensions");
+    QStringList ext = c->readListEntry("Extensions");
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
     kSubMenuItem* menuItem(0);
     for (QStringList::ConstIterator dit=dirs.begin(); dit!=dirs.end(); ++dit)
@@ -144,31 +144,28 @@ void MenuTab::load()
         }
     }
 
-    if (c.readBoolEntry("RecentVsOften", false))
+    if (c->readBoolEntry("RecentVsOften", false))
         m_showRecent->setChecked(true);
     else
         m_showFrequent->setChecked(true);
 
-    m_maxQuickStartItems->setValue(c.readNumEntry("NumVisibleEntries", 5));
+    m_maxQuickStartItems->setValue(c->readNumEntry("NumVisibleEntries", 5));
 }
 
 void MenuTab::save()
 {
-    KConfig c(KickerConfig::configName(), false, false);
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::configName());
 
-    c.setGroup("KMenu");
+    c->setGroup("KMenu");
+    c->writeEntry("UseSidePixmap", m_showPixmap->isChecked());
 
-    c.writeEntry("UseSidePixmap", m_showPixmap->isChecked());
-
-    c.setGroup("menus");
-
-    c.writeEntry("MaxEntries2", m_maxQuickBrowserItems->value());
-
-    c.writeEntry("DetailedMenuEntries", !m_formatSimple->isChecked());
-    c.writeEntry("DetailedEntriesNamesFirst", m_formatNameDesc->isChecked());
-    c.writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
-    c.writeEntry("NumVisibleEntries", m_maxQuickStartItems->value());
-    c.writeEntry("RecentVsOften", m_showRecent->isChecked());
+    c->setGroup("menus");
+    c->writeEntry("MaxEntries2", m_maxQuickBrowserItems->value());
+    c->writeEntry("DetailedMenuEntries", !m_formatSimple->isChecked());
+    c->writeEntry("DetailedEntriesNamesFirst", m_formatNameDesc->isChecked());
+    c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
+    c->writeEntry("NumVisibleEntries", m_maxQuickStartItems->value());
+    c->writeEntry("RecentVsOften", m_showRecent->isChecked());
 
     QStringList ext;
     QListViewItem *item(0);
@@ -177,20 +174,20 @@ void MenuTab::save()
         bool isOn = static_cast<kSubMenuItem*>(item)->isOn();
         if (item == m_bookmarkMenu)
         {
-            c.writeEntry("UseBookmarks", isOn);
+            c->writeEntry("UseBookmarks", isOn);
         }
         else if (item == m_quickBrowserMenu)
         {
-            c.writeEntry("UseBrowser", isOn);
+            c->writeEntry("UseBrowser", isOn);
         }
         else if (isOn)
         {
             ext << static_cast<kSubMenuItem*>(item)->desktopFile();
         }
     }
-    c.writeEntry("Extensions", ext);
+    c->writeEntry("Extensions", ext);
 
-    c.sync();
+    c->sync();
 }
 
 void MenuTab::defaults()
