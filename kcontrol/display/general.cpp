@@ -150,8 +150,10 @@ void KThemeListBox::defaults()
 
 void KThemeListBox::load()
 {
-    setSelected(curItem, true);
-    ensureItemVisible( curItem );
+    if (0 != curItem) {
+        setSelected(curItem, true);
+        ensureItemVisible( curItem );
+    }
 }
 
 
