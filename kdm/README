@@ -117,7 +117,7 @@ _must_ come first on the command line, if they are used:
     is logged (look at /etc/syslog.conf). 
 
 Send me the logs together with a detailed description what you did and
-what happended. If your problem is related to a specific configuration,
+what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your kdm config directory.
 
 
