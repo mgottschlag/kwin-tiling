@@ -330,8 +330,7 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
 //
 int KScreenSaver::buttons()
 {
-    return KCModule::Help | KCModule::Default | KCModule::Reset |
-       KCModule::Cancel | KCModule::Apply | KCModule::Ok;
+    return KCModule::Help | KCModule::Default | KCModule::Apply;
 }
 
 //---------------------------------------------------------------------------
@@ -362,9 +361,11 @@ void KScreenSaver::load()
 
     SaverConfig *saver;
     mSelected = -1;
+    int i = 0;
     for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
         if (saver->file() == mSaver)
-            mSelected = mSaverListBox->count()-1;
+            mSelected = i;
+        i++;
     }
     if ( mSelected > -1 )
     {
