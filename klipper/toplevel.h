@@ -12,7 +12,7 @@
 #ifndef _TOPLEVEL_H_
 #define _TOPLEVEL_H_
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobalaccel.h>
 #include <kpopupmenu.h>
 #include <qmap.h>

@@ -21,7 +21,7 @@
 #ifndef __kcmshell_h__
 #define __kcmshell_h__
 
-#include <kapp.h>
+#include <kapplication.h>
 
 class kcmApplication : public KApplication
 {

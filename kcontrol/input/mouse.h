@@ -38,7 +38,7 @@
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <knuminput.h>
 #include <kglobalsettings.h>
 

@@ -26,7 +26,7 @@
 #ifndef KARTSCONFIG_H
 #define KARTSCONFIG_H
 
-#include <kapp.h>
+#include <kapplication.h>
 
 #include <qlabel.h>
 #include <qlineedit.h>

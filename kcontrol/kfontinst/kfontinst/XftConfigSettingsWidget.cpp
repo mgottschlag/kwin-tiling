@@ -43,7 +43,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qtimer.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include "XftConfigRules.h"
 
 CXftConfigSettingsWidget::CXftConfigSettingsWidget(QWidget *parent, const char *name)

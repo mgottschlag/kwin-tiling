@@ -36,7 +36,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kprocess.h>
 
 /*

@@ -23,7 +23,7 @@
 #endif
 
 #include <qptrlist.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <qwidget.h>
 class QPixmap;
 class KSharedPixmap;

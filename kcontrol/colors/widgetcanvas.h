@@ -16,7 +16,7 @@
 #include <qevent.h>
 #include <qmap.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kcharsets.h>
 #include <kpixmap.h>
