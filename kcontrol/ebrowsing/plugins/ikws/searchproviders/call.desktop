@@ -1,0 +1,9 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=qrz,call
+Name[de]=QRZ.com Amateurfunkrufzeichen
+Name[en]=QRZ.com callsign database
+Query=http://www.qrz.com/database?callsign=\\{@}
+ServiceTypes=SearchProvider
+Type=Service
