@@ -187,7 +187,7 @@ void KDEDConfig::load() {
         }
 		item = clitem;
 		item->setText(1, i18n("Alarm Daemon"));
-		item->setText(2, i18n("Monitors KOrganizer/KAlarm schedules"));
+		item->setText(2, i18n("Monitors KAlarm schedules"));
 		item->setText(3, NOT_RUNNING);
 		item->setText(4, QString::fromLatin1(KALARMD));
 	}
