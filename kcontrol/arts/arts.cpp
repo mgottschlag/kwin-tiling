@@ -191,6 +191,15 @@ void KArtsModule::defaults()
 	responseButton[1]->setChecked(true);
 }
 
+QString KArtsModule::quickHelp()
+{
+        return i18n("<h1>The aRts sound server</h1> Here you can configure aRts, KDE's sound server."
+          " This program not only allows you to hear your system sounds while simultaneously"
+          " listening to some MP3 file or playing a game with a background music. It also allows you"
+          " to apply different effects to your system sounds and provides programmers with"
+          " an easy way to achieve sound support.");
+}
+
 void KArtsModule::updateWidgets()
 {
 	startRealtime->setEnabled(startServer->isChecked());

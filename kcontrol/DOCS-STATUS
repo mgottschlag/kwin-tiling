@@ -13,7 +13,7 @@ as proof-read. Thanks.
 
                         Ready   WhatsThis   proof-read    Manual
 arts:
-  arts.cpp               [ ]        [s]         [ ]         [ ]
+  arts.cpp               [ ]        [x]         [ ]         [ ]
 
 clock:
   dtime.cpp              [ ]        [x]         [ ]         [ ]
@@ -105,13 +105,12 @@ kicker:
   paneltab.cpp           [ ]        [s]         [ ]         [ ]
 
 kio:
-  kcookiesmain.cpp       [ ]        [ ]         [ ]         [ ]
+  kcookiesmain.cpp       [ ]        [x]         [ ]         [ ]
   kcookiesmanagement.cpp [ ]        [ ]         [ ]         [ ]
-  kcookiespolicies.cpp   [ ]        [ ]         [ ]         [ ]
+  kcookiespolicies.cpp   [ ]        [x]         [ ]         [ ]
   kproxydlg.cpp          [ ]        [s]         [ ]         [ ]
   ksmboptdlg.cpp         [ ]        [s]         [ ]         [ ]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
-  useragentdlg.cpp       [ ]        [s]         [ ]         [ ]
+  useragentdlg.cpp       [ ]        [x]         [ ]         [ ]
 
 knotify:
   eventconfig.cpp        [ ]        [ ]         [ ]         [ ]

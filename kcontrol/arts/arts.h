@@ -28,8 +28,8 @@
 
 #include <kapp.h>
 
-#include <qlabel.h> 
-#include <qcheckbox.h> 
+#include <qlabel.h>
+#include <qcheckbox.h>
 
 #include <kcmodule.h>
 
@@ -51,6 +51,7 @@ public:
   void save();
   void defaults();
 
+  QString quickHelp();
 
 private slots:
 
