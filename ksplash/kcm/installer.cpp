@@ -95,8 +95,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   QHBoxLayout* hbox = new QHBoxLayout( this, 0, KDialog::spacingHint() );
 
-  QVBoxLayout* leftbox = new QVBoxLayout( this, 0, KDialog::spacingHint() );
-  hbox->addLayout( leftbox );
+  QVBoxLayout* leftbox = new QVBoxLayout( hbox, KDialog::spacingHint() );
   hbox->setStretchFactor( leftbox, 1 );
 
   mThemesList = new ThemeListBox(this);
@@ -117,8 +116,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   leftbox->addWidget( mBtnTest );
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
-  QVBoxLayout* rightbox = new QVBoxLayout( this, 0, KDialog::spacingHint() );
-  hbox->addLayout( rightbox );
+  QVBoxLayout* rightbox = new QVBoxLayout( hbox, KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 
   mPreview = new QLabel(this);
