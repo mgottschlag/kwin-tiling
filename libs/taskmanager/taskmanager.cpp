@@ -61,7 +61,7 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     // set active window
     WId win = kwin_module->activeWindow();
     activeWindowChanged(win);
-    
+
     configure_startup();
 }
 
@@ -409,7 +409,7 @@ QString Task::className()
 {
     XClassHint hint;
     if(XGetClassHint(qt_xdisplay(), _win, &hint))
-        return QString(hint.res_name);
+        return QString(hint.res_class);
     return QString::null;
 }
 
@@ -441,7 +441,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
   case KIcon::SizeSmall:
     {
       pixmap = icon( 16, 16, true  );
-      
+
       // Icon of last resort
       if( pixmap.isNull() ) {
 	pixmap = KGlobal::iconLoader()->loadIcon( "go",
@@ -478,9 +478,9 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
     {
       // If there's a 48x48 icon in the hints then use it
       pixmap = icon( size, size, false  );
-      
+
       // If not, try to get one from the classname
-      if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
+      if ( pixmap.isNull() || ( pixmap.width( != size ) || ( pixmap.height() != size ) ) {
 	pixmap = KGlobal::iconLoader()->loadIcon( className(),
 						  KIcon::NoGroup,
 						  size,
@@ -489,7 +489,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 						  true );
 	isStaticIcon = true;
       }
-      
+
       // If we still don't have an icon then scale the one in the hints
       if ( pixmap.isNull() || ( pixmap.width() != size ) || ( pixmap.height() != size ) ) {
 	pixmap = icon( size, size, true  );
@@ -516,10 +516,10 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
 
   if ( id1.contains( id2 ) > 0 )
     return true;
-  
+
   if ( id2.contains( id1 ) > 0 )
     return true;
-  
+
   // add hacks here ;-)
     if ( ( id1 == "navigator" && id2 == "netscape")
 	 || ( id1 == "netscape" && id2 == "navigator")
