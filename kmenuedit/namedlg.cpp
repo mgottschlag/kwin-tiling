@@ -27,11 +27,11 @@
 #include "namedlg.h"
 
 NameDialog::NameDialog( QWidget *parent, const char *name )
-    : KDialogBase( parent, name, true, "test", Ok|Cancel, Ok, true )
+    : KDialogBase( parent, name, true, i18n("NewItem"), Ok|Cancel, Ok, true )
 {
     QHBox *page = makeHBoxMainWidget();
     (void)  new QLabel( i18n("Name:"), page);
- 
+
     _lineedit = new KLineEdit(page);
     _lineedit->setMinimumWidth(fontMetrics().maxWidth()*20);
     _lineedit->setFocus();
