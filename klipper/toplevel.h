@@ -39,6 +39,7 @@ class History;
 class KAction;
 class QMimeSource;
 class HistoryItem;
+class KlipperSessionManaged;
 
 class KlipperWidget : public QWidget, public DCOPObject
 {
@@ -199,8 +200,8 @@ private:
     static KAboutData* about_data;
 
     bool blockFetchingNewData();
+    KlipperSessionManaged* session_managed;
 };
-
 
 class Klipper : public KlipperWidget
 {

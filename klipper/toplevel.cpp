@@ -91,6 +91,28 @@ namespace {
     };
 }
 
+/**
+ * Helper class to save history upon session exit.
+ */
+class KlipperSessionManaged : public KSessionManaged
+{
+public:
+    KlipperSessionManaged( KlipperWidget* k )
+        : klipper( k )
+        {}
+
+    /**
+     * Save state upon session exit.
+     *
+     * Saving history on session save
+     */
+    virtual bool commitData( QSessionManager& ) {
+        klipper->saveSession();
+        return true;
+    }
+private:
+    KlipperWidget* klipper;
+};
 
 extern bool qt_qclipboard_bailout_hack;
 #if KDE_IS_VERSION( 3, 9, 0 )
@@ -107,6 +129,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     , locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
+    , session_managed( new KlipperSessionManaged( this ))
 {
     qt_qclipboard_bailout_hack = true;
 
@@ -163,7 +186,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     showTimer = new QTime();
 
     readProperties(m_config);
-    connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
     connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     poll = new ClipboardPoll( this );
@@ -203,6 +225,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
 KlipperWidget::~KlipperWidget()
 {
+    delete session_managed;
     delete showTimer;
     delete hideTimer;
     delete myURLGrabber;
