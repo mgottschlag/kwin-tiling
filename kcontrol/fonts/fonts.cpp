@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kipc.h>
 #include <kstddirs.h>
+#include <kcharsets.h>
 #include <kprocess.h>
 #include <stdlib.h>
 
@@ -54,6 +55,7 @@ FontUseItem::FontUseItem(
   QString key,
   QString rc,
   QFont default_fnt,
+  QString default_charset,
   bool f
 )
   : QObject(),
@@ -64,7 +66,9 @@ FontUseItem::FontUseItem(
     _rcgroup(grp),
     _rckey(key),
     _font(default_fnt),
+    _charset(default_charset),
     _default(default_fnt),
+    _defaultCharset(default_charset),
     fixed(f)
 {
   readFont();
@@ -99,22 +103,31 @@ void FontUseItem::readFont()
   config->setGroup(_rcgroup);
   QFont tmpFnt(_font);
   _font = config->readFontEntry(_rckey, &tmpFnt);
+  _charset = config->readEntry( _rckey + "Charset", "default" );
+  if ( _charset == "default" )
+  {
+    _charset = i18n("default");
+    KGlobal::charsets()->setQFont(_font, KGlobal::locale()->charset());
+  }
   if (deleteme) delete config;
 }
 
 void FontUseItem::writeFont()
 {
   KConfigBase *config;
+  QString charset = ( _charset == i18n("default") ) ? "default" : _charset;
 
   if (_rcfile.isEmpty()) {
     config = KGlobal::config();
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, _font, true, true);
+    config->writeEntry(_rckey+"Charset", charset, true, true);
     config->sync();
   } else {
     config = new KSimpleConfig(locate("config", _rcfile));
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, _font);
+    config->writeEntry(_rckey+"Charset", charset);
     config->sync();
     delete config;
   }
@@ -122,9 +135,15 @@ void FontUseItem::writeFont()
 
 void FontUseItem::choose()
 {
-  int result = KFontDialog::getFont(_font, fixed, prnt);
+  KFontDialog dlg( prnt, "Font Selector", fixed, true, QStringList(), true );
+  dlg.setFont( _font, fixed );
+  dlg.setCharset( _charset );
 
-  if (KDialog::Accepted == result) {
+  int result = dlg.exec();
+  if (KDialog::Accepted == result)
+  {
+    _font = dlg.font();
+    _charset = dlg.charset();
     updateLabel();
     emit changed();
   }
@@ -132,7 +151,7 @@ void FontUseItem::choose()
 
 void FontUseItem::updateLabel()
 {
-  QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize()) + ' ' + QFont::encodingName(_font.charSet());
+  QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize()) + ' ' + _charset;
 
   preview->setText(fontDesc);
   preview->setFont(_font);
@@ -234,6 +253,7 @@ KFonts::KFonts(QWidget *parent, const char *name)
         *it++,
         *it++,
         *defaultFontIt++,
+        i18n("default"),
         *fixedListIt++
       );
 

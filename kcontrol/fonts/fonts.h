@@ -18,7 +18,7 @@ class FontUseItem : public QObject
   Q_OBJECT
 
 public:
-    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, bool fixed = false);
+    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, QString default_charset, bool fixed = false);
 
     QString fontString(QFont rFont);
 
@@ -49,7 +49,9 @@ private:
     QString _rcgroup;
     QString _rckey;
     QFont _font;
+    QString _charset;
     QFont _default;
+    QString _defaultCharset;
     bool fixed;
 };
 
@@ -60,7 +62,7 @@ private:
 class KFonts : public KCModule
 {
     Q_OBJECT
-	
+
 public:
     KFonts(QWidget *parent, const char *name);
     ~KFonts();
@@ -81,7 +83,7 @@ protected slots:
 private:
     bool _changed;
     bool defaultCharset;
-    
+
     QList <FontUseItem> fontUseList;
 };
 
