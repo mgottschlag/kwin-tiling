@@ -12,8 +12,8 @@ noinst_HEADERS = toplevel.h kcmlocale.h klocalesample.h localenum.h localemon.h 
 kcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_locale_la_LIBADD = $(LIB_KDEUI)
 
-TIMEZONES:
-	grep -v '^#' /usr/share/zoneinfo/zone.tab | tr '	' ' ' | sed -e "s#  *# #" | cut -d' ' -f3 >> $(srcdir)/TIMEZONES
+timezones:
+	grep -v '^#' /usr/share/zoneinfo/zone.tab | tr '	' ' ' | sed -e "s#  *# #" | cut -d' ' -f3 | sed -e 's,^,i18n(",; s,$$,");,' >> $(srcdir)/TIMEZONES
 	sort -u $(srcdir)/TIMEZONES > t && mv t $(srcdir)/TIMEZONES
 	
 messages:
