@@ -59,17 +59,17 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   }
 
   if ( KeyType == "standard" ) {
-          for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
-              KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
-              keys->insertItem( KStdAccel::description(id),
-                                 KStdAccel::action(id),
-                                 KStdAccel::key(id),
-                                 true );
-          }
+    for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
+      KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
+      keys->insertItem( KStdAccel::description(id),
+                        KStdAccel::action(id),
+                        KStdAccel::defaultKey(id),
+                        true );
+    }
 
-          KeyScheme = "Standard Key Scheme " ;
-          KeySet    = "Keys" ;
-          check_against_std_keys  = false ;
+    KeyScheme = "Standard Key Scheme " ;
+    KeySet    = "Keys" ;
+    check_against_std_keys  = false ;
   }
 
   keys->setConfigGlobal( true );
@@ -162,11 +162,13 @@ void KKeyModule::save()
 {
   keys->setKeyDict( dict );
   keys->writeSettings();
-  if ( !kapp->dcopClient()->isAttached() )
+  if ( KeyType == "global" ) {
+    if ( !kapp->dcopClient()->isAttached() )
       kapp->dcopClient()->attach();
-  kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
-  kapp->dcopClient()->send("kdesktop", "", "configure()", "");
-  kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
+    kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
+    kapp->dcopClient()->send("kdesktop", "", "configure()", "");
+    kapp->dcopClient()->send("kicker", "Panel", "configure()", "");
+  }
 }
 
 void KKeyModule::defaults()
@@ -176,7 +178,7 @@ void KKeyModule::defaults()
 
 void KKeyModule::slotRemove()
 {
-    QString kksPath =
+  QString kksPath = 
         KGlobal::dirs()->saveLocation("data", "kcmkeys/" + KeyType);
 
   QDir d( kksPath );
