@@ -90,7 +90,7 @@ void KFileShareConfig::load()
     }
     else
     {
-        QString str(QCString(file.readAll()));
+        QString str = file.readAll();
         if ( str=="RESTRICT=yes")
         {
             sharing->setChecked( false );
@@ -116,7 +116,7 @@ void KFileShareConfig::save()
     if ( !dir.exists())
         dir.mkdir("/etc/security");
 
-    QCString str;
+    QString str;
     //write file
     if ( noSharing->isChecked())
     {
@@ -128,7 +128,7 @@ void KFileShareConfig::save()
     }
     QFile file("/etc/security/fileshare.conf");
     if ( file.open(IO_WriteOnly))
-        file.writeBlock( str.data(), str.size()-1);
+        file.writeBlock( str.latin1(), str.length());
     file.close();
 }
 
