@@ -84,28 +84,11 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pDirs = KGlobal::dirs();
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 2, 2, 10, 10);
-    top->setColStretch( 1, 1 );
+    QGridLayout *top = new QGridLayout(this, 3, 3, KDialog::marginHint(), KDialog::spacingHint() );
 
-    // A nice button size. Translators can adapt this
-    QPushButton *pbut = new QPushButton(i18n("abcdefgh"), this);
-    QSize bsize = pbut->sizeHint();
-    delete pbut;
-
-    m_pCBEnable = new QCheckBox( i18n("Enable background"), this );
-    m_pCBEnable->setFixedSize(m_pCBEnable->sizeHint());
-    QWhatsThis::add( m_pCBEnable,
-             i18n("If this is checked, KDM will use the settings below for the background."
-		" If it is disabled, you have to care for the background yourself;"
-		" this is done by running some program (possibly xsetroot) in the script"
-		" specified in the Setup= option in kdmrc (usually Xsetup).") );
-    top->addWidget( m_pCBEnable, 0, 0 );
-    connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
-
-    // Preview monitor at (0,0)
+    // Preview monitor at (0,1)
     m_pMLabel = new QLabel(this);
     m_pMLabel->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
-    m_pMLabel->setFixedSize(m_pMLabel->sizeHint());
     top->addWidget(m_pMLabel, 0, 1, AlignCenter);
     m_pMonitor = new KBGMonitor(m_pMLabel);
     m_pMonitor->setGeometry(23, 14, 151, 115);
@@ -116,10 +99,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
               "like using the current settings. You can even set a background "
               "picture by dragging it onto the preview (e.g. from Konqueror).") );
 
-    // Tabwidget at (1,0)
+    m_pCBEnable = new QCheckBox( i18n("Enab&le background"), this );
+    QWhatsThis::add( m_pCBEnable,
+             i18n("If this is checked, KDM will use the settings below for the background."
+		" If it is disabled, you have to care for the background yourself;"
+		" this is done by running some program (possibly xsetroot) in the script"
+		" specified in the Setup= option in kdmrc (usually Xsetup).") );
+    top->addMultiCellWidget( m_pCBEnable, 1, 1, 0, 2 );
+    connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
+
+    // Tabwidget at (0,2, 2,2)
     m_pTabWidget = new QTabWidget(this);
-    m_pTabWidget->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    top->addMultiCellWidget(m_pTabWidget, 1,1, 0,1);
+    top->addMultiCellWidget(m_pTabWidget,2,2,0,2);
 
     // Background settings on Tab 1
     m_pTab1 = new QWidget(0, "Background Tab");
@@ -130,7 +121,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->setColStretch(2, 1);
 
     QLabel *lbl = new QLabel(i18n("&Mode:"), m_pTab1);
-    lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pBackgroundBox = new QComboBox(m_pTab1);
     lbl->setBuddy( m_pBackgroundBox );
@@ -145,7 +135,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pBackgroundBox, wtstr );
 
     lbl = new QLabel(i18n("Color &1:"), m_pTab1);
-    lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pColor1But = new KColorButton(m_pTab1);
     lbl->setBuddy( m_pColor1But );
@@ -161,7 +150,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pColor1But, wtstr );
 
     lbl = new QLabel(i18n("Color &2:"), m_pTab1);
-    lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
     m_pColor2But = new KColorButton(m_pTab1);
     lbl->setBuddy( m_pColor2But );
@@ -176,7 +164,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
     m_pBGSetupBut = new QPushButton(i18n("S&etup..."), m_pTab1);
-    m_pBGSetupBut->setFixedSize(bsize);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
     hbox->addStretch();
@@ -193,7 +180,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     grid->setColStretch(2, 1);
 
     lbl = new QLabel(i18n("&Mode:"), m_pTab2);
-    lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
     m_pArrangementBox = new QComboBox(m_pTab2);
     lbl->setBuddy( m_pArrangementBox );
@@ -207,7 +193,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pArrangementBox, wtstr );
 
     lbl = new QLabel(i18n("&Wallpaper"), m_pTab2);
-    lbl->setFixedSize(lbl->sizeHint());
     grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy( m_pWallpaperBox );
@@ -226,7 +211,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
     m_pBrowseBut = new QPushButton(i18n("B&rowse..."), m_pTab2);
-    m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     hbox->addWidget(m_pBrowseBut);
     hbox->addStretch();
@@ -234,13 +218,11 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QWhatsThis::add( m_pBrowseBut, i18n("Click here to choose a wallpaper using a file dialog.") );
 
     m_pCBMulti = new QCheckBox(i18n("Mul&tiple:"), m_pTab2);
-    m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
     connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
     grid->addWidget(m_pCBMulti, 3, 0);
     hbox = new QHBoxLayout();
     grid->addLayout(hbox, 3, 1);
     m_pMSetupBut = new QPushButton(i18n("S&etup"), m_pTab2);
-    m_pMSetupBut->setFixedSize(bsize);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
     hbox->addWidget(m_pMSetupBut);
     hbox->addStretch();
