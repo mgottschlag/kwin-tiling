@@ -47,20 +47,22 @@ static bool needToRunKAccessDaemon( KConfig *config )
 KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   : KCModule(parent, "kcmaccess")
 {
-  QVBoxLayout *main = new QVBoxLayout(this, 0,0);
+  QVBoxLayout *main = new QVBoxLayout(this, 0, KDialogBase::spacingHint());
   QTabWidget *tab = new QTabWidget(this);
   main->addWidget(tab);
 
   // bell settings ---------------------------------------
   QWidget *bell = new QWidget(this);
 
-  QVBoxLayout *vbox = new QVBoxLayout(bell, 6,6);
+  QVBoxLayout *vbox = new QVBoxLayout(bell, KDialogBase::marginHint(), 
+      KDialogBase::spacingHint());
 
   QGroupBox *grp = new QGroupBox(i18n("Audible Bell"), bell);
+  grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
-  QVBoxLayout *vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
+  QVBoxLayout *vvbox = new QVBoxLayout(grp->layout(), 
+      KDialogBase::spacingHint());
 
   systemBell = new QCheckBox(i18n("Use &system bell"), grp);
   vvbox->addWidget(systemBell);
@@ -73,7 +75,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
     " a sound file. If you do this, you will probably want to turn off the system bell.<p> Please note"
     " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.") );
 
-  QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
+  QHBoxLayout *hbox = new QHBoxLayout(vvbox, KDialogBase::spacingHint());
   hbox->addSpacing(24);
   soundEdit = new QLineEdit(grp);
   soundLabel = new QLabel(soundEdit, i18n("Sound &to play:"), grp);
@@ -99,10 +101,10 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   // visible bell ----------------------------------------
   grp = new QGroupBox(i18n("Visible Bell"), bell);
+  grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
-  vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
 
   visibleBell = new QCheckBox(i18n("&Use visible bell"), grp);
   vvbox->addWidget(visibleBell);
@@ -110,11 +112,11 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
     " notification shown every time that normally just a bell would occur. This is especially useful"
     " for deaf people.") );
 
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   invertScreen = new QRadioButton(i18n("I&nvert screen"), grp);
   hbox->addWidget(invertScreen);
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   QWhatsThis::add( invertScreen, i18n("All screen colors will be inverted for the amount of time specified below.") );
   hbox->addSpacing(24);
   flashScreen = new QRadioButton(i18n("F&lash screen"), grp);
@@ -127,7 +129,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addStretch();
   QWhatsThis::add( colorButton, i18n("Click here to choose the color used for the \"flash screen\" visible bell.") );
 
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
 
   durationSlider = new KIntNumInput(grp);
@@ -158,32 +160,32 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   // keys settings ---------------------------------------
   QWidget *keys = new QWidget(this);
 
-  vbox = new QVBoxLayout(keys, 6,6);
+  vbox = new QVBoxLayout(keys, KDialog::marginHint(), KDialog::spacingHint());
 
   grp = new QGroupBox(i18n("S&ticky Keys"), keys);
+  grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
-  vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
 
   stickyKeys = new QCheckBox(i18n("Use &sticky keys"), grp);
   vvbox->addWidget(stickyKeys);
 
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   stickyKeysLock = new QCheckBox(i18n("&Lock sticky keys"), grp);
   hbox->addWidget(stickyKeysLock);
 
   grp = new QGroupBox(i18n("Slo&w Keys"), keys);
+  grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
-  vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
 
   slowKeys = new QCheckBox(i18n("&Use slow keys"), grp);
   vvbox->addWidget(slowKeys);
 
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   slowKeysDelay = new KIntNumInput(grp);
   slowKeysDelay->setSuffix(i18n(" msec"));
@@ -193,15 +195,15 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
 
   grp = new QGroupBox(i18n("Bounce Keys"), keys);
+  grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
-  vvbox = new QVBoxLayout(grp, 6,6);
-  vvbox->addSpacing(grp->fontMetrics().height());
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
 
   bounceKeys = new QCheckBox(i18n("Use bou&nce keys"), grp);
   vvbox->addWidget(bounceKeys);
 
-  hbox = new QHBoxLayout(vvbox, 6);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   bounceKeysDelay = new KIntNumInput(grp);
   bounceKeysDelay->setSuffix(i18n(" msec"));
