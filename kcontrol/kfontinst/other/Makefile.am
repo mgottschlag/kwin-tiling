@@ -4,7 +4,7 @@ EXTRA_DIST = README psnames
 
 install-exec-local:
 	$(mkinstalldirs) $(kde_datadir)/kfontinst/
-	$(INSTALL_DATA) psnames $(kde_datadir)/kfontinst/psnames
+	$(INSTALL_DATA) $(srcdir)/psnames $(kde_datadir)/kfontinst/psnames
 	
 
 uninstall-local:
