@@ -99,7 +99,6 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     sList = new KListBox( group );
     readSchemeNames();
-    sList->setFixedHeight(sList->sizeHint().height()/2);
     sList->setCurrentItem( 0 );
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
     groupLayout->addWidget(sList);
