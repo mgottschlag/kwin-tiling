@@ -244,6 +244,7 @@ KDMShutdown::bye_bye()
     GSendInt( _interactiveSd ? SHUT_INTERACT :
 	      force_rb->isChecked() ? SHUT_FORCENOW :
 	      try_rb->isChecked() ? SHUT_TRYNOW : SHUT_SCHEDULE );
+    GSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
     GSet( 0 );
     inherited::accept();
 }

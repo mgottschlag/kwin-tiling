@@ -273,15 +273,22 @@ struct display {
 	char		*authFile;	/* file to store authorization in */
 };
 
+typedef struct {
+	unsigned	how:2,		/* 0=none 1=reboot 2=halt (SHUT_*) */
+			force:2;
+	int		uid;
+	int		start;
+	int		timeout;
+} SdRec;
+
 struct disphist {
 	struct disphist	*next;
 	char		*name;
 	Time_t		lastExit;	/* time of last display exit */
 	unsigned	rLogin:2,	/* 0=nothing 1=relogin 2=login */
-			sd_how:2,	/* 0=none 1=reboot 2=halt (SHUT_*) */
-			sd_when:2,	/* 0=maylater 1=trynow 2=forcenow (SHUT_*) */
 			lock:1,		/* screen locker running */
 			goodExit:1;	/* was the last exit "peaceful"? */
+	SdRec		sdRec;
 	char		*nuser, *npass, *nargs;
 };
 
@@ -330,6 +337,7 @@ void BecomeDaemon (void);
 /* in dm.c */
 extern char *prog, *progpath;
 extern time_t now;
+extern SdRec sdRec;
 void StartDisplay (struct display *d);
 void StartDisplayP2 (struct display *d);
 void StopDisplay (struct display *d);
@@ -338,7 +346,7 @@ void SwitchToX (struct display *d);
 void setNLogin (struct display *d, 
 		const char *nuser, const char *npass, char *nargs,
 		int rl);
-void doShutdown (int how, int when);
+void cancelShutdown (void);
 
 /* in ctrl.c */
 void openCtrl (struct display *d);

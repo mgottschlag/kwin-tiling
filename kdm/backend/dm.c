@@ -121,7 +121,8 @@ static int TitleLen;
 
 static int StorePid (void);
 
-static int sdAction, Stopping;
+static int Stopping;
+SdRec sdRec = { 0, 0, 0, TO_INF, TO_INF };
 
 time_t now;
 
@@ -327,11 +328,11 @@ main (int argc, char **argv)
     openCtrl (0);
     MainLoop ();
     closeCtrl (0);
-    if (sdAction)
+    if (sdRec.how)
     {
 	if (Fork() <= 0)
 	{
-	    char *cmd = sdAction == SHUT_HALT ? cmdHalt : cmdReboot;
+	    char *cmd = sdRec.how == SHUT_HALT ? cmdHalt : cmdReboot;
 	    execute (parseArgs ((char **)0, cmd), (char **)0);
 	    LogError ("Failed to execute shutdown command %\"s\n", cmd);
 	    exit (1);
@@ -632,25 +633,6 @@ stoppen (int force)
 
 
 void
-doShutdown (int how, int when)
-{
-    switch (when) {
-	case SHUT_TRYNOW:
-	    if (AnyActiveDisplays ())
-		return;
-	    /* fallthrough */
-	case SHUT_INTERACT:	/* XXX temp hack! */
-	case SHUT_FORCENOW:
-	    stoppen (TRUE);
-	    break;
-	default:
-	    stoppen (FALSE);
-	    break;
-    }
-    sdAction = how;
-}
-
-void
 setNLogin (struct display *d, 
 	   const char *nuser, const char *npass, char *nargs, int rl)
 {
@@ -728,7 +710,7 @@ processDPipe (struct display *d)
 static void
 processGPipe (struct display *d)
 {
-    int cmd, how;
+    int cmd;
     GTalk dpytalk;
 
     dpytalk.pipe = &d->gpipe;
@@ -744,8 +726,19 @@ processGPipe (struct display *d)
     }
     switch (cmd) {
     case G_Shutdown:
-	how = GRecvInt ();
-	doShutdown (how, GRecvInt ());
+	sdRec.how = GRecvInt ();
+	sdRec.force = 0;
+	sdRec.start = 0;
+	sdRec.timeout = 0;
+	switch (GRecvInt ()) {
+	case SHUT_FORCENOW:
+	    sdRec.force = 2;
+	    break;
+	case SHUT_SCHEDULE:
+	    sdRec.timeout = TO_INF;
+	    break;
+	}
+	sdRec.uid = GRecvInt ();
 	break;
     default:
 	LogError ("Internal error: unknown G_* command %d\n", cmd);
@@ -782,6 +775,14 @@ RescanConfigs (int force)
 #endif
 	updateCtrl ();
     }
+}
+
+void
+cancelShutdown (void)
+{
+    sdRec.how = 0;
+    Stopping = 0;
+    RescanConfigs (TRUE);
 }
 
 
@@ -991,6 +992,22 @@ ReapChildren (void)
 #endif
 }
 
+static int
+wouldShutdown (void)
+{
+    struct display *d;
+
+    if (sdRec.force) {
+	if (sdRec.force == 1)
+	    for (d = displays; d; d = d->next)
+		if (d->status == remoteLogin ||
+		    (d->userSess >= 0 && d->userSess != sdRec.uid))
+		    return 0;
+	return 1;
+    }
+    return !AnyActiveDisplays ();
+}
+
 FD_TYPE	WellKnownSocketsMask;
 int	WellKnownSocketsMax;
 int	WellKnownSocketsCount;
@@ -1055,8 +1072,26 @@ MainLoop (void)
     {
 	if (!Stopping)
 	    StartDisplays ();
-	reads = WellKnownSocketsMask;
 	to = TO_INF;
+	if (sdRec.how) {
+	    if (sdRec.start != TO_INF && now < sdRec.start) {
+		/*if (sdRec.start < to)*/
+		    to = sdRec.start;
+	    } else {
+		sdRec.start = TO_INF;
+		if (now >= sdRec.timeout) {
+		    sdRec.timeout = TO_INF;
+		    if (wouldShutdown ())
+			stoppen (TRUE);
+		    else
+			cancelShutdown ();
+		} else {
+		    stoppen (FALSE);
+		    /*if (sdRec.timeout < to)*/
+			to = sdRec.timeout;
+		}
+	    }
+	}
 	if (serverTimeout < to)
 	    to = serverTimeout;
 	if (utmpTimeout < to)
@@ -1066,6 +1101,7 @@ MainLoop (void)
 	    to = 0;
 	tv.tv_sec = to;
 	tv.tv_usec = 0;
+	reads = WellKnownSocketsMask;
 	nready = select (WellKnownSocketsMax + 1, &reads, 0, 0, &tv);
 	Debug ("select returns %d\n", nready);
 	time (&now);
@@ -1256,7 +1292,7 @@ StartDisplays (void)
 void
 StartDisplay (struct display *d)
 {
-    if (sdAction)
+    if (Stopping)
     {
 	Debug ("stopping display %s because shutdown is scheduled\n", d->name);
 	StopDisplay (d);
@@ -1354,7 +1390,7 @@ StartDisplayP2 (struct display *d)
 
 	d->pid = pid;
 	d->hstent->lock = d->hstent->rLogin = d->hstent->goodExit = 
-	    d->hstent->sd_how = d->hstent->sd_when = 0;
+	    d->hstent->sdRec.how = 0;
 	time (&d->lastStart);
 	break;
     }
@@ -1426,9 +1462,27 @@ ExitDisplay (
     he = d->hstent;
     time (&he->lastExit);
     he->goodExit = goodExit;
+    if (he->sdRec.how)
+    {
+	if (!sdRec.how || sdRec.force != 2 ||
+	    !((d->allowNuke == SHUT_NONE && sdRec.uid != he->sdRec.uid) ||
+	      (d->allowNuke == SHUT_ROOT && he->sdRec.uid)))
+	{
+	    sdRec = he->sdRec;
+	    if (now < sdRec.timeout || wouldShutdown ())
+		endState = DS_REMOVE;
+	}
+	he->sdRec.how = 0;
+    }
     if (d->status == zombie)
 	rStopDisplay (d, d->zstatus);
-    else {
+    else
+    {
+	if (Stopping)
+	{
+	    StopDisplay (d);
+	    return;
+	}
 	if (endState != DS_RESTART ||
 	    (d->displayType & d_origin) != dFromFile)
 	{
@@ -1445,7 +1499,7 @@ ExitDisplay (
 			LogError ("Unable to fire up local display %s;"
 				  " disabling.\n", d->name);
 			StopDisplay (d);
-			goto bork;
+			return;
 		    }
 		}
 		else
@@ -1455,7 +1509,7 @@ ExitDisplay (
 			LogError ("Disabling foreign display %s"
 				 " (too many attempts)\n", d->name);
 			StopDisplay (d);
-			goto bork;
+			return;
 		    }
 		}
 	    }
@@ -1472,12 +1526,6 @@ ExitDisplay (
 		d->status = notRunning;
 	    }
 	}
-    }
-  bork:
-    if (he->sd_how)
-    {
-	doShutdown (he->sd_how, he->sd_when);
-	he->sd_how = 0;
     }
 }
 

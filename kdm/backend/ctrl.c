@@ -310,6 +310,30 @@ str_cat (char **bp, const char *str, int max)
 }
 
 static void
+sd_cat (char **bp, SdRec *sdr)
+{
+    if (sdr->how == SHUT_HALT)
+	str_cat (bp, "halt,", 5);
+    else
+	str_cat (bp, "reboot,", 7);
+    if (sdr->start == TO_INF)
+	str_cat (bp, "0,", 2);
+    else
+	*bp += sprintf (*bp, "%d,", sdr->start);
+    if (sdr->timeout == TO_INF)
+	str_cat (bp, "-1,", 3);
+    else
+	*bp += sprintf (*bp, "%d,", sdr->timeout);
+    if (sdr->force == 2)
+	str_cat (bp, "force", 5);
+    else if (sdr->force == 1)
+	str_cat (bp, "forcemy", 7);
+    else
+	str_cat (bp, "cancel", 6);
+    *bp += sprintf (*bp, ",%d", sdr->uid);
+}
+
+static void
 processCtrl (const char *string, int len, int fd, struct display *d)
 {
 #define Reply(t) Writer (fd, t, strlen (t))
@@ -317,7 +341,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
     struct display *di;
     const char *word;
     char **ar, *args, *bp;
-    int how, when;
+    SdRec sdr;
     char cbuf[1024];
 
     if (!(ar = initStrArr (0)))
@@ -413,57 +437,149 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		goto bust;
 	    }
 	} else if (!strcmp (ar[0], "shutdown")) {
-	    if (!ar[1] || (!ar[2] && !d)) {
-		fLog (d, fd, "bad", "missing argument(s)");
+	    if (!ar[1])
+		goto miss;
+	    sdr.force = 0;
+	    if (fd >= 0 && !strcmp (ar[1], "status")) {
+		bp = cbuf;
+		*bp++ = 'o';
+		*bp++ = 'k';
+		if (sdRec.how) {
+		    str_cat (&bp, "\tglobal,", 8);
+		    sd_cat (&bp, &sdRec);
+		}
+		if (d && d->hstent->sdRec.how) {
+		    str_cat (&bp, "\tlocal,", 7);
+		    sd_cat (&bp, &d->hstent->sdRec);
+		}
+		*bp++ = '\n';
+		Writer (fd, cbuf, bp - cbuf);
 		goto bust;
-	    }
-	    if (!strcmp (ar[1], "reboot"))
-		how = SHUT_REBOOT;
-	    else if (!strcmp (ar[1], "halt"))
-		how = SHUT_HALT;
-	    else {
-		fLog (d, fd, "bad", "invalid type %\"s", ar[1]);
-		goto bust;
-	    }
-	    if (ar[2]) {
-		if (!strcmp (ar[2], "forcenow"))
-		    when = SHUT_FORCENOW;
-		else if (!strcmp (ar[2], "trynow"))
-		    when = SHUT_TRYNOW;
-		else if (!strcmp (ar[2], "schedule"))
-		    when = SHUT_SCHEDULE;
+	    } else if (!strcmp (ar[1], "cancel")) {
+		sdr.how = 0;
+		sdr.start = 0;
+		if (d && ar[2]) {
+		    if (!strcmp (ar[2], "global"))
+			sdr.start = TO_INF;
+		    else if (strcmp (ar[2], "local")) {
+			fLog (d, fd, "bad", "invalid cancel scope %\"s", ar[2]);
+			goto bust;
+		    }
+		}
+	    } else {
+		if (!strcmp (ar[1], "reboot"))
+		    sdr.how = SHUT_REBOOT;
+		else if (!strcmp (ar[1], "halt"))
+		    sdr.how = SHUT_HALT;
 		else {
-		    fLog (d, fd, "bad", "invalid mode %\"s", ar[2]);
+		    fLog (d, fd, "bad", "invalid type %\"s", ar[1]);
 		    goto bust;
 		}
-	    } else
-		when = d ? d->defSdMode : -1;
+		sdr.uid = -1;
+		if (!ar[2])
+		    goto miss;
+		sdr.start = strtol (ar[2], &bp, 10);
+		if (bp != ar[2] && !*bp) {
+		    if (*ar[2] == '+')
+			sdr.start += now;
+		    if (!ar[3])
+			goto miss;
+		    sdr.timeout = strtol (ar[3], &bp, 10);
+		    if (bp == ar[3] || *bp) {
+			fLog (d, fd, "bad", "invalid timeout %\"s", ar[3]);
+			goto bust;
+		    }
+		    if (*ar[3] == '+')
+			sdr.timeout += sdr.start;
+		    if (sdr.timeout < 0)
+			sdr.timeout = TO_INF;
+		    else {
+			if (!ar[4])
+			    goto miss;
+			if (!strcmp (ar[4], "force"))
+			    sdr.force = 2;
+			else if (d && !strcmp (ar[4], "forcemy"))
+			    sdr.force = 1;
+			else if (strcmp (ar[4], "cancel")) {
+			    fLog (d, fd, "bad", "invalid timeout action %\"s",
+				  ar[4]);
+			    goto bust;
+			}
+		    }
+		} else {
+		    sdr.timeout = 0;
+		    if (!strcmp (ar[2], "forcenow"))
+			sdr.force = 2;
+		    else if (!strcmp (ar[2], "schedule"))
+			sdr.timeout = TO_INF;
+		    else if (strcmp (ar[2], "trynow")) {
+			fLog (d, fd, "bad", "invalid mode %\"s", ar[2]);
+			goto bust;
+		    }
+		}
+	    }
 	    if (d) {
+		sdr.uid = d->userSess >= 0 ? d->userSess : 0;
 		if (d->allowShutdown == SHUT_NONE ||
-		    (d->allowShutdown == SHUT_ROOT && d->userSess))
+		    (d->allowShutdown == SHUT_ROOT && sdr.uid))
 		{
 		    fLog (d, fd, "perm", "shutdown forbidden");
 		    goto bust;
 		}
-		if (when == SHUT_FORCENOW &&
-		    (d->allowNuke == SHUT_NONE ||
-		    (d->allowNuke == SHUT_ROOT && d->userSess)))
-		{
-		    fLog (d, fd, "perm", "forced shutdown forbidden");
-		    goto bust;
-		}
-		d->hstent->sd_how = how;
-		d->hstent->sd_when = when;
+		if (!sdr.how && !sdr.start) 
+		    d->hstent->sdRec = sdr;
+		else {
+		    if (sdRec.how && sdRec.force == 2 &&
+			((d->allowNuke == SHUT_NONE && sdRec.uid != sdr.uid) ||
+			 (d->allowNuke == SHUT_ROOT && sdr.uid)))
+		    {
+			fLog (d, fd, "perm", "overriding forced shutdown forbidden");
+			goto bust;
+		    }
+		    if (sdr.force == 2 &&
+			(d->allowNuke == SHUT_NONE ||
+			 (d->allowNuke == SHUT_ROOT && sdr.uid)))
+		    {
+			fLog (d, fd, "perm", "forced shutdown forbidden");
+			goto bust;
+		    }
+		    if (!sdr.start)
+			d->hstent->sdRec = sdr;
+		    else {
+			if (!sdr.how)
+			    cancelShutdown ();
+			else
+			    sdRec = sdr;
+		    }
+		}	
 	    } else {
 		if (!fifoAllowShutdown) {
 		    fLog (d, fd, "perm", "shutdown forbidden");
 		    goto bust;
 		}
-		if (when == SHUT_FORCENOW && !fifoAllowNuke) {
-		    fLog (d, fd, "perm", "forced shutdown forbidden");
+		if (sdRec.how && sdRec.force == 2 &&
+		    sdRec.uid != -1 && !fifoAllowNuke)
+		{
+		    fLog (d, fd, "perm", "overriding forced shutdown forbidden");
 		    goto bust;
 		}
-		doShutdown (how, when);
+		if (!sdr.how)
+		    cancelShutdown ();
+		else {
+		    if (sdr.force) {
+			if (!fifoAllowNuke) {
+			    fLog (d, fd, "perm", "forced shutdown forbidden");
+			    goto bust;
+			}
+		    } else {
+			if (!sdr.start && !sdr.timeout && AnyActiveDisplays ()) {
+			    fLog (d, fd, "busy", "user sessions running");
+			    goto bust;
+			}
+		    }
+		    sdr.uid = -1;
+		    sdRec = sdr;
+		}
 	    }
 	} else if (d) {
 	    if (!strcmp (ar[0], "lock")) {
@@ -490,6 +606,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    if (!strcmp (ar[0], "login")) {
 		int nuke;
 		if (arrLen (ar) < 5) {
+		  miss:
 		    fLog (d, fd, "bad", "missing argument(s)");
 		    goto bust;
 		}
