@@ -431,8 +431,8 @@ CConfig::CConfig()
         int     t,
                 s;
 
-        for(t=0; top[t]!=QString::null; ++t)
-            for(s=0; constEncodingsSubDirs[s]!=QString::null; ++s)
+        for(t=0; top[t]!=QString::null && !found; ++t)
+            for(s=0; constEncodingsSubDirs[s]!=QString::null && !found; ++s)
                 if(CMisc::dExists(top[t]+constEncodingsSubDirs[s]))
                 {
                     itsEncodingsDir=top[t]+constEncodingsSubDirs[s];
