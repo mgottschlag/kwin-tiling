@@ -36,6 +36,16 @@ if test $# -eq 0 ; then
 fi
 
 #
+# Find kdialog/xmessage...
+if test -n "`type -p kdialog`"; then
+    dialogCmd="kdialog --msgbox"
+elif test -n "`type -p xmessage`"; then
+    dialogCmd="xmessage -center"
+else
+    dialogCmd="echo"
+fi
+
+#
 # First check if kcmfontinst is loaded into KControl...
 kfi_app="kcontrol font_installer"
 dcopfind $kfi_app
@@ -56,7 +66,7 @@ else
         #
         # ...hmmm, need to start a kcmshell then...
         kcmshell kcmfontinst &
-        kdialog --msgbox "The Font Installer is currently being started\nplease wait..." &
+        $dialogCmd "The Font Installer is currently being started, please wait..." &
         max_count=30
         count=0
         dcopfind $kfi_app
@@ -100,10 +110,10 @@ if test -n "$status"; then
             dcop $kfi_app installFonts $list
         fi
     else
-        kdialog --error "Timeout whilst waiting for Font Installer to initialise!"
+        $dialogCmd "Timeout whilst waiting for Font Installer to initialise!"
     fi
 else
     #
     # Something went wrong...
-    kdialog --error "The Font Installer could not be started"
+    $dialogCmd "The Font Installer could not be started"
 fi
