@@ -62,19 +62,19 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
     layout->setSpacing( KDialog::spacingHint() );
 
     m_appCombo = new KComboBox( false, this, "app combo" );
-    
+
     m_notifyWidget = new KNotifyWidget( this, "knotify widget" );
     connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
-    
+
     layout->addWidget( m_appCombo );
     layout->addWidget( m_notifyWidget );
-    
+
     connect( m_appCombo, SIGNAL( activated( const QString& ) ),
              SLOT( slotAppActivated( const QString& )) );
 
-    connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ), 
+    connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ),
              SLOT( slotPlayerSettings()));
-    
+
     load();
 
 };
@@ -97,7 +97,7 @@ Application * KCMKNotify::applicationByDescription( const QString& text )
         if ( it.current()->text() == text )
             return it.current();
     }
-    
+
     return 0L;
 }
 
@@ -114,21 +114,14 @@ void KCMKNotify::slotPlayerSettings()
     // dialog besides a modal dialog. sigh.
     if ( !m_playerSettings )
         m_playerSettings = new PlayerSettingsDialog( this, true );
-    
+
     m_playerSettings->exec();
 }
 
 
-// FIXME: this doesn't work, it's a Reset, not a Defaults.
 void KCMKNotify::defaults()
 {
-    if (KMessageBox::warningContinueCancel(this,
-        i18n("This will cause the notifications for *All Applications* "
-             "to be reset to their defaults!"), i18n("Are you sure?!"), i18n("Continue"))
-        != KMessageBox::Continue)
-        return;
-
-    m_notifyWidget->reload( true );
+    m_notifyWidget->resetDefaults( true ); // ask user
 }
 
 void KCMKNotify::load()
@@ -138,7 +131,7 @@ void KCMKNotify::load()
 
     m_appCombo->clear();
     m_notifyWidget->clear();
-    
+
     m_fullpaths =
         KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
 
@@ -150,30 +143,31 @@ void KCMKNotify::load()
     ApplicationList apps = m_notifyWidget->apps();
     apps.sort();
     m_notifyWidget->setEnabled( !apps.isEmpty() );
-    
+
     ApplicationListIterator appIt( apps );
-    for ( ; appIt.current(); ++appIt ) 
+    for ( ; appIt.current(); ++appIt )
         m_appCombo->insertItem( appIt.current()->text() );
-    
-    
+
+
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp" );
     if ( !appDesc.isEmpty() )
         m_appCombo->setCurrentItem( appDesc );
-    
+
     slotAppActivated( m_appCombo->currentText() );
 
-    
+
     // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
+    emit changed( false );
 }
 
 void KCMKNotify::save()
 {
     if ( m_playerSettings )
         m_playerSettings->save();
-    
+
     m_notifyWidget->save(); // will dcop knotify about its new config
 
     emit changed( false );
@@ -220,7 +214,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
 {
     QVBox *box = new QVBox( this );
     setMainWidget( box );
-    
+
     QHBox *hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
     cbExternal = new QCheckBox( i18n("Use e&xternal player: "), hbox );
@@ -236,7 +230,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     volumeSlider->setOrientation( Horizontal );
     volumeSlider->setRange( 0, 100 );
     l->setBuddy( volumeSlider );
-    
+
     load();
 }
 
@@ -244,7 +238,7 @@ void PlayerSettingsDialog::load()
 {
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
-    cbExternal->setChecked( config.readBoolEntry( "Use external player", 
+    cbExternal->setChecked( config.readBoolEntry( "Use external player",
                                                   false ));
     reqExternal->setURL( config.readEntry( "External player" ));
     reqExternal->setEnabled( cbExternal->isChecked() );
@@ -267,8 +261,8 @@ void PlayerSettingsDialog::save()
 void PlayerSettingsDialog::slotApply()
 {
     save();
-    kapp->dcopClient()->send("knotify", "", "reconfigure()", ""); 
-    
+    kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
+
     KDialogBase::slotApply();
 }
 
