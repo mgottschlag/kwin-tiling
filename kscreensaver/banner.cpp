@@ -471,7 +471,7 @@ void KBannerSaver::initialize()
 	int size;
 	char ichar;
 
-	if ( !stricmp( fontFamily.local8Bit(), "Helvetica" ) )
+	if ( !qstricmp( fontFamily.local8Bit(), "Helvetica" ) )
 		ichar = 'o';
 	else
 		ichar = 'i';

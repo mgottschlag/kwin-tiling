@@ -141,8 +141,8 @@ get_pixel_resource (const char *res_name, const char *res_class,
   return color.pixel;
  DEFAULT:
   delete [] s;
-  return ((strlen(res_class) >= 10 &&
-	   !strcmp ("Background", res_class + strlen(res_class) - 10))
+  return ((qstrlen(res_class) >= 10 &&
+	   !strcmp ("Background", res_class + qstrlen(res_class) - 10))
 	  ? BlackPixel (qt_xdisplay(), DefaultScreen (qt_xdisplay()))
 	  : WhitePixel (qt_xdisplay(), DefaultScreen (qt_xdisplay())));
 }
