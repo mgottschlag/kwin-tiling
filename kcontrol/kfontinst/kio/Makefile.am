@@ -13,8 +13,8 @@ KioFonts.h
 servicesdir = $(kde_servicesdir)
 services_DATA = fonts.protocol
 
-data_DATA = fonts.desktop
-datadir = $(kde_datadir)/konqsidebartng/virtual_folders/services
+vfsdata_DATA = fonts.desktop
+vfsdatadir = $(kde_datadir)/konqsidebartng/virtual_folders/services
 
 mimetype_DATA = folder.desktop system-folder.desktop
 mimetypedir = $(kde_mimedir)/fonts
