@@ -23,6 +23,10 @@ if include_kcontrol_randr
 RANDR_SUBDIR=randr
 endif
 
+if include_kcontrol_joystick
+JOYSTICK_SUBDIR=joystick
+endif
+
 # 'colors' and 'fonts' should come after 'krdb'
 SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	kicker locale launch keys kio konq style kded \
@@ -31,4 +35,5 @@ SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	icons screensaver taskbar crypto privacy smserver \
 	konsole spellchecking $(USBVIEW_SUBDIR) \
 	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
-	componentchooser performance xinerama $(VIEW1394_SUBDIR) display kthememanager
+	componentchooser performance xinerama $(VIEW1394_SUBDIR) display kthememanager \
+        $(JOYSTICK_SUBDIR)

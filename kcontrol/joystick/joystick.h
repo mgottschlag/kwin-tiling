@@ -1,0 +1,47 @@
+/***************************************************************************
+ *   Copyright (C) 2003 by Martin Koller                                   *
+ *   m.koller@surfeu.at                                                    *
+ *   This file is part of the KDE Control Center Module for Joysticks      *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+#ifndef _JOYSTICK_H_
+#define _JOYSTICK_H_
+
+#include <kcmodule.h>
+
+class JoyWidget;
+
+class joystick: public KCModule
+{
+  Q_OBJECT
+
+  public:
+    joystick(QWidget *parent = 0, const char *name = 0, const QStringList &list = QStringList());
+    ~joystick();
+
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
+    virtual QString quickHelp() const;
+    virtual const KAboutData *aboutData() const { return myAboutData; };
+
+  private:
+    KAboutData *myAboutData;
+    JoyWidget *joyWidget;
+};
+
+#endif

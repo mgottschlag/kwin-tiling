@@ -1,0 +1,15 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=joystick - a kcontrol module to test joysticks
+Comment[de]=joystick - ein KControl-Modul zum Testen von Joysticks
+Exec=kcmshell joystick
+Keywords=joystick,gamepad
+Name=Joystick
+Name[de]=Joystick
+Terminal=false
+Type=Application
+X-KDE-FactoryName=joystick
+X-KDE-Library=joystick
+X-KDE-ModuleType=Library
+Icon=joystick
+Categories=Qt;KDE;X-KDE-settings-peripherals
