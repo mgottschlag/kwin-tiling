@@ -33,7 +33,7 @@ int KVItemList::compareItems( Item i1, Item i2)
 {
     KDMViewItem *lbi1 = (KDMViewItem *)i1;
     KDMViewItem *lbi2 = (KDMViewItem *)i2;
-    return strcmp( lbi1->text(), lbi2->text() );
+    return strcmp( lbi1->text().ascii(), lbi2->text().ascii() );
 }
 
 /* My g++ gives internal compiler errors if i don't make a destructor */

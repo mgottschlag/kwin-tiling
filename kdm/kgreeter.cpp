@@ -325,8 +325,8 @@ KGreeter::shutdown_button_clicked()
      timer->stop();
      KDMShutdown k( kdmcfg->shutdownButton(),
 		    this, "Shutdown",
-		    kdmcfg->shutdown()->data(), 
-		    kdmcfg->restart()->data());
+		    kdmcfg->shutdown()->ascii(), 
+		    kdmcfg->restart()->ascii());
      k.exec();
      SetTimer();
 }
@@ -388,7 +388,7 @@ void
 KGreeter::load_wm()
 {
      // read passwd
-     pwd = getpwnam(loginEdit->text());
+     pwd = getpwnam(loginEdit->text().ascii());
      endpwent();
      if (!pwd) return;
      // we don't need the password
@@ -657,8 +657,8 @@ KGreeter::restrict_nohome()
 void 
 KGreeter::go_button_clicked()
 {
-     greet->name = qstrdup(loginEdit->text());
-     greet->password = qstrdup(passwdEdit->text());
+     greet->name = qstrdup(loginEdit->text().ascii());
+     greet->password = qstrdup(passwdEdit->text().ascii());
      
      if (!Verify (d, greet, verify)){
 	  failedLabel->show();
@@ -678,7 +678,7 @@ KGreeter::go_button_clicked()
 
      // Set session argument:
      verify->argv = parseArgs( verify->argv, 
-				    sessionargBox->currentText());
+				    sessionargBox->currentText().ascii());
 
      save_wm();
      //qApp->desktop()->setCursor( waitCursor);

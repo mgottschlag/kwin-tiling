@@ -38,11 +38,11 @@ static void semsplit( const QString& str, QStrList& result)
      //QStrList result;
      int i1 = 0, i2 = 0;
      while( ( i2 = str.find( ';', i1)) != -1) {
-          result.append( str.mid(i1,i2-i1));
+          result.append( str.mid(i1,i2-i1).ascii());
           i1 = i2 + 1;
      }
      if( i1 != (int)str.length()) {
-          result.append(str.mid(i1,str.length()));
+          result.append(str.mid(i1,str.length()).ascii());
      }
      //return result;
 }
@@ -60,7 +60,7 @@ KDMConfig::getUsers( QString s, bool sorted)
      QPixmap default_pix( user_pix_dir + "default.xpm");
      if( default_pix.isNull())
           printf("Cant get default pixmap from \"%s\"\n",
-                 QString(user_pix_dir + "default.xpm").data());
+                 QString(user_pix_dir + "default.xpm").ascii());
      if( s.isNull()) {  // isEmpty()?  Th.
           QString  nu = kc->readEntry( "NoUsers");
           QStrList no_users;
@@ -177,12 +177,12 @@ KDMConfig::getConfig()
      int i1 = 0, i2 = 0;
      while( ( i2 = session_string.find( ';', i1)) != -1) {
           _sessionTypes->append(
-               qstrdup( session_string.mid( i1, i2-i1).data()));
+               qstrdup( session_string.mid( i1, i2-i1).ascii()));
           i1 = i2 + 1;
      }
      if( i1 != (int)session_string.length())
           _sessionTypes->append(
-               qstrdup( session_string.mid( i1, session_string.length())));
+               qstrdup( session_string.mid( i1, session_string.length()).ascii()));
      if( _sessionTypes->count() == 0) {
           _sessionTypes->append( "kde");
           _sessionTypes->append( "failsafe");

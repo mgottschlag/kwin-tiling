@@ -43,14 +43,14 @@ public:
 	  : pm(p)
      { setText( s ); }
      virtual ~KDMViewItem() {}; 
-     virtual const char    *text()   const { return txt; }
+     virtual const QString    text()   const { return txt; }
      virtual const QPixmap *pixmap() const { return &pm; }
      enum State { Normal, Selected, Hilighted};
 protected:
      virtual void paint( QPainter * , KDMView* , enum State = Normal);
      virtual int height( const KDMView * ) const;
      virtual int width( const KDMView * ) const;
-     virtual void setText( const char* text) { txt = text;}
+     virtual void setText( const QString& text) { txt = text;}
      virtual void setPixmap( const QPixmap pix) { pm = pix;}
 private:
      QString txt;

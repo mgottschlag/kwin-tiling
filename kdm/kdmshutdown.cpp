@@ -298,7 +298,7 @@ KDMShutdown::rb_clicked( int id)
 void
 KDMShutdown::pw_entered()
 {
-     if( verify_root_pw( pswdEdit->text())) {
+     if( verify_root_pw( pswdEdit->text().ascii())) {
 	  okButton->setEnabled( true);
      } else {
 	  okButton->setEnabled( false);
