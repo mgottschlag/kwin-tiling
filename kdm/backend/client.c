@@ -368,6 +368,9 @@ AccNoPass (const char *un)
 {
     char **fp;
 
+    if (!*un)
+	return 0;
+
     if (!strcmp (un, td->autoUser))
 	return 1;
 
