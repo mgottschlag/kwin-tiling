@@ -119,7 +119,7 @@ void Triggers_tab::new_selected( int type_P )
         {
         case TYPE_SHORTCUT_TRIGGER: // Shortcut_trigger
             dlg = new Shortcut_trigger_dialog(
-                new Shortcut_trigger( NULL, 0 )); // CHECKME NULL ?
+                new Shortcut_trigger( NULL, KShortcut())); // CHECKME NULL ?
           break;
         case TYPE_GESTURE_TRIGGER: // Gesture trigger
             dlg = new Gesture_trigger_dialog(
@@ -223,7 +223,7 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
 
 void Shortcut_trigger_widget::clear_data()
     {
-    bt->setShortcut( 0, false );
+    bt->setShortcut( KShortcut(), false );
     }
 
 void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
@@ -239,12 +239,12 @@ void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
         clear_data();
         return;
         }
-    bt->setShortcut( data_P->keycode(), false );
+    bt->setShortcut( data_P->shortcut(), false );
     }
 
 Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const
     {
-    return bt->shortcut().keyCodeQt() != 0
+    return !bt->shortcut().isNull()
         ? new Shortcut_trigger( data_P, bt->shortcut()) : NULL;
     }
 

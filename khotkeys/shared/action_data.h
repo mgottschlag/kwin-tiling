@@ -165,7 +165,7 @@ class Command_url_shortcut_action_data
         Command_url_shortcut_action_data( Action_data_group* parent_P, const QString& name_P,
             const QString& comment_P, bool enabled_P = true );
         Command_url_shortcut_action_data( Action_data_group* parent_P, const QString& name_P,
-            const QString& comment_P, unsigned int keycode_P, const QString& command_url_P,
+            const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
             bool enabled_P = true );    
         Command_url_shortcut_action_data( KConfig& cfg_P, Action_data_group* parent_P );
     };
@@ -178,7 +178,7 @@ class Menuentry_shortcut_action_data
         Menuentry_shortcut_action_data( Action_data_group* parent_P, const QString& name_P,
             const QString& comment_P, bool enabled_P = true );
         Menuentry_shortcut_action_data( Action_data_group* parent_P, const QString& name_P,
-            const QString& comment_P, unsigned int keycode_P, const QString& command_url_P,
+            const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
             bool enabled_P = true );    
         Menuentry_shortcut_action_data( KConfig& cfg_P, Action_data_group* parent_P );
     };

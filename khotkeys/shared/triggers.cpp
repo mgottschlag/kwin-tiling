@@ -112,47 +112,46 @@ void Trigger_list::activate( bool activate_P )
 
 // Shortcut_trigger
 
-Shortcut_trigger::Shortcut_trigger( Action_data* data_P, unsigned int keycode_P )
-    : Trigger( data_P ), _keycode( keycode_P )
+Shortcut_trigger::Shortcut_trigger( Action_data* data_P, const KShortcut& shortcut_P )
+    : Trigger( data_P ), _shortcut( shortcut_P )
     {
-    keyboard_handler->insert_item( keycode(), this );
+    keyboard_handler->insert_item( shortcut(), this );
     }
     
 Shortcut_trigger::Shortcut_trigger( KConfig& cfg_P, Action_data* data_P )
-    : Trigger( cfg_P, data_P )
+    : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", 0 ))
     {
-    _keycode = KKey( cfg_P.readEntry( "Key", 0 )).keyCodeQt();
-    keyboard_handler->insert_item( keycode(), this );
+    keyboard_handler->insert_item( shortcut(), this );
     }
 
 Shortcut_trigger::~Shortcut_trigger()
     {
-    keyboard_handler->remove_item( keycode(), this );
+    keyboard_handler->remove_item( shortcut(), this );
     }
     
 void Shortcut_trigger::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Key", KKey( _keycode ).toStringInternal());
+    cfg_P.writeEntry( "Key", _shortcut.toStringInternal());
     cfg_P.writeEntry( "Type", "SHORTCUT" ); // overwrites value set in base::cfg_write()
     }
 
 Shortcut_trigger* Shortcut_trigger::copy( Action_data* data_P ) const
     {
     kdDebug( 1217 ) << "Shortcut_trigger::copy()" << endl;
-    return new Shortcut_trigger( data_P ? data_P : data, keycode());
+    return new Shortcut_trigger( data_P ? data_P : data, shortcut());
     }
     
 const QString Shortcut_trigger::description() const
     {
     // CHECKME vice mods
-    return i18n( "Shortcut trigger : " ) + KKey( keycode()).toString();
+    return i18n( "Shortcut trigger : " ) + _shortcut.toString();
     // CHECKME i18n pro toString() ?
     }
     
-bool Shortcut_trigger::handle_key( unsigned int keycode_P )
+bool Shortcut_trigger::handle_key( const KShortcut& shortcut_P )
     {
-    if( keycode() == keycode_P )
+    if( shortcut() == shortcut_P )
         {
         data->execute();
         return true;

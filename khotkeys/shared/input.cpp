@@ -53,21 +53,21 @@ Kbd::~Kbd()
     delete kga;
     }
     
-void Kbd::insert_item( unsigned int keycode_P, Kbd_receiver* receiver_P )
+void Kbd::insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
     {
     Receiver_data& rcv = receivers[ receiver_P ];
-    rcv.keycodes.append( keycode_P );
+    rcv.shortcuts.append( shortcut_P );
     if( rcv.active )
-        grab_key( keycode_P );
+        grab_shortcut( shortcut_P );
     }
 
-void Kbd::remove_item( unsigned int keycode_P, Kbd_receiver* receiver_P )
+void Kbd::remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
     {
     Receiver_data& rcv = receivers[ receiver_P ];
-    rcv.keycodes.remove( keycode_P );
+    rcv.shortcuts.remove( shortcut_P );
     if( rcv.active )
-        ungrab_key( keycode_P );
-    if( rcv.keycodes.count() == 0 )
+        ungrab_shortcut( shortcut_P );
+    if( rcv.shortcuts.count() == 0 )
         receivers.remove( receiver_P );
     }
     
@@ -77,10 +77,10 @@ void Kbd::activate_receiver( Kbd_receiver* receiver_P )
     if( rcv.active )
         return;
     rcv.active = true;
-    for( QValueList< unsigned int >::ConstIterator it( rcv.keycodes.begin());
-         it != rcv.keycodes.end();
+    for( QValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+         it != rcv.shortcuts.end();
          ++it )
-        grab_key( *it );
+        grab_shortcut( *it );
     }
 
 void Kbd::deactivate_receiver( Kbd_receiver* receiver_P )
@@ -89,37 +89,37 @@ void Kbd::deactivate_receiver( Kbd_receiver* receiver_P )
     if( !rcv.active )
         return;
     rcv.active = false;
-    for( QValueList< unsigned int >::ConstIterator it( rcv.keycodes.begin());
-         it != rcv.keycodes.end();
+    for( QValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+         it != rcv.shortcuts.end();
          ++it )
-        ungrab_key( *it );
+        ungrab_shortcut( *it );
     }
 
-void Kbd::grab_key( unsigned int keycode_P )
+void Kbd::grab_shortcut( const KShortcut& shortcut_P )
     {
-    if( grabs.contains( keycode_P ))
-        ++grabs[ keycode_P ];
+    if( grabs.contains( shortcut_P ))
+        ++grabs[ shortcut_P ];
     else
         {
-        grabs[ keycode_P ] = 1;
+        grabs[ shortcut_P ] = 1;
 #if 0
         // CHECKME ugly ugly hack
         QString name = ' ' + QString::number( keycode_P );
         kga->insertItem( "", name, keycode_P );
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
-        QString name = ' ' + QString::number( keycode_P );
-        kga->insert( name, name, QString::null, keycode_P, keycode_P,
-            this, SLOT( key_slot( int )));
+        QString name = ' ' + shortcut_P.toStringInternal();
+        kga->insert( name, name, QString::null, shortcut_P, shortcut_P,
+            this, SLOT( key_slot( QString )));
         QTimer::singleShot( 0, this, SLOT( update_connections()));
         }
     }
     
-void Kbd::ungrab_key( unsigned int keycode_P )
+void Kbd::ungrab_shortcut( const KShortcut& shortcut_P )
     {
-    if( !grabs.contains( keycode_P ))
+    if( !grabs.contains( shortcut_P ))
         return;
-    if( --grabs[ keycode_P ] == 0 )
+    if( --grabs[ shortcut_P ] == 0 )
         {
 #if 0
         // CHECKME workaround for KGlobalAccel::disconnectItem() not working
@@ -127,8 +127,8 @@ void Kbd::ungrab_key( unsigned int keycode_P )
         // kga->disconnectItem( ' ' + QString::number( keycode_P ), NULL, NULL );
         kga->removeItem( ' ' + QString::number( keycode_P ));
 #endif
-        kga->remove( ' ' + QString::number( keycode_P ));
-        grabs.remove( keycode_P );
+        kga->remove( ' ' + shortcut_P.toStringInternal());
+        grabs.remove( shortcut_P );
         QTimer::singleShot( 0, this, SLOT( update_connections()));
         }
     }
@@ -138,17 +138,17 @@ void Kbd::update_connections()
     kga->updateConnections();
     }
     
-void Kbd::key_slot( int keycode_P )
+void Kbd::key_slot( QString key_P )
     {
-    kdDebug( 1217 ) << "Key pressed:" << keycode_P << endl;
-    unsigned int keycode = static_cast< unsigned int >( keycode_P ); // CHECKME
-    if( !grabs.contains( keycode ))
+    kdDebug( 1217 ) << "Key pressed:" << key_P << endl;
+    KShortcut shortcut( key_P );
+    if( !grabs.contains( shortcut ))
         return;
     for( QMap< Kbd_receiver*, Receiver_data >::ConstIterator it = receivers.begin();
          it != receivers.end();
          ++it )
-        if( ( *it ).keycodes.contains( keycode ) && ( *it ).active
-            && it.key()->handle_key( keycode ))
+        if( ( *it ).shortcuts.contains( shortcut ) && ( *it ).active
+            && it.key()->handle_key( shortcut ))
             return;
     }
     

@@ -95,7 +95,7 @@ Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal( Action_data_gr
 QString khotkeys_get_menu_shortcut( Menuentry_shortcut_action_data* data_P )
     {
     if( data_P->trigger() != NULL )
-        return KKey( data_P->trigger()->keycode()).toString();
+        return data_P->trigger()->shortcut().toString();
     return "";
     }
         
@@ -203,7 +203,7 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     // make sure the shortcut is valid
     shortcut = (KShortcut( shortcut_P )).toStringInternal();
     if( !shortcut.isEmpty())
-        entry->set_trigger( new Shortcut_trigger( entry, KKey( shortcut ).keyCodeQt()));
+        entry->set_trigger( new Shortcut_trigger( entry, KShortcut( shortcut )));
     if( shortcut.isEmpty())
         {
         delete entry;            

@@ -308,12 +308,12 @@ template class Simple_action_data< Shortcut_trigger, Command_url_action >;
 
 Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
-    unsigned int keycode_P, const QString& command_url_P, bool enabled_P )
+    const KShortcut& shortcut_P, const QString& command_url_P, bool enabled_P )
     : Simple_action_data< Shortcut_trigger, Command_url_action >( parent_P, name_P,
         comment_P, enabled_P )
     {
     set_action( new Command_url_action( this, command_url_P ));
-    set_trigger( new Shortcut_trigger( this, keycode_P ));
+    set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
 
 template<>
@@ -330,12 +330,12 @@ template class Simple_action_data< Shortcut_trigger, Menuentry_action >;
 
 Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P,
-    unsigned int keycode_P, const QString& menuentry_P, bool enabled_P )
+    const KShortcut& shortcut_P, const QString& menuentry_P, bool enabled_P )
     : Simple_action_data< Shortcut_trigger, Menuentry_action >( parent_P, name_P,
         comment_P, enabled_P )
     {
     set_action( new Menuentry_action( this, menuentry_P ));
-    set_trigger( new Shortcut_trigger( this, keycode_P ));
+    set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
     
 template<>

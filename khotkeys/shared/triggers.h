@@ -64,17 +64,17 @@ class Shortcut_trigger
     {
     typedef Trigger base;
     public:
-        Shortcut_trigger( Action_data* data_P, unsigned int keycode_P );
+        Shortcut_trigger( Action_data* data_P, const KShortcut& shortcut_P );
         Shortcut_trigger( KConfig& cfg_P, Action_data* data_P );
         virtual ~Shortcut_trigger();
         virtual void cfg_write( KConfig& cfg_P ) const;
         virtual Shortcut_trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
-        unsigned int keycode() const;
-        virtual bool handle_key( unsigned int keycode_P ); // CHECKME nebo slot ?
+        const KShortcut& shortcut() const;
+        virtual bool handle_key( const KShortcut& shortcut_P );
         virtual void activate( bool activate_P );
     private:
-        unsigned int _keycode;
+        KShortcut _shortcut;
     };
 
 class Window_trigger
@@ -181,9 +181,9 @@ const QString& Trigger_list::comment() const
 // Shortcut_trigger
 
 inline
-unsigned int Shortcut_trigger::keycode() const
+const KShortcut& Shortcut_trigger::shortcut() const
     {
-    return _keycode;
+    return _shortcut;
     }
 
 // Window_trigger

@@ -16,6 +16,7 @@
 #include <qmap.h>
 #include <qwidget.h>
 #include <qvaluelist.h>
+#include <kshortcut.h>
 
 #include <X11/X.h>
 #include <fixx11h.h>
@@ -28,9 +29,9 @@ namespace KHotKeys
 class Kbd_receiver
     {
     public:
-        virtual bool handle_key( unsigned int keycode_P ) = 0;
+        virtual bool handle_key( const KShortcut& shortcut_P ) = 0;
     };
-    
+
 class Kbd
     : public QObject
     {
@@ -38,27 +39,27 @@ class Kbd
     public:
 	Kbd( bool grabbing_enabled_P, QObject* parent_P );
         virtual ~Kbd();
-	void insert_item( unsigned int keycode_P, Kbd_receiver* receiver_P );
-        void remove_item( unsigned int keycode_P, Kbd_receiver* receiver_P );
+	void insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
+        void remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
         void activate_receiver( Kbd_receiver* receiver_P );
         void deactivate_receiver( Kbd_receiver* receiver_P );
         static bool send_macro_key( unsigned int keycode, Window window_P = InputFocus );
     protected:
         bool x11EventFilter( const XEvent* );                                                              
-        void grab_key( unsigned int keycode_P );
-        void ungrab_key( unsigned int keycode_P );
+        void grab_shortcut( const KShortcut& shortcut_P );
+        void ungrab_shortcut( const KShortcut& shortcut_P );
     private slots:
-        void key_slot( int keycode_P );
+        void key_slot( QString key_P );
         void update_connections();
     private:
         struct Receiver_data
             {
             Receiver_data();
-            QValueList< unsigned int > keycodes;
+            QValueList< KShortcut > shortcuts;
             bool active;
             };
         QMap< Kbd_receiver*, Receiver_data > receivers;
-        QMap< unsigned int, int > grabs;
+        QMap< KShortcut, int > grabs;
         KGlobalAccel* kga;
     };
 

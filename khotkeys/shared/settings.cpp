@@ -205,12 +205,12 @@ void Settings::read_settings_v1( KConfig& cfg_P )
                 menuentries->set_conditions( new Condition_list( "", menuentries ));
                 }
             ( void ) new Menuentry_shortcut_action_data( menuentries, name, "",
-                KKey( shortcut ).keyCodeQt(), run );
+                KShortcut( shortcut ), run );
             }
         else
             {
             ( void ) Command_url_shortcut_action_data( actions, name, "",
-                KKey( shortcut ).keyCodeQt(), run );
+                KShortcut( shortcut ), run );
             }
         }
     }
