@@ -20,21 +20,27 @@
 
 */
 
+#include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qsplitter.h>
+#include <qtimer.h>
 #include <qvgroupbox.h>
 
 #include <kaboutdata.h>
 #include <kapp.h>
 #include <kaudioplayer.h>
+#include <kcursor.h>
 #include <kdialog.h>
+#include <kfiledialog.h>
+#include <kglobal.h>
 #include <kiconloader.h>
 #include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
+#include <kstddirs.h>
 #include <kurlrequester.h>
 
 #include "knotify.h"
@@ -66,6 +72,24 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
     requester->setEnabled( false );
     l->setBuddy( requester );
 
+    // find the first "sound"-resource that contains files
+    QStringList soundDirs = KGlobal::dirs()->resourceDirs( "sound" );
+    if ( !soundDirs.isEmpty() ) {
+	KURL soundURL;
+	QDir dir;
+	dir.setFilter( QDir::Files | QDir::Readable );
+	QStringList::Iterator it = soundDirs.begin();
+	while ( it != soundDirs.end() ) {
+	    dir = *it;
+	    if ( dir.isReadable() && dir.count() > 2 ) {
+		soundURL.setPath( *it );
+		requester->fileDialog()->setURL( soundURL );
+		break;
+	    }
+	    ++it;
+	}
+    }
+
     playButton = new QPushButton(  hbox );
     playButton->setFixedSize( requester->button()->size() );
     playButton->setPixmap( UserIcon("play") );
@@ -78,15 +102,17 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	     SLOT( slotItemActivated( QListViewItem * )));
 
     m_events = new Events();
-    m_events->load();
+    qApp->processEvents(); // let's show up
 
-    updateView();
+    // reading can take some time
+    QTimer::singleShot( 0, this, SLOT( loadAll() ));
 };
 
 KNotifyWidget::~KNotifyWidget()
 {
     delete m_events;
 }
+
 
 /**
  * Clears the view and iterates over all apps, creating listview-items
@@ -106,7 +132,6 @@ void KNotifyWidget::updateView()
 	appItem = new QListViewItem( view, appItem, (*it)->text() );
 	appItem->setPixmap( 0, SmallIcon( (*it)->icon() ));
 
-	// FIXME: delay that?
 	KNEventListIterator it2( *(*it)->eventList() );
 	while( (e = it2.current()) ) {
 	    eItem = new KNListViewItem( appItem, eItem, e );
@@ -143,7 +168,7 @@ void KNotifyWidget::changed()
  */
 void KNotifyWidget::slotFileChanged( const QString& text )
 {
-    if ( !currentItem ) // should never happen
+    if ( !currentItem )
 	return;
 
     KNEvent *event = currentItem->event;
@@ -156,6 +181,7 @@ void KNotifyWidget::slotFileChanged( const QString& text )
 
     if ( itemText && *itemText != text ) {
 	*itemText = text;
+	qDebug("*** event: %s", event->soundfile.latin1());
 	emit changed();
     }
 
@@ -169,8 +195,12 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
+    setEnabled( false );
+    setCursor( KCursor::waitCursor() );
     m_events->load();
     updateView();
+    setEnabled( true );
+    unsetCursor();
 }
 
 void KNotifyWidget::save()
@@ -205,9 +235,9 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
 	}
     }
     else {
+	currentItem = 0L;
 	requester->lineEdit()->clear();
 	playButton->hide();
-	currentItem = 0L;
     }
 
     requester->setEnabled( enableButton );

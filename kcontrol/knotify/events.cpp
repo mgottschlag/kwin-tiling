@@ -62,9 +62,9 @@ void Events::save()
     }
 }
 
-// returns e.g. "kwin/eventsrc" from a given path 
+// returns e.g. "kwin/eventsrc" from a given path
 // "/opt/kde2/share/apps/kwin/eventsrc"
-QString Events::makeRelative( const QString& fullPath ) 
+QString Events::makeRelative( const QString& fullPath )
 {
   int slash = fullPath.findRev( '/' ) - 1;
   slash = fullPath.findRev( '/', slash );
@@ -85,8 +85,8 @@ KNApplication::KNApplication( KConfig *config )
     m_events = 0L;
     kc = config;
     kc->setGroup( QString::fromLatin1("!Global!") );
-    m_icon = kc->readEntry(QString::fromLatin1("IconName"), 
-                           QString::fromLatin1("misc")); 
+    m_icon = kc->readEntry(QString::fromLatin1("IconName"),
+                           QString::fromLatin1("misc"));
     m_description = kc->readEntry( QString::fromLatin1("Comment"),
 				   i18n("No description available") );
 }
