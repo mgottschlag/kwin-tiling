@@ -66,8 +66,6 @@ private:
     MenuTab        *menutab;
     AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
-    PositionTab*      m_positiontab;
-    HidingTab*        m_hidingtab;
 };
 
 #endif // __main_h__
