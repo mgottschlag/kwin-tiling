@@ -3,6 +3,7 @@ Name=UNIX Scheme
 Name[cs]=Schéma Unix
 Name[es]=Esquema UNIX
 Name[hu]=UNIX-összeállítás
+Name[mt]=Skema UNIX
 Name[pt_BR]=Esquema UNIX
 Name[sv]=Unix-schema
 Uses Win Modifer=false
