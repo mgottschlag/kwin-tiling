@@ -1,5 +1,6 @@
 /* This file is part of the KDE project
-   Copyright (C) 1999 David Faure (maintainer)
+   Copyright (C) 1999 David Faure
+   Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -17,14 +18,26 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include <kapplication.h>
+#include "lockprocess.h"
+#include "main.h"
+
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <stdlib.h>
 #include <kglobalsettings.h>
 
-#include "lockprocess.h"
+#include <stdlib.h>
+
+#include <X11/Xlib.h>
+#include <fixx11h.h>
+
+bool MyApp::x11EventFilter( XEvent *ev )
+{
+    if (ev->type == XKeyPress || ev->type == ButtonPress)
+        emit activity();
+    return false;
+}
+
 
 static KCmdLineOptions options[] =
 {
@@ -38,6 +51,16 @@ static KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
+    KLocale::setMainCatalogue("kdesktop");
+
+    KCmdLineArgs::init( argc, argv, "kdesktop_lock", I18N_NOOP("KDesktop Locker"), I18N_NOOP("Screen Locker for KDesktop"), "2.0" );
+    KCmdLineArgs::addCmdLineOptions( options );
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    putenv(strdup("SESSION_MANAGER="));
+
+    KApplication::disableAutoDcopRegistration(); // not needed
+    
     int kdesktop_screen_number = 0;
     int starting_screen = 0;
 
@@ -101,39 +124,27 @@ int main( int argc, char **argv )
         }
     }
 
-    QCString appname;
-    if (kdesktop_screen_number == 0)
-	appname = "kdesktop_lock";
-    else
-	appname.sprintf("kdesktop_lock-screen-%d", kdesktop_screen_number);
-
-    // TODO i18n ?
-    KCmdLineArgs::init( argc, argv, appname.data(), I18N_NOOP("Screen Locker for KDesktop"), "1.0" );
-    KCmdLineArgs::addCmdLineOptions( options );
-
-    putenv(strdup("SESSION_MANAGER="));
-    // TODO
-    KLocale::setMainCatalogue("kdesktop");
-
-    KApplication::disableAutoDcopRegistration(); // not needed
-    KApplication app;
+    MyApp app;
     kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
 
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-    LockProcess process(child, args->isSet("blank"));
+    LockProcess process(child, args->isSet( "blank" ));
     if (!child)
         process.setChildren(child_sockets);
     else
         process.setParent(parent_connection);
 
-    if( !child && args->isSet("forcelock"))
-	process.lock();
+    bool rt;
+    if( !child && args->isSet( "forcelock" ))
+        rt = process.lock();
     else if( child || args->isSet( "dontlock" ))
-	process.dontLock();
+        rt = process.dontLock();
     else
-	process.defaultSave();
+        rt = process.defaultSave();
+    if (!rt)
+        return 1;
 
     return app.exec();
 }
+
+#include "main.moc"

@@ -3,17 +3,29 @@
 // This file is part of the KDE project
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
+// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 //
 
 #ifndef __LOCKENG_H__
 #define __LOCKENG_H__
 
-#include <qwidget.h>
+#include <kgreeterplugin.h>
+
 #include <kprocess.h>
+
+#include <qwidget.h>
 #include <qtimer.h>
 #include <qvaluestack.h>
+#include <qmessagebox.h>
 
 #include <X11/Xlib.h>
+
+class KLibrary;
+
+struct GreeterPluginHandle {
+    KLibrary *library;
+    kgreeterplugin_info *info;
+};
 
 //===========================================================================
 //
@@ -28,17 +40,17 @@ public:
     LockProcess(bool child_saver = false, bool useBlankOnly = false);
     ~LockProcess();
 
-    void lock();
+    bool lock();
 
-    void defaultSave();
+    bool defaultSave();
 
-    void dontLock();
+    bool dontLock();
 
     void setChildren(QValueList<int> children) { child_sockets = children; }
     void setParent(int fd) { mParent = fd; }
 
-    void registerDialog( QWidget* w );
-    void unregisterDialog( QWidget* w );
+    void msgBox( QMessageBox::Icon type, const QString &txt );
+    int execDialog( QDialog* dlg );
     
 public slots:
     void quitSaver();
@@ -48,10 +60,9 @@ protected:
 
 private slots:
     void hackExited(KProcess *);
-    void slotStart();
     void sigtermPipeSignal();
     void startNewSession();
-    void actuallySetLock();
+    bool startLock();
     void suspend();
     void resume();
     void checkDPMSActive();
@@ -70,7 +81,8 @@ private:
     void ungrabInput();
     void xdmFifoCmd(const char *cmd);
     void xdmFifoLockCmd(const char *cmd);
-    void startSaver();
+    void cantLock(const QString &reason);
+    bool startSaver();
     void stopSaver();
     bool startHack();
     void stopHack();
@@ -79,10 +91,11 @@ private:
     void stayOnTop();
     void lockXF86();
     void unlockXF86();
+    static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
 
-    bool        mLock;
+    bool        mLocked;
+    int         mLockGrace;
     int         mPriority;
-    bool        mLockOnce;
     bool        mBusy;
     Colormap    mColorMap;
     KProcess    mHackProc;
@@ -94,14 +107,17 @@ private:
     bool        child_saver;
     QValueList<int> child_sockets;
     int         mParent;
-    bool	mUseBlankOnly;
+    bool        mUseBlankOnly;
     bool        mSuspended;
     QTimer      mSuspendTimer;
     bool        mVisibility;
     QTimer      mCheckDPMS;
     QValueStack< QWidget* > mDialogs;
     bool        mRestoreXF86Lock;
-    bool	mForbidden;
+    bool        mForbidden;
+    QStringList mPlugins;
+    QString     mMethod;
+    GreeterPluginHandle greetPlugin;
 };
 
 #endif

@@ -3,6 +3,7 @@
 // This file is part of the KDE project
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
+// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 //
 
 //kdesktop keeps running and checks user inactivity
@@ -17,8 +18,8 @@
 
 #include <config.h>
 
-#include <stdlib.h>
-#include <qcursor.h>
+#include "lockprocess.h"
+#include "lockdlg.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -27,16 +28,22 @@
 #include <kmessagebox.h>
 #include <kglobalsettings.h>
 #include <klocale.h>
+#include <klibloader.h>
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
+
+#include <qframe.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qcursor.h>
 #include <qtimer.h>
 #include <qfile.h>
+#include <qsocketnotifier.h>
+#include <qvaluevector.h>
+
+#include <stdlib.h>
 #include <assert.h>
 #include <signal.h>
-#include <qsocketnotifier.h>
-
-#include "lockprocess.h"
-#include "lockprocess.moc"
-#include "lockdlg.h"
-
 #ifdef HAVE_SETPRIORITY
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -113,8 +120,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
                                      KGlobal::dirs()->kde_default("apps") +
                                      relPath);
 
-    mLockOnce = false;
-
     // virtual root property
     gXA_VROOT = XInternAtom (qt_xdisplay(), "__SWM_VROOT", False);
     gXA_SCREENSAVER_VERSION = XInternAtom (qt_xdisplay(), "_SCREENSAVER_VERSION", False);
@@ -142,12 +147,15 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     QStringList dmopt =
         QStringList::split(QChar(','),
                             QString::fromLatin1( ::getenv( "XDM_MANAGED" )));
-    if (dmopt.findIndex( "rsvd" ) < 0)
-        mXdmFifoName = QString::null;
-    else
+    if (dmopt.findIndex( "rsvd" ) >= 0)
         mXdmFifoName = dmopt.first();
+    for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
+        if ((*it).startsWith("method="))
+            mMethod = (*it).mid(7);
 
     configure();
+    
+    greetPlugin.library = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -156,6 +164,11 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 //
 LockProcess::~LockProcess()
 {
+    if (greetPlugin.library) {
+        if (greetPlugin.info->done)
+            greetPlugin.info->done();
+        greetPlugin.library->unload();
+    }
 }
 
 static int sigterm_pipe[2];
@@ -207,23 +220,33 @@ void LockProcess::sigtermPipeSignal()
 }
 
 //---------------------------------------------------------------------------
-void LockProcess::lock()
+bool LockProcess::lock()
 {
-    mLockOnce = true;
-    startSaver();
+    if (startSaver()) {
+        if (startLock())
+            return true;
+        stopSaver();
+    }
+    return false;
 }
 
 //---------------------------------------------------------------------------
-void LockProcess::defaultSave()
+bool LockProcess::defaultSave()
 {
-    startSaver();
+    mLocked = false;
+    if (startSaver()) {
+        if (mLockGrace >= 0)
+            QTimer::singleShot(mLockGrace, this, SLOT(startLock()));
+        return true;
+    }
+    return false;
 }
 
 //---------------------------------------------------------------------------
-void LockProcess::dontLock()
+bool LockProcess::dontLock()
 {
-    mLock = false;
-    startSaver();
+    mLocked = false;
+    return startSaver();
 }
 
 //---------------------------------------------------------------------------
@@ -246,32 +269,28 @@ void LockProcess::configure()
 
     if(config.readBoolEntry("Lock", false))
     {
-        int lockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT);
-
-        if (lockGrace < 0)
-        {
-            lockGrace = 0;
-        }
-        else if (lockGrace > 300000)
-        {
-            lockGrace = 300000; // 5 minutes, keep the value sane
-        }
-
-        QTimer::singleShot(lockGrace, this, SLOT(actuallySetLock()));
+        mLockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT);
+        if (mLockGrace < 0)
+            mLockGrace = 0;
+        else if (mLockGrace > 300000)
+            mLockGrace = 300000; // 5 minutes, keep the value sane
     }
-    mLock = false;
+    else
+        mLockGrace = -1;
 
     mPriority = config.readNumEntry("Priority", 19);
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
-    mSaver = config.readEntry("Saver");
 
-    if ((mSaver.isEmpty() && mLockOnce) || mUseBlankOnly)
-    {
+    mSaver = config.readEntry("Saver");
+    if (mSaver.isEmpty() || mUseBlankOnly)
         mSaver = "KBlankscreen.desktop";
-    }
 
     readSaver();
+
+    mPlugins = config.readListEntry("PluginsUnlock");
+    if (mPlugins.isEmpty())
+        mPlugins = QStringList("classic");
 }
 
 //---------------------------------------------------------------------------
@@ -553,21 +572,20 @@ void LockProcess::xdmFifoCmd(const char *cmd)
 
 void LockProcess::xdmFifoLockCmd(const char *cmd)
 {
-    if (!mXdmFifoName.isNull() && (mLock || mLockOnce))
-	xdmFifoCmd(cmd);
+    if (!mXdmFifoName.isNull() && mLocked)
+        xdmFifoCmd(cmd);
 }
 
 //---------------------------------------------------------------------------
 //
 // Start the screen saver.
 //
-void LockProcess::startSaver()
+bool LockProcess::startSaver()
 {
     if (!child_saver && !grabInput())
     {
         kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
-        QApplication::exit(1); // quit, don't stay running and doing nothing
-        return;
+        return false;
     }
     mBusy = false;
 
@@ -584,19 +602,11 @@ void LockProcess::startSaver()
 
     raise();
     XSync(qt_xdisplay(), False);
-    if (!child_saver)
-        xdmFifoLockCmd("lock\n");
-    slotStart();
-}
+    setVRoot( winId(), winId() );
+    if (!startHack())
+        setBackgroundColor(black); // failed to start a hack.  Just show a blank screen
 
-void LockProcess::slotStart()
-{
-	setVRoot( winId(), winId() );
-	if (startHack() == false)
-	{
-		// failed to start a hack.  Just show a blank screen
-		setBackgroundColor(black);
-	}
+    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -617,13 +627,83 @@ void LockProcess::stopSaver()
         for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
             write(*it, out, sizeof(out));
     }
-    mLockOnce = false;
 }
 
-void LockProcess::actuallySetLock()
+// private static
+QVariant LockProcess::getConf(void *, const char *, const QVariant &dflt)
 {
-    mLock = true;
+    return dflt;
 }
+
+void LockProcess::cantLock( const QString &txt)
+{
+    msgBox( QMessageBox::Critical, i18n("Will not lock the screen, as unlocking would be impossible:\n") + txt );
+}
+
+#if 0 // placeholders for later
+i18n("Cannot start <i>kcheckpass</i>.");
+i18n("<i>kcheckpass</i> is unable to operate. Possibly it is not SetUID root.");
+#endif
+
+//---------------------------------------------------------------------------
+//
+// Make the screen saver password protected.
+//
+bool LockProcess::startLock()
+{
+    QValueVector<GreeterPluginHandle> greetPlugins;
+    int best = 0, bestidx = -1;
+
+    for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
+        GreeterPluginHandle plugin;
+        QString path = KLibLoader::self()->findLibrary(
+                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).latin1() );
+        if (path.isEmpty()) {
+            kdWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
+            continue;
+        }
+        if (!(plugin.library = KLibLoader::self()->library( path.latin1() ))) {
+            kdWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
+            continue;
+        }
+        if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
+            kdWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
+            plugin.library->unload();
+            continue;
+        }
+        plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
+        if (plugin.info->init && !plugin.info->init( getConf, this )) {
+            kdWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve" << endl;
+            plugin.library->unload();
+            continue;
+        }
+        kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->name << ") loaded" << endl;
+        int score = plugin.info->capable( mMethod.latin1() );
+        if (score > best) {
+            best = score;
+            bestidx = greetPlugins.size();
+        }
+        greetPlugins.append( plugin );
+        if (score == 100)
+            break;
+    }
+    for (int i = 0; i < (int)greetPlugins.size(); i++)
+        if (i != bestidx) {
+            if (greetPlugins[i].info->done)
+                greetPlugins[i].info->done();
+            greetPlugins[i].library->unload();
+        }
+    if (bestidx == -1) {
+        cantLock( i18n("No appropriate greeter plugin configured.") );
+        return false;
+    }
+    greetPlugin = greetPlugins[bestidx];
+    KGlobal::locale()->insertCatalogue( "kdmgreet" );
+    mLocked = true;
+    xdmFifoLockCmd("lock\n");
+    return true;
+}
+
 
 //---------------------------------------------------------------------------
 //
@@ -661,7 +741,7 @@ bool LockProcess::startHack()
             }
             mHackProc << word;
         }
-	
+
 	if (!mForbidden)
 	{
 		if (mHackProc.start() == true)
@@ -708,7 +788,7 @@ void LockProcess::suspend()
 
 void LockProcess::resume()
 {
-    if (mDialogs.count() > 0)
+    if (!mDialogs.isEmpty())
         return; // no resuming with dialog visible
     if(!mVisibility)
         return; // no need to resume, not visible
@@ -720,33 +800,14 @@ void LockProcess::resume()
 //---------------------------------------------------------------------------
 //
 // Show the password dialog
+// This is called only in the master process
 //
 bool LockProcess::checkPass()
 {
-    suspend();
-    PasswordDlg passDlg( this, !mXdmFifoName.isNull());
+    PasswordDlg passDlg( this, &greetPlugin, !mXdmFifoName.isNull());
     connect(&passDlg, SIGNAL(startNewSession()), SLOT(startNewSession()));
 
-    QDesktopWidget *desktop = KApplication::desktop();
-    QRect rect = passDlg.geometry();
-    if (child_sockets.isEmpty()) {
-        QRect desk = KGlobalSettings::desktopGeometry(QCursor::pos());
-        rect.moveCenter(desk.center());
-    } else {
-        rect.moveCenter(desktop->screenGeometry(qt_xscreen()).center());
-    }
-
-    passDlg.move(rect.topLeft() );
-
-    XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
-	     arrowCursor.handle(), CurrentTime);
-    registerDialog( &passDlg );
-    bool rt = passDlg.exec();
-    unregisterDialog( &passDlg );
-    XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
-	     blankCursor.handle(), CurrentTime);
-    resume();
-    return rt;
+    return execDialog( &passDlg ) == QDialog::Accepted;
 }
 
 static void fakeFocusIn( WId window )
@@ -765,22 +826,33 @@ static void fakeFocusIn( WId window )
     XSendEvent( qt_xdisplay(), window, False, NoEventMask, &ev );
 }
 
-// Because of input grabs, and attempts to keep the screen
-// covered, showing dialogs in the usual way is not enough.
-// Calling registerDialog() before showing it ensures it will
-// be visible and get keyboard input.
-void LockProcess::registerDialog( QWidget* w )
+int LockProcess::execDialog( QDialog *dlg )
 {
-    mDialogs.prepend( w );
-    fakeFocusIn( w->winId());
+    dlg->adjustSize();
+
+    QRect rect = dlg->geometry();
+    rect.moveCenter(KGlobalSettings::desktopGeometry(QCursor::pos()).center());
+    dlg->move( rect.topLeft() );
+
+    if (mDialogs.isEmpty())
+    {
+        suspend();
+        XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
+                arrowCursor.handle(), CurrentTime);
+    }
+    mDialogs.prepend( dlg );
+    fakeFocusIn( dlg->winId());
+    int rt = dlg->exec();
+    mDialogs.remove( dlg );
+    if( mDialogs.isEmpty() ) {
+        XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
+                blankCursor.handle(), CurrentTime);
+        resume();
+    } else
+        fakeFocusIn( mDialogs.first()->winId());
+    return rt;
 }
 
-void LockProcess::unregisterDialog( QWidget* w )
-{
-    mDialogs.remove( w );
-    if( mDialogs.count() > 0 )
-        fakeFocusIn( mDialogs.first()->winId());
-}
 
 //---------------------------------------------------------------------------
 //
@@ -793,10 +865,10 @@ bool LockProcess::x11Event(XEvent *event)
         case KeyPress:
         case ButtonPress:
         case MotionNotify:
-            if (mBusy)
-		break;
+            if (mBusy || !mDialogs.isEmpty())
+                break;
             mBusy = true;
-            if (!(mLock || mLockOnce) || checkPass())
+            if (!mLocked || checkPass())
             {
                 stopSaver();
                 kapp->quit();
@@ -812,7 +884,10 @@ bool LockProcess::x11Event(XEvent *event)
                 if(!mVisibility)
                     mSuspendTimer.start(2000, true);
                 else
-                    resume();
+                {
+                    mSuspendTimer.stop();
+                    resume();          
+                }
                 if (event->xvisibility.state != VisibilityUnobscured)
                     stayOnTop();
             }
@@ -836,7 +911,7 @@ bool LockProcess::x11Event(XEvent *event)
     // Qt seems to be quite hard to persuade to redirect the event,
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
-    if(mDialogs.count() > 0 && ( event->type == KeyPress || event->type == KeyRelease)
+    if(!mDialogs.isEmpty() && ( event->type == KeyPress || event->type == KeyRelease)
         && event->xkey.window != mDialogs.first()->winId())
     {
         XEvent ev2 = *event;
@@ -850,7 +925,7 @@ bool LockProcess::x11Event(XEvent *event)
 
 void LockProcess::stayOnTop()
 {
-    if(mDialogs.count() > 0)
+    if(!mDialogs.isEmpty())
     {
         // this restacking is written in a way so that
         // if the stacking positions actually don't change,
@@ -935,3 +1010,30 @@ void LockProcess::unlockXF86()
 {
 }
 #endif
+
+void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
+{
+    QDialog box( 0, "messagebox", true, WX11BypassWM );
+    QFrame *winFrame = new QFrame( &box );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+    QLabel *label1 = new QLabel( winFrame );
+    label1->setPixmap( QMessageBox::standardIcon( type ) );
+    QLabel *label2 = new QLabel( txt, winFrame );
+    KPushButton *button = new KPushButton( KStdGuiItem::ok(), winFrame );
+    button->setDefault( true );
+    button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
+    connect( button, SIGNAL( clicked() ), &box, SLOT( accept() ) );
+
+    QVBoxLayout *vbox = new QVBoxLayout( &box );
+    vbox->addWidget( winFrame );
+    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
+    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
+    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+    
+    execDialog( &box );
+}
+
+
+#include "lockprocess.moc"

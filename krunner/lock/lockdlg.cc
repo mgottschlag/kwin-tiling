@@ -4,14 +4,27 @@
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
 // Copyright (c) 2003 Chris Howells <howells@kde.org>
+// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 
 #include <config.h>
 
-#include <ctype.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <pwd.h>
-#include <sys/types.h>
+#include "lockprocess.h"
+#include "lockdlg.h"
+#include <kcheckpass.h>
+
+#include <klocale.h>
+#include <kpushbutton.h>
+#include <kseparator.h>
+#include <kstandarddirs.h>
+#include <kglobalsettings.h>
+#include <kconfig.h>
+#include <kiconloader.h>
+#include <kdesu/defaults.h>
+#include <kpassdlg.h>
+#include <kdebug.h>
+#include <kuser.h>
+#include <dcopref.h>
+
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
@@ -20,20 +33,15 @@
 #include <qstringlist.h>
 #include <qfontmetrics.h>
 #include <qstyle.h>
-#include <klocale.h>
-#include <kpushbutton.h>
-#include <kstandarddirs.h>
-#include <kglobalsettings.h>
-#include <kconfig.h>
-#include <kiconloader.h>
-#include <kdesu/defaults.h>
-#include <kpassdlg.h>
-#include <kdebug.h>
-#include <dcopref.h>
-#include "lockdlg.h"
-#include "lockprocess.h"
-#include "lockdlg.moc"
-#include "lockdlgimpl.h"
+#include <qapplication.h>
+
+#include <ctype.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -45,36 +53,79 @@
 //
 // Simple dialog for entering a password.
 //
-PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
-    : LockDlgImpl(parent, "password dialog", true, WX11BypassWM),
+PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool nsess)
+    : QDialog(parent, "password dialog", true, WX11BypassWM), 
       mCapsLocked(-1),
       mUnlockingFailed(false)
 {
-    frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
-    frame->setLineWidth(2);
+    frame = new QFrame( this );
+    frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
+    frame->setLineWidth( 2 );
 
-    pixlabel->setPixmap(DesktopIcon("lock"));
+    QLabel *pixLabel = new QLabel( frame, "pixlabel" );
+    pixLabel->setPixmap(DesktopIcon("lock"));
 
-    mLabel->setText(labelText());
+    KUser user;
+    QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
+            i18n("<nobr><b>The screen is locked</b><br>") :
+            i18n("<nobr><b>The screen is locked by %1</b><br>").arg( user.fullName() ), frame );
 
-    mEntry->installEventFilter(this);
+    mStatusLabel = new QLabel( "<b> </b>", frame );
+    mStatusLabel->setAlignment( QLabel::AlignCenter );
 
-    connect(cancel, SIGNAL(clicked()), SLOT(slotCancel()));
+    mLayoutButton = new QPushButton( frame );
+    mLayoutButton->setFlat( true );
+
+    KSeparator *sep = new KSeparator( KSeparator::HLine, frame );
+
+    mNewSessButton = new KPushButton( i18n("&Start New Session"), frame );
+    ok = new KPushButton( KStdGuiItem::ok(), frame );
+    cancel = new KPushButton( KStdGuiItem::cancel(), frame );
+
+    greet = plugin->info->create( this, this, mLayoutButton, QString::null,
+              KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
+            
+
+    QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this ); 
+    unlockDialogLayout->addWidget( frame );
+
+    QHBoxLayout *layStatus = new QHBoxLayout( 0, 0, KDialog::spacingHint()); 
+    layStatus->addWidget( mStatusLabel );
+    layStatus->addWidget( mLayoutButton );
+
+    QHBoxLayout *layButtons = new QHBoxLayout( 0, 0, KDialog::spacingHint()); 
+    layButtons->addWidget( mNewSessButton );
+    layButtons->addStretch();
+    layButtons->addWidget( ok );
+    layButtons->addWidget( cancel );
+
+    frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() ); 
+    frameLayout->addMultiCellWidget( pixLabel, 0, 2, 0, 0, AlignTop );
+    frameLayout->addWidget( greetLabel, 0, 1 );
+    frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
+    frameLayout->addLayout( layStatus, 2, 1 );
+    frameLayout->addMultiCellWidget( sep, 3, 3, 0, 1 );
+    frameLayout->addMultiCellLayout( layButtons, 4, 4, 0, 1 );
+
+    setTabOrder( ok, cancel );
+    setTabOrder( cancel, mNewSessButton );
+    setTabOrder( mNewSessButton, mLayoutButton );
+
+    connect(mLayoutButton, SIGNAL(clicked()), this, SLOT(layoutClicked()));
+    connect(cancel, SIGNAL(clicked()), SLOT(reject()));
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
+    connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
 
-    if (nsess) {
-        connect(mButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
-        mButton->installEventFilter(this);
-    } else
-        mButton->hide();
+    if (!nsess)
+        mNewSessButton->hide();
 
     installEventFilter(this);
 
     mFailedTimerId = 0;
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
+    connect(qApp, SIGNAL(activity()), SLOT(slotActivity()) );
 
-    connect(&mPassProc, SIGNAL(processExited(KProcess *)),
-                        SLOT(passwordChecked(KProcess *)));
+    greet->start();
 
     DCOPRef kxkb("kxkb", "kxkb");
     if( !kxkb.isNull() ) {
@@ -86,12 +137,19 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
         }
     }
     // no kxkb running or not working :(
-    mLayout->hide();
+    mLayoutButton->hide();
+}
+
+PasswordDlg::~PasswordDlg()
+{                
+    hide();
+    frameLayout->removeItem( greet->getLayoutItem() );
+    delete greet;
 }
 
 void PasswordDlg::layoutClicked()
 {
-    QStringList::iterator it = layoutsList.find( mLayout->text() );
+    QStringList::iterator it = layoutsList.find( mLayoutButton->text() );
     if( it == layoutsList.end() ) {  // huh?
 
 	setLayoutText( "err" );
@@ -109,71 +167,18 @@ void PasswordDlg::layoutClicked()
 
 void PasswordDlg::setLayoutText( const QString &txt )
 {
-    mLayout->setText( txt );
-    QSize sz = mLayout->fontMetrics().size( 0, txt );
-    int mrg = mLayout->style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
-    mLayout->setFixedSize( sz.width() + mrg, sz.height() + mrg );
+    mLayoutButton->setText( txt );
+    QSize sz = mLayoutButton->fontMetrics().size( 0, txt );
+    int mrg = mLayoutButton->style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
+    mLayoutButton->setFixedSize( sz.width() + mrg, sz.height() + mrg );
 }
-
-QString PasswordDlg::checkForUtf8(QString txt)
-{
-    /* Code borrowed from KGpg  which in turn took from Gpa */
-    const char *s;
-
-    /* Make sure the encoding is UTF-8. Test structure suggested by Werner Koch */
-    if (txt.isEmpty())
-        return "";
-
-    for (s = txt.ascii(); *s && !(*s & 0x80); s++);
-
-    if (*s && !strchr (txt.ascii(), 0xc3) && (txt.find("\\x")==-1))
-        return txt;
-
-    /* The string is not in UTF-8 */
-    if (txt.find("\\x") == -1)
-      return QString::fromUtf8(txt.ascii());
-
-    for ( int idx = 0 ; (idx = txt.find( "\\x", idx )) >= 0 ; ++idx ) {
-      char str[2] = "x";
-      str[0] = (char) QString( txt.mid( idx + 2, 2 ) ).toShort( 0, 16 );
-      txt.replace( idx, 4, str );
-    }
-
-    if (!strchr(txt.ascii(), 0xc3))
-      return QString::fromUtf8(txt.ascii());
-    else
-      return QString::fromUtf8(QString::fromUtf8(txt.ascii()).ascii());
-}
-
-//---------------------------------------------------------------------------
-//
-// Fetch current user id, and return "Firstname Lastname (username)"
-//
-QString PasswordDlg::labelText()
-{
-    struct passwd *current = getpwuid(getuid());
-    if ( !current )
-        return QString::null;
-
-    QString fullname = QString::fromLocal8Bit(current->pw_gecos);
-    if (fullname.find(',') != -1)
-    {
-        // Remove everything from and including first comma
-        fullname.truncate(fullname.find(','));
-    }
-
-    QString username = checkForUtf8(QString::fromLocal8Bit(current->pw_name));
-
-    return i18n("Enter the password for user %1 (%2)").arg(fullname).arg(username);
-}
-
 
 void PasswordDlg::updateLabel()
 {
     if (mUnlockingFailed)
     {
         mStatusLabel->setPaletteForegroundColor(Qt::black);
-        mStatusLabel->setText( i18n("<b>Unlocking failed</b>"));
+        mStatusLabel->setText(i18n("<b>Unlocking failed</b>"));
     }
     else
     if (mCapsLocked)
@@ -202,142 +207,247 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         killTimer(mFailedTimerId);
         mFailedTimerId = 0;
         // Show the normal password prompt.
-	mLabel->setEnabled(true);
-        mLabel->setText(labelText());
         mUnlockingFailed = false;
-	updateLabel();
-        mEntry->erase();
-        mEntry->setEnabled(true);
+        updateLabel();
         ok->setEnabled(true);
         cancel->setEnabled(true);
-        password->setEnabled(true);
-        mEntry->setFocus();
-        if(mButton)
-            mButton->setEnabled(true);
+        greet->revive();
+        greet->start();
     }
 }
 
 bool PasswordDlg::eventFilter(QObject *, QEvent *ev)
 {
-    if ( ev->type() == QEvent::KeyPress ) {
+    if (ev->type() == QEvent::KeyPress || ev->type() == QEvent::KeyRelease)
+        capsLocked();
+    return false;
+}
+
+void PasswordDlg::slotActivity()
+{
+    if (mTimeoutTimerId) {
         killTimer(mTimeoutTimerId);
         mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
-        capsLocked();
-        QKeyEvent *e = (QKeyEvent *)ev;
-        if ( ( e->state() == 0 &&
-	       ( e->key() == Key_Enter || e->key() == Key_Return ) ) ||
-             ( e->state() & Keypad && e->key() == Key_Enter ) ) {
-            if ( focusWidget() == mButton )
-                mButton->animateClick();
-            else if ( focusWidget() == mEntry )
-                startCheckPassword();
-            return true;
-        }
     }
-    else if (ev->type() == QEvent::KeyRelease)
-        capsLocked();
-    else if (ev->type() == QEvent::ContextMenu)
-	return true;
-    return false;
+}
+
+////// kckeckpass interface code
+
+int PasswordDlg::Reader (void *buf, int count)
+{
+    int ret, rlen;
+
+    for (rlen = 0; rlen < count; ) {
+      dord:
+        ret = ::read (sFd, (void *)((char *)buf + rlen), count - rlen);
+        if (ret < 0) {
+            if (errno == EINTR)
+                goto dord;
+            if (errno == EAGAIN)
+                break;
+            return -1;
+        }
+        if (!ret)
+            break;
+        rlen += ret;
+    }
+    return rlen;
+}
+
+bool PasswordDlg::GRead (void *buf, int count)
+{
+    return Reader (buf, count) == count;
+}
+
+bool PasswordDlg::GWrite (const void *buf, int count)
+{
+    return ::write (sFd, buf, count) == count;
+}
+
+bool PasswordDlg::GSendInt (int val)
+{
+    return GWrite (&val, sizeof(val));
+}
+
+bool PasswordDlg::GSendStr (const char *buf)
+{
+    int len = buf ? ::strlen (buf) + 1 : 0;
+    return GWrite (&len, sizeof(len)) && GWrite (buf, len);
+}
+
+bool PasswordDlg::GSendArr (int len, const char *buf)
+{
+    return GWrite (&len, sizeof(len)) && GWrite (buf, len);
+}
+
+bool PasswordDlg::GRecvInt (int *val)
+{
+    return GRead (val, sizeof(*val));
+}
+
+bool PasswordDlg::GRecvArr (char **ret)
+{
+    int len;
+    char *buf;
+
+    if (!GRecvInt(&len))
+        return false;
+    if (!len) {
+        *ret = 0;
+        return true;
+    }
+    if (!(buf = (char *)::malloc (len)))
+        return false;
+    *ret = buf;
+    return GRead (buf, len);
+}
+
+void PasswordDlg::reapVerify()
+{
+    ::close( sFd );
+    int status;      
+    ::waitpid( sPid, &status, 0 );
+    if (WIFEXITED(status))
+        switch (WEXITSTATUS(status)) {
+        case AuthOk:
+            greet->succeeded();
+            accept();
+            return;
+        case AuthBad:
+            greet->failed();
+            mUnlockingFailed = true;
+            updateLabel();
+            mFailedTimerId = startTimer(1500);
+            ok->setEnabled(false);
+            cancel->setEnabled(false);
+            return;
+        case AuthAbort:
+            return;
+        }
+    cantCheck();
+}
+
+void PasswordDlg::handleVerify()
+{
+    int ret;
+    char *arr;
+
+    while (GRecvInt( &ret )) {
+        switch (ret) {
+        case ConvGetBinary:
+            if (!GRecvArr( &arr ))
+                break;
+            greet->binaryPrompt( arr, false );
+            if (arr)
+                ::free( arr );
+            return;
+        case ConvGetNormal:
+            if (!GRecvArr( &arr ))
+                break;
+            greet->textPrompt( arr, true, false );
+            if (arr)
+                ::free( arr );
+            return;
+        case ConvGetHidden:
+            if (!GRecvArr( &arr ))
+                break;
+            greet->textPrompt( arr, false, false );
+            if (arr)
+                ::free( arr );
+            return;
+        case ConvPutInfo:
+            if (!GRecvArr( &arr ))
+                break;
+            static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Information, QString::fromLocal8Bit( arr ) );
+            ::free( arr );
+            continue;
+        case ConvPutError:
+            if (!GRecvArr( &arr ))
+                break;
+            static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Warning, QString::fromLocal8Bit( arr ) );
+            ::free( arr );
+            continue;
+        }
+        break;
+    }
+    reapVerify();
+}
+                                
+////// greeter plugin callbacks
+
+void PasswordDlg::gplugReturnText( const char *text, int )
+{
+    GSendStr( text );
+    handleVerify();
+}
+
+void PasswordDlg::gplugReturnBinary( const char *data )
+{
+    if (data) {
+        unsigned const char *up = (unsigned const char *)data;
+        int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
+        if (!len)
+            GSendArr( 4, data );
+        else
+            GSendArr( len, data );
+    } else
+        GSendArr( 0, 0 );
+    handleVerify();
+}
+
+void PasswordDlg::gplugSetUser( const QString & )
+{
+    // ignore ...
+}
+
+void PasswordDlg::cantCheck()
+{
+    greet->failed();
+    static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical, 
+        i18n("Cannot unlock the screen, as the authentication system fails to work.\n"
+             "You must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
+    greet->revive();
 }
 
 //---------------------------------------------------------------------------
 //
 // Starts the kcheckpass process to check the user's password.
 //
-// Serge Droz <serge.droz@pso.ch> 10.2000
-// Define ACCEPT_ENV if you want to pass an environment variable to
-// kcheckpass. Define ACCEPT_ARGS if you want to pass command line
-// arguments to kcheckpass
-#define ACCEPT_ENV
-//#define ACCEPT_ARGS
-void PasswordDlg::startCheckPassword()
+void PasswordDlg::gplugStart( const char *method )
 {
-    const char *passwd = mEntry->password();
-    if (passwd)
-    {
-	mLabel->setEnabled(false);
-        mButton->setEnabled(false);
-        mEntry->setEnabled(false);
-        ok->setEnabled(false);
-        cancel->setEnabled(false);
-        password->setEnabled(false);
-
-        QString kcp_binName = KStandardDirs::findExe("kcheckpass");
-
-        mPassProc.clearArguments();
-        mPassProc << kcp_binName;
-
-#ifdef HAVE_PAM
-# ifdef ACCEPT_ENV
-        setenv("KDE_PAM_ACTION", KSCREENSAVER_PAM_SERVICE, 1);
-# elif defined(ACCEPT_ARGS)
-        mPassProc << "-c" << KSCREENSAVER_PAM_SERVICE;
-# endif
-#endif
-	bool ret = mPassProc.start(KProcess::NotifyOnExit, KProcess::Stdin);
-#ifdef HAVE_PAM
-# ifdef ACCEPT_ENV
-        unsetenv("KDE_PAM_ACTION");
-# endif
-#endif
-	if (ret == false)
-        {
-            kdDebug(1204) << "kcheckpass failed to start" << endl;
-            mLabel->setText(i18n("Verification failed\nKill kdesktop_lock"));
-            mFailedTimerId = startTimer(10000);
-            return;
-        }
-
-        // write Password to stdin
-        mPassProc.writeStdin(passwd, strlen(passwd));
-        mPassProc.closeStdin();
+    int sfd[2];
+    char fdbuf[16];
+    
+    if (::socketpair(AF_LOCAL, SOCK_STREAM, 0, sfd)) {
+        cantCheck();
+        return;
     }
+    if ((sPid = ::fork()) < 0) {
+        ::close(sfd[0]);
+        ::close(sfd[1]);
+        cantCheck();
+        return;
+    }
+    if (!sPid) {
+        ::close(sfd[0]);
+        sprintf(fdbuf, "%d", sfd[1]);
+        execlp("kcheckpass", "kcheckpass", 
+               "-c", KSCREENSAVER_PAM_SERVICE, 
+               "-m", method, 
+               "-S", fdbuf, 
+               (char *)0);
+        exit(20);
+    }
+    ::close(sfd[1]);
+    sFd = sfd[0];
+    handleVerify();
 }
 
-//---------------------------------------------------------------------------
-//
-// The kcheckpass process has exited.
-//
-void PasswordDlg::passwordChecked(KProcess *proc)
+void PasswordDlg::slotOK()
 {
-    if (proc == &mPassProc)
-    {
-	    /* the exit codes of kcheckpass:
-	       0: everything fine
-		   1: authentification failed
-		   2: passwd access failed [permissions/misconfig]
-	    */
-        if (mPassProc.normalExit() && !mPassProc.exitStatus())
-        {
-	    accept();
-        }
-        else if ( mPassProc.exitStatus() == 2 )
-	{
-/*
-XXX this needs to go into a separate routine at startup time
-		KMessageBox::error(0,
-		  i18n( "<h1>Screen Locking Failed!</h1>"
-		  "Your screen was not locked because the <i>kcheckpass</i> "
-		  "program was not able to check your password. This is "
-		  "usually the result of kcheckpass not being installed "
-		  "correctly. If you installed KDE yourself, reinstall "
-		  "kcheckpass as root. If you are using a pre-compiled "
-		  "package, contact the packager." ),
-		  i18n( "Screen Locking Failed" ) );
-*/
-            kdDebug(1204) << "kcheckpass cannot verify password. not setuid root?" << endl;
-            mLabel->setText(i18n("Verification failed\nKill kdesktop_lock"));
-            mFailedTimerId = startTimer(10000);
-	}
-        else
-        {
-            mUnlockingFailed = true;
-            updateLabel();
-            mFailedTimerId = startTimer(1500);
-        }
-    }
+    greet->next();
 }
+
 
 void PasswordDlg::show()
 {
@@ -348,6 +458,7 @@ void PasswordDlg::show()
 void PasswordDlg::slotStartNewSession()
 {
     killTimer(mTimeoutTimerId);
+    mTimeoutTimerId = 0;
 
     QDialog *dialog = new QDialog( this, "warnbox", true, WX11BypassWM );
     QFrame *winFrame = new QFrame( dialog );
@@ -425,31 +536,14 @@ void PasswordDlg::slotStartNewSession()
     }
     label2->setFixedSize(QSize(pref_width+10, pref_height));
 
-    dialog->show();
-    dialog->setFocus();
-
-    static_cast< LockProcess* >( parent())->registerDialog( dialog );
-    int ret = dialog->exec();
-    static_cast< LockProcess* >( parent())->unregisterDialog( dialog );
+    int ret = static_cast< LockProcess* >( parent())->execDialog( dialog );
 
     delete dialog;
 
-    mEntry->setFocus();
-
     if (ret == QDialog::Accepted)
-	emit startNewSession();
+        emit startNewSession();
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
-}
-
-void PasswordDlg::slotCancel()
-{
-    reject();
-}
-
-void PasswordDlg::slotOK()
-{
-   startCheckPassword();
 }
 
 void PasswordDlg::capsLocked()
@@ -462,3 +556,4 @@ void PasswordDlg::capsLocked()
     updateLabel();
 }
 
+#include "lockdlg.moc"

@@ -3,31 +3,43 @@
 // This file is part of the KDE project
 //
 // Copyright (c) 1999 Martin R. Jones <mjones@kde.org>
+// Copyright (c) 2003 Oswald Buddenhagen <ossi@kde.org>
 //
 
 #ifndef __LOCKDLG_H__
 #define __LOCKDLG_H__
 
-#include <qdialog.h>
-#include <kprocess.h>
-#include <X11/Xlib.h>
-#include <qstringlist.h>
-#include "lockdlgimpl.h"
+#include <kgreeterplugin.h>
 
+#include <qdialog.h>
+#include <qstringlist.h>
+
+struct GreeterPluginHandle;
 class LockProcess;
+class QFrame;
+class QGridLayout;
+class QLabel;
+class KPushButton;
+
 //===========================================================================
 //
 // Simple dialog for entering a password.
 // It does not handle password validation.
 //
-class PasswordDlg : public LockDlgImpl
+class PasswordDlg : public QDialog, public KGreeterPluginHandler
 {
     Q_OBJECT
 
 public:
-    PasswordDlg(LockProcess *parent, bool msess);
-    QString checkForUtf8(QString txt);
+    PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, bool msess);
+    ~PasswordDlg();
     virtual void show();
+
+    // from KGreetPluginHandler
+    virtual void gplugReturnText( const char *text, int );
+    virtual void gplugReturnBinary( const char *data );
+    virtual void gplugSetUser( const QString & );
+    virtual void gplugStart( const char *method );
 
 signals:
     void startNewSession();
@@ -36,25 +48,39 @@ protected:
     virtual void timerEvent(QTimerEvent *);
     virtual bool eventFilter(QObject *, QEvent *);
 
-protected slots:
-    void passwordChecked(KProcess *);
+private slots:
     void slotStartNewSession();
-    void slotCancel();
     void slotOK();
     void layoutClicked();
+    void slotActivity();
 
 private:
     void setLayoutText( const QString &txt );
-    void startCheckPassword();
     void capsLocked();
     void updateLabel();
-    QString labelText();
+    int Reader (void *buf, int count);
+    bool GRead (void *buf, int count);
+    bool GWrite (const void *buf, int count);
+    bool GSendInt (int val);
+    bool GSendStr (const char *buf);
+    bool GSendArr (int len, const char *buf);
+    bool GRecvInt (int *val);
+    bool GRecvArr (char **buf);
+    void handleVerify();
+    void reapVerify();
+    void cantCheck();
+    KGreeterPlugin *greet;
+    QFrame      *frame;
+    QGridLayout *frameLayout;
+    QLabel      *mStatusLabel;
+    KPushButton *mNewSessButton, *ok, *cancel;
+    QPushButton *mLayoutButton;
     int         mFailedTimerId;
     int         mTimeoutTimerId;
     int         mCapsLocked;
     bool        mUnlockingFailed;
-    KProcess    mPassProc;
     QStringList layoutsList;
+    int         sPid, sFd;
 };
 
 #endif
