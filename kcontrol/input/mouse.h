@@ -45,7 +45,7 @@
 #include <kcmodule.h>
 
 #include "kmousedlg.h"
-#include "core/themepage.h"
+#include "themepage.h"
 
 #define RIGHT_HANDED 0
 #define LEFT_HANDED  1
