@@ -386,8 +386,7 @@ void CSSConfig::preview()
 
   // Show the preview
   PreviewDialog *dlg = new PreviewDialog(this, 0, true);
-  QColorGroup clgrp = dlg->preview->colorGroup();
-  clgrp.setColor(QColorGroup::Base, back);
+  dlg->preview->setPaper(back);
   dlg->preview->viewport()->setFont(QFont("helvetica", bfs));
 
   dlg->exec();
