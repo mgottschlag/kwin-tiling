@@ -695,7 +695,7 @@ void Backgnd::slotAdvanced()
     delete dlg;
 }
 
-void Backgnd::makeReadOnly(bool state)
+void Backgnd::setEnabled( bool state )
 {
     KBackgroundRenderer *r = m_Renderer[m_Desk];
     m_pDesktopLabel->setEnabled(state);
@@ -739,6 +739,41 @@ void Backgnd::makeReadOnly(bool state)
         m_pBalanceLbl->setEnabled(r->backgroundMode()!=KBackgroundSettings::NoBlending);
         adjustMultiWP();
     }
+
+}
+
+void Backgnd::makeReadOnly()
+{
+    m_pDesktopLabel->setEnabled(false);
+    m_pDesktopBox->setEnabled(false);
+    m_monitorImage->setEnabled(false);
+    m_pAdvancedBut->setEnabled( false );
+    m_pWallpaperGrp->setEnabled( false );
+    PushButton17->setEnabled( false );
+    m_pWallpaperBox->setEnabled( false );
+    m_pRemoveBut->setEnabled( false );
+    m_pChangeInterval->setEnabled( false );
+    m_pWPBlendBox->setEnabled( false );
+    m_pWPImageOrderLbl->setEnabled( false );
+    m_pWPBlendLbl->setEnabled( false );
+    m_pBalanceLbl->setEnabled( false );
+    m_pImageOrderBox->setEnabled( false );
+    m_pWPChangeIntervalLbl->setEnabled( false );
+    m_pWPModeLbl->setEnabled( false );
+
+    m_pBalanceSlider->setEnabled( false );
+    m_pWPModeBox->setEnabled( false );
+    m_pBackgroundGrp->setEnabled( false );
+    m_pProgramRadio->setEnabled( false );
+    m_pProgramSetupBut->setEnabled( false );
+    m_pPatternEditBut->setEnabled( false );
+    m_pColor1Label->setEnabled( false );
+    m_pColor2But->setEnabled( false);
+    m_pColor2Label->setEnabled( false );
+    m_pColor1But->setEnabled( false );
+    m_pBlendModeLabel->setEnabled( false );
+    m_pColorBlendBox->setEnabled( false );
+    m_pColorRadio->setEnabled( false );
 }
 
 #include "backgnd.moc"

@@ -80,7 +80,7 @@ void KBackground::moduleChanged(bool b)
 void KBackground::slotEnableChanged()
 {
  bool en = m_pCBEnable->isChecked();
- m_background->makeReadOnly( en );
+ m_background->setEnabled( en );
 }
 
 void KBackground::makeReadOnly()

@@ -44,7 +44,9 @@ public:
     void load();
     void save();
     void defaults();
-    void makeReadOnly(bool state = false);
+    void makeReadOnly();
+    void setEnabled( bool state );
+
 protected slots:
     void slotColorBlendMode(int);
     void slotBGMode(int);
