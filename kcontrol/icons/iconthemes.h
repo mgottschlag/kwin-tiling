@@ -39,8 +39,9 @@ public:
   IconThemesConfig(QWidget *parent = 0L, const char *name = 0L);
   virtual ~IconThemesConfig();
   
-
   void loadThemes();
+
+  void updateRemoveButton();
 
   void load();
   void save();

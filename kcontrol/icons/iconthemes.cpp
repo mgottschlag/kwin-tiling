@@ -27,7 +27,7 @@
 #include <qdict.h>
 #include <qstring.h>
 #include <qcstring.h>
-#include <qlistview.h>
+#include <klistview.h>
 #include <qfile.h>
 #include <qpushbutton.h>
 #include <qgroupbox.h>
@@ -74,13 +74,12 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   lh2->addStretch(10);
 
 
-  m_iconThemes=new QListView(this,"IconThemeList");
+  m_iconThemes=new KListView(this,"IconThemeList");
   m_iconThemes->addColumn(i18n("Name"));
   m_iconThemes->addColumn(i18n("Description"));
   m_iconThemes->setAllColumnsShowFocus( true );
   connect(m_iconThemes,SIGNAL(selectionChanged(QListViewItem *)),
 		SLOT(themeSelected(QListViewItem *)));
-
 
   m_themeRequester=new KURLRequester(this,"themeRequester");
 //  m_themeRequester->fileDialog()->setMode( KFile::File | KFile::ExistingOnly );
@@ -106,6 +105,7 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   m_defaultTheme=iconThemeItem(KIconTheme::current());
 //  m_iconThemes->setCurrentItem(m_defaultTheme);
   m_iconThemes->setSelected(m_defaultTheme, true);
+  updateRemoveButton();
 
   load();
 
@@ -186,20 +186,25 @@ void IconThemesConfig::installNewTheme()
   QListViewItem *item=iconThemeItem(KIconTheme::current());
 //  m_iconThemes->setCurrentItem(item);
   m_iconThemes->setSelected(item, true);
+  updateRemoveButton();
 }
 
 void IconThemesConfig::removeSelectedTheme()
 {
+  QListViewItem *selected = m_iconThemes->selectedItem();
+  if (!selected) 
+     return; 
+
   QString question=i18n("Are you sure you want to remove the %1 icon theme ?"
         "\nThis will delete the files installed by this theme").
-	arg(m_iconThemes->currentItem()->text(0));
+	arg(selected->text(0));
 
-  bool deletingCurrentTheme=(m_iconThemes->currentItem()==iconThemeItem(KIconTheme::current()));
+  bool deletingCurrentTheme=(selected==iconThemeItem(KIconTheme::current()));
 
   int r=KMessageBox::questionYesNo(this,question,i18n("Confirmation"));
   if (r!=KMessageBox::Yes) return;
 
-  KIconTheme icontheme(m_themeNames[m_iconThemes->currentItem()->text(0)]);
+  KIconTheme icontheme(m_themeNames[selected->text(0)]);
 
   unlink(QFile::encodeName(icontheme.dir()+"/index.desktop").data());
 
@@ -211,17 +216,31 @@ void IconThemesConfig::removeSelectedTheme()
 
   loadThemes();
 
-
   QListViewItem *item=0L;
   //Fallback to hicolor if we've deleted the current theme
-  if (deletingCurrentTheme) item=iconThemeItem("hicolor");
-  else item=iconThemeItem(KIconTheme::current());
-
+  if (!deletingCurrentTheme) 
+     item=iconThemeItem(KIconTheme::current());
+  if (!item)
+     item=iconThemeItem("hicolor");
 //  m_iconThemes->setCurrentItem(item);
+
   m_iconThemes->setSelected(item, true);
+  updateRemoveButton();  
 
   if (deletingCurrentTheme) // Change the configuration
     save();
+}
+
+void IconThemesConfig::updateRemoveButton()
+{
+  QListViewItem *selected = m_iconThemes->selectedItem();
+  bool enabled = false;
+  if (selected)
+  {
+    QString dirName(m_themeNames[selected->text(0)]); 
+    enabled = ( dirName != "hicolor" && dirName != "locolor" );
+  }
+  m_removeButton->setEnabled(enabled);
 }
 
 void IconThemesConfig::themeSelected(QListViewItem *item)
@@ -230,9 +249,7 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
   KIconTheme icontheme(dirName);
   if (!icontheme.isValid()) kdDebug() << "notvalid\n";
 
-  if ( dirName=="hicolor" || dirName=="locolor" )
-    m_removeButton->setEnabled(false);
-  else m_removeButton->setEnabled(true);
+  updateRemoveButton();
 
   KIcon icon=icontheme.iconPath("exec.png",
 	icontheme.defaultSize(KIcon::Desktop),KIcon::MatchBest);
@@ -256,15 +273,17 @@ void IconThemesConfig::load()
 
 void IconThemesConfig::save()
 {
+  QListViewItem *selected = m_iconThemes->selectedItem();
+  if (!selected) 
+     return; 
 
   KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
 
   config->setGroup("Icons");
 
-  config->writeEntry("Theme", m_themeNames[
-	m_iconThemes->selectedItem()->text(0)]);
+  config->writeEntry("Theme", m_themeNames[selected->text(0)]);
 
-  KIconTheme icontheme(m_themeNames[m_iconThemes->selectedItem()->text(0)]);
+  KIconTheme icontheme(m_themeNames[selected->text(0)]);
 
   const char *groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 
@@ -283,7 +302,6 @@ void IconThemesConfig::save()
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
-
 }
 
 void IconThemesConfig::defaults()
@@ -292,6 +310,7 @@ void IconThemesConfig::defaults()
 
 //  m_iconThemes->setCurrentItem(m_defaultTheme);
   m_iconThemes->setSelected(m_defaultTheme,true);
+  updateRemoveButton();
 
   emit changed(true);
 }
