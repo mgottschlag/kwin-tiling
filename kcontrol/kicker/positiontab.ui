@@ -935,7 +935,7 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                 <cstring>m_xineramaScreenLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>Xinerama Screen</string>
+                                <string>Xinerama screen:</string>
                             </property>
                         </widget>
                         <widget class="QComboBox">

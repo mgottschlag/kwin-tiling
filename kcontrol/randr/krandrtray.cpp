@@ -62,7 +62,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Display Configuration"), 0, 0);
 
 	if (!isValid()) {
-		lastIndex = menu->insertItem(i18n("Required X extension not available"));
+		lastIndex = menu->insertItem(i18n("Required X Extension Not Available"));
 		menu->setItemEnabled(lastIndex, false);
 
 	} else {

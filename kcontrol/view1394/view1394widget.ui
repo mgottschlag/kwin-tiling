@@ -178,7 +178,7 @@
                         <cstring>m_busResetPb</cstring>
                     </property>
                     <property name="text">
-                        <string>Generate 1394 bus reset</string>
+                        <string>Generate 1394 Bus Reset</string>
                     </property>
                 </widget>
             </hbox>
