@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qobject.h>
 #include <qvaluelist.h>
 #if QT_VERSION < 300
-#include <qptrlist.h>
+#include <qlist.h>
 #else
 #include <qptrlist.h>
 #endif
