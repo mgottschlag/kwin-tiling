@@ -20,4 +20,4 @@ METASOURCES = AUTO
 bin_PROGRAMS = klocaldomainurifilterhelper
 
 klocaldomainurifilterhelper_SOURCES = klocaldomainurifilterhelper.c
-klocaldomainurifilterhelper_LDFLAGS = -lkdefakes
+klocaldomainurifilterhelper_LDADD = $(LIBSOCKET)
