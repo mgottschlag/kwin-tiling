@@ -372,8 +372,6 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    continue;
 		bp = cbuf;
 		*bp++ = '\t';
-		if (di == d)
-		    *bp++ = '*';
 		args = di->name;
 		if (!memcmp (args, "localhost:", 10))
 		    args += 9;
@@ -389,6 +387,15 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		*bp++ = ',';
 		if (di->status == remoteLogin)
 		    str_cat (&bp, "<remote>", 8);
+		*bp++ = ',';
+		if (di == d)
+		    *bp++ = '*';
+		if (di->userSess >= 0 &&
+		    (d ? (d->userSess != di->userSess &&
+			  (d->allowNuke == SHUT_NONE ||
+			   (d->allowNuke == SHUT_ROOT && d->userSess))) :
+			 !fifoAllowNuke))
+		    *bp++ = '!';
 		Writer (fd, cbuf, bp - cbuf);
 	    }
 	    Reply ("\n");
