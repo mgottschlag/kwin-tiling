@@ -111,10 +111,16 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 
 	// Disable the install button if ~/.icons isn't writable
 	QString path = QDir::homeDirPath() + "/.icons";
-	if ( !themeDirs.contains( path ) || !QFileInfo( path ).isWritable() )
+	QFileInfo icons = QFileInfo( path );
+
+	if ( ( icons.exists() && !icons.isWritable() ) ||
+		( !icons.exists() && !QFileInfo( QDir::homeDirPath() ).isWritable() ) )
 		installButton->setEnabled( false );
 
-        selectionChanged( listview->currentItem() );
+	if ( !themeDirs.contains( path ) )
+		installButton->setEnabled( false );
+
+	selectionChanged( listview->currentItem() );
 }
 
 
@@ -279,6 +285,8 @@ bool ThemePage::installThemes( const QString &file )
 		return false;
 
 	const QString destDir = QDir::homeDirPath() + "/.icons/";
+	KStandardDirs::makeDir( destDir ); // Make sure the directory exists
+
 	for ( QStringList::ConstIterator it = themeDirs.begin(); it != themeDirs.end(); ++it )
 	{
 		// Check if a theme with that name already exists
