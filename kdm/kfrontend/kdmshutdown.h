@@ -66,17 +66,8 @@ private:
     int			liloTarget;
 #endif
 
-    void set_min( QWidget* w)
-    {
-	w->adjustSize();
-	w->setMinimumSize( w->size());
-    }
-
-    void set_fixed( QWidget* w)
-    {
-	w->adjustSize();
-	w->setFixedSize( w->size());
-    }
+    void set_min( QWidget* w) { w->setMinimumSize( w->sizeHint()); }
+    void set_fixed( QWidget* w) { w->setFixedSize( w->sizeHint()); }
 
 };
 

@@ -70,7 +70,7 @@ class KGreeter : public QFrame {
     Q_OBJECT
 
 public:
-    KGreeter(QWidget *parent = 0, const char *ti = 0);
+    KGreeter();
     ~KGreeter();
     void ReturnPressed();
     void UpdateLock();
@@ -82,22 +82,22 @@ public slots:
     void console_button_clicked();
     void quit_button_clicked();
     void shutdown_button_clicked();
-    void slot_user_name( QIconViewItem *);
-    void slot_session_selected( );
+    void slot_user_name( QIconViewItem * );
+    void slot_session_selected();
     void SetTimer();
     void timerDone();
     void load_wm();
 
 protected:
-    void timerEvent( QTimerEvent *) {};
-    void keyPressEvent( QKeyEvent *);
+    void timerEvent( QTimerEvent * ) {};
+    void keyPressEvent( QKeyEvent * );
 
 private:
-    void set_wm(const char *);
-    void insertUsers( QIconView *);
-    void MsgBox(QMessageBox::Icon typ, QString msg);
-    void Inserten (QPopupMenu *mnu, const QString& txt, const char *member);
-    bool verifyUser( bool);
+    void set_wm( const char * );
+    void insertUsers( QIconView * );
+    void MsgBox( QMessageBox::Icon typ, QString msg ) { KFMsgBox::box( this, typ, msg ); }
+    void Inserten( QPopupMenu *mnu, const QString& txt, const char *member );
+    bool verifyUser( bool );
     void updateStatus();
 
     enum WmStat { WmNone, WmPrev, WmSel };

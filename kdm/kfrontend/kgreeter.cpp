@@ -67,28 +67,27 @@ extern "C" {
 KGreeter *kgreeter = 0;
 
 void
-KLoginLineEdit::focusOutEvent( QFocusEvent *e)
+KLoginLineEdit::focusOutEvent( QFocusEvent *e )
 {
     emit lost_focus();
-    QLineEdit::focusOutEvent( e);
+    QLineEdit::focusOutEvent( e );
 }
 
 class MyApp : public KApplication {
 
 public:
-    MyApp(int& argc, char** argv) : KApplication(argc, argv, "kdmgreet") {};
+    MyApp( int& argc, char** argv ) : KApplication( argc, argv, "kdmgreet" ) {};
     virtual bool x11EventFilter( XEvent * );
 };
 
 bool
-MyApp::x11EventFilter( XEvent * ev)
+MyApp::x11EventFilter( XEvent * ev )
 {
     switch (ev->type) {
     case FocusIn:
     case FocusOut:
 	// Hack to tell dialogs to take focus when the keyboard is grabbed
-//	if (ev->xfocus.mode == NotifyWhileGrabbed)
-	    ev->xfocus.mode = NotifyNormal;
+	ev->xfocus.mode = NotifyNormal;
 	break;
     case ButtonPress:
     case ButtonRelease:
@@ -107,8 +106,8 @@ MyApp::x11EventFilter( XEvent * ev)
 
 void KGreeter::keyPressEvent( QKeyEvent *e )
 {
-    if ( e->state() == 0)
-	switch ( e->key() ) {
+    if (e->state() == 0)
+	switch (e->key()) {
 	    case Key_Enter:
 	    case Key_Return:
 		ReturnPressed();
@@ -120,9 +119,9 @@ void KGreeter::keyPressEvent( QKeyEvent *e )
     else if ( e->state() & Keypad && e->key() == Key_Enter ) {
 	ReturnPressed();
 	return;
-    } else if ( !(~e->state() & (AltButton | ControlButton)) &&
-	        e->key() == Key_Delete && 
-		kdmcfg->_allowShutdown != SHUT_NONE) {
+    } else if (!(~e->state() & (AltButton | ControlButton)) &&
+	       e->key() == Key_Delete && 
+	       kdmcfg->_allowShutdown != SHUT_NONE) {
 	shutdown_button_clicked();
 	return;
     }
@@ -172,22 +171,27 @@ KGreeter::insertUsers( QIconView *iconview)
 	}
     }
     endpwent();
-    if( kdmcfg->_sortUsers)
+    if (kdmcfg->_sortUsers)
         iconview->sort();
 }
 
 #undef CHECK_STRING
 
 void
-KGreeter::Inserten (QPopupMenu *mnu, const QString& txt, const char *member)
+KGreeter::Inserten( QPopupMenu *mnu, const QString& txt, const char *member )
 {
-    mnu->insertItem(txt, this, member, QAccel::shortcutKey(txt));
+    mnu->insertItem( txt, this, member, QAccel::shortcutKey(txt) );
 }
 
-KGreeter::KGreeter(QWidget *parent, const char *t)
-  : QFrame( parent, t, WStyle_Customize | WStyle_NoBorder | WStyle_Tool)
+KGreeter::KGreeter()
+  : QFrame( 0, 0, WStyle_Customize | WStyle_NoBorder | WStyle_Tool )
+  , user_view( 0 )
+  , clock( 0 )
+  , pixLabel( 0 )
+  , capslocked( -1 )
+  , loginfailed( false )
 {
-    setFrameStyle (QFrame::WinPanel | QFrame::Raised);
+    setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     QBoxLayout* vbox = new QBoxLayout(  this,
 					QBoxLayout::TopToBottom,
 					10, 10);
@@ -211,12 +215,7 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 	user_view->setResizeMode(QIconView::Adjust);
 	insertUsers( user_view);
 	vbox->addWidget( user_view);
-    } else {
-	user_view = NULL;
     }
-
-    pixLabel = 0;
-    clock    = 0;
 
     switch( kdmcfg->_logoArea ) {
 	case LOGO_CLOCK:
@@ -292,29 +291,29 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
     optMenu->setCheckable(false);
 
     if (dhasConsole)
-	Inserten (optMenu, i18n("Co&nsole Login"),
-		  SLOT(console_button_clicked()));
+	Inserten( optMenu, i18n("Co&nsole Login"),
+		  SLOT( console_button_clicked() ) );
 
-/*    Inserten (optMenu, i18n("&Remote Login"),
-	      SLOT(chooser_button_clicked()));
-*/
-    Inserten (optMenu, disLocal ?
+//    Inserten( optMenu, i18n("&Remote Login"),
+//	      SLOT( chooser_button_clicked() ) );
+
+    Inserten( optMenu, disLocal ?
 		       i18n("R&estart X Server") :
 		       i18n("Clos&e Connection"),
-	      SLOT(quit_button_clicked()));
+	      SLOT( quit_button_clicked() ) );
 
-    menuButton = new QPushButton( i18n("&Menu"), this);
-    menuButton->setPopup(optMenu);
-    hbox2->addWidget( menuButton);
+    menuButton = new QPushButton( i18n("&Menu"), this );
+    menuButton->setPopup( optMenu );
+    hbox2->addWidget( menuButton );
 
-    hbox2->addStretch( 1);
+    hbox2->addStretch( 1 );
 
     if (kdmcfg->_allowShutdown != SHUT_NONE)
     {
-	shutdownButton = new QPushButton(i18n("&Shutdown..."), this);
-	connect( shutdownButton, SIGNAL(clicked()),
-		 SLOT(shutdown_button_clicked()));
-	hbox2->addWidget( shutdownButton);
+	shutdownButton = new QPushButton( i18n("&Shutdown..."), this );
+	connect( shutdownButton, SIGNAL( clicked() ),
+		 SLOT( shutdown_button_clicked() ) );
+	hbox2->addWidget( shutdownButton );
     }
 
     timer = new QTimer( this );
@@ -364,7 +363,7 @@ KGreeter::~KGreeter ()
 void
 KGreeter::slot_user_name( QIconViewItem *item)
 {
-    if( item != 0) {
+    if (item) {
 	loginEdit->setText( item->text());
 	passwdEdit->erase();
 	passwdEdit->setFocus();
@@ -465,7 +464,7 @@ KGreeter::console_button_clicked()
 void
 KGreeter::shutdown_button_clicked()
 {
-    KDMShutdown k( this);
+    KDMShutdown k( this );
     k.exec();
 }
 
@@ -530,12 +529,6 @@ KGreeter::load_wm()
 #define sorrybox QMessageBox::Warning
 #define infobox QMessageBox::Information
 
-void
-KGreeter::MsgBox(QMessageBox::Icon typ, QString msg)
-{
-    KFMsgBox::box(kgreeter, typ, msg);
-}
-
 bool
 KGreeter::verifyUser(bool haveto)
 {
@@ -590,11 +583,11 @@ KGreeter::verifyUser(bool haveto)
 		f.close();
 
 		if (mesg.isEmpty())
-		    MsgBox (sorrybox, 
+		    MsgBox( sorrybox, 
 			    i18n("Logins are not allowed at the moment.\n"
-					"Try again later."));
+					"Try again later.") );
 		else
-		    MsgBox (sorrybox, mesg);
+		    MsgBox( sorrybox, mesg );
 	    }
 	    free (msg);
 	    break;
@@ -739,17 +732,17 @@ kg_main(int argc, char **argv)
     QRect scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
     kgreeter = new KGreeter;
     kgreeter->setMaximumSize(scr.size());
-    kgreeter->move(-1000, -1000);
+    kgreeter->move(-10000, -10000);
     kgreeter->show();
     QRect grt(QPoint (0, 0), kgreeter->sizeHint());
     if (kdmcfg->_greeterPosX >= 0) {
-	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY));
-	moveInto (grt, scr);
+	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
+	moveInto( grt, scr );
     } else
-	grt.moveCenter( scr.center());
-    kgreeter->setGeometry (grt);
-    XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime);
-    XUndefineCursor (dpy, RootWindow (dpy, DefaultScreen (dpy)));
+	grt.moveCenter( scr.center() );
+    kgreeter->setGeometry( grt );
+    XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime );
+    XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
     Debug ("entering event loop\n");
     kapp->exec();
     delete kgreeter;

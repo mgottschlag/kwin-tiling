@@ -39,18 +39,14 @@
 
 
 KDMShutdown::KDMShutdown( QWidget* _parent)
-    : FDialog( _parent, "Shutdown", true)
+    : FDialog( _parent, "Shutdown")
 {
     QComboBox *targets = 0;
-    QFrame* winFrame = new QFrame( this);
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised);
     QGridLayout* box = new QGridLayout( winFrame, 3, 2, 
 			KDialog::spacingHint() * 2, KDialog::spacingHint());
 
     howGroup = new QVButtonGroup( i18n("Shutdown type"), winFrame);
     box->addWidget( howGroup, 0, 0, AlignTop);
-
-//    QGridLayout *grid = new QGridLayout(howGroup, 2, 2);
 
     QRadioButton *rb;
     rb = new QRadioButton( i18n("&Halt"), howGroup);
@@ -59,13 +55,8 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     rb->setChecked( true);
     rb->setFocus();
 
-//    grid->addWidget( rb, 0, 0);
-//    howGroup->insert( rb);
-
     restart_rb = new QRadioButton( i18n("&Reboot"), howGroup);
     set_min( restart_rb);
-
-//    grid->addWidget(restart_rb, 1, 0);
 
 #if defined(__linux__) && defined(__i386__)
     if ( kdmcfg->_useLilo ) {
@@ -98,7 +89,6 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     }
 #endif
 
-//    howGroup->insert( restart_rb);
     set_fixed (howGroup);
 
 
@@ -157,7 +147,6 @@ KDMShutdown::KDMShutdown( QWidget* _parent)
     connect( okButton, SIGNAL(clicked()), SLOT(bye_bye()));
     connect( cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
-    set_fixed (winFrame);
     when_changed (0);
 }
 

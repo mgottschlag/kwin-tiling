@@ -28,26 +28,28 @@
 #define FDIALOG_H
 
 #include <qdialog.h>
+#include <qframe.h>
 #include <qmessagebox.h>
 
-#include <kmessagebox.h>
-
 class FDialog : public QDialog {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
-     FDialog( QWidget *parent = 0, const char* name = 0, 
-	      bool modal = FALSE, WFlags f = 0) 
-       : QDialog( parent, name, modal, f) {}
-     virtual int exec();
+    FDialog( QWidget *parent = 0, const char* name = 0, bool modal = true );
+    virtual int exec();
 
+protected:
+    QFrame *winFrame;
 };
 
-class KFMsgBox : public KMessageBox {
+class KFMsgBox : public FDialog {
+
+private:
+    KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text );
 
 public:
-    static void box(QWidget *parent, QMessageBox::Icon type, 
-		    const QString &text);
+    static void box( QWidget *parent, QMessageBox::Icon type, 
+		     const QString &text );
 };
 
 #endif /* FDIALOG_H */

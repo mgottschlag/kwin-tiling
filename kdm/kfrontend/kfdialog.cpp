@@ -24,100 +24,59 @@
     */
  
 
-#include <qapplication.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qhbox.h>
+#include <qpushbutton.h>
 
 #include <kapplication.h>
-#include <kdialogbase.h>
 #include <klocale.h>
 
 #include "kfdialog.h"
 
 #include <X11/Xlib.h>
 
+FDialog::FDialog( QWidget *parent, const char *name, bool modal )
+   : QDialog( parent, name, modal, WStyle_NoBorder )
+{
+    winFrame = new QFrame( this );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+}
+
 int
 FDialog::exec()
 {
+    winFrame->resize( winFrame->sizeHint() );
     QDialog::show();
-    XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime);
+    XSetInputFocus( qt_xdisplay(), winId(), RevertToParent, CurrentTime );
     QDialog::exec();
-    // Give focus back to parent:
-    if( parentWidget() != 0)
+    if (parentWidget())
 	parentWidget()->setActiveWindow();
-
     return result();
 }
 
-void
-KFMsgBox::box(QWidget *parent, QMessageBox::Icon type, const QString &text)
+KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text )
+   : FDialog( parent )
 {
-    QFrame winFrame( 0);
-    winFrame.setFrameStyle( QFrame::Panel | QFrame::Raised);
-    winFrame.setLineWidth( 2);
+    QLabel *label1 = new QLabel( winFrame );
+    label1->setPixmap( QMessageBox::standardIcon( type ) );
+    QLabel *label2 = new QLabel( text, winFrame );
+    QPushButton *button = new QPushButton( i18n("&OK"), winFrame );
+    button->setDefault( true );
+    button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
+    connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
 
-    KDialogBase dialog(QString::fromLatin1(""),
-		       KDialogBase::Yes,
-		       KDialogBase::Yes, KDialogBase::Yes,
-		       &winFrame, 0, true, true,
-		       i18n("&OK"));
+    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
+    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
+    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+}
 
-    QWidget *contents = new QWidget(&dialog);
-    QHBoxLayout *lay = new QHBoxLayout(contents);
-    lay->setSpacing(KDialog::spacingHint()*2);
-    lay->setMargin(KDialog::marginHint()*2);
-
-    lay->addStretch(1);
-    QLabel *label1 = new QLabel( contents);
-#if QT_VERSION < 300
-    label1->setPixmap(QMessageBox::standardIcon(type, kapp->style().guiStyle()));
-#else
-    label1->setPixmap(QMessageBox::standardIcon(type));
-#endif
-    lay->add( label1 );
-    lay->add( new QLabel(text, contents) );
-    lay->addStretch(1);
-
-    dialog.setMainWidget(contents);
-    dialog.enableButtonSeparator(false);
-
-    dialog.resize(dialog.sizeHint());
-    int ft = winFrame.frameWidth() * 2;
-    winFrame.resize( dialog.width() + ft, dialog.height() + ft);
-    int fw = winFrame.width(), fh = winFrame.height();
-
-    QWidget *desk = QApplication::desktop();
-
-    QPoint p;
-    if ( parent ) {
-	parent = parent->topLevelWidget();
-	QPoint pp = parent->mapToGlobal( QPoint(0,0) );
-	p = QPoint( pp.x() + parent->width()/2,
-		    pp.y() + parent->height()/ 2 );
-    } else {
-	p = QPoint( desk->width()/2, desk->height()/2 );
-    }
-
-    p = QPoint( p.x()-fw/2, p.y()-fh/2);
-
-    if ( p.x() + fw > desk->width() )
-	p.setX( desk->width() - fw);
-    if ( p.x() < 0 )
-	p.setX( 0 );
-
-    if ( p.y() + fh > desk->height() )
-	p.setY( desk->height() - fh);
-    if ( p.y() < 0 )
-	p.setY( 0 );
-
-    winFrame.move( p);
-    winFrame.show();
-
-    dialog.exec();
-
-    if( parent != 0)
-	parent->setActiveWindow();
+void
+KFMsgBox::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
+{
+    KFMsgBox dlg( parent, type, text.stripWhiteSpace() );
+    dlg.exec();
 }
 
 #include "kfdialog.moc"
