@@ -81,8 +81,9 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   label->setBuddy(emailAddr);
 
   wtstr = i18n("Enter your email address here, e.g. \"john@doe.com\" (without"
-     "the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
-     "Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address.");
+     " the quotation marks). This information is <em>mandatory</em> if you want to use email.<p>"
+     " Do <em>not</em> enter something like \"John Doe &lt;john@doe.com&gt;\", just a plain email address."
+     " You're email address must not contain any blank spaces.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( emailAddr, wtstr );
 

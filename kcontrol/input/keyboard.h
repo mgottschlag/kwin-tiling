@@ -44,6 +44,8 @@ public:
   void load();
   void defaults();
 
+  QString quickHelp();
+
 private slots:
 
   void changed();

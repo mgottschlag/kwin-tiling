@@ -34,6 +34,7 @@
 #include <qcheckbox.h>
 #include <qstring.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
@@ -45,11 +46,19 @@
 KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
     : KCModule (parent, name)
 {
+  QString wtstr;
   QBoxLayout* lay = new QVBoxLayout(this, 10);
 
   repeatBox = new QCheckBox(i18n("Keyboard repeat"), this);
   lay->addWidget(repeatBox);
   connect(repeatBox, SIGNAL(clicked()), this, SLOT(changed()));
+
+  wtstr = i18n("If you check this option, pressing and holding down a key"
+     " emits the same character over and over again. For example,"
+     " pressing and holding down the Tab key will have the same effect"
+     " as that of pressing that key several times in succession:"
+     " Tab characters continue to be emitted until you release the key.");
+  QWhatsThis::add( repeatBox, wtstr );
 
   lay->addSpacing(10);
   click = new KIntNumInput(100, this);
@@ -60,6 +69,17 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name)
   connect(click, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
   lay->addWidget(click);
+
+  wtstr = i18n("If supported, this option allows you to hear audible"
+     " clicks from your computer's speakers when you press the keys"
+     " on your keyboard. This might be useful if your keyboard"
+     " does not have mechanical keys, or if the sound that the keys"
+     " make is very soft.<p>"
+     " You can change the loudness of the key click feedback"
+     " by dragging the slider button or by clicking the up/down"
+     " arrows on the spin-button. Setting the volume to 0 % turns off"
+     " the key click.");
+  QWhatsThis::add( click, wtstr );
 
   lay->addStretch(10);
   load();
@@ -123,13 +143,21 @@ void KeyboardConfig::save()
   delete config;
 }
 
-
 void KeyboardConfig::defaults()
 {
     setClick(50);
     setRepeat(true);
 }
 
+QString KeyboardConfig::quickHelp()
+{
+  return i18n("<h1>Keyboard</h1> This module allows you to choose options"
+     " for the way in which your keyboard works. The actual effect of"
+     " setting these options depends upon the features provided by your"
+     " keyboard hardware and the X server on which KDE is running.<p>"
+     " For example, you may find that changing the key click volume"
+     " has no effect because this feature is not available on your system.");
+}
 
 void KeyboardConfig::changed()
 {
