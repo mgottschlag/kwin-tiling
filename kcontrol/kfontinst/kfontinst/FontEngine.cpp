@@ -41,7 +41,6 @@
 #include <fstream.h>
 #include <iostream.h>
 #include <stdio.h>
-#include <zlib.h>
 #include <netinet/in.h>
 #include <qimage.h>
 #include <qregexp.h>
