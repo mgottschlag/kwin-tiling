@@ -43,6 +43,7 @@ Name[sv]=Fönsterdekoration
 Name[ta]=º¡ÇÃ «Äí¸¡Ãõ
 Name[tr]=Pencere Dekorasyonu
 Name[uk]=Обрамлення вікон
+Name[vi]=BềEtrí cửa sềE
 Name[zh_CN.GB2312]=窗口修饰
 
 Comment=Window border theme
@@ -76,9 +77,10 @@ Comment[ru]=тема границ окон
 Comment[sk]=Téma okraja okien
 Comment[sl]=Tema robov oken
 Comment[sv]=Tema för fönsterkanter
-Comment[ta]=º¡ÇÃ µÃí¸Ç¢ü¸¡É ¯Õì¸Õì¸û
+Comment[ta]=º¡ÇÃ µÃ ¯Õ¸Õ
 Comment[tr]=Pencere kenarı teması
 Comment[uk]=Тема для країв вікон
+Comment[vi]=Theme của viền Cửa sềE
 Comment[zh_CN.GB2312]=Windows 边框主题
 Comment[zh_TW.Big5]=Windows 邊界佈景
 
@@ -111,4 +113,5 @@ Keywords[sl]=kwin,okno,upravljalnik,rob,meja,slog,stil,tema,pogled,občutek,gumb
 Keywords[sv]=kwin,fönster,hanterare,kant,stil,tema,utseende,känsla,layout,knapp,hantera,kant,kwm,dekoration
 Keywords[tr]=kwin,pencere,yönetici,kenar,stil,tema,görünüş,doku,yerleşim,düğme,tutamaç,kenar,kwm,dekorasyon
 Keywords[uk]=kwin,вікно,менеджер,границя,стиль,тема,вигляд,поведінка,розклад,кнопка,handle,край,kwm,обрамлення
+Keywords[vi]=kwin,window,manager,border,style,theme,look,feel,layout,button,handle,edge,kwm,decoration,cửa sềEtrình quản lí,viền,kiểu,cạnh,bềEtrí 
 Keywords[zh_CN.GB2312]=kwin,window,manager,border,style,theme,look,feel,layout,button,handle,edge,kwm,decoration,窗口,管理器,边界,风格,主题,观感,部局,按钮,边缘,装饰

@@ -1,13 +1,17 @@
 [Desktop Entry]
 Type=Service
 Name=Open Directory
-Name[de]=Verzeichnis öffnen
+Name[af]=OPEN GIDS
+Name[bg]=Отвори директория
 Name[eo]=Libera katalogo
 Name[is]=Opin mappa
 Name[ko]=자료방 열기
 Name[lv]=Atvērt Direktoriju
 Name[nl]=Map openen
 Name[no]=Åpne katalog
+Name[ta]=¾¢Èó¾ «¨¼×
+Name[vi]=MềEthư mục 
+Name[wa]=Drovî ridant
 ServiceTypes=SearchProvider
 Keys=dmoz,odp
 Query=http://search.dmoz.org/cgi-bin/search?search=\\1

@@ -1,7 +1,9 @@
 [Desktop Entry]
 Exec=khotkeys
 Name=KDE Hot Keys
+Name[af]=KDE WARM SLEUTELS
 Name[az]=KDE Qısa yol Düymələri
+Name[bg]=Горещи клавиши на KDE
 Name[cs]=Horké klávesy
 Name[da]=KDE Genvejstaster
 Name[de]=KDE-Kurzbefehle
@@ -25,14 +27,14 @@ Name[no]=KDEs hjemmeside
 Name[no_NY]=KDE-snøggtastar
 Name[pl]=Skróty klawiszowe KDE
 Name[pt_BR]=Teclas de atalho do KDE
-Name[ro]=Taste rapide KDE
 Name[ru]=Горячие клавиши KDE
 Name[sk]=Klávesové skratky KDE
 Name[sl]=Vroče tipke KDE
 Name[sv]=KDE Snabbtangenter
 Name[ta]=KDE ÍÎÅ¢¨º¸û
-Name[tr]=KDE K�sayol Tu�lar�
+Name[tr]=KDE Kısayol Tuşları
 Name[uk]=Швидкі клавіши KDE
+Name[vi]=Các phím nóng cho KDE 
 Name[zh_CN.GB2312]=KDE 热键
 Name[zh_TW.Big5]=KDE 熱鍵
 Type=Service
