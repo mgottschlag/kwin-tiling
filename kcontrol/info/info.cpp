@@ -188,7 +188,9 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     last = new QListViewItem(item, last, i18n("Default Number of Colormap Cells"),
 		Value((int)DisplayCells(dpy, scr)));
     last = new QListViewItem(item, last, i18n("Preallocated Pixels"),
-		i18n("black %1, White %2").arg(BlackPixel(dpy,scr)).arg(WhitePixel(dpy,scr)));
+		i18n("black %1, White %2")
+		.arg(KGlobal::locale()->formatNumber(BlackPixel(dpy,scr), 0))
+		.arg(KGlobal::locale()->formatNumber(WhitePixel(dpy,scr), 0)));
 
     QString YES(i18n("Yes"));
     QString NO(i18n("No"));
@@ -288,9 +290,9 @@ bool GetInfo_XServer_Generic( QListView *lBox )
     req_size = XExtendedMaxRequestSize(dpy);
     if (!req_size) req_size = XMaxRequestSize(dpy);
     last = new QListViewItem(next, last, i18n("Maximum Request Size"),
-		QString("%1 Byte").arg(req_size*4));
+		i18n("%1 Byte").arg(KGlobal::locale()->formatNumber(req_size*4,0)));
     last = new QListViewItem(next, last, i18n("Motion Buffer Size"),
-		QString("%1 Byte").arg(XDisplayMotionBufferSize(dpy)));
+		i18n("%1 Byte").arg(KGlobal::locale()->formatNumber(XDisplayMotionBufferSize(dpy), 0)));
 
     last = item = new QListViewItem(next, last, i18n("Bitmap"));
     last->setExpandable(true);
