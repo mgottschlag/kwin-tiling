@@ -50,7 +50,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
     );
 
   cb_busyCursor_ =
-    new QCheckBox(i18n("Change the pointer shape"), groupBox);
+    new QCheckBox(i18n("Show an icon next to the mouse cursor"), groupBox);
 
   cb_taskbarButton_ =
     new QCheckBox
