@@ -17,7 +17,7 @@ kthememgr_LDADD = $(LIB_KIMGIO) $(LIB_KFILE)
 kthememgr_LDFLAGS = $(all_libraries) $(LDFLAGS) $(KDE_RPATH)
 
 METASOURCES = theme.moc installer.moc colors.moc widgetcanvas.moc \
-	options.moc about.moc groupdetails.moc themecreator.moc
+	options.moc about.moc groupdetails.moc 
 
 kde_icon_DATA = kthememgr.xpm
 
