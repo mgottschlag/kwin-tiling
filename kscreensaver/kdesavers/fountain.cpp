@@ -305,9 +305,9 @@ void Fountain::paintGL ()
 	glLoadIdentity();
 						// Reset The ModelView Matrix
 	transIndex++;
-	glTranslatef( GLfloat(5.0*sin(2*3.14*transIndex/360)), GLfloat(4.0*cos(2*3.14*transIndex/360)), 0.0 );
-	xspeed = GLfloat(100.0*cos(2*3.14*transIndex/360)+100);
-	yspeed = GLfloat(100.0*sin(2*3.14*transIndex/360)+100);
+	glTranslatef( GLfloat(5.0*sin(4*3.14*transIndex/360)), GLfloat(4.0*cos(2*3.14*transIndex/360)), 0.0 );
+	xspeed = GLfloat(100.0*cos(3*3.14*transIndex/360)+100);
+	yspeed = GLfloat(100.0*sin(3*3.14*transIndex/360)+100);
 	//slowdown = GLfloat(4.0*sin(2*3.14*transIndex/360)+4.01);
 
 	for (loop=0;loop<MAX_PARTICLES;loop++)				// Loop Through All The Particles
@@ -329,7 +329,7 @@ void Fountain::paintGL ()
                                particle[loop].life );
 
                     /* Build Quad From A Triangle Strip */
-                    glBegin( GL_TRIANGLE_STRIP );
+                    glBegin( GL_TRIANGLE_FAN );
                       /* Top Right */
                       glTexCoord2d( 1, 1 );
                       glVertex3f( x + 0.5f, y + 0.5f, z );
@@ -371,7 +371,7 @@ void Fountain::paintGL ()
 			index += 0.001;
 			particle[loop].yg =2.0*sin(2*3.14*transIndex/360);
 			particle[loop].xg =2.0*cos(2*3.14*transIndex/360);
-			particle[loop].zg =2.0+(2.0*cos(2*3.14*transIndex/360));
+			particle[loop].zg =4.0+(4.0*cos(2*3.14*transIndex/360));
 
 		}
 	}
