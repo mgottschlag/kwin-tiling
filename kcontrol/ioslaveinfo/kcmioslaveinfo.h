@@ -1,5 +1,8 @@
 /*
- * ksmbstatus.h
+ * kcmioslaveinfo.h
+ *
+ * Copyright 2001 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
+ * Copyright 2001 George Staikos  <staikos@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -28,15 +31,22 @@
 #include <qlistbox.h>
 //#include <klistbox.h>
 
+class KIOTimeoutControl;
+class QTabWidget;
+class QSpinBox;
+class KConfig;
+
 class KCMIOSlaveInfo : public KCModule
 {
    Q_OBJECT
    public:
-      KCMIOSlaveInfo(QWidget *parent, const char * name=0);
+      KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L);
+      virtual ~KCMIOSlaveInfo();
 
-      virtual void load() {};
-      virtual void save() {};
-      virtual void defaults(){};
+      void load();
+      void save();
+      void defaults();
+      int buttons();
       QString quickHelp() const;
 
    protected:
@@ -46,6 +56,38 @@ class KCMIOSlaveInfo : public KCModule
 
       void showInfo(const QString& protocol);
       //void showInfo(QListBoxItem *item);
+
+   public slots:
+      void configChanged();
+      void childChanged(bool really);
+
+   private:
+      QTabWidget *tabs;
+      QWidget *tabInfo;
+      KIOTimeoutControl *tabTimeouts;
 };
+
+
+class KIOTimeoutControl : public QWidget {
+ Q_OBJECT
+public:
+  KIOTimeoutControl(QWidget *parent = 0L, const char *name = 0L);
+  virtual ~KIOTimeoutControl();
+
+  void load();
+  void save();
+  void defaults();
+
+private slots:
+  void timeoutChanged(int val);
+
+signals:
+  void changed(bool really);
+
+private:
+  QSpinBox *_to_read, *_to_response, *_to_connect, *_to_proxy;
+  KConfig *_cfg;
+};
+
 
 #endif

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Comment=Information about the available ioslaves
+Comment=Information about the available ioslaves and timeout values
 Comment[cs]=Informace o dostupných pomocných zařízeních
 Comment[da]=Information om de tilgængelige iuslaver
 Comment[de]=Information zu den verfügbaren Ein/Ausgabe-Modulen
@@ -34,7 +34,7 @@ Comment[zh_TW.Big5]=關於可用 ioslaves 的資訊
 DocPath=kcontrol/windows-shares.html
 Exec=kcmshell ioslaveinfo
 Icon=samba
-Keywords=Samba,IO slaves,Slaves,Network,Information
+Keywords=Samba,IO slaves,Slaves,Network,Information,Timeout
 Keywords[cs]=Samba,Pomocná zařízení,Zařízení,Síť,Informace
 Keywords[da]=Samba,IO slaver,Slaver,Netværk,Information
 Keywords[de]=DMA,DMA-Kanäle,Systeminformation,Information,Ein-/Ausgabe,IO-Slaves
