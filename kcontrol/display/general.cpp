@@ -37,6 +37,7 @@
 #include <kprocess.h>
 #include <kcmodule.h>
 #include <kiconloader.h>
+#include <kglobalsettings.h>
 
 #include "general.h"
 
@@ -58,7 +59,14 @@ extern "C" {
             proc.setExecutable("krdb");
             proc.start( KProcess::Block );
         }
-    }
+        // Write some Qt root property.
+       QByteArray properties;
+       QDataStream d(properties, IO_WriteOnly);
+       d << kapp->palette() << KGlobalSettings::generalFont();
+       Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
+       XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
+               (unsigned char*) properties.data(), properties.size());
+       }
 }
 
 
@@ -445,8 +453,6 @@ void KGeneral::save()
     }
 
     KIPC::sendMessageAll(KIPC::StyleChanged);
-#warning "readd setting of Mac style menu (used sendKWMCommand)"
-    //KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
     QApplication::syncX();
 
     m_bChanged = false;
