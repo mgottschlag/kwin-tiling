@@ -15,7 +15,7 @@ METASOURCES = AUTO
 noinst_HEADERS = backgnd.h bgdialogs.h bgsettings.h bgrender.h 
 
 noinst_LTLIBRARIES = libbgnd.la
-libbgnd_la_SOURCES = bgsettings.cc bgrender.cc
+libbgnd_la_SOURCES = bgrender.cc bgsettings.cc
 libbgnd_la_LIBADD = $(LIB_KSYCOCA)
 libbgnd_la_LDFLAGS = -no-undefined $(all_libraries)
 

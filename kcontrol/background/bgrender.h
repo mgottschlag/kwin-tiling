@@ -18,7 +18,9 @@
 #include <bgsettings.h>
 
 class QSize;
+class QRect;
 class QImage;
+class QPixmap;
 class QTimer;
 
 class KConfig;
@@ -48,6 +50,7 @@ public:
     void setPreview(QSize size);
     void setTile(bool tile);
 
+    QPixmap *pixmap();
     QImage *image();
     bool isActive() { return m_State & Rendering; }
     void cleanup();
@@ -74,6 +77,10 @@ private:
     void createTempFile();
     void tile(QImage *dst, QRect rect, QImage *src);
     void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0));
+    
+    void wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
+    void fastWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
+    void fullWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
 
     int doBackground(bool quit=false);
     int doWallpaper(bool quit=false);
@@ -85,6 +92,7 @@ private:
     KTempFile* m_Tempfile;
     QSize m_Size, m_rSize;
     QImage *m_pImage, *m_pBackground;
+    QPixmap *m_pPixmap;
     QTimer *m_pTimer;
 
     KConfig *m_pConfig;

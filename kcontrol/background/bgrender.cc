@@ -21,6 +21,7 @@
 #include <qfileinfo.h>
 #include <qdir.h>
 #include <qtimer.h>
+#include <qpainter.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -67,7 +68,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = QApplication::desktop()->size();
-    m_pBackground = 0L; m_pImage = 0L;
+    m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
     m_pProc = 0L;
     m_Tempfile = 0L;
     m_bPreview = false;
@@ -174,11 +175,18 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     int retval = Done;
     QString file;
+    
+    static unsigned int tileWidth = 0;
+    static unsigned int tileHeight = 0;
+    if( tileWidth == 0 )
+        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), 8, 8,
+            &tileWidth, &tileHeight ) != Success )
+            tileWidth = tileHeight = 8; // some defaults
 
     switch (bgmode) {
 
     case Flat:
-	m_pBackground->create(10, 10, 32);
+	m_pBackground->create( tileWidth, tileHeight, 32);
         m_pBackground->fill(colorA().rgb());
         break;
 
@@ -224,7 +232,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     case HorizontalGradient:
     {
 	QSize size = m_Size;
-	size.setHeight(30);
+	size.setHeight( tileHeight );
 	*m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::HorizontalGradient, 0);
         break;
@@ -232,7 +240,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     case VerticalGradient:
     {
 	QSize size = m_Size;
-	size.setWidth(30);
+	size.setWidth( tileWidth );
         *m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::VerticalGradient, 0);
         break;
@@ -270,7 +278,6 @@ int KBackgroundRenderer::doWallpaper(bool quit)
         return Done;
 
     int wpmode = wallpaperMode();
-    int blmode = blendMode();
 
     bool bTile = m_bTile;
     if (wpmode != NoWallpaper)
@@ -310,7 +317,7 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 wp_out:
 
     if (m_pBackground->isNull()) {
-	m_pBackground->create(10, 10, 32);
+	m_pBackground->create(8, 8, 32);
 	m_pBackground->fill(colorA().rgb());
     }
 
@@ -379,7 +386,72 @@ wp_out:
             }
     }
 
+    wallpaperBlend( d, wp, ww, wh );
+    
+    if (retval == Done)
+        m_State |= WallpaperDone;
 
+    return retval;
+}
+
+#if QT_VERSION >= 300
+extern bool qt_use_xrender; // in Qt ( qapplication_x11.cpp )
+#endif
+
+void KBackgroundRenderer::wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+{
+#if QT_VERSION >=300 
+    if( blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer()))
+#else
+    if( blendMode() == NoBlending && !wp.hasAlphaBuffer())
+#endif
+        {
+        fastWallpaperBlend( d, wp, ww, wh );
+    }
+    else {
+        fullWallpaperBlend( d, wp, ww, wh );
+    }
+}
+
+// works only for NoBlending and no alpha in wallpaper
+// but is much faster than QImage fidling
+void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+{
+    *m_pImage = QImage();
+    // copy background to m_pPixmap
+    if( wallpaperMode() == NoWallpaper ) {
+        // if there's no wallpaper, no need to tile the pixmap to the size of desktop, as X does
+        // that automatically and using a smaller pixmap should save some memory
+        m_pPixmap->convertFromImage( *m_pBackground );
+    }
+    else if (m_pBackground->size() == m_Size) {
+        m_pPixmap->convertFromImage( *m_pBackground );
+    } else {
+        *m_pPixmap = QPixmap( m_Size );
+        QPainter p( m_pPixmap );
+        QPixmap pm;
+        pm.convertFromImage( *m_pBackground );
+        p.drawTiledPixmap( 0, 0, m_Size.width(), m_Size.height(), pm );
+    }
+
+    // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
+    if (d.isValid()) {
+        QPixmap wp_pixmap;
+        wp_pixmap.convertFromImage( wp );
+        for (int y = d.top(); y < d.bottom(); y += wh) {
+	    for (int x = d.left(); x < d.right(); x += ww) {
+		bitBlt( m_pPixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
+	    }
+	}
+    }
+}
+
+
+void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+{
+    *m_pPixmap = QPixmap();
+    int w = m_Size.width();	// desktop width/height
+    int h = m_Size.height();
     // copy background to m_pImage
     if (m_pBackground->size() == m_Size) {
 	*m_pImage = m_pBackground->copy();
@@ -403,10 +475,10 @@ wp_out:
 
 
     // blend whole desktop
-    if (wpmode != NoWallpaper) {
+    if ( wallpaperMode() != NoWallpaper) {
       int bal = blendBalance();
 
-      switch( blmode ) {
+      switch( blendMode() ) {
       case HorizontalBlending:
 	KImageEffect::blend( *m_pImage, *m_pBackground,
 			     KImageEffect::HorizontalGradient,
@@ -458,14 +530,7 @@ wp_out:
 	break;
       }
     }
-
-    if (retval == Done)
-        m_State |= WallpaperDone;
-
-    return retval;
 }
-
-
 
 /* Alpha blend an area from <src> with offset <soffs> to rectangle <dr> of <dst>
  * Default offset is QPoint(0, 0).
@@ -518,6 +583,8 @@ void KBackgroundRenderer::start()
 	m_pBackground = new QImage();
     if (m_pImage == 0L)
 	m_pImage = new QImage();
+    if (m_pPixmap == 0L)
+	m_pPixmap = new QPixmap();
 
     m_State = Rendering;
     m_pTimer->start(0, true);
@@ -581,6 +648,7 @@ void KBackgroundRenderer::cleanup()
 {
     delete m_pBackground; m_pBackground = 0L;
     delete m_pImage; m_pImage = 0L;
+    delete m_pPixmap; m_pPixmap = 0L;
     delete m_pProc; m_pProc = 0L;
     m_State = 0;
 }
@@ -603,10 +671,33 @@ void KBackgroundRenderer::setTile(bool tile)
 }
 
 
+QPixmap *KBackgroundRenderer::pixmap()
+{
+    if (m_State & AllDone) {
+        if( m_pPixmap->isNull()) {
+            m_pPixmap->convertFromImage( *m_pImage );
+        }
+        return m_pPixmap;
+    }
+    return 0L;
+}
+
 QImage *KBackgroundRenderer::image()
 {
-    if (m_State & AllDone)
+    if (m_State & AllDone) {
+        if( m_pImage->isNull()) {
+            if( m_pPixmap->size() != m_Size ) {
+                QPainter p( m_pPixmap );
+                QPixmap pm( m_Size ); // the pixmap may be smaller, so tile it
+                pm.convertFromImage( *m_pBackground );
+                p.drawTiledPixmap( 0, 0, m_Size.width(), m_Size.height(), pm );
+                *m_pImage = pm.convertToImage();
+            }
+            else
+                *m_pImage = m_pPixmap->convertToImage();
+        }
         return m_pImage;
+    }
     return 0L;
 }
 
