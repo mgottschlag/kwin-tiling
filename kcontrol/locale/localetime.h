@@ -72,6 +72,8 @@ private slots:
   void slotCalendarSystemChanged(int calendarSystem);
 
 private:
+  void updateWeekDayNames();
+
   QValueList<StringPair> timeMap() const;
   QValueList<StringPair> dateMap() const;
 

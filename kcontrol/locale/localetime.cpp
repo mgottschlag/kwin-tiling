@@ -37,6 +37,7 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+#include <kcalendarsystem.h>
 
 #include "toplevel.h"
 #include "localetime.h"
@@ -234,11 +235,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect (m_comboWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWeekStartDayChanged(int)));
 
-  QStringList tmpDays;
-  tmpDays << I18N_NOOP("Monday") << I18N_NOOP("Tuesday") << I18N_NOOP("Wednesday")
-          << I18N_NOOP("Thursday") << I18N_NOOP("Friday") << I18N_NOOP("Saturday")
-          << I18N_NOOP("Sunday");
-  m_comboWeekStartDay->insertStringList(tmpDays);
+  updateWeekDayNames();
 
   m_chDateMonthNamePossessive = new QCheckBox(this, I18N_NOOP("Use declined form of month name"));
   connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
@@ -334,6 +331,8 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
     calendarType = calendars.first();
 
   m_locale->setCalendar(calendarType);
+
+  updateWeekDayNames();
 }
 
 void KLocaleConfigTime::slotLocaleChanged()
@@ -448,13 +447,7 @@ void KLocaleConfigTime::slotTranslate()
   m_comboDateFmtShort->insertStringList(QStringList::split(sep, str));
   m_comboDateFmtShort->setEditText(old);
 
-  m_comboWeekStartDay->changeItem(m_locale->translate("Monday"),    0);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Tuesday"),   1);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Wednesday"), 2);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Thursday"),  3);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Friday"),    4);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Saturday"),  5);
-  m_comboWeekStartDay->changeItem(m_locale->translate("Sunday"),    6);
+  updateWeekDayNames();
 
   while ( m_comboCalendarSystem->count() < 2 )
     m_comboCalendarSystem->insertItem(QString::null);
@@ -531,5 +524,29 @@ void KLocaleConfigTime::slotTranslate()
       ("<p>This option determines whether possessive form of month "
        "names should be used in dates.</p>");
     QWhatsThis::add( m_chDateMonthNamePossessive,  str );
+  }
+}
+
+void KLocaleConfigTime::updateWeekDayNames()
+{
+  const KCalendarSystem * calendar = m_locale->calendar();
+
+  for ( int i = 1; ; ++i )
+  {
+    QString str = calendar->weekDayName(i);
+    bool outsideComboList = m_comboWeekStartDay->count() < i;
+
+    if ( str.isNull() )
+    {
+      if ( outsideComboList )
+        break;
+      else
+        m_comboWeekStartDay->removeItem(i - 1);
+    }
+        
+    if ( outsideComboList )
+      m_comboWeekStartDay->insertItem(str, i - 1);
+    else
+      m_comboWeekStartDay->changeItem(str, i - 1);
   }
 }
