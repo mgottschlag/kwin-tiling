@@ -24,6 +24,7 @@
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <kapplication.h>
+#include <kuser.h>
 
 #include <qobjectlist.h>
 #include <qaccel.h>
@@ -52,12 +53,8 @@ void KCGlobal::init()
     buf[sizeof(buf)-1] ='\0';
   QString hostname(buf);
   
-  char *user = getlogin();
-  if (user == 0) user = getenv("LOGNAME");
-  QString username(user);
-
   setHostName(hostname);
-  setUserName(username);
+  setUserName(KUser().loginName());
   setRoot(getuid() == 0);
 
   setKDEVersion(KDE::versionString());

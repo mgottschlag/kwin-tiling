@@ -31,6 +31,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <kwin.h>
+#include <kuser.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -76,11 +77,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 11 );
 
-    char *user = getlogin();
-    if (!user) user = getenv("LOGNAME");
-    QLabel* label = new QLabel(
-      i18n("End Session for \"%1\"").arg(QString::fromLatin1(user ? user : "<?""?""?>")),
-      frame );
+    QLabel* label = new QLabel( i18n("End Session for \"%1\"").arg(KUser().loginName()), frame );
     QFont fnt = label->font();
     fnt.setBold( true );
     fnt.setPixelSize( fnt.pixelSize() * 3 / 2 );
