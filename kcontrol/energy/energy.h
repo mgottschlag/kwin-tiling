@@ -59,8 +59,9 @@ private:
     static void applySettings(bool, int, int, int);
     friend void init_energy();
 	
-    bool m_bChanged, m_bEnabled, m_bDPMS;
+    bool m_bChanged, m_bEnabled, m_bDPMS, m_bMaintainSanity;
     int m_Standby, m_Suspend, m_Off;
+    int m_StandbyDesired, m_SuspendDesired, m_OffDesired;
 
     QCheckBox *m_pCBEnable;
     KIntNumInput *m_pStandbySlider;

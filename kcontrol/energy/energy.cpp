@@ -105,6 +105,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_Suspend = DFLT_SUSPEND;
     m_Off = DFLT_OFF;
     m_bDPMS = false;
+    m_bMaintainSanity = true;
 
 #ifdef HAVE_DPMS
     int dummy;
@@ -188,7 +189,7 @@ int KEnergy::buttons()
 {
     if (m_bDPMS)
     return KCModule::Help | KCModule::Default | KCModule::Reset |
-           KCModule::Cancel | KCModule::Ok;
+           KCModule::Cancel | KCModule::Ok | KCModule::Apply;
     else
     return KCModule::Help | KCModule::Ok;
 }
@@ -219,6 +220,10 @@ void KEnergy::defaults()
     m_Suspend = DFLT_SUSPEND;
     m_Off = DFLT_OFF;
 
+    m_StandbyDesired = m_Standby;
+    m_SuspendDesired = m_Suspend;
+    m_OffDesired = m_Off;
+
     showSettings();
     emit changed(true);
 }
@@ -230,6 +235,10 @@ void KEnergy::readSettings()
     m_Standby = m_pConfig->readNumEntry("displayStandby", DFLT_STANDBY);
     m_Suspend = m_pConfig->readNumEntry("displaySuspend", DFLT_SUSPEND);
     m_Off = m_pConfig->readNumEntry("displayPowerOff", DFLT_OFF);
+
+    m_StandbyDesired = m_Standby;
+    m_SuspendDesired = m_Suspend;
+    m_OffDesired = m_Off;
 
     m_bChanged = false;
 }
@@ -252,6 +261,8 @@ void KEnergy::writeSettings()
 
 void KEnergy::showSettings()
 {
+    m_bMaintainSanity = false;
+
     if (m_bDPMS)
     m_pCBEnable->setChecked(m_bEnabled);
 
@@ -261,6 +272,8 @@ void KEnergy::showSettings()
     m_pSuspendSlider->setValue(m_Suspend);
     m_pOffSlider->setEnabled(m_bEnabled);
     m_pOffSlider->setValue(m_Off);
+
+    m_bMaintainSanity = true;
 }
 
 
@@ -318,10 +331,18 @@ void KEnergy::slotChangeEnable(bool ena)
 void KEnergy::slotChangeStandby(int value)
 {
     m_Standby = value;
-    if (m_Suspend > 0 && m_Standby > m_Suspend)
-    m_pSuspendSlider->setValue(m_Standby);
-    else if (m_Off > 0 && m_Standby > m_Off)
-    m_pOffSlider->setValue(m_Standby);
+
+    if ( m_bMaintainSanity ) {
+	m_bMaintainSanity = false;
+	m_StandbyDesired = value;
+        if ((m_Suspend > 0 && m_Standby > m_Suspend) ||
+	    (m_SuspendDesired && m_Standby >= m_SuspendDesired) )
+            m_pSuspendSlider->setValue(m_Standby);
+        if ((m_Off > 0 && m_Standby > m_Off) ||
+	    (m_OffDesired && m_Standby >= m_OffDesired) )
+            m_pOffSlider->setValue(m_Standby);
+	m_bMaintainSanity = true;
+    }
 
     m_bChanged = true;
     emit changed(true);
@@ -331,10 +352,19 @@ void KEnergy::slotChangeStandby(int value)
 void KEnergy::slotChangeSuspend(int value)
 {
     m_Suspend = value;
-    if (m_Off > 0 && m_Suspend > m_Off)
-    m_pOffSlider->setValue(m_Suspend);
-    if (m_Suspend < m_Standby)
-    m_pStandbySlider->setValue(m_Suspend);
+
+    if ( m_bMaintainSanity ) {
+	m_bMaintainSanity = false;
+	m_SuspendDesired = value;
+	if (m_Suspend == 0 && m_StandbyDesired > 0)
+	    m_pStandbySlider->setValue( m_StandbyDesired );
+        else if (m_Suspend < m_Standby || m_Suspend <= m_StandbyDesired )
+            m_pStandbySlider->setValue(m_Suspend);
+        if ((m_Off > 0 && m_Suspend > m_Off) ||
+	    (m_OffDesired && m_Suspend >= m_OffDesired) )
+            m_pOffSlider->setValue(m_Suspend);
+	m_bMaintainSanity = true;
+    }
 
     m_bChanged = true;
     emit changed(true);
@@ -344,8 +374,20 @@ void KEnergy::slotChangeSuspend(int value)
 void KEnergy::slotChangeOff(int value)
 {
     m_Off = value;
-    if (m_Off < m_Suspend)
-    m_pSuspendSlider->setValue(m_Off);
+
+    if ( m_bMaintainSanity ) {
+	m_bMaintainSanity = false;
+	m_OffDesired = value;
+	if (m_Off == 0 && m_StandbyDesired > 0)
+	    m_pStandbySlider->setValue( m_StandbyDesired );
+        else if (m_Off < m_Standby || m_Off <= m_StandbyDesired )
+            m_pStandbySlider->setValue(m_Off);
+	if (m_Off == 0 && m_SuspendDesired > 0)
+	    m_pSuspendSlider->setValue( m_SuspendDesired );
+        else if (m_Off < m_Suspend || m_Off <= m_SuspendDesired )
+            m_pSuspendSlider->setValue(m_Off);
+	m_bMaintainSanity = true;
+    }
 
     m_bChanged = true;
     emit changed(true);
