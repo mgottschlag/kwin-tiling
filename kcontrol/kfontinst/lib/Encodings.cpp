@@ -37,6 +37,9 @@
 #include <fstream>
 
 #ifdef HAVE_FONT_ENC
+
+#include <unistd.h>
+
 extern "C"
 {
 #include <X11/fonts/fontenc.h>
@@ -746,9 +749,9 @@ bool CEncodings::createEncodingsDotDir(const QString &dir)
         else
         {
             if(CMisc::fExists(destFile))
-                CMisc::doCmd("rm", "-f", destFile);
+                unlink(QFile::encodeName(destFile).data());
 
-            status=CMisc::doCmd("ln", "-s", sysFile, destFile);
+            status=0==symlink(QFile::encodeName(sysFile).data(), QFile::encodeName(destFile).data());
         }
     }
 
