@@ -166,6 +166,7 @@ void DisposeProtoDisplay (pdpy)
 	prev->next = pdpy->next;
     else
 	protoDisplays = pdpy->next;
+    bzero(&pdpy->key, sizeof(pdpy->key));
     XdmcpDisposeARRAY8 (&pdpy->connectionAddress);
     if (pdpy->fileAuthorization)
 	XauDisposeAuth (pdpy->fileAuthorization);
