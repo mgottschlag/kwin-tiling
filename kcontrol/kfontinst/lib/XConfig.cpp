@@ -102,7 +102,7 @@ bool CXConfig::writeConfig()
     //
     // Check if file has been written since we last read it. If so, then re-read
     // and add any new paths that we've added...
-    if(CMisc::getTimeStamp(itsFileName)!=itsTime)
+    if(CMisc::fExists(itsFileName) && CMisc::getTimeStamp(itsFileName)!=itsTime)
     {
         CXConfig newConfig(itsType, itsFileName);
 
@@ -909,11 +909,13 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
  
     if(d.isReadable())
     {
-        CFontsFile          fd(QFile::encodeName(QString(dir+"fonts.dir")));
+        CFontsFile          fd(QFile::encodeName(QString(dir+"fonts.dir"))),
+                            fs(QFile::encodeName(QString(dir+"fonts.scale")));
         const QFileInfoList *files=d.entryInfoList();
         QStringList         fdir,
                             fscale;
-        const QStringList   *origfd;
+        const QStringList   *origfd=NULL,
+                            *origfs=NULL;
  
         if(files)
         {
@@ -921,16 +923,28 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
             QFileInfo             *fInfo;
  
             for(; NULL!=(fInfo=it.current()); ++it)
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && CFontEngine::isAFont(QFile::encodeName(fInfo->fileName())))
-                    if(NULL!=(origfd=fd.getXlfds(fInfo->fileName())))
-                    {
-                        fdir+=*origfd;
-                        fscale+=*origfd;
-                    }
-                    else
-                    {
-                        bool bitmap=CFontEngine::isABitmap(QFile::encodeName(fInfo->fileName()));
+            {
+                QCString cName(QFile::encodeName(fInfo->fileName()));
 
+                if("."!=fInfo->fileName() && ".."!=fInfo->fileName() && CFontEngine::isAFont(cName))
+                {
+                    bool bitmap=CFontEngine::isABitmap(cName);
+
+                    origfd=fd.getXlfds(fInfo->fileName());
+                    origfs=fs.getXlfds(fInfo->fileName());
+
+                    if(origfd)
+                        fdir+=*origfd;
+                    else if(origfs)
+                        fdir+=*origfs;
+
+                    if(origfs)
+                        fscale+=*origfs;
+                    else if(origfd && !bitmap)
+                        fscale+=*origfd;
+
+                    if(!origfd && !origfs)
+                    {
                         if(!bitmap)
                         {
                             int face=0,
@@ -1014,6 +1028,8 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                  CGlobal::fe().closeFont();
                              }
                       }
+                }
+            }
         }
 
         ofstream fontsDotDir(QFile::encodeName(QString(dir+"fonts.dir")));
