@@ -103,7 +103,7 @@ void KCMIOSlaveInfo::childChanged(bool really) {
 
 QString KCMIOSlaveInfo::quickHelp() const
 {
-   return i18n("Gives you an overview over the installed ioslaves and allows"
+   return i18n("Gives you an overview of the installed ioslaves and allows"
                " you to configure the network timeout values for those slaves.");
 }
 

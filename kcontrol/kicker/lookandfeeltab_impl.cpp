@@ -60,14 +60,14 @@ LookAndFeelTab::LookAndFeelTab( KickerConfig *parent, const char* name )
     // whats this help
     QWhatsThis::add(m_manualHideAnimation, i18n("If hide buttons are enabled, check this option to make the "
                                                 "panel softly slide away when you click on the hide buttons. "
-                                                "Else it will just disappear."));
+                                                "Otherwise it will just disappear."));
 
     QWhatsThis::add(m_manualHideSlider, i18n("Determines the speed of the hide animation, i.e. the "
                                              "animation shown when you click on the panel's hide buttons."));
 
     QWhatsThis::add(m_autoHideAnimation, i18n("If auto-hide panel is enabled, check this option to make "
                                               "the panel softly slide down after a certain amount of time. "
-                                              "Else it will just disappear."));
+                                              "Otherwise it will just disappear."));
 
     QWhatsThis::add(m_autoHideSlider, i18n("Determines the speed of the auto-hide animation, "
                                            "i.e. the animation shown when the panel disappears after "
@@ -76,7 +76,7 @@ LookAndFeelTab::LookAndFeelTab( KickerConfig *parent, const char* name )
     QWhatsThis::add(m_hideButtonSlider, i18n("Here you can change the size of the hide buttons."));
 
     QWhatsThis::add(m_backgroundImage, i18n("If this option is selected, you "
-                                            "can choose a background image that will be used to display the "
+                                            "can choose a background image that will be displayed on the "
                                             "panel. If it is not selected, the default colors will be used, "
                                             "see the 'Colors' control module."));
 

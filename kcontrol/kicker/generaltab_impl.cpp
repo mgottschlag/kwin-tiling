@@ -65,7 +65,7 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
 
     QWhatsThis::add(m_autoHideSwitch, i18n("If this option is enabled, the panel will automatically show "
 					   "itself for a brief period of time when the desktop is switched "
-					   "so you can see what desktop you are on.") );
+					   "so you can see which desktop you are on.") );
 
     QString delaystr = i18n("Here you can change the delay after which the panel will disappear"
                             " if not used.");

@@ -70,7 +70,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   cal = new KDateTable( this );
   l1->addMultiCellWidget( cal, 1, 1, 0, 2 );
-  QWhatsThis::add( cal, i18n("Here you can change the day of month.") );
+  QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month.") );
 
   // Time frame
 
@@ -136,8 +136,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   minusPB->setAutoRepeat( TRUE );
   v3->addWidget(minusPB, 1, 7 );
 
-  QString wtstr = i18n("Here you can change system time. Click into the "
-    " hours, minutes or seconds field to change the according value, either"
+  QString wtstr = i18n("Here you can change the system time. Click into the"
+    " hours, minutes or seconds field to change the relevant value, either"
     " using the up and down buttons to the right or by entering a new value.");
   QWhatsThis::add( minusPB, wtstr );
   QWhatsThis::add( plusPB, wtstr );
@@ -330,7 +330,7 @@ QString Dtime::quickHelp() const
 {
   return i18n("<h1>Date & Time</h1> This control module can be used to set the system date and"
     " time. As these settings do not only affect you as a user, but rather the whole system, you"
-    " can only change these settings when you started the Control Center as root. If you don't have"
+    " can only change these settings when you start the Control Center as root. If you don't have"
     " the root password, but feel the system time should be corrected, please contact your system"
     " administrator.");
 }

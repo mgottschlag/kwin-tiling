@@ -67,7 +67,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   all_rb = new QRadioButton(i18n("Load all applets internal"), level_group);
   vbox->addWidget(all_rb);
-  QWhatsThis::add( level_group, i18n("Panel applets can be started using two different ways:"
+  QWhatsThis::add( level_group, i18n("Panel applets can be started in two different ways:"
     " internal or external. While 'internal' is the preferred way to load applets, this can"
     " raise stability or security problems when you are using poorly programmed third-party applets."
     " To address these problems, applets can be marked 'trusted'. You might want to configure"
@@ -101,11 +101,11 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   QVBox *vbox2 = new QVBox(list_group);
   pb_add = new QPushButton(i18n("<<"), vbox2);
-  QWhatsThis::add( pb_add, i18n("Click here to move the selected applet in the list of available"
-    " applets to the list of trusted applets.") );
+  QWhatsThis::add( pb_add, i18n("Click here to add the selected applet from the list of available,"
+    " untrusted applets to the list of trusted applets.") );
   pb_remove = new QPushButton(i18n(">>"), vbox2);
-  QWhatsThis::add( pb_remove, i18n("Click here to remove the selected applet in the list of trusted"
-    " applets and move it to the list of available, untrusted applets.") );
+  QWhatsThis::add( pb_remove, i18n("Click here to remove the selected applet from the list of trusted"
+    " applets to the list of available, untrusted applets.") );
   pb_add->setEnabled(false);
   pb_remove->setEnabled(false);
   connect(pb_add, SIGNAL(clicked()), SLOT(add_clicked()));

@@ -58,7 +58,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     connect(generaltab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     lnftab = new LookAndFeelTab(this);
-    tab->addTab(lnftab, i18n("&Look &  Feel"));
+    tab->addTab(lnftab, i18n("&Look & Feel"));
     connect(lnftab, SIGNAL(changed()), this, SLOT(configChanged()));
 
     menutab = new MenuTab(this);
@@ -129,16 +129,16 @@ QString KickerConfig::quickHelp() const
 {
     return i18n("<h1>Panel</h1> Here you can configure the KDE panel (also"
                 " referred to as 'kicker'). This includes options like the position and"
-                " size of the panel as well as its hiding behaviour and its looks.<p>"
-                " Note that you can access some of these options also by directly clicking"
+                " size of the panel, as well as its hiding behavior and its looks.<p>"
+                " Note that you can also access some of these options directly by clicking"
                 " on the panel, e.g. dragging it with the left mouse button or using the"
-                " context menu on right button click. This context menu also offers you"
+                " context menu on right mouse button click. This context menu also offers you"
                 " manipulation of the panel's buttons and applets.");
 }
 
 bool KickerConfig::horizontal()
 {
-    return (generaltab->m_topButton->isChecked() || 
+    return (generaltab->m_topButton->isChecked() ||
             generaltab->m_bottomButton->isChecked());
 }
 

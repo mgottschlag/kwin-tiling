@@ -249,7 +249,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("The double click interval is the maximal time"
-         " (in milliseconds) between two mouseclicks which"
+         " (in milliseconds) between two mouse clicks which"
          " turns them into a double click. If the second"
          " click happens later than this time interval after"
          " the first click, they are recognized as two"
@@ -265,7 +265,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     lay->addWidget(dragStartTime);
     connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-    wtstr = i18n("If you click with the mouse (e. g. in a multi line"
+    wtstr = i18n("If you click with the mouse (e.g. in a multi-line"
          " editor) and begin to move the mouse within the"
          " drag start time, a drag operation will be initiated.");
     QWhatsThis::add( dragStartTime, wtstr );

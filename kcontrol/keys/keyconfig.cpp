@@ -90,8 +90,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   QLabel *label = new QLabel( sList, i18n("&Key scheme"), this );
 
   wtstr = i18n("Here you can see a list of the existing key binding schemes with 'Current scheme'"
-    " referring to the settings you are using right now. Select a scheme to use it, remove or change"
-    " it.");
+    " referring to the settings you are using right now. Select a scheme to use, remove or"
+    " change it.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( sList, wtstr );
 

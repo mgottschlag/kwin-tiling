@@ -86,7 +86,7 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
   hbl->addWidget(tiles_cb);
   QWhatsThis::add( tiles_cb, i18n("If this option is enabled, the panel will display"
     " panel buttons using tile images instead of just drawing flat buttons. You can still"
-    " enable or disable usage of tiles for the different kind of panel buttons, using the"
+    " enable or disable usage of tiles for the different kinds of panel buttons, using the"
     " options below.") );
 
   zoom_cb = new QCheckBox(i18n("Enable icon zooming"), general_group);

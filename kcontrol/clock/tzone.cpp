@@ -61,7 +61,7 @@ Tzone::Tzone(QWidget * parent, const char *name)
     lay->addWidget(currentzone, 3);
     currentzone->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
-    QLabel* instructions = new QLabel(i18n("To change the timezone, select your area from the list below:"), frame1);
+    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), frame1);
     top_lay->addWidget(instructions);
 
     tzonelist = new QComboBox( FALSE, frame1, "ComboBox_1" );
