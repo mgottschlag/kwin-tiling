@@ -666,6 +666,11 @@ void KBackgroundSettings::setWallpaperList(QStringList list)
     KStandardDirs *d = KGlobal::dirs();
     if (m_WallpaperList == list)
 	return;
+
+    QString currentWallpaper;
+    if ((m_MultiMode == InOrder) && (m_CurrentWallpaper < (int) m_WallpaperFiles.count()))
+	currentWallpaper = m_WallpaperFiles[m_CurrentWallpaper];
+
     dirty = hashdirty = true;
     m_WallpaperList.clear();
     for(QStringList::ConstIterator it = list.begin();
@@ -674,7 +679,9 @@ void KBackgroundSettings::setWallpaperList(QStringList list)
        m_WallpaperList.append(d->relativeLocation("wallpaper", *it));
     }
     updateWallpaperFiles();
-    changeWallpaper(true);
+    // Try to keep the current wallpaper
+    m_CurrentWallpaper = m_WallpaperFiles.findIndex(currentWallpaper) - 1;
+    changeWallpaper(m_CurrentWallpaper < 0);
 }
 
 
