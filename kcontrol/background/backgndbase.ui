@@ -964,6 +964,8 @@ Blending" this button is disabled.</string>
     </connection>
 </connections>
 <includes>
+    <include location="global" impldecl="in declaration">kcolorbutton.h</include>
+    <include location="global" impldecl="in declaration">kcombobox.h</include>
     <include location="local" impldecl="in implementation">backgndbase.ui.h</include>
 </includes>
 <slots>
