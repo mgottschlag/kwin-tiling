@@ -377,7 +377,7 @@ void KMemoryWidget::update_Values()
     used[0] = ZERO_IF_NO_INFO(Memory_Info[TOTAL_MEM]) - used[1] - used[2] - used[3];
     if (!ram_colors_initialized) {
 		ram_colors_initialized = true;
-		ram_text[0] = i18n("Used RAM");
+		ram_text[0] = i18n("Application Data");
 		ram_colors[0] = COLOR_USED_MEMORY; /* used+shared */
 		ram_text[1] = i18n("Disk Buffers");
 		ram_colors[1] = QColor(24,131,5); /* buffer */
@@ -412,7 +412,7 @@ void KMemoryWidget::update_Values()
     used[0] = (Memory_Info[TOTAL_MEM]+Memory_Info[SWAP_MEM])-used[1]-used[2];
     if (!all_colors_initialized) {
 		all_colors_initialized = true;
-		all_text[0] = i18n("Used RAM");
+		all_text[0] = i18n("Used Physical Memory");
 		all_colors[0] = COLOR_USED_MEMORY; /* used ram */
 		all_text[1] = i18n("Used Swap");
 		all_colors[1] = COLOR_USED_SWAP; /* used swap */
