@@ -68,7 +68,7 @@ void KickerConfig::save()
   if (!kapp->dcopClient()->isAttached())
     kapp->dcopClient()->attach();
   QByteArray data;
-  kapp->dcopClient()->send( "kicker", "KickerIface", "configure()", data );
+  kapp->dcopClient()->send( "kicker", "Panel", "configure()", data );
 }
 
 void KickerConfig::defaults()
