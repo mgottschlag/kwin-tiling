@@ -54,15 +54,7 @@ int CPopupMenu::getRightHeight()
 
 int CPopupMenu::getRightWidth()
 {
-  // doesn't work, because itemWidth() doesn't work
-  int i, j = count();
-  int w = 0;
-  for( i = 0; i < j; i++)
-    {
-      if( w < itemWidth(i) )
-	w = itemWidth(i);
-    }
-  return w+4;
+  return sizeHint().width()+4;
 }
 
 void CPopupMenu::mousePressEvent( QMouseEvent *e )
