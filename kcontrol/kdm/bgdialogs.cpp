@@ -22,6 +22,8 @@
 #include <qcombobox.h>
 #include <qframe.h>
 #include <qmap.h>
+#include <qvbox.h>
+#include <qdragobject.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -40,24 +42,17 @@
 
 
 KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
-    : QDialog(parent, name, true)
+    : KDialogBase(parent, name, true, i18n("Select Background Program"),
+	Ok | Cancel, Ok, true)
 {
-    QVBoxLayout *top = new QVBoxLayout(this);
-    top->setSpacing(10);
-    top->setMargin(10);
+    QFrame *page = makeMainWidget();
+    QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("The programs below are available:"), this);
-    top->addWidget(lbl);
-
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
-    QVBoxLayout *vbox = new QVBoxLayout(frame);
-    vbox->setMargin(10);
-    vbox->setSpacing(10);
+    QLabel *lbl = new QLabel(i18n("Select Background Program:"), page);
+    layout->addWidget(lbl, 0, 0);
 
     // Create the listview
-    m_ListView = new QListView(frame);
+    m_ListView = new QListView(page);
     m_ListView->addColumn("");
     m_ListView->setColumnAlignment(0, AlignCenter);
     m_ListView->addColumn(i18n("Program"));
@@ -66,6 +61,8 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
     m_ListView->setAllColumnsShowFocus(true);
     m_ListView->setItemMargin(2);
 
+    layout->addWidget(m_ListView, 1, 0);
+
     // Fill it
     QStringList lst = KBackgroundProgram::list();
     QStringList::Iterator it;
@@ -73,38 +70,29 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
 	updateItem(*it);
 
     // Make the listview a little broader
-    m_ListView->setMinimumWidth(m_ListView->sizeHint().width() + 40);
+    m_ListView->setMinimumWidth(m_ListView->sizeHint().width() + 20);
+    m_ListView->setFixedSize(m_ListView->width(), 200);
 
     connect(m_ListView, SIGNAL(clicked(QListViewItem *)),
 	    SLOT(slotItemClicked(QListViewItem *)));
     connect(m_ListView, SIGNAL(doubleClicked(QListViewItem *)),
 	    SLOT(slotItemDoubleClicked(QListViewItem *)));
-    vbox->addWidget(m_ListView);
 
     // Add/Remove/Modify buttons
-    QHBoxLayout *hbox = new QHBoxLayout(vbox);
-    QPushButton *but = new QPushButton(i18n("&Add"), frame);
-    hbox->addWidget(but);
+    QVBoxLayout *vbox = new QVBoxLayout(spacingHint());
+    QPushButton *but = new QPushButton(i18n("&Add..."), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotAdd()));
-    but = new QPushButton(i18n("&Remove"), frame);
-    hbox->addWidget(but);
+    but = new QPushButton(i18n("&Remove"), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotRemove()));
-    but = new QPushButton(i18n("&Modify"), frame);
-    hbox->addWidget(but);
+    but = new QPushButton(i18n("&Modify..."), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotModify()));
 
-    // OK, Cancel button
-    KButtonBox *bbox = new KButtonBox(this);
-    but = bbox->addButton(i18n("&Help"));
-    connect(but, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    but = bbox->addButton(i18n("&OK"));
-    connect(but, SIGNAL(clicked()), SLOT(accept()));
-    but = bbox->addButton(i18n("&Cancel"));
-    connect(but, SIGNAL(clicked()), SLOT(reject()));
-    bbox->layout();
-    top->addSpacing(10);
-    top->addWidget(bbox);
+    vbox->addStretch(1);
+
+    layout->addLayout(vbox, 1, 1);
 }
 
 	
@@ -181,7 +169,7 @@ void KProgramSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global\n"
 		"and can only be removed by the System Administrator.\n"),
-		i18n("Cannot remove Program"));
+		i18n("Cannot remove program"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,
@@ -216,78 +204,65 @@ void KProgramSelectDialog::slotModify()
     }
 }
 
-
-void KProgramSelectDialog::slotHelp()
-{
-}
-
-
 void KProgramSelectDialog::slotItemClicked(QListViewItem *item)
 {
-    m_Current = item->text(1);
+    if ( item )
+        m_Current = item->text(1);
 }
 
 
 void KProgramSelectDialog::slotItemDoubleClicked(QListViewItem *item)
 {
-    m_Current = item->text(1);
-    accept();
+    if ( item )
+    {
+        m_Current = item->text(1);
+        accept();
+    }
 }
 
 
 /**** KProgramEditDialog ****/
 
 KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *name)
-    : QDialog(parent, name, true)
+    : KDialogBase(parent, name, true, i18n("Configure background Program"),
+	Ok | Cancel, Ok, true)
 {
-    QVBoxLayout *top = new QVBoxLayout(this);
-    top->setMargin(10);
-    top->setSpacing(10);
-    QLabel *lbl = new QLabel( i18n("You can fill out the form below to create "
-	    "or modify a desktop paint program"), this);
-    lbl->setTextFormat(Qt::RichText); // make text wrap
-    top->addWidget(lbl);
+    QFrame *frame = makeMainWidget();
 
-    // A nice frame
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
+    QGridLayout *grid = new QGridLayout(frame, 6, 2, 0, spacingHint());
+    grid->addColSpacing(1, 300);
 
-    QGridLayout *grid = new QGridLayout(frame, 6, 2);
-    grid->setSpacing(10);
-    grid->setMargin(10);
-
-    lbl = new QLabel(i18n("&Name"), frame);
+    QLabel *lbl = new QLabel(i18n("&Name:"), frame);
     grid->addWidget(lbl, 0, 0);
     m_NameEdit = new QLineEdit(frame);
     lbl->setBuddy(m_NameEdit);
     grid->addWidget(m_NameEdit, 0, 1);
 
-    lbl = new QLabel(i18n("&Comment"), frame);
+    lbl = new QLabel(i18n("&Comment:"), frame);
     grid->addWidget(lbl, 1, 0);
     m_CommentEdit = new QLineEdit(frame);
     lbl->setBuddy(m_CommentEdit);
     grid->addWidget(m_CommentEdit, 1, 1);
 
-    lbl = new QLabel(i18n("&Command"), frame);
+    lbl = new QLabel(i18n("&Command:"), frame);
     grid->addWidget(lbl, 2, 0);
     m_CommandEdit = new QLineEdit(frame);
     lbl->setBuddy(m_CommandEdit);
     grid->addWidget(m_CommandEdit, 2, 1);
 
-    lbl = new QLabel(i18n("&Preview cmd"), frame);
+    lbl = new QLabel(i18n("&Preview cmd:"), frame);
     grid->addWidget(lbl, 3, 0);
     m_PreviewEdit = new QLineEdit(frame);
     lbl->setBuddy(m_PreviewEdit);
     grid->addWidget(m_PreviewEdit, 3, 1);
 
-    lbl = new QLabel(i18n("&Executable"), frame);
+    lbl = new QLabel(i18n("&Executable:"), frame);
     grid->addWidget(lbl, 4, 0);
     m_ExecEdit = new QLineEdit(frame);
     lbl->setBuddy(m_ExecEdit);
     grid->addWidget(m_ExecEdit, 4, 1);
 
-    lbl = new QLabel(i18n("&Refresh time"), frame);
+    lbl = new QLabel(i18n("&Refresh time:"), frame);
     grid->addWidget(lbl, 5, 0);
     m_RefreshEdit = new QSpinBox(frame);
     m_RefreshEdit->setRange(5, 60);
@@ -296,20 +271,6 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_RefreshEdit->setFixedSize(m_RefreshEdit->sizeHint());
     lbl->setBuddy(m_RefreshEdit);
     grid->addWidget(m_RefreshEdit, 5, 1, AlignLeft);
-
-    // Buttons
-    KButtonBox *bbox = new KButtonBox(this);
-    QPushButton *but = bbox->addButton(i18n("&Help"));
-    connect(but, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    but = bbox->addButton(i18n("&OK"));
-    connect(but, SIGNAL(clicked()), SLOT(slotOK()));
-    but = bbox->addButton(i18n("&Cancel"));
-    connect(but, SIGNAL(clicked()), SLOT(reject()));
-    bbox->layout();
-    top->addWidget(bbox);
-    // Make the dialog a little broader
-    bbox->setMinimumWidth(bbox->sizeHint().width() + 80);
 
     m_Program = program;
     if (m_Program.isEmpty()) {
@@ -339,13 +300,7 @@ QString KProgramEditDialog::program()
     return m_NameEdit->text();
 }
 
-
-void KProgramEditDialog::slotHelp()
-{
-}
-
-
-void KProgramEditDialog::slotOK()
+void KProgramEditDialog::slotOk()
 {
     QString s = m_NameEdit->text();
     if (s.isEmpty()) {
@@ -390,30 +345,26 @@ void KProgramEditDialog::slotOK()
 
 
 KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
-    : QDialog(parent, name, true)
+    : KDialogBase(parent, name, true, i18n("Select Background Pattern"),
+	Ok | Cancel, Ok, true)
 {
-    QVBoxLayout *top = new QVBoxLayout(this);
-    top->setSpacing(10);
-    top->setMargin(10);
+    QFrame *page = makeMainWidget();
+    QGridLayout *layout = new QGridLayout(page, 2, 2, 0, spacingHint());
 
-    QLabel *lbl = new QLabel(i18n("The patterns below are available:"), this);
-    top->addWidget(lbl);
-
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
-    QVBoxLayout *vbox = new QVBoxLayout(frame);
-    vbox->setMargin(10);
-    vbox->setSpacing(10);
+    QLabel *lbl = new QLabel(i18n("Select Pattern:"), page);
+    layout->addWidget(lbl, 0, 0);
 
     // Create the listview
-    m_ListView = new QListView(frame);
+    m_ListView = new QListView(page);
     m_ListView->addColumn("");
     m_ListView->setColumnAlignment(0, AlignCenter);
     m_ListView->addColumn(i18n("Pattern"));
     m_ListView->addColumn(i18n("Comment"));
+    m_ListView->addColumn(i18n("Preview"));
     m_ListView->setAllColumnsShowFocus(true);
     m_ListView->setItemMargin(2);
+
+    layout->addWidget(m_ListView, 1, 0);
 
     // Fill it
     QStringList lst = KBackgroundPattern::list();
@@ -428,32 +379,21 @@ KPatternSelectDialog::KPatternSelectDialog(QWidget *parent, char *name)
 	    SLOT(slotItemClicked(QListViewItem *)));
     connect(m_ListView, SIGNAL(doubleClicked(QListViewItem *)),
 	    SLOT(slotItemDoubleClicked(QListViewItem *)));
-    vbox->addWidget(m_ListView);
 
     // Add/Remove/Modify buttons
-    QHBoxLayout *hbox = new QHBoxLayout(vbox);
-    QPushButton *but = new QPushButton(i18n("&Add"), frame);
-    hbox->addWidget(but);
+    QVBoxLayout *vbox = new QVBoxLayout(spacingHint());
+    QPushButton *but = new QPushButton(i18n("&Add..."), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotAdd()));
-    but = new QPushButton(i18n("&Remove"), frame);
-    hbox->addWidget(but);
+    but = new QPushButton(i18n("&Remove"), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotRemove()));
-    but = new QPushButton(i18n("&Modify"), frame);
-    hbox->addWidget(but);
+    but = new QPushButton(i18n("&Modify..."), page);
+    vbox->addWidget(but);
     connect(but, SIGNAL(clicked()), SLOT(slotModify()));
+    vbox->addStretch(1);
 
-    // OK, Cancel button
-    KButtonBox *bbox = new KButtonBox(this);
-    but = bbox->addButton(i18n("&Help"));
-    connect(but, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    but = bbox->addButton(i18n("&OK"));
-    connect(but, SIGNAL(clicked()), SLOT(accept()));
-    but = bbox->addButton(i18n("&Cancel"));
-    connect(but, SIGNAL(clicked()), SLOT(reject()));
-    bbox->layout();
-    top->addSpacing(10);
-    top->addWidget(bbox);
+    layout->addLayout(vbox, 1, 1);
 }
 
 	
@@ -494,6 +434,16 @@ void KPatternSelectDialog::updateItem(QString name, bool select)
     item->setText(1, pat.name());
     item->setText(2, pat.comment());
 
+    QPixmap pmPat(KGlobal::dirs()->findResource("dtop_pattern", pat.pattern()));
+    QPixmap preview(100,20);
+    QPainter p;
+    p.begin(&preview);
+    p.drawTiledPixmap(0,0,100,20,pmPat);
+    p.setPen(black);
+    p.drawRect(0,0,100,20);
+    p.end();
+    item->setPixmap(3, preview);
+
     m_Items[name] = item;
     if (select) {
 	m_ListView->ensureItemVisible(item);
@@ -529,7 +479,7 @@ void KPatternSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the pattern! The pattern is global\n"
 		"and can only be removed by the System Administrator.\n"),
-		i18n("Cannot remove Pattern"));
+		i18n("Cannot remove pattern"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,
@@ -564,12 +514,6 @@ void KPatternSelectDialog::slotModify()
     }
 }
 
-
-void KPatternSelectDialog::slotHelp()
-{
-}
-
-
 void KPatternSelectDialog::slotItemClicked(QListViewItem *item)
 {
     m_Current = item->text(1);
@@ -586,61 +530,35 @@ void KPatternSelectDialog::slotItemDoubleClicked(QListViewItem *item)
 /**** KPatternEditDialog ****/
 
 KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
-	char *name) : QDialog(parent, name, true)
+	char *name) : KDialogBase(parent, name, true, i18n("Configure Background Pattern"),
+	Ok | Cancel, Ok, true)
 {
-    QVBoxLayout *top = new QVBoxLayout(this);
-    top->setMargin(10);
-    top->setSpacing(10);
-    QLabel *lbl = new QLabel( i18n("You can fill out the form below to create "
-	    "or modify a desktop pattern"), this);
-    lbl->setTextFormat(Qt::RichText); // make text wrap
-    top->addWidget(lbl);
+    QFrame *frame = makeMainWidget();
+    QGridLayout *grid = new QGridLayout(frame, 3, 2, 0, spacingHint());
+    grid->addColSpacing(1,200);
 
-    // A nice frame
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
-
-    QGridLayout *grid = new QGridLayout(frame, 3, 2);
-    grid->setSpacing(10);
-    grid->setMargin(10);
-
-    lbl = new QLabel(i18n("&Name"), frame);
+    QLabel *lbl = new QLabel(i18n("&Name:"), frame);
     grid->addWidget(lbl, 0, 0);
     m_NameEdit = new QLineEdit(frame);
     lbl->setBuddy(m_NameEdit);
     grid->addWidget(m_NameEdit, 0, 1);
 
-    lbl = new QLabel(i18n("&Comment"), frame);
+    lbl = new QLabel(i18n("&Comment:"), frame);
     grid->addWidget(lbl, 1, 0);
     m_CommentEdit = new QLineEdit(frame);
     lbl->setBuddy(m_CommentEdit);
     grid->addWidget(m_CommentEdit, 1, 1);
 
-    lbl = new QLabel(i18n("&Image"), frame);
+    lbl = new QLabel(i18n("&Image:"), frame);
     grid->addWidget(lbl, 2, 0);
     QHBoxLayout *hbox = new QHBoxLayout();
     grid->addLayout(hbox, 2, 1);
     m_FileEdit = new QLineEdit(frame);
     lbl->setBuddy(m_FileEdit);
     hbox->addWidget(m_FileEdit);
-    QPushButton *but = new QPushButton(i18n("&Browse"), frame);
+    QPushButton *but = new QPushButton(i18n("&Browse..."), frame);
     connect(but, SIGNAL(clicked()), SLOT(slotBrowse()));
     hbox->addWidget(but);
-
-    // Buttons
-    KButtonBox *bbox = new KButtonBox(this);
-    but = bbox->addButton(i18n("&Help"));
-    connect(but, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    but = bbox->addButton(i18n("&OK"));
-    connect(but, SIGNAL(clicked()), SLOT(slotOK()));
-    but = bbox->addButton(i18n("&Cancel"));
-    connect(but, SIGNAL(clicked()), SLOT(reject()));
-    bbox->layout();
-    top->addWidget(bbox);
-    // Make the dialog a little broader
-    bbox->setMinimumWidth(bbox->sizeHint().width() + 80);
 
     m_Pattern = pattern;
     if (m_Pattern.isEmpty()) {
@@ -660,12 +578,6 @@ KPatternEditDialog::KPatternEditDialog(QString pattern, QWidget *parent,
     m_FileEdit->setText(pat.pattern());
 }
 
-
-void KPatternEditDialog::slotHelp()
-{
-}
-
-
 void KPatternEditDialog::slotBrowse()
 {
     KURL url = KFileDialog::getOpenURL();
@@ -682,7 +594,7 @@ QString KPatternEditDialog::pattern()
 }
 
 
-void KPatternEditDialog::slotOK()
+void KPatternEditDialog::slotOk()
 {
     QString s = m_NameEdit->text();
     if (s.isEmpty()) {
@@ -702,7 +614,7 @@ void KPatternEditDialog::slotOK()
 
     if (m_FileEdit->text().isEmpty()) {
 	KMessageBox::sorry(this, i18n("You did not fill in the `Image' field.\n"
-				      "This is a required field."));
+		"This is a required field."));
 	return;
     }
 
@@ -714,89 +626,100 @@ void KPatternEditDialog::slotOK()
 }
 
 
+/**** KMultiWallpaperList ****/
+
+KMultiWallpaperList::KMultiWallpaperList(QWidget *parent, char *name)
+	: QListBox(parent, name)
+{
+    setAcceptDrops(true);
+}
+
+
+void KMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
+{
+    ev->accept(QUriDrag::canDecode(ev));
+}
+
+
+void KMultiWallpaperList::dropEvent(QDropEvent *ev)
+{
+    QStringList files;
+    QUriDrag::decodeLocalFiles(ev, files);
+    insertStringList(files);
+}
+
+
 /**** KMultiWallpaperDialog ****/
 
 KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
 	QWidget *parent, char *name)
-	: QDialog(parent, name, true)
+	: KDialogBase(parent, name, true, i18n("Configure Wallpapers"),
+	Ok | Cancel, Ok, true)
 {
+    QVBox *page = makeVBoxMainWidget();
+
     m_pSettings = setts;
     m_Wallpapers = m_pSettings->wallpaperList();
     m_Interval = m_pSettings->wallpaperChangeInterval();
     m_Mode = m_pSettings->multiWallpaperMode();
 
-    QVBoxLayout *top = new QVBoxLayout(this);
-    top->setSpacing(10);
-    top->setMargin(10);
-    top->addSpacing(10);
+    QHBox *hbox = new QHBox(page);
 
-    QHBoxLayout *hbox = new QHBoxLayout();
-    top->addLayout(hbox);
-
-    QLabel *lbl = new QLabel(i18n("&Interval"), this);
-    hbox->addWidget(lbl);
-    m_pIntervalEdit = new QSpinBox(this);
-    m_pIntervalEdit->setRange(5, 240);
-    m_pIntervalEdit->setSteps(5, 15);
-    m_pIntervalEdit->setValue(QMAX(5,m_Interval));
+    QLabel *lbl = new QLabel(i18n("&Interval:"), hbox);
+    m_pIntervalEdit = new QSpinBox(hbox);
+    m_pIntervalEdit->setRange(1, 240);
+    m_pIntervalEdit->setSteps(1, 15);
+    m_pIntervalEdit->setValue(QMAX(1,m_Interval));
     m_pIntervalEdit->setSuffix(i18n(" minutes"));
     lbl->setBuddy(m_pIntervalEdit);
-    hbox->addWidget(m_pIntervalEdit);
-    hbox->addStretch();
+    hbox->setStretchFactor(m_pIntervalEdit, 1);
 
-    lbl = new QLabel(i18n("&Mode"), this);
-    hbox->addWidget(lbl);
-    m_pModeEdit = new QComboBox(this);
+    lbl = new QLabel(i18n("&Mode:"), hbox);
+    m_pModeEdit = new QComboBox(hbox);
     m_pModeEdit->insertItem(i18n("In Order"));
     m_pModeEdit->insertItem(i18n("Random"));
     m_pModeEdit->setCurrentItem(m_Mode-1);
     lbl->setBuddy(m_pModeEdit);
-    hbox->addWidget(m_pModeEdit);
-    hbox->addStretch();
 
-    top->addSpacing(10);
-    lbl = new QLabel(i18n("You can select files and directories below:"), this);
-    top->addWidget(lbl);
+    hbox->setStretchFactor(m_pModeEdit, 1);
 
-    QFrame *frame = new QFrame(this);
+    lbl = new QLabel(i18n("You can select files and directories below:"), page);
+
+    QFrame *frame = new QFrame(page);
     frame->setFrameStyle(QFrame::WinPanel|QFrame::Raised);
-    top->addWidget(frame);
     QVBoxLayout *vbox = new QVBoxLayout(frame);
-    vbox->setSpacing(10);
-    vbox->setMargin(10);
-    m_pListBox = new QListBox(frame);
+    vbox->setSpacing(spacingHint());
+    vbox->setMargin(marginHint());
+    m_pListBox = new KMultiWallpaperList(frame);
     m_pListBox->setMinimumSize(QSize(300,150));
     vbox->addWidget(m_pListBox);
     m_pListBox->insertStringList(m_Wallpapers);
 
-    hbox = new QHBoxLayout();
-    vbox->addLayout(hbox);
-    QPushButton *pbut = new QPushButton(i18n("&Add"), frame);
+    hbox = new QHBox(frame);
+    vbox->addWidget(hbox);
+    QPushButton *pbut = new QPushButton(i18n("&Add..."), hbox);
     connect(pbut, SIGNAL(clicked()), SLOT(slotAdd()));
-    hbox->addWidget(pbut);
-    pbut = new QPushButton(i18n("&Remove"), frame);
+    pbut = new QPushButton(i18n("&Remove"), hbox);
     connect(pbut, SIGNAL(clicked()), SLOT(slotRemove()));
-    hbox->addWidget(pbut);
-
-    KButtonBox *bbox = new KButtonBox(this);
-    pbut = bbox->addButton("&Help");
-    connect(pbut, SIGNAL(clicked()), SLOT(slotHelp()));
-    bbox->addStretch();
-    pbut = bbox->addButton(i18n("&OK"));
-    connect(pbut, SIGNAL(clicked()), SLOT(slotOK()));
-    pbut = bbox->addButton(i18n("&Cancel"));
-    connect(pbut, SIGNAL(clicked()), SLOT(reject()));
-    top->addWidget(bbox);
 }
 
 
 void KMultiWallpaperDialog::slotAdd()
 {
-    KURL url = KFileDialog::getOpenURL();
-    if (url.isEmpty())
+    KFileDialog fileDialog(QString::null, QString::null, this, "fileDialog", true);
+
+    fileDialog.setCaption(i18n("Select"));
+    KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |
+                                                 KFile::Directory |
+                                                 KFile::ExistingOnly |
+                                                 KFile::LocalOnly);
+    fileDialog.setMode(mode);
+    fileDialog.exec();
+    QStringList files = fileDialog.selectedFiles();
+    if (files.isEmpty())
 	return;
 
-    m_pListBox->insertItem(url.url());
+    m_pListBox->insertStringList(files);
 }
 
 
@@ -809,12 +732,7 @@ void KMultiWallpaperDialog::slotRemove()
 }
 
 
-void KMultiWallpaperDialog::slotHelp()
-{
-}
-
-
-void KMultiWallpaperDialog::slotOK()
+void KMultiWallpaperDialog::slotOk()
 {
     QStringList lst;
     for (unsigned i=0; i<m_pListBox->count(); i++)

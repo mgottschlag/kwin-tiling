@@ -12,9 +12,11 @@
 #ifndef __BGDialogs_h_Included__
 #define __BGDialogs_h_Included__
 
-#include <qdialog.h>
 #include <qmap.h>
 #include <qstring.h>
+#include <qevent.h>
+
+#include <kdialogbase.h>
 
 class QListView;
 class QListViewItem;
@@ -29,7 +31,7 @@ class KBackgroundSettings;
 /**
  * Dialog to select a background program.
  */
-class KProgramSelectDialog: public QDialog
+class KProgramSelectDialog: public KDialogBase
 {
     Q_OBJECT
 
@@ -43,7 +45,6 @@ public slots:
     void slotAdd();
     void slotRemove();
     void slotModify();
-    void slotHelp();
     void slotItemClicked(QListViewItem *);
     void slotItemDoubleClicked(QListViewItem *);
 
@@ -59,7 +60,7 @@ private:
 /**
  * Dialog to edit a background program.
  */
-class KProgramEditDialog: public QDialog
+class KProgramEditDialog: public KDialogBase
 {
     Q_OBJECT
 
@@ -71,8 +72,7 @@ public:
     QString program();
 
 public slots:
-    void slotHelp();
-    void slotOK();
+    void slotOk();
 
 private:
     QString m_Program;
@@ -87,7 +87,7 @@ private:
 /**
  * Dialog to select a background pattern.
  */
-class KPatternSelectDialog: public QDialog
+class KPatternSelectDialog: public KDialogBase
 {
     Q_OBJECT
 
@@ -101,7 +101,6 @@ public slots:
     void slotAdd();
     void slotRemove();
     void slotModify();
-    void slotHelp();
     void slotItemClicked(QListViewItem *);
     void slotItemDoubleClicked(QListViewItem *);
 
@@ -117,7 +116,7 @@ private:
 /**
  * Dialog to edit a background pattern.
  */
-class KPatternEditDialog: public QDialog
+class KPatternEditDialog: public KDialogBase
 {
     Q_OBJECT
 
@@ -129,8 +128,7 @@ public:
     QString pattern();
 
 public slots:
-    void slotHelp();
-    void slotOK();
+    void slotOk();
     void slotBrowse();
 
 private:
@@ -141,10 +139,25 @@ private:
     
 
 /**
+ * QListBox with DND
+ */
+
+class KMultiWallpaperList: public QListBox
+{
+public:
+    KMultiWallpaperList(QWidget *parent=0L, char *name=0L);
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *);
+    virtual void dropEvent(QDropEvent *);
+};
+
+
+/**
  * Multiwallpaper settings.
  */
 
-class KMultiWallpaperDialog: public QDialog
+class KMultiWallpaperDialog: public KDialogBase
 {
     Q_OBJECT
 
@@ -155,8 +168,7 @@ public:
 public slots:
     void slotAdd();
     void slotRemove();
-    void slotHelp();
-    void slotOK();
+    void slotOk();
 
 private:
     int m_Interval, m_Mode;
@@ -164,7 +176,7 @@ private:
     QStringList m_Wallpapers;
     QSpinBox *m_pIntervalEdit;
     QComboBox *m_pModeEdit;
-    QListBox *m_pListBox;
+    KMultiWallpaperList *m_pListBox;
 
     KBackgroundSettings *m_pSettings;
 };
