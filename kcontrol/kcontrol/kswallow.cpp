@@ -46,9 +46,9 @@ void KSwallowWidget::swallowWindow(Window w)
   Window root;
 
   XGetGeometry(qt_xdisplay(), window, &root, &x, &y, &width, &height, &dummy, &dummy);
-  if (width < parentWidget()->width())
+  if ((int)width < parentWidget()->width())
     width = parentWidget()->width();
-  if (height < parentWidget()->height())
+  if ((int)height < parentWidget()->height())
     height = parentWidget()->height();
   parentWidget()->resize(width,height);
   resize(width,height);

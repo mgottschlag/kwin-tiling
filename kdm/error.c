@@ -97,19 +97,11 @@ LogInfo(
 
 /*VARARGS1*/
 int
-LogError (
-#if NeedVarargsPrototypes
-    char * fmt, ...)
-#else
-    fmt, arg1, arg2, arg3, arg4, arg5, arg6)
-    char *fmt;
-    Fmtarg_t arg1, arg2, arg3, arg4, arg5, arg6;
-#endif
+LogError (char * fmt, ...)
 {
 #ifndef USE_SYSLOG
     fprintf (stderr, "xdm error (pid %d): ", (int)getpid());
 #endif
-#if NeedVarargsPrototypes
     {
 	va_list args;
 	va_start(args, fmt);
@@ -120,13 +112,6 @@ LogError (
 #  endif
 	va_end(args);
     }
-#else
-#  ifdef USE_SYSLOG
-    syslog (LOG_ERR, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  else
-    fprintf (stderr, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  endif
-#endif
 #ifdef USE_SYSLOG
     return 0;
 #else
@@ -136,19 +121,11 @@ LogError (
 
 /*VARARGS1*/
 void
-LogPanic (
-#if NeedVarargsPrototypes
-    char * fmt, ...)
-#else
-    fmt, arg1, arg2, arg3, arg4, arg5, arg6)
-    char *fmt;
-    Fmtarg_t arg1, arg2, arg3, arg4, arg5, arg6;
-#endif
+LogPanic (char * fmt, ...)
 {
 #ifndef USE_SYSLOG
     fprintf (stderr, "xdm panic (pid %d): ", (int)getpid());
 #endif
-#if NeedVarargsPrototypes
     {
 	va_list args;
 	va_start(args, fmt);
@@ -159,13 +136,6 @@ LogPanic (
 #  endif
 	va_end(args);
     }
-#else
-#  ifdef USE_SYSLOG
-    syslog (LOG_EMERG, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  else
-    fprintf (fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  endif
-#endif
 #ifdef USE_SYSLOG
     fflush (stderr);
 #endif
@@ -174,14 +144,7 @@ LogPanic (
 
 /*VARARGS1*/
 int
-LogOutOfMem (
-#if NeedVarargsPrototypes
-    char * fmt, ...)
-#else
-    fmt, arg1, arg2, arg3, arg4, arg5, arg6)
-    char *fmt;
-    Fmtarg_t arg1, arg2, arg3, arg4, arg5, arg6;
-#endif
+LogOutOfMem (char * fmt, ...)
 {
 #ifdef USE_SYSLOG
     char fmt1[256];
@@ -189,7 +152,6 @@ LogOutOfMem (
 #else
     fprintf (stderr, "kdm: out of memory in routine ");
 #endif
-#if NeedVarargsPrototypes
     {
 	va_list args;
 	va_start(args, fmt);
@@ -200,13 +162,6 @@ LogOutOfMem (
 #  endif
 	va_end(args);
     }
-#else
-#  ifdef USE_SYSLOG
-    syslog(LOG_ALERT, fmt1, arg1, arg2, arg3, arg4, arg5, arg6);
-#  else
-    fprintf (stderr, fmt, arg1, arg2, arg3, arg4, arg5, arg6);
-#  endif
-#endif
 #ifdef USE_SYSLOG
     return 0;
 #else
