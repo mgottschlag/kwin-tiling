@@ -36,4 +36,7 @@ extern int _XdmcpWriteARRAYofARRAY8(XdmcpBuffer *, ARRAYofARRAY8 *);
 extern int _XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
 extern int _XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
 
+extern void Exit(int) ATTR_NORETURN;
+extern void Die(int, const char *) ATTR_NORETURN;
+
 #endif

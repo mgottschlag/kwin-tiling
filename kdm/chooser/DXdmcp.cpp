@@ -16,13 +16,16 @@
  ***************************************************************************/
 
 #include "DXdmcp.h"
+
+#include <klocale.h>
+#include <kmessagebox.h>
+
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
-#include <klocale.h>
 #include <qfont.h>
-#include <kmessagebox.h>
+
 #include <stdlib.h>
 
 HostView::HostView(CXdmcp * cxdmcp, QWidget * parent, const char *name, WFlags)
@@ -46,6 +49,7 @@ HostView::HostView(CXdmcp * cxdmcp, QWidget * parent, const char *name, WFlags)
 	    SLOT(accept()));
 
 //      setItemMargin(1);
+    setResizeMode(LastColumn);
 };
 
 /*
@@ -124,7 +128,7 @@ void HostView::accept()
     if (item != 0) {
 	comXdmcp->chooseHost(item->text(namecol).latin1());
 	delete comXdmcp;
-	exit(EX_NORMAL);
+	Exit(EX_NORMAL);
     }
 }
 
@@ -136,7 +140,7 @@ void HostView::willing()
 
 void HostView::cancel()
 {
-    exit(EX_NORMAL);
+    Exit(EX_NORMAL);
 }
 
 void HostView::slotRegisterHostname(const QString & name)
@@ -152,7 +156,7 @@ static void set_min(QWidget * w)
 
 ChooserDlg::ChooserDlg(CXdmcp * cxdmcp, QWidget * parent, const char *name,
 		       bool modal, WFlags f)
-    : FDialog(parent, name, modal, f)
+    : QDialog(parent, name, modal, f)
 {
     QBoxLayout *topLayout = new QVBoxLayout(this, 0, 0);
 
@@ -163,25 +167,11 @@ ChooserDlg::ChooserDlg(CXdmcp * cxdmcp, QWidget * parent, const char *name,
 
     QBoxLayout *vbox = new QVBoxLayout(winFrame, 10, 10);
 
-    host_view = new HostView(cxdmcp, winFrame, "hosts");
-
-    // Buttons
-    QPushButton *accept = new QPushButton(i18n("&Accept"), winFrame);
-    QPushButton *cancel = new QPushButton(i18n("&Cancel"), winFrame);
-//     QPushButton *willing = new QPushButton( i18n("&Willing"), winFrame);
-    QPushButton *help = new QPushButton(i18n("&Help"), winFrame);
-    QPushButton *ping = new QPushButton(i18n("&Ping"), winFrame);
-
     QLabel *title = new QLabel(i18n("XDMCP Host Menu"), winFrame);
     title->setAlignment(AlignCenter);
-
-    set_min(accept);
-    set_min(cancel);
-    set_min(ping);
-    set_min(help);
-    set_min(title);
-
     vbox->addWidget(title);
+
+    host_view = new HostView(cxdmcp, winFrame, "hosts");
     vbox->addWidget(host_view);
 
     QBoxLayout *hibox = new QHBoxLayout(vbox, 10);
@@ -191,11 +181,24 @@ ChooserDlg::ChooserDlg(CXdmcp * cxdmcp, QWidget * parent, const char *name,
     hibox->addWidget(itxt);
     hibox->addWidget(iline);
 
+    // Buttons
+    QPushButton *accept = new QPushButton(i18n("&Accept"), winFrame);
+    QPushButton *ping = new QPushButton(i18n("&Ping"), winFrame);
+    QPushButton *cancel = new QPushButton(i18n("&Cancel"), winFrame);
+//     QPushButton *willing = new QPushButton( i18n("&Willing"), winFrame);
+//    QPushButton *help = new QPushButton(i18n("&Help"), winFrame);
+
+    set_min(accept);
+    set_min(cancel);
+    set_min(ping);
+//    set_min(help);
+    set_min(title);
+
     QBoxLayout *hbox = new QHBoxLayout(vbox, 20);
     hbox->addWidget(accept);
     hbox->addWidget(ping);
 //     hbox->addWidget( willing);
-    hbox->addWidget(help);
+//    hbox->addWidget(help);
     hbox->addWidget(cancel);
 
     topLayout->activate();
@@ -206,10 +209,11 @@ ChooserDlg::ChooserDlg(CXdmcp * cxdmcp, QWidget * parent, const char *name,
     connect(accept, SIGNAL(clicked()), host_view, SLOT(accept()));
 //     connect( willing, SIGNAL( clicked()), host_view, SLOT( willing()));
     connect(cancel, SIGNAL(clicked()), host_view, SLOT(cancel()));
-    connect(help, SIGNAL(clicked()), this, SLOT(slotHelp()));
+//    connect(help, SIGNAL(clicked()), this, SLOT(slotHelp()));
     connect(iline, SIGNAL(returnPressed()), this, SLOT(addHostname()));
 }
 
+/*
 void ChooserDlg::slotHelp()
 {
     KMessageBox::information(0,
@@ -219,6 +223,7 @@ void ChooserDlg::slotHelp()
 				  "in the Host Menu to enter a host. :("));
     iline->setFocus();
 }
+*/
 
 void ChooserDlg::ping()
 {

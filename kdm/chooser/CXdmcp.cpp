@@ -663,6 +663,7 @@ int CXdmcp::initXDMCP()
     XdmcpHeader header;
     int i;
 
+    memset(&header, 0, sizeof(header));
     header.version = XDM_PROTOCOL_VERSION;
     header.opcode = (CARD16) BROADCAST_QUERY;
     header.length = 1;
@@ -766,16 +767,11 @@ void CXdmcp::chooseHost(const char *r)
 		break;
 	}
 #if defined(STREAMSCONN)
-	if ((fd = t_open("/dev/tcp", O_RDWR, NULL)) == -1) {
-	    fprintf(stderr, "Cannot create response endpoint\n");
-	    fflush(stderr);
-	    exit(EX_REMANAGE_DPY);
-	}
+	if ((fd = t_open("/dev/tcp", O_RDWR, NULL)) == -1)
+	    Die(EX_REMANAGE_DPY, "Cannot create response endpoint\n");
 	if (t_bind(fd, NULL, NULL) == -1) {
-	    fprintf(stderr, "Cannot bind response endpoint\n");
-	    fflush(stderr);
 	    t_close(fd);
-	    exit(EX_REMANAGE_DPY);
+	    Die(EX_REMANAGE_DPY, "Cannot bind response endpoint\n");
 	}
 	call.addr.buf = (char *) addr;
 	call.addr.len = len;
@@ -786,20 +782,15 @@ void CXdmcp::chooseHost(const char *r)
 	call.udata.maxlen = 0;
 	if (t_connect(fd, &call, NULL) == -1) {
 	    t_error("Cannot connect to xdm\n");
-	    fflush(stderr);
 	    t_unbind(fd);
 	    t_close(fd);
-	    exit(EX_REMANAGE_DPY);
+	    Exit(EX_REMANAGE_DPY);
 	}
 #else
-	if ((fd = socket(family, SOCK_STREAM, 0)) == -1) {
-	    fprintf(stderr, "Cannot create response socket\n");
-	    exit(EX_REMANAGE_DPY);
-	}
-	if (::connect(fd, addr, len) == -1) {
-	    fprintf(stderr, "Cannot connect to xdm\n");
-	    exit(EX_REMANAGE_DPY);
-	}
+	if ((fd = socket(family, SOCK_STREAM, 0)) == -1)
+	    Die(EX_REMANAGE_DPY, "Cannot create response socket\n");
+	if (::connect(fd, addr, len) == -1)
+	    Die(EX_REMANAGE_DPY, "Cannot connect to xdm\n");
 #endif
 	buffer.data = (BYTE *) buf;
 	buffer.size = sizeof(buf);
@@ -810,11 +801,9 @@ void CXdmcp::chooseHost(const char *r)
 	_XdmcpWriteARRAY8(&buffer, &h->hostaddr);
 #if defined(STREAMSCONN)
 	if (t_snd(fd, (char *) buffer.data, buffer.pointer, 0) < 0) {
-	    fprintf(stderr, "Cannot send to xdm\n");
-	    fflush(stderr);
 	    t_unbind(fd);
 	    t_close(fd);
-	    exit(EX_REMANAGE_DPY);
+	    Die(EX_REMANAGE_DPY, "Cannot send to xdm\n");
 	}
 	sleep(5);		/* Hack because sometimes the connection gets
 				   closed before the data arrives on the other end. */

@@ -19,9 +19,13 @@
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
+
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+
 #include <stdlib.h>
+#include <time.h>
+#include <sys/stat.h>
 
 static const char *description = I18N_NOOP("Login chooser for Xdmcp");
 
@@ -57,13 +61,25 @@ static KCmdLineOptions options[] = {
     {"xdmaddress <addr>", I18N_NOOP("Specify the chooser socket (in hex)"), 0},
     {"clientaddress <addr>", I18N_NOOP("Specify the client ip (in hex)"), 0},
     {"connectionType <type>", I18N_NOOP("Specify the connection type (in dec)"), 0},
-    {"+[host]", I18N_NOOP("Specify the hosts to list or use BROADCAST"), 0}
+    {"+[host]", I18N_NOOP("Specify the hosts to list or use BROADCAST"), 0},
+    KCmdLineLastOption
 };
 
 int main(int argc, char **argv)
 {
-    if (!getenv( "HOME" ))
-	setenv( "HOME", "/tmp", 1 );	/* for QSettings */
+    /* for QSettings */
+    srand( time( 0 ) );
+    char qtrc[32];
+    for (int i = 0; i < 10000; i++) {
+	sprintf( qtrc, "/tmp/%010d", rand() );
+	if (!mkdir( qtrc, 0700 ))
+	    goto okay;
+    }
+    Die( EX_UNMANAGE_DPY, "Cannot create $HOME\n" );
+  okay:
+    if (setenv( "HOME", qtrc, 1 ))
+	Die( EX_UNMANAGE_DPY, "Cannot set $HOME\n" );
+
     KApplication::disableAutoDcopRegistration();
 
     KCmdLineArgs::init(argc, argv, "chooser", description, version);
@@ -81,5 +97,5 @@ int main(int argc, char **argv)
     kchooser->ping();
     app.exec();
 
-    exit(0);
+    Exit(EX_NORMAL);
 }

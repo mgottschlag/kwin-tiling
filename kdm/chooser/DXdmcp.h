@@ -20,10 +20,10 @@
 #ifndef QT_CLEAN_NAMESPACE
 #define QT_CLEAN_NAMESPACE
 #endif
+#include <qdialog.h>
 #include <qlistview.h>
 #include <qlineedit.h>
 
-#include "kfdialog.h"
 #include "CXdmcp.h"
 
 class HostView:public QListView {
@@ -67,7 +67,7 @@ class HostView:public QListView {
 };
 
 
-class ChooserDlg:public FDialog {
+class ChooserDlg:public QDialog {
     Q_OBJECT
 
   public:
@@ -78,7 +78,7 @@ class ChooserDlg:public FDialog {
 
   public slots:
     void addHostname();
-    void slotHelp();
+//    void slotHelp();
 
   private:
     HostView *host_view;
