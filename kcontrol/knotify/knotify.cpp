@@ -144,6 +144,7 @@ void KNotifyWidget::eventSelected(QListViewItem *_i)
 	QString event=((EventListViewItem*)_i)->event;
 	
 	KConfig *conf = new KConfig(file,false,false);
+	KMessageBox::error(this, file, "");
 	eventview->load(conf,event);
 }
 

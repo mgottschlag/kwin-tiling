@@ -32,12 +32,6 @@
 
 #include <iostream.h>
 
-static QString presentation[5] = {
-	i18n("Sound"),
-	i18n("MessageBox"),
-	i18n("Log File"),
-	i18n("Standard Error")
-};
 
 
 EventView::EventView(QWidget *parent, const char *name):
@@ -45,12 +39,14 @@ EventView::EventView(QWidget *parent, const char *name):
 {
 	QGridLayout *layout=new QGridLayout(this,2,3);
 	
+	static QStringList presentation;
+	presentation << i18n("Sound")
+	             << i18n("MessageBox")
+	             << i18n("Log File")
+	             << i18n("Standard Error");
+
 	eventslist=new QListBox(this);
-	{	eventslist->insertItem(presentation[0]);
-		eventslist->insertItem(presentation[1]);
-		eventslist->insertItem(presentation[2]);
-		eventslist->insertItem(presentation[3]);
-	}
+	eventslist->insertStringList(presentation);
 	
 	layout->addMultiCellWidget(eventslist, 0,2, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
@@ -133,7 +129,7 @@ void EventView::itemToggled(bool on)
 	file->blockSignals(true);
 	eventslist->blockSignals(true);
 	
-	int p;
+	int p=0;
 	switch(eventslist->currentItem())
 	{
 	case (0):
@@ -173,7 +169,7 @@ void EventView::load(KConfig *config, const QString &section)
 	
 	{ // Load the presentation
 		present=conf->readNumEntry("presentation", -1);
-		if (present==KNotifyClient::Default)
+		if (present==-1)
 			present=conf->readNumEntry("default_presentation", 0);
 	}
 
@@ -212,7 +208,7 @@ void EventView::setPixmap(int item, bool on)
 void EventView::save()
 {
 	if (!conf) return;
-	conf->writeEntry("presentation", int(present));
+	conf->writeEntry("presentation", present);
 	if (!soundfile.isEmpty())
 		conf->writeEntry("soundfile", soundfile);
 	if (!soundfile.isEmpty())
@@ -224,6 +220,9 @@ void EventView::unload()
 {
 	save();
 	delete conf;
+	for (uint c=eventslist->count()-1; ((int)c)>=0; c--) // wraparound
+		setPixmap(c, false); // Unenable all the list items
+	
 	enabled->setChecked(false);
 	file->setText("");
 	setEnabled(false);
