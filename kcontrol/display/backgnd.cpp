@@ -199,6 +199,9 @@ void KGlobalBackgroundSettings::writeSettings()
 KBackground::KBackground(QWidget *parent, Mode m)
     : KDisplayModule(parent, m)
 {
+    if (m == Init)
+	return;
+
     m_pConfig = new KConfig("kdesktoprc");
     m_pDirs = KGlobal::dirs();
 
@@ -484,7 +487,7 @@ void KBackground::defaultSettings()
 	r->stop();
     r->setBackgroundMode(KBackgroundSettings::Flat);
     r->setColorA(_defColorA);
-    r->setColorA(_defColorB);
+    r->setColorB(_defColorB);
     r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
     r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
     m_pGlobals->setCommonBackground(_defCommon);

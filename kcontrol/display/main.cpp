@@ -31,6 +31,7 @@
 #include "backgnd.h"
 #include "fonts.h"
 #include "energy.h"
+#include "advanced.h"
 #include <qfont.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -59,6 +60,7 @@ private:
   KGeneral *general;
   KBackground *background;
   KEnergy *energy;
+  KAdvanced *advanced;
 };
 
 
@@ -66,7 +68,7 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
   : KControlApplication(argc, argv, name)
 {
   colors = 0; screensaver = 0; fonts = 0; general = 0; background = 0;
-  energy = 0;
+  energy = 0; advanced = 0;
 
   if (runGUI())
     {
@@ -89,12 +91,17 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
       if (!pages || pages->contains("energy"))
 	addPage(energy = new KEnergy(dialog, KDisplayModule::Setup),
 		i18n("&Energy"), "kdisplay-8.html");
+      if (!pages || pages->contains("advanced"))
+	addPage(advanced = new KAdvanced(dialog, KDisplayModule::Setup),
+		i18n("&Advanced"), "kdisplay-8.html");
 
-      if (background || screensaver || colors || fonts || general || energy)
+      if (background || screensaver || colors || fonts || general || energy
+          || advanced)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style,energy}]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,"
+		"colors,fonts,style,energy,advanced}]\n").ascii());
           justInit = TRUE;
         }
 
@@ -114,6 +121,7 @@ void KDisplayApplication::init()
   delete energy;
   KFonts *fonts = new KFonts(0, KDisplayModule::Init);
   delete fonts;
+  KAdvanced *advanced = new KAdvanced(0, KDisplayModule::Init);
   
   writeQDesktopProperties( colors->createPalette(), KGlobal::generalFont() );
   
@@ -145,6 +153,8 @@ void KDisplayApplication::apply()
     fonts->applySettings();
   if (general)
     general->applySettings();
+  if (advanced)
+    advanced->applySettings();
 
   kapp->config()->sync();
   
@@ -185,6 +195,8 @@ void KDisplayApplication::defaultValues()
     fonts->defaultSettings();
   if (general)
     general->defaultSettings();
+  if (advanced)
+    advanced->defaultSettings();
 }
 
 void KDisplayApplication::writeQDesktopProperties( QPalette pal, QFont font)
