@@ -50,6 +50,7 @@ public:
     void setHidden(bool b);
 
     virtual void setOpen(bool o);
+    void load();
 
 private:
     void update();
@@ -92,6 +93,8 @@ protected slots:
     void undel();
 
 protected:
+    void del(TreeItem *);
+    void undel(TreeItem *);
     void fill();
     void fillBranch(const QString& relPath, TreeItem* parent);
     QString findName(KDesktopFile *df, bool deleted);

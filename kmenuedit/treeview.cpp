@@ -85,13 +85,20 @@ void TreeItem::update()
 
 void TreeItem::setOpen(bool o)
 {
-    if (o && !_directoryPath.isEmpty() && !_init)
+    if (o)
+       load();
+
+    QListViewItem::setOpen(o);
+}
+
+void TreeItem::load()
+{
+    if (!_directoryPath.isEmpty() && !_init)
     {
        _init = true;
        TreeView *tv = static_cast<TreeView *>(listView());
        tv->fillBranch(_directoryPath, this);
     }
-    QListViewItem::setOpen(o);
 }
 
 static QPixmap appIcon(const QString &iconName)
@@ -1039,7 +1046,21 @@ void TreeView::del()
 
     // nil selected? -> nil to delete
     if (item == 0) return;
+    
+    del(item);
 
+    _ac->action("edit_cut")->setEnabled(false);
+    _ac->action("edit_copy")->setEnabled(false);
+    _ac->action("delete")->setEnabled(false);
+
+    // Select new current item
+    setSelected( currentItem(), true );
+    // Switch the UI to show that item
+    itemSelected( selectedItem() );
+}
+
+void TreeView::del(TreeItem *item)
+{
     QString file = item->file();
 
     // is file a .directory or a .desktop file
@@ -1057,11 +1078,30 @@ void TreeView::del()
         return; // Should not happen.
     }
 
+    item->load();
+    
+    QListViewItem * myChild = item->firstChild();
+    while( myChild ) {
+        TreeItem *childItem = static_cast<TreeItem*>(myChild);
+        del(childItem);
+        myChild = myChild->nextSibling();
+    }
+    
     if (_showHidden)
         item->setHidden(true);
     else
         delete item;
+}
 
+void TreeView::undel()
+{
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to delete
+    if (!item || !item->isHidden()) return;
+    
+    undel(item);
+    
     _ac->action("edit_cut")->setEnabled(false);
     _ac->action("edit_copy")->setEnabled(false);
     _ac->action("delete")->setEnabled(false);
@@ -1072,13 +1112,8 @@ void TreeView::del()
     itemSelected( selectedItem() );
 }
 
-void TreeView::undel()
+void TreeView::undel(TreeItem *item)
 {
-    TreeItem *item = (TreeItem*)selectedItem();
-
-    // nil selected? -> nil to delete
-    if (!item || !item->isHidden()) return;
-
     KDesktopFile df(item->file());
     df.writeEntry("Name", item->name());
     df.deleteEntry("Hidden");
@@ -1087,14 +1122,14 @@ void TreeView::undel()
 
     item->setHidden(false);
 
-    _ac->action("edit_cut")->setEnabled(false);
-    _ac->action("edit_copy")->setEnabled(false);
-    _ac->action("delete")->setEnabled(false);
-
-    // Select new current item
-    setSelected( currentItem(), true );
-    // Switch the UI to show that item
-    itemSelected( selectedItem() );
+    item->load();
+    
+    QListViewItem * myChild = item->firstChild();
+    while( myChild ) {
+        TreeItem *childItem = static_cast<TreeItem*>(myChild);
+        undel(childItem);
+        myChild = myChild->nextSibling();
+    }
 }
 
 void TreeView::cleanupClipboard() {
