@@ -331,7 +331,7 @@ bool Stroke::record( int x, int y )
     return true;
     }
     
-char* Stroke::translate( int min_bin_points_P, int scale_ratio_P, int min_points_P )
+char* Stroke::translate( int min_bin_points_percentage_P, int scale_ratio_P, int min_points_P )
     {
     if( point_count < min_points_P )
 	return NULL;
@@ -378,9 +378,9 @@ char* Stroke::translate( int min_bin_points_P, int scale_ratio_P, int min_points
     	    bin_count++;
 	else
 	    {  // we are moving to a new bin -- consider adding to the sequence
-	                                        // CHECKME tohle taky konfigurovatelne ? vvvv
-	    if(( bin_count > min_bin_points_P && bin_count > ( point_count / MAX_SEQUENCE / 4 ))
-		|| ( sequence_count == 0 ))
+	                                        // CHECKME tohle taky konfigurovatelne ?
+	    if( bin_count >= ( min_bin_points_percentage_P * point_count / 100 )
+		|| sequence_count == 0 )
 		{
 		if( sequence_count >= MAX_SEQUENCE )
 		    return NULL;

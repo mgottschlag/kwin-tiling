@@ -30,17 +30,17 @@ class Stroke
         static const int MAX_SEQUENCE = 25;
     // largest number of points allowed to be sampled
         static const int MAX_POINTS = 5000;
-    // default number of sample points in a bin to be valid
-        static const int MIN_BIN_POINTS = 20;
+    // default percentage of sample points in a bin from all points to be valid
+        static const int MIN_BIN_POINTS_PERCENTAGE = 5;
     // default threshold of size of smaller axis needed for it to define its own bin size
         static const int SCALE_RATIO = 4;
     // default number of sample points required to have a valid stroke
-        static const int MIN_POINTS = 50;
+        static const int MIN_POINTS = 10;
 	Stroke();
 	~Stroke();
 	bool record( int x, int y );
-	char* translate( int min_bin_points_P = MIN_BIN_POINTS, int scale_ratio_P = SCALE_RATIO,
-	    int min_points_P = MIN_POINTS ); // CHECKME returns ret_val ( see below )
+	char* translate( int min_bin_points_percentage_P = MIN_BIN_POINTS_PERCENTAGE,
+            int scale_ratio_P = SCALE_RATIO, int min_points_P = MIN_POINTS ); // CHECKME returns ret_val ( see below )
 	void reset();
     protected:
 	int bin( int x, int y );
