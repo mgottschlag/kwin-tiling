@@ -126,7 +126,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
 
   load();
-  if (getuid() != 0) {
+  if (getuid() != 0 || !config->checkConfigFilesWritable( true )) {
     appearance->makeReadOnly();
     font->makeReadOnly();
     background->makeReadOnly();
