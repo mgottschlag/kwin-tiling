@@ -466,7 +466,10 @@ void KFonts::save()
       xft.setSubPixelType(KXftConfig::SubPixel::None);
 
   if((useAA != useAA_original) || xft.changed()) {
-    KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
+    KMessageBox::information(this,
+      i18n(
+        "<p>You have changed anti-aliasing related settings. This change will only affect newly started applications.</p>"
+      ), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
 
