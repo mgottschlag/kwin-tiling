@@ -21,7 +21,6 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 
-#include <iostream.h>
 #include <kdebug.h>
 #include <kcombobox.h>
 #include <kdialog.h>
