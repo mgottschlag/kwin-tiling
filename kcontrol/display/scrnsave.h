@@ -8,7 +8,6 @@
 #ifndef __SCRNSAVE_H__
 #define __SCRNSAVE_H__
 
-#include <kprocess.h>
 #include <qwidget.h>
 #include <qpushbutton.h>
 #include <qlistbox.h>
@@ -19,7 +18,8 @@
 #include <qcheckbox.h>
 #include <qslider.h>
 
-#include "display.h"
+#include <kcmodule.h>
+#include <kprocess.h>
 
 class KIntNumInput;
 
@@ -79,18 +79,23 @@ protected:
 };
 
 //===========================================================================
-class KScreenSaver : public KDisplayModule
+class KScreenSaver : public KCModule
 {
     Q_OBJECT
 public:
-    KScreenSaver(QWidget *parent, Mode mode);
+    KScreenSaver(QWidget *parent, const char *parent);
     ~KScreenSaver();
 
-    virtual void readSettings( int deskNum = 0 );
-    virtual void loadSettings() {}
-    virtual void applySettings();
-    virtual void defaultSettings();
-    virtual void updateValues();
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
+
+    int buttons();
+    void updateValues();
+    void readSettings();
+
+signals:
+    void changed(bool);
 
 protected slots:
     void slotScreenSaver( int );

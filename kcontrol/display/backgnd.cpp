@@ -37,6 +37,7 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <kwm.h>
+#include <kwin.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
@@ -50,6 +51,15 @@
 #include <bgrender.h>
 #include <bgdialogs.h>
 #include <backgnd.h>
+
+
+/**** DLL Interface ****/
+
+extern "C" {
+    KCModule *create_background(QWidget *parent, const char *name) {
+	return new KBackground(parent, name);
+    }
+}
 
 
 /**** KBGMonitor ****/
@@ -76,12 +86,9 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 
 /**** KBackground ****/
 
-KBackground::KBackground(QWidget *parent, Mode m)
-    : KDisplayModule(parent, m)
+KBackground::KBackground(QWidget *parent, const char *name)
+    : KCModule(parent, name)
 {
-    if (m == Init)
-	return;
-
     m_pConfig = new KConfig("kdesktoprc");
     m_pDirs = KGlobal::dirs();
 
@@ -210,8 +217,8 @@ KBackground::KBackground(QWidget *parent, Mode m)
     hbox->addWidget(m_pMSetupBut);
     hbox->addStretch();
 
-    m_Desk = KWM::currentDesktop() - 1;
-    m_Max = KWM::numberOfDesktops();
+    m_Desk = KWin::currentDesktop() - 1;
+    m_Max = KWin::numberOfDesktops();
     m_pGlobals = new KGlobalBackgroundSettings();
     for (int i=0; i<m_Max; i++) {
 	m_Renderer[i] = new KBackgroundRenderer(i);
@@ -220,6 +227,15 @@ KBackground::KBackground(QWidget *parent, Mode m)
 
     init();
     apply();
+
+    setButtons(buttons());
+}
+
+
+int KBackground::buttons()
+{
+    return KCModule::Help | KCModule::Default | KCModule::Reset |
+	   KCModule::Cancel | KCModule::Apply | KCModule::Ok;
 }
 
 
@@ -231,7 +247,7 @@ void KBackground::init()
     int i;
 
     // Desktop names
-    for (i=0; i<KWM::numberOfDesktops(); i++)
+    for (i=0; i<KWin::numberOfDesktops(); i++)
 	m_pDeskList->insertItem(m_pGlobals->deskName(i));
     
     // Background modes: make sure these match with kdesktop/bgrender.cc !!
@@ -339,13 +355,19 @@ void KBackground::apply()
 }
 
 
-void KBackground::loadSettings()
+void KBackground::load()
 {
-    // what to do here?
+    int desk = m_Desk;
+    if (m_pGlobals->commonBackground())
+	desk = 0;
+    m_Renderer[desk]->load(desk);
+
+    apply();
+    emit changed(false);
 }
 
 
-void KBackground::applySettings()
+void KBackground::save()
 {
     m_pGlobals->writeSettings();
     for (int i=0; i<m_Max; i++)
@@ -353,10 +375,11 @@ void KBackground::applySettings()
 
     // notify kdesktop. kdesktop will notify all clients
     KWM::sendKWMCommand("kbgwm_reconfigure");
+    emit changed(false);
 }
 
 
-void KBackground::defaultSettings()
+void KBackground::defaults()
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
@@ -372,6 +395,7 @@ void KBackground::defaultSettings()
     r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
     m_pGlobals->setCommonBackground(_defCommon);
     apply();
+    emit changed(true);
 }
 
 
@@ -394,6 +418,7 @@ void KBackground::slotCommonDesk(bool common)
 
     m_pGlobals->setCommonBackground(common);
     apply();
+    emit changed(true);
 }
 
 
@@ -413,6 +438,7 @@ void KBackground::slotBGMode(int mode)
     r->stop();
     r->setBackgroundMode(mode);
     apply();
+    emit changed(true);
 }
 
 
@@ -436,6 +462,7 @@ void KBackground::slotBGSetup()
 	    r->stop();
 	    r->setPattern(dlg.pattern());
 	    r->start();
+	    emit changed(true);
 	}
 	break;
     }
@@ -448,6 +475,7 @@ void KBackground::slotBGSetup()
 	    r->stop();
 	    r->setProgram(dlg.program());
 	    r->start();
+	    emit changed(true);
 	}
 	break;
     }
@@ -470,6 +498,7 @@ void KBackground::slotColor1(const QColor &color)
     r->stop();
     r->setColorA(color);
     r->start();
+    emit changed(true);
 }
     
 
@@ -486,6 +515,7 @@ void KBackground::slotColor2(const QColor &color)
     r->stop();
     r->setColorB(color);
     r->start();
+    emit changed(true);
 }
     
 
@@ -508,6 +538,7 @@ void KBackground::slotImageDropped(QString uri)
     r->stop();
     r->setWallpaper(uri);
     r->start();
+    emit changed(true);
 }
 
 
@@ -533,6 +564,7 @@ void KBackground::slotMultiMode(bool multi)
 	m_pBrowseBut->setEnabled(true);
 	m_pMSetupBut->setEnabled(false);
     }
+    emit changed(true);
 }
 
 
@@ -549,6 +581,7 @@ void KBackground::slotWallpaper(const QString &wallpaper)
     r->stop();
     r->setWallpaper(wallpaper);
     r->start();
+    emit changed(true);
 }
 
 
@@ -575,6 +608,7 @@ void KBackground::slotBrowseWallpaper()
     r->stop();
     r->setWallpaper(file);
     r->start();
+    emit changed(true);
 }
 
 
@@ -594,6 +628,7 @@ void KBackground::slotWPMode(int mode)
     r->stop();
     r->setWallpaperMode(mode);
     r->start();
+    emit changed(true);
 }
     
 
@@ -608,6 +643,7 @@ void KBackground::slotSetupMulti()
     if (dlg.exec() == QDialog::Accepted) {
 	r->stop();
 	r->start();
+	emit changed(true);
     }
 }
 

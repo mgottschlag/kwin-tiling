@@ -10,75 +10,75 @@
 
 #include <qobject.h>
 #include <kfontdialog.h>
+#include <kcmodule.h>
 
-#include "display.h"
-
-#include <X11/X.h>
-
-extern bool runResourceManager;
 
 class FontUseItem
 {
 public:
-    FontUseItem( const QString& n, QFont default_fnt, bool fixed = false );
-	QString fontString( QFont rFont );
-	void setRC( const QString& group, const QString& key, const QString& rc = QString::null );
-	void readFont();
-	void writeFont();
-	void setDefault();
-	void setFont(const QFont &fnt ) { _font = fnt; }
-	QFont font() { return _font; }
-	const QString& rcFile() { return _rcfile; }
-	const QString& rcGroup() { return _rcgroup; }
-	const QString& rcKey() { return _rckey; }
-	const QString& text()		{ return _text; }
-	bool spacing() { return fixed; }
-	void	setSelect( bool flag )	{ selected = flag; }
-	bool	select()		{ return selected; }
+    FontUseItem(QString n, QFont default_fnt, bool fixed = false);
+
+    QString fontString(QFont rFont);
+    void setRC(QString group, QString key, QString rcfile=QString::null);
+
+    void readFont();
+    void writeFont();
+    void setDefault();
+    void setFont(const QFont &fnt ) { _font = fnt; }
+
+    QFont font() { return _font; }
+    const QString& rcFile() { return _rcfile; }
+    const QString& rcGroup() { return _rcgroup; }
+    const QString& rcKey() { return _rckey; }
+    const QString& text() { return _text; }
+    bool spacing() { return fixed; }
+    void setSelect( bool flag )	{ selected = flag; }
+    bool select() { return selected; }
 
 private:
-	QString _text;
-	QString _rcfile;
-	QString _rcgroup;
-	QString _rckey;
-	QFont _font;
-	QFont _default;
-	bool fixed;
-	bool selected;
+    QString _text;
+    QString _rcfile;
+    QString _rcgroup;
+    QString _rckey;
+    QFont _font;
+    QFont _default;
+    bool fixed;
+    bool selected;
 };
 
-class KFonts : public KDisplayModule
+
+/**
+ * The Destkop/fonts tab in kcontrol.
+ */
+class KFonts : public KCModule
 {
-	Q_OBJECT
+    Q_OBJECT
 	
 public:
-	KFonts(QWidget *parent, Mode mode);
-	~KFonts();
+    KFonts(QWidget *parent, const char *name);
+    ~KFonts();
 
-	virtual void readSettings( int deskNum = 0 );
-	virtual void loadSettings() {};
-	virtual void applySettings();
-	virtual void defaultSettings();
-	
-protected slots:
-	void slotSetFont(const QFont &fnt);
-	void slotPreviewFont( int index );
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
 
-protected:
-	void apply();
-	void writeSettings();
-	void setDefaults();
+    int buttons();
 	
-protected:
-	KFontChooser *fntChooser;
-	QListBox *lbFonts;
-	bool useRM;
-	
-	bool changed;
-	
-	QList <FontUseItem> fontUseList;
-	
-	bool defaultCharset;
+signals:
+    void changed(bool);
+
+private slots:
+    void slotSetFont(const QFont &fnt);
+    void slotPreviewFont( int index );
+
+private:
+    bool useRM;
+    bool _changed;
+    bool defaultCharset;
+    
+    QListBox *lbFonts;
+    QList <FontUseItem> fontUseList;
+    KFontChooser *fntChooser;
 };
 
 #endif

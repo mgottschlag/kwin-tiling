@@ -13,25 +13,30 @@
 #define __Advanced_h_Included__
 
 #include <qobject.h>
-#include "display.h"
+#include <kcmodule.h>
 
 class QCheckBox;
 class QSpinBox;
 class KGlobalBackgroundSettings;
 
 /**
- * The "advanced" tab in kcmdisplay.
+ * The Desktop/Advanced tab in kcontrol.
  */
-class KAdvanced: public KDisplayModule
+class KAdvanced: public KCModule
 {
     Q_OBJECT
 
 public:
-    KAdvanced(QWidget *parent, Mode mode);
+    KAdvanced(QWidget *parent, const char *name);
 
-    virtual void loadSettings();
-    virtual void applySettings();
-    virtual void defaultSettings();
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
+
+    int buttons();
+
+signals:
+    void changed(bool);
 
 private slots:
     void slotLimitCache(bool);

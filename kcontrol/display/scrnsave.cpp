@@ -42,16 +42,26 @@
 #include <unistd.h>
 #endif
 
-#include <kiconloader.h>
-#include <kcontrol.h>
-
-#include "kcolordlg.h"
-#include "scrnsave.h"
 #include <klocale.h>
 #include <kconfig.h>
+#include <kcolordlg.h>
+#include <kiconloader.h>
+#include <kcmodule.h>
+
+#include "scrnsave.h"
 #include "scrnsave.moc"
 
 #define CORNER_SIZE		15
+
+
+//===========================================================================
+// DLL Interface for kcontrol
+
+extern "C" {
+    KCModule *create_screensaver(QWidget *parent, const char *name) {
+	return new KScreenSaver(parent, name);
+    }
+}
 
 //===========================================================================
 //
@@ -109,8 +119,8 @@ void TestWin::keyPressEvent(QKeyEvent *)
 
 //===========================================================================
 //
-KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
-	: KDisplayModule( parent, m )
+KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
+	: KCModule(parent, name)
 {
     mSetupProc = 0;
     mPreviewProc = 0;
@@ -119,9 +129,6 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     mPrevSelected = -1;
     mMonitor = 0;
      
-    if (mode() == Init) 
-        return;
-    
     // Add non-KDE path
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
@@ -134,8 +141,6 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
     readSettings();
 	
-    setName( i18n("Screen Saver").ascii() );
-    
     mSetupProc = new KProcess;
     connect(mSetupProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotSetupDone(KProcess *)));
@@ -284,6 +289,14 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
 
 //---------------------------------------------------------------------------
 //
+int KScreenSaver::buttons()
+{
+    return KCModule::Help | KCModule::Default | KCModule::Reset |
+	   KCModule::Cancel | KCModule::Apply | KCModule::Ok;
+}
+
+//---------------------------------------------------------------------------
+//
 KScreenSaver::~KScreenSaver()
 {
     if (mPreviewProc)
@@ -304,87 +317,115 @@ KScreenSaver::~KScreenSaver()
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::readSettings( int )
+void KScreenSaver::load()
 {
-	KConfig *config = new KConfig( "kdesktoprc");
-	config->setGroup( "ScreenSaver" );
+    readSettings();
+
+    SaverConfig *saver;
+    mSelected = 0;
+    for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+        if (saver->file() == mSaver && mEnabled) 
+            mSelected = mSaverListBox->count()-1;
+    }
+    mSaverListBox->setCurrentItem(mSelected);
+    slotScreenSaver(mSelected);
+
+    updateValues();
+    emit changed(false);
+}
     
-	mEnabled = config->readBoolEntry("Enabled", false);
-	mLock = config->readBoolEntry("Lock", false);
-	mTimeout = config->readNumEntry("Timeout", 300);
-	mPriority = config->readNumEntry("Priority", 0);
-	mPasswordStars = config->readBoolEntry("PasswordAsStars", true);
-	mSaver = config->readEntry("Saver");
-    
-	if (mPriority < 0) mPriority = 0;
-	if (mPriority > 19) mPriority = 19;
+//---------------------------------------------------------------------------
+//
+void KScreenSaver::readSettings()
+{
+    KConfig *config = new KConfig( "kdesktoprc");
+    config->setGroup( "ScreenSaver" );
+
+    mEnabled = config->readBoolEntry("Enabled", false);
+    mLock = config->readBoolEntry("Lock", false);
+    mTimeout = config->readNumEntry("Timeout", 300);
+    mPriority = config->readNumEntry("Priority", 0);
+    mPasswordStars = config->readBoolEntry("PasswordAsStars", true);
+    mSaver = config->readEntry("Saver");
+
+    if (mPriority < 0) mPriority = 0;
+    if (mPriority > 19) mPriority = 19;
     if (mTimeout < 60) mTimeout = 60;
 
     mChanged = false;
-
-	delete config;
+    delete config;
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::updateValues()
 {
-	mWaitEdit->setValue(mTimeout/60);
-	mLockCheckBox->setChecked(mLock);
-	mStarsCheckBox->setChecked(mPasswordStars);
-	mPrioritySlider->setValue(mPriority);
+    mWaitEdit->setValue(mTimeout/60);
+    mLockCheckBox->setChecked(mLock);
+    mStarsCheckBox->setChecked(mPasswordStars);
+    mPrioritySlider->setValue(mPriority);
 }
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::defaultSettings()
+void KScreenSaver::defaults()
 {
-	slotScreenSaver( 0 );
-	mSaverListBox->setCurrentItem( 0 );
-	mSaverListBox->centerCurrentItem();
-	slotTimeoutChanged( 1 );
-	slotPriorityChanged( 0 );
-	slotLock( false );
-	slotStars( true );
-	updateValues();
+    slotScreenSaver( 0 );
+    mSaverListBox->setCurrentItem( 0 );
+    mSaverListBox->centerCurrentItem();
+    slotTimeoutChanged( 1 );
+    slotPriorityChanged( 0 );
+    slotLock( false );
+    slotStars( true );
+    updateValues();
+
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::writeSettings()
+void KScreenSaver::save()
 {
-	if ( !mChanged )
-		return;
+    if ( !mChanged )
+	return;
 
-	KConfig *config = new KConfig( "kdesktoprc");
-	config->setGroup( "ScreenSaver" );
+    KConfig *config = new KConfig( "kdesktoprc");
+    config->setGroup( "ScreenSaver" );
 
-	config->writeEntry("Enabled", mEnabled);
-	config->writeEntry("Timeout", mTimeout);
-	config->writeEntry("Lock", mLock);
-	config->writeEntry("Priority", mPriority);
-	config->writeEntry("PasswordAsStars", mPasswordStars);
+    config->writeEntry("Enabled", mEnabled);
+    config->writeEntry("Timeout", mTimeout);
+    config->writeEntry("Lock", mLock);
+    config->writeEntry("Priority", mPriority);
+    config->writeEntry("PasswordAsStars", mPasswordStars);
     config->writeEntry("Saver", mSaver);
-	config->sync();
+    config->sync();
     delete config;
+
+    // TODO (GJ): When you changed anything, these two lines will give a segfault 
+    // on exit. I don't know why yet.
+
+    DCOPClient *client = kapp->dcopClient();
+    client->send("kdesktop", "KScreensaverIface", "configure()", "");
+
+    mChanged = false;
+    emit changed(false);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::findSavers()
 {
-	QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
-                                                    "*.desktop", false, true);
-    
-	QStringList::Iterator it = saverFileList.begin();
-	for ( ; it != saverFileList.end(); ++it ) {
-        SaverConfig *saver = new SaverConfig;
-        if (saver->read(*it)) {
-            mSaverList.append(saver);
-        }
-        else 
-            delete saver;
-	}
+    QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
+						"*.desktop", false, true);
+
+    QStringList::Iterator it = saverFileList.begin();
+    for ( ; it != saverFileList.end(); ++it ) {
+	SaverConfig *saver = new SaverConfig;
+	if (saver->read(*it))
+	    mSaverList.append(saver);
+	else 
+	    delete saver;
+    }
 
     mSaverList.sort();
 }
@@ -393,12 +434,12 @@ void KScreenSaver::findSavers()
 //
 void KScreenSaver::setMonitor()
 {
-	if (mPreviewProc->isRunning())
-	    // CC: this will automatically cause a "slotPreviewExited"
-	    // when the viewer exits
-	    mPreviewProc->kill( );
-	else
-	    slotPreviewExited(mPreviewProc);
+    if (mPreviewProc->isRunning())
+	// CC: this will automatically cause a "slotPreviewExited"
+	// when the viewer exits
+	mPreviewProc->kill();
+    else
+	slotPreviewExited(mPreviewProc);
 }
 
 //---------------------------------------------------------------------------
@@ -415,14 +456,13 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     if (mMonitor)
         delete mMonitor;
 
-	mMonitor = new KSSMonitor(mMonitorLabel);
-	mMonitor->setBackgroundColor(black);
-	mMonitor->setGeometry((mMonitorLabel->width()-200)/2+20,
+    mMonitor = new KSSMonitor(mMonitorLabel);
+    mMonitor->setBackgroundColor(black);
+    mMonitor->setGeometry((mMonitorLabel->width()-200)/2+20,
                           (mMonitorLabel->height()-160)/2+10, 157, 111);
     mMonitor->show();
 
-    if (mEnabled)
-    {
+    if (mEnabled) {
         mPreviewProc->clearArguments();
         
         QString saver = mSaverList.at(mSelected-1)->saver();
@@ -457,35 +497,34 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 //
 void KScreenSaver::slotScreenSaver(int indx)
 {
-	if ( indx == 0 ) {
-		mSetupBt->setEnabled( false );
-		mTestBt->setEnabled( false );
-		mEnabled = false;
-	}
-	else {
-		if (!mSetupProc->isRunning())
-			mSetupBt->setEnabled(!mSaverList.at(indx - 1)->setup().isEmpty());
-		mTestBt->setEnabled(true);
-        mSaver = mSaverList.at(indx - 1)->file();
-		mEnabled = true;
-	}
+    if ( indx == 0 ) {
+	mSetupBt->setEnabled( false );
+	mTestBt->setEnabled( false );
+	mEnabled = false;
+    } else {
+	if (!mSetupProc->isRunning())
+	    mSetupBt->setEnabled(!mSaverList.at(indx - 1)->setup().isEmpty());
+	mTestBt->setEnabled(true);
+	mSaver = mSaverList.at(indx - 1)->file();
+	mEnabled = true;
+    }
     
     mSelected = indx;
     
-	setMonitor();
-
-	mChanged = true;
+    setMonitor();
+    mChanged = true;
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotSetup()
 {
-	if ( !mEnabled )
-	    return;
+    if ( !mEnabled )
+	return;
 
-	if (mSetupProc->isRunning())
-	    return;
+    if (mSetupProc->isRunning())
+	return;
 	
     mSetupProc->clearArguments();
 
@@ -521,7 +560,7 @@ void KScreenSaver::slotTest()
 	    mTestProc = new KProcess;
     }
 
-	mTestProc->clearArguments();
+    mTestProc->clearArguments();
     QString saver = mSaverList.at(mSelected-1)->saver();
     QTextStream ts(&saver, IO_ReadOnly);
 
@@ -572,65 +611,57 @@ void KScreenSaver::slotStopTest()
     }
     mTestWin->releaseKeyboard();
     mTestWin->hide();
-	mTestBt->setEnabled(true);
+    mTestBt->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotTimeoutChanged(int to )
 {
-	mTimeout = to * 60;
-	mChanged = true;
+    mTimeout = to * 60;
+    mChanged = true;
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotLock( bool l )
 {
-	mLock = l;
-	mChanged = true;
+    mLock = l;
+    mChanged = true;
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotStars( bool s )
 {
-	mPasswordStars = s;
-	mChanged = true;
+    mPasswordStars = s;
+    mChanged = true;
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotPriorityChanged( int val )
 {
-	if ( val != mPriority )
-		mChanged = true;
-	
-	mPriority = val;
+    if (val == mPriority)
+	return;
+    
+    mPriority = val;
+    if (mPriority > 19)
+	mPriority = 19;
 
-	if ( mPriority > 19 )
-		mPriority = 19;
+    mChanged = true;
+    emit changed(true);
 }
 
 //---------------------------------------------------------------------------
 //
 void KScreenSaver::slotSetupDone(KProcess *)
 {
-  mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
-	setMonitor();
-	mSetupBt->setEnabled( true );
-}
-
-//---------------------------------------------------------------------------
-//
-void KScreenSaver::applySettings()
-{
-  if (mChanged)
-  {
-    writeSettings();
-    DCOPClient *client = kapp->dcopClient();
-    client->send("kdesktop", "KScreensaverIface", "configure()", "");
-    mChanged = false;
-  }
+    mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
+    setMonitor();
+    mSetupBt->setEnabled( true );
 }
 

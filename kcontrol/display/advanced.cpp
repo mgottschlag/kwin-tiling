@@ -19,6 +19,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kwm.h>
+#include <kcmodule.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -27,14 +28,19 @@
 #include "advanced.h"
 
 
+/**** DLL interface ****/
+
+extern "C" {
+    KCModule *create_advanced(QWidget *parent, const char *name) {
+	return new KAdvanced(parent, name);
+    }
+}
+
 /**** KAdvanced ****/
 
-KAdvanced::KAdvanced(QWidget *parent, Mode m)
-    : KDisplayModule(parent, m)
+KAdvanced::KAdvanced(QWidget *parent, const char *name)
+    : KCModule(parent, name)
 {
-    if (m == Init)
-	return;
-
     // Top layout
     QVBoxLayout *top = new QVBoxLayout(this);
     top->setMargin(10);
@@ -80,6 +86,41 @@ KAdvanced::KAdvanced(QWidget *parent, Mode m)
     m_pSettings = new KGlobalBackgroundSettings();
     apply();
 
+    setButtons(buttons());
+}
+
+
+void KAdvanced::load()
+{
+    m_pSettings->readSettings();
+    apply();
+    emit changed(false);
+}
+
+
+void KAdvanced::save()
+{
+    m_pSettings->writeSettings();
+    KWM::sendKWMCommand("kbgwm_reconfigure");
+    emit changed(false);
+}
+
+
+void KAdvanced::defaults()
+{
+    m_pSettings->setLimitCache(_defLimitCache);
+    m_pSettings->setExportBackground(_defExport);
+    m_pSettings->setDockPanel(_defDock);
+    m_pSettings->setCacheSize(_defCacheSize);
+    apply();
+    emit changed(true);
+}
+
+
+int KAdvanced::buttons()
+{
+    return KCModule::Help | KCModule::Default | KCModule::Reset |
+	   KCModule::Cancel | KCModule::Apply | KCModule::Ok;
 }
 
 
@@ -103,6 +144,7 @@ void KAdvanced::slotLimitCache(bool limit)
 {
     m_pSettings->setLimitCache(limit);
     apply();
+    emit changed(true);
 }
 
 
@@ -110,6 +152,7 @@ void KAdvanced::slotCacheSize(int size)
 {
     m_pSettings->setCacheSize(size);
     apply();
+    emit changed(true);
 }
 
 
@@ -117,6 +160,7 @@ void KAdvanced::slotExportBackground(bool exp)
 {
     m_pSettings->setExportBackground(exp);
     apply();
+    emit changed(true);
 }
 
 
@@ -124,30 +168,9 @@ void KAdvanced::slotDockPanel(bool dock)
 {
     m_pSettings->setDockPanel(dock);
     apply();
+    emit changed(true);
 }
 
-
-void KAdvanced::loadSettings()
-{
-    qDebug("KAdvanced::loadSettings");
-}
-
-
-void KAdvanced::applySettings()
-{
-    m_pSettings->writeSettings();
-    KWM::sendKWMCommand("kbgwm_reconfigure");
-}
-
-
-void KAdvanced::defaultSettings()
-{
-    m_pSettings->setLimitCache(_defLimitCache);
-    m_pSettings->setExportBackground(_defExport);
-    m_pSettings->setDockPanel(_defDock);
-    m_pSettings->setCacheSize(_defCacheSize);
-    apply();
-}
 
 
 #include "advanced.moc"

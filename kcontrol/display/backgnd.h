@@ -19,10 +19,8 @@
 #include <qevent.h>
 #include <qwidget.h>
 
-#include <kcontrol.h>
-
+#include <kcmodule.h>
 #include <bgdefaults.h>
-#include "display.h"
 
 class QCheckBox;
 class QListBox;
@@ -64,18 +62,23 @@ protected:
 
 
 /**
- * The "background" tab in kcmdisplay.
+ * The Desktop/Background tab in kcontrol.
  */
-class KBackground: public KDisplayModule
+class KBackground: public KCModule
 {
     Q_OBJECT
 
 public:
-    KBackground(QWidget *parent, Mode mode);
+    KBackground(QWidget *parent, const char *name);
 
-    virtual void loadSettings();
-    virtual void applySettings();
-    virtual void defaultSettings();
+    virtual void load();
+    virtual void save();
+    virtual void defaults();
+
+    int buttons();
+
+signals:
+    void changed(bool);
 
 private slots:
     void slotSelectDesk(int desk);
