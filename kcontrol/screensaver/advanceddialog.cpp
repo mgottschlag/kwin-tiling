@@ -14,10 +14,11 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const ch
  : KDialogBase( parent, name, true, i18n( "Advanced Options" ),
                 Ok | Cancel, Ok, true )
 {
-	readSettings();
-
+	
 	dialog = new AdvancedDialog(this);
 	setMainWidget(dialog);
+
+	readSettings();
 
 	connect(dialog->qcbPriority, SIGNAL(activated(int)),
 		this, SLOT(slotPriorityChanged(int)));
@@ -39,24 +40,19 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const ch
 
 void KScreenSaverAdvancedDialog::readSettings()
 {
-    KConfig *config = new KConfig( "kdesktoprc");
-    config->setGroup( "ScreenSaver" );
-
-    mPriority = config->readNumEntry("Priority", 19);
-    if (mPriority < 0) mPriority = 0;
-    if (mPriority > 19) mPriority = 19;
-
-    
-       dialog->setTopLeftMode(2);
-//    dialog->setMode(dialog->qcbPriority, 0);
-    //int foo = config->readNumEntry("ActionTopLeft", 0);
-    // kdDebug() << "setting active " << dialog->qcbTopLeft->currentItem() << endl;
-//     dialog->qcbTopLeft->setCurrentItem(foo);
-//     dialog->qcbTopRight->setCurrentItem(config->readNumEntry("ActionTopRight", 0));
-//     dialog->qcbBottomLeft->setCurrentItem(config->readNumEntry("ActionBottomLeft", 0));
-//     dialog->qcbBottomRight->setCurrentItem(config->readNumEntry("ActionBottomRight", 0));*/
-    mChanged = false;
-    delete config;
+	KConfig *config = new KConfig("kdesktoprc");
+	config->setGroup("ScreenSaver");
+	
+	mPriority = config->readNumEntry("Priority", 19);
+	if (mPriority < 0) mPriority = 0;
+	if (mPriority > 19) mPriority = 19;
+	
+	dialog->qcbTopLeft->setCurrentItem(config->readNumEntry("ActionTopLeft", 0));    
+	dialog->qcbTopRight->setCurrentItem(config->readNumEntry("ActionTopRight", 0));
+	dialog->qcbBottomLeft->setCurrentItem(config->readNumEntry("ActionBottomLeft", 0));
+	dialog->qcbBottomRight->setCurrentItem(config->readNumEntry("ActionBottomRight", 0));
+	mChanged = false;
+	delete config;
 }
 
 void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
@@ -81,43 +77,44 @@ void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 
 void KScreenSaverAdvancedDialog::slotOk()
 {
-    if (mChanged) {
-        KConfig *config = new KConfig("kdesktoprc");
-        config->setGroup( "ScreenSaver" );
-
-        config->writeEntry("Priority", mPriority);
-        /*config->writeEntry(
-            "ActionTopLeft", dialog->qcbTopLeft->currentItem());
-        config->writeEntry(
-            "ActionBottomLeft", dialog->qcbTopRight->currentItem());
-        config->writeEntry(
-            "ActionTopRight", dialog->qcbBottomLeft->currentItem());
-        config->writeEntry(
-            "ActionBottomRight", dialog->qcbBottomRight->currentItem());
-        config->sync();*/
-        delete config;
-    }
-    accept();
+	if (mChanged)
+	{
+		KConfig *config = new KConfig("kdesktoprc");
+		config->setGroup( "ScreenSaver" );
+	
+		config->writeEntry("Priority", mPriority);
+		config->writeEntry(
+		"ActionTopLeft", dialog->qcbTopLeft->currentItem());
+		config->writeEntry(
+		"ActionTopRight", dialog->qcbTopRight->currentItem());
+		config->writeEntry(
+		"ActionBottomLeft", dialog->qcbBottomLeft->currentItem());
+		config->writeEntry(
+		"ActionBottomRight", dialog->qcbBottomRight->currentItem());
+		config->sync();
+		delete config;
+	}
+	accept();
 }
 
 void KScreenSaverAdvancedDialog::slotChangeBottomRightCorner(int)
 {
-    mChanged = true;
+	mChanged = true;
 }
 
 void KScreenSaverAdvancedDialog::slotChangeBottomLeftCorner(int)
 {
-    mChanged = true;
+	mChanged = true;
 }
 
 void KScreenSaverAdvancedDialog::slotChangeTopRightCorner(int)
 {
-    mChanged = true;
+	mChanged = true;
 }
 
 void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 {
-    mChanged = true;
+	mChanged = true;
 }
 
 /* =================================================================================================== */
@@ -134,7 +131,6 @@ AdvancedDialog::~AdvancedDialog()
  
 }
 
-/*FIXME -- this should work but crashes so needs valgrinding on an x86 box
 void AdvancedDialog::setMode(QComboBox *box, int i)
 {
 	box->setCurrentItem(i);
@@ -143,47 +139,4 @@ void AdvancedDialog::setMode(QComboBox *box, int i)
 int AdvancedDialog::mode(QComboBox *box)
 {
 	return box->currentItem();
-}*/
-
-
-void AdvancedDialog::setTopLeftMode(int i)
-{
-	kdDebug() << "setting mode to " << i << endl;
-	abort();
-	qcbTopLeft->setCurrentItem(i);
-}
-
-void AdvancedDialog::setTopRightMode(int i)
-{
-	qcbTopRight->setCurrentItem(i);
-}
-
-void AdvancedDialog::setBottomLeftMode(int i)
-{
-	qcbBottomLeft->setCurrentItem(i);
-}
-
-void AdvancedDialog::setBottomRightMode(int i)
-{
-	qcbBottomRight->setCurrentItem(i);
-}
-
-int AdvancedDialog::topLeftMode()
-{
-	return qcbTopLeft->currentItem();
-}
-
-int AdvancedDialog::topRightMode()
-{
-	return qcbTopLeft->currentItem();
-}
-
-int AdvancedDialog::bottomLeftMode()
-{
-	return qcbTopLeft->currentItem();
-}
-
-int AdvancedDialog::bottomRightMode()
-{
-	return qcbTopLeft->currentItem();
 }

@@ -19,16 +19,8 @@ class AdvancedDialog : public AdvancedDialogImpl
 public:
 	AdvancedDialog(QWidget *parent = 0, const char *name = 0);
 	~AdvancedDialog();
-/*	void setMode(QComboBox *box, int i);
-	int mode(QComboBox *box);*/
-	void setTopLeftMode(int);
-	void setTopRightMode(int);
-	void setBottomLeftMode(int);
-	void setBottomRightMode(int);
-	int topLeftMode();
-	int topRightMode();
-	int bottomLeftMode();
-	int bottomRightMode();
+	void setMode(QComboBox *box, int i);
+	int mode(QComboBox *box);
 };
 
 /* =================================================================================================== */
