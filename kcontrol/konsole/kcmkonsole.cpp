@@ -70,6 +70,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)), SLOT( changed() ));
     connect(dialog->frameCB,SIGNAL(toggled(bool)), SLOT( changed() ));
     connect(dialog->line_spacingSB,SIGNAL(valueChanged(int)), SLOT( changed() ));
+    connect(dialog->matchTabWinTitleCB,SIGNAL(toggled(bool)), SLOT( changed() ));
     connect(dialog->silence_secondsSB,SIGNAL(valueChanged(int)), SLOT( changed() ));
     connect(dialog->word_connectorLE,SIGNAL(textChanged(const QString &)), SLOT( changed() ));
     connect(dialog->SchemaEditor1, SIGNAL(changed()), SLOT( changed() ));
@@ -93,6 +94,7 @@ void KCMKonsole::load(bool useDefaults)
     dialog->terminalSizeHintCB->setChecked(config.readBoolEntry("TerminalSizeHint",false));
     bidiOrig = config.readBoolEntry("EnableBidi",false);
     dialog->bidiCB->setChecked(bidiOrig);
+    dialog->matchTabWinTitleCB->setChecked(config.readBoolEntry("MatchTabWinTitle",false));
     dialog->warnCB->setChecked(config.readBoolEntry("WarnQuit",true));
     dialog->ctrldragCB->setChecked(config.readBoolEntry("CtrlDrag",true));
     dialog->cutToBeginningOfLineCB->setChecked(config.readBoolEntry("CutToBeginningOfLine",false));
@@ -130,6 +132,7 @@ void KCMKonsole::save()
     config.writeEntry("TerminalSizeHint", dialog->terminalSizeHintCB->isChecked());
     bool bidiNew = dialog->bidiCB->isChecked();
     config.writeEntry("EnableBidi", bidiNew);
+    config.writeEntry("MatchTabWinTitle", dialog->matchTabWinTitleCB->isChecked());
     config.writeEntry("WarnQuit", dialog->warnCB->isChecked());
     config.writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
     config.writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>KCMKonsoleDialog</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,6 +11,9 @@
             <width>507</width>
             <height>490</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>KCMKonsoleDialog</string>
     </property>
     <property name="layoutMargin" stdset="0">
     </property>
@@ -45,7 +48,61 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
+                    <spacer row="2" column="0">
+                        <property name="name">
+                            <cstring>Spacer3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
                     <widget class="QGroupBox" row="1" column="0">
+                        <property name="name">
+                            <cstring>GroupBox3</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Double Click</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel1_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Consider the following characters &amp;part of a word when double clicking:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>word_connectorLE</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit" row="1" column="0">
+                                <property name="name">
+                                    <cstring>word_connectorLE</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>GroupBox2</cstring>
                         </property>
@@ -62,6 +119,9 @@
                                 </property>
                                 <property name="text">
                                     <string>Show terminal si&amp;ze after resizing</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+Z</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
@@ -120,6 +180,23 @@
                                     <string>Use Ctrl+S/Ctrl+Q flow control</string>
                                 </property>
                             </widget>
+                            <spacer row="11" column="3">
+                                <property name="name">
+                                    <cstring>Spacer3</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
                             <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
                                 <property name="name">
                                     <cstring>bidiCB</cstring>
@@ -128,56 +205,7 @@
                                     <string>Enable bidirectional text rendering</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="9" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel1_4</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Line spacing:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>line_spacingSB</cstring>
-                                </property>
-                            </widget>
-                            <widget class="KIntNumInput" row="9" column="1">
-                                <property name="name">
-                                    <cstring>line_spacingSB</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="minValue">
-                                    <number>0</number>
-                                </property>
-                                <property name="maxValue">
-                                    <number>8</number>
-                                </property>
-                            </widget>
-                            <spacer row="9" column="3">
-                                <property name="name">
-                                    <cstring>Spacer2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="10" column="0">
+                            <widget class="QLabel" row="11" column="0">
                                 <property name="name">
                                     <cstring>SilenceLabel</cstring>
                                 </property>
@@ -196,7 +224,7 @@
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="10" column="1">
+                            <widget class="KIntNumInput" row="11" column="1" rowspan="1" colspan="2">
                                 <property name="name">
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
@@ -212,44 +240,28 @@
                                     <number>1</number>
                                 </property>
                             </widget>
-                            <spacer row="10" column="3">
+                            <widget class="KIntNumInput" row="10" column="2">
                                 <property name="name">
-                                    <cstring>Spacer3</cstring>
+                                    <cstring>line_spacingSB</cstring>
                                 </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
+                                <property name="minValue">
+                                    <number>0</number>
                                 </property>
-                            </spacer>
-                        </grid>
-                    </widget>
-                    <widget class="QGroupBox" row="2" column="0">
-                        <property name="name">
-                            <cstring>GroupBox3</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Double Click</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel1_3</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Consider the following characters &amp;part of a word when double clicking:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>word_connectorLE</cstring>
+                                <property name="maxValue">
+                                    <number>8</number>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="0">
+                            <widget class="QLabel" row="10" column="0" rowspan="1" colspan="2">
                                 <property name="name">
-                                    <cstring>word_connectorLE</cstring>
+                                    <cstring>TextLabel1_4</cstring>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
@@ -259,20 +271,40 @@
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
+                                <property name="text">
+                                    <string>&amp;Line spacing:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>line_spacingSB</cstring>
+                                </property>
+                            </widget>
+                            <spacer row="10" column="3">
+                                <property name="name">
+                                    <cstring>Spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="4">
+                                <property name="name">
+                                    <cstring>matchTabWinTitleCB</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Set tab title to match window title</string>
+                                </property>
                             </widget>
                         </grid>
                     </widget>
-                    <spacer row="3" column="0">
-                        <property name="name">
-                            <cstring>Spacer3</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                    </spacer>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -350,14 +382,12 @@
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+        <data format="PNG" length="256">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b000000c749444154388dad55db1184200c4c180bb005eab1cd6b8112b40d4bf1bee2486ef3006fbf1c93ece605f07eece4e1a4ed42ff2b35f6e2961132e46309941952ed8f628a761a21f56217cb20b04a45fe276d97f8ffb422431ad96e62a4ee057a83131bcc38431a6d057f8eb5cb36438afcb5cded719614011e9088308374c61aa9adb0e0651b5552b4b29efaacb099312ad5da5b2d50a93124463b2adf516fbb8cbd1354a9b1b667c8a787674144f9f982bcb93635ba8cb3fd1b2616f251013403fee763fabce8bff0aa6c98500331e50000000049454e44ae426082</data>
     </image>
     <image name="image1">
-        <data format="XPM.GZ" length="4350">789c6dd7594f23471007f0f7fd14d6d6db2aaaf58c3db647511eb831b7317794879ac30760cc61c010e5bba7dcf5af5688167664fdb66bbaababbb67cccf1f8dab93c3c68f9fdf5e16b298968d7222cf8d1fd5eb6cf6f1e75f7ffcfded7b9a3656ff9aad46fafdb76fdf078b46d9389a3fd42bf04841699e964933b830b79a7019dd0b96955b895b5a703bcd572e08eea576ff6570ae0eedd477b792103f854b8b2fc6d1163f77237e646e37113f89b6f8307e3bf1785a8b0eedbc696eb7ad9db7e01ee6476ee4ffe0c6fd158c7c69182cde4eec6e87fea50dfbf8176e6ba7d07f96669999cfa325ccaf862bcc97a36dbccf60f178cee11cde706761f16917ae30fe6b7488a7851bf14d7327417f676eb4f756eea41e2f57e6d83e83919f6cba117f04235fd9765b3b0fa36dfc398cf973edc67a6fb951ffe768ab6765ee26b8dff213ef5f4630e2b9e7463ea7ee8ee5ff60ee2618af8eb6fe3238437eb91bf1299cdbfacad3cadd5617f5a11738c7fe4adcb8ffd68d7aeec15e8fc3683b9f62ee2518ef33dafa3f75e3bc957086f86eb4d56f3db8e8e6dd56f01a5cc1bbe65e629673d8ebd18d0efdc9058cf9f2c08df9e630ce037db8719ec37c7a9a7fb708f10267b65e7cef46fb3e9ca3fd23dad6ef0cf67abe99f304f95ec3a8871cbb71be52d8d777e8b6fee412f6f958be3adf5ea817b561afe7d86ded7c67ce13c46fc37ede2766c17a17059cd9f38e466e8c3f8eb6fd700f0b9ef7095c37cd3d37de178f2be76dcf876fa343bd790267f012f67a77cc319f69b4ed872e2ca8e732daeabfe3c6fa9cc235f21f9b8bd4f2a5cd687bfedbfd659ee7ede017b842becf6eb44fa3cbd0df8559b0ffe808ceb0ff37e01afba3652e52cc87a26dbe276ecca7097790ff73b4cdef0616ac4fdf6df1c2d1d67ee8c6f80318eb4bd1180ff529513f0ecf7b694b62f5a002ceccb2662e523c2fb7605f9f0fd8fbbf75e3bc2dcd3e9ebcb9f17ce8c05e8f83685bcf701e44eb2db65e4fd1b65eebe62245be53b8c6f3ffdd8dfd3933fbf884761f5f0edcd88f951bf118bf44bde926dae24fe01ae7af76e3f9169e2f45bb143c0f5fdcf6fea23b18f773eac6f3e63ddac6db75e37df5e8c6fbae65aebcde6d37beaf84f528aa52f03c9dc3359ea79939c627d136deab1befaf75b883ef23e76e3ccfaea36d7dc2f795322b05ebfb0ad738af7db7ad371f99fd7e59b8b13f276e9cdf1318f5e54337e6d78cb67cf761ec170efba1acaa1afd9db92d3f3a36d729ea77efc6f33cbccf2beddfe6478fe6d85e45dbfd851bf1577007f5d877e3bc86f5a9ea3a2d6cffdfc1debe116df5db73a39e37b0e777191dda257c7fa83b6e8a2eaae00eeceb13d6b7d69f325b79b058fd32b170c1a55ebffaac2ccae2b9e6118f79c253bd6ef9ee3fd7587fef79c60f7acf3cc617fcc84ffcac6d8ffcc20b7ee5377ee7257ff027aff1bac66ff0269716cf5b1ab7cd3bbcabb17ddee37d3ee0433ee2633ee1019ff290cff89c2ff89229c48b66f1ac3d5df135df7093134eb9c56dcef4b3c35dee71ce393111dbfa8c784a4205955451cd1d1ad1982634a55bbad3f80eddd38c1ef882e66cf52ab5ff2b8d7ea4277aa6175ad06bb866f446efb4d4df0ffad4fed762ffb7b44e1b9cd2266dd142c75e5ddb3cd0bb3e347a477bd9d5f83ee245e3f7689f0ee830f67d44c77412ee186946033aa5e197fecfe85c7bf7be2fe892aee89a6ea84989f6bfa434f4eff9df52c509b5d0779b32ea684d13ea528f728d1e882ebfce37f6cf077422b4ea5b440ad14af1a15452ab473aee52c65ff39789b64fe955f44eb9937b5d858c5b32d377c0c32a7fee7ecd5fe61aff284ff22c2fb290577993775db1443fb53ef2219f5ff2bf93356d5b970dd9d41eb77820dbb223bbab155ed55ffab2f725ffb1eccb81aed6931cca116ab490633909d10339fd5ffdef795d869ae7923bc27226e772415d5986b51d683663b9d4fcfbb1ff190fe54aaec35aeaa577ee20f24673e94b531249a585fc2b69ebfe3ed7dae91f75ba964b5c03e9d344ba1add93bce0826c3f87f3b2a9fb6f18aeba10ba2f563f25eb1b563771a5d17531e2513c5fba538b3111cd690dd73c7ef6a95f4c8aa99de12fe77da4951de9ffffea730be7fd9fdfbffd0b690edc6c</data>
+        <data format="PNG" length="1114">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000042149444154388d8d95c18b1c4514c67fbb29e5b54ea05b26da1d36b08d096e8b11261871837bc8e282ac7ac82187e049a317e32d37110992bf42123c694eea414c0e0bf1b0ec6c402139485a54e8810c54c10e741146fa110bd643f74c12bd642e4d75f77cf5d5ef7dafdfc2ce7087d9eff32fdfdff74e5114104011e489d6e952cce5cfbe5998692dec0c77b87aedd3fddd9f2b3efce02291082209aa3504685022e4ffd7a000a82a765c515615ce95acae659c3f7765c100ec6e575cf8f822e991025f3b6a6f890c484f181ccfc1583428f5d4e2fe84da039aa04121b40eb32483a0ec6e5bce9f8385d36fa7fb9b1b17c8f31cbfe7a95c45be94520c72b2141a1caa160d1666e24ea94aa11ee7685054159d2ada34d41387c40dc63b8844f0b5c73a4bb19cb3f9de001f2aac1fa23aa209168c004224902e29d22ff1e38abbdb275055c4800610233867311a1491847a62c98f66ac6f14d8e99072f22daa15b68a8108424d6422e24c88e3966fbce4c9d786945b27f0be0103ed13c16004d59a2c4d58df28a87548e9aee2274ab95d60c7193c9a0281fc959ae2a4450364a9e2572c7a2b43438374ef2dd2154012d050514dbec7396578a3130d9d6850066f0ad9d186f2d78cdbbb799b0a202f2c48d3aebbb418310240b112637588574bf54b8efaa4fd9b691dacbf5b305813542bae63a9eee4c4694d967b5494eca8c7ef0933bdc5d90e6a2caa0e3f013b7adce9fa5b03d637561113a30106a71d18c5fd9677058338ad01e91c0b8b743b880182ce19cd9c0e5e2b583fbdda565d3d04cfedad180942133af201b2bc3588e111c680068f489780ce69b192b279768088524f2b3458ea694d3de99a4323bc976ed34eb86b98c51993f6be10f77240c99685cd731991f1582df15aa15a213d583f5313a7806988fb8a0640e336359d9e9933568bf44062214ba19e2a7652a13d8b068ff596b807182189234e9da9f1ceb78c81b28c3ac6fe21e306c58e41d5118952acd6a0c2f56b9e6a5c72f346cdcd6b19a3bf8010010d714f89533b674c90c7189b598eab12a45fb5c75b8253672b863fbcccf5af93b6904119fe9851bf5153ac3a746ae7b9d5698c1dc58f313e70e4707ce9d84bafa2f79fc23fb8c7c1438ef04031a2642fee21060ec69ee47020796ecaa12313ccd333d1b67935047acf2be3bb11aa010dbe656cc755dbe3b772084a7ebc6d5711253b593dfcc0cc8fcd3cafda455512c7f200ec56cbfac0f1d7d34b7fdf0f98fd88a92a7e9cb0e70cc933c0b38a2c823ea0bd76c70c016adb67f47bc2a117a6d40abeea33fa23c2fb867edfb413e4a34fded94ffb3991c46dc7754cd3634ad2af490b857f5a5137126a97e02a8120a485235b6a28ef80bd077ee2b9f2d54fed04595dcbd8ddb6c4bd87334c10cadb2064e856177e7864e669fbe1df154a0142839f7ad2e5b6880bff1da66eece78e315d959f609da670f98befe6c3f45fb42672c9cce08fa40000000049454e44ae426082</data>
     </image>
 </images>
-<connections>
-</connections>
 <includes>
     <include location="global" impldecl="in declaration">kcolorbutton.h</include>
     <include location="global" impldecl="in declaration">knuminput.h</include>
@@ -365,4 +395,12 @@
 </includes>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+<includehints>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>schemaeditor.h</includehint>
+    <includehint>sessioneditor.h</includehint>
+</includehints>
 </UI>
