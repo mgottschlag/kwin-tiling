@@ -22,43 +22,26 @@
 #ifndef __kcdialog_h__
 #define __kcdialog_h__
 
-#include <qdialog.h>
+#include <kdialogbase.h>
 
-class QPushButton;
-class QFrame;
 class KCModule;
 
-class KCDialog : public QDialog
+class KCDialog : public KDialogBase
 {
   Q_OBJECT
-
 public:
-
-  KCDialog(KCModule *client, const QString &docpath=QString::null, QWidget *parent=0, const char *name=0, bool modal=false, WFlags f=0);
-
+  KCDialog(KCModule *client, int b, const QString &docpath=QString::null, QWidget *parent=0, const char *name=0, bool modal=false);
 
 protected slots:
 
-  void helpClicked();
-  void defaultClicked();
-  void resetClicked();
-  void cancelClicked();
-  void applyClicked();
-  void okClicked();
+  virtual void slotDefault();
+  virtual void slotUser1(); // Reset
+  virtual void slotApply();
+  virtual void slotOk();
   void clientChanged(bool state);
 
-
 private:
-
   KCModule    *_client;
-  QPushButton *_help;
-  QPushButton *_default;
-  QPushButton *_reset;
-  QPushButton *_cancel;
-  QPushButton *_apply;
-  QPushButton *_ok;
-  QFrame      *_sep;
-  QString     _docpath;
 };
 
 #endif

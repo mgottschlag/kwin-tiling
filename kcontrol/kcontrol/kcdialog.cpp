@@ -19,119 +19,56 @@
 
 */
 
-#include <qframe.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-
-
 #include <klocale.h>
 #include <kapp.h>
-
 
 #include "kcdialog.h"
 #include "kcdialog.moc"
 #include "kcmodule.h"
 
-// proxywidget.cpp has it too, let's share if using final
-#ifndef KDE_USE_FINAL
-static void setVisible(QPushButton *btn, bool vis)
-{
-  if (vis)
-    btn->show();
-  else
-    btn->hide();
-}
-#endif
-
-KCDialog::KCDialog(KCModule *client, const QString &docpath, QWidget *parent, const char *name, bool modal, WFlags f)
-  : QDialog(parent, name, modal, f), _client(client), _docpath(docpath)
+KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *parent, const char *name, bool modal)
+  : KDialogBase(parent, name, modal, QString::null, 
+	(b & KCModule::Help ? Help : 0) |
+	(b & KCModule::Default ? Default : 0) |
+	(b & KCModule::Reset ? User1 : 0) |
+	(b & KCModule::Cancel ? Cancel : 0) |
+	(b & KCModule::Apply ? Apply : 0) |
+	(b & KCModule::Ok ? Ok : 0),
+	Ok, false, i18n("&Reset")),
+    _client(client)
 {
   client->reparent(this,0,QPoint(0,0),true);
+  setMainWidget(client);
   connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
-  _sep = new QFrame(this);
-  _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
-  _sep->show();
-
-  _help = new QPushButton(i18n("&Help"), this);
-  _default = new QPushButton(i18n("&Default"), this);
-  _reset = new QPushButton(i18n("&Reset"), this);
-  _cancel = new QPushButton(i18n("&Cancel"), this);
-  _apply = new QPushButton(i18n("&Apply"), this);
-  _ok = new QPushButton(i18n("&OK"), this);
-
-  // only enable the requested buttons
-  int b = _client->buttons();
-  setVisible(_help, b & KCModule::Help);
-  setVisible(_default, b & KCModule::Default);
-  setVisible(_reset, b & KCModule::Reset);
-  setVisible(_cancel, b & KCModule::Cancel);
-  setVisible(_apply, b & KCModule::Apply);
-  setVisible(_ok, b & KCModule::Ok);
+  setHelp( docpath, QString::null );
 
   // disable initial buttons
-  _reset->setEnabled(false);
-  _apply->setEnabled(false);
-
-  connect(_help, SIGNAL(clicked()), this, SLOT(helpClicked()));
-  connect(_default, SIGNAL(clicked()), this, SLOT(defaultClicked()));
-  connect(_reset, SIGNAL(clicked()), this, SLOT(resetClicked()));
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(cancelClicked()));
-  connect(_apply, SIGNAL(clicked()), this, SLOT(applyClicked()));
-  connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
-
-  QGridLayout *top = new QGridLayout(this, 4, 6, 5);
-  top->addMultiCellWidget(client, 0, 0, 0, 6);
-  top->addMultiCellWidget(_sep, 1, 1, 0, 6);
-  top->addWidget(_help, 2, 0);
-  top->addWidget(_default, 2, 1);
-  top->addWidget(_reset, 2, 2);
-  top->addWidget(_apply, 2, 4);
-  top->addWidget(_ok, 2, 5);
-  top->addWidget(_cancel, 2, 6);
-
-  top->setRowStretch(0, 1);
-  top->setColStretch(3, 1);
-
-  top->activate();
+  enableButton(User1, false);
+  enableButton(Apply, false);
 }
 
-
-void KCDialog::helpClicked()
-{
-  if(_docpath != QString::null)
-    kapp->invokeHTMLHelp(_docpath, "");
-}
-
-
-void KCDialog::defaultClicked()
+void KCDialog::slotDefault()
 {
   _client->defaults();
   clientChanged(true);
 }
 
 
-void KCDialog::resetClicked()
+void KCDialog::slotUser1()
 {
   _client->load();
   clientChanged(false);
 }
 
-
-void KCDialog::cancelClicked()
-{
-  reject();
-}
-
-
-void KCDialog::applyClicked()
+void KCDialog::slotApply()
 {
   _client->save();
   clientChanged(false);
 }
 
 
-void KCDialog::okClicked()
+void KCDialog::slotOk()
 {
   _client->save();
   accept();
@@ -140,6 +77,6 @@ void KCDialog::okClicked()
 void KCDialog::clientChanged(bool state)
 {
   // enable/disable buttons
-  _reset->setEnabled(state);
-  _apply->setEnabled(state);
+  enableButton(User1, state);
+  enableButton(Apply, state);
 }
