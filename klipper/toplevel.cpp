@@ -462,11 +462,11 @@ void TopLevel::setURLGrabberEnabled( bool enable )
     if ( !bURLGrabber ) {
         delete myURLGrabber;
         myURLGrabber = 0L;
-	toggleURLGrabAction->setText(i18n("Enable &actions"));
+	toggleURLGrabAction->setText(i18n("Enable &Actions"));
     }
 
     else {
-	toggleURLGrabAction->setText(i18n("&Actions enabled"));
+	toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber();
             connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
