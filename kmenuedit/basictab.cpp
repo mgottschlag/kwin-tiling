@@ -146,6 +146,16 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     layout->setRowStretch(0, 2);
 
+    //disable all group at the begining.
+    //because there is not file selected.
+    _nameEdit->setEnabled(false);
+    _commentEdit->setEnabled(false);
+    _execEdit->setEnabled(false);
+    _typeEdit->setEnabled(false);
+    _path_group->setEnabled(false);
+    _term_group->setEnabled(false);
+    _uid_group->setEnabled(false);
+
     connect( this, SIGNAL( changed()), SLOT( slotChanged()));
 }
 
@@ -163,6 +173,8 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     bool isDF = desktopFile.find(".desktop") > 0;
 
     // set only basic attributes if it is not a .desktop file
+    _nameEdit->setEnabled(true);
+    _commentEdit->setEnabled(true);
     _execEdit->setEnabled(isDF);
     _typeEdit->setEnabled(isDF);
     _path_group->setEnabled(isDF);

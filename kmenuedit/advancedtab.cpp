@@ -60,6 +60,10 @@ AdvancedTab::AdvancedTab( QWidget *parent, const char *name )
     if( !KHotKeys::present())
         setEnabled( false ); // disable the whole tab if no KHotKeys found
     _khotkeysNeedsSave = false;
+
+    //disable all because at the begining
+    //there isn't a file selected
+    setEnabled( false );
 }
 
 void AdvancedTab::setDesktopFile(const QString& desktopFile)
