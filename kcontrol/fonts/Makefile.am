@@ -4,9 +4,9 @@ INCLUDES = $(all_includes)
 
 kde_module_LTLIBRARIES = libkcm_fonts.la
 
-libkcm_fonts_la_SOURCES = fonts.cpp ../display/krdb.cpp
+libkcm_fonts_la_SOURCES = fonts.cpp
 libkcm_fonts_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_fonts_la_LIBADD = $(LIB_KDEUI)
+libkcm_fonts_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/kcontrol/display/libkrdb.la
 libkcm_fonts_la_METASOURCES = fonts.moc
 
 noinst_HEADERS = fonts.h
