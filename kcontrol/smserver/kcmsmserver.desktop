@@ -37,7 +37,7 @@ Name[ja]=セッションマネージャー
 Name[ko]=세션 관리자
 Name[lt]=Sesijos valdyklė
 Name[lv]=Sesiju Menedžeris
-Name[mt]=Manager tas-Sessjoni
+Name[mt]=Manager tas-sessjoni
 Name[nb]=Sesjonbehandler
 Name[nl]=Sessiebeheerder
 Name[nn]=Øktbehandlar
@@ -62,7 +62,7 @@ Name[zh_CN]=会话管理器
 Name[zh_TW]=工作階段管理程式
 Name[zu]=Umphathi Wenhlanganiso
 
-Comment=You can configure the session manager here
+Comment=Configure the session manager and logout settings
 Comment[af]=jy kan konfigureer die sessie bestuurder hier
 Comment[ar]=تستطيع اعداد مدير الجلسات هنا
 Comment[az]=İclas idarəçisini buradan quraşdıra bilərsiniz
