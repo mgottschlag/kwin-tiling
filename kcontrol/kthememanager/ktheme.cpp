@@ -474,7 +474,7 @@ void KTheme::apply()
     {
         KConfig * cursorConf = KGlobal::config();
         cursorConf->setGroup( "KDE" );
-        cursorConf->writeEntry( "cursorTheme", cursorsElem.attribute( "name" ) );
+        cursorConf->writeEntry( "cursorTheme", cursorsElem.attribute( "name" ), true, true );
         cursorConf->sync();
         // FIXME is there a way to notify KDE of cursor changes?
     }
