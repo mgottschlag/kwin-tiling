@@ -12,4 +12,4 @@ SUBDIRS =
 libkcm_samba_la_METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_input_la_SOURCES) -o $(podir)/kcminput.pot
+	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(libkcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot
