@@ -664,6 +664,22 @@ DefineLocal (FILE *file, Xauth *auth)
 /* Argh! this is evil. But ConvertAddr works only with Xdmcp.h */
 #ifdef XDMCP
 
+/*
+ * Call ConvertAddr(), and if it returns an IPv4 localhost, convert it
+ * to a local display name.  Meets the _XTransConvertAddress's localhost
+ * hack.
+ */
+ 
+static int ConvertAuthAddr
+(XdmcpNetaddr saddr, int *len, char **addr)
+{
+    int ret;
+    ret = ConvertAddr(saddr, len, addr);
+    if (ret == FamilyInternet && *(in_addr_t *)*addr == htonl(0x7F000001L))
+	ret = FamilyLocal;
+    return ret;
+}
+
 #ifdef SYSV_SIOCGIFCONF
 
 /* Deal with different SIOCGIFCONF ioctl semantics on SYSV, SVR4 */
@@ -1015,7 +1031,7 @@ writeRemoteAuth (FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
     if (!peer || peerlen < 2)
 	return;
     setAuthNumber (auth, name);
-    family = ConvertAddr (peer, &peerlen, &addr);
+    family = ConvertAuthAddr (peer, &peerlen, &addr);
     Debug ("writeRemoteAuth: family %d\n", family);
     if (family != FamilyLocal)
     {
