@@ -125,7 +125,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
   connect(use_theme_cb, SIGNAL(clicked()), SLOT(use_theme_clicked()));
   theme_label = new QLabel(hbox1);
   theme_label->setFixedSize(50,50);
-  theme_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  theme_label->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
   theme_label->setAlignment(AlignCenter);
   hbox1->setSpacing(10); 
   hbox1->setStretchFactor(use_theme_cb, 2); 
