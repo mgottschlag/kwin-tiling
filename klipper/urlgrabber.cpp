@@ -72,6 +72,14 @@ URLGrabber::~URLGrabber()
     delete myActions;
 }
 
+void URLGrabber::invokeAction( const QString& clip )
+{
+    if ( !clip.isEmpty() )
+	myClipData = clip;
+
+    actionMenu( false );
+}
+
 
 void URLGrabber::setActionList( ActionList *list )
 {

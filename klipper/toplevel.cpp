@@ -163,7 +163,7 @@ void TopLevel::newClipData()
 
         QString *data = new QString(clipData);
 
-        if ( myURLGrabber ) {
+        if ( bURLGrabber && myURLGrabber ) {
             if ( myURLGrabber->checkNewData( clipData ))
                 return; // don't add into the history
         }
@@ -381,8 +381,13 @@ void TopLevel::slotConfigure()
 
 void TopLevel::slotRepeatAction()
 {
-    if ( myURLGrabber && bURLGrabber )
-        myURLGrabber->repeatLastAction();
+    if ( !myURLGrabber ) {
+	myURLGrabber = new URLGrabber();
+	connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
+		 SLOT( showPopupMenu( QPopupMenu * )) );
+    }
+
+    myURLGrabber->invokeAction( QSlast );
 }
 
 void TopLevel::setURLGrabberEnabled( bool enable )

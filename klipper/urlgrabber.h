@@ -47,7 +47,7 @@ public:
    * otherwise true.
    */
   bool checkNewData( const QString& clipData );
-  void repeatLastAction() { actionMenu( false ); }
+  void invokeAction( const QString& clip = QString::null );
 
   const ActionList * actionList() const { return myActions; }
   void setActionList( ActionList * );
