@@ -217,14 +217,16 @@ MenuEntryInfo::~MenuEntryInfo()
    df->rollback(false);
    delete df;
 }
-
+#include <kdebug.h>
 KDesktopFile *MenuEntryInfo::desktopFile()
 {
+    kdDebug()<<"KDesktopFile *MenuEntryInfo::desktopFile()**********\n";
+    kdDebug()<<"service :"<<service<<endl;
    if (!df)
    {
       df = new KDesktopFile(service->desktopEntryPath());
    }
-
+   kdDebug()<<" df: "<<df<<endl;
    return df;
 }
 

@@ -45,7 +45,6 @@ public:
     BasicTab( QWidget *parent=0, const char *name=0 );
 
     void apply();
-
 signals:
     void changed( MenuFolderInfo * );
     void changed( MenuEntryInfo * );
@@ -53,7 +52,7 @@ signals:
 public slots:
     void setFolderInfo(MenuFolderInfo *folderInfo);
     void setEntryInfo(MenuEntryInfo *entryInfo);
-
+    void slotDisableAction();
 protected slots:
     void slotChanged();
     void launchcb_clicked();

@@ -60,7 +60,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
                                         KDialog::spacingHint());
 
     general_group->setAcceptDrops(false);
-	
+
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
 	_nameEdit->setAcceptDrops(false);
@@ -197,6 +197,11 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     if (!KHotKeys::present())
        general_group_keybind->hide();
 
+    slotDisableAction();
+}
+
+void BasicTab::slotDisableAction()
+{
     //disable all group at the begining.
     //because there is not file selected.
     _nameEdit->setEnabled(false);
@@ -209,6 +214,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _path_group->setEnabled(false);
     _term_group->setEnabled(false);
     _uid_group->setEnabled(false);
+    _iconButton->setEnabled(false);
     // key binding part
     general_group_keybind->setEnabled( false );
 }
@@ -247,7 +253,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _commentEdit->setText(folderInfo->comment);
     _iconButton->setIcon(folderInfo->icon);
 
-    // clean all disabled fields and return 
+    // clean all disabled fields and return
     _execEdit->lineEdit()->setText("");
     _pathEdit->lineEdit()->setText("");
     _termOptEdit->setText("");
@@ -288,7 +294,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         _launchCB->setChecked(df->readBoolEntry("StartupNotify", true));
     else // backwards comp.
         _launchCB->setChecked(df->readBoolEntry("X-KDE-StartupNotify", true));
-      
+
     if(df->readNumEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
@@ -307,7 +313,7 @@ void BasicTab::apply()
         _menuEntryInfo->setDirty();
         _menuEntryInfo->setCaption(_nameEdit->text());
         _menuEntryInfo->setIcon(_iconButton->icon());
-        
+
         KDesktopFile *df = _menuEntryInfo->desktopFile();
         df->writeEntry("Comment", _commentEdit->text());
         df->writePathEntry("Exec", _execEdit->lineEdit()->text());

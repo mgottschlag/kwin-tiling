@@ -53,9 +53,9 @@ public:
 
     QString name() const { return _name; }
     void setName(const QString &name);
-    
+
     bool isDirectory() const { return m_folderInfo; }
-    
+
     bool isHidden() const { return _hidden; }
     void setHidden(bool b);
 
@@ -85,7 +85,7 @@ public:
     void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString::null);
     void setViewMode(bool showHidden);
     void save();
-    
+
     bool dirty();
 
 public slots:
@@ -95,7 +95,7 @@ public slots:
 signals:
     void entrySelected(MenuFolderInfo *folderInfo);
     void entrySelected(MenuEntryInfo *entryInfo);
-
+    void disableAction();
 protected slots:
     void itemSelected(QListViewItem *);
     void slotDropped(QDropEvent *, QListViewItem *, QListViewItem *);

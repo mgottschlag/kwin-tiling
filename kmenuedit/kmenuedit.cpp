@@ -102,10 +102,13 @@ void KMenuEdit::setupView()
             m_basicTab, SLOT(setFolderInfo(MenuFolderInfo *)));
     connect(m_tree, SIGNAL(entrySelected(MenuEntryInfo *)),
             m_basicTab, SLOT(setEntryInfo(MenuEntryInfo *)));
+    connect(m_tree, SIGNAL(disableAction()),
+            m_basicTab, SLOT(slotDisableAction() ) );
 
-    connect(m_basicTab, SIGNAL(changed(MenuFolderInfo *)), 
+    connect(m_basicTab, SIGNAL(changed(MenuFolderInfo *)),
             m_tree, SLOT(currentChanged(MenuFolderInfo *)));
-    connect(m_basicTab, SIGNAL(changed(MenuEntryInfo *)), 
+
+    connect(m_basicTab, SIGNAL(changed(MenuEntryInfo *)),
             m_tree, SLOT(currentChanged(MenuEntryInfo *)));
 
     // restore splitter sizes
@@ -151,22 +154,22 @@ void KMenuEdit::slotSave()
 bool KMenuEdit::queryClose()
 {
     if (!m_tree->dirty()) return true;
-    
-    int result = KMessageBox::warningYesNoCancel(this, 
+
+    int result = KMessageBox::warningYesNoCancel(this,
                     i18n("You have made changes to the menu.\n"
                          "Do you want to save the changes or discard them?"),
                     i18n("Save Menu Changes?"),
                     KStdGuiItem::save(), KStdGuiItem::discard() );
-                    
+
     switch(result)
     {
       case KMessageBox::Yes:
          m_tree->save();
          return true;
-      
+
       case KMessageBox::No:
          return true;
-         
+
       default:
          break;
     }
