@@ -132,7 +132,7 @@ const QString Theme::baseDir()
 bool Theme::checkExtension(const QString &file)
 {
   return ((file.right(4) == ".tgz") ||
-	  (file.right(4) == ".zip") ||
+          (file.right(4) == ".zip") ||
           (file.right(7) == ".tar.gz") ||
           (file.right(7) == ".ktheme"));
 }
@@ -186,7 +186,7 @@ void Theme::cleanupWorkDir(void)
 
   // cleanup work directory
   cmd = QString::fromLatin1( "rm -rf %1*" ).arg( workDir() );
-  rc = system(cmd.local8Bit());
+  rc = system(QFile::encodeName(cmd));
   if (rc) kdWarning() << "Error during cleanup of work directory: rc=" << rc << " " << cmd << endl;
 }
 
@@ -558,222 +558,220 @@ bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
 //-----------------------------------------------------------------------------
 int Theme::installGroup(const char* aGroupName)
 {
-  QString value, oldValue, cfgFile, cfgGroup, appDir, group;
-  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
-  QString preInstCmd;
-  bool absPath = false;
-  KSimpleConfig* cfg = NULL;
-  int len, i, installed = 0;
-  const char* missing = 0;
+    QString value, oldValue, cfgFile, cfgGroup, appDir, group;
+    QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
+    QString preInstCmd;
+    bool absPath = false;
+    KSimpleConfig* cfg = NULL;
+    int len, i, installed = 0;
+    const char* missing = 0;
 
-  group = aGroupName;
-  if (mThemeType == Theme_Windows)
-  {
-    if (group == "Colors")
-      group = "Control Panel/Colors";
-    else if (group == "Display")
-      group = "Control Panel/Desktop";
-    else if (group == "Sounds")
-      group = "AppEvents/Schemes/Apps/.Default/Minimize/.Current";
-  }
-  mConfig->setGroup(group);
-
-  if (!instOverwrite) uninstallFiles(aGroupName);
-  else readInstFileList(aGroupName);
-
-  while (!group.isEmpty())
-  {
-    mMappings->setGroup(group);
-
-    // Read config settings
-    value = mMappings->readEntry("ConfigThemeGroup");
-    if (!value.isEmpty())
+    group = aGroupName;
+    if (mThemeType == Theme_Windows)
     {
-      mConfig->setGroup(value);
+        if (group == "Colors")
+            group = "Control Panel/Colors";
+        else if (group == "Display")
+            group = "Control Panel/Desktop";
+        else if (group == "Sounds")
+            group = "AppEvents/Schemes/Apps/.Default/Minimize/.Current";
     }
+    mConfig->setGroup(group);
 
-    value = mMappings->readEntry("ConfigFile");
-    if (!value.isEmpty())
+    if (!instOverwrite)
+        uninstallFiles(aGroupName);
+    else
+        readInstFileList(aGroupName);
+
+    while (!group.isEmpty())
     {
-      cfgFile = value;
-      if (cfgFile == "KDERC") cfgFile = QDir::homeDirPath() + "/.kderc";
-      else if (cfgFile[0] != '/') cfgFile = mConfigDir + cfgFile;
-    }
-    value = mMappings->readEntry("ConfigGroup");
-    if (!value.isEmpty()) cfgGroup = value;
-    value = mMappings->readEntry("ConfigAppDir");
-    if (!value.isEmpty() && (value[0] != '/'))
-    {
-      appDir = value;
-      appDir = baseDir() + appDir;
+        mMappings->setGroup(group);
 
-      len = appDir.length();
-      if (len > 0 && appDir[len-1]!='/') appDir += '/';
-    }
-    absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
-    QString emptyValue = mMappings->readEntry("ConfigEmpty");
+        // Read config settings
+        value = mMappings->readEntry("ConfigThemeGroup");
+        if (!value.isEmpty())
+            mConfig->setGroup(value);
 
-    value = mMappings->readEntry("ConfigActivateCmd");
-    if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
-      mCmdList.append(value);
-    instCmd = mMappings->readEntry("ConfigInstallCmd", instCmd).stripWhiteSpace();
-    preInstCmd = mMappings->readEntry("ConfigPreInstallCmd", preInstCmd).stripWhiteSpace();
-
-    // Some checks
-    if (cfgFile.isEmpty()) missing = "ConfigFile";
-    if (cfgGroup.isEmpty()) missing = "ConfigGroup";
-    if (missing)
-    {
-      kdWarning() << "Internal error in theme mappings (file theme.mappings) in group " << group << ":" << endl
-		   << "Entry `" << missing << "' is missing or has no value." << endl;
-      break;
-    }
-
-    // Open config file and sync/close old one
-    if (oldCfgFile != cfgFile)
-    {
-      if (cfg)
-      {
-	cfg->sync();
-	delete cfg;
-      }
-      cfg = new KSimpleConfig(cfgFile);
-      oldCfgFile = cfgFile;
-    }
-
-    // Set group in config file
-    cfg->setGroup(cfgGroup);
-
-    // Execute pre-install command (if given)
-    if (!preInstCmd.isEmpty()) preInstallCmd(cfg, preInstCmd);
-
-    // Process all mapping entries for the group
-    QMap<QString, QString> aMap = mMappings->entryMap(group);
-    QMap<QString, QString>::Iterator aIt(aMap.begin());
-
-    for (; aIt != aMap.end(); ++aIt) {
-      key = aIt.key();
-      if ( key.left(6).lower() == "Config" ) continue;
-      value = (*aIt).stripWhiteSpace();
-      len = value.length();
-      bool bInstallFile = false;
-      bool bInstallDir = false;
-      if (len>0 && value[len-1]=='!')
-      {
-	value.truncate(len - 1);
-      }
-      else if (len>0 && value[len-1]=='*')
-      {
-	value.truncate(len - 1);
-        bInstallDir = true;
-      }
-      else
-      {
-        bInstallFile = true;
-      }
-
-      // parse mapping
-      i = value.find(':');
-      if (i >= 0)
-      {
-	cfgKey = value.left(i);
-	cfgValue = value.mid(i+1);
-      }
-      else
-      {
-	cfgKey = value;
-	cfgValue = QString::null;
-      }
-      if (cfgKey.isEmpty()) cfgKey = key;
-
-      if (bInstallFile || bInstallDir)
-      {
-	oldValue = cfg->readEntry(cfgKey);
-	if (!oldValue.isEmpty() && oldValue==emptyValue)
-	  oldValue = QString::null;
-      }
-      else
-      {
-         oldValue = QString::null;
-      }
-
-      themeValue = mConfig->readEntry(key);
-      if (group.left(20) == "Control Panel/Colors")
-      {
-        themeValue.replace(QRegExp("\\s"), QString::fromLatin1(","));
-      }
-      else if (group.left(21) == "Control Panel/Desktop")
-      {
- 	if (key == "WallpaperStyle")
+        value = mMappings->readEntry("ConfigFile");
+        if (!value.isEmpty())
         {
-	  themeValue = "Scaled";
+            cfgFile = value;
+            if (cfgFile == "KDERC")
+                cfgFile = QDir::homeDirPath() + "/.kderc";
+            else if (cfgFile[0] != '/')
+                cfgFile = mConfigDir + cfgFile;
         }
-      }
-      if (bInstallFile && (mThemeType == Theme_Windows))
-      {
-         themeValue.replace(QRegExp("%.+%"), QString::null);
-      }
 
-      if (cfgValue.isEmpty()) cfgValue = themeValue;
+        value = mMappings->readEntry("ConfigGroup");
+        if (!value.isEmpty())
+            cfgGroup = value;
 
-      // Install file
-      if (bInstallFile)
-      {
-        // Strip leading path
-        i = cfgValue.findRev('/');
-        if (i != -1)
-           cfgValue = cfgValue.mid(i+1);
-	if (!themeValue.isEmpty())
-	{
-          KStandardDirs::makeDir(appDir);
-	  if (installFile(themeValue, appDir + cfgValue))
-	    installed++;
-	  else bInstallFile = false;
-	}
-      }
-      // Install dir
-      if (bInstallDir)
-      {
-	if (!themeValue.isEmpty())
-	{
-          KStandardDirs::makeDir(appDir);
-	  if (installDirectory(themeValue, appDir + cfgValue))
-	    installed++;
-	  else bInstallDir = false;
-	}
-      }
+        value = mMappings->readEntry("ConfigAppDir");
+        if (!value.isEmpty() && (value[0] != '/'))
+        {
+            appDir = value;
+            appDir = baseDir() + appDir;
 
-      bool bDeleteKey = false;
-      // Determine config value
-      if (cfgValue.isEmpty())
-      {
-         cfgValue = emptyValue;
-         if (cfgValue.isEmpty())
-           bDeleteKey = true;
-      }
-      else if ((bInstallFile || bInstallDir) && absPath)
-         cfgValue = appDir + cfgValue;
+            len = appDir.length();
+            if (len > 0 && appDir[len-1]!='/')
+                appDir += '/';
+        }
 
-      // Set config entry
-      if (bDeleteKey)
-         cfg->deleteEntry(cfgKey, false);
-      else
-         cfg->writeEntry(cfgKey, cfgValue);
+        absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
+        QString emptyValue = mMappings->readEntry("ConfigEmpty");
+
+        value = mMappings->readEntry("ConfigActivateCmd");
+        if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
+            mCmdList.append(value);
+        instCmd = mMappings->readEntry("ConfigInstallCmd", instCmd).stripWhiteSpace();
+        preInstCmd = mMappings->readEntry("ConfigPreInstallCmd", preInstCmd).stripWhiteSpace();
+
+        // Some checks
+        if (cfgFile.isEmpty()) missing = "ConfigFile";
+        if (cfgGroup.isEmpty()) missing = "ConfigGroup";
+        if (missing)
+        {
+            kdWarning() << "Internal error in theme mappings (file theme.mappings) in group " << group << ":" << endl
+                        << "Entry `" << missing << "' is missing or has no value." << endl;
+            break;
+        }
+
+        // Open config file and sync/close old one
+        if (oldCfgFile != cfgFile)
+        {
+            if (cfg)
+            {
+                cfg->sync();
+                delete cfg;
+            }
+            cfg = new KSimpleConfig(cfgFile);
+            oldCfgFile = cfgFile;
+        }
+
+        // Set group in config file
+        cfg->setGroup(cfgGroup);
+
+        // Execute pre-install command (if given)
+        if (!preInstCmd.isEmpty()) preInstallCmd(cfg, preInstCmd);
+
+        // Process all mapping entries for the group
+        QMap<QString, QString> aMap = mMappings->entryMap(group);
+        QMap<QString, QString>::Iterator aIt(aMap.begin());
+
+        for (; aIt != aMap.end(); ++aIt) {
+            key = aIt.key();
+            if ( key.startsWith("Config") ) continue;
+            value = (*aIt).stripWhiteSpace();
+            len = value.length();
+            bool bInstallFile = false;
+            bool bInstallDir = false;
+            if (len>0 && value[len-1]=='!')
+                value.truncate(len - 1);
+            else if (len>0 && value[len-1]=='*')
+            {
+                value.truncate(len - 1);
+                bInstallDir = true;
+            }
+            else
+                bInstallFile = true;
+
+            // parse mapping
+            i = value.find(':');
+            if (i >= 0)
+            {
+                cfgKey = value.left(i);
+                cfgValue = value.mid(i+1);
+            }
+            else
+            {
+                cfgKey = value;
+                cfgValue = QString::null;
+            }
+            if (cfgKey.isEmpty())
+                cfgKey = key;
+
+            if (bInstallFile || bInstallDir)
+            {
+                oldValue = cfg->readEntry(cfgKey);
+                if (!oldValue.isEmpty() && oldValue==emptyValue)
+                    oldValue = QString::null;
+            }
+            else
+                oldValue = QString::null;
+
+            themeValue = mConfig->readEntry(key);
+            if (group.left(20) == "Control Panel/Colors")
+                themeValue.replace(QRegExp("\\s"), QString::fromLatin1(","));
+            else if (group.left(21) == "Control Panel/Desktop")
+            {
+                if (key == "WallpaperStyle")
+                    themeValue = "Scaled";
+            }
+            if (bInstallFile && (mThemeType == Theme_Windows))
+                themeValue.replace(QRegExp("%.+%"), QString::null);
+
+            if (cfgValue.isEmpty())
+                cfgValue = themeValue;
+
+            // Install file
+            if (bInstallFile)
+            {
+                // Strip leading path
+                i = cfgValue.findRev('/');
+                if (i != -1)
+                    cfgValue = cfgValue.mid(i+1);
+                if (!themeValue.isEmpty())
+                {
+                    KStandardDirs::makeDir(appDir);
+                    if (installFile(themeValue, appDir + cfgValue))
+                        installed++;
+                    else
+                        bInstallFile = false;
+                }
+            }
+            // Install dir
+            if (bInstallDir)
+            {
+                if (!themeValue.isEmpty())
+                {
+                    KStandardDirs::makeDir(appDir);
+                    if (installDirectory(themeValue, appDir + cfgValue))
+                        installed++;
+                    else bInstallDir = false;
+                }
+            }
+
+            bool bDeleteKey = false;
+            // Determine config value
+            if (cfgValue.isEmpty())
+            {
+                cfgValue = emptyValue;
+                if (cfgValue.isEmpty())
+                    bDeleteKey = true;
+            }
+            else if ((bInstallFile || bInstallDir) && absPath)
+                cfgValue = appDir + cfgValue;
+
+            // Set config entry
+            if (bDeleteKey)
+                cfg->deleteEntry(cfgKey, false);
+            else
+                cfg->writeEntry(cfgKey, cfgValue);
+        }
+
+        if (!instCmd.isEmpty())
+            installCmd(cfg, instCmd, installed);
+        group = mMappings->readEntry("ConfigNextGroup");
     }
 
-    if (!instCmd.isEmpty())
-       installCmd(cfg, instCmd, installed);
-    group = mMappings->readEntry("ConfigNextGroup");
-  }
+    if (cfg)
+    {
+        cfg->sync();
+        delete cfg;
+    }
 
-  if (cfg)
-  {
-    cfg->sync();
-    delete cfg;
-  }
-
-  writeInstFileList(aGroupName);
-  return installed;
+    writeInstFileList(aGroupName);
+    return installed;
 }
 
 
@@ -817,7 +815,6 @@ static void cleanKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
 static int countKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
 {
   return aCfg->readEntry(entry).isEmpty() ? 0 : 1;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -894,6 +891,13 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
     if (!value.isEmpty())
         aCfg->writeEntry("RotateBackground", true);
   }
+  else if (cmd == "setKmenu")
+  {
+    QString value = aCfg->readEntry("SideImage",QString::null);
+    QString value2 = aCfg->readEntry("SideImageTile",QString::null);
+    if (!value.isEmpty() || !value2.isEmpty())
+        aCfg->writeEntry("UseSidePixmap", true);
+  }
   else
   {
     kdWarning() << "Unknown command `" << aCmd << "' in theme.mappings "
@@ -948,7 +952,7 @@ void Theme::doCmdList(void)
     kdDebug() << "do command: " << cmd << endl;
     if (cmd.startsWith("kfmclient"))
     {
-      system(cmd.local8Bit());
+      system(QFile::encodeName(cmd));
     }
     else if (cmd == "applyColors")
     {
@@ -985,7 +989,7 @@ void Theme::doCmdList(void)
           client->attach();
        client->send("kwin", "", "reconfigure()", "");
     }
-    else if (cmd == "applyKicker")
+    else if (cmd == "applyKicker" || cmd == "applyKmenu")
     {
        // reconfigure kicker
        DCOPClient *client = kapp->dcopClient();
@@ -1000,7 +1004,7 @@ void Theme::doCmdList(void)
       if (KMessageBox::questionYesNo(0, str) == KMessageBox::Yes) {
           str.sprintf(mRestartCmd.local8Bit().data(), appName.local8Bit().data(),
                       appName.local8Bit().data());
-          system(str.local8Bit());
+          system(QFile::encodeName(str));
       }
     }
   }
@@ -1021,7 +1025,7 @@ bool Theme::backupFile(const QString &fname) const
   QFile::remove((fname + '~'));
   cmd.sprintf("mv \"%s\" \"%s~\"", fname.local8Bit().data(),
 	      fname.local8Bit().data());
-  rc = system(cmd.local8Bit());
+  rc = system(QFile::encodeName(cmd));
   if (rc) kdWarning() << "Cannot make backup copy of "
           << fname << ": mv returned " << rc << endl;
   return (rc==0);
@@ -1078,7 +1082,7 @@ void Theme::uninstallFiles(const char* aGroupName)
     if (finfo.exists())
     {
       if (rename(QFile::encodeName(fname+'~').data(), QFile::encodeName(fname).data()))
-	kdWarning() << "Failed to rename " << fname << " to "
+      kdWarning() << "Failed to rename " << fname << " to "
         << fname << "~:" << strerror(errno) << endl;
       else reverted = true;
     }
@@ -1112,7 +1116,11 @@ void Theme::install(void)
      installGroup("Window Border");
      installGroup("Window Titlebar");
   }
-  if (instPanel) installGroup("Panel");
+  if (instPanel)
+      installGroup("Panel");
+
+  if (instKmenu)
+      installGroup("KMenu");
 
   doCmdList();
 
@@ -1204,21 +1212,21 @@ bool Theme::hasGroup(const QString& aName, bool aNotEmpty)
   if (mThemeType == Theme_Windows)
   {
     if (aName == "Colors")
-	gName = "Control Panel/Colors";
+        gName = "Control Panel/Colors";
     else if (aName == "Display")
-	gName = "Control Panel/Desktop";
+        gName = "Control Panel/Desktop";
     else if (aName == "Sounds")
         gName = "AppEvents/Schemes/Apps/.Default/Minimize/.Current";
   } else
-    gName = aName;
+      gName = aName;
   found = mConfig->hasGroup(gName);
 
   if (!aNotEmpty)
-    return found;
+      return found;
 
   QMap<QString, QString> aMap = mConfig->entryMap(gName);
   if (found && aNotEmpty)
-    found = !aMap.isEmpty();
+      found = !aMap.isEmpty();
 
   return found;
 }
@@ -1275,11 +1283,11 @@ void Theme::runKrdb(void) const
   KSimpleConfig cfg("kcmdisplayrc", true);
 
   cfg.setGroup("X11");
-  if (cfg.readBoolEntry("useResourceManager", true)) {
+  if (cfg.readBoolEntry("exportKDEColors", true)) {
     QString exe = locate("exe", "krdb");
     if (exe.isEmpty())
       exe = "krdb";
-    system(exe.local8Bit());
+    system(QFile::encodeName(exe));
   }
 }
 

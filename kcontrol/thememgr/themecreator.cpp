@@ -104,6 +104,8 @@ bool ThemeCreator::extract(void)
   if (instColors) extractGroup("Colors");
   if (instSounds) extractGroup("Sounds");
   if (instWM) extractGroup("Window Border");
+  if (instPanel) extractGroup("Panel");
+  if (instKmenu) extractGroup("KMenu");
 
   kdDebug() << "Theme::extract() done" << endl;
 
@@ -118,144 +120,150 @@ bool ThemeCreator::extract(void)
 //-----------------------------------------------------------------------------
 int ThemeCreator::extractGroup(const char* aGroupName)
 {
-  QString value, cfgFile, cfgGroup, appDir, group, emptyValue, mapValue, str;
-  QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
-  bool absPath = false, doCopyFile;
-  KSimpleConfig* cfg = 0;
-  int len, i, extracted = 0;
-  const char* missing = 0;
+    QString value, cfgFile, cfgGroup, appDir, group, emptyValue, mapValue, str;
+    QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd;
+    bool absPath = false, doCopyFile;
+    KSimpleConfig* cfg = 0;
+    int len, i, extracted = 0;
+    const char* missing = 0;
 
-  kdDebug() << "*** beginning with " << aGroupName << endl;
-  group = aGroupName;
-  mConfig->setGroup(group);
+    kdDebug() << "*** beginning with " << aGroupName << endl;
+    group = aGroupName;
+    mConfig->setGroup(group);
 
-  while (!group.isEmpty())
-  {
-    mMappings->setGroup(group);
-    kdDebug() << "Mappings group: " << group << endl;
-
-    // Read config settings
-    value = mMappings->readEntry("ConfigFile");
-    if (!value.isEmpty())
+    while (!group.isEmpty())
     {
-      cfgFile = value;
-      if (cfgFile == "KDERC") cfgFile = QDir::homeDirPath() + "/.kderc";
-      else if (cfgFile[0] != '/') cfgFile = mConfigDir + cfgFile;
+        mMappings->setGroup(group);
+        kdDebug() << "Mappings group: " << group << endl;
+
+        // Read config settings
+        value = mMappings->readEntry("ConfigFile");
+        if (!value.isEmpty())
+        {
+            cfgFile = value;
+            if (cfgFile == "KDERC") cfgFile = QDir::homeDirPath() + "/.kderc";
+            else if (cfgFile[0] != '/') cfgFile = mConfigDir + cfgFile;
+        }
+        value = mMappings->readEntry("ConfigGroup");
+        if (!value.isEmpty())
+            cfgGroup = value;
+        value = mMappings->readEntry("ConfigAppDir");
+        if (!value.isEmpty())
+        {
+            appDir = baseDir() + value;
+            len = appDir.length();
+            if (len > 0 && appDir[len-1]!='/') appDir += '/';
+        }
+        absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
+        value = mMappings->readEntry("ConfigEmpty");
+        if (!value.isEmpty())
+            emptyValue = value;
+        value = mMappings->readEntry("ConfigActivateCmd");
+        if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
+            mCmdList.append(value);
+
+        instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
+
+        // Some checks
+        if (cfgFile.isEmpty()) missing = "ConfigFile";
+        if (cfgGroup.isEmpty()) missing = "ConfigGroup";
+        if (missing)
+        {
+            kdWarning() << "Internal error in theme mappings "
+                        << "(file theme.mappings) in group " << group << ":" << endl
+                        << "Entry `" << missing << "' is missing or has no value." << endl;
+            break;
+        }
+
+        // Open config file and sync/close old one
+        if (oldCfgFile != cfgFile)
+        {
+            if (cfg)
+            {
+                kdDebug() << "closing config file" << endl;
+                cfg->sync();
+                delete cfg;
+            }
+            kdDebug() << "opening config file " << cfgFile << endl;
+            cfg = new KSimpleConfig(cfgFile);
+            oldCfgFile = cfgFile;
+        }
+
+        // Set group in config file
+        cfg->setGroup(cfgGroup);
+        kdDebug() << cfgFile << ": " << cfgGroup << endl;
+        // Process all mapping entries for the group
+
+        QMap<QString, QString> aMap = mMappings->entryMap(group);
+        QMap<QString, QString>::Iterator aIt(aMap.begin());
+        for (; aIt != aMap.end(); ++aIt) {
+            key = aIt.key();
+            if (key.startsWith("Config")) continue;
+            mapValue = (*aIt).stripWhiteSpace();
+            len = mapValue.length();
+            if (len>0 && mapValue[len-1]=='!')
+            {
+                doCopyFile = false;
+                mapValue.truncate(len-1);
+            }
+            else
+                doCopyFile = true;
+
+            // parse mapping
+            i = mapValue.find(':');
+            if (i >= 0)
+            {
+                cfgKey = mapValue.left(i);
+                cfgValue = mapValue.mid(i+1, 1024);
+            }
+            else
+            {
+                cfgKey = mapValue;
+                cfgValue = QString::null;
+            }
+            if (cfgKey.isEmpty())
+                cfgKey = key;
+            value = cfg->readEntry(cfgKey);
+
+            if (doCopyFile)
+            {
+                if (!value.isEmpty())
+                {
+                    if (value[0] != '/') value = appDir + value;
+                    str = extractFile(value);
+                    if (!str.isEmpty())
+                    {
+                        extracted++;
+                        value = str;
+                    }
+                    value = fileOf(value);
+                }
+            }
+
+            // Set config entry
+            if (value == emptyValue)
+                value = "";
+            kdDebug() << key << "=" << value << endl;
+            if (value.isEmpty())
+                mConfig->deleteEntry(key, false);
+            else
+                mConfig->writeEntry(key, value);
+        }
+
+        if (!instCmd.isEmpty())
+            extractCmd(cfg, instCmd, extracted);
+        group = mMappings->readEntry("ConfigNextGroup");
     }
-    value = mMappings->readEntry("ConfigGroup");
-    if (!value.isEmpty()) cfgGroup = value;
-    value = mMappings->readEntry("ConfigAppDir");
-    if (!value.isEmpty())
+
+    if (cfg)
     {
-      appDir = baseDir() + value;
-      len = appDir.length();
-      if (len > 0 && appDir[len-1]!='/') appDir += '/';
-    }
-    absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
-    value = mMappings->readEntry("ConfigEmpty");
-    if (!value.isEmpty()) emptyValue = value;
-    value = mMappings->readEntry("ConfigActivateCmd");
-    if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
-      mCmdList.append(value);
-
-    instCmd = mMappings->readEntry("ConfigInstallCmd").stripWhiteSpace();
-
-    // Some checks
-    if (cfgFile.isEmpty()) missing = "ConfigFile";
-    if (cfgGroup.isEmpty()) missing = "ConfigGroup";
-    if (missing)
-    {
-      kdWarning() << "Internal error in theme mappings "
-		   << "(file theme.mappings) in group " << group << ":" << endl
-		   << "Entry `" << missing << "' is missing or has no value." << endl;
-      break;
+        kdDebug() << "closing config file" << endl;
+        cfg->sync();
+        delete cfg;
     }
 
-    // Open config file and sync/close old one
-    if (oldCfgFile != cfgFile)
-    {
-      if (cfg)
-      {
-	kdDebug() << "closing config file" << endl;
-	cfg->sync();
-	delete cfg;
-      }
-      kdDebug() << "opening config file " << cfgFile << endl;
-      cfg = new KSimpleConfig(cfgFile);
-      oldCfgFile = cfgFile;
-    }
-
-    // Set group in config file
-    cfg->setGroup(cfgGroup);
-    kdDebug() << cfgFile << ": " << cfgGroup << endl;
-    // Process all mapping entries for the group
-
-    QMap<QString, QString> aMap = mMappings->entryMap(group);
-    QMap<QString, QString>::Iterator aIt(aMap.begin());
-    for (; aIt != aMap.end(); ++aIt) {
-      key = aIt.key();
-      if (key.startsWith("Config")) continue;
-      mapValue = (*aIt).stripWhiteSpace();
-      len = mapValue.length();
-      if (len>0 && mapValue[len-1]=='!')
-      {
-	doCopyFile = false;
-	mapValue.truncate(len-1);
-      }
-      else doCopyFile = true;
-
-      // parse mapping
-      i = mapValue.find(':');
-      if (i >= 0)
-      {
-	cfgKey = mapValue.left(i);
-	cfgValue = mapValue.mid(i+1, 1024);
-      }
-      else
-      {
-	cfgKey = mapValue;
-	cfgValue = QString::null;
-      }
-      if (cfgKey.isEmpty()) cfgKey = key;
-      value = cfg->readEntry(cfgKey);
-
-      if (doCopyFile)
-      {
-	if (!value.isEmpty())
-	{
-	  if (value[0] != '/') value = appDir + value;
-	  str = extractFile(value);
-	  if (!str.isEmpty())
-	  {
-	    extracted++;
-	    value = str;
-	  }
-	  value = fileOf(value);
-	}
-      }
-
-      // Set config entry
-      if (value == emptyValue) value = "";
-      kdDebug() << key << "=" << value << endl;
-      if (value.isEmpty())
-         mConfig->deleteEntry(key, false);
-      else
-         mConfig->writeEntry(key, value);
-    }
-
-    if (!instCmd.isEmpty()) extractCmd(cfg, instCmd, extracted);
-    group = mMappings->readEntry("ConfigNextGroup");
-  }
-
-  if (cfg)
-  {
-    kdDebug() << "closing config file" << endl;
-    cfg->sync();
-    delete cfg;
-  }
-
-  kdDebug() << "*** done with " << aGroupName << endl;
-  return extracted;
+    kdDebug() << "*** done with " << aGroupName << endl;
+    return extracted;
 }
 
 
@@ -368,6 +376,3 @@ void ThemeCreator::saveGroupGeneral(void)
   mConfig->writeEntry("homepage", mHomePage);
   mConfig->writeEntry("version", mVersion);
 }
-
-
-

@@ -62,6 +62,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
   mCbxWM = newLine("Window Border", i18n("Window decorations"), &mStatWM);
   mCbxPanel = newLine("Panel", i18n("Panel"), &mStatPanel);
+  mCbxKmenu = newLine("KMenu", i18n("Menu"), &mStatKmenu); //### change to i18n("K - Menu") after message freeze
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -140,6 +141,7 @@ void Options::save()
   theme->instIcons = mCbxIcons->isChecked();
   theme->instWM = mCbxWM->isChecked();
   theme->instPanel = mCbxPanel->isChecked();
+  theme->instKmenu = mCbxKmenu->isChecked();
   theme->instOverwrite = !mCbxOverwrite->isChecked();
 }
 
@@ -153,6 +155,7 @@ void Options::slotInvert()
   mCbxIcons->setChecked(!mCbxIcons->isChecked());
   mCbxWM->setChecked(!mCbxWM->isChecked());
   mCbxPanel->setChecked(!mCbxPanel->isChecked());
+  mCbxKmenu->setChecked(!mCbxKmenu->isChecked());
   save();
 }
 
@@ -166,6 +169,7 @@ void Options::slotClear()
   mCbxIcons->setChecked(false);
   mCbxWM->setChecked(false);
   mCbxPanel->setChecked(false);
+  mCbxKmenu->setChecked(false);
   save();
 }
 
@@ -237,6 +241,7 @@ void Options::updateStatus(void)
   updateStatus("Icons", mStatIcons);
   updateStatus("Window Border", mStatWM);
   updateStatus("Panel", mStatPanel);
+  updateStatus("KMenu", mStatKmenu);
 }
 
 
@@ -253,6 +258,7 @@ void Options::writeConfig()
   cfg->writeEntry("icons", mCbxIcons->isChecked());
   cfg->writeEntry("wm", mCbxWM->isChecked());
   cfg->writeEntry("panel", mCbxPanel->isChecked());
+  cfg->writeEntry("kmenu", mCbxKmenu->isChecked());
 }
 
 
@@ -269,6 +275,7 @@ void Options::readConfig()
   mCbxIcons->setChecked(cfg->readBoolEntry("icons", true));
   mCbxWM->setChecked(cfg->readBoolEntry("wm", true));
   mCbxPanel->setChecked(cfg->readBoolEntry("panel", true));
+  mCbxKmenu->setChecked(cfg->readBoolEntry("kmenu", true));
   save();
 }
 

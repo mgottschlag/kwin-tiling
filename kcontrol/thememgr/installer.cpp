@@ -126,9 +126,7 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
 
   mGui = !aInit;
   if (!mGui)
-  {
     return;
-  }
 
   connect(theme, SIGNAL(changed()), SLOT(slotThemeChanged()));
 
@@ -158,7 +156,6 @@ Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
   mBtnRemove = bbox->addButton(i18n("Remove"));
   connect(mBtnRemove, SIGNAL(clicked()), SLOT(slotRemove()));
 
-
   bbox->layout();
 
   mText = new QMultiLineEdit(this);
@@ -186,14 +183,14 @@ int Installer::addTheme(const QString &path)
     QString tmp = path;
     int i = tmp.findRev('/');
     if (i >= 0)
-       tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
+        tmp = tmp.right(tmp.length() - tmp.findRev('/') - 1);
     QString p = Theme::removeExtension(tmp);
     tmp = i18n( p.utf8() );
     i = mThemesList->count();
     while((i > 0) && (mThemesList->text(i-1) > tmp))
-	i--;
+        i--;
     if ((i > 0) && (mThemesList->text(i-1) == tmp))
-       return i-1;
+        return i-1;
     mThemesList->insertItem(tmp, i);
     mThemesList->text2path.insert( tmp, p );
     return i;
@@ -363,9 +360,7 @@ void Installer::slotFilesDropped(const KURL::List &urls)
   for(KURL::List::ConstIterator it = urls.begin();
       it != urls.end();
       ++it)
-  {
-     addNewTheme(*it);
-  }
+      addNewTheme(*it);
 }
 
 //-----------------------------------------------------------------------------

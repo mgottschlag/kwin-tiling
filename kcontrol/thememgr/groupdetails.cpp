@@ -72,12 +72,12 @@ void GroupDetails::slotEdit()
 
 void GroupDetails::slotOk()
 {
-close();
+  close();
 }
 
 void GroupDetails::slotCancel()
 {
-close();
+  close();
 }
 
 

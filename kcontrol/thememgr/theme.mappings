@@ -33,10 +33,10 @@
 #
 # If fileName is given it must be preceded with a ':' and is used as
 # a fixed file name. Then the corresponding file of the theme will be renamed
-# upon copy. E.g. Kwm expects it's close button to have the name close.png,
+# upon copy. E.g. Kwm expects its close button to have the name close.png,
 # so the value would be ":close"
 #
-# An asteriks (*) at the end indicates that a whole directory should be 
+# An asterisk (*) at the end indicates that a whole directory should be 
 # installed instead of a single file.
 #
 # The exclamation mark indicates that no file shall be installed. Used for
@@ -72,7 +72,10 @@
 #   - applyColors: Sends a color-scheme-changed signal to all windows.
 #   - applyWallpaper: Changes wallpaper.
 #	- applyIcons: Changes icons
-#   - applyKWM: Changes WM decorations.
+#   - applySound: Changes sound mappings (KNotify events)
+#   - applyKWM: Changes Window Manager decorations.
+#   - applyKicker: Reconfigures Kicker with new settings
+#   - applyKmenu: ditto as above
 #   - restart <app>: Restart application <app>.
 #
 # * ConfigInstallCmd: This command is executed after the current group
@@ -86,6 +89,7 @@
 #   - setSound: enable sound notification
 #   - setKWM: enable kwm theme
 #   - setKicker: enable kicker background theme
+#   - setKmenu: copies K-Menu side images in place and enables them
 #
 #-----------------------------------------------------------------------------
 [Colors]
@@ -572,3 +576,12 @@ ConfigGroup=General
 ConfigInstallCmd=setKicker
 ConfigActivateCmd=applyKicker
 background=BackgroundTheme
+
+[KMenu]
+ConfigAppDir=apps/kicker/pics
+ConfigFile=kickerrc
+ConfigGroup=KMenu
+ConfigInstallCmd=setKmenu
+ConfigActivateCmd=applyKmenu
+kside=SideImage
+kside_tile=SideImageTile

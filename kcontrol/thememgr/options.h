@@ -55,6 +55,7 @@ protected:
   QCheckBox *mCbxIcons;
   QCheckBox *mCbxWM;
   QCheckBox *mCbxPanel;
+  QCheckBox *mCbxKmenu;
   QCheckBox *mCbxOverwrite;
   QLabel *mStatColors;
   QLabel *mStatWallpapers;
@@ -62,6 +63,7 @@ protected:
   QLabel *mStatIcons;
   QLabel *mStatWM;
   QLabel *mStatPanel;
+  QLabel *mStatKmenu;
   QGridLayout *mGrid;
   bool mGui;
   int mGridRow;

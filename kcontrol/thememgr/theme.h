@@ -41,7 +41,7 @@ public:
   /** Load theme and prepare it for installation or modification. Returns
    true on success. */
   virtual bool load(const QString &path, QString &error);
-  
+
   bool isValid() { return mValid; }
   void setValid(bool valid) { mValid = valid; }
 
@@ -65,11 +65,12 @@ public:
 
   /** Theme packet installation options */
   bool instColors;
-  bool instWallpapers;  
+  bool instWallpapers;
   bool instSounds;
   bool instIcons;
   bool instWM;
   bool instPanel;
+  bool instKmenu;
   bool instOverwrite;
 
   /** Test if group with given name exists. If notEmpty is true the
@@ -81,13 +82,13 @@ public:
 
   /** Base directory. */
   static const QString baseDir(void);
-  
+
   /** returns true when the file has a supported extension **/
   static bool checkExtension(const QString &file);
-  
+
   /** remove extension part from the file **/
   static QString removeExtension(const QString &file);
-  
+
   /** default extension for the file **/
   static QString defaultExtension();
 
@@ -212,7 +213,7 @@ protected:
 
   enum ThemeType { Theme_KDE, Theme_Windows };
 
-  ThemeType mThemeType;	   
+  ThemeType mThemeType;
   QString mFileName;       // Name+path
   QString mThemePath;      // Path to dir where theme files are stored
   QString mThemercFile;    // Name of the .themerc file
@@ -227,9 +228,9 @@ protected:
   QString mEmail;
   QString mHomePage;
   QString mVersion;
-  
+
   QStringList mFileList;
-  
+
   KSimpleConfig* mMappings;
   KSimpleConfig* mConfig;
   QStringList mCmdList;
