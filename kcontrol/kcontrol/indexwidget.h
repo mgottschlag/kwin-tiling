@@ -28,18 +28,20 @@ class ModuleTreeView;
 class ModuleIconView;
 class QPushButton;
 
+enum IndexViewMode {Icon, Tree};
+
 class IndexWidget : public QWidget
-{  
-  Q_OBJECT    
+{
+  Q_OBJECT;
   
 public:   
-  IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);	
+  IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);
+  virtual ~IndexWidget();
 
 public slots:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);
-  void activateIconView();
-  void activateTreeView();
+  void activateView(IndexViewMode);
 
 protected slots:
   void moduleSelected(ConfigModule *);
@@ -56,7 +58,7 @@ private:
   ModuleIconView   *_icon;
   QPushButton      *_viewbtn;
   ConfigModuleList *_modules;
-
+  IndexViewMode    viewMode;
 };
 
 #endif

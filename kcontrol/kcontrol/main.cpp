@@ -39,7 +39,7 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kmessagebox.h>
-
+#include <kconfig.h>
 
 #include "main.h"
 #include "main.moc"
@@ -62,9 +62,25 @@ MyApplication::MyApplication()
     toplevel = new TopLevel();
   
   setMainWidget(toplevel);
-  toplevel->resize(720,520);
+
+  KConfig *config = KGlobal::config();
+  config->setGroup("General");
+  int x = config->readNumEntry("InitialWidth", 720);
+  int y = config->readNumEntry("InitialHeight", 520);
+  toplevel->resize(x,y);
 }
 
+MyApplication::~MyApplication()
+{
+  if (toplevel)
+    {
+      KConfig *config = KGlobal::config();
+      config->setGroup("General");
+      config->writeEntry("InitialWidth", toplevel->width());
+      config->writeEntry("InitialHeight", toplevel->height());
+      config->sync();
+    }
+}
 
 int MyApplication::newInstance()
 {

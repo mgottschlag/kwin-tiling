@@ -22,6 +22,7 @@
 
 #include <kglobal.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "indexwidget.h"
 #include "indexwidget.moc"
@@ -32,6 +33,7 @@
 IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *name)
   : QWidget(parent, name)
   , _modules(modules)
+  , viewMode(Icon)
 {
   // treeview
   _tree = new ModuleTreeView(_modules, this);
@@ -50,8 +52,25 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
   _viewbtn->setFixedHeight(22);
   connect(_viewbtn, SIGNAL(clicked()), this, SLOT(viewButtonClicked()));
 
-  // activate iconview
-  activateIconView();
+  KConfig *config = KGlobal::config();
+  config->setGroup("Index");
+  QString defaultview = config->readEntry("DefaultView", "Icon");
+
+  if (defaultview == "Tree")
+    activateView(Tree);
+  else
+    activateView(Icon);
+}
+
+IndexWidget::~IndexWidget()
+{
+  KConfig *config = KGlobal::config();
+  config->setGroup("Index");
+  if (viewMode == Tree)
+    config->writeEntry("DefaultView", "Tree");
+  else
+    config->writeEntry("DefaultView", "Icon");
+  config->sync();
 }
 
 void IndexWidget::resizeEvent(QResizeEvent *)
@@ -115,26 +134,30 @@ void IndexWidget::makeVisible(ConfigModule *module)
   _tree->makeVisible(module);
 }
 
-void IndexWidget::activateIconView()
+void IndexWidget::activateView(IndexViewMode mode)
 {
-  _tree->hide();
-  _icon->show();
-  _icon->setFocus();
-  _viewbtn->setText(i18n("S&witch to treeview."));
-}
+  viewMode = mode;
 
-void IndexWidget::activateTreeView()
-{
-  _tree->show();
-  _tree->setFocus();
-  _icon->hide();
-  _viewbtn->setText(i18n("S&witch to iconview."));
+  if (mode == Icon)
+    {
+      _tree->hide();
+      _icon->show();
+      _icon->setFocus();
+      _viewbtn->setText(i18n("S&witch to treeview."));
+    }
+  else
+    {
+      _tree->show();
+      _tree->setFocus();
+      _icon->hide();
+      _viewbtn->setText(i18n("S&witch to iconview."));
+    }
 }
 
 void IndexWidget::viewButtonClicked()
 {
-  if (_tree->isVisible())
-    activateIconView();
+  if (viewMode == Icon)
+    activateView(Tree);
   else
-    activateTreeView();
+    activateView(Icon);
 }
