@@ -127,7 +127,9 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   WndwSnap = new KIntNumInput(10, MagicBox);
   WndwSnap->setRange( 0, MAX_WNDW_SNAP);
-  WndwSnap->setLabel( i18n("pixels"));
+  BrdrSnap->setLabel(i18n("Window Snap Zone:"));
+  WndwSnap->setSuffix( i18n("pixels"));
+  BrdrSnap->setSteps(1,1);
   eLay->addWidget(WndwSnap,3,2);
   lay->addWidget(MagicBox,5);
 
