@@ -22,10 +22,13 @@ KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIBCRYPT) $(LIBUCB) $(LIBUTIL) $(LIBRESOLV)
 
 # Libraries:
+# We link against LIB_KDECORE because on some platforms we need snprintf
+# from that lib. Eventually we need to load this lib anyway so we can
+# just as well link against it directly.
 LDFLAGS = $(all_libraries) $(KDE_RPATH) $(KRB_RPATH)
 LDADD = $(LIB_X11) -lXau $(LIBXDMCP) $(PASSLIB) \
     $(LIB_LIBS) $(KERBEROS_LIBS) $(LIBSOCKET) \
-    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV)
+    $(LIBCRYPT) $(LIBUCB) $(LIBDL) $(LIBUTIL) $(LIBRESOLV) $(LIB_KDECORE)
 kdm_LDADD = $(LDADD) $(KDM_GREET_LIBS)
 
 # Sources for kdm:
