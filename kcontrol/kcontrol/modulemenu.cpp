@@ -55,7 +55,7 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
       // Item names may contain ampersands. To avoid them being converted to 
       // accelators, replace them with two ampersands.
       QString name = module->moduleName();
-      name.replace(QRegExp("&"), "&&");
+      name.replace("&", "&&");
       
       int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
                                           , name, id);
@@ -114,7 +114,7 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   // Item names may contain ampersands. To avoid them being converted to 
   // accelators, replace them with two ampersands.
   QString name = group->caption();
-  name.replace(QRegExp("&"), "&&");
+  name.replace("&", "&&");
   
   parent->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
                                          , name, menu);

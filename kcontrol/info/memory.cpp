@@ -164,7 +164,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; ++i) {
 	    if (i == SWAP_MEM)
 		vbox->addSpacing(SPACING);
-	    Widget = new QLabel("", this);
+	    Widget = new QLabel(this);
 	    Widget->setAlignment(AlignRight);
 	    MemSizeLabel[i][j] = Widget;
 	    vbox->addWidget(Widget, 1);
@@ -194,7 +194,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    title = i18n("Swap Space");
 	    break;
 	default:
-	    title = "";
+	    title = QString::null; 
 	    break;
 	};
 	Widget = new QLabel("<b>" + title + "</b>", this);

@@ -152,7 +152,7 @@ void KLocaleConfigMoney::save()
                        m_locale->monetaryDecimalSymbol(), true, true);
 
   str = ent.readEntry("MonetaryThousandsSeparator", QString::fromLatin1(","));
-  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
+  str.replace(QString::fromLatin1("$0"), QString::null);
   config->deleteEntry("MonetaryThousandsSeparator", false, true);
   if (str != m_locale->monetaryThousandsSeparator())
     config->writeEntry("MonetaryThousandsSeparator",

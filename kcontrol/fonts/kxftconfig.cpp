@@ -47,7 +47,7 @@ static QString dirSyntax(const QString &d)
     {
         QString ds(d);
 
-        ds.replace(QRegExp("//"), "/");
+        ds.replace("//", "/");
 
         int slashPos=ds.findRev('/');
 

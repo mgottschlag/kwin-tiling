@@ -178,7 +178,7 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
       userquery = userquery.replace(i, 3, " ");
     
     for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
-      *it = (*it).replace(QRegExp("%20"), " ");
+      *it = (*it).replace("%20", " ");
   }
 
   PIDDBG << "Generating substitution map:\n";

@@ -72,7 +72,7 @@ QString CFontmapCreator::getQtName(const QString &font)
         }
     }
 
-    newName.replace(QRegExp(" "), "");
+    newName.replace(" ", QString::null);
     return newName;
 } 
 
@@ -282,7 +282,7 @@ void CFontmapCreator::outputPsEntry(CBufferedFile &file, const TSlant &slant)
  
         QString starOfficeName(slant.psname);
  
-        starOfficeName.replace(QRegExp(" "), QChar('_'));
+        starOfficeName.replace(" ", QChar('_'));
  
         if(slant.psname!=starOfficeName)
             outputAlias(file, starOfficeName, "", slant.psname);

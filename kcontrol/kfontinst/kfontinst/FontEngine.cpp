@@ -713,8 +713,8 @@ static QString createNames(const QString &familyName, QString &fullName)
             QString full(fullName),
                     fam(familyName);
 
-            full.replace(QRegExp(" "), "");   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
-            fam.replace(QRegExp(" "), "");
+            full.replace(" ", QString::null);   // Remove whitespace - so we would now have "LuciduxMonoItalicOldstyle"
+            fam.replace(" ", QString::null);
 
             if(0==full.find(fam))  // Found "LuciduxMono" in "LuciduxMonoItalic" - so set family to "ItalicOldstyle"
             {

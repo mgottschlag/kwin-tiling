@@ -53,9 +53,9 @@ const char * intro_infotext = I18N_NOOP("Welcome to the \"KDE Info Center\", "
                                 "a central place to find information about your "
                                 "computer system.");
 
-const char * use_text = I18N_NOOP("Click on the \"<b>Help</b>\" tab on the left to view help "
+const char * use_text = I18N_NOOP("Click on the \"Help\" tab on the left to view help "
                         "for the active "
-                        "control module. Use the \"<b>Search</b>\" tab if you are unsure "
+                        "control module. Use the \"Search\" tab if you are unsure "
                         "where to look for "
                         "a particular configuration option.");
 
@@ -349,10 +349,6 @@ void AboutWidget::updatePixmap()
         p.setFont(f1);
 
         QString ut = i18n(use_text);
-        // do not break message freeze
-        ut.replace(QRegExp("<b>"), "");
-        ut.replace(QRegExp("</b>"), "");
-
         QRect r = p.boundingRect(0, 0, bwidth, bheight, hAlign | AlignVCenter | WordBreak, ut);
         if (bheight - r.height() < 10)
            return;
