@@ -67,6 +67,7 @@ public:
     void raise();
     void activate();
     void toDesktop(int);
+    void toCurrentDesktop();
     void publishIconGeometry(QRect);
 
     // internal
