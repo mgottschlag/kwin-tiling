@@ -21,6 +21,8 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -37,7 +39,6 @@
 KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
  : KConfigWidget(parent, name)
 {
-  KLocale *locale =  KGlobal::locale();
   QLabel *label;
   QGroupBox *gbox;
 
@@ -115,6 +116,30 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
   tl1->addWidget(label, 6, 1);
   tl1->addWidget(edMonFraDig, 6, 2);
 
+  label = new QLabel("1", gbox, i18n("Positive currency prefix"));
+  chMonPosPreCurSym = new QCheckBox(gbox);
+  connect( chMonPosPreCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosPreCurSymChanged(const QString &) ) );
+  tl1->addWidget(label, 7, 1);
+  tl1->addWidget(chMonPosPreCurSym, 7, 2);
+
+  label = new QLabel("1", gbox, i18n("Negative currency prefix"));
+  chMonNegPreCurSym = new QCheckBox(gbox);
+  connect( chMonNegPreCurSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegPreCurSymChanged(const QString &) ) );
+  tl1->addWidget(label, 8, 1);
+  tl1->addWidget(chMonNegPreCurSym, 8, 2);
+
+  label = new QLabel("1", gbox, i18n("Sign position, positive"));
+  cmbMonPosMonSignPos = new QComboBox(gbox);
+  connect( cmbMonPosMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotMonPosMonSignPosChanged(int) ) );
+  tl1->addWidget(label, 9, 1);
+  tl1->addWidget(cmbMonPosMonSignPos, 9, 2);
+
+  label = new QLabel("1", gbox, i18n("Sign position, negative"));
+  cmbMonNegMonSignPos = new QComboBox(gbox);
+  connect( cmbMonNegMonSignPos, SIGNAL( activated(int) ), this, SLOT( slotNegPosMonSignPosChanged(int) ) );
+  tl1->addWidget(label, 10, 1);
+  tl1->addWidget(cmbMonNegMonSignPos, 10, 2);
+
   tl1->activate();
 
   // Examples
@@ -123,6 +148,7 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
   sample = new KLocaleSample(gbox);
 
   sample->update();
+  syncWithKLocale();
 }
 
 KLocaleConfigAdvanced::~KLocaleConfigAdvanced()
@@ -190,4 +216,24 @@ void KLocaleConfigAdvanced::slotMonFraDigChanged(const QString &t)
 {
   KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
   sample->update();
+}
+
+void KLocaleConfigAdvanced::syncWithKLocale()
+{
+  // Numbers
+  edDecSym->setText(KGlobal::locale()->_decimalSymbol);
+  edThoSep->setText(KGlobal::locale()->_thousandsSeparator);
+
+  // Money
+  edMonCurSym->setText(KGlobal::locale()->_currencySymbol);
+  edMonDecSym->setText(KGlobal::locale()->_monetaryDecimalSymbol);
+  edMonThoSep->setText(KGlobal::locale()->_monetaryThousandsSeparator);
+  edMonPosSign->setText(KGlobal::locale()->_positiveSign);
+  edMonNegSign->setText(KGlobal::locale()->_negativeSign);
+  edMonFraDig->setText(KGlobal::locale()->formatNumber(KGlobal::locale()->_fracDigits));
+
+  chMonPosPreCurSym->setChecked(KGlobal::locale()->_positivePrefixCurrencySymbol);
+  chMonNegPreCurSym->setChecked(KGlobal::locale()->_negativePrefixCurrencySymbol);
+  cmbMonPosMonSignPos->setCurrentItem(KGlobal::locale()->_positiveMonetarySignPosition);
+  cmbMonPosMonSignPos->setCurrentItem(KGlobal::locale()->_negativeMonetarySignPosition);
 }

@@ -50,11 +50,11 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
 
       reTranslate();
 
-      if (locale)
+      if (locale || localeadv)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmlocale [-init | language]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmlocale [-init | language | advanced]\n").ascii());
 	  justInit = TRUE;
         }
     }

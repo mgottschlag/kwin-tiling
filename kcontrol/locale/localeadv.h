@@ -27,6 +27,8 @@
 
 #include <kcontrol.h>
 
+class QCheckBox;
+class QComboBox;
 class QLineEdit;
 
 class KLanguageCombo;
@@ -44,6 +46,7 @@ public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
+  void syncWithKLocale();
 
 private slots:
   // Numbers
@@ -72,6 +75,11 @@ private:
   QLineEdit *edMonPosSign;
   QLineEdit *edMonNegSign;
   QLineEdit *edMonFraDig;
+
+  QCheckBox *chMonPosPreCurSym;
+  QCheckBox *chMonNegPreCurSym;
+  QComboBox *cmbMonPosMonSignPos;
+  QComboBox *cmbMonNegMonSignPos;
 };
 
 #endif
