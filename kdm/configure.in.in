@@ -122,7 +122,7 @@ are installed or use --without-xdmcp to disable XDMCP support!])
   fi
 fi
 AC_SUBST(LIBXDMCP)
-AC_SUBST(kdmchooserdir)	dnl XXX phase out
+AM_CONDITIONAL(include_kdm_chooser, test -n "$kdmchooserdir") dnl XXX phase out
 
 AC_MSG_CHECKING(whether to use Kerberos v4)
 AC_ARG_WITH(krb4,

@@ -1,5 +1,9 @@
+if include_kdm_chooser
+chooser_SUBDIR=chooser
+endif
+
 # backend needs to be conditional; chooser will go away.
-SUBDIRS = backend kfrontend @kdmchooserdir@
+SUBDIRS = backend kfrontend $(chooser_SUBDIR)
 
 EXTRA_DIST = misc
 
