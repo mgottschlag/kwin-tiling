@@ -98,6 +98,83 @@ QString khotkeys_get_menu_shortcut( Menuentry_shortcut_action_data* data_P )
         return data_P->trigger()->shortcut().toString();
     return "";
     }
+
+void khotkeys_get_all_shortcuts_internal(const Action_data_group* data_P, QStringList &result)
+    {
+    if( !data_P->enabled( false ))
+        return;
+    for( Action_data_group::Iterator it = data_P->first_child();
+         it;
+         ++it )
+        {
+        if( !(*it)->enabled( true ))
+            continue;
+        if( Menuentry_shortcut_action_data* entry
+            = dynamic_cast< Menuentry_shortcut_action_data* >( *it ))
+            {
+               if (entry->trigger() && !entry->trigger()->shortcut().isNull())
+                    result.append(entry->trigger()->shortcut().toString());
+            }
+        if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))
+            {
+               khotkeys_get_all_shortcuts_internal( group, result );
+            }
+        }
+    }
+
+
+QStringList khotkeys_get_all_shortcuts( )
+    {
+    QStringList result;
+    Settings settings;
+    settings.read_settings( true );
+
+    khotkeys_get_all_shortcuts_internal(settings.actions, result);
+    
+    return result;
+    }
+
+
+KService::Ptr khotkeys_find_menu_entry_internal(const Action_data_group* data_P, const QString &shortcut_P)
+    {
+    if( !data_P->enabled( false ))
+        return 0;
+    for( Action_data_group::Iterator it = data_P->first_child();
+         it;
+         ++it )
+        {
+        if( !(*it)->enabled( true ))
+            continue;
+        if( Menuentry_shortcut_action_data* entry
+            = dynamic_cast< Menuentry_shortcut_action_data* >( *it ))
+            {
+               if (entry->trigger() && 
+                   entry->trigger()->shortcut().toString() == shortcut_P)
+               {
+                  if (entry->action())
+                     return entry->action()->service();
+                  return 0;
+               }
+            }
+        if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))
+            {
+               KService::Ptr result = khotkeys_find_menu_entry_internal( group, shortcut_P );
+               if (result)
+                  return result;
+            }
+        }
+        return 0;
+    }
+
+
+KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
+    {
+    Settings settings;
+    settings.read_settings( true );
+
+    return khotkeys_find_menu_entry_internal(settings.actions, shortcut_P);
+    }
+
         
 void khotkeys_send_reread_config()
     {
@@ -253,4 +330,14 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     const QString& shortcut_P )
     {
     return KHotKeys::khotkeys_change_menu_entry_shortcut( entry_P, shortcut_P );
+    }
+
+QStringList khotkeys_get_all_shortcuts( )
+    {
+    return KHotKeys::khotkeys_get_all_shortcuts();
+    }
+
+KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
+    {
+    return KHotKeys::khotkeys_find_menu_entry( shortcut_P );
     }

@@ -14,6 +14,7 @@
 #include <qstring.h>
 #include <kdialogbase.h>
 #include <kaccel.h>
+#include <kservice.h>
 
 // see also kdebase/kmenuedit/khotkeys.h
 extern "C"
@@ -31,6 +32,10 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
 bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
 // menu entry was removed
 void khotkeys_menu_entry_deleted( const QString& entry_P );    
+// List of all hotkeys in use
+QStringList khotkeys_get_all_shortcuts( );
+// Find menu entry that uses shortcut
+KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P );
     } // extern "C"
 
 #endif

@@ -33,6 +33,7 @@ class QGroupBox;
 class QLabel;
 class KURLRequester;
 class KComboBox;
+class KService;
 
 class MenuFolderInfo;
 class MenuEntryInfo;
@@ -48,6 +49,7 @@ public:
 signals:
     void changed( MenuFolderInfo * );
     void changed( MenuEntryInfo * );
+    void findServiceShortcut(const KShortcut&, KService::Ptr &);
 
 public slots:
     void setFolderInfo(MenuFolderInfo *folderInfo);

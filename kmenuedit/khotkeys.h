@@ -22,6 +22,7 @@
 #define __khotkeys_public_h__
 
 #include <qstring.h>
+#include <kservice.h>
 
 // see kdebase/khotkeys/kcontrol for info on these
 
@@ -35,6 +36,8 @@ public:
                                             const QString shortcut_P );
     static bool menuEntryMoved( const QString& new_P, const QString& old_P );
     static void menuEntryDeleted( const QString& entry_P );
+    static QStringList allShortCuts( );
+    static KService::Ptr findMenuEntry( const QString &shortcut_P );
 };
 
 #endif

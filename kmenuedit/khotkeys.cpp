@@ -29,6 +29,8 @@ extern "C"
                                                              const QString& shortcut_P );
     static bool (*khotkeys_menu_entry_moved_2)( const QString& new_P, const QString& old_P );
     static void (*khotkeys_menu_entry_deleted_2)( const QString& entry_P );
+    static QStringList (*khotkeys_get_all_shortcuts_2)( );
+    static KService::Ptr (*khotkeys_find_menu_entry_2)( const QString& shortcut_P );
 }
 
 static bool khotkeys_present = false;
@@ -53,6 +55,13 @@ bool KHotKeys::init()
     khotkeys_menu_entry_deleted_2 =
         ( void (*)( const QString& ))
         ( lib->symbol( "khotkeys_menu_entry_deleted" ));
+    khotkeys_get_all_shortcuts_2 =
+        ( QStringList (*)( ))
+        ( lib->symbol( "khotkeys_get_all_shortcuts" ));
+    khotkeys_find_menu_entry_2 = 
+        ( KService::Ptr (*)( const QString& ))
+        ( lib->symbol( "khotkeys_find_menu_entry" ));
+        
     if( khotkeys_init_2
         && khotkeys_get_menu_entry_shortcut_2
         && khotkeys_change_menu_entry_shortcut_2
@@ -108,4 +117,22 @@ void KHotKeys::menuEntryDeleted( const QString& entry_P )
     if( !khotkeys_present )
         return;
     khotkeys_menu_entry_deleted_2( entry_P );
+}
+
+QStringList KHotKeys::allShortCuts( )
+{
+    if( !khotkeys_inited )
+        init();
+    if (!khotkeys_get_all_shortcuts_2)
+        return QStringList();
+    return khotkeys_get_all_shortcuts_2();
+}
+
+KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
+{
+    if( !khotkeys_inited )
+        init();
+    if (!khotkeys_find_menu_entry_2)
+        return 0;
+    return khotkeys_find_menu_entry_2(shortcut_P);
 }

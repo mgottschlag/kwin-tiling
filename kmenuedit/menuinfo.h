@@ -87,6 +87,12 @@ public:
     
     // Save menu and all its entries and submenus
     void save();
+
+    // Search service by shortcut
+    KService::Ptr findServiceShortcut(const KShortcut&);
+
+    // Set whether the entry is in active use (as opposed to in the clipboard/deleted)
+    void setInUse(bool inUse);
     
 public:
     QString id; // Relative to parent
@@ -122,8 +128,12 @@ public:
     
     KShortcut shortcut();
     void setShortcut(const KShortcut &_shortcut);
+    bool isShortcutAvailable(const KShortcut &_shortcut);
     
     void setDirty();
+
+    // Set whether the entry is in active use (as opposed to in the clipboard/deleted)
+    void setInUse(bool inUse);
     
     void save();
 

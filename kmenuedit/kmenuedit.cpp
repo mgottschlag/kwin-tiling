@@ -111,6 +111,9 @@ void KMenuEdit::setupView()
     connect(m_basicTab, SIGNAL(changed(MenuEntryInfo *)),
             m_tree, SLOT(currentChanged(MenuEntryInfo *)));
 
+    connect(m_basicTab, SIGNAL(findServiceShortcut(const KShortcut&, KService::Ptr &)),
+            m_tree, SLOT(findServiceShortcut(const KShortcut&, KService::Ptr &)));
+
     // restore splitter sizes
     KConfig* config = KGlobal::config();
     QValueList<int> sizes = config->readIntListEntry("SplitterSizes");

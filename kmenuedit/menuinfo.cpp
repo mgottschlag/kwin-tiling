@@ -21,13 +21,17 @@
 
 #include <qregexp.h>
 
-#include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <khotkeys.h>
+#include <kstandarddirs.h>
 
 //
 // MenuFolderInfo
 //
+
+static QStringList *s_allShortcuts = 0;
+static QStringList *s_newShortcuts = 0;
+static QStringList *s_freeShortcuts = 0;
 
 // Add sub menu
 void MenuFolderInfo::add(MenuFolderInfo *info)
@@ -208,6 +212,47 @@ bool MenuFolderInfo::hasDirt()
    return false;
 }
 
+KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
+{
+   KService::Ptr result;
+   // Check sub-menus
+   for(MenuFolderInfo *subFolderInfo = subFolders.first();
+       subFolderInfo; subFolderInfo = subFolders.next())
+   {
+      result = subFolderInfo->findServiceShortcut(cut);
+      if (result)
+          return result;
+   }
+
+   // Check entries
+   MenuEntryInfo *entryInfo;
+   for(QPtrListIterator<MenuEntryInfo> it(entries);
+       (entryInfo = it.current()); ++it)
+   {
+      if (entryInfo->shortCut == cut)
+         return entryInfo->service;
+   }
+   return 0;
+}
+
+void MenuFolderInfo::setInUse(bool inUse)
+{
+   // Propagate to sub-menus
+   for(MenuFolderInfo *subFolderInfo = subFolders.first();
+       subFolderInfo; subFolderInfo = subFolders.next())
+   {
+      subFolderInfo->setInUse(inUse);
+   }
+
+   // Propagate to entries
+   MenuEntryInfo *entryInfo;
+   for(QPtrListIterator<MenuEntryInfo> it(entries);
+       (entryInfo = it.current()); ++it)
+   {
+      entryInfo->setInUse(inUse);
+   }
+}
+
 //
 // MenuEntryInfo
 //
@@ -293,13 +338,85 @@ KShortcut MenuEntryInfo::shortcut()
    return shortCut;
 }
 
+static void freeShortcut(const KShortcut &shortCut)
+{
+   if (!shortCut.isNull())
+   {
+      QString shortcutKey = shortCut.toString();
+      if (s_newShortcuts)
+         s_newShortcuts->remove(shortcutKey);
+      
+      if (!s_freeShortcuts)
+         s_freeShortcuts = new QStringList;
+      
+      s_freeShortcuts->append(shortcutKey);
+   }
+}
+
+static void allocateShortcut(const KShortcut &shortCut)
+{
+   if (!shortCut.isNull())
+   {
+      QString shortcutKey = shortCut.toString();
+      if (s_freeShortcuts)
+          s_freeShortcuts->remove(shortcutKey);
+
+      if (!s_newShortcuts)
+         s_newShortcuts = new QStringList;
+
+      s_newShortcuts->append(shortcutKey);
+   }
+}
+
 void MenuEntryInfo::setShortcut(const KShortcut &_shortcut)
 {
    if (shortCut == _shortcut)
       return;
 
+   freeShortcut(shortCut);
+   allocateShortcut(_shortcut);
+
    shortCut = _shortcut;
    shortcutLoaded = true;
    shortcutDirty = true;
    dirty = true;
+}
+
+void MenuEntryInfo::setInUse(bool inUse)
+{
+   if (inUse)
+   {
+      KShortcut temp = shortcut();
+      shortCut = KShortcut();
+      if (isShortcutAvailable(temp))
+         shortCut = temp;
+      allocateShortcut(shortCut);
+   }
+   else
+   {
+      freeShortcut(shortcut());
+   }
+}
+
+bool MenuEntryInfo::isShortcutAvailable(const KShortcut &_shortcut)
+{
+   if (shortCut == _shortcut)
+      return true;
+      
+   QString shortcutKey = _shortcut.toString();
+   bool available = true;
+   if (!s_allShortcuts)
+   {
+      s_allShortcuts = new QStringList(KHotKeys::allShortCuts());
+   }
+   available = !s_allShortcuts->contains(shortcutKey);
+   if (available && s_newShortcuts)
+   {
+      available = !s_newShortcuts->contains(shortcutKey);
+   }
+   if (!available && s_freeShortcuts)
+   {
+      available = s_freeShortcuts->contains(shortcutKey);
+   }
+   return available;
 }

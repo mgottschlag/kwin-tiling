@@ -91,6 +91,7 @@ public:
 public slots:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);
+    void findServiceShortcut(const KShortcut&, KService::Ptr &);
 
 signals:
     void entrySelected(MenuFolderInfo *folderInfo);

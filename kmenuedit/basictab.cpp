@@ -31,6 +31,7 @@
 #include <kdialog.h>
 #include <kkeybutton.h>
 #include <klineedit.h>
+#include <kmessagebox.h>
 #include <kicondialog.h>
 #include <kdesktopfile.h>
 #include <kurlrequester.h>
@@ -372,12 +373,28 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
     if (signalsBlocked())
        return;
 
-    _keyEdit->setShortcut(cut, false);
-
     if ( KHotKeys::present() )
     {
-       _menuEntryInfo->setShortcut( _keyEdit->shortcut() );
+       if (!_menuEntryInfo->isShortcutAvailable( cut ) )
+       {
+          KService::Ptr service;
+          emit findServiceShortcut(cut, service);
+          if (!service)
+             service = KHotKeys::findMenuEntry(cut.toString());
+          if (service)
+          {
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.").arg(cut.toString(), service->name()));
+             return;
+          }
+          else
+          {
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.").arg(cut.toString()));
+             return;
+          }
+       }
+       _menuEntryInfo->setShortcut( cut );
     }
+    _keyEdit->setShortcut(cut, false);
     if (_menuEntryInfo)
        emit changed( _menuEntryInfo );
 }

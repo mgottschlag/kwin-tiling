@@ -604,6 +604,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
 	   parentItem->setOpen(true);
 
          folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
+         folderInfo->setInUse(true);
          parentFolderInfo->add(folderInfo);
 
          // create the TreeItem
@@ -640,6 +641,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
          QString oldCaption = entryInfo->caption;
          QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
          entryInfo->setCaption(newCaption);
+         entryInfo->setInUse(true);
       }
       // Add file to menu
       // m_menuFile->addEntry(folder, menuId);
@@ -972,6 +974,7 @@ void TreeView::paste()
              parentItem->setOpen(true);
 
          folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
+         folderInfo->setInUse(true);
          parentFolderInfo->add(folderInfo);
 
          // create the TreeItem
@@ -1009,6 +1012,7 @@ void TreeView::paste()
          QString oldCaption = entryInfo->caption;
          QString newCaption = parentFolderInfo->uniqueItemCaption(oldCaption);
          entryInfo->setCaption(newCaption);
+         entryInfo->setInUse(true);
       }
       // Add file to menu
       // m_menuFile->addEntry(folder, menuId);
@@ -1061,6 +1065,7 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
         TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
         MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
         parentFolderInfo->take(folderInfo);
+        folderInfo->setInUse(false);
 
         if (m_clipboard == COPY_FOLDER && (m_clipboardFolderInfo == folderInfo))
         {
@@ -1093,12 +1098,12 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
         TreeItem *parentItem = static_cast<TreeItem*>(item->parent());
         MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
         parentFolderInfo->take(entryInfo);
+        entryInfo->setInUse(false);
 
         if (m_clipboard == COPY_FILE && (m_clipboardEntryInfo == entryInfo))
         {
            // Copy + Del == Cut
            m_clipboard = MOVE_FILE; // Clipboard now owns entryInfo
-
         }
         else
         {
@@ -1143,3 +1148,9 @@ bool TreeView::dirty()
 {
     return m_rootFolder->hasDirt() || m_menuFile->dirty();
 }
+
+void TreeView::findServiceShortcut(const KShortcut&cut, KService::Ptr &service)
+{
+    service = m_rootFolder->findServiceShortcut(cut);
+}
+
