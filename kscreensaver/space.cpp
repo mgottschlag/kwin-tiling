@@ -459,9 +459,10 @@ initSpace(Window window)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
+
 #include <kapp.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "space.moc"
 
@@ -681,11 +682,9 @@ void kSpaceSetup::slotOkPressed()
 
 void kSpaceSetup::slotAbout()
 {
-	QMessageBox::information(this,
-		glocale->translate("About KSpace"), 
+	KMessageBox::about(this,
 		glocale->translate("KSpace\nCopyright (c) 1998\n"
-				   "Bernd Johannes Wuebben <wuebben@kde.org>"),
-		glocale->translate("OK"));
+				   "Bernd Johannes Wuebben <wuebben@kde.org>"));
 }
 
 

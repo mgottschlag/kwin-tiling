@@ -18,19 +18,17 @@
 // Qt includes:
 
 #include <qpushbutton.h>
-//#include <qcheckbox.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 #include <qlabel.h>
-//#include <qcombobox.h>
+#include <qlayout.h>
+
 #include <kconfig.h>
 #include <kapp.h>
 #include <klocale.h>
+#include <kbuttonbox.h>
+#include <kmessagebox.h>
 
 #include "slidescreen.h"
-
-#include <qlayout.h>
-#include <kbuttonbox.h>
 #include "helpers.h"
 
 
@@ -550,13 +548,11 @@ void kSlideScreenSetup::slotOkPressed()
 
 void kSlideScreenSetup::slotAbout()
 {
-	QMessageBox::information(this,
-		glocale->translate("About SlideScreen"), 
+	KMessageBox::about(this,
 		glocale->translate("SlideScreen Version 1.1\n\n"
 				   "Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
 				   "Ported to kscreensaver by:\n\n"
-				   "Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"),
-		glocale->translate("OK"));
+				   "Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"));
 }
 
 #include "slidescreen.moc"

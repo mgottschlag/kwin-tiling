@@ -17,18 +17,24 @@
 //		- test by setup saver and choosing alg from list
 
 #include <stdlib.h>
+#include <time.h>
+#include <limits.h>
+#include <math.h>
+
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qscrollbar.h>
-#include <qmessagebox.h>
 #include <qlineedit.h>
 #include <qlistbox.h>
+#include <qlayout.h>
+
 #include <kapp.h>
 #include <kconfig.h>
-#include <time.h>
-#include <limits.h>
-#include <math.h>
+#include <kmessagebox.h>
+#include <kbuttonbox.h>
+#include <klocale.h>
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include "xlock.h"
@@ -37,9 +43,6 @@
 #include "blob.h"
 
 #include "helpers.h"
-#include <kbuttonbox.h>
-#include <qlayout.h>
-#include <klocale.h>
 
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
@@ -571,10 +574,8 @@ void KBlobSetup::slotOkPressed()
 
 void KBlobSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Blob"), 
-			     glocale->translate("Blobsaver Version 0.1\n\nwritten by Tiaan Wessels 1997\ntiaan@netsys.co.za"), 
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Blobsaver Version 0.1\n\nwritten by Tiaan Wessels 1997\ntiaan@netsys.co.za"));
 	if (saver)
 		saver->setAlgorithm(algs->currentItem());
 }

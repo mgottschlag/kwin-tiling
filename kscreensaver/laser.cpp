@@ -293,7 +293,6 @@ void laser_cleanup()
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 
 #include "laser.h"
 
@@ -305,6 +304,7 @@ void laser_cleanup()
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #undef Below // X sux
 
@@ -484,9 +484,7 @@ void kLaserSetup::slotOkPressed()
 
 void kLaserSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Laser"),
-			     glocale->translate("Laser Version 3.3\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Martin Jones."),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Laser Version 3.3\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Martin Jones."));
 }
 

@@ -7,20 +7,23 @@
 // layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
 
 #include <stdlib.h>
+
 #include <qcolor.h>
 #include <qlabel.h>
 #include <qscrollbar.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
-#include <qmessagebox.h>
 #include <qslider.h>
+#include <qgroupbox.h>
+#include <qlayout.h>
+
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
-#include <qgroupbox.h>
-#include <qlayout.h>
 #include <kbuttonbox.h>
+#include <kmessagebox.h>
+
 #include "helpers.h"
 
 #include "kcolordlg.h"
@@ -340,10 +343,8 @@ void KBannerSetup::slotOkPressed()
 
 void KBannerSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Banner"), 
-			     glocale->translate("Banner Version 0.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org"), 
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Banner Version 0.1\n\nwritten by Martin R. Jones 1996\nmjones@kde.org"));
 }
 
 //-----------------------------------------------------------------------------

@@ -401,7 +401,6 @@ void pyro_setCloud( int c )
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 #include "pyro.h"
 
 #include "pyro.moc"
@@ -412,6 +411,7 @@ void pyro_setCloud( int c )
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #undef Below
 
@@ -632,11 +632,9 @@ void kPyroSetup::slotOkPressed()
 
 void kPyroSetup::slotAbout()
 {
-	QMessageBox::information(this,
-		glocale->translate("About Pyro"), 
+	KMessageBox::about(this,
 		glocale->translate("Pyro Version 3.4\n\n"
 				   "Copyright (c) 1991 by Patrick J. Naughton\n\n"
-				   "Ported to kscreensave by Martin Jones."),
-		glocale->translate("OK"));
+				   "Ported to kscreensave by Martin Jones."));
 }
 

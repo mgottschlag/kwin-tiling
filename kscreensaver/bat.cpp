@@ -425,7 +425,6 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 #include <qlayout.h>
 #include <kbuttonbox.h>
 #include "helpers.h"
@@ -434,6 +433,7 @@ XEraseImage(Display * display, Window win, GC gc, int x, int y, int xlast, int y
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "bat.moc"
 
@@ -665,10 +665,8 @@ void kBatSetup::slotOkPressed()
 
 void kBatSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Bat"), 
-			     glocale->translate("Bat\n\nCopyright (c) 1986 by Sun Microsystems\n\nPorted to kscreensave by Emanuel Pirker."), 
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Bat\n\nCopyright (c) 1986 by Sun Microsystems\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

@@ -11,12 +11,12 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qscrollbar.h>
-#include <qmessagebox.h>
 #include <qslider.h>
 #include <kapp.h>
 #include <time.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "polygon.h"
 
@@ -235,12 +235,10 @@ void kPolygonSetup::slotOkPressed()
 
 void kPolygonSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Polygon"), 
+	KMessageBox::information(this,
 			     glocale->translate("Polygon Version 0.1\n\n"\
 					       "written by Martin R. Jones 1996\n"\
-					       "mjones@kde.org"), 
-			     glocale->translate("OK"));
+					       "mjones@kde.org"));
 }
 
 //-----------------------------------------------------------------------------

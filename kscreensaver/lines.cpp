@@ -14,10 +14,10 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qscrollbar.h>
-#include <qmessagebox.h>
 #include <qslider.h>
 #include <kconfig.h>
 #include <kapp.h>
+#include <kmessagebox.h>
 
 #include "kcolordlg.h"
 #include "lines.h"
@@ -294,12 +294,10 @@ void kLinesSetup::slotColend(){
 }
 
 void kLinesSetup::slotAbout(){
-	QMessageBox::information(this,
-		glocale->translate("About Lines"),
+	KMessageBox::about(this,
 		glocale->translate("Lines Version 0.1.1\n\n"
 				   "written by Dirk Staneker 1997\n"
-				   "dirk.stanerker@student.uni-tuebingen.de"),
-		glocale->translate("OK"));
+				   "dirk.stanerker@student.uni-tuebingen.de"));
 }
 
 // Ok pressed - save settings and exit

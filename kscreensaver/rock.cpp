@@ -402,7 +402,6 @@ void rock_setRotate( bool rotate )
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 #include "rock.h"
 
 #include "rock.moc"
@@ -412,6 +411,7 @@ void rock_setRotate( bool rotate )
 #include "helpers.h"
 #include <kapp.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #undef Below
 
@@ -719,9 +719,7 @@ void kRockSetup::slotOkPressed()
 
 void kRockSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Rock"),
-			     glocale->translate("Rock Version 3.3\n\nCopyright (c) 1992 by Jamie Zawinski\n\nPorted to kscreensave by Martin Jones."),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Rock Version 3.3\n\nCopyright (c) 1992 by Jamie Zawinski\n\nPorted to kscreensave by Martin Jones."));
 }
 

@@ -166,10 +166,8 @@ drawforest(Window win)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 
 #include "forest.h"
-
 #include "forest.moc"
 
 #include <qlayout.h>
@@ -178,6 +176,7 @@ drawforest(Window win)
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #undef Below
 
@@ -401,10 +400,8 @@ void kForestSetup::slotOkPressed()
 
 void kForestSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Forest"),
-			     glocale->translate("Forest\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Emanuel Pirker."), 
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Forest\n\nCopyright (c) 1995 by Pascal Pensa\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

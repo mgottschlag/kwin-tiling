@@ -11,32 +11,30 @@
 #include <sys/types.h>
 #include <time.h>
 
-#include <kapp.h> 
-#include <kglobal.h>
-
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qmessagebox.h> 
 #include <qlistbox.h>
 #include <qcheckbox.h>
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-
 #include <qlayout.h>
+
+#include <kapp.h> 
+#include <kglobal.h>
+#include <kmessagebox.h> 
 #include <kbuttonbox.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kstddirs.h>
-#include "helpers.h"
 
+#include "helpers.h"
 #include "science.h"
 #include "science.moc"
 
 #include <X11/Xutil.h>
-
 
 #define SCI_DEFAULT_MODE          0
 #define SCI_DEFAULT_MOVEX         6
@@ -1299,11 +1297,7 @@ void KScienceSetup::slotOkPressed()
 
 void KScienceSetup::slotAbout()
 {
-	QString about;
-
-	about = i18n("Science Version 0.26.5\n\nwritten by Rene Beutler (1998)\nrbeutler@g26.ethz.ch");
-	QMessageBox::information(this,
-			      i18n("About Science"), 
-	                      about,
-	                      i18n("OK") );
+	QString about = i18n("Science Version 0.26.5\n\nwritten by Rene Beutler (1998)\nrbeutler@g26.ethz.ch");
+	KMessageBox::about(this,
+	                      about);
 }

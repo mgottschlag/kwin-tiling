@@ -200,10 +200,8 @@ drawlissie(Window win, lissiestruct * lissie)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 
 #include "lissie.h"
-
 #include "lissie.moc"
 
 #include <qlayout.h>
@@ -212,6 +210,7 @@ drawlissie(Window win, lissiestruct * lissie)
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #undef Below
 
@@ -482,8 +481,6 @@ void kLissieSetup::slotOkPressed()
 
 void kLissieSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Lissie"), 
-			     glocale->translate("Lissie\n\nCopyright (c) 1996 by Alexander Jolk\n\nPorted to kscreensave by Emanuel Pirker."), 
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Lissie\n\nCopyright (c) 1996 by Alexander Jolk\n\nPorted to kscreensave by Emanuel Pirker."));
 }

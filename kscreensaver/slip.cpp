@@ -253,18 +253,17 @@ drawslip(Window win)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
-#include <kapp.h>
-
-#include "slip.h"
-
-#include "slip.moc"
-
 #include <qlayout.h>
+
+#include <kapp.h>
+#include <kmessagebox.h>
 #include <kbuttonbox.h>
-#include "helpers.h"
 #include <klocale.h>
 #include <kconfig.h>
+
+#include "slip.h"
+#include "slip.moc"
+#include "helpers.h"
 
 #undef Below
 
@@ -491,10 +490,8 @@ void kSlipSetup::slotOkPressed()
 
 void kSlipSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Slip"), 
-			     glocale->translate("Slip\n\nCopyright (c) 1991 by Scott Draves\n\nPorted to kscreensave by Emanuel Pirker."),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+		glocale->translate("Slip\n\nCopyright (c) 1991 by Scott Draves\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

@@ -64,19 +64,20 @@
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 #include <qcombobox.h>
 #include <qslider.h>
+
 #include <kapp.h>
+#include <kbuttonbox.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "attraction.h"
 #include "attraction.moc"
 
-#include <qlayout.h>
-#include <kbuttonbox.h>
 #include "helpers.h"
 
 //=============================================================
@@ -951,12 +952,10 @@ void kAttractionSetup::slotOkPressed()
 
 void kAttractionSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Attraction"), 
-			     glocale->translate("Attraction Version 1.0\n\n"
-				"Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
-				"Ported to kscreensaver by:\n\n"
-				"Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+		glocale->translate("Attraction Version 1.0\n\n"
+				   "Copyright (c) 1992-1997 by Jamie Zawinski <jwz@jwz.org>\n\n"
+				   "Ported to kscreensaver by:\n\n"
+				   "Tom Vijlbrief <tom.vijlbrief@knoware.nl> oct 1998"));
 }
 

@@ -271,7 +271,8 @@ void initGL(Window window)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
+
+#include <kmessagebox.h>
 
 #include "pipes.moc"
 
@@ -798,11 +799,9 @@ void kPipesSetup::slotOkPressed()
 
 void kPipesSetup::slotAbout()
 {
-  QMessageBox::information(this,
-	glocale->translate("About KPipes"), 
+  KMessageBox::about(this,
 	glocale->translate("KPipes\nCopyright (c) 1998\n"
-			   "Lars Doelle <lars.doelle@on-line.de>"),
-	glocale->translate("OK"));
+			   "Lars Doelle <lars.doelle@on-line.de>"));
 }
 
 #endif

@@ -810,25 +810,23 @@ release_bouboule()
 
 }
 
-
 //---------------------------------------------------
 
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
-
-#include "bouboule.h"
-
-#include "bouboule.moc"
-
 #include <qlayout.h>
+
 #include <kbuttonbox.h>
-#include "helpers.h"
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
+
+#include "bouboule.h"
+#include "bouboule.moc"
+#include "helpers.h"
 
 #undef Below
 
@@ -1223,10 +1221,8 @@ void kBoubouleSetup::slotOkPressed()
 
 void kBoubouleSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Bouboule"),
-			     glocale->translate("Bouboule v0.1 -- a glob of spheres twisting and changing size\n\nCopyright (c) 1996 by Jeremie PETIT\n\nPorted to kscreensave by Cedric Tefft"), 
-			     glocale->translate("OK")); 
+	KMessageBox::about(this,
+			     glocale->translate("Bouboule v0.1 -- a glob of spheres twisting and changing size\n\nCopyright (c) 1996 by Jeremie PETIT\n\nPorted to kscreensave by Cedric Tefft"));
 }
 
 

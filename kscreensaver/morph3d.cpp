@@ -906,12 +906,12 @@ release_morph3d()
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
+
 #include <kapp.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "morph3d.h"
-
 #include "morph3d.moc"
 
 #undef Below    // X sux
@@ -1120,10 +1120,8 @@ void kMorph3dSetup::slotOkPressed()
 
 void kMorph3dSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Morph3D"), 
-			     glocale->translate("Morph3D\n\nCopyright (c) 1997 by Marcelo F. Vianna\n\nPorted to kscreensave by Emanuel Pirker."),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Morph3D\n\nCopyright (c) 1997 by Marcelo F. Vianna\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 

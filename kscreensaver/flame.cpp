@@ -274,12 +274,12 @@ drawflame(Window win)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 
 #include "flame.h"
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #include "flame.moc"
 
@@ -552,10 +552,8 @@ void kFlameSetup::slotOkPressed()
 
 void kFlameSetup::slotAbout()
 {
-  QMessageBox::information(this,
-		       glocale->translate("About Flame"),
-		       glocale->translate("Flame Version 3.3\n\nCopyright (c) 1991 by Scott Draves <spot@draves.org>\n\nPorted to kscreensave by Martin Jones."), 
-		       glocale->translate("OK"));
+  KMessageBox::about(this,
+		       glocale->translate("Flame Version 3.3\n\nCopyright (c) 1991 by Scott Draves <spot@draves.org>\n\nPorted to kscreensave by Martin Jones."));
 }
 
 

@@ -186,7 +186,6 @@ drawhop(Window win)
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qcolor.h>
-#include <qmessagebox.h>
 
 #include "hop.h"
 
@@ -198,6 +197,7 @@ drawhop(Window win)
 #include <kapp.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kmessagebox.h>
 
 #undef Below // X sux
 
@@ -468,10 +468,8 @@ void kHopSetup::slotOkPressed()
 
 void kHopSetup::slotAbout()
 {
-	QMessageBox::information(this,
-			     glocale->translate("About Hop"), 
-			     glocale->translate("Hop Version 3.3\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Emanuel Pirker."),
-			     glocale->translate("OK"));
+	KMessageBox::about(this,
+			     glocale->translate("Hop Version 3.3\n\nCopyright (c) 1991 by Patrick J. Naughton\n\nPorted to kscreensave by Emanuel Pirker."));
 }
 
 
