@@ -20,9 +20,11 @@
   */
 
 #include "toplevel.h"
+#include <klocale.h>
 
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {
+    KLocale::setMainCatalogue("kcmlocale");
     return new KLocaleApplication(parent, name);
   }
 }
