@@ -250,6 +250,7 @@ bool GetInfo_Devices (QListView *lbox)
 		QDict<QListViewItem> lv_items;
 		Device *dev;
 		QString line, controller;
+		lbox->setRootIsDecorated(true);
 		lbox->addColumn("Device");
 		lbox->addColumn("Description");
 		while ( (line=qts.readLine()) != QString::null) {
