@@ -280,7 +280,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     connect( mWaitEdit, SIGNAL( valueChanged(int) ),
              SLOT( slotTimeoutChanged(int) ) );
     
-    groupLayout->addWidget(mWaitEdit);
+    groupLayout->addWidget(mWaitEdit, 0, AlignTop);
     
 	mLockCheckBox = new QCheckBox( i18n("&Require password"), group );
 	mLockCheckBox->setChecked( mLock );

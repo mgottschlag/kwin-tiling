@@ -364,7 +364,7 @@ KBackground::KBackground(QWidget *parent, Mode m)
     cacheSlider = new KIntNumInput(i18n("Cache size:"), 128, 5120, 512, cacheSize,
                                    "kB", 10, true, this );
     cacheSlider->setSteps(512, 1024);
-    topLayout->addWidget( cacheSlider, 5, 3);
+    topLayout->addWidget( cacheSlider, 4, 3);
 
     showSettings();
 
