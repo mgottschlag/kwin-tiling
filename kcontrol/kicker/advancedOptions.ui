@@ -97,7 +97,7 @@
                 <string>&amp;Resizeable handle</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>With this option enabled you can can click and drag the edge of the panel to freely resize it. The panel's size has to be set to "Custom". This option can also be set in the panel's context menu.</string>
+                <string>With this option enabled you can click and drag the edge of the panel to freely resize it. The panel's size has to be set to "Custom". This option can also be set in the panel's context menu.</string>
             </property>
         </widget>
         <spacer row="5" column="0">
