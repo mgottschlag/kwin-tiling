@@ -32,8 +32,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "kfdialog.h"
 
 class QPopupMenu;
-class KConsole;
 class QGridLayout;
+class KConsole;
+class KGVerify;
 
 #define ex_exit    1
 #define ex_greet   2
@@ -65,6 +66,7 @@ class KGDialog : public FDialog {
 
 	bool needSep;
 	QPopupMenu *optMenu;
+	KGVerify *verify;
 #ifdef WITH_KDM_XCONSOLE
 	KConsole *consoleView;
 #endif

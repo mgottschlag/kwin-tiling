@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "kgdialog.h"
+#include "kgverify.h"
 #include "kconsole.h"
 #include "kdmshutdown.h"
 #include "kdm_greet.h"
@@ -44,6 +45,7 @@ KGDialog::KGDialog( bool themed ) : inherited( 0, !themed )
 #endif
 
 	optMenu = 0;
+	verify = 0;
 }
 
 void
@@ -127,6 +129,8 @@ KGDialog::slotActivateMenu( int id )
 void
 KGDialog::slotExit()
 {
+	if (verify)
+		verify->abort();
 	::exit( EX_RESERVER_DPY );
 }
 
@@ -153,11 +157,18 @@ KGDialog::slotConsole()
 #ifdef HAVE_VTS
 	dpySpec *sess = fetchSessions( 0 );
 	if (sess) {
+		if (verify)
+			verify->suspend();
 		int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE, 0 ).exec();
+		if (verify)
+			verify->resume();
 		disposeSessions( sess );
 		if (!ret)
 			return;
 	}
+#else
+	if (verify)
+		verify->abort();
 #endif
 	GSet( 1 );
 	GSendInt( G_Console );
@@ -167,10 +178,14 @@ KGDialog::slotConsole()
 void
 KGDialog::slotShutdown()
 {
+	if (verify)
+		verify->suspend();
 	if (_scheduledSd == SHUT_ALWAYS)
 		KDMShutdown::scheduleShutdown( this );
 	else
 		KDMSlimShutdown( this ).exec();
+	if (verify)
+		verify->resume();
 }
 
 void

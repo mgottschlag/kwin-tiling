@@ -71,9 +71,6 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	void slotUserClicked( QListViewItem * );
 	void slotSessionSelected( int );
 	void slotUserEntered();
-	void slotExit();
-	void slotShutdown();
-	void slotConsole();
 
   protected:
 	void installUserList();
@@ -88,7 +85,6 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	KSimpleConfig *stsFile;
 	UserListView *userView;
 	QStringList *userList;
-	KGVerify *verify;
 	QPopupMenu *sessMenu;
 	QValueVector<SessType> sessionTypes;
 	int nNormals, nSpecials;

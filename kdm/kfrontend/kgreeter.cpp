@@ -106,7 +106,6 @@ KGreeter::KGreeter( bool framed )
   , dName( dname )
   , userView( 0 )
   , userList( 0 )
-  , verify( 0 )
   , nNormals( 0 )
   , nSpecials( 0 )
   , curPrev( -1 )
@@ -357,35 +356,6 @@ KGreeter::insertSessions()
 		case 2: nNormals++; break;
 		}
 	}
-}
-
-void
-KGreeter::slotShutdown()
-{
-	verify->suspend();
-	inherited::slotShutdown();
-	verify->resume();
-}
-
-void
-KGreeter::slotConsole()
-{
-#ifdef HAVE_VTS
-	verify->suspend();
-#else
-	verify->abort();
-#endif
-	inherited::slotConsole();
-#ifdef HAVE_VTS
-	verify->resume();
-#endif
-}
-
-void
-KGreeter::slotExit()
-{
-	verify->abort();
-	inherited::slotExit();
 }
 
 void
