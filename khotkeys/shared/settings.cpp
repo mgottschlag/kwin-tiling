@@ -226,13 +226,13 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             continue;
         cfg_P.setGroup( group );
         QString name = cfg_P.readEntry( "Name" );
-        if( name == QString::null )
+        if( name.isNull() )
             continue;
         QString shortcut = cfg_P.readEntry( "Shortcut" );
-        if( shortcut == QString::null )
+        if( shortcut.isNull() )
             continue;
         QString run = cfg_P.readEntry( "Run" );
-        if( run == QString::null )
+        if( run.isNull() )
             continue;
         bool menuentry = cfg_P.readBoolEntry( "MenuEntry", false );
         // CHECKME tohle pridavani az pak je trosku HACK
