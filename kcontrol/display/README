@@ -7,6 +7,24 @@ This is README for two programs : kbgndwm and kcmdisplay - background module
 Both are part of KDE and require kwm to work properly.
 
 
+30 October 1999:
+
+  I rewrote the background setup tab so that it makes use of
+  the new background code.
+
+  Some features/issues:
+  * Support for background programs (a la xearth)
+  * Possibility to export the desktop background as a shared pixmap. This
+    allows clients to implement pseudo transparency very easy.
+  * Support for drop-in patterns and background programs.
+  * Works very much like the old setup, but uses a different config file.
+  * Uses KBackgroundRenderer to render so no code duplication.
+
+
+  That's it. 
+  Geert Jansen <g.t.jansen@stud.tue.nl>
+
+    
 Some new features :
 
 1. One Desktop radio button -

@@ -241,10 +241,11 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
     groupLayout = new QHBoxLayout( group, 15, 5 );
     
-    QLabel* label = new QLabel( mPrioritySlider, i18n("High"), group );
+    QLabel* label = new QLabel(i18n("High"), group );
     groupLayout->addWidget(label);
 
     mPrioritySlider = new QSlider(QSlider::Horizontal, group);
+    label->setBuddy(mPrioritySlider);
     mPrioritySlider->setRange(0, 19);
     mPrioritySlider->setSteps(1, 5);
     mPrioritySlider->setValue(mPriority);

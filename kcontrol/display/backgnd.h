@@ -1,305 +1,160 @@
-//-----------------------------------------------------------------------------
-//
-// KDE Display background setup module
-//
-// Copyright (c)  Martin R. Jones 1996
-//
+/* vi: ts=8 sts=4 sw=4
+ *
+ * $Id: $
+ *
+ * This file is part of the KDE project, module kdesktop.
+ * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
+ * 
+ * You can Freely distribute this program under the GNU General Public
+ * License. See the file "COPYING" for the exact licensing terms.
+ */
 
-#ifndef __BACKGND_H__
-#define __BACKGND_H__
+#ifndef __Bgnd_h_Included__
+#define __Bgnd_h_Included__
 
+#include <qobject.h>
+#include <qstring.h>
+#include <qcolor.h>
+#include <qmap.h>
+#include <qevent.h>
 #include <qwidget.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qlistbox.h>
-#include <qradiobutton.h>
-#include <qlineedit.h>
-#include <qbuttongroup.h>
 
-#include <knuminput.h>
-#include <kcolordlg.h>
-#include <kcolorbtn.h>
 #include <kcontrol.h>
 
+#include <bgdefaults.h>
 #include "display.h"
 
-class KBackground;
-class KIntNumInput;
-struct PatternEntry;
+class QCheckBox;
+class QListBox;
+class QComboBox;
+class QStringList;
+class QButtonGroup;
+class QPalette;
+class QLabel;
 
-class KItem : public QObject
-{
-  
-public:
+class KColorButton;
+class KBackgroundRenderer;
+class KGlobalBackgroundSettings;
+class KConfig;
+class KStandardDirs;
 
-  KItem() : QObject() {}
 
-  KItem ( const KItem &itm ): QObject() // deep copy
-    {
-	*this = itm;
-    }
-
-  KItem &operator=( const KItem &itm )	// deep copy
-    {
-      color1 = itm.color1;
-      color2 = itm.color2;
-      wpMode = itm.wpMode;
-      ncMode = itm.ncMode;
-      stMode = itm.stMode;
-      orMode = itm.orMode;
-      bUseWallpaper = itm.bUseWallpaper;
-      wallpaper = itm.wallpaper.data();
-      pattern = itm.pattern;
-      return *this;
-    }
-
-  QColor color1;
-  QColor color2;
-  int wpMode;
-  int ncMode;
-  int stMode; 
-  int orMode;
-  QString pattern;
-
-  bool bUseWallpaper;
-  QString wallpaper;
-};
-
+/**
+ * This class handles drops on the preview monitor.
+ */
 class KBGMonitor : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  KBGMonitor( QWidget *parent ) : QWidget( parent ) {
-    setAcceptDrops( true);
-  };
 
-  // we don't want no steenking palette change
-  virtual void setPalette( const QPalette & ) {};
+    KBGMonitor(QWidget *parent) : QWidget(parent) {
+	setAcceptDrops( true);
+    };
+	     
+    // we don't want no steenking palette change
+    virtual void setPalette(const QPalette &) {};
+
 signals:
-  void imageDropped( QDropEvent *);
+    void imageDropped(QString);
+
 protected:
-  virtual void dropEvent( QDropEvent *);
-  virtual void dragEnterEvent( QDragEnterEvent *);
+    virtual void dropEvent(QDropEvent *);
+    virtual void dragEnterEvent(QDragEnterEvent *);
 };
 
-class KRenameDeskDlg : public QDialog
-{
-  Q_OBJECT
-public:
-  KRenameDeskDlg( const QString& t, QWidget *parent );
-  virtual ~KRenameDeskDlg() {}
 
-  QString title()
-    {  return edit->text(); }
+
+/**
+ * A class to read/modify the global desktop background settings.
+ */
+class KGlobalBackgroundSettings
+{
+public:
+    KGlobalBackgroundSettings();
+
+    QString deskName(int desk);
+    void setDeskName(int desk, QString name);
+
+    int cacheSize() { return m_CacheSize; }
+    void setCacheSize(int size);
+
+    bool limitCache() { return m_bLimitCache; }
+    void setLimitCache(bool limit);
+
+    bool commonBackground() { return m_bCommon; }
+    void setCommonBackground(bool common);
+
+    bool dockPanel() { return m_bDock; }
+    void setDockPanel(bool dock);
+
+    bool exportBackground() {return m_bExport; }
+    void setExportBackground(bool export);
+
+    void readSettings();
+    void writeSettings();
 
 private:
-  QLineEdit *edit;
-};
+    bool dirty, m_bKWM;
+    bool m_bCommon, m_bDock;
+    bool m_bLimitCache, m_bExport;
+    int m_CacheSize;
+    QStringList m_Names;
 
-class KBPatternDlg : public QDialog
-{
-  Q_OBJECT
-
-public:
-  KBPatternDlg( QColor color1, QColor color2, QString *name, int *orient,
-		int *type, QWidget *parent = 0, char *name = 0 );
-  ~KBPatternDlg();
-    
-protected slots:
-  void selected(int index);
-  virtual void done ( int r );
-  void slotMode( int );
-    
-private:
-  QLabel *preview;
-  QLabel *lPreview;
-  QLabel *lName;
-  QListBox *listBox;
-  QList<PatternEntry> *list;
-  QCheckBox *orientCB;
-  QRadioButton *rbVert;
-  QRadioButton *rbHoriz;
-  QRadioButton *rbPattern;
-  QButtonGroup *suGroup;
-	
-  enum { Portrait = 1, Landscape, GreyMap };
-	
-  bool changed;
-  QString current;
-  QString *pattern;
-  int *orMode;
-  int *tpMode;
-  int mode;
-    
-  QColor color1, color2;
+    KConfig *m_pConfig;
 };
 
 
-class KRandomDlg : public QDialog
+/**
+ * The "background" tab in kcmdisplay.
+ */
+class KBackground: public KDisplayModule
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  KRandomDlg(int _desktop, KBackground *_kb, char *name = 0 );
-  ~KRandomDlg() {}
+    KBackground(QWidget *parent, Mode mode);
 
-  friend class KBackground;
+    virtual void loadSettings();
+    virtual void applySettings();
+    virtual void defaultSettings();
 
-protected:
-  void addToPicList( QString pic );
-  void readSettings();
-  void copyCurrent();
-  virtual void dropEvent(QDropEvent *event);
-  virtual void dragEnterEvent( QDragEnterEvent *);
-
-protected slots:
-  void selected( int index );
-  void slotDelete();
-  void slotAdd();
-  void changeDir();
-  void slotBrowse ();
-
-  virtual void done ( int r );
+private slots:
+    void slotSelectDesk(int desk);
+    void slotCommonDesk(bool common);
+    void slotBGMode(int mode);
+    void slotBGSetup();
+    void slotColor1(const QColor &);
+    void slotColor2(const QColor &);
+    void slotImageDropped(QString);
+    void slotWPMode(int);
+    void slotWallpaper(const QString &);
+    void slotBrowseWallpaper();
+    void slotSetupMulti();
+    void slotPreviewDone(int);
+    void slotMultiMode(bool);
 
 private:
-  QLabel *desktopLabel;
-  QListBox *listBox;
-  QList<QString> list;
-  QCheckBox *orderButton;
+    void init();
+    void apply();
 
-  QCheckBox *dirCheckBox;
-  QLineEdit *dirLined;
-  QPushButton *dirPushButton;
+    int m_Desk, m_Max;
 
-  KIntNumInput* timerNumInput;
+    QListBox *m_pDeskList;
+    QCheckBox *m_pCBCommon, *m_pCBMulti;
+    QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
+    QComboBox *m_pArrangementBox;
+    QPushButton *m_pBGSetupBut, *m_pMSetupBut;
+    QPushButton *m_pBrowseBut;
+    QMap<QString,int> m_Wallpaper;
 
-  KBackground *kb;
-  QList<KItem> ItemList;
+    KBackgroundRenderer *m_Renderer[_maxDesktops];
+    KGlobalBackgroundSettings *m_pGlobals;
+    KColorButton *m_pColor1But, *m_pColor2But;
+    KBGMonitor *m_pMonitor;
 
-  bool useDir;
-  QString picDir;
-
-  int count;
-  int delay;
-  bool inorder;
-
-  bool changed;
-  int desktop;
-  int item;
+    KConfig *m_pConfig;
+    KStandardDirs *m_pDirs;
 };
 
 
-class KBackground : public KDisplayModule
-{
-  Q_OBJECT
-public:
-	
-  enum { Portrait = 1, Landscape };
-  enum { Flat = 1, Gradient, Pattern, GreyMap };
-
-  KBackground(QWidget *parent, Mode mode);
-
-  virtual void readSettings( int deskNum = 0 );
-  virtual void apply( bool force = FALSE );
-  virtual void loadSettings();
-  virtual void applySettings();
-  virtual void defaultSettings();
-
-  friend class KItem;
-  friend class KRandomDlg;
-
-protected slots:
-
-  void slotSelectColor1( const QColor &col );
-  void slotSelectColor2( const QColor &col );
-  void slotBrowse();
-  void slotWallpaper( const QString & );
-  void slotWallpaperMode( int );
-  void slotColorMode( int );
-  void slotStyleMode( int );
-  void slotSwitchDesk( int );
-  void slotRenameDesk();
-  void slotSetup2Color();
-  void slotSetupRandom();
-  void slotToggleRandom();
-  void slotToggleOneDesktop();
-  void slotToggleDock();
-  void slotDropped(QDropEvent *event);
-
-protected:
-  void getDeskNameList();
-  void setDesktop( int );
-  void showSettings();
-  void writeSettings( int deskNum );
-  void setMonitor();
-  bool loadWallpaper( const QString& filename, bool useContext = TRUE );
-  void retainResources();
-  void setDefaults();
-
-  void resizeEvent( QResizeEvent * );
-
-  bool setNew( QString pic, int item );
-
-protected:
-  enum { Tiled = 1,
-	 Mirrored,
-	 CenterTiled,
-	 Centred,
-	 CentredBrick,
-	 CentredWarp,
-	 CentredMaxpect,
-	 SymmetricalTiled,
-	 SymmetricalMirrored,
-	 Scaled };
-
-  enum { OneColor = 1, TwoColor };
-
-  QListBox     *deskListBox;
-
-  QCheckBox *oneDesktopButton;
-  QCheckBox *dockButton;
-  QCheckBox *randomButton;
-
-  QRadioButton *rbPattern;
-  QRadioButton *rbGradient;
-
-  KColorButton *colButton1;
-  KColorButton *colButton2;
-
-  QButtonGroup *ncGroup;
-
-  QPushButton  *renameButton;
-  QPushButton  *changeButton;
-  QPushButton  *randomSetupButton;
-  QPushButton  *browseButton;
-
-  QComboBox *wpModeCombo;
-  QComboBox *wpCombo;
-
-  KIntNumInput* cacheSlider;
-
-  QLabel *monitorLabel;
-  KBGMonitor* monitor;
-
-  QPixmap wpPixmap;
-  QString deskName;
-  QStrList deskNames;
-
-  int deskNum;
-  int random;
-  int maxDesks;
-
-  KItem currentItem;
-  KRandomDlg *rnddlg;
-
-  bool changed;
-
-  bool randomMode;
-  bool oneDesktopMode;
-  bool interactive;
-  bool docking;
-
-};
-
-
-#endif
+#endif // __Bgnd_h_Included__
