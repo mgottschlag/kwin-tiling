@@ -148,7 +148,7 @@ void KDrKonqiGeneral::changed()
   emit KCModule::changed(true);
 }
 
-void KDrKonqiGeneral::slotPresetChanged(int index)
+void KDrKonqiGeneral::slotPresetChanged(int)
 {
   // This code was supposed to grey out the list box on the right side.
   // Unfortantly setEnable doesn't grey out, but only disables the list box.
