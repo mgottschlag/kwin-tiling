@@ -64,7 +64,7 @@ Comment[fi]=Resoluution muuttaminen ja ruudun kääntäminen
 Comment[fr]=Redimensionner et Tourner votre affichage
 Comment[gl]=Redimensionar e rotar a súa pantalla
 Comment[he]=שנה את גודלה של התצוגה שלך וסובב אותה
-Comment[hi]=अपने प्रकटन(डिस्प्ले) का आकार बदलें तथा घुमाएँ 
+Comment[hi]=अपने प्रकटन(डिस्प्ले) का आकार बदलें तथा घुमाएँ
 Comment[hu]=A képernyő átméretezése, elforgatása
 Comment[it]=Ridimensiona e ruota il tuo display
 Comment[mn]=Дэлгэцийнхээ хэмжээг өөрчилөх ба эргүүлэх
@@ -128,5 +128,3 @@ Keywords[wa]=candjî l' grandeu,tourner,håynaedje,coleur,parfondeu,grandeu,di 
 Keywords[xx]=xxresize,rotate,display,color,depth,size,horizontal,verticalxx
 Keywords[zh_CN]=resize,rotate,display,color,depth,size,horizontal,vertical,更改大小,旋转,显示,颜色,深度,大小,垂直,水平
 Keywords[zh_TW]=resize,rotate,display,color,depth,size,horizontal,vertical,調整大小,旋轉,螢幕,顏色,深度,尺寸,垂直,水平
-
-Categories=Qt;KDE;
