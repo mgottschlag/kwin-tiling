@@ -29,6 +29,7 @@
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qdragobject.h>
 #include <qhbox.h>
@@ -36,6 +37,7 @@
 #include <qwhatsthis.h>
 #include <qtabwidget.h>
 #include <qspinbox.h>
+#include <qhbuttongroup.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -136,6 +138,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     m_pConfig = new KConfig("kdesktoprc");
     m_pDirs = KGlobal::dirs();
+
+    m_oldMode = KBackgroundSettings::Centred;
 
     // Top layout
     QGridLayout *top = new QGridLayout(this, 3, 2);
@@ -241,17 +245,32 @@ KBackground::KBackground(QWidget *parent, const char *name)
     // Wallpaper at Tab 2
     m_pTab2 = new QWidget(0L, "Wallpaper Tab");
     m_pTabWidget->addTab(m_pTab2, i18n("&Wallpaper"));
-    grid = new QGridLayout(m_pTab2, 4, 3, 10, 10);
+    grid = new QGridLayout(m_pTab2, 5, 3, 10, 10);
     grid->setColStretch(1, 1);
     grid->setColStretch(2, 1);
+    grid->setRowStretch(4, 1);
+
+    m_WallpaperType = new QHButtonGroup( m_pTab2 );
+    m_WallpaperType->setExclusive( true );
+    m_WallpaperType->setFrameStyle( QFrame::NoFrame );
+    QWhatsThis::add( m_WallpaperType, i18n("If you check this option, you can choose"
+      " a set of graphic files to be used as wallpaper, one at a time, for an"
+      " interval ranging from 5 minutes to 4 hours. You can also choose to have"
+      " the graphics selected at random or in the order you specified them.") );
+    connect( m_WallpaperType, SIGNAL(clicked(int)), SLOT(slotWallpaperType(int)) );
+    grid->addMultiCellWidget( m_WallpaperType, 0, 0, 0, 2 );
+
+    QRadioButton *rb = new QRadioButton( i18n("&No Wallpaper"), m_WallpaperType );
+    rb = new QRadioButton( i18n("&Single Wallpaper"), m_WallpaperType );
+    rb = new QRadioButton( i18n("&Multiple Wallpapers"), m_WallpaperType );
 
     lbl = new QLabel(i18n("M&ode:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
+    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
     m_pArrangementBox = new QComboBox(m_pTab2);
     connect(m_pArrangementBox, SIGNAL(activated(int)), SLOT(slotWPMode(int)));
     lbl->setBuddy(m_pArrangementBox);
-    grid->addWidget(m_pArrangementBox, 0, 1, Qt::AlignLeft);
+    grid->addWidget(m_pArrangementBox, 1, 1, Qt::AlignLeft);
     QWhatsThis::add( m_pArrangementBox, i18n("You can have a wallpaper (based on"
       " a graphic) on top of your background. You can choose one of the following"
       " methods for displaying the wallpaper:"
@@ -268,34 +287,26 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     lbl = new QLabel(i18n("&Wallpaper:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
+    grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
     m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
         SLOT(slotWallpaper(const QString &)));
-    grid->addWidget(m_pWallpaperBox, 1, 1);
+    grid->addWidget(m_pWallpaperBox, 2, 1);
     QWhatsThis::add( m_pWallpaperBox, i18n("Click to choose the graphic you want"
       " to use as wallpaper.") );
 
     m_pBrowseBut = new QPushButton(i18n("&Browse..."), m_pTab2);
-    grid->addWidget(m_pBrowseBut, 2, 1, Qt::AlignLeft);
+    grid->addWidget(m_pBrowseBut, 2, 2, Qt::AlignLeft);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     QWhatsThis::add( m_pBrowseBut, i18n("If the graphic you want is not in a standard"
       " directory, you can still find it by clicking here.") );
 
-    m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), m_pTab2);
-    m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
-    grid->addWidget(m_pCBMulti, 3, 0, Qt::AlignLeft);
-    connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
-    m_pMSetupBut = new QPushButton(i18n("S&etup..."), m_pTab2);
-    m_pMSetupBut->setFixedSize(bsize);
+    m_pMSetupBut = new QPushButton(i18n("S&etup Multiple..."), m_pTab2);
+    m_pMSetupBut->setFixedSize(m_pMSetupBut->sizeHint());
     grid->addWidget(m_pMSetupBut, 3, 1, Qt::AlignLeft);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
-    QWhatsThis::add( m_pCBMulti, i18n("If you check this option, you can choose"
-      " a set of graphic files to be used as wallpaper, one at a time, for an"
-      " interval ranging from 5 minutes to 4 hours. You can also choose to have"
-      " the graphics selected at random or in the order you specified them.") );
     QWhatsThis::add( m_pMSetupBut, i18n("Click here to select graphics to be used"
       " for wallpaper, and to configure other options.") );
 
@@ -430,7 +441,6 @@ void KBackground::init()
     m_pWallpaperBox->setMaximumWidth(m_pWallpaperBox->sizeHint().width());
 
     // Wallpaper tilings: again they must match the ones from bgrender.cc
-    m_pArrangementBox->insertItem(i18n("No Wallpaper"));
     m_pArrangementBox->insertItem(i18n("Centered"));
     m_pArrangementBox->insertItem(i18n("Tiled"));
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
@@ -485,6 +495,12 @@ void KBackground::apply()
     }
 
     // Wallpaper mode
+    if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper )
+	m_WallpaperType->setButton( 0 );
+    else if ( r->multiWallpaperMode() == KBackgroundSettings::NoMulti )
+	m_WallpaperType->setButton( 1 );
+    else
+	m_WallpaperType->setButton( 2 );
     QString wp = r->wallpaper();
     if (wp.isEmpty())
         wp = QString(" ");
@@ -495,11 +511,11 @@ void KBackground::apply()
         m_pWallpaperBox->setCurrentItem(count);
     }
     m_pWallpaperBox->setCurrentItem(m_Wallpaper[wp]);
-    m_pArrangementBox->setCurrentItem(r->wallpaperMode());
 
     if (r->wallpaperMode() == KBackgroundSettings::NoWallpaper)
     {
-        m_pCBMulti->setEnabled(false);
+	m_pArrangementBox->setCurrentItem(m_oldMode-1);
+	m_pArrangementBox->setEnabled(false);
         m_pWallpaperBox->setEnabled(false);
         m_pBrowseBut->setEnabled(false);
         m_pMSetupBut->setEnabled(false);
@@ -511,7 +527,8 @@ void KBackground::apply()
     }
     else
     {
-        m_pCBMulti->setEnabled(true);
+	m_pArrangementBox->setCurrentItem(r->wallpaperMode()-1);
+	m_pArrangementBox->setEnabled(true);
         m_pBlendBox->setEnabled(true);
         m_pBlendSlider->setEnabled(
             (r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
@@ -521,13 +538,11 @@ void KBackground::apply()
         // Multi mode
         if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti)
         {
-            m_pCBMulti->setChecked(false);
             m_pWallpaperBox->setEnabled(true);
             m_pBrowseBut->setEnabled(true);
             m_pMSetupBut->setEnabled(false);
         } else
         {
-            m_pCBMulti->setChecked(true);
             m_pWallpaperBox->setEnabled(false);
             m_pBrowseBut->setEnabled(false);
             m_pMSetupBut->setEnabled(true);
@@ -819,32 +834,63 @@ void KBackground::slotImageDropped(QString uri)
     emit changed(true);
 }
 
-
-void KBackground::slotMultiMode(bool multi)
+void KBackground::slotWallpaperType( int type )
 {
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
-    if (multi == (r->multiWallpaperMode() != KBackgroundSettings::NoMulti))
-        return;
+
+    bool multi = (r->multiWallpaperMode() != KBackgroundSettings::NoMulti);
+    int mode = r->wallpaperMode();
+
+    switch ( type ) {
+	case 0:
+	    m_oldMode = mode;
+	    mode = KBackgroundSettings::NoWallpaper;
+	    m_pArrangementBox->setEnabled(false);
+	    m_pWallpaperBox->setEnabled(false);
+	    m_pBrowseBut->setEnabled(false);
+	    m_pMSetupBut->setEnabled(false);
+	    // Blending not possible without wallpaper
+	    m_pBlendBox->setEnabled(false);
+	    m_pBlendSlider->setEnabled(false);
+	    m_pReverseBlending->setEnabled(false);
+	    break;
+	
+	case 1:
+	    multi = false;
+	    if ( mode == KBackgroundSettings::NoWallpaper )
+		mode = m_oldMode;
+	    m_pWallpaperBox->setEnabled(true);
+	    m_pBrowseBut->setEnabled(true);
+	    m_pMSetupBut->setEnabled(false);
+	    break;
+
+	case 2:
+	    multi = true;
+	    if ( mode == KBackgroundSettings::NoWallpaper )
+		mode = m_oldMode;
+	    m_pWallpaperBox->setEnabled(false);
+	    m_pBrowseBut->setEnabled(false);
+	    m_pMSetupBut->setEnabled(true);
+	    break;
+    }
+
+    if ( r->wallpaperMode() == KBackgroundSettings::NoWallpaper &&
+	mode != KBackgroundSettings::NoWallpaper ) {
+	m_pArrangementBox->setEnabled(true);
+        m_pBlendBox->setEnabled(true);
+        m_pBlendSlider->setEnabled(
+            (r->blendMode() == KBackgroundSettings::NoBlending) ? false : true);
+    }
 
     r->stop();
+    r->setWallpaperMode(mode);
     r->setMultiWallpaperMode(multi ? 1 : 0);
     r->start();
-
-    if (multi) {
-        m_pWallpaperBox->setEnabled(false);
-        m_pBrowseBut->setEnabled(false);
-        m_pMSetupBut->setEnabled(true);
-    } else {
-        m_pWallpaperBox->setEnabled(true);
-        m_pBrowseBut->setEnabled(true);
-        m_pMSetupBut->setEnabled(false);
-    }
     emit changed(true);
 }
-
 
 void KBackground::slotWallpaper(const QString &wallpaper)
 {
@@ -912,38 +958,10 @@ void KBackground::slotWPMode(int mode)
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
+    mode++;
+
     if (mode == r->wallpaperMode())
         return;
-
-    if (mode == KBackgroundSettings::NoWallpaper) {
-        m_pCBMulti->setEnabled(false);
-        m_pWallpaperBox->setEnabled(false);
-        m_pBrowseBut->setEnabled(false);
-        m_pMSetupBut->setEnabled(false);
-
-        // Blending not possible without wallpaper
-        m_pBlendBox->setEnabled(false);
-        m_pBlendSlider->setEnabled(false);
-    }
-    else {
-        m_pCBMulti->setEnabled(true);
-        m_pBlendBox->setEnabled(true);
-        m_pBlendSlider->setEnabled(
-            (r->blendMode()==KBackgroundSettings::NoBlending)?false:true);
-
-        // Multi mode
-        if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
-            m_pCBMulti->setChecked(false);
-            m_pWallpaperBox->setEnabled(true);
-            m_pBrowseBut->setEnabled(true);
-            m_pMSetupBut->setEnabled(false);
-        } else {
-            m_pCBMulti->setChecked(true);
-            m_pWallpaperBox->setEnabled(false);
-            m_pBrowseBut->setEnabled(false);
-            m_pMSetupBut->setEnabled(true);
-        }
-    }
 
     r->stop();
     r->setWallpaperMode(mode);

@@ -26,7 +26,7 @@ class QCheckBox;
 class QListBox;
 class QComboBox;
 class QStringList;
-class QButtonGroup;
+class QHButtonGroup;
 class QPalette;
 class QLabel;
 class QSlider;
@@ -86,12 +86,12 @@ private slots:
     void slotColor1(const QColor &);
     void slotColor2(const QColor &);
     void slotImageDropped(QString);
+    void slotWallpaperType(int);
     void slotWPMode(int);
     void slotWallpaper(const QString &);
     void slotBrowseWallpaper();
     void slotSetupMulti();
     void slotPreviewDone(int);
-    void slotMultiMode(bool);
     void slotBlendMode(int mode);
     void slotBlendBalance(int value);
     void slotReverseBlending(bool value);
@@ -103,12 +103,14 @@ private:
     void apply();
 
     int m_Desk, m_Max;
+    int m_oldMode;
 
     QListBox *m_pDeskList;
-    QCheckBox *m_pCBCommon, *m_pCBMulti;
+    QCheckBox *m_pCBCommon;
     QCheckBox *m_pReverseBlending, *m_pCBLimit;
     QComboBox *m_pBackgroundBox, *m_pWallpaperBox;
     QComboBox *m_pArrangementBox, *m_pBlendBox;
+    QHButtonGroup *m_WallpaperType;
     QSlider *m_pBlendSlider;
     QPushButton *m_pBGSetupBut, *m_pMSetupBut;
     QPushButton *m_pBrowseBut;
