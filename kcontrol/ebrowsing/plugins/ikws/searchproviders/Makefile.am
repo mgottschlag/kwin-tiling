@@ -36,6 +36,7 @@ services_DATA =	acronym.desktop \
 		php.desktop \
 		python.desktop \
 		qt.desktop \
+		rae.desktop \
 		rfc.desktop \
 		rpmfind.desktop \
 		ruby_application_archive.desktop \
