@@ -189,7 +189,7 @@ public:
 
     enum WallpaperMode {
 	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect,
-	Scaled, lastWallpaperMode
+	Scaled, CentredAutoFit, lastWallpaperMode
     };
     void setWallpaperMode(int mode);
     int wallpaperMode() const { return m_WallpaperMode; }

@@ -330,6 +330,12 @@ wp_out:
 	    wp = wp.smoothScale(ww = w, wh = h);
 	    d.setRect(0, 0, w, h);
 	    break;
+        case CentredAutoFit:
+            if( ww <= w && wh <= h ) {
+    	        d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh); // like Centred
+	        break;
+            }
+            // fall through
 	case CentredMaxpect:
             double sx = (double) w / ww;
             double sy = (double) h / wh;

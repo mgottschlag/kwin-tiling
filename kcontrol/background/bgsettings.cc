@@ -454,6 +454,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     ADD_STRING(CenterTiled)
     ADD_STRING(CentredMaxpect)
     ADD_STRING(Scaled)
+    ADD_STRING(CentredAutoFit)
     #undef ADD_STRING
 
     // Multiple wallpaper modes

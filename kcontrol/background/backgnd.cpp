@@ -292,7 +292,11 @@ KBackground::KBackground(QWidget *parent, const char *name)
 					     " until it fills either the width or height of the desktop, and then center"
 					     " it on the desktop.</li>"
 					     " <li><em>Scaled:</em> Magnify the graphic, distorting it if necessary,"
-					     " until the entire desktop is covered.</li></ul>") );
+					     " until the entire desktop is covered.</li>"
+                                             " <li><em>Centered Auto Fit:</em> If the wallpaper fits the desktop,"
+                                             " this mode works like Centered. If the wallpaper is larger"
+                                             " than the desktop, it's scalled down to fit while keeping the aspect"
+                                             " ratio.</li></ul>") );
 
     lbl = new QLabel(i18n("&Wallpaper:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
@@ -444,6 +448,7 @@ void KBackground::init()
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
     m_pArrangementBox->insertItem(i18n("Centered Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
+    m_pArrangementBox->insertItem(i18n("Centered Auto Fit"));
 }
 
 
