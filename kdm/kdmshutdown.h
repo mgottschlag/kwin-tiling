@@ -50,14 +50,14 @@ class KDMShutdown : public FDialog {
      Q_OBJECT
 public:
      KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
-		  const char* _shutdown = SHUTDOWN_CMD,
-		  const char* _restart  = REBOOT_CMD,
+		  const QString &_shutdown = QString::fromLatin1(SHUTDOWN_CMD),
+		  const QString &_restart  = QString::fromLatin1(REBOOT_CMD),
 #ifndef BSD
-		  const char *_console = "/sbin/init 3",
+		  const QString &_console = QString::fromLatin1("/sbin/init 3"),
 #endif
 		  bool _lilo = FALSE,
-		  const char* _lilocmd = 0,
-                  const char* _lilomap = 0);
+		  const QString &_lilocmd = QString::null,
+                  const QString &_lilomap = QString::null);
 private slots:
      void rb_clicked(int);
      void pw_entered();
@@ -69,11 +69,11 @@ private:
      QPushButton*  okButton;
      QPushButton*  cancelButton;
      QLineEdit*    pswdEdit;
-     const char*   cur_action;
-     const char*   shutdown;
-     const char*   restart;
+     QString       cur_action;
+     QString       shutdown;
+     QString       restart;
 #ifndef BSD
-     const char*   console;
+     QString       console;
 #endif
      QRadioButton  *restart_rb;
      bool          lilo;
@@ -82,3 +82,11 @@ private:
 };
 
 #endif /* KDMSHUTDOWN_H */
+
+
+
+
+
+
+
+

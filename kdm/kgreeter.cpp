@@ -121,7 +121,7 @@ MyApp::x11EventFilter( XEvent * ev){
 	      ks == XK_KP_Enter)
 	       kgreeter->ReturnPressed();
      }
-     // Hack to tell dialogs to take focus
+     // Hack to tell dialogs to take focus 
      if( ev->type == ConfigureNotify) {
 	  QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
 	  target = target->topLevelWidget();
@@ -179,7 +179,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
      QGridLayout* grid = new QGridLayout( 4, 2, 5);
 
-     QLabel* welcomeLabel = new QLabel( *kdmcfg->greetString(), winFrame);
+     QLabel* welcomeLabel = new QLabel( kdmcfg->greetString(), winFrame);
      welcomeLabel->setAlignment(AlignCenter);
      welcomeLabel->setFont( *kdmcfg->greetFont());
      set_min( welcomeLabel);
@@ -200,8 +200,8 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      kimgioRegister();
 
      QPixmap pixmap;
-     if( QFile::exists( *kdmcfg->logo()))
-	  pixmap.load( *kdmcfg->logo());
+     if( QFile::exists( kdmcfg->logo() ) )
+	  pixmap.load( kdmcfg->logo() );
      else
 	  pixmap.resize( 100,100);
      pixLabel->setPixmap( pixmap);
@@ -256,7 +256,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      hbox2->addWidget( sessionargLabel);
      sessionargBox = new QComboBox( false, winFrame);
 
-     sessionargBox->insertStrList( *kdmcfg->sessionTypes() );
+     sessionargBox->insertStringList( kdmcfg->sessionTypes() );
      set_fixed( sessionargBox);
      hbox2->addWidget( sessionargBox);
      
@@ -378,7 +378,6 @@ KGreeter::chooser_button_clicked()
   exit(UNMANAGE_DISPLAY);
 }
 #endif
-
 void
 KGreeter::shutdown_button_clicked()
 {
@@ -386,14 +385,14 @@ KGreeter::shutdown_button_clicked()
   
   KDMShutdown k( kdmcfg->shutdownButton(),
 		 this, "Shutdown",
-		 kdmcfg->shutdown()->ascii(), 
-		 kdmcfg->restart()->ascii(),
+		 kdmcfg->shutdown(), 
+		 kdmcfg->restart(),
 #ifndef BSD
-		 kdmcfg->consoleMode()->ascii(),
+		 kdmcfg->consoleMode(),
 #endif
 		 kdmcfg->useLilo(),
-		 kdmcfg->liloCmd().ascii(),
-		 kdmcfg->liloMap().ascii());
+		 kdmcfg->liloCmd(),
+		 kdmcfg->liloMap());
   k.exec();
 
   SetTimer();
@@ -434,8 +433,8 @@ static inline void switch_to_root( int gidset_size, gid_t *gidset)
 void
 KGreeter::save_wm()
 {
-     QString file(pwd->pw_dir);
-     file += "/" WMRC;
+     QString file = QFile::decodeName(pwd->pw_dir);
+     file += QString::fromLatin1("/" WMRC);
 
      // open file as user which is loging in
      int gidset_size;
@@ -459,14 +458,14 @@ void
 KGreeter::load_wm()
 {
      // read passwd
-     pwd = getpwnam(loginEdit->text().ascii());
+     pwd = getpwnam( QFile::encodeName( loginEdit->text() ).data() );
      endpwent();
      if (!pwd) return;
      // we don't need the password
      memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
 
-     QString file(pwd->pw_dir);
-     file += "/" WMRC;
+     QString file = QFile::decodeName(pwd->pw_dir);
+     file += QString::fromLatin1( "/" WMRC );
      
      int gidset_size;
      // Go user
@@ -593,7 +592,8 @@ KGreeter::restrict_nologin()
 
      QString file;
      /* Note that <file> will be "" if there is no nologin capability */
-     if ((file = login_getcapstr(lc, "nologin", "", NULL)) == NULL) {
+     file = QFile::decodeName(login_getcapstr(lc, "nologin", "", NULL));
+     if (file.isNull()) {
        KMessageBox::error(this, i18n("Could not access the login capabilities database or out of memory."));
        return true;
      }
@@ -609,7 +609,7 @@ KGreeter::restrict_nologin()
 #endif
 
      if (f.handle() == -1) {
-       f.setName(_PATH_NOLOGIN);
+       f.setName(QString::fromLatin1(_PATH_NOLOGIN));
        f.open(IO_ReadOnly);
      }
 
@@ -618,7 +618,7 @@ KGreeter::restrict_nologin()
        QTextStream t( &f ); 
 
        while ( !t.eof() )
-         s += t.readLine() + "\n";  
+         s += t.readLine() + '\n';
        f.close();
        KMessageBox::sorry(this, s);
 
@@ -719,8 +719,8 @@ KGreeter::restrict_nohome()
 void 
 KGreeter::go_button_clicked()
 {
-     greet->name = qstrdup(loginEdit->text().ascii());
-     greet->password = qstrdup(passwdEdit->text().ascii());
+     greet->name = qstrdup( QFile::encodeName(loginEdit->text()).data() );
+     greet->password = qstrdup( QFile::encodeName(passwdEdit->text()).data() );
      
      if (!Verify (d, greet, verify)){
 	  failedLabel->show();
@@ -739,8 +739,9 @@ KGreeter::go_button_clicked()
      }
 
      // Set session argument:
-     verify->argv = parseArgs( verify->argv, 
-				    sessionargBox->currentText().ascii());
+     // sessions are in fact filenames and should be encoded that way
+     verify->argv = parseArgs( verify->argv,
+			       QFile::encodeName( sessionargBox->currentText() ).data() );
 
      save_wm();
      //qApp->desktop()->setCursor( waitCursor);
@@ -753,17 +754,22 @@ KGreeter::go_button_clicked()
 void
 KGreeter::ReturnPressed()
 {
+	printf("ReturnPressed:0\n");
      if( !goButton->isEnabled())
 	  return;
+	printf("ReturnPressed:1\n");
      if( loginEdit->hasFocus()) {
 	  passwdEdit->setFocus();
           load_wm();
+	printf("ReturnPressed:4\n");
      }
      else if (passwdEdit->hasFocus()
 	      || goButton->hasFocus() 
 	      || cancelButton->hasFocus()) {
 	  go_button_clicked();
+	printf("ReturnPressed:3\n");
      }
+	printf("ReturnPressed:2\n");
 }
 
 static void 
@@ -838,7 +844,7 @@ GreetUser(
      KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
 
      MyApp myapp;
-     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
+     KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + QString::fromLatin1("kdm/pics/users/"));
      QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );
      
@@ -850,7 +856,7 @@ GreetUser(
      RegisterCloseOnFork (ConnectionNumber (*dpy));
      SecureDisplay (d, *dpy);
 
-     // this is necessary, since Qt-1.1 just overwrites the
+     // this is necessary, since Qt just overwrites the
      // IOErrorHandler that was set by xdm!!!
      // we have to return RESERVER_DISPLAY to restart the server
      XSetIOErrorHandler(IOErrorHandler);
@@ -864,8 +870,10 @@ GreetUser(
       */
      if (source (verify->systemEnviron, d->startup) != 0)
      {
-          QString buf = i18n("Startup program %1 exited with non-zero status.\n"
-		  "Please contact your system administrator.\nPlease press OK to retry.").arg(d->startup);
+          QString buf = i18n("Startup program %1 exited with non-zero status."
+			     "\nPlease contact your system administrator.\n"
+			     "Please press OK to retry.")
+	       .arg(QFile::decodeName(d->startup));
 	  qApp->restoreOverrideCursor();
 	  KMessageBox::error(0, buf, i18n("Login aborted"));
 	  SessionExit (d, OBEYSESS_DISPLAY, FALSE);

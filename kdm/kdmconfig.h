@@ -53,12 +53,12 @@ public:
      QFont*          normalFont()      { return _normalFont;}
      QFont*          failFont()        { return _failFont;}
      QFont*          greetFont()       { return _greetFont;}
-     QString*        greetString()     { return _greetString;}
-     QStrList*       sessionTypes()    { return _sessionTypes;}
+     QString         greetString()     { return _greetString;}
+     QStringList     sessionTypes()    { return _sessionTypes;}
      int             shutdownButton()  { return _shutdownButton;}
-     QString*        shutdown()        { return _shutdown;}
-     QString*        restart()         { return _restart;}
-     QString*        logo()            { return _logo;}
+     QString         shutdown()        { return _shutdown;}
+     QString         restart()         { return _restart;}
+     QString         logo()            { return _logo;}
      KVItemList*     users()           { return _users;}
      // GUIStyle        style()           { return _style;}
 	// None is defined as a macro somewhere in an X header. GRRRR.
@@ -68,23 +68,23 @@ public:
      QString         liloMap() { return _liloMap; };
      bool            useLilo() { return _useLilo; };
 #ifndef BSD
-     QString         *consoleMode() { return _consoleMode; };
+     QString         consoleMode() { return _consoleMode; };
 #endif
 
 private:
      void           getConfig();
-     KVItemList*    getUsers( QString s = 0, bool = false);
+     KVItemList*    getUsers( QStringList s = QStringList(), bool = false);
      KConfig*       kc;
 
      QFont*         _normalFont;
      QFont*         _failFont;
      QFont*         _greetFont;
-     QString*       _greetString;
-     QStrList*      _sessionTypes;
+     QString        _greetString;
+     QStringList    _sessionTypes;
      int            _shutdownButton;
-     QString*       _shutdown;
-     QString*       _restart;
-     QString*       _logo;
+     QString        _shutdown;
+     QString        _restart;
+     QString        _logo;
      KVItemList*    _users;
      // GUIStyle       _style;
      
@@ -92,7 +92,7 @@ private:
      QString        _liloMap;
      bool           _useLilo;
 #ifndef BSD
-     QString        *_consoleMode;
+     QString        _consoleMode;
 #endif
 };
 

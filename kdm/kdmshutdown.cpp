@@ -50,11 +50,15 @@ extern "C" {
 # endif
 #endif /* USE_PAM */
 #include <sys/types.h>
-#include <kapp.h>
 
 #include "dm.h"
-#include <klocale.h>
+
+#include <qfile.h>
 #include <qcombobox.h>
+
+#include <kapp.h>
+#include <klocale.h>
+
 #include "liloinfo.moc"
 
 static inline void
@@ -175,13 +179,13 @@ verify_root_pw( const char* pw)
 }
 
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
-			  const char* _shutdown, 
-			  const char* _restart,
+			  const QString &_shutdown, 
+			  const QString &_restart,
 #ifndef BSD
-			  const char *_console,
+			  const QString &_console,
 #endif
 			  bool _lilo,
-			  const char *_lilocmd, const char *_lilomap)
+			  const QString &_lilocmd, const QString &_lilomap)
 
      : FDialog( _parent, _name, true)
 {
@@ -253,10 +257,10 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
        // fill combo box with contents of lilo config
        LiloInfo info(_lilocmd, _lilomap);
 
-       QStrList list;
+       QStringList list;
        if (info.getBootOptions(&list) == 0)
        {
-	 targets->insertStrList(list);
+	 targets->insertStringList(list);
          liloTarget = info.getDefaultBootOptionIndex();
 	 targets->setCurrentItem(liloTarget);
 	 connect(targets,SIGNAL(activated(int)),this,SLOT(target_changed(int)));
@@ -346,7 +350,7 @@ KDMShutdown::rb_clicked( int id)
 	  cur_action = restart;
 	  break;
      case 2:
-	  cur_action = 0L;
+	  cur_action = QString::null;
 	  break;
 #ifndef BSD
      case 3:
@@ -367,7 +371,8 @@ KDMShutdown::target_changed(int id)
 void
 KDMShutdown::pw_entered()
 {
-     if( verify_root_pw( pswdEdit->text().ascii())) {
+     // usernames and passwords are stored in the same format as files
+     if( verify_root_pw( QFile::encodeName( pswdEdit->text() ).data() ) ) {
 	  okButton->setEnabled( true);
      } else {
 	  okButton->setEnabled( false);
@@ -378,7 +383,7 @@ KDMShutdown::pw_entered()
 void
 KDMShutdown::bye_bye()
 {
-     if( cur_action) {
+     if( !cur_action.isNull() ) {
 	  QApplication::flushX();
 	  if( fork() == 0) {
 
@@ -391,7 +396,7 @@ KDMShutdown::bye_bye()
 	       }
 
 	       sleep(1);
-	       system( cur_action);
+	       system( QFile::encodeName( cur_action ).data() );
 	       exit( UNMANAGE_DISPLAY);
 	  } else {
 	       exit( UNMANAGE_DISPLAY);

@@ -46,16 +46,16 @@ public slots:
 
   /* Remove host from list.
 	 */
-  void slotDeleteHost(char *name);
+  void slotDeleteHost(const QString &name);
 
 	/* Change hosts name in list.
 	 */
-  void slotChangeHost(char *oldname, CXdmcp::HostName *newname);
+  void slotChangeHost(const QString &oldname, CXdmcp::HostName *newname);
 
 	/* Add hostname to ping.
 	 * "BROADCAST" is special.
 	 */
-  void slotRegisterHostname (const char *name);
+  void slotRegisterHostname (const QString &name);
 
 private:
 	CXdmcp *comXdmcp;	

@@ -39,7 +39,7 @@ class KDMView;
 
 class KDMViewItem {
 public:
-     KDMViewItem(const char *s, const QPixmap p )
+     KDMViewItem(const QString &s, const QPixmap p )
 	  : pm(p)
      { setText( s ); }
      virtual ~KDMViewItem() {}; 

@@ -34,10 +34,10 @@ void LiloInfo::initialize ( QString lilolocation, QString bootmaplocation )
 		error = -8;
 	else
 		error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// The options array will make deep copies of its strings
-	options = new QStrList ( true );
+	options = new QStringList();
 
 	// Initialize the remaining internal variables
 	optionsAreRead = false;
@@ -88,12 +88,12 @@ int LiloInfo::changeBootmapLocation ( QString bootmaplocation )
 }
 
 /*
- * Make a copy of the internal options array in the QStrList parameter.
+ * Make a copy of the internal options array in the QStringList parameter.
  * Note that the bootOptions parameter must be allocated before calling this method.
  * I don't know how to handle the situation in which it is not. Exception handling
  * maybe?
  */
-int LiloInfo::getBootOptions ( QStrList *bootOptions )
+int LiloInfo::getBootOptions ( QStringList *bootOptions )
 {
 	if ( debug ) cerr << "[LiloInfo] Get boot options...";
 
@@ -102,7 +102,7 @@ int LiloInfo::getBootOptions ( QStrList *bootOptions )
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// First, clear the bootOptions array
 	bootOptions->clear();
@@ -118,7 +118,7 @@ int LiloInfo::getBootOptions ( QStrList *bootOptions )
 
 	// Copy options into bootOptions
 	for ( unsigned int i = 0; i < options->count(); i++ )
-		bootOptions->append ( options->at(i) );
+		bootOptions->append ( *options->at(i) );
 
 	if ( debug ) cerr << "done." << endl;
 
@@ -138,7 +138,7 @@ int LiloInfo::getDefaultBootOption ( QString &defaultOption )
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// If the options are not already read from the Lilo output, do it now
 	if ( !optionsAreRead )
@@ -150,7 +150,7 @@ int LiloInfo::getDefaultBootOption ( QString &defaultOption )
 	}
 
 	// Find the default option in the option array
-	defaultOption = options->at ( indexDefault );
+	defaultOption = *options->at ( indexDefault );
 
 	if ( debug ) cerr << "done." << endl;
 
@@ -170,7 +170,7 @@ int LiloInfo::getDefaultBootOptionIndex()
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// If the options are not already read from the Lilo output, do it now
 	if ( !optionsAreRead )
@@ -218,7 +218,7 @@ int LiloInfo::getNextBootOption ( QString &nextOption )
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// If the options are not already read from the Lilo output, do it now
 	if ( !optionsAreRead )
@@ -239,7 +239,7 @@ int LiloInfo::getNextBootOption ( QString &nextOption )
 	}
 
 	// Find the next boot option in the options array
-	nextOption = options->at ( indexNext );
+	nextOption = *options->at ( indexNext );
 
 	if ( debug ) cerr << "done." << endl;
 
@@ -269,7 +269,7 @@ int LiloInfo::getNextBootOptionIndex()
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// If the options are not already read from the Lilo output, do it now
 	if ( !optionsAreRead )
@@ -315,7 +315,7 @@ QString LiloInfo::getErrorDescription()
 		// state is reset, first make a copy and then clear liloErrorString.
 		QString tmp = liloErrorString.copy();
 		error = 0;
-		liloErrorString = QString ( "" );
+		liloErrorString = QString::null;
 		return tmp;
 	}
 	else if ( error == -6 )
@@ -323,13 +323,13 @@ QString LiloInfo::getErrorDescription()
 		// An error occured trying to start the KProcess.
 		QString tmp = liloErrorString.copy();
 		error = 0;
-		liloErrorString = QString ( "" );
+		liloErrorString = QString::null;
 		return tmp;
 	}
 	else
 	{
 		QString errorString;
-		liloErrorString = QString ( "" );
+		liloErrorString = QString::null;
 		switch ( error )
 		{
 			case -2:
@@ -373,12 +373,13 @@ bool LiloInfo::getOptionsFromLilo()
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// Create the process handle. The command line will be something like
 	// "/sbin/lilo -q -m /boot/map".
 	liloproc << liloloc;
-	liloproc << "-q" << "-m" << bootmaploc;
+	liloproc << QString::fromLatin1("-q"); 
+        liloproc << QString::fromLatin1("-m") << bootmaploc;
 
 	// Connect to the standard output and error signals. Lilo's output will be received
 	// by getOptionsFromStdout() and by receivedStderr(). The former receives the boot
@@ -428,11 +429,11 @@ bool LiloInfo::getNextOptionFromLilo()
 
 	// Reset the error state
 	error = -2;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// Create the process handle
 	liloproc << liloloc;
-	liloproc << "-q" << "-v" << "-m" << bootmaploc << "|" << "sed" << "-n" << "'s/\"[^\"]*$//;/Default boot command/s/.*\"//p'" << "|" << "sed 's/ .*//'";
+	liloproc << QString::fromLatin1("-q") << QString::fromLatin1("-v") << QString::fromLatin1("-m") << bootmaploc << QString::fromLatin1("|") << QString::fromLatin1("sed") << QString::fromLatin1("-n") << QString::fromLatin1("'s/\"[^\"]*$//;/Default boot command/s/.*\"//p'") << QString::fromLatin1("|") << QString::fromLatin1("sed 's/ .*//'");
 
 	// Connect to the standard output and error signals. This time standard output is
 	// received by getNextOptionFromStdout().
@@ -485,9 +486,9 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 		defaultOption; // contains the default option
 
 	// Copy the received string into a QString, and add a '\n'.
-	QString outString = QString ( buffer ).append ( "\n" );
+	QString outString = QString::fromLatin1(buffer) + '\n';
 
-	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << outString << "\"" << endl;
+	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << outString.latin1() << "\"" << endl;
 
 	// Parse the output string. The boolean 'ready' indicates whether the entire input
 	// has been parsed. 'curPos' is the index in the input string, the position at which
@@ -523,13 +524,13 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 			defaultOption = line.copy();
 			curIsDefault = false;
 
-			if ( debug ) cerr << "[LiloInfo]     Default option found: '" << defaultOption << "'" << endl;
+			if ( debug ) cerr << "[LiloInfo]     Default option found: '" << defaultOption.latin1() << "'" << endl;
 		}
 
 		// Add the string to the list of options (keeping it sorted)
-		options->inSort ( line );
+		options->append( line );
 
-		if ( debug ) cerr << "[LiloInfo]     Option added: '" << line << "'" << endl;
+		if ( debug ) cerr << "[LiloInfo]     Option added: '" << line.latin1() << "'" << endl;
 
 		// Proceed to the next line
 		curPos = nextPos;
@@ -537,10 +538,11 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 		// If we are at the end of the string, the job is done
 		if ( curPos == (int)outString.length() ) ready = true;
 	}
+	options->sort();
 
 	// The options array is filled now. We have to find the defaultOption string
 	// in the (sorted) array in order to set the indexDefault to the right value.
-	indexDefault = options->find ( defaultOption );
+	indexDefault = options->findIndex ( defaultOption );
 }
 
 /*
@@ -549,9 +551,9 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
  */
 void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
 {
-	QString nextOption = QString ( buffer );
+	QString nextOption = QString::fromLatin1(buffer);
 
-	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << nextOption << "\"" << endl;
+	if ( debug ) cerr << "[LiloInfo]     Received on standard output: \"" << nextOption.latin1() << "\"" << endl;
 
 	if ( !nextOption.isEmpty() )
 	{
@@ -562,7 +564,7 @@ void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
 		QString upperNextOption = nextOption.upper();
 		for ( unsigned int i = 0; i < options->count(); i++ )
 		{
-			if ( QString(options->at(i)).upper() == upperNextOption )
+			if ( (*options->at(i)).upper() == upperNextOption )
 			{
 				// Found the option in the options array. Set the index and reset the
 				// error code.
@@ -587,12 +589,12 @@ void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
 void LiloInfo::processStderr ( KProcess *, char *buffer, int  )
 {
 	// Copy the received string into a QString
-	QString errString = QString ( buffer ).append ( "\n" );
+	QString errString = QString::fromLatin1(buffer) + '\n';
 
-	if ( debug ) cerr << "[LiloInfo]     Received on standard error: \"" << errString << "\"" << endl;
+	if ( debug ) cerr << "[LiloInfo]     Received on standard error: \"" << errString.latin1() << "\"" << endl;
 
 	// If the string starts with "Ignoring entry ...", remove the first line
-	if ( errString.left ( 8 ) == "Ignoring" )
+	if ( errString.left ( 8 ) == QString::fromLatin1("Ignoring") )
 		errString.remove(0, errString.find ( '\n' ) - 1 );
 
 	if ( !errString.isEmpty() )
@@ -601,7 +603,7 @@ void LiloInfo::processStderr ( KProcess *, char *buffer, int  )
 		liloErrorString = errString;
 		error = -1;
 
-		if ( debug ) cerr << "[LiloInfo]     Lilo Error: " << liloErrorString << endl;
+		if ( debug ) cerr << "[LiloInfo]     Lilo Error: " << liloErrorString.latin1() << endl;
 	}
 }
 
@@ -624,7 +626,7 @@ int LiloInfo::setNextBootOption ( QString nextBootOption )
 	int index;
 
 	// Find the provided string in the options array
-	index = options->find ( nextBootOption );
+	index = options->findIndex ( nextBootOption );
 
 	// If the string is not found, it is an invalid option
 	if ( index < 0 ) return ( error = -5 );
@@ -685,12 +687,12 @@ int LiloInfo::setNextBootOption ( int nextBootOptionIndex, bool clearNextOption 
 
 	// Reset the error state
 	error = 0;
-	liloErrorString = QString ( "" );
+	liloErrorString = QString::null;
 
 	// The command line will look like "/sbin/lilo -m /boot/map -R Linux"
 	liloproc << liloloc;
-	liloproc << "-m" << bootmaploc << "-R";
-	if ( !clearNextOption ) liloproc << options->at ( nextBootOptionIndex );
+	liloproc << QString::fromLatin1("-m") << bootmaploc << QString::fromLatin1("-R");
+	if ( !clearNextOption ) liloproc << *options->at ( nextBootOptionIndex );
 
 	// Connect to standard error. We don't expect standard output, so we don't connect to
 	// that.

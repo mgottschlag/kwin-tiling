@@ -55,19 +55,11 @@ HostView::HostView( CXdmcp *cxdmcp, QWidget *parent, const char *name, WFlags)
 
 void HostView::slotAddHost(CXdmcp::HostName *name)
 {
-	char *nstr = new char[name->hostname.length+1];
-	strncpy(nstr, (char *)name->hostname.data, (size_t)name->hostname.length);
-	nstr[name->hostname.length] = 0;
+	QString nstr = QString::fromLatin1((char *)name->hostname.data, name->hostname.length);
+	QString sstr = QString::fromLatin1((char *)name->status.data, name->status.length);
 
-	char *sstr = new char[name->status.length+1];
-	strncpy(sstr, (char *)name->status.data, (size_t)name->status.length);
-	sstr[name->status.length] = 0;
-
-	QListViewItem *item = new QListViewItem((QListView *)this, QString(nstr),	QString(sstr));
+	QListViewItem *item = new QListViewItem(this, nstr, sstr);
 	insertItem(item);
-
-	delete [] nstr;
-	delete [] sstr;
 }
 
 void HostView::slotDeleteAllHosts()
@@ -75,7 +67,7 @@ void HostView::slotDeleteAllHosts()
 	clear();
 }
 
-void HostView::slotDeleteHost(char *name)
+void HostView::slotDeleteHost(const QString &name)
 {
 	QListViewItemIterator it( this );
 
@@ -87,31 +79,23 @@ void HostView::slotDeleteHost(char *name)
 	}
 }
 
-void HostView::slotChangeHost(char *oldname, CXdmcp::HostName *name)
+void HostView::slotChangeHost(const QString &oldname, CXdmcp::HostName *name)
 {
-	if(!oldname)
+	if(oldname.isNull())
 		return;
 
-	char *nstr = new char[name->hostname.length+1];
-	strncpy(nstr, (char *)name->hostname.data, (size_t)name->hostname.length);
-	nstr[name->hostname.length] = 0;
-
-	char *sstr = new char[name->status.length+1];
-	strncpy(sstr, (char *)name->status.data, (size_t)name->status.length);
-	sstr[name->status.length] = 0;
+	QString nstr = QString::fromLatin1((char *)name->hostname.data, name->hostname.length);
+	QString sstr = QString::fromLatin1((char *)name->status.data, name->status.length);
 
 	QListViewItemIterator it( this );
 	for ( ; it.current(); ++it )
 	{
-		if(it.current()->text(namecol).latin1() == oldname) {
+		if(it.current()->text(namecol) == oldname) {
 			it.current()->setText(namecol, nstr);
 			it.current()->setText(statcol, sstr);
 			break;		
 		}
 	}
-
-	delete [] nstr;
-	delete [] sstr;
 }
 
 void HostView::pingHosts()
@@ -143,9 +127,9 @@ HostView::cancel ()
     exit (OBEYSESS_DISPLAY);
 }
 
-void HostView::slotRegisterHostname(const char *name)
+void HostView::slotRegisterHostname(const QString &name)
 {
-	comXdmcp->registerHostname (name);
+	comXdmcp->registerHostname (name.latin1());
 	comXdmcp->pingHosts();
 }
 
@@ -235,7 +219,7 @@ void ChooserDlg::ping()
 void ChooserDlg::addHostname()
 {
 	if(iline->text().length()) {
-		host_view->slotRegisterHostname (iline->text().latin1());
+		host_view->slotRegisterHostname (iline->text());
 		iline->clear();
 	}
 }

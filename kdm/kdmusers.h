@@ -31,8 +31,8 @@
 
 class KDMUserItem : public KDMViewItem {
 public:
-     setName( const char* name) { user_name = QString( name);}
-     const char* name() { return user_name.data()} cont;
+     setName( const QString &name) { user_name = name; }
+     const QString &name() { return user_name } const;
 private:
      QString user_name;
 };

@@ -7,7 +7,7 @@
 
 #include <qfileinfo.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 
 #include <kapp.h>
 #include <kprocess.h>
@@ -50,7 +50,7 @@
  * option (i.e. one that does not occur in the list of boot options) results
  * in error '-5'. Error '-6' means that the Lilo command could not be
  * run (may be permission denied or file not found; the real error string can
- * be retrieved by getErrorDescription(). Error '-7' and '-8' mean that the Lilo
+ * be retrieved by getErrorDescription(). Error '-7' and '-8' mean that tstrhe Lilo
  * location and the bootmap file location, respectively, is a non-existing file.
  *
  * Note that calling the constructor is sufficient initialization. So you can
@@ -129,10 +129,10 @@ class LiloInfo : QObject
 		 * before calling this method!
 		 * @return               The return value is an error code.
 		 * @param   bootOptions  The object that will hold the boot options.
-		 *                       The QStrList must be allocated before calling
+		 *                       The QStringList must be allocated before calling
 		 *                       this method!
 		 */
-		int getBootOptions ( QStrList *bootOptions );
+		int getBootOptions ( QStringList *bootOptions );
 
 		/**
 		 * This method returns a string representation of the default boot
@@ -212,7 +212,7 @@ class LiloInfo : QObject
 		QString liloloc, bootmaploc;
 		bool optionsAreRead;               // true as soon as lilo -q is called
 		bool nextOptionIsRead;          // true as soon as lilo -q -v is called
-		QStrList *options;
+		QStringList *options;
 		int indexDefault;             // index in options of the default option
 		int indexNext;                   // index in options of the next option
 		bool debug, useHack;

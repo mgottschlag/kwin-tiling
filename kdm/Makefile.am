@@ -1,5 +1,6 @@
 # $Id$
 
+AM_CPPFLAGS = -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST
 SUBDIRS	= config pics $(xdmconfigsubdir)
 
 # Extra lib. Might be -lpam -dl or -lshadow or nothing

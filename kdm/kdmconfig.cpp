@@ -34,73 +34,55 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 
-// Func. for splitting ';' sep. lists.
-static void semsplit( const QString& str, QStrList& result)
-{
-     //QStrList result;
-     int i1 = 0, i2 = 0;
-     while( ( i2 = str.find( ';', i1)) != -1) {
-          result.append( str.mid(i1,i2-i1).ascii());
-          i1 = i2 + 1;
-     }
-     if( i1 != (int)str.length()) {
-          result.append(str.mid(i1,str.length()).ascii());
-     }
-     //return result;
-}
-
 KDMConfig::KDMConfig( )
 {
      getConfig();
 }
 
 KVItemList*
-KDMConfig::getUsers( QString s, bool sorted)
+KDMConfig::getUsers( QStringList s, bool sorted)
 {
      KVItemList* result = new KVItemList;
-     QPixmap default_pix( locate("user_pic", "default.png"));
+     QPixmap default_pix( locate("user_pic", QString::fromLatin1("default.png")));
      if( default_pix.isNull())
        printf("Cant get default pixmap from \"default.png\"\n");
-     if( s.isNull()) {  // isEmpty()?  Th.
-          QString  nu = kc->readEntry( "NoUsers");
-          QStrList no_users;
-          semsplit( nu, no_users);
+     if( s.isEmpty()) {  // isEmpty()?  Th.
+          QStringList no_users = kc->readListEntry( QString::fromLatin1("NoUsers"), ';');
           struct passwd *ps;
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
           setpwent();
           for( ps = getpwent(); ps ; ) {
+	       // usernames are stored in the same encoding as files
+	       QString username = QFile::decodeName ( ps->pw_name );
                if( CHECK_STRING(ps->pw_dir) &&
                    CHECK_STRING(ps->pw_shell) &&
                    //CHECK_STRING(ps->pw_gecos) && // many users didn't want this check (tanghus)
-                   ( no_users.contains( ps->pw_name) == 0)){
+                   ( no_users.contains( username ) == 0)){
                     // we might have a real user, insert him/her
-                    QPixmap p( locate("user_pic", QString(ps->pw_name) + ".png"));
+                    QPixmap p( locate("user_pic",
+				      username + QString::fromLatin1(".png")));
                     if( p.isNull())
                          p = default_pix;
                     if( sorted)
-                         result->inSort( new KDMViewItem( ps->pw_name,
-p));
+                         result->inSort( new KDMViewItem( username, p));
                     else
-                         result->append( new KDMViewItem( ps->pw_name,
-p));
+                         result->append( new KDMViewItem( username, p));
                }
                ps = getpwent();
           }
           endpwent();
 #undef CHECK_STRING
      } else {
-          QStrList sl;
-          semsplit( s, sl);
-          sl.setAutoDelete( true);
-          QStrListIterator it( sl);
-          for( ; it.current(); ++it) {
-               QPixmap p( locate("user_pic", QString(it.current()) + ".png"));
+          QStringList::ConstIterator it = s.begin();
+          for( ; it != s.end(); ++it) {
+               QPixmap p( locate("user_pic",
+				 *it + QString::fromLatin1(".png")));
                if( p.isNull())
                     p = default_pix;
                if( sorted)
-                    result->inSort( new KDMViewItem( it.current(),p));
+                    result->inSort( new KDMViewItem( *it,p));
                else
-                    result->append( new KDMViewItem( it.current(),p));
+                    result->append( new KDMViewItem( *it,p));
           }
      }
      return result;
@@ -108,40 +90,40 @@ p));
 
 void KDMConfig::getConfig()
 {
-    kc = new KConfig( "kdmrc" ); // kalle
-    kc->setGroup( "KDM");
+    kc = new KConfig( QString::fromLatin1("kdmrc") ); // kalle
+    kc->setGroup( QString::fromLatin1("KDM") );
     
     // Read Entries
-    QString normal_font = kc->readEntry( "StdFont");
-    QString fail_font   = kc->readEntry( "FailFont");
-    QString greet_font  = kc->readEntry( "GreetFont");
+    QString normal_font = kc->readEntry( QString::fromLatin1("StdFont") );
+    QString fail_font   = kc->readEntry( QString::fromLatin1("FailFont") );
+    QString greet_font  = kc->readEntry( QString::fromLatin1("GreetFont") );
     
-    QString greet_string   = kc->readEntry(             "GreetString");
-    QString session_string = kc->readEntry(            "SessionTypes");
-    QString logo_string    = kc->readEntry(              "LogoPixmap");
-    if( kc->hasKey("ShutdownButton")) {
-	QString tmp       = kc->readEntry(       "ShutdownButton");
-	if( tmp == "All")
+    QString greet_string = kc->readEntry( QString::fromLatin1("GreetString"));
+    _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"), ';');
+    QString logo_string = kc->readEntry( QString::fromLatin1("LogoPixmap") );
+    if( kc->hasKey( QString::fromLatin1("ShutdownButton") ) ) {
+	QString tmp = kc->readEntry( QString::fromLatin1("ShutdownButton") );
+	if( tmp == QString::fromLatin1("All") )
 	    _shutdownButton = All;
-	else if( tmp == "RootOnly")
+	else if( tmp == QString::fromLatin1("RootOnly") )
 	    _shutdownButton = RootOnly;
-	else if( tmp == "ConsoleOnly")
+	else if( tmp == QString::fromLatin1("ConsoleOnly") )
 	    _shutdownButton = ConsoleOnly;
 	else
 	    _shutdownButton = KNone;
-	_shutdown         = new QString( kc->readEntry(  "Shutdown"));
-	if( _shutdown->isNull())
-	    *_shutdown = SHUTDOWN_CMD;
-	_restart          = new QString( kc->readEntry(   "Restart"));
-	if( _restart->isNull())
-	    *_restart = REBOOT_CMD;
+	_shutdown         = kc->readEntry( QString::fromLatin1("Shutdown") );
+	if( _shutdown.isNull())
+	    _shutdown = QString::fromLatin1(SHUTDOWN_CMD);
+	_restart          = kc->readEntry( QString::fromLatin1("Restart") );
+	if( _restart.isNull())
+	    _restart = QString::fromLatin1(REBOOT_CMD);
     } else
 	_shutdownButton   = KNone;
     
 #ifndef BSD
-    _consoleMode = new QString(kc->readEntry("ConsoleMode"));
-    if (_consoleMode->isNull())
-	*_consoleMode = "/sbin/init 3";
+    _consoleMode = kc->readEntry( QString::fromLatin1("ConsoleMode") );
+    if (_consoleMode.isNull())
+	_consoleMode = QString::fromLatin1("/sbin/init 3");
 #endif
     
     /* TODO: to be ported to QStyle
@@ -157,45 +139,40 @@ void KDMConfig::getConfig()
 
      // Logo
      if( logo_string.isNull()) // isEmpty() ?
-          _logo = new QString( locate("data", "kdm/pics/kdelogo.png") );
+          _logo = locate("data", QString::fromLatin1("kdm/pics/kdelogo.png"));
      else
-          _logo = new QString( logo_string);
+          _logo = logo_string;
 
      // Table of users
-     bool sorted = kc->readNumEntry( "SortUsers", 1);
-     if( kc->hasKey( "UserView") && kc->readNumEntry( "UserView")) {
-          if( kc->hasKey( "Users")) {
-               QString users = kc->readEntry( "Users");
+     bool sorted = kc->readNumEntry( QString::fromLatin1("SortUsers"), 1);
+     if( kc->hasKey( QString::fromLatin1("UserView") ) && 
+	 kc->readNumEntry( QString::fromLatin1("UserView"))) {
+          if( kc->hasKey( QString::fromLatin1("Users") ) ) {
+               QStringList users = 
+		 kc->readListEntry( QString::fromLatin1("Users"), ';');
                /* make list of users from kdmrc */
                _users = getUsers( users, sorted);
           } else  {
-               _users = getUsers( QString(), sorted);
+               _users = getUsers( QStringList(), sorted);
           }
      } else {
           /* no user view */
           _users = NULL;
      }
 
-     // Session Arguments:
-     _sessionTypes = new QStrList;
-     int i1 = 0, i2 = 0;
-     while( ( i2 = session_string.find( ';', i1)) != -1) {
-          _sessionTypes->append(
-               qstrdup( session_string.mid( i1, i2-i1).ascii()));
-          i1 = i2 + 1;
-     }
-     if( i1 != (int)session_string.length())
-          _sessionTypes->append(
-               qstrdup( session_string.mid( i1, session_string.length()).ascii()));
-     if( _sessionTypes->count() == 0) {
-          _sessionTypes->append( "kde");
-          _sessionTypes->append( "failsafe");
+     // Defaults for session types
+     if( _sessionTypes.isEmpty() ) {
+          _sessionTypes.append( QString::fromLatin1("kde") );
+          _sessionTypes.append( QString::fromLatin1("failsafe") );
      }
 
      // Greet String and fonts:
      char buf[256];
      gethostname( buf, 255);
-     QString longhostname = buf;
+     // Reading hostname with same encoding as filenames.
+     // most likely this doesn't really matter because the standards says (?)
+     // that it has to be in US-ASCII only.
+     QString longhostname = QFile::decodeName(buf);
      QString hostname;
      // Remove domainname, because it's generally
      // too long to look nice in the title:
@@ -206,7 +183,8 @@ void KDMConfig::getConfig()
      if( !normal_font.isEmpty()) { // Rettet til isEmpty. Strengen kan godt være 0-længde
                                    // selvom isNull() giver false.
           if(normal_font.contains(',')) {                           //Th.
-            _normalFont = new QFont(kc->readFontEntry( "StdFont")); //Th.
+            _normalFont = new QFont(
+	      kc->readFontEntry( QString::fromLatin1("StdFont"))); //Th.
           }
           else {
             _normalFont = new QFont( normal_font);
@@ -217,7 +195,8 @@ void KDMConfig::getConfig()
 
      if( !fail_font.isEmpty()) {
           if(fail_font.contains(',')) {                             //Th.
-            _failFont = new QFont(kc->readFontEntry( "FailFont"));  //Th.
+            _failFont = new QFont(
+	      kc->readFontEntry( QString::fromLatin1("FailFont")));  //Th.
           }
           else {
             _failFont = new QFont( fail_font);
@@ -230,28 +209,31 @@ void KDMConfig::getConfig()
 
      if( !greet_font.isEmpty()) {
           if(greet_font.contains(',')) {                             //Th.
-            _greetFont = new QFont(kc->readFontEntry( "GreetFont")); //Th.
+            _greetFont = new QFont(
+	      kc->readFontEntry( QString::fromLatin1("GreetFont") )); //Th.
           }
           else {
             _greetFont = new QFont( greet_font);
             _greetFont->setRawMode( true);
           }
      } else
-          _greetFont = new QFont( "times", 24, QFont::Black);
+          _greetFont = new QFont( QString::fromLatin1("times"), 24, QFont::Black);
 
      if( greet_string.isEmpty())
-          _greetString = new QString( hostname);
+          _greetString = hostname;
      else {
-          QRegExp rx( "HOSTNAME");
+          QRegExp rx( QString::fromLatin1("HOSTNAME") );
           greet_string.replace( rx, hostname);
-          _greetString = new QString( greet_string);
+          _greetString = greet_string;
      }
 
      // Lilo options
-     kc->setGroup("Lilo");
-     _liloCmd = kc->readEntry("LiloCommand", "/sbin/lilo");
-     _liloMap = kc->readEntry("LiloMap", "/boot/map");
-     _useLilo = kc->readBoolEntry("Lilo", FALSE);
+     kc->setGroup( QString::fromLatin1("Lilo") );
+     _liloCmd = kc->readEntry(QString::fromLatin1("LiloCommand"),
+			      QString::fromLatin1("/sbin/lilo"));
+     _liloMap = kc->readEntry(QString::fromLatin1("LiloMap"),
+			      QString::fromLatin1("/boot/map"));
+     _useLilo = kc->readBoolEntry(QString::fromLatin1("Lilo"), FALSE);
 }
 
 KDMConfig::~KDMConfig()
@@ -259,7 +241,12 @@ KDMConfig::~KDMConfig()
      delete _normalFont;
      delete _failFont;
      delete _greetFont;
-     delete _greetString;
-     delete _sessionTypes;
      delete kc;
 }
+
+
+
+
+
+
+
