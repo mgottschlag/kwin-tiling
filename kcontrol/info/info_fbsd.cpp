@@ -33,12 +33,13 @@
 #endif
 
 #include <sys/types.h>
-#include <sys/param.h>
 #include <sys/sysctl.h>
 
-#if __FreeBSD_version >= 500042
-	//#define HAVE_DEVINFO_H
-#endif
+//#if __FreeBSD_version >= 500042
+//	#define we should have devinfo.h
+//#else
+//	#define we probably don't have devinfo.h
+//#endif
 
 #ifdef HAVE_DEVINFO_H
 	extern "C" {
@@ -55,8 +56,6 @@
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qtextstream.h>
-
-#include <kdebug.h>
 
 class Device {
 public:
@@ -92,13 +91,20 @@ bool GetInfo_CPU (QListView *lBox)
 	for (int i = ncpu; i > 0; i--) {
 		/* Stuff for sysctl */
 		char *buf;
+		int i_buf;
 
 		// get the processor model
 		sysctlbyname("hw.model", NULL, &len, NULL, 0);
 		buf = new char[len];
 		sysctlbyname("hw.model", buf, &len, NULL, 0);
 
-		cpustring = i18n("CPU %1: %2, unknown speed").arg(i).arg(buf);
+		// get the TSC speed if we can
+		len = sizeof(i_buf);
+		if (sysctlbyname("machdep.tsc_freq", &i_buf, &len, NULL, 0) != -1) {
+			cpustring = i18n("CPU %1: %2, %3 MHz").arg(i).arg(buf).arg(i_buf/1000000);
+		} else {
+			cpustring = i18n("CPU %1: %2, unknown speed").arg(i).arg(buf);
+		}
 
 		/* Put everything in the listbox */
 		new QListViewItem(lBox, cpustring);
@@ -145,7 +151,7 @@ bool GetInfo_IO_Ports (QListView *lbox)
 #ifdef HAVE_DEVINFO_H
 	/* Oh neat, current now has a neat little utility called devinfo */
 	if (devinfo_init())
-	return false;
+		return false;
 	devinfo_foreach_rman(print_ioports, lbox);
 	return true;
 #else
@@ -158,25 +164,22 @@ bool GetInfo_Sound (QListView *lbox)
 	QFile *sndstat = new QFile("/dev/sndstat");
 	QTextStream *t;
 	QString s;
+	QListViewItem *olditem = 0;
 
-	if (!sndstat->exists()) {
-		delete sndstat;
-		return false;
-	}
+	if (!sndstat->exists() || !sndstat->open(IO_ReadOnly)) {
 
-	if (!sndstat->open(IO_ReadOnly)) {
-		delete sndstat;
-		return false;
-	}
-
-	t = new QTextStream(sndstat);
-
-	QListViewItem* olditem = 0;
-	while ((s=t->readLine()) != QString::null)
+		s = i18n("Your sound system could not be queried.  /dev/sndstat does not exist or is not readable.");
 		olditem = new QListViewItem(lbox, olditem, s);
+	} else {
+		t = new QTextStream(sndstat);
+		while ((s=t->readLine()) != QString::null) {
+			olditem = new QListViewItem(lbox, olditem, s);
+		}
 
-	delete t;
-	sndstat->close();
+		delete t;
+		sndstat->close();
+	}
+
 	delete sndstat;
 	return true;
 }
@@ -187,34 +190,33 @@ bool GetInfo_SCSI (QListView *lbox)
 	QFile *camcontrol = new QFile("/sbin/camcontrol");
 	QTextStream *t;
 	QString s;
-
-	if (!camcontrol->exists()) {
-		kdDebug() << "camcontrol doesn't exist" << endl;
-
-		delete camcontrol;
-		return false;
-	}
-
-	/* This prints out a list of all the scsi devies, perhaps eventually we could
-	   parse it as opposed to schlepping it into a listbox */
-	if ((pipe = popen("/sbin/camcontrol devlist", "r")) == NULL) {
-		kdDebug() << "popen failed" << endl;
-		delete camcontrol;
-		return false;
-	}
-
-	t = new QTextStream(pipe, IO_ReadOnly);
-
 	QListViewItem *olditem = 0;
 
-	while (true) {
-		s = t->readLine();
-		if ( s.isEmpty() )
-			break;
+	if (!camcontrol->exists()) {
+		s = i18n ("SCSI subsystem could not be queried: /sbin/camcontrol could not be found");
 		olditem = new QListViewItem(lbox, olditem, s);
+	} else if ((pipe = popen("/sbin/camcontrol devlist 2>&1", "r")) == NULL) {
+		s = i18n ("SCSI subsystem could not be queried: /sbin/camcontrol could not be executed");
+		olditem = new QListViewItem(lbox, olditem, s);
+	} else {
+
+		/* This prints out a list of all the scsi devies, perhaps eventually we could
+		   parse it as opposed to schlepping it into a listbox */
+
+		t = new QTextStream(pipe, IO_ReadOnly);
+
+		while (true) {
+			s = t->readLine();
+			if ( s.isEmpty() )
+				break;
+			olditem = new QListViewItem(lbox, olditem, s);
+		}
+
+		delete t;
+		pclose(pipe);
 	}
 
-	delete t; delete camcontrol; pclose(pipe);
+	delete camcontrol;
 
 	if (!lbox->childCount())
 		return false;
@@ -231,24 +233,57 @@ bool GetInfo_PCI (QListView *lbox)
 	QListViewItem *olditem = 0;
 
 	pcicontrol = new QFile("/usr/X11R6/bin/scanpci");
-	if (pcicontrol->exists()) {
-		cmd = "/usr/X11R6/bin/scanpci";
-		if  ((pipe = popen(cmd.latin1(), "r")) != NULL) {
-			t = new QTextStream(pipe, IO_ReadOnly);
 
-			while (true) {
-				s = t->readLine();
-				if ( s.isEmpty() )
-					break;
-				olditem = new QListViewItem(lbox, olditem, s);
+	if (!pcicontrol->exists()) {
+		delete pcicontrol;
+		pcicontrol = new QFile("/usr/X11R6/bin/pcitweak");
+		if (!pcicontrol->exists()) {
+			delete pcicontrol;
+			pcicontrol = new QFile("/usr/sbin/pciconf");
+			if (!pcicontrol->exists()) {
+				QString s;
+				s = i18n("Could not find any programs with which to query your system's PCI information");
+				(void) new QListViewItem(lbox, 0, s);
+				delete pcicontrol;
+				return true;
+			} else {
+				cmd = "/usr/sbin/pciconf -l";
 			}
-			delete t;
-			pclose(pipe);
+		} else {
+			cmd = "/usr/X11R6/bin/pcitweak -l 2>&1";
 		}
+	} else {
+		cmd = "/usr/X11R6/bin/scanpci";
 	}
+	delete pcicontrol;
+
+	if ((pipe = popen(cmd.latin1(), "r")) == NULL) {
+		s = i18n ("PCI subsystem could not be queried: %1 could not be executed").arg(cmd);
+		olditem = new QListViewItem(lbox, olditem, s);
+	} else {
+
+		/* This prints out a list of all the pci devies, perhaps eventually we could
+		   parse it as opposed to schlepping it into a listbox */
+
+		t = new QTextStream(pipe, IO_ReadOnly);
+
+		while (true) {
+			s = t->readLine();
+			if ( s.isEmpty() )
+				break;
+			olditem = new QListViewItem(lbox, olditem, s);
+		}
+
+		delete t;
+		pclose(pipe);
+	}
+
 	if (!lbox->childCount()) {
+		s = i18n("The PCI subsystem could not be queried, this may need root privileges.");
+		olditem = new QListViewItem(lbox, olditem, s);
 		return false;
 	}
+
 	return true;
 }
 
@@ -257,26 +292,28 @@ bool GetInfo_Partitions (QListView *lbox)
 	struct fstab *fstab_ent;
 
 	if (setfsent() != 1) /* Try to open fstab */ {
-		kdError() << "Ahh couldn't open fstab!" << endl;
-		return false;
+		int s_err = errno;
+		QString s;
+		s = i18n("Could not check filesystem info: ");
+		s += strerror(s_err);
+		(void)new QListViewItem(lbox, 0, s);
+	} else {
+		lbox->addColumn(i18n("Device"));
+		lbox->addColumn(i18n("Mount Point"));
+		lbox->addColumn(i18n("FS Type"));
+		lbox->addColumn(i18n("Mount Options"));
+
+		while ((fstab_ent=getfsent())!=NULL) {
+			new QListViewItem(lbox, fstab_ent->fs_spec,
+					  fstab_ent->fs_file, fstab_ent->fs_vfstype,
+					  fstab_ent->fs_mntops);
+		}
+
+		lbox->setSorting(0);
+		lbox->header()->setClickEnabled(true);
+
+		endfsent(); /* Close fstab */
 	}
-
-	lbox->addColumn(i18n("Device"));
-	lbox->addColumn(i18n("Mount Point"));
-	lbox->addColumn(i18n("FS Type"));
-	lbox->addColumn(i18n("Mount Options"));
-
-
-	while ((fstab_ent=getfsent())!=NULL) {
-		new QListViewItem(lbox, fstab_ent->fs_spec,
-				  fstab_ent->fs_file, fstab_ent->fs_vfstype,
-				  fstab_ent->fs_mntops);
-	}
-
-	lbox->setSorting(0);
-	lbox->header()->setClickEnabled(true);
-
-	endfsent(); /* Close fstab */
 	return true;
 }
 
