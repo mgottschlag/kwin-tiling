@@ -14,6 +14,7 @@ class QCheckBox;
 
 class KConfig;
 class KIntNumInput;
+class KAboutData;
 
 #include <kcmodule.h>
 
@@ -28,6 +29,7 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
+    const KAboutData* aboutData() const;
 
     void apply();
     int buttons();

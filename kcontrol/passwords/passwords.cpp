@@ -21,6 +21,7 @@
 #include <kpassdlg.h>
 #include <kgenericfactory.h>
 #include <knuminput.h>
+#include <kaboutdata.h>
 
 #include <kdesu/defaults.h>
 #include <kdesu/client.h>
@@ -204,5 +205,18 @@ QString KPasswordConfig::quickHelp() const
        " the behavior of passwords in KMail and other programs cannot be"
        " configured here.");
 }
+
+const KAboutData* KPasswordConfig::aboutData() const
+{
+   KAboutData *about =
+   new KAboutData(I18N_NOOP("kcmpasswords"), I18N_NOOP("Password Control Module"),
+                  0, 0, KAboutData::License_GPL,
+                  I18N_NOOP("(c) 1999-2000, Geert Jansen"));
+
+   about->addAuthor("Geert Jansen", 0 , "jansen@kde.org");
+
+   return about;
+}
+
 
 #include "passwords.moc"
