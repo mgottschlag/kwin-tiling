@@ -58,7 +58,7 @@ protected:
 	void setLogo(QString logo);
 
 private slots:
-        void slotLogoPixChanged(const QString &);
+        void slotLogoPixChanged(QString);
         void changed();
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  

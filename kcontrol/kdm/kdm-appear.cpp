@@ -66,8 +66,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(logobutton, 2,1, QWidget::AlignCenter);
   grid->addRowSpacing(2, 80);
   logobutton->setIcon("kdelogo.png");
-  connect(logobutton, SIGNAL(iconChanged(const QString&)),
-	  SLOT(slotLogoPixChanged(const QString&)));
+  connect(logobutton, SIGNAL(iconChanged(QString)), SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(const QString&)), this, SLOT(changed()));
 
   QToolTip::add(logobutton, i18n("Click or drop an image here"));
@@ -169,7 +168,7 @@ void KDMAppearanceWidget::setLogo(QString logo)
 }
 
 
-void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
+void KDMAppearanceWidget::slotLogoPixChanged(QString iconstr)
 {
   // Because KIconLoaderButton only returns a relative filename
   // we gotta save the image in PIXDIR.

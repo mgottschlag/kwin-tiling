@@ -59,7 +59,7 @@ private slots:
         void slotAllToUsr();
         void slotUsrToAll();
         void slotNoToAll();
-        void slotUserPixChanged(const QString&);
+        void slotUserPixChanged(QString);
 	void slotChanged();
 
 private:

@@ -104,8 +104,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     userbutton->installEventFilter(this); // for drag and drop
     userbutton->setIcon("default.png");
     userbutton->setFixedSize(80, 80);
-    connect(userbutton, SIGNAL(iconChanged(const QString&)),
-            SLOT(slotUserPixChanged(const QString&)));
+    connect(userbutton, SIGNAL(iconChanged(QString)), SLOT(slotUserPixChanged(QString)));
     connect(userbutton, SIGNAL(iconChanged(const QString&)), this, SLOT(slotChanged()));
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
     lLayout->addWidget(userbutton);
@@ -147,7 +146,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 }
 
 
-void KDMUsersWidget::slotUserPixChanged(const QString& )
+void KDMUsersWidget::slotUserPixChanged(QString)
 {
     debug("KDMUsersWidget::slotUserPixChanged()");
     QString msg, user(userlabel->text());
